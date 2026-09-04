@@ -90,21 +90,69 @@ for: `nohup`, `nice`, `stdbuf`, `timeout`, `time`, `command`, `exec` and `xargs`
 The resolved command is then subject to the SAME Python-flag scan and re-arming as a
 direct launch, however deep the wrapper nesting.
 
-`srun`, `mpirun` and the other job launchers are DELIBERATELY NOT in that table, and
-saying so is part of the contract. Their option grammars are large enough that a
-fail-closed parser would refuse correct submissions, so they are treated as ordinary
-non-Python children: they inherit the re-armed contract AND the wrapper directory on
-`PATH`, so `srun python3 -I x.py` is refused by the wrapper rather than by the argv
-scan, and `srun /abs/python3 -I x.py` is the declared gap below. What is NOT true of
-them is that this file parsed them.
+A GUARDED PROCESS MAY START ONLY A CHILD THIS GUARD CAN PROVE KEEPS ITS OWN PYTHON
+LAUNCHES GUARDED. That is the whole launch contract, and it replaces the weaker one
+round 6 broke. The weaker one was "scan Python launches and let every other child
+inherit the wrapper directory on `PATH`" -- so a shell SCRIPT FILE was admitted
+UNREAD, and the reviewer wrote three of them that resolve the interpreter without
+consulting `PATH` at all (`command -p python3 -I ...`, a reordered
+`PATH=/usr/bin:/bin python3 -I ...`, BSD `env -P /usr/bin:/bin python3 -I ...`).
+All three exited 0, ran their sentinel, loaded the wrong tree, and wrote no child
+record. `_scan_resolved_command` now CLASSIFIES the resolved command word and admits
+exactly six things:
 
-`sh -c`, `bash -c` and `zsh -c` carry a COMMAND STRING rather than an argv, so the
-string is tokenised with `shlex`, split into simple commands at `;`, `&&`, `||`,
-`|`, `&` and unquoted newlines, and every simple command whose executable is a
-Python interpreter is scanned by the same grammar. A string the tokenizer cannot
-parse is refused rather than skipped, and so is a shell option this parser does not
-model, for the reason above. An interpreter named by an ABSOLUTE PATH counts as
-Python: `/usr/bin/python3.11 -I` is the same request as `python3 -I`.
+  1. a PYTHON interpreter -- by basename or by resolved path, under the startup-flag
+     grammar and the environment contract. An interpreter named by an ABSOLUTE OR
+     RELATIVE PATH goes through the SAME grammar, which is what retires the
+     "absolute path" arm of the old declared gap: what guards a Python child is the
+     shim on `PYTHONPATH`, not the wrapper on `PATH`, so there was never a reason to
+     treat `/usr/bin/python3 -I` as beyond reach;
+  2. a modelled SHELL -- `sh`, `bash`, `dash`, and `zsh` only behind `-f`/`--no-rcs`.
+     A `-c` string is scanned as before AND A SCRIPT FILE OPERAND IS READ AND SCANNED
+     WITH THE SAME SCANNER. A shell with no operand and no `-c` reads its program
+     from stdin and is refused; so are `-l`/`--login`, `-i`, `-s`, `--rcfile`,
+     `--init-file`, and any shell launch made with `$BASH_ENV` or `$ENV` set, because
+     each of them runs a startup file this guard was never handed. `ksh`, `mksh`,
+     `fish`, `csh` and `tcsh` are refused as unmodelled shells rather than treated as
+     unknown binaries;
+  3. `git`, on an allowlist of subcommands that cannot reach a hook, a pager, an
+     external diff or a transport GIVEN THE ARGV ALONE -- plus a refusal when the
+     child's environment carries `GIT_EXTERNAL_DIFF`, `GIT_SSH_COMMAND`, `GIT_PAGER`
+     or any of the rest of `_GIT_EXTERNAL_PROGRAM_ENV_VARS`. `log`, `show` and `diff`
+     require `--no-ext-diff` explicitly; `config` is admitted only in its four
+     reading spellings;
+  4. `sbatch`, modelled as a wrapper whose operand is a BATCH SCRIPT (read and
+     scanned, `#SBATCH` lines being the comments they are) or a `--wrap` STRING.
+     `srun` joins `nice`/`nohup`/`timeout`/`xargs` in the wrapper table. Both refuse
+     `--export` anything other than `ALL`. `mpirun`/`mpiexec` are refused: two
+     implementations, two grammars, and an app-file that names further commands;
+  5. a LEAF TOOL -- a short committed list of programs that execs nothing their own
+     arguments name -- admitted only when its executable was found in a named system
+     prefix and carries NO shebang. A file called `ls` with `#!/bin/sh` in it is
+     scanned as the script it is, never trusted by name;
+  6. a FILE WITH A SHEBANG naming one of the above, which is how `./stage.sh` and a
+     `#!/usr/bin/env python3` entrypoint are covered. A shebang's `-S`/`-I` is a
+     refusal exactly as a command line's is.
+
+Everything else is `LAUNCH_REASON_UNPROVEN`: `perl`, `make`, `ssh`, `find`, `awk`,
+`sed`, `sudo`, `conda`, `uv run`, an unknown binary, a script whose shebang names
+none of the six.
+
+INSIDE A SHELL PROGRAM the same closure applies line by line, and two of round 6's
+routes live here rather than at the argv. An assignment to `PATH`, `PYTHONPATH`,
+`BASH_ENV`, `ENV`, `LD_PRELOAD`, `DYLD_INSERT_LIBRARIES` or any `MNV_GUARD_*`
+variable is refused WHEREVER IT APPEARS -- on its own line, `export`ed, `declare`d or
+`unset` -- because it disarms every later line and not only the command it prefixes.
+`eval`, `alias`, `unalias`, `hash -p`, `enable -f`, `command -p`, `exec -a`/`-l` and
+`module load` are refused because each changes what a later word resolves to or
+builds its program after this scan ends; `source`/`.` reads and scans its single
+literal operand; `trap`'s handler string is scanned; a function body is scanned as
+ordinary lines, which is what makes a later call to the name admissible; a command
+substitution's INSIDE is scanned as a program of its own, and a substitution shaping
+the argv of a shell, an interpreter, a wrapper or `source` is refused because the
+argv that runs is then not the argv that was read. Here-document bodies are DATA and
+are skipped, so `python3 - <<EOF` is scanned as the launch it is while its payload is
+not read as commands.
 
 INTERPRETER WRAPPERS ON PATH COVER THE SECOND LAUNCH SITE. `install()` also prepends
 `mnv_guard_shim/bin/` -- tracked wrappers named `python3` and `python`, plus one
@@ -124,18 +172,25 @@ carry a `.sh` suffix -- the suffix would be part of the name it intercepts -- so
 A-2(f) source manifest does not bind them and `path_shim_sha256` in every record
 does instead. See `_path_shim_digests`.
 
-THE ONE DECLARED RESIDUAL GAP, AFTER BOTH HALVES, is a non-Python child that invokes
-the interpreter by an ABSOLUTE PATH with `-S`, `-I` or `-E`, or that clears `PATH` or
-the environment before invoking it. Neither half can reach it: the argv is built
-inside a process this interpreter does not guard, an absolute path consults no `PATH`
-and therefore no wrapper, and a cleared environment removes both the wrapper
-directory and the contract. It is written into EVERY inventory record as
-`declared_gap` so a ratchet reader sees the coverage boundary without reading this
-file, and it is measured -- not asserted -- in
-`tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsCovered`, beside the covered
-counterparts it must be distinguished from. Read `declared_gap` together with
-`path_shim`: when `path_shim` is not `armed` the boundary is WIDER than that
-sentence, because the `PATH`-wrapper half did not run.
+THE WRAPPERS ARE KEPT AND THEY ARE NO LONGER THE COVERAGE ARGUMENT. They still stand
+in front of every interpreter a child ADMITTED by the closure above resolves through
+`PATH`, which is a second, independent chance to refuse; what they may no longer be
+asked to do is carry the whole claim for a child nobody read. A run whose records say
+`path_shim: not-armed` is now narrower by that second chance rather than open.
+
+THE TWO DECLARED RESIDUALS, AFTER THE CLOSURE AND BOTH HALVES, ARE NEITHER OF THEM AN
+UNSCANNED PYTHON LAUNCH. (1) TRUST BY LOCATION: a leaf tool or a read-only `git` is
+admitted because its executable was found in a named system prefix and carries no
+shebang, so a tampered system prefix -- or a repository-local `.git` configuration
+naming an external program -- is outside this guard. (2) A COMMAND WORD BUILT AT RUN
+TIME is REFUSED and not read, so the residual there is a refused launch and never an
+unguarded one; the cost is a correct launcher that has to be respelled. Both are
+written into EVERY inventory record as `declared_gap` so a ratchet reader sees the
+coverage boundary without reading this file, and they are measured -- not asserted --
+in `tests/test_mnv_guarded_run.py::TheSubprocessBoundaryIsCovered` and
+`TheClosedChildModelRefusesWhatItCannotProve`, beside the covered counterparts they
+must be distinguished from. Read `declared_gap` together with `path_shim`: when
+`path_shim` is not `armed` the second chance above did not run.
 
 TWO RECEIPTS, NEITHER OF WHICH IS A GATE
 ----------------------------------------
@@ -197,9 +252,10 @@ third convention:
     3 -- MEASURED VIOLATION: an import resolved outside the expected tree, the script itself
          lies in a checkout that is not --expect-root, or a Python child would have started
          without the guard -- a startup flag that prevents shim installation, an argv or
-         environment that strips the propagation contract, or a launch prefix whose grammar
-         this guard does not model and therefore CANNOT scan (fail-closed: unparsed is a
-         refusal, never a pass)
+         environment that strips the propagation contract, a launch prefix whose grammar
+         this guard does not model and therefore CANNOT scan, or a child whose own launches
+         it cannot PROVE stay guarded (fail-closed: unparsed and unproven are both refusals,
+         never a pass)
 2 is deliberately not 3, so "we could not check" can never be read as "we checked
 and it was clean".
 """
@@ -272,11 +328,28 @@ TRACKED_WRAPPER_NAMES = ("python3", "python")
 #: to the ratchet readers that consume these records, and a reader who cannot see the boundary reads
 #: a green record as total coverage. Read it beside `path_shim`: when that is not `armed` the
 #: boundary is wider than this sentence, because the PATH-wrapper half did not run.
-DECLARED_GAP = ("a non-Python child that invokes the interpreter by an ABSOLUTE PATH with -S, -I or "
-                "-E, or that clears PATH or the environment before invoking it: the argv is built "
-                "inside a process this interpreter does not guard, an absolute path consults no "
-                "PATH and therefore no wrapper, and a cleared environment removes both the wrapper "
-                "directory and the propagation contract")
+#:
+#: REWRITTEN FOR ROUND 6, AND NEITHER ARM IS AN UNSCANNED PYTHON LAUNCH ANY MORE. The predecessor
+#: sentence named "an ABSOLUTE PATH with -S, -I or -E, or a cleared PATH or environment", and the
+#: reviewer's finding was that it was BOTH incomplete and operationally fail-open: three shell
+#: SCRIPT FILES reached the wrong-tree import by routes it did not describe, and the absolute-path
+#: arm it did describe was a fully admitted run. Both are closed -- a path to an interpreter goes
+#: through the same flag grammar as a bare name, and a shell's script file is read. What is left is
+#: TRUST BY LOCATION and REFUSAL, and the second one is not a hole.
+DECLARED_GAP = (
+    "TWO RESIDUALS, AND NEITHER IS AN UNSCANNED PYTHON LAUNCH. (1) TRUST BY LOCATION: a leaf tool "
+    "(ls, cat, mkdir, tar, sacct, ... -- see _LEAF_TOOL_BASENAMES) or a read-only `git` is admitted "
+    "because its executable was found in a named system prefix (/bin, /usr/bin, /sbin, /usr/sbin, "
+    "/usr/local/bin, /usr/local/sbin, /opt/homebrew/bin, /opt/local/bin, /opt/slurm/bin, "
+    "/usr/global/bin) and carries no shebang; nothing about its behaviour is read. So a TAMPERED "
+    "SYSTEM PREFIX, or a repository-local .git configuration naming an external program "
+    "(diff.external, a hook, core.pager), is outside this guard: those are files rather than an "
+    "argv, and the environment variables that do the same job (GIT_EXTERNAL_DIFF, GIT_SSH_COMMAND, "
+    "GIT_PAGER, ...) are refused where they can be seen. (2) COMMAND WORDS BUILT AT RUN TIME: a "
+    "shell script or -c string whose command word comes from a variable, a command substitution, a "
+    "glob or tilde expansion is REFUSED and not read, so the residual for it is A REFUSED LAUNCH "
+    "AND NEVER AN UNGUARDED ONE -- the cost is a correct launcher that must be respelled, not a "
+    "wrong-tree import that runs")
 
 PROPAGATION_ENV_VARS = (
     MODULE_ENV,
@@ -833,6 +906,29 @@ def _shim_first_pythonpath(existing) -> str:
 _ENV_BASENAMES = frozenset({"env"})
 
 
+#: WHY the launch was refused, as a field. Every refusal here is the same SITE (this wrapper owns one
+#: launch boundary) and the same exit code, and the repo's own rule -- see the `SITE_*` block --
+#: is that a reader must not have to parse which check fired out of prose.
+LAUNCH_REASON_FLAGS = "python-startup-flags-bypass-the-shim"
+LAUNCH_REASON_ENV = "the-launch-argv-or-environment-strips-the-propagation-contract"
+LAUNCH_REASON_UNMODELLED = "a-launch-wrapper-option-this-guard-does-not-model"
+LAUNCH_REASON_UNPARSED = "a-launch-argv-or-command-string-this-guard-cannot-parse"
+
+#: ROUND 6's REASON, AND THE ONE THAT CHANGED THE MODEL RATHER THAN A TABLE. The four reasons above
+#: all presuppose that a NON-PYTHON child is somebody else's problem: the old `_scan_launch` returned
+#: the argv untouched for anything that was not an interpreter, and the PATH wrappers were the whole
+#: of the coverage for what that child then launched. The reviewer walked through that with three
+#: SHELL SCRIPT FILES -- `command -p python3 -I`, a reordered `PATH=/usr/bin:/bin python3 -I`, and
+#: BSD `env -P /usr/bin:/bin python3 -I` -- each of which resolves the interpreter without consulting
+#: the shim directory, and none of which the old declared gap described. A script file was admitted
+#: UNREAD, so the coverage claim rested on a PATH lookup the script could simply decline to make.
+#: The model is now the other way round: a guarded process may start only a child this guard can
+#: PROVE keeps its Python launches guarded -- an interpreter under the flag grammar, a shell whose
+#: string or SCRIPT FILE has been read, a leaf tool that execs nothing, a read-only `git`, or a file
+#: whose shebang resolves to one of those. Everything else refuses with THIS reason.
+LAUNCH_REASON_UNPROVEN = "a-child-this-guard-cannot-prove-keeps-its-launches-guarded"
+
+
 class _LaunchRefusal(Exception):
     """A launch this guard cannot SCAN, and therefore will not allow.
 
@@ -894,10 +990,23 @@ _WRAPPER_SPECS = {
     "time": {"flags": frozenset({"-p", "--portability", "-a", "--append", "-v", "--verbose",
                                  "-q", "--quiet"}),
              "values": frozenset({"-o", "--output", "-f", "--format"})},
-    "command": {"flags": frozenset({"-p"}), "values": frozenset(),
-                "print_only": frozenset({"-v", "-V"})},
-    "exec": {"flags": frozenset({"-l"}), "values": frozenset({"-a"}),
-             "clearing": frozenset({"-c"})},
+    # `command -p` USES A DEFAULT PATH AND THEREFORE NOT OURS. It is one of the three routes round 6
+    # drove through a shell script: the shim directory is on the inherited PATH, `-p` replaces that
+    # PATH with the implementation's own, and the interpreter it then finds has no wrapper in front
+    # of it. The child would still inherit the shim-first PYTHONPATH, so it is not certainly
+    # unguarded -- but "probably still guarded" is not a claim this file makes, and the rule is that
+    # a launch removing half the contract is refused rather than reasoned about.
+    "command": {"flags": frozenset(), "values": frozenset(),
+                "print_only": frozenset({"-v", "-V"}),
+                "refusing": {"-p": LAUNCH_REASON_ENV}},
+    # `-a` RENAMES argv[0] AND `-l` MAKES A LOGIN SHELL OF THE CHILD, and both were previously
+    # followed rather than refused. `-a` is why: the scan reports on the executable it resolved
+    # while the child sees a different argv[0], so a record naming `python3` would describe an
+    # invocation nobody can find in a process list. `-l` runs the login startup files this guard
+    # cannot read. `-c` clears the environment, which is the older refusal and keeps its ENV reason.
+    "exec": {"flags": frozenset(), "values": frozenset(),
+             "clearing": frozenset({"-c"}),
+             "refusing": {"-a": LAUNCH_REASON_UNPROVEN, "-l": LAUNCH_REASON_UNPROVEN}},
     # `-i`, `-e`, `--replace` and `--eof` appear in BOTH tables, which is not a mistake: GNU xargs
     # gives them OPTIONAL arguments, so the bare spelling consumes nothing and only the ATTACHED
     # spelling (`-i{}`, `-eEOF`) carries a value. Listing them as value-taking only would make
@@ -911,17 +1020,212 @@ _WRAPPER_SPECS = {
                                    "--delimiter", "-a", "--arg-file", "-E", "-e", "--eof"})},
 }
 
-#: Shells whose `-c` argument is a COMMAND STRING and not an argv. Their own option grammar is
-#: modelled for the same fail-closed reason as `env`'s: an unmodelled option can consume the token
-#: that holds the command string, and reading the wrong token as the command is worse than refusing.
-_SHELL_BASENAMES = frozenset({"sh", "bash", "zsh", "dash", "ksh", "mksh"})
-#: `c` is in the set because a cluster is what carries it -- `bash -lc <string>` is the spelling a
-#: login-shell launcher uses, and a table that listed every OTHER short flag but not `c` refused
-#: exactly the invocations it was written to read (measured on `bash -c` itself).
-_SHELL_FLAG_CHARS = "abcCefhiklmnpstuvxBDPT"
-_SHELL_VALUE_OPTIONS = frozenset({"-o", "+o", "-O", "+O", "--rcfile", "--init-file"})
-_SHELL_FLAG_LONG = frozenset({"--login", "--noprofile", "--norc", "--posix", "--noediting",
-                              "--interactive", "--verbose", "--debugger", "--restricted"})
+#: Shells this guard MODELS: their option grammar is parsed, their `-c` string is scanned, and their
+#: SCRIPT FILE OPERAND IS READ AND SCANNED WITH THE SAME SCANNER. `zsh` is modelled only behind
+#: `-f`/`--no-rcs`, because without it zsh reads `.zshenv` even non-interactively -- a startup file
+#: this guard cannot see, running before the script's first line.
+_SHELL_BASENAMES = frozenset({"sh", "bash", "zsh", "dash"})
+
+#: Shells that are RECOGNISED AS SHELLS AND REFUSED, which is not the same as being unknown. Their
+#: option grammars and startup-file rules differ from the four above in ways this file does not
+#: model, and the fail-closed rule is that a shell whose grammar is unmodelled cannot be read --
+#: naming them keeps a reader from concluding that `csh` simply was not thought of.
+_UNMODELLED_SHELL_BASENAMES = frozenset({"ksh", "ksh93", "mksh", "pdksh", "fish", "csh", "tcsh",
+                                         "rc", "es", "xonsh", "elvish", "nu"})
+
+#: `c` is in the set because a cluster is what carries it -- `bash -ec <string>` is the spelling a
+#: launcher uses, and a table that listed every OTHER short flag but not `c` refused exactly the
+#: invocations it was written to read (measured on `bash -c` itself).
+_SHELL_FLAG_CHARS = "abcCefhklmnptuvxBDPT"
+#: THE SHORT FLAGS THAT REFUSE, and each for a different reason a reader should not have to guess:
+#: `-l` runs the login startup files, `-i` runs the interactive ones, and `-s` reads the program
+#: from STDIN. In all three cases a program this guard cannot read runs before -- or instead of --
+#: the one it was handed, so there is nothing to scan.
+_SHELL_REFUSING_FLAG_CHARS = "ils"
+_SHELL_VALUE_OPTIONS = frozenset({"-o", "+o", "-O", "+O"})
+#: `--rcfile`/`--init-file` NAME A STARTUP FILE THIS GUARD DOES NOT READ, so they refuse rather than
+#: consume their value. They were previously in `_SHELL_VALUE_OPTIONS`, which skipped the value and
+#: left the startup file unexamined.
+_SHELL_REFUSING_VALUE_OPTIONS = frozenset({"--rcfile", "--init-file"})
+_SHELL_FLAG_LONG = frozenset({"--noprofile", "--norc", "--no-rcs", "--posix", "--noediting",
+                              "--verbose", "--debugger", "--restricted"})
+_SHELL_REFUSING_LONG = frozenset({"--login", "--interactive"})
+#: The two spellings that make `zsh` skip `.zshenv` and the rest of its startup files.
+_ZSH_NO_STARTUP_OPTIONS = frozenset({"-f", "--no-rcs"})
+
+#: STARTUP-FILE VARIABLES: a non-interactive `bash` sources `$BASH_ENV` and a POSIX `sh` sources
+#: `$ENV` BEFORE the script's first line. Whatever they name is a shell program this guard was never
+#: handed and cannot read, so a shell launch made with either of them set in the CHILD's environment
+#: is refused and the variable is named. This is checked against the environment the child will
+#: actually receive, not against `os.environ`, because an explicit `env=` is what a launcher would
+#: use to set it.
+_SHELL_STARTUP_ENV_VARS = ("BASH_ENV", "ENV")
+
+#: VARIABLES WHOSE ASSIGNMENT IS REFUSED WHEREVER IT APPEARS IN A SHELL PROGRAM, and not only in
+#: front of an interpreter. THIS IS ROUND 6's SECOND ROUTE. `_breaks_propagation_contract` already
+#: refused `PYTHONPATH=/nowhere python3 x.py`, where the assignment is that command's own
+#: environment -- but `PATH=/usr/bin:/bin` ON ITS OWN LINE, or `export`ed, or `unset`, changes what
+#: EVERY LATER LINE resolves and disarms an interpreter three lines further down that this scan would
+#: otherwise pass. So the assignment itself refuses, whatever follows it.
+_SHELL_PROTECTED_VARIABLES = frozenset({
+    "PATH", "PYTHONPATH", "PYTHONHOME", "PYTHONSAFEPATH", "PYTHONNOUSERSITE", "PYTHONSTARTUP",
+    "PYTHONEXECUTABLE", "LD_PRELOAD", "DYLD_INSERT_LIBRARIES", "BASH_ENV", "ENV",
+})
+#: Every propagation and PATH-half variable, by PREFIX rather than by list: a variable this guard
+#: has not invented yet is still one whose reassignment inside a script it cannot allow.
+_GUARD_ENV_PREFIX = "MNV_GUARD_"
+
+#: LEAF TOOLS: programs that do their work and exit, and do NOT exec another program named by their
+#: own arguments. They are the reason the closed model is usable at all -- a guarded science step
+#: that cannot `mkdir` is a guard nobody keeps -- and the list is deliberately SHORT, because every
+#: name on it is a name whose behaviour this file is asserting without reading anything.
+#:
+#: WHAT IS DELIBERATELY NOT HERE, AND THIS HALF MATTERS MORE THAN THE LIST: `ssh`, `scp`, `rsync -e`,
+#: `make`, `xargs` as a leaf, `find` (`-exec`), `perl`, `ruby`, `node`, `awk`, `sed` (`e` command),
+#: `sudo`, `su`, `nohup` as a leaf, `time`, `watch`, `tmux`, `screen`, `sh` under another name. Each
+#: of them runs a program its arguments name, so admitting it by basename would admit
+#: `perl -e 'exec "python3","-I",...'` -- which is the reviewer's finding with a different spelling.
+#: `xargs`, `nice`, `nohup`, `timeout`, `stdbuf`, `time`, `command` and `exec` stay in
+#: `_WRAPPER_SPECS`, where their command word is RESOLVED and then scanned; they are wrappers, never
+#: leaves.
+_LEAF_TOOL_BASENAMES = frozenset({
+    # coreutils and their BSD equivalents
+    "ls", "cat", "cp", "mv", "mkdir", "rm", "rmdir", "touch", "head", "tail", "wc", "sort",
+    "uniq", "cut", "tr", "tee", "date", "hostname", "uname", "id", "true", "false", "sleep",
+    "stat", "readlink", "realpath", "basename", "dirname", "pwd", "printf", "echo", "which",
+    # digests
+    "sha256sum", "shasum", "md5sum",
+    # archive tools: they extract and compress, they do not run what they extract
+    "tar", "gzip", "gunzip", "zstd", "xz",
+    # Slurm CLIENTS that submit or report and run nothing locally. `sbatch` and `srun` are NOT
+    # here: `sbatch` runs a script and `srun` runs a command, so both are modelled as wrappers.
+    "sacct", "squeue", "sinfo", "scancel", "sstat",
+    # rsync ONLY without -e/--rsh/--rsync-path, checked in `_check_leaf_options`
+    "rsync",
+})
+
+#: `rsync`'s three options that make it run a program of the caller's choosing on one end or the
+#: other. Present -> the launch is not a leaf and is refused.
+_RSYNC_REMOTE_SHELL_OPTIONS = ("-e", "--rsh", "--rsync-path")
+
+#: WHERE A LEAF MAY LIVE. A leaf is admitted because of the DIRECTORY IT WAS FOUND IN, since nothing
+#: else about `ls` is being checked -- so the trust is in the prefix, and that is exactly arm (1) of
+#: `DECLARED_GAP`. `/usr/bin` already covers the Slurm clients on Perlmutter; `/opt/slurm/bin` and
+#: `/usr/global/bin` are named because they are the two other places that site puts them, and a
+#: prefix absent from a machine simply matches nothing.
+_SYSTEM_EXECUTABLE_PREFIXES = (
+    "/bin", "/usr/bin", "/sbin", "/usr/sbin", "/usr/local/bin", "/usr/local/sbin",
+    "/opt/homebrew/bin", "/opt/local/bin", "/opt/slurm/bin", "/usr/global/bin",
+)
+
+#: `git` SUBCOMMANDS THAT, GIVEN THE ARGV ALONE, CANNOT RUN A CONFIGURED EXTERNAL PROGRAM. This is
+#: the one non-leaf tool with a subcommand allowlist, because the guarded code in this repository
+#: reads git constantly -- HEAD, `ls-files`, `rev-parse HEAD:<path>`, `hash-object` -- and refusing
+#: all of it would refuse the provenance checks the campaign is built on. What is excluded is
+#: everything that can reach a hook, a pager, an external diff or a transport.
+_GIT_READ_ONLY_SUBCOMMANDS = frozenset({
+    "rev-parse", "ls-files", "ls-tree", "hash-object", "cat-file", "merge-base", "rev-list",
+    "describe", "name-rev", "for-each-ref", "symbolic-ref", "check-ignore", "status",
+    "diff-index", "diff-tree",
+})
+#: These three CAN run an external diff driver, so they are admitted only with `--no-ext-diff`
+#: EXPLICITLY PRESENT. `-p` is the patch flag and is fine; `--ext-diff` re-enables what
+#: `--no-ext-diff` disables and refuses.
+_GIT_NO_EXT_DIFF_SUBCOMMANDS = frozenset({"log", "show", "diff"})
+#: `git config` is admitted only in its four READING spellings. `git config user.name` is a read
+#: too, but it is the same argv shape as a WRITE with one more operand, and a rule that has to
+#: count operands to tell a read from a write is a rule that will one day miscount.
+_GIT_CONFIG_READ_OPTIONS = frozenset({"--get", "--get-all", "--get-regexp", "--get-urlmatch",
+                                      "--list", "-l"})
+#: Global options accepted in front of the subcommand. `-C` and `--git-dir` only choose WHICH
+#: repository, which changes nothing about what can run. `-c`, `--config-env`, `--exec-path` and
+#: `--paginate` each install a configuration or a program for the subcommand to run, so they refuse.
+_GIT_GLOBAL_VALUE_OPTIONS = frozenset({"-C", "--git-dir", "--work-tree", "--namespace"})
+_GIT_GLOBAL_FLAG_OPTIONS = frozenset({"--no-pager", "--no-optional-locks", "--literal-pathspecs",
+                                      "--no-replace-objects", "--bare", "--no-lazy-fetch"})
+
+#: ENVIRONMENT VARIABLES THAT MAKE A READ-ONLY `git` RUN AN ARBITRARY PROGRAM. An allowlist over the
+#: argv is worth nothing while any of these is set: `GIT_EXTERNAL_DIFF` alone turns `git diff-tree`
+#: into a launcher. Checked against the environment the child will receive.
+_GIT_EXTERNAL_PROGRAM_ENV_VARS = (
+    "GIT_SSH", "GIT_SSH_COMMAND", "GIT_PAGER", "GIT_EDITOR", "GIT_SEQUENCE_EDITOR",
+    "GIT_EXTERNAL_DIFF", "GIT_ASKPASS", "GIT_EXEC_PATH", "GIT_CONFIG_PARAMETERS",
+    "GIT_CONFIG_GLOBAL", "GIT_CONFIG_SYSTEM",
+)
+
+#: `sbatch`'s operand is a SCRIPT FILE (scanned with the same scanner, `#SBATCH` lines being
+#: comments) or a `--wrap` STRING. Its option table is fail-closed for the reason on `_parse_env`:
+#: an unmodelled option's VALUE may be the script name.
+_SBATCH_FLAGS = frozenset({
+    "-H", "--hold", "--parsable", "-Q", "--quiet", "-v", "--verbose", "--exclusive", "--requeue",
+    "--no-requeue", "--wait", "-W", "--test-only", "--contiguous", "-O", "--overcommit",
+    "--spread-job", "--use-min-nodes", "--ignore-pbs", "--kill-on-invalid-dep", "--no-kill",
+    "-k", "--reboot", "--get-user-env", "--exclusive=user", "--gres-flags=enforce-binding",
+})
+_SBATCH_VALUES = frozenset({
+    "-a", "--array", "-A", "--account", "-b", "--begin", "-c", "--cpus-per-task", "-C",
+    "--constraint", "-d", "--dependency", "-D", "--chdir", "-e", "--error", "-J", "--job-name",
+    "-L", "--licenses", "-m", "--distribution", "-M", "--clusters", "-n", "--ntasks", "-N",
+    "--nodes", "-o", "--output", "-p", "--partition", "-q", "--qos", "-S", "--core-spec", "-t",
+    "--time", "-w", "--nodelist", "-x", "--exclude", "--comment", "--cpu-freq", "--deadline",
+    "--delay-boot", "--exclusive", "--export-file", "--gid", "--gpus", "--gpus-per-node",
+    "--gpus-per-task", "--gpu-bind", "--gpu-freq", "--gres", "--hint", "--mail-type",
+    "--mail-user", "--mem", "--mem-per-cpu", "--mem-per-gpu", "--mem-bind", "--mincpus",
+    "--network", "--nice", "--ntasks-per-core", "--ntasks-per-node", "--ntasks-per-socket",
+    "--ntasks-per-gpu", "--open-mode", "--power", "--priority", "--profile", "--propagate",
+    "--reservation", "--signal", "--sockets-per-node", "--switches", "--thread-spec",
+    "--threads-per-core", "--time-min", "--tmp", "--uid", "--wait-all-nodes", "--wckey",
+    "--cores-per-socket", "--extra-node-info", "--container", "--prefer", "--tres-per-task",
+})
+#: `srun` is a WRAPPER over its command, not over a script. Same fail-closed table rule. It was
+#: DELIBERATELY UNMODELLED before round 6, on the argument that a fail-closed parser would refuse
+#: correct submissions -- true, and the price of leaving it unmodelled was that `srun <anything>`
+#: was admitted unread, so the whole coverage claim for it rested on the PATH wrapper.
+_SRUN_FLAGS = frozenset({
+    "-Q", "--quiet", "-v", "--verbose", "--exclusive", "-O", "--overcommit", "-l", "--label",
+    "-u", "--unbuffered", "-K", "--kill-on-bad-exit", "-k", "--no-kill", "-X", "--disable-status",
+    "-Z", "--no-allocate", "--overlap", "--pty", "--contiguous", "--spread-job",
+    "--use-min-nodes", "--multi-prog", "--test-only", "-i", "--interactive", "--exact",
+    "--preserve-env", "-E", "--wait-all-nodes", "--het-group",
+})
+_SRUN_VALUES = frozenset({
+    "-A", "--account", "-c", "--cpus-per-task", "-C", "--constraint", "-D", "--chdir", "-e",
+    "--error", "-J", "--job-name", "-L", "--licenses", "-m", "--distribution", "-n", "--ntasks",
+    "-N", "--nodes", "-o", "--output", "-p", "--partition", "-q", "--qos", "-r", "--relative",
+    "-s", "--oversubscribe", "-S", "--core-spec", "-t", "--time", "-T", "--threads", "-w",
+    "--nodelist", "-x", "--exclude", "--cpu-bind", "--cpu-freq", "--gpus", "--gpus-per-node",
+    "--gpus-per-task", "--gpu-bind", "--gpu-freq", "--gres", "--hint", "--jobid", "--mem",
+    "--mem-per-cpu", "--mem-per-gpu", "--mem-bind", "--mincpus", "--mpi", "--network", "--nice",
+    "--ntasks-per-core", "--ntasks-per-node", "--ntasks-per-socket", "--ntasks-per-gpu",
+    "--open-mode", "--power", "--prolog", "--epilog", "--profile", "--propagate", "--reservation",
+    "--signal", "--sockets-per-node", "--switches", "--task-epilog", "--task-prolog",
+    "--thread-spec", "--threads-per-core", "--time-min", "--tmp", "--tres-per-task", "--input",
+    "-I", "--immediate", "--container", "--prefer", "--resv-ports", "--sockets-per-node",
+})
+#: `--export` on either client decides which of the caller's environment reaches the task, and
+#: anything other than `ALL` drops the propagation contract, the shim-first `PYTHONPATH`, or both.
+_EXPORT_OPTION_ALLOWED_VALUE = "ALL"
+
+#: REGISTERED HERE AND NOT IN THE LITERAL ABOVE only because the tables it needs are defined after
+#: it. `srun` is an ordinary entry in the wrapper table now, so the offset arithmetic, the `--`
+#: handling and the fail-closed unmodelled-option rule are the ones every other wrapper already has.
+_WRAPPER_SPECS["srun"] = {"flags": _SRUN_FLAGS, "values": _SRUN_VALUES, "export_option": True}
+
+#: `mpirun`/`mpiexec` are REFUSED and not modelled. Two independent implementations (Open MPI and
+#: MPICH) with different option grammars, and both accept an app-file whose contents name further
+#: commands -- so a fail-closed table would be a table over a grammar that varies by installation.
+_REFUSED_LAUNCHER_BASENAMES = frozenset({"mpirun", "mpiexec", "orterun", "prterun", "aprun",
+                                         "ibrun", "jsrun", "lrun"})
+
+#: Shell-string operator characters, CLASSIFIED BY SHAPE RATHER THAN ENUMERATED. A token made only
+#: of these is an operator: one containing `<` or `>` is a redirection, whose TARGET must be dropped
+#: with it, and anything else (`;`, `&&`, `||`, `|`, `&`, `(`, `)`, `{`, `}`, `;;`, `|&`) ends a
+#: simple command. Enumerating the spellings instead was WRONG IN THE FAIL-OPEN DIRECTION and the
+#: two measured escapes are why this is a character class: `python3 2>/dev/null -I x.py` tokenises
+#: with a bare `2` that ended the flag scan before the `-I`, and bash's `&>` is a spelling no
+#: redirection list I wrote contained. A leading file-descriptor digit is dropped with the operator
+#: for the same reason.
+_SHELL_PUNCTUATION = frozenset(";&|<>(){}")
 
 #: Shell-string operator characters, CLASSIFIED BY SHAPE RATHER THAN ENUMERATED. A token made only
 #: of these is an operator: one containing `<` or `>` is a redirection, whose TARGET must be dropped
@@ -938,19 +1242,14 @@ _SHELL_PUNCTUATION = frozenset(";&|<>(){}")
 #: over an argv that can be shaped by a child is not a walk this file should contain.
 _MAX_WRAPPER_DEPTH = 8
 
-#: WHY the launch was refused, as a field. Every refusal here is the same SITE (this wrapper owns one
-#: launch boundary) and the same exit code, and the repo's own rule -- see the `SITE_*` block --
-#: is that a reader must not have to parse which check fired out of prose.
-LAUNCH_REASON_FLAGS = "python-startup-flags-bypass-the-shim"
-LAUNCH_REASON_ENV = "the-launch-argv-or-environment-strips-the-propagation-contract"
-LAUNCH_REASON_UNMODELLED = "a-launch-wrapper-option-this-guard-does-not-model"
-LAUNCH_REASON_UNPARSED = "a-launch-argv-or-command-string-this-guard-cannot-parse"
 
 _LAUNCH_HEADLINES = {
     LAUNCH_REASON_FLAGS: "PYTHON STARTUP FLAGS BYPASS THE IMPORT SHIM",
     LAUNCH_REASON_ENV: "THE CHILD WOULD START WITHOUT THE PROPAGATION CONTRACT",
     LAUNCH_REASON_UNMODELLED: "THIS LAUNCH PREFIX USES AN OPTION THIS GUARD DOES NOT MODEL",
     LAUNCH_REASON_UNPARSED: "THIS LAUNCH CANNOT BE PARSED, SO IT CANNOT BE SCANNED",
+    LAUNCH_REASON_UNPROVEN: ("THIS CHILD CANNOT BE PROVEN TO KEEP ITS OWN PYTHON LAUNCHES "
+                             "GUARDED"),
 }
 
 _LAUNCH_EXPLANATIONS = {
@@ -972,18 +1271,34 @@ _LAUNCH_EXPLANATIONS = {
                              "with no value, or a wrapper chain deeper than this file follows. "
                              "None of them can be scanned, and an unscanned Python launch is the "
                              "defect this guard exists for."),
+    LAUNCH_REASON_UNPROVEN: ("A guarded process may start only a child this guard can PROVE keeps "
+                             "its Python launches guarded: an interpreter under the startup-flag "
+                             "grammar, a shell whose -c string or SCRIPT FILE has been read and "
+                             "scanned, a leaf tool that execs no other program and resolves under "
+                             "a system prefix, a read-only `git`, or a file whose shebang is one "
+                             "of those. Round 6 reached the wrong-tree import through a shell "
+                             "SCRIPT FILE, which the previous model admitted UNREAD on the "
+                             "strength of a PATH lookup the script declined to make. Route the "
+                             "work through a shell script this guard can read, or through "
+                             "mnv_guarded_run.py; do not widen the leaf table to make a launcher "
+                             "pass."),
 }
 
 
-#: The `outcome` string each launch-refusal reason records. TWO OUTCOMES AND NOT FOUR: the pair that
-#: refuses a launch this guard READ keeps the outcome downstream controls already name, and the pair
-#: that refuses a launch it COULD NOT READ gets its own, because those are the two different claims
-#: a reader of a record has to be able to tell apart. The reason field carries the finer detail.
+#: The `outcome` string each launch-refusal reason records. TWO OUTCOMES AND NOT FIVE: the pair that
+#: refuses a launch this guard READ keeps the outcome downstream controls already name, and the ones
+#: that refuse a launch whose coverage it COULD NOT ESTABLISH share the second, because those are the
+#: two different claims a reader of a record has to be able to tell apart. The reason field carries
+#: the finer detail. `LAUNCH_REASON_UNPROVEN` joins the second group deliberately: to a ratchet
+#: reader "this guard could not establish that this launch stays guarded" is the SAME claim whether
+#: the obstacle was an option it does not model or a child it cannot prove, and giving it a third
+#: outcome would silently re-route every control that keys off the existing two.
 LAUNCH_OUTCOMES = {
     LAUNCH_REASON_FLAGS: "refused:launch-python-startup-flags",
     LAUNCH_REASON_ENV: "refused:launch-python-startup-flags",
     LAUNCH_REASON_UNMODELLED: "refused:launch-unmodelled-launch-grammar",
     LAUNCH_REASON_UNPARSED: "refused:launch-unmodelled-launch-grammar",
+    LAUNCH_REASON_UNPROVEN: "refused:launch-unmodelled-launch-grammar",
 }
 
 
@@ -1182,6 +1497,23 @@ def _parse_wrapper(argv: list[str], spec: dict) -> "int | None":
             return None                      # reports instead of exec: nothing is launched
         if token in spec.get("clearing", frozenset()):
             raise _LaunchRefusal(LAUNCH_REASON_ENV, token)
+        #: OPTIONS THAT ARE MODELLED AND STILL REFUSED, which is a third state the first version of
+        #: this table did not have. `command -p` and `exec -a`/`-l` are understood exactly -- that
+        #: is why they refuse -- so reporting them as UNMODELLED would send a reader to add them to
+        #: a table they are already in.
+        refusing = spec.get("refusing", {})
+        if token in refusing:
+            raise _LaunchRefusal(refusing[token], token)
+        if spec.get("export_option") and token.partition("=")[0] == "--export":
+            #: `--export=ALL` is the only value that carries the caller's environment, and the
+            #: contract lives in that environment. Anything else -- `NONE`, an explicit list, or a
+            #: separate-word value this table would otherwise skip -- drops it.
+            if token != f"--export={_EXPORT_OPTION_ALLOWED_VALUE}":
+                raise _LaunchRefusal(LAUNCH_REASON_ENV, token)
+            index += 1
+            continue
+        if spec.get("export_option") and token == "--export":
+            raise _LaunchRefusal(LAUNCH_REASON_ENV, token)
         if token in spec["flags"]:
             index += 1
             continue
@@ -1209,21 +1541,52 @@ def _parse_wrapper(argv: list[str], spec: dict) -> "int | None":
     return index
 
 
-def _shell_command_string(argv: list[str]) -> "str | None":
-    """The `-c` COMMAND STRING in a shell invocation, or None when the shell runs no string.
+def _parse_shell_invocation(argv: list[str], env=None) -> dict:
+    """What a shell launch will actually run: a `-c` STRING, or a SCRIPT FILE. Never nothing.
 
-    Fail-closed on an unmodelled shell option for the reason on `_SHELL_VALUE_OPTIONS`: an option
-    that consumes a word could consume the command string, and scanning the wrong token is worse
-    than refusing. A shell invoked on a SCRIPT FILE has no string here and is not refused -- what
-    that script does at ITS launch sites is the PATH wrapper's half of the contract.
+    ROUND 6's FIRST FINDING IS THE `None` THIS FUNCTION NO LONGER RETURNS. Its predecessor
+    (`_shell_command_string`) answered "is there a `-c` string" and returned None for everything
+    else -- and None meant ADMITTED, so `bash script.sh` ran a program this guard never opened. The
+    old docstring said so out loud: "what that script does at ITS launch sites is the PATH
+    wrapper's half of the contract". The reviewer then wrote three scripts that resolve the
+    interpreter WITHOUT a PATH lookup, so no wrapper stood in front of any of them. The shell's
+    operand is therefore read now, and every outcome of this parse is either a program to scan or a
+    refusal:
+
+      {"kind": "string", "text": ...}   -- `-c`: scan the string
+      {"kind": "script", "path": ...}   -- a file operand: read it and scan it
+
+    THE REFUSALS ARE ALL ONE SHAPE: a shell program would run that this guard was not handed.
+    `-l`/`--login` and `-i`/`--interactive` run startup files; `--rcfile`/`--init-file` name one;
+    `-s` and a bare invocation read the program from STDIN, which does not exist yet at scan time;
+    `$BASH_ENV`/`$ENV` in the child's environment name one that runs before the script's first
+    line; and `zsh` reads `.zshenv` unless `-f`/`--no-rcs` says otherwise.
     """
+    basename = _executable_basename(_text_argument(argv[0]))
+    source = os.environ if env is None else env
+    for name in _SHELL_STARTUP_ENV_VARS:
+        if source.get(name):
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                 f"${name} names a shell startup file this guard cannot read")
     index = 1
+    options_done = False
+    suppresses_startup = False
     while index < len(argv):
         token = argv[index]
         if token == "--":
-            return None                      # everything after is the script and its argv
+            options_done = True
+            index += 1
+            break
         if token == "-" or not token.startswith(("-", "+")):
-            return None
+            break
+        if token in _ZSH_NO_STARTUP_OPTIONS:
+            suppresses_startup = True
+            index += 1
+            continue
+        if token in _SHELL_REFUSING_VALUE_OPTIONS or token in _SHELL_REFUSING_LONG:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN, token)
+        if token.startswith("--") and token.partition("=")[0] in _SHELL_REFUSING_VALUE_OPTIONS:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN, token)
         if token in _SHELL_VALUE_OPTIONS:
             if index + 1 >= len(argv):
                 raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{token} with no value")
@@ -1235,16 +1598,49 @@ def _shell_command_string(argv: list[str]) -> "str | None":
         if token.startswith("--"):
             raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
         cluster = token[1:]
-        if "c" in cluster:
-            if not set(cluster) <= set(_SHELL_FLAG_CHARS):
-                raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
-            if index + 1 >= len(argv):
-                raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{token} with no command string")
-            return argv[index + 1]
+        refusing = [c for c in cluster if c in _SHELL_REFUSING_FLAG_CHARS]
+        if refusing:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN, f"{token} (-{refusing[0]})")
         if not set(cluster) <= set(_SHELL_FLAG_CHARS):
             raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, token)
+        if "f" in cluster:
+            suppresses_startup = True
+        if "c" in cluster:
+            if index + 1 >= len(argv):
+                raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{token} with no command string")
+            if basename == "zsh" and not suppresses_startup:
+                raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                     "zsh reads .zshenv unless -f/--no-rcs is given")
+            return {"kind": "string", "text": argv[index + 1]}
         index += 1
-    return None
+    if basename == "zsh" and not suppresses_startup:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             "zsh reads .zshenv unless -f/--no-rcs is given")
+    if index >= len(argv):
+        #: A SHELL WITH NO OPERAND READS ITS PROGRAM FROM STDIN. `sh <<EOF ...` and
+        #: `subprocess.run(["bash"], input=...)` are the two spellings, and in both the program
+        #: does not exist as bytes this scan can reach -- the parent writes it after the fork.
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             "a shell with no -c string and no script operand reads its program "
+                             "from stdin, which does not exist at scan time")
+    operand = argv[index]
+    if operand == "-" and not options_done:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             "`-` makes the shell read its program from stdin")
+    return {"kind": "script", "path": operand}
+
+
+def _shell_command_string(argv: list[str]) -> "str | None":
+    """The `-c` COMMAND STRING in a shell invocation, or None when the operand is a SCRIPT FILE.
+
+    ONE PARSE, TWO CALLERS, so a shell option cannot mean one thing here and another in the scan:
+    this is `_parse_shell_invocation` with the script arm collapsed to None. Callers that need to
+    know WHICH of the two a launch is -- and every caller that decides a verdict does -- use the
+    parse directly; this spelling survives because the string is the only thing several call sites
+    want and because `None` here now means "a script file, go and read it" rather than "admitted".
+    """
+    parsed = _parse_shell_invocation(argv)
+    return parsed["text"] if parsed["kind"] == "string" else None
 
 
 def _unquoted_lines(text: str) -> list[str]:
@@ -1293,38 +1689,334 @@ def _unquoted_lines(text: str) -> list[str]:
     return parts
 
 
+def _mask_quoted(text: str) -> str:
+    """`text` with every character INSIDE quotes replaced by NUL, offsets preserved.
+
+    A VIEW FOR SEARCHING, never for tokenising. Two searches below have to distinguish shell syntax
+    from data that happens to look like it -- `echo "a << b"` is not a here-document, and `'$(x)'`
+    is not a command substitution -- and a regex over the raw line gets both wrong in the direction
+    that DROPS LINES from the scan. Offsets are preserved so a match's position is a position in
+    the real line.
+    """
+    out = []
+    quote: "str | None" = None
+    index = 0
+    while index < len(text):
+        character = text[index]
+        if quote is None and character == "\\" and index + 1 < len(text):
+            out.append("\0\0")
+            index += 2
+            continue
+        if quote is not None:
+            if character == "\\" and quote == '"' and index + 1 < len(text):
+                out.append("\0\0")
+                index += 2
+                continue
+            out.append("\0" if character != quote else character)
+            if character == quote:
+                quote = None
+            index += 1
+            continue
+        if character in "\"'":
+            quote = character
+            out.append(character)
+            index += 1
+            continue
+        out.append(character)
+        index += 1
+    return "".join(out)
+
+
+#: A word-initial `#` starts a comment; one inside a word (`file#1`) does not. These are the
+#: characters after which a `#` is word-initial, plus the start of a line.
+_SHELL_WORD_BREAK = frozenset(" \t;&|<>(){}")
+
+
+def _shell_logical_lines(text: str) -> list[str]:
+    """A shell program as LOGICAL LINES: continuations joined, comments stripped, quotes intact.
+
+    THIS IS WHAT MAKES A SCRIPT FILE SCANNABLE BY THE SAME CODE AS A `-c` STRING, and each of the
+    three transformations is here because the alternative is a wrong answer rather than an untidy
+    one:
+
+      * A `\\`-newline continuation joined here means `python3 \\<newline>  -I x.py` is ONE command
+        with an `-I` in it. Left alone, the two halves are two logical lines and the second reads as
+        a command called `-I`. This repository has the receipt for the same class of error in the
+        other direction: on 2026-08-18 a hook inserted between a continued command's lines
+        truncated it to a launch with no arguments, and `bash -n` passed.
+      * A comment stripped here is what makes `#!/bin/bash` and every `#SBATCH` line inert. They
+        must be inert rather than skipped by pattern, because `#SBATCH --wrap=...` would otherwise
+        tokenise into a command; and the shebang is checked separately, by `_read_shebang`, where
+        the interpreter it names is the question.
+      * Quotes are kept, because the tokeniser below needs them and because a newline inside quotes
+        is DATA and not a command separator (`_unquoted_lines`' measured finding).
+
+    An unbalanced quote raises, and the caller turns that into a refusal: a program this cannot
+    split is a program nothing can scan.
+    """
+    lines: list[str] = []
+    current: list[str] = []
+    quote: "str | None" = None
+    at_word_start = True
+    index = 0
+    length = len(text)
+    while index < length:
+        character = text[index]
+        if quote is None and character == "\\":
+            following = text[index + 1] if index + 1 < length else ""
+            if following == "\n":
+                index += 2                   # a line continuation: both characters disappear
+                at_word_start = False
+                continue
+            current.append(character)
+            if following:
+                current.append(following)
+                index += 2
+            else:
+                index += 1
+            at_word_start = False
+            continue
+        if quote is not None:
+            if character == "\\" and quote == '"' and index + 1 < length:
+                current.append(character)
+                current.append(text[index + 1])
+                index += 2
+                continue
+            current.append(character)
+            if character == quote:
+                quote = None
+            index += 1
+            continue
+        if character in "\"'":
+            quote = character
+            current.append(character)
+            at_word_start = False
+            index += 1
+            continue
+        if character == "#" and at_word_start:
+            while index < length and text[index] != "\n":
+                index += 1
+            continue
+        if character == "\n":
+            lines.append("".join(current))
+            current = []
+            at_word_start = True
+            index += 1
+            continue
+        current.append(character)
+        at_word_start = character in _SHELL_WORD_BREAK
+        index += 1
+    if quote is not None:
+        raise ValueError(f"no closing quotation in {text!r}")
+    lines.append("".join(current))
+    return lines
+
+
+#: `<<WORD`, `<<-WORD`, `<<'WORD'`, `<<"WORD"`. `<<<` (bash's here-STRING) deliberately does not
+#: match: its data is on the same line, and the tokeniser already drops it with its redirection.
+_HEREDOC_RE = re.compile(r"<<-?[ \t]*(?:'([^']*)'|\"([^\"]*)\"|([A-Za-z_][A-Za-z0-9_]*))")
+
+
+def _drop_heredoc_bodies(lines: list[str]) -> list[str]:
+    """Remove here-document BODIES, keeping the line that opens them.
+
+    A HERE-DOCUMENT BODY IS DATA, AND SCANNING IT AS COMMANDS IS WRONG IN BOTH DIRECTIONS. In the
+    noisy direction, `python3 - <<EOF` followed by a program that says `import x` would have those
+    lines read as commands called `import`, and every one of them would refuse as an unprovable
+    child -- a guard that refuses a correct launch is a guard that gets removed. In the quiet
+    direction, a body line that happened to tokenise cleanly would make the scan report on a
+    command that never runs.
+
+    The OPENING line is kept: `python3 - <<EOF` is a real Python launch and the interpreter word is
+    on it. `sh <<EOF` is a real shell launch with no operand, which `_parse_shell_invocation`
+    refuses -- the body being data is exactly why it cannot be scanned.
+
+    An unterminated body runs to end of input, which is what a shell does with it too, so the
+    remaining lines are consumed rather than refused.
+    """
+    kept: list[str] = []
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        index += 1
+        kept.append(line)
+        for quoted, double_quoted, bare in _HEREDOC_RE.findall(_mask_quoted(line)):
+            terminator = quoted or double_quoted or bare
+            while index < len(lines):
+                candidate = lines[index]
+                index += 1
+                if candidate.strip() == terminator:
+                    break
+    return kept
+
+
+#: What a command substitution collapses to before tokenising. It CONTAINS A `$` on purpose: a
+#: substitution standing where the command word goes is then refused by the same rule that refuses
+#: every other command word built at runtime, rather than by a rule of its own.
+_SUBSTITUTION_PLACEHOLDER = "$MNV_GUARD_COMMAND_SUBSTITUTION"
+
+
+def _mask_command_substitutions(line: str) -> "tuple[str, list[str]]":
+    """Replace `$(...)` and backticks with one placeholder word; return the masked line and INSIDES.
+
+    TWO PROBLEMS, ONE PASS. Tokenising `python3 $(which x)` with `punctuation_chars=True` splits at
+    the substitution's own parentheses, so the simple command breaks in half and the scan reports
+    on fragments; and the text inside the substitution IS A COMMAND that runs, so dropping it would
+    admit `X=$(python3 -I x.py)` unread. Masking fixes the first and returning the insides lets the
+    caller scan them as programs of their own, which is the same rule applied one level down rather
+    than a second rule.
+
+    Single quotes protect their contents (`'$(x)'` is a literal); double quotes do NOT, because a
+    substitution inside them still runs.
+    """
+    out: list[str] = []
+    insides: list[str] = []
+    quote: "str | None" = None
+    index = 0
+    length = len(line)
+    while index < length:
+        character = line[index]
+        if quote != "'" and character == "\\" and index + 1 < length:
+            out.append(character)
+            out.append(line[index + 1])
+            index += 2
+            continue
+        if quote == "'":
+            out.append(character)
+            if character == "'":
+                quote = None
+            index += 1
+            continue
+        if character == "'" and quote is None:
+            quote = "'"
+            out.append(character)
+            index += 1
+            continue
+        if character == '"':
+            quote = None if quote == '"' else '"'
+            out.append(character)
+            index += 1
+            continue
+        if character == "`":
+            end = index + 1
+            while end < length and line[end] != "`":
+                end += 2 if line[end] == "\\" else 1
+            insides.append(line[index + 1:min(end, length)])
+            out.append(_SUBSTITUTION_PLACEHOLDER)
+            index = end + 1
+            continue
+        if character == "$" and index + 1 < length and line[index + 1] == "(":
+            if index + 2 < length and line[index + 2] == "(":
+                #: `$((...))` is ARITHMETIC, not a substitution: it runs no command. Its inner
+                #: parentheses would still break the tokeniser, so it is masked and NOT scanned.
+                depth = 0
+                end = index + 1
+                while end < length:
+                    if line[end] == "(":
+                        depth += 1
+                    elif line[end] == ")":
+                        depth -= 1
+                        if depth == 0:
+                            break
+                    end += 1
+                out.append("0")
+                index = end + 1
+                continue
+            depth = 0
+            end = index + 1
+            while end < length:
+                if line[end] == "(":
+                    depth += 1
+                elif line[end] == ")":
+                    depth -= 1
+                    if depth == 0:
+                        break
+                end += 1
+            insides.append(line[index + 2:min(end, length)])
+            out.append(_SUBSTITUTION_PLACEHOLDER)
+            index = end + 1
+            continue
+        out.append(character)
+        index += 1
+    return "".join(out), insides
+
+
+#: `name()`, `name ()` and `function name` -- the three spellings of a function definition. The
+#: BODY is not special-cased: it is ordinary lines, so the scan reads it like any other, and that is
+#: what makes a later CALL to the name admissible.
+_FUNCTION_DEFINITION_RE = re.compile(
+    r"^[ \t]*(?:function[ \t]+([A-Za-z_][A-Za-z0-9_:.-]*)[ \t]*(?:\([ \t]*\))?"
+    r"|([A-Za-z_][A-Za-z0-9_:.-]*)[ \t]*\([ \t]*\))[ \t]*")
+
+
+def _strip_function_definitions(lines: list[str]) -> "tuple[set[str], list[str]]":
+    """Every function NAME defined in this program, and the lines with the `name()` prefix removed.
+
+    THE PREFIX HAS TO GO OR THE DEFINITION READS AS A CALL. `mnv_inv() {` tokenises to
+    `['mnv_inv', '(', ')', '{']`, the parentheses split the simple command, and what is left is a
+    one-word command `mnv_inv` -- an unknown word, refused, on the line that DEFINES it. Stripping
+    the prefix leaves the body, which is scanned as ordinary lines.
+
+    THE NAMES ARE COLLECTED IN A PRE-PASS so that a call appearing before the textual definition is
+    still admissible. That is more permissive than the shell (which would fail on it) and it is the
+    safe direction: the body was scanned either way, so admitting the call adds nothing unscanned.
+    """
+    defined: set[str] = set()
+    rewritten: list[str] = []
+    for line in lines:
+        match = _FUNCTION_DEFINITION_RE.match(line)
+        if match:
+            defined.add(match.group(1) or match.group(2))
+            line = line[match.end():]
+        rewritten.append(line)
+    return defined, rewritten
+
+
+def _tokenise_shell_line(line: str) -> list[str]:
+    """One logical line, tokenised with shell punctuation kept as operator tokens."""
+    lexer = shlex.shlex(line, posix=True, punctuation_chars=True)
+    lexer.whitespace_split = True
+    return list(lexer)                       # ValueError here is the caller's refusal
+
+
+def _split_simple_commands(tokens: list[str]) -> list[list[str]]:
+    """Split one line's tokens at every operator, dropping redirections with their targets."""
+    commands: list[list[str]] = []
+    current: list[str] = []
+    skip_next = False
+    for token in tokens:
+        if skip_next:
+            skip_next = False
+            continue
+        if token and set(token) <= _SHELL_PUNCTUATION:
+            if "<" in token or ">" in token:
+                if current and current[-1].isdigit():
+                    current.pop()            # the file descriptor belongs to the redirection
+                skip_next = True             # drop the operator AND its target
+                continue
+            if current:
+                commands.append(current)
+            current = []
+            continue
+        current.append(token)
+    if current:
+        commands.append(current)
+    return commands
+
+
 def _simple_commands(text: str) -> list[list[str]]:
-    """Every SIMPLE COMMAND in a shell command string, tokenised, redirections removed.
+    """Every SIMPLE COMMAND in a shell program, tokenised, redirections removed.
 
     Split at `;`, `&&`, `||`, `|`, `&`, subshell parentheses and unquoted newlines, because each of
     those starts a command whose first word is an executable -- and a Python interpreter behind any
     of them is a launch this guard owns. Redirection operators take their target with them so that
-    a redirection cannot end the startup-flag scan early.
+    a redirection cannot end the startup-flag scan early. Line continuations, comments and
+    here-document bodies are handled by `_shell_logical_lines` and `_drop_heredoc_bodies` first, so
+    a `-c` string and a SCRIPT FILE reduce to the same thing before either is scanned.
     """
     commands: list[list[str]] = []
-    for line in _unquoted_lines(text):
-        lexer = shlex.shlex(line, posix=True, punctuation_chars=True)
-        lexer.whitespace_split = True
-        tokens = list(lexer)                 # ValueError here is the caller's refusal
-        current: list[str] = []
-        skip_next = False
-        for token in tokens:
-            if skip_next:
-                skip_next = False
-                continue
-            if token and set(token) <= _SHELL_PUNCTUATION:
-                if "<" in token or ">" in token:
-                    if current and current[-1].isdigit():
-                        current.pop()        # the file descriptor belongs to the redirection
-                    skip_next = True         # drop the operator AND its target
-                    continue
-                if current:
-                    commands.append(current)
-                current = []
-                continue
-            current.append(token)
-        if current:
-            commands.append(current)
+    for line in _drop_heredoc_bodies(_shell_logical_lines(text)):
+        commands.extend(_split_simple_commands(_tokenise_shell_line(line)))
     return commands
 
 
@@ -1399,8 +2091,10 @@ def _contract_operands(resolved: dict) -> "tuple[list[str], dict]":
 
     PATH IS DELIBERATELY NOT RESTORED. `env -i` clears it, and putting it back would overrule the
     caller on something that is not this guard's contract -- the interpreter itself needs no PATH.
-    What is lost is the PATH-wrapper half for that child's own non-Python descendants, which is the
-    `clears PATH or the environment` arm of `DECLARED_GAP` and is stated there rather than here.
+    What is lost is the PATH-wrapper half for that child's own descendants -- the SECOND chance to
+    refuse, not the coverage: the closed child model reads what the child will run before it starts,
+    so a cleared PATH costs redundancy rather than opening a route. This was the
+    `clears PATH or the environment` arm of the pre-round-6 `DECLARED_GAP`, and it is no longer one.
 
     The returned environment view is what the caller checks with
     `_environment_reaching_child_is_armed`: if this process's own `os.environ` has already lost the
@@ -1425,110 +2119,747 @@ def _contract_operands(resolved: dict) -> "tuple[list[str], dict]":
     return operands, view
 
 
-def _scan_shell_string(text: str, env, depth: int = 0) -> bool:
-    """Scan a shell COMMAND STRING; raise to refuse, and return whether it launches an interpreter.
+def _locate_executable(executable, env=None) -> str:
+    """Where a launch will FIND its executable, WITHOUT resolving symlinks.
 
-    THE RETURN VALUE IS LOAD-BEARING AND IS NOT A CONVENIENCE. `env -i bash -c 'python3 x.py'`
-    holds no isolating flag and no disarming operand INSIDE the string -- the clearing happens
-    outside it -- so a scan that only raised would have returned quietly and launched a shell whose
-    interpreter starts unguarded. The caller therefore has to know whether the contract still has
-    to reach this child, and it may not simply assume it does: requiring the contract for EVERY
-    shell string would refuse `bash -c 'ls'` from a process that had disarmed itself, which is a
-    launch with no interpreter in it and nothing to guard.
+    `_resolve_executable` answers "which file runs", which is the right question for "is this
+    Python". This answers "which directory was it found in", which is the question a leaf tool is
+    admitted by -- and the two differ exactly where it matters: `/usr/local/bin/gzip` is commonly a
+    symlink into a versioned cellar outside every system prefix, so resolving first would refuse a
+    correct `gzip` while a symlink PLANTED in `/usr/local/bin` is admitted either way. The trust is
+    therefore in the lookup directory, and saying so is arm (1) of `DECLARED_GAP` rather than a
+    footnote.
+    """
+    text = _text_argument(executable)
+    path_value = None if env is None else env.get("PATH")
+    if isinstance(path_value, bytes):
+        path_value = os.fsdecode(path_value)
+    return shutil.which(text, path=path_value) or text
 
-    A `-c` string is not an argv, so nothing above can see the interpreter inside it: round 5's
-    `bash -c "python3 -I child.py"` is the same request as `python3 -I child.py` at a launch site,
-    and it was invisible. Every simple command is resolved through the same wrapper grammar, and a
-    LEADING `NAME=VALUE` prefix is read as that command's environment because every shell applies
-    it that way -- `PYTHONPATH=/nowhere python3 x.py` disarms the child exactly as `env` would.
 
-    A STRING IS REFUSED AND NEVER REPAIRED. Rewriting a command string means re-quoting somebody
-    else's shell program, and a guard that edits a shell string can change what a run computes.
-    The argv spelling is repaired because the tokens are ours to insert between; this one is not.
+def _read_shebang(path: str) -> "list[str] | None":
+    """The `#!` line of `path`, split into words, or None when there is no readable shebang.
+
+    None means "this is not a text program", which for a LEAF is the state that lets it be trusted
+    by location and for anything else is a refusal. `shlex` splits the line because macOS passes
+    the whole tail of a shebang as separate arguments and a `#!/usr/bin/python3 -I` there is an
+    isolating launch; Linux passes it as one argument, which splits to the same words.
     """
     try:
-        commands = _simple_commands(text)
-    except ValueError as err:
-        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{text!r}: {err}") from err
-    launches_python = False
-    for command in commands:
-        stripped = None
-        index = 0
-        while index < len(command):
-            name, separator, value = command[index].partition("=")
-            if not separator or not name:
-                break
-            if _breaks_propagation_contract(name, value):
-                stripped = stripped or command[index]
+        with open(path, "rb") as handle:
+            if handle.read(2) != b"#!":
+                return None
+            line = handle.readline(4096)
+    except OSError:
+        return None
+    try:
+        text = line.decode("utf-8", "replace").strip()
+        return shlex.split(text, posix=True)
+    except ValueError:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                             f"the shebang of {path} cannot be tokenised") from None
+
+
+def _under_a_system_prefix(located: str) -> bool:
+    """Whether `located`'s DIRECTORY is one of the named system executable prefixes."""
+    try:
+        directory = os.path.dirname(os.path.abspath(located))
+    except OSError:
+        return False
+    return directory in _SYSTEM_EXECUTABLE_PREFIXES
+
+
+def _check_leaf(command: list[str], located: str, target: str) -> None:
+    """Admit a leaf tool, or refuse it. Called only when the file has NO shebang.
+
+    A LEAF IS THE ONE THING HERE ADMITTED WITHOUT READING ANYTHING, so what is checked is where it
+    lives and what it is:
+
+      * it must be a regular executable file found in a system prefix -- a name that resolves to
+        nothing, or to something under `$HOME`, is not the tool whose behaviour this table asserts.
+        `$HOME/bin` in front of `/usr/bin` is not hypothetical here: OI-179 defect 1 is a `mkdir`
+        on 2026-08-26 satisfying a conditional in `/etc/profile:171`, with no edit to any tracked
+        file, so a table keyed on basename alone would have been a menu;
+      * `rsync` must carry none of `-e`/`--rsh`/`--rsync-path`, each of which makes it run a
+        program the caller names.
+
+    THE SHEBANG CASE IS NOT A REFUSAL AND IS NOT HANDLED HERE. A file named `ls` with `#!/bin/sh` in
+    it is a SCRIPT, and the caller falls through to the shebang path so it is READ AND SCANNED --
+    which is strictly better than refusing it, because a shell script named after a leaf is a
+    perfectly ordinary thing for a site to install and its contents are readable.
+    """
+    if not _under_a_system_prefix(located):
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"{command[0]} resolved to {located}, which is not in a system "
+                             f"prefix ({', '.join(_SYSTEM_EXECUTABLE_PREFIXES)})",
+                             executable=target)
+    if not os.path.isfile(target) or not os.access(target, os.X_OK):
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"{command[0]} is not a regular executable file at {target}",
+                             executable=target)
+    if _executable_basename(_text_argument(command[0])) == "rsync":
+        for option in _RSYNC_REMOTE_SHELL_OPTIONS:
+            for argument in command[1:]:
+                if argument == option or argument.startswith(f"{option}="):
+                    raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN, argument, executable=target)
+
+
+def _scan_git(command: list[str], env, target: str) -> None:
+    """Admit a READ-ONLY `git`, or refuse it. Argv allowlist AND environment, because either alone
+    is worth nothing.
+
+    WHY `git` HAS AN ALLOWLIST WHEN NOTHING ELSE DOES. This repository's guarded code reads git on
+    every provenance path -- `rev-parse HEAD`, `ls-files`, `rev-parse HEAD:<path>`, `hash-object`,
+    `status --porcelain` -- and refusing all of it would refuse the checks the campaign's evidence
+    rests on. So the subcommands that cannot reach a hook, a pager, an external diff or a transport
+    GIVEN THE ARGV ALONE are admitted by name.
+
+    "GIVEN THE ARGV ALONE" IS THE LOAD-BEARING QUALIFIER AND THE REASON THE ENVIRONMENT IS CHECKED
+    FIRST. `GIT_EXTERNAL_DIFF` turns `git diff-tree` into a launcher of an arbitrary program, and
+    `GIT_SSH_COMMAND` does the same for anything that touches a remote -- so an allowlist over the
+    argv with either of those set would be an allowlist over half the input. What remains, and is
+    declared in `DECLARED_GAP` rather than covered, is a repository-local `.git/config` that names
+    an external program: it is a file, not an argv, and it is trusted the same way a system prefix
+    is.
+    """
+    source = os.environ if env is None else env
+    for name in _GIT_EXTERNAL_PROGRAM_ENV_VARS:
+        if source.get(name):
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                 f"${name} makes git run a program of the caller's choosing",
+                                 executable=target)
+    index = 1
+    while index < len(command):
+        token = command[index]
+        if token == "--":
             index += 1
-        command = command[index:]
-        if not command:
+            break
+        if not token.startswith("-"):
+            break
+        if token in _GIT_GLOBAL_VALUE_OPTIONS:
+            if index + 1 >= len(command):
+                raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"git {token} with no value",
+                                     executable=target)
+            index += 2
             continue
-        resolved = _resolve_launch_command(command, env)
-        if resolved is None:
+        if token.partition("=")[0] in _GIT_GLOBAL_VALUE_OPTIONS and "=" in token:
+            index += 1
             continue
-        target = _resolve_executable(resolved["command"][0], env)
-        if _executable_basename(target) in _SHELL_BASENAMES:
-            nested = _shell_command_string(resolved["command"])
-            if nested is not None:
-                if depth >= _MAX_WRAPPER_DEPTH:
-                    raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
-                                         f"shell strings nested deeper than {_MAX_WRAPPER_DEPTH}")
-                launches_python = _scan_shell_string(nested, env, depth + 1) or launches_python
+        if token in _GIT_GLOBAL_FLAG_OPTIONS:
+            index += 1
             continue
-        if not _is_python_executable(target):
+        #: `-c`, `--config-env`, `--exec-path`, `--paginate` and everything not named above: each
+        #: installs configuration or a program for the subcommand to run. `-c alias.x='!python3 -I'`
+        #: is the whole allowlist defeated in one token.
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN, f"git global option {token}",
+                             executable=target)
+    if index >= len(command):
+        return                               # `git` with no subcommand prints usage
+    subcommand = command[index]
+    rest = command[index + 1:]
+    if subcommand in _GIT_READ_ONLY_SUBCOMMANDS:
+        return
+    if subcommand in _GIT_NO_EXT_DIFF_SUBCOMMANDS:
+        if "--no-ext-diff" not in rest:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                 f"git {subcommand} without --no-ext-diff can run the configured "
+                                 f"diff.external program",
+                                 executable=target)
+        if "--ext-diff" in rest or "--paginate" in rest:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN, f"git {subcommand} with --ext-diff or "
+                                 f"--paginate", executable=target)
+        return
+    if subcommand == "worktree" and rest[:1] == ["list"]:
+        return
+    if subcommand in ("branch", "tag") and "--list" in rest:
+        return
+    if subcommand == "remote" and rest in ([], ["-v"], ["--verbose"]):
+        return
+    if subcommand == "config" and any(o in rest or
+                                      any(a.startswith(f"{o}=") for a in rest)
+                                      for o in _GIT_CONFIG_READ_OPTIONS):
+        return
+    raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN, f"git {subcommand}", executable=target)
+
+
+class _ScanContext:
+    """The state a scan carries across nesting: where it is, how deep, and what it has read.
+
+    `defined` and `seen` are SHARED DOWNWARDS AND NOT COPIED, deliberately. A function defined in a
+    sourced file is callable in the file that sourced it, so the names have to travel; and `seen` is
+    what makes `a.sh` sourcing `b.sh` sourcing `a.sh` a refusal instead of a hang.
+    """
+
+    __slots__ = ("cwd", "depth", "defined", "seen", "script_dir")
+
+    def __init__(self, cwd: str, depth: int = 0, defined=None, seen=None, script_dir=None):
+        self.cwd = cwd
+        self.depth = depth
+        self.defined: set[str] = set() if defined is None else defined
+        self.seen: set[str] = set() if seen is None else seen
+        self.script_dir = script_dir
+
+    def deeper(self, script_dir=None) -> "_ScanContext":
+        if self.depth >= _MAX_WRAPPER_DEPTH:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                                 f"shell programs nested deeper than {_MAX_WRAPPER_DEPTH}")
+        return _ScanContext(self.cwd, self.depth + 1, self.defined, self.seen,
+                            script_dir if script_dir is not None else self.script_dir)
+
+
+#: Shell builtins and reserved words that RUN NO PROGRAM NAMED BY THEIR ARGUMENTS. They are listed
+#: rather than pattern-matched because each one that is missing refuses a correct script and each one
+#: wrongly present admits an unscanned launch. `eval`, `exec`, `source`, `.`, `command`, `alias`,
+#: `hash`, `trap`, `export`, `unset`, `declare`, `typeset` and `readonly` are NOT here: every one of
+#: them either runs something or changes what a later name resolves to, and each has its own handler.
+_SHELL_INERT_BUILTINS = frozenset({
+    ":", "true", "false", "cd", "pwd", "pushd", "popd", "dirs", "echo", "printf", "read", "set",
+    "shopt", "shift", "unalias_placeholder", "umask", "ulimit", "wait", "sleep_placeholder",
+    "return", "break", "continue", "exit", "logout", "let", "test", "[", "[[", "getopts", "jobs",
+    "fg", "bg", "kill", "disown", "suspend", "times", "type", "help", "history", "bind",
+    "complete", "compgen", "compopt", "caller", "mapfile", "readarray", "local", "wait", "trap_p",
+})
+
+#: Reserved words in COMMAND POSITION that are followed by another command. Each is stripped and the
+#: rest of the simple command re-dispatched -- and the reason is a measured fail-open shape: `if [ -f
+#: x ]; then python3 -I y.py; fi` tokenises so that `then` is the first word of a simple command and
+#: `python3 -I y.py` are its ARGUMENTS, which no flag scan would ever look at.
+_SHELL_COMMAND_PREFIX_WORDS = frozenset({"if", "then", "elif", "else", "do", "!", "while",
+                                         "until", "{", "}", "coproc"})
+#: Reserved words that END a construct and command nothing.
+_SHELL_TERMINATOR_WORDS = frozenset({"fi", "done", "esac", ";;", ";&", ";;&", "]]", "]"})
+#: `for NAME in WORD ...` and `select NAME in WORD ...`: the words are DATA, so the whole simple
+#: command is skipped rather than dispatched on `for`.
+_SHELL_ITERATION_WORDS = frozenset({"for", "select"})
+
+#: Environment-manipulating builtins whose operands are examined for a protected assignment.
+_SHELL_DECLARING_BUILTINS = frozenset({"export", "declare", "typeset", "readonly", "local"})
+
+#: Tools that relaunch an interpreter through machinery of their own -- a new `PATH`, a new
+#: `PYTHONPATH`, a shim of their own, or a resolved virtualenv. Each is refused because the
+#: interpreter it eventually runs is chosen by state this scan cannot see.
+_INTERPRETER_MANAGER_BASENAMES = frozenset({"conda", "mamba", "micromamba", "pyenv", "pipenv",
+                                            "poetry", "uv", "uvx", "virtualenv", "pipx", "hatch",
+                                            "pdm", "rye", "activate"})
+
+#: `module` is a shell FUNCTION on every cluster that has it, and it edits `PATH` and `PYTHONPATH`.
+#: `list` is the only subcommand that reports instead of editing, so it is the only one admitted.
+_MODULE_READ_ONLY_SUBCOMMANDS = frozenset({"list"})
+
+
+def _is_protected_shell_variable(name: str) -> bool:
+    """Whether assigning or unsetting `name` inside a shell program disarms a later launch."""
+    return name in _SHELL_PROTECTED_VARIABLES or name.startswith(_GUARD_ENV_PREFIX)
+
+
+def _refuse_a_word_built_at_runtime(word: str, role: str) -> None:
+    """Refuse a command word, `source` operand or interpreter path this scan cannot READ.
+
+    THE WORD IS THE ANSWER, so a word assembled at run time means there is no answer. `$PY x.py`,
+    `` `which python3` x.py ``, `~/bin/python3 x.py` and `./py*/python3 x.py` each name a file whose
+    identity is decided after this scan ends, and every one of them is a spelling of the launch the
+    guard exists to see. This is where arm (2) of `DECLARED_GAP` comes from: the residual for such a
+    script is REFUSED, never an unguarded run.
+
+    `[` and `[[` are exempt: they are the test builtin, and their name simply contains a glob
+    character.
+    """
+    if word in ("[", "[["):
+        return
+    for character in "$`*?":
+        if character in word:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                                 f"the {role} {word!r} is built at run time ({character!r})")
+    if word.startswith("~"):
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                             f"the {role} {word!r} depends on tilde expansion")
+    if "[" in word or "]" in word:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                             f"the {role} {word!r} is a glob pattern")
+
+
+def _read_shell_script(path: str) -> str:
+    """The text of a shell script, or a refusal. An unreadable program cannot be a scanned one."""
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as handle:
+            return handle.read()
+    except OSError as err:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"the shell script {path} cannot be read ({err.strerror}), so its "
+                             f"launches cannot be scanned") from None
+
+
+def _scan_shell_script_file(path: str, env, context: _ScanContext) -> bool:
+    """Read a shell SCRIPT FILE and scan it with the same scanner a `-c` string gets.
+
+    THE WHOLE OF ROUND 6's FIRST FINDING IS THAT THIS FUNCTION DID NOT EXIST. `bash script.sh` was
+    admitted unread; the three mutations the reviewer wrote were ordinary shell lines in an ordinary
+    file. Nothing about a file makes it less scannable than a string -- `_shell_logical_lines`
+    reduces both to the same logical lines, with `#!` and `#SBATCH` inert as the comments they are.
+
+    A CYCLE IS A REFUSAL, not a recursion limit reached the slow way: `a.sh` sourcing `b.sh`
+    sourcing `a.sh` is a program whose text this scan cannot enumerate.
+    """
+    resolved = os.path.abspath(path)
+    if resolved in context.seen:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                             f"the shell script {resolved} is reached from itself; a cyclic "
+                             f"program cannot be read to the end")
+    context.seen.add(resolved)
+    inner = context.deeper(script_dir=os.path.dirname(resolved))
+    return _scan_shell_program(_read_shell_script(resolved), env, inner)
+
+
+def _resolve_shell_operand(word: str, context: _ScanContext) -> str:
+    """A shell operand's path, resolved against the launch cwd and then the script's directory.
+
+    TWO CANDIDATES, AND SEARCHING BOTH IS THE FAIL-CLOSED DIRECTION. `source ./setup.sh` resolves
+    against the shell's working directory, which is the `cwd=` of the launch when one was given and
+    this process's otherwise; but a launcher `cd`s, and this scan does not execute the `cd`. Looking
+    in the script's own directory as well means the file gets READ AND SCANNED in the case where the
+    first candidate misses -- scanning more files is never the direction that admits something
+    unscanned. When neither exists the caller refuses, because an operand naming no readable file is
+    a program this guard cannot see.
+    """
+    if os.path.isabs(word):
+        return word
+    first = os.path.join(context.cwd, word)
+    if os.path.exists(first):
+        return first
+    if context.script_dir:
+        second = os.path.join(context.script_dir, word)
+        if os.path.exists(second):
+            return second
+    return first
+
+
+def _scan_sbatch(command: list[str], env, context: _ScanContext, target: str) -> bool:
+    """`sbatch`: its operand is a SCRIPT FILE to scan, or a `--wrap` STRING to scan.
+
+    MODELLED AS A WRAPPER OVER A SCRIPT AND NOT AS A LEAF, because that is what it is: everything
+    the batch script launches runs later, on a compute node, out of reach of this interpreter and of
+    the PATH wrappers. So the script is read now or the submission is refused now. `#SBATCH` lines
+    inside it are comments and `_shell_logical_lines` already treats them as such -- they are
+    directives to Slurm, never commands.
+
+    `--export` MUST BE `ALL` OR ABSENT: any other value decides which of the submitter's
+    environment reaches the task, and the propagation contract lives in that environment.
+    """
+    index = 1
+    positional: "str | None" = None
+    while index < len(command):
+        token = command[index]
+        if token == "--":
+            index += 1
+            break
+        if not token.startswith("-") or token == "-":
+            positional = token
+            break
+        name = token.partition("=")[0]
+        if name == "--export":
+            if token != f"--export={_EXPORT_OPTION_ALLOWED_VALUE}":
+                raise _LaunchRefusal(LAUNCH_REASON_ENV, token, executable=target)
+            index += 1
             continue
-        launches_python = True
-        flag = _forbidden_python_flag(resolved["command"])
+        if name == "--wrap":
+            if "=" in token:
+                return _scan_shell_program(token.partition("=")[2], env, context.deeper())
+            if index + 1 >= len(command):
+                raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, "sbatch --wrap with no value",
+                                     executable=target)
+            return _scan_shell_program(command[index + 1], env, context.deeper())
+        if token in _SBATCH_FLAGS:
+            index += 1
+            continue
+        if "=" in token and name in _SBATCH_VALUES | _SBATCH_FLAGS:
+            index += 1
+            continue
+        if token in _SBATCH_VALUES:
+            if index + 1 >= len(command):
+                raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"sbatch {token} with no value",
+                                     executable=target)
+            index += 2
+            continue
+        if len(token) > 2 and not token.startswith("--") and token[:2] in _SBATCH_VALUES:
+            index += 1
+            continue
+        #: AN UNMODELLED sbatch OPTION MAY TAKE THE SCRIPT NAME AS ITS VALUE, which is the same
+        #: fail-open shape `_parse_env` was rebuilt for: the scan would then read a directive file
+        #: as the batch script and answer confidently about the wrong bytes.
+        raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, f"sbatch {token}", executable=target)
+    else:
+        return False                         # options only: sbatch reads the script from stdin
+    if positional is None:
+        if index >= len(command):
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                 "sbatch with no script operand reads its batch script from "
+                                 "stdin, which does not exist at scan time", executable=target)
+        positional = command[index]
+    _refuse_a_word_built_at_runtime(positional, "sbatch script operand")
+    return _scan_shell_script_file(_resolve_shell_operand(positional, context), env, context)
+
+
+def _scan_resolved_command(command: list[str], env, context: _ScanContext) -> bool:
+    """THE CLOSED CHILD MODEL. Classify what a launch will exec, and refuse what cannot be proven.
+
+    Returns whether the child STARTS A PYTHON INTERPRETER, which is what tells the caller whether
+    the propagation contract still has to reach it. Raises `_LaunchRefusal` for everything else.
+
+    The six classes, in the order they are tried, and the order matters because the earlier ones are
+    decided by NAME and the later ones by reading bytes:
+
+      1. a PYTHON interpreter, by basename or by resolved path -- the startup-flag grammar, then the
+         contract. An ABSOLUTE OR RELATIVE PATH to an interpreter is now admitted only through this
+         same grammar, which is what retires the `absolute path` arm of the old declared gap: the
+         old model let it through because no PATH lookup happened, but the thing that guards a
+         Python child is the shim on `PYTHONPATH`, not the wrapper on `PATH`;
+      2. a modelled SHELL -- its `-c` string or its SCRIPT FILE is read and scanned;
+      3. `git`, on a read-only subcommand allowlist plus an environment check;
+      4. `sbatch`, whose batch script or `--wrap` string is scanned;
+      5. a LEAF TOOL that execs no program its arguments name, admitted by location;
+      6. a FILE WITH A SHEBANG naming one of the above -- `./x.sh`, or a `#!/usr/bin/env python3`
+         entrypoint invoked directly.
+
+    Everything else is `LAUNCH_REASON_UNPROVEN`. `srun`, `nice`, `nohup`, `timeout`, `xargs`,
+    `command`, `exec`, `time`, `stdbuf` and `env` never reach here as themselves: they are wrappers,
+    and `_resolve_launch_command` has already walked past them to the command they run.
+    """
+    word = _text_argument(command[0])
+    located = _locate_executable(word, env)
+    target = _resolve_executable(word, env)
+    name = _executable_basename(word)
+
+    if _is_python_executable(target) or _is_python_executable(word):
+        _refuse_a_word_built_at_runtime(word, "interpreter path")
+        flag = _forbidden_python_flag(command)
         if flag is not None:
             raise _LaunchRefusal(LAUNCH_REASON_FLAGS, flag, executable=target)
-        disarming = stripped or resolved["stripped"]
-        if resolved["clears"] and disarming is None:
-            disarming = "env -i"
-        if disarming is not None:
-            raise _LaunchRefusal(LAUNCH_REASON_ENV, disarming, executable=target)
+        return True
+    if name in _SHELL_BASENAMES:
+        parsed = _parse_shell_invocation(command, env)
+        if parsed["kind"] == "string":
+            return _scan_shell_program(parsed["text"], env, context.deeper())
+        _refuse_a_word_built_at_runtime(parsed["path"], "shell script operand")
+        return _scan_shell_script_file(_resolve_shell_operand(parsed["path"], context), env,
+                                       context)
+    if name in _UNMODELLED_SHELL_BASENAMES:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"{name} is a shell whose option and startup-file grammar this guard "
+                             f"does not model", executable=target)
+    if name in _REFUSED_LAUNCHER_BASENAMES:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"{name} has no single option grammar across implementations and can "
+                             f"take an app-file naming further commands", executable=target)
+    if name in _INTERPRETER_MANAGER_BASENAMES:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"{name} relaunches an interpreter through machinery this scan cannot "
+                             f"see", executable=target)
+    if name == "git":
+        _scan_git(command, env, target)
+        return False
+    if name == "sbatch":
+        return _scan_sbatch(command, env, context, target)
+    shebang = _read_shebang(target)
+    if name in _LEAF_TOOL_BASENAMES and shebang is None:
+        _check_leaf(command, located, target)
+        return False
+    #: A LEAF NAME THAT IS A SCRIPT FALLS THROUGH TO BE SCANNED, never trusted and never refused for
+    #: its name. `/usr/bin/shasum` is a Perl script on macOS and `/usr/bin/which` is a shell script
+    #: on several distributions -- both are leaf names, and both are read here.
+
+    if shebang is None:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"{word} resolves to {target}, which is neither an interpreter, a "
+                             f"shell, a leaf tool nor a script with a readable shebang",
+                             executable=target)
+    #: A SHEBANG IS AN ARGV WITH THE SCRIPT APPENDED, so it re-enters this same classification --
+    #: including `#!/usr/bin/env python3 -I`, whose isolating flag is a refusal exactly as it is on
+    #: a command line. The script's own path replaces the shebang's implicit operand so that a
+    #: `#!...sh` shebang scans THIS file rather than looking for an operand it has not got.
+    interpreter = shebang[0] if not shebang[0].endswith(os.sep) else shebang[0]
+    options = shebang[1:]
+    inner_name = _executable_basename(interpreter)
+    inner_resolved = _resolve_executable(interpreter, env)
+    if inner_name in _ENV_BASENAMES:
+        parsed = _parse_env(["env", *options, "--placeholder-script"])
+        if parsed is None:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                 f"the shebang of {target} runs env with no command",
+                                 executable=target)
+        if parsed["clears"] or parsed["stripped"] is not None:
+            raise _LaunchRefusal(LAUNCH_REASON_ENV,
+                                 parsed["stripped"] or "env -i in a shebang", executable=target)
+        inner = parsed["command"][:-1]       # drop the placeholder the parse needed
+        if not inner:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                 f"the shebang of {target} runs env with no command",
+                                 executable=target)
+        return _scan_resolved_command([*inner, target], env, context.deeper())
+    if _is_python_executable(inner_resolved) or _is_python_executable(interpreter):
+        flag = _forbidden_python_flag([interpreter, *options])
+        if flag is not None:
+            raise _LaunchRefusal(LAUNCH_REASON_FLAGS, f"{flag} in the shebang of {target}",
+                                 executable=inner_resolved)
+        return True
+    if inner_name in _SHELL_BASENAMES:
+        parsed = _parse_shell_invocation([interpreter, *options, target], env)
+        if parsed["kind"] == "string":
+            return _scan_shell_program(parsed["text"], env, context.deeper())
+        return _scan_shell_script_file(target, env, context)
+    raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                         f"the shebang of {target} names {interpreter}, which is neither an "
+                         f"interpreter, a shell nor env", executable=target)
+
+
+def _scan_shell_simple_command(tokens: list[str], env, context: _ScanContext,
+                               substituted: bool) -> bool:
+    """One SIMPLE COMMAND out of a shell program. Returns whether it starts an interpreter.
+
+    THE ASSIGNMENT PREFIX IS CHECKED BEFORE ANYTHING ELSE AND REFUSES ON ITS OWN, which is round 6's
+    second route. `PATH=/usr/bin:/bin python3 -I x.py` was already caught (the command is Python);
+    `PATH=/usr/bin:/bin` ON ITS OWN LINE was not, and it disarms every later line in the file. So a
+    protected name refuses wherever it is assigned and whatever follows it.
+
+    Everything after that is a dispatch on the command word, and the shape of it is: a builtin that
+    runs nothing is skipped, a builtin that runs something has the something scanned, a builtin that
+    changes what a NAME resolves to is refused, and an ordinary word goes through the wrapper
+    grammar into `_scan_resolved_command`.
+    """
+    index = 0
+    stripped: "str | None" = None
+    while index < len(tokens):
+        name, separator, value = tokens[index].partition("=")
+        if not separator or not name or name.endswith(("+", "!")):
+            break
+        if _is_protected_shell_variable(name):
+            raise _LaunchRefusal(LAUNCH_REASON_ENV, tokens[index])
+        if _breaks_propagation_contract(name, value):
+            stripped = stripped or tokens[index]
+        index += 1
+    tokens = tokens[index:]
+    if not tokens:
+        return False
+
+    word = tokens[0]
+    while word in _SHELL_COMMAND_PREFIX_WORDS:
+        tokens = tokens[1:]
+        if not tokens:
+            return False
+        word = tokens[0]
+    if word in _SHELL_TERMINATOR_WORDS or word in _SHELL_ITERATION_WORDS or word == "in":
+        return False
+    if word == "case":
+        return False
+    if word in context.defined:
+        #: A CALL TO A FUNCTION DEFINED IN THIS PROGRAM. Its body was scanned as ordinary lines, so
+        #: the call adds nothing this scan has not already read.
+        return False
+    if word in _SHELL_INERT_BUILTINS:
+        return False
+    if word in _SHELL_DECLARING_BUILTINS:
+        for operand in tokens[1:]:
+            declared = operand.partition("=")[0].lstrip("+")
+            if not operand.startswith("-") and _is_protected_shell_variable(declared) \
+                    and "=" in operand:
+                raise _LaunchRefusal(LAUNCH_REASON_ENV, f"{word} {operand}")
+        return False
+    if word == "unset":
+        for operand in tokens[1:]:
+            if not operand.startswith("-") and _is_protected_shell_variable(operand):
+                raise _LaunchRefusal(LAUNCH_REASON_ENV, f"unset {operand}")
+        return False
+    if word == "alias" or word == "unalias":
+        #: AN ALIAS CHANGES WHAT A LATER WORD RESOLVES TO, so a scan that read past it would be
+        #: reading a different program than the shell runs -- and `unalias` is refused with it,
+        #: because the only way to unalias is to have aliased.
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"{word} changes what a later command word resolves to")
+    if word == "eval":
+        #: `eval` RE-PARSES ITS ARGUMENTS AT RUN TIME, which is its entire purpose. Scanning the
+        #: literal spelling would answer about a program that is not the one that runs.
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                             "eval builds its program at run time, so there is nothing to scan")
+    if word == "hash":
+        for operand in tokens[1:]:
+            if operand.startswith("-") and set(operand[1:]) & set("pdr"):
+                raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                     f"hash {operand} changes what a later command word resolves "
+                                     f"to")
+        return False
+    if word == "enable":
+        for operand in tokens[1:]:
+            if operand.startswith("-f"):
+                raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                     "enable -f loads a builtin from a shared object")
+        return False
+    if word == "builtin":
+        return _scan_shell_simple_command(tokens[1:], env, context, substituted)
+    if word in ("source", "."):
+        operands = [t for t in tokens[1:] if t]
+        if len(operands) != 1:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                                 f"{word} with {len(operands)} operands: only a single literal "
+                                 f"path can be read and scanned")
+        _refuse_a_word_built_at_runtime(operands[0], f"{word} operand")
+        return _scan_shell_script_file(_resolve_shell_operand(operands[0], context), env, context)
+    if word == "trap":
+        handler = next((t for t in tokens[1:] if not t.startswith("-")), None)
+        if handler is None or handler in ("", "-"):
+            return False
+        return _scan_shell_program(handler, env, context.deeper())
+    if word == "module":
+        subcommand = next((t for t in tokens[1:] if not t.startswith("-")), None)
+        if subcommand in _MODULE_READ_ONLY_SUBCOMMANDS:
+            return False
+        raise _LaunchRefusal(LAUNCH_REASON_ENV,
+                             f"module {subcommand or ''}".strip() +
+                             " can reset PATH and PYTHONPATH for every later line")
+
+    _refuse_a_word_built_at_runtime(word, "command word")
+    resolved = _resolve_launch_command(tokens, env)
+    if resolved is None:
+        return False
+    if substituted:
+        #: A COMMAND SUBSTITUTION IN A SIMPLE COMMAND WHOSE COMMAND WORD IS A SHELL, AN INTERPRETER,
+        #: A WRAPPER OR `source` decides part of that command's argv at run time -- so the argv this
+        #: scan read is not the argv that runs, and a clean read of it establishes nothing.
+        head = _executable_basename(_text_argument(resolved["command"][0]))
+        if (head in _SHELL_BASENAMES or head in _WRAPPER_SPECS or head in _ENV_BASENAMES
+                or _is_python_executable(_resolve_executable(resolved["command"][0], env))):
+            raise _LaunchRefusal(LAUNCH_REASON_UNPARSED,
+                                 f"a command substitution shapes the argv of {head}")
+    launches_python = _scan_resolved_command(resolved["command"], env, context)
+    if not launches_python:
+        return False
+    disarming = stripped or resolved["stripped"]
+    if resolved["clears"] and disarming is None:
+        disarming = "env -i"
+    if disarming is not None:
+        raise _LaunchRefusal(LAUNCH_REASON_ENV, disarming,
+                             executable=_resolve_executable(resolved["command"][0], env))
+    return True
+
+
+def _scan_shell_program(text: str, env, context: _ScanContext) -> bool:
+    """Scan a shell PROGRAM -- a `-c` string or the text of a script file. Same code for both.
+
+    A STRING IS REFUSED AND NEVER REPAIRED, and so is a file. Rewriting a command string means
+    re-quoting somebody else's shell program, and a guard that edits a shell program can change what
+    a run computes. The argv spelling is repaired because the tokens are ours to insert between;
+    these are not.
+
+    THE RETURN VALUE IS LOAD-BEARING AND IS NOT A CONVENIENCE. `env -i bash -c 'python3 x.py'` holds
+    no isolating flag and no disarming operand INSIDE the program -- the clearing happens outside it
+    -- so a scan that only raised would have returned quietly and launched a shell whose interpreter
+    starts unguarded. The caller therefore has to know whether the contract still has to reach this
+    child, and it may not simply assume it does: requiring the contract for EVERY shell program
+    would refuse `bash -c 'ls'` from a process that had disarmed itself, which is a launch with no
+    interpreter in it and nothing to guard.
+    """
+    try:
+        lines = _drop_heredoc_bodies(_shell_logical_lines(text))
+    except ValueError as err:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{text!r}: {err}") from err
+    defined, lines = _strip_function_definitions(lines)
+    context.defined.update(defined)
+    launches_python = False
+    case_depth = 0
+    for line in lines:
+        masked, insides = _mask_command_substitutions(line)
+        for inside in insides:
+            #: THE INSIDE OF A SUBSTITUTION IS A PROGRAM THAT RUNS, so it is scanned as one.
+            #: `X=$(python3 -I x.py)` is otherwise an assignment with an opaque value, and the
+            #: isolated interpreter in it is never seen.
+            launches_python = _scan_shell_program(inside, env, context.deeper()) or launches_python
+        try:
+            tokens = _tokenise_shell_line(masked)
+        except ValueError as err:
+            raise _LaunchRefusal(LAUNCH_REASON_UNPARSED, f"{line!r}: {err}") from err
+        first = tokens[0] if tokens else ""
+        if first == "case":
+            case_depth += 1
+        elif first == "esac":
+            case_depth = max(0, case_depth - 1)
+        for command, terminator in _split_simple_commands_with_terminators(tokens):
+            if case_depth and terminator == ")":
+                continue                     # a `case` PATTERN, not a command
+            substituted = any(_SUBSTITUTION_PLACEHOLDER in token for token in command)
+            launches_python = _scan_shell_simple_command(
+                command, env, context, substituted) or launches_python
     return launches_python
 
 
-def _scan_launch(argv: list[str], env, guard: GuardedPathFinder) -> list[str]:
+def _split_simple_commands_with_terminators(tokens: list[str]) -> "list[tuple[list[str], str]]":
+    """`_split_simple_commands`, with the OPERATOR that ended each command kept beside it.
+
+    ONE CONSUMER, ONE REASON: `case`. A pattern list -- `stage2) python3 x.py ;;` -- tokenises so
+    that `stage2` is a simple command of its own, and an unknown one-word command is a refusal. The
+    operator that ended it is `)`, which is the only thing in the token stream that distinguishes a
+    pattern from a command, so the scanner needs to see it. Everything else ignores the terminator.
+    """
+    commands: "list[tuple[list[str], str]]" = []
+    current: list[str] = []
+    skip_next = False
+    for token in tokens:
+        if skip_next:
+            skip_next = False
+            continue
+        if token and set(token) <= _SHELL_PUNCTUATION:
+            if "<" in token or ">" in token:
+                if current and current[-1].isdigit():
+                    current.pop()
+                skip_next = True
+                continue
+            if current:
+                commands.append((current, token))
+            current = []
+            continue
+        current.append(token)
+    if current:
+        commands.append((current, ""))
+    return commands
+
+
+def _scan_shell_string(text: str, env, depth: int = 0) -> bool:
+    """Scan a shell COMMAND STRING. The entry point for a `-c` string and for `os.system`.
+
+    `_scan_shell_program` is where the work is; this spelling keeps the name the shim, the controls
+    and the docstring above all refer to, and it is what makes a string and a SCRIPT FILE provably
+    the same scan rather than two implementations that agree today.
+    """
+    return _scan_shell_program(text, env, _ScanContext(os.getcwd(), depth))
+
+
+def _scan_launch(argv: list[str], env, guard: GuardedPathFinder, cwd=None) -> list[str]:
     """Return the argv to launch, re-armed if that is what the contract needs; raise to refuse.
 
     THE ORDER IS THE CHEAPEST CORRECT ONE. The wrapper prefixes are resolved first, because until
-    they are there is no executable to ask questions about; a shell `-c` string is scanned next,
-    because a shell is not a Python child and its string holds launches of its own; only a resolved
-    PYTHON command is flag-scanned; and the environment question is asked LAST, after any argv
-    repair, so a repaired launch is not refused for the state it was repaired out of.
+    they are there is no executable to ask questions about; the resolved child is then CLASSIFIED
+    (`_scan_resolved_command`), which reads a shell's string or script file, flag-scans an
+    interpreter, and refuses a child whose coverage cannot be established; and the environment
+    question is asked LAST, after any argv repair, so a repaired launch is not refused for the state
+    it was repaired out of.
 
-    A non-Python child is not refused here. It inherits the re-armed contract AND the wrapper
-    directory on `PATH`, which is what makes an ordinary interpreter it launches guarded; what
-    remains is `DECLARED_GAP`.
+    A NON-PYTHON CHILD IS NO LONGER WAVED THROUGH, AND THAT IS ROUND 6's CHANGE. It used to be:
+    "it inherits the re-armed contract AND the wrapper directory on PATH, which is what makes an
+    ordinary interpreter it launches guarded" -- true only for a child that resolves the interpreter
+    through PATH, and the reviewer wrote three shell scripts that decline to. A child is admitted now
+    only when this guard could read what it will run.
     """
     resolved = _resolve_launch_command(argv, env)
     if resolved is None:
         return argv
     command = resolved["command"]
     target = _resolve_executable(command[0], env)
-    text = (_shell_command_string(command)
-            if _executable_basename(target) in _SHELL_BASENAMES else None)
-    if text is not None:
-        # A SHELL STRING IS NOT A PYTHON CHILD, BUT IT CAN HOLD ONE, and the wrapper prefix in
-        # front of the SHELL is what would disarm it: `env -i bash -c 'python3 x.py'` clears the
-        # environment outside the string, so the string itself is clean and the interpreter inside
-        # it starts unguarded. The scan therefore reports whether an interpreter is in there, and
-        # the contract checks below run for that case exactly as they do for a direct launch.
-        if not _scan_shell_string(text, env):
-            return argv
-    elif _is_python_executable(target):
-        flag = _forbidden_python_flag(command)
-        if flag is not None:
-            raise _LaunchRefusal(LAUNCH_REASON_FLAGS, flag, executable=target)
-    else:
+    context = _ScanContext(os.fspath(cwd) if cwd is not None else os.getcwd())
+    if not _scan_resolved_command(command, env, context):
         return argv
     if resolved["clears"] or resolved["stripped"] is not None:
         disarming = resolved["stripped"] or "env -i"
         if resolved["inject_at"] is None:
             #: The command came out of an `env -S` STRING, so there is no argv position to insert
-            #: the contract at. Refused rather than rewritten, for the reason on `_scan_shell_string`.
+            #: the contract at. Refused rather than rewritten, for the reason on
+            #: `_scan_shell_program`.
             raise _LaunchRefusal(LAUNCH_REASON_ENV, disarming, executable=target)
         operands, view = _contract_operands(resolved)
         missing = _environment_reaching_child_is_armed(view)
@@ -1542,18 +2873,24 @@ def _scan_launch(argv: list[str], env, guard: GuardedPathFinder) -> list[str]:
     return argv
 
 
-def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder):
+def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder, cwd=None):
     """Re-arm a launch, or refuse a Python child that could not install the guard.
 
     Returns `(environment, argv)`. The environment is re-armed FIRST so that the armed copy is what
     every later check reads, and the argv comes back possibly REWRITTEN -- see `_contract_operands`.
     A caller that ignores the returned argv would silently drop an argv-level repair, which is why
     every wrapped primitive below writes both back.
+
+    `cwd` IS THE LAUNCH'S WORKING DIRECTORY AND NOT THIS PROCESS'S, where the caller gave one. It
+    matters because a relative operand -- `bash ./stage.sh`, `source ./setup.sh` -- names a
+    different file under a different cwd, and a scan that resolved it against the wrong directory
+    would read the wrong bytes and report on a program that does not run. The primitives that have
+    no `cwd` parameter (`os.exec*`, `posix_spawn`) pass None, which means this process's own.
     """
     armed_env = _rearm_launch_environment(env, guard)
     argv = _launch_argv(arguments)
     try:
-        return armed_env, _scan_launch(argv, armed_env, guard)
+        return armed_env, _scan_launch(argv, armed_env, guard, cwd)
     except _LaunchRefusal as refusal:
         launched = getattr(refusal, "executable", None)
         refusal_record = {
@@ -1585,7 +2922,8 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
         else:
             argv = _launch_argv(command)
             executable = executable or argv[0]
-        armed_env, armed_argv = _prepare_launch(executable, argv, env, guard)
+        armed_env, armed_argv = _prepare_launch(executable, argv, env, guard,
+                                                bound.arguments.get("cwd"))
         if env is not None:
             bound.arguments["env"] = armed_env
         # AN ARGV-LEVEL REPAIR IS ONLY REAL IF IT IS WRITTEN BACK. `shell=True` is excluded because
@@ -1963,9 +3301,11 @@ def write_inventory(dest, guard, script, expect_root, allow, outcome, violation=
         "guard_installed": guard is not None,
         "propagation": (guard.propagation if guard is not None else "not-armed"),
         "launch_env": (guard.launch_env if guard is not None else "not-re-armed"),
-        # THE SECOND HALF OF THE PROCESS-BOUNDARY CONTRACT, as a state and never a boolean. `armed`
-        # means a non-Python child's `python3 -I` is refused by the wrapper on PATH; anything else
-        # names why it is not, and widens `declared_gap` below by exactly that much.
+        # THE SECOND CHANCE TO REFUSE, as a state and never a boolean. `armed` means an admitted
+        # child's `python3 -I` is refused by the wrapper on PATH as well as by the scan that read
+        # the child; anything else names why it is not. Since round 6 this NARROWS the guard by one
+        # redundant check rather than widening `declared_gap`, because the closure below reads what
+        # a child will run before it starts.
         "path_shim": (guard.path_shim if guard is not None else "not-armed"),
         "path_shim_dirs": [d for d in (os.environ.get(PATH_SHIM_DIRS_ENV) or "").split(os.pathsep)
                            if d],

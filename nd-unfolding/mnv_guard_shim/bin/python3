@@ -21,9 +21,16 @@
 # a missing scanner, an unresolvable interpreter, a missing contract. An unscanned Python launch is
 # the defect this file exists for, so "could not check" may not be spelled "ran anyway".
 #
-# WHAT IT CANNOT COVER, and this is `DECLARED_GAP` in `mnv_guarded_run.py`: a child that invokes the
-# interpreter by an ABSOLUTE PATH consults no PATH and therefore no wrapper, and a child that clears
-# PATH or the environment removes the wrapper directory along with the contract.
+# WHAT IT IS NO LONGER THE WHOLE OF, since round 6 of review. A child that invokes the interpreter
+# by an ABSOLUTE PATH consults no PATH and therefore no wrapper, and a child that clears PATH removes
+# the wrapper directory -- and until round 6 those two facts WERE `DECLARED_GAP`, because a
+# non-Python child was admitted unread and this file was the only thing standing behind it. The
+# reviewer wrote three shell scripts that decline the PATH lookup (`command -p python3 -I ...`, a
+# reordered `PATH=... python3 -I ...`, BSD `env -P ... python3 -I ...`) and all three ran. So the
+# guard now READS what a child will run -- a shell's script file included -- and refuses a child it
+# cannot prove. This wrapper is kept as the SECOND, INDEPENDENT chance to refuse for children the
+# scan admitted, which is why a missing `bin/` is recorded as a narrower guard rather than an open
+# one. The residuals are stated in `DECLARED_GAP`; neither of them is this file's business.
 #
 # POSIX sh ON PURPOSE. This runs in front of every interpreter launch on a login node and a compute
 # node, under dash as readily as bash, and a bashism here would be a wrapper that works on the
