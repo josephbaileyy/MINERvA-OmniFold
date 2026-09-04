@@ -474,6 +474,12 @@ job, and the guard's `env` grammar was incomplete.
 | **the guard's `env` parser was fail-open** (`env -- python -I`, `env -S 'python -I …'`) | `env` parsed with the full coreutils/BSD grammar and **fail-closed on anything unmodelled**; `-S` strings split and rescanned; `sh -c`/`bash -c` strings tokenised and each simple command scanned; `nohup`/`nice`/`stdbuf`/`timeout`/`time`/`command`/`exec` prefixes followed; absolute interpreter paths count as Python; a launch that strips the contract (`env -i`, `env -u`, `env PYTHONPATH=…`) is re-armed; PATH interpreter wrappers `mnv_guard_shim/bin/{python3,python}` with `scan_argv.py` refuse `-S/-I/-E` and re-inject the contract for non-Python children that launch Python via PATH | `fcf60b25` | both reviewer forms refused (exit 3, `[oi136 launch]`, REFUSED-launch record); bash child running `python3 -I` via PATH refused by the wrapper; bash child running `python3 x.py` via PATH guarded and its foreign import refused; 169 guard tests, 401 in the ten-suite matrix at the worker's tree; two further fail-opens found by measurement and pinned (`env -iv`; `env -i bash -c '…'`) |
 | (integrator) the wrappers and scanner were unbound | all four shim files bound wherever the guard is bound; fixture commits them | `6f4686d7` | swapping only `bin/python3` after approval → `(4, "stale")`, nothing run |
 
+> **SUPERSEDED 2026-09-04 BY §12 — DO NOT QUOTE THE RESIDUAL BELOW AS CURRENT.** Reviewer round 6
+> found this sentence both incomplete and operationally fail-open, and both halves of it are now
+> closed. The paragraph is left as written because it is the round-5 record of what was true at
+> `fcf60b25`; the residual that is current is in §12 and, mechanically, in `DECLARED_GAP` — read that
+> constant rather than any prose, including this document's.
+
 **The residual, stated exactly and measured:** a non-Python child that invokes the interpreter by
 an **absolute path** with `-S`/`-I`/`-E`, or that clears `PATH` or the environment before doing so.
 The argv is built inside a process this interpreter does not guard; an absolute path consults no
@@ -488,3 +494,51 @@ by the PATH wrapper and `srun /abs/python3 -I x.py` is the residual. The wrapper
 ### 11.1 Proposed tip, revised
 
 The last commit of `wave1-integration-20260903` as force-pushed after this record.
+
+## 12. Reviewer round 6 (2026-09-04) — finding 4, and the launch model it replaced
+
+The reviewer's finding, verbatim: *"The guard's stated residual is incomplete and remains
+operationally fail-open. Shell script files are not scanned; the implementation relies entirely on
+the inherited PATH wrapper (`mnv_guarded_run.py:1212`, `:1493`). Three shell-script mutations
+bypassed it: `command -p python3 -I ...`, reordered `PATH=/usr/bin:/bin python3 -I ...`, BSD
+`env -P /usr/bin:/bin python3 -I ...`. All returned 0, ran the sentinel, loaded the wrong tree,
+produced no child record, and were not described by the declared 'absolute path or cleared
+environment' gap. The already-declared absolute-path route is itself also a fully admitted
+fail-open path."*
+
+**Both halves were right, and the second is the one that changed the design.** §11's model was
+*scan Python launches; every other child inherits the re-armed contract and the wrapper directory on
+`PATH`.* That is a coverage claim resting on a **PATH lookup the child can simply decline to make** —
+and a shell script file was admitted **unread**, so there was nothing else to fall back on. The
+old `_shell_command_string` docstring said so out loud: *"A shell invoked on a SCRIPT FILE has no
+string here and is not refused — what that script does at ITS launch sites is the PATH wrapper's
+half of the contract."*
+
+| reviewer finding | resolution | proof |
+|---|---|---|
+| three shell-script mutations ran, unread, with no child record | **the closed child model.** `_scan_resolved_command` classifies every resolved child and admits exactly six things: a Python interpreter under the startup-flag grammar **in any path spelling**; a modelled shell (`sh`/`bash`/`dash`, `zsh` only behind `-f`/`--no-rcs`) whose `-c` string **or SCRIPT FILE operand** is read and scanned; read-only `git` on a subcommand allowlist plus a hostile-environment check; `sbatch` whose batch script or `--wrap` string is scanned; a leaf tool from a committed list, admitted only when found in a named system prefix with no shebang; and a file whose shebang names one of those. Everything else refuses with the new `LAUNCH_REASON_UNPROVEN`. Inside a shell program, an assignment/`export`/`unset` of `PATH`, `PYTHONPATH`, `BASH_ENV`, `ENV`, `LD_PRELOAD`, `DYLD_INSERT_LIBRARIES` or any `MNV_GUARD_*` refuses **wherever it appears**, not only in front of an interpreter; `eval`, `alias`, `hash -p`, `enable -f`, `command -p`, `exec -a`/`-l`, `module load`, `conda`/`uv run` refuse; `source`/`.` reads and scans its single literal operand; `trap` handlers, function bodies and the insides of command substitutions are scanned; here-document bodies are data. `srun` joins the wrapper table, `mpirun` is refused, `--export` must be `ALL`; `ksh`/`mksh`/`fish`/`csh`/`tcsh` refuse as unmodelled shells | all three mutations refused (exit 3, `[oi136 launch]`, REFUSED-launch record, sentinel absent) in **both** spellings — `bash script.sh` and `./script.sh` behind a shebang with a relative operand under `cwd=`. `TheClosedChildModelRefusesWhatItCannotProve`, 17 named tests building real files and running the real guard in a subprocess |
+| the declared absolute-path route was a fully admitted fail-open run | **retired, and the reasoning behind it was wrong rather than merely narrow.** The argument was "an absolute path consults no `PATH`, so no wrapper stands in front of it" — true and irrelevant: what guards a Python child is the shim on `PYTHONPATH`, and what defeats the shim is `-I`. So the question was never whether a PATH lookup happens, it was whether the launch was **read** | the arm that used to assert exit 0, a written sentinel and `ISOLATED-LOADED WRONG TREE` now asserts exit 3 with reason `python-startup-flags-bypass-the-shim`, in a script file **and** as a direct argv. `env -i <abs python> child.py` inside a script, the other arm of the old gap, likewise inverted |
+| the PATH wrappers were carrying the coverage claim | **kept, and demoted to what they are:** a second, independent chance to refuse for children the scan admitted. A record saying `path_shim: not-armed` is now narrower by one redundant check rather than open | the wrapper is still exercised as a unit and, in the same arm as the script-file refusal, called directly on the same argv so both refusers stay live |
+
+**The residual after this round, stated exactly and no wider — and neither arm is an unscanned
+Python launch.** (1) **Trust by location:** a leaf tool or a read-only `git` is admitted because its
+executable was found in a named system prefix (`/bin`, `/usr/bin`, `/sbin`, `/usr/sbin`,
+`/usr/local/bin`, `/usr/local/sbin`, `/opt/homebrew/bin`, `/opt/local/bin`, `/opt/slurm/bin`,
+`/usr/global/bin`) and carries no shebang; nothing about its behaviour is read. So a **tampered
+system prefix**, or a **repository-local `.git` configuration** naming an external program
+(`diff.external`, a hook, `core.pager`), is outside this guard — those are files rather than an
+argv, and the environment variables that do the same job are refused where they can be seen.
+(2) **Command words built at run time:** a shell script or `-c` string whose command word comes from
+a variable, a command substitution, a glob or tilde expansion is **refused and not read**, so the
+residual there is *a refused launch and never an unguarded one* — the cost is a correct launcher
+that must be respelled, not a wrong-tree import that runs. Every inventory record carries this as
+`declared_gap`; read that constant, not this paragraph, and read it beside `path_shim`.
+
+**One operational consequence, reported rather than smoothed over.** The `git` rule refuses when the
+child's environment carries any of `GIT_SSH`, `GIT_SSH_COMMAND`, `GIT_PAGER`, `GIT_EDITOR`,
+`GIT_SEQUENCE_EDITOR`, `GIT_EXTERNAL_DIFF`, `GIT_ASKPASS`, `GIT_EXEC_PATH`, `GIT_CONFIG_PARAMETERS`,
+`GIT_CONFIG_GLOBAL` or `GIT_CONFIG_SYSTEM`. On a machine that exports one of these — a Claude Code
+session exports `GIT_EDITOR=true` — **every** guarded `git` launch refuses, including the admitted
+read-only spellings. None of the allowlisted subcommands opens an editor, so `GIT_EDITOR` and
+`GIT_SEQUENCE_EDITOR` are the two members of that set whose presence is not itself a route; narrowing
+the set is a judgement about how much to trust the allowlist and is **not taken here**.
