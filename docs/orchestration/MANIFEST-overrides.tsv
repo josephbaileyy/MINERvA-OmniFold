@@ -138,6 +138,7 @@ docs/orchestration/VERDICT-20260830-readiness-10-1-k0-7ac0edec.md	LIVE	open
 docs/orchestration/VERIFICATION-20260822-k0-execution-integrity.md	LIVE	open	
 docs/orchestration/WAKER.md	LIVE	open	
 docs/orchestration/WALKDOWN-20260822-one-pass.md	LIVE	open	
+docs/orchestration/control-plane/campaign-origin.json	LIVE	open	""
 docs/orchestration/control-plane/owners.tsv	LIVE	open	""
 docs/orchestration/control-plane/playbook.tsv	LIVE	open	""
 docs/orchestration/control-plane/policy.json	LIVE	open	""

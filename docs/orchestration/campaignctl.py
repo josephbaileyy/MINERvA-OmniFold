@@ -1828,9 +1828,10 @@ def publish_cached_state(queue: Queue, message: str) -> str | None:
             )
             remote = sync.local_head()
         sync.base = remote
-        if not sync.state_fingerprint() and remote is not None:
-            # Nothing local to publish and a ref that already holds records:
-            # pushing an empty tree here would DELETE them.
+        if not sync.state_fingerprint():
+            # Nothing local to publish.  Pushing an empty tree here would DELETE
+            # whatever the ref holds, and creating the ref at an empty tree would
+            # commit this host's emptiness as the campaign's state.
             return None
         return sync.push(message)
 

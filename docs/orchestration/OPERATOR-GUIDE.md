@@ -100,47 +100,114 @@ claim without a terminal receipt becomes `outcome-unknown` and is never retried
 automatically. A newly staged item sends one deduplicated ntfy approval alert on
 the next ticker pass.
 
-**The queue is campaign-global and lives outside every checkout.** The canonical
-directory is
+**The admission namespace is the repository's origin remote, and every admission
+is a compare-and-swap on one ref there.** The queue's state lives in a git tree on
+
+```
+refs/campaign/r5-20260902-0836139b/queue
+```
+
+at the origin pinned in `docs/orchestration/control-plane/campaign-origin.json`.
+The middle component of the ref names this campaign: `20260902` is the ruling
+record's date and `0836139b` the first eight hex digits of its SHA-256. It is a
+constant, not a digest recomputed per run: amending the decision record must not
+repoint the ref and orphan live claims, so re-deriving it is a commit that also
+migrates the ref.
+
+Everything that decides admission is in that tree — `items/`, `approvals/`,
+`claims/`, `outcomes/`, `releases/`, `revocations/`, and
+`logs/admission-lock.log`. The passwd-home directory is now a **cache** of it,
+plus the files that are genuinely local: the producer and validator logs, the
+run directories, `admission.lock`, `queue-sync.lock`, the `pending/` retries, and
+the queue's own bare git directory `queue-git`.
 
 ```
 <passwd-home>/.mnv_campaign/r5-20260902-0836139b/campaign-queue
 ```
 
-where the middle component names this campaign: `20260902` is the ruling record's
-date and `0836139b` the first eight hex digits of its SHA-256. Every clone and
-linked worktree owned by that UID on the host resolves that same path from the
-system passwd database, not from `$HOME` or another per-process setting. The
-admission lock, the reservation inventory, the claims, and the outcomes are
-shared. It is a constant, not a digest recomputed per run: amending the decision
-record must not repoint the queue and orphan live claims, so re-deriving it is a
-commit that also migrates the directory.
+Every operation, under the local lock: fetches the ref; makes the cached
+families **exactly** that tree, deleting anything the tree lacks; does its work;
+and, if it changed anything, commits it (author `campaignctl
+<campaignctl@localhost>`, subject naming the operation and item) and pushes with
+`--force-with-lease` against the sha it fetched.
 
-**Compute is admissible only from that directory.** The R5 headroom check, the
-reservation inventory, the admission lock, and the claim are all properties of ONE
-directory. A queue started with any other `--state-dir` (or
-`CAMPAIGN_QUEUE_STATE_DIR`) may still stage, approve, and run **non-compute**
-items, but a compute item there is exit 6 and a `refused` outcome with the reason
-`non-canonical state dir cannot admit compute`. The refusal happens **before** any
-lock is taken, because a lock file in a second state directory excludes nobody.
+**The fail-closed behaviours.** No network is no admission: a fetch that cannot
+reach the origin refuses **every** operation — compute or not — with `campaign
+origin is unreachable`, because every reservation that bounds the ceiling is in
+that ref and a queue that cannot read them cannot tell an empty campaign from a
+full one. The same refusal covers a checkout with no `origin` (`checkout has no
+origin remote`), a checkout whose origin URL differs from the pinned one after
+normalisation (`checkout origin is not this campaign's pinned origin`), a pin
+that is untracked or edited in the working tree (`campaign origin pin is not
+committed at HEAD`), and a pin naming another campaign key, ruling record or ref.
+A rejected push means another host moved the ref: the mutation is **discarded**,
+the ref is re-read, and the tick exits 5 with `lost the admission race`. Nothing
+is merged — merging two states each computed against headroom the other had not
+taken is exactly how 502 hours fit under a ceiling of 500.
 
-This is not tidiness, and it is not only about `--state-dir`. Two queues in two
-directories read the same committed receipt, take separate locks, scan separate
-inventories, and each admit a six-hour item the other never counted — 502 against
-a ceiling of 500. That was first reached by pointing `--state-dir` elsewhere and
-then, with the canonical directory still derived from the queue's repository, by
-`git clone`: a clone has the same commits, the same committed receipt, the same
-contracts and the same `HEAD`, so its ticker considered its own copy of the
-directory canonical and admitted against hours another checkout had already
-reserved. `MNV_CAMPAIGN_STATE_ROOT` is retired and its presence refuses every
-queue operation rather than being ignored. An operator who set it expected it to
-change the queue, so silently proceeding would conceal a split-root
-misconfiguration.
+**The admission window is one push.** The reservation scan and the claim that
+admits the item are computed against one fetched tree and land together, so two
+hosts cannot both claim against the same sha. An outcome, release, or revocation
+records something that already happened, so a push that does not land does not
+discard it: the record waits in `pending/` and every later operation retries it,
+in order, until it lands. Until then the item stays **claimed** in the ref and
+keeps reserving its full declared maximum on every host, and the tick reports
+exit 5 rather than a terminal code. An unpushed outcome releases nothing
+anywhere.
 
-Admission is global per `(host, uid)`. Two different hosts or two different UIDs
-hold two queues; the committed receipt is the only cross-host object. Each claim
-and outcome records the resolved state directory, UID, and hostname so this
-boundary is explicit in the durable queue records.
+**Inspecting the ref.** These read the campaign's actual state without going
+through the tool:
+
+```bash
+git ls-remote origin 'refs/campaign/*'
+git fetch origin '+refs/campaign/r5-20260902-0836139b/queue:refs/campaign/r5-20260902-0836139b/queue'
+git ls-tree -r --name-only refs/campaign/r5-20260902-0836139b/queue
+git show refs/campaign/r5-20260902-0836139b/queue:claims/<item-id>.json
+git log --oneline refs/campaign/r5-20260902-0836139b/queue
+```
+
+The last one is the campaign's admission history: one commit per operation, each
+naming what it did and to which item.
+
+**Compute is still admissible only from the canonical cache directory.** The
+admission lock and the run directories are properties of ONE directory, so a
+queue started with any other `--state-dir` (or `CAMPAIGN_QUEUE_STATE_DIR`) may
+still stage, approve, and run **non-compute** items, but a compute item there is
+exit 6 and a `refused` outcome with the reason `non-canonical state dir cannot
+admit compute`. The refusal happens **before** any lock is taken, because a lock
+file in a second state directory excludes nobody. The reservation inventory is no
+longer what that refusal protects — every cache reads the one ref — but the lock
+and the exclusive run directory still are. `MNV_CAMPAIGN_STATE_ROOT` is retired
+and its presence refuses every queue operation rather than being ignored: an
+operator who set it expected it to change the queue, so silently proceeding would
+conceal a split-root misconfiguration.
+
+**Migrating a pre-ref queue.** The first operation on a cache that predates this
+model will fetch the ref and delete cached records the ref does not have, because
+a record only one host holds is a record no other host counts. To carry an
+existing directory into the ref instead, publish it before the first ordinary
+operation:
+
+```bash
+cd /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration
+/usr/bin/python3.11 -c 'import campaignctl; print(campaignctl.publish_cached_state(campaignctl.Queue(), "migrate the pre-ref queue"))'
+```
+
+That is still a compare-and-swap: it leases against the ref's current sha and
+refuses on a race rather than overwriting another host's records. It prints the
+commit it landed, or `None` when the cache held no state to publish — an empty
+cache never pushes, because an empty tree would delete whatever the ref holds.
+
+**The residual, stated exactly.** The origin remote named in the pinned file is
+the namespace. A clone whose `origin` is a different repository is a different
+repository, and its receipts and its ceiling are its own. The ref moves only by
+lease, so a force-push of that ref without a lease — or any other direct write to
+it — is a repository write from outside this tool, and no check inside this tool
+can prevent it.
+
+Each claim and outcome still records the resolved cache directory, UID, and
+hostname, so which host took a reservation is explicit in the durable record even
+though the reservation itself is now one object.
 
 **An item records the absolute `repo_path` it was staged from**, and only a ticker
 in that repository runs it. Another checkout's item is skipped rather than
@@ -379,15 +446,20 @@ staged again — which is also why the post-run reconciliation receipt must be
 committed *before* the next item is staged, not between its staging and its tick.
 
 **R5 admission is atomic and reserved.** A ceiling belongs to the campaign, not to
-an item and not to a checkout. Besides the receipt's spend and this item's
-`maximum_cost`, the headroom check counts the full declared `maximum_cost` of every
-other compute item in the campaign-global queue whose hours are not yet accounted
-for — including items staged from other checkouts. Refusal is inclusive in either
-column — spend plus reservations plus this item meeting the ceiling is already a
-refusal — and the reason names the items holding the reservation and why. With
-490 GPU task-hours recorded, two six-hour items each projected 496 and both were
-admitted, although together they project 502; now the second is refused while
-the first is in flight.
+an item, not to a checkout, and not to a host. Besides the receipt's spend and this
+item's `maximum_cost`, the headroom check counts the full declared `maximum_cost`
+of every other compute item **in the queue ref's tree** whose hours are not yet
+accounted for — including items staged from other checkouts and from other hosts.
+Refusal is inclusive in either column — spend plus reservations plus this item
+meeting the ceiling is already a refusal — and the reason names the items holding
+the reservation and why. With 490 GPU task-hours recorded, two six-hour items each
+projected 496 and both were admitted, although together they project 502. That was
+reached three times: with two `--state-dir` values, then with two `git clone`s each
+resolving its own "canonical" directory, and then with two passwd homes — two hosts
+or two UIDs — each holding a complete inventory the other could not see. All three
+now read one inventory, because the reservation scan reads the tree fetched from
+the origin's queue ref rather than a directory on the host that happens to be
+ticking.
 
 **A reservation is released by counted spend, not by finishing and not by a later
 timestamp.** `staged`, `approved`, and claimed-or-running (`outcome-unknown`) items
@@ -453,10 +525,13 @@ counts the finished item's tasks — that release is never something a tick deci
 for itself.
 
 The headroom check and the claim that admits the item happen under **one
-exclusive lock**, `admission.lock` in the campaign-global queue directory, an
-`O_EXCL` file naming its owner `host:pid`. Two tickers therefore cannot both read
-the same receipt, both find room, and both claim — including two tickers in two
-clones, which contend for that one file. A tick that finds the lock held claims
+exclusive lock**, `admission.lock` in the campaign-global cache directory, an
+`O_EXCL` file naming its owner `host:pid`, **and one push** against the campaign
+queue ref. Two tickers on one host therefore cannot both read the same receipt,
+both find room, and both claim — including two tickers in two clones, which
+contend for that one file — and two tickers on DIFFERENT hosts cannot either,
+because their claims are leased against the same fetched sha and the loser's is
+rejected and discarded. A tick that finds the lock held claims
 nothing and exits 5 with `outcome-unknown` and the holder in its reason; it has
 written no outcome, so a later tick retries. A lock older than the admitting
 item's `timeout_seconds` plus its whole wall budget is stale and is removed,

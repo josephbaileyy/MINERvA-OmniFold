@@ -2754,6 +2754,38 @@ class CampaignQueueTests(unittest.TestCase):
         ):
             campaignctl.summary(self.queue)
 
+    def test_publishing_an_empty_cache_never_pushes(self) -> None:
+        """The documented migration path must not commit emptiness as the state.
+
+        ``publish_cached_state`` is the one entry point that does NOT reset the
+        cache to the ref first, so it is the one that could push an empty tree
+        over another host's records. An empty cache pushes nothing, in both ref
+        states: with the ref absent, because creating it at an empty tree would
+        record this host's emptiness as the campaign's; and with the ref present,
+        because that would delete what it holds.
+        """
+        self.assertIsNone(self.queue_ref_sha())
+        self.assertIsNone(
+            campaignctl.publish_cached_state(self.queue, "nothing to migrate")
+        )
+        self.assertIsNone(self.queue_ref_sha())
+
+        item = self.stage("one")
+        landed = self.queue_ref_sha()
+        self.assertIsNotNone(landed)
+        self.assertIn("items/one.json", self.queue_ref_paths())
+        # An emptied cache still publishes nothing, rather than deleting the ref's
+        # records: reconciling a cache DOWNWARDS is a fetch, never a push.
+        (self.queue.state / "items" / "one.json").unlink()
+        self.assertIsNone(
+            campaignctl.publish_cached_state(self.queue, "nothing to migrate")
+        )
+        self.assertEqual(self.queue_ref_sha(), landed)
+        campaignctl.refresh_queue(self.queue)
+        self.assertEqual(
+            self.queue.item("one")["proposal_digest"], item["proposal_digest"]
+        )
+
     def test_the_pinned_origin_file_in_this_repository_is_this_campaigns(
         self,
     ) -> None:
