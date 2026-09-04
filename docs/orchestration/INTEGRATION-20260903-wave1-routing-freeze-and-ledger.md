@@ -594,3 +594,66 @@ ran the matrix on that branch and again on the integrated tip. Worker branches `
 ref deleted; `main` untouched; no OI-* row edited (OI-136's row still says the guard does not cross
 a subprocess boundary, and that sentence is now false in the direction of understatement); the
 `GIT_EDITOR` narrowing above is left untaken; LIVE-STATE.md not regenerated.
+
+## 13. Reviewer round 7 (2026-09-04) — verdict BLOCK on `656ff895`, and what this revision changed
+
+`656ff895` is **withdrawn**. Round 7 carried four BLOCKs: three against the guard (findings 1–3)
+and one against the queue (finding 4). **Two models were replaced, not patched.** The guard's model
+of shell syntax stops being the enforcement — every admitted shell now runs as bash's own
+restricted mode with a wrapper-only `PATH`, and the scanner is the first refuser. The queue's
+notion of "one namespace" stops being a directory on a host — it is the pinned origin remote, and
+every admission is a compare-and-swap on one ref there.
+
+| reviewer BLOCK | resolution | commit | proof |
+|---|---|---|---|
+| **1. the exec'd file is not scanned** (`subprocess.run(["ls","-I","child.py"], executable=sys.executable)` ran Python as a leaf tool) | every wrapped primitive scans `(the real executable, argv[1:])`: `executable=` for subprocess (with `shell=True` the shell **is** the executable and `executable=` replaces it), the path argument for `exec*`/`spawn*`/`posix_spawn*`, the child's `PATH` resolution for the `p` spellings, `/bin/sh` for `os.system`; `argv[0]` is a display name and is ignored | `7db26bb2` | the reproducer refused on every primitive that takes an executable apart from argv: exit 3, `[oi136 launch]`, REFUSED-launch record, sentinel absent |
+| **2. runtime-built arguments bypass the scan** (`FLAG=-I; /usr/bin/python3 "$FLAG" child.py`) | inside a shell program a token holding an expansion, backtick, glob or leading `~` refuses wherever it can select a program or an interpreter option: every token of a wrapper prefix, every token up to and including the first operand of Python or a shell, every token of `sbatch`/`srun`, every token of `git` except a literal-operand subcommand's operands after `--`; `xargs` refuses any non-leaf command; `python3 x.py "$@"` stays admitted, `python3 "$@"` refuses — **and** the restricted rewrite refuses the slash in `/usr/bin/python3` regardless | `7db26bb2`, `40987967` | refused by the static layer; refused again by restricted bash with the static layer disabled through a suite-only knob (both layers measured independently) |
+| **3. `cd` before a relative script** (benign `child.sh` scanned, malicious `sub/child.sh` run) | the scanner keeps a **set** of candidate working directories that `cd`/`pushd` grows and that `CDPATH`, `cd -`, `cd ~x`, a bare `cd` or a runtime operand marks unknown; a relative operand is resolved against every candidate and every existing resolution is read and scanned; write-then-execute (a redirection or `cp`/`mv`/`ln`/`tee`/`sed -i`/`chmod` target that is also a script operand) refuses — **and** restricted bash refuses `cd` outright | `7db26bb2`, `40987967` | the pair refused statically (the malicious candidate is found); with the scanner disabled, bash refuses the `cd`; the all-benign pair is likewise refused by bash, reported as the model rather than smoothed over |
+| **the model behind all three** | `install()` pins a real bash from a named system prefix with its sha256; every admitted shell launch (`bash`/`sh`/`dash` with `-c` or a script, shebang scripts, `shell=True`, `os.system`) is rewritten to `<that bash> -r [--posix] …` with `PATH` = the guard's wrapper directories only and `SHELLOPTS`, `BASH_ENV`, `ENV`, `CDPATH`, `BASH_FUNC_*`, `LD_PRELOAD`, `DYLD_*`, `PYTHONHOME`, `PYTHONEXECUTABLE` removed; bash itself then refuses slashes in command names, `cd`, `exec`, `PATH`/`ENV` assignment, `command -p`, `hash -p`, `enable -f`, redirection and `set +r`, and everything not in the wrapper directory is `command not found`; committed wrappers for `bash`, `sh`, `git`, `sbatch`, `srun` and the five reporting Slurm clients delegate to `wrapper_exec.py`, and `install()` generates one forwarder per leaf tool present under a system prefix; `zsh` is refused (its restricted mode is not modelled); a shell started **by** a restricted shell re-enters restricted mode; every record carries `shell`, `real_bash`, `static_scan`; all sixteen committed shim files are bound by the queue | `7db26bb2`, `71834b05`, `d2e456b2` | nine existing arms changed verdict and each says why in its docstring (`zsh -f` refused; `-o`/`+r`/`-O restricted_shell` refused; the all-admissible pipeline lost its `cd` and `> /dev/null`; the decoy-interpreter arm moved to a non-shell child); no rule was weakened to keep an assertion |
+| **4. R5 splittable across passwd homes** (two hosts, one 490-hour receipt, 502 projected) | every admission-deciding family — items, approvals, claims, outcomes, releases, revocations, the admission log — lives in a git tree on `refs/campaign/<key>/queue` at the origin pinned in the committed `control-plane/campaign-origin.json` (campaign key, ruling record and its sha256, the URL `git remote get-url origin` prints, the ref name); every operation fetches the ref, makes the cache exactly that tree, acts, and lands the mutation with `--force-with-lease` against the fetched sha — the reservation scan and the claim are **one push**; a fetch that cannot reach the origin refuses; a rejected lease discards the mutation and refuses with a lost-race reason a later tick may retry, nothing is merged; an outcome, release or revocation whose push does not land waits in the cache and the item keeps reserving in the ref; only the lease and non-fast-forward reasons mean the ref moved (a server ruleset's `[remote rejected]` is a refusal, not a race); `GIT_TERMINAL_PROMPT=0` and the hook-redirecting `GIT_*` variables cleared on every git call; the pin is a new receipt binding (119 → 120, the delta enumerated) | `4f5abf70`, `f51e3273`, `53c6ac8c` | reviewer mutation rerun with two **different** passwd homes and one bare origin: exactly one item admitted, the other's producer never ran; the lost lease and its retry; the unpushed outcome; the unreachable origin; the URL mismatch; the uncommitted and mis-keyed pin; the checked-in pin's agreement with the module; the campaign suite is 91 tests |
+
+**Residuals, stated exactly.** Guard (`DECLARED_GAP`, on every record): (1) trust by location — a
+leaf tool, read-only `git`, `sbatch` and the real bash are run because their file was found under a
+named system prefix with no shebang, so a tampered prefix or a repository-local `.git`
+configuration naming an external program is outside the guard; (2) the restricted-shell guarantee
+is bash's own (manual §6.10), so a defect there is the residual for shells; (3) an `sbatch` job
+script runs on the cluster outside this process tree, where the static model is the enforcement
+and its residual is a **refusal** — a job script built at run time is refused, not read; (4) an
+admitted Python child is guarded by the shim and these hooks in turn. Queue: the origin remote
+named in the pin is the namespace; a clone whose origin is a different repository is a different
+repository and its receipts are its own; the ref moves only by lease, so a force-push of the ref
+without a lease is a repository write outside this tool; the ticker now needs push permission for
+`refs/campaign/*`, and a ruleset or an expired credential refuses every admission rather than
+admitting silently.
+
+### 13.1 Proposed tip, revised
+
+The last commit of `wave1-integration-20260903` as force-pushed after this record. Verified there,
+clean worktree, macOS default `TMPDIR`:
+
+| check | result |
+|---|---|
+| pre-commit hook | 12 checks passed |
+| `generate_manifest.py --check --committed-only` | OK, fixed point |
+| control-plane and R5 meter self-tests | PASS, PASS |
+| `probe-oi136-sys-path-hijack-20260826.py` | exit 0; FAIL-OPEN SET exactly 9 (the ratchet test pins it) |
+| `verify_hash_bindings.py` | ALL BINDINGS INTACT (120 receipt bindings) |
+| nine-suite matrix on 3.11 (guard, k0 two-roots, N2 boundary, census, both ratchets, campaign, meter, routes) | 463 passed, 1 skipped, 944 subtests passed, 1 failed: `TheRefusalIsUnchanged::test_site_packages_is_still_ignored_and_absent`, the same environment artefact as §12.1 (empty `site-packages` in the ephemeral `uv` build environment; passes under the system interpreter) |
+| `docs/orchestration` whole-directory run | the same 40 environment-dependent failures and errors as at `744660d8` and `656ff895`; none new, none fixed |
+| `generate_live_state.py --check-freshness` | STALE — deliberate; the OI-73 owner hold stands |
+
+**One integration conflict, resolved as a union and named in the pick.** The guard lane batched
+the queue's committed-file lookups (`git cat-file --batch`, because sixteen bound shim files made
+the one-wall-deadline control drift past its budget) while the queue lane rewrote the same
+methods for the origin model; `40987967` keeps both — the batched lookup with the queue lane's
+git environment, and the queue lane's blob-id helper — and the 91-test campaign suite passes on
+the union.
+
+**Dispatch record.** Both pieces ran on claude-school in parallel off `656ff895`, detached from
+any tool timeout; both hit the account's session limit after committing with clean worktrees and
+before reporting, so the integrator ran every verification on each branch and again on the
+integrated tip. Worker branches `w1r9-contract` and `w1r9-guard` remain local as provenance.
+
+**What this round did not do:** no receipt committed; no push to `refs/campaign/*` at the real
+origin (the pin names it; nothing has been written there); no compute, scheduler or cluster
+contact; no ref deleted; `main` untouched; no OI-* row edited; LIVE-STATE.md not regenerated.
