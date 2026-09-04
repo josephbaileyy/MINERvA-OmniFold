@@ -458,6 +458,32 @@ class CampaignQueueTests(unittest.TestCase):
         spend["by_state"] = {"COMPLETED": len(identities)}
         return self.install_receipt(source, spend=spend, **changes)
 
+    def write_release_record(
+        self,
+        name: str,
+        *,
+        item_id: str,
+        outcome_sha256: str,
+        commit: bool,
+    ) -> str:
+        """Write a ruling-family record bound to one canonical outcome digest."""
+        relative = f"docs/orchestration/{name}"
+        path = self.repo / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            "# Continuation decision\n\n"
+            f"RELEASE-RESERVATION {item_id} outcome-sha256 {outcome_sha256}\n"
+        )
+        if commit:
+            subprocess.run(
+                ["git", "-C", str(self.repo), "add", relative], check=True
+            )
+            subprocess.run(
+                ["git", "-C", str(self.repo), "commit", "-qm", "add ruling"],
+                check=True,
+            )
+        return relative
+
     def test_stage_approve_and_run_exactly_once(self):
         item = self.stage()
         self.approve(item)
@@ -1266,6 +1292,44 @@ class CampaignQueueTests(unittest.TestCase):
         )
         self.assertFalse(self.queue.path("claims", "beta").exists())
 
+    def test_release_cannot_bypass_receipt_inclusion_for_recorded_ids(self) -> None:
+        """Identifiable spend remains reserved until a receipt lists its task."""
+        producer = self.commit_script(
+            "alpha_producer.py", write_task_ids(["7101_0"])
+        )
+        receipt = self.install_receipt("near-gpu-ceiling")
+        uncounted_receipt = self.install_receipt(
+            "near-gpu-ceiling", measured_at_utc="2026-09-29T12:00:30+00:00"
+        )
+        alpha_contract = self.six_hour_contract("alpha")
+        beta_contract = self.six_hour_contract("beta")
+        alpha = self.stage(
+            "alpha", kind="compute", contract=alpha_contract, script=producer
+        )
+        self.approve(alpha)
+        rc, alpha_outcome = self.run_ready(receipt)
+        self.assertEqual((rc, alpha_outcome["status"]), (0, "succeeded"))
+        self.assertEqual(
+            alpha_outcome[campaignctl.OUTCOME_TASK_IDS_FIELD], ["7101_0"]
+        )
+
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        self.approve(beta)
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "only a committed receipt.*can release"
+        ):
+            campaignctl.release(
+                self.queue,
+                "alpha",
+                "docs/orchestration/AUTHORIZATION-unused.md",
+                interactive=False,
+            )
+
+        rc, beta_outcome = self.run_ready(uncounted_receipt)
+        self.assertEqual((rc, beta_outcome["status"]), (6, "refused"))
+        self.assertIn("7101_0", beta_outcome["reason"])
+        self.assertFalse(self.queue.path("claims", "beta").exists())
+
     def test_a_later_receipt_that_never_counted_the_item_releases_nothing(
         self,
     ) -> None:
@@ -1374,6 +1438,15 @@ class CampaignQueueTests(unittest.TestCase):
 
         self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
         self.assertEqual(outcome[campaignctl.OUTCOME_TASK_IDS_FIELD], [])
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "expects_scheduler_tasks false.*nothing"
+        ):
+            campaignctl.release(
+                self.queue,
+                "alpha",
+                "docs/orchestration/AUTHORIZATION-unused.md",
+                interactive=False,
+            )
         beta = self.stage("beta", kind="compute", contract=beta_contract)
         self.approve(beta)
 
@@ -1439,13 +1512,7 @@ class CampaignQueueTests(unittest.TestCase):
         )
 
     def test_an_operator_release_clears_an_unaccountable_reservation(self) -> None:
-        """The only way out of a permanent hold, and it is a human act.
-
-        ``release`` is refused without a TTY, refused for an item that never ran
-        (that is ``revoke``'s job) and refused while an item may still be spending;
-        it records the operator's reason and logs the release. Only then does the
-        next item get the hours.
-        """
+        """Only a committed decision bound to the exact outcome carries the hold."""
         silent_producer = self.commit_script(
             "silent_producer.py",
             "from pathlib import Path\nPath('ran').write_text('yes')\n",
@@ -1461,48 +1528,67 @@ class CampaignQueueTests(unittest.TestCase):
             "alpha", kind="compute", contract=alpha_contract, script=silent_producer
         )
         self.approve(alpha)
-        self.assertEqual(self.run_ready(receipt)[0], 3)
-        beta = self.stage("beta", kind="compute", contract=beta_contract)
-        self.approve(beta)
-        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": receipt}):
-            self.assertIn(
-                "operator release required",
-                str(
-                    campaignctl.r5_refusal_reason(
-                        self.queue, self.queue.item(beta["id"])
-                    )
-                ),
+        rc, outcome = self.run_ready(receipt)
+        self.assertEqual(rc, 3)
+        outcome_sha256 = campaignctl.digest(outcome)
+
+        uncommitted = self.write_release_record(
+            "AUTHORIZATION-uncommitted.md",
+            item_id="alpha",
+            outcome_sha256=outcome_sha256,
+            commit=False,
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "release record is not committed at HEAD"
+        ):
+            campaignctl.release(
+                self.queue, "alpha", uncommitted, interactive=False
             )
 
-        with self.assertRaisesRegex(campaignctl.QueueError, "never claimed"):
-            campaignctl.release(
-                self.queue, "beta", "beta never ran", interactive=False
-            )
-        with self.assertRaisesRegex(campaignctl.QueueError, "release reason"):
-            campaignctl.release(self.queue, "alpha", "   ", interactive=False)
+        wrong = self.write_release_record(
+            "DECISION-wrong-outcome.md",
+            item_id="alpha",
+            outcome_sha256="0" * 64,
+            commit=True,
+        )
+        with self.assertRaisesRegex(
+            campaignctl.QueueError, "does not bind this item.*outcome digest"
+        ):
+            campaignctl.release(self.queue, "alpha", wrong, interactive=False)
+
+        correct = self.write_release_record(
+            "AUTHORIZATION-continue-after-alpha.md",
+            item_id="alpha",
+            outcome_sha256=outcome_sha256,
+            commit=True,
+        )
         with mock.patch.object(
             campaignctl.sys.stdin, "isatty", return_value=False
         ):
             with self.assertRaisesRegex(
                 campaignctl.QueueError, "release requires an interactive TTY"
             ):
-                campaignctl.release(self.queue, "alpha", "carrying the spend")
+                campaignctl.release(self.queue, "alpha", correct)
 
         record = campaignctl.release(
-            self.queue,
-            "alpha",
-            "sacct shows no tasks for this arm; carrying the six hours",
-            interactive=False,
+            self.queue, "alpha", correct, interactive=False
         )
 
         self.assertEqual(record["state_at_release"], "failed")
-        self.assertIn("carrying the six hours", record["reason"])
+        self.assertEqual(record["record_path"], correct)
+        self.assertEqual(
+            record["record_sha256"], campaignctl.sha256_file(self.repo / correct)
+        )
+        self.assertEqual(record["git_head"], self.queue.git_head())
+        self.assertEqual(record["outcome_sha256"], outcome_sha256)
         log = (
             self.queue.state / "logs" / campaignctl.ADMISSION_LOCK_LOG
         ).read_text()
         self.assertIn("reservation-released", log)
         self.assertIn("alpha", log)
 
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        self.approve(beta)
         rc, outcome = self.run_ready(receipt)
 
         self.assertEqual(

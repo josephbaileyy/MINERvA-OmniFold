@@ -183,8 +183,20 @@ An item that **ran** cannot be revoked; if its spend can never be identified (se
 the release rule below), the operator act is instead
 
 ```bash
-/usr/bin/python3.11 campaignctl.py release --id <item-id> --reason '<why>'
+/usr/bin/python3.11 campaignctl.py release --id <item-id> \
+  --record docs/orchestration/AUTHORIZATION-<stamp>-continue-after-<item-id>.md
 ```
+
+The record must already be committed at the checkout's `HEAD`, with worktree
+bytes identical to that blob. It must contain the literal line printed by the
+refusal context:
+
+```text
+RELEASE-RESERVATION <item-id> outcome-sha256 <canonical-outcome-sha256>
+```
+
+The command still requires the interactive `RELEASE <item-id>` phrase. That
+phrase confirms the operator act but does not authorize continuation by itself.
 
 which asks you to type `RELEASE <item-id>`, records the reason, and appends a
 `reservation-released` line to `logs/admission-lock.log`. It is refused for an
@@ -409,9 +421,19 @@ Two cases sit outside that rule, one on each side:
   or malformed, the launcher failed, the producer was killed before writing it —
   can never satisfy clause 2, so it reserves its full declared maximum
   **permanently**, with the reason `ran with no recorded task ids; operator release
-  required`. No tick clears it. Only `release --id <item> --reason '<why>'` from a
-  TTY does, and that is a human accepting an unmeasurable spend; `revoke` remains
-  for items that never ran.
+  required`. No tick clears it. R5 authorizes a stop, not spending, so only
+  `release --id <item> --record <path>` with a fresh committed continuation
+  decision can carry this unmeasurable spend. The `DECISION-*.md` or
+  `AUTHORIZATION-*.md` record must be under `docs/orchestration/` and bind the
+  exact canonical outcome SHA-256 with the literal line shown above. The TTY
+  phrase is additional confirmation, never a substitute. `revoke` remains for
+  items that never ran.
+
+`release` refuses any outcome that records scheduler task IDs. Those identifiable
+tasks can release only through a committed meter receipt that lists every ID. It
+also refuses an arm declaring `expects_scheduler_tasks` false because that arm
+already releases on a later receipt timestamp and has nothing for an operator to
+release.
 
 **So the reconciliation loop is: run → meter on Perlmutter → commit a receipt
 listing that item's task ids → next admission.** Concretely, the finished item's

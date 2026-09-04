@@ -27,11 +27,14 @@ only that the meter ran, never that it saw these tasks.  The queue gives each
 claim an exclusive run directory and passes its task-ids file to the producer
 and validator in ``MNV_CAMPAIGN_TASK_IDS_FILE``.  campaignctl reads that file
 before the validator and records the ids in the outcome.  An item that never ran
-releases at once; an item that
-ran and recorded NO ids -- missing or malformed file, crash, launcher error,
-timeout -- never releases automatically and is cleared only by an operator
-``revoke`` or ``release --reason``.  Re-metering after every compute item, with
-that item's task ids in the receipt, is therefore the reconciliation step.
+releases at once; an item that ran and recorded NO ids -- missing or malformed
+file, crash, launcher error,
+timeout -- never releases automatically.  R5 authorizes a stop, not spending,
+so only a fresh continuation decision in a committed ``DECISION-*`` or
+``AUTHORIZATION-*`` record can release that unmeasurable reservation.  An
+operator's typed phrase is additional confirmation, never the authorization.
+Re-metering after every compute item, with that item's task ids in the receipt,
+is therefore the ordinary reconciliation step.
 
 Because both the lock and that reservation inventory are properties of ONE
 queue, and a queue kept inside a checkout is one queue PER CHECKOUT, the
@@ -108,6 +111,7 @@ CAMPAIGN_KEY = "r5-20260902-0836139b"
 QUEUE_DIRECTORY_NAME = "campaign-queue"
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+RELEASE_RECORD_NAME_RE = re.compile(r"^(?:DECISION|AUTHORIZATION)-.+\.md$")
 #: Scheduler task identity, in exactly the form ``r5_meter.py`` meters and publishes
 #: in ``spend.metered_task_ids``: a job id, optionally with an array-task suffix.  The
 #: two patterns must stay identical or a producer could declare ids no receipt could
@@ -260,8 +264,9 @@ UNREMEASURED_HOLD = "terminal, not yet remeasured"
 UNCOUNTED_HOLD = "ran, task ids not yet in a receipt"
 #: Reason a finished compute item reserves PERMANENTLY: it ran, and no scheduler task
 #: identity was ever recorded for it, so no receipt can ever demonstrate inclusion.
-#: Only an operator act -- ``revoke`` before a claim, ``release --reason`` after one --
-#: clears it, and that act is a human accepting an unmeasurable spend.
+#: Only ``revoke`` before a claim or a committed continuation decision after one
+#: clears it. R5 authorizes a stop rather than spending, so a typed phrase alone
+#: cannot carry unmeasurable spend into another admission.
 UNIDENTIFIED_HOLD = "ran with no recorded task ids; operator release required"
 #: Refusal for a queue whose state directory is not the campaign's single canonical
 #: one.  The lock and the reservation inventory are properties of that ONE directory,
@@ -1375,6 +1380,47 @@ def validate_r5_receipt(value: object) -> dict[str, object]:
     return receipt
 
 
+def committed_file_identity(
+    queue: Queue,
+    relative: Path,
+    *,
+    missing_label: str,
+    uncommitted_reason: str,
+) -> tuple[Path, str, str]:
+    """Return a worktree file and its blob SHA when both match ``HEAD``.
+
+    This is the single identity check for evidence and decision records.  A
+    second implementation could drift until one path accepted uncommitted bytes
+    that the other refused.
+    """
+    if relative.is_absolute():
+        raise QueueError(
+            f"{uncommitted_reason}: path must be repository-relative, not {relative}"
+        )
+    try:
+        path = resolve_repo_path(queue.repo, relative.as_posix())
+    except QueueError as exc:
+        raise QueueError(f"{uncommitted_reason}: {exc}") from exc
+    if not path.is_file():
+        raise QueueError(f"{missing_label} missing: {path}")
+    head = queue.git_head()
+    try:
+        committed_sha256 = queue.committed_file_sha256(path)
+    except QueueError as exc:
+        raise QueueError(
+            f"{uncommitted_reason}: {relative.as_posix()} is not tracked at "
+            "the repository HEAD"
+        ) from exc
+    if sha256_file(path) != committed_sha256:
+        raise QueueError(
+            f"{uncommitted_reason}: {relative.as_posix()} differs from the blob "
+            "committed at HEAD"
+        )
+    if queue.git_head() != head:
+        raise QueueError(f"{uncommitted_reason}: repository HEAD changed during check")
+    return path, committed_sha256, head
+
+
 def committed_r5_receipt(queue: Queue) -> tuple[Path | None, str | None]:
     """Locate the R5 receipt and require it to be committed at ``HEAD``.
 
@@ -1398,29 +1444,15 @@ def committed_r5_receipt(queue: Queue) -> tuple[Path | None, str | None]:
     """
     override = os.environ.get("CAMPAIGN_R5_RECEIPT")
     relative = DEFAULT_R5_RECEIPT if override is None else Path(override)
-    if relative.is_absolute():
-        return None, (
-            f"{R5_UNCOMMITTED_REASON}: CAMPAIGN_R5_RECEIPT must name a "
-            f"repository-relative path, not {override}"
-        )
     try:
-        receipt_path = resolve_repo_path(queue.repo, str(relative))
+        receipt_path, _, _ = committed_file_identity(
+            queue,
+            relative,
+            missing_label="R5 receipt",
+            uncommitted_reason=R5_UNCOMMITTED_REASON,
+        )
     except QueueError as exc:
-        return None, f"{R5_UNCOMMITTED_REASON}: {exc}"
-    if not receipt_path.is_file():
-        return None, f"R5 receipt missing: {receipt_path}"
-    try:
-        committed_sha256 = queue.committed_file_sha256(receipt_path)
-    except QueueError:
-        return None, (
-            f"{R5_UNCOMMITTED_REASON}: {relative.as_posix()} is not tracked at "
-            "the repository HEAD"
-        )
-    if sha256_file(receipt_path) != committed_sha256:
-        return None, (
-            f"{R5_UNCOMMITTED_REASON}: {relative.as_posix()} differs from the "
-            "blob committed at HEAD"
-        )
+        return None, str(exc)
     return receipt_path, None
 
 
@@ -1862,22 +1894,25 @@ def claimed_run_directory(queue: Queue, item_id: str) -> Path:
 
 
 def release(
-    queue: Queue, item_id: str, reason: str, interactive: bool = True
+    queue: Queue, item_id: str, record: str, interactive: bool = True
 ) -> dict:
-    """Clear the reservation of an item that RAN and cannot be accounted for.
+    """Carry an unmeasurable reservation under a committed continuation decision.
 
     An item that ran and recorded no scheduler task identities -- it crashed
     before its task-ids file was read, the launcher never started, the producer
     timed out -- can never satisfy the inclusion half of the release rule, so it
     reserves its full declared maximum forever.  That is deliberate: those hours
-    were probably spent and nothing in any receipt can be pointed at.  The only
-    way out is a human deciding to carry an unmeasurable spend, so this is an
-    operator act with a typed phrase, a recorded reason and a log line, and it is
-    NEVER something a tick performs.
+    were probably spent and nothing in any receipt can be pointed at.  R5
+    authorizes a stop, not spending; an unmeasurable spend can be carried only by
+    a fresh continuation decision recorded in a committed ruling-family
+    document, never by an operator's typed phrase.  The phrase confirms the
+    interactive act in addition to that record and never replaces it.
 
     ``revoke`` remains the act for an item that never ran; this one is refused
     for those, and refused for an item that is still ``staged``, ``approved`` or
-    claimed-and-running, because such an item may be spending right now.
+    claimed-and-running, because such an item may be spending right now.  It is
+    also refused when an outcome records any task-ID measurement: identifiable
+    spend releases only through inclusion in a committed meter receipt.
 
     Parameters
     ----------
@@ -1885,9 +1920,9 @@ def release(
         Queue holding the item, its claim and its outcome.
     item_id : str
         Item whose reservation is being cleared.
-    reason : str
-        Operator's reason, recorded verbatim.  Required: a release with no stated
-        reason is indistinguishable from a mistake.
+    record : str
+        Repository-relative ``DECISION-*.md`` or ``AUTHORIZATION-*.md`` path
+        committed at ``HEAD`` and bound to the canonical outcome digest.
     interactive : bool, optional
         Require the typed phrase from a TTY.  ``False`` is for the suite only.
 
@@ -1898,7 +1933,6 @@ def release(
     """
     item = queue.item(item_id)
     state = state_of(queue, item)
-    stated = require_text(reason, field="release reason")
     if not queue.path("claims", item_id).exists():
         raise QueueError(
             f"item {item_id} was never claimed, so it holds no ran-reservation "
@@ -1908,6 +1942,59 @@ def release(
         raise QueueError(
             f"item {item_id} is {state}, so it may be spending now: its "
             "reservation is not an operator's to clear"
+        )
+    outcome_path = queue.path("outcomes", item_id)
+    if not outcome_path.is_file():
+        raise QueueError(f"item {item_id} has no terminal outcome to release")
+    outcome = read_object(outcome_path)
+    require_text(outcome.get("status"), field=f"outcome {item_id} status")
+    if item.get("kind") != "compute":
+        raise QueueError("release applies only to a compute reservation")
+    if not expects_scheduler_tasks(item):
+        raise QueueError(
+            f"item {item_id} declares expects_scheduler_tasks false and releases "
+            "on the receipt timestamp; there is nothing for an operator to release"
+        )
+    task_ids = outcome_task_ids(queue, item_id)
+    if task_ids:
+        raise QueueError(
+            f"item {item_id} recorded scheduler task ids; only a committed receipt "
+            "listing every id can release its reservation"
+        )
+    if task_ids is not None:
+        raise QueueError(
+            f"item {item_id} recorded an empty scheduler task-id measurement; "
+            "release applies only when outcome_task_ids is None"
+        )
+
+    outcome_sha256 = digest(outcome)
+    relative_record = Path(require_text(record, field="release record"))
+    record_path, record_sha256, record_head = committed_file_identity(
+        queue,
+        relative_record,
+        missing_label="release record",
+        uncommitted_reason="release record is not committed at HEAD",
+    )
+    committed_relative = record_path.relative_to(queue.repo)
+    if committed_relative.parts[:2] != ("docs", "orchestration"):
+        raise QueueError("release record must be under docs/orchestration/")
+    if not RELEASE_RECORD_NAME_RE.fullmatch(record_path.name):
+        raise QueueError(
+            "release record must be named DECISION-*.md or AUTHORIZATION-*.md"
+        )
+    binding_line = (
+        f"RELEASE-RESERVATION {item_id} outcome-sha256 {outcome_sha256}"
+    )
+    try:
+        record_lines = record_path.read_text().splitlines()
+    except (OSError, UnicodeDecodeError) as exc:
+        raise QueueError(
+            f"release record cannot be read as text: {record_path}"
+        ) from exc
+    if binding_line not in record_lines:
+        raise QueueError(
+            "release record does not bind this item and canonical outcome digest: "
+            f"required literal line {binding_line!r}"
         )
     if interactive:
         if not sys.stdin.isatty():
@@ -1920,8 +2007,11 @@ def release(
     receipt = {
         "schema_version": 1,
         "id": item_id,
-        "reason": stated,
         "state_at_release": state,
+        "record_path": committed_relative.as_posix(),
+        "record_sha256": record_sha256,
+        "git_head": record_head,
+        "outcome_sha256": outcome_sha256,
         "released_at_utc": queue.clock(),
         "released_by": f"{os.environ.get('USER', 'unknown')}@{socket.gethostname()}",
         "interactive_tty": interactive,
@@ -2587,11 +2677,11 @@ def build_parser() -> argparse.ArgumentParser:
         "release",
         help=(
             "clear the reservation of an item that RAN and recorded no scheduler "
-            "task ids, accepting an unmeasurable spend; requires a reason"
+            "task ids under a committed continuation decision"
         ),
     )
     p.add_argument("--id", required=True)
-    p.add_argument("--reason", required=True)
+    p.add_argument("--record", required=True)
     sub.add_parser("list")
     sub.add_parser("status").add_argument("--json", action="store_true")
     sub.add_parser("run-ready").add_argument("--json", action="store_true")
@@ -2631,7 +2721,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.action == "release":
             print(
                 json.dumps(
-                    release(queue, args.id, args.reason), indent=2, sort_keys=True
+                    release(queue, args.id, args.record), indent=2, sort_keys=True
                 )
             )
             return 0
