@@ -2178,6 +2178,21 @@ class TheClosedChildModelRefusesWhatItCannotProve(unittest.TestCase):
                                  result.stdout + result.stderr)
                 self.assertIn("[oi136 launch]", result.stderr)
                 self.assertEqual(self.records()[0]["launch_refusal"]["reason"], reason)
+        # NO OPERAND: sbatch reads its batch script from STDIN, which is the same state a bare
+        # `bash` is in and refuses for the same reason -- the program does not exist as bytes this
+        # scan can reach. Both spellings, because the parse reaches them by different exits.
+        for arguments in (["sbatch"], ["sbatch", "--parsable"]):
+            with self.subTest(arguments=arguments):
+                self.inventory.unlink(missing_ok=True)
+                parent = write(self.nd / "parent_sbatch_stdin.py",
+                               "import subprocess\n"
+                               f"raise SystemExit(subprocess.run({arguments!r}).returncode)\n")
+                result = self.guarded(parent)
+                self.assertEqual(result.returncode, mgr.VIOLATION_EXIT,
+                                 result.stdout + result.stderr)
+                self.assertEqual(self.records()[0]["launch_refusal"]["reason"],
+                                 mgr.LAUNCH_REASON_UNPROVEN)
+                self.assertIn("stdin", self.records()[0]["launch_refusal"]["offending_flag"])
 
     def test_a_child_that_execs_a_program_ITS_OWN_ARGUMENTS_NAME_is_refused_as_UNPROVEN(self):
         """`perl -e exec`, `find -exec`, `make`, `ssh`: four ways to start `python3 -I` with no

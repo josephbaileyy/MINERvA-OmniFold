@@ -2522,14 +2522,17 @@ def _scan_sbatch(command: list[str], env, context: _ScanContext, target: str) ->
         #: fail-open shape `_parse_env` was rebuilt for: the scan would then read a directive file
         #: as the batch script and answer confidently about the wrong bytes.
         raise _LaunchRefusal(LAUNCH_REASON_UNMODELLED, f"sbatch {token}", executable=target)
-    else:
-        return False                         # options only: sbatch reads the script from stdin
-    if positional is None:
-        if index >= len(command):
-            raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
-                                 "sbatch with no script operand reads its batch script from "
-                                 "stdin, which does not exist at scan time", executable=target)
+    if positional is None and index < len(command):
         positional = command[index]
+    if positional is None:
+        #: NO OPERAND MEANS sbatch READS ITS BATCH SCRIPT FROM STDIN -- the same state a bare
+        #: `bash` is in, and it must refuse for the same reason: the program does not exist as
+        #: bytes this scan can reach, because the parent writes it after the fork. Reached two
+        #: ways (`sbatch` alone, and options with no operand), so it is tested once here rather
+        #: than at each exit.
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             "sbatch with no script operand reads its batch script from stdin, "
+                             "which does not exist at scan time", executable=target)
     _refuse_a_word_built_at_runtime(positional, "sbatch script operand")
     return _scan_shell_script_file(_resolve_shell_operand(positional, context), env, context)
 
@@ -2611,7 +2614,10 @@ def _scan_resolved_command(command: list[str], env, context: _ScanContext) -> bo
     #: including `#!/usr/bin/env python3 -I`, whose isolating flag is a refusal exactly as it is on
     #: a command line. The script's own path replaces the shebang's implicit operand so that a
     #: `#!...sh` shebang scans THIS file rather than looking for an operand it has not got.
-    interpreter = shebang[0] if not shebang[0].endswith(os.sep) else shebang[0]
+    if not shebang:
+        raise _LaunchRefusal(LAUNCH_REASON_UNPROVEN,
+                             f"the shebang of {target} names no interpreter", executable=target)
+    interpreter = shebang[0]
     options = shebang[1:]
     inner_name = _executable_basename(interpreter)
     inner_resolved = _resolve_executable(interpreter, env)
