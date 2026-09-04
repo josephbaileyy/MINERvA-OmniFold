@@ -124,7 +124,7 @@ import tarfile
 import tempfile
 import threading
 import time
-from typing import Callable, Iterator, NamedTuple
+from typing import Callable, Iterator, NamedTuple, Sequence
 
 
 HERE = Path(__file__).resolve().parent
@@ -1068,19 +1068,13 @@ class Queue:
     def committed_file_sha256(self, path: Path) -> str:
         """Return the SHA-256 of a file as committed at the queue's HEAD."""
         relative = inside(path, self.repo).relative_to(self.repo).as_posix()
-        result = subprocess.run(
-            ["git", "-C", str(self.repo), "show", f"HEAD:{relative}"],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            check=False,
-            env=git_environment(),
-        )
-        if result.returncode != 0:
+        digests = self.committed_file_sha256_many([relative])
+        committed = digests.get(relative)
+        if committed is None:
             raise QueueError(
                 f"bound file must be committed at repository HEAD: {relative}"
             )
-        return hashlib.sha256(result.stdout).hexdigest()
+        return committed
 
     def committed_blob_id(self, path: Path) -> str:
         """Return the git blob object name of a file as committed at ``HEAD``.
@@ -1106,10 +1100,82 @@ class Queue:
             )
         return blob
 
-    def require_committed_binding(self, binding: dict[str, str]) -> None:
-        """Require a binding to match the corresponding blob at ``HEAD``."""
+    def committed_file_sha256_many(
+        self, relatives: Sequence[str]
+    ) -> dict[str, str | None]:
+        """SHA-256 of each path as committed at HEAD, in ONE ``git`` process.
+
+        WHY IT IS BATCHED, MEASURED RATHER THAN ASSUMED.  ``git show HEAD:<path>``
+        per binding is one subprocess per bound file, and the guard's shim grew from
+        four committed files to sixteen when every admitted shell began running as
+        restricted bash out of a wrapper directory.  Twelve extra ``git`` processes
+        inside ``validate_unchanged`` cost ~60 ms, which is measured by
+        ``test_one_wall_deadline_covers_producer_and_validator``: that control asserts
+        a one-second wall budget ends the run inside 1.5 s, and the per-binding
+        spelling pushed it to 1.52 s.  ``git cat-file --batch`` answers all of them
+        from one process, so the cost of binding a file is a line of stdin.
+
+        A path missing at HEAD maps to ``None`` rather than raising, because the
+        caller owns the message: ``require_committed_binding`` and the contract check
+        say different things about the same absence.
+        """
+        wanted = list(dict.fromkeys(relatives))
+        if not wanted:
+            return {}
+        process = subprocess.Popen(
+            ["git", "-C", str(self.repo), "cat-file", "--batch"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            env=git_environment(),
+        )
+        request = "".join(f"HEAD:{relative}\n" for relative in wanted).encode()
+        assert process.stdin is not None and process.stdout is not None
+        process.stdin.write(request)
+        process.stdin.close()
+        digests: dict[str, str | None] = {}
+        try:
+            for relative in wanted:
+                header = process.stdout.readline()
+                if not header:
+                    digests[relative] = None
+                    continue
+                fields = header.decode("utf-8", "replace").split()
+                # `<oid> <type> <size>` for a blob that exists; `<name> missing` for
+                # one that does not.  A tree or a tag at that path is not a file and
+                # is reported absent for the same reason a missing blob is.
+                if len(fields) != 3 or fields[1] != "blob":
+                    digests[relative] = None
+                    continue
+                size = int(fields[2])
+                contents = process.stdout.read(size)
+                process.stdout.read(1)       # the newline `cat-file` appends
+                digests[relative] = hashlib.sha256(contents).hexdigest()
+        finally:
+            process.stdout.close()
+            process.wait()
+        return digests
+
+    def require_committed_binding(
+        self, binding: dict[str, str], committed: dict[str, str | None] | None = None
+    ) -> None:
+        """Require a binding to match the corresponding blob at ``HEAD``.
+
+        ``committed`` is a batch already read by ``committed_file_sha256_many``; a
+        caller with many bindings passes one rather than paying a ``git`` process per
+        file.  A path absent from the batch falls back to the single lookup, so the
+        two spellings cannot disagree about a file the batch did not cover.
+        """
         path = resolve_repo_path(self.repo, binding["path"])
-        committed_sha256 = self.committed_file_sha256(path)
+        if committed is not None and binding["path"] in committed:
+            committed_sha256 = committed[binding["path"]]
+            if committed_sha256 is None:
+                relative = inside(path, self.repo).relative_to(self.repo).as_posix()
+                raise QueueError(
+                    f"bound file must be committed at repository HEAD: {relative}"
+                )
+        else:
+            committed_sha256 = self.committed_file_sha256(path)
         if (
             binding["sha256"] != committed_sha256
             or sha256_file(path) != committed_sha256
@@ -2360,12 +2426,17 @@ def validate_unchanged(queue: Queue, item: dict) -> None:
             raise QueueError("campaign contract path is missing")
         if read_object(resolve_repo_path(queue.repo, contract_path)) != contract:
             raise QueueError("embedded campaign contract differs from its bound file")
+    committed = (
+        queue.committed_file_sha256_many([b["path"] for b in item["bindings"]])
+        if item.get("kind") == "compute"
+        else {}
+    )
     for binding in item["bindings"]:
         path = resolve_repo_path(queue.repo, binding["path"])
         if not path.is_file() or sha256_file(path) != binding["sha256"]:
             raise QueueError(f"bound file changed after staging: {binding['path']}")
         if item.get("kind") == "compute":
-            queue.require_committed_binding(binding)
+            queue.require_committed_binding(binding, committed=committed)
 
 
 def validate_r5_receipt(value: object) -> dict[str, object]:

@@ -844,7 +844,18 @@ def _path_shim_digests() -> dict:
     `git`, `sbatch`, `srun` and the five Slurm clients -- and the one list they all come
     from is `COMMITTED_SHIM_FILES`, so a wrapper with no digest is not a state this reaches.
     """
-    return _sha256_of_committed_shim_files()
+    global _PATH_SHIM_DIGESTS
+    if _PATH_SHIM_DIGESTS is None:
+        #: MEMOISED PER PROCESS, and that is a statement about the files rather than an
+        #: optimisation for its own sake: these are the bytes THIS process executes, they are read
+        #: at arm time, and a change to them mid-run would not be picked up by the wrappers either.
+        #: It is called at least twice per `install()` and once more from `write_inventory`, and
+        #: hashing sixteen committed files three times shows up in a wall-clock budget.
+        _PATH_SHIM_DIGESTS = _sha256_of_committed_shim_files()
+    return dict(_PATH_SHIM_DIGESTS)
+
+
+_PATH_SHIM_DIGESTS: "dict | None" = None
 
 
 def _arm_path_shim() -> "tuple[str, dict]":
@@ -950,6 +961,8 @@ def _locate_a_system_tool(basename: str) -> "str | None":
     it, and inside a restricted shell it is `command not found` rather than a program nobody read.
     """
     for prefix in _SYSTEM_EXECUTABLE_PREFIXES:
+        if basename not in _names_in_a_system_prefix(prefix):
+            continue
         candidate = os.path.join(prefix, basename)
         if not (os.path.isfile(candidate) and os.access(candidate, os.X_OK)):
             continue
@@ -961,6 +974,38 @@ def _locate_a_system_tool(basename: str) -> "str | None":
             return None
         return candidate
     return None
+
+
+_SYSTEM_PREFIX_NAMES: dict = {}
+
+
+def _names_in_a_system_prefix(prefix: str) -> frozenset:
+    """The basenames in one system prefix, listed ONCE per process rather than stat'ed per name.
+
+    `_generated_forwarder_dir` asks this question forty times over ten prefixes, at `install()`, in
+    every guarded process in a run -- four hundred `stat` calls on a path that cannot change under
+    it. One `scandir` per prefix answers all of them, and the CORRECTNESS check (a regular
+    executable file, no shebang) still runs on the candidate this narrows to.
+    """
+    if prefix not in _SYSTEM_PREFIX_NAMES:
+        try:
+            _SYSTEM_PREFIX_NAMES[prefix] = frozenset(os.listdir(prefix))
+        except OSError:
+            _SYSTEM_PREFIX_NAMES[prefix] = frozenset()
+    return _SYSTEM_PREFIX_NAMES[prefix]
+
+
+def _write_an_executable_file(path: pathlib.Path, text: str) -> None:
+    """Create an executable file in one open, rather than write-then-chmod.
+
+    Forty forwarders per guarded process is forty extra syscalls the mode argument of `os.open`
+    already covers, and this runs at `install()` inside a wall-clock budget a campaign control
+    measures. The mode is applied at creation, so there is no window in which the file exists and
+    is not executable.
+    """
+    descriptor = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o755)
+    with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+        handle.write(text)
 
 
 def _generated_forwarder_dir() -> str:
@@ -987,17 +1032,15 @@ def _generated_forwarder_dir() -> str:
         if resolved is None:
             continue
         forwarder = pathlib.Path(directory) / basename
-        forwarder.write_text(
+        _write_an_executable_file(
+            forwarder,
             "#!/bin/sh\n"
             f"# GENERATED at arm time by {__file__} for this process only. Not tracked, not\n"
             "# evidence: it exists so that a restricted shell, whose PATH is the guard's wrapper\n"
             "# directories and nothing else, can still reach the leaf tools _LEAF_TOOL_BASENAMES\n"
             "# names. The path below was resolved ONCE, from a named system prefix, and the file\n"
             "# it names carries no shebang -- that is the whole of what admits it.\n"
-            f"exec {shlex.quote(resolved)} \"$@\"\n",
-            encoding="utf-8",
-        )
-        forwarder.chmod(0o755)
+            f"exec {shlex.quote(resolved)} \"$@\"\n")
     #: Best-effort removal, for the reason recorded on `_generated_wrapper_dir`: an `os.exec*`
     #: replacement never runs `atexit`, and a child outliving its parent must not lose `ls`.
     atexit.register(shutil.rmtree, directory, True)
@@ -3222,22 +3265,28 @@ def _refuse_write_then_execute(context: _ScanContext) -> None:
             f"is decided at scan time, so they cannot be shown to be different files")
 
 
-#: COMMANDS WHOSE OPERANDS ARE A WRITE, keyed by basename, with the OPTIONS that carry a target
-#: separately. Each of them can replace a file this scan read -- `cp new stage.sh`, `tee stage.sh`,
-#: `sed -i`, `curl -o stage.sh`, `install`, `dd of=stage.sh`. The list is short and every name on it
-#: is a name whose write this file is asserting without reading anything, exactly as
-#: `_LEAF_TOOL_BASENAMES` is; a writer NOT on it is covered by the redirection rule or by nothing,
-#: and "or by nothing" is why the intersection is not the only control -- the restricted shell
-#: refuses redirection outright and refuses every command this list does not name a wrapper for.
+#: COMMANDS WHOSE OPERANDS ARE A WRITE, and WHICH of their operands is one. Each of them can
+#: replace a file this scan read -- `cp new stage.sh`, `tee stage.sh`, `sed -i`, `curl -o stage.sh`,
+#: `install`, `dd of=stage.sh`, `chmod +x stage.sh`. The list is short and every name on it is a
+#: name whose write this file is asserting without reading anything, exactly as
+#: `_LEAF_TOOL_BASENAMES` is. A writer NOT on it is covered by the redirection rule or by nothing,
+#: and "or by nothing" is why the intersection is not the only control: the restricted shell refuses
+#: redirection outright and refuses every command the wrapper directory does not hold.
+#:
+#: WHICH OPERAND IS THE TARGET IS PER-COMMAND AND IS NOT GUESSABLE, which is why there are four
+#: tables rather than one rule. `cp a b c dir` writes the LAST; `tee a b` and `chmod +x a b` write
+#: EVERY one; `curl` and `wget` name theirs with an option; `dd` names it with `of=`; and `sed -i`
+#: writes every operand EXCEPT the first, because the first is the script expression -- unless `-e`
+#: or `-f` supplied the expression, in which case every operand is a file. Reading `sed -i s/a/b/
+#: stage.sh` with the wrong rule records `s/a/b/` as a path and `stage.sh` as safe, which is a
+#: check that is right about the wrong object.
 _WRITER_BASENAMES = frozenset({"cp", "mv", "ln", "install", "tee", "sed", "chmod", "dd", "rsync",
-                               "curl", "wget", "touch", "cat", "gzip", "gunzip", "tar", "zstd",
-                               "xz", "sha256sum", "shasum", "md5sum"})
-#: Writers whose target is named by an OPTION rather than by trailing position.
-_WRITER_TARGET_OPTIONS = {"curl": ("-o", "--output"), "wget": ("-O", "--output-document"),
-                          "sed": ("-i", "--in-place")}
-#: Writers whose target is EVERY operand rather than the last one. `tee a b c` writes all three,
-#: `sed -i` edits all of them, and `chmod +x a b` changes all of them.
-_WRITERS_OVER_EVERY_OPERAND = frozenset({"tee", "sed", "chmod", "touch"})
+                               "curl", "wget"})
+_WRITER_TARGET_OPTIONS = {"curl": ("-o", "--output"), "wget": ("-O", "--output-document")}
+_WRITERS_OVER_EVERY_OPERAND = frozenset({"tee", "chmod"})
+_WRITERS_OVER_THE_LAST_OPERAND = frozenset({"cp", "mv", "ln", "install", "rsync"})
+_SED_IN_PLACE_OPTIONS = ("-i", "--in-place")
+_SED_EXPRESSION_OPTIONS = ("-e", "--expression", "-f", "--file")
 
 
 def _record_write_targets(tokens: list, context: _ScanContext) -> None:
@@ -3251,36 +3300,46 @@ def _record_write_targets(tokens: list, context: _ScanContext) -> None:
     if name not in _WRITER_BASENAMES:
         return
     options = _WRITER_TARGET_OPTIONS.get(name, ())
-    operands, index = [], 1
+    operands: list = []
+    in_place = False
+    expression_given = False
+    index = 1
     while index < len(tokens):
         token = tokens[index]
-        if token in options:
-            if index + 1 < len(tokens):
-                operands.append(tokens[index + 1])
-                index += 2
-                continue
-            index += 1
+        if token in options and index + 1 < len(tokens):
+            _record_one_write_target(tokens[index + 1], context)
+            index += 2
             continue
         if any(token.startswith(f"{option}=") for option in options):
-            operands.append(token.partition("=")[2])
+            _record_one_write_target(token.partition("=")[2], context)
             index += 1
-            continue
-        if name == "sed" and token.startswith("-i") and len(token) > 2:
-            index += 1                       # `sed -i.bak`: the suffix, not a target
             continue
         if name == "dd" and token.startswith("of="):
-            operands.append(token.partition("=")[2])
+            _record_one_write_target(token.partition("=")[2], context)
             index += 1
             continue
+        if name == "sed":
+            if any(token.startswith(option) for option in _SED_IN_PLACE_OPTIONS):
+                in_place = True              # `-i` and `-i.bak` alike: the suffix is not a target
+                index += 1
+                continue
+            if token in _SED_EXPRESSION_OPTIONS and index + 1 < len(tokens):
+                expression_given = True
+                index += 2
+                continue
         if token.startswith("-"):
             index += 1
             continue
         operands.append(token)
         index += 1
-    if not operands:
-        return
-    targets = operands if name in _WRITERS_OVER_EVERY_OPERAND or name in _WRITER_TARGET_OPTIONS \
-        else operands[-1:]
+    if name == "sed":
+        targets = (operands if expression_given else operands[1:]) if in_place else []
+    elif name in _WRITERS_OVER_EVERY_OPERAND:
+        targets = operands
+    elif name in _WRITERS_OVER_THE_LAST_OPERAND:
+        targets = operands[-1:]
+    else:
+        targets = []                         # curl/wget/dd: the target came from its own option
     for target in targets:
         _record_one_write_target(target, context)
 

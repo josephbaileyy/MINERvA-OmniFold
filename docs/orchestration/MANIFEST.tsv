@@ -245,7 +245,7 @@ docs/orchestration/agent_session_notify.py	tracked	MACHINE	script			generated		e
 docs/orchestration/agentctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/test_wakerctl.py;docs/orchestration/wakerctl.py;nd-unfolding/tests/test_mnv_guarded_run.py	no	14	983	34900
 docs/orchestration/audit_gates_that_cannot_fail.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_cannot_fail_auditor.py	no	9	625	31531
 docs/orchestration/audit_validator_tolerance_units.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_validator_units_auditor.py	no	4	231	10090
-docs/orchestration/campaignctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/wakerctl.py;nd-unfolding/mnv_guarded_run.py;nd-unfolding/tests/test_mnv_guarded_run.py	no	9	4000	173599
+docs/orchestration/campaignctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/wakerctl.py;nd-unfolding/mnv_guarded_run.py;nd-unfolding/tests/test_mnv_guarded_run.py	no	9	4071	177142
 docs/orchestration/compare_m1_m6.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/test_compare_m1_m6.py	no	41	1101	67440
 docs/orchestration/control-plane/campaign-origin.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/campaignctl.py;docs/orchestration/test_campaignctl.py;docs/orchestration/verify_hash_bindings.py	no	5	8	392
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	4	13	747

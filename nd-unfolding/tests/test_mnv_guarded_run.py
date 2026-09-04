@@ -2325,6 +2325,881 @@ class TheClosedChildModelRefusesWhatItCannotProve(unittest.TestCase):
                                        mgr.LAUNCH_REASON_FLAGS, "-I")
 
 
+class Round7Fixture(unittest.TestCase):
+    """The round-7 fixture: two checkouts, the real guard deployed, a hijacking child to hand out.
+
+    IT IS THE ROUND-6 FIXTURE'S SHAPE AND NOT A NEW ONE, deliberately: the three findings below are
+    the same defect class round 6 measured, so an arm that passed there and fails here has to differ
+    in the RULE and not in the scaffolding. Every arm runs the real guard in a real subprocess and
+    checks a file on disk, because "refused" and "refused after the wrong tree loaded" are the same
+    exit code and only the sentinel tells them apart.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        tmp = pathlib.Path(self._tmp.name).resolve()
+        self.tmp = tmp
+        self.good = make_checkout(tmp, "expected-tree")
+        self.bad = make_checkout(tmp, "stale-tree")
+        write(self.good / "nd-unfolding" / "victim.py", "MARK = 'RIGHT TREE'\n")
+        write(self.bad / "nd-unfolding" / "victim.py", "MARK = 'WRONG TREE'\n")
+        self.nd = self.good / "nd-unfolding"
+        self.inventory = tmp / "inventory" / "guard.jsonl"
+        self.deployed_guard = self.nd / "mnv_guarded_run.py"
+        self.deployed_guard.write_bytes(GUARD.read_bytes())
+        self.deployed_shim = self.nd / "mnv_guard_shim"
+        deploy_shim(self.deployed_shim)
+        self.addCleanup(self._tmp.cleanup)
+
+    def guarded(self, parent, *, static_scan=True):
+        """Run the deployed guard over `parent`. `static_scan=False` sets the test-only knob.
+
+        THE KNOB EXISTS SO THE TWO LAYERS CAN BE MEASURED APART. With the static scanner in front,
+        a reproducer never reaches the restricted shell -- so "bash would have refused it too" would
+        be an assertion nobody ran. `MNV_GUARD_TEST_ONLY_DISABLE_STATIC_SCAN` makes the guard
+        swallow its own launch refusals and hand the launch on with the restricted rewrite intact,
+        which leaves bash as the thing that decides. It disables nothing else, and every record
+        written while it is set says `static_scan: disabled-for-test`.
+        """
+        env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+        env = {k: v for k, v in env.items() if not k.startswith("GIT_")}
+        if not static_scan:
+            env[mgr.STATIC_SCAN_DISABLED_ENV] = "1"
+        return subprocess.run(
+            [sys.executable, str(self.deployed_guard), "--expect-root", str(self.good),
+             "--inventory", str(self.inventory), "--", str(parent)],
+            capture_output=True, text=True, env=env)
+
+    def records(self):
+        if not self.inventory.exists():
+            return []
+        return [json.loads(line) for line in self.inventory.read_text().splitlines()
+                if line.strip()]
+
+    def hijacking_child(self, name: str):
+        """A Python child that RECORDS HAVING RUN, then commits the OI-136 defect."""
+        sentinel = self.tmp / f"{name}-ran"
+        child = write(
+            self.nd / f"{name}.py",
+            "import pathlib, sys\n"
+            f"pathlib.Path({str(sentinel)!r}).write_text('ran')\n"
+            f"sys.path.insert(0, {str(self.bad / 'nd-unfolding')!r})\n"
+            "import victim\n"
+            "print('HIJACK-LOADED', victim.MARK)\n",
+        )
+        return child, sentinel
+
+    def clean_child(self, name: str = "child_clean"):
+        return write(self.nd / f"{name}.py",
+                     "import victim\nprint('CHILD-LOADED', victim.MARK)\n")
+
+    def bash_parent(self, name: str, body: str, *, cwd=None):
+        """Write a shell script and a parent that runs it with `/bin/bash <abs path>`."""
+        script = write(self.nd / f"{name}.sh", body)
+        parent = write(
+            self.nd / f"parent_{name}.py",
+            "import os, subprocess\n"
+            "env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}\n"
+            f"raise SystemExit(subprocess.run(['/bin/bash', {str(script)!r}], env=env, "
+            f"cwd={str(cwd or self.nd)!r}).returncode)\n")
+        return parent
+
+    def assertRefusedStatically(self, result, sentinel, reason=None, offending=None):
+        """Exit 3, `[oi136 launch]`, a REFUSED-launch record, and the sentinel ABSENT."""
+        self.assertEqual(result.returncode, mgr.VIOLATION_EXIT, result.stdout + result.stderr)
+        self.assertIn("[oi136 launch]", result.stderr)
+        self.assertNotIn("HIJACK-LOADED", result.stdout)
+        self.assertFalse(sentinel.exists(),
+                         "the sentinel exists, so the refused child RAN -- this is the reviewer's "
+                         "finding, not a refusal")
+        records = self.records()
+        self.assertEqual([record["depth"] for record in records], [0],
+                         "a child record means a child interpreter started")
+        self.assertEqual(records[0]["verdict"], "REFUSED launch")
+        self.assertEqual(records[0]["refusal_site"], mgr.SITE_LAUNCH)
+        self.assertEqual(records[0]["static_scan"], "enabled")
+        refusal = records[0]["launch_refusal"]
+        self.assertIsNotNone(refusal, records[0])
+        if reason is not None:
+            self.assertEqual(refusal["reason"], reason, refusal)
+        if offending is not None:
+            self.assertIn(offending, refusal["offending_flag"], refusal)
+        return records[0]
+
+    def assertRefusedByTheShellItself(self, result, sentinel, message):
+        """The SHELL's own error, the sentinel absent, and NO child record for a foreign import.
+
+        THE EXIT CODE IS NOT THE ASSERTION HERE, and that is bash's semantics rather than a
+        weakening. `bash -r` refuses ONE COMMAND and carries on -- `cd: restricted` then the next
+        line -- so a script whose last command succeeds exits 0 while the refused line never ran.
+        What proves the refusal is the message bash printed, the sentinel that does not exist, and
+        the absence of any record from an interpreter that would have written one.
+        """
+        self.assertIn(message, result.stderr, result.stdout + result.stderr)
+        self.assertFalse(sentinel.exists(),
+                         "restricted bash did not stop the child: the sentinel exists")
+        self.assertNotIn("HIJACK-LOADED", result.stdout)
+        self.assertEqual([record["depth"] for record in self.records()], [0],
+                         "a depth-1 record means the foreign import's interpreter started")
+        self.assertEqual(self.records()[0]["static_scan"], "disabled-for-test")
+
+
+class TheExecutedFileIsWhatIsClassifiedNeverArgvZero(Round7Fixture):
+    """ROUND 7, FINDING 1: the guard trusted `ls` while the kernel ran Python.
+
+    THE FINDING VERBATIM: "subprocess's actual executable is not scanned. mnv_guarded_run.py:2928
+    classifies only argv; :2964 passes executable= separately. Reproducer:
+    `subprocess.run(["ls", "-I", "child.py"], executable=sys.executable)`. The guard trusted ls as a
+    leaf tool while Python actually executed. Result: exit 0, foreign import ran, sentinel created,
+    no refusal and no guarded-child record."
+
+    IT IS NOT A `subprocess` DETAIL AND THAT IS THE POINT OF THE TABLE. Every POSIX exec primitive
+    takes the file to execute SEPARATELY from the argv -- `execv(path, argv)`, `spawnv(mode, file,
+    args)`, `posix_spawn(path, argv, env)` -- and `argv[0]` is a display name in all of them.
+    `env -a`, `exec -a` and `bash -c cmd name` exist precisely to set it to something else. So each
+    primitive that has the two arguments gets a row, and each row is the reviewer's reproducer with
+    that primitive's spelling: a Python interpreter as the file, `-I` as an argument, and `ls` as
+    the display name.
+    """
+
+    def python_under_a_false_name(self, name: str, call: str):
+        child, sentinel = self.hijacking_child(name)
+        parent = write(
+            self.nd / f"parent_{name}.py",
+            "import os, subprocess, sys\n"
+            f"CHILD = {str(child)!r}\n"
+            f"{call}\n")
+        return parent, sentinel
+
+    #: THE ARGV IS `["ls", "-I", CHILD]` IN EVERY ROW and the executable is a real interpreter, so a
+    #: guard reading `argv[0]` sees a leaf tool and a guard reading the executable sees `python -I`.
+    #: `check_output` is here beside `run` because they are different callables in the module even
+    #: though both reach `Popen`, and a reader of this table should not have to know that.
+    SUBPROCESS_SPELLINGS = {
+        "run": "raise SystemExit(subprocess.run(['ls', '-I', CHILD],\n"
+               "    executable=sys.executable).returncode)",
+        "Popen": "raise SystemExit(subprocess.Popen(['ls', '-I', CHILD],\n"
+                 "    executable=sys.executable).wait())",
+        "call": "raise SystemExit(subprocess.call(['ls', '-I', CHILD],\n"
+                "    executable=sys.executable))",
+        "check_call": "subprocess.check_call(['ls', '-I', CHILD], executable=sys.executable)",
+        "check_output": "subprocess.check_output(['ls', '-I', CHILD], executable=sys.executable)",
+    }
+
+    def test_the_reviewers_reproducer_is_refused_for_every_subprocess_spelling(self):
+        for name, call in self.SUBPROCESS_SPELLINGS.items():
+            with self.subTest(primitive=name):
+                self.inventory.unlink(missing_ok=True)
+                parent, sentinel = self.python_under_a_false_name(f"exe_{name}", call)
+                self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                             mgr.LAUNCH_REASON_FLAGS, "-I")
+
+    #: `os.execl*` AND `os.spawnl*` ARE NOT LISTED and are not missing: CPython implements them by
+    #: calling the module-global `execv`/`execve`/`spawnv*`, which this guard has replaced, so a row
+    #: for each would measure the same wrapper twice under a different spelling.
+    OS_SPELLINGS = {
+        "execv": "os.execv(sys.executable, ['ls', '-I', CHILD])",
+        "execve": "os.execve(sys.executable, ['ls', '-I', CHILD], dict(os.environ))",
+        "spawnv": "raise SystemExit(os.spawnv(os.P_WAIT, sys.executable, ['ls', '-I', CHILD]))",
+        "spawnve": "raise SystemExit(os.spawnve(os.P_WAIT, sys.executable, ['ls', '-I', CHILD],\n"
+                   "    dict(os.environ)))",
+        "posix_spawn": "pid = os.posix_spawn(sys.executable, ['ls', '-I', CHILD],\n"
+                       "    dict(os.environ))\n"
+                       "_, status = os.waitpid(pid, 0)\n"
+                       "raise SystemExit(os.waitstatus_to_exitcode(status))",
+        "posix_spawnp": "pid = os.posix_spawnp(sys.executable, ['ls', '-I', CHILD],\n"
+                        "    dict(os.environ))\n"
+                        "_, status = os.waitpid(pid, 0)\n"
+                        "raise SystemExit(os.waitstatus_to_exitcode(status))",
+    }
+
+    def test_the_reviewers_reproducer_is_refused_for_every_os_exec_and_spawn_primitive(self):
+        for name, call in self.OS_SPELLINGS.items():
+            with self.subTest(primitive=name):
+                self.inventory.unlink(missing_ok=True)
+                parent, sentinel = self.python_under_a_false_name(f"osx_{name}", call)
+                self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                             mgr.LAUNCH_REASON_FLAGS, "-I")
+
+    def test_the_execvp_family_resolves_the_name_on_the_CHILDS_path_not_on_argv_zero(self):
+        """`os.execvp("python3", ["ls", "-I", child])`: the file is a NAME and it is resolved.
+
+        The `p` spellings are the ones where "the executable" is not a path but a lookup, and the
+        lookup uses the CHILD's `PATH`. A guard that classified `argv[0]` would see `ls`; one that
+        classified the file has to resolve `python3` the way the child will.
+        """
+        child, sentinel = self.hijacking_child("execvp_child")
+        parent = write(
+            self.nd / "parent_execvp.py",
+            "import os\n"
+            f"os.execvp('python3', ['ls', '-I', {str(child)!r}])\n")
+        self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                     mgr.LAUNCH_REASON_FLAGS, "-I")
+
+    @unittest.skipUnless(shutil.which("zsh"), "no zsh on this platform")
+    def test_with_shell_True_the_executable_kwarg_IS_the_shell_and_replaces_bin_sh(self):
+        """`subprocess.run(cmd, shell=True, executable="/bin/zsh")` is a ZSH launch, not an `sh` one.
+
+        CPython builds `[executable or "/bin/sh", "-c", cmd]`, so `executable=` decides WHICH SHELL
+        interprets the string -- a different language with different startup files and a restricted
+        mode this guard does not model. A scan that assumed `/bin/sh` would read the string with
+        one shell's grammar and hand it to another. The refusal names `zsh`, which is the only
+        evidence that the kwarg was read.
+        """
+        child, sentinel = self.hijacking_child("shell_exe_child")
+        parent = write(
+            self.nd / "parent_shell_exe.py",
+            "import subprocess\n"
+            f"raise SystemExit(subprocess.run('python3 {shlex.quote(str(child))}', shell=True,\n"
+            "    executable='/bin/zsh').returncode)\n")
+        self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                     mgr.LAUNCH_REASON_UNPROVEN, "zsh")
+
+    def test_THE_SILENT_DIRECTION_a_true_leaf_under_its_own_name_still_runs(self):
+        """The power arm: `executable=` naming the tool it says it names is ADMITTED.
+
+        Without this the class above would pass for a guard that refused every `executable=`, which
+        is a rule nobody could keep. The same argv, with `ls` as the executable as well as as the
+        display name, runs -- and the `-I` in it is `ls`'s own ignore-pattern option, which is what
+        makes the pair a comparison rather than two unlike things.
+        """
+        parent = write(
+            self.nd / "parent_true_leaf.py",
+            "import subprocess\n"
+            f"code = subprocess.run(['ls', '-I', 'victim.py'], executable='/bin/ls',\n"
+            f"    cwd={str(self.nd)!r}).returncode\n"
+            "print('LEAF-EXIT', code)\n")
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("LEAF-EXIT 0", result.stdout)
+        self.assertNotIn("[oi136 launch]", result.stderr)
+        self.assertIsNone(self.records()[0]["launch_refusal"])
+
+
+class TheRestrictedShellIsTheSecondLayerAndRefusesOnItsOwn(Round7Fixture):
+    """ROUND 7, FINDINGS 2 AND 3, AND THE MODEL CHANGE THEY FORCED. Two layers, measured apart.
+
+    THE TWO FINDINGS VERBATIM. (2) "Shell-expanded Python flags bypass the static scan. :2655
+    rejects runtime-built command words, but not runtime-built arguments. `FLAG=-I` /
+    `/usr/bin/python3 "$FLAG" child.py`. This also ran successfully outside the shim contract with
+    no refusal or child record." (3) "A preceding cd can make the scanner inspect the wrong script.
+    :2448 explicitly does not model cd. With a benign child.sh in the launch directory and a
+    malicious one under sub/: `cd sub` / `bash child.sh` -- the guard scanned the benign file; the
+    shell executed the malicious file. Its Python -I launch escaped and imported the foreign
+    module."
+
+    WHY THE FIX IS NOT A THIRD PATCH TO THE MODEL. Rounds 5, 6 and 7 each found a construct this
+    guard's model of shell syntax got wrong, and each time the answer was a better model. The
+    boundary of that answer is "how well one Python file parses shell", which is not a boundary
+    anybody can state. So the model stopped being the enforcement: an admitted shell is REWRITTEN to
+    run as `bash -r` with a PATH holding the guard's wrapper directories and nothing else, and what
+    a shell program can reach is bounded by bash's own restricted mode (manual section 6.10) plus
+    the contents of one directory. The static scanner stays in front as the first refuser.
+
+    SO EVERY REPRODUCER IS MEASURED TWICE, AND THE SECOND MEASUREMENT NEEDS THE KNOB. With the
+    static scanner in front, a reproducer never reaches bash -- so "the shell would have refused it
+    too" would be a claim nobody ran. `Round7Fixture.guarded(static_scan=False)` stands the static
+    half down and leaves the rewrite in place, and the arms below then assert BASH'S OWN message.
+    """
+
+    # --- finding 2: a runtime-built ARGUMENT, not a command word -------------------------------
+
+    def test_finding_2_a_shell_expanded_python_flag_is_refused_by_the_STATIC_scanner(self):
+        """`FLAG=-I` then `/usr/bin/python3 "$FLAG" child.py`, exactly as the reviewer wrote it.
+
+        The command word is a literal absolute path, so the predecessor's one question -- "is the
+        COMMAND WORD built at run time" -- answered no and the scan went on to a flag walk over
+        `["$FLAG", "child.py"]`, in which `$FLAG` is not a token starting with `-`. It read as the
+        script operand and ended the walk. The rule is now that every token up to and including an
+        interpreter's first operand must be literal, and the refusal names the token.
+        """
+        child, sentinel = self.hijacking_child("flag_expansion")
+        parent = self.bash_parent(
+            "flag_expansion",
+            "FLAG=-I\n"
+            f"/usr/bin/python3 \"$FLAG\" {shlex.quote(str(child))}\n")
+        record = self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                              mgr.LAUNCH_REASON_UNPARSED, "$FLAG")
+        self.assertIn("python interpreter option", record["launch_refusal"]["offending_flag"])
+
+    def test_finding_2_is_refused_AGAIN_by_restricted_bash_with_the_static_scanner_STOOD_DOWN(self):
+        """The same script, the static half disabled: `bash -r` refuses the absolute command name.
+
+        THE TWO LAYERS ARE INDEPENDENT AND THIS IS WHAT MAKES THAT MEASURED. Restricted bash never
+        looks at `$FLAG` -- what it refuses is `/usr/bin/python3`, because its first documented
+        restriction is that a command name may not contain a slash. So the expansion could have
+        been anything at all and the launch would still not have happened, which is a claim about
+        the shape of the program rather than about this file's ability to read one token.
+        """
+        child, sentinel = self.hijacking_child("flag_expansion_dyn")
+        parent = self.bash_parent(
+            "flag_expansion_dyn",
+            "FLAG=-I\n"
+            f"/usr/bin/python3 \"$FLAG\" {shlex.quote(str(child))}\n")
+        result = self.guarded(parent, static_scan=False)
+        self.assertRefusedByTheShellItself(
+            result, sentinel, "/usr/bin/python3: restricted: cannot specify `/' in command names")
+
+    # --- finding 3: a preceding cd ------------------------------------------------------------
+
+    def two_child_scripts(self, *, malicious_sub: bool):
+        """`child.sh` in the launch directory and `sub/child.sh` under it. One name, two files.
+
+        The launch-directory copy is always benign. `malicious_sub` decides whether the copy the
+        `cd` would reach launches an isolated interpreter -- which is the reviewer's arrangement --
+        or is benign too, which is the arrangement that shows what the DYNAMIC layer costs.
+        """
+        child, sentinel = self.hijacking_child(
+            "cd_hijack" if malicious_sub else "cd_benign")
+        write(self.nd / "child.sh", "echo BENIGN-IN-LAUNCH-DIR\n")
+        sub = self.nd / "sub"
+        sub.mkdir(exist_ok=True)
+        write(sub / "child.sh",
+              f"/usr/bin/python3 -I {shlex.quote(str(child))}\n" if malicious_sub
+              else "echo BENIGN-IN-SUB\n")
+        return child, sentinel
+
+    def test_finding_3_a_preceding_cd_no_longer_makes_the_scanner_read_the_wrong_file(self):
+        """`cd sub` then `bash child.sh`, with the malicious copy under `sub/`.
+
+        THE PREDECESSOR SCANNED A FILE THAT EXISTED AND WAS NOT THE ONE THAT RAN. It resolved a
+        relative operand against the launch cwd, found the benign `child.sh` there, read it, and
+        admitted the launch; the shell had already moved into `sub/`. There is no way to pick
+        correctly without executing the `cd`, so the scanner picks ALL of them: `cd` with a literal
+        operand ADDS a candidate directory, a relative operand is resolved against every candidate,
+        and every resolution that exists is read. The malicious copy is therefore read, and the
+        refusal names ITS `-I` -- which only a scan of that file's contents can produce.
+        """
+        child, sentinel = self.two_child_scripts(malicious_sub=True)
+        parent = self.bash_parent("cd_hijack", "cd sub\nbash child.sh\n")
+        self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                     mgr.LAUNCH_REASON_FLAGS, "-I")
+
+    def test_finding_3_is_refused_AGAIN_by_restricted_bash_with_the_static_scanner_STOOD_DOWN(self):
+        """The same two files, the static half disabled: `bash -r` refuses the `cd` itself.
+
+        The shell never leaves the launch directory, so `bash child.sh` runs the BENIGN copy that
+        was always there -- which is visible on stdout -- and the malicious one under `sub/` is
+        never reached by anything. The second layer does not need to know which file was dangerous.
+        """
+        child, sentinel = self.two_child_scripts(malicious_sub=True)
+        parent = self.bash_parent("cd_hijack_dyn", "cd sub\nbash child.sh\n")
+        result = self.guarded(parent, static_scan=False)
+        self.assertRefusedByTheShellItself(result, sentinel, "cd: restricted")
+        self.assertIn("BENIGN-IN-LAUNCH-DIR", result.stdout)
+        self.assertNotIn("BENIGN-IN-SUB", result.stdout)
+
+    def test_a_BENIGN_cd_is_admitted_statically_AND_REFUSED_BY_THE_SHELL_which_is_the_model(self):
+        """Both `child.sh` files benign: the static scan admits, and restricted bash still says no.
+
+        THIS ARM IS THE COST OF THE MODEL, WRITTEN DOWN RATHER THAN DISCOVERED LATER. Nothing in
+        this program is wrong: the scanner reads both copies, both are `echo`, and it admits. Bash
+        then refuses the `cd` anyway, because `cd` is refused in restricted mode whatever it points
+        at -- and the program runs the launch-directory copy instead of the one it meant to. A
+        launcher that changes directory has to be respelled with absolute paths.
+
+        BOTH HALVES ARE ASSERTED IN ONE ARM ON PURPOSE. Split apart, "the static scan admits" and
+        "the shell refuses" are two facts about two runs; together they are the statement that the
+        two layers DISAGREE here, which is the thing a reader of the model needs to know.
+        """
+        child, sentinel = self.two_child_scripts(malicious_sub=False)
+        parent = self.bash_parent("cd_benign", "cd sub\nbash child.sh\n")
+        result = self.guarded(parent)
+        self.assertNotIn("[oi136 launch]", result.stderr,
+                         "the static scanner refused a program with nothing wrong in it")
+        self.assertIn("cd: restricted", result.stderr)
+        self.assertIn("BENIGN-IN-LAUNCH-DIR", result.stdout)
+        self.assertNotIn("BENIGN-IN-SUB", result.stdout)
+        self.assertFalse(sentinel.exists())
+
+    def test_an_UNKNOWN_working_directory_refuses_a_relative_operand_rather_than_guessing(self):
+        """`cd "$D"`, a bare `cd`, `cd -`, `cd ~x` and `CDPATH=`: the candidate set is UNKNOWN.
+
+        AN EMPTY SET WOULD BE THE WRONG STATE and this is why the tracker has three. With the
+        destination unresolvable, "every directory the operand could name" is unbounded -- so a
+        relative `bash child.sh` after one of these is a REFUSAL that names the construct, not a
+        file-not-found and not a scan of whichever copy happens to be nearest.
+        """
+        self.two_child_scripts(malicious_sub=False)
+        cases = {
+            "runtime operand": 'D=/tmp\ncd "$D"\nbash child.sh\n',
+            "no operand": "cd\nbash child.sh\n",
+            "cd -": "cd -\nbash child.sh\n",
+            "cd ~user": "cd ~root\nbash child.sh\n",
+            "CDPATH assigned": "CDPATH=/tmp\ncd sub\nbash child.sh\n",
+        }
+        for name, body in cases.items():
+            with self.subTest(construct=name):
+                self.inventory.unlink(missing_ok=True)
+                parent = self.bash_parent(f"cd_unknown_{abs(hash(name))}", body)
+                result = self.guarded(parent)
+                self.assertEqual(result.returncode, mgr.VIOLATION_EXIT,
+                                 result.stdout + result.stderr)
+                refusal = self.records()[0]["launch_refusal"]
+                self.assertEqual(refusal["reason"], mgr.LAUNCH_REASON_UNPARSED, refusal)
+                self.assertIn("cannot be resolved", refusal["offending_flag"])
+        # THE SILENT DIRECTION: an ABSOLUTE operand is unaffected by an unknown working directory,
+        # because its identity does not depend on one.
+        self.inventory.unlink(missing_ok=True)
+        parent = self.bash_parent(
+            "cd_unknown_absolute",
+            f"cd\nbash {shlex.quote(str(self.nd / 'child.sh'))}\n")
+        result = self.guarded(parent)
+        self.assertNotIn("[oi136 launch]", result.stderr, result.stdout + result.stderr)
+
+    # --- finding 1 has no second layer, and that is measured rather than assumed ---------------
+
+    def test_finding_1_HAS_NO_SECOND_LAYER_AND_THE_STATIC_CLASSIFICATION_IS_THE_WHOLE_OF_IT(self):
+        """The `executable=` reproducer, with the static half stood down: it RUNS.
+
+        SAYING SO IS THE POINT OF THIS ARM. Findings 2 and 3 are shell programs, so restricted bash
+        stands behind the scanner for both; finding 1 is `subprocess.run(["ls", "-I", child],
+        executable=sys.executable)` -- no shell anywhere in it, and an ABSOLUTE executable, so no
+        PATH lookup and therefore no interpreter wrapper either. There is nothing behind the
+        classification. With it disabled the sentinel is written and the wrong tree loads, which is
+        the reviewer's original observation reproduced on purpose.
+
+        A CLAIM OF "TWO INDEPENDENT LAYERS" THAT COVERED THIS CASE WOULD BE FALSE, and a suite that
+        simply omitted the arm would leave the reader to assume the general claim. The guard's
+        answer for finding 1 is that the classification is now correct, not that something else
+        would have caught it.
+        """
+        child, sentinel = self.hijacking_child("no_second_layer")
+        parent = write(
+            self.nd / "parent_no_second_layer.py",
+            "import subprocess, sys\n"
+            f"subprocess.run(['ls', '-I', {str(child)!r}], executable=sys.executable)\n")
+        result = self.guarded(parent, static_scan=False)
+        self.assertTrue(sentinel.exists(),
+                        "the arm is vacuous: the child did not run even with the scanner disabled")
+        self.assertIn("HIJACK-LOADED WRONG TREE", result.stdout)
+        # And WITH the scanner enabled, which is the state every real run is in.
+        self.inventory.unlink(missing_ok=True)
+        sentinel.unlink()
+        self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                     mgr.LAUNCH_REASON_FLAGS, "-I")
+
+
+class TheStaticScannerRefusesEveryTokenThatCanSelectAProgram(Round7Fixture):
+    """ROUND 7, PART C: the first layer, as a table over what a shell program is allowed to say.
+
+    THE STATIC SCANNER IS NO LONGER THE ENFORCEMENT AND IT IS STILL THE FIRST REFUSER, and both
+    halves of that sentence are why this class is separate from the restricted-shell one. It is not
+    the enforcement because bash's restricted mode is; it is still worth having because a refusal
+    that happens BEFORE the launch names the construct, points at the line, and costs no compute --
+    and because for an `sbatch` job script, which runs on a compute node in another process tree,
+    there is nothing behind it.
+
+    EVERY ROW REFUSES BEFORE ANYTHING RUNS, and each names the token it refused for. The rows are
+    the four rules of part C: a runtime-built token anywhere it could select a program or an
+    interpreter option, `xargs` over anything but a leaf, a working directory this scan cannot
+    resolve, and a path the program both WRITES and RUNS.
+    """
+
+    def refusing_rows(self, child):
+        quoted = shlex.quote(str(child))
+        return {
+            # round 6's three, which must stay refused
+            "PATH= in front of the interpreter": (
+                f"PATH=/usr/bin:/bin python3 -I {quoted}\n", mgr.LAUNCH_REASON_ENV, "PATH="),
+            "command -p": (f"command -p python3 {quoted}\n", mgr.LAUNCH_REASON_ENV, "-p"),
+            "env -P": (f"env -P /usr/bin:/bin python3 -I {quoted}\n",
+                       mgr.LAUNCH_REASON_UNMODELLED, "-P"),
+            "hash -p": (f"hash -p /usr/bin/python3 python3\npython3 -I {quoted}\n",
+                        mgr.LAUNCH_REASON_UNPROVEN, "hash -p"),
+            # round 7's runtime-token rule, in each position it covers
+            "an indirect command word": (f"PY=/usr/bin/python3\n$PY {quoted}\n",
+                                         mgr.LAUNCH_REASON_UNPARSED, "$PY"),
+            "an expanded interpreter option": (f"F=-I\npython3 \"$F\" {quoted}\n",
+                                               mgr.LAUNCH_REASON_UNPARSED, "$F"),
+            "an expanded script operand": ("S=x.py\npython3 \"$S\"\n",
+                                           mgr.LAUNCH_REASON_UNPARSED, "$S"),
+            "an expanded -m module": ("M=json.tool\npython3 -m \"$M\"\n",
+                                      mgr.LAUNCH_REASON_UNPARSED, "$M"),
+            "an expanded -c program": ("C='import os'\npython3 -c \"$C\"\n",
+                                       mgr.LAUNCH_REASON_UNPARSED, "$C"),
+            "python3 \"$@\"": ("python3 \"$@\"\n", mgr.LAUNCH_REASON_UNPARSED, "$@"),
+            "an expanded shell script operand": ("S=child.sh\nbash \"$S\"\n",
+                                                 mgr.LAUNCH_REASON_UNPARSED, "$S"),
+            "an expanded wrapper option": (f"T=5\ntimeout \"$T\" python3 {quoted}\n",
+                                           mgr.LAUNCH_REASON_UNPARSED, "$T"),
+            "an expanded sbatch option": (f"A=acct\nsbatch -A \"$A\" job.sh\n",
+                                          mgr.LAUNCH_REASON_UNPARSED, "$A"),
+            "an expanded srun option": (f"N=1\nsrun -n \"$N\" python3 {quoted}\n",
+                                        mgr.LAUNCH_REASON_UNPARSED, "$N"),
+            "an expanded git global option": ("G=--no-pager\ngit \"$G\" status\n",
+                                              mgr.LAUNCH_REASON_UNPARSED, "$G"),
+            "an expanded git log argument": ("R=HEAD\ngit log --no-ext-diff \"$R\"\n",
+                                             mgr.LAUNCH_REASON_UNPARSED, "$R"),
+            "a glob in the interpreter path": (f"./py*/python3 {quoted}\n",
+                                               mgr.LAUNCH_REASON_UNPARSED, "*"),
+            # xargs builds its child's argv at run time by construction
+            "xargs over an interpreter": (f"echo {quoted} | xargs python3\n",
+                                          mgr.LAUNCH_REASON_UNPARSED, "xargs"),
+            # the environment that decides which interpreter and which stdlib
+            "PYTHONHOME in front of the interpreter": (f"PYTHONHOME=/x python3 {quoted}\n",
+                                                       mgr.LAUNCH_REASON_ENV, "PYTHONHOME"),
+        }
+
+    def test_every_construct_that_can_select_a_program_is_refused_before_the_launch(self):
+        child, sentinel = self.hijacking_child("static_table")
+        for name, (body, reason, offending) in self.refusing_rows(child).items():
+            with self.subTest(construct=name):
+                self.inventory.unlink(missing_ok=True)
+                sentinel.unlink(missing_ok=True)
+                parent = self.bash_parent(f"static_{abs(hash(name))}", body)
+                self.assertRefusedStatically(self.guarded(parent), sentinel, reason, offending)
+
+    def test_a_copied_interpreter_UNDER_ANOTHER_NAME_is_refused_for_what_it_is(self):
+        """`./tool child.py` where `tool` is a byte copy of the interpreter.
+
+        A NAME IS NOT A BEHAVIOUR IN BOTH DIRECTIONS. The leaf table refuses a file called `ls` that
+        turns out to be a script; this is the same rule with the roles swapped -- a file called
+        `tool` that turns out to be an interpreter. It resolves to no system prefix, matches no
+        interpreter name, and carries no shebang to read, so there is nothing about it this guard
+        can establish and it refuses. Restricted bash would refuse it a second time for the slash.
+        """
+        child, sentinel = self.hijacking_child("copied_interpreter")
+        tool = self.nd / "tool"
+        shutil.copy2(sys.executable, tool)
+        tool.chmod(0o755)
+        parent = self.bash_parent("copied_interpreter",
+                                  f"./tool -I {shlex.quote(str(child))}\n")
+        self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                     mgr.LAUNCH_REASON_UNPROVEN, "tool")
+
+    def test_a_path_the_program_both_WRITES_and_RUNS_is_refused_however_the_write_is_spelled(self):
+        """WRITE-THEN-EXECUTE: the bytes this scan read are not the bytes that would run.
+
+        IT IS NOT A RACE THIS GUARD CAN WIN BY RE-READING. The write happens after the launch is
+        admitted, inside the program, so a second read at launch time would see the same bytes the
+        first one did. The composition is refused instead -- and the ORDER OF THE LINES IS NOT THE
+        BOUND, which the reversed row asserts: a program that runs `stage.sh` and then rewrites it
+        is the same program the next time round.
+
+        THE RUNTIME-TARGET ROW IS THE OTHER HALF. `cp payload.sh "$OUT"` names a path this scan
+        cannot compare with anything, so the intersection is empty for the wrong reason; paired with
+        a relative script operand, whose identity is also decided later, the two cannot be shown to
+        be different files.
+        """
+        write(self.nd / "payload.sh", "echo payload\n")
+        write(self.nd / "stage.sh", "echo staged\n")
+        rows = {
+            "cp then run": "cp payload.sh stage.sh\nbash stage.sh\n",
+            "run then cp": "bash stage.sh\ncp payload.sh stage.sh\n",
+            "mv then run": "mv payload.sh stage.sh\nbash stage.sh\n",
+            "tee then run": "echo x | tee stage.sh\nbash stage.sh\n",
+            "redirection then run": "echo x > stage.sh\nbash stage.sh\n",
+            "rsync then run": "rsync payload.sh stage.sh\nbash stage.sh\n",
+            "source, not run": "cp payload.sh stage.sh\nsource stage.sh\n",
+            "runtime target and a relative operand": (
+                "OUT=stage.sh\ncp payload.sh \"$OUT\"\nbash stage.sh\n"),
+        }
+        child, sentinel = self.hijacking_child("toctou")
+        for name, body in rows.items():
+            with self.subTest(row=name):
+                self.inventory.unlink(missing_ok=True)
+                parent = self.bash_parent(f"toctou_{abs(hash(name))}", body)
+                record = self.assertRefusedStatically(self.guarded(parent), sentinel,
+                                                      mgr.LAUNCH_REASON_UNPARSED)
+                self.assertIn("stage.sh", record["launch_refusal"]["offending_flag"])
+        # THE SILENT DIRECTION, and it is the one that keeps the rule usable: writing a file the
+        # program does NOT run is what a science step does all day.
+        self.inventory.unlink(missing_ok=True)
+        parent = self.bash_parent("toctou_clean",
+                                  "cp payload.sh other.sh\nbash stage.sh\n")
+        result = self.guarded(parent)
+        self.assertNotIn("[oi136 launch]", result.stderr, result.stdout + result.stderr)
+
+    def test_the_WRITER_table_is_wider_than_the_leaf_table_and_the_leaf_rule_fires_first(self):
+        """`sed -i`, `chmod`, `install`, `dd`, `curl -o`: refused as NON-LEAVES before the write.
+
+        THE TWO TABLES ARE NOT THE SAME TABLE AND A READER SHOULD NOT HAVE TO INFER THAT. Round 7's
+        write-then-execute rule names the writers it models -- `_WRITER_BASENAMES` -- and most of
+        those names are deliberately absent from `_LEAF_TOOL_BASENAMES`, because `sed` has an `e`
+        command, `install` runs a strip program and `curl` writes wherever it is told. So inside an
+        admitted shell program they refuse for being unprovable children, and the composition check
+        never gets to see them.
+
+        THE WRITER TABLE IS KEPT WIDE ANYWAY, and this arm is why that is not dead code: the two
+        tables move independently, and a later round that admits one of these names as a leaf must
+        find the composition rule already covering it rather than have to remember to add it.
+        """
+        write(self.nd / "payload.sh", "echo payload\n")
+        write(self.nd / "stage.sh", "echo staged\n")
+        for command in ("sed -i s/a/b/ stage.sh", "chmod +x stage.sh",
+                        "install payload.sh stage.sh", "dd if=payload.sh of=stage.sh",
+                        "curl -o stage.sh http://example.invalid/x"):
+            with self.subTest(writer=command.split()[0]):
+                self.inventory.unlink(missing_ok=True)
+                parent = self.bash_parent(f"writer_{abs(hash(command))}",
+                                          f"{command}\nbash stage.sh\n")
+                result = self.guarded(parent)
+                self.assertEqual(result.returncode, mgr.VIOLATION_EXIT,
+                                 result.stdout + result.stderr)
+                self.assertEqual(self.records()[0]["launch_refusal"]["reason"],
+                                 mgr.LAUNCH_REASON_UNPROVEN)
+        # And the unit-level claim the arm above cannot reach: the writer table DOES model each of
+        # them, called directly, so widening the leaf table cannot silently uncover the composition.
+        for tokens, target in ((["sed", "-i", "s/a/b/", "stage.sh"], "stage.sh"),
+                               (["sed", "-i.bak", "-e", "s/a/b/", "one.sh"], "one.sh"),
+                               (["chmod", "+x", "a.sh", "b.sh"], "b.sh"),
+                               (["install", "-m", "755", "src", "dest.sh"], "dest.sh"),
+                               (["dd", "if=src", "of=out.sh"], "out.sh"),
+                               (["curl", "-o", "got.sh", "http://x"], "got.sh"),
+                               (["wget", "--output-document=w.sh", "http://x"], "w.sh")):
+            with self.subTest(unit=tokens[0]):
+                context = mgr._ScanContext(str(self.nd), in_shell=True)
+                mgr._record_write_targets(tokens, context)
+                self.assertIn(str(self.nd / target), context.uses.written, tokens)
+
+
+class TheWrapperDirectoryIsWhatARestrictedShellMayREACH(Round7Fixture):
+    """ROUND 7, PART B's other half: what a restricted shell CAN do, and what is simply not there.
+
+    A GUARD THAT REFUSES EVERYTHING IS NOT A GUARD, IT IS A REMOVAL. The closed child model is only
+    keepable if an ordinary launcher still runs, so the admitted set is measured here beside the
+    refused one -- and it is measured through a Python child's own inventory record, because "the
+    script exited 0" cannot tell a guarded child from one that never started.
+    """
+
+    def digest_tool(self):
+        """A digest leaf that exists HERE, chosen by measurement rather than by name.
+
+        `sha256sum` is coreutils and `shasum` is the Perl script macOS ships -- and a Perl script
+        gets NO forwarder, because a forwarder is written only for a file that carries no shebang.
+        So a row naming the wrong one would fail for a reason that has nothing to do with the rule.
+        """
+        for name in ("sha256sum", "md5sum", "cksum"):
+            located = shutil.which(name)
+            if located and mgr._locate_a_system_tool(name):
+                return name
+        return None
+
+    def test_the_admitted_set_runs_and_the_python_child_leaves_a_GUARDED_record(self):
+        """`python3 x.py`, `python3 x.py "$@"`, `git rev-parse HEAD`, `ls`, `mkdir -p`, a digest.
+
+        EVERY ONE OF THESE GOES THROUGH A WRAPPER OR A FORWARDER, because a restricted shell's PATH
+        is the guard's wrapper directories and nothing else. `git` reaches the committed wrapper,
+        which applies the read-only allowlist and then execs the system git; `ls`, `mkdir` and the
+        digest reach forwarders `install()` generated for this host; `python3` reaches the
+        interpreter wrapper, which scans and then execs the real interpreter -- and the two depth-1
+        records are what proves the children were GUARDED rather than merely successful.
+        """
+        digest = self.digest_tool()
+        self.assertIsNotNone(digest, "no shebang-free digest leaf under a system prefix here")
+        clean = self.clean_child()
+        quoted = shlex.quote(str(clean))
+        parent = self.bash_parent(
+            "admitted",
+            "set -eu\n"
+            f"ls {shlex.quote(str(self.nd))}\n"
+            f"mkdir -p {shlex.quote(str(self.tmp / 'made'))}\n"
+            f"{digest} {quoted}\n"
+            f"git -C {shlex.quote(str(REPO))} rev-parse HEAD\n"
+            f"python3 {quoted}\n"
+            f"python3 {quoted} \"$@\"\n")
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("[oi136 launch]", result.stderr)
+        self.assertEqual(result.stdout.count("CHILD-LOADED RIGHT TREE"), 2, result.stdout)
+        self.assertTrue((self.tmp / "made").is_dir())
+        depths = sorted(record["depth"] for record in self.records())
+        self.assertEqual(depths, [0, 1, 1], "a python child of the restricted shell left no record")
+        for record in self.records():
+            if record["depth"] == 1:
+                self.assertEqual(record["propagation"], "armed")
+
+    def test_a_program_the_wrapper_directory_does_not_hold_is_COMMAND_NOT_FOUND(self):
+        """`awk`, `perl`, `make`: refused statically, and NOT PRESENT at all to the shell.
+
+        THE TWO LAYERS SAY DIFFERENT THINGS HERE AND BOTH ARE ASSERTED. The scanner refuses them by
+        name -- each runs a program its own arguments can name, which is why none of them is in
+        `_LEAF_TOOL_BASENAMES`. With the scanner stood down, the restricted shell does not refuse
+        them either: it cannot FIND them, because the only PATH it has is a directory this guard
+        wrote, and `command not found` at exit 127 is the shell saying the set of reachable
+        programs is exactly the set the guard enumerated.
+        """
+        for tool in ("awk", "perl", "make"):
+            with self.subTest(tool=tool):
+                self.inventory.unlink(missing_ok=True)
+                parent = self.bash_parent(f"notfound_{tool}", f"{tool} --version\necho AFTER\n")
+                refused = self.guarded(parent)
+                self.assertEqual(refused.returncode, mgr.VIOLATION_EXIT,
+                                 refused.stdout + refused.stderr)
+                self.assertEqual(self.records()[0]["launch_refusal"]["reason"],
+                                 mgr.LAUNCH_REASON_UNPROVEN)
+
+                self.inventory.unlink(missing_ok=True)
+                loose = self.guarded(parent, static_scan=False)
+                self.assertIn(f"{tool}: command not found", loose.stderr,
+                              loose.stdout + loose.stderr)
+                self.assertNotIn(f"{tool} version", loose.stdout.lower())
+
+    #: EACH ROW IS A CONSTRUCT BASH'S RESTRICTED MODE REFUSES, with the fragment of ITS message that
+    #: identifies the refusal. The messages are bash's and not this guard's, which is the whole
+    #: claim -- so they are matched loosely enough to survive a bash version (3.2 says `PATH:
+    #: readonly variable` where 5.x says `PATH: restricted`) and tightly enough to name the rule.
+    RESTRICTED_MODE_ROWS = {
+        "a command name with a slash": ("/bin/ls\n", "cannot specify `/' in command names"),
+        "cd": ("cd /tmp\n", "cd: restricted"),
+        "exec": ("exec ls\n", "exec: restricted"),
+        "command -p": ("command -p ls\n", "command: -p: restricted"),
+        "hash -p": ("hash -p /bin/ls ls\n", "hash: /bin/ls: restricted"),
+        # bash 3.2 reports `enable: restricted` where later versions name the option; the fragment
+        # is the part both spellings share, so the row survives a bash version without stopping
+        # being about `enable -f`.
+        "enable -f": ("enable -f /tmp/x.so foo\n", "enable: "),
+        "output redirection": ("echo x > out.txt\n", "out.txt: restricted"),
+    }
+
+    def test_restricted_bash_refuses_each_construct_in_ITS_OWN_WORDS(self):
+        """The dynamic layer, one row per rule, with the static half stood down.
+
+        THE MESSAGES ARE THE EVIDENCE AND THE EXIT CODE IS NOT. `bash -r` refuses ONE COMMAND and
+        continues, so a script whose last line succeeds exits 0 with the refused line never having
+        run -- which is why every row appends an `echo` and asserts that it DID run: it separates
+        "bash refused this command" from "the shell died before reaching it".
+        """
+        for name, (body, message) in self.RESTRICTED_MODE_ROWS.items():
+            with self.subTest(construct=name):
+                self.inventory.unlink(missing_ok=True)
+                parent = self.bash_parent(f"rbash_{abs(hash(name))}", body + "echo REACHED-END\n")
+                result = self.guarded(parent, static_scan=False)
+                self.assertIn(message, result.stderr, result.stdout + result.stderr)
+                self.assertIn("restricted", result.stderr, result.stdout + result.stderr)
+                self.assertIn("REACHED-END", result.stdout,
+                              "the shell stopped before the marker, so the row proves nothing "
+                              "about which command was refused")
+
+    def test_a_PATH_assignment_inside_the_restricted_shell_cannot_take_effect(self):
+        """`PATH=/usr/bin` inside a restricted shell, with the static half stood down.
+
+        Its message differs across bash versions -- 3.2 reports a readonly variable, later ones
+        report the restriction -- so the assertion is on the two things that do not differ: bash
+        named PATH, and the assignment did not happen.
+        """
+        parent = self.bash_parent("rbash_path", "PATH=/usr/bin\necho AFTER $PATH\n")
+        result = self.guarded(parent, static_scan=False)
+        self.assertIn("PATH", result.stderr, result.stdout + result.stderr)
+        self.assertTrue(
+            "readonly" in result.stderr or "restricted" in result.stderr,
+            result.stderr)
+        self.assertNotIn("AFTER /usr/bin", result.stdout)
+
+    @staticmethod
+    def a_variable_survives_an_exec(variable: str) -> bool:
+        """Whether `variable` is still set inside a `/bin/sh` this process starts with it.
+
+        THE FIXTURE HAS TO AGREE WITH THE WORLD RATHER THAN WITH THE CODE. `DYLD_INSERT_LIBRARIES`
+        is stripped by macOS System Integrity Protection before a protected binary starts, so a row
+        asserting that the wrapper refuses it would pass or fail for a reason on the platform's side
+        of the boundary. This asks the platform.
+        """
+        probe = subprocess.run(
+            ["/bin/sh", "-c", f'printf %s "${{{variable}-unset}}"'],
+            env=dict(os.environ, **{variable: "/nonexistent"}),
+            capture_output=True, text=True)
+        return probe.stdout == "/nonexistent"
+
+    def test_the_interpreter_wrapper_refuses_a_HOSTILE_ENVIRONMENT_from_a_non_shell_child(self):
+        """`PYTHONHOME` reaching `bin/python3`, which a restricted child cannot do and a plain one can.
+
+        A RESTRICTED SHELL STRIPS ALL FOUR of `PYTHONHOME`, `PYTHONEXECUTABLE`, `LD_PRELOAD` and
+        `DYLD_INSERT_LIBRARIES`, so this cannot arrive from one. The wrapper is ALSO reached from an
+        admitted NON-shell child, which was never handed a restricted environment -- and there the
+        variables decide which interpreter, which standard library, or which shared object runs
+        before `sitecustomize` does. The wrapper is standing in front of the interpreter, so it is
+        the place that has to say no.
+        """
+        clean = self.clean_child()
+        for variable in ("PYTHONHOME", "PYTHONEXECUTABLE", "LD_PRELOAD",
+                         "DYLD_INSERT_LIBRARIES"):
+            with self.subTest(variable=variable):
+                if not self.a_variable_survives_an_exec(variable):
+                    # MEASURED, NOT ASSUMED. macOS System Integrity Protection strips every
+                    # `DYLD_*` variable from the environment of a protected binary, so on this
+                    # host the wrapper -- a `#!/bin/sh` script -- can never see one. Asserting a
+                    # refusal here would be asserting it about a variable that never arrived,
+                    # which is a green arm that measures nothing.
+                    self.skipTest(f"${variable} does not survive an exec on this platform")
+                self.inventory.unlink(missing_ok=True)
+                parent = write(
+                    self.nd / "parent_hostile_env.py",
+                    "import os, subprocess\n"
+                    f"env = dict(os.environ, **{{{variable!r}: '/nonexistent'}})\n"
+                    f"code = subprocess.run(['python3', {str(clean)!r}], env=env).returncode\n"
+                    "print('WRAPPER-EXIT', code)\n")
+                result = self.guarded(parent)
+                self.assertIn("WRAPPER-EXIT 3", result.stdout, result.stdout + result.stderr)
+                self.assertIn("THE INTERPRETER WOULD START UNDER AN ENVIRONMENT", result.stderr)
+                self.assertNotIn("CHILD-LOADED", result.stdout)
+
+
+class TheRecordSaysWHICHShellRanAndWHICHBytesEnforced(Round7Fixture):
+    """The dynamic half in the inventory record, because a ratchet reader cannot open this file.
+
+    `path_shim` already answered "did the PATH wrapper half arm". `shell` and `real_bash` answer the
+    same question for the half that actually enforces now -- and `static_scan` answers a question
+    that did not exist before round 7: whether the record was written by a run whose first layer was
+    deliberately stood down for a test. A reader who cannot see that would take a measurement of the
+    restricted shell for a measurement of a production run.
+    """
+
+    def test_every_record_names_the_restricted_shell_and_pins_the_bash_that_enforced(self):
+        clean = self.clean_child()
+        parent = write(self.nd / "parent_record.py",
+                       "import subprocess\n"
+                       f"raise SystemExit(subprocess.run(['/bin/bash', '-c', "
+                       f"'python3 {shlex.quote(str(clean))}']).returncode)\n")
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        for record in self.records():
+            self.assertEqual(record["shell"], "restricted", record)
+            self.assertEqual(record["static_scan"], "enabled", record)
+            self.assertEqual(record["real_bash"]["path"],
+                             mgr._resolve_real_bash()[0], record)
+            self.assertEqual(
+                record["real_bash"]["sha256"],
+                hashlib.sha256(pathlib.Path(record["real_bash"]["path"]).read_bytes()).hexdigest())
+
+    def test_the_record_pins_EVERY_committed_shim_file_and_the_list_is_the_one_that_is_bound(self):
+        """`path_shim_sha256` covers `COMMITTED_SHIM_FILES`, which is what the queue binds.
+
+        THE TWO LISTS HAVE TO BE THE SAME LIST OR NEITHER MEANS ANYTHING. A wrapper the record
+        digests but the queue does not bind can be swapped between staging and running; one the
+        queue binds but no record digests leaves a run with no evidence of which bytes executed.
+        Round 7 added eleven files to `bin/`, which is eleven chances to add one to a single list.
+        """
+        clean = self.clean_child()
+        parent = write(self.nd / "parent_digest.py",
+                       f"import subprocess\nsubprocess.run(['python3', {str(clean)!r}])\n")
+        self.guarded(parent)
+        digests = self.records()[0]["path_shim_sha256"]
+        self.assertEqual(set(digests), set(mgr.COMMITTED_SHIM_FILES))
+        for name, digest in digests.items():
+            deployed = self.deployed_shim / name
+            self.assertTrue(deployed.is_file(), name)
+            self.assertEqual(digest,
+                             hashlib.sha256((SHIM_TREE / name).read_bytes()).hexdigest(), name)
+
+    def test_the_committed_shim_list_and_the_queues_bound_list_are_the_SAME_list(self):
+        """`COMMITTED_SHIM_FILES` and `campaignctl.GUARD_SHIM_PATHS`, compared as sets of paths.
+
+        They are two literals in two files by necessity -- `campaignctl` must not import the guard
+        -- so the thing that keeps them one list is this comparison. Without it the pair is a
+        convention, and a convention is what round 5's wrapper-swap control exists because of.
+        """
+        sys.path.insert(0, str(REPO / "docs" / "orchestration"))
+        try:
+            import campaignctl
+        finally:
+            sys.path.pop(0)
+        bound = {str(path) for path in campaignctl.GUARD_SHIM_PATHS}
+        declared = {f"nd-unfolding/mnv_guard_shim/{name}" for name in mgr.COMMITTED_SHIM_FILES}
+        self.assertEqual(bound, declared)
+
+
 class TheStartupFlagScanFollowsCPythonsOptionGrammar(unittest.TestCase):
     """A TABLE OVER THE SCANNER ITSELF, called directly, and it is deliberately in-process.
 
