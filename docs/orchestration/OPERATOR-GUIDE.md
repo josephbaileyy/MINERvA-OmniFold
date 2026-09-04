@@ -155,6 +155,17 @@ keeps reserving its full declared maximum on every host, and the tick reports
 exit 5 rather than a terminal code. An unpushed outcome releases nothing
 anywhere.
 
+**What this requires of the checkout.** Every tick now reaches the network, and
+the ticker needs **push** permission for `refs/campaign/*` at the origin. A
+branch-protection or ruleset rule that forbids creating or updating refs outside
+`refs/heads/*` refuses every admission, as does an expired credential — both
+surface as `campaign origin is unreachable` or a push failure, never as a silent
+admission. Terminal prompting is disabled for every git call this tool makes, so a
+missing credential refuses at once rather than hanging an unattended tick with the
+admission lock held; an SSH key with a passphrase and no agent behaves the same way
+only if `BatchMode` is set in the operator's SSH config, which is worth checking
+before the first unattended tick on a new host.
+
 **Inspecting the ref.** These read the campaign's actual state without going
 through the tool:
 

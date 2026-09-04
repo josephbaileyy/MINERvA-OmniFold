@@ -411,6 +411,13 @@ QUEUE_PENDING_NAME = "pending"
 #: already taken -- while an unpushed OUTCOME is spend that really happened, so
 #: dropping it would release a reservation nobody ever counted.
 QUEUE_PENDING_FAMILIES = frozenset({"outcomes", "releases", "revocations"})
+#: Name of one set-aside record: a sequence, the family, and the item.  The
+#: sequence is what preserves ORDER on retry -- a release means nothing before the
+#: outcome it releases -- and a name that does not match this is refused rather
+#: than sorted into an arbitrary position.
+QUEUE_PENDING_NAME_RE = re.compile(
+    r"^(?P<sequence>[0-9]{6})-(?P<family>[a-z]+)-.+\.json$"
+)
 #: Field the returned copy of a record carries when its push has not landed yet.  It
 #: is never written into the record itself: the record is what the ref will hold, and
 #: "this host has not managed to publish it" is a property of this host and this tick.
@@ -435,12 +442,14 @@ GIT_REDIRECTING_ENVIRONMENT = (
 )
 #: A git object name, in either hash size, as ``ls-remote`` and ``rev-parse`` print it.
 GIT_OBJECT_RE = re.compile(r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
-#: Everything ``git push`` says when the remote ref was not where the lease said it
-#: was.  All of them mean the same thing here -- another host moved the ref between
-#: this operation's fetch and its push -- and none of them may be resolved by merging.
+#: What ``git push`` says when the remote ref was not where the lease said it was.
+#: All of these mean the same thing -- another host moved the ref between this
+#: operation's fetch and its push -- and none may be resolved by merging.  The
+#: bare ``[rejected]``/``[remote rejected]`` tokens are deliberately NOT here: a
+#: server-side ruleset that forbids creating ``refs/campaign/*`` prints one too,
+#: and calling that a lost race would publish a mechanism nobody could act on.
+#: It is still a refusal, just not this one.
 PUSH_REJECTION_MARKERS = (
-    "[rejected]",
-    "[remote rejected]",
     "stale info",
     "fetch first",
     "non-fast-forward",
@@ -515,13 +524,21 @@ def git_environment(**overrides: str) -> dict[str, str]:
     own ``GIT_INDEX_FILE`` for a different repository and a different index.
     Those variables OUTRANK ``-C`` and ``--git-dir``, so a HEAD identity check or
     a state commit made under them would silently measure or write the wrong
-    object.  They are cleared for every git invocation this module makes.
+    object.  They are cleared for every git invocation this module makes, and
+    terminal prompting is disabled so a missing credential refuses instead of
+    hanging an unattended tick.
     """
     environment = {
         key: value
         for key, value in os.environ.items()
         if key not in GIT_REDIRECTING_ENVIRONMENT
     }
+    # The ticker is unattended.  A credential prompt on the fetch or the push
+    # would HANG it with the admission lock held, which is worse than any
+    # refusal: a refusal is retried at the next tick and says why, a hang holds
+    # the lock until someone notices.  Prompts off means missing credentials read
+    # as an unreachable origin.
+    environment["GIT_TERMINAL_PROMPT"] = "0"
     environment.update(overrides)
     return environment
 
@@ -1541,7 +1558,12 @@ class QueueSync:
                     "fetched but is not readable afterwards"
                 )
         self.base = remote
-        if force or remote != self.cache_sha or self.state_fingerprint() != self.fingerprint:
+        # Re-extract when the ref moved, and ALSO when the cache no longer
+        # matches what it held right after the last reset: a record written here
+        # by hand, or a mutation an operation could not land, must not survive
+        # into a scan just because the ref happened to stand still.
+        drifted = self.state_fingerprint() != self.fingerprint
+        if force or remote != self.cache_sha or drifted:
             self.reset_cache(remote)
 
     def discard(self) -> None:
@@ -1670,10 +1692,16 @@ class QueueSync:
         root.mkdir(parents=True, exist_ok=True)
         # A sequence, because order matters: a release means nothing before the
         # outcome it releases, and a millisecond clock could tie.
-        existing = sorted(root.glob("*.json"))
-        sequence = 1 + max(
-            (int(path.name.split("-", 1)[0]) for path in existing), default=0
-        )
+        sequences = []
+        for path in sorted(root.glob("*.json")):
+            match = QUEUE_PENDING_NAME_RE.fullmatch(path.name)
+            if match is None:
+                raise QueueError(
+                    f"pending campaign queue record has an unmodelled name, so "
+                    f"the retry order cannot be established: {path}"
+                )
+            sequences.append(int(match.group("sequence")))
+        sequence = 1 + max(sequences, default=0)
         path = root / f"{sequence:06d}-{family}-{item_id}.json"
         atomic_json(
             path,
@@ -1791,13 +1819,27 @@ def commit_state_record(
         The record, with ``queue_push_pending`` added when it has not landed.
     """
     sync = queue.sync()
+    write_refused = False
     try:
         with queue_operation(queue, message):
-            atomic_json(queue.path(family, item_id), record, exclusive=exclusive)
+            try:
+                atomic_json(
+                    queue.path(family, item_id), record, exclusive=exclusive
+                )
+            except QueueError:
+                write_refused = True
+                raise
     except QueueError as exc:
-        if sync.depth:
-            # An enclosing operation owns the push, so deferring here would set
-            # aside a record that operation is still holding open.
+        if sync.depth or write_refused:
+            # A refused WRITE is not retryable: the exclusive link found a record
+            # already there, and a record that cannot be written now cannot be
+            # written later either, so setting it aside would retry it at every
+            # tick forever and report the tick unresolved rather than wrong.  A
+            # failure anywhere else in the cycle -- an unreachable origin at the
+            # fetch, a lost lease at the push -- IS retryable, and the record
+            # describes something that already happened.  ``sync.depth`` means an
+            # enclosing operation owns the push, so deferring here would set
+            # aside a record it is still holding open.
             raise
         sync.defer(family, item_id, record, message)
         return {**record, QUEUE_PUSH_PENDING_FIELD: str(exc)}

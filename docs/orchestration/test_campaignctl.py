@@ -2754,6 +2754,86 @@ class CampaignQueueTests(unittest.TestCase):
         ):
             campaignctl.summary(self.queue)
 
+    def test_a_hooks_git_environment_cannot_redirect_the_queues_git_calls(
+        self,
+    ) -> None:
+        """``GIT_DIR`` outranks ``-C``, and a hook hands campaignctl one.
+
+        Every identity this module checks -- the receipt, the release record, the
+        origin pin -- is measured with ``git -C <repo>``, and every state commit
+        is written with ``--git-dir``. Under a hook's environment those arguments
+        lose: the HEAD would come from the hook's repository and the commit would
+        be built against the hook's index. Both are cleared, and terminal
+        prompting is off so a missing credential refuses instead of hanging an
+        unattended tick with the admission lock held.
+        """
+        elsewhere = self.root / "hooks-repository"
+        elsewhere.mkdir()
+        subprocess.run(["git", "-C", str(elsewhere), "init", "-q"], check=True)
+        for key, value in (
+            ("user.email", "test@example.invalid"),
+            ("user.name", "Test"),
+        ):
+            subprocess.run(
+                ["git", "-C", str(elsewhere), "config", key, value], check=True
+            )
+        (elsewhere / "unrelated").write_text("x")
+        subprocess.run(["git", "-C", str(elsewhere), "add", "unrelated"], check=True)
+        subprocess.run(
+            ["git", "-C", str(elsewhere), "commit", "-qm", "the hook's repository"],
+            check=True,
+        )
+        foreign_head = subprocess.run(
+            ["git", "-C", str(elsewhere), "rev-parse", "HEAD"],
+            stdout=subprocess.PIPE, text=True, check=True,
+        ).stdout.strip()
+        own_head = self.queue.git_head()
+        self.assertNotEqual(own_head, foreign_head)
+
+        with mock.patch.dict(
+            os.environ,
+            {
+                "GIT_DIR": str(elsewhere / ".git"),
+                "GIT_WORK_TREE": str(elsewhere),
+                "GIT_INDEX_FILE": str(elsewhere / ".git" / "index"),
+            },
+        ):
+            environment = campaignctl.git_environment()
+            for key in campaignctl.GIT_REDIRECTING_ENVIRONMENT:
+                self.assertNotIn(key, environment)
+            self.assertEqual(environment["GIT_TERMINAL_PROMPT"], "0")
+            # And the effect, not only the variable: HEAD and a whole operation
+            # still resolve against THIS repository.
+            self.assertEqual(self.queue.git_head(), own_head)
+            item = self.stage("under-a-hook")
+
+        self.assertEqual(item["git_head"], own_head)
+        self.assertIn("items/under-a-hook.json", self.queue_ref_paths())
+
+    def test_a_refused_write_is_not_set_aside_for_retry(self) -> None:
+        """Only a failed PUSH is retried; a failed write is refused outright.
+
+        Both arrive at the same place -- a ``QueueError`` out of one operation --
+        so they have to be told apart at the point they are handled. A record the
+        exclusive link refused because one is already there cannot be written
+        later either, so setting it aside would retry it at every tick forever
+        and, worse, would report the tick as unresolved rather than as wrong.
+        """
+        item = self.stage("one")
+        self.approve(item)
+        rc, outcome = campaignctl.run_ready(self.queue)
+        self.assertEqual((rc, outcome["status"]), (0, "succeeded"))
+
+        with self.assertRaisesRegex(campaignctl.QueueError, "refusing to overwrite"):
+            campaignctl.write_outcome(self.queue, self.queue.item("one"), "failed")
+
+        self.assertFalse(
+            (self.queue.state / campaignctl.QUEUE_PENDING_NAME).exists()
+        )
+        self.assertEqual(
+            self.queue_ref_record("outcomes/one.json")["status"], "succeeded"
+        )
+
     def test_publishing_an_empty_cache_never_pushes(self) -> None:
         """The documented migration path must not commit emptiness as the state.
 
