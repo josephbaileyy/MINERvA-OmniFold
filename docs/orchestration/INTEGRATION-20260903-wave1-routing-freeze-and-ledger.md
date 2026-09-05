@@ -673,7 +673,7 @@ coverage the code did not have. It is replaced below, and the layer it names is 
 
 | reviewer BLOCK | resolution | commit | proof |
 |---|---|---|---|
-| **the push destination is not the pinned one** (`GIT_CONFIG_COUNT`, `GIT_CONFIG_PARAMETERS`, `GIT_CONFIG_GLOBAL` each landed the lease-protected push in a second bare repository while `ls-remote` and `fetch` still answered from the pin; `stage()` returned success and the pinned origin's queue ref did not exist afterwards) | the asymmetry is closed at both ends. **The environment:** every git invocation the module makes runs with `GIT_INJECTING_ENVIRONMENT` removed — the six configuration-injecting names, the numbered `GIT_CONFIG_KEY_*`/`GIT_CONFIG_VALUE_*` half by pattern because it cannot be enumerated, and the ten program-selecting names the guard lane already refuses — and with `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1` **set**, so only repository-local configuration applies, which is the one scope the destination check can enumerate. **The destination:** `QueueSync` reads both `git remote get-url origin` and `git remote get-url --push origin` **in the scratch bare repository that actually pushes**, and refuses unless both normalise equal to the pin; it refuses any key under `remote.origin.*` or `url.*` that the queue did not itself write (a namespace rule, not a list, so a key git adds later cannot slip through), and `core.hookspath`, `core.sshcommand`, and a `!`-spelled `credential.helper` outright; the push goes to the literal pinned URL rather than to the remote name, and the admission log records the resolved push destination beside `origin_url` | `08d184ea`, `a8ebd393`, `95c0976c` | each of the three environment vectors and both configuration routes measured against a diverted second origin, with a no-injection control that lands on the pinned origin and a positive control proving the injection really diverts an unsanitised push; the diverted repository holds no refs afterwards; campaign suite 98 passed (+36 subtests), was 91 |
+| **the push destination is not the pinned one** (`GIT_CONFIG_COUNT`, `GIT_CONFIG_PARAMETERS`, `GIT_CONFIG_GLOBAL` each landed the lease-protected push in a second bare repository while `ls-remote` and `fetch` still answered from the pin; `stage()` returned success and the pinned origin's queue ref did not exist afterwards) | the asymmetry is closed at both ends. **The environment:** every git invocation the module makes runs with `GIT_INJECTING_ENVIRONMENT` removed — the six configuration-injecting names, the numbered `GIT_CONFIG_KEY_*`/`GIT_CONFIG_VALUE_*` half by pattern because it cannot be enumerated, and the ten program-selecting names the guard lane already refuses — and with `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1` **set**, so only repository-local configuration applies, which is the one scope the destination check can enumerate. **The destination:** `QueueSync` reads both `git remote get-url origin` and `git remote get-url --push origin` **in the scratch bare repository that actually pushes**, and refuses unless both normalise equal to the pin; it refuses configuration in its own git directory that the queue did not write, and `core.hookspath`, `core.sshcommand`, and a `!`-spelled `credential.helper` outright **(SUPERSEDED BY §15: as written here this was a namespace rule over `remote.origin.*` and `url.*` plus a two-item forbidden list, and the claim that "a key git adds later cannot slip through" was FALSE of the list half — `core.fsmonitor` slipped it and ran. §15 replaces both with an allowlist of the keys the queue itself writes.)**; the push goes to the literal pinned URL rather than to the remote name, and the admission log records the resolved push destination beside `origin_url` | `08d184ea`, `a8ebd393`, `95c0976c` | each of the three environment vectors and both configuration routes measured against a diverted second origin, with a no-injection control that lands on the pinned origin and a positive control proving the injection really diverts an unsanitised push; the diverted repository holds no refs afterwards; campaign suite 98 passed (+36 subtests), was 91 — **103 after §15** |
 
 **One deliberate departure from the integrator's brief, and it matches the reviewer's own remedy.**
 The brief said the three environment vectors must *refuse on presence*. The lane made them **inert**
@@ -758,3 +758,87 @@ proposes, and does **not** assume, the boundary the next verdict should be given
 The lane asks the reviewer to grade the next revision against that boundary and to say plainly
 either that it is met, or which specific route the boundary must still be widened to cover. The
 remaining hardening below that line belongs to OI-136's owner and its row, not to this integration.
+
+## 15. Reviewer round 9 (2026-09-05) — three findings on `5d294883`, and the boundary corrected
+
+`5d294883` is **withdrawn**. The round-9 report closed both round-8 BLOCKs against the reviewer's own
+unedited reproducers, confirmed the two queue layers are independent rather than one claim measured
+twice (a `include.path` pointing at a file carrying `url.*.pushInsteadOf` slips the namespace rule and
+is still caught by the destination check), and raised three findings. All three are taken here.
+
+### 15.1 The boundary, corrected — §14.2 is superseded
+
+§14.2 proposed grading against two halves: cooperating launchers in scope absolutely, and code
+bypassing the interpreter to reach the kernel out of scope by declaration. **The reviewer's answer is
+that the line is in the wrong place, and this lane accepts it without reservation.** Findings 1 and 2
+below are neither cooperating launchers nor kernel bypasses: both travel through layers this guard
+hooks — the `fork_exec` floor, and the queue's own `git` invocations. `9d14e7c0`, the fix this lane
+disclosed and proved load-bearing last round, lives in that same gap, so §14.2 as written would have
+excluded a fix it had just shipped. A boundary that excludes your own last correction is the wrong
+boundary.
+
+**The in-scope half is therefore widened, in the reviewer's words:** *any route that reaches the
+kernel or the origin through a layer this guard hooks, cooperating or not.* The out-of-scope half is
+unchanged and stays measured rather than asserted: `ctypes`/`cffi` calling libc directly, a C
+extension doing the same, a rebuilt interpreter whose `_posixsubprocess` is not the patched module
+object, and files rather than argv on a trusted system prefix. Residuals (1)–(4) already name exactly
+that, and the `ctypes` arm asserts the hijack **succeeds**, so it goes red if the residual ever
+silently closes.
+
+**The reviewer also corrected its own round-7 record**, and it belongs here because it changes what a
+prior certification meant: that round's "guard suite 172 OK" was 172 of 221 declared arms, truncated
+by the same mid-file entry point that finding 3 describes. This lane's own matrix invokes the file a
+way that collects everything, so the 500-passed figure in §14.1 stands as written.
+
+### 15.2 The three findings
+
+| reviewer finding | resolution | commit | proof |
+|---|---|---|---|
+| **1. the ticket key omits the environment.** Keyed on `(argv, file)`, the floor's ticket path returned `original(*call_args, **call_kwargs)` — the caller's own `env_list`, never checked and never re-armed. Through the lane's own `stdout.fileno()` seam, an in-window call matching both halves of the key while stripping only `MNV_GUARD_*`/`PYTHONPATH` produced `CHILD-ENV-UNGUARDED / HIJACK-LOADED WRONG TREE / exit 0 / no refusal recorded`; the same call with the full environment gave `CHILD-ENV-GUARDED / TICKET-SPENT 3 / no hijack`. One field, both directions | the reviewer's remedy taken literally: the environment is **checked on the ticket path, not added to the identity** — which cannot reintroduce the false refusal the ticket exists to prevent, because a correct launch's environment already is the armed one. The identity stays `(argv, file)`. `_environment_reaching_child_is_armed` now runs at **both** consume sites before the launch: the kernel floor's `guarded()`, and the `_prepare_launch` ticket path that `os.posix_spawn` reaches on every `close_fds=False` launch — a second site the integrator's brief did not name and the lane found. New reason `LAUNCH_REASON_TICKET_ENV`, distinct from `LAUNCH_REASON_ENV` because the claim differs: the older one says the scan read this launch and its argv or environment strips the contract; this one says a layer above approved this argv and this file and the contract went missing **between the layers**, which is where a reader of the record must look. `env=None` is admitted, because at both layers it means inherit and what an inheriting child receives is this armed process's own environment — the very thing the helper reads. `_ApprovedLaunch`'s docstring is rewritten: the sentence the reviewer quoted is gone, and the replacement states that the ticket certifies only that the layer above scanned this argv and this file, never the environment | `00ad57cb` | reproducer red before the fix with the hijack verbatim (`HIJACK-LOADED WRONG TREE / TICKET-SPENT 0 / OUTER-EXIT 3`), green after; reverting **only** the `_prepare_launch` call turns only the `os.posix_spawn` arm red, attributing each arm to its own site; the inheriting launch has its own arm driving `env_list=None` through the floor; 26 named controls re-run, including `subprocess.run("ls", shell=True, close_fds=False)`, spawn, forkserver, `ProcessPoolExecutor`, both `fork_exec` bindings refusing `-I`, `preexec_fn`, and every round-6/7/8 reproducer |
+| **2. the program-installing config category is a list of two.** The namespace rule was justified as "a rule spelled as a list has to be extended for every key git adds, and the failure of the missing entry is a diverted push that reports success" — and then the forbidden keys were a two-item list. `core.fsmonitor`, pointed at a script in the scratch repository's own config, **was executed twice** by the queue's own read-tree/add/write-tree, and the operation was admitted | the lane's own design taken literally, as the reviewer prescribed: the queue creates that directory and writes a known set, so **any key outside `QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS` refuses**, with the single exception of `credential.helper` when its value does not begin with `!`. Both `QUEUE_SCRATCH_GUARDED_CONFIG_PREFIXES` and `QUEUE_SCRATCH_FORBIDDEN_CONFIG_KEYS` are deleted, with no remaining reference in the tree; the category is retired rather than extended. The written set gains the four keys `git init --bare` writes itself, each commented as such, and a completeness arm reads a freshly created scratch repository with a plain subprocess — not through the queue's own reader, so the fixture is not derived from the code it checks — and asserts nothing outside the set is present. A git version writing a key the set lacks **refuses rather than admits**, which is the right direction, and the docstring says so. `verify_push_destination` is untouched: both layers still run | `020ebaec` | `core.fsmonitor` refuses **before its program runs** (sentinel absent), and load-bearing: with `campaignctl.py` reverted the sentinel is present carrying two lines, the script having executed twice while `stage` built its state commit; `core.sshcommand`, `core.hookspath` and a `!` helper each with their own sentinel; `core.pager`, `alias.x` and `protocol.ext.allow` refuse though no rule ever named them; a non-`!` helper still admitted through a whole cycle; campaign suite 103 passed (+46 subtests), was 98 |
+| **3. `unittest.main()` sat mid-file**, so the guard suite's own entry point ran 202 of 251 arms and exited 0, truncating away `TheDefectMutationFires`, `TheInnocentMutationStaysGreen` and `TheRefusalIsUnchanged` — the arms that prove the detectors still fire. Pre-existing at `656ff895`, `9c2969fa` and `5d294883` alike | the entry point moves to the end of the file, and a regression guard reads **this module's own source** through `inspect.getsource` (so it reads whichever file is running, under either route), parses it, and asserts one top-level `if __name__` block that is the **last top-level statement** — the actual invariant, since `sys.exit` does not care whether what follows is a class, a constant or a second `unittest.main()` | `1325d6b7` | arms collected by the file's own entry point: **202 before, 261 after**, equal to `-m unittest` and to pytest collection on both 3.11 and 3.12; the guard parses rather than greps, proven by an opposite-direction arm whose source carries `if __name__ == "__main__":` **inside a string** and must not count — this suite writes dozens of child programs containing that line, so a regex version would refuse every future commit |
+
+**A record item the guard lane could not write and this lane owes it:** `LAUNCH_REASON_TICKET_ENV` is
+new, and it takes the existing `refused:launch-python-startup-flags` outcome rather than a new
+literal, so no ratchet re-routes. The residual **count is unchanged** — this closes a live defect
+rather than declaring a new residual — and residuals (1) to (4) stand exactly as §14 states them.
+
+**§14 is corrected in place, not merely superseded.** Its queue row asserted "a namespace rule, not a
+list, so a key git adds later cannot slip through" — the precise claim finding 2 refuted — and quoted
+a campaign-suite count that has moved. Both are amended where they stand, so the row cannot be read
+in isolation and believed.
+
+### 15.3 Proposed tip
+
+The last commit of `wave1-integration-20260903` as force-pushed after this record. Verified there,
+clean worktree, macOS default `TMPDIR`:
+
+| check | result |
+|---|---|
+| pre-commit hook | 12 checks passed |
+| `generate_manifest.py --check --committed-only` | OK, fixed point, 727 rows |
+| control-plane and R5 meter self-tests | PASS, PASS |
+| `probe-oi136-sys-path-hijack-20260826.py` | exit 0; FAIL-OPEN SET exactly 9 |
+| `verify_hash_bindings.py` | ALL BINDINGS INTACT |
+| nine-suite matrix on 3.11 | 515 passed, 1 skipped, 996 subtests, 1 failed — the `site-packages` `uv` artefact recorded since §12.1 (empty purelib in the ephemeral build environment; passes under the system interpreter) |
+| guard suite via **the file's own entry point** | Ran 261 tests, OK (skipped=1) — the number finding 3 was about, now equal to `-m unittest` and to pytest collection |
+| `docs/orchestration` whole-directory run | the same 40 environment-dependent failures and errors as at every tip since `744660d8`; none new, none fixed |
+| `generate_live_state.py --check-freshness` | STALE — deliberate; the OI-73 owner hold stands |
+
+**Dispatch record.** Both pieces ran on claude-school in parallel off `5d294883`, detached, and both
+reported cleanly. Each carried a load-bearing check performed by reverting the fix and watching the
+new arm reproduce the reviewer's own output, then restoring byte-identically; neither revert is
+committed. Worker branches `w1r11-contract` and `w1r11-guard` remain local as provenance.
+
+**What this round did not do:** no receipt committed; nothing pushed to `refs/campaign/*` at the real
+origin, which still holds none; no compute, scheduler or cluster contact; no ref deleted; `main`
+untouched at `dae18f22` with its seven untracked paths; no OI-* row edited; LIVE-STATE.md not
+regenerated.
+
+**Where this leaves the campaign.** R1–R4 and R6 have passed unchanged since round 3. R5 and the
+deployment guard are now closed against every route the corrected boundary admits, and what remains
+below it is named in residuals (1)–(4) and measured rather than asserted. The remaining hardening —
+`ctypes`/`cffi`, a C extension, a rebuilt interpreter, a tampered system prefix — belongs to OI-136's
+owner and its row, not to this integration. Nothing here is admissible for compute regardless: the
+queue admits no item until a receipt measured on Perlmutter is committed, cause-3 compute is
+suspended by §5 of the ruling record, and PET remains diagnostic.
