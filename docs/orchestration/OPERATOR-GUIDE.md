@@ -176,16 +176,30 @@ lands in another repository — every host fetching the same base, each pushing 
 its own destination, each seeing a successful lease. So the queue's own git
 directory `queue-git`, which is the thing that fetches and pushes, has **both**
 of its URLs proved equal to the pin after it is configured and again before every
-fetch and every push, and refuses any local key under `remote.origin.*` or
-`url.*` that campaignctl did not itself write (it writes exactly `gc.auto`,
-`core.bare` and `remote.origin.url`), plus `core.sshCommand`, `core.hooksPath` and
-a `credential.helper` spelled as a `!` shell command. Those refusals read `the
-campaign queue does not push to this campaign's pinned origin` and `the campaign
-queue's git configuration was written from outside campaignctl`. A checkout whose
-`origin` fetches from the pin and pushes elsewhere is refused on the same footing
-as a mismatched fetch URL, with `checkout origin does not push to this campaign's
-pinned origin`. The push then names the literal pinned URL rather than the remote,
-and each `compute-admitted` log line records `push_url` — the destination
+fetch and every push.
+
+Independently of that comparison, its local configuration is an **allowlist, not
+a list of forbidden keys**: campaignctl creates that directory, so it refuses
+**any** local key that is not one it or `git init` wrote there. The admitted set
+is `gc.auto`, `core.bare` and `remote.origin.url`, which campaignctl writes, plus
+`core.repositoryformatversion`, `core.filemode`, `core.ignorecase` and
+`core.precomposeunicode`, which `git init` writes; the one exception outside it is
+`credential.helper`, admitted only when its value does not begin with `!`, the
+spelling git hands to a shell. This replaces a rule that named the categories it
+knew about — the namespaces `remote.origin.*` and `url.*` that decide a
+destination, plus `core.sshCommand` and `core.hooksPath` — and therefore admitted
+`core.fsmonitor`, which is a path to a program the queue's own `add` and
+`write-tree` execute once each per state commit. The refusal names the offending
+key and the writable set, and **the remedy is to remove that key from
+`<cache>/queue-git/config`, not to widen the rule**; if a future git writes a key
+the set lacks, the queue refuses rather than admits, which is the safe direction.
+Those refusals read `the campaign queue does not push to this campaign's pinned
+origin` and `the campaign queue's git configuration was written from outside
+campaignctl`. A checkout whose `origin` fetches from the pin and pushes
+elsewhere is refused on the same footing as a mismatched fetch URL, with
+`checkout origin does not push to this campaign's pinned origin`. The push then
+names the literal pinned URL rather than the remote, and each `compute-admitted`
+log line records `push_url` — the destination
 `get-url --push` resolved in `queue-git` — beside `origin_url`.
 
 The environment is the other half, and it changes what an operator must

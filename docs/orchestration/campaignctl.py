@@ -436,28 +436,41 @@ QUEUE_TREE_PATHS = QUEUE_STATE_FAMILIES + (f"logs/{ADMISSION_LOCK_LOG}",)
 #: ref behind in it.  The checkout's ``.git`` is read for HEAD, the receipt identity,
 #: the pin identity and the origin URL, and written never.
 QUEUE_SCRATCH_GIT_NAME = "queue-git"
-#: EVERY local configuration key campaignctl writes into that git directory.  It is an
-#: enumeration rather than a pattern because it is the allowlist the destination check
-#: subtracts: any key in a namespace that can re-point a push and is not one of these
-#: is configuration this module did not write, and is refused instead of obeyed.
+#: EVERY local configuration key this git directory legitimately holds: the three
+#: :meth:`QueueSync.ensure_scratch` writes, and the ones ``git init`` writes before
+#: campaignctl configures anything.  With the one exception below this is the WHOLE
+#: rule, and it is an ALLOWLIST, not a list of forbidden keys.  Round 8 spelled the
+#: rule as the two namespaces that decide a destination plus a list of the two keys
+#: that install a program, and ``core.fsmonitor`` -- which the queue's own ``add``
+#: and ``write-tree`` EXECUTE once each per state commit -- was in neither, so it
+#: was admitted.  A list has to be extended for every key git adds and the failure
+#: of the missing entry is a diverted push, or an executed program, that reports
+#: success; the allowlist has no missing entry, because the queue creates this
+#: directory and knows what it put in it.  Anything else arrived from outside this
+#: module and is refused.
 QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS = frozenset(
-    {"gc.auto", "core.bare", "remote.origin.url"}
+    {
+        # Written by `ensure_scratch`.
+        "gc.auto",
+        "core.bare",
+        "remote.origin.url",
+        # Written by `git init --bare` itself.  The format version always; the
+        # filesystem probes only where they apply, `core.filemode` and
+        # `core.ignorecase` per what git measured and `core.precomposeunicode` on
+        # macOS.  They are listed because the directory really does hold them --
+        # `test_a_fresh_queue_git_directory_holds_only_keys_this_module_admits` is
+        # what proves this set complete for the git that runs it.
+        "core.repositoryformatversion",
+        "core.filemode",
+        "core.ignorecase",
+        "core.precomposeunicode",
+    }
 )
-#: The namespaces in which ONE key silently sends a push somewhere else:
-#: ``remote.origin.pushurl`` and ``remote.origin.proxy`` under the first,
-#: ``url.<base>.insteadof`` and ``url.<base>.pushinsteadof`` under the second.  The
-#: rule is a namespace and not a list of those four because a rule spelled as a list
-#: has to be extended for every key git adds, and the failure of the missing entry is
-#: a diverted push that reports success.
-QUEUE_SCRATCH_GUARDED_CONFIG_PREFIXES = ("remote.origin.", "url.")
-#: Keys outside those namespaces that install a PROGRAM into the queue's own git
-#: invocations: an ssh command for the transport, and a hooks directory whose
-#: ``pre-push`` runs on the way out.  Neither changes the destination ``get-url
-#: --push`` prints, so neither is caught by comparing urls.
-QUEUE_SCRATCH_FORBIDDEN_CONFIG_KEYS = frozenset({"core.sshcommand", "core.hookspath"})
-#: A credential helper is admitted -- an https origin needs one, and global
-#: configuration is now out of scope -- EXCEPT in the spelling git runs as a shell
-#: command.  A leading ``!`` is that spelling.
+#: The one key admitted OUTSIDE that set: an https origin needs a credential helper,
+#: global configuration is out of scope since the environment was cleared, and a
+#: helper is the documented way to supply one -- so refusing it would refuse every
+#: correct unattended tick.  It is admitted only in the spellings git does not hand
+#: to a shell; a leading ``!`` is the spelling git runs as a shell command.
 CREDENTIAL_HELPER_KEY = "credential.helper"
 CREDENTIAL_HELPER_SHELL_PREFIX = "!"
 #: Same-host serialisation for one cache.  It is a LOCAL file and it is not the thing
@@ -603,9 +616,10 @@ ORIGIN_PUSH_MISMATCH_REASON = (
 QUEUE_PUSH_MISMATCH_REASON = (
     "the campaign queue does not push to this campaign's pinned origin"
 )
-#: The queue creates and configures its own git directory, so every key in it that
-#: could re-point a push is one this module wrote or one that arrived from outside it.
-#: The second case is a refusal rather than a value to interpret.
+#: The queue creates and configures its own git directory, so EVERY key in it is one
+#: this module wrote or one that arrived from outside it.  The second case is a
+#: refusal rather than a value to interpret, and the refusal does not depend on
+#: anybody having predicted what the key does.
 QUEUE_SCRATCH_CONFIG_REASON = (
     "the campaign queue's git configuration was written from outside campaignctl"
 )
@@ -1699,43 +1713,48 @@ class QueueSync:
 
         The url comparison reads what git resolves NOW.  This reads what could
         resolve it somewhere else NEXT time and what could run a program on the
-        way: a ``pushurl`` written behind the queue's back, an ``insteadOf``
-        rewrite, an ssh command, a hooks directory, a proxy, or a credential
-        helper spelled as a shell command.  The queue creates this directory
-        itself and writes exactly
-        :data:`QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS`, so in the two namespaces that
-        decide a destination anything else came from outside this module -- and
-        an unmodelled key there is refused rather than interpreted, because the
-        way to be wrong about it is a push that lands elsewhere and reports
-        success.
+        way -- a ``pushurl`` written behind the queue's back, an ``insteadOf``
+        rewrite, a proxy, an ssh command, a hooks directory, an ``fsmonitor``
+        the queue's own ``add`` and ``write-tree`` execute -- and it names none
+        of them.  The queue CREATES this directory and it holds exactly
+        :data:`QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS`, so every other key arrived
+        from outside this module and is refused rather than interpreted.  That
+        allowlist is the whole rule, because the categories it replaced were
+        lists: ``core.fsmonitor`` was in neither the two destination namespaces
+        nor the two program-installing keys, and pointed at a script in this
+        directory's own config it ran twice per state commit and the operation
+        was admitted.  The only exception is
+        :data:`CREDENTIAL_HELPER_KEY`, and only when its value is not the
+        spelling git hands to a shell.
+
+        A git version that writes a key this set lacks REFUSES rather than
+        admits, which is the safe direction: the queue stops until an operator
+        removes the key or the set is extended with a comment saying git wrote
+        it.  The unsafe direction is what this replaces -- a rule that had to be
+        extended for every key git adds, whose missing entry is a push that
+        lands elsewhere, or a program that runs, and reports success.
         """
         for key, value in self.scratch_config():
             lowered = key.lower()
             if lowered in QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS:
                 continue
-            if any(
-                lowered.startswith(prefix)
-                for prefix in QUEUE_SCRATCH_GUARDED_CONFIG_PREFIXES
-            ):
-                raise QueueError(
-                    f"{QUEUE_SCRATCH_CONFIG_REASON}: {self.scratch} sets {key} "
-                    f"to {value!r}, and campaignctl writes only "
-                    f"{sorted(QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS)} there; a key "
-                    "under remote.origin.* or url.* decides where a push goes"
-                )
-            if lowered in QUEUE_SCRATCH_FORBIDDEN_CONFIG_KEYS:
-                raise QueueError(
-                    f"{QUEUE_SCRATCH_CONFIG_REASON}: {self.scratch} sets {key} "
-                    f"to {value!r}, which installs a program in the queue's own "
-                    "git invocations"
-                )
-            if lowered == CREDENTIAL_HELPER_KEY and value.startswith(
+            if lowered == CREDENTIAL_HELPER_KEY and not value.startswith(
                 CREDENTIAL_HELPER_SHELL_PREFIX
             ):
-                raise QueueError(
-                    f"{QUEUE_SCRATCH_CONFIG_REASON}: {self.scratch} sets {key} "
-                    f"to {value!r}, which git runs as a shell command"
-                )
+                continue
+            raise QueueError(
+                f"{QUEUE_SCRATCH_CONFIG_REASON}: {self.scratch} sets {key} to "
+                f"{value!r}.  campaignctl creates that directory and it holds "
+                f"exactly {sorted(QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS)} -- what "
+                f"campaignctl writes plus what `git init` wrote -- and outside "
+                f"that set only a {CREDENTIAL_HELPER_KEY} whose value does not "
+                f"begin with {CREDENTIAL_HELPER_SHELL_PREFIX!r} is admitted.  "
+                f"The remedy is to REMOVE {key} from {self.scratch}/config (a "
+                f"{CREDENTIAL_HELPER_KEY} may instead be respelled without the "
+                "leading marker), NOT to add an allowance for it: a key this "
+                "module did not write is a key that can send a push elsewhere "
+                "or install a program in the queue's own git invocations."
+            )
 
     def verify_push_destination(self) -> str:
         """Prove this git directory pushes to the PIN, and return where it pushes.

@@ -453,6 +453,58 @@ class CampaignQueueTests(unittest.TestCase):
             check=True,
         )
 
+    def scratch_config_key_names(self) -> list[str]:
+        """Return that directory's local key names, read WITHOUT campaignctl.
+
+        The completeness assertion below asks whether the module's allowlist
+        covers what a repository this module CREATES actually holds, so the
+        measurement may not go through
+        :meth:`QueueSync.scratch_config`: a reading taken with the code under
+        test cannot disagree with it about what the keys are. ``-z`` for the
+        same reason production uses it -- a value may contain a newline -- and
+        ``--name-only`` because only the names are the question here.
+        """
+        result = subprocess.run(
+            [
+                "git",
+                "--git-dir",
+                str(self.scratch_git_dir()),
+                "config",
+                "--list",
+                "--local",
+                "--name-only",
+                "-z",
+            ],
+            stdout=subprocess.PIPE,
+            text=True,
+            check=True,
+        )
+        return sorted(chunk for chunk in result.stdout.split("\0") if chunk)
+
+    def sentinel_script(self, name: str) -> tuple[Path, Path]:
+        """Write an executable that RECORDS having run, and return both paths.
+
+        The sentinel is what tells a refusal apart from a refusal that arrived
+        too late. ``core.fsmonitor`` is executed by the queue's own ``add`` and
+        ``write-tree``, so a check placed after them would still raise, still
+        leave the ref unmoved, and still have run arbitrary code as the
+        operator -- a test that asserted only the refusal would pass for that.
+        The sentinel path is baked into the script instead of passed in the
+        environment, because the program is started by git with whatever
+        environment git decided to give it.
+        """
+        directory = self.root / "sentinels"
+        directory.mkdir(exist_ok=True)
+        sentinel = directory / f"{name}.ran"
+        script = directory / f"{name}.sh"
+        script.write_text(
+            "#!/bin/sh\n"
+            f'printf "ran %s\\n" "$*" >> "{sentinel}"\n'
+            "exit 0\n"
+        )
+        script.chmod(0o755)
+        return script, sentinel
+
     def unsanitised_queue_push(self, ref: str) -> subprocess.CompletedProcess:
         """Push the queue ref as campaignctl did BEFORE the environment was cleared.
 
@@ -3100,24 +3152,18 @@ class CampaignQueueTests(unittest.TestCase):
         self.assert_cycle_lands_on_the_pin("after", diverted)
 
     def test_the_queues_git_directory_admits_only_the_keys_it_writes(self) -> None:
-        """A namespace rule, and the direction it has to keep admitting.
+        """Every spelling of the DIVERSION, under a rule that names none of them.
 
-        ``remote.origin.pushurl`` is one spelling of the diversion; an
-        ``insteadOf`` rewrite is another; a proxy is a third; and ``mirror`` is
-        the one nobody would have listed, which is why the rule is the two
-        NAMESPACES that decide a destination minus the keys campaignctl writes,
-        rather than a list of the keys somebody thought of. An ssh command and a
-        hooks path change no url at all and so are named separately.
-
-        The last arm is the opposite direction: an https origin needs a
-        credential helper, global configuration is out of scope now, and a
-        helper that is not a shell command is the documented way to supply one --
-        a check that refused it would refuse every correct unattended tick.
+        ``remote.origin.pushurl`` is one spelling; an ``insteadOf`` rewrite is
+        another; a proxy is a third; and ``mirror`` is the one nobody would have
+        listed. Round 8 covered them with the two NAMESPACES that decide a
+        destination minus the keys campaignctl writes; they are covered now by
+        the allowlist, which subtracts nothing and so cannot be missing an
+        entry. These arms are kept because the namespaces were retired, and a
+        retired rule's cases have to keep failing.
         """
         diverted = self.diverted_origin()
         self.assert_cycle_lands_on_the_pin("one", diverted)
-        hooks = self.root / "injected-hooks"
-        hooks.mkdir()
 
         for key, value in (
             ("remote.origin.pushurl", str(diverted)),
@@ -3125,9 +3171,6 @@ class CampaignQueueTests(unittest.TestCase):
             (f"url.{diverted}.insteadOf", str(self.origin)),
             ("remote.origin.proxy", "http://127.0.0.1:1"),
             ("remote.origin.mirror", "true"),
-            ("core.sshCommand", "/bin/false"),
-            ("core.hooksPath", str(hooks)),
-            ("credential.helper", "!/bin/echo password=x"),
         ):
             with self.subTest(key=key):
                 self.write_scratch_config(key, value)
@@ -3141,9 +3184,246 @@ class CampaignQueueTests(unittest.TestCase):
                     campaignctl.summary(self.queue)["counts"]["staged"], 0
                 )
 
-        self.write_scratch_config("credential.helper", "osxkeychain")
-        self.assertEqual(campaignctl.summary(self.queue)["counts"]["staged"], 0)
         self.assertEqual(self.refs_in(diverted), [])
+
+    def test_an_fsmonitor_in_the_queues_git_directory_refuses_before_it_runs(
+        self,
+    ) -> None:
+        """Round 8's missing entry: a PROGRAM the queue itself executes.
+
+        ``core.fsmonitor`` changes no url, so the destination comparison admits
+        it. It is under neither ``remote.origin.*`` nor ``url.*``, so the
+        namespace rule admitted it. It was not one of the two keys the
+        program-installing category listed, so that admitted it as well.
+        Pointed at a script in this directory's own configuration it is executed
+        by the queue's own ``add`` and again by its ``write-tree`` -- twice per
+        state commit -- and the whole operation SUCCEEDED.
+
+        The sentinel is the load-bearing half. A refusal on its own is also what
+        a check placed after those two commands would produce, and by then the
+        script has already run as the operator; the assertion that has to hold
+        is that it never ran at all. Measured with the allowlist removed, this
+        test goes red with the sentinel PRESENT and TWO lines in it, one per
+        execution, written while ``stage`` was building its state commit.
+        """
+        diverted = self.diverted_origin()
+        # The git directory a key can be written into is the one the queue
+        # creates on its first operation, so land a whole cycle first.
+        self.assert_cycle_lands_on_the_pin("before", diverted)
+        landed = self.queue_ref_sha()
+        script, sentinel = self.sentinel_script("fsmonitor")
+        self.write_scratch_config("core.fsmonitor", str(script))
+
+        for label, operation in (
+            ("summary", lambda: campaignctl.summary(self.queue)),
+            ("refresh", lambda: campaignctl.refresh_queue(self.queue)),
+            ("stage", lambda: self.stage("after")),
+        ):
+            with self.subTest(operation=label):
+                with self.assertRaisesRegex(
+                    campaignctl.QueueError,
+                    campaignctl.QUEUE_SCRATCH_CONFIG_REASON,
+                ):
+                    operation()
+            # In its OWN subtest, because when the refusal is what regressed the
+            # arm above has already failed and would never reach this line --
+            # and this is the line that says the program RAN.
+            with self.subTest(operation=label, ran="fsmonitor program"):
+                self.assertFalse(
+                    sentinel.exists(),
+                    f"the fsmonitor program ran during {label}: "
+                    f"{sentinel.read_text() if sentinel.exists() else ''}",
+                )
+
+        # No state reached the ref, and none reached anywhere else either.
+        self.assertEqual(self.queue_ref_sha(), landed)
+        self.assertNotIn("items/after.json", self.queue_ref_paths())
+        self.assertEqual(self.refs_in(diverted), [])
+
+        # The direction the check must NOT act in: with the key gone the same
+        # cycle lands on the pinned origin, and nothing has run even then.
+        self.unset_scratch_config("core.fsmonitor")
+        self.assert_cycle_lands_on_the_pin("after", diverted)
+        self.assertFalse(
+            sentinel.exists(),
+            "the fsmonitor program ran at some point: "
+            f"{sentinel.read_text() if sentinel.exists() else ''}",
+        )
+
+    def test_every_program_installing_key_refuses_before_its_program_runs(
+        self,
+    ) -> None:
+        """The category that was a list of two, measured on four keys.
+
+        ``core.sshCommand`` is the transport, ``core.hooksPath`` puts a
+        ``pre-push`` on the way out, ``credential.helper`` in the ``!`` spelling
+        is handed to a shell, and ``core.fsmonitor`` -- the one the list lacked
+        -- runs inside the state commit. None of the four changes the
+        destination ``get-url --push`` prints, so no url comparison catches any
+        of them; all four are refused now for the one reason that covers them
+        without naming them, which is that campaignctl did not write them.
+
+        Each arm points its key at a script that records having run, and asserts
+        the record is absent. What that assertion is worth differs by arm, and
+        the difference was measured rather than assumed: ``core.fsmonitor``
+        executes twice per state commit -- reverting the allowlist makes the arm
+        above go red with the record present -- and a ``pre-push`` under
+        ``core.hooksPath`` runs for this fixture's push as well. The ssh command
+        and the credential helper have nothing to invoke against a local-path
+        origin: no transport is started and no authentication is asked for. For
+        those two the record's absence is a regression guard, not a reproducer,
+        which is why the fsmonitor arm stands on its own above.
+        """
+        diverted = self.diverted_origin()
+        self.assert_cycle_lands_on_the_pin("one", diverted)
+        landed = self.queue_ref_sha()
+
+        hooks = self.root / "injected-hooks"
+        hooks.mkdir()
+        pre_push, hook_sentinel = self.sentinel_script("hookspath")
+        (hooks / "pre-push").write_text(pre_push.read_text())
+        (hooks / "pre-push").chmod(0o755)
+        ssh, ssh_sentinel = self.sentinel_script("sshcommand")
+        helper, helper_sentinel = self.sentinel_script("credentialhelper")
+        fsmonitor, fsmonitor_sentinel = self.sentinel_script("fsmonitor-arm")
+
+        for key, value, sentinel in (
+            ("core.fsmonitor", str(fsmonitor), fsmonitor_sentinel),
+            ("core.sshCommand", str(ssh), ssh_sentinel),
+            ("core.hooksPath", str(hooks), hook_sentinel),
+            ("credential.helper", f"!{helper}", helper_sentinel),
+        ):
+            with self.subTest(key=key):
+                self.write_scratch_config(key, value)
+                with self.assertRaisesRegex(
+                    campaignctl.QueueError,
+                    campaignctl.QUEUE_SCRATCH_CONFIG_REASON,
+                ):
+                    self.stage(f"after-{sentinel.stem}")
+                self.assertFalse(
+                    sentinel.exists(),
+                    f"{key} installed a program that RAN: "
+                    f"{sentinel.read_text() if sentinel.exists() else ''}",
+                )
+                self.assertEqual(self.queue_ref_sha(), landed)
+                self.unset_scratch_config(key)
+                self.assertEqual(
+                    campaignctl.summary(self.queue)["counts"]["staged"], 0
+                )
+
+        self.assertEqual(self.refs_in(diverted), [])
+
+    def test_a_key_no_rule_ever_named_is_refused_because_the_category_is_gone(
+        self,
+    ) -> None:
+        """The point of an allowlist: these three were never anybody's category.
+
+        ``core.pager``, an alias, and ``protocol.ext.allow`` are under no
+        guarded namespace and on no forbidden list, and under round 8's rule all
+        three were ADMITTED. They are not refused here because a fourth category
+        was added for them -- they are refused because campaignctl did not write
+        them, which is the only property the rule reads. A key git adds in a
+        release nobody has run yet is refused by the same sentence.
+        """
+        diverted = self.diverted_origin()
+        self.assert_cycle_lands_on_the_pin("one", diverted)
+        landed = self.queue_ref_sha()
+
+        for key, value in (
+            ("core.pager", "cat"),
+            ("alias.x", "log"),
+            ("protocol.ext.allow", "always"),
+        ):
+            with self.subTest(key=key):
+                self.write_scratch_config(key, value)
+                with self.assertRaisesRegex(
+                    campaignctl.QueueError,
+                    campaignctl.QUEUE_SCRATCH_CONFIG_REASON,
+                ):
+                    self.stage("after")
+                # The refusal has to say WHICH key and what the writable set is,
+                # so the operator's remedy is removal and not an allowance.
+                with self.assertRaises(campaignctl.QueueError) as caught:
+                    campaignctl.summary(self.queue)
+                message = str(caught.exception)
+                self.assertIn(key, message)
+                self.assertIn("REMOVE", message)
+                for written in campaignctl.QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS:
+                    self.assertIn(written, message)
+                self.assertEqual(self.queue_ref_sha(), landed)
+                self.assertNotIn("items/after.json", self.queue_ref_paths())
+                self.unset_scratch_config(key)
+                self.assertEqual(
+                    campaignctl.summary(self.queue)["counts"]["staged"], 0
+                )
+
+        self.assertEqual(self.refs_in(diverted), [])
+
+    def test_a_credential_helper_that_is_not_a_shell_command_stays_admitted(
+        self,
+    ) -> None:
+        """The direction the allowlist must NOT act in.
+
+        An https origin needs a credential helper, ``~/.gitconfig`` is out of
+        scope since the configuration environment was cleared, and this
+        directory's own local config is the documented place to put one. So the
+        one key outside the written set that is admitted is a helper that git
+        does not hand to a shell -- and it is admitted through a whole cycle,
+        not just through the read that happens first, because a refusal in the
+        push would refuse every correct unattended tick just as thoroughly.
+        """
+        diverted = self.diverted_origin()
+        self.assert_cycle_lands_on_the_pin("one", diverted)
+        self.write_scratch_config("credential.helper", "osxkeychain")
+
+        self.assertEqual(campaignctl.summary(self.queue)["counts"]["staged"], 0)
+        self.assert_cycle_lands_on_the_pin("two", diverted)
+
+        # And it is still there: an admitted key is admitted, not deleted.
+        self.assertIn("credential.helper", self.scratch_config_key_names())
+
+    def test_a_fresh_queue_git_directory_holds_only_keys_this_module_admits(
+        self,
+    ) -> None:
+        """What makes the allowlist a rule and not a guess: measure the set.
+
+        The allowlist is only safe if it really covers what a repository this
+        module CREATES contains, and ``git init`` writes keys campaignctl never
+        asked for -- the format version always, the filesystem probes where they
+        apply. So this asserts directly against ``git config --list --local`` in
+        a directory :meth:`QueueSync.ensure_scratch` has just made: every key in
+        it is in :data:`campaignctl.QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS`.
+
+        A git that writes a key the set lacks fails HERE, and in production
+        refuses rather than admits. The three keys campaignctl writes itself are
+        asserted present as the positive control: an empty or wrongly scoped
+        read would otherwise satisfy the emptiness assertion without measuring
+        anything.
+        """
+        sync = campaignctl.QueueSync(self.queue)
+        self.assertFalse(
+            self.scratch_git_dir().exists(),
+            "this arm has to measure a FRESHLY created directory",
+        )
+        sync.ensure_scratch(str(self.origin))
+
+        observed = self.scratch_config_key_names()
+        for written in ("gc.auto", "core.bare", "remote.origin.url"):
+            self.assertIn(written, observed)
+        self.assertEqual(
+            [
+                key
+                for key in observed
+                if key not in campaignctl.QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS
+            ],
+            [],
+            "git wrote a local key QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS does not "
+            "list, so this git's fresh queue directory refuses itself; add the "
+            "key to that set with a comment saying git init wrote it",
+        )
+
+        # And the directory that set describes is one every operation admits.
+        self.assert_cycle_lands_on_the_pin("fresh", self.diverted_origin())
 
     def test_a_checkout_that_pushes_somewhere_else_is_refused_too(self) -> None:
         """``get-url`` prints one of TWO urls, and the checkout has both as well.
