@@ -115,6 +115,35 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **completing PET coverage is not a publication prerequisite**. Preserves the ruled stop exactly,
   t0 `2026-09-02T13:44:27Z` at `9ce59a59`.
 
+### Joseph rules the complete-successor question: Z may be specified (2026-09-06)
+
+- [`DECISION-20260906-joseph-authorizes-z-specification-only.md`](DECISION-20260906-joseph-authorizes-z-specification-only.md)
+  - **SPECIFICATION ONLY; authorizes nothing to build or run.** Joseph rules the one question
+  `PACKET-20260905` asked, selecting its **option B**. `RZ` names **exactly one** complete scalar-5D
+  successor **Z** as a **prospective** seven-cause grading subject and a **possible** adoption
+  subject, with **seven distinct assessment cells**; **G's historical cells are preserved**, including
+  `(cause 7, G)`'s permanent `OPEN` under `R1`, and **Y's cause-7-only scope under `R2` is
+  preserved**. Z's assessments may form a **self-contained** tally and **may never be combined with
+  G's or Y's grades** — a three-way separation, wider than the packet asked for. Authorized
+  deliverables are a scientific contract, cause dispositions, terminal criteria, dependency analysis
+  and a **costed execution proposal**; **any proposed criterion change is carved out** and reserved
+  for a separate decision. **No implementation, construction, compute, grading, adoption or
+  publication change.** `R1`–`R6` are untouched and `R5`'s accounting start, ceilings and stop date
+  are preserved exactly; `RZ` is **not** `D-C3-VOI` and **not** `D-C3-RUN`. The ruling **opens no
+  `SCOREBOARD` cells** — `(ii)` constrains a future assessment, it does not create one. Gate 2 remains
+  FAIL; counts hold at CAND `1 of 7`, QUOTED `0 of 7`. There is no `R7`: `RZ` does not extend the
+  2026-09-02 series.
+- [`PROMPTS-20260906-z-specification-session.md`](PROMPTS-20260906-z-specification-session.md)
+  - **A PROMPT, NOT AN AUTHORIZATION; subordinate to `RZ`, which overrides it wherever they differ.**
+  The brief for the fresh scientific-contract session that drafts Z's specification: reading order,
+  the five authorized deliverables, the boundaries restated so none is inferred away, the criterion
+  carve-out, and the return envelope. §2.1 carries the dependency instruction — a standalone Y
+  construction and the historical-candidate cause-3 seed scan are examined **as examples, not as the
+  whole question**, each candidate answered separately for `necessary` / `applicable` /
+  `reusable-now`, with the two suspended-authority facts (`D-Y-CONSTRUCT` does not exist; `R4`
+  suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
+  launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
+
 ### PET typed-descriptor semantic evidence
 
 - [`../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md`](../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md)
