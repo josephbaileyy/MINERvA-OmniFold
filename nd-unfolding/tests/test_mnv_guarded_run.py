@@ -4342,6 +4342,305 @@ class TheApprovalIsBoundToTheFileAndNotOnlyToTheArgv(Round8Fixture):
         self.assertIn("THE TICKET IS KEYED ON (ARGV, FILE)", mgr.__doc__)
 
 
+class TheTicketNeverCERTIFIEDTheEnvironmentSoTheConsumeSiteChecksIt(Round8Fixture):
+    """ROUND 10: the ticket's key is (argv, file), and the child's ENVIRONMENT is neither half.
+
+    THE FINDING VERBATIM: "The ticket key omits the environment. You keyed it on (argv, file); on
+    the ticket path the floor does `return original(*call_args, **call_kwargs)` -- the caller's own
+    env_list, never checked by `_environment_reaching_child_is_armed` and never re-armed. Through
+    your own seam (stdout.fileno() from _get_handles, same thread, approval outstanding), an
+    in-window call matching both halves of the key and stripping only MNV_GUARD_*/PYTHONPATH:
+    CHILD-ENV-UNGUARDED / HIJACK-LOADED WRONG TREE / exit 0 / no refusal recorded; control,
+    identical call with the full environment: CHILD-ENV-GUARDED / TICKET-SPENT 3 / no hijack. One
+    field, both directions. This is 9d14e7c0's class exactly, one field over."
+
+    WHY THE REPRODUCER AND ITS CONTROL DIFFER IN EXACTLY ONE FIELD, AND WHY THAT IS THE WHOLE
+    DESIGN. They run the SAME parent, the SAME outer `Popen`, the SAME in-window `fork_exec`
+    through the SAME seam, with the SAME argv and the SAME `executable_list` -- so both halves of
+    the ticket's identity MATCH in both, and the ticket is found in both. The only difference is
+    the `env_list` the in-window call passes: the parent's own environment, or the parent's own
+    environment minus `MNV_GUARD_*` and `PYTHONPATH`. A one-directional arm would be satisfied by a
+    guard that had simply stopped issuing tickets, or one that refused this argv outright, and
+    either would re-break the launches `_ApprovedLaunch` exists to wave through.
+
+    THE SAME ONE FIELD IS THEN TAKEN TO THE OTHER CONSUME SITE. There are two of them --
+    `_prepare_launch`'s `return env, argv` and the floor's `return original(...)` -- and each
+    returns the caller's own environment for its own reason, so each gets a run of its own rather
+    than a shared assertion. `os.posix_spawn` is how `subprocess.Popen` reaches the first on every
+    `close_fds=False` launch, and it is the arm that goes red if only the floor is checked.
+
+    THE FIX IS A CHECK AND NOT A THIRD KEY HALF, which is the reviewer's own remedy, and the
+    control arm is what makes that distinction measurable: with the environment in the IDENTITY the
+    control's in-window call would still match (it passes the same environment the ticket was
+    issued around), but every layer that legitimately re-spells an environment would stop matching
+    -- invisibly, because a mismatch only ever makes the lower layer scan MORE. That direction is
+    measured by `test_the_launches_THIS_GUARD_ALREADY_READ_are_still_waved_through_at_the_floor`
+    and by the multiprocessing arms above, which are the launches a broken identity breaks.
+    """
+
+    #: STRIPPED IN THE CHILD'S OWN ENVIRONMENT AND NOWHERE ELSE. `PATH` keeps the guard's wrapper
+    #: directories and every other variable is the parent's, so the two arms differ in the
+    #: propagation contract and in nothing else -- and the contract is what decides whether the
+    #: child's interpreter imports the shim as `sitecustomize`.
+    STRIP = ("        return {k: v for k, v in os.environ.items()\n"
+             "                if not k.startswith('MNV_GUARD_') and k != 'PYTHONPATH'}\n")
+    KEEP = "        return dict(os.environ)\n"
+
+    #: THE IN-WINDOW LAUNCH THROUGH `os.posix_spawn`, which is `_prepare_launch`'s OWN consume site
+    #: and not the floor's. `subprocess.Popen` takes this route on every `close_fds=False` launch,
+    #: so both sites are reachable from a public primitive and both had to be checked.
+    SPAWN_LAUNCH = "        pid = os.posix_spawn(EXE, ARGV, self.child_environment())\n"
+
+    def floor_launch(self) -> str:
+        """The in-window launch through `_posixsubprocess.fork_exec`: the floor's consume site.
+
+        The argument list is `Round8Fixture.FORK_EXEC_CALL`, which is `spawnv_passfds`'s own, so
+        the reproducer passes the twenty-three positions the producer passes rather than an
+        invention of this file's.
+        """
+        return ("        env_list = [os.fsencode(k) + b'=' + os.fsencode(v)\n"
+                "                    for k, v in self.child_environment().items()]\n"
+                "        errpipe_read, errpipe_write = os.pipe()\n"
+                "        argv = ARGV\n"
+                "        pid = _posixsubprocess.fork_exec(\n"
+                + self.FORK_EXEC_CALL +
+                "        os.close(errpipe_write)\n"
+                "        os.close(errpipe_read)\n")
+
+    def window_parent(self, name: str, child: pathlib.Path, environment: str, launch=None):
+        """The reviewer's reproducer, with `environment` deciding what the in-window call passes.
+
+        THE OUTER LAUNCH IS THE LEGITIMATE ONE and it is what issues the approval:
+        `Popen([sys.executable, child], stdout=<object>)` -- a plain Python launch with no startup
+        flags, which this guard admits and re-arms. CPython calls `stdout.fileno()` from
+        `_get_handles`, inside `Popen.__init__`, which is inside this guard's own
+        `_approve_launch`/`_withdraw_launch_approval` window and in the same thread, so the
+        approval stack the lower layer reads is the one that call sees. From there the reproducer
+        calls the layer BENEATH the primitive directly, with the approved argv AND the approved
+        file, and only the environment of its own choosing.
+
+        `environment` AND `launch` ARE THE TWO AXES AND THEY VARY SEPARATELY: the environment is
+        the one field the finding is about, and the launch is WHICH consume site it arrives at.
+        """
+        return write(
+            self.nd / f"parent_{name}.py",
+            "import os, subprocess, sys, _posixsubprocess\n"
+            "EXE = sys.executable\n"
+            f"CHILD = {str(child)!r}\n"
+            "ARGV = [EXE, CHILD]\n"
+            "\n"
+            "class SpendsTheTicket:\n"
+            "    #: Reached from Popen._get_handles, INSIDE Popen.__init__, with the approval for\n"
+            "    #: (ARGV, EXE) outstanding on this thread's stack.\n"
+            "    def child_environment(self):\n"
+            + environment +
+            "\n"
+            "    def fileno(self):\n"
+            + (self.floor_launch() if launch is None else launch) +
+            "        _, status = os.waitpid(pid, 0)\n"
+            "        print('TICKET-SPENT', os.waitstatus_to_exitcode(status))\n"
+            "        return os.open(os.devnull, os.O_WRONLY)\n"
+            "\n"
+            "proc = subprocess.Popen(ARGV, stdout=SpendsTheTicket())\n"
+            "proc.wait()\n"
+            "print('OUTER-EXIT', proc.returncode)\n")
+
+    def test_an_in_window_call_MATCHING_BOTH_HALVES_cannot_DISARM_the_child(self):
+        """THE REPRODUCER. Both halves of the key match; the environment does not, so it REFUSES.
+
+        WHAT PROVES THE CHECK IS LOAD-BEARING is that this arm FAILS without it: the ticket matches
+        on `(argv, file)`, the floor returns `original(*call_args, **call_kwargs)` with the
+        caller's own stripped `env_list`, and the interpreter that starts has no `MNV_GUARD_*` and
+        no shim-first `PYTHONPATH` -- so it installs no guard, hijacks `sys.path`, prints
+        `HIJACK-LOADED WRONG TREE` and exits 0, and `TICKET-SPENT 0` says the launch was never even
+        looked at.
+
+        THE SENTINEL IS THE ASSERTION THAT SEPARATES "REFUSED" FROM "REFUSED TOO LATE". The child
+        writes it before it touches `sys.path`, so a refusal that let the interpreter start leaves
+        it behind; `assertRefusedStatically` requires it absent and requires the ONLY record to be
+        this parent's, at depth 0.
+        """
+        child, sentinel = self.hijacking_child("ticket_env_child")
+        parent = self.window_parent("ticket_env_stripped", child, self.STRIP)
+        result = self.guarded(parent)
+        self.assertNotIn("TICKET-SPENT", result.stdout,
+                         "the floor spent the approval and launched a DISARMED child -- this is "
+                         "the finding, not a refusal")
+        self.assertNotIn("OUTER-EXIT", result.stdout,
+                         "the parent got past the call, so nothing was refused")
+        self.assertNotIn("HIJACK-LOADED", result.stdout,
+                         "the unguarded child loaded the wrong tree: this is the finding verbatim")
+        record = self.assertRefusedStatically(result, sentinel, mgr.LAUNCH_REASON_TICKET_ENV)
+        self.assertIn(record["launch_refusal"]["offending_flag"],
+                      (mgr.MODULE_ENV, mgr.EXPECT_ROOT_ENV, mgr.PARENT_PID_ENV, mgr.DEPTH_ENV,
+                       "PYTHONPATH"),
+                      "the refusal does not name a contract variable the child would start "
+                      f"without: {record['launch_refusal']}")
+        self.assertEqual(record["launch_refusal"]["executable"],
+                         os.path.realpath(sys.executable),
+                         "the refusal does not name the file the disarmed launch would have run")
+        self.assertEqual(record["outcome"], mgr.launch_outcome(record["launch_refusal"]))
+
+    def test_the_OTHER_consume_site_os_posix_spawn_REFUSES_the_same_stripped_environment(self):
+        """TWO CONSUME SITES, TWO RUNS. This one is `_prepare_launch`'s, reached as `Popen` reaches
+        it.
+
+        `os.posix_spawn` DOES CONSUME, and that is why it is a second arm rather than a second
+        assertion. `subprocess.Popen` chooses it over `fork_exec` on every `close_fds=False`
+        launch, so the ticket is spent inside `_prepare_launch`, whose ticket path returns the
+        CALLER's `env` for exactly the reason the floor returned the caller's `env_list`. The AST
+        arm below can say both sites call the check; only a run can say the check refuses at both,
+        and a coverage claim resting on a site nobody exercised is the class of finding this file
+        keeps closing.
+
+        THE ONE FIELD IS THE SAME ONE. Same seam, same argv, same file, same stripped environment
+        as the reproducer above -- only the layer differs -- and the admitted direction for this
+        site is measured by the `close_fds=False` rows of
+        `test_the_launches_THIS_GUARD_ALREADY_READ_are_still_waved_through_at_the_floor`.
+        """
+        child, sentinel = self.hijacking_child("ticket_env_spawn_child")
+        parent = self.window_parent("ticket_env_spawn", child, self.STRIP,
+                                    launch=self.SPAWN_LAUNCH)
+        result = self.guarded(parent)
+        self.assertNotIn("TICKET-SPENT", result.stdout,
+                         "os.posix_spawn spent the approval and launched a DISARMED child: the "
+                         "check covers the floor and not `_prepare_launch`'s own consume site")
+        self.assertNotIn("HIJACK-LOADED", result.stdout,
+                         "the unguarded child loaded the wrong tree through os.posix_spawn")
+        record = self.assertRefusedStatically(result, sentinel, mgr.LAUNCH_REASON_TICKET_ENV)
+        self.assertEqual(record["outcome"], mgr.launch_outcome(record["launch_refusal"]))
+
+    def test_the_IDENTICAL_in_window_call_carrying_the_ARMED_environment_STILL_SPENDS_THE_TICKET(
+            self):
+        """The other direction of the one field: same argv, same file, FULL environment -> admitted.
+
+        WITHOUT THIS ARM the reproducer above would also pass against a guard that had stopped
+        issuing tickets altogether, or one that had started refusing `[sys.executable, child]`, and
+        both of those break the correct launches the ticket exists for. Here the in-window call is
+        byte-for-byte the same except that it passes `dict(os.environ)`, so the child arrives
+        GUARDED -- and being the same hijacking child, IT refuses its own wrong-tree import and
+        exits 3. `TICKET-SPENT 3` is therefore the reviewer's own control output and it is the
+        positive evidence that the launch was ADMITTED at the floor: had the ticket path refused,
+        nothing would have printed at all and stderr would carry `[oi136 launch]`.
+        """
+        child, sentinel = self.hijacking_child("ticket_env_armed_child")
+        parent = self.window_parent("ticket_env_armed", child, self.KEEP)
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("[oi136 launch]", result.stderr,
+                         "the armed in-window call was refused AT THE LAUNCH: the check reads more "
+                         "than the environment, and the ticket no longer waves through the launch "
+                         "the layer above already read")
+        self.assertIn("TICKET-SPENT 3", result.stdout, result.stdout + result.stderr)
+        self.assertIn("OUTER-EXIT 3", result.stdout, result.stdout + result.stderr)
+        self.assertNotIn("HIJACK-LOADED", result.stdout,
+                         "the guarded child loaded the wrong tree, so it was not guarded after all")
+        self.assertTrue(sentinel.exists(),
+                        "the child never ran, so this arm is not measuring an ADMITTED launch")
+        guarded_children = [record for record in self.records() if record["depth"] == 1]
+        self.assertTrue(guarded_children,
+                        "no record at depth 1: the admitted child ran without installing the "
+                        "guard, which is the finding in the silent direction")
+        for record in guarded_children:
+            self.assertEqual(record["propagation"], "armed", record)
+            self.assertIsNone(record["launch_refusal"], record)
+            self.assertEqual(record["verdict"], mgr.VERDICT_REFUSED, record)
+
+    def test_an_INHERITING_launch_is_NOT_refused_and_the_check_reads_THIS_PROCESSES_environment(
+            self):
+        """`env_list=None` at the floor means execv -- inherit -- and must stay admitted.
+
+        THE COMMONEST CORRECT LAUNCH IN THIS FILE IS THIS ONE. `subprocess.run([python, child])`
+        passes no `env=`, so the ticket is issued with None, `Popen._execute_child` builds
+        `env_list=None`, and the floor consumes the ticket with None. A check that treated "no
+        environment" as "no contract" would refuse it -- and a guard that fires on every correct
+        run is not a guard. What an inheriting child receives is this armed process's own
+        `os.environ`, which is what `_environment_reaching_child_is_armed(None)` reads.
+
+        IT IS MEASURED THROUGH THE FLOOR AND NOT THROUGH `subprocess`, so the None arrives at the
+        consume site as the C function's own position 5 rather than as a keyword nobody passed.
+        """
+        child = self.clean_child("ticket_env_inherit_child")
+        parent, _ = self.fork_exec_parent("ticket_env_inherit", "_posixsubprocess.fork_exec",
+                                          argv=f"[EXE, {str(child)!r}]", env_list="None",
+                                          child=str(child))
+        result = self.guarded(parent)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("[oi136 launch]", result.stderr,
+                         "an inheriting launch was refused: None was read as a disarmed "
+                         "environment rather than as `inherit this armed process's own`")
+        self.assertIn("FORK-EXEC-EXIT 0", result.stdout, result.stdout + result.stderr)
+        self.assertIn("CHILD-LOADED RIGHT TREE", result.stdout, result.stdout + result.stderr)
+        self.assertIn(1, [record["depth"] for record in self.records()],
+                      "no record at depth 1: the inheriting child ran without installing the guard")
+
+    def test_the_ticket_DOCSTRING_says_what_it_does_and_does_NOT_certify(self):
+        """The sentence round 10's reviewer quoted is corrected, and the new claims are pinned.
+
+        THE DOCSTRING WAS AGAIN THE DEFECT'S COVER. It said "a lower layer launching something else
+        while an approval is outstanding does not match and is scanned", which was true of a
+        different argv and a different file and FALSE of the same argv and the same file with the
+        contract stripped out of the environment -- a reader had no reason to look for the check
+        that was missing. So the superseded phrasing is asserted ABSENT, and what replaced it names
+        both what the ticket certifies and where the environment is now checked instead.
+        """
+        doc = mgr._ApprovedLaunch.__doc__
+        self.assertNotIn("launching something else while an approval is outstanding does not "
+                         "match", doc)
+        self.assertIn("WHAT IT CERTIFIES, EXACTLY", doc)
+        self.assertIn("IT NEVER CERTIFIED THE ENVIRONMENT", doc)
+        self.assertIn("_refuse_an_approved_launch_whose_environment_is_disarmed", doc)
+        self.assertIn("NOT A THIRD HALF OF THE KEY", doc)
+        # Round 9's claims are still there: this round corrects one sentence, it does not replace
+        # the ticket's own account of itself.
+        self.assertIn("THE IDENTITY IS (ARGV, FILE) AND NOT THE ARGV", doc)
+        self.assertIn("IT IS PER-THREAD", doc)
+        # And the header carries the same correction, for a reader who never opens the class.
+        self.assertIn("THE ENVIRONMENT IS CHECKED AT THE CONSUME SITE RATHER THAN CARRIED BY THE "
+                      "TICKET", mgr.__doc__)
+
+    def test_EVERY_consume_site_in_the_SOURCE_calls_the_environment_check(self):
+        """Read off the AST: a third consume site added without the check is red on its own commit.
+
+        WHY THIS IS A TEST AND NOT A REVIEW NOTE. The two arms above measure the two consume sites
+        that exist TODAY -- `_prepare_launch`'s and the floor's -- and a coverage claim about
+        "every consume site" measured once decays the moment a fourth layer is hooked. The
+        enumeration therefore comes from the SOURCE: every function whose body calls
+        `_consume_approved_launch` must also call
+        `_refuse_an_approved_launch_whose_environment_is_disarmed`, and the arm names the
+        function that does not.
+
+        THE POSITIVE CONTROL IS THE ENUMERATION ITSELF. A walk that found no consume site at all
+        would satisfy the demand vacuously, so the two known sites are asserted present by name.
+        """
+        import ast
+        tree = ast.parse(GUARD.read_text())
+        #: KEYED BY (name, line) AND NOT BY NAME. Four nested functions in this module are called
+        #: `guarded`, and a dict keyed by name would let a future consuming one overwrite the
+        #: floor's and be measured as if it were the same site.
+        consumers = []
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            called = {inner.func.id for inner in ast.walk(node)
+                      if isinstance(inner, ast.Call) and isinstance(inner.func, ast.Name)}
+            if "_consume_approved_launch" in called:
+                consumers.append((node.name, node.lineno, called))
+        names = {name for name, _, _ in consumers}
+        self.assertIn("_prepare_launch", names,
+                      f"the walk did not find `_prepare_launch`'s consume site: {sorted(names)}")
+        self.assertIn("guarded", names,
+                      f"the walk did not find the kernel floor's consume site: {sorted(names)}")
+        unchecked = sorted(f"{name}:{lineno}" for name, lineno, called in consumers
+                           if "_refuse_an_approved_launch_whose_environment_is_disarmed"
+                           not in called)
+        self.assertEqual(unchecked, [],
+                         "these functions consume a launch approval and do not check that the "
+                         "environment reaching the child is armed, so a ticket that matches both "
+                         f"halves of the key can start an unguarded interpreter from them: "
+                         f"{unchecked}")
+
+
 class TheStartupFlagScanFollowsCPythonsOptionGrammar(unittest.TestCase):
     """A TABLE OVER THE SCANNER ITSELF, called directly, and it is deliberately in-process.
 

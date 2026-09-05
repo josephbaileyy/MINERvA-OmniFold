@@ -251,6 +251,19 @@ records the file the layer below will actually exec, resolved through the ARMED 
 both halves must be equal before the floor skips its scan; `preexec_fn` is refused outright beside
 that (`LAUNCH_REASON_PREEXEC`).
 
+AND THE ENVIRONMENT IS CHECKED AT THE CONSUME SITE RATHER THAN CARRIED BY THE TICKET, which is
+round 10's correction. The ticket certifies that the layer above scanned this argv and this file,
+and NOTHING ELSE: on the ticket path the lower layer passed the caller's own environment straight
+through, so an in-window call matching both halves of the key while stripping only `MNV_GUARD_*`
+and `PYTHONPATH` started an UNGUARDED interpreter on the approved argv and the approved file --
+round 9's class, one field over. Every consume site now requires that the environment REACHING THE
+CHILD is armed and refuses with `LAUNCH_REASON_TICKET_ENV` when it is not. It is a CHECK and not a
+third half of the key, because a correct launch's environment already is the armed one, while a
+key half that every re-spelling of an environment could break would only ever make the lower layer
+scan MORE -- silently, which is the failure the ticket itself was introduced to fix. An ABSENT
+environment is admitted: at these layers None means inherit, and what an inheriting child gets is
+this armed process's own `os.environ`, which is what the check reads.
+
 `multiprocessing.set_executable` IS NOT ADVERSARIAL AND IS HOOKED WHERE THE CHOICE IS MADE. A direct
 `fork_exec` call is something only an attacker writes; `set_executable` is public API a launcher may
 reasonably reach for, and it names the file every `spawn` and `forkserver` child will exec. Since
@@ -1414,6 +1427,35 @@ LAUNCH_REASON_KERNEL_FLOOR = "a-fork_exec-call-at-the-kernel-floor-this-guard-ca
 #: shell, and there is no shell reading in this refusal to hand anywhere.
 LAUNCH_REASON_PREEXEC = "a-preexec-fn-runs-caller-code-inside-this-guards-approval-window"
 
+#: ROUND 10's REASON, AND IT NAMES THE CONSUME SITE RATHER THAN THE SCAN. Round 10's reviewer keyed
+#: on the field round 9's ticket does NOT carry: the environment. The identity is `(argv, file)`,
+#: and on the ticket path both consume sites used to hand the CALLER's own environment straight to
+#: the child -- never read by `_environment_reaching_child_is_armed`, never repaired by
+#: `_rearm_launch_environment`. So an in-window call (`stdout.fileno()` from `Popen._get_handles`,
+#: same thread, approval outstanding) matching BOTH halves of the key while stripping only
+#: `MNV_GUARD_*` and `PYTHONPATH` started an UNGUARDED interpreter on the approved argv and the
+#: approved file: the wrong tree loaded, exit 0, no refusal recorded. That is round 9's class
+#: exactly, one field over.
+#:
+#: WHY IT IS NOT `LAUNCH_REASON_ENV`, WHICH NAMES THE SAME MISSING VARIABLE. They are about the same
+#: CONTRACT and a different CLAIM, and the difference is what a reader of a record needs:
+#: `LAUNCH_REASON_ENV` says "the scan READ this launch and its argv or environment strips the
+#: contract", i.e. the launch as written is wrong. THIS one says "a layer above scanned and APPROVED
+#: this argv and this file, and the environment that arrived at the consume site is not the armed
+#: one the approval was issued around", i.e. something got in BETWEEN the two layers. A record
+#: carrying the first reason sends a reader to the caller's argv; this one sends them to the window.
+#: They share an `outcome` for the reason `LAUNCH_REASON_KERNEL_FLOOR` shares one -- see
+#: `LAUNCH_OUTCOMES`.
+#:
+#: THE ENVIRONMENT IS CHECKED AND NOT ADDED TO THE IDENTITY, which is the reviewer's own remedy and
+#: the only one of the two that cannot backfire. A check cannot reintroduce a false refusal, because
+#: a correct launch's environment already IS the armed one; a third key half would make every layer
+#: that legitimately RE-SPELLS an environment a mismatch (`Popen._posix_spawn`'s
+#: `if env is None: env = os.environ`, the floor's `NAME=VALUE` bytes round-trip, and
+#: `_restricted_shell_environment`'s rebuild), and a mismatch is invisible in every refusal arm
+#: because it only ever makes the lower layer scan MORE -- which is how the ticket came to exist.
+LAUNCH_REASON_TICKET_ENV = "an-approved-launch-whose-child-environment-is-not-the-armed-one"
+
 
 class _LaunchRefusal(Exception):
     """A launch this guard cannot SCAN, and therefore will not allow.
@@ -1794,6 +1836,8 @@ _LAUNCH_HEADLINES = {
                                  "READ, SO IT CANNOT BE SCANNED"),
     LAUNCH_REASON_PREEXEC: ("preexec_fn RUNS CALLER CODE IN THE FORKED CHILD, INSIDE THIS "
                             "GUARD'S OWN LAUNCH APPROVAL"),
+    LAUNCH_REASON_TICKET_ENV: ("AN APPROVED LAUNCH WOULD START ITS CHILD WITHOUT THE PROPAGATION "
+                               "CONTRACT"),
 }
 
 _LAUNCH_EXPLANATIONS = {
@@ -1846,6 +1890,20 @@ _LAUNCH_EXPLANATIONS = {
                             "the presence of threads. Spell the intent with cwd=, env=, "
                             "start_new_session=, pass_fds= or umask= -- all of which this layer "
                             "sees -- or do the work in the parent before the launch."),
+    LAUNCH_REASON_TICKET_ENV: ("A layer above scanned THIS argv and THIS file and handed the launch "
+                               "down as an approved ticket, and the environment that arrived with "
+                               "it at the consume site is not the armed one: a MNV_GUARD_* "
+                               "variable is missing or holds a value other than this process's, or "
+                               "PYTHONPATH's first entry is not the shim directory. The ticket "
+                               "certifies the argv and the file and NOTHING ELSE -- it never "
+                               "certified the environment -- so the environment reaching the child "
+                               "is checked here rather than trusted, and a child that would start "
+                               "without the contract is refused exactly as the scan refuses one. "
+                               "An absent environment is NOT this state: at these layers None "
+                               "means inherit, and what the child inherits is this armed process's "
+                               "own os.environ. Pass the environment the layer above armed and "
+                               "wrote back, or make the launch through a public primitive, which "
+                               "re-arms an explicit env= before it scans."),
 }
 
 
@@ -1873,6 +1931,13 @@ LAUNCH_OUTCOMES = {
     #: outcome, which would tell a ratchet reader that a startup flag was found -- nothing was
     #: scanned here at all.
     LAUNCH_REASON_PREEXEC: "refused:launch-unmodelled-launch-grammar",
+    #: ROUND 10's REASON TAKES THE **FIRST** OUTCOME, and that is the one place it differs from the
+    #: three above it. Nothing was unreadable here: the layer above READ this launch, and what this
+    #: refusal reports is that the child would start without the propagation contract -- which is
+    #: the claim `LAUNCH_REASON_ENV` already carries to a ratchet reader, and the same remedy. The
+    #: `reason` field is what says the contract went missing BETWEEN the two layers rather than in
+    #: the caller's own argv.
+    LAUNCH_REASON_TICKET_ENV: "refused:launch-python-startup-flags",
 }
 
 
@@ -4328,8 +4393,22 @@ class _ApprovedLaunch:
     was refused exactly that way before this existed.
 
     A FLAG WOULD SUPPRESS MORE THAN IT APPROVED. The ticket carries an IDENTITY and is consumed
-    ONCE, so a lower layer launching something else while an approval is outstanding does not match
-    and is scanned.
+    ONCE, so a lower layer launching a DIFFERENT ARGV, or the same argv with a DIFFERENT FILE,
+    while an approval is outstanding does not match and is scanned.
+
+    WHAT IT CERTIFIES, EXACTLY: THAT THE LAYER ABOVE SCANNED **THIS ARGV** AND **THIS FILE**. That
+    is the whole of it, and round 10's finding is that the consume sites read it as though it said
+    more. IT NEVER CERTIFIED THE ENVIRONMENT -- there is no environment in the identity and there
+    never was -- yet on the ticket path both sites handed the CALLER's own environment to the child
+    unread by `_environment_reaching_child_is_armed` and unrepaired by `_rearm_launch_environment`.
+    So an in-window call matching both halves of the key while stripping only `MNV_GUARD_*` and
+    `PYTHONPATH` started an UNGUARDED interpreter on the approved argv and the approved file: the
+    wrong tree loaded, exit 0, nothing refused. THE ENVIRONMENT IS THEREFORE CHECKED AT EVERY
+    CONSUME SITE (`_refuse_an_approved_launch_whose_environment_is_disarmed`,
+    `LAUNCH_REASON_TICKET_ENV`) AND IS DELIBERATELY NOT A THIRD HALF OF THE KEY: a check cannot
+    refuse a correct launch, whose environment already IS the armed one, while a third key half
+    would turn every layer that legitimately re-spells an environment into a mismatch -- and a
+    mismatch is invisible, because it only ever makes the lower layer scan MORE.
 
     THE IDENTITY IS (ARGV, FILE) AND NOT THE ARGV, WHICH IS ROUND 9's CORRECTION. Keyed on the argv
     alone it contradicted round 8's own finding -- the argv is not the executable -- and the earlier
@@ -4441,6 +4520,51 @@ def _refuse_the_launch(refusal: _LaunchRefusal, guard: GuardedPathFinder, argv, 
     guard.launch_refusal = record
     _report_launch(record)
     raise SystemExit(VIOLATION_EXIT) from None
+
+
+def _refuse_an_approved_launch_whose_environment_is_disarmed(argv, executable, env,
+                                                             guard: GuardedPathFinder) -> None:
+    """THE TICKET PATH'S ENVIRONMENT GATE. Every consume site calls it before the launch runs.
+
+    ROUND 10's FINDING IS THAT THE TICKET NEVER CERTIFIED THE ENVIRONMENT, and the ticket path was
+    the one route to a child where nothing did. `_ApprovedLaunch`'s identity is `(argv, file)`;
+    matching it used to be the whole of the consume site, and what followed was the caller's own
+    environment handed to the child untouched -- `_environment_reaching_child_is_armed` is called
+    from `_scan_launch`, which the ticket exists to SKIP, and `_rearm_launch_environment` runs one
+    line further down `_prepare_launch` than a matched ticket ever reaches. An in-window call
+    matching both halves of the key while stripping only `MNV_GUARD_*` and `PYTHONPATH` therefore
+    ran an unguarded interpreter on the approved argv and the approved file.
+
+    ONE FUNCTION FOR BOTH CONSUME SITES, for the reason `_launch_identity` is one function for both
+    sides of the key: two sites each spelling their own environment check are two implementations
+    of one rule, and the first thing they diverge on is the `None` below.
+
+    IT IS THE SAME PREDICATE THE SCAN PATH USES AND NOT A SECOND ONE.
+    `_environment_reaching_child_is_armed` is called here with the environment REACHING THE CHILD,
+    so a ticket path and a scan path refuse the same disarmed child for the same missing variable;
+    only the `reason` differs, because only the reason differs -- see `LAUNCH_REASON_TICKET_ENV`.
+
+    `env=None` IS ADMITTED, AND IT IS NOT A HOLE. At both consume sites None means INHERIT, which is
+    the same spelling this file uses everywhere: `_environment_from_fork_exec` keeps the floor's
+    `env_list=None` as None ("use execv instead of execve"), and `_rearm_launch_environment(None)`
+    returns None. What an inheriting child receives is THIS process's `os.environ`, which is armed
+    -- `install()` exported the contract into it -- and which is exactly what
+    `_environment_reaching_child_is_armed(None)` reads. Refusing None instead would refuse the
+    commonest correct launch in the file: `subprocess.run([sys.executable, "child.py"])` passes no
+    `env=`, so the ticket is issued with None, `Popen._execute_child` builds `env_list = None`, and
+    the floor consumes the ticket with None. A guard that fired on every correct run would not be a
+    guard.
+
+    THE TICKET IS ALREADY SPENT WHEN THIS RUNS, and that is deliberate: the caller has to CONSUME to
+    know it is on the ticket path at all, and the refusal below exits the process, so there is no
+    later launch for an unspent ticket to serve. `_refuse_the_launch` names the file from
+    `executable` in its own single place rather than a second copy here.
+    """
+    missing = _environment_reaching_child_is_armed(env)
+    if missing is None:
+        return
+    _refuse_the_launch(_LaunchRefusal(LAUNCH_REASON_TICKET_ENV, missing), guard, argv, executable,
+                       env)
 
 
 def _scan_launch(argv, env, guard: GuardedPathFinder, cwd=None, executable=None):
@@ -4562,6 +4686,12 @@ def _prepare_launch(executable, arguments, env, guard: GuardedPathFinder, cwd=No
         #: alone was spendable by anything running inside the window on a DIFFERENT file. `env` is
         #: the environment the layer above ARMED and wrote back, so a bare name resolves here to the
         #: same file it resolved to there.
+        #: AND THE ENVIRONMENT IS CHECKED RATHER THAN TRUSTED, which is round 10's correction. What
+        #: is returned here is the caller's own `env` -- the ticket certifies the argv and the file
+        #: and never certified this -- so a call that matched both halves of the key while stripping
+        #: the contract started an unguarded child from here. `os.posix_spawn` reaches this line on
+        #: every `close_fds=False` launch, so this is a consume site and not only a fast path.
+        _refuse_an_approved_launch_whose_environment_is_disarmed(argv, executable, env, guard)
         return env, argv
     armed_env = _rearm_launch_environment(env, guard)
     try:
@@ -4931,6 +5061,16 @@ def _install_launch_guards(guard: GuardedPathFinder) -> None:
                 #: `return` is the line that skips the scan, and before the file was keyed it could
                 #: be reached by anything running inside the window with `executable_list` of its
                 #: own choosing.
+                #: AND THE ENVIRONMENT REACHING THE CHILD IS CHECKED BEFORE THAT `return` RUNS,
+                #: which is round 10's correction. `original(*call_args, **call_kwargs)` passes the
+                #: CALLER's `env_list` -- the ticket certifies the argv and the file and never
+                #: certified this -- so an in-window call matching both halves of the key while
+                #: stripping only `MNV_GUARD_*` and `PYTHONPATH` used to exec an unguarded
+                #: interpreter from this line. `env` is the mapping `_environment_from_fork_exec`
+                #: read out of position 5, so None still means "execv, inherit this armed process's
+                #: environment" and is admitted.
+                _refuse_an_approved_launch_whose_environment_is_disarmed(argv, executable, env,
+                                                                        guard)
                 return original(*call_args, **call_kwargs)
             armed_env, armed_argv = _prepare_launch(executable, argv, env, guard, cwd)
             positional = list(call_args)
