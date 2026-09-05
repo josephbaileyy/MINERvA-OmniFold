@@ -5985,10 +5985,6 @@ class EveryRefusalSiteHasAControlThatNamesItsOutcome(unittest.TestCase):
         self.assertIsNone(mgr.SITE_NONE)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 # =================================================================================
 # THE LOADED-CHECKOUT INVENTORY (promoted 2026-08-23 from the OI-126 lane's probe).
 #
@@ -6998,3 +6994,162 @@ class TheCaptureCannotGoMISSINGSilently(unittest.TestCase):
         called = {n.func.id for n in ast.walk(funcs["_emit_inventory"])
                   if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)}
         self.assertIn("_repo_env_capture", called)
+
+
+def classes_defined_after(source: str, marker: str = "__name__") -> list:
+    """Top-level class names defined AFTER the `if __name__ == "__main__"` block, from the AST.
+
+    ONE PREDICATE, TWO CALLERS -- the arm that measures THIS file and the power arm that feeds it a
+    file carrying the defect. A rule spelled twice is a rule that can agree with its own fixture and
+    disagree with the tree, and the whole point of this instrument is that it reads the tree.
+
+    IT PARSES RATHER THAN GREPS. `if __name__ == "__main__":` inside a fixture STRING -- and this
+    file writes dozens of child programs as strings -- is not an entry point, and a regex would
+    count it as one. The AST sees only top-level statements.
+    """
+    import ast
+    tree = ast.parse(source)
+    entry = [node.lineno for node in tree.body
+             if isinstance(node, ast.If)
+             and any(isinstance(inner, ast.Name) and inner.id == marker
+                     for inner in ast.walk(node.test))]
+    if not entry:
+        return []
+    first = min(entry)
+    return [node.name for node in tree.body
+            if isinstance(node, ast.ClassDef) and node.lineno > first]
+
+
+class TheFilesOwnEntryPointCOLLECTSEveryClass(unittest.TestCase):
+    """FINDING 3: `unittest.main()` sat mid-file, so this file's own entry point TRUNCATED the run.
+
+    THE FINDING VERBATIM: "`unittest.main()` sits mid-file in the guard suite, at line 5690 of
+    6701. Thirteen classes are defined after it, so `python3 nd-unfolding/tests/
+    test_mnv_guarded_run.py` -- the file's own entry point -- runs 202 of 251 arms and exits 0. Via
+    `-m unittest` all 251 pass, so these are green arms, not hidden failures; but the 49 include
+    TheDefectMutationFires, TheInnocentMutationStaysGreen and TheRefusalIsUnchanged, the arms that
+    prove the detectors still fire."
+
+    WHY A TRUNCATED RUN IS WORSE THAN A FAILING ONE. `unittest.main()` calls `sys.exit`, so every
+    top-level statement after it is unreachable when the file is run directly: the classes below it
+    are never even DEFINED, the loader never sees them, and the run prints `OK`. There is no
+    warning, no skip and no differing exit code -- the only symptom is a smaller number that
+    nobody was comparing against anything. Measured before the move: 202 arms from the file's own
+    entry point against 251 from `-m unittest`; after it, both collect 251.
+
+    SO THE INVARIANT IS PINNED FROM THE SOURCE AND NOT FROM A COUNT. A test that asserted "251
+    arms" would have to be edited by every commit that adds one, which makes it a maintenance
+    ritual rather than a guard. What cannot drift is the STRUCTURE: the entry-point block is the
+    last top-level statement in the file, so there is nothing after it to lose.
+    """
+
+    def source(self) -> str:
+        """This module's own source, via `inspect` -- so it reads the file that is RUNNING.
+
+        `sys.modules[__module__]` is `__main__` when the file is run directly and the imported
+        module otherwise, and `inspect.getsource` follows `__file__` in both cases. Reading
+        `__file__` here rather than a path this test computes is what makes the two collection
+        routes measure the same bytes.
+        """
+        import inspect
+        return inspect.getsource(sys.modules[type(self).__module__])
+
+    def test_NO_class_is_defined_after_the_entry_point_block(self):
+        """The arm the finding asks for: last class before `if __name__ == "__main__"`.
+
+        THE POWER ARM IS BELOW. This assertion is vacuously true for a file with no entry point at
+        all and for a predicate that finds no classes, so both are asserted non-empty here and the
+        predicate is fed the defect below.
+        """
+        import ast
+        source = self.source()
+        tree = ast.parse(source)
+        classes = [node for node in tree.body if isinstance(node, ast.ClassDef)]
+        entries = [node for node in tree.body
+                   if isinstance(node, ast.If)
+                   and any(isinstance(inner, ast.Name) and inner.id == "__name__"
+                           for inner in ast.walk(node.test))]
+        self.assertEqual(len(entries), 1,
+                         f"this file must have exactly one top-level `if __name__` block, and a "
+                         f"second one truncates the run at whichever comes first: "
+                         f"{[node.lineno for node in entries]}")
+        #: A FLOOR AND NOT A CENSUS. 40 top-level classes at the commit that moved the entry point;
+        #: the floor is what makes the comparison below non-vacuous, and pinning the exact count
+        #: would turn every added or retired class into a failing arm about arithmetic.
+        self.assertGreaterEqual(len(classes), 30,
+                                f"the walk found {len(classes)} top-level classes, so it is not "
+                                f"reading this suite and the assertion below would pass on "
+                                f"anything")
+        self.assertLess(classes[-1].lineno, entries[0].lineno,
+                        f"class {classes[-1].name} is defined at line {classes[-1].lineno}, AFTER "
+                        f"the entry-point block at line {entries[0].lineno}: `unittest.main()` "
+                        f"calls sys.exit, so running this file directly never defines it and the "
+                        f"run exits 0 having collected fewer arms than `-m unittest` does")
+        self.assertEqual(classes_defined_after(source), [])
+
+    def test_the_entry_point_block_is_the_LAST_top_level_statement(self):
+        """The invariant behind the arm above, and the one that covers more than classes.
+
+        A module-level constant, a helper function or a second `unittest.main()` added after the
+        block is unreachable in exactly the same way a class is -- `sys.exit` does not care what
+        the statement was. Asserting the block is LAST is therefore the whole rule, and the
+        line-number comparison above is the specific symptom the finding named.
+        """
+        import ast
+        tree = ast.parse(self.source())
+        last = tree.body[-1]
+        self.assertIsInstance(
+            last, ast.If,
+            f"the last top-level statement in this file is a "
+            f"{type(last).__name__} at line {last.lineno}, not the `if __name__` entry point; "
+            f"anything after `unittest.main()` is dead code when the file is run directly")
+        self.assertTrue(any(isinstance(inner, ast.Name) and inner.id == "__name__"
+                            for inner in ast.walk(last.test)),
+                        "the last top-level `if` is not the entry-point block")
+
+    def test_that_detector_actually_HAS_power(self):
+        """Feed the predicate the defect and it must report it -- by name, not by count.
+
+        WITHOUT THIS the arm above is indistinguishable from a predicate that always returns `[]`,
+        which is how a structural check becomes a green gate that proves nothing. The fixture is
+        the DEFECT this file had: an entry point with a class after it.
+        """
+        broken = ('import unittest\n'
+                  'class Before(unittest.TestCase):\n'
+                  '    pass\n'
+                  'if __name__ == "__main__":\n'
+                  '    unittest.main()\n'
+                  'class AfterOne(unittest.TestCase):\n'
+                  '    pass\n'
+                  'class AfterTwo(unittest.TestCase):\n'
+                  '    pass\n')
+        self.assertEqual(classes_defined_after(broken), ["AfterOne", "AfterTwo"])
+        fixed = ('import unittest\n'
+                 'class Before(unittest.TestCase):\n'
+                 '    pass\n'
+                 'class After(unittest.TestCase):\n'
+                 '    pass\n'
+                 'if __name__ == "__main__":\n'
+                 '    unittest.main()\n')
+        self.assertEqual(classes_defined_after(fixed), [])
+
+    def test_a_STRING_containing_an_entry_point_is_not_counted_as_one(self):
+        """The other direction: this file writes child programs that contain that exact line.
+
+        A grep-based version of this check would find `if __name__ == "__main__":` inside the
+        multiprocessing parents written by `TheApprovalIsBoundToTheFileAndNotOnlyToTheArgv` and
+        report a truncation that does not exist -- refusing every future commit for a line in a
+        fixture string. The AST reads statements, and a string is not one.
+        """
+        with_a_string = ('import unittest\n'
+                         'PARENT = """\n'
+                         'if __name__ == "__main__":\n'
+                         '    print(1)\n'
+                         '"""\n'
+                         'class After(unittest.TestCase):\n'
+                         '    pass\n')
+        self.assertEqual(classes_defined_after(with_a_string), [])
+
+
+if __name__ == "__main__":
+    unittest.main()
