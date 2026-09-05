@@ -68,10 +68,12 @@ whole configuration-injecting and program-selecting family REMOVED and with both
 file scopes pointed at nothing, leaving only repository-local configuration; the
 queue's own git directory, which is the thing that fetches and pushes, has BOTH of
 its urls proved equal to the pin after ``ensure_scratch`` and again before every
-fetch and every push, and refuses any local key under ``remote.origin.*`` or
-``url.*`` it did not itself write, plus a hooks path, an ssh command or a shell
-credential helper; the push names the literal pinned url rather than the remote;
-and the admission log records that resolved destination beside the origin url.
+fetch and every push, and refuses every local key in it outside the ALLOWLIST of
+what campaignctl and ``git init`` write there -- the one exception being a
+``credential.helper`` spelled as a bare helper name, because an https origin needs
+a helper and a value git can run as a program is not one; the push names the
+literal pinned url rather than the remote; and the admission log records that
+resolved destination beside the origin url.
 The last two are belt and braces -- an ``insteadOf`` rewrite applies to a
 command-line url too, so the cleared environment and the configuration check are
 the load-bearing halves.
@@ -469,10 +471,35 @@ QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS = frozenset(
 #: The one key admitted OUTSIDE that set: an https origin needs a credential helper,
 #: global configuration is out of scope since the environment was cleared, and a
 #: helper is the documented way to supply one -- so refusing it would refuse every
-#: correct unattended tick.  It is admitted only in the spellings git does not hand
-#: to a shell; a leading ``!`` is the spelling git runs as a shell command.
+#: correct unattended tick.  What is admitted is a SPELLING, and round 9 named the
+#: wrong one: it turned on the value's first character, admitting anything without a
+#: leading bang, and a bang is only one of the ways git runs a program.  git
+#: assembles the value into a single command STRING -- the value itself when it is
+#: bang-prefixed or an absolute path, otherwise ``git credential-<value>`` -- and
+#: hands that string to ``sh -c`` as soon as it holds a space or a shell
+#: metacharacter, so a path and an argument are both live programs.  Measured on git
+#: 2.39.3 against a loopback origin answering 401, which is what makes git consult a
+#: helper at all: ``/abs/helper.sh`` RAN, once per ``ls-remote``;
+#: ``store --file=$(/abs/helper.sh)`` RAN through the command substitution; and
+#: ``store<newline>/abs/helper.sh`` RAN as the shell's second command.  So the value
+#: has to be a BARE HELPER NAME, decided by
+#: :func:`credential_helper_is_a_bare_name`: a name, then single-space-separated
+#: arguments, each against a character allowlist.  ``osxkeychain``, ``store``,
+#: ``cache``, ``gh``, ``manager`` and ``store --file=/etc/mnv/creds`` are admitted;
+#: an absolute path, a bang command, ``../x``, an argument carrying shell syntax, a
+#: value separated by anything but a single space, and an empty value are not.
 CREDENTIAL_HELPER_KEY = "credential.helper"
-CREDENTIAL_HELPER_SHELL_PREFIX = "!"
+#: The first token, which is the helper NAME.  It must start with a letter or a
+#: digit -- so no leading marker and no leading dot -- and hold only name
+#: characters, which is what makes a path unspellable here: ``/`` is absent, so
+#: ``/abs/path/helper.sh`` and ``../x`` cannot match at all.
+CREDENTIAL_HELPER_NAME_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
+#: Every later token, which is an ARGUMENT.  Deliberately wider than the name,
+#: because helpers are configured with paths and ``store --file=/etc/mnv/creds``
+#: must keep working, and still narrow enough that the string git assembles carries
+#: nothing ``sh -c`` reads as syntax: no ``$``, backtick, ``;``, ``&``, ``|``,
+#: parenthesis, redirection, quote or glob character is in this set.
+CREDENTIAL_HELPER_ARGUMENT_RE = re.compile(r"[A-Za-z0-9._,:+@=/~-]+")
 #: Same-host serialisation for one cache.  It is a LOCAL file and it is not the thing
 #: that makes admission global: the cross-host serialisation is the ref lease.
 QUEUE_SYNC_LOCK_NAME = "queue-sync.lock"
@@ -1552,6 +1579,54 @@ def campaign_origin(queue: Queue) -> dict[str, str]:
     }
 
 
+def credential_helper_is_a_bare_name(value: str) -> bool:
+    """Return whether one ``credential.helper`` value names a helper and nothing else.
+
+    The queue's own git directory is the one place an operator is TOLD to put a
+    helper, so this value is expected in production and cannot simply be
+    refused.  What it may not be is a program: git turns the value into one
+    command string and runs that string under ``sh -c`` whenever it contains a
+    space or a shell metacharacter, so an absolute path is executed directly and
+    an argument is executed by the shell.  Both were measured -- see
+    :data:`CREDENTIAL_HELPER_KEY` -- which is why this is a character allowlist
+    over the WHOLE value rather than a forbidden prefix: a prefix rule names one
+    spelling, and the ones it does not name are admitted with the same silence
+    that admitted ``core.fsmonitor`` in round 8.
+
+    The value is split on SINGLE spaces, not on whitespace.  A generic
+    whitespace split would read ``store<newline>/abs/helper.sh`` as a name and
+    an argument, and an argument may contain ``/``, so it would be ADMITTED --
+    and git ran that second line as its own shell command.  Splitting on single
+    spaces leaves the newline inside a token, where the character allowlist
+    refuses it; the same holds for a tab and a CR, and consecutive spaces leave
+    an empty token, which matches nothing.
+
+    Parameters
+    ----------
+    value : str
+        The value exactly as :meth:`QueueSync.scratch_config` read it, which is
+        why that reader uses ``-z``: a value that lost its newline in a
+        line-splitting parser would be checked here in a spelling git will not
+        use.
+
+    Returns
+    -------
+    bool
+        ``True`` only for a bare helper name optionally followed by
+        single-space-separated arguments, each within its character allowlist.
+        An empty value is ``False``.
+    """
+    if not value:
+        return False
+    name, *arguments = value.split(" ")
+    if CREDENTIAL_HELPER_NAME_RE.fullmatch(name) is None:
+        return False
+    return all(
+        CREDENTIAL_HELPER_ARGUMENT_RE.fullmatch(argument) is not None
+        for argument in arguments
+    )
+
+
 class _SyncLock:
     """Same-host serialisation for one queue cache.
 
@@ -1724,8 +1799,12 @@ class QueueSync:
         nor the two program-installing keys, and pointed at a script in this
         directory's own config it ran twice per state commit and the operation
         was admitted.  The only exception is
-        :data:`CREDENTIAL_HELPER_KEY`, and only when its value is not the
-        spelling git hands to a shell.
+        :data:`CREDENTIAL_HELPER_KEY`, and only when its value is a bare helper
+        name by :func:`credential_helper_is_a_bare_name` -- a name plus
+        single-space-separated arguments, each within a character allowlist.
+        The exception used to be spelled as a forbidden prefix, and an absolute
+        path is not that prefix: git executed one directly, with no shell, on
+        the queue's own ``ls-remote``.
 
         A git version that writes a key this set lacks REFUSES rather than
         admits, which is the safe direction: the queue stops until an operator
@@ -1738,8 +1817,8 @@ class QueueSync:
             lowered = key.lower()
             if lowered in QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS:
                 continue
-            if lowered == CREDENTIAL_HELPER_KEY and not value.startswith(
-                CREDENTIAL_HELPER_SHELL_PREFIX
+            if lowered == CREDENTIAL_HELPER_KEY and credential_helper_is_a_bare_name(
+                value
             ):
                 continue
             raise QueueError(
@@ -1747,13 +1826,21 @@ class QueueSync:
                 f"{value!r}.  campaignctl creates that directory and it holds "
                 f"exactly {sorted(QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS)} -- what "
                 f"campaignctl writes plus what `git init` wrote -- and outside "
-                f"that set only a {CREDENTIAL_HELPER_KEY} whose value does not "
-                f"begin with {CREDENTIAL_HELPER_SHELL_PREFIX!r} is admitted.  "
-                f"The remedy is to REMOVE {key} from {self.scratch}/config (a "
-                f"{CREDENTIAL_HELPER_KEY} may instead be respelled without the "
-                "leading marker), NOT to add an allowance for it: a key this "
-                "module did not write is a key that can send a push elsewhere "
-                "or install a program in the queue's own git invocations."
+                f"that set only a {CREDENTIAL_HELPER_KEY} spelled as a BARE "
+                f"HELPER NAME is admitted: a name matching "
+                f"/{CREDENTIAL_HELPER_NAME_RE.pattern}/ and then arguments "
+                f"separated by SINGLE spaces, each matching "
+                f"/{CREDENTIAL_HELPER_ARGUMENT_RE.pattern}/ -- `osxkeychain`, "
+                "`store`, `cache`, `manager`, `store --file=/etc/mnv/creds`.  "
+                f"The remedy is to REMOVE {key} from {self.scratch}/config, or "
+                f"for a {CREDENTIAL_HELPER_KEY} to RESPELL it as a bare name, "
+                "and NOT to add an allowance for it: a key this module did not "
+                "write is a key that can send a push elsewhere or install a "
+                "program in the queue's own git invocations, and a helper value "
+                "is one of those programs -- git assembles it into a single "
+                "command string and hands that string to `sh -c` whenever it "
+                "holds a space or a shell metacharacter, so a path, an "
+                "argument, or a newline inside it is a program that RUNS."
             )
 
     def verify_push_destination(self) -> str:

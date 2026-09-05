@@ -1,4 +1,5 @@
 import contextlib
+import http.server
 import json
 import os
 import subprocess
@@ -57,6 +58,41 @@ def write_task_ids(task_ids: list[str]) -> str:
         f"_ids = Path(os.environ[{campaignctl.CAMPAIGN_TASK_IDS_FILE_ENV!r}])\n"
         f"_ids.write_text({json.dumps(json.dumps(task_ids))})\n"
     )
+
+
+class BasicAuthChallenge(http.server.BaseHTTPRequestHandler):
+    """A loopback origin that answers EVERY request with a 401 Basic challenge.
+
+    The one thing an http pin buys that this file's local-path origin cannot:
+    git only consults a credential helper when a transport ASKS for
+    authentication. Against a local path there is no transport and no
+    authentication, so every credential route is inert by construction -- which
+    is why round 9's fixture could not watch an absolute-path helper execute,
+    and why its `sentinel absent` assertion for that key was a regression guard
+    rather than a reproducer. Production pins an https url, so this is the
+    fixture that matches it.
+
+    It serves no git protocol at all, and does not need to: the 401 with a
+    `WWW-Authenticate` header is what makes git ask its helper for a username on
+    the queue's own `ls-remote`, and campaignctl sets ``GIT_TERMINAL_PROMPT=0``
+    so the operation then FAILS instead of hanging an unattended tick. Every arm
+    that uses it expects the operation to fail; what the arm measures is which
+    failure comes first and whether the helper's program ran on the way.
+    """
+
+    # The method names are BaseHTTPRequestHandler's dispatch protocol, not this
+    # file's naming: it calls `do_<VERB>` for the verb it read off the request.
+    def do_GET(self) -> None:
+        self.send_response(401)
+        self.send_header("WWW-Authenticate", 'Basic realm="mnv"')
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    #: git probes `info/refs` with GET and pushes with POST. Both answer 401.
+    do_POST = do_GET
+
+    def log_message(self, *args: object) -> None:
+        """Swallow the per-request log line, which is not this suite's output."""
 
 
 class CampaignQueueTests(unittest.TestCase):
@@ -504,6 +540,103 @@ class CampaignQueueTests(unittest.TestCase):
         )
         script.chmod(0o755)
         return script, sentinel
+
+    def challenge_origin(self) -> str:
+        """Repoint the whole campaign at a loopback 401 origin, and return its url.
+
+        The credential arms need an ``http`` pin, because a helper is only
+        consulted by a transport that asks for authentication and the local-path
+        origin every other arm uses never does. So this starts
+        :class:`BasicAuthChallenge` on ``127.0.0.1`` port 0 in a daemon thread --
+        no network, no external process -- and moves the pin AND the checkout's
+        remote onto its url, which is the pair every operation compares before it
+        does anything.
+
+        The pin is COMMITTED, because an uncommitted pin is its own refusal and
+        would stop these arms before they reached the configuration check. The
+        server is torn down by ``addCleanup`` rather than by the arm, so a
+        failing assertion cannot leave the thread behind.
+
+        Returns
+        -------
+        str
+            The pinned url, ``http://127.0.0.1:<port>/queue.git``.
+        """
+        server = http.server.ThreadingHTTPServer(
+            ("127.0.0.1", 0), BasicAuthChallenge
+        )
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        # LIFO: `shutdown` stops `serve_forever`, and only then is the socket
+        # closed. The other order leaves the serving thread reading a dead fd.
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        url = f"http://127.0.0.1:{server.server_address[1]}/queue.git"
+        self.write_origin_pin(origin_url=url, commit=True)
+        subprocess.run(
+            ["git", "-C", str(self.repo), "remote", "set-url", "origin", url],
+            check=True,
+        )
+        return url
+
+    def credential_probe_on_path(self) -> tuple[Path, Path]:
+        """Install ``git-credential-mnvprobe`` and return its directory and sentinel.
+
+        A helper named as a BARE NAME is the spelling the rule admits, and git
+        resolves it by running ``git credential-<name>``, which it finds on
+        ``PATH``. :func:`campaignctl.git_environment` clears the ``GIT_*``
+        redirecting and injecting families and nothing else, so ``PATH`` is
+        inherited and an arm can put a probe on it.
+        """
+        directory = self.root / "credential-probe-bin"
+        directory.mkdir(exist_ok=True)
+        sentinel = self.root / "sentinels" / "mnvprobe.ran"
+        sentinel.parent.mkdir(exist_ok=True)
+        probe = directory / "git-credential-mnvprobe"
+        probe.write_text(
+            "#!/bin/sh\n"
+            f'printf "ran %s\\n" "$*" >> "{sentinel}"\n'
+            "exit 0\n"
+        )
+        probe.chmod(0o755)
+        return directory, sentinel
+
+    def assert_a_bare_helper_runs_against_the_challenge_origin(self) -> None:
+        """POSITIVE CONTROL: prove the 401 fixture reaches git's credential machinery.
+
+        Every credential refusal arm asserts a sentinel is ABSENT, and absence
+        has two causes: the refusal arrived before the program could run, or the
+        fixture never got as far as git asking for a credential at all. Only the
+        first is a finding, and this is what separates them -- without it the
+        refusal arms would pass unchanged against a fixture whose origin was a
+        local path, which is exactly the fixture that missed this finding.
+
+        The helper is ``mnvprobe``, which the new rule ADMITS, with an
+        executable ``git-credential-mnvprobe`` on ``PATH``. The operation still
+        fails -- there is no git server behind the 401 -- but it fails at the
+        NETWORK, with :data:`campaignctl.ORIGIN_UNREACHABLE_REASON`, which is
+        after git consulted the helper. The sentinel is what says so.
+
+        The key is removed again on the way out, so the arm that called this
+        measures only its own key.
+        """
+        bindir, sentinel = self.credential_probe_on_path()
+        self.write_scratch_config("credential.helper", "mnvprobe")
+        with mock.patch.dict(
+            os.environ, {"PATH": f"{bindir}{os.pathsep}{os.environ['PATH']}"}
+        ):
+            with self.assertRaisesRegex(
+                campaignctl.QueueError, campaignctl.ORIGIN_UNREACHABLE_REASON
+            ):
+                campaignctl.summary(self.queue)
+        self.assertTrue(
+            sentinel.exists(),
+            "the admitted bare-name helper git-credential-mnvprobe never ran, "
+            "so this fixture does not reach git's credential machinery and "
+            "every `the sentinel is absent` assertion in the refusal arms "
+            "would hold for the wrong reason -- it would be measuring a "
+            "fixture in which no helper can run at all",
+        )
+        self.unset_scratch_config("credential.helper")
 
     def unsanitised_queue_push(self, ref: str) -> subprocess.CompletedProcess:
         """Push the queue ref as campaignctl did BEFORE the environment was cleared.
@@ -3359,7 +3492,7 @@ class CampaignQueueTests(unittest.TestCase):
 
         self.assertEqual(self.refs_in(diverted), [])
 
-    def test_a_credential_helper_that_is_not_a_shell_command_stays_admitted(
+    def test_a_credential_helper_spelled_as_a_bare_name_stays_admitted(
         self,
     ) -> None:
         """The direction the allowlist must NOT act in.
@@ -3367,10 +3500,14 @@ class CampaignQueueTests(unittest.TestCase):
         An https origin needs a credential helper, ``~/.gitconfig`` is out of
         scope since the configuration environment was cleared, and this
         directory's own local config is the documented place to put one. So the
-        one key outside the written set that is admitted is a helper that git
-        does not hand to a shell -- and it is admitted through a whole cycle,
-        not just through the read that happens first, because a refusal in the
-        push would refuse every correct unattended tick just as thoroughly.
+        one key outside the written set that is admitted is a helper spelled as
+        a bare NAME -- and it is admitted through a whole cycle, not just
+        through the read that happens first, because a refusal in the push would
+        refuse every correct unattended tick just as thoroughly.
+
+        Renamed in round 10: the old name said "not a shell command", which was
+        the retired rule's own description of itself, and an absolute path is
+        not a shell command either -- git executes it directly.
         """
         diverted = self.diverted_origin()
         self.assert_cycle_lands_on_the_pin("one", diverted)
@@ -3381,6 +3518,222 @@ class CampaignQueueTests(unittest.TestCase):
 
         # And it is still there: an admitted key is admitted, not deleted.
         self.assertIn("credential.helper", self.scratch_config_key_names())
+
+    def test_a_credential_helper_that_is_an_absolute_path_refuses_before_it_runs(
+        self,
+    ) -> None:
+        """Round 9's exception named ONE spelling git runs, and git has others.
+
+        ``credential.helper = /abs/path/helper.sh`` carries no leading marker, so
+        the retired rule ADMITTED it -- and git executes an absolute helper
+        DIRECTLY, with no shell, the moment a transport asks for a credential.
+        Under the production https pin that transport is the queue's own
+        ``ls-remote``, and OPERATOR-GUIDE tells operators to put a helper in
+        exactly this local config, so the exception is present in production
+        scratch configs BY DESIGN: what has to be constrained is the value, not
+        its first character.
+
+        This arm is a REPRODUCER, not a regression guard, and the 401 fixture is
+        what makes it one. Measured on git 2.39.3 with ``campaignctl.py``
+        reverted to its previous content, it goes red with the sentinel PRESENT
+        and TWO lines in it -- one ``ls-remote`` per line: one from
+        :meth:`campaignctl.QueueSync.refresh`, and one from the ``discard`` that
+        :func:`campaignctl.queue_operation` runs on the way out of the failure,
+        which re-fetches. A refusal alone would not have told those two apart
+        from a check that ran after them.
+
+        The bang-spelled value is kept beside it as the control the retired rule
+        did catch, because it has to keep refusing. Both are refused now for one
+        reason that names neither spelling: neither value is a helper NAME.
+        """
+        diverted = self.diverted_origin()
+        # The git directory a key can be written into is the one the queue makes
+        # on its first operation, so land a whole cycle on the local pin, and
+        # only then move the campaign onto the http origin.
+        self.assert_cycle_lands_on_the_pin("before", diverted)
+        landed = self.queue_ref_sha()
+        self.challenge_origin()
+        self.assert_a_bare_helper_runs_against_the_challenge_origin()
+
+        absolute, absolute_sentinel = self.sentinel_script("helper-absolute")
+        banged, banged_sentinel = self.sentinel_script("helper-banged")
+        for label, value, sentinel in (
+            ("an absolute path", str(absolute), absolute_sentinel),
+            ("a bang command", f"!{banged}", banged_sentinel),
+        ):
+            with self.subTest(helper=label):
+                self.write_scratch_config("credential.helper", value)
+                with self.assertRaises(campaignctl.QueueError) as caught:
+                    campaignctl.summary(self.queue)
+                message = str(caught.exception)
+                self.assertIn(campaignctl.QUEUE_SCRATCH_CONFIG_REASON, message)
+                # The remedy for THIS key is not the remedy for the others: a
+                # helper the operator needs is respelled, not removed.
+                self.assertIn("RESPELL", message)
+                self.assertIn("osxkeychain", message)
+                self.unset_scratch_config("credential.helper")
+            # In its own subtest, because when the REFUSAL is what regressed the
+            # arm above has already failed and would never reach this line --
+            # and this is the line that says the helper's program RAN.
+            with self.subTest(helper=label, ran="the helper program"):
+                self.assertFalse(
+                    sentinel.exists(),
+                    f"the helper spelled as {label} RAN before the refusal: "
+                    f"{sentinel.read_text() if sentinel.exists() else ''}",
+                )
+
+        # Nothing moved the pinned origin's ref, and nothing reached the second
+        # repository either. The http origin serves no git protocol at all, so a
+        # push could not have landed there whatever it tried.
+        self.assertEqual(self.queue_ref_sha(), landed)
+        self.assertEqual(self.refs_in(diverted), [])
+
+    def test_a_credential_helper_carrying_shell_syntax_refuses_before_it_runs(
+        self,
+    ) -> None:
+        """Why the rule constrains ARGUMENTS and the SEPARATOR, not just the name.
+
+        A rule that checked only the first token would have this finding's shape
+        one layer down. git assembles the whole value into ONE command string --
+        ``git credential-<value>`` for a name -- and hands that string to
+        ``sh -c`` as soon as it holds a space or a shell metacharacter, so what
+        follows the name is shell source. Measured on git 2.39.3 in a throwaway
+        repository whose origin is a loopback 401 of the same shape as this
+        fixture's, with no config rule in the way so git saw each value, one
+        execution per ``ls-remote``:
+
+        * ``store; /abs/helper.sh`` -- the sentinel program RAN;
+        * ``store --file=$(/abs/helper.sh)`` -- RAN, through the command
+          substitution, which is why an argument's character allowlist excludes
+          ``$`` and a parenthesis rather than only a semicolon;
+        * ``store<newline>/abs/helper.sh`` -- RAN, as the shell's second
+          command. This is the measurement that decided the SEPARATOR: git's
+          config values may hold newlines, which is why
+          :meth:`campaignctl.QueueSync.scratch_config` reads them ``-z``, and a
+          tokenizer splitting on generic whitespace would have read that second
+          line as an ARGUMENT -- where slashes are legal, because
+          ``store --file=/etc/mnv/creds`` has to keep working. Splitting on
+          single spaces leaves the newline inside a token, where the character
+          allowlist refuses it;
+        * ``store<tab>/abs/helper.sh`` -- did NOT run. git handed the tab to
+          ``sh -c`` inside one word, so the path became an argument to
+          ``git credential-store`` rather than a command. It is refused anyway,
+          because this is an allowlist and not a patch for the vectors somebody
+          measured; for the tab alone the sentinel's absence is a REGRESSION
+          GUARD, in the same sense this file already uses for ``core.sshCommand``
+          against a local-path origin.
+        """
+        diverted = self.diverted_origin()
+        self.assert_cycle_lands_on_the_pin("before", diverted)
+        landed = self.queue_ref_sha()
+        self.challenge_origin()
+        self.assert_a_bare_helper_runs_against_the_challenge_origin()
+
+        for label, spelling, ran_when_admitted in (
+            ("a second command", "store; {script}", True),
+            ("a command substitution", "store --file=$({script})", True),
+            ("a newline", "store\n{script}", True),
+            ("a tab", "store\t{script}", False),
+        ):
+            script, sentinel = self.sentinel_script(
+                f"helper-{label.replace(' ', '-')}"
+            )
+            with self.subTest(injection=label):
+                self.write_scratch_config(
+                    "credential.helper", spelling.format(script=script)
+                )
+                with self.assertRaisesRegex(
+                    campaignctl.QueueError,
+                    campaignctl.QUEUE_SCRATCH_CONFIG_REASON,
+                ):
+                    campaignctl.summary(self.queue)
+                self.unset_scratch_config("credential.helper")
+            with self.subTest(injection=label, ran="the injected program"):
+                self.assertFalse(
+                    sentinel.exists(),
+                    f"the value injecting {label} ran its program before the "
+                    "refusal"
+                    + (
+                        ""
+                        if ran_when_admitted
+                        else " -- and this spelling does not execute on this "
+                        "git even when admitted, so this assertion is the "
+                        "regression guard and not the reproducer"
+                    )
+                    + f": {sentinel.read_text() if sentinel.exists() else ''}",
+                )
+
+        self.assertEqual(self.queue_ref_sha(), landed)
+        self.assertEqual(self.refs_in(diverted), [])
+
+    def test_the_helper_spellings_an_operator_configures_stay_admitted(
+        self,
+    ) -> None:
+        """The false-refusal half, priced: a fix that breaks every correct tick.
+
+        The rule buys nothing if it refuses the helpers operators actually
+        configure -- the refusal would arrive on an unattended tick, with the
+        admission lock held, on every host at once. So the predicate is measured
+        directly on both sides: the spellings git ships or documents are
+        admitted, including one carrying an absolute path in an ARGUMENT, and the
+        spellings that are programs or that hide one behind whitespace are not.
+
+        Measured on the predicate rather than through a cycle because that is
+        the level the rule lives at, and because a whole cycle can only be run
+        against one value at a time; the whole-cycle arms above cover
+        ``osxkeychain`` end to end and the refusal end to end.
+        """
+        for value in (
+            "osxkeychain",
+            "store",
+            "cache",
+            "gh",
+            "manager",
+            "manager-core",
+            "wincred",
+            "libsecret",
+            "store --file=/etc/mnv/creds",
+            "cache --timeout=3600",
+            "netrc -f /etc/mnv/netrc.gpg",
+        ):
+            with self.subTest(admitted=value):
+                self.assertTrue(
+                    campaignctl.credential_helper_is_a_bare_name(value),
+                    f"{value!r} is a helper spelling an operator is told to "
+                    "configure, and refusing it would refuse every correct "
+                    "unattended tick on every host",
+                )
+
+        for value in (
+            "",
+            " ",
+            "/usr/local/bin/git-credential-helper.sh",
+            "!/usr/local/bin/git-credential-helper.sh",
+            "!sh -c 'echo password=x'",
+            "../x",
+            "./x",
+            ".hidden",
+            "-helper",
+            "store; /tmp/evil.sh",
+            "store && /tmp/evil.sh",
+            "store | tee /tmp/creds",
+            "store --file=$(/tmp/evil.sh)",
+            "store --file=`/tmp/evil.sh`",
+            "store --file=/tmp/x > /tmp/evil",
+            "store\n/tmp/evil.sh",
+            "store\t/tmp/evil.sh",
+            "store\r/tmp/evil.sh",
+            "store  --file=/tmp/x",
+            "store ",
+            "store --file='/tmp/x y'",
+        ):
+            with self.subTest(refused=value):
+                self.assertFalse(
+                    campaignctl.credential_helper_is_a_bare_name(value),
+                    f"{value!r} was admitted, and git assembles a helper value "
+                    "into one command string it hands to `sh -c` whenever it "
+                    "holds a space or a metacharacter",
+                )
 
     def test_a_fresh_queue_git_directory_holds_only_keys_this_module_admits(
         self,

@@ -184,15 +184,28 @@ a list of forbidden keys**: campaignctl creates that directory, so it refuses
 is `gc.auto`, `core.bare` and `remote.origin.url`, which campaignctl writes, plus
 `core.repositoryformatversion`, `core.filemode`, `core.ignorecase` and
 `core.precomposeunicode`, which `git init` writes; the one exception outside it is
-`credential.helper`, admitted only when its value does not begin with `!`, the
-spelling git hands to a shell. This replaces a rule that named the categories it
+`credential.helper`, admitted only when its value is a **bare helper name** — a
+name of `[A-Za-z0-9._-]` characters starting with a letter or a digit, optionally
+followed by arguments separated by **single spaces**, each argument drawn from
+`[A-Za-z0-9._,:+@=/~-]`. So `osxkeychain`, `store`, `cache`, `manager` and
+`store --file=/etc/mnv/creds` are admitted, while an absolute path, a `!` command,
+`../x`, an argument carrying shell syntax such as `store; /tmp/x` or
+`store --file=$(/tmp/x)`, and a value whose separator is a tab or a newline are
+all refused. The reason is that git assembles the value into **one command string**
+— the value itself when it is `!`-prefixed or an absolute path, otherwise
+`git credential-<value>` — and hands that string to `sh -c` as soon as it holds a
+space or a shell metacharacter, so a path and an argument are both programs that
+run. Measured on git 2.39.3 against an origin answering 401: an absolute-path
+helper executed, once per `ls-remote`; so did `store --file=$(…)`; and so did the
+second line of a newline-separated value. This replaces a rule that named the categories it
 knew about — the namespaces `remote.origin.*` and `url.*` that decide a
 destination, plus `core.sshCommand` and `core.hooksPath` — and therefore admitted
 `core.fsmonitor`, which is a path to a program the queue's own `add` and
 `write-tree` execute once each per state commit. The refusal names the offending
 key and the writable set, and **the remedy is to remove that key from
-`<cache>/queue-git/config`, not to widen the rule**; if a future git writes a key
-the set lacks, the queue refuses rather than admits, which is the safe direction.
+`<cache>/queue-git/config`, not to widen the rule** — for a `credential.helper`,
+to **respell it as a bare name**; if a future git writes a key the set lacks, the
+queue refuses rather than admits, which is the safe direction.
 Those refusals read `the campaign queue does not push to this campaign's pinned
 origin` and `the campaign queue's git configuration was written from outside
 campaignctl`. A checkout whose `origin` fetches from the pin and pushes
@@ -216,7 +229,8 @@ invoked from one, so refusing on presence would refuse every correct run. The
 practical consequence: **`~/.gitconfig` and `/etc/gitconfig` are no longer read by
 this tool.** A credential helper configured globally will not be seen — put it in
 `queue-git`'s own local config (`git --git-dir <cache>/queue-git config
-credential.helper osxkeychain`; a `!`-prefixed value is refused), and put SSH
+credential.helper osxkeychain`; only a bare helper name is admitted, so a path, a
+`!` command, and anything carrying shell syntax are refused), and put SSH
 identity and `BatchMode` in `~/.ssh/config` rather than in `GIT_SSH_COMMAND` or
 `core.sshCommand`, both of which are now cleared or refused. A missing credential
 still surfaces as `campaign origin is unreachable` rather than as a hang.
