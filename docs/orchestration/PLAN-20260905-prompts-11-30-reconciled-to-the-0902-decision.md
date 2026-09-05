@@ -25,11 +25,11 @@ publish projections before Y adoption"* all presuppose a terminal action that do
 successor question they were reaching for is real, but it is **Z**'s, and Z needs a ruling
 (`PACKET-20260905-full-scalar5d-successor-scope-question.md`).
 
-**3. The real critical path is not in #11–#30 at all.** The decision record's §4 lists **six owner
-applications** that apply the rulings to the control documents, and names item 6 — a `WAKER`/accounting
-entry metering `R5` from t0 — as *"the one that fails silently"*, because `RUNS.tsv` is 12 days behind
-and **the campaign has no working spend meter today**. Those six are surfaced in §5. They outrank most
-of this list.
+**3. Much of the real critical path is not in #11–#30 at all.** The decision record's §4 lists **six
+owner applications** that apply the rulings to the control documents. §5 reconciles each against
+committed evidence at `origin/main` `c71b319a` rather than repeating the list: **five are genuinely
+unapplied, and the sixth is substantially done.** They outrank most of this list, but they are **five
+edits with five owners, not six sessions to dispatch**.
 
 ## 2. The stop, preserved exactly as ruled — not reopened, not re-optioned
 
@@ -39,7 +39,7 @@ of this list.
 | GPU ceiling | **`500` GPU task-hours** |
 | CPU ceiling | **`500` CPU task-hours** |
 | unit | task-hours — `ElapsedRaw` summed over **distinct task identities**; `.batch`/`.extern` and array-bracket rows excluded |
-| t0 | the decision record's commit instant, **`2026-09-02T14:40:06Z`** (commit `dae18f22`); earlier spend is not metered |
+| t0 | **`2026-09-02T13:44:27Z`** — the instant of the decision's **original** commit **`9ce59a59`**, the value `r5_meter.py:31-34` uses. Spend before t0 is not metered; tasks straddling t0 are clipped at t0. **Not `dae18f22`/`14:40:06Z`, which only renamed the record and changed none of its bytes** |
 | trigger | **OR** — any one firing stops the campaign |
 | remaining | **25 days** as of 2026-09-05 |
 
@@ -143,7 +143,8 @@ return envelope.**
 > case against a ratified arm-1 envelope of `20`. Otherwise recommend skipping it and state exactly
 > which leg stays OPEN as a result.
 > **Preserve** the ruled stop — `2026-09-30`, `500` GPU task-hours, `500` CPU task-hours, t0
-> `2026-09-02T14:40:06Z`. **Propose no new cap options and no new accounting start.** Do not retune
+> `2026-09-02T13:44:27Z` (commit `9ce59a59`). **Propose no new cap options and no new accounting
+> start.** Do not retune
 > §3's thresholds `f_agg <= 0.0415` / `f_med <= 0.0274`.
 > **Produce a packet only.** `D-C3-VOI` **and** `D-C3-RUN` both remain prerequisites to execution, and a
 > VOI signature alone does not revive compute authority. Launch nothing.
@@ -178,22 +179,37 @@ Original prompt stands. Add:
 > disposition** — completing PET coverage is not a publication prerequisite. Preserve the five Gate-6
 > prohibition keys verbatim. Ask for no compute.
 
-## 5. The six owner applications from the decision record §4 — surfaced, not performed
+## 5. The decision record's §4 applications — RECONCILED against committed evidence, not relisted
 
-These are **not** part of #11–#30 and are on the critical path ahead of most of it. Owners are the
-record's, not this lane's.
+The 2026-09-02 record listed six. **A list written then is a statement about then.** Each row below was
+re-measured at `origin/main` `c71b319a` before being called outstanding, because dispatching six
+sessions for a list of six would be routing from the record instead of from the tree.
 
-| # | application | owner |
-|---|---|---|
-| 1 | `SCOREBOARD:85` — annotate cause 7 **permanently OPEN** for G; add a **new** `(cause 7, Y)` row **without editing `:85`'s grade** | the board's owner |
-| 2 | `DECISION-20260831` §1 — amendment note recording `R2`'s cause-7-only prospective amendment | lane C (rulings) |
-| 3 | `PREDECLARE-20260901-cause7` §1 `M` and §2 — appended dated ruling section closing the three reserved questions | that predeclaration's author lane |
-| 4 | `PREDECLARE-20260901-cause3-mii` §6c — record `R4`'s suspension **on the authorization**, not on the criterion | the cause-3 lane |
-| 5 | `DECISION-20260901-…-oi187` half (b) and `OI-187`'s row — record `R5`'s conditional supersession and the stop's three values | the publication-scope lane |
-| 6 | **a `WAKER`/accounting entry metering `R5` from t0** | the orchestration lane |
+**Result: five are unapplied and need an owner; one is substantially done.**
 
-**Item 6 first.** Without it the ceilings cannot fire and only the date binds — and it is also §6.1 of
-the Z packet, i.e. a prerequisite to any larger campaign.
+| # | application | measured state at `c71b319a` | still needed? |
+|---|---|---|---|
+| 1 | `SCOREBOARD:85` — annotate cause 7 **permanently OPEN** for G; add a **new** `(cause 7, Y)` row without editing `:85`'s grade | `:85` still reads *"**OPEN** — discharged for a THIRD artifact; see §5"*. No `permanently OPEN`, no `(cause 7, Y)` row. The board cites `DECISION-20260902-joseph-applies-oi173-cause4-m` and `RULING-20260902`, but **not** the cause-7 ruling | **YES** — the board's owner |
+| 2 | `DECISION-20260831` §1 — amendment note recording `R2`'s cause-7-only prospective amendment | no reference to `R2` or 2026-09-02 in that record | **YES** — lane C (rulings) |
+| 3 | `PREDECLARE-20260901-cause7` §1 `M` and §2 — appended dated ruling section closing the three reserved questions | `:153` and `:186` still carry the **original** *"Joseph must rule …"* text; no appended ruling section | **YES** — that predeclaration's author lane |
+| 4 | `PREDECLARE-20260901-cause3-mii` §6c — record `R4`'s suspension **on the authorization**, not on the criterion | no `SUSPEND`/`R4`/2026-09-02 marking anywhere in the file | **YES** — the cause-3 lane |
+| 5 | `DECISION-20260901-…-oi187` half (b) and `OI-187`'s row — record `R5`'s conditional supersession and the stop's three values | no `R5` supersession note in that record; **no `2026-09-30`, `500` GPU or `500` CPU value anywhere in `docs/OPEN_ITEMS.md`** | **YES** — the publication-scope lane |
+| 6 | a `WAKER`/accounting entry metering `R5` from t0 | **substantially applied by Wave 1.** `docs/orchestration/r5_meter.py` implements `R5`'s unit, both ceilings, the inclusive boundary and the correct t0 (`:31-34`), alongside fail-closed admission in `campaignctl.py`. **Residual:** no operational receipt (`state/r5-meter-receipt.json` absent), no standing `WAKER.md` entry, no unattended tick configured | **PARTLY** — residual only; **do not rebuild the meter** |
+
+**What changed since the record was written, stated precisely.** Item 6's premise — *"the campaign has
+no working spend meter today"*, `RUNS.tsv` 12 days behind — **described 2026-09-02 and no longer
+describes `main`.** The instrument now exists. What has never happened is a measurement: per
+`ACCEPTANCE-20260905-wave1-review-pass-and-closeout.md`, **no operational accounting receipt is
+committed and no unattended execution is configured**, and *"the queue admits no item at all until a
+receipt measured on Perlmutter is committed, and none is."*
+
+**Two cautions for whoever picks up item 6's residual.** Taking a first receipt requires cluster
+contact, so it is not a documentation task and must be costed against `R5` itself. And nothing here
+establishes that the meter behaves correctly against real `sacct` output — **deployment readiness is
+unmeasured, not demonstrated.**
+
+**Sequencing.** Items 1–5 are five independent document edits with five distinct owners and no shared
+file; they can run concurrently. Item 6's residual is the only one that is not a document edit.
 
 ## 6. Parallelization
 
@@ -203,7 +219,8 @@ the Z packet, i.e. a prerequisite to any larger campaign.
 - **#13** cause-1 note disclosure — the **only** publication-editor lane; must not overlap another.
 - **#24** typed semantics — `nd-unfolding/pet/`, optional.
 - **#26** fixed-draw recovery — optional, evidence only.
-- **§5 items 1–6** — six distinct owners, six distinct files.
+- **§5 items 1–5** — five distinct owners, five distinct files. **Not six**: item 6 is
+  substantially applied and carries only a residual (§5).
 
 **Contention to manage.** #13 and §5 item 5 both touch publication scope: #13 edits note/primer/paper,
 item 5 edits `OI-187`'s row. Adjacent, not overlapping — but run them in a known order rather than

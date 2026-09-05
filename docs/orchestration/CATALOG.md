@@ -96,18 +96,24 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   discipline, combination rule, stage gate). §4 walks the seven causes as they stand for G; §5
   re-measures the strongest ground rather than inheriting it: the jitter print at `a0cdc019` (06-08)
   **predates** the flux fix `081ae4ac` (07-31), so cause 4's `M` is unmeetable for G by a property of
-  the **committed history**, which a new revision would not share. §6 records the two campaign facts
-  that belong on the table first — there is **no working spend meter**, and S is **refused by the
-  publication gate**. **`R5`'s stop is not reopened or re-optioned.**
+  the **committed history**, which a new revision would not share — the broad "no committed revision"
+  conclusion is cited to `DECISION-20260902-joseph-applies-oi173-cause4-m.md` §4, **not** derived from
+  the two-revision ancestry check, which is labelled as the narrow measurement it is. §6 records the
+  two campaign facts that belong on the table first: the `R5` meter **exists** (Wave 1's
+  `r5_meter.py`, fail-closed admission) but **no operational accounting receipt is committed and no
+  unattended execution is configured**, and S is **refused by the publication gate**. **`R5`'s stop is
+  not reopened or re-optioned**; t0 is `2026-09-02T13:44:27Z` at `9ce59a59`.
 - [`PLAN-20260905-prompts-11-30-reconciled-to-the-0902-decision.md`](PLAN-20260905-prompts-11-30-reconciled-to-the-0902-decision.md)
   - **ROUTING ONLY; a NOW row authorizes drafting, reading and measuring, never compute.** Disposes
   prompts #11–#30 as NOW / AWAITING a named decision / OPTIONAL. Corrects #11's premise, false on both
   halves — **G is RETAINED** and `Y` is **cause-7-only**, so Y has no causes 1–6 dispositions to give —
   and removes "adopt Y" as an outcome, which rewrites #20 and #21. §3b checks the recommended
   cause-disposition map row by row against the board: only cause 7 is Y's, cause 2 is already four
-  METs, cause 5 already landed in `VL66`. §5 surfaces the decision record's **six owner applications**,
-  item 6 (the `R5` meter) first. Records that **completing PET coverage is not a publication
-  prerequisite**. Preserves the ruled stop exactly.
+  METs, cause 5 already landed in `VL66`. §5 **reconciles** the decision record's six owner
+  applications against committed evidence rather than relisting them: **five are unapplied; item 6
+  (the `R5` meter) is substantially done by Wave 1 and carries only a residual.** Records that
+  **completing PET coverage is not a publication prerequisite**. Preserves the ruled stop exactly,
+  t0 `2026-09-02T13:44:27Z` at `9ce59a59`.
 
 ### PET typed-descriptor semantic evidence
 

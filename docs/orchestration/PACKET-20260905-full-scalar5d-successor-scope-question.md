@@ -34,8 +34,11 @@ QUOTED `0 of 7`; `R5`'s stop is unchanged and is **not** reopened here.
    construction and compute each requiring their own committed authorization.
 
 **Nothing here asks to change `R5`.** The stop stands at the first of `2026-09-30T00:00:00Z`, `500` GPU
-task-hours, `500` CPU task-hours, metered from t0 = the decision record's commit instant
-`2026-09-02T14:40:06Z` (commit `dae18f22`). **25 days remain** as of 2026-09-05. A Z ruling that
+task-hours, `500` CPU task-hours, metered from t0 = **`2026-09-02T13:44:27Z`**, the instant of the
+decision's original commit **`9ce59a59`** — the value `r5_meter.py:31-34` uses. (`dae18f22`, an hour
+later, only **renamed** the record out of the campaign-token trap and changed none of its bytes, which
+is why its sha256 is unchanged; dating t0 from it would move the accounting start by 56 minutes.)
+**25 days remain** as of 2026-09-05. A Z ruling that
 arrives too late to be executed before the stop is still a meaningful ruling — it fixes what the next
 campaign is — but it should be taken knowing the date binds.
 
@@ -99,7 +102,13 @@ no revision able to produce G's fluxfix input could print the unified/block rati
   (`FINDING-20260901-cause4-jitter-floor-recovered.md`);
 - the flux fix `081ae4ac` was committed **2026-07-31**;
 - `git merge-base --is-ancestor 081ae4ac a0cdc019` is **false** — the print revision **predates** the
-  flux fix, so the board's "no committed revision carries both" holds;
+  flux fix. **This measurement is narrow and is labelled as such: it establishes only that those two
+  revisions do not coexist, not that no committed revision anywhere carries both.** The broader
+  conclusion is not this lane's to make and is not made here; it is the committed ground of
+  `DECISION-20260902-joseph-applies-oi173-cause4-m.md` §4, whose cell text carries the word
+  **"committed"** deliberately, on a basis §3b describes as *"committed bytes with a positive
+  control"* — **structural rather than a search**, explicitly superseding `SCOREBOARD` §3's empty
+  search at `:670`, which that record declines to treat as a negative result;
 - at `origin/main` `c71b319a`, `unified_throw_cov.py` contains one `jitter` occurrence and it is a
   **comment** at `:476`, not the print.
 
@@ -116,11 +125,25 @@ close, and it is not a recommendation.
 
 ## 6. What a Z campaign would run into — the two facts that should be on the table before the ruling
 
-**6.1 There is no working spend meter.** The decision record's §4 item 6 names it and calls it *"the one
-that fails silently"*: `RUNS.tsv` is 12 days behind the scheduler and carries no row for the round-2
-374-task run or the four gap-3 failures, so **`R5`'s ceilings cannot fire against an unmaintained
-ledger. The date can.** A multi-cause campaign is exactly the workload that would need the ceilings to
-be real. **Item 6 is a prerequisite to a Z campaign, not a parallel chore.**
+**6.1 The meter exists; what is missing is an operational measurement.** The 2026-09-02 record's §4
+item 6 described a campaign with no spend meter — `RUNS.tsv` 12 days behind the scheduler, no row for
+the round-2 374-task run or the four gap-3 failures. **That was the state on September 2 and it is not
+the state of current `main`.** Wave 1 implemented the meter (`docs/orchestration/r5_meter.py`, with
+`R5`'s unit, both ceilings, the inclusive boundary, and t0 clipping for tasks straddling the start)
+together with fail-closed campaign admission (`campaignctl.py`).
+
+What remains absent is narrower and should be stated as exactly that. Per
+`ACCEPTANCE-20260905-wave1-review-pass-and-closeout.md`: **no operational accounting receipt is
+committed** — `docs/orchestration/state/r5-meter-receipt.json` does not exist — and **no unattended
+execution is configured**, the queue's credential decision being Joseph's or the site owner's. The
+acceptance record puts the consequence plainly: *"The queue admits no item at all until a receipt
+measured on Perlmutter is committed, and none is."*
+
+**So the accurate statement for a Z campaign is: the instrument is built and admission is fail-closed,
+but the ceilings have never been measured against the scheduler.** A first receipt measured on
+Perlmutter is a prerequisite to a Z campaign. **This packet does not rebuild the meter and does not
+infer that it is deployment-ready** — whether it runs correctly against real `sacct` output is
+unmeasured here.
 
 **6.2 The only existing complete construction is refused by the publication gate.** S —
 `std_final5_candidate.root`, run `57128458` — carries `publication_gate_rejects_this: true`, and
