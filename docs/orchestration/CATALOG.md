@@ -76,6 +76,39 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `OI-188`; §7 gives each ruling an owning record. Gate 2 remains FAIL; counts hold at CAND `1 of 7`,
   QUOTED `0 of 7`.
 
+### Y as R2 permits it, the complete-successor question, and #11-#30 reconciled (2026-09-05)
+
+- [`PREDECLARE-20260905-cause7-only-successor-Y.md`](PREDECLARE-20260905-cause7-only-successor-Y.md)
+  - **SPECIFICATION ONLY; all four legs OPEN and ungraded.** The cause-7-only successor `Y` that `R2`
+  permits: artifact identities bound to path plus digest (G, its `combined_source`, its `uthrow_source`,
+  S as a **component donor only**, F and J as explicit non-evidence), the replacement algebra
+  `C_Y = C_G - L_support + L_active` over the five `p4_lib.BANDS` **imported, never retyped**, the
+  receipt schema, the five magnitude measurements `R3` left threshold-free, and the both-direction test
+  contract. Records that Y replaces **five of the nine** detector laterals in `detector_universes.txt`
+  — the kinematic ones — and makes the weight-only justification for the other four
+  (`VALIDATION_LEDGER.md:790`) a **pre-construction measurement**, not an inherited claim. §6 lists
+  eight things a four-leg-MET Y still could **not** establish, starting with `(cause 7, G)`, which
+  `R1` fixes permanently OPEN. **Constructing Y requires its own committed authorization (`R2(iv)`).**
+- [`PACKET-20260905-full-scalar5d-successor-scope-question.md`](PACKET-20260905-full-scalar5d-successor-scope-question.md)
+  - **ONE QUESTION FOR JOSEPH; authorizes nothing and recommends no option.** Whether a **complete**
+  scalar-5D successor — called **Z**, deliberately not `Y` — may be named as a **seven-cause** grading
+  subject and therefore a possible adoption subject, and what a ruling must say (subject, cell
+  discipline, combination rule, stage gate). §4 walks the seven causes as they stand for G; §5
+  re-measures the strongest ground rather than inheriting it: the jitter print at `a0cdc019` (06-08)
+  **predates** the flux fix `081ae4ac` (07-31), so cause 4's `M` is unmeetable for G by a property of
+  the **committed history**, which a new revision would not share. §6 records the two campaign facts
+  that belong on the table first — there is **no working spend meter**, and S is **refused by the
+  publication gate**. **`R5`'s stop is not reopened or re-optioned.**
+- [`PLAN-20260905-prompts-11-30-reconciled-to-the-0902-decision.md`](PLAN-20260905-prompts-11-30-reconciled-to-the-0902-decision.md)
+  - **ROUTING ONLY; a NOW row authorizes drafting, reading and measuring, never compute.** Disposes
+  prompts #11–#30 as NOW / AWAITING a named decision / OPTIONAL. Corrects #11's premise, false on both
+  halves — **G is RETAINED** and `Y` is **cause-7-only**, so Y has no causes 1–6 dispositions to give —
+  and removes "adopt Y" as an outcome, which rewrites #20 and #21. §3b checks the recommended
+  cause-disposition map row by row against the board: only cause 7 is Y's, cause 2 is already four
+  METs, cause 5 already landed in `VL66`. §5 surfaces the decision record's **six owner applications**,
+  item 6 (the `R5` meter) first. Records that **completing PET coverage is not a publication
+  prerequisite**. Preserves the ruled stop exactly.
+
 ### PET typed-descriptor semantic evidence
 
 - [`../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md`](../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md)
