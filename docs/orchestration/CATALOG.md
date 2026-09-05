@@ -143,6 +143,27 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `reusable-now`, with the two suspended-authority facts (`D-Y-CONSTRUCT` does not exist; `R4`
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
+- [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
+  - **SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables `RZ(v)`
+  authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by path plus
+  digest, the imported constants, the composition, the receipt schema, and what does not exist yet), the
+  **seven cause dispositions** (§2, none inherited — discharge is a (cause × artifact) property and Z
+  inherits nothing from G), **terminal criteria** (§3, per-cell completion *and* failure, eleven reject-Z
+  conditions, a bidirectional test contract), the **dependency analysis** (§4, nineteen candidates each
+  answered separately for `necessary` / `applicable` / `reusable-now`, with `D-Y-CONSTRUCT` and
+  `D-C3-VOI`+`D-C3-RUN` flagged and **neither found to be a Z prerequisite**), and a **costed execution
+  proposal** (§5, from the ratified `70` GPU / `113` CPU seven-arm anchor, with the meter gap named).
+  **§6 is `RZ(v)`'s criterion carve-out and is NOT adopted** — two proposals reserved for Joseph, the
+  first being that `N/A` is outside `CRITERIA` §3's three-token vocabulary, so a cause-5 `N/A` makes Z's
+  seven-MET terminal state **unreachable as the vocabulary stands** (§2.5). **Three upstream claims are
+  re-measured and corrected in place:** S carries `publication_gate_rejects_this: **false**` and its
+  committed receipt records an 11-gate PASS, so the *"the adopter refuses it outright"* ground is stale —
+  the durable ground is that S is a block-sum object with **no unified-throw inflation** and addresses one
+  cause of seven (§1.4, and `VL68` already carries the correction); `SCOREBOARD` §2b's *"`M(ii)` cannot be
+  configured on either leg"* is superseded by the `3dd5e66e` seed split (§2.3); and Y's
+  `C_Y − C_G = L_active − L_support` closure **does not apply to Z** and would be a false identity in a Z
+  receipt (§1.3). Opens no `SCOREBOARD` cell, moves no count, preserves `R5` exactly, does not widen Y.
+  `BEN-381` disqualifies the drafting lane from grading the legs it defines.
 
 ### PET typed-descriptor semantic evidence
 
