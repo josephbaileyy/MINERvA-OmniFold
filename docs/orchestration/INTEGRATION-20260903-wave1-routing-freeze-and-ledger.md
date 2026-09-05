@@ -795,7 +795,7 @@ way that collects everything, so the 500-passed figure in §14.1 stands as writt
 | reviewer finding | resolution | commit | proof |
 |---|---|---|---|
 | **1. the ticket key omits the environment.** Keyed on `(argv, file)`, the floor's ticket path returned `original(*call_args, **call_kwargs)` — the caller's own `env_list`, never checked and never re-armed. Through the lane's own `stdout.fileno()` seam, an in-window call matching both halves of the key while stripping only `MNV_GUARD_*`/`PYTHONPATH` produced `CHILD-ENV-UNGUARDED / HIJACK-LOADED WRONG TREE / exit 0 / no refusal recorded`; the same call with the full environment gave `CHILD-ENV-GUARDED / TICKET-SPENT 3 / no hijack`. One field, both directions | the reviewer's remedy taken literally: the environment is **checked on the ticket path, not added to the identity** — which cannot reintroduce the false refusal the ticket exists to prevent, because a correct launch's environment already is the armed one. The identity stays `(argv, file)`. `_environment_reaching_child_is_armed` now runs at **both** consume sites before the launch: the kernel floor's `guarded()`, and the `_prepare_launch` ticket path that `os.posix_spawn` reaches on every `close_fds=False` launch — a second site the integrator's brief did not name and the lane found. New reason `LAUNCH_REASON_TICKET_ENV`, distinct from `LAUNCH_REASON_ENV` because the claim differs: the older one says the scan read this launch and its argv or environment strips the contract; this one says a layer above approved this argv and this file and the contract went missing **between the layers**, which is where a reader of the record must look. `env=None` is admitted, because at both layers it means inherit and what an inheriting child receives is this armed process's own environment — the very thing the helper reads. `_ApprovedLaunch`'s docstring is rewritten: the sentence the reviewer quoted is gone, and the replacement states that the ticket certifies only that the layer above scanned this argv and this file, never the environment | `00ad57cb` | reproducer red before the fix with the hijack verbatim (`HIJACK-LOADED WRONG TREE / TICKET-SPENT 0 / OUTER-EXIT 3`), green after; reverting **only** the `_prepare_launch` call turns only the `os.posix_spawn` arm red, attributing each arm to its own site; the inheriting launch has its own arm driving `env_list=None` through the floor; 26 named controls re-run, including `subprocess.run("ls", shell=True, close_fds=False)`, spawn, forkserver, `ProcessPoolExecutor`, both `fork_exec` bindings refusing `-I`, `preexec_fn`, and every round-6/7/8 reproducer |
-| **2. the program-installing config category is a list of two.** The namespace rule was justified as "a rule spelled as a list has to be extended for every key git adds, and the failure of the missing entry is a diverted push that reports success" — and then the forbidden keys were a two-item list. `core.fsmonitor`, pointed at a script in the scratch repository's own config, **was executed twice** by the queue's own read-tree/add/write-tree, and the operation was admitted | the lane's own design taken literally, as the reviewer prescribed: the queue creates that directory and writes a known set, so **any key outside `QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS` refuses**, with the single exception of `credential.helper` when its value does not begin with `!`. Both `QUEUE_SCRATCH_GUARDED_CONFIG_PREFIXES` and `QUEUE_SCRATCH_FORBIDDEN_CONFIG_KEYS` are deleted, with no remaining reference in the tree; the category is retired rather than extended. The written set gains the four keys `git init --bare` writes itself, each commented as such, and a completeness arm reads a freshly created scratch repository with a plain subprocess — not through the queue's own reader, so the fixture is not derived from the code it checks — and asserts nothing outside the set is present. A git version writing a key the set lacks **refuses rather than admits**, which is the right direction, and the docstring says so. `verify_push_destination` is untouched: both layers still run | `020ebaec` | `core.fsmonitor` refuses **before its program runs** (sentinel absent), and load-bearing: with `campaignctl.py` reverted the sentinel is present carrying two lines, the script having executed twice while `stage` built its state commit; `core.sshcommand`, `core.hookspath` and a `!` helper each with their own sentinel; `core.pager`, `alias.x` and `protocol.ext.allow` refuse though no rule ever named them; a non-`!` helper still admitted through a whole cycle; campaign suite 103 passed (+46 subtests), was 98 |
+| **2. the program-installing config category is a list of two.** The namespace rule was justified as "a rule spelled as a list has to be extended for every key git adds, and the failure of the missing entry is a diverted push that reports success" — and then the forbidden keys were a two-item list. `core.fsmonitor`, pointed at a script in the scratch repository's own config, **was executed twice** by the queue's own read-tree/add/write-tree, and the operation was admitted | the lane's own design taken literally, as the reviewer prescribed: the queue creates that directory and writes a known set, so **any key outside `QUEUE_SCRATCH_WRITTEN_CONFIG_KEYS` refuses**, with the single exception of `credential.helper` when its value does not begin with `!` **(SUPERSEDED BY §16: that exception admitted an ABSOLUTE PATH, which git executes on the queue's own `ls-remote`; the value is now constrained character by character)**. Both `QUEUE_SCRATCH_GUARDED_CONFIG_PREFIXES` and `QUEUE_SCRATCH_FORBIDDEN_CONFIG_KEYS` are deleted, with no remaining reference in the tree; the category is retired rather than extended. The written set gains the four keys `git init --bare` writes itself, each commented as such, and a completeness arm reads a freshly created scratch repository with a plain subprocess — not through the queue's own reader, so the fixture is not derived from the code it checks — and asserts nothing outside the set is present. A git version writing a key the set lacks **refuses rather than admits**, which is the right direction, and the docstring says so. `verify_push_destination` is untouched: both layers still run | `020ebaec` | `core.fsmonitor` refuses **before its program runs** (sentinel absent), and load-bearing: with `campaignctl.py` reverted the sentinel is present carrying two lines, the script having executed twice while `stage` built its state commit; `core.sshcommand`, `core.hookspath` and a `!` helper each with their own sentinel; `core.pager`, `alias.x` and `protocol.ext.allow` refuse though no rule ever named them; a non-`!` helper still admitted through a whole cycle; campaign suite 103 passed (+46 subtests), was 98 |
 | **3. `unittest.main()` sat mid-file**, so the guard suite's own entry point ran 202 of 251 arms and exited 0, truncating away `TheDefectMutationFires`, `TheInnocentMutationStaysGreen` and `TheRefusalIsUnchanged` — the arms that prove the detectors still fire. Pre-existing at `656ff895`, `9c2969fa` and `5d294883` alike | the entry point moves to the end of the file, and a regression guard reads **this module's own source** through `inspect.getsource` (so it reads whichever file is running, under either route), parses it, and asserts one top-level `if __name__` block that is the **last top-level statement** — the actual invariant, since `sys.exit` does not care whether what follows is a class, a constant or a second `unittest.main()` | `1325d6b7` | arms collected by the file's own entry point: **202 before, 261 after**, equal to `-m unittest` and to pytest collection on both 3.11 and 3.12; the guard parses rather than greps, proven by an opposite-direction arm whose source carries `if __name__ == "__main__":` **inside a string** and must not count — this suite writes dozens of child programs containing that line, so a regex version would refuse every future commit |
 
 **A record item the guard lane could not write and this lane owes it:** `LAUNCH_REASON_TICKET_ENV` is
@@ -839,6 +839,161 @@ regenerated.
 deployment guard are now closed against every route the corrected boundary admits, and what remains
 below it is named in residuals (1)–(4) and measured rather than asserted. The remaining hardening —
 `ctypes`/`cffi`, a C extension, a rebuilt interpreter, a tampered system prefix — belongs to OI-136's
-owner and its row, not to this integration. Nothing here is admissible for compute regardless: the
+owner and its row, not to this integration. **(CORRECTED BY §16: the sentence about R5 was false as
+written. Round 10 found a route the corrected boundary admits and R5 did not cover — a
+`credential.helper` spelled as an absolute path, which git executes on the queue's own `ls-remote`.
+The guard half held: round 10 returned no live guard finding. This lane also read the hand-off
+sentence as the campaign's stop signal, and it was the wrong lane to read it in; §16.4 says where
+the stop signal actually was.)** Nothing here is admissible for compute regardless: the
 queue admits no item until a receipt measured on Perlmutter is committed, cause-3 compute is
 suspended by §5 of the ruling record, and PET remains diagnostic.
+
+## 16. Reviewer round 10 (2026-09-05) — one finding on `d78a2d37`, in the queue lane
+
+The verdict was BLOCK with a single finding, and everything else the reviewer re-ran came back
+closed against its own reproducers, unedited: the ticket now refuses an approved launch whose child
+environment is not the armed one, its matching-file control is still ADMITTED with a guarded child so
+the fix bought no false refusal, all five configuration arms refuse with `core.fsmonitor` refusing
+before its program runs, and the file's own entry point and `-m unittest` both collect 261. Three of
+those checks went past what this lane had proved, and each is recorded because it changes what the
+certification means:
+
+* **The environment check reads the EFFECT, not the names.** The reviewer kept every `MNV_GUARD_*`
+  variable intact and rewrote only `PYTHONPATH` to an empty directory; the launch still refuses. A
+  check that had compared variable names would have passed that mutation.
+* **`env_list=None` is admitted and the child is really guarded** — `CHILD-HOOKS True`,
+  `SHIM-ON-PATH True` — which confirms this lane's inherit arm from outside it.
+* **The AST entry-point guard was mutation-tested.** One class appended after the block turns it red
+  naming the exact line; an unmodified copy of the same file stays green, so the arm fires on the
+  defect and not on the copying.
+
+One consequence of round 9 the reviewer recorded rather than filed: an `include.path` now refuses at
+the **configuration rule** instead of at the push-destination comparison, because the allowlist runs
+first. `verify_push_destination` still stands behind it, and both layers still run.
+
+### 16.1 The finding, and what makes it the same actor as `core.fsmonitor`
+
+The allowlist's one exception admitted a `credential.helper` whose value did not begin with `!`. A
+leading `!` is the spelling git hands to a shell — and it is not the only spelling git RUNS. An
+absolute path is executed directly. Measured by the reviewer against a loopback origin answering 401,
+which is what makes git consult a helper at all, and reproduced independently here on a second
+account before the fix was written (git 2.39.3, Apple Git-146; one execution per `ls-remote`, with no
+configuration rule in the way so git saw every value):
+
+| `credential.helper` value | round-9 config rule | the program |
+|---|---|---|
+| `/abs/path/helper-A.sh` | **admitted** | **RAN** — the finding |
+| `!/abs/path/helper-B.sh` | refused | RAN when git saw it (see below) |
+| `store; /abs/path/helper-C.sh` | **admitted** | **RAN** |
+| `store --file=$(/abs/path/helper-D.sh)` | **admitted** | **RAN**, through the substitution |
+| `store` + newline + `/abs/path/helper-E.sh` | **admitted** | **RAN** as the shell's second command |
+| `store` + tab + `/abs/path/helper-F.sh` | admitted | did not run — the tab stayed inside one word |
+| `sub/dir/helper-G.sh` (relative) | admitted | did not run — `git credential-sub/dir/...` is no command |
+| `store --file=/abs/path/creds` | admitted | `git credential-store`, which is the point |
+| `mnvprobe`, `git-credential-mnvprobe` on `PATH` | admitted | RAN — the legitimate case |
+
+One correction to the reviewer's own table, in the direction that makes the rule stricter rather than
+looser: `!/abs/path/helper-B.sh` was recorded as `never ran`. What never ran is the whole operation —
+the config rule refused that spelling first. With no rule in the way git executes it, so `!` and an
+absolute path are the same kind of thing to git and the old rule's distinction between them was not
+about what runs.
+
+The reusable half is the reviewer's, and it is why round 9's fixture could not see this: **the
+fixture's origin is a local path, so every credential route is inert in it by construction.** Round
+9's own honesty note had already said that of `core.sshCommand` and the `!` helper — the identical
+reasoning applied to the one key still being admitted, and that is the key where it mattered, because
+the production pin is `https` and OPERATOR-GUIDE tells operators to put a helper in exactly this
+local config. The exception is therefore present in production scratch directories BY DESIGN.
+
+### 16.2 The rule, and the two places it goes past the stated remedy
+
+The remedy asked for a slash-free bare helper name with arguments allowed. That is adopted, and
+extended by two measurements, because a rule that constrained only the first token would have had
+this finding's shape one layer in. git assembles the value into ONE command string — the value itself
+when bang-prefixed or absolute, otherwise `git credential-<value>` — and hands that string to `sh -c`
+as soon as it holds a space or a shell metacharacter, so the argument half of a value is shell source
+and not data.
+
+`credential_helper_is_a_bare_name` splits the value on SINGLE spaces and admits it only when the
+first token matches `[A-Za-z0-9][A-Za-z0-9._-]*` and every later token matches
+`[A-Za-z0-9._,:+@=/~-]+`. So:
+
+* the NAME may not hold a slash, which refuses an absolute path, `../x` and a bang;
+* an ARGUMENT may hold a slash, so `store --file=/etc/mnv/creds` keeps working, but may not hold
+  `$`, a backtick, `;`, `&`, `|`, a parenthesis, a redirection, a quote or a glob — rows C and D
+  above, both of which RAN;
+* the SEPARATOR is a single space, not generic whitespace. That is row E: a config value may hold a
+  newline, which is why `scratch_config` reads `-z`, and a whitespace split would have read the
+  second line as an ARGUMENT — where slashes are legal — and git ran it. Splitting on single spaces
+  leaves the newline inside a token, where the character allowlist refuses it;
+* an empty value refuses.
+
+Rows F and G are refused too, though neither executes on this git; for those two the arms are
+REGRESSION GUARDS and their docstrings say so, in the same sense round 9 used for `core.sshCommand`.
+`CREDENTIAL_HELPER_SHELL_PREFIX` is retired with no remaining reference in the tree, and the sentence
+"does not begin with `!`" is gone from `campaignctl.py`, `test_campaignctl.py` and OPERATOR-GUIDE.
+
+**The fixture is an HTTP PIN with a positive control.** A `ThreadingHTTPServer` on `127.0.0.1` port 0
+answers every request 401 with a Basic challenge — no network, no external process, torn down by
+`addCleanup`. Its positive control is `credential.helper = mnvprobe` with an executable
+`git-credential-mnvprobe` on `PATH`: admitted by the new rule, sentinel APPEARS, operation then fails
+at the unreachable origin. Without it, "the sentinel is absent" in the refusal arms would hold just
+as well in a fixture where no helper could ever run — which is exactly the defect being fixed.
+
+**Load-bearing.** With only `campaignctl.py` reverted to `d78a2d37` the absolute-path arm goes red
+with the sentinel PRESENT carrying two `ran get` lines from a single `summary` — one `ls-remote` in
+`QueueSync.refresh`, one in the `discard` that `queue_operation` runs on the way out — and the bang
+arm goes red on the refusal text. Restored byte-identically, not committed.
+
+### 16.3 The operational cost, which is an operator's decision and not a defect
+
+A helper installed as an absolute path — Git Credential Manager, or
+`/usr/libexec/git-core/git-credential-libsecret` — is now REFUSED in the queue's git directory and
+must be respelled as the bare name whose `git-credential-<name>` is on `PATH`. This stacks with the
+round-8 consequence that `~/.gitconfig` is no longer read at all. Both are stated in OPERATOR-GUIDE.
+A URL-scoped `credential.<url>.helper` is refused as well, and has been since round 9's allowlist,
+because only the exact key `credential.helper` is excepted. **No ticker host has been configured, so
+nothing is broken today; the decision of what a Perlmutter ticker host's credential is belongs to
+Joseph or the site owner.**
+
+### 16.4 Where the stop signal actually was
+
+This lane proposed after round 9 that the campaign stop and the residual hardening pass to OI-136's
+owner. The reviewer showed the reasoning pointed at the wrong lane: against the boundary adopted in
+§15.1 the guard passes and returned no live finding this round, while every finding since round 7 has
+been in the queue's configuration surface — fetch-versus-push, then an incomplete denylist, then the
+last unconstrained value inside the allowlist that replaced it. Each is strictly narrower than the
+one before, and after this fix the allowlist admits no unconstrained value at all: every admitted key
+is a key campaignctl wrote, and the one exception's value is now constrained character by character.
+The hand-off of residuals (1)–(4) to OI-136's owner still stands on its own merits; it is not what
+ends the campaign.
+
+### 16.5 Proposed tip
+
+The last commit of `wave1-integration-20260903` as force-pushed after this record. Verified there,
+clean worktree, macOS default `TMPDIR`:
+
+| check | result |
+|---|---|
+| pre-commit hook | 12 checks passed |
+| `generate_manifest.py --check --committed-only` | OK, fixed point, 727 rows |
+| control-plane and R5 meter self-tests | PASS, PASS |
+| campaign suite | 106 passed (+90 subtests), was 103 (+46) |
+| `probe-oi136-sys-path-hijack-20260826.py` | exit 0; FAIL-OPEN SET exactly 9 |
+| `verify_hash_bindings.py` | ALL BINDINGS INTACT |
+| nine-suite matrix on 3.11 | **522 passed**, 1 skipped, 1040 subtests, 1 failed — the `site-packages` `uv` artefact recorded since §12.1. Measured against a SAME-SET baseline taken at `d78a2d37` in this same environment rather than against the published number: **519 passed, 996 subtests, the same 1 failed**, so the delta is exactly **+3 arms and +44 subtests, zero new failures**. §15.3's 515 is not that baseline — this lane could not recover the exact file list behind it and rebuilt the set from the ledger's own parenthetical, which turns out to hold four tests more; the honest comparison is the one taken here, and the only suite this change can reach is the campaign suite, whose own delta is +3 |
+| guard suite via the file's own entry point | Ran 261 tests, OK (skipped=1) — unchanged, and the guard was not touched this round |
+| `docs/orchestration` whole-directory run | 23 failures, and `comm` against the saved 40-failure baseline reports **none new**. The count moves run to run in this directory, which is why the comparison is against a saved set and not against a number |
+| `generate_live_state.py --check-freshness` | STALE — deliberate; the OI-73 owner hold stands |
+
+**Dispatch record.** The fix ran on claude-school in a worktree off `d78a2d37` and reported cleanly;
+the measurement of what git does with each helper spelling ran in parallel on codex-school, in a
+throwaway directory with no repository access, so the rule's justification comes from two accounts
+that did not see each other's work. Their tables agree on every row. The worker's commit is on the
+branch VERBATIM — it was written on top of the accepted tip, so there was no rebase and the sha that
+was tested is the sha that is proposed. Worker branch `w1r12-credential` remains local as provenance.
+
+**What this round did not do:** no receipt committed; nothing pushed to `refs/campaign/*` at the real
+origin, which still holds none; no compute, scheduler or cluster contact; no ref deleted; `main`
+untouched at `dae18f22` with its seven untracked paths; no OI-* row edited; LIVE-STATE.md not
+regenerated; the guard lane not touched, because it had no finding.
