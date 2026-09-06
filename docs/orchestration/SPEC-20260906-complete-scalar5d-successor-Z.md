@@ -1,8 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 13 — rev. 12's published check tests the LINE-WRAPPING, not the text: one quoted clause wraps
-# a blockquote and a contiguous `grep` calls it ABSENT. Normalized, measured, and the near-miss that
-# hid it for three tips is recorded.**
+# **rev. 14 — rev. 13 over-scoped its own fix and misnamed its owner: plain `sed 's/^> //'` is CORRECT
+# on BSD, and only the `\?` generalization this lane added is not. Measured A/B/C, and the peer is
+# cleared in the record.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -29,6 +29,20 @@ ungraded here**, and this document opens none.
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
 
+## 0.0l What changed in rev. 14
+
+Rev. 13 was `a95a6862`. **One correction, and it is the same failure rev. 13 catalogued, committed by
+rev. 13 itself.**
+
+| # | rev. 13 left | rev. 14 does |
+|---|---|---|
+| 1 | *"why `python3` and not `sed`"*, which reads as **any** `sed` normalizer being unsafe on macOS | **narrowed to what was measured.** `sed 's/^> //'` — the line as it was actually sent — returns **`1`, correct**, on BSD and GNU alike. Only the **`\?` generalization, which is this lane's**, returns `0`. **Over-scoping a real defect is a false alarm on a correct command** — the shape rev. 13 had just catalogued, one level up |
+| 2 | the defect's owner described loosely | **named.** The working line was the preflight session's; the breaking `\?` was this lane's, **and this lane told that session the opposite before measuring.** A false accusation against a peer is not something a record should leave standing |
+| 3 | *"`python3` because `sed` is unsafe"* | **`python3` for a better reason, measured:** the record holds **4 bare `>` lines**, so the obvious hardening of `s/^> //` is exactly the unportable construct. `python3` removes the class rather than one instance |
+
+**Nothing else moved. The pin does not move** — the invariant still holds at `9c1230fa`, and §5.6a,
+§5.8, §6.7's five decisions and §7's nineteen items are unchanged.
+
 ## 0.0k What changed in rev. 13
 
 Rev. 12 was `3241833d`. **The check rev. 12 published is defective in the dangerous direction, and this
@@ -39,7 +53,7 @@ lane's own verification had been passing for a reason unrelated to the text.**
 | 1 | §5.9's check greps each clause **contiguously** out of the raw file | **it produces a FALSE ABSENT.** The §2 limits clause wraps across a `> ` blockquote continuation, so a contiguous `grep -F` fails on the newline and the marker. **Measured here at `9c1230fa`: naive reports `1 of 7` ABSENT, normalized reports `0`.** The check now carries the normalization step |
 | 2 | the check's failure direction was unstated | **stated, because it is the whole risk.** A false ABSENT on *this* invariant reads as *"the authorization no longer quotes Joseph's limits"* — the worst false alarm this document can raise, and one that would move the pin and start a hunt for a finding that does not exist |
 | 3 | rev. 12 reported the invariant holding at two later tips | **and it held for a reason that was partly luck, which is recorded.** This lane's probe string had been **pre-truncated at exactly the wrap point** (`"…no automatic retries or"`), so it passed three tips in a row **without ever exercising the wrap**. A probe shortened to avoid a hazard does not test past it |
-| 4 | — | **and the first draft of THIS revision published a broken remedy, caught by running it.** Its `sed 's/…>[[:space:]]\?//'` **does not strip the marker on macOS** — BSD basic regex does not read `\?` as optional — so the check returned `0` on a clause that is present, while GNU `sed` on Perlmutter would have accepted it. **Replaced by a `python3` normalizer, tested in both directions:** `1` on the wrapping clause, `0` on a fabricated absent one |
+| 4 | — | **and the first draft of THIS revision published a broken remedy, caught by running it.** Its `sed 's/…>[[:space:]]\?//'` **does not strip the marker on macOS** — BSD basic regex does not read `\?` as optional — so the check returned `0` on a clause that is present, while GNU `sed` on Perlmutter would have accepted it. **Replaced by a `python3` normalizer, tested in both directions:** `1` on the wrapping clause, `0` on a fabricated absent one. **⚠ REV. 14 NARROWS THIS AND CORRECTS ITS OWNER — see §0.0l; the broken `\?` was this lane's generalization, not the line it generalized** |
 
 **The pin does not move.** Re-measured at `9c1230fa`: the evidence directory diff against `1422569c` is
 **empty**, all seven clauses are present under normalization, and the full diff is confined to the
@@ -2306,14 +2320,32 @@ git show <tip>:docs/orchestration/AUTHORIZATION-20260906-pm-root-inspection.md \
   | grep -c "<clause>"                                                             # once per clause, expect 1
 ```
 
-**Why `python3` and not `sed`, which is what a first draft of this subsection published.** That draft's
-`sed 's/^[[:space:]]*>[[:space:]]\?//'` **does not strip the marker on macOS**, because BSD basic regex
-does not read `\?` as an optional quantifier — **measured here: the `> ` prefixes survive it and the
-whole check silently returns `0`.** GNU `sed` on Perlmutter would accept it, so the same published
-command would pass on the cluster and produce a false ABSENT on a laptop. **The control plane is
-`python3` end to end; using it here removes the BSD-versus-GNU divergence rather than documenting
-around it.** Both directions of the replacement were tested: `1` on the wrapping clause, and `0` on a
-fabricated clause that is genuinely absent.
+**Why `python3`, stated narrowly in rev. 14 because rev. 13 over-scoped it and the over-scoping was the
+same failure one level up.** Rev. 13 wrote *"why `python3` and not `sed`"*, which reads as *any* `sed`
+normalizer being unsafe here. **It is not, and a reader acting on that would replace a working command
+or distrust a correct green.** Measured on this machine (`uname -s` → `Darwin`, `sed --version` →
+`sed: illegal option`, so BSD), against `9c1230fa`, `grep -cF` on the wrapping clause:
+
+| variant | result |
+|---|---|
+| **A** — `sed 's/^> //'`, one literal prefix, **as the preflight session actually sent it** | **`1`, correct.** BSD and GNU treat it identically |
+| **B** — `sed 's/^[[:space:]]*>[[:space:]]\?//'`, **this lane's generalization of A** | **`0`, a false ABSENT** — BSD basic regex does not read `\?` as an optional quantifier |
+| **C** — negative control, variant A against a fabricated clause | **`0`, correct** |
+
+**So the divergence belongs to `\?`, and `\?` is this lane's.** Rev. 13 reported the defect accurately
+and described its owner loosely; **the working line was the preflight session's and the breaking
+generalization was mine**, and this lane also said so the wrong way round in a message to that session
+before measuring. The correction is recorded here because a false accusation against a peer is exactly
+the sort of thing a record should not leave standing.
+
+**And the generalization was MOTIVATED, which is why `python3` is still the right answer.** Measured:
+the record contains **4 bare `>` lines** with no trailing space, which variant A leaves in place as a
+stray token — harmless only because **none of the seven quoted clauses crosses one**. So A is correct
+*for these seven clauses at this formatting*, and the obvious hardening against the fifth `>` line
+someone adds mid-clause is precisely the unportable one. **`python3` removes the class instead of
+documenting one instance**, and the control plane is `python3` everywhere else. Both directions of the
+replacement were tested: `1` on the wrapping clause, `0` on a fabricated clause that is genuinely
+absent.
 
 **⚠ WITHOUT THE NORMALIZATION THE CHECK TESTS THE LINE-WRAPPING, NOT THE TEXT — and rev. 12 published
 it that way.** The §2 limits clause is wrapped across a blockquote continuation in the record:

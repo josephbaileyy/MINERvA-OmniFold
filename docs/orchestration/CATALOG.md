@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 13. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 14. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -362,6 +362,16 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   accepted it. The published check is now a **`python3` normalizer**, matching the control plane's own
   language and **tested in both directions** (`1` present, `0` on a fabricated clause). **The pin does
   not move:** at `9c1230fa` the evidence-directory diff is empty and all seven clauses are present.
+  **⚠ AND REV. 14 NARROWS REV. 13's OWN FIX, WHICH OVER-SCOPED THE DEFECT AND MISNAMED ITS OWNER.**
+  *"Why `python3` and not `sed`"* reads as any `sed` normalizer being unsafe on macOS; it is not.
+  Measured A/B/C on Darwin against `9c1230fa`: `sed 's/^> //'` — **the line as the preflight session
+  actually sent it** — returns **`1`, correct** on BSD and GNU alike; only the **`\?` generalization,
+  which was this lane's**, returns `0`; the negative control returns `0`. **Over-scoping a real defect
+  is a false alarm on a correct command — the very shape rev. 13 had just catalogued, one level up** —
+  and this lane had also told that session the opposite before measuring, which the record now corrects.
+  `python3` is still adopted, for a measured reason rather than a general suspicion: the record holds
+  **4 bare `>` lines**, so the obvious hardening of `s/^> //` is precisely the unportable construct, and
+  `python3` removes the class rather than one instance.
   **REVIEW ROUND 5 (rev. 6) found no new substantive contract finding.** Two non-blocking remnants, both
   the drafting lane's: §7 item 3 still called the prior one that *"understates a Z member"* — replaced
   with *"a prior measured on a different subject"*, with the rev.-4 changelog row that carried it marked
