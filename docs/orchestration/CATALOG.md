@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 14. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 15. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -372,6 +372,28 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `python3` is still adopted, for a measured reason rather than a general suspicion: the record holds
   **4 bare `>` lines**, so the obvious hardening of `s/^> //` is precisely the unportable construct, and
   `python3` removes the class rather than one instance.
+  **READINESS RECLASSIFIED, A DECISION SHEET, AND THE METER REPAIR (rev. 15).** §6.7's single readiness
+  list was **circular**: it named unwritten code and the two pre-launch reviews as prerequisites for an
+  **implementation** authorization, when such an authorization **is** permission to write that code and
+  a pre-launch review gates a **launch**. Readiness now separates **specification acceptance** (READY;
+  the act is Joseph's, and §7's nineteen items are its content rather than blockers to it),
+  **implementation authorization** (**zero compute**; ready today for the five inflation gates, the
+  `g^c` and `r_null` reconstructions, the dominant-block refusal, the cause-4 re-add, the receipt schema
+  and the validator skeleton — **only** the null's numeric `ε` waits on `D4` and the cause-3 acceptance
+  code on `D1`/`D2`), and **production authorization** (NOT ready; `D-RESOURCE`, the committed receipt,
+  the `PM-*` reads, the written code, the two reviews, and `D3` if the campaign is taken). New **§6.8**
+  is a **decision sheet for `D1`–`D4`** — recommended choice, scientific justification, claim supported,
+  cost consequence and remaining uncertainty, one row each, **pointing at §3.7's existing packets and
+  proposing nothing new**. New **§5.6b** records that the **meter repair landed** at `72bcd2f6` on
+  `main` (**not an ancestor of this tip**, merge base `c71b319a`): the metered unit is an **execution
+  attempt**, `sacct -X -D`, an attempt is `(JobID, Start)`, receipt schema `2`, version-1 receipts
+  **refused**. **`D5` is RESOLVED** in the direction §5.9 flagged and leaves the sheet. **§7 item 19's
+  first remedy is TAKEN** — no default `--write`, scratch-path examples, and a runbook section stating
+  that committing to the state path arms admission queue-wide — while the **second, untracking the gate
+  path, was declined and referred to Joseph**; and the hazard is now **larger**, because after the
+  repair the documented command yields a valid armable receipt where before it yielded a visibly wrong
+  one. The waker cadence was **wrong by an order of magnitude** (`≈0.65`–`0.69`/day, `≈28`–`29` task-
+  hours by the stop, not `0.05`–`0.07`); **`N` is `4`–`5` under all four ceiling readings, re-derived**.
   **REVIEW ROUND 5 (rev. 6) found no new substantive contract finding.** Two non-blocking remnants, both
   the drafting lane's: §7 item 3 still called the prior one that *"understates a Z member"* — replaced
   with *"a prior measured on a different subject"*, with the rev.-4 changelog row that carried it marked

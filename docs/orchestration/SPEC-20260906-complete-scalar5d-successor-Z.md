@@ -1,8 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 14 — rev. 13 over-scoped its own fix and misnamed its owner: plain `sed 's/^> //'` is CORRECT
-# on BSD, and only the `\?` generalization this lane added is not. Measured A/B/C, and the peer is
-# cleared in the record.**
+# **rev. 15 — readiness RECLASSIFIED into three authorizations, because permission to implement
+# cannot require the implementation. Decision sheet §6.8 for `D1`–`D4`. The meter repair has landed:
+# `D5` is resolved and the waker accrual was wrong by an order of magnitude — `N` survives it.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -28,6 +28,19 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0m What changed in rev. 15
+
+Rev. 14 was `55e1ebcb`. **Three changes on instruction, and no general rewrite.**
+
+| # | rev. 14 left | rev. 15 does |
+|---|---|---|
+| 1 | one readiness list answering *"ready for an implementation authorization?"*, which named **unwritten code** and **pre-launch reviews** as prerequisites | **⚠ CIRCULAR, and not fixable by editing the list.** An implementation authorization **is** permission to write that code; a pre-launch review gates a **launch**. §6.7 now separates **specification acceptance**, **implementation authorization** and **production authorization**, each with its own prerequisites. **Consequence: most of Z's code is authorizable today at zero compute** — only the null's `ε` and the cause-3 acceptance code wait, and each on its own decision |
+| 2 | `D1`–`D5` framed but scattered across §3.7, §5 and §6.7 | **new §6.8, a decision sheet** — one row per decision, five fields each (recommended choice, why, claim supported, cost, remaining uncertainty), **pointing at the existing packets and proposing nothing new** |
+| 3 | the meter repair *"expected within days"*; `D5` open; the waker accruing at *"≈`0.05`–`0.07`/day"* | **new §5.6b.** The repair **landed** at `72bcd2f6` on `main` (**not an ancestor of this tip**): attempts are summed, `sacct -X -D`, an attempt is `(JobID, Start)`, schema `2`, v1 receipts refused. **`D5` is RESOLVED** in the direction §5.9 flagged. **§7 item 19's first remedy is TAKEN**, its second **declined and referred to Joseph**. And the cadence figure was **wrong by an order of magnitude** — `≈0.65`–`0.69`/day, `≈28`–`29` task-hours by the stop. **`N` is `4`–`5` under all four readings; re-derived, not assumed** |
+
+**Nothing is adopted and nothing moved.** §§1–5's measurements, §3.7's two packets, the four rulings
+and the pin all stand. **A recommendation in §6.8 is not an adoption.**
 
 ## 0.0l What changed in rev. 14
 
@@ -1744,7 +1757,7 @@ compute*, because it is already committed or is a measurement rather than a buil
 |---|---|---|---|---|
 | 1 | **A standalone Y construction** (`⚠ AUTH`: needs `D-Y-CONSTRUCT`, `R2(iv)`, which **does not exist**) | **NO.** Y is cause-7-only and built by a different algebra — a lateral-only swap with `C_G` as minuend (§1.3c). Z's cause-7 evidence must be measured on Z's own construction | **as METHOD only.** Y's artifact-identity discipline, receipt field set, migration-census requirement and bidirectional test contract are reused in §1.5 and §3.4. Y's *measurements* are not: Y's `M` is `C_Y` vs `C_G`, an object Z does not build | **method: YES, zero compute.** **product: N/A** — it does not exist and constructing it is unauthorized |
 | 2 | **The historical-candidate cause-3 fixed-draw seed scan** (`⚠ AUTH`: `R4` **SUSPENDS** it; needs **both** `D-C3-VOI` and `D-C3-RUN`) | **NO for Z**, and §6.3 now settles why: Z's `M(ii)` is the **joint-baseline** quantity on Z's own assembled covariance, and the narrow scan is **diagnostic** for Z unless substitution is separately ruled | **NO as evidence; YES as method and cost prior.** What transfers is the predeclared quantity form, the six exhaustive branches, the thresholds `f_agg ≤ 0.0415` / `f_med ≤ 0.0274` and the 13-task shape. No measured value transfers | **method and thresholds: YES, committed.** **a measured value: NO — none exists.** `R4`: no `nd-unfolding/uq_5d/cause3_mii_20260901/`, no receipt; the run never launched |
-| 3 | **The first `r5_meter` accounting receipt measured on Perlmutter** | **YES — for a Z CAMPAIGN, not for this specification.** `campaignctl` is fail-closed and *"admits no item at all until a receipt measured on Perlmutter is committed, and none is"* (`ACCEPTANCE-20260905`) | **YES.** It measures the campaign's spend against `R5`, a property of any Z campaign | **NO — it does not exist.** `docs/orchestration/state/r5-meter-receipt.json` is **absent at this base**. It is a login-node `sacct` query plus a commit, not a build; §5.6 |
+| 3 | **The first `r5_meter` accounting receipt measured on Perlmutter** | **YES — a TIER-3 prerequisite only** (§6.7). It gates production, **not** specification acceptance and **not** permission to implement | **YES.** It measures the campaign's spend against `R5`, a property of any Z campaign | **NO — it does not exist**, re-measured at this base. **⚠ AND REV. 1–14's *"a query plus a commit, not a build"* UNDERSTATES IT** — committing it **arms compute admission queue-wide** (§5.6a), and the **meter repair has since landed** (§5.6b), which converts the documented command's output from a visibly-wrong receipt into an honestly armable one |
 | 4 | **`PM-1`** — the nine-vs-five weight-only band census on **G's own `combined_source`** | **YES.** If any of the four weight-only bands carries selection-dependent support in the 5D chain, Z's five-band scope is **incomplete for cause 7** and this specification must be amended | **YES** — a property of the support family Z reads | **NO.** The tree's claim is the **FPS-side** row `VALIDATION_LEDGER.md:788-791`, corroborated by `2D_OMNIFOLD_REFERENCE.md:239-241` — the same split, not a second measurement. A cluster read |
 | 5 | **`PM-2`** — G's `combined_source` sha256, **read from the file** | **YES.** Without it Z's parent chain has a definite description where it needs a digest | **YES** | **⚠ CORRECTED IN REV. 7 — §5.9a. YES, ALREADY IN THE TREE.** G's **own** build receipt `STAMPED_HASH_RECEIPT.slurm-56720356.json` records the full path and `9f7b2f55…` at `2026-08-12T05:46:19Z`, **four days before S read the file**; S's manifest is a second, differently-originated **agreeing** measurement. **Rev. 2–6's *"using S's digest as G's is the substitution `PM-2` exists to prevent"* is FALSE and is withdrawn.** What survives is a *timing* qualification, not a missing digest: the launcher hashes after building, and the `mtime_ns 2026-07-14` field is what closes the gap — hence §1.5's new **open-time stamping** requirement |
 | 6 | **`PM-3`** — availability, provenance and **grid/footing compatibility** of the ten selection-complete endpoints | **YES.** They are `L_active`'s inputs | **YES** | **PARTLY, and rev. 2 narrows what the evidence shows.** `RECEIPT-20260816` records all 20 stage-1/2 tags **SKIPPED** as of 2026-08-16 and `DETERMINATION-20260811` records the samples *"Gate-3 promoted… since 2026-07-20"*. **Historical SKIPs establish neither present availability nor mandatory retraining** — the reviewer's formulation. A cluster `ls` plus digest and footing check; a **rebuild is priced only if that check fails** (§5.5) |
@@ -2104,6 +2117,83 @@ campaign, either the runbook's default `--write` target must stop being the gate
 must stop being an ordinary tracked-by-default file — **and which of those is right is not this lane's
 call.** It is named in §7 item 19 and belongs to the meter's owner.
 
+### 5.6b THE METER REPAIR HAS LANDED — operational dependencies updated, NEW IN REV. 15
+
+**Measured, not relayed.** The repair is on `main` at **`72bcd2f6`**, branch
+`r5-accounting-requeue-repair-20260906`. **Ancestry: NOT an ancestor of this tip** — the merge base is
+`c71b319a`, so **this document's `r5_meter.py` is the pre-repair one** and every `file:line` in §5.6
+and §5.2a describes the landed-then version. Seven commits, of which four matter here.
+
+| what changed | effect on this document |
+|---|---|
+| **`e055490c` — the metered unit is an EXECUTION ATTEMPT, not a job id.** `sacct` is now queried `-X -D`; a requeued job's `952` attempts were being counted as one | **`D5` IS RESOLVED, in the direction §5.9 flagged.** Attempts are summed |
+| **`71bfa298` — an attempt is `(JobID, Start)`, not `(JobID, End)`.** Keying on `End` charged one execution twice | a defect **introduced and caught inside the repair**; `End` is deliberately excluded because two rows differing only in `End` are far more likely two *observations* of one execution |
+| **`852b26ab` — the runbook's own example became a live arming act, so it moved** | **§7 item 19's first remedy is TAKEN** — see below |
+| **`45008564` — a requeued producer's reservation must still release** | `campaignctl` compares declared ids against `metered_task_ids` and never against `attempts_by_task_id`, so an item cannot become releasable because its job requeued |
+
+**Receipt schema is now `2`, and a version-1 receipt is REFUSED rather than migrated** — it counted at
+most one attempt per job id, which under-counts every requeued job, and an under-count against a
+prohibition is the fail-**open** direction. Both `r5_meter.py` and `campaignctl.py` refuse it.
+
+#### What this changes for Z, item by item
+
+1. **`D5` is off the decision sheet.** `R5` §3's *"distinct task identities"* is read as excluding the
+   several **representations** of one execution, not as collapsing several **executions** of one job
+   id — with §3's *"counted in full"* and *"a failed task spends"* settling the tie, and under-counting
+   named as the unrecoverable direction. **The alternative reading is named and isolated in one
+   function** (`_sum_charged_seconds`), so a contrary ruling stays cheap. **That remains Joseph's to
+   overturn; this document simply stops carrying it as an open decision.**
+2. **§7 item 19's first remedy is TAKEN, and its second is now a DECISION rather than a finding.**
+   `R5-METER.md` no longer defaults `--write`, its verification examples write to a scratch path or
+   nothing at all, the word *"refresh"* is gone, and a dedicated section states that committing to the
+   state path **opens compute admission queue-wide**. The disclaimer this document flagged is now
+   marked in the runbook itself as a statement about **authorization** that is **silent about
+   admission**. **The second remedy — untracking or ignoring the gate path — was deliberately DECLINED
+   and referred to the decision owner**, because it would change how admission can ever be armed. So
+   item 19 is half closed by code and half open as Joseph's call.
+3. **⚠ THE REPAIR MAKES THE HAZARD WORSE BEFORE IT MAKES IT BETTER, and the finding says so.** Before
+   it, the documented command produced the visibly-wrong `0.0016667` receipt, which a reader would
+   likely catch. After it, the same command produces a **valid, complete, honestly armable** receipt.
+   *"The repair converts a dud into live ammunition, which is why the runbook could not be left as it
+   was."* **§5.6a's warning is therefore more load-bearing after the repair, not less.**
+4. **Admission is STILL SHUT.** `docs/orchestration/state/r5-meter-receipt.json` **does not exist** —
+   re-measured at this base. §4 row 3 stands unchanged as a Tier-3 prerequisite, and committing a
+   receipt is a deliberate act, not a step.
+5. **The 30-day `sacct` window is now dated and owned** (`FINDING-20260906-r5-meter-undercounted-requeue-attempts.md`
+   §7). The span reaches 30 days at **`2026-10-02T13:44:27Z`**, which is **after** the `R5` stop, so the
+   meter covers the whole campaign window. **The live constraint is narrower than §5.9b said:** `R5` §3
+   lets jobs running at the stop finish with their spend counted, so **that final measurement must be
+   taken before that instant**, or it needs `sacct -j <jobid>`.
+
+#### The waker accrual, corrected by an order of magnitude — and `N` survives it
+
+**§5.9 item 14 and `D5` carried `≈0.05`–`0.07` CPU task-h/day. That figure is WRONG and its author
+withdrew it**: it scaled a 21-minute delta instead of measuring whole days, and averaged across a day
+containing an `8.6`-hour hang. **A rate taken from a window containing an outlier is not a rate.**
+Re-derived per calendar day, ordinary cadence is **`≈0.65`–`0.69` CPU task-h/day** (`2026-09-04`:
+`0.652778`; `2026-09-05`: `0.690556`; `2026-09-03`'s `10.263611` is the hang, excluded as an outlier).
+
+**Projected to the `R5` stop from the `09:20Z` measurement — `23.61` days — that is `15.3`–`16.3`
+further CPU task-hours, for a waker total of `≈28`–`29` by the stop**, against `12.606389` measured so
+far. Roughly ten times what this document previously implied.
+
+**`N` does not move. Re-derived here under four readings:**
+
+| ceiling reading | CPU left after one Z build | additional members | **`N` total** |
+|---|---:|---:|---:|
+| nominal `500`, waker ignored | `413.47` | `4` / `3` | **`5` / `4`** |
+| less the measured `12.606389` | `400.86` | `4` / `3` | **`5` / `4`** |
+| less the accrual projected to the stop | `384.57` | `4` / `3` | **`5` / `4`** |
+| …plus one more `8.6` h hang | `375.94` | `4` / `3` | **`5` / `4`** |
+
+*(each pair is the nominal `86.53` member and the `115.36` member carrying arm 5's measured `+58.7%`
+swing)*
+
+**So the affordability finding is robust to a tenfold error in a term this document had wrong**, which
+is worth stating precisely because it is the kind of coincidence that should be checked rather than
+assumed. The reason is structural: the waker is `≈6%` of one member's CPU cost, and `N` is an integer
+floor.
+
 ## 5.7 The uncertainty on all of the above
 
 1. **No Z arm has ever run.** Every figure is transferred from a different product's arms, and a **Z**
@@ -2435,7 +2525,7 @@ and the distinction is load-bearing in this campaign.
 | 11 | a **7-day full-system outage** `maintenance_20260916` sits inside the `R5` window; and `sacct` refuses queries spanning more than 30 days | **RELAYED; the arithmetic is RE-DERIVED HERE — §5.9b** |
 | 12 | **NEW IN REV. 8** — the k=0 round-2 campaign spans **`37.5` h** end to end, at `54.90` GPU / `86.77` CPU task-hours over the same window | **RELAYED — §5.9c.** The GPU figure reproduces §5.2's `54.90` **exactly** by a different route. **It releases §6.7 item 5 from blocker to caveat, and the caveat is that this is ONE realization** |
 | 13 | **NEW IN REV. 8** — `uthrow5d_combF` is `shared_milan_ss11`, **CPU, never GPU**: `2,075` / `1,526` / `1,395` s against 3–4 h requests | **RELAYED, and the IDENTITY is the load-bearing part — §5.8b.** `uthrow5d_combF` is `unified_throw_cov_5d --combine`, i.e. **arm 7, already inside the seven-arm round**. It is **NOT** `sbatch_combine_5d_budget.sh` / `budget5d`, which still has no accounting row in any dimension |
-| 14 | **NEW IN REV. 8** — the requeue-inclusive figure **moves**: `12.5903` CPU task-h at `08:59Z`, `12.606389` at `09:20Z`, `≈0.05`–`0.07`/day plus hangs, still exactly one distinct job id in the window | **RELAYED — `D5`.** Any percentage taken against it must carry its **measurement instant**; the scope was complete at both |
+| 14 | **NEW IN REV. 8** — the requeue-inclusive figure **moves**: `12.5903` CPU task-h at `08:59Z`, `12.606389` at `09:20Z`, `≈0.05`–`0.07`/day plus hangs, still exactly one distinct job id in the window | **RELAYED — `D5`. ⚠ THE CADENCE IS WRONG BY AN ORDER OF MAGNITUDE and its author withdrew it: `≈0.65`–`0.69`/day, not `0.05`–`0.07` — §5.6b.** The two dated totals stand; the RATE does not. Any percentage taken against it must carry its **measurement instant** |
 | 15 | **NEW IN REV. 8** — `PM-4` cannot be discharged as written; the declared ROOT inspection is **authorized by Joseph and committed, and campaignctl still cannot admit it** on four independent grounds | **RE-VERIFIED HERE for the key inventory — §1.3d.** The blocker was returned to Joseph rather than worked around, and **nothing was installed** — the `uproot` question stays his |
 
 ### 5.9c THE WALL CLOCK, MEASURED — NEW IN REV. 8, and it releases §6.7's item 5
@@ -2783,45 +2873,106 @@ eighth that refuses it. What remains is genuinely a choice:
 **`D4` is the least contentious of the four** — it changes a clamp into a formula and adds an
 auditability requirement — but it is still a criterion and this lane may not adopt it.
 
-### The readiness verdict, stated plainly
+### The readiness verdict — RECLASSIFIED IN REV. 15 INTO THREE AUTHORIZATIONS
 
-**The contract is NOT ready for an implementation authorization.** Five things stand between here and
-one, and they are of four different kinds. **Rev. 8 changes the count of BLOCKERS from five to four** —
-item 5 is now a caveat — **and adds nothing new to the list**, because §1.3d's finding is a defect in a
-prerequisite's phrasing rather than a fifth obstacle:
+**Rev. 7–14 answered one question — *"is the contract ready for an implementation authorization?"* —
+with one list, and the list was wrong in a way that could not be fixed by editing it.** It named
+*"code that does not exist"* and *"two independent pre-launch reviews"* as things standing between here
+and permission to implement. **Neither can be.** An implementation authorization **is** permission to
+write that code, so requiring the code first is circular; and a pre-launch review reviews something
+before it is **launched**, which is a production question. Conflating the three put a compute-side
+prerequisite in front of a zero-compute act and made the specification look further from usable than it
+is.
 
-1. **Decisions — `D1`–`D5` above.** None is work; all are Joseph's.
-2. **A measurement that does not exist — §4 row 3's `r5_meter` receipt on Perlmutter.** `campaignctl`
-   *"admits no item at all until"* it is committed, and it gates every row that costs compute. **The
-   read has now been taken and the receipt deliberately NOT committed** (§5.9), because committing it
-   arms admission — a larger act than the evidence errand. **So this gate is still shut, and it is now
-   shut by choice.** Committing it is itself a decision, and `D5` should be settled first: the receipt
-   as landed reports `0.0016667` CPU task-h where the requeue-inclusive reading is `12.5903`.
-3. **Code that does not exist** — §1.3b's five inflation gates, §3.7a's `r_null` reconstruction, the
-   cause-3 dominant-block refusal, the cause-4 jitter re-add, and Z's validator and receipt schema.
-   None of it needs compute; all of it needs writing.
-4. **`D-RESOURCE`, which does not exist** (§4 row 19), and the two independent pre-launch reviews
-   (`PLAN-20260905` #17), which are not done.
-5. **⚠ RELEASED IN REV. 8, from blocker to caveat.** `maintenance_20260916` still removes seven days
-   from the middle of the `R5` window, leaving `16 d 15 h` in two blocks (§5.9b) — **but the wall clock
-   is now measured**: one complete round spans `37.5` h, so `4`–`5` rounds fit inside **either** block
-   without straddling the outage (§5.9c). **Rev. 7 called this *"the one constraint no decision can
-   relax"*; that was written of an unmeasured quantity and is withdrawn.** What remains is a caveat with
-   teeth: `37.5` h is **one realization at one week's queue depth**, it already contains that week's
-   queue wait, and a campaign would run into the **pre-outage rush**. **The schedule is not a blocker on
-   the evidence available, and the evidence is a single sample.**
+**Three authorizations, in order. Each has its own prerequisites and none inherits the next one's.**
 
-**What IS ready:** the scientific contract (§1), all seven cause dispositions (§2), the terminal
-criteria including both formerly-incomplete ones (§3, §3.7), the dependency analysis (§4), and a cost
-census whose remaining holes are named per row with the act that closes each (§5, §5.8). **That is
-`RZ(v)`'s five deliverables, complete as a specification and unapproved as a criterion set.**
-### `D5` — NOT Z's contract, but it moves the ceiling Z is measured against
+#### Tier 1 — SPECIFICATION ACCEPTANCE: accepting §§1–5 as Z's contract
+
+| | |
+|---|---|
+| **what it permits** | citing this document as the contract Z is built and graded against |
+| **what it costs** | nothing |
+| **prerequisites** | none outstanding. Five independent contract-review rounds are closed; §§1–4 and §5's census carry their own evidence classes |
+| **status** | **READY. The act is Joseph's and nobody else's** |
+
+**§7's nineteen items are not prerequisites for this tier — they are its content.** A specification
+that names its gaps, each with the act that closes it, is complete **as a specification**; one that
+hides them is not. Accepting §§1–5 accepts those nineteen as the declared state of knowledge.
+
+#### Tier 2 — IMPLEMENTATION AUTHORIZATION: permission to write Z's producer, validator and tests
+
+| | |
+|---|---|
+| **what it permits** | writing code and fixtures. **No compute, no scheduler, no artifact** |
+| **what it costs** | **zero task-hours.** §5.8's local timings put the validation arithmetic at minutes on a laptop-class machine at the real `10,694` dimension |
+| **prerequisites** | Tier 1, plus `D1`–`D4` **for the two parts that depend on them** |
+| **status** | **READY for most of the work today; two parts wait on `D1`–`D4`** |
+
+**Most of the implementation is unblocked by the specification alone.** §1.3b's five inflation gates,
+the `g^c` reconstruction, §3.4's mutation set, the cause-3 dominant-block refusal, the cause-4 jitter
+re-add, the `V`/`R`/`A` partition gate, Z's receipt schema and the whole validator skeleton are all
+specified to the file-and-line and need no decision.
+
+**Exactly two parts wait, and they wait on their own decision rather than on the whole set:**
+
+- the fixed-seed null check's **numeric `ε` and normalizer** — `D4`;
+- the **cause-3 acceptance code** — `D1`, and `D2` for its per-bin leg.
+
+**Not prerequisites at this tier, stated because rev. 7–14 listed them and they do not belong:** the
+code itself; the two independent pre-launch reviews (`PLAN-20260905` #17), which gate a **launch**;
+`D-RESOURCE`; the committed meter receipt; and `D3`'s member count, which prices a campaign and
+constrains no line of code.
+
+**One real qualification.** §3.4 requires fixtures built from the **producer's own** objects, and some
+of those are cluster-resident. **The code can be written now; a few fixtures need the `PM-*` reads,
+which are reads and not runs** — and those reads are themselves blocked only by a ROOT-capable
+environment (§7 item 1).
+
+#### Tier 3 — PRODUCTION AUTHORIZATION: permission to build Z
+
+| | |
+|---|---|
+| **what it permits** | spending against `R5` to produce the artifact |
+| **what it costs** | §5.8b's production block, and `D3`'s campaign on top if taken |
+| **prerequisites** | everything below, and here the code legitimately **is** one |
+| **status** | **NOT READY, and no single act makes it ready** |
+
+1. **Tier 2 discharged and the code written**, including Z's validator and the five inflation gates.
+   At this tier the code is a prerequisite because a run without a validator produces an ungradable
+   artifact.
+2. **The two independent pre-launch reviews** (`PLAN-20260905` #17). Worker agreement is not
+   independence.
+3. **`D-RESOURCE`** — an exact resource authorization naming a Z run. It does not exist (§4 row 19),
+   and `R5`'s ceilings are *"NOT authorization to spend up to"* them.
+4. **A committed `r5_meter` receipt** — and per §5.6b that is now a deliberate, queue-wide arming act
+   rather than a clerical step.
+5. **The `PM-*` reads** — `PM-1`, `PM-4`, `PM-5` and `PM-3`'s grid arm, plus §7 item 17's binding of
+   G's production-CV input, on which `PM-4` and reject condition `11b` fail together.
+6. **`D3`**, if the joint-baseline campaign is taken: `N`, the offset set, and diagonal-or-grid.
+
+**The schedule is a caveat at this tier, not a prerequisite** (§5.9c): `4`–`5` rounds fit inside either
+block of the split window on one measured realization, and one realization is what that is.
+
+#### What this reclassification does and does not change
+
+**It moves nothing.** No gate, no count, no grade, no cell. **It changes only the question each
+prerequisite is an answer to**, and the consequence is that **`RZ(v)`'s five deliverables are complete
+and Tier 2 is reachable today for most of Z's code** — which the previous single list obscured by
+counting production prerequisites against a zero-compute act.
+### `D5` — ⚠ RESOLVED IN REV. 15 BY THE LANDED REPAIR (§5.6b). Retained as written, for the record
+
+**The repair adopts the attempt-summing reading**, which is the direction §5.9 flagged: `sacct -X -D`,
+an attempt is `(JobID, Start)`, and every attempt of one job id is charged. **`D5` is therefore off
+§6.8's sheet.** The alternative reading is named in the finding and isolated in one function, so
+Joseph can still overturn it cheaply. The text below is rev. 9's and is kept unedited.
 
 **`R5` §3 says retried tasks count in full. The meter, as landed, does not count them.** Measured on the
 same window: **`0.0016667` CPU task-h deduplicated, `12.5903` with `--duplicates` at `2026-09-06T08:59Z`**
 — 953 instances of one self-requeueing waker, of which a single `8 h 37 m` hang dominates and the other
 948 sum to `≈2.96` h. **⚠ AND IT MOVES: `12.606389` at `09:20Z`, twenty-one minutes later.** It grows
 `≈0.05`–`0.07` CPU task-h/day from the waker's ordinary cadence, plus whatever the next hang adds.
+**⚠ THAT RATE IS WRONG BY AN ORDER OF MAGNITUDE AND IS WITHDRAWN — §5.6b: `≈0.65`–`0.69`/day, giving
+`≈28`–`29` CPU task-hours by the `R5` stop. `N` is unaffected, re-derived under four readings.**
 **Every percentage taken against this reading must carry its measurement instant** — a bare `12.59` is
 already stale. The **scope** was complete at both instants: exactly one distinct job id in the `R5`
 window. **And `--duplicates` cannot simply be switched on:** `_parse_sacct_dump` keys on job id alone and
@@ -2834,6 +2985,65 @@ while the waker runs, and every figure in §3.7b and §5.8 is quoted against the
 move `N`:** re-derived here, the affordable member count is `4`–`5` under **both** readings
 (`413.47` or `400.88` CPU task-h remaining after one build, against `86.53` or `115.36` per member).
 
+
+## 6.8 DECISION SHEET `D1`–`D4` — NEW IN REV. 15
+
+**One row per decision, pointing at the packet that already exists. This adds no new proposal and
+changes none of them** — §3.7a and §3.7b are the objects; §6.7 is the framing; this is the summary a
+decision is actually taken from. **Nothing here is adopted, and a recommendation is not an adoption.**
+
+---
+
+### `D1` — the `(cause 3, Z)` acceptance packet → **§3.7b**
+
+| field | |
+|---|---|
+| **RECOMMENDED** | **Adopt §3.7b as written.** Statistics `s_agg` and `s_med`, each the **maximum** relative change over the declared offset set; denominators **Z's own as-built `k = 0` member**; precision target **3 s.f.** aggregate, **4 s.f.** per-bin median; boundary **direct**, `s ≤ δ` |
+| **WHY** | Each statistic is the relative change in a quantity that is **itself printed**, so no model connects it to a reported number — §3.6d's ordering rule is satisfied by construction. The **direct** form is the only one admissible under the operative rulings: quadrature presumes baseline variation is an omitted independent contribution **added to the budget**, which `PREDECLARE-20260901-cause3-mii` §5 and §1.3a property 3 both forbid. The **maximum** rather than a sample SD, because the population is the **finite declared offset set** and no inference to a distribution is made — the predeclaration's own position |
+| **CLAIM SUPPORTED** | *"No declared estimator-baseline offset moves Z's printed uncertainty at its declared precision."* A statement about the **declared set**, never about the offset population |
+| **COST** | **The boundary form costs nothing.** The design it grades is `D3`. At the format prior the boundaries are **`0.0861%`** and **`0.0374%`** — `48.2×` and `73.1×` tighter than the narrow scan's `4.15%`/`2.74%`, which is arithmetic, not a preference |
+| **UNCERTAINTY** | `δ` is **void until Z's own printed values exist** (the two 5D macros are defined and never printed, and their values are J's). The per-bin leg's target is `D2`. And the evidence is **asymmetric**: at the affordable `N`, an unfavourable result is strong evidence of sensitivity while a favourable one is weak evidence of stability |
+
+---
+
+### `D2` — the per-bin leg's precision target → **§3.7b item 3**
+
+| field | |
+|---|---|
+| **RECOMMENDED** | **Option (i): a third, model-dependent leg**, `median_i(m_i) ≤ δ_med`, with the **uniform-movement model stated in the same sentence as the number** |
+| **WHY** | **The note prints no per-bin uncertainty**, so no per-bin `δ` can be derived (measured, with a positive control). The printed median macro **is** the note's own summary of the per-bin distribution, which makes it the available precision control. Option (ii) — a data release with a declared precision — **does not exist in this tree**, and creating one is a publication act outside `RZ(iv)` |
+| **CLAIM SUPPORTED** | *"The typical bin's uncertainty does not move at the precision the note prints for its per-bin summary."* **Weaker than the narrow scan's contract, and §3.7b says so rather than claiming parity** |
+| **COST** | **None.** It is a grading rule over data the two exact legs already require |
+| **UNCERTAINTY** | **The model is not exact** — a median of ratios is not a ratio of medians — and a movement concentrated in a few bins can pass it. That is why the per-bin distribution is reported with its `median`, `p90`, `max` and argmax bin **regardless of which option is chosen** |
+
+---
+
+### `D3` — the joint-baseline design: `N`, the offsets, diagonal-or-grid → **§3.7b items 1 and "What `N` can be"**
+
+| field | |
+|---|---|
+| **RECOMMENDED** | **The DIAGONAL, unconditionally.** On `N`: **`5` total** (`k = 0` plus four offsets) is the largest that fits with any contingency — **but the prior question is whether the measurement is worth taking at all**, and this lane's recommendation is to take it **only if an unfavourable result would change a decision** |
+| **WHY** | The diagonal `(42+k, 1000+k)` is **what the launchers implement** — one shared `MNV_EST_SEED_OFFSET` across exactly seven production launchers, with an eighth refusing it — and §6.3's word *"jointly"* is satisfied by it. A **grid** needs a second environment variable: **code, not compute**, and no ruling asks for one. On `N`: affordability is a hard wall, not a preference — see below |
+| **CLAIM SUPPORTED** | At `N = 5`: *"Four counterfactual baselines on the implemented diagonal did not move Z's printed values."* **Not** a claim about the offset population, and not a stability result |
+| **COST** | **`3`–`4` additional members at `54.90` GPU / `86.53` CPU each — `164.7`–`219.6` GPU / `259.6`–`346.1` CPU task-hours**, taking a Z campaign to **`≈86%` of the CPU ceiling**. Re-derived in rev. 15 against the corrected waker accrual: **`N = 4`–`5` under every reading** — nominal ceiling, the measured `12.606389`, that projected to the stop, and that plus one more `8.6` h hang. **The historical `46`/`50`-member design is `5.1×`–`8.7×` over.** Wall clock fits: `≈1.56` d per round against a `10 d 4 h` and a `6 d 11 h` block |
+| **UNCERTAINTY** | The per-member cost is a **prior from a different subject** and its direction is **not established**. The CPU column carries a **measured `±58.7%`** single-arm swing. The wall-clock figure is **one realization at one week's queue depth**, and a campaign would run into the pre-outage rush |
+
+---
+
+### `D4` — the fixed-seed null packet → **§3.7a**
+
+| field | |
+|---|---|
+| **RECOMMENDED** | **Adopt §3.7a as written.** Normalizer `‖x_cv2 − x_cv‖ / ‖x_cv‖`; `ε = n_iters · n_rep · float64.eps` (**a formula with imported operands**, `= 1.1873e-11` at Z's expected shape); new reject condition **`11b`**; the receipt fields naming the production ROOT |
+| **WHY** | Numerator and denominator are **the same object over the same population**, so the ratio is dimensionless by construction rather than by assertion. `sqrt(Tr C_Z)` is rejected because it divides a **central-value** difference by an **uncertainty** scale — a larger covariance would license a *less* deterministic CV. `ε` is the worst-case forward error of the reduction, **imported rather than chosen**, and it binds over the tightest evaluated sensitivity channel by **~7 orders in the one unmeasured quantity**, so the conclusion survives the unresolved channel |
+| **CLAIM SUPPORTED** | *"Z's CV re-unfold is deterministic to within the arithmetic accumulation scale of its own reduction"* — replacing a bound §3.1a measures as **unable to fail** (`1e-12` absolute against a vector of norm `~1e-37`) |
+| **COST** | **Zero compute**, if `PM-6`'s bounded read of `hXSecND_flat` is available. The standalone determinism control run — `2` CV unfolds, `≈1.45` GPU task-h — is a **contingency only**, needed if that read is impossible |
+| **UNCERTAINTY** | `‖x_cv‖` for G is **unmeasured**, so the `8.9×` margin rests on `‖x‖ ≥ √Tr C_blocksum` — likely at a printed per-bin median of `13.36%`, still an inference. The **printed-total sensitivity channel** needs the 5D bin volumes. And **`11b` depends on binding G's production-CV input**, the same gap that makes `PM-4` unreadable (§1.3d, §7 item 17) |
+
+---
+
+**`D5` is not on this sheet because it is RESOLVED — §5.6b.** The landed meter repair adopts the
+attempt-summing reading, which is the direction §5.9 flagged.
 
 ---
 
@@ -2942,7 +3152,12 @@ move `N`:** re-derived here, the affordable member count is `4`–`5` under **bo
 14. **A measured read rate for the artifact replay's I/O term** (`≈41` GB if each component is a full
     `10,694²` `TH2D`). Its arithmetic term is `≈0.07` CPU task-h; **the I/O term is the whole question**
     and the sum is not established (§5.8c).
-15. **How much of `R5` is actually left — two measured answers `12.59` CPU task-h apart.** The landed
+15. **⚠ RESOLVED IN REV. 15 BY THE LANDED REPAIR — §5.6b.** The metered unit is now an **execution
+    attempt**, `sacct` is queried `-X -D`, and every attempt of one job id is charged, which is the
+    reading this item asked for. **What survives is not a gap but a rate correction:** the waker's
+    ordinary cadence is `≈0.65`–`0.69` CPU task-h/day, not the `0.05`–`0.07` this document carried, for
+    `≈28`–`29` by the stop. **`N` is `4`–`5` under every reading.** The item as written follows.
+    **How much of `R5` is actually left — two measured answers `12.59` CPU task-h apart.** The landed
     meter deduplicates requeued instances (`_sacct_argv()` carries no `--duplicates`; `_parse_sacct_dump`
     keys on job id and raises on the duplicated dump — **re-verified here** at `r5_meter.py:380-392` and
     `:270`), while `R5` §3 says *"retried tasks count in full"*. **What it would take:** a ruling on
@@ -2990,6 +3205,14 @@ move `N`:** re-derived here, the affordable member count is `4`–`5` under **bo
     and neither step looks like a decision. **What it would take:** either the runbook's default target
     moves off the gate path, or the gate path stops being tracked-by-default. **Which is right is the
     meter owner's call, not this lane's**, and this record proposes neither.
+    **⚠ HALF CLOSED IN REV. 15 — §5.6b.** The **first** remedy is **TAKEN**: `--write` now has no
+    default, the verification examples write to a scratch path or nothing, *"refresh"* is gone, and the
+    runbook carries a dedicated section saying that committing to the state path opens admission
+    queue-wide, with its own disclaimer marked as silent about admission. The **second** — untracking or
+    ignoring the gate path — was **deliberately DECLINED and referred to the decision owner**, because
+    it changes how admission can ever be armed. **So this item is now a live decision for Joseph rather
+    than an open finding, and the hazard is LARGER than when it was written:** after the repair the
+    documented command produces a valid, armable receipt where before it produced a visibly wrong one.
 
 ---
 
