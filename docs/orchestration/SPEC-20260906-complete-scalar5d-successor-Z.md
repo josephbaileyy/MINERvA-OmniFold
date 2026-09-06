@@ -1,8 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 16 — the contract review of `D1`–`D4` is IMPLEMENTED on Joseph's approval. Three
-# format-and-arithmetic-derived numbers are WITHDRAWN, `11b`'s operand is corrected, and a correlation
-# blindness neither statistic could see is now a named requirement. `D3` alone survives, conditionally.**
+# **rev. 17 — round 2 of the `D1`–`D4` review. `min(achievable, acceptable)` is WITHDRAWN: it used a
+# feasibility floor as an upper bound, which §3.6a had already forbidden. `B ≤ S` replaces it, the
+# control is revised on three gaps, and the product it was priced against was `15×` too large.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -29,6 +29,32 @@ ungraded here**, and this document opens none.
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
 
+## 0.0o What changed in rev. 17
+
+Rev. 16 was `23f9dad5`. **Round 2 of the contract review accepted rev. 16's threshold withdrawals,
+persisted null operands, correlation limitation, conditional `D3` and generalized leg-set branches — and
+found the REPLACEMENT `D4` proposal not yet passable.** Rev. 17 implements that round.
+
+**⚠ PROVENANCE, STATED PRECISELY BECAUSE REV. 16'S LINE DOES NOT TRANSFER.** Rev. 16 records *"Joseph has
+approved the findings"*, and for that round he did. **This round arrived relayed WITHOUT an approval
+statement.** So rev. 17 separates two kinds of change: **corrections of this lane's own errors, which
+need no approval and are made unconditionally**, and **dispositions, which are recorded as the
+REVIEWER'S and remain pending.** Nothing below is adopted.
+
+| # | rev. 16 said | rev. 17 does |
+|---|---|---|
+| 1 | the null's bound is `min(achievable, acceptable)` | **⚠ ACCEPTANCE-BLOCKING, AND WITHDRAWN.** An observed reproducibility floor is not an acceptance tolerance, and a minimum turns it into one mechanically. **Worse: §3.6a says the floor bounds `ε` from BELOW; `min` used it as an upper bound** — rev. 16 inverted a constraint written two sections earlier, while quoting the paragraph that states it. Replaced by **`B` (operating-error bound, with assumptions and confidence) and `S` (independently justified scientific cap), the precondition `B ≤ S`, and `ε` argued WITHIN `[B, S]`**. If `B > S` the finding is that **the execution envelope is not demonstrated adequate** — not a tolerance to adopt |
+| 2 | the control: `8` invocations, two arms, `≈11.6` GPU task-h, *"the only route"* | **all four claims corrected.** *"Only route"* **withdrawn** — the review did not establish it, this lane asserted it; three routes are now named, and **pinning LightGBM's `num_threads`/`deterministic`/`force_row_wise` is Tier-2 code that could make `B` a design property rather than a measurement**. **Gap 1:** a within-envelope null does **not** measure a between-envelope shift — both arms can reproduce perfectly while their CVs differ; a cross-arm `r_cross` is required if portability is the claim, and rev. 16's own persistence requirement is what makes it available. **Gap 2:** `4` repeats had no justification; a coverage/confidence objective, the sampling assumptions and a **predeclared** estimator are required, and **two arms do not prevent tuning**. **And the subject engages §6.4** — a control on Z's own bank reads the bound off Z's nulls |
+| 3 | the control costs `≈11.6` **GPU** task-h for *"`2` CV unfolds"* per invocation | **⚠ BOTH OPERANDS WRONG, AND THIS DOCUMENT HAD ALREADY RECORDED THE CORRECTION.** An invocation is a whole `do_combine` — bank load, slab load, three `10,694²` assemblies — not two unfolds; and the combine is a **CPU** job (`sbatch_uthrow_combine_5d_fast.sh:4`, `--constraint=cpu --cpus-per-task=16 --mem=90G --time=03:00:00`). §0.0's rev.-2 correction row 10 already says *"`--null` runs in the **CPU** combine step; the `43.5`-min basis is a **GPU** arm-3 per-task time."* **Rev. 16 priced a new row off exactly that basis.** Cost is now **UNPRICED**, with a `3n` CPU task-h reservation bound |
+| 4 | the persistence costs `1.05` MB *"against a `≈41` GB product"* | **⚠ WRONG BY `15×`, and the right number was in this document's own digest table.** The **throw product** holds **three** `10,694²` `TH2D`s = `2.74` GB derived, against `2.668` GB **measured** at §5.9's `uthrow` row. `41` GB is the **45-component** band family (`13 V + 5 A + 27 R` × `0.915` GB = `41.17` GB) and G's `combined_source` (`41.44` GB measured) — **a different object, conflated.** The fraction moves `2.6e-5 → 3.9e-4`; **the conclusion is unchanged and the operand was still wrong** |
+| 5 | §3.7d's correlation legs cost *"zero production"* and *"the cost is validator code"* | **corrected: no additional MEMBERS is not FREE.** Priced per member — `s_proj` and `s_corr` **seconds** with **zero incremental I/O** (the diagonal legs already materialize the matrix via `np.frombuffer`), `s_eig` **`≈1`–`3` min** and `≈1.8` GB, measured by timing `eigvalsh` at four sizes here and scaling by `n³`. At `N = 5`, `s_eig` alone is `5`–`15` min. **Tier 2 runtime, not `R5`** |
+| 6 | *"erring in both directions at `12.5%` each"*, unqualified in every summary | **the sampling model now travels with the number.** `12.5%` is exact **for a value uniform in its decade and a change uniform on `[0, one display unit)`** — a synthetic model, not a statement about rounding comparisons generally. The full statement in §3.7b item 4A always carried it; the summaries did not |
+| 7 | §3.7 *"This section completes them"*; receipts say the graded quantities *"did not move"* | **both corrected.** §3.7 completes neither criterion — it supplies no acceptance number. And **with a positive tolerance the claim is *"did not exceed their declared movement limits"***, never *"did not move"*; four sites fixed |
+| 8 | `D2` framed as waiting on *"two numbers"* from Joseph | **corrected.** `D1` and `D2` need **justified tolerances and scope**, which is scientific work — not a number Joseph supplies |
+
+**Nothing is adopted and nothing moved.** §§1–2's dispositions, §1.3a–d, §6.1–6.5, the four rulings and
+the pin all stand. Counts, gates and cells are untouched.
+
 ## 0.0n What changed in rev. 16
 
 Rev. 15 was `eff4c6c1`. **A contract review of `D1`–`D4` — which the earlier PASS did not cover — found
@@ -38,11 +64,11 @@ approved the findings; rev. 16 implements them.** The assembly algebra and the e
 
 | # | rev. 15 proposed | rev. 16 does |
 |---|---|---|
-| 1 | `D1`: adopt `s_agg ≤ 0.0861%` and `s_med ≤ 0.0374%`, derived from macro formatting | **THRESHOLDS WITHDRAWN as acceptance criteria; statistics and direct normalization RETAINED.** Formatting does not establish how much sensitivity is scientifically acceptable — and the rule behind the numbers is **factually wrong**: half a display unit neither guarantees nor is required for an unchanged printed value, erring in **both** directions at **`12.5%`** each (derived, then checked on `200,000` pairs). If literal display invariance is wanted, **rounding equality** is exact and needs no `δ` |
+| 1 | `D1`: adopt `s_agg ≤ 0.0861%` and `s_med ≤ 0.0374%`, derived from macro formatting | **THRESHOLDS WITHDRAWN as acceptance criteria; statistics and direct normalization RETAINED.** Formatting does not establish how much sensitivity is scientifically acceptable — and the rule behind the numbers is **factually wrong**: half a display unit neither guarantees nor is required for an unchanged printed value, erring in **both** directions at **`12.5%`** each **under the stated synthetic model** — a value uniform in its decade and a change uniform on `[0, one display unit)` — derived exactly and checked on `200,000` pairs. **The rate belongs to that model, not to rounding comparisons in general; the failure in both directions does not.** If literal display invariance is wanted, **rounding equality** is exact and needs no `δ` |
 | 2 | — | **NEW §3.7d: every proposed gate is BLIND TO CORRELATIONS.** `I₂` and `[[1,0.9],[0.9,1]]` give identical trace and identical per-bin statistics — both legs return **exactly `0.0`** — while the sd of their sum and difference move by **`+37.8%`** and **`−68.4%`**. **And it is live, not hypothetical:** `project_cov_nd.py:2-11` marginalizes the assembled covariance as `M C Mᵀ`, which is exactly the functional both legs miss. Three candidate legs are specified; **none is adopted** |
 | 3 | `D2`: adopt option (i), the model-dependent third leg | **NOT ADOPTED.** *"A missing data release does not prevent specifying a scientifically motivated per-bin tolerance"* — rev. 7–15 answered a **formatting** question in the slot a **scientific** one belonged in. The distribution stays a **diagnostic** pending *"what movement, in what fraction of bins, and why"* |
 | 4 | `D4`: adopt `ε = n_iters · n_rep · eps = 1.1873e-11` | **`ε` WITHHELD; normalizer RETAINED.** It is a **summation bound over a computation that is not a summation** — measured against `unified_throw_cov_5d.py:47-89`, the chain is LightGBM fitting, three **event-level** accumulations and five divisions, so **`n_rep` counts OUTPUT BINS while every accumulation runs over EVENTS**. Underneath: the module's own docstring calls the estimator *"**nearly** deterministic in `seed` alone"*, no thread or determinism flag is pinned, and G's measured null is **not zero** — a **reproducibility** question, not a rounding one |
-| 5 | `D4`: `11b` reconstructs `‖x_cv‖` from the production ROOT's `hXSecND_flat` | **OPERAND CORRECTED.** The numerator compares two **internally** re-unfolded CVs; a separately produced denominator **presumes the determinism the null tests**, and `adopt_unified_5d.py:116-121` checks **cardinality only**. **Remedy: persist `x_cv`, `x_cv2` and the predicate — `1.05` MB against `≈41` GB.** `11b` restated, **`11c`** added as a conditional cross-check |
+| 5 | `D4`: `11b` reconstructs `‖x_cv‖` from the production ROOT's `hXSecND_flat` | **OPERAND CORRECTED.** The numerator compares two **internally** re-unfolded CVs; a separately produced denominator **presumes the determinism the null tests**, and `adopt_unified_5d.py:116-121` checks **cardinality only**. **Remedy: persist `x_cv`, `x_cv2` and the predicate — `1.05` MB against the throw product** (⚠ rev. 17: **`2.668` GB measured**, not the `≈41` GB rev. 16 wrote — see §0.0o row 4). `11b` restated, **`11c`** added as a conditional cross-check |
 | 6 | `D3`: the diagonal, **unconditionally**, because the launchers implement it | **CONDITIONAL YES to a small diagonal diagnostic.** An implementation is not a justification. **No grid is required.** And **`N = 5` is a planning proposal, not demonstrated capacity** — `219.6` GPU / `346.1` CPU task-hours before campaign costs and contingencies |
 | 7 | branch table hardcoded to two legs | **RESTATED OVER A DECLARED LEG SET `L`** (§3.7b item 5). Rev. 7–15's MET branch would have **ignored any third leg** — values right, scope wrong. Fixed before a third leg exists |
 | 8 | *"a sample standard deviation is inadmissible"*; *"if it entered the budget, quadrature would become correct"* | **both withdrawn** as the review's nonblocking corrections. A finite declared population does not make SD inadmissible — this packet itself uses a finite-set covariance; **the maximum is right because the CLAIM is universally quantified**. And **budget adoption alone would not establish independence**, so quadrature's burden does not lift |
@@ -50,7 +76,9 @@ approved the findings; rev. 16 implements them.** The assembly algebra and the e
 **What this costs: nothing, and it removes one Tier-3 prerequisite.** Every remedy above is validator or
 writer code (Tier 2) or a scope statement. `PM-6`'s bounded read is **no longer needed for `D4`**. The
 one new compute item is the **determinism control — `≈11.6` GPU task-h, returned as a bounded proposal
-and NOT run** (§3.7a).
+and NOT run** (§3.7a). **⚠ SUPERSEDED IN REV. 17 AND LEFT IN PLACE: that price is withdrawn** (wrong
+operation, wrong partition — §0.0o row 3), the control is revised on three gaps, and it is no longer the
+only route.
 
 **Nothing is adopted and nothing moved.** §§1–2's dispositions, §1.3a–d, §6.1–6.5, the four rulings and
 the pin all stand. Counts, gates and cells are untouched.
@@ -665,7 +693,8 @@ Versioned, per `PREDECLARE-20260901-cause7` §1 `P`, extended from Y's §3 to se
 
 - **⚠ THE NULL BLOCK — NEW IN REV. 16, and it is a WRITER change, not just a receipt field.** Z's
   throw product persists **`x_cv`, `x_cv2` and the support predicate's result** on the full grid
-  (`1.05` MB against a `≈41` GB product), and the receipt records `n_rep` **as recomputed by the
+  (`1.05` MB against a **`2.668` GB** product — ⚠ corrected in rev. 17 from `≈41` GB, which is a
+  different object), and the receipt records `n_rep` **as recomputed by the
   validator from the persisted predicate**, `‖x_cv‖`, `‖x_cv2 − x_cv‖`, the reconstructed `r_null`, and
   the per-bin diagnostic with its argmax bin. Where an external cross-check against a named production
   ROOT is reported at all, it carries that ROOT's **path, sha256 and key** and the **elementwise**
@@ -1147,7 +1176,8 @@ and `UNRESOLVED` is a permitted per-leg verdict that must not be re-read as the 
     be **independently reconstructed from the persisted `x_cv`, `x_cv2` and support predicate in Z's own
     throw product**. The throw writer does **not** persist them today (`unified_throw_cov.py:540-579`,
     measured; the vector is computed at `:369-371` and dropped at `:586`), so **Z's writer must**, at
-    `1.05` MB against a `≈41` GB product. Without it the validator can only read the producer's own
+    `1.05` MB against a **`2.668` GB** product (⚠ rev. 17; rev. 16 wrote `≈41` GB, which is the
+    45-component band family, not the throw product). Without it the validator can only read the producer's own
     number back and compare it with itself — the shape §1.3b rejected for `g`. **Rev. 7–15 sourced the
     denominator from the production ROOT's `hXSecND_flat` instead; that is a different object from a
     different job, and it PRESUMES the determinism the null tests** (§3.7a).
@@ -1437,7 +1467,10 @@ condition `4c` still bites** — a run against an underived boundary is itself a
 the mechanism that makes this state safe, and it is why the correction is a retitling rather than an
 alarm.
 
-**§3.6 says what would complete each criterion. This section completes them, and approves nothing.**
+**§3.6 says what would complete each criterion. ⚠ REV. 17: THIS SECTION COMPLETES NEITHER, and rev.
+7–16's *"this section completes them"* is withdrawn as an operative remnant.** It supplies statistics,
+normalizations, operands, receipt requirements, falsifiers and outcome branches, **and no acceptance
+number for either criterion**. It approves nothing.
 §6.6 requires the statistic, its denominator, the precision target and the boundary to be approved
 **together as one packet**, and `BEN-381` bars this lane from grading what it drafts. What changes here
 is only that the packet now exists and can be put; §6.7 puts it.
@@ -1578,33 +1611,139 @@ needs, and this document did not have one.
 |---|---|
 | **SURVIVES — the normalizer** | `r_null = ‖x_cv2 − x_cv‖ / ‖x_cv‖` over the reported support. Item 1's argument is untouched: numerator and denominator are the same object, and `sqrt(Tr C_Z)` and the per-bin max stay rejected on the record. **The review's recommendation is explicit — *"keep scale-relative normalization"*** |
 | **SURVIVES — §6.4's requirement** | the bound must be scale-relative and fixed before production. Unchanged; not reopened |
-| **SURVIVES — the sensitivity controls** | the three channels and their `5.00e-41` tightest evaluated limit stand as what they always were: a limit on what is **acceptable**, never a derivation of what is **achievable** |
+| **SURVIVES — the sensitivity controls** | the three channels and their `5.00e-41` tightest evaluated limit stand as what they always were: **candidate inputs to `S` below**, never a derivation of what is achievable |
 | **WITHHELD** | **`ε = n_iters · n_rep · eps`, and the number `1.1873e-11` with it.** Not adopted, not proposed, and not to be cited from this document as a criterion |
 | **WITHHELD with it** | the `8.9×` margin claim, which was `ε` divided by a transferred figure. With `ε` gone the margin has no numerator |
-| **REQUIRED** | a **justified numerical/reproducibility model** for this algorithm and envelope, **subject to** an independently justified scientific sensitivity limit. The bound Z runs against is the **smaller** of what the computation can achieve and what the science can tolerate, and this document had argued the first badly and the second incompletely |
+| **REQUIRED** | the two-quantity structure immediately below, which **replaces rev. 16's `min(achievable, acceptable)`** |
+
+#### ⚠ REV. 17 — `min(achievable, acceptable)` IS WITHDRAWN. It inverted a constraint this document had already stated correctly
+
+**Rev. 16 wrote that the bound is *"the SMALLER of what the computation can achieve and what the science
+can tolerate."* That is the same mistake §3.6 warned against, wearing a formula, and the contract review
+is right to call it acceptance-blocking.** An observed reproducibility floor is **not** an acceptance
+tolerance, and taking a minimum turns it into one mechanically — which is precisely the step §3.6a
+forbids: *"a measured process-to-process floor… tells you what repeatability is **achievable**; it does
+not tell you what error is **scientifically acceptable**… It may bound `ε` from **below** as a
+feasibility constraint; it cannot justify `ε`."*
+
+**`min` uses that floor as an UPPER bound. §3.6a says it is a LOWER one. Rev. 16 inverted the direction
+of a constraint written two sections earlier in its own document**, and did it while quoting the
+paragraph that says so.
+
+**Both branches of the minimum fail, and each fails in a shape this repository has catalogued:**
+
+| case | what `min` would set | what actually happens |
+|---|---|---|
+| `B < S` — the envelope is comfortably inside the science's tolerance | `ε = B`, the **feasibility floor** | the gate sits at the floor, so **correct runs fail** at whatever rate `B`'s coverage leaves. A guard that fires on correct runs |
+| `B > S` — the envelope is **not good enough** | `ε = S` | **every** correct run fails, because the computation cannot achieve `S`. And the real finding — *the envelope is inadequate* — is silently converted into a threshold nobody can meet |
+
+**THE DEFENSIBLE STRUCTURE, and it is the review's:**
+
+    B  =  an OPERATING-ERROR BOUND on this algorithm in this execution envelope,
+          with its assumptions and its confidence stated.
+    S  =  an INDEPENDENTLY JUSTIFIED SCIENTIFIC CAP on how much CV movement is tolerable.
+
+    REQUIRE   B <= S.
+    Then      epsilon is JUSTIFIED WITHIN [B, S]  --  argued, never taken as an endpoint.
+
+**Three things follow, and each is a change in what the failure of this criterion would MEAN:**
+
+1. **`B ≤ S` is a precondition, not an arithmetic step.** If it fails, **the proposed execution envelope
+   is not demonstrated adequate** — that is a finding about the envelope, and the responses to it are to
+   change the envelope, revisit `S`, or stop. **It is not a tolerance to adopt.**
+2. **`B` and `S` are established by different work and neither substitutes for the other.** `B` is
+   measured or designed (below); `S` is argued from what the covariance is used for — the same argument
+   `D1`'s thresholds now wait on, which is why §3.7a and §3.7b are not independent questions.
+3. **`ε` is argued inside the interval.** Where in `[B, S]` it sits is a judgement about how much margin
+   to leave against an envelope that will requeue, run at different thread counts and outlive this
+   specification. **A number read off either endpoint is not that judgement.**
 
 **JOSEPH'S QUESTION, RECORDED VERBATIM AS THE THING THAT MUST BE ANSWERED:** *"What reproducibility
 tolerance is justified for this exact algorithm and execution envelope, subject to an independently
-justified scientific sensitivity limit?"*
+justified scientific sensitivity limit?"* **Read against the structure above, that question already has
+the right shape — `B`, then `S`, then a tolerance justified subject to both — and rev. 16 answered it
+with a minimum.**
 
-#### The bounded experiment that would answer the achievable half — PROPOSED, NOT RUN
+#### The bounded experiment that could establish `B` — PROPOSED, NOT RUN, AND ⚠ REVISED IN REV. 17
 
-**This is returned as a proposal because resolving it requires an experiment, and running one is outside
-this lane's brief.** It is the control §3.7a and §5.8d already price as a contingency; the review's
-finding **promotes it from contingency to the only route to a defensible `ε`**.
+**Rev. 16 called this *"the only route to a defensible `ε`."* That claim is WITHDRAWN — the review did
+not establish it, and this lane asserted it.** Three routes are named below and none is privileged.
+Rev. 16's version of the control also had three gaps, all three now stated rather than repaired away.
+
+##### ⚠ GAP 1 — a within-envelope null does not measure a between-envelope shift
+
+**The most serious of the three, because rev. 16's two-arm design looked like it addressed portability
+and does not.** `r_null` compares two re-unfolds **inside one process**. Run the control at two thread
+counts and you get **two within-envelope nulls**, and *both can be essentially zero while the two arms'
+CVs differ from each other*. Reproducibility within an envelope and agreement across envelopes are
+**two different quantities**, and rev. 16 measured the first while claiming the second.
+
+**The fix is a second statistic, and rev. 16's own persistence requirement is what makes it available:**
+
+    r_cross  =  || x_cv^(A) - x_cv^(B) ||  /  || x_cv^(A) ||      [ A, B two declared envelopes ]
+
+Because Z's writer now persists `x_cv` (§3.7a's auditability requirement), the cross-arm vectors exist
+to be compared. **Which statistic the control needs is decided by the claim:** if the claim is *"Z
+reproduces within a fixed envelope"*, `r_null` alone; if it is *"Z's CV is portable across the envelopes
+a requeueing campaign will actually see"*, `r_cross` is required and `r_null` does not substitute.
+
+##### ⚠ GAP 2 — `4` repeats had no justification, and two arms do not prevent tuning
+
+**Rev. 16 wrote that `4` is *"the smallest count from which a tail is arguable at all"*. That is not a
+justification, it is a shrug with a number attached, and it is withdrawn.** What a sampling design needs
+before it is proposable:
 
 | | |
 |---|---|
-| **what it runs** | `do_combine --null` on Z's bank at the production `--iters` and `--estimator-seed`, `R` times, changing **nothing** between repeats except what the envelope is declared to vary |
-| **what it measures** | the distribution of `‖x_cv2 − x_cv‖ / ‖x_cv‖` — not one value. **A floor is a distribution's upper tail, and one sample is not one** |
-| **the envelope must be declared, because it is the subject** | thread count, node type, LightGBM version, BLAS, and whether repeats share a process. **Two arms are the minimum that answers anything: same-envelope repeats, and one deliberate thread-count change** — a bound that holds only at one thread count is not a bound on a campaign that requeues |
-| **cost** | one `--null` invocation is **`2` CV unfolds → `1` sample**, at §5.8d's transferred `≈1.45` GPU task-h (`2 × 43.5` min). **`4` repeats in each of `2` arms = `8` invocations = `≈11.6` GPU task-h** (**TRANSFERRED**, from the same different-subject prior as every other figure in §5, and carrying its stated uncertainty). `4` is the smallest count from which a tail is arguable at all, and this record does not claim it is enough |
-| **what it would decide** | the **achievable** half of the bound, as a measured floor with a stated envelope |
-| **what it CANNOT decide** | the **acceptable** half. No number of repeats says how much CV movement is scientifically tolerable; that is the sensitivity limit, and it is a separate argument |
-| **what it must not become** | reading `ε` off Z's own null. **`§6.4` forbids exactly that**, and the arm structure above is what keeps a measured floor from silently becoming a threshold: the control runs on repeats of a **fixed** configuration and its output is a distribution, not a pass mark |
+| **the objective** | what is `B` — a maximum over repeats? a one-sided upper tolerance bound at a stated **coverage** and **confidence**? These are different quantities and they need different counts |
+| **the sampling assumptions** | are repeats independent? Repeats **inside one job** share a node, a library load and a page cache; repeats **across jobs** do not. **An i.i.d. assumption over the first is unlikely to hold, and the design must say which it makes** |
+| **what prevents tuning** | **not the arm count — rev. 16 implied it was.** What prevents it is **predeclaring the estimator of `B`, the repeat count and the envelopes BEFORE any run, and committing not to revise them afterwards.** Two arms observed and then summarized however the numbers fall is a threshold tuned to its own data |
+| **the subject** | **⚠ AND THIS ENGAGES §6.4 DIRECTLY.** If the control runs on **Z's own bank**, its nulls are Z's nulls, and §6.4 forbids reading the bound off them. If it runs on a **different** bank, it is a **transfer** and needs a transfer argument. **Neither is chosen here; both must be, and the first needs Joseph's ruling rather than this lane's reading of §6.4** |
+
+##### ⚠ GAP 3 — the cost was priced against the wrong operation on the wrong partition
+
+**Rev. 16 priced `8` invocations at `≈1.45` GPU task-h each for `≈11.6` GPU task-h. Both halves are
+wrong, and this document had already recorded the correction once.**
+
+| what rev. 16 assumed | measured, at this base |
+|---|---|
+| an invocation is *"`2` CV unfolds"* | **it is not.** `do_combine` (`unified_throw_cov.py:363`ff) loads the bank, globs and loads every throw slab, assembles `C_uni`, `C_block` and `C_cross` and writes three `10,694²` `TH2D`s. The `--null` block at `:513-523` is **one step inside that**, and an invocation charges the whole combine |
+| the partition is GPU, at the `43.5`-min arm-3 per-task prior | **the combine is a CPU job.** `sbatch_uthrow_combine_5d_fast.sh:4` is `--qos=shared --constraint=cpu --nodes=1 --ntasks=1 --cpus-per-task=16 --mem=90G --time=03:00:00`, and its own header (`:9`) says *"`--null` repeats CV at the identical seed and must be zero"* |
+
+**⚠ AND THIS IS A REPEAT OF A CORRECTION ALREADY IN THIS DOCUMENT, WHICH IS THE PART WORTH RECORDING.**
+§0.0's rev.-2 correction row 10 reads: *"`--null` runs in the **CPU** combine step; the `43.5`-min basis
+is a **GPU** arm-3 per-task time"* — found by this lane, applying the reviewer's own rule to a line the
+reviewer had not named. **Rev. 16 then priced a new row off exactly that basis.** §5.2 leaves the
+cause-4 second CV unfold **unpriced** for this same reason, and §7 items 5 and 13 name the missing
+measurement. The correction was made, recorded, and not carried.
+
+**SO THE COST IS UNPRICED, and that is the honest entry:**
+
+- **spend — UNRESOLVED.** No CV-unfold time on the **CPU** partition exists in this tree (§7 item 13),
+  and the combine's own arm has no recorded actual either (§5.2's combine row: `grep` over `RUNS.tsv`
+  returns **0** rows against a positive control). **Two unmeasured terms, not one.**
+- **reservation bound — `3` h per invocation** at the launcher's own `--time=03:00:00`, `--ntasks=1`, so
+  `n` invocations reserve `3n` CPU task-h. **A request bounds an attempt, not a completion** (§5.2's
+  standing rule), and `n` is undetermined until Gap 2 is answered.
+- **a GPU control is admissible but is not this one.** The review says so explicitly: *"A separately
+  proposed GPU control is possible, but its execution path, envelope and complete cost must be stated."*
+  **This document states none of the three for a GPU path, so it does not propose one.**
+
+##### The three routes to `B`, none privileged
+
+| route | what it costs | what it would give |
+|---|---|---|
+| **(i) PIN THE ENVELOPE IN CODE, and make `B` a design property rather than a measurement.** `make_estimators` (`omnifold_nn_core.py:143-148`) sets `random_state` and **nothing else**; LightGBM exposes `num_threads`, `deterministic` and `force_row_wise`/`force_col_wise` | **Tier 2 — code, no compute.** Whether pinning them makes two re-unfolds bit-identical **here** is untested, and testing it is itself cheap | potentially the strongest outcome: a `B` that is **argued from the configuration** rather than sampled, and an envelope that no longer varies with the allocation |
+| **(ii) the control above**, with all three gaps answered | unpriced (above) | a measured `B` with a declared envelope, coverage and confidence |
+| **(iii) ESTABLISH `S` FIRST.** If the scientific cap is loose enough that **any** plausible `B` sits below it, `B ≤ S` is discharged without measuring `B` precisely | **zero compute.** It is an argument, and it is the same argument `D1` waits on | `B ≤ S` satisfied by bounding, with `ε` then argued from `S`'s side |
+
+**Route (i) deserves the first look and this record says why rather than ranking it silently:** it is the
+only one that can *reduce* the quantity instead of *measuring* it, it costs no compute, and it addresses
+Gap 1 at the source — an envelope that is pinned does not have a between-envelope shift to bound.
+**It is named, not recommended as a decision.**
 
 **No authorization is sought here and none is implied.** `D-RESOURCE` does not exist, §4 row 3's gate is
-shut, and this row is not in §5.8b's production block.
+shut, and no row above is in §5.8b's production block.
 
 #### Item 4 — presence, finiteness, and the abort rule
 
@@ -1659,8 +1798,14 @@ is cheap enough that nothing else needs weighing.** The producer already holds b
   predicate's result** (`rep`), so `n_rep` is derived by the validator rather than trusted;
 - **persist `x_cv2` on the same grid** — another **`527` kB** — so the **numerator** is independently
   reconstructible too, not just the denominator;
-- **total `1.05` MB against a product whose three `10,694²` `TH2D`s are `≈41` GB** — a fraction of
-  **`2.6e-5`** (**DERIVED**). There is no storage argument on the other side of this.
+- **total `1.05` MB against the throw product, and ⚠ REV. 17 CORRECTS THE OPERAND REV. 16 USED.** Three
+  `10,694²` `TH2D`s are **`2.74` GB** (**DERIVED**: `3 × 10694² × 8` B), and the measured size of the
+  existing `uthrow` product is **`2,668,021,041` B = `2.668` GB** (**MEASURED**, §5.9's digest table —
+  the right number was already in this document). **Rev. 16 wrote `≈41` GB, which is a different
+  object**: the **45-component** band family (`13 V + 5 A + 27 R` at `0.915` GB each = `41.17` GB) and
+  G's `combined_source` (`41,436,632,945` B = `41.44` GB, §1.1). **The fraction is `3.9e-4`, not
+  `2.6e-5`** — still negligible, **and the conclusion surviving does not make the operand right.** It is
+  this lane's catalogued failure: the check was correct about the wrong object.
 
 Then the validator recomputes `rep`, `n_rep`, `‖x_cv‖`, `‖x_cv2 − x_cv‖` and `r_null` **from the
 persisted vectors**, and the producer's recorded scalar is checked **against** that reconstruction
@@ -1755,7 +1900,8 @@ ensemble**, so a blanket inadmissibility rule would strike out the object being 
 withdrawn.**
 
 **The maximum is right for a different and better reason: it is the statistic the CLAIM requires.** The
-claim `D1` supports is *"**no** declared offset moves the printed value"* — a statement quantified over
+claim `D1` supports is *"**no** declared offset moves the printed value **beyond its declared
+limit**"* (⚠ verb corrected in rev. 17) — a statement quantified over
 **every** member of `K`. **A universally quantified claim is graded by the extremum, not by a spread**;
 an SD can be small while one member is far out, and the claim would be false with the gate green. **The
 statistic follows from the quantifier in the sentence, not from the finiteness of the set.**
@@ -1985,7 +2131,9 @@ false. **`F7_FLOOR_MULTIPLE = 2.0` has no role here** and §3.6b's reason transf
 
 **Two limits that must survive into the receipt, in `PREDECLARE` §5's style — and rev. 16 adds a third:**
 
-- **MET means no offset in `K` moved the graded quantities.** It is a statement about the declared set,
+- **MET means no offset in `K` moved a graded quantity BEYOND ITS DECLARED LIMIT** — ⚠ rev. 17 corrects
+  rev. 7–16's *"moved the graded quantities"*, which with a positive `δ_ℓ` claims more than the legs
+  test. It is a statement about the declared set,
   not about offsets outside it, and at the `N` §5.8 prices it is **weak evidence of stability** while an
   unfavourable result is **strong evidence of sensitivity**. The asymmetry is real and the receipt
   states it.
@@ -2078,34 +2226,57 @@ summaries, or scientifically relevant uses of the assembled covariance?"*
 **Answer (a) — NARROW THE CLAIM, and write the narrowing where the result is read.** Acceptance protects
 the two displayed summaries and nothing else. Then the receipt must carry, in `PREDECLARE` §5's style
 and not in a footnote: *"A MET result on `(cause 3, Z)` states that two displayed scalar summaries did
-not move. It is **not** evidence that `C_Z`'s correlation structure is stable, and it does **not**
-license the assembled covariance for marginalization, projection, coverage validation or any other
-off-diagonal-sensitive use."* **Costs nothing. It is a scope statement — and it is only honest if it
+not exceed their declared movement limits. It is **not** evidence that `C_Z`'s correlation structure is
+stable, and it does **not** license the assembled covariance for marginalization, projection, coverage
+validation or any other off-diagonal-sensitive use."* **⚠ REV. 17 CORRECTS THE VERB.** With a positive
+tolerance, *"did not move"* claims something the criterion does not test — the legs bound movement, they
+do not detect its absence — and the wrong verb in a receipt is how a bounded result becomes an
+unbounded one downstream. **Costs nothing. It is a scope statement — and it is only honest if it
 travels with the grade.**
 
 **Answer (b) — ADD A CORRELATION-SENSITIVE LEG.** Three candidates, in ascending order of how much they
 assume. **None is derived here, and none has a boundary**, because §3.6d's ordering rule forbids
 attaching a number to a statistic before the use-based justification exists:
 
-| candidate statistic | what it sees | why it is cheap |
+| candidate statistic | what it sees | what it needs (⚠ priced below in rev. 17 — *"no new members"* is not *"free"*) |
 |---|---|---|
-| **`s_proj` — the maximum relative change in `√(uᵀ C_Z u)` over a PREDECLARED set of linear functionals `u`** | exactly the quantity the marginalizations compute | the functionals **already exist as code**: the rows of `project_cov_nd.py`'s `M`, plus the all-ones vector. **Zero new production** |
+| **`s_proj` — the maximum relative change in `√(uᵀ C_Z u)` over a PREDECLARED set of linear functionals `u`** | exactly the quantity the marginalizations compute | the functionals **already exist as code**: the rows of `project_cov_nd.py`'s `M`, plus the all-ones vector. **No new production members** |
 | `s_corr` — the relative Frobenius change in the **correlation** matrix `D^{-1} C_Z D^{-1}` | correlation structure with the diagonal divided out, so it cannot be satisfied by the diagonal | one extra matrix per member; arithmetic only |
-| `s_eig` — the relative change in the leading eigenvalue | the dominant mode | one `10,694²` eigensolve per member; the most expensive and the least interpretable |
+| `s_eig` — the relative change in the leading eigenvalue | the dominant mode | one `10,694²` eigensolve per member; **the most expensive of the three and the least interpretable** |
 
 **`s_proj` is the one this lane would put first if asked**, because its functionals are the ones the
 repository actually applies and because a predeclared functional set keeps it a falsifiable measurement
 rather than a search. **It is not recommended here as a decision** — that is `D1`.
 
-#### What this costs, and what it does not
+#### What this costs — ⚠ CORRECTED IN REV. 17: no additional MEMBERS is not the same as FREE
 
-**Zero production, under every option.** Each candidate is a functional of covariance matrices the
-design already builds; nothing above adds a member, an unfold or a throw. **The cost is validator code
-and a predeclaration**, which sits in Tier 2 and not in `R5`.
+**Rev. 16 wrote *"zero production, under every option"* and *"the cost is validator code"*. The first
+clause is true and the second hides an execution cost, which the contract review is right to name.**
+None of the three candidates adds a member, an unfold or a throw — **and evaluating them is arithmetic
+on `10,694²` matrices, which is not nothing.** Priced here, per member:
 
-**And what it does not do:** it does not reopen §6.3's ruled quantity — the subject is still the
-assembled covariance `C_Z`. It adds a **second way of reading** that same object, which is what makes it
-admissible without a new ruling. **§3.6b's own reason already pointed here** — *"the same trace can be
+| candidate | incremental I/O | arithmetic | figure |
+|---|---|---|---|
+| **`s_proj`** | **zero.** The two exact legs already materialize the full matrix — `adopt_unified_5d.py:46-49` reads a `TH2D` through `np.frombuffer`, not bin by bin — so `C_Z^(k)` is already resident when `s_agg` and `s_med` are computed | `M C Mᵀ` with **sparse** `M` (each source cell maps to one destination, `project_cov_nd.py:2-11`) is `O(nnz(C))` = `1.14e8` operations | **seconds** (**DERIVED**) |
+| **`s_corr`** | **zero**, same reason | one elementwise divide and one Frobenius norm over `1.14e8` elements, plus `0.92` GB for the second matrix | **seconds**, plus `≈0.9` GB resident (**DERIVED**) |
+| **`s_eig`** | **zero**, same reason | one `eigvalsh` on `10,694²`, `O(n³)` ≈ `4e12` flops | **`≈1`–`3` minutes** per member and `≈1.8` GB working memory (**MEASURED-AND-EXTRAPOLATED**: `numpy.linalg.eigvalsh` timed here at `n = 500`/`1000`/`1500`/`2000` and scaled by `n³`; the extrapolation spans `1.1`–`2.7` min across those four anchors, which is the width of the estimate and is reported rather than averaged away) |
+
+**And `s_eig` may be nearly free for a reason worth checking rather than assuming.** §5.2's
+inflated-object validation row states that **PSD on the inflated object is an `eigvalsh` on `10,694²`**.
+**If** the validator checks PSD that way, the full spectrum is already computed and the leading
+eigenvalue is a byproduct. **If** it checks PSD by Cholesky — cheaper, and a reasonable implementation
+choice — it is not. **That row is `unpriced` in §5.2, so this is a conditional and not a saving**, and
+§5.8f's rule applies: an opportunity is recorded as an opportunity.
+
+**Where these costs live: Tier 2 validator runtime, not `R5`.** §5.8's local timings already put the
+validation arithmetic at minutes on a laptop-class machine at the real dimension, and these rows are of
+that kind. **They are execution costs and they are named; they are not a production authorization
+question.** The `N`-fold multiplication matters though — at `N = 5`, `s_eig` alone is `5`–`15` minutes,
+and it is the one candidate whose cost is not negligible.
+
+**And what this section does not do:** it does not reopen §6.3's ruled quantity — the subject is still
+the assembled covariance `C_Z`. It adds a **second way of reading** that same object, which is what makes
+it admissible without a new ruling. **§3.6b's own reason already pointed here** — *"the same trace can be
 diffuse or concentrated"* — and rev. 7–15 answered that with a per-bin leg, which is still the diagonal.
 **Concentration across bins and correlation between them are different objects, and the packet had a leg
 for only one of them.**
@@ -2124,7 +2295,7 @@ each with its closure named:
 
 | unresolved | what closes it | new in rev. 16? |
 |---|---|---|
-| the fixed-seed null's **numeric bound** — `ε` withheld | a justified reproducibility model, whose achievable half needs §3.7a's bounded control | **yes** |
+| the fixed-seed null's **numeric bound** — `ε` withheld | **`B ≤ S`, then `ε` argued within `[B, S]`** (⚠ rev. 17 — rev. 16's `min` is withdrawn). `B` by any of §3.7a's three routes, the cheapest of which is **code, not compute**; `S` by the same use-based argument `D1` waits on | **yes** |
 | the cause-3 **acceptance boundaries** — both withdrawn | a **use-based** justification of how much sensitivity is acceptable | **yes** |
 | the **correlation disposition** | narrow the claim in the receipt, or adopt one of §3.7d's three candidate legs | **yes** |
 | the per-bin **tolerance and coverage fraction** | Joseph's answer to *"what movement, in what fraction of bins, and why"* | restated |
@@ -2689,7 +2860,7 @@ withdrawn — and *"cold checkout, no producer helpers"* means no producer code 
 | term | figure | class |
 |---|---|---|
 | arithmetic — re-read `≈45` component matrices, re-sum, re-check §1.3b's identities, `eigvalsh` both variants | `≈ 0.07` CPU task-h | **DERIVED**, same basis as §5.8b |
-| I/O — `≈41` GB if each component is a full `10,694²` `TH2D`, which is how `hCov_universe5d_<band>` is read (`adopt_unified_5d.py:130-141`) | **UNRESOLVED** | needs a measured read rate on the storage the components sit on |
+| I/O — `≈41` GB if each component is a full `10,694²` `TH2D`, which is how `hCov_universe5d_<band>` is read (`adopt_unified_5d.py:130-141`). **⚠ REV. 17: THIS `41` GB IS CORRECT AND IS NOT THE THROW PRODUCT.** It is the **45-component** family — `13 V + 5 A + 27 R` at `0.915` GB each = `41.17` GB, against G's `combined_source` at `41.44` GB measured. The **throw product** is three such matrices, `2.67` GB. Rev. 16 conflated them; the two figures are annotated here so nobody re-derives the same error from this row | **UNRESOLVED** | needs a measured read rate on the storage the components sit on |
 | digest recomputation over the component files | **UNRESOLVED** | same read rate |
 | **total** | **not established** | the arithmetic term is small; the I/O term is the whole question and nobody has measured it |
 
@@ -2705,11 +2876,11 @@ is unpriced, and §5.3's *"this lane has not sized it"* stands for the sum.
 | **the joint-baseline campaign** (§3.7b) | Joseph approves the packet **and** authorizes a design at `N` | `3`–`4` additional members at `54.90`/`86.53` each → **`164.7`–`219.6` GPU / `259.6`–`346.1` CPU** | **DERIVED** on **TRANSFERRED** per-member costs |
 | a **2-D grid** instead of the implemented diagonal | Joseph rules `"jointly"` means a grid | **code, not compute** — a second environment variable and a launcher change | **MEASURED** (one shared `MNV_EST_SEED_OFFSET`, §3.7b) |
 | **`PM-6`** — `‖x_cv‖` for G. **⚠ REV. 16: NO LONGER A `D4` PREREQUISITE** — `11b` is restated over vectors **Z's own writer persists**, so Z's denominator never leaves Z's product | it would now answer a narrower question — **G's** null ratio under §3.7a's normalizer, which G's product cannot supply either | **≈ 0 task-h** — a bounded read of `hXSecND_flat` | **MEASURED** that the key exists (`adopt_unified_5d.py:116-120`) |
-| a standalone **null-determinism control run**. **⚠ REV. 16 CHANGES ITS TRIGGER AND ITS SIZE.** No longer *"only if `PM-6` is impossible"* — `PM-6` is not a `D4` prerequisite any more — but **the only route to a defensible bound**, since `ε` is withheld (§3.7a item 3) | §6.4 requires the bound fixed **before** production, so arm 7's own `--null` is too late. And **one sample is not a floor**: the control must return a distribution over repeats, with a declared envelope | **`8` invocations over `2` arms** (same-envelope repeats, and one deliberate thread-count change) at `2` CV unfolds each, `≈ 1.45` GPU task-h per invocation = **`≈11.6` GPU task-h**; request `2` h per invocation | **TRANSFERRED** — `det5dBKG` `57753244`, and the direction is not established. **A PROPOSAL, returned and not run** |
+| a standalone **null-determinism control run**. **⚠ REV. 17 REVISES IT AGAIN AND UNPRICES IT.** Rev. 16 called it *"the only route"* to a defensible bound; **withdrawn** — §3.7a names three routes and the cheapest is **code, not compute** (pin `num_threads`/`deterministic`/`force_row_wise`) | §6.4 requires the bound fixed **before** production, so arm 7's own `--null` is too late — **and if the control runs on Z's own bank, §6.4 is engaged and needs a ruling.** Three gaps must be answered first: a within-envelope null does **not** measure a between-envelope shift; the repeat count needs a coverage/confidence objective and its sampling assumptions; and the estimator of `B` must be **predeclared**, because two arms do not prevent tuning | **UNPRICED. ⚠ REV. 16'S `≈11.6` GPU TASK-H IS WITHDRAWN — wrong operation, wrong partition.** An invocation is a whole `do_combine` (bank load, slab load, three `10,694²` assemblies), not *"`2` CV unfolds"*; and the combine is **CPU** — `sbatch_uthrow_combine_5d_fast.sh:4`, `--qos=shared --constraint=cpu --cpus-per-task=16 --mem=90G --time=03:00:00`. **Reservation bound `3n` CPU task-h**; spend **UNRESOLVED**, the same missing measurement §5.2 leaves the cause-4 second unfold unpriced for | **§0.0's rev.-2 correction row 10 already recorded that `--null` runs in the CPU combine step and the `43.5`-min basis is a GPU arm-3 time. Rev. 16 priced a new row off it anyway** |
 | **endpoint rebuild** | **only if** `PM-3`'s availability/provenance/compatibility check **fails** | unpriced, deliberately | historical SKIPs establish neither present availability nor mandatory retraining |
 | cause-1's **disclosure** and cause-5's **path re-trace** | closure conditions | **0 task-h** — a publication act and a static read | §6.2, §6.1 |
 | the **five inflation gates**, the **cause-3 dominant-block refusal**, and the **`r_null` reconstruction** | required for `C`/`T` | **code, not compute** | §1.3b, §4 rows 10–11, §3.7a |
-| **⚠ NEW IN REV. 16 — persisting `x_cv`, `x_cv2` and the support predicate** in Z's throw product | `11b`'s operand; required for `C`/`T` whatever `D4` decides | **code, not compute** — `1.05` MB of product, `2.6e-5` of `≈41` GB | **DERIVED** (§3.7a) |
+| **⚠ NEW IN REV. 16 — persisting `x_cv`, `x_cv2` and the support predicate** in Z's throw product | `11b`'s operand; required for `C`/`T` whatever `D4` decides | **code, not compute** — `1.05` MB of product, **`3.9e-4`** of the `2.668` GB throw product (⚠ rev. 17: rev. 16 divided by `41` GB, a different object) | **MEASURED** product size (§5.9); **DERIVED** fraction (§3.7a) |
 | **⚠ NEW IN REV. 16 — a correlation-sensitive leg** (`s_proj`, `s_corr` or `s_eig`) | Joseph answers §3.7d's disposition with *"add a leg"* rather than *"narrow the claim"* | **NO PRODUCTION.** `s_proj`'s functionals already exist as code (`project_cov_nd.py`); `s_corr` is one matrix per member; `s_eig` is one `10,694²` eigensolve per member | **MEASURED** that both statistics are diagonal-only (§3.7d) |
 
 ### 5.8e CONTINGENCIES — what the estimates do not carry
@@ -3347,7 +3518,7 @@ than absorbed:**
 
 | part | rev. 15 said it waited on | rev. 16: what it actually waits on |
 |---|---|---|
-| the fixed-seed null check's **numeric bound** | `D4` — *"a decision"* | **`D4`, plus specification work that does not exist yet.** `ε` is withheld; a justified reproducibility model is required, and its achievable half needs a **bounded experiment** (§3.7a). **The normalizer, the persistence and the reject conditions are unblocked and can be written today** — only the constant is blocked |
+| the fixed-seed null check's **numeric bound** | `D4` — *"a decision"* | **`D4`, plus specification work that does not exist yet.** `ε` is withheld; **`B ≤ S` must be established and `ε` argued within `[B, S]`** (⚠ rev. 17). **And one route to `B` is itself Tier-2 work that could be done today** — pinning `num_threads`/`deterministic`/`force_row_wise` in `make_estimators`, which costs no compute. **The normalizer, the persistence and the reject conditions are unblocked and can be written now** — only the constant is blocked |
 | the **cause-3 acceptance code** | `D1`, and `D2` for its per-bin leg | **`D1` and `D2`, plus a use-based justification and a correlation disposition.** The **statistics** are unblocked and can be written today — `s_agg`, `s_med`, the per-bin distribution, the leg-set machinery. **Only the boundaries are blocked**, and §3.7d's candidate legs are specified enough to write behind a flag |
 
 **The honest summary: in both cases the STATISTIC is authorizable and the NUMBER is not.** That is a
@@ -3446,9 +3617,9 @@ each is not another number but a stated scientific question.**
 | **RECOMMENDED — adopt** | `s_agg` and `s_med` as defined (§3.7b item 2); denominators **Z's own as-built `k = 0` member**; boundary **form** direct, `s ≤ δ`, never quadrature; the maximum over the declared set |
 | **RECOMMENDED — do NOT adopt** | **`δ_agg = 0.0861%` and `δ_med = 0.0374%` as acceptance criteria.** Withdrawn (§3.7b item 4C). They may be quoted as the historical printed format's resolution and as nothing else |
 | **WHY the statistics stand** | each is the relative change in a quantity that is itself reported, so no model connects it to a printed number; §3.6d's ordering rule is satisfied by construction. **Why the direct form stands, and now more firmly:** quadrature needs **independence**, and — correcting rev. 4–15 — **budget adoption alone would not establish it**, so the direct form is not merely the currently-permitted choice but the one whose alternative carries an undischarged burden |
-| **WHY the thresholds fall** | **(1)** choosing 3 or 4 significant figures does not establish how much estimator-baseline sensitivity is scientifically acceptable, and the macros the format came from are **defined and never printed**; **(2)** the rule behind them is **factually wrong** — half a display unit neither guarantees nor is required for an unchanged printed value, and it errs in **both** directions at **`12.5%`** each (§3.7b item 4A); **(3)** neither statistic can see correlations (§3.7d) |
+| **WHY the thresholds fall** | **(1)** choosing 3 or 4 significant figures does not establish how much estimator-baseline sensitivity is scientifically acceptable, and the macros the format came from are **defined and never printed**; **(2)** the rule behind them is **factually wrong** — half a display unit neither guarantees nor is required for an unchanged printed value, and it errs in **both** directions, at **`12.5%`** each **under the synthetic sampling model stated in §3.7b item 4A** (value uniform in its decade, change uniform on `[0, u)`); **the bidirectional failure is general, the rate is the model's**; **(3)** neither statistic can see correlations (§3.7d) |
 | **CLAIM SUPPORTED** | with the statistics alone and no boundary: **none yet** — a statistic without a justified boundary measures but does not accept. Once a boundary exists: *"no declared estimator-baseline offset moves `√Tr C_Z` or the printed per-bin median by more than the declared tolerance."* **Never a statement about `C_Z`'s correlation structure** unless §3.7d's leg is added |
-| **COST** | **zero, in both directions.** Withdrawing the thresholds costs nothing; supplying a justified one costs nothing; §3.7d's `s_proj` leg costs **no production** — its functionals already exist as code |
+| **COST** | **zero production, in both directions.** Withdrawing the thresholds costs nothing; supplying a justified one costs nothing; §3.7d's legs add **no production members** — but ⚠ rev. 17: *"no new members"* is not *"free"*. Priced per member: `s_proj` and `s_corr` **seconds** at zero incremental I/O, `s_eig` **`≈1`–`3` min** and `≈1.8` GB (§3.7d). Tier-2 runtime, not `R5` |
 | **WHAT IS NOW REQUIRED** | **(a)** a **use-based justification**: how much sensitivity is scientifically acceptable, and why, stated before the number; **(b)** an explicit **disposition of correlation sensitivity** — narrow the claim in the receipt, or add a leg (§3.7d names three candidates); **(c)** if literal display invariance is what is wanted, use **rounding equality**, which is exact and needs no `δ` (§3.7b item 4D) |
 | **JOSEPH'S QUESTION** | *"Is acceptance intended to protect only these displayed summaries, or scientifically relevant uses of the assembled covariance?"* |
 | **REMAINING UNCERTAINTY** | the question above is **not** one this lane can answer from the tree — it is a judgement about what the measurement is for. And the evidence stays **asymmetric**: at any affordable `N`, an unfavourable result is strong and a favourable one is weak |
@@ -3464,7 +3635,7 @@ each is not another number but a stated scientific question.**
 | **WHY** | `median_i(m_i)` is a legitimate descriptive statistic; **applying the printed median's precision to it is a new tolerance choice, not a consequence of that summary's formatting**. And rev. 7–15's ground was invalid: **a missing data release does not prevent specifying a scientifically motivated per-bin tolerance** — the two are unrelated questions. **Disclosing the uniform-movement assumption does not justify it** |
 | **CLAIM SUPPORTED** | as a diagnostic: *"here is how per-bin uncertainty moved, and where it moved most."* **It accepts nothing**, which is the honest state |
 | **COST** | **none.** It is computed from data the two exact legs already require |
-| **JOSEPH'S QUESTION** | *"What per-bin movement is acceptable, in what fraction of bins, and why?"* — **two numbers, not one.** Rev. 7–15's option (i) supplied a tolerance and let the median fix the fraction at `50%` by default rather than by argument |
+| **JOSEPH'S QUESTION** | *"What per-bin movement is acceptable, in what fraction of bins, and why?"* — and **⚠ rev. 17 corrects rev. 16's framing of it as *"two numbers"*.** It is a **justified tolerance and a justified scope**, which is scientific work and not a value Joseph supplies on request; the two numbers are its **output**. Rev. 7–15's option (i) supplied one and let the median fix the other at `50%` by default rather than by argument |
 | **CONSEQUENCE IF A THIRD LEG IS ADOPTED** | **the outcome branches must incorporate its failure.** Rev. 7–15's MET branch checked exactly two legs. **Already fixed structurally** — §3.7b item 5 is now written over a declared leg set `L`, so any third leg binds without a further edit |
 | **REMAINING UNCERTAINTY** | a per-bin criterion also inherits §3.7d: bin-by-bin movement and between-bin correlation are different objects, and answering this question does not answer that one |
 
@@ -3493,11 +3664,13 @@ each is not another number but a stated scientific question.**
 | **RECOMMENDED — adopt** | `r_null = ‖x_cv2 − x_cv‖ / ‖x_cv‖` over the reported support, with `sqrt(Tr C_Z)` and the per-bin max rejected on the record. **The review is explicit: keep scale-relative normalization** |
 | **RECOMMENDED — withhold** | **`ε = n_iters · n_rep · float64.eps` and the value `1.1873e-11`**, and with them the `8.9×` margin claim |
 | **WHY `ε` falls** | it is a **summation bound applied to something that is not a summation**. Measured against the kernel that runs (`unified_throw_cov_5d.py:47-89`): the chain is LightGBM fitting × `n_iters`, three **event-level** accumulations, a completeness **division**, and four more divisions. **`n_rep` counts OUTPUT BINS while every accumulation runs over EVENTS** — the operand is simply wrong. `n_iters` as an amplification allowance is asserted, not demonstrated. And a bound on evaluating the **final norm** would not bound the **difference between two re-unfolds**. **Underneath all three: the estimator is not claimed deterministic even by its own module** — `omnifold_nn_core.py:203-204` says *"nearly deterministic in `seed` alone"*, `make_estimators` pins `random_state` and **no** thread or determinism flag, and G's measured null is **not zero**. This is a **reproducibility** question, not a rounding one |
-| **WHY the operand of `11b` also falls** | the numerator compares **two internally re-unfolded CVs**; rev. 7–15's denominator came from a **separately produced ROOT**. `adopt_unified_5d.py:116-121` checks **cardinality only** — not the mask, not the values — and **a file hash cannot resolve identity**. Worse, a separately produced CV as denominator **presumes the determinism the null is testing**. **Remedy, and it is cheap: persist `x_cv`, `x_cv2` and the support predicate in Z's own product — `1.05` MB against `≈41` GB, a fraction of `2.6e-5`.** `11b` is restated over the persisted vectors; the external route becomes `11c`, conditional on elementwise identity |
+| **WHY the operand of `11b` also falls** | the numerator compares **two internally re-unfolded CVs**; rev. 7–15's denominator came from a **separately produced ROOT**. `adopt_unified_5d.py:116-121` checks **cardinality only** — not the mask, not the values — and **a file hash cannot resolve identity**. Worse, a separately produced CV as denominator **presumes the determinism the null is testing**. **Remedy, and it is cheap: persist `x_cv`, `x_cv2` and the support predicate in Z's own product — `1.05` MB against the `2.668` GB throw product, a fraction of `3.9e-4`** (⚠ rev. 17 corrects rev. 16's `≈41` GB / `2.6e-5`, which divided by the 45-component band family instead).** `11b` is restated over the persisted vectors; the external route becomes `11c`, conditional on elementwise identity |
 | **CLAIM SUPPORTED** | with the normalizer and no `ε`: *"here is Z's CV reproducibility, on a scale-relative measure, reconstructible from Z's own product."* **A measurement, not yet an acceptance** |
-| **COST** | **zero** for the normalizer, the persistence and the restated reject conditions — all Tier 2. **`PM-6`'s bounded read is no longer needed for `D4`** (it was needed only to bind the external denominator), which **removes** a Tier-3 prerequisite. The **achievable** half of the bound needs the determinism control: **`≈11.6` GPU task-h**, `8` invocations over `2` arms — **a bounded proposal, returned and not run** (§3.7a) |
-| **JOSEPH'S QUESTION** | *"What reproducibility tolerance is justified for this exact algorithm and execution envelope, subject to an independently justified scientific sensitivity limit?"* |
-| **REMAINING UNCERTAINTY** | the bound is `min(achievable, acceptable)` and **neither half is established**. The control measures the first with a declared envelope; the second is a scientific argument nobody has made. **§6.4's prohibition on reading the bound off Z's own null constrains how the first may ever be used**, and the control's two-arm structure is what keeps a measured floor from becoming a threshold |
+| **COST** | **zero** for the normalizer, the persistence and the restated reject conditions — all Tier 2. **`PM-6`'s bounded read is no longer needed for `D4`**, which **removes** a Tier-3 prerequisite. **⚠ REV. 17 WITHDRAWS THE CONTROL'S PRICE.** Rev. 16's *"`≈11.6` GPU task-h, `8` invocations"* priced the wrong operation on the wrong partition: an invocation is a whole `do_combine`, and the combine is a **CPU** job (`sbatch_uthrow_combine_5d_fast.sh:4`). **Spend is UNRESOLVED** — no CPU-partition CV-unfold time exists and the combine arm has no recorded actual either. **Reservation bound `3n` CPU task-h** at the launcher's own `--time`, with `n` undetermined until the sampling design exists |
+| **⚠ NEW IN REV. 17 — THE BOUND'S STRUCTURE** | rev. 16's `min(achievable, acceptable)` is **withdrawn**: it used a feasibility floor as an **upper** bound where §3.6a says it bounds `ε` from **below**. Replaced by **`B` with its assumptions and confidence, `S` independently justified, the precondition `B ≤ S`, and `ε` argued within `[B, S]`**. **If `B > S`, the finding is that the execution envelope is not demonstrated adequate — not a tolerance** |
+| **⚠ NEW IN REV. 17 — THREE ROUTES TO `B`, none privileged** | rev. 16's *"the only route"* is **withdrawn**; the review did not establish it. **(i) pin the envelope in code** — `make_estimators` sets `random_state` and no `num_threads`/`deterministic`/`force_row_wise`; **Tier 2, no compute**, and the only route that *reduces* the quantity rather than measuring it. **(ii) the revised control**, with all three gaps answered. **(iii) establish `S` first**, and discharge `B ≤ S` by bounding |
+| **JOSEPH'S QUESTION** | *"What reproducibility tolerance is justified for this exact algorithm and execution envelope, subject to an independently justified scientific sensitivity limit?"* — **and the structure above is the shape of that question**, which rev. 16 answered with a minimum |
+| **REMAINING UNCERTAINTY** | **neither `B` nor `S` is established**, and rev. 17 adds a third gap rev. 16 hid: **a within-envelope null does not measure a between-envelope shift**, so two arms of `r_null` can both be ~zero while the arms' CVs differ. A cross-arm `r_cross` is required if portability is the claim. **And the control's subject engages §6.4** — run on Z's own bank, its nulls are Z's nulls |
 
 ---
 
@@ -3637,7 +3810,9 @@ adopted by accident.**
     The `43.5`-minute figure is a **GPU** arm-3 per-task time and rev. 2 already priced this row off it
     once, wrongly. **What it would take:** one `sacct` read of the combine arm's partition and runtime —
     also requested from the preflight session.
-14. **A measured read rate for the artifact replay's I/O term** (`≈41` GB if each component is a full
+14. **A measured read rate for the artifact replay's I/O term** (`≈41` GB — the **45-component** family,
+    **not** the `2.67` GB throw product; the two were conflated in rev. 16 and are separated in §5.8c —
+    if each component is a full
     `10,694²` `TH2D`). Its arithmetic term is `≈0.07` CPU task-h; **the I/O term is the whole question**
     and the sum is not established (§5.8c).
 15. **⚠ RESOLVED IN REV. 15 BY THE LANDED REPAIR — §5.6b.** The metered unit is now an **execution
@@ -3721,14 +3896,26 @@ adopted by accident.**
     for off-diagonal-sensitive use — or a leg that can see correlations. §3.7d specifies three
     candidates; **`s_proj` costs no production**, because its functionals already exist as code. **None
     is adopted, and none has a boundary**, since a boundary needs item 20 first.
-22. **⚠ NEW IN REV. 16 — A JUSTIFIED REPRODUCIBILITY MODEL FOR Z'S FIXED-SEED NULL, replacing the
-    withheld `ε`.** The bound is `min(achievable, acceptable)` and **neither half exists**. **What it
-    would take, achievable half:** §3.7a's bounded control — `8` `--null` invocations over **two arms**
-    (same-envelope repeats, and one deliberate thread-count change), `≈11.6` GPU task-h, **returned as a
-    proposal and NOT run**. Its output is a **distribution**, because a floor is a tail and one sample is
-    not one. **Acceptable half:** a sensitivity argument nobody has made; the three channels in §3.7a
-    stand as what they always were. **And §6.4 constrains how the first may ever be used** — the bound
-    may not be read off Z's own null, which is why the control runs on repeats of a fixed configuration.
+22. **⚠ RESTATED IN REV. 17 — A JUSTIFIED BOUND FOR Z'S FIXED-SEED NULL, AND REV. 16 GOT THE RELATION
+    BETWEEN ITS TWO HALVES WRONG.** Rev. 16 wrote that the bound is `min(achievable, acceptable)`.
+    **Withdrawn as acceptance-blocking**: an observed reproducibility floor is not an acceptance
+    tolerance, and §3.6a — in this document, two sections earlier — says such a floor *"may bound `ε`
+    from **below** as a feasibility constraint; it cannot justify `ε`."* **`min` used it as an upper
+    bound.** The defensible structure is **`B`** (an operating-error bound with stated assumptions and
+    confidence), **`S`** (an independently justified scientific cap), the **precondition `B ≤ S`**, and
+    `ε` **argued within `[B, S]`**. **If `B > S` the finding is that the execution envelope is not
+    demonstrated adequate**, which is a conclusion about the envelope and not a threshold.
+    **WHAT IT WOULD TAKE — three routes, none privileged, and rev. 16's *"the only route"* withdrawn:**
+    **(i)** **pin the envelope in code** — `make_estimators` (`omnifold_nn_core.py:143-148`) sets
+    `random_state` and no `num_threads`, `deterministic` or `force_row_wise`; **Tier 2, zero compute**,
+    and the only route that *reduces* the quantity rather than sampling it; **(ii)** the control in
+    §3.7a with all three of its gaps answered — a cross-arm `r_cross` (a within-envelope null does
+    **not** measure a between-envelope shift), a declared coverage/confidence objective with its
+    sampling assumptions, and a **predeclared** estimator of `B`, since two arms do not prevent tuning;
+    **(iii)** establish `S` first and discharge `B ≤ S` by bounding. **Its cost is UNPRICED** — rev. 16's
+    `≈11.6` GPU task-h priced the wrong operation on the wrong partition (§5.8d). **And the control's
+    subject engages `§6.4`**: run on Z's own bank, its nulls are Z's nulls; run on another bank, it is a
+    transfer needing an argument. **That is Joseph's ruling, not this lane's reading.**
     **Joseph's question:** *"What reproducibility tolerance is justified for this exact algorithm and
     execution envelope, subject to an independently justified scientific sensitivity limit?"*
 23. **⚠ NEW IN REV. 16 — WHETHER A PRODUCTION ROOT'S `hXSecND_flat` IS ELEMENTWISE IDENTICAL TO A THROW
