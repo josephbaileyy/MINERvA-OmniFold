@@ -53,14 +53,19 @@ under-counts every requeued job — an under-count against a prohibition. Both `
 
 ## Use
 
-On Perlmutter, query accounting in UTC and atomically refresh the default receipt:
+On Perlmutter, query accounting in UTC. `measure` on its own writes nothing and prints the receipt:
 
 ```bash
-python3 docs/orchestration/r5_meter.py measure \
-  --write docs/orchestration/state/r5-meter-receipt.json
+python3 docs/orchestration/r5_meter.py measure
+python3 docs/orchestration/r5_meter.py measure --write /tmp/r5-receipt-check.json
 ```
 
-Before a proposed run, declare its maximum GPU and CPU task-hour costs and check the boundary:
+**Use one of those two forms to verify the meter.** `--write` has no default, so neither can arm
+anything. To read the boundary against whatever receipt is committed:
+
+Before a proposed run, declare its maximum GPU and CPU task-hour costs and check the boundary
+(`--receipt` defaults to the committed receipt path; with no receipt there, this fails closed at
+exit 4, which is the correct shut):
 
 ```bash
 python3 docs/orchestration/r5_meter.py check \
@@ -75,5 +80,33 @@ NERSC refuses any `sacct` window wider than 30 days. `measure` queries t0 → no
 errors and the meter fails closed. The final measurement of jobs still running at the stop must be
 taken before it — see `FINDING-20260906-r5-meter-undercounted-requeue-attempts.md`.
 
-The meter authorizes nothing. R5 is a prohibition and an accounting boundary; every run still needs
-its own declaration and authorization.
+## Writing the receipt to `state/` arms compute admission
+
+`campaignctl` admits a compute item only against an R5 receipt **committed** at
+`docs/orchestration/state/r5-meter-receipt.json`. There is no such file today, so every compute item
+is refused. Writing a valid receipt there and committing it does not merely record a measurement —
+**it opens compute admission for the whole queue**, for the 24 hours until the receipt goes stale.
+
+That is a deliberate decision with its own weight, and it is two ordinary-looking commands away:
+
+```bash
+# THIS ARMS COMPUTE ADMISSION QUEUE-WIDE. It is not a smoke test and not routine hygiene.
+python3 docs/orchestration/r5_meter.py measure \
+  --write docs/orchestration/state/r5-meter-receipt.json
+git add docs/orchestration/state && git commit
+```
+
+Neither step announces itself. Nothing ignores that path (`git check-ignore` finds no rule), and
+`docs/orchestration/state/` already holds 150 tracked `.json` files, so committing the directory is
+the norm — a `git add -A` completes the arming. **The person most at risk is a careful reviewer
+following this runbook to confirm the meter works.** Verify with the two forms above instead, and do
+not commit `docs/orchestration/state/` afterwards without looking at what is in it.
+
+The receipt expires 24 hours after its `measured_at_utc`, not after its commit, so an accidental
+arming heals itself within a day. It heals the receipt; it does not heal the jobs that ran under it.
+The commit is reversible. The compute is not.
+
+The meter **authorizes** nothing: R5 is a prohibition and an accounting boundary, and every run still
+needs its own declaration and authorization. That is a statement about authorization and it is
+**silent about admission**, which is the one thing a committed receipt does control. Do not read the
+first sentence as covering the second.
