@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 2. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 3. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -175,7 +175,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `C_stat`/`C_ML` is **not** evidence of incompleteness (§2.6b), and the replay-doubling and *"≈4.5×"*
   cost claims are withdrawn (§5.3, §5.4). Opens no `SCOREBOARD` cell, moves no count, preserves `R5`
   exactly, does not widen Y, does not promote S. `BEN-381` disqualifies the drafting lane from grading
-  the legs it defines, and from grading under the four rulings.
+  the legs it defines, and from grading under the four rulings — **but not from designing what it
+  specifies**, a rev. 2 over-application withdrawn in rev. 3.
+  **REVIEW ROUND 2 (rev. 3) closed one hole rev. 2 itself opened and corrected one of its own
+  corrections.** §1.3b's four inflation gates were **jointly satisfiable by an uninflated object** —
+  `g ≡ 1` passes the closure identity, `g ≥ 1`, the zero-denominator rule and PSD — so a **fifth gate**
+  requires the validator to **independently reconstruct `g^c` from `diag(C_unified)`,
+  `diag(C_blocksum)` and `hJointMeanShift`, per variant**, with the matching `T`-leg mutation. New
+  **§3.6** converts the two ruled-but-incomplete terminal criteria into completion schemas: the null's
+  normalizer, units, `ε` derivation and presence rule; and cause 3's member definition, statistic,
+  two-leg normalization, the `S/U ≤ sqrt(2δ+δ²)` boundary derivation applied to **Z's own** printed
+  precision, and the three classes mapped onto the six branches — **reopening no ruling**. And **`R5`
+  meters `ElapsedRaw`, actual elapsed, not requested walltime**, so rev. 2's *"the metered cost is the
+  wall request"* is false: §5.2 now separates **expected spend** (`55.70` GPU / `86.53` CPU) from a
+  **reservation bound** (`73.0` / `≤118.0`), and both are labelled a **PRICED SUBTOTAL** with four
+  required rows unpriced. Also narrowed: the J28 line to **the two assemblies only** (its rescale is
+  J28-only, its throw combine **is arm 7**); the cause-4 jitter counterfactual to a **second** unfold at
+  `seed + 7`, distinct from `--null`'s same-seed one; `54.90`/`86.53` to a **historical prior that
+  understates a Z member**; and S to holding the **uninflated** vertical components while lacking `D_Z`
+  and the inflated term.
 
 ### PET typed-descriptor semantic evidence
 

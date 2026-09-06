@@ -17,7 +17,7 @@ docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md	tracked	ARCHIVAL	document			te
 docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/state/oi137-covering-search-20260822.sh	no	7	397	26997
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	tracked	LIVE	document		20260901	open		route-only		no	6	226	14356
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	tracked	LIVE	document		20260901	open		route-only		no	5	296	19292
-docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	31	1603	145883
+docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	31	1621	147626
 docs/orchestration/CENSUS-20260902-permanence-language-in-leg-grade-cells.md	tracked	LIVE	document		20260902	open		route-only		no	2	170	10966
 docs/orchestration/CLAIM-CLM-001.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	686
 docs/orchestration/CLAIM-CLM-002.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	515
@@ -39,7 +39,7 @@ docs/orchestration/CONVENTION-document-retention.md	tracked	LIVE	document			open
 docs/orchestration/CONVENTION-lane-worktrees.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/open-items/test_check_open_items_columns.py;docs/orchestration/merge_guard.sh;docs/orchestration/shared_push.sh;nd-unfolding/tests/test_p4_token_gate_scope_and_rev.py	yes	9	354	25006
 docs/orchestration/CONVENTION-receipt-ingredients.md	tracked	LIVE	document			open		route-only	2d-unfolding/receipt_model_chi2_2d.py;nd-unfolding/launcher_argv_probe.py;nd-unfolding/mii_stage0_distinctness.py;nd-unfolding/p4_check_verifier_token.py	no	19	67	4366
 docs/orchestration/CONVENTION-verifying-a-check-is-deployed.md	tracked	LIVE	document			open		route-only	nd-unfolding/tests/test_precommit_hook_is_wired.py	no	6	237	16930
-docs/orchestration/CORPUS-20260811-gates-that-cannot-fail-sweep.md	tracked	LIVE	document		20260811	open		route-only		no	2	237	16785
+docs/orchestration/CORPUS-20260811-gates-that-cannot-fail-sweep.md	tracked	LIVE	document		20260811	open		route-only		no	3	237	16785
 docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md	tracked	LIVE	document		20260811	open		route-only	nd-unfolding/receipt_candidate_stamps_5d.py;nd-unfolding/receipt_cause1_endpoint_census_5d.py;nd-unfolding/receipt_construction_contract_5d.py;nd-unfolding/tests/test_uq_remediation.py	no	25	764	63419
 docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md	tracked	ARCHIVAL	document		20260804	terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	8	126	8226
 docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	2	262	15435
@@ -230,7 +230,7 @@ docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	tracked	LIVE	d
 docs/orchestration/SESSION-WORKFLOW.md	tracked	LIVE	document			open		route-only		no	2	170	8468
 docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	tracked	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	16	1069	77774
 docs/orchestration/SPEC-20260825-f17b-tree-comparison-instrument.md	tracked	LIVE	document		20260825	open		route-only	docs/orchestration/compare_m1_m6.py	no	10	208	12935
-docs/orchestration/SPEC-20260906-complete-scalar5d-successor-Z.md	tracked	LIVE	document		20260906	open		route-only		no	2	1292	109183
+docs/orchestration/SPEC-20260906-complete-scalar5d-successor-Z.md	tracked	LIVE	document		20260906	open		route-only		no	2	1510	129493
 docs/orchestration/TASK-HANDOFF.template.md	tracked	LIVE	template			open		route-only		no	2	125	4731
 docs/orchestration/TASK.template.md	tracked	LIVE	template			open		route-only		no	3	34	1256
 docs/orchestration/TRAVEL-MODE-DEPLOYMENT-20260825.md	tracked	ARCHIVAL	document		20260825	terminal		exact-path-only		yes	0	67	3536

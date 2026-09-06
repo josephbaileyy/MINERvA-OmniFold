@@ -1,6 +1,7 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 2 — contract review round 1, and Joseph's rulings on its recommendations**
+# **rev. 3 — contract review round 2: the validator gate that makes the others fail, two criteria
+# schematized, and the metering rule corrected again**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -21,6 +22,26 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0a What changed in rev. 3
+
+Rev. 2 was `e15eb475`. A second round of the same independent contract review returned two
+implementation-blocking findings, three production findings and two non-blocking corrections. **All
+seven were re-measured here and all seven are upheld. Four were rev. 2 defects, and one of those was
+introduced BY rev. 2's own fix.**
+
+| # | rev. 2 said | rev. 3 says | whose call |
+|---|---|---|---|
+| 1 | §1.3b's four new inflation gates | **They are jointly satisfiable by an UNINFLATED object.** `g ≡ 1` passes the closure identity (`0 == 0`), `g >= 1`, the zero-denominator rule and PSD. A **fifth gate** now requires the validator to **independently reconstruct `g^c` from the throw operands, per variant** — §1.3b. **This hole was introduced by rev. 2's own fix**, which is why it is recorded rather than patched | **reviewer** |
+| 2 | §6.3/§6.4 rule the quantity and the form; §7 notes the rest is open | **Named as open is not enough — three outcome classes are not executable criteria.** New **§3.6** gives both a completion schema: the null's normalizer/units/`ε`-derivation/presence rule, and cause 3's member definition, statistic, two-leg normalization, the `S/U ≤ sqrt(2δ+δ²)` boundary derivation, and the three classes mapped onto the six branches. **No ruling is reopened** | **reviewer** |
+| 3 | §5.2a: *"the metered cost is the wall request, not the runtime"* | **FALSE, and rev. 2 introduced it.** `R5` meters **`ElapsedRaw` — actual elapsed** (`r5_meter.py:49-58`, `:165-174`, `:277`). A job requesting 90 min and exiting at 48 charges `≈0.80`. The observed `3.00` was a **hold that stayed allocated to timeout**. §5.2 now carries **spend** and **reservation** as separate columns | **reviewer** |
+| 4 | `73.0` / `≤118.0` for one build | **relabelled a PRICED SUBTOTAL, not an upper bound**, and four required rows are marked unpriced. The J28 line is narrowed to **the two assemblies only** (its rescale is J28-only; its throw combine **is arm 7**). The cause-4 jitter unfold is a **SECOND** unfold at `seed + 7`, distinct from `--null`'s same-seed one, so arm 7's headroom is not evidence about it | **reviewer** |
+| 5 | `54.90`/`86.53` per member; the family is *"out of reach"* | **a historical seven-arm PRIOR**, understating a Z member (active lateral, both assemblies, inflated-object validation). The extrapolation bounds **the historical design**, not Z's — Z's has no design, therefore no cost, therefore no affordability verdict | **reviewer** |
+| 6 | §1.4c: S lacks *"§1.3a's entire vertical term"* | **overstated, and contradicted by this lane's own partition measurement** — all 13 `VERT_BANDS` are inside S's 40 `retained_bands`. S has the **uninflated** components; it lacks **`D_Z` and the inflated term** | **reviewer** |
+| 7 | §7: the cause-3 design is *"not this lane's"* under `BEN-381` | **withdrawn.** `BEN-381` bars grading your own design, **not producing one**. Route the grading independently; do not manufacture a drafting prerequisite | **reviewer** |
+
+**Upheld from rev. 2:** the cause-1 non-pair treatment, the cause-5 disposal, the seed-configurability
+correction, the projection-guard correction, and the withdrawal of mandatory replay doubling.
 
 ## 0.0 What changed in rev. 2, so a reader of rev. 1 is not silently overtaken
 
@@ -239,6 +260,32 @@ be **extended** — and the extension is the part that does not exist today.
 | **`C_Z^c − C_Z^blocksum == (g^c_i g^c_j − 1) · (Σ_V C_b)_{ij}`** | rel `1e-9` | **DOES NOT EXIST.** This is the inflation's closure identity and the one gate that can catch a double-counted or mis-scoped vertical set |
 | **`g^c >= 1` everywhere, finite, and `== 1` exactly where `v_blk == 0`** | exact | **DOES NOT EXIST** |
 | **PSD of the INFLATED object**, not only of the block sum | eigenvalue | **partial** — `adopt_unified_5d.py:150-165` checks `ev[0] >= -1e-12·ev[-1]` on the adopted matrix, but outside the P4 gate list, so no receipt records it as a gate |
+| **`g^c` INDEPENDENTLY RECONSTRUCTED from the throw operands and compared elementwise to the `g` the producer recorded — separately for EACH variant** | exact, or a stated float tolerance | **DOES NOT EXIST, and without it the four gates above are jointly satisfiable by an UNINFLATED object** |
+
+**⚠ THE RECONSTRUCTION GATE IS NOT ONE MORE CHECK; IT IS WHAT MAKES THE OTHER FOUR CAPABLE OF
+FAILING.** Rev. 2's first gate set was reviewed and found jointly vacuous in the direction that matters.
+**Set `g^c ≡ 1` everywhere and emit the block sum**, and every one of them passes:
+
+| gate | value at `g ≡ 1` | verdict |
+|---|---|---|
+| `C_Z^c − C_Z^blocksum == (g_i g_j − 1)(Σ_V C_b)_{ij}` | `0 == 0` | **passes, trivially** |
+| `g^c >= 1` everywhere, finite | `1 >= 1` | **passes** |
+| `g^c == 1` exactly where `v_blk == 0` | true everywhere, so true there | **passes** |
+| PSD of the inflated object | it is the block sum, already PSD | **passes** |
+
+**So a Z that silently discarded the whole inflation would clear the gate set and ship as an inflated
+object.** That is this repository's own catalogued shape — a guard whose green state is reachable
+without the work being done (`CORPUS-20260811-gates-that-cannot-fail-sweep.md`) — and it was introduced
+by rev. 2's own new gates, which is why it is recorded here rather than quietly patched.
+
+**The requirement, stated so it cannot be satisfied by reading a recorded value back:** the validator
+recomputes `g^c` **from the throw operands themselves** — `diag(C_unified)`, `diag(C_blocksum)`, and
+`hJointMeanShift` for the CV-centered variant — by §1.3a's formula, **for each variant separately**, and
+compares elementwise against the `g^c` the producer wrote. Reading the producer's `hInflation_g` and
+checking it against itself is not this gate. **Both variants must be reconstructed independently**,
+because `g^mean` and `g^cv` differ only through the `+ mean_shift²` term and a validator that reconstructs
+one and reuses it for the other cannot detect a dropped shift — which is cause 2's defect arriving inside
+cause 3's machinery.
 
 `1e-9` is the existing standard-P4 relative closure tolerance (`p4_build_components.py:140-171`). **It is
 a numerical closure tolerance and may not be reported as an `M`-leg materiality threshold**
@@ -297,8 +344,12 @@ broader conclusion is `VL68`'s, not this lane's.
    `retained_bands` is the other 40, read from the same support family. That is **cause 7 and nothing
    else**.
 3. **NEW — S cannot donate the component Z most needs.** `D_Z` is derived from **Z's own throw ROOT's**
-   `C_unified`/`C_blocksum` diagonals. **S has no throw arm**, so §1.3a's entire vertical term is absent
-   from it and there is nothing in S to donate for it.
+   `C_unified`/`C_blocksum` diagonals, and **S has no throw arm**. **Stated precisely, because rev. 2
+   overstated it and this lane's own partition measurement contradicts the overstatement:** S *does*
+   contain the **uninflated** vertical components — all 13 `VERT_BANDS` are inside its 40
+   `retained_bands`, verified above. What S lacks is **`D_Z` itself and therefore the inflated term**.
+   So S can donate a vertical band's *content*; it cannot donate the operator that makes Z's vertical
+   block what G's is, and no re-digesting of S's components supplies one.
 
 **S may donate**, and this is real reusable evidence: the 45 per-band `component_content_hash` values,
 `reported_mask_hash = 74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a`,
@@ -319,8 +370,9 @@ Versioned, per `PREDECLARE-20260901-cause7` §1 `P`, extended from Y's §3 to se
 - **The inflation block — new in rev. 2:** `V`/`R`/`A` membership as read from the imported constants;
   the disjointness and exhaustiveness results; the throw ROOT's path and digest; `g` as a histogram plus
   `min`, `median`, `max`, the count of bins `> 1`, and **the count of bins where `v_blk == 0` and `g` was
-  pinned to 1**; the measured residual of §1.3b's inflation closure identity; and `sqrt_tr` before and
-  after inflation.
+  pinned to 1**; the measured residual of §1.3b's inflation closure identity; **the elementwise
+  result of the independent `g^c` reconstruction, reported separately for each variant, with the
+  operand digests it was rebuilt from**; and `sqrt_tr` before and after inflation.
 - **Per cause, a named block** carrying its own operands — cause 1's counterfactual **with its scope
   statement** (§2.1); cause 2's F7 operands **with `k` and its source**; cause 3's `estimator_seed` and
   `draw_seed` at **both** legs; cause 4's re-added print value, seed and both operand digests; cause 5's
@@ -344,8 +396,10 @@ migration, **or the reverse**, must **abort**.
    candidate and `--out` must always be passed explicitly.
 2. **Z's receipt schema and version** — §1.5's field set, versioned, written **last**.
 3. **Z's producing revision** — pinned commit plus import-closure digests bound to the run.
-4. **Z's validator** — the standard-P4 validator covers the block-sum identities; **§1.3b's four
-   inflation gates do not exist**, and the six non-cause-7 causes have no Z-side validator at all.
+4. **Z's validator** — the standard-P4 validator covers the block-sum identities; **§1.3b's five
+   inflation gates do not exist**, and without the fifth — the independent `g^c` reconstruction — the
+   other four are satisfied by an uninflated object. The six non-cause-7 causes have no Z-side validator
+   at all.
 5. **Z's test-contract fixtures** — §3.3.
 
 ---
@@ -753,6 +807,9 @@ literal zero; require the key **present** (absence must fail, never pass vacuous
 numerical value justified by precision and sensitivity controls established **before** implementation and
 **not** selected from a favourable production result. **This does not retrospectively regrade G.**
 
+**The ruling fixes the FORM; the normalizer and the numerical value are still undefined.** §3.6a lists
+exactly what completes it, and until it is complete `(cause 3, Z)`'s `M(i)` cannot be graded.
+
 ## 3.2 Per-cell completion and per-cell failure
 
 A cell is `(cause n, Z)`. Under `CRITERIA` §0 each carries four legs `C`/`P`/`M`/`T`, all four must hold,
@@ -776,6 +833,12 @@ and `UNRESOLVED` is a permitted per-leg verdict that must not be re-read as the 
 2. Any §1.3b identity fails outside relative `1e-9` — **including the four that do not exist yet**.
 3. `V`, `R`, `A` are not pairwise disjoint, or do not exhaust the support family's band set.
 4. Any `g^c[i] < 1`, or non-finite, or `≠ 1` where `v_blk[i] == 0`.
+4b. **`g^c` does not reproduce when reconstructed independently** from `diag(C_unified)`,
+    `diag(C_blocksum)` and `hJointMeanShift` by §1.3a's formula, **for either variant separately**.
+    Without this, conditions 2, 4, 6 and the closure identity are all satisfied by `g ≡ 1` — §1.3b.
+4c. The run proceeds against a fixed-seed null bound or a `(cause 3, Z)` outcome rule that **§3.6 still
+    lists as incomplete**. An un-derived boundary is not a criterion, and grading against one is the
+    failure §3.6 exists to prevent.
 5. `C_unified` appears as a budget block rather than through its diagonal, or `C_seed` appears as a
    budget block at all.
 6. Symmetry or PSD fails **on the inflated object**.
@@ -805,7 +868,12 @@ guarded object disappears.
   introduce a PET-derived input to a module Z invokes (5); replace `M` by its diagonal (6); substitute
   CV-support-limited bands for the active endpoints (7). **Plus, for §1.3a:** move a vertical band from
   `V` into `R`; add `C_unified` as a block; feed a `v_blk == 0` bin and check `g` is pinned to 1 rather
-  than `inf`. Each must fail **specifically**, even when dimensions, PSD, total trace and internal sums
+  than `inf`; **and — the mutation rev. 2's gate set could not catch — set `g^c ≡ 1` everywhere and emit
+  the block sum as though it were inflated.** That mutation passes the closure identity, `g >= 1`, the
+  zero-denominator rule and PSD, and **only the reconstruction gate can fail it**. A `T` leg that does
+  not carry this mutation has not tested the inflation at all. **Run it separately for each variant**,
+  because a validator that reconstructs `g^mean` and reuses it for `g^cv` passes a dropped `mean_shift²`
+  term. Each must fail **specifically**, even when dimensions, PSD, total trace and internal sums
   still pass.
 - **Direction 2 — guarded object disappears.** Delete or rename, one at a time: an active endpoint; an
   active-band object; a migration census/policy; G's parent digest; `fixed_seed_null_norm`; a seed stamp;
@@ -839,6 +907,87 @@ projection (3D/4D covariances must be exact projections from an **adopted** trun
 any publication claim, or `R5`'s scoped-Letter default; or **authorize its own construction** (`RZ(iv)`;
 `R5`'s ceilings remain *"a prohibition and an accounting boundary … NOT authorization to spend up to"*).
 
+## 3.6 The two terminal criteria that are NOT YET EXECUTABLE, and exactly what completes each
+
+**Neither is wrongly decided and neither reopens a ruling.** §6.3 and §6.4 fix the *quantity* and the
+*form*; what is missing is the statistic, the normalization and the boundary that turn a named class into
+something a run can be graded against. **Three named outcome classes are not yet executable criteria**,
+and this section says precisely what a complete definition must contain — so the next lane completes a
+schema rather than inventing one, and so the gap is visible rather than discovered at grading time.
+
+**Both must be completed BEFORE the implementation they govern**, for the reason
+`PREDECLARE-20260901-cause3-mii` §3 gives about its own thresholds: *"a threshold chosen to make the
+eventual number pass is not a criterion."*
+
+### 3.6a The fixed-seed null bound (§6.4 fixes the form; four things remain)
+
+1. **Name the normalizer, explicitly.** The measured quantity is `‖x_cv2 − x_cv‖` in
+   `cm²/nucleon`-scaled units, so the scale-relative form the ruling requires is a **dimensionless
+   ratio**. The obvious candidate is `‖x_cv2 − x_cv‖ / ‖x_cv‖` — which is what
+   `unified_throw_cov.py:517`'s `1e-12 * ‖base‖` was reaching for **before** `max(…, 1.0)` clamped it to
+   an absolute floor (§3.1a). **It must be written down and defended, not inferred from the broken
+   expression.** Alternatives that must be considered and rejected on the record if not chosen: a per-bin
+   maximum relative deviation, and normalization by `sqrt(Tr C_Z)`.
+2. **State units on both sides** and assert the ratio is dimensionless in the receipt.
+3. **Fix `ε` from a precision or sensitivity control established BEFORE implementation.** Two admissible
+   derivations, either of which is a control rather than a preference: the **publication-precision rule**
+   `S/U ≤ sqrt(2δ + δ²)` that §3.6b reuses, applied to whatever reported quantity a non-deterministic CV
+   could move; or a **measured process-to-process reproducibility floor** on the target hardware, taken
+   before Z's production run. **`ε` may not be read off Z's own null.** §6.4 is explicit.
+4. **Require presence and finiteness.** The key must be **present** — absence must fail, never pass
+   vacuously (`CRITERIA` §2 cause 4's null-as-absent shape, PB2) — and both operands finite. A failure
+   **aborts**; it is not recorded as a note.
+
+**What is already determined and needs no further decision:** the bound is scale-relative, it is fixed
+before production, it is not chosen from a favourable result, and **none of this retrospectively regrades
+G** (§6.4).
+
+### 3.6b `(cause 3, Z)`'s joint-baseline magnitude (§6.3 fixes the quantity; five things remain)
+
+1. **The member definition.** What exactly one member is — this lane's reading is *a complete assembled
+   `C_Z` produced at a distinct joint `(sweep-baseline, throw-baseline)` estimator-offset pair*, the
+   sweep side varying from `42` and the throw side from `1000` — **and the offset set itself**. §6.3
+   leaves the design open, so this is the design.
+2. **The statistic.** What the variation is taken over: the per-member **cross-section vectors**, or the
+   per-member **covariance entries**. These are different objects with different dimensions and they are
+   not interchangeable; the narrow scan's `C_seed` is a covariance over *vectors*
+   (`PREDECLARE-20260901-cause3-mii` §1), and whether the composite inherits that or measures spread of
+   the assembled matrices is the substantive choice. **Name one; state why; state its dimension.**
+3. **The normalization — two legs, and the second must bind independently.** An aggregate leg
+   (`f_agg`-shaped, a trace ratio against a **named** denominator) and a per-bin leg (`f_med`-shaped),
+   because — the predeclaration's own reason, which transfers unchanged — *"the same trace can be diffuse
+   or concentrated, so the per-bin leg is independently binding."* Both denominators named in the same
+   sentence as their numerators.
+4. **The boundaries, DERIVED and not chosen.** Use the rule
+   `PREDECLARE-20260901-cause3-mii` §3 already established:
+
+       S/U <= sqrt(2*delta + delta^2),   delta = (half the last printed unit) / (the printed value)
+
+   applied to **Z's own reported quantities at Z's own declared precision**. On the candidate that rule
+   gave `4.15%` at three significant figures and `2.74%` at four. **Those two numbers may NOT be carried
+   across by assumption** — the predeclaration itself says *"if the printed precision changes before
+   execution, these numerical thresholds are void and must be redeclared before the run."* Z's precision
+   must be measured, then the rule applied.
+5. **The three classes mapped onto branches, with the falsifiers named.** §6.3's favourable /
+   unfavourable / inconclusive map onto the six-branch structure `R4` preserves: **inconclusive** covers
+   wrong footing and *vacuous variation* — a readback whose seed set or fixed-draw identity does not match
+   the declaration, where **a zero spread is evidence the knob never reached the estimator, not a
+   favourable result**; **favourable** requires *both* legs inside their boundaries; **unfavourable**
+   splits by which leg exceeded. **A valid large result is not automatically MET**, and boundary equality
+   is favourable only if the conditions are written `<=`.
+
+**And one thing that must NOT be imported:** `F7_FLOOR_MULTIPLE = 2.0` has **no principled role** here.
+The predeclaration's §3 states why and the reason transfers verbatim: F7 compares an ensemble mean shift
+with a finite-`N` sampling floor, whereas this measures the covariance generated by changing estimator
+seeds, and `sqrt(Tr C)/sqrt(N)` *"would import systematic covariance into an estimator-noise test."*
+
+### 3.6c What this section does not do
+
+It takes no decision reserved to Joseph, proposes no criterion change, and does not reopen §6.3 or §6.4.
+It converts two ruled-but-incomplete criteria into **named schemas with named derivations**, and records
+that until they are completed the corresponding cells cannot be graded — which is a statement about
+readiness, not about the rulings.
+
 ---
 
 # 4. DEPENDENCY ANALYSIS — deliverable `RZ(v)(d)`
@@ -863,11 +1012,11 @@ compute*, because it is already committed or is a measurement rather than a buil
 | 7 | **`PM-4`** — G's mask digest and row-order digest, read from G | **YES.** §1.3's invariant is unassertable without them, and without it every `M` comparison is over two populations | **YES** | **NO.** S's `reported_mask_hash`/`row_index_sha256` are **S's**, and `row_index_basis` warns that *"builds before [2026-08-10] lack it"* — G is 2026-08-12, so it plausibly carries `hRowIndex5D`, but that is an inference, not a read |
 | 8 | **`PM-5` (NEW in rev. 2)** — the `V`/`R`/`A` partition measured against G's own `combined_source` band inventory | **YES.** §1.3a's disjointness-and-exhaustiveness gate cannot be written against an unmeasured family | **YES** | **PARTLY.** `VERT_BANDS` (13) and `p4_lib.BANDS` (5) are committed constants; S's manifest gives 45 `all_syst_bands`. **But that is S's family read, not G's**, and `R`'s membership is a *complement*, so it is only as good as the family list. A cluster read closes it |
 | 9 | **The cause-4 jitter-print re-add**, with §2.4's four conditions | **YES.** The only route by which `(cause 4, Z)`'s `M` can be anything but permanently unmeetable | **YES — the property Z has and G cannot.** The obstruction is a property of the committed history, and this base descends from `081ae4ac` | **NO — code that does not exist.** The *specification* of what to re-add **is** reusable: `a0cdc019:232-252`, recovered and committed |
-| 10 | **The four inflation gates of §1.3b** | **YES.** Without them Z's inflated object has no closure check at all, and the one that catches a double-counted `V` does not exist | **YES** | **NO — new code.** `adopt_unified_5d.py` computes the quantities; nothing asserts the identity |
+| 10 | **The FIVE inflation gates of §1.3b**, including the **`g`-reconstruction** gate | **YES, and the fifth is what makes the other four capable of failing** — `g ≡ 1` satisfies all four (§1.3b) | **YES** | **NO — new code.** `adopt_unified_5d.py` *computes* `g` and writes `hInflation_g`; **nothing recomputes it from the throw operands and compares**, and reading the producer's own value back is not this gate |
 | 11 | **Extending the cause-3 seed guard to the dominant block** | **YES** for `(cause 3, Z)`'s `C`. Today *"the single-seed property of the dominant block holds by hardcoding and is checked by nothing"* | **YES** | **NO — new code.** But **half already landed**: `sweep_bank_5d.py:358`'s flag and `:309`'s stamp exist. What remains is the *refusal*, not the *stamp* |
 | 12 | **The cause-3 throw-leg seed/draw separation** | **NO — already done.** `unified_throw_cov.py:630/:634`, both `required=True`; `:477-479` and `:483-485` refuse mixed estimator and incoherent draw seeds | **YES** | **YES, zero compute.** Landed `3dd5e66e`, 2026-08-18, an ancestor. **`SCOREBOARD` §2b's *"unsatisfiable"* is superseded** |
 | 13 | **A bidirectional projection-coverage repair** | **NO — WITHDRAWN, it already exists** (§2.6a). `p4_lib.build_projection_M:1353` is fail-closed both ways (BEN-064, 2026-08-09) with `reachable_low_mask:1322` as the contract correction (2026-08-10); `eavailW_covariance.py:407-432` is guarded and **deliberately not** fail-closed | **YES** | **YES, zero compute.** What Z needs instead is to **preserve the asymmetry and evidence both censuses** |
-| 14 | **The standard-P4 validator's 11 gates as Z's cause-7 `C`/`T` machinery** | **NO as a prerequisite; YES as reuse** | **YES for the BLOCK-SUM identities**, already PASSed on a 10,694-bin object (`full_total_identity_relerr = 4.6e-14`). **NOT for the inflated object** — §1.3b's four gates are outside its scope | **YES for what it covers, zero compute.** What is **not** reusable is the *verdict*: S's PASS is evidence about S |
+| 14 | **The standard-P4 validator's 11 gates as Z's cause-7 `C`/`T` machinery** | **NO as a prerequisite; YES as reuse** | **YES for the BLOCK-SUM identities**, already PASSed on a 10,694-bin object (`full_total_identity_relerr = 4.6e-14`). **NOT for the inflated object** — §1.3b's five gates are outside its scope | **YES for what it covers, zero compute.** What is **not** reusable is the *verdict*: S's PASS is evidence about S — **nor the coverage**: `RECEIPT-20260816`'s stage 5 measured the **block-sum** gates, so it prices and validates none of §1.3b's five additional ones (§5.2) |
 | 15 | **The cause-5 construction-path re-trace on Z's own path** | **YES** for `(cause 5, Z)`, and §6.1 makes it the **precondition of the ruled disposal** | **PARTLY.** The *reasoning* transfers; the *coverage* does not — Z's path is a superset and runs through `adopt_unified_5d.py`, which `VL66` did not audit | **YES, zero compute** — a static read. **But not by cause 5's owner**, per `VL66`'s own weighting caveat |
 | 16 | **Cause 1's completed magnitude measurement** (both one-sided choices, off-diagonal, non-pair bands accounted) | **YES** for `(cause 1, Z)`'s `M`, and §6.2 fixes its form | **YES** — a property of the bank Z rebuilds | **NO.** A measurement on Z's own bank. **No unfold**: the census reads `uq_5d/universe_sweep_bkgaware/…` outputs, so the marginal cost is post-processing, not GPU — but **off-diagonal means full `10,694²` per band**, which is a real memory/CPU cost this lane has not sized |
 | 17 | **Cause 1's disclosure** (`RULING 1`'s note obligation) | **YES**, and §6.2 makes it part of closure | **YES** | **NO** — and writing it is a **publication act outside `RZ(iv)`** |
@@ -920,18 +1069,30 @@ The reviewer confirms it is a valid ratified ceiling anchor. Three things about 
   — **`C_ML`**. Conflating it with a cause-3 scan on the shared word *"seed"* double-counts one and omits
   the other. The off-branch `VOI-20260906` records the same collision independently.
 
-## 5.2 One Z build
+## 5.2 One Z build — a PRICED SUBTOTAL, not a complete upper bound
 
-| item | GPU task-h | CPU task-h | basis, and how firm |
-|---|---:|---:|---|
-| seven-arm production round | **70** | **113** | ratified **ceiling** sum `20+20+30` / `8+60+40+5`. Firm as a ceiling; conservative against both actuals. **Contains the statistical replica ensemble (arm 1) and the ML-split ensemble (arm 2)** |
-| standard-P4 lateral stages 3–6 | **3.00** | 0 | **corrected in rev. 2 — see §5.2a.** The observed instance metered at the parent task's `03:00:03`; the step's `00:47:58` is a runtime floor, not R5 spend. Assumes stages 1–2 skip, **conditional on `PM-3`** |
-| statistical + ML **combine** | 0 | **≤ 1.0** | `sbatch_combine_5d_budget.sh` — **not one of the seven arms** (grep over the proposal and the amendment returns nothing). Its own header requests `--qos=shared --constraint=cpu --ntasks=1 --time=01:00:00`, so `1.0` is a wall-clock ceiling, not a measurement. It performs **both** `combine_cov_nd.py` calls and `analyze_universes_5d.py` |
-| **inflated assembly, both variants** | 0 | **≤ 4.0** | **missing from rev. 1.** `sbatch_j28_adopt_5d.sh` — `--qos=shared --constraint=cpu --ntasks=1 --time=04:00:00`, running `adopt_unified_5d.py` twice (`:111` mean-centered, `:113` `--cv-centered`) plus the rescale step. **Not one of the seven arms.** Wall-clock ceiling, not a measurement |
-| cause-4 `--null` extra CV unfold | 0 | **absorbed** | **corrected in rev. 2.** `--null` runs in the **CPU** combine (`sbatch_j28_adopt_5d.sh:98`; arm 7 `sbatch_uthrow_combine_5d_fast.sh`, `--constraint=cpu`). Arm 7's ratified ceiling is `5` CPU against measured actuals `0.42`/`0.58` — **~8× headroom** — so one extra unfold is expected to be absorbed. **If it is not, the ceiling is the bound** |
-| cause-1 counterfactual, incl. off-diagonal | 0 | **unpriced** | post-processing of `uq_5d/universe_sweep_bkgaware/…` outputs (`receipt_cause1_endpoint_census_5d.json`, `inputs.glob`) — **no unfold**. But off-diagonal means full `10,694²` per band; this lane did not size it |
-| validation and 4D projection | — | — | **inside** the stages 3–6 line: `RECEIPT-20260816` records stage 5 (11 gates) and stage 6 in that chain |
-| **ONE Z BUILD** | **73.0** | **≤ 118.0** | **`14.6%` of `R5`'s GPU ceiling; `≤23.6%` of its CPU ceiling** |
+**Read the header literally.** Rev. 2 presented `73.0`/`≤118.0` as though it bounded a build. It does
+not: three required items are explicitly **unpriced** (rows marked so below), and a subtotal that omits
+required work is a floor with a decimal point, not a ceiling. The reviewer's formulation is adopted.
+
+**Two columns, because rev. 2 collapsed them and §5.2a shows they are different questions.** `R5` meters
+**actual elapsed** (`ElapsedRaw`), so *spend* is the runtime; the *requested walltime* is a reservation
+bound and what a breach is measured against. They are not interchangeable.
+
+| item | **expected spend** GPU / CPU task-h | **reservation bound** GPU / CPU task-h | basis, and how firm |
+|---|---|---|---|
+| seven-arm production round | `54.90` / `86.53` | **`70` / `113`** | spend = round-2 measured actuals; bound = the **ratified ceilings** `20+20+30` / `8+60+40+5`. Contains arm 1 (the statistical replica ensemble) and arm 2 (the ML-split ensemble) |
+| standard-P4 lateral stages 3–6 | **`0.80`** / 0 | **`3.00`** / 0 | **corrected twice — §5.2a.** Spend = the step's measured `00:47:58` for a job that exits; `3.00` is what the observed **hold-style** dispatch actually charged, retained as a hazard to design out. Assumes stages 1–2 skip, **conditional on `PM-3`** |
+| statistical + ML **combine** | **unmeasured** / **unmeasured** | 0 / **`1.0`** | `sbatch_combine_5d_budget.sh`, **not one of the seven arms**. Its `--time=01:00:00` is a *request*; **no actual is recorded** — `grep` over `RUNS.tsv` for `budget5d`/`combine_5d_budget` returns **0** rows against a positive control on the same file |
+| **the two assemblies only** (`adopt_unified_5d.py` ×2) | **unmeasured** / **unmeasured** | 0 / **< `4.0`** | **narrowed in rev. 3.** Rev. 2 charged the whole 4-hour `sbatch_j28_adopt_5d.sh`. **Three of its four operations are not Z's:** `rescale_flux_universes.py` (`:74`) is a **J28-only historical repair** Z never runs; `unified_throw_cov_5d.py --combine … --null` (`:94`) **is arm 7**, already counted above; the slab union is symlinks. **Only `:111` and `:113` are additional**, and the 4-hour request bounds all four together, so `< 4.0` is all it licenses |
+| **cause-4 jitter counterfactual — a SECOND CV unfold** | **unpriced** | **unpriced** | **corrected in rev. 3, and rev. 2 had the wrong operand.** `--null`'s unfold uses `args.estimator_seed` (`unified_throw_cov.py:514-515`) — the **same** seed. The jitter counterfactual uses **`args.seed + 7`** (`a0cdc019:233-234`). **They are two different unfolds**, so re-adding the print adds one *on top of* the one arm 7 already runs. **Arm 7's historical headroom is evidence about the existing unfold and says nothing about the additional one** |
+| cause-1 counterfactual, incl. off-diagonal | **unpriced** | **unpriced** | post-processing of `uq_5d/universe_sweep_bkgaware/…` (`receipt_cause1_endpoint_census_5d.json`, `inputs.glob`) — **no unfold**. Off-diagonal means full `10,694²` per band; unsized |
+| **Z's INFLATED-OBJECT validation** | **unpriced** | **unpriced** | **new row in rev. 3.** `RECEIPT-20260816`'s stage 5 covers the **block-sum** gates and is inside the stages 3–6 line. **§1.3b's five additional gates are not** — in particular the `g`-reconstruction gate recomputes `g^c` per variant over the reported support, and PSD on the inflated object is an `eigvalsh` on `10,694²`. Unsized |
+| **PRICED SUBTOTAL** | **`55.70` / `86.53`** | **`73.0` / `≤118.0`** | **`11.1%` / `17.3%` of `R5` at expected spend; `14.6%` / `≤23.6%` at the reservation bound.** **Four required rows above are unpriced and are NOT in either figure** |
+
+**So the honest one-line answer is:** a Z build's *known* cost is `≈56` GPU / `≈87` CPU task-hours of
+measured-actual spend, reserving up to `73` / `118`; **and four required items have no price at all**,
+one of which (cause 3, §5.4) has no design either.
 
 ### 5.2a The scheduler-accounting correction, because it changed the number
 
@@ -948,9 +1109,27 @@ runtime prior, not R5 spend, and the reviewer is right to separate them:**
 - **And it predates `t0` (`2026-09-02T13:44:27Z`), so it contributes nothing to actual R5 consumption.**
   It is a prior for planning, and nothing else.
 
-**Consequence for a Z plan:** the metered cost of this step is the **wall request**, not the runtime. A
-right-sized request (say `--time=01:30:00` against a 48-minute chain) meters near `1.0`–`1.5`; dispatching
-inside a 3-hour hold meters `3.00`. This proposal prices the observed `3.00` and notes the lever.
+**⚠ AND REV. 2'S OWN CONCLUSION FROM THAT WAS FALSE. Corrected here on the second review.** Rev. 2
+wrote *"the metered cost of this step is the wall request, not the runtime."* **It is neither — it is the
+parent task's ACTUAL elapsed time.** Measured: `SACCT_FIELDS` (`r5_meter.py:49-58`) requests
+**`ElapsedRaw`** and **not** `Timelimit`; `_parse_elapsed` (`:165-174`) parses that value directly and
+`_calculate_spend` (`:277`) sums it. **A task that requests 90 minutes and exits after 48 contributes
+`≈0.80` task-hours, not `1.5`.**
+
+**So why did the observed instance meter `3.00`?** Because the parent **stayed allocated until its
+timeout** — it was a `claude-hold` allocation, and the receipt says so: the job timed out at `03:00:03`
+*"AFTER this chain completed"*. The hold, not the wall request, is what charged three hours.
+
+**The correct rule, and it separates two numbers rev. 2 conflated:**
+
+- **actual elapsed → SPEND.** A right-sized Z job that exits when its work is done meters near the
+  runtime, `≈0.80` task-hours on this evidence.
+- **requested walltime → a RESERVATION or MAXIMUM-COST bound**, useful for a ceiling and for what a
+  breach would be measured against, and **not** a charge.
+
+**Neither `0.80` nor `3.00` is automatically the future charge.** §5.2 now carries both columns, and the
+`3.00` figure is retained only as *what a hold-style dispatch actually cost*, which is a real hazard to
+design out rather than a price to plan on.
 
 **Rev. 1 also stated this backwards in its own §5.6.** It described `RUNS.tsv:321`'s allocation-level
 `node_h=6.00` as a `7.5×` error against `0.80`. Under `R5`'s unit the **allocation-level view is the
@@ -960,9 +1139,15 @@ closer one**, and the step-level figure was the misleading one. Corrected here.
 
 | scenario | GPU task-h | CPU task-h | vs. `R5` 500/500 |
 |---|---:|---:|---|
-| one Z build | `73.0` | `≤118.0` | `14.6%` / `≤23.6%` |
+| one Z build, **expected spend** (priced rows only) | `55.70` | `86.53` | `11.1%` / `17.3%` |
+| one Z build, **reservation bound** (priced rows only) | `73.0` | `≤118.0` | `14.6%` / `≤23.6%` |
 | **+ independent ARTIFACT REPLAY** | **not a production round** | **not a production round** | see below |
-| + optional independent **regeneration**, if separately proposed and authorized | `146.0` | `≤236.0` | `29.2%` / `≤47.2%` |
+| + optional independent **regeneration**, if separately proposed and authorized | `111.4` – `146.0` | `173.1` – `≤236.0` | `22.3–29.2%` / `34.6–≤47.2%` |
+
+**Every figure in this table inherits §5.2's caveat: it sums the PRICED rows only.** Four required
+items — the cause-4 second unfold, the cause-1 off-diagonal counterfactual, Z's inflated-object
+validation, and the artifact replay — carry no price, and `(cause 3, Z)`'s ruled measurement carries no
+design. **Nothing here is a complete upper bound on a Z campaign.**
 
 **Rev. 1's automatic doubling to `143`/`226` is WITHDRAWN.** The reviewer's correction: *"price
 independent reconstruction from digest-bound artifacts separately. 'Cold checkout, no producer helpers'
@@ -997,15 +1182,24 @@ would *"attribute a `39.223`/`55.337`-per-seed scan price"* to the wrong object.
 is measured over **members**, each a complete seven-arm round:
 
 - at the historical family sizes, `46 × (54.90, 86.53) = **2,525** GPU + **3,980** CPU`, and
-  `50 × … = **2,745** + **4,326**` — **5× to 9× over `R5`'s `500`/`500`**, i.e. **out of reach inside
-  this campaign entirely**;
-- **§6.3 explicitly does not adopt 46/50 as the necessary design.** A smaller, purpose-built design is
-  what Z's cause-3 specification must produce, and **this lane does not propose one** — that is a
-  measurement-design question with a scientific answer, not an arithmetic one.
+  `50 × … = **2,745** + **4,326**` — **5× to 9× over `R5`'s `500`/`500`**;
+- **§6.3 explicitly does not adopt 46/50 as the necessary design.**
 
-**So the honest statement is:** `(cause 3, Z)`'s `M(ii)` as ruled is **not affordable at the historical
-family size inside `R5`**, and its affordability at a smaller design is **unknown until the design
-exists**. That is a finding for Joseph, not a plan (§7 item 3).
+**⚠ AND `54.90`/`86.53` IS A HISTORICAL SEVEN-ARM PRIOR, NOT A MEASURED Z-MEMBER PRICE — rev. 2 blurred
+that and rev. 3 separates it.** A **Z** member is not a historical seven-arm round: it additionally
+carries the **active lateral components** (§2.7), the **final inflated assembly in both variants**
+(§1.3a), and Z's **inflated-object validation** (§1.3b) — the three rows §5.2 marks unpriced. **So the
+per-member figure is a lower bound of unknown tightness**, and every product of it inherits that.
+
+**What the extrapolation does and does not establish.** It establishes that **the historical 46–50-member
+design exceeds `R5`'s ceilings by 5×–9×** — a fact about that design, at prior costs. **It does not
+establish the cost of Z's design, and therefore not its affordability either**, because §6.3 leaves the
+design open and a Z member costs more per member than the prior used here.
+
+**So the honest statement is:** `(cause 3, Z)`'s `M(ii)` as ruled has **no design, therefore no cost,
+therefore no affordability verdict**; and the one design that *has* been sized — the historical family —
+**exceeds `R5` by 5×–9× at a per-member price that understates a Z member.** That is a finding for
+Joseph, not a plan (§7 item 3).
 
 ## 5.5 Conditional and unpriced items, named rather than absorbed
 
@@ -1013,8 +1207,16 @@ exists**. That is a finding for Joseph, not a plan (§7 item 3).
   fail. **Historical SKIPs establish neither present availability nor mandatory retraining**, so a
   rebuild is neither assumed nor pre-costed here.
 - **Cause-1 off-diagonal counterfactual** — §5.2, unsized.
+- **The cause-4 jitter counterfactual's SECOND CV unfold** — §5.2, unsized, and **distinct from the
+  same-seed `--null` unfold arm 7 already runs**. Arm 7's headroom is evidence about the existing
+  operation and does not establish that the additional one fits.
+- **Z's inflated-object validation** — §5.2, unsized. The historical P4 chain covers its **block-sum**
+  gates; §1.3b's five additional gates, including the `g` reconstruction over the reported support and
+  an `eigvalsh` on `10,694²`, are **not** in that measurement.
+- **The two assemblies alone** — §5.2. The 4-hour J28 request bounds them **together with** a J28-only
+  rescale Z never runs and a throw combine already counted as arm 7.
 - **Artifact replay** — §5.3, unsized.
-- **The four inflation gates and the cause-3 dominant-block refusal** — code, not compute.
+- **The five inflation gates of §1.3b and the cause-3 dominant-block refusal** — code, not compute.
 - **A joint-baseline design for `(cause 3, Z)`** — §5.4.
 
 ## 5.6 The meter gap, named in the proposal as the brief requires
@@ -1049,15 +1251,19 @@ identities (`PM-2`, `PM-3`, `PM-5`), and an explicit run authorization (`D-RESOU
 
 ## 5.7 The uncertainty on all of the above
 
-1. **No Z arm has ever run.** Every figure is transferred from a different product's arms. This dominates
-   and no arithmetic here reduces it.
+1. **No Z arm has ever run.** Every figure is transferred from a different product's arms, and a **Z**
+   member additionally carries the active lateral components, both assemblies and the inflated-object
+   validation — so the transferred per-member figures are **lower bounds of unknown tightness**, not
+   estimates. This dominates and no arithmetic here reduces it.
 2. **CPU-partition arms are demonstrably not reproducible across scheduler regimes.** `AMENDMENT` §3c/§3e
    establish it and the measurement is stark: arm 5 went `30.94 → 49.11` between rounds, **+58.7% on one
    arm**, and the amendment says *"a third run may exceed them."* **Treat the CPU column as carrying at
    least a ±60% single-arm swing.**
-3. **Three of the four non-arm lines are WALL REQUESTS, not measurements** — the combine (`≤1.0`), the
-   assembly (`≤4.0`), and the metered stages-3–6 figure (`3.00`). They are upper bounds by construction
-   and will over-state a well-sized campaign.
+3. **The reservation column is built from WALL REQUESTS, which `R5` does not charge.** `R5` meters
+   **actual elapsed** (§5.2a), so the right-hand column bounds a reservation and over-states a well-sized
+   campaign; the left-hand column is the spend estimate, and **two of its rows are `unmeasured` rather
+   than measured**. Do not read either column as a charge.
+3b. **The priced subtotal omits four required rows** (§5.2). It is a floor, not a ceiling.
 4. **Failed and retried tasks count in full** under `R5` §3, including `FAILED`, `CANCELLED` and
    `TIMEOUT`. A single failed pass spends its full elapsed time and produces no Z.
 5. **Two build lines are unsized** (§5.5), and `(cause 3, Z)`'s ruled quantity has **no design and
@@ -1228,17 +1434,29 @@ contract and nothing in §§1–5 depends on it.**
    existing session, costed against `R5`'s meter — which itself needs §4 row 3 first.
 2. **Whether S's `support_family_sha256` is G's `combined_source` digest.** Same path, reads four days
    apart, nothing binding them. **What it would take:** `PM-2`.
-3. **A measurement design for `(cause 3, Z)`'s ruled joint-baseline quantity.** §6.3 fixes the *quantity*
-   and explicitly does not fix the *design*; §5.4 shows the historical family size is **5×–9× over
-   `R5`**, so the design is the whole question. **What it would take:** a measurement-design proposal
-   with a scientific rationale for its member count and offsets — not arithmetic, and **not this lane's**,
-   since `BEN-381` will disqualify whoever drafts it from grading the leg.
-4. **The numerical value of §6.4's scale-relative null bound.** The ruling fixes the *form* and forbids
-   choosing it from a result; the value awaits the precision and sensitivity controls it must be
-   justified by. **What it would take:** those controls, before implementation.
-5. **The cost of the cause-1 off-diagonal counterfactual and of the artifact replay.** Both are
-   post-processing on `10,694²` matrices; neither needs an unfold; neither was sized here. **What it
-   would take:** a memory/wall-clock estimate against the reported-bin dimension.
+3. **A measurement design for `(cause 3, Z)`'s ruled joint-baseline quantity — and, with it, the
+   statistic, normalization and boundaries §3.6b schematizes.** §6.3 fixes the *quantity* and explicitly
+   does not fix the *design*; §5.4 shows the historical family size is **5×–9× over `R5`** at a
+   per-member prior that **understates** a Z member, so the design is the whole question. **What it
+   would take:** a measurement-design proposal
+   with a scientific rationale for its member count and offsets — not arithmetic. **Rev. 2 said this was
+   "not this lane's" because `BEN-381` would disqualify the drafter from grading the leg. That is a
+   misreading and is withdrawn:** `BEN-381` bars a lane from **grading its own design**, not from
+   **producing** one. This lane may design it; the **grading** must be routed to a lane that took none of
+   the deciding measurements. Manufacturing a drafting prerequisite out of a grading separation would add
+   a blocker the rule does not create.
+4. **The normalizer and the numerical value of §6.4's scale-relative null bound.** The ruling fixes the
+   *form* and forbids choosing the value from a result. **§3.6a now names the four things that complete
+   it** — the normalizer with its rejected alternatives on the record, units, the `ε` derivation from a
+   precision or sensitivity control, and the presence/finiteness rule. **What it would take:** those
+   controls, established before implementation.
+5. **Four unpriced cost rows (§5.2), which is why the subtotal is a floor.** The cause-1 off-diagonal
+   counterfactual; the **second** CV unfold the cause-4 jitter counterfactual adds at `seed + 7`, distinct
+   from `--null`'s same-seed one; Z's **inflated-object validation**, which the historical P4 chain's
+   block-sum stage 5 does not cover; and the artifact replay. None needs an unfold except the cause-4
+   one. **What it would take:** a memory/wall-clock estimate against the `10,694`-bin dimension for
+   three of them, and one measured CV-unfold time **on the CPU partition where `--null` actually runs**
+   for the fourth — the GPU arm-3 figure rev. 2 used is not commensurable.
 6. **Whether real Perlmutter `sacct` output parses through `r5_meter._parse_sacct_dump`.** 18 tests pass
    on hand-authored fixtures, and a fixture written beside its parser cannot disagree with it. **What it
    would take:** one login-node `sacct` capture — the same act as §4 row 3.
