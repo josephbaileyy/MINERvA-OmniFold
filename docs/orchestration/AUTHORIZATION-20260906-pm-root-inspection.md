@@ -218,9 +218,25 @@ own". **If the decision is needed sooner than that, it should not wait on the re
     python3 docs/orchestration/r5_meter.py measure \
       --write docs/orchestration/state/r5-meter-receipt.json
 
-**That command is the arming act.** It writes a receipt to the exact path `campaignctl` reads as its
-compute-admission gate, and once a valid one under 24 hours old is committed there, every ready
-compute item is measured against headroom instead of refused.
+**That command is the FIRST HALF of the arming act, and the second half is a routine `git add`.**
+Corrected from an earlier revision of this section, which called the command itself the arming act —
+off by one step, and the step it omitted is the more invisible of the two. `campaignctl` requires the
+receipt **committed** (`committed_r5_receipt`, `:3080-3111`), so the write alone admits nothing.
+What closes the gap is that nothing stops the commit:
+
+- **The gate path is not ignored.** `git check-ignore -v docs/orchestration/state/r5-meter-receipt.json`
+  exits **1** — no rule covers it.
+- **Committing that directory is the norm, not an exception.** `git ls-files docs/orchestration/state/`
+  tracks **150** `.json` files.
+- **The runbook frames the write as maintenance.** The block is introduced as *"atomically refresh the
+  default receipt"* (`R5-METER.md:11`) — *refresh*, *default* — which reads as hygiene, not as a
+  decision.
+
+**So the sequence is: follow the runbook, then commit the state directory.** A `git add -A`, or any
+routine "commit the state files", finishes it. **Neither half looks like a decision**, and the runbook's
+own closing disclaimer will not stop it: *"The meter authorizes nothing. R5 is a prohibition and an
+accounting boundary"* is **true about authorization and silent about admission**, which is the one
+thing that path controls.
 
 **So the hazard is not a careless flag — it is a careful reader.** The tool is safe by default:
 `measure`'s `--write` has **no default** (`r5_meter.py:751`), so a bare `measure` writes nothing, and
@@ -237,9 +253,16 @@ describes; what it omits is that the act is a queue-wide decision.
 The `check` default cuts the safe way: with no receipt at that path, `check` fails closed. **The gate
 is currently shut by absence**, which is the right kind of shut.
 
+**The remedy is the meter owner's call and this lane does not choose between them:** move the
+runbook's default `--write` target off the gate path, or stop the gate path being tracked by default.
+It is adjacent to the integration lane's `r5_meter` repair — whoever lands that will have these files
+open, and shipping a repaired tool whose documented invocation still writes to the gate path would
+leave the hazard exactly where it is.
+
 *(Mechanism found by the integration lane. This lane first asserted that `measure --write` defaulted
-to the gate path — it does not, and that claim was withdrawn. The instinct was right and the
-mechanism was wrong; the real one is worse.)*
+to the gate path — it does not, and that claim was withdrawn. The tracked-by-default second half was
+measured by the Z-specification lane. Three revisions, each wrong in a smaller way: the instinct was
+right, the first mechanism was wrong, and the second was incomplete.)*
 
 ## 5. Status
 
