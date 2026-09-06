@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 4. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 5. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -213,6 +213,21 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   bounds; a time limit **bounds an attempt, not a completion**, so the combine and assembly reservations
   are **PROPOSED, UNVERIFIED**; and the omitted rows are enumerated **per subtotal** — five for the spend
   estimate, three for the proposed reservation, two campaign-level items in neither.
+  **REVIEW ROUND 4 (rev. 5) found no new assembly-algebra defect and closed two residual defects, both
+  the drafting lane's.** Three **withdrawn cost claims had survived in operative text** and are removed:
+  the assembly row's *"`< 4.0` is all it licenses"* (a request that was never exceeded measures nothing,
+  and it covered four operations of which only two are Z's), §5.4's *"a Z member costs more"* and the
+  prior *"understates"* it (a prior measured on a **different subject** supports **no direction**), and
+  §7's *"the subtotal is a floor"* with its stale four-row count. And **§3.6d overstated the narrow
+  scan**: it called `C_seed` an independent variance contribution *"being added to the budget"*, which
+  **`PREDECLARE-20260901-cause3-mii` §5 expressly forbids** — *"It does not add `C_seed` to the
+  uncertainty budget"* — and which contradicted this document's own §1.3a. Quadrature is now stated as
+  the **conditional model that motivated** those thresholds, **never demonstrated even where it was
+  used**. Two recommendations adopted: **direct relative change `|U'−U|/U ≤ δ` is the DEFAULT** for
+  §6.3's assembled-covariance subject, with the burden of demonstration on any proposal to use
+  quadrature; and §6.6's boundary-form item now records **how the decision must be put** — the statistic,
+  denominator, precision target and boundary approved **together**, never a formula detached from them,
+  so **that item is not ready to decide today**.
 
 ### PET typed-descriptor semantic evidence
 

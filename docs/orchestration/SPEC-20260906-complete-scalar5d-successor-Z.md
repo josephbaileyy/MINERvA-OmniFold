@@ -1,7 +1,7 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 4 — contract review round 3: the acceptance mathematics is derived rather than borrowed,
-# the dropped-shift mutation is separated, and the cost language stops asserting bounds**
+# **rev. 5 — contract review round 4: withdrawn cost claims removed from operative text, and the
+# quadrature model stated as the conditional it always was**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -22,6 +22,24 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0c What changed in rev. 5
+
+Rev. 4 was `9e65d3ae`. Review round 4 found **no new assembly-algebra defect** and confirmed rev. 4's
+substantive fixes. Two corrections remain, and **both are mine**: three withdrawn cost claims survived in
+operative text, and one sentence overstated what the narrow scan established.
+
+| # | rev. 4 said | rev. 5 says | whose call |
+|---|---|---|---|
+| 1a | the assembly row ends *"`< 4.0` is all it licenses"* | **removed** — it contradicted the row's own new `PROPOSED, UNVERIFIED` label. A request that was never exceeded measures nothing, and the 4-hour figure covered four operations of which only two are Z's | **reviewer** |
+| 1b | §5.4: *"a Z member costs more per member"*; the prior *"understates a Z member"* | **withdrawn.** A prior measured on a **different subject** supports **no direction** — extra work pushes one way, reuse and execution conditions the other | **reviewer** |
+| 1c | §7 item 5: *"four unpriced cost rows, which is why the subtotal is a floor"* | **replaced by §5.2's per-subtotal census** — five omitted from the spend estimate, three from the proposed reservation, two campaign-level items in neither. *"Floor"* withdrawn | **reviewer** |
+| 2 | §3.6d: an independent contribution *"being added to the budget… is exactly what `C_seed` is for the narrow scan"* | **WRONG, and it contradicted this document's own §1.3a.** `PREDECLARE-20260901-cause3-mii` §5: *"It does not add `C_seed` to the uncertainty budget."* Quadrature is the **conditional model that motivated** the narrow scan's thresholds — not a demonstration of independence, and not budget inclusion. **It was never demonstrated even where it was used** | **reviewer** |
+| 3 | §3.6d listed three boundary cases neutrally | **direct relative change is now the DEFAULT** for §6.3's assembled-covariance subject, per the reviewer's standing recommendation, with the burden of demonstration on any proposal to use quadrature | **reviewer, adopted** |
+| 4 | §6.6's boundary-form item said only *what* is open | **adds HOW it must be put:** the statistic, denominator, precision target and boundary are approved **together**, never a formula detached from them. **So it is not ready to decide today** | **reviewer, adopted** |
+
+**Confirmed by the reviewer as correctly declared and still outstanding:** the exact joint-baseline
+statistic and acceptance rule, the normalized null bound and its justification, and complete costing.
 
 ## 0.0b What changed in rev. 4
 
@@ -1047,18 +1065,36 @@ is not portable, and rev. 3 ported it twice.** Written out, the original derivat
 > `S/U ≤ sqrt(2δ + δ²)`.
 
 **Every step past `δ` depends on the quadrature model, and quadrature is an assumption about the
-statistic — not a property of publication precision.** It holds when the statistic is an *independent
-variance contribution being added to the budget*, which is exactly what `C_seed` is for the narrow scan.
-It does **not** automatically hold for a difference between two CV vectors (§3.6a) or for variation among
-assembled covariance matrices (§3.6b).
+statistic — not a property of publication precision.** It is the model under which the statistic *would
+be* an independent variance contribution added to a reported `U`.
+
+**⚠ AND THAT IS A CONDITIONAL, WHICH REV. 4 STATED AS A FACT ABOUT THE NARROW SCAN. Corrected here,
+because the overstatement contradicts this document's own §1.3a.** Rev. 4 wrote that an independent
+contribution *"being added to the budget"* is *"exactly what `C_seed` is for the narrow scan."* **It is
+not, and the predeclaration forbids it:** `PREDECLARE-20260901-cause3-mii` §5 states *"It does not add
+`C_seed` to the uncertainty budget. A magnitude measurement and budget adoption are different
+decisions."* §1.3a property 3 of this very document quotes that same line. **Quadrature is the
+CONDITIONAL MODEL that motivated the narrow scan's thresholds** — *if such a contribution were added,
+how large could it be before it moved a printed value* — and it is **not** a demonstration that `C_seed`
+is independent, nor a claim that it enters any budget.
+
+The model does **not** automatically hold for a difference between two CV vectors (§3.6a) or for
+variation among assembled covariance matrices (§3.6b) — and, as the paragraph above shows, it was never
+*demonstrated* even where it was used.
 
 **So the derivation splits, and the split is what must be written down:**
 
 | what the statistic IS, relative to the reported `U` | the boundary that follows |
 |---|---|
-| an **omitted independent contribution** added in quadrature | `S/U ≤ sqrt(2δ + δ²)` — the original rule, **retained only where independent-additivity is demonstrated, not assumed** |
-| a **directly measured change in `U` itself** | `\|U' − U\| / U ≤ δ` — no quadrature step, because there is nothing being added |
+| a **directly measured change in `U` itself** — **the DEFAULT for §6.3's assembled-covariance subject** | `\|U' − U\| / U ≤ δ` — no quadrature step, because nothing is being added |
+| an **omitted independent contribution** added in quadrature | `S/U ≤ sqrt(2δ + δ²)` — **available only after independent additivity is DEMONSTRATED for the statistic in hand**, never by analogy with the narrow scan, which did not demonstrate it either |
 | **neither** | derive it, and state the model in the same sentence as the number |
+
+**The default is the reviewer's standing recommendation and this lane adopts it:** *use direct relative
+change when the chosen statistic measures change in the reported uncertainty itself; use quadrature only
+after demonstrating independent additivity.* Since §6.3's ruled subject is the **assembled covariance**,
+a change *in* `U` is what the statistic will measure unless someone shows otherwise — so the burden sits
+on any proposal to use quadrature, not on the direct form.
 
 `δ = (half the last printed unit) / (the printed value)` is common to all three and is the part that
 genuinely transfers.
@@ -1192,7 +1228,9 @@ bound and what a breach is measured against. They are not interchangeable.
 | seven-arm production round | `54.90` / `86.53` | **`70` / `113`** | spend = round-2 measured actuals; bound = the **ratified ceilings** `20+20+30` / `8+60+40+5`. Contains arm 1 (the statistical replica ensemble) and arm 2 (the ML-split ensemble) |
 | standard-P4 lateral stages 3–6 | **`0.80`** / 0 | **`3.00`** / 0 | **corrected twice — §5.2a.** Spend = the step's measured `00:47:58` for a job that exits; `3.00` is what the observed **hold-style** dispatch actually charged, retained as a hazard to design out. Assumes stages 1–2 skip, **conditional on `PM-3`** |
 | statistical + ML **combine** | **unmeasured** | 0 / **`1.0` PROPOSED, UNVERIFIED** | `sbatch_combine_5d_budget.sh`, **not one of the seven arms**. `--time=01:00:00` is a *request*, and **a time limit bounds an ATTEMPT, not a successful completion** — it says the job is killed at one hour, not that the work finishes inside it. **No actual is recorded**: `grep` over `RUNS.tsv` for `budget5d`/`combine_5d_budget` returns **0** rows against a positive control on the same file |
-| **the two assemblies only** (`adopt_unified_5d.py` ×2) | **unmeasured** | 0 / **`4.0` PROPOSED, UNVERIFIED** | **narrowed in rev. 3, relabelled in rev. 4.** The 4-hour figure is a *historical request*, so it **bounds an attempt, not a completion**, and it is not a derived `< 4 h` completion bound for Z's assemblies — it can motivate a **proposed** reservation and nothing more. Rev. 2 charged the whole 4-hour `sbatch_j28_adopt_5d.sh`. **Three of its four operations are not Z's:** `rescale_flux_universes.py` (`:74`) is a **J28-only historical repair** Z never runs; `unified_throw_cov_5d.py --combine … --null` (`:94`) **is arm 7**, already counted above; the slab union is symlinks. **Only `:111` and `:113` are additional**, and the 4-hour request bounds all four together, so `< 4.0` is all it licenses |
+| **the two assemblies only** (`adopt_unified_5d.py` ×2) | **unmeasured** | 0 / **`4.0` PROPOSED, UNVERIFIED** | **narrowed in rev. 3, relabelled in rev. 4.** The 4-hour figure is a *historical request*, so it **bounds an attempt, not a completion**, and it is not a derived `< 4 h` completion bound for Z's assemblies — it can motivate a **proposed** reservation and nothing more. **No completion bound is licensed by it** —
+the 4-hour request covered all four of that launcher's operations, of which only these two are Z's, and a
+request that was never exceeded is not a measurement of what these two need. Rev. 2 charged the whole 4-hour `sbatch_j28_adopt_5d.sh`. **Three of its four operations are not Z's:** `rescale_flux_universes.py` (`:74`) is a **J28-only historical repair** Z never runs; `unified_throw_cov_5d.py --combine … --null` (`:94`) **is arm 7**, already counted above; the slab union is symlinks. **Only `:111` and `:113` are additional**, and the 4-hour request covered all four together, so it licenses **no completion bound for these two at all** |
 | **cause-4 jitter counterfactual — a SECOND CV unfold** | **unpriced** | **unpriced** | **corrected in rev. 3, and rev. 2 had the wrong operand.** `--null`'s unfold uses `args.estimator_seed` (`unified_throw_cov.py:514-515`) — the **same** seed. The jitter counterfactual uses **`args.seed + 7`** (`a0cdc019:233-234`). **They are two different unfolds**, so re-adding the print adds one *on top of* the one arm 7 already runs. **Arm 7's historical headroom is evidence about the existing unfold and says nothing about the additional one** |
 | cause-1 counterfactual, incl. off-diagonal | **unpriced** | **unpriced** | post-processing of `uq_5d/universe_sweep_bkgaware/…` (`receipt_cause1_endpoint_census_5d.json`, `inputs.glob`) — **no unfold**. Off-diagonal means full `10,694²` per band; unsized |
 | **Z's INFLATED-OBJECT validation** | **unpriced** | **unpriced** | **new row in rev. 3.** `RECEIPT-20260816`'s stage 5 covers the **block-sum** gates and is inside the stages 3–6 line. **§1.3b's five additional gates are not** — in particular the `g`-reconstruction gate recomputes `g^c` per variant over the reported support, and PSD on the inflated object is an `eigvalsh` on `10,694²`. Unsized |
@@ -1321,12 +1359,16 @@ extrapolations below are useful **conditional on those prior costs** and on noth
 **What the extrapolation does and does not establish.** It establishes that **the historical 46–50-member
 design exceeds `R5`'s ceilings by 5×–9×** — a fact about that design, at prior costs. **It does not
 establish the cost of Z's design, and therefore not its affordability either**, because §6.3 leaves the
-design open and a Z member costs more per member than the prior used here.
+design open, and the prior used here was measured on a **different subject** — a historical seven-arm
+member with neither the active lateral components, nor both assemblies, nor the inflated-object
+validation. **Rev. 4 said a Z member "costs more"; that is withdrawn too.** A different subject supports
+no direction: the extra work pushes one way, and reuse and execution conditions can push the other.
 
 **So the honest statement is:** `(cause 3, Z)`'s `M(ii)` as ruled has **no design, therefore no cost,
 therefore no affordability verdict**; and the one design that *has* been sized — the historical family —
-**exceeds `R5` by 5×–9× at a per-member price that understates a Z member.** That is a finding for
-Joseph, not a plan (§7 item 3).
+**exceeds `R5` by 5×–9× at prior costs measured on a different subject.** Whether a Z member is dearer
+or cheaper than that prior is **not established in either direction**. That is a finding for Joseph, not
+a plan (§7 item 3).
 
 ## 5.5 Conditional and unpriced items, named rather than absorbed
 
@@ -1552,6 +1594,13 @@ contract and nothing in §§1–5 depends on it.**
   than an `S` added to it, pointing instead at `|U' − U| / U ≤ δ`. **Adopting a different boundary form
   is a criterion question, not a completion detail**, and it is surfaced here for Joseph's separate
   decision. §6.3's *quantity* is unaffected either way; only the acceptance mathematics is at issue.
+  **HOW THIS ONE MUST BE PUT, and it is a constraint on the packet rather than on the answer.** The
+  reviewer's standing recommendation, adopted: **approve the concrete statistic, its denominator, the
+  precision target and the boundary TOGETHER — never a formula detached from those definitions.** A
+  boundary approved in the abstract would be an authorization over an object nobody has defined, and
+  §3.6d's whole finding is that the formula's validity depends on what the statistic is. **So this item
+  is not ready to be decided today**, and nothing here asks for a decision: it is ready when §3.6b's
+  definitions exist and can be put to Joseph as one package.
 - **Whether the three non-pair bands' construction should change** (§6.2) — a criterion extension nobody
   has proposed and this lane does not.
 - **Whether the narrow fixed-draw scan may SUBSTITUTE for the joint-baseline quantity** (§6.3) — reserved,
@@ -1594,7 +1643,9 @@ contract and nothing in §§1–5 depends on it.**
    **achievable** rather than what is **acceptable**, so it can constrain `ε` but cannot justify it.
    **What it would take:** a stated mechanism by which a non-deterministic CV moves a reported quantity,
    then a boundary derived for that mechanism, then a number.
-5. **Four unpriced cost rows (§5.2), which is why the subtotal is a floor.** The cause-1 off-diagonal
+5. **The unpriced cost rows (§5.2), enumerated there PER SUBTOTAL — five omitted from the spend
+   estimate, three from the proposed reservation, and two campaign-level items in neither. Neither
+   partial sum is a bound in either direction**; rev. 3's *"floor"* is withdrawn. The cause-1 off-diagonal
    counterfactual; the **second** CV unfold the cause-4 jitter counterfactual adds at `seed + 7`, distinct
    from `--null`'s same-seed one; Z's **inflated-object validation**, which the historical P4 chain's
    block-sum stage 5 does not cover; and the artifact replay. None needs an unfold except the cause-4
