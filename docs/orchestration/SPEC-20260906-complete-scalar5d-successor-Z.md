@@ -1,7 +1,7 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 3 — contract review round 2: the validator gate that makes the others fail, two criteria
-# schematized, and the metering rule corrected again**
+# **rev. 4 — contract review round 3: the acceptance mathematics is derived rather than borrowed,
+# the dropped-shift mutation is separated, and the cost language stops asserting bounds**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -22,6 +22,26 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0b What changed in rev. 4
+
+Rev. 3 was `736fe39a`. Review round 3 returned one implementation-contract finding with two parts, two
+production corrections and one non-blocking correction. **All are upheld, and all four are rev. 3
+defects — including one where rev. 3's own reasoning was traced and found not to hold.** No ruling is
+reopened and the assembly algebra is unchanged.
+
+| # | rev. 3 said | rev. 4 says | whose call |
+|---|---|---|---|
+| 1 | §3.6a/§3.6b: derive the boundary with `S/U ≤ sqrt(2δ + δ²)` | **The quadrature model does not transfer, and rev. 3 ported it twice.** That formula assumes an **omitted independent contribution added in quadrature**; neither a difference of two CV vectors nor variation among assembled covariances satisfies that model. New **§3.6d** splits the derivation by what the statistic *is* relative to `U`, keeps `δ` as the part that genuinely transfers, and imposes the ordering rule: **statistic first, boundary second** — which rev. 3 inverted. A reproducibility floor is also demoted: it measures **achievable** repeatability, not **acceptable** error | **reviewer** |
+| 1b | §3.6b item 2: cross-section-vector spread or covariance-entry spread, freely chosen | **§6.3 already fixed the subject as the ASSEMBLED covariance**, and rev. 3 reopened it. Vector spread cannot replace it without a demonstrated equivalence or the **substitution ruling §6.3 reserves** | **reviewer** |
+| 1c | §3.6c: *"proposes no criterion change"* | **too categorical, withdrawn.** Completing §3.6 requires substantive scientific choices, and **if the surviving boundary is not the quadrature rule, that is itself a criterion question** for the `RZ(v)` carve-out. Surfaced, not decided | **reviewer** |
+| 2 | run the `g ≡ 1` mutation *"separately for each variant"* to catch a reused `g^mean` | **It cannot, and the trace is short:** against a `g ≡ 1` producer, a reuse-faulty validator reconstructs the true `g^mean ≠ 1` and **rejects on both variants** — right answer, wrong reason, fault survives. §3.4 now carries a **distinct** `g^cv ← g^mean` mutation on operands where the two must differ (`v_blk=1`, `v_uni=4`, `mean_shift=1` → `g^mean = 2`, `g^cv = √5`), **and** requires the `g ≡ 1` fixture to make `g ≡ 1` wrong, since `g[i] = 1` is legitimate wherever `v_uni[i] ≤ v_blk[i]` | **reviewer** |
+| 3 | historical costs are *"lower bounds of unknown tightness"*; the partial sum is *"a floor"* | **withdrawn, both.** Extra work does not prove a future run costs more — reuse and different execution conditions can move it down. They are **priors from a different subject**, and the extrapolations are conditional on those prior costs | **reviewer** |
+| 4 | the 4-hour J28 request gives `< 4.0` for Z's assemblies | **a time limit bounds an ATTEMPT, not a completion.** Relabelled **PROPOSED, UNVERIFIED**, as is the combine's `1.0` | **reviewer** |
+| 5 | *"four required rows"* unpriced, with shifting membership | **enumerated per subtotal:** the spend estimate omits **five** rows (including the combine and assemblies, whose spend is *unmeasured*); the proposed reservation omits **three**; two campaign-level items are in neither | **reviewer** |
+
+**Upheld from rev. 3:** the `g`-reconstruction requirement itself, the elapsed-time accounting fix, the S
+correction and the `BEN-381` correction.
 
 ## 0.0a What changed in rev. 3
 
@@ -834,8 +854,10 @@ and `UNRESOLVED` is a permitted per-leg verdict that must not be re-read as the 
 3. `V`, `R`, `A` are not pairwise disjoint, or do not exhaust the support family's band set.
 4. Any `g^c[i] < 1`, or non-finite, or `≠ 1` where `v_blk[i] == 0`.
 4b. **`g^c` does not reproduce when reconstructed independently** from `diag(C_unified)`,
-    `diag(C_blocksum)` and `hJointMeanShift` by §1.3a's formula, **for either variant separately**.
-    Without this, conditions 2, 4, 6 and the closure identity are all satisfied by `g ≡ 1` — §1.3b.
+    `diag(C_blocksum)` and `hJointMeanShift` by §1.3a's formula, **for each variant separately and each
+    from its own operands**. Two distinct failures are covered and neither implies the other: an
+    **uninflated** object (`g ≡ 1`), which conditions 2, 4, 6 and the closure identity all admit; and a
+    **dropped shift** (`g^cv` equal to `g^mean`), which survives the first mutation entirely — §3.4(ii).
 4c. The run proceeds against a fixed-seed null bound or a `(cause 3, Z)` outcome rule that **§3.6 still
     lists as incomplete**. An un-derived boundary is not a criterion, and grading against one is the
     failure §3.6 exists to prevent.
@@ -868,12 +890,28 @@ guarded object disappears.
   introduce a PET-derived input to a module Z invokes (5); replace `M` by its diagonal (6); substitute
   CV-support-limited bands for the active endpoints (7). **Plus, for §1.3a:** move a vertical band from
   `V` into `R`; add `C_unified` as a block; feed a `v_blk == 0` bin and check `g` is pinned to 1 rather
-  than `inf`; **and — the mutation rev. 2's gate set could not catch — set `g^c ≡ 1` everywhere and emit
-  the block sum as though it were inflated.** That mutation passes the closure identity, `g >= 1`, the
-  zero-denominator rule and PSD, and **only the reconstruction gate can fail it**. A `T` leg that does
-  not carry this mutation has not tested the inflation at all. **Run it separately for each variant**,
-  because a validator that reconstructs `g^mean` and reuses it for `g^cv` passes a dropped `mean_shift²`
-  term. Each must fail **specifically**, even when dimensions, PSD, total trace and internal sums
+  than `inf`; **and TWO DISTINCT INFLATION MUTATIONS, which rev. 3 wrongly collapsed into one:**
+
+  **(i) `g^c ≡ 1` everywhere, emitting the block sum as though it were inflated.** This passes the
+  closure identity, `g >= 1`, the zero-denominator rule and PSD, so **only the reconstruction gate can
+  fail it**. **The fixture must make `g ≡ 1` WRONG**, which is not automatic: `g[i] = 1` is the *correct*
+  answer wherever `v_uni[i] <= v_blk[i]`, because `max()` then returns `v_blk[i]`. So the fixture must
+  carry bins with `v_uni > v_blk` and the test must assert the reconstructed `g` exceeds 1 on them —
+  otherwise the mutation is indistinguishable from legitimate input and the test passes vacuously.
+
+  **(ii) `g^cv ← g^mean` — the dropped-shift mutation, and it is NOT reachable by (i).** Rev. 3 claimed
+  running (i) *"separately for each variant"* would catch a validator that reconstructs `g^mean` and
+  reuses it for `g^cv`. **It does not.** Traced: against a producer emitting `g ≡ 1`, that faulty
+  validator reconstructs the true `g^mean ≠ 1` and compares it to `1` on **both** variants, so it
+  **rejects twice** — correct behaviour, for the wrong reason, and the reuse fault survives.
+
+  The discriminating mutation is a **producer** that emits `g^cv = g^mean`, i.e. drops the
+  `+ mean_shift²` term, on operands for which the two must differ. **Worked fixture:** `v_blk = 1`,
+  `v_uni = 4`, `mean_shift = 1` gives `g^mean = sqrt(max(4,1))/sqrt(1) = 2` and
+  `g^cv = sqrt(max(4+1,1))/sqrt(1) = sqrt(5) ≈ 2.2360680`. A correct validator reconstructs `g^cv`
+  **including** the shift term and fails; the reuse-faulty validator reconstructs `g^mean`, compares it
+  to the producer's `g^mean`, and **passes**. That is the only mutation in this contract that separates
+  the two validators, and a `T` leg without it has not tested the CV-centered reconstruction at all. Each must fail **specifically**, even when dimensions, PSD, total trace and internal sums
   still pass.
 - **Direction 2 — guarded object disappears.** Delete or rename, one at a time: an active endpoint; an
   active-band object; a migration census/policy; G's parent digest; `fixed_seed_null_norm`; a seed stamp;
@@ -929,11 +967,19 @@ eventual number pass is not a criterion."*
    expression.** Alternatives that must be considered and rejected on the record if not chosen: a per-bin
    maximum relative deviation, and normalization by `sqrt(Tr C_Z)`.
 2. **State units on both sides** and assert the ratio is dimensionless in the receipt.
-3. **Fix `ε` from a precision or sensitivity control established BEFORE implementation.** Two admissible
-   derivations, either of which is a control rather than a preference: the **publication-precision rule**
-   `S/U ≤ sqrt(2δ + δ²)` that §3.6b reuses, applied to whatever reported quantity a non-deterministic CV
-   could move; or a **measured process-to-process reproducibility floor** on the target hardware, taken
-   before Z's production run. **`ε` may not be read off Z's own null.** §6.4 is explicit.
+3. **Fix `ε` from a control established BEFORE implementation — but derive it for the RIGHT MODEL, which
+   is not the one rev. 3 offered.** Rev. 3 named the publication-precision rule
+   `S/U ≤ sqrt(2δ + δ²)` as an admissible derivation. **It is not admissible here as written**, and §3.6d
+   says why: that formula assumes `S` is an **independent uncertainty added in quadrature** to a reported
+   `U`, and the null is **a difference between two central-value vectors**, not an added variance
+   contribution. So the order of work is: **(i)** state which reported quantity a non-deterministic CV
+   could move, **and through what mechanism**; **(ii)** derive the boundary appropriate to *that*
+   relationship; only then **(iii)** attach a number.
+   **And a reproducibility floor is not a substitute for step (ii).** A measured process-to-process floor
+   on the target hardware tells you what repeatability is **achievable**; it does not tell you what error
+   is **scientifically acceptable**, and the two coincide only by accident. It may bound `ε` from below as
+   a feasibility constraint; it cannot justify `ε`.
+   **`ε` may not be read off Z's own null.** §6.4 is explicit.
 4. **Require presence and finiteness.** The key must be **present** — absence must fail, never pass
    vacuously (`CRITERIA` §2 cause 4's null-as-absent shape, PB2) — and both operands finite. A failure
    **aborts**; it is not recorded as a note.
@@ -948,26 +994,35 @@ G** (§6.4).
    `C_Z` produced at a distinct joint `(sweep-baseline, throw-baseline)` estimator-offset pair*, the
    sweep side varying from `42` and the throw side from `1000` — **and the offset set itself**. §6.3
    leaves the design open, so this is the design.
-2. **The statistic.** What the variation is taken over: the per-member **cross-section vectors**, or the
-   per-member **covariance entries**. These are different objects with different dimensions and they are
-   not interchangeable; the narrow scan's `C_seed` is a covariance over *vectors*
-   (`PREDECLARE-20260901-cause3-mii` §1), and whether the composite inherits that or measures spread of
-   the assembled matrices is the substantive choice. **Name one; state why; state its dimension.**
+2. **The statistic — and §6.3 has ALREADY FIXED ITS SUBJECT, which rev. 3 wrongly reopened.** §6.3 rules
+   the quantity to be *"the variation of the **assembled** covariance `C_Z`"*. Rev. 3 offered
+   per-member **cross-section vectors** and per-member **covariance entries** as a free choice between
+   equals. **They are not equals under the ruling:** the assembled covariance is the ruled subject, and
+   the narrow scan's `C_seed` — a covariance over *vectors* (`PREDECLARE-20260901-cause3-mii` §1) —
+   **cannot replace it** without either a demonstrated equivalence or the **substitution ruling §6.3
+   expressly reserves**. What remains open is the statistic's *form over the ruled subject*: how spread
+   among assembled matrices is reduced to a number. **Name it; state why; state its dimension; and if the
+   answer drifts toward vector spread, that is a substitution question, not a drafting choice.**
 3. **The normalization — two legs, and the second must bind independently.** An aggregate leg
    (`f_agg`-shaped, a trace ratio against a **named** denominator) and a per-bin leg (`f_med`-shaped),
    because — the predeclaration's own reason, which transfers unchanged — *"the same trace can be diffuse
    or concentrated, so the per-bin leg is independently binding."* Both denominators named in the same
    sentence as their numerators.
-4. **The boundaries, DERIVED and not chosen.** Use the rule
-   `PREDECLARE-20260901-cause3-mii` §3 already established:
+4. **The boundaries, DERIVED for the right model — and rev. 3 mandated the WRONG derivation.** Rev. 3
+   said to *"use the rule `PREDECLARE-20260901-cause3-mii` §3 already established"*,
+   `S/U ≤ sqrt(2δ + δ²)`. **That rule does not transfer to this statistic**, for the reason §3.6d gives:
+   it is derived for an **omitted independent contribution added in quadrature**, and variation among
+   **assembled covariance matrices** is a change *in* `U`, not an independent `S` added to it. **Applying
+   it here would import an additivity model nobody has demonstrated.**
 
-       S/U <= sqrt(2*delta + delta^2),   delta = (half the last printed unit) / (the printed value)
+   What **does** transfer is `δ` itself — `(half the last printed unit) / (the printed value)`, measured
+   on **Z's own** reported quantities at **Z's own** declared precision. What must be derived per
+   statistic is the **map from the statistic to `(U' − U)/U`**. §3.6d gives the two cases and the rule
+   for choosing between them.
 
-   applied to **Z's own reported quantities at Z's own declared precision**. On the candidate that rule
-   gave `4.15%` at three significant figures and `2.74%` at four. **Those two numbers may NOT be carried
-   across by assumption** — the predeclaration itself says *"if the printed precision changes before
-   execution, these numerical thresholds are void and must be redeclared before the run."* Z's precision
-   must be measured, then the rule applied.
+   **And the candidate's `4.15%` / `2.74%` may NOT be carried across in any case** — the predeclaration
+   says *"if the printed precision changes before execution, these numerical thresholds are void and must
+   be redeclared before the run."* Z's precision is measured first, then the boundary derived.
 5. **The three classes mapped onto branches, with the falsifiers named.** §6.3's favourable /
    unfavourable / inconclusive map onto the six-branch structure `R4` preserves: **inconclusive** covers
    wrong footing and *vacuous variation* — a readback whose seed set or fixed-draw identity does not match
@@ -981,12 +1036,62 @@ The predeclaration's §3 states why and the reason transfers verbatim: F7 compar
 with a finite-`N` sampling floor, whereas this measures the covariance generated by changing estimator
 seeds, and `sqrt(Tr C)/sqrt(N)` *"would import systematic covariance into an estimator-noise test."*
 
+### 3.6d The acceptance mathematics, stated once because BOTH criteria above depend on it
+
+**The publication-precision idea is sound and it is the right family of criterion. The specific formula
+is not portable, and rev. 3 ported it twice.** Written out, the original derivation
+(`PREDECLARE-20260901-cause3-mii` §3) is:
+
+> an **omitted independent contribution** `S` added to a reported uncertainty `U` gives
+> `U' = sqrt(U² + S²)`; requiring `U' − U` below half the last printed unit yields
+> `S/U ≤ sqrt(2δ + δ²)`.
+
+**Every step past `δ` depends on the quadrature model, and quadrature is an assumption about the
+statistic — not a property of publication precision.** It holds when the statistic is an *independent
+variance contribution being added to the budget*, which is exactly what `C_seed` is for the narrow scan.
+It does **not** automatically hold for a difference between two CV vectors (§3.6a) or for variation among
+assembled covariance matrices (§3.6b).
+
+**So the derivation splits, and the split is what must be written down:**
+
+| what the statistic IS, relative to the reported `U` | the boundary that follows |
+|---|---|
+| an **omitted independent contribution** added in quadrature | `S/U ≤ sqrt(2δ + δ²)` — the original rule, **retained only where independent-additivity is demonstrated, not assumed** |
+| a **directly measured change in `U` itself** | `\|U' − U\| / U ≤ δ` — no quadrature step, because there is nothing being added |
+| **neither** | derive it, and state the model in the same sentence as the number |
+
+`δ = (half the last printed unit) / (the printed value)` is common to all three and is the part that
+genuinely transfers.
+
+**The ordering rule this imposes, and it is the reviewer's:** *first* define the statistic and its
+relationship to the affected reported quantity; *then* derive its boundary. Rev. 3 inverted that for
+cause 3 — it mandated the quadrature boundary in item 4 while item 2 still left the statistic open — and
+an acceptance boundary chosen before its statistic is a number in search of a meaning.
+
+**Naming units and re-measuring printed precision does not establish applicability.** Both are
+necessary; neither is the additivity argument.
+
 ### 3.6c What this section does not do
 
-It takes no decision reserved to Joseph, proposes no criterion change, and does not reopen §6.3 or §6.4.
-It converts two ruled-but-incomplete criteria into **named schemas with named derivations**, and records
-that until they are completed the corresponding cells cannot be graded — which is a statement about
-readiness, not about the rulings.
+It does not reopen §6.3 or §6.4, and it takes no decision reserved to Joseph. It converts two
+ruled-but-incomplete criteria into **named schemas with named derivations**, and records that until they
+are completed the corresponding cells cannot be graded — a statement about readiness, not about the
+rulings.
+
+**But rev. 3's claim that it "proposes no criterion change" was too categorical, and it is withdrawn.**
+Completing §3.6a and §3.6b requires **substantive scientific choices** — which reported quantity the null
+could move and by what mechanism; how spread among assembled covariances is reduced to a number; and
+which of §3.6d's boundary models applies. **Those are not clerical.** Two consequences follow and both
+are stated rather than absorbed:
+
+1. **If the acceptance boundary that survives §3.6d is NOT the predeclared quadrature rule** — and for
+   the assembled-covariance subject §3.6d says it will not be — **then Z's cause-3 acceptance
+   mathematics differs in form from the narrow scan's.** That is a **criterion question**, it belongs in
+   the `RZ(v)` carve-out, and it must be surfaced to Joseph explicitly rather than settled inside a
+   completion schema. This record surfaces it; it does not decide it.
+2. **If completing §3.6b's statistic drifts from the assembled covariance toward cross-section-vector
+   spread**, that is the **substitution** §6.3 reserved — not a drafting choice — and it needs either a
+   demonstrated equivalence or a separate ruling.
 
 ---
 
@@ -1071,9 +1176,12 @@ The reviewer confirms it is a valid ratified ceiling anchor. Three things about 
 
 ## 5.2 One Z build — a PRICED SUBTOTAL, not a complete upper bound
 
-**Read the header literally.** Rev. 2 presented `73.0`/`≤118.0` as though it bounded a build. It does
-not: three required items are explicitly **unpriced** (rows marked so below), and a subtotal that omits
-required work is a floor with a decimal point, not a ceiling. The reviewer's formulation is adopted.
+**Read the header literally, and do not repair it into a bound.** Rev. 2 presented `73.0`/`≤118.0` as
+though it bounded a build; rev. 3 called the remainder *"a floor with a decimal point"*. **Both are
+withdrawn.** A subtotal that omits required work is **neither a ceiling nor a floor** — it is a partial
+sum, and the omitted rows could move a real campaign in either direction, as could reuse and different
+execution conditions. **The two subtotals below omit DIFFERENT rows, enumerated under each**, and neither
+is a bound on spend.
 
 **Two columns, because rev. 2 collapsed them and §5.2a shows they are different questions.** `R5` meters
 **actual elapsed** (`ElapsedRaw`), so *spend* is the runtime; the *requested walltime* is a reservation
@@ -1083,16 +1191,30 @@ bound and what a breach is measured against. They are not interchangeable.
 |---|---|---|---|
 | seven-arm production round | `54.90` / `86.53` | **`70` / `113`** | spend = round-2 measured actuals; bound = the **ratified ceilings** `20+20+30` / `8+60+40+5`. Contains arm 1 (the statistical replica ensemble) and arm 2 (the ML-split ensemble) |
 | standard-P4 lateral stages 3–6 | **`0.80`** / 0 | **`3.00`** / 0 | **corrected twice — §5.2a.** Spend = the step's measured `00:47:58` for a job that exits; `3.00` is what the observed **hold-style** dispatch actually charged, retained as a hazard to design out. Assumes stages 1–2 skip, **conditional on `PM-3`** |
-| statistical + ML **combine** | **unmeasured** / **unmeasured** | 0 / **`1.0`** | `sbatch_combine_5d_budget.sh`, **not one of the seven arms**. Its `--time=01:00:00` is a *request*; **no actual is recorded** — `grep` over `RUNS.tsv` for `budget5d`/`combine_5d_budget` returns **0** rows against a positive control on the same file |
-| **the two assemblies only** (`adopt_unified_5d.py` ×2) | **unmeasured** / **unmeasured** | 0 / **< `4.0`** | **narrowed in rev. 3.** Rev. 2 charged the whole 4-hour `sbatch_j28_adopt_5d.sh`. **Three of its four operations are not Z's:** `rescale_flux_universes.py` (`:74`) is a **J28-only historical repair** Z never runs; `unified_throw_cov_5d.py --combine … --null` (`:94`) **is arm 7**, already counted above; the slab union is symlinks. **Only `:111` and `:113` are additional**, and the 4-hour request bounds all four together, so `< 4.0` is all it licenses |
+| statistical + ML **combine** | **unmeasured** | 0 / **`1.0` PROPOSED, UNVERIFIED** | `sbatch_combine_5d_budget.sh`, **not one of the seven arms**. `--time=01:00:00` is a *request*, and **a time limit bounds an ATTEMPT, not a successful completion** — it says the job is killed at one hour, not that the work finishes inside it. **No actual is recorded**: `grep` over `RUNS.tsv` for `budget5d`/`combine_5d_budget` returns **0** rows against a positive control on the same file |
+| **the two assemblies only** (`adopt_unified_5d.py` ×2) | **unmeasured** | 0 / **`4.0` PROPOSED, UNVERIFIED** | **narrowed in rev. 3, relabelled in rev. 4.** The 4-hour figure is a *historical request*, so it **bounds an attempt, not a completion**, and it is not a derived `< 4 h` completion bound for Z's assemblies — it can motivate a **proposed** reservation and nothing more. Rev. 2 charged the whole 4-hour `sbatch_j28_adopt_5d.sh`. **Three of its four operations are not Z's:** `rescale_flux_universes.py` (`:74`) is a **J28-only historical repair** Z never runs; `unified_throw_cov_5d.py --combine … --null` (`:94`) **is arm 7**, already counted above; the slab union is symlinks. **Only `:111` and `:113` are additional**, and the 4-hour request bounds all four together, so `< 4.0` is all it licenses |
 | **cause-4 jitter counterfactual — a SECOND CV unfold** | **unpriced** | **unpriced** | **corrected in rev. 3, and rev. 2 had the wrong operand.** `--null`'s unfold uses `args.estimator_seed` (`unified_throw_cov.py:514-515`) — the **same** seed. The jitter counterfactual uses **`args.seed + 7`** (`a0cdc019:233-234`). **They are two different unfolds**, so re-adding the print adds one *on top of* the one arm 7 already runs. **Arm 7's historical headroom is evidence about the existing unfold and says nothing about the additional one** |
 | cause-1 counterfactual, incl. off-diagonal | **unpriced** | **unpriced** | post-processing of `uq_5d/universe_sweep_bkgaware/…` (`receipt_cause1_endpoint_census_5d.json`, `inputs.glob`) — **no unfold**. Off-diagonal means full `10,694²` per band; unsized |
 | **Z's INFLATED-OBJECT validation** | **unpriced** | **unpriced** | **new row in rev. 3.** `RECEIPT-20260816`'s stage 5 covers the **block-sum** gates and is inside the stages 3–6 line. **§1.3b's five additional gates are not** — in particular the `g`-reconstruction gate recomputes `g^c` per variant over the reported support, and PSD on the inflated object is an `eigvalsh` on `10,694²`. Unsized |
-| **PRICED SUBTOTAL** | **`55.70` / `86.53`** | **`73.0` / `≤118.0`** | **`11.1%` / `17.3%` of `R5` at expected spend; `14.6%` / `≤23.6%` at the reservation bound.** **Four required rows above are unpriced and are NOT in either figure** |
+| **PARTIAL SUM** | **`55.70` / `86.53`** | **`73.0` / `118.0`** | **`11.1%` / `17.3%` of `R5` for the spend estimate; `14.6%` / `23.6%` for the proposed reservation.** **Neither is a bound. Each omits a different set of rows — enumerated immediately below** |
 
-**So the honest one-line answer is:** a Z build's *known* cost is `≈56` GPU / `≈87` CPU task-hours of
-measured-actual spend, reserving up to `73` / `118`; **and four required items have no price at all**,
-one of which (cause 3, §5.4) has no design either.
+**The omissions, listed per subtotal rather than as one moving count, because rev. 3 gave three different
+numbers with three different memberships.**
+
+- **The expected-spend partial sum (`55.70` / `86.53`) omits FIVE rows:** the statistical+ML combine
+  (**unmeasured** — a request is not a spend estimate), the two assemblies (**unmeasured**, same reason),
+  the cause-4 second CV unfold, the cause-1 off-diagonal counterfactual, and Z's inflated-object
+  validation.
+- **The proposed-reservation partial sum (`73.0` / `118.0`) omits THREE rows:** the cause-4 second CV
+  unfold, the cause-1 off-diagonal counterfactual, and Z's inflated-object validation. It *includes* the
+  combine and the assemblies, at **proposed, unverified** request-derived figures.
+- **Campaign-level items are in neither, by construction:** the artifact replay (§5.3) and
+  `(cause 3, Z)`'s ruled measurement (§5.4), the latter having no design and therefore no cost.
+
+**So the honest one-line answer is:** a Z build's *estimated* spend on the rows that have one is `≈56`
+GPU / `≈87` CPU task-hours, with a **proposed** reservation of `73` / `118`; **five rows have no spend
+estimate, three have no figure at all, and one campaign-level item has no design.** None of that makes
+either partial sum a bound in either direction.
 
 ### 5.2a The scheduler-accounting correction, because it changed the number
 
@@ -1139,15 +1261,16 @@ closer one**, and the step-level figure was the misleading one. Corrected here.
 
 | scenario | GPU task-h | CPU task-h | vs. `R5` 500/500 |
 |---|---:|---:|---|
-| one Z build, **expected spend** (priced rows only) | `55.70` | `86.53` | `11.1%` / `17.3%` |
-| one Z build, **reservation bound** (priced rows only) | `73.0` | `≤118.0` | `14.6%` / `≤23.6%` |
+| one Z build, **spend estimate** (5 rows omitted, §5.2) | `55.70` | `86.53` | `11.1%` / `17.3%` |
+| one Z build, **proposed reservation** (3 rows omitted, §5.2) | `73.0` | `118.0` | `14.6%` / `23.6%` |
 | **+ independent ARTIFACT REPLAY** | **not a production round** | **not a production round** | see below |
-| + optional independent **regeneration**, if separately proposed and authorized | `111.4` – `146.0` | `173.1` – `≤236.0` | `22.3–29.2%` / `34.6–≤47.2%` |
+| + optional independent **regeneration**, if separately proposed and authorized | `111.4` – `146.0` | `173.1` – `236.0` | `22.3–29.2%` / `34.6–47.2%` |
 
-**Every figure in this table inherits §5.2's caveat: it sums the PRICED rows only.** Four required
-items — the cause-4 second unfold, the cause-1 off-diagonal counterfactual, Z's inflated-object
-validation, and the artifact replay — carry no price, and `(cause 3, Z)`'s ruled measurement carries no
-design. **Nothing here is a complete upper bound on a Z campaign.**
+**Every figure in this table inherits §5.2's per-column omission census**, which lists five omitted rows
+for the spend estimate and three for the proposed reservation. **On top of those, two campaign-level
+items are in neither:** the artifact replay below, which is unsized, and `(cause 3, Z)`'s ruled
+measurement (§5.4), which has no design and therefore no cost. **Nothing here bounds a Z campaign in
+either direction.**
 
 **Rev. 1's automatic doubling to `143`/`226` is WITHDRAWN.** The reviewer's correction: *"price
 independent reconstruction from digest-bound artifacts separately. 'Cold checkout, no producer helpers'
@@ -1189,7 +1312,11 @@ is measured over **members**, each a complete seven-arm round:
 that and rev. 3 separates it.** A **Z** member is not a historical seven-arm round: it additionally
 carries the **active lateral components** (§2.7), the **final inflated assembly in both variants**
 (§1.3a), and Z's **inflated-object validation** (§1.3b) — the three rows §5.2 marks unpriced. **So the
-per-member figure is a lower bound of unknown tightness**, and every product of it inherits that.
+per-member figure is a PRIOR from a different subject, not a bound in either direction**, and every
+product of it inherits that. **Rev. 3 called it a "lower bound of unknown tightness"; that is withdrawn.**
+Additional work does not prove a future Z run costs *more*: execution conditions differ, and reuse —
+skipped endpoint stages, cached slabs, a warmer footing — can move a real run the other way. The
+extrapolations below are useful **conditional on those prior costs** and on nothing else.
 
 **What the extrapolation does and does not establish.** It establishes that **the historical 46–50-member
 design exceeds `R5`'s ceilings by 5×–9×** — a fact about that design, at prior costs. **It does not
@@ -1253,8 +1380,10 @@ identities (`PM-2`, `PM-3`, `PM-5`), and an explicit run authorization (`D-RESOU
 
 1. **No Z arm has ever run.** Every figure is transferred from a different product's arms, and a **Z**
    member additionally carries the active lateral components, both assemblies and the inflated-object
-   validation — so the transferred per-member figures are **lower bounds of unknown tightness**, not
-   estimates. This dominates and no arithmetic here reduces it.
+   validation. **That makes the transferred figures PRIORS FROM A DIFFERENT SUBJECT — not bounds in
+   either direction.** Rev. 3 called them lower bounds; withdrawn, because reuse and different execution
+   conditions can move a real run down as well as up. Every extrapolation here is conditional on the
+   prior costs it was built from. This dominates and no arithmetic reduces it.
 2. **CPU-partition arms are demonstrably not reproducible across scheduler regimes.** `AMENDMENT` §3c/§3e
    establish it and the measurement is stark: arm 5 went `30.94 → 49.11` between rounds, **+58.7% on one
    arm**, and the amendment says *"a third run may exceed them."* **Treat the CPU column as carrying at
@@ -1263,7 +1392,10 @@ identities (`PM-2`, `PM-3`, `PM-5`), and an explicit run authorization (`D-RESOU
    **actual elapsed** (§5.2a), so the right-hand column bounds a reservation and over-states a well-sized
    campaign; the left-hand column is the spend estimate, and **two of its rows are `unmeasured` rather
    than measured**. Do not read either column as a charge.
-3b. **The priced subtotal omits four required rows** (§5.2). It is a floor, not a ceiling.
+3b. **Each subtotal omits a DIFFERENT set of rows, enumerated per column in §5.2.** Neither is a bound:
+    the spend column is an estimate with five rows missing, and the reservation column is a proposed
+    reservation with three rows missing — **and a reservation is not a floor on spend either**, since
+    `R5` charges actual elapsed (§5.2a).
 4. **Failed and retried tasks count in full** under `R5` §3, including `FAILED`, `CANCELLED` and
    `TIMEOUT`. A single failed pass spends its full elapsed time and produces no Z.
 5. **Two build lines are unsized** (§5.5), and `(cause 3, Z)`'s ruled quantity has **no design and
@@ -1413,6 +1545,13 @@ contract and nothing in §§1–5 depends on it.**
 
 ## 6.6 What remains a criterion question and is NOT ruled here
 
+- **⚠ NEW IN REV. 4, and it is the one most likely to be needed: whether Z's cause-3 acceptance
+  boundary may take a DIFFERENT FORM from the narrow scan's.** §3.6d establishes that the predeclared
+  `S/U ≤ sqrt(2δ + δ²)` rule assumes an omitted **independent contribution added in quadrature**, and
+  that variation among **assembled covariances** — §6.3's ruled subject — is a change *in* `U` rather
+  than an `S` added to it, pointing instead at `|U' − U| / U ≤ δ`. **Adopting a different boundary form
+  is a criterion question, not a completion detail**, and it is surfaced here for Joseph's separate
+  decision. §6.3's *quantity* is unaffected either way; only the acceptance mathematics is at issue.
 - **Whether the three non-pair bands' construction should change** (§6.2) — a criterion extension nobody
   has proposed and this lane does not.
 - **Whether the narrow fixed-draw scan may SUBSTITUTE for the joint-baseline quantity** (§6.3) — reserved,
@@ -1435,7 +1574,9 @@ contract and nothing in §§1–5 depends on it.**
 2. **Whether S's `support_family_sha256` is G's `combined_source` digest.** Same path, reads four days
    apart, nothing binding them. **What it would take:** `PM-2`.
 3. **A measurement design for `(cause 3, Z)`'s ruled joint-baseline quantity — and, with it, the
-   statistic, normalization and boundaries §3.6b schematizes.** §6.3 fixes the *quantity* and explicitly
+   statistic, normalization and boundaries §3.6b schematizes — and, per §3.6d, an acceptance boundary
+   whose FORM may not be the predeclared quadrature rule, which is itself a carve-out question (§6.6).**
+   §6.3 fixes the *quantity* and explicitly
    does not fix the *design*; §5.4 shows the historical family size is **5×–9× over `R5`** at a
    per-member prior that **understates** a Z member, so the design is the whole question. **What it
    would take:** a measurement-design proposal
@@ -1446,10 +1587,13 @@ contract and nothing in §§1–5 depends on it.**
    the deciding measurements. Manufacturing a drafting prerequisite out of a grading separation would add
    a blocker the rule does not create.
 4. **The normalizer and the numerical value of §6.4's scale-relative null bound.** The ruling fixes the
-   *form* and forbids choosing the value from a result. **§3.6a now names the four things that complete
-   it** — the normalizer with its rejected alternatives on the record, units, the `ε` derivation from a
-   precision or sensitivity control, and the presence/finiteness rule. **What it would take:** those
-   controls, established before implementation.
+   *form* and forbids choosing the value from a result. **§3.6a names the four things that complete it**
+   — the normalizer with its rejected alternatives on the record, units, the `ε` derivation, and the
+   presence/finiteness rule. **Rev. 4 corrects what that derivation may be:** the quadrature rule is
+   **not** admissible here as written (§3.6d), and a hardware reproducibility floor bounds what is
+   **achievable** rather than what is **acceptable**, so it can constrain `ε` but cannot justify it.
+   **What it would take:** a stated mechanism by which a non-deterministic CV moves a reported quantity,
+   then a boundary derived for that mechanism, then a number.
 5. **Four unpriced cost rows (§5.2), which is why the subtotal is a floor.** The cause-1 off-diagonal
    counterfactual; the **second** CV unfold the cause-4 jitter counterfactual adds at `seed + 7`, distinct
    from `--null`'s same-seed one; Z's **inflated-object validation**, which the historical P4 chain's

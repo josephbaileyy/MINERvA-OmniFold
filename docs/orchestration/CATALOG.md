@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 3. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 4. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -194,6 +194,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `seed + 7`, distinct from `--null`'s same-seed one; `54.90`/`86.53` to a **historical prior that
   understates a Z member**; and S to holding the **uninflated** vertical components while lacking `D_Z`
   and the inflated term.
+  **REVIEW ROUND 3 (rev. 4) fixes the acceptance mathematics and the test contract.** New **§3.6d**:
+  the predeclared `S/U ≤ sqrt(2δ+δ²)` threshold **does not transfer** to either new criterion, because it
+  assumes an **omitted independent contribution added in quadrature** and neither a difference of two CV
+  vectors nor variation among assembled covariances satisfies that model; `δ` transfers, the quadrature
+  map does not, and for a **directly measured change in `U`** the comparison is `|U'−U|/U ≤ δ`. The
+  ordering rule is inverted back: **statistic first, boundary second**. A hardware reproducibility floor
+  is demoted to a feasibility constraint — it measures **achievable** repeatability, not **acceptable**
+  error. §3.6b's free choice between assembled-covariance and cross-section-vector spread is **withdrawn**:
+  §6.3 fixed the assembled covariance as the subject, and vector spread is the **substitution** it
+  reserved. §3.6c's *"proposes no criterion change"* is **too categorical and withdrawn** — a boundary
+  form differing from the predeclared rule is itself a carve-out question, now listed in **§6.6**. In the
+  test contract, the `g ≡ 1` and **dropped-shift** mutations are **separated**: a reuse-faulty validator
+  **rejects `g ≡ 1` on both variants**, so a distinct `g^cv ← g^mean` mutation is required on operands
+  where the two must differ (`v_blk=1`, `v_uni=4`, `mean_shift=1` → `g^mean=2`, `g^cv=√5`), and the
+  `g ≡ 1` fixture must make `g ≡ 1` **wrong**, since it is legitimate wherever `v_uni ≤ v_blk`. Cost
+  language stops asserting bounds: historical figures are **priors from a different subject**, not lower
+  bounds; a time limit **bounds an attempt, not a completion**, so the combine and assembly reservations
+  are **PROPOSED, UNVERIFIED**; and the omitted rows are enumerated **per subtotal** — five for the spend
+  estimate, three for the proposed reservation, two campaign-level items in neither.
 
 ### PET typed-descriptor semantic evidence
 
