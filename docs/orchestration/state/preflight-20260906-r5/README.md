@@ -61,15 +61,48 @@ measurement to carry a caveat would destroy the thing that makes it evidence.
 
 `12.5903` and `12.606389` are not two versions of one number and neither is "the R5 CPU spend". Each
 is the spend measurable in a specific capture at a specific instant: `12.590278` at
-`2026-09-06T08:59Z` over 953 attempts, `12.606389` at `2026-09-06T09:20Z` over 958. The waker fires
-about every five minutes, so the figure grows ~0.05–0.07 CPU task-hours/day on ordinary cadence, and
-a single hang added 8.63 hours on 2026-09-03. **Attribute any total to a pinned capture and its
-digest; never re-query to reproduce one.**
+`2026-09-06T08:59Z` over 953 attempts, `12.606389` at `2026-09-06T09:20Z` over 958.
+**Attribute any total to a pinned capture and its digest; never re-query to reproduce one.**
 
-The magnitude was never the point. ~1.5 CPU task-hours over the remaining campaign against a 500
-ceiling is not a ceiling risk. The point is that the instrument reported `0.0017` for work that had
-actually spent `12.6` — wrong by four orders of magnitude — so a real production run would have been
+**⚠ CORRECTED: the cadence figure in an earlier revision of this file was wrong by an order of
+magnitude.** It said ~`0.05`–`0.07` CPU task-hours/day. Re-derived per calendar day from
+`sacct-r5-window-ALL-duplicates-8field.psv`:
+
+| day | CPU task-hours | note |
+|---|---:|---|
+| 2026-09-02 | `0.728889` | partial — from t0 at 13:44:27Z |
+| 2026-09-03 | **`10.263611`** | **the 31,063 s hang — an outlier, not a rate** |
+| 2026-09-04 | `0.652778` | full day |
+| 2026-09-05 | `0.690556` | full day |
+| 2026-09-06 | `0.270556` | partial — to the measurement instant |
+
+**Ordinary cadence is ≈`0.65`–`0.69` CPU task-hours/day**, from the two complete non-outlier days.
+The error was scaling a 21-minute delta instead of measuring whole days, and averaging across a day
+that contained an 8.6-hour hang. **A rate taken from a window containing an outlier is not a rate.**
+
+Consequently the projection was also wrong: over the ~23.6 days remaining to the R5 stop, the waker's
+ordinary cadence implies **≈15–16 CPU task-hours**, not the ~1.5 an earlier revision stated — plus
+hang risk, which one 09-03 event alone shows can add ~8.6 in a day.
+
+**The magnitude was still never the point.** Even 15–16 task-hours against a 500 ceiling is ~3% and
+not a ceiling risk. The point is that the instrument reported `0.0017` for work that had actually
+spent `12.6` — wrong by four orders of magnitude — so a real production run would have been
 mismeasured the same way.
+
+### These captures are multi-window, and that shape has a known hazard
+
+`sacct-hist-alloc-20260701-to-20260906.psv` is assembled from three queries (the 30-day span cap), and
+a dump assembled from more than one window can contain **two observations of one execution**. Measured
+in this file: exactly **2 byte-identical duplicate lines** out of 3,994 — jobs `57575105` and
+`57644537`, each appearing twice with every field equal. `57575105` ran `08-27T15:00 → 08-28T01:59`
+and straddles the `08-28T00:00` window boundary, which explains it; **`57644537` ran entirely inside
+one window and its duplication is unexplained** — recorded as unexplained rather than given a cause.
+
+Both are the benign form: rows sharing `(JobID, Start)` that agree on every field, so any meter keying
+on that pair collapses them to one. The dangerous form — a `RUNNING` row with `End=Unknown` beside a
+later `COMPLETED` row for the same start — **does not occur in any capture here**: `End=Unknown` rows
+number **0** in all three. `sacct-arrays-duplicates-8field.psv` has **0** duplicate `(JobID, Start)`
+pairs despite also being multi-window.
 
 **The defect is a pattern, not an anomaly.** **Five** earlier jobs in the same `cron` waker lineage
 show the same shape — `56585597` (1,580 attempts), `57575105` (490), `57668375` (354), `56139864`
