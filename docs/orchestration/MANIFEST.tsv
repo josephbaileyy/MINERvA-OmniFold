@@ -17,7 +17,7 @@ docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md	tracked	ARCHIVAL	document			te
 docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/state/oi137-covering-search-20260822.sh	no	7	397	26997
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	tracked	LIVE	document		20260901	open		route-only		no	6	226	14356
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	tracked	LIVE	document		20260901	open		route-only		no	5	296	19292
-docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	31	1703	155949
+docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	31	1725	158150
 docs/orchestration/CENSUS-20260902-permanence-language-in-leg-grade-cells.md	tracked	LIVE	document		20260902	open		route-only		no	2	170	10966
 docs/orchestration/CLAIM-CLM-001.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	686
 docs/orchestration/CLAIM-CLM-002.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	33	515
@@ -230,7 +230,7 @@ docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	tracked	LIVE	d
 docs/orchestration/SESSION-WORKFLOW.md	tracked	LIVE	document			open		route-only		no	2	170	8468
 docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	tracked	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	16	1069	77774
 docs/orchestration/SPEC-20260825-f17b-tree-comparison-instrument.md	tracked	LIVE	document		20260825	open		route-only	docs/orchestration/compare_m1_m6.py	no	10	208	12935
-docs/orchestration/SPEC-20260906-complete-scalar5d-successor-Z.md	tracked	LIVE	document		20260906	open		route-only		no	2	2569	221515
+docs/orchestration/SPEC-20260906-complete-scalar5d-successor-Z.md	tracked	LIVE	document		20260906	open		route-only		no	2	2707	234893
 docs/orchestration/TASK-HANDOFF.template.md	tracked	LIVE	template			open		route-only		no	2	125	4731
 docs/orchestration/TASK.template.md	tracked	LIVE	template			open		route-only		no	3	34	1256
 docs/orchestration/TRAVEL-MODE-DEPLOYMENT-20260825.md	tracked	ARCHIVAL	document		20260825	terminal		exact-path-only		yes	0	67	3536
@@ -433,7 +433,7 @@ docs/orchestration/state/RECEIPT-20260815-oi126-boundary-feasibility.json	tracke
 docs/orchestration/state/RECEIPT-20260815-oi126-mechanism-narrowing.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	4	243	12687
 docs/orchestration/state/RECEIPT-20260815-oi126-push-vs-extraction-RESULT.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	75	6062
 docs/orchestration/state/RECEIPT-20260815-oi126-tiebreak-retirement.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	1	317	12304
-docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	2	137	9743
+docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	3	137	9743
 docs/orchestration/state/RECEIPT-20260816-p4-standard-stages456.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	4	166	10327
 docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json	tracked	MACHINE	state-artifact		20260822	open		exact-path-only		no	5	459	29867
 docs/orchestration/state/RECEIPT-20260823-g2-fullevent-truthcloud-coverage.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only		yes	0	74	3862

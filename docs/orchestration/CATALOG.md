@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 7. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 8. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -266,6 +266,28 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   (`D4`), and the `12.59` CPU task-h gap between the meter's deduplicated reading and `R5` §3's
   *"retried tasks count in full"* (`D5`) — **and takes none of them.** **The contract is NOT ready for
   an implementation authorization**, and §6.7 says what would make it ready.
+  **SECOND OPERATIONAL PACKET (rev. 8) — one blocker released, one prerequisite found unreadable.**
+  New **§5.9c**: the k=0 round-2 campaign spans **`37.5` h** end to end (376 tasks,
+  `2026-08-30T21:29:20` → `2026-09-01T10:58:02`), and its `54.90` GPU task-hours reproduce §5.2's figure
+  **exactly by a different route**. So `4`–`5` rounds fit inside **either** block of the split window
+  without straddling the outage, and §6.7's readiness item 5 — rev. 7's *"the one constraint no decision
+  can relax"* — is **withdrawn to a caveat**: `37.5` h is **one realization at one week's queue depth**,
+  already inclusive of that week's queue wait, and a campaign would run into the pre-outage rush. The
+  cause-4 second CV unfold gains a **measured upper bound `≤ 0.5764` CPU task-h** — `--null` runs inside
+  `uthrow5d_combF` on `shared_milan_ss11`, **CPU and never GPU**, which is the specific thing rev. 2 got
+  wrong; the identity matters, because that job is **arm 7**, not the still-unmeasured `budget5d`
+  statistical+ML combine. `D5`'s figure is now dated: `12.5903` at `08:59Z`, `12.606389` at `09:20Z`,
+  `≈0.05`–`0.07`/day. **⚠ AND `PM-4` CANNOT BE DISCHARGED AS WRITTEN.** New **§1.3d**: G's committed key
+  inventory is **13 keys** and holds **neither `hRowIndex5D` nor `hXSecND_flat`** (re-verified here in
+  `receipt_candidate_stamps_5d.json`), so *"read from G"* has no referent — and rev. 2–7's flagged
+  inference that *"G is 2026-08-12, so it plausibly carries `hRowIndex5D`"* is **refuted**, the 49-key
+  object being the 2026-08-16 rebuild in **S's** lineage. **The invariant stands and its route changes**:
+  both digests are reconstructible from G's production-CV input, which is the same object reject
+  condition **`11b`** already names, and which **G's own hash receipt does not bind** — so `PM-4` and
+  `11b` fail together on one missing identity (new §7 item 17). The preflight evidence is now **committed
+  off-branch** at `21b3d567`/`cd41ff41` on `lane/pm-root-inspection-20260906`, with its receipts named
+  `r5-meter-receipt-INCOMPLETE-*`; `docs/orchestration/state/r5-meter-receipt.json` still does not exist
+  and admission stays shut.
   **REVIEW ROUND 5 (rev. 6) found no new substantive contract finding.** Two non-blocking remnants, both
   the drafting lane's: §7 item 3 still called the prior one that *"understates a Z member"* — replaced
   with *"a prior measured on a different subject"*, with the rev.-4 changelog row that carried it marked

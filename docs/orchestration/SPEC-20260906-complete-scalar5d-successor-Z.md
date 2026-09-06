@@ -1,7 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 7 — SPECIFICATION COMPLETION: the joint-baseline acceptance packet, the normalized null
-# bound, and the cost census by category. Everything new is PROPOSED and none of it is approved.**
+# **rev. 8 — the second operational packet: the wall clock is measured and is NOT the binding
+# constraint; the cause-4 unfold gets a measured CPU bound; and `PM-4` cannot be discharged as
+# written, because G carries neither key it names.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -27,6 +28,24 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0f What changed in rev. 8
+
+Rev. 7 was `641c6812`. **No review finding; a second read-only evidence packet from the
+operational-preflight session, folded in with the same RELAYED / RE-VERIFIED HERE discipline.** Nothing
+is approved, no ruling is reopened, and the assembly algebra is unchanged.
+
+| # | rev. 7 left | rev. 8 does |
+|---|---|---|
+| 1 | §6.7 readiness item 5: *"a schedule nobody has checked"*, called **the one constraint no decision can relax** | **MEASURED and it goes the other way.** One complete seven-arm round spans **`37.5` h** end to end (376 tasks, `2026-08-30T21:29:20` → `2026-09-01T10:58:02`), so `4`–`5` rounds fit **inside either block** of the split window without straddling the outage. **Downgraded from a blocker to a caveat**, because it is **one realization at one week's queue depth** — §5.9c |
+| 2 | the cause-4 second CV unfold: **UNRESOLVED**, needing a CPU-partition time | **bounded: `≤ 0.5764` CPU task-h.** `--null` runs inside `uthrow5d_combF` (`sbatch_uthrow_combine_5d_fast.sh:339`, `:2`), measured three times at `1,395`/`1,526`/`2,075` s on `shared_milan_ss11` — **CPU, never GPU**, which is exactly what rev. 2 got wrong |
+| 3 | `D5` quoted `12.5903` CPU task-h as a fixed figure | **it moves**: `12.5903` at `08:59Z`, `12.606389` at `09:20Z`, growing `≈0.05`–`0.07`/day plus hangs. Every percentage taken against it now carries its **measurement instant** |
+| 4 | §1.3: the mask and row-order digests *"must be read from G"*; §4 row 7 inferred G *"plausibly carries `hRowIndex5D`"* | **⚠ RE-VERIFIED HERE AND REFUTED. G's committed key inventory is 13 keys and contains NEITHER `hRowIndex5D` NOR `hXSecND_flat`** (`receipt_candidate_stamps_5d.json`, `A1_candidate_meancentered.all_keys`). **So `PM-4` as written has no referent** and §1.3's invariant is assertable only through the producer route — §1.3d |
+
+**The rev. 7 inference was labelled an inference and it resolved against me.** That is the process
+working, and it is the second time in two revisions that a `PM-*` row rested on something the tree
+already answered (§5.9a was the first). **The difference is that this one was flagged; that one was
+asserted.**
 
 ## 0.0e What changed in rev. 7
 
@@ -259,6 +278,47 @@ mask and row ordering**, as a **declared invariant with a guard**:
 Both must be **read from G** before construction (`PM-4`, §4) and re-asserted by Z's validator. A Z whose
 mask differs makes every `M`-leg comparison in §2 ill-posed, because the two sides would be distributions
 over different populations.
+
+### 1.3d ⚠ THE INVARIANT STANDS; ITS EVIDENCE ROUTE DOES NOT — NEW IN REV. 8
+
+**"Read from G" has no referent, and this is measured, not relayed.** `receipt_candidate_stamps_5d.json`
+records G's complete key inventory under `A1_candidate_meancentered.all_keys` — **13 keys**, listed here
+because a count is not an inventory:
+
+    centering_convention, combined_source, fixed_seed_null_norm_checked,
+    hCov_combined5d_total_uthrow, hInflation_g, joint_mean_shift_norm_checked,
+    n_throws_checked, sqrt_tr_new, sqrt_tr_old, upstream_fixed_seed_null_norm,
+    upstream_joint_mean_shift_norm, upstream_n_throws, uthrow_source
+
+**Neither `hRowIndex5D` nor `hXSecND_flat` is among them**, and the same is true of
+`A2_candidate_cvcentered` (13 keys) and the positive control. **So G stores no row-index array and no CV
+vector**, and §1.3's two digests cannot be *read* from G at all.
+
+**Rev. 2–7's §4 row 7 inferred the opposite and said so honestly** — *"`row_index_basis` warns that
+'builds before [2026-08-10] lack it'; G is 2026-08-12, so it plausibly carries `hRowIndex5D`, but that is
+an inference, not a read."* **The inference is now refuted.** What carries `hRowIndex5D` is the
+**2026-08-16 rebuild**, which `RECEIPT-20260816-hrowindex4d-readback.json:83` records as having *"49 keys
+including `hRowIndex5D`"* against *"the audited Aug-9 object [which] had 47 and no row-index array"*.
+That is **S's** lineage, not G's — which is precisely why §1.1 lists `row_index_sha256` under **S** and
+why §4 row 7 warned against borrowing it.
+
+**What changes, and what does not.**
+
+- **The invariant is UNCHANGED and still required.** `mask_digest(Z) == mask_digest(G)` and
+  `row_order_digest(Z) == row_order_digest(G)` remain declared invariants and §3.3 condition 1 remains a
+  reject condition. **A guard whose operand cannot be obtained is a guard that cannot fire**, which is
+  this repository's catalogued failure shape — so the route must be fixed, not the requirement dropped.
+- **The route becomes the PRODUCER, not the product.** G's reported mask is determined by the predicate
+  `x_cv > 0` over the **production CV** (`hXSecND_flat`), and its row order by the C-order flatten of the
+  `14×16×7×7×6` grid. Both are properties of the inputs G was built from, so the digests are
+  **reconstructible** — from the production ROOT `sbatch_adopt_stamped_footing.sh:29` supplies, which
+  **G's own hash receipt does not bind** (§5.9a records the four files it does bind, and this is not one).
+- **This is the same object `11b` already points at** (§3.7a). One production ROOT, bound by path and
+  digest in Z's receipt, closes the null's denominator **and** the mask/row-order route together.
+- **`PM-4`'s PHRASING needs amending and that is not this lane's act.** *"G's mask digest and row-order
+  digest, read from G"* names a read nobody can perform. Whoever owns §4's row should restate it as
+  *"reconstructed from G's production-CV input, whose identity must first be bound"* — and the binding
+  gap is the finding, not the reconstruction.
 
 ### 1.3a The composition, with the inflation given its explicit place
 
@@ -908,7 +968,9 @@ and `UNRESOLVED` is a permitted per-leg verdict that must not be re-read as the 
 
 **Z is rejected outright, before any cell is graded, if any of these holds:**
 
-1. `mask_digest(Z) != mask_digest(G)` or `row_order_digest(Z) != row_order_digest(G)`.
+1. `mask_digest(Z) != mask_digest(G)` or `row_order_digest(Z) != row_order_digest(G)`. **⚠ The
+   condition stands; its operand cannot be READ from G — §1.3d. Both digests must be reconstructed from
+   G's production-CV input, and that input's identity must be bound before this condition can fire.**
 2. Any §1.3b identity fails outside relative `1e-9` — **including the four that do not exist yet**.
 3. `V`, `R`, `A` are not pairwise disjoint, or do not exhaust the support family's band set.
 4. Any `g^c[i] < 1`, or non-finite, or `≠ 1` where `v_blk[i] == 0`.
@@ -1585,7 +1647,7 @@ compute*, because it is already committed or is a measurement rather than a buil
 | 4 | **`PM-1`** — the nine-vs-five weight-only band census on **G's own `combined_source`** | **YES.** If any of the four weight-only bands carries selection-dependent support in the 5D chain, Z's five-band scope is **incomplete for cause 7** and this specification must be amended | **YES** — a property of the support family Z reads | **NO.** The tree's claim is the **FPS-side** row `VALIDATION_LEDGER.md:788-791`, corroborated by `2D_OMNIFOLD_REFERENCE.md:239-241` — the same split, not a second measurement. A cluster read |
 | 5 | **`PM-2`** — G's `combined_source` sha256, **read from the file** | **YES.** Without it Z's parent chain has a definite description where it needs a digest | **YES** | **⚠ CORRECTED IN REV. 7 — §5.9a. YES, ALREADY IN THE TREE.** G's **own** build receipt `STAMPED_HASH_RECEIPT.slurm-56720356.json` records the full path and `9f7b2f55…` at `2026-08-12T05:46:19Z`, **four days before S read the file**; S's manifest is a second, differently-originated **agreeing** measurement. **Rev. 2–6's *"using S's digest as G's is the substitution `PM-2` exists to prevent"* is FALSE and is withdrawn.** What survives is a *timing* qualification, not a missing digest: the launcher hashes after building, and the `mtime_ns 2026-07-14` field is what closes the gap — hence §1.5's new **open-time stamping** requirement |
 | 6 | **`PM-3`** — availability, provenance and **grid/footing compatibility** of the ten selection-complete endpoints | **YES.** They are `L_active`'s inputs | **YES** | **PARTLY, and rev. 2 narrows what the evidence shows.** `RECEIPT-20260816` records all 20 stage-1/2 tags **SKIPPED** as of 2026-08-16 and `DETERMINATION-20260811` records the samples *"Gate-3 promoted… since 2026-07-20"*. **Historical SKIPs establish neither present availability nor mandatory retraining** — the reviewer's formulation. A cluster `ls` plus digest and footing check; a **rebuild is priced only if that check fails** (§5.5) |
-| 7 | **`PM-4`** — G's mask digest and row-order digest, read from G | **YES.** §1.3's invariant is unassertable without them, and without it every `M` comparison is over two populations | **YES** | **NO.** S's `reported_mask_hash`/`row_index_sha256` are **S's**, and `row_index_basis` warns that *"builds before [2026-08-10] lack it"* — G is 2026-08-12, so it plausibly carries `hRowIndex5D`, but that is an inference, not a read |
+| 7 | **`PM-4`** — G's mask digest and row-order digest, read from G | **YES.** §1.3's invariant is unassertable without them, and without it every `M` comparison is over two populations | **YES** | **⚠ CORRECTED IN REV. 8 — §1.3d. NOT MERELY UNREAD: UNREADABLE AS PHRASED.** G's committed key inventory is **13 keys** and holds **neither `hRowIndex5D` nor `hXSecND_flat`** (`receipt_candidate_stamps_5d.json`, re-verified here), so *"read from G"* has no referent. **Rev. 2–7's *"G is 2026-08-12, so it plausibly carries `hRowIndex5D`"* was flagged as an inference and is now REFUTED** — the 49-key object carrying it is the **2026-08-16 rebuild**, i.e. S's lineage. The digests are **reconstructible** from G's production-CV input, whose identity **G's own hash receipt does not bind**. That binding gap is the row's real content, and the row's phrasing needs amending by its owner |
 | 8 | **`PM-5` (NEW in rev. 2)** — the `V`/`R`/`A` partition measured against G's own `combined_source` band inventory | **YES.** §1.3a's disjointness-and-exhaustiveness gate cannot be written against an unmeasured family | **YES** | **PARTLY.** `VERT_BANDS` (13) and `p4_lib.BANDS` (5) are committed constants; S's manifest gives 45 `all_syst_bands`. **But that is S's family read, not G's**, and `R`'s membership is a *complement*, so it is only as good as the family list. A cluster read closes it |
 | 9 | **The cause-4 jitter-print re-add**, with §2.4's four conditions | **YES.** The only route by which `(cause 4, Z)`'s `M` can be anything but permanently unmeetable | **YES — the property Z has and G cannot.** The obstruction is a property of the committed history, and this base descends from `081ae4ac` | **NO — code that does not exist.** The *specification* of what to re-add **is** reusable: `a0cdc019:232-252`, recovered and committed |
 | 10 | **The FIVE inflation gates of §1.3b**, including the **`g`-reconstruction** gate | **YES, and the fifth is what makes the other four capable of failing** — `g ≡ 1` satisfies all four (§1.3b) | **YES** | **NO — new code.** `adopt_unified_5d.py` *computes* `g` and writes `hInflation_g`; **nothing recomputes it from the throw operands and compares**, and reading the producer's own value back is not this gate |
@@ -1920,12 +1982,14 @@ remain *"a prohibition and an accounting boundary … NOT authorization to spend
 |---|---|---|
 | cause-1 off-diagonal counterfactual | unpriced | **≈ `0.03` CPU task-h** — DERIVED from local timings on the real `10,694` dimension |
 | Z's inflated-object validation | unpriced | **≈ `0.07` CPU task-h** — same |
-| cause-4 second CV unfold | unpriced | **UNRESOLVED** — needs one CV-unfold time on the **CPU** partition |
+| cause-4 second CV unfold | unpriced | **`≤ 0.5764` CPU task-h — a MEASURED UPPER BOUND** added in rev. 8, off `uthrow5d_combF` on `shared_milan_ss11` (§5.9 item 13). **CPU confirmed, which is the specific thing rev. 2 got wrong** |
 | statistical + ML combine | unmeasured | **STILL UNMEASURED, and now a COVERED absence** — no `budget5d`/`combine_5d_budget` row exists in retained accounting `2026-07-01`→now (`3,994` rows, coverage verified), and the 4D analogue was CANCELLED at `0` s (§5.9 item 5) |
 | the two assemblies | unmeasured | **`≤ 0.5231` CPU task-h — a MEASURED UPPER BOUND** on the pair, from `j28_adopt_5d` `56429334` (§5.9 item 4). Replaces `4.0 PROPOSED, UNVERIFIED` |
 
-**Two of five are now estimated, one is bounded above by a measurement, one is a covered absence, and
-one needs a measurement nobody has taken.** The `4.0` and `1.0` reservation figures rev. 4 labelled
+**Two of five are estimated, TWO are bounded above by measurements, and one is a covered absence.
+Rev. 8 leaves no row in this table without a figure or a stated reason for having none** — the combine
+is the only one still `unmeasured`, and it is unmeasured because **no accounting row for it exists in
+any dimension**, which is a covered absence rather than a gap. The `4.0` and `1.0` reservation figures rev. 4 labelled
 **PROPOSED, UNVERIFIED** are now settled in opposite directions: the assemblies come in at **`≤ 0.5231`,
 an eighth of the proposal**, and the combine has no accounting at all rather than a low one. The two new figures are small enough that they do not move `55.70`/`86.53`
 materially — **which is itself the finding.** Rev. 3 flagged them as an unsized hazard on the strength
@@ -1959,7 +2023,7 @@ The cost of the artifact itself. Authorized by `D-RESOURCE`, which **does not ex
 | the two `adopt_unified_5d.py` assemblies | — | **`≤ 0.5231`** | **MEASURED UPPER BOUND, relayed** — `j28_adopt_5d` `56429334` COMPLETED in `1,883` s and the pair is a subset of its four operations (§5.9 item 4). **No point estimate is licensed** |
 | cause-1 counterfactual **incl. off-diagonal** | — | `≈ 0.03` | **DERIVED** — `44` as-built + `42`+`42` one-sided band covariances at `≈0.5` s, plus accumulation |
 | Z's inflated-object validation, **both variants** | — | `≈ 0.07` | **DERIVED** — `2 ×` (`13` band reads + closure residual + symmetry + `eigvalsh` at `113` s) |
-| cause-4 jitter counterfactual — a **second** CV unfold | — | **UNRESOLVED** | distinct from `--null`'s same-seed unfold; needs a **CPU**-partition time, and the `43.5`-min figure is a **GPU** arm-3 per-task time |
+| cause-4 jitter counterfactual — a **second** CV unfold | — | **`≤ 0.5764`** | **MEASURED UPPER BOUND, relayed — NEW IN REV. 8.** `--null` runs inside `uthrow5d_combF` (`sbatch_uthrow_combine_5d_fast.sh:339` passes `--null`, `:2` names the job — **verified here**), which is `shared_milan_ss11`, **CPU**: `2,075` / `1,526` / `1,395` s. That job is combine arithmetic **plus one CV unfold**, so **one unfold ≤ the whole job** — the same subset-of-a-completed-job logic as the assemblies. **It bounds the increment and does not estimate it** |
 | **partial sum of the SPEND ESTIMATES only** | **`55.70`** | **`86.63`** | **not a bound in either direction.** The assemblies' `≤ 0.5231` is an **upper bound, not a spend estimate**, so it is deliberately NOT summed here; **two rows — the combine and the cause-4 second unfold — have no figure at all** |
 
 ### 5.8c ARTIFACT REPLAY — verifying Z from digest-bound components
@@ -2036,11 +2100,23 @@ faster form sitting beside it, and because **adopting it would be a code change 
 byte-level equivalence check**, not a free win.
 ## 5.9 RELAYED OPERATIONAL EVIDENCE — NEW IN REV. 7, AND ITS PROVENANCE IS PART OF IT
 
-**This subsection is NOT this lane's measurement.** It relays a read-only evidence packet produced by
-the **operational-preflight session** (`preflight [e11e6d]`, same worktree base, live read-only SSH to
-Perlmutter, login31 pinned), at
-`.../38a63c82-.../scratchpad/R5-EVIDENCE-PACKET-20260906.md` with raw dumps beside it.
-**Nothing from it is committed at this base and this record commits nothing.**
+**This subsection is NOT this lane's measurement.** It relays two read-only evidence packets produced by
+the **operational-preflight session** (`preflight [e11e6d]`, live read-only SSH to Perlmutter, login31
+pinned).
+
+**⚠ THE EVIDENCE IS NOW COMMITTED, AND NOT ON THIS BRANCH — cite it accordingly.**
+`21b3d567` and `cd41ff41`, branch **`lane/pm-root-inspection-20260906`** (ancestry measured: **NOT an
+ancestor of this tip**; this tip is their *parent*). They carry
+`docs/orchestration/state/preflight-20260906-r5/` — `R5-PREFLIGHT-EVIDENCE.md`, `DIGESTS.txt`, four raw
+`sacct` `.psv` dumps, and two receipts named
+**`r5-meter-receipt-INCOMPLETE-{live,fromfile}.json`** — plus
+`AUTHORIZATION-20260906-pm-root-inspection.md` and `PREDECLARATION-20260906-pm-root-inspection.md`.
+**Note the filenames: the incompleteness is carried in the identifier, not only in the prose.**
+
+**Nothing from it is committed AT THIS BASE, this record commits none of it, and
+`docs/orchestration/state/r5-meter-receipt.json` — the path `campaignctl` admission turns on — still does
+not exist.** Two sessions shared this worktree while both packets were produced, so the RELAYED /
+RE-VERIFIED HERE split below is a statement about **who measured what**, not about who typed it.
 
 **Two of its claims were re-verified HERE, against files in this checkout, before anything downstream
 was changed. The rest is relayed and labelled as such** — a peer's report is not a measurement I took,
@@ -2059,6 +2135,48 @@ and the distinction is load-bearing in this campaign.
 | 9 | **`PM-2` is dischargeable, and two statements in THIS document are false** | **RE-VERIFIED HERE — see §5.9a.** Both corrected in place |
 | 10 | `PM-1`, `PM-4`, `PM-5` and `PM-3`'s grid/footing arm are **BLOCKED**: they need to open a ROOT, and on the login node `uproot` is absent from both interpreters while PyROOT segfaults on import in the project conda env | **RELAYED.** A `TKey` listing is a header read, not a `41` GB scan, so these are cheap once unblocked — but **installing `uproot` changes the environment rather than reading it**, and the preflight session correctly declined. **`PM-3`'s availability arm IS discharged**: all ten endpoints present in `universe_sweep_bkgaware/`, all dated `2026-07-14`. **Trap recorded: a second, non-bkgaware set of the same ten filenames sits in `universe_sweep/` dated `2026-06-12` — pin the DIRECTORY, not the filename** |
 | 11 | a **7-day full-system outage** `maintenance_20260916` sits inside the `R5` window; and `sacct` refuses queries spanning more than 30 days | **RELAYED; the arithmetic is RE-DERIVED HERE — §5.9b** |
+| 12 | **NEW IN REV. 8** — the k=0 round-2 campaign spans **`37.5` h** end to end, at `54.90` GPU / `86.77` CPU task-hours over the same window | **RELAYED — §5.9c.** The GPU figure reproduces §5.2's `54.90` **exactly** by a different route. **It releases §6.7 item 5 from blocker to caveat, and the caveat is that this is ONE realization** |
+| 13 | **NEW IN REV. 8** — `uthrow5d_combF` is `shared_milan_ss11`, **CPU, never GPU**: `2,075` / `1,526` / `1,395` s against 3–4 h requests | **RELAYED, and the IDENTITY is the load-bearing part — §5.8b.** `uthrow5d_combF` is `unified_throw_cov_5d --combine`, i.e. **arm 7, already inside the seven-arm round**. It is **NOT** `sbatch_combine_5d_budget.sh` / `budget5d`, which still has no accounting row in any dimension |
+| 14 | **NEW IN REV. 8** — the requeue-inclusive figure **moves**: `12.5903` CPU task-h at `08:59Z`, `12.606389` at `09:20Z`, `≈0.05`–`0.07`/day plus hangs, still exactly one distinct job id in the window | **RELAYED — `D5`.** Any percentage taken against it must carry its **measurement instant**; the scope was complete at both |
+| 15 | **NEW IN REV. 8** — `PM-4` cannot be discharged as written; the declared ROOT inspection is **authorized by Joseph and committed, and campaignctl still cannot admit it** on four independent grounds | **RE-VERIFIED HERE for the key inventory — §1.3d.** The blocker was returned to Joseph rather than worked around, and **nothing was installed** — the `uproot` question stays his |
+
+### 5.9c THE WALL CLOCK, MEASURED — NEW IN REV. 8, and it releases §6.7's item 5
+
+**RELAYED.** The k=0 round-2 campaign, bounded by time from the first `sbatch` at
+`2026-08-30T20:47:32Z`:
+
+| | |
+|---|---|
+| tasks in the window | **376** (this document's arm-membership view gives 374; the two extra are the time-bound's, not a new population) |
+| first task start → last task end | `2026-08-30T21:29:20` → `2026-09-01T10:58:02` |
+| **end-to-end wall-clock span** | **`1 d 13 h 28 m 42 s` ≈ `37.5` hours** |
+| task-hours over the same window | `54.90` GPU / `86.77` CPU |
+
+**The task-hours corroborate this document's anchor rather than replacing it.** `54.90` GPU is
+`54.90` — exact agreement with §5.2's round-2 figure, arrived at by a different route (a time window
+versus arm membership). CPU is `86.77` against `86.53`, a `0.24` task-h difference the preflight session
+attributes to the two extra in-window tasks. **§5.2's numbers stand; treat this as an independent
+confirmation, not as a new number**, and do not mix the two CPU figures in one sentence — they are over
+different populations.
+
+**Against §5.9b's split window, `≈1.56` days per round gives:**
+
+| block | length | rounds that fit |
+|---|---|---:|
+| **A** — now → outage start | `10 d 3 h 50 m` | `≈6.5` |
+| **B** — outage end → `R5` stop | `6 d 11 h` | `≈4.1` |
+
+**So a `4`–`5`-member campaign fits the wall clock inside EITHER block, without straddling the outage.**
+§6.7's readiness item 5 — *"the one constraint no decision can relax"* — is **released from blocker to
+caveat**.
+
+**⚠ AND THE CAVEAT IS THE PART TO CARRY, IN THE PREFLIGHT SESSION'S OWN WORDS.** `37.5` h is **one
+observed end-to-end span under the queue conditions of 2026-08-30**, already inclusive of whatever queue
+wait those 376 tasks met. **It is one sample, not a distribution.** A busier machine — or the pre-outage
+rush in the days before `2026-09-16`, which is exactly when a campaign would run — could move it
+substantially, and nothing in the record bounds that. **The correct sentence is *"fits, on one measured
+round at that week's queue depth"*, and this document does not write the shorter one.** It is also the
+same volatility §5.7 item 2 already measures on the CPU column: `+58.7%` on one arm between two rounds.
 
 ### 5.9a ⚠ TWO FALSE STATEMENTS IN THIS DOCUMENT, CORRECTED — and the failure is mine and familiar
 
@@ -2370,7 +2488,9 @@ auditability requirement — but it is still a criterion and this lane may not a
 ### The readiness verdict, stated plainly
 
 **The contract is NOT ready for an implementation authorization.** Five things stand between here and
-one, and they are of four different kinds:
+one, and they are of four different kinds. **Rev. 8 changes the count of BLOCKERS from five to four** —
+item 5 is now a caveat — **and adds nothing new to the list**, because §1.3d's finding is a defect in a
+prerequisite's phrasing rather than a fifth obstacle:
 
 1. **Decisions — `D1`–`D5` above.** None is work; all are Joseph's.
 2. **A measurement that does not exist — §4 row 3's `r5_meter` receipt on Perlmutter.** `campaignctl`
@@ -2384,10 +2504,14 @@ one, and they are of four different kinds:
    None of it needs compute; all of it needs writing.
 4. **`D-RESOURCE`, which does not exist** (§4 row 19), and the two independent pre-launch reviews
    (`PLAN-20260905` #17), which are not done.
-5. **A schedule nobody has checked.** `maintenance_20260916` removes seven days from the middle of the
-   `R5` window, leaving `16 d 15 h` in two blocks (§5.9b). §3.7b establishes that a `4`–`5`-member
-   campaign's **task-hours** fit; **nothing establishes that its wall-clock does**, and it is the one
-   constraint here that no decision can relax.
+5. **⚠ RELEASED IN REV. 8, from blocker to caveat.** `maintenance_20260916` still removes seven days
+   from the middle of the `R5` window, leaving `16 d 15 h` in two blocks (§5.9b) — **but the wall clock
+   is now measured**: one complete round spans `37.5` h, so `4`–`5` rounds fit inside **either** block
+   without straddling the outage (§5.9c). **Rev. 7 called this *"the one constraint no decision can
+   relax"*; that was written of an unmeasured quantity and is withdrawn.** What remains is a caveat with
+   teeth: `37.5` h is **one realization at one week's queue depth**, it already contains that week's
+   queue wait, and a campaign would run into the **pre-outage rush**. **The schedule is not a blocker on
+   the evidence available, and the evidence is a single sample.**
 
 **What IS ready:** the scientific contract (§1), all seven cause dispositions (§2), the terminal
 criteria including both formerly-incomplete ones (§3, §3.7), the dependency analysis (§4), and a cost
@@ -2396,9 +2520,13 @@ census whose remaining holes are named per row with the act that closes each (§
 ### `D5` — NOT Z's contract, but it moves the ceiling Z is measured against
 
 **`R5` §3 says retried tasks count in full. The meter, as landed, does not count them.** Measured on the
-same window: **`0.0016667` CPU task-h deduplicated, `12.5903` with `--duplicates`** — 953 instances of
-one self-requeueing waker, of which a single `8 h 37 m` hang dominates and the other 948 sum to `≈2.96`
-h. **And `--duplicates` cannot simply be switched on:** `_parse_sacct_dump` keys on job id alone and
+same window: **`0.0016667` CPU task-h deduplicated, `12.5903` with `--duplicates` at `2026-09-06T08:59Z`**
+— 953 instances of one self-requeueing waker, of which a single `8 h 37 m` hang dominates and the other
+948 sum to `≈2.96` h. **⚠ AND IT MOVES: `12.606389` at `09:20Z`, twenty-one minutes later.** It grows
+`≈0.05`–`0.07` CPU task-h/day from the waker's ordinary cadence, plus whatever the next hang adds.
+**Every percentage taken against this reading must carry its measurement instant** — a bare `12.59` is
+already stale. The **scope** was complete at both instants: exactly one distinct job id in the `R5`
+window. **And `--duplicates` cannot simply be switched on:** `_parse_sacct_dump` keys on job id alone and
 raises *"conflicting rows for task identity"* when fed the duplicated dump (`r5_meter.py:270`,
 re-verified here).
 
@@ -2522,11 +2650,21 @@ move `N`:** re-derived here, the affordable member count is `4`–`5` under **bo
     `:270`), while `R5` §3 says *"retried tasks count in full"*. **What it would take:** a ruling on
     which reading `R5` means, then a parser keyed on `(job id, submit time)` rather than job id alone.
     **`D5`. It does not move `N`; it moves the denominator of every percentage in §5.**
-16. **Whether `4`–`5` complete `374`-task rounds FIT the wall-clock**, in a `10 d 4 h` block and a
-    `6 d 11 h` block either side of `maintenance_20260916` (§5.9b). The ceiling arithmetic in §3.7b
-    establishes that the task-hours fit; **it establishes nothing about the schedule**, and one arm's
-    tail already ran eleven hours at two-way concurrency in a single round. **What it would take:** the
-    wall-clock duration of the k=0 round-2 campaign, which is one `sacct` span read.
+16. **⚠ ANSWERED IN REV. 8, AND THE ANSWER IS ONE SAMPLE.** Rev. 7 asked whether `4`–`5` complete
+    rounds fit the wall clock, and named the `sacct` span read that would settle it. **It was taken:
+    `37.5` h per round, so they fit inside either block** (§5.9c). **What remains unestablished is the
+    DISTRIBUTION.** That span is one realization at the queue depth of `2026-08-30`; a campaign would
+    run into the pre-outage rush before `2026-09-16`, and nothing in the record bounds queue behaviour
+    then. **What it would take:** spans from two or more complete rounds — of which the tree holds
+    exactly one, since round 1 and round 2 are the only complete populations and only round 2's window
+    was read.
+17. **A binding for G's production-CV input — the one object §1.3d and `11b` both now depend on.**
+    `sbatch_adopt_stamped_footing.sh:29` supplies it by default and **G's own hash receipt does not bind
+    it** (that receipt binds four files, and this is not one — §5.9a). Without it the mask and
+    row-order digests cannot be reconstructed and `‖x_cv‖` cannot be recomputed, so **`PM-4` and `11b`
+    fail together on the same missing identity**. **What it would take:** the production ROOT's path and
+    sha256, bound to G's build — which the ROOT inspection `AUTHORIZATION-20260906-pm-root-inspection.md`
+    covers and `campaignctl` currently cannot admit.
 
 ---
 
