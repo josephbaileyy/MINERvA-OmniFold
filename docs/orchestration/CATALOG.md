@@ -35,6 +35,12 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 - [`R5-METER.md`](R5-METER.md)
   - Usage and fail-closed semantics for the R5 task-hour accounting boundary. The meter authorizes
     nothing; every run still requires its own declaration and authorization.
+- [`FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md`](FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md)
+  - **OPEN, owned by the orchestration lane.** The `sacct` span limit makes the meter's own query
+    unissuable from **2026-10-02T13:44:27Z**, two and a half days after the stop. Two dated
+    obligations: preserve and commit the full accounting capture before that instant with the ids of
+    everything still running, and meter those jobs afterwards with `-j`, which bypasses the limit. A
+    query limitation is not permission to omit expenditure.
 - [`FINDING-20260906-r5-meter-undercounted-requeue-attempts.md`](FINDING-20260906-r5-meter-undercounted-requeue-attempts.md)
   - **The metered unit is an execution attempt, not a job id.** On a preserved Perlmutter capture of
   one self-requeueing waker job the meter reported **0.0016667** CPU task-hours where **12.590278**
