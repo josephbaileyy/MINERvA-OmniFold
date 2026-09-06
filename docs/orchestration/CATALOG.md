@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 6. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 7. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -228,6 +228,44 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   quadrature; and §6.6's boundary-form item now records **how the decision must be put** — the statistic,
   denominator, precision target and boundary approved **together**, never a formula detached from them,
   so **that item is not ready to decide today**.
+  **SPECIFICATION COMPLETION (rev. 7) — no review finding; the three declared gaps are closed and
+  everything new is PROPOSED.** New **§3.7** completes both terminal criteria. For the **fixed-seed
+  null**: the normalizer is `‖x_cv2 − x_cv‖ / ‖x_cv‖`, with `sqrt(Tr C_Z)` rejected (it divides a
+  central-value difference by an uncertainty scale, and it is the denominator behind the campaign's
+  quoted `1.31e-12`) and the per-bin maximum rejected as a gate but retained as a diagnostic;
+  `ε = n_iters · n_rep · float64.eps = 1.1873e-11`, a **formula with imported operands** rather than a
+  constant, binding over three sensitivity channels by seven orders in the one unmeasured quantity; and
+  a new reject condition **`11b`**, because the throw writer **does not persist `x_cv`** so the ratio
+  is otherwise unauditable — `hXSecND_flat` in the production ROOT closes it. For **`(cause 3, Z)`**:
+  the member is **MEASURED, not designed** — one shared `MNV_EST_SEED_OFFSET` across exactly **seven**
+  production launchers, with an **eighth that refuses it**, so no arm can be reused and the implemented
+  family is the **diagonal** `(42+k, 1000+k)` rather than a grid; the population is the **finite declared
+  offset set**, which makes a sample SD inadmissible and the **maximum** the matching statistic; and the
+  boundaries are `s_agg ≤ δ_agg` and `s_med ≤ δ_med`. **Under the direct model those are `0.0861%` and
+  `0.0374%` — `48×` and `73×` tighter than the narrow scan's `4.15%`/`2.74%`**, which is arithmetic, not
+  a preference. The **precision target is a DECLARATION nobody can measure**: both 5D candidate macros
+  are defined and **never printed** (covering search with a positive control) and their values are J's,
+  quarantined. **Affordability: `N = 4`–`5` total members inside `R5`, at `86.5%` of the CPU ceiling,
+  against `5.1×`–`8.7×` for the historical 46/50 design — no affordable middle.** New **§5.8** recasts
+  the cost census as **production / artifact replay / conditional / contingency** and sizes two of three
+  unpriced build rows from local timings at the real `10,694` dimension (`eigvalsh` `113` s, peak
+  `1.83` GB) — **minutes and gigabytes, not hours and terabytes**, with memory the binding constraint.
+  New **§5.9** relays a read-only operational evidence packet, every item marked RELAYED or RE-VERIFIED
+  HERE: a genuine meter receipt parses live `sacct` and is deliberately **uncommitted**; the assemblies
+  gain a **measured upper bound** `≤ 0.5231` CPU task-h; a **7-day outage inside the `R5` window** cuts
+  the usable schedule to **`16 d 15 h` in two blocks**; and `sacct`'s 30-day span limit makes the meter
+  stop working `2 d 14 h` after the `R5` stop. **⚠ TWO STATEMENTS IN REV. 1–6 WERE FALSE and are
+  corrected in place (§5.9a):** `combined_source`'s digest **is** recorded in the tree — in **G's own
+  build receipt**, `9f7b2f55…` at `2026-08-12T05:46:19Z`, **four days before S read the file** — so
+  §1.1's *"no digest anywhere in the tree"* and §4 row 5's *"using S's digest as G's is the
+  substitution `PM-2` exists to prevent"* both fall. **An absence asserted without a covering search**,
+  about a file in G's own directory in this checkout. What survives is a timing qualification and a new
+  §1.5 requirement: stamp `path + sha256 + size + mtime_ns + inode + device` **at open time**. New
+  **§6.7** puts **five decisions** to Joseph as packets — the cause-3 acceptance packet (`D1`), the
+  per-bin precision target (`D2`), the design `N`/offsets/diagonal-or-grid (`D3`), the null packet
+  (`D4`), and the `12.59` CPU task-h gap between the meter's deduplicated reading and `R5` §3's
+  *"retried tasks count in full"* (`D5`) — **and takes none of them.** **The contract is NOT ready for
+  an implementation authorization**, and §6.7 says what would make it ready.
   **REVIEW ROUND 5 (rev. 6) found no new substantive contract finding.** Two non-blocking remnants, both
   the drafting lane's: §7 item 3 still called the prior one that *"understates a Z member"* — replaced
   with *"a prior measured on a different subject"*, with the rev.-4 changelog row that carried it marked

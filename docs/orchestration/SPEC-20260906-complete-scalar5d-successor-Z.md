@@ -1,10 +1,15 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 6 — contract review round 5: the last directional remnant removed, and a split Markdown
-# table row repaired**
+# **rev. 7 — SPECIFICATION COMPLETION: the joint-baseline acceptance packet, the normalized null
+# bound, and the cost census by category. Everything new is PROPOSED and none of it is approved.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
+
+**§3.7 AND §5.8 ARE PROPOSALS, NOT CRITERIA.** They are citable as *the packet put to Joseph* and as
+*this lane's measurements*; they are **NOT** citable as an adopted statistic, an adopted denominator, an
+adopted precision target, an adopted boundary, or an approved cost. §6.6 requires the four to be
+approved **together**, and §6.7 lists what is still his to decide.
 
 **NOT CITABLE FOR:** any construction, any authorization to construct, any implementation, any compute,
 any grade on any leg, any discharge, any adoption, any count, any gate movement, any spend, any
@@ -22,6 +27,26 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0e What changed in rev. 7
+
+Rev. 6 was `f98cce8a`. **No review finding drove this revision** — it executes the three completion
+items rev. 6 declared outstanding, on Joseph's instruction to complete the specification work only.
+**Nothing here reopens the assembly algebra, and nothing here approves a criterion.**
+
+| # | rev. 6 left | rev. 7 does |
+|---|---|---|
+| 1 | `(cause 3, Z)`'s joint-baseline statistic and acceptance rule named as a schema (§3.6b) | **§3.7b** gives the whole packet: member, population, two statistics, both denominators, the precision target, both boundaries, and the branch map. **The member turned out to be MEASURED, not a design choice** — exactly seven production launchers apply one shared `MNV_EST_SEED_OFFSET`, and the eighth refuses it |
+| 2 | the null bound's normalizer, units and `ε` named as a schema (§3.6a) | **§3.7a** fixes the normalizer with both alternatives rejected on the record, derives `ε` from a precision control and checks it against three sensitivity channels, and adds the auditability requirement §3.6a did not anticipate |
+| 3 | five cost rows with no spend estimate, three with no figure at all | **§5.8** re-casts the census into **production / artifact replay / conditional / contingency**, and **sizes two of the three unpriced build rows** from local timings on the real `10,694` dimension. One remains unresolved and two await the preflight session's `sacct` read |
+| 4 | §6.6: the boundary-form question *"is not ready to be decided today"* | **§6.7** puts it, because the packet §6.6 required now exists. **Five decisions are named and none is taken here** |
+| 5 | §5.6's meter gap, `PM-2`, and the assemblies' cost, all open | **§5.9** relays a read-only evidence packet from the **operational-preflight session** and marks every item RELAYED or RE-VERIFIED HERE. A genuine meter receipt now parses live `sacct` and is deliberately **uncommitted**; the assemblies gain a **measured upper bound** of `0.5231` CPU task-h; and a **7-day outage inside the `R5` window** cuts the usable schedule to `16 d 15 h` in two blocks |
+| 6 | **⚠ two statements in rev. 1–6 were FALSE** — §1.1's *"no digest for `combined_source` is recorded anywhere in the tree"* and §4 row 5's *"using S's digest as G's is the substitution `PM-2` exists to prevent"* | **corrected in place, §5.9a.** G's **own** build receipt, in this checkout, in G's own directory, records the digest four days before S read the file. **An absence asserted without a covering search** — the same shape as rev. 1's missed decision record, and recorded as this lane's failure rather than repaired quietly |
+
+**One consequence a reader must not miss:** under the direct relative-change model rev. 5 adopted as the
+default, Z's cause-3 boundaries come out **48× and 73× tighter** than the narrow scan's predeclared
+`4.15%` / `2.74%`. That is arithmetic, not a preference (§3.7b), and it is the substance of the decision
+§6.7 puts to Joseph.
 
 ## 0.0d What changed in rev. 6
 
@@ -188,7 +213,7 @@ committed receipts and labelled as such, never as this lane's own file reads.
 | name | identity | role for Z | where measured |
 |---|---|---|---|
 | **G** | `nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root`, sha256 `4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2`, job `56720356`, **10,694** reported bins of the **65,856**-bin grid | **required, digest-bound `parent_candidate`**; the **`M`-leg comparison baseline for every one of Z's seven cells**. **NOT an operand of Z's construction** — §1.3 | `R1`; `PREDECLARE-20260901-cause7` §0 |
-| **G.combined_source** | `uq_universe_5d_covariance_combined_bkgaware.root` — **name only; no digest for it is recorded anywhere in the tree** | the support-limited lateral family Z replaces five bands of, **and the file the 13 vertical per-band covariances are read from** (§1.3a) | `nd-unfolding/uq_5d/receipt_candidate_stamps_5d.json:28-30`, key `combined_source` |
+| **G.combined_source** | **⚠ CORRECTED IN REV. 7 — §5.9a.** `nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root`, sha256 **`9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a`**, `41,436,632,945` B, mtime `2026-07-14T20:59:17Z` — recorded by **G's own build receipt**, `STAMPED_HASH_RECEIPT.slurm-56720356.json`. **Rev. 1–6 said *"name only; no digest is recorded anywhere in the tree"*. That was FALSE** — an absence asserted without a covering search, about a file in G's own directory in this checkout | the support-limited lateral family Z replaces five bands of, **and the file the 13 vertical per-band covariances are read from** (§1.3a) | `nd-unfolding/uq_5d/receipt_candidate_stamps_5d.json:28-30`, key `combined_source` |
 | **G.uthrow_source** | `unified_throw_cov_5d_fluxfix_20260806_full160.root` | the throw ROOT G's inflation was derived from. **Z derives its own** — §1.3a | same receipt, `:32-34`, key `uthrow_source` |
 | **G.centering** | `mean-centered` | Z's **primary** variant inherits it; the CV-centered variant is the F7 sibling, not a replacement | same receipt, `:24-26`, key `centering_convention` |
 | **G total √Tr** | `5.269625166386846e-38` | the `M`-leg denominator for aggregate comparisons | `DECISION-20260831` §5 |
@@ -903,6 +928,11 @@ and `UNRESOLVED` is a permitted per-leg verdict that must not be re-read as the 
 9. Any endpoint lacks a selection-migration census, or contradicts `p4_lib.py:64-65`'s declared policy.
 10. The producing revision is unpinned, or import-closure digests are not bound to the run.
 11. The fixed-seed null key is **absent**, or its bound is not the scale-relative one §6.4 rules.
+11b. **NEW IN REV. 7 (§3.7a), and it is the null's analogue of `4b`.** The null RATIO cannot be
+    **independently reconstructed** — `fixed_seed_null_norm` over a `‖x_cv‖` **recomputed by the
+    validator** from the named production ROOT's `hXSecND_flat` under the reported-support predicate.
+    The throw writer does **not** persist `x_cv` (`unified_throw_cov.py:540-579`, measured), so without
+    this the validator can only read the producer's own number back and compare it with itself.
 12. `PM-1` shows the five-band scope does not cover cause 7's defect class on G's own `combined_source`.
 13. The receipt reports `C_Z − C_G == L_active − L_support` as an identity (§1.3c), or cites `C_Z − C_G`
     as cause 7's magnitude (§2.7).
@@ -980,6 +1010,11 @@ any publication claim, or `R5`'s scoped-Letter default; or **authorize its own c
 `R5`'s ceilings remain *"a prohibition and an accounting boundary … NOT authorization to spend up to"*).
 
 ## 3.6 The two terminal criteria that are NOT YET EXECUTABLE, and exactly what completes each
+
+**⚠ COMPLETED IN REV. 7 — READ §3.7 BESIDE THIS SECTION.** §3.6 remains as written because it is the
+**schema §3.7 discharges**, and a completion is only checkable against the requirement it claims to
+meet. Where §3.6 says *"remains"*, read *"is answered in §3.7, PROPOSED and unapproved"*. §3.6's
+requirements are not relaxed by §3.7 and none of them is dropped.
 
 **Neither is wrongly decided and neither reopens a ruling.** §6.3 and §6.4 fix the *quantity* and the
 *form*; what is missing is the statistic, the normalization and the boundary that turn a named class into
@@ -1145,6 +1180,390 @@ are stated rather than absorbed:
    spread**, that is the **substitution** §6.3 reserved — not a drafting choice — and it needs either a
    demonstrated equivalence or a separate ruling.
 
+## 3.7 THE TWO CRITERIA, COMPLETED — NEW IN REV. 7, AND ENTIRELY PROPOSED
+
+**§3.6 says what would complete each criterion. This section completes them, and approves nothing.**
+§6.6 requires the statistic, its denominator, the precision target and the boundary to be approved
+**together as one packet**, and `BEN-381` bars this lane from grading what it drafts. What changes here
+is only that the packet now exists and can be put; §6.7 puts it.
+
+**Every quantity below carries its evidence class, and a figure without one is an error in this
+document.** **MEASURED** — re-measured in this checkout at this base, with `file:line` or a digest.
+**TRANSFERRED** — measured on a different subject and carried here conditionally, direction of the
+difference **not** established. **DERIVED** — arithmetic on the two above, no new information.
+**UNRESOLVED** — named, with the exact act that closes it.
+
+### 3.7a The fixed-seed null bound, completed — §3.6a's four items answered
+
+#### Item 1 — the normalizer, with both named alternatives rejected on the record
+
+**CHOSEN.** The graded quantity is the dimensionless ratio
+
+    r_null  =  || x_cv2 - x_cv ||_2  /  || x_cv ||_2
+
+both norms taken over the **reported support** (`x_cv > 0`, `unified_throw_cov.py:370-371`, the
+predicate — never a hardcoded `10,694`). Three reasons, and the first is the one that matters:
+
+1. **Both sides are the same object.** Numerator and denominator are L2 norms of the *same*
+   cross-section vector in the *same* units over the *same* population, so the ratio is dimensionless by
+   construction and a receipt can assert it rather than assume it.
+2. **It is the quantity the error model actually bounds** — item 3.
+3. **It is what the implementation was reaching for.** `unified_throw_cov.py:517` is
+   `tol = 1e-12 * max(float(np.linalg.norm(base)), 1.0)` (**MEASURED**, at this base). The operand
+   `‖base‖` is right; the `max(…, 1.0)` clamp is the whole defect (§3.1a). **The repair is to delete a
+   clamp, not to invent a scale.**
+
+**REJECTED — normalization by `sqrt(Tr C_Z)`.** It divides a **central-value** difference by an
+**uncertainty** scale. Two consequences, either one fatal: **(a)** a Z with a larger covariance would be
+permitted a *less* deterministic CV, which inverts what a determinism check means; **(b)** it makes
+`M(i)` depend on the very object `M(i)` is a precondition for.
+
+**And this rejection has a live consequence, so it is stated rather than left implicit.** The campaign's
+quoted relative figure — *"the measured fixed-seed null on this product is `5.8223e-50`, i.e. `1.31e-12`
+of the sqrt-trace"* (`CRITERIA-20260811` `:196-201`) — uses exactly this rejected kind of denominator.
+**Which one, identified by arithmetic rather than by assumption**, because *"the sqrt-trace"* is a
+definite description and this document names three:
+
+| denominator | ratio | 3 s.f. | is it the quoted figure? |
+|---|---:|---:|---|
+| the **unified throw's** `4.443674e-38`, the value that same passage is discussing | `1.31026e-12` | `1.31e-12` | **YES** |
+| the **block-sum** footing `4.357790406860002e-38` | `1.33608e-12` | `1.34e-12` | no |
+| **G's total** `5.269625166386846e-38` | `1.10489e-12` | `1.10e-12` | no |
+
+**A first draft of this subsection asserted the block-sum footing. It is wrong, and the correction is
+recorded rather than absorbed** — the passage's own neighbouring sentence names `4.443674e-38`, so the
+answer was in the operand all along. **The substantive point survives and is sharpened:** the quoted
+figure is normalized by an *uncertainty* scale — a **third** one, distinct from both footings this
+document otherwise uses — while `r_null` is normalized by the **central-value** norm. **Z's number will
+differ, and the two must never be set side by side.** Different denominators over different populations
+is this campaign's most-repeated error class, and it just caught this paragraph.
+
+**REJECTED as the gate, RETAINED as a reported diagnostic — the per-bin maximum relative deviation
+`max_i |Δx_i| / x_i`.** The support predicate is `x_cv > 0`, which admits bins arbitrarily close to
+zero, so the statistic is dominated by the least significant bins and would fire on every correct run —
+the mirror image of the catalogued gate-that-cannot-fail, and just as useless. Worse, **no boundary can
+be derived for it**: a floating-point reduction's forward error is bounded relative to the sum of the
+magnitudes it accumulates, **not** relative to a possibly-cancelling per-bin result, so item 3's model
+says nothing about it. §3.6d forbids attaching a number to a statistic with no derivation, so it is
+**reported with its argmax bin index** — which is what makes concentration visible — and it is **not** a
+gate.
+
+#### Item 2 — units, asserted rather than assumed
+
+Numerator and denominator are both `cm²/nucleon`-scaled L2 norms over the reported support; `r_null` is
+**dimensionless**. The receipt states the unit of each operand **and** asserts the ratio's
+dimensionlessness as a field, because §3.6a's requirement is a written assertion, not a fact the reader
+is expected to reconstruct.
+
+#### Item 3 — `ε`, derived from a precision control and checked against three sensitivity channels
+
+§6.4 requires the value to be justified by *"precision and sensitivity controls established before
+implementation"*. Those are two different controls; both are computed, and **the bound is the tighter**.
+
+**THE PRECISION CONTROL, and it is the one that binds.** The proposal is a **formula, not a constant**:
+
+    eps_rel  =  n_iters * n_rep * numpy.finfo(numpy.float64).eps
+
+with `n_rep` the **measured** support cardinality and `n_iters` the run's **own** `--iters`, both
+imported from the run rather than retyped (§1.2's discipline; a retyped `10694` is a second
+implementation of a predicate).
+
+- **`n_rep * eps` is the worst-case forward error of one length-`n` floating-point accumulation**,
+  `n·eps/(1 − n·eps) ≈ n·eps`. At `n_rep = 10694` and `eps = 2.220446049250313e-16` that is
+  **`2.3745e-12`** (**DERIVED**). It is deliberately the *sequential* worst case: numpy's pairwise
+  summation is `O(log₂ n)·eps = 2.97e-15` and the random-walk expectation is `√n·eps = 2.30e-14`, but
+  **the reduction structure inside the estimator is not this lane's to assume**, so the loosest of the
+  three models is the honest one.
+- **`n_iters` is the amplification allowance, and it is derived rather than chosen.** The unfold is
+  iterative — every production launcher passes `--iters 5` (**MEASURED**:
+  `sbatch_unfold_5d_detector_bkgaware_gpu.sh:340`, `sbatch_uthrow_block_5d.sh:345`,
+  `sbatch_bootstrap_5d_gpu.sh:328`) — and a conservative model lets each iteration compound one
+  reduction's worth of error. At `n_iters = 5` the bound is **`ε = 1.1873e-11`** (**DERIVED**).
+  **A chosen multiple would have been a tuned threshold; an imported one is not.**
+
+**Does it leave a working margin, or is it a guard that fires on every correct run?** G's committed null
+is `5.8223488501140625e-50` (**MEASURED**, `PREDECLARE-20260901-cause3-mii` §0). Its ratio to `‖x_cv‖`
+is **UNRESOLVED** — see the auditability note below — but its ratio to the block-sum sqrt-trace is
+`1.3361e-12`, so *if* `‖x_cv‖ ≥ √Tr C_blocksum`, G's `r_null` is at most `1.3361e-12`, i.e. **`0.11 ε`,
+an `8.9×` margin** (**TRANSFERRED** — G is not Z, and this is a plausibility check on the bound, **not**
+its derivation; §6.4's prohibition is on reading the bound off *Z's own* null, and nothing here does).
+The `if` is not free: `‖σ‖ ≤ ‖x‖` holds unless the norm-weighted fractional uncertainty exceeds 100%
+against a printed per-bin median of `13.36%` — **likely, and still an inference, and it is what the
+auditability requirement below closes.**
+
+**THE SENSITIVITY CONTROL, computed in absolute units because that is what can be evaluated today.**
+Three channels by which a non-deterministic CV moves a reported quantity:
+
+| channel | mechanism, measured | limit on `‖Δx‖` at the printed precision |
+|---|---|---|
+| **joint mean-shift norm** | `hJointMeanShift` is *"joint throw mean minus CV"* (**MEASURED**, `unified_throw_cov.py:575`), so a CV perturbation moves it by **exactly** `−Δx` | `\|Δx\| ≤ δ·‖ms‖ = 3.030e-3 × 1.65e-38 =` **`5.00e-41`** |
+| **CV-centered sqrt-trace** | cv-centering takes deviations about the CV, so `ΔTr C = −2 ms·Δx` to first order | `‖Δx‖ ≤ δ·(√Tr)²/‖ms‖ =` **`1.89e-40`** |
+| **the printed cross-section total** | the CV *is* the reported central value | **UNRESOLVED** — `values.tex:29-31`: *"THE TOTAL IS AN INTEGRAL, NOT A SUM OF BIN CONTENTS… the bin-area Jacobian is required"*, and the 5D bin volumes are not in this checkout |
+
+**The tightest evaluated sensitivity limit is `5.00e-41` absolute, and G's measured null sits `8.6e8`
+below it** (**DERIVED**). **The precision control binds, and the conclusion survives the unresolved
+channel by a wide margin:** `ε·‖x_cv‖` exceeds `5.00e-41` only if `‖x_cv‖ > 4.21e-30`, against a vector
+whose norm is order `1e-37` — **seven orders of headroom in the one quantity nobody has measured.** The
+unresolved channel would have to be eight orders tighter than both evaluated ones to change which
+control binds.
+
+**So `ε = n_iters · n_rep · eps` is the proposal, and the sensitivity controls are reported beside it to
+show the margin rather than to set the number.**
+
+#### Item 4 — presence, finiteness, and the abort rule
+
+`fixed_seed_null_checked` must be **present and `1`**; `fixed_seed_null_norm` must be **present and
+finite**; `‖x_cv‖` must be **present, finite and strictly positive** (a zero denominator is an abort,
+never a pinned ratio — the opposite of §1.3a's `g = 1` rule, because here a zero denominator means the
+CV is empty). **Any failure ABORTS the run**; none of them is recorded as a note. The writer already
+distinguishes *"checked and zero"* from *"not checked"* (`unified_throw_cov.py:553-563`, **MEASURED**),
+and Z inherits that and fails closed on `checked == 0`.
+
+#### ⚠ One requirement §3.6a did not anticipate, and without it the bound is unauditable
+
+**MEASURED, and it is the finding of this subsection.** `unified_throw_cov.py:540-579` writes
+`C_unified`, `C_blocksum`, `C_cross`, `hJointMeanShift`, the two seeds, the offset provenance and
+`fixed_seed_null_norm` — **and it does not write `x_cv`.** The vector is computed at `:369-371`, carried
+in the return dict as `x_cv_reported` at `:586`, and **dropped**. So the denominator of the ratio this
+criterion grades is **not recoverable from the product the criterion grades**, and a validator could
+only read back the producer's own recorded number — which is the exact shape §1.3b rejected for `g`.
+
+**The vector does exist elsewhere: `hXSecND_flat` in the production ROOT** (**MEASURED** —
+`adopt_unified_5d.py:116-120` reads it, applies `xfull > 0`, and asserts the resulting dimension equals
+the throw's). So the requirement is cheap and it is **not** a new field in a new place:
+
+- Z's throw receipt records the **production ROOT's path and sha256** and the key `hXSecND_flat`, plus
+  the **recomputed `‖x_cv‖`** and `n_rep`;
+- Z's validator **recomputes `‖x_cv‖` from `hXSecND_flat` under the same predicate** and reconstructs
+  `r_null` independently, exactly as it reconstructs `g^c` (§1.3b);
+- **reading the producer's recorded `r_null` back and comparing it with itself is not this check.**
+
+**Add to §3.3's reject conditions, as `11b`:** *the null ratio cannot be independently reconstructed
+from `fixed_seed_null_norm` and a `‖x_cv‖` recomputed from the named production ROOT.*
+
+#### What §3.7a does NOT do
+
+It does not regrade G — §6.4 says so and this is a forward requirement. It does not change the measured
+`5.8223488501140625e-50`. It does not claim the current guard is *wrong about G's product*: §3.1a's
+finding is that the guard cannot fail, not that the product is bad. **And it is not approved:** `ε`'s
+form, the normalizer and the reject condition are all in §6.7's packet.
+
+### 3.7b `(cause 3, Z)`'s joint-baseline acceptance packet — §3.6b's five items answered
+
+#### Item 1 — the member, and it is MEASURED rather than designed
+
+**§3.6b called this *"the design"*. It is not: the mechanism already exists in the launchers, and this
+lane found it by reading them rather than by proposing one.** Exactly **seven** production launchers
+apply one shared environment variable, and its default reproduces the archive:
+
+| arm | launcher, `file:line` | baseline it offsets |
+|---|---|---|
+| 1 bootstrap | `sbatch_bootstrap_5d_gpu.sh:326` | `42 + ${MNV_EST_SEED_OFFSET:-0}` |
+| 2 seed split | `sbatch_seedscan_split_5d.sh:307` | `42 + …` |
+| 3 detector | `sbatch_unfold_5d_detector_bkgaware_gpu.sh:329` | `42 + …` |
+| 4 sweep | `sbatch_sweep_bank_5d_run_bkgaware_gpu.sh:318` | `42 + …` |
+| 5 uthrow run | `sbatch_uthrow_run_5d_fast.sh:316` | `1000 + …` |
+| 6 uthrow block | `sbatch_uthrow_block_5d.sh:337` | `1000 + …` |
+| 7 uthrow combine | `sbatch_uthrow_combine_5d_fast.sh:134` | `1000 + …` |
+
+**An eighth file names the variable and REFUSES it:** `sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh:164-165`
+fails with *"MNV_EST_SEED_OFFSET must be unset for the estimator-seed scan"*. **That is an independent
+mechanical confirmation of §6.3's ruling** — the narrow fixed-draw scan is a *different object* from the
+joint-baseline family, and the code already refuses to conflate them.
+
+**So a member is:** one complete seven-arm production round at one integer value of
+`MNV_EST_SEED_OFFSET = k`, assembled through the standard-P4 lateral stages and both centering variants
+into a complete `C_Z^(k)`. **`k = 0` reproduces the archive's seeds — and that is arithmetic plus a
+measurement, not the launcher comment's say-so.** Each hook's comment claims it, but the check is that
+`42 + 0` and `1000 + 0` equal the values the **unhooked** sibling launchers hardcode:
+`sbatch_sweep_bank_5d_run.sh:17` passes `--estimator-seed 42` and `sbatch_uthrow_run_5d.sh:22` passes
+`--estimator-seed 1000` (**MEASURED**). So **Z's own build is member `k = 0`** and costs nothing extra.
+
+**Two consequences, and the second is a cost finding.**
+
+1. **The implemented family is the DIAGONAL `(42+k, 1000+k)`, not a 2-D grid.** One variable moves both
+   sides by the same integer. §6.3's word is *"jointly"*, which the diagonal satisfies; if a **grid** —
+   sweep and throw offset independently — is what is wanted, that is a **second environment variable and
+   a launcher change**, i.e. **code, not compute**, and it must be decided before the offsets are
+   declared. §6.7 puts it.
+2. **No arm can be reused across members, so there is no cheap member.** This lane's first reading was
+   that arms 1 and 2 produce `C_stat` and `C_ML` and could be held fixed, cutting a member's cost. **That
+   reading was wrong and the launchers refute it:** both take `42 + OFFSET` as their *estimator* seed. A
+   member is the whole round. **The error is recorded rather than quietly dropped**, because it is this
+   lane's recurring one — an unchecked number that favoured the argument being made.
+
+#### The population, stated before the statistic because it determines which statistic is admissible
+
+**The population is the FINITE DECLARED OFFSET SET `K = {0, k₁, …, k_{N−1}}`, predeclared in full before
+the first task, and no inference is made to a distribution over offsets.** This is not a convenience;
+it is `PREDECLARE-20260901-cause3-mii` §1's own position — *"The population is the finite declared set,
+not an inferred distribution"* — and it transfers because the same thing is true here: nobody has a
+model of the offset population, and `N` will be small (below).
+
+**That settles a choice §3.6b left open.** With a finite declared population and no distributional
+inference, a **sample standard deviation is inadmissible as the decision statistic** — it estimates a
+parameter of a population this design explicitly declines to infer. The **maximum over the declared
+set** is the statistic that matches the claim being made. The SD and the full per-member table are
+**reported** as descriptive summaries; they grade nothing.
+
+#### Item 2 — the two statistics, over §6.3's ruled subject
+
+Both are taken over the **assembled** covariance `C_Z`, which §6.3 fixes and §3.6b item 2 records that
+rev. 3 wrongly reopened. Both are dimensionless; both denominators are Z's **own as-built `k = 0`**
+member, named in the same sentence as their numerators.
+
+    s_agg   =  max_{k in K}  | sqrt(Tr C_Z^(k)) - sqrt(Tr C_Z^(0)) |  /  sqrt(Tr C_Z^(0))
+
+    q^(k)   =  median_{i in support}  ( sigma_i^(k) / x_i )        [ the printed per-bin quantity ]
+    s_med   =  max_{k in K}  | q^(k) - q^(0) |  /  q^(0)
+
+`σ_i^(k) = sqrt((C_Z^(k))_ii)`; `x_i` is the reported CV, **held fixed at `k = 0`** — the central value
+is not a covariance-construction quantity and §1.3 fixes it, so varying it here would measure a
+different thing.
+
+**Both are EXACT, and that is the point.** Each is the relative change in a quantity that is itself
+printed, so neither needs a model connecting a statistic to a reported number. §3.6d's ordering rule —
+statistic first, boundary second — is satisfied by construction.
+
+**Reported beside them, gating nothing:** the per-member table of `√Tr C_Z^(k)` and `q^(k)`; the sample
+SD of each; and **the per-bin movement distribution** `m_i = max_k |σ_i^(k) − σ_i^(0)| / σ_i^(0)` with
+its median, `p90`, `max` and argmax bin.
+
+#### Item 3 — the normalization, and where its second leg is genuinely weak
+
+§3.6b requires two legs and requires the second to **bind independently**, on the predeclaration's
+reason: *"the same trace can be diffuse or concentrated, so the per-bin leg is independently binding."*
+`s_agg` and `s_med` are the two legs, and they can disagree — a trace can hold still while the per-bin
+median moves, and the converse.
+
+**⚠ AND THE PER-BIN LEG HAS A GAP THIS LANE CANNOT CLOSE, SO IT IS NAMED RATHER THAN PAPERED OVER.**
+`s_med` is the movement of a **printed median**, so it is an aggregate. A criterion that binds on
+**individual bins** would need a per-bin precision target — and **the note prints no per-bin
+uncertainty**, so no per-bin `δ` can be derived today. Two admissible closures, and both are decisions:
+
+- **(i) — recommended.** Treat the printed median macro as the note's summary of the per-bin
+  distribution, apply its `δ` to the per-bin movement distribution, and grade `median_i(m_i) ≤ δ_med` as
+  a **third, model-dependent leg**, stating the model — uniform movement — in the same sentence as the
+  number. It is not exact and it must not be presented as if it were.
+- **(ii).** Derive a per-bin `δ` from a **data release** with a declared precision. **No such release
+  exists in this tree**, and creating one is a publication decision outside `RZ(iv)`.
+
+**Until one is chosen, the per-bin distribution is REPORTED and the two exact legs are the gates.** That
+is a weaker contract than the narrow scan's and this record says so plainly rather than claiming parity.
+
+#### Item 4 — the precision target and the boundaries
+
+**THE PRECISION TARGET IS A DECLARATION, NOT A MEASUREMENT — and that is why the boundary could not be
+fixed before now.** `δ = (half the last printed unit) / (the printed value)` needs a printed value at a
+printed precision. Measured, with a covering search and a positive control:
+
+- `values.tex:113` `\gbdtFiveAdoptTrace = 5.81e-38` — **three significant figures**;
+  `values.tex:111` `\gbdtFiveBlockMedian = 13.36` **%** — **four**.
+- **Both macros are DEFINED AND NEVER USED.** A `grep` for the four 5D candidate macros across every
+  `.tex` in `docs/analysis-note/` outside `values.tex` returns **zero** print sites, against a positive
+  control on the same file set — `\uqMedian` / `\sigTwoD` / `\ratioTot` appear in **six** files. (The two
+  *auxiliary* macros `\gbdtAiEstTrace` and `\gbdtMlSplitTrace` **are** printed, at `sec_systematics.tex:108-110`.)
+- **And the values in them are J's, which are quarantined** (§1.1; QUOTED `0 of 7`).
+
+**So what transfers is the FORMAT — 3 significant figures for the aggregate, 4 for the per-bin median —
+and not the values.** The predeclaration's own rule governs: *"if the printed precision changes before
+execution, these numerical thresholds are void and must be redeclared before the run."* **Joseph must
+declare the precision at which Z's two quantities will be reported**; everything downstream is
+arithmetic. §6.7 asks for it.
+
+**THE BOUNDARIES.** §3.6d's default applies without needing a demonstration, because each statistic is
+the relative change in the reported quantity **itself**:
+
+    s_agg <= delta_agg          s_med <= delta_med          ( both written <= ; equality is favourable )
+
+**At the format-and-value prior — TRANSFERRED, and void the moment Z's own printed values exist:**
+
+| leg | printed quantity, format prior | `δ` | **proposed boundary** | the narrow scan's quadrature threshold, for contrast |
+|---|---|---:|---:|---:|
+| aggregate | `√Tr C_Z`, 3 s.f., mantissa `5.81` | `8.6059e-4` | **`0.0861%`** | `4.15%` — **`48.2×` looser** |
+| per-bin median | `median_i(σ_i/x_i)`, 4 s.f., mantissa `13.36` | `3.7425e-4` | **`0.0374%`** | `2.74%` — **`73.1×` looser** |
+
+**The `48×`/`73×` gap is arithmetic, not a preference, and it is the substance of §6.7's question.**
+Quadrature moves `U` only at second order in a small added `S`, so it tolerates a large `S`; a direct
+change moves `U` at first order. Re-derived here from the predeclaration's own numbers as a check on the
+reading: `δ = 0.005/5.81 → sqrt(2δ+δ²) = 4.1496%` and `δ = 0.005/13.36 → 2.7361%`, reproducing the
+predeclared `4.15%` and `2.74%` **exactly** — which is also how the two printed quantities behind those
+thresholds were identified.
+
+**And the choice is not "which formula", it is a scientific question with a name.** Quadrature would be
+right if baseline variation were **an omitted independent contribution being added to the budget**. It
+is not, and it may not be: `PREDECLARE-20260901-cause3-mii` §5 — *"It does not add `C_seed` to the
+uncertainty budget. A magnitude measurement and budget adoption are different decisions"* — and §1.3a
+property 3 forbids it as a block. **Under the operative rulings the direct model is the only admissible
+one.** If Joseph ever decided that baseline variation should *enter* the budget, quadrature would become
+correct — and that is a **budget-adoption** decision, not a threshold preference.
+
+#### Item 5 — the branches, mapped onto `R4`'s six, with the falsifiers named
+
+Evaluated in order; a validity failure dominates every numerical branch.
+
+1. **INCONCLUSIVE / WRONG FOOTING.** Any member fails §2-style footing agreement; the mask or row-order
+   digest differs between members; a member's `V`/`R`/`A` partition differs; any `C_Z^(k)` fails a
+   §1.3b identity; `x_i` is not held fixed at `k = 0`. **Report no magnitude.**
+2. **INCONCLUSIVE / VACUOUS BASELINE VARIATION.** The read-back `est_seed_offset` set is not exactly `K`;
+   `est_seed_offset_declared` is `0` on any member (the two-key rule at `unified_throw_cov.py:571-574`
+   exists precisely so a baseline that never reached the estimator is readable rather than inferable);
+   any two members' product digests collide; any member is missing or non-finite. **A zero spread here is
+   evidence the knob never reached the estimator, NOT a favourable result.** This is the execution
+   falsifier.
+3. **MET.** All validity checks pass and **both** `s_agg ≤ δ_agg` **and** `s_med ≤ δ_med`. Grades only
+   `(cause 3, Z)`'s `M(ii)` and authorizes nothing.
+4. **NOT MET — AGGREGATE.** Valid, `s_agg > δ_agg`, `s_med ≤ δ_med`.
+5. **NOT MET — PER-BIN.** Valid, `s_agg ≤ δ_agg`, `s_med > δ_med`.
+6. **NOT MET — BOTH.** Valid, both exceeded.
+
+**A valid large result is NOT a reject condition** (§3.3) — it is branches 4–6, an informative
+unfavourable outcome. Non-finite values are branch 1 or 2, never a comparison that happens to return
+false. **`F7_FLOOR_MULTIPLE = 2.0` has no role here** and §3.6b's reason transfers unchanged.
+
+**Two limits that must survive into the receipt, in `PREDECLARE` §5's style:**
+
+- **MET means no offset in `K` moved the printed value.** It is a statement about the declared set, not
+  about offsets outside it, and with the `N` §5.8 shows is affordable it is **weak evidence of
+  stability** while an unfavourable result is **strong evidence of sensitivity**. The asymmetry is real
+  and the receipt states it.
+- **It measures the diagonal `(42+k, 1000+k)`.** It does not measure sweep-only or throw-only variation,
+  their interaction, or any offset off the diagonal.
+
+#### What `N` can be — the finding, and it is a cost finding
+
+**DERIVED**, from §5.2's spend estimate and the per-arm round-2 actuals, at **TRANSFERRED** per-member
+costs measured on a historical seven-arm round rather than a Z member:
+
+| | GPU task-h | CPU task-h | max additional members under `R5` | **`N` total** |
+|---|---:|---:|---:|---:|
+| one Z build (member `k = 0`) | `55.70` | `86.53` | — | — |
+| remaining under `R5` `500`/`500` | `444.30` | `413.47` | — | — |
+| per additional member, nominal | `54.90` | `86.53` | GPU `8.09`, **CPU `4.78`** | **`5`** |
+| per additional member, arm 5 at its measured `+58.7%` swing | `54.90` | `115.36` | GPU `8.09`, **CPU `3.58`** | **`4`** |
+
+**So the ruled quantity is affordable inside `R5` at `N = 4` to `5` total members, consuming `86.5%` of
+the CPU ceiling** — with `R5` §3 charging every failed and retried task in full, and with §5.2's omitted
+rows still outside the arithmetic. **The historical `46`/`50`-member design is `5.1×`–`8.7×` over.**
+**There is no affordable middle**: the CPU column is the binding one, and it is the column §5.7 measures
+as carrying at least a `±60%` single-arm swing.
+
+**That is the design answer §6.3 left open, and it is not this lane's to accept.** A four-or-five-member
+maximum-deviation measurement is a real, predeclarable, falsifiable measurement — and it is a **weak**
+one, in the specific and stateable sense above. §6.7 puts the choice.
+
+### 3.7c What §3.7 does not do
+
+It approves nothing, opens no cell, grades no leg and takes no decision reserved to Joseph. It does not
+reopen `§6.3`'s quantity, `§6.4`'s form, `R4`'s suspension, or the assembly algebra. It proposes no
+change to `CRITERIA` §0's vocabulary. It does not authorize the offsets it names, the control read it
+names, or any run. **`BEN-381` applies to it in full:** this lane drafted these criteria and re-measured
+the evidence under them, so it grades nothing under them.
+
+**And it does not pretend to be complete where it is not.** Three things above are **UNRESOLVED** and
+each names its closure: `‖x_cv‖` for G (a bounded read of `hXSecND_flat`); the printed-total sensitivity
+channel (the 5D bin volumes); and the per-bin leg's precision target (a declaration or a data release).
+**None of the three changes which control binds or which boundary model applies.**
 ---
 
 # 4. DEPENDENCY ANALYSIS — deliverable `RZ(v)(d)`
@@ -1164,7 +1583,7 @@ compute*, because it is already committed or is a measurement rather than a buil
 | 2 | **The historical-candidate cause-3 fixed-draw seed scan** (`⚠ AUTH`: `R4` **SUSPENDS** it; needs **both** `D-C3-VOI` and `D-C3-RUN`) | **NO for Z**, and §6.3 now settles why: Z's `M(ii)` is the **joint-baseline** quantity on Z's own assembled covariance, and the narrow scan is **diagnostic** for Z unless substitution is separately ruled | **NO as evidence; YES as method and cost prior.** What transfers is the predeclared quantity form, the six exhaustive branches, the thresholds `f_agg ≤ 0.0415` / `f_med ≤ 0.0274` and the 13-task shape. No measured value transfers | **method and thresholds: YES, committed.** **a measured value: NO — none exists.** `R4`: no `nd-unfolding/uq_5d/cause3_mii_20260901/`, no receipt; the run never launched |
 | 3 | **The first `r5_meter` accounting receipt measured on Perlmutter** | **YES — for a Z CAMPAIGN, not for this specification.** `campaignctl` is fail-closed and *"admits no item at all until a receipt measured on Perlmutter is committed, and none is"* (`ACCEPTANCE-20260905`) | **YES.** It measures the campaign's spend against `R5`, a property of any Z campaign | **NO — it does not exist.** `docs/orchestration/state/r5-meter-receipt.json` is **absent at this base**. It is a login-node `sacct` query plus a commit, not a build; §5.6 |
 | 4 | **`PM-1`** — the nine-vs-five weight-only band census on **G's own `combined_source`** | **YES.** If any of the four weight-only bands carries selection-dependent support in the 5D chain, Z's five-band scope is **incomplete for cause 7** and this specification must be amended | **YES** — a property of the support family Z reads | **NO.** The tree's claim is the **FPS-side** row `VALIDATION_LEDGER.md:788-791`, corroborated by `2D_OMNIFOLD_REFERENCE.md:239-241` — the same split, not a second measurement. A cluster read |
-| 5 | **`PM-2`** — G's `combined_source` sha256, **read from the file** | **YES.** Without it Z's parent chain has a definite description where it needs a digest | **YES** | **NO, and the near-miss must be named.** `std_component_manifest.json` records `support_family_sha256 = 9f7b2f55…` for **the same path**, but S read it 2026-08-16 and G was built 2026-08-12. **Using S's digest as G's is the substitution `PM-2` exists to prevent** |
+| 5 | **`PM-2`** — G's `combined_source` sha256, **read from the file** | **YES.** Without it Z's parent chain has a definite description where it needs a digest | **YES** | **⚠ CORRECTED IN REV. 7 — §5.9a. YES, ALREADY IN THE TREE.** G's **own** build receipt `STAMPED_HASH_RECEIPT.slurm-56720356.json` records the full path and `9f7b2f55…` at `2026-08-12T05:46:19Z`, **four days before S read the file**; S's manifest is a second, differently-originated **agreeing** measurement. **Rev. 2–6's *"using S's digest as G's is the substitution `PM-2` exists to prevent"* is FALSE and is withdrawn.** What survives is a *timing* qualification, not a missing digest: the launcher hashes after building, and the `mtime_ns 2026-07-14` field is what closes the gap — hence §1.5's new **open-time stamping** requirement |
 | 6 | **`PM-3`** — availability, provenance and **grid/footing compatibility** of the ten selection-complete endpoints | **YES.** They are `L_active`'s inputs | **YES** | **PARTLY, and rev. 2 narrows what the evidence shows.** `RECEIPT-20260816` records all 20 stage-1/2 tags **SKIPPED** as of 2026-08-16 and `DETERMINATION-20260811` records the samples *"Gate-3 promoted… since 2026-07-20"*. **Historical SKIPs establish neither present availability nor mandatory retraining** — the reviewer's formulation. A cluster `ls` plus digest and footing check; a **rebuild is priced only if that check fails** (§5.5) |
 | 7 | **`PM-4`** — G's mask digest and row-order digest, read from G | **YES.** §1.3's invariant is unassertable without them, and without it every `M` comparison is over two populations | **YES** | **NO.** S's `reported_mask_hash`/`row_index_sha256` are **S's**, and `row_index_basis` warns that *"builds before [2026-08-10] lack it"* — G is 2026-08-12, so it plausibly carries `hRowIndex5D`, but that is an inference, not a read |
 | 8 | **`PM-5` (NEW in rev. 2)** — the `V`/`R`/`A` partition measured against G's own `combined_source` band inventory | **YES.** §1.3a's disjointness-and-exhaustiveness gate cannot be written against an unmeasured family | **YES** | **PARTLY.** `VERT_BANDS` (13) and `p4_lib.BANDS` (5) are committed constants; S's manifest gives 45 `all_syst_bands`. **But that is S's family read, not G's**, and `R`'s membership is a *complement*, so it is only as good as the family list. A cluster read closes it |
@@ -1378,6 +1797,14 @@ member with neither the active lateral components, nor both assemblies, nor the 
 validation. **Rev. 4 said a Z member "costs more"; that is withdrawn too.** A different subject supports
 no direction: the extra work pushes one way, and reuse and execution conditions can push the other.
 
+**⚠ SUPERSEDED IN PART BY REV. 7 — §3.7b.** *"No design"* was right about what §6.3 left open and wrong
+about what the tree already contained: **the member is implemented**, as one shared
+`MNV_EST_SEED_OFFSET` across exactly seven launchers, so what was open was `N` and the offset set, not
+the member. With the member measured, the affordable count is **`N = 4`–`5` total at `86.5%` of the CPU
+ceiling**, and there is now an affordability finding where this paragraph says there is none. **The
+per-member prior and its "different subject" caveat are unchanged and still govern.** Read the sentence
+below as rev. 3's, superseded:
+
 **So the honest statement is:** `(cause 3, Z)`'s `M(ii)` as ruled has **no design, therefore no cost,
 therefore no affordability verdict**; and the one design that *has* been sized — the historical family —
 **exceeds `R5` by 5×–9× at prior costs measured on a different subject.** Whether a Z member is dearer
@@ -1385,6 +1812,11 @@ or cheaper than that prior is **not established in either direction**. That is a
 a plan (§7 item 3).
 
 ## 5.5 Conditional and unpriced items, named rather than absorbed
+
+**⚠ SUPERSEDED IN PART BY REV. 7 — §5.8 is the current census and §5.8a is the delta.** Three of the
+items below are no longer unsized: the cause-1 off-diagonal counterfactual (`≈0.03` CPU task-h), Z's
+inflated-object validation (`≈0.07`), and the two assemblies (`≤ 0.5231`, a **measured upper bound**).
+The list is kept as written because §5.8 is a completion of it, not a replacement.
 
 - **Endpoint rebuild.** Priced **only if** `PM-3`'s availability, provenance or compatibility checks
   fail. **Historical SKIPs establish neither present availability nor mandatory retraining**, so a
@@ -1413,6 +1845,11 @@ the scheduler.** Measured at this base:
 - `docs/orchestration/campaignctl.py` exists (204,141 B); admission is fail-closed.
 - **`docs/orchestration/state/r5-meter-receipt.json` DOES NOT EXIST.** Measured, not recalled. The
   reviewer confirms: *"No operational meter receipt is committed at either reviewed revision."*
+  **⚠ STILL TRUE AT THIS BASE, AND NOW FOR A DIFFERENT REASON — §5.9.** A genuine receipt has been
+  **produced** against live Perlmutter `sacct` by the operational-preflight session and deliberately
+  **not committed**, because committing it arms `campaignctl`'s fail-closed admission and that is a
+  larger act than an evidence errand. **So the gate still holds, and it now holds by choice rather than
+  by absence.**
 - `test_r5_meter.py`: **18 tests, all passing** — **on three checked-in fixtures**
   (`test_fixtures_r5_meter/{mixed,perlmutter_regular_gpu,rows_vs_identities}.sacct`) that are
   **hand-authored, not captured** (job ids `50000`/`60000`, task names `task-0`,
@@ -1420,7 +1857,11 @@ the scheduler.** Measured at this base:
   its parser cannot disagree with it.
 - `_sacct_argv()` (`:380-392`) requests `JobID,JobName,State,ElapsedRaw,Partition,Start,End,AllocTRES`
   for the current user from t0 to now. **Whether real Perlmutter `sacct` output parses cleanly through
-  it is unmeasured.**
+  it is unmeasured.** **⚠ ANSWERED IN REV. 7 — IT DOES** (§5.9 item 1, relayed). **And two new defects
+  arrived with the answer:** `_sacct_argv()` carries **no `--duplicates`**, so a requeued task is
+  counted once against `R5` §3's *"retried tasks count in full"* (`D5`, `12.59` CPU task-h of measured
+  gap); and `sacct` **refuses spans over 30 days**, so this query stops working on
+  `2026-10-02T13:44:27Z` — `2 d 13 h 44 m` after the `R5` stop (§5.9b).
 - **No unattended execution is configured** (`ACCEPTANCE-20260905`; the credential decision is Joseph's
   or the site owner's).
 
@@ -1456,6 +1897,230 @@ identities (`PM-2`, `PM-3`, `PM-5`), and an explicit run authorization (`D-RESOU
    `TIMEOUT`. A single failed pass spends its full elapsed time and produces no Z.
 5. **Two build lines are unsized** (§5.5), and `(cause 3, Z)`'s ruled quantity has **no design and
    therefore no cost** (§5.4).
+
+## 5.8 THE CENSUS BY CATEGORY — NEW IN REV. 7
+
+**§5.2's census is organized by *which subtotal omits what*. This one is organized by *what kind of cost
+it is*, because the four kinds are authorized differently and must not be summed into one number.**
+Nothing here is a bid, a request or an authorization; `RZ(iv)` withholds compute and `R5`'s ceilings
+remain *"a prohibition and an accounting boundary … NOT authorization to spend up to"*.
+
+**Evidence classes are the same four §3.7 uses**, and they are the point of this section:
+
+- **MEASURED** — a number this lane produced, with the machine or the `file:line` named.
+- **TRANSFERRED** — measured on a different subject or different hardware. **Direction not established.**
+- **DERIVED** — arithmetic on those.
+- **UNRESOLVED** — no figure, with the exact act that would produce one.
+
+### 5.8a What rev. 7 moved, stated first so the census is readable as a delta
+
+§5.2's spend estimate omitted **five** rows. After this revision:
+
+| row | rev. 6 | **rev. 7** |
+|---|---|---|
+| cause-1 off-diagonal counterfactual | unpriced | **≈ `0.03` CPU task-h** — DERIVED from local timings on the real `10,694` dimension |
+| Z's inflated-object validation | unpriced | **≈ `0.07` CPU task-h** — same |
+| cause-4 second CV unfold | unpriced | **UNRESOLVED** — needs one CV-unfold time on the **CPU** partition |
+| statistical + ML combine | unmeasured | **STILL UNMEASURED, and now a COVERED absence** — no `budget5d`/`combine_5d_budget` row exists in retained accounting `2026-07-01`→now (`3,994` rows, coverage verified), and the 4D analogue was CANCELLED at `0` s (§5.9 item 5) |
+| the two assemblies | unmeasured | **`≤ 0.5231` CPU task-h — a MEASURED UPPER BOUND** on the pair, from `j28_adopt_5d` `56429334` (§5.9 item 4). Replaces `4.0 PROPOSED, UNVERIFIED` |
+
+**Two of five are now estimated, one is bounded above by a measurement, one is a covered absence, and
+one needs a measurement nobody has taken.** The `4.0` and `1.0` reservation figures rev. 4 labelled
+**PROPOSED, UNVERIFIED** are now settled in opposite directions: the assemblies come in at **`≤ 0.5231`,
+an eighth of the proposal**, and the combine has no accounting at all rather than a low one. The two new figures are small enough that they do not move `55.70`/`86.53`
+materially — **which is itself the finding.** Rev. 3 flagged them as an unsized hazard on the strength
+of the `10,694²` dimension; measured, the dimension costs **minutes and gigabytes, not hours and
+terabytes**, and the binding constraint on both rows is **memory (~2–3 GB peak), not time.**
+
+**The sizing basis, named on both sides because it is a hardware transfer.** Measured on this machine —
+macOS `arm64`, numpy `1.26.4` on `openblas64`, single process:
+
+| operation at `n = 10,694` | measured / extrapolated | how |
+|---|---:|---|
+| full `n²` outer product | `0.269` s | MEASURED at `n = 10,694` |
+| in-place `n²` add | `0.286` s | MEASURED at `n = 10,694` |
+| band covariance `ZᵀZ/N`, `N ∈ {2, 3, 100}` | `0.45`–`0.62` s | MEASURED at `n = 10,694` |
+| `numpy.linalg.eigvalsh` | **`113` s** | EXTRAPOLATED cubically from `n = 5000` (`11.53` s); the constant `t/n³` converges from above — `1.28e-10`, `1.07e-10`, `9.72e-11`, `9.23e-11` at `n = 2000…5000` |
+| peak memory, eigenvalues only | **`1.83` GB** | MEASURED as one extra matrix copy at `n = 4000` (`123` MB delta against a `128` MB matrix); `jobz='N'` LAPACK workspace is `O(n)` |
+
+**The transfer is to AMD `EPYC` CPU nodes with a different BLAS, and its DIRECTION IS NOT
+ESTABLISHED** — more cores could make it faster, a slower single core could make it slower. **What
+survives the transfer is the order of magnitude**, and that is all these two rows are claimed to.
+
+### 5.8b PRODUCTION — building Z once
+
+The cost of the artifact itself. Authorized by `D-RESOURCE`, which **does not exist** (§4 row 19).
+
+| item | GPU task-h | CPU task-h | class |
+|---|---:|---:|---|
+| seven-arm production round (member `k = 0`) | `54.90` | `86.53` | **TRANSFERRED** — round-2 actuals, `AMENDMENT` §3d |
+| standard-P4 lateral stages 3–6 | `0.80` | 0 | **TRANSFERRED**, conditional on `PM-3`; §5.2a |
+| statistical + ML combine | — | **UNRESOLVED** | one `sacct` read; a `--time` request is not a spend estimate |
+| the two `adopt_unified_5d.py` assemblies | — | **`≤ 0.5231`** | **MEASURED UPPER BOUND, relayed** — `j28_adopt_5d` `56429334` COMPLETED in `1,883` s and the pair is a subset of its four operations (§5.9 item 4). **No point estimate is licensed** |
+| cause-1 counterfactual **incl. off-diagonal** | — | `≈ 0.03` | **DERIVED** — `44` as-built + `42`+`42` one-sided band covariances at `≈0.5` s, plus accumulation |
+| Z's inflated-object validation, **both variants** | — | `≈ 0.07` | **DERIVED** — `2 ×` (`13` band reads + closure residual + symmetry + `eigvalsh` at `113` s) |
+| cause-4 jitter counterfactual — a **second** CV unfold | — | **UNRESOLVED** | distinct from `--null`'s same-seed unfold; needs a **CPU**-partition time, and the `43.5`-min figure is a **GPU** arm-3 per-task time |
+| **partial sum of the SPEND ESTIMATES only** | **`55.70`** | **`86.63`** | **not a bound in either direction.** The assemblies' `≤ 0.5231` is an **upper bound, not a spend estimate**, so it is deliberately NOT summed here; **two rows — the combine and the cause-4 second unfold — have no figure at all** |
+
+### 5.8c ARTIFACT REPLAY — verifying Z from digest-bound components
+
+`PLAN-20260905` #19, §4 row 21. **Not a second production campaign** — rev. 1's automatic doubling stays
+withdrawn — and *"cold checkout, no producer helpers"* means no producer code paths, **not** retraining.
+
+| term | figure | class |
+|---|---|---|
+| arithmetic — re-read `≈45` component matrices, re-sum, re-check §1.3b's identities, `eigvalsh` both variants | `≈ 0.07` CPU task-h | **DERIVED**, same basis as §5.8b |
+| I/O — `≈41` GB if each component is a full `10,694²` `TH2D`, which is how `hCov_universe5d_<band>` is read (`adopt_unified_5d.py:130-141`) | **UNRESOLVED** | needs a measured read rate on the storage the components sit on |
+| digest recomputation over the component files | **UNRESOLVED** | same read rate |
+| **total** | **not established** | the arithmetic term is small; the I/O term is the whole question and nobody has measured it |
+
+**Do not read the small arithmetic term as a small replay.** A replay whose dominant term is unmeasured
+is unpriced, and §5.3's *"this lane has not sized it"* stands for the sum.
+
+### 5.8d CONDITIONAL WORK — priced only if a named precondition resolves a particular way
+
+**None of these is part of a Z build. Each is named with its trigger, so nothing is silently absorbed.**
+
+| item | trigger | figure | class |
+|---|---|---|---|
+| **the joint-baseline campaign** (§3.7b) | Joseph approves the packet **and** authorizes a design at `N` | `3`–`4` additional members at `54.90`/`86.53` each → **`164.7`–`219.6` GPU / `259.6`–`346.1` CPU** | **DERIVED** on **TRANSFERRED** per-member costs |
+| a **2-D grid** instead of the implemented diagonal | Joseph rules `"jointly"` means a grid | **code, not compute** — a second environment variable and a launcher change | **MEASURED** (one shared `MNV_EST_SEED_OFFSET`, §3.7b) |
+| **`PM-6`** — `‖x_cv‖` for G, to close §3.7a's denominator | needed before `ε` can be checked against a real ratio | **≈ 0 task-h** — a bounded read of `hXSecND_flat` | **MEASURED** that the key exists (`adopt_unified_5d.py:116-120`) |
+| a standalone **null-determinism control run**, *only if* `PM-6` is impossible | §6.4 requires the bound fixed **before** production, so arm 7's own `--null` is too late | `2` CV unfolds `≈ 1.45` GPU task-h at the `43.5`-min prior; request `2` h | **TRANSFERRED** — `det5dBKG` `57753244`, and the direction is not established |
+| **endpoint rebuild** | **only if** `PM-3`'s availability/provenance/compatibility check **fails** | unpriced, deliberately | historical SKIPs establish neither present availability nor mandatory retraining |
+| cause-1's **disclosure** and cause-5's **path re-trace** | closure conditions | **0 task-h** — a publication act and a static read | §6.2, §6.1 |
+| the **five inflation gates**, the **cause-3 dominant-block refusal**, and the **`r_null` reconstruction** | required for `C`/`T` | **code, not compute** | §1.3b, §4 rows 10–11, §3.7a |
+
+### 5.8e CONTINGENCIES — what the estimates do not carry
+
+**These are not line items. They are reasons every figure above can be wrong in the unfavourable
+direction, and `R5` charges them in full.**
+
+1. **The CPU column carries at least a `±60%` single-arm swing.** **MEASURED across two complete
+   populations:** arm 5 went `30.94 → 49.11`, **`+58.7%`**, and `AMENDMENT` §3c/§3e attribute it to
+   on-node contention that *burns* CPU, not to queue waiting. Applied to a member this alone moves
+   `N` from `5` to `4` (§3.7b).
+2. **Failed, cancelled and timed-out tasks count in full** under `R5` §3. A `374`-task round with any
+   failures costs more than a clean one and produces the same one Z.
+3. **Arm 4 holds its ceiling with only `12.4%` headroom on a rising trend** (`AMENDMENT` §3d), and this
+   document proposes raising no ceiling.
+4. **A hold-style dispatch charges to its timeout.** The observed `03:00:03` instance metered `3.00`
+   task-hours for `00:47:58` of work (§5.2a). That is a hazard to design out, not a price to plan on —
+   and it is a *design* hazard, so it is inside this lane's reach and not the scheduler's fault.
+5. **Every per-member and per-arm figure is a prior from a different subject.** No Z arm has ever run.
+   §5.7 item 1 governs and nothing in §5.8 weakens it.
+6. **⚠ NEW IN REV. 7 — a 7-day full-system outage sits inside the `R5` window, and the usable
+   scheduling window is `16 d 15 h` in two blocks, not `24` days** (§5.9b). §5.3's *"24 days 1 hour"*
+   measured the calendar. **This may bind harder than the ceiling** for a `4`–`5`-round campaign and
+   nobody had asked the question.
+7. **⚠ NEW IN REV. 7 — array launches that abort produce nothing and still charge.** Three of eight
+   `det5dBKG` launches aborted at `4`–`75` s (§5.9 item 7). `R5` §3 charges them in full.
+8. **⚠ NEW IN REV. 7 — the ceiling itself is contested by `12.59` CPU task-h and the gap grows.**
+   `D5`. It does not move `N`, and it does move the headroom every other figure is quoted against.
+
+### 5.8f One named cost-reduction opportunity, recorded as an opportunity and NOT as a saving
+
+**MEASURED.** `unified_throw_cov.py:544-549` writes `C_unified`, `C_blocksum` and `C_cross` with nested
+Python loops — `3 × 10,694² ≈ 3.4e8` `SetBinContent` calls — and `unified_throw_cov_5d.py`'s header
+records that *"do_throws, do_blockunits, do_combine, the jitter null — is inherited unchanged"*, so that
+is what arm 7 executes. **The repository already contains the fast form:** `adopt_unified_5d.py:58-59`'s
+`_write_th2`, whose docstring is *"Fast dense TH2D write via the writable ROOT buffer (avoids 1e8
+SetBinContent calls)"*, and the matching reader `_th2` at `:46-49` uses `np.frombuffer` rather than a
+loop.
+
+**No saving is claimed.** Arm 7's measured round-2 actual is `0.58` CPU task-h in total, so the
+opportunity is bounded above by a small number, and **this lane has not measured PyROOT's
+`SetBinContent` rate** — the local environment has no ROOT (`perlmutter-root-tf-env-split`). It is
+recorded because a reader pricing arm 7 for a `4`–`5`-member campaign should know the writer has a
+faster form sitting beside it, and because **adopting it would be a code change requiring its own
+byte-level equivalence check**, not a free win.
+## 5.9 RELAYED OPERATIONAL EVIDENCE — NEW IN REV. 7, AND ITS PROVENANCE IS PART OF IT
+
+**This subsection is NOT this lane's measurement.** It relays a read-only evidence packet produced by
+the **operational-preflight session** (`preflight [e11e6d]`, same worktree base, live read-only SSH to
+Perlmutter, login31 pinned), at
+`.../38a63c82-.../scratchpad/R5-EVIDENCE-PACKET-20260906.md` with raw dumps beside it.
+**Nothing from it is committed at this base and this record commits nothing.**
+
+**Two of its claims were re-verified HERE, against files in this checkout, before anything downstream
+was changed. The rest is relayed and labelled as such** — a peer's report is not a measurement I took,
+and the distinction is load-bearing in this campaign.
+
+| # | claim | status here |
+|---|---|---|
+| 1 | a genuine `r5_meter` receipt now parses real Perlmutter `sacct`; spend `0.0` GPU / `0.0016667` CPU task-h, one task, all flags false | **RELAYED.** §5.6's *"whether real Perlmutter `sacct` output parses cleanly through it is unmeasured"* is answered — **by a receipt that is NOT COMMITTED**, so §4 row 3 still gates every compute row |
+| 2 | that receipt **undercounts**: the one in-window task is a self-requeueing waker with `Restarts=1990`, and `--duplicates` gives **953 instances, `12.5903` CPU task-h** on the same window | **RE-VERIFIED HERE.** `r5_meter.py:380-392` `_sacct_argv()` carries no `--duplicates`, and `_parse_sacct_dump` keys on job id alone — `:270` raises *"conflicting rows for task identity"*. **So `--duplicates` is not a drop-in fix, and the gap is a SPECIFICATION question against `R5` §3's *"retried tasks count in full"*.** `D5` |
+| 3 | `57128458`'s parent metered `ElapsedRaw = 10,803` s against a `10,800` s request — elapsed **exceeds** the wall request, which a request cannot do | **RELAYED, and it settles §5.2a on the scheduler's own record.** The `3.00` was a hold that stayed allocated, not a wall-request charge |
+| 4 | `j28_adopt_5d` = `56429334`, COMPLETED, **`1,883` s = `0.5231` CPU task-h**, `shared_milan_ss11`, against a `4:00:00` request | **RELAYED. It replaces the assemblies' `4.0 PROPOSED, UNVERIFIED` with a MEASURED UPPER BOUND on the pair** — the two assemblies are a subset of that job's four operations, and the job completed, so the pair took **≤ `0.5231`**. Direction established, for once, because a subset of a completed job is bounded by it. **It licenses no point estimate** |
+| 5 | no `budget5d` / `combine_5d_budget` row exists anywhere in retained accounting (`2026-07-01` → now, `3,994` rows, coverage verified); the 4D analogue `budget4dCc` was CANCELLED at `0` s | **RELAYED. `unmeasured` stays and is now a covered absence rather than an uncovered one** |
+| 6 | `det5dBKG` `57753244` is `shared_gpu_ss11`, **a100** — n=19, min `2,511` s, median `2,605` s, max `2,730` s, sum `13.7617` GPU task-h | **RELAYED, and it confirms §5.2's standing warning that the `43.5`-min figure is a GPU time.** The distribution is tight on the full-length arrays |
+| 7 | across eight `det5dBKG` array launches, **three aborted at 4–75 s and produced nothing**, and the 126-task mean is `27.56` min — *"a number describing no run that happened"* | **RELAYED, and it is a contingency, not a price** — §5.8e item 2. The aborted arrays' elapsed still counts under `R5` §3 |
+| 8 | G's own committed key list is **13 keys and contains no CV vector and no norm** | **RELAYED, and it independently supports §3.7a's auditability requirement** without depending on a ROOT read |
+| 9 | **`PM-2` is dischargeable, and two statements in THIS document are false** | **RE-VERIFIED HERE — see §5.9a.** Both corrected in place |
+| 10 | `PM-1`, `PM-4`, `PM-5` and `PM-3`'s grid/footing arm are **BLOCKED**: they need to open a ROOT, and on the login node `uproot` is absent from both interpreters while PyROOT segfaults on import in the project conda env | **RELAYED.** A `TKey` listing is a header read, not a `41` GB scan, so these are cheap once unblocked — but **installing `uproot` changes the environment rather than reading it**, and the preflight session correctly declined. **`PM-3`'s availability arm IS discharged**: all ten endpoints present in `universe_sweep_bkgaware/`, all dated `2026-07-14`. **Trap recorded: a second, non-bkgaware set of the same ten filenames sits in `universe_sweep/` dated `2026-06-12` — pin the DIRECTORY, not the filename** |
+| 11 | a **7-day full-system outage** `maintenance_20260916` sits inside the `R5` window; and `sacct` refuses queries spanning more than 30 days | **RELAYED; the arithmetic is RE-DERIVED HERE — §5.9b** |
+
+### 5.9a ⚠ TWO FALSE STATEMENTS IN THIS DOCUMENT, CORRECTED — and the failure is mine and familiar
+
+**RE-VERIFIED IN THIS CHECKOUT**, `nd-unfolding/uq_5d/readopt_20260811_footing/STAMPED_HASH_RECEIPT.slurm-56720356.json`
+— `job_id 56720356`, `created_at_utc 2026-08-12T05:46:19+00:00`, `schema stamped-footing-candidate-receipt-v1`:
+
+| key | path recorded | sha256 | size | mtime, re-derived from `mtime_ns` |
+|---|---|---|---|---|
+| `combined_bkgaware` | **full path** `nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root` | `9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a` | `41436632945` | **`2026-07-14T20:59:17Z`** |
+| `uthrow` | `nd-unfolding/uq_5d/unified_throw_cov_5d_fluxfix_20260806_full160.root` | `4cb02ae767c887b5fc43554a8f2c4a1821d25fdf547aeeeedbe8b3d57f8b4281` | `2668021041` | `2026-08-07T00:38:46Z` |
+| `A1_stamped_meancentered` | G itself | `4f168e83…` (matches §1.1) | `892170881` | `2026-08-12T05:43:34Z` |
+
+**So §1.1's `G.combined_source` row — *"name only; no digest for it is recorded anywhere in the tree"* —
+is FALSE, and §4 row 5's *"using S's digest as G's is the substitution `PM-2` exists to prevent"* is
+FALSE.** G's own build receipt records that digest **four days before S read the file**, and S's
+manifest is a second, differently-originated, agreeing measurement rather than a substitution.
+
+**The failure class is one this lane has already been burned by and it is recorded rather than quietly
+repaired.** *"Nowhere in the tree"* is an inference from absence asserted **without a covering search**,
+about a file sitting in **G's own directory in this very checkout**. It is the same shape as rev. 1's
+missed `no-fourth-grade-token` record. **A claim of absence needs the search that would have found it,
+stated beside the claim.**
+
+**What survives, and it is a real requirement on Z rather than a caveat.** The launcher hashes **after
+building**, so the digest binds the bytes at `05:46:19`, not by direct observation the bytes read at
+`05:43:34`. The gap closes on the same receipt's `mtime_ns = 2026-07-14T20:59:17Z`, which predates the
+job — and the preflight session reports `ctime == mtime` on the cluster today, `ctime` being the field
+userspace cannot set, which excludes `cp -p` / `touch -r` / `rsync --times`. **Irreducible residual:**
+`/pscratch` is purgeable, a restore could reconstruct metadata, and the chain runs partly backwards from
+a later digest.
+
+**REQUIREMENT ON Z'S RECEIPT (§1.5), and it is the durable lesson:** stamp
+`path + sha256 + size + mtime_ns + inode + device` **at OPEN time, not at job end.** G's receipt gets
+four of six fields, at the wrong instant. **`PM-2`'s disposition is not this lane's to take** — it is a
+`SCOREBOARD`/`OPEN_ITEMS` act by whoever owns the row — but the evidence for discharging it now exists
+and this record says so.
+
+### 5.9b THE SCHEDULE, WHICH MAY BIND HARDER THAN THE CEILING — arithmetic re-derived here
+
+**RELAYED:** `maintenance_20260916`, `2026-09-16T13:00Z → 2026-09-23T13:00Z`, **5,248 nodes**,
+`MAINT,IGNORE_JOBS`. **RE-DERIVED HERE** from `2026-09-06T09:10Z`:
+
+| span | duration |
+|---|---|
+| to the `R5` stop `2026-09-30T00:00:00Z` | `23 d 14 h 50 m` |
+| **block A** — now → outage start | `10 d 3 h 50 m` |
+| the outage | `7 d 0 h 0 m` |
+| **block B** — outage end → `R5` stop | `6 d 11 h 0 m` |
+| **USABLE SCHEDULING WINDOW** | **`16 d 14 h 50 m`, in two blocks** |
+
+**§5.3's *"24 days 1 hour"* measured the calendar, not the schedule.** A `4`–`5`-member joint-baseline
+campaign is `4`–`5` complete rounds of **374 tasks each**, and `AMENDMENT` §3c records that one arm's
+tail *"ran at two-way concurrency on `Reason=Resources` for eleven hours"* in a single round. **Whether
+four or five such rounds fit into a `10`-day and a `6.5`-day block is not established here, and it is a
+question nobody had asked** — the ceiling arithmetic in §3.7b assumes only that the task-hours fit, not
+that the wall-clock does.
+
+**And the meter itself expires inside the same window.** `sacct` refuses spans over 30 days (measured by
+the preflight session's bisection: 30 d accepted, 31 d rejected; the limit is on **span**, not lookback).
+`_sacct_argv()` queries `t0 → now`, so **the meter can measure the complete `R5` window only until
+`2026-10-02T13:44:27Z`** — `2 d 13 h 44 m` after the stop (re-derived here). After that the live query
+fails and, admission being fail-closed, `campaignctl` closes. **Neither fact is in §5.6.**
 
 ---
 
@@ -1615,6 +2280,10 @@ contract and nothing in §§1–5 depends on it.**
   §3.6d's whole finding is that the formula's validity depends on what the statistic is. **So this item
   is not ready to be decided today**, and nothing here asks for a decision: it is ready when §3.6b's
   definitions exist and can be put to Joseph as one package.
+  **⚠ SUPERSEDED IN REV. 7 — THE PACKAGE NOW EXISTS.** §3.7b supplies the statistic, its denominator,
+  the precision target and the boundary as one packet, so the condition this bullet set is met and
+  **§6.7 puts it.** The constraint itself is unchanged and is honoured: the four are put together, and
+  no formula is offered detached from its definitions.
 - **Whether the three non-pair bands' construction should change** (§6.2) — a criterion extension nobody
   has proposed and this lane does not.
 - **Whether the narrow fixed-draw scan may SUBSTITUTE for the joint-baseline quantity** (§6.3) — reserved,
@@ -1627,16 +2296,145 @@ contract and nothing in §§1–5 depends on it.**
   `DECISION-20260902-joseph-rules-no-fourth-grade-token.md` §3 as *"the better-motivated change"* **if**
   §0 is ever opened. It is not opened here.
 
+## 6.7 WHAT IS NOW READY TO BE PUT TO JOSEPH — NEW IN REV. 7, AND NOTHING HERE IS DECIDED
+
+**§6.6 said the boundary-form question *"is not ready to be decided today"*, on one condition: the
+statistic, the denominator, the precision target and the boundary must be approved TOGETHER. That
+condition is now met.** §3.7 supplies all four for both criteria. This section states the decisions and
+takes none of them. **`BEN-381` bars this lane from grading these legs, and §0.2's pattern governs: the
+framing below is this lane's and open to challenge on its merits; any adoption is Joseph's.**
+
+**Five decisions. `D1` and `D4` are packets and must be answered as packets — a boundary approved apart
+from its statistic would authorize a number over an object nobody has defined.** `D5` arrived with the
+operational evidence packet (§5.9) and is **not part of Z's contract**; it is here because it moves the
+ceiling every figure in §3.7b and §5.8 is quoted against.
+
+### `D1` — the `(cause 3, Z)` acceptance packet (§3.7b)
+
+| part | what is proposed | what it turns on |
+|---|---|---|
+| **D1a** the two statistics | `s_agg` = max over the declared offset set of the relative change in `√Tr C_Z`; `s_med` = the same for the printed per-bin median `median_i(σ_i/x_i)` | the **max** rather than a sample SD, because the population is the finite declared offset set and no distributional inference is made — `PREDECLARE-20260901-cause3-mii` §1's own position |
+| **D1b** the denominators | Z's **own as-built `k = 0` member**: `√Tr C_Z^(0)` and `q^(0)` | both named beside their numerators; both statistics exact, so no model connects them to a printed number |
+| **D1c** the **precision target** | declare that Z's aggregate is reported to **3 significant figures** and its per-bin median to **4**, matching the existing macro format | **this is a declaration, not a measurement.** Both macros are defined and **never printed** (measured, with a positive control), and their values are J's, quarantined. Nobody can measure Z's `δ` until this is declared |
+| **D1d** the **boundary form** | **direct relative change**, `s ≤ δ` | at the format prior this is **`0.0861%`** and **`0.0374%`**, i.e. **`48.2×` and `73.1×` tighter** than the narrow scan's `4.15%` / `2.74%` |
+
+**`D1d` is the substantive one, and it is not a choice between formulas.** Quadrature would be correct
+if baseline variation were **an omitted independent contribution added to the budget**. Under the
+operative rulings it is not and may not be — `PREDECLARE-20260901-cause3-mii` §5 (*"It does not add
+`C_seed` to the uncertainty budget. A magnitude measurement and budget adoption are different
+decisions"*) and §1.3a property 3. **So the question is: is baseline variation a stability requirement
+on a number Z reports, or a candidate budget component?** The first is the direct model; the second is a
+budget-adoption decision this record neither makes nor invites.
+
+### `D2` — the per-bin leg's precision target (§3.7b item 3)
+
+**The note prints no per-bin uncertainty, so no per-bin `δ` exists to derive.** Three answers, and the
+gap is real under all of them:
+
+1. **Recommended.** Add a **third, model-dependent leg** — `median_i(m_i) ≤ δ_med` under a stated
+   uniform-movement model — so the per-bin distribution binds, with the model written in the same
+   sentence as the number.
+2. Derive a per-bin `δ` from a **data release with a declared precision**. None exists in this tree, and
+   creating one is a publication act outside `RZ(iv)`.
+3. **Report the per-bin distribution and gate only the two exact legs.** Honest, and weaker than the
+   narrow scan's contract — which §3.7b states rather than disguises.
+
+### `D3` — the joint-baseline design: `N`, the offset set, and diagonal-or-grid (§3.7b)
+
+**The member is measured, not designed** — one shared `MNV_EST_SEED_OFFSET`, seven launchers, and an
+eighth that refuses it. What remains is genuinely a choice:
+
+- **`N` and the offset set.** Affordable inside `R5` at **`N = 4`–`5` total**, consuming **`86.5%` of
+  the CPU ceiling**, against a historical `46`/`50`-member design at **`5.1×`–`8.7×` over**. There is no
+  affordable middle. **A four-or-five-member maximum-deviation result is weak evidence of stability and
+  strong evidence of sensitivity** — the asymmetry is real, and whether it is worth the ceiling is
+  Joseph's call, not an arithmetic one.
+- **Diagonal or grid.** The launchers implement the **diagonal** `(42+k, 1000+k)`. If §6.3's
+  *"jointly"* means a 2-D grid, that is **a second environment variable and a launcher change — code,
+  not compute** — and it must be settled **before** the offsets are declared, not after.
+- **Nothing here authorizes a run.** `D-RESOURCE` does not exist, `R5`'s ceilings are a prohibition, and
+  §4 row 3's meter receipt gates every row that costs compute.
+
+### `D4` — the fixed-seed null packet (§3.7a)
+
+| part | what is proposed |
+|---|---|
+| **D4a** normalizer | `r_null = ‖x_cv2 − x_cv‖ / ‖x_cv‖`, both over the reported support; `sqrt(Tr C_Z)` and the per-bin max **rejected on the record**, the second retained as a reported diagnostic |
+| **D4b** `ε` | `ε = n_iters · n_rep · numpy.finfo(float64).eps`, a **formula with imported operands**, `= 1.1873e-11` at Z's expected shape. A precision control; the sensitivity controls are reported beside it and are `~8` orders looser |
+| **D4c** reject condition | new **`11b`** in §3.3 — the ratio must be **independently reconstructible**, with `‖x_cv‖` recomputed by the validator from the production ROOT's `hXSecND_flat` |
+| **D4d** receipt fields | the production ROOT's path, sha256 and key; the recomputed `‖x_cv‖` and `n_rep`; the per-bin diagnostic with its argmax bin |
+
+**`D4` is the least contentious of the four** — it changes a clamp into a formula and adds an
+auditability requirement — but it is still a criterion and this lane may not adopt it.
+
+### The readiness verdict, stated plainly
+
+**The contract is NOT ready for an implementation authorization.** Five things stand between here and
+one, and they are of four different kinds:
+
+1. **Decisions — `D1`–`D5` above.** None is work; all are Joseph's.
+2. **A measurement that does not exist — §4 row 3's `r5_meter` receipt on Perlmutter.** `campaignctl`
+   *"admits no item at all until"* it is committed, and it gates every row that costs compute. **The
+   read has now been taken and the receipt deliberately NOT committed** (§5.9), because committing it
+   arms admission — a larger act than the evidence errand. **So this gate is still shut, and it is now
+   shut by choice.** Committing it is itself a decision, and `D5` should be settled first: the receipt
+   as landed reports `0.0016667` CPU task-h where the requeue-inclusive reading is `12.5903`.
+3. **Code that does not exist** — §1.3b's five inflation gates, §3.7a's `r_null` reconstruction, the
+   cause-3 dominant-block refusal, the cause-4 jitter re-add, and Z's validator and receipt schema.
+   None of it needs compute; all of it needs writing.
+4. **`D-RESOURCE`, which does not exist** (§4 row 19), and the two independent pre-launch reviews
+   (`PLAN-20260905` #17), which are not done.
+5. **A schedule nobody has checked.** `maintenance_20260916` removes seven days from the middle of the
+   `R5` window, leaving `16 d 15 h` in two blocks (§5.9b). §3.7b establishes that a `4`–`5`-member
+   campaign's **task-hours** fit; **nothing establishes that its wall-clock does**, and it is the one
+   constraint here that no decision can relax.
+
+**What IS ready:** the scientific contract (§1), all seven cause dispositions (§2), the terminal
+criteria including both formerly-incomplete ones (§3, §3.7), the dependency analysis (§4), and a cost
+census whose remaining holes are named per row with the act that closes each (§5, §5.8). **That is
+`RZ(v)`'s five deliverables, complete as a specification and unapproved as a criterion set.**
+### `D5` — NOT Z's contract, but it moves the ceiling Z is measured against
+
+**`R5` §3 says retried tasks count in full. The meter, as landed, does not count them.** Measured on the
+same window: **`0.0016667` CPU task-h deduplicated, `12.5903` with `--duplicates`** — 953 instances of
+one self-requeueing waker, of which a single `8 h 37 m` hang dominates and the other 948 sum to `≈2.96`
+h. **And `--duplicates` cannot simply be switched on:** `_parse_sacct_dump` keys on job id alone and
+raises *"conflicting rows for task identity"* when fed the duplicated dump (`r5_meter.py:270`,
+re-verified here).
+
+**This record does not adjudicate it and it is not in Z's contract.** It is surfaced because the
+question *"how much of `R5` is left"* has two measured answers `12.59` CPU task-h apart, the gap grows
+while the waker runs, and every figure in §3.7b and §5.8 is quoted against the ceiling. **It does not
+move `N`:** re-derived here, the affordable member count is `4`–`5` under **both** readings
+(`413.47` or `400.88` CPU task-h remaining after one build, against `86.53` or `115.36` per member).
+
+
 ---
 
 # 7. WHAT THIS LANE COULD NOT ESTABLISH, AND WHAT IT WOULD TAKE
 
-1. **`PM-1`, `PM-2`, `PM-3`, `PM-4`, `PM-5`.** All five are reads of cluster-resident ROOTs this checkout
-   does not carry (`*.root` is `.gitignore`d). **What it would take:** five cluster reads under an
-   existing session, costed against `R5`'s meter — which itself needs §4 row 3 first.
-2. **Whether S's `support_family_sha256` is G's `combined_source` digest.** Same path, reads four days
-   apart, nothing binding them. **What it would take:** `PM-2`.
-3. **A measurement design for `(cause 3, Z)`'s ruled joint-baseline quantity — and, with it, the
+1. **⚠ SUPERSEDED IN PART BY REV. 7 — §5.9 items 9–10.** **`PM-1`, `PM-2`, `PM-3`, `PM-4`, `PM-5`.**
+   Rev. 1–6 called all five *"reads of cluster-resident ROOTs this checkout does not carry"*. **Two of
+   those were wrong about the ACT required.** Now: **`PM-2` is answered from a COMMITTED RECEIPT in this
+   checkout** — no cluster read, no ROOT (§5.9a). **`PM-3`'s availability arm is discharged** by a
+   directory listing (ten endpoints, `universe_sweep_bkgaware/`, all `2026-07-14`). **`PM-1`, `PM-4`,
+   `PM-5` and `PM-3`'s grid/footing arm remain open and are now BLOCKED for a NAMED reason:** they need
+   to open a ROOT, and on the login node `uproot` is absent from both interpreters while PyROOT
+   segfaults on import in the project conda env. **What it would take:** a ROOT-capable environment — the
+   campaign env, not a bare interpreter. Each is then a `TKey` header listing, not a `41` GB scan.
+   **Installing `uproot` would CHANGE the environment rather than read it, and that is not an evidence
+   errand.**
+2. **⚠ ANSWERED IN REV. 7 — AND THE PREMISE WAS FALSE.** Rev. 1–6 asked *"whether S's
+   `support_family_sha256` is G's `combined_source` digest"*, on the ground that *"nothing binds
+   them"*. **Something does, and it is committed in G's own directory:**
+   `STAMPED_HASH_RECEIPT.slurm-56720356.json` records `9f7b2f55…` for the full path at
+   `2026-08-12T05:46:19Z`, **four days before S's read**, so the two are **independent agreeing
+   measurements** rather than one substituted for the other (§5.9a). **What survives is narrower and
+   real:** the launcher hashes **after** building, so the digest binds the bytes at job end rather than
+   at open — which is why §1.5 now requires `path + sha256 + size + mtime_ns + inode + device` stamped
+   **at open time**.
+3. **⚠ LARGELY ANSWERED IN REV. 7 — read §3.7b first; what survives is stated at the end of this item.**
+   **A measurement design for `(cause 3, Z)`'s ruled joint-baseline quantity — and, with it, the
    statistic, normalization and boundaries §3.6b schematizes — and, per §3.6d, an acceptance boundary
    whose FORM may not be the predeclared quadrature rule, which is itself a carve-out question (§6.6).**
    §6.3 fixes the *quantity* and explicitly
@@ -1649,7 +2447,15 @@ contract and nothing in §§1–5 depends on it.**
    **producing** one. This lane may design it; the **grading** must be routed to a lane that took none of
    the deciding measurements. Manufacturing a drafting prerequisite out of a grading separation would add
    a blocker the rule does not create.
-4. **The normalizer and the numerical value of §6.4's scale-relative null bound.** The ruling fixes the
+   **WHAT REV. 7 ESTABLISHED:** the member is **measured, not designed** — one shared
+   `MNV_EST_SEED_OFFSET` across exactly seven launchers, with an eighth refusing it; the statistic,
+   both denominators and both boundaries are specified in §3.7b; and the affordable `N` is **`4`–`5`**
+   against a historical design at `5.1×`–`8.7×` over `R5`. **WHAT SURVIVES AS UNESTABLISHED:** the
+   printed precision Z will be reported at, which is Joseph's declaration and not a measurement
+   (§6.7 D1c); whether *"jointly"* means the implemented diagonal or a 2-D grid (§6.7 D3); and whether
+   a four-or-five-member maximum-deviation measurement is worth `86.5%` of the CPU ceiling.
+4. **⚠ ANSWERED IN REV. 7 — §3.7a; what survives is `‖x_cv‖` itself, named as `PM-6` below.**
+   **The normalizer and the numerical value of §6.4's scale-relative null bound.** The ruling fixes the
    *form* and forbids choosing the value from a result. **§3.6a names the four things that complete it**
    — the normalizer with its rejected alternatives on the record, units, the `ε` derivation, and the
    presence/finiteness rule. **Rev. 4 corrects what that derivation may be:** the quadrature rule is
@@ -1657,8 +2463,12 @@ contract and nothing in §§1–5 depends on it.**
    **achievable** rather than what is **acceptable**, so it can constrain `ε` but cannot justify it.
    **What it would take:** a stated mechanism by which a non-deterministic CV moves a reported quantity,
    then a boundary derived for that mechanism, then a number.
-5. **The unpriced cost rows (§5.2), enumerated there PER SUBTOTAL — five omitted from the spend
-   estimate, three from the proposed reservation, and two campaign-level items in neither. Neither
+   **REV. 7 SUPPLIES ALL THREE:** three mechanisms, two of them evaluated; a precision control
+   `ε = n_iters · n_rep · eps` that binds over the sensitivity controls by seven orders in the one
+   unmeasured quantity; and the value `1.1873e-11` at Z's expected shape. **It is PROPOSED** (§6.7 D4).
+5. **⚠ PARTLY CLOSED IN REV. 7 — §5.8a is the delta; two of five rows are now estimated, three are
+   still open.** **The unpriced cost rows (§5.2), enumerated there PER SUBTOTAL — five omitted from the
+   spend estimate, three from the proposed reservation, and two campaign-level items in neither. Neither
    partial sum is a bound in either direction**; rev. 3's *"floor"* is withdrawn. The cause-1 off-diagonal
    counterfactual; the **second** CV unfold the cause-4 jitter counterfactual adds at `seed + 7`, distinct
    from `--null`'s same-seed one; Z's **inflated-object validation**, which the historical P4 chain's
@@ -1683,6 +2493,40 @@ contract and nothing in §§1–5 depends on it.**
    that `≤1.0` is representative. `grep` over `RUNS.tsv` for `budget5d` and `combine_5d_budget` returns
    **0** rows against a positive control on the same file (`57128458` → `:321`), so the ledger carries no
    accounting for it. **What it would take:** one `sacct` read.
+
+10. **`PM-6` — `‖x_cv‖` for G, and with it G's null ratio under §3.7a's chosen normalizer.** The key
+    exists (`hXSecND_flat`, `adopt_unified_5d.py:116-120`) but the throw writer does not persist the
+    vector (`unified_throw_cov.py:540-579`), so the ratio is not reconstructible from the throw product
+    alone. **What it would take:** one bounded cluster read — requested from the operational-preflight
+    session at this revision. **It does not change which control binds** (§3.7a); it converts the `8.9×`
+    margin from a conditional into a measurement.
+11. **The printed-total sensitivity channel.** `values.tex:29-31` records that *"THE TOTAL IS AN
+    INTEGRAL, NOT A SUM OF BIN CONTENTS"* and that the bin-area Jacobian is required; the 5D bin volumes
+    are not in this checkout. **What it would take:** the 5D edge arrays. **It would have to be eight
+    orders tighter than both evaluated channels to change §3.7a's conclusion.**
+12. **A per-bin precision target for `(cause 3, Z)`'s second leg.** The note prints **no** per-bin
+    uncertainty, so no per-bin `δ` can be derived today (measured with a positive control, §3.7b item 4).
+    **What it would take:** either the model-dependent third leg §3.7b recommends, or a data release with
+    a declared precision — the second being a publication decision outside `RZ(iv)`. **Until then Z's
+    per-bin contract is weaker than the narrow scan's, and §3.7b says so rather than claiming parity.**
+13. **A measured CV-unfold time on the CPU partition**, for the cause-4 counterfactual's second unfold.
+    The `43.5`-minute figure is a **GPU** arm-3 per-task time and rev. 2 already priced this row off it
+    once, wrongly. **What it would take:** one `sacct` read of the combine arm's partition and runtime —
+    also requested from the preflight session.
+14. **A measured read rate for the artifact replay's I/O term** (`≈41` GB if each component is a full
+    `10,694²` `TH2D`). Its arithmetic term is `≈0.07` CPU task-h; **the I/O term is the whole question**
+    and the sum is not established (§5.8c).
+15. **How much of `R5` is actually left — two measured answers `12.59` CPU task-h apart.** The landed
+    meter deduplicates requeued instances (`_sacct_argv()` carries no `--duplicates`; `_parse_sacct_dump`
+    keys on job id and raises on the duplicated dump — **re-verified here** at `r5_meter.py:380-392` and
+    `:270`), while `R5` §3 says *"retried tasks count in full"*. **What it would take:** a ruling on
+    which reading `R5` means, then a parser keyed on `(job id, submit time)` rather than job id alone.
+    **`D5`. It does not move `N`; it moves the denominator of every percentage in §5.**
+16. **Whether `4`–`5` complete `374`-task rounds FIT the wall-clock**, in a `10 d 4 h` block and a
+    `6 d 11 h` block either side of `maintenance_20260916` (§5.9b). The ceiling arithmetic in §3.7b
+    establishes that the task-hours fit; **it establishes nothing about the schedule**, and one arm's
+    tail already ran eleven hours at two-way concurrency in a single round. **What it would take:** the
+    wall-clock duration of the k=0 round-2 campaign, which is one `sacct` span read.
 
 ---
 
@@ -1714,6 +2558,12 @@ off-branch `lane/cause3-voi-20260906`.
 
 It regenerates no state: `OI-73`'s hold stands and `generate_live_state.py --check-freshness` reports
 STALE at this base by design.
+
+**§3.7 AND §5.8 ADOPT NOTHING.** They are proposals. No statistic, denominator, precision target,
+boundary, reject condition, offset set, member count, cost figure or `ε` in them is approved by this
+record, and §6.7 exists precisely so that no reader can mistake a completed specification for an
+accepted one. **The contract is NOT ready for an implementation authorization**, and §6.7 lists what
+would make it ready.
 
 **And it does not grade the legs it defines.** `BEN-381`; see the header. That applies to the four
 rulings too: they fix criteria and outcomes, and the lane that drafted them grades nothing under them.
