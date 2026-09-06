@@ -139,12 +139,49 @@ requires inventing a contract and a validator, which is more fabrication than th
 4. **A post-run receipt**, preserving the final `sacct` accounting for the allocation including any
    failed execution time, committed beside the preflight evidence.
 
-**The alternative, which needs no exception and which this lane prefers if there is no hurry:** wait
-for the integration lane's `r5_meter` repair, re-measure, commit a receipt that is actually complete,
-and go through campaignctl properly — which still needs a campaign contract and Joseph's TTY approval,
-so 3.2, 3.3 and 3.4 remain even then. **The honest summary is that this inspection does not fit the
-campaign queue at all**, and the real decision is whether an attended, declared, bounded allocation
-should ever have to.
+**The alternative:** wait for the integration lane's `r5_meter` repair, re-measure, commit a receipt
+that is actually complete, and go through campaignctl properly — which still needs a campaign contract
+and Joseph's TTY approval, so 3.2, 3.3 and 3.4 remain even then. **The honest summary is that this
+inspection does not fit the campaign queue at all**, and the real decision is whether an attended,
+declared, bounded allocation should ever have to.
+
+### 4a. ⚠ The two paths have DIFFERENT BLAST RADII, and the procedurally correct one is the larger act
+
+**An earlier revision of this section called the alternative the choice "if there is no hurry",
+implying it was the same outcome reached more safely. That was wrong and is withdrawn.** The
+correction is the integration lane's, made while reviewing its own repair.
+
+Committing the first complete receipt to `docs/orchestration/state/r5-meter-receipt.json` does not
+admit one item. **It arms compute admission for the entire queue.** That path is the gate's only
+input, `R5_MAX_AGE` is 24 hours, and once a valid fresh receipt is committed every ready compute item
+is measured against headroom rather than refused for want of a receipt. So:
+
+| | path 1 — one-off exception | path 2 — wait for the repair |
+|---|---|---|
+| what it authorizes | **one** declared, attended, 30-minute allocation | **every** compute item the queue holds or later admits |
+| the gate afterwards | **stays shut** | **open** |
+| procedural correctness | an exception, recorded as one | the front door |
+| reversibility | expires with the allocation | the receipt can be removed, but anything admitted meanwhile already ran |
+
+**The more procedurally correct path is the larger commitment.** That is not an argument against it —
+a gate that is never opened is a gate nobody has tested, and the queue exists to be used. It is an
+argument against treating it as the cautious default, which is how §4 previously read.
+
+**Neither path is obviously right and this lane does not recommend one.** The choice is between a
+narrow exception that leaves the gate shut, and opening the gate for everything in order to put one
+small inspection through it correctly. That is Joseph's to weigh.
+
+**Timing, from the lane that owns the repair (2026-09-06):** branch expected the same day; landed in
+one to three days **if an independent review passes first time**, longer if it returns BLOCK — the
+last comparable round did. Stated as "days, not weeks, but contingent on a review that lane does not
+own". **If the decision is needed sooner than that, it should not wait on the repair.**
+
+**Two things that do NOT follow from the repair landing**, recorded so neither is assumed:
+1. **It does not unblock this inspection.** It clears 3.1 only. Blockers 3.2 (TTY approval), 3.3 (item
+   shape) and 3.4 (no committed contract) are untouched by it. Necessary, not sufficient.
+2. **It does not arm the gate by itself.** The repair writes no receipt, and an operational receipt
+   cannot be manufactured from a preserved historical capture. Arming is a separate, deliberate act —
+   and must not happen as a side effect of someone running the repaired tool once to see if it works.
 
 ## 5. Status
 
