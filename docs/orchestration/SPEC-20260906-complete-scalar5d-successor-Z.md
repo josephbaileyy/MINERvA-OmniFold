@@ -1,7 +1,7 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 5 — contract review round 4: withdrawn cost claims removed from operative text, and the
-# quadrature model stated as the conditional it always was**
+# **rev. 6 — contract review round 5: the last directional remnant removed, and a split Markdown
+# table row repaired**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -22,6 +22,22 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0d What changed in rev. 6
+
+Rev. 5 was `4e43940b`. Review round 5 found **no new substantive contract finding** and confirmed that
+rev. 5 resolved the acceptance-model correction and correctly defers the boundary approval. Two
+non-blocking remnants, **both mine**:
+
+| # | rev. 5 left | rev. 6 does | whose call |
+|---|---|---|---|
+| 1 | §7 item 3 still called the prior one that *"understates a Z member"* — the same directional claim §5.4 had just withdrawn | replaced with **"a prior measured on a different subject"**. **And the rev.-4 changelog row 5 carried it too**; that row is marked superseded in place rather than rewritten, per this tree's convention | **reviewer** |
+| 2 | rev. 5's assembly-row edit inserted **literal newlines inside a Markdown table row**, splitting it across three physical lines and breaking the table | row rejoined onto one line. **A covering check over the whole file** — every line starting with `\|` must end with `\|` — found **exactly one** such row and **none remaining** after the repair, so this was the only instance across all six revisions | **reviewer** |
+
+**Confirmed still outstanding, and they are now the whole of the remaining work:** the joint-baseline
+statistic and acceptance rule, the normalized null bound and its justification, and complete costing.
+**These prevent implementation readiness; none of them requires reopening the assembly algebra or the
+settled rulings.**
 
 ## 0.0c What changed in rev. 5
 
@@ -74,7 +90,7 @@ introduced BY rev. 2's own fix.**
 | 2 | §6.3/§6.4 rule the quantity and the form; §7 notes the rest is open | **Named as open is not enough — three outcome classes are not executable criteria.** New **§3.6** gives both a completion schema: the null's normalizer/units/`ε`-derivation/presence rule, and cause 3's member definition, statistic, two-leg normalization, the `S/U ≤ sqrt(2δ+δ²)` boundary derivation, and the three classes mapped onto the six branches. **No ruling is reopened** | **reviewer** |
 | 3 | §5.2a: *"the metered cost is the wall request, not the runtime"* | **FALSE, and rev. 2 introduced it.** `R5` meters **`ElapsedRaw` — actual elapsed** (`r5_meter.py:49-58`, `:165-174`, `:277`). A job requesting 90 min and exiting at 48 charges `≈0.80`. The observed `3.00` was a **hold that stayed allocated to timeout**. §5.2 now carries **spend** and **reservation** as separate columns | **reviewer** |
 | 4 | `73.0` / `≤118.0` for one build | **relabelled a PRICED SUBTOTAL, not an upper bound**, and four required rows are marked unpriced. The J28 line is narrowed to **the two assemblies only** (its rescale is J28-only; its throw combine **is arm 7**). The cause-4 jitter unfold is a **SECOND** unfold at `seed + 7`, distinct from `--null`'s same-seed one, so arm 7's headroom is not evidence about it | **reviewer** |
-| 5 | `54.90`/`86.53` per member; the family is *"out of reach"* | **a historical seven-arm PRIOR**, understating a Z member (active lateral, both assemblies, inflated-object validation). The extrapolation bounds **the historical design**, not Z's — Z's has no design, therefore no cost, therefore no affordability verdict | **reviewer** |
+| 5 | `54.90`/`86.53` per member; the family is *"out of reach"* | **a historical seven-arm PRIOR** — *"understating a Z member"*, **which rev. 5 withdrew: see §0.0c row 1b; a prior measured on a different subject supports no direction.** The extrapolation bounds **the historical design**, not Z's — Z's has no design, therefore no cost, therefore no affordability verdict | **reviewer** |
 | 6 | §1.4c: S lacks *"§1.3a's entire vertical term"* | **overstated, and contradicted by this lane's own partition measurement** — all 13 `VERT_BANDS` are inside S's 40 `retained_bands`. S has the **uninflated** components; it lacks **`D_Z` and the inflated term** | **reviewer** |
 | 7 | §7: the cause-3 design is *"not this lane's"* under `BEN-381` | **withdrawn.** `BEN-381` bars grading your own design, **not producing one**. Route the grading independently; do not manufacture a drafting prerequisite | **reviewer** |
 
@@ -1228,9 +1244,7 @@ bound and what a breach is measured against. They are not interchangeable.
 | seven-arm production round | `54.90` / `86.53` | **`70` / `113`** | spend = round-2 measured actuals; bound = the **ratified ceilings** `20+20+30` / `8+60+40+5`. Contains arm 1 (the statistical replica ensemble) and arm 2 (the ML-split ensemble) |
 | standard-P4 lateral stages 3–6 | **`0.80`** / 0 | **`3.00`** / 0 | **corrected twice — §5.2a.** Spend = the step's measured `00:47:58` for a job that exits; `3.00` is what the observed **hold-style** dispatch actually charged, retained as a hazard to design out. Assumes stages 1–2 skip, **conditional on `PM-3`** |
 | statistical + ML **combine** | **unmeasured** | 0 / **`1.0` PROPOSED, UNVERIFIED** | `sbatch_combine_5d_budget.sh`, **not one of the seven arms**. `--time=01:00:00` is a *request*, and **a time limit bounds an ATTEMPT, not a successful completion** — it says the job is killed at one hour, not that the work finishes inside it. **No actual is recorded**: `grep` over `RUNS.tsv` for `budget5d`/`combine_5d_budget` returns **0** rows against a positive control on the same file |
-| **the two assemblies only** (`adopt_unified_5d.py` ×2) | **unmeasured** | 0 / **`4.0` PROPOSED, UNVERIFIED** | **narrowed in rev. 3, relabelled in rev. 4.** The 4-hour figure is a *historical request*, so it **bounds an attempt, not a completion**, and it is not a derived `< 4 h` completion bound for Z's assemblies — it can motivate a **proposed** reservation and nothing more. **No completion bound is licensed by it** —
-the 4-hour request covered all four of that launcher's operations, of which only these two are Z's, and a
-request that was never exceeded is not a measurement of what these two need. Rev. 2 charged the whole 4-hour `sbatch_j28_adopt_5d.sh`. **Three of its four operations are not Z's:** `rescale_flux_universes.py` (`:74`) is a **J28-only historical repair** Z never runs; `unified_throw_cov_5d.py --combine … --null` (`:94`) **is arm 7**, already counted above; the slab union is symlinks. **Only `:111` and `:113` are additional**, and the 4-hour request covered all four together, so it licenses **no completion bound for these two at all** |
+| **the two assemblies only** (`adopt_unified_5d.py` ×2) | **unmeasured** | 0 / **`4.0` PROPOSED, UNVERIFIED** | **narrowed in rev. 3, relabelled in rev. 4.** The 4-hour figure is a *historical request*, so it **bounds an attempt, not a completion**, and it is not a derived `< 4 h` completion bound for Z's assemblies — it can motivate a **proposed** reservation and nothing more. **No completion bound is licensed by it** — the 4-hour request covered all four of that launcher's operations, of which only these two are Z's, and a request that was never exceeded is not a measurement of what these two need. Rev. 2 charged the whole 4-hour `sbatch_j28_adopt_5d.sh`. **Three of its four operations are not Z's:** `rescale_flux_universes.py` (`:74`) is a **J28-only historical repair** Z never runs; `unified_throw_cov_5d.py --combine … --null` (`:94`) **is arm 7**, already counted above; the slab union is symlinks. **Only `:111` and `:113` are additional**, and the 4-hour request covered all four together, so it licenses **no completion bound for these two at all** |
 | **cause-4 jitter counterfactual — a SECOND CV unfold** | **unpriced** | **unpriced** | **corrected in rev. 3, and rev. 2 had the wrong operand.** `--null`'s unfold uses `args.estimator_seed` (`unified_throw_cov.py:514-515`) — the **same** seed. The jitter counterfactual uses **`args.seed + 7`** (`a0cdc019:233-234`). **They are two different unfolds**, so re-adding the print adds one *on top of* the one arm 7 already runs. **Arm 7's historical headroom is evidence about the existing unfold and says nothing about the additional one** |
 | cause-1 counterfactual, incl. off-diagonal | **unpriced** | **unpriced** | post-processing of `uq_5d/universe_sweep_bkgaware/…` (`receipt_cause1_endpoint_census_5d.json`, `inputs.glob`) — **no unfold**. Off-diagonal means full `10,694²` per band; unsized |
 | **Z's INFLATED-OBJECT validation** | **unpriced** | **unpriced** | **new row in rev. 3.** `RECEIPT-20260816`'s stage 5 covers the **block-sum** gates and is inside the stages 3–6 line. **§1.3b's five additional gates are not** — in particular the `g`-reconstruction gate recomputes `g^c` per variant over the reported support, and PSD on the inflated object is an `eigvalsh` on `10,694²`. Unsized |
@@ -1627,7 +1641,7 @@ contract and nothing in §§1–5 depends on it.**
    whose FORM may not be the predeclared quadrature rule, which is itself a carve-out question (§6.6).**
    §6.3 fixes the *quantity* and explicitly
    does not fix the *design*; §5.4 shows the historical family size is **5×–9× over `R5`** at a
-   per-member prior that **understates** a Z member, so the design is the whole question. **What it
+   per-member prior **measured on a different subject**, so the design is the whole question. **What it
    would take:** a measurement-design proposal
    with a scientific rationale for its member count and offsets — not arithmetic. **Rev. 2 said this was
    "not this lane's" because `BEN-381` would disqualify the drafter from grading the leg. That is a

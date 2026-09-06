@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 5. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 6. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -228,6 +228,16 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   quadrature; and §6.6's boundary-form item now records **how the decision must be put** — the statistic,
   denominator, precision target and boundary approved **together**, never a formula detached from them,
   so **that item is not ready to decide today**.
+  **REVIEW ROUND 5 (rev. 6) found no new substantive contract finding.** Two non-blocking remnants, both
+  the drafting lane's: §7 item 3 still called the prior one that *"understates a Z member"* — replaced
+  with *"a prior measured on a different subject"*, with the rev.-4 changelog row that carried it marked
+  **superseded in place** rather than rewritten; and rev. 5's assembly-row edit had inserted **literal
+  newlines inside a Markdown table row**, splitting it across three lines and breaking the table — the
+  row is rejoined, and a **covering check over the whole file** found exactly that one and none
+  remaining. **The remaining work is now specification completion only** — the joint-baseline statistic
+  and acceptance rule, the normalized null bound and its justification, and complete costing. Those gaps
+  prevent implementation readiness; **none requires reopening the assembly algebra or the settled
+  rulings.**
 
 ### PET typed-descriptor semantic evidence
 
