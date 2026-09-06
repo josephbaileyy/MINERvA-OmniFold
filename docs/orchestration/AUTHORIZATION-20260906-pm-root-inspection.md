@@ -253,8 +253,35 @@ describes; what it omits is that the act is a queue-wide decision.
 The `check` default cuts the safe way: with no receipt at that path, `check` fails closed. **The gate
 is currently shut by absence**, which is the right kind of shut.
 
+**⚠ The hazard is LATENT NOW and becomes LIVE when the repair lands — which couples it to §4's
+choice.** Stated by the integration lane while scoping its own repair, and it is the sharpest form of
+this:
+
+- **Today**, the documented command produces the `0.0016667` receipt — the one Joseph ruled must not
+  be presented as admission evidence. Arming the queue with it would commit a receipt that is visibly
+  wrong and that a reader would likely catch.
+- **After the meter repair**, the same command produces a **valid, complete, honestly armable**
+  receipt. Nobody reviewing it would question it, because nothing about it is wrong except that
+  committing it was a queue-wide decision nobody made deliberately.
+
+**The repair converts a dud into live ammunition.** That is not an argument against the repair — it is
+the reason the documentation fix belongs in the same change, which is the conclusion that lane reached
+about its own work.
+
+**For §4 this means the two decisions are coupled.** Path 2 — wait for the repair, commit a complete
+receipt, go through the front door — is exactly the path that makes accidental arming both possible
+and undetectable, at the same moment it becomes procedurally available. It remains the correct path;
+it should be taken with the runbook fixed first, not after.
+
 **The remedy is the meter owner's call and this lane does not choose between them:** move the
 runbook's default `--write` target off the gate path, or stop the gate path being tracked by default.
+**Decided since, by the lane that owns the repair:** it is taking the first — moving the target and
+deleting the word *refresh* — and **refusing** the second, on the ground that `committed_r5_receipt`
+*requires* the file committed (and its `CAMPAIGN_R5_RECEIPT` override is repo-relative, tracked, and
+byte-identical to `HEAD` or refused), so untracking the path would change **how admission can ever be
+armed**. That is a change to the admission mechanism rather than to documentation, and therefore
+Joseph's, not something to fold into a bounded accounting repair. It is surfaced to him as a named
+open option rather than taken.
 It is adjacent to the integration lane's `r5_meter` repair — whoever lands that will have these files
 open, and shipping a repaired tool whose documented invocation still writes to the gate path would
 leave the hazard exactly where it is.
