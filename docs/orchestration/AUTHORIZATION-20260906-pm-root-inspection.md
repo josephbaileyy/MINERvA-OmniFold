@@ -183,6 +183,37 @@ own". **If the decision is needed sooner than that, it should not wait on the re
    cannot be manufactured from a preserved historical capture. Arming is a separate, deliberate act —
    and must not happen as a side effect of someone running the repaired tool once to see if it works.
 
+### 4b. ⚠ The command that arms the gate is the one the documentation tells you to run
+
+**Measured, because §4a's caution is abstract and this is what makes it live.**
+`docs/orchestration/R5-METER.md:13-16` gives the tool's canonical usage, verbatim:
+
+    python3 docs/orchestration/r5_meter.py measure \
+      --write docs/orchestration/state/r5-meter-receipt.json
+
+**That command is the arming act.** It writes a receipt to the exact path `campaignctl` reads as its
+compute-admission gate, and once a valid one under 24 hours old is committed there, every ready
+compute item is measured against headroom instead of refused.
+
+**So the hazard is not a careless flag — it is a careful reader.** The tool is safe by default:
+`measure`'s `--write` has **no default** (`r5_meter.py:751`), so a bare `measure` writes nothing, and
+the only default aimed at the gate path is `check --receipt` (`:753`), which reads. The danger is
+that someone verifying the repaired meter does the conscientious thing, opens the tool's own
+documentation, runs the documented command, and arms the queue. **Following the instructions is the
+dangerous path**, which is worse than a footgun, because the people most exposed are the ones being
+most diligent — an independent reviewer of the repair above all.
+
+**The operational rule:** verify with `measure` and **no** `--write`, or `--write` to a scratch path.
+**Never run `R5-METER.md`'s example as a smoke test.** The example is not wrong for the act it
+describes; what it omits is that the act is a queue-wide decision.
+
+The `check` default cuts the safe way: with no receipt at that path, `check` fails closed. **The gate
+is currently shut by absence**, which is the right kind of shut.
+
+*(Mechanism found by the integration lane. This lane first asserted that `measure --write` defaulted
+to the gate path — it does not, and that claim was withdrawn. The instinct was right and the
+mechanism was wrong; the real one is worse.)*
+
 ## 5. Status
 
 **DECLARED, COMMITTED, NOT SUBMITTED.** No job was submitted. No credential was created or changed.
