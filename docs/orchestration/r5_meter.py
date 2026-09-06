@@ -3,8 +3,8 @@
 
 THE METERED UNIT IS AN EXECUTION ATTEMPT, NOT A JOB ID.  A requeued job keeps one
 `JobID` and runs many times, and each run burns real wall time on a real node.  An
-attempt is identified by ``(JobID, Start, End)`` -- with this field list ``Start`` is
-the only attempt discriminator ``sacct`` returns -- and `ElapsedRaw` on those rows is
+attempt is identified by ``(JobID, Start)`` -- with this field list ``Start`` is the
+only attempt discriminator ``sacct`` returns -- and `ElapsedRaw` on those rows is
 per-attempt, not cumulative.
 
 * ATTEMPTS ARE SUMMED.  R5 §3 counts a retried task "in full" and says "a failed task
@@ -15,11 +15,12 @@ per-attempt, not cumulative.
   EXECUTIONS of one job id.  See
   ``FINDING-20260906-r5-meter-undercounted-requeue-attempts.md``, which also records
   the reading this rejects, so the decision owner can overturn it in one place.
-* WHAT IS DEDUPLICATED.  Two rows agreeing on ``(JobID, Start, End)`` are one
-  observation of one attempt and are counted once.  Step and array-bracket rows are
-  excluded outright.  Rows whose ``Start`` is unknown -- a PENDING job -- are skipped.
-* WHAT FAILS CLOSED.  Two observations of one attempt that disagree about
-  ``ElapsedRaw`` or about GPU classification raise `MeterError`; the query needs
+* WHAT IS DEDUPLICATED.  Two identical rows are one observation of one attempt and are
+  counted once.  Step and array-bracket rows are excluded outright.  Rows whose
+  ``Start`` is unknown -- a PENDING job -- are skipped.
+* WHAT FAILS CLOSED.  Two rows sharing ``(JobID, Start)`` that disagree about ``End``,
+  ``ElapsedRaw`` or GPU classification raise `MeterError` -- including the RUNNING
+  snapshot plus later COMPLETED row that concatenating two query windows produces; the query needs
   ``--duplicates`` or a requeued job's earlier attempts are invisible; a
   schema-version-1 receipt is refused outright because it counted at most one attempt
   per job id; and a missing, stale or malformed receipt is a stop.
@@ -125,7 +126,8 @@ class AttemptRecord:
         Attempt start instant in UTC.
     end : str
         `End` exactly as the row reported it, including ``Unknown`` for an attempt
-        still running. Part of the attempt identity, so it is kept unparsed.
+        still running. NOT part of the attempt identity -- it is compared between two
+        observations of one attempt, and a disagreement refuses the dump.
     counted : bool
         False only for an attempt whose whole span precedes t0. Such an attempt is
         still recorded, so a later contradicting observation of it is refused
@@ -143,12 +145,19 @@ class AttemptRecord:
     counted: bool
 
 
-#: One execution attempt: ``(JobID, Start, End)``.  Slurm returns one record per
-#: attempt under ``--duplicates``, and with this field list ``Start`` is the only
-#: discriminator between them; ``End`` is carried too so a same-start/different-end
-#: pair cannot silently collapse.  Job id ALONE is not an attempt identity -- keying
-#: on it is exactly the defect this repair closes.
-AttemptKey = tuple[str, datetime, str]
+#: One execution attempt: ``(JobID, Start)``.  Slurm returns one record per attempt
+#: under ``--duplicates``, and with this field list ``Start`` is the ONLY discriminator
+#: between them.  Job id alone is not an attempt identity -- keying on it is the defect
+#: this repair closes.
+#:
+#: ``End`` is deliberately NOT part of the key.  Two rows sharing ``(JobID, Start)`` and
+#: differing in ``End`` are far more likely to be two OBSERVATIONS of one execution --
+#: a RUNNING snapshot with ``End`` ``Unknown`` and the later COMPLETED row, which is
+#: exactly what concatenating two query windows produces -- than two executions that
+#: began in the same second.  Keying on ``End`` charged such a pair twice.  Since this
+#: field list cannot tell the two situations apart, the pair is REFUSED rather than
+#: resolved by guessing which reading was meant.
+AttemptKey = tuple[str, datetime]
 
 
 def parse_iso_utc(value: str) -> datetime:
@@ -302,21 +311,31 @@ def _parse_sacct_dump(raw_text: str) -> dict[AttemptKey, AttemptRecord]:
             line_number=line_number,
         ) or partition.lower().startswith("gpu")
 
-        key: AttemptKey = (job_id, start, end_text)
+        key: AttemptKey = (job_id, start)
         existing = attempts.get(key)
         if existing is not None:
-            # One attempt observed twice -- the same row repeated in the dump.  It
-            # is counted once.  Two observations that disagree about what was
-            # spent, or about which ceiling it is spent against, cannot both be
-            # true, and choosing between them would be a measurement nobody made.
+            # One attempt observed twice.  Identical rows are one observation and are
+            # charged once.  Rows that disagree about when it ENDED, about what it
+            # spent, or about which ceiling it spent against cannot all be true of one
+            # execution, and this field list cannot tell "two observations of one
+            # execution" from "two executions that started in the same second".
+            # Choosing between them would be a measurement nobody made, so the whole
+            # dump is refused.  The common cause is a dump assembled from more than one
+            # query window, where a job appears once RUNNING (End Unknown) and again
+            # COMPLETED: re-query it in a single window, or with `-j <jobid>`.
             for field, recorded, observed in (
+                ("End", existing.end, end_text),
                 ("ElapsedRaw", existing.raw_elapsed_seconds, raw_elapsed),
                 ("GPU classification", existing.is_gpu, is_gpu),
             ):
                 if recorded != observed:
                     raise MeterError(
                         f"line {line_number}: conflicting {field} for execution "
-                        f"attempt of task identity {job_id} started {start_text}"
+                        f"attempt of task identity {job_id} started {start_text}: "
+                        f"{recorded!r} then {observed!r}. Two observations of one "
+                        f"execution and two executions starting in the same second "
+                        f"are indistinguishable in these fields, so this dump is "
+                        f"refused rather than guessed at"
                     )
             continue
 

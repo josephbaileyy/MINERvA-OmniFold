@@ -10,19 +10,24 @@ node. The meter therefore charges **execution attempts**, and `sacct` is queried
 (`--allocations --duplicates`); without `--duplicates` Slurm returns only a requeued job's most
 recent record.
 
-- **An attempt is `(JobID, Start, End)`.** With this field list `Start` is the only attempt
-  discriminator `sacct` returns; `End` is carried too so a same-start/different-end pair cannot
-  collapse. `ElapsedRaw` on those rows is per-attempt, not cumulative.
+- **An attempt is `(JobID, Start)`.** With this field list `Start` is the only attempt discriminator
+  `sacct` returns. `ElapsedRaw` on those rows is per-attempt, not cumulative. `End` is deliberately
+  **not** part of the identity: two rows sharing `(JobID, Start)` and differing in `End` are far more
+  likely two *observations* of one execution — a RUNNING snapshot and the later COMPLETED row, which
+  is what concatenating two query windows produces — than two executions beginning in the same
+  second, and these fields cannot tell the two apart.
 - **Attempts are summed.** R5 §3 counts a retried task "in full" and says "a failed task spends", so
   every attempt of one job id is added. "Distinct task identities" in §3's unit stops the several
   *representations* of one execution being counted twice; it does not collapse several distinct
   *executions* of one job id.
-- **What is deduplicated.** Two rows agreeing on all three fields are one observation of one attempt
-  and are charged once. `.batch`, `.extern`, numbered steps and array-bracket summary rows
+- **What is deduplicated.** Two identical rows are one observation of one attempt and are charged
+  once. `.batch`, `.extern`, numbered steps and array-bracket summary rows
   (`123_[1-100]`) are excluded outright — a step row is a representation, never an attempt. A row
   whose `Start` is `Unknown` (a PENDING job) is skipped.
-- **What fails closed.** Two observations of one attempt that disagree about `ElapsedRaw` or about
-  GPU classification raise `MeterError` naming the job id and the field. A `schema_version` 1
+- **What fails closed.** Two rows sharing `(JobID, Start)` that disagree about `End`, `ElapsedRaw`
+  or GPU classification raise `MeterError` naming the job id, the field and both values. The dump is
+  refused rather than resolved by guessing which reading was meant; re-query in a single window, or
+  with `-j <jobid>`. A `schema_version` 1
   receipt is refused. A missing, malformed, or older-than-24-hours receipt is treated as a stop.
 
 The t0 rules apply **per attempt**, not per job: an attempt straddling t0 is clipped at t0, one that

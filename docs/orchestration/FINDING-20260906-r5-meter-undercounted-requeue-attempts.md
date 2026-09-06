@@ -92,9 +92,22 @@ as a fixture; both were re-derived from the bytes by this lane rather than accep
 **Every total in this finding belongs to a pinned capture at a stated instant, and is not a campaign
 spend figure.** The all-jobs capture, taken about twenty minutes after the `-j` one, meters **958
 attempts and 12.606389 CPU task-hours** where the `-j` capture meters 952 and 12.590278. The
-difference is five further waker firings, not a discrepancy: the corrected R5 CPU figure **grows by
-roughly 0.05–0.07 task-hours per day** from the waker's ordinary cadence alone. Any assertion of a
-fixed total must pin the capture rather than re-query, which is what the committed fixture does.
+difference is **six further waker execution rows totalling 58 s**, not a discrepancy. Any assertion
+of a fixed total must pin the capture rather than re-query, which is what the committed fixture does.
+
+**The waker's ordinary cadence, re-derived per day from the committed fixture** (an earlier revision
+of this finding said "roughly 0.05–0.07 task-hours per day", which was wrong by an order of
+magnitude and was corrected in review):
+
+| day | attempts | charged | note |
+|---|---:|---:|---|
+| 2026-09-03 | 180 | **10.263611 h** | dominated by one 31 063 s hung attempt; not cadence |
+| 2026-09-04 | 277 | **0.652778 h** | a full ordinary day |
+| 2026-09-05 | 288 | **0.690556 h** | a full ordinary day |
+
+So ordinary cadence is **≈0.65–0.69 CPU task-hours per day**, and a single hang can add ten hours in
+a day. Neither figure threatens a 500-hour ceiling — the point of this finding is the instrument, not
+the magnitude — but the number should be right, and the outlier should not be averaged into a "rate".
 
 What the wider sweep establishes, each re-derived here from the committed bytes:
 
@@ -156,16 +169,17 @@ No other capture is committed.
 
 ## 4. The corrected semantics
 
-- **The metered unit is an execution attempt**, identified by **`(JobID, Start, End)`**. `End` is
-  carried so that a same-start/different-end pair cannot silently collapse.
+- **The metered unit is an execution attempt**, identified by **`(JobID, Start)`**. `End` is
+  deliberately **not** part of the identity — see §5a for why an earlier revision of this repair got
+  that wrong and what it cost.
 - **Attempts are summed** per job id.
 - **Deduplicated:** two rows agreeing on all three key fields are one observation of one attempt and
   are charged once (`mixed.sacct`'s `20001|duplicate` row keeps exactly this meaning). `.batch`,
   `.extern`, numbered steps and array-bracket summary rows are excluded outright — a step row is a
   *representation* of an execution, never an attempt. A row whose `Start` is `Unknown`/`N/A`/empty
   is skipped.
-- **Fails closed:** two observations of one attempt disagreeing on `ElapsedRaw`, or on GPU
-  classification, raise `MeterError` naming the job id and the field; a `schema_version` 1 receipt
+- **Fails closed:** two rows sharing `(JobID, Start)` that disagree on `End`, on `ElapsedRaw`, or on
+  GPU classification raise `MeterError` naming the job id, the field and both values; a `schema_version` 1 receipt
   is refused by `r5_meter._validate_receipt`, by `r5_meter check` (exit 4) and by
   `campaignctl.validate_r5_receipt`; a missing, stale or malformed receipt remains a stop.
 - **t0 rules are per attempt, not per job:** an attempt straddling t0 is clipped at t0, one that
@@ -230,6 +244,43 @@ not. That, plus §3's explicit "counted in full" / "a failed task spends", settl
 attempt per job id would change that function and nothing else in the accounting path (the receipt's
 `attempt_count` / `attempts_by_task_id` columns would then become descriptive rather than
 load-bearing).
+
+## 5a. A defect found in review, and what it changes
+
+**An independent review BLOCKed the first revision of this repair.** The finding is recorded here
+because it is the more interesting half of the story: the first fix resolved an ambiguity by guessing
+instead of refusing, in a repair whose whole subject is that very discipline.
+
+**What was wrong.** The attempt identity was `(JobID, Start, End)`. `End` was included so that two
+executions beginning in the same second could not collapse into one. But it also made two
+*observations* of a single execution look like two executions:
+
+```
+70000|job|RUNNING|600|regular|2026-09-03T00:00:00|Unknown|cpu=2
+70000|job|COMPLETED|1200|regular|2026-09-03T00:00:00|2026-09-03T00:20:00|cpu=2
+```
+
+One execution that spent **1 200 s** was charged **1 800 s** as two attempts, and the resulting
+receipt passed every validator. That shape is not hypothetical: it is what a dump **assembled from
+more than one query window** produces, and §7's 30-day span limit is precisely the reason such dumps
+get assembled here.
+
+**Why it was the wrong kind of error even though it over-charges.** Over-counting is the safer
+direction against a ceiling, so this would not have spent past a prohibition. But the governing
+instruction is to *fail closed when the available evidence cannot resolve identity or elapsed-time
+semantics*, and this field list genuinely cannot distinguish "two observations of one execution" from
+"two executions that started in the same second". Charging both picks one reading silently.
+
+**What changed.** The identity is now `(JobID, Start)`. `End` moved from the key into the set of
+fields that two rows sharing a key must agree on, alongside `ElapsedRaw` and GPU classification; a
+disagreement in any of them refuses the dump, naming the job id, the field and both values, and
+telling the operator to re-query in one window or with `-j <jobid>`. The reviewer's exact reproducer
+is a regression test, the test that had blessed the old behaviour now asserts the refusal, and a
+third test pins the case that motivated including `End` in the first place — a byte-identical
+repeated row must still count once, not refuse.
+
+**Cost to the measurements: none.** The preserved captures contain **zero** duplicate `(JobID, Start)`
+pairs, so the real fixture still meters 952 attempts and 12.590278 CPU task-hours, unchanged.
 
 ## 6. Receipts requiring replacement
 

@@ -511,17 +511,61 @@ class RequeuedExecutionAttemptTests(unittest.TestCase):
         self.assertIn("conflicting GPU classification", str(raised.exception))
         self.assertIn("70101", str(raised.exception))
 
-    def test_the_same_start_with_a_different_end_is_a_distinct_attempt(self) -> None:
-        """``End`` is part of the attempt identity, so it cannot collapse a pair."""
+    def test_the_same_start_with_a_different_end_refuses_instead_of_charging_twice(
+        self,
+    ) -> None:
+        """Two rows sharing ``(JobID, Start)`` but not ``End`` are irreconcilable.
+
+        They are far more likely two OBSERVATIONS of one execution than two executions
+        that began in the same second, and these fields cannot tell the two apart.
+        Charging both would invent spend; picking one would be a measurement nobody
+        made. The dump is refused.
+        """
+        with self.assertRaises(r5_meter.MeterError) as raised:
+            self.spend(
+                "70102|a|COMPLETED|600|regular|2026-09-03T00:00:00|"
+                "2026-09-03T00:10:00|cpu=2",
+                "70102|b|COMPLETED|1200|regular|2026-09-03T00:00:00|"
+                "2026-09-03T00:20:00|cpu=2",
+            )
+
+        message = str(raised.exception)
+        self.assertIn("conflicting End", message)
+        self.assertIn("70102", message)
+        self.assertIn("2026-09-03T00:00:00", message)
+
+    def test_a_running_snapshot_and_its_completed_row_are_not_two_attempts(
+        self,
+    ) -> None:
+        """The shape a dump assembled from two query windows produces.
+
+        One execution seen once while RUNNING (``End`` ``Unknown``) and again once
+        COMPLETED. Keying the attempt on ``End`` charged this pair 1800 s for an
+        execution that spent 1200. It is refused.
+        """
+        with self.assertRaises(r5_meter.MeterError) as raised:
+            self.spend(
+                "70000|job|RUNNING|600|regular|2026-09-03T00:00:00|Unknown|cpu=2",
+                "70000|job|COMPLETED|1200|regular|2026-09-03T00:00:00|"
+                "2026-09-03T00:20:00|cpu=2",
+            )
+
+        message = str(raised.exception)
+        self.assertIn("conflicting End", message)
+        self.assertIn("'Unknown'", message)
+        self.assertIn("70000", message)
+
+    def test_a_byte_identical_row_repeated_is_still_one_attempt(self) -> None:
+        """Dropping ``End`` from the key must not make a repeated row refuse."""
         spend = self.spend(
-            "70102|a|COMPLETED|600|regular|2026-09-03T00:00:00|"
+            "70103|a|COMPLETED|600|regular|2026-09-03T00:00:00|"
             "2026-09-03T00:10:00|cpu=2",
-            "70102|b|COMPLETED|1200|regular|2026-09-03T00:00:00|"
-            "2026-09-03T00:20:00|cpu=2",
+            "70103|a|COMPLETED|600|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:10:00|cpu=2",
         )
 
-        self.assertEqual(spend["attempt_count"], 2)
-        self.assertEqual(spend["cpu_task_hours"], (600 + 1200) / 3600.0)
+        self.assertEqual(spend["attempt_count"], 1)
+        self.assertEqual(spend["cpu_task_hours"], 600 / 3600.0)
 
     def test_t0_is_clipped_per_attempt_not_per_job(self) -> None:
         """A straddling attempt is clipped; its siblings after t0 are charged whole."""
