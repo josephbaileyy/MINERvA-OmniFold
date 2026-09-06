@@ -159,13 +159,40 @@ is measured against headroom rather than refused for want of a receipt. So:
 | | path 1 — one-off exception | path 2 — wait for the repair |
 |---|---|---|
 | what it authorizes | **one** declared, attended, 30-minute allocation | **every** compute item the queue holds or later admits |
-| the gate afterwards | **stays shut** | **open** |
+| the gate afterwards | **stays shut** | **open for ≤24 h, then stale-shut — repeatable** (§4c) |
 | procedural correctness | an exception, recorded as one | the front door |
 | reversibility | expires with the allocation | the receipt can be removed, but anything admitted meanwhile already ran |
 
 **The more procedurally correct path is the larger commitment.** That is not an argument against it —
 a gate that is never opened is a gate nobody has tested, and the queue exists to be used. It is an
 argument against treating it as the cautious default, which is how §4 previously read.
+
+### 4c. The opening is TIME-BOUNDED, which narrows path 2's radius without making it small
+
+**Measured after §4a was written, and it corrects §4a's own table.** §4a said path 2 leaves the gate
+"open" full stop. It does not: the opening **expires**.
+
+`r5_refusal_reason` refuses a receipt whose `measured_at_utc` is older than
+`R5_MAX_AGE = 24 hours` (`campaignctl.py:292`, checked at `:3358`), with a 60-second future-skew bound
+the other way (`:296`). So a committed receipt admits compute for **at most 24 hours from the instant
+it was measured** — not from when it was committed — and then the queue stale-refuses again until
+someone re-measures and re-commits.
+
+**What that does change:** path 2's radius is "every compute item, for up to a day", not "every
+compute item, forever". The gate is **repeatable-and-expiring rather than permanent**, and its default
+resting state is shut. That is a materially smaller commitment than §4a implied and Joseph should
+weigh the corrected version.
+
+**What it does not change, and why the act is still not small:**
+- Within that window **every ready compute item is admissible**, not merely this inspection.
+  `committed_r5_receipt(queue)` takes the queue and no item (`:3080`), and `r5_refusal_reason` consults
+  it for every compute item — one commit clears that refusal for all of them.
+- **Anything admitted in the window has already run.** Expiry closes the gate; it does not undo what
+  went through. The commit is reversible, the compute is not.
+- It is **repeatable**, so "it expires" is a property of one receipt, not a bound on the practice.
+
+*(Expiry measured and its significance framed by the Z-specification lane, in its §5.6a. This lane's
+§4a understated the bound and is corrected here rather than edited silently.)*
 
 **Neither path is obviously right and this lane does not recommend one.** The choice is between a
 narrow exception that leaves the gate shut, and opening the gate for everything in order to put one
