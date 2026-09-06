@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 15. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 16. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -404,6 +404,27 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   and acceptance rule, the normalized null bound and its justification, and complete costing. Those gaps
   prevent implementation readiness; **none requires reopening the assembly algebra or the settled
   rulings.**
+  **CONTRACT REVIEW OF `D1`–`D4` (rev. 16), which the earlier PASS did not cover: `D1`, `D2` and `D4`
+  are NOT ready for adoption as written and `D3` is supportable conditionally. Joseph approved the
+  findings and rev. 16 implements them; the assembly algebra and the existing rulings are not
+  reopened.** `D1`'s **thresholds are WITHDRAWN as acceptance criteria** while the statistics and direct
+  normalization stand — macro formatting does not establish what sensitivity is scientifically
+  acceptable, and the half-a-display-unit rule behind the numbers is **factually wrong in both
+  directions at `12.5%` each** (derived, then checked on `200,000` pairs); **rounding equality** is the
+  exact test if display invariance is what is meant. New **§3.7d**: every proposed gate is **blind to
+  correlations** — `I₂` and `[[1,0.9],[0.9,1]]` give identical trace and per-bin statistics while their
+  sum and difference uncertainties move `+37.8%` and `−68.4%` — and it is **live**, because
+  `project_cov_nd.py` marginalizes the assembled covariance as `M C Mᵀ`; three candidate legs, none
+  adopted. `D2`'s option (i) is **not adopted** — a missing data release does not prevent specifying a
+  scientifically motivated per-bin tolerance. `D4`'s **`ε` is WITHHELD**: it is a summation bound over a
+  computation that is not a summation, `n_rep` counts output bins while every accumulation runs over
+  events, and the estimator is *"nearly deterministic in `seed` alone"* by its own module — a
+  reproducibility question. `11b`'s **operand is corrected** (persist `x_cv`, `x_cv2` and the predicate,
+  `1.05` MB against `≈41` GB) and **`11c`** is added as a conditional cross-check. Outcome branches are
+  **restated over a declared leg set `L`**, so a third leg cannot be ignored by a two-leg MET branch.
+  `N = 4`–`5` is re-labelled a **planning estimate, not demonstrated capacity**. **Zero cost, and one
+  Tier-3 prerequisite removed**; the one new compute item — a `≈11.6` GPU task-h determinism control —
+  is **returned as a bounded proposal and not run**. Five new §7 items (20–24) carry the questions.
 
 ### PET typed-descriptor semantic evidence
 
