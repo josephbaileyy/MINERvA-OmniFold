@@ -1,7 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 12 — the off-branch citation stops chasing a moving tip. The pin is stated as an INVARIANT
-# with the command that tests it, so the next commit on that branch needs no revision here.**
+# **rev. 13 — rev. 12's published check tests the LINE-WRAPPING, not the text: one quoted clause wraps
+# a blockquote and a contiguous `grep` calls it ABSENT. Normalized, measured, and the near-miss that
+# hid it for three tips is recorded.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -27,6 +28,23 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0k What changed in rev. 13
+
+Rev. 12 was `3241833d`. **The check rev. 12 published is defective in the dangerous direction, and this
+lane's own verification had been passing for a reason unrelated to the text.**
+
+| # | rev. 12 left | rev. 13 does |
+|---|---|---|
+| 1 | §5.9's check greps each clause **contiguously** out of the raw file | **it produces a FALSE ABSENT.** The §2 limits clause wraps across a `> ` blockquote continuation, so a contiguous `grep -F` fails on the newline and the marker. **Measured here at `9c1230fa`: naive reports `1 of 7` ABSENT, normalized reports `0`.** The check now carries the normalization step |
+| 2 | the check's failure direction was unstated | **stated, because it is the whole risk.** A false ABSENT on *this* invariant reads as *"the authorization no longer quotes Joseph's limits"* — the worst false alarm this document can raise, and one that would move the pin and start a hunt for a finding that does not exist |
+| 3 | rev. 12 reported the invariant holding at two later tips | **and it held for a reason that was partly luck, which is recorded.** This lane's probe string had been **pre-truncated at exactly the wrap point** (`"…no automatic retries or"`), so it passed three tips in a row **without ever exercising the wrap**. A probe shortened to avoid a hazard does not test past it |
+| 4 | — | **and the first draft of THIS revision published a broken remedy, caught by running it.** Its `sed 's/…>[[:space:]]\?//'` **does not strip the marker on macOS** — BSD basic regex does not read `\?` as optional — so the check returned `0` on a clause that is present, while GNU `sed` on Perlmutter would have accepted it. **Replaced by a `python3` normalizer, tested in both directions:** `1` on the wrapping clause, `0` on a fabricated absent one |
+
+**The pin does not move.** Re-measured at `9c1230fa`: the evidence directory diff against `1422569c` is
+**empty**, all seven clauses are present under normalization, and the full diff is confined to the
+authorization record. **Nothing else moved** — §5.6a, §5.8, §6.7's five decisions and §7's nineteen
+items are unchanged.
 
 ## 0.0j What changed in rev. 12
 
@@ -2277,19 +2295,57 @@ decaying count inside a provenance section is the wrong kind of precision.
    evidence"*; *"for my separate approval"*; §4's *"This lane will not act on it without his explicit
    approval"* and *"No arming of admission"*; and §3.5's *"`r5_refusal_reason` is called only under…"*.
 
-**THE CHECK, so nobody has to take this on trust or re-derive it:**
+**THE CHECK, so nobody has to take this on trust or re-derive it — and the normalization step is not
+optional, for the reason immediately below:**
 
 ```
 git diff --stat 1422569c <tip> -- docs/orchestration/state/preflight-20260906-r5/   # must be empty
+
 git show <tip>:docs/orchestration/AUTHORIZATION-20260906-pm-root-inspection.md \
-  | grep -c "do not present it as valid admission evidence"                        # and the other six
+  | python3 -c "import re,sys; print(re.sub(r'\s+',' ',re.sub(r'(?m)^\s*>\s?','',sys.stdin.read())))" \
+  | grep -c "<clause>"                                                             # once per clause, expect 1
 ```
 
-**RESULT AT THE TWO LATER TIPS THIS LANE HAS RUN IT AGAINST — `d7dd2f1c` and `6b439466`: all seven
-clauses present in both, evidence directory untouched in both**, each later diff confined to the
-authorization record. **So the pin holds, and a further commit on that branch does not need a revision
-here — it needs the check re-run.** If either condition ever fails, the pin moves and the failure is the
-finding.
+**Why `python3` and not `sed`, which is what a first draft of this subsection published.** That draft's
+`sed 's/^[[:space:]]*>[[:space:]]\?//'` **does not strip the marker on macOS**, because BSD basic regex
+does not read `\?` as an optional quantifier — **measured here: the `> ` prefixes survive it and the
+whole check silently returns `0`.** GNU `sed` on Perlmutter would accept it, so the same published
+command would pass on the cluster and produce a false ABSENT on a laptop. **The control plane is
+`python3` end to end; using it here removes the BSD-versus-GNU divergence rather than documenting
+around it.** Both directions of the replacement were tested: `1` on the wrapping clause, and `0` on a
+fabricated clause that is genuinely absent.
+
+**⚠ WITHOUT THE NORMALIZATION THE CHECK TESTS THE LINE-WRAPPING, NOT THE TEXT — and rev. 12 published
+it that way.** The §2 limits clause is wrapped across a blockquote continuation in the record:
+
+```
+> *"Limits: one CPU node, one inspection task, maximum 30 minutes, no GPUs, no automatic retries or
+> requeues. Release the allocation immediately when finished. …
+```
+
+so a contiguous `grep -F` for that sentence fails on the newline **and** on the `> ` marker.
+**Measured here at `9c1230fa`: the naive form reports `1 of 7` ABSENT; the normalized form reports
+`0`.** Any clause long enough to wrap is exposed, and an editor reflowing that file would expose more
+without changing a word.
+
+**The failure direction is what makes this worth a revision rather than a footnote.** A false ABSENT on
+*this* invariant reads as **"the authorization no longer quotes Joseph's limits"** — the worst false
+alarm this document can raise. It would move the pin and start a search for a finding that does not
+exist, and it would do so **on a correct branch**, which is this repository's catalogued
+guard-that-fires-on-every-correct-run shape pointed the other way.
+
+**⚠ AND THIS LANE'S OWN VERIFICATION HAD BEEN GREEN FOR THE WRONG REASON, WHICH IS RECORDED RATHER THAN
+QUIETLY FIXED.** The probe string used at rev. 10, 11 and 12 was **pre-truncated at exactly the wrap
+point** — `"…no automatic retries or"` — so it passed three tips in a row **without ever crossing the
+break it would have failed on**. **A probe shortened to avoid a hazard does not test past it**, and
+three green runs said nothing about the clause this document actually quotes.
+
+**RESULT, re-measured at the most recent tip this lane has run it against, `9c1230fa`: condition 1's
+diff is EMPTY, and all seven clauses are present under normalization**, the full diff being confined to
+the authorization record. **The invariant has held at every tip checked. The check is the authority, not
+the list of tips** — a register of shas is the count-shaped field rev. 12 removed. **A further commit on
+that branch needs the check re-run, not a revision here**; if either condition fails, the pin moves and
+the failure is the finding.
 
 **One of those later commits was itself a finding for this document, and the mechanism is worth
 recording because it is repeatable.** `4c30c089` — *"name the command that arms the gate: it is the one

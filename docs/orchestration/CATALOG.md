@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 12. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 13. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -350,6 +350,18 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `4c30c089`'s subject line was itself a finding for §5.6a, and it reached this document only because
   rev. 11 audited rev. 10's own count instead of trusting it — **reading a cited branch beats counting
   it.**
+  **⚠ AND REV. 12's PUBLISHED CHECK TESTED THE LINE-WRAPPING, NOT THE TEXT (rev. 13).** The §2 limits
+  clause wraps across a `> ` blockquote continuation, so a contiguous `grep -F` calls it **ABSENT** —
+  **measured at `9c1230fa`: naive reports `1 of 7` absent, normalized reports `0`.** The failure
+  direction is the whole risk: a false ABSENT on this invariant reads as *"the authorization no longer
+  quotes Joseph's limits"*, which would move the pin and start a hunt for a finding that does not exist,
+  **on a correct branch**. Two near-misses are recorded rather than repaired quietly: this lane's probe
+  string had been **pre-truncated at exactly the wrap point**, so three green runs never crossed the
+  break; and **the first draft of the remedy was itself broken** — `sed`'s `\?` is not an optional
+  quantifier in BSD basic regex, so it returned `0` on macOS while GNU `sed` on Perlmutter would have
+  accepted it. The published check is now a **`python3` normalizer**, matching the control plane's own
+  language and **tested in both directions** (`1` present, `0` on a fabricated clause). **The pin does
+  not move:** at `9c1230fa` the evidence-directory diff is empty and all seven clauses are present.
   **REVIEW ROUND 5 (rev. 6) found no new substantive contract finding.** Two non-blocking remnants, both
   the drafting lane's: §7 item 3 still called the prior one that *"understates a Z member"* — replaced
   with *"a prior measured on a different subject"*, with the rev.-4 changelog row that carried it marked
