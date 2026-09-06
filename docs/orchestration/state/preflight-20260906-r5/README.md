@@ -71,10 +71,31 @@ ceiling is not a ceiling risk. The point is that the instrument reported `0.0017
 actually spent `12.6` — wrong by four orders of magnitude — so a real production run would have been
 mismeasured the same way.
 
-**The defect is a pattern, not an anomaly.** Four earlier jobs in the same `cron` waker lineage show
-the same shape — `56585597` (1,580 attempts), `57575105` (490), `57668375` (354), `56139864` (92) —
-all CANCELLED and all outside the R5 window, so none of them move R5 spend. Had any run after t0 the
-meter would have under-reported them identically.
+**The defect is a pattern, not an anomaly.** **Five** earlier jobs in the same `cron` waker lineage
+show the same shape — `56585597` (1,580 attempts), `57575105` (490), `57668375` (354), `56139864`
+(92) and `57275989` (9) — all `cron` partition, all `TimeLimit=12:00:00`, all CANCELLED, and all
+outside the R5 window, so none of them move R5 spend. Had any run after t0 the meter would have
+under-reported them identically. With the live waker `57712764` that is **six** requeueing jobs.
+
+An earlier revision of this file said four. `57275989`, the smallest at nine attempts, was dropped
+between the measurement output and the prose — the measurement was right and the summary was not.
+It is named rather than rounded away, because a nine-attempt job is still a job the landed meter
+would charge once.
+
+### The arrays sweep's covering search is DISCONTIGUOUS — state it that way
+
+`sacct-arrays-duplicates-8field.psv` is **three separate queries**, not one range:
+`2026-07-10→2026-07-20`, `2026-08-12→2026-08-20`, `2026-08-25→2026-09-01` — three because NERSC
+rejects any `sacct` window wider than 30 days. Observed `Start` values run `2026-07-09T16:30:23` to
+`2026-09-01T06:41:58`, the earliest preceding the first window because `sacct` returns jobs running
+*during* a window. **But the coverage inside that range has two holes:** `2026-07-20`–`2026-08-10`
+(≈22 days) and `2026-08-21`–`2026-08-23` (≈3 days). Roughly 28 of those ≈54 days are covered.
+
+So the negative result is: **zero requeued array tasks in 5,942 rows of retained allocation-level
+accounting for user `josephrb`, across three discontiguous windows covering ≈28 days between
+2026-07-09 and 2026-09-01.** Describing it as "spanning 2026-07-09 to 2026-09-01" would assert a
+covering search that was not performed. A negative claim is only as good as its stated boundary, and
+this campaign has already corrected one absence claim made without a covering search.
 
 ## Provenance
 
