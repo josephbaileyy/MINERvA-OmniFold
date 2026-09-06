@@ -62,6 +62,31 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `OI-187` half (b). **Adopts nothing, discharges nothing, authorizes no submission and no spend.**
   Gate 2 remains FAIL; counts hold at CAND `1 of 7`, QUOTED `0 of 7`. §4 lists six downstream
   applications this lane is `BEN-381`-disqualified from performing.
+- [`VOI-20260906-cause3-mii-estimator-seed-scan.md`](VOI-20260906-cause3-mii-estimator-seed-scan.md)
+  - **UNSIGNED. The first of the two documents `R4` requires, and it authorizes nothing.** Prices the
+  cause-3 fixed-draw estimator-seed scan against four separated consequence classes: it changes cause
+  3's `M` grade cell and can change nothing else — discharge is blocked by `C` and `P-i` independently,
+  adoption by §5's prohibitions, and the one possible note disclosure **requires its own assessment and
+  ruling** rather than inheriting cause 1's. Distinguishes the narrow fixed-draw measurement `R4`
+  recognizes from **substitution** for the joint-baseline `(B)` measurement, which stays a separate
+  question and is **not** made a prerequisite. Records the `R5` meter as **implemented and
+  reviewer-PASSED with no operational receipt**, so measured headroom is unavailable and no
+  assumed-ceiling comparison is made. **Recommends DEFER** behind a Perlmutter meter receipt and an
+  independent verification of the execution proposals. Names `Z` (the complete scalar-5D successor,
+  `RZ`) as distinct from the joint-baseline composite, so neither carries the other's cost. Signs
+  nothing, grades nothing, alters no scientific criterion, launches nothing.
+- [`FINDING-20260906-cause3-scan-execution-composition.md`](FINDING-20260906-cause3-scan-execution-composition.md)
+  - **DISCOVERY RECORD for the VOI packet's §7; every remedy is a PROPOSAL awaiting independent
+  verification.** Five measurements at HEAD `c71b319a` and deployment `7ac0edec`: the predeclaration's
+  §6b citations resolve at the **deployment**, not `main` (+45 lines), so its preflight measured the
+  right operand but lacks its sha; the declared seed set `1..12` is unreachable through the launcher's
+  `42 + k` knob, and each of the three available routes meets a **different** declared falsifier, two of
+  them only after the spend; the viable route writes into the joint-baseline scan's own `mii/` member
+  namespace, where resume is by marker; the clean-offset predicate calls those offsets dirty while
+  nothing on that path enforces it; and `SCOREBOARD` §2b's *"cannot be configured on either leg"* ground
+  is **stale** — both legs now expose separate estimator and draw seeds, moving `(B)`'s blocker from
+  code to **Gate 2**. `BEN-381`: this lane measured all five, so it grades no cell and applies no
+  repair; §7 names each owner. Draws **no** affordability conclusion.
 - [`PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md`](PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md)
   - **UNSIGNED RECOMMENDATION, rev. 3, authorizing nothing.** Six rulings put to Joseph, each with an
   exhaustive branch set and a fallback state: grade `(cause 7, G)` permanently OPEN on the direct byte

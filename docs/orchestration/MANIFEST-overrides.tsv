@@ -1,5 +1,6 @@
 path	class	event_status	canonical_successor
 docs/orchestration/AMENDMENT-20260831-oi177-per-arm-ceilings.md	LIVE	open	
+docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md	LIVE	open	
 docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	LIVE	open	
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	LIVE	open	
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	LIVE	open	
@@ -41,9 +42,9 @@ docs/orchestration/DECISION-20260901-joseph-oi187-upgrade-not-blocker.md	LIVE	op
 docs/orchestration/DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md	LIVE	terminal	
 docs/orchestration/DECISION-20260901-joseph-ratifies-oi185-invariants.md	LIVE	terminal	
 docs/orchestration/DECISION-20260902-joseph-applies-oi173-cause4-m.md	LIVE	open	
+docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md	LIVE	open	""
 docs/orchestration/DECISION-20260902-joseph-rules-no-fourth-grade-token.md	LIVE	open	
 docs/orchestration/DECISION-20260902-joseph-rules-oi173-referent-is-the-candidate.md	LIVE	open	
-docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md	LIVE	open	""
 docs/orchestration/DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md	LIVE	open	
 docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	LIVE	open	
 docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	LIVE	open	
@@ -66,6 +67,7 @@ docs/orchestration/FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md	LIV
 docs/orchestration/FINDING-20260901-k0r2-redeploy-precondition-delta.md	LIVE	open	
 docs/orchestration/FINDING-20260901-p-leg-status-measured-against-the-candidate.md	LIVE	open
 docs/orchestration/FINDING-20260901-pscratch-read-stalls-block-a2b.md	LIVE	open	
+docs/orchestration/FINDING-20260906-cause3-scan-execution-composition.md	LIVE	open	
 docs/orchestration/FINDINGS.md	LIVE	open	
 docs/orchestration/FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md	LIVE	open	
 docs/orchestration/FREEZE-20260830-k0-deployment-7ac0edec.md	LIVE	open	
@@ -83,6 +85,7 @@ docs/orchestration/GRADE-20260825-f17b-comparison-instrument-fitness.md	LIVE	ope
 docs/orchestration/GRADE-20260825-selector-narrowing-fitness.md	LIVE	open	
 docs/orchestration/HOLD-20260821-clause-c-verification.md	ARCHIVAL	terminal	
 docs/orchestration/INDEX-retracted-and-superseded-values.md	LIVE	open	
+docs/orchestration/INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md	LIVE	open	
 docs/orchestration/LIVE-STATE.md	LIVE	generated	
 docs/orchestration/LIVE-USAGE.md	LIVE	open	
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	open	
@@ -121,6 +124,7 @@ docs/orchestration/RECORD-20260901-k0r2-round2-outcome.md	LIVE	open
 docs/orchestration/RECORD-20260901-oi179-defect3-enforced.md	LIVE	terminal	
 docs/orchestration/REVIEW-20260902-pet-typed-semantic-evidence.md	LIVE	open	""
 docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md	LIVE	open	
+docs/orchestration/RULING-20260902-quoted-column-permanence-is-p-scoped.md	LIVE	open	
 docs/orchestration/RUNBOOK-20260822-b1-lift-preflight.md	LIVE	open	
 docs/orchestration/RUNBOOK-status-dashboard.md	LIVE	open	
 docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	open	
@@ -136,6 +140,7 @@ docs/orchestration/VERDICT-20260821-expiry-c-real-path-present-seed.md	ARCHIVAL	
 docs/orchestration/VERDICT-20260825-gate2-k0-rehearsal-nine-clauses.md	LIVE	open	
 docs/orchestration/VERDICT-20260830-readiness-10-1-k0-7ac0edec.md	LIVE	open
 docs/orchestration/VERIFICATION-20260822-k0-execution-integrity.md	LIVE	open	
+docs/orchestration/VOI-20260906-cause3-mii-estimator-seed-scan.md	LIVE	open	
 docs/orchestration/WAKER.md	LIVE	open	
 docs/orchestration/WALKDOWN-20260822-one-pass.md	LIVE	open	
 docs/orchestration/control-plane/campaign-origin.json	LIVE	open	""
@@ -155,9 +160,6 @@ docs/orchestration/state/RECEIPT-20260830-k0-deployment-and-freeze-bundle-7ac0ed
 docs/orchestration/state/RECEIPT-20260830-quarantine-k0-aa67c426-member-namespace.json	MACHINE	open	
 docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	MACHINE	open	
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
-docs/orchestration/state/live-state.schema.json	LIVE	open	""
 docs/orchestration/state/live-state.json	LIVE	open	
+docs/orchestration/state/live-state.schema.json	LIVE	open	""
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
-docs/orchestration/RULING-20260902-quoted-column-permanence-is-p-scoped.md	LIVE	open	
-docs/orchestration/INTEGRATION-20260903-wave1-routing-freeze-and-ledger.md	LIVE	open	
-docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md	LIVE	open	
