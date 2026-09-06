@@ -1,8 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 9 — the citation moves to the corrected evidence revision, and §5.6a names THE OPENING ACT:
-# committing one receipt removes a QUEUE-WIDE refusal for 24 hours, and Joseph has already forbidden
-# presenting the receipt that exists.**
+# **rev. 10 — the off-branch evidence this document rests on is COMMITTED BUT UNPUSHED, so its shas
+# resolve on one machine only. Measured with a positive control, and it is a defect in §5.9's own
+# citations rather than in the evidence.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -28,6 +28,26 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0h What changed in rev. 10
+
+Rev. 9 was `b043148d`. **No review finding, and no new operational measurement. One defect in this
+document's citations, found while checking a supersession the preflight session reported.**
+
+| # | rev. 9 left | rev. 10 does |
+|---|---|---|
+| 1 | §5.9's off-branch evidence described as **"COMMITTED"** | **⚠ COMMITTED AND UNPUSHED — measured here with a positive control.** `git ls-remote origin 'refs/heads/lane/*'` returns exactly two rows, `lane/cause3-voi-20260906` and `lane/y-cause7-spec-and-scope`; **`lane/pm-root-inspection-20260906` is absent.** So all four shas this document cites off-branch resolve **in this local repository only**. §5.9's provenance block now says so |
+| 2 | the citation pinned at `1422569c` | **it STAYS at `1422569c`, and the reason is measured rather than assumed.** `d7dd2f1c` is now the branch tip; its diff touches **only** `AUTHORIZATION-20260906-pm-root-inspection.md`, and **all seven clauses this document quotes from that record are byte-identical across the two revisions** (substring-checked in both). Citing an unpushed *newer* sha would add nothing and resolve no better |
+
+**Why this is worth a revision on its own.** *"Committed"* and *"pushed"* are different branch
+properties, and this document has been treating the first as if it implied the second since rev. 8 —
+in a §5.9 whose entire discipline is labelling where each claim came from. **A citation nobody else can
+fetch is a definite description with a hexadecimal costume**, and §7 item 18 records what would resolve
+it. **This lane does not push another lane's branch**, and would not push this one in particular: it
+carries an authorization Joseph has not ruled on.
+
+**No substance moved.** The measurements in §5.9, §5.9a–c, §5.6a, §5.8 and §7 are unchanged, and the
+five decisions in §6.7 are unchanged.
 
 ## 0.0g What changed in rev. 9
 
@@ -2179,6 +2199,28 @@ dumps and `R5-PREFLIGHT-EVIDENCE.md` are **byte-identical across the two revisio
 digest-bound citation below is unaffected and only the prose moved. **The second of those two errors is
 an uncovered inference from absence — the same class as §5.9a — and it was caught by its own author.**
 
+**⚠ THE BRANCH HAS MOVED AGAIN AND THE CITATION DELIBERATELY HAS NOT — NEW IN REV. 10.** The tip is now
+`d7dd2f1c`, six commits on `641c6812`, correcting the authorization record's own §4a (which had said
+path 2 leaves the gate *"open"*, without §5.6a's 24-hour expiry). **This document still cites
+`1422569c`, and the ground is measured, not assumed:** `git diff 1422569c d7dd2f1c` touches **only**
+`AUTHORIZATION-20260906-pm-root-inspection.md`, the evidence directory is untouched, and **all seven
+clauses quoted from that record in §5.6, §5.6a and §7 item 17 are present byte-identically in BOTH
+revisions** (substring-checked in each). The six removed lines are an *"alternative if there is no
+hurry"* paragraph this document never cited.
+
+**⚠ AND THE WHOLE BRANCH IS COMMITTED BUT UNPUSHED, WHICH IS A DEFECT IN THIS DOCUMENT'S CITATIONS
+RATHER THAN IN THE EVIDENCE.** Measured here, with a positive control because a zero-row query is not a
+measurement on its own: `git ls-remote origin 'refs/heads/lane/*'` returns **exactly two** rows —
+`lane/cause3-voi-20260906` at `47494dbe` and `lane/y-cause7-spec-and-scope` at this document's own tip —
+and `refs/heads/lane/pm-root-inspection-20260906` is **absent**, while the same command spelled the same
+way resolves the control. **So `21b3d567`, `cd41ff41`, `1422569c` and `d7dd2f1c` exist in this local
+repository and nowhere a reader can fetch.** Rev. 8 and rev. 9 wrote *"COMMITTED"* and let it read as
+*"available"*; **committed and pushed are different branch properties and this document conflated
+them.** Read every off-branch sha below as **locally resolvable only** until §7 item 18 closes.
+**This lane does not push another lane's branch**, and would not push this one in particular — it
+carries an authorization Joseph has not ruled on, and publishing it would give an undecided proposal
+the reach of a settled record.
+
 `1422569c` carries
 `docs/orchestration/state/preflight-20260906-r5/` — `R5-PREFLIGHT-EVIDENCE.md`, `DIGESTS.txt`, four raw
 `sacct` `.psv` dumps, and two receipts named
@@ -2745,6 +2787,17 @@ move `N`:** re-derived here, the affordable member count is `4`–`5` under **bo
     and any proposed one-off accounting exception for my separate approval — do not bypass them"*) and
     **has not been ruled on**. So the read is authorized and unadmittable, which is a different state
     from unauthorized.
+
+18. **The off-branch evidence this document rests on is UNPUSHED, so §5.9's and §7's citations to it
+    resolve on one machine only.** Measured with a positive control (§5.9): the remote carries exactly
+    two `lane/*` refs and `lane/pm-root-inspection-20260906` is not among them. Everything in §5.9 that
+    is **RELAYED** therefore has a citation a reader outside this machine cannot follow — the
+    **RE-VERIFIED HERE** items are unaffected, because their evidence is in this checkout. **What it
+    would take:** a push by that branch's owner. **It is not this lane's act**, and it should not happen
+    before Joseph rules on the authorization record's §4, since pushing would publish an undecided
+    accounting exception. **The right reading until then is that §5.9's relayed measurements are
+    attested but not yet independently fetchable**, which is weaker than this document said in rev. 8
+    and rev. 9 and is stated here rather than left to a reader to discover.
 
 ---
 

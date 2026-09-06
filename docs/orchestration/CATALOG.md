@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 9. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 10. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -311,6 +311,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   presentation. §7 item 17 is sharpened: the ROOT **inspection is authorized** with quoted limits, while
   the **one-off accounting exception** that would let it be admitted is a proposal Joseph **expressly
   reserved to himself** and has not ruled on — authorized and unadmittable, which is not unauthorized.
+  **⚠ THE OFF-BRANCH EVIDENCE IS COMMITTED BUT UNPUSHED (rev. 10), which is a defect in §5.9's
+  CITATIONS and not in the evidence.** Measured with a positive control, because a zero-row query is
+  not a measurement on its own: `git ls-remote origin 'refs/heads/lane/*'` returns **exactly two** rows
+  — `lane/cause3-voi-20260906` and `lane/y-cause7-spec-and-scope` — and
+  `lane/pm-root-inspection-20260906` is **absent**, while the same command resolves the control. So
+  `21b3d567`, `cd41ff41`, `1422569c` and `d7dd2f1c` resolve **in one local repository only**, and rev. 8
+  and rev. 9's *"COMMITTED"* was read as *"available"*: **committed and pushed are different branch
+  properties.** §5.9's **RELAYED** items are therefore attested but **not independently fetchable**;
+  the **RE-VERIFIED HERE** items are unaffected, their evidence being in this checkout. New §7 item 18
+  records what would resolve it — **a push by that branch's owner, which is not this lane's act and
+  should not precede Joseph's ruling on §4**, since it would publish an undecided accounting exception.
+  The citation deliberately **stays at `1422569c`** although the tip is now `d7dd2f1c`: that diff
+  touches **only** the authorization record, the evidence directory is untouched, and **all seven
+  clauses this document quotes are byte-identical in both revisions** (substring-checked in each).
   **REVIEW ROUND 5 (rev. 6) found no new substantive contract finding.** Two non-blocking remnants, both
   the drafting lane's: §7 item 3 still called the prior one that *"understates a Z member"* — replaced
   with *"a prior measured on a different subject"*, with the rev.-4 changelog row that carried it marked
