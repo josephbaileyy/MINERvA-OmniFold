@@ -144,26 +144,38 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables `RZ(v)`
-  authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by path plus
-  digest, the imported constants, the composition, the receipt schema, and what does not exist yet), the
-  **seven cause dispositions** (§2, none inherited — discharge is a (cause × artifact) property and Z
-  inherits nothing from G), **terminal criteria** (§3, per-cell completion *and* failure, eleven reject-Z
-  conditions, a bidirectional test contract), the **dependency analysis** (§4, nineteen candidates each
-  answered separately for `necessary` / `applicable` / `reusable-now`, with `D-Y-CONSTRUCT` and
-  `D-C3-VOI`+`D-C3-RUN` flagged and **neither found to be a Z prerequisite**), and a **costed execution
-  proposal** (§5, from the ratified `70` GPU / `113` CPU seven-arm anchor, with the meter gap named).
-  **§6 is `RZ(v)`'s criterion carve-out and is NOT adopted** — two proposals reserved for Joseph, the
-  first being that `N/A` is outside `CRITERIA` §3's three-token vocabulary, so a cause-5 `N/A` makes Z's
-  seven-MET terminal state **unreachable as the vocabulary stands** (§2.5). **Three upstream claims are
-  re-measured and corrected in place:** S carries `publication_gate_rejects_this: **false**` and its
-  committed receipt records an 11-gate PASS, so the *"the adopter refuses it outright"* ground is stale —
-  the durable ground is that S is a block-sum object with **no unified-throw inflation** and addresses one
-  cause of seven (§1.4, and `VL68` already carries the correction); `SCOREBOARD` §2b's *"`M(ii)` cannot be
-  configured on either leg"* is superseded by the `3dd5e66e` seed split (§2.3); and Y's
-  `C_Y − C_G = L_active − L_support` closure **does not apply to Z** and would be a false identity in a Z
-  receipt (§1.3). Opens no `SCOREBOARD` cell, moves no count, preserves `R5` exactly, does not widen Y.
-  `BEN-381` disqualifies the drafting lane from grading the legs it defines.
+  - **rev. 2. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
+  path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
+  `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
+  + C_stat + C_ML` with `D_Z`'s operands, zero-denominator handling and both centering variants; §1.3b's
+  identity set, **four of whose gates do not exist**; the receipt schema; and what does not exist yet),
+  the **seven cause dispositions** (§2, none inherited), **terminal criteria** (§3, per-cell completion
+  *and* failure, fifteen reject-Z conditions, a bidirectional test contract), the **dependency analysis**
+  (§4, twenty-two candidates each answered separately for `necessary` / `applicable` / `reusable-now`,
+  with `D-Y-CONSTRUCT` and `D-C3-VOI`+`D-C3-RUN` flagged and **neither found to be a Z prerequisite**),
+  and a **costed execution proposal** (§5 — `73.0` GPU / `≤118.0` CPU task-hours for one build against
+  `R5`'s `500`/`500`, from the ratified `70`/`113` seven-arm anchor, with the meter gap named).
+  **§6 carries FOUR RULINGS Joseph took on 2026-09-06** on an independent contract review's
+  recommendations: `(cause 5, Z)` may be terminally disposed **`INAPPLICABLE — disposed by decision`**
+  after the complete trace and falsifier check, **adding no token** and on cause 2's by-decision
+  precedent (§6.1); `(cause 1, Z)` closes on **measure-and-disclose irrespective of magnitude**, once
+  independently verified, **without inventing ± endpoints for the non-pair bands** (§6.2); `(cause 3, Z)`'s
+  `M(ii)` is the **joint-baseline** quantity with the narrow fixed-draw scan **diagnostic unless
+  substitution is separately ruled**, the 46/50-member family **not assumed**, and three outcome classes
+  predeclared (§6.3); and Z uses a **scale-relative fixed-seed null bound fixed before production**
+  (§6.4). §6.5 withdraws rev. 1's multi-draw cause-4 proposal. **`CRITERIA` §0's vocabulary is NOT
+  extended** — `DECISION-20260902-joseph-rules-no-fourth-grade-token.md` stands, and rev. 1's contrary
+  proposal is recorded as a miss. **Corrections carried in place:** S's `publication_gate_rejects_this`
+  is **`false`** with an 11-gate PASS, so the *"adopter refuses it outright"* ground is stale — the
+  durable ground is that S is a block-sum object with **no unified-throw inflation** and **cannot donate
+  `D_Z`** (§1.4); `SCOREBOARD` §2b's *"`M(ii)` cannot be configured"* is superseded by `3dd5e66e` (§2.3);
+  and, **withdrawn from rev. 1**, the bidirectional projection guard is **not missing** — both projectors
+  guard both directions and differ **deliberately** in fail-closed-ness (§2.6a), reuse of
+  `C_stat`/`C_ML` is **not** evidence of incompleteness (§2.6b), and the replay-doubling and *"≈4.5×"*
+  cost claims are withdrawn (§5.3, §5.4). Opens no `SCOREBOARD` cell, moves no count, preserves `R5`
+  exactly, does not widen Y, does not promote S. `BEN-381` disqualifies the drafting lane from grading
+  the legs it defines, and from grading under the four rulings.
 
 ### PET typed-descriptor semantic evidence
 
