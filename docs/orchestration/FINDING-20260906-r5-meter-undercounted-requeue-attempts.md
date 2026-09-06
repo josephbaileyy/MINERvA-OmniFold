@@ -173,8 +173,9 @@ No other capture is committed.
   deliberately **not** part of the identity — see §5a for why an earlier revision of this repair got
   that wrong and what it cost.
 - **Attempts are summed** per job id.
-- **Deduplicated:** two rows agreeing on all three key fields are one observation of one attempt and
-  are charged once (`mixed.sacct`'s `20001|duplicate` row keeps exactly this meaning). `.batch`,
+- **Deduplicated:** two rows agreeing on the key `(JobID, Start)` **and** on `End`, `ElapsedRaw` and
+  GPU classification are one observation of one attempt and are charged once (`mixed.sacct`'s
+  `20001|duplicate` row keeps exactly this meaning); disagreement in any of those three refuses. `.batch`,
   `.extern`, numbered steps and array-bracket summary rows are excluded outright — a step row is a
   *representation* of an execution, never an attempt. A row whose `Start` is `Unknown`/`N/A`/empty
   is skipped.
@@ -273,14 +274,35 @@ semantics*, and this field list genuinely cannot distinguish "two observations o
 
 **What changed.** The identity is now `(JobID, Start)`. `End` moved from the key into the set of
 fields that two rows sharing a key must agree on, alongside `ElapsedRaw` and GPU classification; a
-disagreement in any of them refuses the dump, naming the job id, the field and both values, and
-telling the operator to re-query in one window or with `-j <jobid>`. The reviewer's exact reproducer
+disagreement in any of them refuses the dump, naming the job id, the conflicting field and both
+values. (The recovery instruction — re-query in a single window, or with `-j <jobid>` — is carried by
+`R5-METER.md` and the code comment at the refusal site, **not** by the exception string itself; an
+earlier revision of this section claimed the exception carried it, which review caught.) The
+reviewer's exact reproducer
 is a regression test, the test that had blessed the old behaviour now asserts the refusal, and a
 third test pins the case that motivated including `End` in the first place — a byte-identical
 repeated row must still count once, not refuse.
 
 **Cost to the measurements: none.** The preserved captures contain **zero** duplicate `(JobID, Start)`
 pairs, so the real fixture still meters 952 attempts and 12.590278 CPU task-hours, unchanged.
+
+**What real accounting does and does not contain, for this shape.** The capturing lane measured its
+own captures for both forms after this defect was found:
+
+- The **benign** form is real and present. `sacct-hist-alloc.psv`, itself assembled from three query
+  windows, holds exactly **2 byte-identical duplicate lines out of 3 994**. One, `57575105`, ran
+  `2026-08-27T15:00:04 → 2026-08-28T01:59:20` and **straddles that dump's `2026-08-28T00:00` window
+  boundary**, so it was returned once per window — the mechanism above, in real data. The other,
+  `57644537`, ran wholly inside a single window and is duplicated anyway; it is recorded as
+  **unexplained** rather than assigned a cause. That matters more than the explained one: window
+  straddling is *sufficient* to produce duplication but is evidently not *necessary*, so evidence
+  built only from straddlers would not cover the space.
+- The **dangerous** form is absent from every preserved capture. Rows with `End` = `Unknown` number
+  **0** across all three files, so no `RUNNING`-beside-`COMPLETED` pair exists in any of them.
+
+So the agreement path — identical rows collapsing to one charge — is exercised by real data, while
+the refusal path is exercised only synthetically, of necessity. Both are labelled accordingly in the
+test suite.
 
 ## 6. Receipts requiring replacement
 
