@@ -1,8 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 10 — the off-branch evidence this document rests on is COMMITTED BUT UNPUSHED, so its shas
-# resolve on one machine only. Measured with a positive control, and it is a defect in §5.9's own
-# citations rather than in the evidence.**
+# **rev. 11 — §5.6a's opening act is not merely available, it is PRESCRIBED: a committed runbook's
+# copy-pasteable command writes to the gate's exact path, in a directory whose 150 siblings are all
+# tracked, leaving one ordinary `git add` between a routine measurement and a queue-wide opening.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -28,6 +28,19 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0i What changed in rev. 11
+
+Rev. 10 was `9b9708af`. **One measurement, taken in this checkout, that sharpens §5.6a's warning from
+carelessness to procedure.**
+
+| # | rev. 10 left | rev. 11 does |
+|---|---|---|
+| 1 | §5.6a: *"nobody should perform it by running the repaired tool once to see whether it works"* | **too weak, and the real hazard is the opposite of carelessness.** `R5-METER.md:12-16` is a copy-pasteable block that writes to **the gate's exact path**, introduced as *"atomically refresh the default receipt"*. Measured here: that path is **not gitignored** (`git check-ignore` exits 1) and **150 tracked `.json` files already sit in the same directory**. So the residual step is **one ordinary `git add`** — and the runbook's own closing disclaimer covers **authorization** while saying nothing about **admission**, which is the exact gap |
+| 2 | §5.9 said *"six commits"* but named four | **all six enumerated**, including `7eccccdc` and `4c30c089`, whose subject line is what sent this lane to `R5-METER.md`. **The measurement is this lane's own, in this checkout** |
+
+**No substance moved** and nothing is approved. §5.6a's three radius bounds, §5.8's figures, §5.9's
+measurements and §6.7's five decisions are all unchanged.
 
 ## 0.0h What changed in rev. 10
 
@@ -2004,11 +2017,41 @@ consequence.** Measured against `campaignctl.py` at this base:
 
 **The operational sentence, which is the point of this subsection:** the integration lane's meter
 repair is expected within days, and **landing the repair does not open the gate.** The opening act is a
-`git commit` of a receipt to one tracked path — **so nobody should perform it by running the repaired
-tool once to see whether it works.** That is a queue-wide decision with its own weight, and under
-Joseph's standing instruction the receipt that exists today may not be presented as admission evidence
-at all (§5.6). **This lane names the act; it does not propose taking it, and `RZ(iv)` would not let
-it.**
+`git commit` of a receipt to one tracked path. That is a queue-wide decision with its own weight, and
+under Joseph's standing instruction the receipt that exists today may not be presented as admission
+evidence at all (§5.6). **This lane names the act; it does not propose taking it, and `RZ(iv)` would
+not let it.**
+
+**⚠ AND THE ACT IS PRESCRIBED, NOT MERELY AVAILABLE — NEW IN REV. 11, measured in this checkout.**
+Rev. 9 wrote *"nobody should perform it by running the repaired tool once to see whether it works"*,
+which frames the hazard as carelessness. **It is the opposite: the documented procedure performs the
+first half of it.** `docs/orchestration/R5-METER.md:12-16` carries a copy-pasteable block, introduced
+by *"On Perlmutter, query accounting in UTC and atomically refresh the default receipt"*:
+
+```bash
+python3 docs/orchestration/r5_meter.py measure \
+  --write docs/orchestration/state/r5-meter-receipt.json
+```
+
+**That is the gate's exact path**, written by the runbook's own recommended invocation. Three
+measurements make the remaining distance one command:
+
+| measured | result |
+|---|---|
+| is the gate path gitignored? | **NO** — `git check-ignore -v docs/orchestration/state/r5-meter-receipt.json` exits **1** |
+| do its siblings get committed? | **YES, as the norm** — `git ls-files docs/orchestration/state/` counts **150** tracked `.json` files |
+| does the runbook warn about admission? | **NO.** Its closing line is *"The meter authorizes nothing. R5 is a prohibition and an accounting boundary; every run still needs its own declaration and authorization."* **True about AUTHORIZATION and silent about ADMISSION** — and admission is what that path controls |
+
+**So the sequence that arms the queue is: follow the runbook, then `git add`.** Neither step looks like
+a decision. A `git add -A`, a routine *"commit the state directory"*, or any hook that stages generated
+state completes it, and **§5.6a's whole point is that the second step is the one with the queue-wide
+consequence while the first is the one anybody would do.** The runbook's disclaimer will not stop it,
+because it disclaims a different thing.
+
+**Stated as a requirement rather than a worry, since this document is a specification:** before any Z
+campaign, either the runbook's default `--write` target must stop being the gate path, or the gate path
+must stop being an ordinary tracked-by-default file — **and which of those is right is not this lane's
+call.** It is named in §7 item 19 and belongs to the meter's owner.
 
 ## 5.7 The uncertainty on all of the above
 
@@ -2201,7 +2244,12 @@ an uncovered inference from absence — the same class as §5.9a — and it was 
 
 **⚠ THE BRANCH HAS MOVED AGAIN AND THE CITATION DELIBERATELY HAS NOT — NEW IN REV. 10.** The tip is now
 `d7dd2f1c`, six commits on `641c6812`, correcting the authorization record's own §4a (which had said
-path 2 leaves the gate *"open"*, without §5.6a's 24-hour expiry). **This document still cites
+path 2 leaves the gate *"open"*, without §5.6a's 24-hour expiry). **All six, enumerated in rev. 11
+because rev. 10 said "six" and named four:** `21b3d567`, `cd41ff41`, `1422569c`, `7eccccdc`
+(*"the two paths in §4 have different blast radii"*), `4c30c089` (*"name the command that arms the gate:
+it is the one `R5-METER.md` tells you to run"*), `d7dd2f1c`. **That fifth subject line is what sent this
+lane to `R5-METER.md`; the measurements in §5.6a are this lane's own, taken in this checkout, and are
+MEASURED rather than RELAYED.** **This document still cites
 `1422569c`, and the ground is measured, not assumed:** `git diff 1422569c d7dd2f1c` touches **only**
 `AUTHORIZATION-20260906-pm-root-inspection.md`, the evidence directory is untouched, and **all seven
 clauses quoted from that record in §5.6, §5.6a and §7 item 17 are present byte-identically in BOTH
@@ -2798,6 +2846,15 @@ move `N`:** re-derived here, the affordable member count is `4`–`5` under **bo
     accounting exception. **The right reading until then is that §5.9's relayed measurements are
     attested but not yet independently fetchable**, which is weaker than this document said in rev. 8
     and rev. 9 and is stated here rather than left to a reader to discover.
+
+19. **The meter runbook's default `--write` target is the admission gate's input path, and that path is
+    an ordinary tracked-by-default file.** Measured (§5.6a): `R5-METER.md:12-16` writes to
+    `docs/orchestration/state/r5-meter-receipt.json`; `git check-ignore` exits **1** on it; **150**
+    tracked `.json` files already sit in that directory; and the runbook disclaims **authorization**
+    while saying nothing about **admission**. So *follow the runbook, then `git add`* arms the queue,
+    and neither step looks like a decision. **What it would take:** either the runbook's default target
+    moves off the gate path, or the gate path stops being tracked-by-default. **Which is right is the
+    meter owner's call, not this lane's**, and this record proposes neither.
 
 ---
 

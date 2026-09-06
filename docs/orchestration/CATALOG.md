@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 10. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 11. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -325,6 +325,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   The citation deliberately **stays at `1422569c`** although the tip is now `d7dd2f1c`: that diff
   touches **only** the authorization record, the evidence directory is untouched, and **all seven
   clauses this document quotes are byte-identical in both revisions** (substring-checked in each).
+  **⚠ THE OPENING ACT IS PRESCRIBED, NOT MERELY AVAILABLE (rev. 11), and the measurement is this lane's
+  own.** Rev. 9's *"nobody should perform it by running the repaired tool once to see whether it works"*
+  framed the hazard as carelessness; **the documented procedure performs the first half of it.**
+  `R5-METER.md:12-16` is a copy-pasteable block — introduced as *"atomically refresh the default
+  receipt"* — whose `--write` target **is the admission gate's exact path**,
+  `docs/orchestration/state/r5-meter-receipt.json`. Measured here: that path is **not gitignored**
+  (`git check-ignore` exits `1`), **150** tracked `.json` files already sit in the same directory, and
+  the runbook's closing disclaimer covers **authorization** while saying nothing about **admission** —
+  which is what that path controls. **So the sequence that arms the queue is: follow the runbook, then
+  `git add`**, and neither step looks like a decision; a `git add -A` or a routine "commit the state
+  directory" completes it. New §7 item 19 states the requirement without choosing between its two
+  remedies — the runbook's default target moves off the gate path, or the gate path stops being
+  tracked-by-default — because **that is the meter owner's call, not this lane's.** §5.9 also now
+  enumerates all six off-branch commits, rev. 10 having said "six" and named four.
   **REVIEW ROUND 5 (rev. 6) found no new substantive contract finding.** Two non-blocking remnants, both
   the drafting lane's: §7 item 3 still called the prior one that *"understates a Z member"* — replaced
   with *"a prior measured on a different subject"*, with the rev.-4 changelog row that carried it marked
