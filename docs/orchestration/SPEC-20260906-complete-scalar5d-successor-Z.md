@@ -1,8 +1,7 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 11 — §5.6a's opening act is not merely available, it is PRESCRIBED: a committed runbook's
-# copy-pasteable command writes to the gate's exact path, in a directory whose 150 siblings are all
-# tracked, leaving one ordinary `git add` between a routine measurement and a queue-wide opening.**
+# **rev. 12 — the off-branch citation stops chasing a moving tip. The pin is stated as an INVARIANT
+# with the command that tests it, so the next commit on that branch needs no revision here.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -28,6 +27,26 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0j What changed in rev. 12
+
+Rev. 11 was `8d643fd8`. **A structural fix to one citation, and no new substance.**
+
+**The problem, which is this document's own and recurring.** §5.9 pinned an off-branch citation at
+`1422569c` and described the branch by **counting** its commits. That count has now been wrong twice in
+three revisions — rev. 10 said *"six"* and named four; rev. 11 enumerated six and the branch is now at
+**seven** — and it will keep going stale, because the cited branch is **actively advancing** while this
+document is not its author. **Chasing a tip is churn, and a stale count in a section about provenance is
+worse than churn.**
+
+**The fix: state the pin as an INVARIANT and name the command that tests it**, rather than as a
+snapshot that decays. §5.9 now says what the pin depends on — the evidence directory unchanged, and the
+seven quoted clauses present — gives the two-line check, and records the result at the two later tips
+this lane has actually run it against (`d7dd2f1c`, `6b439466`: **all seven present in both, evidence
+directory untouched in both**). **A further commit on that branch does not require a revision here; it
+requires re-running the check.**
+
+**Nothing else moved.** §5.6a, §5.8, §6.7's five decisions and §7's nineteen items are unchanged.
 
 ## 0.0i What changed in rev. 11
 
@@ -2242,14 +2261,42 @@ dumps and `R5-PREFLIGHT-EVIDENCE.md` are **byte-identical across the two revisio
 digest-bound citation below is unaffected and only the prose moved. **The second of those two errors is
 an uncovered inference from absence — the same class as §5.9a — and it was caught by its own author.**
 
-**⚠ THE BRANCH HAS MOVED AGAIN AND THE CITATION DELIBERATELY HAS NOT — NEW IN REV. 10.** The tip is now
-`d7dd2f1c`, six commits on `641c6812`, correcting the authorization record's own §4a (which had said
-path 2 leaves the gate *"open"*, without §5.6a's 24-hour expiry). **All six, enumerated in rev. 11
-because rev. 10 said "six" and named four:** `21b3d567`, `cd41ff41`, `1422569c`, `7eccccdc`
-(*"the two paths in §4 have different blast radii"*), `4c30c089` (*"name the command that arms the gate:
-it is the one `R5-METER.md` tells you to run"*), `d7dd2f1c`. **That fifth subject line is what sent this
-lane to `R5-METER.md`; the measurements in §5.6a are this lane's own, taken in this checkout, and are
-MEASURED rather than RELAYED.** **This document still cites
+**⚠ THE BRANCH IS ACTIVELY ADVANCING AND THE CITATION DELIBERATELY DOES NOT FOLLOW IT. REV. 12 STATES
+THE PIN AS AN INVARIANT INSTEAD OF A SNAPSHOT, BECAUSE THE SNAPSHOT WENT STALE TWICE.** Rev. 10 said
+*"six commits"* and named four; rev. 11 enumerated six; the tip was `6b439466`, **seven**, before rev. 12
+was written. **A count of someone else's branch is a field this document cannot keep true**, and a
+decaying count inside a provenance section is the wrong kind of precision.
+
+**THE PIN: `1422569c`. THE INVARIANT IT RESTS ON, and it is two conditions, not a date:**
+
+1. **The evidence directory is unchanged** — `docs/orchestration/state/preflight-20260906-r5/` — so
+   every digest-bound claim in the table above still reads off the bytes this document read.
+2. **The seven clauses quoted from `AUTHORIZATION-20260906-pm-root-inspection.md` in §5.6, §5.6a and §7
+   item 17 are present**: §1's *"I authorize one CPU-only interactive allocation…"*; §2's
+   *"maximum 30 minutes, no GPUs, no automatic retries or…"*; *"do not present it as valid admission
+   evidence"*; *"for my separate approval"*; §4's *"This lane will not act on it without his explicit
+   approval"* and *"No arming of admission"*; and §3.5's *"`r5_refusal_reason` is called only under…"*.
+
+**THE CHECK, so nobody has to take this on trust or re-derive it:**
+
+```
+git diff --stat 1422569c <tip> -- docs/orchestration/state/preflight-20260906-r5/   # must be empty
+git show <tip>:docs/orchestration/AUTHORIZATION-20260906-pm-root-inspection.md \
+  | grep -c "do not present it as valid admission evidence"                        # and the other six
+```
+
+**RESULT AT THE TWO LATER TIPS THIS LANE HAS RUN IT AGAINST — `d7dd2f1c` and `6b439466`: all seven
+clauses present in both, evidence directory untouched in both**, each later diff confined to the
+authorization record. **So the pin holds, and a further commit on that branch does not need a revision
+here — it needs the check re-run.** If either condition ever fails, the pin moves and the failure is the
+finding.
+
+**One of those later commits was itself a finding for this document, and the mechanism is worth
+recording because it is repeatable.** `4c30c089` — *"name the command that arms the gate: it is the one
+`R5-METER.md` tells you to run"* — is what sent this lane to that runbook, and §5.6a was wrong until it
+did. **It reached this document only because rev. 11 audited rev. 10's own count and enumerated what it
+had merely tallied.** Reading a cited branch beats counting it; **the measurements in §5.6a are then
+this lane's own, taken in this checkout, and are MEASURED rather than RELAYED.** **This document still cites
 `1422569c`, and the ground is measured, not assumed:** `git diff 1422569c d7dd2f1c` touches **only**
 `AUTHORIZATION-20260906-pm-root-inspection.md`, the evidence directory is untouched, and **all seven
 clauses quoted from that record in §5.6, §5.6a and §7 item 17 are present byte-identically in BOTH

@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 11. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 12. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -337,8 +337,19 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `git add`**, and neither step looks like a decision; a `git add -A` or a routine "commit the state
   directory" completes it. New §7 item 19 states the requirement without choosing between its two
   remedies — the runbook's default target moves off the gate path, or the gate path stops being
-  tracked-by-default — because **that is the meter owner's call, not this lane's.** §5.9 also now
-  enumerates all six off-branch commits, rev. 10 having said "six" and named four.
+  tracked-by-default — because **that is the meter owner's call, not this lane's.**
+  **THE OFF-BRANCH CITATION STOPS CHASING A MOVING TIP (rev. 12).** §5.9 had described that branch by
+  **counting** its commits, and the count went stale twice in three revisions — rev. 10 said *"six"* and
+  named four; rev. 11 enumerated six; the tip was **seven** before rev. 12 was written. **A count of
+  someone else's actively advancing branch is a field this document cannot keep true.** The pin stays at
+  `1422569c` and is now stated as an **invariant with the command that tests it**: the evidence
+  directory unchanged, and the seven quoted clauses of the authorization record present. **Run at the
+  two later tips this lane has checked — `d7dd2f1c` and `6b439466` — all seven are present in both and
+  the evidence directory is untouched in both**, each later diff confined to the authorization record.
+  **A further commit on that branch now needs the check re-run, not a revision here.** Recorded with it:
+  `4c30c089`'s subject line was itself a finding for §5.6a, and it reached this document only because
+  rev. 11 audited rev. 10's own count instead of trusting it — **reading a cited branch beats counting
+  it.**
   **REVIEW ROUND 5 (rev. 6) found no new substantive contract finding.** Two non-blocking remnants, both
   the drafting lane's: §7 item 3 still called the prior one that *"understates a Z member"* — replaced
   with *"a prior measured on a different subject"*, with the rev.-4 changelog row that carried it marked
