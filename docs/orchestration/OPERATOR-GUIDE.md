@@ -497,13 +497,22 @@ outcome records `wall_seconds`, `producer_timeout_seconds`, and
 Immediately before claiming a compute item, the queue reads
 `docs/orchestration/state/r5-meter-receipt.json`. Tests may override that path
 with `CAMPAIGN_R5_RECEIPT`. Exit code 6 and a `refused` outcome result if the
-receipt is missing or malformed, is more than 24 hours old, is dated later than
+receipt is missing or malformed, carries `schema_version` 1, is more than 24 hours
+old, is dated later than
 the queue clock by more than 60 seconds of tolerated skew, reports `fired.any`,
 has reached the stop date, or leaves no headroom for this item once every other
 reserving item is counted. Freshness is bounded on
 both sides on purpose: an age-only bound accepted a receipt dated a day after
 the queue clock, which is how a stale measurement can be made to look
 permanently fresh.
+
+**A `schema_version` 1 receipt is refused outright, not merely treated as old.**
+Version 1 keyed spend by job id, so it counted at most **one execution attempt per
+job** and under-reported every requeued job — 6 s where one waker job had burned
+45 325 s. That is an under-count against a prohibition, so it is not valid
+accounting at any age: both `r5_meter.py` and `campaignctl.py` refuse it and say
+why. Re-measure with the current meter. See
+`FINDING-20260906-r5-meter-undercounted-requeue-attempts.md`.
 
 **The receipt must be committed, and the Perlmutter measurer commits it before
 any compute can be admitted.** A measurement that exists only in a working tree
@@ -551,6 +560,13 @@ reserving its **full declared `maximum_cost`** until a committed receipt
    had the chance to see the spend — **and**
 2. lists **every** identity in that item's `scheduler_task_ids` in
    `spend.metered_task_ids` — the meter demonstrably **did** see it.
+
+Clause 2 compares **scheduler task ids**, and a requeued job keeps one id however
+many times it ran. `spend.metered_task_ids` answers "was this item's spend
+counted"; the receipt's `spend.attempts_by_task_id` answers "how many of its
+executions were charged" and is deliberately **not** part of the release test. An
+item does not become releasable, or stop being releasable, because its job
+requeued — only its hours change, and those are already in the spend columns.
 
 R5 §3 counts a task in full however it ended, and lets a job running at the stop
 finish with its spend counted, so hours are real from the claim onwards. Releasing

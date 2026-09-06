@@ -66,6 +66,7 @@ docs/orchestration/FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md	LIV
 docs/orchestration/FINDING-20260901-k0r2-redeploy-precondition-delta.md	LIVE	open	
 docs/orchestration/FINDING-20260901-p-leg-status-measured-against-the-candidate.md	LIVE	open
 docs/orchestration/FINDING-20260901-pscratch-read-stalls-block-a2b.md	LIVE	open	
+docs/orchestration/FINDING-20260906-r5-meter-undercounted-requeue-attempts.md	LIVE	open	
 docs/orchestration/FINDINGS.md	LIVE	open	
 docs/orchestration/FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md	LIVE	open	
 docs/orchestration/FREEZE-20260830-k0-deployment-7ac0edec.md	LIVE	open	

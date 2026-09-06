@@ -35,6 +35,15 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 - [`R5-METER.md`](R5-METER.md)
   - Usage and fail-closed semantics for the R5 task-hour accounting boundary. The meter authorizes
     nothing; every run still requires its own declaration and authorization.
+- [`FINDING-20260906-r5-meter-undercounted-requeue-attempts.md`](FINDING-20260906-r5-meter-undercounted-requeue-attempts.md)
+  - **The metered unit is an execution attempt, not a job id.** On a preserved Perlmutter capture of
+  one self-requeueing waker job the meter reported **0.0016667** CPU task-hours where **12.590278**
+  had been spent across **952** attempts — the fail-OPEN direction against a prohibition — or refused
+  outright once `--duplicates` was in the query. Records the corrected semantics, the receipt
+  schema-2 fields, the version-1 refusal, the reading of §3 it rejects (named so it can be
+  overturned in one function), and one dated follow-up: the 30-day `sacct` span limit fires at
+  `2026-10-02T13:44:27Z`, after the stop date. Produces **no** operational receipt, changes no
+  ceiling, moves no gate or count, and does not amend the ruling.
 
 
 ### PET Gate-6 branch preservation — removal proposed, NOT executed

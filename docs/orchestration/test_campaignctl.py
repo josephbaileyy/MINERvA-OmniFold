@@ -1125,6 +1125,11 @@ class CampaignQueueTests(unittest.TestCase):
         identities = sorted(set(spend["metered_task_ids"]) | set(task_ids))
         spend["metered_task_ids"] = identities
         spend["task_count"] = len(identities)
+        # One execution attempt per task: these fixtures describe ordinary jobs, and
+        # the attempt columns have to stay consistent with the task columns or the
+        # receipt is refused as malformed and the test measures the wrong refusal.
+        spend["attempts_by_task_id"] = {identity: 1 for identity in identities}
+        spend["attempt_count"] = len(identities)
         spend["by_state"] = {"COMPLETED": len(identities)}
         return self.install_receipt(source, spend=spend, **changes)
 
@@ -4486,11 +4491,91 @@ class MeterReceiptInteroperability(unittest.TestCase):
         A producer allowed to declare an identity ``r5_meter`` would never publish
         could never be released by any receipt; a producer allowed LESS than the
         meter publishes would silently drop tasks from its own accounting.
+
+        Pattern equality alone would go vacuous the moment the meter published
+        something other than a bare scheduler id -- an attempt spelling such as
+        ``57712764#3`` matches neither pattern while both patterns stay identical.
+        So the ids a REQUEUED measurement actually publishes are checked against
+        campaignctl's own pattern here, which is the invariant the release path
+        depends on.
         """
         import r5_meter
 
         self.assertEqual(
             campaignctl.TASK_ID_RE.pattern, r5_meter.TASK_ID_RE.pattern
+        )
+        spend = self._metered_waker_spend()
+        metered = spend["metered_task_ids"]
+        attempts_by_task_id = spend["attempts_by_task_id"]
+        assert isinstance(metered, list) and isinstance(attempts_by_task_id, dict)
+        self.assertEqual(metered, ["57712764"])
+        self.assertGreater(attempts_by_task_id["57712764"], 1)
+        for task_id in (*metered, *attempts_by_task_id):
+            self.assertTrue(campaignctl.TASK_ID_RE.fullmatch(str(task_id)))
+
+    def _metered_waker_spend(self) -> dict[str, object]:
+        """Meter the preserved requeue capture and validate it as campaignctl does."""
+        import r5_meter
+
+        fixture = (
+            Path(campaignctl.__file__).resolve().parent
+            / "test_fixtures_r5_meter"
+            / "waker_requeue_attempts.sacct"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            receipt_path = Path(directory) / "receipt.json"
+            self.assertEqual(
+                r5_meter.main(
+                    [
+                        "measure",
+                        "--from-file", str(fixture),
+                        "--now", "2026-09-10T00:00:00Z",
+                        "--write", str(receipt_path),
+                    ]
+                ),
+                0,
+            )
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        spend = campaignctl.validate_r5_receipt(receipt)["spend"]
+        assert isinstance(spend, dict)
+        return spend
+
+    def test_a_requeued_receipt_is_accepted_with_its_attempts_reported(
+        self,
+    ) -> None:
+        """952 attempts on one job id pass campaignctl's exhaustive spend checks.
+
+        The queue's release path asks "was THIS task counted", so one id with many
+        attempts must validate and must still be matchable against a producer's
+        declaration. The 12.59 CPU task-hours are what the defect reported as
+        0.0016667.
+        """
+        spend = self._metered_waker_spend()
+
+        self.assertEqual(spend["task_count"], 1)
+        self.assertEqual(spend["attempt_count"], 952)
+        self.assertEqual(spend["attempts_by_task_id"], {"57712764": 952})
+        self.assertEqual(round(float(spend["cpu_task_hours"]), 6), 12.590278)
+
+    def test_campaignctl_refuses_a_schema_version_one_receipt(self) -> None:
+        """A pre-repair receipt is refused HERE too, or the queue admits an undercount.
+
+        Both modules have to refuse it: r5_meter's `check` is a separate process from
+        the queue's admission read, and a v1 receipt committed before this repair
+        would otherwise still buy headroom.
+        """
+        receipt = json.loads(R5_FIXTURES["healthy"].read_text())
+        self.assertEqual(receipt["schema_version"], 2)
+        receipt["schema_version"] = 1
+
+        with self.assertRaises(campaignctl.QueueError) as raised:
+            campaignctl.validate_r5_receipt(receipt)
+
+        self.assertEqual(
+            str(raised.exception),
+            "R5 meter receipt schema_version 1 is refused: it counted at most one "
+            "execution attempt per job id, so it under-counts every requeued job "
+            "and is not valid R5 accounting",
         )
 
     def test_a_metered_receipts_identities_are_what_the_queue_reads(self) -> None:

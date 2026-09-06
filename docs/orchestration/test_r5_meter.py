@@ -18,6 +18,11 @@ FIXTURES = Path(__file__).with_name("test_fixtures_r5_meter")
 MIXED_FIXTURE = FIXTURES / "mixed.sacct"
 PERLMUTTER_GPU_FIXTURE = FIXTURES / "perlmutter_regular_gpu.sacct"
 ROW_INFLATION_FIXTURE = FIXTURES / "rows_vs_identities.sacct"
+#: The preserved Perlmutter capture of one self-requeueing waker job, sanitized only by
+#: replacing the real NERSC scratch path inside `JobName`. See
+#: `FINDING-20260906-r5-meter-undercounted-requeue-attempts.md` for both digests and the
+#: measurement that the totals are unchanged by that substitution.
+WAKER_REQUEUE_FIXTURE = FIXTURES / "waker_requeue_attempts.sacct"
 
 
 class R5MeterMeasurementTests(unittest.TestCase):
@@ -115,7 +120,7 @@ class R5MeterMeasurementTests(unittest.TestCase):
         self.assertEqual(spend["cpu_task_hours"], (3599 + 3600) / 3600.0)
         self.assertEqual(spend["metered_task_ids"], ["24000", "24002"])
         self.assertTrue(receipt["unit"].startswith("task-hours:"))
-        self.assertIn("tasks straddling t0 are clipped at t0", receipt["unit"])
+        self.assertIn("attempts straddling t0 are clipped at t0", receipt["unit"])
 
     def test_failures_and_running_tasks_count_but_pending_does_not(self) -> None:
         spend = self.build_fixture_receipt()["spend"]
@@ -364,6 +369,370 @@ class R5MeterCheckTests(unittest.TestCase):
         self.assertEqual(
             json.loads(output.getvalue()),
             json.loads(self.receipt_path.read_text(encoding="utf-8")),
+        )
+
+
+class RequeuedExecutionAttemptTests(unittest.TestCase):
+    """A requeued job id carries many execution attempts, and each one spends.
+
+    The landed meter keyed spend by ``JobID`` alone, kept the single largest
+    ``ElapsedRaw`` for a repeated id, and raised on two rows of one id with
+    different starts. On the real capture that was 0.0016667 CPU task-hours where
+    45 325 s had been burned, or an outright refusal once ``--duplicates`` was in
+    the query. Every test here asserts a NUMBER, because "does not crash" was
+    already true of the defect.
+    """
+
+    def spend(self, *rows: str) -> dict[str, object]:
+        """Meter the given `sacct` rows and return the receipt's ``spend``."""
+        receipt = r5_meter.build_receipt(
+            "\n".join(rows) + "\n",
+            now=r5_meter.parse_iso_utc("2026-09-10T00:00:00Z"),
+            source_kind="file",
+            source_location="attempts.sacct",
+        )
+        spend = receipt["spend"]
+        assert isinstance(spend, dict)
+        return spend
+
+    def test_the_real_waker_capture_meters_every_requeue_attempt(self) -> None:
+        """The preserved capture: 952 attempts of ONE job id, summing to 45 325 s.
+
+        The measurement that fixes the magnitude of the defect. The plain query
+        returned one row of 6 s; this is what ``sacct -X -D`` over the same window
+        actually holds. The 953rd row is the PENDING record whose ``Start`` is
+        ``Unknown``, and it is not an attempt.
+        """
+        raw_text = WAKER_REQUEUE_FIXTURE.read_text(encoding="utf-8")
+        receipt = r5_meter.build_receipt(
+            raw_text,
+            now=r5_meter.parse_iso_utc("2026-09-10T00:00:00Z"),
+            source_kind="file",
+            source_location=str(WAKER_REQUEUE_FIXTURE),
+        )
+        spend = receipt["spend"]
+        assert isinstance(spend, dict)
+
+        self.assertEqual(len(raw_text.splitlines()), 953)
+        self.assertEqual(spend["metered_task_ids"], ["57712764"])
+        self.assertEqual(spend["task_count"], 1)
+        self.assertEqual(spend["attempt_count"], 952)
+        self.assertEqual(spend["attempts_by_task_id"], {"57712764": 952})
+        self.assertEqual(spend["cpu_task_hours"], 45325 / 3600.0)
+        self.assertEqual(round(float(spend["cpu_task_hours"]), 6), 12.590278)
+        self.assertEqual(spend["gpu_task_hours"], 0.0)
+        self.assertEqual(spend["by_state"], {"NODE_FAIL": 2, "REQUEUED": 950})
+        # The under-count the repair closes, stated as the number it must not be.
+        self.assertNotEqual(round(float(spend["cpu_task_hours"]), 7), 0.0016667)
+
+    def test_distinct_requeues_of_one_id_are_summed(self) -> None:
+        spend = self.spend(
+            "70000|first|REQUEUED|600|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:10:00|cpu=2",
+            "70000|second|REQUEUED|1200|regular|2026-09-03T01:00:00|"
+            "2026-09-03T01:20:00|cpu=2",
+            "70000|third|FAILED|1800|regular|2026-09-03T02:00:00|"
+            "2026-09-03T02:30:00|cpu=2",
+        )
+
+        self.assertEqual(spend["cpu_task_hours"], (600 + 1200 + 1800) / 3600.0)
+        self.assertEqual(spend["task_count"], 1)
+        self.assertEqual(spend["attempt_count"], 3)
+        self.assertEqual(spend["attempts_by_task_id"], {"70000": 3})
+        self.assertEqual(spend["by_state"], {"FAILED": 1, "REQUEUED": 2})
+
+    def test_a_byte_repeated_row_is_one_observation_of_one_attempt(self) -> None:
+        """``mixed.sacct``'s ``20001|duplicate`` row keeps its original meaning.
+
+        It agrees with ``20001|at-t0`` on ``(JobID, Start, End)``, so it is the same
+        execution observed twice and is charged once. Summing attempts must not turn
+        a repeated row into a second execution.
+        """
+        raw_text = MIXED_FIXTURE.read_text(encoding="utf-8")
+        receipt = r5_meter.build_receipt(
+            raw_text,
+            now=r5_meter.parse_iso_utc("2026-09-10T00:00:00Z"),
+            source_kind="file",
+            source_location=str(MIXED_FIXTURE),
+        )
+        spend = receipt["spend"]
+        assert isinstance(spend, dict)
+
+        self.assertIn("20001|duplicate", raw_text)
+        self.assertEqual(spend["attempts_by_task_id"]["20001"], 1)
+        self.assertEqual(spend["gpu_task_hours"], 3.5)
+
+    def test_an_ordinary_non_requeued_job_is_charged_exactly_once(self) -> None:
+        """The control that proves the fix does not inflate the common case.
+
+        Every figure here is the figure the pre-repair meter produced for
+        ``mixed.sacct``: no id has more than one attempt, so summing changes nothing.
+        """
+        receipt = r5_meter.build_receipt(
+            MIXED_FIXTURE.read_text(encoding="utf-8"),
+            now=r5_meter.parse_iso_utc("2026-09-10T00:00:00Z"),
+            source_kind="file",
+            source_location=str(MIXED_FIXTURE),
+        )
+        spend = receipt["spend"]
+        assert isinstance(spend, dict)
+        attempts_by_task_id = spend["attempts_by_task_id"]
+        assert isinstance(attempts_by_task_id, dict)
+
+        self.assertEqual(spend["gpu_task_hours"], 3.5)
+        self.assertEqual(spend["cpu_task_hours"], 8.5)
+        self.assertEqual(spend["task_count"], 8)
+        self.assertEqual(spend["attempt_count"], 8)
+        self.assertEqual(sorted(set(attempts_by_task_id.values())), [1])
+
+    def test_conflicting_elapsed_for_one_attempt_fails_closed(self) -> None:
+        with self.assertRaises(r5_meter.MeterError) as raised:
+            self.spend(
+                "70100|a|COMPLETED|600|regular|2026-09-03T00:00:00|"
+                "2026-09-03T00:10:00|cpu=2",
+                "70100|b|COMPLETED|900|regular|2026-09-03T00:00:00|"
+                "2026-09-03T00:10:00|cpu=2",
+            )
+
+        self.assertIn("conflicting ElapsedRaw", str(raised.exception))
+        self.assertIn("70100", str(raised.exception))
+
+    def test_conflicting_gpu_classification_for_one_attempt_fails_closed(
+        self,
+    ) -> None:
+        with self.assertRaises(r5_meter.MeterError) as raised:
+            self.spend(
+                "70101|a|COMPLETED|600|regular|2026-09-03T00:00:00|"
+                "2026-09-03T00:10:00|cpu=2,gres/gpu=1",
+                "70101|b|COMPLETED|600|regular|2026-09-03T00:00:00|"
+                "2026-09-03T00:10:00|cpu=2",
+            )
+
+        self.assertIn("conflicting GPU classification", str(raised.exception))
+        self.assertIn("70101", str(raised.exception))
+
+    def test_the_same_start_with_a_different_end_is_a_distinct_attempt(self) -> None:
+        """``End`` is part of the attempt identity, so it cannot collapse a pair."""
+        spend = self.spend(
+            "70102|a|COMPLETED|600|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:10:00|cpu=2",
+            "70102|b|COMPLETED|1200|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:20:00|cpu=2",
+        )
+
+        self.assertEqual(spend["attempt_count"], 2)
+        self.assertEqual(spend["cpu_task_hours"], (600 + 1200) / 3600.0)
+
+    def test_t0_is_clipped_per_attempt_not_per_job(self) -> None:
+        """A straddling attempt is clipped; its siblings after t0 are charged whole."""
+        spend = self.spend(
+            "70200|straddles-t0|REQUEUED|3600|regular|2026-09-02T13:44:26|"
+            "2026-09-02T14:44:26|cpu=2",
+            "70200|after-t0|REQUEUED|3600|regular|2026-09-02T15:00:00|"
+            "2026-09-02T16:00:00|cpu=2",
+            "70200|also-after-t0|FAILED|1800|regular|2026-09-02T17:00:00|"
+            "2026-09-02T17:30:00|cpu=2",
+        )
+
+        self.assertEqual(
+            spend["cpu_task_hours"], (3599 + 3600 + 1800) / 3600.0
+        )
+        self.assertEqual(spend["attempt_count"], 3)
+        self.assertEqual(spend["attempts_by_task_id"], {"70200": 3})
+
+    def test_an_attempt_ending_at_t0_is_excluded_but_its_siblings_count(
+        self,
+    ) -> None:
+        """The case a per-JOB clip gets wrong in both directions.
+
+        Clipping the job by its first attempt would either discard the whole id --
+        the attempt that ended at t0 spent nothing R5 meters -- or charge the later
+        attempts a clip they never straddled.
+        """
+        spend = self.spend(
+            "70300|before-t0|REQUEUED|3600|regular|2026-09-02T12:44:27|"
+            "2026-09-02T13:44:27|cpu=2",
+            "70300|after-t0|REQUEUED|900|regular|2026-09-02T14:00:00|"
+            "2026-09-02T14:15:00|cpu=2",
+        )
+
+        self.assertEqual(spend["cpu_task_hours"], 900 / 3600.0)
+        self.assertEqual(spend["metered_task_ids"], ["70300"])
+        self.assertEqual(spend["attempt_count"], 1)
+        self.assertEqual(spend["attempts_by_task_id"], {"70300": 1})
+
+    def test_every_failed_attempt_state_spends_and_pending_does_not(self) -> None:
+        """R5 §3: a failed task spends, and retried time counts in full."""
+        states = ("FAILED", "CANCELLED", "TIMEOUT", "NODE_FAIL", "REQUEUED")
+        rows = [
+            f"70400|attempt-{index}|{state}|600|regular|"
+            f"2026-09-03T0{index}:00:00|2026-09-03T0{index}:10:00|cpu=2"
+            for index, state in enumerate(states)
+        ]
+        rows.append(
+            "70400|still-queued|PENDING|0|regular|Unknown|Unknown|cpu=2"
+        )
+
+        spend = self.spend(*rows)
+
+        self.assertEqual(spend["attempt_count"], len(states))
+        self.assertEqual(spend["cpu_task_hours"], len(states) * 600 / 3600.0)
+        self.assertEqual(
+            spend["by_state"], {state: 1 for state in states}
+        )
+        self.assertNotIn("PENDING", spend["by_state"])
+
+    def test_steps_and_array_brackets_are_excluded_per_attempt(self) -> None:
+        """A step row is a representation of an execution, never an attempt.
+
+        Both attempts below carry a full set of step representations, so an
+        attempt-summing meter that stopped excluding them would charge each
+        execution four times over.
+        """
+        spend = self.spend(
+            "70500_3|first|REQUEUED|600|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:10:00|cpu=2",
+            "70500_3.batch|batch|REQUEUED|600|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:10:00|cpu=2",
+            "70500_3.extern|extern|REQUEUED|600|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:10:00|cpu=2",
+            "70500_3.0|step|REQUEUED|600|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:10:00|cpu=2",
+            "70500_3|second|COMPLETED|900|regular|2026-09-03T01:00:00|"
+            "2026-09-03T01:15:00|cpu=2",
+            "70500_3.batch|batch|COMPLETED|900|regular|2026-09-03T01:00:00|"
+            "2026-09-03T01:15:00|cpu=2",
+            "70500_[1-100]|bracket|COMPLETED|90000|regular|"
+            "2026-09-03T00:00:00|2026-09-04T01:00:00|cpu=2",
+        )
+
+        self.assertEqual(spend["metered_task_ids"], ["70500_3"])
+        self.assertEqual(spend["attempt_count"], 2)
+        self.assertEqual(spend["cpu_task_hours"], (600 + 900) / 3600.0)
+
+    def test_an_array_job_sums_attempts_per_task_and_keeps_bare_ids(self) -> None:
+        spend = self.spend(
+            "70600_1|a1|REQUEUED|600|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:10:00|cpu=2",
+            "70600_1|a2|COMPLETED|1200|regular|2026-09-03T01:00:00|"
+            "2026-09-03T01:20:00|cpu=2",
+            "70600_2|b1|REQUEUED|300|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:05:00|cpu=2",
+            "70600_2|b2|REQUEUED|300|regular|2026-09-03T02:00:00|"
+            "2026-09-03T02:05:00|cpu=2",
+            "70600_2|b3|FAILED|1800|regular|2026-09-03T03:00:00|"
+            "2026-09-03T03:30:00|cpu=2",
+        )
+        metered = spend["metered_task_ids"]
+        assert isinstance(metered, list)
+
+        self.assertEqual(metered, ["70600_1", "70600_2"])
+        self.assertEqual(
+            spend["attempts_by_task_id"], {"70600_1": 2, "70600_2": 3}
+        )
+        self.assertEqual(spend["attempt_count"], 5)
+        self.assertEqual(
+            spend["cpu_task_hours"],
+            (600 + 1200 + 300 + 300 + 1800) / 3600.0,
+        )
+        # D3: the ids stay BARE, because campaignctl's release path matches a
+        # producer's declared ids against exactly this list.
+        for task_id in metered:
+            self.assertIsNotNone(r5_meter.TASK_ID_RE.fullmatch(str(task_id)))
+
+    def test_a_gpu_job_with_several_attempts_is_charged_to_gpu_hours_only(
+        self,
+    ) -> None:
+        """CPU cores inside a GPU allocation are not also charged as CPU."""
+        spend = self.spend(
+            "70700|a|REQUEUED|1800|regular|2026-09-03T00:00:00|"
+            "2026-09-03T00:30:00|billing=1,cpu=32,gres/gpu=4,mem=256G",
+            "70700|b|NODE_FAIL|3600|regular|2026-09-03T01:00:00|"
+            "2026-09-03T02:00:00|billing=1,cpu=32,gres/gpu=4,mem=256G",
+            "70700|c|COMPLETED|1800|regular|2026-09-03T03:00:00|"
+            "2026-09-03T03:30:00|billing=1,cpu=32,gres/gpu=4,mem=256G",
+        )
+
+        self.assertEqual(spend["gpu_task_hours"], (1800 + 3600 + 1800) / 3600.0)
+        self.assertEqual(spend["cpu_task_hours"], 0.0)
+        self.assertEqual(spend["attempt_count"], 3)
+
+    def test_the_query_asks_for_allocations_and_duplicates(self) -> None:
+        """Without ``-D`` a requeued job's earlier attempts are never returned."""
+        with mock.patch(
+            "docs.orchestration.r5_meter.subprocess.run"
+        ) as run:
+            run.return_value = mock.Mock(stdout=b"", stderr=b"")
+            r5_meter._read_source(None)
+
+        argv = run.call_args.args[0]
+        self.assertIn("-X", argv)
+        self.assertIn("-D", argv)
+
+
+class R5ReceiptSchemaVersionTests(unittest.TestCase):
+    """A schema-version-1 receipt is not valid accounting and is refused."""
+
+    def version_one_receipt(self) -> dict[str, object]:
+        """Return a receipt relabelled to the superseded schema version."""
+        receipt = r5_meter.build_receipt(
+            MIXED_FIXTURE.read_text(encoding="utf-8"),
+            now=r5_meter.parse_iso_utc("2026-09-10T00:00:00Z"),
+            source_kind="file",
+            source_location=str(MIXED_FIXTURE),
+        )
+        receipt["schema_version"] = 1
+        return receipt
+
+    def test_build_receipt_publishes_schema_version_two(self) -> None:
+        receipt = r5_meter.build_receipt(
+            MIXED_FIXTURE.read_text(encoding="utf-8"),
+            now=r5_meter.parse_iso_utc("2026-09-10T00:00:00Z"),
+            source_kind="file",
+            source_location=str(MIXED_FIXTURE),
+        )
+
+        self.assertEqual(receipt["schema_version"], 2)
+
+    def test_validate_receipt_refuses_schema_version_one_and_says_why(
+        self,
+    ) -> None:
+        with self.assertRaises(r5_meter.MeterError) as raised:
+            r5_meter._validate_receipt(self.version_one_receipt())
+
+        self.assertEqual(
+            str(raised.exception),
+            "receipt schema_version 1 is refused: it counted at most one "
+            "execution attempt per job id, so it under-counts every requeued job "
+            "and is not valid R5 accounting; re-measure with this version of the "
+            "meter",
+        )
+
+    def test_check_receipt_exits_four_on_a_schema_version_one_receipt(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            receipt_path = Path(directory) / "receipt.json"
+            receipt_path.write_text(
+                json.dumps(self.version_one_receipt()), encoding="utf-8"
+            )
+            errors = io.StringIO()
+            with contextlib.redirect_stderr(errors):
+                exit_code = r5_meter.main(
+                    [
+                        "check",
+                        "--receipt",
+                        str(receipt_path),
+                        "--now",
+                        "2026-09-10T00:00:00Z",
+                    ]
+                )
+
+        self.assertEqual(exit_code, 4)
+        self.assertIn(
+            "R5 check failed closed: receipt schema_version 1 is refused: it "
+            "counted at most one execution attempt per job id",
+            errors.getvalue(),
         )
 
 

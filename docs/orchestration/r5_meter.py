@@ -1,5 +1,33 @@
 #!/usr/bin/env python3
-"""Measure and enforce the R5 date and task-hour stop boundaries."""
+"""Measure and enforce the R5 date and task-hour stop boundaries.
+
+THE METERED UNIT IS AN EXECUTION ATTEMPT, NOT A JOB ID.  A requeued job keeps one
+`JobID` and runs many times, and each run burns real wall time on a real node.  An
+attempt is identified by ``(JobID, Start, End)`` -- with this field list ``Start`` is
+the only attempt discriminator ``sacct`` returns -- and `ElapsedRaw` on those rows is
+per-attempt, not cumulative.
+
+* ATTEMPTS ARE SUMMED.  R5 §3 counts a retried task "in full" and says "a failed task
+  spends", so every attempt of one job id is added.  "Distinct task identities" in §3's
+  unit exists to stop the several REPRESENTATIONS of one execution -- ``.batch``,
+  ``.extern``, numbered steps, array-bracket summary rows, and a repeated observation
+  of one row -- from being counted twice.  It does not collapse several distinct
+  EXECUTIONS of one job id.  See
+  ``FINDING-20260906-r5-meter-undercounted-requeue-attempts.md``, which also records
+  the reading this rejects, so the decision owner can overturn it in one place.
+* WHAT IS DEDUPLICATED.  Two rows agreeing on ``(JobID, Start, End)`` are one
+  observation of one attempt and are counted once.  Step and array-bracket rows are
+  excluded outright.  Rows whose ``Start`` is unknown -- a PENDING job -- are skipped.
+* WHAT FAILS CLOSED.  Two observations of one attempt that disagree about
+  ``ElapsedRaw`` or about GPU classification raise `MeterError`; the query needs
+  ``--duplicates`` or a requeued job's earlier attempts are invisible; a
+  schema-version-1 receipt is refused outright because it counted at most one attempt
+  per job id; and a missing, stale or malformed receipt is a stop.
+
+`spend` reports both identities: ``metered_task_ids`` answers "was this scheduler task
+counted", and ``attempts_by_task_id`` with ``attempt_count`` answer "how many of its
+executions were charged".
+"""
 
 from __future__ import annotations
 
@@ -41,9 +69,10 @@ STOP_DATE_UTC = datetime(2026, 9, 30, tzinfo=timezone.utc)
 GPU_TASK_HOURS_CEILING = 500.0
 CPU_TASK_HOURS_CEILING = 500.0
 UNIT = (
-    "task-hours: sum of post-t0 ElapsedRaw over distinct task identities; "
-    "tasks straddling t0 are clipped at t0; .batch/.extern/step and "
-    "array-bracket rows excluded"
+    "task-hours: sum of post-t0 ElapsedRaw over every execution attempt, with the "
+    "attempts of one job id summed; an attempt is (JobID, Start, End) and a repeated "
+    "observation of one attempt is counted once; attempts straddling t0 are clipped "
+    "at t0; .batch/.extern/step and array-bracket rows excluded"
 )
 DEFAULT_RECEIPT_PATH = Path("docs/orchestration/state/r5-meter-receipt.json")
 SACCT_FIELDS = (
@@ -65,31 +94,61 @@ class MeterError(ValueError):
 
 
 @dataclass(frozen=True)
-class TaskRecord:
-    """One distinct, metered Slurm task identity.
+class AttemptRecord:
+    """One metered EXECUTION ATTEMPT of a Slurm task.
+
+    A requeued job keeps one `task_id` across every attempt, so this is not one per
+    scheduler task: `AttemptKey` identifies the attempt, `task_id` identifies the task
+    it belongs to.
 
     Parameters
     ----------
     task_id : str
-        Plain Slurm job ID or concrete array-task ID.
+        Plain Slurm job ID or concrete array-task ID. Shared by every attempt of
+        a requeued job.
     state : str
-        Normalized Slurm state.
+        Normalized Slurm state of this attempt.
     elapsed_seconds : float
-        Elapsed wall-clock seconds charged to this task.
+        Wall-clock seconds CHARGED to this attempt, after any clip at t0.
+    raw_elapsed_seconds : int
+        `ElapsedRaw` exactly as the row reported it, before the t0 clip. Two
+        observations of one attempt are compared on this rather than on the
+        charged value, because a clip can drive two disagreeing rows to a
+        matching zero.
     partition : str
-        Slurm partition, used as a secondary GPU classification signal.
+        Slurm partition, the secondary GPU classification signal already folded
+        into `is_gpu`.
     is_gpu : bool
-        Whether AllocTRES or the partition identifies a GPU allocation.
+        Whether AllocTRES or the partition identifies a GPU allocation. Attempts
+        of one job id can differ here, because a requeue may land elsewhere.
     start : datetime
-        Task start instant in UTC.
+        Attempt start instant in UTC.
+    end : str
+        `End` exactly as the row reported it, including ``Unknown`` for an attempt
+        still running. Part of the attempt identity, so it is kept unparsed.
+    counted : bool
+        False only for an attempt whose whole span precedes t0. Such an attempt is
+        still recorded, so a later contradicting observation of it is refused
+        rather than waved through.
     """
 
     task_id: str
     state: str
     elapsed_seconds: float
+    raw_elapsed_seconds: int
     partition: str
     is_gpu: bool
     start: datetime
+    end: str
+    counted: bool
+
+
+#: One execution attempt: ``(JobID, Start, End)``.  Slurm returns one record per
+#: attempt under ``--duplicates``, and with this field list ``Start`` is the only
+#: discriminator between them; ``End`` is carried too so a same-start/different-end
+#: pair cannot silently collapse.  Job id ALONE is not an attempt identity -- keying
+#: on it is exactly the defect this repair closes.
+AttemptKey = tuple[str, datetime, str]
 
 
 def parse_iso_utc(value: str) -> datetime:
@@ -204,8 +263,8 @@ def _alloc_tres_has_gpu(value: str, *, line_number: int) -> bool:
     return False
 
 
-def _parse_sacct_dump(raw_text: str) -> dict[str, TaskRecord]:
-    tasks: dict[str, TaskRecord] = {}
+def _parse_sacct_dump(raw_text: str) -> dict[AttemptKey, AttemptRecord]:
+    attempts: dict[AttemptKey, AttemptRecord] = {}
     reader = csv.reader(io.StringIO(raw_text), delimiter="|")
     for line_number, row in enumerate(reader, start=1):
         if not row or all(not field for field in row):
@@ -225,9 +284,11 @@ def _parse_sacct_dump(raw_text: str) -> dict[str, TaskRecord]:
             elapsed_text,
             partition,
             start_text,
-            _,
+            end_text,
             alloc_tres,
         ) = row
+        # A step or array-bracket row is a REPRESENTATION of an execution, never an
+        # attempt, so it is excluded before any attempt is formed.
         if TASK_ID_RE.fullmatch(job_id) is None:
             continue
 
@@ -235,62 +296,107 @@ def _parse_sacct_dump(raw_text: str) -> dict[str, TaskRecord]:
         if start is None:
             continue
 
-        elapsed_seconds = _parse_elapsed(elapsed_text, line_number=line_number)
-        if start < T0_UTC:
-            elapsed_seconds = max(
-                0.0,
-                elapsed_seconds - (T0_UTC - start).total_seconds(),
-            )
-            if elapsed_seconds == 0.0:
-                continue
-
+        raw_elapsed = _parse_elapsed(elapsed_text, line_number=line_number)
         is_gpu = _alloc_tres_has_gpu(
             alloc_tres,
             line_number=line_number,
         ) or partition.lower().startswith("gpu")
 
-        record = TaskRecord(
+        key: AttemptKey = (job_id, start, end_text)
+        existing = attempts.get(key)
+        if existing is not None:
+            # One attempt observed twice -- the same row repeated in the dump.  It
+            # is counted once.  Two observations that disagree about what was
+            # spent, or about which ceiling it is spent against, cannot both be
+            # true, and choosing between them would be a measurement nobody made.
+            for field, recorded, observed in (
+                ("ElapsedRaw", existing.raw_elapsed_seconds, raw_elapsed),
+                ("GPU classification", existing.is_gpu, is_gpu),
+            ):
+                if recorded != observed:
+                    raise MeterError(
+                        f"line {line_number}: conflicting {field} for execution "
+                        f"attempt of task identity {job_id} started {start_text}"
+                    )
+            continue
+
+        # The clip is per ATTEMPT: a requeued job can have one attempt straddling t0
+        # and later attempts wholly after it, and clipping the job would charge the
+        # wrong span for every one of them.
+        charged_seconds = float(raw_elapsed)
+        counted = True
+        if start < T0_UTC:
+            charged_seconds = max(
+                0.0,
+                charged_seconds - (T0_UTC - start).total_seconds(),
+            )
+            # An attempt that ended at or before t0 spent nothing R5 meters.  It is
+            # still RECORDED so a contradicting observation of it is still refused.
+            counted = charged_seconds > 0.0
+
+        attempts[key] = AttemptRecord(
             task_id=job_id,
             state=_normalize_state(state_text, line_number=line_number),
-            elapsed_seconds=elapsed_seconds,
+            elapsed_seconds=charged_seconds,
+            raw_elapsed_seconds=raw_elapsed,
             partition=partition,
             is_gpu=is_gpu,
             start=start,
+            end=end_text,
+            counted=counted,
         )
-        existing = tasks.get(job_id)
-        if existing is None:
-            tasks[job_id] = record
-            continue
-        if (existing.partition, existing.is_gpu, existing.start) != (
-            record.partition,
-            record.is_gpu,
-            record.start,
-        ):
-            raise MeterError(
-                f"line {line_number}: conflicting rows for task identity {job_id}"
-            )
-        if record.elapsed_seconds > existing.elapsed_seconds:
-            tasks[job_id] = record
-    return tasks
+    return attempts
 
 
-def _calculate_spend(tasks: dict[str, TaskRecord]) -> dict[str, object]:
-    gpu_seconds = 0
-    cpu_seconds = 0
-    by_state: Counter[str] = Counter()
-    for task in tasks.values():
-        if task.is_gpu:
-            gpu_seconds += task.elapsed_seconds
+def _sum_charged_seconds(
+    attempts: Sequence[AttemptRecord],
+) -> tuple[float, float]:
+    """Sum charged wall-clock seconds over attempts, splitting GPU from CPU.
+
+    THIS IS THE WHOLE SUMMING STEP.  R5 §3 counts a retried task "in full" and says
+    "a failed task spends", so every execution attempt of one job id is ADDED: 952
+    requeue attempts each burned real wall time on a real node.  A contrary ruling --
+    that "distinct task identities" collapses a job id's attempts to one figure
+    rather than only its several representations -- would change this function and
+    nothing else.
+
+    The GPU/CPU split is per attempt, not per job id, because a requeue can land on
+    a different partition than the attempt before it.
+    """
+    gpu_seconds = 0.0
+    cpu_seconds = 0.0
+    for attempt in attempts:
+        if attempt.is_gpu:
+            gpu_seconds += attempt.elapsed_seconds
         else:
-            cpu_seconds += task.elapsed_seconds
-        by_state[task.state] += 1
+            cpu_seconds += attempt.elapsed_seconds
+    return gpu_seconds, cpu_seconds
 
-    task_ids = sorted(tasks)
+
+def _calculate_spend(
+    attempts: dict[AttemptKey, AttemptRecord],
+) -> dict[str, object]:
+    charged = [attempt for attempt in attempts.values() if attempt.counted]
+    gpu_seconds, cpu_seconds = _sum_charged_seconds(charged)
+    by_state: Counter[str] = Counter()
+    attempts_by_task_id: Counter[str] = Counter()
+    for attempt in charged:
+        by_state[attempt.state] += 1
+        attempts_by_task_id[attempt.task_id] += 1
+
+    task_ids = sorted(attempts_by_task_id)
     return {
         "gpu_task_hours": gpu_seconds / 3600.0,
         "cpu_task_hours": cpu_seconds / 3600.0,
         "task_count": len(task_ids),
+        "attempt_count": len(charged),
         "metered_task_ids": task_ids,
+        "attempts_by_task_id": {
+            task_id: attempts_by_task_id[task_id] for task_id in task_ids
+        },
+        # Per ATTEMPT, so these sum to attempt_count rather than to task_count: a
+        # requeued job is REQUEUED many times and NODE_FAIL once, and collapsing that
+        # to one state per job id would have to invent which attempt spoke for it.
         "by_state": dict(sorted(by_state.items())),
     }
 
@@ -332,7 +438,7 @@ def build_receipt(
     Returns
     -------
     dict[str, object]
-        Schema-version-1 measurement receipt.
+        Schema-version-2 measurement receipt.
 
     Raises
     ------
@@ -348,7 +454,10 @@ def build_receipt(
     gpu_hours = float(spend["gpu_task_hours"])
     cpu_hours = float(spend["cpu_task_hours"])
     return {
-        "schema_version": 1,
+        # 2: attempts are metered and summed, and `spend` carries attempt_count and
+        # attempts_by_task_id.  A version-1 receipt counted at most one attempt per
+        # job id, so it is refused rather than migrated -- see `_validate_receipt`.
+        "schema_version": 2,
         "decision_record": DECISION_RECORD,
         "t0_utc": T0_UTC_TEXT,
         "stop_date_utc": STOP_DATE_UTC_TEXT,
@@ -378,10 +487,25 @@ def build_receipt(
 
 
 def _sacct_argv() -> list[str]:
+    # `-X` (--allocations) keeps step rows out, and `-D` (--duplicates) is what makes
+    # a requeued job's EARLIER execution attempts visible at all: without it Slurm
+    # returns only the most recent record, which under-counted one self-requeueing
+    # waker job as 6 s instead of 45 325 s.  The two compose on Perlmutter.
+    #
+    # NERSC refuses any sacct window wider than 30 days ("Too wide of a date range in
+    # query"; the limit is on the SPAN, not the lookback).  This query spans t0 -> now,
+    # so it crosses 30 days at 2026-10-02T13:44:27Z -- 2 d 13 h 44 m 27 s AFTER the R5
+    # stop date, i.e. outside the campaign window.  After that instant sacct errors and
+    # the meter fails CLOSED (no receipt, `check` returns 4).  Chunking is deliberately not
+    # implemented; see FINDING-20260906-r5-meter-undercounted-requeue-attempts.md for
+    # the one act that must happen before it: the final measurement of jobs still
+    # running at the stop.
     return [
         "sacct",
         "--user",
         getpass.getuser(),
+        "-X",
+        "-D",
         "--parsable2",
         "--noheader",
         "--starttime",
@@ -477,7 +601,7 @@ def measure(
     Returns
     -------
     dict[str, object]
-        Schema-version-1 measurement receipt.
+        Schema-version-2 measurement receipt.
     """
     raw_text, source_kind, source_location = _read_source(from_file)
     receipt = build_receipt(
@@ -495,7 +619,7 @@ def _require_exact_keys(
     value: object, keys: set[str], *, location: str
 ) -> dict[str, object]:
     if not isinstance(value, dict) or set(value) != keys:
-        raise MeterError(f"{location} does not have the schema-version-1 keys")
+        raise MeterError(f"{location} does not have the schema-version-2 keys")
     return value
 
 
@@ -527,7 +651,17 @@ def _validate_receipt(receipt: object) -> tuple[datetime, float, float]:
         },
         location="receipt",
     )
-    if type(top["schema_version"]) is not int or top["schema_version"] != 1:
+    version = top["schema_version"]
+    # A version-1 receipt is not merely an older shape: it keyed spend by job id and
+    # therefore counted at most ONE execution attempt per requeued job.  Accepting one
+    # would admit an under-count against a prohibition, so it is refused, not migrated.
+    if type(version) is int and version == 1:
+        raise MeterError(
+            "receipt schema_version 1 is refused: it counted at most one execution "
+            "attempt per job id, so it under-counts every requeued job and is not "
+            "valid R5 accounting; re-measure with this version of the meter"
+        )
+    if type(version) is not int or version != 2:
         raise MeterError("receipt schema_version does not match the R5 schema")
     fixed_values = {
         "decision_record": DECISION_RECORD,
@@ -576,7 +710,9 @@ def _validate_receipt(receipt: object) -> tuple[datetime, float, float]:
             "gpu_task_hours",
             "cpu_task_hours",
             "task_count",
+            "attempt_count",
             "metered_task_ids",
+            "attempts_by_task_id",
             "by_state",
         },
         location="spend",
@@ -605,6 +741,33 @@ def _validate_receipt(receipt: object) -> tuple[datetime, float, float]:
         or len(task_ids) != task_count
     ):
         raise MeterError("metered_task_ids must be sorted, unique task identities")
+    # SCHEDULER TASK IDENTITY vs EXECUTION-ATTEMPT IDENTITY.  `metered_task_ids` and
+    # `task_count` answer "was this scheduler task's spend counted" -- the question
+    # campaignctl's reservation release asks, which is why the ids stay BARE.
+    # `attempts_by_task_id` and `attempt_count` answer "how many of its executions
+    # were charged".  One job id may now carry many attempts, so the second is not
+    # derivable from the first.
+    attempt_count = spend["attempt_count"]
+    if (
+        isinstance(attempt_count, bool)
+        or not isinstance(attempt_count, int)
+        or attempt_count < 0
+    ):
+        raise MeterError("spend.attempt_count must be a non-negative integer")
+    attempts_by_task_id = spend["attempts_by_task_id"]
+    if (
+        not isinstance(attempts_by_task_id, dict)
+        or list(attempts_by_task_id) != task_ids
+        or any(
+            isinstance(count, bool) or not isinstance(count, int) or count < 1
+            for count in attempts_by_task_id.values()
+        )
+        or sum(cast(dict[str, int], attempts_by_task_id).values()) != attempt_count
+    ):
+        raise MeterError(
+            "spend.attempts_by_task_id must map every metered task id, in sorted "
+            "order, to a positive attempt count summing to attempt_count"
+        )
     by_state = spend["by_state"]
     if not isinstance(by_state, dict) or any(
         not isinstance(state, str)
@@ -616,8 +779,10 @@ def _validate_receipt(receipt: object) -> tuple[datetime, float, float]:
     ):
         raise MeterError("spend.by_state must contain non-negative integer counts")
     state_counts = cast(dict[str, int], by_state)
-    if sum(state_counts.values()) != task_count:
-        raise MeterError("spend.by_state counts do not match task_count")
+    # Per attempt, so this ties to attempt_count.  A requeued job contributes one
+    # entry per execution.
+    if sum(state_counts.values()) != attempt_count:
+        raise MeterError("spend.by_state counts do not match attempt_count")
 
     expected_fired = _fired_status(
         now=measured_at,
@@ -777,6 +942,10 @@ def _run_self_test() -> bool:
         "3|straddling|COMPLETED|3600|regular|2026-09-02T13:44:26|"
         "2026-09-02T14:44:26|gres/gpu:a100=1",
         "4|pending|PENDING|0|regular|Unknown|Unknown|cpu=1",
+        "5|requeued-first|REQUEUED|60|regular|2026-09-02T14:00:00|"
+        "2026-09-02T14:01:00|cpu=2",
+        "5|requeued-again|NODE_FAIL|120|regular|2026-09-02T15:00:00|"
+        "2026-09-02T15:02:00|cpu=2",
     ]
     receipt = build_receipt(
         "\n".join(rows) + "\n",
@@ -788,10 +957,14 @@ def _run_self_test() -> bool:
     if not isinstance(spend, dict):
         return False
     positive_control = (
-        spend["task_count"] == 3
+        spend["task_count"] == 4
+        and spend["attempt_count"] == 5
         and spend["gpu_task_hours"] == (3600 + 3599) / 3600.0
-        and spend["cpu_task_hours"] == 0.5
-        and spend["by_state"] == {"COMPLETED": 2, "FAILED": 1}
+        # Job id 5 requeued once: BOTH attempts are charged, so 1800 + 60 + 120.
+        and spend["cpu_task_hours"] == (1800 + 60 + 120) / 3600.0
+        and spend["attempts_by_task_id"] == {"1": 1, "2_7": 1, "3": 1, "5": 2}
+        and spend["by_state"]
+        == {"COMPLETED": 2, "FAILED": 1, "NODE_FAIL": 1, "REQUEUED": 1}
     )
     negative_control = not _fired_status(
         now=parse_iso_utc("2026-09-29T23:59:59Z"),
@@ -808,7 +981,33 @@ def _run_self_test() -> bool:
         malformed_rejected = True
     else:
         malformed_rejected = False
-    return positive_control and negative_control and malformed_rejected
+    try:
+        # One attempt, two observations that disagree about what it spent.
+        _parse_sacct_dump(
+            "6|a|COMPLETED|60|regular|2026-09-02T14:00:00|"
+            "2026-09-02T14:01:00|cpu=1\n"
+            "6|b|COMPLETED|61|regular|2026-09-02T14:00:00|"
+            "2026-09-02T14:01:00|cpu=1\n"
+        )
+    except MeterError:
+        conflict_rejected = True
+    else:
+        conflict_rejected = False
+    version_one = dict(receipt)
+    version_one["schema_version"] = 1
+    try:
+        _validate_receipt(version_one)
+    except MeterError as exc:
+        version_one_refused = "schema_version 1 is refused" in str(exc)
+    else:
+        version_one_refused = False
+    return (
+        positive_control
+        and negative_control
+        and malformed_rejected
+        and conflict_rejected
+        and version_one_refused
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
