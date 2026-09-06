@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 8. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 9. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -288,6 +288,29 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   off-branch** at `21b3d567`/`cd41ff41` on `lane/pm-root-inspection-20260906`, with its receipts named
   `r5-meter-receipt-INCOMPLETE-*`; `docs/orchestration/state/r5-meter-receipt.json` still does not exist
   and admission stays shut.
+  **CITATION AND BLAST RADIUS (rev. 9) — no review finding.** The evidence citation moves from
+  `cd41ff41` to **`1422569c`**, which supersedes it: `cd41ff41`'s `README.md` says *"four earlier jobs"*
+  in the waker lineage where there are **five, six with the live one**, and states the array negative
+  result **without its covering-search boundary** (three **discontiguous** queries, `≈28` days, absences
+  of `22` and `3`, because `sacct` selects on runtime overlap). **Verified here:** the diff is
+  `README.md` + `DIGESTS.txt` only, and **only `README.md`'s digest moves** — both receipts, all four
+  raw dumps and `R5-PREFLIGHT-EVIDENCE.md` are byte-identical, so every digest-bound citation is
+  unaffected. Chain, child to parent: `1422569c → cd41ff41 → 21b3d567 → 641c6812`; **rev. 7 is their
+  root and none is an ancestor of this tip, and the two lanes stay separate** because that branch
+  carries an authorization Joseph has not yet ruled on. New **§5.6a** names **the opening act**, because
+  §4 row 3 makes the meter receipt Z's first prerequisite and *"a query plus a commit"* understates the
+  consequence: **running** the meter arms nothing; an untracked or post-commit-edited receipt is still
+  refused; **committing** one to `docs/orchestration/state/r5-meter-receipt.json` removes a
+  **QUEUE-WIDE** refusal, since `committed_r5_receipt(queue)` takes only the queue and
+  `r5_refusal_reason` consults it for **every** compute item. Three things bound the radius and none
+  makes the act small: it **expires** after `R5_MAX_AGE = 24 h`; other refusals survive it; and the
+  known `--kind read-only` bypass is recorded as **refused**. So the integration lane's meter repair
+  **landing does not open the gate** — nobody should open it by running the repaired tool once to see
+  whether it works. §5.6's *"shut by choice"* is corrected: it is shut by **Joseph's own instruction**
+  — *"do not present it as valid admission evidence"* — and committing it to the gate's path **is** that
+  presentation. §7 item 17 is sharpened: the ROOT **inspection is authorized** with quoted limits, while
+  the **one-off accounting exception** that would let it be admitted is a proposal Joseph **expressly
+  reserved to himself** and has not ruled on — authorized and unadmittable, which is not unauthorized.
   **REVIEW ROUND 5 (rev. 6) found no new substantive contract finding.** Two non-blocking remnants, both
   the drafting lane's: §7 item 3 still called the prior one that *"understates a Z member"* — replaced
   with *"a prior measured on a different subject"*, with the rev.-4 changelog row that carried it marked

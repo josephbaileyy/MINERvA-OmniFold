@@ -1,8 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 8 — the second operational packet: the wall clock is measured and is NOT the binding
-# constraint; the cause-4 unfold gets a measured CPU bound; and `PM-4` cannot be discharged as
-# written, because G carries neither key it names.**
+# **rev. 9 — the citation moves to the corrected evidence revision, and §5.6a names THE OPENING ACT:
+# committing one receipt removes a QUEUE-WIDE refusal for 24 hours, and Joseph has already forbidden
+# presenting the receipt that exists.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -28,6 +28,23 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0g What changed in rev. 9
+
+Rev. 8 was `cbac8621`. **No review finding. A citation correction the preflight session asked for, and
+one addition that belongs in a Z cost proposal rather than in an operational packet.**
+
+| # | rev. 8 left | rev. 9 does |
+|---|---|---|
+| 1 | §5.9 cited the evidence at `cd41ff41` | **moved to `1422569c`, which supersedes it.** `cd41ff41`'s `README.md` carries **two known errors** — *"four earlier jobs"* in the waker lineage where there are **five, six with the live one**, and the array negative result stated **without its covering-search boundary**. **Verified here:** the diff is `README.md` + `DIGESTS.txt` only, and **only `README.md`'s digest moves** — both receipts, all four raw dumps and `R5-PREFLIGHT-EVIDENCE.md` are byte-identical. **Citing a revision with a known miscount is exactly what §5.9's RELAYED / RE-VERIFIED split exists to prevent** |
+| 2 | §5.6 said admission is *"shut by choice"*, attributing the choice to the preflight session | **the attribution was wrong and understated the evidence.** It is shut by **Joseph's own instruction** — *"Label the existing R5 receipt explicitly as incomplete… do not present it as valid admission evidence"* — and committing it to the gate's path **is** that presentation |
+| 3 | §4 row 3 treats the meter receipt as a missing prerequisite | **new §5.6a names what committing it DOES.** The gate is resolved **per queue, not per item**, so one commit removes a refusal for **every** compute item at once — for **24 hours**. **Running the repaired meter arms nothing; committing its output is the act** |
+| 4 | §7 item 17 said the inspection *"is covered by"* an authorization | **sharpened.** Joseph authorized the **inspection**, quoted with its limits; what he has **not** ruled on is the **one-off accounting exception** that would let it be admitted, which he expressly reserved to himself |
+
+**Nothing is approved, no ruling is reopened, the assembly algebra is unchanged, and the two lanes stay
+separate** — `lane/pm-root-inspection-20260906` is **not** merged here, because it carries an
+authorization Joseph has not yet ruled on and a Z revision must not lend that the look of a settled
+record.
 
 ## 0.0f What changed in rev. 8
 
@@ -1907,11 +1924,15 @@ the scheduler.** Measured at this base:
 - `docs/orchestration/campaignctl.py` exists (204,141 B); admission is fail-closed.
 - **`docs/orchestration/state/r5-meter-receipt.json` DOES NOT EXIST.** Measured, not recalled. The
   reviewer confirms: *"No operational meter receipt is committed at either reviewed revision."*
-  **⚠ STILL TRUE AT THIS BASE, AND NOW FOR A DIFFERENT REASON — §5.9.** A genuine receipt has been
-  **produced** against live Perlmutter `sacct` by the operational-preflight session and deliberately
-  **not committed**, because committing it arms `campaignctl`'s fail-closed admission and that is a
-  larger act than an evidence errand. **So the gate still holds, and it now holds by choice rather than
-  by absence.**
+  **⚠ STILL TRUE AT THIS BASE, AND NOW FOR A DIFFERENT REASON — §5.9, §5.6a.** A genuine receipt has
+  been **produced** against live Perlmutter `sacct` and deliberately **not committed**.
+  **⚠ REV. 8 ATTRIBUTED THAT CHOICE TO THE PREFLIGHT SESSION. IT IS JOSEPH'S INSTRUCTION, WHICH IS
+  STRONGER EVIDENCE, AND THE CORRECTION IS RECORDED RATHER THAN ABSORBED.** Quoted from
+  `AUTHORIZATION-20260906-pm-root-inspection.md` §2 (`1422569c`, off-branch): *"Label the existing R5
+  receipt explicitly as incomplete because it omits requeue expenditure; do not present it as valid
+  admission evidence."* **Committing it to `docs/orchestration/state/r5-meter-receipt.json` IS that
+  presentation** — that path is the gate's input and nothing else reads it. **So the gate holds by
+  instruction, not by absence and not by a lane's discretion.**
 - `test_r5_meter.py`: **18 tests, all passing** — **on three checked-in fixtures**
   (`test_fixtures_r5_meter/{mixed,perlmutter_regular_gpu,rows_vs_identities}.sacct`) that are
   **hand-authored, not captured** (job ids `50000`/`60000`, task names `task-0`,
@@ -1934,6 +1955,40 @@ authorization cost is not this lane's to price. **Do not infer the meter is depl
 
 **And the other production prerequisites, per the reviewer:** measured headroom, compatible input
 identities (`PM-2`, `PM-3`, `PM-5`), and an explicit run authorization (`D-RESOURCE`). None exists.
+
+### 5.6a THE OPENING ACT, NAMED — NEW IN REV. 9, because §4 row 3 makes it Z's first prerequisite
+
+**§4 row 3 says a Z campaign needs the first `r5_meter` receipt, and calls it *"a login-node `sacct`
+query plus a commit, not a build"*. That is true about the effort and misleading about the
+consequence.** Measured against `campaignctl.py` at this base:
+
+| the act | what it does |
+|---|---|
+| **running** the meter, repaired or not | **nothing.** No gate reads a process's output |
+| **writing** the receipt to an untracked file, or editing it after committing | **still refused** — `committed_file_identity` (`:3055-3077`) rejects an untracked path **and** a working-tree edit that no longer byte-matches the committed blob |
+| **committing** a receipt to `docs/orchestration/state/r5-meter-receipt.json` at `HEAD` | **removes a QUEUE-WIDE refusal.** `committed_r5_receipt(queue)` (`:3080-3111`) takes **only the queue** — no item — and `r5_refusal_reason` (`:3330-3341`) consults it for **every** compute item. One commit clears that reason for **all of them at once** |
+
+**Three things bound the blast radius and none of them makes the act small.**
+
+1. **It expires.** `R5_MAX_AGE = 24 hours` (`:292`, checked at `:3355-3360`), with a `60`-second
+   future-skew bound (`:296`) — so admission re-closes a day later unless a fresh receipt is committed.
+   **The act is repeatable and expiring, not permanent.**
+2. **Other refusals survive it.** Non-canonical state, `fired.any`, the stop date and the spend
+   ceilings are all still checked. **Committing the receipt admits nothing by itself; it removes one of
+   several reasons to refuse.**
+3. **A known bypass exists and is on the record as REFUSED.** A `--kind read-only` item skips the R5
+   gate entirely, because `r5_refusal_reason` is called only under `if item["kind"] == "compute"`. The
+   preflight session named it in `AUTHORIZATION-20260906-pm-root-inspection.md` §3.5 and rejected it.
+   **It is recorded here for the same reason it was recorded there: an available evasion that nobody
+   has written down is an undiscovered one.**
+
+**The operational sentence, which is the point of this subsection:** the integration lane's meter
+repair is expected within days, and **landing the repair does not open the gate.** The opening act is a
+`git commit` of a receipt to one tracked path — **so nobody should perform it by running the repaired
+tool once to see whether it works.** That is a queue-wide decision with its own weight, and under
+Joseph's standing instruction the receipt that exists today may not be presented as admission evidence
+at all (§5.6). **This lane names the act; it does not propose taking it, and `RZ(iv)` would not let
+it.**
 
 ## 5.7 The uncertainty on all of the above
 
@@ -2104,9 +2159,27 @@ byte-level equivalence check**, not a free win.
 the **operational-preflight session** (`preflight [e11e6d]`, live read-only SSH to Perlmutter, login31
 pinned).
 
-**⚠ THE EVIDENCE IS NOW COMMITTED, AND NOT ON THIS BRANCH — cite it accordingly.**
-`21b3d567` and `cd41ff41`, branch **`lane/pm-root-inspection-20260906`** (ancestry measured: **NOT an
-ancestor of this tip**; this tip is their *parent*). They carry
+**⚠ THE EVIDENCE IS COMMITTED, NOT ON THIS BRANCH, AND THE CITATION MOVED IN REV. 9 — cite
+`1422569c`.** Branch **`lane/pm-root-inspection-20260906`**; chain measured here, child to parent:
+`1422569c → cd41ff41 → 21b3d567 → 641c6812`, so **this document's rev. 7 is their root and none of them
+is an ancestor of this tip.**
+
+**Rev. 8 cited `cd41ff41` and that revision has two known errors in its `README.md`**, both self-reported
+by the preflight session: it says *"four earlier jobs"* in the `cron` waker lineage where there are
+**five, six counting the live waker `57712764`** (`57275989`, 9 attempts, was dropped in transcription);
+and it states the array negative result **without its covering-search boundary** — that sweep is three
+**discontiguous** queries totalling `≈28` days with absences of `22` and `3` days, not the contiguous
+span the observed `Start` range invites, because `sacct` selects on **runtime overlap** and observed
+days overstate what the search reached for.
+
+**Verified here rather than taken on trust:** `git diff cd41ff41 1422569c` touches **`README.md` and
+`DIGESTS.txt` only**, `26` insertions / `5` deletions, and inside `DIGESTS.txt` **exactly one line
+changes — `README.md`'s own hash.** Both `r5-meter-receipt-INCOMPLETE-*.json`, all four raw `.psv`
+dumps and `R5-PREFLIGHT-EVIDENCE.md` are **byte-identical across the two revisions**, so every
+digest-bound citation below is unaffected and only the prose moved. **The second of those two errors is
+an uncovered inference from absence — the same class as §5.9a — and it was caught by its own author.**
+
+`1422569c` carries
 `docs/orchestration/state/preflight-20260906-r5/` — `R5-PREFLIGHT-EVIDENCE.md`, `DIGESTS.txt`, four raw
 `sacct` `.psv` dumps, and two receipts named
 **`r5-meter-receipt-INCOMPLETE-{live,fromfile}.json`** — plus
@@ -2663,8 +2736,15 @@ move `N`:** re-derived here, the affordable member count is `4`–`5` under **bo
     it** (that receipt binds four files, and this is not one — §5.9a). Without it the mask and
     row-order digests cannot be reconstructed and `‖x_cv‖` cannot be recomputed, so **`PM-4` and `11b`
     fail together on the same missing identity**. **What it would take:** the production ROOT's path and
-    sha256, bound to G's build — which the ROOT inspection `AUTHORIZATION-20260906-pm-root-inspection.md`
-    covers and `campaignctl` currently cannot admit.
+    sha256, bound to G's build. **Two different things are needed and rev. 8 ran them together.** The
+    **inspection itself is authorized** — Joseph, 2026-09-06, quoted with its limits in
+    `AUTHORIZATION-20260906-pm-root-inspection.md` §1-§2 (one CPU node, one task, ≤ 30 min, no GPU, no
+    requeue). What does **not** exist is a way to **admit** it: §3 of that record measures four
+    independent blockers, and §4's **one-off accounting exception** — the narrowest thing that would
+    clear them — is a **proposal Joseph expressly reserved to himself** (*"return the precise blocker
+    and any proposed one-off accounting exception for my separate approval — do not bypass them"*) and
+    **has not been ruled on**. So the read is authorized and unadmittable, which is a different state
+    from unauthorized.
 
 ---
 
