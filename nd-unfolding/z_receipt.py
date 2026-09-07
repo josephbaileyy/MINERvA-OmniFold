@@ -319,6 +319,20 @@ def _validate_reconstruction_ran(inflation) -> None:
         raise ZContractError(
             f"receipt: {RECONSTRUCTION_KEY} records discriminating {discriminating!r}, which is "
             f"not a verdict.")
+    # ⚠ ROUND-8, FIRST PATH. The breakdown was demanded only when `discriminating` was False,
+    # so OMITTING it on a True verdict skipped validation entirely and wrote MET. The asymmetry
+    # was never justified: a claim that the gate COULD see a dropped shift is exactly as much in
+    # need of its measurements as a claim that it could not, and it is the more consequential of
+    # the two, because it is the one a reader treats as assurance.
+    blockers = block.get("discrimination_blockers")
+    if not isinstance(blockers, dict):
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} carries no `discrimination_blockers`. The breakdown "
+            f"is required for EITHER verdict -- pinned, saturated and below-tolerance counts are "
+            f"what make `discriminating` checkable, and a True verdict without them is an "
+            f"assurance with nothing behind it.")
+    _validate_discrimination_blockers(blockers, discriminating, rtol)
+
     if not discriminating:
         note = block.get("note")
         if not isinstance(note, str) or not note.strip():
@@ -327,21 +341,13 @@ def _validate_reconstruction_ran(inflation) -> None:
                 f"limitation note. A non-discriminating pass is admissible -- a genuinely tiny "
                 f"mean shift is not a defect -- but it must arrive WITH the statement of what "
                 f"was not tested, or the reader cannot tell it from a discriminating one.")
-        if not isinstance(block.get("discrimination_blockers"), dict):
-            raise ZContractError(
-                f"receipt: {RECONSTRUCTION_KEY} reports discriminating=False without "
-                f"`discrimination_blockers`. WHY the gate was blind -- pinned, saturated, or "
-                f"below tolerance -- is the actionable part, and saturation is invisible to a "
-                f"tolerance argument.")
-    if isinstance(block.get("discrimination_blockers"), dict):
-        _validate_discrimination_blockers(block["discrimination_blockers"], discriminating)
 
 
 BLOCKER_COUNTS = ("n_bins", "n_separated", "n_pinned", "n_saturated_v_uni_below_v_blk",
                   "n_shift_below_tolerance")
 
 
-def _validate_discrimination_blockers(blockers, discriminating) -> None:
+def _validate_discrimination_blockers(blockers, discriminating, rtol) -> None:
     """The disclosure must contain MEASUREMENTS, and they must be consistent with the verdict.
 
     ⚠ ROUND-7 ISSUE 2. Requiring the key was not requiring the content: `discrimination_blockers
@@ -405,13 +411,28 @@ def _validate_discrimination_blockers(blockers, discriminating) -> None:
             f"{blockers['n_bins']}. Mechanisms that do not add up leave a cause unnamed, which is "
             f"exactly how saturation went unnoticed.")
 
-    expected = blockers["n_separated"] > 0
-    if bool(discriminating) is not expected:
+    # ⚠ ROUND-8, SECOND PATH. Checking `discriminating == (n_separated > 0)` left the third
+    # term free, so the flag and the count could agree while CONTRADICTING the separation they
+    # are both derived from. Both of these were written as MET at rtol=1e-9, with valid
+    # partitions:
+    #     n_separated=0, discriminating=False, max_separation=0.5   (0.5 > rtol: something moved)
+    #     n_separated=3, discriminating=True,  max_separation=0     (nothing moved at all)
+    #
+    # In the producer these are one quantity read three ways -- `n_separated = sum(sep > rtol)`
+    # and `max_separation = sep.max()`, so `max(sep) > rtol` iff `any(sep) > rtol` EXACTLY. The
+    # identity is therefore checkable in full, and two of its three pairings are not enough: a
+    # partial consistency check is what let a self-contradicting record through twice.
+    n_sep_positive = blockers["n_separated"] > 0
+    sep_exceeds_rtol = blockers["max_separation"] > rtol
+    if not (bool(discriminating) == n_sep_positive == sep_exceeds_rtol):
         raise ZContractError(
-            f"receipt: {RECONSTRUCTION_KEY} records discriminating={discriminating!r} beside "
-            f"n_separated={blockers['n_separated']}. The verdict is a FUNCTION of the "
-            f"measurements -- discriminating is exactly n_separated > 0 -- so these two halves "
-            f"did not come from the same run.")
+            f"receipt: {RECONSTRUCTION_KEY} breaks the discrimination identity. "
+            f"discriminating={discriminating!r}, n_separated={blockers['n_separated']} "
+            f"(> 0 is {n_sep_positive}), max_separation={blockers['max_separation']!r} "
+            f"(> rtol {rtol:.0e} is {sep_exceeds_rtol}). These are ONE measurement read three "
+            f"ways -- n_separated counts the bins with sep > rtol and max_separation is that "
+            f"same sep's maximum -- so all three must agree. They did not, which means the "
+            f"record was assembled rather than measured.")
 
 
 def _leg_is_unbacked(entry):
