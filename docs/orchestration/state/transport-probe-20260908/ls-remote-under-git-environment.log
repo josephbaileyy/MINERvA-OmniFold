@@ -1,0 +1,6 @@
+campaignctl.git_environment present: True
+HOME present: True | SSH_AUTH_SOCK present: True
+GIT_CONFIG_GLOBAL: /dev/null | GIT_CONFIG_NOSYSTEM: 1
+timestamp_utc: 2026-09-07T23:05:08.098519+00:00
+scp-ssh   rc=0 out='8c939996cab973dc0ea84296c11ab5aa244d3acd\trefs/heads/main' err=''
+https-pin rc=0 out='8c939996cab973dc0ea84296c11ab5aa244d3acd\trefs/heads/main' err=''
