@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 17. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 18. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -429,9 +429,12 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   is **returned as a bounded proposal and not run**. Five new §7 items (20–24) carry the questions.
   **ROUND 2 OF THAT REVIEW (rev. 17) accepted the threshold withdrawals, persisted null operands,
   correlation limitation, conditional `D3` and generalized leg-set branches, and found the REPLACEMENT
-  `D4` proposal not yet passable.** Relayed **without** an approval statement, so rev. 17 separates
+  `D4` proposal not yet passable.** Relayed **without** an approval statement, so rev. 17 separated
   corrections of this lane's own errors — made unconditionally — from the reviewer's dispositions, which
-  remain pending. **`min(achievable, acceptable)` is WITHDRAWN as acceptance-blocking:** an observed
+  it marked pending; **Joseph approved those findings on 2026-09-07 and rev. 18 discharges the mark.**
+  **The distinction rev. 17 drew is kept, because approval is where it gets lost: the FINDINGS are
+  approved, and `D1`, `D2` and `D4` are NOT adopted — the approved finding about them is that they are
+  not ready as written, with `D3` conditional. No cell opens and no count moves.** **`min(achievable, acceptable)` is WITHDRAWN as acceptance-blocking:** an observed
   reproducibility floor is not an acceptance tolerance, and §3.6a — two sections earlier in the same
   document — says such a floor bounds `ε` from **below**, so `min` inverted its direction. Replaced by
   **`B` (operating-error bound, with assumptions and confidence), `S` (independently justified

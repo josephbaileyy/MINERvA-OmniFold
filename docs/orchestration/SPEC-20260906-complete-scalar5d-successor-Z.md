@@ -1,8 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 17 — round 2 of the `D1`–`D4` review. `min(achievable, acceptable)` is WITHDRAWN: it used a
-# feasibility floor as an upper bound, which §3.6a had already forbidden. `B ≤ S` replaces it, the
-# control is revised on three gaps, and the product it was priced against was `15×` too large.**
+# **rev. 18 — round 2's findings are APPROVED, 2026-09-07. Rev. 17's provenance caveat is discharged at
+# the two sites that carried it, and the distinction it protected is kept: the FINDINGS are approved;
+# `D1`–`D4` are still NOT ADOPTED, which is what those findings say.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -29,17 +29,46 @@ ungraded here**, and this document opens none.
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
 
+## 0.0p What changed in rev. 18
+
+Rev. 17 was `4657e55a`. **One change, and it is a change of standing rather than of content.**
+
+**Rev. 17 was written from a review round relayed without an approval statement**, so it split its
+changes in two and marked the reviewer's dispositions **pending**. **Joseph approved them on
+2026-09-07.** §0.0o's provenance paragraph and the `CATALOG` entry's matching sentence are updated;
+**no finding, number, disposition or requirement moves**, because rev. 17 already implemented all of
+them — only their standing changes.
+
+**⚠ AND THE DISTINCTION REV. 17 DREW IS KEPT, because it is the one that matters and approval is exactly
+where it gets lost.** *"The findings are approved"* is **not** *"`D1`–`D4` are adopted."* The findings
+**are that three of the four are not ready for adoption**, so approving them **closes nothing and opens
+no cell**:
+
+| | |
+|---|---|
+| **APPROVED, 2026-09-07** | the round-2 findings: `min(achievable, acceptable)` is acceptance-blocking; the control has three gaps and its price was wrong; the correlation legs are not free; and the five nonblocking corrections |
+| **STILL NOT ADOPTED** | **`D1`, `D2`, `D4`** — the approved finding is that they are **not ready as written**. **`D3`** remains *supportable conditionally*, with its four prerequisites unmet |
+| **STILL OPEN** | every §7 item, including 20–24; `B`, `S` and the `B ≤ S` precondition; the use-based justification; the correlation disposition; the per-bin tolerance and scope |
+
+**Counts, gates, cells and the pin are untouched. `BEN-381` still bars this lane from grading what it
+drafted, and an approved finding that something is unready is not a grade.**
+
 ## 0.0o What changed in rev. 17
 
 Rev. 16 was `23f9dad5`. **Round 2 of the contract review accepted rev. 16's threshold withdrawals,
 persisted null operands, correlation limitation, conditional `D3` and generalized leg-set branches — and
 found the REPLACEMENT `D4` proposal not yet passable.** Rev. 17 implements that round.
 
-**⚠ PROVENANCE, STATED PRECISELY BECAUSE REV. 16'S LINE DOES NOT TRANSFER.** Rev. 16 records *"Joseph has
-approved the findings"*, and for that round he did. **This round arrived relayed WITHOUT an approval
-statement.** So rev. 17 separates two kinds of change: **corrections of this lane's own errors, which
-need no approval and are made unconditionally**, and **dispositions, which are recorded as the
-REVIEWER'S and remain pending.** Nothing below is adopted.
+**⚠ PROVENANCE — UPDATED IN REV. 18, AND THE ORIGINAL STATE IS KEPT BECAUSE IT IS PART OF THE RECORD.**
+Rev. 17 was written from a round **relayed without an approval statement**, so it separated two kinds of
+change: **corrections of this lane's own errors, made unconditionally**, and **dispositions, recorded as
+the reviewer's and marked pending**. **Joseph approved the findings on 2026-09-07, and the pending mark
+is discharged.**
+
+**The split it protected still holds, and approval is precisely where that gets lost, so it is restated
+rather than dropped: THE FINDINGS ARE APPROVED; `D1`–`D4` ARE NOT ADOPTED.** The approved finding about
+three of them **is that they are not ready for adoption as written**. Nothing below is adopted, no cell
+opens, and no count moves — §0.0p.
 
 | # | rev. 16 said | rev. 17 does |
 |---|---|---|
@@ -3603,6 +3632,13 @@ numerical proposals — the earlier PASS did not cover them — found that `D1`,
 for adoption as written, and that `D3` is supportable conditionally. Joseph has approved those findings,
 and this sheet implements them.** The assembly algebra and the existing rulings are **not** reopened;
 §§1–2, §1.3a–d, §6.1–6.5 and the pin are untouched.
+
+**⚠ ROUND 2 OF THAT REVIEW IS ALSO APPROVED — 2026-09-07 (rev. 17 implemented it, rev. 18 records the
+approval).** It found the **replacement** `D4` proposal not yet passable: `min(achievable, acceptable)`
+is withdrawn for `B ≤ S`, the control is revised on three gaps and unpriced, and the correlation legs
+are re-priced as *not free*. **`D4`'s rows below carry it.** **Both approvals are approvals of FINDINGS,
+and every finding is that a decision is not ready** — so this sheet still decides nothing, and `D1`,
+`D2` and `D4` remain unadopted with `D3` conditional.
 
 **What changed, in one line: three format-and-arithmetic-derived numbers are gone, and what replaces
 each is not another number but a stated scientific question.**
