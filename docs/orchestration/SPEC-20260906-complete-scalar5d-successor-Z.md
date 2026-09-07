@@ -1,8 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 20 — PASS on rev. 19's corrections, with one left: *"venue-independent"* claimed more reach
-# than a laptop timing supports. And the meter repair is now ON `main` at `d4922b89` — re-measured
-# here, together with one relayed ruling that no record corroborates.**
+# **rev. 21 — the uncorroborated ruling is now CORROBORATED: Joseph confirmed it and the decision
+# record exists on `main`. §7 item 19 CLOSES as declined, `D5` is RATIFIED, and §5.6c's covering
+# search is discharged by the artifact it said was missing.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -28,6 +28,22 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0s What changed in rev. 21
+
+Rev. 20 was `e4402e4f`. **§5.6c reported that a relayed ruling could not be corroborated. Joseph
+confirmed it directly, the record was written, and it is now on `main` — so the gap §5.6c named is
+closed by the artifact it said was missing.**
+
+| # | rev. 20 said | rev. 21 does |
+|---|---|---|
+| 1 | the relayed ruling is **NOT CORROBORATED**; §7 item 19 stays **referred**; `D5` stays resolved **by code** | **CORROBORATED.** `DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md` is on `main` at **`3497abec`**, amended at **`32880a6f`**, and the finding it rules on is de-staled against it at **`6669ac3b`** — its status line, §5 and §8 now point there. **§7 item 19's second remedy CLOSES as DECLINED. `D5` is RATIFIED, not merely resolved by code.** The relay was accurate; only the record was missing |
+| 2 | — | **the ruling's date is `2026-09-06`, not `2026-09-07`.** It was **given on approving the landing**, which is why `72bcd2f6`/`d4922b89` landed under it; `09-07` is when this lane obtained confirmation. **The verbatim instruction is in the finding's Appendix A**, published by the lane that received it, and the decision record governs only the two rulings while the appendix is the source for the rest |
+| 3 | — | **recorded because it is the more useful half: two lanes wrote that record simultaneously.** This lane's landed first and the integration lane dropped its near-duplicate unpushed, spending its commit on the part only it could do. **This lane in turn staged a revert of its own record — on the view that the peer's was better sourced — and abandoned it unpushed on finding the peer had already resolved it the other way.** Two agents deferring to each other is a random walk; the tie-break that ended it was *which artifact is better evidenced*, not who yielded last |
+
+**Nothing else moves.** `D1`, `D2` and `D4` stay unadopted, `D3` conditional, and justified `B`/`S`,
+the cause-3 tolerances, the correlation disposition, the per-bin scope and a complete execution costing
+all remain outstanding. **Admission is still unarmed** — re-measured at the new head.
 
 ## 0.0r What changed in rev. 20
 
@@ -2942,7 +2958,23 @@ gives about a different one.
 | **`git log --all -- docs/orchestration/state/r5-meter-receipt.json` returns `0` commits** | **stronger than rev. 15's *"does not exist at this base"***: **no commit on any ref has ever touched the gate path.** Combined with its absence at `origin/main` (`git cat-file -e` → fatal), **admission has never been armed, anywhere** |
 | **`ac647761` adds `FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md`** | it **discharges §5.6b item 5** with an owner, quoting the decision owner of 2026-09-06: *"preserve accounting before `2026-10-02T13:44:27Z`… **This is a query limitation, not permission to omit their expenditure**"*, and it measures the limit by bisection (30 days accepted, 31 rejected; the limit is on the **span**; `-j <jobid>` bypasses it, `--name=` does not). Its own header says it is **NOT CITABLE FOR** any spend figure or authorization |
 
-#### ⚠ NOT CORROBORATED — the relayed ruling, and this is the part that changes nothing
+#### ⚠ CORROBORATED IN REV. 21 — read this box first; the subsection below is rev. 20's state, kept
+
+**The gap this subsection reported is closed, and closed by the artifact it said was missing.** Joseph
+confirmed both rulings directly on 2026-09-07, and the record now exists on `main`:
+
+| | |
+|---|---|
+| **the ruling** | `DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md`, landed **`3497abec`**, amended **`32880a6f`** |
+| **the finding, de-staled against it** | **`6669ac3b`** — the status line, §5 and §8 of `FINDING-20260906-…` now point at the decision record, with the overturned reading and the refused proposal **kept in place rather than deleted** |
+| **the verbatim instruction** | that finding's **Appendix A**, published by the lane that received it. **The ruling was GIVEN 2026-09-06**, on approving the landing — which is why `72bcd2f6` and `d4922b89` landed under it. `2026-09-07` is only when this lane obtained confirmation |
+| **what it settles here** | **§7 item 19's second remedy: CLOSED as DECLINED**, so `committed_r5_receipt`'s requirement stands unchanged. **`D5`: RATIFIED**, so the alternative reading of R5 §3 is overturned by decision and reviving it needs a **new decision**, not an edit to `_sum_charged_seconds` |
+| **what it does NOT settle** | **admission is still unarmed** — re-measured at the new head: no receipt at `origin/main`, and `git log --all` over the gate path still returns **`0`** commits. The ruling **preserves the arming mechanism; it does not use it** |
+
+**The rev.-20 text below is kept unedited**, because the covering search it records is the reason the
+record exists, and a reader should be able to see the state that produced it.
+
+#### ⚠ NOT CORROBORATED AT REV. 20 — the relayed ruling, and this is the part that changed nothing
 
 **RELAYED:** that Joseph *"ratified that `R5` charges every distinct execution attempt exactly once —
 failed and requeued included"* and that he **declined** untracking the receipt path, so the
@@ -3784,7 +3816,13 @@ block of the split window on one measured realization, and one realization is wh
 prerequisite is an answer to**, and the consequence is that **`RZ(v)`'s five deliverables are complete
 and Tier 2 is reachable today for most of Z's code** — which the previous single list obscured by
 counting production prerequisites against a zero-compute act.
-### `D5` — ⚠ RESOLVED IN REV. 15 BY THE LANDED REPAIR (§5.6b). Retained as written, for the record
+### `D5` — ⚠ RESOLVED IN REV. 15 BY THE LANDED REPAIR, AND **RATIFIED** IN REV. 21 (§5.6b, §5.6c)
+
+**Joseph ratified the attempt-summing reading — ruled 2026-09-06, confirmed 2026-09-07, recorded on
+`main` at `3497abec`.** So `D5` is settled by **decision** and not only by what the code does. **The
+alternative reading is overturned rather than merely unchosen**, and §5.6b item 1's *"that remains
+Joseph's to overturn"* now means **by a new decision** — the change stays cheap in
+`_sum_charged_seconds`, but cheapness in code is no longer the operative question.
 
 **The repair adopts the attempt-summing reading**, which is the direction §5.9 flagged: `sacct -X -D`,
 an attempt is `(JobID, Start)`, and every attempt of one job id is charged. **`D5` is therefore off
@@ -4098,8 +4136,15 @@ adopted by accident.**
     it changes how admission can ever be armed. **So this item is now a live decision for Joseph rather
     than an open finding, and the hazard is LARGER than when it was written:** after the repair the
     documented command produces a valid, armable receipt where before it produced a visibly wrong one.
+    **⚠ REV. 21 — CLOSED. THE SECOND REMEDY IS DECLINED, BY A RECORDED DECISION.** Joseph confirmed it
+    directly on 2026-09-07, having ruled it on 2026-09-06; the record is on `main` at `3497abec`
+    (amended `32880a6f`) and the finding is de-staled against it at `6669ac3b`. **The gate path stays
+    tracked, `committed_r5_receipt`'s requirement is unchanged, and §8's *"live option"* is retired.**
+    **The hazard is NOT reduced by this** — the mitigation is the first remedy, which was taken and
+    stands. **So this item is closed in both halves: one by code, one by decision.** The rev.-20 text
+    follows, kept because the covering search in it is what produced the record.
     **⚠ REV. 20 — STILL REFERRED, AND A RELAY DOES NOT CLOSE IT.** A peer relayed that Joseph declined
-    the untrack, which would settle this item. **No record of that decision exists at `origin/main`
+    the untrack, which would settle this item. **No record of that decision existed at `origin/main`
     `d4922b89`** — the source FINDING's status is still *"open — three things are with the decision
     owner"* and its untrack remedy is still *"a live option"* (covering search in §5.6c). **The relay
     may well be right and the record may lag it; either way this item is not closed on a relay.** Note

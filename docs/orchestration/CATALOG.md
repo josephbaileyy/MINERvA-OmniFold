@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 20. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 21. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -462,7 +462,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   reading and declined the untrack. At `d4922b89` the source FINDING is still *"open — three things are
   with the decision owner"*, so **§7 item 19 stays referred and `D5` stays resolved by code, not
   ratified** — uncorroborated is not false, and if the relay is right the outcome is the one already
-  assumed. **`min(achievable, acceptable)` is WITHDRAWN as acceptance-blocking:** an observed
+  assumed.
+  **REV. 21 — CORROBORATED, and by the artifact §5.6c said was missing.** Joseph confirmed both
+  rulings directly on 2026-09-07, having given them **2026-09-06** on approving the landing;
+  `DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md` is on `main`
+  (`3497abec`, amended `32880a6f`) and the finding is de-staled against it at `6669ac3b`. **§7 item 19
+  closes as DECLINED and `D5` is RATIFIED** — the alternative reading of R5 §3 is overturned by
+  decision, so reviving it needs a new decision rather than an edit. **Admission is still unarmed.**
+  The relay was accurate throughout; only the record was missing. **`min(achievable, acceptable)` is WITHDRAWN as acceptance-blocking:** an observed
   reproducibility floor is not an acceptance tolerance, and §3.6a — two sections earlier in the same
   document — says such a floor bounds `ε` from **below**, so `min` inverted its direction. Replaced by
   **`B` (operating-error bound, with assumptions and confidence), `S` (independently justified
