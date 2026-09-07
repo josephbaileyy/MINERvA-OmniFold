@@ -97,6 +97,15 @@ this reminder should plan to look at
 `https://claude.ai/code/routines/trig_01Qog2yDeBo9k8fTv7BHUDd9` on or after the fire time rather than
 expect a message to arrive.
 
+*One precision, so this is not read as “no notice of any kind exists.”* The run does produce
+something: a session whose report lands at the routine URL and in its runs list. Whether the
+platform raises its own notification for a completed routine run is **unverified** — neither the
+lane that measured the connector state nor the lane that wrote this section has checked it, and
+neither will claim it either way. What is established is the narrower statement above: **the
+routine itself has no capability to send anything anywhere.** “Go and look on or after the fire
+time” is therefore the instruction that holds under either answer, which is why it is the one
+written here.
+
 **Two limits, so this is not read as more than it is.** The removal was routine-scoped, so the account's
 own connectors are untouched and were *not* verified — the routine API gives no way to. And this is a
 measurement at an instant, not a guarantee about `2026-10-01`: the five write-capable connectors
