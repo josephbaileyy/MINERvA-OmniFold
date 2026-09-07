@@ -41,7 +41,7 @@ from datetime import datetime, timezone
 
 import numpy as np
 
-from z_contract import ZContractError, require, withheld_boundaries
+from z_contract import Z_BOUNDARIES, ZContractError, require, withheld_boundaries
 from unified_throw_cov import _atomic_savez   # the producer's own idiom; do not reimplement
 
 Z_RECEIPT_SCHEMA_VERSION = 1
@@ -185,13 +185,54 @@ def build_receipt(*, z_stamp, variant, parent, code_identity, inflation, null_bl
         "negative_statement": NEGATIVE_STATEMENT,
         "notes": notes or {},
     }
-    # A receipt that carries a MET verdict while a boundary it depended on is withheld would be the
-    # exact failure Joseph's instruction names. Refuse to write one.
-    if outcome and outcome.get("assessable") is False and outcome.get("branch") == 3:
+    _validate_passing_outcome(outcome)
+    return receipt
+
+
+def _validate_passing_outcome(outcome) -> None:
+    """A MET receipt must be justified by the declarations it actually rests on.
+
+    ⚠ REVIEW FINDING 1, SECOND HALF. The first version refused only the self-contradictory case --
+    `assessable=False` together with `branch=3`. So an outcome claiming `assessable=True,
+    branch=3` was written happily while the receipt's own `withheld_boundaries` block recorded all
+    four boundaries as withheld. The receipt contained its own refutation and did not look at it.
+
+    A passing grade is now checked against the per-leg boundary records the outcome carries AND
+    against the live registry, because those are two different ways to be wrong: a stale outcome
+    dict, and a leg whose boundary was withdrawn after the outcome was computed.
+    """
+    if not outcome:
+        return
+    branch = outcome.get("branch")
+    if outcome.get("assessable") is False and branch == 3:
         raise ZContractError(
             "receipt: outcome claims branch 3 (MET) while reporting itself not assessable. "
             "A withheld boundary cannot produce a passing grade.")
-    return receipt
+    if branch != 3:
+        return
+
+    legs = outcome.get("leg_results") or {}
+    if not legs:
+        raise ZContractError(
+            "receipt: outcome claims branch 3 (MET) but records no leg results. A pass with no "
+            "legs is not a pass -- §3.7b item 5 grades over a declared leg set L.")
+    offenders = []
+    for name, entry in legs.items():
+        b = (entry or {}).get("boundary") or {}
+        if b.get("status") != "DECLARED" or b.get("value") is None:
+            offenders.append(f"{name} (recorded as {b.get('status')!r})")
+            continue
+        if "limit" not in (entry or {}):
+            offenders.append(f"{name} (no limit was applied)")
+            continue
+        live = Z_BOUNDARIES.get(b.get("name"))
+        if live is not None and not live.is_declared:
+            offenders.append(f"{name} (boundary {b.get('name')!r} is withheld in the registry now)")
+    if offenders:
+        raise ZContractError(
+            "receipt: outcome claims branch 3 (MET) but these legs are not backed by a declared "
+            f"boundary: {sorted(offenders)}. Joseph, 2026-09-07: missing or unapproved acceptance "
+            "boundaries must produce an explicit non-passing result.")
 
 
 def write_receipt(path, receipt) -> dict:

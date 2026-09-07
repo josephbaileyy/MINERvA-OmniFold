@@ -92,26 +92,79 @@ Z_REPRO_KNOBS = {
 }
 
 
+# A name that cannot be a LightGBM parameter. The probe asks about it too: if the backend
+# "recognises" it, the recognition METHOD is not discriminating and every answer it gives is
+# worthless. See `probe_backend`.
+_NEGATIVE_CONTROL = "z_probe_definitely_not_a_lightgbm_parameter_9f2c"
+# A parameter the production estimator already passes (`omnifold_nn_core:145`), so it certainly
+# exists in any build this campaign could be using.
+_POSITIVE_CONTROL = "num_leaves"
+
+
+def _alias_membership(aliases, name):
+    """Is `name` a real parameter, by this build's alias table? `None` if unanswerable.
+
+    `_ConfigAliases.get(name)` returns a SET. For a real parameter it contains the canonical name
+    and its aliases; for an unknown name LightGBM 4.x returns `{name}` -- the query echoed back.
+    So `bool(...)` is true for everything, which is review finding 5. Membership has to be tested
+    against the echo, and even that is only trustworthy if the controls below behave.
+    """
+    try:
+        s = aliases.get(name)
+    except Exception:
+        return None
+    if not isinstance(s, (set, frozenset, list, tuple)):
+        return None
+    s = set(s)
+    if not s:
+        return False
+    return s != {name}          # a bare echo is not recognition
+
+
 def probe_backend() -> BackendProbe:
-    """Import LightGBM and report what is actually there. Never raises; the caller decides."""
+    """Import LightGBM and report what is actually there, WITH CONTROLS. Never raises.
+
+    ⚠ REVIEW FINDING 5. The first version used `bool(_ConfigAliases.get(knob))`, which is not a
+    membership test: LightGBM 4.5.0 echoes an unknown name straight back, so every knob -- real or
+    invented -- came back "recognised". A recognition test that cannot fail certifies anything.
+
+    Two controls now run alongside the real questions, and BOTH must behave or the whole probe is
+    reported unverified:
+
+      * a NEGATIVE control -- a name that cannot exist. If it is "recognised", the method is
+        echoing and no answer from it means anything.
+      * a POSITIVE control -- `num_leaves`, which the production estimator already passes. If it
+        is NOT recognised, the method is blind and, again, no answer means anything.
+
+    A probe that cannot discriminate returns `None` for every knob, which the overlay refuses. That
+    is the intended outcome on any build whose alias table echoes.
+    """
     try:
         import lightgbm  # noqa: F401
     except Exception as exc:                       # ImportError, or a broken install
         return BackendProbe(available=False, version=None, error=f"{type(exc).__name__}: {exc}",
                             recognised_knobs={k: None for k in Z_REPRO_KNOBS})
+
     version = getattr(lightgbm, "__version__", None)
-    recognised = {}
     aliases = getattr(getattr(lightgbm, "basic", None), "_ConfigAliases", None)
-    for knob in Z_REPRO_KNOBS:
-        if aliases is None or not hasattr(aliases, "get"):
-            # No way to interrogate this build's parameter table. UNVERIFIED is not RECOGNISED.
-            recognised[knob] = None
-            continue
-        try:
-            recognised[knob] = bool(aliases.get(knob))
-        except Exception:
-            recognised[knob] = None
-    return BackendProbe(available=True, version=version, error=None, recognised_knobs=recognised)
+    if aliases is None or not hasattr(aliases, "get"):
+        return BackendProbe(available=True, version=version,
+                            error="this build exposes no interrogable parameter table",
+                            recognised_knobs={k: None for k in Z_REPRO_KNOBS})
+
+    neg = _alias_membership(aliases, _NEGATIVE_CONTROL)
+    pos = _alias_membership(aliases, _POSITIVE_CONTROL)
+    if neg is not False or pos is not True:
+        return BackendProbe(
+            available=True, version=version,
+            error=(f"recognition method is not discriminating: negative control "
+                   f"{_NEGATIVE_CONTROL!r} -> {neg!r} (want False), positive control "
+                   f"{_POSITIVE_CONTROL!r} -> {pos!r} (want True)"),
+            recognised_knobs={k: None for k in Z_REPRO_KNOBS})
+
+    return BackendProbe(available=True, version=version, error=None,
+                        recognised_knobs={k: _alias_membership(aliases, k)
+                                          for k in Z_REPRO_KNOBS})
 
 
 def z_lgbm_overlay(probe: Optional[BackendProbe] = None) -> dict:
@@ -131,12 +184,22 @@ def z_lgbm_overlay(probe: Optional[BackendProbe] = None) -> dict:
             "guess a determinism configuration -- an unrecognised LightGBM parameter is silently "
             "ignored, which would yield a run that reports itself pinned while its reduction order "
             "still varies with the allocation. Re-run this probe in the campaign environment.")
-    unverified = [k for k, v in probe.recognised_knobs.items() if v is not True]
+    # ⚠ REVIEW FINDING 5, SECOND HALF. The first version iterated over `probe.recognised_knobs`,
+    # so a probe carrying an EMPTY map had nothing to disagree with and sailed through. The
+    # required set is `Z_REPRO_KNOBS`; absence of evidence is now iterated over explicitly.
+    unverified = [k for k in Z_REPRO_KNOBS if probe.recognised_knobs.get(k) is not True]
     if unverified:
         raise ZContractError(
-            f"Z reproducibility overlay REFUSED: knobs {sorted(unverified)} were not confirmed "
-            f"against LightGBM {probe.version!r}. Confirmed knobs are not enough -- every knob must "
-            "be recognised, because a silently-ignored one is indistinguishable from a set one.")
+            f"Z reproducibility overlay REFUSED: knobs {sorted(unverified)} carry no positive "
+            f"evidence against LightGBM {probe.version!r} "
+            f"(probe error: {probe.error!r}). Every required knob needs its own confirmation -- a "
+            "silently-ignored parameter is indistinguishable from a set one, and a missing entry "
+            "is not a passing one.")
+    if not probe.version or not str(probe.version).strip():
+        raise ZContractError(
+            "Z reproducibility overlay REFUSED: the backend reported no version. The knobs are "
+            "version-dependent, and a configuration that cannot name the build it was verified "
+            "against is not reproducible in the sense this module exists to provide.")
     return {
         "params": {k: v for k, (v, _) in Z_REPRO_KNOBS.items()},
         "rationale": {k: r for k, (_, r) in Z_REPRO_KNOBS.items()},

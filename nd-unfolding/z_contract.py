@@ -117,22 +117,49 @@ class Boundary:
     provenance: Optional[str]
     reason: Optional[str]
 
+    def __post_init__(self):
+        """⚠ THE INVARIANT LIVES HERE, NOT IN THE CLASSMETHODS.
+
+        Review finding 1: the first version enforced provenance only inside `declared()`, so the
+        dataclass's own generated constructor -- `Boundary("null_epsilon", 1.0, None, None)` --
+        produced a usable boundary with no approval behind it. A guard on the polite path is not a
+        guard: `__post_init__` runs on EVERY construction path, including `replace()` and
+        unpickling.
+        """
+        if not self.name or not str(self.name).strip():
+            raise ZContractError("boundary: a name is required")
+        if self._value is None:
+            if not self.reason or not str(self.reason).strip():
+                raise ZContractError(
+                    f"boundary {self.name!r}: a withheld boundary requires a reason")
+            if self.provenance:
+                raise ZContractError(
+                    f"boundary {self.name!r}: a withheld boundary must not carry provenance -- "
+                    f"provenance is what makes a value citable, and there is no value")
+        else:
+            v = float(self._value)
+            if v != v or abs(v) == float("inf"):
+                raise ZContractError(
+                    f"boundary {self.name!r}: value must be finite, got {self._value!r}")
+            if not self.provenance or not str(self.provenance).strip():
+                raise ZContractError(
+                    f"boundary {self.name!r}: a declared boundary requires provenance naming the "
+                    f"record that approved it. A number without an approval is not a criterion.")
+            if self.reason:
+                raise ZContractError(
+                    f"boundary {self.name!r}: a declared boundary must not also carry a "
+                    f"withholding reason -- one of the two states, never both")
+
     @classmethod
     def declared(cls, name: str, value: float, provenance: str) -> "Boundary":
-        v = float(value)
-        if not (v == v and abs(v) != float("inf")):
-            raise ZContractError(f"boundary {name!r}: value must be finite, got {value!r}")
-        if not provenance or not str(provenance).strip():
+        if value is None:
             raise ZContractError(
-                f"boundary {name!r}: a declared boundary requires provenance naming the record "
-                f"that approved it. A number without an approval is not a criterion.")
-        return cls(name=name, _value=v, provenance=str(provenance), reason=None)
+                f"boundary {name!r}: declared() needs a value; use withheld() to withhold one")
+        return cls(name=name, _value=float(value), provenance=provenance, reason=None)
 
     @classmethod
     def withheld(cls, name: str, reason: str) -> "Boundary":
-        if not reason or not str(reason).strip():
-            raise ZContractError(f"boundary {name!r}: a withheld boundary requires a reason")
-        return cls(name=name, _value=None, provenance=None, reason=str(reason))
+        return cls(name=name, _value=None, provenance=None, reason=reason)
 
     @property
     def is_declared(self) -> bool:
@@ -204,15 +231,24 @@ def withheld_boundaries() -> dict:
 
 
 # ------------------------------------------------------------------------- the band partition --
-def check_band_partition(vert, residual, lateral):
-    """§1.3b gate 5 / §3.3 condition 3: V, R, A pairwise disjoint and exhaustive.
+def check_band_partition(vert, residual, lateral, band_inventory):
+    """§1.3b gate 5 / §3.3 condition 3: V, R, A pairwise disjoint and EXHAUSTIVE.
 
     Takes the three sets as the PRODUCER built them and checks them against the imported
     constants. It does not rebuild them from those constants -- a check that constructs its own
     operand cannot disagree with the producer, which is the fixture-derived-from-the-rule failure
     this repository has already paid for.
+
+    ⚠ `band_inventory` IS REQUIRED, and review finding 6 is why. The first version checked only
+    disjointness, the two imported sets and a COUNT, so the correct `V` and `A` plus 27 INVENTED
+    residual names passed -- 45 of them, all disjoint, none of them real. A count is not an
+    inventory. Exhaustiveness is a claim about the support family's actual band set, so the actual
+    set has to be supplied; there is no default, because a defaulted inventory would be the
+    producer's own list and the check would agree with it by construction.
     """
     V, R, A = set(vert), set(residual), set(lateral)
+    inv = set(band_inventory)
+    require(inv, "band inventory is empty -- exhaustiveness cannot be checked against nothing")
     require(len(V) == len(list(vert)), "V contains duplicates")
     require(len(R) == len(list(residual)), "R contains duplicates")
     require(len(A) == len(list(lateral)), "A contains duplicates")
@@ -225,8 +261,18 @@ def check_band_partition(vert, residual, lateral):
     require(A == set(LATERAL_BANDS),
             f"A is not p4_lib.BANDS: missing {sorted(set(LATERAL_BANDS) - A)}, "
             f"extra {sorted(A - set(LATERAL_BANDS))}")
+    union = V | R | A
+    missing, invented = inv - union, union - inv
+    require(not missing,
+            f"partition is not exhaustive: {len(missing)} band(s) in the support-family inventory "
+            f"are in no part -- {sorted(missing)[:6]}")
+    require(not invented,
+            f"partition contains {len(invented)} band(s) absent from the support-family "
+            f"inventory -- {sorted(invented)[:6]}. A name that is not in the inventory is not a "
+            f"band, however neatly it partitions")
     total = len(V) + len(R) + len(A)
     require(total == N_BANDS_TOTAL,
             f"V+R+A = {total}, expected {N_BANDS_TOTAL} ({N_VERT}+{N_RESIDUAL}+{N_LATERAL})")
     require(len(R) == N_RESIDUAL, f"|R| = {len(R)}, expected {N_RESIDUAL}")
-    return {"n_vert": len(V), "n_residual": len(R), "n_lateral": len(A), "n_total": total}
+    return {"n_vert": len(V), "n_residual": len(R), "n_lateral": len(A), "n_total": total,
+            "n_inventory": len(inv), "exhaustive": True}

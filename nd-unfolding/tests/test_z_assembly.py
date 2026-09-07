@@ -64,7 +64,9 @@ def gate_kwargs(s, **over):
               cov_lateral_sum=s["S_A"], cov_stat=s["C_stat"], cov_ml=s["C_ML"],
               bands_vert=list(zc.VERT_BANDS),
               bands_residual=[f"r{i}" for i in range(zc.N_RESIDUAL)],
-              bands_lateral=list(zc.LATERAL_BANDS))
+              bands_lateral=list(zc.LATERAL_BANDS),
+              band_inventory=(list(zc.VERT_BANDS) + [f"r{i}" for i in range(zc.N_RESIDUAL)]
+                              + list(zc.LATERAL_BANDS)))
     kw.update(over)
     return kw
 
@@ -117,9 +119,9 @@ class AnUninflatedObjectPassesFourGatesAndFailsOnlyTheFifth(unittest.TestCase):
         za.gate_symmetry_psd(self.s["C_Z"])
 
     def test_G5_partition_passes_on_the_uninflated_object(self):
-        zc.check_band_partition(list(zc.VERT_BANDS),
-                                [f"r{i}" for i in range(zc.N_RESIDUAL)],
-                                list(zc.LATERAL_BANDS))
+        R = [f"r{i}" for i in range(zc.N_RESIDUAL)]
+        zc.check_band_partition(list(zc.VERT_BANDS), R, list(zc.LATERAL_BANDS),
+                                list(zc.VERT_BANDS) + R + list(zc.LATERAL_BANDS))
 
     def test_G3_reconstruction_is_the_only_gate_that_catches_it(self):
         with self.assertRaises(zc.ZContractError) as cm:
@@ -137,8 +139,9 @@ class TheDroppedShiftIsCaughtByTheVariantCoupling(unittest.TestCase):
     def test_the_correct_coupling_passes(self):
         s = build_scenario()
         out = za.check_variant_coupling(s["v_uni_cv"], s["v_uni_mean"], s["ms"])
-        self.assertLessEqual(out["max_rel_residual"], zc.IDENTITY_RTOL)
+        self.assertLessEqual(out["max_deviation"], out["max_allowance"])
         self.assertGreater(out["ms_norm"], 0.0)
+        self.assertTrue(out["discriminating"], "fixture cannot exercise the gate")
 
     def test_reusing_one_variants_operands_for_both_is_caught(self):
         s = build_scenario()
@@ -146,17 +149,44 @@ class TheDroppedShiftIsCaughtByTheVariantCoupling(unittest.TestCase):
             za.check_variant_coupling(s["v_uni_mean"], s["v_uni_mean"], s["ms"])
         self.assertIn("dropped-shift", str(cm.exception))
 
-    def test_an_identically_zero_shift_is_refused_rather_than_passing_vacuously(self):
+    def test_a_zero_shift_is_ACCEPTED_and_reported_as_non_discriminating(self):
+        """Review finding 4: a zero shift legitimately makes the variants equal.
+
+        The old version raised here, rejecting a correct operand set from inside an algebraic
+        identity. "Both variants must exist" is a real requirement, but it is §3.3 condition 14's,
+        and it is not this function's to enforce.
+        """
         s = build_scenario()
         z = np.zeros_like(s["ms"])
-        with self.assertRaises(zc.ZContractError) as cm:
-            za.check_variant_coupling(s["v_uni_mean"], s["v_uni_mean"], z)
-        self.assertIn("identically zero", str(cm.exception))
+        out = za.check_variant_coupling(s["v_uni_mean"], s["v_uni_mean"], z)
+        self.assertFalse(out["discriminating"])
+        self.assertIn("WITHOUT DISCRIMINATING", out["note"])
+
+    def test_a_correct_input_near_the_cancellation_regime_is_ACCEPTED(self):
+        """Review finding 4's counterexample, verbatim: v_mean=1, ms=1e-5, v_cv=v_mean+ms**2.
+
+        The subtraction-based residual reported 8.3e-8 against a 1e-9 tolerance and rejected this.
+        """
+        v_mean, ms = np.array([1.0]), np.array([1e-5])
+        out = za.check_variant_coupling(v_mean + ms ** 2, v_mean, ms)
+        self.assertLessEqual(out["max_deviation"], out["max_allowance"])
+
+    def test_the_gate_still_catches_a_dropped_shift_where_it_CAN_discriminate(self):
+        out_ok = za.check_variant_coupling(np.array([1.25]), np.array([1.0]), np.array([0.5]))
+        self.assertTrue(out_ok["discriminating"])
+        with self.assertRaises(zc.ZContractError):
+            za.check_variant_coupling(np.array([1.0]), np.array([1.0]), np.array([0.5]))
+
+    def test_it_reports_when_the_shift_is_too_small_to_discriminate(self):
+        """A gate that cannot fail must say so rather than supply false assurance."""
+        v_mean, ms = np.array([1.0]), np.array([1e-9])
+        out = za.check_variant_coupling(v_mean + ms ** 2, v_mean, ms)
+        self.assertFalse(out["discriminating"])
 
     def test_a_perturbed_shift_is_caught(self):
         s = build_scenario()
         bad = s["ms"].copy()
-        bad[0] *= 1.5
+        bad[0] *= 4.0
         with self.assertRaises(zc.ZContractError):
             za.check_variant_coupling(s["v_uni_cv"], s["v_uni_mean"], bad)
 
@@ -213,17 +243,48 @@ class EachGateFiresOnItsOwnDefect(unittest.TestCase):
             za.gate_symmetry_psd(C_bad)
         self.assertIn("psd", str(cm.exception))
 
-    def test_cholesky_and_eigvalsh_agree_on_the_clean_object(self):
-        s = build_scenario()
-        a = za.gate_symmetry_psd(s["C_Z"], method="eigvalsh")
-        b = za.gate_symmetry_psd(s["C_Z"], method="cholesky")
-        self.assertTrue(a["eigenvalues_computed"])
-        self.assertFalse(b["eigenvalues_computed"])
+    def test_a_materially_negative_eigenvalue_at_PHYSICAL_SCALE_is_caught(self):
+        """Review finding 2, verbatim, and the sharpest defect in this module.
 
-    def test_an_unknown_psd_method_is_refused(self):
-        s = build_scenario()
-        with self.assertRaises(zc.ZContractError):
-            za.gate_symmetry_psd(s["C_Z"], method="probably_fine")
+        `max(abs(lam_max), 1.0)` made the tolerance ABSOLUTE. Z's covariances live near 1e-38, so
+        the 1.0 floor swallowed everything: 1e-76 * [[1,2],[2,1]] has eigenvalues -1e-76 and
+        3e-76 -- a third of the spectrum negative -- and it passed. This is the same clamp §3.1a
+        names as "the whole defect" in unified_throw_cov.py:517, rebuilt inside the gate meant to
+        enforce that finding.
+        """
+        C = 1e-76 * np.array([[1.0, 2.0], [2.0, 1.0]])
+        self.assertLess(float(np.linalg.eigvalsh(C)[0]), 0.0)     # the fixture really is bad
+        with self.assertRaises(zc.ZContractError) as cm:
+            za.gate_symmetry_psd(C)
+        self.assertIn("psd", str(cm.exception))
+
+    def test_the_psd_verdict_is_invariant_under_rescaling(self):
+        """The property that makes the tolerance scale-free, tested rather than asserted."""
+        good = build_scenario()["C_Z"]
+        bad = 1e-76 * np.array([[1.0, 2.0], [2.0, 1.0]])
+        for c in (1e-60, 1e-30, 1.0, 1e30):
+            with self.subTest(scale=c):
+                za.gate_symmetry_psd(good * c)                    # still passes
+                with self.assertRaises(zc.ZContractError):
+                    za.gate_symmetry_psd(bad * c)                 # still fails
+
+    def test_a_SINGULAR_psd_matrix_is_accepted_though_cholesky_would_refuse_it(self):
+        """Why Cholesky was removed: it tests positive DEFINITENESS, which is strictly stronger.
+
+        A covariance with a null direction is PSD and perfectly valid, and nothing in §1.3a
+        guarantees the assembled object has full rank. A Cholesky gate would refuse such a build --
+        a guard that fires on a correct run. (This asserts the property of the two METHODS, not a
+        claim about Z's rank, which this lane has not established.)
+        """
+        n = 6
+        rng = np.random.default_rng(1)
+        A = rng.standard_normal((n, n - 1))
+        C = A @ A.T                                   # PSD, rank n-1: exactly one null direction
+        w = np.linalg.eigvalsh(C)
+        self.assertLess(abs(w[0]) / w[-1], 1e-12, "fixture is not actually singular")
+        za.gate_symmetry_psd(C)                       # accepted, correctly
+        with self.assertRaises(np.linalg.LinAlgError):
+            np.linalg.cholesky(C)                     # would have refused it
 
 
 class TheAlgebraRefusesMalformedOperands(unittest.TestCase):

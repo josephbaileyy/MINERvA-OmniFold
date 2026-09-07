@@ -164,42 +164,87 @@ def gate_g_reconstruction(g_recorded, v_uni, v_blk, rtol=IDENTITY_RTOL):
 
 
 def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL):
-    """G3b -- PROPOSED, not inherited. `v_uni^cv - v_uni^mean == ms**2`.
+    """G3b -- PROPOSED, not inherited. The forward identity `v_uni^cv == v_uni^mean + ms**2`.
 
-    Catches the dropped shift of §3.3 condition 4b by an exact identity rather than by hoping the
-    two variants' operands happen to differ. See the module docstring for the derivation.
+    ⚠ REVIEW FINDING 4 REBUILT THIS. Two defects, both of which rejected CORRECT inputs:
+
+      * it raised whenever `ms` was identically zero. A zero shift makes the two variants
+        legitimately equal -- that is arithmetic, not a defect. "Both variants must exist" is a
+        real requirement (§3.3 condition 14) but it is a requirement about the BUILD, and
+        enforcing it from inside an algebraic identity made a valid operand set unusable.
+      * it compared the SUBTRACTION `v_cv - v_mean` against `ms**2`, which cancels. Measured on a
+        correctly constructed input -- `v_mean = 1`, `ms = 1e-5`, `v_cv = v_mean + ms**2` -- the
+        subtraction loses the low bits and the relative residual came out `8.3e-8`, eighty times
+        the tolerance. The check failed on exactly the input it was written to accept.
+
+    The repair is to test the identity FORWARD and to scale the allowance by the OPERANDS rather
+    than by their difference, elementwise.
+
+    ⚠ AND ITS DISCRIMINATING POWER IS REPORTED, because it is limited and silence about that would
+    be worse than the gate's absence. When `ms**2` sinks below the float64 resolution of `v_uni`,
+    the identity cannot distinguish a correct build from a dropped shift -- the signal is beneath
+    the noise. In that regime the gate PASSES and reports `discriminating=False`, so a caller
+    cannot read it as assurance. **G3 -- the independent per-variant `g` reconstruction -- remains
+    the primary gate for the dropped shift, and this one is corroboration.**
     """
     a = np.asarray(v_uni_cv, float)
     b = np.asarray(v_uni_mean, float)
     ms = np.asarray(mean_shift, float)
     require(a.shape == b.shape == ms.shape,
             f"variant coupling: shapes {a.shape}, {b.shape}, {ms.shape} differ")
-    lhs = a - b
-    rhs = ms ** 2
-    scale = max(float(np.max(np.abs(rhs))), float(np.max(np.abs(lhs))))
-    if scale == 0.0:
-        # Both variants identical AND the shift identically zero. Not an arithmetic failure, but a
-        # zero shift means the two variants are the same object, which the two-variant requirement
-        # exists to prevent. Fail closed and say which of the two facts was observed.
-        raise ZContractError(
-            "variant coupling: the recorded mean shift is identically zero, so the cv- and "
-            "mean-centered variants are the same object. §1.6 requires both variants and "
-            "§3.3 condition 14 refuses a single-variant build.")
-    resid = float(np.max(np.abs(lhs - rhs)) / scale)
-    require(resid <= rtol,
-            f"variant coupling: max relative residual {resid:.3e} > {rtol:.0e} -- "
-            f"v_uni^cv - v_uni^mean does not equal ms**2, which is the dropped-shift signature")
-    return {"max_rel_residual": resid, "rtol": rtol,
-            "ms_norm": float(np.linalg.norm(ms))}
+    require(np.all(np.isfinite(a)) and np.all(np.isfinite(b)) and np.all(np.isfinite(ms)),
+            "variant coupling: non-finite operand")
+
+    predicted = b + ms ** 2
+    # Elementwise allowance from the magnitudes actually entering the sum -- not from the
+    # difference, which is what cancelled.
+    allow = rtol * (np.abs(a) + np.abs(b) + ms ** 2)
+    dev = np.abs(a - predicted)
+    worst = int(np.argmax(dev - allow)) if dev.size else 0
+    ok = bool(np.all(dev <= allow))
+    signal, noise = ms ** 2, rtol * (np.abs(a) + np.abs(b))
+    discriminating = bool(np.any(signal > noise))
+    require(ok,
+            f"variant coupling: v_uni^cv != v_uni^mean + ms**2 at bin {worst} "
+            f"(deviation {float(dev[worst]):.6e} > allowance {float(allow[worst]):.6e}) -- "
+            f"the dropped-shift signature")
+    return {"max_deviation": float(dev.max()) if dev.size else 0.0,
+            "max_allowance": float(allow.max()) if allow.size else 0.0,
+            "rtol": rtol, "ms_norm": float(np.linalg.norm(ms)),
+            "discriminating": discriminating,
+            "n_bins_where_signal_exceeds_noise": int(np.sum(signal > noise)),
+            "note": ("PASSED WITHOUT DISCRIMINATING: ms**2 is below the float64 resolution of "
+                     "v_uni everywhere, so a dropped shift would look identical. Rely on G3."
+                     if not discriminating else "discriminating")}
 
 
-def gate_symmetry_psd(C_Z, rtol=IDENTITY_RTOL, method="eigvalsh"):
-    """G4. Symmetry and PSD ON THE INFLATED OBJECT.
+def gate_symmetry_psd(C_Z, rtol=IDENTITY_RTOL):
+    """G4. Symmetry and PSD ON THE INFLATED OBJECT, scaled by the object and nothing else.
 
-    `method="eigvalsh"` returns the full spectrum's extremes, which is what §5.2 assumes and what
-    would make §3.7d's `s_eig` a byproduct rather than a new cost. `method="cholesky"` is cheaper
-    and returns no spectrum; the caller chooses, and the receipt records which ran, because "PSD
-    passed" means different things about what else is now known.
+    ⚠ REVIEW FINDING 2, AND IT IS THE MOST EMBARRASSING ONE IN THIS MODULE. The first version
+    tested `lam_min >= -rtol * max(abs(lam_max), 1.0)`. That `max(..., 1.0)` is an ABSOLUTE FLOOR,
+    and Z's covariances live at `~1e-38`, so the floor dominated every real comparison and the gate
+    admitted any negative eigenvalue smaller than `1e-9`. Measured: `1e-76 * [[1,2],[2,1]]` has
+    eigenvalues `-1e-76` and `3e-76` -- materially negative, a third of the spectrum -- and it
+    passed.
+
+    **This is the same defect, character for character, that §3.1a of the specification identifies
+    as "the whole defect" in `unified_throw_cov.py:517`'s `1e-12 * max(||base||, 1.0)`.** The gate
+    written to enforce that finding reproduced it. An absolute floor inside a relative test is this
+    campaign's signature bug and it survived because the fixture was `O(1)`.
+
+    The repair is the one §3.1a prescribes: delete the clamp. `lam_min >= -rtol * lam_max` is
+    scale-free -- multiply `C` by any `c > 0` and both sides scale together -- so the test is
+    invariant under rescaling, which is the property the fixtures now assert directly.
+
+    CHOLESKY IS GONE, and not because it is slow. It tests POSITIVE DEFINITENESS, which is
+    strictly stronger than PSD: it refuses any matrix with a null direction. A covariance may
+    legitimately have one, and nothing in §1.3a guarantees the assembled object has full rank, so a
+    Cholesky gate could refuse a correct Z -- a guard that fires on a correct run. Offering it as
+    an equivalent PSD method was wrong. (An earlier draft of this note claimed the object IS
+    singular by construction because the zero-denominator bins zero a row of the vertical block
+    sum. That is not right either: the residual, lateral, stat and ML terms are added on top and
+    generally restore rank. The rank of Z is not established here and no gate depends on it.)
     """
     C = np.asarray(C_Z, float)
     require(C.ndim == 2 and C.shape[0] == C.shape[1], f"psd: not square, shape {C.shape}")
@@ -209,40 +254,33 @@ def gate_symmetry_psd(C_Z, rtol=IDENTITY_RTOL, method="eigvalsh"):
     asym = float(np.max(np.abs(C - C.T)) / scale)
     require(asym <= rtol, f"symmetry: relative asymmetry {asym:.3e} > {rtol:.0e}")
 
-    Csym = 0.5 * (C + C.T)
-    out = {"rel_asymmetry": asym, "rtol": rtol, "psd_method": method}
-    if method == "cholesky":
-        try:
-            np.linalg.cholesky(Csym)
-        except np.linalg.LinAlgError as exc:
-            raise ZContractError(f"psd: Cholesky failed on the inflated object: {exc}") from exc
-        out["eigenvalues_computed"] = False
-        return out
-    if method != "eigvalsh":
-        raise ZContractError(f"psd: unknown method {method!r}; use 'eigvalsh' or 'cholesky'")
-    w = np.linalg.eigvalsh(Csym)
+    w = np.linalg.eigvalsh(0.5 * (C + C.T))
     lam_min, lam_max = float(w[0]), float(w[-1])
-    require(lam_min >= -rtol * max(abs(lam_max), 1.0),
-            f"psd: minimum eigenvalue {lam_min:.6e} is negative beyond tolerance "
-            f"(max {lam_max:.6e})")
-    out.update({"eigenvalues_computed": True, "lambda_min": lam_min, "lambda_max": lam_max})
-    return out
+    require(lam_max > 0, f"psd: no positive eigenvalue (max {lam_max:.6e})")
+    # Scale-free. No absolute floor, deliberately -- see the docstring.
+    require(lam_min >= -rtol * lam_max,
+            f"psd: minimum eigenvalue {lam_min:.6e} is negative beyond tolerance, "
+            f"{abs(lam_min) / lam_max:.3e} of the maximum {lam_max:.6e} > {rtol:.0e}")
+    return {"rel_asymmetry": asym, "rtol": rtol, "psd_method": "eigvalsh",
+            "eigenvalues_computed": True, "lambda_min": lam_min, "lambda_max": lam_max,
+            "neg_fraction_of_max": abs(min(lam_min, 0.0)) / lam_max}
 
 
 # --------------------------------------------------------------------------- the gate suite ----
 def run_inflation_gates(*, C_Z, g, pinned_mask, v_uni, v_blk, cov_vert_sum, cov_residual_sum,
                         cov_lateral_sum, cov_stat, cov_ml, bands_vert, bands_residual,
-                        bands_lateral, psd_method="eigvalsh", rtol=IDENTITY_RTOL):
+                        bands_lateral, band_inventory, rtol=IDENTITY_RTOL):
     """Run G1-G5 for ONE centering variant and return every measured operand.
 
     Raises `ZContractError` on the first failure -- fail closed, and never a boolean, because a
-    boolean loses which gate spoke.
+    boolean loses which gate spoke. `band_inventory` is required: see `check_band_partition`.
     """
     results = {}
-    results["G5_band_partition"] = check_band_partition(bands_vert, bands_residual, bands_lateral)
+    results["G5_band_partition"] = check_band_partition(bands_vert, bands_residual, bands_lateral,
+                                                        band_inventory)
     results["G2_g_domain"] = gate_g_domain(g, pinned_mask, v_blk)
     results["G3_g_reconstruction"] = gate_g_reconstruction(g, v_uni, v_blk, rtol=rtol)
     results["G1_closure_identity"] = gate_closure_identity(
         C_Z, g, cov_vert_sum, cov_residual_sum, cov_lateral_sum, cov_stat, cov_ml, rtol=rtol)
-    results["G4_symmetry_psd"] = gate_symmetry_psd(C_Z, rtol=rtol, method=psd_method)
+    results["G4_symmetry_psd"] = gate_symmetry_psd(C_Z, rtol=rtol)
     return results

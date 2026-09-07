@@ -31,7 +31,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from z_contract import require
+from z_contract import ZContractError, require
 
 # --------------------------------------------------------------------- the null ratio (§3.7a) --
 
@@ -80,17 +80,37 @@ def null_ratio(x_cv, x_cv2, mask=None):
 
 
 def reconstruct_null_ratio(x_cv, x_cv2, mask):
-    """§3.3 condition 11b: rebuild the ratio from the PERSISTED operands.
+    """§3.3 condition 11b: rebuild the ratio from the PERSISTED operands, predicate included.
 
     The point is what it does NOT read: the producer's recorded `fixed_seed_null_norm`. Reading
     that back and comparing it with itself is not a check, which is the shape §1.3b rejected for
     `g`. Rev. 17 also corrected the operand -- the numerator compares two INTERNALLY re-unfolded
     CVs, so the denominator must come from the same run's persisted `x_cv`, not from a separately
     produced ROOT, which would presume the determinism the null is testing.
+
+    ⚠ REVIEW FINDING 3. The first version APPLIED the persisted mask instead of CHECKING it, so a
+    producer that shipped a wrong predicate got a wrong ratio back with no complaint. Measured:
+    `x_cv = [1, 1]`, `x_cv2 = [1, 2]`, persisted mask `[True, False]` reported `r_null = 0.0`
+    where the reported support is both bins and the true ratio is `0.7071`. A reconstruction that
+    inherits the producer's predicate is not independent of the producer -- which is the whole
+    property `11b` exists to establish. The predicate is now RECOMPUTED and the persisted one must
+    agree with it exactly.
     """
-    m = np.asarray(mask, bool)
-    require(m.sum() > 0, "null reconstruction: persisted support predicate selects no bins")
-    return null_ratio(x_cv, x_cv2, mask=m)
+    m_persisted = np.asarray(mask, bool)
+    m_recomputed = support_mask(x_cv)
+    require(m_persisted.shape == m_recomputed.shape,
+            f"null reconstruction: persisted mask shape {m_persisted.shape} != CV shape "
+            f"{m_recomputed.shape}")
+    if not np.array_equal(m_persisted, m_recomputed):
+        n_bad = int(np.sum(m_persisted != m_recomputed))
+        raise ZContractError(
+            f"null reconstruction: the persisted support predicate disagrees with `x_cv > 0` "
+            f"recomputed from the persisted CV in {n_bad} bin(s) "
+            f"(persisted selects {int(m_persisted.sum())}, recomputed {int(m_recomputed.sum())}). "
+            f"§3.3 condition 11b requires an INDEPENDENT reconstruction; applying the producer's "
+            f"predicate would inherit exactly what the condition exists to check.")
+    require(m_recomputed.sum() > 0, "null reconstruction: the reported support is empty")
+    return null_ratio(x_cv, x_cv2, mask=m_recomputed)
 
 
 # ---------------------------------------------------------------- cause 3 statistics (§3.7b) ---

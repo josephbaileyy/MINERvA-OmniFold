@@ -277,7 +277,7 @@ class ADeclaredThirdLegBindsWithoutEditingTheBranches(unittest.TestCase):
     """The rev.-16 fix: rev. 7-15 hardcoded the pair, so a third leg would have been ignored."""
 
     def setUp(self):
-        self.corr = zv.Leg("corr", "aggregate", "cause3_corr", "s_corr")
+        self.corr = zv.Leg("corr", "aggregate", "cause3_corr", "s_corr", sees_correlations=True)
         self.L3 = zv.LegSet([AGG, MED, self.corr], predeclared_at="TEST")
         self.declared = {
             "cause3_agg": zc.Boundary.declared("cause3_agg", 0.01, "T"),
@@ -288,14 +288,14 @@ class ADeclaredThirdLegBindsWithoutEditingTheBranches(unittest.TestCase):
     def test_a_third_leg_failing_prevents_MET(self):
         with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
             out = zv.assess(self.L3, {"s_agg": 0.001, "s_med": 0.001, "s_corr": 0.9},
-                            all_valid(), correlation_leg_present=True)
+                            all_valid())
         self.assertFalse(out.is_met)
         self.assertEqual(out.failing_legs, ("corr",))
 
     def test_all_three_within_limits_is_MET(self):
         with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
             out = zv.assess(self.L3, {"s_agg": 0.001, "s_med": 0.001, "s_corr": 0.001},
-                            all_valid(), correlation_leg_present=True)
+                            all_valid())
         self.assertTrue(out.is_met)
 
     def test_a_leg_must_declare_one_of_the_two_R4_classes(self):
@@ -347,11 +347,102 @@ class ValidityDominatesEveryNumericalBranch(unittest.TestCase):
         self.assertIn("does NOT license", out.scope_statement)
         self.assertIn("marginalization", out.scope_statement)
 
-    def test_the_scope_statement_is_dropped_once_a_correlation_leg_is_present(self):
-        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
-            out = zv.assess(self.L, {"s_agg": 0.0, "s_med": 0.0}, all_valid(),
-                            correlation_leg_present=True)
+    def test_a_caller_can_no_longer_suppress_the_scope_statement(self):
+        """Review finding 8: it used to be a keyword argument, so a caller could simply assert it.
+
+        The declared leg set is the only thing that decides it now, and `assess` takes no such
+        argument at all -- a signature that cannot be lied to beats one that is merely documented.
+        """
+        with self.assertRaises(TypeError):
+            zv.assess(self.L, {"s_agg": 0.0, "s_med": 0.0}, all_valid(),
+                      correlation_leg_present=True)
+
+    def test_the_scope_statement_is_dropped_only_when_a_leg_actually_sees_correlations(self):
+        corr = zv.Leg("corr", "aggregate", "cause3_corr", "s_corr", sees_correlations=True)
+        L3 = zv.LegSet([AGG, MED, corr], predeclared_at="TEST")
+        declared = dict(self.declared)
+        declared["cause3_corr"] = zc.Boundary.declared("cause3_corr", 0.03, "T")
+        with mock.patch.dict(zc.Z_BOUNDARIES, declared):
+            out = zv.assess(L3, {"s_agg": 0.0, "s_med": 0.0, "s_corr": 0.0}, all_valid())
         self.assertIsNone(out.scope_statement)
+        self.assertTrue(L3.sees_correlations)
+
+    def test_a_leg_set_of_diagonal_only_legs_reports_that_it_sees_no_correlations(self):
+        self.assertFalse(self.L.sees_correlations)
+
+
+class TheStatisticDomainIsValidatedBeforeAnyComparison(unittest.TestCase):
+    """Review finding 7. Every statistic here is |a-b|/b with b>0: finite and non-negative."""
+
+    def setUp(self):
+        self.L = zv.LegSet([AGG, MED], predeclared_at="TEST")
+        self.declared = {"cause3_agg": zc.Boundary.declared("cause3_agg", 0.01, "T"),
+                         "cause3_med": zc.Boundary.declared("cause3_med", 0.02, "T")}
+
+    def test_negative_infinity_no_longer_returns_MET(self):
+        """Measured before the fix: -inf <= delta is True, so this graded as a PASS."""
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": float("-inf"), "s_med": 0.0}, all_valid())
+        self.assertFalse(out.is_met)
+        self.assertEqual(out.branch, 1)
+        self.assertIn("agg", out.validity["invalid_statistics"])
+
+    def test_NaN_is_inconclusive_rather_than_an_unfavourable_measurement(self):
+        """NaN <= delta is False, which used to read as a measured excess. It is not one."""
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": float("nan"), "s_med": 0.0}, all_valid())
+        self.assertEqual(out.branch, 1)
+        self.assertNotEqual(out.branch, 4)
+
+    def test_positive_infinity_is_inconclusive(self):
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": float("inf"), "s_med": 0.0}, all_valid())
+        self.assertEqual(out.branch, 1)
+
+    def test_a_negative_relative_change_is_out_of_domain(self):
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": -0.001, "s_med": 0.0}, all_valid())
+        self.assertEqual(out.branch, 1)
+        self.assertIn("negative", out.validity["invalid_statistics"]["agg"])
+
+    def test_a_non_numeric_statistic_is_out_of_domain(self):
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": "small", "s_med": 0.0}, all_valid())
+        self.assertEqual(out.branch, 1)
+
+    def test_valid_statistics_still_grade_normally(self):
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": 0.0, "s_med": 0.0}, all_valid())
+        self.assertTrue(out.is_met)
+        self.assertEqual(out.validity["invalid_statistics"], {})
+
+
+class TheNullAbortsRatherThanScoringBadly(unittest.TestCase):
+    def test_an_exceeded_bound_carries_its_reject_condition(self):
+        """Review finding 7: it used to return an EMPTY reject list, reading as a clean run."""
+        with mock.patch.dict(zc.Z_BOUNDARIES,
+                             {"null_epsilon": zc.Boundary.declared("null_epsilon", 1e-11, "T")}):
+            out = zv.assess_null(1.0)
+        self.assertEqual(out["verdict"], "exceeds bound")
+        self.assertIn("11", out["reject_conditions"])
+        self.assertTrue(out["aborts"])
+
+    def test_a_satisfied_bound_does_not_abort(self):
+        with mock.patch.dict(zc.Z_BOUNDARIES,
+                             {"null_epsilon": zc.Boundary.declared("null_epsilon", 1e-11, "T")}):
+            out = zv.assess_null(1e-13)
+        self.assertEqual(out["verdict"], "within bound")
+        self.assertEqual(out["reject_conditions"], [])
+        self.assertFalse(out["aborts"])
+
+    def test_a_non_finite_ratio_is_refused_before_the_bound_is_consulted(self):
+        with mock.patch.dict(zc.Z_BOUNDARIES,
+                             {"null_epsilon": zc.Boundary.declared("null_epsilon", 1e-11, "T")}):
+            for bad in (float("nan"), float("inf"), -1.0):
+                with self.subTest(r_null=bad):
+                    out = zv.assess_null(bad)
+                    self.assertFalse(out["assessable"])
+                    self.assertTrue(out["aborts"])
 
 
 # ------------------------------------------------------------------------------------ receipt --
@@ -430,6 +521,55 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
         with self.assertRaises(zc.ZContractError) as cm:
             zrec.build_receipt(**blocks)
         self.assertIn("withheld boundary cannot produce a passing grade", str(cm.exception))
+
+    def test_a_MET_outcome_whose_legs_rest_on_WITHHELD_boundaries_is_refused(self):
+        """Review finding 1, second half.
+
+        assessable=True with branch=3 used to be written happily while the receipt's own
+        withheld_boundaries block recorded all four as withheld. The receipt carried its own
+        refutation and never looked at it.
+        """
+        blocks = self._blocks()
+        blocks["outcome"] = {
+            "assessable": True, "branch": 3, "branch_label": "MET",
+            "leg_results": {"agg": {"class": "aggregate", "statistic": 0.0,
+                                    "boundary": {"name": "cause3_agg", "status": "WITHHELD",
+                                                 "value": None}}}}
+        with self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("not backed by a declared boundary", str(cm.exception))
+
+    def test_a_MET_outcome_with_no_legs_at_all_is_refused(self):
+        blocks = self._blocks()
+        blocks["outcome"] = {"assessable": True, "branch": 3, "leg_results": {}}
+        with self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("records no leg results", str(cm.exception))
+
+    def test_a_MET_outcome_whose_boundary_was_withdrawn_since_is_refused(self):
+        """The stale-outcome case: the dict says DECLARED, the live registry disagrees."""
+        blocks = self._blocks()
+        blocks["outcome"] = {
+            "assessable": True, "branch": 3,
+            "leg_results": {"agg": {"limit": 0.01,
+                                    "boundary": {"name": "cause3_agg", "status": "DECLARED",
+                                                 "value": 0.01, "provenance": "stale"}}}}
+        with self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("withheld in the registry now", str(cm.exception))
+
+    def test_a_genuinely_backed_MET_outcome_is_accepted(self):
+        """The positive direction, so the refusals above are not passing for the wrong reason."""
+        blocks = self._blocks()
+        blocks["outcome"] = {
+            "assessable": True, "branch": 3,
+            "leg_results": {"agg": {"limit": 0.01,
+                                    "boundary": {"name": "cause3_agg", "status": "DECLARED",
+                                                 "value": 0.01, "provenance": "TEST-RECORD"}}}}
+        with mock.patch.dict(zc.Z_BOUNDARIES,
+                             {"cause3_agg": zc.Boundary.declared("cause3_agg", 0.01, "TEST")}):
+            r = zrec.build_receipt(**blocks)
+        self.assertEqual(r["outcome"]["branch"], 3)
 
     def test_the_real_unassessable_outcome_records_cleanly(self):
         L = zv.LegSet([AGG, MED], predeclared_at="TEST")

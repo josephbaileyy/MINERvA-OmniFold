@@ -14,6 +14,7 @@ clean case. A one-directional check waves the other through, which this reposito
 import os
 import sys
 import unittest
+from unittest import mock
 
 import numpy as np
 
@@ -95,6 +96,36 @@ class DeclaringABoundaryRequiresItsApproval(unittest.TestCase):
             zc.Boundary.withheld("t", "")
 
 
+class TheInvariantHoldsOnEveryConstructionPath(unittest.TestCase):
+    """Review finding 1. The classmethods were the polite path; the dataclass ctor was the door."""
+
+    def test_the_raw_constructor_cannot_mint_a_value_without_provenance(self):
+        with self.assertRaises(zc.ZContractError):
+            zc.Boundary("null_epsilon", 1.0, None, None)
+
+    def test_the_raw_constructor_cannot_mint_a_withheld_boundary_without_a_reason(self):
+        with self.assertRaises(zc.ZContractError):
+            zc.Boundary("null_epsilon", None, None, None)
+
+    def test_a_boundary_cannot_be_both_declared_and_withheld(self):
+        with self.assertRaises(zc.ZContractError):
+            zc.Boundary("t", 1.0, "REC", "and also withheld")
+
+    def test_a_withheld_boundary_cannot_carry_provenance(self):
+        with self.assertRaises(zc.ZContractError):
+            zc.Boundary("t", None, "REC", "reason")
+
+    def test_dataclasses_replace_also_goes_through_the_invariant(self):
+        import dataclasses
+        good = zc.Boundary.declared("t", 0.5, "REC")
+        with self.assertRaises(zc.ZContractError):
+            dataclasses.replace(good, provenance=None)
+
+    def test_declared_with_no_value_is_refused_clearly(self):
+        with self.assertRaises(zc.ZContractError):
+            zc.Boundary.declared("t", None, "REC")
+
+
 class ConstantsAreImportedNotRetyped(unittest.TestCase):
     """§1.2. A retyped band list is a second implementation of a predicate."""
 
@@ -122,9 +153,10 @@ class TheBandPartitionGateFiresInBothDirections(unittest.TestCase):
         self.V = list(zc.VERT_BANDS)
         self.A = list(zc.LATERAL_BANDS)
         self.R = [f"residual_{i}" for i in range(zc.N_RESIDUAL)]
+        self.INV = self.V + self.R + self.A
 
     def test_the_real_partition_passes(self):
-        out = zc.check_band_partition(self.V, self.R, self.A)
+        out = zc.check_band_partition(self.V, self.R, self.A, self.INV)
         self.assertEqual(out["n_total"], 45)
         self.assertEqual(out["n_vert"], 13)
         self.assertEqual(out["n_residual"], 27)
@@ -133,22 +165,41 @@ class TheBandPartitionGateFiresInBothDirections(unittest.TestCase):
     def test_an_overlap_between_V_and_R_is_caught(self):
         R = list(self.R[:-1]) + [self.V[0]]
         with self.assertRaises(zc.ZContractError) as cm:
-            zc.check_band_partition(self.V, R, self.A)
+            zc.check_band_partition(self.V, R, self.A, self.INV)
         self.assertIn("overlap", str(cm.exception))
 
     def test_a_missing_vertical_band_is_caught(self):
         with self.assertRaises(zc.ZContractError):
-            zc.check_band_partition(self.V[:-1], self.R + ["extra"], self.A)
+            zc.check_band_partition(self.V[:-1], self.R + ["extra"], self.A, self.INV)
 
     def test_a_short_residual_set_is_caught_even_with_V_and_A_correct(self):
-        # The count leg has to bite on its own: V and A are exactly right here.
-        with self.assertRaises(zc.ZContractError) as cm:
-            zc.check_band_partition(self.V, self.R[:-1], self.A)
-        self.assertIn("45", str(cm.exception))
+        with self.assertRaises(zc.ZContractError):
+            zc.check_band_partition(self.V, self.R[:-1], self.A, self.INV)
 
     def test_a_duplicate_inside_one_set_is_caught(self):
         with self.assertRaises(zc.ZContractError):
-            zc.check_band_partition(self.V, self.R[:-1] + [self.R[0]], self.A)
+            zc.check_band_partition(self.V, self.R[:-1] + [self.R[0]], self.A, self.INV)
+
+    def test_INVENTED_residual_names_no_longer_pass(self):
+        """Review finding 6, verbatim: correct V and A plus 27 invented names used to pass."""
+        invented = [f"invented_{i}" for i in range(zc.N_RESIDUAL)]
+        with self.assertRaises(zc.ZContractError) as cm:
+            zc.check_band_partition(self.V, invented, self.A, self.INV)
+        self.assertIn("exhaustive", str(cm.exception))
+
+    def test_a_band_in_the_partition_but_absent_from_the_inventory_is_caught(self):
+        inv = self.V + self.R[:-1] + self.A          # inventory is missing one residual band
+        with self.assertRaises(zc.ZContractError) as cm:
+            zc.check_band_partition(self.V, self.R, self.A, inv)
+        self.assertIn("absent from the support-family", str(cm.exception))
+
+    def test_an_empty_inventory_is_refused_rather_than_vacuously_satisfied(self):
+        with self.assertRaises(zc.ZContractError):
+            zc.check_band_partition(self.V, self.R, self.A, [])
+
+    def test_the_inventory_is_a_required_argument(self):
+        with self.assertRaises(TypeError):
+            zc.check_band_partition(self.V, self.R, self.A)
 
 
 class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
@@ -172,6 +223,74 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
         with self.assertRaises(zc.ZContractError) as cm:
             zr.z_lgbm_overlay(absent)
         self.assertIn("REFUSED", str(cm.exception))
+
+    def test_an_EMPTY_recognition_map_refuses(self):
+        """Review finding 5: iterating the probe's own dict meant an empty one had no dissent."""
+        empty = zr.BackendProbe(available=True, version="4.5.0", recognised_knobs={})
+        with self.assertRaises(zc.ZContractError) as cm:
+            zr.z_lgbm_overlay(empty)
+        for knob in zr.Z_REPRO_KNOBS:
+            self.assertIn(knob, str(cm.exception))
+
+    def test_a_backend_reporting_no_version_refuses(self):
+        anon = zr.BackendProbe(available=True, version=None,
+                               recognised_knobs={k: True for k in zr.Z_REPRO_KNOBS})
+        with self.assertRaises(zc.ZContractError) as cm:
+            zr.z_lgbm_overlay(anon)
+        self.assertIn("version", str(cm.exception))
+
+    def test_an_echoing_alias_table_is_treated_as_non_discriminating(self):
+        """Review finding 5: LightGBM 4.5.0 echoes an unknown name back, so bool() certifies all.
+
+        A fake table that echoes everything must recognise nothing, or the probe is a rubber stamp.
+        """
+        class Echo:
+            @staticmethod
+            def get(name):
+                return {name}
+        self.assertFalse(zr._alias_membership(Echo, "anything_at_all"))
+
+    def test_a_real_alias_set_is_recognised(self):
+        class Real:
+            @staticmethod
+            def get(name):
+                return {name, "an_alias_of_it"}
+        self.assertTrue(zr._alias_membership(Real, "num_threads"))
+
+    def test_the_probe_reports_unverified_when_its_controls_misbehave(self):
+        """The negative control is the point: if a bogus name passes, no answer is worth having."""
+        import types
+        fake_basic = types.SimpleNamespace(_ConfigAliases=type("E", (), {
+            "get": staticmethod(lambda name: {name, "x"})}))     # recognises EVERYTHING
+        fake_lgbm = types.ModuleType("lightgbm")
+        fake_lgbm.__version__ = "4.5.0"
+        fake_lgbm.basic = fake_basic
+        with mock.patch.dict(sys.modules, {"lightgbm": fake_lgbm}):
+            p = zr.probe_backend()
+        self.assertTrue(p.available)
+        self.assertIn("not discriminating", p.error or "")
+        self.assertTrue(all(v is None for v in p.recognised_knobs.values()))
+        with self.assertRaises(zc.ZContractError):
+            zr.z_lgbm_overlay(p)
+
+    def test_a_discriminating_backend_is_accepted(self):
+        """The positive direction, so the refusals above are not passing for the wrong reason."""
+        import types
+        real = set(zr.Z_REPRO_KNOBS) | {zr._POSITIVE_CONTROL}
+
+        class Table:
+            @staticmethod
+            def get(name):
+                return {name, f"{name}_alias"} if name in real else {name}
+
+        fake_lgbm = types.ModuleType("lightgbm")
+        fake_lgbm.__version__ = "4.5.0"
+        fake_lgbm.basic = types.SimpleNamespace(_ConfigAliases=Table)
+        with mock.patch.dict(sys.modules, {"lightgbm": fake_lgbm}):
+            p = zr.probe_backend()
+        self.assertIsNone(p.error)
+        self.assertTrue(all(v is True for v in p.recognised_knobs.values()))
+        self.assertEqual(zr.z_lgbm_overlay(p)["backend"]["version"], "4.5.0")
 
     def test_an_unverified_knob_refuses_even_when_the_backend_imports(self):
         # The dangerous middle case: LightGBM is there, but we cannot confirm a parameter name.
