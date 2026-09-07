@@ -25,6 +25,7 @@ EXIT CODES, which select the contract's terminal branch:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -61,7 +62,8 @@ def refuse_output_inside_a_checkout(out_dir: Path) -> None:
                 )
 
 
-def classify(report: dict, bindings: dict, attempt_id: str) -> tuple[int, dict]:
+def classify(report: dict, bindings: dict, attempt_id: str,
+             bindings_sha256: str | None = None) -> tuple[int, dict]:
     """Return (exit_code, findings). Pure, so tests can drive every branch directly."""
     findings: dict[str, object] = {}
 
@@ -72,12 +74,23 @@ def classify(report: dict, bindings: dict, attempt_id: str) -> tuple[int, dict]:
             "report_attempt_id": report.get("attempt_id"),
         }
 
+    if bindings_sha256 is not None:
+        claimed = report.get("bindings_sha256")
+        if claimed != bindings_sha256:
+            return EXIT_ERROR, {
+                "reason": "report was produced against different bindings bytes",
+                "expected_bindings_sha256": bindings_sha256,
+                "report_bindings_sha256": claimed,
+            }
+
     reads = report.get("reads")
     if not isinstance(reads, list):
         return EXIT_ERROR, {"reason": "report has no reads array"}
 
-    # The obligations come from the committed bindings, NEVER from the report.
-    obligations = producer_module.declared_read_ids(bindings)
+    # The obligations AND their kinds come from the committed bindings, NEVER from the
+    # report. A record's self-declared `kind` is descriptive, never authoritative.
+    kinds = producer_module.obligation_kinds(bindings)
+    obligations = list(kinds)
     findings["obligation_count"] = len(obligations)
     if not obligations:
         return EXIT_ERROR, {"reason": "bindings declare no reads; nothing to validate"}
@@ -102,24 +115,37 @@ def classify(report: dict, bindings: dict, attempt_id: str) -> tuple[int, dict]:
         str(entry.get("read_id", "<unnamed>")) for entry in reads
         if entry.get("kind") not in {REQUIRED, OPTIONAL}
     )
+    # A record that claims a different kind than the bindings give its id is a fault in
+    # itself: it is the producer trying to reclassify its own obligation.
+    kind_disagreements = sorted(
+        str(entry.get("read_id"))
+        for entry in reads
+        if entry.get("read_id") in kinds
+        and entry.get("kind") in {REQUIRED, OPTIONAL}
+        and entry.get("kind") != kinds[entry["read_id"]]
+    )
+    findings["records_whose_kind_contradicts_bindings"] = kind_disagreements
     findings["records_with_unknown_status"] = bad_status
     findings["records_with_unknown_kind"] = bad_kind
 
     # A required read that did not happen, OR an optional key that was listed and then
     # could not be read. The second is not the declared absence: we did not learn whether
     # it is there, which is a different thing from learning that it is not.
+    def bound_kind(entry):
+        return kinds.get(entry.get("read_id"))
+
     required_failures = sorted(
         str(entry.get("read_id", "<unnamed>")) for entry in reads
-        if entry.get("kind") == REQUIRED and entry.get("status") in {"absent",
-                                                                     "unreadable"}
+        if bound_kind(entry) == REQUIRED
+        and entry.get("status") in {"absent", "unreadable"}
     )
     unreadable_optional = sorted(
         str(entry.get("read_id", "<unnamed>")) for entry in reads
-        if entry.get("kind") == OPTIONAL and entry.get("status") == "unreadable"
+        if bound_kind(entry) == OPTIONAL and entry.get("status") == "unreadable"
     )
     optional_absences = sorted(
         str(entry.get("read_id", "<unnamed>")) for entry in reads
-        if entry.get("kind") == OPTIONAL and entry.get("status") == "absent"
+        if bound_kind(entry) == OPTIONAL and entry.get("status") == "absent"
     )
     findings["required_read_failures"] = required_failures
     findings["unreadable_optional_objects"] = unreadable_optional
@@ -130,8 +156,8 @@ def classify(report: dict, bindings: dict, attempt_id: str) -> tuple[int, dict]:
     missing = sorted(set(obligations) - seen)
     findings["missing_read_records"] = missing
 
-    faults = (bad_status or bad_kind or required_failures or unreadable_optional
-              or report.get("traceback") or report.get("fatal"))
+    faults = (bad_status or bad_kind or kind_disagreements or required_failures
+              or unreadable_optional or report.get("traceback") or report.get("fatal"))
     if faults:
         return EXIT_ERROR, findings
     if missing:
@@ -158,7 +184,9 @@ def main(argv: list[str] | None = None) -> int:
                    "reason": f"cannot read report or bindings: {error}"}
         exit_code = EXIT_ERROR
     else:
-        exit_code, findings = classify(report, bindings, args.attempt_id)
+        measured = hashlib.sha256(args.bindings.read_bytes()).hexdigest()
+        exit_code, findings = classify(report, bindings, args.attempt_id,
+                                       bindings_sha256=measured)
         verdict = {
             "terminal_branch": {EXIT_COMPLETE: "COMPLETE",
                                 EXIT_INCOMPLETE: "INCOMPLETE"}.get(exit_code, "ERROR"),

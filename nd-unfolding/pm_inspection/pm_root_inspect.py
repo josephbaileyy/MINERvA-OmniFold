@@ -273,10 +273,17 @@ def read_G(ROOT, path: Path, optional_names: list[str], reads: list) -> dict:
 
         if "hInflation_g" in present:
             hist = handle.Get("hInflation_g")
-            nbins = int(hist.GetNbinsX()) if hist else None
-            out["hInflation_g_nbins"] = nbins
-            record(reads, "G:hInflation_g_nbins", "read", REQUIRED_ABSENCE_IS_A_FAILURE,
-                   nbins=nbins)
+            # A listed key whose object will not load is a FAULT. Emitting
+            # `status=read, nbins=None` reported a measurement that never happened.
+            if not hist or not hasattr(hist, "GetNbinsX"):
+                record(reads, "G:hInflation_g_nbins", "unreadable",
+                       REQUIRED_ABSENCE_IS_A_FAILURE,
+                       detail="hInflation_g is listed but did not load as a histogram")
+            else:
+                nbins = int(hist.GetNbinsX())
+                out["hInflation_g_nbins"] = nbins
+                record(reads, "G:hInflation_g_nbins", "read",
+                       REQUIRED_ABSENCE_IS_A_FAILURE, nbins=nbins)
         else:
             record(reads, "G:hInflation_g_nbins", "absent",
                    REQUIRED_ABSENCE_IS_A_FAILURE,
@@ -506,28 +513,44 @@ def read_endpoint(ROOT, path: Path, label: str, nbins: int, optional_names: list
         handle.Close()
 
 
-def declared_read_ids(bindings: dict) -> list[str]:
-    """Every read this producer is required to emit a record for, computed from bindings.
+def obligation_kinds(bindings: dict) -> dict[str, str]:
+    """Map every obligation to the kind the BINDINGS give it, not the kind a record claims.
 
-    The validator compares the report against this same list, so a read that is silently
-    skipped is INCOMPLETE rather than invisible.
+    An earlier revision let each record carry its own ``kind``, so relabelling
+    ``input:G`` as ``expected-optional`` and marking it ``absent`` produced ``COMPLETE``:
+    the producer could downgrade its own obligations. The authority for whether an absence
+    is an answer or a fault is the committed bindings, and only these ids are optional:
+    the conditional reads the predeclaration writes as "only if the listing shows it" and
+    "when present".
     """
-    ids = [f"input:{entry['id']}" for entry in bindings["inputs"]]
-    ids += ["G:key_listing", "G:combined_source", "G:centering_convention",
-            "G:sqrt_tr_old", "G:sqrt_tr_new", "G:hInflation_g_nbins",
-            "G:read_onlyness"]
-    ids += [f"G:{name}" for name in bindings["optional_objects"]["G"]]
-    ids += ["CS:key_listing", "CV_central:key_listing", "CV_central:hXSecND_flat"]
+    kinds: dict[str, str] = {}
+    for entry in bindings["inputs"]:
+        kinds[f"input:{entry['id']}"] = REQUIRED_ABSENCE_IS_A_FAILURE
+    for read_id in ("G:key_listing", "G:combined_source", "G:centering_convention",
+                    "G:sqrt_tr_old", "G:sqrt_tr_new", "G:hInflation_g_nbins",
+                    "G:read_onlyness", "CS:key_listing", "CV_central:key_listing",
+                    "CV_central:hXSecND_flat"):
+        kinds[read_id] = REQUIRED_ABSENCE_IS_A_FAILURE
+    for name in bindings["optional_objects"]["G"]:
+        kinds[f"G:{name}"] = OPTIONAL_ABSENCE_IS_AN_ANSWER
     for band in bindings["bands"]:
         for endpoint in (0, 1):
             label = f"EP_{band}_{endpoint}"
-            ids += [f"{label}:key_listing", f"{label}:hXSecND_flat"]
-            ids += [f"{label}:hXSec_{axis}" for axis in ("pt", "pz", "eavail", "q3", "W")]
-            ids += [f"{label}:{scalar}" for scalar in ("ndim", "dataPOT",
-                                                       "globalCompleteness")]
-            ids += [f"{label}:{name}"
-                    for name in bindings["optional_objects"]["endpoint"]]
-    return ids
+            required = [f"{label}:key_listing", f"{label}:hXSecND_flat"]
+            required += [f"{label}:hXSec_{axis}"
+                         for axis in ("pt", "pz", "eavail", "q3", "W")]
+            required += [f"{label}:{scalar}"
+                         for scalar in ("ndim", "dataPOT", "globalCompleteness")]
+            for read_id in required:
+                kinds[read_id] = REQUIRED_ABSENCE_IS_A_FAILURE
+            for name in bindings["optional_objects"]["endpoint"]:
+                kinds[f"{label}:{name}"] = OPTIONAL_ABSENCE_IS_AN_ANSWER
+    return kinds
+
+
+def declared_read_ids(bindings: dict) -> list[str]:
+    """Every read this producer must emit a record for, in a stable order."""
+    return list(obligation_kinds(bindings).keys())
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -543,6 +566,16 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = args.out
     refuse_output_inside_a_checkout(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # The contract carries a FIXED attempt id, so a second run into the same directory
+    # would overwrite the first attempt's evidence and present itself as that attempt.
+    # Refuse instead: a new attempt needs a new id and a new run directory.
+    report_path = out_dir / "pm-inspection-report.json"
+    if report_path.exists():
+        raise SystemExit(
+            f"{report_path} already exists; attempt ids are not reusable. Use a fresh "
+            "run directory and a fresh --attempt-id rather than overwriting evidence."
+        )
 
     bindings = json.loads(args.bindings.read_text())
     reads: list[dict] = []
@@ -629,7 +662,7 @@ def main(argv: list[str] | None = None) -> int:
         exit_code = EXIT_INCOMPLETE
     report["producer_exit_code"] = exit_code
 
-    (out_dir / "pm-inspection-report.json").write_text(
+    report_path.write_text(
         json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(json.dumps({"exit_code": exit_code,
                       "records": len(reads),

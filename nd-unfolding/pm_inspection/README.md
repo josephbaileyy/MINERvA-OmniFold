@@ -107,3 +107,34 @@ disagrees with the repo root, and it passes — binding all sixteen guard-shim f
 That the guard exists is also what makes "environment yes, analysis code no" enforceable
 rather than merely asserted: `mnv_guarded_run.py` refuses imports from another checkout
 (OI-136), and `module_provenance()` records what actually loaded.
+
+## Second review round — four more real holes, and how they were closed
+
+| defect in `28a65747` | repair |
+|---|---|
+| a record's own `kind` was authoritative, so relabelling `input:G` as expected-optional and marking it absent returned COMPLETE | `obligation_kinds()` derives every id's kind from the committed bindings; a record whose kind contradicts them is itself a fault |
+| `bindings_sha256: "wrong"` still returned COMPLETE | the validator hashes the bindings file it was handed and refuses a report produced against different bytes |
+| `hInflation_g` listed but null still emitted `status=read, nbins=None` | a listed key that will not load is `unreadable` |
+| the fixed attempt id could be reused over an existing report | the producer refuses to overwrite an existing report; a new attempt needs a new id and a new run directory |
+| fixtures were hand-written status records | `test_pm_producer_driven.py` runs the **real producer** against a fake ROOT and a real temporary tree, then mutates that |
+
+## Which interpreter runs the tests, exactly
+
+**`/Users/josephbailey/miniconda3/bin/python3`, Python 3.12.2, numpy 1.26.4.** Recorded with
+its probe output in `docs/orchestration/state/pm-inspection-test-evidence-20260908/`.
+
+`/usr/bin/python3` on this machine is 3.9.6 and **cannot import numpy**, so four tests error
+there rather than fail. That is not a defect in them: `mask_digests` is a numpy algorithm
+because the predeclaration specifies it as one, and a skip guard would hide the very
+comparison PM-4 depends on. Run them under an interpreter that has numpy — on Perlmutter that
+is the `root_6_28` prefix, numpy 1.26.4, little-endian, which is what makes `idx.tobytes()`
+reproducible on both machines.
+
+## The fake ROOT is test support, not a ROOT substitute
+
+`fake_root.py` implements only what the producer touches. Its point is that hand-written
+records prove only that the validator classifies what the test author already believed —
+running the real producer against a controllable tree proves the payloads being classified
+are the ones the producer actually emits. It also makes `TParameter<double>` behave the way
+the real class does, with the value in `GetVal()` and a decoy string in `GetTitle()`, so the
+typed-read repair is tested rather than asserted.

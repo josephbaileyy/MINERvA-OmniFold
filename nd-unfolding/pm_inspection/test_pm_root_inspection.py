@@ -33,7 +33,8 @@ OPTIONAL = validator.OPTIONAL
 ATTEMPT = "attempt-under-test"
 
 BINDINGS = json.loads((HERE / "INPUT-BINDINGS-20260908.json").read_text())
-OBLIGATIONS = producer.declared_read_ids(BINDINGS)
+KINDS = producer.obligation_kinds(BINDINGS)
+OBLIGATIONS = list(KINDS)
 
 
 def report(reads, attempt_id=ATTEMPT, **extra):
@@ -44,8 +45,8 @@ def report(reads, attempt_id=ATTEMPT, **extra):
 
 
 def full_capture():
-    """An innocent report: every obligation recorded, nothing wrong."""
-    return report([{"read_id": rid, "status": "read", "kind": REQUIRED}
+    """An innocent report: every obligation recorded with ITS BOUND KIND."""
+    return report([{"read_id": rid, "status": "read", "kind": KINDS[rid]}
                    for rid in OBLIGATIONS])
 
 
@@ -56,7 +57,7 @@ class InnocentCapturesPass(unittest.TestCase):
 
     def test_expected_optional_absence_is_still_COMPLETE(self):
         """hRowIndex5D absent from G is the ANSWER, and must not become a fault."""
-        reads = [{"read_id": rid, "status": "read", "kind": REQUIRED}
+        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
                  for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
         reads.append({"read_id": "G:hRowIndex5D", "status": "absent", "kind": OPTIONAL})
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
@@ -72,7 +73,8 @@ class MutationsThatMustNotPass(unittest.TestCase):
 
     def test_producer_cannot_shrink_its_own_obligations(self):
         """A report claiming only one declared read must not thereby become COMPLETE."""
-        doc = report([{"read_id": "G:key_listing", "status": "read", "kind": REQUIRED}])
+        doc = report([{"read_id": "G:key_listing", "status": "read",
+                       "kind": KINDS["G:key_listing"]}])
         doc["declared_read_ids"] = ["G:key_listing"]
         code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_INCOMPLETE)
@@ -85,7 +87,7 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertIn("not bound to this attempt", findings["reason"])
 
     def test_unknown_status_is_a_fault(self):
-        reads = [{"read_id": rid, "status": "read", "kind": REQUIRED}
+        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
                  for rid in OBLIGATIONS]
         reads[0] = dict(reads[0], status="probably-fine")
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
@@ -93,7 +95,7 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertEqual(findings["records_with_unknown_status"], [OBLIGATIONS[0]])
 
     def test_unknown_kind_is_a_fault(self):
-        reads = [{"read_id": rid, "status": "read", "kind": REQUIRED}
+        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
                  for rid in OBLIGATIONS]
         reads[0] = dict(reads[0], kind="sort-of-required")
         code, _ = validator.classify(report(reads), BINDINGS, ATTEMPT)
@@ -101,7 +103,7 @@ class MutationsThatMustNotPass(unittest.TestCase):
 
     def test_unreadable_optional_is_a_fault_not_the_declared_absence(self):
         """Listed-but-unreadable is not 'we learned it is absent'."""
-        reads = [{"read_id": rid, "status": "read", "kind": REQUIRED}
+        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
                  for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
         reads.append({"read_id": "G:hRowIndex5D", "status": "unreadable",
                       "kind": OPTIONAL})
@@ -110,8 +112,25 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertEqual(findings["unreadable_optional_objects"], ["G:hRowIndex5D"])
         self.assertEqual(findings["expected_optional_absences"], [])
 
+    def test_a_record_cannot_reclassify_its_own_obligation(self):
+        """Relabelling a required id as expected-optional must not buy COMPLETE."""
+        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
+                 for rid in OBLIGATIONS]
+        reads[0] = {"read_id": OBLIGATIONS[0], "status": "absent", "kind": OPTIONAL}
+        code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn(OBLIGATIONS[0],
+                      findings["records_whose_kind_contradicts_bindings"])
+        self.assertIn(OBLIGATIONS[0], findings["required_read_failures"])
+
+    def test_wrong_bindings_digest_is_ERROR(self):
+        code, findings = validator.classify(full_capture(), BINDINGS, ATTEMPT,
+                                            bindings_sha256="wrong")
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("different bindings bytes", findings["reason"])
+
     def test_required_failure_is_ERROR(self):
-        reads = [{"read_id": rid, "status": "read", "kind": REQUIRED}
+        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
                  for rid in OBLIGATIONS]
         reads[0] = dict(reads[0], status="unreadable")
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
@@ -126,7 +145,7 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertTrue(findings["producer_traceback"])
 
     def test_missing_record_is_INCOMPLETE(self):
-        reads = [{"read_id": rid, "status": "read", "kind": REQUIRED}
+        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
                  for rid in OBLIGATIONS[:-1]]
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_INCOMPLETE)
