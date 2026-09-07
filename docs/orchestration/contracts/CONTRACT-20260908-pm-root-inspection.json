@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "campaign_id": "pm-root-inspection-20260908",
-  "scientific_question": "Capture the fixed read-only ROOT measurements predeclared for PM-1, PM-3, PM-4 and PM-5. This contract governs CAPTURE ONLY. It adjudicates none of those measurements, sets no acceptance threshold, and its terminal branches classify whether the declared reads happened -- never whether the values are adequate. PM-4's provenance gap is preserved: digests are reconstructed through G's producer-input route and are never evidence of G's historical production input.",
+  "scientific_question": "Capture the fixed read-only ROOT measurements predeclared for PM-1, PM-3, PM-4 and PM-5. This contract governs CAPTURE ONLY. It adjudicates none of those measurements, sets no acceptance threshold, and its terminal branches classify whether the declared reads happened -- never whether the values are adequate. PM-4's provenance gap is preserved: digests are reconstructed through G's producer-input route and are never evidence of G's historical production input. The validator routes through nd-unfolding/mnv_guarded_run.py, whose --expect-root refusal (OI-136) is what enforces that no analysis code is imported from the deployed tree; that tree supplies the built environment only.",
   "candidate": {
     "id": "pm-inspection-capture-20260908",
     "uri": "file:///pscratch/sd/j/josephrb/pm-inspection-20260908/pm-inspection-report.json",
@@ -81,9 +81,19 @@
   "terminal_validator": {
     "argv": [
       "/usr/bin/python3.11",
+      "nd-unfolding/mnv_guarded_run.py",
+      "--expect-root",
+      "/pscratch/sd/j/josephrb/exec-20260907",
+      "--label",
+      "pm-root-inspection-terminal-validator",
+      "--",
       "nd-unfolding/pm_inspection/pm_root_validate.py",
       "--report",
       "/pscratch/sd/j/josephrb/pm-inspection-20260908/pm-inspection-report.json",
+      "--bindings",
+      "nd-unfolding/pm_inspection/INPUT-BINDINGS-20260908.json",
+      "--attempt-id",
+      "pm-root-inspection-20260908-attempt-1",
       "--out",
       "/pscratch/sd/j/josephrb/pm-inspection-20260908"
     ],

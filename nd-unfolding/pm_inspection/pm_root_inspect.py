@@ -73,12 +73,16 @@ def refuse_output_inside_a_checkout(out_dir: Path) -> None:
     """
     if not out_dir.is_absolute():
         raise SystemExit(f"--out must be an absolute path, got {out_dir}")
-    for parent in [out_dir, *out_dir.parents]:
-        if (parent / ".git").exists():
-            raise SystemExit(
-                f"--out {out_dir} is inside the git checkout at {parent}; "
-                "runtime output must live outside every checkout"
-            )
+    # Resolve first. A symlink whose TARGET is inside a checkout passes a purely lexical
+    # walk while writing into the working tree, which is the whole thing this refuses.
+    resolved = Path(os.path.realpath(out_dir))
+    for candidate in {out_dir, resolved}:
+        for parent in [candidate, *candidate.parents]:
+            if (parent / ".git").exists():
+                raise SystemExit(
+                    f"--out {out_dir} resolves to {resolved}, inside the git checkout at "
+                    f"{parent}; runtime output must live outside every checkout"
+                )
 
 
 def module_provenance(forbidden_root: str) -> dict[str, object]:
@@ -107,6 +111,32 @@ def module_provenance(forbidden_root: str) -> dict[str, object]:
         "module_count": len(loaded),
         "modules": loaded,
     }
+
+
+def read_scalar(handle, name: str):
+    """Read a stored scalar by its ACTUAL type, not by assuming TNamed.
+
+    ``adopt_unified_5d.py:177`` writes ``sqrt_tr_old`` as ``TParameter<double>``, whose
+    value lives in ``GetVal()``; ``GetTitle()`` on it returns the title string, not the
+    number.  ``p4_evidence.py:88`` is the precedent for reading the typed value.  Returning
+    a title where a double was meant is a silently wrong measurement, so this dispatches on
+    what the object actually is and reports the class it saw.
+
+    Returns
+    -------
+    tuple
+        ``(value, class_name)``; ``value`` is ``None`` only when the object is null or
+        carries neither a typed value nor a title, which callers must treat as a fault.
+    """
+    obj = handle.Get(name)
+    if not obj:
+        return None, None
+    class_name = obj.ClassName() if hasattr(obj, "ClassName") else type(obj).__name__
+    if hasattr(obj, "GetVal"):
+        return obj.GetVal(), class_name
+    if hasattr(obj, "GetTitle"):
+        return obj.GetTitle(), class_name
+    return None, class_name
 
 
 def open_root_file(ROOT, path: Path):
@@ -180,6 +210,38 @@ def bind_inputs(bindings: dict, data_root: Path, reads: list) -> dict[str, Path]
     return resolved
 
 
+def row_index_contents(obj) -> dict[str, object]:
+    """Digest a present row index by its CONTENTS, in the predeclared spelling.
+
+    A count is not a measurement of a row index: two different indices share a length.
+    PM-4 compares ``row_index_sha256`` against S, so if ``hRowIndex5D`` turns out to be
+    present the contents are what has to be captured.
+    """
+    import numpy as np  # noqa: PLC0415
+
+    if hasattr(obj, "GetNbinsX"):
+        count = int(obj.GetNbinsX())
+        values = np.array(
+            [obj.GetBinContent(index + 1) for index in range(count)], dtype=np.float64)
+    elif hasattr(obj, "GetSize"):
+        count = int(obj.GetSize())
+        values = np.array([obj[index] for index in range(count)], dtype=np.float64)
+    else:
+        return {"contents_readable": False,
+                "detail": "object exposes neither GetNbinsX nor GetSize"}
+    idx = values.astype(np.int64)
+    raw = idx.tobytes()
+    return {
+        "contents_readable": True,
+        "count": int(idx.size),
+        "row_index_sha256": hashlib.sha256(raw).hexdigest(),
+        "reported_mask_hash": hashlib.sha256(raw + b"|C").hexdigest(),
+        "row_index_matches_S": (
+            hashlib.sha256(raw).hexdigest() == S_ROW_INDEX_SHA256),
+        "provenance": "read_from_G",
+    }
+
+
 def read_G(ROOT, path: Path, optional_names: list[str], reads: list) -> dict:
     """Declared read 1: G's key listing, the stamp scalars, and the row index IF present."""
     out: dict[str, object] = {}
@@ -199,10 +261,15 @@ def read_G(ROOT, path: Path, optional_names: list[str], reads: list) -> dict:
                 record(reads, read_id, "absent", REQUIRED_ABSENCE_IS_A_FAILURE,
                        detail="declared scalar not in G's key listing")
                 continue
-            obj = handle.Get(scalar)
-            value = getattr(obj, "GetTitle", lambda: None)() if obj else None
+            value, class_name = read_scalar(handle, scalar)
+            if value is None:
+                record(reads, read_id, "unreadable", REQUIRED_ABSENCE_IS_A_FAILURE,
+                       root_class=class_name,
+                       detail="key present but object is null or carries no value")
+                continue
             out[scalar] = value
-            record(reads, read_id, "read", REQUIRED_ABSENCE_IS_A_FAILURE, value=value)
+            record(reads, read_id, "read", REQUIRED_ABSENCE_IS_A_FAILURE, value=value,
+                   root_class=class_name)
 
         if "hInflation_g" in present:
             hist = handle.Get("hInflation_g")
@@ -221,10 +288,19 @@ def read_G(ROOT, path: Path, optional_names: list[str], reads: list) -> dict:
             read_id = f"G:{name}"
             if name in present:
                 obj = handle.Get(name)
-                record(reads, read_id, "read", OPTIONAL_ABSENCE_IS_AN_ANSWER,
-                       present=True,
-                       entries=int(obj.GetEntries()) if hasattr(obj, "GetEntries") else None)
+                if not obj:
+                    record(reads, read_id, "unreadable", REQUIRED_ABSENCE_IS_A_FAILURE,
+                           detail="key listed but object could not be read; that is a "
+                                  "fault, not the declared absence")
+                    out[f"{name}_present"] = None
+                    continue
+                # If a row index IS there, the count is not the measurement -- the row
+                # contents are, because PM-4 compares an index digest against S.
+                contents = row_index_contents(obj)
                 out[f"{name}_present"] = True
+                out[name] = contents
+                record(reads, read_id, "read", OPTIONAL_ABSENCE_IS_AN_ANSWER,
+                       present=True, **contents)
             else:
                 record(reads, read_id, "absent", OPTIONAL_ABSENCE_IS_AN_ANSWER,
                        present=False,
@@ -254,24 +330,81 @@ def read_CS(ROOT, path: Path, reads: list) -> dict:
         handle.Close()
 
 
-def flat_digest(hist, nbins: int) -> dict[str, object]:
-    """Digest the regular-bin contents of a flat 5D histogram.
+#: S's committed comparands, PREDECLARATION section 4 and
+#: nd-unfolding/active_universe_5d/standard/candidate/std_component_manifest.json.
+#: Comparison is exact digest equality, no tolerance.
+S_REPORTED_MASK_HASH = "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a"
+S_ROW_INDEX_SHA256 = "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+S_EXPECTED_COUNT = 10694
 
-    Returned under a name that keeps the provenance caveat attached to the value.
+
+def mask_digests(central) -> dict[str, object]:
+    """The PREDECLARED digest algorithm, not an invented one.
+
+    From PREDECLARATION section 4, which cites ``p4_evidence.py:78-84``,
+    ``p4_lib.py:1209-1218`` and ``p4_build_components.py:198-203,224-230``:
+
+        mask               = central > 0            # strictly greater, NOT != 0
+        idx                = np.nonzero(mask)[0].astype(np.int64)
+        reported_mask_hash = sha256(idx.tobytes() + b"|C")
+        row_index_sha256   = sha256(idx.tobytes())
+
+    Zero-based ascending global indices on the C-order (pt,pz,eavail,q3,W) grid, native
+    byte order, no rounding.  ``central > 0`` and ``central != 0`` differ on negative bins,
+    and a JSON rendering of booleans is not ``idx.tobytes()``: an earlier revision of this
+    file used both wrong spellings and would have produced digests that could never match
+    S while looking plausible.
+
+    Parameters
+    ----------
+    central : numpy.ndarray
+        The regular bins only, under/overflow already excluded.
     """
-    values = [float(hist.GetBinContent(index + 1)) for index in range(nbins)]
-    finite = all(value == value and abs(value) != float("inf") for value in values)
-    payload = json.dumps([repr(value) for value in values]).encode()
+    import numpy as np  # noqa: PLC0415 -- the declared algorithm is a numpy one
+
+    mask = central > 0
+    idx = np.nonzero(mask)[0].astype(np.int64)
+    raw = idx.tobytes()
     return {
-        "nbins": nbins,
-        "all_finite": finite,
-        "content_sha256": hashlib.sha256(payload).hexdigest(),
-        "mask_sha256": hashlib.sha256(
-            json.dumps([value != 0.0 for value in values]).encode()
-        ).hexdigest(),
+        "count": int(idx.size),
+        "expected_count": S_EXPECTED_COUNT,
+        "count_matches_S": int(idx.size) == S_EXPECTED_COUNT,
+        "row_index_sha256": hashlib.sha256(raw).hexdigest(),
+        "reported_mask_hash": hashlib.sha256(raw + b"|C").hexdigest(),
+        "row_index_matches_S": hashlib.sha256(raw).hexdigest() == S_ROW_INDEX_SHA256,
+        "reported_mask_matches_S": (
+            hashlib.sha256(raw + b"|C").hexdigest() == S_REPORTED_MASK_HASH),
+        "byte_order": sys.byteorder,
+        "dtype": "int64",
         "provenance": "reconstructed_through_producer_input_route",
         "NOT": "read_from_G",
     }
+
+
+def flat_digest(hist, declared_nbins: int) -> dict[str, object]:
+    """Digest ``hXSecND_flat``'s regular bins, checking the grid rather than assuming it.
+
+    ``declared_nbins`` is what the bindings SAY the grid is.  The histogram's own
+    ``GetNbinsX()`` is what it IS.  Reporting the former as if it were the latter is how a
+    grid non-conformance -- exactly what PM-3's grid arm exists to detect -- gets reported
+    as conformance, so both are recorded and any disagreement is a measured mismatch.
+    """
+    import numpy as np  # noqa: PLC0415
+
+    measured_nbins = int(hist.GetNbinsX())
+    central = np.array(
+        [float(hist.GetBinContent(index + 1)) for index in range(measured_nbins)],
+        dtype=np.float64,
+    )
+    digests = mask_digests(central)
+    digests.update({
+        "declared_nbins": int(declared_nbins),
+        "measured_nbins": measured_nbins,
+        "nbins_conforms": measured_nbins == int(declared_nbins),
+        "all_finite": bool(np.isfinite(central).all()),
+        "content_sha256": hashlib.sha256(central.tobytes()).hexdigest(),
+    })
+    return digests
 
 
 def read_flat_source(ROOT, path: Path, read_prefix: str, nbins: int, reads: list) -> dict:
@@ -341,20 +474,30 @@ def read_endpoint(ROOT, path: Path, label: str, nbins: int, optional_names: list
                 record(reads, read_id, "absent", REQUIRED_ABSENCE_IS_A_FAILURE,
                        detail="declared scalar absent")
                 continue
-            obj = handle.Get(scalar)
-            value = getattr(obj, "GetTitle", lambda: None)() if obj else None
+            value, class_name = read_scalar(handle, scalar)
+            if value is None:
+                record(reads, read_id, "unreadable", REQUIRED_ABSENCE_IS_A_FAILURE,
+                       root_class=class_name,
+                       detail="key present but object is null or carries no value")
+                continue
             out[scalar] = value
-            record(reads, read_id, "read", REQUIRED_ABSENCE_IS_A_FAILURE, value=value)
+            record(reads, read_id, "read", REQUIRED_ABSENCE_IS_A_FAILURE, value=value,
+                   root_class=class_name)
 
-        # "when present" in the predeclaration: absence is an expected outcome.
+        # "when present" in the predeclaration: absence is an expected outcome. A key that
+        # is listed but unreadable is NOT that outcome -- it is a fault.
         for name in optional_names:
             read_id = f"{label}:{name}"
             if name in present:
-                obj = handle.Get(name)
-                value = getattr(obj, "GetTitle", lambda: None)() if obj else None
+                value, class_name = read_scalar(handle, name)
+                if value is None:
+                    record(reads, read_id, "unreadable", REQUIRED_ABSENCE_IS_A_FAILURE,
+                           root_class=class_name,
+                           detail="key listed but unreadable; not the declared absence")
+                    continue
                 out[name] = value
                 record(reads, read_id, "read", OPTIONAL_ABSENCE_IS_AN_ANSWER,
-                       present=True, value=value)
+                       present=True, value=value, root_class=class_name)
             else:
                 record(reads, read_id, "absent", OPTIONAL_ABSENCE_IS_AN_ANSWER,
                        present=False, detail="declared as 'when present'")
@@ -371,7 +514,8 @@ def declared_read_ids(bindings: dict) -> list[str]:
     """
     ids = [f"input:{entry['id']}" for entry in bindings["inputs"]]
     ids += ["G:key_listing", "G:combined_source", "G:centering_convention",
-            "G:sqrt_tr_old", "G:sqrt_tr_new", "G:hInflation_g_nbins"]
+            "G:sqrt_tr_old", "G:sqrt_tr_new", "G:hInflation_g_nbins",
+            "G:read_onlyness"]
     ids += [f"G:{name}" for name in bindings["optional_objects"]["G"]]
     ids += ["CS:key_listing", "CV_central:key_listing", "CV_central:hXSecND_flat"]
     for band in bindings["bands"]:
@@ -390,6 +534,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--bindings", type=Path, required=True)
     parser.add_argument("--data-root", type=Path, required=True)
+    parser.add_argument("--attempt-id", required=True,
+                        help="binds this report to THIS attempt; the validator requires it")
     parser.add_argument("--out", type=Path, required=True,
                         help="ABSOLUTE run directory, outside every git checkout")
     args = parser.parse_args(argv)
@@ -402,6 +548,7 @@ def main(argv: list[str] | None = None) -> int:
     reads: list[dict] = []
     report: dict[str, object] = {
         "schema_version": 1,
+        "attempt_id": args.attempt_id,
         "started_at_utc": utcnow(),
         "bindings_sha256": hashlib.sha256(args.bindings.read_bytes()).hexdigest(),
         "data_root": str(args.data_root),
@@ -434,8 +581,30 @@ def main(argv: list[str] | None = None) -> int:
             exit_code = EXIT_ERROR
         else:
             nbins = int(bindings["grid_nbins"])
+            # PREDECLARATION section 4: G's sha256 before and after, so read-onlyness for G
+            # is MEASURED. CS is 41.4 GB and is not re-hashed, so its read-onlyness stays
+            # asserted-by-opening-READ and is recorded as a limitation, never as a proof.
+            g_before = sha256_file(resolved["G"])
             report["G"] = read_G(ROOT, resolved["G"],
                                  bindings["optional_objects"]["G"], reads)
+            g_after = sha256_file(resolved["G"])
+            unchanged = g_before == g_after
+            report["G_read_onlyness"] = {
+                "sha256_before": g_before,
+                "sha256_after": g_after,
+                "unchanged": unchanged,
+                "basis": "measured by before/after digest",
+            }
+            record(reads, "G:read_onlyness",
+                   "read" if unchanged else "unreadable",
+                   REQUIRED_ABSENCE_IS_A_FAILURE,
+                   sha256_before=g_before, sha256_after=g_after, unchanged=unchanged,
+                   detail=None if unchanged else
+                   "G CHANGED ACROSS THE INSPECTION; the read was not read-only")
+            report["CS_read_onlyness"] = {
+                "basis": "asserted by opening READ; NOT proven by digest",
+                "reason": "41,436,632,945 bytes; a before/after digest is excluded",
+            }
             report["CS"] = read_CS(ROOT, resolved["CS"], reads)
             report["CV_central"] = read_flat_source(
                 ROOT, resolved["CV_central"], "CV_central", nbins, reads)

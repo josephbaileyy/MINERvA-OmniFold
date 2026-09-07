@@ -74,3 +74,36 @@ commit**. Input identity is therefore by digest, never by commit reference.
    cleanup. An initial approval alone is not attendance.
 4. **PyROOT on a compute node is unmeasured.** It works on a login node under this
    environment; the compute-node case is a declared unknown and must fail as `ERROR`, not hang.
+
+## Repairs made after review BLOCK on `a2214f0e`
+
+Independent review found eight real defects. Every one is now pinned by a test that fails if
+it returns.
+
+| defect in `a2214f0e` | repair |
+|---|---|
+| validator returned `COMPLETE` for an empty capture | empty capture is `ERROR` |
+| unknown `status` passed silently | any status outside `{read, absent, unreadable}` is a fault |
+| an *unreadable* optional counted as the declared absence | unreadable optional is a fault; only `absent` is the measurement |
+| validator took `declared_read_ids` from the producer | obligations recomputed from the committed bindings; a shrunken declaration is `INCOMPLETE` and flagged |
+| a stale report at the fixed path satisfied the read | producer and validator share `--attempt-id`; a mismatch is `ERROR` |
+| mask digest invented (`!= 0`, JSON booleans) | the predeclared algorithm: `central > 0`, `sha256(idx.tobytes())` and `sha256(idx.tobytes() + b"\|C")`, compared to S's committed values |
+| `row_index_sha256` and G's before/after digest absent | both captured; G read-onlyness is now measured, CS's stays asserted |
+| declared `grid_nbins` reported as measured | `GetNbinsX()` recorded separately, with `nbins_conforms` |
+| scalars read with `GetTitle` only | typed `GetVal()` for `TParameter<double>` such as `sqrt_tr_old`; null is a fault |
+| `hRowIndex5D` present branch recorded only `GetEntries` | records row **contents** and their index digest |
+| output guard fooled by `link -> repo/subdir` | both guards resolve the path before the ancestor walk; the validator now has the guard too |
+| contract argv skipped the guard | both route through `nd-unfolding/mnv_guarded_run.py` |
+
+## `--expect-root` is checkout-path-dependent, and that is a real constraint
+
+`command_bindings(..., require_guard=True)` refuses unless the guarded argv's
+`--expect-root` equals the repository root campaignctl is running from. The committed value
+is `/pscratch/sd/j/josephrb/exec-20260907`, so **this contract is only stageable from a
+checkout at exactly that path.** Verified two ways: the argv is refused when `--expect-root`
+disagrees with the repo root, and it passes — binding all sixteen guard-shim files plus
+`mnv_guarded_run.py` and the validator — when they agree.
+
+That the guard exists is also what makes "environment yes, analysis code no" enforceable
+rather than merely asserted: `mnv_guarded_run.py` refuses imports from another checkout
+(OI-136), and `module_provenance()` records what actually loaded.

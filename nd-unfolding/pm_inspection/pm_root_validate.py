@@ -1,33 +1,39 @@
 #!/usr/bin/env python3
 """Terminal validator for the bounded ROOT inspection.
 
-IT CLASSIFIES MEASUREMENT CAPTURE, NOT SCIENCE.  It reads the producer's report and
-selects exactly one terminal branch.  It never looks at whether a measured value is good,
-expected, or sufficient, and it has no acceptance threshold to apply -- because none was
+IT CLASSIFIES MEASUREMENT CAPTURE, NOT SCIENCE.  It never looks at whether a measured value
+is good, expected, or sufficient, and it has no acceptance threshold, because none was
 authorized and inventing one here would be inventing a scientific criterion.
 
-THE DISTINCTION THAT MATTERS.  ``hRowIndex5D`` absent from G is the ANSWER to a declared
-question and is COMPLETE.  A required input that is missing, the wrong size, or whose bytes
-do not match its binding is a capture FAILURE and is ERROR.  Collapsing those two would
-turn a real measurement into a fault, or a fault into a measurement; keeping them apart is
-this validator's whole job.
+IT DOES NOT TRUST THE PRODUCER'S ACCOUNT OF ITS OWN OBLIGATIONS.  An earlier revision took
+``declared_read_ids`` from the report, so a producer that declared nothing and read nothing
+was ``COMPLETE``.  The obligation list is now recomputed from the committed bindings, and a
+report is refused unless it is bound to THIS attempt -- otherwise a stale report left at the
+fixed path satisfies the read.
 
-WHAT COMPLETE DOES AND DOES NOT UNLOCK.  It unlocks preserving the capture as a
-measurement.  It does not discharge PM-1, PM-3, PM-4 or PM-5, does not adopt anything, and
-does not make the numbers citable for a gate movement.  Those belong to whoever owns those
-rows, on evidence this inspection only supplies.
+THE DISTINCTION THAT MATTERS.  ``hRowIndex5D`` absent from G is the ANSWER to a declared
+question and is ``COMPLETE``.  A required input that is missing or digest-mismatched, a key
+that is listed but unreadable, or a record with a status this validator does not model, are
+all FAULTS.  Collapsing those would turn a measurement into a fault or a fault into a
+measurement.
 
 EXIT CODES, which select the contract's terminal branch:
-  0   COMPLETE    every declared read has a record, and no required read failed
-  10  INCOMPLETE  ran to the end, but a declared read has no record
-  20  ERROR       required input unusable, producer error, or an unreadable report
+  0   COMPLETE    every obligation has a record, and no fault
+  10  INCOMPLETE  ran to the end, but an obligation has no record
+  20  ERROR       fault, unbound or unreadable report, or an empty capture
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+
+import pm_root_inspect as producer_module  # noqa: E402
 
 EXIT_COMPLETE = 0
 EXIT_INCOMPLETE = 10
@@ -36,47 +42,97 @@ EXIT_ERROR = 20
 OPTIONAL = "expected-optional"
 REQUIRED = "required"
 
+#: The only statuses this validator models. Anything else is a fault rather than a pass,
+#: because an unmodelled status is a measurement whose meaning nobody has decided.
+KNOWN_STATUSES = frozenset({"read", "absent", "unreadable"})
 
-def classify(report: dict) -> tuple[int, dict]:
-    """Return (exit_code, findings). Pure: no I/O, so the tests can drive it directly."""
+
+def refuse_output_inside_a_checkout(out_dir: Path) -> None:
+    """Same rule as the producer: absolute, and outside every working tree once resolved."""
+    if not out_dir.is_absolute():
+        raise SystemExit(f"--out must be an absolute path, got {out_dir}")
+    resolved = Path(os.path.realpath(out_dir))
+    for candidate in {out_dir, resolved}:
+        for parent in [candidate, *candidate.parents]:
+            if (parent / ".git").exists():
+                raise SystemExit(
+                    f"--out {out_dir} resolves to {resolved}, inside the git checkout at "
+                    f"{parent}; validator output must live outside every checkout"
+                )
+
+
+def classify(report: dict, bindings: dict, attempt_id: str) -> tuple[int, dict]:
+    """Return (exit_code, findings). Pure, so tests can drive every branch directly."""
     findings: dict[str, object] = {}
 
+    if report.get("attempt_id") != attempt_id:
+        return EXIT_ERROR, {
+            "reason": "report is not bound to this attempt",
+            "expected_attempt_id": attempt_id,
+            "report_attempt_id": report.get("attempt_id"),
+        }
+
     reads = report.get("reads")
-    declared = report.get("declared_read_ids")
-    if not isinstance(reads, list) or not isinstance(declared, list):
-        return EXIT_ERROR, {"reason": "report is missing reads or declared_read_ids"}
+    if not isinstance(reads, list):
+        return EXIT_ERROR, {"reason": "report has no reads array"}
+
+    # The obligations come from the committed bindings, NEVER from the report.
+    obligations = producer_module.declared_read_ids(bindings)
+    findings["obligation_count"] = len(obligations)
+    if not obligations:
+        return EXIT_ERROR, {"reason": "bindings declare no reads; nothing to validate"}
+    if not reads:
+        return EXIT_ERROR, {"reason": "empty capture: no read records at all",
+                            "obligation_count": len(obligations)}
+
+    claimed = report.get("declared_read_ids")
+    if claimed is not None and sorted(claimed) != sorted(obligations):
+        findings["producer_declaration_disagrees_with_bindings"] = True
 
     if report.get("traceback"):
         findings["producer_traceback"] = True
     if report.get("fatal"):
         findings["producer_fatal"] = report["fatal"]
 
-    seen = {entry.get("read_id") for entry in reads}
-    missing = sorted(set(declared) - seen)
-    findings["missing_read_records"] = missing
+    bad_status = sorted(
+        str(entry.get("read_id", "<unnamed>")) for entry in reads
+        if entry.get("status") not in KNOWN_STATUSES
+    )
+    bad_kind = sorted(
+        str(entry.get("read_id", "<unnamed>")) for entry in reads
+        if entry.get("kind") not in {REQUIRED, OPTIONAL}
+    )
+    findings["records_with_unknown_status"] = bad_status
+    findings["records_with_unknown_kind"] = bad_kind
 
+    # A required read that did not happen, OR an optional key that was listed and then
+    # could not be read. The second is not the declared absence: we did not learn whether
+    # it is there, which is a different thing from learning that it is not.
     required_failures = sorted(
-        entry.get("read_id", "<unnamed>") for entry in reads
+        str(entry.get("read_id", "<unnamed>")) for entry in reads
         if entry.get("kind") == REQUIRED and entry.get("status") in {"absent",
                                                                      "unreadable"}
     )
+    unreadable_optional = sorted(
+        str(entry.get("read_id", "<unnamed>")) for entry in reads
+        if entry.get("kind") == OPTIONAL and entry.get("status") == "unreadable"
+    )
     optional_absences = sorted(
-        entry.get("read_id", "<unnamed>") for entry in reads
+        str(entry.get("read_id", "<unnamed>")) for entry in reads
         if entry.get("kind") == OPTIONAL and entry.get("status") == "absent"
     )
     findings["required_read_failures"] = required_failures
+    findings["unreadable_optional_objects"] = unreadable_optional
     findings["expected_optional_absences"] = optional_absences
     findings["expected_optional_absences_are_measurements"] = True
 
-    unknown_kind = sorted(
-        entry.get("read_id", "<unnamed>") for entry in reads
-        if entry.get("kind") not in {REQUIRED, OPTIONAL}
-    )
-    if unknown_kind:
-        findings["records_with_unknown_kind"] = unknown_kind
-        return EXIT_ERROR, findings
+    seen = {entry.get("read_id") for entry in reads}
+    missing = sorted(set(obligations) - seen)
+    findings["missing_read_records"] = missing
 
-    if report.get("traceback") or report.get("fatal") or required_failures:
+    faults = (bad_status or bad_kind or required_failures or unreadable_optional
+              or report.get("traceback") or report.get("fatal"))
+    if faults:
         return EXIT_ERROR, findings
     if missing:
         return EXIT_INCOMPLETE, findings
@@ -86,21 +142,27 @@ def classify(report: dict) -> tuple[int, dict]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--bindings", type=Path, required=True)
+    parser.add_argument("--attempt-id", required=True)
     parser.add_argument("--out", type=Path, required=True,
-                        help="ABSOLUTE run directory the producer wrote to")
+                        help="ABSOLUTE run directory, outside every git checkout")
     args = parser.parse_args(argv)
+
+    refuse_output_inside_a_checkout(args.out)
 
     try:
         report = json.loads(args.report.read_text())
+        bindings = json.loads(args.bindings.read_text())
     except (OSError, ValueError) as error:
         verdict = {"terminal_branch": "ERROR",
-                   "reason": f"cannot read producer report: {error}"}
+                   "reason": f"cannot read report or bindings: {error}"}
         exit_code = EXIT_ERROR
     else:
-        exit_code, findings = classify(report)
+        exit_code, findings = classify(report, bindings, args.attempt_id)
         verdict = {
             "terminal_branch": {EXIT_COMPLETE: "COMPLETE",
                                 EXIT_INCOMPLETE: "INCOMPLETE"}.get(exit_code, "ERROR"),
+            "attempt_id": args.attempt_id,
             "findings": findings,
             "classifies": "measurement capture only",
             "does_not_classify": (
