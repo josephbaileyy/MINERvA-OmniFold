@@ -11,6 +11,7 @@ boundary, which this baseline deliberately has none of -- so those tests inject 
 `patch.dict` rather than shipping one. If the accepting path were left untested, "we never return
 MET" would be true for the wrong reason and nobody would know until a boundary was approved.
 """
+import json
 import os
 import sys
 import tempfile
@@ -446,16 +447,62 @@ class TheNullAbortsRatherThanScoringBadly(unittest.TestCase):
 
 
 # ------------------------------------------------------------------------------------ receipt --
+CODE_IDENTITY = {"revision": "d298b446",
+                 "import_closure_digests": {"z_receipt": "a" * 64, "z_statistics": "b" * 64}}
+
+
 class TheReceiptPersistsTheNullOperands(unittest.TestCase):
-    def test_round_trip_reproduces_the_ratio_without_the_producers_scalar(self):
+    """The slab, and the format contract that says what is in it.
+
+    Every negative below starts from a file this writer ACTUALLY WROTE and mutates one thing. A
+    hand-assembled fixture would be a second implementation of the format, and it could only ever
+    agree with my reading of it -- these have to disagree with the producer to be worth running.
+    """
+
+    def _good(self, name="z_null_operands.npz", n=200):
         d = writable_tmpdir_or_skip(self)
         rng = np.random.default_rng(2)
-        x1 = np.abs(rng.normal(5.0, 1.0, size=200))
-        x1[:20] = 0.0
-        x2 = x1 + rng.normal(0.0, 1e-10, size=200)
+        x1 = np.abs(rng.normal(5.0, 1.0, size=n))
+        x1[:n // 10] = 0.0
+        x2 = x1 + rng.normal(0.0, 1e-10, size=n)
         mask = zs.support_mask(x1)
-        path = os.path.join(d, "z_null_operands.npz")
-        meta = zrec.persist_null_operands(path, x1, x2, mask)
+        path = os.path.join(d, name)
+        meta = zrec.persist_null_operands(path, x1, x2, mask, code_identity=CODE_IDENTITY)
+        return path, meta, (x1, x2, mask)
+
+    @staticmethod
+    def _reopen(src):
+        with np.load(src, allow_pickle=False) as z:
+            return {k: z[k] for k in z.files}
+
+    def _rewrite(self, src, *, drop=(), **overrides):
+        """Rewrite a real file with one thing changed. `dst` sits beside it."""
+        arrays = self._reopen(src)
+        for key in drop:
+            arrays.pop(key, None)
+        arrays.update(overrides)
+        dst = src + ".mutated.npz"
+        np.savez_compressed(dst, **arrays)
+        return dst
+
+    def _remap_declaration(self, src, mutate):
+        arrays = self._reopen(src)
+        decl = json.loads(str(arrays["declaration_json"].item()))
+        mutate(decl)
+        arrays["declaration_json"] = np.asarray(
+            json.dumps(decl, sort_keys=True, separators=(",", ":")))
+        dst = src + ".declaration.npz"
+        np.savez_compressed(dst, **arrays)
+        return dst
+
+    def _refused(self, path):
+        with self.assertRaises(zc.ZContractError) as cm:
+            zrec.load_null_operands(path)
+        return str(cm.exception)
+
+    # ---- positive ------------------------------------------------------------------------------
+    def test_round_trip_reproduces_the_ratio_without_the_producers_scalar(self):
+        path, meta, (x1, x2, mask) = self._good()
         self.assertEqual(meta["n_rep"], int(mask.sum()))
         self.assertEqual(meta["n_grid"], 200)
 
@@ -464,23 +511,408 @@ class TheReceiptPersistsTheNullOperands(unittest.TestCase):
         direct = zs.null_ratio(x1, x2, mask=mask)
         self.assertEqual(rebuilt["r_null"], direct["r_null"])
 
-    def test_a_missing_operand_is_a_reject_not_a_fallback(self):
+    def test_the_round_trip_preserves_the_operands_EXACTLY_and_their_declared_types(self):
+        path, _, (x1, x2, mask) = self._good()
+        a, b, m = zrec.load_null_operands(path)
+        for got, want, name in ((a, x1, "x_cv"), (b, x2, "x_cv2"), (m, mask, "support_mask")):
+            with self.subTest(array=name):
+                self.assertTrue(np.array_equal(got, want))
+                self.assertEqual(got.dtype,
+                                 np.dtype(zrec.NULL_OPERAND_CONSTRUCTION["arrays"][name]["dtype"]))
+
+    def test_the_file_carries_its_version_its_construction_and_its_producers_identity(self):
+        path, meta, _ = self._good()
+        stored = self._reopen(path)
+        self.assertEqual(int(stored["schema_version"]), zrec.Z_NULL_OPERAND_SCHEMA_VERSION)
+        self.assertEqual(str(stored["construction_digest"].item()),
+                         zrec.NULL_OPERAND_CONSTRUCTION_DIGEST)
+        decl = json.loads(str(stored["declaration_json"].item()))
+        self.assertEqual(decl["writer"]["code_identity"], CODE_IDENTITY)
+        self.assertEqual(decl["writer"]["function"], "persist_null_operands")
+        # and the stamp the receipt will carry names the same three things
+        self.assertEqual(meta["schema_version"], zrec.Z_NULL_OPERAND_SCHEMA_VERSION)
+        self.assertEqual(meta["construction_digest"], zrec.NULL_OPERAND_CONSTRUCTION_DIGEST)
+        self.assertEqual(meta["writer"]["code_identity"], CODE_IDENTITY)
+
+    def test_the_slab_FORMAT_is_not_governed_by_the_RECEIPT_version(self):
+        """Both constants are 1 today, so equality proves nothing either way -- this checks the
+        COUPLING instead: moving the receipt's version must not move the slab's."""
+        path, _, _ = self._good(n=20)
+        with mock.patch.object(zrec, "Z_RECEIPT_SCHEMA_VERSION", 99):
+            a, _, _ = zrec.load_null_operands(path)
+        self.assertEqual(a.ndim, 1)
+        self.assertIn(zrec.Z_NULL_OPERAND_SCHEMA_VERSION,
+                      zrec.SUPPORTED_NULL_OPERAND_SCHEMA_VERSIONS)
+
+    # ---- the version, which is checked before anything else ------------------------------------
+    def test_an_UNVERSIONED_file_is_refused_rather_than_read_as_the_current_format(self):
+        """THE FINDING. The file is otherwise perfect -- correct arrays, correct semantics.
+
+        It is refused anyway, because the three familiar keys establish only that three familiar
+        names are in it. Reading it would be inferring the format from the key set, which is the
+        inference that produced the finding.
+        """
+        path, _, (x1, x2, mask) = self._good()
+        legacy = os.path.join(os.path.dirname(path), "legacy_unversioned.npz")
+        np.savez_compressed(legacy, x_cv=x1, x_cv2=x2, support_mask=mask)
+        msg = self._refused(legacy)
+        self.assertIn("no `schema_version`", msg)
+        self.assertIn("REFUSED", msg)
+
+    def test_an_UNKNOWN_version_is_refused_and_names_what_this_reader_reads(self):
+        path, _, _ = self._good()
+        ahead = self._rewrite(path, schema_version=np.asarray(2, dtype=np.int64))
+        msg = self._refused(ahead)
+        self.assertIn("schema_version 2 is not supported", msg)
+        self.assertIn(str(list(zrec.SUPPORTED_NULL_OPERAND_SCHEMA_VERSIONS)), msg)
+
+    def test_a_version_of_the_wrong_TYPE_is_a_format_mismatch_not_a_value_to_coerce(self):
+        path, _, _ = self._good()
+        stringly = self._rewrite(path, schema_version=np.asarray("1"))
+        self.assertIn("format mismatch", self._refused(stringly))
+
+    def test_a_versioned_file_MISSING_a_header_key_is_refused(self):
+        path, _, _ = self._good()
+        for key in ("construction_digest", "declaration_json"):
+            with self.subTest(missing=key):
+                self.assertIn("header key", self._refused(self._rewrite(path, drop=(key,))))
+
+    # ---- the construction, in both directions --------------------------------------------------
+    def test_a_construction_this_reader_does_not_IMPLEMENT_is_refused(self):
+        """A file written against a construction this reader does not implement.
+
+        This is the file-side direction; the reader-side direction has its own test above. A
+        BUMPED version is a different refusal entirely -- the version check, one line earlier --
+        and is covered separately, because attributing it here would credit this guard with a
+        catch it does not make.
+        """
+        path, _, _ = self._good()
+        other = self._rewrite(path, construction_digest=np.asarray("0" * 64))
+        msg = self._refused(other)
+        self.assertIn("disagree about what these arrays ARE", msg)
+
+    def test_a_reader_whose_OWN_construction_has_moved_refuses_an_older_file(self):
+        """The other direction of the same comparison: the file did not change, this reader did.
+
+        Reverting the reader loads the identical file, which is the control -- without it this
+        test would pass on any refusal at all.
+        """
+        path, _, _ = self._good(n=20)
+        with mock.patch.object(zrec, "NULL_OPERAND_CONSTRUCTION_DIGEST", "9" * 64):
+            self.assertIn("disagree about what these arrays ARE", self._refused(path))
+        a, _, _ = zrec.load_null_operands(path)
+        self.assertEqual(a.size, 20)
+
+    def test_a_declaration_whose_version_disagrees_with_the_header_is_refused(self):
+        path, _, _ = self._good()
+
+        def bump(decl):
+            decl["schema_version"] = 2
+
+        self.assertIn("the header says schema_version 1 and the declaration says 2",
+                      self._refused(self._remap_declaration(path, bump)))
+
+    def test_a_declaration_whose_construction_digest_disagrees_with_the_header_is_refused(self):
+        path, _, _ = self._good()
+
+        def swap(decl):
+            decl["construction_digest"] = "f" * 64
+
+        self.assertIn("header's construction digest and the declaration's disagree",
+                      self._refused(self._remap_declaration(path, swap)))
+
+    def test_a_declaration_that_is_not_JSON_is_refused(self):
+        path, _, _ = self._good()
+        broken = self._rewrite(path, declaration_json=np.asarray("{not json"))
+        self.assertIn("not valid JSON", self._refused(broken))
+
+    # ---- provenance is required, and is NOT a pass condition -----------------------------------
+    def test_the_writer_REFUSES_to_persist_without_a_usable_code_identity(self):
         d = writable_tmpdir_or_skip(self)
-        path = os.path.join(d, "partial.npz")
-        np.savez_compressed(path, x_cv=np.ones(4))       # no x_cv2, no mask
+        rng = np.random.default_rng(0)
+        x = np.abs(rng.normal(5.0, 1.0, size=8))
+        cases = {
+            "absent": {},
+            "unpinned revision": {"import_closure_digests": {"z_receipt": "a"}},
+            "empty revision": {"revision": "  ", "import_closure_digests": {"z_receipt": "a"}},
+            "no import closure": {"revision": "d298b446"},
+            "empty import closure": {"revision": "d298b446", "import_closure_digests": {}},
+        }
+        for label, identity in cases.items():
+            with self.subTest(case=label):
+                with self.assertRaises(zc.ZContractError):
+                    zrec.persist_null_operands(
+                        os.path.join(d, f"ci_{label.replace(' ', '_')}.npz"),
+                                               x, x, x > 0, code_identity=identity)
+
+    def test_an_UNSERIALISABLE_code_identity_is_refused_by_the_CONTENTS_check_now(self):
+        """⚠ This test used to assert the JSON-serialisation guard's message, and the reviewer's
+        block-2 fix took that guard's input away from it.
+
+        `object()` is no longer refused for failing to serialise; it is refused earlier and better,
+        by the contents check, which names the MODULE whose digest is wrong instead of quoting a
+        TypeError. Re-pointing the assertion rather than deleting the case keeps the input covered
+        -- and the serialisation guard is now unreachable by construction, which is recorded at the
+        guard itself rather than left for a reader to discover.
+        """
+        d = writable_tmpdir_or_skip(self)
+        path = os.path.join(d, "unserialisable.npz")
+        x = np.array([1.0, 2.0])
         with self.assertRaises(zc.ZContractError) as cm:
-            zrec.load_null_operands(path)
-        self.assertIn("11b", str(cm.exception))
+            zrec.persist_null_operands(
+                path, x, x, x > 0,
+                code_identity={"revision": "d298b446",
+                               "import_closure_digests": {"z_receipt": object()}})
+        self.assertIn("SHAPE of provenance", str(cm.exception))
+        self.assertFalse(os.path.exists(path))
+
+    def test_a_declaration_without_its_writers_code_identity_is_refused_on_READ(self):
+        path, _, _ = self._good()
+
+        def strip(decl):
+            decl["writer"].pop("code_identity")
+
+        self.assertIn("code identity is missing", self._refused(
+            self._remap_declaration(path, strip)))
+
+    def test_a_STRANGERS_writer_identity_does_NOT_block_a_well_formed_file(self):
+        """Provenance answers who to ask. It is not the reader's admission criterion, so a file
+        this module did not write loads when its version, construction and arrays hold."""
+        path, _, (x1, _, _) = self._good()
+
+        def rebrand(decl):
+            decl["writer"]["module"] = "somebody_elses_producer"
+            decl["writer"]["code_identity"] = {"revision": "0" * 40,
+                                               "import_closure_digests": {"theirs": "c" * 64}}
+
+        a, _, _ = zrec.load_null_operands(self._remap_declaration(path, rebrand))
+        self.assertTrue(np.array_equal(a, x1))
+
+    def test_OUR_OWN_writer_identity_does_NOT_rescue_a_file_whose_declaration_is_wrong(self):
+        """The mirror of the test above, and the reason both must exist: an identity check that
+        admits on a familiar name is the same defect as a key check that admits on familiar keys."""
+        path, _, _ = self._good()
+
+        def lie(decl):
+            decl["n_rep"] = decl["n_rep"] + 1
+
+        mutated = self._remap_declaration(path, lie)
+        decl = json.loads(str(self._reopen(mutated)["declaration_json"].item()))
+        self.assertEqual(decl["writer"]["code_identity"], CODE_IDENTITY)   # still ours
+        self.assertIn("persisted mask selects", self._refused(mutated))
+
+    # ---- ⚠ REVIEWER BLOCK 1: the declaration's OWN construction was bound to nothing ----------
+    def test_the_declarations_own_CONSTRUCTION_is_bound_to_the_digest(self):
+        """All three LOADED before the fix, on files this writer produced.
+
+        The header digest certifies THIS READER's construction literal and said nothing about the
+        file's own copy -- which is the part a human, or any tool that is not this reader, opens to
+        find out what the arrays are. The role rewrite is the dangerous one: it names the exact
+        operand §3.7a rejected, so a reader trusting the file's own words would believe Z's
+        denominator came from a separately produced ROOT.
+        """
+        path, _, (x1, _, _) = self._good(n=20)
+        cases = {
+            "construction removed":
+                (lambda dd: dd.pop("construction"), "carries no `construction` object"),
+            "construction replaced by an integer":
+                (lambda dd: dd.__setitem__("construction", 17), "carries no `construction` object"),
+            "x_cv role rewritten to an externally produced CV":
+                (lambda dd: dd["construction"]["arrays"]["x_cv"].__setitem__(
+                    "role", "externally supplied CV from the production ROOT"),
+                 "is not the description its digest certifies"),
+        }
+        for label, (mutate, expected) in cases.items():
+            with self.subTest(case=label):
+                self.assertIn(expected, self._refused(self._remap_declaration(path, mutate)))
+        # control: the unmutated file still loads, so each refusal is attributable to its mutation
+        a, _, _ = zrec.load_null_operands(path)
+        self.assertTrue(np.array_equal(a, x1))
+
+    def test_the_construction_survives_its_own_json_round_trip(self):
+        """The binding is only meaningful if the literal serialises exactly. A tuple anywhere in
+        `NULL_OPERAND_CONSTRUCTION` would come back a list and every file would fail to load."""
+        restored = json.loads(json.dumps(zrec.NULL_OPERAND_CONSTRUCTION, sort_keys=True,
+                                         separators=(",", ":")))
+        self.assertEqual(restored, zrec.NULL_OPERAND_CONSTRUCTION)
+
+    # ---- ⚠ REVIEWER BLOCK 2: the code identity's CONTENTS were never validated ----------------
+    def test_a_code_identity_whose_CONTENTS_are_not_digests_is_refused_ON_WRITE(self):
+        """Measured as accepted before the fix, and the file was written.
+
+        An identity naming a module and pairing it with `null` is not provenance; it is the SHAPE
+        of provenance, which is worse, because it satisfies every check a reader who trusts the key
+        set would make. `assertFalse(exists)` is the second half: a refused write that still left a
+        file behind would be worse than an accepted one.
+        """
+        d = writable_tmpdir_or_skip(self)
+        x = np.array([1.0, 2.0])
+        cases = {
+            "digest is None": {"z_receipt.py": None},
+            "digest is an int": {"z_receipt.py": 7},
+            "digest is whitespace": {"z_receipt.py": "  "},
+            "digest is a list": {"z_receipt.py": ["a" * 64]},
+            "module id is empty": {"": "a" * 64},
+            "module id is not a string": {7: "a" * 64},
+        }
+        for label, closure in cases.items():
+            with self.subTest(case=label):
+                path = os.path.join(d, "ci_" + label.replace(" ", "_") + ".npz")
+                with self.assertRaises(zc.ZContractError):
+                    zrec.persist_null_operands(
+                        path, x, x, x > 0,
+                        code_identity={"revision": "00df4dba",
+                                       "import_closure_digests": closure})
+                self.assertFalse(os.path.exists(path), "a refused write left a file behind")
+
+    def test_a_NULLED_digest_in_a_persisted_declaration_is_refused_on_READ(self):
+        path, _, _ = self._good(n=20)
+
+        def null_it(decl):
+            decl["writer"]["code_identity"]["import_closure_digests"]["z_receipt"] = None
+
+        self.assertIn("SHAPE of provenance",
+                      self._refused(self._remap_declaration(path, null_it)))
+
+    def test_the_encoding_contract_ACCEPTS_what_it_says_it_accepts(self):
+        """The contract is non-empty strings, NOT hex and NOT a `sha256:`/`blob:` prefix. Without
+        this the two refusal tests above would also pass on a reader that refused everything."""
+        d = writable_tmpdir_or_skip(self)
+        x = np.array([1.0, 2.0])
+        for label, digest in {"bare hex": "a" * 64, "prefixed": "sha256:" + "b" * 64,
+                              "git blob": "blob:cf53f587", "short": "cf53f58"}.items():
+            with self.subTest(encoding=label):
+                path = os.path.join(d, "ok_" + label.replace(" ", "_") + ".npz")
+                zrec.persist_null_operands(
+                    path, x, x, x > 0,
+                    code_identity={"revision": "00df4dba",
+                                   "import_closure_digests": {"z_receipt.py": digest}})
+                self.assertTrue(os.path.exists(path))
+
+    # ---- metadata that disagrees with the arrays -----------------------------------------------
+    def test_a_declared_n_grid_that_disagrees_with_the_arrays_is_refused(self):
+        path, _, _ = self._good()
+
+        def lie(decl):
+            decl["n_grid"] = decl["n_grid"] - 1
+
+        self.assertIn("arrays are length", self._refused(self._remap_declaration(path, lie)))
+
+    def test_a_declaration_covering_a_DIFFERENT_set_of_arrays_is_refused(self):
+        path, _, _ = self._good()
+        for field in ("dtypes", "digests"):
+            with self.subTest(field=field):
+                def drop(decl, field=field):
+                    decl[field].pop("x_cv2")
+
+                self.assertIn("not a description of this file",
+                              self._refused(self._remap_declaration(path, drop)))
+
+    def test_an_array_that_does_not_match_its_DECLARED_digest_is_refused(self):
+        """A partially rewritten slab: the bytes moved, the description did not."""
+        path, _, (x1, x2, _) = self._good()
+        tampered = self._rewrite(path, x_cv2=x2 * 1.5)
+        self.assertIn("does not digest to the value declared with it", self._refused(tampered))
+
+    def test_a_declared_dtype_that_contradicts_the_construction_is_refused(self):
+        path, _, _ = self._good()
+
+        def lie(decl):
+            decl["dtypes"]["support_mask"] = "int8"
+
+        self.assertIn("where this construction says", self._refused(
+            self._remap_declaration(path, lie)))
+
+    def test_BOTH_ENDS_of_the_declared_n_rep_bound(self):
+        """`0 <= n_rep <= n_grid` is a bound I wrote, so both ends get a test.
+
+        An EMPTY support is a well-formed FILE -- the loader returns it, and `null_ratio` is what
+        refuses to divide by it. A support LARGER than the grid is not a value error, it is a
+        declaration describing a different object, and the reader refuses before returning.
+        """
+        d = writable_tmpdir_or_skip(self)
+        empty = os.path.join(d, "empty_support.npz")
+        x = np.array([-1.0, -2.0, -3.0])
+        mask = zs.support_mask(x)                          # all False: nothing is reported
+        self.assertEqual(int(mask.sum()), 0)
+        zrec.persist_null_operands(empty, x, x, mask, code_identity=CODE_IDENTITY)
+        _, _, m = zrec.load_null_operands(empty)           # the FILE is valid: it loads
+        self.assertEqual(int(m.sum()), 0)
+        with self.assertRaises(zc.ZContractError) as cm:
+            zs.null_ratio(x, x, mask=m)                    # the STATISTIC is not
+        self.assertIn("support is empty", str(cm.exception))
+
+        path, _, _ = self._good(n=20)
+
+        def over(decl):
+            decl["n_rep"] = decl["n_grid"] + 1
+
+        self.assertIn("outside [0, 20]", self._refused(self._remap_declaration(path, over)))
+
+    # ---- malformed operands --------------------------------------------------------------------
+    def test_a_missing_operand_is_a_reject_not_a_fallback(self):
+        path, _, _ = self._good()
+        self.assertIn("11b", self._refused(self._rewrite(path, drop=("x_cv2",))))
+
+    def test_an_UNEXPECTED_key_means_the_format_changed_without_the_version(self):
+        path, _, _ = self._good()
+        extra = self._rewrite(path, x_cv_per_throw=np.zeros((3, 4)))
+        self.assertIn("without bumping the version", self._refused(extra))
+
+    def test_a_NARROWER_operand_dtype_is_refused_rather_than_coerced(self):
+        """`np.asarray(a, float)` would have widened this silently and returned it as float64."""
+        path, _, (x1, _, _) = self._good()
+        narrowed = self._rewrite(path, x_cv=x1.astype(np.float32))
+        self.assertIn("has dtype float32", self._refused(narrowed))
+
+    def test_an_INTEGER_mask_is_refused_rather_than_coerced_to_bool(self):
+        """The construction says the mask is a predicate's RESULT. An int array is a different
+        object -- a count, or a selection index -- and coercing it would invent a predicate."""
+        path, _, (_, _, mask) = self._good()
+        as_ints = self._rewrite(path, support_mask=mask.astype(np.int8))
+        self.assertIn("has dtype int8", self._refused(as_ints))
+
+    def test_a_2D_operand_is_refused(self):
+        path, _, (x1, _, _) = self._good(n=20)
+        reshaped = self._rewrite(path, x_cv=x1.reshape(4, 5))
+        self.assertIn("2-D", self._refused(reshaped))
+
+    def test_operands_of_UNEQUAL_length_are_refused(self):
+        path, _, (_, x2, _) = self._good(n=20)
+        short = self._rewrite(path, x_cv2=x2[:-1])
+        self.assertIn("must be over one grid", self._refused(short))
 
     def test_persistence_refuses_mismatched_shapes(self):
         d = writable_tmpdir_or_skip(self)
         with self.assertRaises(zc.ZContractError):
             zrec.persist_null_operands(os.path.join(d, "x.npz"),
-                                       np.ones(4), np.ones(5), np.ones(4, bool))
+                                       np.ones(4), np.ones(5), np.ones(4, bool),
+                                       code_identity=CODE_IDENTITY)
 
     def test_the_array_digest_separates_shape_from_bytes(self):
         a = np.arange(6, dtype=float)
         self.assertNotEqual(zrec.sha256_array(a), zrec.sha256_array(a.reshape(2, 3)))
+
+    # ---- the boundary this reader does NOT police ----------------------------------------------
+    def test_the_reader_leaves_the_PREDICATE_check_to_condition_11b(self):
+        """A slab whose mask disagrees with `x_cv > 0` is a well-formed FILE and a bad OPERAND SET.
+
+        The loader returns it; `reconstruct_null_ratio` is what refuses it. Pinning this keeps the
+        two responsibilities apart -- moving the predicate check into the loader would make §3.3
+        condition 11b's independence check unreachable on the only path that feeds it, while
+        leaving a reader to believe independence had been established at load time.
+        """
+        d = writable_tmpdir_or_skip(self)
+        path = os.path.join(d, "wrong_predicate.npz")
+        x1 = np.array([1.0, 1.0])
+        wrong = np.array([True, False])            # the true support is both bins
+        zrec.persist_null_operands(path, x1, np.array([1.0, 2.0]), wrong,
+                                   code_identity=CODE_IDENTITY)
+        a, b, m = zrec.load_null_operands(path)    # the FILE is valid: it loads
+        self.assertTrue(np.array_equal(m, wrong))
+        with self.assertRaises(zc.ZContractError) as cm:
+            zs.reconstruct_null_ratio(a, b, m)     # the OPERANDS are not: 11b refuses them
+        self.assertIn("11b", str(cm.exception))
 
 
 # What `za.run_pair_gates` actually returns on a correct build, trimmed to the fields the receipt
@@ -527,6 +959,17 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
         blocks["variant"] = "both"
         with self.assertRaises(zc.ZContractError):
             zrec.build_receipt(**blocks)
+
+    def test_a_code_identity_with_a_NULL_DIGEST_is_refused_here_too(self):
+        """One definition, two products. `_require_code_identity` is shared with the operand slab,
+        so the reviewer's block-2 repair reaches this caller without being retyped -- which is the
+        whole reason the definition was consolidated rather than duplicated."""
+        blocks = self._blocks()
+        blocks["code_identity"] = {"revision": "10c24678",
+                                   "import_closure_digests": {"z_contract.py": None}}
+        with self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("SHAPE of provenance", str(cm.exception))
 
     def test_code_identity_without_import_closure_digests_is_refused(self):
         blocks = self._blocks()
