@@ -96,19 +96,51 @@ attempts and 12.606389 CPU task-hours** where the `-j` capture meters 952 and 12
 difference is **six further waker execution rows totalling 58 s**, not a discrepancy. Any assertion
 of a fixed total must pin the capture rather than re-query, which is what the committed fixture does.
 
-**The waker's ordinary cadence, re-derived per day from the committed fixture** (an earlier revision
-of this finding said "roughly 0.05–0.07 task-hours per day", which was wrong by an order of
-magnitude and was corrected in review):
+**The waker's ordinary cadence — corrected twice, and the second correction is the instructive one.**
 
-| day | attempts | charged | note |
-|---|---:|---:|---|
-| 2026-09-03 | 180 | **10.263611 h** | dominated by one 31 063 s hung attempt; not cadence |
-| 2026-09-04 | 277 | **0.652778 h** | a full ordinary day |
-| 2026-09-05 | 288 | **0.690556 h** | a full ordinary day |
+An earlier revision said "roughly 0.05–0.07 task-hours per day", wrong by an order of magnitude. The
+replacement quoted **0.65–0.69** h/day and called 2026-09-04 "a full ordinary day". Both of those are
+also wrong, and the way they were wrong is worth keeping:
 
-So ordinary cadence is **≈0.65–0.69 CPU task-hours per day**, and a single hang can add ten hours in
-a day. Neither figure threatens a 500-hour ceiling — the point of this finding is the instrument, not
-the magnitude — but the number should be right, and the outlier should not be averaged into a "rate".
+- the band was cross-checked against a *rate* computed as (delta between two captures) ÷ (elapsed
+  between them) — but **the second capture's instant is nowhere recorded**. The finding pins its row
+  count and sha256 and says only "about twenty minutes after". Moving that unpinned instant from
+  08:00Z to 11:00Z walks the rate from 0.615 to 0.738 and out of the band on both sides. This
+  document's own rule — *any assertion of a fixed total must pin the capture* — applies to a
+  **denominator** as much as to a total;
+- **2026-09-04 is not a full ordinary day.** It lost 11 of its 288 five-minute ticks to the hang's
+  recovery, and the Start-day booking convention assigns to 09-03 the 3 183 s of that hang which
+  physically elapsed after midnight on 09-04. Exactly **one** attempt in 1 155 straddles midnight
+  (`2026-09-03T16:15:20 → 2026-09-04T00:53:03`), so the convention moves that one day and no other —
+  but 09-04 is the day it moves, and it was the day quoted as ordinary.
+
+**Corrected derivation**, needing no second capture: per calendar day from the single preserved
+`-X -D` capture of `2026-09-07T01:54:09Z` (1 155 attempts, 47 033 s = `13.064722222222223` CPU
+task-hours, one job id, zero duplicate `(JobID, Start)` pairs, zero `End=Unknown` rows). Derived by
+the accepting lane and **re-derived independently here from the committed bytes**, in `awk`/Python
+rather than through `r5_meter.py`, so the parser is not both the instrument and the witness:
+
+| day | ticks / 288 | charged | s per attempt | longest attempt |
+|---|---:|---:|---:|---:|
+| 2026-09-02 | 99 | 0.728889 h | 26.505 | 453 s (partial day; startup) |
+| 2026-09-03 | 180 | **10.263611 h** | 205.272 | **31 063 s — the hang** |
+| 2026-09-04 | 277 | 0.652778 h | 8.484 | 18 s (11 ticks lost; see above) |
+| 2026-09-05 | 288 | 0.690556 h | 8.632 | 15 s |
+| 2026-09-06 | 288 | 0.672222 h | 8.403 | 14 s |
+| 2026-09-07 | 23 | 0.056667 h | 8.870 | 13 s (partial day) |
+
+**The headline number is the per-tick cost, not a per-day total: 8.4–8.9 s per attempt, ≈288 attempts
+per day, so ≈0.67–0.71 CPU task-hours/day.** Per-tick cost is the quantity that is actually stable —
+a per-day total silently mixes cadence with *tick loss*, which is what made 09-04 look like the low
+end of a band it does not belong to. Scaled to a complete day, 09-04's own per-tick cost gives
+0.6787 h, placing all three ordinary days together.
+
+Two whole days, 09-05 and 09-06, are simultaneously complete, outlier-free and free of a
+midnight-straddling attempt; they are the only two that qualify. A single hang added ten hours in a
+day, which is why the outlier is excluded from the rate rather than averaged into it.
+
+Neither figure threatens a 500-hour ceiling — this finding is about the instrument, not the
+magnitude — but the number should be right, and it took three passes to get there.
 
 What the wider sweep establishes, each re-derived here from the committed bytes:
 
