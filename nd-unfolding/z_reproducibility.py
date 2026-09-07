@@ -110,11 +110,32 @@ _NEGATIVE_CONTROL = "z_probe_definitely_not_a_lightgbm_parameter_9f2c"
 _POSITIVE_CONTROL = "num_leaves"
 
 _ALIAS_FREE_CONTROL_NOTE = (
-    "third control, added in round 3: a parameter the table defines with an EMPTY alias list. It "
-    "is chosen FROM THE TABLE rather than named here, so it cannot go stale against a version "
-    "that changes which parameters have aliases. Any recognition method that infers existence "
-    "from the SHAPE of an alias set fails this control while passing the other two -- which is "
-    "exactly how the previous two methods survived review.")
+    "third control, added in round 3: a parameter with no aliases BEYOND ITS OWN NAME. It is "
+    "chosen FROM THE TABLE rather than named here, so it cannot go stale against a version that "
+    "changes which parameters have aliases. Any recognition method that infers existence from the "
+    "SHAPE of an alias set fails this control while passing the other two -- which is exactly how "
+    "the previous two methods survived review.")
+
+
+def _extra_aliases(canonical, aliases):
+    """The aliases of `canonical` OTHER THAN ITSELF, or None if the entry is not a sequence.
+
+    ⚠ ROUND-4 FINDING 2. The round-3 control tested `not aliases`, i.e. an EMPTY list. That is the
+    shape of the C++ JSON dump, but LightGBM 4.5.0's PYTHON accessor PREPENDS the canonical name
+    to its own alias list, so an alias-free parameter comes back as `[name]` and never as `[]`.
+    Measured against a source-shaped table holding three alias-free parameters: recognition and
+    the overlay both succeeded, and the control reported UNAVAILABLE -- so the one control that
+    exists to catch this defect class silently did not run.
+
+    A control that stops controlling without saying so is worse than no control, and it is this
+    repository's catalogued shape: a green state reachable without the work being done.
+
+    Subtracting the canonical name answers the question under BOTH shapes, which matters because
+    which accessor answered is not something this module can verify from here.
+    """
+    if not isinstance(aliases, (set, frozenset, list, tuple)):
+        return None
+    return {str(a) for a in aliases} - {str(canonical)}
 
 # How to reach the build's own parameter table, best first. `_get_all_param_aliases()` is the
 # C-API dump (`LGBM_DumpParamAliases`), i.e. the table LightGBM itself is configured from;
@@ -209,7 +230,7 @@ def probe_backend() -> BackendProbe:
 
     universe = _parameter_universe(table)
     alias_free = sorted(str(k) for k, v in table.items()
-                        if isinstance(v, (set, frozenset, list, tuple)) and not v)
+                        if _extra_aliases(k, v) == set())
     # Prefer an alias-free parameter that is NOT one of Z's own knobs, so the control asks an
     # INDEPENDENT question. If the only alias-free names in the table are the knobs themselves the
     # control still runs, but it is then answering the same question as the knob check and says so.
@@ -227,8 +248,9 @@ def probe_backend() -> BackendProbe:
                         "n_alias_free_in_table": len(alias_free),
                         "independent_of_Z_knobs": af_name not in Z_REPRO_KNOBS}
                        if af_name is not None else
-                       {"name": None, "status": "UNAVAILABLE -- the table defines no alias-free "
-                                                "parameter, so this control could not be run",
+                       {"name": None, "status": "UNAVAILABLE -- no parameter in this table has an "
+                                                "alias set consisting of its own name alone, so "
+                                                "this control could not be run",
                         "note": _ALIAS_FREE_CONTROL_NOTE}),
     }
     misbehaving = [c for c in ("negative", "positive", "alias_free")

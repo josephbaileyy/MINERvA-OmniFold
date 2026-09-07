@@ -232,21 +232,30 @@ class TheBandPartitionGateFiresInBothDirections(unittest.TestCase):
 
 
 class LGBM45Table:
-    """Shaped like LightGBM 4.5.0's own parameter dump: canonical -> alias LIST, `[]` when none.
+    """Shaped like LightGBM 4.5.0's PYTHON accessor: the canonical name is PREPENDED to its aliases.
 
-    ⚠ The previous positive fixture invented an alias for every parameter, which is precisely why
-    it could not fail round-3 finding 2. `deterministic` and `force_row_wise` are alias-free
-    upstream and are alias-free here; `is_unbalance` is an alias-free parameter that is NOT one of
-    Z's knobs, so the alias-free control has an independent name to use.
+    ⚠ TWO ROUNDS OF FIXTURE DEFECTS, both of the same kind -- a fixture agreeing with my code
+    rather than with the world, so the control it feeds could not fail.
+
+      * round 2's invented an alias for EVERY parameter, so nothing was alias-free and finding 2
+        was invisible.
+      * round 3's gave alias-free parameters `[]`. That is the C++ JSON dump's shape, but the
+        Python accessor prepends the canonical name, so upstream returns `[name]`. Measured
+        against a source-shaped table with three alias-free parameters, the control reported
+        UNAVAILABLE and silently did not run.
+
+    `deterministic` and `force_row_wise` are alias-free upstream and are alias-free here;
+    `is_unbalance` is an alias-free parameter that is NOT one of Z's knobs, so the control has an
+    independent name to choose.
     """
 
     _dump = {
-        "num_leaves": ["num_leaf", "max_leaves", "max_leaf", "max_leaf_nodes"],
-        "num_threads": ["num_thread", "nthread", "nthreads", "n_jobs"],
-        "learning_rate": ["shrinkage_rate", "eta"],
-        "deterministic": [],
-        "force_row_wise": [],
-        "is_unbalance": [],
+        "num_leaves": ["num_leaves", "num_leaf", "max_leaves", "max_leaf", "max_leaf_nodes"],
+        "num_threads": ["num_threads", "num_thread", "nthread", "nthreads", "n_jobs"],
+        "learning_rate": ["learning_rate", "shrinkage_rate", "eta"],
+        "deterministic": ["deterministic"],
+        "force_row_wise": ["force_row_wise"],
+        "is_unbalance": ["is_unbalance"],
     }
 
     @classmethod
@@ -256,6 +265,18 @@ class LGBM45Table:
     @classmethod
     def get(cls, name):
         return {name} | set(cls._dump.get(name, []))
+
+
+class RawDumpTable(LGBM45Table):
+    """The other shape: the C++ `LGBM_DumpParamAliases` JSON, where alias-free means `[]`.
+
+    Both shapes are in play and this module cannot verify from here which accessor answers on the
+    campaign build, so the control must give the same verdict on either.
+    """
+
+    @classmethod
+    def _get_all_param_aliases(cls):
+        return {k: [a for a in v if a != k] for k, v in cls._dump.items()}
 
 
 def probe_against(table, version="4.5.0"):
@@ -350,12 +371,42 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
         self.assertEqual(p.controls["table_source"],
                          "_ConfigAliases._get_all_param_aliases()")
 
+    def test_the_control_RUNS_on_the_source_shape_where_alias_free_means_name_alone(self):
+        """⚠ ROUND-4 FINDING 2, verbatim. The control silently stopped running.
+
+        The Python accessor prepends the canonical name, so an alias-free parameter is `[name]`
+        and never `[]`. Round 3 tested `not aliases`, which is only the JSON dump's shape.
+        Measured on this fixture before the fix: recognition and the overlay both SUCCEEDED and
+        the control reported UNAVAILABLE -- the single control written to catch this defect class
+        did not run, and nothing said so. A green result reachable without the work being done.
+        """
+        af = probe_against(LGBM45Table).controls["alias_free"]
+        self.assertIsNotNone(af["name"], "the control did not run on the source shape")
+        self.assertNotIn("status", af)
+        self.assertEqual(af["n_alias_free_in_table"], 3)
+
+    def test_both_accessor_shapes_give_the_same_control_verdict(self):
+        """Which accessor answers is not knowable from here, so it must not change the verdict."""
+        a = probe_against(LGBM45Table)
+        b = probe_against(RawDumpTable)
+        self.assertEqual(a.controls["alias_free"], b.controls["alias_free"])
+        self.assertEqual(a.recognised_knobs, b.recognised_knobs)
+        self.assertIsNone(a.error)
+        self.assertIsNone(b.error)
+
+    def test_extra_aliases_subtracts_the_canonical_name_under_either_shape(self):
+        self.assertEqual(zr._extra_aliases("deterministic", ["deterministic"]), set())
+        self.assertEqual(zr._extra_aliases("deterministic", []), set())
+        self.assertEqual(zr._extra_aliases("num_threads", ["num_threads", "n_jobs"]), {"n_jobs"})
+        self.assertIsNone(zr._extra_aliases("num_threads", None))
+
     def test_the_alias_free_control_reports_UNAVAILABLE_rather_than_passing(self):
         """A table with no alias-free entry cannot run the control. Absence is not a pass."""
         class NoAliasFree:
             @staticmethod
             def _get_all_param_aliases():
-                return {k: [f"{k}_alias"] for k in
+                # Every parameter has a REAL alias beyond its own name, under either shape.
+                return {k: [k, f"{k}_alias"] for k in
                         list(zr.Z_REPRO_KNOBS) + [zr._POSITIVE_CONTROL]}
 
         p = probe_against(NoAliasFree)

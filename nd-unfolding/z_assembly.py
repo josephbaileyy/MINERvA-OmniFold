@@ -150,6 +150,18 @@ def gate_g_reconstruction(g_recorded, v_uni, v_blk, rtol=IDENTITY_RTOL):
 
     This is the gate the other four do not substitute for: an uninflated object (`g == 1`
     everywhere) passes closure, the floor, the zero rule and PSD, and fails only here.
+
+    ⚠ SCOPE, stated here because a round-3 note claimed reach this does not have. `v_uni` is an
+    ARGUMENT. This gate catches a `g` that disagrees with the operands it was handed; it cannot
+    catch a wrong `v_uni`, because it never sees another one to disagree with. In particular a
+    `v_uni^cv` that dropped the `+ mean_shift**2` term is self-consistent with the `g` derived
+    from it, and this gate passes -- at any shift size.
+
+    §1.3b's requirement is the stronger one: derive `v_uni^cv` from `diag(C_unified)`,
+    `diag(C_blocksum)` and `hJointMeanShift` per variant, *"because `g^mean` and `g^cv` differ
+    only through the `+ mean_shift²` term and a validator that reconstructs one and reuses it for
+    the other cannot detect a dropped shift"*. Supplying independently derived operands is the
+    caller's obligation; this function cannot tell whether they were.
     """
     g_recorded = np.asarray(g_recorded, float)
     g_rebuilt, _ = compute_g(v_uni, v_blk)
@@ -190,11 +202,19 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
 
     *The threshold is the tolerance, not the arithmetic.* The earlier text said "below the float64
     resolution of `v_uni`", which is a different and far narrower claim. Measured at `v_mean = 1`,
-    `ms = 1e-5`: `ms**2 = 1e-10` is **4.5e5 ulps**, entirely representable, and `(1 + 1e-10) - 1`
-    returns `1e-10` exactly. It is simply smaller than the `2e-9` allowance this gate is
-    configured with. The resolution regime needs `ms < 1.5e-8`; the tolerance regime -- the one
-    that actually binds -- needs `ms < 4.5e-5`, some three thousand times wider. Naming the rarer
-    mechanism understated how often the gate is blind.
+    `ms = 1e-5`: `ms**2 = 1e-10` is **4.5e5 ulps** and entirely representable. It is simply
+    smaller than the `2e-9` allowance this gate is configured with. The resolution regime needs
+    `ms < 1.5e-8`; the tolerance regime -- the one that actually binds -- needs `ms < 4.5e-5`,
+    some three thousand times wider. Naming the rarer mechanism understated how often the gate is
+    blind.
+
+    ⚠ ROUND 4: the illustration used for that was itself wrong. `(1 + 1e-10) - 1` does NOT return
+    `1e-10` exactly; it returns `1.000000082740371e-10`, a relative error of `8.3e-8`. The
+    subtraction is exact (Sterbenz); the loss is in rounding `1 + 1e-10` to a double, `0.037` ulps
+    of `1.0`. That `8.3e-8` is the very residual round-2 finding 4 measured -- the same
+    cancellation, which is why this function tests the identity forward. The point it was offered
+    for survives: `ms**2` is recovered to seven significant digits, so this is nowhere near a
+    representability limit.
 
     *And "rely on G3" was unsound.* Measured on that same input with the shift dropped: this gate
     passes non-discriminating and **G3 passes too**. G3 reconstructs `g` from the RECORDED `v_uni`,
@@ -203,10 +223,22 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
     shift size. G3 is the gate for a MIS-RECORDED `g`; it was never the gate for a mis-built
     `v_uni`, and pointing at it offered assurance that does not exist.
 
-    What remains when `discriminating=False` is therefore not another gate. It is §3.3 condition
-    14 -- both variants exist and are distinct -- which is a check on the OPERANDS and their
-    provenance, not on this identity. A caller reading `discriminating=False` should treat the
-    dropped shift as UNTESTED here.
+    ⚠ ROUND 4 AGAIN, AND THE REPLACEMENT POINTER WAS ALSO WRONG. The previous text sent the
+    reader to §3.3 condition 14, "which checks the operands". It does not. Condition 14 reads in
+    full: *"Only one centering variant was produced, or `--out` was defaulted for either."* That
+    is a check on whether both variants were PRODUCED and whether an output path was defaulted.
+    It never looks at the operands and it cannot detect a dropped shift. Twice now the honest
+    finding -- this gate is blind here -- has been softened by naming some other check that turns
+    out not to cover it, which is worse than the blindness, because a named fallback stops the
+    reader looking.
+
+    So: **when `discriminating=False` the dropped shift is UNTESTED by this check, and nothing in
+    this module covers it.** What the contract still requires is §1.3b's independent
+    reconstruction of `g^c` from the RAW THROW OPERANDS -- `diag(C_unified)`, `diag(C_blocksum)`
+    and `hJointMeanShift`, per variant separately -- which derives `v_uni^cv` instead of accepting
+    it, and is the only stated check that would disagree with a producer that dropped the shift.
+    `gate_g_reconstruction` below is NOT that check: it takes `v_uni` as an argument. Deriving
+    `v_uni` from the throw operands is the caller's obligation and is not discharged here.
     """
     a = np.asarray(v_uni_cv, float)
     b = np.asarray(v_uni_mean, float)
@@ -236,10 +268,12 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
             "n_bins_where_signal_exceeds_noise": int(np.sum(signal > noise)),
             "note": ("PASSED WITHOUT DISCRIMINATING: ms**2 is below the configured allowance "
                      "rtol*(|v_cv|+|v_mean|) in every bin, so a dropped shift would look "
-                     "identical here. This is a tolerance limit, not a representability one, and "
-                     "G3 does NOT cover the gap -- it reconstructs g from the recorded v_uni, so "
-                     "a v_uni built without the shift is self-consistent. Treat the dropped shift "
-                     "as UNTESTED and fall back on §3.3 condition 14, which checks the operands."
+                     "identical here. This is a tolerance limit, not a representability one. The "
+                     "dropped shift is UNTESTED by this check and NOTHING IN THIS MODULE covers "
+                     "it: G3 reconstructs g from the recorded v_uni, so a v_uni built without the "
+                     "shift is self-consistent, and §3.3 condition 14 checks only that both "
+                     "variants were produced and that --out was not defaulted. §1.3b's "
+                     "independent reconstruction from the raw throw operands remains required."
                      if not discriminating else "discriminating")}
 
 
