@@ -176,24 +176,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
-  - **rev. 4. PROPOSAL ONLY. Adopts nothing, grades nothing, declares no tolerance.** Maps the
-  publication's intended covariance consumer to candidate `(cause 3, Z)` criteria under `RZ`. The
-  consumer **inverts** the projected covariance (`chi2 = d @ pinv(C_y) @ d`), so it is dominated by
-  the SMALLEST retained eigenvalues, while `s_agg` (a trace), `s_med` (a diagonal median) and
-  `s_eig` (the LEADING eigenvalue) are structurally at the wrong end. **`s_proj` is NOT inherently
-  blind** — rev. 1 claimed it was and that claim is withdrawn; a `u` aligned with a small
-  eigenvector measures that mode, so sufficiency over the DECLARED functional set is left OPEN with
-  no method offered — rev. 2 proposed a check and rev. 3 withdrew it as dimensionally incoherent
-  (input-space rows against output-space eigenvectors). Three candidates with `D1`'s five fields and no numbers;
-  C-1 is defined on the significance itself because a relative `chi2` tolerance is not a tolerance
-  on `Nsigma`. Carries three things honestly that a reader could otherwise over-credit: the cited
-  significance module is a named instance of the MAP whose outputs are **GATED** (quarantine cause
-  6 -- ⚠ corrected in rev. 4: that module reads the historical 4D BLOCK-SUM covariance, not the
-  cause-6 product; GATED still holds on its own citation), spectral summaries cannot determine the
-  quadratic form (`diag(1,4)` vs `diag(4,1)`), and the
-  three projection-matrix implementations -- the cited module builds a THIRD inline -- are an
-  **unresolved premise** with none designated as adopted. `CITABLE FOR` / `NOT CITABLE FOR`
-  and the six withdrawn rev. 1 claims are at the top.
+  - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
+  publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
+  **C-1** direct sensitivity of the quoted significance, **C-2** a conditioning diagnostic, **C-3**
+  projected-bin sensitivity via the existing `s_proj`. **Projection and inversion policy are
+  unresolved** — the projection map has three implementations with none designated, and the
+  `pinv` cutoff, tail and `ndf` conventions are undeclared. Read its `CITABLE FOR` / `NOT CITABLE
+  FOR` header before quoting any part of it.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
   - **rev. 21. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by

@@ -35,7 +35,7 @@ module that rev. 1–3 got wrong or left vague. None changes a candidate; all ch
 |---|---|---|
 | 11 | the cited module's covariance is quarantine cause 6 | **wrong product.** `:54` defaults to `uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root`, hist `hCov_combined4d_total` — the historical **4D block-sum**, not the `(E_avail,W)` cause-6 covariance. The GATED status stands on its own citation; the cause-6 attribution was mine and is withdrawn (§1b) |
 | 12 | there are TWO projection-matrix builders | **at least THREE.** The cited module builds its own `M` **inline** at `:85-88`. §6 is restated over three (§1b, §6) |
-| 13 | the significance follows through `norm.isf` | **`norm.isf(p / 2.0)`** at `:113` — a two-sided `p` converted to a one-sided equivalent. The tail convention is part of the quantity and must be declared, not inherited (§1b, §3 C-1) |
+| 13 | the significance follows through `norm.isf` | **`z = norm.isf(p / 2.0)`** at `:113`, the Gaussian two-sided-tail-equivalent magnitude. (⚠ Rev. 4 called this "a two-sided `p` converted to one-sided"; `chi2.sf` is an UPPER-TAIL `p`, so that description was wrong — the formula is authoritative.) The convention is part of the quantity and must be declared, not inherited (§1b, §3 C-1) |
 | 14 | *(unstated)* | **`ndf` is the BIN COUNT**, `chi2_to_sigma(chi2, n_ea)` at `:132`, while `pinv` discards modes — so `ndf` is not the retained rank. Any adopted criterion must state its `ndf` policy explicitly (§1b, §4c) |
 | 15 | on disagreement "the consumer's builder wins by definition" | **unsupported**, and especially for a GATED consumer. Differing maps require reconciliation of axes, support and units plus validation — not automatic precedence (§6) |
 
@@ -111,8 +111,10 @@ chi2 = float(d @ Cinv @ d)            # d = data - generator
 ```
 
 with the significance following at `:111-113` as `p = stats.chi2.sf(chi2, ndf)` then
-`z = stats.norm.isf(p / 2.0)` — ⚠ **`p / 2.0`, a two-sided `p` converted to a one-sided Gaussian
-equivalent.** Rev. 3 wrote `norm.isf` without the halving. And `ndf` is the **bin count**
+`z = stats.norm.isf(p / 2.0)` — **the Gaussian two-sided-tail-equivalent magnitude.** ⚠ Rev. 3 wrote
+`norm.isf` without the halving, and rev. 4 then mis-described the halving as converting a two-sided
+`p` to a one-sided one: `chi2.sf` is an **upper-tail** `p`. **The formula is authoritative**; quote
+it rather than a characterisation of it. And `ndf` is the **bin count**
 (`chi2_to_sigma(chi2, n_ea)`, `:132`), **not the retained rank**, while `pinv` discards modes below
 its cutoff. **Both the tail convention and the `ndf` policy are part of the quantity and must be
 declared by any criterion built on it, never inherited silently.**
@@ -210,7 +212,7 @@ tolerances.**
 - **Cost.** Zero incremental production: arithmetic over members `D3` would produce and a projection
   the note already builds.
 - **Limit.** It is a criterion on a **reported procedure**, so it inherits every modelling choice in
-  that procedure — the `pinv` cutoff, the **tail convention** (`p / 2.0`), the **`ndf` policy** (bin
+  that procedure — the `pinv` cutoff, the **`z = norm.isf(p / 2.0)` convention**, the **`ndf` policy** (bin
   count, not retained rank), the `DIS ≥ 0.8` sub-block, and the generator set. Those become part of
   the declared criterion rather than free parameters, and it must be re-derived if any changes.
 
