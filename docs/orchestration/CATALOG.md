@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 18. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 19. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -434,7 +434,21 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   it marked pending; **Joseph approved those findings on 2026-09-07 and rev. 18 discharges the mark.**
   **The distinction rev. 17 drew is kept, because approval is where it gets lost: the FINDINGS are
   approved, and `D1`, `D2` and `D4` are NOT adopted — the approved finding about them is that they are
-  not ready as written, with `D3` conditional. No cell opens and no count moves.** **`min(achievable, acceptable)` is WITHDRAWN as acceptance-blocking:** an observed
+  not ready as written, with `D3` conditional. No cell opens and no count moves.**
+  **A FOLLOW-UP CHECK (rev. 19) confirmed that separation and found three of rev. 17's own explanations
+  still wrong — none a new decision, all this lane's errors, corrected unconditionally.** `B > S` does
+  **not** mean every correct run fails: **`B` is an UPPER bound on the error**, so a loose `B` above `S`
+  establishes that **`B ≤ S` is not demonstrated** — a statement about the evidence — and **not** that
+  the envelope is inadequate, which is a statement about the world. *"Never taken as an endpoint"* is
+  withdrawn: **either endpoint is admissible when justified**, and what is forbidden is choosing
+  mechanically. *"Tier 2 validator runtime, not `R5`"* is a **category error** — Tier 2 is permission to
+  write code, `r5_meter` meters **scheduler tasks by `ElapsedRaw`**, and arithmetic folded into an
+  in-scope task adds no row while lengthening the metered quantity; §3.7d now carries a four-venue
+  table. And the control's *"no recorded actual"* was a **false absence citing the wrong launcher**: the
+  unmeasured combine is `budget5d`, while the control invokes **`uthrow5d_combF`**, measured three times
+  at §5.9 row 13 (`0.3875`/`0.4239`/`0.5764` CPU task-h) — the control stays unpriced, but on `n` and
+  the thread-count arm rather than on an absence. **`B ≤ S`, the three gaps, the price withdrawal and
+  every disposition stand as written.** **`min(achievable, acceptable)` is WITHDRAWN as acceptance-blocking:** an observed
   reproducibility floor is not an acceptance tolerance, and §3.6a — two sections earlier in the same
   document — says such a floor bounds `ε` from **below**, so `min` inverted its direction. Replaced by
   **`B` (operating-error bound, with assumptions and confidence), `S` (independently justified

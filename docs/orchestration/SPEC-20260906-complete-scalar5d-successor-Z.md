@@ -1,8 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 18 — round 2's findings are APPROVED, 2026-09-07. Rev. 17's provenance caveat is discharged at
-# the two sites that carried it, and the distinction it protected is kept: the FINDINGS are approved;
-# `D1`–`D4` are still NOT ADOPTED, which is what those findings say.**
+# **rev. 19 — three corrections to rev. 17's own explanations, none a new decision. `B > S` means
+# adequacy is NOT DEMONSTRATED, not that runs fail; *"validator"* is not an `R5` exemption, so the venue
+# is now named; and the control's *"no recorded actual"* cited the WRONG combine — three exist.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -29,6 +29,23 @@ ungraded here**, and this document opens none.
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
 
+## 0.0q What changed in rev. 19
+
+Rev. 18 was `c706fe03`. **A follow-up check of the rev.-17 correction pass confirmed the
+approval/adoption separation and found three of rev. 17's own explanations still wrong. None is a new
+decision for Joseph; all three are this lane's errors, corrected unconditionally.** The `B ≤ S`
+framework, the control's three gaps, the price withdrawal and every disposition stand as written.
+
+| # | rev. 17 said | rev. 19 does |
+|---|---|---|
+| 1 | `B > S` means *"**every** correct run fails, because the computation cannot achieve `S`"*; and `ε` is *"argued, **never taken as an endpoint**"* | **⚠ BOTH OVERSTATED, BOTH WITHDRAWN.** **`B` is an UPPER bound on the error, not an error every run attains** — a loose `B` above `S` means **`B ≤ S` is not demonstrated**, which is a statement about the **evidence**, while *"the envelope is inadequate"* is a statement about **the world**. Rev. 17 collapsed the two one sentence after drawing them. And the review **prohibited neither endpoint**: `ε = S` or `ε = B` is admissible **when justified**. **What is forbidden is choosing mechanically** — which is what `min` did, returning the tight end when the interval is non-empty and a value **outside** it when it is empty |
+| 2 | §3.7d's legs are *"Tier 2 validator runtime, **not `R5`**"* | **⚠ A CATEGORY ERROR, CORRECTED.** Tier 2 is permission to **write** code; it says nothing about where code **executes** or who is charged. **`r5_meter._calculate_spend` (`:277`) sums `ElapsedRaw` over distinct `sacct` task identities — the metered object is a scheduler task, and nothing about the word *"validator"* exempts one.** §3.7d now carries a **four-venue table**, and names the case rev. 17 missed entirely: **arithmetic folded into an existing in-scope task adds no row but lengthens its `ElapsedRaw`, which IS the metered quantity** — charged in full, invisibly, and to be counted once |
+| 3 | the control is unpriced partly because *"the combine's own arm has no recorded actual either"* | **⚠ A FALSE ABSENCE, AND IT CITED THE WRONG COMBINE.** The unmeasured one is `sbatch_combine_5d_budget.sh` / **`budget5d`**, the statistical+ML combine. The control invokes **`uthrow5d_combF`**, for which **§5.9 row 13 already reports three CPU elapsed measurements — `1,395` / `1,526` / `2,075` s = `0.3875` / `0.4239` / `0.5764` CPU task-h on `shared_milan_ss11`.** §5.9 row 13's own text exists to warn that the two are different launchers, **and rev. 17 conflated them anyway.** The control stays **UNPRICED** — those measurements do not establish a new control's cost — **but the reason is now `n` and the arms, not a non-existent absence** |
+| 4 | *"every §7 item, including 20–24"* remains open (§0.0p) | **too broad — §7 marks several items answered, resolved or narrowed.** Corrected to **"all outstanding §7 requirements remain outstanding"** |
+
+**Nothing is adopted and nothing moved.** The round-1 and round-2 findings stay approved, `D1`/`D2`/`D4`
+stay unadopted, `D3` stays conditional, and no count, gate, cell or pin changes.
+
 ## 0.0p What changed in rev. 18
 
 Rev. 17 was `4657e55a`. **One change, and it is a change of standing rather than of content.**
@@ -48,7 +65,7 @@ no cell**:
 |---|---|
 | **APPROVED, 2026-09-07** | the round-2 findings: `min(achievable, acceptable)` is acceptance-blocking; the control has three gaps and its price was wrong; the correlation legs are not free; and the five nonblocking corrections |
 | **STILL NOT ADOPTED** | **`D1`, `D2`, `D4`** — the approved finding is that they are **not ready as written**. **`D3`** remains *supportable conditionally*, with its four prerequisites unmet |
-| **STILL OPEN** | every §7 item, including 20–24; `B`, `S` and the `B ≤ S` precondition; the use-based justification; the correlation disposition; the per-bin tolerance and scope |
+| **STILL OPEN** | **all outstanding §7 requirements remain outstanding**, including 20–24 (⚠ rev. 19 narrows rev. 18's *"every §7 item"*, which was too broad — §7 marks several items answered, resolved or narrowed in place); `B`, `S` and the `B ≤ S` precondition; the use-based justification; the correlation disposition; the per-bin tolerance and scope |
 
 **Counts, gates, cells and the pin are untouched. `BEN-381` still bars this lane from grading what it
 drafted, and an approved finding that something is unready is not a grade.**
@@ -76,7 +93,7 @@ opens, and no count moves — §0.0p.
 | 2 | the control: `8` invocations, two arms, `≈11.6` GPU task-h, *"the only route"* | **all four claims corrected.** *"Only route"* **withdrawn** — the review did not establish it, this lane asserted it; three routes are now named, and **pinning LightGBM's `num_threads`/`deterministic`/`force_row_wise` is Tier-2 code that could make `B` a design property rather than a measurement**. **Gap 1:** a within-envelope null does **not** measure a between-envelope shift — both arms can reproduce perfectly while their CVs differ; a cross-arm `r_cross` is required if portability is the claim, and rev. 16's own persistence requirement is what makes it available. **Gap 2:** `4` repeats had no justification; a coverage/confidence objective, the sampling assumptions and a **predeclared** estimator are required, and **two arms do not prevent tuning**. **And the subject engages §6.4** — a control on Z's own bank reads the bound off Z's nulls |
 | 3 | the control costs `≈11.6` **GPU** task-h for *"`2` CV unfolds"* per invocation | **⚠ BOTH OPERANDS WRONG, AND THIS DOCUMENT HAD ALREADY RECORDED THE CORRECTION.** An invocation is a whole `do_combine` — bank load, slab load, three `10,694²` assemblies — not two unfolds; and the combine is a **CPU** job (`sbatch_uthrow_combine_5d_fast.sh:4`, `--constraint=cpu --cpus-per-task=16 --mem=90G --time=03:00:00`). §0.0's rev.-2 correction row 10 already says *"`--null` runs in the **CPU** combine step; the `43.5`-min basis is a **GPU** arm-3 per-task time."* **Rev. 16 priced a new row off exactly that basis.** Cost is now **UNPRICED**, with a `3n` CPU task-h reservation bound |
 | 4 | the persistence costs `1.05` MB *"against a `≈41` GB product"* | **⚠ WRONG BY `15×`, and the right number was in this document's own digest table.** The **throw product** holds **three** `10,694²` `TH2D`s = `2.74` GB derived, against `2.668` GB **measured** at §5.9's `uthrow` row. `41` GB is the **45-component** band family (`13 V + 5 A + 27 R` × `0.915` GB = `41.17` GB) and G's `combined_source` (`41.44` GB measured) — **a different object, conflated.** The fraction moves `2.6e-5 → 3.9e-4`; **the conclusion is unchanged and the operand was still wrong** |
-| 5 | §3.7d's correlation legs cost *"zero production"* and *"the cost is validator code"* | **corrected: no additional MEMBERS is not FREE.** Priced per member — `s_proj` and `s_corr` **seconds** with **zero incremental I/O** (the diagonal legs already materialize the matrix via `np.frombuffer`), `s_eig` **`≈1`–`3` min** and `≈1.8` GB, measured by timing `eigvalsh` at four sizes here and scaling by `n³`. At `N = 5`, `s_eig` alone is `5`–`15` min. **Tier 2 runtime, not `R5`** |
+| 5 | §3.7d's correlation legs cost *"zero production"* and *"the cost is validator code"* | **corrected: no additional MEMBERS is not FREE.** Priced per member — `s_proj` and `s_corr` **seconds** with **zero incremental I/O** (the diagonal legs already materialize the matrix via `np.frombuffer`), `s_eig` **`≈1`–`3` min** and `≈1.8` GB, measured by timing `eigvalsh` at four sizes here and scaling by `n³`. At `N = 5`, `s_eig` alone is `5`–`15` min. **Tier 2 runtime, not `R5`** — **⚠ SUPERSEDED IN REV. 19: that exemption is a category error; the venue decides, and arithmetic folded into an in-scope scheduler task IS metered (§0.0q row 2)** |
 | 6 | *"erring in both directions at `12.5%` each"*, unqualified in every summary | **the sampling model now travels with the number.** `12.5%` is exact **for a value uniform in its decade and a change uniform on `[0, one display unit)`** — a synthetic model, not a statement about rounding comparisons generally. The full statement in §3.7b item 4A always carried it; the summaries did not |
 | 7 | §3.7 *"This section completes them"*; receipts say the graded quantities *"did not move"* | **both corrected.** §3.7 completes neither criterion — it supplies no acceptance number. And **with a positive tolerance the claim is *"did not exceed their declared movement limits"***, never *"did not move"*; four sites fixed |
 | 8 | `D2` framed as waiting on *"two numbers"* from Joseph | **corrected.** `D1` and `D2` need **justified tolerances and scope**, which is scientific work — not a number Joseph supplies |
@@ -1659,33 +1676,69 @@ feasibility constraint; it cannot justify `ε`."*
 of a constraint written two sections earlier in its own document**, and did it while quoting the
 paragraph that says so.
 
-**Both branches of the minimum fail, and each fails in a shape this repository has catalogued:**
-
-| case | what `min` would set | what actually happens |
-|---|---|---|
-| `B < S` — the envelope is comfortably inside the science's tolerance | `ε = B`, the **feasibility floor** | the gate sits at the floor, so **correct runs fail** at whatever rate `B`'s coverage leaves. A guard that fires on correct runs |
-| `B > S` — the envelope is **not good enough** | `ε = S` | **every** correct run fails, because the computation cannot achieve `S`. And the real finding — *the envelope is inadequate* — is silently converted into a threshold nobody can meet |
-
 **THE DEFENSIBLE STRUCTURE, and it is the review's:**
 
-    B  =  an OPERATING-ERROR BOUND on this algorithm in this execution envelope,
-          with its assumptions and its confidence stated.
+    B  =  an OPERATING-ERROR BOUND on this algorithm in this execution envelope --
+          an UPPER bound on the error, with its assumptions and its confidence stated.
     S  =  an INDEPENDENTLY JUSTIFIED SCIENTIFIC CAP on how much CV movement is tolerable.
 
-    REQUIRE   B <= S.
-    Then      epsilon is JUSTIFIED WITHIN [B, S]  --  argued, never taken as an endpoint.
+    REQUIRE   B <= S.                    (equivalently: the admissible interval is non-empty)
+    Then      epsilon is JUSTIFIED WITHIN [B, S].
+
+**Why the interval is `[B, S]` and not something else.** `ε < B` would put the gate below a bound the
+computation is only claimed to respect *up to* `B`, so correct runs could fail; `ε > S` would admit
+movement the science has said it cannot tolerate. **`B` is therefore a lower bound on an admissible `ε`
+and `S` is an upper one** — which is exactly the direction §3.6a stated and `min` reversed.
+
+##### ⚠ REV. 19 CORRECTS TWO EXPLANATIONS REV. 17 ATTACHED TO THIS FRAMEWORK
+
+**The framework is unchanged. Two things rev. 17 said *about* it were wrong, and both overstated.**
+
+**(1) `B > S` does NOT mean *"every correct run fails."*** Rev. 17's table said so; **withdrawn.**
+**`B` is an UPPER bound on the error, not an error every run attains.** A bound that exceeds `S` may be
+loose — the realized errors can all sit far below `S` while the bound sits above it. So:
+
+| what `B > S` establishes | what it does NOT establish |
+|---|---|
+| **`B ≤ S` is not demonstrated** — the admissible interval is empty **on the evidence available**, so no `ε` can be justified from it | **that the envelope is inadequate.** That would need a *lower* bound on the error, or observations exceeding `S`. Neither is implied by a loose upper bound |
+| that the responses are to **tighten `B`** (more data, a better model, or pinning the envelope), **revisit `S`**, or **change the envelope** | that runs would fail. **The realized error is unmeasured in this branch** |
+
+**The distinction is the whole point of the framework, and rev. 17 collapsed it one sentence after
+drawing it.** *"Adequacy is not demonstrated"* is a statement about **evidence**; *"the envelope is
+inadequate"* is a statement about **the world**. **A loose bound produces the first and says nothing
+about the second** — and it is this lane's catalogued inference-from-absence shape, in the branch where
+absence of a demonstration was read as presence of a defect.
+
+**(2) *"never taken as an endpoint"* is WITHDRAWN — the review prohibited no such thing.** Rev. 17 wrote
+that `ε` is *"argued, never taken as an endpoint"* and that *"a number read off either endpoint is not
+that judgement."* **Overreach, and this lane's own addition.** Either endpoint may be chosen **when
+justified**:
+
+- **`ε = S`** is the loosest scientifically acceptable value. With `B ≤ S` it leaves the **most** margin
+  against the computation, and it is the natural choice when `S` is the binding scientific statement and
+  no further tightening is warranted.
+- **`ε = B`** is admissible too — for instance where the claim being supported is about **reproducibility
+  itself** rather than about scientific tolerance. It leaves no margin for `B`'s assumptions to be
+  slightly wrong, which is an argument to weigh, **not a prohibition**.
+
+**What IS forbidden is choosing mechanically.** `min(B, S)` is the mechanical choice, and it fails
+differently in each branch: with `B < S` it returns `B` — inside the interval, but selected **by formula
+rather than by argument** and with zero margin; with `B > S` it returns `S`, which is **outside the
+empty admissible interval**, and it silently converts *"adequacy is not demonstrated"* into a threshold.
+**The objection was never to the endpoints. It was to arriving at one without an argument.**
 
 **Three things follow, and each is a change in what the failure of this criterion would MEAN:**
 
-1. **`B ≤ S` is a precondition, not an arithmetic step.** If it fails, **the proposed execution envelope
-   is not demonstrated adequate** — that is a finding about the envelope, and the responses to it are to
-   change the envelope, revisit `S`, or stop. **It is not a tolerance to adopt.**
+1. **`B ≤ S` is a precondition, not an arithmetic step.** If it fails, **`B ≤ S` has not been
+   demonstrated for the proposed execution envelope** — a finding about the state of the evidence, whose
+   responses are to tighten `B`, revisit `S`, or change the envelope. **It is not a tolerance to adopt,
+   and it is not a verdict that the envelope is bad.**
 2. **`B` and `S` are established by different work and neither substitutes for the other.** `B` is
    measured or designed (below); `S` is argued from what the covariance is used for — the same argument
    `D1`'s thresholds now wait on, which is why §3.7a and §3.7b are not independent questions.
-3. **`ε` is argued inside the interval.** Where in `[B, S]` it sits is a judgement about how much margin
-   to leave against an envelope that will requeue, run at different thread counts and outlive this
-   specification. **A number read off either endpoint is not that judgement.**
+3. **`ε` is argued inside the interval, endpoints included.** Where in `[B, S]` it sits is a judgement
+   about how much margin to leave against an envelope that will requeue, run at different thread counts
+   and outlive this specification. **The requirement is the argument, not the position.**
 
 **JOSEPH'S QUESTION, RECORDED VERBATIM AS THE THING THAT MUST BE ANSWERED:** *"What reproducibility
 tolerance is justified for this exact algorithm and execution envelope, subject to an independently
@@ -1746,14 +1799,41 @@ reviewer had not named. **Rev. 16 then priced a new row off exactly that basis.*
 cause-4 second CV unfold **unpriced** for this same reason, and §7 items 5 and 13 name the missing
 measurement. The correction was made, recorded, and not carried.
 
-**SO THE COST IS UNPRICED, and that is the honest entry:**
+**SO THE COST IS UNPRICED — AND ⚠ REV. 19 CORRECTS THE REASON REV. 17 GAVE, WHICH WAS A FALSE ABSENCE
+ABOUT THE WRONG LAUNCHER.**
 
-- **spend — UNRESOLVED.** No CV-unfold time on the **CPU** partition exists in this tree (§7 item 13),
-  and the combine's own arm has no recorded actual either (§5.2's combine row: `grep` over `RUNS.tsv`
-  returns **0** rows against a positive control). **Two unmeasured terms, not one.**
+**Rev. 17 wrote that *"the combine's own arm has no recorded actual either"*, citing §5.2's combine row.
+That row is about `sbatch_combine_5d_budget.sh` / `budget5d` — the **statistical + ML** combine. The
+control invokes `uthrow5d_combF` — `sbatch_uthrow_combine_5d_fast.sh`, which is
+`unified_throw_cov_5d --combine`, i.e. **arm 7**. They are different launchers, and §5.9 row 13 exists
+in this document specifically to say so:** *"the IDENTITY is the load-bearing part… It is **NOT**
+`sbatch_combine_5d_budget.sh` / `budget5d`."* **Rev. 17 conflated them one revision after that warning
+was cited elsewhere in the same section.**
+
+**WHAT IS ACTUALLY MEASURED for the operation the control would invoke — three observations, RELAYED at
+§5.9 row 13, `shared_milan_ss11`, CPU:**
+
+| elapsed | CPU task-h |
+|---:|---:|
+| `1,395` s | `0.3875` |
+| `1,526` s | `0.4239` |
+| `2,075` s | `0.5764` |
+
+**These do not price the control, and they are not offered as doing so** — they are historical runs of a
+different bank's combine at a different slab count, and §5.8's cause-4 row already uses the largest of
+them as a **measured upper bound on one invocation** (`≤ 0.5764`). **What they do is refute *"no recorded
+actual"*, which is the sentence being corrected.**
+
+- **per-invocation spend — MEASURED, three times, `0.39`–`0.58` CPU task-h** on the historical subject
+  (**TRANSFERRED** to Z, which has neither this bank nor this slab count).
+- **total spend — UNRESOLVED, and for two reasons that are not absences.** `n` is undetermined until the
+  sampling design of Gap 2 exists; and **the thread-count arm deliberately varies the very quantity that
+  sets elapsed**, so a figure measured at one thread count does not carry to the other arm. **An
+  unpriced total with measured components is a different state from an unmeasured operation, and rev. 17
+  reported the second.**
 - **reservation bound — `3` h per invocation** at the launcher's own `--time=03:00:00`, `--ntasks=1`, so
-  `n` invocations reserve `3n` CPU task-h. **A request bounds an attempt, not a completion** (§5.2's
-  standing rule), and `n` is undetermined until Gap 2 is answered.
+  `n` invocations reserve `3n` CPU task-h (§5.9 row 13's historical requests were `3`–`4` h). **A request
+  bounds an attempt, not a completion** (§5.2's standing rule).
 - **a GPU control is admissible but is not this one.** The review says so explicitly: *"A separately
   proposed GPU control is possible, but its execution path, envelope and complete cost must be stated."*
   **This document states none of the three for a GPU path, so it does not propose one.**
@@ -2297,11 +2377,42 @@ eigenvalue is a byproduct. **If** it checks PSD by Cholesky — cheaper, and a r
 choice — it is not. **That row is `unpriced` in §5.2, so this is a conditional and not a saving**, and
 §5.8f's rule applies: an opportunity is recorded as an opportunity.
 
-**Where these costs live: Tier 2 validator runtime, not `R5`.** §5.8's local timings already put the
-validation arithmetic at minutes on a laptop-class machine at the real dimension, and these rows are of
-that kind. **They are execution costs and they are named; they are not a production authorization
-question.** The `N`-fold multiplication matters though — at `N = 5`, `s_eig` alone is `5`–`15` minutes,
-and it is the one candidate whose cost is not negligible.
+##### ⚠ WHERE THESE COSTS ARE CHARGED — REV. 19 CORRECTS A CATEGORICAL EXEMPTION REV. 17 ASSERTED
+
+**Rev. 17 wrote *"Tier 2 validator runtime, not `R5`."* That is wrong, and the error is a category
+one: it reads a **permission** as an **accounting venue**.** Tier 2 is permission to *write* code. It
+says nothing about where that code *executes* or who is charged for it, and **nothing about the word
+"validator" exempts anything from `R5`.**
+
+**Measured, at this base.** `r5_meter._calculate_spend` (`r5_meter.py:277`) sums **`ElapsedRaw` over
+distinct task identities** returned by `sacct` for the account in the accounting window. **The metered
+object is a scheduler task, identified by nothing but its existence** — not by what it computes, not by
+whether it is called a validator, and not by whether it is "development". So:
+
+| venue | metered by `R5`? | what it costs |
+|---|---|---|
+| **off the scheduler** — the laptop-class machine §5.8's local timings were taken on | **NO.** It never appears in `sacct` | wall clock only. **But it is available only where the inputs are, and Z's covariances are cluster-resident** — so this venue is real for fixtures and unit tests, and largely unavailable for the `10,694²` legs |
+| **a shared login node** | **NO** — not a Slurm task | not metered, **and whether a minutes-long `10,694²` eigensolve belongs on a shared login node is a separate policy question this record does not settle.** It is named so it is not treated as a free venue by default |
+| **inside an existing in-scope scheduler task** — e.g. folded into the member's own validation step | **YES, and this is the case rev. 17 missed entirely.** No new task row appears, **but the arithmetic lengthens that task's `ElapsedRaw`, and `ElapsedRaw` is precisely the metered quantity** | charged in full, invisibly. **It must be counted once — inside the host task's figure — and not also as a separate row** |
+| **its own scheduler task** | **YES**, in full | charged as its own row |
+
+**So the cost placement has to name the venue, and this document cannot name it yet**, because Z's
+validator does not exist and its execution plan is part of the implementation `D1`–`D4` gate. **What can
+be stated is the arithmetic and the double-counting rule:**
+
+- the per-member figures above — `s_proj`/`s_corr` **seconds**, `s_eig` **`≈1`–`3` min** and `≈1.8` GB —
+  are **wall-clock costs of the arithmetic**, venue-independent;
+- **at `N = 5`, `s_eig` alone is `5`–`15` minutes**, and it is the one candidate whose cost is not
+  negligible;
+- **if that runs inside a metered task it is `R5` spend**, and it belongs in §5.8b's production block
+  rather than in a conditional row;
+- **if it runs off the scheduler it is not `R5` spend**, and the record must say so **because it named
+  the venue**, never because it named the work "validation".
+
+**§5.8's *"minutes on a laptop-class machine"* is still true and is still not an exemption.** It states
+a **wall clock at a named venue**. Rev. 17 read it as a statement about `R5`, which it never was — and
+that is the same substitution this document keeps catching: a measurement of one thing quoted as a
+conclusion about another.
 
 **And what this section does not do:** it does not reopen §6.3's ruled quantity — the subject is still
 the assembled covariance `C_Z`. It adds a **second way of reading** that same object, which is what makes
@@ -2905,7 +3016,7 @@ is unpriced, and §5.3's *"this lane has not sized it"* stands for the sum.
 | **the joint-baseline campaign** (§3.7b) | Joseph approves the packet **and** authorizes a design at `N` | `3`–`4` additional members at `54.90`/`86.53` each → **`164.7`–`219.6` GPU / `259.6`–`346.1` CPU** | **DERIVED** on **TRANSFERRED** per-member costs |
 | a **2-D grid** instead of the implemented diagonal | Joseph rules `"jointly"` means a grid | **code, not compute** — a second environment variable and a launcher change | **MEASURED** (one shared `MNV_EST_SEED_OFFSET`, §3.7b) |
 | **`PM-6`** — `‖x_cv‖` for G. **⚠ REV. 16: NO LONGER A `D4` PREREQUISITE** — `11b` is restated over vectors **Z's own writer persists**, so Z's denominator never leaves Z's product | it would now answer a narrower question — **G's** null ratio under §3.7a's normalizer, which G's product cannot supply either | **≈ 0 task-h** — a bounded read of `hXSecND_flat` | **MEASURED** that the key exists (`adopt_unified_5d.py:116-120`) |
-| a standalone **null-determinism control run**. **⚠ REV. 17 REVISES IT AGAIN AND UNPRICES IT.** Rev. 16 called it *"the only route"* to a defensible bound; **withdrawn** — §3.7a names three routes and the cheapest is **code, not compute** (pin `num_threads`/`deterministic`/`force_row_wise`) | §6.4 requires the bound fixed **before** production, so arm 7's own `--null` is too late — **and if the control runs on Z's own bank, §6.4 is engaged and needs a ruling.** Three gaps must be answered first: a within-envelope null does **not** measure a between-envelope shift; the repeat count needs a coverage/confidence objective and its sampling assumptions; and the estimator of `B` must be **predeclared**, because two arms do not prevent tuning | **UNPRICED. ⚠ REV. 16'S `≈11.6` GPU TASK-H IS WITHDRAWN — wrong operation, wrong partition.** An invocation is a whole `do_combine` (bank load, slab load, three `10,694²` assemblies), not *"`2` CV unfolds"*; and the combine is **CPU** — `sbatch_uthrow_combine_5d_fast.sh:4`, `--qos=shared --constraint=cpu --cpus-per-task=16 --mem=90G --time=03:00:00`. **Reservation bound `3n` CPU task-h**; spend **UNRESOLVED**, the same missing measurement §5.2 leaves the cause-4 second unfold unpriced for | **§0.0's rev.-2 correction row 10 already recorded that `--null` runs in the CPU combine step and the `43.5`-min basis is a GPU arm-3 time. Rev. 16 priced a new row off it anyway** |
+| a standalone **null-determinism control run**. **⚠ REV. 17 REVISES IT AGAIN AND UNPRICES IT.** Rev. 16 called it *"the only route"* to a defensible bound; **withdrawn** — §3.7a names three routes and the cheapest is **code, not compute** (pin `num_threads`/`deterministic`/`force_row_wise`) | §6.4 requires the bound fixed **before** production, so arm 7's own `--null` is too late — **and if the control runs on Z's own bank, §6.4 is engaged and needs a ruling.** Three gaps must be answered first: a within-envelope null does **not** measure a between-envelope shift; the repeat count needs a coverage/confidence objective and its sampling assumptions; and the estimator of `B` must be **predeclared**, because two arms do not prevent tuning | **UNPRICED. ⚠ REV. 16'S `≈11.6` GPU TASK-H IS WITHDRAWN — wrong operation, wrong partition.** An invocation is a whole `do_combine` (bank load, slab load, three `10,694²` assemblies), not *"`2` CV unfolds"*; and the combine is **CPU** — `sbatch_uthrow_combine_5d_fast.sh:4`, `--qos=shared --constraint=cpu --cpus-per-task=16 --mem=90G --time=03:00:00`. **Reservation bound `3n` CPU task-h**. **⚠ REV. 19: per-invocation spend is MEASURED, not absent** — `uthrow5d_combF` at `0.3875`/`0.4239`/`0.5764` CPU task-h (§5.9 row 13), which is the same evidence §5.8a already uses for the cause-4 second unfold's `≤ 0.5764` upper bound. Rev. 17's *"no recorded actual"* cited the **`budget5d`** combine, a different launcher. **The TOTAL stays unresolved: `n` is undetermined and the thread-count arm varies what sets elapsed** | **§0.0's rev.-2 correction row 10 already recorded that `--null` runs in the CPU combine step and the `43.5`-min basis is a GPU arm-3 time. Rev. 16 priced a new row off it anyway** |
 | **endpoint rebuild** | **only if** `PM-3`'s availability/provenance/compatibility check **fails** | unpriced, deliberately | historical SKIPs establish neither present availability nor mandatory retraining |
 | cause-1's **disclosure** and cause-5's **path re-trace** | closure conditions | **0 task-h** — a publication act and a static read | §6.2, §6.1 |
 | the **five inflation gates**, the **cause-3 dominant-block refusal**, and the **`r_null` reconstruction** | required for `C`/`T` | **code, not compute** | §1.3b, §4 rows 10–11, §3.7a |
@@ -3523,7 +3634,7 @@ hides them is not. Accepting §§1–5 accepts those nineteen as the declared st
 | | |
 |---|---|
 | **what it permits** | writing code and fixtures. **No compute, no scheduler, no artifact** |
-| **what it costs** | **zero task-hours.** §5.8's local timings put the validation arithmetic at minutes on a laptop-class machine at the real `10,694` dimension |
+| **what it costs** | **zero task-hours AT THE VENUE THAT FIGURE WAS TAKEN AT** — §5.8's local timings put the validation arithmetic at minutes on a **laptop-class machine** at the real `10,694` dimension, and an off-scheduler run never enters `sacct`. **⚠ Rev. 19: that is a statement about a venue, not an exemption.** The same code run as, or inside, an in-scope scheduler task is metered on `ElapsedRaw` like any other (§3.7d) |
 | **prerequisites** | Tier 1, plus — **for the two parts that depend on them** — the open items on `D1`–`D4` |
 | **status** | **READY for most of the work today; two parts wait, and rev. 16 changed WHAT they wait on** |
 
@@ -3655,7 +3766,7 @@ each is not another number but a stated scientific question.**
 | **WHY the statistics stand** | each is the relative change in a quantity that is itself reported, so no model connects it to a printed number; §3.6d's ordering rule is satisfied by construction. **Why the direct form stands, and now more firmly:** quadrature needs **independence**, and — correcting rev. 4–15 — **budget adoption alone would not establish it**, so the direct form is not merely the currently-permitted choice but the one whose alternative carries an undischarged burden |
 | **WHY the thresholds fall** | **(1)** choosing 3 or 4 significant figures does not establish how much estimator-baseline sensitivity is scientifically acceptable, and the macros the format came from are **defined and never printed**; **(2)** the rule behind them is **factually wrong** — half a display unit neither guarantees nor is required for an unchanged printed value, and it errs in **both** directions, at **`12.5%`** each **under the synthetic sampling model stated in §3.7b item 4A** (value uniform in its decade, change uniform on `[0, u)`); **the bidirectional failure is general, the rate is the model's**; **(3)** neither statistic can see correlations (§3.7d) |
 | **CLAIM SUPPORTED** | with the statistics alone and no boundary: **none yet** — a statistic without a justified boundary measures but does not accept. Once a boundary exists: *"no declared estimator-baseline offset moves `√Tr C_Z` or the printed per-bin median by more than the declared tolerance."* **Never a statement about `C_Z`'s correlation structure** unless §3.7d's leg is added |
-| **COST** | **zero production, in both directions.** Withdrawing the thresholds costs nothing; supplying a justified one costs nothing; §3.7d's legs add **no production members** — but ⚠ rev. 17: *"no new members"* is not *"free"*. Priced per member: `s_proj` and `s_corr` **seconds** at zero incremental I/O, `s_eig` **`≈1`–`3` min** and `≈1.8` GB (§3.7d). Tier-2 runtime, not `R5` |
+| **COST** | **zero production, in both directions.** Withdrawing the thresholds costs nothing; supplying a justified one costs nothing; §3.7d's legs add **no production members** — but ⚠ rev. 17: *"no new members"* is not *"free"*. Priced per member: `s_proj` and `s_corr` **seconds** at zero incremental I/O, `s_eig` **`≈1`–`3` min** and `≈1.8` GB (§3.7d). **⚠ Rev. 19: whether that is `R5` spend depends on the VENUE, not on the word "validator"** — folded into an in-scope scheduler task it lengthens a metered `ElapsedRaw`; off the scheduler it does not appear in `sacct` at all |
 | **WHAT IS NOW REQUIRED** | **(a)** a **use-based justification**: how much sensitivity is scientifically acceptable, and why, stated before the number; **(b)** an explicit **disposition of correlation sensitivity** — narrow the claim in the receipt, or add a leg (§3.7d names three candidates); **(c)** if literal display invariance is what is wanted, use **rounding equality**, which is exact and needs no `δ` (§3.7b item 4D) |
 | **JOSEPH'S QUESTION** | *"Is acceptance intended to protect only these displayed summaries, or scientifically relevant uses of the assembled covariance?"* |
 | **REMAINING UNCERTAINTY** | the question above is **not** one this lane can answer from the tree — it is a judgement about what the measurement is for. And the evidence stays **asymmetric**: at any affordable `N`, an unfavourable result is strong and a favourable one is weak |
@@ -3702,7 +3813,7 @@ each is not another number but a stated scientific question.**
 | **WHY `ε` falls** | it is a **summation bound applied to something that is not a summation**. Measured against the kernel that runs (`unified_throw_cov_5d.py:47-89`): the chain is LightGBM fitting × `n_iters`, three **event-level** accumulations, a completeness **division**, and four more divisions. **`n_rep` counts OUTPUT BINS while every accumulation runs over EVENTS** — the operand is simply wrong. `n_iters` as an amplification allowance is asserted, not demonstrated. And a bound on evaluating the **final norm** would not bound the **difference between two re-unfolds**. **Underneath all three: the estimator is not claimed deterministic even by its own module** — `omnifold_nn_core.py:203-204` says *"nearly deterministic in `seed` alone"*, `make_estimators` pins `random_state` and **no** thread or determinism flag, and G's measured null is **not zero**. This is a **reproducibility** question, not a rounding one |
 | **WHY the operand of `11b` also falls** | the numerator compares **two internally re-unfolded CVs**; rev. 7–15's denominator came from a **separately produced ROOT**. `adopt_unified_5d.py:116-121` checks **cardinality only** — not the mask, not the values — and **a file hash cannot resolve identity**. Worse, a separately produced CV as denominator **presumes the determinism the null is testing**. **Remedy, and it is cheap: persist `x_cv`, `x_cv2` and the support predicate in Z's own product — `1.05` MB against the `2.668` GB throw product, a fraction of `3.9e-4`** (⚠ rev. 17 corrects rev. 16's `≈41` GB / `2.6e-5`, which divided by the 45-component band family instead).** `11b` is restated over the persisted vectors; the external route becomes `11c`, conditional on elementwise identity |
 | **CLAIM SUPPORTED** | with the normalizer and no `ε`: *"here is Z's CV reproducibility, on a scale-relative measure, reconstructible from Z's own product."* **A measurement, not yet an acceptance** |
-| **COST** | **zero** for the normalizer, the persistence and the restated reject conditions — all Tier 2. **`PM-6`'s bounded read is no longer needed for `D4`**, which **removes** a Tier-3 prerequisite. **⚠ REV. 17 WITHDRAWS THE CONTROL'S PRICE.** Rev. 16's *"`≈11.6` GPU task-h, `8` invocations"* priced the wrong operation on the wrong partition: an invocation is a whole `do_combine`, and the combine is a **CPU** job (`sbatch_uthrow_combine_5d_fast.sh:4`). **Spend is UNRESOLVED** — no CPU-partition CV-unfold time exists and the combine arm has no recorded actual either. **Reservation bound `3n` CPU task-h** at the launcher's own `--time`, with `n` undetermined until the sampling design exists |
+| **COST** | **zero** for the normalizer, the persistence and the restated reject conditions — all Tier 2. **`PM-6`'s bounded read is no longer needed for `D4`**, which **removes** a Tier-3 prerequisite. **⚠ REV. 17 WITHDRAWS THE CONTROL'S PRICE.** Rev. 16's *"`≈11.6` GPU task-h, `8` invocations"* priced the wrong operation on the wrong partition: an invocation is a whole `do_combine`, and the combine is a **CPU** job (`sbatch_uthrow_combine_5d_fast.sh:4`). **⚠ REV. 19 CORRECTS THE REASON:** rev. 17 said *"the combine arm has no recorded actual"*, citing the **`budget5d`** combine. The control invokes **`uthrow5d_combF`**, measured three times at §5.9 row 13 — **`0.3875` / `0.4239` / `0.5764` CPU task-h**, `shared_milan_ss11`. **Per-invocation spend is MEASURED (and TRANSFERRED); the TOTAL is unresolved** because `n` is undetermined and the thread-count arm varies what sets elapsed. **Reservation bound `3n` CPU task-h** at the launcher's own `--time` |
 | **⚠ NEW IN REV. 17 — THE BOUND'S STRUCTURE** | rev. 16's `min(achievable, acceptable)` is **withdrawn**: it used a feasibility floor as an **upper** bound where §3.6a says it bounds `ε` from **below**. Replaced by **`B` with its assumptions and confidence, `S` independently justified, the precondition `B ≤ S`, and `ε` argued within `[B, S]`**. **If `B > S`, the finding is that the execution envelope is not demonstrated adequate — not a tolerance** |
 | **⚠ NEW IN REV. 17 — THREE ROUTES TO `B`, none privileged** | rev. 16's *"the only route"* is **withdrawn**; the review did not establish it. **(i) pin the envelope in code** — `make_estimators` sets `random_state` and no `num_threads`/`deterministic`/`force_row_wise`; **Tier 2, no compute**, and the only route that *reduces* the quantity rather than measuring it. **(ii) the revised control**, with all three gaps answered. **(iii) establish `S` first**, and discharge `B ≤ S` by bounding |
 | **JOSEPH'S QUESTION** | *"What reproducibility tolerance is justified for this exact algorithm and execution envelope, subject to an independently justified scientific sensitivity limit?"* — **and the structure above is the shape of that question**, which rev. 16 answered with a minimum |
@@ -3948,8 +4059,11 @@ adopted by accident.**
     §3.7a with all three of its gaps answered — a cross-arm `r_cross` (a within-envelope null does
     **not** measure a between-envelope shift), a declared coverage/confidence objective with its
     sampling assumptions, and a **predeclared** estimator of `B`, since two arms do not prevent tuning;
-    **(iii)** establish `S` first and discharge `B ≤ S` by bounding. **Its cost is UNPRICED** — rev. 16's
-    `≈11.6` GPU task-h priced the wrong operation on the wrong partition (§5.8d). **And the control's
+    **(iii)** establish `S` first and discharge `B ≤ S` by bounding. **Its TOTAL cost is UNPRICED** — rev. 16's
+    `≈11.6` GPU task-h priced the wrong operation on the wrong partition, and **⚠ rev. 19 corrects rev.
+    17's reason in turn**: the per-invocation cost is **measured** (`uthrow5d_combF`,
+    `0.3875`/`0.4239`/`0.5764` CPU task-h, §5.9 row 13), and what is unresolved is `n` and the
+    thread-count arm. Rev. 17's *"no recorded actual"* named the **`budget5d`** combine instead (§5.8d). **And the control's
     subject engages `§6.4`**: run on Z's own bank, its nulls are Z's nulls; run on another bank, it is a
     transfer needing an argument. **That is Joseph's ruling, not this lane's reading.**
     **Joseph's question:** *"What reproducibility tolerance is justified for this exact algorithm and
