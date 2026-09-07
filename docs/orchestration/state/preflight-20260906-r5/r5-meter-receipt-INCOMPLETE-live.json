@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "decision_record": "docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md",
+  "t0_utc": "2026-09-02T13:44:27Z",
+  "stop_date_utc": "2026-09-30T00:00:00Z",
+  "ceilings": {
+    "gpu_task_hours": 500.0,
+    "cpu_task_hours": 500.0
+  },
+  "unit": "task-hours: sum of post-t0 ElapsedRaw over distinct task identities; tasks straddling t0 are clipped at t0; .batch/.extern/step and array-bracket rows excluded",
+  "measured_at_utc": "2026-09-06T08:54:17.695700Z",
+  "measured_on_host": "login31",
+  "source": {
+    "kind": "sacct",
+    "argv_or_path": "sacct --user josephrb --parsable2 --noheader --starttime 2026-09-02T13:44:27 --endtime now --format=JobID,JobName,State,ElapsedRaw,Partition,Start,End,AllocTRES",
+    "raw_sha256": "e91b2f1122309464b8d09b01c112a0a0aa8104f8c2d452c3b1aa5c3dac0ba076"
+  },
+  "spend": {
+    "gpu_task_hours": 0.0,
+    "cpu_task_hours": 0.0016666666666666668,
+    "task_count": 1,
+    "metered_task_ids": [
+      "57712764"
+    ],
+    "by_state": {
+      "REQUEUED": 1
+    }
+  },
+  "fired": {
+    "date": false,
+    "gpu": false,
+    "cpu": false,
+    "any": false
+  },
+  "headroom": {
+    "gpu_task_hours": 500.0,
+    "cpu_task_hours": 499.99833333333333
+  }
+}
