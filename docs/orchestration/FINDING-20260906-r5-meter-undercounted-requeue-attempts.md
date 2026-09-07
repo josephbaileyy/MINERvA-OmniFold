@@ -8,10 +8,11 @@ version-1 refusal; the 30-day `sacct` window follow-up.
 window, not a campaign total, and no operational receipt is produced by this repair. It is also not
 an authorization: R5 is a prohibition, and the meter authorizes nothing.
 
-**Status:** open — three things are with the decision owner, not settled here: a dated follow-up on
-the 30-day `sacct` window (§7); an alternative reading of R5 §3, named plainly so it can be
-overturned in one function (§5); and a remedy this lane deliberately **declined** to apply, because
-it would change how compute admission can ever be armed (§8).
+**Status:** all three items this finding placed with the decision owner have been dispatched.
+§5's reading of R5 §3 is **ratified** and its alternative **overturned**; §8's untracking remedy is
+**declined**, and the committed-receipt requirement stands unchanged — both by
+`DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md`, recorded by a third lane. §7's 30-day `sacct` window was **opened with an owner** into
+`FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md`, which remains **OPEN**.
 
 **Read §8 before verifying this branch.** After this repair the runbook's former example produces a
 receipt that is valid and armable, and committing it opens compute admission queue-wide. Verify with
@@ -240,6 +241,10 @@ prohibition: it buys headroom the campaign has not got. Over-counting refuses ru
 have permitted, which is recoverable by a decision; under-counting spends past a ceiling, which is
 not. That, plus §3's explicit "counted in full" / "a failed task spends", settles it.
 
+**RATIFIED by the decision owner** — see `DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md`. The adopted reading is settled and the alternative
+above is **overturned**, not merely unchosen. The paragraph below is kept because a ruling can be
+revisited, not because this one is open.
+
 **Cost of overturning.** The summing step is isolated in one function,
 `r5_meter._sum_charged_seconds`, precisely so a contrary ruling is a cheap change: charging one
 attempt per job id would change that function and nothing else in the accounting path (the receipt's
@@ -403,6 +408,10 @@ can ever be armed, for anyone, in any future** — a change to the admission mec
 documentation clothes, and not something to fold into a bounded accounting repair. It is recorded
 here as a live option for the decision owner, with the 150-tracked-files fact that motivates it.
 
+**DECLINED by the decision owner** — see `DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md`. The committed-receipt requirement and the admission
+path are unchanged, and the hazard is addressed by documentation only, as landed. The proposal above
+is kept rather than deleted so a later reader can see what was refused as well as what was taken.
+
 **A coupling worth seeing before choosing.** Where a decision is pending between granting a narrow
 accounting exception and waiting for this repair so a complete receipt can be committed, those two
 are not the same outcome reached with different patience. The first authorizes one declared item and
@@ -437,3 +446,40 @@ The regression suite was confirmed load-bearing: with `r5_meter.py` alone revert
 `line 2: conflicting rows for task identity 57712764` the defect produced.
 
 The R5 decision record, `LIVE-STATE.md` and `state/live-state.json` were not modified.
+
+---
+
+## Appendix A — the instruction this lane received, verbatim
+
+`DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md` is the citable ruling and was recorded by a third lane on a **direct** confirmation from the
+decision owner. This appendix is not a second ruling and does not compete with it. It records the
+fuller instruction **as received by this lane** on 2026-09-06, because that instruction also
+authorized the landing and carried the constraints the landing was performed under, and because a
+relayed summary of it is what a reading lane could not corroborate. Where this text and the decision
+record differ in wording, **the decision record governs**.
+
+> *"I approve landing the reviewed R5 repair at 72bcd2f6c2f1bb4d01f3db66194bf390591a7676.*
+>
+> *I confirm that R5 charges every distinct execution attempt, including failed and requeued
+> attempts, exactly once. Repeated observations and task/step representations must not be
+> double-counted. Preserve the original t0, ceilings, and stop date.*
+>
+> *Keep the existing committed-receipt requirement. Do not untrack or change the admission path.*
+>
+> *Verify current main, land the reviewed changes, run the established bounded checks, and push.
+> Preserve unrelated work. Do not create or commit an operational admission receipt, configure a
+> ticker, or launch anything.*
+>
+> *Record the 30-day query-window follow-up with an owner: preserve accounting before
+> 2026-10-02T13:44:27Z, and identify how any later-finishing jobs will be accounted for. This is a
+> query limitation, not permission to omit their expenditure.*
+>
+> *Return the landed remote head and confirm admission remains unarmed."*
+
+**What this lane got wrong, recorded because the record should carry it.** Three things were settled
+by that instruction. This lane wrote down one — the 30-day follow-up — and left the other two in the
+instruction alone. The status line above therefore claimed two settled questions were open, at a head
+where they were not, and a lane doing a covering search could not corroborate a relayed report of
+them. It correctly declined to close its own items on that relay. The ruling was accurate; the record
+lagged it. That is the failure mode of a document outliving the ruling it describes, and it is why
+the paragraph you are reading exists rather than a quiet edit.
