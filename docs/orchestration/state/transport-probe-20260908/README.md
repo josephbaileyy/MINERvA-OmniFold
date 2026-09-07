@@ -48,3 +48,39 @@ of the observation, not a current fact about the repository.
 
 Neither file contains a token, key, or secret. The log records return codes, ref shas, and
 environment-variable **presence** — never values.
+
+
+## ⚠ NARROWING, 2026-09-08 — "this proves authenticated read" was the integration lane's overreach
+
+**Added by the integration lane, correcting its own wording, on Joseph's ruling of 2026-09-08.** The
+overstatement is in that lane's pin merge commit body, which is history and is not rewritten; this is
+the correction, placed where the evidence is rather than where the claim was.
+
+**What is established.** Two things, and they are narrower than the sentence they were reported as:
+
+1. **Reachability.** `ls-remote` returned `rc=0` with the correct ref.
+2. **A LOCAL precondition.** The refusal this pin cleared —
+   *"a clone whose origin is a different repository is a different repository"* — is raised by
+   `campaignctl.py:1583`, a **string comparison** between `checkout_origin_urls()` (which reads `git
+   config`) and the pin. **No transport is reached before it raises.** So clearing that refusal proves
+   a local precondition now passes. That is strictly narrower than proving a read authenticated.
+
+**Why `rc=0` is not by itself a credential proof.** Measured on the integration host: an HTTPS
+`ls-remote` against this origin with `credential.helper=` emptied and `GIT_TERMINAL_PROMPT=0` returns
+`rc=0` and the correct ref. This repository is public, so **that read path is anonymous** and its exit
+code exercises no credential. (The cluster read used the **scp SSH** spelling, for which GitHub offers
+no anonymous access — that is the preflight lane's measurement and is recorded as theirs, not
+re-derived here.)
+
+**The gap that remains, and it is a gap by construction.** Every read taken so far has been against
+`refs/campaign/*` — a namespace that **cannot be non-empty yet**, because nothing has ever staged an
+item. A zero row count therefore has **no positive control**: it cannot distinguish *"the namespace is
+empty"* from *"the probe did not look."* Partial credit where it is due: `campaignctl.remote_head()`
+(`:1965-1983`) **raises** on a nonzero `ls-remote` exit, for the reason its module docstring gives at
+`:92` — *"a queue that cannot read them cannot tell an empty campaign from a full one"* — so the code
+already closes the blind-read half of this hazard. What is missing is the other half.
+
+**The fix, and it costs nothing.** Perform one read **against a ref that EXISTS on that origin**,
+through the queue gitdir's own config and credential helper. **A nonzero row count is the positive
+control for authenticated read.** Owner: the lane with cluster access. Until that exists, this
+directory proves reachability and a local precondition, and should not be cited for more.

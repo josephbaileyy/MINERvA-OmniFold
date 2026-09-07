@@ -28,6 +28,18 @@
 #     bash docs/orchestration/merge_guard.sh <LANE>       e.g. B | C | D | A
 #
 # Run it BEFORE resolving any conflict. Exit 0 means you may resolve; anything else means stop.
+#
+# AND "STOP" IS TERMINAL. Joseph ruled on 2026-09-08, after an integration lane overrode a refusal on
+# a coordinator's authorization: NO AUTHORIZER CONVERTS A REFUSAL INTO A PASS. A guard's exit is a
+# fact about the tree; an authorization is a permission about an act; permissions govern acts, not
+# measurements. There is no override input to this script and that is deliberate. Two legal exits,
+# both ending in a green run: remove the cause and re-run, or -- if the gate is genuinely over-strict
+# -- FIX THE GATE, which is reviewable and protects the next operator instead of this one merge.
+# For a conflict confined to a GENERATED file, the file is the symptom and the generators disagreeing
+# is the event: regenerate from the merged sources and re-run this gate. MANIFEST.tsv carries a row
+# describing its own line and byte count, so it conflicts on every concurrent merge by construction.
+# Full ruling, including why "the guard refused" is an underspecified report and you must name WHICH
+# exit: docs/orchestration/RULING-20260908-joseph-a-merge-guard-refusal-is-terminal.md
 
 set -uo pipefail
 cd "$(dirname "$0")/../.." || exit 3
