@@ -175,6 +175,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `reusable-now`, with the two suspended-authority facts (`D-Y-CONSTRUCT` does not exist; `R4`
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
+- [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
+  - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
+  publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
+  **C-1** direct sensitivity of the quoted significance, **C-2** a conditioning diagnostic, **C-3**
+  projected-bin sensitivity via the existing `s_proj`. **Projection and inversion policy are
+  unresolved** — the projection map has three implementations with none designated, and the
+  `pinv` cutoff, tail and `ndf` conventions are undeclared. Read its `CITABLE FOR` / `NOT CITABLE
+  FOR` header before quoting any part of it.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
   - **rev. 21. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
