@@ -1,0 +1,164 @@
+{
+  "schema_version": 2,
+  "campaign_id": "pm-root-inspection-20260908",
+  "scientific_question": "Capture the fixed read-only ROOT measurements predeclared for PM-1, PM-3, PM-4 and PM-5. This contract governs CAPTURE ONLY. It adjudicates none of those measurements, sets no acceptance threshold, and its terminal branches classify whether the declared reads happened -- never whether the values are adequate. PM-4's provenance gap is preserved: digests are reconstructed through G's producer-input route and are never evidence of G's historical production input.",
+  "candidate": {
+    "id": "pm-inspection-capture-20260908",
+    "uri": "file:///pscratch/sd/j/josephrb/pm-inspection-20260908/pm-inspection-report.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "inputs": [
+    {
+      "id": "G",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+      "sha256": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2"
+    },
+    {
+      "id": "CS",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+      "sha256": "9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a"
+    },
+    {
+      "id": "CV_central",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+      "sha256": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8"
+    },
+    {
+      "id": "EP_BeamAngleX_0",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleX_0.root",
+      "sha256": "d915c37512fedf7d548c34a9727e5f3dd5cc6249f1e44d789f72c6dd50f930c3"
+    },
+    {
+      "id": "EP_BeamAngleX_1",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleX_1.root",
+      "sha256": "a61e52523c4bb00f1336927d8824c66dec3c716058e028c50802e543fefc649c"
+    },
+    {
+      "id": "EP_BeamAngleY_0",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleY_0.root",
+      "sha256": "b37f90ed779284bddd71dd2cf333f353ad5d7090f4701dc795b4c82b55366fae"
+    },
+    {
+      "id": "EP_BeamAngleY_1",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleY_1.root",
+      "sha256": "da3d2dd66f1d494107b47e948ba19736f556422a228cf9e1cea4b4fdf12ef3cc"
+    },
+    {
+      "id": "EP_MuonResolution_0",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_MuonResolution_0.root",
+      "sha256": "bc1380ac37f51aa01f8b396097594dd07e3338fdea03400079147bff71893132"
+    },
+    {
+      "id": "EP_MuonResolution_1",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_MuonResolution_1.root",
+      "sha256": "601f7ab82a18aba4d38a557047fa2e1e5f7107ddae1180d94b7471fcf5d58782"
+    },
+    {
+      "id": "EP_Muon_Energy_MINERvA_0",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINERvA_0.root",
+      "sha256": "940faf9e51cf61430a0193cbcd8a743548356e526f118730f93435541cbff23e"
+    },
+    {
+      "id": "EP_Muon_Energy_MINERvA_1",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINERvA_1.root",
+      "sha256": "3996e2fe5cb96b4253d00c1deea834a26f97ab4a21ec163e3255ab433d4c7b5d"
+    },
+    {
+      "id": "EP_Muon_Energy_MINOS_0",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINOS_0.root",
+      "sha256": "133085a6a68e453f608ef491d2f424d8922a730ad40992c503adf267f005f684"
+    },
+    {
+      "id": "EP_Muon_Energy_MINOS_1",
+      "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINOS_1.root",
+      "sha256": "ef4749f831a9353bdbb1e7a7f3178305a0f5d9b65b9782893cf38745150d6946"
+    }
+  ],
+  "producer": "preflight-session-e11e6d",
+  "independent_validator": "pm-root-validate-terminal-classifier",
+  "decision_authority": "joseph-decision-owner",
+  "validator_version": "pm_root_validate.py@1",
+  "terminal_validator": {
+    "argv": [
+      "/usr/bin/python3.11",
+      "nd-unfolding/pm_inspection/pm_root_validate.py",
+      "--report",
+      "/pscratch/sd/j/josephrb/pm-inspection-20260908/pm-inspection-report.json",
+      "--out",
+      "/pscratch/sd/j/josephrb/pm-inspection-20260908"
+    ],
+    "cwd": "."
+  },
+  "terminal_branches": [
+    {
+      "id": "capture-complete",
+      "return_codes": [
+        0
+      ],
+      "condition": "Every declared read has a record and no required read failed. An expected-optional absence, such as hRowIndex5D absent from G, is a measurement and satisfies this branch.",
+      "decision": "Preserve the capture as a measurement. This is NOT a discharge of PM-1, PM-3, PM-4 or PM-5, NOT an adoption, and NOT blanket citability.",
+      "unlocks": [
+        "preserve-capture-as-measurement",
+        "report-measurements-separately-from-conclusions"
+      ],
+      "forbids": [
+        "discharge-any-PM-row",
+        "adopt-any-artifact",
+        "move-any-gate",
+        "cite-as-scientific-verdict"
+      ]
+    },
+    {
+      "id": "capture-incomplete",
+      "return_codes": [
+        10
+      ],
+      "condition": "The producer ran to the end but at least one declared read has no record.",
+      "decision": "Preserve the partial capture as error evidence. Nothing captured may be cited as a measurement of the missing reads.",
+      "unlocks": [
+        "preserve-partial-capture-as-error-evidence"
+      ],
+      "forbids": [
+        "treat-partial-capture-as-measurement",
+        "discharge-any-PM-row",
+        "retry-without-new-authorization"
+      ]
+    },
+    {
+      "id": "capture-error",
+      "return_codes": "otherwise",
+      "condition": "Any other terminal result: a required input missing, unreadable, wrong size or digest-mismatched; a ROOT import failure; an unhandled exception; or an unreadable report.",
+      "decision": "Preserve all error evidence including the traceback and the partial report. Report the failure; capture nothing as a measurement.",
+      "unlocks": [
+        "preserve-error-evidence"
+      ],
+      "forbids": [
+        "treat-any-output-as-measurement",
+        "discharge-any-PM-row",
+        "retry-without-new-authorization"
+      ]
+    }
+  ],
+  "maximum_cost": {
+    "gpu_task_hours": 0.0,
+    "cpu_task_hours": 0.5,
+    "wall_hours": 0.5
+  },
+  "output_namespace": "/pscratch/sd/j/josephrb/pm-inspection-20260908",
+  "preservation_behavior": {
+    "mode": "preserve-first",
+    "artifacts": [
+      "pm-inspection-report.json",
+      "pm-inspection-verdict.json",
+      "producer-stdout.log",
+      "producer-stderr.log"
+    ]
+  },
+  "retry_policy": {
+    "automatic_retraining": false,
+    "requires_new_authorization": true
+  },
+  "accounting": {
+    "expects_scheduler_tasks": true
+  }
+}
