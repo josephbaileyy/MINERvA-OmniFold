@@ -125,8 +125,25 @@ class Census:
 
     @property
     def is_blind(self) -> bool:
-        """No record was read. Every zero below is NOT MEASURED rather than measured."""
-        return self.records == 0
+        """NOTHING AT ALL WAS SEEN -- no countable record, and nothing uncountable either.
+
+        Distinct from `is_unreadable` on purpose. Blind means the census looked and the world was
+        empty; unreadable means the world was full of things it could not parse. Collapsing the two
+        is the defect this whole file is shaped around, one layer up from where it was first fixed.
+        """
+        return self.records == 0 and not self.foreign_schema and not self.malformed
+
+    @property
+    def is_unreadable(self) -> bool:
+        """Lines were present and NONE were countable.
+
+        A newer guard writing `mnv_guard_inventory/2` lands here: every record is well-formed, the
+        file is exactly where it should be, and this census understands none of it. Reporting that
+        as BLIND would say "no guard has ever fired" about a population that may be nothing but
+        firings -- a reader degrading to an empty world on unfamiliar input. It is a drift failure
+        and it exits as one.
+        """
+        return self.records == 0 and bool(self.foreign_schema or self.malformed)
 
     def add_file(self, path: pathlib.Path) -> None:
         self.files_read.append(str(path))
@@ -265,6 +282,17 @@ def main(argv=None) -> int:
             missing.append(str(p))
             continue
         c.add_file(p)
+
+    if c.is_unreadable:
+        print("GUARD FIRING CENSUS -- POPULATION UNREADABLE, REFUSING TO COUNT.", file=sys.stderr)
+        print(f"  {len(c.files_read)} file(s) read, 0 records of schema {SCHEMA!r}, "
+              f"{c.malformed} malformed line(s).", file=sys.stderr)
+        for schema, n in sorted(c.foreign_schema.items(), key=lambda kv: -kv[1]):
+            print(f"  {n} record(s) of schema {schema!r} -- not counted", file=sys.stderr)
+        print("  This is NOT the blind state: records were present and none were countable. "
+              "Reporting it as BLIND would describe a possibly-full population as an empty one.",
+              file=sys.stderr)
+        return SCHEMA_DRIFT_EXIT
 
     if c.is_blind:
         #: THE WHOLE POINT OF THIS BRANCH. Printing a table of zeros here would say "no guard has

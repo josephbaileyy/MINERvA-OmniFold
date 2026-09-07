@@ -160,6 +160,61 @@ class AZeroIsNotSelfExplanatory(unittest.TestCase):
                       "a measured zero must still name every reason that did not fire")
 
 
+class AnUnreadablePopulationIsNotAnEmptyOne(unittest.TestCase):
+    """A reader that degrades to BLIND on unfamiliar input reports an empty world.
+
+    Raised by the integrator against the first version of this file, which did exactly that: an
+    inventory written by a NEWER guard is well-formed, correctly located, and possibly nothing but
+    firings -- and the census called it BLIND. These assert the three states stay separate.
+    """
+
+    def test_records_of_a_newer_schema_exit_DRIFT_and_not_BLIND(self):
+        with tempfile.TemporaryDirectory() as td:
+            inv = pathlib.Path(td) / "inv.jsonl"
+            write_records(inv, [{"schema": "mnv_guard_inventory/2", "outcome": "refused:x",
+                                 "launch_refusal": {"reason": "a-reason-from-a-newer-guard"}},
+                                {"schema": "mnv_guard_inventory/2", "outcome": "ok"}])
+            proc = run_census("--inventory", str(inv))
+        self.assertEqual(proc.returncode, census.SCHEMA_DRIFT_EXIT,
+                         "a population of unreadable records must not exit BLIND")
+        self.assertIn("UNREADABLE", proc.stderr)
+        self.assertIn("mnv_guard_inventory/2", proc.stderr,
+                      "the operator must be told WHICH schema it could not read")
+        #: The word BLIND appears in the message ON PURPOSE, contrasting the two states. What must
+        #: be absent is the blind HEADER -- the claim itself, not the mention.
+        self.assertNotIn("BLIND, NOT MEASURED", proc.stderr)
+
+    def test_a_file_of_only_malformed_lines_is_unreadable_not_blind(self):
+        with tempfile.TemporaryDirectory() as td:
+            inv = pathlib.Path(td) / "inv.jsonl"
+            inv.write_text("{ truncated" + chr(10) + "also not json" + chr(10))
+            proc = run_census("--inventory", str(inv))
+        self.assertEqual(proc.returncode, census.SCHEMA_DRIFT_EXIT)
+        self.assertIn("UNREADABLE", proc.stderr)
+
+    def test_a_genuinely_empty_population_is_still_BLIND(self):
+        #: THE OPPOSITE DIRECTION. The fix above must not turn every empty run into drift.
+        with tempfile.TemporaryDirectory() as td:
+            proc = run_census("--inventory-dir", td)
+        self.assertEqual(proc.returncode, census.CENSUS_BLIND_EXIT)
+        self.assertIn("BLIND, NOT MEASURED", proc.stderr)
+        self.assertNotIn("UNREADABLE", proc.stderr)
+
+    def test_one_countable_record_beside_foreign_ones_still_reports(self):
+        #: Partial readability is not drift: there is a real distribution to report, and the
+        #: foreign count is disclosed in the report rather than being promoted to a refusal.
+        with tempfile.TemporaryDirectory() as td:
+            inv = pathlib.Path(td) / "inv.jsonl"
+            write_records(inv, [a_refusal(mgr.LAUNCH_REASON_FLAGS),
+                                {"schema": "mnv_guard_inventory/2", "outcome": "ok"}])
+            proc = run_census("--inventory", str(inv))
+        self.assertEqual(proc.returncode, 0)
+        self.assertIn("NOT COUNTED", proc.stdout)
+
+    def test_the_three_states_have_three_distinct_exits(self):
+        self.assertEqual(len({0, census.CENSUS_BLIND_EXIT, census.SCHEMA_DRIFT_EXIT}), 3)
+
+
 class TheDistribution(unittest.TestCase):
 
     def test_entropy_of_k_uniform_reasons_is_log2_k(self):
