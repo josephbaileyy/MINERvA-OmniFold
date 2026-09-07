@@ -176,7 +176,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
-  - **rev. 3. PROPOSAL ONLY. Adopts nothing, grades nothing, declares no tolerance.** Maps the
+  - **rev. 4. PROPOSAL ONLY. Adopts nothing, grades nothing, declares no tolerance.** Maps the
   publication's intended covariance consumer to candidate `(cause 3, Z)` criteria under `RZ`. The
   consumer **inverts** the projected covariance (`chi2 = d @ pinv(C_y) @ d`), so it is dominated by
   the SMALLEST retained eigenvalues, while `s_agg` (a trace), `s_med` (a diagonal median) and
@@ -188,8 +188,11 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   C-1 is defined on the significance itself because a relative `chi2` tolerance is not a tolerance
   on `Nsigma`. Carries three things honestly that a reader could otherwise over-credit: the cited
   significance module is a named instance of the MAP whose outputs are **GATED** (quarantine cause
-  6), spectral summaries cannot determine the quadratic form (`diag(1,4)` vs `diag(4,1)`), and the
-  two projection-matrix builders are an **unresolved premise**. `CITABLE FOR` / `NOT CITABLE FOR`
+  6 -- ⚠ corrected in rev. 4: that module reads the historical 4D BLOCK-SUM covariance, not the
+  cause-6 product; GATED still holds on its own citation), spectral summaries cannot determine the
+  quadratic form (`diag(1,4)` vs `diag(4,1)`), and the
+  three projection-matrix implementations -- the cited module builds a THIRD inline -- are an
+  **unresolved premise** with none designated as adopted. `CITABLE FOR` / `NOT CITABLE FOR`
   and the six withdrawn rev. 1 claims are at the top.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
   - **rev. 21. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables

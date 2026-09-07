@@ -28,6 +28,17 @@ two new overclaims and left two others standing:
 | 9 | the consumed form is "dominated by" the smallest retained eigenvalues | **too strong.** It CAN be sensitive to small retained modes, and only where `d` has overlap with them (§2a) |
 | 10 | C-2 is a necessary precondition for interpreting C-1; pinning `rcond` reduces variation | **neither.** C-1 measures the reported quantity and is interpretable on its own terms. And the default `rcond` is ALREADY a policy — recording it improves reproducibility and removes no within-run variation (§3 C-2, §4c) |
 
+**⚠ REV. 4 (2026-09-08) — FIVE SOURCE-LEVEL CORRECTIONS.** Every one is a fact about the cited
+module that rev. 1–3 got wrong or left vague. None changes a candidate; all change what may be said:
+
+| # | rev. 3 claimed | corrected |
+|---|---|---|
+| 11 | the cited module's covariance is quarantine cause 6 | **wrong product.** `:54` defaults to `uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root`, hist `hCov_combined4d_total` — the historical **4D block-sum**, not the `(E_avail,W)` cause-6 covariance. The GATED status stands on its own citation; the cause-6 attribution was mine and is withdrawn (§1b) |
+| 12 | there are TWO projection-matrix builders | **at least THREE.** The cited module builds its own `M` **inline** at `:85-88`. §6 is restated over three (§1b, §6) |
+| 13 | the significance follows through `norm.isf` | **`norm.isf(p / 2.0)`** at `:113` — a two-sided `p` converted to a one-sided equivalent. The tail convention is part of the quantity and must be declared, not inherited (§1b, §3 C-1) |
+| 14 | *(unstated)* | **`ndf` is the BIN COUNT**, `chi2_to_sigma(chi2, n_ea)` at `:132`, while `pinv` discards modes — so `ndf` is not the retained rank. Any adopted criterion must state its `ndf` policy explicitly (§1b, §4c) |
+| 15 | on disagreement "the consumer's builder wins by definition" | **unsupported**, and especially for a GATED consumer. Differing maps require reconciliation of axes, support and units plus validation — not automatic precedence (§6) |
+
 ---
 
 ## CITABLE FOR / NOT CITABLE FOR — read this before quoting anything below
@@ -48,7 +59,8 @@ two new overclaims and left two others standing:
 - any tolerance value, or any claim that a criterion is adopted or ready for adoption.
 - any claim that `s_proj` is *inherently* blind to shape directions. It is not (§2b).
 - any claim about a **current** significance number. The ones in the tree are **GATED** (§1b).
-- the equivalence of the two projection-matrix builders (§6) — an unresolved premise, not a result.
+- the equivalence of the three projection-matrix implementations (§6), or any of them being the
+  adopted one — an unresolved premise, not a result.
 
 ---
 
@@ -76,13 +88,20 @@ displayed summaries are not printed, and the intended scientific use is the proj
 `eavail_generator_significance.py` shows what this class of consumer **computes**. It is **not**
 evidence about any current number, and this proposal does not present it as one:
 
-- `INTEGRATION_CHECKLIST.md:37`: *"**The covariance-dependent significances remain GATED**"*.
-- Its covariance is quarantine **cause 6**, `PUBLICATION-READINESS-20260822.md:892`, `KNOWN_ISSUES`
-  #36 (HIGH, OPEN): the `(E_avail,W)` covariance *"has not been rebuilt after fixing its
-  per-universe flux normalization"*, and `VL67` records cause 6 as **OPEN and furthest** — no
-  `(E_avail,W)` product has been rebuilt at all.
+- `INTEGRATION_CHECKLIST.md:37`: *"**The covariance-dependent significances remain GATED**"*. That
+  citation stands on its own and is the operative one.
+- ⚠ **REV. 3 ATTRIBUTED ITS COVARIANCE TO QUARANTINE CAUSE 6. THAT IS THE WRONG PRODUCT.** `:54`
+  defaults to `uq_4d/universe_stage2_4d/uq_universe_4d_covariance_combined.root`, hist
+  `hCov_combined4d_total` — the historical **4D block-sum**. Cause 6 concerns the `(E_avail,W)`
+  covariance, which this invocation does not read. The GATED status is unaffected; the cause-6
+  attribution is withdrawn.
+- ⚠ **IT BUILDS ITS OWN `M` INLINE**, `:85-88`: `M = np.zeros((n_ea, nrep))`,
+  `M[iea, np.arange(nrep)] = wcell`, weights `dpt·dpz·dq3` grouped by `E_avail` bin. **That is a
+  THIRD implementation of the projection map**, distinct from both builders in §6.
 - `SPEC §…:2354` names `eavail_generator_significance.py:83-89` as a validated instance of the
-  **projection map**, which is a narrower statement than validation of its significances.
+  **projection map**, which is narrower than validation of its significances.
+- **The future adopted path is unspecified.** None of the three implementations is designated, and
+  this proposal does not designate one.
 
 **What it is cited for here: the FORM of the consumption.** `:107,132`:
 
@@ -91,10 +110,16 @@ Cinv = np.linalg.pinv(C_y)            # C_y is the PROJECTED covariance
 chi2 = float(d @ Cinv @ d)            # d = data - generator
 ```
 
-with the significance following through `stats.chi2.sf` and `norm.isf` (`:110-114`). **The consumed
-quantity is a quadratic form in the pseudo-inverse of the projected covariance.** That form is what
-the criteria below must bound; whether any particular current output is trustworthy is a different
-question with a different owner, and it is gated.
+with the significance following at `:111-113` as `p = stats.chi2.sf(chi2, ndf)` then
+`z = stats.norm.isf(p / 2.0)` — ⚠ **`p / 2.0`, a two-sided `p` converted to a one-sided Gaussian
+equivalent.** Rev. 3 wrote `norm.isf` without the halving. And `ndf` is the **bin count**
+(`chi2_to_sigma(chi2, n_ea)`, `:132`), **not the retained rank**, while `pinv` discards modes below
+its cutoff. **Both the tail convention and the `ndf` policy are part of the quantity and must be
+declared by any criterion built on it, never inherited silently.**
+
+**The consumed quantity is a quadratic form in the pseudo-inverse of the projected covariance.** That
+form is what the criteria below must bound; whether any particular current output is trustworthy is
+a different question with a different owner, and it is gated.
 
 The module states the hazard in its own comment at `:98-101`:
 
@@ -185,9 +210,9 @@ tolerances.**
 - **Cost.** Zero incremental production: arithmetic over members `D3` would produce and a projection
   the note already builds.
 - **Limit.** It is a criterion on a **reported procedure**, so it inherits every modelling choice in
-  that procedure — the `pinv` cutoff, the `DIS ≥ 0.8` sub-block, the generator set. Those become
-  part of the declared criterion rather than free parameters, and the criterion must be re-derived
-  if the procedure changes.
+  that procedure — the `pinv` cutoff, the **tail convention** (`p / 2.0`), the **`ndf` policy** (bin
+  count, not retained rank), the `DIS ≥ 0.8` sub-block, and the generator set. Those become part of
+  the declared criterion rather than free parameters, and it must be re-derived if any changes.
 
 ### C-2 — the conditioning diagnostic *(companion; ⚠ NOT coverage)*
 
@@ -258,7 +283,6 @@ Rev. 1 concluded "pin it, and a rank change is otherwise an artifact". **Both ha
 
 - **A fixed cutoff policy is not a fixed retained subspace.** Pinning `rcond` does not pin the rank:
   an eigenvalue crossing a *fixed* threshold between members changes the retained subspace anyway.
-  Pinning removes one source of variation, not the phenomenon.
 - **A rank discontinuity is a sensitivity of the stated procedure, not automatically an artifact.**
   If the declared criterion is "the significance this procedure reports", then a member whose rank
   differs *is* a member on which the procedure behaves differently, and that is a finding.
@@ -294,7 +318,8 @@ evidence is a sufficient reason on its own and is the only one claimed.
 
 ## 6. UNRESOLVED PREMISE, CARRIED EXPLICITLY: WHICH `M`?
 
-**Two projection-matrix builders exist and this proposal does not assume they agree.**
+**At least THREE projection-matrix implementations exist and this proposal does not assume any two
+agree.** ⚠ Rev. 3 counted two; the cited consumer builds a third inline (§1b, `:85-88`).
 
 - `p4_lib.build_projection_M` (`p4_lib.py:1353`) — executed by `p4_project_4d.py:141`; carries a
   bidirectional coverage check and an **independent reconstruction by a deliberately different
@@ -311,12 +336,14 @@ nothing more.** No artifact establishes that they produce the same `M`.
 1. Both builders instantiated on the same edges, masks and drop axis, and `M₁ − M₂` compared
    elementwise to zero at float64 tolerance, for **every** projection the publication quotes — not
    one exemplar, since they may agree on the 4D case and differ where support masks bite.
-2. If they differ, the **consumer's** builder wins by definition, and `s_proj`'s docstring is wrong
-   and must be corrected rather than reinterpreted.
-3. If they agree, record a measured agreement with both shas — not an assumption retired.
+2. ⚠ **If they differ, no implementation takes automatic precedence.** Rev. 3 said "the consumer's
+   builder wins by definition"; that is withdrawn, and it is least defensible precisely where the
+   consumer is **GATED**. Differing maps require reconciliation of **axes, support and units**, and
+   then validation of whichever is adopted — a designation, not a default.
+3. If they agree, record a measured agreement with all shas — not an assumption retired.
 
-Until (1) is run, **every `M` above reads as "the consumer's `M`, builder unidentified"**, which is
-weaker than it looks and is deliberately not smoothed over.
+Until (1) is run, **every `M` above reads as "the adopted `M`, implementation unidentified and
+undesignated"**, which is weaker than it looks and is deliberately not smoothed over.
 
 ---
 
