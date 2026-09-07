@@ -306,6 +306,66 @@ class TheRawOperandReconstructionCatchesWhatG3CANNOT(unittest.TestCase):
         self.assertIsNone(za.gate_raw_operand_reconstruction(
             **raw_operands(s))["stored_cv_discriminating"])
 
+    # ---- ⚠ ROUND-7 ISSUE 1: one runner must not give two verdicts on one build ------------
+    def test_the_CLIPPING_EXAMPLE_survives_the_PAIR_RUNNER_with_a_stored_cv_diagonal(self):
+        """The reviewer's counterexample, through the runner, with the optional diagonal present.
+
+        Measured before the fix: the raw gate ACCEPTED (clip(-4)=0, so v_uni^cv = 0+9 = 9) and
+        `run_pair_gates` then handed the UNCLIPPED -4 to the coupling check, which predicted
+        -4+9 = 5 and REFUSED the identical build. Two operand semantics inside one runner.
+        """
+        kw = dict(g_recorded={"mean": np.array([1.0]), "cv": np.array([3.0])},
+                  diag_c_unified_mean=np.array([-4.0]), diag_c_blocksum=np.array([1.0]),
+                  joint_mean_shift=np.array([3.0]), diag_c_unified_cv=np.array([9.0]))
+        standalone = za.gate_raw_operand_reconstruction(**kw)
+        res = za.run_pair_gates(**kw)                       # must NOT disagree with it
+        self.assertEqual(res["G3R_raw_operand_reconstruction"]["n_clipped_unified"],
+                         standalone["n_clipped_unified"])
+        self.assertIn("G3b_variant_coupling", res)
+
+    def test_the_two_checks_agree_on_every_clipped_operand_set(self):
+        """Property form, so a future caller cannot reintroduce the divergence on other inputs."""
+        rng = np.random.default_rng(11)
+        for trial in range(8):
+            raw_mean = rng.normal(0.0, 1.0, size=6)          # deliberately includes negatives
+            v_blk = np.abs(rng.normal(1.0, 0.5, size=6)) + 0.1
+            ms = rng.normal(0.0, 0.3, size=6)
+            d = za.derive_variant_diagonals(raw_mean, v_blk, ms)
+            g_mean, _ = za.compute_g(d["v_uni_mean"], d["v_blk"])
+            g_cv, _ = za.compute_g(d["v_uni_cv"], d["v_blk"])
+            with self.subTest(trial=trial):
+                za.run_pair_gates(g_recorded={"mean": g_mean, "cv": g_cv},
+                                  diag_c_unified_mean=raw_mean, diag_c_blocksum=v_blk,
+                                  joint_mean_shift=ms, diag_c_unified_cv=d["v_uni_cv"])
+
+    def test_the_coupling_check_REFUSES_raw_diagonals_rather_than_answering_differently(self):
+        """The ambiguity is closed by refusing, not by documenting.
+
+        A clipped v_uni is non-negative by construction, so a negative entry means the caller
+        handed over a raw diagonal -- and silently answering a different question is what reached
+        review.
+        """
+        with self.assertRaises(zc.ZContractError) as cm:
+            za.check_variant_coupling(np.array([9.0]), np.array([-4.0]), np.array([3.0]))
+        self.assertIn("CLIPPED v_uni values", str(cm.exception))
+        self.assertIn("derive_variant_diagonals", str(cm.exception))
+
+    def test_the_shared_derivation_is_the_only_place_the_clip_lives(self):
+        d = za.derive_variant_diagonals(np.array([-4.0]), np.array([-1.0]), np.array([3.0]))
+        self.assertEqual(list(d["v_uni_mean"]), [0.0])
+        self.assertEqual(list(d["v_blk"]), [0.0])
+        self.assertEqual(list(d["v_uni_cv"]), [9.0])         # clip FIRST, then + ms**2
+        self.assertEqual(d["n_clipped_unified"], 1)
+        self.assertEqual(d["n_clipped_blocksum"], 1)
+
+    def test_the_pair_runner_still_catches_a_genuinely_inconsistent_stored_diagonal(self):
+        """The fix must not have turned the coupling check into a rubber stamp."""
+        s = build_scenario()
+        bad = s["v_uni_cv"].copy()
+        bad[0] *= 2.0
+        with self.assertRaises(zc.ZContractError):
+            za.run_pair_gates(**raw_operands(s, diag_c_unified_cv=bad))
+
     def test_the_pair_runner_carries_the_gate_under_its_section_name(self):
         s = build_scenario()
         res = za.run_pair_gates(**raw_operands(s, diag_c_unified_cv=s["v_uni_cv"]))

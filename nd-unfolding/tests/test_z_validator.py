@@ -799,6 +799,103 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
             zrec.build_receipt(**blocks)
         self.assertIn("discrimination_blockers", str(cm.exception))
 
+    # ---- ⚠ ROUND-7 ISSUE 2: requiring the key was not requiring the content ---------------
+    def _blockers(self, **over):
+        b = {"n_bins": 3, "n_separated": 0, "n_pinned": 0,
+             "n_saturated_v_uni_below_v_blk": 3, "n_shift_below_tolerance": 0,
+             "max_separation": 0.0}
+        b.update(over)
+        return self._recon(discriminating=False, note="blind here",
+                           discrimination_blockers=b)
+
+    def test_an_EMPTY_blockers_dict_is_refused(self):
+        """Measured: `{}` satisfied "is a dict" and a MET receipt was written."""
+        blocks = self._recon(discriminating=False, note="blind here",
+                             discrimination_blockers={})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("omits", str(cm.exception))
+
+    def test_a_PARTIAL_blockers_dict_names_what_is_missing(self):
+        blocks = self._recon(discriminating=False, note="blind here",
+                             discrimination_blockers={"n_bins": 3})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("n_separated", str(cm.exception))
+
+    def test_counts_that_DO_NOT_PARTITION_the_bins_are_refused(self):
+        """A breakdown that does not add up leaves a fifth cause unnamed -- which is how
+        saturation went unnoticed for a whole round."""
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**self._blockers(n_bins=10))
+        self.assertIn("do not partition", str(cm.exception))
+
+    def test_a_record_CONTRADICTING_its_own_verdict_is_refused(self):
+        """discriminating=False beside n_separated=5: two halves from different runs."""
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**self._blockers(
+                n_bins=5, n_separated=5, n_saturated_v_uni_below_v_blk=0, max_separation=0.5))
+        self.assertIn("did not come from the same run", str(cm.exception))
+
+    def test_the_same_contradiction_in_the_OTHER_direction_is_refused(self):
+        """discriminating=True with n_separated=0. The consistency check must be two-sided."""
+        blocks = self._recon(
+            discriminating=True,
+            discrimination_blockers={"n_bins": 3, "n_separated": 0, "n_pinned": 3,
+                                     "n_saturated_v_uni_below_v_blk": 0,
+                                     "n_shift_below_tolerance": 0, "max_separation": 0.0})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("did not come from the same run", str(cm.exception))
+
+    def test_NEGATIVE_or_non_integer_counts_are_refused(self):
+        for bad in ({"n_pinned": -1}, {"n_pinned": 1.5}, {"n_pinned": True}, {"n_bins": 0}):
+            with self.subTest(**bad):
+                with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError):
+                    zrec.build_receipt(**self._blockers(**bad))
+
+    def test_a_non_finite_max_separation_is_refused(self):
+        for bad in (float("inf"), float("nan"), -1.0):
+            with self.subTest(max_separation=bad):
+                with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError):
+                    zrec.build_receipt(**self._blockers(max_separation=bad))
+
+    def test_a_COMPLETE_and_CONSISTENT_disclosure_is_accepted(self):
+        """The positive direction, so the refusals above are not passing for the wrong reason."""
+        with self._live(0.01, "TEST"):
+            r = zrec.build_receipt(**self._blockers())
+        blk = r["inflation"]["G3R_raw_operand_reconstruction"]
+        self.assertFalse(blk["discriminating"])
+        self.assertEqual(blk["discrimination_blockers"]["n_saturated_v_uni_below_v_blk"], 3)
+
+    def test_the_REAL_gates_blockers_satisfy_the_receipt_in_BOTH_directions(self):
+        """Discriminating and non-discriminating output from the real gate must both be writable.
+
+        A validation rule the producer cannot satisfy is a rule that only fires on fixtures.
+        """
+        import z_assembly as za
+        cases = {
+            "discriminating": dict(v_mean=np.array([2.0]), v_blk=np.array([1.0]),
+                                   ms=np.array([0.5])),
+            "saturated": dict(v_mean=np.array([1.0]), v_blk=np.array([100.0]),
+                              ms=np.array([1.0])),
+        }
+        for label, c in cases.items():
+            with self.subTest(case=label):
+                d = za.derive_variant_diagonals(c["v_mean"], c["v_blk"], c["ms"])
+                g_mean, _ = za.compute_g(d["v_uni_mean"], d["v_blk"])
+                g_cv, _ = za.compute_g(d["v_uni_cv"], d["v_blk"])
+                res = za.run_pair_gates(g_recorded={"mean": g_mean, "cv": g_cv},
+                                        diag_c_unified_mean=c["v_mean"],
+                                        diag_c_blocksum=c["v_blk"], joint_mean_shift=c["ms"])
+                blocks = self._blocks()
+                blocks["inflation"] = res
+                blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST",
+                                              limit=0.01)
+                with self._live(0.01, "TEST"):
+                    r = zrec.build_receipt(**blocks)
+                self.assertEqual(r["outcome"]["branch"], 3)
+
     def test_a_genuinely_backed_MET_outcome_is_accepted(self):
         """The positive direction, so the refusals above are not passing for the wrong reason."""
         blocks = self._blocks()

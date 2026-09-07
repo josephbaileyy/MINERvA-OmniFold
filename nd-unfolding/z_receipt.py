@@ -333,6 +333,85 @@ def _validate_reconstruction_ran(inflation) -> None:
                 f"`discrimination_blockers`. WHY the gate was blind -- pinned, saturated, or "
                 f"below tolerance -- is the actionable part, and saturation is invisible to a "
                 f"tolerance argument.")
+    if isinstance(block.get("discrimination_blockers"), dict):
+        _validate_discrimination_blockers(block["discrimination_blockers"], discriminating)
+
+
+BLOCKER_COUNTS = ("n_bins", "n_separated", "n_pinned", "n_saturated_v_uni_below_v_blk",
+                  "n_shift_below_tolerance")
+
+
+def _validate_discrimination_blockers(blockers, discriminating) -> None:
+    """The disclosure must contain MEASUREMENTS, and they must be consistent with the verdict.
+
+    ⚠ ROUND-7 ISSUE 2. Requiring the key was not requiring the content: `discrimination_blockers
+    = {}` satisfied "is a dict" and a MET receipt was written carrying a note that explained
+    nothing and a breakdown that measured nothing. So did a breakdown whose counts did not add
+    up, and one that said `discriminating=False` beside `n_separated=5` -- a record contradicting
+    the verdict it accompanies.
+
+    Four checks, because they fail independently:
+
+      * PRESENT -- every count and `max_separation`, so an empty or partial dict is refused.
+      * IN DOMAIN -- counts are non-negative integers, `max_separation` finite and non-negative.
+        `bool` is excluded: `isinstance(True, int)` is True in Python.
+      * PARTITIONING -- separated + pinned + saturated + below-tolerance == n_bins. Named
+        mechanisms that do not add up leave a fifth cause unaccounted for, and the whole reason
+        this breakdown exists is that saturation was the cause nobody had named.
+      * CONSISTENT -- `discriminating` is exactly `n_separated > 0`. The verdict is a function of
+        the measurements, so a receipt where they disagree is not a receipt with a bad number in
+        it; it is one whose two halves came from different runs.
+    """
+    missing = [k for k in BLOCKER_COUNTS + ("max_separation",) if k not in blockers]
+    if missing:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers omits {missing}. A breakdown "
+            f"that names no mechanism explains nothing -- an empty dict satisfied the previous "
+            f"check, which required the key and not its content.")
+
+    for key in BLOCKER_COUNTS:
+        v = blockers[key]
+        if isinstance(v, bool) or not isinstance(v, int):
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers[{key!r}] is {v!r}, which "
+                f"is not a bin count.")
+        if v < 0:
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers[{key!r}] is {v}; a count "
+                f"of bins cannot be negative.")
+
+    sep_max = blockers["max_separation"]
+    if isinstance(sep_max, bool) or not isinstance(sep_max, (int, float)):
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers['max_separation'] is "
+            f"{sep_max!r}, which is not a measurement.")
+    if not math.isfinite(sep_max) or sep_max < 0:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers['max_separation'] is "
+            f"{sep_max!r}; a relative separation is finite and non-negative by construction.")
+
+    if blockers["n_bins"] <= 0:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers reports n_bins "
+            f"{blockers['n_bins']}. A reconstruction over no bins is not evidence of anything.")
+
+    parts = ("n_separated", "n_pinned", "n_saturated_v_uni_below_v_blk",
+             "n_shift_below_tolerance")
+    total = sum(blockers[k] for k in parts)
+    if total != blockers["n_bins"]:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers do not partition the bins -- "
+            f"{' + '.join(f'{k}={blockers[k]}' for k in parts)} = {total}, but n_bins is "
+            f"{blockers['n_bins']}. Mechanisms that do not add up leave a cause unnamed, which is "
+            f"exactly how saturation went unnoticed.")
+
+    expected = blockers["n_separated"] > 0
+    if bool(discriminating) is not expected:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} records discriminating={discriminating!r} beside "
+            f"n_separated={blockers['n_separated']}. The verdict is a FUNCTION of the "
+            f"measurements -- discriminating is exactly n_separated > 0 -- so these two halves "
+            f"did not come from the same run.")
 
 
 def _leg_is_unbacked(entry):

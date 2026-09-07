@@ -179,6 +179,45 @@ def gate_g_reconstruction(g_recorded, v_uni, v_blk, rtol=IDENTITY_RTOL):
     return {"max_rel_diff": resid, "rtol": rtol}
 
 
+def derive_variant_diagonals(diag_c_unified_mean, diag_c_blocksum, joint_mean_shift):
+    """§1.3a's operand transformation, in ONE place, because two callers disagreed about it.
+
+    ⚠ ROUND-7 ISSUE 1. `gate_raw_operand_reconstruction` clipped its raw diagonals (round 6's
+    fix) and `run_pair_gates` then handed the UNCLIPPED mean diagonal to
+    `check_variant_coupling`. Measured on `diag_mean=-4, diag_block=1, shift=3, stored cv=9`: the
+    raw gate ACCEPTS -- clip(-4)=0, so `v_uni^cv = 0 + 9 = 9` -- and the coupling check predicts
+    `-4 + 9 = 5` and REJECTS the identical build. One runner, two operand semantics, opposite
+    verdicts.
+
+    Fixing the runner alone would have left the ambiguity in place for the next caller. The
+    transformation lives here now and both callers read it from here:
+
+        v_uni^mean = clip(diag(C_unified), 0, inf)
+        v_blk      = clip(diag(C_blocksum), 0, inf)
+        v_uni^cv   = v_uni^mean + mean_shift**2        (added AFTER the clip -- the order matters)
+    """
+    v_uni_raw = np.asarray(diag_c_unified_mean, float)
+    v_blk_raw = np.asarray(diag_c_blocksum, float)
+    ms = np.asarray(joint_mean_shift, float)
+    require(v_uni_raw.shape == v_blk_raw.shape == ms.shape,
+            f"variant diagonals: operand shapes differ -- diag(C_unified^mean) {v_uni_raw.shape}, "
+            f"diag(C_blocksum) {v_blk_raw.shape}, mean shift {ms.shape}")
+    for name, arr in (("diag(C_unified^mean)", v_uni_raw), ("diag(C_blocksum)", v_blk_raw),
+                      ("hJointMeanShift", ms)):
+        require(np.all(np.isfinite(arr)), f"variant diagonals: {name} is not finite")
+
+    v_uni_mean = np.clip(v_uni_raw, 0.0, np.inf)
+    v_blk = np.clip(v_blk_raw, 0.0, np.inf)
+    return {
+        "v_uni_mean": v_uni_mean,
+        "v_uni_cv": v_uni_mean + ms ** 2,
+        "v_blk": v_blk,
+        "ms": ms,
+        "n_clipped_unified": int(np.sum(v_uni_raw < 0.0)),
+        "n_clipped_blocksum": int(np.sum(v_blk_raw < 0.0)),
+    }
+
+
 def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL):
     """G3b -- PROPOSED, not inherited. The forward identity `v_uni^cv == v_uni^mean + ms**2`.
 
@@ -257,6 +296,16 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
             f"variant coupling: shapes {a.shape}, {b.shape}, {ms.shape} differ")
     require(np.all(np.isfinite(a)) and np.all(np.isfinite(b)) and np.all(np.isfinite(ms)),
             "variant coupling: non-finite operand")
+    # ⚠ ROUND-7 ISSUE 1. These are CLIPPED `v_uni` values, not raw diagonals. A clipped variance
+    # is non-negative by construction, so a negative entry means the caller passed the raw
+    # diagonal and this check would silently answer a different question from the reconstruction
+    # gate's. Refusing is the only way the ambiguity cannot survive: an unclear contract that
+    # merely produces a different NUMBER is the defect that reached review.
+    neg = int(np.sum(a < 0.0) + np.sum(b < 0.0))
+    require(neg == 0,
+            f"variant coupling: {neg} negative entr(y/ies) among the v_uni operands. This check "
+            f"takes CLIPPED v_uni values, not raw diagonals -- run them through "
+            f"`derive_variant_diagonals` first, which is where §1.3a's clip lives.")
 
     predicted = b + ms ** 2
     # Elementwise allowance from the magnitudes actually entering the sum -- not from the
@@ -338,32 +387,15 @@ def gate_raw_operand_reconstruction(*, g_recorded, diag_c_unified_mean, diag_c_b
             f"variants be reconstructed independently -- one variant cannot expose the reuse "
             f"fault this gate exists to catch.")
 
-    v_uni_mean_raw = np.asarray(diag_c_unified_mean, float)
-    v_blk_raw = np.asarray(diag_c_blocksum, float)
-    ms = np.asarray(joint_mean_shift, float)
-    require(v_uni_mean_raw.shape == v_blk_raw.shape == ms.shape,
-            f"raw-operand reconstruction: operand shapes differ -- diag(C_unified^mean) "
-            f"{v_uni_mean_raw.shape}, diag(C_blocksum) {v_blk_raw.shape}, mean shift {ms.shape}")
-    for name, arr in (("diag(C_unified^mean)", v_uni_mean_raw), ("diag(C_blocksum)", v_blk_raw),
-                      ("hJointMeanShift", ms)):
-        require(np.all(np.isfinite(arr)), f"raw-operand reconstruction: {name} is not finite")
+    d = derive_variant_diagonals(diag_c_unified_mean, diag_c_blocksum, joint_mean_shift)
+    ms = d["ms"]
 
-    # ⚠ ROUND-6 BLOCKER 3: §1.3a CLIPS BOTH RAW DIAGONALS, and the first version did not.
-    # The contract is explicit, and the ORDER matters -- the shift is added to the CLIPPED
-    # unified diagonal, not to the raw one:
-    #     v_uni^c[i] = clip(diag(C_unified)[i], 0, inf)   ( + mean_shift[i]**2  when c = cv )
-    #     v_blk[i]   = clip(diag(C_blocksum)[i], 0, inf)
-    # Passing raw entries through meant a negative sweep estimate -- which a low-rank throw
-    # estimator does produce -- reached `compute_g` and was REFUSED as "negative variance". The
-    # gate rejected an operand set the contract defines a transformation for. Clipping is the
-    # contract's, not this function's invention, so it belongs here rather than in the caller.
-    n_clipped_uni = int(np.sum(v_uni_mean_raw < 0.0))
-    n_clipped_blk = int(np.sum(v_blk_raw < 0.0))
-    v_uni_mean = np.clip(v_uni_mean_raw, 0.0, np.inf)
-    v_blk = np.clip(v_blk_raw, 0.0, np.inf)
-
-    # THE DERIVATION. `v_uni^cv` is computed, never accepted -- see the docstring.
-    derived = {"mean": v_uni_mean, "cv": v_uni_mean + ms ** 2}
+    # §1.3a's clip and the `+ ms**2` both live in `derive_variant_diagonals`, so this gate and
+    # `check_variant_coupling` cannot answer different questions about the same operands
+    # (round-7 issue 1). `v_uni^cv` is still COMPUTED there, never accepted from the producer.
+    n_clipped_uni, n_clipped_blk = d["n_clipped_unified"], d["n_clipped_blocksum"]
+    v_uni_mean, v_blk = d["v_uni_mean"], d["v_blk"]
+    derived = {"mean": v_uni_mean, "cv": d["v_uni_cv"]}
 
     stored_cv_deviation, stored_cv_discriminating = None, None
     if diag_c_unified_cv is not None:
@@ -560,6 +592,13 @@ def run_pair_gates(*, g_recorded, diag_c_unified_mean, diag_c_blocksum, joint_me
         diag_c_blocksum=diag_c_blocksum, joint_mean_shift=joint_mean_shift,
         diag_c_unified_cv=diag_c_unified_cv, rtol=rtol)
     if diag_c_unified_cv is not None:
+        # ⚠ ROUND-7 ISSUE 1: this used to pass the RAW mean diagonal while the gate above used
+        # the clipped one, so one runner gave two verdicts on one build. Both now read the same
+        # derivation, and the stored cv diagonal is clipped on the same terms as the derived one.
+        d = derive_variant_diagonals(diag_c_unified_mean, diag_c_blocksum, joint_mean_shift)
+        stored = np.asarray(diag_c_unified_cv, float)
+        require(np.all(np.isfinite(stored)),
+                "pair gates: the stored diag(C_unified^cv) is not finite")
         results["G3b_variant_coupling"] = check_variant_coupling(
-            diag_c_unified_cv, diag_c_unified_mean, joint_mean_shift, rtol=rtol)
+            np.clip(stored, 0.0, np.inf), d["v_uni_mean"], d["ms"], rtol=rtol)
     return results
