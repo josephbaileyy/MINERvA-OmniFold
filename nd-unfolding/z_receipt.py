@@ -216,23 +216,63 @@ def _validate_passing_outcome(outcome) -> None:
         raise ZContractError(
             "receipt: outcome claims branch 3 (MET) but records no leg results. A pass with no "
             "legs is not a pass -- §3.7b item 5 grades over a declared leg set L.")
-    offenders = []
-    for name, entry in legs.items():
-        b = (entry or {}).get("boundary") or {}
-        if b.get("status") != "DECLARED" or b.get("value") is None:
-            offenders.append(f"{name} (recorded as {b.get('status')!r})")
-            continue
-        if "limit" not in (entry or {}):
-            offenders.append(f"{name} (no limit was applied)")
-            continue
-        live = Z_BOUNDARIES.get(b.get("name"))
-        if live is not None and not live.is_declared:
-            offenders.append(f"{name} (boundary {b.get('name')!r} is withheld in the registry now)")
+    offenders = [f"{name} ({why})" for name, entry in legs.items()
+                 for why in [_leg_is_unbacked(entry)] if why]
     if offenders:
         raise ZContractError(
             "receipt: outcome claims branch 3 (MET) but these legs are not backed by a declared "
             f"boundary: {sorted(offenders)}. Joseph, 2026-09-07: missing or unapproved acceptance "
             "boundaries must produce an explicit non-passing result.")
+
+
+def _leg_is_unbacked(entry):
+    """Why this leg cannot support a MET grade, or `None` if it can.
+
+    ⚠ ROUND-3 FINDING 1. The first repair checked the recorded boundary block and, if the live
+    registry happened to hold that name, that the live one was still declared. Both halves leaked:
+
+      * `Z_BOUNDARIES.get(name)` returns `None` for an UNKNOWN name, and `live is not None` guarded
+        the only check that used it. Measured: a leg citing `cause3_aggg` -- one keystroke off, no
+        provenance -- graded MET inside a receipt whose own `withheld_boundaries` block listed all
+        four real boundaries as withheld.
+      * nothing compared the recorded declaration with the live one. Measured: a stale outcome
+        applying `limit=1.0` under approval record `APPROVAL-OLD` passed while the live boundary
+        was `0.1` under `APPROVAL-NEW` -- a receipt graded against a superseded criterion, and the
+        receipt itself is where that would have to be caught.
+
+    So the chain is checked end to end: the cited name must be a boundary Z actually HAS, that
+    boundary must be declared NOW, the recorded copy must agree with it in both value and
+    provenance, and the limit that was APPLIED must be that value. A pass is only as good as the
+    weakest link in that chain, and each link is a different way to be wrong.
+    """
+    entry = entry or {}
+    b = entry.get("boundary") or {}
+    name = b.get("name")
+
+    if not name:
+        return "cites no boundary name"
+    live = Z_BOUNDARIES.get(name)
+    if live is None:
+        return (f"cites boundary {name!r}, which is not in Z's registry -- known names are "
+                f"{sorted(Z_BOUNDARIES)}")
+    if not live.is_declared:
+        return f"boundary {name!r} is withheld in the registry now"
+    if b.get("status") != "DECLARED" or b.get("value") is None:
+        return f"boundary {name!r} recorded as {b.get('status')!r} with value {b.get('value')!r}"
+
+    live_value = live.value
+    if b.get("value") != live_value:
+        return (f"recorded boundary value {b.get('value')!r} != the live declaration "
+                f"{live_value!r} for {name!r} -- the outcome is stale")
+    if b.get("provenance") != live.provenance:
+        return (f"recorded provenance {b.get('provenance')!r} != the live approval record "
+                f"{live.provenance!r} for {name!r} -- graded against a superseded criterion")
+    if "limit" not in entry:
+        return "no limit was applied"
+    if entry.get("limit") != live_value:
+        return (f"applied limit {entry.get('limit')!r} != the declared boundary {live_value!r} "
+                f"for {name!r}")
+    return None
 
 
 def write_receipt(path, receipt) -> dict:

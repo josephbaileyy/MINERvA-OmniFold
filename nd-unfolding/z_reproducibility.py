@@ -70,14 +70,22 @@ class BackendProbe:
     version: Optional[str] = None
     error: Optional[str] = None
     recognised_knobs: dict = field(default_factory=dict)   # knob -> True / False / None
+    # What the recognition method was, and how its controls behaved. On the receipt so a reader
+    # can see WHICH table answered and whether it was interrogable, not just the verdict.
+    controls: dict = field(default_factory=dict)
 
     def describe(self) -> dict:
         return {"available": self.available, "version": self.version, "error": self.error,
-                "recognised_knobs": dict(self.recognised_knobs)}
+                "recognised_knobs": dict(self.recognised_knobs),
+                "controls": dict(self.controls)}
 
 
 # The knobs Z would pin, each with the reason it is on the list. Values are Z's PROPOSAL; nothing
 # here is applied, and none of these is an acceptance boundary.
+# ⚠ `deterministic` and `force_row_wise` are defined upstream with EMPTY alias lists. That fact
+# broke the first two recognition methods (review findings 5 and, again, round 3 finding 2): an
+# alias-free parameter is indistinguishable from an unknown one if you only look at what
+# `_ConfigAliases.get()` returns. Recognition reads the parameter TABLE now. See `_parameter_table`.
 Z_REPRO_KNOBS = {
     "deterministic": (True,
                       "LightGBM's own switch for reproducible histogram construction. The module "
@@ -97,47 +105,89 @@ Z_REPRO_KNOBS = {
 # worthless. See `probe_backend`.
 _NEGATIVE_CONTROL = "z_probe_definitely_not_a_lightgbm_parameter_9f2c"
 # A parameter the production estimator already passes (`omnifold_nn_core:145`), so it certainly
-# exists in any build this campaign could be using.
+# exists in any build this campaign could be using. It also HAS aliases upstream, which is why it
+# alone was not enough -- see `_ALIAS_FREE_CONTROL_NOTE`.
 _POSITIVE_CONTROL = "num_leaves"
 
+_ALIAS_FREE_CONTROL_NOTE = (
+    "third control, added in round 3: a parameter the table defines with an EMPTY alias list. It "
+    "is chosen FROM THE TABLE rather than named here, so it cannot go stale against a version "
+    "that changes which parameters have aliases. Any recognition method that infers existence "
+    "from the SHAPE of an alias set fails this control while passing the other two -- which is "
+    "exactly how the previous two methods survived review.")
 
-def _alias_membership(aliases, name):
-    """Is `name` a real parameter, by this build's alias table? `None` if unanswerable.
+# How to reach the build's own parameter table, best first. `_get_all_param_aliases()` is the
+# C-API dump (`LGBM_DumpParamAliases`), i.e. the table LightGBM itself is configured from;
+# `.aliases` is the dict some builds expose directly.
+#
+# ⚠ THESE ACCESSOR NAMES ARE NOT VERIFIED IN THIS INTERPRETER -- LightGBM is not installed here
+# (see the module docstring). They are taken from upstream. The failure direction is deliberate:
+# if none of them resolves to a non-empty dict, the probe reports the table unreadable, every
+# knob comes back `None`, and `z_lgbm_overlay` REFUSES. A wrong guess here cannot certify
+# anything; it can only withhold. Verifying them is part of the outstanding production check.
+_TABLE_ACCESSORS = (
+    ("_ConfigAliases._get_all_param_aliases()", lambda a: a._get_all_param_aliases()),
+    ("_ConfigAliases.aliases", lambda a: a.aliases),
+)
 
-    `_ConfigAliases.get(name)` returns a SET. For a real parameter it contains the canonical name
-    and its aliases; for an unknown name LightGBM 4.x returns `{name}` -- the query echoed back.
-    So `bool(...)` is true for everything, which is review finding 5. Membership has to be tested
-    against the echo, and even that is only trustworthy if the controls below behave.
+
+def _parameter_table(aliases):
+    """`(table, source)` -- the build's canonical -> aliases map -- or `(None, why_not)`.
+
+    ⚠ ROUND-3 FINDING 2. The two previous methods both interrogated `_ConfigAliases.get(name)`
+    and tried to read existence off the RESULT:
+
+      * `bool(get(name))` -- true for everything, because an unknown name is echoed back.
+      * `get(name) != {name}` -- false for every ALIAS-FREE parameter, and LightGBM 4.5.0 defines
+        `deterministic` and `force_row_wise` with empty alias lists. Measured: both of Z's own
+        determinism knobs came back "unrecognised" and the overlay refused a valid configuration.
+
+    Both are inferences about a lookup's return SHAPE. Neither is a membership test. The table
+    itself is the only thing that answers the question asked, so this reads the table.
     """
-    try:
-        s = aliases.get(name)
-    except Exception:
-        return None
-    if not isinstance(s, (set, frozenset, list, tuple)):
-        return None
-    s = set(s)
-    if not s:
-        return False
-    return s != {name}          # a bare echo is not recognition
+    for source, fetch in _TABLE_ACCESSORS:
+        try:
+            t = fetch(aliases)
+        except Exception:
+            continue
+        if isinstance(t, dict) and t:
+            return t, source
+    return None, ("this build exposes no readable parameter table (tried "
+                  + ", ".join(s for s, _ in _TABLE_ACCESSORS) + ")")
+
+
+def _parameter_universe(table):
+    """Every name the table admits: canonical keys AND aliases, since either may be passed."""
+    universe = set()
+    for canonical, aliases in table.items():
+        universe.add(str(canonical))
+        if isinstance(aliases, (set, frozenset, list, tuple)):
+            universe |= {str(a) for a in aliases}
+    return universe
 
 
 def probe_backend() -> BackendProbe:
-    """Import LightGBM and report what is actually there, WITH CONTROLS. Never raises.
+    """Import LightGBM and report what is actually there, WITH THREE CONTROLS. Never raises.
 
-    ⚠ REVIEW FINDING 5. The first version used `bool(_ConfigAliases.get(knob))`, which is not a
-    membership test: LightGBM 4.5.0 echoes an unknown name straight back, so every knob -- real or
-    invented -- came back "recognised". A recognition test that cannot fail certifies anything.
+    The question is "does this build have a parameter called X", and it is answered by looking X
+    up in the build's own parameter table (`_parameter_table`). Two earlier methods tried to infer
+    it from the shape of an alias lookup and both were wrong, in opposite directions -- one
+    certified every name, the next refused every alias-free one.
 
-    Two controls now run alongside the real questions, and BOTH must behave or the whole probe is
-    reported unverified:
+    THE CONTROLS, and what each one is for:
 
-      * a NEGATIVE control -- a name that cannot exist. If it is "recognised", the method is
-        echoing and no answer from it means anything.
-      * a POSITIVE control -- `num_leaves`, which the production estimator already passes. If it
-        is NOT recognised, the method is blind and, again, no answer means anything.
+      * NEGATIVE -- a name that cannot exist. Catches a method that echoes its query back, which
+        is how `bool(get(name))` certified invented parameters.
+      * POSITIVE -- `num_leaves`, which the production estimator already passes. Catches a table
+        that is present but empty, truncated, or shaped differently than assumed.
+      * ALIAS-FREE -- chosen FROM the table: a parameter whose alias list is empty. Catches a
+        method that mistakes "no aliases" for "no such parameter", which is the round-3 finding.
+        Unavailable if the table defines no such parameter; that is recorded, not treated as a
+        pass, and it is not treated as a failure either -- absence of the fixture is not evidence.
 
-    A probe that cannot discriminate returns `None` for every knob, which the overlay refuses. That
-    is the intended outcome on any build whose alias table echoes.
+    If any available control misbehaves, EVERY knob comes back `None` and the overlay refuses. The
+    controls guard the method, not the knobs, so a method that cannot be trusted about the control
+    is not trusted about anything.
     """
     try:
         import lightgbm  # noqa: F401
@@ -146,25 +196,51 @@ def probe_backend() -> BackendProbe:
                             recognised_knobs={k: None for k in Z_REPRO_KNOBS})
 
     version = getattr(lightgbm, "__version__", None)
+    blind = {k: None for k in Z_REPRO_KNOBS}
     aliases = getattr(getattr(lightgbm, "basic", None), "_ConfigAliases", None)
-    if aliases is None or not hasattr(aliases, "get"):
-        return BackendProbe(available=True, version=version,
-                            error="this build exposes no interrogable parameter table",
-                            recognised_knobs={k: None for k in Z_REPRO_KNOBS})
+    if aliases is None:
+        return BackendProbe(available=True, version=version, recognised_knobs=blind,
+                            error="this build exposes no _ConfigAliases parameter table")
 
-    neg = _alias_membership(aliases, _NEGATIVE_CONTROL)
-    pos = _alias_membership(aliases, _POSITIVE_CONTROL)
-    if neg is not False or pos is not True:
+    table, source = _parameter_table(aliases)
+    if table is None:
+        return BackendProbe(available=True, version=version, recognised_knobs=blind,
+                            error=source, controls={"table_source": None})
+
+    universe = _parameter_universe(table)
+    alias_free = sorted(str(k) for k, v in table.items()
+                        if isinstance(v, (set, frozenset, list, tuple)) and not v)
+    # Prefer an alias-free parameter that is NOT one of Z's own knobs, so the control asks an
+    # INDEPENDENT question. If the only alias-free names in the table are the knobs themselves the
+    # control still runs, but it is then answering the same question as the knob check and says so.
+    independent = [k for k in alias_free if k not in Z_REPRO_KNOBS]
+    af_name = (independent or alias_free or [None])[0]
+    controls = {
+        "table_source": source,
+        "table_parameters": len(table),
+        "universe_size": len(universe),
+        "negative": {"name": _NEGATIVE_CONTROL, "want": False,
+                     "got": _NEGATIVE_CONTROL in universe},
+        "positive": {"name": _POSITIVE_CONTROL, "want": True,
+                     "got": _POSITIVE_CONTROL in universe},
+        "alias_free": ({"name": af_name, "want": True, "got": af_name in universe,
+                        "n_alias_free_in_table": len(alias_free),
+                        "independent_of_Z_knobs": af_name not in Z_REPRO_KNOBS}
+                       if af_name is not None else
+                       {"name": None, "status": "UNAVAILABLE -- the table defines no alias-free "
+                                                "parameter, so this control could not be run",
+                        "note": _ALIAS_FREE_CONTROL_NOTE}),
+    }
+    misbehaving = [c for c in ("negative", "positive", "alias_free")
+                   if "want" in controls[c] and controls[c]["got"] is not controls[c]["want"]]
+    if misbehaving:
         return BackendProbe(
-            available=True, version=version,
-            error=(f"recognition method is not discriminating: negative control "
-                   f"{_NEGATIVE_CONTROL!r} -> {neg!r} (want False), positive control "
-                   f"{_POSITIVE_CONTROL!r} -> {pos!r} (want True)"),
-            recognised_knobs={k: None for k in Z_REPRO_KNOBS})
+            available=True, version=version, recognised_knobs=blind, controls=controls,
+            error=("recognition method is not discriminating; misbehaving controls "
+                   + repr(misbehaving) + " against table " + repr(source)))
 
-    return BackendProbe(available=True, version=version, error=None,
-                        recognised_knobs={k: _alias_membership(aliases, k)
-                                          for k in Z_REPRO_KNOBS})
+    return BackendProbe(available=True, version=version, error=None, controls=controls,
+                        recognised_knobs={k: (k in universe) for k in Z_REPRO_KNOBS})
 
 
 def z_lgbm_overlay(probe: Optional[BackendProbe] = None) -> dict:

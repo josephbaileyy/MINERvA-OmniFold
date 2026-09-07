@@ -125,6 +125,35 @@ class TheInvariantHoldsOnEveryConstructionPath(unittest.TestCase):
         with self.assertRaises(zc.ZContractError):
             zc.Boundary.declared("t", None, "REC")
 
+    def test_ordinary_unpickling_does_NOT_call_post_init_so_setstate_does(self):
+        """⚠ ROUND-3 NONBLOCKING 1. The docstring claimed `__post_init__` covered unpickling.
+
+        Measured: it does not. `pickle` restores state directly and never calls `__init__`, and a
+        payload whose provenance had been blanked came back with `.value` usable. Rather than
+        withdraw the claim and leave the gap, `__setstate__` re-runs the invariant -- so the test
+        for the claim is the counterexample that disproved it.
+        """
+        import pickle
+        good = zc.Boundary.declared("t", 0.5, "REC")
+        self.assertEqual(pickle.loads(pickle.dumps(good)).value, 0.5)
+        tampered = pickle.dumps(good).replace(b"REC", b"   ")
+        with self.assertRaises(zc.ZContractError):
+            pickle.loads(tampered)
+
+    def test_a_withheld_boundary_survives_a_pickle_round_trip_and_stays_withheld(self):
+        import pickle
+        w = pickle.loads(pickle.dumps(zc.Z_BOUNDARIES["null_epsilon"]))
+        self.assertFalse(w.is_declared)
+        with self.assertRaises(zc.BoundaryWithheld):
+            w.value
+
+    def test_copy_and_deepcopy_still_work(self):
+        """`__setstate__` must not break the ordinary paths it sits on."""
+        import copy
+        good = zc.Boundary.declared("t", 0.5, "REC")
+        self.assertEqual(copy.deepcopy(good), good)
+        self.assertEqual(copy.copy(good), good)
+
 
 class ConstantsAreImportedNotRetyped(unittest.TestCase):
     """§1.2. A retyped band list is a second implementation of a predicate."""
@@ -202,6 +231,43 @@ class TheBandPartitionGateFiresInBothDirections(unittest.TestCase):
             zc.check_band_partition(self.V, self.R, self.A)
 
 
+class LGBM45Table:
+    """Shaped like LightGBM 4.5.0's own parameter dump: canonical -> alias LIST, `[]` when none.
+
+    ⚠ The previous positive fixture invented an alias for every parameter, which is precisely why
+    it could not fail round-3 finding 2. `deterministic` and `force_row_wise` are alias-free
+    upstream and are alias-free here; `is_unbalance` is an alias-free parameter that is NOT one of
+    Z's knobs, so the alias-free control has an independent name to use.
+    """
+
+    _dump = {
+        "num_leaves": ["num_leaf", "max_leaves", "max_leaf", "max_leaf_nodes"],
+        "num_threads": ["num_thread", "nthread", "nthreads", "n_jobs"],
+        "learning_rate": ["shrinkage_rate", "eta"],
+        "deterministic": [],
+        "force_row_wise": [],
+        "is_unbalance": [],
+    }
+
+    @classmethod
+    def _get_all_param_aliases(cls):
+        return {k: list(v) for k, v in cls._dump.items()}
+
+    @classmethod
+    def get(cls, name):
+        return {name} | set(cls._dump.get(name, []))
+
+
+def probe_against(table, version="4.5.0"):
+    """Run the real `probe_backend` against a stand-in backend exposing `table`."""
+    import types
+    fake = types.ModuleType("lightgbm")
+    fake.__version__ = version
+    fake.basic = types.SimpleNamespace(_ConfigAliases=table)
+    with mock.patch.dict(sys.modules, {"lightgbm": fake}):
+        return zr.probe_backend()
+
+
 class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
     """Joseph asked for the config 'after checking the actual LightGBM backend and version'.
 
@@ -239,58 +305,119 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
             zr.z_lgbm_overlay(anon)
         self.assertIn("version", str(cm.exception))
 
-    def test_an_echoing_alias_table_is_treated_as_non_discriminating(self):
-        """Review finding 5: LightGBM 4.5.0 echoes an unknown name back, so bool() certifies all.
-
-        A fake table that echoes everything must recognise nothing, or the probe is a rubber stamp.
-        """
+    def test_a_build_with_no_READABLE_table_is_unverified_rather_than_certified(self):
+        """An echoing `get()` and no table is the shape both broken methods were built on."""
         class Echo:
             @staticmethod
             def get(name):
                 return {name}
-        self.assertFalse(zr._alias_membership(Echo, "anything_at_all"))
 
-    def test_a_real_alias_set_is_recognised(self):
-        class Real:
-            @staticmethod
-            def get(name):
-                return {name, "an_alias_of_it"}
-        self.assertTrue(zr._alias_membership(Real, "num_threads"))
-
-    def test_the_probe_reports_unverified_when_its_controls_misbehave(self):
-        """The negative control is the point: if a bogus name passes, no answer is worth having."""
-        import types
-        fake_basic = types.SimpleNamespace(_ConfigAliases=type("E", (), {
-            "get": staticmethod(lambda name: {name, "x"})}))     # recognises EVERYTHING
-        fake_lgbm = types.ModuleType("lightgbm")
-        fake_lgbm.__version__ = "4.5.0"
-        fake_lgbm.basic = fake_basic
-        with mock.patch.dict(sys.modules, {"lightgbm": fake_lgbm}):
-            p = zr.probe_backend()
+        p = probe_against(Echo)
         self.assertTrue(p.available)
-        self.assertIn("not discriminating", p.error or "")
+        self.assertIn("no readable parameter table", p.error or "")
         self.assertTrue(all(v is None for v in p.recognised_knobs.values()))
         with self.assertRaises(zc.ZContractError):
             zr.z_lgbm_overlay(p)
 
-    def test_a_discriminating_backend_is_accepted(self):
-        """The positive direction, so the refusals above are not passing for the wrong reason."""
-        import types
-        real = set(zr.Z_REPRO_KNOBS) | {zr._POSITIVE_CONTROL}
+    def test_ALIAS_FREE_parameters_are_recognised(self):
+        """⚠ ROUND-3 FINDING 2, verbatim, and the reason the previous method was wrong.
 
-        class Table:
-            @staticmethod
-            def get(name):
-                return {name, f"{name}_alias"} if name in real else {name}
+        LightGBM 4.5.0 defines `deterministic` and `force_row_wise` with EMPTY alias lists, so
+        `_ConfigAliases.get(name)` returns `{name}` for them -- byte-identical to what it returns
+        for a name that does not exist. The `get(name) != {name}` method therefore marked two of
+        Z's three knobs unrecognised and the overlay refused a perfectly valid configuration.
 
-        fake_lgbm = types.ModuleType("lightgbm")
-        fake_lgbm.__version__ = "4.5.0"
-        fake_lgbm.basic = types.SimpleNamespace(_ConfigAliases=Table)
-        with mock.patch.dict(sys.modules, {"lightgbm": fake_lgbm}):
-            p = zr.probe_backend()
+        This fixture is shaped like the real table, alias-free entries and all.
+        """
+        p = probe_against(LGBM45Table)
         self.assertIsNone(p.error)
-        self.assertTrue(all(v is True for v in p.recognised_knobs.values()))
+        self.assertEqual(p.recognised_knobs,
+                         {"deterministic": True, "force_row_wise": True, "num_threads": True})
         self.assertEqual(zr.z_lgbm_overlay(p)["backend"]["version"], "4.5.0")
+
+    def test_the_alias_free_CONTROL_is_run_and_is_chosen_from_the_table(self):
+        """The control that would have caught finding 2, and it is not a name hard-coded here.
+
+        Naming an alias-free parameter in this file would only be true of the version I guessed;
+        deriving it from the table keeps the control honest across versions. It also prefers a
+        parameter that is NOT one of Z's knobs, so it asks an independent question.
+        """
+        p = probe_against(LGBM45Table)
+        af = p.controls["alias_free"]
+        self.assertTrue(af["got"])
+        self.assertTrue(af["independent_of_Z_knobs"])
+        self.assertNotIn(af["name"], zr.Z_REPRO_KNOBS)
+        self.assertEqual(p.controls["table_source"],
+                         "_ConfigAliases._get_all_param_aliases()")
+
+    def test_the_alias_free_control_reports_UNAVAILABLE_rather_than_passing(self):
+        """A table with no alias-free entry cannot run the control. Absence is not a pass."""
+        class NoAliasFree:
+            @staticmethod
+            def _get_all_param_aliases():
+                return {k: [f"{k}_alias"] for k in
+                        list(zr.Z_REPRO_KNOBS) + [zr._POSITIVE_CONTROL]}
+
+        p = probe_against(NoAliasFree)
+        self.assertIsNone(p.error)                       # not a failure ...
+        self.assertIsNone(p.controls["alias_free"]["name"])
+        self.assertIn("UNAVAILABLE", p.controls["alias_free"]["status"])   # ... but recorded
+
+    def test_a_table_missing_the_POSITIVE_control_is_unverified(self):
+        """Catches a table that is present but truncated, empty-ish or differently shaped."""
+        class Truncated:
+            @staticmethod
+            def _get_all_param_aliases():
+                return {"learning_rate": ["eta"]}
+
+        p = probe_against(Truncated)
+        self.assertIn("not discriminating", p.error or "")
+        self.assertIn("positive", p.error or "")
+        self.assertTrue(all(v is None for v in p.recognised_knobs.values()))
+
+    def test_a_table_admitting_the_NEGATIVE_control_is_unverified(self):
+        """The echo detector, moved to where the method now reads."""
+        class Permissive:
+            @staticmethod
+            def _get_all_param_aliases():
+                return {zr._NEGATIVE_CONTROL: [], zr._POSITIVE_CONTROL: ["num_leaf"],
+                        **{k: [] for k in zr.Z_REPRO_KNOBS}}
+
+        p = probe_against(Permissive)
+        self.assertIn("negative", p.error or "")
+        with self.assertRaises(zc.ZContractError):
+            zr.z_lgbm_overlay(p)
+
+    def test_a_knob_genuinely_ABSENT_from_the_table_is_refused(self):
+        """The direction that must survive the fix: a real refusal is still a refusal."""
+        class MissingKnob:
+            @staticmethod
+            def _get_all_param_aliases():
+                d = {k: [] for k in zr.Z_REPRO_KNOBS if k != "force_row_wise"}
+                d[zr._POSITIVE_CONTROL] = ["num_leaf"]
+                d["is_unbalance"] = []
+                return d
+
+        p = probe_against(MissingKnob)
+        self.assertIs(p.recognised_knobs["force_row_wise"], False)
+        with self.assertRaises(zc.ZContractError) as cm:
+            zr.z_lgbm_overlay(p)
+        self.assertIn("force_row_wise", str(cm.exception))
+
+    def test_an_alias_is_admitted_as_well_as_the_canonical_name(self):
+        universe = zr._parameter_universe(LGBM45Table._get_all_param_aliases())
+        self.assertIn("num_threads", universe)
+        self.assertIn("n_jobs", universe)                # an alias of it
+        self.assertNotIn(zr._NEGATIVE_CONTROL, universe)
+
+    def test_the_second_accessor_is_used_when_the_first_is_absent(self):
+        class OldStyle:
+            aliases = {"num_leaves": {"num_leaf"}, "is_unbalance": set(),
+                       **{k: set() for k in zr.Z_REPRO_KNOBS}}
+
+        p = probe_against(OldStyle)
+        self.assertIsNone(p.error)
+        self.assertEqual(p.controls["table_source"], "_ConfigAliases.aliases")
 
     def test_an_unverified_knob_refuses_even_when_the_backend_imports(self):
         # The dangerous middle case: LightGBM is there, but we cannot confirm a parameter name.

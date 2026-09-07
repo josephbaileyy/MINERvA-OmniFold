@@ -181,11 +181,32 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
     than by their difference, elementwise.
 
     ⚠ AND ITS DISCRIMINATING POWER IS REPORTED, because it is limited and silence about that would
-    be worse than the gate's absence. When `ms**2` sinks below the float64 resolution of `v_uni`,
-    the identity cannot distinguish a correct build from a dropped shift -- the signal is beneath
-    the noise. In that regime the gate PASSES and reports `discriminating=False`, so a caller
-    cannot read it as assurance. **G3 -- the independent per-variant `g` reconstruction -- remains
-    the primary gate for the dropped shift, and this one is corroboration.**
+    be worse than the gate's absence. When `ms**2` falls below the CONFIGURED allowance
+    `rtol * (|v_cv| + |v_mean|)`, the identity cannot distinguish a correct build from a dropped
+    shift. The gate then PASSES and reports `discriminating=False`, so a caller cannot read it as
+    assurance.
+
+    ⚠ ROUND 3 CORRECTED BOTH HALVES OF THAT PARAGRAPH.
+
+    *The threshold is the tolerance, not the arithmetic.* The earlier text said "below the float64
+    resolution of `v_uni`", which is a different and far narrower claim. Measured at `v_mean = 1`,
+    `ms = 1e-5`: `ms**2 = 1e-10` is **4.5e5 ulps**, entirely representable, and `(1 + 1e-10) - 1`
+    returns `1e-10` exactly. It is simply smaller than the `2e-9` allowance this gate is
+    configured with. The resolution regime needs `ms < 1.5e-8`; the tolerance regime -- the one
+    that actually binds -- needs `ms < 4.5e-5`, some three thousand times wider. Naming the rarer
+    mechanism understated how often the gate is blind.
+
+    *And "rely on G3" was unsound.* Measured on that same input with the shift dropped: this gate
+    passes non-discriminating and **G3 passes too**. G3 reconstructs `g` from the RECORDED `v_uni`,
+    so a `v_uni^cv` built without the shift is self-consistent with the `g` derived from it and
+    there is nothing for G3 to disagree with -- not merely in the small-signal regime, but at any
+    shift size. G3 is the gate for a MIS-RECORDED `g`; it was never the gate for a mis-built
+    `v_uni`, and pointing at it offered assurance that does not exist.
+
+    What remains when `discriminating=False` is therefore not another gate. It is §3.3 condition
+    14 -- both variants exist and are distinct -- which is a check on the OPERANDS and their
+    provenance, not on this identity. A caller reading `discriminating=False` should treat the
+    dropped shift as UNTESTED here.
     """
     a = np.asarray(v_uni_cv, float)
     b = np.asarray(v_uni_mean, float)
@@ -213,8 +234,12 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
             "rtol": rtol, "ms_norm": float(np.linalg.norm(ms)),
             "discriminating": discriminating,
             "n_bins_where_signal_exceeds_noise": int(np.sum(signal > noise)),
-            "note": ("PASSED WITHOUT DISCRIMINATING: ms**2 is below the float64 resolution of "
-                     "v_uni everywhere, so a dropped shift would look identical. Rely on G3."
+            "note": ("PASSED WITHOUT DISCRIMINATING: ms**2 is below the configured allowance "
+                     "rtol*(|v_cv|+|v_mean|) in every bin, so a dropped shift would look "
+                     "identical here. This is a tolerance limit, not a representability one, and "
+                     "G3 does NOT cover the gap -- it reconstructs g from the recorded v_uni, so "
+                     "a v_uni built without the shift is self-consistent. Treat the dropped shift "
+                     "as UNTESTED and fall back on §3.3 condition 14, which checks the operands."
                      if not discriminating else "discriminating")}
 
 

@@ -549,27 +549,99 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
     def test_a_MET_outcome_whose_boundary_was_withdrawn_since_is_refused(self):
         """The stale-outcome case: the dict says DECLARED, the live registry disagrees."""
         blocks = self._blocks()
-        blocks["outcome"] = {
-            "assessable": True, "branch": 3,
-            "leg_results": {"agg": {"limit": 0.01,
-                                    "boundary": {"name": "cause3_agg", "status": "DECLARED",
-                                                 "value": 0.01, "provenance": "stale"}}}}
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="stale", limit=0.01)
         with self.assertRaises(zc.ZContractError) as cm:
             zrec.build_receipt(**blocks)
         self.assertIn("withheld in the registry now", str(cm.exception))
 
+    # ---- ⚠ ROUND-3 FINDING 1: the chain from the cited name to the applied limit --------------
+    def test_an_UNKNOWN_boundary_name_is_refused(self):
+        """Measured before this fix: `cause3_aggg` -- one keystroke off -- graded MET.
+
+        `Z_BOUNDARIES.get(name)` returns None for an unknown name, and `live is not None` guarded
+        the only check that consulted it, so a name Z has never heard of skipped every test. The
+        receipt listed all four real boundaries as withheld in the same document.
+        """
+        blocks = self._blocks()
+        blocks["outcome"] = self._met(name="cause3_aggg", value=1.0, prov=None, limit=1.0)
+        with self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("not in Z's registry", str(cm.exception))
+
+    def test_a_CHANGED_declaration_is_refused(self):
+        """Measured: limit 1.0 under APPROVAL-OLD passed while the live boundary was 0.1."""
+        blocks = self._blocks()
+        blocks["outcome"] = self._met(name="cause3_agg", value=1.0, prov="APPROVAL-OLD", limit=1.0)
+        with self._live(0.1, "APPROVAL-NEW"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("the outcome is stale", str(cm.exception))
+
+    def test_the_right_VALUE_under_a_SUPERSEDED_approval_record_is_refused(self):
+        """Two records can name the same number for different reasons; the record is the citation.
+
+        This is the half a value comparison alone would wave through -- and the half that matters
+        under BEN-381, where which record approved a limit is the whole question.
+        """
+        blocks = self._blocks()
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.1, prov="APPROVAL-OLD", limit=0.1)
+        with self._live(0.1, "APPROVAL-NEW"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("superseded criterion", str(cm.exception))
+
+    def test_a_limit_that_does_not_match_the_boundary_it_cites_is_refused(self):
+        """The declaration can be perfect and the number actually APPLIED still be another one."""
+        blocks = self._blocks()
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.1, prov="APPROVAL-NEW", limit=1.0)
+        with self._live(0.1, "APPROVAL-NEW"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("applied limit", str(cm.exception))
+
+    def test_a_leg_citing_no_boundary_name_at_all_is_refused(self):
+        blocks = self._blocks()
+        blocks["outcome"] = {"assessable": True, "branch": 3,
+                             "leg_results": {"agg": {"limit": 0.1, "boundary": {}}}}
+        with self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("cites no boundary name", str(cm.exception))
+
     def test_a_genuinely_backed_MET_outcome_is_accepted(self):
         """The positive direction, so the refusals above are not passing for the wrong reason."""
         blocks = self._blocks()
-        blocks["outcome"] = {
-            "assessable": True, "branch": 3,
-            "leg_results": {"agg": {"limit": 0.01,
-                                    "boundary": {"name": "cause3_agg", "status": "DECLARED",
-                                                 "value": 0.01, "provenance": "TEST-RECORD"}}}}
-        with mock.patch.dict(zc.Z_BOUNDARIES,
-                             {"cause3_agg": zc.Boundary.declared("cause3_agg", 0.01, "TEST")}):
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"):
             r = zrec.build_receipt(**blocks)
         self.assertEqual(r["outcome"]["branch"], 3)
+
+    def test_what_the_VALIDATOR_actually_emits_is_accepted_unchanged(self):
+        """The end-to-end direction: `assess` must produce a receipt the receipt will take.
+
+        A validation rule invented in the receipt and never satisfied by the real producer would
+        be a rule that only fires on hand-written fixtures. This passes `assess`'s own output
+        straight through, so the two agree on the shape by construction rather than by my reading.
+        """
+        declared = {"cause3_agg": zc.Boundary.declared("cause3_agg", 0.5, "TEST-APPROVAL"),
+                    "cause3_med": zc.Boundary.declared("cause3_med", 0.5, "TEST-APPROVAL")}
+        with mock.patch.dict(zc.Z_BOUNDARIES, declared):
+            out = zv.assess(zv.LegSet([AGG, MED], predeclared_at="TEST"),
+                            {"s_agg": 0.0, "s_med": 0.0}, all_valid())
+            self.assertEqual(out.branch, 3)
+            blocks = self._blocks()
+            blocks["outcome"] = out.describe()
+            r = zrec.build_receipt(**blocks)
+        self.assertEqual(r["outcome"]["branch"], 3)
+
+    @staticmethod
+    def _met(name, value, prov, limit):
+        return {"assessable": True, "branch": 3, "branch_label": "MET",
+                "leg_results": {"agg": {"class": "aggregate", "statistic": 0.0, "limit": limit,
+                                        "boundary": {"name": name, "status": "DECLARED",
+                                                     "value": value, "provenance": prov}}}}
+
+    @staticmethod
+    def _live(value, provenance):
+        return mock.patch.dict(
+            zc.Z_BOUNDARIES,
+            {"cause3_agg": zc.Boundary.declared("cause3_agg", value, provenance)})
 
     def test_the_real_unassessable_outcome_records_cleanly(self):
         L = zv.LegSet([AGG, MED], predeclared_at="TEST")

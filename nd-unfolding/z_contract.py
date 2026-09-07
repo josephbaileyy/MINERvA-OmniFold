@@ -123,8 +123,18 @@ class Boundary:
         Review finding 1: the first version enforced provenance only inside `declared()`, so the
         dataclass's own generated constructor -- `Boundary("null_epsilon", 1.0, None, None)` --
         produced a usable boundary with no approval behind it. A guard on the polite path is not a
-        guard: `__post_init__` runs on EVERY construction path, including `replace()` and
-        unpickling.
+        guard.
+
+        THE PATHS THIS COVERS, and what establishes each (round 3 corrected the list):
+
+          * `Boundary(...)`, `declared()`, `withheld()` -- `__post_init__` is called by the
+            generated `__init__`.
+          * `dataclasses.replace()` -- calls `__init__`, so likewise.
+          * `pickle.loads()` -- **NOT** by `__post_init__`. Measured: a round trip through
+            `pickle` restores state directly and never calls `__init__`, and a payload whose
+            provenance had been blanked came back with `.value` usable. That is what `__setstate__`
+            below is for. The earlier blanket claim that this method runs on "every construction
+            path, including unpickling" was WRONG, and it was wrong in the direction that matters.
         """
         if not self.name or not str(self.name).strip():
             raise ZContractError("boundary: a name is required")
@@ -149,6 +159,18 @@ class Boundary:
                 raise ZContractError(
                     f"boundary {self.name!r}: a declared boundary must not also carry a "
                     f"withholding reason -- one of the two states, never both")
+
+    def __setstate__(self, state):
+        """Re-run the invariant after deserialization, because `__post_init__` will not.
+
+        Nothing in Z pickles a `Boundary` today -- receipts are JSON. This exists because the
+        alternative on offer was to document the gap and leave it open, and a three-line hook that
+        makes the docstring above TRUE is worth more than a caveat that has to be remembered. The
+        state is restored through `object.__setattr__` since the dataclass is frozen.
+        """
+        for key, value in state.items():
+            object.__setattr__(self, key, value)
+        self.__post_init__()
 
     @classmethod
     def declared(cls, name: str, value: float, provenance: str) -> "Boundary":
