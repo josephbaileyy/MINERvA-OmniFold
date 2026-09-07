@@ -52,6 +52,61 @@ follows was that item's execution; these two acts are its remainder.
 The owner holds **two dated obligations**, below. Neither is discharged by this record, and neither
 is assigned to the integration lane that wrote it.
 
+## 3a. Concrete owner — ACCEPTED 2026-09-07
+
+**The orchestration lane's ownership in §3 is institutional. This section names the session that
+holds it.**
+
+**Accepted by:** session **`preflight [e11e6d]`**, on the decision owner's assignment of 2026-09-07.
+Transcript: `https://claude.ai/code/session_01Kv6jeUoFeyXewZsG6am3by`.
+
+**Acceptance is not durability, and this session is not the mechanism.** A chat session ends. The
+obligations below are dated, and the deadline is three weeks out, so the continuation is carried by a
+scheduled agent and by this record — not by anyone remembering.
+
+### Durable continuation
+
+**Reminder:** Claude Code routine **`trig_01Qog2yDeBo9k8fTv7BHUDd9`**, one-shot, fires
+**`2026-10-01T09:00:00Z`** — `1 d 9 h` after the R5 stop, `1 d 4 h 44 m` before the §2 deadline. It
+reads this record, reports whether it is still OPEN, lists the §4.3 ids, and alerts the decision owner
+that Obligation B needs a host with `sacct`. Manage it at
+`https://claude.ai/code/routines/trig_01Qog2yDeBo9k8fTv7BHUDd9`.
+
+**That routine cannot discharge anything.** It is a cloud agent with no NERSC access; it cannot run
+`sacct`. It raises the alarm and hands over the commands. **Whoever performs Obligation B needs SSH to
+a host with `sacct`.**
+
+**Instructions to whoever picks this up, in order:**
+
+1. Read §4 and §5 of this record. They carry the exact commands.
+2. Take the **final** Obligation A capture before `2026-10-02T13:44:27Z`. The 2026-09-07 snapshot
+   under `docs/orchestration/state/preflight-20260907-r5-followup/` is **insurance, not discharge** —
+   spend continued accruing after it.
+3. Re-read §4.3's outstanding ids from the *final* capture, not from the snapshot.
+4. Meter later finishers per §5, and heed its trap: remove the superseded `RUNNING` rows for exactly
+   those ids before concatenating, and nothing else.
+5. **Do not write `docs/orchestration/state/r5-meter-receipt.json`.** Preserving evidence does not
+   authorize arming compute admission; that is a separate decision belonging to the decision owner.
+
+### Obligation A — early snapshot PERFORMED 2026-09-07, record still OPEN
+
+Committed at `docs/orchestration/state/preflight-20260907-r5-followup/`, measured with the **landed
+repaired meter** (`383eec66…`, byte-verified, run from isolated scratch; the cluster checkout was not
+modified):
+
+| | |
+|---|---:|
+| capture sha256 | `31c74b422aa1889e351042e93ab567035b5907bd0279362e3666fb6dbc246e86` |
+| receipt sha256 | `ed86508e35b0f1dc0999cf95a3a6d1199682d8309bfc9475500039a876369b9b` |
+| CPU task-hours | **`13.064722222222223`** |
+| GPU task-hours | `0.0` |
+| attempts / task ids | `1155` / `1` |
+| **§4.3 outstanding** | **`57712764`** |
+| rows with `End=Unknown` | `0` — §5's trap does not apply to *this* capture |
+
+**Status remains OPEN.** `57712764` is non-terminal and still accruing at roughly `0.65`–`0.69` CPU
+task-hours/day, so both the final capture and Obligation B are outstanding.
+
 ## 4. Obligation A — preserve the accounting **before `2026-10-02T13:44:27Z`**
 
 Before that instant, on a host with `sacct`:

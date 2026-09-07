@@ -1,0 +1,44 @@
+{
+  "schema_version": 2,
+  "decision_record": "docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md",
+  "t0_utc": "2026-09-02T13:44:27Z",
+  "stop_date_utc": "2026-09-30T00:00:00Z",
+  "ceilings": {
+    "gpu_task_hours": 500.0,
+    "cpu_task_hours": 500.0
+  },
+  "unit": "task-hours: sum of post-t0 ElapsedRaw over every execution attempt, with the attempts of one job id summed; an attempt is (JobID, Start, End) and a repeated observation of one attempt is counted once; attempts straddling t0 are clipped at t0; .batch/.extern/step and array-bracket rows excluded",
+  "measured_at_utc": "2026-09-07T01:54:09.029195Z",
+  "measured_on_host": "login13",
+  "source": {
+    "kind": "file",
+    "argv_or_path": "/global/homes/j/josephrb/r5-followup-20260907/r5-window-preserved.psv",
+    "raw_sha256": "31c74b422aa1889e351042e93ab567035b5907bd0279362e3666fb6dbc246e86"
+  },
+  "spend": {
+    "gpu_task_hours": 0.0,
+    "cpu_task_hours": 13.064722222222223,
+    "task_count": 1,
+    "attempt_count": 1155,
+    "metered_task_ids": [
+      "57712764"
+    ],
+    "attempts_by_task_id": {
+      "57712764": 1155
+    },
+    "by_state": {
+      "NODE_FAIL": 2,
+      "REQUEUED": 1153
+    }
+  },
+  "fired": {
+    "date": false,
+    "gpu": false,
+    "cpu": false,
+    "any": false
+  },
+  "headroom": {
+    "gpu_task_hours": 500.0,
+    "cpu_task_hours": 486.9352777777778
+  }
+}
