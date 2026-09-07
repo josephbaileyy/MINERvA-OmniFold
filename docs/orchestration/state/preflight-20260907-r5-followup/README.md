@@ -1,10 +1,14 @@
 # R5 preserved accounting snapshot — 2026-09-07
 
 **⚠ THIS IS NOT THE OPERATIONAL ADMISSION RECEIPT AND MUST NOT BE MOVED TO ONE.**
-`r5-snapshot-receipt-20260907.json` is deliberately **not** at
+`r5-accounting-snapshot-20260907.json` is deliberately **not** at
 `docs/orchestration/state/r5-meter-receipt.json`. Committing a valid receipt to that path arms
 compute admission queue-wide. Evidence capture does not authorize it — the decision owner said so
 explicitly when ordering this snapshot.
+
+The file is named `…-snapshot.json`, not `…-receipt…`, so that neither the path nor the name
+invites mis-staging. It was renamed from `r5-snapshot-receipt-20260907.json`; the bytes and the
+sha256 below are unchanged by the rename.
 
 ## What this is
 
@@ -20,7 +24,7 @@ checkout was not modified and does not carry the repair.**
 | file | sha256 |
 |---|---|
 | `r5-window-preserved.psv` | `31c74b422aa1889e351042e93ab567035b5907bd0279362e3666fb6dbc246e86` |
-| `r5-snapshot-receipt-20260907.json` | `ed86508e35b0f1dc0999cf95a3a6d1199682d8309bfc9475500039a876369b9b` |
+| `r5-accounting-snapshot-20260907.json` | `ed86508e35b0f1dc0999cf95a3a6d1199682d8309bfc9475500039a876369b9b` |
 
 ## The measurement
 
