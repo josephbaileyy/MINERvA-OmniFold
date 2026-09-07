@@ -12,6 +12,7 @@ Every guard below is tested in BOTH directions: it fires on the defect AND stays
 clean case. A one-directional check waves the other through, which this repository has paid for.
 """
 import os
+import pathlib
 import sys
 import unittest
 from unittest import mock
@@ -232,7 +233,7 @@ class TheBandPartitionGateFiresInBothDirections(unittest.TestCase):
 
 
 class LGBM45Table:
-    """Shaped like LightGBM 4.5.0's PYTHON accessor: the canonical name is PREPENDED to its aliases.
+    """Shaped like LightGBM 4.6.0's PYTHON accessor: the canonical name is PREPENDED to its aliases.
 
     ⚠ THREE ROUNDS OF FIXTURE DEFECTS, all of one kind -- a fixture agreeing with my code rather
     than with the world, so the control it feeds could not fail:
@@ -249,22 +250,28 @@ class LGBM45Table:
         sentence justifying the choice asserted it too. Swapping the identifier without rewriting
         the reason would have left a correct fixture carrying a false premise.
 
-    WHAT IS AND IS NOT ESTABLISHED HERE, since three corrections in a row were all of upstream
-    facts I cannot check from this interpreter:
+    ⚠ AS OF 2026-09-07 THESE FACTS ARE MEASURED, NOT REVIEWED. The campaign backend was read
+    directly (`root_6_28` on login07, LightGBM **4.6.0**) and every premise above was confirmed
+    against the real parameter table:
 
-      * NOT verifiable locally -- LightGBM is absent (see `z_reproducibility`'s docstring). Which
-        parameters are alias-free in 4.5.0 is taken from the upstream table via review:
-        `deterministic`, `force_row_wise` and `force_col_wise` alias-free; `is_unbalance` not.
-      * NOT load-bearing. No test's verdict depends on the upstream fact being TRUE: what the
-        control needs is a table CONTAINING an alias-free entry that is not one of Z's knobs, and
-        it picks that entry FROM the table. `test_the_fixtures_alias_free_set_is_what_the_docstring
-        _claims` does name these three, but it compares the fixture with THIS PARAGRAPH, not with
-        LightGBM -- it keeps prose and fixture in step and cannot detect that both are wrong.
-      * So the premise is about REALISM, which is exactly what was missing when findings 5, r3-2
-        and r4-2 each survived a passing fixture. Getting it right still matters; asserting it as
-        checked does not make it so.
-      * The question is settled for real by the outstanding production probe, which records
-        `n_alias_free_in_table` and the chosen control name in the receipt.
+      * `deterministic -> ['deterministic']`, `force_row_wise -> ['force_row_wise']`,
+        `force_col_wise -> ['force_col_wise']` -- all three genuinely alias-free.
+      * `is_unbalance -> ['is_unbalance', 'unbalance', 'unbalanced_sets']` -- not alias-free,
+        exactly as round 5 was told.
+      * **`0` of 140 entries have an empty alias list and `70` are self-only**, so round 3's
+        `not aliases` test would have found NO alias-free parameter on the real backend. The
+        shape this fixture now uses is the shape upstream returns.
+
+    See `z_reproducibility.MEASURED_BACKEND` for the full record and its caveats. This fixture is
+    still a fixture -- the local interpreter has no LightGBM, so these tests exercise it and not
+    the backend -- but it is no longer standing in for something unverified.
+
+    WHAT REMAINS TRUE REGARDLESS: no test's verdict here depends on the upstream fact. The control
+    needs a table CONTAINING an alias-free entry that is not one of Z's knobs, and it picks that
+    entry FROM the table. `test_the_fixtures_alias_free_set_is_what_the_docstring_claims` names
+    these three, but it compares the fixture with THIS PARAGRAPH; it keeps prose and fixture in
+    step and could not, by itself, have detected that both were wrong. Measuring the backend is
+    what did that.
     """
 
     _dump = {
@@ -298,7 +305,7 @@ class RawDumpTable(LGBM45Table):
         return {k: [a for a in v if a != k] for k, v in cls._dump.items()}
 
 
-def probe_against(table, version="4.5.0"):
+def probe_against(table, version="4.6.0"):     # 4.6.0 is the MEASURED campaign version
     """Run the real `probe_backend` against a stand-in backend exposing `table`."""
     import types
     fake = types.ModuleType("lightgbm")
@@ -362,7 +369,7 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
     def test_ALIAS_FREE_parameters_are_recognised(self):
         """⚠ ROUND-3 FINDING 2, verbatim, and the reason the previous method was wrong.
 
-        LightGBM 4.5.0 defines `deterministic` and `force_row_wise` with EMPTY alias lists, so
+        LightGBM defines `deterministic` and `force_row_wise` with no aliases of their own, so
         `_ConfigAliases.get(name)` returns `{name}` for them -- byte-identical to what it returns
         for a name that does not exist. The `get(name) != {name}` method therefore marked two of
         Z's three knobs unrecognised and the overlay refused a perfectly valid configuration.
@@ -373,7 +380,7 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
         self.assertIsNone(p.error)
         self.assertEqual(p.recognised_knobs,
                          {"deterministic": True, "force_row_wise": True, "num_threads": True})
-        self.assertEqual(zr.z_lgbm_overlay(p)["backend"]["version"], "4.5.0")
+        self.assertEqual(zr.z_lgbm_overlay(p)["backend"]["version"], "4.6.0")
 
     def test_the_alias_free_CONTROL_is_run_and_is_chosen_from_the_table(self):
         """The control that would have caught finding 2, and it is not a name hard-coded here.
@@ -426,6 +433,60 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
         self.assertEqual(alias_free, {"deterministic", "force_row_wise", "force_col_wise"})
         self.assertNotIn("is_unbalance", alias_free)     # it has unbalance, unbalanced_sets
         self.assertEqual(alias_free - set(zr.Z_REPRO_KNOBS), {"force_col_wise"})
+
+    def test_the_fixture_agrees_with_the_MEASURED_backend_record(self):
+        """The fixture and `MEASURED_BACKEND` must not drift apart.
+
+        Three rounds of fixture defects were all unverifiable upstream facts. Now that the backend
+        has been read, the fixture is pinned to that reading -- so if someone edits one without
+        the other, this fails rather than the pair quietly diverging again.
+        """
+        m = zr.MEASURED_BACKEND
+        self.assertEqual(m["lightgbm_version"], "4.6.0")
+        self.assertEqual(m["accessor_that_answered"], "_ConfigAliases._get_all_param_aliases()")
+        self.assertEqual(m["n_empty_alias_list"], 0)     # why `not aliases` found nothing real
+        self.assertGreater(m["n_alias_free"], 0)
+        table = LGBM45Table._get_all_param_aliases()
+        self.assertEqual(sorted(table["is_unbalance"]),
+                         ["is_unbalance", "unbalance", "unbalanced_sets"])
+        self.assertEqual(zr._extra_aliases("force_col_wise", table["force_col_wise"]), set())
+        # the fixture's shape is upstream's: alias-free entries carry their own name, not []
+        self.assertEqual([k for k, v in table.items() if len(v) == 0], [])
+
+    def test_the_measured_record_is_an_observation_and_not_consulted_for_decisions(self):
+        """It carries a date and a host, and no code path READS it to decide anything.
+
+        ⚠ The first version of this test scanned the source TEXT for the name and counted two
+        hits -- the assignment and a docstring sentence pointing readers at it. A text scan cannot
+        tell prose from code, which is the wrong instrument for a question about what executes.
+        An AST walk answers the actual question: `MEASURED_BACKEND` must appear exactly once, as
+        an assignment TARGET, and never in a load context.
+        """
+        import ast
+        m = zr.MEASURED_BACKEND
+        for key in ("observed_utc", "host", "caveats"):
+            self.assertIn(key, m)
+
+        tree = ast.parse(pathlib.Path(zr.__file__).read_text())
+        stores, loads = [], []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Name) and node.id == "MEASURED_BACKEND":
+                (stores if isinstance(node.ctx, ast.Store) else loads).append(node.lineno)
+            if isinstance(node, ast.Attribute) and node.attr == "MEASURED_BACKEND":
+                loads.append(node.lineno)
+        self.assertEqual(len(stores), 1, f"expected one assignment, got lines {stores}")
+        self.assertEqual(loads, [], f"MEASURED_BACKEND is READ at lines {loads} -- it is an "
+                                    f"observation, and a decision must consult probe_backend()")
+
+    def test_the_recorded_digest_is_paired_with_the_revision_it_resolves_in(self):
+        """A digest alone re-points; the working copy no longer matches it, and correctly so."""
+        m = zr.MEASURED_BACKEND
+        self.assertIn("module_revision_run_there", m)
+        self.assertTrue(m["module_revision_run_there"].startswith("8212de00:"))
+        import hashlib
+        live = hashlib.sha256(pathlib.Path(zr.__file__).read_bytes()).hexdigest()
+        self.assertNotEqual(live, m["module_sha256_run_there"],
+                            "if these ever match, the pairing note is stale rather than wrong")
 
     def test_extra_aliases_subtracts_the_canonical_name_under_either_shape(self):
         self.assertEqual(zr._extra_aliases("deterministic", ["deterministic"]), set())

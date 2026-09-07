@@ -34,6 +34,7 @@ second implementation, and this one already handles the partial-write case.
 from __future__ import annotations
 
 import hashlib
+import math
 import json
 import os
 import tempfile
@@ -185,11 +186,11 @@ def build_receipt(*, z_stamp, variant, parent, code_identity, inflation, null_bl
         "negative_statement": NEGATIVE_STATEMENT,
         "notes": notes or {},
     }
-    _validate_passing_outcome(outcome)
+    _validate_passing_outcome(outcome, inflation)
     return receipt
 
 
-def _validate_passing_outcome(outcome) -> None:
+def _validate_passing_outcome(outcome, inflation=None) -> None:
     """A MET receipt must be justified by the declarations it actually rests on.
 
     ⚠ REVIEW FINDING 1, SECOND HALF. The first version refused only the self-contradictory case --
@@ -211,6 +212,8 @@ def _validate_passing_outcome(outcome) -> None:
     if branch != 3:
         return
 
+    _validate_reconstruction_ran(inflation)
+
     legs = outcome.get("leg_results") or {}
     if not legs:
         raise ZContractError(
@@ -223,6 +226,213 @@ def _validate_passing_outcome(outcome) -> None:
             "receipt: outcome claims branch 3 (MET) but these legs are not backed by a declared "
             f"boundary: {sorted(offenders)}. Joseph, 2026-09-07: missing or unapproved acceptance "
             "boundaries must produce an explicit non-passing result.")
+
+
+RECONSTRUCTION_KEY = "G3R_raw_operand_reconstruction"
+
+
+def _validate_reconstruction_ran(inflation) -> None:
+    """A MET receipt must PROVE §1.3b's reconstruction ran, on BOTH variants.
+
+    Integrated 2026-09-07 under Joseph's authorization. §1.3b's whole point is that the other four
+    inflation gates are *jointly satisfiable by an uninflated object*, so a receipt that records
+    them and not this one records a green state reachable without the work being done. The
+    validator's `identities_pass` flag cannot substitute: it is a producer-supplied boolean, which
+    is the "read the producer's own value back" shape §1.3b explicitly rejects.
+
+    So this looks for the gate's own measured output, not for an assertion that it passed:
+
+      * the block must be present under `RECONSTRUCTION_KEY`,
+      * it must carry `per_variant` results for BOTH `mean` and `cv` -- one variant cannot expose
+        the reuse fault,
+      * each variant's `max_rel_diff` must be within the `rtol` the gate recorded.
+
+    ⚠ A NON-DISCRIMINATING PASS IS RECORDED, NOT REJECTED. Where `ms**2` is under the tolerance the
+    gate cannot see a dropped shift and says so; refusing on that would make the receipt refuse
+    correct builds whose mean shift is genuinely tiny. The receipt therefore carries
+    `discriminating` through to the reader instead of silently upgrading it to assurance --
+    the same choice, for the same reason, as the gate itself.
+    """
+    block = (inflation or {}).get(RECONSTRUCTION_KEY)
+    if not isinstance(block, dict):
+        raise ZContractError(
+            f"receipt: outcome claims branch 3 (MET) but the inflation block records no "
+            f"{RECONSTRUCTION_KEY!r}. §1.3b's reconstruction is what makes the other four "
+            f"inflation gates capable of failing -- an uninflated object satisfies all four -- so "
+            f"a pass that cannot show it ran is not a pass.")
+    per_variant = block.get("per_variant")
+    if not isinstance(per_variant, dict):
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} carries no per_variant measurements. A recorded "
+            f"verdict is not a recorded measurement.")
+    absent = [v for v in ("mean", "cv") if v not in per_variant]
+    if absent:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} is missing variant(s) {absent}. §1.3b requires BOTH "
+            f"variants be reconstructed independently, because g^mean and g^cv differ only "
+            f"through the mean-shift term.")
+    # ⚠ ROUND-6 BLOCKER 2. Every comparison below was made against values that were never
+    # checked for being NUMBERS IN RANGE, so three MET receipts were reproduced:
+    #   * `rtol=inf` with `max_rel_diff=100`   -- 100 <= inf is True
+    #   * `max_rel_diff=-inf`                  -- -inf <= rtol is True
+    #   * no `discriminating` field at all     -- the disclosure simply omitted
+    # A tolerance of infinity is not a loose tolerance, it is the ABSENCE of one, and a negative
+    # relative residual is not a small residual, it is not a residual. Both passed a comparison
+    # that was well formed and vacuous -- the same shape as the PSD gate's absolute floor.
+    rtol = block.get("rtol")
+    if isinstance(rtol, bool) or not isinstance(rtol, (int, float)):
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} records rtol {rtol!r}; a comparison with no stated "
+            f"tolerance cannot be re-checked by a reader.")
+    if not math.isfinite(rtol) or not rtol > 0:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} records rtol {rtol!r}, which is not a finite positive "
+            f"tolerance. `inf` is not a loose tolerance -- it is the absence of one, and every "
+            f"residual satisfies it.")
+    for variant in ("mean", "cv"):
+        diff = (per_variant[variant] or {}).get("max_rel_diff")
+        if isinstance(diff, bool) or not isinstance(diff, (int, float)):
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} variant {variant!r} records max_rel_diff "
+                f"{diff!r}, which is not a measurement.")
+        if not math.isfinite(diff) or diff < 0:
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} variant {variant!r} records max_rel_diff "
+                f"{diff!r}. A relative residual is finite and non-negative by construction, so "
+                f"this value did not come from the gate -- and `-inf <= rtol` would have passed.")
+        if not diff <= rtol:
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} variant {variant!r} recorded max_rel_diff "
+                f"{diff:.6e} > rtol {rtol:.0e}, so the reconstruction did NOT pass, yet the "
+                f"outcome claims MET.")
+
+    # THE DISCLOSURE IS PART OF THE EVIDENCE, NOT A COURTESY. A pass whose discriminating power
+    # is unstated reads as assurance it may not carry, which is the whole subject of this gate's
+    # three corrected docstrings. Absent metadata is refused rather than defaulted either way.
+    if "discriminating" not in block:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} omits `discriminating`. Whether the reconstruction "
+            f"could have detected a dropped shift on these operands is part of what a pass "
+            f"means; a receipt that does not say reads as assurance it may not carry.")
+    discriminating = block["discriminating"]
+    if not isinstance(discriminating, bool):
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} records discriminating {discriminating!r}, which is "
+            f"not a verdict.")
+    # ⚠ ROUND-8, FIRST PATH. The breakdown was demanded only when `discriminating` was False,
+    # so OMITTING it on a True verdict skipped validation entirely and wrote MET. The asymmetry
+    # was never justified: a claim that the gate COULD see a dropped shift is exactly as much in
+    # need of its measurements as a claim that it could not, and it is the more consequential of
+    # the two, because it is the one a reader treats as assurance.
+    blockers = block.get("discrimination_blockers")
+    if not isinstance(blockers, dict):
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} carries no `discrimination_blockers`. The breakdown "
+            f"is required for EITHER verdict -- pinned, saturated and below-tolerance counts are "
+            f"what make `discriminating` checkable, and a True verdict without them is an "
+            f"assurance with nothing behind it.")
+    _validate_discrimination_blockers(blockers, discriminating, rtol)
+
+    if not discriminating:
+        note = block.get("note")
+        if not isinstance(note, str) or not note.strip():
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} reports discriminating=False and carries no "
+                f"limitation note. A non-discriminating pass is admissible -- a genuinely tiny "
+                f"mean shift is not a defect -- but it must arrive WITH the statement of what "
+                f"was not tested, or the reader cannot tell it from a discriminating one.")
+
+
+BLOCKER_COUNTS = ("n_bins", "n_separated", "n_pinned", "n_saturated_v_uni_below_v_blk",
+                  "n_shift_below_tolerance")
+
+
+def _validate_discrimination_blockers(blockers, discriminating, rtol) -> None:
+    """The disclosure must contain MEASUREMENTS, and they must be consistent with the verdict.
+
+    ⚠ ROUND-7 ISSUE 2. Requiring the key was not requiring the content: `discrimination_blockers
+    = {}` satisfied "is a dict" and a MET receipt was written carrying a note that explained
+    nothing and a breakdown that measured nothing. So did a breakdown whose counts did not add
+    up, and one that said `discriminating=False` beside `n_separated=5` -- a record contradicting
+    the verdict it accompanies.
+
+    Four checks, because they fail independently:
+
+      * PRESENT -- every count and `max_separation`, so an empty or partial dict is refused.
+      * IN DOMAIN -- counts are non-negative integers, `max_separation` finite and non-negative.
+        `bool` is excluded: `isinstance(True, int)` is True in Python.
+      * PARTITIONING -- separated + pinned + saturated + below-tolerance == n_bins. Named
+        mechanisms that do not add up leave a fifth cause unaccounted for, and the whole reason
+        this breakdown exists is that saturation was the cause nobody had named.
+      * CONSISTENT -- `discriminating` is exactly `n_separated > 0`. The verdict is a function of
+        the measurements, so a receipt where they disagree is not a receipt with a bad number in
+        it; it is one whose two halves came from different runs.
+    """
+    missing = [k for k in BLOCKER_COUNTS + ("max_separation",) if k not in blockers]
+    if missing:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers omits {missing}. A breakdown "
+            f"that names no mechanism explains nothing -- an empty dict satisfied the previous "
+            f"check, which required the key and not its content.")
+
+    for key in BLOCKER_COUNTS:
+        v = blockers[key]
+        if isinstance(v, bool) or not isinstance(v, int):
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers[{key!r}] is {v!r}, which "
+                f"is not a bin count.")
+        if v < 0:
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers[{key!r}] is {v}; a count "
+                f"of bins cannot be negative.")
+
+    sep_max = blockers["max_separation"]
+    if isinstance(sep_max, bool) or not isinstance(sep_max, (int, float)):
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers['max_separation'] is "
+            f"{sep_max!r}, which is not a measurement.")
+    if not math.isfinite(sep_max) or sep_max < 0:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers['max_separation'] is "
+            f"{sep_max!r}; a relative separation is finite and non-negative by construction.")
+
+    if blockers["n_bins"] <= 0:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers reports n_bins "
+            f"{blockers['n_bins']}. A reconstruction over no bins is not evidence of anything.")
+
+    parts = ("n_separated", "n_pinned", "n_saturated_v_uni_below_v_blk",
+             "n_shift_below_tolerance")
+    total = sum(blockers[k] for k in parts)
+    if total != blockers["n_bins"]:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} discrimination_blockers do not partition the bins -- "
+            f"{' + '.join(f'{k}={blockers[k]}' for k in parts)} = {total}, but n_bins is "
+            f"{blockers['n_bins']}. Mechanisms that do not add up leave a cause unnamed, which is "
+            f"exactly how saturation went unnoticed.")
+
+    # ⚠ ROUND-8, SECOND PATH. Checking `discriminating == (n_separated > 0)` left the third
+    # term free, so the flag and the count could agree while CONTRADICTING the separation they
+    # are both derived from. Both of these were written as MET at rtol=1e-9, with valid
+    # partitions:
+    #     n_separated=0, discriminating=False, max_separation=0.5   (0.5 > rtol: something moved)
+    #     n_separated=3, discriminating=True,  max_separation=0     (nothing moved at all)
+    #
+    # In the producer these are one quantity read three ways -- `n_separated = sum(sep > rtol)`
+    # and `max_separation = sep.max()`, so `max(sep) > rtol` iff `any(sep) > rtol` EXACTLY. The
+    # identity is therefore checkable in full, and two of its three pairings are not enough: a
+    # partial consistency check is what let a self-contradicting record through twice.
+    n_sep_positive = blockers["n_separated"] > 0
+    sep_exceeds_rtol = blockers["max_separation"] > rtol
+    if not (bool(discriminating) == n_sep_positive == sep_exceeds_rtol):
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} breaks the discrimination identity. "
+            f"discriminating={discriminating!r}, n_separated={blockers['n_separated']} "
+            f"(> 0 is {n_sep_positive}), max_separation={blockers['max_separation']!r} "
+            f"(> rtol {rtol:.0e} is {sep_exceeds_rtol}). These are ONE measurement read three "
+            f"ways -- n_separated counts the bins with sep > rtol and max_separation is that "
+            f"same sep's maximum -- so all three must agree. They did not, which means the "
+            f"record was assembled rather than measured.")
 
 
 def _leg_is_unbacked(entry):

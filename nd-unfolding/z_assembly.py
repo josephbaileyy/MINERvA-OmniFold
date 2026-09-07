@@ -160,8 +160,12 @@ def gate_g_reconstruction(g_recorded, v_uni, v_blk, rtol=IDENTITY_RTOL):
     §1.3b's requirement is the stronger one: derive `v_uni^cv` from `diag(C_unified)`,
     `diag(C_blocksum)` and `hJointMeanShift` per variant, *"because `g^mean` and `g^cv` differ
     only through the `+ mean_shift²` term and a validator that reconstructs one and reuses it for
-    the other cannot detect a dropped shift"*. Supplying independently derived operands is the
-    caller's obligation; this function cannot tell whether they were.
+    the other cannot detect a dropped shift"*.
+
+    ⚠ THAT GATE NOW EXISTS: `gate_raw_operand_reconstruction` below, added under Joseph's
+    2026-09-07 integration authorization. It does not supersede this function -- this one is still
+    the per-variant check that a recorded `g` matches the operands it was handed -- but the
+    §1.3b obligation is discharged there and no longer left to the caller.
     """
     g_recorded = np.asarray(g_recorded, float)
     g_rebuilt, _ = compute_g(v_uni, v_blk)
@@ -173,6 +177,45 @@ def gate_g_reconstruction(g_recorded, v_uni, v_blk, rtol=IDENTITY_RTOL):
             f"g reconstruction: max relative difference {resid:.3e} > {rtol:.0e} -- the recorded "
             f"g is not the one its own operands produce")
     return {"max_rel_diff": resid, "rtol": rtol}
+
+
+def derive_variant_diagonals(diag_c_unified_mean, diag_c_blocksum, joint_mean_shift):
+    """§1.3a's operand transformation, in ONE place, because two callers disagreed about it.
+
+    ⚠ ROUND-7 ISSUE 1. `gate_raw_operand_reconstruction` clipped its raw diagonals (round 6's
+    fix) and `run_pair_gates` then handed the UNCLIPPED mean diagonal to
+    `check_variant_coupling`. Measured on `diag_mean=-4, diag_block=1, shift=3, stored cv=9`: the
+    raw gate ACCEPTS -- clip(-4)=0, so `v_uni^cv = 0 + 9 = 9` -- and the coupling check predicts
+    `-4 + 9 = 5` and REJECTS the identical build. One runner, two operand semantics, opposite
+    verdicts.
+
+    Fixing the runner alone would have left the ambiguity in place for the next caller. The
+    transformation lives here now and both callers read it from here:
+
+        v_uni^mean = clip(diag(C_unified), 0, inf)
+        v_blk      = clip(diag(C_blocksum), 0, inf)
+        v_uni^cv   = v_uni^mean + mean_shift**2        (added AFTER the clip -- the order matters)
+    """
+    v_uni_raw = np.asarray(diag_c_unified_mean, float)
+    v_blk_raw = np.asarray(diag_c_blocksum, float)
+    ms = np.asarray(joint_mean_shift, float)
+    require(v_uni_raw.shape == v_blk_raw.shape == ms.shape,
+            f"variant diagonals: operand shapes differ -- diag(C_unified^mean) {v_uni_raw.shape}, "
+            f"diag(C_blocksum) {v_blk_raw.shape}, mean shift {ms.shape}")
+    for name, arr in (("diag(C_unified^mean)", v_uni_raw), ("diag(C_blocksum)", v_blk_raw),
+                      ("hJointMeanShift", ms)):
+        require(np.all(np.isfinite(arr)), f"variant diagonals: {name} is not finite")
+
+    v_uni_mean = np.clip(v_uni_raw, 0.0, np.inf)
+    v_blk = np.clip(v_blk_raw, 0.0, np.inf)
+    return {
+        "v_uni_mean": v_uni_mean,
+        "v_uni_cv": v_uni_mean + ms ** 2,
+        "v_blk": v_blk,
+        "ms": ms,
+        "n_clipped_unified": int(np.sum(v_uni_raw < 0.0)),
+        "n_clipped_blocksum": int(np.sum(v_blk_raw < 0.0)),
+    }
 
 
 def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL):
@@ -232,13 +275,19 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
     out not to cover it, which is worse than the blindness, because a named fallback stops the
     reader looking.
 
-    So: **when `discriminating=False` the dropped shift is UNTESTED by this check, and nothing in
-    this module covers it.** What the contract still requires is §1.3b's independent
-    reconstruction of `g^c` from the RAW THROW OPERANDS -- `diag(C_unified)`, `diag(C_blocksum)`
-    and `hJointMeanShift`, per variant separately -- which derives `v_uni^cv` instead of accepting
-    it, and is the only stated check that would disagree with a producer that dropped the shift.
-    `gate_g_reconstruction` below is NOT that check: it takes `v_uni` as an argument. Deriving
-    `v_uni` from the throw operands is the caller's obligation and is not discharged here.
+    So: **when `discriminating=False` the dropped shift is UNTESTED by this check.**
+
+    §1.3b's independent reconstruction from the RAW THROW OPERANDS is now implemented as
+    `gate_raw_operand_reconstruction`, and it IS the gate for a mis-built `v_uni`: it derives
+    `v_uni^cv` from `v_uni^mean + ms**2` rather than accepting a stored array, so a producer that
+    dropped the shift disagrees with it.
+
+    ⚠ BUT IT IS BLIND IN THE SAME REGIME, AND SAYING OTHERWISE WOULD REPEAT THE ERROR THIS
+    PARAGRAPH HAS ALREADY MADE TWICE. Both checks compare a difference of order `ms**2` against a
+    relative tolerance on operands of order `v_uni`. When `ms**2` falls under that tolerance, the
+    reconstruction rebuilds a `g^cv` indistinguishable from `g^mean` and passes too. It reports
+    its own `discriminating` flag for exactly this reason. Below the floor NOTHING here detects a
+    dropped shift, and the only remedy is operand provenance, not another gate.
     """
     a = np.asarray(v_uni_cv, float)
     b = np.asarray(v_uni_mean, float)
@@ -247,6 +296,16 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
             f"variant coupling: shapes {a.shape}, {b.shape}, {ms.shape} differ")
     require(np.all(np.isfinite(a)) and np.all(np.isfinite(b)) and np.all(np.isfinite(ms)),
             "variant coupling: non-finite operand")
+    # ⚠ ROUND-7 ISSUE 1. These are CLIPPED `v_uni` values, not raw diagonals. A clipped variance
+    # is non-negative by construction, so a negative entry means the caller passed the raw
+    # diagonal and this check would silently answer a different question from the reconstruction
+    # gate's. Refusing is the only way the ambiguity cannot survive: an unclear contract that
+    # merely produces a different NUMBER is the defect that reached review.
+    neg = int(np.sum(a < 0.0) + np.sum(b < 0.0))
+    require(neg == 0,
+            f"variant coupling: {neg} negative entr(y/ies) among the v_uni operands. This check "
+            f"takes CLIPPED v_uni values, not raw diagonals -- run them through "
+            f"`derive_variant_diagonals` first, which is where §1.3a's clip lives.")
 
     predicted = b + ms ** 2
     # Elementwise allowance from the magnitudes actually entering the sum -- not from the
@@ -275,6 +334,179 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
                      "variants were produced and that --out was not defaulted. §1.3b's "
                      "independent reconstruction from the raw throw operands remains required."
                      if not discriminating else "discriminating")}
+
+
+def gate_raw_operand_reconstruction(*, g_recorded, diag_c_unified_mean, diag_c_blocksum,
+                                    joint_mean_shift, diag_c_unified_cv=None,
+                                    rtol=IDENTITY_RTOL):
+    """§1.3b's reconstruction gate: rebuild `g^c` from the THROW OPERANDS, both variants, and
+    compare elementwise against what the producer recorded.
+
+    Joseph, 2026-09-07, authorized this integration. §1.3b states the requirement and why the
+    other four gates need it:
+
+        *"the validator recomputes `g^c` from the throw operands themselves -- `diag(C_unified)`,
+        `diag(C_blocksum)`, and `hJointMeanShift` for the CV-centered variant -- by §1.3a's
+        formula, for each variant separately, and compares elementwise against the `g^c` the
+        producer wrote. Reading the producer's `hInflation_g` and checking it against itself is
+        not this gate. Both variants must be reconstructed independently, because `g^mean` and
+        `g^cv` differ only through the `+ mean_shift²` term and a validator that reconstructs one
+        and reuses it for the other cannot detect a dropped shift."*
+
+    WHAT MAKES THIS DIFFERENT FROM `gate_g_reconstruction`, which is the whole point: that one
+    takes `v_uni` as an ARGUMENT, so a `v_uni^cv` built without the shift is self-consistent with
+    the `g` derived from it and passes. Here `v_uni^cv` is **DERIVED** -- `v_uni^mean + ms**2` --
+    so the producer never gets to supply the quantity under test. A dropped shift then shows up as
+    a disagreement in `g^cv` and in `g^cv` only, which is also how the report names it.
+
+    BOTH VARIANTS ARE REQUIRED. Not as a formality: a caller who passes only `mean` gets the
+    reuse failure §1.3b names, and there is no way for this function to notice from one variant.
+    `diag_c_unified_cv` is OPTIONAL and is CROSS-CHECKED, never substituted -- if the producer
+    stored its own cv diagonal, disagreement with the derived one is reported as
+    `stored_cv_deviation` and refused, but the reconstruction itself always uses the derived
+    value. A stored operand cannot be allowed to certify itself.
+
+    ⚠ ITS DISCRIMINATING POWER IS MEASURED BY RUNNING THE MUTATION, not modelled. The gate
+    rebuilds `g^cv` from the correct operands AND from the dropped-shift operands and reports
+    whether its own comparison could separate them at `rtol`. `discrimination_blockers` breaks
+    down why not: bins PINNED (`v_blk == 0`), bins SATURATED (`v_uni^cv <= v_blk`, where
+    `max(v_uni, v_blk)` makes `g` exactly 1 no matter how large the shift), and bins where the
+    shift is merely under tolerance. Saturation is the one a tolerance argument misses entirely --
+    at `v_uni_mean=1, v_blk=100, ms=1` the shift is enormous and moves `g` not at all.
+
+    There is no gate behind this one. Where it cannot discriminate, the dropped shift is UNTESTED
+    and the remedy is the operands' provenance.
+
+    Returns the measured operands; raises `ZContractError` on the first disagreement.
+    """
+    require(isinstance(g_recorded, dict),
+            "raw-operand reconstruction: g_recorded must be a {variant: array} mapping")
+    missing = [v for v in ("mean", "cv") if v not in g_recorded]
+    require(not missing,
+            f"raw-operand reconstruction: variant(s) {missing} absent. §1.3b requires BOTH "
+            f"variants be reconstructed independently -- one variant cannot expose the reuse "
+            f"fault this gate exists to catch.")
+
+    d = derive_variant_diagonals(diag_c_unified_mean, diag_c_blocksum, joint_mean_shift)
+    ms = d["ms"]
+
+    # §1.3a's clip and the `+ ms**2` both live in `derive_variant_diagonals`, so this gate and
+    # `check_variant_coupling` cannot answer different questions about the same operands
+    # (round-7 issue 1). `v_uni^cv` is still COMPUTED there, never accepted from the producer.
+    n_clipped_uni, n_clipped_blk = d["n_clipped_unified"], d["n_clipped_blocksum"]
+    v_uni_mean, v_blk = d["v_uni_mean"], d["v_blk"]
+    derived = {"mean": v_uni_mean, "cv": d["v_uni_cv"]}
+
+    stored_cv_deviation, stored_cv_discriminating = None, None
+    if diag_c_unified_cv is not None:
+        stored = np.asarray(diag_c_unified_cv, float)
+        require(stored.shape == v_uni_mean.shape,
+                f"raw-operand reconstruction: stored diag(C_unified^cv) shape {stored.shape} "
+                f"!= {v_uni_mean.shape}")
+        # ⚠ ROUND-6 BLOCKER 2: this operand was never checked for finiteness, so a stored
+        # diagonal of `inf` gave `dev = inf` and `allow = inf`, and `inf <= inf` is True -- the
+        # comparison reported the operand CROSS-CHECKED. The pair runner happens to reject it
+        # later via `check_variant_coupling`, but that does not repair the standalone gate, which
+        # is a public entry point and is what the receipt's evidence comes from.
+        require(np.all(np.isfinite(stored)),
+                "raw-operand reconstruction: the stored diag(C_unified^cv) is not finite. A "
+                "non-finite operand makes the comparison below vacuous -- inf <= inf passes -- "
+                "so it is refused before any tolerance is consulted.")
+        stored_clipped = np.clip(stored, 0.0, np.inf)
+        allow = rtol * (np.abs(stored_clipped) + np.abs(derived["cv"]))
+        dev = np.abs(stored_clipped - derived["cv"])
+        stored_cv_deviation = float(dev.max()) if dev.size else 0.0
+        # Its OWN discrimination question, which is not the g-level one: could this comparison
+        # tell a dropped shift in the DIAGONAL apart from a correct one? Reported separately
+        # because the two checks saturate differently and conflating them was blocker 1.
+        stored_cv_discriminating = bool(np.any(ms ** 2 > allow)) if dev.size else False
+        require(bool(np.all(dev <= allow)),
+                f"raw-operand reconstruction: the STORED diag(C_unified^cv) disagrees with "
+                f"v_uni^mean + ms**2 by {stored_cv_deviation:.6e} at worst. The stored operand is "
+                f"cross-checked, never substituted, so this is a defect in the operand set itself.")
+
+    per_variant, offenders = {}, []
+    for variant in ("mean", "cv"):
+        rebuilt, pinned = compute_g(derived[variant], v_blk)
+        recorded = np.asarray(g_recorded[variant], float)
+        if recorded.shape != rebuilt.shape:
+            raise ZContractError(
+                f"raw-operand reconstruction: recorded g^{variant} shape {recorded.shape} != "
+                f"rebuilt {rebuilt.shape}")
+        denom = np.maximum(np.abs(rebuilt), 1.0)      # g >= 1, so this is just |g|
+        resid = np.abs(recorded - rebuilt) / denom
+        worst = int(np.argmax(resid)) if resid.size else 0
+        per_variant[variant] = {
+            "max_rel_diff": float(resid.max()) if resid.size else 0.0,
+            "worst_bin": worst,
+            "n_pinned": int(pinned.sum()),
+            "n_inflated": int(np.sum(rebuilt > 1.0)),
+        }
+        if not bool(np.all(resid <= rtol)):
+            offenders.append(f"g^{variant} (max relative difference "
+                             f"{float(resid.max()):.6e} at bin {worst})")
+
+    # ⚠ ROUND-6 BLOCKER 1, AND IT IS THE WORST DEFECT IN THIS FUNCTION.
+    #
+    # The first version computed discrimination as `ms**2 > rtol*(v_uni^cv + v_uni^mean)` -- a
+    # comparison on the DIAGONALS. But the quantity under test is `g`, and `g` SATURATES:
+    # `sqrt(max(v_uni, v_blk))/sqrt(v_blk)` is exactly 1 whenever `v_uni <= v_blk`, so a shift of
+    # any size changes nothing there. Measured: `v_uni_mean=1, v_blk=100, ms=1` gives `g == 1` for
+    # both variants -- the mutation is undetectable -- and the flag said `discriminating=True`.
+    # Same at `v_blk == 0`, where both are pinned. Three revisions of this docstring reasoned
+    # about `g` while the arithmetic underneath measured the diagonals.
+    #
+    # THE FIX IS TO RUN THE MUTATION. Rebuild `g^cv` from the correct operands and from the
+    # dropped-shift operands, and ask whether THIS gate's own comparison could separate them at
+    # `rtol`. That uses the real formula, so saturation, pinning and tolerance are all accounted
+    # for by construction rather than modelled -- a built-in mutation test instead of a proxy.
+    g_cv_correct, pinned_cv = compute_g(derived["cv"], v_blk)
+    g_cv_mutated, _ = compute_g(derived["mean"], v_blk)          # the dropped shift, applied
+    sep = np.abs(g_cv_correct - g_cv_mutated) / np.maximum(np.abs(g_cv_correct), 1.0)
+    n_separated = int(np.sum(sep > rtol))
+    discriminating = n_separated > 0
+
+    # Why not, when not -- the three mechanisms, counted rather than guessed at.
+    saturated = (derived["cv"] <= v_blk) & ~pinned_cv
+    blockers = {
+        "n_bins": int(v_blk.size),
+        "n_separated": n_separated,
+        "n_pinned": int(pinned_cv.sum()),
+        "n_saturated_v_uni_below_v_blk": int(saturated.sum()),
+        "n_shift_below_tolerance": int(np.sum((sep <= rtol) & ~pinned_cv & ~saturated)),
+        "max_separation": float(sep.max()) if sep.size else 0.0,
+    }
+
+    if offenders:
+        raise ZContractError(
+            f"raw-operand reconstruction FAILED for {offenders}, tolerance {rtol:.0e}. The "
+            f"recorded g is not what §1.3a's formula produces from diag(C_unified), "
+            f"diag(C_blocksum) and hJointMeanShift. A disagreement on g^cv ALONE is the "
+            f"dropped-mean-shift signature; a disagreement on both is a mis-scoped or uninflated "
+            f"g. (This gate could{'' if discriminating else ' NOT'} discriminate a dropped shift "
+            f"on these operands: {blockers}.)")
+
+    return {
+        "per_variant": per_variant,
+        "rtol": rtol,
+        "ms_norm": float(np.linalg.norm(ms)),
+        "stored_cv_cross_checked": diag_c_unified_cv is not None,
+        "stored_cv_deviation": stored_cv_deviation,
+        "stored_cv_discriminating": stored_cv_discriminating,
+        "n_clipped_unified": n_clipped_uni,
+        "n_clipped_blocksum": n_clipped_blk,
+        "discriminating": discriminating,
+        "discrimination_blockers": blockers,
+        "note": ("PASSED WITHOUT DISCRIMINATING: rebuilding g^cv from the dropped-shift operands "
+                 "gives values this gate's own comparison cannot separate from the correct ones "
+                 f"at rtol -- {blockers['n_pinned']} bin(s) pinned, "
+                 f"{blockers['n_saturated_v_uni_below_v_blk']} saturated with v_uni <= v_blk so "
+                 f"the shift cannot move g at all, "
+                 f"{blockers['n_shift_below_tolerance']} with the shift under tolerance. There is "
+                 "NO further gate behind this one -- treat the dropped shift as UNTESTED and rely "
+                 "on the operands' provenance, not on another check."
+                 if not discriminating else "discriminating"),
+    }
 
 
 def gate_symmetry_psd(C_Z, rtol=IDENTITY_RTOL):
@@ -342,4 +574,31 @@ def run_inflation_gates(*, C_Z, g, pinned_mask, v_uni, v_blk, cov_vert_sum, cov_
     results["G1_closure_identity"] = gate_closure_identity(
         C_Z, g, cov_vert_sum, cov_residual_sum, cov_lateral_sum, cov_stat, cov_ml, rtol=rtol)
     results["G4_symmetry_psd"] = gate_symmetry_psd(C_Z, rtol=rtol)
+    return results
+
+
+def run_pair_gates(*, g_recorded, diag_c_unified_mean, diag_c_blocksum, joint_mean_shift,
+                   diag_c_unified_cv=None, rtol=IDENTITY_RTOL):
+    """The gates that span BOTH centering variants, which `run_inflation_gates` cannot see.
+
+    `run_inflation_gates` runs G1-G5 for ONE variant. §1.3b's reconstruction and the variant
+    coupling are properties of the PAIR, so a per-variant runner structurally cannot host them --
+    which is why the reconstruction obligation went undischarged for four review rounds while
+    five gates reported green.
+    """
+    results = {}
+    results["G3R_raw_operand_reconstruction"] = gate_raw_operand_reconstruction(
+        g_recorded=g_recorded, diag_c_unified_mean=diag_c_unified_mean,
+        diag_c_blocksum=diag_c_blocksum, joint_mean_shift=joint_mean_shift,
+        diag_c_unified_cv=diag_c_unified_cv, rtol=rtol)
+    if diag_c_unified_cv is not None:
+        # ⚠ ROUND-7 ISSUE 1: this used to pass the RAW mean diagonal while the gate above used
+        # the clipped one, so one runner gave two verdicts on one build. Both now read the same
+        # derivation, and the stored cv diagonal is clipped on the same terms as the derived one.
+        d = derive_variant_diagonals(diag_c_unified_mean, diag_c_blocksum, joint_mean_shift)
+        stored = np.asarray(diag_c_unified_cv, float)
+        require(np.all(np.isfinite(stored)),
+                "pair gates: the stored diag(C_unified^cv) is not finite")
+        results["G3b_variant_coupling"] = check_variant_coupling(
+            np.clip(stored, 0.0, np.inf), d["v_uni_mean"], d["ms"], rtol=rtol)
     return results

@@ -483,6 +483,26 @@ class TheReceiptPersistsTheNullOperands(unittest.TestCase):
         self.assertNotEqual(zrec.sha256_array(a), zrec.sha256_array(a.reshape(2, 3)))
 
 
+# What `za.run_pair_gates` actually returns on a correct build, trimmed to the fields the receipt
+# reads. Shaped from the GATE's output, not invented here -- a fixture built from the rule it
+# feeds cannot disagree with it.
+PASSING_RECONSTRUCTION = {
+    "G3R_raw_operand_reconstruction": {
+        "per_variant": {"mean": {"max_rel_diff": 0.0, "worst_bin": 0, "n_pinned": 3,
+                                 "n_inflated": 21},
+                        "cv": {"max_rel_diff": 1.1e-16, "worst_bin": 4, "n_pinned": 3,
+                               "n_inflated": 21}},
+        "rtol": 1e-9,
+        "discriminating": True,
+        # Required for EITHER verdict (round 8), and the three terms must satisfy
+        # discriminating == (n_separated > 0) == (max_separation > rtol).
+        "discrimination_blockers": {"n_bins": 24, "n_separated": 21, "n_pinned": 3,
+                                    "n_saturated_v_uni_below_v_blk": 0,
+                                    "n_shift_below_tolerance": 0, "max_separation": 0.017},
+    },
+}
+
+
 class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
     def _blocks(self):
         return dict(
@@ -490,7 +510,7 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
             variant="cv",
             parent={"candidate": "G", "sha256": "1" * 64},
             code_identity={"revision": "10c24678", "import_closure_digests": {"z_contract": "a"}},
-            inflation={"n_pinned": 3},
+            inflation={"n_pinned": 3, **PASSING_RECONSTRUCTION},
             null_block={"r_null": 1e-13},
             cause_blocks={"cause3": {}},
             closure={"max_rel_residual": 1e-15},
@@ -603,6 +623,360 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
         with self.assertRaises(zc.ZContractError) as cm:
             zrec.build_receipt(**blocks)
         self.assertIn("cites no boundary name", str(cm.exception))
+
+    # ---- §1.3b integration, 2026-09-07: a MET receipt must PROVE the reconstruction ran ------
+    def test_a_MET_receipt_without_the_reconstruction_block_is_refused(self):
+        """The gate that makes the other four capable of failing must be shown, not asserted."""
+        blocks = self._blocks()
+        blocks["inflation"] = {"n_pinned": 3}          # the other gates only
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("G3R_raw_operand_reconstruction", str(cm.exception))
+
+    def test_a_MET_receipt_recording_only_ONE_variant_is_refused(self):
+        blocks = self._blocks()
+        one = {"per_variant": {"cv": {"max_rel_diff": 0.0}}, "rtol": 1e-9}
+        blocks["inflation"] = {"G3R_raw_operand_reconstruction": one}
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("BOTH", str(cm.exception))
+
+    def test_a_MET_receipt_whose_reconstruction_EXCEEDED_its_tolerance_is_refused(self):
+        blocks = self._blocks()
+        bad = {"per_variant": {"mean": {"max_rel_diff": 0.0},
+                               "cv": {"max_rel_diff": 1e-3}},         # the dropped-shift signature
+               "rtol": 1e-9}
+        blocks["inflation"] = {"G3R_raw_operand_reconstruction": bad}
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("did NOT pass", str(cm.exception))
+
+    def test_a_recorded_VERDICT_is_not_a_recorded_MEASUREMENT(self):
+        """`{"passed": true}` is exactly the shape §1.3b rejects."""
+        blocks = self._blocks()
+        blocks["inflation"] = {"G3R_raw_operand_reconstruction": {"passed": True}}
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("not a recorded measurement", str(cm.exception))
+
+    def test_a_reconstruction_with_no_stated_TOLERANCE_is_refused(self):
+        blocks = self._blocks()
+        blocks["inflation"] = {"G3R_raw_operand_reconstruction": {
+            "per_variant": {"mean": {"max_rel_diff": 0.0}, "cv": {"max_rel_diff": 0.0}}}}
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("cannot be re-checked", str(cm.exception))
+
+    def test_a_NON_DISCRIMINATING_pass_is_carried_through_rather_than_refused(self):
+        """A tiny genuine mean shift must not make the receipt refuse a correct build.
+
+        It must arrive WITH its disclosure, though -- see the two tests below.
+        """
+        blocks = self._blocks()
+        blk = {k: dict(v) for k, v in PASSING_RECONSTRUCTION.items()}
+        blk["G3R_raw_operand_reconstruction"].update(
+            discriminating=False,
+            note="PASSED WITHOUT DISCRIMINATING: 3 bin(s) saturated with v_uni <= v_blk.",
+            discrimination_blockers={"n_bins": 3, "n_separated": 0, "n_pinned": 0,
+                                     "n_saturated_v_uni_below_v_blk": 3,
+                                     "n_shift_below_tolerance": 0, "max_separation": 0.0})
+        blocks["inflation"] = blk
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"):
+            r = zrec.build_receipt(**blocks)
+        self.assertEqual(r["outcome"]["branch"], 3)
+        self.assertFalse(r["inflation"]["G3R_raw_operand_reconstruction"]["discriminating"])
+
+    def test_a_NON_passing_outcome_is_not_required_to_carry_the_reconstruction(self):
+        """The requirement is on a PASS. A refusal must not itself need the gate to have run."""
+        blocks = self._blocks()
+        blocks["inflation"] = {"n_pinned": 3}
+        blocks["outcome"] = {"assessable": False, "branch": None, "reject_conditions": ["4c"]}
+        r = zrec.build_receipt(**blocks)
+        self.assertIsNone(r["outcome"]["branch"])
+
+    def test_what_the_REAL_gate_emits_satisfies_the_receipt(self):
+        """End to end: `run_pair_gates`'s own output, unedited, must be acceptable.
+
+        A receipt rule the real producer does not satisfy would be a rule that only fires on
+        hand-written fixtures -- the defect this suite has already found twice.
+        """
+        import z_assembly as za
+        n = 12
+        v_blk = np.full(n, 2.0)
+        v_uni_mean = v_blk * 1.3
+        ms = np.full(n, 0.05)
+        g_mean, _ = za.compute_g(v_uni_mean, v_blk)
+        g_cv, _ = za.compute_g(v_uni_mean + ms ** 2, v_blk)
+        res = za.run_pair_gates(g_recorded={"mean": g_mean, "cv": g_cv},
+                                diag_c_unified_mean=v_uni_mean, diag_c_blocksum=v_blk,
+                                joint_mean_shift=ms)
+        blocks = self._blocks()
+        blocks["inflation"] = res
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"):
+            r = zrec.build_receipt(**blocks)
+        self.assertEqual(r["outcome"]["branch"], 3)
+        self.assertTrue(r["inflation"]["G3R_raw_operand_reconstruction"]["discriminating"])
+
+    # ---- ⚠ ROUND-6 BLOCKER 2: the receipt compared against unvalidated values -------------
+    def _recon(self, **over):
+        blk = {"per_variant": {"mean": {"max_rel_diff": 0.0}, "cv": {"max_rel_diff": 0.0}},
+               "rtol": 1e-9, "discriminating": True,
+               "discrimination_blockers": {"n_bins": 3, "n_separated": 3, "n_pinned": 0,
+                                           "n_saturated_v_uni_below_v_blk": 0,
+                                           "n_shift_below_tolerance": 0,
+                                           "max_separation": 0.5}}
+        blk.update(over)
+        blocks = self._blocks()
+        blocks["inflation"] = {"G3R_raw_operand_reconstruction": blk}
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        return blocks
+
+    def test_an_INFINITE_tolerance_is_refused(self):
+        """Measured: rtol=inf with max_rel_diff=100 wrote a MET receipt. 100 <= inf is True.
+
+        An infinite tolerance is not a loose one -- it is the absence of one, and every residual
+        satisfies it. Same shape as the PSD gate's absolute floor.
+        """
+        blocks = self._recon(
+            rtol=float("inf"),
+            per_variant={"mean": {"max_rel_diff": 100.0}, "cv": {"max_rel_diff": 100.0}})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("not a finite positive tolerance", str(cm.exception))
+
+    def test_a_ZERO_or_negative_tolerance_is_refused(self):
+        for bad in (0.0, -1e-9):
+            with self.subTest(rtol=bad):
+                with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError):
+                    zrec.build_receipt(**self._recon(rtol=bad))
+
+    def test_a_NEGATIVE_INFINITE_residual_is_refused(self):
+        """Measured: max_rel_diff=-inf wrote a MET receipt, because -inf <= rtol is True."""
+        blocks = self._recon(per_variant={"mean": {"max_rel_diff": float("-inf")},
+                                          "cv": {"max_rel_diff": 0.0}})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("finite and non-negative", str(cm.exception))
+
+    def test_a_NaN_residual_is_refused(self):
+        blocks = self._recon(per_variant={"mean": {"max_rel_diff": float("nan")},
+                                          "cv": {"max_rel_diff": 0.0}})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError):
+            zrec.build_receipt(**blocks)
+
+    def test_a_BOOLEAN_masquerading_as_a_measurement_is_refused(self):
+        """`isinstance(True, int)` is True in Python, so a bare bool would have slipped through."""
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError):
+            zrec.build_receipt(**self._recon(rtol=True))
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError):
+            zrec.build_receipt(**self._recon(
+                per_variant={"mean": {"max_rel_diff": True}, "cv": {"max_rel_diff": 0.0}}))
+
+    def test_an_OMITTED_discriminating_field_is_refused(self):
+        """Measured: the disclosure could simply be left out and the receipt still said MET."""
+        blk = {"per_variant": {"mean": {"max_rel_diff": 0.0}, "cv": {"max_rel_diff": 0.0}},
+               "rtol": 1e-9}
+        blocks = self._blocks()
+        blocks["inflation"] = {"G3R_raw_operand_reconstruction": blk}
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("omits `discriminating`", str(cm.exception))
+
+    def test_a_non_boolean_discriminating_verdict_is_refused(self):
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError):
+            zrec.build_receipt(**self._recon(discriminating="probably"))
+
+    def test_a_non_discriminating_pass_WITHOUT_its_note_is_refused(self):
+        blocks = self._recon(
+            discriminating=False,
+            discrimination_blockers={"n_bins": 1, "n_separated": 0, "n_pinned": 1,
+                                     "n_saturated_v_uni_below_v_blk": 0,
+                                     "n_shift_below_tolerance": 0, "max_separation": 0.0})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("carries no limitation note", str(cm.exception))
+
+    def test_a_non_discriminating_pass_WITHOUT_its_blockers_is_refused(self):
+        """WHY it was blind is the actionable part, and saturation is invisible to a tolerance.
+
+        Built directly rather than through `_recon`, which now supplies a breakdown by default --
+        the helper cannot express "omit it", and a test that silently stopped exercising the
+        omission would be worse than no test.
+        """
+        blk = {"per_variant": {"mean": {"max_rel_diff": 0.0}, "cv": {"max_rel_diff": 0.0}},
+               "rtol": 1e-9, "discriminating": False, "note": "blind here"}
+        blocks = self._blocks()
+        blocks["inflation"] = {"G3R_raw_operand_reconstruction": blk}
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("discrimination_blockers", str(cm.exception))
+
+    # ---- ⚠ ROUND-7 ISSUE 2: requiring the key was not requiring the content ---------------
+    def _blockers(self, **over):
+        b = {"n_bins": 3, "n_separated": 0, "n_pinned": 0,
+             "n_saturated_v_uni_below_v_blk": 3, "n_shift_below_tolerance": 0,
+             "max_separation": 0.0}
+        b.update(over)
+        return self._recon(discriminating=False, note="blind here",
+                           discrimination_blockers=b)
+
+    def test_an_EMPTY_blockers_dict_is_refused(self):
+        """Measured: `{}` satisfied "is a dict" and a MET receipt was written."""
+        blocks = self._recon(discriminating=False, note="blind here",
+                             discrimination_blockers={})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("omits", str(cm.exception))
+
+    def test_a_PARTIAL_blockers_dict_names_what_is_missing(self):
+        blocks = self._recon(discriminating=False, note="blind here",
+                             discrimination_blockers={"n_bins": 3})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("n_separated", str(cm.exception))
+
+    def test_counts_that_DO_NOT_PARTITION_the_bins_are_refused(self):
+        """A breakdown that does not add up leaves a fifth cause unnamed -- which is how
+        saturation went unnoticed for a whole round."""
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**self._blockers(n_bins=10))
+        self.assertIn("do not partition", str(cm.exception))
+
+    def test_a_record_CONTRADICTING_its_own_verdict_is_refused(self):
+        """discriminating=False beside n_separated=5: two halves from different runs."""
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**self._blockers(
+                n_bins=5, n_separated=5, n_saturated_v_uni_below_v_blk=0, max_separation=0.5))
+        self.assertIn("breaks the discrimination identity", str(cm.exception))
+
+    def test_the_same_contradiction_in_the_OTHER_direction_is_refused(self):
+        """discriminating=True with n_separated=0. The consistency check must be two-sided."""
+        blocks = self._recon(
+            discriminating=True,
+            discrimination_blockers={"n_bins": 3, "n_separated": 0, "n_pinned": 3,
+                                     "n_saturated_v_uni_below_v_blk": 0,
+                                     "n_shift_below_tolerance": 0, "max_separation": 0.0})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("breaks the discrimination identity", str(cm.exception))
+
+    def test_NEGATIVE_or_non_integer_counts_are_refused(self):
+        for bad in ({"n_pinned": -1}, {"n_pinned": 1.5}, {"n_pinned": True}, {"n_bins": 0}):
+            with self.subTest(**bad):
+                with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError):
+                    zrec.build_receipt(**self._blockers(**bad))
+
+    def test_a_non_finite_max_separation_is_refused(self):
+        for bad in (float("inf"), float("nan"), -1.0):
+            with self.subTest(max_separation=bad):
+                with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError):
+                    zrec.build_receipt(**self._blockers(max_separation=bad))
+
+    # ---- ⚠ ROUND-8: the breakdown is required for EITHER verdict --------------------------
+    def test_a_DISCRIMINATING_pass_without_the_breakdown_is_refused(self):
+        """Measured: omitting it on a True verdict skipped validation entirely and wrote MET.
+
+        The asymmetry was never justified. A claim that the gate COULD see a dropped shift needs
+        its measurements exactly as much as a claim that it could not -- and more, because it is
+        the one a reader treats as assurance.
+        """
+        blk = {"per_variant": {"mean": {"max_rel_diff": 0.0}, "cv": {"max_rel_diff": 0.0}},
+               "rtol": 1e-9, "discriminating": True}
+        blocks = self._blocks()
+        blocks["inflation"] = {"G3R_raw_operand_reconstruction": blk}
+        blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST", limit=0.01)
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+            zrec.build_receipt(**blocks)
+        self.assertIn("EITHER verdict", str(cm.exception))
+
+    def test_counts_agreeing_with_the_flag_but_CONTRADICTING_the_separation_are_refused(self):
+        """Both reproduced at rtol=1e-9 with valid partitions, before the third term was checked.
+
+        `n_separated` and `max_separation` are one quantity read two ways in the producer --
+        `sum(sep > rtol)` and `sep.max()` -- so `max(sep) > rtol` iff `any(sep) > rtol` exactly.
+        Checking only two of the three pairings let a self-contradicting record through twice.
+        """
+        cases = {
+            "nothing separated, yet a large max separation":
+                dict(discriminating=False, note="blind",
+                     discrimination_blockers={"n_bins": 3, "n_separated": 0, "n_pinned": 0,
+                                              "n_saturated_v_uni_below_v_blk": 3,
+                                              "n_shift_below_tolerance": 0,
+                                              "max_separation": 0.5}),
+            "three separated, yet zero max separation":
+                dict(discriminating=True,
+                     discrimination_blockers={"n_bins": 3, "n_separated": 3, "n_pinned": 0,
+                                              "n_saturated_v_uni_below_v_blk": 0,
+                                              "n_shift_below_tolerance": 0,
+                                              "max_separation": 0.0}),
+        }
+        for label, over in cases.items():
+            with self.subTest(case=label):
+                with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError) as cm:
+                    zrec.build_receipt(**self._recon(**over))
+                self.assertIn("ONE measurement read three ways", str(cm.exception))
+
+    def test_a_max_separation_exactly_AT_the_tolerance_is_not_separation(self):
+        """The gate counts `sep > rtol`, strictly, so the receipt must use the same boundary."""
+        blocks = self._recon(
+            discriminating=True,
+            discrimination_blockers={"n_bins": 1, "n_separated": 1, "n_pinned": 0,
+                                     "n_saturated_v_uni_below_v_blk": 0,
+                                     "n_shift_below_tolerance": 0, "max_separation": 1e-9})
+        with self._live(0.01, "TEST"), self.assertRaises(zc.ZContractError):
+            zrec.build_receipt(**blocks)
+
+    def test_a_DISCRIMINATING_disclosure_is_accepted_when_all_three_agree(self):
+        with self._live(0.01, "TEST"):
+            r = zrec.build_receipt(**self._recon())
+        blk = r["inflation"]["G3R_raw_operand_reconstruction"]
+        self.assertTrue(blk["discriminating"])
+        self.assertGreater(blk["discrimination_blockers"]["max_separation"], blk["rtol"])
+
+    def test_a_COMPLETE_and_CONSISTENT_disclosure_is_accepted(self):
+        """The positive direction, so the refusals above are not passing for the wrong reason."""
+        with self._live(0.01, "TEST"):
+            r = zrec.build_receipt(**self._blockers())
+        blk = r["inflation"]["G3R_raw_operand_reconstruction"]
+        self.assertFalse(blk["discriminating"])
+        self.assertEqual(blk["discrimination_blockers"]["n_saturated_v_uni_below_v_blk"], 3)
+
+    def test_the_REAL_gates_blockers_satisfy_the_receipt_in_BOTH_directions(self):
+        """Discriminating and non-discriminating output from the real gate must both be writable.
+
+        A validation rule the producer cannot satisfy is a rule that only fires on fixtures.
+        """
+        import z_assembly as za
+        cases = {
+            "discriminating": dict(v_mean=np.array([2.0]), v_blk=np.array([1.0]),
+                                   ms=np.array([0.5])),
+            "saturated": dict(v_mean=np.array([1.0]), v_blk=np.array([100.0]),
+                              ms=np.array([1.0])),
+        }
+        for label, c in cases.items():
+            with self.subTest(case=label):
+                d = za.derive_variant_diagonals(c["v_mean"], c["v_blk"], c["ms"])
+                g_mean, _ = za.compute_g(d["v_uni_mean"], d["v_blk"])
+                g_cv, _ = za.compute_g(d["v_uni_cv"], d["v_blk"])
+                res = za.run_pair_gates(g_recorded={"mean": g_mean, "cv": g_cv},
+                                        diag_c_unified_mean=c["v_mean"],
+                                        diag_c_blocksum=c["v_blk"], joint_mean_shift=c["ms"])
+                blocks = self._blocks()
+                blocks["inflation"] = res
+                blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="TEST",
+                                              limit=0.01)
+                with self._live(0.01, "TEST"):
+                    r = zrec.build_receipt(**blocks)
+                self.assertEqual(r["outcome"]["branch"], 3)
 
     def test_a_genuinely_backed_MET_outcome_is_accepted(self):
         """The positive direction, so the refusals above are not passing for the wrong reason."""
