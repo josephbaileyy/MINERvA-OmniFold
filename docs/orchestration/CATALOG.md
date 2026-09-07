@@ -175,6 +175,19 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `reusable-now`, with the two suspended-authority facts (`D-Y-CONSTRUCT` does not exist; `R4`
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
+- [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
+  - **PROPOSAL ONLY. Adopts nothing, grades nothing, and declares no tolerance value.** Maps the
+  publication's ACTUAL covariance consumers to candidate `(cause 3, Z)` sensitivity criteria, under
+  `RZ`, at the coordinator's request. **Its finding is negative and cuts against the cheap options:
+  the consumer inverts the projected covariance** (`eavail_generator_significance.py:107,132`,
+  `chi2 = d @ pinv(C_y) @ d`), so the published quantity is dominated by the SMALLEST retained
+  eigenvalues, while `s_agg`, `s_med`, `s_proj` and `s_eig` are every one of them dominated by the
+  largest — `s_eig` by construction. **A criterion built on any of the four can be satisfied while a
+  quoted significance moves arbitrarily.** Three candidates are set out with the five fields `D1`
+  requires and no numbers; `pinv`'s unpinned `rcond` is named as a prerequisite that gates two of
+  them. Carries the two-projection-builder question as an **unresolved premise** rather than
+  assuming equivalence. `CITABLE FOR` / `NOT CITABLE FOR` at the top. `BEN-381` bars this lane from
+  grading these legs, not from drafting them (SPEC §7 item 3).
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
   - **rev. 21. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
