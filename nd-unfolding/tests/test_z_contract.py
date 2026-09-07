@@ -234,8 +234,8 @@ class TheBandPartitionGateFiresInBothDirections(unittest.TestCase):
 class LGBM45Table:
     """Shaped like LightGBM 4.5.0's PYTHON accessor: the canonical name is PREPENDED to its aliases.
 
-    ⚠ TWO ROUNDS OF FIXTURE DEFECTS, both of the same kind -- a fixture agreeing with my code
-    rather than with the world, so the control it feeds could not fail.
+    ⚠ THREE ROUNDS OF FIXTURE DEFECTS, all of one kind -- a fixture agreeing with my code rather
+    than with the world, so the control it feeds could not fail:
 
       * round 2's invented an alias for EVERY parameter, so nothing was alias-free and finding 2
         was invisible.
@@ -243,19 +243,38 @@ class LGBM45Table:
         Python accessor prepends the canonical name, so upstream returns `[name]`. Measured
         against a source-shaped table with three alias-free parameters, the control reported
         UNAVAILABLE and silently did not run.
+      * round 4's named `is_unbalance` as the independent alias-free example. It is NOT alias-free
+        -- upstream gives it `unbalance` and `unbalanced_sets`. The shape was right by then and
+        the tests passed, but the fixture asserted something false about the world, and the
+        sentence justifying the choice asserted it too. Swapping the identifier without rewriting
+        the reason would have left a correct fixture carrying a false premise.
 
-    `deterministic` and `force_row_wise` are alias-free upstream and are alias-free here;
-    `is_unbalance` is an alias-free parameter that is NOT one of Z's knobs, so the control has an
-    independent name to choose.
+    WHAT IS AND IS NOT ESTABLISHED HERE, since three corrections in a row were all of upstream
+    facts I cannot check from this interpreter:
+
+      * NOT verifiable locally -- LightGBM is absent (see `z_reproducibility`'s docstring). Which
+        parameters are alias-free in 4.5.0 is taken from the upstream table via review:
+        `deterministic`, `force_row_wise` and `force_col_wise` alias-free; `is_unbalance` not.
+      * NOT load-bearing. No test's verdict depends on the upstream fact being TRUE: what the
+        control needs is a table CONTAINING an alias-free entry that is not one of Z's knobs, and
+        it picks that entry FROM the table. `test_the_fixtures_alias_free_set_is_what_the_docstring
+        _claims` does name these three, but it compares the fixture with THIS PARAGRAPH, not with
+        LightGBM -- it keeps prose and fixture in step and cannot detect that both are wrong.
+      * So the premise is about REALISM, which is exactly what was missing when findings 5, r3-2
+        and r4-2 each survived a passing fixture. Getting it right still matters; asserting it as
+        checked does not make it so.
+      * The question is settled for real by the outstanding production probe, which records
+        `n_alias_free_in_table` and the chosen control name in the receipt.
     """
 
     _dump = {
         "num_leaves": ["num_leaves", "num_leaf", "max_leaves", "max_leaf", "max_leaf_nodes"],
         "num_threads": ["num_threads", "num_thread", "nthread", "nthreads", "n_jobs"],
         "learning_rate": ["learning_rate", "shrinkage_rate", "eta"],
+        "is_unbalance": ["is_unbalance", "unbalance", "unbalanced_sets"],
         "deterministic": ["deterministic"],
         "force_row_wise": ["force_row_wise"],
-        "is_unbalance": ["is_unbalance"],
+        "force_col_wise": ["force_col_wise"],
     }
 
     @classmethod
@@ -394,6 +413,20 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
         self.assertIsNone(a.error)
         self.assertIsNone(b.error)
 
+    def test_the_fixtures_alias_free_set_is_what_the_docstring_claims(self):
+        """⚠ ROUND-5. The docstring named a parameter that upstream gives two aliases.
+
+        Nothing caught it because nothing read the fixture back: `is_unbalance` was alias-free
+        BY FIAT in the `_dump` I wrote, so every assertion agreed with me. This derives the set
+        from the table instead, so prose and fixture cannot drift apart again -- and it fails if
+        someone re-adds an aliased parameter as the independent example.
+        """
+        table = LGBM45Table._get_all_param_aliases()
+        alias_free = {k for k, v in table.items() if zr._extra_aliases(k, v) == set()}
+        self.assertEqual(alias_free, {"deterministic", "force_row_wise", "force_col_wise"})
+        self.assertNotIn("is_unbalance", alias_free)     # it has unbalance, unbalanced_sets
+        self.assertEqual(alias_free - set(zr.Z_REPRO_KNOBS), {"force_col_wise"})
+
     def test_extra_aliases_subtracts_the_canonical_name_under_either_shape(self):
         self.assertEqual(zr._extra_aliases("deterministic", ["deterministic"]), set())
         self.assertEqual(zr._extra_aliases("deterministic", []), set())
@@ -446,7 +479,7 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
             def _get_all_param_aliases():
                 d = {k: [] for k in zr.Z_REPRO_KNOBS if k != "force_row_wise"}
                 d[zr._POSITIVE_CONTROL] = ["num_leaf"]
-                d["is_unbalance"] = []
+                d["force_col_wise"] = []
                 return d
 
         p = probe_against(MissingKnob)
@@ -463,7 +496,7 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
 
     def test_the_second_accessor_is_used_when_the_first_is_absent(self):
         class OldStyle:
-            aliases = {"num_leaves": {"num_leaf"}, "is_unbalance": set(),
+            aliases = {"num_leaves": {"num_leaf"}, "force_col_wise": set(),
                        **{k: set() for k in zr.Z_REPRO_KNOBS}}
 
         p = probe_against(OldStyle)
