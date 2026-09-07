@@ -1,8 +1,8 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
-# **rev. 19 — three corrections to rev. 17's own explanations, none a new decision. `B > S` means
-# adequacy is NOT DEMONSTRATED, not that runs fail; *"validator"* is not an `R5` exemption, so the venue
-# is now named; and the control's *"no recorded actual"* cited the WRONG combine — three exist.**
+# **rev. 20 — PASS on rev. 19's corrections, with one left: *"venue-independent"* claimed more reach
+# than a laptop timing supports. And the meter repair is now ON `main` at `d4922b89` — re-measured
+# here, together with one relayed ruling that no record corroborates.**
 
 **CITABLE FOR:** §1's contract, §2's seven cause dispositions, §3's terminal criteria, §4's dependency
 table, §5's cost arithmetic **with its stated uncertainty**, and §6's rulings with their authority.
@@ -28,6 +28,23 @@ ungraded here**, and this document opens none.
 **`BEN-381` DISQUALIFIES THIS LANE FROM GRADING THE LEGS THIS CONTRACT DEFINES.** It drafted them and it
 re-measured the evidence they rest on. The grading lane must be one that took none of the deciding
 measurements. That separation is `R2`'s pattern and it carries forward.
+
+## 0.0r What changed in rev. 20
+
+Rev. 19 was `726ff53b`. **The three rev.-19 corrections and the §7 wording fix were checked and PASS —
+a PASS on those corrections, and explicitly not acceptance of `D1`–`D4` or of production readiness.**
+Two things follow, one of them a correction and one an operational re-measurement.
+
+| # | rev. 19 said | rev. 20 does |
+|---|---|---|
+| 1 | §3.7d's per-member figures are *"wall-clock costs of the arithmetic, **venue-independent**"* | **⚠ THE REACH EXCEEDS THE EVIDENCE, AND IT IS THE SAME SHAPE THE REST OF THIS DOCUMENT KEEPS CATCHING.** They are **local timing estimates** — `numpy.linalg.eigvalsh` on one laptop-class machine — and they depend on **hardware, thread count and the numerical library**. Relabelled **MEASURED locally, TRANSFERRED elsewhere with runtime UNESTABLISHED**. **The irony is load-bearing:** §3.7a's own finding is that thread count is a property of the allocation and nothing pins it, and LAPACK's symmetric eigensolver is threaded — **so `s_eig`, the one figure that matters, is the one most exposed** |
+| 2 | §5.6b records the repair on a **branch**, `72bcd2f6`, not an ancestor of this tip | **new §5.6c, re-measured against `origin/main` after a fetch.** **`origin/main` = `d4922b89`, and `72bcd2f6` IS an ancestor of it** — the chain is linear on `main`, so the branch framing is superseded. **The merge base with this tip is still `c71b319a`, so every `r5_meter.py` `file:line` here still describes the PRE-REPAIR version** — now with a named tip to re-derive against. Admission is shut **more strongly than rev. 15 could say**: `git log --all` over the gate path returns **`0` commits**, so **it has never been armed on any ref**. And `ac647761`'s new `FOLLOWUP-…` record **discharges §5.6b item 5** with an owner |
+| 3 | — | **⚠ AND ONE RELAYED RULING IS NOT CORROBORATED.** The relay says Joseph ratified the attempt-summing reading and **declined** untracking the gate path. **At `d4922b89` no such record exists** — the FINDING's status is still *"open — three things are with the decision owner"* and the untrack is still *"a live option"*; the only recorded 2026-09-06 instruction concerns the 30-day window. **So §7 item 19's second remedy stays REFERRED, not closed, and `D5` stays resolved BY CODE rather than ratified.** Uncorroborated is **not** false, and **if the relay is right the outcome is the one this document already assumes** — nothing downstream turns on it |
+
+**Nothing is adopted and nothing moved.** Rev. 19's corrections, the `B ≤ S` framework, the control's
+three gaps and every disposition stand. **`D1`, `D2` and `D4` remain unadopted, `D3` conditional, and
+justified `B`/`S`, the cause-3 tolerances, the correlation disposition, the per-bin scope and a complete
+execution costing all remain outstanding.**
 
 ## 0.0q What changed in rev. 19
 
@@ -2401,7 +2418,13 @@ validator does not exist and its execution plan is part of the implementation `D
 be stated is the arithmetic and the double-counting rule:**
 
 - the per-member figures above — `s_proj`/`s_corr` **seconds**, `s_eig` **`≈1`–`3` min** and `≈1.8` GB —
-  are **wall-clock costs of the arithmetic**, venue-independent;
+  are **LOCAL TIMING ESTIMATES**, **MEASURED** on one laptop-class machine and **TRANSFERRED** to any
+  other venue **with runtime UNESTABLISHED there**. **⚠ REV. 20 CORRECTS REV. 19'S *"venue-independent"*,
+  which claimed more reach than the measurement supports:** an eigensolve's runtime depends on
+  **hardware, thread count and the numerical library**, and **§3.7a's own finding is that thread count
+  is a property of the allocation with nothing pinning it** — so `s_eig`, the only figure here that is
+  not negligible, is precisely the one whose transfer is least safe. What *is* venue-independent is the
+  **operation count** (`O(n³)` ≈ `4e12` flops) and the **memory** (`≈1.8` GB); the **time** is not;
 - **at `N = 5`, `s_eig` alone is `5`–`15` minutes**, and it is the one candidate whose cost is not
   negligible;
 - **if that runs inside a metered task it is `R5` spend**, and it belongs in §5.8b's production block
@@ -2863,9 +2886,11 @@ prohibition is the fail-**open** direction. Both `r5_meter.py` and `campaignctl.
    likely catch. After it, the same command produces a **valid, complete, honestly armable** receipt.
    *"The repair converts a dud into live ammunition, which is why the runbook could not be left as it
    was."* **§5.6a's warning is therefore more load-bearing after the repair, not less.**
-4. **Admission is STILL SHUT.** `docs/orchestration/state/r5-meter-receipt.json` **does not exist** —
-   re-measured at this base. §4 row 3 stands unchanged as a Tier-3 prerequisite, and committing a
-   receipt is a deliberate act, not a step.
+4. **Admission is STILL SHUT** — and **⚠ rev. 20 measures it more strongly than this bullet could.**
+   `docs/orchestration/state/r5-meter-receipt.json` does not exist at this base; **and
+   `git log --all` over that path returns `0` commits, so it has never been armed on ANY ref**, and it
+   is absent at `origin/main` (§5.6c). §4 row 3 stands unchanged as a Tier-3 prerequisite, and
+   committing a receipt is a deliberate act, not a step.
 5. **The 30-day `sacct` window is now dated and owned** (`FINDING-20260906-r5-meter-undercounted-requeue-attempts.md`
    §7). The span reaches 30 days at **`2026-10-02T13:44:27Z`**, which is **after** the `R5` stop, so the
    meter covers the whole campaign window. **The live constraint is narrower than §5.9b said:** `R5` §3
@@ -2900,6 +2925,56 @@ swing)*
 is worth stating precisely because it is the kind of coincidence that should be checked rather than
 assumed. The reason is structural: the waker is `≈6%` of one member's CPU cost, and `N` is an integer
 floor.
+
+### 5.6c THE REPAIR IS NOW ON `main` — RE-MEASURED IN REV. 20, AND ONE RELAYED CLAIM IS NOT CORROBORATED
+
+**Arrived as a peer relay; every line below is separated into what this lane MEASURED in its own tree
+and what remains RELAYED.** The relay is not treated as a ruling, for the reason §7 item 17 already
+gives about a different one.
+
+#### MEASURED HERE, at this base, against `origin/main` after a fetch
+
+| | |
+|---|---|
+| **`origin/main` = `d4922b89e778d3fef29ee5cb6c73bf6636733b4f`** | matches the sha relayed |
+| **`72bcd2f6` IS an ancestor of `origin/main`** (`git merge-base --is-ancestor` → true) | so §5.6b's *"branch `r5-accounting-requeue-repair-20260906`"* framing is **superseded**: the whole chain `e055490c → 45008564 → 852b26ab → 71bfa298 → 72bcd2f6` is **linear on `main`**, plus `ac647761` and `d4922b89` after it |
+| **the merge base of this tip and `origin/main` is still `c71b319a`** | **so every `r5_meter.py` `file:line` in this document still describes the PRE-REPAIR version.** Unchanged from rev. 15, and now with a named tip to re-derive against: `d4922b89` |
+| **`git log --all -- docs/orchestration/state/r5-meter-receipt.json` returns `0` commits** | **stronger than rev. 15's *"does not exist at this base"***: **no commit on any ref has ever touched the gate path.** Combined with its absence at `origin/main` (`git cat-file -e` → fatal), **admission has never been armed, anywhere** |
+| **`ac647761` adds `FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md`** | it **discharges §5.6b item 5** with an owner, quoting the decision owner of 2026-09-06: *"preserve accounting before `2026-10-02T13:44:27Z`… **This is a query limitation, not permission to omit their expenditure**"*, and it measures the limit by bisection (30 days accepted, 31 rejected; the limit is on the **span**; `-j <jobid>` bypasses it, `--name=` does not). Its own header says it is **NOT CITABLE FOR** any spend figure or authorization |
+
+#### ⚠ NOT CORROBORATED — the relayed ruling, and this is the part that changes nothing
+
+**RELAYED:** that Joseph *"ratified that `R5` charges every distinct execution attempt exactly once —
+failed and requeued included"* and that he **declined** untracking the receipt path, so the
+committed-receipt requirement stands.
+
+**MEASURED: no such record exists at `d4922b89`, and the covering search is named so the absence is
+scoped rather than asserted.** Searched: `FINDING-20260906-r5-meter-undercounted-requeue-attempts.md`,
+`R5-METER.md`, the new `FOLLOWUP-…` record, and a grep over `docs/orchestration/*.md` for
+`execution attempt` / `requeue` (9 files, each opened). What is actually there:
+
+- the FINDING's status line is still **`open — three things are with the decision owner, not settled
+  here`**;
+- its untrack remedy is still **`offered to the decision owner instead… here as a live option`**;
+- the only 2026-09-06 instruction of Joseph's that IS recorded concerns **the 30-day window**, and it is
+  the one the FOLLOWUP discharges. **One of the three is settled; the other two are not recorded as
+  settled.**
+
+**SO THIS DOCUMENT DOES NOT MOVE ON THE RELAY:**
+
+1. **§7 item 19's second remedy stays REFERRED, not closed.** A relay that Joseph declined it is not the
+   declining. **And note the direction: if the relay is right, the outcome is the one this document
+   already assumes** — the committed-receipt requirement stands unchanged — **so nothing downstream
+   turns on it.** What changes is only whether §7 item 19 may be marked closed, and it may not.
+2. **`D5` stays resolved BY CODE, not by ratification.** §5.6b's resolution rests on what
+   `_sum_charged_seconds` and `_sacct_argv` measurably do at `72bcd2f6`, which is unaffected. **A
+   ratification would make the alternative reading harder to revive; its absence leaves §5.6b item 1's
+   sentence exact as written** — *"that remains Joseph's to overturn."*
+
+**⚠ AND UNCORROBORATED IS NOT FALSE.** The record may simply lag the ruling; the peer relayed in good
+faith and flagged it as context rather than as authority. **What would close it is one committed
+decision record, or Joseph saying so directly** — the same standard §7 item 17 applies to the accounting
+exception, and the same one `DECISION-20260902-…` met.
 
 ## 5.7 The uncertainty on all of the above
 
@@ -4023,6 +4098,14 @@ adopted by accident.**
     it changes how admission can ever be armed. **So this item is now a live decision for Joseph rather
     than an open finding, and the hazard is LARGER than when it was written:** after the repair the
     documented command produces a valid, armable receipt where before it produced a visibly wrong one.
+    **⚠ REV. 20 — STILL REFERRED, AND A RELAY DOES NOT CLOSE IT.** A peer relayed that Joseph declined
+    the untrack, which would settle this item. **No record of that decision exists at `origin/main`
+    `d4922b89`** — the source FINDING's status is still *"open — three things are with the decision
+    owner"* and its untrack remedy is still *"a live option"* (covering search in §5.6c). **The relay
+    may well be right and the record may lag it; either way this item is not closed on a relay.** Note
+    the direction: **if it is right, the outcome is the one this document already assumes** — the
+    committed-receipt requirement stands — **so nothing downstream moves.** What closes it is a
+    committed decision record, or Joseph saying so.
 
 20. **⚠ NEW IN REV. 16 — A USE-BASED JUSTIFICATION FOR CAUSE-3 ACCEPTANCE, which is the thing rev. 7–15
     substituted a format for.** *"How much estimator-baseline sensitivity is scientifically acceptable,

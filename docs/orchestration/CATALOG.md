@@ -144,7 +144,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
-  - **rev. 19. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
+  - **rev. 20. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by
   path plus digest; the imported constants, now including `adopt_unified_5d.VERT_BANDS` and
   `uq_math.F7_FLOOR_MULTIPLE`; **§1.3a's explicit inflation algebra** `C_Z = D_Z(Σ_V C_b)D_Z + Σ_R + Σ_A
@@ -448,7 +448,21 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   unmeasured combine is `budget5d`, while the control invokes **`uthrow5d_combF`**, measured three times
   at §5.9 row 13 (`0.3875`/`0.4239`/`0.5764` CPU task-h) — the control stays unpriced, but on `n` and
   the thread-count arm rather than on an absence. **`B ≤ S`, the three gaps, the price withdrawal and
-  every disposition stand as written.** **`min(achievable, acceptable)` is WITHDRAWN as acceptance-blocking:** an observed
+  every disposition stand as written.**
+  **REV. 20 — those corrections PASS, with one left and one operational re-measurement.** §3.7d's
+  figures were called *"venue-independent"*; they are **local timing estimates** whose runtime depends
+  on hardware, threading and numerical libraries, now labelled **MEASURED locally / TRANSFERRED with
+  runtime unestablished elsewhere** — and `s_eig`, the only non-negligible one, is the most exposed,
+  since §3.7a's own finding is that nothing pins the thread count. New **§5.6c**: the meter repair is
+  now **on `main`** — `origin/main` = `d4922b89` and `72bcd2f6` is an ancestor of it, so §5.6b's branch
+  framing is superseded, while the merge base with this tip is still `c71b319a`, so **every
+  `r5_meter.py` file:line here still describes the pre-repair version**. Admission is shut more strongly
+  than before: **`git log --all` over the gate path returns `0` commits — it has never been armed on any
+  ref**. **And one relayed ruling is NOT corroborated:** that Joseph ratified the attempt-summing
+  reading and declined the untrack. At `d4922b89` the source FINDING is still *"open — three things are
+  with the decision owner"*, so **§7 item 19 stays referred and `D5` stays resolved by code, not
+  ratified** — uncorroborated is not false, and if the relay is right the outcome is the one already
+  assumed. **`min(achievable, acceptable)` is WITHDRAWN as acceptance-blocking:** an observed
   reproducibility floor is not an acceptance tolerance, and §3.6a — two sections earlier in the same
   document — says such a floor bounds `ε` from **below**, so `min` inverted its direction. Replaced by
   **`B` (operating-error bound, with assumptions and confidence), `S` (independently justified
