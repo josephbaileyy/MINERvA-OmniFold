@@ -1,10 +1,20 @@
-# DECISION 2026-09-07 — Joseph ratifies R5's attempt-level accounting, and DECLINES untracking the admission gate path
+# DECISION — Joseph ratifies R5's attempt-level accounting, and DECLINES untracking the admission gate path
 
-**Status:** RECORDED. **Owner of the decision:** Joseph. **Recorded by:** the Z-specification lane
-(`lane/y-cause7-spec-and-scope`), which is **not** the lane that wrote the repair.
+**⚠ THE RULING WAS GIVEN 2026-09-06. THIS RECORD WAS WRITTEN 2026-09-07, AND ITS FILENAME CARRIES THE
+RECORDING DATE, NOT THE RULING DATE.** Corrected in place — the first revision of this file was titled
+*"DECISION 2026-09-07"*, which would read as **authorizing a landing that had already happened**: the
+repair landed at `72bcd2f6` and reached `main` at `d4922b89` on **2026-09-06**, under this same
+instruction. **It is not retroactive authorization.** The filename is left unchanged because
+`6669ac3b` and the finding already point at it.
+
+**Status:** RECORDED. **Owner of the decision:** Joseph.
+**Ruling given:** 2026-09-06, on approving the landing — verbatim in the finding's **Appendix A**.
+**Confirmed directly to this lane:** 2026-09-07 (§1).
+**Recorded by:** the Z-specification lane (`lane/y-cause7-spec-and-scope`), which is **not** the lane
+that wrote the repair. **Recorded at:** 2026-09-07T01:27:29Z, **tree at recording** `d4922b89`.
 **Rules on:** `FINDING-20260906-r5-meter-undercounted-requeue-attempts.md` **§5** and **§8** — two of
 the three items that finding placed with the decision owner.
-**Tree at recording:** `d4922b89`. **Recorded at:** 2026-09-07T01:27:29Z.
+**De-staled against by:** `6669ac3b`, which points that finding's status line, §5 and §8 here.
 
 **CITABLE FOR:** that R5's metered unit is the execution attempt, by decision and not only by code;
 that the alternative reading of R5 §3 is overturned; that the admission gate path stays tracked and
@@ -40,6 +50,19 @@ rulings could not be corroborated in the tree:**
 **"Both" is fixed by the report he was answering**, which named exactly two: the attempt-level
 accounting reading, and the declining of the untrack. Those are §2 and §3. Nothing else is ruled here.
 
+**⚠ AND THE PRIMARY TEXT IS NOW IN THE TREE — ADDED IN THIS AMENDMENT.** This record was written from
+a direct confirmation of a summary, and the fuller instruction Joseph actually gave on 2026-09-06 is
+recorded **verbatim** by the lane that received it, at the finding's **Appendix A** (`6669ac3b`). That
+instruction also **authorized the landing** and carried the constraints it was performed under, which
+this record had no basis to hold.
+
+**PRECEDENCE, stated so two documents cannot both claim to govern:** on the **two rulings** in §2 and
+§3, **this record governs**, because it rests on a direct answer rather than on a relay. On **anything
+else the instruction said** — the landing authorization, the preservation of `t0`, the ceilings and the
+stop date, the prohibitions on receipts, tickers and launches — **Appendix A is the source, and it is
+not a second ruling.** Where the wording differs on the two rulings, this record governs; where this
+record is silent, it is silent, and Appendix A is not overridden by that silence.
+
 **The chain matters and is recorded, because the gap in it is the reason this file exists:**
 
 | when | what happened |
@@ -49,6 +72,8 @@ accounting reading, and the declining of the untrack. Those are §2 and §3. Not
 | 2026-09-06/07 | a peer session **relays** that Joseph had ratified the other two |
 | 2026-09-07 | this lane **could not corroborate** the relay. Covering search: the finding, `R5-METER.md`, the `FOLLOWUP` record, and a grep over `docs/orchestration/*.md` for `execution attempt` / `requeue` (9 files, each opened). At `d4922b89` the finding's status line still read *"open — three things are with the decision owner"* and §8's remedy still read *"here as a live option for the decision owner"* |
 | 2026-09-07 | Joseph confirms directly. **The relay was accurate; the record simply lagged it** |
+| 2026-09-07 | **two lanes write the record at once.** This one landed first; the integration lane, holding a near-duplicate, **dropped its own unpushed** rather than leave two decision records for one ruling, and spent its commit on the part only it could do — de-staling the finding (`6669ac3b`) and publishing the verbatim instruction as Appendix A. **Recorded because the race is informative: the same gap was visible to two lanes simultaneously and both moved to close it** |
+| 2026-09-07 | this amendment corrects the ruling date and adds the precedence rule above |
 
 **Both halves of that are true and both are kept.** The relaying session was right on the merits, and
 it flagged its own message as context rather than as authority. **And the ruling was still not
@@ -138,10 +163,12 @@ admitted, and the `CAMPAIGN_R5_RECEIPT` override remains repository-relative onl
    expenditure*, and nothing here relaxes that.
 5. **It produces no spend figure.** The `12.590278` in §2 is one waker job over one window, quoted to
    identify the reading, not to price anything.
-6. **It does not edit the finding it rules on.** `FINDING-20260906-…`'s status line still reads
-   *"open — three things are with the decision owner"*, which is now stale in two of three: **that
-   line is its owning lane's to update, not this lane's.** The `CATALOG` entry for this record sits
-   immediately after that finding's so the two are found together in the meantime.
+6. **It does not edit the finding it rules on** — and **⚠ it no longer needs to.** When this record
+   landed, `FINDING-20260906-…`'s status line still read *"open — three things are with the decision
+   owner"* and its §8 still offered the untracking remedy as *"a live option"*, both stale in the two
+   items ruled here. **That was its owning lane's to correct, and it did, at `6669ac3b`:** the status
+   line, §5 and §8 now point here, with the overturned reading and the refused proposal **kept in
+   place rather than deleted**, so a reader sees what was turned down as well as what was taken.
 
 ## 5. What moves downstream, and the answer is almost nothing
 
