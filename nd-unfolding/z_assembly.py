@@ -160,8 +160,12 @@ def gate_g_reconstruction(g_recorded, v_uni, v_blk, rtol=IDENTITY_RTOL):
     §1.3b's requirement is the stronger one: derive `v_uni^cv` from `diag(C_unified)`,
     `diag(C_blocksum)` and `hJointMeanShift` per variant, *"because `g^mean` and `g^cv` differ
     only through the `+ mean_shift²` term and a validator that reconstructs one and reuses it for
-    the other cannot detect a dropped shift"*. Supplying independently derived operands is the
-    caller's obligation; this function cannot tell whether they were.
+    the other cannot detect a dropped shift"*.
+
+    ⚠ THAT GATE NOW EXISTS: `gate_raw_operand_reconstruction` below, added under Joseph's
+    2026-09-07 integration authorization. It does not supersede this function -- this one is still
+    the per-variant check that a recorded `g` matches the operands it was handed -- but the
+    §1.3b obligation is discharged there and no longer left to the caller.
     """
     g_recorded = np.asarray(g_recorded, float)
     g_rebuilt, _ = compute_g(v_uni, v_blk)
@@ -232,13 +236,19 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
     out not to cover it, which is worse than the blindness, because a named fallback stops the
     reader looking.
 
-    So: **when `discriminating=False` the dropped shift is UNTESTED by this check, and nothing in
-    this module covers it.** What the contract still requires is §1.3b's independent
-    reconstruction of `g^c` from the RAW THROW OPERANDS -- `diag(C_unified)`, `diag(C_blocksum)`
-    and `hJointMeanShift`, per variant separately -- which derives `v_uni^cv` instead of accepting
-    it, and is the only stated check that would disagree with a producer that dropped the shift.
-    `gate_g_reconstruction` below is NOT that check: it takes `v_uni` as an argument. Deriving
-    `v_uni` from the throw operands is the caller's obligation and is not discharged here.
+    So: **when `discriminating=False` the dropped shift is UNTESTED by this check.**
+
+    §1.3b's independent reconstruction from the RAW THROW OPERANDS is now implemented as
+    `gate_raw_operand_reconstruction`, and it IS the gate for a mis-built `v_uni`: it derives
+    `v_uni^cv` from `v_uni^mean + ms**2` rather than accepting a stored array, so a producer that
+    dropped the shift disagrees with it.
+
+    ⚠ BUT IT IS BLIND IN THE SAME REGIME, AND SAYING OTHERWISE WOULD REPEAT THE ERROR THIS
+    PARAGRAPH HAS ALREADY MADE TWICE. Both checks compare a difference of order `ms**2` against a
+    relative tolerance on operands of order `v_uni`. When `ms**2` falls under that tolerance, the
+    reconstruction rebuilds a `g^cv` indistinguishable from `g^mean` and passes too. It reports
+    its own `discriminating` flag for exactly this reason. Below the floor NOTHING here detects a
+    dropped shift, and the only remedy is operand provenance, not another gate.
     """
     a = np.asarray(v_uni_cv, float)
     b = np.asarray(v_uni_mean, float)
@@ -275,6 +285,131 @@ def check_variant_coupling(v_uni_cv, v_uni_mean, mean_shift, rtol=IDENTITY_RTOL)
                      "variants were produced and that --out was not defaulted. §1.3b's "
                      "independent reconstruction from the raw throw operands remains required."
                      if not discriminating else "discriminating")}
+
+
+def gate_raw_operand_reconstruction(*, g_recorded, diag_c_unified_mean, diag_c_blocksum,
+                                    joint_mean_shift, diag_c_unified_cv=None,
+                                    rtol=IDENTITY_RTOL):
+    """§1.3b's reconstruction gate: rebuild `g^c` from the THROW OPERANDS, both variants, and
+    compare elementwise against what the producer recorded.
+
+    Joseph, 2026-09-07, authorized this integration. §1.3b states the requirement and why the
+    other four gates need it:
+
+        *"the validator recomputes `g^c` from the throw operands themselves -- `diag(C_unified)`,
+        `diag(C_blocksum)`, and `hJointMeanShift` for the CV-centered variant -- by §1.3a's
+        formula, for each variant separately, and compares elementwise against the `g^c` the
+        producer wrote. Reading the producer's `hInflation_g` and checking it against itself is
+        not this gate. Both variants must be reconstructed independently, because `g^mean` and
+        `g^cv` differ only through the `+ mean_shift²` term and a validator that reconstructs one
+        and reuses it for the other cannot detect a dropped shift."*
+
+    WHAT MAKES THIS DIFFERENT FROM `gate_g_reconstruction`, which is the whole point: that one
+    takes `v_uni` as an ARGUMENT, so a `v_uni^cv` built without the shift is self-consistent with
+    the `g` derived from it and passes. Here `v_uni^cv` is **DERIVED** -- `v_uni^mean + ms**2` --
+    so the producer never gets to supply the quantity under test. A dropped shift then shows up as
+    a disagreement in `g^cv` and in `g^cv` only, which is also how the report names it.
+
+    BOTH VARIANTS ARE REQUIRED. Not as a formality: a caller who passes only `mean` gets the
+    reuse failure §1.3b names, and there is no way for this function to notice from one variant.
+    `diag_c_unified_cv` is OPTIONAL and is CROSS-CHECKED, never substituted -- if the producer
+    stored its own cv diagonal, disagreement with the derived one is reported as
+    `stored_cv_deviation` and refused, but the reconstruction itself always uses the derived
+    value. A stored operand cannot be allowed to certify itself.
+
+    ⚠ ITS DISCRIMINATING POWER IS REPORTED AND IS LIMITED, in exactly the regime
+    `check_variant_coupling` documents. The `mean`/`cv` reconstructions differ only through
+    `ms**2`; where that is below `rtol * v_uni`, a dropped shift rebuilds to the same `g` and this
+    gate passes. It then reports `discriminating=False`. There is no gate behind this one -- below
+    that floor the dropped shift is undetectable by any tolerance-based identity here, and the
+    remedy is the operands' provenance.
+
+    Returns the measured operands; raises `ZContractError` on the first disagreement.
+    """
+    require(isinstance(g_recorded, dict),
+            "raw-operand reconstruction: g_recorded must be a {variant: array} mapping")
+    missing = [v for v in ("mean", "cv") if v not in g_recorded]
+    require(not missing,
+            f"raw-operand reconstruction: variant(s) {missing} absent. §1.3b requires BOTH "
+            f"variants be reconstructed independently -- one variant cannot expose the reuse "
+            f"fault this gate exists to catch.")
+
+    v_uni_mean = np.asarray(diag_c_unified_mean, float)
+    v_blk = np.asarray(diag_c_blocksum, float)
+    ms = np.asarray(joint_mean_shift, float)
+    require(v_uni_mean.shape == v_blk.shape == ms.shape,
+            f"raw-operand reconstruction: operand shapes differ -- diag(C_unified^mean) "
+            f"{v_uni_mean.shape}, diag(C_blocksum) {v_blk.shape}, mean shift {ms.shape}")
+    for name, arr in (("diag(C_unified^mean)", v_uni_mean), ("diag(C_blocksum)", v_blk),
+                      ("hJointMeanShift", ms)):
+        require(np.all(np.isfinite(arr)), f"raw-operand reconstruction: {name} is not finite")
+
+    # THE DERIVATION. `v_uni^cv` is computed, never accepted -- see the docstring.
+    derived = {"mean": v_uni_mean, "cv": v_uni_mean + ms ** 2}
+
+    stored_cv_deviation = None
+    if diag_c_unified_cv is not None:
+        stored = np.asarray(diag_c_unified_cv, float)
+        require(stored.shape == v_uni_mean.shape,
+                f"raw-operand reconstruction: stored diag(C_unified^cv) shape {stored.shape} "
+                f"!= {v_uni_mean.shape}")
+        allow = rtol * (np.abs(stored) + np.abs(derived["cv"]))
+        dev = np.abs(stored - derived["cv"])
+        stored_cv_deviation = float(dev.max()) if dev.size else 0.0
+        require(bool(np.all(dev <= allow)),
+                f"raw-operand reconstruction: the STORED diag(C_unified^cv) disagrees with "
+                f"v_uni^mean + ms**2 by {stored_cv_deviation:.6e} at worst. The stored operand is "
+                f"cross-checked, never substituted, so this is a defect in the operand set itself.")
+
+    per_variant, offenders = {}, []
+    for variant in ("mean", "cv"):
+        rebuilt, pinned = compute_g(derived[variant], v_blk)
+        recorded = np.asarray(g_recorded[variant], float)
+        if recorded.shape != rebuilt.shape:
+            raise ZContractError(
+                f"raw-operand reconstruction: recorded g^{variant} shape {recorded.shape} != "
+                f"rebuilt {rebuilt.shape}")
+        denom = np.maximum(np.abs(rebuilt), 1.0)      # g >= 1, so this is just |g|
+        resid = np.abs(recorded - rebuilt) / denom
+        worst = int(np.argmax(resid)) if resid.size else 0
+        per_variant[variant] = {
+            "max_rel_diff": float(resid.max()) if resid.size else 0.0,
+            "worst_bin": worst,
+            "n_pinned": int(pinned.sum()),
+            "n_inflated": int(np.sum(rebuilt > 1.0)),
+        }
+        if not bool(np.all(resid <= rtol)):
+            offenders.append(f"g^{variant} (max relative difference "
+                             f"{float(resid.max()):.6e} at bin {worst})")
+
+    # Can a dropped shift even be seen here? Same floor as `check_variant_coupling`, same reason.
+    signal = ms ** 2
+    noise = rtol * (np.abs(derived["cv"]) + np.abs(derived["mean"]))
+    discriminating = bool(np.any(signal > noise))
+
+    if offenders:
+        raise ZContractError(
+            f"raw-operand reconstruction FAILED for {offenders}, tolerance {rtol:.0e}. The "
+            f"recorded g is not what §1.3a's formula produces from diag(C_unified), "
+            f"diag(C_blocksum) and hJointMeanShift. A disagreement on g^cv ALONE is the "
+            f"dropped-mean-shift signature; a disagreement on both is a mis-scoped or uninflated "
+            f"g. (This gate could{'' if discriminating else ' NOT'} discriminate a dropped shift "
+            f"on these operands.)")
+
+    return {
+        "per_variant": per_variant,
+        "rtol": rtol,
+        "ms_norm": float(np.linalg.norm(ms)),
+        "stored_cv_cross_checked": diag_c_unified_cv is not None,
+        "stored_cv_deviation": stored_cv_deviation,
+        "discriminating": discriminating,
+        "n_bins_where_signal_exceeds_noise": int(np.sum(signal > noise)),
+        "note": ("PASSED WITHOUT DISCRIMINATING: ms**2 is below rtol*(v_uni^cv + v_uni^mean) in "
+                 "every bin, so a g^cv built from a dropped shift rebuilds to the same values. "
+                 "There is NO further gate behind this one -- treat the dropped shift as "
+                 "UNTESTED and rely on the operands' provenance, not on another check."
+                 if not discriminating else "discriminating"),
+    }
 
 
 def gate_symmetry_psd(C_Z, rtol=IDENTITY_RTOL):
@@ -342,4 +477,24 @@ def run_inflation_gates(*, C_Z, g, pinned_mask, v_uni, v_blk, cov_vert_sum, cov_
     results["G1_closure_identity"] = gate_closure_identity(
         C_Z, g, cov_vert_sum, cov_residual_sum, cov_lateral_sum, cov_stat, cov_ml, rtol=rtol)
     results["G4_symmetry_psd"] = gate_symmetry_psd(C_Z, rtol=rtol)
+    return results
+
+
+def run_pair_gates(*, g_recorded, diag_c_unified_mean, diag_c_blocksum, joint_mean_shift,
+                   diag_c_unified_cv=None, rtol=IDENTITY_RTOL):
+    """The gates that span BOTH centering variants, which `run_inflation_gates` cannot see.
+
+    `run_inflation_gates` runs G1-G5 for ONE variant. §1.3b's reconstruction and the variant
+    coupling are properties of the PAIR, so a per-variant runner structurally cannot host them --
+    which is why the reconstruction obligation went undischarged for four review rounds while
+    five gates reported green.
+    """
+    results = {}
+    results["G3R_raw_operand_reconstruction"] = gate_raw_operand_reconstruction(
+        g_recorded=g_recorded, diag_c_unified_mean=diag_c_unified_mean,
+        diag_c_blocksum=diag_c_blocksum, joint_mean_shift=joint_mean_shift,
+        diag_c_unified_cv=diag_c_unified_cv, rtol=rtol)
+    if diag_c_unified_cv is not None:
+        results["G3b_variant_coupling"] = check_variant_coupling(
+            diag_c_unified_cv, diag_c_unified_mean, joint_mean_shift, rtol=rtol)
     return results

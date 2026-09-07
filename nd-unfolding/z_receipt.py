@@ -185,11 +185,11 @@ def build_receipt(*, z_stamp, variant, parent, code_identity, inflation, null_bl
         "negative_statement": NEGATIVE_STATEMENT,
         "notes": notes or {},
     }
-    _validate_passing_outcome(outcome)
+    _validate_passing_outcome(outcome, inflation)
     return receipt
 
 
-def _validate_passing_outcome(outcome) -> None:
+def _validate_passing_outcome(outcome, inflation=None) -> None:
     """A MET receipt must be justified by the declarations it actually rests on.
 
     ⚠ REVIEW FINDING 1, SECOND HALF. The first version refused only the self-contradictory case --
@@ -211,6 +211,8 @@ def _validate_passing_outcome(outcome) -> None:
     if branch != 3:
         return
 
+    _validate_reconstruction_ran(inflation)
+
     legs = outcome.get("leg_results") or {}
     if not legs:
         raise ZContractError(
@@ -223,6 +225,67 @@ def _validate_passing_outcome(outcome) -> None:
             "receipt: outcome claims branch 3 (MET) but these legs are not backed by a declared "
             f"boundary: {sorted(offenders)}. Joseph, 2026-09-07: missing or unapproved acceptance "
             "boundaries must produce an explicit non-passing result.")
+
+
+RECONSTRUCTION_KEY = "G3R_raw_operand_reconstruction"
+
+
+def _validate_reconstruction_ran(inflation) -> None:
+    """A MET receipt must PROVE §1.3b's reconstruction ran, on BOTH variants.
+
+    Integrated 2026-09-07 under Joseph's authorization. §1.3b's whole point is that the other four
+    inflation gates are *jointly satisfiable by an uninflated object*, so a receipt that records
+    them and not this one records a green state reachable without the work being done. The
+    validator's `identities_pass` flag cannot substitute: it is a producer-supplied boolean, which
+    is the "read the producer's own value back" shape §1.3b explicitly rejects.
+
+    So this looks for the gate's own measured output, not for an assertion that it passed:
+
+      * the block must be present under `RECONSTRUCTION_KEY`,
+      * it must carry `per_variant` results for BOTH `mean` and `cv` -- one variant cannot expose
+        the reuse fault,
+      * each variant's `max_rel_diff` must be within the `rtol` the gate recorded.
+
+    ⚠ A NON-DISCRIMINATING PASS IS RECORDED, NOT REJECTED. Where `ms**2` is under the tolerance the
+    gate cannot see a dropped shift and says so; refusing on that would make the receipt refuse
+    correct builds whose mean shift is genuinely tiny. The receipt therefore carries
+    `discriminating` through to the reader instead of silently upgrading it to assurance --
+    the same choice, for the same reason, as the gate itself.
+    """
+    block = (inflation or {}).get(RECONSTRUCTION_KEY)
+    if not isinstance(block, dict):
+        raise ZContractError(
+            f"receipt: outcome claims branch 3 (MET) but the inflation block records no "
+            f"{RECONSTRUCTION_KEY!r}. §1.3b's reconstruction is what makes the other four "
+            f"inflation gates capable of failing -- an uninflated object satisfies all four -- so "
+            f"a pass that cannot show it ran is not a pass.")
+    per_variant = block.get("per_variant")
+    if not isinstance(per_variant, dict):
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} carries no per_variant measurements. A recorded "
+            f"verdict is not a recorded measurement.")
+    absent = [v for v in ("mean", "cv") if v not in per_variant]
+    if absent:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} is missing variant(s) {absent}. §1.3b requires BOTH "
+            f"variants be reconstructed independently, because g^mean and g^cv differ only "
+            f"through the mean-shift term.")
+    rtol = block.get("rtol")
+    if not isinstance(rtol, (int, float)) or not rtol > 0:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} records rtol {rtol!r}; a comparison with no stated "
+            f"tolerance cannot be re-checked by a reader.")
+    for variant in ("mean", "cv"):
+        diff = (per_variant[variant] or {}).get("max_rel_diff")
+        if not isinstance(diff, (int, float)):
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} variant {variant!r} records max_rel_diff "
+                f"{diff!r}, which is not a measurement.")
+        if not diff <= rtol:
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} variant {variant!r} recorded max_rel_diff "
+                f"{diff:.6e} > rtol {rtol:.0e}, so the reconstruction did NOT pass, yet the "
+                f"outcome claims MET.")
 
 
 def _leg_is_unbacked(entry):

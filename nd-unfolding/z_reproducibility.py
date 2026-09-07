@@ -7,18 +7,50 @@ paths."*
 
 WHAT WAS CHECKED, AND WHAT THE CHECK FOUND
 ------------------------------------------
-`import lightgbm` **fails in this interpreter** -- the package is absent -- and no version is pinned
-anywhere in the repository (searched `*.txt`, `*.yml`, `*.yaml`, `*.cfg`, `*.toml`, `*.sh`; the only
-hits are prose comments about thread behaviour). `setup_salloc_env.sh` activates a conda prefix
-`root_6_28` whose contents are not in this checkout.
+⚠ **THIS SECTION WAS REWRITTEN 2026-09-07: THE BACKEND IS NOW MEASURED, NOT UNKNOWN.** Joseph
+authorized the verification; it was done by READING the campaign environment, installing nothing.
 
-**So the actual backend and version CANNOT be established from here, and this module does not
-guess.** `z_lgbm_overlay()` REFUSES unless a live probe has confirmed the backend and recognised
-every knob it is about to set. That is the same discipline as `z_contract.Boundary`: an unverified
+`import lightgbm` still fails **in this laptop interpreter**, and every local test therefore runs
+against fixtures. But the interpreter that matters is the one the unfold runs in --
+`run_p4_unfold_std.sh` calls `python3` with `import ROOT` available, so the chain runs under the
+`root_6_28` conda prefix, and `omnifold_nn_core.make_estimators:144` imports LightGBM lazily
+inside it. That environment was read directly on a login node (`login07`, no scheduler, no
+training, no file written into the checkout):
+
+  * **LightGBM `4.6.0`**, Python `3.11.14`,
+    `~/.conda/envs/root_6_28/lib/python3.11/site-packages/lightgbm/`.
+  * `_ConfigAliases._get_all_param_aliases()` **exists and answers**: a dict of **140** canonical
+    parameters over a **307**-name universe. This module's primary accessor is correct.
+  * `_ConfigAliases.aliases` is **`None`** on this build, so the fallback accessor is NOT
+    exercised here. It is kept for older builds and must be read as untested against 4.6.0.
+  * **`0` entries have an empty alias list; `70` of 140 are self-only.** So the round-3 method,
+    which tested `not aliases`, would have found **zero** alias-free parameters on the real
+    backend and reported its third control UNAVAILABLE -- on the campaign build, not merely on a
+    fixture. The correction was larger than the fixture suggested.
+  * The facts three review rounds turned on, now read from the table rather than argued:
+    `deterministic -> ['deterministic']`, `force_row_wise -> ['force_row_wise']`,
+    `force_col_wise -> ['force_col_wise']`, and
+    `is_unbalance -> ['is_unbalance', 'unbalance', 'unbalanced_sets']`.
+  * The negative control echoes back as `['z_probe_...']`, confirming on the real build the
+    behaviour that made `bool(get(name))` certify everything.
+  * `LGBMClassifier(deterministic=True, force_row_wise=True, num_threads=1)` constructs and
+    `get_params()` returns all three, so the knobs are accepted by the estimator and not merely
+    present in a table.
+
+**THE REVIEWED MODULE ITSELF WAS RUN AGAINST THAT BACKEND**, byte-identical -- sha256
+`76e9867cf384e8775bba4f808ef44343191c0ffba6f29333a1a1ce96c69267ce`, verified on both ends -- with
+only a two-line `z_contract` shim supplying `ZContractError`, which no probe logic touches.
+`probe_backend()` returned all three controls behaving (negative False, positive True, alias-free
+True on `alpha`, independent of Z's knobs), all three knobs recognised, and **`z_lgbm_overlay()`
+ACCEPTED for the first time** at version `4.6.0`. See `MEASURED_BACKEND`.
+
+`z_lgbm_overlay()` still REFUSES wherever a live probe has not confirmed the backend -- including
+this laptop. That discipline is unchanged and is the same as `z_contract.Boundary`: an unverified
 value that could change a production artifact is withheld at the point of use, not defaulted.
 
-Installing LightGBM to answer the question would CHANGE the environment rather than read it, which
-is not an evidence errand -- the same rule §7 item 1 applies to `uproot`.
+Nothing was installed to obtain this. Installing LightGBM locally would have answered a question
+about macOS rather than about the campaign, which is the venue error this repository has made
+before.
 
 WHY PINNING IS THE POINT (§3.7a route (i))
 ------------------------------------------
@@ -308,6 +340,43 @@ def z_lgbm_overlay(probe: Optional[BackendProbe] = None) -> dict:
             "chain. This is a deliberate, declared divergence, not a bug fix, and Z's receipt "
             "must carry it so a later comparison is not read as disagreement between subjects."),
     }
+
+
+# ------------------------------------------------------------------- the measured backend ------
+# A TIMESTAMPED OBSERVATION, not a current state. It records what one read of one environment
+# returned; it does not assert that the environment is still that way, and nothing in this module
+# consults it to decide anything. `probe_backend()` is what decides, at the point of use.
+MEASURED_BACKEND = {
+    "observed_utc": "2026-09-07",
+    "host": "login07 (saul.nersc.gov login node -- no scheduler, no training, read-only)",
+    "environment": "~/.conda/envs/root_6_28  -- the prefix run_p4_unfold_std.sh runs the chain in",
+    "python": "3.11.14",
+    "lightgbm_version": "4.6.0",
+    "lightgbm_path": "~/.conda/envs/root_6_28/lib/python3.11/site-packages/lightgbm/",
+    "accessor_that_answered": "_ConfigAliases._get_all_param_aliases()",
+    "accessor_absent_on_this_build": "_ConfigAliases.aliases is None",
+    "table_parameters": 140,
+    "universe_size": 307,
+    "n_alias_free": 70,
+    "n_empty_alias_list": 0,          # why the round-3 method found none on the real backend
+    "knobs_recognised": {"deterministic": True, "force_row_wise": True, "num_threads": True},
+    "knobs_accepted_by_estimator": {"deterministic": True, "force_row_wise": True,
+                                    "num_threads": 1},
+    "overlay_verdict": "ACCEPTED",
+    # ⚠ THE DIGEST IS OF THE MODULE AS RUN, WHICH IS NOT THIS FILE ANY MORE. It resolves to
+    # `nd-unfolding/z_reproducibility.py` at commit 8212de00 -- the reviewed, merged revision --
+    # and this docstring was rewritten afterwards to record what that run found. A reader who
+    # shas the working copy will get a different value, correctly. Cite the pair, never the
+    # digest alone.
+    "module_sha256_run_there":
+        "76e9867cf384e8775bba4f808ef44343191c0ffba6f29333a1a1ce96c69267ce",
+    "module_revision_run_there": "8212de00:nd-unfolding/z_reproducibility.py",
+    "caveats": (
+        "One host, one read, one date. The login node is not a compute node and this says nothing "
+        "about the allocation's threading. It also does NOT verify that a Z run would reproduce -- "
+        "it verifies that the knobs exist, are recognised and are accepted, which is the "
+        "precondition for pinning them and not evidence that pinning them suffices."),
+}
 
 
 def transferred_repro_evidence() -> dict:

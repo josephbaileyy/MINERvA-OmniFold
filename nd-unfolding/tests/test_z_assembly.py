@@ -58,6 +58,151 @@ def build_scenario(n=24, n_pinned=3, seed=7):
                 g=g, pinned=pinned, C_Z=C_Z)
 
 
+def raw_operands(s, **over):
+    """The §1.3b operand set: what a producer hands the validator, per variant.
+
+    Note what is NOT here: `v_uni_cv`. The gate derives it. Passing it would be handing the gate
+    the quantity under test, which is the defect the gate exists to catch.
+    """
+    g_mean, _ = za.compute_g(s["v_uni_mean"], s["v_blk"])
+    kw = dict(g_recorded={"mean": g_mean, "cv": s["g"]},
+              diag_c_unified_mean=s["v_uni_mean"],
+              diag_c_blocksum=s["v_blk"],
+              joint_mean_shift=s["ms"])
+    kw.update(over)
+    return kw
+
+
+class TheRawOperandReconstructionCatchesWhatG3CANNOT(unittest.TestCase):
+    """§1.3b's gate, integrated 2026-09-07 under Joseph's authorization.
+
+    Every test here is paired against `gate_g_reconstruction` where the contrast is the point:
+    the older gate takes `v_uni` as an argument, so it cannot see a mis-BUILT `v_uni`.
+    """
+
+    def test_a_correct_operand_set_passes_and_reports_it_can_discriminate(self):
+        s = build_scenario()
+        out = za.gate_raw_operand_reconstruction(**raw_operands(s))
+        self.assertTrue(out["discriminating"])
+        for variant in ("mean", "cv"):
+            self.assertLessEqual(out["per_variant"][variant]["max_rel_diff"], out["rtol"])
+
+    def test_A_DROPPED_MEAN_SHIFT_IS_REFUSED(self):
+        """THE reason this gate exists. The producer computed g^cv from v_uni^MEAN.
+
+        Measured on the same input, `gate_g_reconstruction` PASSES: it rebuilds g from the v_uni
+        it was handed, and a v_uni^cv missing the shift is perfectly self-consistent with the g
+        derived from it. That contrast is asserted below, not described.
+        """
+        s = build_scenario()
+        g_mean, _ = za.compute_g(s["v_uni_mean"], s["v_blk"])
+
+        # the OLD gate, fed the producer's own (wrong) v_uni -- passes, seeing nothing
+        za.gate_g_reconstruction(g_mean, s["v_uni_mean"], s["v_blk"])
+
+        # the NEW gate derives v_uni^cv itself, so the same defect cannot hide
+        with self.assertRaises(zc.ZContractError) as cm:
+            za.gate_raw_operand_reconstruction(
+                **raw_operands(s, g_recorded={"mean": g_mean, "cv": g_mean}))
+        msg = str(cm.exception)
+        self.assertIn("g^cv", msg)
+        self.assertNotIn("g^mean", msg)          # cv ALONE is the dropped-shift signature
+
+    def test_an_UNINFLATED_object_is_refused_on_both_variants(self):
+        """g == 1 everywhere satisfies the other four gates jointly (§1.3b's own table)."""
+        s = build_scenario()
+        ones = np.ones_like(s["g"])
+        with self.assertRaises(zc.ZContractError) as cm:
+            za.gate_raw_operand_reconstruction(
+                **raw_operands(s, g_recorded={"mean": ones, "cv": ones}))
+        self.assertIn("g^mean", str(cm.exception))
+        self.assertIn("g^cv", str(cm.exception))
+
+    def test_ONE_VARIANT_is_refused_because_reuse_is_invisible_from_one(self):
+        s = build_scenario()
+        g_mean, _ = za.compute_g(s["v_uni_mean"], s["v_blk"])
+        for only in ({"mean": g_mean}, {"cv": s["g"]}):
+            with self.subTest(supplied=sorted(only)):
+                with self.assertRaises(zc.ZContractError) as cm:
+                    za.gate_raw_operand_reconstruction(**raw_operands(s, g_recorded=only))
+                self.assertIn("BOTH variants", str(cm.exception))
+
+    def test_the_two_variants_are_derived_from_DIFFERENT_v_uni_by_exactly_ms_squared(self):
+        """The reuse fault §1.3b names is structurally impossible here; this pins that."""
+        s = build_scenario()
+        out = za.gate_raw_operand_reconstruction(**raw_operands(s))
+        # the gate rebuilt both; if it had reused one v_uni the g's would coincide where ms != 0
+        g_mean, _ = za.compute_g(s["v_uni_mean"], s["v_blk"])
+        g_cv, _ = za.compute_g(s["v_uni_mean"] + s["ms"] ** 2, s["v_blk"])
+        moved = np.sum(g_mean != g_cv)
+        self.assertGreater(moved, 0, "fixture cannot distinguish the variants")
+        self.assertEqual(out["per_variant"]["mean"]["max_rel_diff"], 0.0)
+
+    def test_a_STORED_cv_diagonal_is_cross_checked_and_never_substituted(self):
+        s = build_scenario()
+        out = za.gate_raw_operand_reconstruction(
+            **raw_operands(s, diag_c_unified_cv=s["v_uni_cv"]))
+        self.assertTrue(out["stored_cv_cross_checked"])
+        self.assertLessEqual(out["stored_cv_deviation"], 1e-12)
+
+    def test_a_stored_cv_diagonal_that_DISAGREES_is_refused(self):
+        s = build_scenario()
+        bad = s["v_uni_cv"].copy()
+        bad[0] *= 1.5
+        with self.assertRaises(zc.ZContractError) as cm:
+            za.gate_raw_operand_reconstruction(**raw_operands(s, diag_c_unified_cv=bad))
+        self.assertIn("cross-checked, never substituted", str(cm.exception))
+
+    def test_a_stored_cv_diagonal_cannot_RESCUE_a_dropped_shift(self):
+        """The substitution hazard, in the direction that matters.
+
+        If the gate had used the stored cv diagonal instead of deriving it, a producer who
+        dropped the shift in BOTH the diagonal and the g would be self-consistent and pass.
+        """
+        s = build_scenario()
+        g_mean, _ = za.compute_g(s["v_uni_mean"], s["v_blk"])
+        with self.assertRaises(zc.ZContractError):
+            za.gate_raw_operand_reconstruction(
+                **raw_operands(s, g_recorded={"mean": g_mean, "cv": g_mean},
+                               diag_c_unified_cv=s["v_uni_mean"]))
+
+    def test_it_reports_when_the_shift_is_too_small_to_discriminate_AND_names_no_fallback(self):
+        """Round 3 and 4 both softened this by naming a check that did not cover it."""
+        n = 6
+        s = dict(v_uni_mean=np.full(n, 2.0), v_blk=np.full(n, 1.0), ms=np.full(n, 1e-9))
+        g_mean, _ = za.compute_g(s["v_uni_mean"], s["v_blk"])
+        out = za.gate_raw_operand_reconstruction(
+            g_recorded={"mean": g_mean, "cv": g_mean},      # dropped shift, and it PASSES
+            diag_c_unified_mean=s["v_uni_mean"], diag_c_blocksum=s["v_blk"],
+            joint_mean_shift=s["ms"])
+        self.assertFalse(out["discriminating"])
+        self.assertIn("NO further gate behind this one", out["note"])
+        self.assertIn("UNTESTED", out["note"])
+
+    def test_the_pair_runner_carries_the_gate_under_its_section_name(self):
+        s = build_scenario()
+        res = za.run_pair_gates(**raw_operands(s, diag_c_unified_cv=s["v_uni_cv"]))
+        self.assertIn("G3R_raw_operand_reconstruction", res)
+        self.assertIn("G3b_variant_coupling", res)
+
+    def test_malformed_operands_are_refused_rather_than_broadcast(self):
+        s = build_scenario()
+        g_mean, _ = za.compute_g(s["v_uni_mean"], s["v_blk"])
+        with self.assertRaises(zc.ZContractError):
+            za.gate_raw_operand_reconstruction(**raw_operands(s, diag_c_blocksum=s["v_blk"][:-1]))
+        with self.assertRaises(zc.ZContractError):
+            bad = s["ms"].copy(); bad[0] = np.nan
+            za.gate_raw_operand_reconstruction(**raw_operands(s, joint_mean_shift=bad))
+        with self.assertRaises(zc.ZContractError):
+            za.gate_raw_operand_reconstruction(**raw_operands(s, g_recorded=["not", "a", "dict"]))
+
+    def test_the_gate_consults_NO_acceptance_boundary(self):
+        """Structural, not scientific. It must work with every boundary withheld, as they are."""
+        s = build_scenario()
+        self.assertTrue(all(not b.is_declared for b in zc.Z_BOUNDARIES.values()))
+        za.gate_raw_operand_reconstruction(**raw_operands(s))     # would raise if it reached one
+
+
 def gate_kwargs(s, **over):
     kw = dict(C_Z=s["C_Z"], g=s["g"], pinned_mask=s["pinned"], v_uni=s["v_uni_cv"],
               v_blk=s["v_blk"], cov_vert_sum=s["S_V"], cov_residual_sum=s["S_R"],
