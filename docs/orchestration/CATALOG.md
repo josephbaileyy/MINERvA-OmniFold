@@ -176,14 +176,15 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
-  - **rev. 2. PROPOSAL ONLY. Adopts nothing, grades nothing, declares no tolerance.** Maps the
+  - **rev. 3. PROPOSAL ONLY. Adopts nothing, grades nothing, declares no tolerance.** Maps the
   publication's intended covariance consumer to candidate `(cause 3, Z)` criteria under `RZ`. The
   consumer **inverts** the projected covariance (`chi2 = d @ pinv(C_y) @ d`), so it is dominated by
   the SMALLEST retained eigenvalues, while `s_agg` (a trace), `s_med` (a diagonal median) and
   `s_eig` (the LEADING eigenvalue) are structurally at the wrong end. **`s_proj` is NOT inherently
   blind** — rev. 1 claimed it was and that claim is withdrawn; a `u` aligned with a small
-  eigenvector measures that mode, so sufficiency over the DECLARED functional set is an open
-  question with a named cheap check (§2b). Three candidates with `D1`'s five fields and no numbers;
+  eigenvector measures that mode, so sufficiency over the DECLARED functional set is left OPEN with
+  no method offered — rev. 2 proposed a check and rev. 3 withdrew it as dimensionally incoherent
+  (input-space rows against output-space eigenvectors). Three candidates with `D1`'s five fields and no numbers;
   C-1 is defined on the significance itself because a relative `chi2` tolerance is not a tolerance
   on `Nsigma`. Carries three things honestly that a reader could otherwise over-credit: the cited
   significance module is a named instance of the MAP whose outputs are **GATED** (quarantine cause

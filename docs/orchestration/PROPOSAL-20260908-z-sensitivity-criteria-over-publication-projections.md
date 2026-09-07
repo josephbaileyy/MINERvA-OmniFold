@@ -11,12 +11,22 @@ document is not a caveat. The rev. 1 claims that were **withdrawn**:
 
 | # | rev. 1 claimed | withdrawn because |
 |---|---|---|
-| 1 | `s_proj` is dominated by large eigenvalues | **false in general.** A `u` aligned with a small eigenvector measures that mode. The insufficiency is a property of the DECLARED functional set, and is now stated as a CHECK rather than a result (§2b) |
+| 1 | `s_proj` is dominated by large eigenvalues | **false in general.** A `u` aligned with a small eigenvector measures that mode. Rev. 2 replaced this with a proposed check, which rev. 3 also withdrew — see row 7. The question is left OPEN (§2b) |
 | 2 | C-2 gives "complete correlation coverage" | **false.** `diag(1,4)` and `diag(4,1)` share every eigenvalue and condition number, yet for `d = (1,0)` give `chi2` of `1` and `1/4`. Eigenvectors matter (§3 C-2) |
 | 3 | a relative `chi2` tolerance is a tolerance on the quoted significance | **false.** The map is `chi2.sf` then `norm.isf`, strongly nonlinear. C-1 is now defined on the significance itself (§3 C-1) |
 | 4 | an unpinned `rcond` makes a rank change an "artifact" | **two errors.** A fixed cutoff policy is not a fixed retained subspace, and a rank discontinuity is a **sensitivity of the stated procedure**, to be reported, not dismissed (§4c) |
 | 5 | two printed decimals justify a tolerance | **that is the `D1c` error, committed by me.** Rounding granularity bounds what COULD matter; it never establishes what DOES (§4a) |
 | 6 | `BEN-381` is why this lane proposes no number | **the withdrawn misreading again.** Proposing is not adopting. The real reason is absent evidence (§5) |
+
+**⚠ REV. 3 (2026-09-08) — FOUR FURTHER FINDINGS, ALL SUSTAINED.** Rev. 2's own repairs introduced
+two new overclaims and left two others standing:
+
+| # | rev. 2 claimed | withdrawn because |
+|---|---|---|
+| 7 | a §2b overlap test would settle `s_proj`'s sufficiency | **the test was dimensionally incoherent.** Rows of `M` live in INPUT space; eigenvectors of `M C Mᵀ` live in OUTPUT space. It also pointed at the modes `pinv` DISCARDS rather than the small modes it RETAINS, and an overlap would not prove a perturbation bound in any case. **Test removed; coverage left unresolved** (§2b) |
+| 8 | a criterion looser than the printed precision is "certainly vacuous" | **false.** Printing precision sets no scientific floor and no ceiling. The retained "floor" was the same formatting error in smaller form (§4a) |
+| 9 | the consumed form is "dominated by" the smallest retained eigenvalues | **too strong.** It CAN be sensitive to small retained modes, and only where `d` has overlap with them (§2a) |
+| 10 | C-2 is a necessary precondition for interpreting C-1; pinning `rcond` reduces variation | **neither.** C-1 measures the reported quantity and is interpretable on its own terms. And the default `rcond` is ALREADY a policy — recording it improves reproducibility and removes no within-run variation (§3 C-2, §4c) |
 
 ---
 
@@ -27,7 +37,9 @@ document is not a caveat. The rev. 1 claims that were **withdrawn**:
 - what the publication path **intends** to consume from the assembled covariance (§1), and the
   explicit distinction between that and a **validated current path** (§1b);
 - the structural argument in §2a that `s_agg`, `s_med` and `s_eig` cannot bound an inverse-quadratic
-  consumer, and the **check** in §2b that would settle whether `s_proj` can;
+  consumer;
+- that `s_proj`'s coverage over the declared functional set is **UNRESOLVED**, with no method offered
+  (§2b) — cite the open state, not a direction;
 - the three candidates and their claim limits (§3);
 - what evidence would justify a tolerance and what does not exist (§4, §5).
 
@@ -98,7 +110,12 @@ a numerical artifact.
 
 ### 2a. The structural half, which stands
 
-`dᵀ (M C Mᵀ)⁺ d` is dominated by the **smallest retained** eigenvalues of the projected covariance.
+`dᵀ (M C Mᵀ)⁺ d` **can be strongly sensitive to the smallest RETAINED modes of the projected
+covariance — and only where `d` has overlap with them.** ⚠ Rev. 2 said "is dominated by"; that is too
+strong, and the qualifier is not cosmetic: if `d` is orthogonal to the small retained modes they do
+not matter, so the sensitivity is a property of the (covariance, `d`) pair rather than of the
+covariance alone. Note also that modes BELOW `pinv`'s cutoff are **discarded**, not amplified; the
+amplified ones are the small modes just above it.
 
 - **`s_agg`** is a relative change in `√Tr C`. A trace is a **sum** of eigenvalues, so a near-null
   mode contributes negligibly to it while dominating the inverse. A perturbation can move the
@@ -110,23 +127,23 @@ a numerical artifact.
 **These three cannot bound the consumed quantity, and that argument does not depend on any property
 of the declared functional set.**
 
-### 2b. ⚠ `s_proj` IS NOT INHERENTLY BLIND, AND REV. 1 WAS WRONG TO SAY SO
+### 2b. ⚠ `s_proj` IS NOT INHERENTLY BLIND, AND ITS SUFFICIENCY IS LEFT UNRESOLVED
 
-`s_proj` measures `√(uᵀ C u)`. **If `u` is aligned with a small eigenvector, that is exactly the
-mode the inverse amplifies, and `s_proj` sees it.** The statistic is not the problem.
+`s_proj` measures `√(uᵀ C u)`. **If `u` is aligned with a small eigenvector, that is a mode the
+inverse can amplify, and `s_proj` sees it.** The statistic is not the problem, and rev. 1's claim
+that it was is withdrawn.
 
-The real question is a property of the **declared, finite** functional set: the rows of the
-width-weighted projection matrix, plus the all-ones vector. Those rows are **non-negative** width
-weights, so they plausibly have small overlap with the sign-alternating shape directions that carry
-tiny variance — but **plausibly is not measured, and this proposal does not assert it.**
+Whether `s_proj` over the **declared, finite** functional set suffices to bound the consumed
+quantity is **open, and this proposal does not attempt to settle it.**
 
-**THE CHECK THAT WOULD SETTLE IT, and it is cheap.** For the declared `U` and the `k = 0` projected
-covariance, compute each row's overlap with the small-eigenvalue subspace: eigendecompose `M C Mᵀ`,
-express each `u` in that basis, and report the fraction of `‖u‖²` lying in the modes below the
-retained cutoff. If that fraction is negligible for every declared `u`, `s_proj` over the declared
-set is insufficient **for this covariance** and the point is established rather than argued. If it
-is not negligible, `s_proj` over the declared set may suffice and C-1 gains a cheaper companion.
-**Neither outcome is assumed here.**
+**⚠ REV. 2 PROPOSED A TEST FOR THIS AND THE TEST WAS WRONG. IT IS REMOVED RATHER THAN REPAIRED.**
+It asked for the overlap of each declared `u` with the eigenbasis of `M C Mᵀ`. Three independent
+defects: the rows of `M` are vectors in **input** space while the eigenvectors of `M C Mᵀ` are in
+**output** space, so the overlap is not even dimensionally defined; it pointed at the modes below
+`pinv`'s cutoff, which are **discarded** rather than amplified; and an overlap figure would not
+constitute a perturbation bound even if both spaces matched. **No replacement test is offered here.**
+Establishing coverage for `s_proj` over the declared set is real work with a real method, and
+inventing a second wrong one in the same document would be worse than leaving the question open.
 
 ### 2c. And a bound on the spectrum alone is not a bound on the consumer
 
@@ -181,8 +198,10 @@ tolerances.**
   counterexample shows a spectral summary cannot determine the quadratic form. This is a
   **diagnostic on the operator**, not a bound on the consumer.
 - **Claim supported.** *"The projected covariance's conditioning and retained rank are stable under
-  the declared offsets."* Its value is as a **precondition for interpreting C-1**: if conditioning
-  or rank moves, a stable `s_sig` needs explaining rather than reporting.
+  the declared offsets."* ⚠ Rev. 2 called this a **precondition** for interpreting C-1; that is
+  withdrawn. C-1 measures the reported quantity directly and is interpretable on its own terms.
+  C-2 is **informative context** — if conditioning or rank moves, that is worth knowing beside a
+  stable `s_sig` — and it is not mathematically necessary for C-1 to mean what it says.
 - **Limit.** Says nothing about central values, and by §2c nothing about the consumed form.
 
 ### C-3 — `s_proj` over the real functionals *(retained; scope now honest)*
@@ -191,7 +210,8 @@ tolerances.**
   reimplement** — over the rows of the production projection matrix rather than synthetic ones.
 - **Denominator.** `√(uᵀ C⁽⁰⁾ u)` per functional.
 - **Correlation coverage.** Sees off-diagonal structure **along the declared `u`**. Whether that
-  includes the inverse-relevant directions is the open question of §2b, **not** a settled negative.
+  reaches the inverse-relevant directions is **unresolved** (§2b) — neither a settled negative nor a
+  demonstrated sufficiency. C-3 must therefore be quoted for its projected-bin claim only.
 - **Claim supported.** *"Projected bin uncertainties are stable under the declared offsets."* A real,
   reportable property, and **not** a significance claim.
 - **Wiring gap, measured 2026-09-08.** `s_proj`, `s_corr` and `s_eig` are implemented and called
@@ -217,8 +237,10 @@ both of which `D1c` also had:
 - **it presumes the decision depends on the printed digits**, when it depends on the **margin** to
   whatever threshold the claim rests on.
 
-**Printed granularity bounds what could POSSIBLY matter. It never establishes what DOES.** Retained
-here only as a floor: a criterion looser than the printing is certainly vacuous.
+**Printed granularity establishes nothing scientific, in either direction.** ⚠ Rev. 2 retained it
+"as a floor — a criterion looser than the printing is certainly vacuous". That is withdrawn too, and
+it was the same error one size smaller: printing precision sets no scientific floor and no ceiling.
+A display choice constrains no tolerance.
 
 ### 4b. WHAT COULD: THE DECISION MARGIN
 
@@ -241,10 +263,13 @@ Rev. 1 concluded "pin it, and a rank change is otherwise an artifact". **Both ha
   If the declared criterion is "the significance this procedure reports", then a member whose rank
   differs *is* a member on which the procedure behaves differently, and that is a finding.
 
-**So the requirement is REPORTING, not suppression:** record the cutoff policy and the retained rank
-per member, and treat a rank change as a **reportable event that blocks a bare pass** — the criterion
-must state what it does when rank moves, rather than averaging over it. Pinning the policy is still
-worth doing, as code and not compute, but it is a reduction in variation and not a fix.
+**So the requirement is REPORTING, not suppression:** record the cutoff actually applied and the
+retained rank per member, and treat a rank change as a **reportable event that blocks a bare pass** —
+the criterion must state what it does when rank moves, rather than averaging over it.
+
+⚠ Rev. 2 said pinning `rcond` is "a reduction in variation". Withdrawn: **the default is already a
+policy**, deterministic given the matrix. Recording it explicitly improves reproducibility and
+auditability; it removes no within-run variation, because there was none to remove.
 
 ---
 
@@ -256,8 +281,8 @@ worth doing, as code and not compute, but it is a reduction in variation and not
 - **The members do not exist.** `D3` records `N = 5` as a planning proposal rather than demonstrated
   capacity, with no `D-RESOURCE`. These criteria are **specifiable now and measurable only later** —
   the honest state, and not an argument for a cheaper criterion that measures the wrong thing.
-- **The §2b overlap check has not been run**, so `s_proj`'s sufficiency over the declared set is
-  open in both directions.
+- **`s_proj`'s sufficiency over the declared functional set is unresolved** (§2b), and this
+  proposal offers no method for settling it.
 
 **⚠ REV. 1 GAVE A SECOND REASON AND IT WAS WRONG.** It said supplying a number would collapse
 `BEN-381`'s drafting/grading separation. **Proposing a tolerance is neither adopting nor grading it**
@@ -302,9 +327,10 @@ Nothing to be adopted. Four things to be **decided or run by whoever owns them**
 1. Whether the acceptance target is the **quoted significance** (C-1) rather than a covariance
    summary. §1 and §2a are the evidence; the judgement is not this lane's.
 2. The threshold and margin in §4b — the one input that cannot come from the code.
-3. Whether the §2b overlap check and the §6 builder comparison are authorized as Tier-2 work. Both
-   are code, neither is compute, and both change the proposal's own conclusions if they come out
-   the other way.
+3. Whether the §6 builder comparison is authorized as Tier-2 work. It is code, not compute, and it
+   changes the proposal's own conclusions if it comes out the other way. **`s_proj`'s coverage
+   question (§2b) is NOT included here**: it needs a method this proposal does not have, and asking
+   for authorization to run an unspecified check would be asking for a blank cheque.
 4. Whether the `pinv` cutoff **policy** should be pinned and the retained **rank** reported per
    member (§4c). It changes no estimator default.
 
