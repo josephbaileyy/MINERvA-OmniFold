@@ -358,8 +358,9 @@ test suite.
   has no `sacct`, so a receipt produced here would be a false measurement. The first measurement
   under the repaired meter remains a Perlmutter act, per `R5-METER.md`.
 - Consequently the campaign's compute-admission posture is unchanged by this repair: with no
-  committed receipt, `campaignctl` already refuses every compute item, and `r5_meter check` already
-  returns 4.
+  committed receipt, `campaignctl` **as it exists in this repository** already refuses every compute
+  item, and `r5_meter check` already returns 4. **That is a statement about the tool on `main`, not
+  about what any compute host enforces** — see §8's closing note.
 
 ## 7. Follow-up for the decision owner — the 30-day `sacct` window
 
@@ -398,7 +399,7 @@ itself, `2026-10-02T13:44:27Z`, is unaffected.)*
 ## 8. What this repair makes possible — arming compute admission
 
 **This repair writes no receipt, and landing it leaves compute admission exactly as shut as it is
-today.** That is deliberate (§6). But it changes what the *documented* invocation produces, and that
+today** — with the scope of "shut" as stated in the closing note below. That is deliberate (§6). But it changes what the *documented* invocation produces, and that
 is worth stating plainly rather than leaving for someone to discover.
 
 **The conversion this repair performs.** Before it, the canonical command in `R5-METER.md` produced
@@ -456,6 +457,26 @@ repair does.
 **The asymmetry, which is the reason none of this is merely tidy.** An accidental arming heals in 24
 hours when the receipt goes stale. It heals the receipt. It does not heal the jobs admitted and run
 inside that window. The commit is reversible; the compute is not.
+
+**⚠ SCOPE OF EVERY "ADMISSION IS SHUT" CLAIM IN THIS DOCUMENT — added 2026-09-07.** Each such claim
+describes `campaignctl.py` **as committed in this repository**: with no receipt at the gate path, the
+code on `main` refuses every compute item and `r5_meter check` returns 4. It is **not** a measurement
+of what any compute host enforces.
+
+The lane that owns the follow-up reports that the checkout the waker runs from is **235 commits
+behind `main`**, that its `docs/orchestration/campaignctl.py` is the **2026-08-25 predecessor** (466
+lines against 4 627 on `main`, 20 commits to that file since), and that it contains **zero**
+occurrences of `origin` and of `refs/campaign` — no admission namespace, no receipt gate, no
+`R5_MAX_AGE`. **This lane has no cluster access and could not re-derive that**; it is recorded as
+their measurement, attributed, not as an independent one.
+
+If that holds, then on that host the gate is not *shut* — it is **absent**, which is a different
+thing and the weaker of the two. A shut gate refuses; an absent gate does not participate. Nothing in
+this repair changes that either way: the repair fixes the meter, and a meter is not a gate. But
+"admission is shut" should not be read as an operational guarantee about a host running code that
+predates the gate, and the distinction is recorded here rather than left for someone to discover from
+a `{"status":"idle"}` that means "this tool has no concept of the namespace", not "the queue is
+empty".
 
 **Operational instruction, for anyone verifying this branch.** Verify with `measure` and no
 `--write`, or `--write` to a scratch path. Never run the state-path example as a smoke test, and do
