@@ -93,18 +93,45 @@ def declared_sites() -> "dict[str, str]":
             if n.startswith("SITE_") and getattr(mgr, n) is not None}
 
 
-def inventory_files(paths, directories) -> "list[pathlib.Path]":
-    """The population, named explicitly so a report can state what it read.
+def inventory_files(paths, directories) -> "tuple[list[pathlib.Path], list[dict]]":
+    """The population, plus WHERE IT WAS LOOKED FOR and whether that place existed.
 
-    Directories are walked for `*.jsonl` because that is what `write_inventory` appends to. A
-    directory that contains none contributes nothing and is NOT an error here -- it becomes the
-    blind state in `main`, which is reported rather than defaulted away.
+    Returns `(files, roots)`. Each root records `{path, exists, is_dir, files}`.
+
+    WHY THE SECOND RETURN VALUE EXISTS. `os.walk` on a path that does not exist yields nothing and
+    raises nothing, so a directory holding no records and a directory that is not there produce the
+    identical empty list. Those are measured-zero and not-measured one level above the schema fix:
+    "the guard never fired" versus "this reader looked somewhere this deployment does not use". On
+    the cluster that is not hypothetical -- that checkout's layout genuinely differs from main's, so
+    a stale `--inventory-dir` finds nothing and looks exactly like a quiet guard.
+
+    The remedy is deliberately NOT a fourth exit code. Multiplying states means testing their cross
+    product, and the distinction a reader needs is provenance, not another number: exit 2 with "root
+    absent" and exit 2 with "root exists, 0 files" are different sentences on the same code path.
     """
     found = [pathlib.Path(p) for p in paths]
+    roots = []
     for d in directories:
-        for root, _dirs, names in os.walk(d):
-            found.extend(pathlib.Path(root) / n for n in sorted(names) if n.endswith(".jsonl"))
-    return found
+        root = pathlib.Path(d)
+        before = len(found)
+        if root.is_dir():
+            for where, _dirs, names in os.walk(root):
+                found.extend(pathlib.Path(where) / n
+                             for n in sorted(names) if n.endswith(".jsonl"))
+        roots.append({"path": str(root), "exists": root.exists(), "is_dir": root.is_dir(),
+                      "files": len(found) - before})
+    return found, roots
+
+
+def describe_root(r: dict) -> str:
+    """One line per searched root, saying what was there rather than only what was found."""
+    if not r["exists"]:
+        return f"ABSENT           {r['path']}  -- nothing was searched; this path does not exist"
+    if not r["is_dir"]:
+        return f"NOT A DIRECTORY  {r['path']}  -- nothing was searched"
+    if r["files"] == 0:
+        return f"EXISTS, EMPTY    {r['path']}  -- searched, 0 *.jsonl found"
+    return f"EXISTS           {r['path']}  -- {r['files']} *.jsonl found"
 
 
 class Census:
@@ -206,7 +233,7 @@ def effective_count(counts) -> float:
     return 2 ** entropy_bits(counts) if sum(counts.values()) else 0.0
 
 
-def report(c: Census) -> str:
+def report(c: Census, roots=()) -> str:
     reasons_declared = declared_reasons()
     lines = []
     lines.append("GUARD FIRING CENSUS")
@@ -250,6 +277,11 @@ def report(c: Census) -> str:
         for v in undeclared:
             lines.append(f"    {v}")
     lines.append("")
+    if roots:
+        lines.append("  SEARCHED -- where these files came from, and what was there:")
+        for r in roots:
+            lines.append(f"    {describe_root(r)}")
+        lines.append("")
     lines.append("  POPULATION -- every count above is scoped to these files and to no other run:")
     for p in c.files_read:
         lines.append(f"    {p}")
@@ -274,7 +306,7 @@ def main(argv=None) -> int:
         print(f"  {drift}", file=sys.stderr)
         return SCHEMA_DRIFT_EXIT
 
-    files = inventory_files(args.inventory, args.inventory_dir)
+    files, roots = inventory_files(args.inventory, args.inventory_dir)
     c = Census()
     missing = []
     for p in files:
@@ -300,6 +332,13 @@ def main(argv=None) -> int:
         print("GUARD FIRING CENSUS -- BLIND, NOT MEASURED.", file=sys.stderr)
         print(f"  {len(files)} file(s) named, {len(missing)} missing, "
               f"{c.malformed} malformed line(s), 0 records of schema {SCHEMA!r}.", file=sys.stderr)
+        #: WHERE IT LOOKED, always. Without this the two worlds this exit covers -- "the guard never
+        #: fired" and "this reader searched a path this deployment does not use" -- are one message.
+        for r in roots:
+            print(f"  searched: {describe_root(r)}", file=sys.stderr)
+        if not roots and not files:
+            print("  searched: NOTHING -- no --inventory or --inventory-dir was given",
+                  file=sys.stderr)
         for m in missing:
             print(f"  missing: {m}", file=sys.stderr)
         print("  No distribution is reported. A zero count here would be indistinguishable from "
@@ -308,7 +347,7 @@ def main(argv=None) -> int:
 
     if args.json:
         print(json.dumps({
-            "files_read": c.files_read, "records": c.records, "malformed": c.malformed,
+            "files_read": c.files_read, "roots_searched": roots, "records": c.records, "malformed": c.malformed,
             "foreign_schema": {str(k): v for k, v in c.foreign_schema.items()},
             "refusals": c.refusals,
             "outcomes": dict(c.outcomes), "sites": dict(c.sites), "reasons": dict(c.reasons),
@@ -319,7 +358,7 @@ def main(argv=None) -> int:
             "undeclared_reasons": c.undeclared_reasons(),
         }, indent=2))
     else:
-        print(report(c))
+        print(report(c, roots))
     if missing:
         for m in missing:
             print(f"  NAMED BUT ABSENT: {m}", file=sys.stderr)

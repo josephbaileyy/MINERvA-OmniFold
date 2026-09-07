@@ -215,6 +215,65 @@ class AnUnreadablePopulationIsNotAnEmptyOne(unittest.TestCase):
         self.assertEqual(len({0, census.CENSUS_BLIND_EXIT, census.SCHEMA_DRIFT_EXIT}), 3)
 
 
+class BlindNamesWhereItLooked(unittest.TestCase):
+    """Exit 2 covers two worlds; the MESSAGE must separate them even though the exit does not.
+
+    Raised by the integrator one level above the schema fix: "the guard never fired" and "this
+    reader searched a path this deployment does not use" both produce zero files. On the cluster,
+    whose layout differs from main's, the second is live. The remedy is provenance, not a fourth
+    exit -- so what these assert is that the two messages DIFFER, not that the codes do.
+    """
+
+    def test_an_absent_root_and_an_empty_one_do_not_produce_the_same_message(self):
+        with tempfile.TemporaryDirectory() as td:
+            empty = pathlib.Path(td) / "exists-empty"
+            empty.mkdir()
+            absent = pathlib.Path(td) / "no-such-root"
+            a = run_census("--inventory-dir", str(empty))
+            b = run_census("--inventory-dir", str(absent))
+        self.assertEqual(a.returncode, census.CENSUS_BLIND_EXIT)
+        self.assertEqual(b.returncode, census.CENSUS_BLIND_EXIT,
+                         "the exit is deliberately the same; the message is what must differ")
+        self.assertIn("EXISTS, EMPTY", a.stderr)
+        self.assertIn("ABSENT", b.stderr)
+        self.assertNotEqual(a.stderr.replace(str(empty), "X"), b.stderr.replace(str(absent), "X"),
+                            "the two worlds are still indistinguishable to a reader")
+
+    def test_a_root_that_is_a_file_is_reported_as_not_a_directory(self):
+        with tempfile.TemporaryDirectory() as td:
+            f = pathlib.Path(td) / "notadir"
+            f.write_text("")
+            proc = run_census("--inventory-dir", str(f))
+        self.assertEqual(proc.returncode, census.CENSUS_BLIND_EXIT)
+        self.assertIn("NOT A DIRECTORY", proc.stderr)
+
+    def test_giving_no_source_at_all_says_so_rather_than_implying_an_empty_world(self):
+        proc = run_census()
+        self.assertEqual(proc.returncode, census.CENSUS_BLIND_EXIT)
+        self.assertIn("NOTHING", proc.stderr)
+
+    def test_a_successful_report_also_names_the_root_it_searched(self):
+        with tempfile.TemporaryDirectory() as td:
+            d = pathlib.Path(td) / "inv"
+            d.mkdir()
+            write_records(d / "a.jsonl", [a_refusal(mgr.LAUNCH_REASON_FLAGS)])
+            proc = run_census("--inventory-dir", str(d))
+        self.assertEqual(proc.returncode, 0)
+        self.assertIn("SEARCHED", proc.stdout)
+        self.assertIn(str(d), proc.stdout)
+
+    def test_json_carries_the_roots_searched(self):
+        with tempfile.TemporaryDirectory() as td:
+            d = pathlib.Path(td) / "inv"
+            d.mkdir()
+            write_records(d / "a.jsonl", [a_refusal(mgr.LAUNCH_REASON_FLAGS)])
+            proc = run_census("--inventory-dir", str(d), "--json")
+        roots = json.loads(proc.stdout)["roots_searched"]
+        self.assertEqual(len(roots), 1)
+        self.assertTrue(roots[0]["exists"])
+        self.assertEqual(roots[0]["files"], 1)
+
+
 class TheDistribution(unittest.TestCase):
 
     def test_entropy_of_k_uniform_reasons_is_log2_k(self):
