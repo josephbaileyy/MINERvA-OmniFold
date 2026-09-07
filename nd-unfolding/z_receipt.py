@@ -225,6 +225,34 @@ def _require_code_identity(code_identity, where) -> dict:
     require(isinstance(closure, dict) and closure,
             f"{where}: code identity needs import-closure digests bound to the run; a pinned "
             f"revision alone does not fix what was actually imported.")
+
+    # ⚠ REVIEWER BLOCK, DEFECT 2. This validated the CONTAINER -- "a non-empty dict" -- and never
+    # its CONTENTS. Measured as accepted on WRITE and carried back on READ:
+    #     {"z_receipt.py": None}   {"m": 7}   {"m": ""}   {"": "a"*64}   {"m": ["a"]}
+    # An identity naming a module and pairing it with `null` is not provenance; it is the SHAPE of
+    # provenance, which is worse, because it satisfies every check a reader is likely to make.
+    #
+    # The writer's own error message already asserted that "an import-closure digest is a string"
+    # while nothing enforced it. A contract stated in prose and unenforced in code is the same
+    # defect as a description bound to nothing -- defect 1, one product over.
+    #
+    # THE ENCODING CONTRACT, stated rather than left to be inferred: a module ID is a non-empty
+    # string without surrounding whitespace, and a digest is a non-empty string. A digest is
+    # deliberately NOT required to be hex and NOT required to carry a `sha256:` / `blob:` prefix.
+    # Both would be defensible and neither is this repair's call: at eight hex characters a blob id
+    # and a sha256 are indistinguishable by eye, so a prefix convention has real merit -- but hex-
+    # only and prefixed are mutually exclusive, it would reject every existing caller, and it
+    # belongs to whoever owns the receipt's provenance format. Raised, not decided here.
+    for module_id, value in sorted(closure.items(), key=lambda kv: str(kv[0])):
+        require(isinstance(module_id, str) and module_id.strip(),
+                f"{where}: import-closure digests are keyed by module ID, and {module_id!r} is "
+                f"not a non-empty string. A digest attached to an unnameable module cannot be "
+                f"re-checked against anything.")
+        require(isinstance(value, str) and value.strip(),
+                f"{where}: the import-closure digest for {module_id!r} is {value!r}, which is not "
+                f"a non-empty string. Naming a module and pairing it with a non-digest is the "
+                f"SHAPE of provenance without the content, and it passes every check a reader who "
+                f"trusts the key set would make.")
     return {"revision": revision, "import_closure_digests": dict(closure)}
 
 
@@ -264,6 +292,16 @@ def persist_null_operands(path, x_cv, x_cv2, mask, *, code_identity) -> dict:
     # that can fail to serialise. Letting a TypeError out of a fail-closed module would be a
     # different error class for the same kind of fault, and a caller catching ZContractError would
     # miss it.
+    #
+    # ⚠ AFTER THE REVIEWER'S BLOCK 2 THIS IS UNREACHABLE, and that is recorded here rather than left
+    # to be discovered. Every component of `declaration` is now a validated primitive: the counts
+    # and the version are ints this function computes, the dtypes and digests are strings it
+    # computes, and `_require_code_identity` has just established that the revision, every module ID
+    # and every digest is a non-empty string. No input reaches the `except` any more -- `object()`
+    # used to, and is now refused earlier and better, by name. It stays as a backstop against a
+    # FUTURE caller-supplied field being added to the declaration, and NO TEST CLAIMS TO EXERCISE
+    # IT: an unreachable guard is tolerable, a test asserting it fired would be a coverage claim
+    # with nothing behind it.
     try:
         declaration_json = _canonical_json(declaration)
     except TypeError as exc:
@@ -321,6 +359,36 @@ def _validate_declaration(decl, version, digest, path) -> dict:
     require(decl["construction_digest"] == digest,
             f"null operands at {path}: the header's construction digest and the declaration's "
             f"disagree. These came from different writes.")
+
+    # ⚠ REVIEWER BLOCK, DEFECT 1. The header digest certifies THIS READER's construction literal.
+    # It said nothing whatever about the file's OWN copy -- which is the part a human, or any tool
+    # that is not this reader, actually opens to find out what the arrays are. Measured on
+    # writer-produced files: `construction` REMOVED, `construction` replaced by the integer 17, and
+    # `arrays.x_cv.role` rewritten to "externally supplied CV from the production ROOT" all LOADED.
+    #
+    # That is this section's own defect one level in. I checked the object nearest to hand -- a
+    # digest STRING -- rather than the object whose correctness the claim depends on, namely the
+    # construction that digest is supposed to certify. A file could therefore carry a
+    # self-contradicting description that the digest check appeared to have blessed, and the
+    # rewritten role is the dangerous one: it names the exact operand §3.7a REJECTED, so a reader
+    # trusting the file's own words would believe Z's denominator came from a separately produced
+    # ROOT -- which presumes the determinism the null exists to test.
+    #
+    # Both comparisons are made rather than one. `digest == NULL_OPERAND_CONSTRUCTION_DIGEST` is
+    # established by the loader one step earlier, so checking only `actual == digest` would leave
+    # this function's guarantee dependent on its caller.
+    construction = decl.get("construction")
+    require(isinstance(construction, dict) and construction,
+            f"null operands at {path}: the declaration carries no `construction` object (got "
+            f"{type(construction).__name__}). The digest names a construction; the declaration "
+            f"must CONTAIN it, or the file describes itself to a reader in words nothing checks.")
+    actual = hashlib.sha256(_canonical_json(construction).encode()).hexdigest()
+    require(actual == digest and actual == NULL_OPERAND_CONSTRUCTION_DIGEST,
+            f"null operands at {path}: the declaration's own `construction` hashes to {actual}, "
+            f"against the header's {digest} and this reader's "
+            f"{NULL_OPERAND_CONSTRUCTION_DIGEST}. The file's description of what its arrays ARE is "
+            f"not the description its digest certifies, so one of the two is a forgery or an edit "
+            f"that did not propagate.")
     n_grid = _declared(decl, "n_grid", int, path,
                        "The declared grid length is checked against the arrays, not believed.")
     require(n_grid > 0,
