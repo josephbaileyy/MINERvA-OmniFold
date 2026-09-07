@@ -1,0 +1,9 @@
+  QUEUE_SCRATCH_GIT_NAME: queue-git
+  default state dir: None
+    /global/homes/j/josephrb/.campaignctl/queue-git ABSENT
+
+  === POSITIVE CONTROL: read a namespace that DOES exist ===
+  timestamp_utc: 2026-09-07T23:48:05.729239+00:00
+  url (the pin): git@github.com:josephbaileyy/MINERvA-OmniFold
+  refs/heads/*     rc=0  rows=20  err=''
+  refs/campaign/*  rc=0  rows=0  err=''
