@@ -76,6 +76,41 @@ that Obligation B needs a host with `sacct`. Manage it at
 `sacct`. It raises the alarm and hands over the commands. **Whoever performs Obligation B needs SSH to
 a host with `sacct`.**
 
+**Connector state — measured 2026-09-07, and it changes what “alerts” above can mean.** The routine
+has **zero connectors attached**: `mcp_connections: []`, and in its session config `mcp_servers: []`
+and `owner_tagged_mcp_servers: []`. Otherwise it is unchanged and still armed — `enabled: true`,
+one-shot, `run_once_at` / `next_run_at` `2026-10-01T09:00:00Z`, model `claude-sonnet-5`,
+`allowed_tools: [Bash, Read, Glob, Grep]`, source the GitHub repository, same trigger id throughout.
+
+*Provenance, because the two halves have different authors.* **The removal is the decision owner's**,
+authorized at the routine level only and performed by session `preflight [e11e6d]` with a
+`RemoteTrigger` `update` carrying `clear_mcp_connections: true` at `2026-09-07T11:07:14Z`. **The empty
+state is `preflight`'s measurement**, confirmed by three reads that are not the write's own echo: a
+separate `get` on the trigger, an account-wide `list`, and a further `get` after a prompt-only update
+at `2026-09-07T17:34:08Z`. All three returned `mcp_connections: []`. I have no way to observe connector
+state from here and did not re-derive it; it is recorded as their measurement and attributed.
+
+**The consequence for this record: the routine cannot notify anyone.** With no connectors it can read
+the repository and write a final report, and nothing else. “Alerts the decision owner” above therefore
+means *it produces a report that someone must open* — the alarm is pull, not push. Whoever relies on
+this reminder should plan to look at
+`https://claude.ai/code/routines/trig_01Qog2yDeBo9k8fTv7BHUDd9` on or after the fire time rather than
+expect a message to arrive.
+
+**Two limits, so this is not read as more than it is.** The removal was routine-scoped, so the account's
+own connectors are untouched and were *not* verified — the routine API gives no way to. And this is a
+measurement at an instant, not a guarantee about `2026-10-01`: the five write-capable connectors
+(Gmail, Slack, Drive, M365, Claude_Code_Remote) were attached without being asked for in the first
+place, which is precisely why the state is worth re-checking at fire time rather than assumed. The
+routine's prompt now also forbids contacting anyone through any connected tool; that is belt-and-braces
+behind the detachment and the weaker of the two, since it depends on a model reading an instruction
+correctly while the detachment does not.
+
+**This supersedes the open item that read “five write-capable connectors attached to
+`trig_01Qog2yDeBo9k8fTv7BHUDd9`; detaching them is the decision owner's call.”** It was his call, he
+made it, and it was carried out and then measured. The blocker is closed; only the re-check at fire
+time survives it.
+
 **Merged head — verified 2026-09-07.** This section and the preserved snapshot reached the
 repository's default branch (`refs/heads/main`, which is what the routine clones) at
 **`0feab57d7aebf176a77275c7b2eec1abf3db90a5`**. Verified independently of the landing lane, by
