@@ -76,6 +76,15 @@ that Obligation B needs a host with `sacct`. Manage it at
 `sacct`. It raises the alarm and hands over the commands. **Whoever performs Obligation B needs SSH to
 a host with `sacct`.**
 
+**Merged head — verified 2026-09-07.** This section and the preserved snapshot reached the
+repository's default branch (`refs/heads/main`, which is what the routine clones) at
+**`0feab57d7aebf176a77275c7b2eec1abf3db90a5`**. Verified independently of the landing lane, by
+reading the default branch itself: `e81e146d` is an ancestor; §3a is present and names the owner;
+all three files of `docs/orchestration/state/preflight-20260907-r5-followup/` are present with the
+snapshot at `ed86508e…` and the capture at `31c74b42…`, byte-identical to the branch; and
+`docs/orchestration/state/r5-meter-receipt.json` is **still absent**, with **0** commits touching it
+on any ref. Landing this evidence armed nothing.
+
 **The routine clones the repository's default branch, so it can only see what has been merged there.**
 Its first step is therefore a precondition check: if this section or the preserved snapshot directory
 is absent from the branch it clones, it must lead its output with `MISSING CONTEXT`, name
