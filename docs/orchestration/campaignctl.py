@@ -233,6 +233,16 @@ RELEASE_RECORD_NAME_RE = re.compile(r"^(?:DECISION|AUTHORIZATION)-.+\.md$")
 #: in ``spend.metered_task_ids``: a job id, optionally with an array-task suffix.  The
 #: two patterns must stay identical or a producer could declare ids no receipt could
 #: ever list, so a cross-module test compares them rather than trusting this comment.
+#:
+#: SCHEDULER TASK IDENTITY IS NOT EXECUTION-ATTEMPT IDENTITY, and this pattern is the
+#: former.  Since 2026-09-06 the meter counts EXECUTION ATTEMPTS -- one requeued job id
+#: carried 952 of them -- and reports them per id in ``spend.attempts_by_task_id``.  A
+#: producer still declares, and :func:`reservation_hold` still compares, BARE ids: the
+#: question the release path asks is "was THIS item's spend counted", which
+#: ``metered_task_ids`` answers, and not "how many of its executions were charged",
+#: which ``attempts_by_task_id`` answers.  Spelling an attempt into an id here (say
+#: ``57712764#3``) would make every producer declaration unmatchable and release
+#: nothing, so attempt detail stays in its own sibling field.
 TASK_ID_RE = re.compile(r"^[0-9]+(?:_[0-9]+)?$")
 PYTHON = Path("/usr/bin/python3.11")
 ALLOWED_PYTHONS = {PYTHON, Path(sys.executable).resolve()}
@@ -345,12 +355,19 @@ R5_RECEIPT_KEYS = frozenset(
     }
 )
 R5_SOURCE_KEYS = frozenset({"kind", "argv_or_path", "raw_sha256"})
+#: ``task_count``/``metered_task_ids`` count SCHEDULER TASKS; ``attempt_count``/
+#: ``attempts_by_task_id`` count the EXECUTION ATTEMPTS charged, which since the
+#: 2026-09-06 meter repair may be many per task.  ``by_state`` tallies attempts, so it
+#: sums to ``attempt_count``.  The set is exact rather than a minimum, so a receipt
+#: from a meter that published a field this queue does not understand is refused.
 R5_SPEND_KEYS = frozenset(
     {
         "gpu_task_hours",
         "cpu_task_hours",
         "task_count",
+        "attempt_count",
         "metered_task_ids",
+        "attempts_by_task_id",
         "by_state",
     }
 )
@@ -686,6 +703,13 @@ class ReceiptAccounting(NamedTuple):
     never saw (a fresh query over the wrong interval, or over rows this item's
     tasks are not in), and inclusion alone would release an item whose ids appear
     in a receipt taken BEFORE it stopped and therefore before its final spend.
+
+    ``metered_task_ids`` holds SCHEDULER TASK ids, and that is the right identity
+    here: release asks whether this item's spend was counted, which the presence of
+    its declared id answers whatever number of EXECUTION ATTEMPTS that id carried.
+    The receipt's ``attempts_by_task_id`` answers how many were charged, and is
+    deliberately not consulted: an item does not become releasable, or stop being
+    releasable, because its job requeued.
     """
 
     measured_at: dt.datetime
@@ -2921,8 +2945,14 @@ def validate_unchanged(queue: Queue, item: dict) -> None:
 def validate_r5_receipt(value: object) -> dict[str, object]:
     """Validate the complete R5 meter receipt and its internal accounting."""
     receipt = require_object(value, field="R5 meter receipt", keys=R5_RECEIPT_KEYS)
-    if receipt["schema_version"] != 1:
-        raise QueueError("R5 meter receipt schema_version must be 1")
+    if receipt["schema_version"] != 2:
+        if receipt["schema_version"] == 1:
+            raise QueueError(
+                "R5 meter receipt schema_version 1 is refused: it counted at most "
+                "one execution attempt per job id, so it under-counts every "
+                "requeued job and is not valid R5 accounting"
+            )
+        raise QueueError("R5 meter receipt schema_version must be 2")
     decision_record = require_text(
         receipt["decision_record"], field="R5 meter decision_record"
     )
@@ -2978,7 +3008,8 @@ def validate_r5_receipt(value: object) -> dict[str, object]:
 
     unit = require_text(receipt["unit"], field="R5 meter unit")
     # r5_meter.py writes the unit token followed by its definition ("task-hours: sum of
-    # ElapsedRaw over distinct task identities; ..."); only the token is load-bearing here.
+    # post-t0 ElapsedRaw over every execution attempt, with the attempts of one job id
+    # summed; ..."); only the token is load-bearing here.
     if unit != "task-hours" and not unit.startswith("task-hours:"):
         raise QueueError("R5 meter unit must be 'task-hours'")
     require_text(receipt["measured_on_host"], field="R5 meter measured_on_host")
@@ -3011,6 +3042,39 @@ def validate_r5_receipt(value: object) -> dict[str, object]:
     )
     if len(metered_task_ids) != task_count:
         raise QueueError("R5 meter spend.task_count does not match metered_task_ids")
+    # The attempt columns are validated here for the same reason the task columns are:
+    # an unchecked field is a field a hand-edited receipt can contradict.  They also
+    # bound `by_state` below, which tallies ATTEMPTS.
+    attempt_count = spend["attempt_count"]
+    if (
+        isinstance(attempt_count, bool)
+        or not isinstance(attempt_count, int)
+        or attempt_count < task_count
+    ):
+        raise QueueError(
+            "R5 meter spend.attempt_count must be an integer that is at least "
+            "spend.task_count: every metered task has at least one attempt"
+        )
+    attempts_by_task_id = spend["attempts_by_task_id"]
+    if not isinstance(attempts_by_task_id, dict) or sorted(
+        attempts_by_task_id
+    ) != sorted(metered_task_ids):
+        raise QueueError(
+            "R5 meter spend.attempts_by_task_id must name exactly the metered "
+            "task identities"
+        )
+    if not all(
+        isinstance(count, int) and not isinstance(count, bool) and count >= 1
+        for count in attempts_by_task_id.values()
+    ):
+        raise QueueError(
+            "R5 meter spend.attempts_by_task_id must map each task identity to a "
+            "positive attempt count"
+        )
+    if sum(attempts_by_task_id.values()) != attempt_count:
+        raise QueueError(
+            "R5 meter spend.attempts_by_task_id does not sum to attempt_count"
+        )
     by_state = spend["by_state"]
     if not isinstance(by_state, dict) or not all(
         isinstance(state, str)
@@ -3023,8 +3087,8 @@ def validate_r5_receipt(value: object) -> dict[str, object]:
         raise QueueError(
             "R5 meter spend.by_state must map state names to nonnegative integers"
         )
-    if sum(by_state.values()) != task_count:
-        raise QueueError("R5 meter spend.by_state does not sum to task_count")
+    if sum(by_state.values()) != attempt_count:
+        raise QueueError("R5 meter spend.by_state does not sum to attempt_count")
 
     fired = require_object(
         receipt["fired"], field="R5 meter fired", keys=R5_FIRED_KEYS

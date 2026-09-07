@@ -47,6 +47,26 @@ SHIM_FILES = tuple(
 #: checked-in receipt fixture's `metered_task_ids`, so a receipt only counts them when
 #: a test puts them there.
 PRODUCER_TASK_IDS = ["7001_0"]
+#: The BARE scheduler job id of the preserved requeue capture
+#: (`test_fixtures_r5_meter/waker_requeue_attempts.sacct`) and the number of
+#: EXECUTION ATTEMPTS the 2026-09-06 meter repair charges it for. A requeued job
+#: keeps one job id across every one of those runs, which is why the release rule
+#: compares bare ids -- and why 952 attempts on one id must not make the arm that
+#: declared it unreleasable.
+REQUEUED_TASK_ID = "57712764"
+REQUEUED_ATTEMPTS = 952
+#: A second job id metered with the same 952 attempts, which no item here ever
+#: declared. The receipt counting it proves the meter ran and charged a great
+#: deal; it says nothing about THIS item's task.
+ANOTHER_REQUEUED_TASK_ID = "57998811"
+#: GPU task-hours beta declares in the two requeue-release tests: the whole
+#: headroom the healthy receipt leaves EXCEPT the six hours alpha declares
+#: (500 ceiling - 100 spent - 6). Beta is therefore admitted exactly when alpha's
+#: reservation is released and refused exactly when it is held, so beta's outcome
+#: measures the release and nothing else -- any smaller declaration would be
+#: admitted either way. Re-derived from the receipt in the fixture below rather
+#: than trusted from this comment.
+BETA_GPU_MAXIMUM = 394.0
 #: Producer prologue: the scheduler task identities an arm reports. The real producer
 #: writes these from its sbatch output; here they are literal, and the file is what
 #: campaignctl reads between the producer and the validator.
@@ -1125,7 +1145,46 @@ class CampaignQueueTests(unittest.TestCase):
         identities = sorted(set(spend["metered_task_ids"]) | set(task_ids))
         spend["metered_task_ids"] = identities
         spend["task_count"] = len(identities)
+        # One execution attempt per task: these fixtures describe ordinary jobs, and
+        # the attempt columns have to stay consistent with the task columns or the
+        # receipt is refused as malformed and the test measures the wrong refusal.
+        spend["attempts_by_task_id"] = {identity: 1 for identity in identities}
+        spend["attempt_count"] = len(identities)
         spend["by_state"] = {"COMPLETED": len(identities)}
+        return self.install_receipt(source, spend=spend, **changes)
+
+    def install_requeued_receipt(
+        self, source: str, task_id: str, attempts: int, **changes: object
+    ) -> str:
+        """Commit a receipt counting ``task_id`` as ``attempts`` EXECUTIONS.
+
+        The requeue shape the 2026-09-06 meter repair made measurable: ONE
+        scheduler task id, charged for many runs.
+        :meth:`install_counting_receipt` cannot express it -- it writes one
+        attempt per task, which is what an ordinary job looks like -- so the
+        attempt columns are built here while the metered hours stay exactly as
+        the fixture recorded them, for the same reason they do there.
+
+        Every column campaignctl validates has to agree or the receipt is refused
+        as malformed and the test measures the wrong refusal:
+        ``attempts_by_task_id`` names exactly the metered identities and sums to
+        ``attempt_count``, and ``by_state`` tallies ATTEMPTS rather than tasks, so
+        the requeued job contributes ``attempts - 1`` failed runs and one final
+        completion.
+        """
+        spend = dict(json.loads(R5_FIXTURES[source].read_text())["spend"])
+        identities = sorted(set(spend["metered_task_ids"]) | {task_id})
+        spend["metered_task_ids"] = identities
+        spend["task_count"] = len(identities)
+        spend["attempts_by_task_id"] = {
+            identity: attempts if identity == task_id else 1
+            for identity in identities
+        }
+        spend["attempt_count"] = sum(spend["attempts_by_task_id"].values())
+        spend["by_state"] = {
+            "COMPLETED": len(identities),
+            "NODE_FAIL": attempts - 1,
+        }
         return self.install_receipt(source, spend=spend, **changes)
 
     def write_release_record(
@@ -2063,6 +2122,216 @@ class CampaignQueueTests(unittest.TestCase):
             (rc, outcome["status"], outcome["id"]), (0, "succeeded", "beta")
         )
         self.assertTrue(self.queue.path("claims", "beta").exists())
+
+    def _a_requeued_producer_ran_with_beta_ready(self, receipt: str) -> None:
+        """Run an arm whose ONE scheduler task was requeued, then ready a second.
+
+        :meth:`_alpha_ran_with_beta_ready`'s shape -- alpha is executed by the
+        queue, so the ids the release rule reads are the ids alpha's own producer
+        declared and campaignctl actually recorded -- with the two differences
+        this case needs.
+
+        Alpha declares the bare job id of the preserved requeue capture, because
+        one job id is what a requeued job keeps across all of its executions.
+        And beta declares :data:`BETA_GPU_MAXIMUM` instead of six hours, because
+        this receipt's spend is well under both ceilings: the near-ceiling receipt
+        the neighbouring tests use puts the margin at a spend that is already at
+        its ceiling, and here the only thing at the margin is alpha's own
+        declared maximum. That arithmetic is asserted from the receipt rather
+        than assumed, because a beta that fits either way would make both tests
+        pass without measuring the release at all.
+        """
+        producer = self.commit_script(
+            "requeued_producer.py", write_task_ids([REQUEUED_TASK_ID])
+        )
+        alpha_contract = self.six_hour_contract("alpha")
+
+        def declare_the_decisive_headroom(value: dict[str, object]) -> None:
+            value["campaign_id"] = "beta"
+            value["maximum_cost"] = {
+                "cpu_task_hours": 1.0,
+                "gpu_task_hours": BETA_GPU_MAXIMUM,
+                "wall_hours": 6.0,
+            }
+
+        beta_contract = self.write_contract(
+            commit=True,
+            validator_script="validator_success.py",
+            name="contract-beta.json",
+            mutate=declare_the_decisive_headroom,
+        )
+        alpha = self.stage(
+            "alpha", kind="compute", contract=alpha_contract, script=producer
+        )
+        self.approve(alpha)
+
+        rc, outcome = self.run_ready(receipt)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (0, "succeeded", "alpha")
+        )
+        self.assertEqual(
+            outcome[campaignctl.OUTCOME_TASK_IDS_FIELD], [REQUEUED_TASK_ID]
+        )
+        admitting = json.loads((self.repo / receipt).read_text())
+        alpha_contract_value = alpha["campaign_contract"]
+        assert isinstance(alpha_contract_value, dict)
+        alpha_maximum = alpha_contract_value["maximum_cost"]
+        assert isinstance(alpha_maximum, dict)
+        self.assertEqual(
+            admitting["ceilings"]["gpu_task_hours"]
+            - admitting["spend"]["gpu_task_hours"]
+            - alpha_maximum["gpu_task_hours"],
+            BETA_GPU_MAXIMUM,
+            "beta must declare exactly the hours alpha's reservation decides, or "
+            "its admission measures something other than the release",
+        )
+        beta = self.stage("beta", kind="compute", contract=beta_contract)
+        self.approve(beta)
+
+    def test_a_requeued_producers_reservation_releases_on_its_counted_attempts(
+        self,
+    ) -> None:
+        """The one case the 2026-09-06 meter repair created and did not exercise.
+
+        The repair made the metered unit an EXECUTION ATTEMPT, so one job id now
+        arrives with 952 of them, and ``spend.metered_task_ids`` keeps holding
+        bare job ids precisely so this path goes on working. The release code is
+        unchanged by design -- which is exactly the shape whose breakage no unit
+        test reports, because nothing drove a requeued producer through stage,
+        outcome and receipt.
+
+        A requeued job must release like a job that ran once. If it does not, it
+        holds its full declared maximum against the ceiling for the rest of the
+        campaign, and the arm that inherits that headroom is refused for spend
+        the meter has already counted.
+        """
+        requeued = self.install_requeued_receipt(
+            "healthy",
+            REQUEUED_TASK_ID,
+            REQUEUED_ATTEMPTS,
+            measured_at_utc="2026-09-29T12:00:30+00:00",
+        )
+        # The same identities counted as ONE execution each: the attempt columns
+        # are the only difference between the two receipts, so the parity arm
+        # below reads the requeue as the variable and nothing else.
+        once = self.install_counting_receipt(
+            "healthy",
+            [REQUEUED_TASK_ID],
+            measured_at_utc="2026-09-29T12:00:30+00:00",
+        )
+        self._a_requeued_producer_ran_with_beta_ready(self.healthy_receipt)
+        beta = self.queue.item("beta")
+        receipt = json.loads((self.repo / requeued).read_text())
+        spend = receipt["spend"]
+        # It is a valid schema-2 receipt in the queue's own judgement, or what
+        # refuses below would be the malformed-receipt refusal.
+        campaignctl.validate_r5_receipt(receipt)
+        self.assertEqual(
+            spend["attempts_by_task_id"],
+            {"100_0": 1, "100_1": 1, REQUEUED_TASK_ID: 952},
+        )
+        self.assertEqual(spend["attempt_count"], 954)
+        self.assertEqual(spend["task_count"], 3)
+        self.assertEqual(spend["by_state"], {"COMPLETED": 3, "NODE_FAIL": 951})
+        self.assertEqual(sum(spend["by_state"].values()), spend["attempt_count"])
+        self.assertEqual(receipt["fired"]["any"], False)
+        # Well under both ceilings, so nothing here turns on the headroom the
+        # receipt itself reports.
+        self.assertEqual(
+            [spend["gpu_task_hours"], receipt["ceilings"]["gpu_task_hours"]],
+            [100.0, 500.0],
+        )
+        self.assertEqual(
+            [spend["cpu_task_hours"], receipt["ceilings"]["cpu_task_hours"]],
+            [200.0, 500.0],
+        )
+
+        # BEFORE: the admitting receipt was measured at the instant alpha's
+        # outcome was recorded, so alpha still holds its six hours and beta's
+        # refusal names them. This is what makes beta's admission below a
+        # measurement of the release rather than of the ceiling.
+        with mock.patch.dict(
+            os.environ, {"CAMPAIGN_R5_RECEIPT": self.healthy_receipt}
+        ):
+            held = str(campaignctl.r5_refusal_reason(self.queue, beta))
+        self.assertIn("R5 gpu_task_hours ceiling would be reached", held)
+        self.assertIn("100 + 6 + 394 >= 500", held)
+        self.assertIn("reserved by alpha (terminal, not yet remeasured)", held)
+
+        # AFTER: the receipt counts all 952 of alpha's attempts, so alpha stops
+        # reserving its declared maximum and beta's 394 hours fit.
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": requeued}):
+            self.assertIsNone(campaignctl.r5_refusal_reason(self.queue, beta))
+        # PARITY, which is the invariant itself: the same release for the same id
+        # counted as a single execution. Both receipts list alpha's id; they
+        # disagree only about how many runs it was charged for.
+        with mock.patch.dict(os.environ, {"CAMPAIGN_R5_RECEIPT": once}):
+            self.assertIsNone(campaignctl.r5_refusal_reason(self.queue, beta))
+        self.assertEqual(
+            json.loads((self.repo / once).read_text())["spend"][
+                "attempts_by_task_id"
+            ][REQUEUED_TASK_ID],
+            1,
+        )
+
+        rc, outcome = self.run_ready(requeued)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (0, "succeeded", "beta")
+        )
+        self.assertTrue(self.queue.path("claims", "beta").exists())
+
+    def test_a_receipt_of_another_jobs_attempts_releases_nothing(self) -> None:
+        """952 attempts charged to a job this item never declared release nothing.
+
+        The other direction of the same repair, and the one an attempt count
+        makes newly tempting: a receipt reporting hundreds of charged executions
+        is evidence that the meter ran and counted a great deal, for a job id
+        that is not this item's. ``attempts_by_task_id`` answers how many
+        executions were charged, never WHOSE, so the inclusion clause must refuse
+        exactly as it does for any item whose ids are not in the receipt.
+        """
+        other = self.install_requeued_receipt(
+            "healthy",
+            ANOTHER_REQUEUED_TASK_ID,
+            REQUEUED_ATTEMPTS,
+            measured_at_utc="2026-09-29T12:00:30+00:00",
+        )
+        self._a_requeued_producer_ran_with_beta_ready(self.healthy_receipt)
+        receipt = json.loads((self.repo / other).read_text())
+        spend = receipt["spend"]
+        campaignctl.validate_r5_receipt(receipt)
+        self.assertEqual(
+            spend["attempts_by_task_id"],
+            {"100_0": 1, "100_1": 1, ANOTHER_REQUEUED_TASK_ID: 952},
+        )
+        self.assertEqual(spend["attempt_count"], 954)
+        self.assertNotIn(REQUEUED_TASK_ID, spend["metered_task_ids"])
+        # The timestamp clause is SATISFIED by this receipt, so the refusal below
+        # can only be the inclusion clause.
+        self.assertGreater(
+            campaignctl.parse_utc(
+                receipt["measured_at_utc"], field="fixture receipt"
+            ),
+            campaignctl.terminal_outcome_instant(self.queue, "alpha"),
+        )
+
+        rc, outcome = self.run_ready(other)
+
+        self.assertEqual(
+            (rc, outcome["status"], outcome["id"]), (6, "refused", "beta")
+        )
+        self.assertIn(
+            "R5 gpu_task_hours ceiling would be reached", outcome["reason"]
+        )
+        self.assertIn("100 + 6 + 394 >= 500", outcome["reason"])
+        self.assertIn(
+            f"reserved by alpha (ran, task ids not yet in a receipt: "
+            f"{REQUEUED_TASK_ID})",
+            outcome["reason"],
+        )
+        self.assertFalse(self.queue.path("claims", "beta").exists())
 
     def test_an_item_expecting_no_tasks_releases_on_the_timestamp_alone(self) -> None:
         """An arm that schedules nothing has no identity for a receipt to list.
@@ -4486,11 +4755,91 @@ class MeterReceiptInteroperability(unittest.TestCase):
         A producer allowed to declare an identity ``r5_meter`` would never publish
         could never be released by any receipt; a producer allowed LESS than the
         meter publishes would silently drop tasks from its own accounting.
+
+        Pattern equality alone would go vacuous the moment the meter published
+        something other than a bare scheduler id -- an attempt spelling such as
+        ``57712764#3`` matches neither pattern while both patterns stay identical.
+        So the ids a REQUEUED measurement actually publishes are checked against
+        campaignctl's own pattern here, which is the invariant the release path
+        depends on.
         """
         import r5_meter
 
         self.assertEqual(
             campaignctl.TASK_ID_RE.pattern, r5_meter.TASK_ID_RE.pattern
+        )
+        spend = self._metered_waker_spend()
+        metered = spend["metered_task_ids"]
+        attempts_by_task_id = spend["attempts_by_task_id"]
+        assert isinstance(metered, list) and isinstance(attempts_by_task_id, dict)
+        self.assertEqual(metered, ["57712764"])
+        self.assertGreater(attempts_by_task_id["57712764"], 1)
+        for task_id in (*metered, *attempts_by_task_id):
+            self.assertTrue(campaignctl.TASK_ID_RE.fullmatch(str(task_id)))
+
+    def _metered_waker_spend(self) -> dict[str, object]:
+        """Meter the preserved requeue capture and validate it as campaignctl does."""
+        import r5_meter
+
+        fixture = (
+            Path(campaignctl.__file__).resolve().parent
+            / "test_fixtures_r5_meter"
+            / "waker_requeue_attempts.sacct"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            receipt_path = Path(directory) / "receipt.json"
+            self.assertEqual(
+                r5_meter.main(
+                    [
+                        "measure",
+                        "--from-file", str(fixture),
+                        "--now", "2026-09-10T00:00:00Z",
+                        "--write", str(receipt_path),
+                    ]
+                ),
+                0,
+            )
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        spend = campaignctl.validate_r5_receipt(receipt)["spend"]
+        assert isinstance(spend, dict)
+        return spend
+
+    def test_a_requeued_receipt_is_accepted_with_its_attempts_reported(
+        self,
+    ) -> None:
+        """952 attempts on one job id pass campaignctl's exhaustive spend checks.
+
+        The queue's release path asks "was THIS task counted", so one id with many
+        attempts must validate and must still be matchable against a producer's
+        declaration. The 12.59 CPU task-hours are what the defect reported as
+        0.0016667.
+        """
+        spend = self._metered_waker_spend()
+
+        self.assertEqual(spend["task_count"], 1)
+        self.assertEqual(spend["attempt_count"], 952)
+        self.assertEqual(spend["attempts_by_task_id"], {"57712764": 952})
+        self.assertEqual(round(float(spend["cpu_task_hours"]), 6), 12.590278)
+
+    def test_campaignctl_refuses_a_schema_version_one_receipt(self) -> None:
+        """A pre-repair receipt is refused HERE too, or the queue admits an undercount.
+
+        Both modules have to refuse it: r5_meter's `check` is a separate process from
+        the queue's admission read, and a v1 receipt committed before this repair
+        would otherwise still buy headroom.
+        """
+        receipt = json.loads(R5_FIXTURES["healthy"].read_text())
+        self.assertEqual(receipt["schema_version"], 2)
+        receipt["schema_version"] = 1
+
+        with self.assertRaises(campaignctl.QueueError) as raised:
+            campaignctl.validate_r5_receipt(receipt)
+
+        self.assertEqual(
+            str(raised.exception),
+            "R5 meter receipt schema_version 1 is refused: it counted at most one "
+            "execution attempt per job id, so it under-counts every requeued job "
+            "and is not valid R5 accounting",
         )
 
     def test_a_metered_receipts_identities_are_what_the_queue_reads(self) -> None:

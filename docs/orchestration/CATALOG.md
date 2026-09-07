@@ -35,6 +35,38 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 - [`R5-METER.md`](R5-METER.md)
   - Usage and fail-closed semantics for the R5 task-hour accounting boundary. The meter authorizes
     nothing; every run still requires its own declaration and authorization.
+- [`FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md`](FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md)
+  - **OPEN, owned by the orchestration lane.** The `sacct` span limit makes the meter's own query
+    unissuable from **2026-10-02T13:44:27Z**, two and a half days after the stop. Two dated
+    obligations: preserve and commit the full accounting capture before that instant with the ids of
+    everything still running, and meter those jobs afterwards with `-j`, which bypasses the limit. A
+    query limitation is not permission to omit expenditure.
+- [`FINDING-20260906-r5-meter-undercounted-requeue-attempts.md`](FINDING-20260906-r5-meter-undercounted-requeue-attempts.md)
+  - **The metered unit is an execution attempt, not a job id.** On a preserved Perlmutter capture of
+  one self-requeueing waker job the meter reported **0.0016667** CPU task-hours where **12.590278**
+  had been spent across **952** attempts — the fail-OPEN direction against a prohibition — or refused
+  outright once `--duplicates` was in the query. Records the corrected semantics, the receipt
+  schema-2 fields, the version-1 refusal, the reading of §3 it rejects (named so it can be
+  overturned in one function), and one dated follow-up: the 30-day `sacct` span limit fires at
+  `2026-10-02T13:44:27Z`, after the stop date. Produces **no** operational receipt, changes no
+  ceiling, moves no gate or count, and does not amend the ruling.
+  **⚠ Its status line — *"open — three things are with the decision owner"* — is STALE in two of
+  three: see the decision record immediately below. Updating that line is its owning lane's act.**
+- [`DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md`](DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md)
+  - **Joseph, 2026-09-07, ratifies two of the three items the finding above left with him.**
+  **(1) The metered unit is the execution attempt:** R5 charges every distinct attempt exactly once,
+  failed and requeued included, with repeated observations and `.batch`/`.extern`/step/array-bracket
+  **representations** not double-counted. The alternative reading — one charge per job id — is
+  **overturned**; it stays isolated in `_sum_charged_seconds`, so it is still cheap in code, but
+  reviving it now needs a **new decision** rather than an edit. **(2) Untracking or ignoring the
+  admission gate path is DECLINED**, so `committed_r5_receipt`'s requirement is unchanged and §8's
+  *"live option"* is retired — arming admission stays possible and stays a deliberate, attributable
+  commit. Records the provenance chain that made the file necessary: an **accurate** peer relay that
+  nothing in the tree corroborated, then direct confirmation. **Authorizes no compute, arms no
+  admission** (a whole-history log over the gate path returns **0** commits — it has never been
+  written on any ref), changes no ceiling, gate, count or grade, and does not touch the 30-day
+  follow-up. Recorded by a lane that did not write the repair and that **declares its own interest**
+  in the record existing.
 
 
 ### PET Gate-6 branch preservation — removal proposed, NOT executed

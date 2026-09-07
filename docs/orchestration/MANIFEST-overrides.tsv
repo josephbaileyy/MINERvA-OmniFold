@@ -45,6 +45,7 @@ docs/orchestration/DECISION-20260902-joseph-rules-no-fourth-grade-token.md	LIVE	
 docs/orchestration/DECISION-20260902-joseph-rules-oi173-referent-is-the-candidate.md	LIVE	open	
 docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md	LIVE	open	""
 docs/orchestration/DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md	LIVE	open	
+docs/orchestration/DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md	LIVE	terminal	
 docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	LIVE	open	
 docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	LIVE	open	
 docs/orchestration/DECLARATION-20260823-k0-candidate-sha.md	LIVE	open	
@@ -66,6 +67,7 @@ docs/orchestration/FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md	LIV
 docs/orchestration/FINDING-20260901-k0r2-redeploy-precondition-delta.md	LIVE	open	
 docs/orchestration/FINDING-20260901-p-leg-status-measured-against-the-candidate.md	LIVE	open
 docs/orchestration/FINDING-20260901-pscratch-read-stalls-block-a2b.md	LIVE	open	
+docs/orchestration/FINDING-20260906-r5-meter-undercounted-requeue-attempts.md	LIVE	open	
 docs/orchestration/FINDINGS.md	LIVE	open	
 docs/orchestration/FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md	LIVE	open	
 docs/orchestration/FREEZE-20260830-k0-deployment-7ac0edec.md	LIVE	open	
@@ -167,3 +169,4 @@ docs/orchestration/PLAN-20260905-prompts-11-30-reconciled-to-the-0902-decision.m
 docs/orchestration/DECISION-20260906-joseph-authorizes-z-specification-only.md	LIVE	open	
 docs/orchestration/PROMPTS-20260906-z-specification-session.md	LIVE	open	
 docs/orchestration/SPEC-20260906-complete-scalar5d-successor-Z.md	LIVE	open	
+docs/orchestration/FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md	LIVE	open	

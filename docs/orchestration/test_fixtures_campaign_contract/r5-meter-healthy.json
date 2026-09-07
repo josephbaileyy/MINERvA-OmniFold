@@ -16,7 +16,7 @@
   },
   "measured_at_utc": "2026-09-29T12:00:00+00:00",
   "measured_on_host": "fixture-host",
-  "schema_version": 1,
+  "schema_version": 2,
   "source": {
     "argv_or_path": [
       "sacct",
@@ -27,6 +27,11 @@
     "raw_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
   },
   "spend": {
+    "attempt_count": 2,
+    "attempts_by_task_id": {
+      "100_0": 1,
+      "100_1": 1
+    },
     "by_state": {
       "COMPLETED": 2
     },
