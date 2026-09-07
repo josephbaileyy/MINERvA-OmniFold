@@ -76,6 +76,13 @@ that Obligation B needs a host with `sacct`. Manage it at
 `sacct`. It raises the alarm and hands over the commands. **Whoever performs Obligation B needs SSH to
 a host with `sacct`.**
 
+**The routine clones the repository's default branch, so it can only see what has been merged there.**
+Its first step is therefore a precondition check: if this section or the preserved snapshot directory
+is absent from the branch it clones, it must lead its output with `MISSING CONTEXT`, name
+`lane/r5-followup-ownership-20260907` as pushed-but-unmerged, and continue with the alert regardless —
+the deadline is real whether or not the record reached `main`. It fails loudly rather than reminding
+successfully about a record that is not there.
+
 **Instructions to whoever picks this up, in order:**
 
 1. Read §4 and §5 of this record. They carry the exact commands.
@@ -97,15 +104,16 @@ modified):
 | | |
 |---|---:|
 | capture sha256 | `31c74b422aa1889e351042e93ab567035b5907bd0279362e3666fb6dbc246e86` |
-| receipt sha256 | `ed86508e35b0f1dc0999cf95a3a6d1199682d8309bfc9475500039a876369b9b` |
+| snapshot sha256 | `ed86508e35b0f1dc0999cf95a3a6d1199682d8309bfc9475500039a876369b9b` |
 | CPU task-hours | **`13.064722222222223`** |
 | GPU task-hours | `0.0` |
 | attempts / task ids | `1155` / `1` |
 | **§4.3 outstanding** | **`57712764`** |
 | rows with `End=Unknown` | `0` — §5's trap does not apply to *this* capture |
 
-**Status remains OPEN.** `57712764` is non-terminal and still accruing at roughly `0.65`–`0.69` CPU
-task-hours/day, so both the final capture and Obligation B are outstanding.
+**Status remains OPEN.** `57712764` is non-terminal and still accruing at `0.67`–`0.69` CPU
+task-hours/day (per-tick cost `8.4`–`8.9` s at 288 ticks/day; see the snapshot README and
+`FINDING-20260906-r5-meter-undercounted-requeue-attempts.md`), so both the final capture and Obligation B are outstanding.
 
 ## 4. Obligation A — preserve the accounting **before `2026-10-02T13:44:27Z`**
 
