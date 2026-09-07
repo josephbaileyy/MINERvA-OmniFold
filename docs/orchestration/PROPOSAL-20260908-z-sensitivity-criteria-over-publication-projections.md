@@ -1,11 +1,22 @@
 # PROPOSAL — Z sensitivity criteria mapped to the publication's actual covariance consumers
 
 **Authored 2026-09-08 by the Z spec/implementation lane, under `RZ`, at the coordinator's request.
-NOTHING HERE IS ADOPTED.** `BEN-381` bars this lane from **grading** legs it drafted; it does not bar
-this lane from **producing** a proposal — `SPEC-20260906-complete-scalar5d-successor-Z.md` §7 item 3
-withdraws that misreading explicitly. An independent reviewer assesses this; only an explicit
-decision adopts it. All four scientific boundaries remain **WITHHELD** and this document declares no
-tolerance value.
+NOTHING HERE IS ADOPTED.** An independent reviewer assesses this; only an explicit decision adopts
+it. All four scientific boundaries remain **WITHHELD** and this document declares no tolerance value.
+
+**⚠ REV. 2 (2026-09-08) — SIX REVIEWER FINDINGS, ALL SUSTAINED, ALL FIXED IN PLACE.** Rev. 1
+overreached in five places and repeated one error it had itself criticised. Every correction is
+carried in the section it affects rather than in a changelog, because a caveat at the end of a long
+document is not a caveat. The rev. 1 claims that were **withdrawn**:
+
+| # | rev. 1 claimed | withdrawn because |
+|---|---|---|
+| 1 | `s_proj` is dominated by large eigenvalues | **false in general.** A `u` aligned with a small eigenvector measures that mode. The insufficiency is a property of the DECLARED functional set, and is now stated as a CHECK rather than a result (§2b) |
+| 2 | C-2 gives "complete correlation coverage" | **false.** `diag(1,4)` and `diag(4,1)` share every eigenvalue and condition number, yet for `d = (1,0)` give `chi2` of `1` and `1/4`. Eigenvectors matter (§3 C-2) |
+| 3 | a relative `chi2` tolerance is a tolerance on the quoted significance | **false.** The map is `chi2.sf` then `norm.isf`, strongly nonlinear. C-1 is now defined on the significance itself (§3 C-1) |
+| 4 | an unpinned `rcond` makes a rank change an "artifact" | **two errors.** A fixed cutoff policy is not a fixed retained subspace, and a rank discontinuity is a **sensitivity of the stated procedure**, to be reported, not dismissed (§4c) |
+| 5 | two printed decimals justify a tolerance | **that is the `D1c` error, committed by me.** Rounding granularity bounds what COULD matter; it never establishes what DOES (§4a) |
+| 6 | `BEN-381` is why this lane proposes no number | **the withdrawn misreading again.** Proposing is not adopting. The real reason is absent evidence (§5) |
 
 ---
 
@@ -13,27 +24,27 @@ tolerance value.
 
 **CITABLE FOR**
 
-- what the publication path actually **consumes** from the assembled covariance, measured against
-  code and the readiness record rather than inferred from the note's prose;
-- the finding in §2, that **none of the four candidate statistics bounds the consumed quantity**;
-- the mapping in §3 from each consumer to the statistic that *would* bound it;
-- what evidence would justify a tolerance, and what evidence does not exist (§4, §5).
+- what the publication path **intends** to consume from the assembled covariance (§1), and the
+  explicit distinction between that and a **validated current path** (§1b);
+- the structural argument in §2a that `s_agg`, `s_med` and `s_eig` cannot bound an inverse-quadratic
+  consumer, and the **check** in §2b that would settle whether `s_proj` can;
+- the three candidates and their claim limits (§3);
+- what evidence would justify a tolerance and what does not exist (§4, §5).
 
 **NOT CITABLE FOR**
 
-- any tolerance value. None is proposed, and §5 says why supplying one here would be a defect.
-- any claim that a criterion is adopted, recommended for adoption, or ready for adoption.
-- any claim about `C_Z`'s correctness. This is about what a criterion must *measure*, not about
-  whether Z is right.
-- the equivalence of the two projection-matrix builders (§6). That is an **unresolved premise**
-  carried explicitly, not a result.
+- any tolerance value, or any claim that a criterion is adopted or ready for adoption.
+- any claim that `s_proj` is *inherently* blind to shape directions. It is not (§2b).
+- any claim about a **current** significance number. The ones in the tree are **GATED** (§1b).
+- the equivalence of the two projection-matrix builders (§6) — an unresolved premise, not a result.
 
 ---
 
-## 1. THE CONSUMER, MEASURED
+## 1. THE CONSUMER
 
-`PUBLICATION-READINESS-20260822.md:885-888` (`PR-G10`, path CRITICAL) states what the covariance is
-for:
+### 1a. What the publication intends to consume
+
+`PUBLICATION-READINESS-20260822.md:885-888` (`PR-G10`, path CRITICAL):
 
 > Rebuild exact 2D, 3D, 4D, `(E_avail,W)` and declared FPS marginals with explicit projection
 > matrices; validate `M C Mᵀ` against direct block sums; recompute generator comparisons and
@@ -42,208 +53,262 @@ for:
 and `sec_summary.tex:35`, quoted at `:924`: *"no significance is quoted without a corrected projected
 covariance."*
 
-The displayed 5D summaries are **not** the consumer. Measured against the build graph at
-`:149-163`: `paper_body.tex` contains no `\input`, the four `\gbdtFive*` magnitudes are reachable
-only from `main_note.tex`, and `gbdtFive` / `sqrt` / `e-38` each count **0** in `paper_body.tex`.
-**The external paper quotes no 5D covariance magnitude at all**, while retaining **12**
-covariance-dependent claims (`grep -ciE covarian paper_body.tex`).
+The displayed 5D summaries are not that consumer. Measured against the build graph at `:149-163`:
+`paper_body.tex` contains no `\input`, and `gbdtFive` / `sqrt` / `e-38` each count **0** in it, while
+**12** covariance-dependent claims remain. **The external paper quotes no 5D covariance magnitude at
+all.** So `D1`'s question is answered by the artifact rather than by anyone's judgement: the
+displayed summaries are not printed, and the intended scientific use is the projection.
 
-**So `D1`'s question — protect the displayed summaries, or scientific uses of the covariance? — is
-already answered by the artifact: the displayed 5D summaries are not printed, and the scientific use
-is the projection.** That is not this lane's judgement about what *should* matter; it is what the
-build graph does.
+### 1b. ⚠ THE CODE BELOW IS A NAMED INSTANCE OF THE MAP, NOT A VALIDATED CURRENT PATH
 
-### 1a. What the consumer computes, exactly
+`eavail_generator_significance.py` shows what this class of consumer **computes**. It is **not**
+evidence about any current number, and this proposal does not present it as one:
 
-`eavail_generator_significance.py:107,132`:
+- `INTEGRATION_CHECKLIST.md:37`: *"**The covariance-dependent significances remain GATED**"*.
+- Its covariance is quarantine **cause 6**, `PUBLICATION-READINESS-20260822.md:892`, `KNOWN_ISSUES`
+  #36 (HIGH, OPEN): the `(E_avail,W)` covariance *"has not been rebuilt after fixing its
+  per-universe flux normalization"*, and `VL67` records cause 6 as **OPEN and furthest** — no
+  `(E_avail,W)` product has been rebuilt at all.
+- `SPEC §…:2354` names `eavail_generator_significance.py:83-89` as a validated instance of the
+  **projection map**, which is a narrower statement than validation of its significances.
+
+**What it is cited for here: the FORM of the consumption.** `:107,132`:
 
 ```python
 Cinv = np.linalg.pinv(C_y)            # C_y is the PROJECTED covariance
-...
 chi2 = float(d @ Cinv @ d)            # d = data - generator
 ```
 
-with the significance following from `chi2` through `stats.chi2.sf`. **The published quantity is a
-quadratic form in the PSEUDO-INVERSE of the projected covariance.**
+with the significance following through `stats.chi2.sf` and `norm.isf` (`:110-114`). **The consumed
+quantity is a quadratic form in the pseudo-inverse of the projected covariance.** That form is what
+the criteria below must bound; whether any particular current output is trustworthy is a different
+question with a different owner, and it is gated.
 
-The module says why this matters, in its own comment at `:98-101`:
+The module states the hazard in its own comment at `:98-101`:
 
 > a highly-correlated systematic covariance (flux is a coherent normalization) can be near-singular
 > -> **pinv amplifies shape directions** and inflates chi^2
 
-and it prints the eigenvalue spectrum and condition number at `:102-105` precisely so a reader can
-tell a significance from a numerical artifact.
+and prints the spectrum and condition number at `:102-105` so a reader can tell a significance from
+a numerical artifact.
 
 ---
 
-## 2. THE FINDING: NONE OF THE FOUR CANDIDATES BOUNDS THAT QUANTITY
+## 2. WHAT A CRITERION MUST BOUND, AND WHICH CANDIDATES CANNOT
 
-| statistic | where | what it measures | dominated by |
-|---|---|---|---|
-| `s_agg` | §3.7b | relative change in `√Tr C_Z` | the **largest** variances |
-| `s_med` | §3.7b | relative change in the printed per-bin median `σ_i/x_i` | the **diagonal**, at its median |
-| `s_proj` | `z_statistics.py:198` | relative change in `√(uᵀ C u)` over predeclared `u` | the **variance along each `u`** |
-| `s_eig` | `z_statistics.py:256` | relative change in the **leading** eigenvalue | the **largest** eigenvalue |
+### 2a. The structural half, which stands
 
-The consumed quantity is `dᵀ (M C Mᵀ)⁺ d`. An inverse is dominated by the **smallest** retained
-eigenvalues. Every statistic in the table is dominated by the large end of the spectrum — `s_eig`
-explicitly so, by construction.
+`dᵀ (M C Mᵀ)⁺ d` is dominated by the **smallest retained** eigenvalues of the projected covariance.
 
-**Therefore a criterion built on any of the four can be satisfied while a quoted significance moves
-arbitrarily.** The mechanism is not exotic and is not hypothetical: the covariance is
-*deliberately* correlation-dominated because flux enters as a coherent normalization, so the small
-eigenvalues are the shape directions, they carry tiny variance, and `pinv` amplifies exactly them.
-A perturbation that leaves `Tr C`, the diagonal median, every predeclared `uᵀ C u` and the leading
-eigenvalue within any tolerance can still move a near-null direction by a large *relative* amount —
-and it is the relative movement of the small eigenvalues that propagates to `chi2`.
+- **`s_agg`** is a relative change in `√Tr C`. A trace is a **sum** of eigenvalues, so a near-null
+  mode contributes negligibly to it while dominating the inverse. A perturbation can move the
+  inverse arbitrarily and `Tr C` immeasurably.
+- **`s_med`** is the **median of the diagonal** — a summary of per-bin variances, carrying no
+  information about the directions the inverse amplifies.
+- **`s_eig`** measures the **leading** eigenvalue, explicitly and by construction the wrong end.
 
-**This is the substantive result of the proposal, and it cuts against the cheapest option.** The
-statistics that already exist and cost nothing are the ones that cannot bound the published claim.
+**These three cannot bound the consumed quantity, and that argument does not depend on any property
+of the declared functional set.**
+
+### 2b. ⚠ `s_proj` IS NOT INHERENTLY BLIND, AND REV. 1 WAS WRONG TO SAY SO
+
+`s_proj` measures `√(uᵀ C u)`. **If `u` is aligned with a small eigenvector, that is exactly the
+mode the inverse amplifies, and `s_proj` sees it.** The statistic is not the problem.
+
+The real question is a property of the **declared, finite** functional set: the rows of the
+width-weighted projection matrix, plus the all-ones vector. Those rows are **non-negative** width
+weights, so they plausibly have small overlap with the sign-alternating shape directions that carry
+tiny variance — but **plausibly is not measured, and this proposal does not assert it.**
+
+**THE CHECK THAT WOULD SETTLE IT, and it is cheap.** For the declared `U` and the `k = 0` projected
+covariance, compute each row's overlap with the small-eigenvalue subspace: eigendecompose `M C Mᵀ`,
+express each `u` in that basis, and report the fraction of `‖u‖²` lying in the modes below the
+retained cutoff. If that fraction is negligible for every declared `u`, `s_proj` over the declared
+set is insufficient **for this covariance** and the point is established rather than argued. If it
+is not negligible, `s_proj` over the declared set may suffice and C-1 gains a cheaper companion.
+**Neither outcome is assumed here.**
+
+### 2c. And a bound on the spectrum alone is not a bound on the consumer
+
+From the reviewer, and it corrects rev. 1's C-2: `diag(1, 4)` and `diag(4, 1)` have identical
+eigenvalues, identical smallest eigenvalue and identical condition number. For `d = (1, 0)` they
+give `chi2 = 1` and `chi2 = 1/4`. **Eigenvalues do not determine the quadratic form; eigenvectors and
+their alignment with `d` do.** Any candidate expressed purely in spectral summaries inherits this
+limit, C-2 included.
 
 ---
 
-## 3. CANDIDATE CRITERIA, MAPPED TO CONSUMERS
+## 3. CANDIDATE CRITERIA
 
-Each row states the statistic, its **denominator**, its **assumptions**, its **correlation
-coverage**, and the **claim it would support** — the five fields `D1` requires. No tolerances.
+Five fields each — statistic, denominator, assumptions, correlation coverage, claim supported. **No
+tolerances.**
 
-### C-1 — direct sensitivity of the quoted statistic *(recommended as the primary candidate)*
+### C-1 — sensitivity of the quoted significance itself *(primary candidate)*
 
-- **Statistic.** `s_chi2 = max over the declared offset set of |chi2_k − chi2_0| / chi2_0`, for each
-  (generator, projection) pair the publication actually quotes.
-- **Denominator.** `chi2_0`, the `k = 0` as-built member's own value for that same pair — Z's own
-  baseline, matching `D1b`'s rule that the denominator is Z's as-built member and never an external
-  product.
-- **Assumptions.** That the declared offset set is the population of interest (it is finite and
-  declared, so the **max** is exact and no distributional inference is made — `D1a`'s own ground);
-  and that `pinv`'s rank cutoff is held fixed across members. **The second is not currently pinned
-  and must be** — see §4c.
-- **Correlation coverage.** **Complete for the consumed quantity.** It measures the published number
-  itself, so no correlation blindness survives.
+- **Statistic.** `s_sig = max over the declared offset set of |Nsigma_k − Nsigma_0|`, per
+  (generator, projection) pair the publication quotes. **An ABSOLUTE difference in a quantity
+  already expressed in sigma units.**
+- **Why absolute, and why on `Nsigma` rather than `chi2` — ⚠ REV. 1 GOT THIS WRONG.** A relative
+  `chi2` tolerance is **not** a tolerance on the significance: the map is `chi2.sf` composed with
+  `norm.isf` and is strongly nonlinear, so one relative `chi2` change produces different `Nsigma`
+  movements depending on `chi2` and `ndf`. Defining the statistic on the reported quantity removes
+  the mapping question instead of hiding it. It also **removes the `chi2_0 = 0` denominator
+  problem** rev. 1 had: there is no denominator. (`Nsigma` is `inf` when `p = 0`; the statistic is
+  undefined for such a pair and must be **reported as undefined**, never as zero movement.)
+- **Denominator.** None. Where a relative form is wanted for `chi2` as a secondary diagnostic, the
+  denominator is `chi2_0`, Z's own `k = 0` member per `D1b`, and it is undefined at `chi2_0 = 0`.
+- **Assumptions.** The declared offset set is the population of interest, so the **max** is exact and
+  no distributional inference is made (`D1a`'s own ground); and the `pinv` cutoff **policy** and the
+  retained **rank** are both recorded per member (§4c).
+- **Correlation coverage.** Complete **for the pairs measured** — it evaluates the published number,
+  so no blindness survives *within that set*. It says nothing about pairs not in the declared set.
 - **Claim supported.** *"No declared estimator-baseline offset moves any quoted generator
-  significance by more than the declared tolerance."* That is the statement the publication needs.
-- **Cost.** Zero incremental production: it reuses the members `D3` would produce and the projection
-  the note already builds. It is arithmetic on matrices that exist.
-- **Limit.** It is a criterion on the *reported* statistic, so it inherits every modelling choice in
-  `eavail_generator_significance.py`, including `pinv`'s cutoff and the `DIS ≥ 0.8` sub-block.
-  Those become part of the declared criterion rather than free parameters.
+  significance, among the declared (generator, projection) pairs, by more than the declared
+  tolerance."*
+- **Cost.** Zero incremental production: arithmetic over members `D3` would produce and a projection
+  the note already builds.
+- **Limit.** It is a criterion on a **reported procedure**, so it inherits every modelling choice in
+  that procedure — the `pinv` cutoff, the `DIS ≥ 0.8` sub-block, the generator set. Those become
+  part of the declared criterion rather than free parameters, and the criterion must be re-derived
+  if the procedure changes.
 
-### C-2 — the conditioning floor *(recommended as a companion, not a substitute)*
+### C-2 — the conditioning diagnostic *(companion; ⚠ NOT coverage)*
 
-- **Statistic.** Relative change in the **smallest retained** eigenvalue of `M C Mᵀ`, and in the
-  condition number, over the declared offsets — the two numbers `:102-105` already prints.
-- **Denominator.** The `k = 0` member's own smallest retained eigenvalue.
-- **Assumptions.** That "retained" is defined by the same cutoff the consumer uses. Same pin as C-1.
-- **Correlation coverage.** Complete in the direction that matters for an inverse.
-- **Claim supported.** *"The projected covariance's conditioning is stable under the declared
-  offsets"* — which is the **precondition** for C-1 being interpretable rather than a second
-  measurement of it. If conditioning is unstable, a stable `chi2` is luck.
-- **Limit.** Says nothing about the central value; it is a stability statement about the operator.
+- **Statistic.** Relative change in the smallest retained eigenvalue of `M C Mᵀ`, in the condition
+  number, and **in the retained rank** — the numbers `:102-105` already prints, plus the rank.
+- **Denominator.** The `k = 0` member's own value for each.
+- **Correlation coverage.** ⚠ **NOT complete, and rev. 1's claim that it was is withdrawn.** §2c's
+  counterexample shows a spectral summary cannot determine the quadratic form. This is a
+  **diagnostic on the operator**, not a bound on the consumer.
+- **Claim supported.** *"The projected covariance's conditioning and retained rank are stable under
+  the declared offsets."* Its value is as a **precondition for interpreting C-1**: if conditioning
+  or rank moves, a stable `s_sig` needs explaining rather than reporting.
+- **Limit.** Says nothing about central values, and by §2c nothing about the consumed form.
 
-### C-3 — `s_proj` over the *real* functionals *(retained, with its limit stated)*
+### C-3 — `s_proj` over the real functionals *(retained; scope now honest)*
 
-- **Statistic.** `z_statistics.s_proj` (already implemented; **do not reimplement**) over the rows of
-  the production projection matrix rather than synthetic ones.
+- **Statistic.** `z_statistics.s_proj` — **already implemented at `z_statistics.py:198`; do not
+  reimplement** — over the rows of the production projection matrix rather than synthetic ones.
 - **Denominator.** `√(uᵀ C⁽⁰⁾ u)` per functional.
-- **Correlation coverage.** Partial: it sees off-diagonal structure *along the declared `u`*, and is
-  blind to the small-eigenvalue directions that drive C-1.
-- **Claim supported.** *"Projected bin uncertainties are stable"* — a real and reportable property,
-  and **not** a significance claim. It should not be described as covering one.
-- **Wiring gap, measured 2026-09-08.** `s_proj`, `s_corr` and `s_eig` are implemented and are called
-  **only from tests** (`test_z_validator.py:138-147`), and `s_proj` is exercised only over a
-  hand-written `U = [[1,1],[1,-1]]` at `:139`. `z_validator` supports a correlation leg
-  (`Leg.sees_correlations`; `correlation_leg_present` at `:224`) but **no declared leg set outside
-  tests contains one.** The gap is the functionals and the leg declaration, not the statistic.
+- **Correlation coverage.** Sees off-diagonal structure **along the declared `u`**. Whether that
+  includes the inverse-relevant directions is the open question of §2b, **not** a settled negative.
+- **Claim supported.** *"Projected bin uncertainties are stable under the declared offsets."* A real,
+  reportable property, and **not** a significance claim.
+- **Wiring gap, measured 2026-09-08.** `s_proj`, `s_corr` and `s_eig` are implemented and called
+  **only from tests** (`test_z_validator.py:138-147`); `s_proj` is exercised only over a hand-written
+  `U = [[1,1],[1,-1]]` at `:139`. `z_validator` supports a correlation leg (`Leg.sees_correlations`;
+  `correlation_leg_present` at `:224`) but no declared leg set outside tests contains one. **The gap
+  is the functionals and the leg declaration, not the statistic.**
 
 ---
 
 ## 4. WHAT EVIDENCE COULD JUSTIFY A TOLERANCE
 
-A tolerance on C-1 is justifiable from evidence that **already exists or is cheap**, and this is the
-part `D1` has been missing:
+### 4a. ⚠ WHAT CANNOT: THE PRINTED PRECISION. REV. 1 MADE THE `D1c` ERROR IT CRITICISED.
 
-**(a) The significance's own reporting granularity.** The publication quotes `Nsigma` to two
-decimals (`:134`, `{z:7.2f}`). A movement that cannot change the second decimal of any quoted
-`Nsigma` is, for the published claim, no movement at all. **This is a use-based argument, not a
-formatting one** — the distinction `D1c` failed: the number is not "the format's resolution", it is
-"the smallest change that could alter a reader's inference from the quoted result". It needs stating
-as such and it needs the map from `chi2` movement to `Nsigma` movement, which is `stats.chi2.sf`
-composed with `norm.isf` and is exact.
+Rev. 1 argued that a movement unable to change the second decimal of a printed `Nsigma` is no
+movement, and called this "use-based, not formatting". **It is a formatting argument wearing a
+use-based label, and it is exactly the reasoning `D1c` was withdrawn for.** Two independent defects,
+both of which `D1c` also had:
 
-**(b) The decision the significance feeds.** If a quoted significance is used to say a generator is
-or is not disfavoured, the tolerance is whatever cannot move it across the threshold that claim
-rests on. That threshold is a scientific choice and it is **not in the tree** — it is the one input
-that must come from the analysis, not from the code.
+- **it errs in both directions at a rounding boundary** — `2.4499` and `2.4501` print differently
+  and are indistinguishable scientifically, while `2.451` and `2.549` print the same at one decimal
+  and are not;
+- **it presumes the decision depends on the printed digits**, when it depends on the **margin** to
+  whatever threshold the claim rests on.
 
-**(c) A pin that does not exist yet and must.** `np.linalg.pinv`'s default `rcond` is relative to
-the largest singular value, so **the retained rank can differ between two members**. If it does,
-`chi2_k` and `chi2_0` are quadratic forms on different subspaces and their difference is not a
-sensitivity — it is an artifact. **Nothing currently pins it.** Pinning the cutoff is code, not
-compute, and it is a prerequisite for C-1 and C-2 both.
+**Printed granularity bounds what could POSSIBLY matter. It never establishes what DOES.** Retained
+here only as a floor: a criterion looser than the printing is certainly vacuous.
+
+### 4b. WHAT COULD: THE DECISION MARGIN
+
+If a quoted significance supports a claim that a generator is or is not disfavoured at some
+threshold, the justified tolerance is the one that cannot move `Nsigma` across the **margin** between
+its value and that threshold — a margin, not a rounding step. **That threshold is a scientific
+choice and it is not in this tree.** It is the one input that must come from the analysis.
+
+### 4c. ⚠ A PREREQUISITE, RESTATED AFTER TWO REVIEWER CORRECTIONS
+
+`np.linalg.pinv` is called with **no `rcond`** (measured: zero occurrences of `rcond` in that
+module), so its cutoff is relative to the largest singular value and moves with each member.
+
+Rev. 1 concluded "pin it, and a rank change is otherwise an artifact". **Both halves were wrong:**
+
+- **A fixed cutoff policy is not a fixed retained subspace.** Pinning `rcond` does not pin the rank:
+  an eigenvalue crossing a *fixed* threshold between members changes the retained subspace anyway.
+  Pinning removes one source of variation, not the phenomenon.
+- **A rank discontinuity is a sensitivity of the stated procedure, not automatically an artifact.**
+  If the declared criterion is "the significance this procedure reports", then a member whose rank
+  differs *is* a member on which the procedure behaves differently, and that is a finding.
+
+**So the requirement is REPORTING, not suppression:** record the cutoff policy and the retained rank
+per member, and treat a rank change as a **reportable event that blocks a bare pass** — the criterion
+must state what it does when rank moves, rather than averaging over it. Pinning the policy is still
+worth doing, as code and not compute, but it is a reduction in variation and not a fix.
 
 ---
 
 ## 5. WHAT REMAINS UNAVAILABLE, AND WHY NO NUMBER IS PROPOSED
 
-- **(b) above is unavailable in this tree.** No artifact states what decision any quoted significance
-  supports at what threshold. Without it a tolerance would be a number with a derivation and no
-  purpose.
-- **The members do not exist.** C-1 and C-2 are defined over a declared offset set; `D3` records
-  that `N = 5` is a planning proposal and not demonstrated capacity, and that no run authorization
-  (`D-RESOURCE`) exists. **These criteria are specifiable now and measurable only later.** That is
-  the honest state and it is not an argument for adopting a cheaper criterion that measures the
-  wrong thing.
-- **Why this lane proposes no value.** A tolerance recommended here would be adopted with this
-  lane's recommendation as its provenance, and this lane drafted the statistic. `BEN-381` permits
-  the drafting and bars the grading; supplying the number would collapse the two.
+- **§4b's threshold does not exist in this tree.** No artifact states what decision any quoted
+  significance supports at what margin. **This is the reason no tolerance is proposed:** a number
+  without it would have a derivation and no purpose.
+- **The members do not exist.** `D3` records `N = 5` as a planning proposal rather than demonstrated
+  capacity, with no `D-RESOURCE`. These criteria are **specifiable now and measurable only later** —
+  the honest state, and not an argument for a cheaper criterion that measures the wrong thing.
+- **The §2b overlap check has not been run**, so `s_proj`'s sufficiency over the declared set is
+  open in both directions.
+
+**⚠ REV. 1 GAVE A SECOND REASON AND IT WAS WRONG.** It said supplying a number would collapse
+`BEN-381`'s drafting/grading separation. **Proposing a tolerance is neither adopting nor grading it**
+— `SPEC §7 item 3` withdraws that exact misreading, and rev. 1 reproduced it after being corrected on
+it once. `BEN-381` bars this lane from **grading** these legs and bars nothing else. The absence of
+evidence is a sufficient reason on its own and is the only one claimed.
 
 ---
 
 ## 6. UNRESOLVED PREMISE, CARRIED EXPLICITLY: WHICH `M`?
 
-**Two projection-matrix builders exist in this tree and this proposal does not assume they agree.**
+**Two projection-matrix builders exist and this proposal does not assume they agree.**
 
-- `p4_lib.build_projection_M` (`p4_lib.py:1353`) — what `p4_project_4d.py:141` executes. It carries a
-  bidirectional coverage check and an **independent reconstruction** by a deliberately different
-  method (`:1455`), kept free of the first's helpers so the comparison means something.
+- `p4_lib.build_projection_M` (`p4_lib.py:1353`) — executed by `p4_project_4d.py:141`; carries a
+  bidirectional coverage check and an **independent reconstruction by a deliberately different
+  algorithm** (`:1455`, vectorised `unravel_index`/`ravel_multi_index`/`searchsorted` against a
+  per-column Python loop), kept free of the first's helpers so the comparison means something.
 - `project_cov_nd.build_projection` (`project_cov_nd.py:79`) — width-weighted marginalisation.
   **`s_proj`'s own docstring names this one** (`z_statistics.py:202`).
 
 They share `AXIS_EDGES` — `p4_project_4d.py:46` calls it a canonical drift-guarded mirror — **and
-nothing more**. No artifact in the tree establishes that the two produce the same `M`.
+nothing more.** No artifact establishes that they produce the same `M`.
 
-**Consequence for this proposal.** C-1 and C-2 are defined over `M C Mᵀ` for *the M the consumer
-uses*, which is a fact about the publication path, not a free choice. C-3's functionals are named by
-a docstring pointing at the *other* builder. Until equivalence is settled, "the projections" denotes
-two objects and a criterion written over the phrase is measured against whichever one someone wires
-in.
-
-**What equivalence evidence would be required** — and it is bounded, a check rather than a study:
+**What equivalence evidence would be required** — bounded, a check rather than a study:
 
 1. Both builders instantiated on the same edges, masks and drop axis, and `M₁ − M₂` compared
    elementwise to zero at float64 tolerance, for **every** projection the publication quotes — not
-   one exemplar, since the builders may agree on the 4D case and differ where support masks bite.
+   one exemplar, since they may agree on the 4D case and differ where support masks bite.
 2. If they differ, the **consumer's** builder wins by definition, and `s_proj`'s docstring is wrong
    and must be corrected rather than reinterpreted.
-3. If they agree, record it as a measured agreement with both shas, not as an assumption retired.
+3. If they agree, record a measured agreement with both shas — not an assumption retired.
 
-Until (1) is run, **every use of `M` in §3 should be read as "the consumer's `M`, builder
-unidentified"**, which is a weaker statement than it looks and is deliberately not smoothed over.
+Until (1) is run, **every `M` above reads as "the consumer's `M`, builder unidentified"**, which is
+weaker than it looks and is deliberately not smoothed over.
 
 ---
 
 ## 7. WHAT THIS PROPOSAL ASKS FOR
 
-Nothing to be adopted. Three things to be **decided by whoever owns the decision**:
+Nothing to be adopted. Four things to be **decided or run by whoever owns them**:
 
 1. Whether the acceptance target is the **quoted significance** (C-1) rather than a covariance
-   summary. §1 and §2 are the evidence; the judgement is not this lane's.
-2. The threshold in §4(b) — the one input that cannot come from the code.
-3. Whether the `pinv` cutoff pin in §4(c) is authorized as Tier-2 code work. It is a prerequisite
-   for C-1 and C-2 and it changes no estimator default.
+   summary. §1 and §2a are the evidence; the judgement is not this lane's.
+2. The threshold and margin in §4b — the one input that cannot come from the code.
+3. Whether the §2b overlap check and the §6 builder comparison are authorized as Tier-2 work. Both
+   are code, neither is compute, and both change the proposal's own conclusions if they come out
+   the other way.
+4. Whether the `pinv` cutoff **policy** should be pinned and the retained **rank** reported per
+   member (§4c). It changes no estimator default.
 
 **No criteria owner exists.** `docs/orchestration/control-plane/owners.tsv` has twelve rows and none
-of them is scientific acceptance criteria; the nearest register fit is `lane_c` (rulings / schema /
-launcher policy) and every other row escalates to Joseph. That is a gap in the control plane, not a
-gap in this proposal, and it is recorded here because a proposal with no assigned adopter is how a
-recommendation becomes a de facto decision by default.
+is scientific acceptance criteria; the nearest register fit is `lane_c` (rulings / schema / launcher
+policy) and every other row escalates to Joseph. Recorded because a proposal with no assigned adopter
+is how a recommendation becomes a decision by default.
