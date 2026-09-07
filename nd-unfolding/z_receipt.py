@@ -34,6 +34,7 @@ second implementation, and this one already handles the partial-write case.
 from __future__ import annotations
 
 import hashlib
+import math
 import json
 import os
 import tempfile
@@ -270,22 +271,68 @@ def _validate_reconstruction_ran(inflation) -> None:
             f"receipt: {RECONSTRUCTION_KEY} is missing variant(s) {absent}. §1.3b requires BOTH "
             f"variants be reconstructed independently, because g^mean and g^cv differ only "
             f"through the mean-shift term.")
+    # ⚠ ROUND-6 BLOCKER 2. Every comparison below was made against values that were never
+    # checked for being NUMBERS IN RANGE, so three MET receipts were reproduced:
+    #   * `rtol=inf` with `max_rel_diff=100`   -- 100 <= inf is True
+    #   * `max_rel_diff=-inf`                  -- -inf <= rtol is True
+    #   * no `discriminating` field at all     -- the disclosure simply omitted
+    # A tolerance of infinity is not a loose tolerance, it is the ABSENCE of one, and a negative
+    # relative residual is not a small residual, it is not a residual. Both passed a comparison
+    # that was well formed and vacuous -- the same shape as the PSD gate's absolute floor.
     rtol = block.get("rtol")
-    if not isinstance(rtol, (int, float)) or not rtol > 0:
+    if isinstance(rtol, bool) or not isinstance(rtol, (int, float)):
         raise ZContractError(
             f"receipt: {RECONSTRUCTION_KEY} records rtol {rtol!r}; a comparison with no stated "
             f"tolerance cannot be re-checked by a reader.")
+    if not math.isfinite(rtol) or not rtol > 0:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} records rtol {rtol!r}, which is not a finite positive "
+            f"tolerance. `inf` is not a loose tolerance -- it is the absence of one, and every "
+            f"residual satisfies it.")
     for variant in ("mean", "cv"):
         diff = (per_variant[variant] or {}).get("max_rel_diff")
-        if not isinstance(diff, (int, float)):
+        if isinstance(diff, bool) or not isinstance(diff, (int, float)):
             raise ZContractError(
                 f"receipt: {RECONSTRUCTION_KEY} variant {variant!r} records max_rel_diff "
                 f"{diff!r}, which is not a measurement.")
+        if not math.isfinite(diff) or diff < 0:
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} variant {variant!r} records max_rel_diff "
+                f"{diff!r}. A relative residual is finite and non-negative by construction, so "
+                f"this value did not come from the gate -- and `-inf <= rtol` would have passed.")
         if not diff <= rtol:
             raise ZContractError(
                 f"receipt: {RECONSTRUCTION_KEY} variant {variant!r} recorded max_rel_diff "
                 f"{diff:.6e} > rtol {rtol:.0e}, so the reconstruction did NOT pass, yet the "
                 f"outcome claims MET.")
+
+    # THE DISCLOSURE IS PART OF THE EVIDENCE, NOT A COURTESY. A pass whose discriminating power
+    # is unstated reads as assurance it may not carry, which is the whole subject of this gate's
+    # three corrected docstrings. Absent metadata is refused rather than defaulted either way.
+    if "discriminating" not in block:
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} omits `discriminating`. Whether the reconstruction "
+            f"could have detected a dropped shift on these operands is part of what a pass "
+            f"means; a receipt that does not say reads as assurance it may not carry.")
+    discriminating = block["discriminating"]
+    if not isinstance(discriminating, bool):
+        raise ZContractError(
+            f"receipt: {RECONSTRUCTION_KEY} records discriminating {discriminating!r}, which is "
+            f"not a verdict.")
+    if not discriminating:
+        note = block.get("note")
+        if not isinstance(note, str) or not note.strip():
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} reports discriminating=False and carries no "
+                f"limitation note. A non-discriminating pass is admissible -- a genuinely tiny "
+                f"mean shift is not a defect -- but it must arrive WITH the statement of what "
+                f"was not tested, or the reader cannot tell it from a discriminating one.")
+        if not isinstance(block.get("discrimination_blockers"), dict):
+            raise ZContractError(
+                f"receipt: {RECONSTRUCTION_KEY} reports discriminating=False without "
+                f"`discrimination_blockers`. WHY the gate was blind -- pinned, saturated, or "
+                f"below tolerance -- is the actionable part, and saturation is invisible to a "
+                f"tolerance argument.")
 
 
 def _leg_is_unbacked(entry):

@@ -179,6 +179,133 @@ class TheRawOperandReconstructionCatchesWhatG3CANNOT(unittest.TestCase):
         self.assertIn("NO further gate behind this one", out["note"])
         self.assertIn("UNTESTED", out["note"])
 
+    # ---- ⚠ ROUND-6 BLOCKER 1: discrimination is measured by RUNNING the mutation -----------
+    def test_SATURATION_is_reported_as_non_discriminating(self):
+        """The reviewer's counterexample verbatim: v_uni_mean=1, v_blk=100, mean_shift=1.
+
+        `g = sqrt(max(v_uni, v_blk))/sqrt(v_blk)` is exactly 1 whenever `v_uni <= v_blk`, so a
+        shift of ANY size moves `g` not at all. The first flag compared ms**2 against a tolerance
+        on the DIAGONALS and reported discriminating=True on this input -- false assurance about
+        a mutation it could not have seen. Three docstring revisions reasoned about `g` while the
+        arithmetic measured the diagonals.
+        """
+        v_mean, v_blk, ms = np.array([1.0]), np.array([100.0]), np.array([1.0])
+        g, _ = za.compute_g(v_mean, v_blk)
+        self.assertEqual(float(g[0]), 1.0)                       # the fixture really saturates
+        out = za.gate_raw_operand_reconstruction(
+            g_recorded={"mean": g, "cv": g}, diag_c_unified_mean=v_mean,
+            diag_c_blocksum=v_blk, joint_mean_shift=ms)
+        self.assertFalse(out["discriminating"])
+        self.assertEqual(out["discrimination_blockers"]["n_saturated_v_uni_below_v_blk"], 1)
+        self.assertIn("saturated", out["note"])
+
+    def test_PINNED_bins_are_reported_as_non_discriminating(self):
+        v_mean, v_blk, ms = np.array([1.0]), np.array([0.0]), np.array([1.0])
+        g, _ = za.compute_g(v_mean, v_blk)
+        out = za.gate_raw_operand_reconstruction(
+            g_recorded={"mean": g, "cv": g}, diag_c_unified_mean=v_mean,
+            diag_c_blocksum=v_blk, joint_mean_shift=ms)
+        self.assertFalse(out["discriminating"])
+        self.assertEqual(out["discrimination_blockers"]["n_pinned"], 1)
+
+    def test_a_shift_UNDER_TOLERANCE_is_reported_as_non_discriminating(self):
+        out = za.gate_raw_operand_reconstruction(
+            g_recorded={"mean": za.compute_g(np.array([2.0]), np.array([1.0]))[0],
+                        "cv": za.compute_g(np.array([2.0]), np.array([1.0]))[0]},
+            diag_c_unified_mean=np.array([2.0]), diag_c_blocksum=np.array([1.0]),
+            joint_mean_shift=np.array([1e-9]))
+        self.assertFalse(out["discriminating"])
+        self.assertEqual(out["discrimination_blockers"]["n_shift_below_tolerance"], 1)
+
+    def test_a_SEPARABLE_operand_set_reports_discriminating_with_its_margin(self):
+        v_mean, v_blk, ms = np.array([2.0]), np.array([1.0]), np.array([0.5])
+        g_cv, _ = za.compute_g(v_mean + ms ** 2, v_blk)
+        g_mean, _ = za.compute_g(v_mean, v_blk)
+        out = za.gate_raw_operand_reconstruction(
+            g_recorded={"mean": g_mean, "cv": g_cv}, diag_c_unified_mean=v_mean,
+            diag_c_blocksum=v_blk, joint_mean_shift=ms)
+        self.assertTrue(out["discriminating"])
+        self.assertGreater(out["discrimination_blockers"]["max_separation"], out["rtol"])
+
+    def test_the_blocker_buckets_PARTITION_every_bin(self):
+        """Named mechanisms that do not add up would leave a fourth cause unaccounted for."""
+        s = build_scenario()
+        out = za.gate_raw_operand_reconstruction(**raw_operands(s))
+        b = out["discrimination_blockers"]
+        self.assertEqual(b["n_separated"] + b["n_pinned"]
+                         + b["n_saturated_v_uni_below_v_blk"] + b["n_shift_below_tolerance"],
+                         b["n_bins"])
+
+    # ---- ⚠ ROUND-6 BLOCKER 3: §1.3a clips both raw diagonals -------------------------------
+    def test_NEGATIVE_raw_entries_are_CLIPPED_per_the_contract_not_refused(self):
+        """§1.3a: `v_uni^c = clip(diag(C_unified), 0, inf)`, `v_blk = clip(...)`.
+
+        A low-rank throw estimator does produce negative variance entries. The first version
+        passed them straight to `compute_g`, which refused them as "negative variance" -- the
+        gate rejecting an operand set the contract defines a transformation for.
+        """
+        out = za.gate_raw_operand_reconstruction(
+            g_recorded={"mean": np.array([1.0]), "cv": np.array([1.0])},
+            diag_c_unified_mean=np.array([-1e-18]), diag_c_blocksum=np.array([1.0]),
+            joint_mean_shift=np.array([0.0]))
+        self.assertEqual(out["n_clipped_unified"], 1)
+
+    def test_a_negative_BLOCKSUM_entry_is_clipped_and_counted_too(self):
+        out = za.gate_raw_operand_reconstruction(
+            g_recorded={"mean": np.array([1.0]), "cv": np.array([1.0])},
+            diag_c_unified_mean=np.array([0.0]), diag_c_blocksum=np.array([-1e-20]),
+            joint_mean_shift=np.array([0.0]))
+        self.assertEqual(out["n_clipped_blocksum"], 1)
+
+    def test_the_shift_is_added_AFTER_clipping_not_before(self):
+        """The contract's ORDER. clip(-4)+9 == 9, whereas clip(-4+9) == 5 -- different g."""
+        v_mean, v_blk, ms = np.array([-4.0]), np.array([1.0]), np.array([3.0])
+        expected, _ = za.compute_g(np.array([0.0 + 9.0]), v_blk)      # clip first, then + ms**2
+        wrong, _ = za.compute_g(np.array([5.0]), v_blk)               # add first, then clip
+        self.assertNotAlmostEqual(float(expected[0]), float(wrong[0]))
+        g_mean, _ = za.compute_g(np.array([0.0]), v_blk)
+        out = za.gate_raw_operand_reconstruction(
+            g_recorded={"mean": g_mean, "cv": expected}, diag_c_unified_mean=v_mean,
+            diag_c_blocksum=v_blk, joint_mean_shift=ms)
+        self.assertLessEqual(out["per_variant"]["cv"]["max_rel_diff"], out["rtol"])
+        with self.assertRaises(zc.ZContractError):      # the add-then-clip ordering is refused
+            za.gate_raw_operand_reconstruction(
+                g_recorded={"mean": g_mean, "cv": wrong}, diag_c_unified_mean=v_mean,
+                diag_c_blocksum=v_blk, joint_mean_shift=ms)
+
+    # ---- ⚠ ROUND-6 BLOCKER 2: the optional operand was never validated ---------------------
+    def test_a_NON_FINITE_stored_cv_diagonal_is_refused_before_any_tolerance(self):
+        """Measured: `inf <= inf` is True, so it was reported CROSS-CHECKED."""
+        s = build_scenario()
+        for bad in (np.inf, -np.inf, np.nan):
+            with self.subTest(value=bad):
+                stored = s["v_uni_cv"].copy()
+                stored[0] = bad
+                with self.assertRaises(zc.ZContractError) as cm:
+                    za.gate_raw_operand_reconstruction(
+                        **raw_operands(s, diag_c_unified_cv=stored))
+                self.assertIn("not finite", str(cm.exception))
+
+    def test_the_stored_diagonal_check_reports_its_OWN_discrimination(self):
+        """It is a different comparison from the g-level one and saturates differently.
+
+        On the saturated input the g-level flag is False while the DIAGONAL comparison could
+        still separate a dropped shift -- conflating the two was blocker 1.
+        """
+        v_mean, v_blk, ms = np.array([1.0]), np.array([100.0]), np.array([1.0])
+        g, _ = za.compute_g(v_mean, v_blk)
+        out = za.gate_raw_operand_reconstruction(
+            g_recorded={"mean": g, "cv": g}, diag_c_unified_mean=v_mean,
+            diag_c_blocksum=v_blk, joint_mean_shift=ms,
+            diag_c_unified_cv=v_mean + ms ** 2)
+        self.assertFalse(out["discriminating"])            # g cannot move
+        self.assertTrue(out["stored_cv_discriminating"])   # the diagonal still can
+
+    def test_stored_cv_discrimination_is_None_when_no_diagonal_was_supplied(self):
+        s = build_scenario()
+        self.assertIsNone(za.gate_raw_operand_reconstruction(
+            **raw_operands(s))["stored_cv_discriminating"])
+
     def test_the_pair_runner_carries_the_gate_under_its_section_name(self):
         s = build_scenario()
         res = za.run_pair_gates(**raw_operands(s, diag_c_unified_cv=s["v_uni_cv"]))

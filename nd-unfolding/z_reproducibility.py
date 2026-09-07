@@ -34,8 +34,14 @@ training, no file written into the checkout):
   * The negative control echoes back as `['z_probe_...']`, confirming on the real build the
     behaviour that made `bool(get(name))` certify everything.
   * `LGBMClassifier(deterministic=True, force_row_wise=True, num_threads=1)` constructs and
-    `get_params()` returns all three, so the knobs are accepted by the estimator and not merely
-    present in a table.
+    `get_params()` returns all three -- **and that establishes NOTHING**, which is the third time
+    this module has been fooled by an echo. Measured with the control I should have run first:
+    `LGBMClassifier(z_bogus_not_a_param_9f2c=42).get_params()` returns `42` for that key just as
+    happily. The sklearn wrapper STORES arbitrary keyword parameters, so `get_params()` is
+    wrapper storage and not native execution of the setting -- the same defect as
+    `_ConfigAliases.get()` echoing an unknown name, one layer up. **Recognition rests on the
+    PARAMETER TABLE observation above and on nothing else**, and the reproducibility caveat is
+    undiminished: that a knob is recognised does not show the run is reproducible.
 
 **THE REVIEWED MODULE ITSELF WAS RUN AGAINST THAT BACKEND**, byte-identical -- sha256
 `76e9867cf384e8775bba4f808ef44343191c0ffba6f29333a1a1ce96c69267ce`, verified on both ends -- with
@@ -360,8 +366,14 @@ MEASURED_BACKEND = {
     "n_alias_free": 70,
     "n_empty_alias_list": 0,          # why the round-3 method found none on the real backend
     "knobs_recognised": {"deterministic": True, "force_row_wise": True, "num_threads": True},
-    "knobs_accepted_by_estimator": {"deterministic": True, "force_row_wise": True,
-                                    "num_threads": 1},
+    # NOT "accepted": `get_params()` echoes an arbitrary kwarg identically (measured with
+    # `z_bogus_not_a_param_9f2c=42`). This records only that the wrapper STORED them.
+    "knobs_stored_by_sklearn_wrapper": {"deterministic": True, "force_row_wise": True,
+                                        "num_threads": 1},
+    "wrapper_storage_is_not_execution": (
+        "LGBMClassifier stores arbitrary keyword parameters, so get_params() is not an "
+        "acceptance test. The negative control z_bogus_not_a_param_9f2c=42 round-trips too. "
+        "Recognition rests on the parameter table, not on this field."),
     "overlay_verdict": "ACCEPTED",
     # ⚠ THE DIGEST IS OF THE MODULE AS RUN, WHICH IS NOT THIS FILE ANY MORE. It resolves to
     # `nd-unfolding/z_reproducibility.py` at commit 8212de00 -- the reviewed, merged revision --
