@@ -11,6 +11,29 @@ Placing these bytes there would arm admission. Joseph ruled on 2026-09-06:
 
 So they are committed here, under a name that carries the label, for evidence and audit only.
 
+## What these bytes can and cannot do, measured after the repair
+
+The sentence above — *"Placing these bytes there would arm admission"* — was true when it was
+written, on the pre-repair meter. **It is no longer true, and the correction is worth having because
+a file named `r5-meter-receipt-*` landing on `main` during a conversation about arming admission is
+exactly what gets misread later.** These two files are inert for three independent reasons, any one
+of which is sufficient:
+
+1. **Path.** They are not at `docs/orchestration/state/r5-meter-receipt.json`, and campaignctl reads
+   only that exact path.
+2. **Schema.** Both are `schema_version` **1**, and the repaired meter refuses that outright.
+   Measured, not inferred — `r5_meter.py check --receipt` on `…-live.json` at the landed meter
+   (`383eec66…`) returns: *"R5 check failed closed: receipt schema_version 1 is refused: it counted
+   at most one execution attempt per job id, so it under-counts every requeued job and is not valid
+   R5 accounting; re-measure with this version of the meter"*.
+3. **Age.** Both carry `measured_at_utc` `2026-09-06T08:54:17Z`, and `campaignctl.R5_MAX_AGE` is
+   24 hours, so they were stale from 2026-09-07 onward and can never become fresh again.
+
+So moving them to the gate path would not arm anything; it would be refused twice over. **Do not
+move them anyway** — the reason to keep them here is that a receipt at the gate path is a claim
+about admission regardless of whether the tooling honours it, and the label belongs where the bytes
+are. What changed is the mechanism, not the instruction.
+
 ## Why they are incomplete
 
 Both receipts report **`0.0016666…` CPU task-hours** against the 500/500 ceilings. That is what the
