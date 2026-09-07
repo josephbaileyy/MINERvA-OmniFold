@@ -50,6 +50,23 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   overturned in one function), and one dated follow-up: the 30-day `sacct` span limit fires at
   `2026-10-02T13:44:27Z`, after the stop date. Produces **no** operational receipt, changes no
   ceiling, moves no gate or count, and does not amend the ruling.
+  **⚠ Its status line — *"open — three things are with the decision owner"* — is STALE in two of
+  three: see the decision record immediately below. Updating that line is its owning lane's act.**
+- [`DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md`](DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md)
+  - **Joseph, 2026-09-07, ratifies two of the three items the finding above left with him.**
+  **(1) The metered unit is the execution attempt:** R5 charges every distinct attempt exactly once,
+  failed and requeued included, with repeated observations and `.batch`/`.extern`/step/array-bracket
+  **representations** not double-counted. The alternative reading — one charge per job id — is
+  **overturned**; it stays isolated in `_sum_charged_seconds`, so it is still cheap in code, but
+  reviving it now needs a **new decision** rather than an edit. **(2) Untracking or ignoring the
+  admission gate path is DECLINED**, so `committed_r5_receipt`'s requirement is unchanged and §8's
+  *"live option"* is retired — arming admission stays possible and stays a deliberate, attributable
+  commit. Records the provenance chain that made the file necessary: an **accurate** peer relay that
+  nothing in the tree corroborated, then direct confirmation. **Authorizes no compute, arms no
+  admission** (a whole-history log over the gate path returns **0** commits — it has never been
+  written on any ref), changes no ceiling, gate, count or grade, and does not touch the 30-day
+  follow-up. Recorded by a lane that did not write the repair and that **declares its own interest**
+  in the record existing.
 
 
 ### PET Gate-6 branch preservation — removal proposed, NOT executed
