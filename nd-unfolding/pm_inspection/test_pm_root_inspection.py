@@ -37,17 +37,33 @@ KINDS = producer.obligation_kinds(BINDINGS)
 OBLIGATIONS = list(KINDS)
 
 
+def payloaded(read_id, status="read", kind=None):
+    """A record carrying the payload fields its read is required to produce.
+
+    These tests exercise CLASSIFICATION logic, so their records must be well-formed the way
+    the producer's are -- otherwise they would only be re-testing the payload rule that
+    test_pm_producer_driven.py already covers against the real producer.
+    """
+    entry = {"read_id": read_id, "status": status,
+             "kind": kind if kind is not None else KINDS[read_id]}
+    if status == "read":
+        for field in validator.payload_fields_for(read_id):
+            entry[field] = "/synthetic/path" if field == "path" else 1
+    return entry
+
+
 def report(reads, attempt_id=ATTEMPT, **extra):
     base = {"attempt_id": attempt_id, "reads": reads,
             "declared_read_ids": list(OBLIGATIONS)}
+    for section in validator.REQUIRED_REPORT_SECTIONS:
+        base[section] = {"synthetic": True}
     base.update(extra)
     return base
 
 
 def full_capture():
-    """An innocent report: every obligation recorded with ITS BOUND KIND."""
-    return report([{"read_id": rid, "status": "read", "kind": KINDS[rid]}
-                   for rid in OBLIGATIONS])
+    """An innocent report: every obligation recorded with its bound kind and payload."""
+    return report([payloaded(rid) for rid in OBLIGATIONS])
 
 
 class InnocentCapturesPass(unittest.TestCase):
@@ -57,8 +73,7 @@ class InnocentCapturesPass(unittest.TestCase):
 
     def test_expected_optional_absence_is_still_COMPLETE(self):
         """hRowIndex5D absent from G is the ANSWER, and must not become a fault."""
-        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
-                 for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
+        reads = [payloaded(rid) for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
         reads.append({"read_id": "G:hRowIndex5D", "status": "absent", "kind": OPTIONAL})
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_COMPLETE)
@@ -73,8 +88,7 @@ class MutationsThatMustNotPass(unittest.TestCase):
 
     def test_producer_cannot_shrink_its_own_obligations(self):
         """A report claiming only one declared read must not thereby become COMPLETE."""
-        doc = report([{"read_id": "G:key_listing", "status": "read",
-                       "kind": KINDS["G:key_listing"]}])
+        doc = report([payloaded("G:key_listing")])
         doc["declared_read_ids"] = ["G:key_listing"]
         code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_INCOMPLETE)
@@ -87,24 +101,21 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertIn("not bound to this attempt", findings["reason"])
 
     def test_unknown_status_is_a_fault(self):
-        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
-                 for rid in OBLIGATIONS]
+        reads = [payloaded(rid) for rid in OBLIGATIONS]
         reads[0] = dict(reads[0], status="probably-fine")
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_ERROR)
         self.assertEqual(findings["records_with_unknown_status"], [OBLIGATIONS[0]])
 
     def test_unknown_kind_is_a_fault(self):
-        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
-                 for rid in OBLIGATIONS]
+        reads = [payloaded(rid) for rid in OBLIGATIONS]
         reads[0] = dict(reads[0], kind="sort-of-required")
         code, _ = validator.classify(report(reads), BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_ERROR)
 
     def test_unreadable_optional_is_a_fault_not_the_declared_absence(self):
         """Listed-but-unreadable is not 'we learned it is absent'."""
-        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
-                 for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
+        reads = [payloaded(rid) for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
         reads.append({"read_id": "G:hRowIndex5D", "status": "unreadable",
                       "kind": OPTIONAL})
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
@@ -114,8 +125,7 @@ class MutationsThatMustNotPass(unittest.TestCase):
 
     def test_a_record_cannot_reclassify_its_own_obligation(self):
         """Relabelling a required id as expected-optional must not buy COMPLETE."""
-        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
-                 for rid in OBLIGATIONS]
+        reads = [payloaded(rid) for rid in OBLIGATIONS]
         reads[0] = {"read_id": OBLIGATIONS[0], "status": "absent", "kind": OPTIONAL}
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_ERROR)
@@ -130,8 +140,7 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertIn("different bindings bytes", findings["reason"])
 
     def test_required_failure_is_ERROR(self):
-        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
-                 for rid in OBLIGATIONS]
+        reads = [payloaded(rid) for rid in OBLIGATIONS]
         reads[0] = dict(reads[0], status="unreadable")
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_ERROR)
@@ -145,8 +154,7 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertTrue(findings["producer_traceback"])
 
     def test_missing_record_is_INCOMPLETE(self):
-        reads = [{"read_id": rid, "status": "read", "kind": KINDS[rid]}
-                 for rid in OBLIGATIONS[:-1]]
+        reads = [payloaded(rid) for rid in OBLIGATIONS[:-1]]
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_INCOMPLETE)
         self.assertEqual(findings["missing_read_records"], [OBLIGATIONS[-1]])

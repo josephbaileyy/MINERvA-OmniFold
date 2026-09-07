@@ -138,3 +138,31 @@ running the real producer against a controllable tree proves the payloads being 
 are the ones the producer actually emits. It also makes `TParameter<double>` behave the way
 the real class does, with the value in `GetVal()` and a decoy string in `GetTitle()`, so the
 typed-read repair is tested rather than asserted.
+
+## Third review round — a capture with no measurements in it
+
+Review stripped every `reads` entry to `read_id`/`status`/`kind`, deleted the top-level `G`,
+`CS`, `CV_central`, `endpoints` and `G_read_onlyness` sections, and the validator still said
+`COMPLETE`. It had been checking that records **existed**, never that they **carried
+anything**.
+
+Two rules close it, and neither is an acceptance threshold — both ask whether the number is
+*there*, never whether it is right:
+
+- **`payload_fields_for()`** names what a `status="read"` record must carry, by what that read
+  measures: `key_count` for a listing, `row_index_sha256`/`reported_mask_hash`/`count`/
+  `measured_nbins`/`content_sha256` for a flat histogram, `nbins`/`first_edge`/`last_edge` for
+  an axis, `sha256_before`/`sha256_after`/`unchanged` for G's read-onlyness, `value` for a
+  scalar. A null in any of them is a fault. An `absent` optional carries nothing and is
+  exempt, because there is nothing for it to carry.
+- **`REQUIRED_REPORT_SECTIONS`** must all be present, so deleting the payload sections cannot
+  leave a well-formed shell.
+
+**Malformed shapes now produce a verdict, not a traceback.** A report that is not an object, a
+`reads` array holding non-records, unreadable bindings, or any unexpected exception inside
+`classify` all end as `ERROR` with a written verdict. An uncaught exception would leave the
+terminal branch unselected — the one outcome the contract has no consequence for.
+
+The hand-written classification tests now build records through the same payload rule, so they
+test classification rather than re-testing the payload rule the producer-driven suite already
+covers.

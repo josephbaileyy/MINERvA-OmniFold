@@ -48,6 +48,56 @@ REQUIRED = "required"
 KNOWN_STATUSES = frozenset({"read", "absent", "unreadable"})
 
 
+#: Top-level sections a capture must carry. Their absence means the payloads are gone even
+#: if every read record survives, which is the shape review reproduced: records stripped to
+#: read_id/status/kind, sections deleted, and the whole thing still reading as COMPLETE.
+REQUIRED_REPORT_SECTIONS = (
+    "G", "CS", "CV_central", "endpoints", "G_read_onlyness", "module_provenance",
+    "root_version",
+)
+
+
+def payload_fields_for(read_id: str) -> tuple[str, ...]:
+    """Fields a ``status="read"`` record MUST carry, by what that read measures.
+
+    A record that says a read happened but carries no measurement is not a capture. This is
+    a completeness rule, not an acceptance threshold: it asks whether the number is THERE,
+    never whether the number is right, expected, or good enough.
+    """
+    if read_id.startswith("input:"):
+        return ("path", "size_bytes", "digest_provenance")
+    if read_id.endswith(":key_listing"):
+        return ("key_count",)
+    if read_id.endswith(":hXSecND_flat"):
+        return ("row_index_sha256", "reported_mask_hash", "count", "measured_nbins",
+                "content_sha256")
+    if read_id == "G:hInflation_g_nbins":
+        return ("nbins",)
+    if read_id == "G:read_onlyness":
+        return ("sha256_before", "sha256_after", "unchanged")
+    if ":hXSec_" in read_id:
+        return ("nbins", "first_edge", "last_edge")
+    if read_id == "G:hRowIndex5D":
+        return ("present",)
+    # Every remaining declared read is a stored scalar.
+    return ("value",)
+
+
+def payload_defects(reads: list, kinds: dict) -> list[str]:
+    """Read ids whose ``read`` record is missing, or nulls, a required payload field."""
+    defects = []
+    for entry in reads:
+        if not isinstance(entry, dict) or entry.get("status") != "read":
+            continue
+        read_id = entry.get("read_id")
+        if read_id not in kinds:
+            continue
+        for field in payload_fields_for(str(read_id)):
+            if entry.get(field) is None:
+                defects.append(f"{read_id}:{field}")
+    return sorted(defects)
+
+
 def refuse_output_inside_a_checkout(out_dir: Path) -> None:
     """Same rule as the producer: absolute, and outside every working tree once resolved."""
     if not out_dir.is_absolute():
@@ -67,6 +117,10 @@ def classify(report: dict, bindings: dict, attempt_id: str,
     """Return (exit_code, findings). Pure, so tests can drive every branch directly."""
     findings: dict[str, object] = {}
 
+    if not isinstance(report, dict):
+        return EXIT_ERROR, {"reason": "report is not a JSON object"}
+    if not isinstance(bindings, dict) or not isinstance(bindings.get("inputs"), list):
+        return EXIT_ERROR, {"reason": "bindings are not a JSON object with inputs"}
     if report.get("attempt_id") != attempt_id:
         return EXIT_ERROR, {
             "reason": "report is not bound to this attempt",
@@ -86,6 +140,14 @@ def classify(report: dict, bindings: dict, attempt_id: str,
     reads = report.get("reads")
     if not isinstance(reads, list):
         return EXIT_ERROR, {"reason": "report has no reads array"}
+    malformed = [index for index, entry in enumerate(reads)
+                 if not isinstance(entry, dict) or "read_id" not in entry]
+    if malformed:
+        return EXIT_ERROR, {"reason": "report has malformed read records",
+                            "malformed_record_indices": malformed[:20]}
+
+    missing_sections = [name for name in REQUIRED_REPORT_SECTIONS
+                        if report.get(name) is None]
 
     # The obligations AND their kinds come from the committed bindings, NEVER from the
     # report. A record's self-declared `kind` is descriptive, never authoritative.
@@ -155,9 +217,13 @@ def classify(report: dict, bindings: dict, attempt_id: str,
     seen = {entry.get("read_id") for entry in reads}
     missing = sorted(set(obligations) - seen)
     findings["missing_read_records"] = missing
+    findings["missing_report_sections"] = missing_sections
+    findings["reads_missing_payload"] = payload_defects(reads, kinds)
 
     faults = (bad_status or bad_kind or kind_disagreements or required_failures
-              or unreadable_optional or report.get("traceback") or report.get("fatal"))
+              or unreadable_optional or missing_sections
+              or findings["reads_missing_payload"]
+              or report.get("traceback") or report.get("fatal"))
     if faults:
         return EXIT_ERROR, findings
     if missing:
@@ -183,10 +249,21 @@ def main(argv: list[str] | None = None) -> int:
         verdict = {"terminal_branch": "ERROR",
                    "reason": f"cannot read report or bindings: {error}"}
         exit_code = EXIT_ERROR
+        findings = None
     else:
-        measured = hashlib.sha256(args.bindings.read_bytes()).hexdigest()
-        exit_code, findings = classify(report, bindings, args.attempt_id,
-                                       bindings_sha256=measured)
+        # A malformed shape must produce a VERDICT, not a traceback: an uncaught exception
+        # here leaves the terminal branch unselected, which is the one outcome the contract
+        # has no consequence for.
+        try:
+            measured = hashlib.sha256(args.bindings.read_bytes()).hexdigest()
+            exit_code, findings = classify(report, bindings, args.attempt_id,
+                                           bindings_sha256=measured)
+        except Exception as error:  # noqa: BLE001
+            verdict = {"terminal_branch": "ERROR",
+                       "reason": f"validator could not classify this report: {error!r}"}
+            exit_code = EXIT_ERROR
+            findings = None
+    if findings is not None:
         verdict = {
             "terminal_branch": {EXIT_COMPLETE: "COMPLETE",
                                 EXIT_INCOMPLETE: "INCOMPLETE"}.get(exit_code, "ERROR"),

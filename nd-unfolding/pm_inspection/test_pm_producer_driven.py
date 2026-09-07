@@ -231,5 +231,76 @@ class ProducerDrivenMutations(unittest.TestCase):
                 tree.run_producer()
 
 
+class PayloadsMustActuallyBeThere(unittest.TestCase):
+    """Review's reproduction: strip the measurements, keep the shape, expect COMPLETE."""
+
+    def test_stripped_records_and_sections_are_not_a_capture(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
+
+            # Exactly the mutation review reproduced.
+            for section in ("G", "CS", "CV_central", "endpoints", "G_read_onlyness"):
+                report.pop(section, None)
+            report["reads"] = [
+                {"read_id": e["read_id"], "status": e["status"], "kind": e["kind"]}
+                for e in report["reads"]]
+
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertEqual(
+                findings["missing_report_sections"],
+                ["G", "CS", "CV_central", "endpoints", "G_read_onlyness"])
+            self.assertTrue(findings["reads_missing_payload"])
+
+    def test_one_nulled_payload_field_is_enough(self):
+        """Not a threshold: the number must be present, never a particular value."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            for entry in report["reads"]:
+                if entry["read_id"] == "G:sqrt_tr_old":
+                    entry["value"] = None
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertIn("G:sqrt_tr_old:value", findings["reads_missing_payload"])
+
+    def test_intact_capture_control_still_passes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_COMPLETE)
+            self.assertEqual(findings["reads_missing_payload"], [])
+            self.assertEqual(findings["missing_report_sections"], [])
+
+    def test_expected_absence_control_needs_no_payload(self):
+        """An absent optional has nothing to carry; it must not be a payload defect."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            absent = [r for r in report["reads"] if r["read_id"] == "G:hRowIndex5D"][0]
+            self.assertEqual(absent["status"], "absent")
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
+
+    def test_malformed_records_are_ERROR_not_an_exception(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            report["reads"] = ["not a record", {"no": "read_id"}]
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertIn("malformed", findings["reason"])
+
+    def test_non_object_report_is_ERROR_not_an_exception(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            tree.run_producer()
+            exit_code, findings = tree.validate(["not", "an", "object"])
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertIn("not a JSON object", findings["reason"])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -30,3 +30,27 @@ OK
 {"exit_code": 0, "records": 38, "missing_read_records": 0}
 {"exit_code": 0, "records": 38, "missing_read_records": 0}
 {"exit_code": 0, "records": 38, "missing_read_records": 0}
+
+=== third repair round, re-run 2026-09-07T23:18:52Z ===
+$ /Users/josephbailey/miniconda3/bin/python3 -m unittest discover -s nd-unfolding/pm_inspection -p 'test_pm_*.py'
+............................................
+----------------------------------------------------------------------
+Ran 44 tests in 0.272s
+
+OK
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 20, "records": 5, "missing_read_records": 33}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
