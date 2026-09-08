@@ -913,18 +913,108 @@ def write_verdict(out_dir: Path, verdict: dict) -> Path:
     return path
 
 
+
+#: The queue hands producer and validator the SAME path, and its parent IS the exclusive claim
+#: run directory. Deriving identity from it means both halves read one queue-owned fact instead
+#: of two argv strings that can disagree, and nothing collides when an item is re-claimed.
+CAMPAIGN_TASK_IDS_FILE_ENV = "MNV_CAMPAIGN_TASK_IDS_FILE"
+#: What campaignctl sets before running the validator: the producer's return code, or the
+#: literal below when it never produced one.
+CAMPAIGN_PRODUCER_RETURNCODE_ENV = "CAMPAIGN_PRODUCER_RETURNCODE"
+PRODUCER_NEVER_FINISHED = "TIMEOUT_OR_NOT_STARTED"
+
+
+class CampaignModeUnsatisfied(Exception):
+    """Required campaign mode could not read what the queue is supposed to supply."""
+
+
+def claim_run_directory(environ: dict) -> Path:
+    """The claim directory, from the queue's own task-ids path."""
+    raw = environ.get(CAMPAIGN_TASK_IDS_FILE_ENV)
+    if not raw:
+        raise CampaignModeUnsatisfied(
+            f"{CAMPAIGN_TASK_IDS_FILE_ENV} is not set; in required campaign mode this "
+            "validator will not guess the claim directory")
+    return Path(raw).parent
+
+
+def producer_status(environ: dict) -> tuple[str, str | None]:
+    """Classify the producer's outcome from the queue's own variable.
+
+    Returns ``("ok", None)`` only for an explicit ``0``. Absence is NOT standalone here: in
+    required mode a missing variable means the queue did not run this validator the way the
+    contract says, and guessing would convert an unrun producer into a clean verdict.
+    """
+    raw = environ.get(CAMPAIGN_PRODUCER_RETURNCODE_ENV)
+    if raw is None:
+        return "absent", (
+            f"{CAMPAIGN_PRODUCER_RETURNCODE_ENV} is not set; required campaign mode refuses "
+            "rather than falling back to standalone")
+    if raw == PRODUCER_NEVER_FINISHED:
+        return "never-finished", (
+            f"producer status is {PRODUCER_NEVER_FINISHED}: it timed out or never started, so "
+            "any report present is not this attempt's completed capture")
+    try:
+        code = int(raw)
+    except ValueError:
+        return "unparseable", f"producer status {raw!r} is neither an integer nor {PRODUCER_NEVER_FINISHED}"
+    if code != 0:
+        return "nonzero", f"producer exited {code}; a nonzero producer cannot yield a COMPLETE capture"
+    return "ok", None
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--bindings", type=Path, required=True)
-    parser.add_argument("--attempt-id", required=True)
-    parser.add_argument("--out", type=Path, required=True,
+    parser.add_argument("--campaign-mode", choices=("required", "standalone"),
+                        default="standalone",
+                        help="required: derive paths and identity from the queue and refuse "
+                             "unless it supplied a producer status. standalone: tests only")
+    parser.add_argument("--report", type=Path)
+    parser.add_argument("--attempt-id")
+    parser.add_argument("--out", type=Path,
                         help="ABSOLUTE run directory, outside every git checkout")
     args = parser.parse_args(argv)
 
-    refuse_output_inside_a_checkout(args.out)
+    if args.campaign_mode == "required":
+        # Everything the queue owns comes from the queue, not from argv.
+        try:
+            run_dir = claim_run_directory(os.environ)
+        except CampaignModeUnsatisfied as error:
+            print(json.dumps({"terminal_branch": "ERROR", "exit_code": EXIT_ERROR,
+                              "campaign_mode": "required", "reason": str(error)}))
+            return EXIT_ERROR
+        out = run_dir
+        report_path = run_dir / "pm-inspection-report.json"
+        attempt_id = run_dir.name
+        state, reason = producer_status(os.environ)
+        if state != "ok":
+            refuse_output_inside_a_checkout(out)
+            verdict = {"terminal_branch": "ERROR", "campaign_mode": "required",
+                       "producer_status": state, "reason": reason,
+                       "validator_exit_code": EXIT_ERROR}
+            try:
+                write_verdict(out, verdict)
+            except (OSError, VerdictNotWritten) as error:
+                print(json.dumps({"terminal_branch": "ERROR", "exit_code": EXIT_ERROR,
+                                  "verdict_not_written": str(error),
+                                  "classification_that_could_not_be_written": "ERROR"}))
+                return EXIT_ERROR
+            print(json.dumps({"terminal_branch": "ERROR", "exit_code": EXIT_ERROR,
+                              "producer_status": state}))
+            return EXIT_ERROR
+    else:
+        missing = [name for name, value in (("--report", args.report),
+                                            ("--attempt-id", args.attempt_id),
+                                            ("--out", args.out)) if value is None]
+        if missing:
+            parser.error("standalone mode requires " + ", ".join(missing))
+        out, report_path, attempt_id = args.out, args.report, args.attempt_id
 
-    exit_code, verdict = build_verdict(args.report, args.bindings, args.attempt_id)
+    args.out = out
+    refuse_output_inside_a_checkout(out)
+
+    exit_code, verdict = build_verdict(report_path, args.bindings, attempt_id)
     verdict["validator_exit_code"] = exit_code
     try:
         write_verdict(args.out, verdict)
