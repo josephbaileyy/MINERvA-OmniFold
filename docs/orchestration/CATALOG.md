@@ -1038,6 +1038,21 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   HEAD**, four write sites existing, which is a live board asserting an untrue impossibility and needs its own route.
   **Counts unchanged:** CAND `1 of 7`, QUOTED `0 of 7`; Gate 2 FAIL; nothing graded, adopted, or discharged.
 
+- **A MERGE-GUARD REFUSAL IS TERMINAL AND NO AUTHORIZER CONVERTS IT INTO A PASS — Joseph's rule, 2026-09-08:**
+  [`RULING-20260908-joseph-a-merge-guard-refusal-is-terminal.md`](RULING-20260908-joseph-a-merge-guard-refusal-is-terminal.md)
+  — a guard's exit is a **fact about the tree**; an authorization is a **permission about an act**; permissions govern
+  acts, not measurements, so an override treats a permission as if it changed a fact. **Terminal for the override,
+  never for the task:** remove the cause and re-run, or fix the gate — reviewable, dated, and it protects the next
+  operator rather than one merge. `merge_guard.sh` has **no override input**, by design. **Report which EXIT, because
+  "the guard refused" is underspecified:** `whose_row.py` exit `1` covers *foreign* (relievable only by that row's named
+  author, or Joseph) and *unattributable* (where a **generated**-file conflict lands) through one code and one summary
+  line at `:850-857`; exits `2` (it did not look) and `3` (its own self-test failed) are authorizable by **nobody**. For
+  a generated-file conflict the file is the symptom and the generators disagreeing is the event — **regenerate from the
+  merged sources and re-run the gate**; `MANIFEST.tsv` carries a row describing its own line and byte count, so it
+  conflicts on every concurrent merge **by construction**. Occasioned by an override at `a1fc54ed` whose *resolution*
+  was verified byte-identical to the generator's output — **right answer, wrong route, and the right route was a
+  three-second command available at the time.**
+
 - **THE `QUOTED`-COLUMN PERMANENCE CLAIM IS `P`-SCOPED, NOT COLUMN-WIDE — the clean-lane ruling the pointer remedy waited on, 2026-09-02:**
   [`RULING-20260902-quoted-column-permanence-is-p-scoped.md`](RULING-20260902-quoted-column-permanence-is-p-scoped.md)
   — `SCOREBOARD:5`'s *"THE QUOTED COLUMN CANNOT MOVE BY REMEDIATION"* binds the QUOTED-side `P` legs of causes 2/3/4
