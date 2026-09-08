@@ -403,6 +403,12 @@ def self_test() -> int:
          load_row_owners(Path(_tmp + ".does-not-exist")), {})
     _os.unlink(_tmp)
 
+    # ---- CLEAN-MERGE STATE, on real merges in throwaway repositories. See
+    # _clean_merge_power_cases for why the newest pass-granting path is power-tested HERE and not
+    # only in test_whose_row_clean_merge.py.
+    for _label, _got, _want in _clean_merge_power_cases():
+        case(_label, _got, _want)
+
     for label, ok, got, _ in checks:
         print(f"  {'ok  ' if ok else 'FAIL'} {label}" + ("" if ok else f"  (got {got!r})"))
     print(f"  {len(blocks)} blocks parsed from FINDINGS.md's header, {len(checks)} checks")
@@ -1043,6 +1049,108 @@ def clean_merge_report(v: CleanMergeVerdict, limit: int = SCOPE_PRINT_LIMIT) -> 
         lines.append(f"    ... and {len(v.scope) - limit} more")
     return lines
 
+
+
+# The identity and config isolation the throwaway fixtures below need. `core.hooksPath` in this
+# repository is an ABSOLUTE path (EnterWorktree normalises it for every lane), and a GLOBAL
+# hooksPath would make a throwaway repo run this campaign's pre-commit hook -- which runs this
+# self-test, which would build another throwaway repo. Identity comes from the environment so no
+# fixture depends on a `git config` write having landed first.
+_FIXTURE_ENV = {
+    "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_SYSTEM": os.devnull, "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_AUTHOR_NAME": "whose_row self-test", "GIT_AUTHOR_EMAIL": "selftest@example.invalid",
+    "GIT_COMMITTER_NAME": "whose_row self-test", "GIT_COMMITTER_EMAIL": "selftest@example.invalid",
+    "GIT_AUTHOR_DATE": "2026-09-08T00:00:00 +0000",
+    "GIT_COMMITTER_DATE": "2026-09-08T00:00:00 +0000",
+}
+
+
+def _fixture_git(repo: Path, *args: str, allow_fail: bool = False) -> str:
+    rc, out, err = _git(list(args), repo, _FIXTURE_ENV)
+    if rc != 0 and not allow_fail:
+        raise SystemExit(f"FATAL: the clean-merge power test could not build its fixture: "
+                         f"`git {' '.join(args)}` returned {rc} in {repo}\n{err}\n"
+                         f"A power test that cannot run must not report PASS, so this is fatal "
+                         f"rather than skipped.")
+    return out
+
+
+def _clean_merge_power_cases() -> list[tuple[str, object, object]]:
+    """[(label, got, want)] for the clean-merge state, on REAL merges in throwaway repositories.
+
+    WHY IT IS IN THE SELF-TEST and not only in test_whose_row_clean_merge.py: merge_guard.sh runs
+    `--self-test` FIRST, so that a broken gate fails the merge instead of passing everything. The
+    clean-merge state is the one that can hand out a 0, so leaving it out of the power test would
+    put the newest pass-granting path outside the check whose whole job is guarding pass-granting
+    paths -- and `lane_matches`' own docstring records that this file's one false pass was caught
+    end-to-end and NOT by this self-test.
+
+    NOTHING HERE MEASURES THE REAL REPOSITORY, deliberately. During a real merge the operator's
+    tree is the object under test; a power test that read it would be reporting the answer instead
+    of testing the instrument.
+
+    Both directions, and the negative is the laundering path: a hand-resolved, staged conflict.
+    """
+    out: list[tuple[str, object, object]] = []
+    tmp = Path(tempfile.mkdtemp(prefix="whose_row-selftest-merges-"))
+    try:
+        # ---- A: a genuine conflict-FREE merge, then two ways of spoiling it --------------------
+        a = tmp / "clean"
+        a.mkdir()
+        _fixture_git(a, "init", "-q", "-b", "main", ".")
+        (a / "base.md").write_text("base\n")
+        _fixture_git(a, "add", "-A"); _fixture_git(a, "commit", "-q", "-m", "base")
+        _fixture_git(a, "checkout", "-q", "-b", "side")
+        (a / "side-only.md").write_text("side\n")
+        _fixture_git(a, "add", "-A"); _fixture_git(a, "commit", "-q", "-m", "side")
+        _fixture_git(a, "checkout", "-q", "main")
+        (a / "main-only.md").write_text("main\n")
+        _fixture_git(a, "add", "-A"); _fixture_git(a, "commit", "-q", "-m", "main")
+        _fixture_git(a, "merge", "--no-ff", "--no-commit", "side")
+        v = verify_clean_merge(a)
+        out.append(("CLEAN MERGE: a real conflict-free merge VERIFIES", (v.ok, v.reason),
+                    (True, "CLEAN-MERGE-VERIFIED")))
+        out.append(("CLEAN MERGE: and its two trees are identical, not merely both present",
+                    v.staged_tree == v.reconstructed_tree and bool(v.staged_tree), True))
+        out.append(("CLEAN MERGE: the scope is MEASURED, not empty",
+                    v.scope, ("side-only.md",)))
+        # STAGED DRIFT on top of that same clean merge -- nothing about the merge changed, but what
+        # would be committed did.
+        (a / "base.md").write_text("base, edited while merging\n")
+        _fixture_git(a, "add", "base.md")
+        out.append(("CLEAN MERGE: one extra staged edit is NOT a verified merge",
+                    verify_clean_merge(a).reason, "TREE-MISMATCH"))
+        _fixture_git(a, "merge", "--abort", allow_fail=True)
+        out.append(("CLEAN MERGE: with no merge in progress there is nothing to verify",
+                    verify_clean_merge(a).reason, "NO-MERGE-IN-PROGRESS"))
+
+        # ---- B: THE LAUNDERING PATH. A real conflict, resolved by hand and STAGED. -------------
+        b = tmp / "laundered"
+        b.mkdir()
+        _fixture_git(b, "init", "-q", "-b", "main", ".")
+        (b / "rows.md").write_text("| BEN-131 | base |\n")
+        _fixture_git(b, "add", "-A"); _fixture_git(b, "commit", "-q", "-m", "base")
+        _fixture_git(b, "checkout", "-q", "-b", "side")
+        (b / "rows.md").write_text("| BEN-131 | SIDE |\n")
+        _fixture_git(b, "add", "-A"); _fixture_git(b, "commit", "-q", "-m", "side")
+        _fixture_git(b, "checkout", "-q", "main")
+        (b / "rows.md").write_text("| BEN-131 | MAIN |\n")
+        _fixture_git(b, "add", "-A"); _fixture_git(b, "commit", "-q", "-m", "main")
+        _fixture_git(b, "merge", "--no-ff", "--no-commit", "side", allow_fail=True)
+        out.append(("LAUNDERING: while unresolved, the cause named is the unmerged index",
+                    verify_clean_merge(b).reason, "UNMERGED-ENTRIES-PRESENT"))
+        (b / "rows.md").write_text("| BEN-131 | HAND-RESOLVED |\n")
+        _fixture_git(b, "add", "rows.md")
+        out.append(("LAUNDERING: git itself now reports NO unmerged files (the premise)",
+                    _fixture_git(b, "diff", "--name-only", "--diff-filter=U"), ""))
+        v = verify_clean_merge(b)
+        out.append(("LAUNDERING: a hand-resolved, STAGED conflict is still REFUSED",
+                    (v.ok, v.reason), (False, "RECONSTRUCTION-CONFLICTED")))
+        out.append(("LAUNDERING: and it is refused while the index is clean, not because it is not",
+                    v.unmerged, 0))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return out
 
 
 def main() -> int:

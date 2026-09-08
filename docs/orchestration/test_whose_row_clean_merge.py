@@ -130,9 +130,11 @@ class Fixture:
         self.git("commit", "-q", "-m", msg)
 
     # -- the gate, end to end ---------------------------------------------------------------------
-    def gate(self, *args) -> subprocess.CompletedProcess:
+    def gate(self, *args, extra_env: dict | None = None) -> subprocess.CompletedProcess:
+        env = _env()
+        env.update(extra_env or {})
         return subprocess.run([sys.executable, str(self.gate_path), *args],
-                              cwd=self.root, capture_output=True, text=True, env=_env())
+                              cwd=self.root, capture_output=True, text=True, env=env)
 
     def guard(self, *args) -> subprocess.CompletedProcess:
         return subprocess.run(["bash", "docs/orchestration/merge_guard.sh", *args],
@@ -149,7 +151,8 @@ class Fixture:
         self.commit("base")
         return self
 
-    def branch_then_merge(self, *, side_edits, main_edits, merge_flags=("--no-ff", "--no-commit")):
+    def branch_then_merge(self, *, side_edits, main_edits, merge_ref="side",
+                          merge_flags=("--no-ff", "--no-commit")):
         """A real two-parent merge, left IN PROGRESS. Returns the merge's exit code."""
         self.git("checkout", "-q", "-b", "side")
         for rel, text in side_edits.items():
@@ -159,7 +162,8 @@ class Fixture:
         for rel, text in main_edits.items():
             self.write(rel, text)
         self.commit("main")
-        return self.git("merge", *merge_flags, "side", check=False).returncode
+        ref = self.git("rev-parse", "side").stdout.strip() if merge_ref == "oid" else merge_ref
+        return self.git("merge", *merge_flags, ref, check=False).returncode
 
 
 def clean_merge(root: Path) -> Fixture:
@@ -172,10 +176,18 @@ def clean_merge(root: Path) -> Fixture:
     return f
 
 
-def foreign_conflict(root: Path) -> Fixture:
-    """Both branches rewrite the SAME line carrying lane C's row: a genuine content conflict."""
+def foreign_conflict(root: Path, by_oid: bool = False) -> Fixture:
+    """Both branches rewrite the SAME line carrying lane C's row: a genuine content conflict.
+
+    `by_oid` merges the raw commit id instead of the branch name. That is not a decoration: git
+    writes the merged-in REF into the `>>>>>>>` marker, so merging by oid makes the working tree's
+    conflict markers byte-identical to the ones `merge-tree` writes -- which is the only way to
+    build the case where the staged tree EQUALS the conflicted reconstruction. See
+    test_conflict_markers_staged_verbatim_is_not_a_pass.
+    """
     f = Fixture(root).base()
     rc = f.branch_then_merge(
+        merge_ref="oid" if by_oid else "side",
         side_edits={ROWS: "| id | note |\n| --- | --- |\n| %s | SIDE wording |\n" % CONTESTED},
         main_edits={ROWS: "| id | note |\n| --- | --- |\n| %s | MAIN wording |\n" % CONTESTED})
     assert rc != 0, "fixture wanted a real conflict, git merged cleanly"
@@ -417,6 +429,67 @@ class CleanMergeGateTests(unittest.TestCase):
         r = f.gate("--conflicts", "--lane", "")
         self.assertEqual(r.returncode, 2)
         self.assertIn("FATAL", r.stderr)
+        self.assertNotIn("CLEAN MERGE VERIFIED", r.stdout)
+
+    def test_conflict_markers_staged_verbatim_is_not_a_pass(self):
+        """`git add` on a file whose conflict markers are still in it -- the classic accident.
+
+        THIS IS THE ONE CASE CONDITION 3 CARRIES ALONE. Merged by raw oid, git's markers are
+        byte-identical to the ones `merge-tree` writes, so the staged tree EQUALS the conflicted
+        reconstruction and the tree comparison is satisfied. Only "the reconstruction exited 1"
+        stands between this index -- conflict markers, on another lane's row -- and a green gate.
+        The test asserts that equality itself, so a later reader can see why the case is here.
+        """
+        f = foreign_conflict(self.new("markers"), by_oid=True)
+        f.git("add", ROWS)
+        self.assertIn("<<<<<<<", f.read(ROWS), "premise: the markers are still in the staged file")
+
+        mh = (f.root / ".git/MERGE_HEAD").read_text().strip()
+        recon = f.git("merge-tree", "--write-tree", "HEAD", mh,
+                      check=False).stdout.splitlines()[0].strip()
+        idx = f.root / "index-copy"
+        shutil.copyfile(f.root / ".git/index", idx)
+        staged = subprocess.run(["git", "write-tree"], cwd=f.root, capture_output=True, text=True,
+                                env={**_env(), "GIT_INDEX_FILE": str(idx)}).stdout.strip()
+        idx.unlink()
+        self.assertEqual(staged, recon,
+                         "premise of this test: the trees MATCH here, so condition 4 is satisfied "
+                         "and only condition 3 can refuse")
+
+        r = f.gate("--conflicts", "--lane", LANE)
+        self.assertNotEqual(r.returncode, 0, r.stdout)
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertIn("RECONSTRUCTION-CONFLICTED", r.stdout)
+
+    def test_a_targeted_enumeration_failure_on_a_clean_merge_is_2(self):
+        """Enumeration fails while every other git call works -- the case a whole missing repository
+        cannot produce, and the one that shows the enumeration guard carrying weight.
+
+        Manufactured with a real subprocess, because the precondition has no in-process form: a
+        `git` shim earlier on PATH refuses `--diff-filter=U` with rc 128 and execs the real git for
+        everything else. Without the guard in main() the gate would reach the clean-merge path -- on
+        this fixture the reconstruction SUCCEEDS -- and hand out a 0 having enumerated nothing.
+        """
+        f = clean_merge(self.new("shimmed"))
+        self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 0,
+                         "premise: this merge verifies when enumeration works")
+        real_git = shutil.which("git")
+        self.assertIsNotNone(real_git)
+        bindir = f.root.parent / "shim-bin"
+        bindir.mkdir(exist_ok=True)
+        (bindir / "git").write_text(
+            "#!/bin/bash\n"
+            "for a in \"$@\"; do\n"
+            "  if [ \"$a\" = '--diff-filter=U' ]; then\n"
+            "    echo 'fatal: manufactured enumeration failure (test shim)' >&2; exit 128\n"
+            "  fi\n"
+            "done\n"
+            f"exec {real_git} \"$@\"\n")
+        (bindir / "git").chmod(0o755)
+        r = f.gate("--conflicts", "--lane", LANE,
+                   extra_env={"PATH": f"{bindir}:{os.environ.get('PATH', '')}"})
+        self.assertEqual(r.returncode, 2, f"{r.stdout}\n{r.stderr}")
+        self.assertIn("could not enumerate unmerged files", r.stdout)
         self.assertNotIn("CLEAN MERGE VERIFIED", r.stdout)
 
     # ---- ISOLATION, measured ---------------------------------------------------------------------
