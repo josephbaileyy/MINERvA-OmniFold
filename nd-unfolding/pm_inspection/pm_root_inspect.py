@@ -29,6 +29,9 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import time
+import subprocess
+import re
 import os
 import platform
 import sys
@@ -621,6 +624,85 @@ def obligation_kinds(bindings: dict) -> dict[str, str]:
             for name in bindings["optional_objects"]["endpoint"]:
                 kinds[f"{label}:{name}"] = OPTIONAL_ABSENCE_IS_AN_ANSWER
     return kinds
+
+
+# --------------------------------------------------------------------------- launch mode
+
+#: What campaignctl sets; its parent IS the exclusive claim run directory.
+CAMPAIGN_TASK_IDS_FILE_ENV = "MNV_CAMPAIGN_TASK_IDS_FILE"
+#: Scheduler task identity, in the exact form r5_meter.py publishes.
+TASK_ID_RE = re.compile(r"^[0-9]+(?:_[0-9]+)?$")
+
+EXIT_SUBMISSION_UNCERTAIN = 30
+
+
+class SubmissionUncertain(Exception):
+    """A job may or may not exist, and the reservation must be retained."""
+
+
+def write_task_ids(path: Path, job_id: str) -> None:
+    """Record the scheduler identity BEFORE the job can spend anything.
+
+    This is the whole reason the launcher submits rather than allocating interactively: the
+    id exists at submission, so a job that then fails in the queue, at node setup, or during
+    interpreter startup is still an id somebody can meter. Writing it later -- from inside
+    the job -- would leave every pre-startup failure unattributable.
+    """
+    if not TASK_ID_RE.fullmatch(job_id):
+        raise SubmissionUncertain(
+            f"scheduler returned {job_id!r}, which is not a task identity; a job may exist "
+            "and cannot be named")
+    path.write_text(json.dumps([job_id]) + "\n")
+
+
+def submit_one_job(wrap_command: str, *, run_dir: Path, task_ids_path: Path,
+                   account: str, qos: str, minutes: int, comment: str) -> str:
+    """Submit exactly one CPU job and return its id, recording it before returning.
+
+    A non-zero ``sbatch`` is NOT proof that no job was created -- an acknowledgement can be
+    lost after the scheduler accepted it -- so a failure here raises SubmissionUncertain and
+    the caller retains the reservation. It never reports zero spend.
+    """
+    argv = [
+        "sbatch", "--parsable", "--comment", comment,
+        "--nodes", "1", "--ntasks", "1", "--constraint", "cpu",
+        "--time", str(minutes), "--account", account, "--qos", qos,
+        "--no-requeue", "--export=ALL",
+        "--output", str(run_dir / "job.log"),
+        "--wrap", wrap_command,
+    ]
+    try:
+        completed = subprocess.run(argv, capture_output=True, text=True, timeout=120)
+    except (OSError, subprocess.SubprocessError) as error:
+        raise SubmissionUncertain(f"sbatch could not be run or did not answer: {error}")
+    if completed.returncode != 0:
+        raise SubmissionUncertain(
+            f"sbatch exited {completed.returncode}: {completed.stderr.strip()[:200]!r}. "
+            "This is NOT evidence that no job was created; the reservation is retained and "
+            f"the job may be recoverable by --comment {comment}")
+    job_id = completed.stdout.strip().split(";")[0]
+    write_task_ids(task_ids_path, job_id)
+    return job_id
+
+
+def wait_for_job(job_id: str, *, deadline: float, poll_seconds: int = 20) -> str | None:
+    """Poll until the job reaches a terminal state, or the deadline passes."""
+    terminal = {"COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "NODE_FAIL",
+                "OUT_OF_MEMORY", "BOOT_FAIL", "DEADLINE", "PREEMPTED"}
+    while time.time() < deadline:
+        probe = subprocess.run(
+            ["sacct", "-j", job_id, "-X", "-n", "-P", "-o", "State"],
+            capture_output=True, text=True, timeout=60)
+        states = [line.split()[0] for line in probe.stdout.splitlines() if line.strip()]
+        if states and all(state in terminal for state in states):
+            return states[0]
+        time.sleep(poll_seconds)
+    return None
+
+
+def cancel_this_job(job_id: str) -> None:
+    """Cancel by ID only -- never by name, never by user."""
+    subprocess.run(["scancel", job_id], capture_output=True, text=True, timeout=60)
 
 
 def declared_read_ids(bindings: dict) -> list[str]:
