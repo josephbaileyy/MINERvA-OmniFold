@@ -62,9 +62,10 @@ separately from conclusions.
 An interactive allocation yields no scheduler identity until it is granted, so an allocation can
 exist and begin spending before anything has recorded what to meter or what to cancel. The guard's
 shim wraps `sbatch`, `srun`, `scancel`, `squeue`, `sacct` and **not `salloc`**, so the interactive
-route also has no guarded spelling. Batch submission returns the job id **at submission**, before
-the job can spend, which is what makes immediate identity recording and scoped cancellation
-possible.
+route also has no guarded spelling. A successful batch submission normally returns the job id
+independently of when the payload starts, which is what makes prompt identity recording
+and scoped cancellation possible. That is **not** a guarantee that the id is in hand
+before the job can spend -- see section 6.
 
 **This does not make the batch route risk-free, and two limits are recorded here rather than
 discovered later.** A non-zero submission does **not** prove no job was created — an acknowledgement
@@ -76,3 +77,31 @@ window is closed.
 ## 5. Status
 
 **AUTHORIZED, NOT EXERCISED.** Nothing has been staged, submitted or executed under this record.
+
+## 6. Correction 2026-09-08 — section 4 claimed a guarantee the scheduler does not give
+
+**The original wording, preserved verbatim so nothing is erased:** "Batch submission returns the
+job id **at submission**, before the job can spend, which is what makes immediate identity
+recording and scoped cancellation possible."
+
+That is false as a guarantee, and it contradicted the limit recorded two paragraphs below it in
+the same section. `sbatch` returning an id and the payload starting are not ordered by anything
+the client controls: the job may start before the client receives the acknowledgement, and
+before the client has persisted it. That acknowledgement-and-write window is real, and it is
+exactly what the launcher's uncertain-submission path exists for.
+
+**What is true, and what the route actually rests on.** A successful submission normally returns
+an id independently of payload startup, so identity can be recorded promptly rather than only
+after a grant. The window between the scheduler accepting a job and the client holding a durable
+record of its id remains open. A submission whose outcome is not known is classified uncertain
+and its **reservation is retained**, never released on an assumption of zero spend. A failure to
+record an id already in hand is written to the run directory rather than dropped.
+
+**Nothing in section 1 changes.** Joseph's approval and its limits stand exactly as quoted. No
+re-authorization is required, because the authorization never depended on the false guarantee --
+only on the batch route having a guarded spelling and an id to record at all.
+
+**Provenance of this correction:** raised by the Codex coordinator on
+`inbox-65039-659f8fe1c2`, and confirmed by me against section 4's own next paragraph before
+amending. The false clause is corrected in place AND quoted above, so a reader of section 4
+alone is not misled and the original record stays recoverable without git.
