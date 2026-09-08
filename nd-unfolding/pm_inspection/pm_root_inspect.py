@@ -91,6 +91,13 @@ def module_provenance(forbidden_root: str) -> dict[str, object]:
     Sourcing the deployed tree's environment is allowed; importing its ANALYSIS CODE is
     not.  Asserting that in prose is worth nothing, so this measures it: every loaded
     module's file, and an explicit list of any that resolve under the forbidden root.
+
+    ``forbidden_root`` must be the root the BINDINGS declare, not the one argv happens to
+    name.  Aimed at argv, a wrong ``--data-root`` both read the wrong tree and re-pointed
+    this measurement away from the tree it exists to watch, so the offender list came back
+    empty for an import from the declared root -- an empty list from a measurement aimed
+    somewhere else says nothing at all.  The validator compares all three: the bindings'
+    root, the report's ``data_root``, and this ``forbidden_root``.
     """
     loaded: dict[str, str] = {}
     for name, module in sorted(sys.modules.items()):
@@ -125,8 +132,11 @@ def read_scalar(handle, name: str):
     Returns
     -------
     tuple
-        ``(value, class_name)``; ``value`` is ``None`` only when the object is null or
-        carries neither a typed value nor a title, which callers must treat as a fault.
+        ``(value, class_name)``; ``value`` is ``None`` when the object is null, carries
+        neither a typed value nor a title, or carries an EMPTY title, all of which callers
+        must treat as a fault.  A typed ``0.0`` is a measurement and is returned; an empty
+        title is not a measurement of anything, and emitting ``status=read, value=""``
+        would be the same hollow record with the null replaced by an empty value.
     """
     obj = handle.Get(name)
     if not obj:
@@ -135,8 +145,28 @@ def read_scalar(handle, name: str):
     if hasattr(obj, "GetVal"):
         return obj.GetVal(), class_name
     if hasattr(obj, "GetTitle"):
-        return obj.GetTitle(), class_name
+        title = obj.GetTitle()
+        return (title if isinstance(title, str) and title.strip() else None), class_name
     return None, class_name
+
+
+def why_this_object_cannot_be_digested(obj, needs: tuple[str, ...]) -> str | None:
+    """Why a listed object cannot be read as a histogram, or ``None`` if it can.
+
+    A listed key whose object will not load, or which loads as something these reads
+    cannot be performed on, is ONE ``unreadable`` record and the capture continues.  Round
+    2 added that check for ``hInflation_g`` and nowhere else, so a listed-but-null
+    ``hXSecND_flat`` or axis histogram was dereferenced straight away: the
+    ``AttributeError`` came out of the middle of the first endpoint and cost 21 of the 38
+    declared reads, and ``retry_policy.requires_new_authorization`` means a re-run is not
+    free.  One bad object must cost one record.
+    """
+    if not obj:
+        return "listed key did not load"
+    missing = [name for name in needs if not hasattr(obj, name)]
+    if missing:
+        return f"loaded object exposes no {', '.join(missing)}"
+    return None
 
 
 def open_root_file(ROOT, path: Path):
@@ -275,10 +305,11 @@ def read_G(ROOT, path: Path, optional_names: list[str], reads: list) -> dict:
             hist = handle.Get("hInflation_g")
             # A listed key whose object will not load is a FAULT. Emitting
             # `status=read, nbins=None` reported a measurement that never happened.
-            if not hist or not hasattr(hist, "GetNbinsX"):
+            unreadable = why_this_object_cannot_be_digested(hist, ("GetNbinsX",))
+            if unreadable:
                 record(reads, "G:hInflation_g_nbins", "unreadable",
                        REQUIRED_ABSENCE_IS_A_FAILURE,
-                       detail="hInflation_g is listed but did not load as a histogram")
+                       detail=f"hInflation_g is listed but {unreadable}")
             else:
                 nbins = int(hist.GetNbinsX())
                 out["hInflation_g_nbins"] = nbins
@@ -296,7 +327,13 @@ def read_G(ROOT, path: Path, optional_names: list[str], reads: list) -> dict:
             if name in present:
                 obj = handle.Get(name)
                 if not obj:
-                    record(reads, read_id, "unreadable", REQUIRED_ABSENCE_IS_A_FAILURE,
+                    # The kind is the one the BINDINGS give this id. Stamping it
+                    # `required` here made the validator additionally accuse an honest
+                    # producer of reclassifying its own obligation; the verdict was right
+                    # and the accusation was not. `status` carries the fault, `kind`
+                    # carries the obligation, and they are different questions.
+                    record(reads, read_id, "unreadable", OPTIONAL_ABSENCE_IS_AN_ANSWER,
+                           present=True,
                            detail="key listed but object could not be read; that is a "
                                   "fault, not the declared absence")
                     out[f"{name}_present"] = None
@@ -306,6 +343,14 @@ def read_G(ROOT, path: Path, optional_names: list[str], reads: list) -> dict:
                 contents = row_index_contents(obj)
                 out[f"{name}_present"] = True
                 out[name] = contents
+                if not contents.get("contents_readable"):
+                    # It loaded and could not be digested. That is the same fault as a
+                    # key that did not load: we did not learn what the row index holds,
+                    # which is not the declared absence and is not a measurement of the
+                    # one object PM-4's premise turns on.
+                    record(reads, read_id, "unreadable", OPTIONAL_ABSENCE_IS_AN_ANSWER,
+                           present=True, **contents)
+                    continue
                 record(reads, read_id, "read", OPTIONAL_ABSENCE_IS_AN_ANSWER,
                        present=True, **contents)
             else:
@@ -429,6 +474,13 @@ def read_flat_source(ROOT, path: Path, read_prefix: str, nbins: int, reads: list
                    detail="declared required object absent from this file")
             return out
         hist = handle.Get("hXSecND_flat")
+        unreadable = why_this_object_cannot_be_digested(
+            hist, ("GetNbinsX", "GetBinContent"))
+        if unreadable:
+            record(reads, f"{read_prefix}:hXSecND_flat", "unreadable",
+                   REQUIRED_ABSENCE_IS_A_FAILURE,
+                   detail=f"hXSecND_flat is listed but {unreadable}")
+            return out
         digest = flat_digest(hist, nbins)
         out["hXSecND_flat"] = digest
         record(reads, f"{read_prefix}:hXSecND_flat", "read",
@@ -451,10 +503,18 @@ def read_endpoint(ROOT, path: Path, label: str, nbins: int, optional_names: list
                key_count=len(listing))
 
         if "hXSecND_flat" in present:
-            digest = flat_digest(handle.Get("hXSecND_flat"), nbins)
-            out["hXSecND_flat"] = digest
-            record(reads, f"{label}:hXSecND_flat", "read",
-                   REQUIRED_ABSENCE_IS_A_FAILURE, **digest)
+            hist = handle.Get("hXSecND_flat")
+            unreadable = why_this_object_cannot_be_digested(
+                hist, ("GetNbinsX", "GetBinContent"))
+            if unreadable:
+                record(reads, f"{label}:hXSecND_flat", "unreadable",
+                       REQUIRED_ABSENCE_IS_A_FAILURE,
+                       detail=f"hXSecND_flat is listed but {unreadable}")
+            else:
+                digest = flat_digest(hist, nbins)
+                out["hXSecND_flat"] = digest
+                record(reads, f"{label}:hXSecND_flat", "read",
+                       REQUIRED_ABSENCE_IS_A_FAILURE, **digest)
         else:
             record(reads, f"{label}:hXSecND_flat", "absent",
                    REQUIRED_ABSENCE_IS_A_FAILURE,
@@ -468,6 +528,12 @@ def read_endpoint(ROOT, path: Path, label: str, nbins: int, optional_names: list
                        detail="declared axis histogram absent")
                 continue
             hist = handle.Get(name)
+            unreadable = why_this_object_cannot_be_digested(
+                hist, ("GetNbinsX", "GetBinLowEdge", "GetBinWidth"))
+            if unreadable:
+                record(reads, read_id, "unreadable", REQUIRED_ABSENCE_IS_A_FAILURE,
+                       detail=f"{name} is listed but {unreadable}")
+                continue
             count = int(hist.GetNbinsX())
             edges = [float(hist.GetBinLowEdge(index + 1)) for index in range(count)]
             edges.append(float(hist.GetBinLowEdge(count) + hist.GetBinWidth(count)))
@@ -498,8 +564,12 @@ def read_endpoint(ROOT, path: Path, label: str, nbins: int, optional_names: list
             if name in present:
                 value, class_name = read_scalar(handle, name)
                 if value is None:
-                    record(reads, read_id, "unreadable", REQUIRED_ABSENCE_IS_A_FAILURE,
-                           root_class=class_name,
+                    # `status` carries the fault; `kind` carries the obligation the
+                    # BINDINGS give this id. Stamping an optional object `required` here
+                    # made the validator accuse an honest producer of reclassifying its
+                    # own obligation on top of a verdict that was already correct.
+                    record(reads, read_id, "unreadable", OPTIONAL_ABSENCE_IS_AN_ANSWER,
+                           present=True, root_class=class_name,
                            detail="key listed but unreadable; not the declared absence")
                     continue
                 out[name] = value
@@ -522,6 +592,11 @@ def obligation_kinds(bindings: dict) -> dict[str, str]:
     is an answer or a fault is the committed bindings, and only these ids are optional:
     the conditional reads the predeclaration writes as "only if the listing shows it" and
     "when present".
+
+    THE VALIDATOR NO LONGER CALLS THIS.  It used to, which meant the terminal validator
+    derived its obligations from the producer's own code; a mutation here moved both halves
+    together and the skew was invisible.  It now keeps its own table and the tests hold
+    both to a third restatement of the predeclaration.
     """
     kinds: dict[str, str] = {}
     for entry in bindings["inputs"]:
@@ -604,7 +679,8 @@ def main(argv: list[str] | None = None) -> int:
         ROOT.gROOT.SetBatch(True)
         ROOT.gErrorIgnoreLevel = ROOT.kWarning
         report["root_version"] = ROOT.gROOT.GetVersion()
-        report["module_provenance"] = module_provenance(str(args.data_root))
+        # Aimed at the DECLARED root, never at argv: see module_provenance's docstring.
+        report["module_provenance"] = module_provenance(str(bindings["data_root"]))
 
         resolved = bind_inputs(bindings, args.data_root, reads)
         missing = [entry["id"] for entry in bindings["inputs"]

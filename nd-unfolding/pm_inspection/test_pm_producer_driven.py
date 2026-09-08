@@ -14,6 +14,7 @@ import hashlib
 import json
 import sys
 import tempfile
+import types
 import unittest
 from pathlib import Path
 
@@ -31,6 +32,39 @@ ATTEMPT = "producer-driven-attempt"
 def flat_hist(nbins=NBINS):
     # Includes a negative bin, so `> 0` and `!= 0` cannot agree.
     return fake_root.FakeHist([1.0, 0.0, -2.0, 3.0, 0.0, 4.0][:nbins])
+
+
+def g_objects(**overrides):
+    """G's declared contents. `hRowIndex5D` is absent, which is the declared answer."""
+    objects = {
+        "combined_source": fake_root.FakeNamed("cs.root"),
+        "centering_convention": fake_root.FakeNamed("mean"),
+        "sqrt_tr_old": fake_root.FakeParameter(1.5),
+        "sqrt_tr_new": fake_root.FakeParameter(1.25),
+        "hInflation_g": fake_root.FakeHist([1.0] * 4),
+    }
+    objects.update(overrides)
+    return objects
+
+
+class FileThatRewritesItsOwnBytes(fake_root.FakeFile):
+    """A file whose key listing mutates the file on disk.
+
+    G's read-onlyness is MEASURED by a before/after digest precisely because nothing else
+    would catch a read that writes. A fixture that cannot make G change cannot tell a
+    measured read-onlyness from a hardcoded one, and review measured exactly that:
+    hardcoding `unchanged = True` in the producer left all 44 tests green. This is the
+    substrate that makes the mutation detectable.
+    """
+
+    def __init__(self, objects, path):
+        super().__init__(objects)
+        self._path = Path(path)
+
+    def GetListOfKeys(self):
+        with self._path.open("ab") as handle:
+            handle.write(b"!")
+        return super().GetListOfKeys()
 
 
 def endpoint_objects(with_optional=False, missing=(), null=()):
@@ -54,11 +88,14 @@ def endpoint_objects(with_optional=False, missing=(), null=()):
 class Tree:
     """A temporary data root, matching bindings, and a fake ROOT wired to both."""
 
-    def __init__(self, tmp, g_objects=None, ep_overrides=None):
+    def __init__(self, tmp, g_objects=None, cv_objects=None, ep_overrides=None,
+                 g_file_factory=None, data_root_binding=None, grid_nbins=NBINS):
         self.root = Path(tmp) / "data"
         self.root.mkdir()
         self.bands = ["BandA"]
         self.files = {}
+        self.paths = {}
+        self.objects = {}
         inputs = []
 
         def add(input_id, relpath, payload, objects):
@@ -76,18 +113,16 @@ class Tree:
             })
             if input_id == "CS":
                 inputs[-1]["digest_limitation"] = "NOT re-hashed in the fixture either"
+            self.paths[input_id] = path
+            self.objects[input_id] = objects
             self.files[str(path)] = fake_root.FakeFile(objects)
 
-        add("G", "g.root", b"G-bytes", g_objects if g_objects is not None else {
-            "combined_source": fake_root.FakeNamed("cs.root"),
-            "centering_convention": fake_root.FakeNamed("mean"),
-            "sqrt_tr_old": fake_root.FakeParameter(1.5),
-            "sqrt_tr_new": fake_root.FakeParameter(1.25),
-            "hInflation_g": fake_root.FakeHist([1.0] * 4),
-        })
+        add("G", "g.root", b"G-bytes",
+            g_objects if g_objects is not None else globals()["g_objects"]())
         add("CS", "cs.root", b"CS-bytes",
             {"hCov_universe5d_BandA": None, "hCov_universe5d_total": None})
-        add("CV_central", "cv.root", b"CV-bytes", {"hXSecND_flat": flat_hist()})
+        add("CV_central", "cv.root", b"CV-bytes",
+            cv_objects if cv_objects is not None else {"hXSecND_flat": flat_hist()})
         for band in self.bands:
             for endpoint in (0, 1):
                 key = f"EP_{band}_{endpoint}"
@@ -95,9 +130,15 @@ class Tree:
                 add(key, f"{key}.root", f"{key}-bytes".encode(),
                     override if override is not None else endpoint_objects())
 
+        if g_file_factory is not None:
+            self.files[str(self.paths["G"])] = g_file_factory(
+                self.objects["G"], self.paths["G"])
+
         self.bindings = {
             "schema_version": 1, "measured_at_utc": "test",
-            "data_root": str(self.root), "bands": self.bands, "grid_nbins": NBINS,
+            "data_root": data_root_binding if data_root_binding is not None
+            else str(self.root),
+            "bands": self.bands, "grid_nbins": grid_nbins,
             "what_these_digests_are": "synthetic",
             "what_these_digests_are_NOT": "not evidence of anything real",
             "optional_objects": {"G": ["hRowIndex5D"], "endpoint": ["estimator_seed"]},
@@ -121,6 +162,13 @@ class Tree:
     def validate(self, report, attempt=ATTEMPT):
         digest = hashlib.sha256(self.bindings_path.read_bytes()).hexdigest()
         return validator.classify(report, self.bindings, attempt, bindings_sha256=digest)
+
+
+def one(report, read_id):
+    """The single record for a read id. Two records for one read is itself a defect."""
+    matches = [entry for entry in report["reads"] if entry["read_id"] == read_id]
+    assert len(matches) == 1, f"{read_id}: {len(matches)} records, expected 1"
+    return matches[0]
 
 
 class ProducerDrivenHappyPath(unittest.TestCase):
@@ -174,16 +222,9 @@ class ProducerDrivenMutations(unittest.TestCase):
 
     def test_listed_but_null_hInflation_g_is_ERROR(self):
         with tempfile.TemporaryDirectory() as tmp:
-            tree = Tree(tmp, g_objects={
-                "combined_source": fake_root.FakeNamed("cs.root"),
-                "centering_convention": fake_root.FakeNamed("mean"),
-                "sqrt_tr_old": fake_root.FakeParameter(1.5),
-                "sqrt_tr_new": fake_root.FakeParameter(1.25),
-                "hInflation_g": None,
-            })
+            tree = Tree(tmp, g_objects=g_objects(hInflation_g=None))
             _, report = tree.run_producer()
-            entry = [r for r in report["reads"]
-                     if r["read_id"] == "G:hInflation_g_nbins"][0]
+            entry = one(report, "G:hInflation_g_nbins")
             self.assertEqual(entry["status"], "unreadable")
             self.assertEqual(tree.validate(report)[0], validator.EXIT_ERROR)
 
@@ -222,6 +263,13 @@ class ProducerDrivenMutations(unittest.TestCase):
             code, report = tree.run_producer()
             self.assertEqual(code, producer.EXIT_ERROR)
             self.assertIn("CV_central", report["fatal"])
+            # And the TERMINAL object has to agree: asserting on the producer's own exit
+            # code stops one layer nearer to hand than the classifier that selects the
+            # contract's branch.
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertIn("CV_central", findings["producer_fatal"])
+            self.assertIn("input:CV_central", findings["required_read_failures"])
 
     def test_attempt_id_cannot_be_reused_over_an_existing_report(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -300,6 +348,271 @@ class PayloadsMustActuallyBeThere(unittest.TestCase):
             exit_code, findings = tree.validate(["not", "an", "object"])
             self.assertEqual(exit_code, validator.EXIT_ERROR)
             self.assertIn("not a JSON object", findings["reason"])
+
+
+class OneBadObjectCostsOneRecord(unittest.TestCase):
+    """A listed-but-null object used to abort the capture from inside the first endpoint.
+
+    Review measured it: `AttributeError: 'NoneType' object has no attribute 'GetNbinsX'`,
+    17 records emitted, 21 of the 38 declared reads never attempted, and the second
+    endpoint never opened. The verdict class was right and the cost was not: with
+    retry_policy.requires_new_authorization, a re-run is not free, so a fault has to be
+    recorded and the remaining declared reads still performed.
+    """
+
+    def _assert_one_unreadable_and_the_rest_read(self, tree, read_id):
+        code, report = tree.run_producer()
+        self.assertIsNone(report.get("traceback"))
+        self.assertEqual(code, producer.EXIT_COMPLETE)   # ran to the end
+        self.assertEqual(one(report, read_id)["status"], "unreadable")
+        exit_code, findings = tree.validate(report)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertEqual(findings["required_read_failures"], [read_id])
+        self.assertEqual(findings["missing_read_records"], [])
+        return report
+
+    def test_a_null_flat_histogram_costs_one_record(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, ep_overrides={
+                "EP_BandA_0": endpoint_objects(null=("hXSecND_flat",))})
+            report = self._assert_one_unreadable_and_the_rest_read(
+                tree, "EP_BandA_0:hXSecND_flat")
+            # The endpoint that used to be lost entirely.
+            self.assertEqual(one(report, "EP_BandA_1:hXSecND_flat")["status"], "read")
+            self.assertEqual(one(report, "EP_BandA_0:hXSec_W")["status"], "read")
+
+    def test_a_null_axis_histogram_costs_one_record(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, ep_overrides={
+                "EP_BandA_0": endpoint_objects(null=("hXSec_pt",))})
+            report = self._assert_one_unreadable_and_the_rest_read(
+                tree, "EP_BandA_0:hXSec_pt")
+            self.assertEqual(one(report, "EP_BandA_0:hXSec_pz")["status"], "read")
+
+    def test_an_object_that_loads_as_the_wrong_thing_costs_one_record(self):
+        """Not null, but not something these reads can be performed on either."""
+        with tempfile.TemporaryDirectory() as tmp:
+            objects = endpoint_objects()
+            objects["hXSecND_flat"] = fake_root.FakeNamed("I am not a histogram")
+            tree = Tree(tmp, ep_overrides={"EP_BandA_0": objects})
+            report = self._assert_one_unreadable_and_the_rest_read(
+                tree, "EP_BandA_0:hXSecND_flat")
+            self.assertIn("exposes no", one(report, "EP_BandA_0:hXSecND_flat")["detail"])
+
+    def test_a_null_central_flat_histogram_costs_one_record(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, cv_objects={"hXSecND_flat": None})
+            report = self._assert_one_unreadable_and_the_rest_read(
+                tree, "CV_central:hXSecND_flat")
+            self.assertEqual(one(report, "EP_BandA_0:hXSecND_flat")["status"], "read")
+
+
+class ReadOnlynessOfGIsMeasuredNotAsserted(unittest.TestCase):
+    """PREDECLARATION section 4 measures G's read-onlyness with a before/after digest, and
+    the authorization forbids modifying source artifacts. Nothing tested the measurement:
+    hardcoding `unchanged = True` in the producer left all 44 tests green."""
+
+    def test_a_read_that_rewrites_G_is_caught_by_the_before_after_digest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, g_file_factory=FileThatRewritesItsOwnBytes)
+            _, report = tree.run_producer()
+            entry = one(report, "G:read_onlyness")
+            self.assertNotEqual(entry["sha256_before"], entry["sha256_after"])
+            self.assertFalse(entry["unchanged"])
+            self.assertFalse(report["G_read_onlyness"]["unchanged"])
+            self.assertEqual(entry["status"], "unreadable")
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertTrue(findings["source_artifact_changed_during_the_inspection"])
+
+    def test_a_read_that_does_not_write_is_measured_as_unchanged(self):
+        """The control. A guard that fires on every correct run is not a guard."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            entry = one(report, "G:read_onlyness")
+            self.assertEqual(entry["sha256_before"], entry["sha256_after"])
+            self.assertTrue(entry["unchanged"])
+            self.assertEqual(entry["status"], "read")
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_COMPLETE)
+            self.assertFalse(findings["source_artifact_changed_during_the_inspection"])
+
+
+class TheMeasuredNumbersAreMeasured(unittest.TestCase):
+    """Each of these is a number the producer could have restated instead of measuring.
+    The validator faults none of their VALUES -- that would be an acceptance threshold --
+    so only a producer-driven test can hold the producer to measuring them."""
+
+    def test_a_declared_grid_size_is_not_reported_as_a_measured_one(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, cv_objects={"hXSecND_flat": flat_hist(nbins=4)})
+            _, report = tree.run_producer()
+            entry = one(report, "CV_central:hXSecND_flat")
+            self.assertEqual(entry["measured_nbins"], 4)      # what it IS
+            self.assertEqual(entry["declared_nbins"], NBINS)  # what the bindings SAY
+            self.assertFalse(entry["nbins_conforms"])
+            # A measured grid non-conformance is a MEASUREMENT. PM-3's grid arm exists to
+            # detect it; classifying it as a capture fault would be inventing a criterion.
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
+
+    def test_a_non_finite_bin_is_measured_and_is_not_a_capture_fault(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, cv_objects={
+                "hXSecND_flat": fake_root.FakeHist([1.0, float("inf"), 2.0])})
+            _, report = tree.run_producer()
+            entry = one(report, "CV_central:hXSecND_flat")
+            self.assertFalse(entry["all_finite"])
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
+
+    def test_the_last_axis_edge_is_the_upper_edge_of_the_last_bin(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            entry = one(report, "EP_BandA_0:hXSec_pt")
+            self.assertEqual(entry["nbins"], 3)
+            self.assertEqual(entry["first_edge"], 0.0)
+            # Low edges 0,1,2 and a final bin of width 1. The last edge is the UPPER edge
+            # of the last bin, so an axis of n bins has n+1 edges; dropping the final one
+            # silently reports the last LOW edge as the range's end.
+            self.assertEqual(entry["last_edge"], 3.0)
+            self.assertEqual(report["endpoints"]["EP_BandA_0"]["hXSec_pt"]["edges"],
+                             [0.0, 1.0, 2.0, 3.0])
+
+    def test_a_present_row_index_is_captured_by_its_contents(self):
+        """The present branch of the one read PM-4's premise turns on. A count is not a
+        measurement of a row index: two different indices share a length."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, g_objects=g_objects(
+                hRowIndex5D=fake_root.FakeHist([0.0, 3.0, 5.0])))
+            _, report = tree.run_producer()
+            entry = one(report, "G:hRowIndex5D")
+            self.assertEqual(entry["status"], "read")
+            self.assertTrue(entry["contents_readable"])
+            self.assertEqual(entry["count"], 3)
+            import numpy as np
+            raw = np.array([0, 3, 5], dtype=np.int64).tobytes()
+            self.assertEqual(entry["row_index_sha256"],
+                             hashlib.sha256(raw).hexdigest())
+            self.assertEqual(entry["reported_mask_hash"],
+                             hashlib.sha256(raw + b"|C").hexdigest())
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
+
+
+class TheProducerIsNotAccusedOfWhatItDidNotDo(unittest.TestCase):
+    """`status` carries the fault; `kind` carries the obligation. Stamping an unreadable
+    OPTIONAL object `required` made the validator additionally report it as the producer
+    reclassifying its own obligation, against a producer that did nothing wrong."""
+
+    def test_an_unreadable_optional_keeps_the_kind_the_bindings_give_it(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, ep_overrides={"EP_BandA_0": endpoint_objects(
+                with_optional=True, null=("estimator_seed",))})
+            _, report = tree.run_producer()
+            entry = one(report, "EP_BandA_0:estimator_seed")
+            self.assertEqual(entry["status"], "unreadable")
+            self.assertEqual(entry["kind"], validator.OPTIONAL)
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertEqual(findings["unreadable_optional_objects"],
+                             ["EP_BandA_0:estimator_seed"])
+            self.assertEqual(findings["records_whose_kind_contradicts_bindings"], [])
+
+    def test_a_row_index_that_loads_but_cannot_be_digested_is_a_fault(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, g_objects=g_objects(
+                hRowIndex5D=fake_root.FakeNamed("I am not a histogram")))
+            _, report = tree.run_producer()
+            entry = one(report, "G:hRowIndex5D")
+            self.assertEqual(entry["status"], "unreadable")
+            self.assertEqual(entry["kind"], validator.OPTIONAL)
+            self.assertFalse(entry["contents_readable"])
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertEqual(findings["unreadable_optional_objects"], ["G:hRowIndex5D"])
+            # Not the declared absence: we did not learn whether the row index is there.
+            self.assertNotIn("G:hRowIndex5D", findings["expected_optional_absences"])
+            self.assertEqual(findings["records_whose_kind_contradicts_bindings"], [])
+
+    def test_an_unreadable_optional_G_object_keeps_its_kind_too(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, g_objects=g_objects(hRowIndex5D=None))
+            _, report = tree.run_producer()
+            entry = one(report, "G:hRowIndex5D")
+            self.assertEqual(entry["status"], "unreadable")
+            self.assertEqual(entry["kind"], validator.OPTIONAL)
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertEqual(findings["records_whose_kind_contradicts_bindings"], [])
+
+    def test_an_empty_title_is_not_a_stored_value(self):
+        """The round-4 class at the producer: `status=read, value=""` is the same hollow
+        record with the null replaced by an empty value."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, g_objects=g_objects(
+                combined_source=fake_root.FakeNamed("")))
+            _, report = tree.run_producer()
+            entry = one(report, "G:combined_source")
+            self.assertEqual(entry["status"], "unreadable")
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertIn("G:combined_source", findings["required_read_failures"])
+
+    def test_a_typed_zero_is_still_a_value(self):
+        """The control for the rule above: 0.0 from GetVal is a measurement."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, g_objects=g_objects(
+                sqrt_tr_old=fake_root.FakeParameter(0.0)))
+            _, report = tree.run_producer()
+            entry = one(report, "G:sqrt_tr_old")
+            self.assertEqual(entry["status"], "read")
+            self.assertEqual(entry["value"], 0.0)
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
+
+
+class TheCaptureIsBoundToTheDeclaredTree(unittest.TestCase):
+    """bindings["data_root"] was committed and read by nobody: the producer took the root
+    from argv and aimed the contamination measurement at that same argv value."""
+
+    def test_the_contamination_measurement_is_aimed_at_the_declared_root(self):
+        declared = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, data_root_binding=declared)
+            _, report = tree.run_producer()
+            self.assertEqual(report["module_provenance"]["forbidden_root"], declared)
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertTrue(findings["data_root_disagrees_with_bindings"])
+            # Aimed correctly even though argv pointed elsewhere, which is the half of
+            # the defect that silently disarmed the measurement.
+            self.assertFalse(
+                findings["contamination_measurement_aimed_at_the_wrong_tree"])
+
+    def test_a_module_loaded_from_the_bound_tree_is_measured_as_an_offender(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            stand_in = types.ModuleType("p4_lib_stand_in")
+            stand_in.__file__ = str(tree.root / "nd-unfolding" / "p4_lib.py")
+            sys.modules["p4_lib_stand_in"] = stand_in
+            try:
+                _, report = tree.run_producer()
+            finally:
+                sys.modules.pop("p4_lib_stand_in", None)
+            self.assertEqual(
+                report["module_provenance"]["modules_loaded_from_forbidden_root"],
+                ["p4_lib_stand_in"])
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertEqual(findings["modules_loaded_from_the_forbidden_root"],
+                             ["p4_lib_stand_in"])
+
+    def test_the_control_measures_no_offenders(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            self.assertEqual(
+                report["module_provenance"]["modules_loaded_from_forbidden_root"], [])
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
 
 
 if __name__ == "__main__":
