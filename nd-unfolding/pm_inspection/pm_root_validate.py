@@ -489,6 +489,69 @@ def classify(report: dict, bindings: dict, attempt_id: str,
     return EXIT_COMPLETE, findings
 
 
+#: The one artifact this half of the contract preserves.
+VERDICT_FILENAME = "pm-inspection-verdict.json"
+
+
+class VerdictNotWritten(Exception):
+    """The classification happened; its artifact did not."""
+
+
+def build_verdict(report_path: Path, bindings_path: Path,
+                  attempt_id: str) -> tuple[int, dict]:
+    """Classify, returning a verdict for every input shape including the broken ones.
+
+    A malformed shape must produce a VERDICT, not a traceback: an uncaught exception
+    leaves the terminal branch unselected, which is the one outcome the contract has no
+    consequence for.
+    """
+    try:
+        report = json.loads(report_path.read_text())
+        bindings = json.loads(bindings_path.read_text())
+    except (OSError, ValueError) as error:
+        return EXIT_ERROR, {"terminal_branch": "ERROR",
+                            "reason": f"cannot read report or bindings: {error}"}
+    try:
+        measured = hashlib.sha256(bindings_path.read_bytes()).hexdigest()
+        exit_code, findings = classify(report, bindings, attempt_id,
+                                       bindings_sha256=measured)
+    except Exception as error:  # noqa: BLE001
+        return EXIT_ERROR, {
+            "terminal_branch": "ERROR",
+            "reason": f"validator could not classify this report: {error!r}"}
+    return exit_code, {
+        "terminal_branch": {EXIT_COMPLETE: "COMPLETE",
+                            EXIT_INCOMPLETE: "INCOMPLETE"}.get(exit_code, "ERROR"),
+        "attempt_id": attempt_id,
+        "findings": findings,
+        "classifies": "measurement capture only",
+        "does_not_classify": (
+            "scientific adequacy, discharge of PM-1/PM-3/PM-4/PM-5, adoption, "
+            "gate movement, or blanket citability"
+        ),
+    }
+
+
+def write_verdict(out_dir: Path, verdict: dict) -> Path:
+    """Write the verdict, and NEVER overwrite one.
+
+    ``preservation_behavior.mode`` is ``preserve-first`` and the producer already refuses
+    to overwrite its report. A verdict silently replaced is a terminal classification
+    nobody can audit afterwards: review dropped one record from the report, re-ran with
+    the same argv, and the COMPLETE verdict became an INCOMPLETE with no trace of the
+    first. Refusing keeps the first artifact, and the refusal is still an ERROR return
+    rather than a traceback, so a branch is selected either way.
+    """
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / VERDICT_FILENAME
+    if path.exists():
+        raise VerdictNotWritten(
+            f"{path} already exists and a verdict is never overwritten; a second "
+            "classification needs a fresh run directory and a fresh --attempt-id")
+    path.write_text(json.dumps(verdict, indent=2, sort_keys=True) + "\n")
+    return path
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--report", type=Path, required=True)
@@ -500,43 +563,22 @@ def main(argv: list[str] | None = None) -> int:
 
     refuse_output_inside_a_checkout(args.out)
 
-    try:
-        report = json.loads(args.report.read_text())
-        bindings = json.loads(args.bindings.read_text())
-    except (OSError, ValueError) as error:
-        verdict = {"terminal_branch": "ERROR",
-                   "reason": f"cannot read report or bindings: {error}"}
-        exit_code = EXIT_ERROR
-        findings = None
-    else:
-        # A malformed shape must produce a VERDICT, not a traceback: an uncaught exception
-        # here leaves the terminal branch unselected, which is the one outcome the contract
-        # has no consequence for.
-        try:
-            measured = hashlib.sha256(args.bindings.read_bytes()).hexdigest()
-            exit_code, findings = classify(report, bindings, args.attempt_id,
-                                           bindings_sha256=measured)
-        except Exception as error:  # noqa: BLE001
-            verdict = {"terminal_branch": "ERROR",
-                       "reason": f"validator could not classify this report: {error!r}"}
-            exit_code = EXIT_ERROR
-            findings = None
-    if findings is not None:
-        verdict = {
-            "terminal_branch": {EXIT_COMPLETE: "COMPLETE",
-                                EXIT_INCOMPLETE: "INCOMPLETE"}.get(exit_code, "ERROR"),
-            "attempt_id": args.attempt_id,
-            "findings": findings,
-            "classifies": "measurement capture only",
-            "does_not_classify": (
-                "scientific adequacy, discharge of PM-1/PM-3/PM-4/PM-5, adoption, "
-                "gate movement, or blanket citability"
-            ),
-        }
+    exit_code, verdict = build_verdict(args.report, args.bindings, args.attempt_id)
     verdict["validator_exit_code"] = exit_code
-    args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "pm-inspection-verdict.json").write_text(
-        json.dumps(verdict, indent=2, sort_keys=True) + "\n")
+    try:
+        write_verdict(args.out, verdict)
+    except (OSError, VerdictNotWritten) as error:
+        # The write path used to sit outside every guard, so an --out that was a regular
+        # file, a verdict path that was a directory, and an unwritable --out each ended in
+        # a traceback with no artifact at all. The classification is reported here and the
+        # return is ERROR: a validation whose verdict cannot be recorded is not one.
+        print(json.dumps({
+            "terminal_branch": "ERROR",
+            "exit_code": EXIT_ERROR,
+            "verdict_not_written": str(error),
+            "classification_that_could_not_be_written": verdict["terminal_branch"],
+        }))
+        return EXIT_ERROR
     print(json.dumps({"terminal_branch": verdict["terminal_branch"],
                       "exit_code": exit_code}))
     return exit_code
