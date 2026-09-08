@@ -18,7 +18,7 @@ existed.
 | `test_pm_producer_driven.py` | the REAL producer against a controllable temporary tree |
 | `test_pm_validator_output.py` | the validator's `main`, end to end, including its write path |
 
-117 tests at the fourth repair round, none of them needing ROOT or any real input.
+161 tests at the fifth repair round, none of them needing ROOT or any real input.
 
 The contract lives at `docs/orchestration/contracts/CONTRACT-20260908-pm-root-inspection.json`.
 
@@ -205,6 +205,59 @@ payload values are now spelled out in `test_pm_root_inspection.py` from the pred
 independently of both halves. There is one test per payload branch and one per required section
 that fails when that single branch or section is dropped. All sixteen of review's mutations are
 now caught, as are sixteen reverts of the repairs above.
+
+**That claim was true and too narrow, and round 5 shows how.** The fixture stopped being built
+by calling the payload rule, but its report SECTIONS stayed four hand-written stubs —
+`{"key_count": 13}`, one endpoint out of ten, no TKey listing, no axis edges and no digest
+anywhere in them. So the repair reached the records and stopped one layer short of the
+sections, and a rule requiring a listing or an edge still could not fail against this suite.
+See the next section.
+
+## Fifth review round — the same class one layer up, and the repair is structural
+
+Review returned BLOCK on `cd35c26e` with four reproduced classes, every one COMPLETE against a
+report the REAL producer wrote. Round 3 required a payload; round 4 required it non-empty and
+each section to be a non-empty mapping. `{"lost": true}` is a non-empty mapping.
+
+**The asymmetry that kept the class alive for five rounds was structural, not local.** The
+obligation side was a flat id-presence set — `set(obligations) - seen` at
+`pm_root_validate.py:440-441` — while every content rule iterated `reads`. So PRESENCE
+satisfied an obligation and CONTENT was only ever examined from the record side, and anything
+an obligation required that no record happened to mention was invisible by construction.
+
+`classify` is now **requirement-driven end to end**. It walks the obligations the committed
+bindings impose, and for each one demands a record, that record's status, the record payload
+that read produces, and the **nested capture** the read is declared to preserve. The record
+side is used for exactly two things: a record nobody asked for, and a read recorded twice.
+
+| defect in `cd35c26e` | repair |
+|---|---|
+| deleting `CS.key_listing`, deleting an axis's `edges`, or replacing `G`/`CS`/`CV_central`/`endpoints` with `{"lost": true}` each returned COMPLETE | every obligation carries the report path its product occupies. A listing must be TKey **names, classes and cycles** (PREDECLARATION §4) and as many of them as the record counted; an axis must carry the edges **including the final upper edge**, so nbins+1 of them; a digest mapping must restate the record's measurement and agree with it |
+| `input:G` with a wrong `path`, `size_bytes: -7`, `sha256` of all zeros, or `digest_verified: false` was COMPLETE, and removing either digest field was too | each input is matched against **its own committed binding** and that binding's digest policy. **CS's no-rehash branch is preserved**: the bindings exclude it at 41.4 GB, so its record carries the historical digest as `sha256_bound_not_verified` with `digest_verified: false` and that is a complete capture — while a record *claiming* a verification the bindings exclude is a fault |
+| a module loaded from the bound tree with an EMPTY offender summary was COMPLETE | the offenders are **recomputed** from `module_provenance.modules` against the bound root. The map is the measurement, the list is the producer's account of it, and the two must agree; a report with no map cannot be audited at all |
+| a second `G:sqrt_tr_old` record with a different value was COMPLETE | read ids are unique. Two records for one declared read is two answers to one question, and nothing downstream says which one the verdict was reached on |
+
+**The fixture was the reason the tests could not see any of this, and review named it exactly:
+the synthetic positive fixture omitted the listings and the edges, so a rule requiring them
+could not fail against it.** `report()` now builds all five nested sections from the records,
+carrying a thirteen-entry TKey listing with names, classes and cycles (two entries share a name
+and differ in cycle), the complete `nbins+1` edge list, the digest mappings, and every one of
+the ten endpoints. Those literals are restated in the test file from PREDECLARATION §4 and §7 —
+what each read produces, and that the listings and every computed digest are preserved outputs
+— and `pm_root_validate` is never asked what they should contain. `section_path()` is restated
+there too and a test compares it to the validator's table, which is the same
+two-independent-statements cross-check the obligation table already had.
+
+**Confirmed by reverting, not by assertion.** Seventeen reverts of the repairs above were
+applied one at a time to a copy of the validator; every one fails at least one test, and each
+fine-grained revert — TKey names, classes, cycles, the listing length, the edge count, the
+record/section comparison, the conditional read's answer, the bound path, the bound size, the
+bound digest, the verification policy, CS's exclusion, the offender recomputation, the module
+map, the duplicate rule — fails exactly the test written for it.
+
+**Still not crossed:** `nbins_conforms: false`, `all_finite: false`, `row_index_matches_S:
+false`, `count_matches_S: false`, any scalar's value, and the expected optional absences are
+each COMPLETE against the real producer, with a test holding each one there.
 
 ## What is a completeness check here, and what would be an acceptance threshold
 

@@ -16,6 +16,16 @@ kind, the payload branch each read falls in, and the payload values themselves a
 restated here from ``PREDECLARATION-20260906-pm-root-inspection.md`` sections 3-4.  Two
 statements that must agree is the whole point; one statement asked twice is not a test.
 
+AND THE FIXTURE MUST CARRY THE WHOLE PAYLOAD, WHICH IS WHERE ROUND 4 STOPPED SHORT.  Its
+report SECTIONS stayed four hand-written stubs -- ``{"key_count": 13}``, one endpoint out
+of ten, no TKey listing, no axis edges and no digest anywhere -- so a rule requiring any of
+those could not fail against this suite, and round 5 reproduced four classes that walked
+straight through it.  ``sections_from()`` now builds every nested section the producer
+writes, from ``section_path()``, ``SYNTHETIC_KEY_LISTING`` and ``SYNTHETIC_AXIS_EDGES``,
+which are this file's restatement of PREDECLARATION section 4 (what each read produces) and
+section 7 (the listings and every computed digest are preserved outputs).  Nothing in the
+fixture is read out of ``pm_root_validate``.
+
 The innocent cases are here for the same reason: a validator that refuses everything is not
 correct either, and the expected-optional absence must keep passing.
 
@@ -25,6 +35,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -47,6 +58,9 @@ BINDINGS = json.loads((HERE / "INPUT-BINDINGS-20260908.json").read_text())
 # --------------------------------------------------------------------------------------
 # The predeclaration, restated. Nothing below is read out of the validator or the producer.
 # --------------------------------------------------------------------------------------
+
+#: PREDECLARATION section 3: every input file, keyed by the read id that opens it.
+BINDING_BY_READ_ID = {f"input:{entry['id']}": entry for entry in BINDINGS["inputs"]}
 
 #: PREDECLARATION section 4: the conditional reads, the only ids whose absence is an answer.
 G_OPTIONAL_OBJECTS = ("hRowIndex5D",)
@@ -113,10 +127,30 @@ def payload_branch(read_id):
     return "stored_scalar"
 
 
+def section_path(read_id):
+    """Where the report PRESERVES this read's product. Restated from the predeclaration.
+
+    Section 4 names what each read produces and section 7 lists the key listings and every
+    computed digest among the outputs to be preserved, so each obligation has a place in
+    the report that its measurement has to occupy. An input read has none: its whole
+    measurement is the record.
+    """
+    if read_id.startswith("input:"):
+        return ()
+    if read_id == "G:read_onlyness":
+        return ("G_read_onlyness",)
+    owner, _, name = read_id.partition(":")
+    if owner in ("G", "CS", "CV_central"):
+        return (owner, name)
+    return ("endpoints", owner, name)
+
+
 #: What a ``status="read"`` record of each branch MUST carry. The row-index branch is the
-#: readable case; the undigestible case is a contradiction, tested separately.
+#: readable case; the undigestible case is a contradiction, tested separately. The input
+#: branch is completed per input by ``expected_payload_fields``, because which digest
+#: field a record carries is that input's OWN binding policy.
 EXPECTED_PAYLOAD_FIELDS = {
-    "input": ("path", "size_bytes", "digest_provenance"),
+    "input": ("path", "size_bytes", "digest_provenance", "digest_verified"),
     "key_listing": ("key_count",),
     "flat_histogram": ("row_index_sha256", "reported_mask_hash", "count",
                        "measured_nbins", "declared_nbins", "nbins_conforms",
@@ -129,13 +163,52 @@ EXPECTED_PAYLOAD_FIELDS = {
     "stored_scalar": ("value",),
 }
 
+
+def expected_payload_fields(read_id):
+    """The record fields this read must carry, including its binding's digest policy.
+
+    PREDECLARATION section 4 excludes a full sha256 of CS -- 41.4 GB -- and the bindings
+    carry that as ``verify_digest_at_runtime: false`` with the historical
+    ``support_family_sha256``. A re-hashed input therefore records a MEASURED ``sha256``
+    and a CS-like input records the bound digest it did not verify. Those are two
+    different measurements and the fixture spells both.
+    """
+    if read_id.startswith("input:"):
+        binding = BINDING_BY_READ_ID[read_id]
+        measured = ("sha256",) if binding["verify_digest_at_runtime"] else (
+            "sha256_bound_not_verified",)
+        return EXPECTED_PAYLOAD_FIELDS["input"] + measured
+    return EXPECTED_PAYLOAD_FIELDS[payload_branch(read_id)]
+
+
+#: PREDECLARATION section 4 read 1: "top-level TKey NAMES, CLASSES and CYCLES". Thirteen
+#: of them, G's committed inventory (section 5). Two entries share a name and differ in
+#: cycle, which is why the cycle is part of the declared read and not decoration.
+SYNTHETIC_KEY_LISTING = [
+    {"name": "centering_convention", "class": "TNamed", "cycle": 1},
+    {"name": "combined_source", "class": "TNamed", "cycle": 1},
+    {"name": "dataPOT", "class": "TParameter<double>", "cycle": 1},
+    {"name": "globalCompleteness", "class": "TParameter<double>", "cycle": 1},
+    {"name": "hCov_stamped5d_total", "class": "TH2D", "cycle": 1},
+    {"name": "hInflation_g", "class": "TH1D", "cycle": 1},
+    {"name": "hXSec_eavail", "class": "TH1D", "cycle": 1},
+    {"name": "hXSec_pt", "class": "TH1D", "cycle": 1},
+    {"name": "hXSec_pz", "class": "TH1D", "cycle": 1},
+    {"name": "ndim", "class": "TNamed", "cycle": 1},
+    {"name": "sqrt_tr_new", "class": "TParameter<double>", "cycle": 1},
+    {"name": "sqrt_tr_old", "class": "TParameter<double>", "cycle": 1},
+    {"name": "stamp_utc", "class": "TNamed", "cycle": 2},
+]
+
+#: PREDECLARATION section 4 read 4: the axis edges INCLUDING the final upper edge, so an
+#: axis of n bins has n+1 of them. The record's nbins/first_edge/last_edge are derived
+#: from this one literal, which is what makes them agree by construction.
+SYNTHETIC_AXIS_EDGES = [0.0, 1.5, 3.0, 5.0, 7.5]
+
 #: One literal, internally consistent value per payload field. ``first_edge`` is 0.0 on
 #: purpose: a legitimately-zero numeric must pass, while an empty digest must not.
 LITERAL_PAYLOAD_VALUES = {
-    "path": "/synthetic/root/some-input.root",
-    "size_bytes": 892170881,
-    "digest_provenance": "committed-historical",
-    "key_count": 13,
+    "key_count": len(SYNTHETIC_KEY_LISTING),
     "row_index_sha256": "a" * 64,
     "reported_mask_hash": "b" * 64,
     "content_sha256": "c" * 64,
@@ -144,11 +217,11 @@ LITERAL_PAYLOAD_VALUES = {
     "declared_nbins": 65856,
     "nbins_conforms": True,
     "all_finite": True,
-    "nbins": 4,
+    "nbins": len(SYNTHETIC_AXIS_EDGES) - 1,
     "sha256_before": "d" * 64,
     "sha256_after": "d" * 64,
-    "first_edge": 0.0,
-    "last_edge": 7.5,
+    "first_edge": SYNTHETIC_AXIS_EDGES[0],
+    "last_edge": SYNTHETIC_AXIS_EDGES[-1],
     "unchanged": True,
     "present": True,
     "contents_readable": True,
@@ -156,36 +229,147 @@ LITERAL_PAYLOAD_VALUES = {
 }
 
 
+def input_payload(binding):
+    """What an ``input:`` record measures, from PREDECLARATION section 3 and the binding.
+
+    The path is the bound tree plus the bound relpath, the size is the bound size, and the
+    digest is whichever of the two the binding's own policy names. Nothing here is asked
+    of the validator: it is read out of the committed bindings.
+    """
+    fields = {
+        "path": os.path.join(BINDINGS["data_root"], binding["relpath"]),
+        "size_bytes": binding["size_bytes"],
+        "digest_provenance": binding["digest_provenance"],
+        "digest_verified": bool(binding["verify_digest_at_runtime"]),
+    }
+    if binding["verify_digest_at_runtime"]:
+        fields["sha256"] = binding["sha256"]
+    else:
+        fields["sha256_bound_not_verified"] = binding["sha256"]
+    return fields
+
+
+def literal_payload_value(read_id, field):
+    if read_id.startswith("input:"):
+        return input_payload(BINDING_BY_READ_ID[read_id])[field]
+    return LITERAL_PAYLOAD_VALUES[field]
+
+
 def payloaded(read_id, status="read", kind=None, **overrides):
     """A record carrying literal values for the payload its read is required to produce."""
     entry = {"read_id": read_id, "status": status,
              "kind": kind if kind is not None else KINDS[read_id]}
     if status == "read":
-        for field in EXPECTED_PAYLOAD_FIELDS[payload_branch(read_id)]:
-            entry[field] = LITERAL_PAYLOAD_VALUES[field]
+        for field in expected_payload_fields(read_id):
+            entry[field] = literal_payload_value(read_id, field)
     entry.update(overrides)
     return entry
 
 
+def a_whole_number(value):
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def nested_capture(read_id, entry):
+    """The product this read is declared to leave in the report, mirroring the record.
+
+    Round 4's fixtures were built by CALLING the rule under test, so no test could detect
+    a gap in either. This is built from the predeclaration's own account of what each read
+    produces -- a TKey listing of names, classes and cycles; the complete axis edges; the
+    digests -- and from the record the producer would have written beside it, never from
+    ``pm_root_validate``. Mirroring the record is what the producer literally does: it
+    records one measurement dict and stores the same dict in the section.
+    """
+    branch = payload_branch(read_id)
+    if branch == "key_listing":
+        count = entry.get("key_count")
+        if a_whole_number(count) and 0 <= count <= len(SYNTHETIC_KEY_LISTING):
+            return SYNTHETIC_KEY_LISTING[:count]
+        return list(SYNTHETIC_KEY_LISTING)
+    if branch == "axis_histogram":
+        capture = {"edges": list(SYNTHETIC_AXIS_EDGES)}
+        if "nbins" in entry:
+            capture["nbins"] = entry["nbins"]
+        return capture
+    if branch in ("flat_histogram", "read_onlyness", "row_index"):
+        # The row index's yes/no answer is stored beside the contents at
+        # `hRowIndex5D_present`, not inside them, so it is not part of this mapping.
+        return {field: entry[field]
+                for field in EXPECTED_PAYLOAD_FIELDS[branch]
+                if field in entry and not (branch == "row_index" and field == "present")}
+    if branch == "inflation_nbins":
+        return entry.get("nbins")
+    return entry.get("value")
+
+
+def place(document, path, value):
+    node = document
+    for step in path[:-1]:
+        node = node.setdefault(step, {})
+    node[path[-1]] = value
+
+
+def sections_from(reads):
+    """The five nested sections, carrying the product of every read that happened.
+
+    The old fixture's sections were four hand-written stubs -- ``{"key_count": 13}``,
+    ``{"key_count": 4}``, one endpoint out of ten -- with no listing, no edges and no
+    digest anywhere in them. A rule requiring any of those could not fail against it,
+    which is precisely how round 5's first class walked through five rounds of repair.
+    """
+    sections = {"G": {}, "CS": {}, "CV_central": {}, "endpoints": {},
+                "G_read_onlyness": {}}
+    for entry in reads:
+        read_id = entry.get("read_id")
+        if read_id not in KINDS:
+            continue
+        path = section_path(read_id)
+        if not path:
+            continue
+        status = entry.get("status")
+        if payload_branch(read_id) == "row_index" and status in ("read", "absent"):
+            # G's declared conditional read: "settle whether G carries a row index at
+            # all", so the answer is preserved either way.
+            place(sections, path[:-1] + (path[-1] + "_present",), entry.get("present"))
+        if status == "read":
+            place(sections, path, nested_capture(read_id, entry))
+    return sections
+
+
+def module_provenance_capture(extra_modules=None):
+    """What ``module_provenance()`` measures: the per-module file MAP, plus a summary.
+
+    The map is the measurement and ``modules_loaded_from_forbidden_root`` is the
+    producer's account of it, so the fixture carries both and derives the second from the
+    first exactly as the producer does.
+    """
+    modules = {
+        "hashlib": "/opt/python/lib/python3.12/hashlib.py",
+        "json": "/opt/python/lib/python3.12/json/__init__.py",
+        "pm_root_inspect": str(HERE / "pm_root_inspect.py"),
+    }
+    modules.update(extra_modules or {})
+    prefix = BINDINGS["data_root"].rstrip("/") + "/"
+    return {
+        "forbidden_root": BINDINGS["data_root"],
+        "modules": modules,
+        "module_count": len(modules),
+        "modules_loaded_from_forbidden_root": sorted(
+            name for name, filename in modules.items() if filename.startswith(prefix)),
+    }
+
+
 def report(reads, attempt_id=ATTEMPT, **extra):
-    """An otherwise-intact report shell whose sections carry literal measurements."""
+    """An otherwise-intact report whose sections carry the FULL declared payload."""
     base = {
         "attempt_id": attempt_id,
         "reads": reads,
         "declared_read_ids": list(OBLIGATIONS),
         "data_root": BINDINGS["data_root"],
-        "G": {"key_count": 13, "sqrt_tr_old": 1.5},
-        "CS": {"key_count": 7, "band_keys": ["hCov_universe5d_BeamAngleX"]},
-        "CV_central": {"key_count": 4},
-        "endpoints": {"EP_BeamAngleX_0": {"key_count": 9}},
-        "G_read_onlyness": {"sha256_before": "d" * 64, "sha256_after": "d" * 64,
-                            "unchanged": True,
-                            "basis": "measured by before/after digest"},
-        "module_provenance": {"forbidden_root": BINDINGS["data_root"],
-                              "modules_loaded_from_forbidden_root": [],
-                              "module_count": 3},
+        "module_provenance": module_provenance_capture(),
         "root_version": "6.28/12",
     }
+    base.update(sections_from(reads))
     base.update(extra)
     return base
 
@@ -200,6 +384,9 @@ def capture_with(read_id, **changes):
     reads = [payloaded(rid) for rid in OBLIGATIONS if rid != read_id]
     reads.append(payloaded(read_id, **changes))
     return report(reads)
+
+
+REQUIREMENTS = validator.obligation_requirements(BINDINGS)
 
 
 class ThePredeclarationIsTheAuthority(unittest.TestCase):
@@ -221,8 +408,28 @@ class ThePredeclarationIsTheAuthority(unittest.TestCase):
             branch = payload_branch(read_id)
             with self.subTest(read_id=read_id, branch=branch):
                 self.assertEqual(
-                    set(validator.payload_fields_for(read_id, payloaded(read_id))),
-                    set(EXPECTED_PAYLOAD_FIELDS[branch]))
+                    set(validator.required_record_fields(REQUIREMENTS[read_id],
+                                                         payloaded(read_id))),
+                    set(expected_payload_fields(read_id)))
+
+    def test_every_obligation_preserves_its_read_in_the_declared_section(self):
+        """The nested capture each read leaves behind, restated independently. A rule
+        that names the wrong place cannot detect an emptied one."""
+        for read_id in OBLIGATIONS:
+            with self.subTest(read_id=read_id):
+                self.assertEqual(REQUIREMENTS[read_id].section_path,
+                                 section_path(read_id))
+
+    def test_every_input_is_matched_against_its_own_binding_policy(self):
+        """CS's no-rehash branch and the twelve re-hashed inputs are different records."""
+        for read_id, binding in BINDING_BY_READ_ID.items():
+            with self.subTest(read_id=read_id):
+                self.assertEqual(
+                    set(validator.required_record_fields(REQUIREMENTS[read_id],
+                                                         payloaded(read_id))),
+                    set(expected_payload_fields(read_id)))
+        self.assertIn("sha256_bound_not_verified", expected_payload_fields("input:CS"))
+        self.assertIn("sha256", expected_payload_fields("input:G"))
 
     def test_every_payload_branch_is_exercised_by_some_obligation(self):
         covered = {payload_branch(read_id) for read_id in OBLIGATIONS}
@@ -399,7 +606,7 @@ class EveryPayloadBranchMustCarryItsMeasurement(unittest.TestCase):
         for read_id in OBLIGATIONS:
             entry = payloaded(read_id)
             if payload_branch(read_id) == branch:
-                for field in EXPECTED_PAYLOAD_FIELDS[branch]:
+                for field in expected_payload_fields(read_id):
                     if field in keep:
                         continue
                     entry.pop(field, None)
@@ -438,6 +645,109 @@ class EveryPayloadBranchMustCarryItsMeasurement(unittest.TestCase):
 
     def test_stored_scalar_branch(self):
         self._assert_branch_is_pinned("stored_scalar")
+
+
+class EveryReadMustLeaveItsProductInTheReport(unittest.TestCase):
+    """One test per branch that HAS a nested capture, each failing if that branch's rule
+    is dropped from the validator.
+
+    This is what the repaired fixture buys. The old ``report()`` carried four hand-written
+    section stubs -- no listing, no edges, no digest, one endpoint out of ten -- so a rule
+    requiring any of those could not fail against it, and round 5's first class walked
+    through five rounds of record-side repair. The sections here are built from this
+    file's restatement of PREDECLARATION sections 4 and 7, and the validator is never
+    asked what they should contain.
+    """
+
+    BRANCHES_WITH_A_SECTION = ("key_listing", "flat_histogram", "inflation_nbins",
+                               "read_onlyness", "axis_histogram", "row_index",
+                               "stored_scalar")
+
+    def _drop(self, branch):
+        doc = full_capture()
+        dropped = []
+        for read_id in OBLIGATIONS:
+            if payload_branch(read_id) != branch:
+                continue
+            path = section_path(read_id)
+            found, node = validator.dig(doc, path[:-1])
+            if found and isinstance(node, dict) and path[-1] in node:
+                del node[path[-1]]
+                dropped.append(read_id)
+        self.assertTrue(dropped, f"no obligation falls in branch {branch}")
+        return doc, dropped
+
+    def test_every_branch_with_a_section_is_pinned_one_at_a_time(self):
+        for branch in self.BRANCHES_WITH_A_SECTION:
+            with self.subTest(branch=branch):
+                doc, dropped = self._drop(branch)
+                code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+                self.assertEqual(code, validator.EXIT_ERROR)
+                self.assertEqual(findings["reads_missing_payload"], [],
+                                 "the RECORDS are intact; only the products are gone")
+                for read_id in dropped:
+                    self.assertIn(read_id, findings["reads_missing_nested_capture"])
+
+    def test_every_branch_with_a_section_is_covered_by_some_obligation(self):
+        covered = {payload_branch(read_id) for read_id in OBLIGATIONS
+                   if section_path(read_id)}
+        self.assertEqual(covered, set(self.BRANCHES_WITH_A_SECTION))
+
+    def test_a_nonempty_mapping_is_not_a_section(self):
+        """`{"lost": true}` passes every shape rule round 4 added."""
+        for section in ("G", "CS", "CV_central", "endpoints"):
+            with self.subTest(section=section):
+                doc = full_capture()
+                doc[section] = {"lost": True}
+                code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+                self.assertEqual(code, validator.EXIT_ERROR)
+                self.assertEqual(findings["missing_report_sections"], [])
+                self.assertTrue(findings["reads_missing_nested_capture"])
+
+    def test_a_truncated_axis_is_not_a_complete_capture(self):
+        doc = full_capture()
+        doc["endpoints"]["EP_BeamAngleX_0"]["hXSec_pt"]["edges"].pop()
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("EP_BeamAngleX_0:hXSec_pt",
+                      findings["reads_missing_nested_capture"])
+
+    def test_a_listing_whose_length_disagrees_with_its_count_is_a_fault(self):
+        doc = full_capture()
+        doc["CS"]["key_listing"] = SYNTHETIC_KEY_LISTING[:3]
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("CS:key_listing", findings["reads_missing_nested_capture"])
+
+    def test_the_answer_to_Gs_conditional_read_must_be_in_the_report(self):
+        """hRowIndex5D absent is the ANSWER; deleting the answer is not the answer."""
+        reads = [payloaded(rid) for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
+        reads.append({"read_id": "G:hRowIndex5D", "status": "absent", "kind": OPTIONAL,
+                      "present": False})
+        doc = report(reads)
+        self.assertIs(doc["G"]["hRowIndex5D_present"], False)   # the control
+        self.assertEqual(validator.classify(doc, BINDINGS, ATTEMPT)[0],
+                         validator.EXIT_COMPLETE)
+        del doc["G"]["hRowIndex5D_present"]
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("G:hRowIndex5D", findings["reads_missing_nested_capture"])
+
+
+class OneDeclaredReadIsOneRecord(unittest.TestCase):
+    """Two records for one declared read is two answers to one question."""
+
+    def test_a_duplicate_record_is_a_fault(self):
+        reads = [payloaded(rid) for rid in OBLIGATIONS]
+        reads.append(payloaded("G:sqrt_tr_old", value=999))
+        code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertEqual(findings["duplicate_read_records"], ["G:sqrt_tr_old"])
+
+    def test_the_control_has_no_duplicates(self):
+        code, findings = validator.classify(full_capture(), BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_COMPLETE, findings)
+        self.assertEqual(findings["duplicate_read_records"], [])
 
 
 class EmptyIsNotAMeasurement(unittest.TestCase):
@@ -520,8 +830,8 @@ class EmptyIsNotAMeasurement(unittest.TestCase):
         for section in EXPECTED_REPORT_SECTIONS:
             doc[section] = {}
         for entry in doc["reads"]:
-            for field in EXPECTED_PAYLOAD_FIELDS[payload_branch(entry["read_id"])]:
-                value = LITERAL_PAYLOAD_VALUES[field]
+            for field in expected_payload_fields(entry["read_id"]):
+                value = literal_payload_value(entry["read_id"], field)
                 entry[field] = 0 if isinstance(value, (int, float)) else ""
         code, _ = validator.classify(doc, BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_ERROR)

@@ -615,5 +615,359 @@ class TheCaptureIsBoundToTheDeclaredTree(unittest.TestCase):
             self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
 
 
+class TheReportMustPreserveWhatEachReadProduced(unittest.TestCase):
+    """Round 5, class 1: shape satisfied, substance absent, one layer above the payload.
+
+    Round 3 required a payload; round 4 required it non-empty and the sections to be
+    non-empty mappings. ``{"lost": true}`` is a non-empty mapping, so every one of these
+    returned COMPLETE. PREDECLARATION section 4 requires TKey names, classes and cycles
+    for a listing and the edges INCLUDING the final upper edge for an axis; section 7
+    requires the listings preserved. Each mutation below is applied alone to a report the
+    REAL producer wrote.
+    """
+
+    def _mutated(self, mutate):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE,
+                             "the control must be COMPLETE before it is mutated")
+            mutate(report)
+            return tree.validate(report)
+
+    def test_a_deleted_key_listing_is_not_a_capture(self):
+        def mutate(report):
+            del report["CS"]["key_listing"]
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("CS:key_listing", findings["reads_missing_nested_capture"])
+
+    def test_deleted_axis_edges_are_not_a_capture(self):
+        def mutate(report):
+            del report["endpoints"]["EP_BandA_0"]["hXSec_pt"]["edges"]
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("EP_BandA_0:hXSec_pt", findings["reads_missing_nested_capture"])
+
+    def test_an_incomplete_edge_list_is_not_a_capture(self):
+        """n bins have n+1 edges. Dropping the final upper edge leaves a well-formed list
+        of numbers that silently reports the last LOW edge as the range's end."""
+        def mutate(report):
+            report["endpoints"]["EP_BandA_0"]["hXSec_pt"]["edges"].pop()
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("INCLUDING the final upper edge",
+                      findings["reads_missing_nested_capture_why"][
+                          "EP_BandA_0:hXSec_pt"])
+
+    def test_a_listing_stripped_of_its_names_is_not_a_capture(self):
+        """The declared read is names, classes AND cycles: each is separately required,
+        and a revert of any one of the three has to fail a test here."""
+        def mutate(report):
+            for entry in report["endpoints"]["EP_BandA_1"]["key_listing"]:
+                entry.pop("name")
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("EP_BandA_1:key_listing", findings["reads_missing_nested_capture"])
+
+    def test_a_listing_stripped_of_its_classes_is_not_a_capture(self):
+        def mutate(report):
+            for entry in report["G"]["key_listing"]:
+                entry.pop("class")
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("G:key_listing", findings["reads_missing_nested_capture"])
+
+    def test_a_listing_stripped_of_its_cycles_is_not_a_capture(self):
+        def mutate(report):
+            for entry in report["CV_central"]["key_listing"]:
+                entry.pop("cycle")
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("CV_central:key_listing", findings["reads_missing_nested_capture"])
+
+    def test_a_nonempty_mapping_with_nothing_in_it_is_not_a_capture(self):
+        """The exact reproducer: four sections replaced by `{"lost": true}`."""
+        for section in ("G", "CS", "CV_central", "endpoints"):
+            with self.subTest(section=section):
+                def mutate(report, section=section):
+                    report[section] = {"lost": True}
+                exit_code, findings = self._mutated(mutate)
+                self.assertEqual(exit_code, validator.EXIT_ERROR)
+                self.assertEqual(findings["missing_report_sections"], [],
+                                 "a non-empty mapping passes the outer shell rule")
+                self.assertTrue(findings["reads_missing_nested_capture"])
+
+    def test_a_section_that_disagrees_with_its_record_is_not_a_capture(self):
+        """Record and section state the same measurement twice; they must agree."""
+        def mutate(report):
+            report["CV_central"]["hXSecND_flat"]["content_sha256"] = "f" * 64
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("CV_central:hXSecND_flat",
+                      findings["reads_missing_nested_capture"])
+
+    def test_the_intact_capture_control_still_preserves_everything(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_COMPLETE, findings)
+            self.assertEqual(findings["reads_missing_nested_capture"], [])
+
+
+class EachInputMustMatchItsOwnBinding(unittest.TestCase):
+    """Round 5, class 2: `input:G`'s identity was never checked against the bindings.
+
+    A wrong path, a negative size, a digest of all zeros and `digest_verified: false`
+    each returned COMPLETE, because the fields were only checked for being non-empty and
+    of the right type. CS's no-rehash branch is preserved: the bindings exclude it from
+    runtime verification at 41.4 GB and that is a complete capture, not a fault.
+    """
+
+    def _mutated(self, mutate, read_id="input:G"):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
+            mutate(one(report, read_id))
+            return tree.validate(report)
+
+    def _assert_identity_fault(self, mutate, needle, read_id="input:G"):
+        exit_code, findings = self._mutated(mutate, read_id)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertTrue(
+            any(needle in problem
+                for problem in findings["inputs_that_disagree_with_their_binding"]),
+            findings["inputs_that_disagree_with_their_binding"])
+
+    def test_a_path_that_is_not_the_bound_one_is_a_fault(self):
+        def mutate(entry):
+            entry["path"] = "/somewhere/else/g.root"
+        self._assert_identity_fault(mutate, "is not the bound")
+
+    def test_a_size_that_is_not_the_bound_one_is_a_fault(self):
+        def mutate(entry):
+            entry["size_bytes"] = -7
+        self._assert_identity_fault(mutate, "size_bytes")
+
+    def test_a_digest_that_is_not_the_bound_one_is_a_fault(self):
+        def mutate(entry):
+            entry["sha256"] = "0" * 64
+        self._assert_identity_fault(mutate, "sha256")
+
+    def test_an_unverified_digest_where_the_binding_requires_one_is_a_fault(self):
+        def mutate(entry):
+            entry["digest_verified"] = False
+        self._assert_identity_fault(mutate, "requires runtime digest verification")
+
+    def test_a_removed_digest_is_a_fault(self):
+        def mutate(entry):
+            entry.pop("sha256")
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("input:G:sha256", findings["reads_missing_payload"])
+
+    def test_a_removed_digest_verified_flag_is_a_fault(self):
+        def mutate(entry):
+            entry.pop("digest_verified")
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("input:G:digest_verified", findings["reads_missing_payload"])
+
+    def test_a_wrong_digest_provenance_is_a_fault(self):
+        def mutate(entry):
+            entry["digest_provenance"] = "read_from_G"
+        self._assert_identity_fault(mutate, "digest_provenance")
+
+    def test_claiming_a_verification_the_bindings_exclude_is_a_fault(self):
+        """CS is not re-hashed. A record saying it was is claiming work that never ran."""
+        def mutate(entry):
+            entry["digest_verified"] = True
+        self._assert_identity_fault(mutate, "claims a verification that did not happen",
+                                    read_id="input:CS")
+
+    def test_the_CS_no_rehash_branch_is_a_COMPLETE_capture(self):
+        """The positive control that must not be crossed: 41.4 GB is deliberately not
+        re-hashed, so the historical digest carried unverified IS the capture."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            entry = one(report, "input:CS")
+            self.assertFalse(entry["digest_verified"])
+            self.assertNotIn("sha256", entry)
+            bound = next(e for e in tree.bindings["inputs"] if e["id"] == "CS")
+            self.assertEqual(entry["sha256_bound_not_verified"], bound["sha256"])
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_COMPLETE, findings)
+            self.assertEqual(findings["inputs_that_disagree_with_their_binding"], [])
+
+    def test_every_input_the_producer_wrote_matches_its_binding(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            self.assertEqual(
+                tree.validate(report)[1]["inputs_that_disagree_with_their_binding"], [])
+
+
+class ContaminationIsRecomputedNotBelieved(unittest.TestCase):
+    """Round 5, class 3: the producer's summary of its own contamination was taken on
+    trust. A module loaded from the bound tree, with an EMPTY offender list, was
+    COMPLETE. The map is the measurement; the list is an account of it."""
+
+    def test_a_hidden_offender_is_recomputed_from_the_module_map(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
+            report["module_provenance"]["modules"]["bad"] = str(tree.root / "bad.py")
+            report["module_provenance"]["module_count"] = len(
+                report["module_provenance"]["modules"])
+            self.assertEqual(
+                report["module_provenance"]["modules_loaded_from_forbidden_root"], [])
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertIn("bad", findings["modules_loaded_from_the_forbidden_root"])
+            self.assertTrue(any(
+                "recomputed from the module map" in problem
+                for problem in findings["records_contradicting_their_own_measurement"]))
+
+    def test_a_deleted_module_map_leaves_the_summary_unauditable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            del report["module_provenance"]["modules"]
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertTrue(any(
+                "no per-module file map" in problem
+                for problem in findings["records_contradicting_their_own_measurement"]))
+
+    def test_a_module_count_that_disagrees_with_the_map_is_a_fault(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            report["module_provenance"]["module_count"] = 99999
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_ERROR)
+
+    def test_the_honest_control_recomputes_to_no_offenders(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            self.assertTrue(report["module_provenance"]["modules"])
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_COMPLETE, findings)
+            self.assertEqual(findings["modules_loaded_from_the_forbidden_root"], [])
+
+    def test_a_real_offender_is_still_measured_by_the_producer_too(self):
+        """The recomputation must not replace the producer's own measurement: both the
+        map and the summary have to name a genuine import from the bound tree."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            stand_in = types.ModuleType("p4_lib_stand_in_round5")
+            stand_in.__file__ = str(tree.root / "nd-unfolding" / "p4_lib.py")
+            sys.modules["p4_lib_stand_in_round5"] = stand_in
+            try:
+                _, report = tree.run_producer()
+            finally:
+                sys.modules.pop("p4_lib_stand_in_round5", None)
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertEqual(findings["modules_loaded_from_the_forbidden_root"],
+                             ["p4_lib_stand_in_round5"])
+            self.assertNotIn(
+                "recomputed from the module map",
+                " ".join(findings["records_contradicting_their_own_measurement"]))
+
+
+class OneDeclaredReadIsOneRecord(unittest.TestCase):
+    """Round 5, class 4: a second record for the same read id was COMPLETE. Two answers
+    to one declared question is not a capture of it, and nothing downstream says which
+    of the two the verdict was reached on."""
+
+    def test_a_duplicate_read_record_is_a_fault(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
+            duplicate = dict(one(report, "G:sqrt_tr_old"))
+            duplicate["value"] = 999
+            report["reads"].append(duplicate)
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertEqual(findings["duplicate_read_records"], ["G:sqrt_tr_old"])
+
+    def test_a_duplicated_input_record_is_a_fault(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            report["reads"].append(dict(one(report, "input:CS")))
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_ERROR)
+            self.assertEqual(findings["duplicate_read_records"], ["input:CS"])
+
+    def test_the_control_records_each_declared_read_exactly_once(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            ids = [entry["read_id"] for entry in report["reads"]]
+            self.assertEqual(len(ids), len(set(ids)))
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_COMPLETE, findings)
+            self.assertEqual(findings["duplicate_read_records"], [])
+
+
+class MeasuredNonconformanceIsStillACompleteCapture(unittest.TestCase):
+    """The line the validator must not cross, pinned against the REAL producer. Each of
+    these is a scientific non-conformance the inspection exists to MEASURE; classifying
+    any of them as a capture fault would be inventing an acceptance threshold."""
+
+    def _flat(self, cv_objects):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, cv_objects=cv_objects)
+            _, report = tree.run_producer()
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_COMPLETE, findings)
+            return one(report, "CV_central:hXSecND_flat")
+
+    def test_nbins_conforms_false_is_COMPLETE(self):
+        entry = self._flat({"hXSecND_flat": flat_hist(nbins=4)})
+        self.assertFalse(entry["nbins_conforms"])
+
+    def test_all_finite_false_is_COMPLETE(self):
+        entry = self._flat({"hXSecND_flat": fake_root.FakeHist([1.0, float("inf"), 2.0])})
+        self.assertFalse(entry["all_finite"])
+
+    def test_row_index_matches_S_false_is_COMPLETE(self):
+        entry = self._flat({"hXSecND_flat": flat_hist()})
+        self.assertFalse(entry["row_index_matches_S"])
+        self.assertFalse(entry["reported_mask_matches_S"])
+
+    def test_count_matches_S_false_is_COMPLETE(self):
+        entry = self._flat({"hXSecND_flat": flat_hist()})
+        self.assertFalse(entry["count_matches_S"])
+        self.assertNotEqual(entry["count"], producer.S_EXPECTED_COUNT)
+
+    def test_any_scalar_value_is_COMPLETE(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp, g_objects=g_objects(
+                sqrt_tr_old=fake_root.FakeParameter(-1234.5),
+                centering_convention=fake_root.FakeNamed("something nobody expected")))
+            _, report = tree.run_producer()
+            self.assertEqual(one(report, "G:sqrt_tr_old")["value"], -1234.5)
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE)
+
+    def test_the_expected_optional_absences_are_COMPLETE(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = Tree(tmp)
+            _, report = tree.run_producer()
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_COMPLETE, findings)
+            self.assertIn("G:hRowIndex5D", findings["expected_optional_absences"])
+            self.assertIn("EP_BandA_0:estimator_seed",
+                          findings["expected_optional_absences"])
+            self.assertIs(report["G"]["hRowIndex5D_present"], False)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
