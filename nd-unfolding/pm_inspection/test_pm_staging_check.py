@@ -10,8 +10,20 @@ argv against RELATIVE paths, while ``command_bindings`` rewrites the guard targe
 script to absolute in place.  A fixture from the real construction path would have failed
 immediately.
 
-Nothing here writes to the campaign queue, reaches a network, or contacts a scheduler. The
-queue state directory is a throwaway temp dir and no remote is configured.
+WHAT THE ISOLATION IS, EXACTLY.  ``stage`` runs inside ``queue_operation``, which refreshes
+against the pinned origin, so staging is not a local operation and these tests cannot pretend
+otherwise.  Each test therefore builds its own bare repository in its temp dir and commits an
+origin pin naming it, so no test reaches the real origin, no test can write to the real
+campaign ref, and no test contacts a scheduler.  The queue state directory is a throwaway temp
+dir.
+
+WHAT THAT ISOLATION DOES NOT PROVE.  The mock changes two things about the world: where the
+origin lives, and the root the guard and validator are pinned to.  Everything else -- the
+guard, the shim, the producer, the validator, the bindings and the reviewed contract -- is the
+real file.  So these tests establish the CHECKER's behaviour against a really-staged item.
+They say nothing about whether the production origin is reachable, whether its queue ref is in
+the state staging expects, or whether the real execution checkout is pinned where the contract
+says.  Those are integration facts and no test here substitutes for measuring them.
 """
 from __future__ import annotations
 
@@ -124,7 +136,7 @@ def build_repo(tmp: str) -> tuple[Path, object]:
 
 
 def stage_real_item(repo: Path, ctl, tmp: str, *, timeout_seconds: int | None = None) -> dict:
-    """Call the controller's own stage(). The state dir is a throwaway; no remote exists."""
+    """Call the controller's own stage() against the temp repo's own mock origin."""
     state = Path(tmp) / "queue-state"
     state.mkdir()
     queue = ctl.Queue(repo=repo, state=state)
@@ -182,14 +194,20 @@ class ThePositiveControl(StagedFixture):
 
 
 class TheStageDefaultIsCaughtBeforeApproval(StagedFixture):
-    def test_a_600_second_item_is_refused_by_name(self):
-        item = stage_real_item(self.repo, self.ctl, self.tmp + "/x"
-                               if False else self.tmp, timeout_seconds=600) \
-            if False else copy.deepcopy(self.item)
-        item["timeout_seconds"] = 600
-        item["proposal_digest"] = self.ctl.digest(self.ctl.proposal_payload(item))
-        findings = "\n".join(self.check(item))
-        self.assertIn("killed mid-wait", findings)
+    def test_a_really_staged_600_second_item_is_refused_by_name(self):
+        # Staged for real at the controller's own default rather than mutated, because the
+        # danger is precisely that campaignctl ACCEPTS 600 -- which this also demonstrates.
+        # It needs its own repository and its own mock origin: stage lands the item on the
+        # queue ref, so re-staging the same id into the same origin is refused, as it should
+        # be.
+        with tempfile.TemporaryDirectory() as tmp:
+            repo, ctl = build_repo(tmp)
+            item = stage_real_item(repo, ctl, tmp, timeout_seconds=600)
+            self.assertEqual(item["timeout_seconds"], 600)
+            findings = checker.check_item(
+                item, repo=repo, expect_root=str(repo), ctl=ctl,
+                expect_contract_sha256=ctl.sha256_file(repo / checker.CONTRACT_PATH))
+        self.assertIn("killed mid-wait", "\n".join(findings))
 
     def test_a_timeout_that_starves_the_validator_is_refused(self):
         item = copy.deepcopy(self.item)
