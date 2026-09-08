@@ -969,5 +969,90 @@ class MeasuredNonconformanceIsStillACompleteCapture(unittest.TestCase):
             self.assertIs(report["G"]["hRowIndex5D_present"], False)
 
 
+class AnEmptyKeyListingIsACensusOfZero(unittest.TestCase):
+    """Round 6: round 5's own strictness turned a legitimate measurement into a fault.
+
+    PREDECLARATION section 4's CS presence census sets NO MINIMUM NUMBER OF KEYS, so a
+    file holding no top-level keys has an empty listing and ``key_count: 0``. Round 5
+    required the preserved listing to be a NON-empty list, which reads a minimum into a
+    census that states none: the real producer's exit-0 capture of an empty CS classified
+    as ERROR on that one reason.
+
+    The substrate is CS's KEY LISTING, not its bytes. The file on disk still carries the
+    bound bytes and matches its binding, so the only thing empty is the thing the census
+    counts, and nothing else in the capture moves.
+
+    Zero is a count. Absent is not a count, and everything the emptiness rule was standing
+    in for still refuses: a listing that is gone, entries that are not TKey records, and a
+    length that disagrees with ``key_count`` in EITHER direction.
+    """
+
+    def _empty_cs(self, tmp):
+        tree = Tree(tmp)
+        tree.files[str(tree.paths["CS"])] = fake_root.FakeFile({})
+        return tree
+
+    def _mutated(self, mutate):
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = self._empty_cs(tmp)
+            _, report = tree.run_producer()
+            self.assertEqual(tree.validate(report)[0], validator.EXIT_COMPLETE,
+                             "the zero-census control must be COMPLETE before mutation")
+            mutate(report)
+            return tree.validate(report)
+
+    def _why(self, findings):
+        return findings["reads_missing_nested_capture_why"].get("CS:key_listing", "")
+
+    def test_an_empty_CS_file_is_a_COMPLETE_capture_of_zero_keys(self):
+        """The positive, from the REAL producer: 38 records, exit 0, and a census of 0."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = self._empty_cs(tmp)
+            code, report = tree.run_producer()
+            self.assertEqual(code, producer.EXIT_COMPLETE, report.get("traceback"))
+            self.assertEqual(one(report, "CS:key_listing")["status"], "read")
+            self.assertEqual(one(report, "CS:key_listing")["key_count"], 0)
+            self.assertEqual(report["CS"]["key_listing"], [])
+            exit_code, findings = tree.validate(report)
+            self.assertEqual(exit_code, validator.EXIT_COMPLETE, findings)
+            self.assertEqual(findings["reads_missing_nested_capture"], [])
+
+    def test_an_absent_listing_at_key_count_zero_is_still_not_a_capture(self):
+        """A count of zero has a product; a listing that is GONE has none to check."""
+        def mutate(report):
+            del report["CS"]["key_listing"]
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("preserves nothing", self._why(findings))
+
+    def test_a_nonempty_listing_at_key_count_zero_is_not_a_capture(self):
+        """One census stated twice and differently: the record counted none and the
+        section preserved keys. Allowing zero must not stop being an AGREEMENT rule."""
+        def mutate(report):
+            report["CS"]["key_listing"] = list(report["G"]["key_listing"])
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("the record counted 0", self._why(findings))
+
+    def test_an_empty_listing_against_a_nonzero_count_is_not_a_capture(self):
+        """The same disagreement mirrored: the record counted 13 and none were kept."""
+        def mutate(report):
+            one(report, "CS:key_listing")["key_count"] = 13
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("holds 0 TKeys and the record counted 13", self._why(findings))
+
+    def test_malformed_entries_are_not_a_capture_even_at_an_agreeing_count(self):
+        """Admitting the empty list must not admit junk in a non-empty one. The count is
+        moved to agree on purpose, so the length rule cannot be what refuses this and the
+        entry rules have to reach it on their own."""
+        def mutate(report):
+            report["CS"]["key_listing"] = [{"name": "hCov_universe5d_total"}]
+            one(report, "CS:key_listing")["key_count"] = 1
+        exit_code, findings = self._mutated(mutate)
+        self.assertEqual(exit_code, validator.EXIT_ERROR)
+        self.assertIn("carries no class", self._why(findings))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

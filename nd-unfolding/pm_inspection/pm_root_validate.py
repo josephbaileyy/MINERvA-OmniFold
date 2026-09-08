@@ -285,9 +285,21 @@ def dig(document: object, path: tuple[str, ...]) -> tuple[bool, object]:
 
 
 def tkey_listing_defect(value: object) -> str | None:
-    """PREDECLARATION section 4: TKey NAMES, CLASSES and CYCLES, not a count of them."""
-    if not isinstance(value, list) or not value:
-        return "not a non-empty list of TKey entries"
+    """PREDECLARATION section 4: TKey NAMES, CLASSES and CYCLES, not a count of them.
+
+    AN EMPTY LIST IS NOT REFUSED HERE, and that is the round-6 repair. Round 5 demanded a
+    NON-empty listing, which reads a minimum number of keys into a presence census that
+    sets none: a file with no top-level keys has an empty listing, and that is the
+    measurement rather than a malformed capture. Zero is a count. What is refused is a
+    listing that is ABSENT -- caught one layer up in ``nested_capture_defect``, where the
+    report preserves nothing at the section path -- one whose entries are not TKey
+    records, and one whose LENGTH disagrees with the record's ``key_count``, which is what
+    ``listing_capture_defect`` compares. An empty listing whose record states no count at
+    all agrees with nothing and is already a fault: ``key_count`` is a required payload
+    field of this branch and its absence is reported as one.
+    """
+    if not isinstance(value, list):
+        return "not a list of TKey entries"
     for index, item in enumerate(value):
         if not isinstance(item, dict):
             return f"TKey entry {index} is not a mapping"
@@ -301,6 +313,13 @@ def tkey_listing_defect(value: object) -> str | None:
 
 
 def listing_capture_defect(value: object, entry: dict) -> str | None:
+    """The listing, and its agreement with the number the record says it counted.
+
+    With the emptiness rule gone from ``tkey_listing_defect``, this comparison is what
+    carries the zero case in BOTH directions: an empty listing against ``key_count: 13``
+    and a non-empty listing against ``key_count: 0`` are each a report whose two
+    statements of one census disagree.
+    """
     problem = tkey_listing_defect(value)
     if problem is not None:
         return problem
