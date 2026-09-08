@@ -3,7 +3,7 @@
 **STATUS: FOR REVIEW. NOT SUBMITTED, NOT APPROVED, NOT EXECUTED.** Nothing here has been run
 against the real inputs. Admission is blocked on prerequisites recorded below.
 
-These four files package the fixed reads already declared in
+These files package the fixed reads already declared in
 `docs/orchestration/PREDECLARATION-20260906-pm-root-inspection.md` §3–§4. They add no
 scientific scope: every path opened and every object read was declared before this code
 existed.
@@ -13,7 +13,12 @@ existed.
 | `INPUT-BINDINGS-20260908.json` | the thirteen inputs, with digests and their provenance |
 | `pm_root_inspect.py` | producer — opens each input `READ`, performs the declared reads |
 | `pm_root_validate.py` | terminal validator — classifies capture, selects one branch |
-| `test_pm_root_inspection.py` | 19 focused tests, no ROOT required |
+| `fake_root.py` | test support: the slice of the PyROOT surface the producer touches |
+| `test_pm_root_inspection.py` | classification and predeclaration-conformance tests |
+| `test_pm_producer_driven.py` | the REAL producer against a controllable temporary tree |
+| `test_pm_validator_output.py` | the validator's `main`, end to end, including its write path |
+
+117 tests at the fourth repair round, none of them needing ROOT or any real input.
 
 The contract lives at `docs/orchestration/contracts/CONTRACT-20260908-pm-root-inspection.json`.
 
@@ -86,7 +91,7 @@ it returns.
 | unknown `status` passed silently | any status outside `{read, absent, unreadable}` is a fault |
 | an *unreadable* optional counted as the declared absence | unreadable optional is a fault; only `absent` is the measurement |
 | validator took `declared_read_ids` from the producer | obligations recomputed from the committed bindings; a shrunken declaration is `INCOMPLETE` and flagged |
-| a stale report at the fixed path satisfied the read | producer and validator share `--attempt-id`; a mismatch is `ERROR` |
+| a stale report at the fixed path satisfied the read | producer and validator share `--attempt-id`; a mismatch is `ERROR`. **This repair is partial and the row overstated it — see "The fixed attempt id" below.** |
 | mask digest invented (`!= 0`, JSON booleans) | the predeclared algorithm: `central > 0`, `sha256(idx.tobytes())` and `sha256(idx.tobytes() + b"\|C")`, compared to S's committed values |
 | `row_index_sha256` and G's before/after digest absent | both captured; G read-onlyness is now measured, CS's stays asserted |
 | declared `grid_nbins` reported as measured | `GetNbinsX()` recorded separately, with `nbins_conforms` |
@@ -163,6 +168,111 @@ Two rules close it, and neither is an acceptance threshold — both ask whether 
 `classify` all end as `ERROR` with a written verdict. An uncaught exception would leave the
 terminal branch unselected — the one outcome the contract has no consequence for.
 
-The hand-written classification tests now build records through the same payload rule, so they
-test classification rather than re-testing the payload rule the producer-driven suite already
-covers.
+## Fourth review round — the same class again, and why the tests could not see it
+
+Two independent reviewers returned BLOCK on `da8179f0`. The through-line both found is the
+one this package has now failed four times: **the validator believing a record's summary of
+a measurement over the measurement sitting next to it in the same record.** Round 1 took the
+obligations from the producer's account; round 2 treated a self-declared `kind` as
+authoritative; round 3 carried a `status` with the payload absent; round 4 found `status`,
+`unchanged`, `present` and `nbins_conforms` still believed over the digests and counts beside
+them.
+
+| defect in `da8179f0` | repair |
+|---|---|
+| the presence rule tested for `None`, so every digest `""`, every count `0` and all seven sections `{}` returned `COMPLETE` | a payload field must be non-empty **and of the kind its read produces**; a section must be a non-empty mapping, or for `root_version` a non-empty string |
+| `sha256_before`, `sha256_after` and `unchanged` were never compared, so a record saying **G changed** was `COMPLETE` | `unchanged` must equal `sha256_before == sha256_after`; either of the report's two statements of it saying G changed is a fault, and the two disagreeing is a fault |
+| `G:hRowIndex5D`'s payload rule was `("present",)`, so an object that loaded and could not be digested was a measurement | `contents_readable` is a payload field, the digest is required when contents are readable, and the producer records the undigestible case as `unreadable` |
+| the validator imported the producer's `obligation_kinds()`, so producer/validator skew was invisible | the table is restated in the validator; the tests hold both copies to a third restatement of the predeclaration, and a subprocess test fails if the import returns |
+| `producer_declaration_disagrees_with_bindings` was computed and then excluded from `faults` | it is a fault |
+| a listed-but-null `hXSecND_flat` or axis histogram aborted the capture with `AttributeError`, costing 21 of 38 reads | one bad object costs one `unreadable` record and the capture continues |
+| `bindings["data_root"]` was committed and read by nobody, and `module_provenance`'s `forbidden_root` took the same argv value that chose the tree | the producer aims the contamination measurement at the **declared** root; the validator compares all three, and a populated offender list is a fault |
+| the validator's write path sat outside every guard | classification and writing are separate; a write failure reports the classification it could not file and returns `ERROR` |
+| the verdict was silently overwritten | `preserve-first`: a second classification needs a fresh run directory |
+| an unreadable **optional** object was stamped `kind: required`, so an honest producer was additionally accused of reclassifying its own obligation | `status` carries the fault, `kind` carries the obligation |
+| an empty `TNamed` title was reported as `status=read, value=""` | an empty title is `unreadable`; a typed `0.0` is still a measurement |
+
+**The reason three rounds each found this class is the fixtures.** `payloaded()` built every
+record by calling `validator.payload_fields_for()` — the rule under test — so fixture and rule
+moved together and no test could detect a gap in either. Review measured the cost: sixteen
+mutations applied one at a time, and **fifteen left all 44 tests green**, including hardcoding
+read-onlyness, reporting the declared grid size as the measured one, and emptying seven of the
+eight payload branches. The paragraph this replaced claimed that building fixtures through the
+payload rule was the *repair*; it was the defect.
+
+The obligation table, each obligation's kind, the payload branch each read falls in and the
+payload values are now spelled out in `test_pm_root_inspection.py` from the predeclaration,
+independently of both halves. There is one test per payload branch and one per required section
+that fails when that single branch or section is dropped. All sixteen of review's mutations are
+now caught, as are sixteen reverts of the repairs above.
+
+## What is a completeness check here, and what would be an acceptance threshold
+
+The line the validator does not cross: **is the number there, and does it contradict another
+number in the same record** is capture completeness. **Is the number right, big enough or close
+enough** is an acceptance threshold, and there is deliberately none, because inventing one would
+be inventing a scientific criterion nobody authorized.
+
+So `unchanged` is compared to the two digests that define it, `nbins_conforms` to the two bin
+counts that define it, and a count to the bins it was counted over — every one of them an exact
+comparison of fields the producer already wrote. But a measured grid **non-conformance** is a
+`COMPLETE` capture carrying `nbins_conforms: false`, a non-finite bin is a `COMPLETE` capture
+carrying `all_finite: false`, and `row_index_matches_S: false` is a measurement and not a
+failure. Each of those has a test asserting `COMPLETE`, because a validator that refuses
+everything is not correct either.
+
+Zero and `false` are not emptiness. A `count` of 0 is a real answer, `first_edge` is 0.0 in the
+fixtures on purpose, and `unchanged: false` is the measurement itself. An empty digest never is,
+which is why the two are typed separately rather than both tested for truthiness.
+
+## The fixed attempt id — SURFACED, NOT FIXED. It needs a ruling, not a patch
+
+`CONTRACT-20260908-pm-root-inspection.json:96` hardcodes
+`--attempt-id pm-root-inspection-20260908-attempt-1`. Both reviewers independently reproduced
+what follows from that, and **it is not repaired here**:
+
+1. attempt 1 runs and writes `pm-inspection-report.json` at the fixed `output_namespace`;
+2. attempt 2 runs, and the producer **correctly** refuses to overwrite that report;
+3. the validator reads the report **from attempt 1**, whose `attempt_id` matches the contract's
+   literal, and returns `COMPLETE`, granting `unlocks: preserve-capture-as-measurement` for a
+   capture this attempt never performed.
+
+The overwrite refusal makes the stale case the *default* outcome of a re-run rather than an edge
+case. `test_stale_report_from_another_attempt_is_refused` tests a *different* attempt id, which
+is a different hazard from the fixed-path one.
+
+**Why no code change fixes it.** The producer and the validator already agree on the id; the
+defect is that the id is a constant in a committed file, so it cannot distinguish "the producer
+just wrote this" from "this has been sitting here since attempt 1". Any per-run value the
+producer invents and the validator reads back is a value the validator learns *from the report
+it is validating*, which is the class of defect this whole package keeps failing. The id has to
+come from **outside both halves**.
+
+**Proposal, for the contract and launcher owners.**
+
+- **Where the nonce comes from.** The launcher generates it once per invocation, as
+  `pm-root-inspection-20260908-<utc-timestamp>-<8 hex>`, from `secrets.token_hex(4)` and the UTC
+  clock. Not from a git sha (a re-run at the same sha is exactly the case that must be
+  distinguishable), and not from the scheduler's job id alone (a requeued array task can repeat
+  it), though including `SLURM_JOB_ID` alongside the random part is harmless and useful for
+  cross-referencing.
+- **Who injects it.** Whatever launches *both* halves — the same process that runs the producer
+  and then the validator. It passes the identical string to `--attempt-id` on both, and derives
+  `--out` for both from it, so each attempt gets a fresh run directory and the producer's
+  overwrite refusal stops being reachable in the normal case.
+- **What the contract says instead.** The `terminal_validator.argv` entry for `--attempt-id`,
+  and the `--out` path that embeds it, become declared **substitutions** rather than literals —
+  e.g. `"--attempt-id", "${ATTEMPT_ID}"` with an `attempt_id` block stating who generates it,
+  the format, and that it must be identical across the two halves and unique per invocation.
+  That requires `campaignctl`'s argv binder to permit and record a substitution, which is why
+  this is a contract-and-launcher change and not a code change.
+- **A second, independent belt.** The validator could additionally require that the report's
+  `finished_at_utc` be no older than the validator's own start minus a bound. That is a
+  *freshness* check, it is not free of judgement (someone has to choose the bound), and it is
+  weaker than a nonce, so it is recorded here as an option and not implemented.
+
+**Related, and worth a ruling in the same pass:** the contract commits **no producer argv at
+all** — `"producer"` is a free-text field — so nothing committed pins the producer's
+`--attempt-id`, `--out` or `--data-root`. The validator now refuses a report whose `data_root`
+disagrees with the bindings, which closes the consequence of a wrong `--data-root` but does not
+pin the argv.
