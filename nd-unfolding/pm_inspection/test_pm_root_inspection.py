@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 """Focused tests for the bounded ROOT inspection producer and validator.
 
-MUTATION TESTS ARE THE POINT.  Every defect that review found in the first revision is
+MUTATION TESTS ARE THE POINT.  Every defect that review found in an earlier revision is
 pinned here by a test that FAILS if the defect returns: an empty capture reading COMPLETE,
 an unknown status passing, an unreadable optional counting as the declared absence, the
 validator trusting the producer's own obligation list, a stale report satisfying a
 fixed-path read, a symlinked output directory landing inside a checkout, an invented mask
 digest, and a declared grid size reported as a measured one.
+
+THE FIXTURES DO NOT CALL THE RULES THEY TEST.  Round 4 of review measured what that costs:
+``payloaded()`` used to build each record by calling ``validator.payload_fields_for()``, so
+emptying seven of the eight payload branches left all 44 tests green -- the fixture moved
+with the rule and could not disagree with it.  The obligation table, each obligation's
+kind, the payload branch each read falls in, and the payload values themselves are now
+restated here from ``PREDECLARATION-20260906-pm-root-inspection.md`` sections 3-4.  Two
+statements that must agree is the whole point; one statement asked twice is not a test.
 
 The innocent cases are here for the same reason: a validator that refuses everything is not
 correct either, and the expected-optional absence must keep passing.
@@ -17,8 +25,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 from pathlib import Path
 
@@ -33,30 +43,149 @@ OPTIONAL = validator.OPTIONAL
 ATTEMPT = "attempt-under-test"
 
 BINDINGS = json.loads((HERE / "INPUT-BINDINGS-20260908.json").read_text())
-KINDS = producer.obligation_kinds(BINDINGS)
+
+# --------------------------------------------------------------------------------------
+# The predeclaration, restated. Nothing below is read out of the validator or the producer.
+# --------------------------------------------------------------------------------------
+
+#: PREDECLARATION section 4: the conditional reads, the only ids whose absence is an answer.
+G_OPTIONAL_OBJECTS = ("hRowIndex5D",)
+ENDPOINT_OPTIONAL_OBJECTS = ("estimator_seed", "estimator_seed_0", "estimator_seed_1",
+                             "est_seed_offset", "est_seed_offset_0", "est_seed_offset_1")
+G_REQUIRED_READS = ("G:key_listing", "G:combined_source", "G:centering_convention",
+                    "G:sqrt_tr_old", "G:sqrt_tr_new", "G:hInflation_g_nbins",
+                    "G:read_onlyness")
+AXES = ("pt", "pz", "eavail", "q3", "W")
+ENDPOINT_SCALARS = ("ndim", "dataPOT", "globalCompleteness")
+
+#: The sections a capture must carry, spelled out so that dropping one from the validator's
+#: own tuple fails a test instead of silently narrowing the rule.
+EXPECTED_REPORT_SECTIONS = ("G", "CS", "CV_central", "endpoints", "G_read_onlyness",
+                            "module_provenance", "root_version")
+
+
+def spelled_out_obligations(bindings):
+    """Every declared read and the kind the predeclaration gives it, restated here."""
+    kinds = {}
+    for entry in bindings["inputs"]:
+        kinds[f"input:{entry['id']}"] = REQUIRED
+    for read_id in G_REQUIRED_READS:
+        kinds[read_id] = REQUIRED
+    for name in G_OPTIONAL_OBJECTS:
+        kinds[f"G:{name}"] = OPTIONAL
+    for read_id in ("CS:key_listing", "CV_central:key_listing",
+                    "CV_central:hXSecND_flat"):
+        kinds[read_id] = REQUIRED
+    for band in bindings["bands"]:
+        for endpoint in (0, 1):
+            label = f"EP_{band}_{endpoint}"
+            kinds[f"{label}:key_listing"] = REQUIRED
+            kinds[f"{label}:hXSecND_flat"] = REQUIRED
+            for axis in AXES:
+                kinds[f"{label}:hXSec_{axis}"] = REQUIRED
+            for scalar in ENDPOINT_SCALARS:
+                kinds[f"{label}:{scalar}"] = REQUIRED
+            for name in ENDPOINT_OPTIONAL_OBJECTS:
+                kinds[f"{label}:{name}"] = OPTIONAL
+    return kinds
+
+
+KINDS = spelled_out_obligations(BINDINGS)
 OBLIGATIONS = list(KINDS)
 
 
-def payloaded(read_id, status="read", kind=None):
-    """A record carrying the payload fields its read is required to produce.
+def payload_branch(read_id):
+    """Which declared read this is. Restated, not asked of the validator."""
+    if read_id.startswith("input:"):
+        return "input"
+    if read_id.endswith(":key_listing"):
+        return "key_listing"
+    if read_id.endswith(":hXSecND_flat"):
+        return "flat_histogram"
+    if read_id == "G:hInflation_g_nbins":
+        return "inflation_nbins"
+    if read_id == "G:read_onlyness":
+        return "read_onlyness"
+    if ":hXSec_" in read_id:
+        return "axis_histogram"
+    if read_id == "G:hRowIndex5D":
+        return "row_index"
+    return "stored_scalar"
 
-    These tests exercise CLASSIFICATION logic, so their records must be well-formed the way
-    the producer's are -- otherwise they would only be re-testing the payload rule that
-    test_pm_producer_driven.py already covers against the real producer.
-    """
+
+#: What a ``status="read"`` record of each branch MUST carry. The row-index branch is the
+#: readable case; the undigestible case is a contradiction, tested separately.
+EXPECTED_PAYLOAD_FIELDS = {
+    "input": ("path", "size_bytes", "digest_provenance"),
+    "key_listing": ("key_count",),
+    "flat_histogram": ("row_index_sha256", "reported_mask_hash", "count",
+                       "measured_nbins", "declared_nbins", "nbins_conforms",
+                       "all_finite", "content_sha256"),
+    "inflation_nbins": ("nbins",),
+    "read_onlyness": ("sha256_before", "sha256_after", "unchanged"),
+    "axis_histogram": ("nbins", "first_edge", "last_edge"),
+    "row_index": ("present", "contents_readable", "count", "row_index_sha256",
+                  "reported_mask_hash"),
+    "stored_scalar": ("value",),
+}
+
+#: One literal, internally consistent value per payload field. ``first_edge`` is 0.0 on
+#: purpose: a legitimately-zero numeric must pass, while an empty digest must not.
+LITERAL_PAYLOAD_VALUES = {
+    "path": "/synthetic/root/some-input.root",
+    "size_bytes": 892170881,
+    "digest_provenance": "committed-historical",
+    "key_count": 13,
+    "row_index_sha256": "a" * 64,
+    "reported_mask_hash": "b" * 64,
+    "content_sha256": "c" * 64,
+    "count": 3,
+    "measured_nbins": 65856,
+    "declared_nbins": 65856,
+    "nbins_conforms": True,
+    "all_finite": True,
+    "nbins": 4,
+    "sha256_before": "d" * 64,
+    "sha256_after": "d" * 64,
+    "first_edge": 0.0,
+    "last_edge": 7.5,
+    "unchanged": True,
+    "present": True,
+    "contents_readable": True,
+    "value": 1.5,
+}
+
+
+def payloaded(read_id, status="read", kind=None, **overrides):
+    """A record carrying literal values for the payload its read is required to produce."""
     entry = {"read_id": read_id, "status": status,
              "kind": kind if kind is not None else KINDS[read_id]}
     if status == "read":
-        for field in validator.payload_fields_for(read_id):
-            entry[field] = "/synthetic/path" if field == "path" else 1
+        for field in EXPECTED_PAYLOAD_FIELDS[payload_branch(read_id)]:
+            entry[field] = LITERAL_PAYLOAD_VALUES[field]
+    entry.update(overrides)
     return entry
 
 
 def report(reads, attempt_id=ATTEMPT, **extra):
-    base = {"attempt_id": attempt_id, "reads": reads,
-            "declared_read_ids": list(OBLIGATIONS)}
-    for section in validator.REQUIRED_REPORT_SECTIONS:
-        base[section] = {"synthetic": True}
+    """An otherwise-intact report shell whose sections carry literal measurements."""
+    base = {
+        "attempt_id": attempt_id,
+        "reads": reads,
+        "declared_read_ids": list(OBLIGATIONS),
+        "data_root": BINDINGS["data_root"],
+        "G": {"key_count": 13, "sqrt_tr_old": 1.5},
+        "CS": {"key_count": 7, "band_keys": ["hCov_universe5d_BeamAngleX"]},
+        "CV_central": {"key_count": 4},
+        "endpoints": {"EP_BeamAngleX_0": {"key_count": 9}},
+        "G_read_onlyness": {"sha256_before": "d" * 64, "sha256_after": "d" * 64,
+                            "unchanged": True,
+                            "basis": "measured by before/after digest"},
+        "module_provenance": {"forbidden_root": BINDINGS["data_root"],
+                              "modules_loaded_from_forbidden_root": [],
+                              "module_count": 3},
+        "root_version": "6.28/12",
+    }
     base.update(extra)
     return base
 
@@ -66,18 +195,68 @@ def full_capture():
     return report([payloaded(rid) for rid in OBLIGATIONS])
 
 
+def capture_with(read_id, **changes):
+    """A full capture in which exactly one record has been changed."""
+    reads = [payloaded(rid) for rid in OBLIGATIONS if rid != read_id]
+    reads.append(payloaded(read_id, **changes))
+    return report(reads)
+
+
+class ThePredeclarationIsTheAuthority(unittest.TestCase):
+    """The rules under test must match this file's independent restatement of them."""
+
+    def test_validator_obligations_match_the_predeclaration(self):
+        self.assertEqual(validator.obligation_kinds(BINDINGS), KINDS)
+
+    def test_producer_obligations_match_the_predeclaration(self):
+        """Producer and validator now hold separate tables; they must still agree."""
+        self.assertEqual(producer.obligation_kinds(BINDINGS), KINDS)
+
+    def test_required_sections_are_the_seven_declared_ones(self):
+        self.assertEqual(validator.REQUIRED_REPORT_SECTIONS, EXPECTED_REPORT_SECTIONS)
+
+    def test_every_obligation_requires_the_payload_its_read_measures(self):
+        """Emptying any payload branch fails here, which is what round 4 could not do."""
+        for read_id in OBLIGATIONS:
+            branch = payload_branch(read_id)
+            with self.subTest(read_id=read_id, branch=branch):
+                self.assertEqual(
+                    set(validator.payload_fields_for(read_id, payloaded(read_id))),
+                    set(EXPECTED_PAYLOAD_FIELDS[branch]))
+
+    def test_every_payload_branch_is_exercised_by_some_obligation(self):
+        covered = {payload_branch(read_id) for read_id in OBLIGATIONS}
+        self.assertEqual(covered, set(EXPECTED_PAYLOAD_FIELDS))
+
+
 class InnocentCapturesPass(unittest.TestCase):
     def test_full_capture_is_COMPLETE(self):
-        code, _ = validator.classify(full_capture(), BINDINGS, ATTEMPT)
-        self.assertEqual(code, validator.EXIT_COMPLETE)
+        code, findings = validator.classify(full_capture(), BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_COMPLETE, findings)
 
     def test_expected_optional_absence_is_still_COMPLETE(self):
         """hRowIndex5D absent from G is the ANSWER, and must not become a fault."""
         reads = [payloaded(rid) for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
-        reads.append({"read_id": "G:hRowIndex5D", "status": "absent", "kind": OPTIONAL})
+        reads.append({"read_id": "G:hRowIndex5D", "status": "absent", "kind": OPTIONAL,
+                      "present": False})
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
-        self.assertEqual(code, validator.EXIT_COMPLETE)
+        self.assertEqual(code, validator.EXIT_COMPLETE, findings)
         self.assertEqual(findings["expected_optional_absences"], ["G:hRowIndex5D"])
+
+    def test_a_legitimately_zero_number_is_a_measurement(self):
+        """0 non-zero bins, or a first edge at 0.0, is a real answer. An empty digest is
+        never one, which is why the two are not treated alike."""
+        doc = capture_with("CV_central:hXSecND_flat", count=0)
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_COMPLETE, findings)
+
+    def test_a_false_boolean_measurement_is_not_a_missing_one(self):
+        """nbins_conforms=False is a measured grid non-conformance, not a capture gap.
+        Faulting on its VALUE would be an acceptance threshold; the validator has none."""
+        doc = capture_with("CV_central:hXSecND_flat", nbins_conforms=False,
+                           measured_nbins=4)
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_COMPLETE, findings)
 
 
 class MutationsThatMustNotPass(unittest.TestCase):
@@ -87,13 +266,26 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertIn("empty capture", findings["reason"])
 
     def test_producer_cannot_shrink_its_own_obligations(self):
-        """A report claiming only one declared read must not thereby become COMPLETE."""
+        """A report claiming only one declared read must not thereby become COMPLETE.
+
+        The declaration mismatch is itself the fault: the records may all be missing as
+        well, but a producer that disagrees with the committed bindings about what it was
+        supposed to read has already failed, so this is ERROR and not INCOMPLETE.
+        """
         doc = report([payloaded("G:key_listing")])
         doc["declared_read_ids"] = ["G:key_listing"]
         code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
-        self.assertEqual(code, validator.EXIT_INCOMPLETE)
+        self.assertEqual(code, validator.EXIT_ERROR)
         self.assertTrue(findings["producer_declaration_disagrees_with_bindings"])
         self.assertGreater(len(findings["missing_read_records"]), 1)
+
+    def test_a_declared_read_that_does_not_exist_is_a_fault(self):
+        """The only cross-check on producer/validator skew must reach the verdict."""
+        doc = full_capture()
+        doc["declared_read_ids"] = list(OBLIGATIONS) + ["a-read-that-does-not-exist"]
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["producer_declaration_disagrees_with_bindings"])
 
     def test_stale_report_from_another_attempt_is_refused(self):
         code, findings = validator.classify(full_capture(), BINDINGS, "a-different-attempt")
@@ -101,16 +293,14 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertIn("not bound to this attempt", findings["reason"])
 
     def test_unknown_status_is_a_fault(self):
-        reads = [payloaded(rid) for rid in OBLIGATIONS]
-        reads[0] = dict(reads[0], status="probably-fine")
-        code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
+        doc = capture_with(OBLIGATIONS[0], status="probably-fine")
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_ERROR)
         self.assertEqual(findings["records_with_unknown_status"], [OBLIGATIONS[0]])
 
     def test_unknown_kind_is_a_fault(self):
-        reads = [payloaded(rid) for rid in OBLIGATIONS]
-        reads[0] = dict(reads[0], kind="sort-of-required")
-        code, _ = validator.classify(report(reads), BINDINGS, ATTEMPT)
+        doc = capture_with(OBLIGATIONS[0], kind="sort-of-required")
+        code, _ = validator.classify(doc, BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_ERROR)
 
     def test_unreadable_optional_is_a_fault_not_the_declared_absence(self):
@@ -133,6 +323,17 @@ class MutationsThatMustNotPass(unittest.TestCase):
                       findings["records_whose_kind_contradicts_bindings"])
         self.assertIn(OBLIGATIONS[0], findings["required_read_failures"])
 
+    def test_a_kind_disagreement_alone_is_a_fault(self):
+        """With no other defect in the report, the kind disagreement must still be ERROR:
+        removing it from the faults expression left the whole suite green in round 4."""
+        doc = capture_with("G:hRowIndex5D", kind=REQUIRED)
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(findings["records_whose_kind_contradicts_bindings"],
+                         ["G:hRowIndex5D"])
+        self.assertEqual(findings["required_read_failures"], [])
+        self.assertEqual(findings["reads_missing_payload"], [])
+        self.assertEqual(code, validator.EXIT_ERROR)
+
     def test_wrong_bindings_digest_is_ERROR(self):
         code, findings = validator.classify(full_capture(), BINDINGS, ATTEMPT,
                                             bindings_sha256="wrong")
@@ -140,9 +341,8 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertIn("different bindings bytes", findings["reason"])
 
     def test_required_failure_is_ERROR(self):
-        reads = [payloaded(rid) for rid in OBLIGATIONS]
-        reads[0] = dict(reads[0], status="unreadable")
-        code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
+        doc = capture_with(OBLIGATIONS[0], status="unreadable")
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_ERROR)
         self.assertEqual(findings["required_read_failures"], [OBLIGATIONS[0]])
 
@@ -153,11 +353,331 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertEqual(code, validator.EXIT_ERROR)
         self.assertTrue(findings["producer_traceback"])
 
+    def test_producer_fatal_is_ERROR_even_with_a_full_capture(self):
+        doc = full_capture()
+        doc["fatal"] = "required inputs unusable: CV_central"
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["producer_fatal"])
+
     def test_missing_record_is_INCOMPLETE(self):
         reads = [payloaded(rid) for rid in OBLIGATIONS[:-1]]
         code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
         self.assertEqual(code, validator.EXIT_INCOMPLETE)
         self.assertEqual(findings["missing_read_records"], [OBLIGATIONS[-1]])
+
+
+class EveryPayloadBranchMustCarryItsMeasurement(unittest.TestCase):
+    """One test per branch, each failing if THAT branch's rule is emptied.
+
+    Round 4 emptied seven of the eight branches one at a time and the suite stayed green,
+    because the fixture was built by calling the rule. These strip the fields this file
+    says the branch must carry, and require the verdict -- not just the finding list -- to
+    change.
+    """
+
+    #: A row index that says its contents were unreadable is not required to carry the
+    #: digest of contents it could not read -- it is a contradiction, tested separately --
+    #: so this one field stays, and the digest stays required because of it.
+    KEEP = {"row_index": {"contents_readable": True}}
+
+    def _strip(self, branch):
+        reads = []
+        stripped = []
+        keep = self.KEEP.get(branch, {})
+        for read_id in OBLIGATIONS:
+            entry = payloaded(read_id)
+            if payload_branch(read_id) == branch:
+                for field in EXPECTED_PAYLOAD_FIELDS[branch]:
+                    if field in keep:
+                        continue
+                    entry.pop(field, None)
+                    stripped.append(f"{read_id}:{field}")
+            reads.append(entry)
+        self.assertTrue(stripped, f"no obligation falls in branch {branch}")
+        return report(reads), stripped
+
+    def _assert_branch_is_pinned(self, branch):
+        doc, stripped = self._strip(branch)
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        for entry in stripped:
+            self.assertIn(entry, findings["reads_missing_payload"])
+
+    def test_input_branch(self):
+        self._assert_branch_is_pinned("input")
+
+    def test_key_listing_branch(self):
+        self._assert_branch_is_pinned("key_listing")
+
+    def test_flat_histogram_branch(self):
+        self._assert_branch_is_pinned("flat_histogram")
+
+    def test_inflation_nbins_branch(self):
+        self._assert_branch_is_pinned("inflation_nbins")
+
+    def test_read_onlyness_branch(self):
+        self._assert_branch_is_pinned("read_onlyness")
+
+    def test_axis_histogram_branch(self):
+        self._assert_branch_is_pinned("axis_histogram")
+
+    def test_row_index_branch(self):
+        self._assert_branch_is_pinned("row_index")
+
+    def test_stored_scalar_branch(self):
+        self._assert_branch_is_pinned("stored_scalar")
+
+
+class EmptyIsNotAMeasurement(unittest.TestCase):
+    """`""`, `{}` and `[]` passed every presence check in round 4: it tested for None."""
+
+    def test_an_empty_digest_is_not_a_capture(self):
+        doc = capture_with("CV_central:hXSecND_flat", row_index_sha256="")
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("CV_central:hXSecND_flat:row_index_sha256",
+                      findings["reads_missing_payload"])
+
+    def test_a_whitespace_only_text_field_is_not_a_capture(self):
+        doc = capture_with("input:G", digest_provenance="   ")
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("input:G:digest_provenance", findings["reads_missing_payload"])
+
+    def test_a_number_where_a_digest_belongs_is_not_a_capture(self):
+        """The round-3 fixture put 1 in every field, digests included."""
+        doc = capture_with("CV_central:hXSecND_flat", content_sha256=1)
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("CV_central:hXSecND_flat:content_sha256",
+                      findings["reads_missing_payload"])
+
+    def test_a_string_where_a_count_belongs_is_not_a_capture(self):
+        doc = capture_with("G:key_listing", key_count="thirteen")
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("G:key_listing:key_count", findings["reads_missing_payload"])
+
+    def test_a_digest_that_is_not_a_digest_is_not_a_capture(self):
+        doc = capture_with("CV_central:hXSecND_flat", content_sha256="deadbeef")
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("CV_central:hXSecND_flat:content_sha256",
+                      findings["reads_missing_payload"])
+
+    def test_an_empty_scalar_value_is_not_a_capture(self):
+        doc = capture_with("G:combined_source", value="")
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("G:combined_source:value", findings["reads_missing_payload"])
+
+    def test_every_required_section_is_pinned_one_at_a_time(self):
+        """Dropping any single section from the validator's tuple fails here."""
+        for section in EXPECTED_REPORT_SECTIONS:
+            with self.subTest(section=section):
+                doc = full_capture()
+                doc.pop(section)
+                code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+                self.assertEqual(code, validator.EXIT_ERROR)
+                self.assertIn(section, findings["missing_report_sections"])
+
+    def test_an_empty_section_is_as_absent_as_a_missing_one(self):
+        for section in EXPECTED_REPORT_SECTIONS:
+            with self.subTest(section=section):
+                doc = full_capture()
+                doc[section] = {} if section != "root_version" else ""
+                code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+                self.assertEqual(code, validator.EXIT_ERROR)
+                self.assertIn(section, findings["missing_report_sections"])
+
+    def test_sections_alone_carry_the_verdict(self):
+        """With every record payload intact, emptying the sections must still be ERROR:
+        removing missing_sections from the faults expression must not be survivable."""
+        doc = full_capture()
+        for section in EXPECTED_REPORT_SECTIONS:
+            doc[section] = {}
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(findings["reads_missing_payload"], [])
+        self.assertEqual(list(findings["missing_report_sections"]),
+                         list(EXPECTED_REPORT_SECTIONS))
+        self.assertEqual(code, validator.EXIT_ERROR)
+
+    def test_the_whole_round_four_reproducer(self):
+        """Every digest "", every count 0, every section {}: review got COMPLETE."""
+        doc = full_capture()
+        for section in EXPECTED_REPORT_SECTIONS:
+            doc[section] = {}
+        for entry in doc["reads"]:
+            for field in EXPECTED_PAYLOAD_FIELDS[payload_branch(entry["read_id"])]:
+                value = LITERAL_PAYLOAD_VALUES[field]
+                entry[field] = 0 if isinstance(value, (int, float)) else ""
+        code, _ = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+
+
+class ARecordMustAgreeWithItself(unittest.TestCase):
+    """Consistency between fields the producer already wrote. Not a threshold: no field's
+    VALUE is judged, only whether it contradicts another field in the same record."""
+
+    def test_G_changing_across_the_inspection_is_a_fault(self):
+        doc = capture_with("G:read_onlyness", sha256_after="e" * 64, unchanged=False)
+        doc["G_read_onlyness"] = {"sha256_before": "d" * 64, "sha256_after": "e" * 64,
+                                  "unchanged": False}
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["source_artifact_changed_during_the_inspection"])
+
+    def test_unchanged_must_equal_the_digest_comparison(self):
+        """The producer's summary of the measurement cannot outrank the measurement."""
+        doc = capture_with("G:read_onlyness", sha256_after="e" * 64, unchanged=True)
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(any("read_onlyness" in item for item
+                            in findings["records_contradicting_their_own_measurement"]))
+
+    def test_the_read_onlyness_section_must_agree_with_the_record(self):
+        doc = full_capture()
+        doc["G_read_onlyness"] = {"sha256_before": "d" * 64, "sha256_after": "e" * 64,
+                                  "unchanged": False}
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["source_artifact_changed_during_the_inspection"])
+
+    def test_status_read_must_mean_present(self):
+        doc = capture_with("G:hRowIndex5D", present=False)
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["records_contradicting_their_own_measurement"])
+
+    def test_status_absent_must_not_mean_present(self):
+        reads = [payloaded(rid) for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
+        reads.append({"read_id": "G:hRowIndex5D", "status": "absent", "kind": OPTIONAL,
+                      "present": True})
+        code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["records_contradicting_their_own_measurement"])
+
+    def test_a_row_index_that_loaded_but_could_not_be_digested_is_a_fault(self):
+        """The object PM-4's premise turns on: it loads, exposes neither GetNbinsX nor
+        GetSize, and round 4 classified that as a measurement."""
+        reads = [payloaded(rid) for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
+        reads.append({"read_id": "G:hRowIndex5D", "status": "read", "kind": OPTIONAL,
+                      "present": True, "contents_readable": False,
+                      "detail": "object exposes neither GetNbinsX nor GetSize"})
+        code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["records_contradicting_their_own_measurement"])
+
+    def test_a_present_row_index_must_carry_its_digest(self):
+        reads = [payloaded(rid) for rid in OBLIGATIONS if rid != "G:hRowIndex5D"]
+        reads.append({"read_id": "G:hRowIndex5D", "status": "read", "kind": OPTIONAL,
+                      "present": True, "contents_readable": True})
+        code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("G:hRowIndex5D:row_index_sha256", findings["reads_missing_payload"])
+
+    def test_nbins_conforms_must_equal_the_two_numbers_beside_it(self):
+        """Hardcoding nbins_conforms=True over a measured non-conformance is caught here;
+        the VALUE of nbins_conforms is still never judged."""
+        doc = capture_with("CV_central:hXSecND_flat", measured_nbins=4,
+                           nbins_conforms=True)
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["records_contradicting_their_own_measurement"])
+
+    def test_a_count_cannot_exceed_the_bins_it_was_counted_over(self):
+        doc = capture_with("CV_central:hXSecND_flat", count=70000)
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["records_contradicting_their_own_measurement"])
+
+    def test_the_two_mask_digests_cannot_be_the_same_bytes(self):
+        """One is sha256(idx), the other sha256(idx + b"|C"); equality means one was
+        copied into the other."""
+        doc = capture_with("CV_central:hXSecND_flat", reported_mask_hash="a" * 64)
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["records_contradicting_their_own_measurement"])
+
+
+class TheCaptureMustComeFromTheBoundTree(unittest.TestCase):
+    def test_a_report_from_another_data_root_is_a_fault(self):
+        doc = full_capture()
+        doc["data_root"] = "/tmp/some-other-tree"
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["data_root_disagrees_with_bindings"])
+
+    def test_a_trailing_slash_is_not_a_different_tree(self):
+        doc = full_capture()
+        doc["data_root"] = BINDINGS["data_root"] + "/"
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_COMPLETE, findings)
+
+    def test_a_contamination_measurement_aimed_elsewhere_is_a_fault(self):
+        """A forbidden_root that is not the bound tree measures nothing about the bound
+        tree, so the offender list being empty says nothing either."""
+        doc = full_capture()
+        doc["module_provenance"] = {"forbidden_root": "/tmp/somewhere-harmless",
+                                    "modules_loaded_from_forbidden_root": []}
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["contamination_measurement_aimed_at_the_wrong_tree"])
+
+    def test_a_populated_offender_list_is_a_fault(self):
+        doc = full_capture()
+        doc["module_provenance"] = {
+            "forbidden_root": BINDINGS["data_root"],
+            "modules_loaded_from_forbidden_root": ["p4_lib"]}
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertEqual(findings["modules_loaded_from_the_forbidden_root"], ["p4_lib"])
+
+    def test_a_missing_offender_list_is_a_fault(self):
+        """Deleting the measurement must not read the same as measuring no offenders."""
+        doc = full_capture()
+        doc["module_provenance"] = {"forbidden_root": BINDINGS["data_root"]}
+        code, findings = validator.classify(doc, BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertTrue(findings["records_contradicting_their_own_measurement"])
+
+    def test_bindings_without_a_data_root_cannot_ground_the_check(self):
+        bindings = dict(BINDINGS)
+        bindings.pop("data_root")
+        code, findings = validator.classify(full_capture(), bindings, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertIn("data_root", findings["reason"])
+
+
+class TheValidatorDoesNotImportTheProducer(unittest.TestCase):
+    """Round 2 moved the obligation table out of the producer's DATA. It stayed in the
+    producer's CODE, and the validator imported it, so producer/validator skew was
+    invisible. The two tables are now separate statements that a test compares."""
+
+    def test_the_validator_classifies_with_the_producer_unimportable(self):
+        script = textwrap.dedent(f"""
+            import json, sys
+            HERE = {str(HERE)!r}
+
+            class RefuseTheProducer:
+                def find_module(self, name, path=None):
+                    if name == "pm_root_inspect":
+                        raise AssertionError(
+                            "the validator must not import the producer")
+                def find_spec(self, name, path=None, target=None):
+                    return self.find_module(name, path)
+
+            sys.meta_path.insert(0, RefuseTheProducer())
+            sys.path.insert(0, HERE)
+            import pm_root_validate as validator
+            bindings = json.load(open(HERE + "/INPUT-BINDINGS-20260908.json"))
+            print(len(validator.obligation_kinds(bindings)))
+        """)
+        completed = subprocess.run([sys.executable, "-c", script],
+                                   capture_output=True, text=True)
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertEqual(int(completed.stdout.strip()), len(OBLIGATIONS))
 
 
 class OutputLocationGuards(unittest.TestCase):

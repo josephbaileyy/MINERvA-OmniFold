@@ -7,9 +7,19 @@ authorized and inventing one here would be inventing a scientific criterion.
 
 IT DOES NOT TRUST THE PRODUCER'S ACCOUNT OF ITS OWN OBLIGATIONS.  An earlier revision took
 ``declared_read_ids`` from the report, so a producer that declared nothing and read nothing
-was ``COMPLETE``.  The obligation list is now recomputed from the committed bindings, and a
-report is refused unless it is bound to THIS attempt -- otherwise a stale report left at the
-fixed path satisfies the read.
+was ``COMPLETE``.  The obligation list is recomputed from the committed bindings, by this
+file's own table rather than by importing the producer's, and a report is refused unless it
+is bound to THIS attempt -- otherwise a stale report left at the fixed path satisfies the
+read.
+
+IT DOES NOT TRUST A RECORD'S SUMMARY OF A MEASUREMENT OVER THE MEASUREMENT BESIDE IT.  Four
+review rounds each found one form of that: obligations taken from the producer's account, a
+self-declared ``kind`` treated as authoritative, a ``status`` carried with the payload
+absent, and then ``status``/``unchanged``/``present``/``nbins_conforms`` believed over the
+digests and counts in the same record.  So a payload field must be non-empty and of the
+kind its read produces, and where two fields in one record determine each other they are
+compared.  ``unchanged`` must equal ``sha256_before == sha256_after``; nothing here asks
+whether a digest is the RIGHT digest.
 
 THE DISTINCTION THAT MATTERS.  ``hRowIndex5D`` absent from G is the ANSWER to a declared
 question and is ``COMPLETE``.  A required input that is missing or digest-mismatched, a key
@@ -28,13 +38,9 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 from pathlib import Path
-
-HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE))
-
-import pm_root_inspect as producer_module  # noqa: E402
 
 EXIT_COMPLETE = 0
 EXIT_INCOMPLETE = 10
@@ -47,22 +53,87 @@ REQUIRED = "required"
 #: because an unmodelled status is a measurement whose meaning nobody has decided.
 KNOWN_STATUSES = frozenset({"read", "absent", "unreadable"})
 
-
 #: Top-level sections a capture must carry. Their absence means the payloads are gone even
 #: if every read record survives, which is the shape review reproduced: records stripped to
 #: read_id/status/kind, sections deleted, and the whole thing still reading as COMPLETE.
+#: Present-but-EMPTY is the same loss, so a section must be non-empty as well.
 REQUIRED_REPORT_SECTIONS = (
     "G", "CS", "CV_central", "endpoints", "G_read_onlyness", "module_provenance",
     "root_version",
 )
 
+#: The one section that is a string rather than a mapping: the ROOT version ROOT reported.
+SECTIONS_THAT_ARE_TEXT = frozenset({"root_version"})
 
-def payload_fields_for(read_id: str) -> tuple[str, ...]:
+SHA256_HEX = re.compile(r"[0-9a-f]{64}")
+
+#: What KIND of value each payload field carries. The split is deliberate and it is not a
+#: threshold: an EMPTY DIGEST is never a measurement, whereas a count of 0 legitimately is
+#: -- zero non-zero bins is a real answer -- and ``unchanged=False`` is the measurement
+#: itself rather than a missing one. So emptiness is refused where emptiness is impossible,
+#: and zero and False are accepted where they are answers.
+SHA256_FIELDS = frozenset({"row_index_sha256", "reported_mask_hash", "content_sha256",
+                           "sha256_before", "sha256_after"})
+TEXT_FIELDS = frozenset({"path", "digest_provenance"})
+NUMERIC_FIELDS = frozenset({"size_bytes", "key_count", "count", "measured_nbins",
+                            "declared_nbins", "nbins", "first_edge", "last_edge"})
+BOOLEAN_FIELDS = frozenset({"unchanged", "present", "contents_readable",
+                            "nbins_conforms", "all_finite"})
+
+
+def is_number(value: object) -> bool:
+    """A real number, and not a bool: ``True`` is an ``int`` and is not a count."""
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+def obligation_kinds(bindings: dict) -> dict[str, str]:
+    """Map every obligation to the kind the BINDINGS give it.
+
+    THIS TABLE IS THIS FILE'S OWN.  It used to be imported from the producer, which meant
+    the terminal validator derived its obligations from the code it was validating: round 2
+    moved the kinds out of the producer's DATA and they stayed in the producer's CODE, so
+    producer/validator skew was invisible by construction.  The duplication is the point --
+    two statements of the predeclaration that a test compares are a cross-check, and one
+    statement asked twice is not.  ``test_pm_root_inspection.py`` holds both to a third,
+    independent restatement of PREDECLARATION sections 3-4.
+
+    Only the conditional reads are optional: the ones the predeclaration writes as "only if
+    the listing shows it" and "when present".
+    """
+    kinds: dict[str, str] = {}
+    for entry in bindings["inputs"]:
+        kinds[f"input:{entry['id']}"] = REQUIRED
+    for read_id in ("G:key_listing", "G:combined_source", "G:centering_convention",
+                    "G:sqrt_tr_old", "G:sqrt_tr_new", "G:hInflation_g_nbins",
+                    "G:read_onlyness", "CS:key_listing", "CV_central:key_listing",
+                    "CV_central:hXSecND_flat"):
+        kinds[read_id] = REQUIRED
+    for name in bindings["optional_objects"]["G"]:
+        kinds[f"G:{name}"] = OPTIONAL
+    for band in bindings["bands"]:
+        for endpoint in (0, 1):
+            label = f"EP_{band}_{endpoint}"
+            for read_id in (f"{label}:key_listing", f"{label}:hXSecND_flat"):
+                kinds[read_id] = REQUIRED
+            for axis in ("pt", "pz", "eavail", "q3", "W"):
+                kinds[f"{label}:hXSec_{axis}"] = REQUIRED
+            for scalar in ("ndim", "dataPOT", "globalCompleteness"):
+                kinds[f"{label}:{scalar}"] = REQUIRED
+            for name in bindings["optional_objects"]["endpoint"]:
+                kinds[f"{label}:{name}"] = OPTIONAL
+    return kinds
+
+
+def payload_fields_for(read_id: str, entry: dict | None = None) -> tuple[str, ...]:
     """Fields a ``status="read"`` record MUST carry, by what that read measures.
 
     A record that says a read happened but carries no measurement is not a capture. This is
     a completeness rule, not an acceptance threshold: it asks whether the number is THERE,
     never whether the number is right, expected, or good enough.
+
+    ``entry`` is the record itself, for the one read whose payload depends on what it
+    found: a row index that loaded and could be digested must carry the digest, and one
+    that loaded and could not is a contradiction handled by ``self_contradictions``.
     """
     if read_id.startswith("input:"):
         return ("path", "size_bytes", "digest_provenance")
@@ -70,7 +141,7 @@ def payload_fields_for(read_id: str) -> tuple[str, ...]:
         return ("key_count",)
     if read_id.endswith(":hXSecND_flat"):
         return ("row_index_sha256", "reported_mask_hash", "count", "measured_nbins",
-                "content_sha256")
+                "declared_nbins", "nbins_conforms", "all_finite", "content_sha256")
     if read_id == "G:hInflation_g_nbins":
         return ("nbins",)
     if read_id == "G:read_onlyness":
@@ -78,24 +149,162 @@ def payload_fields_for(read_id: str) -> tuple[str, ...]:
     if ":hXSec_" in read_id:
         return ("nbins", "first_edge", "last_edge")
     if read_id == "G:hRowIndex5D":
-        return ("present",)
+        fields = ("present", "contents_readable")
+        if entry is not None and entry.get("contents_readable") is True:
+            fields += ("count", "row_index_sha256", "reported_mask_hash")
+        return fields
     # Every remaining declared read is a stored scalar.
     return ("value",)
 
 
-def payload_defects(reads: list, kinds: dict) -> list[str]:
-    """Read ids whose ``read`` record is missing, or nulls, a required payload field."""
-    defects = []
+def payload_field_defect(field: str, entry: dict) -> str | None:
+    """Why this field is not a measurement, or ``None`` if it is one."""
+    if field not in entry:
+        return "absent"
+    value = entry[field]
+    if value is None:
+        return "null"
+    if field in SHA256_FIELDS:
+        if not isinstance(value, str) or not SHA256_HEX.fullmatch(value):
+            return "not a sha256 hex digest"
+        return None
+    if field in TEXT_FIELDS:
+        if not isinstance(value, str) or not value.strip():
+            return "not a non-empty string"
+        return None
+    if field in NUMERIC_FIELDS:
+        if not is_number(value):
+            return "not a number"
+        return None
+    if field in BOOLEAN_FIELDS:
+        if not isinstance(value, bool):
+            return "not a boolean"
+        return None
+    # A stored scalar carries whatever ROOT held: a number, or a TNamed's title. A zero is
+    # a measurement; an empty title is not a value, and the producer records that as
+    # unreadable rather than as a read.
+    if isinstance(value, str):
+        return None if value.strip() else "empty string where a stored value belongs"
+    if is_number(value):
+        return None
+    return "not a stored scalar value"
+
+
+def payload_defects(reads: list, kinds: dict) -> tuple[list[str], dict[str, str]]:
+    """Read ids whose ``read`` record is missing, empties, or mistypes a payload field."""
+    reasons: dict[str, str] = {}
     for entry in reads:
         if not isinstance(entry, dict) or entry.get("status") != "read":
             continue
         read_id = entry.get("read_id")
         if read_id not in kinds:
             continue
-        for field in payload_fields_for(str(read_id)):
-            if entry.get(field) is None:
-                defects.append(f"{read_id}:{field}")
-    return sorted(defects)
+        for field in payload_fields_for(str(read_id), entry):
+            defect = payload_field_defect(field, entry)
+            if defect is not None:
+                reasons[f"{read_id}:{field}"] = defect
+    return sorted(reasons), reasons
+
+
+def self_contradictions(entry: dict) -> list[str]:
+    """Ways one record disagrees with itself.
+
+    Every check here compares two fields the producer already wrote. None of them asks
+    whether a value is right, big enough, or close enough -- ``unchanged`` is compared to
+    the two digests that define it, ``nbins_conforms`` to the two bin counts that define
+    it, and a count to the bins it was counted over. A record whose summary contradicts its
+    own measurement is the one thing four review rounds kept finding, and it is exactly
+    what a capture-completeness classifier can see without deciding any science.
+    """
+    problems: list[str] = []
+    status = entry.get("status")
+
+    if "present" in entry:
+        if status == "read" and entry["present"] is not True:
+            problems.append("status=read but present is not true")
+        if status == "absent" and entry["present"] is not False:
+            problems.append("status=absent but present is not false")
+    if status == "read" and entry.get("contents_readable") is False:
+        problems.append(
+            "status=read but contents_readable is false: the object loaded and its "
+            "contents could not be digested, which is a fault and not a measurement")
+
+    before, after, unchanged = (entry.get("sha256_before"), entry.get("sha256_after"),
+                                entry.get("unchanged"))
+    if (isinstance(before, str) and isinstance(after, str)
+            and isinstance(unchanged, bool) and unchanged != (before == after)):
+        problems.append(
+            f"unchanged={unchanged} but sha256_before == sha256_after is {before == after}")
+
+    measured, declared = entry.get("measured_nbins"), entry.get("declared_nbins")
+    conforms = entry.get("nbins_conforms")
+    if (is_number(measured) and is_number(declared) and isinstance(conforms, bool)
+            and conforms != (measured == declared)):
+        problems.append(
+            f"nbins_conforms={conforms} but measured_nbins {measured} == declared_nbins "
+            f"{declared} is {measured == declared}")
+
+    count = entry.get("count")
+    if is_number(count) and is_number(measured) and count > measured:
+        problems.append(f"count {count} exceeds the measured_nbins {measured} it was "
+                        "counted over")
+
+    row_index, mask = entry.get("row_index_sha256"), entry.get("reported_mask_hash")
+    if isinstance(row_index, str) and row_index == mask:
+        problems.append("row_index_sha256 and reported_mask_hash are the same bytes; one "
+                        "is sha256(idx) and the other sha256(idx + b'|C')")
+
+    read_id = entry.get("read_id", "<unnamed>")
+    return [f"{read_id}: {problem}" for problem in problems]
+
+
+def read_onlyness_of_the_source(report: dict, reads: list) -> tuple[bool, list[str]]:
+    """Did G change across the inspection, by the digests the producer itself wrote?
+
+    PREDECLARATION section 4 has G's before/after digest so that read-onlyness for G is
+    MEASURED rather than asserted, and the authorization forbids modifying source
+    artifacts. Round 4 found that ``sha256_before``, ``sha256_after`` and ``unchanged``
+    appeared in this file exactly once each -- in the required-field list -- and were never
+    compared, so a report stating that G CHANGED validated as COMPLETE.
+
+    This is exact byte equality of two fields already in the record, and the report states
+    the same three fields twice: once in the ``G:read_onlyness`` record and once in the
+    ``G_read_onlyness`` section. Either one saying G changed is a fault, and the two
+    disagreeing is a fault, because then the report does not carry one answer.
+    """
+    problems: list[str] = []
+    changed = False
+    record = next((entry for entry in reads if isinstance(entry, dict)
+                   and entry.get("read_id") == "G:read_onlyness"), None)
+    section = report.get("G_read_onlyness")
+    views = []
+    if record is not None:
+        views.append(("record G:read_onlyness", record))
+    if isinstance(section, dict) and section:
+        views.append(("section G_read_onlyness", section))
+
+    for label, view in views:
+        before, after = view.get("sha256_before"), view.get("sha256_after")
+        if isinstance(before, str) and isinstance(after, str) and before != after:
+            changed = True
+            problems.append(f"{label}: G changed across the inspection, sha256_before "
+                            f"{before} != sha256_after {after}")
+        if view.get("unchanged") is False:
+            changed = True
+            problems.append(f"{label}: unchanged is false; the read was not read-only")
+
+    if len(views) == 2:
+        for field in ("sha256_before", "sha256_after", "unchanged"):
+            if record.get(field) != section.get(field):
+                problems.append(
+                    f"section G_read_onlyness {field} does not match the G:read_onlyness "
+                    "record; the report carries two answers for one measurement")
+    return changed, sorted(set(problems))
+
+
+def same_path(left: object, right: object) -> bool:
+    """Lexical comparison only: the validating host need not hold either tree."""
+    return os.path.normpath(str(left)) == os.path.normpath(str(right))
 
 
 def refuse_output_inside_a_checkout(out_dir: Path) -> None:
@@ -121,6 +330,11 @@ def classify(report: dict, bindings: dict, attempt_id: str,
         return EXIT_ERROR, {"reason": "report is not a JSON object"}
     if not isinstance(bindings, dict) or not isinstance(bindings.get("inputs"), list):
         return EXIT_ERROR, {"reason": "bindings are not a JSON object with inputs"}
+    declared_root = bindings.get("data_root")
+    if not isinstance(declared_root, str) or not declared_root.strip():
+        return EXIT_ERROR, {
+            "reason": "bindings declare no data_root, so nothing binds the capture to a "
+                      "tree and the contamination measurement has no target"}
     if report.get("attempt_id") != attempt_id:
         return EXIT_ERROR, {
             "reason": "report is not bound to this attempt",
@@ -146,12 +360,17 @@ def classify(report: dict, bindings: dict, attempt_id: str,
         return EXIT_ERROR, {"reason": "report has malformed read records",
                             "malformed_record_indices": malformed[:20]}
 
-    missing_sections = [name for name in REQUIRED_REPORT_SECTIONS
-                        if report.get(name) is None]
+    # A section that is present but EMPTY has lost exactly what a missing one lost.
+    missing_sections = [
+        name for name in REQUIRED_REPORT_SECTIONS
+        if not (isinstance(report.get(name), str) and report[name].strip()
+                if name in SECTIONS_THAT_ARE_TEXT
+                else isinstance(report.get(name), dict) and report[name])
+    ]
 
     # The obligations AND their kinds come from the committed bindings, NEVER from the
     # report. A record's self-declared `kind` is descriptive, never authoritative.
-    kinds = producer_module.obligation_kinds(bindings)
+    kinds = obligation_kinds(bindings)
     obligations = list(kinds)
     findings["obligation_count"] = len(obligations)
     if not obligations:
@@ -160,9 +379,13 @@ def classify(report: dict, bindings: dict, attempt_id: str,
         return EXIT_ERROR, {"reason": "empty capture: no read records at all",
                             "obligation_count": len(obligations)}
 
-    claimed = report.get("declared_read_ids")
-    if claimed is not None and sorted(claimed) != sorted(obligations):
-        findings["producer_declaration_disagrees_with_bindings"] = True
+    # The one cross-check on producer/validator skew, and it has to reach the verdict: a
+    # report declaring a read that does not exist, or omitting one that does, means the two
+    # halves disagree about what was supposed to be read.
+    claimed_reads = report.get("declared_read_ids")
+    declaration_disagrees = (claimed_reads is not None
+                             and sorted(claimed_reads) != sorted(obligations))
+    findings["producer_declaration_disagrees_with_bindings"] = declaration_disagrees
 
     if report.get("traceback"):
         findings["producer_traceback"] = True
@@ -218,11 +441,46 @@ def classify(report: dict, bindings: dict, attempt_id: str,
     missing = sorted(set(obligations) - seen)
     findings["missing_read_records"] = missing
     findings["missing_report_sections"] = missing_sections
-    findings["reads_missing_payload"] = payload_defects(reads, kinds)
+    payload_missing, payload_reasons = payload_defects(reads, kinds)
+    findings["reads_missing_payload"] = payload_missing
+    findings["reads_missing_payload_why"] = payload_reasons
+
+    contradictions = sorted(
+        problem for entry in reads if entry.get("read_id") in kinds
+        for problem in self_contradictions(entry))
+
+    # The capture has to have come from the tree the bindings bind, and the contamination
+    # measurement has to have been aimed at that same tree: a forbidden_root pointed
+    # somewhere else measures nothing about the bound tree, so its empty offender list
+    # says nothing either.
+    wrong_data_root = not same_path(report.get("data_root"), declared_root)
+    provenance = report.get("module_provenance")
+    aimed_elsewhere = False
+    offenders: list[str] = []
+    if isinstance(provenance, dict) and provenance:
+        aim = provenance.get("forbidden_root")
+        aimed_elsewhere = not (isinstance(aim, str) and same_path(aim, declared_root))
+        listed = provenance.get("modules_loaded_from_forbidden_root")
+        if isinstance(listed, list):
+            offenders = sorted(str(name) for name in listed)
+        else:
+            contradictions.append(
+                "module_provenance: no modules_loaded_from_forbidden_root list, so "
+                "nothing was measured about imports from the bound tree")
+    findings["data_root_disagrees_with_bindings"] = wrong_data_root
+    findings["bindings_data_root"] = declared_root
+    findings["contamination_measurement_aimed_at_the_wrong_tree"] = aimed_elsewhere
+    findings["modules_loaded_from_the_forbidden_root"] = offenders
+
+    source_changed, read_onlyness_problems = read_onlyness_of_the_source(report, reads)
+    contradictions = sorted(set(contradictions) | set(read_onlyness_problems))
+    findings["source_artifact_changed_during_the_inspection"] = source_changed
+    findings["records_contradicting_their_own_measurement"] = contradictions
 
     faults = (bad_status or bad_kind or kind_disagreements or required_failures
-              or unreadable_optional or missing_sections
-              or findings["reads_missing_payload"]
+              or unreadable_optional or missing_sections or payload_missing
+              or contradictions or source_changed or declaration_disagrees
+              or wrong_data_root or aimed_elsewhere or offenders
               or report.get("traceback") or report.get("fatal"))
     if faults:
         return EXIT_ERROR, findings
