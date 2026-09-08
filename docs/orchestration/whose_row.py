@@ -1029,6 +1029,13 @@ def clean_merge_report(v: CleanMergeVerdict, limit: int = SCOPE_PRINT_LIMIT) -> 
                  f"(exit 0, conflict-free, isolated index)")
     lines.append(f"  staged tree:       {v.staged_tree}  == the reconstruction")
     lines.append(f"  unmerged entries:  {v.unmerged} (git ls-files --unmerged)")
+    # The OPERAND, named in the same breath as the verdict. What was compared is the INDEX, which is
+    # what `git commit` records for a merge; `git commit -a` would record the working tree instead
+    # and is therefore outside what this pass covers.
+    lines.append("  operand:           the INDEX, which is what `git commit` records for a merge. "
+                 "`git commit -a` would")
+    lines.append("                     commit the working tree instead, which is not what was "
+                 "verified here.")
     lines.append(f"  scope inspected:   {len(v.scope)} path(s) this merge changes against HEAD")
     for p in v.scope[:limit]:
         lines.append(f"    {p}")
