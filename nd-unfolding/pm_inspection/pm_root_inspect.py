@@ -705,6 +705,56 @@ def cancel_this_job(job_id: str) -> None:
     subprocess.run(["scancel", job_id], capture_output=True, text=True, timeout=60)
 
 
+
+#: Measured from the controller 2026-09-08, not assumed: `sacctmgr show qos` gives debug
+#: MaxWall 00:30:00 and UsageFactor 1.000000, identical to interactive's factor. debug is in
+#: account m3246's association list. NERSC's resource-usage policy reserves debug for
+#: development and testing rather than production, which is what a bounded capture is.
+DEFAULT_QOS = "debug"
+#: One node, one task, cpu, and a bound BELOW the 30-minute grant so the validator has room.
+DEFAULT_MINUTES = 25
+
+
+def launch(args, bindings_path: Path, run_dir: Path, task_ids_path: Path) -> int:
+    """Submit one job, record its identity, wait bounded, cancel only it, propagate its code.
+
+    The producer's own exit code is what campaignctl hands the validator, so it must mean what
+    it says: 0 only when the job reached a terminal state of its own accord AND the inner mode
+    reported success.
+    """
+    wrap = " ".join([
+        args.inner_python, "nd-unfolding/mnv_guarded_run.py",
+        "--expect-root", str(args.expect_root),
+        "--label", "pm-root-inspection-read",
+        "--", "nd-unfolding/pm_inspection/pm_root_inspect.py",
+        "--mode", "read",
+        "--bindings", str(bindings_path),
+        "--data-root", str(args.data_root),
+        "--attempt-id", run_dir.name,
+        "--out", str(run_dir),
+    ])
+    try:
+        job_id = submit_one_job(
+            wrap, run_dir=run_dir, task_ids_path=task_ids_path,
+            account=args.account, qos=args.qos, minutes=args.minutes,
+            comment=args.comment)
+    except SubmissionUncertain as error:
+        (run_dir / "submission-uncertain.txt").write_text(str(error) + "\n")
+        print(json.dumps({"submission": "uncertain", "reservation": "RETAINED",
+                          "detail": str(error)}))
+        return EXIT_SUBMISSION_UNCERTAIN
+
+    deadline = time.time() + args.minutes * 60 + 120
+    state = wait_for_job(job_id, deadline=deadline)
+    if state is None:
+        cancel_this_job(job_id)
+        print(json.dumps({"job_id": job_id, "state": "cancelled-on-deadline",
+                          "reservation": "RETAINED"}))
+        return EXIT_ERROR
+    print(json.dumps({"job_id": job_id, "state": state}))
+    return EXIT_COMPLETE if state == "COMPLETED" else EXIT_ERROR
+
+
 def declared_read_ids(bindings: dict) -> list[str]:
     """Every read this producer must emit a record for, in a stable order."""
     return list(obligation_kinds(bindings).keys())
@@ -714,6 +764,18 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--bindings", type=Path, required=True)
     parser.add_argument("--data-root", type=Path, required=True)
+    parser.add_argument("--mode", choices=("read", "launch"), default="read",
+                        help="launch: submit one job and wait. read: perform the reads.")
+    parser.add_argument("--inner-python",
+                        default="/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python",
+                        help="interpreter inside the job; must supply PyROOT. Verified "
+                             "2026-09-08 to run the guard to exit 0 on a login node.")
+    parser.add_argument("--expect-root", type=Path,
+                        default=Path("/pscratch/sd/j/josephrb/exec-20260907"))
+    parser.add_argument("--account", default="m3246")
+    parser.add_argument("--qos", default=DEFAULT_QOS)
+    parser.add_argument("--minutes", type=int, default=DEFAULT_MINUTES)
+    parser.add_argument("--comment", default="pm-root-inspection-20260908")
     parser.add_argument("--attempt-id", required=True,
                         help="binds this report to THIS attempt; the validator requires it")
     parser.add_argument("--out", type=Path, required=True,
@@ -733,6 +795,11 @@ def main(argv: list[str] | None = None) -> int:
             f"{report_path} already exists; attempt ids are not reusable. Use a fresh "
             "run directory and a fresh --attempt-id rather than overwriting evidence."
         )
+
+    if args.mode == "launch":
+        task_ids_path = Path(os.environ.get(CAMPAIGN_TASK_IDS_FILE_ENV,
+                                            out_dir / "task-ids.json"))
+        return launch(args, args.bindings, out_dir, task_ids_path)
 
     bindings = json.loads(args.bindings.read_text())
     reads: list[dict] = []
