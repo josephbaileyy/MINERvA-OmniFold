@@ -87,10 +87,18 @@ def _load_gate():
 WR = _load_gate()
 
 
-def _env():
+def _env(overrides: dict | None = None):
+    """The fixture environment. A value of `None` in `overrides` DELETES the variable, which the
+    hostile-`HOME` regression needs: `GIT_CONFIG_GLOBAL` is set here for every other fixture, and
+    with it set that attack cannot even be staged, so the test would prove nothing."""
     e = dict(os.environ)
     e.update(GIT_ENV)
     e.pop("MNV_LANE", None)     # merge_guard.sh falls back to it; a leaked value would forge a lane
+    for k, v in (overrides or {}).items():
+        if v is None:
+            e.pop(k, None)
+        else:
+            e[k] = v
     return e
 
 
@@ -131,10 +139,8 @@ class Fixture:
 
     # -- the gate, end to end ---------------------------------------------------------------------
     def gate(self, *args, extra_env: dict | None = None) -> subprocess.CompletedProcess:
-        env = _env()
-        env.update(extra_env or {})
-        return subprocess.run([sys.executable, str(self.gate_path), *args],
-                              cwd=self.root, capture_output=True, text=True, env=env)
+        return subprocess.run([sys.executable, str(self.gate_path), *args], cwd=self.root,
+                              capture_output=True, text=True, env=_env(extra_env))
 
     def guard(self, *args) -> subprocess.CompletedProcess:
         return subprocess.run(["bash", "docs/orchestration/merge_guard.sh", *args],
@@ -196,6 +202,31 @@ def foreign_conflict(root: Path, by_oid: bool = False) -> Fixture:
     return f
 
 
+def hand_resolved_foreign_conflict(root: Path) -> Fixture:
+    """The critical negative's fixture at the moment the index LOOKS clean: a real conflict on lane
+    C's row, resolved by hand and staged. `git diff --diff-filter=U` is empty here, which is the
+    premise every laundering case needs."""
+    f = foreign_conflict(root)
+    f.write(ROWS, "| id | note |\n| --- | --- |\n| %s | HAND-RESOLVED by lane B |\n" % CONTESTED)
+    f.git("add", ROWS)
+    assert f.git("diff", "--name-only", "--diff-filter=U").stdout == "", \
+        "fixture wanted an index that looks clean"
+    return f
+
+
+def live_merge_tree_rc(f: Fixture, env_overrides: dict | None = None) -> int:
+    """What `git merge-tree --write-tree HEAD MERGE_HEAD` returns IN THE FIXTURE REPOSITORY -- that
+    is, the reconstruction the FIRST version of this gate performed, in the live repo.
+
+    Every attack regression asserts this is 0 before asserting the gate still refuses. Without that
+    first assertion the fixture is not shown to be an attack at all, and a regression that cannot
+    fail is the defect this repository has recorded most often (`a-fixture-derived-from-the-rule`,
+    and the 178 controls that missed an unsatisfiable guard)."""
+    mh = (f.root / ".git/MERGE_HEAD").read_text().strip()
+    return subprocess.run(["git", "merge-tree", "--write-tree", "HEAD", mh], cwd=f.root,
+                          capture_output=True, text=True, env=_env(env_overrides)).returncode
+
+
 def digest_worktree(root: Path) -> str:
     """Every tracked-or-not path outside .git, name and bytes. `.git` is excluded on purpose: the
     reconstruction WRITES loose tree objects -- that is what `--write-tree` means -- and the claim
@@ -209,6 +240,69 @@ def digest_worktree(root: Path) -> str:
         if p.is_file() and not p.is_symlink():
             h.update(hashlib.sha256(p.read_bytes()).digest())
     return h.hexdigest()
+
+
+# --------------------------------------------------------------------------------------------------
+# THE HOST REPOSITORY IS NOT A FIXTURE, and on 2026-09-08 that stopped being obvious.
+#
+# A fixture in this work ran `git config core.bare true` with a cwd inside a LIVE repository.
+# `.git/config` is shared with every linked worktree, so it reached out of the worktree it was
+# supposed to be confined to: an unrelated checkout started failing `git status` with "this
+# operation must be run in a work tree", and a worktree index was wiped (1992 staged deletions).
+#
+# Every fixture below therefore creates its own directory and names it explicitly -- `cwd=` on every
+# `subprocess.run`, `GIT_DIR` on every isolated call -- and this module digests the HOST's config
+# and index around the whole suite and fails loudly if either moved. The isolation claim about the
+# operator's index was already measured this way; the host deserved the same instrument and did not
+# have it. `test_the_host_guard_would_actually_notice` is the control that keeps this from being an
+# assertion nobody could fail.
+# --------------------------------------------------------------------------------------------------
+
+
+def host_state(repo: Path) -> dict[str, str]:
+    """Digests of the state a fixture must never reach. Keyed so a failure NAMES what moved.
+
+    `rev-parse --git-path`, not `.git/config`: in a linked worktree the config is the shared one in
+    the common dir -- which is exactly the file the 2026-09-08 incident wrote -- and a hardcoded
+    path would digest something that is not the file at risk.
+    """
+    state: dict[str, str] = {}
+    for label, gitpath in (("config", "config"), ("config.worktree", "config.worktree"),
+                           ("index", "index")):
+        r = subprocess.run(["git", "-C", str(repo), "rev-parse", "--git-path", gitpath],
+                           capture_output=True, text=True, env=_env())
+        if r.returncode != 0 or not r.stdout.strip():
+            state[label] = f"unlocatable (rc={r.returncode}) {r.stderr.strip()}"
+            continue
+        path = Path(r.stdout.strip())
+        if not path.is_absolute():
+            path = repo / path
+        state[label] = (hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file()
+                        else "absent")
+    # The exact symptom of the incident, named on its own rather than only folded into a digest.
+    r = subprocess.run(["git", "-C", str(repo), "rev-parse", "--is-bare-repository"],
+                       capture_output=True, text=True, env=_env())
+    state["is-bare-repository"] = r.stdout.strip() or f"rc={r.returncode}"
+    return state
+
+
+_HOST_BEFORE: dict[str, str] = {}
+
+
+def setUpModule():
+    _HOST_BEFORE.update(host_state(REAL_REPO))
+
+
+def tearDownModule():
+    after = host_state(REAL_REPO)
+    moved = {k: (_HOST_BEFORE.get(k), after.get(k)) for k in set(_HOST_BEFORE) | set(after)
+             if _HOST_BEFORE.get(k) != after.get(k)}
+    if moved:
+        raise AssertionError(
+            f"THIS SUITE MUTATED THE HOST REPOSITORY {REAL_REPO}. A fixture reached outside its own "
+            f"directory -- or something else wrote the host while the suite ran. Either way the "
+            f"isolation claim is void until it is explained, because `.git/config` is SHARED with "
+            f"every linked worktree: {moved}")
 
 
 def digest_index(f: Fixture) -> str:
@@ -492,6 +586,176 @@ class CleanMergeGateTests(unittest.TestCase):
         self.assertIn("could not enumerate unmerged files", r.stdout)
         self.assertNotIn("CLEAN MERGE VERIFIED", r.stdout)
 
+    # ---- CONDITION 6: THE TRACKED WORKING TREE ---------------------------------------------------
+    def test_an_unstaged_edit_to_a_tracked_file_is_not_a_pass(self):
+        """THE REQUIRED NEGATIVE for condition 6, and it starts from a PASS so the change of verdict
+        is attributable to the edit and to nothing else.
+
+        The first version of this gate printed the hole in its own receipt -- "the operand is the
+        INDEX; `git commit -a` would commit the working tree instead" -- and stopped there. Two
+        reviewers named that line independently. An operator who reads a 0 here and types
+        `git commit -a` commits a tree nothing verified.
+        """
+        f = clean_merge(self.new("unstaged-tracked"))
+        first = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(first.returncode, 0, f"premise: this merge passes clean\n{first.stdout}")
+
+        self.assertIn("docs/notes/shared.md", f.git("ls-files").stdout, "premise: it is TRACKED")
+        (f.root / "docs/notes/shared.md").write_text("edited, NOT staged\n", encoding="utf-8")
+
+        after = f.gate("--conflicts", "--lane", LANE)
+        self.assertNotEqual(after.returncode, 0,
+                            "AN UNVERIFIED WORKING TREE WAS PASSED. `git commit -a` would commit "
+                            f"it.\n{after.stdout}\n{after.stderr}")
+        self.assertEqual(after.returncode, 2, after.stdout)
+        self.assertIn("WORKTREE-DIFFERS-FROM-INDEX", after.stdout)
+        self.assertIn("docs/notes/shared.md", after.stdout, "the refusal must name the drifted path")
+
+    def test_an_untracked_file_present_still_passes(self):
+        """THE REQUIRED CONTROL. Without it condition 6 could be "refuse unless the tree is
+        pristine", which is a different and wrong condition: an operator carrying unrelated scratch
+        files has not resolved anybody's row, and `git commit -a` would not stage those files."""
+        f = clean_merge(self.new("untracked-control"))
+        (f.root / "SCRATCH-notes.txt").write_text("my unrelated scratch file\n", encoding="utf-8")
+        (f.root / "docs/notes/UNTRACKED.md").write_text("and one inside a tracked directory\n",
+                                                        encoding="utf-8")
+        self.assertIn("??", f.git("status", "--porcelain").stdout, "premise: untracked files exist")
+        r = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(r.returncode, 0, f"an untracked file blocked a verified merge\n{r.stdout}")
+        self.assertIn("CLEAN MERGE VERIFIED", r.stdout)
+
+    def test_an_unstaged_deletion_of_a_tracked_file_is_not_a_pass(self):
+        """Drift in the other direction. `git commit -a` records the DELETION, so a pass here would
+        certify a tree that is missing a file the reconstruction contains."""
+        f = clean_merge(self.new("unstaged-delete"))
+        self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 0, "premise: it passes")
+        (f.root / "docs/notes/main-only.md").unlink()
+        r = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertIn("WORKTREE-DIFFERS-FROM-INDEX", r.stdout)
+        self.assertIn("docs/notes/main-only.md", r.stdout)
+
+    def test_a_stale_mtime_alone_does_not_refuse(self):
+        """THE OTHER CONTROL, and the reason condition 6 refreshes a COPY of the index rather than
+        asking `git diff-files` directly.
+
+        MEASURED while writing this: `git diff-files --name-only` against an unrefreshed index
+        reports any file whose stat data merely changed, so a bare `touch` -- or a rewrite with
+        IDENTICAL bytes, which is what many generators and editors do -- would have refused a
+        genuinely clean merge. A gate with that failure mode teaches operators to ignore it.
+        """
+        f = clean_merge(self.new("stale-mtime"))
+        self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 0, "premise: it passes")
+        target = f.root / "docs/notes/shared.md"
+        same = target.read_bytes()
+        os.utime(target, (0, 0))                     # a stat change and nothing else
+        target.write_bytes(same)                     # and an identical rewrite, for good measure
+        self.assertNotEqual(f.git("diff-files", "--name-only").stdout.strip(), "",
+                            "premise of this control: the UNREFRESHED index does report drift here")
+        r = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(r.returncode, 0, f"a stale mtime refused a clean merge\n{r.stdout}")
+        self.assertIn("CLEAN MERGE VERIFIED", r.stdout)
+
+    # ---- THE RECONSTRUCTION IS INDEPENDENT OF THE OPERATOR: three real attacks -------------------
+    # Each one is asserted to WORK against `git merge-tree` in the live repository first, so the
+    # regression is measured against a live attack rather than a hypothesis. All three turned the
+    # hand-resolved foreign conflict into CLEAN-MERGE-VERIFIED in the first version of this gate.
+    def test_info_attributes_plus_a_merge_driver_cannot_launder_the_refusal(self):
+        """The reviewer's reproduction, run for real. `.git/info/attributes` is untracked, local and
+        operator-writable, and the driver is a config value -- so the state the reconstruction exists
+        to be independent of was the state that governed it."""
+        f = hand_resolved_foreign_conflict(self.new("attack-info-attributes"))
+        self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 2, "premise: refused")
+        (f.root / ".git/info").mkdir(parents=True, exist_ok=True)
+        (f.root / ".git/info/attributes").write_text("%s merge=ours\n" % ROWS, encoding="utf-8")
+        f.git("config", "--local", "merge.ours.driver", "true")
+        self.assertEqual(live_merge_tree_rc(f), 0,
+                         "THE ATTACK DID NOT TAKE, so this test proves nothing: `merge-tree` in the "
+                         "live repository must report the conflicted merge as CLEAN for the "
+                         "regression below to mean anything")
+        r = f.gate("--conflicts", "--lane", LANE)
+        self.assertNotEqual(r.returncode, 0,
+                            "A HAND-RESOLVED FOREIGN CONFLICT WAS LAUNDERED by two lines of "
+                            f"operator-writable local state.\n{r.stdout}")
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertIn("RECONSTRUCTION-CONFLICTED", r.stdout)
+
+    def test_an_untracked_working_tree_gitattributes_cannot_launder_the_refusal(self):
+        """The sharpest of the three, and it is not in the reviewer's report -- found while closing
+        it. In a NON-BARE repository git reads merge attributes from the WORKING-TREE
+        `.gitattributes`, so the file that decided the merge semantics need not be committed, staged,
+        or known to git as content at all. `git status` shows it as a single `??` line."""
+        f = hand_resolved_foreign_conflict(self.new("attack-untracked-attrs"))
+        (f.root / ".gitattributes").write_text("%s merge=ours\n" % ROWS, encoding="utf-8")
+        f.git("config", "--local", "merge.ours.driver", "true")
+        self.assertIn("?? .gitattributes", f.git("status", "--porcelain").stdout,
+                      "premise: the file governing the merge is UNTRACKED")
+        self.assertEqual(live_merge_tree_rc(f), 0, "the attack did not take; see the note above")
+        r = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertIn("RECONSTRUCTION-CONFLICTED", r.stdout)
+
+    def test_a_hostile_global_gitconfig_cannot_launder_the_refusal(self):
+        """The third vector: `~/.gitconfig`. Neutralising only the repo-local file would have left
+        this open, so the sanitized environment moves HOME as well as masking GIT_CONFIG_GLOBAL.
+
+        `GIT_CONFIG_GLOBAL` is deleted from this fixture's environment on purpose -- with it set to
+        /dev/null the attack cannot even be staged and the test would pass vacuously."""
+        f = hand_resolved_foreign_conflict(self.new("attack-global-config"))
+        home = f.root.parent / "hostile-home"
+        home.mkdir(exist_ok=True)
+        (home / "attrs").write_text("%s merge=ours\n" % ROWS, encoding="utf-8")
+        (home / ".gitconfig").write_text(
+            '[merge "ours"]\n\tdriver = true\n[core]\n\tattributesFile = %s\n' % (home / "attrs"),
+            encoding="utf-8")
+        hostile = {"HOME": str(home), "GIT_CONFIG_GLOBAL": None, "GIT_CONFIG_SYSTEM": None,
+                   "GIT_CONFIG_NOSYSTEM": None}
+        self.assertEqual(live_merge_tree_rc(f, hostile), 0,
+                         "the attack did not take; see the note in live_merge_tree_rc")
+        r = f.gate("--conflicts", "--lane", LANE, extra_env=hostile)
+        self.assertEqual(r.returncode, 2, f"{r.stdout}\n{r.stderr}")
+        self.assertIn("RECONSTRUCTION-CONFLICTED", r.stdout)
+
+    def test_an_in_tree_gitattributes_that_changes_the_merge_is_refused_not_honoured(self):
+        """THE `.gitattributes` QUESTION, DECIDED AND PINNED rather than inherited from whatever the
+        implementation happens to do.
+
+        A committed `.gitattributes` is legitimate content, and one might argue the reconstruction
+        should honour it. It does NOT, and this test is the decision: the reconstruction computes the
+        merge under git's built-in default semantics, with every attribute source neutralised.
+
+        WHY, measured: git's real merge does not read the committed file either -- in a non-bare
+        repository it reads the WORKING-TREE copy, which is the attack immediately above and need
+        not match anything committed. "Faithful to the in-tree file" and "independent of the
+        operator" are therefore not simultaneously available, and independence is the entire purpose
+        of the reconstruction.
+
+        THIS TEST COVERS ONLY HALF THE PROBLEM, and the other half is a KNOWN OPEN HOLE as of
+        2026-09-08 -- recorded as finding 3 in the branch report, with its fixture, and NOT fixed.
+        Here `merge=union` CHANGES THE MERGED CONTENT, so the real merge produces a tree that
+        differs from the reconstruction and condition 4 refuses. An attribute that instead FORCES A
+        CONFLICT (`-merge`, or `binary` on a text file) produces no tree at all, the operator
+        supplies one, and they can supply exactly the default merge the reconstruction computes --
+        which this gate currently PASSES. Do not read this test as covering committed attributes in
+        general; it does not.
+        """
+        f = Fixture(self.new("in-tree-attrs"))
+        f.write(".gitattributes", "docs/notes/shared.md merge=union\n")
+        f.base()
+        rc = f.branch_then_merge(side_edits={"docs/notes/shared.md": "SIDE prose\n"},
+                                 main_edits={"docs/notes/shared.md": "MAIN prose\n"})
+        self.assertEqual(rc, 0, "premise: the committed union driver makes the REAL merge clean")
+        self.assertEqual(f.git("ls-files", "--unmerged").stdout, "", "premise: nothing unmerged")
+        self.assertIn("MAIN prose", f.read("docs/notes/shared.md"))
+        self.assertIn("SIDE prose", f.read("docs/notes/shared.md"))
+        r = f.gate("--conflicts", "--lane", LANE)
+        self.assertNotEqual(r.returncode, 0, r.stdout)
+        self.assertEqual(r.returncode, 2, r.stdout)
+        # Either arm is a refusal; which one depends on whether the DEFAULT merge of these parents
+        # conflicts. Asserting the set rather than one token keeps this test about the decision.
+        self.assertTrue(any(t in r.stdout for t in ("RECONSTRUCTION-CONFLICTED", "TREE-MISMATCH")),
+                        f"wanted a fail-closed refusal naming the reconstruction\n{r.stdout}")
+
     # ---- ISOLATION, measured ---------------------------------------------------------------------
     def test_the_gate_writes_neither_the_index_nor_the_working_tree(self):
         """"It does not touch your merge" is a measurement here. Digested before and after, on the
@@ -515,6 +779,58 @@ class CleanMergeGateTests(unittest.TestCase):
         self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 2)
         self.assertEqual(digest_worktree(f.root), before_wt)
         self.assertEqual(digest_index(f), before_idx)
+
+
+class ObjectStoreAndHostIsolationTests(unittest.TestCase):
+    """Two claims that are easy to make and were not previously measured."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="wr-store-test-"))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+
+    def new(self, name: str) -> Path:
+        d = self.tmp / name
+        d.mkdir(parents=True)
+        return d
+
+    def test_the_reconstruction_adds_no_objects_to_the_operators_repository(self):
+        """The first version ran `merge-tree --write-tree` in the operator's repository, so the
+        reconstruction's trees -- and, on a conflict, its conflict-marker BLOBS -- were written
+        there. The isolated one shares the store read-only through alternates and writes into a
+        directory that is deleted, so a REFUSAL leaves nothing behind either. Measured on the
+        refusing path, which is the one that has new objects to write."""
+        f = hand_resolved_foreign_conflict(self.new("no-new-objects"))
+        objects = f.root / ".git/objects"
+        before = sorted(q.relative_to(objects).as_posix() for q in objects.rglob("*") if q.is_file())
+        v = f.verdict()
+        self.assertEqual(v.reason, "RECONSTRUCTION-CONFLICTED", v.detail)
+        after = sorted(q.relative_to(objects).as_posix() for q in objects.rglob("*") if q.is_file())
+        self.assertEqual(after, before,
+                         f"the reconstruction wrote into the operator's object store: "
+                         f"{sorted(set(after) - set(before))}")
+
+    def test_the_host_guard_would_actually_notice(self):
+        """THE CONTROL FOR `tearDownModule`. Without it the host digest is an assertion nobody could
+        fail, which is the shape of the 178 controls this repository has already recorded as having
+        missed an unsatisfiable guard.
+
+        The mutation is a plain file write INSIDE a throwaway repository -- deliberately not
+        `git config`, which is the command that caused the 2026-09-08 incident and which this suite
+        does not run against anything it does not own.
+        """
+        d = self.new("host-guard-control")
+        f = Fixture(d).base()
+        before = host_state(d)
+        self.assertNotIn("unlocatable", " ".join(before.values()), before)
+        self.assertEqual(before["is-bare-repository"], "false", before)
+        cfg = d / ".git/config"
+        cfg.write_text(cfg.read_text(encoding="utf-8") + "\tbare = true\n", encoding="utf-8")
+        after = host_state(d)
+        self.assertNotEqual(after["config"], before["config"], "a config write went unnoticed")
+        self.assertEqual(after["is-bare-repository"], "true",
+                         "the exact symptom of the 2026-09-08 incident went unnoticed")
+        # And the index digest is a separate key, so a failure says WHICH file moved.
+        self.assertEqual(after["index"], before["index"])
 
 
 class MergeGuardWrapperTests(unittest.TestCase):
@@ -620,19 +936,49 @@ class VerdictReasonTests(unittest.TestCase):
         self.assertIn(v.staged_tree, v.detail)
         self.assertIn(v.reconstructed_tree, v.detail)
 
-    def test_an_unstaged_worktree_edit_does_not_change_the_verdict(self):
-        """A DOCUMENTED LIMIT, pinned so it is a decision rather than an oversight. The operand is
-        the INDEX, because that is what `git commit` records for a merge. An unstaged edit is not a
-        resolution of anybody's row -- resolving a conflict requires staging, and until it is staged
-        the unmerged entries are still there and condition 5 refuses. `git commit -a` would commit
-        something this gate did not verify; the exit-0 message says so."""
+    def test_an_unstaged_worktree_edit_names_the_working_tree_and_the_path(self):
+        """THIS TEST USED TO ASSERT THE OPPOSITE, and the inversion is the point.
+
+        Until 2026-09-08 it read `test_an_unstaged_worktree_edit_does_not_change_the_verdict` and
+        pinned a DOCUMENTED LIMIT: the operand was the index, and the exit-0 message said so. Two
+        reviewers, working separately, both named that message as the hole rather than the
+        disclosure -- an identified, relevant hole is closed before a freeze, not deferred and then
+        reopened. Condition 6 closes it, and this test now pins the closure at the same place the
+        limit used to be pinned, so the history of the decision is legible from one file.
+        """
         f = clean_merge(self.new("unstaged"))
         (f.root / "docs/notes/shared.md").write_text("edited but NOT staged\n", encoding="utf-8")
         v = f.verdict()
+        self.assertFalse(v.ok, v.detail)
+        self.assertEqual(v.reason, "WORKTREE-DIFFERS-FROM-INDEX", v.detail)
+        self.assertEqual(v.worktree_drift, ("docs/notes/shared.md",))
+        # C4 SUCCEEDED here: the index really is the reconstruction, and the refusal is about the
+        # working tree only. Recorded so the two conditions cannot be confused for each other.
+        self.assertEqual(v.staged_tree, v.reconstructed_tree)
+        self.assertEqual(v.unmerged, 0)
+        self.assertIn("git commit -a", v.detail)
+
+    def test_an_untracked_file_is_invisible_to_condition_six(self):
+        """The control, at unit level: `worktree_drift` must be EMPTY, not merely harmless."""
+        f = clean_merge(self.new("untracked-unit"))
+        (f.root / "scratch.txt").write_text("untracked\n", encoding="utf-8")
+        (f.root / "docs").mkdir(exist_ok=True)
+        (f.root / "docs/scratch.md").write_text("untracked, nested\n", encoding="utf-8")
+        v = f.verdict()
         self.assertTrue(v.ok, v.detail)
-        r = f.gate("--conflicts", "--lane", LANE)
-        self.assertEqual(r.returncode, 0)
-        self.assertIn("git commit -a", r.stdout)
+        self.assertEqual(v.worktree_drift, ())
+
+    def test_a_verified_pass_carries_the_isolation_it_measured(self):
+        """The receipt's isolation lines come from measurements taken during the run, so they cannot
+        describe an environment the reconstruction did not have. Empty here would mean the pass
+        printed a claim nobody checked."""
+        v = clean_merge(self.new("iso-facts")).verdict()
+        self.assertTrue(v.ok, v.detail)
+        joined = " ".join(v.isolation)
+        self.assertIn("scope=local", joined)
+        self.assertIn("refs/replace/ empty", joined)
+        self.assertIn("objects/info/alternates", joined)
+        self.assertIn("GIT_ATTR_NOSYSTEM=1", joined)
 
 
 if __name__ == "__main__":
