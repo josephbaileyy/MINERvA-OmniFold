@@ -32,6 +32,7 @@ import json
 import time
 import subprocess
 import re
+import shlex
 import os
 import platform
 import sys
@@ -632,6 +633,13 @@ def obligation_kinds(bindings: dict) -> dict[str, str]:
 CAMPAIGN_TASK_IDS_FILE_ENV = "MNV_CAMPAIGN_TASK_IDS_FILE"
 #: Scheduler task identity, in the exact form r5_meter.py publishes.
 TASK_ID_RE = re.compile(r"^[0-9]+(?:_[0-9]+)?$")
+#: `sbatch --parsable` prints `<jobid>` or `<jobid>;<cluster>`, ONE line per submission.
+PARSABLE_LINE_RE = re.compile(r"^(?P<id>[0-9]+(?:_[0-9]+)?)(?:;[^;\s]+)?$")
+
+#: Measured from the controller 2026-09-08: debug MaxWall 00:30:00, UsageFactor 1.000000,
+#: identical factor to interactive, and present in account m3246's association list.
+DEFAULT_QOS = "debug"
+DEFAULT_MINUTES = 25
 
 EXIT_SUBMISSION_UNCERTAIN = 30
 
@@ -640,28 +648,36 @@ class SubmissionUncertain(Exception):
     """A job may or may not exist, and the reservation must be retained."""
 
 
-def write_task_ids(path: Path, job_id: str) -> None:
-    """Record the scheduler identity BEFORE the job can spend anything.
+def parse_parsable_receipt(stdout: str) -> str:
+    """Return the one job id in an ``sbatch --parsable`` receipt, or refuse.
 
-    This is the whole reason the launcher submits rather than allocating interactively: the
-    id exists at submission, so a job that then fails in the queue, at node setup, or during
-    interpreter startup is still an id somebody can meter. Writing it later -- from inside
-    the job -- would leave every pre-startup failure unattributable.
+    A receipt this function cannot read is UNKNOWN, never "the first thing that looks like an
+    id". Truncating a multi-line receipt to its first entry would leave later jobs running with
+    nobody holding their identity, and cancelling an unvalidated raw string could name a job
+    this item never created. Both failure modes end here as SubmissionUncertain with the raw
+    receipt preserved for a human.
     """
-    if not TASK_ID_RE.fullmatch(job_id):
+    lines = [line.strip() for line in stdout.splitlines() if line.strip()]
+    if len(lines) != 1:
         raise SubmissionUncertain(
-            f"scheduler returned {job_id!r}, which is not a task identity; a job may exist "
-            "and cannot be named")
-    path.write_text(json.dumps([job_id]) + "\n")
+            f"sbatch receipt is not one line ({len(lines)}): {stdout!r}. One or more jobs may "
+            "exist and cannot be named; nothing will be cancelled on an unvalidated string")
+    match = PARSABLE_LINE_RE.fullmatch(lines[0])
+    if match is None:
+        raise SubmissionUncertain(
+            f"sbatch receipt {lines[0]!r} is not a parsable job identity; a job may exist and "
+            "cannot be named")
+    return match.group("id")
 
 
-def submit_one_job(wrap_command: str, *, run_dir: Path, task_ids_path: Path,
-                   account: str, qos: str, minutes: int, comment: str) -> str:
-    """Submit exactly one CPU job and return its id, recording it before returning.
+def submit_one_job(wrap_command: str, *, run_dir: Path, account: str, qos: str,
+                   minutes: int, comment: str) -> str:
+    """Submit exactly one CPU job and return its validated id.
 
-    A non-zero ``sbatch`` is NOT proof that no job was created -- an acknowledgement can be
-    lost after the scheduler accepted it -- so a failure here raises SubmissionUncertain and
-    the caller retains the reservation. It never reports zero spend.
+    Validation happens on the RECEIPT, before any caller can lose it, and this function never
+    writes a file: recording is the caller's job so a write failure cannot destroy an id this
+    function already knows. A non-zero sbatch is NOT proof that no job was created -- an
+    acknowledgement can be lost after the scheduler accepted it.
     """
     argv = [
         "sbatch", "--parsable", "--comment", comment,
@@ -677,82 +693,115 @@ def submit_one_job(wrap_command: str, *, run_dir: Path, task_ids_path: Path,
         raise SubmissionUncertain(f"sbatch could not be run or did not answer: {error}")
     if completed.returncode != 0:
         raise SubmissionUncertain(
-            f"sbatch exited {completed.returncode}: {completed.stderr.strip()[:200]!r}. "
-            "This is NOT evidence that no job was created; the reservation is retained and "
-            f"the job may be recoverable by --comment {comment}")
-    job_id = completed.stdout.strip().split(";")[0]
-    write_task_ids(task_ids_path, job_id)
-    return job_id
+            f"sbatch exited {completed.returncode}: {completed.stderr.strip()[:200]!r}. This "
+            f"is NOT evidence that no job was created; recoverable by --comment {comment}")
+    return parse_parsable_receipt(completed.stdout)
 
 
-def wait_for_job(job_id: str, *, deadline: float, poll_seconds: int = 20) -> str | None:
-    """Poll until the job reaches a terminal state, or the deadline passes."""
+def write_task_ids(path: Path, job_id: str) -> None:
+    """Record the identity. The caller must already hold ``job_id`` if this raises."""
+    path.write_text(json.dumps([job_id]) + "\n")
+
+
+def job_state(job_id: str) -> tuple[str | None, str]:
+    """Return (terminal_state, detail). ``None`` means NOT KNOWN to be terminal.
+
+    A non-zero ``sacct`` or a timeout is unknown, never terminal: an exit code of 1 with a
+    stale COMPLETED on stdout would otherwise read as a finished job.
+    """
     terminal = {"COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "NODE_FAIL",
                 "OUT_OF_MEMORY", "BOOT_FAIL", "DEADLINE", "PREEMPTED"}
-    while time.time() < deadline:
+    try:
         probe = subprocess.run(
             ["sacct", "-j", job_id, "-X", "-n", "-P", "-o", "State"],
             capture_output=True, text=True, timeout=60)
-        states = [line.split()[0] for line in probe.stdout.splitlines() if line.strip()]
-        if states and all(state in terminal for state in states):
-            return states[0]
+    except (OSError, subprocess.SubprocessError) as error:
+        return None, f"sacct did not answer: {error}"
+    if probe.returncode != 0:
+        return None, f"sacct exited {probe.returncode}; state is unknown, not terminal"
+    states = [line.split()[0] for line in probe.stdout.splitlines() if line.strip()]
+    if not states:
+        return None, "sacct returned no rows; state is unknown"
+    if all(state in terminal for state in states):
+        return states[0], "terminal"
+    return None, f"not terminal: {states[0]}"
+
+
+def wait_for_job(job_id: str, *, deadline: float, poll_seconds: int = 20) -> tuple[str | None, str]:
+    """Poll until terminal or the deadline passes."""
+    detail = "deadline passed before any probe"
+    while time.time() < deadline:
+        state, detail = job_state(job_id)
+        if state is not None:
+            return state, detail
         time.sleep(poll_seconds)
-    return None
+    return None, detail
 
 
-def cancel_this_job(job_id: str) -> None:
-    """Cancel by ID only -- never by name, never by user."""
-    subprocess.run(["scancel", job_id], capture_output=True, text=True, timeout=60)
+def cancel_this_job(job_id: str) -> dict[str, object]:
+    """Cancel by id only, then VERIFY. A successful request is not a terminated job."""
+    result: dict[str, object] = {"job_id": job_id, "cancel_requested": True}
+    try:
+        completed = subprocess.run(["scancel", job_id], capture_output=True, text=True,
+                                   timeout=60)
+        result["scancel_returncode"] = completed.returncode
+        result["scancel_stderr"] = completed.stderr.strip()[:200]
+    except (OSError, subprocess.SubprocessError) as error:
+        result["scancel_returncode"] = None
+        result["scancel_error"] = str(error)
+    state, detail = job_state(job_id)
+    result["terminal_state"] = state
+    result["verification"] = detail
+    result["cleanup"] = "verified-terminal" if state is not None else "UNRESOLVED"
+    return result
 
 
-
-#: Measured from the controller 2026-09-08, not assumed: `sacctmgr show qos` gives debug
-#: MaxWall 00:30:00 and UsageFactor 1.000000, identical to interactive's factor. debug is in
-#: account m3246's association list. NERSC's resource-usage policy reserves debug for
-#: development and testing rather than production, which is what a bounded capture is.
-DEFAULT_QOS = "debug"
-#: One node, one task, cpu, and a bound BELOW the 30-minute grant so the validator has room.
-DEFAULT_MINUTES = 25
-
-
-def launch(args, bindings_path: Path, run_dir: Path, task_ids_path: Path) -> int:
-    """Submit one job, record its identity, wait bounded, cancel only it, propagate its code.
-
-    The producer's own exit code is what campaignctl hands the validator, so it must mean what
-    it says: 0 only when the job reached a terminal state of its own accord AND the inner mode
-    reported success.
-    """
-    wrap = " ".join([
+def launch(args, run_dir: Path, task_ids_path: Path) -> int:
+    """Submit one job, record it, wait bounded, and never leave without accounting for it."""
+    wrap = shlex.join([
         args.inner_python, "nd-unfolding/mnv_guarded_run.py",
         "--expect-root", str(args.expect_root),
         "--label", "pm-root-inspection-read",
         "--", "nd-unfolding/pm_inspection/pm_root_inspect.py",
         "--mode", "read",
-        "--bindings", str(bindings_path),
+        "--bindings", str(args.bindings),
         "--data-root", str(args.data_root),
         "--attempt-id", run_dir.name,
         "--out", str(run_dir),
     ])
+    job_id: str | None = None
+    outcome: dict[str, object] = {}
     try:
-        job_id = submit_one_job(
-            wrap, run_dir=run_dir, task_ids_path=task_ids_path,
-            account=args.account, qos=args.qos, minutes=args.minutes,
-            comment=args.comment)
-    except SubmissionUncertain as error:
-        (run_dir / "submission-uncertain.txt").write_text(str(error) + "\n")
-        print(json.dumps({"submission": "uncertain", "reservation": "RETAINED",
-                          "detail": str(error)}))
-        return EXIT_SUBMISSION_UNCERTAIN
+        try:
+            job_id = submit_one_job(wrap, run_dir=run_dir, account=args.account,
+                                    qos=args.qos, minutes=args.minutes,
+                                    comment=args.comment)
+        except SubmissionUncertain as error:
+            (run_dir / "submission-uncertain.txt").write_text(str(error) + "\n")
+            outcome = {"submission": "uncertain", "reservation": "RETAINED",
+                       "detail": str(error)}
+            return EXIT_SUBMISSION_UNCERTAIN
 
-    deadline = time.time() + args.minutes * 60 + 120
-    state = wait_for_job(job_id, deadline=deadline)
-    if state is None:
-        cancel_this_job(job_id)
-        print(json.dumps({"job_id": job_id, "state": "cancelled-on-deadline",
-                          "reservation": "RETAINED"}))
-        return EXIT_ERROR
-    print(json.dumps({"job_id": job_id, "state": state}))
-    return EXIT_COMPLETE if state == "COMPLETED" else EXIT_ERROR
+        # The id is known from here on. A failure to RECORD it must not lose it.
+        try:
+            write_task_ids(task_ids_path, job_id)
+            outcome["task_ids_written"] = True
+        except OSError as error:
+            outcome["task_ids_written"] = False
+            outcome["task_ids_error"] = f"{type(error).__name__}: {error}"
+            (run_dir / "task-ids-write-failed.txt").write_text(
+                json.dumps({"job_id": job_id, "error": str(error)}) + "\n")
+
+        state, detail = wait_for_job(job_id, deadline=time.time() + args.minutes * 60 + 120)
+        outcome.update({"job_id": job_id, "state": state, "detail": detail})
+        if state is None:
+            return EXIT_ERROR
+        return EXIT_COMPLETE if state == "COMPLETED" else EXIT_ERROR
+    finally:
+        # Scoped cleanup: only ever this job, only when it is not known terminal.
+        if job_id is not None and outcome.get("state") is None:
+            outcome["cleanup_attempt"] = cancel_this_job(job_id)
+        print(json.dumps(outcome, sort_keys=True))
 
 
 def declared_read_ids(bindings: dict) -> list[str]:
@@ -776,14 +825,32 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--qos", default=DEFAULT_QOS)
     parser.add_argument("--minutes", type=int, default=DEFAULT_MINUTES)
     parser.add_argument("--comment", default="pm-root-inspection-20260908")
-    parser.add_argument("--attempt-id", required=True,
+    parser.add_argument("--attempt-id",
                         help="binds this report to THIS attempt; the validator requires it")
-    parser.add_argument("--out", type=Path, required=True,
+    parser.add_argument("--out", type=Path,
                         help="ABSOLUTE run directory, outside every git checkout")
     args = parser.parse_args(argv)
 
-    out_dir = args.out
-    refuse_output_inside_a_checkout(out_dir)
+    if args.mode == "launch":
+        # No standalone fallback. Launch mode exists only inside a claim: deriving the run
+        # directory from --out while taking the task-ids path from the queue is how the
+        # producer ends up writing its report somewhere the validator will never look.
+        raw = os.environ.get(CAMPAIGN_TASK_IDS_FILE_ENV)
+        if not raw:
+            raise SystemExit(
+                f"--mode launch requires {CAMPAIGN_TASK_IDS_FILE_ENV}; it is set by the queue "
+                "under an exclusive claim and there is no standalone launch path")
+        task_ids_path = Path(raw)
+        claim_dir = task_ids_path.parent
+        refuse_output_inside_a_checkout(claim_dir)
+        claim_dir.mkdir(parents=True, exist_ok=True)
+        return launch(args, claim_dir, task_ids_path)
+
+    if args.mode == "read" and (args.out is None or args.attempt_id is None):
+        parser.error("--mode read requires --out and --attempt-id")
+    out_dir = args.out if args.out is not None else Path.cwd()
+    if args.mode == "read":
+        refuse_output_inside_a_checkout(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # The contract carries a FIXED attempt id, so a second run into the same directory
@@ -796,10 +863,6 @@ def main(argv: list[str] | None = None) -> int:
             "run directory and a fresh --attempt-id rather than overwriting evidence."
         )
 
-    if args.mode == "launch":
-        task_ids_path = Path(os.environ.get(CAMPAIGN_TASK_IDS_FILE_ENV,
-                                            out_dir / "task-ids.json"))
-        return launch(args, args.bindings, out_dir, task_ids_path)
 
     bindings = json.loads(args.bindings.read_text())
     reads: list[dict] = []
