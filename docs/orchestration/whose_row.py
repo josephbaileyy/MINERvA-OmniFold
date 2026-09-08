@@ -1669,9 +1669,23 @@ def main() -> int:
         # MEASURED 2026-09-08 with `GIT_DIR` exported: before `_fixture_env` existed the fixtures
         # wrote the CALLER's index; after it, three LAUNDERING cases still reported
         # NO-MERGE-IN-PROGRESS, because `verify_clean_merge` had resolved the caller's repository
-        # rather than the fixture's. Scrubbing here closes the self-test. The same sensitivity on
-        # the OPERATIONAL path is NOT closed by this line and is recorded as its own finding; it is
-        # fail-closed -- a redirected verdict REFUSES, it cannot grant a pass.
+        # rather than the fixture's. Scrubbing here closes the SELF-TEST only.
+        #
+        # THE OPERATIONAL PATH IS NOT CLOSED BY THIS LINE, AND IT IS NOT FAIL-CLOSED. An earlier
+        # version of this comment said a redirected verdict "REFUSES, it cannot grant a pass". That
+        # was FALSE and is struck. Measured with cwd in an unrelated repository:
+        #
+        #     GIT_DIR alone                 -> rc=2, WORKTREE-DIFFERS-FROM-INDEX
+        #     GIT_DIR *and* GIT_WORK_TREE   -> rc=0, "You may commit this merge."
+        #
+        # The PAIR grants a pass, and the receipt describes the REDIRECTED repository -- its
+        # parents, its scope -- while the operator is committing somewhere else. With GIT_DIR alone
+        # C6 catches it only BY ACCIDENT: the index is the other repository's while the work tree
+        # seen is this one's, so every tracked file reads as drift. GIT_WORK_TREE removes that
+        # accident rather than adding a new hole. Git does not normally export GIT_WORK_TREE to a
+        # hook, which bounds the exposure; it does not make it safe. Closing it means scrubbing
+        # inherited git context on the operational path too, or refusing when GIT_DIR /
+        # GIT_WORK_TREE / GIT_COMMON_DIR do not resolve to REPO. Recorded for the author queue.
         for _inherited in [k for k in os.environ if k.startswith("GIT_")]:
             del os.environ[_inherited]
         return self_test()
