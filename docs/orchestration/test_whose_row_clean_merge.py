@@ -978,18 +978,58 @@ class CleanMergeGateTests(unittest.TestCase):
         return bindir
 
     # ---- ISOLATION, measured ---------------------------------------------------------------------
+    def _private_scratch(self, name: str) -> Path:
+        """A temp dir owned by ONE test, handed to the gate as its TMPDIR.
+
+        The scratch assertion below used to set-difference the SHARED system temp dir around the
+        gate call. That measures the MACHINE, not the gate: any `whose_row-mergecheck-*` created by
+        ANOTHER process inside the window was attributed to the invocation under test. On 2026-09-08
+        it returned a false BLOCK from an independent review and destroyed a mutation baseline, both
+        against a tip where the gate leaks nothing -- the same suite passes 52/52 under an isolated
+        TMPDIR and fails one test under a shared one. A private TMPDIR makes the observation window
+        private, so the only writer is the invocation being measured.
+        """
+        scratch = Path(tempfile.mkdtemp(prefix=f"wr-scratch-{name}-"))
+        self.addCleanup(shutil.rmtree, scratch, ignore_errors=True)
+        return scratch
+
     def test_the_gate_writes_neither_the_index_nor_the_working_tree(self):
         """"It does not touch your merge" is a measurement here. Digested before and after, on the
         PASSING path -- the one that runs every git invocation in the function."""
         f = clean_merge(self.new("isolation"))
         before_wt, before_idx = digest_worktree(f.root), digest_index(f)
-        scratch_before = set(os.listdir(tempfile.gettempdir()))
-        r = f.gate("--conflicts", "--lane", LANE)
+        scratch = self._private_scratch("isolation")
+        r = f.gate("--conflicts", "--lane", LANE, extra_env={"TMPDIR": str(scratch)})
         self.assertEqual(r.returncode, 0, r.stdout)
         self.assertEqual(digest_worktree(f.root), before_wt, "the working tree was modified")
         self.assertEqual(digest_index(f), before_idx, "the real index was written")
-        left = [n for n in set(os.listdir(tempfile.gettempdir())) - scratch_before
-                if n.startswith("whose_row-mergecheck-")]
+        left = sorted(n for n in os.listdir(scratch) if n.startswith("whose_row-mergecheck-"))
+        self.assertEqual(left, [], f"scratch directories left behind: {left}")
+
+    def test_a_concurrent_scratch_dir_cannot_manufacture_a_leak_report(self):
+        """The regression for the defect above, deterministic rather than timing-dependent.
+
+        A `whose_row-mergecheck-*` directory belonging to SOMEONE ELSE is planted in the shared
+        system temp dir inside the observation window. The gate under test leaks nothing, so this
+        must still pass. Revert the fix -- read the shared temp dir instead of the private one --
+        and the plant is attributed to the gate and this test FAILS, which is precisely the false
+        BLOCK that was reported against a clean tip.
+
+        The plant is created after the gate returns and before the listing, so there is no race and
+        no sleep, and the assertion never reads the shared temp dir itself: this test cannot go
+        flaky in the way the defect it guards against does.
+        """
+        f = clean_merge(self.new("isolation-concurrent"))
+        scratch = self._private_scratch("isolation-concurrent")
+        r = f.gate("--conflicts", "--lane", LANE, extra_env={"TMPDIR": str(scratch)})
+        self.assertEqual(r.returncode, 0, r.stdout)
+        intruder = Path(tempfile.mkdtemp(prefix="whose_row-mergecheck-"))
+        self.addCleanup(shutil.rmtree, intruder, ignore_errors=True)
+        self.assertTrue(intruder.is_dir(), "the regression needs a real intruding directory")
+        self.assertNotEqual(intruder.parent, scratch,
+                            "the plant must land OUTSIDE the gate's private scratch, or it proves "
+                            "nothing about attribution")
+        left = sorted(n for n in os.listdir(scratch) if n.startswith("whose_row-mergecheck-"))
         self.assertEqual(left, [], f"scratch directories left behind: {left}")
 
     def test_isolation_holds_on_a_refusing_path_too(self):
@@ -1200,6 +1240,114 @@ class VerdictReasonTests(unittest.TestCase):
         self.assertIn("refs/replace/ empty", joined)
         self.assertIn("objects/info/alternates", joined)
         self.assertIn("GIT_ATTR_NOSYSTEM=1", joined)
+
+
+class SelfTestMustNotTouchTheCallingRepositoryTests(unittest.TestCase):
+    """`--self-test` builds throwaway repositories and must resolve NO other one.
+
+    2026-09-08: `_fixture_git` passed its environment as `env_extra`, which ADDS to the inherited
+    one, so a hook's `GIT_DIR` and `GIT_INDEX_FILE` reached the fixture's own `git init`, `add -A`
+    and `commit`, and they operated on the OPERATOR's repository instead. Measured in a disposable
+    clone: afterwards its index carried the FIXTURE's files, `base.md` and `side-only.md`, paths
+    that exist nowhere in that clone. It was invisible where the gate was written -- that clone has
+    `core.hooksPath` unset and no hooks -- and fired from a worktree of the real repository, whose
+    absolute `core.hooksPath` every linked worktree inherits.
+
+    Both routes are covered here on purpose: a hook-shaped ENVIRONMENT, and an ACTUAL `pre-commit`
+    hook in a linked worktree, which is how it was really hit.
+
+    WHAT THE CONTROL ACTUALLY DEMONSTRATES, stated exactly. Pointed at the pre-fix gate via
+    `MNV_CLEAN_MERGE_GATE_SRC`, both tests FAIL deterministically -- but on these small fixtures the
+    pre-fix gate ABORTS under a hook environment before it reaches the caller, so what fires is the
+    exit-code assertion, not the digest one. The index corruption itself was measured on a full
+    clone, where the caller's index afterwards held `base.md` and `side-only.md`. The digest
+    assertion is not decorative -- it was power-checked separately and does come back unequal when
+    the caller is touched -- but do not read a green here as proof that corruption specifically was
+    detected. It is proof that the pre-fix gate cannot survive a hook environment and the post-fix
+    gate can, with the caller unchanged.
+    """
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="wr-callerenv-"))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+
+    def _caller(self, name: str) -> Path:
+        """A disposable stand-in for the operator's repository."""
+        repo = self.tmp / name
+        repo.mkdir()
+        run = lambda *a: subprocess.run(["git", *a], cwd=repo, env=_env(), check=True,
+                                        capture_output=True, text=True)
+        run("init", "-q", "-b", "main", ".")
+        (repo / "a.txt").write_text("a\n")
+        (repo / "b.txt").write_text("b\n")
+        run("add", "-A")
+        run("commit", "-q", "-m", "caller base")
+        return repo
+
+    @staticmethod
+    def _digest(repo: Path) -> dict:
+        """HEAD, index, config, bareness and the tracked set -- by DIGEST, not by eyeballing."""
+        def sha(path: Path) -> str:
+            return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else "absent"
+        g = lambda *a: subprocess.run(["git", *a], cwd=repo, env=_env(),
+                                      capture_output=True, text=True).stdout.strip()
+        return {"head": g("rev-parse", "HEAD"),
+                "index": sha(repo / ".git" / "index"),
+                "config": sha(repo / ".git" / "config"),
+                "is_bare": g("rev-parse", "--is-bare-repository"),
+                "tracked": tuple(sorted(g("ls-files").splitlines()))}
+
+    def test_a_hook_shaped_environment_does_not_redirect_the_self_test(self):
+        caller = self._caller("direct")
+        scratch = self.tmp / "scratch-direct"
+        scratch.mkdir()
+        before = self._digest(caller)
+        # Exactly what git exports to a `pre-commit` hook: GIT_DIR always, GIT_INDEX_FILE during a
+        # commit. GIT_WORK_TREE is deliberately NOT set -- git does not export it, and setting it
+        # made the unfixed gate abort EARLIER than it corrupts, which weakened this control into
+        # "the self-test crashed" instead of "the caller was altered".
+        env = _env({"GIT_DIR": str(caller / ".git"),
+                    "GIT_INDEX_FILE": str(caller / ".git" / "index"),
+                    "TMPDIR": str(scratch)})
+        r = subprocess.run([sys.executable, str(Path(WR.__file__)), "--self-test"],
+                           cwd=self.tmp, env=env, capture_output=True, text=True)
+        # DIGEST FIRST, deliberately: the property under test is that the caller is untouched, and
+        # asserting the exit code first would report "1 != 0" for a self-test that crashed while
+        # saying nothing about the repository it damaged on the way.
+        self.assertEqual(self._digest(caller), before,
+                         "--self-test altered the repository that invoked it")
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_an_actual_pre_commit_hook_in_a_linked_worktree_leaves_the_caller_alone(self):
+        """The route it was really hit by. A PATH-free, real hook, and the hook must actually RUN --
+        a marker file proves it, or a hook that silently never fired would pass this vacuously."""
+        caller = self._caller("hooked")
+        run = lambda *a: subprocess.run(["git", *a], cwd=caller, env=_env(), check=True,
+                                        capture_output=True, text=True)
+        hooks = self.tmp / "hooks"
+        hooks.mkdir()
+        marker = self.tmp / "hook-ran"
+        scratch = self.tmp / "scratch-hooked"
+        scratch.mkdir()
+        (hooks / "pre-commit").write_text(
+            "#!/bin/sh\n"
+            f'echo ran > "{marker}"\n'
+            f'TMPDIR="{scratch}" "{sys.executable}" "{Path(WR.__file__)}" --self-test >&2\n')
+        (hooks / "pre-commit").chmod(0o755)
+        run("config", "core.hooksPath", str(hooks))          # BEFORE the digest: it writes config
+        wt = self.tmp / "linked"
+        run("worktree", "add", "-q", str(wt), "-b", "lane")
+        before = self._digest(caller)
+
+        (wt / "c.txt").write_text("c\n")
+        subprocess.run(["git", "add", "-A"], cwd=wt, env=_env(), check=True, capture_output=True)
+        commit = subprocess.run(["git", "commit", "-q", "-m", "in the linked worktree"],
+                                cwd=wt, env=_env(), capture_output=True, text=True)
+
+        self.assertTrue(marker.exists(), "the pre-commit hook never ran, so this proves nothing")
+        self.assertEqual(self._digest(caller), before,
+                         "a commit in a LINKED WORKTREE altered the caller's repository")
+        self.assertEqual(commit.returncode, 0, commit.stdout + commit.stderr)
 
 
 if __name__ == "__main__":

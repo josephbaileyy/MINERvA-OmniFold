@@ -1510,17 +1510,45 @@ def clean_merge_report(v: CleanMergeVerdict, limit: int = SCOPE_PRINT_LIMIT) -> 
 # hooksPath would make a throwaway repo run this campaign's pre-commit hook -- which runs this
 # self-test, which would build another throwaway repo. Identity comes from the environment so no
 # fixture depends on a `git config` write having landed first.
-_FIXTURE_ENV = {
-    "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_SYSTEM": os.devnull, "GIT_CONFIG_NOSYSTEM": "1",
-    "GIT_AUTHOR_NAME": "whose_row self-test", "GIT_AUTHOR_EMAIL": "selftest@example.invalid",
-    "GIT_COMMITTER_NAME": "whose_row self-test", "GIT_COMMITTER_EMAIL": "selftest@example.invalid",
-    "GIT_AUTHOR_DATE": "2026-09-08T00:00:00 +0000",
-    "GIT_COMMITTER_DATE": "2026-09-08T00:00:00 +0000",
-}
+def _fixture_env(home: Path) -> dict[str, str]:
+    """The environment the power-test fixtures run in: a full REPLACEMENT, never an addition.
+
+    This used to be a dict passed as `env_extra`, which ADDS to the inherited environment. `_git`'s
+    own docstring says why that is wrong and names the variable: `GIT_DIR` is one of the ones that
+    must be guaranteed ABSENT, "and absence is not something you can guarantee by adding keys to a
+    dictionary you did not build". The reconstruction obeyed that; this call site did not.
+
+    IT MATTERS BECAUSE A GIT HOOK EXPORTS THEM. `merge_guard.sh` runs `--self-test` first, and the
+    repository's `pre-commit` runs it too; during a commit git exports `GIT_DIR` and
+    `GIT_INDEX_FILE`. With those inherited, the fixture's own `git init` / `add -A` / `commit`
+    resolve the OPERATOR's repository instead of the throwaway one. MEASURED 2026-09-08 in a
+    disposable clone: after one hook-shaped `--self-test` the clone's index carried the FIXTURE's
+    files, `base.md` and `side-only.md`, paths that exist nowhere in that clone.
+
+    It was invisible where the gate was written: that clone has `core.hooksPath` unset and no hooks,
+    while the main repository pins an absolute `core.hooksPath` that every linked worktree inherits.
+
+    `GIT_DIR`, `GIT_INDEX_FILE`, `GIT_WORK_TREE` and `GIT_COMMON_DIR` are absent BY CONSTRUCTION --
+    the filter drops every inherited `GIT_*` and none of them is added back -- so each fixture
+    command discovers the repository from its own cwd and can reach no other.
+    """
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    env.update({
+        "HOME": str(home), "XDG_CONFIG_HOME": str(home),
+        "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_SYSTEM": os.devnull,
+        "GIT_CONFIG_NOSYSTEM": "1", "GIT_ATTR_NOSYSTEM": "1",
+        "GIT_NO_REPLACE_OBJECTS": "1", "GIT_TERMINAL_PROMPT": "0",
+        "GIT_AUTHOR_NAME": "whose_row self-test", "GIT_AUTHOR_EMAIL": "selftest@example.invalid",
+        "GIT_COMMITTER_NAME": "whose_row self-test", "GIT_COMMITTER_EMAIL": "selftest@example.invalid",
+        "GIT_AUTHOR_DATE": "2026-09-08T00:00:00 +0000",
+        "GIT_COMMITTER_DATE": "2026-09-08T00:00:00 +0000",
+        "LC_ALL": "C", "LANG": "C",
+    })
+    return env
 
 
 def _fixture_git(repo: Path, *args: str, allow_fail: bool = False) -> str:
-    rc, out, err = _git(list(args), repo, _FIXTURE_ENV)
+    rc, out, err = _git(list(args), repo, env_full=_fixture_env(repo.parent))
     if rc != 0 and not allow_fail:
         raise SystemExit(f"FATAL: the clean-merge power test could not build its fixture: "
                          f"`git {' '.join(args)}` returned {rc} in {repo}\n{err}\n"
@@ -1633,6 +1661,19 @@ def main() -> int:
     if args.check_ledger_ids:
         return check_ledger_ids(REPO / "VALIDATION_LEDGER.md")
     if args.self_test:
+        # HERMETIC BY CONSTRUCTION. Every power case builds a throwaway repository and must resolve
+        # ITS OWN, from its own cwd. A caller that exports git context redirects them elsewhere --
+        # and a `pre-commit` hook DOES export `GIT_DIR`, plus `GIT_INDEX_FILE` during a commit, so
+        # this is the normal way the self-test runs, not an exotic one.
+        #
+        # MEASURED 2026-09-08 with `GIT_DIR` exported: before `_fixture_env` existed the fixtures
+        # wrote the CALLER's index; after it, three LAUNDERING cases still reported
+        # NO-MERGE-IN-PROGRESS, because `verify_clean_merge` had resolved the caller's repository
+        # rather than the fixture's. Scrubbing here closes the self-test. The same sensitivity on
+        # the OPERATIONAL path is NOT closed by this line and is recorded as its own finding; it is
+        # fail-closed -- a redirected verdict REFUSES, it cannot grant a pass.
+        for _inherited in [k for k in os.environ if k.startswith("GIT_")]:
+            del os.environ[_inherited]
         return self_test()
 
     # A GATE THAT CANNOT FAIL, found 2026-08-12 by Lane B probing this script rather than using it.
