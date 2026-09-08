@@ -1695,8 +1695,9 @@ def main() -> int:
                       f"auto-resolved and the reconstruction PROVES it -- so no contested row "
                       f"exists, and nobody resolved anyone else's row. You may commit this merge.")
                 return 0
-            print("CANNOT CHECK :: clean-merge certification failed. The reason above names "
-                  "the unverified condition.")
+            print("CANNOT CHECK :: this merge COULD NOT BE VERIFIED as a clean merge -- the "
+                  "reason above names the condition that did not hold, and an INABILITY to check "
+                  "is one of them.")
             print("  Remove the cause and re-run the guard. A clean index or an authorization "
                   "does not convert this refusal into a pass.")
             return 2

@@ -90,7 +90,8 @@ case "$rc" in
   1) echo "  REFUSED :: a contested row belongs to another lane. ROUTE IT TO THE NAMED AUTHOR AND DO"
      echo "             NOT RESOLVE IT. Joseph's rule, 2026-08-12: no lane's ledger row is merged by"
      echo "             anyone but its author." ;;
-  2) echo "  CANNOT CHECK :: attribution or clean-merge certification could not be established."
+  2) echo "  CANNOT CHECK :: attribution examined nothing, or this merge COULD NOT BE VERIFIED as a"
+     echo "             clean merge -- including the cases where the gate was merely UNABLE to check."
      echo "             This is NOT a pass. Read the reason token above, remove its cause and re-run."
      echo "             A clean index alone does not verify a hand-resolved conflict, committed merge"
      echo "             attributes, uncertain ancestry, staged drift or tracked working-tree drift." ;;

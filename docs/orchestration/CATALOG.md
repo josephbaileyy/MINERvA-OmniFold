@@ -1045,8 +1045,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   never for the task:** remove the cause and re-run, or fix the gate — reviewable, dated, and it protects the next
   operator rather than one merge. `merge_guard.sh` has **no override input**, by design. **Report which EXIT, because
   "the guard refused" is underspecified:** `whose_row.py` exit `1` covers *foreign* (relievable only by that row's named
-  author, or Joseph) and *unattributable* (where a **generated**-file conflict lands) through one code and one summary
-  branch in `whose_row.py`'s `main`; exits `2` (attribution or clean-merge certification failed) and `3`
+  author, or Joseph) and *unattributable* (where a **generated**-file conflict lands) through ONE branch and ONE summary
+  line in `main`, guarded by `if args.lane and (foreign or unattributable):` — **that expression, colon included, is the
+  citation, and it occurs exactly once in the file** (without the colon it also matches a comment recording BEN-117's
+  empty-`--lane` defect). This entry previously read `:850-857`; the clean-merge insertions of 2026-09-08
+  moved the block and no line number moved with it, so **grep the expression** rather than trusting a number, here or
+  in any successor of this entry.
+  Exits `2` (attribution examined nothing, or a clean merge **could not be verified** — an inability counts) and `3`
   (its own self-test failed) are authorizable by **nobody**. For
   a generated-file conflict the file is the symptom and the generators disagreeing is the event — **regenerate from the
   merged sources and re-run the gate**; `MANIFEST.tsv` carries a row describing its own line and byte count, so it

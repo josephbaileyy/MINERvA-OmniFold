@@ -932,25 +932,50 @@ class CleanMergeGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2, result.stdout)
         self.assertIn("RECONSTRUCTION-NOT-ISOLATED", result.stdout)
 
+    # TWO ENUMERATIONS, TWO TESTS, and the split is a mutation-run finding rather than tidiness.
+    # `verify_clean_merge` asks `diff-tree` twice: C7 enumerates what each side CHANGED against the
+    # merge base (`--name-status`), and C5(iii) enumerates what the MERGE changes against HEAD, so
+    # the pass can print what it looked at (`--name-only`). One shim that failed every `diff-tree`
+    # was caught by whichever call ran first -- C7's -- so reverting C5(iii) killed NOTHING and the
+    # condition was untested while a test appeared to cover it. Each shim now names its own call.
     def test_unenumerable_changed_scope_is_not_certified(self):
-        """A failed changed-path query cannot silently produce an empty scope."""
+        """C7's enumeration: a failed changed-path query cannot silently produce an empty scope,
+        which would mean 'no path was content-merged, so no attribute can matter'."""
         f = clean_merge(self.new("unreadable-scope"))
         self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 0)
+        result = f.gate("--conflicts", "--lane", LANE,
+                        extra_env={"PATH": f"{self._diff_tree_shim('--name-status')}:"
+                                           f"{os.environ.get('PATH', '')}"})
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("SCOPE-UNENUMERABLE", result.stdout)
+
+    def test_an_unenumerable_reconstruction_scope_is_not_certified(self):
+        """C5(iii)'s enumeration: with this one reverted the gate returns 0 while printing an EMPTY
+        scope, so the pass names nothing it looked at -- and a pass that names nothing is the shape
+        of the vacuous verdicts this gate's own `main` has already been repaired for twice."""
+        f = clean_merge(self.new("unreadable-reconstruction-scope"))
+        self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 0)
+        result = f.gate("--conflicts", "--lane", LANE,
+                        extra_env={"PATH": f"{self._diff_tree_shim('--name-only')}:"
+                                           f"{os.environ.get('PATH', '')}"})
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("SCOPE-UNENUMERABLE", result.stdout)
+
+    def _diff_tree_shim(self, only_when: str) -> Path:
+        """A `git` that fails `diff-tree` ONLY when the given option is present. Everything else --
+        including the other `diff-tree` -- reaches the real git untouched."""
         real_git = shutil.which("git")
         self.assertIsNotNone(real_git)
-        bindir = self.new("scope-shim")
+        bindir = self.new("diff-tree-shim" + only_when)
         (bindir / "git").write_text(
             "#!/bin/bash\n"
-            "if [ \"$1\" = diff-tree ]; then exit 128; fi\n"
+            "if [ \"$1\" = diff-tree ]; then\n"
+            f'  for a in "$@"; do [ "$a" = {only_when} ] && exit 128; done\n'
+            "fi\n"
             f'exec "{real_git}" "$@"\n'
         )
         (bindir / "git").chmod(0o755)
-        result = f.gate(
-            "--conflicts", "--lane", LANE,
-            extra_env={"PATH": f"{bindir}:{os.environ.get('PATH', '')}"},
-        )
-        self.assertEqual(result.returncode, 2, result.stdout)
-        self.assertIn("SCOPE-UNENUMERABLE", result.stdout)
+        return bindir
 
     # ---- ISOLATION, measured ---------------------------------------------------------------------
     def test_the_gate_writes_neither_the_index_nor_the_working_tree(self):

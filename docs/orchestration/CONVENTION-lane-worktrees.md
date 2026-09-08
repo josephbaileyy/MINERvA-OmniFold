@@ -62,9 +62,12 @@ describing the script, which is worse, because the script has a self-test and th
 no check count of its own — the suite reports its own total, and a second copy in prose can only drift.
 Same remedy and same reason as `waker_fired_but_unread.sh` (BEN-097).
 
-    exit 0  PASS          owned-row resolution allowed, or clean merge independently verified
+    exit 0  PASS          every contested row is yours and you may resolve; OR there was no conflict
+                          and the clean merge was INDEPENDENTLY VERIFIED — a measurement, not an
+                          empty check. Which one it is, the gate says in the line above its verdict
     exit 1  REFUSED       a row belongs to another lane — route it, do not resolve
-    exit 2  CANNOT CHECK  attribution or clean-merge certification failed. NOT a pass
+    exit 2  CANNOT CHECK  attribution examined nothing, or a clean merge COULD NOT BE VERIFIED —
+                          including every case where the gate was merely UNABLE to check. NOT a pass
     exit 3  BLOCKED       no lane given, or the gate's own self-test failed
 
 Run it on every conflict before resolving. It attributes each row to its owning lane by **deriving** the
@@ -72,12 +75,32 @@ BEN block table out of `FINDINGS.md`'s own header, and it refuses to fall back t
 stale block map attributes rows to the wrong lane, which is worse than no attribution and is the shape of
 the false confession BEN-160 records. When it refuses, **route to the named author; do not resolve.**
 
-For an automatic merge, run the guard before committing. A clean-merge pass requires an in-progress
-two-parent merge, the same single merge base in the operator and isolated repositories, a conflict-free
-reconstruction, matching staged contents, and no tracked working-tree drift. Committed merge-relevant
-attributes on any path changed since the base refuse certification, including rename sources and
-destinations. Benign attributes and unchanged binary paths do not block a pass. Local graph overrides
-and multiple merge bases are unsupported and refuse; no permission converts that refusal into a pass.
+**For an AUTOMATIC merge, run the guard before committing.** Since 2026-09-08 that is a verifiable
+state rather than an empty set: the gate reconstructs the merge of the exact parents and prints what
+it measured. A pass requires ALL of — an in-progress two-parent merge; the same single merge base in
+your repository and in the isolated one the gate builds for the reconstruction; a conflict-free
+reconstruction of those two commits; a staged tree byte-identical to it; and no tracked
+working-tree drift, so `git commit` and `git commit -a` would record the same verified tree.
+Untracked files are ignored and never block a pass.
+
+A **committed merge attribute refuses** certification when it lands on a path git had to
+CONTENT-MERGE — changed on BOTH sides against that merge base, or the destination of a rename of
+such a path. The reconstruction neutralises every attribute source deliberately, because real git
+reads the operator-writable WORKING-TREE `.gitattributes`, so faithful and independent cannot both
+hold; an unreconstructed semantics is therefore a refusal and not a pass. It has to be a refusal
+rather than a tree comparison: an attribute that FORCES a conflict produces no tree at all, so
+there is nothing for the staged-tree check to disagree with, and the operator can supply exactly the
+tree the neutralised reconstruction computes.
+
+**What does NOT refuse, and this half is load-bearing:** an attribute with no merge effect
+(`linguist-vendored`), and a merge-relevant attribute on a path only ONE side changed — git takes
+that side verbatim without consulting the attribute. `*.pdf binary` is committed in this repository
+over 59 tracked PDFs, so a rule wider than that would refuse every merge that rebuilt a
+deliverable, and an unreachable pass is the defect this state exists to repair, not a safe default.
+
+Local graph overrides (grafts, a shallow boundary, replace refs) and multiple merge bases are
+unsupported and refuse. No permission converts any of these into a pass — `merge_guard.sh` has no
+override input, by design (`RULING-20260908-joseph-a-merge-guard-refusal-is-terminal.md`).
 
 ### What the attributor cannot do, stated so it does not overstate its reach
 
