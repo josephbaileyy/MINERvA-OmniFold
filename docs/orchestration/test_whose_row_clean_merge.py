@@ -781,6 +781,79 @@ class CleanMergeGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2, result.stdout)
         self.assertIn("UNRECONSTRUCTED-MERGE-ATTRIBUTES", result.stdout)
 
+    def test_a_one_sided_binary_path_does_not_refuse_a_clean_merge(self):
+        """THE NARROWING IS LOAD-BEARING, and this is the test that says so.
+
+        `*.pdf binary` is committed in THIS repository over 59 tracked PDFs, and `binary` IS
+        merge-relevant (`check-attr` reports `merge: unset` for it). Measured at 419e4ed9, where the
+        checked scope was the UNION of the two sides' changes: a genuinely clean merge in which one
+        side had rebuilt a deliverable refused with UNRECONSTRUCTED-MERGE-ATTRIBUTES while nothing
+        at all had been changed on both sides. git never content-merges a path only one side
+        touched -- it takes that side verbatim -- so no attribute on it can have altered anything,
+        and refusing there is not a conservatism, it is the unreachable green this state repairs.
+        """
+        f = Fixture(self.new("one-sided-binary")).base()
+        f.write(".gitattributes", "*.pdf binary\n")
+        f.write("docs/notes/deliverable.pdf", "nominal\n")
+        f.commit("attributes")
+        rc = f.branch_then_merge(
+            side_edits={"docs/notes/deliverable.pdf": "REBUILT deliverable\n"},
+            main_edits={"docs/notes/shared.md": "shared prose, MAIN\n"},
+        )
+        self.assertEqual(rc, 0, "premise: the merge is genuinely clean")
+        base = f.git("merge-base", "HEAD", "MERGE_HEAD").stdout.strip()
+        incoming = set(f.git("diff-tree", "-r", "--name-only", "--no-commit-id", base,
+                             "MERGE_HEAD").stdout.split())
+        ours = set(f.git("diff-tree", "-r", "--name-only", "--no-commit-id", base,
+                         "HEAD").stdout.split())
+        self.assertIn("docs/notes/deliverable.pdf", incoming, "premise: the pdf moved on one side")
+        self.assertEqual(incoming & ours, set(), "premise: NOTHING was changed on both sides")
+        self.assertEqual(f.git("check-attr", "--cached", "merge", "--",
+                               "docs/notes/deliverable.pdf").stdout.strip(),
+                         "docs/notes/deliverable.pdf: merge: unset",
+                         "premise: the attribute really is merge-relevant, so this is not vacuous")
+        r = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertIn("CLEAN MERGE VERIFIED", r.stdout)
+        self.assertIn("docs/notes/deliverable.pdf", r.stdout, "and it says what it looked at")
+
+    def test_a_rename_destination_attribute_refuses_certification(self):
+        """The laundering path that a scope of intersecting PATHS ALONE would leave open.
+
+        The conflict-forcing attribute is on the rename DESTINATION and on nothing else: side
+        renames old.txt -> new.txt and edits it, main edits old.txt, and git content-merges into
+        new.txt -- which is where it looks the attribute up. So the real merge CONFLICTS (asserted),
+        the operator hand-resolves to the obvious combined text, and a reconstruction with
+        attributes neutralised computes exactly that text. The intersection of changed paths is
+        {old.txt}, which carries no attribute at all; the destination has to be added back.
+        """
+        f = Fixture(self.new("rename-destination")).base()
+        f.write(".gitattributes", "new.txt -merge\n")
+        f.write("old.txt", "a\nb\nc\nd\ne\nf\ng\n")
+        f.commit("attributes")
+        f.git("checkout", "-q", "-b", "side")
+        f.git("mv", "old.txt", "new.txt")
+        f.write("new.txt", "SIDE\nb\nc\nd\ne\nf\ng\n")
+        f.commit("rename and edit")
+        f.git("checkout", "-q", "main")
+        f.write("old.txt", "a\nb\nc\nd\ne\nf\nMAIN\n")
+        f.commit("edit")
+        self.assertEqual(f.git("merge", "--no-ff", "--no-commit", "side", check=False).returncode, 1,
+                         "premise: the DESTINATION's attribute forces a real conflict")
+        self.assertNotEqual(f.git("ls-files", "--unmerged").stdout, "")
+        self.assertEqual(f.git("check-attr", "--cached", "merge", "--", "old.txt").stdout.strip(),
+                         "old.txt: merge: unspecified",
+                         "premise: the rename SOURCE carries nothing, so only the destination can "
+                         "put this merge in the checked scope")
+        f.write("new.txt", "SIDE\nb\nc\nd\ne\nf\nMAIN\n")
+        f.git("add", "-A")
+        self.assertEqual(f.git("diff", "--name-only", "--diff-filter=U").stdout, "",
+                         "premise: the index now looks clean")
+        r = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(r.returncode, 2, r.stdout)
+        self.assertIn("UNRECONSTRUCTED-MERGE-ATTRIBUTES", r.stdout)
+        self.assertIn("new.txt", r.stdout)
+
     def test_local_replace_graph_is_not_certified(self):
         """Even an inert replacement is an unreconstructed local graph input."""
         f = clean_merge(self.new("replace-graph"))
@@ -805,8 +878,21 @@ class CleanMergeGateTests(unittest.TestCase):
         self.assertIn("MERGE-GRAPH-UNVERIFIABLE", result.stdout)
 
     def test_unreadable_committed_attributes_are_not_certified(self):
-        """A failed attribute query cannot silently certify default semantics."""
-        f = clean_merge(self.new("unreadable-attributes"))
+        """A failed attribute query cannot silently certify default semantics.
+
+        The fixture edits ONE file on BOTH sides -- disjoint lines, so the merge is genuinely clean
+        -- because that is what puts a path in C7's checked scope. `clean_merge`'s two branches touch
+        different files, so nothing is content-merged there and the attribute query is never
+        reached: with that fixture this test passed while asserting nothing (measured while
+        narrowing the scope, and the reason the premise below is asserted rather than assumed).
+        """
+        f = Fixture(self.new("unreadable-attributes")).base()
+        f.write("shared.txt", "a\nb\nc\nd\ne\nf\ng\n")
+        f.commit("a file both sides will change")
+        self.assertEqual(f.branch_then_merge(
+            side_edits={"shared.txt": "SIDE\nb\nc\nd\ne\nf\ng\n"},
+            main_edits={"shared.txt": "a\nb\nc\nd\ne\nf\nMAIN\n"},
+        ), 0, "premise: disjoint edits to one file merge cleanly")
         self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 0)
         real_git = shutil.which("git")
         self.assertIsNotNone(real_git)

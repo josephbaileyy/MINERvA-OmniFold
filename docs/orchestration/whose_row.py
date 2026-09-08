@@ -913,13 +913,32 @@ def _conflicted_paths(merge_tree_output: str) -> list[str]:
 # `merge-tree` writes exists only in the throwaway store -- so unlike the first version, this one
 # adds no loose objects to the operator's repository at all.
 #
-# Committed attributes are inspected from the base and both parent trees in a
-# separate index. Merge-relevant attributes on changed paths refuse certification:
-# neutralizing a conflict-forcing attribute can otherwise produce a clean tree
-# identical to a hand resolution. The changed-path union includes rename sources
-# and destinations; this conservatively refuses some one-sided attribute merges.
-# Unchanged paths and attributes unrelated to merging do not block certification.
-# Reconstruction itself retains an empty index and no operator attribute sources.
+# `.gitattributes` COMMITTED INSIDE THE MERGED TREES: still not honoured, and no longer assumed
+# harmless. Neutralising every attribute source was once defended with the claim that
+#
+#     "a merge whose real semantics WERE altered by an attribute, from any source, produces a tree
+#      that differs from the reconstruction and is refused by condition 4 (TREE-MISMATCH)"
+#
+# which is TRUE for attributes that CHANGE MERGED CONTENT (`merge=union`, a custom driver: the real
+# merge produces a different tree and C4 sees it) and FALSE for attributes that FORCE A CONFLICT
+# (`-merge`, or `binary` on a TEXT file). A conflict produces NO TREE AT ALL, so there is nothing
+# for C4 to differ from: the OPERATOR supplies the tree, and they can supply exactly the one the
+# neutralised reconstruction computes. Measured twice, by an independent reviewer and again here --
+# `.gitattributes` committing `shared.txt -merge`, `shared.txt` seven lines a..g, side edits line 1,
+# main edits line 7: the real merge exits 1 ("Cannot merge binary files") leaving three unmerged
+# stages, the operator hand-resolves to the obvious combined text, and the pre-C7 gate certified it.
+#
+# C7 is why that path is closed now, and it REFUSES rather than reproduces: real git reads the
+# WORKING-TREE `.gitattributes`, which is operator-writable and need not match anything committed,
+# so "faithful" and "independent" are not simultaneously available and independence is the purpose
+# of the reconstruction. An unreconstructed semantics is therefore a refusal, not a pass. The
+# refusal is narrow by construction -- see `_check_merge_semantics`: only the paths git had to
+# CONTENT-MERGE (changed against the single merge base on both sides, plus rename destinations),
+# only from COMMITTED trees read into an index outside this repository, and only when the value is
+# something other than `unspecified`. `linguist-vendored` and an unchanged `*.pdf binary` do not
+# refuse; both are pinned as controls, because "refuse whenever a merge attribute exists" would
+# refuse every merge in this repository and unreachable green is the defect this state repairs.
+# The reconstruction itself still runs with an empty index and no operator attribute source at all.
 # --------------------------------------------------------------------------------------------------
 
 
@@ -1069,16 +1088,57 @@ def _check_merge_semantics(
     if rc != 0 or len(bases) != 1 or tuple(out.split()) != bases:
         return "MERGE-GRAPH-UNVERIFIABLE", "a single matching merge base is required", bases
 
-    changed: set[str] = set()
+    # ---- THE SCOPE: the paths git had to CONTENT-MERGE, which is the both-sides INTERSECTION ----
+    # NOT the union of the two sides, and the difference is load-bearing rather than cosmetic. git
+    # consults a `merge` attribute only where it runs a content merge, and it runs one only for a
+    # path whose content differs from the merge base on BOTH sides; a path changed on one side alone
+    # is taken from that side verbatim, so no attribute on it can alter the result or force a
+    # conflict. MEASURED against the union form on 2026-09-08: this repository commits
+    # `*.pdf binary` over 59 tracked PDFs, so a genuinely clean merge in which one side had rebuilt
+    # a deliverable refused with UNRECONSTRUCTED-MERGE-ATTRIBUTES while the intersection was EMPTY
+    # -- the unreachable green this branch exists to repair, walked back in through C7.
+    #
+    # RENAME DESTINATIONS ARE ADDED BACK IN, because a rename moves the content merge to the
+    # destination path and git looks the attribute up THERE. MEASURED: `.gitattributes` carrying
+    # `new.txt -merge`, side renames old.txt -> new.txt and edits it, main edits old.txt -> a
+    # genuine conflict at new.txt, whose SOURCE path carries no attribute at all. A scope of
+    # intersecting paths alone would have certified the hand resolution of that conflict, so the
+    # narrowing is done with rename detection ON rather than by dropping `--no-renames`.
+    #
+    # `-l0` because rename detection can be skipped SILENTLY: measured, `-M -l1` over three inexact
+    # renames exits 0, reports six D/A records where there are three R records, and says so only in
+    # a warning on stderr. A skipped detection would drop the destination from this scope, so any
+    # diagnostic at all from these two enumerations refuses instead of narrowing the scope.
+    sides: list[set[str]] = []
+    renames: dict[str, set[str]] = {}
     for parent in (head, merge_head):
         rc, out, err = _git(
-            ["diff-tree", "-r", "-z", "--no-renames", "--no-commit-id", "--name-only",
+            ["diff-tree", "-r", "-z", "-M", "-l0", "--no-commit-id", "--name-status",
              bases[0], parent], iso, env_full=env
         )
-        if rc != 0:
-            return "SCOPE-UNENUMERABLE", err.strip(), bases
-        changed.update(path for path in out.split("\0") if path)
-    if not changed:
+        if rc != 0 or err.strip():
+            return "SCOPE-UNENUMERABLE", err.strip() or f"rc={rc}", bases
+        fields = out.split("\0")[:-1] if out else []
+        side: set[str] = set()
+        cursor = 0
+        while cursor < len(fields):
+            status = fields[cursor]
+            width = 3 if status[:1] in ("R", "C") else 2
+            if not status or cursor + width > len(fields):
+                return ("SCOPE-UNENUMERABLE",
+                        f"a `diff-tree --name-status -z` record ({status!r}) is truncated, so the "
+                        f"changed scope cannot be read", bases)
+            if width == 3:
+                source, destination = fields[cursor + 1], fields[cursor + 2]
+                side.update((source, destination))
+                renames.setdefault(source, set()).add(destination)
+            else:
+                side.add(fields[cursor + 1])
+            cursor += width
+        sides.append(side)
+    content_merged = sides[0] & sides[1]
+    content_merged |= {dst for src in tuple(content_merged) for dst in renames.get(src, ())}
+    if not content_merged:
         return None, "", bases
     attr_env = dict(env, GIT_INDEX_FILE=str(iso.parent / "attributes.index"))
     for tree in (*bases, head, merge_head):
@@ -1086,7 +1146,7 @@ def _check_merge_semantics(
         if rc != 0:
             return "MERGE-ATTRIBUTES-UNREADABLE", err.strip(), bases
         # Batches bound argv size while Git handles patterns, macros and nested files.
-        paths = sorted(changed)
+        paths = sorted(content_merged)
         for offset in range(0, len(paths), 64):
             batch = paths[offset:offset + 64]
             attrs = ("merge", "conflict-marker-size", "filter", "working-tree-encoding")
@@ -1124,8 +1184,10 @@ def verify_clean_merge(repo: Path = REPO) -> CleanMergeVerdict:
             (iii) the inspected scope is enumerable, so the pass can print what it looked at.
         C6  the TRACKED working tree matches the index, so `git commit -a` would record the same
             tree that C4 verified. Untracked files are ignored, deliberately.
-        C7  committed merge attributes on changed paths are absent, and both repositories
-            establish the same single merge base without local graph overrides.
+        C7  the merge semantics are the ones that were reconstructed: no committed merge attribute
+            on any path git had to CONTENT-MERGE (both sides changed it against the base, or it is
+            the destination of a rename of such a path), and both repositories agree on a SINGLE
+            merge base with no local graph override (grafts, shallow boundary, replace refs).
 
     C5(ii) is defence in depth and its exit-code effect is masked: an index carrying unmerged
     entries cannot produce a tree at all, so C4 would refuse anyway. It is kept, and kept FIRST,
