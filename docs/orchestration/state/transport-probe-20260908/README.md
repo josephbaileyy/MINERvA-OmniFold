@@ -73,8 +73,12 @@ no anonymous access — that is the preflight lane's measurement and is recorded
 re-derived here.)
 
 **The gap that remains, and it is a gap by construction.** Every read taken so far has been against
-`refs/campaign/*` — a namespace that **cannot be non-empty yet**, because nothing has ever staged an
-item. A zero row count therefore has **no positive control**: it cannot distinguish *"the namespace is
+`refs/campaign/*`, which was **observed empty at every reading taken so far**. (An earlier version of
+this sentence said the namespace *cannot* be non-empty because nothing has ever staged an item. That
+asserted more than any observation here supports — never-created and created-then-emptied are
+indistinguishable from these reads, and it is the same unevidenced form struck from the section
+below. Corrected here rather than left for the correction below to carry alone.) A zero row count
+therefore has **no positive control**: it cannot distinguish *"the namespace is
 empty"* from *"the probe did not look."* Partial credit where it is due: `campaignctl.remote_head()`
 (`:1965-1983`) **raises** on a nonzero `ls-remote` exit, for the reason its module docstring gives at
 `:92` — *"a queue that cannot read them cannot tell an empty campaign from a full one"* — so the code
