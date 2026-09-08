@@ -287,6 +287,17 @@ class MutationsThatMustNotPass(unittest.TestCase):
         self.assertEqual(code, validator.EXIT_ERROR)
         self.assertTrue(findings["producer_declaration_disagrees_with_bindings"])
 
+    def test_a_record_for_an_undeclared_read_is_a_fault(self):
+        """The mirror of the declaration cross-check: a measurement nobody asked for is
+        the same report/bindings disagreement as a declaration nobody can perform."""
+        reads = [payloaded(rid) for rid in OBLIGATIONS]
+        reads.append({"read_id": "G:hSomethingNobodyDeclared", "status": "read",
+                      "kind": REQUIRED, "value": 1.0})
+        code, findings = validator.classify(report(reads), BINDINGS, ATTEMPT)
+        self.assertEqual(code, validator.EXIT_ERROR)
+        self.assertEqual(findings["records_for_reads_the_bindings_do_not_declare"],
+                         ["G:hSomethingNobodyDeclared"])
+
     def test_stale_report_from_another_attempt_is_refused(self):
         code, findings = validator.classify(full_capture(), BINDINGS, "a-different-attempt")
         self.assertEqual(code, validator.EXIT_ERROR)

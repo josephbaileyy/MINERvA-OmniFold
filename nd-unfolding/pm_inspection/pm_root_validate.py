@@ -439,7 +439,12 @@ def classify(report: dict, bindings: dict, attempt_id: str,
 
     seen = {entry.get("read_id") for entry in reads}
     missing = sorted(set(obligations) - seen)
+    # The mirror of the declaration cross-check, and the same disagreement: a record for a
+    # read the bindings do not declare is a measurement nobody asked for. Now that the two
+    # halves keep separate obligation tables, this is where producer-side skew surfaces.
+    undeclared = sorted(str(read_id) for read_id in seen - set(obligations))
     findings["missing_read_records"] = missing
+    findings["records_for_reads_the_bindings_do_not_declare"] = undeclared
     findings["missing_report_sections"] = missing_sections
     payload_missing, payload_reasons = payload_defects(reads, kinds)
     findings["reads_missing_payload"] = payload_missing
@@ -480,7 +485,7 @@ def classify(report: dict, bindings: dict, attempt_id: str,
     faults = (bad_status or bad_kind or kind_disagreements or required_failures
               or unreadable_optional or missing_sections or payload_missing
               or contradictions or source_changed or declaration_disagrees
-              or wrong_data_root or aimed_elsewhere or offenders
+              or undeclared or wrong_data_root or aimed_elsewhere or offenders
               or report.get("traceback") or report.get("fatal"))
     if faults:
         return EXIT_ERROR, findings
