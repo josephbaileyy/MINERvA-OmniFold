@@ -329,3 +329,74 @@ all** — `"producer"` is a free-text field — so nothing committed pins the pr
 `--attempt-id`, `--out` or `--data-root`. The validator now refuses a report whose `data_root`
 disagrees with the bindings, which closes the consequence of a wrong `--data-root` but does not
 pin the argv.
+
+## Sixth review round — the launcher had no deadline of its own, so the controller's SIGKILL was it
+
+**The finding.** Every bound in the launcher was a per-call timeout. Added up along the worst
+path they exceeded the wall the controller gives the whole execution:
+
+| step | bound | cumulative |
+|---|---|---|
+| `sbatch` | `timeout=120` | 120 s |
+| `wait_for_job` | `deadline = time.time() + minutes*60 + 120` = 1620 s | 1740 s |
+| a poll that *starts* at `deadline - ε` | `sacct timeout=60` | 1800 s |
+| `scancel` in the `finally` | `timeout=60` | 1860 s |
+| the verifying `sacct` | `timeout=60` | 1920 s |
+
+`campaignctl.run_compute_item` fixes **one** deadline for the whole execution before the
+producer starts (`campaignctl.py:4018-4019`), runs the producer under
+`subprocess.run(timeout=…)`, and then gives the terminal validator `deadline - monotonic()`
+(`:4038`) — *what the producer left*. A validator with no budget is not started at all
+(`:4039`). So the old launcher could be killed at 1800 s while still polling, and `finally`
+could not save it: CPython's `subprocess.run` timeout path calls `Popen.kill()`, which is
+`SIGKILL` on POSIX and cannot be caught. No `finally`, no `atexit`, no cancellation — a job
+left running with nobody holding its identity, and no validator to record the loss.
+
+The wall-clock deadline had a second defect the same repair closes: `time.time()` is not
+monotonic, so an NTP step during the wait moved the deadline in either direction.
+
+**The repair.** One absolute budget, taken from `time.monotonic()` *before* submission, that
+caps every subprocess and every sleep, and holds back two reserves it will not spend:
+
+| constant | value | what it is |
+|---|---|---|
+| `CONTROLLER_WALL_SECONDS` | 1800 s | `maximum_cost.wall_hours` (0.5) × 3600 — **unchanged** |
+| `VALIDATOR_RESERVE_SECONDS` | 240 s | left *outside* the launcher for the validator |
+| `STAGED_TIMEOUT_SECONDS` | 1560 s | what admission must stage as `--timeout-seconds` |
+| `CONTROLLER_START_SLACK_SECONDS` | 60 s | log open, guard shim exec, interpreter imports |
+| `LAUNCHER_BUDGET_SECONDS` | 1500 s | the launcher's own wall |
+| `CLEANUP_RESERVE_SECONDS` | 180 s | held back inside it for `scancel` + its verifying `sacct` |
+| `WAIT_WINDOW_SECONDS` | 1200 s | what is left to wait in |
+
+Every scheduler call goes through one chokepoint, `run_within`, which grants
+`min(nominal, remaining)` — against `remaining_before_reserve` for ordinary work, against
+`remaining` for cleanup — and **refuses to start** a call it cannot cover. A refusal there is a
+statement about our own clock and never about the job: an unaffordable `sacct` is `UNKNOWN`,
+an unaffordable `scancel` records `cancel_requested: false`, and cleanup reports `UNRESOLVED`
+rather than claiming anything. The reservation is retained in every one of those branches.
+
+**Admission must stage the timeout explicitly.** `campaignctl`'s `--timeout-seconds` defaults
+to **600** (`campaignctl.py:4540`); at that value the launcher is killed mid-wait and none of
+this helps. Staging this item must pass `--timeout-seconds 1560`. The number is not implied by
+the contract — `maximum_cost.wall_hours` bounds it but does not set it — so it is a thing a
+human must type, and `test_the_stage_default_would_kill_this_launcher` exists to keep it from
+being forgotten silently.
+
+**`--minutes` dropped 25 → 15, forced by the arithmetic.** A 25-minute walltime request cannot
+fit a 20-minute wait window: a job that used its full allocation would be cancelled rather than
+read. `verify_budget_arithmetic` now refuses `--minutes` larger than the window *before
+anything is submitted*, and says so — raising the window instead would mean raising
+`maximum_cost.wall_hours`, which is an authorization question and not a code change.
+
+**What this still does not guarantee.** The budget assumes our own clock reads return and that
+a granted subprocess honours its timeout. A stalled filesystem inside `subprocess.run`'s
+cleanup, or a node that stops scheduling us, can still overrun; the budget shrinks that window,
+it does not abolish it. The outcome is therefore also written to `launch-outcome.json` in the
+run directory, because `print` to campaignctl's log pipe is block-buffered and a kill we failed
+to beat would lose the print but not the file.
+
+Twelve fake-clock tests pin this, none of them contacting a scheduler. The one that answers the
+finding directly is `test_worst_case_walk_finishes_before_the_controller_kill`: every call
+burns its entire grant, the job never reaches a terminal state, and the walk must still end
+inside `LAUNCHER_BUDGET_SECONDS`, inside `STAGED_TIMEOUT_SECONDS` once the start slack is added
+back, and with the validator's 240 s still unspent.

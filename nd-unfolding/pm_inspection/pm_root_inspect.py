@@ -639,9 +639,149 @@ PARSABLE_LINE_RE = re.compile(r"^(?P<id>[0-9]+(?:_[0-9]+)?)(?:;[^;\s]+)?$")
 #: Measured from the controller 2026-09-08: debug MaxWall 00:30:00, UsageFactor 1.000000,
 #: identical factor to interactive, and present in account m3246's association list.
 DEFAULT_QOS = "debug"
-DEFAULT_MINUTES = 25
 
 EXIT_SUBMISSION_UNCERTAIN = 30
+
+# --------------------------------------------------------------------------- the budget
+#
+# WHY AN ABSOLUTE BUDGET EXISTS.  campaignctl.run_compute_item fixes ONE deadline for the
+# whole execution before it starts the producer (campaignctl.py:4018-4019, 4038):
+#
+#     started  = time.monotonic()
+#     deadline = started + maximum_cost.wall_hours * 3600
+#     producer_timeout = min(item["timeout_seconds"], deadline - started)
+#     ...
+#     validator_timeout = deadline - time.monotonic()
+#
+# and runs the producer under subprocess.run(timeout=producer_timeout).  CPython's timeout
+# path calls Popen.kill(), which is SIGKILL on POSIX and cannot be caught, so a producer that
+# overruns is not asked to stop -- it is destroyed.  ``finally`` does not run, ``atexit`` does
+# not run, a submitted job is left running with nobody holding its identity, and the validator
+# that would have recorded the loss is never started, because the budget it shares with the
+# producer is already gone.
+#
+# So the launcher does not rely on being allowed to finish.  It fixes its own absolute
+# deadline from time.monotonic() BEFORE submission, caps every subprocess and every sleep by
+# what is left of it, and holds back two reserves it will not spend: one inside its own budget
+# for cancellation and terminal verification, one outside it for the validator downstream.
+#
+# The wall-clock deadline this replaces had a second defect: time.time() is not monotonic, so
+# an NTP step during the wait could move the deadline in either direction.
+
+#: campaignctl's whole-execution wall = maximum_cost.wall_hours (0.5) * 3600.
+CONTROLLER_WALL_SECONDS = 1800.0
+#: Left to campaignctl for the terminal validator, which runs AFTER this producer out of the
+#: same wall.  A validator with no budget left is not started at all (campaignctl.py:4039).
+VALIDATOR_RESERVE_SECONDS = 240.0
+#: What staging MUST pass as ``--timeout-seconds``.  campaignctl defaults that flag to 600
+#: (campaignctl.py:4540), which would SIGKILL this launcher mid-wait; the number is not
+#: implied by the contract and has to be given explicitly at admission.
+STAGED_TIMEOUT_SECONDS = 1560.0
+#: Controller work between fixing the deadline and this process's first instruction:
+#: run_logged_command's log open, the guard shim exec, and the interpreter's imports.
+CONTROLLER_START_SLACK_SECONDS = 60.0
+#: The launcher's own absolute wall, measured from before submission.
+LAUNCHER_BUDGET_SECONDS = STAGED_TIMEOUT_SECONDS - CONTROLLER_START_SLACK_SECONDS
+#: Held back from that wall for scancel plus its verifying sacct plus margin.
+CLEANUP_RESERVE_SECONDS = 180.0
+
+SBATCH_TIMEOUT_SECONDS = 120.0
+SACCT_TIMEOUT_SECONDS = 60.0
+SCANCEL_TIMEOUT_SECONDS = 60.0
+POLL_SECONDS = 20.0
+
+#: What is left to wait in, once submission and the cleanup reserve are taken out.
+WAIT_WINDOW_SECONDS = (
+    LAUNCHER_BUDGET_SECONDS - CLEANUP_RESERVE_SECONDS - SBATCH_TIMEOUT_SECONDS)
+
+#: The job's own --time.  It must fit the wait window: asking the scheduler for longer than
+#: the launcher can wait would cancel jobs that were about to succeed.
+DEFAULT_MINUTES = 15
+
+
+class BudgetExhausted(Exception):
+    """The deadline forbids STARTING a call. Never a statement about the job's state."""
+
+
+class Budget:
+    """One absolute deadline, fixed before submission, that caps everything after it."""
+
+    def __init__(self, total_seconds: float = LAUNCHER_BUDGET_SECONDS,
+                 reserve_seconds: float = CLEANUP_RESERVE_SECONDS,
+                 clock=time.monotonic) -> None:
+        self._clock = clock
+        self._start = clock()
+        self._total = float(total_seconds)
+        self._reserve = float(reserve_seconds)
+
+    def elapsed(self) -> float:
+        return self._clock() - self._start
+
+    def remaining(self) -> float:
+        """To the absolute deadline. Only cleanup may spend down into this."""
+        return self._total - self.elapsed()
+
+    def remaining_before_reserve(self) -> float:
+        """What ordinary work may still spend, leaving cancellation its reserve."""
+        return self.remaining() - self._reserve
+
+    def grant(self, nominal_seconds: float) -> float:
+        return min(float(nominal_seconds), self.remaining_before_reserve())
+
+    def grant_for_cleanup(self, nominal_seconds: float) -> float:
+        return min(float(nominal_seconds), self.remaining())
+
+    def snapshot(self) -> dict[str, float]:
+        return {"elapsed_seconds": round(self.elapsed(), 3),
+                "remaining_seconds": round(self.remaining(), 3),
+                "remaining_before_reserve_seconds":
+                    round(self.remaining_before_reserve(), 3)}
+
+
+def verify_budget_arithmetic(minutes: int) -> dict[str, float]:
+    """Refuse a plan the controller's wall cannot hold, before anything is submitted."""
+    plan = {
+        "controller_wall_seconds": CONTROLLER_WALL_SECONDS,
+        "staged_timeout_seconds": STAGED_TIMEOUT_SECONDS,
+        "validator_reserve_seconds": VALIDATOR_RESERVE_SECONDS,
+        "controller_start_slack_seconds": CONTROLLER_START_SLACK_SECONDS,
+        "launcher_budget_seconds": LAUNCHER_BUDGET_SECONDS,
+        "cleanup_reserve_seconds": CLEANUP_RESERVE_SECONDS,
+        "wait_window_seconds": WAIT_WINDOW_SECONDS,
+        "job_walltime_seconds": float(minutes) * 60.0,
+    }
+    if STAGED_TIMEOUT_SECONDS + VALIDATOR_RESERVE_SECONDS > CONTROLLER_WALL_SECONDS:
+        raise SystemExit(
+            f"staged timeout {STAGED_TIMEOUT_SECONDS:.0f}s plus the validator reserve "
+            f"{VALIDATOR_RESERVE_SECONDS:.0f}s exceeds the controller wall "
+            f"{CONTROLLER_WALL_SECONDS:.0f}s: the validator would be started with no budget")
+    if LAUNCHER_BUDGET_SECONDS <= CLEANUP_RESERVE_SECONDS + SBATCH_TIMEOUT_SECONDS:
+        raise SystemExit(
+            "the launcher budget cannot cover submission plus the cleanup reserve")
+    if plan["job_walltime_seconds"] > WAIT_WINDOW_SECONDS:
+        raise SystemExit(
+            f"--minutes {minutes} asks the scheduler for {minutes * 60}s, but this launcher "
+            f"can only wait {WAIT_WINDOW_SECONDS:.0f}s inside its budget, so a job that used "
+            "its full walltime would be cancelled rather than read. Lower --minutes, or raise "
+            "the staged timeout and maximum_cost.wall_hours together -- which is an "
+            "authorization question, not a code change.")
+    return plan
+
+
+def run_within(argv: list[str], *, budget: Budget, nominal: float,
+               cleanup: bool = False) -> subprocess.CompletedProcess:
+    """Run one scheduler command inside the budget, or refuse to start it.
+
+    Every scheduler call in launch mode goes through here, so no path can outlive the
+    deadline.  A call the budget cannot cover is refused BEFORE it starts, which is a
+    statement about our own clock and never about the job.
+    """
+    grant = budget.grant_for_cleanup(nominal) if cleanup else budget.grant(nominal)
+    if grant <= 0:
+        edge = "the deadline" if cleanup else "the cleanup reserve"
+        raise BudgetExhausted(
+            f"{argv[0]} was not started: {grant:.1f}s remained before {edge}")
+    return subprocess.run(argv, capture_output=True, text=True, timeout=grant)
 
 
 class SubmissionUncertain(Exception):
@@ -670,14 +810,15 @@ def parse_parsable_receipt(stdout: str) -> str:
     return match.group("id")
 
 
-def submit_one_job(wrap_command: str, *, run_dir: Path, account: str, qos: str,
-                   minutes: int, comment: str) -> str:
+def submit_one_job(wrap_command: str, *, budget: Budget, run_dir: Path, account: str,
+                   qos: str, minutes: int, comment: str) -> str:
     """Submit exactly one CPU job and return its validated id.
 
     Validation happens on the RECEIPT, before any caller can lose it, and this function never
     writes a file: recording is the caller's job so a write failure cannot destroy an id this
     function already knows. A non-zero sbatch is NOT proof that no job was created -- an
-    acknowledgement can be lost after the scheduler accepted it.
+    acknowledgement can be lost after the scheduler accepted it, and neither is a timeout,
+    which is why an sbatch that outruns its grant is uncertain rather than a refusal.
     """
     argv = [
         "sbatch", "--parsable", "--comment", comment,
@@ -688,7 +829,7 @@ def submit_one_job(wrap_command: str, *, run_dir: Path, account: str, qos: str,
         "--wrap", wrap_command,
     ]
     try:
-        completed = subprocess.run(argv, capture_output=True, text=True, timeout=120)
+        completed = run_within(argv, budget=budget, nominal=SBATCH_TIMEOUT_SECONDS)
     except (OSError, subprocess.SubprocessError) as error:
         raise SubmissionUncertain(f"sbatch could not be run or did not answer: {error}")
     if completed.returncode != 0:
@@ -703,18 +844,22 @@ def write_task_ids(path: Path, job_id: str) -> None:
     path.write_text(json.dumps([job_id]) + "\n")
 
 
-def job_state(job_id: str) -> tuple[str | None, str]:
+def job_state(job_id: str, *, budget: Budget,
+              cleanup: bool = False) -> tuple[str | None, str]:
     """Return (terminal_state, detail). ``None`` means NOT KNOWN to be terminal.
 
-    A non-zero ``sacct`` or a timeout is unknown, never terminal: an exit code of 1 with a
-    stale COMPLETED on stdout would otherwise read as a finished job.
+    A non-zero ``sacct``, a timeout, or a probe the budget could not afford to start are all
+    unknown, never terminal: an exit code of 1 with a stale COMPLETED on stdout would
+    otherwise read as a finished job, and a probe we never ran says nothing at all.
     """
     terminal = {"COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "NODE_FAIL",
                 "OUT_OF_MEMORY", "BOOT_FAIL", "DEADLINE", "PREEMPTED"}
+    argv = ["sacct", "-j", job_id, "-X", "-n", "-P", "-o", "State"]
     try:
-        probe = subprocess.run(
-            ["sacct", "-j", job_id, "-X", "-n", "-P", "-o", "State"],
-            capture_output=True, text=True, timeout=60)
+        probe = run_within(argv, budget=budget, nominal=SACCT_TIMEOUT_SECONDS,
+                           cleanup=cleanup)
+    except BudgetExhausted as error:
+        return None, f"state is unknown: {error}"
     except (OSError, subprocess.SubprocessError) as error:
         return None, f"sacct did not answer: {error}"
     if probe.returncode != 0:
@@ -727,59 +872,83 @@ def job_state(job_id: str) -> tuple[str | None, str]:
     return None, f"not terminal: {states[0]}"
 
 
-def wait_for_job(job_id: str, *, deadline: float, poll_seconds: int = 20) -> tuple[str | None, str]:
-    """Poll until terminal or the deadline passes."""
-    detail = "deadline passed before any probe"
-    while time.time() < deadline:
-        state, detail = job_state(job_id)
+def wait_for_job(job_id: str, *, budget: Budget,
+                 sleeper=time.sleep) -> tuple[str | None, str]:
+    """Poll until terminal or until the cleanup reserve is all that is left.
+
+    The loop and every probe inside it are bounded by ``remaining_before_reserve``, so the
+    wait cannot consume the seconds cancellation and its verification are holding.
+    """
+    detail = "budget exhausted before any probe"
+    while budget.remaining_before_reserve() > 0:
+        state, detail = job_state(job_id, budget=budget)
         if state is not None:
             return state, detail
-        time.sleep(poll_seconds)
+        nap = min(POLL_SECONDS, budget.remaining_before_reserve())
+        if nap <= 0:
+            break
+        sleeper(nap)
     return None, detail
 
 
-def cancel_this_job(job_id: str) -> dict[str, object]:
+def cancel_this_job(job_id: str, *, budget: Budget) -> dict[str, object]:
     """Cancel by id only, then VERIFY. A successful request is not a terminated job."""
-    result: dict[str, object] = {"job_id": job_id, "cancel_requested": True}
+    result: dict[str, object] = {"job_id": job_id}
     try:
-        completed = subprocess.run(["scancel", job_id], capture_output=True, text=True,
-                                   timeout=60)
+        completed = run_within(["scancel", job_id], budget=budget,
+                               nominal=SCANCEL_TIMEOUT_SECONDS, cleanup=True)
+        result["cancel_requested"] = True
         result["scancel_returncode"] = completed.returncode
         result["scancel_stderr"] = completed.stderr.strip()[:200]
-    except (OSError, subprocess.SubprocessError) as error:
+    except BudgetExhausted as error:
+        # No request was made, so do not record one: the job may still be running.
+        result["cancel_requested"] = False
         result["scancel_returncode"] = None
         result["scancel_error"] = str(error)
-    state, detail = job_state(job_id)
+    except (OSError, subprocess.SubprocessError) as error:
+        result["cancel_requested"] = True
+        result["scancel_returncode"] = None
+        result["scancel_error"] = str(error)
+    state, detail = job_state(job_id, budget=budget, cleanup=True)
     result["terminal_state"] = state
     result["verification"] = detail
     result["cleanup"] = "verified-terminal" if state is not None else "UNRESOLVED"
+    result["budget"] = budget.snapshot()
     return result
 
 
-def launch(args, run_dir: Path, task_ids_path: Path) -> int:
+def launch(args, run_dir: Path, task_ids_path: Path, *, clock=time.monotonic,
+           sleeper=time.sleep) -> int:
     """Submit one job, record it, wait bounded, and never leave without accounting for it."""
-    wrap = shlex.join([
-        args.inner_python, "nd-unfolding/mnv_guarded_run.py",
-        "--expect-root", str(args.expect_root),
-        "--label", "pm-root-inspection-read",
-        "--", "nd-unfolding/pm_inspection/pm_root_inspect.py",
-        "--mode", "read",
-        "--bindings", str(args.bindings),
-        "--data-root", str(args.data_root),
-        "--attempt-id", run_dir.name,
-        "--out", str(run_dir),
-    ])
+    plan = verify_budget_arithmetic(args.minutes)
+    budget = Budget(clock=clock)          # fixed BEFORE anything can be submitted
     job_id: str | None = None
-    outcome: dict[str, object] = {}
+    outcome: dict[str, object] = {"budget_plan": plan}
     try:
+        wrap = shlex.join([
+            args.inner_python, "nd-unfolding/mnv_guarded_run.py",
+            "--expect-root", str(args.expect_root),
+            "--label", "pm-root-inspection-read",
+            "--", "nd-unfolding/pm_inspection/pm_root_inspect.py",
+            "--mode", "read",
+            "--bindings", str(args.bindings),
+            "--data-root", str(args.data_root),
+            "--attempt-id", run_dir.name,
+            "--out", str(run_dir),
+        ])
         try:
-            job_id = submit_one_job(wrap, run_dir=run_dir, account=args.account,
-                                    qos=args.qos, minutes=args.minutes,
-                                    comment=args.comment)
+            job_id = submit_one_job(wrap, budget=budget, run_dir=run_dir,
+                                    account=args.account, qos=args.qos,
+                                    minutes=args.minutes, comment=args.comment)
+        except BudgetExhausted as error:
+            # sbatch was never started, so no job exists to hold or to cancel.
+            outcome.update({"submission": "not attempted", "reservation": "RETAINED",
+                            "detail": str(error)})
+            return EXIT_ERROR
         except SubmissionUncertain as error:
             (run_dir / "submission-uncertain.txt").write_text(str(error) + "\n")
-            outcome = {"submission": "uncertain", "reservation": "RETAINED",
-                       "detail": str(error)}
+            outcome.update({"submission": "uncertain", "reservation": "RETAINED",
+                            "detail": str(error)})
             return EXIT_SUBMISSION_UNCERTAIN
 
         # The id is known from here on. A failure to RECORD it must not lose it.
@@ -792,7 +961,7 @@ def launch(args, run_dir: Path, task_ids_path: Path) -> int:
             (run_dir / "task-ids-write-failed.txt").write_text(
                 json.dumps({"job_id": job_id, "error": str(error)}) + "\n")
 
-        state, detail = wait_for_job(job_id, deadline=time.time() + args.minutes * 60 + 120)
+        state, detail = wait_for_job(job_id, budget=budget, sleeper=sleeper)
         outcome.update({"job_id": job_id, "state": state, "detail": detail})
         if state is None:
             return EXIT_ERROR
@@ -800,8 +969,17 @@ def launch(args, run_dir: Path, task_ids_path: Path) -> int:
     finally:
         # Scoped cleanup: only ever this job, only when it is not known terminal.
         if job_id is not None and outcome.get("state") is None:
-            outcome["cleanup_attempt"] = cancel_this_job(job_id)
+            outcome["cleanup_attempt"] = cancel_this_job(job_id, budget=budget)
+        outcome["budget_at_exit"] = budget.snapshot()
+        # Written as well as printed: stdout is block-buffered into campaignctl's log, so a
+        # kill we failed to beat would lose the print but not the file.
+        try:
+            (run_dir / "launch-outcome.json").write_text(
+                json.dumps(outcome, sort_keys=True) + "\n")
+        except OSError:
+            pass
         print(json.dumps(outcome, sort_keys=True))
+        sys.stdout.flush()
 
 
 def declared_read_ids(bindings: dict) -> list[str]:
