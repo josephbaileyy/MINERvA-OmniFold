@@ -62,15 +62,22 @@ describing the script, which is worse, because the script has a self-test and th
 no check count of its own — the suite reports its own total, and a second copy in prose can only drift.
 Same remedy and same reason as `waker_fired_but_unread.sh` (BEN-097).
 
-    exit 0  PASS          every contested row is yours; you may resolve
+    exit 0  PASS          owned-row resolution allowed, or clean merge independently verified
     exit 1  REFUSED       a row belongs to another lane — route it, do not resolve
-    exit 2  CANNOT CHECK  nothing was examined, so nothing was verified. NOT a pass
+    exit 2  CANNOT CHECK  attribution or clean-merge certification failed. NOT a pass
     exit 3  BLOCKED       no lane given, or the gate's own self-test failed
 
 Run it on every conflict before resolving. It attributes each row to its owning lane by **deriving** the
 BEN block table out of `FINDINGS.md`'s own header, and it refuses to fall back to a hardcoded copy — a
 stale block map attributes rows to the wrong lane, which is worse than no attribution and is the shape of
 the false confession BEN-160 records. When it refuses, **route to the named author; do not resolve.**
+
+For an automatic merge, run the guard before committing. A clean-merge pass requires an in-progress
+two-parent merge, the same single merge base in the operator and isolated repositories, a conflict-free
+reconstruction, matching staged contents, and no tracked working-tree drift. Committed merge-relevant
+attributes on any path changed since the base refuse certification, including rename sources and
+destinations. Benign attributes and unchanged binary paths do not block a pass. Local graph overrides
+and multiple merge bases are unsupported and refuse; no permission converts that refusal into a pass.
 
 ### What the attributor cannot do, stated so it does not overstate its reach
 

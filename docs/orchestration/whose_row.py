@@ -809,7 +809,7 @@ def check_row_owners() -> int:
 
 
 class CleanMergeVerdict(NamedTuple):
-    """The measurement, not a boolean. `ok` is only true when all SIX conditions held.
+    """The measurement, not a boolean. `ok` is only true when all conditions held.
 
     `reason` is a stable token, asserted by name in the tests: a message-only distinction would let
     the causes drift into each other, and the mutation battery needs to see WHICH condition spoke.
@@ -913,51 +913,13 @@ def _conflicted_paths(merge_tree_output: str) -> list[str]:
 # `merge-tree` writes exists only in the throwaway store -- so unlike the first version, this one
 # adds no loose objects to the operator's repository at all.
 #
-# `.gitattributes` COMMITTED INSIDE THE MERGED TREES: NOT honoured -- and THIS IS AN OPEN HOLE, not
-# a settled decision. Read the whole of this block before trusting the paragraph after it.
-#
-# ############################################################################################
-# ## KNOWN FALSE, 2026-09-08, and left standing here only so the next reader sees WHICH claim  ##
-# ## failed and how it was measured. An independent reviewer reproduced the counterexample and ##
-# ## I reproduced it again in this tree before writing this correction. THE GATE HAS AN OPEN   ##
-# ## LAUNDERING PATH. It is recorded in the branch report as finding 3, PENDING, with the       ##
-# ## fixture; it is NOT fixed, and no test in this suite catches it.                            ##
-# ##                                                                                            ##
-# ## The claim that failed:                                                                     ##
-# ##     "a merge whose real semantics WERE altered by an attribute, from any source, produces  ##
-# ##      a tree that differs from the reconstruction and is refused by condition 4"             ##
-# ##                                                                                            ##
-# ## True for attributes that CHANGE MERGED CONTENT (`merge=union`, a custom driver): the real   ##
-# ## merge produces a different tree, condition 4 sees the difference, refusal.                  ##
-# ## FALSE for attributes that FORCE A CONFLICT (`-merge`, `binary` on a TEXT file). A conflict  ##
-# ## produces NO TREE AT ALL, so there is nothing for condition 4 to differ from -- the OPERATOR ##
-# ## supplies the tree, and they can supply exactly the one the neutralised reconstruction       ##
-# ## computes. MEASURED in a throwaway repository: `.gitattributes` committing `shared.txt       ##
-# ## -merge`, `shared.txt` seven lines a..g, side edits line 1, main edits line 7. The real      ##
-# ## merge exits 1 ("Cannot merge binary files") and leaves three unmerged stages. The operator  ##
-# ## hand-resolves to the obvious combined text (SIDE line 1, MAIN line 7) and stages it. That   ##
-# ## is byte-identical to the default three-way merge, so this function returns                  ##
-# ## CLEAN-MERGE-VERIFIED for a REAL CONFLICT RESOLVED BY HAND -- the exact act the gate exists  ##
-# ## to refuse. My own earlier note reached the edge of this and stopped one step short: I       ##
-# ## checked `*.pdf binary` and concluded it "refuses either way", which is true for a file that ##
-# ## is genuinely binary and false for a TEXT file marked `-merge`, which is the opposite case.  ##
-# ############################################################################################
-#
-# The paragraph the false sentence came from, with the sentence removed, because the rest of the
-# reasoning is unaffected and is what the repair will build on: the reconstruction neutralises every
-# attribute source -- system (`GIT_ATTR_NOSYSTEM=1`), global (`core.attributesFile=/dev/null` and a
-# scratch `HOME`), repo-local (`info/attributes`, written empty), and in-tree (the isolated
-# repository's index is empty, and in a bare repository git resolves attributes from the index).
-# Vector 3 above is why it cannot simply honour the in-tree file instead: git's real merge does not
-# read the committed copy either, it reads the WORKING-TREE copy, which is operator-writable and
-# need not match anything committed -- so "faithful" and "independent" are not simultaneously
-# available, and independence is the purpose of the reconstruction. What does NOT follow, and what I
-# wrongly wrote, is that neutralising is therefore always fail-closed.
-# `test_an_in_tree_gitattributes_that_changes_the_merge_is_refused_not_honoured` pins only the
-# content-changing half (`merge=union`), which is the half that was already safe.
-# Measured on this repository: the only tracked `.gitattributes` sets `linguist-vendored` (no merge
-# effect at all) and `*.pdf binary` -- so nothing here is currently exposed through a committed
-# attribute, and the hole is reachable by committing one.
+# Committed attributes are inspected from the base and both parent trees in a
+# separate index. Merge-relevant attributes on changed paths refuse certification:
+# neutralizing a conflict-forcing attribute can otherwise produce a clean tree
+# identical to a hand resolution. The changed-path union includes rename sources
+# and destinations; this conservatively refuses some one-sided attribute merges.
+# Unchanged paths and attributes unrelated to merging do not block certification.
+# Reconstruction itself retains an empty index and no operator attribute sources.
 # --------------------------------------------------------------------------------------------------
 
 
@@ -1071,17 +1033,84 @@ def _prove_isolation(git_dir: Path, env: dict[str, str], head: str,
                  "GIT_ATTR_NOSYSTEM=1, and the")
     facts.append("             index is empty -- so merge semantics are git's BUILT-IN default and "
                  "an in-tree")
-    facts.append("             .gitattributes is NOT honoured here. A merge whose semantics an "
-                 "attribute did change")
-    facts.append("             yields a different tree and is REFUSED by condition 4, never passed.")
+    facts.append("             .gitattributes is checked separately for unreconstructed merge semantics.")
     facts.append("hooks:       core.hooksPath points at a path that does not exist")
     return None, tuple(facts)
+
+
+def _check_merge_semantics(
+    repo: Path, iso: Path, env: dict[str, str], head: str, merge_head: str
+) -> tuple[str | None, str, tuple[str, ...]]:
+    """Check ancestry agreement and committed attributes before reconstruction."""
+    if any(name in os.environ for name in
+           ("GIT_SHALLOW_FILE", "GIT_GRAFT_FILE", "GIT_REPLACE_REF_BASE")):
+        return "MERGE-GRAPH-UNVERIFIABLE", "inherited graph override", ()
+    # Alternates share objects, but not shallow boundaries, grafts or replace refs.
+    for graph_file in ("shallow", "info/grafts"):
+        rc, out, err = _git(["rev-parse", "--git-path", graph_file], repo)
+        if rc != 0 or not out.strip():
+            return "MERGE-GRAPH-UNVERIFIABLE", err.strip(), ()
+        path = Path(out.strip())
+        if not path.is_absolute():
+            path = repo / path
+        try:
+            if path.exists() and path.stat().st_size:
+                return "MERGE-GRAPH-UNVERIFIABLE", f"local graph boundary: {graph_file}", ()
+        except OSError as exc:
+            return "MERGE-GRAPH-UNVERIFIABLE", str(exc), ()
+    rc, out, err = _git(["for-each-ref", "--format=%(refname)", "refs/replace/"], repo)
+    if rc != 0 or out.strip():
+        return "MERGE-GRAPH-UNVERIFIABLE", "replace refs are present or unreadable", ()
+    rc, out, err = _git(["merge-base", "-a", head, merge_head], iso, env_full=env)
+    bases = tuple(out.split())
+    if rc != 0 or not bases or any(not OID.fullmatch(base) for base in bases):
+        return "MERGE-BASE-UNREADABLE", err.strip(), ()
+    rc, out, err = _git(["merge-base", "-a", head, merge_head], repo)
+    if rc != 0 or len(bases) != 1 or tuple(out.split()) != bases:
+        return "MERGE-GRAPH-UNVERIFIABLE", "a single matching merge base is required", bases
+
+    changed: set[str] = set()
+    for parent in (head, merge_head):
+        rc, out, err = _git(
+            ["diff-tree", "-r", "-z", "--no-renames", "--no-commit-id", "--name-only",
+             bases[0], parent], iso, env_full=env
+        )
+        if rc != 0:
+            return "SCOPE-UNENUMERABLE", err.strip(), bases
+        changed.update(path for path in out.split("\0") if path)
+    if not changed:
+        return None, "", bases
+    attr_env = dict(env, GIT_INDEX_FILE=str(iso.parent / "attributes.index"))
+    for tree in (*bases, head, merge_head):
+        rc, out, err = _git(["read-tree", tree], iso, env_full=attr_env)
+        if rc != 0:
+            return "MERGE-ATTRIBUTES-UNREADABLE", err.strip(), bases
+        # Batches bound argv size while Git handles patterns, macros and nested files.
+        paths = sorted(changed)
+        for offset in range(0, len(paths), 64):
+            batch = paths[offset:offset + 64]
+            attrs = ("merge", "conflict-marker-size", "filter", "working-tree-encoding")
+            rc, out, err = _git(
+                ["check-attr", "--cached", "-z", *attrs, "--", *batch],
+                iso, env_full=attr_env
+            )
+            fields = out.split("\0")[:-1]
+            if rc != 0 or not out.endswith("\0") or len(fields) != len(batch) * len(attrs) * 3:
+                return "MERGE-ATTRIBUTES-UNREADABLE", err.strip(), bases
+            for index in range(0, len(fields), 3):
+                path, attribute, value = fields[index:index + 3]
+                if value != "unspecified":
+                    return (
+                        "UNRECONSTRUCTED-MERGE-ATTRIBUTES",
+                        f"{path}: {attribute}={value} in committed tree {tree}", bases
+                    )
+    return None, "", bases
 
 
 def verify_clean_merge(repo: Path = REPO) -> CleanMergeVerdict:
     """Was the in-progress merge of the exact parents independently reconstructible as conflict-free,
     is that reconstruction what is staged, and is the staged state what would actually be committed?
-    All SIX conditions required; any doubt refuses.
+    All conditions required; any doubt refuses.
 
         C1  a merge is in progress and its EXACT parents are readable (HEAD, MERGE_HEAD)
         C2  the merge of those two commits is INDEPENDENTLY reconstructible, in a repository this
@@ -1095,6 +1124,8 @@ def verify_clean_merge(repo: Path = REPO) -> CleanMergeVerdict:
             (iii) the inspected scope is enumerable, so the pass can print what it looked at.
         C6  the TRACKED working tree matches the index, so `git commit -a` would record the same
             tree that C4 verified. Untracked files are ignored, deliberately.
+        C7  committed merge attributes on changed paths are absent, and both repositories
+            establish the same single merge base without local graph overrides.
 
     C5(ii) is defence in depth and its exit-code effect is masked: an index carrying unmerged
     entries cannot produce a tree at all, so C4 would refuse anyway. It is kept, and kept FIRST,
@@ -1207,6 +1238,10 @@ def verify_clean_merge(repo: Path = REPO) -> CleanMergeVerdict:
                 f"the reconstruction environment could not be SHOWN free of operator influence, so "
                 f"nothing computed in it would mean anything: {why_not}. An unprovable environment "
                 f"is an inability, not a pass.", head, merge_head)
+        reason, detail, bases = _check_merge_semantics(repo, iso, iso_env, head, merge_head)
+        if reason:
+            return CleanMergeVerdict(False, reason, detail, head, merge_head, bases,
+                                     isolation=isolation)
         rc, out, err = _git(["merge-tree", "--write-tree", head, merge_head], iso,
                             env_full=iso_env)
         if rc is None or rc not in (0, 1):
@@ -1338,19 +1373,7 @@ def verify_clean_merge(repo: Path = REPO) -> CleanMergeVerdict:
                 head, merge_head, reconstructed_tree=reconstructed, staged_tree=staged, unmerged=0,
                 worktree_drift=drift, isolation=isolation)
 
-        # ---- C5(iii): name the inputs and enumerate the scope, so the pass is a MEASUREMENT -------
-        # Both calls run in the ISOLATED repository: `diff-tree` has to, because the reconstructed
-        # tree exists only there, and `merge-base` is asked there for the same reason C2 is -- a
-        # replace ref in the operator's repository can rewrite a commit's parents, and the graph this
-        # pass names should be the one the reconstruction actually used.
-        rc, out, err = _git(["merge-base", "-a", head, merge_head], iso, env_full=iso_env)
-        if rc != 0 or not out.split():
-            return CleanMergeVerdict(False, "MERGE-BASE-UNREADABLE",
-                                     f"the parents' merge base could not be named (rc={rc}): "
-                                     f"{err.strip()}", head, merge_head,
-                                     reconstructed_tree=reconstructed, staged_tree=staged,
-                                     isolation=isolation)
-        bases = tuple(out.split())
+        # The reconstructed tree exists only in the isolated object store.
         rc, out, err = _git(["diff-tree", "-r", "-z", "--no-commit-id", "--name-only",
                              head + "^{tree}", reconstructed], iso, env_full=iso_env)
         if rc != 0:
@@ -1610,14 +1633,10 @@ def main() -> int:
                       f"auto-resolved and the reconstruction PROVES it -- so no contested row "
                       f"exists, and nobody resolved anyone else's row. You may commit this merge.")
                 return 0
-            print("CANNOT CHECK :: no unmerged files, so there is nothing to attribute and NOTHING "
-                  "WAS CHECKED.")
-            print("  If you are gating a merge, you are gating an empty set -- resolve the conflict "
-                  "first, or name the files explicitly.")
-            print("  If you only wanted to ask who owns what, omit --lane; a query may legitimately "
-                  "return nothing, a gate may not.")
-            print("  A CLEAN merge can pass here as of 2026-09-08, but only on an independent "
-                  "reconstruction of its exact parents; the line above says which condition failed.")
+            print("CANNOT CHECK :: clean-merge certification failed. The reason above names "
+                  "the unverified condition.")
+            print("  Remove the cause and re-run the guard. A clean index or an authorization "
+                  "does not convert this refusal into a pass.")
             return 2
         print("no unmerged files; nothing to attribute  (query mode: 0 files, 0 rows)")
         return 0

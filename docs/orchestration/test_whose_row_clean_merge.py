@@ -481,10 +481,7 @@ class CleanMergeGateTests(unittest.TestCase):
         self.assertIn("NOT-A-TWO-PARENT-MERGE", r.stdout)
 
     def test_unrelated_histories_clean_merge_is_not_a_pass(self):
-        """`git merge --allow-unrelated-histories` can be CLEAN while the reconstruction refuses to
-        run at all (`merge-tree` exits 128, "refusing to merge unrelated histories"). An inability
-        is not a verdict, so this is a 2 -- and it is the case that shows condition 2 carrying
-        weight on its own rather than being implied by condition 3."""
+        """A clean unrelated-history merge has no independently verifiable base."""
         f = Fixture(self.new("unrelated")).base()
         f.git("checkout", "-q", "--orphan", "orphan")
         f.git("rm", "-q", "-rf", ".")
@@ -496,7 +493,7 @@ class CleanMergeGateTests(unittest.TestCase):
         self.assertEqual(f.git("ls-files", "--unmerged").stdout, "")
         r = f.gate("--conflicts", "--lane", LANE)
         self.assertEqual(r.returncode, 2, r.stdout)
-        self.assertIn("RECONSTRUCTION-UNAVAILABLE", r.stdout)
+        self.assertIn("MERGE-BASE-UNREADABLE", r.stdout)
 
     def test_naming_files_explicitly_cannot_reach_the_clean_merge_path(self):
         """The clean-merge state requires the gate's OWN enumeration to have returned zero. A named
@@ -526,20 +523,16 @@ class CleanMergeGateTests(unittest.TestCase):
         self.assertNotIn("CLEAN MERGE VERIFIED", r.stdout)
 
     def test_conflict_markers_staged_verbatim_is_not_a_pass(self):
-        """`git add` on a file whose conflict markers are still in it -- the classic accident.
-
-        THIS IS THE ONE CASE CONDITION 3 CARRIES ALONE. Merged by raw oid, git's markers are
-        byte-identical to the ones `merge-tree` writes, so the staged tree EQUALS the conflicted
-        reconstruction and the tree comparison is satisfied. Only "the reconstruction exited 1"
-        stands between this index -- conflict markers, on another lane's row -- and a green gate.
-        The test asserts that equality itself, so a later reader can see why the case is here.
-        """
+        """Staged conflict markers matching reconstruction must still refuse."""
         f = foreign_conflict(self.new("markers"), by_oid=True)
+        head = f.git("rev-parse", "HEAD").stdout.strip()
+        # Reconstruction passes raw object IDs, so match its marker label as well.
+        f.write(ROWS, f.read(ROWS).replace("<<<<<<< HEAD\n", f"<<<<<<< {head}\n"))
         f.git("add", ROWS)
         self.assertIn("<<<<<<<", f.read(ROWS), "premise: the markers are still in the staged file")
 
         mh = (f.root / ".git/MERGE_HEAD").read_text().strip()
-        recon = f.git("merge-tree", "--write-tree", "HEAD", mh,
+        recon = f.git("merge-tree", "--write-tree", head, mh,
                       check=False).stdout.splitlines()[0].strip()
         idx = f.root / "index-copy"
         shutil.copyfile(f.root / ".git/index", idx)
@@ -669,6 +662,8 @@ class CleanMergeGateTests(unittest.TestCase):
         (f.root / ".git/info").mkdir(parents=True, exist_ok=True)
         (f.root / ".git/info/attributes").write_text("%s merge=ours\n" % ROWS, encoding="utf-8")
         f.git("config", "--local", "merge.ours.driver", "true")
+        f.write(ROWS, f.git("show", "HEAD:" + ROWS).stdout)
+        f.git("add", ROWS)
         self.assertEqual(live_merge_tree_rc(f), 0,
                          "THE ATTACK DID NOT TAKE, so this test proves nothing: `merge-tree` in the "
                          "live repository must report the conflicted merge as CLEAN for the "
@@ -717,28 +712,7 @@ class CleanMergeGateTests(unittest.TestCase):
         self.assertIn("RECONSTRUCTION-CONFLICTED", r.stdout)
 
     def test_an_in_tree_gitattributes_that_changes_the_merge_is_refused_not_honoured(self):
-        """THE `.gitattributes` QUESTION, DECIDED AND PINNED rather than inherited from whatever the
-        implementation happens to do.
-
-        A committed `.gitattributes` is legitimate content, and one might argue the reconstruction
-        should honour it. It does NOT, and this test is the decision: the reconstruction computes the
-        merge under git's built-in default semantics, with every attribute source neutralised.
-
-        WHY, measured: git's real merge does not read the committed file either -- in a non-bare
-        repository it reads the WORKING-TREE copy, which is the attack immediately above and need
-        not match anything committed. "Faithful to the in-tree file" and "independent of the
-        operator" are therefore not simultaneously available, and independence is the entire purpose
-        of the reconstruction.
-
-        THIS TEST COVERS ONLY HALF THE PROBLEM, and the other half is a KNOWN OPEN HOLE as of
-        2026-09-08 -- recorded as finding 3 in the branch report, with its fixture, and NOT fixed.
-        Here `merge=union` CHANGES THE MERGED CONTENT, so the real merge produces a tree that
-        differs from the reconstruction and condition 4 refuses. An attribute that instead FORCES A
-        CONFLICT (`-merge`, or `binary` on a text file) produces no tree at all, the operator
-        supplies one, and they can supply exactly the default merge the reconstruction computes --
-        which this gate currently PASSES. Do not read this test as covering committed attributes in
-        general; it does not.
-        """
+        """A committed union driver must not supply a clean-merge certificate."""
         f = Fixture(self.new("in-tree-attrs"))
         f.write(".gitattributes", "docs/notes/shared.md merge=union\n")
         f.base()
@@ -751,10 +725,146 @@ class CleanMergeGateTests(unittest.TestCase):
         r = f.gate("--conflicts", "--lane", LANE)
         self.assertNotEqual(r.returncode, 0, r.stdout)
         self.assertEqual(r.returncode, 2, r.stdout)
-        # Either arm is a refusal; which one depends on whether the DEFAULT merge of these parents
-        # conflicts. Asserting the set rather than one token keeps this test about the decision.
-        self.assertTrue(any(t in r.stdout for t in ("RECONSTRUCTION-CONFLICTED", "TREE-MISMATCH")),
-                        f"wanted a fail-closed refusal naming the reconstruction\n{r.stdout}")
+        self.assertIn("UNRECONSTRUCTED-MERGE-ATTRIBUTES", r.stdout)
+
+    def test_committed_conflict_forcing_attributes_refuse_hand_resolution(self):
+        """Disjoint text edits genuinely conflict under committed binary attributes."""
+        for attribute in ("-merge", "binary", "merge=custom"):
+            with self.subTest(attribute=attribute):
+                f = Fixture(self.new("forced-" + attribute)).base()
+                f.write(".gitattributes", "shared.txt " + attribute + "\n")
+                f.write("shared.txt", "a\nb\nc\nd\ne\nf\ng\n")
+                f.commit("attributes")
+                if attribute == "merge=custom":
+                    f.git("config", "merge.custom.driver", "false")
+                rc = f.branch_then_merge(
+                    side_edits={"shared.txt": "SIDE\nb\nc\nd\ne\nf\ng\n"},
+                    main_edits={"shared.txt": "a\nb\nc\nd\ne\nf\nMAIN\n"},
+                )
+                self.assertEqual(rc, 1)
+                self.assertNotEqual(f.git("ls-files", "--unmerged").stdout, "")
+                f.write("shared.txt", "SIDE\nb\nc\nd\ne\nf\nMAIN\n")
+                f.git("add", "shared.txt")
+                self.assertEqual(f.git("ls-files", "--unmerged").stdout, "")
+                result = f.gate("--conflicts", "--lane", LANE)
+                self.assertEqual(result.returncode, 2, result.stdout)
+                self.assertIn("UNRECONSTRUCTED-MERGE-ATTRIBUTES", result.stdout)
+
+    def test_benign_attributes_and_unchanged_binary_rules_allow_clean_merge(self):
+        """Linguist attributes and unchanged binary paths have no merge effect."""
+        f = Fixture(self.new("benign-attributes")).base()
+        f.write(".gitattributes", "*.txt linguist-vendored\n*.pdf binary\n")
+        f.write("shared.txt", "a\nb\nc\nd\ne\nf\ng\n")
+        f.write("unchanged.pdf", "unchanged\n")
+        f.commit("attributes")
+        self.assertEqual(f.branch_then_merge(
+            side_edits={"shared.txt": "SIDE\nb\nc\nd\ne\nf\ng\n"},
+            main_edits={"shared.txt": "a\nb\nc\nd\ne\nf\nMAIN\n"},
+        ), 0)
+        result = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_renamed_attribute_path_refuses_certification(self):
+        """Rename sources remain in the checked scope even when removed in a parent."""
+        f = Fixture(self.new("rename-attributes")).base()
+        f.write(".gitattributes", "old.txt -merge\n")
+        f.write("old.txt", "a\nb\nc\nd\ne\nf\ng\n")
+        f.commit("attributes")
+        f.git("checkout", "-q", "-b", "side")
+        f.git("mv", "old.txt", "new.txt")
+        f.commit("rename")
+        f.git("checkout", "-q", "main")
+        f.write("old.txt", "a\nb\nc\nd\ne\nf\nMAIN\n")
+        f.commit("edit")
+        self.assertEqual(f.git("merge", "--no-ff", "--no-commit", "side").returncode, 0)
+        result = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("UNRECONSTRUCTED-MERGE-ATTRIBUTES", result.stdout)
+
+    def test_local_replace_graph_is_not_certified(self):
+        """Even an inert replacement is an unreconstructed local graph input."""
+        f = clean_merge(self.new("replace-graph"))
+        base = f.git("merge-base", "HEAD", "MERGE_HEAD").stdout.strip()
+        f.git("update-ref", "refs/replace/" + base, base)
+        result = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("MERGE-GRAPH-UNVERIFIABLE", result.stdout)
+
+    def test_multiple_merge_bases_are_not_certified(self):
+        """Two real merges of the same branches form an unsupported criss-cross."""
+        f = clean_merge(self.new("multiple-bases"))
+        first_parent = f.git("rev-parse", "HEAD").stdout.strip()
+        f.commit("first merge")
+        f.git("checkout", "-q", "side")
+        f.git("merge", "--no-ff", "-m", "second merge", first_parent)
+        f.git("checkout", "-q", "main")
+        self.assertEqual(f.git("merge", "--no-ff", "--no-commit", "side").returncode, 0)
+        self.assertEqual(len(f.git("merge-base", "-a", "HEAD", "MERGE_HEAD").stdout.split()), 2)
+        result = f.gate("--conflicts", "--lane", LANE)
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("MERGE-GRAPH-UNVERIFIABLE", result.stdout)
+
+    def test_unreadable_committed_attributes_are_not_certified(self):
+        """A failed attribute query cannot silently certify default semantics."""
+        f = clean_merge(self.new("unreadable-attributes"))
+        self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 0)
+        real_git = shutil.which("git")
+        self.assertIsNotNone(real_git)
+        bindir = self.new("attribute-shim")
+        (bindir / "git").write_text(
+            "#!/bin/bash\n"
+            "if [ \"$1\" = check-attr ]; then exit 128; fi\n"
+            f'exec "{real_git}" "$@"\n'
+        )
+        (bindir / "git").chmod(0o755)
+        result = f.gate(
+            "--conflicts", "--lane", LANE,
+            extra_env={"PATH": f"{bindir}:{os.environ.get('PATH', '')}"},
+        )
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("MERGE-ATTRIBUTES-UNREADABLE", result.stdout)
+
+    def test_unprovable_isolation_is_not_certified(self):
+        """Unexpected config provenance prevents an otherwise clean merge pass."""
+        f = clean_merge(self.new("unprovable-isolation"))
+        self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 0)
+        real_git = shutil.which("git")
+        self.assertIsNotNone(real_git)
+        bindir = self.new("isolation-shim")
+        (bindir / "git").write_text(
+            "#!/bin/bash\n"
+            "if [ \"$1\" = config ]; then\n"
+            "  printf 'global\\0file:unexpected\\0core.bare\\ntrue\\0'; exit 0\n"
+            "fi\n"
+            f'exec "{real_git}" "$@"\n'
+        )
+        (bindir / "git").chmod(0o755)
+        result = f.gate(
+            "--conflicts", "--lane", LANE,
+            extra_env={"PATH": f"{bindir}:{os.environ.get('PATH', '')}"},
+        )
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("RECONSTRUCTION-NOT-ISOLATED", result.stdout)
+
+    def test_unenumerable_changed_scope_is_not_certified(self):
+        """A failed changed-path query cannot silently produce an empty scope."""
+        f = clean_merge(self.new("unreadable-scope"))
+        self.assertEqual(f.gate("--conflicts", "--lane", LANE).returncode, 0)
+        real_git = shutil.which("git")
+        self.assertIsNotNone(real_git)
+        bindir = self.new("scope-shim")
+        (bindir / "git").write_text(
+            "#!/bin/bash\n"
+            "if [ \"$1\" = diff-tree ]; then exit 128; fi\n"
+            f'exec "{real_git}" "$@"\n'
+        )
+        (bindir / "git").chmod(0o755)
+        result = f.gate(
+            "--conflicts", "--lane", LANE,
+            extra_env={"PATH": f"{bindir}:{os.environ.get('PATH', '')}"},
+        )
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("SCOPE-UNENUMERABLE", result.stdout)
 
     # ---- ISOLATION, measured ---------------------------------------------------------------------
     def test_the_gate_writes_neither_the_index_nor_the_working_tree(self):

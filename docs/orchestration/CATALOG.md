@@ -1046,7 +1046,8 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   operator rather than one merge. `merge_guard.sh` has **no override input**, by design. **Report which EXIT, because
   "the guard refused" is underspecified:** `whose_row.py` exit `1` covers *foreign* (relievable only by that row's named
   author, or Joseph) and *unattributable* (where a **generated**-file conflict lands) through one code and one summary
-  line at `:850-857`; exits `2` (it did not look) and `3` (its own self-test failed) are authorizable by **nobody**. For
+  branch in `whose_row.py`'s `main`; exits `2` (attribution or clean-merge certification failed) and `3`
+  (its own self-test failed) are authorizable by **nobody**. For
   a generated-file conflict the file is the symptom and the generators disagreeing is the event — **regenerate from the
   merged sources and re-run the gate**; `MANIFEST.tsv` carries a row describing its own line and byte count, so it
   conflicts on every concurrent merge **by construction**. Occasioned by an override at `a1fc54ed` whose *resolution*
