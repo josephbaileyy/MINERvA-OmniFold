@@ -48,10 +48,14 @@ LIMITS, stated because an attributor that overstates its reach is the defect it 
 from __future__ import annotations
 
 import argparse
+import os
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
+from typing import NamedTuple
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent          # derived from __file__, never hardcoded (the p4_evidence.py lesson)
@@ -736,6 +740,304 @@ def check_row_owners() -> int:
     return 1 if problems else 0
 
 
+# ==================================================================================================
+# CLEAN-MERGE VERIFICATION, added 2026-09-08.
+#
+# WHY. A merge that AUTO-RESOLVES has no unmerged files, so everything above examined nothing and
+# `main` returned 2 -- which meant a green exit was UNREACHABLE for every clean merge. Three
+# independent observations (a resolved prose conflict, a pristine single-file branch, a clean
+# evidence merge) all landed on the same 2, and five branches sat blocked behind it. Joseph's
+# ruling of 2026-09-08 makes a refusal terminal and names exactly two legal exits: remove the
+# cause and re-run to green, or FIX THE GATE. Green was not reachable, so this is the second exit.
+# The refusing paths are untouched: no code below maps an existing 2 onto 0.
+#
+# THE HOLE IN THE OBVIOUS FIX, which is the whole reason this is 150 lines and not three.
+# "MERGE_HEAD present + zero unmerged entries -> 0" is WRONG, and wrong in the one direction that
+# matters. An operator who hits a REFUSED foreign conflict, resolves it by hand and `git add`s it
+# has zero unmerged entries too -- so that version hands a 0 to the exact act this gate exists to
+# refuse, through the door being opened for clean merges. A refusal would become launderable by
+# `git add`, and the gate would be worse than the one that refused everything.
+#
+# SO THE CLAIM IS NOT "the index looks clean now". It is:
+#
+#     the ORIGINAL merge of THESE EXACT PARENTS was conflict-free -- recomputed here, from the two
+#     parent commits alone -- and what is staged is byte-identical to that recomputation.
+#
+# The recomputation reads only `HEAD` and `MERGE_HEAD`, so it is INDEPENDENT of anything the
+# operator did to the index. Measured on a throwaway repository before this was written:
+# `git merge-tree --write-tree HEAD MERGE_HEAD` still exits 1 after the conflict has been
+# hand-resolved and staged, and `git diff --diff-filter=U` is empty at that same moment. That gap
+# between the two facilities is what closes the laundering path, and it is why the reconstruction
+# is not optional decoration on a cheaper check.
+#
+# ISOLATION. `--write-tree` writes TREE OBJECTS (that is what the flag means, and they are
+# unreferenced until something points at them), and every git invocation here that could touch an
+# index is given a `GIT_INDEX_FILE` inside a throwaway directory: the reconstruction gets a
+# never-created index path, and the staged tree is computed from a BYTE COPY of the real index.
+# The real index and the working tree are never written. `test_whose_row_clean_merge.py` digests
+# both before and after a run and requires them byte-identical, because "I touched nothing" is a
+# measurement here and not a promise.
+#
+# EVERY CONDITION FAILS CLOSED, and each returns its OWN reason token rather than a shared one.
+# The ruling's section 2 is explicit that "the guard refused" withholds the field that determines
+# what to do next; a single CANNOT-CHECK token for eleven different inabilities would rebuild that
+# defect one level down.
+# ==================================================================================================
+
+
+class CleanMergeVerdict(NamedTuple):
+    """The measurement, not a boolean. `ok` is only true when all five conditions held.
+
+    `reason` is a stable token, asserted by name in the tests: a message-only distinction would let
+    the causes drift into each other, and the mutation battery needs to see WHICH condition spoke.
+    """
+    ok: bool
+    reason: str
+    detail: str
+    head: str | None = None
+    merge_head: str | None = None
+    bases: tuple[str, ...] = ()
+    reconstructed_tree: str | None = None
+    staged_tree: str | None = None
+    unmerged: int | None = None
+    scope: tuple[str, ...] = ()
+
+
+OID = re.compile(r"^[0-9a-f]{40}(?:[0-9a-f]{24})?$")   # sha1 or sha256, exactly
+
+
+def _git(args: list[str], repo: Path, env_extra: dict[str, str] | None = None):
+    """(rc, stdout, stderr), with rc None when git could not be EXECUTED at all.
+
+    A separate helper rather than a refactor of the existing call sites, so their behaviour is
+    untouched. `None` is deliberately not 0 and not 1: an inability must not be readable as either
+    verdict, which is the distinction the CANNOT-CHECK code exists to preserve.
+    """
+    env = None
+    if env_extra:
+        env = dict(os.environ)
+        env.update(env_extra)
+    try:
+        r = subprocess.run(["git", *args], capture_output=True, text=True, cwd=str(repo), env=env)
+    except OSError as exc:
+        return None, "", f"{type(exc).__name__}: {exc}"
+    return r.returncode, r.stdout, r.stderr
+
+
+def _conflicted_paths(merge_tree_output: str) -> list[str]:
+    """Paths from `merge-tree --write-tree`'s conflict block: `<mode> <oid> <stage>\\tpath`.
+
+    Best-effort and used ONLY in a message. The VERDICT comes from the exit status, never from
+    parsing this text -- a parser that found no paths must not be able to turn a conflicted
+    reconstruction into a clean one.
+    """
+    out = []
+    for line in merge_tree_output.splitlines()[1:]:
+        if "\t" in line:
+            out.append(line.split("\t", 1)[1])
+    return sorted(set(out))
+
+
+def verify_clean_merge(repo: Path = REPO) -> CleanMergeVerdict:
+    """Was the in-progress merge of the exact parents independently reconstructible as conflict-free,
+    and is that reconstruction what is staged? All five conditions required; any doubt refuses.
+
+        C1  a merge is in progress and its EXACT parents are readable (HEAD, MERGE_HEAD)
+        C2  the merge of those two commits is INDEPENDENTLY reconstructible here
+        C3  that reconstruction was conflict-FREE
+        C4  the staged result's tree is IDENTICAL to the reconstruction
+        C5  (i)   the unmerged set enumerated successfully  -- established by the caller, which
+                  returns 2 when `git diff --diff-filter=U` fails, and is why this function is only
+                  reached on a successful enumeration;
+            (ii)  zero unmerged entries, RE-MEASURED here with a second facility;
+            (iii) the inspected scope is enumerable, so the pass can print what it looked at.
+
+    C5(ii) is defence in depth and its exit-code effect is masked: an index carrying unmerged
+    entries cannot produce a tree at all, so C4 would refuse anyway. It is kept, and kept FIRST,
+    because it is the only one of the two that can NAME the cause -- `git write-tree` reports an
+    inability, not "you are mid-conflict". Recorded here rather than discovered by the next reader,
+    because a condition whose removal changes no verdict is exactly the kind of thing a mutation
+    table quietly passes over.
+    """
+    tmp = Path(tempfile.mkdtemp(prefix="whose_row-mergecheck-"))
+    try:
+        # ---- C1: a merge is in progress, and the parents are the EXACT ones -----------------------
+        # `--git-path`, not `.git/MERGE_HEAD`: in a linked worktree the merge state lives in the
+        # worktree's own git dir, and every lane here runs in a linked worktree
+        # (CONVENTION-lane-worktrees.md), so the hardcoded path would find nothing and this would
+        # report NO-MERGE-IN-PROGRESS for every lane -- fail-closed, but permanently.
+        rc, out, err = _git(["rev-parse", "--git-path", "MERGE_HEAD"], repo)
+        if rc != 0 or not out.strip():
+            return CleanMergeVerdict(False, "GIT-FAILURE",
+                                     f"could not locate MERGE_HEAD (rc={rc}): {err.strip()}")
+        mh_path = Path(out.strip())
+        if not mh_path.is_absolute():
+            mh_path = repo / mh_path
+        if not mh_path.exists():
+            return CleanMergeVerdict(
+                False, "NO-MERGE-IN-PROGRESS",
+                f"{mh_path} does not exist, so there is no merge whose parents could be "
+                f"reconstructed. A FAST-FORWARD and an ALREADY-COMMITTED merge both land here: "
+                f"neither has an in-progress merge to measure. If you need a gated record of a "
+                f"fast-forward, re-run the merge with --no-ff --no-commit.")
+        try:
+            heads = [l.strip() for l in mh_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        except OSError as exc:
+            return CleanMergeVerdict(False, "MERGE-HEAD-UNREADABLE", f"{mh_path}: {exc}")
+        if len(heads) != 1:
+            return CleanMergeVerdict(
+                False, "NOT-A-TWO-PARENT-MERGE",
+                f"MERGE_HEAD names {len(heads)} head(s). The reconstruction below merges TWO "
+                f"commits; an octopus merge is not recomputable by it, so its parents cannot be "
+                f"independently checked and this is not a pass.")
+        rc, out, err = _git(["rev-parse", "--verify", "--quiet", "HEAD^{commit}"], repo)
+        if rc != 0 or not OID.match(out.strip()):
+            return CleanMergeVerdict(False, "PARENT-UNRESOLVABLE",
+                                     f"HEAD does not resolve to a commit (rc={rc}): {err.strip()}")
+        head = out.strip()
+        rc, out, err = _git(["rev-parse", "--verify", "--quiet", heads[0] + "^{commit}"], repo)
+        if rc != 0 or not OID.match(out.strip()):
+            return CleanMergeVerdict(False, "PARENT-UNRESOLVABLE",
+                                     f"MERGE_HEAD {heads[0]!r} does not resolve to a commit "
+                                     f"(rc={rc}): {err.strip()}")
+        merge_head = out.strip()
+
+        # ---- C5(ii): zero unmerged entries, by a DIFFERENT facility than the caller used ----------
+        rc, out, err = _git(["ls-files", "--unmerged", "-z"], repo)
+        if rc != 0:
+            return CleanMergeVerdict(False, "GIT-FAILURE", f"git ls-files --unmerged failed "
+                                     f"(rc={rc}): {err.strip()}", head, merge_head)
+        entries = [e for e in out.split("\0") if e]
+        if entries:
+            return CleanMergeVerdict(False, "UNMERGED-ENTRIES-PRESENT",
+                                     f"{len(entries)} unmerged index entr(ies) remain, so this merge "
+                                     f"is still being resolved", head, merge_head,
+                                     unmerged=len(entries))
+
+        # ---- C2: independent reconstruction, in an isolated index -------------------------------
+        # The index path handed to merge-tree is inside the throwaway directory and is never
+        # created; merge-tree does not use an index, and pinning it anyway means a git that DID
+        # would write to the throwaway rather than to the operator's merge.
+        rc, out, err = _git(["merge-tree", "--write-tree", head, merge_head], repo,
+                            {"GIT_INDEX_FILE": str(tmp / "reconstruct.index")})
+        if rc is None or rc not in (0, 1):
+            # 129 is what git < 2.38 returns for `--write-tree` (measured: "unknown option"), 128
+            # covers refusing unrelated histories and every other fatal. All of them mean THE
+            # RECONSTRUCTION DID NOT HAPPEN, which is an inability, never a pass.
+            return CleanMergeVerdict(
+                False, "RECONSTRUCTION-UNAVAILABLE",
+                f"`git merge-tree --write-tree` did not run (rc={rc}): "
+                f"{(err.strip() or out.strip())[:400]}. git >= 2.38 is required, and unrelated "
+                f"histories are not reconstructed here.", head, merge_head)
+        first = out.splitlines()[0].strip() if out.strip() else ""
+        if not OID.match(first):
+            return CleanMergeVerdict(False, "RECONSTRUCTION-UNAVAILABLE",
+                                     f"`git merge-tree --write-tree` exited {rc} but its first line "
+                                     f"is not a tree id: {first!r}", head, merge_head)
+        # ---- C3: and it was conflict-FREE --------------------------------------------------------
+        if rc == 1:
+            paths = _conflicted_paths(out)
+            return CleanMergeVerdict(
+                False, "RECONSTRUCTION-CONFLICTED",
+                f"the merge of these exact parents CONFLICTS on {len(paths)} path(s): "
+                f"{', '.join(paths[:8])}{' ...' if len(paths) > 8 else ''}. A clean index does not "
+                f"change that: if those conflicts have been resolved by hand, the resolution is "
+                f"exactly what this gate refuses to certify.",
+                head, merge_head, reconstructed_tree=first, unmerged=0)
+        rc2, out2, err2 = _git(["rev-parse", "--verify", "--quiet", first + "^{tree}"], repo)
+        if rc2 != 0 or out2.strip() != first:
+            return CleanMergeVerdict(False, "RECONSTRUCTION-UNAVAILABLE",
+                                     f"the reconstructed id {first} is not a tree in this repository",
+                                     head, merge_head)
+        reconstructed = first
+
+        # ---- C4: what is STAGED is byte-identical to the reconstruction ---------------------------
+        # Computed from a COPY of the index, because `git write-tree` may rewrite the index's
+        # cache-tree extension, and this function's contract is that it writes neither the index nor
+        # the working tree.
+        rc, out, err = _git(["rev-parse", "--git-path", "index"], repo)
+        if rc != 0 or not out.strip():
+            return CleanMergeVerdict(False, "STAGED-TREE-UNREADABLE",
+                                     f"could not locate the index (rc={rc}): {err.strip()}",
+                                     head, merge_head, reconstructed_tree=reconstructed)
+        real_index = Path(out.strip())
+        if not real_index.is_absolute():
+            real_index = repo / real_index
+        copied = tmp / "staged.index"
+        try:
+            shutil.copyfile(real_index, copied)
+        except OSError as exc:
+            return CleanMergeVerdict(False, "STAGED-TREE-UNREADABLE", f"{real_index}: {exc}",
+                                     head, merge_head, reconstructed_tree=reconstructed)
+        rc, out, err = _git(["write-tree"], repo, {"GIT_INDEX_FILE": str(copied)})
+        if rc != 0 or not OID.match(out.strip()):
+            return CleanMergeVerdict(False, "STAGED-TREE-UNREADABLE",
+                                     f"`git write-tree` over a copy of the index failed (rc={rc}): "
+                                     f"{err.strip()}", head, merge_head,
+                                     reconstructed_tree=reconstructed)
+        staged = out.strip()
+        if staged != reconstructed:
+            return CleanMergeVerdict(
+                False, "TREE-MISMATCH",
+                f"the staged tree {staged} is NOT the reconstruction {reconstructed}. Something was "
+                f"changed on top of the automatic merge -- a hand resolution, a staged unrelated "
+                f"edit, a different merge strategy or `-X` option, or renormalisation. Whatever it "
+                f"was, it is a resolution this gate has not verified and will not certify.",
+                head, merge_head, reconstructed_tree=reconstructed, staged_tree=staged, unmerged=0)
+
+        # ---- C5(iii): name the inputs and enumerate the scope, so the pass is a MEASUREMENT -------
+        rc, out, err = _git(["merge-base", "-a", head, merge_head], repo)
+        if rc != 0 or not out.split():
+            return CleanMergeVerdict(False, "MERGE-BASE-UNREADABLE",
+                                     f"the parents' merge base could not be named (rc={rc}): "
+                                     f"{err.strip()}", head, merge_head,
+                                     reconstructed_tree=reconstructed, staged_tree=staged)
+        bases = tuple(out.split())
+        rc, out, err = _git(["diff-tree", "-r", "-z", "--no-commit-id", "--name-only",
+                             head + "^{tree}", reconstructed], repo)
+        if rc != 0:
+            return CleanMergeVerdict(False, "SCOPE-UNENUMERABLE",
+                                     f"could not enumerate what this merge changes (rc={rc}): "
+                                     f"{err.strip()}", head, merge_head, bases,
+                                     reconstructed_tree=reconstructed, staged_tree=staged)
+        scope = tuple(p for p in out.split("\0") if p)
+        return CleanMergeVerdict(True, "CLEAN-MERGE-VERIFIED",
+                                 "the merge of these exact parents was reconstructed independently, "
+                                 "conflict-free, and the staged tree is byte-identical to it",
+                                 head, merge_head, bases, reconstructed, staged, 0, scope)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+SCOPE_PRINT_LIMIT = 25
+
+
+def clean_merge_report(v: CleanMergeVerdict, limit: int = SCOPE_PRINT_LIMIT) -> list[str]:
+    """The lines a caller prints for `v`. Both directions print the parents when they are known:
+    a refusal that does not say WHICH merge it was measuring is as underspecified as the bare
+    "the guard refused" the 2026-09-08 ruling is about."""
+    lines = []
+    if not v.ok:
+        lines.append(f"  clean-merge check :: {v.reason} -- {v.detail}")
+        if v.head:
+            lines.append(f"    parents inspected: HEAD={v.head[:12]} MERGE_HEAD="
+                         f"{(v.merge_head or '?')[:12]}")
+        return lines
+    lines.append(f"CLEAN MERGE VERIFIED :: HEAD={v.head} + MERGE_HEAD={v.merge_head}")
+    lines.append(f"  merge base(s):     {', '.join(v.bases)}")
+    lines.append(f"  reconstruction:    git merge-tree --write-tree -> {v.reconstructed_tree} "
+                 f"(exit 0, conflict-free, isolated index)")
+    lines.append(f"  staged tree:       {v.staged_tree}  == the reconstruction")
+    lines.append(f"  unmerged entries:  {v.unmerged} (git ls-files --unmerged)")
+    lines.append(f"  scope inspected:   {len(v.scope)} path(s) this merge changes against HEAD")
+    for p in v.scope[:limit]:
+        lines.append(f"    {p}")
+    if len(v.scope) > limit:
+        lines.append(f"    ... and {len(v.scope) - limit} more")
+    return lines
+
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("files", nargs="*", help="ledger files to attribute (default: the conflicted set)")
@@ -803,12 +1105,35 @@ def main() -> int:
     # --lane you are using it as a QUERY, and an empty answer is a fine answer.
     if not files:
         if args.lane:
+            # ZERO UNMERGED FILES IS NOW TWO STATES, NOT ONE. Until 2026-09-08 both landed on the 2
+            # below, so no clean merge could reach a green exit and five branches were stuck behind a
+            # refusal the ruling of that date makes terminal. The split is a MEASUREMENT and never an
+            # absence: `verify_clean_merge` recomputes the merge of these exact parents from the two
+            # parent commits alone, and passes only if that reconstruction was conflict-free AND is
+            # byte-identical to what is staged. Reaching here at all establishes C5(i) -- the
+            # enumeration above succeeded, because its failure returns 2 before this point.
+            #
+            # WHAT THIS DOES NOT DO, said here because it is the plausible misreading: it does not
+            # map 2 onto 0. A hand-resolved conflict has zero unmerged files too, and it stays at 2
+            # -- the reconstruction still conflicts, which is measured, not assumed. Nothing in the
+            # refusal paths below was changed.
+            verdict = verify_clean_merge(REPO)
+            for line in clean_merge_report(verdict):
+                print(line)
+            if verdict.ok:
+                print(f"OK [examined 0 unmerged file(s), 0 attributable row(s); "
+                      f"{len(verdict.scope)} path(s) in the reconstructed merge] :: this merge "
+                      f"auto-resolved and the reconstruction PROVES it -- so no contested row "
+                      f"exists, and nobody resolved anyone else's row. You may commit this merge.")
+                return 0
             print("CANNOT CHECK :: no unmerged files, so there is nothing to attribute and NOTHING "
                   "WAS CHECKED.")
             print("  If you are gating a merge, you are gating an empty set -- resolve the conflict "
                   "first, or name the files explicitly.")
             print("  If you only wanted to ask who owns what, omit --lane; a query may legitimately "
                   "return nothing, a gate may not.")
+            print("  A CLEAN merge can pass here as of 2026-09-08, but only on an independent "
+                  "reconstruction of its exact parents; the line above says which condition failed.")
             return 2
         print("no unmerged files; nothing to attribute  (query mode: 0 files, 0 rows)")
         return 0
