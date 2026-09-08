@@ -1271,6 +1271,17 @@ class SelfTestMustNotTouchTheCallingRepositoryTests(unittest.TestCase):
         self.tmp = Path(tempfile.mkdtemp(prefix="wr-callerenv-"))
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
 
+    def _gate(self) -> Path:
+        """A copy of the gate under test that can actually run `--self-test`.
+
+        NOT `WR.__file__`: under the mutation driver that is a lone file in a scratch directory with
+        no FINDINGS.md beside it, so `--self-test` fails for want of its repository and these tests
+        fail on the UNMUTATED gate. The driver's IDENTITY control caught exactly that and reported
+        HARNESS BROKEN, which invalidated a whole 18-row table. `Fixture` copies the gate under test
+        together with INFRA, so this works wherever GATE_SRC happens to live.
+        """
+        return Fixture(self.tmp / f"gatehome-{len(list(self.tmp.iterdir()))}").gate_path
+
     def _caller(self, name: str) -> Path:
         """A disposable stand-in for the operator's repository."""
         repo = self.tmp / name
@@ -1309,14 +1320,19 @@ class SelfTestMustNotTouchTheCallingRepositoryTests(unittest.TestCase):
         env = _env({"GIT_DIR": str(caller / ".git"),
                     "GIT_INDEX_FILE": str(caller / ".git" / "index"),
                     "TMPDIR": str(scratch)})
-        r = subprocess.run([sys.executable, str(Path(WR.__file__)), "--self-test"],
+        r = subprocess.run([sys.executable, str(self._gate()), "--self-test"],
                            cwd=self.tmp, env=env, capture_output=True, text=True)
         # DIGEST FIRST, deliberately: the property under test is that the caller is untouched, and
         # asserting the exit code first would report "1 != 0" for a self-test that crashed while
         # saying nothing about the repository it damaged on the way.
         self.assertEqual(self._digest(caller), before,
                          "--self-test altered the repository that invoked it")
-        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        # DELIBERATELY NOT `assertEqual(r.returncode, 0)`. Whether the self-test PASSES is a
+        # different question from whether it touched the caller, and asserting it here made this a
+        # proxy for every mutation: any mutant that breaks any power case failed these tests, so
+        # they appeared as killers on all 18 rows and TWO rows were killed by nothing else. That
+        # reads as coverage the guards do not have. `--self-test`'s own health is the driver's
+        # IDENTITY row and merge_guard.sh's job, not this test's.
 
     def test_an_actual_pre_commit_hook_in_a_linked_worktree_leaves_the_caller_alone(self):
         """The route it was really hit by. A PATH-free, real hook, and the hook must actually RUN --
@@ -1332,7 +1348,7 @@ class SelfTestMustNotTouchTheCallingRepositoryTests(unittest.TestCase):
         (hooks / "pre-commit").write_text(
             "#!/bin/sh\n"
             f'echo ran > "{marker}"\n'
-            f'TMPDIR="{scratch}" "{sys.executable}" "{Path(WR.__file__)}" --self-test >&2\n')
+            f'TMPDIR="{scratch}" "{sys.executable}" "{self._gate()}" --self-test >&2\n')
         (hooks / "pre-commit").chmod(0o755)
         run("config", "core.hooksPath", str(hooks))          # BEFORE the digest: it writes config
         wt = self.tmp / "linked"
@@ -1347,7 +1363,9 @@ class SelfTestMustNotTouchTheCallingRepositoryTests(unittest.TestCase):
         self.assertTrue(marker.exists(), "the pre-commit hook never ran, so this proves nothing")
         self.assertEqual(self._digest(caller), before,
                          "a commit in a LINKED WORKTREE altered the caller's repository")
-        self.assertEqual(commit.returncode, 0, commit.stdout + commit.stderr)
+        # Not asserting the COMMIT succeeded, for the same reason: the hook runs `--self-test`, so a
+        # mutant makes the commit fail and this test would kill every row by proxy. The marker above
+        # already proves the hook RAN, which is what this test needs.
 
 
 if __name__ == "__main__":
