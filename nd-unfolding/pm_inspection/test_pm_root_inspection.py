@@ -656,6 +656,11 @@ class TheValidatorDoesNotImportTheProducer(unittest.TestCase):
     invisible. The two tables are now separate statements that a test compares."""
 
     def test_the_validator_classifies_with_the_producer_unimportable(self):
+        """A subprocess is the only place this is measurable: in this process the producer
+        is already imported, so a `import pm_root_inspect` inside the validator would find
+        it in sys.modules and no hook would fire. The report below is minimal on purpose --
+        it only has to be well-formed enough to reach the obligation table and the whole
+        record walk, which is where the import used to be."""
         script = textwrap.dedent(f"""
             import json, sys
             HERE = {str(HERE)!r}
@@ -672,12 +677,20 @@ class TheValidatorDoesNotImportTheProducer(unittest.TestCase):
             sys.path.insert(0, HERE)
             import pm_root_validate as validator
             bindings = json.load(open(HERE + "/INPUT-BINDINGS-20260908.json"))
-            print(len(validator.obligation_kinds(bindings)))
+            report = {{"attempt_id": "a", "data_root": bindings["data_root"],
+                      "reads": [{{"read_id": "G:key_listing", "status": "read",
+                                 "kind": "required", "key_count": 13}}]}}
+            code, findings = validator.classify(report, bindings, "a")
+            print(len(validator.obligation_kinds(bindings)), code,
+                  len(findings["missing_read_records"]))
         """)
         completed = subprocess.run([sys.executable, "-c", script],
                                    capture_output=True, text=True)
         self.assertEqual(completed.returncode, 0, completed.stderr)
-        self.assertEqual(int(completed.stdout.strip()), len(OBLIGATIONS))
+        counted, code, missing = completed.stdout.split()
+        self.assertEqual(int(counted), len(OBLIGATIONS))
+        self.assertEqual(int(code), validator.EXIT_ERROR)   # sections are gone
+        self.assertEqual(int(missing), len(OBLIGATIONS) - 1)
 
 
 class OutputLocationGuards(unittest.TestCase):
