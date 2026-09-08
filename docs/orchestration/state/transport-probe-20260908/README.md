@@ -51,15 +51,16 @@ environment-variable **presence** — never values.
 
 ## Positive control — 2026-09-07T23:48:05Z
 
-Every campaign read taken until now was against `refs/campaign/*`, a namespace that **cannot**
-be non-empty, because no item has ever been staged. A zero row count there has no positive
-control by construction: it cannot separate *"the namespace is empty"* from *"the probe did not
-look"*. Review named that, having written the same rule to me earlier the same day about
-presence censuses — pair every "found nothing" with a control whose absence would be
+Every campaign read taken until now was against `refs/campaign/*`, and every one returned zero
+rows. A zero row count on its own cannot separate *"the namespace is empty"* from *"the probe
+did not look"*. Review named that, having written the same rule to me earlier the same day
+about presence censuses — pair every "found nothing" with a control whose absence would be
 impossible.
 
-One `ls-remote` under `campaignctl.git_environment()`, over the pinned SSH URL, in a single
-invocation reading both namespaces:
+**Two `ls-remote` invocations**, one per namespace, under the same
+`campaignctl.git_environment()` and the same pinned SSH URL, from the same process. The source
+loops `subprocess.run`; an earlier revision of this section called it a single invocation,
+which its own `positive-control-probe.sh` contradicts.
 
 ```
 url (the pin): git@github.com:josephbaileyy/MINERvA-OmniFold
@@ -67,18 +68,21 @@ refs/heads/*     rc=0  rows=20
 refs/campaign/*  rc=0  rows=0
 ```
 
-**Twenty rows is the control.** The same environment, the same URL, the same process: the read
-demonstrably returns data when data exists, so the zero on `refs/campaign/*` is a measured
-emptiness rather than a blind read. And because the URL is the scp SSH spelling, against which
+**Twenty rows is the control.** Same environment, same URL, same process, seconds apart: the
+read demonstrably returns data when data exists, so the zero on `refs/campaign/*` is a measured
+absence rather than a blind read. Two invocations rather than one is a real weakening — control
+and subject are not literally the same call — but they share every input that could make a read
+fail silently. And because the URL is the scp SSH spelling, against which
 GitHub offers no anonymous access, `rc=0` with rows here does carry the credential proof that
 an `rc=0` over public HTTPS does not.
 
 **Two limits on this, stated rather than left to be found.**
 
-1. **It did not route through the queue's own git directory.** `~/.campaignctl/queue-git` is
-   **absent** — `ensure_scratch` has never run, because nothing has ever been staged. So this
-   measures the environment and the URL, not that gitdir's own config and credential helper.
-   That routing is untestable until a queue directory exists.
+1. **It did not route through the queue's own git directory.** `~/.campaignctl/queue-git` was
+   **observed absent at `2026-09-07T23:48:05Z`**. Why it is absent is not evidenced here:
+   never created, or created and removed, are indistinguishable from this observation. So this
+   measures the environment and the URL, not that gitdir's own config and credential helper,
+   and that routing stays untestable while no queue directory exists.
 2. **It still says nothing about writes.** A push to `refs/campaign/<KEY>/queue` *is* the
    admission write; probing it would perform the act the gate exists to control. Write
    capability remains **NOT ESTABLISHED and DELIBERATELY UNPROBED**, and the first real write
