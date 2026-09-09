@@ -1,0 +1,12 @@
+{
+  "completed_at_utc": "2026-09-09T05:35:15+00:00",
+  "consumed": false,
+  "hostname": "login07",
+  "id": "pm-root-inspection-20260908",
+  "proposal_digest": "ccccf135a51f6d363e153455d6846c3b6b1dd390dd65607a91de681f651c22be",
+  "reason": "R5 receipt missing: /pscratch/sd/j/josephrb/exec-20260907/docs/orchestration/state/r5-meter-receipt.json",
+  "schema_version": 1,
+  "state_dir": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue",
+  "status": "refused",
+  "uid": 112498
+}
