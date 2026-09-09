@@ -650,6 +650,8 @@ docs/orchestration/state/p4-sweep-snapshots.json	tracked	MACHINE	state-artifact	
 docs/orchestration/state/p5a-nominal-vs-cstat-family-percell-20260815.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	6	1	15456
 docs/orchestration/state/pet-typed-descriptor-fixed-source-smoke-20260901.json	tracked	MACHINE	state-artifact		20260901	generated		exact-path-only	docs/orchestration/runs/pet-typed-semantic-evidence-20260901/probe_fixed_sample.py	yes	4	155	4918
 docs/orchestration/state/pm-inspection-test-evidence-20260908/interpreter-and-tests.txt	tracked	MACHINE	state-artifact	pm-inspection-test-evidence-20260908		generated		exact-path-only		yes	0	56	3251
+docs/orchestration/state/pm-root-inspection-20260909c-report-58127048.json	tracked	MACHINE	state-artifact		20260909	generated		exact-path-only		yes	0	4105	124657
+docs/orchestration/state/pm-root-inspection-20260909c-verdict-58127048.json	tracked	MACHINE	state-artifact		20260909	generated		exact-path-only		yes	0	95	4174
 docs/orchestration/state/preflight-20260906-r5/DIGESTS.txt	tracked	MACHINE	state-artifact	preflight-20260906-r5		generated		exact-path-only		yes	3	9	885
 docs/orchestration/state/preflight-20260906-r5/R5-PREFLIGHT-EVIDENCE.md	tracked	MACHINE	state-artifact	preflight-20260906-r5		generated		exact-path-only		yes	4	445	27092
 docs/orchestration/state/preflight-20260906-r5/README.md	tracked	MACHINE	state-artifact	preflight-20260906-r5		generated		exact-path-only	docs/orchestration/test_watch_report_train_run.py;nd-unfolding/pm_inspection/test_pm_staging_check.py;omnifold_nn/setup.py	yes	18	162	10810

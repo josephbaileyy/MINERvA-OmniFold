@@ -1,0 +1,4105 @@
+{
+  "CS": {
+    "band_keys": [
+      "hCov_universe5d_2p2h",
+      "hCov_universe5d_AGKYxF1pi",
+      "hCov_universe5d_AhtBY",
+      "hCov_universe5d_BeamAngleX",
+      "hCov_universe5d_BeamAngleY",
+      "hCov_universe5d_BhtBY",
+      "hCov_universe5d_CCQEPauliSupViaKF",
+      "hCov_universe5d_CV1uBY",
+      "hCov_universe5d_CV2uBY",
+      "hCov_universe5d_EtaNCEL",
+      "hCov_universe5d_Flux",
+      "hCov_universe5d_FrAbs_N",
+      "hCov_universe5d_FrAbs_pi",
+      "hCov_universe5d_FrCEx_N",
+      "hCov_universe5d_FrCEx_pi",
+      "hCov_universe5d_FrElas_N",
+      "hCov_universe5d_FrElas_pi",
+      "hCov_universe5d_FrInel_N",
+      "hCov_universe5d_FrPiProd_N",
+      "hCov_universe5d_FrPiProd_pi",
+      "hCov_universe5d_GEANT_Neutron",
+      "hCov_universe5d_GEANT_Pion",
+      "hCov_universe5d_GEANT_Proton",
+      "hCov_universe5d_HighQ2",
+      "hCov_universe5d_LowQ2",
+      "hCov_universe5d_MFP_N",
+      "hCov_universe5d_MFP_pi",
+      "hCov_universe5d_MaCCQE",
+      "hCov_universe5d_MaNCEL",
+      "hCov_universe5d_MaRES",
+      "hCov_universe5d_MinosEfficiency",
+      "hCov_universe5d_MuonResolution",
+      "hCov_universe5d_Muon_Energy_MINERvA",
+      "hCov_universe5d_Muon_Energy_MINOS",
+      "hCov_universe5d_MvRES",
+      "hCov_universe5d_NormDISCC",
+      "hCov_universe5d_NormNCRES",
+      "hCov_universe5d_RDecBR1gamma",
+      "hCov_universe5d_Rvn1pi",
+      "hCov_universe5d_Rvn2pi",
+      "hCov_universe5d_Rvp1pi",
+      "hCov_universe5d_Rvp2pi",
+      "hCov_universe5d_Theta_Delta2Npi",
+      "hCov_universe5d_VecFFCCQEshape",
+      "hCov_universe5d___Normalization_flat"
+    ],
+    "key_listing": [
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_combined5d_total"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_2p2h"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_AGKYxF1pi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_AhtBY"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_BeamAngleX"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_BeamAngleY"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_BhtBY"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_CCQEPauliSupViaKF"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_CV1uBY"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_CV2uBY"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_EtaNCEL"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_Flux"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_FrAbs_N"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_FrAbs_pi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_FrCEx_N"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_FrCEx_pi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_FrElas_N"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_FrElas_pi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_FrInel_N"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_FrPiProd_N"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_FrPiProd_pi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_GEANT_Neutron"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_GEANT_Pion"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_GEANT_Proton"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_HighQ2"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_LowQ2"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_MFP_N"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_MFP_pi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_MaCCQE"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_MaNCEL"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_MaRES"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_MinosEfficiency"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_MuonResolution"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_Muon_Energy_MINERvA"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_Muon_Energy_MINOS"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_MvRES"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_NormDISCC"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_NormNCRES"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_RDecBR1gamma"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_Rvn1pi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_Rvn2pi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_Rvp1pi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_Rvp2pi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_Theta_Delta2Npi"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_VecFFCCQEshape"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d___Normalization_flat"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_universe5d_total"
+      }
+    ],
+    "total_present": true
+  },
+  "CS_read_onlyness": {
+    "basis": "asserted by opening READ; NOT proven by digest",
+    "reason": "41,436,632,945 bytes; a before/after digest is excluded"
+  },
+  "CV_central": {
+    "hXSecND_flat": {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "d94daca9251d095115f20808a84052bd9b38ad2534da10ae32e48588531a5968",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+    },
+    "key_listing": [
+      {
+        "class": "TParameter<double>",
+        "cycle": 1,
+        "name": "dataPOT"
+      },
+      {
+        "class": "TParameter<double>",
+        "cycle": 1,
+        "name": "globalCompleteness"
+      },
+      {
+        "class": "TH1D",
+        "cycle": 1,
+        "name": "hCompletenessND_flat"
+      },
+      {
+        "class": "TH1D",
+        "cycle": 1,
+        "name": "hUnfoldND_flat"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hXSec2D"
+      },
+      {
+        "class": "TH1D",
+        "cycle": 1,
+        "name": "hXSecND_dropLast_flat"
+      },
+      {
+        "class": "TH1D",
+        "cycle": 1,
+        "name": "hXSecND_flat"
+      },
+      {
+        "class": "TH1D",
+        "cycle": 1,
+        "name": "hXSec_W"
+      },
+      {
+        "class": "TH1D",
+        "cycle": 1,
+        "name": "hXSec_eavail"
+      },
+      {
+        "class": "TH1D",
+        "cycle": 1,
+        "name": "hXSec_pt"
+      },
+      {
+        "class": "TH1D",
+        "cycle": 1,
+        "name": "hXSec_pz"
+      },
+      {
+        "class": "TH1D",
+        "cycle": 1,
+        "name": "hXSec_q3"
+      },
+      {
+        "class": "TParameter<int>",
+        "cycle": 1,
+        "name": "ndim"
+      }
+    ]
+  },
+  "G": {
+    "centering_convention": "mean-centered",
+    "combined_source": "uq_universe_5d_covariance_combined_bkgaware.root",
+    "hInflation_g_nbins": 10694,
+    "hRowIndex5D_present": false,
+    "key_count": 13,
+    "key_listing": [
+      {
+        "class": "TNamed",
+        "cycle": 1,
+        "name": "centering_convention"
+      },
+      {
+        "class": "TNamed",
+        "cycle": 1,
+        "name": "combined_source"
+      },
+      {
+        "class": "TParameter<int>",
+        "cycle": 1,
+        "name": "fixed_seed_null_norm_checked"
+      },
+      {
+        "class": "TH2D",
+        "cycle": 1,
+        "name": "hCov_combined5d_total_uthrow"
+      },
+      {
+        "class": "TH1D",
+        "cycle": 1,
+        "name": "hInflation_g"
+      },
+      {
+        "class": "TParameter<int>",
+        "cycle": 1,
+        "name": "joint_mean_shift_norm_checked"
+      },
+      {
+        "class": "TParameter<int>",
+        "cycle": 1,
+        "name": "n_throws_checked"
+      },
+      {
+        "class": "TParameter<double>",
+        "cycle": 1,
+        "name": "sqrt_tr_new"
+      },
+      {
+        "class": "TParameter<double>",
+        "cycle": 1,
+        "name": "sqrt_tr_old"
+      },
+      {
+        "class": "TParameter<double>",
+        "cycle": 1,
+        "name": "upstream_fixed_seed_null_norm"
+      },
+      {
+        "class": "TParameter<double>",
+        "cycle": 1,
+        "name": "upstream_joint_mean_shift_norm"
+      },
+      {
+        "class": "TParameter<int>",
+        "cycle": 1,
+        "name": "upstream_n_throws"
+      },
+      {
+        "class": "TNamed",
+        "cycle": 1,
+        "name": "uthrow_source"
+      }
+    ],
+    "sqrt_tr_new": 5.269625166386846e-38,
+    "sqrt_tr_old": 4.357790406860002e-38
+  },
+  "G_read_onlyness": {
+    "basis": "measured by before/after digest",
+    "sha256_after": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+    "sha256_before": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+    "unchanged": true
+  },
+  "attempt_id": "pm-root-inspection-20260909c",
+  "bindings_sha256": "ece38b9b80374a63e6e78c3b57f75accf283099e2e956a76830dbbfe1702402b",
+  "capture_note": "COMPLETE means the declared measurements were captured. It is not a scientific grade and it is not a statement that anything is discharged.",
+  "data_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+  "declared_read_ids": [
+    "input:G",
+    "input:CS",
+    "input:CV_central",
+    "input:EP_BeamAngleX_0",
+    "input:EP_BeamAngleX_1",
+    "input:EP_BeamAngleY_0",
+    "input:EP_BeamAngleY_1",
+    "input:EP_MuonResolution_0",
+    "input:EP_MuonResolution_1",
+    "input:EP_Muon_Energy_MINERvA_0",
+    "input:EP_Muon_Energy_MINERvA_1",
+    "input:EP_Muon_Energy_MINOS_0",
+    "input:EP_Muon_Energy_MINOS_1",
+    "G:key_listing",
+    "G:combined_source",
+    "G:centering_convention",
+    "G:sqrt_tr_old",
+    "G:sqrt_tr_new",
+    "G:hInflation_g_nbins",
+    "G:read_onlyness",
+    "CS:key_listing",
+    "CV_central:key_listing",
+    "CV_central:hXSecND_flat",
+    "G:hRowIndex5D",
+    "EP_BeamAngleX_0:key_listing",
+    "EP_BeamAngleX_0:hXSecND_flat",
+    "EP_BeamAngleX_0:hXSec_pt",
+    "EP_BeamAngleX_0:hXSec_pz",
+    "EP_BeamAngleX_0:hXSec_eavail",
+    "EP_BeamAngleX_0:hXSec_q3",
+    "EP_BeamAngleX_0:hXSec_W",
+    "EP_BeamAngleX_0:ndim",
+    "EP_BeamAngleX_0:dataPOT",
+    "EP_BeamAngleX_0:globalCompleteness",
+    "EP_BeamAngleX_0:estimator_seed",
+    "EP_BeamAngleX_0:estimator_seed_0",
+    "EP_BeamAngleX_0:estimator_seed_1",
+    "EP_BeamAngleX_0:est_seed_offset",
+    "EP_BeamAngleX_0:est_seed_offset_0",
+    "EP_BeamAngleX_0:est_seed_offset_1",
+    "EP_BeamAngleX_1:key_listing",
+    "EP_BeamAngleX_1:hXSecND_flat",
+    "EP_BeamAngleX_1:hXSec_pt",
+    "EP_BeamAngleX_1:hXSec_pz",
+    "EP_BeamAngleX_1:hXSec_eavail",
+    "EP_BeamAngleX_1:hXSec_q3",
+    "EP_BeamAngleX_1:hXSec_W",
+    "EP_BeamAngleX_1:ndim",
+    "EP_BeamAngleX_1:dataPOT",
+    "EP_BeamAngleX_1:globalCompleteness",
+    "EP_BeamAngleX_1:estimator_seed",
+    "EP_BeamAngleX_1:estimator_seed_0",
+    "EP_BeamAngleX_1:estimator_seed_1",
+    "EP_BeamAngleX_1:est_seed_offset",
+    "EP_BeamAngleX_1:est_seed_offset_0",
+    "EP_BeamAngleX_1:est_seed_offset_1",
+    "EP_BeamAngleY_0:key_listing",
+    "EP_BeamAngleY_0:hXSecND_flat",
+    "EP_BeamAngleY_0:hXSec_pt",
+    "EP_BeamAngleY_0:hXSec_pz",
+    "EP_BeamAngleY_0:hXSec_eavail",
+    "EP_BeamAngleY_0:hXSec_q3",
+    "EP_BeamAngleY_0:hXSec_W",
+    "EP_BeamAngleY_0:ndim",
+    "EP_BeamAngleY_0:dataPOT",
+    "EP_BeamAngleY_0:globalCompleteness",
+    "EP_BeamAngleY_0:estimator_seed",
+    "EP_BeamAngleY_0:estimator_seed_0",
+    "EP_BeamAngleY_0:estimator_seed_1",
+    "EP_BeamAngleY_0:est_seed_offset",
+    "EP_BeamAngleY_0:est_seed_offset_0",
+    "EP_BeamAngleY_0:est_seed_offset_1",
+    "EP_BeamAngleY_1:key_listing",
+    "EP_BeamAngleY_1:hXSecND_flat",
+    "EP_BeamAngleY_1:hXSec_pt",
+    "EP_BeamAngleY_1:hXSec_pz",
+    "EP_BeamAngleY_1:hXSec_eavail",
+    "EP_BeamAngleY_1:hXSec_q3",
+    "EP_BeamAngleY_1:hXSec_W",
+    "EP_BeamAngleY_1:ndim",
+    "EP_BeamAngleY_1:dataPOT",
+    "EP_BeamAngleY_1:globalCompleteness",
+    "EP_BeamAngleY_1:estimator_seed",
+    "EP_BeamAngleY_1:estimator_seed_0",
+    "EP_BeamAngleY_1:estimator_seed_1",
+    "EP_BeamAngleY_1:est_seed_offset",
+    "EP_BeamAngleY_1:est_seed_offset_0",
+    "EP_BeamAngleY_1:est_seed_offset_1",
+    "EP_MuonResolution_0:key_listing",
+    "EP_MuonResolution_0:hXSecND_flat",
+    "EP_MuonResolution_0:hXSec_pt",
+    "EP_MuonResolution_0:hXSec_pz",
+    "EP_MuonResolution_0:hXSec_eavail",
+    "EP_MuonResolution_0:hXSec_q3",
+    "EP_MuonResolution_0:hXSec_W",
+    "EP_MuonResolution_0:ndim",
+    "EP_MuonResolution_0:dataPOT",
+    "EP_MuonResolution_0:globalCompleteness",
+    "EP_MuonResolution_0:estimator_seed",
+    "EP_MuonResolution_0:estimator_seed_0",
+    "EP_MuonResolution_0:estimator_seed_1",
+    "EP_MuonResolution_0:est_seed_offset",
+    "EP_MuonResolution_0:est_seed_offset_0",
+    "EP_MuonResolution_0:est_seed_offset_1",
+    "EP_MuonResolution_1:key_listing",
+    "EP_MuonResolution_1:hXSecND_flat",
+    "EP_MuonResolution_1:hXSec_pt",
+    "EP_MuonResolution_1:hXSec_pz",
+    "EP_MuonResolution_1:hXSec_eavail",
+    "EP_MuonResolution_1:hXSec_q3",
+    "EP_MuonResolution_1:hXSec_W",
+    "EP_MuonResolution_1:ndim",
+    "EP_MuonResolution_1:dataPOT",
+    "EP_MuonResolution_1:globalCompleteness",
+    "EP_MuonResolution_1:estimator_seed",
+    "EP_MuonResolution_1:estimator_seed_0",
+    "EP_MuonResolution_1:estimator_seed_1",
+    "EP_MuonResolution_1:est_seed_offset",
+    "EP_MuonResolution_1:est_seed_offset_0",
+    "EP_MuonResolution_1:est_seed_offset_1",
+    "EP_Muon_Energy_MINERvA_0:key_listing",
+    "EP_Muon_Energy_MINERvA_0:hXSecND_flat",
+    "EP_Muon_Energy_MINERvA_0:hXSec_pt",
+    "EP_Muon_Energy_MINERvA_0:hXSec_pz",
+    "EP_Muon_Energy_MINERvA_0:hXSec_eavail",
+    "EP_Muon_Energy_MINERvA_0:hXSec_q3",
+    "EP_Muon_Energy_MINERvA_0:hXSec_W",
+    "EP_Muon_Energy_MINERvA_0:ndim",
+    "EP_Muon_Energy_MINERvA_0:dataPOT",
+    "EP_Muon_Energy_MINERvA_0:globalCompleteness",
+    "EP_Muon_Energy_MINERvA_0:estimator_seed",
+    "EP_Muon_Energy_MINERvA_0:estimator_seed_0",
+    "EP_Muon_Energy_MINERvA_0:estimator_seed_1",
+    "EP_Muon_Energy_MINERvA_0:est_seed_offset",
+    "EP_Muon_Energy_MINERvA_0:est_seed_offset_0",
+    "EP_Muon_Energy_MINERvA_0:est_seed_offset_1",
+    "EP_Muon_Energy_MINERvA_1:key_listing",
+    "EP_Muon_Energy_MINERvA_1:hXSecND_flat",
+    "EP_Muon_Energy_MINERvA_1:hXSec_pt",
+    "EP_Muon_Energy_MINERvA_1:hXSec_pz",
+    "EP_Muon_Energy_MINERvA_1:hXSec_eavail",
+    "EP_Muon_Energy_MINERvA_1:hXSec_q3",
+    "EP_Muon_Energy_MINERvA_1:hXSec_W",
+    "EP_Muon_Energy_MINERvA_1:ndim",
+    "EP_Muon_Energy_MINERvA_1:dataPOT",
+    "EP_Muon_Energy_MINERvA_1:globalCompleteness",
+    "EP_Muon_Energy_MINERvA_1:estimator_seed",
+    "EP_Muon_Energy_MINERvA_1:estimator_seed_0",
+    "EP_Muon_Energy_MINERvA_1:estimator_seed_1",
+    "EP_Muon_Energy_MINERvA_1:est_seed_offset",
+    "EP_Muon_Energy_MINERvA_1:est_seed_offset_0",
+    "EP_Muon_Energy_MINERvA_1:est_seed_offset_1",
+    "EP_Muon_Energy_MINOS_0:key_listing",
+    "EP_Muon_Energy_MINOS_0:hXSecND_flat",
+    "EP_Muon_Energy_MINOS_0:hXSec_pt",
+    "EP_Muon_Energy_MINOS_0:hXSec_pz",
+    "EP_Muon_Energy_MINOS_0:hXSec_eavail",
+    "EP_Muon_Energy_MINOS_0:hXSec_q3",
+    "EP_Muon_Energy_MINOS_0:hXSec_W",
+    "EP_Muon_Energy_MINOS_0:ndim",
+    "EP_Muon_Energy_MINOS_0:dataPOT",
+    "EP_Muon_Energy_MINOS_0:globalCompleteness",
+    "EP_Muon_Energy_MINOS_0:estimator_seed",
+    "EP_Muon_Energy_MINOS_0:estimator_seed_0",
+    "EP_Muon_Energy_MINOS_0:estimator_seed_1",
+    "EP_Muon_Energy_MINOS_0:est_seed_offset",
+    "EP_Muon_Energy_MINOS_0:est_seed_offset_0",
+    "EP_Muon_Energy_MINOS_0:est_seed_offset_1",
+    "EP_Muon_Energy_MINOS_1:key_listing",
+    "EP_Muon_Energy_MINOS_1:hXSecND_flat",
+    "EP_Muon_Energy_MINOS_1:hXSec_pt",
+    "EP_Muon_Energy_MINOS_1:hXSec_pz",
+    "EP_Muon_Energy_MINOS_1:hXSec_eavail",
+    "EP_Muon_Energy_MINOS_1:hXSec_q3",
+    "EP_Muon_Energy_MINOS_1:hXSec_W",
+    "EP_Muon_Energy_MINOS_1:ndim",
+    "EP_Muon_Energy_MINOS_1:dataPOT",
+    "EP_Muon_Energy_MINOS_1:globalCompleteness",
+    "EP_Muon_Energy_MINOS_1:estimator_seed",
+    "EP_Muon_Energy_MINOS_1:estimator_seed_0",
+    "EP_Muon_Energy_MINOS_1:estimator_seed_1",
+    "EP_Muon_Energy_MINOS_1:est_seed_offset",
+    "EP_Muon_Energy_MINOS_1:est_seed_offset_0",
+    "EP_Muon_Energy_MINOS_1:est_seed_offset_1"
+  ],
+  "endpoints": {
+    "EP_BeamAngleX_0": {
+      "dataPOT": 1.057394261158926e+21,
+      "globalCompleteness": 1.0,
+      "hXSecND_flat": {
+        "NOT": "read_from_G",
+        "all_finite": true,
+        "byte_order": "little",
+        "content_sha256": "916fcdbb386c6db08cd6456c62393ee2f8a26b49aa4b14c08a306fce73b701fe",
+        "count": 10694,
+        "count_matches_S": true,
+        "declared_nbins": 65856,
+        "dtype": "int64",
+        "expected_count": 10694,
+        "measured_nbins": 65856,
+        "nbins_conforms": true,
+        "provenance": "reconstructed_through_producer_input_route",
+        "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+        "reported_mask_matches_S": true,
+        "row_index_matches_S": true,
+        "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+      },
+      "hXSec_W": {
+        "edges": [
+          0.0,
+          1.1,
+          1.4,
+          1.8,
+          2.2,
+          3.0,
+          100.0
+        ],
+        "nbins": 6
+      },
+      "hXSec_eavail": {
+        "edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.8,
+          1.5,
+          3.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "hXSec_pt": {
+        "edges": [
+          0.0,
+          0.07,
+          0.15,
+          0.25,
+          0.33,
+          0.4,
+          0.47,
+          0.55,
+          0.7,
+          0.85,
+          1.0,
+          1.25,
+          1.5,
+          2.5,
+          4.5
+        ],
+        "nbins": 14
+      },
+      "hXSec_pz": {
+        "edges": [
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          15.0,
+          20.0,
+          40.0,
+          60.0
+        ],
+        "nbins": 16
+      },
+      "hXSec_q3": {
+        "edges": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.2,
+          2.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "key_listing": [
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "dataPOT"
+        },
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "globalCompleteness"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hCompletenessND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hUnfoldND_flat"
+        },
+        {
+          "class": "TH2D",
+          "cycle": 1,
+          "name": "hXSec2D"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_dropLast_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_W"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_eavail"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pt"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pz"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_q3"
+        },
+        {
+          "class": "TParameter<int>",
+          "cycle": 1,
+          "name": "ndim"
+        }
+      ],
+      "ndim": 5
+    },
+    "EP_BeamAngleX_1": {
+      "dataPOT": 1.057394261158926e+21,
+      "globalCompleteness": 1.0,
+      "hXSecND_flat": {
+        "NOT": "read_from_G",
+        "all_finite": true,
+        "byte_order": "little",
+        "content_sha256": "f0752524a96b1be0f6b206550ca38b7baa6a4c93a97e8de4d7c32fa2d3aeb1ba",
+        "count": 10694,
+        "count_matches_S": true,
+        "declared_nbins": 65856,
+        "dtype": "int64",
+        "expected_count": 10694,
+        "measured_nbins": 65856,
+        "nbins_conforms": true,
+        "provenance": "reconstructed_through_producer_input_route",
+        "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+        "reported_mask_matches_S": true,
+        "row_index_matches_S": true,
+        "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+      },
+      "hXSec_W": {
+        "edges": [
+          0.0,
+          1.1,
+          1.4,
+          1.8,
+          2.2,
+          3.0,
+          100.0
+        ],
+        "nbins": 6
+      },
+      "hXSec_eavail": {
+        "edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.8,
+          1.5,
+          3.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "hXSec_pt": {
+        "edges": [
+          0.0,
+          0.07,
+          0.15,
+          0.25,
+          0.33,
+          0.4,
+          0.47,
+          0.55,
+          0.7,
+          0.85,
+          1.0,
+          1.25,
+          1.5,
+          2.5,
+          4.5
+        ],
+        "nbins": 14
+      },
+      "hXSec_pz": {
+        "edges": [
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          15.0,
+          20.0,
+          40.0,
+          60.0
+        ],
+        "nbins": 16
+      },
+      "hXSec_q3": {
+        "edges": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.2,
+          2.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "key_listing": [
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "dataPOT"
+        },
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "globalCompleteness"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hCompletenessND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hUnfoldND_flat"
+        },
+        {
+          "class": "TH2D",
+          "cycle": 1,
+          "name": "hXSec2D"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_dropLast_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_W"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_eavail"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pt"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pz"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_q3"
+        },
+        {
+          "class": "TParameter<int>",
+          "cycle": 1,
+          "name": "ndim"
+        }
+      ],
+      "ndim": 5
+    },
+    "EP_BeamAngleY_0": {
+      "dataPOT": 1.057394261158926e+21,
+      "globalCompleteness": 1.0,
+      "hXSecND_flat": {
+        "NOT": "read_from_G",
+        "all_finite": true,
+        "byte_order": "little",
+        "content_sha256": "251a48eeda3430077a8edb62208d8292a66424dcf2678a358d40baf69c87e978",
+        "count": 10694,
+        "count_matches_S": true,
+        "declared_nbins": 65856,
+        "dtype": "int64",
+        "expected_count": 10694,
+        "measured_nbins": 65856,
+        "nbins_conforms": true,
+        "provenance": "reconstructed_through_producer_input_route",
+        "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+        "reported_mask_matches_S": true,
+        "row_index_matches_S": true,
+        "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+      },
+      "hXSec_W": {
+        "edges": [
+          0.0,
+          1.1,
+          1.4,
+          1.8,
+          2.2,
+          3.0,
+          100.0
+        ],
+        "nbins": 6
+      },
+      "hXSec_eavail": {
+        "edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.8,
+          1.5,
+          3.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "hXSec_pt": {
+        "edges": [
+          0.0,
+          0.07,
+          0.15,
+          0.25,
+          0.33,
+          0.4,
+          0.47,
+          0.55,
+          0.7,
+          0.85,
+          1.0,
+          1.25,
+          1.5,
+          2.5,
+          4.5
+        ],
+        "nbins": 14
+      },
+      "hXSec_pz": {
+        "edges": [
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          15.0,
+          20.0,
+          40.0,
+          60.0
+        ],
+        "nbins": 16
+      },
+      "hXSec_q3": {
+        "edges": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.2,
+          2.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "key_listing": [
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "dataPOT"
+        },
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "globalCompleteness"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hCompletenessND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hUnfoldND_flat"
+        },
+        {
+          "class": "TH2D",
+          "cycle": 1,
+          "name": "hXSec2D"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_dropLast_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_W"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_eavail"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pt"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pz"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_q3"
+        },
+        {
+          "class": "TParameter<int>",
+          "cycle": 1,
+          "name": "ndim"
+        }
+      ],
+      "ndim": 5
+    },
+    "EP_BeamAngleY_1": {
+      "dataPOT": 1.057394261158926e+21,
+      "globalCompleteness": 1.0,
+      "hXSecND_flat": {
+        "NOT": "read_from_G",
+        "all_finite": true,
+        "byte_order": "little",
+        "content_sha256": "1a72b3bfb14bd7984fac4b9678d945f614bd5dc5f8000b5cadbb4622053e2c1a",
+        "count": 10694,
+        "count_matches_S": true,
+        "declared_nbins": 65856,
+        "dtype": "int64",
+        "expected_count": 10694,
+        "measured_nbins": 65856,
+        "nbins_conforms": true,
+        "provenance": "reconstructed_through_producer_input_route",
+        "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+        "reported_mask_matches_S": true,
+        "row_index_matches_S": true,
+        "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+      },
+      "hXSec_W": {
+        "edges": [
+          0.0,
+          1.1,
+          1.4,
+          1.8,
+          2.2,
+          3.0,
+          100.0
+        ],
+        "nbins": 6
+      },
+      "hXSec_eavail": {
+        "edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.8,
+          1.5,
+          3.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "hXSec_pt": {
+        "edges": [
+          0.0,
+          0.07,
+          0.15,
+          0.25,
+          0.33,
+          0.4,
+          0.47,
+          0.55,
+          0.7,
+          0.85,
+          1.0,
+          1.25,
+          1.5,
+          2.5,
+          4.5
+        ],
+        "nbins": 14
+      },
+      "hXSec_pz": {
+        "edges": [
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          15.0,
+          20.0,
+          40.0,
+          60.0
+        ],
+        "nbins": 16
+      },
+      "hXSec_q3": {
+        "edges": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.2,
+          2.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "key_listing": [
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "dataPOT"
+        },
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "globalCompleteness"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hCompletenessND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hUnfoldND_flat"
+        },
+        {
+          "class": "TH2D",
+          "cycle": 1,
+          "name": "hXSec2D"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_dropLast_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_W"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_eavail"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pt"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pz"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_q3"
+        },
+        {
+          "class": "TParameter<int>",
+          "cycle": 1,
+          "name": "ndim"
+        }
+      ],
+      "ndim": 5
+    },
+    "EP_MuonResolution_0": {
+      "dataPOT": 1.057394261158926e+21,
+      "globalCompleteness": 1.0,
+      "hXSecND_flat": {
+        "NOT": "read_from_G",
+        "all_finite": true,
+        "byte_order": "little",
+        "content_sha256": "ad00427cfa217b32bcecbe8e3f1306838afbb5809c521732f0500bb63569aff3",
+        "count": 10694,
+        "count_matches_S": true,
+        "declared_nbins": 65856,
+        "dtype": "int64",
+        "expected_count": 10694,
+        "measured_nbins": 65856,
+        "nbins_conforms": true,
+        "provenance": "reconstructed_through_producer_input_route",
+        "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+        "reported_mask_matches_S": true,
+        "row_index_matches_S": true,
+        "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+      },
+      "hXSec_W": {
+        "edges": [
+          0.0,
+          1.1,
+          1.4,
+          1.8,
+          2.2,
+          3.0,
+          100.0
+        ],
+        "nbins": 6
+      },
+      "hXSec_eavail": {
+        "edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.8,
+          1.5,
+          3.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "hXSec_pt": {
+        "edges": [
+          0.0,
+          0.07,
+          0.15,
+          0.25,
+          0.33,
+          0.4,
+          0.47,
+          0.55,
+          0.7,
+          0.85,
+          1.0,
+          1.25,
+          1.5,
+          2.5,
+          4.5
+        ],
+        "nbins": 14
+      },
+      "hXSec_pz": {
+        "edges": [
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          15.0,
+          20.0,
+          40.0,
+          60.0
+        ],
+        "nbins": 16
+      },
+      "hXSec_q3": {
+        "edges": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.2,
+          2.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "key_listing": [
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "dataPOT"
+        },
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "globalCompleteness"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hCompletenessND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hUnfoldND_flat"
+        },
+        {
+          "class": "TH2D",
+          "cycle": 1,
+          "name": "hXSec2D"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_dropLast_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_W"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_eavail"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pt"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pz"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_q3"
+        },
+        {
+          "class": "TParameter<int>",
+          "cycle": 1,
+          "name": "ndim"
+        }
+      ],
+      "ndim": 5
+    },
+    "EP_MuonResolution_1": {
+      "dataPOT": 1.057394261158926e+21,
+      "globalCompleteness": 1.0,
+      "hXSecND_flat": {
+        "NOT": "read_from_G",
+        "all_finite": true,
+        "byte_order": "little",
+        "content_sha256": "38e38a7c5c1ff615f31636c6c496734d1ebbd206648965608105eb3d5f15e968",
+        "count": 10694,
+        "count_matches_S": true,
+        "declared_nbins": 65856,
+        "dtype": "int64",
+        "expected_count": 10694,
+        "measured_nbins": 65856,
+        "nbins_conforms": true,
+        "provenance": "reconstructed_through_producer_input_route",
+        "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+        "reported_mask_matches_S": true,
+        "row_index_matches_S": true,
+        "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+      },
+      "hXSec_W": {
+        "edges": [
+          0.0,
+          1.1,
+          1.4,
+          1.8,
+          2.2,
+          3.0,
+          100.0
+        ],
+        "nbins": 6
+      },
+      "hXSec_eavail": {
+        "edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.8,
+          1.5,
+          3.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "hXSec_pt": {
+        "edges": [
+          0.0,
+          0.07,
+          0.15,
+          0.25,
+          0.33,
+          0.4,
+          0.47,
+          0.55,
+          0.7,
+          0.85,
+          1.0,
+          1.25,
+          1.5,
+          2.5,
+          4.5
+        ],
+        "nbins": 14
+      },
+      "hXSec_pz": {
+        "edges": [
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          15.0,
+          20.0,
+          40.0,
+          60.0
+        ],
+        "nbins": 16
+      },
+      "hXSec_q3": {
+        "edges": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.2,
+          2.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "key_listing": [
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "dataPOT"
+        },
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "globalCompleteness"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hCompletenessND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hUnfoldND_flat"
+        },
+        {
+          "class": "TH2D",
+          "cycle": 1,
+          "name": "hXSec2D"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_dropLast_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_W"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_eavail"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pt"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pz"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_q3"
+        },
+        {
+          "class": "TParameter<int>",
+          "cycle": 1,
+          "name": "ndim"
+        }
+      ],
+      "ndim": 5
+    },
+    "EP_Muon_Energy_MINERvA_0": {
+      "dataPOT": 1.057394261158926e+21,
+      "globalCompleteness": 1.0,
+      "hXSecND_flat": {
+        "NOT": "read_from_G",
+        "all_finite": true,
+        "byte_order": "little",
+        "content_sha256": "7165649c88be4c8e7d3fbec06cf7f8687a6fc6447457e075096e5ccf5856d712",
+        "count": 10694,
+        "count_matches_S": true,
+        "declared_nbins": 65856,
+        "dtype": "int64",
+        "expected_count": 10694,
+        "measured_nbins": 65856,
+        "nbins_conforms": true,
+        "provenance": "reconstructed_through_producer_input_route",
+        "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+        "reported_mask_matches_S": true,
+        "row_index_matches_S": true,
+        "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+      },
+      "hXSec_W": {
+        "edges": [
+          0.0,
+          1.1,
+          1.4,
+          1.8,
+          2.2,
+          3.0,
+          100.0
+        ],
+        "nbins": 6
+      },
+      "hXSec_eavail": {
+        "edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.8,
+          1.5,
+          3.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "hXSec_pt": {
+        "edges": [
+          0.0,
+          0.07,
+          0.15,
+          0.25,
+          0.33,
+          0.4,
+          0.47,
+          0.55,
+          0.7,
+          0.85,
+          1.0,
+          1.25,
+          1.5,
+          2.5,
+          4.5
+        ],
+        "nbins": 14
+      },
+      "hXSec_pz": {
+        "edges": [
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          15.0,
+          20.0,
+          40.0,
+          60.0
+        ],
+        "nbins": 16
+      },
+      "hXSec_q3": {
+        "edges": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.2,
+          2.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "key_listing": [
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "dataPOT"
+        },
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "globalCompleteness"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hCompletenessND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hUnfoldND_flat"
+        },
+        {
+          "class": "TH2D",
+          "cycle": 1,
+          "name": "hXSec2D"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_dropLast_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_W"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_eavail"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pt"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pz"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_q3"
+        },
+        {
+          "class": "TParameter<int>",
+          "cycle": 1,
+          "name": "ndim"
+        }
+      ],
+      "ndim": 5
+    },
+    "EP_Muon_Energy_MINERvA_1": {
+      "dataPOT": 1.057394261158926e+21,
+      "globalCompleteness": 1.0,
+      "hXSecND_flat": {
+        "NOT": "read_from_G",
+        "all_finite": true,
+        "byte_order": "little",
+        "content_sha256": "32a708f7b9b3061333527cdf1991661ab52ced7fbc8272e3ac226b444500f307",
+        "count": 10694,
+        "count_matches_S": true,
+        "declared_nbins": 65856,
+        "dtype": "int64",
+        "expected_count": 10694,
+        "measured_nbins": 65856,
+        "nbins_conforms": true,
+        "provenance": "reconstructed_through_producer_input_route",
+        "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+        "reported_mask_matches_S": true,
+        "row_index_matches_S": true,
+        "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+      },
+      "hXSec_W": {
+        "edges": [
+          0.0,
+          1.1,
+          1.4,
+          1.8,
+          2.2,
+          3.0,
+          100.0
+        ],
+        "nbins": 6
+      },
+      "hXSec_eavail": {
+        "edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.8,
+          1.5,
+          3.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "hXSec_pt": {
+        "edges": [
+          0.0,
+          0.07,
+          0.15,
+          0.25,
+          0.33,
+          0.4,
+          0.47,
+          0.55,
+          0.7,
+          0.85,
+          1.0,
+          1.25,
+          1.5,
+          2.5,
+          4.5
+        ],
+        "nbins": 14
+      },
+      "hXSec_pz": {
+        "edges": [
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          15.0,
+          20.0,
+          40.0,
+          60.0
+        ],
+        "nbins": 16
+      },
+      "hXSec_q3": {
+        "edges": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.2,
+          2.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "key_listing": [
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "dataPOT"
+        },
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "globalCompleteness"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hCompletenessND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hUnfoldND_flat"
+        },
+        {
+          "class": "TH2D",
+          "cycle": 1,
+          "name": "hXSec2D"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_dropLast_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_W"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_eavail"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pt"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pz"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_q3"
+        },
+        {
+          "class": "TParameter<int>",
+          "cycle": 1,
+          "name": "ndim"
+        }
+      ],
+      "ndim": 5
+    },
+    "EP_Muon_Energy_MINOS_0": {
+      "dataPOT": 1.057394261158926e+21,
+      "globalCompleteness": 1.001824229352185,
+      "hXSecND_flat": {
+        "NOT": "read_from_G",
+        "all_finite": true,
+        "byte_order": "little",
+        "content_sha256": "193db9c04af367ac98571117c81bb6ccedc20b1575ae386beef7c61753fb7139",
+        "count": 10694,
+        "count_matches_S": true,
+        "declared_nbins": 65856,
+        "dtype": "int64",
+        "expected_count": 10694,
+        "measured_nbins": 65856,
+        "nbins_conforms": true,
+        "provenance": "reconstructed_through_producer_input_route",
+        "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+        "reported_mask_matches_S": true,
+        "row_index_matches_S": true,
+        "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+      },
+      "hXSec_W": {
+        "edges": [
+          0.0,
+          1.1,
+          1.4,
+          1.8,
+          2.2,
+          3.0,
+          100.0
+        ],
+        "nbins": 6
+      },
+      "hXSec_eavail": {
+        "edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.8,
+          1.5,
+          3.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "hXSec_pt": {
+        "edges": [
+          0.0,
+          0.07,
+          0.15,
+          0.25,
+          0.33,
+          0.4,
+          0.47,
+          0.55,
+          0.7,
+          0.85,
+          1.0,
+          1.25,
+          1.5,
+          2.5,
+          4.5
+        ],
+        "nbins": 14
+      },
+      "hXSec_pz": {
+        "edges": [
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          15.0,
+          20.0,
+          40.0,
+          60.0
+        ],
+        "nbins": 16
+      },
+      "hXSec_q3": {
+        "edges": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.2,
+          2.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "key_listing": [
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "dataPOT"
+        },
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "globalCompleteness"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hCompletenessND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hUnfoldND_flat"
+        },
+        {
+          "class": "TH2D",
+          "cycle": 1,
+          "name": "hXSec2D"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_dropLast_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_W"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_eavail"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pt"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pz"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_q3"
+        },
+        {
+          "class": "TParameter<int>",
+          "cycle": 1,
+          "name": "ndim"
+        }
+      ],
+      "ndim": 5
+    },
+    "EP_Muon_Energy_MINOS_1": {
+      "dataPOT": 1.057394261158926e+21,
+      "globalCompleteness": 1.0005210189647662,
+      "hXSecND_flat": {
+        "NOT": "read_from_G",
+        "all_finite": true,
+        "byte_order": "little",
+        "content_sha256": "d1b70014a7c57a5fad3751bf56d25c671cd6d583080ece8b00546d8d10011869",
+        "count": 10694,
+        "count_matches_S": true,
+        "declared_nbins": 65856,
+        "dtype": "int64",
+        "expected_count": 10694,
+        "measured_nbins": 65856,
+        "nbins_conforms": true,
+        "provenance": "reconstructed_through_producer_input_route",
+        "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+        "reported_mask_matches_S": true,
+        "row_index_matches_S": true,
+        "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08"
+      },
+      "hXSec_W": {
+        "edges": [
+          0.0,
+          1.1,
+          1.4,
+          1.8,
+          2.2,
+          3.0,
+          100.0
+        ],
+        "nbins": 6
+      },
+      "hXSec_eavail": {
+        "edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.8,
+          1.5,
+          3.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "hXSec_pt": {
+        "edges": [
+          0.0,
+          0.07,
+          0.15,
+          0.25,
+          0.33,
+          0.4,
+          0.47,
+          0.55,
+          0.7,
+          0.85,
+          1.0,
+          1.25,
+          1.5,
+          2.5,
+          4.5
+        ],
+        "nbins": 14
+      },
+      "hXSec_pz": {
+        "edges": [
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          15.0,
+          20.0,
+          40.0,
+          60.0
+        ],
+        "nbins": 16
+      },
+      "hXSec_q3": {
+        "edges": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          1.2,
+          2.0,
+          100.0
+        ],
+        "nbins": 7
+      },
+      "key_listing": [
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "dataPOT"
+        },
+        {
+          "class": "TParameter<double>",
+          "cycle": 1,
+          "name": "globalCompleteness"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hCompletenessND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hUnfoldND_flat"
+        },
+        {
+          "class": "TH2D",
+          "cycle": 1,
+          "name": "hXSec2D"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_dropLast_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSecND_flat"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_W"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_eavail"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pt"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_pz"
+        },
+        {
+          "class": "TH1D",
+          "cycle": 1,
+          "name": "hXSec_q3"
+        },
+        {
+          "class": "TParameter<int>",
+          "cycle": 1,
+          "name": "ndim"
+        }
+      ],
+      "ndim": 5
+    }
+  },
+  "finished_at_utc": "2026-09-09T19:36:47.023717Z",
+  "missing_read_records": [],
+  "module_provenance": {
+    "forbidden_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "module_count": 199,
+    "modules": {
+      "ROOT": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/__init__.py",
+      "ROOT._application": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_application.py",
+      "ROOT._asan": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_asan.py",
+      "ROOT._facade": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_facade.py",
+      "ROOT._numbadeclare": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_numbadeclare.py",
+      "ROOT._pythonization": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/__init__.py",
+      "ROOT._pythonization._cppinstance": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_cppinstance.py",
+      "ROOT._pythonization._drawables": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_drawables.py",
+      "ROOT._pythonization._generic": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_generic.py",
+      "ROOT._pythonization._pyz_utils": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_pyz_utils.py",
+      "ROOT._pythonization._rdataframe": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_rdataframe.py",
+      "ROOT._pythonization._rdfdescription": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_rdfdescription.py",
+      "ROOT._pythonization._roofit": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/__init__.py",
+      "ROOT._pythonization._roofit._rooabscollection": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_rooabscollection.py",
+      "ROOT._pythonization._roofit._rooabsdata": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_rooabsdata.py",
+      "ROOT._pythonization._roofit._rooabspdf": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_rooabspdf.py",
+      "ROOT._pythonization._roofit._rooabsreal": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_rooabsreal.py",
+      "ROOT._pythonization._roofit._rooabsreallvalue": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_rooabsreallvalue.py",
+      "ROOT._pythonization._roofit._rooarglist": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_rooarglist.py",
+      "ROOT._pythonization._roofit._rooargset": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_rooargset.py",
+      "ROOT._pythonization._roofit._roocategory": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roocategory.py",
+      "ROOT._pythonization._roofit._roochi2var": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roochi2var.py",
+      "ROOT._pythonization._roofit._roodatahist": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roodatahist.py",
+      "ROOT._pythonization._roofit._roodataset": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roodataset.py",
+      "ROOT._pythonization._roofit._roodecays": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roodecays.py",
+      "ROOT._pythonization._roofit._roogenfitstudy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roogenfitstudy.py",
+      "ROOT._pythonization._roofit._rooglobalfunc": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_rooglobalfunc.py",
+      "ROOT._pythonization._roofit._roojsonfactorywstool": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roojsonfactorywstool.py",
+      "ROOT._pythonization._roofit._roomcstudy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roomcstudy.py",
+      "ROOT._pythonization._roofit._roomsgservice": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roomsgservice.py",
+      "ROOT._pythonization._roofit._roonllvar": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roonllvar.py",
+      "ROOT._pythonization._roofit._rooprodpdf": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_rooprodpdf.py",
+      "ROOT._pythonization._roofit._roorealvar": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roorealvar.py",
+      "ROOT._pythonization._roofit._roosimultaneous": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roosimultaneous.py",
+      "ROOT._pythonization._roofit._roosimwstool": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roosimwstool.py",
+      "ROOT._pythonization._roofit._roovectordatastore": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_roovectordatastore.py",
+      "ROOT._pythonization._roofit._rooworkspace": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_rooworkspace.py",
+      "ROOT._pythonization._roofit._utils": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_roofit/_utils.py",
+      "ROOT._pythonization._runtime_error": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_runtime_error.py",
+      "ROOT._pythonization._rvec": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_rvec.py",
+      "ROOT._pythonization._stl_vector": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_stl_vector.py",
+      "ROOT._pythonization._tarray": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tarray.py",
+      "ROOT._pythonization._tclass": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tclass.py",
+      "ROOT._pythonization._tclonesarray": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tclonesarray.py",
+      "ROOT._pythonization._tcollection": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tcollection.py",
+      "ROOT._pythonization._tcomplex": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tcomplex.py",
+      "ROOT._pythonization._tcontext": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tcontext.py",
+      "ROOT._pythonization._tdirectory": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tdirectory.py",
+      "ROOT._pythonization._tdirectoryfile": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tdirectoryfile.py",
+      "ROOT._pythonization._tfile": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tfile.py",
+      "ROOT._pythonization._tgraph": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tgraph.py",
+      "ROOT._pythonization._th1": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_th1.py",
+      "ROOT._pythonization._titer": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_titer.py",
+      "ROOT._pythonization._tmva": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tmva/__init__.py",
+      "ROOT._pythonization._tmva._crossvalidation": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tmva/_crossvalidation.py",
+      "ROOT._pythonization._tmva._dataloader": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tmva/_dataloader.py",
+      "ROOT._pythonization._tmva._factory": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tmva/_factory.py",
+      "ROOT._pythonization._tmva._rbdt": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tmva/_rbdt.py",
+      "ROOT._pythonization._tmva._rtensor": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tmva/_rtensor.py",
+      "ROOT._pythonization._tmva._tree_inference": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tmva/_tree_inference.py",
+      "ROOT._pythonization._tmva._utils": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tmva/_utils.py",
+      "ROOT._pythonization._tobject": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tobject.py",
+      "ROOT._pythonization._tobjstring": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tobjstring.py",
+      "ROOT._pythonization._tseqcollection": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tseqcollection.py",
+      "ROOT._pythonization._tstring": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tstring.py",
+      "ROOT._pythonization._ttree": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_ttree.py",
+      "ROOT._pythonization._tvector3": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tvector3.py",
+      "ROOT._pythonization._tvectort": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/_pythonization/_tvectort.py",
+      "__future__": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/__future__.py",
+      "__main__": "nd-unfolding/pm_inspection/pm_root_inspect.py",
+      "_bisect": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_bisect.cpython-311-x86_64-linux-gnu.so",
+      "_blake2": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_blake2.cpython-311-x86_64-linux-gnu.so",
+      "_bz2": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_bz2.cpython-311-x86_64-linux-gnu.so",
+      "_collections_abc": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/_collections_abc.py",
+      "_compression": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/_compression.py",
+      "_ctypes": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_ctypes.cpython-311-x86_64-linux-gnu.so",
+      "_datetime": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_datetime.cpython-311-x86_64-linux-gnu.so",
+      "_distutils_hack": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/_distutils_hack/__init__.py",
+      "_frozen_importlib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/importlib/_bootstrap.py",
+      "_frozen_importlib_external": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/importlib/_bootstrap_external.py",
+      "_hashlib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_hashlib.cpython-311-x86_64-linux-gnu.so",
+      "_json": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_json.cpython-311-x86_64-linux-gnu.so",
+      "_lzma": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_lzma.cpython-311-x86_64-linux-gnu.so",
+      "_mnv_guarded_run_propagated_1552428": "/pscratch/sd/j/josephrb/exec-20260907/nd-unfolding/mnv_guarded_run.py",
+      "_opcode": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_opcode.cpython-311-x86_64-linux-gnu.so",
+      "_posixsubprocess": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_posixsubprocess.cpython-311-x86_64-linux-gnu.so",
+      "_random": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_random.cpython-311-x86_64-linux-gnu.so",
+      "_sha512": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_sha512.cpython-311-x86_64-linux-gnu.so",
+      "_sitebuiltins": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/_sitebuiltins.py",
+      "_socket": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_socket.cpython-311-x86_64-linux-gnu.so",
+      "_struct": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_struct.cpython-311-x86_64-linux-gnu.so",
+      "_sysconfigdata__linux_x86_64-linux-gnu": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/_sysconfigdata__linux_x86_64-linux-gnu.py",
+      "_typing": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_typing.cpython-311-x86_64-linux-gnu.so",
+      "_uuid": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/_uuid.cpython-311-x86_64-linux-gnu.so",
+      "_weakrefset": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/_weakrefset.py",
+      "abc": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/abc.py",
+      "argparse": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/argparse.py",
+      "array": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/array.cpython-311-x86_64-linux-gnu.so",
+      "ast": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/ast.py",
+      "bisect": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/bisect.py",
+      "bz2": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/bz2.py",
+      "codecs": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/codecs.py",
+      "collections": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/collections/__init__.py",
+      "collections.abc": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/collections/abc.py",
+      "configparser": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/configparser.py",
+      "contextlib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/contextlib.py",
+      "copyreg": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/copyreg.py",
+      "cppyy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/cppyy/__init__.py",
+      "cppyy._cpython_cppyy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/cppyy/_cpython_cppyy.py",
+      "cppyy._pythonization": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/cppyy/_pythonization.py",
+      "cppyy._stdcpp_fix": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/cppyy/_stdcpp_fix.py",
+      "cppyy._typemap": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/cppyy/_typemap.py",
+      "cppyy._version": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/cppyy/_version.py",
+      "cppyy_backend": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/cppyy_backend/__init__.py",
+      "cppyy_backend.loader": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/cppyy_backend/loader.py",
+      "ctypes": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/ctypes/__init__.py",
+      "ctypes._endian": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/ctypes/_endian.py",
+      "datetime": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/datetime.py",
+      "dis": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/dis.py",
+      "encodings": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/encodings/__init__.py",
+      "encodings.aliases": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/encodings/aliases.py",
+      "encodings.utf_8": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/encodings/utf_8.py",
+      "enum": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/enum.py",
+      "fcntl": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/fcntl.cpython-311-x86_64-linux-gnu.so",
+      "fnmatch": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/fnmatch.py",
+      "functools": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/functools.py",
+      "genericpath": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/genericpath.py",
+      "gettext": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/gettext.py",
+      "hashlib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/hashlib.py",
+      "importlib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/importlib/__init__.py",
+      "importlib._abc": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/importlib/_abc.py",
+      "importlib._bootstrap": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/importlib/_bootstrap.py",
+      "importlib._bootstrap_external": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/importlib/_bootstrap_external.py",
+      "importlib.machinery": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/importlib/machinery.py",
+      "importlib.util": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/importlib/util.py",
+      "inspect": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/inspect.py",
+      "io": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/io.py",
+      "ipaddress": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/ipaddress.py",
+      "json": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/json/__init__.py",
+      "json.decoder": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/json/decoder.py",
+      "json.encoder": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/json/encoder.py",
+      "json.scanner": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/json/scanner.py",
+      "keyword": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/keyword.py",
+      "libROOTPythonizations": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/libROOTPythonizations3_11.so",
+      "libROOTPythonizations3_11": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/libROOTPythonizations3_11.so",
+      "libcppyy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/libcppyy3_11.so",
+      "libcppyy3_11": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/libcppyy3_11.so",
+      "linecache": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/linecache.py",
+      "locale": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/locale.py",
+      "lzma": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lzma.py",
+      "math": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/math.cpython-311-x86_64-linux-gnu.so",
+      "nersc_pymon": "/opt/nersc/pymon/nersc_pymon/__init__.py",
+      "nersc_pymon._vendor": "/opt/nersc/pymon/nersc_pymon/_vendor/__init__.py",
+      "nersc_pymon._vendor.nerscjson": "/opt/nersc/pymon/nersc_pymon/_vendor/nerscjson.py",
+      "nersc_pymon.log": "/opt/nersc/pymon/nersc_pymon/log.py",
+      "ntpath": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/ntpath.py",
+      "opcode": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/opcode.py",
+      "operator": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/operator.py",
+      "os": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/os.py",
+      "os.path": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/posixpath.py",
+      "pathlib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pathlib.py",
+      "pkgutil": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pkgutil.py",
+      "platform": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/platform.py",
+      "posixpath": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/posixpath.py",
+      "random": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/random.py",
+      "re": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/re/__init__.py",
+      "re._casefix": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/re/_casefix.py",
+      "re._compiler": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/re/_compiler.py",
+      "re._constants": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/re/_constants.py",
+      "re._parser": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/re/_parser.py",
+      "reprlib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/reprlib.py",
+      "runpy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/runpy.py",
+      "select": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/select.cpython-311-x86_64-linux-gnu.so",
+      "selectors": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/selectors.py",
+      "shlex": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shlex.py",
+      "shutil": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/shutil.py",
+      "signal": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/signal.py",
+      "site": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site.py",
+      "sitecustomize": "/pscratch/sd/j/josephrb/exec-20260907/nd-unfolding/mnv_guard_shim/sitecustomize.py",
+      "socket": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/socket.py",
+      "stat": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/stat.py",
+      "struct": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/struct.py",
+      "subprocess": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/subprocess.py",
+      "sysconfig": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/sysconfig.py",
+      "tempfile": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py",
+      "textwrap": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/textwrap.py",
+      "threading": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/threading.py",
+      "token": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/token.py",
+      "tokenize": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tokenize.py",
+      "traceback": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/traceback.py",
+      "types": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/types.py",
+      "typing": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/typing.py",
+      "urllib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/urllib/__init__.py",
+      "urllib.parse": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/urllib/parse.py",
+      "uuid": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/uuid.py",
+      "warnings": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/warnings.py",
+      "weakref": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/weakref.py",
+      "zipimport": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/zipimport.py",
+      "zlib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/zlib.cpython-311-x86_64-linux-gnu.so"
+    },
+    "modules_loaded_from_forbidden_root": [],
+    "platform": "Linux-6.4.0-150600.23.125_15.0.28-cray_shasta_c-x86_64-with-glibc2.38",
+    "python": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python",
+    "sys_path": [
+      "/pscratch/sd/j/josephrb/exec-20260907/nd-unfolding/pm_inspection",
+      "/pscratch/sd/j/josephrb/exec-20260907/nd-unfolding",
+      "/pscratch/sd/j/josephrb/exec-20260907/nd-unfolding/mnv_guard_shim",
+      "/opt/nersc/pymon",
+      "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python311.zip",
+      "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11",
+      "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload",
+      "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+    ],
+    "version": "3.11.14"
+  },
+  "out_dir": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue/runs/pm-root-inspection-20260909c",
+  "pm4_provenance": "Digests here are reconstructed through G's producer-input route. G's own hash receipt does not bind the central CV, so nothing here establishes what G consumed historically. Never relabel these as read_from_G.",
+  "producer_exit_code": 0,
+  "reads": [
+    {
+      "digest_provenance": "committed-historical",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+      "read_id": "input:G",
+      "sha256": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+      "size_bytes": 892170881,
+      "status": "read"
+    },
+    {
+      "digest_limitation": "41.4 GB. NOT re-hashed by this inspection and NOT re-hashed to produce this binding. The value is the historical support-family digest as recorded; size is checked, bytes are not.",
+      "digest_provenance": "committed-historical",
+      "digest_verified": false,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+      "read_id": "input:CS",
+      "sha256_bound_not_verified": "9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a",
+      "size_bytes": 41436632945,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+      "read_id": "input:CV_central",
+      "sha256": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
+      "size_bytes": 479553,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleX_0.root",
+      "read_id": "input:EP_BeamAngleX_0",
+      "sha256": "d915c37512fedf7d548c34a9727e5f3dd5cc6249f1e44d789f72c6dd50f930c3",
+      "size_bytes": 480285,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleX_1.root",
+      "read_id": "input:EP_BeamAngleX_1",
+      "sha256": "a61e52523c4bb00f1336927d8824c66dec3c716058e028c50802e543fefc649c",
+      "size_bytes": 479890,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleY_0.root",
+      "read_id": "input:EP_BeamAngleY_0",
+      "sha256": "b37f90ed779284bddd71dd2cf333f353ad5d7090f4701dc795b4c82b55366fae",
+      "size_bytes": 479997,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleY_1.root",
+      "read_id": "input:EP_BeamAngleY_1",
+      "sha256": "da3d2dd66f1d494107b47e948ba19736f556422a228cf9e1cea4b4fdf12ef3cc",
+      "size_bytes": 479897,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_MuonResolution_0.root",
+      "read_id": "input:EP_MuonResolution_0",
+      "sha256": "bc1380ac37f51aa01f8b396097594dd07e3338fdea03400079147bff71893132",
+      "size_bytes": 480169,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_MuonResolution_1.root",
+      "read_id": "input:EP_MuonResolution_1",
+      "sha256": "601f7ab82a18aba4d38a557047fa2e1e5f7107ddae1180d94b7471fcf5d58782",
+      "size_bytes": 480405,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINERvA_0.root",
+      "read_id": "input:EP_Muon_Energy_MINERvA_0",
+      "sha256": "940faf9e51cf61430a0193cbcd8a743548356e526f118730f93435541cbff23e",
+      "size_bytes": 480118,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINERvA_1.root",
+      "read_id": "input:EP_Muon_Energy_MINERvA_1",
+      "sha256": "3996e2fe5cb96b4253d00c1deea834a26f97ab4a21ec163e3255ab433d4c7b5d",
+      "size_bytes": 479757,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINOS_0.root",
+      "read_id": "input:EP_Muon_Energy_MINOS_0",
+      "sha256": "133085a6a68e453f608ef491d2f424d8922a730ad40992c503adf267f005f684",
+      "size_bytes": 529102,
+      "status": "read"
+    },
+    {
+      "digest_provenance": "measured-current-2026-09-08",
+      "digest_verified": true,
+      "kind": "required",
+      "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINOS_1.root",
+      "read_id": "input:EP_Muon_Energy_MINOS_1",
+      "sha256": "ef4749f831a9353bdbb1e7a7f3178305a0f5d9b65b9782893cf38745150d6946",
+      "size_bytes": 528474,
+      "status": "read"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "G:key_listing",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "G:combined_source",
+      "root_class": "TNamed",
+      "status": "read",
+      "value": "uq_universe_5d_covariance_combined_bkgaware.root"
+    },
+    {
+      "kind": "required",
+      "read_id": "G:centering_convention",
+      "root_class": "TNamed",
+      "status": "read",
+      "value": "mean-centered"
+    },
+    {
+      "kind": "required",
+      "read_id": "G:sqrt_tr_old",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 4.357790406860002e-38
+    },
+    {
+      "kind": "required",
+      "read_id": "G:sqrt_tr_new",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 5.269625166386846e-38
+    },
+    {
+      "kind": "required",
+      "nbins": 10694,
+      "read_id": "G:hInflation_g_nbins",
+      "status": "read"
+    },
+    {
+      "detail": "declared conditional read; absence is a measurement",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "G:hRowIndex5D",
+      "status": "absent"
+    },
+    {
+      "detail": null,
+      "kind": "required",
+      "read_id": "G:read_onlyness",
+      "sha256_after": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+      "sha256_before": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+      "status": "read",
+      "unchanged": true
+    },
+    {
+      "band_key_count": 45,
+      "key_count": 47,
+      "kind": "required",
+      "note": "listing only; no ReadObj on any covariance matrix",
+      "read_id": "CS:key_listing",
+      "status": "read"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "CV_central:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "d94daca9251d095115f20808a84052bd9b38ad2534da10ae32e48588531a5968",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "CV_central:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "EP_BeamAngleX_0:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "916fcdbb386c6db08cd6456c62393ee2f8a26b49aa4b14c08a306fce73b701fe",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "EP_BeamAngleX_0:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 4.5,
+      "nbins": 14,
+      "read_id": "EP_BeamAngleX_0:hXSec_pt",
+      "status": "read"
+    },
+    {
+      "first_edge": 1.5,
+      "kind": "required",
+      "last_edge": 60.0,
+      "nbins": 16,
+      "read_id": "EP_BeamAngleX_0:hXSec_pz",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_BeamAngleX_0:hXSec_eavail",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_BeamAngleX_0:hXSec_q3",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 6,
+      "read_id": "EP_BeamAngleX_0:hXSec_W",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleX_0:ndim",
+      "root_class": "TParameter<int>",
+      "status": "read",
+      "value": 5
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleX_0:dataPOT",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.057394261158926e+21
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleX_0:globalCompleteness",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.0
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_0:estimator_seed",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_0:estimator_seed_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_0:estimator_seed_1",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_0:est_seed_offset",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_0:est_seed_offset_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_0:est_seed_offset_1",
+      "status": "absent"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "EP_BeamAngleX_1:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "f0752524a96b1be0f6b206550ca38b7baa6a4c93a97e8de4d7c32fa2d3aeb1ba",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "EP_BeamAngleX_1:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 4.5,
+      "nbins": 14,
+      "read_id": "EP_BeamAngleX_1:hXSec_pt",
+      "status": "read"
+    },
+    {
+      "first_edge": 1.5,
+      "kind": "required",
+      "last_edge": 60.0,
+      "nbins": 16,
+      "read_id": "EP_BeamAngleX_1:hXSec_pz",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_BeamAngleX_1:hXSec_eavail",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_BeamAngleX_1:hXSec_q3",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 6,
+      "read_id": "EP_BeamAngleX_1:hXSec_W",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleX_1:ndim",
+      "root_class": "TParameter<int>",
+      "status": "read",
+      "value": 5
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleX_1:dataPOT",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.057394261158926e+21
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleX_1:globalCompleteness",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.0
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_1:estimator_seed",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_1:estimator_seed_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_1:estimator_seed_1",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_1:est_seed_offset",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_1:est_seed_offset_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleX_1:est_seed_offset_1",
+      "status": "absent"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "EP_BeamAngleY_0:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "251a48eeda3430077a8edb62208d8292a66424dcf2678a358d40baf69c87e978",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "EP_BeamAngleY_0:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 4.5,
+      "nbins": 14,
+      "read_id": "EP_BeamAngleY_0:hXSec_pt",
+      "status": "read"
+    },
+    {
+      "first_edge": 1.5,
+      "kind": "required",
+      "last_edge": 60.0,
+      "nbins": 16,
+      "read_id": "EP_BeamAngleY_0:hXSec_pz",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_BeamAngleY_0:hXSec_eavail",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_BeamAngleY_0:hXSec_q3",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 6,
+      "read_id": "EP_BeamAngleY_0:hXSec_W",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleY_0:ndim",
+      "root_class": "TParameter<int>",
+      "status": "read",
+      "value": 5
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleY_0:dataPOT",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.057394261158926e+21
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleY_0:globalCompleteness",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.0
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_0:estimator_seed",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_0:estimator_seed_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_0:estimator_seed_1",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_0:est_seed_offset",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_0:est_seed_offset_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_0:est_seed_offset_1",
+      "status": "absent"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "EP_BeamAngleY_1:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "1a72b3bfb14bd7984fac4b9678d945f614bd5dc5f8000b5cadbb4622053e2c1a",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "EP_BeamAngleY_1:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 4.5,
+      "nbins": 14,
+      "read_id": "EP_BeamAngleY_1:hXSec_pt",
+      "status": "read"
+    },
+    {
+      "first_edge": 1.5,
+      "kind": "required",
+      "last_edge": 60.0,
+      "nbins": 16,
+      "read_id": "EP_BeamAngleY_1:hXSec_pz",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_BeamAngleY_1:hXSec_eavail",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_BeamAngleY_1:hXSec_q3",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 6,
+      "read_id": "EP_BeamAngleY_1:hXSec_W",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleY_1:ndim",
+      "root_class": "TParameter<int>",
+      "status": "read",
+      "value": 5
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleY_1:dataPOT",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.057394261158926e+21
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_BeamAngleY_1:globalCompleteness",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.0
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_1:estimator_seed",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_1:estimator_seed_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_1:estimator_seed_1",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_1:est_seed_offset",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_1:est_seed_offset_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_BeamAngleY_1:est_seed_offset_1",
+      "status": "absent"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "EP_MuonResolution_0:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "ad00427cfa217b32bcecbe8e3f1306838afbb5809c521732f0500bb63569aff3",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "EP_MuonResolution_0:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 4.5,
+      "nbins": 14,
+      "read_id": "EP_MuonResolution_0:hXSec_pt",
+      "status": "read"
+    },
+    {
+      "first_edge": 1.5,
+      "kind": "required",
+      "last_edge": 60.0,
+      "nbins": 16,
+      "read_id": "EP_MuonResolution_0:hXSec_pz",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_MuonResolution_0:hXSec_eavail",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_MuonResolution_0:hXSec_q3",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 6,
+      "read_id": "EP_MuonResolution_0:hXSec_W",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_MuonResolution_0:ndim",
+      "root_class": "TParameter<int>",
+      "status": "read",
+      "value": 5
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_MuonResolution_0:dataPOT",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.057394261158926e+21
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_MuonResolution_0:globalCompleteness",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.0
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_0:estimator_seed",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_0:estimator_seed_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_0:estimator_seed_1",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_0:est_seed_offset",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_0:est_seed_offset_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_0:est_seed_offset_1",
+      "status": "absent"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "EP_MuonResolution_1:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "38e38a7c5c1ff615f31636c6c496734d1ebbd206648965608105eb3d5f15e968",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "EP_MuonResolution_1:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 4.5,
+      "nbins": 14,
+      "read_id": "EP_MuonResolution_1:hXSec_pt",
+      "status": "read"
+    },
+    {
+      "first_edge": 1.5,
+      "kind": "required",
+      "last_edge": 60.0,
+      "nbins": 16,
+      "read_id": "EP_MuonResolution_1:hXSec_pz",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_MuonResolution_1:hXSec_eavail",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_MuonResolution_1:hXSec_q3",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 6,
+      "read_id": "EP_MuonResolution_1:hXSec_W",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_MuonResolution_1:ndim",
+      "root_class": "TParameter<int>",
+      "status": "read",
+      "value": 5
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_MuonResolution_1:dataPOT",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.057394261158926e+21
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_MuonResolution_1:globalCompleteness",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.0
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_1:estimator_seed",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_1:estimator_seed_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_1:estimator_seed_1",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_1:est_seed_offset",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_1:est_seed_offset_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_MuonResolution_1:est_seed_offset_1",
+      "status": "absent"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINERvA_0:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "7165649c88be4c8e7d3fbec06cf7f8687a6fc6447457e075096e5ccf5856d712",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "EP_Muon_Energy_MINERvA_0:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 4.5,
+      "nbins": 14,
+      "read_id": "EP_Muon_Energy_MINERvA_0:hXSec_pt",
+      "status": "read"
+    },
+    {
+      "first_edge": 1.5,
+      "kind": "required",
+      "last_edge": 60.0,
+      "nbins": 16,
+      "read_id": "EP_Muon_Energy_MINERvA_0:hXSec_pz",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_Muon_Energy_MINERvA_0:hXSec_eavail",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_Muon_Energy_MINERvA_0:hXSec_q3",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 6,
+      "read_id": "EP_Muon_Energy_MINERvA_0:hXSec_W",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINERvA_0:ndim",
+      "root_class": "TParameter<int>",
+      "status": "read",
+      "value": 5
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINERvA_0:dataPOT",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.057394261158926e+21
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINERvA_0:globalCompleteness",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.0
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_0:estimator_seed",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_0:estimator_seed_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_0:estimator_seed_1",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_0:est_seed_offset",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_0:est_seed_offset_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_0:est_seed_offset_1",
+      "status": "absent"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINERvA_1:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "32a708f7b9b3061333527cdf1991661ab52ced7fbc8272e3ac226b444500f307",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "EP_Muon_Energy_MINERvA_1:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 4.5,
+      "nbins": 14,
+      "read_id": "EP_Muon_Energy_MINERvA_1:hXSec_pt",
+      "status": "read"
+    },
+    {
+      "first_edge": 1.5,
+      "kind": "required",
+      "last_edge": 60.0,
+      "nbins": 16,
+      "read_id": "EP_Muon_Energy_MINERvA_1:hXSec_pz",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_Muon_Energy_MINERvA_1:hXSec_eavail",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_Muon_Energy_MINERvA_1:hXSec_q3",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 6,
+      "read_id": "EP_Muon_Energy_MINERvA_1:hXSec_W",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINERvA_1:ndim",
+      "root_class": "TParameter<int>",
+      "status": "read",
+      "value": 5
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINERvA_1:dataPOT",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.057394261158926e+21
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINERvA_1:globalCompleteness",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.0
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_1:estimator_seed",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_1:estimator_seed_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_1:estimator_seed_1",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_1:est_seed_offset",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_1:est_seed_offset_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINERvA_1:est_seed_offset_1",
+      "status": "absent"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINOS_0:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "193db9c04af367ac98571117c81bb6ccedc20b1575ae386beef7c61753fb7139",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "EP_Muon_Energy_MINOS_0:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 4.5,
+      "nbins": 14,
+      "read_id": "EP_Muon_Energy_MINOS_0:hXSec_pt",
+      "status": "read"
+    },
+    {
+      "first_edge": 1.5,
+      "kind": "required",
+      "last_edge": 60.0,
+      "nbins": 16,
+      "read_id": "EP_Muon_Energy_MINOS_0:hXSec_pz",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_Muon_Energy_MINOS_0:hXSec_eavail",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_Muon_Energy_MINOS_0:hXSec_q3",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 6,
+      "read_id": "EP_Muon_Energy_MINOS_0:hXSec_W",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINOS_0:ndim",
+      "root_class": "TParameter<int>",
+      "status": "read",
+      "value": 5
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINOS_0:dataPOT",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.057394261158926e+21
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINOS_0:globalCompleteness",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.001824229352185
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_0:estimator_seed",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_0:estimator_seed_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_0:estimator_seed_1",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_0:est_seed_offset",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_0:est_seed_offset_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_0:est_seed_offset_1",
+      "status": "absent"
+    },
+    {
+      "key_count": 13,
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINOS_1:key_listing",
+      "status": "read"
+    },
+    {
+      "NOT": "read_from_G",
+      "all_finite": true,
+      "byte_order": "little",
+      "content_sha256": "d1b70014a7c57a5fad3751bf56d25c671cd6d583080ece8b00546d8d10011869",
+      "count": 10694,
+      "count_matches_S": true,
+      "declared_nbins": 65856,
+      "dtype": "int64",
+      "expected_count": 10694,
+      "kind": "required",
+      "measured_nbins": 65856,
+      "nbins_conforms": true,
+      "provenance": "reconstructed_through_producer_input_route",
+      "read_id": "EP_Muon_Energy_MINOS_1:hXSecND_flat",
+      "reported_mask_hash": "74374b1af0795c3eb077c9ef0ee6ef3cfa4d7b7b3df63bd4f392d7db80eb136a",
+      "reported_mask_matches_S": true,
+      "row_index_matches_S": true,
+      "row_index_sha256": "61746918371fb9a99f69b8e657f98e0796ae9efd63e21a89346fbb620a596f08",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 4.5,
+      "nbins": 14,
+      "read_id": "EP_Muon_Energy_MINOS_1:hXSec_pt",
+      "status": "read"
+    },
+    {
+      "first_edge": 1.5,
+      "kind": "required",
+      "last_edge": 60.0,
+      "nbins": 16,
+      "read_id": "EP_Muon_Energy_MINOS_1:hXSec_pz",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_Muon_Energy_MINOS_1:hXSec_eavail",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 7,
+      "read_id": "EP_Muon_Energy_MINOS_1:hXSec_q3",
+      "status": "read"
+    },
+    {
+      "first_edge": 0.0,
+      "kind": "required",
+      "last_edge": 100.0,
+      "nbins": 6,
+      "read_id": "EP_Muon_Energy_MINOS_1:hXSec_W",
+      "status": "read"
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINOS_1:ndim",
+      "root_class": "TParameter<int>",
+      "status": "read",
+      "value": 5
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINOS_1:dataPOT",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.057394261158926e+21
+    },
+    {
+      "kind": "required",
+      "read_id": "EP_Muon_Energy_MINOS_1:globalCompleteness",
+      "root_class": "TParameter<double>",
+      "status": "read",
+      "value": 1.0005210189647662
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_1:estimator_seed",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_1:estimator_seed_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_1:estimator_seed_1",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_1:est_seed_offset",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_1:est_seed_offset_0",
+      "status": "absent"
+    },
+    {
+      "detail": "declared as 'when present'",
+      "kind": "expected-optional",
+      "present": false,
+      "read_id": "EP_Muon_Energy_MINOS_1:est_seed_offset_1",
+      "status": "absent"
+    }
+  ],
+  "root_version": "6.28/12",
+  "schema_version": 1,
+  "started_at_utc": "2026-09-09T19:36:24.549922Z"
+}
