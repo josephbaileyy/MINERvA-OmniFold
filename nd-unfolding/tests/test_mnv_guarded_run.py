@@ -7447,6 +7447,13 @@ class InstallIsIdempotentOnlyForACompatibleRequest(unittest.TestCase):
             f"import importlib.util as u\n"
             f"s = u.spec_from_file_location('impostor', {str(impostor)!r})\n"
             "m = u.module_from_spec(s)\n"
+            # REGISTERED, and the registration is the whole point. `inspect.getfile` resolves
+            # a CLASS through `sys.modules[cls.__module__]`, so an unregistered module makes it
+            # RAISE and the refusal comes from the `except` fallback with `installed None` --
+            # never reaching the path comparison this test is named for. `sitecustomize`
+            # registers the propagated module, so registered is also the shape the real
+            # topology produces. Unregistered is covered by its own test below.
+            "sys.modules['impostor'] = m\n"
             "s.loader.exec_module(m)\n"
             "for i, f in enumerate(sys.meta_path):\n"
             "    if getattr(f, '__name__', None) == 'PathFinder' "
@@ -7466,6 +7473,54 @@ class InstallIsIdempotentOnlyForACompatibleRequest(unittest.TestCase):
         self.assertIn("REFUSED", result.stdout, result.stdout + result.stderr)
         self.assertIn("guard module file", result.stdout,
                       "the refusal must name the provenance, not the policy")
+        self.assertIn("impostor.py", result.stdout,
+                      "the refusal must name the impostor's ACTUAL path; 'installed None' "
+                      "means the except fallback fired and the comparison was never reached")
+        self.assertNotIn("installed None", result.stdout)
+
+    def test_an_incumbent_whose_class_has_no_readable_source_file_is_refused(self):
+        """The `except` branch, which the registered impostor above deliberately does not take.
+
+        Kept as a separate arm rather than folded in, because the two reach the refusal by
+        different routes and a single test covering "either" would let a mutant survive in
+        whichever one it did not happen to exercise -- which is exactly what happened: with
+        the impostor unregistered, `if installed_module != this_module` could be mutated to
+        `if installed_module is None` and all 273 tests still passed while the decoy ran.
+        """
+        impostor = write(
+            self.good / "nd-unfolding" / "unregistered.py",
+            "class GuardedPathFinder:\n"
+            "    def __init__(self, inner, expect, allowed):\n"
+            "        self._inner = inner\n"
+            "        self.expect_root = expect\n"
+            "        self.allowed = allowed\n"
+            "    def find_spec(self, fullname, path=None, target=None):\n"
+            "        return self._inner.find_spec(fullname, path, target)\n"
+            "    def invalidate_caches(self):\n"
+            "        pass\n")
+        result = self.probe(
+            f"import importlib.util as u\n"
+            f"s = u.spec_from_file_location('unreg', {str(impostor)!r})\n"
+            "m = u.module_from_spec(s)\n"
+            "s.loader.exec_module(m)\n"          # deliberately NOT registered
+            "for i, f in enumerate(sys.meta_path):\n"
+            "    if getattr(f, '__name__', None) == 'PathFinder' "
+            "or type(f).__name__ == 'PathFinder':\n"
+            f"        sys.meta_path[i] = m.GuardedPathFinder(f, {str(self.good)!r}, "
+            f"frozenset({{{str(self.good)!r}}}))\n"
+            "        break\n"
+            "else:\n"
+            "    raise SystemExit('fixture failed to plant the impostor')\n"
+            "try:\n"
+            f"    g.install({str(self.good)!r})\n"
+            "except RuntimeError as exc:\n"
+            "    print('REFUSED', exc)\n"
+            "else:\n"
+            "    print('ADOPTED')\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("REFUSED", result.stdout, result.stdout + result.stderr)
+        self.assertIn("installed None", result.stdout,
+                      "this arm exists to cover the unreadable-source-file branch")
 
     def test_an_incumbent_whose_allowed_is_a_string_is_refused_not_coerced(self):
         """`frozenset('abc')` is three characters, not an error, so coercion hides a mismatch."""

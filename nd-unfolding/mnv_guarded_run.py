@@ -5248,6 +5248,15 @@ def _refuse_an_incompatible_reinstall(incumbent, expect: str, allowed: frozenset
     refuses imports the caller declared legitimate, and while that direction is fail-closed
     it is still not the guard the caller asked for. Neither is ours to reconcile here.
 
+    THE DECISIVE ARGUMENT FOR EQUALITY IS ABOUT THE RECORD, NOT ABOUT ENFORCEMENT, and it is
+    written down because the enforcement argument alone reads as mere conservatism and
+    invites a later reviewer to relax this to containment. `write_inventory` writes
+    `"expect_root"` and `"allow"` from the CALLER's arguments and never from the incumbent.
+    So under any non-equality rule the emitted record would describe a policy that did not
+    enforce -- a false receipt, which in this repository is worse than a refusal, because a
+    refusal is read as a refusal and a receipt is read as a measurement. Under equality the
+    two cannot disagree.
+
     LINEAGE IS DELIBERATELY NOT COMPARED. `_arm_child_environment` ADVANCES the recorded
     depth and rewrites the parent pid as part of arming, so by the time a second `install()`
     reads the environment it sees `depth + 1` and this process's own pid. Comparing lineage
@@ -5261,7 +5270,10 @@ def _refuse_an_incompatible_reinstall(incumbent, expect: str, allowed: frozenset
     `expect_root` and `allowed` would accept any object that merely CLAIMS the right policy
     while enforcing none of it, and the accepted object supplies both the enforcement and
     the fields the record is written from, so the record would say `propagation: armed`
-    either way. Measured before this clause existed: a forty-line class named
+    either way. A CONSEQUENCE WORTH EXPECTING: two byte-identical copies of this file at two
+    paths inside one tree now refuse each other. That is intended -- they are two unlike
+    provenances as far as review is concerned -- but it is surprising the first time.
+    Measured before this clause existed: a forty-line class named
     `GuardedPathFinder`, whose `find_spec` delegates to the real finder unchanged, was
     adopted by a second `install()`; the payload then imported from the stale tree and the
     run exited 0. At the parent commit the same probe exited 2, because there ANY incumbent
@@ -5275,6 +5287,13 @@ def _refuse_an_incompatible_reinstall(incumbent, expect: str, allowed: frozenset
         #: A type with no readable source file is not a guard this module produced. It is
         #: reported as a disagreement rather than raised, so the caller sees WHY it was
         #: refused instead of a traceback from the check itself.
+        #: WHY `None` IS REACHABLE AT ALL, since a debugger reading "installed None" will
+        #: otherwise assume the check is broken: `inspect.getfile` resolves a CLASS through
+        #: `sys.modules[cls.__module__]`, so a module that was never registered there -- or
+        #: was registered and then pruned, e.g. by a chained third-party `sitecustomize`
+        #: running between the two installs -- raises rather than answering. The propagated
+        #: half registers itself (`mnv_guard_shim/sitecustomize.py`) and holds the
+        #: reference, so a legitimate repeat install does not take this branch.
         installed_module = None
     this_module = str(pathlib.Path(__file__).resolve())
     if installed_module != this_module:
