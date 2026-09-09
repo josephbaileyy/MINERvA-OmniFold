@@ -1,0 +1,56 @@
+=== interpreter probe, run fresh in the exact test shell ===
+$ command -v python3
+/Users/josephbailey/miniconda3/bin/python3
+
+$ python3 -c 'import numpy,sys; print(sys.executable); print(numpy.__version__); print(numpy.__file__); print(sys.path)'
+/Users/josephbailey/miniconda3/bin/python3
+1.26.4
+/Users/josephbailey/miniconda3/lib/python3.12/site-packages/numpy/__init__.py
+['', '/Users/josephbailey/miniconda3/lib/python312.zip', '/Users/josephbailey/miniconda3/lib/python3.12', '/Users/josephbailey/miniconda3/lib/python3.12/lib-dynload', '/Users/josephbailey/.local/lib/python3.12/site-packages', '/Users/josephbailey/miniconda3/lib/python3.12/site-packages', '/Users/josephbailey/Documents/School/selfstudy/bumphunt/hps_gp_v1/src', '/Users/josephbailey/miniconda3/lib/python3.12/site-packages/pyBumpHunter-0.4.3.dev8+ga05c083.d20250619-py3.12.egg', '/Users/josephbailey/miniconda3/lib/python3.12/site-packages/setuptools/_vendor']
+
+$ /usr/bin/python3 -c 'import numpy,sys; ...'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'numpy'
+
+=== test run, interpreter named explicitly ===
+$ /Users/josephbailey/miniconda3/bin/python3 -m unittest discover -s nd-unfolding/pm_inspection -p 'test_pm_*.py'
+......................................
+----------------------------------------------------------------------
+Ran 38 tests in 0.195s
+
+OK
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 20, "records": 5, "missing_read_records": 33}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+
+=== third repair round, re-run 2026-09-07T23:18:52Z ===
+$ /Users/josephbailey/miniconda3/bin/python3 -m unittest discover -s nd-unfolding/pm_inspection -p 'test_pm_*.py'
+............................................
+----------------------------------------------------------------------
+Ran 44 tests in 0.272s
+
+OK
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 20, "records": 5, "missing_read_records": 33}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
+{"exit_code": 0, "records": 38, "missing_read_records": 0}
