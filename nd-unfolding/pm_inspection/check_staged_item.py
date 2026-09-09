@@ -27,7 +27,7 @@ queue writes.  It is not an authorization and it does not approve.  A PASS says 
 is staged is what the committed tree produces.
 
 USE:
-    campaignctl ... show --id pm-root-inspection-20260909 > staged-item.json
+    campaignctl ... show --id pm-root-inspection-20260909b > staged-item.json
     check_staged_item.py --item staged-item.json --repo <integrated checkout> \
         --expect-head <the reviewed head>
 
@@ -49,14 +49,18 @@ sys.path.insert(0, str(HERE))
 
 import pm_root_inspect as producer  # noqa: E402
 
-#: REPOINTED 2026-09-09. `revoke` writes a record keyed on the ITEM ID and `state_of` reads it
-#: forever, so a revoked id can never be re-staged and a new campaign instance is the only
-#: recovery. The contract pins campaign_id to this value, which is why a new contract goes
-#: with it.
-CAMPAIGN_ID = "pm-root-inspection-20260909"
-#: REPOINTED 2026-09-09 alongside REVIEWED_CONTRACT_SHA256; the 20260908 contract stays on
-#: main as the record of the item that was staged, approved and revoked, and is not edited.
-CONTRACT_PATH = "docs/orchestration/contracts/CONTRACT-20260909-pm-root-inspection.json"
+#: REPOINTED 2026-09-09 (2nd time). `revoke` writes a record keyed on the ITEM ID and
+#: `state_of` reads it forever, so a revoked id can never be re-staged and a new campaign
+#: instance is the only recovery. The contract pins campaign_id to this value, which is why a
+#: new contract goes with it. `-20260909` is burned differently from `-20260908`: it was not
+#: revoked, it RAN and FAILED, and `state_of` reports it `failed` permanently. A failed id is
+#: as unusable as a revoked one, so the third instance costs a third contract.
+CAMPAIGN_ID = "pm-root-inspection-20260909b"
+#: REPOINTED alongside REVIEWED_CONTRACT_SHA256. Both earlier contracts stay on main as the
+#: record of what was staged, approved, and then revoked (20260908) or failed (20260909).
+#: Neither is edited: mutating one would make its record describe something that never
+#: happened.
+CONTRACT_PATH = "docs/orchestration/contracts/CONTRACT-20260909b-pm-root-inspection.json"
 BINDINGS_PATH = "nd-unfolding/pm_inspection/INPUT-BINDINGS-20260908.json"
 PRODUCER_PATH = "nd-unfolding/pm_inspection/pm_root_inspect.py"
 GUARD_PATH = "nd-unfolding/mnv_guarded_run.py"
@@ -64,6 +68,18 @@ DATA_ROOT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 INNER_PYTHON = "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python"
 OUTER_PYTHON = "/usr/bin/python3.11"
 DEFAULT_EXPECT_ROOT = "/pscratch/sd/j/josephrb/exec-20260907"
+#: WHERE THE GUARD'S STRUCTURED RECORD LANDS, and it has to be in the argv rather than left to
+#: the environment. MEASURED on 2026-09-09: with no `--inventory` the campaign captured ZERO
+#: JSONL records -- `_arm_child_environment` does `setdefault(INVENTORY_ENV, "")`, the empty
+#: string reaches the batch job through `sbatch --export=ALL`, and the shim reads it as None at
+#: startup. Only the human-readable `[oi136-inv]` stderr block survived, so a refused arm left
+#: nothing structured to cite. Passing `--inventory` to the OUTER producer fixes both levels:
+#: `main()` sets `INVENTORY_ENV` before `install()`, so the real path is what the batch job
+#: inherits and what its shim captures. Measured in a two-level fixture: 0 records without,
+#: 3 with -- including the inner job at depth=1 carrying its own `--label`.
+#: IT MUST BE ABSOLUTE, on a filesystem the COMPUTE node can write, and ITS PARENT MUST EXIST:
+#: `write_inventory` opens the file with `open(dest, "a")` and does not create directories.
+GUARD_INVENTORY = "/pscratch/sd/j/josephrb/pm-inspection-20260909b/guard-inventory.jsonl"
 DESCRIPTION = (
     "Bounded attended read-only ROOT inspection for PM-1/PM-3/PM-4/PM-5")
 
@@ -76,15 +92,16 @@ REVIEWED_MAXIMUM_COST = {"gpu_task_hours": 0.0, "cpu_task_hours": 0.5, "wall_hou
 #: A stale copy with a filesystem output_namespace and --report/--out literals rides on the
 #: launcher branch, and an item staged from it would agree with itself perfectly. Editing the
 #: contract must therefore change this constant, which means passing a reviewer.
-#: REPOINTED 2026-09-09 to CONTRACT-20260909-pm-root-inspection.json, whose only difference from
-#: the 20260908 contract is `campaign_id`. Why a new contract at all: `revoke` writes a record keyed
+#: REPOINTED 2026-09-09 (2nd time) to CONTRACT-20260909b-pm-root-inspection.json, whose only
+#: difference from the 20260909 contract is `campaign_id` -- verified by diff as two changed
+#: lines, one removed and one added. Why a new contract at all: `revoke` writes a record keyed
 #: on the ITEM ID and `state_of` reads it forever, so a revoked id can never be re-staged; the
 #: contract pins `campaign_id` to that id, so recovering from a revoke costs a new contract. The
 #: 20260908 contract stays on main as the record of the item that was staged, approved and revoked.
 #: Changed as a constant, deliberately, rather than passed via --expect-contract-sha256: the flag
 #: would route around the reviewer this pin exists to require.
 REVIEWED_CONTRACT_SHA256 = (
-    "86134ddbac581e40bf48a783da752ef558187625010d0a1bc7d5258d26b00d49")
+    "2d91f022d497506255078796782171ccbf28a95df83348e3bac79e53d7c22aac")
 
 
 class CheckError(Exception):
@@ -103,6 +120,7 @@ def literal_argv(expect_root: str) -> list[str]:
         GUARD_PATH,
         "--expect-root", expect_root,
         "--label", "pm-root-inspection-launch",
+        "--inventory", GUARD_INVENTORY,
         "--",
         PRODUCER_PATH,
         "--mode", "launch",
