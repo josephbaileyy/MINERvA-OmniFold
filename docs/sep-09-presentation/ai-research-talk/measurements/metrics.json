@@ -1,0 +1,173 @@
+{
+  "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+  "measured_at_utc": "2026-09-09T05:27:33.626920+00:00",
+  "scope": "All non-merge commits reachable from revision; author dates; no working-tree files",
+  "limits": [
+    "Repository starts in April; project began in December by speaker recollection.",
+    "April and September are partial observation months.",
+    "A touch is one distinct path in one non-merge commit; repeated edits count again.",
+    "Directory categories are locations, not a classifier of scientific value or labor.",
+    "Authorship, human hours, accepted tasks, learning, and causal speedup are unmeasured.",
+    "Snapshot stock is sensitive to migrations, deletions, and vendoring.",
+    "Scientific figures replot historical committed receipts; no training or new extraction."
+  ],
+  "monthly": [
+    {
+      "month": "2026-04",
+      "nonmerge_commits": 8,
+      "Analysis directories": 171,
+      "Orchestration directories": 0,
+      "Presentation / note": 0,
+      "Other paths": 31
+    },
+    {
+      "month": "2026-05",
+      "nonmerge_commits": 50,
+      "Analysis directories": 483,
+      "Orchestration directories": 0,
+      "Presentation / note": 23,
+      "Other paths": 25
+    },
+    {
+      "month": "2026-06",
+      "nonmerge_commits": 86,
+      "Analysis directories": 595,
+      "Orchestration directories": 0,
+      "Presentation / note": 117,
+      "Other paths": 170
+    },
+    {
+      "month": "2026-07",
+      "nonmerge_commits": 263,
+      "Analysis directories": 752,
+      "Orchestration directories": 635,
+      "Presentation / note": 449,
+      "Other paths": 504
+    },
+    {
+      "month": "2026-08",
+      "nonmerge_commits": 1970,
+      "Analysis directories": 1801,
+      "Orchestration directories": 4582,
+      "Presentation / note": 180,
+      "Other paths": 733
+    },
+    {
+      "month": "2026-09",
+      "nonmerge_commits": 265,
+      "Analysis directories": 233,
+      "Orchestration directories": 608,
+      "Presentation / note": 0,
+      "Other paths": 34
+    }
+  ],
+  "snapshots": [
+    {
+      "month": "2026-04",
+      "label": "2026-04 month end (UTC)",
+      "revision": "93cc13a45a9652467898bcf9a4dbb9cd294f808a",
+      "tracked_files": 137,
+      "tracked_python_files": 24,
+      "Analysis directories": 22,
+      "Orchestration directories": 0,
+      "Presentation / note": 0,
+      "Other paths": 2
+    },
+    {
+      "month": "2026-05",
+      "label": "2026-05 month end (UTC)",
+      "revision": "30416a1730ccbce3739b039a0b651344a688f6a1",
+      "tracked_files": 324,
+      "tracked_python_files": 52,
+      "Analysis directories": 50,
+      "Orchestration directories": 0,
+      "Presentation / note": 0,
+      "Other paths": 2
+    },
+    {
+      "month": "2026-06",
+      "label": "2026-06 month end (UTC)",
+      "revision": "ddf4a7d51f9400962e3b4760440eb34b77a7541b",
+      "tracked_files": 539,
+      "tracked_python_files": 132,
+      "Analysis directories": 118,
+      "Orchestration directories": 0,
+      "Presentation / note": 0,
+      "Other paths": 14
+    },
+    {
+      "month": "2026-07",
+      "label": "2026-07 month end (UTC)",
+      "revision": "1d72cc29fe9e7f893f68d2db4c0ba22a7d6f11d6",
+      "tracked_files": 1432,
+      "tracked_python_files": 269,
+      "Analysis directories": 239,
+      "Orchestration directories": 16,
+      "Presentation / note": 0,
+      "Other paths": 14
+    },
+    {
+      "month": "2026-08",
+      "label": "2026-08 month end (UTC)",
+      "revision": "a3e8785cbce93cfb42300bf393be74dd182f1d15",
+      "tracked_files": 1845,
+      "tracked_python_files": 489,
+      "Analysis directories": 372,
+      "Orchestration directories": 92,
+      "Presentation / note": 7,
+      "Other paths": 18
+    },
+    {
+      "month": "2026-09",
+      "label": "Sep 8 snapshot",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "tracked_files": 2010,
+      "tracked_python_files": 528,
+      "Analysis directories": 402,
+      "Orchestration directories": 101,
+      "Presentation / note": 7,
+      "Other paths": 18
+    }
+  ],
+  "scientific": {
+    "agreement_n": 205,
+    "agreement_counts": [
+      159,
+      193,
+      202
+    ],
+    "total_ours": 3.0733131599571655e-38,
+    "total_paper": 3.03901139455691e-38,
+    "integral_ratio": 1.0112871460310062,
+    "bare_sum_ratio": 1.011478110602404,
+    "bare_sum_ours": 3.7315426459249167e-37,
+    "bare_sum_paper": 3.6891976275220914e-37,
+    "checkpoint_quantiles": {
+      "Bi_median_rel_dev": 0.00834006595099477,
+      "Bi_rel_dev_p90": 0.16758560664386782,
+      "Bi_rel_dev_p99": 0.4205902753577457,
+      "Bi_max_rel_dev": 0.8663473678243816
+    },
+    "checkpoint_aggregate_absolute_gap": 7.603170850789542e-05,
+    "checkpoint_n": 1999928,
+    "repaired_max_rel_dev": 0.0,
+    "repaired_batch_size": 512
+  },
+  "sources": [
+    {
+      "path": "docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "f84305193b8886f22d83a31269feaf4d73829a315e5a7be8096ac071e390dc82"
+    },
+    {
+      "path": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "8d3079f828175119df7ea156547ecd6869c9ea3e5f7892b092c7521758cbdc4f"
+    },
+    {
+      "path": "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "9901a23bbe20dd614cfbfd8e24f19c24e259aa4f3303b9a203844e71f1f7484c"
+    }
+  ]
+}

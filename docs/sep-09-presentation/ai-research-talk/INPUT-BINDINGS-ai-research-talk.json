@@ -1,0 +1,50 @@
+{
+  "also_excluded_by_repository_policy": {
+    "*.log": "One file, inputs/eavailW_band_20260811_allfour.log, was force-added anyway: EVIDENCE.md cites it as evidence, it is 2.5 KB of text, and a cited artifact that is absent from the tree makes the citation dangle where no review would catch it.",
+    "*.png": "36 raster figures and slide previews. Not a loss: the same figures are committed as vector PDFs under figures/, which .gitignore re-includes via `!docs/**/*.pdf`, and the slide previews are renderings of the committed research-with-ai.pdf."
+  },
+  "data_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+  "how_to_restore": "For each entry: copy $data_root/$source_relpath to $local_name, then verify sha256. check_artifacts.py verifies the built outputs; this file covers the inputs it consumes.",
+  "inputs": [
+    {
+      "local_name": "inputs/ours_2d.root",
+      "provenance": "recorded in EVIDENCE.md by the author",
+      "sha256": "142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5",
+      "size_bytes": 55513,
+      "source_relpath": "2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root"
+    },
+    {
+      "local_name": "inputs/ours_2d_bootstrap.root",
+      "provenance": "RECOVERED 2026-09-09 by matching size then verifying sha256 against the data root; the author's notes did not record a source for this file",
+      "sha256": "f7c734b1127e2cf75ccf2cc4241062b5dced2d55fcec785fa0d42ec861c10270",
+      "size_bytes": 319885,
+      "source_relpath": "2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root"
+    },
+    {
+      "local_name": "inputs/ours_2d_ml.root",
+      "provenance": "RECOVERED 2026-09-09 by matching size then verifying sha256 against the data root; the author's notes did not record a source for this file",
+      "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9",
+      "size_bytes": 320371,
+      "source_relpath": "2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root"
+    },
+    {
+      "local_name": "inputs/ours_2d_systematics.root",
+      "provenance": "RECOVERED 2026-09-09 by matching size then verifying sha256 against the data root; the author's notes did not record a source for this file",
+      "sha256": "62590df75525d6095ce2c0cb96230c875112f0f9223d685c449665eb1936d4e9",
+      "size_bytes": 14106315,
+      "source_relpath": "2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root"
+    },
+    {
+      "local_name": "inputs/published_2d.root",
+      "provenance": "recorded in EVIDENCE.md by the author",
+      "sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+      "size_bytes": 1272641,
+      "source_relpath": "2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root"
+    }
+  ],
+  "measured_at_utc": "2026-09-09T19:18:32.920525Z",
+  "schema_version": 1,
+  "what_these_digests_are": "The bytes each file held when the talk was built, verified 2026-09-09 to be BYTE-IDENTICAL to the file at source_relpath under data_root. Both sides were hashed for this record; the two already documented in EVIDENCE.md agreed with what the author wrote.",
+  "what_these_digests_are_NOT": "They are not evidence that these files are correct, current, or the right inputs for any scientific claim. They fix WHICH bytes the figures were built from, nothing more. The data root is a deployed checkout that cannot be pinned by commit.",
+  "why_these_are_not_committed": "The repository's root .gitignore REFUSES them at line 2 (`*.root`, 'generated artifacts, anywhere in the tree'). This is enforced policy and not merely an observed habit, so these five files could not have been committed by an ordinary `git add` even if that had been intended. They total ~15 MB, the largest 13.5 MB against a largest tracked blob of 8.5 MB, and history rewriting is not available in this repository -- so pinning by digest is both the policy-conforming route and the reversible one."
+}

@@ -1,0 +1,133 @@
+{
+  "inputs": [
+    {
+      "local": "ours_2d_systematics.root",
+      "remote": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root",
+      "sha256": "62590df75525d6095ce2c0cb96230c875112f0f9223d685c449665eb1936d4e9",
+      "size_bytes": 14106315
+    },
+    {
+      "local": "ours_2d_bootstrap.root",
+      "remote": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root",
+      "sha256": "f7c734b1127e2cf75ccf2cc4241062b5dced2d55fcec785fa0d42ec861c10270",
+      "size_bytes": 319885
+    },
+    {
+      "local": "ours_2d_ml.root",
+      "remote": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+      "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9",
+      "size_bytes": 320371
+    }
+  ],
+  "sources": [
+    {
+      "path": "2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/MEFHC_fig6_7_uncertainty_summary.txt",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "0571c4ade51f1d22eb2b4957db5aa8f417f10559cdb36a28ebb1b9332cc1b40b"
+    },
+    {
+      "path": "2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "084a88ae4436b28a5df0989cba73c859fa6a659ce7cf858851b0f973f7036c04"
+    },
+    {
+      "path": "2d-unfolding/2D_OMNIFOLD_REFERENCE.md",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "9c7d2b195dab8e6ca419482be6b006a6cc95be1788ab08cc7b4d1d7516cae450"
+    },
+    {
+      "path": "VALIDATION_LEDGER.md",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "46110d7be0507701bf5314bc4ed14f56995744bd78bb43fda1da6312974078e9"
+    },
+    {
+      "path": "2d-unfolding/uq/analyze_universes.py",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "c070e852cda3e647b4ede439fc4fcc38ad73c313b1fa071d44a856039dcbc148"
+    },
+    {
+      "path": "2d-unfolding/minerva_paper_anc/README",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "715fd56e53d61bf07565dac4195b1f7d71d2f6453ea014f19144d1965a6ffe2a"
+    }
+  ],
+  "construction": "hCov_combined (systematic plus bootstrap) + ML:hCov2D_reported; bootstrap not added a second time",
+  "projection_checks": {
+    "pt": {
+      "central": [
+        1.11027055976365e-39,
+        4.201896188615785e-39,
+        1.0058242457967222e-38,
+        1.748995027287884e-38,
+        2.412569055017497e-38,
+        2.984198893741766e-38,
+        3.440742465434583e-38,
+        3.6438824493266524e-38,
+        3.3063445842203826e-38,
+        2.565373931950823e-38,
+        1.5258391311248956e-38,
+        6.377137953903393e-39,
+        1.482741484769371e-39,
+        1.0944195594425506e-40
+      ],
+      "sigma": [
+        7.189599570279207e-41,
+        2.544469521599728e-40,
+        6.2822318485707904e-40,
+        1.0858858058538163e-39,
+        1.4581247564316213e-39,
+        1.8370715962346228e-39,
+        2.1929387242910986e-39,
+        2.019808636616036e-39,
+        1.787475409077702e-39,
+        1.4455035993395014e-39,
+        9.508845581155707e-40,
+        4.595329776016098e-40,
+        1.023507827474107e-40,
+        8.795781391310618e-42
+      ],
+      "median_relative_percent": 6.220253331724103,
+      "max_relative_percent": 8.036937311126643
+    },
+    "pz": {
+      "central": [
+        2.4004814241580614e-39,
+        3.903980186161595e-39,
+        5.178472474723147e-39,
+        5.94938148913826e-39,
+        6.173619594564288e-39,
+        6.013821026498079e-39,
+        5.501339976431805e-39,
+        4.370359401218524e-39,
+        2.819027191339169e-39,
+        1.558083474588291e-39,
+        8.695484345029787e-40,
+        5.4009692574052946e-40,
+        2.717497880578891e-40,
+        1.3319684171193185e-40,
+        4.2236223020951123e-41,
+        7.300523853820868e-42
+      ],
+      "sigma": [
+        3.5992580858590195e-40,
+        2.6908218269265717e-40,
+        3.208649156756555e-40,
+        3.39047101536437e-40,
+        3.474475241111936e-40,
+        3.2758910269297835e-40,
+        2.974943757954456e-40,
+        2.3754407691543e-40,
+        1.6508008358846847e-40,
+        1.0659915829200764e-40,
+        6.152949110375146e-41,
+        3.3010753941820906e-41,
+        1.5496619285536207e-41,
+        7.758206866705485e-42,
+        2.5111838808858894e-42,
+        5.4570488493262614e-43
+      ],
+      "median_relative_percent": 5.900746504919395,
+      "max_relative_percent": 14.993901013507797
+    }
+  }
+}
