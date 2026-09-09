@@ -265,6 +265,7 @@ docs/orchestration/audit_validator_tolerance_units.py	tracked	MACHINE	script			g
 docs/orchestration/campaignctl.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/test_campaignctl.py;docs/orchestration/wakerctl.py;nd-unfolding/mnv_guarded_run.py;nd-unfolding/pm_inspection/check_staged_item.py;nd-unfolding/pm_inspection/pm_root_inspect.py;nd-unfolding/pm_inspection/test_pm_staging_check.py;nd-unfolding/tests/test_mnv_guarded_run.py	no	25	4627	207580
 docs/orchestration/compare_m1_m6.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/test_compare_m1_m6.py	no	41	1101	67440
 docs/orchestration/contracts/CONTRACT-20260908-pm-root-inspection.json	tracked	MACHINE	machine-data		20260908	generated		exact-path-only	nd-unfolding/pm_inspection/check_staged_item.py	no	3	170	8644
+docs/orchestration/contracts/CONTRACT-20260909b-pm-root-inspection.json	tracked	MACHINE	machine-data		20260909	generated		exact-path-only	nd-unfolding/pm_inspection/check_staged_item.py	no	2	170	8645
 docs/orchestration/control-plane/campaign-origin.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/campaignctl.py;docs/orchestration/state/transport-probe-20260908/positive-control-probe.sh;docs/orchestration/test_campaignctl.py;docs/orchestration/verify_hash_bindings.py;nd-unfolding/pm_inspection/test_pm_staging_check.py	no	9	8	388
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	5	13	747
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	4	26	8403
@@ -307,6 +308,7 @@ docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json	tracked	MACHINE	
 docs/orchestration/receipts/RECEIPT-open-items-archive-repin-20260821.json	tracked	MACHINE	machine-data	20260806-campaign	20260821	generated		exact-path-only	docs/open-items/verify_open_items_restructure.py	no	2	86	4853
 docs/orchestration/run_gate2_r4_detached.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	nd-unfolding/pet/sbatch_gate2_target_validator.sh	no	4	31	1403
 docs/orchestration/runbooks/RUNBOOK-20260908-pm-root-inspection-staging.md	tracked	ARCHIVAL	runbook		20260908	terminal		exact-path-only		yes	0	140	7634
+docs/orchestration/runbooks/RUNBOOK-20260909b-pm-root-inspection-staging.md	tracked	ARCHIVAL	runbook		20260909	terminal		exact-path-only		yes	0	176	9826
 docs/orchestration/runs/agent-A-standard/20260826T141501Z-send-4585f665.json	tracked	MACHINE	run-artifact	agent-A-standard	20260826	generated		exact-path-only		yes	1	1	1198
 docs/orchestration/runs/agy-capacity-probe/20260826-f8b-VERDICT.md	tracked	MACHINE	run-artifact	agy-capacity-probe	20260826	generated		exact-path-only	docs/orchestration/test_verify_run_receipt_blind_spots.py	yes	5	80	4932
 docs/orchestration/runs/agy-capacity-probe/20260826-stackgrade-VERDICT-P6-P7-anchor.md	tracked	MACHINE	run-artifact	agy-capacity-probe	20260826	generated		exact-path-only		yes	1	56	1988
@@ -692,6 +694,7 @@ docs/orchestration/state/producers-oi126-r5/run_recip.sh	tracked	MACHINE	state-a
 docs/orchestration/state/producers-oi126-r5/sbatch_c_perm_ens.sh	tracked	MACHINE	state-artifact	producers-oi126-r5		generated		exact-path-only		yes	1	50	2559
 docs/orchestration/state/producers-oi126-r5/sbatch_c_perm_ens5.sh	tracked	MACHINE	state-artifact	producers-oi126-r5		generated		exact-path-only		yes	1	64	3032
 docs/orchestration/state/quoted-products-digests-56760314.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/uq_5d/sbatch_hpss_protect_quoted_products.sh	yes	3	525	20354
+docs/orchestration/state/r5-meter-receipt.json	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/campaignctl.py;docs/orchestration/r5_meter.py;docs/orchestration/test_campaignctl.py	yes	18	47	1546
 docs/orchestration/state/regen_canonical_namespace_field_pins.py	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	yes	4	137	6597
 docs/orchestration/state/sessions.json	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/agentctl.py;docs/orchestration/test_agentctl.py;docs/orchestration/test_wakerctl.py	yes	18	1060	62001
 docs/orchestration/state/step1-dynamics-submit-56531057.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	4	88	3227
