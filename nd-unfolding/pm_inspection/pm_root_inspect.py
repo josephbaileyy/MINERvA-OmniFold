@@ -917,6 +917,58 @@ def cancel_this_job(job_id: str, *, budget: Budget) -> dict[str, object]:
     return result
 
 
+def path_with_inner_python_bin(inner_python: str, environ=None) -> str:
+    """`PATH` with the inner interpreter's own `bin/` on it, because ROOT shells out to it.
+
+    WHY THIS EXISTS, measured on 2026-09-09 after job 58123269 died in 16 seconds. Importing
+    ROOT constructs a cling interpreter, and cling extracts the standard library include paths
+    by SHELLING OUT to the compiler that built the conda environment:
+
+        LC_ALL=C x86_64-conda-linux-gnu-c++ -O3 -DNDEBUG -xc++ -E -v /dev/null 2>&1 | sed -n ...
+
+    That binary lives in the conda environment's `bin/`, which is NOT on `PATH` merely because
+    `--inner-python` names an absolute interpreter inside it. With the binary unreachable the
+    command produces nothing, cling builds a modulemap overlay with an empty root entry, and
+    `llvm::vfs::OverlayFileSystem::pushOverlay` SEGFAULTS -- exit 139, before any read happens.
+    Measured both ways on a login node, no scheduler and no guard involved: absent it crashes,
+    present it prints `ROOT OK 6.28/12`.
+
+    AND CLING CANNOT TELL. Its probe ends in `| sed`, so the status it reads belongs to `sed`;
+    it logs "With exit code 0" for a compiler it never found. A missing binary is reported as a
+    successful empty answer, which is why this surfaced as a segfault rather than as an error.
+
+    THIS DOES NOT WEAKEN THE IMPORT GUARD, which was the reason to check rather than assume.
+    `install()` re-arms `PATH` and puts its own wrapper directories FIRST; measured inside a
+    guarded process started with this prepend, the order is shim `bin/`, the guard's generated
+    tools dir, and only then the conda `bin/`. So the wrappers still intercept every `python`
+    and `bash` launch and the compiler is merely REACHABLE, not privileged.
+
+    IT INSERTS THE SPELLING THE CALLER USED AND COMPARES BY REAL PATH, which are deliberately
+    two different rules. `/global/homes/j/josephrb` is a SYMLINK to `/global/u2/j/josephrb` on
+    this system, so `resolve()` silently rewrites the directory `--inner-python` names; the
+    first version of this function did that and the entry it added no longer matched the value
+    pinned in the contract or the argv. Both spellings reach the same binary, so nothing broke
+    -- which is worse, because the check I wrote to confirm the fix reported False against a
+    PATH that was in fact correct, and for a few minutes I believed the repair had failed. So:
+    the inserted entry keeps the caller's spelling and stays auditable against the argv, while
+    the already-present test resolves BOTH sides so the two spellings are recognised as one
+    directory and the entry is not added twice.
+
+    It returns a string instead of mutating, so the caller decides when the environment
+    changes and a test can compare the two without touching the process it runs in.
+    """
+    environ = os.environ if environ is None else environ
+    bin_dir = str(Path(inner_python).parent)
+    if not os.path.isabs(bin_dir):
+        bin_dir = str(Path(bin_dir).resolve())
+    current = environ.get("PATH", "")
+    parts = [entry for entry in current.split(os.pathsep) if entry]
+    target = os.path.realpath(bin_dir)
+    if any(os.path.realpath(entry) == target for entry in parts):
+        return current
+    return os.pathsep.join([bin_dir, *parts])
+
+
 def launch(args, run_dir: Path, task_ids_path: Path, *, clock=time.monotonic,
            sleeper=time.sleep) -> int:
     """Submit one job, record it, wait bounded, and never leave without accounting for it."""
@@ -924,6 +976,11 @@ def launch(args, run_dir: Path, task_ids_path: Path, *, clock=time.monotonic,
     budget = Budget(clock=clock)          # fixed BEFORE anything can be submitted
     job_id: str | None = None
     outcome: dict[str, object] = {"budget_plan": plan}
+    #: BEFORE ANYTHING IS SUBMITTED, because `submit_one_job` passes `--export=ALL` and the
+    #: batch job therefore inherits exactly this environment. The read half runs ROOT on the
+    #: compute node, so the compiler cling looks for has to be reachable THERE; setting it
+    #: after submission would change nothing.
+    os.environ["PATH"] = path_with_inner_python_bin(args.inner_python)
     try:
         wrap = shlex.join([
             args.inner_python, "nd-unfolding/mnv_guarded_run.py",

@@ -410,5 +410,97 @@ class TheStagedTimeoutIsPartOfTheDesign(unittest.TestCase):
         self.assertLessEqual(plan["job_walltime_seconds"], plan["wait_window_seconds"])
 
 
+
+class TheInnerInterpretersBinIsPutOnPathBeforeSubmission(unittest.TestCase):
+    """OI-136-ROOTPATH: job 58123269 segfaulted because cling could not find its compiler.
+
+    Importing ROOT builds a cling interpreter, which extracts the standard library include
+    paths by SHELLING OUT to `x86_64-conda-linux-gnu-c++`. That binary sits in the conda
+    environment's `bin/`, and naming an absolute `--inner-python` inside that environment does
+    NOT put it on `PATH`. cling got nothing back, built a modulemap overlay with an empty root
+    entry, and `llvm::vfs::OverlayFileSystem::pushOverlay` died on a signal -- exit 139, 16
+    seconds, before a single read. Measured on a login node with no guard and no scheduler:
+    absent it crashes, present it prints `ROOT OK 6.28/12`.
+
+    `submit_one_job` passes `--export=ALL`, so the batch job inherits the producer's
+    environment and the fix has to be applied BEFORE submission or it reaches nothing.
+    """
+
+    INNER = "/opt/envs/demo/bin/python"
+
+    def test_the_bin_directory_is_prepended_when_it_is_absent(self):
+        got = producer.path_with_inner_python_bin(self.INNER, {"PATH": "/usr/bin:/bin"})
+        self.assertEqual(got, "/opt/envs/demo/bin:/usr/bin:/bin")
+
+    def test_an_empty_path_yields_just_the_bin_directory(self):
+        self.assertEqual(producer.path_with_inner_python_bin(self.INNER, {}),
+                         "/opt/envs/demo/bin")
+
+    def test_it_is_idempotent_so_a_re_entry_does_not_grow_path(self):
+        once = producer.path_with_inner_python_bin(self.INNER, {"PATH": "/usr/bin"})
+        twice = producer.path_with_inner_python_bin(self.INNER, {"PATH": once})
+        self.assertEqual(once, twice)
+
+    def test_the_entry_keeps_the_spelling_the_caller_used(self):
+        """It must NOT be resolved, and the reason is a symlink that really is in the path.
+
+        `/global/homes/j/josephrb` is a symlink to `/global/u2/j/josephrb` on Perlmutter. The
+        first version called `.resolve()`, so the entry it inserted no longer matched the value
+        pinned in the contract and in the staged argv. Both spellings reach the same binary, so
+        nothing broke -- which is the hazard: the check written to confirm the repair reported
+        False against a PATH that was correct, and the repair looked like a failure. An entry
+        that matches the argv can be audited against it by eye.
+        """
+        link = Path(self._tmp.name) / "linked"
+        link.symlink_to(self.real_bin)
+        got = producer.path_with_inner_python_bin(str(link / "python"), {"PATH": "/usr/bin"})
+        self.assertEqual(got.split(":")[0], str(link),
+                         "the caller's spelling must survive; resolve() would rewrite it")
+
+    def test_the_same_directory_reached_by_another_spelling_is_not_added_twice(self):
+        """Idempotence has to survive the symlink, or PATH grows an entry per invocation."""
+        link = Path(self._tmp.name) / "linked"
+        link.symlink_to(self.real_bin)
+        already = f"{self.real_bin}:/usr/bin"
+        got = producer.path_with_inner_python_bin(str(link / "python"), {"PATH": already})
+        self.assertEqual(got, already,
+                         "the real path was already present under its other name")
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.real_bin = Path(self._tmp.name) / "real" / "bin"
+        self.real_bin.mkdir(parents=True)
+
+    def test_launch_puts_it_on_PATH_before_sbatch_is_ever_invoked(self):
+        """The ordering claim, measured rather than asserted in a comment.
+
+        A fix applied after `sbatch` returns would satisfy every test above and still ship the
+        original defect, because `--export=ALL` captures the environment at submission.
+        """
+        import os
+        seen = {}
+
+        def fake_submit(wrap_command, **kw):
+            seen["PATH"] = os.environ.get("PATH", "")
+            raise producer.BudgetExhausted("stop here; submission is not what this test covers")
+
+        args = mock.Mock(minutes=producer.DEFAULT_MINUTES, inner_python=self.INNER,
+                         expect_root=Path("/repo"), bindings=Path("b.json"),
+                         data_root=Path("/data"), account="a", qos="debug", comment="c")
+        with tempfile.TemporaryDirectory() as run:
+            run_dir = Path(run)
+            before = dict(os.environ)
+            try:
+                with mock.patch.object(producer, "submit_one_job", fake_submit):
+                    producer.launch(args, run_dir, run_dir / "task-ids.json")
+            finally:
+                os.environ.clear()
+                os.environ.update(before)
+        self.assertIn("PATH", seen, "submit_one_job was never reached")
+        self.assertEqual(seen["PATH"].split(":")[0], "/opt/envs/demo/bin",
+                         "PATH must already carry the inner interpreter's bin AT submission")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
