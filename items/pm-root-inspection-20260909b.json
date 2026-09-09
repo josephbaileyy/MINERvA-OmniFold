@@ -1,0 +1,301 @@
+{
+  "argv": [
+    "/usr/bin/python3.11",
+    "/pscratch/sd/j/josephrb/exec-20260907/nd-unfolding/mnv_guarded_run.py",
+    "--expect-root",
+    "/pscratch/sd/j/josephrb/exec-20260907",
+    "--label",
+    "pm-root-inspection-launch",
+    "--inventory",
+    "/pscratch/sd/j/josephrb/pm-inspection-20260909b/guard-inventory.jsonl",
+    "--",
+    "/pscratch/sd/j/josephrb/exec-20260907/nd-unfolding/pm_inspection/pm_root_inspect.py",
+    "--mode",
+    "launch",
+    "--bindings",
+    "nd-unfolding/pm_inspection/INPUT-BINDINGS-20260908.json",
+    "--data-root",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "--inner-python",
+    "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python",
+    "--expect-root",
+    "/pscratch/sd/j/josephrb/exec-20260907",
+    "--account",
+    "m3246",
+    "--qos",
+    "debug",
+    "--minutes",
+    "15",
+    "--comment",
+    "pm-root-inspection-20260909b"
+  ],
+  "bindings": [
+    {
+      "path": "docs/orchestration/contracts/CONTRACT-20260909b-pm-root-inspection.json",
+      "sha256": "2d91f022d497506255078796782171ccbf28a95df83348e3bac79e53d7c22aac"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/_wrapper_body",
+      "sha256": "0ff2d42d488edb6a1b397fb3aade650b402473fe283eb297478515e12e9d983b"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/bash",
+      "sha256": "597f566d9843315b011ec0ec209b6fa00b60efdf4c720b8eae3361fac799abf1"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/git",
+      "sha256": "725dceda55d566d9e2181bce981ae9e90fe4bc4a535477d344613a73c51a9759"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/python",
+      "sha256": "d26f5cda8fbe4b8c358b53f173cebf76eaacfae8b5f8b261ea655dfb9fc478b6"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/python3",
+      "sha256": "6df1003ffa566dc37fe3e38ef98548a7417b70c4b353b09472eac574eac09b48"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/sacct",
+      "sha256": "65fcd4f0d29b975b653a88ee23a67b7aad12e3f64781bd64fc5a970ca9684061"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/sbatch",
+      "sha256": "b3fee851854a4e49812b6f460833398e355b33a4be5e1556d5475f5ced770f51"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/scancel",
+      "sha256": "72abe8f3a1a3fbdbb23c68b757b5607807f952d25acb56f950c35445b3806b61"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/sh",
+      "sha256": "8ac23d3a93eed00551954ca6a8eae3c4b24df61a879714342f8641f9661dc61b"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/sinfo",
+      "sha256": "c8907ce28c9af482db8835996e877735140a8da2fe99210a90b3823b388fb1aa"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/squeue",
+      "sha256": "ee4995d54c5ec9f73ec5f62dc0c7bb5d20962ffcc9b5daa9850e87fbbd3f0f68"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/srun",
+      "sha256": "9c1cb283ae2ec00ac4fc3eddd0c01c7677db5621dfc9bed3ddf36ae23ae26708"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/bin/sstat",
+      "sha256": "6490ce56c8cd0e4f6573ecead996f34810563829a21c89654d382f7e00cd3cd3"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/scan_argv.py",
+      "sha256": "bd6499f0621a76518a6c3652681cedc902908dfea2348d1587d0f1bade5d1868"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/sitecustomize.py",
+      "sha256": "b7f78a7250f012b90a9699073973c138925ed27474dcad6772d5fcb6565315e6"
+    },
+    {
+      "path": "nd-unfolding/mnv_guard_shim/wrapper_exec.py",
+      "sha256": "9585602404fccd1ca879283852d3c124916d995ba4f59ef97a18e8f767c9bd22"
+    },
+    {
+      "path": "nd-unfolding/mnv_guarded_run.py",
+      "sha256": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b"
+    },
+    {
+      "path": "nd-unfolding/pm_inspection/INPUT-BINDINGS-20260908.json",
+      "sha256": "ece38b9b80374a63e6e78c3b57f75accf283099e2e956a76830dbbfe1702402b"
+    },
+    {
+      "path": "nd-unfolding/pm_inspection/pm_root_inspect.py",
+      "sha256": "72c3d189e0474d87d2e0e5602c9deef661639afae0996c0fd21fa697a9c7a83b"
+    },
+    {
+      "path": "nd-unfolding/pm_inspection/pm_root_validate.py",
+      "sha256": "30ad85acc01c15c1ee4d74eac0cd163b612bc57a51153297f24f6abe149b9ebc"
+    }
+  ],
+  "campaign_contract": {
+    "accounting": {
+      "expects_scheduler_tasks": true
+    },
+    "campaign_id": "pm-root-inspection-20260909b",
+    "candidate": {
+      "id": "pm-inspection-capture-20260908",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "uri": "file:///pscratch/sd/j/josephrb/pm-inspection-20260908/pm-inspection-report.json"
+    },
+    "decision_authority": "joseph-decision-owner",
+    "independent_validator": "pm-root-validate-terminal-classifier",
+    "inputs": [
+      {
+        "id": "G",
+        "sha256": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root"
+      },
+      {
+        "id": "CS",
+        "sha256": "9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root"
+      },
+      {
+        "id": "CV_central",
+        "sha256": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root"
+      },
+      {
+        "id": "EP_BeamAngleX_0",
+        "sha256": "d915c37512fedf7d548c34a9727e5f3dd5cc6249f1e44d789f72c6dd50f930c3",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleX_0.root"
+      },
+      {
+        "id": "EP_BeamAngleX_1",
+        "sha256": "a61e52523c4bb00f1336927d8824c66dec3c716058e028c50802e543fefc649c",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleX_1.root"
+      },
+      {
+        "id": "EP_BeamAngleY_0",
+        "sha256": "b37f90ed779284bddd71dd2cf333f353ad5d7090f4701dc795b4c82b55366fae",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleY_0.root"
+      },
+      {
+        "id": "EP_BeamAngleY_1",
+        "sha256": "da3d2dd66f1d494107b47e948ba19736f556422a228cf9e1cea4b4fdf12ef3cc",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_BeamAngleY_1.root"
+      },
+      {
+        "id": "EP_MuonResolution_0",
+        "sha256": "bc1380ac37f51aa01f8b396097594dd07e3338fdea03400079147bff71893132",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_MuonResolution_0.root"
+      },
+      {
+        "id": "EP_MuonResolution_1",
+        "sha256": "601f7ab82a18aba4d38a557047fa2e1e5f7107ddae1180d94b7471fcf5d58782",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_MuonResolution_1.root"
+      },
+      {
+        "id": "EP_Muon_Energy_MINERvA_0",
+        "sha256": "940faf9e51cf61430a0193cbcd8a743548356e526f118730f93435541cbff23e",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINERvA_0.root"
+      },
+      {
+        "id": "EP_Muon_Energy_MINERvA_1",
+        "sha256": "3996e2fe5cb96b4253d00c1deea834a26f97ab4a21ec163e3255ab433d4c7b5d",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINERvA_1.root"
+      },
+      {
+        "id": "EP_Muon_Energy_MINOS_0",
+        "sha256": "133085a6a68e453f608ef491d2f424d8922a730ad40992c503adf267f005f684",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINOS_0.root"
+      },
+      {
+        "id": "EP_Muon_Energy_MINOS_1",
+        "sha256": "ef4749f831a9353bdbb1e7a7f3178305a0f5d9b65b9782893cf38745150d6946",
+        "uri": "file:///pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_Muon_Energy_MINOS_1.root"
+      }
+    ],
+    "maximum_cost": {
+      "cpu_task_hours": 0.5,
+      "gpu_task_hours": 0.0,
+      "wall_hours": 0.5
+    },
+    "output_namespace": "queue-claim-run-directory",
+    "preservation_behavior": {
+      "artifacts": [
+        "pm-inspection-report.json",
+        "pm-inspection-verdict.json",
+        "producer-stdout.log",
+        "producer-stderr.log"
+      ],
+      "mode": "preserve-first"
+    },
+    "producer": "preflight-session-e11e6d",
+    "retry_policy": {
+      "automatic_retraining": false,
+      "requires_new_authorization": true
+    },
+    "schema_version": 2,
+    "scientific_question": "Capture the fixed read-only ROOT measurements predeclared for PM-1, PM-3, PM-4 and PM-5. This contract governs CAPTURE ONLY. It adjudicates none of those measurements, sets no acceptance threshold, and its terminal branches classify whether the declared reads happened -- never whether the values are adequate. PM-4's provenance gap is preserved: digests are reconstructed through G's producer-input route and are never evidence of G's historical production input. The validator routes through nd-unfolding/mnv_guarded_run.py, whose --expect-root refusal (OI-136) is what enforces that no analysis code is imported from the deployed tree; that tree supplies the built environment only. EXECUTION ROUTE: attended BATCH, per AUTHORIZATION-20260908-attended-batch-route.md. The producer is the staged argv, guarded; it submits exactly one CPU job, records the scheduler id at submission before the job can spend, waits bounded, and cancels only that id. Report and attempt identity are derived by BOTH halves from the queue-supplied MNV_CAMPAIGN_TASK_IDS_FILE, whose parent is the claim run directory, so no argv literal can collide on a re-claim. The validator runs in required campaign mode: absent CAMPAIGN_PRODUCER_RETURNCODE is an ERROR, never a silent standalone fall-back, and nonzero or TIMEOUT_OR_NOT_STARTED refuse. An uncertain submission retains its reservation; a non-zero submission is NOT evidence that no job was created.",
+    "terminal_branches": [
+      {
+        "condition": "Every declared read has a record and no required read failed. An expected-optional absence, such as hRowIndex5D absent from G, is a measurement and satisfies this branch.",
+        "decision": "Preserve the capture as a measurement. This is NOT a discharge of PM-1, PM-3, PM-4 or PM-5, NOT an adoption, and NOT blanket citability.",
+        "forbids": [
+          "discharge-any-PM-row",
+          "adopt-any-artifact",
+          "move-any-gate",
+          "cite-as-scientific-verdict"
+        ],
+        "id": "capture-complete",
+        "return_codes": [
+          0
+        ],
+        "unlocks": [
+          "preserve-capture-as-measurement",
+          "report-measurements-separately-from-conclusions"
+        ]
+      },
+      {
+        "condition": "The producer ran to the end but at least one declared read has no record.",
+        "decision": "Preserve the partial capture as error evidence. Nothing captured may be cited as a measurement of the missing reads.",
+        "forbids": [
+          "treat-partial-capture-as-measurement",
+          "discharge-any-PM-row",
+          "retry-without-new-authorization"
+        ],
+        "id": "capture-incomplete",
+        "return_codes": [
+          10
+        ],
+        "unlocks": [
+          "preserve-partial-capture-as-error-evidence"
+        ]
+      },
+      {
+        "condition": "Any other terminal result: a required input missing, unreadable, wrong size or digest-mismatched; a ROOT import failure; an unhandled exception; or an unreadable report.",
+        "decision": "Preserve all error evidence including the traceback and the partial report. Report the failure; capture nothing as a measurement.",
+        "forbids": [
+          "treat-any-output-as-measurement",
+          "discharge-any-PM-row",
+          "retry-without-new-authorization"
+        ],
+        "id": "capture-error",
+        "return_codes": "otherwise",
+        "unlocks": [
+          "preserve-error-evidence"
+        ]
+      }
+    ],
+    "terminal_validator": {
+      "argv": [
+        "/usr/bin/python3.11",
+        "nd-unfolding/mnv_guarded_run.py",
+        "--expect-root",
+        "/pscratch/sd/j/josephrb/exec-20260907",
+        "--label",
+        "pm-root-inspection-terminal-validator",
+        "--",
+        "nd-unfolding/pm_inspection/pm_root_validate.py",
+        "--bindings",
+        "nd-unfolding/pm_inspection/INPUT-BINDINGS-20260908.json",
+        "--campaign-mode",
+        "required"
+      ],
+      "cwd": "."
+    },
+    "validator_version": "pm_root_validate.py@1"
+  },
+  "campaign_contract_path": "docs/orchestration/contracts/CONTRACT-20260909b-pm-root-inspection.json",
+  "created_at_utc": "2026-09-09T16:51:59+00:00",
+  "created_by": "josephrb@login15",
+  "cwd": ".",
+  "depends_on": [],
+  "description": "Bounded attended read-only ROOT inspection for PM-1/PM-3/PM-4/PM-5",
+  "git_head": "c52fe7dc2c6ac5e17c4d07475fb67a18c0257517",
+  "id": "pm-root-inspection-20260909b",
+  "kind": "compute",
+  "proposal_digest": "f471039e1493abde8a4ad0cbd13e6562ddbb241dbb63be115e8836346e0d8a05",
+  "repo_path": "/pscratch/sd/j/josephrb/exec-20260907",
+  "schema_version": 1,
+  "timeout_seconds": 1560
+}
