@@ -107,6 +107,7 @@ docs/orchestration/FINDING-20260901-k0r2-redeploy-precondition-delta.md	tracked	
 docs/orchestration/FINDING-20260901-p-leg-status-measured-against-the-candidate.md	tracked	LIVE	finding		20260901	open		route-only		no	2	70	4782
 docs/orchestration/FINDING-20260901-pscratch-read-stalls-block-a2b.md	tracked	LIVE	finding		20260901	open		route-only		no	7	146	8381
 docs/orchestration/FINDING-20260906-r5-meter-undercounted-requeue-attempts.md	tracked	LIVE	finding		20260906	open		route-only	docs/orchestration/r5_meter.py;docs/orchestration/test_r5_meter.py	no	10	538	37675
+docs/orchestration/FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md	tracked	ARCHIVAL	finding		20260910	terminal		exact-path-only		yes	0	100	5827
 docs/orchestration/FINDINGS-ARCHIVE-2026-08.md	tracked	ARCHIVAL	document	2026-07-16-fe-campaign		terminal		exact-path-only	docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	yes	4	155	365050
 docs/orchestration/FINDINGS.md	tracked	LIVE	ledger			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/findings_row_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_whose_row_clean_merge.py;docs/orchestration/verify_ben_citations.py;docs/orchestration/whose_row.py;nd-unfolding/pet/check_canonical_designation.py;nd-unfolding/pet/orchestrate_gpu_node.sh;nd-unfolding/sbatch_bootstrap_5d_gpu.sh;nd-unfolding/tests/test_hash_bindings.py;nd-unfolding/tests/test_remedy_a_adopt_wrapper.py	no	44	130	9431
 docs/orchestration/FLAG-20260824-gregor-pet2-worktree-unpreserved.md	tracked	ARCHIVAL	document		20260824	terminal		exact-path-only		yes	0	51	2954
@@ -289,6 +290,8 @@ docs/orchestration/m1m6_expected_differences.json	tracked	MACHINE	machine-data		
 docs/orchestration/measure_k0_farend_f1b_f17b.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b_round2.sh;docs/orchestration/test_measure_m1_m6.py	no	28	249	16358
 docs/orchestration/measure_k0_farend_f1b_f17b_round2.sh	intended	MACHINE	shell-tool			generated		exact-path-only		no	0	191	8776
 docs/orchestration/measure_m1_m6.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/test_compare_m1_m6.py;docs/orchestration/test_measure_m1_m6.py;nd-unfolding/tests/test_mnv_guarded_run.py	no	51	295	14108
+docs/orchestration/measure_m_builder_equivalence.py	tracked	MACHINE	script			generated		exact-path-only		no	1	70	3013
+docs/orchestration/measure_m_builder_equivalence_controls.py	tracked	MACHINE	script			generated		exact-path-only		no	1	54	2304
 docs/orchestration/merge_guard.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/open-items/test_check_open_items_columns.py;docs/orchestration/shared_push.sh;docs/orchestration/test_whose_row_clean_merge.py;docs/orchestration/verify_ben_citations.py;docs/orchestration/whose_row.py	no	13	103	6431
 docs/orchestration/mutation_whose_row_clean_merge.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/test_whose_row_clean_merge.py	no	1	326	16756
 docs/orchestration/notification-config.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/notifyctl.py	no	3	26	498
