@@ -1,0 +1,1946 @@
+[
+  {
+    "slide": 1,
+    "text": "JOSEPH BAILEY \u00b7 SEPTEMBER 9, 2026",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 1,
+    "text": "Research with AI as an undergraduate",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 1,
+    "text": "MINERvA\u2013OmniFold \u00b7 Nachman group \u00b7 Personal case study",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 1,
+    "text": "01",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 1,
+    "text": "What I could build.\nWhat I could trust.\nWhat I understand.",
+    "x": 58,
+    "y": 151,
+    "width": 830,
+    "height": 154.8,
+    "size": 43
+  },
+  {
+    "slide": 1,
+    "text": "A neutrino analysis\u2014and an experiment in how to do research.",
+    "x": 60,
+    "y": 370,
+    "width": 800,
+    "height": 28.06,
+    "size": 23
+  },
+  {
+    "slide": 1,
+    "text": "Physics undergraduate \u00b7 CS coterm \u00b7 Entering fourth year",
+    "x": 60,
+    "y": 441,
+    "width": 800,
+    "height": 19.52,
+    "size": 16
+  },
+  {
+    "slide": 2,
+    "text": "01 / THE RESEARCH",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 2,
+    "text": "The starting point: an open analysis + OmniFold",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 2,
+    "text": "MINERvA: arXiv:2106.16210 \u00b7 Milton et al.: unbinned_unfolding \u00b7 Start date: speaker account",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 2,
+    "text": "02",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 2,
+    "text": "\u201cI nodded because I thought I understood.\u201d",
+    "x": 52,
+    "y": 116,
+    "width": 860,
+    "height": 32.94,
+    "size": 27
+  },
+  {
+    "slide": 2,
+    "text": "Public MINERvA analysis",
+    "x": 68,
+    "y": 191,
+    "width": 232,
+    "height": 48.8,
+    "size": 20
+  },
+  {
+    "slide": 2,
+    "text": "Tutorial, data and\na published 2D result",
+    "x": 68,
+    "y": 253.8,
+    "width": 232,
+    "height": 48.8,
+    "size": 20
+  },
+  {
+    "slide": 2,
+    "text": "An unfolding method",
+    "x": 364,
+    "y": 191,
+    "width": 232,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 2,
+    "text": "Classifiers learn\nsimulation weights",
+    "x": 364,
+    "y": 229.4,
+    "width": 232,
+    "height": 48.8,
+    "size": 20
+  },
+  {
+    "slide": 2,
+    "text": "Several LLMs",
+    "x": 660,
+    "y": 191,
+    "width": 232,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 2,
+    "text": "Explain the pieces;\nhelp put them together",
+    "x": 660,
+    "y": 229.4,
+    "width": 232,
+    "height": 48.8,
+    "size": 20
+  },
+  {
+    "slide": 2,
+    "text": "Simulation truth",
+    "x": 55,
+    "y": 350,
+    "width": 190,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 2,
+    "text": "\u2192 detector \u2192",
+    "x": 269,
+    "y": 350,
+    "width": 177,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 2,
+    "text": "Reconstructed simulation",
+    "x": 474,
+    "y": 350,
+    "width": 340,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 2,
+    "text": "Transfer weights back",
+    "x": 57,
+    "y": 402,
+    "width": 330,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 2,
+    "text": "\u2190 classifier compares with data",
+    "x": 421,
+    "y": 402,
+    "width": 472,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 2,
+    "text": "Initial target: inclusive \u03bd\u03bc cross sections in transverse and longitudinal muon momentum.",
+    "x": 56,
+    "y": 454,
+    "width": 850,
+    "height": 19.52,
+    "size": 16
+  },
+  {
+    "slide": 3,
+    "text": "01 / THE RESEARCH",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 3,
+    "text": "How closely does the 2D result reproduce the paper?",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 3,
+    "text": "Frozen ROOT inputs match committed receipt \u00b7 Reported phase space \u00b7 Integrated totals differ by about 1.1%",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 3,
+    "text": "03",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 3,
+    "text": "Teal: ours \u00b1 total error; black/gray: paper total error. Ratio bars: our error / paper central.\nEach uses its own bin widths; ratios match bins. Three pT boundaries differ by 0.005 GeV/c.",
+    "x": 54,
+    "y": 450,
+    "width": 854,
+    "height": 36.6,
+    "size": 15
+  },
+  {
+    "slide": 4,
+    "text": "01 / THE RESEARCH",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 4,
+    "text": "The full 2D comparison shows where differences live",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 4,
+    "text": "Original 224-bin grid \u00b7 Positive published statistical-diagonal mask \u00b7 No significance assigned to residuals",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 4,
+    "text": "04",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 4,
+    "text": "193 / 205 reported bins are within 10%; three differ by more than 20%. Gray = unreported.\nCorresponding-bin comparison; y labels use this work\u2019s edges. Three pT boundaries differ.",
+    "x": 54,
+    "y": 450,
+    "width": 854,
+    "height": 36.6,
+    "size": 15
+  },
+  {
+    "slide": 5,
+    "text": "01 / THE RESEARCH",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 5,
+    "text": "The agreement survives looking inside the projections",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 5,
+    "text": "Frozen central values + validated 2D uncertainties \u00b7 Separate errors, no combined uncertainty on the difference",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 5,
+    "text": "05",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 5,
+    "text": "Four matched pT slices; all 14 in backup. Density units: cm\u00b2/(GeV/c)\u00b2/nucleon.\nTeal: ours \u00b1 total error; black/gray: paper total error. Ratio bars: our error / paper central.",
+    "x": 54,
+    "y": 450,
+    "width": 854,
+    "height": 36.6,
+    "size": 15
+  },
+  {
+    "slide": 6,
+    "text": "01 / THE RESEARCH",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 6,
+    "text": "Flux and muon reconstruction dominate our errors",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 6,
+    "text": "Validated 2D source covariances \u00b7 Each component projected with full bin correlations \u00b7 No higher-D covariance",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 6,
+    "text": "06",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 6,
+    "text": "Black markers show released paper components with matching scope; blanks do not mean zero.\nValues are medians across projected bins, not additive shares. ML means unfolding-model seed variation.\nMuon energy scale is a subset of reconstruction; its direct comparison is in backup.",
+    "x": 54,
+    "y": 437,
+    "width": 854,
+    "height": 47.58,
+    "size": 13
+  },
+  {
+    "slide": 7,
+    "text": "01 / THE RESEARCH",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 7,
+    "text": "The scope expanded beyond the published reference",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 7,
+    "text": "2D / 3D / N-D status, governing covariance restrictions, and OI-126 \u00b7 Current scientific scope",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 7,
+    "text": "07",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 7,
+    "text": "2D",
+    "x": 65,
+    "y": 171,
+    "width": 177,
+    "height": 34.16,
+    "size": 28
+  },
+  {
+    "slide": 7,
+    "text": "Muon momentum",
+    "x": 65,
+    "y": 231,
+    "width": 177,
+    "height": 21.96,
+    "size": 18
+  },
+  {
+    "slide": 7,
+    "text": "Central result +\nuncertainty validated",
+    "x": 65,
+    "y": 296,
+    "width": 177,
+    "height": 41.48,
+    "size": 17
+  },
+  {
+    "slide": 7,
+    "text": "3D",
+    "x": 284,
+    "y": 171,
+    "width": 177,
+    "height": 34.16,
+    "size": 28
+  },
+  {
+    "slide": 7,
+    "text": "+ available energy",
+    "x": 284,
+    "y": 231,
+    "width": 177,
+    "height": 21.96,
+    "size": 18
+  },
+  {
+    "slide": 7,
+    "text": "Central result +\nclosure validated",
+    "x": 284,
+    "y": 296,
+    "width": 177,
+    "height": 41.48,
+    "size": 17
+  },
+  {
+    "slide": 7,
+    "text": "4D / 5D",
+    "x": 503,
+    "y": 171,
+    "width": 177,
+    "height": 34.16,
+    "size": 28
+  },
+  {
+    "slide": 7,
+    "text": "+ q3 and W",
+    "x": 503,
+    "y": 231,
+    "width": 177,
+    "height": 21.96,
+    "size": 18
+  },
+  {
+    "slide": 7,
+    "text": "Central results +\nclosures validated",
+    "x": 503,
+    "y": 296,
+    "width": 177,
+    "height": 41.48,
+    "size": 17
+  },
+  {
+    "slide": 7,
+    "text": "Full event",
+    "x": 722,
+    "y": 171,
+    "width": 177,
+    "height": 34.16,
+    "size": 28
+  },
+  {
+    "slide": 7,
+    "text": "Particle-cloud inputs",
+    "x": 722,
+    "y": 231,
+    "width": 177,
+    "height": 21.96,
+    "size": 18
+  },
+  {
+    "slide": 7,
+    "text": "PET diagnostics /\nmethod development",
+    "x": 722,
+    "y": 296,
+    "width": 177,
+    "height": 41.48,
+    "size": 17
+  },
+  {
+    "slide": 7,
+    "text": "Higher-dimensional uncertainties remain unadopted.",
+    "x": 54,
+    "y": 408,
+    "width": 850,
+    "height": 30.5,
+    "size": 25
+  },
+  {
+    "slide": 7,
+    "text": "Beyond reproduction, deciding what would count as validation becomes part of the research.",
+    "x": 54,
+    "y": 450,
+    "width": 850,
+    "height": 21.96,
+    "size": 18
+  },
+  {
+    "slide": 8,
+    "text": "01 / THE RESEARCH",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 8,
+    "text": "Beyond reproduction: a feature the generators miss",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 8,
+    "text": "Aug 11 four-generator log + ledger VL35\u201339 \u00b7 Nine integrated cells \u00b7 Central-value comparison only",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 8,
+    "text": "08",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 8,
+    "text": "High available energy and high W: E_avail \u2265 0.8 GeV, W \u2265 1.8 GeV",
+    "x": 54,
+    "y": 117,
+    "width": 850,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 8,
+    "text": "Adding MEC does not close this gap: data / GENIE rises from 1.535 to 1.579.",
+    "x": 54,
+    "y": 428,
+    "width": 850,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 8,
+    "text": "The significance awaits an adopted covariance; no uncertainty bars are shown.",
+    "x": 54,
+    "y": 465,
+    "width": 850,
+    "height": 19.52,
+    "size": 16
+  },
+  {
+    "slide": 9,
+    "text": "02 / THE WORKFLOW",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 9,
+    "text": "The workflow became a project of its own",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 9,
+    "text": "Historical routes: orchestration README \u00b7 MIGRATION-HANDOFF \u00b7 WAKER \u00b7 Aug 25 campaign-queue commit",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 9,
+    "text": "09",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 9,
+    "text": "Start",
+    "x": 54,
+    "y": 140,
+    "width": 174,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 9,
+    "text": "Ask several models",
+    "x": 239,
+    "y": 140,
+    "width": 280,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 9,
+    "text": "Explain the tutorial;\nassemble a reproduction.",
+    "x": 546,
+    "y": 140,
+    "width": 355,
+    "height": 46.36,
+    "size": 19
+  },
+  {
+    "slide": 9,
+    "text": "July 16\u201318",
+    "x": 54,
+    "y": 214,
+    "width": 174,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 9,
+    "text": "Coordinator + workers",
+    "x": 239,
+    "y": 214,
+    "width": 280,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 9,
+    "text": "Bounded tasks, separate\nverification and review.",
+    "x": 546,
+    "y": 214,
+    "width": 355,
+    "height": 46.36,
+    "size": 19
+  },
+  {
+    "slide": 9,
+    "text": "July 19",
+    "x": 54,
+    "y": 288,
+    "width": 174,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 9,
+    "text": "Deterministic waking",
+    "x": 239,
+    "y": 288,
+    "width": 280,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 9,
+    "text": "Scripts detect events;\nmodels resume for work.",
+    "x": 546,
+    "y": 288,
+    "width": 355,
+    "height": 46.36,
+    "size": 19
+  },
+  {
+    "slide": 9,
+    "text": "August 25",
+    "x": 54,
+    "y": 362,
+    "width": 174,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 9,
+    "text": "Campaign queue",
+    "x": 239,
+    "y": 362,
+    "width": 280,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 9,
+    "text": "Stage actions and checks;\nmake execution explicit.",
+    "x": 546,
+    "y": 362,
+    "width": 355,
+    "height": 46.36,
+    "size": 19
+  },
+  {
+    "slide": 9,
+    "text": "These are documented milestones, not clean experimental eras.",
+    "x": 55,
+    "y": 462,
+    "width": 850,
+    "height": 20.74,
+    "size": 17
+  },
+  {
+    "slide": 10,
+    "text": "02 / THE WORKFLOW",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 10,
+    "text": "Activity grew. Was the work more effective?",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 10,
+    "text": "git 901f2c64 \u00b7 Author months \u00b7 No merges \u00b7 One touch = one path in one commit \u00b7 *Partial months",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 10,
+    "text": "10",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 10,
+    "text": "The right panel measures edit locations. It does not measure hours or scientific value.",
+    "x": 55,
+    "y": 455,
+    "width": 850,
+    "height": 20.74,
+    "size": 17
+  },
+  {
+    "slide": 11,
+    "text": "03 / WHAT THE CHECKS TAUGHT ME",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 11,
+    "text": "A saved model did not reproduce the event weights",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 11,
+    "text": "Historical PET step-2 receipts \u00b7 Aug 7 \u00b7 1,999,928 pass_gen events \u00b7 Diagnostic result",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 11,
+    "text": "11",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 11,
+    "text": "Checkpoint = a saved snapshot of the network\u2019s learned parameters.",
+    "x": 54,
+    "y": 116,
+    "width": 854,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 11,
+    "text": "Used in the run",
+    "x": 634,
+    "y": 180,
+    "width": 273,
+    "height": 23.18,
+    "size": 19
+  },
+  {
+    "slide": 11,
+    "text": "Last epoch\n(final training pass)",
+    "x": 634,
+    "y": 212,
+    "width": 273,
+    "height": 51.24,
+    "size": 21
+  },
+  {
+    "slide": 11,
+    "text": "Saved to disk",
+    "x": 634,
+    "y": 280,
+    "width": 273,
+    "height": 23.18,
+    "size": 19
+  },
+  {
+    "slide": 11,
+    "text": "Best validation epoch\n(lowest held-out loss)",
+    "x": 634,
+    "y": 312,
+    "width": 273,
+    "height": 51.24,
+    "size": 21
+  },
+  {
+    "slide": 11,
+    "text": "Aggregate difference\n< 0.0001",
+    "x": 634,
+    "y": 386,
+    "width": 273,
+    "height": 51.24,
+    "size": 21
+  },
+  {
+    "slide": 11,
+    "text": "Learned model parameters \u2192 event weights \u2192 unfolded distribution",
+    "x": 54,
+    "y": 458,
+    "width": 854,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 12,
+    "text": "03 / WHAT THE WORKFLOW COST",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 12,
+    "text": "The friction: auditing before trying anything",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 12,
+    "text": "Joseph\u2019s account \u00b7 The checkpoint case shows a useful check; it does not quantify the value of all auditing",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 12,
+    "text": "12",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 12,
+    "text": "What slowed me down",
+    "x": 68,
+    "y": 158,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 12,
+    "text": "Agents wanted to audit\neverything before acting.\n\nI often wanted a small\ntrial-and-error experiment.",
+    "x": 68,
+    "y": 196.4,
+    "width": 383,
+    "height": 122.0,
+    "size": 20
+  },
+  {
+    "slide": 12,
+    "text": "What I would change",
+    "x": 509,
+    "y": 158,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 12,
+    "text": "For a cheap, reversible test:\nname the question and try it.\n\nBefore expensive runs or claims:\ncheck the evidence and provenance.",
+    "x": 509,
+    "y": 196.4,
+    "width": 383,
+    "height": 122.0,
+    "size": 20
+  },
+  {
+    "slide": 12,
+    "text": "The question is when a check changes the next decision.",
+    "x": 55,
+    "y": 421,
+    "width": 850,
+    "height": 29.28,
+    "size": 24
+  },
+  {
+    "slide": 12,
+    "text": "Proposed workflow change; no measured time saving is claimed.",
+    "x": 55,
+    "y": 465,
+    "width": 850,
+    "height": 19.52,
+    "size": 16
+  },
+  {
+    "slide": 13,
+    "text": "03 / WHAT THE WORKFLOW COST",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 13,
+    "text": "My active time shifted into orchestration and routing",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 13,
+    "text": "Joseph\u2019s account \u00b7 Historical WAKER F2/F3 failures \u00b7 OI-135 watcher question and implementation decision",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 13,
+    "text": "13",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 13,
+    "text": "The work I remember doing",
+    "x": 68,
+    "y": 158,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 13,
+    "text": "Debugging coordination,\naccount routing and wakeups.\n\nThe logs include wrong executable\npaths and Python environments.",
+    "x": 68,
+    "y": 196.4,
+    "width": 383,
+    "height": 122.0,
+    "size": 20
+  },
+  {
+    "slide": 13,
+    "text": "A simpler tool can help",
+    "x": 509,
+    "y": 158,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 13,
+    "text": "\u201cWhy do we even need an\nLLM for the watcher?\u201d\n\nA defined job outcome can be\nreported by an ordinary script.",
+    "x": 509,
+    "y": 196.4,
+    "width": 383,
+    "height": 122.0,
+    "size": 20
+  },
+  {
+    "slide": 13,
+    "text": "That overhead belongs in any account of productivity.",
+    "x": 55,
+    "y": 421,
+    "width": 850,
+    "height": 29.28,
+    "size": 24
+  },
+  {
+    "slide": 13,
+    "text": "The record supports concrete failures; it does not supply a complete time budget.",
+    "x": 55,
+    "y": 465,
+    "width": 850,
+    "height": 19.52,
+    "size": 16
+  },
+  {
+    "slide": 14,
+    "text": "04 / BECOMING A RESEARCHER",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 14,
+    "text": "Outside expertise corrected the question itself",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 14,
+    "text": "COLLABORATOR_QUESTIONS.md \u00b7 Joseph\u2019s clarification recorded Aug 2 \u00b7 Verbal guidance, not a written endorsement",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 14,
+    "text": "14",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 14,
+    "text": "The mistaken premise",
+    "x": 68,
+    "y": 158,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 14,
+    "text": "A collaborator question said\nthere was no prior MINERvA\n3D unfolding result.\n\nThat premise was wrong.",
+    "x": 68,
+    "y": 196.4,
+    "width": 383,
+    "height": 122.0,
+    "size": 20
+  },
+  {
+    "slide": 14,
+    "text": "The corrected framing",
+    "x": 509,
+    "y": 158,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 14,
+    "text": "MINERvA already had a\n3D unfolding publication.\n\nThe distinction here is the\nunbinned simultaneous method.",
+    "x": 509,
+    "y": 196.4,
+    "width": 383,
+    "height": 122.0,
+    "size": 20
+  },
+  {
+    "slide": 14,
+    "text": "A working pipeline does not establish the novelty of its research claim.",
+    "x": 55,
+    "y": 417,
+    "width": 850,
+    "height": 29.28,
+    "size": 24
+  },
+  {
+    "slide": 14,
+    "text": "This correction does not establish who introduced the error or how much AI contributed.",
+    "x": 55,
+    "y": 474,
+    "width": 850,
+    "height": 18.3,
+    "size": 15
+  },
+  {
+    "slide": 15,
+    "text": "04 / BECOMING A RESEARCHER",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 15,
+    "text": "I have a high-level map. Do I understand the details?",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 15,
+    "text": "Joseph\u2019s account \u00b7 Possible benefits of abstraction are hypotheses, not measured learning outcomes",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 15,
+    "text": "15",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 15,
+    "text": "My honest answer",
+    "x": 68,
+    "y": 158,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 15,
+    "text": "AI abstracts so much away\nthat I am unsure what I could\nexplain without it.\n\nI can see the overall approach.",
+    "x": 68,
+    "y": 196.4,
+    "width": 383,
+    "height": 122.0,
+    "size": 20
+  },
+  {
+    "slide": 15,
+    "text": "The tradeoff I want to test",
+    "x": 509,
+    "y": 158,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 15,
+    "text": "Abstraction might help me avoid\ngetting stuck in a rabbit hole.\n\nIt might also hide a mistake\nI cannot recognize or explain.",
+    "x": 509,
+    "y": 196.4,
+    "width": 383,
+    "height": 122.0,
+    "size": 20
+  },
+  {
+    "slide": 15,
+    "text": "A useful check: predict a change before asking the model.",
+    "x": 55,
+    "y": 421,
+    "width": 850,
+    "height": 29.28,
+    "size": 24
+  },
+  {
+    "slide": 15,
+    "text": "Then explain the result and trace the evidence without relying on the model\u2019s summary.",
+    "x": 55,
+    "y": 465,
+    "width": 850,
+    "height": 19.52,
+    "size": 16
+  },
+  {
+    "slide": 16,
+    "text": "05 / WHAT I TAKE INTO THE NEXT PROJECT",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 16,
+    "text": "Real research output; an unresolved net benefit",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 16,
+    "text": "Personal case study \u00b7 No matched no-AI baseline, model ranking, human-hours estimate or learning score",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 16,
+    "text": "16",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 16,
+    "text": "What I would keep",
+    "x": 68,
+    "y": 158,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 16,
+    "text": "Freely asking basic questions.\nHelp implementing unfamiliar work.\nExternal references and closure\nas tests of research outputs.",
+    "x": 68,
+    "y": 196.4,
+    "width": 383,
+    "height": 97.6,
+    "size": 20
+  },
+  {
+    "slide": 16,
+    "text": "What I would change",
+    "x": 509,
+    "y": 158,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 16,
+    "text": "Smaller, bounded experiments.\nSimpler recurring operations.\nTrack my intervention time.\nPractice explaining key decisions.",
+    "x": 509,
+    "y": 196.4,
+    "width": 383,
+    "height": 97.6,
+    "size": 20
+  },
+  {
+    "slide": 16,
+    "text": "What should a student demonstrate before delegating this much?",
+    "x": 55,
+    "y": 421,
+    "width": 850,
+    "height": 29.28,
+    "size": 24
+  },
+  {
+    "slide": 16,
+    "text": "Judge the accepted research result, the total effort, and the student\u2019s understanding separately.",
+    "x": 55,
+    "y": 465,
+    "width": 850,
+    "height": 19.52,
+    "size": 16
+  },
+  {
+    "slide": 17,
+    "text": "BACKUP / FULL COMPARISON",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 17,
+    "text": "All 14 transverse-momentum slices",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 17,
+    "text": "Backup / Full 2D comparison \u00b7 Same mask and frozen inputs as the main plots",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 17,
+    "text": "17",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 17,
+    "text": "Full slice inventory; differing pT boundaries labeled. Teal: our total error; black/gray: paper total error.\nDensity units: cm\u00b2/(GeV/c)\u00b2/nucleon; per-panel powers of ten are printed on the axes.",
+    "x": 54,
+    "y": 450,
+    "width": 854,
+    "height": 36.6,
+    "size": 15
+  },
+  {
+    "slide": 18,
+    "text": "BACKUP / AGREEMENT COUNTS",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 18,
+    "text": "The 2D reproduction supplied an external reference",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 18,
+    "text": "Committed agreement receipt, Aug 21 \u00b7 205 reported bins \u00b7 Descriptive central-value comparison",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 18,
+    "text": "18",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 18,
+    "text": "Integrated cross section",
+    "x": 626,
+    "y": 146,
+    "width": 279,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 18,
+    "text": "3.073  this work\n3.039  published",
+    "x": 626,
+    "y": 192,
+    "width": 279,
+    "height": 65.88,
+    "size": 27
+  },
+  {
+    "slide": 18,
+    "text": "\u00d7 10^-38 cm\u00b2 / nucleon",
+    "x": 626,
+    "y": 270,
+    "width": 279,
+    "height": 20.74,
+    "size": 17
+  },
+  {
+    "slide": 18,
+    "text": "About 1.1% apart",
+    "x": 626,
+    "y": 316,
+    "width": 279,
+    "height": 32.94,
+    "size": 27
+  },
+  {
+    "slide": 18,
+    "text": "Completed checks: closure, completeness, iterations and standalone uncertainty.",
+    "x": 52,
+    "y": 446,
+    "width": 850,
+    "height": 21.96,
+    "size": 18
+  },
+  {
+    "slide": 19,
+    "text": "BACKUP / NORMALIZATION",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 19,
+    "text": "A reassuring ratio can hide the wrong quantity",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 19,
+    "text": "2D agreement receipt, Aug 21 \u00b7 Values re-derived from recorded operands \u00b7 Ratios rounded",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 19,
+    "text": "19",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 19,
+    "text": "A differential cross section needs bin areas to become a total.",
+    "x": 55,
+    "y": 126,
+    "width": 850,
+    "height": 29.28,
+    "size": 24
+  },
+  {
+    "slide": 19,
+    "text": "Calculation",
+    "x": 73,
+    "y": 267,
+    "width": 344,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 19,
+    "text": "This work",
+    "x": 472,
+    "y": 267,
+    "width": 176,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 19,
+    "text": "Ours / paper",
+    "x": 709,
+    "y": 267,
+    "width": 178,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 19,
+    "text": "Integrated total",
+    "x": 73,
+    "y": 313,
+    "width": 344,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 19,
+    "text": "3.073 \u00d7 10^-38",
+    "x": 472,
+    "y": 313,
+    "width": 218,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 19,
+    "text": "1.0113",
+    "x": 709,
+    "y": 313,
+    "width": 178,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 19,
+    "text": "Bare sum of densities",
+    "x": 73,
+    "y": 354,
+    "width": 344,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 19,
+    "text": "3.732 \u00d7 10^-37",
+    "x": 472,
+    "y": 354,
+    "width": 218,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 19,
+    "text": "1.0115",
+    "x": 709,
+    "y": 354,
+    "width": 178,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 19,
+    "text": "Only the integrated row has total-cross-section units: cm\u00b2/nucleon.",
+    "x": 58,
+    "y": 416,
+    "width": 850,
+    "height": 20.74,
+    "size": 17
+  },
+  {
+    "slide": 19,
+    "text": "Check the definition and units\u2014not only agreement with another number.",
+    "x": 58,
+    "y": 451,
+    "width": 850,
+    "height": 25.62,
+    "size": 21
+  },
+  {
+    "slide": 20,
+    "text": "BACKUP / SIZE AND COMPLEXITY",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 20,
+    "text": "Repository size describes scope, not understanding",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 20,
+    "text": "git 901f2c64 \u00b7 Monthly first-parent snapshots \u00b7 Tracked .py files \u00b7 Includes tests, drivers and vendored files",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 20,
+    "text": "20",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 20,
+    "text": "File-edit entropy describes concentration of edits. It is not a code-complexity score.",
+    "x": 55,
+    "y": 457,
+    "width": 850,
+    "height": 21.96,
+    "size": 18
+  },
+  {
+    "slide": 21,
+    "text": "BACKUP / COMPARISON LIMITS",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 21,
+    "text": "What this case study can establish",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 21,
+    "text": "Explicit evidence limits \u00b7 The absence of a counterfactual does not prevent reporting concrete outcomes",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 21,
+    "text": "21",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 21,
+    "text": "Available evidence",
+    "x": 68,
+    "y": 159,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 21,
+    "text": "Completed research components\nHistorical failure / repair pairs\nRepository activity and scope\nThe speaker's own recollections",
+    "x": 68,
+    "y": 197.4,
+    "width": 383,
+    "height": 97.6,
+    "size": 20
+  },
+  {
+    "slide": 21,
+    "text": "Not measured",
+    "x": 509,
+    "y": 159,
+    "width": 383,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 21,
+    "text": "A matched no-AI baseline\nHuman hours saved\nA controlled model ranking\nA learning score",
+    "x": 509,
+    "y": 197.4,
+    "width": 383,
+    "height": 97.6,
+    "size": 20
+  },
+  {
+    "slide": 21,
+    "text": "Release dates and commit counts alone cannot identify model-specific productivity gains.",
+    "x": 55,
+    "y": 436,
+    "width": 850,
+    "height": 56.12,
+    "size": 23
+  },
+  {
+    "slide": 22,
+    "text": "BACKUP / UNCERTAINTY COMPONENTS",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 22,
+    "text": "Compare the sources released with the paper",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 22,
+    "text": "Paper ROOT: Total, Flux, MuonEnergyScale, StatOnly covariances \u00b7 Our validated 2D budget",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 22,
+    "text": "22",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 22,
+    "text": "Our energy-scale group is MINOS + MINERvA; it excludes efficiency, resolution and beam-angle terms.\nEach input uses its own bin widths. Similar source sizes do not establish identical covariance constructions.",
+    "x": 54,
+    "y": 444,
+    "width": 854,
+    "height": 34.16,
+    "size": 14
+  },
+  {
+    "slide": 23,
+    "text": "BACKUP / SOURCES",
+    "x": 44,
+    "y": 24,
+    "width": 860,
+    "height": 13.42,
+    "size": 11
+  },
+  {
+    "slide": 23,
+    "text": "Research references and scope",
+    "x": 44,
+    "y": 52,
+    "width": 872,
+    "height": 35.2,
+    "size": 32
+  },
+  {
+    "slide": 23,
+    "text": "Full source paths, hashes, calculation definitions and editorial notes are in EVIDENCE.md",
+    "x": 44,
+    "y": 501,
+    "width": 803,
+    "height": 12.2,
+    "size": 10
+  },
+  {
+    "slide": 23,
+    "text": "23",
+    "x": 875,
+    "y": 500,
+    "width": 36,
+    "height": 14.64,
+    "size": 12
+  },
+  {
+    "slide": 23,
+    "text": "MINERvA inclusive CC measurement",
+    "x": 56,
+    "y": 134,
+    "width": 850,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 23,
+    "text": "Ruterbories et al. \u00b7 arXiv:2106.16210",
+    "x": 56,
+    "y": 160,
+    "width": 850,
+    "height": 20.74,
+    "size": 17
+  },
+  {
+    "slide": 23,
+    "text": "OmniFold",
+    "x": 56,
+    "y": 191,
+    "width": 850,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 23,
+    "text": "Andreassen et al. \u00b7 arXiv:1911.09107",
+    "x": 56,
+    "y": 217,
+    "width": 850,
+    "height": 20.74,
+    "size": 17
+  },
+  {
+    "slide": 23,
+    "text": "Unbinned-unfolding software",
+    "x": 56,
+    "y": 248,
+    "width": 850,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 23,
+    "text": "Milton et al. \u00b7 github.com/rymilton/unbinned_unfolding",
+    "x": 56,
+    "y": 274,
+    "width": 850,
+    "height": 20.74,
+    "size": 17
+  },
+  {
+    "slide": 23,
+    "text": "OmniLearn / PET",
+    "x": 56,
+    "y": 305,
+    "width": 850,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 23,
+    "text": "Mikuni & Nachman \u00b7 arXiv:2404.16091",
+    "x": 56,
+    "y": 331,
+    "width": 850,
+    "height": 20.74,
+    "size": 17
+  },
+  {
+    "slide": 23,
+    "text": "MINERvA foundation-model work",
+    "x": 56,
+    "y": 362,
+    "width": 850,
+    "height": 24.4,
+    "size": 20
+  },
+  {
+    "slide": 23,
+    "text": "Krzmanc et al. \u00b7 arXiv:2604.12364",
+    "x": 56,
+    "y": 388,
+    "width": 850,
+    "height": 20.74,
+    "size": 17
+  },
+  {
+    "slide": 23,
+    "text": "2D validated \u00b7 Higher-D covariance unadopted \u00b7 PET diagnostic / method development",
+    "x": 56,
+    "y": 457,
+    "width": 850,
+    "height": 20.74,
+    "size": 17
+  }
+]

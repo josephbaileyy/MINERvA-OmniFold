@@ -1,0 +1,65 @@
+{
+  "source_hashes": {
+    "ours": "142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5",
+    "paper": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3"
+  },
+  "source_revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+  "reported_bins": 205,
+  "agreement_counts": [
+    159,
+    193,
+    202
+  ],
+  "integrals": [
+    3.0733131599571655e-38,
+    3.03901139455691e-38
+  ],
+  "selected_pt_indices_zero_based": [
+    2,
+    7,
+    10,
+    13
+  ],
+  "slice_selection_rule": "Four slices spanning the available range with exactly equal physical boundaries; all 14 supplied in backup.",
+  "ours_pt_edges": [
+    0.0,
+    0.07,
+    0.15,
+    0.25,
+    0.33,
+    0.4,
+    0.47,
+    0.55,
+    0.7,
+    0.85,
+    1.0,
+    1.25,
+    1.5,
+    2.5,
+    4.5
+  ],
+  "published_pt_edges": [
+    0.0,
+    0.075,
+    0.15,
+    0.25,
+    0.325,
+    0.4,
+    0.475,
+    0.55,
+    0.7,
+    0.85,
+    1.0,
+    1.25,
+    1.5,
+    2.5,
+    4.5
+  ],
+  "edge_difference": "At boundary indices 1,4,6: ours .07,.33,.47; published .075,.325,.475. Bin ratios are index matched; each projection uses its own physical widths.",
+  "map_color_limits_percent": [
+    -20,
+    20
+  ],
+  "unreported_cells": 19,
+  "limits": "Projections show our total errors and published reference errors separately; ratio error bars are sigma_ours / paper central. Slices also display our total errors and the separate paper reference errors. No covariance or significance of the difference is constructed."
+}

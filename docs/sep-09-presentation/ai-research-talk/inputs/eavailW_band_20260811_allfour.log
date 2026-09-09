@@ -1,0 +1,26 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Info in <TCanvas::Print>: png file eavailW_band_20260811_allfour.png has been created
+Info in <TCanvas::Print>: pdf file eavailW_band_20260811_allfour.pdf has been created
+[band] GENIE-CV: total=2.4446e-38 (data 3.0699e-38, ratio 1.256); hiE-hiW corner=8.7918e-39 (data 1.3497e-38, data/gen=1.535)
+[band] GENIE+MEC: total=2.4829e-38 (data 3.0699e-38, ratio 1.236); hiE-hiW corner=8.5484e-39 (data 1.3497e-38, data/gen=1.579)
+[band] NuWro: total=2.3444e-38 (data 3.0699e-38, ratio 1.309); hiE-hiW corner=8.6369e-39 (data 1.3497e-38, data/gen=1.563)
+[band] GiBUU: total=2.2227e-38 (data 3.0699e-38, ratio 1.381); hiE-hiW corner=8.3893e-39 (data 1.3497e-38, data/gen=1.609)
+
+=== dsigma/dW (data vs generators) ===
+  W band         data     GENIE-CV    GENIE+MEC        NuWro        GiBUU
+   0.0-  1.1   4.370e-39    3.248e-39    3.454e-39    3.807e-39    4.032e-39
+   1.1-  1.4   1.875e-38    1.642e-38    1.794e-38    1.515e-38    1.388e-38
+   1.4-  1.8   1.419e-38    1.529e-38    1.521e-38    1.251e-38    1.037e-38
+   1.8-  2.2   1.152e-38    1.073e-38    1.042e-38    1.040e-38    8.553e-39
+   2.2-  3.0   7.481e-39    5.764e-39    5.622e-39    5.715e-39    5.550e-39
+   3.0-100.0   4.121e-41    9.578e-42    9.274e-42    1.006e-41    1.666e-41
+
+[band] wrote eavailW_band_20260811_allfour.png and eavailW_band_20260811_allfour.root

@@ -1,0 +1,50 @@
+{
+  "records": [
+    {
+      "generator": "GENIE-CV",
+      "generator_integral": 8.7918e-39,
+      "data_integral": 1.3497e-38,
+      "ratio": 1.535
+    },
+    {
+      "generator": "GENIE+MEC",
+      "generator_integral": 8.5484e-39,
+      "data_integral": 1.3497e-38,
+      "ratio": 1.579
+    },
+    {
+      "generator": "NuWro",
+      "generator_integral": 8.6369e-39,
+      "data_integral": 1.3497e-38,
+      "ratio": 1.563
+    },
+    {
+      "generator": "GiBUU",
+      "generator_integral": 8.3893e-39,
+      "data_integral": 1.3497e-38,
+      "ratio": 1.609
+    }
+  ],
+  "sources": [
+    {
+      "path": "VALIDATION_LEDGER.md",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "46110d7be0507701bf5314bc4ed14f56995744bd78bb43fda1da6312974078e9"
+    },
+    {
+      "path": "docs/analysis-note/sec_eavailw.tex",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "d59a0604c217cf72a38354564a08df0c87443fb2d4fe9beaadb27207f4af7e9b"
+    },
+    {
+      "path": "docs/COLLABORATOR_QUESTIONS.md",
+      "revision": "901f2c647355d69412b5c190fcb1df02d1c8aa14",
+      "sha256": "8648f2a848b92e6d8db6e9ae8a2d46169c764542ba77735610f0150953b342cf"
+    }
+  ],
+  "log_sha256": "06114a541413e19083039b1499ae0a46eccd2c3ba2c866d47c4c2dd3faebdf7c",
+  "log_path": "inputs/eavailW_band_20260811_allfour.log",
+  "source_remote_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/eavailW_band_20260811_allfour.log",
+  "corner": "E_avail >= 0.8 GeV and W >= 1.8 GeV; nine integrated cells",
+  "limits": "Central-value ratios at recorded precision; no covariance, significance or independent-generator evidence count. Original log inspected and copied read-only; no rerun."
+}
