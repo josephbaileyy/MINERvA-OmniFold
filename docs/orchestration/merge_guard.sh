@@ -27,7 +27,9 @@
 # Usage, from inside your lane worktree:
 #     bash docs/orchestration/merge_guard.sh <LANE>       e.g. B | C | D | A
 #
-# Run it BEFORE resolving any conflict. Exit 0 means you may resolve; anything else means stop.
+# Run before resolving a conflict, or before committing an automatic merge.
+# Exit 0 permits owned-row resolution or certifies a reconstructed clean merge.
+# Any other exit means stop and remove the cause before re-running.
 #
 # AND "STOP" IS TERMINAL. Joseph ruled on 2026-09-08, after an integration lane overrode a refusal on
 # a coordinator's authorization: NO AUTHORIZER CONVERTS A REFUSAL INTO A PASS. A guard's exit is a
@@ -84,18 +86,15 @@ rc=$?
 
 echo
 case "$rc" in
-  0) echo "  PASS :: every contested ledger row is yours. You may resolve this merge." ;;
+  0) echo "  PASS :: owned-row attribution or clean-merge reconstruction verified; see the measurement above." ;;
   1) echo "  REFUSED :: a contested row belongs to another lane. ROUTE IT TO THE NAMED AUTHOR AND DO"
      echo "             NOT RESOLVE IT. Joseph's rule, 2026-08-12: no lane's ledger row is merged by"
      echo "             anyone but its author." ;;
-  2) echo "  CANNOT CHECK :: the gate examined nothing, so nothing was verified. This is NOT a pass."
-     echo "             Either there is no conflict to attribute -- in which case you are gating an"
-     echo "             empty set and the merge auto-resolved, which is fine but unverified -- or the"
-     echo "             lane argument was empty, or git could not enumerate unmerged files."
-     echo "             VALIDATION_LEDGER.md rows now CARRY VL ids and are nameable -- but they are"
-     echo "             still UNOWNED, because ownership is not derivable from a VL number: rows are"
-     echo "             written by whichever lane measured the number, in arrival order. Until the"
-     echo "             owner side table exists, a ledger conflict lands here and is routed by hand." ;;
+  2) echo "  CANNOT CHECK :: attribution examined nothing, or this merge COULD NOT BE VERIFIED as a"
+     echo "             clean merge -- including the cases where the gate was merely UNABLE to check."
+     echo "             This is NOT a pass. Read the reason token above, remove its cause and re-run."
+     echo "             A clean index alone does not verify a hand-resolved conflict, committed merge"
+     echo "             attributes, uncertain ancestry, staged drift or tracked working-tree drift." ;;
   *) echo "  BLOCKED :: unexpected exit $rc from the gate. Treat as a refusal." ;;
 esac
 
