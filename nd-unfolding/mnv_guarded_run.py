@@ -5254,20 +5254,52 @@ def _refuse_an_incompatible_reinstall(incumbent, expect: str, allowed: frozenset
     would therefore refuse every legitimate repeat install -- the exact correct-run failure
     this whole change is repairing -- while proving nothing, since both values were written
     by this process.
+
+    THE FIRST CHECK IS ON THE ENFORCING CODE AND NOT ON THE POLICY, and it is the one that
+    keeps this function honest. `_installed_guard` recognises an incumbent by TYPE NAME,
+    which it must -- see there -- but a name is not a provenance. Comparing only
+    `expect_root` and `allowed` would accept any object that merely CLAIMS the right policy
+    while enforcing none of it, and the accepted object supplies both the enforcement and
+    the fields the record is written from, so the record would say `propagation: armed`
+    either way. Measured before this clause existed: a forty-line class named
+    `GuardedPathFinder`, whose `find_spec` delegates to the real finder unchanged, was
+    adopted by a second `install()`; the payload then imported from the stale tree and the
+    run exited 0. At the parent commit the same probe exited 2, because there ANY incumbent
+    forced a refusal. That fail-closed backstop is what the idempotence change traded away,
+    and this clause is what buys it back: the incumbent's class must come from THIS FILE.
     """
     disagreements = []
+    try:
+        installed_module = str(pathlib.Path(inspect.getfile(type(incumbent))).resolve())
+    except (TypeError, OSError, ValueError):
+        #: A type with no readable source file is not a guard this module produced. It is
+        #: reported as a disagreement rather than raised, so the caller sees WHY it was
+        #: refused instead of a traceback from the check itself.
+        installed_module = None
+    this_module = str(pathlib.Path(__file__).resolve())
+    if installed_module != this_module:
+        disagreements.append(
+            f"guard module file: installed {installed_module!r}, "
+            f"this module {this_module!r}")
     installed_root = getattr(incumbent, "expect_root", None)
     if installed_root != expect:
         disagreements.append(
             f"expect_root: installed {installed_root!r}, requested {expect!r}")
-    installed_allowed = frozenset(getattr(incumbent, "allowed", frozenset()))
-    if installed_allowed != allowed:
+    #: THE TYPE IS CHECKED BEFORE THE VALUE. `frozenset("abc")` is a set of three characters
+    #: and not an error, so coercing an `allowed` that arrived as a string would compare a
+    #: silently different object instead of refusing it.
+    installed_allowed = getattr(incumbent, "allowed", None)
+    if not isinstance(installed_allowed, (set, frozenset)):
+        disagreements.append(
+            f"allowed: installed value is {type(installed_allowed).__name__}, "
+            "not a set")
+    elif frozenset(installed_allowed) != allowed:
         disagreements.append(
             f"allowed: installed {sorted(installed_allowed)!r}, "
             f"requested {sorted(allowed)!r}")
     if disagreements:
         raise RuntimeError(
-            "an OI-136 guard for a DIFFERENT tree is already installed in this interpreter; "
+            "an INCOMPATIBLE OI-136 guard is already installed in this interpreter; "
             "refusing to run under it -- " + "; ".join(disagreements))
 
 

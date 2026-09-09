@@ -7268,7 +7268,7 @@ class RepeatedInstallationInOnePropagatedInterpreter(unittest.TestCase):
         # THE REASON, NOT JUST THE REFUSAL. Unfixed, this refused with "no PathFinder" -- the
         # right exit code for the wrong cause, which is a pass that proves nothing about the
         # compatibility check. Naming the expected text is what makes the assertion load-bearing.
-        self.assertIn("DIFFERENT tree", result.stderr, result.stderr)
+        self.assertIn("INCOMPATIBLE OI-136 guard", result.stderr, result.stderr)
         self.assertIn("expect_root", result.stderr, result.stderr)
         self.assertNotIn("no PathFinder in sys.meta_path", result.stderr,
                          "refused for the pre-fix reason, not for the disagreement")
@@ -7410,6 +7410,77 @@ class InstallIsIdempotentOnlyForACompatibleRequest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("REFUSED", result.stdout, result.stdout + result.stderr)
         self.assertIn("no PathFinder in sys.meta_path", result.stdout)
+
+    def test_an_impostor_named_GuardedPathFinder_is_NOT_adopted(self):
+        """A NAME IS NOT A PROVENANCE, and this is the backstop idempotence nearly cost us.
+
+        At 033bef2c any incumbent forced a fail-closed refusal, because `install()` simply
+        found no bare `PathFinder`. Recognising an incumbent by type name removed that, and
+        the first draft of this change compared only `expect_root` and `allowed` -- the
+        POLICY. Measured against that draft, the class below was adopted, the payload
+        imported from the stale tree, and the run exited 0 while its record still read
+        `propagation: armed`, because the record is written from the object that was
+        adopted. The impostor enforces nothing: its `find_spec` delegates to the real finder
+        untouched.
+
+        The threat model is honest about its own limits. The impostor has to be written
+        INSIDE `--expect-root`, since `sitecustomize._verify_guard_location` exits 3
+        otherwise, and anyone who can write there can edit the guard itself. So this is
+        defence in depth rather than a boundary against a full adversary -- which is exactly
+        why it is worth keeping: it is the check that makes a WRONG guard loud instead of
+        silent, including the accidental version-skew case where two unlike copies of this
+        file meet in one interpreter.
+        """
+        impostor = write(
+            self.good / "nd-unfolding" / "impostor.py",
+            "import sys\n"
+            "class GuardedPathFinder:\n"
+            "    def __init__(self, inner, expect, allowed):\n"
+            "        self._inner = inner\n"
+            "        self.expect_root = expect\n"
+            "        self.allowed = allowed\n"
+            "    def find_spec(self, fullname, path=None, target=None):\n"
+            "        return self._inner.find_spec(fullname, path, target)\n"
+            "    def invalidate_caches(self):\n"
+            "        pass\n")
+        result = self.probe(
+            f"import importlib.util as u\n"
+            f"s = u.spec_from_file_location('impostor', {str(impostor)!r})\n"
+            "m = u.module_from_spec(s)\n"
+            "s.loader.exec_module(m)\n"
+            "for i, f in enumerate(sys.meta_path):\n"
+            "    if getattr(f, '__name__', None) == 'PathFinder' "
+            "or type(f).__name__ == 'PathFinder':\n"
+            f"        sys.meta_path[i] = m.GuardedPathFinder(f, {str(self.good)!r}, "
+            f"frozenset({{{str(self.good)!r}}}))\n"
+            "        break\n"
+            "else:\n"
+            "    raise SystemExit('fixture failed to plant the impostor')\n"
+            "try:\n"
+            f"    g.install({str(self.good)!r})\n"
+            "except RuntimeError as exc:\n"
+            "    print('REFUSED', exc)\n"
+            "else:\n"
+            "    print('ADOPTED -- an impostor is enforcing this run')\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("REFUSED", result.stdout, result.stdout + result.stderr)
+        self.assertIn("guard module file", result.stdout,
+                      "the refusal must name the provenance, not the policy")
+
+    def test_an_incumbent_whose_allowed_is_a_string_is_refused_not_coerced(self):
+        """`frozenset('abc')` is three characters, not an error, so coercion hides a mismatch."""
+        result = self.probe(
+            f"a = g.install({str(self.good)!r})\n"
+            f"a.allowed = {str(self.good)!r}\n"
+            "try:\n"
+            f"    g.install({str(self.good)!r})\n"
+            "except RuntimeError as exc:\n"
+            "    print('REFUSED', exc)\n"
+            "else:\n"
+            "    print('ACCEPTED')\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("REFUSED", result.stdout, result.stdout + result.stderr)
+        self.assertIn("not a set", result.stdout)
 
     def test_a_repeat_install_does_not_advance_the_child_depth_a_second_time(self):
         """Re-arming would hand descendants a lineage one deeper than they really are.
