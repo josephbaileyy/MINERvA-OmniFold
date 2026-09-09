@@ -5219,11 +5219,130 @@ def _arm_restricted_shell() -> "tuple[str, dict]":
     return state, {"path": path, "sha256": _sha256_or_none(path)}
 
 
+def _installed_guard():
+    """The `GuardedPathFinder` already in `sys.meta_path`, or None.
+
+    IT MATCHES ON THE TYPE NAME AND NOT WITH `isinstance`, for the reason the `PathFinder`
+    scan below does. The propagated half loads this very file a SECOND time under
+    `_mnv_guarded_run_propagated_<pid>`, so a child that both inherits the shim and runs
+    `mnv_guarded_run.py` as `__main__` holds two module objects and therefore two distinct
+    `GuardedPathFinder` CLASSES. `isinstance` compares class identity and would answer False
+    across that boundary -- silently, and only in the propagated topology, which is the one
+    configuration a single-import unit test cannot reach.
+    """
+    for finder in sys.meta_path:
+        if type(finder).__name__ == "GuardedPathFinder":
+            return finder
+    return None
+
+
+def _refuse_an_incompatible_reinstall(incumbent, expect: str, allowed: frozenset) -> None:
+    """Refuse when the installed guard enforces a different tree than this caller asked for.
+
+    RECOGNISING AN INCUMBENT IS NOT ACCEPTING IT. Returning any guard that happens to be in
+    `sys.meta_path` would convert "refusing to run unguarded" into "running under someone
+    else's guard", which is a WEAKER outcome than the failure this function exists to fix: a
+    caller that asked to be confined to tree A would be confined to tree B and would never
+    learn it. Equality is required rather than containment, in both directions. A wider
+    incumbent silently grants imports the caller declared out of scope; a narrower one
+    refuses imports the caller declared legitimate, and while that direction is fail-closed
+    it is still not the guard the caller asked for. Neither is ours to reconcile here.
+
+    THE DECISIVE ARGUMENT FOR EQUALITY IS ABOUT THE RECORD, NOT ABOUT ENFORCEMENT, and it is
+    written down because the enforcement argument alone reads as mere conservatism and
+    invites a later reviewer to relax this to containment. `write_inventory` writes
+    `"expect_root"` and `"allow"` from the CALLER's arguments and never from the incumbent.
+    So under any non-equality rule the emitted record would describe a policy that did not
+    enforce -- a false receipt, which in this repository is worse than a refusal, because a
+    refusal is read as a refusal and a receipt is read as a measurement. Under equality the
+    two cannot disagree.
+
+    LINEAGE IS DELIBERATELY NOT COMPARED. `_arm_child_environment` ADVANCES the recorded
+    depth and rewrites the parent pid as part of arming, so by the time a second `install()`
+    reads the environment it sees `depth + 1` and this process's own pid. Comparing lineage
+    would therefore refuse every legitimate repeat install -- the exact correct-run failure
+    this whole change is repairing -- while proving nothing, since both values were written
+    by this process.
+
+    THE FIRST CHECK IS ON THE ENFORCING CODE AND NOT ON THE POLICY, and it is the one that
+    keeps this function honest. `_installed_guard` recognises an incumbent by TYPE NAME,
+    which it must -- see there -- but a name is not a provenance. Comparing only
+    `expect_root` and `allowed` would accept any object that merely CLAIMS the right policy
+    while enforcing none of it, and the accepted object supplies both the enforcement and
+    the fields the record is written from, so the record would say `propagation: armed`
+    either way. A CONSEQUENCE WORTH EXPECTING: two byte-identical copies of this file at two
+    paths inside one tree now refuse each other. That is intended -- they are two unlike
+    provenances as far as review is concerned -- but it is surprising the first time.
+    Measured before this clause existed: a forty-line class named
+    `GuardedPathFinder`, whose `find_spec` delegates to the real finder unchanged, was
+    adopted by a second `install()`; the payload then imported from the stale tree and the
+    run exited 0. At the parent commit the same probe exited 2, because there ANY incumbent
+    forced a refusal. That fail-closed backstop is what the idempotence change traded away,
+    and this clause is what buys it back: the incumbent's class must come from THIS FILE.
+    """
+    disagreements = []
+    try:
+        installed_module = str(pathlib.Path(inspect.getfile(type(incumbent))).resolve())
+    except (TypeError, OSError, ValueError):
+        #: A type with no readable source file is not a guard this module produced. It is
+        #: reported as a disagreement rather than raised, so the caller sees WHY it was
+        #: refused instead of a traceback from the check itself.
+        #: WHY `None` IS REACHABLE AT ALL, since a debugger reading "installed None" will
+        #: otherwise assume the check is broken: `inspect.getfile` resolves a CLASS through
+        #: `sys.modules[cls.__module__]`, so a module that was never registered there -- or
+        #: was registered and then pruned, e.g. by a chained third-party `sitecustomize`
+        #: running between the two installs -- raises rather than answering. The propagated
+        #: half registers itself (`mnv_guard_shim/sitecustomize.py`) and holds the
+        #: reference, so a legitimate repeat install does not take this branch.
+        installed_module = None
+    this_module = str(pathlib.Path(__file__).resolve())
+    if installed_module != this_module:
+        disagreements.append(
+            f"guard module file: installed {installed_module!r}, "
+            f"this module {this_module!r}")
+    installed_root = getattr(incumbent, "expect_root", None)
+    if installed_root != expect:
+        disagreements.append(
+            f"expect_root: installed {installed_root!r}, requested {expect!r}")
+    #: THE TYPE IS CHECKED BEFORE THE VALUE. `frozenset("abc")` is a set of three characters
+    #: and not an error, so coercing an `allowed` that arrived as a string would compare a
+    #: silently different object instead of refusing it.
+    installed_allowed = getattr(incumbent, "allowed", None)
+    if not isinstance(installed_allowed, (set, frozenset)):
+        disagreements.append(
+            f"allowed: installed value is {type(installed_allowed).__name__}, "
+            "not a set")
+    elif frozenset(installed_allowed) != allowed:
+        disagreements.append(
+            f"allowed: installed {sorted(installed_allowed)!r}, "
+            f"requested {sorted(allowed)!r}")
+    if disagreements:
+        raise RuntimeError(
+            "an INCOMPATIBLE OI-136 guard is already installed in this interpreter; "
+            "refusing to run under it -- " + "; ".join(disagreements))
+
+
 def install(expect_root: str, allow=()) -> GuardedPathFinder:
-    """Wrap import resolution and every owned process-launch boundary."""
+    """Wrap import resolution and every owned process-launch boundary.
+
+    IDEMPOTENT FOR A COMPATIBLE REQUEST, because the propagated topology installs twice by
+    design. `sitecustomize` installs the guard at interpreter startup from the shim on
+    `PYTHONPATH`, and a batch payload spelled `python mnv_guarded_run.py -- <script>` then
+    calls this again from `main()`. Before OI-136-REINSTALL the second call walked past the
+    already-wrapped finder, found no bare `PathFinder`, and raised -- so the guard refused
+    itself precisely BECAUSE its own propagation had worked, and a run whose propagation had
+    FAILED would have sailed past this point. Measured: job 58106332, dead in 4 seconds.
+    The repeat returns the incumbent WITHOUT re-arming: re-running `_arm_child_environment`
+    would advance the child depth a second time and hand descendants a false lineage, and
+    re-running `_install_launch_guards` would double-wrap every launch hook.
+    """
     expect = str(pathlib.Path(expect_root).resolve())
     allow_roots = tuple(str(pathlib.Path(path).resolve()) for path in allow)
     allowed = frozenset({expect, *allow_roots})
+    incumbent = _installed_guard()
+    if incumbent is not None:
+        _refuse_an_incompatible_reinstall(incumbent, expect, allowed)
+        return incumbent
     propagated_from, depth = _lineage_from_environment()
     for i, finder in enumerate(sys.meta_path):
         if getattr(finder, "__name__", None) == "PathFinder" or type(finder).__name__ == "PathFinder":
