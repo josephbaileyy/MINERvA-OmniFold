@@ -1,0 +1,54 @@
+{
+  "automatic_retraining": false,
+  "completed_at_utc": "2026-09-09T06:18:47+00:00",
+  "decision_consequence": "Preserve all error evidence including the traceback and the partial report. Report the failure; capture nothing as a measurement.",
+  "execution_seconds": 202.919,
+  "forbids": [
+    "treat-any-output-as-measurement",
+    "discharge-any-PM-row",
+    "retry-without-new-authorization"
+  ],
+  "hostname": "login07",
+  "id": "pm-root-inspection-20260909",
+  "producer_log": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue/logs/pm-root-inspection-20260909.producer.log",
+  "producer_returncode": 20,
+  "producer_timeout_seconds": 1560.0,
+  "proposal_digest": "dd6a56c5c92caef671116b10da187ba32769fd687c9b4516364540e3bfd66c90",
+  "required_actions": [
+    {
+      "action": "preserve",
+      "artifacts": [
+        "pm-inspection-report.json",
+        "pm-inspection-verdict.json",
+        "producer-stdout.log",
+        "producer-stderr.log"
+      ],
+      "mode": "preserve-first"
+    },
+    {
+      "action": "refer-decision",
+      "authority": "joseph-decision-owner",
+      "consequence": "Preserve all error evidence including the traceback and the partial report. Report the failure; capture nothing as a measurement."
+    }
+  ],
+  "retry_requires_new_authorization": true,
+  "run_dir": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue/runs/pm-root-inspection-20260909",
+  "scheduler_task_ids": [
+    "58106332"
+  ],
+  "scheduler_task_ids_path": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue/runs/pm-root-inspection-20260909/scheduler-task-ids.json",
+  "scheduler_task_ids_sha256": "0a8db26c225e5f006e84476339dfb7e7807ac878cd778d52b7bcc938f4d12b63",
+  "schema_version": 1,
+  "state_dir": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue",
+  "status": "failed",
+  "terminal_branch": "capture-error",
+  "uid": 112498,
+  "unlocks": [
+    "preserve-error-evidence"
+  ],
+  "validator_log": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue/logs/pm-root-inspection-20260909.validator.log",
+  "validator_returncode": 20,
+  "validator_timeout_seconds": 1597.363,
+  "wall_budget_exhausted": false,
+  "wall_seconds": 1800.0
+}
