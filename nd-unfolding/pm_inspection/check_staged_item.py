@@ -27,7 +27,7 @@ queue writes.  It is not an authorization and it does not approve.  A PASS says 
 is staged is what the committed tree produces.
 
 USE:
-    campaignctl ... show --id pm-root-inspection-20260909b > staged-item.json
+    campaignctl ... show --id pm-root-inspection-20260909c > staged-item.json
     check_staged_item.py --item staged-item.json --repo <integrated checkout> \
         --expect-head <the reviewed head>
 
@@ -49,18 +49,21 @@ sys.path.insert(0, str(HERE))
 
 import pm_root_inspect as producer  # noqa: E402
 
-#: REPOINTED 2026-09-09 (2nd time). `revoke` writes a record keyed on the ITEM ID and
-#: `state_of` reads it forever, so a revoked id can never be re-staged and a new campaign
-#: instance is the only recovery. The contract pins campaign_id to this value, which is why a
-#: new contract goes with it. `-20260909` is burned differently from `-20260908`: it was not
-#: revoked, it RAN and FAILED, and `state_of` reports it `failed` permanently. A failed id is
-#: as unusable as a revoked one, so the third instance costs a third contract.
-CAMPAIGN_ID = "pm-root-inspection-20260909b"
+#: REPOINTED 2026-09-09 (3rd time). An item id is spent once it reaches any terminal state,
+#: and three now are, for three unrelated reasons: `-20260908` REVOKED after it was staged
+#: before the R5 receipt was committed; `-20260909` FAILED because the guard refused to
+#: install over its own propagation; `-20260909b` FAILED because ROOT's cling could not find
+#: the compiler it shells out to and segfaulted. `state_of` reports revoked and failed
+#: forever, `stage` has no --force, and the contract pins campaign_id -- so every instance
+#: costs a contract. All three defects are fixed and each fix was measured off-scheduler
+#: before this instance was built; the third was additionally confirmed on a compute node by
+#: diagnostic job 58124310.
+CAMPAIGN_ID = "pm-root-inspection-20260909c"
 #: REPOINTED alongside REVIEWED_CONTRACT_SHA256. Both earlier contracts stay on main as the
 #: record of what was staged, approved, and then revoked (20260908) or failed (20260909).
 #: Neither is edited: mutating one would make its record describe something that never
 #: happened.
-CONTRACT_PATH = "docs/orchestration/contracts/CONTRACT-20260909b-pm-root-inspection.json"
+CONTRACT_PATH = "docs/orchestration/contracts/CONTRACT-20260909c-pm-root-inspection.json"
 BINDINGS_PATH = "nd-unfolding/pm_inspection/INPUT-BINDINGS-20260908.json"
 PRODUCER_PATH = "nd-unfolding/pm_inspection/pm_root_inspect.py"
 GUARD_PATH = "nd-unfolding/mnv_guarded_run.py"
@@ -79,7 +82,7 @@ DEFAULT_EXPECT_ROOT = "/pscratch/sd/j/josephrb/exec-20260907"
 #: 3 with -- including the inner job at depth=1 carrying its own `--label`.
 #: IT MUST BE ABSOLUTE, on a filesystem the COMPUTE node can write, and ITS PARENT MUST EXIST:
 #: `write_inventory` opens the file with `open(dest, "a")` and does not create directories.
-GUARD_INVENTORY = "/pscratch/sd/j/josephrb/pm-inspection-20260909b/guard-inventory.jsonl"
+GUARD_INVENTORY = "/pscratch/sd/j/josephrb/pm-inspection-20260909c/guard-inventory.jsonl"
 DESCRIPTION = (
     "Bounded attended read-only ROOT inspection for PM-1/PM-3/PM-4/PM-5")
 
@@ -92,16 +95,17 @@ REVIEWED_MAXIMUM_COST = {"gpu_task_hours": 0.0, "cpu_task_hours": 0.5, "wall_hou
 #: A stale copy with a filesystem output_namespace and --report/--out literals rides on the
 #: launcher branch, and an item staged from it would agree with itself perfectly. Editing the
 #: contract must therefore change this constant, which means passing a reviewer.
-#: REPOINTED 2026-09-09 (2nd time) to CONTRACT-20260909b-pm-root-inspection.json, whose only
-#: difference from the 20260909 contract is `campaign_id` -- verified by diff as two changed
-#: lines, one removed and one added. Why a new contract at all: `revoke` writes a record keyed
+#: REPOINTED 2026-09-09 (3rd time) to CONTRACT-20260909c-pm-root-inspection.json, whose only
+#: difference from the 20260909b contract is `campaign_id` -- verified by diff as two changed
+#: lines, one removed and one added. The contract text itself has not been edited since the
+#: 20260908 review; only the id it pins has moved, three times, for three burned instances. Why a new contract at all: `revoke` writes a record keyed
 #: on the ITEM ID and `state_of` reads it forever, so a revoked id can never be re-staged; the
 #: contract pins `campaign_id` to that id, so recovering from a revoke costs a new contract. The
 #: 20260908 contract stays on main as the record of the item that was staged, approved and revoked.
 #: Changed as a constant, deliberately, rather than passed via --expect-contract-sha256: the flag
 #: would route around the reviewer this pin exists to require.
 REVIEWED_CONTRACT_SHA256 = (
-    "2d91f022d497506255078796782171ccbf28a95df83348e3bac79e53d7c22aac")
+    "ea2d24c28733cce33a3de8cd26fadc8b1fab4f127f22b8d2d29c13315f4331cf")
 
 
 class CheckError(Exception):
