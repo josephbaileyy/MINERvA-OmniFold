@@ -1,0 +1,11 @@
+{
+  "claimed_at_utc": "2026-09-09T06:15:23+00:00",
+  "hostname": "login07",
+  "id": "pm-root-inspection-20260909",
+  "owner": "login07:923041",
+  "proposal_digest": "dd6a56c5c92caef671116b10da187ba32769fd687c9b4516364540e3bfd66c90",
+  "run_dir": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue/runs/pm-root-inspection-20260909",
+  "schema_version": 1,
+  "state_dir": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue",
+  "uid": 112498
+}
