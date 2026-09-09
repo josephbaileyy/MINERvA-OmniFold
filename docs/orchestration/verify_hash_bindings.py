@@ -341,8 +341,27 @@ CODE_ROLE_PREFIXES = ("launcher_", "validator_", "script_", "engine_net_", "driv
                       "module_", "reconciler_", "wrapper_", "adopter_")
 
 
-def collect(obj, src, out, unpaired=None):
+def collect(obj, src, out, unpaired=None, revision_pinned=None):
     """Harvest (path, sha256) pairs from the two shapes receipts actually use.
+
+    A PAIR THAT CARRIES A `revision` IS NOT A WORKTREE BINDING and is routed away from `out`.
+    `{path, revision, sha256}` pins the digest of a file AT A GIT REVISION -- its readers
+    fetch it with `git show <revision>:<path>` and never touch the working tree -- so the
+    digest is a property of an immutable git object and comparing it against the checkout is
+    a category error. Left in, it would report MISMATCH every time the live file legitimately
+    moved on: the first record of this shape to arrive bound `VALIDATION_LEDGER.md`, which
+    takes 74 commits in 60 days, so the gate would have gone red daily and for no actionable
+    reason -- the OI-123 hazard, a check that cries wolf until nobody reads it.
+
+    THIS NARROWS THE COLLECTOR, so it was measured before it was written rather than argued:
+    the tree today contains ZERO pairs carrying a `revision`, and the tracked inventory is 120
+    with them counted and 120 with them excluded. Existing coverage loses nothing; every past
+    `ALL BINDINGS INTACT` means exactly what it meant. What changes is only what a FUTURE
+    revision-pinned record does.
+
+    They are counted and PRINTED rather than dropped, for the reason `unpaired` exists: a
+    collector that quietly stops seeing a shape reports ALL BINDINGS INTACT and is indis-
+    tinguishable from one that looked.
 
     OI-127 / BEN-322. A `<role>_sha256` whose dict carries no `<role>`/`<role>_path`/
     `<role>_file` sibling -- and a dict carrying `sha256` with no `path`/`file`/`script` --
@@ -357,12 +376,15 @@ def collect(obj, src, out, unpaired=None):
     later widening of this collector needs -- it is NOT that widening, and it is not a fix.
     """
     if isinstance(obj, dict):
+        pinned = isinstance(obj.get("revision"), str)
+        sink = out if not pinned else (revision_pinned
+                                       if revision_pinned is not None else [])
         p = obj.get("path") or obj.get("file") or obj.get("script")
         s = obj.get("sha256") or obj.get("sha")
         if isinstance(s, str) and len(s) == 64:
             if isinstance(p, str):
-                out.append((p, s, src))
-            elif unpaired is not None:
+                sink.append((p, s, src))
+            elif unpaired is not None and not pinned:
                 unpaired.append(("sha256" if isinstance(obj.get("sha256"), str) else "sha",
                                  src))
         for k, v in obj.items():
@@ -370,16 +392,16 @@ def collect(obj, src, out, unpaired=None):
                 base = k[:-len("_sha256")]
                 for cand in (base, base + "_path", base + "_file"):
                     if isinstance(obj.get(cand), str):
-                        out.append((obj[cand], v, src))
+                        sink.append((obj[cand], v, src))
                         break
                 else:
-                    if unpaired is not None:
+                    if unpaired is not None and not pinned:
                         unpaired.append((k, src))
         for v in obj.values():
-            collect(v, src, out, unpaired)
+            collect(v, src, out, unpaired, revision_pinned)
     elif isinstance(obj, list):
         for v in obj:
-            collect(v, src, out, unpaired)
+            collect(v, src, out, unpaired, revision_pinned)
 
 
 # A pin is only credible where it is USED, so pairing is read off the comparison
@@ -529,6 +551,7 @@ def main():
 
     receipt_pairs = []
     receipt_unpaired = []
+    receipt_revision_pinned = []
     fixture_pairs = []
     fixture_files = []
     for f in (glob.glob(os.path.join(a.root, "docs/**/*.json"), recursive=True)
@@ -544,7 +567,7 @@ def main():
             collect(doc, rel, fixture_pairs, None)
             continue
         try:
-            collect(doc, rel, receipt_pairs, receipt_unpaired)
+            collect(doc, rel, receipt_pairs, receipt_unpaired, receipt_revision_pinned)
         except OSError:
             continue
 
@@ -624,6 +647,12 @@ def main():
           f"repo CODE: {', '.join(sorted({k for k, _ in _code_unpaired}))}")
     print("    this is COVERAGE, not drift: no binding is shown broken. Resolving a role key "
           "needs a RECEIPT-SIDE declared mapping, never one inferred here (BEN-312)")
+    # PRINTED EVEN AT ZERO, because the point of the line is that a reader can tell a
+    # collector that saw none from one that stopped looking. Same reasoning as `unpaired`.
+    print(f"  {len(receipt_revision_pinned)} pair(s) across "
+          f"{len({s for _, _, s in receipt_revision_pinned})} receipt(s) carry a `revision` "
+          f"and were NOT compared against the worktree: they pin a git object, which "
+          f"`git show <revision>:<path>` reads and the checkout cannot contradict")
     print(f"  {ok} OK")
     print(f"  {shell_resolved} of them from EXPECTED_*_SHA guards in *.sh "
           f"({len(shell_pairs)} pins seen, floor {SHELL_PIN_FLOOR})")
