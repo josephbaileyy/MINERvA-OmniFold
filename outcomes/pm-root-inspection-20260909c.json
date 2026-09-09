@@ -1,0 +1,56 @@
+{
+  "automatic_retraining": false,
+  "completed_at_utc": "2026-09-09T19:36:57+00:00",
+  "decision_consequence": "Preserve the capture as a measurement. This is NOT a discharge of PM-1, PM-3, PM-4 or PM-5, NOT an adoption, and NOT blanket citability.",
+  "execution_seconds": 243.867,
+  "forbids": [
+    "discharge-any-PM-row",
+    "adopt-any-artifact",
+    "move-any-gate",
+    "cite-as-scientific-verdict"
+  ],
+  "hostname": "login36",
+  "id": "pm-root-inspection-20260909c",
+  "producer_log": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue/logs/pm-root-inspection-20260909c.producer.log",
+  "producer_returncode": 0,
+  "producer_timeout_seconds": 1560.0,
+  "proposal_digest": "1d018f034b51bd3347c83f98a98f2e6e43fd5621aadd4d5f0d539185d59ff386",
+  "required_actions": [
+    {
+      "action": "preserve",
+      "artifacts": [
+        "pm-inspection-report.json",
+        "pm-inspection-verdict.json",
+        "producer-stdout.log",
+        "producer-stderr.log"
+      ],
+      "mode": "preserve-first"
+    },
+    {
+      "action": "refer-decision",
+      "authority": "joseph-decision-owner",
+      "consequence": "Preserve the capture as a measurement. This is NOT a discharge of PM-1, PM-3, PM-4 or PM-5, NOT an adoption, and NOT blanket citability."
+    }
+  ],
+  "retry_requires_new_authorization": true,
+  "run_dir": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue/runs/pm-root-inspection-20260909c",
+  "scheduler_task_ids": [
+    "58127048"
+  ],
+  "scheduler_task_ids_path": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue/runs/pm-root-inspection-20260909c/scheduler-task-ids.json",
+  "scheduler_task_ids_sha256": "ff4f8eba39e30d5468b6339faaa632bfd3de72709c13674b0863aa9eb8fda0f1",
+  "schema_version": 1,
+  "state_dir": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue",
+  "status": "succeeded",
+  "terminal_branch": "capture-complete",
+  "uid": 112498,
+  "unlocks": [
+    "preserve-capture-as-measurement",
+    "report-measurements-separately-from-conclusions"
+  ],
+  "validator_log": "/global/u2/j/josephrb/.mnv_campaign/r5-20260902-0836139b/campaign-queue/logs/pm-root-inspection-20260909c.validator.log",
+  "validator_returncode": 0,
+  "validator_timeout_seconds": 1556.414,
+  "wall_budget_exhausted": false,
+  "wall_seconds": 1800.0
+}
