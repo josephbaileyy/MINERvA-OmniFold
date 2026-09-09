@@ -266,6 +266,7 @@ docs/orchestration/campaignctl.py	tracked	MACHINE	script			generated		exact-path
 docs/orchestration/compare_m1_m6.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/test_compare_m1_m6.py	no	41	1101	67440
 docs/orchestration/contracts/CONTRACT-20260908-pm-root-inspection.json	tracked	MACHINE	machine-data		20260908	generated		exact-path-only	nd-unfolding/pm_inspection/check_staged_item.py	no	3	170	8644
 docs/orchestration/contracts/CONTRACT-20260909b-pm-root-inspection.json	tracked	MACHINE	machine-data		20260909	generated		exact-path-only	nd-unfolding/pm_inspection/check_staged_item.py	no	2	170	8645
+docs/orchestration/contracts/CONTRACT-20260909c-pm-root-inspection.json	tracked	MACHINE	machine-data		20260909	generated		exact-path-only	nd-unfolding/pm_inspection/check_staged_item.py	no	2	170	8645
 docs/orchestration/control-plane/campaign-origin.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/campaignctl.py;docs/orchestration/state/transport-probe-20260908/positive-control-probe.sh;docs/orchestration/test_campaignctl.py;docs/orchestration/verify_hash_bindings.py;nd-unfolding/pm_inspection/test_pm_staging_check.py	no	9	8	388
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	5	13	747
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	4	26	8403
@@ -309,6 +310,7 @@ docs/orchestration/receipts/RECEIPT-open-items-archive-repin-20260821.json	track
 docs/orchestration/run_gate2_r4_detached.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	nd-unfolding/pet/sbatch_gate2_target_validator.sh	no	4	31	1403
 docs/orchestration/runbooks/RUNBOOK-20260908-pm-root-inspection-staging.md	tracked	ARCHIVAL	runbook		20260908	terminal		exact-path-only		yes	0	140	7634
 docs/orchestration/runbooks/RUNBOOK-20260909b-pm-root-inspection-staging.md	tracked	ARCHIVAL	runbook		20260909	terminal		exact-path-only		yes	0	176	9826
+docs/orchestration/runbooks/RUNBOOK-20260909c-pm-root-inspection-staging.md	tracked	ARCHIVAL	runbook		20260909	terminal		exact-path-only		yes	0	98	5151
 docs/orchestration/runs/agent-A-standard/20260826T141501Z-send-4585f665.json	tracked	MACHINE	run-artifact	agent-A-standard	20260826	generated		exact-path-only		yes	1	1	1198
 docs/orchestration/runs/agy-capacity-probe/20260826-f8b-VERDICT.md	tracked	MACHINE	run-artifact	agy-capacity-probe	20260826	generated		exact-path-only	docs/orchestration/test_verify_run_receipt_blind_spots.py	yes	5	80	4932
 docs/orchestration/runs/agy-capacity-probe/20260826-stackgrade-VERDICT-P6-P7-anchor.md	tracked	MACHINE	run-artifact	agy-capacity-probe	20260826	generated		exact-path-only		yes	1	56	1988

@@ -8,28 +8,33 @@
     "cpu_task_hours": 500.0
   },
   "unit": "task-hours: sum of post-t0 ElapsedRaw over every execution attempt, with the attempts of one job id summed; an attempt is (JobID, Start, End) and a repeated observation of one attempt is counted once; attempts straddling t0 are clipped at t0; .batch/.extern/step and array-bracket rows excluded",
-  "measured_at_utc": "2026-09-09T16:07:25.921876Z",
-  "measured_on_host": "login24",
+  "measured_at_utc": "2026-09-09T19:23:15.413802Z",
+  "measured_on_host": "login36",
   "source": {
     "kind": "sacct",
     "argv_or_path": "sacct --user josephrb -X -D --parsable2 --noheader --starttime 2026-09-02T13:44:27 --endtime now --format=JobID,JobName,State,ElapsedRaw,Partition,Start,End,AllocTRES",
-    "raw_sha256": "c8699518c613df4bfe1b3905bbda84dd9aa966b698d2f1f790835b9ce308f5eb"
+    "raw_sha256": "14f579a8ba9c884b8f4186f45ea4e6879eaa51d6d77e7f2141184baa3f6782bf"
   },
   "spend": {
     "gpu_task_hours": 0.0,
-    "cpu_task_hours": 14.956388888888888,
-    "task_count": 2,
-    "attempt_count": 1885,
+    "cpu_task_hours": 14.966944444444444,
+    "task_count": 4,
+    "attempt_count": 1887,
     "metered_task_ids": [
       "57712764",
-      "58106332"
+      "58106332",
+      "58123269",
+      "58124310"
     ],
     "attempts_by_task_id": {
       "57712764": 1884,
-      "58106332": 1
+      "58106332": 1,
+      "58123269": 1,
+      "58124310": 1
     },
     "by_state": {
-      "FAILED": 1,
+      "COMPLETED": 1,
+      "FAILED": 2,
       "NODE_FAIL": 2,
       "REQUEUED": 1882
     }
@@ -42,6 +47,6 @@
   },
   "headroom": {
     "gpu_task_hours": 500.0,
-    "cpu_task_hours": 485.0436111111111
+    "cpu_task_hours": 485.03305555555556
   }
 }
