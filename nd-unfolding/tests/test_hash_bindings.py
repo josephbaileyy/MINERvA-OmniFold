@@ -556,3 +556,88 @@ def test_tracked_paths_fails_closed_outside_a_repository(tmp_path):
     m = _verifier_module()
     with pytest.raises(RuntimeError, match="cannot enumerate tracked files"):
         m.tracked_paths(str(tmp_path))
+
+
+# --- A `revision`-pinned pair names a git object, not the worktree (talk provenance) ---
+
+def _collect(doc):
+    """Run the collector over one document and return (bindings, unpaired, revision_pinned)."""
+    m = _verifier_module()
+    out, unpaired, pinned = [], [], []
+    m.collect(doc, "fixture.json", out, unpaired, pinned)
+    return out, unpaired, pinned
+
+
+def test_a_pair_without_a_revision_is_still_a_worktree_binding():
+    """The control. If this stops holding, the narrowing below has eaten real coverage."""
+    out, unpaired, pinned = _collect({"path": "a/b.py", "sha256": "0" * 64})
+    assert out == [("a/b.py", "0" * 64, "fixture.json")]
+    assert pinned == []
+
+
+def test_a_pair_carrying_a_revision_is_routed_away_from_the_worktree_check():
+    """`{path, revision, sha256}` pins a git object; the checkout cannot contradict it.
+
+    Its readers fetch it with `git show <revision>:<path>` and never look at the working
+    tree, so comparing the digest against the checkout is a category error that reports
+    MISMATCH whenever the live file legitimately moves on.
+    """
+    out, unpaired, pinned = _collect(
+        {"path": "VALIDATION_LEDGER.md", "revision": "deadbeef", "sha256": "1" * 64})
+    assert out == []
+    assert pinned == [("VALIDATION_LEDGER.md", "1" * 64, "fixture.json")]
+
+
+def test_a_revision_pinned_role_key_is_routed_too():
+    """The `<role>_sha256` shape needs the same treatment, or half the rule leaks."""
+    out, _, pinned = _collect(
+        {"driver": "x/y.py", "driver_sha256": "2" * 64, "revision": "cafe"})
+    assert out == []
+    assert pinned == [("x/y.py", "2" * 64, "fixture.json")]
+
+
+def test_a_revision_pinned_pair_is_NOT_silently_dropped():
+    """It must land somewhere a reader can see, for the reason `unpaired` exists.
+
+    A collector that quietly stops seeing a shape reports ALL BINDINGS INTACT and is
+    indistinguishable from one that looked. This is the test that fails if someone
+    "simplifies" the routing into a bare `continue`.
+    """
+    _, _, pinned = _collect(
+        {"sources": [{"path": "a", "revision": "r1", "sha256": "3" * 64},
+                     {"path": "b", "revision": "r2", "sha256": "4" * 64}]})
+    assert len(pinned) == 2
+
+
+def test_a_revision_pinned_bare_sha_does_not_become_an_unpaired_complaint():
+    """`unpaired` means "bound to nothing and never compared" -- a git pin is neither."""
+    out, unpaired, pinned = _collect({"revision": "abc", "sha256": "5" * 64})
+    assert out == [] and pinned == [] and unpaired == []
+
+
+def test_the_narrowing_costs_the_live_tree_no_coverage():
+    """Measured, not argued: the repository contains no revision-pinned pair today.
+
+    The whole justification for narrowing a shared gate's collector is that existing
+    coverage is untouched. If a revision-pinned receipt is ever added, this test turns into
+    the place that says so, and the delta has to be reviewed rather than absorbed silently.
+    """
+    import glob
+    m = _verifier_module()
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    plain, pinned = [], []
+    for f in (glob.glob(os.path.join(root, "docs/**/*.json"), recursive=True)
+              + glob.glob(os.path.join(root, "nd-unfolding/**/*.json"), recursive=True)):
+        try:
+            doc = json.load(open(f))
+        except (json.JSONDecodeError, OSError):
+            continue
+        if isinstance(doc, dict) and m.NEGATIVE_CONTROL_MARKER in doc:
+            continue
+        m.collect(doc, os.path.relpath(f, root), plain, [], pinned)
+    tracked = m.tracked_paths(root)
+    with_pins, _ = m.receipt_inventory(plain + pinned, root, tracked)
+    without, _ = m.receipt_inventory(plain, root, tracked)
+    assert len(with_pins) == len(without), (
+        f"excluding revision-pinned pairs now costs {len(with_pins) - len(without)} "
+        f"tracked binding(s); review that delta rather than deleting this test")
