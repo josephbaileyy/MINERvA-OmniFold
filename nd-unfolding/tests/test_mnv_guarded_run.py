@@ -7151,5 +7151,282 @@ class TheFilesOwnEntryPointCOLLECTSEveryClass(unittest.TestCase):
         self.assertEqual(classes_defined_after(with_a_string), [])
 
 
+
+class RepeatedInstallationInOnePropagatedInterpreter(unittest.TestCase):
+    """OI-136-REINSTALL: the guard refused itself because its own propagation worked.
+
+    THIS IS THE TOPOLOGY THAT KILLED JOB 58106332, and nothing covered it. `sitecustomize`
+    installs the guard at interpreter startup from the shim on `PYTHONPATH`; a batch payload
+    spelled `python mnv_guarded_run.py -- <script>` then reaches `main()`, which installs
+    again. The second call used to walk `sys.meta_path`, find `GuardedPathFinder` where a bare
+    `PathFinder` had been, and raise "no PathFinder in sys.meta_path; refusing to run
+    unguarded" -- exit 2, four seconds, no report.
+
+    THE DIRECTION MATTERS AND IS WHY IT SURVIVED REVIEW: the failure needs propagation to have
+    SUCCEEDED. An interpreter whose shim never loaded still has its bare `PathFinder` and sails
+    through. So every green run of the unpropagated fixtures above was evidence for the wrong
+    proposition, and a unit test that installs twice by hand -- see the class below -- proves
+    non-idempotence without touching the path that actually broke.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        tmp = pathlib.Path(self._tmp.name).resolve()
+        self.good = make_checkout(tmp, "expected-tree")
+        self.other = make_checkout(tmp, "other-tree")
+        self.deployed_guard = self.good / "nd-unfolding" / "mnv_guarded_run.py"
+        self.deployed_guard.write_bytes(GUARD.read_bytes())
+        self.shim_dir = self.good / "nd-unfolding" / "mnv_guard_shim"
+        deploy_shim(self.shim_dir)
+        # A SECOND COMPLETE DEPLOYMENT, so the disagreeing-root test can arm the shim for a
+        # tree it will legitimately accept. Pointing MNV_GUARD_EXPECT_ROOT at `other` while
+        # MNV_GUARD_MODULE still lived in `good` made `_verify_guard_location` exit 3 during
+        # startup -- a refusal, and a green test, from code three layers above the one under
+        # test. The guard must be INSIDE the root the shim is told to expect.
+        self.other_guard = self.other / "nd-unfolding" / "mnv_guarded_run.py"
+        self.other_guard.write_bytes(GUARD.read_bytes())
+        deploy_shim(self.other / "nd-unfolding" / "mnv_guard_shim")
+        self.payload = write(
+            self.good / "nd-unfolding" / "payload.py",
+            "import sys\n"
+            "print('PAYLOAD RAN')\n"
+            "print('PROPAGATED-MODULES', [n for n in sys.modules\n"
+            "                             if n.startswith('_mnv_guarded_run_propagated_')])\n",
+        )
+
+    def armed(self, **overrides):
+        """Exactly the environment `_arm_child_environment` exports to an inheriting child.
+
+        Built from the DEPLOYED guard and shim rather than this repo's, because
+        `sitecustomize._verify_guard_location` refuses a guard module outside `--expect-root`
+        and would exit 3 before any of this was reached.
+        """
+        environment = dict(
+            os.environ,
+            PYTHONDONTWRITEBYTECODE="1",
+            PYTHONPATH=str(self.shim_dir),
+            MNV_GUARD_MODULE=str(self.deployed_guard),
+            MNV_GUARD_EXPECT_ROOT=str(self.good),
+            MNV_GUARD_ALLOW="",
+            MNV_GUARD_INVENTORY="",
+            MNV_GUARD_PARENT_PID=str(os.getpid()),
+            MNV_GUARD_DEPTH="1",
+        )
+        for name, value in overrides.items():
+            if value is None:
+                environment.pop(name, None)
+            else:
+                environment[name] = value
+        return environment
+
+    def guarded_under_propagation(self, **overrides):
+        return subprocess.run(
+            [sys.executable, str(self.deployed_guard),
+             "--expect-root", str(self.good),
+             "--label", "reinstall-topology",
+             "--", str(self.payload)],
+            capture_output=True, text=True, env=self.armed(**overrides))
+
+    def test_THE_FIXTURE_REALLY_DOUBLE_INSTALLS_which_is_what_makes_the_next_test_mean_anything(self):
+        """The control. Without it a green reproducer proves only that the shim never loaded.
+
+        `_mnv_guarded_run_propagated_<pid>` is the module name `sitecustomize._load_guard`
+        invents, so its presence in `sys.modules` is direct evidence that the propagated half
+        ran and installed BEFORE `main()` installed. If this list is ever empty the topology
+        collapsed to the ordinary single-install case and the reproducer below is vacuous.
+        """
+        result = self.guarded_under_propagation()
+        self.assertIn("PROPAGATED-MODULES", result.stdout, result.stdout + result.stderr)
+        line = [ln for ln in result.stdout.splitlines()
+                if ln.startswith("PROPAGATED-MODULES")][0]
+        self.assertNotIn("[]", line,
+                         "the propagated half did not install; this fixture is not the "
+                         "topology job 58106332 died in")
+
+    def test_a_propagated_interpreter_can_run_the_guard_as_main(self):
+        """The reproducer. Before OI-136-REINSTALL this exited 2 without running the payload."""
+        result = self.guarded_under_propagation()
+        self.assertNotIn("no PathFinder in sys.meta_path", result.stderr,
+                         "the guard refused its own propagation")
+        self.assertNotIn("COULD NOT LOOK", result.stderr, result.stderr)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("PAYLOAD RAN", result.stdout)
+
+    def test_a_propagated_interpreter_asked_for_a_DIFFERENT_tree_still_refuses(self):
+        """Recognition is not acceptance: disagreeing roots must not silently resolve.
+
+        The shim installs for `other`, `main()` asks for `good`. Accepting the incumbent would
+        run the payload confined to a tree the caller never named, which is worse than the
+        failure being fixed -- it is unguarded-by-surprise rather than refused-by-design.
+        """
+        result = self.guarded_under_propagation(MNV_GUARD_EXPECT_ROOT=str(self.other),
+                                                MNV_GUARD_MODULE=str(self.other_guard))
+        self.assertNotEqual(result.returncode, 0,
+                            "a guard for another tree was accepted: " + result.stdout)
+        self.assertNotIn("PAYLOAD RAN", result.stdout)
+        # THE REASON, NOT JUST THE REFUSAL. Unfixed, this refused with "no PathFinder" -- the
+        # right exit code for the wrong cause, which is a pass that proves nothing about the
+        # compatibility check. Naming the expected text is what makes the assertion load-bearing.
+        self.assertIn("DIFFERENT tree", result.stderr, result.stderr)
+        self.assertIn("expect_root", result.stderr, result.stderr)
+        self.assertNotIn("no PathFinder in sys.meta_path", result.stderr,
+                         "refused for the pre-fix reason, not for the disagreement")
+
+
+class InstallIsIdempotentOnlyForACompatibleRequest(unittest.TestCase):
+    """The unit half: `install()` called twice in ONE interpreter, by hand.
+
+    These run unpropagated on purpose, so `sys.meta_path` starts with a bare `PathFinder` and
+    each test controls exactly how many installs happen. That isolation is also their limit --
+    they cannot show the cross-module case, which is why the class above exists.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        tmp = pathlib.Path(self._tmp.name).resolve()
+        self.good = make_checkout(tmp, "expected-tree")
+        self.other = make_checkout(tmp, "other-tree")
+        self.deployed_guard = self.good / "nd-unfolding" / "mnv_guarded_run.py"
+        self.deployed_guard.write_bytes(GUARD.read_bytes())
+        deploy_shim(self.good / "nd-unfolding" / "mnv_guard_shim")
+
+    def probe(self, body: str):
+        """Run `body` in a fresh interpreter with the deployed guard importable."""
+        script = write(self.good / "nd-unfolding" / "probe.py",
+                       "import importlib.util, os, sys\n"
+                       f"spec = importlib.util.spec_from_file_location('g', {str(self.deployed_guard)!r})\n"
+                       "g = importlib.util.module_from_spec(spec)\n"
+                       "sys.modules['g'] = g\n"
+                       "spec.loader.exec_module(g)\n"
+                       + body)
+        return subprocess.run([sys.executable, str(script)], capture_output=True, text=True,
+                              env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
+
+    def test_a_second_install_for_the_same_tree_returns_the_incumbent_itself(self):
+        result = self.probe(
+            f"a = g.install({str(self.good)!r})\n"
+            f"b = g.install({str(self.good)!r})\n"
+            "print('SAME' if a is b else 'DIFFERENT')\n"
+            "print('GUARDS', sum(1 for f in sys.meta_path "
+            "                    if type(f).__name__ == 'GuardedPathFinder'))\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("SAME", result.stdout, result.stdout + result.stderr)
+        self.assertIn("GUARDS 1", result.stdout,
+                      "a repeat install must not stack a second guard")
+
+    def test_a_second_install_for_a_different_expect_root_refuses_and_names_the_field(self):
+        result = self.probe(
+            f"g.install({str(self.good)!r})\n"
+            "try:\n"
+            f"    g.install({str(self.other)!r})\n"
+            "except RuntimeError as exc:\n"
+            "    print('REFUSED', exc)\n"
+            "else:\n"
+            "    print('ACCEPTED -- the guard adopted another tree')\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("REFUSED", result.stdout, result.stdout + result.stderr)
+        self.assertIn("expect_root", result.stdout,
+                      "the refusal must say WHICH field disagreed")
+
+    def test_a_second_install_with_a_wider_allowlist_refuses(self):
+        """A wider incumbent is not 'compatible enough'; it grants what the caller excluded."""
+        result = self.probe(
+            f"g.install({str(self.good)!r}, [{str(self.other)!r}])\n"
+            "try:\n"
+            f"    g.install({str(self.good)!r})\n"
+            "except RuntimeError as exc:\n"
+            "    print('REFUSED', exc)\n"
+            "else:\n"
+            "    print('ACCEPTED')\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("REFUSED", result.stdout, result.stdout + result.stderr)
+        self.assertIn("allowed", result.stdout)
+
+    def test_a_second_install_with_a_narrower_allowlist_also_refuses(self):
+        """The opposite direction, because a one-directional check waves the other through.
+
+        Narrower is fail-closed and therefore tempting to allow. It is still not the guard the
+        caller asked for: imports it declared legitimate would be refused, and it would learn
+        that as an import violation rather than as a configuration disagreement.
+        """
+        result = self.probe(
+            f"g.install({str(self.good)!r})\n"
+            "try:\n"
+            f"    g.install({str(self.good)!r}, [{str(self.other)!r}])\n"
+            "except RuntimeError as exc:\n"
+            "    print('REFUSED', exc)\n"
+            "else:\n"
+            "    print('ACCEPTED')\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("REFUSED", result.stdout, result.stdout + result.stderr)
+        self.assertIn("allowed", result.stdout)
+
+    def test_recognition_survives_the_guard_being_loaded_as_two_separate_modules(self):
+        """The `isinstance` trap, which is the shape the real failure has.
+
+        `sitecustomize` loads this file under its own module name, so the propagated guard's
+        class and `__main__`'s class are DIFFERENT objects with the same name. An idempotence
+        check written as `isinstance(finder, GuardedPathFinder)` answers False across that
+        boundary and reintroduces the exact bug -- while every single-module test above still
+        passes. This test fails if anyone 'tidies' the type-name comparison into `isinstance`.
+        """
+        result = self.probe(
+            "import importlib.util as u\n"
+            f"s2 = u.spec_from_file_location('g2', {str(self.deployed_guard)!r})\n"
+            "g2 = u.module_from_spec(s2)\n"
+            "sys.modules['g2'] = g2\n"
+            "s2.loader.exec_module(g2)\n"
+            "print('DISTINCT CLASSES', g.GuardedPathFinder is not g2.GuardedPathFinder)\n"
+            f"a = g.install({str(self.good)!r})\n"
+            f"b = g2.install({str(self.good)!r})\n"
+            "print('SAME' if a is b else 'DIFFERENT')\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("DISTINCT CLASSES True", result.stdout,
+                      "the fixture must really produce two classes, or it proves nothing")
+        self.assertIn("SAME", result.stdout, result.stdout + result.stderr)
+
+    def test_an_interpreter_with_no_pathfinder_and_no_guard_still_refuses(self):
+        """Fail-closed is preserved. Idempotence must not become a way to run unguarded."""
+        result = self.probe(
+            # BOTH SPELLINGS, because `sys.meta_path` holds the PathFinder CLASS, not an
+            # instance: `type(f).__name__` is 'type' there and a filter using only that
+            # removes nothing. `install()` matches on `__name__` first for exactly this
+            # reason, and a fixture that strips less than the production check looks for is
+            # a fixture that cannot create the condition it claims to test.
+            "sys.meta_path = [f for f in sys.meta_path\n"
+            "                 if getattr(f, '__name__', None) != 'PathFinder'\n"
+            "                 and type(f).__name__ != 'PathFinder']\n"
+            "assert not [f for f in sys.meta_path\n"
+            "            if getattr(f, '__name__', None) == 'PathFinder'\n"
+            "            or type(f).__name__ == 'PathFinder'], 'strip failed'\n"
+            "try:\n"
+            f"    g.install({str(self.good)!r})\n"
+            "except RuntimeError as exc:\n"
+            "    print('REFUSED', exc)\n"
+            "else:\n"
+            "    print('ACCEPTED -- ran unguarded')\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("REFUSED", result.stdout, result.stdout + result.stderr)
+        self.assertIn("no PathFinder in sys.meta_path", result.stdout)
+
+    def test_a_repeat_install_does_not_advance_the_child_depth_a_second_time(self):
+        """Re-arming would hand descendants a lineage one deeper than they really are.
+
+        This is why the repeat returns the incumbent instead of falling through into
+        `_arm_child_environment`, and it is the reason lineage cannot be part of the
+        compatibility comparison: arming MUTATES the values a later install would read.
+        """
+        result = self.probe(
+            f"g.install({str(self.good)!r})\n"
+            "first = os.environ['MNV_GUARD_DEPTH']\n"
+            f"g.install({str(self.good)!r})\n"
+            "print('DEPTH', first, os.environ['MNV_GUARD_DEPTH'])\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("DEPTH 1 1", result.stdout, result.stdout + result.stderr)
+
+
+
 if __name__ == "__main__":
     unittest.main()

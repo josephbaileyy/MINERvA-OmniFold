@@ -5219,11 +5219,79 @@ def _arm_restricted_shell() -> "tuple[str, dict]":
     return state, {"path": path, "sha256": _sha256_or_none(path)}
 
 
+def _installed_guard():
+    """The `GuardedPathFinder` already in `sys.meta_path`, or None.
+
+    IT MATCHES ON THE TYPE NAME AND NOT WITH `isinstance`, for the reason the `PathFinder`
+    scan below does. The propagated half loads this very file a SECOND time under
+    `_mnv_guarded_run_propagated_<pid>`, so a child that both inherits the shim and runs
+    `mnv_guarded_run.py` as `__main__` holds two module objects and therefore two distinct
+    `GuardedPathFinder` CLASSES. `isinstance` compares class identity and would answer False
+    across that boundary -- silently, and only in the propagated topology, which is the one
+    configuration a single-import unit test cannot reach.
+    """
+    for finder in sys.meta_path:
+        if type(finder).__name__ == "GuardedPathFinder":
+            return finder
+    return None
+
+
+def _refuse_an_incompatible_reinstall(incumbent, expect: str, allowed: frozenset) -> None:
+    """Refuse when the installed guard enforces a different tree than this caller asked for.
+
+    RECOGNISING AN INCUMBENT IS NOT ACCEPTING IT. Returning any guard that happens to be in
+    `sys.meta_path` would convert "refusing to run unguarded" into "running under someone
+    else's guard", which is a WEAKER outcome than the failure this function exists to fix: a
+    caller that asked to be confined to tree A would be confined to tree B and would never
+    learn it. Equality is required rather than containment, in both directions. A wider
+    incumbent silently grants imports the caller declared out of scope; a narrower one
+    refuses imports the caller declared legitimate, and while that direction is fail-closed
+    it is still not the guard the caller asked for. Neither is ours to reconcile here.
+
+    LINEAGE IS DELIBERATELY NOT COMPARED. `_arm_child_environment` ADVANCES the recorded
+    depth and rewrites the parent pid as part of arming, so by the time a second `install()`
+    reads the environment it sees `depth + 1` and this process's own pid. Comparing lineage
+    would therefore refuse every legitimate repeat install -- the exact correct-run failure
+    this whole change is repairing -- while proving nothing, since both values were written
+    by this process.
+    """
+    disagreements = []
+    installed_root = getattr(incumbent, "expect_root", None)
+    if installed_root != expect:
+        disagreements.append(
+            f"expect_root: installed {installed_root!r}, requested {expect!r}")
+    installed_allowed = frozenset(getattr(incumbent, "allowed", frozenset()))
+    if installed_allowed != allowed:
+        disagreements.append(
+            f"allowed: installed {sorted(installed_allowed)!r}, "
+            f"requested {sorted(allowed)!r}")
+    if disagreements:
+        raise RuntimeError(
+            "an OI-136 guard for a DIFFERENT tree is already installed in this interpreter; "
+            "refusing to run under it -- " + "; ".join(disagreements))
+
+
 def install(expect_root: str, allow=()) -> GuardedPathFinder:
-    """Wrap import resolution and every owned process-launch boundary."""
+    """Wrap import resolution and every owned process-launch boundary.
+
+    IDEMPOTENT FOR A COMPATIBLE REQUEST, because the propagated topology installs twice by
+    design. `sitecustomize` installs the guard at interpreter startup from the shim on
+    `PYTHONPATH`, and a batch payload spelled `python mnv_guarded_run.py -- <script>` then
+    calls this again from `main()`. Before OI-136-REINSTALL the second call walked past the
+    already-wrapped finder, found no bare `PathFinder`, and raised -- so the guard refused
+    itself precisely BECAUSE its own propagation had worked, and a run whose propagation had
+    FAILED would have sailed past this point. Measured: job 58106332, dead in 4 seconds.
+    The repeat returns the incumbent WITHOUT re-arming: re-running `_arm_child_environment`
+    would advance the child depth a second time and hand descendants a false lineage, and
+    re-running `_install_launch_guards` would double-wrap every launch hook.
+    """
     expect = str(pathlib.Path(expect_root).resolve())
     allow_roots = tuple(str(pathlib.Path(path).resolve()) for path in allow)
     allowed = frozenset({expect, *allow_roots})
+    incumbent = _installed_guard()
+    if incumbent is not None:
+        _refuse_an_incompatible_reinstall(incumbent, expect, allowed)
+        return incumbent
     propagated_from, depth = _lineage_from_environment()
     for i, finder in enumerate(sys.meta_path):
         if getattr(finder, "__name__", None) == "PathFinder" or type(finder).__name__ == "PathFinder":
