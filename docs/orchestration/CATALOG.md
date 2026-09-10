@@ -203,6 +203,42 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   breached. §B.7 **withdraws Part A's own `A30`**: Z's design is `N = 4`-`5` and FITS `R5`
   (`44.6%`/`69.7%`), the `5x`-`9x` figure prices a design §6.3 does not adopt, and the binding
   constraint is the schedule.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partF.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partF.md)
+  - **PART F of the same independent assessment — the ENDPOINT-A yardstick, and it adopts no criterion,
+  grades nothing and authors nothing.** `F1`-`F21`, derived at `6f24fb00` from Ruling 1 (no Z-dependent
+  non-2D significance; 2D scope unchanged), Ruling 2 (finite-ensemble **disclosure only**), the note's
+  own declarations (i)-(v) at `app_statmethods.tex:645-658`, and `paper_body.tex:145-148` — **committed
+  before the designer's endpoint-A packet existed**, with the prior packet's and recommendation's
+  sha256 recorded as digested-NOT-read. **`F.5` pre-registers the seven BLOCK conditions** so no
+  verdict can be fitted afterwards, and one of them (`F18`) blocks in the PERMISSIVE direction:
+  imposing inversion-grade criteria (the `rho` bound, retained rank/subspace, `rcond`, `ndf`,
+  `s_sig`) on an endpoint that releases no significance rejects acceptable cases.
+  **Three measured findings.** `F-0`: **both governing rulings are unrecorded** — no
+  `DECISION-2026091*`/`RULING-2026091*` file in any of 131 refs (newest is `DECISION-20260907`), four
+  distinctive relay phrases absent with an in-loop positive control firing on 24+ refs; Ruling 2's
+  disclosure-only half is nevertheless anchored, re-stating Joseph's recorded 2026-08-22 *"disclose, do
+  not correct"*. `F-I`: **a released projected uncertainty IS a function of the source covariance's
+  off-diagonals** — `diag(M C M^T)_i = sum_{j,k->i} w_j w_k C_jk`, forced by the `10,694 -> 42`
+  geometry (pigeonhole >= 255 cells per destination row), so the diagonal-only premise for deferring
+  `cause3_corr` is false; the relayed mechanism is **corrected** (`Mew` is built inline at
+  `eavailW_covariance.py:404-406`, NOT by `project_cov_nd`, and **width-weighting is not the cause** —
+  multi-cell row support is, unit weights included). Probe
+  [`state/probe-z-endpointA-projected-diagonal-20260910.py`](state/probe-z-endpointA-projected-diagonal-20260910.py),
+  `rc=0`, production `uq_math.project_covariance`, three controls incl. one in the opposite direction:
+  at fixed diagonal the released sigma spans `0.986x`-`2.803x` under equicorrelation and `2.62e+06`
+  over PSD structures, reaching ~0 — the *"looks like a very good measurement"* hazard
+  `eavailW_covariance.py:410-413` already names for empty rows. `F-II`: the ensemble-size evidence is
+  **stronger than cited AND still holed** — `--expected-ids` + `replica_manifest.py:44-48` is a
+  fail-closed bidirectional set-equality check, not an `#SBATCH --array=` declaration, but it is a
+  launcher constant that cannot prove ADEQUACY, and `OI-17`'s `122 of 160` is the precedent. Also
+  measured: **two normalization conventions in one sum** (biased `1/N` `uq_math.py:104` vs unbiased
+  `1/(N-1)` `combine_cov_nd.py:20`), and the ~45 MAT bands are deterministic rank-one despite going
+  through `mat_covariance` at `N=2`, so Ruling 2's block set must be partitioned by **sampling
+  character, not by computing function**. `F9` (**what "verified" means** — re-measurable from the
+  artifact, or established by a construction-time check) is **RESERVED to Joseph and deliberately not
+  answered**, since answering it is a design choice. `F.6` re-measures this lane's independence: the
+  `D1` retained-subspace remedy is live as clause (d) at `173baf44:392`, labelled RELAYED, and was
+  attacked and bidirectionally tested by a THIRD lane — the routing Part E asked for.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
