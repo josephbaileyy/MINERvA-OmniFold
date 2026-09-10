@@ -73,6 +73,23 @@ mirror error, so each consumer was re-read:
 C7's own comment at `:510-518` states the same limitation in its own words and calls the
 diagonal *"the WORST available reduction precisely because it LOOKS TARGETED."*
 
+**⚠ AND C5's OPERAND IS NOT MERELY ANALOGOUS TO A Z BLOCK — it is a NAMED CANDIDATE Z BLOCK.**
+Contributed by the independent assessor and **re-verified here rather than relayed**:
+`eavailW_covariance.py:143,145` default `--stat5d` / `--stat5d-hist` to
+`uq_cov_stat_5d.root` / `hCov_stat5d_reported`, and `SPEC-20260906:504` names exactly that
+path-and-hist (sha256 `6580016f…`) as **"Z's candidate `C_stat` … input"**, which enters `C_Z` in the
+construction at `:610`. **So C5's released band is a linear functional of the off-diagonal entries of
+a candidate `C_Z` summand**, not of an object merely resembling one. This sharpens the row; it does
+not change the verdict.
+
+*Two qualifications, because the sharpening is easy to overstate.* **(i)** It is a **candidate**
+input, not a settled member: the `:504` row itself says *"Whether Z reuses or regenerates them is an
+open scientific question, not a settled requirement"*, and `:3629` carries it as an open scientific
+decision. **(ii)** ⚠ **The relay attributed that openness to §2.6b; §2.6b is the wrong citation** —
+it is titled *"WITHDRAWN — reuse of `C_stat`/`C_ML` is not evidence of incompleteness"* (`:1092`) and
+withdraws a **different** proposition. The openness is at `:504` and `:3629`; §2.6b is not where it
+lives.
+
 **Three independent sites in this tree already record this hazard** and none of them is an
 adoption: SPEC §3.7d (naming `eavailW_covariance.py:290-304` and `coverage_valid_nd.py:20`),
 `z_statistics.py:25`, and `mii_anchor_comparator.py:515`. **The finding was in the tree; what was
@@ -213,8 +230,24 @@ names, would be **cosmetic**, and the licensing change would happen elsewhere or
 
 ### 3.3 The exact amendment — and it is not a deferral
 
-**RECOMMENDED: do not defer `cause3_corr`. Bind it to endpoint A's own statistic.** The amendment is
-then an **adoption record**, three sites, none of which changes what a MET licenses:
+> **⚠ THREE OPTIONS, THREE DIFFERENT VERDICTS. Each carries its verdict inline, because the first
+> relay of this section collapsed them into one and INVERTED the recommendation** — it attached
+> *"unsound"* and *"not recommended"* to option 3, which is the recommended one. A verdict word has
+> to survive being read alone, and in a three-option section it also has to survive being read
+> **apart from the other two**.
+>
+> | option | what it does | verdict |
+> |---|---|---|
+> | **1** | defer `cause3_corr` from A **while A keeps releasing projected uncertainties** | **UNSOUND** — needs `_DIAGONAL_ONLY_SCOPE` narrowed, i.e. a change to what a MET **licenses** |
+> | **2** | narrow **endpoint A itself** to release the covariance and **no** projected uncertainty | **SOUND, NOT RECOMMENDED** — it works, and it deletes A's own deliverable |
+> | **3** | **do not defer**; bind `cause3_corr` to endpoint A's own statistic | **⭐ RECOMMENDED** — the amendment becomes an **adoption record**; **no licensing change** |
+>
+> **"An adoption dressed as a deferral" is NOT the finding, and reverses it.** The finding is that
+> *a deferral cannot be written without an adoption-shaped licensing change* — which is a reason to
+> **do** option 3 openly, not a criticism of it.
+
+**RECOMMENDED (option 3): do not defer `cause3_corr`. Bind it to endpoint A's own statistic.** The
+amendment is then an **adoption record**, three sites, none of which changes what a MET licenses:
 
 1. **`nd-unfolding/z_contract.py:233-235`** — the `reason` string's first clause, *"no
    correlation-sensitive leg is adopted, and none has a boundary"*, becomes **false on adoption** and
@@ -231,16 +264,17 @@ then an **adoption record**, three sites, none of which changes what a MET licen
    precisely what A releases. §3.7d currently presents (a) and (b) as equally admissible; measured
    against the endpoint split, they are not.
 
-**THE ONE FORM IN WHICH A DEFERRAL *IS* SOUNDLY WRITABLE, stated so the choice is Joseph's and not
-foreclosed by me:** narrow **endpoint A itself** to release the assembled covariance and **no projected
+**OPTION 2 — THE ONE FORM IN WHICH A DEFERRAL *IS* SOUNDLY WRITABLE, stated so the choice is
+Joseph's and not foreclosed by me:** narrow **endpoint A itself** to release the assembled covariance and **no projected
 uncertainty** — moving C5, D1 and D2 to a later endpoint. Then A's consumers are C6-on-an-unprojected
 operand and C7, both genuinely diagonal-only, `_DIAGONAL_ONLY_SCOPE` is accurate as written, and no
 licensing change is needed. **The cost is A's projected-uncertainty deliverable**, which is A's stated
 purpose and the object `sec_3d.tex:252-256` says the 3D comparisons are gated on. **I do not recommend
 it**, but it is sound, and it is the only sound deferral available.
 
-**What I am NOT doing:** not amending anything, not adopting the leg, not declaring the boundary, and
-not grading cause 3. Adoption of the leg **keeps cause 3 non-passing** until the boundary is declared
+**What I am NOT doing, and this survives being quoted alone:** not amending anything, not adopting
+the leg, not declaring the boundary, and not grading cause 3. **Option 3 is what the amendment WOULD
+be IF Joseph adopts the leg — it asks him to adopt nothing now.** Adoption of the leg **keeps cause 3 non-passing** until the boundary is declared
 (probe §4(e)) — which is the correct state given Gate 2 FAIL, and is why the recommendation costs
 nothing today.
 
