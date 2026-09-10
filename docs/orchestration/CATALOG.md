@@ -301,6 +301,46 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `F-III` is a measurement of the code and will be re-derived rather than cited, but a second reviewer
   should spot-check that slice. §H.4: *"the orchestrator"* in Parts A-G re-points — that session ended
   and a different one holds the role.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partI.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partI.md)
+  - **PART I — assessment of the endpoint-A packet's §2/§2.1 and §3/§3.1-§3.3** at `05bf8647` (sha256
+  `e5fbd9a9…`), against `F1`-`F21` and §F.5's five block conditions, which were committed at
+  `c695f209` **before this packet existed**. **No grade assigned** (`BEN-381`).
+  **§3-§3.3: every mechanical claim CONFIRMED BY EXECUTION**, not by reading —
+  [`state/probe-z-cause3corr-binding-site-20260910.py`](state/probe-z-cause3corr-binding-site-20260910.py),
+  `rc=0`, in-process registry mutation only. All five §3.1 rows reproduce, plus **two positive controls
+  the packet does not carry**: deleting `cause3_agg` RAISES (so `assess` does consult the registry and
+  the byte-identity is a real negative, not a blind one), and the scope statement flips to `None` when
+  a `sees_correlations=True` leg is declared (so the narrowing is leg-derived). **Strengthening owed to
+  the packet:** the registry line is not merely *inert* but **structurally unreachable** — `assess`
+  looks up boundaries only at `:247` and `describe()` only at `:110`, both keyed on declared legs.
+  **§3.3's "costs nothing today" is structurally true rather than lucky**: leg adopted + boundary
+  withheld gives `assessable=False`, `reject_conditions=('4c',)`, `is_met=False` **at `s_corr=0.001`**,
+  so the refusal is on the ABSENCE OF A LIMIT, not the value. Option ordering does not invert.
+  ⚠ **§2.1's SAMPLE-COVARIANCE POPULATION IS NOT TWO — `Flux` IS THE THIRD, and the chain is closed in
+  tracked code:** `adopt_unified_5d.py:42-43` puts `"Flux"` as the 13th `VERT_BANDS` entry;
+  `z_contract.py:66` imports exactly that as Z's `V`; `z_assembly.py:4` sums `V` **inflated through
+  `D_Z`**; `unified_throw_cov.py:467-468` builds it as `mat_covariance(...)` over the flux universes;
+  `uq_math.py:96-104` is **biased `1/N`**. `OI-137` independently enumerates **three**. So A-6 omits a
+  block **and** its *"one script, one convention"* `1/(N−1)` claim is **false of part of Z's sum** —
+  affirmatively misleading, which is what `F8` exists to prevent. **Diagnosis: the derivation is what
+  admitted it** — reading the formula's surface is right, but `Σ_V C_b` is itself a sum and the third
+  sample covariance is one level INSIDE it. Feasibility is fine: `n_flux` is already inventory-derived
+  (`:126`) and already fail-closed both directions (`:461-465`). `C_unified` named as a boundary case
+  and explicitly NOT required.
+  **The coordinator's ensemble measurement: CONFIRMED, on better footing than offered** — `OI-160`
+  already records both *"an exact-population validator cannot see a contract change"* and the
+  member-scoped set as **100 boot + 24 split**, so equal-`N` needs no cluster read and the `cp -p`
+  caveat drops out of the consequence; `07c18aee` confirmed at 2026-07-14, after the products. The npz
+  **key schema** is a content-based discriminator stronger than `mtime`, but it discriminates the
+  INPUTS while the product is a bare `TH2D` — so the caveat is correctly placed. **Sharpest form: `N`
+  is a count, and a count cannot identify a population**, so A-6 part (a) cannot substitute for part
+  (b), which the packet does not say.
+  **§I.4 concedes my own §2.6b citation** (correct site is §2.6c item 4, `:1122`; substance survives) —
+  **and `SPEC:3629` makes the identical error**, one line below a correct §2.6c citation, so the
+  correction should land there too or the spec keeps producing it. **§I.5 records a gap in my OWN
+  pre-registered block list:** condition 3 covered population **over**-inclusion only, so the flux
+  finding is under-inclusion my §F.5 did not pre-register — the one-directional-guard failure `F15`
+  demands against, in my own pre-registration.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
