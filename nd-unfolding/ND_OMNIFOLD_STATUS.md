@@ -1,5 +1,14 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
+**PET typed-descriptor continuation, 2026-09-10:** reconstruction-side prong
+definitions and their implementation implications are recorded in
+[the semantic reference](pet/PRONG_BRANCH_SEMANTICS.md). The next proposed task
+is a bounded contract repair with local synthetic validation, routed by
+[the typed-descriptor status](pet/TYPED_DESCRIPTOR_STATUS.md#next-bounded-task).
+PET remains diagnostic/method-development under `OI-126`; this documentation
+supplies no new covariance, coverage evidence, or compute authorization. Older
+PET execution narratives below do not define this continuation task.
+
 **Last updated**: 2026-08-14. Narrative lives in `ND_OMNIFOLD_RUN_LOG.md`,
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.

@@ -3,6 +3,13 @@
 The TensorFlow/point-cloud OmniFold engine, kept separate from the dimension-agnostic
 GBDT/MLP N-D drivers at `nd-unfolding/` top level.
 
+**Current typed-descriptor development:** PET remains diagnostic and
+method-development. Read [TYPED_DESCRIPTOR_STATUS.md](TYPED_DESCRIPTOR_STATUS.md)
+for the software state and next bounded task, and
+[PRONG_BRANCH_SEMANTICS.md](PRONG_BRANCH_SEMANTICS.md) for reconstruction-side
+definitions, their limitations and future object-representation implications.
+The legacy workflow inventory below is not an instruction to resume training.
+
 **Code**
 - `dump_pointcloud_inputs.py` — builds `of_inputs_pc.npz` (per-hadron clouds) from the
   `runEventLoopOmniFold_PC_MEFHC.root` omnifile.
