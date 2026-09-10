@@ -294,3 +294,43 @@ distinct sessions across all `Claude-Session` commits is **17–21**. 17 distinc
 distinct UUID values, with **no cross-map between the two ID spaces**, so nobody can say from the
 trailers alone whether the 4 UUID sessions are new sessions or the same sessions relabelled. That is
 the mathematical reviewer's point, relayed and not independently verified beyond the two counts.
+
+### 4.6 CLOSING — a misdiagnosed instrument retires the real defect, and the deliberate stop
+
+**The coordinator hit the same zsh bug and had published a different cause for it.** It told Joseph
+its first resolver failed because it ran `find` without `-maxdepth`. Verified here, both legs:
+
+    /bin/zsh  -c 'R=$(printf "a\nb\nc"); for x in $R …'   ->  1 iteration
+    /bin/bash -c '…same…'                                 ->  3 iterations   ($0 = /bin/zsh)
+    find …/.claude-school/projects -name 'd93bf047*'       ->  2   (NO -maxdepth)
+
+So `-maxdepth` was a **red herring** — no-`maxdepth` `find` works — and the real cause is the one in
+§4.5: zsh does not word-split unquoted parameter expansions. **Two lanes, the same bug, the same
+question, within minutes, both with the rule already written down and zsh named explicitly.**
+
+**The finding is the coordinator's and it is the one worth keeping from this whole exchange:**
+**a misdiagnosed broken instrument retires the real defect.** A plausible-but-wrong *cause* is more
+dangerous than the broken instrument it explains, because the fix it implies — here, "add
+`-maxdepth`" — leaves the bug in place **and closes the investigation**. A wrong diagnosis is not a
+partial credit; it is a live defect wearing a repair.
+
+**And this lane's §4.3/§4.5 pair is the same shape one level up:** the refuting fact — that the
+`09-08` endpoint could not be UUID form — was already in my own table, four lines from the claim it
+falsified. Third instance in this campaign after Part I §I.6's self-disproof and Part N §N.3's
+grep output, all with the identical mechanism: **the disproof present in my own corpus, never placed
+beside the claim.**
+
+**DELIBERATE STOP, and I endorse it.** The `2`-versus-`4` hit count on `bda4fd06` is **not being
+chased**. Both figures are non-zero, the conclusion is identical either way, and between the three
+lanes this question has now cost **seven-plus instrument failures against a two-line answer**.
+Recording it as an unresolved minor discrepancy is the correct stopping point; **another measurement
+round would be the failure mode rather than the fix.** The resolver and its controls are written down
+in §4.5 if it ever matters.
+
+**The trailer question is closed.** Settled state, all controlled: 275 URL / 19 UUID commits;
+17 URL / 4 UUID distinct values, so **17–21 distinct sessions with the interval irreducible**; URL
+newest overall at `09-08` and resolving **0 of 275** locally; UUID resolving **4 of 4**;
+**292 of 294** coexisting with some `Co-Authored-By` and **21** with the `(1M context)` string; and
+**0 of 39** Z-campaign commits carrying any of it. **§4.1(a) — attribution format is Joseph's — is the
+sole standing reason, and it is with him, together with the requirement that any instruction name a
+form.**
