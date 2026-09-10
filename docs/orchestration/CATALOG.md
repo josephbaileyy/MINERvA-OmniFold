@@ -188,7 +188,21 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `A25` derives that no bound on a diagonal bounds `r^T C^-1 r`. Four re-measured findings, incl.
   that the 42-bin `(E_avail,W)` object takes the 5D trunk in **through the statistical block only**
   (`eavailW_covariance.py:441`, `C_lateral` diagonalized at `:469`), and that **four** projection
-  builders exist with one on the `R6`-diagnostic PET path. Part B applies `A1`-`A31` to the proposal.
+  builders exist with one on the `R6`-diagnostic PET path.
+  **Part B is the review: VERDICT = BLOCK on the proposal's §7 items 1-3; item 4 (record the `pinv`
+  cutoff policy and the retained rank per member) is READY and separable.** Blocking: `B1` C-1's
+  declared population is **empty** -- measured, the `\gbdtFive*` macros are defined at
+  `values.tex:112-115` and used **nowhere**, and no deliverable quotes any non-2D significance, so a
+  `max` over "the pairs the publication quotes" is vacuous; `B2` §7 item 2 asks for the margin of a
+  claim the publication does not make and `R5`'s default is that it never will; `B3` **zero**
+  occurrences of `INCONCLUSIVE` against RULED `SPEC` §6.3(4), and the missing branch --
+  `PREDECLARE-20260901-cause3-mii` §4's `VACUOUS SEED VARIATION` -- is the positive control; `B4` §7
+  item 3 is stale (`ceb474cc`, 2026-09-09, postdates rev. 5) and as specified would test agreement
+  over a domain selected for agreement. **Axis (c) is CLEAN: nothing over-rejects** -- all three
+  candidates are sensitivity, not magnitude, statistics, so `R3`/§6.2's magnitude-blindness is not
+  breached. §B.7 **withdraws Part A's own `A30`**: Z's design is `N = 4`-`5` and FITS `R5`
+  (`44.6%`/`69.7%`), the `5x`-`9x` figure prices a design §6.3 does not adopt, and the binding
+  constraint is the schedule.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:

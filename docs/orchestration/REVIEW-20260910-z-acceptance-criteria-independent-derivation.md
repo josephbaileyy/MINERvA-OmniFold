@@ -408,3 +408,343 @@ is at **`sec_3d.tex:223-226`**, quoted in §A.3.1 and re-read from the file. The
 right and its line numbers were not; recorded because a line number into a growing `.tex` decays the
 same way `CRITERIA`'s own `POINTER 3` records for the ledger, and because nothing in Part A rests on
 the routed citation.
+
+---
+---
+
+# PART B: the review, and the verdict
+
+**Written 2026-09-10, after Part A was committed at `1508ead0`. Subject:**
+`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md` **rev. 5**, sha256
+`3fc9fb87b170887cdc8be870f801e7228113c35669be455401bdb7f1e6e9ac4c`, last revised at `610d0882`
+(2026-09-08T01:14:52+0200). Re-pinned against `origin/main` `c18f9daa`.
+
+**CITABLE FOR:** the verdict in §B.0, the findings `B1`–`B9` with their measurements, and the
+corrections in §B.5 — including one to Part A's own `A30`.
+**NOT CITABLE FOR:** adopting or rejecting any candidate criterion; any tolerance; any grade; any
+cell; any count or gate movement; any authorization. **This lane recommends; it does not adopt, and
+it did not draft.** Where a fix is named, the drafting belongs to the proposal's lane and the decision
+to Joseph under `RZ(v)`.
+
+**Disclosure about my own reading order.** Part A was written and its content finalized before the
+proposal was opened. While adding the `CATALOG.md` pointer row that this repository's pre-commit hook
+requires in the same commit, I necessarily read `CATALOG.md`'s existing summary of the proposal
+(`:178-185`). That happened after Part A's text was final and it changed nothing in it, but it is a
+partial exposure and is recorded rather than glossed. Everything in Part A is derivable from the
+sources §A.0 lists.
+
+## B.0 VERDICT
+
+**BLOCK** — on §7 items **1, 2 and 3**. §7 item **4 is READY FOR JOSEPH'S DECISION** and is
+separable; it should go forward on its own rather than wait for the rest.
+
+**What BLOCK does and does not say.** It is a judgement about **readiness for decision**, not about
+the quality of the analysis. The proposal's structural core is **correct, and in one place better than
+my independent derivation**: §2a's *"can be strongly sensitive to the smallest **retained** modes —
+and only where `d` has overlap with them"* is a real refinement of my `A25`, and its observation that
+modes **below** `pinv`'s cutoff are *discarded* rather than amplified is a distinction I did not draw.
+§2c's `diag(1,4)` / `diag(4,1)` counterexample is sound and decisive against any spectral-summary
+candidate. The document withdraws fifteen of its own claims across four revisions, declines to propose
+a tolerance for a stated reason, and marks `s_proj`'s coverage question **unresolved** while refusing
+to invent a second wrong test for it. That is the behaviour the campaign wants.
+
+**It is blocked because three of the four decisions it puts are not yet answerable in the order
+asked**, and because one standing ruling is not carried into the candidates at all. Three of the four
+blocking findings are cheap to fix; `B1` and `B2` are not defects of reasoning but of a claim side
+that does not yet exist.
+
+| finding | axis | severity |
+|---|---|---|
+| `B1` — C-1's declared population is currently **empty**: the deliverables quote no significance at all | (a), (b) | **blocking** |
+| `B2` — §7 item 2 asks for the margin of a claim the publication does not make, and `R5`'s default is that it never will | (a), (d) | **blocking** |
+| `B3` — no `INCONCLUSIVE` branch anywhere, against a RULED requirement; the missing one is the positive control | (b) | **blocking** |
+| `B4` — §7 item 3 is stale, and as specified would authorize a check that can pass over a domain selected for agreement | (b), (d) | **blocking** |
+| `B5` — the proposal never names cause 3 or `M(ii)`, so its criteria are not bound to a (cause × artifact) pair | (a) | serious |
+| `B6` — the `M` enumeration misses a fourth builder, which is on the `R6` PET path | (b) | serious |
+| `B7` — `ndf` = bin count has a measured instance the proposal does not cite; direction is currently conservative | (a) | worth fixing |
+| `B8` — the null arm's thread environment is not pinned, so a reproducibility bound has no fixed configuration | (b) | serious, and outside this proposal's scope |
+| `B9` — nothing in the proposal over-rejects. Axis (c) is **clean** | (c) | none |
+
+---
+
+## B.1 `B1` — C-1's declared population is empty, so C-1 currently passes vacuously
+
+**C-1's statistic** (§3): `s_sig = max` over the declared offset set of `|Nsigma_k − Nsigma_0|`,
+**"per (generator, projection) pair the publication quotes."**
+
+**Measured, at `d147880f`, over `docs/analysis-note/`:**
+
+| measurement | result |
+|---|---|
+| `\gbdtFive*` macro **uses** anywhere in note, primer or paper | **0.** Defined at `values.tex:112-115`; the only other occurrence is `sec_systematics.tex:154`, a **filename** reference to `PROCEDURE-gbdtFive-macro-update.md`, not a macro use |
+| `paper_body.tex`: `\input` / `gbdtFive` / `sqrt` / `e-38` | **0 / 0 / 0 / 0** |
+| a quoted generator significance, χ², p-value or pull for any non-2D result | **none.** `paper_body.tex:145-146` *"Every non-two-dimensional result in this Letter is a central value."* `primer_body.tex:120` *"no significance is assigned."* `sec_3d.tex:225-226`, `:405-406`, `:417-418`, `sec_eavailw.tex:150-151`, `:194` each withhold one explicitly |
+
+So **the set of "(generator, projection) pairs the publication quotes" is empty**, and a `max` over an
+empty set is undefined — or, in any implementation that seeds it with `0.0`, **satisfied trivially**.
+That is this repository's catalogued gates-that-cannot-fail shape
+(`CORPUS-20260811-gates-that-cannot-fail-sweep.md`), reached not by a coding slip but by the
+statistic's own definition, and it is `A3`'s point exactly: *"the pairs the publication quotes"* is a
+**definite description**, and a definite description re-points — here, to nothing.
+
+**This corroborates the proposal's §1 conclusion and then goes past it.** §1a concluded from
+`paper_body.tex`'s zero counts that *"the external paper quotes no 5D covariance magnitude at all"*.
+I reproduce those counts exactly. What §1a did not measure is that **the note does not quote one
+either** — the four `\gbdtFive*` macros are now defined and unused. So the proposal's premise is
+stronger than it claimed, and the same fact undermines its primary candidate.
+
+**Recommended correction (drafting is the proposal lane's).** C-1 must **enumerate its (generator,
+projection) pairs explicitly and prospectively** — which generators, which projection, at which
+binning — rather than by reference to what the publication quotes. Under `A18` that enumeration is
+part of the statistic's definition, so it belongs in the same packet as the denominator, the precision
+target and the boundary. Until it exists, C-1 is a well-motivated shape without a population.
+
+**A separate finding, for another owner.** `CRITERIA-20260811` §1 fixes **X**, the graded artifact, by
+the citation *"The four `\gbdtFive*` macros are consumed in exactly one prose block,
+`sec_systematics.tex:162-173`"*. That block has been rewritten; `:148-154` now reads *"no substitution
+is available, and supplying one would make the sentence false rather than current"*. **The
+artifact-fixing citation has decayed** — the same decay `CRITERIA`'s own `POINTER 3` records about the
+ledger, now landing on `CRITERIA` §1. Surfaced for `CRITERIA`'s owner; **not repaired here**, because
+re-fixing the graded artifact is a criterion act and this lane is the reviewer.
+
+## B.2 `B2` — §7 item 2 asks for the margin of a claim that does not exist
+
+§4b: *"If a quoted significance supports a claim that a generator is or is not disfavoured at some
+threshold, the justified tolerance is the one that cannot move `Nsigma` across the **margin**… That
+threshold is a scientific choice and it is not in this tree."* §5 makes this the sole reason no
+tolerance is proposed. §7 item 2 puts it to Joseph.
+
+**§4b's reasoning is right, and its diagnosis of why the threshold is missing is not.** The threshold
+is not an unrecorded input. **There is no claim for it to be the margin of** (`B1`), and under `R5`
+the **default outcome is that there never will be**: *"the default outcome is the Letter **as
+scoped** — every non-2D result a central value, the joint high-`E_avail`/high-`W` generator deficit
+reported **without** a significance."* Today is 2026-09-10; the stop is 2026-09-30.
+
+**So item 2 is posed out of order.** Joseph cannot state the margin to a threshold for a significance
+the Letter does not quote. The prior, decidable question is a **publication-scope** one under `R5`:
+*will the Letter quote a significance at all, and for which pairs?* Only then does a margin exist to
+be stated. Both are his, but they are two decisions and the second depends on the first.
+
+**And it interacts with `A27`, which makes the ordering matter more, not less.** Measured in §A.4.4:
+the 42-bin `(E_avail,W)` object takes the 5D trunk in **through the statistical block only**
+(`eavailW_covariance.py:441`), its `C_syst` is native at 42 bins, and its `C_lateral` is diagonalized
+at `:469`. Whether Z **regenerates or reuses** `C_stat` is open — `SPEC` §2.6b, §6.6, *"this
+specification does not decide it"*. **On the reuse branch, adopting Z leaves the object the paper's
+headline significance would be computed from unchanged**, and the abstract's *"its significance awaits
+adoption of a common five-dimensional covariance"* (`main_paper.tex:49-51`) would be discharged by an
+adoption that moved nothing. A criterion set for the significance cannot be specified before that
+branch is chosen, because on one branch the criterion's subject does not depend on Z.
+
+**Recommended:** item 2 is withdrawn and replaced by a request that names the two decisions in order,
+and records that the second is conditional on `SPEC` §2.6b's `C_stat` branch.
+
+## B.3 `B3` — no INCONCLUSIVE branch, against `SPEC` §6.3(4), and the missing one is the positive control
+
+**Measured over the proposal:** occurrences of `INCONCLUSIVE` = **0**; of `cause 3` = **0**; of
+`vacuous` = **2**, both in §4a's printed-precision argument, neither an outcome branch.
+
+**`SPEC` §6.3(4) is RULED:** *"Three outcome classes — favourable, unfavourable, inconclusive — are
+specified **BEFORE** measurement"*, on `PREDECLARE-20260901-cause3-mii` §4's six-branch model, which
+`R4` preserves. **Read from that predeclaration at `d147880f`, §4 is exhaustive with six branches:**
+
+1. `INCONCLUSIVE / WRONG FOOTING` (`:226`) — any §2 check fails, or the declared packed input is absent
+2. **`INCONCLUSIVE / VACUOUS SEED VARIATION`** (`:230`) — *"Read-back seed set is not exactly `1..12`"*, etc.
+3. `MET`
+4. `NOT MET — AGGREGATE`, 5. `NOT MET — PER-BIN`, 6. `NOT MET — BOTH` (`:236-240`)
+
+**Branch 2 is a positive control, and its absence is the defect.** `s_sig = max |Nsigma_k − Nsigma_0|`
+is small in **two** unrelated situations: the estimator baseline genuinely does not move the quoted
+significance (the favourable finding), **or the declared offsets never reached the estimator** — an
+unthreaded seed, an offset set that collapses, members that are byte-identical, a resumed member that
+reused a cached slab. **Those are indistinguishable in `s_sig`, and the second reads as the first.**
+This is the identical shape `SPEC` §1.3b exhibits for the inflation, where `g^c ≡ 1` clears four gates
+trivially — and `A21` is that requirement.
+
+The proposal carries **two partial** inconclusive handlers and does not name them as such: `Nsigma`
+undefined at `p = 0` (§3 C-1, *"must be reported as undefined, never as zero movement"* — correct and
+important) and §4c's rank change as *"a reportable event that blocks a bare pass"* (also correct).
+Neither is the vacuity control.
+
+**Recommended:** each candidate carries all three outcome classes explicitly, and the vacuity branch
+is evidenced from the member receipts — per-member estimator-seed values read back and pairwise
+distinct, plus measured member-to-member movement in an object known to depend on the seed. `A22`
+applies: read back from the receipt and recompute, do not trust the launcher's intent. The write sites
+exist (`sweep_bank_5d.py:309`; `analyze_universes_5d.py:273-277`; `unified_throw_cov.py:569-570`;
+`mii_adopt_unified_5d_stamped.py:168`, per `SPEC` §2.3), so this is a declaration gap and not new code.
+
+## B.4 `B4` — §7 item 3 is stale, and as specified would authorize a check that can pass without doing the work
+
+§7 item 3 asks whether the §6 builder comparison is *"authorized as Tier-2 work"*. §6 item 1 specifies
+it as: both builders instantiated on the same edges, masks and drop axis, `M₁ − M₂` compared
+elementwise to zero at float64 tolerance, *"for **every** projection the publication quotes"*.
+
+**It has already been partly run, and its specification has already been found defective — both on
+`main`, and both after the proposal's last revision.**
+`FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md`, merged at
+`ceb474cc` (**2026-09-09T17:13:10−0700**, verified `merge-base --is-ancestor ceb474cc origin/main`),
+versus the proposal's last revision `610d0882` (**2026-09-08T01:14:52+0200**). It establishes
+**byte-identical `M`** on three mask densities for the single-axis `W` marginalisation, and **opposite
+refusal semantics** off that domain. Its **amendment 2, made by the spec's own author**, states that a
+runner implementing §6 item 1 literally *"would either crash on the refusing cases or skip them — and
+skipping restricts the tested domain to exactly the region where the builders agree… which no exit
+code catches"*, and that §6 item 1's further scoping to *"every projection the publication quotes"*
+**may contain no non-nesting case at all**.
+
+**So authorizing §6 item 1 as written would authorize a check whose green state is reachable without
+the work being done** — `A21` again, and by `B1` its declared domain is additionally empty. The
+amendment's remedy is the right one: the comparison's **unit** must be the builders' **outcome**
+(refuses / returns-with-drops / returns-clean), with elementwise `M` equality tested only inside the
+both-returned cell.
+
+**Recommended:** item 3 is withdrawn as posed. What remains genuinely unauthorized is the **residue**
+— the outcome-unit comparison over the non-nesting cases, extended per `B6`. §6 item 2's refusal to
+give any implementation automatic precedence is right and should be kept verbatim; §6 item 3's
+"record a measured agreement with all shas" is now partly satisfied and should cite `ceb474cc` rather
+than ask for it.
+
+## B.5 `B6`, `B7`, `B8` — three narrower findings, and one that is not this proposal's
+
+**`B6` — the enumeration is incomplete, and the fourth builder is on a prohibited path.** §6 counts
+*"at least THREE"*. §A.4.3 measures **four**: `p4_lib.build_projection_M` (`p4_lib.py:1353`, fails
+closed both directions at `:1380` and `:1393-1401`), `project_cov_nd.build_projection`
+(`project_cov_nd.py:79`, neither check), the `(E_avail,W)` inline `Mew`
+(`eavailW_covariance.py:404-406`, **deliberately** fail-open with a printed warning, coverage report
+at `:425`), and **`pet/assemble_ctotal_bkgsub.py:36 build_5d_to_4d_projection`** — on the PET path,
+which is diagnostic under `R6`. §6 also does not carry the third builder's *reason* for differing,
+which is physical rather than accidental: `W² = M² + 2M·E_avail − Q²` makes some `(E_avail,W)` cells
+unreachable, so *"an empty row here can be correct, where in a 5D→4D marginal it cannot be."*
+**A designation among builders that does not name the PET map excludes it by luck rather than by
+`R6`** (`A20`), and one that treats the third builder's fail-open as a defect would be wrong.
+
+**`B7` — the `ndf` policy has a measured instance the proposal does not cite, and its direction is
+determinable.** §1b item 14 and §4c correctly find that `ndf` is the **bin count**
+(`eavail_generator_significance.py:132`, `chi2_to_sigma(chi2, n_ea)`) while `pinv` — called with **no
+`rcond`**; I measure **0** occurrences in that module, confirming §4c — discards modes. The
+`(E_avail,W)` projector supplies a **known, printed, non-empty** instance: structurally unsupported
+cells get an exactly-zero row and column, and the module itself warns *"they are NOT
+measured-and-precise; they are unsupported. Exclude them from any chi2, significance or per-bin ratio
+built on this covariance."* Those modes are dropped by `pinv`, so their components of `d` contribute
+**0** to χ² while `ndf` still counts their bins: **χ² too small and `ndf` too large, both pushing `p`
+up and `Nsigma` down.** The current direction is therefore **conservative**, which is why this is
+`worth fixing` and not blocking — but `A24` applies: a criterion may not rest on a mis-specified
+denominator merely because the error is in the safe direction, and a later "fix" of `ndf` to the
+retained rank **without** also handling `d`'s dropped components would flip the sign. `A29`: the
+excluded-cell list belongs in the criterion, with its count in both directions.
+
+**`B8` — the null arm's thread environment is not pinned. Outside this proposal's scope, and it
+belongs to §3.7a.** This was routed to me as *"arm 5 exports `OMP_NUM_THREADS=32 MKL_NUM_THREADS=2
+OPENBLAS_NUM_THREADS=2`; arms 6 and 7 export none"*. **Measured over the seven launchers that share
+`MNV_EST_SEED_OFFSET`, the routed detail is wrong and the conclusion is stronger:**
+
+| arm | launcher | `OMP` | `MKL` | `OPENBLAS` | runs `--null` |
+|---|---|---|---|---|---|
+| 1 | `sbatch_bootstrap_5d_gpu.sh` | — | — | — | — |
+| 2 | `sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh` | `${SLURM_CPUS_PER_TASK:-32}` | — | — | — |
+| 3 | `sbatch_seedscan_split_5d.sh` | — | — | — | — |
+| 4 | `sbatch_sweep_bank_5d_run_bkgaware_gpu.sh` | — | — | — | — |
+| 5 | `sbatch_unfold_5d_detector_bkgaware_gpu.sh` | `${SLURM_CPUS_PER_TASK:-32}` | — | — | — |
+| 6 | `sbatch_uthrow_block_5d.sh` | — | — | — | — |
+| 7 | `sbatch_uthrow_combine_5d_fast.sh` | — | — | — | **yes, `:339`** |
+
+**No arm of the seven pins `MKL_NUM_THREADS` or `OPENBLAS_NUM_THREADS` at all**, and the two that set
+`OMP_NUM_THREADS` derive it from the scheduler allocation rather than a literal. The quoted
+three-variable string is real but lives in `sbatch_uthrow_run_5d_fast.sh:122`, which is **not one of
+the seven**. So the asymmetry is not arm-5-versus-6-and-7; **thread counts float on every arm**, and
+arm 7 — where `--null` computes `x_cv`/`x_cv2` — pins none of the three.
+
+**Why it matters, stated at the strength the measurement supports.** `SPEC` §6.4 RULES that Z's
+fixed-seed null bound be *"justified by precision and sensitivity controls established before
+implementation"* (`A17`). BLAS thread count changes reduction order and therefore floating-point
+rounding, so **a reproducibility bound cannot be established over a configuration that is not
+fixed** — regardless of how large the effect turns out to be. **I have not measured that thread count
+moves the null**, and I should not be read as claiming it: G's null is `1.31e-12` of the sqrt-trace,
+far above a plausible `~1e-16` reordering term, so it is probably not the dominant contribution. The
+finding is about the **justification**, not the magnitude, and the remedy is cheap: pin the three
+variables in the null arm before the bound is fixed, then measure. This bears on `SPEC` §3.7a, **not
+on the proposal under review**, and is recorded here because it was routed to me and because it is
+`A17`'s live instance. Compounding it: §A.4.2 measures that `x_cv`/`x_cv2` **do not persist**
+(`unified_throw_cov.py:582-604` returns them in a dict; `:569-581` writes only the seeds and
+`hJointMeanShift`), so the null cannot be independently reconstructed either (`A23`).
+
+## B.6 `B9` — axis (c): nothing here over-rejects, and that is a positive result
+
+`A12` is the sharpest over-rejection hazard in the governing set: `R3` gives cause 7's `M` **no
+materiality threshold**, and `SPEC` §6.2 closes `(cause 1, Z)` **irrespective of magnitude**. A
+criterion that rejected Z for a **large** measured difference on those causes would re-add a
+requirement two rulings removed.
+
+**The proposal does not do this, on any of its three candidates.** All three are **sensitivity**
+statistics — movement of a quantity across declared estimator-baseline offsets — not **magnitude**
+statistics, so `A12`'s hazard is not in their shape. C-1 is *"an ABSOLUTE difference in a quantity
+already expressed in sigma units"* and its supported claim is about **movement**, not size. C-2 and
+C-3 are likewise stated on relative change against the `k = 0` member. **No acceptable Z is rejected
+by anything in §3.**
+
+Three further points on the same axis, all in the proposal's favour:
+
+- **C-3's scope is honest and is already enforced in code.** `z_validator.py:224,237,276,282` stamp
+  `_DIAGONAL_ONLY_SCOPE` on the receipt whenever no leg declares `sees_correlations`. So the
+  diagonal-only limitation C-3 admits in prose is machine-recorded, which is stronger than a caveat.
+- **§4a's rejection of printed precision is right in both directions**, and its self-criticism —
+  *"that is the `D1c` error, committed by me"* — is the correct diagnosis. `A24` agrees: a formatting
+  granularity is not a materiality threshold, and neither a floor nor a ceiling.
+- **Declining to propose a tolerance is compliance with `A18`, not a gap.** `SPEC` §6.6's adopted
+  constraint requires statistic, denominator, precision target and boundary **together**; the
+  proposal supplies the first two and openly lacks the last two. Offering a boundary anyway would
+  have been the violation.
+
+**One consequence of `A18` for `B0`, stated because it cuts against my own verdict's framing.** §7
+item 1 asks Joseph to decide *"whether the acceptance target is the quoted significance (C-1)"* —
+i.e. to approve a **statistic** while its precision target and boundary do not exist. Taken
+literally, §6.6 forbids that: *"never a formula detached from those definitions… A boundary approved
+in the abstract would be an authorization over an object nobody has defined."* The proposal's own §7
+preamble (*"Nothing to be adopted"*) points the right way, but item 1's wording reads as an approval.
+**Recommended:** item 1 is reframed explicitly as a **direction-setting judgement that adopts no
+statistic**, or deferred until the packet is complete. This is the one blocking finding that is purely
+a matter of how the question is put.
+
+## B.7 Feasibility — axis (d), and a CORRECTION TO PART A's `A30`
+
+**`A30` drew a feasibility verdict from a cost priced against a design I had already recorded as not
+adopted. That inference was wrong and is withdrawn.** Part A concluded that *"the ruled `M(ii)`
+quantity is, on the specification's own estimate, unaffordable inside the envelope that governs it"*
+and that `(cause 3, Z)`'s `M(ii)` *"will be `UNRESOLVED` at the stop"*, from `SPEC` §5.4's
+`5×`–`9×`-over-`R5` figure. **Re-read at the same base, §5.4 says the opposite of what I used it
+for:** that figure prices the **historical 46–50-member family**, at per-member costs measured on a
+**different subject**, and §5.4 states in terms that it *"does not establish the cost of Z's design,
+and therefore not its affordability either, because §6.3 leaves the design open."* I had recorded that
+same point myself as `A14` and then applied the number anyway. This is the asymmetric-comparison
+failure the campaign catalogues, committed against a warning I had already transcribed.
+
+**Re-measured at `origin/main` `c18f9daa`, `nd-unfolding/Z_CONSTRUCTION_PLAN.md` §5.8:** Z's complete
+requirement **including its own cause-3 design** is `222.8` GPU / `348.5` CPU task-hours at `N = 4` —
+**`44.6%` / `69.7%` of `R5`'s `500`/`500`, and it FITS**; `N = 5` fits with a thin margin. That
+section also carries the correction of its own predecessor: *"the decision is not affordable"* was
+withdrawn as *"the wrong sentence"*, and two rows were reclassified from `MEASURED UPPER BOUND` to
+`TRANSFERRED`.
+
+**The corrected axis-(d) answer.** The required measurements are **feasible on cost** and **tight on
+schedule**. `Z_CONSTRUCTION_PLAN.md` §5.8's own conclusion — *"the binding constraint is the SCHEDULE,
+not the ceiling"* — is the operative one: four to five rounds of 374 tasks against a stop of
+2026-09-30, i.e. **20 days from today**, with the members not yet existing and **no `D-RESOURCE`**.
+`R5`'s ceilings are *"a prohibition and an accounting boundary… NOT authorization to spend up to"*
+them, and `R5` §4 item 6 records the meter as *"the one that fails silently"* (`A31`), so a cost claim
+here is a plan, not an accounting result.
+
+**What survives of `A30`:** the schedule half, and the consequence that if the stop fires first,
+`R5`'s default is the central-value Letter — under which, by `B1`, C-1 has no quoted significance to
+be sensitive to. **What is withdrawn:** the affordability verdict and the prediction that `M(ii)` is
+necessarily `UNRESOLVED` at the stop. `A30` should be read as amended by this section; `A31` stands.
+
+## B.8 What this lane did not do
+
+It drafted no criterion, proposed no tolerance, chose no statistic, designated no projection `M`, and
+graded no leg or cell. It did not edit the proposal, the spec, `CRITERIA`, `SCOREBOARD`, `OPEN_ITEMS`,
+`values.tex` or anything under `docs/analysis-note/`. It ran no compute and queried no scheduler. Two
+findings are routed to owners rather than acted on: `CRITERIA` §1's decayed artifact-fixing citation
+(`B1`), and `SPEC` §3.7a's thread-environment and operand-persistence gaps (`B8`).
+
+**And the limit this creates on this lane.** `B3`, `B6` and §B.6's item-1 reframing are close to
+design input. If any is taken up, **`BEN-381` should be read as disqualifying this lane from grading
+`(cause 3, Z)`'s `M(ii)`**, and this record is the evidence of why. Recorded now rather than argued
+later.
