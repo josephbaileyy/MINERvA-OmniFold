@@ -42,6 +42,15 @@ WHAT EACH SECTION ESTABLISHES, and what it does NOT
                       constraints. Plus the measured concentration case: at equal trace change the
                       per-bin MEDIAN reads exactly 0 while rho separates by n. This is the evidence
                       for the cause3_corr recommendation.
+9  support/range     ⚠ FOUR THIRD-LANE FINDINGS, each reproduced independently. `rho` requires a
+                      POSITIVE DEFINITE baseline, and Z's construction does not give one -- derived
+                      from Z's OWN operands in section 10, not transferred. Section 1b's
+                      monotonicity does NOT survive restricting to a support unless the perturbation
+                      stays inside range(C0); measured both ways. And domination bounds VALUES, not
+                      THRESHOLDS, so it does not imply non-bindingness.
+                      ⚠ THE REPAIRS BELOW ARE DEMONSTRATIONS, NOT THE RECOMMENDED CRITERION: Joseph
+                      ruled 2026-09-10 not to "add regularization, discard directions, or change
+                      inference conventions merely to make a theorem applicable".
 
 `uq_math` is imported, never restated: a rule retyped is a second implementation.
 """
@@ -577,6 +586,176 @@ def section_8_domination(trials: int = 3000) -> None:
     print()
 
 
+def retained_basis(C: np.ndarray, rcond: float = 1e-15) -> np.ndarray:
+    """An orthonormal basis of the subspace `pinv` retains. THE SUPPORT DEFINITION `rho` NEEDED.
+
+    Found missing by the third review lane (F1): `rho` as first written required `C_0 > 0` and the
+    phrase "on the compared support" was never defined anywhere.
+
+    ⚠ AND THE RANK NUMBER FIRST CITED HERE WAS THE WRONG OBJECT'S -- MY ERROR, INHERITED FROM A
+    RELAY AND NOT CHECKED. `app_statmethods.tex:636-637`'s subject is "The standard-P4 5D CANDIDATE
+    covariance", i.e. S, the component DONOR (`std_final5_candidate.root`), measured 2026-08-10.
+    Rank 263 is S's. It is not G's and it is not Z's, and a first version of this docstring called
+    it "the production trunk" -- a definite description doing a citation's work, which is this
+    campaign's catalogued failure. Section 10 derives Z's OWN bound instead.
+
+    ⚠ THIS FUNCTION IS A DEMONSTRATION, NOT THE RECOMMENDED CRITERION. Restricting to a retained
+    subspace DISCARDS DIRECTIONS, and Joseph ruled 2026-09-10 against doing that "merely to make a
+    theorem applicable". It is kept because section 9 needs it to show WHY the repair path was
+    abandoned -- monotonicity does not survive it. `U' C_0 U` is positive definite by construction,
+    so `rho_S` is well defined; that is all this establishes.
+    """
+    w, V = np.linalg.eigh(C)
+    return V[:, w > rcond * w.max()]
+
+
+def rho_on_support(C0: np.ndarray, Ck: np.ndarray, rcond: float = 1e-15) -> float:
+    """`rho` restricted to `C0`'s retained subspace. Defined for a rank-deficient baseline."""
+    U = retained_basis(C0, rcond)
+    return rho(U.T @ C0 @ U, U.T @ Ck @ U)
+
+
+def section_9_support_and_range(trials: int = 4000) -> None:
+    """⚠ FOUR FINDINGS FROM THE THIRD REVIEW LANE, EACH REPRODUCED INDEPENDENTLY HERE.
+
+    F1  `rho` was undefined on the object it was proposed for. `retained_basis` above is the fix.
+    F2  ⚠ AND MONOTONICITY (section 1b) DOES NOT SURVIVE THE RESTRICTION UNLESS THE PERTURBATION
+        STAYS INSIDE `range(C_0)`. Section 1b's proof needs `Ck - C0 = C0^(1/2) E C0^(1/2)`, i.e.
+        `range(Ck - C0)` contained in `range(C0)`. Measured below in both directions. This KILLS,
+        as written, the claim that a trunk-level `rho` bounds every marginal at once.
+    F9  DOMINATION DOES NOT IMPLY NON-BINDINGNESS. Leg 2 is implied by leg 1 iff `rho_crit <= tau`
+        -- a statement about THRESHOLDS, not values. Demonstrated below.
+    F8  section 8's corollary needs `u' C_0 u > 0`; a zero-variance baseline bin makes the ratio
+        unbounded.
+
+    And section 1b's own 1,898-pair ensemble is well-conditioned by construction, so it EXCLUDED
+    the rank-deficient regime the production object lives in -- the domain-exclusion shape section
+    6 diagnosed, in the section next door. Fourth instance in this probe's own history.
+    """
+    rng = np.random.default_rng(SEED + 4)
+    print("9. SUPPORT, RANGE-CONTAINMENT, AND THE THRESHOLD/VALUE DISTINCTION")
+
+    # ---- F2: monotonicity under restriction, both directions.
+    worst_in, worst_out, n_in, n_out = 0.0, 0.0, 0, 0
+    for _ in range(trials):
+        nh, r, nl = 8, 5, 4
+        Q, _ = np.linalg.qr(rng.normal(size=(nh, nh)))
+        ev = np.concatenate([rng.uniform(1.0, 4.0, r), np.zeros(nh - r)])
+        C0 = Q @ np.diag(ev) @ Q.T                       # rank-deficient, like the trunk
+        U = Q[:, :r]
+        Bi = rng.normal(size=(r, r))
+        Bo = rng.normal(size=(nh, nh))
+        deltas = (("inside range(C0)", U @ (0.05 * (Bi + Bi.T)) @ U.T),
+                  ("leaking outside", 0.05 * (Bo + Bo.T)))
+        M = np.zeros((nl, nh))
+        M[rng.integers(0, nl, size=nh), np.arange(nh)] = rng.uniform(0.1, 3.0, size=nh)
+        for label, d in deltas:
+            Ck = C0 + d
+            A0, Ak = M @ C0 @ M.T, M @ Ck @ M.T
+            if np.linalg.eigvalsh(A0)[0] <= 1e-9:
+                continue
+            try:
+                rs = rho_on_support(C0, Ck, rcond=1e-12)
+            except ValueError:
+                continue
+            if rs <= 0:
+                continue
+            ratio = rho(A0, Ak) / rs
+            if label.startswith("inside"):
+                worst_in, n_in = max(worst_in, ratio), n_in + 1
+            else:
+                worst_out, n_out = max(worst_out, ratio), n_out + 1
+    print(f"   F2  perturbation INSIDE range(C0): max rho_proj/rho_support = {worst_in:.3f} "
+          f"over {n_in} trials   (monotonicity HOLDS)")
+    print(f"   F2  perturbation LEAKING outside:  max rho_proj/rho_support = {worst_out:.1f} "
+          f"over {n_out} trials   (monotonicity FAILS)")
+    assert worst_in <= 1.0 + 1e-6, "monotonicity failed even INSIDE the range: the fix is wrong"
+    assert worst_out > 10.0, "the leaking case no longer violates; the finding has stopped reproducing"
+
+    # ---- F9: domination bounds VALUES; independence is about THRESHOLDS.
+    try:
+        from scipy import stats
+
+        def chi2_crit(T, ndf):
+            return float(stats.chi2.isf(2.0 * stats.norm.sf(T), ndf))
+
+        print("   F9  domination gives s <= rho, so leg 2 is IMPLIED iff rho_crit <= tau:")
+        for ndf in (42, 263, 10694):
+            rc = chi2_crit(4.0, ndf) / chi2_crit(3.0, ndf) - 1.0
+            sig = float(np.sqrt(1.0 + rc) - 1.0)
+            binds = [t for t in (0.001, 0.01, 0.05) if sig > t]
+            print(f"       ndf={ndf:6d}: rho_crit={rc:.4f} permits per-bin sigma up to {sig:.4%}; "
+                  f"leg 2 BINDS INDEPENDENTLY at tau in {binds}")
+            assert binds, "no tau in the tested set binds; F9's regime has vanished"
+    except ImportError:
+        print("   F9  SKIPPED, scipy not importable")
+
+    # ---- F8: the corollary's own hypothesis, dropped from its table.
+    C0 = np.diag([1.0, 1.0, 0.0])
+    Ck = np.diag([1.0, 1.0, 0.5])
+    U = retained_basis(C0)
+    print(f"   F8  C0 = diag(1,1,0): rho on the retained {U.shape[1]}-dim subspace = "
+          f"{rho(U.T @ C0 @ U, U.T @ Ck @ U):.6f}, yet the DROPPED bin's variance ratio is "
+          f"0.5/0 = inf -- the per-bin corollary is VOID where the baseline variance is zero")
+    assert U.shape[1] == 2
+
+    # ---- the concentration sentence, and how much of it is n-specific.
+    print("   concentration: the SEPARATION is structural; the 'refused at 1.0' wording is not:")
+    for n in (10, 25, 50, 263):
+        Cc = np.eye(n)
+        E = np.zeros((n, n))
+        E[0, 0] = 0.02 * n
+        r = rho(Cc, Cc + E)
+        print(f"       n={n:4d}: rho={r:.4f}  {'PASSES a 0.2 gate' if r <= 0.2 else 'refused'}")
+    print()
+
+
+def section_10_z_own_rank_bound() -> None:
+    """Z's rank deficiency is DERIVABLE FROM Z'S OWN OPERANDS -- no transfer, before Z exists.
+
+    Rank 263 belongs to S. What transfers is the note's ARGUMENT, in its own words
+    (`app_statmethods.tex:639-640`): "A sum of ~45 two-endpoint MAT bands plus statistical and ML
+    blocks cannot span 10,694 directions, so this is a property of the construction, not a defect."
+    Z is built by that same construction (SPEC 1.3a), so the bound follows from Z's manifest.
+
+    OPERANDS, each measured in this checkout:
+      45 all_syst_bands              S.component_manifest (V=13 + A=5 + R=27), SPEC 1.3a
+      a +-1sigma pair is RANK 1      app_statmethods.tex:301-303, "collapses to the rank-1
+                                     1/4 (X+ - X-)(X+ - X-)'"
+      Flux is N_u = 100 (PPFX)       app_statmethods.tex:264 -> mean-centered rank <= 99
+      C_stat from 100 members        sbatch_bootstrap_5d_gpu.sh:5, --array=1-100%32 -> <= 99
+      C_ML from 24 members           sbatch_seedscan_split_5d.sh:5, --array=1-24%24  -> <= 23
+      D_Z is a positive diagonal     SPEC 1.3a -> rank-preserving on the inflated block
+
+    ⚠ THE ASSUMPTION, NAMED, AND ITS DIRECTION: the note says "ALMOST all other bands are +-1sigma
+    pairs" and its table is labelled "(examples)", so I cannot assert all 44 non-Flux bands are
+    two-endpoint. If any is an N-universe multisim the bound RISES by N-2. The bound is therefore
+    not tight -- but the CONCLUSION is robust, because it is a counting argument over ~45 bands
+    against 10,694 directions, and no plausible band inventory closes that gap.
+    """
+    n_bands = 45
+    n_flux_universes = 100
+    n_stat, n_ml = 100, 24
+    reported_bins = 10694
+
+    rank_bands = (n_bands - 1) * 1 + (n_flux_universes - 1)     # 44 pairs at rank 1, Flux at <= 99
+    bound = rank_bands + (n_stat - 1) + (n_ml - 1)
+    print("10. Z's OWN RANK BOUND, DERIVED (no transfer; rank 263 is S's, not Z's)")
+    print(f"    44 two-endpoint bands at rank <= 1        -> {n_bands - 1}")
+    print(f"    Flux, N_u = {n_flux_universes}, mean-centered           -> {n_flux_universes - 1}")
+    print(f"    C_stat, N = {n_stat}                          -> {n_stat - 1}")
+    print(f"    C_ML,   N = {n_ml}                           -> {n_ml - 1}")
+    print(f"    rank(C_Z) <= {bound}  of {reported_bins} reported bins "
+          f"({bound / reported_bins:.2%} of the dimension)")
+    print(f"    numerical nulls >= {reported_bins - bound}")
+    assert bound < reported_bins / 10, "the counting argument no longer gives a deficient object"
+    print("    So C_Z is SINGULAR by construction and `C_Z^(-1/2)` does not exist. Section 1's")
+    print("    hypothesis fails on Z's trunk -- not as a defect, as a property of the sum.")
+    print(f"    Corroboration, NOT a derivation: S's MEASURED rank is 263 against this bound of "
+          f"{bound} for the same construction class.")
+    print()
+
+
 def main() -> int:
     print(__doc__.split("Run:")[0].strip())
     print("=" * 78)
@@ -590,6 +769,8 @@ def main() -> int:
     section_6_pinv_subspace()
     section_7_ndf_direction()
     section_8_domination()
+    section_9_support_and_range()
+    section_10_z_own_rank_bound()
     print("=" * 78)
     print("ALL ASSERTIONS PASSED. Nothing here adopts, grades or authorizes anything.")
     return 0

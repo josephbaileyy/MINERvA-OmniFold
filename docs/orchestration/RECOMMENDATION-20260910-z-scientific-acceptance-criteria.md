@@ -101,6 +101,10 @@ staleness.**
   *"the configuration is pinned"* **cannot be made today**; that is a statement about the evidence,
   not about the world (`SPEC` §3.7a rev. 19).
 - the equivalence or designation of any projection map `M`.
+- ⚠ **the `M`-INDEPENDENCE of the bound. WITHDRAWN in round 2 (F2).** §2.2's theorem stands; its lift to a singular trunk does not, because it needs `range(C_k − C_0) ⊆ range(C_0)`, which is unmeasured on Z and probably false. **This was rev. 1's flagship practical claim and it must not be quoted.**
+- ⚠ **any acceptance rule built on `rho` at the TRUNK.** §6.1's F1 row derives `rank(C_Z) <= 265` of `10,694` from Z's own operands, so `C_Z^{-1/2}` does not exist. §2.1/§2.1b remain **theorems**; their ROLE as the acceptance instrument is withdrawn (§6.2).
+- ⚠ **rank `263` as a property of Z, G, or "the trunk".** It is **S's**, the component donor (`app_statmethods.tex:636`, subject *"the standard-P4 5D **candidate**"*). An earlier revision of this lane's probe made exactly that misattribution.
+- **that domination implies non-bindingness.** VOID (F9): the implication needs `rho_crit <= τ`, a relation between **thresholds**. Rev. 1's `cause3_corr` hinge rested on it.
 - **the `rho` bound as governing the CONSUMED form without §2.1a's subspace condition.** §2.1 is proven for the TRUE inverse; the consumer uses `pinv`, and §2.1a exhibits identical retained rank with the bound violated. **Quoting §2.1 for `pinv` without the retained-subspace gate is the one misuse of this document that would matter.**
 - **any claim that real Z members do or do not swap modes across the `pinv` cutoff.** §2.1a's construction is synthetic; the regime is UNMEASURED on Z.
 
@@ -110,7 +114,7 @@ staleness.**
 
 **A second lane's document already occupies part of this subject, it is on `main`, and it is routed.**
 `docs/orchestration/PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`,
-sha256 **`3fc9fb87b170887cdc8be870f801e7228113c35669be455401bdb7f1e6e9ac4c`** measured at `c18f9daa`,
+**content digest** sha256 `3fc9fb87b170887cdc8be870f801e7228113c35669be455401bdb7f1e6e9ac4c`, measured at `c18f9daa` — ⚠ **a file digest, NOT a git object: `git cat-file` on it fails. The git identifiers are commit `610d0882` and blob `0a06aa52`** —
 `LIVE`/`open` at `MANIFEST-overrides.tsv:117`, routed from `CATALOG.md:178`. It is the
 **z-operand-schema lane's** work and it predates this lane's assignment. **Two lanes drafting one
 contract is how a repository acquires two conflicting criteria sets, with the winner decided by push
@@ -723,11 +727,24 @@ a second implementation, and this one has already diverged. **Neither recommenda
 the builders are equivalent**; that remains unresolved, and `SPEC` §6's check must be re-scoped so
 its **unit is the outcome**, with elementwise equality tested only inside the both-returned cell.
 
-**(b) `ndf` must be declared, and the current policy is internally inconsistent.**
+**(b) ⚠ `ndf` IS A CODE-CONFORMANCE DEFECT AGAINST A RATIFIED PROTOCOL — NOT A NEW POLICY NEEDING A RULING. Rev. 1 framed it as a recommendation; that was an OVER-ask and an UNDER-claim at once (F3).**
+
+`app_statmethods.tex:645-658` **already mandates** that for any N-D `χ²`: *"`ndf = n_reported` must not be used"*, and the quotation shall state *"(i) the inverse actually used — pseudo-inverse with its `rcond`, or the truncation rank … (ii) the **retained rank** as `ndf`; (iii) the rank-truncation scan …; (iv) which covariance is meant …; and (v) for every sample-covariance block entering the sum, its ensemble size `N`, its normalization convention …, the effective dimension `p` actually inverted after truncation, and the finite-ensemble treatment applied — or the explicit statement that none was."* Measured: `eavail_generator_significance.py:132` passes **`n_ea`**, the bin count. **So this is a departure from a landed, ratified protocol and needs a code fix, not a criterion decision.**
+
+**⚠ AND FIXING IT DOES NOT MAKE THE REFERENCE DISTRIBUTION CORRECT. Protocol compliance is not statistical calibration, and this document must not imply otherwise.** The same protocol says the distributional assumptions *"assume independent Gaussian realizations and a truncation dimension chosen independently of the data, neither of which is established for a data-dependent rank cut"* (`:672-677`). **So rev. 2's unqualified *"distributionally correct"* is WITHDRAWN — that is the phrase to drop, not *"anti-conservative"* (F6). Only the SIGN is assertable; whether the change is a *correction* or a *loosening* is undetermined, because it depends on the rank-based null being accepted, which the protocol says is not established.**
+
+**⚠ CLAUSE (v) IS UNADDRESSED BY THIS DOCUMENT AND ITS OPERANDS ARE NOW MEASURED.** `C_stat` from `N = 100` (`sbatch_bootstrap_5d_gpu.sh:5`, `--array=1-100%32`), `C_ML` from `N = 24` (`sbatch_seedscan_split_5d.sh:5`, `--array=1-24%24`), `45` bands, `p` undetermined until a truncation is chosen. **I propose no correction and deliberately do not reach for a Hartlap-type factor** — `OI-137` is ruled *"disclose, do not correct"* and the protocol's own reason applies here unchanged. §6.5 states what I can and cannot assess.
+
+**AND THE COMPOUNDING, WHICH NOBODY HAD NAMED:** retained-rank `ndf` **raises** reported significances, and the uncorrected finite-ensemble bias **also inflates `χ²`** — the protocol measures the precision matrix as *"too large by a factor ≃2.76"* at `N=160, p=100` and says *"tension is overstated rather than hidden"* (`:664-670`). **Two same-direction effects on the same quoted number, neither quantified for Z, and their composition unexamined until now.** That is a reason to fix the conformance defect **and** not to quote a significance from the result until (v) is discharged — which is `PR-G10`'s own posture.
+
+**The internal inconsistency rev. 1 identified is still real and is the reason the protocol exists:**
 `chi2_to_sigma(chi2, n_ea)` at `:132` passes the **bin count** while `pinv` discards modes below its
 cutoff. A quadratic form evaluated on a rank-`r` retained subspace is referred to a
-`chi2`-distribution on `n` degrees of freedom. **Recommendation: `ndf` = the retained rank, reported
-per member.** This rests on a distributional fact, not a preference. **⚠ AND THE DIRECTION IS DETERMINATE — REV. 1 OF THIS DOCUMENT DECLINED TO NAME IT AND WAS
+`chi2`-distribution on `n` degrees of freedom. **Required, as CONFORMANCE: `ndf` = the retained rank,
+reported per member** — mandated by clause (ii), not recommended by me. ⚠ **Rev. 1 added "this rests
+on a distributional fact, not a preference"; that is WITHDRAWN under F6** — the rank-based null's own
+assumptions are the ones the protocol says are not established for a data-dependent rank cut, so the
+ground for the fix is **conformance**, not calibration. **⚠ AND THE DIRECTION IS DETERMINATE — REV. 1 OF THIS DOCUMENT DECLINED TO NAME IT AND WAS
 WRONG TO.** I wrote that *"dropping modes reduces `chi2` and reduces `ndf`, and the two move `z`
 oppositely, so the net sign is not determined."* **That conflated two different comparisons.** The
 `ndf` **policy** change holds `chi2` fixed — `chi2` is *already* computed with `pinv` today — and at
@@ -799,7 +816,7 @@ both directions and carries controls. **Re-run it rather than believing this sec
 
 ## 2.1 The bound — PROVEN, and SHARP
 
-**Claim.** Let `C_0 > 0` and `C_k > 0` on the compared support, and let
+**Claim.** Let `C_0 ≻ 0` and `C_k ≻ 0` — **strictly positive definite, and ⚠ NOT satisfied by Z's trunk: §6.1's F1 row derives `rank(C_Z) <= 265` of `10,694` from Z's own operands, so `C_0^{-1/2}` does not exist there. Rev. 1 wrote "on the compared support", a phrase it never defined anywhere; §6.2 states the consequence for this theorem's ROLE** — and let
 `rho = ‖ C_0^{-1/2} (C_k − C_0) C_0^{-1/2} ‖_2 < 1`. Then **for every data vector `d`**:
 
     chi2_0 / (1 + rho)   <=   chi2_k   <=   chi2_0 / (1 - rho)
@@ -904,7 +921,7 @@ non-circular.
 
 **This is the result Part 6's recommendation rests on.**
 
-**Claim.** If `rho(C_0, C_k) <= δ < 1` then **for every** `u` with `uᵀ C_0 u > 0`:
+**Claim.** If `rho(C_0, C_k) <= δ < 1` then **for every** `u` with `uᵀ C_0 u > 0` — ⚠ **the hypothesis is load-bearing and rev. 1's corollary table dropped it (F8): a zero-variance baseline bin makes the ratio unbounded, and the reported-support predicate `x_cv > 0` is NOT the same condition as positive variance**:
 
     (1 - δ)  <=  uᵀ C_k u / uᵀ C_0 u  <=  (1 + δ)
 
@@ -919,7 +936,7 @@ vector**; both sides hold at `1.000000000000` and sharpness is reached.
 
 | `u` | what it bounds |
 |---|---|
-| `e_i` | every per-bin **variance** within `[1−δ, 1+δ]`, so every per-bin **σ** within `[√(1−δ), √(1+δ)]` — hence `s_med`, the per-bin **max**, `p90`, the whole per-bin movement distribution |
+| `e_i`, **where `e_iᵀC_0e_i > 0`** | every per-bin **variance** within `[1−δ, 1+δ]`, so every per-bin **σ** within `[√(1−δ), √(1+δ)]` — hence `s_med`, the per-bin **max**, `p90`, the whole per-bin movement distribution |
 | `1` (all-ones) | the total |
 | rows of `M` | **`s_proj`, for every projection — designated or not** (with §2.2 carrying it from the trunk) |
 | — | `Tr C` is a sum of `e_iᵀ C e_i`, so **`s_agg`** too |
@@ -942,8 +959,7 @@ change**:
 | concentrated (`nε` on one direction) | `1.0000` | `0.009950` | **`0.000000`** | **`1.000000`** |
 
 **`s_agg` is identical to twelve digits. The per-bin median reads EXACTLY ZERO on the concentrated
-case** — because one bin moved and a median cannot see it. **`rho` separates them by a factor `n`,
-and at `1.0` it would be refused as `INCONCLUSIVE` rather than passed.** So the hazard §3.6b
+case** — because one bin moved and a median cannot see it. **`rho` separates them by a factor `n`.** ⚠ *Rev. 1 added "and at `1.0` it would be refused as `INCONCLUSIVE`"; that is `n`-specific and is withdrawn — the identical perturbation gives `rho = 0.20` at `n = 10`, which PASSES a `0.2` gate (probe §9). The separation is structural; the refusal was an artifact of `n = 50`.* So the hazard §3.6b
 introduced a per-bin leg to catch is one that an `f_med`-shaped leg is blind to and leg 1 catches.
 *(The `SPEC`'s own `D2` had already noticed half of this — that the median fixes the coverage
 fraction at `50%` "by default rather than by argument".)*
@@ -965,7 +981,22 @@ above. Put `P = B'(BB')^{-1/2}`; then `P'P = I`, so `P` has orthonormal columns 
 
 **What this buys, stated precisely so it is not over-read.** A `rho` measured on the **5D trunk**
 bounds `rho` on **every** projection simultaneously, including projections not yet designated or
-built, **provided `M C_Z^(0) Mᵀ` is nonsingular — the hypothesis of the claim above, which must travel with the next sentence because that sentence gets lifted alone.** **So the BOUND is `M`-independent.** It does **not** make the *reported significance*
+built, **provided `M C_Z^(0) Mᵀ` is nonsingular.**
+
+### ⚠ AND THE `M`-INDEPENDENCE CLAIM THAT FOLLOWED IS WITHDRAWN — F2, ROUND 2
+
+**Rev. 1 concluded from the above: *"So the BOUND is `M`-independent … `rho_5D` can be evaluated BEFORE the projection question is settled, and a small `rho_5D` discharges the sensitivity question for all marginals at once."* That was this document's flagship practical claim and it does not hold as stated.**
+
+The proof needs `C_k − C_0 = C_0^{1/2} E C_0^{1/2}`, i.e. **`range(C_k − C_0) ⊆ range(C_0)`** — automatic when `C_0 ≻ 0`, and **not** automatic once the baseline is singular, which §6.1's F1 row shows Z's is **by construction**. Measured in both directions (probe §9), with the baseline rank-deficient:
+
+| perturbation | `max rho_proj / rho_support` | trials violating |
+|---|---:|---|
+| **inside** `range(C_0)` | `1.000` | `0` of 2,475 — monotonicity **holds** |
+| **leaking outside** | **`2340.8`** | **every** trial — monotonicity **fails** |
+
+**Range containment is neither stated, gated, nor measured on Z — and it is probably false in production**, because members at different estimator baselines give different band vectors and therefore different spans. **The cost of the withdrawal is stated rather than softened: `rho` can no longer be evaluated once on the trunk to cover every marginal, so the criterion re-couples to the `M`-designation question of `D.1(a)`.** §6.3 is the alternative, and it does not need this claim.
+
+**What still stands, unqualified:** the monotonicity theorem itself, for any `M` with `M C_0 Mᵀ` nonsingular and a positive-definite baseline. **It is the LIFT to a singular trunk that fails, not the theorem.** It does **not** make the *reported significance*
 `M`-independent — `chi2_0`, `ndf` and the retained rank all depend on which `M` is used, so D.1(a)–(c)
 remain preconditions. The practical consequence: `rho_5D` can be evaluated **before** the projection
 question is settled, and a small `rho_5D` discharges the sensitivity question for all marginals at
@@ -1047,7 +1078,7 @@ variable moves.**
 **The structural content, and it is the one thing in this document that is a warning rather than a
 recommendation.** For a fixed significance margin, the admissible perturbation **falls as `ndf`
 grows**, asymptotically as `(z_0 - T) * sqrt(2/ndf)`. At a projection with thousands of bins a
-**one-to-two-percent** relative spectral perturbation is enough to move a `4-sigma` claim below
+**one-to-two-percent** — ⚠ **at the BIN COUNT, which `D.1(b)` forbids as `ndf`. At the effective rank scale (`ndf = 263`, S's measured value and the scale Z's own bound implies) `rho_crit ≈ 0.087`, i.e. `8.7%`, looser by `4`–`6×`** (F4) relative spectral perturbation is enough to move a `4-sigma` claim below
 `3-sigma`. **Use the exact formula, not the asymptote:** the asymptote is conservative at large `ndf`
 and **permissive below `ndf ≈ 250`** (at `ndf = 7` it gives `0.535` against the true `0.417`), so
 quoting it as a shortcut errs in the unsafe direction exactly where projections are small.
@@ -1058,143 +1089,127 @@ of `5.26`, while the perturbation a real large-`ndf` claim can absorb is of orde
 
 ---
 
-# 6. THE `cause3_corr` RECOMMENDATION — ONE EXPLICIT ANSWER, AS RULED
+# 6. ROUND 2 — OUTCOME **(2)**: THE UNIVERSAL 5D BOUND IS REJECTED AS THE ACCEPTANCE INSTRUMENT, AND A NARROWER CLAIM IS RECOMMENDED
 
-**Ruled by Joseph, 2026-09-10, quoted rather than summarized:** *"Ask the criteria designer for one
-explicit recommendation: **either a scientifically justified second binding criterion, or a proposed
-amendment explaining why the first criterion adequately covers the intended use and the second adds
-no necessary protection.** Do not retain an unexplained requirement forever, and do not remove it
-merely to obtain `MET`. I will decide any amendment after independent review."*
+**This Part replaces rev. 1's Branch B recommendation, which is WITHDRAWN. The rev.-1 text is quoted
+where it was wrong rather than deleted.** Under the stopping rule's three outcomes this is **(2)** —
+*the intended claim cannot be supported, with a narrower claim recommended* — which Joseph named as a
+legitimate result, not a failure.
 
-**Both failure modes are real and symmetric, and my previous withholding was incurring the first
-one.** Leaving §3.6b's second binding leg standing with nothing behind it is an unexplained
-requirement retained indefinitely — a cost, not a safe default. I was treating abstention as the
-conservative option; it is not.
+**The governing instruction, quoted:** *"Prefer the simplest criterion that supports the intended
+publication use. A universal 5D bound is optional, not an objective in itself. If its assumptions
+cannot be justified, consider direct checks on the declared publication projections and consumers.
+**Do not add regularization, discard directions, or change inference conventions merely to make a
+theorem applicable.**"*
 
-## 6.1 THE RECOMMENDATION: **BRANCH B**, and the ground is a theorem rather than a judgement
+**That instruction retires my repair path rather than redirecting it.** F1 said `rho` needs
+`C_0 ≻ 0`. My planned fix was to define a retained-subspace support and restrict `rho` to it —
+**which is discarding directions to make a theorem applicable, and is on the prohibited list.** So the
+live question was never *"how do we make `rho` defined on the trunk"*; it is *"does the intended
+publication use need a universal 5D bound at all?"* **It does not.**
 
-**Recommended: amend `SPEC` §3.6b. `cause3_corr` should be RETIRED as a key rather than declared as
-a number** — a different act from filling it, and Joseph's to approve.
+## 6.1 THE ROUND TABLE
 
-**Why, in one line:** §2.1b proves that leg 1 **dominates** every candidate second leg, so no second
-*statistic* can bind independently — and §3.6b's own stated reason for wanting a second leg names a
-hazard that leg 1 sees and the `f_med`-shaped leg is measurably blind to.
+| finding | corrected claim / implementation | decisive test | remaining limitation |
+|---|---|---|---|
+| **F1** — `rho` requires `C_0 ≻ 0`; the trunk is not | **`rank(C_Z) <= 265` of `10,694` reported bins, DERIVED FROM Z'S OWN OPERANDS** — 44 two-endpoint bands at rank `1`, Flux at `N_u=100 → 99`, `C_stat` at `N=100 → 99`, `C_ML` at `N=24 → 23`; `D_Z` diagonal, rank-preserving. So `C_Z^{-1/2}` **does not exist**, by construction and not as a defect | probe §10; **singular case mandatory and present** — §9's `diag(1,1,0)` and §10's counting argument | the note says *"ALMOST all other bands are ±1σ pairs"* and its table is *"(examples)"*, so the bound is **not tight**: any other multisim raises it by `N−2`. The **conclusion** is robust — a counting argument over ~45 bands cannot span `10,694` |
+| **F1(b)** ⚠ **my own inherited error** | **Rank `263` is S's, not Z's or G's.** `app_statmethods.tex:636`'s subject is *"The standard-P4 5D **candidate** covariance"* = the component **donor**. A first version of my probe called it *"the production trunk"* | read the sentence's subject; corrected in probe §9's docstring with the error quoted | none — but it is the second definite-description misroute I have accepted from a relay today |
+| **F2** — §2.2's monotonicity fails under support restriction | **THE M-INDEPENDENCE CLAIM IS WITHDRAWN** (§2.2). It holds only if `range(C_k − C_0) ⊆ range(C_0)`, which is **neither stated, gated, nor measured** — and is *likely false* in production, since different estimator seeds give different band spans | probe §9, both directions: **inside** `range(C_0)` max ratio `1.000` over 2,475 trials; **leaking outside** max `2340.8`, every trial violating | **this removes the flagship practical benefit.** `rho` can no longer be evaluated once on the trunk to cover all marginals, so the criterion re-couples to the `M` designation question (`D.1(a)`) |
+| **F9** — domination ⇏ non-bindingness | **REV. 1's HINGE IS VOID, NOT WEAK.** Leg 2 is implied by leg 1 **iff `rho_crit <= τ`** — a statement about **thresholds**, not values. Domination gives `s <= rho`; it says nothing about the two gates | probe §9: at `ndf=42`, `rho_crit=0.2020` permits per-bin `σ` to move `9.63%`, so leg 2 **binds independently** at `τ ∈ {0.1%, 1%, 5%}`; at `ndf=10694` still at `τ=0.1%` | **and my own self-objection (i) had already said `rho_crit` is `17×`–`270×` looser than the candidate boundaries — which IS that regime.** I put the refutation and the claim in one document |
+| **F7** — the §6.2 amendment was self-contradictory | **MOOT — the amendment is withdrawn with Branch B.** Recorded because the defect is diagnostic: under the min-rule a tighter use merely lowers leg 1's boundary, so by my own domination result the *"second leg becomes required"* trigger **could never fire.** A gate that cannot fire, in the clause offered as proof it was *"a replacement, not a deletion"* | inspection; no test needed | none. It is the fourth instance today of a shape I had already catalogued in the same document |
+| **F4** — §5.3's headline was computed at a forbidden `ndf` | **the `"one-to-two-percent"` warning is corrected.** At `ndf=263` (S's measured rank, and the scale Z's own bound implies) `rho_crit ≈ 0.087` — **`8.7%`, looser by `4`–`6×`.** My table had rows at `7/42/247/4825/10694` and none at the scale the object actually has | probe §2 and §9 tables, now carrying `263` | arithmetic was right, **population wrong** — and it cut *against* my own objection (i), whose *"least permissive"* `16.6×` row was computed at the most-forbidden `ndf` |
+| **F8** — the corollary dropped its own hypothesis | **§2.1b's table now carries `uᵀC_0u > 0`.** A zero-variance baseline bin makes the ratio unbounded | probe §9: `diag(1,1,0)` vs `diag(1,1,0.5)` — `rho = 0` on the retained 2-dim subspace while the dropped bin's variance ratio is `0.5/0 = ∞` | **not hypothetical**: `(E_avail,W)` is structurally singular by my own words, and the reported-support predicate (`x_cv > 0`) is **not** the same as positive variance |
+| **F3** — `D.1(b)` under- and over-claimed | **UNDER: it is a CODE-CONFORMANCE DEFECT, not a new policy.** `app_statmethods.tex:648` already mandates *"(ii) the retained rank as ndf"*; `eavail_generator_significance.py:132` passes `n_ea`. **No Joseph ruling is needed to fix a departure from a ratified protocol.** **OVER: clause (v) is unaddressed** — it requires, per sample-covariance block, `N`, the normalization convention, the effective `p` after truncation, and the finite-ensemble treatment **or an explicit statement that none was applied**. My document had zero of that | direct reading of `:645-658`; `N=100` (`sbatch_bootstrap_5d_gpu.sh:5`) and `N=24` (`sbatch_seedscan_split_5d.sh:5`) measured here | **and the composition is named for the first time:** retained-rank `ndf` **raises** significance, and the uncorrected finite-ensemble bias **also inflates `χ²`** (`:664-670`). **Both push the same way and nobody had put them together** |
+| **F6** — *"distributionally correct"* | **WITHDRAWN, and it is the phrase to drop rather than *"anti-conservative"*.** The protocol itself says the assumptions *"assume independent Gaussian realizations and a truncation dimension chosen independently of the data, neither of which is established for a data-dependent rank cut"* | direct reading of `:672-677` | **only the SIGN is assertable.** *"Correction"* vs *"loosening"* is undetermined, and **protocol compliance is not calibration** — the document must not imply that fixing `:132` makes the reference distribution right |
+| **concentration wording** | *"at `1.0` it would be refused"* is **`n`-specific and is dropped.** The **separation** is structural | probe §9: the identical perturbation gives `rho = 0.20` at `n=10` (**passes** a `0.2` gate), `1.00` at `n=50`, `5.26` at `n=263` | the qualitative claim survives; the sentence did not |
 
-**The argument, laid out so each step can be refused separately:**
+## 6.2 WHAT SURVIVES, AND IN WHAT ROLE
 
-1. **§3.6b's requirement is for a second leg that "must bind independently."** Its reason is stated:
-   *"the same trace can be diffuse or concentrated."*
-2. **That is a defect of trace-based statistics.** Leg 1 is a **worst-direction** statistic, so it is
-   maximally sensitive to concentration rather than blind to it.
-3. **PROVEN (§2.1b):** `rho <= δ` bounds every `uᵀCu` functional within `[1−δ, 1+δ]`. So `s_agg`,
-   `s_med`, the per-bin max/`p90`/distribution and `s_proj` are all **corollaries** of leg 1.
-4. **MEASURED (§2.1b):** on the concentrated case at equal trace change, `s_agg` is identical and the
-   per-bin median reads **exactly `0.000000`**, while `rho` reads `1.000000`.
-5. **A dominated statistic cannot bind independently, by definition.** §3.6b's own criterion for a
-   second leg is therefore **unsatisfiable** by anything leg 1 bounds — which is every candidate
-   named in the `SPEC`, and every candidate in `z_statistics.py`.
-6. **Therefore the second leg adds no necessary protection**, and retaining it would require either a
-   statistic outside the `uᵀCu` family with a justified use, or an admission that the requirement is
-   unexplained.
+**§2.1, §2.1b and §2.2 are theorems and remain adoptable exactly as stated.** Nothing below retracts
+them. **What is withdrawn is their ROLE as the acceptance instrument on the trunk** — because their
+hypotheses (`C_0 ≻ 0`; `range(C_k − C_0) ⊆ range(C_0)`) are, respectively, **false by construction**
+and **unmeasured and probably false**. A theorem whose hypothesis fails on the object is not a weak
+criterion; it is not a criterion.
 
-## 6.2 THE AMENDMENT — and it is a REPLACEMENT, not a deletion
+They keep three legitimate uses: as **sufficient conditions** on any declared object where
+`C_0 ≻ 0` is *measurable* rather than assumed — which the small projections may well satisfy; as the
+**diagnostic** that explains *why* the diagonal statistics are inadequate (§2.1b's concentration
+case); and as the reason `D1`'s retained-subspace gate is the right shape.
 
-**Do not read this as "one leg instead of two."** The requirement is replaced by a stricter and
-checkable one:
+## 6.3 THE NARROWER RECOMMENDATION — DIRECT CHECKS ON THE DECLARED CONSUMERS
 
-> **§3.6b item 3, as amended.** `(cause 3, Z)` is graded on **one binding leg that is not a function
-> of the diagonal alone**, together with a **declared inventory of the uses the assembled covariance
-> is accepted FOR**. The leg's boundary is the **minimum over that inventory** of each use's derived
-> boundary. **A second binding leg becomes REQUIRED, without further amendment, the moment a use is
-> declared whose derived boundary is tighter than the one currently binding** — and the receipt must
-> carry the inventory, so a reader can see which uses were priced and which were not.
+**Recommended: the acceptance rule is evaluated ON THE DECLARED PUBLICATION PROJECTIONS, per
+consumer, with no universal bound and no support surgery.**
 
-**This is what makes it an explanation rather than a removal.** The old requirement had a fixed leg
-count and no stated trigger; the amended one has **no fixed count and a stated trigger**. It cannot
-be satisfied by quietly having fewer legs, because the inventory is part of the receipt and adding a
-use tightens the gate automatically.
-
-**And it answers the "do not remove it merely to obtain `MET`" test structurally:** under this
-amendment, **`(cause 3, Z)` still does not pass today** — leg 1's boundary needs `T`, which does not
-exist in the tree, so the cell remains non-passing for the same reason it was before. The amendment
-changes what would have to be argued, not whether the cell passes.
-
-## 6.3 JOSEPH'S CONSTRAINT 1 — the predeclaration, which is part of this deliverable
-
-*"Do not choose a threshold from the same production members it will subsequently grade. If
-measurements are needed to design it, separate exploratory evidence from acceptance evidence
-explicitly and predeclare the validation arrangement."*
-
-**Leg 1's boundary is unusually well placed to satisfy this, because it is DERIVED rather than
-fitted:** `rho_crit = chi2_0/chi2_crit(T, ndf) − 1` is a closed form in `T`, `chi2_0` and `ndf`. `T`
-is a scientific choice and comes from outside the code entirely. **But `chi2_0` and `ndf` come from
-the `k = 0` member, so the constraint bites and is not vacuous.** Predeclared arrangement:
-
-| | |
+| field | |
 |---|---|
-| **the boundary's operands** | `chi2_0` and `ndf` are computed from the **`k = 0` member only**, which is Z's own build and exists **before any `k ≠ 0` member is submitted** |
-| **frozen when** | `rho_crit` is computed, **written to the receipt with its operands, and frozen BEFORE the first `k ≠ 0` task is submitted.** No `k ≠ 0` member may enter its computation, and the frozen value may not be recomputed afterwards |
-| **the graded set** | the max is over `k ≠ 0`; at `k = 0` the statistic is identically zero, so `k = 0` is the **denominator**, not a graded arm. It is used to *set* the boundary and cannot be *graded against* it |
-| **exploratory vs acceptance, declared separately** | if the `pinv` spectrum has to be examined to establish whether §2.1a's near-cutoff regime is reachable on real Z members, that is **EXPLORATORY** and runs on a **separately declared set that is excluded from the acceptance max**. Its members are named in the receipt as exploratory and may not be re-labelled afterwards |
-| **the validation arrangement** | the `T`-independent quantity `rho` is reported for every member **alongside** `rho_crit`, so a reader can re-derive the verdict at any other `T` without re-running anything — which is also what makes it impossible to move `T` after the fact without the move being visible |
-| **what would VOID the predeclaration** | recomputing `rho_crit` after any `k ≠ 0` member exists; re-labelling an exploratory member as an acceptance member; or choosing `T` after seeing `rho` |
+| **quantity** | for each declared `(generator, projection)` pair, the quoted significance and the inversion's own declarations |
+| **statistic** | `s_sig = max` over declared pairs **and** declared offsets of `\|Nsigma_k − Nsigma_0\|`, an absolute difference in a quantity already in σ units; **plus**, per member and per projection, the four declarations `app_statmethods.tex:645-658` already mandates — the inverse actually used with its `rcond` or truncation rank, the **retained rank as `ndf`**, the rank-truncation scan, and which covariance is meant |
+| **denominator** | none for `s_sig`. **This removes the `chi2_0 = 0` problem and needs no metric on a singular trunk** |
+| **why this is now the simplest sufficient instrument** | the declared consumers are **small and enumerable** — the `(E_avail,W)` object is **42 bins**, so its conditioning is **directly measurable** rather than bounded. A bound is what you need when you cannot look; here you can look |
+| **⚠ AND IT REVERSES MY OWN SUPERSESSION OF `PROPOSAL-20260908`'s C-1, WHICH WAS ASYMMETRIC** | I superseded C-1 as *"a sampled maximum with no bound and no coverage argument"* — while simultaneously arguing, for the offset set `K`, that *"the population is the finite declared set, not an inferred distribution"* and that **the max is therefore exact**. **I applied finite-declared-population logic to `K` and demanded distributional coverage from the projection set in the same document.** That is my catalogued asymmetric-comparison failure. C-1's statistic is **reinstated** as the use-facing leg; its authoring lane was right and my ground for superseding it was not |
+| **population / scope** | the declared offset set `K` **×** the declared `(generator, projection)` pairs. Both finite, both predeclared, so the max is exact and no inference to an unmeasured pair is made — and **no claim is made about undeclared pairs**, which is the honest limit rather than a gap |
+| **terminal outcomes** | **MET** — every declared pair's significance stays on the claim's side of `T`, and rank/`rcond`/subspace declarations are stable across members. **NOT MET** — a pair crosses `T`, or a declaration moves. **INCONCLUSIVE** — `p = 0` so `Nsigma` is undefined (reported as undefined, never as zero movement); or **`INCONCLUSIVE / VACUOUS SEED VARIATION`** (`PREDECLARE-20260901-cause3-mii…:230`), the positive control |
+| **cost** | zero incremental production — arithmetic on members `D3` would produce, on `42`-to-`4825`-bin objects rather than `10,694²` |
+| **what it does NOT do** | it makes **no** statement about the trunk as a whole, and none about projections outside the declared set. **A universal claim is exactly what I am giving up**, deliberately, per the steer |
 
-## 6.4 THE THREE STRONGEST OBJECTIONS TO MY OWN RECOMMENDATION
+## 6.4 `cause3_corr` UNDER THE NEW FRAMING — BRANCH A, AND IT NEEDS NO TOLERANCE
 
-**Stated here rather than left for review, because a recommendation whose weaknesses a reviewer has
-to find is not decision-ready.**
+**Recommended second binding leg: the INVERSION-DECLARATION STABILITY of each declared projected
+object across members** — retained rank, the `rcond` actually applied, the condition number, and the
+retained-subspace projector gap `‖P_0 − P_k‖_2`.
 
-**(i) ⚠ THE AMENDMENT IS NUMERICALLY MORE PERMISSIVE THAN THE WITHDRAWN NUMBERS, AND BY A LOT.**
-Measured: `rho_crit` at `z_0 = 4`, `T = 3` against the withdrawn format-derived `δ_agg = 0.0861%`
-and `δ_med = 0.0374%` —
+**Why this is Branch A rather than a relabelling of Branch B:**
 
-| `ndf` | `rho_crit` | vs `δ_agg` | vs `2·δ_med` |
-|---:|---:|---:|---:|
-| `42` | `0.201980` | `234.6×` | `270.0×` |
-| `247` | `0.089719` | `104.2×` | `119.9×` |
-| `4825` | `0.021140` | `24.6×` | `28.3×` |
-| `10694` | `0.014255` | `16.6×` | `19.1×` |
+1. **It needs no `τ`.** It is an identity/stability test, like `A.4`'s census — so the blocker that
+   made me withhold `cause3_corr` (no justified number exists) **does not apply to it.** That is the
+   whole reason it is available and the diagonal legs were not.
+2. **It binds independently, provably.** §2.1a is the witness: `rho = 0.455`, retained rank
+   identical, subspace flipped, bound violated. And conversely a small `rho` permits eigenvalues to
+   cross the cutoff, so leg 1 passing does **not** imply rank stability. **F9's threshold objection
+   does not reach it, because it is not a thresholded statistic in the dominated class.**
+3. **It is justified by a RATIFIED protocol, not by my judgement** — `app_statmethods.tex:645-658`
+   clauses (i), (ii) and (iv) require exactly these declarations *at the point of quotation*, and
+   clause (iv) exists because *"the 5D candidate, its 4D projection and the published 2D block have
+   different ranks."* A criterion that they be **stable across members** is what makes those clauses
+   checkable for a family rather than for one artifact.
+4. **The `1e-8` subspace tolerance is not mine and was attacked.** The third lane's own tolerance
+   attack — eigenvector rotations at `θ ∈ {1e-12 … 1e-9}`, ~46,000 trials, baseline spectrum to
+   `3e-16` — gave a worst exceedance of `1.000002`, float noise.
 
-**So `17×` to `270×` looser on those two statistics.** My defence is that the withdrawn numbers were
-ruled quotable *"as the historical printed format's resolution and as nothing else"* — they are not a
-scientific bar, so being looser than them is not being looser than a bar; display invariance is now
-covered **exactly** by `B.1(iii)`'s rounding-equality test, which has no tolerance to loosen. **But
-the direction is what it is and I am not going to bury it: if the intent behind §3.6b was that
-estimator-baseline sensitivity be held at the sub-`0.1%` level, this recommendation does not deliver
-that, and nothing in this document does, because nothing in the tree justifies `0.1%`
-scientifically.**
+**So §3.6b's two-leg requirement is satisfied with two legs that both bind and neither of which needs
+an unavailable number.** `cause3_corr` should be **retired as a key**, not because no protection is
+needed, but because the protection that is needed is a **declaration-stability leg** rather than a
+tolerance on a correlation statistic. **That is a different recommendation from rev. 1's and it does
+not rest on the void hinge.**
 
-**(ii) AT SMALL `ndf` LEG 1's BOUNDARY IS LOOSE ENOUGH TO BE NEARLY VACUOUS.** `rho_crit = 0.20` at
-`ndf = 42` — a `20%` relative spectral perturbation, which by §2.1b permits per-bin `σ` to move by
-`~9.5%`. That is correct *as a criterion on the significance* (a 42-bin `χ²` with a `1σ` margin is
-genuinely insensitive), and it is **wrong as a stability statement about the covariance.** So leg 1
-protects the significance and, at small `ndf`, little else.
+## 6.5 WHAT I RETURN RATHER THAN RESOLVE
 
-**(iii) AND THAT POINTS AT THE ONE CANDIDATE FOR A GENUINE SECOND USE, WHICH I INVESTIGATED AND
-COULD NOT GROUND.** The note **displays** uncertainty bands, and a band is a second use whose
-boundary need not follow the significance's. I looked for its decision content and it is not there:
-`sec_3d.tex:206-210` labels the 3D band *"shown for orientation only and is not final"*, and no
-adopted covariance stands behind any non-2D band. **So the second use is DEFERRED, not absent** — the
-same distinction I got wrong once and am applying deliberately here. **Which is exactly why §6.2's
-amendment is written as a trigger rather than a deletion:** the moment a band is quoted as a result,
-its boundary enters the inventory and, if tighter, a second binding leg is required with no further
-amendment.
+**The finite-ensemble question, and I state plainly that I cannot settle it.** Clause (v)'s operands
+are now measured — `C_stat` at `N = 100`, `C_ML` at `N = 24`, `45` bands, `p` undetermined until a
+truncation is chosen. **I do not propose a correction, and I do not reach for a Hartlap-type
+factor**: `OI-137` is ruled *"disclose, do not correct"*, and the protocol's own reason is that the
+factor *"assumes independent Gaussian realizations and a truncation dimension chosen independently
+of the data, neither of which is established for a data-dependent rank cut."* Neither is established
+here either. **What I can do and recommend: record `N` beside each block in the construction receipt
+— the protocol calls that half unconditional — and state explicitly that no finite-ensemble
+treatment was applied.** What I cannot do is tell you the size of the resulting bias on a sum of ~45
+deterministic rank-one outer products plus two sample blocks.
 
-**A third branch exists and I am naming it rather than pretending the choice was binary:** a
-**stability requirement on the covariance as such**, justified by something other than a downstream
-decision — reproducibility of the trunk across rebuilds, say. **I cannot ground it from this tree**,
-and inventing a number for it would be the `D1c` error one more time.
+**And the compounding is the part that should reach Joseph:** fixing `:132` to retained-rank `ndf`
+**raises** significances, and the uncorrected finite-ensemble bias **also inflates `χ²`**. **Two
+same-direction effects on the same quoted number, neither yet quantified, and their composition was
+unnamed until this round.** That is a reason to fix the conformance defect and to *not* quote a
+significance from the result until (v) is discharged — which is `PR-G10`'s own posture.
 
-## 6.5 WHAT THE `cause3_corr` RECOMMENDATION SPECIFICALLY DOES NOT DO
-
-It does **not** declare `cause3_corr` — the key **stays withheld** in `z_contract.Z_BOUNDARIES`, and
-I have changed nothing in that file. **`(cause 3, Z)` stays non-passing** while this is open, and it
-would stay non-passing under the amendment too, because leg 1's boundary still needs `T`. It does
-not amend `SPEC` §3.6b — it **proposes** an amendment; the `SPEC` is another lane's and Joseph
-decides after independent review. And it does not touch §6.3's ruled *quantity*: the subject is still
-the assembled covariance `C_Z`.
+**Two foundational issues have now failed to resolve across two consecutive rounds, and per the hard
+stop I return them rather than polish around them:** whether a universal trunk-level bound is wanted
+at all (F1/F2 — I recommend **no**, and §6.3 is the alternative), and what decision threshold `T` any
+quoted significance supports (unchanged since rev. 1; it exists nowhere in the tree and is the one
+input that cannot come from the code).
 
 ---
+
 
 # 7. THE SMALLEST MEASUREMENTS NEEDED, IN DEPENDENCY ORDER
 

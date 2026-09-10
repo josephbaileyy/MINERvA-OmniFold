@@ -223,17 +223,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   margin and `epsilon` argued from `B`'s side because an `epsilon` near `S` would be a gate nothing
   can violate); and **generator significances** (a **sharp, proven** two-sided bound on the consumed
   quadratic form, **non-increasing under projection**, making the criterion closed-form in the
-  decision threshold rather than blocked on it). **All four withheld boundaries now carry an explicit
-  recommendation.** `cause3_corr` is answered in **Part 6**, on Joseph's 2026-09-10 ruling that an
-  unexplained requirement may not be retained indefinitely: the recommendation is **Branch B —
-  retire the key and amend `SPEC` §3.6b**, grounded on §2.1b's **theorem** that leg 1 dominates every
-  `uᵀCu` functional (so `s_agg`, `s_med`, the per-bin distribution and `s_proj` are corollaries, not
-  independent constraints) plus the measured concentration case where the per-bin median reads
-  **exactly zero** while `rho` reads `1.0`. The amendment is a **trigger, not a deletion** — a second
-  binding leg becomes required without further amendment once a use is declared with a tighter
-  boundary. **§6.4 carries three objections to the recommendation, including that it is `17×`–`270×`
-  numerically looser than the withdrawn format-derived numbers**; they are part of the
-  recommendation and not separable from it. **`cause3_corr` remains WITHHELD and `(cause 3, Z)`
+  decision threshold rather than blocked on it). ⚠ **ROUND 2 (2026-09-10) REJECTED THE UNIVERSAL 5D BOUND AS THE ACCEPTANCE INSTRUMENT** — stopping-rule outcome **(2)**, *narrower claim recommended*, which Joseph named as a legitimate result. `rho` needs a positive-definite baseline and **Z's own operands give `rank(C_Z) <= 265` of `10,694`** (Part 6 F1, derived — **rank `263` is S's, not Z's**). §2.1/§2.1b/§2.2 **remain theorems and stay adoptable as stated**; what is withdrawn is their ROLE, plus rev. 1's **`M`-independence** claim (F2: monotonicity needs `range(C_k−C_0) ⊆ range(C_0)`, unmeasured and probably false). **The recommended rule is now DIRECT CHECKS ON THE DECLARED PUBLICATION CONSUMERS** — `s_sig` over declared `(generator, projection)` pairs plus the four inversion declarations `app_statmethods.tex:645-658` already mandates — which also **reinstates `PROPOSAL-20260908`'s C-1 statistic**, superseded in rev. 1 on an asymmetric ground. **All four withheld boundaries carry an explicit recommendation.** `cause3_corr` is answered in **Part 6** as **BRANCH A**: a second binding leg that is the
+  **inversion-declaration stability** of each declared projected object across members — retained
+  rank, applied `rcond`, condition number, retained-subspace gap. **It needs no tolerance**, which is
+  why it is available where a correlation-statistic boundary was not, and it is justified by
+  `app_statmethods.tex:645-658` clauses (i)/(ii)/(iv) rather than by this lane's judgement. ⚠ **Rev.
+  1 recommended Branch B on the ground that domination implies non-bindingness; that hinge is VOID
+  (F9 — the implication needs `rho_crit <= τ`, a relation between THRESHOLDS) and Branch B is
+  WITHDRAWN.** §2.1b's domination theorem itself stands. **`cause3_corr` remains WITHHELD and `(cause 3, Z)`
   remains non-passing** — Joseph decides any amendment after independent review. Its arithmetic is
   re-runnable at
   [`state/probe-z-criteria-acceptance-mathematics-20260910.py`](state/probe-z-criteria-acceptance-mathematics-20260910.py).
