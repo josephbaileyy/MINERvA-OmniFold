@@ -45,6 +45,14 @@ statistic with no consumer is out.
    already inverts by SVD pseudo-inverse — ratified at `app_statmethods.tex:53-58`.** So the
    inversion requirement endpoint B needs is not something to invent; **it exists in-tree, is
    ratified, and the N-D consumers do not conform to it.**
+   **⚠ AND THE PRECEDENT COUNT IS TWO NUMBERS, NOT ONE — the distinction carries B-2 and a single
+   figure does not.** **Ratified precedent = 1:** only `C4` is named in the note as the pattern.
+   **Implemented pattern = 2:** `C8` implements it (retained rank as `ndf`) but is **not named** in
+   the note — its sole deliverable appearance is a figure stem at `sec_3d.tex:231`. **B-2's claim is
+   conformance to a RATIFIED pattern, so the number that carries it is the smaller one.** *(A
+   relayed count of "three" was withdrawn by its own author as double-counting its own finding, and
+   the drift ran toward its own argument. I declined it before it was withdrawn, and record the
+   distinction rather than either count.)*
 2. **`C6` is missing.** `coverage_valid_nd.py` consumes a covariance (`--cov ROOT:hist`) and is a
    genuine consumer — but **diagonal-only**, so it binds to endpoint A and inherits none of B's
    inversion requirements. `SPEC` §3.7d had already named it; the starting list dropped it.
@@ -128,9 +136,35 @@ editing a criterion.** Nothing in the A/B split detects that; only a re-run of �
 | **N2 A Z-shaped sum has NO exact zeros and a MIXED-SIGN tail** | 44 rank-1 band outer products + `N=100` and `N=24` sample blocks: **0 exact zeros**; the `234` null-space eigenvalues span `−2.301e-13 … +2.068e-13`. So **a PSD test at exactly `0` fails on a correct object**, and *"effective **positive** rank above a cutoff"* is the only well-posed count — which is what the ratified protocol already says | probe §2, with the structural/synthetic split stated in the docstring | ⚠ **only the sign and exact-zero result is structural** (a property of floating-point summation). **The magnitudes, condition number and `chi2` inflation are SYNTHETIC** — the real Z tail scale is unmeasured, and I am not extending the retired machinery to measure it |
 | **N3 the inversion requirement already exists and is ratified** | `C4` inverts by SVD pseudo-inverse per `app_statmethods.tex:53-58`; clause (i) at `:645-658` requires the inverse actually used, with its `rcond` or truncation rank, **stated at the point of quotation**. **So endpoint B's inversion requirement is CONFORMANCE, not proposal** | direct reading | **conformance is not calibration.** Making `C1`–`C3` match `C4` makes them well-posed; it does not make their reference distribution correct (§4, F3 unresolved) |
 | **N4 the consumer set was incomplete in three places** | §1: `C4`, `C6`, `D4` added | file existence and line reads, each cited in §1 | superseded by **N5** |
-| **N5 ⚠ MY DECLARED SCOPE COVERED 25% OF THE POPULATION, and it is where I said to look** | `nd-unfolding/*.py` and `2d-unfolding/*.py` are **non-recursive** and `3d-unfolding/` was absent entirely: measured **136 of 541** tracked `.py` files. The 405-file remainder held **four real consumers** (`C8`–`C11`) — one **conforming**, one that **breaks the partition**, one that **feeds a deliverable from the unsearched tree** — and `pet/assemble_ctotal_bkgsub.py`, which the prior record required be excluded **by name**. **An exclusion you cannot state because the file is outside your search is not an exclusion.** | `state/check-consumer-set-20260910.py` — scope stated as a **population** (566 files) and **verified against an independent `git ls-files` count**, not a directory guess. `--self-test` fires on a deliverable-cited consumer, treats an uncited one as census, and is silent on innocent prose | **the SIGNATURES may still be incomplete** — a consumer using none of them is invisible. And the citation test is by **filename in the deliverable text**, so a file cited only via a figure name or a receipt reads as uncited: `False` there means *"not shown to feed a deliverable"*, **not** *"does not feed one"* |
+| **N5 ⚠ MY DECLARED SCOPE COVERED 25% OF THE POPULATION, and it is where I said to look** | `nd-unfolding/*.py` and `2d-unfolding/*.py` are **non-recursive** and `3d-unfolding/` was absent entirely: measured **136 of 541** tracked `.py` files at `054e4d66`. ⚠ **That denominator is dated on purpose: `git ls-tree` gives `541` at `054e4d66` and `542` at `42d5e5e3`, the added file being the instrument itself, which is why the tool prints `542` and this row says `541`. Rev. 1 quoted the earlier number as if current, so the page disagreed with its own tool** — the instrument does **not** self-exclude. The 405-file remainder held **four consumers** (`C8`–`C11`) — one **conforming**, one that **breaks the partition**, one that **feeds a deliverable from the unsearched tree** — and `pet/assemble_ctotal_bkgsub.py`, which the prior record required be excluded **by name**. **An exclusion you cannot state because the file is outside your search is not an exclusion.** | `state/check-consumer-set-20260910.py` — scope as a **population** verified against an independent `git ls-files` count, not a directory guess; `--self-test` fires on a deliverable-cited consumer, treats an uncited one as census, and is silent on innocent prose | **the SIGNATURE SET is the irreducible residue** — no instrument certifies its own signature list (§2b) |
+| **N6 ⚠ TWO MORE CONSUMERS, AND THE MECHANISM WAS MISFILED AS THE CITATION TEST'S BLIND SPOT** | `3d-unfolding/genie/compare_mec_eavail.py` and `mode_decomp_eavail.py` both read `uq_universe_3d_covariance.root` and both have products in `sec_3d.tex` (`:357`, `:348`). They were filed as limit **(b)**, the citation test missing a figure stem. **Measured: each has `0` occurrences of `np.linalg.pinv\|inv(\|solve\|keep.sum()` and `0` of `np.diag\|np.trace`. They were never CANDIDATES, so no citation test could have reached them — this is limit (a).** They call `load_cov`/`project_cov`/`build_projectors` **imported from a registered consumer**, so the consumption is not syntactically local | a **DELEGATION** signature was added — importing a registered consumer's machinery makes you a candidate, so the registry is self-propagating. Both now detected via `DELEGATION` and pinned. The **stem** test was added too, closing (b) independently | **the class is "delegates covariance handling to an import", and delegation is transitive.** The signature covers one hop — a file importing a file that imports a consumer is not caught |
 
 ---
+
+### 2b. THE IRREDUCIBLE RESIDUE — what no version of this instrument can certify
+
+**The signature set is now three, not two:** `INVERSION`, `COV+DIAG`, and — added after N6 —
+`DELEGATION`. **Each addition was forced by a consumer the previous set could not see**, which is
+the honest way to read the sequence: the set grew twice under adversarial pressure and there is no
+argument that it has stopped growing.
+
+**What cannot be certified, stated once rather than implied:**
+
+1. **No instrument certifies its own signature list.** A consumer that inverts through a wrapper this
+   lane has not imagined carries none of the three signatures. **The only defence is that the list
+   grows when someone finds one** — which has now happened twice.
+2. **`DELEGATION` covers one hop.** A file importing a file that imports a registered consumer is
+   not caught. Delegation is transitive; the signature is not.
+3. **The citation test covers filename and figure stem.** A file reached only through a **receipt**
+   the deliverable cites, or through a product filename differing from its own stem, is still
+   invisible. `False` means *not shown to feed a deliverable*.
+4. **Counts are not meanings.** As with the withdrawal checker, a pinned entry rewritten in place
+   keeps its classification. The `reason` field is what a reader re-checks.
+
+**So the claim this packet makes about §1 is bounded and should be quoted bounded:** *every file
+matching one of three signatures whose filename or figure stem appears in note, paper or primer has
+a pinned classification, over a population verified against an independent count.* **It is not
+"the consumer set is complete."**
 
 ## 3. ENDPOINT A — covariance and projected-uncertainty release
 

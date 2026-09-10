@@ -90,6 +90,19 @@ REGISTRY = {
         "excluded because this set is scoped to Z and 2D is complete on value and uncertainty"),
     "2d-unfolding/compare_to_paper_interior.py": ("EXCLUDED", "2D, VALIDATED",
         "same: cited by a deliverable, inverts, and is the 2D interior comparison"),
+    "3d-unfolding/genie/compare_mec_eavail.py": ("A", "QUARANTINED",
+        "reads uq_universe_3d_covariance.root (:51) and imports overlay_generators_band's machinery "
+        "(:28); product at sec_3d.tex:357. Found by DELEGATION, not by a token: it has 0 inversion "
+        "and 0 diagonal tokens of its own"),
+    "3d-unfolding/genie/mode_decomp_eavail.py": ("A", "QUARANTINED",
+        "same covariance (:91), same import (:121); product at sec_3d.tex:348. Same delegation "
+        "mechanism. Both sit on the A side while importing a B-side consumer's machinery -- a third "
+        "and fourth example of 'requirements partition, scripts do not'"),
+    "nd-unfolding/excess_eavail_W.py": ("A", "quarantined",
+        "surfaced by the stem test; (E_avail,W) excess, diagonal-band class"),
+    "docs/analysis-note/app_statmethods.tex": ("A+B", "RATIFIED PROTOCOL",
+        "not a consumer: it is the protocol the consumers must conform to (:53-58 pseudo-inverse, "
+        ":645-658 the four declarations). Registered so the checker stops reporting it"),
     "docs/analysis-note/sec_results.tex": ("EXCLUDED", "2D, VALIDATED",
         "fig:uqbands is a real covariance band, out of scope because this set is scoped to Z"),
 }
@@ -124,8 +137,32 @@ def _hit(text: str, single=(), pairs=()) -> bool:
     return any(all(part in text for part in grp) for grp in pairs)
 
 
+def delegation_tokens() -> tuple[str, ...]:
+    """`import <module>` forms for every registered consumer, so DELEGATION is a signature.
+
+    ⚠ WHY THIS EXISTS, and it is limit (a) rather than the limit (b) it was filed as.
+    `compare_mec_eavail.py` and `mode_decomp_eavail.py` both read the same covariance as a
+    registered consumer and both appear in `sec_3d.tex` as figure stems -- but measured, each has
+    **0** occurrences of `np.linalg.pinv|inv(|solve|keep.sum()` and **0** of `np.diag|np.trace`.
+    They were never CANDIDATES at all, so no citation test could have reached them: they call
+    `load_cov` / `project_cov` / `build_projectors` imported FROM a registered consumer, so the
+    consumption is not syntactically local and a token search cannot see it.
+
+    So a consumer that DELEGATES its covariance handling to an imported helper is invisible to a
+    signature-based search. This closes that class by making the registry self-propagating: import
+    a consumer's machinery and you are a candidate consumer.
+    """
+    mods = set()
+    for reg_path in REGISTRY:
+        if reg_path.endswith(".py"):
+            mods.add(Path(reg_path).stem)
+    return tuple(f"import {m}" for m in sorted(mods)) + tuple(
+        f"from {m} import" for m in sorted(mods))
+
+
 def candidates(root: Path = _REPO) -> dict[str, list[str]]:
     """Candidate consumers, by signature. Returns repo-relative path -> matched signature names."""
+    deleg = delegation_tokens()
     found: dict[str, list[str]] = {}
     for p in population(root):
         try:
@@ -138,6 +175,8 @@ def candidates(root: Path = _REPO) -> dict[str, list[str]]:
                 why.append("INVERSION")
             if _hit(text, pairs=[(c, r) for c in COV_TOKENS for r in READ_TOKENS]):
                 why.append("COV+DIAG")
+            if _hit(text, single=deleg):
+                why.append("DELEGATION")
         else:
             if _hit(text, single=TEX_DEFER):
                 why.append("TEX_DEFER")
@@ -159,19 +198,28 @@ def deliverable_texts(root: Path = _REPO) -> str:
 
 
 def feeds_deliverable(rel_path: str, deliv: str) -> bool:
-    """Does this file's NAME appear anywhere in the deliverable surface?
+    r"""Does this file's NAME **or its STEM** appear anywhere in the deliverable surface?
 
     THE DISCRIMINATOR JOSEPH'S MEMBERSHIP RULE ACTUALLY NAMES -- "a statistic with no consumer is
     out" -- applied as a re-runnable test rather than a directory guess. A covariance-touching file
-    whose name never appears in note, paper or primer produces nothing either quotes, so it is not
-    a consumer OF A DELIVERABLE however much linear algebra it does.
+    neither named nor figure-cited in note, paper or primer produces nothing either quotes.
 
-    ⚠ ITS LIMIT, STATED: a file cited only INDIRECTLY -- via a figure filename, or by a receipt the
-    deliverable cites -- is NOT caught by this. So a False here is "not shown to feed a deliverable",
-    NOT "does not feed one". That is why an unregistered candidate is reported either way and this
-    only classifies HOW it is reported.
+    ⚠ THE STEM TEST IS NEW, AND LIMIT (b) FIRED BEFORE IT EXISTED. The first version tested the
+    filename only -- `compare_mec_eavail.py` -- while the note cites the FIGURE STEM,
+    `\includegraphics[width=\textwidth]{compare_mec_eavail}`. Two real consumers therefore read as
+    *uncited*: `3d-unfolding/genie/compare_mec_eavail.py` and `mode_decomp_eavail.py`, both reading
+    the same covariance as a registered consumer, both importing a registered consumer's machinery,
+    both with their products in `sec_3d.tex` at `:357` and `:348`. Testing the stem as well as the
+    name closes that class.
+
+    ⚠ WHAT REMAINS UNTESTED, so the coverage claim stays scoped to what this does: a file cited
+    only through a RECEIPT the deliverable cites, or through a product filename that differs from
+    its own stem, is still invisible. A `False` here means "not shown to feed a deliverable", never
+    "does not feed one".
     """
-    return Path(rel_path).name in deliv
+    name = Path(rel_path).name
+    stem = Path(rel_path).stem
+    return name in deliv or stem in deliv
 
 
 def audit(root: Path = _REPO) -> list[str]:
@@ -283,11 +331,17 @@ def main(argv: list[str]) -> int:
           f"classified, including exclusions BY NAME.")
     print(f"     CENSUS: {len(_LAST_UNCITED)} further file(s) touch a covariance but are NOT cited "
           f"by any deliverable, so they feed nothing quoted. Reported, not failed.")
-    print("     What this establishes: every covariance-touching file that a DELIVERABLE CITES has")
-    print("     a pinned classification, over a population verified against an independent count.")
-    print("     What it does NOT establish: (a) that the SIGNATURES are complete -- a consumer")
-    print("     using none of them is invisible; (b) that the uncited 75 truly feed nothing --")
-    print("     indirect citation via a figure filename or a receipt is NOT tested.")
+    print("     What this establishes: every file matching an INVERSION, COV+DIAG or DELEGATION")
+    print("     signature whose FILENAME OR FIGURE STEM appears in note, paper or primer has a")
+    print("     pinned classification, over a population verified against an independent count.")
+    print("     What it does NOT establish:")
+    print("       (a) that the SIGNATURE SET is complete. It is now three signatures rather than")
+    print("           two -- DELEGATION was added after two real consumers were found carrying 0")
+    print("           inversion and 0 diagonal tokens -- but no instrument certifies its own")
+    print("           signature list, and this is the irreducible residue.")
+    print("       (b) that the census files feed nothing. The citation test now covers filename AND")
+    print("           figure stem; a file reached only through a RECEIPT, or through a product name")
+    print("           differing from its own stem, is still invisible.")
     return 0
 
 
