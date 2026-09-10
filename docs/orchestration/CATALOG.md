@@ -453,6 +453,32 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   inertness paragraph are partial self-confirmation** (the equal-`N` framing and *"structurally
   unreachable"* are mine), and a second reader should spot-check them. Extending the boundary rather
   than waiting to be asked.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partN.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partN.md)
+  - ⚠ **PART N WITHDRAWS THIS LANE'S OWN "structurally unreachable" STRENGTHENING** — read it before
+  relying on Part I §I.1 or on rev. 3's `:346-347`, which adopted it verbatim. A covering grep of
+  `z_validator.py` at `6f24fb00` gives **FOUR** `boundary(...)` sites, not two: `:83` (leg-keyed,
+  result discarded), `:110`, `:247`, and **`:296` inside `assess_null`**, whose signature at `:286`
+  takes `boundary_key` as a **caller-supplied parameter with a default, not a declared leg** — so
+  `assess_null(r_null, boundary_key='cause3_corr')` reaches it with no leg declared. **The
+  exhaustiveness claim is false, so the conclusion is not established by that argument.** Measured
+  caller census: five sites, **zero** non-default, so the path is **latent, not live**.
+  **§N.2 — the irony is the finding, and it is the reviewer's:** I replaced *"inert"* (contingent) with
+  an absolute word, and **the truth is contingent** — closed by a caller census, a fact about today's
+  callers. *"Inert" was contingent in precisely the way the truth is contingent*; the connotation I
+  objected to was the accurate one.
+  **§N.3 — THIRD INSTANCE, and I held the disproof in my own grep output.** The Part I grep printed all
+  four sites; I wrote *"exactly two."* With `B8` (eight launchers, wrote seven, because the spec said
+  "exactly seven") and `A14` vs `A30`, all three share one mechanism: a correct measurement, then a
+  claim over a **filtered subset** of it, the filter unnoticed and pointed toward the argument being
+  made. Per-cell checking cannot see it; only diffing the raw output against the claim's population
+  can. **And this one propagated into another lane's artifact and was adopted verbatim**, so neither
+  author could catch it — which is why Part M §M.6 enumerated all five contribution sites, and is the
+  strongest evidence yet that the boundary earns its cost.
+  **§N.4: not prescribing the replacement wording** — correcting my own claim is required; choosing
+  what §3.1 says instead is the designer's. **§N.5:** `:294` upheld and **upgraded to a live worked
+  instance** (`PROVENANCE-20260822` = right `N`, wrong arm); my content-discriminates-inputs hedge
+  discharged in my favour; their *"inverts"* withdrawn with **(a) duplicates, (b) repairs** standing;
+  the *"could not have completed"* tightening **relayed, not verified**.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:

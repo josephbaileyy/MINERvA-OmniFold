@@ -114,6 +114,9 @@ rather than spot-declared, because a partial declaration is the failure this lan
 | `:294` | the equal-`N` framing, *"a naming problem rather than a counting one"* | **§2.1a(b) is partial self-confirmation.** Already routed away in part; the (b) half is in my slice and I flag it |
 | `:346-347` | *"structurally unreachable"* replacing *"inert"* | **§3.1's inertness paragraph now contains my sentence.** I cannot be its only reader |
 
+> **⚠ WITHDRAWN 2026-09-10, see Part N. THIS CLAIM IS FALSE AS STATED.** A covering grep of `z_validator.py` at `6f24fb00` gives **four** `boundary(...)` sites, not two: `:83` (`Leg` construction, leg-keyed, result discarded), `:110`, `:247`, and **`:296` inside `assess_null`, whose signature `assess_null(r_null, boundary_key='null_epsilon')` at `:286` takes a **caller-supplied parameter with a default, not a declared leg**. So `assess_null(r_null, boundary_key='cause3_corr')` reaches that boundary with no leg declared anywhere, and *"structurally unreachable"* is not established by this argument. Measured caller census: **zero** non-default callers, so the path is **latent, not live** — which is a contingent fact, and *"inert"* was contingent in precisely the way the truth is contingent. **I had all four sites in my own grep output when I wrote this.**
+
+
 **None of these is a remedy** — each is a measurement anyone can re-derive from the cited lines, so
 Part E's rule leaves this lane independent for the packet as a whole. But **confirming my own words is
 worth less than confirming someone else's**, and a second reader should spot-check `:294` and

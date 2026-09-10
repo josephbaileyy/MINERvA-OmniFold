@@ -48,6 +48,9 @@ at `:110`, also keyed on declared legs. A boundary no leg names is therefore rea
 the outcome nor its description. That is why the delete-test is byte-identical, and it is a mechanism
 rather than an observation.
 
+> **⚠ WITHDRAWN 2026-09-10, see Part N. THIS CLAIM IS FALSE AS STATED.** A covering grep of `z_validator.py` at `6f24fb00` gives **four** `boundary(...)` sites, not two: `:83` (`Leg` construction, leg-keyed, result discarded), `:110`, `:247`, and **`:296` inside `assess_null`, whose signature `assess_null(r_null, boundary_key='null_epsilon')` at `:286` takes a **caller-supplied parameter with a default, not a declared leg**. So `assess_null(r_null, boundary_key='cause3_corr')` reaches that boundary with no leg declared anywhere, and *"structurally unreachable"* is not established by this argument. Measured caller census: **zero** non-default callers, so the path is **latent, not live** — which is a contingent fact, and *"inert"* was contingent in precisely the way the truth is contingent. **I had all four sites in my own grep output when I wrote this.**
+
+
 **§3.2's central finding, independently confirmed:** the emitted scope statement disclaims
 `projection` and `marginalization`, and endpoint A's deliverable *is* a projection. A `MET` under the
 current leg set disclaims the release endpoint A exists to make. This is the same fact `F-I` reached
