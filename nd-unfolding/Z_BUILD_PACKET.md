@@ -289,7 +289,25 @@ Doing (3) first would spend compute against a manifest whose input set is not ye
 
 Read-only throughout. No compute was launched. Nothing below is adopted, graded or decided.
 
-## 7.1 `stat` and `ml` — **REUSE**, and the hypothesis I proposed was refuted and inverts
+## 7.1 `stat` and `ml` — **REUSE, PROVISIONALLY AND FOR THE MEASUREMENT-ONLY BUILD ONLY**
+
+**⚠ SCOPED DOWN ON JOSEPH'S CORRECTION. An earlier revision of this section said "REUSE" without
+qualification. That overstated what was measured.**
+
+What was measured is **diagonal and first-off-diagonal agreement plus a matching trace**. That is
+`2 × 10,694` entries of a `10,694²` matrix — about `0.02 %` of it — plus one scalar. **It does not
+establish full covariance equality**, and a trace is invariant under rearrangements that a sum
+identity would not survive. Combined with provenance that is genuinely thin, the honest verdict is:
+
+- **SUITABLE for the measurement-only, non-passing build.** The components are the ones G's own
+  footing contains, they are digest-pinned and live, their estimator reproduces from raw replicas,
+  and reuse does not introduce a footing difference. Nothing in a non-passing build depends on more.
+- **NOT ESTABLISHED for scientific acceptance.** See §7.1b for what would be required.
+- **AND DO NOT REGENERATE MERELY TO CHANGE THE HISTORICAL NORMALIZATION.** The `1/(N−1)` versus
+  `1/N` mismatch is `OI-137`, already ruled *disclose, do not correct* on 2026-08-22, and changing
+  it would break bit-identity with the footing constant every M-leg in SPEC §2 is matched on.
+
+### 7.1a The evidence, which is real as far as it goes
 
 I asked whether the stat and ML products sit outside the bkgaware correction, in which case reuse
 would mix footings inside one covariance. **Measured, and the opposite is true.**
@@ -345,9 +363,40 @@ exists with no bkgaware variant, so a regeneration off it reproduces the same ba
 and buys nothing; one that genuinely changed the footing would need a 142 GB re-dump and would
 produce components that **no longer sum to G's `4.357790406860002e-38`**.
 
+### 7.1b Remaining checks required before `stat`/`ml` reuse can support Z ADOPTION
+
+Each is a check, not a study, and none is compute:
+
+1. **Full elementwise closure, not two diagonals.** Verify
+   `C_combined == C_syst + C_stat + C_ML` over all `10,694²` entries at a stated float tolerance.
+   The measured agreement covers the diagonal and the first off-diagonal only.
+2. **A producing receipt, or an explicit acceptance that none exists.** No stamps inside either
+   ROOT, **zero `RUNS.tsv` rows** out of 346 with a positive control, and no producer record — the
+   only artifact pinning both digests is a *consumer* manifest from a later run. The job is known
+   only from a prose line in a status document.
+3. **Resolve the support flicker.** 18,979 entries are exactly zero inside the reported mask of
+   `C_stat`'s replica matrix, with every one of the 100 replicas carrying at least one; `C_ML` has
+   none. Whether that is expected bootstrap behaviour or a defect is unadjudicated, and it is
+   newly recorded for this object.
+4. **Settle the two-epoch ensemble.** Seeds 1–2 were written 07-11 and the other 98 on 07-13; the
+   replica `npz` store no revision, so **whether both epochs ran the same code is UNKNOWN**. The
+   magnitude is small (leave-2-out moves √Tr by `+0.271 %`) but the question is provenance, not size.
+5. **State the rank consequence.** Rank is at most 99 and 23 over 10,694 bins. What that implies
+   for `C_Z`'s conditioning and for any `pinv` in a downstream projection needs stating rather
+   than inheriting.
+6. **`PM-4`.** All of the above sits on the declared production CV; that it is the CV **G
+   consumed** is still unbound, and that gap is identical under reuse and regeneration.
+
 ## 7.2 `active` and `footing` — RESOLVED, values in §1a
 
-## 7.3 `null` — the decision point, and the blocker is not the one I expected
+## 7.3 `null` — ⚠ SUPERSEDED BY `Z_NULL_PLAN.md`
+
+**The branch table below is HISTORICAL. Branch B (slab re-stamping) is WITHDRAWN — missing
+seed-role provenance cannot be repaired by adding fields, and the warrant I would have used
+derived the values from the outcome they enable. `unified_throw_cov.py:496`'s refusal stays
+unchanged. The live plan is a null-only entrypoint; see `Z_NULL_PLAN.md`.**
+
+### 7.3-historical — the decision point as first written
 
 **The hypothesis is CONFIRMED on the merits.** `x_cv` and `x_cv2` are the *same call with the same
 seed*, issued twice (`unified_throw_cov.py:369` and `:514`), and `x_cv` is computed **before the
