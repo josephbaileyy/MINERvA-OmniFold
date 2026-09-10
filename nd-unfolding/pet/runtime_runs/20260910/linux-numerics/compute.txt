@@ -1,0 +1,6 @@
+salloc: Granted job allocation 58174544
+salloc: Waiting for resource configuration
+salloc: Nodes nid004142 are ready for job
+onednn=1 exit=1
+onednn=0 exit=1
+salloc: Relinquishing job allocation 58174544

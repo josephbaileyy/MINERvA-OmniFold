@@ -5,8 +5,11 @@ definitions and their implementation implications are recorded in
 [the semantic reference](pet/PRONG_BRANCH_SEMANTICS.md). The v2 prong contract
 repair passes local synthetic software checks. The bounded
 [source-validation and normalization protocol](pet/SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md)
-has an implemented checker and bound launcher; its proposed source audit still
-requires named execution authorization. Preparation and synthetic-check details
+has an implemented checker and bound launcher. The first authorized source
+attempt was interrupted. The subsequent synthetic Linux runtime check clears
+dependency imports but fails its original thread and numerical criteria; see
+[the runtime record](pet/SOURCE_AUDIT_RUNTIME-20260910.md). A further real-source
+attempt still requires named execution authorization. Preparation and synthetic-check details
 are in [the source-audit runbook](pet/SOURCE_AUDIT_RUNBOOK.md). Normalization and training remain separately gated by
 [the typed-descriptor status](pet/TYPED_DESCRIPTOR_STATUS.md#next-bounded-task).
 PET remains diagnostic/method-development under `OI-126`; this documentation

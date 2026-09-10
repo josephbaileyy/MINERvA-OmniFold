@@ -82,3 +82,10 @@ scientific training is a separate stage. OI-126's pairing remains declined and
 the existing `C_stat` construction remains unverified. No PET total covariance
 is adopted. The five exact Gate-6 prohibitions in the execution authorization
 remain in force; this repair supplies no Gate-6 result or permission.
+
+## Subsequent synthetic runtime investigation
+
+The later synthetic-only grant produced the results in
+[SOURCE_AUDIT_RUNTIME-20260910.md](SOURCE_AUDIT_RUNTIME-20260910.md). Imports now
+pass in the candidate Linux runtime, but its original thread and numerical
+criteria fail. This does not complete or replace the interrupted source attempt.

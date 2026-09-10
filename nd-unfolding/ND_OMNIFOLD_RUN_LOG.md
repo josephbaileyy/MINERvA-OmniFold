@@ -1,5 +1,21 @@
 # N-D OmniFold run log
 
+## 2026-09-10 — synthetic runtime investigation
+
+`f59d8170` adds a full fake-reader runtime preflight; `10deb714` reports
+numerical differences and samples resources after failed forward checks. The
+local SciPy 1.16.3 environment completes all 8,192 synthetic rows. Linux job
+`58168872` clears imports but fails forward agreement; job `58174544` measures
+the same discrepancy with both oneDNN settings and four process threads against
+the two-thread ceiling. Both allocations are terminal. The original thresholds
+and guard remain intact; no source-read or scientific acceptance follows.
+
+`pet/SOURCE_AUDIT_RUNTIME-20260910.md` records the diagnosis, exact synthetic
+qualification and pending contract decision. Receipts, guard inventories and
+scheduler observations are preserved under `pet/runtime_runs/20260910/`, bound
+by its preservation manifest. No ROOT source access, fitting or training occurred.
+
+
 ## 2026-09-10 — bounded PET v2 source audit interrupted
 
 The attempt at `58832843`, authorized by

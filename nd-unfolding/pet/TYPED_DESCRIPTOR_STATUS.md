@@ -140,3 +140,15 @@ Preparation does not permit ROOT access or scientific training. Do not repeat
 the prong repair or completed bootstrap/containment probes, or revive Gate 6.
 
 This status authorizes no training, compute, Gate-6 action, `C_ML` construction, or publication claim.
+
+## Synthetic runtime follow-up — 2026-09-10
+
+The direct NumPy-testing dependency is removed, and a SciPy 1.16.3 runtime
+passes the complete local synthetic audit. Linux dependency initialization
+passes under the unchanged guard, but the full Linux preflight remains
+**BLOCKED** by four observed threads against the two-thread ceiling and a
+NumPy/Keras float32 discrepancy against the original tolerance. Both oneDNN
+settings fail identically. See [the runtime record](SOURCE_AUDIT_RUNTIME-20260910.md)
+for committed code, exact receipts, terminal scheduler state and the pending
+contract decision. No real-source audit, normalization or scientific training
+was performed under this synthetic grant.
