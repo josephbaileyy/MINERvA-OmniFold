@@ -363,6 +363,27 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   conformance defect — whereas the equal-`N` finding is an INTERNAL insufficiency, A-6's own part (a)
   failing to substitute for its own part (b). One A-6 defect, one gap in whatever consumes `B`; **not
   additive against the same requirement.**
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partK.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partK.md)
+  - **PART K — the `assessor-F6` / reviewer-`F3` convergence ACCEPTED at the hazard level, and `F6`'s
+  predicate delimited so a rev.-3 clause is not written against a reading `F6` does not support.**
+  One hazard measured twice from opposite ends — a variance positive only by round-off, read as a real
+  measurement (`eavailW_covariance.py:410-413`, re-verified) — **two measurements of one hazard, not
+  two hazards.** `F6`'s own text already carries the structural point one level over: `:429`'s warning
+  is gated on **exactly-empty** while `F-I` reaches near-zero at a **fully populated** row, which is
+  the exactly-zero-versus-round-off distinction relocated.
+  ⚠ **§K.2 DECLINES the extension, against this lane's own interest.** `F6` reads *"a **released
+  projected row** … at the **point of release**"*; `s_proj` is an acceptance statistic, not a released
+  product, so `F6`'s predicate never reaches its internal baseline and *"`F6` covers `F3`'s
+  147-cohort"* does not follow. **This is the same wrong-stage correction this lane gave the
+  coordinator about the sharing-structure finding, applied to its own item** — being the beneficiary
+  of the over-extension is why it had to be said.
+  **§K.3 names the gap that follows and refuses to close it:** a round-off-positive baseline inside an
+  acceptance statistic is covered by **neither** `F6` (wrong stage) **nor** `A-7`'s abort claim (wrong
+  condition — exact only for an exactly-zero baseline). A gap in the requirement set, not in either
+  finding, and one that survives review because each half looks covered from the other's side.
+  Proposing the closing requirement would spend this lane's verdict on `A-7`; §J.2 declined once
+  already. **§K.4: reviewer `F3`'s 500-trial split is NOT re-run or verified** — §4.3/`s_proj`/`δ_proj`
+  are routed away, so the convergence is accepted on the strength of the `F6` half only.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
