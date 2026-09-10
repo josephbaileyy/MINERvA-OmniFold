@@ -73,7 +73,7 @@ third digit where constructions differ, and I report mine.
 
 | # | finding | disposition |
 |---|---|---|
-| **F10** | A-6(a) re-issues committed, delivered work | ⚠⚠ **UPHELD IN PART, THEN INVERTED — and the inversion is the finding.** `PROVENANCE-20260822` is on main with all four fields for every block **including `Flux`**, so **F7 was not a discovery**, my rev.-3 *"refinement of my own"* was already at its `:126`, it holds a block I **still** lack (`2p2h`, N=3), and it identified my §2.1a(b) gap at `:157`. **But its evidence for `N` is `:167,168` — the MEMBER-LOCAL combines, measured at 3 of 100 and 0 of 24 the same day.** Right values, wrong arm. **So A-6 DUPLICATES on fields and REPAIRS on evidence**, and A-6(b) is load-bearing rather than leftover. §2.1 |
+| **F10** | A-6(a) re-issues committed, delivered work | ⚠⚠ **UPHELD, AND ANSWERED WITH A FOURTH OPTION — not an inversion (F20).** `PROVENANCE-20260822` is on main with all four fields for every block **including `Flux`**, so **F7 was not a discovery**, my rev.-3 *"refinement of my own"* was already at its `:126`, it holds a block I **still** lack (`2p2h`, N=3 — ⚠ **and whether that makes the population FOUR is UNRESOLVED**, with the cheap route already specified at its `:233` item 6; §2.1), and it identified my §2.1a(b) gap at `:157`. **But its evidence for `N` is `:167,168` — the MEMBER-LOCAL combines, measured at 3 of 100 and 0 of 24 the same day.** Right values, wrong arm. **So A-6 DUPLICATES on fields and REPAIRS on evidence**, and A-6(b) is load-bearing rather than leftover. §2.1 |
 | **F13** | A-1's *"fifteen"* reject conditions is **nineteen** | ⚠ **UPHELD.** Enumerated: `1 2 3 4 4b 4c 5 6 7 8 9 10 11 11b 11c 12 13 14 15`. **`4c` is the condition my own §3 depends on** — I declared a fixed set excluding it, in the same document |
 | **F17** | A-6's field list exceeds Ruling 2's under a Ruling-2 heading | ⚠ **UPHELD. CHOICE MADE: the sharing structure is an A-7 PRECONDITION on `B'`, not an A-6 disclosure.** It sizes a floor; it discloses nothing about the released object; **it therefore needs no extension of Ruling 2.** A-6 returns to exactly four fields |
 | **F15** | §5's disposition right, characterization backwards | ⚠ **UPHELD in both directions, and one of my two qualifications is FALSE.** Clause (ii) does not reach 2D; *"LIVE"* unestablished; `inv` does **not** raise on a near-singular operand. `do-not-change` survives on **different grounds**. §5 |
@@ -81,6 +81,7 @@ third digit where constructions differ, and I report mine.
 | **F14** | A-2 grounds one declaration and requires four | ⚠ **UPHELD. A-2 narrowed to clause (iv)** — the only one its own sentence argues for |
 | **F9** | §2.1a's *"DECISIVELY"* contradicts §2.1a's own withdrawal | ⚠ **UPHELD.** My withdrawal reached (ii)'s heading and body and **not** the reason carrying the routing. Weakened to the true version; **the conclusion is unharmed** |
 | **F12** | residue 4 **under**-claims | ⚠ **UPHELD — a rejection filed as judgement is PROVEN.** `s_corr` is scale-invariant: `~1.5e-16` while bars move to **200%** |
+| **F20** | my F10 **disposition header** said *"INVERTED"* while my **body** said duplicates-and-repairs | ⚠ **UPHELD, AND IT IS MY THIRD INSTANCE OF A RULE I CATALOGUED MYSELF.** *"Inverts"* was the orchestrator's word and the mathematical reviewer **withdrew** it; I let it into the header while the body said the right thing. **It is NOT an inversion:** leg (i) is **untouched** — A-6(a)'s values still duplicate delivered work and a lane commissioned under (a) would still redo them — and leg (ii) gets **worse**, because *an uncited live record with a defective evidence citation stays defective when nothing points at it.* The finding **adds a fourth option to a trichotomy.** Header corrected; **a verdict word outranks the caveat beside it, and the disposition column is what a later lane reads to decide what is settled** |
 | **F18** | `B'`'s quantile level is undeclared, and **is** the null NOT-MET rate | ⚠ **UPHELD; rev. 3's *"needs no new scientific input"* withdrawn as stated.** `q` **declared at `0.99`**, with its class stated **conditionally**: a conditioning parameter **only because `δ_proj = B'` is forbidden**; if anyone sets `δ_proj = B'` it becomes a false-failure-rate declaration and reverts to Joseph. §4.4e |
 | **F16** | §7 has one culpable absence | ⚠ **UPHELD.** No released projection names its **builder and commit**, while four non-equivalent builders exist and a **committed** finding records they diverge on refusal. Now residue 13 |
 
@@ -209,9 +210,15 @@ construction:
 >
 > ### ⚠⚠ AND THE ANSWER IS **REPAIR** — a fourth option neither the finding nor I had on the list
 >
-> **A-6(a) duplicates ruling 10's FIELDS. A-6(b) REPAIRS ruling 10's EVIDENCE. So A-6 is not
-> redundant work.** Found by the assessor, and I verified both legs myself — which mattered, because
-> this conclusion favours me and reverses the one I had drafted.
+> **A-6(a) duplicates ruling 10's FIELDS. A-6(b) REPAIRS ruling 10's EVIDENCE.** Found by the
+> assessor, and I verified both legs myself — which mattered, because this conclusion favours me.
+>
+> ⚠ **THIS IS A FOURTH OPTION ADDED TO A TRICHOTOMY, NOT AN INVERSION (F20).** *"Inverts the scope
+> conclusion"* was the relaying lane's phrase and was **withdrawn** by the mathematical reviewer, and
+> an earlier revision of this packet carried it in the §0a header while this body said the correct
+> thing. **Leg (i) is untouched:** A-6(a)'s values still duplicate delivered work, and a lane
+> commissioned under (a) would still redo them. **Leg (ii) gets WORSE:** an uncited live record with
+> a defective evidence citation **stays defective when nothing points at it.**
 >
 > **Leg 1.** `PROVENANCE-20260822` evidences `N` from `sbatch_finalize_5d_bkgaware_gpu.sh:167,168`.
 > At `6f24fb00` those `--expected-ids` invocations sit at **`:422,423`**, and `:417`'s own comment
@@ -293,6 +300,21 @@ construction:
 inside `Σ_V C_b` — `C_flux`.** So clause (v)'s *"for every sample-covariance block entering the
 sum"* has a population of **three**, and the derivation only reaches it if it recurses into the
 inner sums.
+
+**⚠ OR FOUR — AND THIS IS UNRESOLVED, WITH THE ROUTE ALREADY SPECIFIED IN A COMMITTED RECORD.**
+`2p2h` is the **first** entry of `KNOB_BANDS` (`unified_throw_cov.py:79-80`, verified), so it passes
+through `:460`'s `mat_covariance` and carries the **biased `1/N`** normalizer — and
+`PROVENANCE-20260822:127` gives it **`N = 3`** while **explicitly declining** to claim *"none
+applicable"*, the only block for which that record withholds the classification. **If those three
+universes are a random ensemble, the population is FOUR, not three — the same recursion that took it
+from two to three, one level further.**
+
+**I am not resolving it, and I do not need to commission anything to state the route:**
+`PROVENANCE-20260822:233` item 6 already specifies it — *"Read the three universe names out of the
+bank. **Cheap**, and it is the only row in §4a whose 'none applicable' I declined to assert."*
+**So this is a residue that names its own resolution, which is a handoff rather than a hole** — and
+the distinction is worth stating because rev. 4's residue recorded the missing block without
+recording that a committed record had already scoped its cheap fix.
 
 **⚠ AND MY OWN B-4 ROW CITED THE WRONG OPERAND. Corrected here.** It gave `N = 100` from
 `sbatch_bootstrap_5d_gpu.sh:5` and `N = 24` from `sbatch_seedscan_split_5d.sh:5`. Read verbatim, those
