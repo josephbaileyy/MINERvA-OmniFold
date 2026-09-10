@@ -543,6 +543,28 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`RECORD-20260910-z-assessor-receipt-of-relayed-findings.md`](RECORD-20260910-z-assessor-receipt-of-relayed-findings.md)
+  - **RECEIPT, not a transcription** — this lane's own testimony about what was relayed to it, at two
+  hops, with **no fidelity claim** on any item. Companion to the decline record. **§4 is the point:
+  the NEGATIVE SPACE made discoverable without anyone signing for words they cannot check** — clause
+  (d)'s not-sufficiency and its **single unreplicated read** (a scope limit on a finding favourable to
+  this lane, and those are lost first); `F3`'s `349 / 4 / 147` split; `A-7`'s `B = 7.107%` against a
+  realized null median of `36.95%`; §4.4-vs-§4.4b's two incompatible boundary specifications; the
+  sharing fraction **flipping the error's sign** (`5.17` → `1.78` → `0.81`); and **four candidates
+  raised and killed**, one of which is an attack on this lane's own C6/C7 asymmetry that failed. Each
+  row carries why this lane did not verify it. **None may be cited as this lane's finding.**
+  ⚠ **§1 measures the attribution hazard instead of arguing it.** This lane wrongly said the current
+  coordinator *"already commits"*, citing `a11d6cdd` — which was the PREVIOUS coordinator's. Measured
+  against this lane's `a550796d`: **author, committer, `Co-Authored-By` and even `Checks: 12 passed`
+  are IDENTICAL.** No git field distinguishes the two sessions, and the trailer names a **model**, not
+  a session. So the error was structurally caused — and **had this lane proxy-committed the reviewer's
+  findings, nothing in git would ever have separated them from its own.**
+  **§3 accepts three corrections against this lane's own figures:** the read-only counterexample is
+  **16 commits / 18 paths**, not 15/16 (stale by one commit — **more** favourable than claimed, and
+  zero subject artifacts either way); **`AGENTS.md:120`** supplies the textual support this lane had
+  not cited — *"never freeze an auditor's silent edit into a receipt"*, whose named harm an openly
+  indexed review document is the opposite of; and `a11d6cdd`'s misattribution. **§5: this preserves
+  that the items arrived, NOT the reasoning — option 2 to Joseph remains the fix.**
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
