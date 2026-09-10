@@ -3,9 +3,19 @@
 **Owner:** `z-criteria-owner` lane (proposed Z scientific-criteria owner).
 **Base of measurement:** `6f24fb00` (`origin/main`). Every file this packet quotes is **byte-identical
 at `6f24fb00` and at this lane's tip** — verified by `git diff` over the nine named paths, empty.
-**Predecessors:** `RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md` (`2ebdf095`),
-`PACKET-20260910-z-consumer-set-and-endpoint-requirements.md` (`173baf44`). Neither is superseded;
-this packet **corrects one row of the second** and adds to both.
+**Predecessors, and ⚠ THE SHA THAT IS SAFE TO READ IS NOT THE SHA THAT IS FAMOUS:**
+- `RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md` — **read at the lane tip, NOT at
+  `2ebdf095`.** Measured: the blob is `98f22b3f…` at `2ebdf095` and moved in six later commits
+  (`3e6fb5b1`, `0d68b0c2`, `9b7380e7`, `c3a6dfd5`, `17f2ac67`, `cebcd995`; **+564 / −43**).
+  **`2ebdf095` still answers `cause3_corr` by ρ-domination — withdrawn in `9b7380e7`, and its
+  successor withdrawn again in §1 below.** So `2ebdf095` is a referent for **one** thing only: what
+  the independent assessor assessed in round 1. It is not a source for current content.
+- `PACKET-20260910-z-consumer-set-and-endpoint-requirements.md` (`173baf44`) — the assessor's
+  referent, kept intact; **its §3 carries a withdrawal banner rather than a rewrite.**
+
+Neither is superseded as a whole; this packet **withdraws one answer in the second** and adds to both.
+*A commit sha beside a document is not a claim that the document is current, and "byte-identical" is
+meaningless unless it names **both** endpoints of the comparison. Rev. 1 of this header named one.*
 **Evidence:** `state/probe-z-projected-stability-20260910.py` — green, 37 checks, run at this tip.
 
 > ## ⚠ CITABLE FOR / NOT CITABLE FOR — at the top, because a verdict word outranks the caveat beside it
