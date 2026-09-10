@@ -15,9 +15,12 @@ what it covers rather than by directory guess, and its scope statement must be c
 A scope naming three globs is not checkable -- nothing establishes those globs cover the consumers.
 
 SO THE SCOPE IS STATED AS A POPULATION AND VERIFIED AGAINST AN INDEPENDENT COUNT:
-every `.py` and `.tex` file under the repository root, excluding the VCS directory and caches.
-`--population` prints the count so it can be compared against `git ls-files '*.py' '*.tex' | wc -l`
-(541 + 24 = 565 measured at `054e4d66`). A count mismatch is reported, not silently absorbed.
+every `.py`, `.tex`, `.C`, `.cpp` and `.sh` file under the repository root, excluding the VCS
+directory and caches -- **913 files, every extension count pinned and verified**, not two of
+five. `--population` prints the per-extension counts so each can be compared against
+`git ls-files` directly. A mismatch is reported, not silently absorbed.
+⚠ The non-Python extensions were added so their members are IN SCOPE and therefore
+EXCLUDABLE BY NAME; their SIGNATURE SET is separately declared UNVALIDATED below.
 
 HOW IT WORKS -- the same PINNED-INVENTORY design as the withdrawal checker, which caught its own
 author on its first run. Signatures find CANDIDATES by content; every candidate must appear in
@@ -41,13 +44,30 @@ from pathlib import Path
 # scanned `docs/` alone -- 0 files -- and `--population` reported that with exit 0.
 _REPO = Path(__file__).resolve().parents[3]
 _LAST_UNCITED: list[str] = []
-SCAN_EXTS = {".py", ".tex"}
+# ⚠ WIDENED. The population was `.py + .tex`, so a consumer in another language was invisible BY
+# CONSTRUCTION -- and, by this packet's own rule, UNEXCLUDABLE: a file outside the scanned population
+# cannot be excluded by name, because it was never in scope to exclude. `.C`, `.cpp` and `.sh` are
+# the other languages actually present in this tree that could carry one.
+SCAN_EXTS = {".py", ".tex", ".C", ".cpp", ".sh"}
+
+# ⚠ AND THE NON-PYTHON SIGNATURE SET IS DECLARED **UNVALIDATED**, on evidence rather than caution.
+# Two independent attempts to signature these languages EACH MISSED A DIFFERENT REAL FILE:
+#   * this lane's attempt matched `run_negweight_covariance_analysis.sh` -- a FALSE POSITIVE, a
+#     shell wrapper whose own filename contains "covariance", plus a stray `trace(` -- and MISSED
+#     `ExtractCrossSection.cpp`.
+#   * the reviewer's attempt found `ExtractCrossSection.cpp` (correctly: it populates an unfolding
+#     covariance via RooUnfold at :83-97) and did not report the `.sh`.
+# So membership for these extensions rests on NAMED REGISTRATION, not on candidacy. Widening the
+# population buys the ability to exclude by name; it does NOT buy signature coverage, and this
+# comment exists so a green run is not read as the latter.
+NONPY_COV = ("GetTotalErrorMatrix", "TMatrixD", "CovMatrix", "covariance")
+NONPY_READ = ("UnfoldHisto", "GetBinError", "Diagonal", "TMatrixDSym")
 SKIP_PARTS = {".git", "__pycache__", ".claude", "node_modules"}
 
 # Independent count, measured at 054e4d66 via `git ls-files '*.py' '*.tex'`.
 # 541 .py + 24 .tex tracked at 054e4d66, PLUS this checker itself = 542 .py. Verified that the
 # +1 was the ONLY untracked .py in the tree when it was pinned, rather than assumed.
-EXPECTED_TRACKED = {".py": 542, ".tex": 24}
+EXPECTED_TRACKED = {".C": 2, ".cpp": 6, ".py": 542, ".sh": 339, ".tex": 24}
 
 # ---- SIGNATURES. Plain substrings; AND-groups (tuples) where one token alone is too generic.
 INVERSION = ("np.linalg.pinv", "np.linalg.inv(", "np.linalg.solve", "keep.sum()")
@@ -103,6 +123,16 @@ REGISTRY = {
     "docs/analysis-note/app_statmethods.tex": ("A+B", "RATIFIED PROTOCOL",
         "not a consumer: it is the protocol the consumers must conform to (:53-58 pseudo-inverse, "
         ":645-658 the four declarations). Registered so the checker stops reporting it"),
+    "MINERvA101/MINERvA-101-Cross-Section/ExtractCrossSection.cpp": ("EXCLUDED",
+        "vendored reference framework",
+        "populates an unfolding covariance via RooUnfold (:83-97), so it IS covariance-touching -- "
+        "and is excluded as the vendored MINERvA-101 teaching/reference framework, not a "
+        "publication consumer of Z. THE POINT OF REGISTERING IT: this exclusion was unstatable "
+        "while the population was .py+.tex, because the file was never in scope to exclude"),
+    "2d-unfolding/HANDOFF_bkg_negweight/run_negweight_covariance_analysis.sh": ("EXCLUDED",
+        "wrapper, and a FALSE POSITIVE of this lane's own non-Python signature",
+        "a shell wrapper whose FILENAME contains 'covariance'; it consumes nothing itself. Recorded "
+        "as the false positive that showed the non-Python signature set is unvalidated"),
     "docs/analysis-note/sec_results.tex": ("EXCLUDED", "2D, VALIDATED",
         "fig:uqbands is a real covariance band, out of scope because this set is scoped to Z"),
 }
@@ -177,11 +207,16 @@ def candidates(root: Path = _REPO) -> dict[str, list[str]]:
                 why.append("COV+DIAG")
             if _hit(text, single=deleg):
                 why.append("DELEGATION")
-        else:
+        elif p.suffix == ".tex":
             if _hit(text, single=TEX_DEFER):
                 why.append("TEX_DEFER")
             if _hit(text, single=TEX_BAND):
                 why.append("TEX_BAND")
+        else:
+            # UNVALIDATED, deliberately: see the note beside NONPY_COV. A hit here is a prompt to
+            # classify, not evidence of consumption; a miss here is not evidence of absence.
+            if _hit(text, pairs=[(c, r) for c in NONPY_COV for r in NONPY_READ]):
+                why.append("NONPY-UNVALIDATED")
         if why:
             found[str(p.relative_to(root))] = why
     return found
@@ -303,12 +338,14 @@ def main(argv: list[str]) -> int:
         return self_test()
     pop = population()
     if "--population" in argv:
-        print(f"SCOPE: every .py and .tex under {_REPO}, excluding {sorted(SKIP_PARTS)}")
+        print(f"SCOPE: every {', '.join(sorted(SCAN_EXTS))} under {_REPO}, "
+              f"excluding {sorted(SKIP_PARTS)}")
         for ext in sorted(SCAN_EXTS):
             print(f"  {ext}: {sum(1 for p in pop if p.suffix == ext)} "
                   f"(pinned {EXPECTED_TRACKED[ext]})")
         print(f"  total scanned: {len(pop)}")
-        print("  CHECK THIS against: git ls-files '*.py' '*.tex' | wc -l")
+        globs = " ".join(f"'*{e}'" for e in sorted(SCAN_EXTS))
+        print(f"  CHECK THIS against: git ls-files {globs} | wc -l")
         drift = [f for f in audit() if f.startswith("POPULATION DRIFT")]
         if drift:
             for f in drift:
@@ -324,9 +361,10 @@ def main(argv: list[str]) -> int:
         for f in failures:
             print(f"  - {f}\n")
         return 1
+    breakdown = ", ".join(f"{sum(1 for q in pop if q.suffix == e)} {e}"
+                          for e in sorted(SCAN_EXTS))
     print(f"[OK] consumer set complete over a STATED population: {len(pop)} files scanned "
-          f"({sum(1 for p in pop if p.suffix == '.py')} .py + "
-          f"{sum(1 for p in pop if p.suffix == '.tex')} .tex).")
+          f"({breakdown}) -- every extension count pinned and verified, not two of five.")
     print(f"     {len(cands)} candidates by signature; all {len(REGISTRY)} registry entries "
           f"classified, including exclusions BY NAME.")
     print(f"     CENSUS: {len(_LAST_UNCITED)} further file(s) touch a covariance but are NOT cited "
@@ -342,6 +380,12 @@ def main(argv: list[str]) -> int:
     print("       (b) that the census files feed nothing. The citation test now covers filename AND")
     print("           figure stem; a file reached only through a RECEIPT, or through a product name")
     print("           differing from its own stem, is still invisible.")
+    print("       (c) that the NON-PYTHON signature set works. It is declared UNVALIDATED: two")
+    print("           independent attempts each missed a different real file. Membership for")
+    print("           .C/.cpp/.sh rests on NAMED REGISTRATION, not on candidacy -- widening the")
+    print("           population bought excludability by name, not signature coverage.")
+    print("       (d) that a language ABSENT from this tree would be seen. SCAN_EXTS is chosen from")
+    print("           the languages present; a new one is a one-line change and a re-pinned count.")
     return 0
 
 

@@ -14,7 +14,19 @@ any revival of the retired universal bound — `rho`, §2.1/§2.2/§2.1b of
 
 ---
 
-## 1. THE CONSUMER SET — verified, and FIVE additions the starting list omits
+## 1. THE CONSUMER SET — bounded as stated below, and FIVE additions the starting list omits
+
+> **⚠ THE BOUND, AT THE CLAIM SITE RATHER THAN 146 LINES LATER.** This section does **not** claim
+> "the consumer set is complete." It claims exactly: **every file matching an `INVERSION`,
+> `COV+DIAG` or `DELEGATION` signature, whose filename or figure stem appears in note, paper or
+> primer, has a pinned classification — over a population of 913 files whose count is verified
+> per extension against `git ls-files`.** Five things that does not establish are in §2b, and the
+> signature set has already grown twice under adversarial pressure.
+>
+> *Rev. 1 headed this section "verified" and put the bound in §2's round table at `:163`. A reader
+> entering at §1 — where the claim is made — got no qualification. **That is the same shape as an
+> instrument printing a meaning claim its own docstring disclaims: the caveat exists and does not
+> travel with the verdict.** Sixth instance in this campaign, and predicted.*
 
 **Membership rule applied, as directed:** a consumer that is *declared and blocked* is in; a
 statistic with no consumer is out.
@@ -143,7 +155,8 @@ editing a criterion.** Nothing in the A/B split detects that; only a re-run of �
 
 ### 2b. THE IRREDUCIBLE RESIDUE — what no version of this instrument can certify
 
-**The signature set is now three, not two:** `INVERSION`, `COV+DIAG`, and — added after N6 —
+**Five residues, not four — the fifth is the population's language boundary, added in round 8.**
+**And the signature set is now three, not two:** `INVERSION`, `COV+DIAG`, and — added after N6 —
 `DELEGATION`. **Each addition was forced by a consumer the previous set could not see**, which is
 the honest way to read the sequence: the set grew twice under adversarial pressure and there is no
 argument that it has stopped growing.
@@ -160,6 +173,22 @@ argument that it has stopped growing.
    invisible. `False` means *not shown to feed a deliverable*.
 4. **Counts are not meanings.** As with the withdrawal checker, a pinned entry rewritten in place
    keeps its classification. The `reason` field is what a reader re-checks.
+5. **⚠ THE POPULATION'S LANGUAGE BOUNDARY — a fifth residue, and a different failure mode from (1).**
+   A consumer in an unscanned language is invisible **by construction**, not by signature — and by
+   this packet's own rule it is also **unexcludable**: *a file outside the scanned population cannot
+   be excluded by name, because it was never in scope to exclude.* **So the population was WIDENED**
+   from `.py + .tex` (566) to `.py .tex .C .cpp .sh` (**913, each extension count pinned and
+   verified**), which brought two files into scope to be excluded by name:
+   `MINERvA101/…/ExtractCrossSection.cpp` — which genuinely populates an unfolding covariance via
+   RooUnfold at `:83-97`, and is the **vendored reference framework**, not a consumer of Z — and a
+   shell wrapper whose own filename contains *"covariance"*.
+   **⚠ BUT WIDENING BOUGHT EXCLUDABILITY, NOT COVERAGE, AND THAT IS MEASURED.** Two independent
+   attempts to signature these languages **each missed a different real file**: this lane's matched
+   the shell wrapper (**a false positive**) and **missed the `.cpp`**; the reviewer's found the
+   `.cpp` and did not report the wrapper. **So the non-Python signature set is declared UNVALIDATED
+   in the instrument, and membership for those extensions rests on NAMED REGISTRATION rather than on
+   candidacy.** A language absent from this tree remains invisible; `SCAN_EXTS` is chosen from the
+   languages present, and widening it is a one-line change plus a re-pinned count.
 
 **So the claim this packet makes about §1 is bounded and should be quoted bounded:** *every file
 matching one of three signatures whose filename or figure stem appears in note, paper or primer has
