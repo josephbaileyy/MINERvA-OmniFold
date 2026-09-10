@@ -32,6 +32,10 @@ statistic with no consumer is out.
 | D2 | `sec_3d.tex:210` | figure band | — | **A** | *"orientation only and is not final"* |
 | D3 | `sec_3d.tex:322` — **note** | 3D generator `χ²` | — | **B** | **deferred-declared** |
 | D4 | ➕ `sec_3d.tex:418-419` — **note** | 4D **pulls** and full-cov `χ²` | — | **B** | **deferred-declared** |
+| C8 | ➕ `3d-unfolding/genie/compare_3d_fullcov.py:105-110` | 3D full cov | truncated eigen | **B** | **QUARANTINED** — ⚠ **CONFORMING: `keep = evals > tol*lmax`, returns `int(keep.sum())` as `ndf`.** Clause (ii) implemented |
+| C9 | ➕ `3d-unfolding/genie/overlay_generators_band.py:26,232` | band **and** `χ²` tension | `ndf = nbins` | ⚠ **A+B** | **QUARANTINED** — non-conforming, and **it breaks the per-script partition** |
+| C10 | ➕ `3d-unfolding/genie/overlay_eavailW_band.py:88-108` | `(E_avail,W)` band | — | **A+B** | **QUARANTINED**; cited by `sec_eavailw.tex:71` — **the unsearched tree feeds a deliverable** |
+| C11 | ➕ `2d-unfolding/uq/_ours_only_chi2.py:128-130` | 2D full cov | `np.linalg.inv` | **B** | **LIVE (2D)** — non-conformer on `ndf` (bin count); `inv` is **correct at full rank** per N2's control |
 | D5 | ➕ `paper_body.tex:146-148` — **paper** | *"A publication-level significance requires the adopted, selection-complete scalar five-dimensional covariance, which is not yet in hand"* | — | **B** | **deferred-declared** |
 | D6 | ➕ `primer_body.tex:130` — **primer** | *"Its statistical significance is not assigned"* | — | **B** | **deferred-declared** |
 
@@ -65,9 +69,14 @@ pattern, producing a false negative, in the measurement of a scope. Fourth time 
 **THREE STATES, CLASSIFIED EXPLICITLY, because *deferred* fails in both directions.** A deferred
 consumer whose criterion is never written **silently becomes absent** when the deferral lifts; one
 counted as present **inflates the population** a criterion claims to cover.
-**LIVE:** `C4` (2D headline, quoted), `D1`/`D2` (bands displayed with magnitudes quarantined).
-**DEFERRED-DECLARED:** `C1`–`C3`, `D3`–`D6`. **ABSENT:** no 5D/3D/4D significance exists anywhere —
-`PROVENANCE-20260822` §5.
+**LIVE:** `C4`, `C11` (2D, quoted); `D1`/`D2` (bands displayed, magnitudes quarantined).
+**DEFERRED-DECLARED:** `C1`–`C3`, `D3`–`D6`.
+**⚠ QUARANTINED-BUT-PRESENT — a third state my first version omitted:** `C8`, `C9`, `C10`.
+`AGENTS.md` quarantines the historical 3D generator significances, **and these scripts produce
+exactly those.** The code exists and runs; the numbers are unquotable. **Omit this state and the
+outputs become live when the quarantine lifts, with no criterion ever written for them** — the same
+both-directions failure as *deferred*.
+**ABSENT:** no 5D/4D significance exists anywhere — `PROVENANCE-20260822` §5.
 
 **EXCLUSIONS, BY NAME, so none holds merely because nobody called it.**
 - **`nd-unfolding/pet/assemble_ctotal_bkgsub.py:36`** (`build_5d_to_4d_projection`) — **excluded
@@ -80,10 +89,15 @@ counted as present **inflates the population** a criterion claims to cover.
   because this set is scoped to Z**: it is the **2D** construction, which is `VALIDATED` and complete
   on both central value and uncertainty. **The scoping is stated here rather than left implied.**
 
-**The set does split cleanly along the endpoint line, and the split is by WHAT IS READ:** every
-**B** member inverts a full matrix; every **A** member reads a diagonal, a trace, or a displayed
-band. **That is the structural basis for keeping the requirement sets apart** — not an
-organisational preference.
+**THE SPLIT IS BY REQUIREMENT TYPE, NOT BY SCRIPT — ⚠ AND MY FIRST VERSION CLAIMED OTHERWISE.**
+It read *"the set does split cleanly along the endpoint line."* **False per script:** `C9`
+`overlay_generators_band.py` is simultaneously an endpoint-**A** band consumer and an endpoint-**B**
+tension consumer — its own docstring says *"WITH the full systematic (+stat+ML) uncertainty band,
+and quantify the data-model tension per axis with a COVARIANCE chi^2"* — and `C10` is the same
+shape. **So a criterion scoped to A alone does not reach a dual script's B half.** What remains true
+is the split by **what is read**: every **B** requirement attaches to a full-matrix inversion, every
+**A** requirement to a diagonal, trace or band. **Requirements partition; scripts do not**, and a
+dual script takes both sets. That is a structural constraint on the split, not a missing row.
 
 ---
 
@@ -99,8 +113,10 @@ about the publication, not the code, and it was unverified. Measured:**
   same file.
 
 **So the premise holds and is a measurement: A-release and B-quotation are already decoupled in both
-live deliverables.** What it does **not** establish is that they *should* stay decoupled — that is a
-publication judgement, not a code property.
+live deliverables.** ⚠ **And the qualification is carried verbatim, because it is the part that
+decays: this establishes that the endpoints ARE decoupled TODAY, not that they should stay so — and
+a later decision to quote a band with a significance beside it would RECOUPLE them without anyone
+editing a criterion.** Nothing in the A/B split detects that; only a re-run of §1 would.
 
 ---
 
@@ -111,7 +127,8 @@ publication judgement, not a code property.
 | **N1 ⚠ `solve` does NOT fail loudly on the covariance class Z belongs to** | Two **B** consumers invert with `np.linalg.solve` (`C2`, `C3`). On an *exactly* singular matrix it raises. **On a NEAR-singular one it returns silently**: probe §1 gives `chi2 = 1.0e18`, no exception, where `pinv` gives `2.0` | probe §1: exactly-singular **raises**; near-singular (`λ_min = 1e-18`) **returns `1.0e18`**; **positive control** §3, full rank `205²`, `solve` and `pinv` agree to `0.0e+00` relative | the failure is a property of the **object's rank**, not of the call. `C2`/`C3` are correct wherever their covariance is full rank; **whether their actual 4D inputs are is UNMEASURED** |
 | **N2 A Z-shaped sum has NO exact zeros and a MIXED-SIGN tail** | 44 rank-1 band outer products + `N=100` and `N=24` sample blocks: **0 exact zeros**; the `234` null-space eigenvalues span `−2.301e-13 … +2.068e-13`. So **a PSD test at exactly `0` fails on a correct object**, and *"effective **positive** rank above a cutoff"* is the only well-posed count — which is what the ratified protocol already says | probe §2, with the structural/synthetic split stated in the docstring | ⚠ **only the sign and exact-zero result is structural** (a property of floating-point summation). **The magnitudes, condition number and `chi2` inflation are SYNTHETIC** — the real Z tail scale is unmeasured, and I am not extending the retired machinery to measure it |
 | **N3 the inversion requirement already exists and is ratified** | `C4` inverts by SVD pseudo-inverse per `app_statmethods.tex:53-58`; clause (i) at `:645-658` requires the inverse actually used, with its `rcond` or truncation rank, **stated at the point of quotation**. **So endpoint B's inversion requirement is CONFORMANCE, not proposal** | direct reading | **conformance is not calibration.** Making `C1`–`C3` match `C4` makes them well-posed; it does not make their reference distribution correct (§4, F3 unresolved) |
-| **N4 the consumer set was incomplete in three places** | §1: `C4`, `C6`, `D4` added | file existence and line reads, each cited in §1 | I searched `nd-unfolding/*.py`, `2d-unfolding/*.py` and `docs/analysis-note/*.tex`. **A consumer outside those three scopes would not have been found** |
+| **N4 the consumer set was incomplete in three places** | §1: `C4`, `C6`, `D4` added | file existence and line reads, each cited in §1 | superseded by **N5** |
+| **N5 ⚠ MY DECLARED SCOPE COVERED 25% OF THE POPULATION, and it is where I said to look** | `nd-unfolding/*.py` and `2d-unfolding/*.py` are **non-recursive** and `3d-unfolding/` was absent entirely: measured **136 of 541** tracked `.py` files. The 405-file remainder held **four real consumers** (`C8`–`C11`) — one **conforming**, one that **breaks the partition**, one that **feeds a deliverable from the unsearched tree** — and `pet/assemble_ctotal_bkgsub.py`, which the prior record required be excluded **by name**. **An exclusion you cannot state because the file is outside your search is not an exclusion.** | `state/check-consumer-set-20260910.py` — scope stated as a **population** (566 files) and **verified against an independent `git ls-files` count**, not a directory guess. `--self-test` fires on a deliverable-cited consumer, treats an uncited one as census, and is silent on innocent prose | **the SIGNATURES may still be incomplete** — a consumer using none of them is invisible. And the citation test is by **filename in the deliverable text**, so a file cited only via a figure name or a receipt reads as uncited: `False` there means *"not shown to feed a deliverable"*, **not** *"does not feed one"* |
 
 ---
 

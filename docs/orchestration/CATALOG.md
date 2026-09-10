@@ -229,6 +229,12 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   Arithmetic re-runnable at
   [`state/probe-z-consumer-inversion-20260910.py`](state/probe-z-consumer-inversion-20260910.py) —
   deliberately a **separate** file, so the retired `rho` machinery stays frozen as history.
+  **Its scope is enforced, not asserted:**
+  [`state/check-consumer-set-20260910.py`](state/check-consumer-set-20260910.py) states the
+  scope as a **population verified against an independent `git ls-files` count** (566 files) and
+  fails closed on any covariance-touching file a deliverable cites without a pinned
+  classification. **The packet's first version declared three globs covering 25% of the tracked
+  population**; the instrument exists because that scope statement was not checkable.
 - [`RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md`](RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md)
   - **RECOMMENDATION ONLY — adopts nothing, grades nothing, authorizes no compute; Joseph retains
   scientific approval.** The `z-criteria-designer` owner's answer to `Z_DECISION_PACKET` §5 items 1,

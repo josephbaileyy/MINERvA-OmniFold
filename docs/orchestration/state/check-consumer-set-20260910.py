@@ -1,0 +1,295 @@
+#!/usr/bin/env python3
+r"""Consumer-set completeness check for PACKET-20260910-z-consumer-set-and-endpoint-requirements.md.
+
+WHY THIS EXISTS. The packet's first version declared its scope as three globs --
+`nd-unfolding/*.py`, `2d-unfolding/*.py`, `docs/analysis-note/*.tex`. Measured: those cover
+**136 of 541** tracked `.py` files, 25%. The 405-file remainder included `3d-unfolding/` entirely
+(27 files), 211 files under `nd-unfolding/` subdirectories and 30 under `2d-unfolding/`'s -- and it
+contained at least four real consumers, one of which (`overlay_generators_band.py`) breaks the
+packet's A/B partition, and one of which (`pet/assemble_ctotal_bkgsub.py`) the prior record required
+be excluded BY NAME. **An exclusion you cannot state because the file is outside your search is not
+an exclusion.**
+
+The reviewer's requirement, passed without addition: *"the consumer-set search must be scoped by
+what it covers rather than by directory guess, and its scope statement must be checkable."*
+A scope naming three globs is not checkable -- nothing establishes those globs cover the consumers.
+
+SO THE SCOPE IS STATED AS A POPULATION AND VERIFIED AGAINST AN INDEPENDENT COUNT:
+every `.py` and `.tex` file under the repository root, excluding the VCS directory and caches.
+`--population` prints the count so it can be compared against `git ls-files '*.py' '*.tex' | wc -l`
+(541 + 24 = 565 measured at `054e4d66`). A count mismatch is reported, not silently absorbed.
+
+HOW IT WORKS -- the same PINNED-INVENTORY design as the withdrawal checker, which caught its own
+author on its first run. Signatures find CANDIDATES by content; every candidate must appear in
+`REGISTRY` with its endpoint(s) and state, or the check FAILS CLOSED. It does not try to classify
+automatically: that judgement is made once, recorded, and pinned.
+
+⚠ NO CHARACTER CLASSES IN THE SIGNATURES. A `[a-z_]*` class dropped `sec_3d` from this lane's own
+`\input` extraction; a `[a-z_0-9]` class dropped `overlay_eavailW_band.py` from the reviewer's grep,
+because of the capital `W`. Three people hit that bug on the same day. Plain substrings only.
+
+Run:            python3 docs/orchestration/state/check-consumer-set-20260910.py
+Population:     python3 docs/orchestration/state/check-consumer-set-20260910.py --population
+Self-test:      python3 docs/orchestration/state/check-consumer-set-20260910.py --self-test
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+# parents: [0]=state [1]=orchestration [2]=docs [3]=repo root. The first version used [2] and
+# scanned `docs/` alone -- 0 files -- and `--population` reported that with exit 0.
+_REPO = Path(__file__).resolve().parents[3]
+_LAST_UNCITED: list[str] = []
+SCAN_EXTS = {".py", ".tex"}
+SKIP_PARTS = {".git", "__pycache__", ".claude", "node_modules"}
+
+# Independent count, measured at 054e4d66 via `git ls-files '*.py' '*.tex'`.
+# 541 .py + 24 .tex tracked at 054e4d66, PLUS this checker itself = 542 .py. Verified that the
+# +1 was the ONLY untracked .py in the tree when it was pinned, rather than assumed.
+EXPECTED_TRACKED = {".py": 542, ".tex": 24}
+
+# ---- SIGNATURES. Plain substrings; AND-groups (tuples) where one token alone is too generic.
+INVERSION = ("np.linalg.pinv", "np.linalg.inv(", "np.linalg.solve", "keep.sum()")
+COV_TOKENS = ("hCov", "covariance", "_cov", "cov_")
+READ_TOKENS = ("np.diag", "np.trace", "sqrt_trace", "trace(")
+TEX_DEFER = ("not quoted pending", "not yet in hand", "significance is not assigned",
+             "are not reported without", "not assigned")
+TEX_BAND = ("uncertainty band", "systematic band", "fractional systematic")
+
+# ---- PINNED REGISTRY. path -> (endpoints, state, note). Endpoints may be BOTH.
+REGISTRY = {
+    # ---------- endpoint B: inverts a full matrix ----------
+    "nd-unfolding/eavail_generator_significance.py": ("B", "GATED", "pinv; ndf = bin count (B-3 defect)"),
+    "nd-unfolding/compare_ascencio_fullcov.py": ("B", "deferred", "solve; N1 applies"),
+    "nd-unfolding/compare_ascencio_fine.py": ("B", "deferred", "solve; N1 applies"),
+    "2d-unfolding/compare_to_paper_fullcov.py": ("B", "LIVE", "SVD pseudo-inverse, RATIFIED app_statmethods:53-58"),
+    "3d-unfolding/genie/compare_3d_fullcov.py": ("B", "QUARANTINED", "CONFORMING: retained rank as ndf, :105-110"),
+    "2d-unfolding/uq/_ours_only_chi2.py": ("B", "LIVE (2D)", "np.linalg.inv, ndf = bin count; correct at full rank"),
+    # ---------- BOTH endpoints in one script ----------
+    "3d-unfolding/genie/overlay_generators_band.py": ("A+B", "QUARANTINED",
+        "band AND covariance chi2 tension; ndf = nbins (:26,:232). BREAKS the per-script partition"),
+    "3d-unfolding/genie/overlay_eavailW_band.py": ("A+B", "QUARANTINED",
+        "band overlay; cited by sec_eavailw.tex:71 for the corner-ratio reduction"),
+    # ---------- endpoint A: diagonal, trace or band ----------
+    "nd-unfolding/eavailW_covariance.py": ("A", "quarantined", "produces C_low; consumes sqrt(diag)"),
+    "nd-unfolding/coverage_valid_nd.py": ("A", "diagnostic", "sqrt(diag(C)) only"),
+    "nd-unfolding/mii_anchor_comparator.py": ("A", "Gate-2 blocked", "sqrt(trace) from diag"),
+    # ---------- EXCLUDED BY NAME, and the exclusion is only statable because it is in scope ----------
+    "nd-unfolding/pet/assemble_ctotal_bkgsub.py": ("EXCLUDED", "PET legacy boundary",
+        "AGENTS.md: cannot satisfy or feed the full-event DAG"),
+    # ---------- .tex deliverables ----------
+    "docs/analysis-note/sec_3d.tex": ("A+B", "deferred x2 + bands",
+        ":193/:210/:261 bands (A); :322 3D chi2 and :418-419 4D pulls deferred (B)"),
+    "docs/analysis-note/paper_body.tex": ("B", "deferred", ":146-148, the PAPER's own words"),
+    "docs/analysis-note/primer_body.tex": ("B", "deferred", ":130, the PRIMER's own words"),
+    "docs/analysis-note/sec_eavailw.tex": ("A", "quarantined",
+        "(E_avail,W) band; :63-67's generator band is NOT covariance-derived and is excluded"),
+    "2d-unfolding/agreement_windows_receipt.py": ("EXCLUDED", "2D, VALIDATED",
+        "cited by a deliverable, so found by the citation test rather than by a directory guess; "
+        "excluded because this set is scoped to Z and 2D is complete on value and uncertainty"),
+    "2d-unfolding/compare_to_paper_interior.py": ("EXCLUDED", "2D, VALIDATED",
+        "same: cited by a deliverable, inverts, and is the 2D interior comparison"),
+    "docs/analysis-note/sec_results.tex": ("EXCLUDED", "2D, VALIDATED",
+        "fig:uqbands is a real covariance band, out of scope because this set is scoped to Z"),
+}
+
+
+def population(root: Path = _REPO) -> list[Path]:
+    """Every .py and .tex under the repo root, excluding the VCS directory and caches.
+
+    ⚠ THE SKIP LIST IS MATCHED AGAINST THE PATH RELATIVE TO `root`, NOT THE ABSOLUTE PATH.
+    The first version used `set(p.parts)` on the absolute path. This checkout lives at
+    `.../MINERvA-OmniFold/.claude/worktrees/z-criteria-owner-20260910`, so EVERY path under it
+    contains `.claude` as a component and the skip rule excluded the entire repository -- 0 files.
+    The operand was the whole absolute path when the intended operand was the part below `root`.
+    """
+    out = []
+    for p in root.rglob("*"):
+        if p.suffix not in SCAN_EXTS or not p.is_file():
+            continue
+        try:
+            rel_parts = set(p.relative_to(root).parts)
+        except ValueError:
+            continue
+        if SKIP_PARTS & rel_parts:
+            continue
+        out.append(p)
+    return sorted(out)
+
+
+def _hit(text: str, single=(), pairs=()) -> bool:
+    if any(s in text for s in single):
+        return True
+    return any(all(part in text for part in grp) for grp in pairs)
+
+
+def candidates(root: Path = _REPO) -> dict[str, list[str]]:
+    """Candidate consumers, by signature. Returns repo-relative path -> matched signature names."""
+    found: dict[str, list[str]] = {}
+    for p in population(root):
+        try:
+            text = p.read_text(errors="ignore")
+        except OSError:
+            continue
+        why = []
+        if p.suffix == ".py":
+            if _hit(text, single=INVERSION):
+                why.append("INVERSION")
+            if _hit(text, pairs=[(c, r) for c in COV_TOKENS for r in READ_TOKENS]):
+                why.append("COV+DIAG")
+        else:
+            if _hit(text, single=TEX_DEFER):
+                why.append("TEX_DEFER")
+            if _hit(text, single=TEX_BAND):
+                why.append("TEX_BAND")
+        if why:
+            found[str(p.relative_to(root))] = why
+    return found
+
+
+def deliverable_texts(root: Path = _REPO) -> str:
+    """The concatenated text of the three build targets' inputs -- the DELIVERABLE surface.
+
+    Measured: `main_note`, `main_paper` and `main_primer` intersect in `values` alone, so the
+    deliverable surface is the union of all three input sets, not any one of them.
+    """
+    note = root / "docs" / "analysis-note"
+    return "\n".join(f.read_text(errors="ignore") for f in sorted(note.glob("*.tex")))
+
+
+def feeds_deliverable(rel_path: str, deliv: str) -> bool:
+    """Does this file's NAME appear anywhere in the deliverable surface?
+
+    THE DISCRIMINATOR JOSEPH'S MEMBERSHIP RULE ACTUALLY NAMES -- "a statistic with no consumer is
+    out" -- applied as a re-runnable test rather than a directory guess. A covariance-touching file
+    whose name never appears in note, paper or primer produces nothing either quotes, so it is not
+    a consumer OF A DELIVERABLE however much linear algebra it does.
+
+    ⚠ ITS LIMIT, STATED: a file cited only INDIRECTLY -- via a figure filename, or by a receipt the
+    deliverable cites -- is NOT caught by this. So a False here is "not shown to feed a deliverable",
+    NOT "does not feed one". That is why an unregistered candidate is reported either way and this
+    only classifies HOW it is reported.
+    """
+    return Path(rel_path).name in deliv
+
+
+def audit(root: Path = _REPO) -> list[str]:
+    failures = []
+    pop = population(root)
+    if root == _REPO:
+        for ext, expected in EXPECTED_TRACKED.items():
+            actual = sum(1 for p in pop if p.suffix == ext)
+            if actual != expected:
+                failures.append(
+                    f"POPULATION DRIFT: {ext} count is {actual}, pinned at {expected} "
+                    f"(measured via `git ls-files` at 054e4d66). Untracked files inflate this; "
+                    f"re-measure and re-pin deliberately rather than absorbing the difference.")
+    deliv = deliverable_texts(root) if (root / "docs" / "analysis-note").is_dir() else ""
+    unreg_cited, unreg_uncited = [], []
+    for path, why in sorted(candidates(root).items()):
+        if path in REGISTRY:
+            continue
+        (unreg_cited if feeds_deliverable(path, deliv) else unreg_uncited).append((path, why))
+    for path, why in unreg_cited:
+        failures.append(f"UNREGISTERED AND CITED BY A DELIVERABLE: {path} "
+                        f"(matched {'+'.join(why)}) -- its name appears in note/paper/primer text, "
+                        f"so it feeds a deliverable. Classify into an endpoint and pin it.")
+    # The uncited group is REPORTED, not failed. The citation test has shown they feed no
+    # deliverable, so failing on them would leave this check permanently red -- which trains its
+    # reader to ignore it, the failure this campaign has already named once.
+    global _LAST_UNCITED
+    _LAST_UNCITED = [p for p, _ in unreg_uncited]
+    return failures
+
+
+def self_test() -> int:
+    import tempfile
+    print("SELF-TEST")
+    clean = audit()
+    print(f"  (a) live tree                     -> {len(clean)} failure(s)   must be 0")
+    if clean:
+        for f in clean:
+            print(f"        {f}")
+        return 1
+    # ⚠ (b) REWRITTEN. Its first version injected an UNCITED consumer and required a failure --
+    # which was the wrong expectation once the design changed: uncited candidates are a reported
+    # census, not a failure, because a permanently-red check trains its reader to ignore it. The
+    # path that DOES fail closed is a consumer CITED BY A DELIVERABLE, so that is what (b) now
+    # exercises, and (b2) asserts the census behaviour it used to conflate with it.
+    with tempfile.TemporaryDirectory() as td:
+        r = Path(td)
+        (r / "docs" / "analysis-note").mkdir(parents=True)
+        (r / "cited_consumer.py").write_text("import numpy as np\nx = np.linalg.pinv(C)\n")
+        (r / "docs" / "analysis-note" / "sec_x.tex").write_text(
+            "Provenance: cited_consumer.py produced this uncertainty band.\n")
+        (r / "uncited_consumer.py").write_text("import numpy as np\ny = np.linalg.solve(C, d)\n")
+        (r / "innocent.py").write_text("print('no covariance here')\n")
+        (r / "plain.tex").write_text("A band of colour. Nothing statistical.\n")
+        cands = candidates(r)
+        fails = audit(r)
+        cited_named = any("cited_consumer.py" in f for f in fails)
+        print(f"  (b) consumer CITED by a deliverable -> detected {len(cands)}, "
+              f"failures {len(fails)}, names it: {cited_named}   must fail and name it")
+        ok_b = cited_named
+        uncited_failed = any("uncited_consumer.py" in f for f in fails)
+        print(f"  (b2) consumer NOT cited             -> detected: "
+              f"{'uncited_consumer.py' in cands}, failed: {uncited_failed}   "
+              f"must be detected but NOT failed (census)")
+        ok_b2 = ("uncited_consumer.py" in cands) and not uncited_failed
+        leaked = [k for k in cands if k in ("innocent.py", "plain.tex")]
+        print(f"  (c) false-positive control          -> leaked {len(leaked)} {leaked}   must be 0")
+        ok_c = not leaked
+    # (d) a capital letter in a filename must not be dropped -- the bug three people hit.
+    caps = [p for p in population() if any(ch.isupper() for ch in p.name)]
+    print(f"  (d) filenames with capitals found  -> {len(caps)}   must be >= 1 "
+          f"(a class like [a-z_0-9] would report 0)")
+    ok_d = len(caps) >= 1
+    ok = ok_b and ok_b2 and ok_c and ok_d
+    print(f"  SELF-TEST {'PASSED' if ok else 'FAILED'}")
+    return 0 if ok else 1
+
+
+def main(argv: list[str]) -> int:
+    if "--self-test" in argv:
+        return self_test()
+    pop = population()
+    if "--population" in argv:
+        print(f"SCOPE: every .py and .tex under {_REPO}, excluding {sorted(SKIP_PARTS)}")
+        for ext in sorted(SCAN_EXTS):
+            print(f"  {ext}: {sum(1 for p in pop if p.suffix == ext)} "
+                  f"(pinned {EXPECTED_TRACKED[ext]})")
+        print(f"  total scanned: {len(pop)}")
+        print("  CHECK THIS against: git ls-files '*.py' '*.tex' | wc -l")
+        drift = [f for f in audit() if f.startswith("POPULATION DRIFT")]
+        if drift:
+            for f in drift:
+                print(f"\n[FAIL] {f}")
+            print("\n  A scope report that finds nothing must NOT exit 0. The first version of this")
+            print("  file scanned 0 files and reported success -- the blind-zero shape.")
+            return 1
+        return 0
+    failures = audit()
+    cands = candidates()
+    if failures:
+        print(f"[FAIL] consumer-set completeness: {len(failures)} issue(s)\n")
+        for f in failures:
+            print(f"  - {f}\n")
+        return 1
+    print(f"[OK] consumer set complete over a STATED population: {len(pop)} files scanned "
+          f"({sum(1 for p in pop if p.suffix == '.py')} .py + "
+          f"{sum(1 for p in pop if p.suffix == '.tex')} .tex).")
+    print(f"     {len(cands)} candidates by signature; all {len(REGISTRY)} registry entries "
+          f"classified, including exclusions BY NAME.")
+    print(f"     CENSUS: {len(_LAST_UNCITED)} further file(s) touch a covariance but are NOT cited "
+          f"by any deliverable, so they feed nothing quoted. Reported, not failed.")
+    print("     What this establishes: every covariance-touching file that a DELIVERABLE CITES has")
+    print("     a pinned classification, over a population verified against an independent count.")
+    print("     What it does NOT establish: (a) that the SIGNATURES are complete -- a consumer")
+    print("     using none of them is invisible; (b) that the uncited 75 truly feed nothing --")
+    print("     indirect citation via a figure filename or a receipt is NOT tested.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
