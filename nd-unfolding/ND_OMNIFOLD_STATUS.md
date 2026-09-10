@@ -6,8 +6,8 @@ definitions and their implementation implications are recorded in
 repair passes local synthetic software checks. The bounded
 [source-validation and normalization protocol](pet/SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md)
 has an implemented checker and bound launcher. The first authorized source
-attempt was interrupted. The subsequent synthetic Linux runtime check clears
-dependency imports but fails its original thread and numerical criteria; see
+attempt was interrupted. The revised synthetic Linux runtime preflight passes all 8,192 rows and 512
+chunks at `ca34a03a`, with four observed threads and a derived rounding budget; see
 [the runtime record](pet/SOURCE_AUDIT_RUNTIME-20260910.md). A further real-source
 attempt still requires named execution authorization. Preparation and synthetic-check details
 are in [the source-audit runbook](pet/SOURCE_AUDIT_RUNBOOK.md). Normalization and training remain separately gated by

@@ -1,5 +1,26 @@
 # N-D OmniFold run log
 
+## 2026-09-10 — complete synthetic runtime preflight
+
+Preparation `ca34a03a` installs the authorized four-thread ceiling and compares
+identical prepared features and weights against float64 rounding budgets. Linux
+allocation `58178592` and its two-CPU step both complete with exit `0:0`; all
+8,192 fake rows and 512 typed chunks pass. Peak observed process resources are
+four threads and 993,112,064 bytes RSS. The scheduler rounds the two-CPU request
+to six reserved CPUs with 8 GiB memory, within the standing reservation ceiling.
+Elapsed allocation time is 5 minutes 11 seconds. The unchanged import guard
+reports no foreign-checkout imports. ROOT is imported but no ROOT source opens.
+
+`pet/runtime_runs/20260910/linux-roundoff/preservation-manifest.json` binds the
+closed receipts, runtime summary, launcher scripts, scheduler and clean-checkout
+records. Transfer digests and complete contiguous entry lists were checked;
+`verification.json` records that scope. The source launcher's final accounting
+writer is not exercised by this fake-reader probe. The 67-test audit suite and
+source lint, formatting and targeted strict typing checks pass. This completes
+synthetic runtime validation only; another source run still needs a separately
+bound authorization. PET pairing, covariance and Gate-6 restrictions are unchanged.
+
+
 ## 2026-09-10 — synthetic runtime investigation
 
 `f59d8170` adds a full fake-reader runtime preflight; `10deb714` reports

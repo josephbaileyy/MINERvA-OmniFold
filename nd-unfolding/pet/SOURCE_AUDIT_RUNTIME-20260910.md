@@ -1,6 +1,6 @@
 # PET source-audit runtime compatibility
 
-**Revised local synthetic preflight passes; Linux resource acceptance is pending.**
+**PASS — complete local and Linux synthetic runtime preflight. Real-source execution remains blocked.**
 
 The locally passing synthetic runtime uses NumPy 1.26.4, SciPy 1.16.3,
 TensorFlow 2.16.2 and Keras 3.15.1. Installation pins are in
@@ -115,9 +115,37 @@ the changed source modules. An initial local invocation accidentally used the
 older SciPy 1.17.1 environment and reproduced the recorded guarded-import
 failure; the complete runs use the compatible SciPy 1.16.3 environment.
 
-Linux resource acceptance remains pending a committed preparation and bounded
-cluster run. Historical failed receipts above retain their original criteria
-and are not relabeled as passing.
+Linux job `58178592` runs the clean preparation commit `ca34a03a` with
+ROOT 6.28/12, NumPy 1.26.4, SciPy 1.16.3, TensorFlow 2.16.2 and Keras 3.15.1.
+It completes all 8,192 rows and 512 typed chunks with no exceptions, all six
+receipt checks passing, exact operand agreement and zero ROOT source opens.
+The first-chunk maximum pooled absolute errors are `2.424e-6` for NumPy and
+`2.320e-6` for Keras, both within their calculated per-output budgets. The
+TensorFlow activation-grid error is at most `2.717e-7`; NumPy is `5.885e-8`.
+
+The scheduler rounds the request for two CPUs and 8 GiB memory to six reserved
+CPUs, within the existing reservation ceiling. Step `.0` uses exactly two CPUs.
+Both the allocation and step are `COMPLETED`, exit `0:0`; allocation elapsed
+is 5 minutes 11 seconds. The audit's wall measurement is 268.56 seconds, its
+peak observed process thread count is four, and its peak observed process RSS
+is 993,112,064 bytes (947.11 MiB). Scheduler step MaxRSS is 1,945,916 KiB;
+that separate step-level measurement is also below the 8 GiB ceiling. Process
+boundary samples do not claim continuous monitoring of transient threads/RSS.
+The recorded artifact bytes excluding logs and receipt are 173,658,980.
+
+The unchanged guard reports zero repository origins outside the expected
+checkout and `child-systemexit:0`. Closed receipt, guard and summary digests
+match after transfer. The exact compressed JSON bytes, scripts, scheduler and
+checkout records are preserved under `runtime_runs/20260910/linux-roundoff/`,
+with its own `preservation-manifest.json` and `verification.json`. Historical
+failed receipts retain their original criteria and are not relabeled as passing.
+
+This preflight exercises the fake-reader audit, process budget, forward checks
+and shard serialization. It does not execute `RootAuditReader` or the real
+launcher's final `accounting.json` writer. Synthetic resource observations are
+in `runtime-summary.json`; they are not a substitute for the real-source
+accounting required by the runbook. No source mapping, release, normalization,
+training or scientific acceptance follows from this synthetic pass.
 
 ## Reproduction
 
