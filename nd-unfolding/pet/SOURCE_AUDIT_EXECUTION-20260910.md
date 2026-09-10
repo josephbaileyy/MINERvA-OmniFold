@@ -49,3 +49,11 @@ OI-126 remains ruled: the existing `C_stat` construction is unverified, its P5A
 pairing is declined, and no PET total covariance is adopted. The completed probes
 remain closed. A terminal failure is evidence to preserve, not permission to
 change the scientific or resource contract.
+
+## Terminal disposition
+
+The single source attempt is interrupted and its allocation is terminal. See
+[SOURCE_AUDIT_INTERRUPTION-20260910.md](SOURCE_AUDIT_INTERRUPTION-20260910.md)
+for preserved bytes, scheduler evidence, diagnosis and repair validation. This
+authorization remains bound to `58832843` and its original preparation digest;
+it does not authorize execution of the repaired checker.

@@ -1,0 +1,14 @@
+
+[oi136 launch] THIS CHILD CANNOT BE PROVEN TO KEEP ITS OWN PYTHON LAUNCHES GUARDED -- REFUSING BEFORE LAUNCH.
+[oi136 launch]   executable     /Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/lscpu
+[oi136 launch]   offending flag lscpu resolves to /Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/lscpu, which is neither an interpreter, a shell, a leaf tool nor a script with a readable shebang
+[oi136 launch]   argv           ['lscpu']
+[oi136 launch] A guarded process may start only a child this guard can PROVE keeps its Python launches guarded: an interpreter under the startup-flag grammar, a shell whose -c string or SCRIPT FILE has been read and scanned, a leaf tool that execs no other program and resolves under a system prefix, a read-only `git`, or a file whose shebang is one of those. Round 6 reached the wrong-tree import through a shell SCRIPT FILE, which the previous model admitted UNREAD on the strength of a PATH lookup the script declined to make. Route the work through a shell script this guard can read, or through mnv_guarded_run.py; do not widen the leaf table to make a launcher pass.
+
+[oi136] inventory: checked=1566 repo_origin_count=5 outside_expect_root=0 verdict=REFUSED launch -> /tmp/pet-guarded-synthetic-recovery.json
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics  (6) __main__, atomic_write, typed_descriptor_keras, typed_descriptor_source_audit, typed_descriptor_source_smoke, typed_descriptors
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.

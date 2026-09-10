@@ -1,0 +1,116 @@
+{
+  "files": {
+    "authorization.json": {
+      "bytes": 713,
+      "sha256": "2a89a3c7f98baa4e6aa97a93fcb571ffa8d118fc0e0424009ddd0ca0e815f2d5"
+    },
+    "dependency-inspection.json": {
+      "bytes": 580,
+      "sha256": "84a748a7cf67a44747f8a677a1bd2a8d73780e2b44f70f18c3ae744fd1cbef63"
+    },
+    "interrupted-audit/data/metadata.json": {
+      "bytes": 18590,
+      "sha256": "f3d43367a7382c74259ca54c803cf52b3a1360d6518887750814d6f67f9dbf53"
+    },
+    "interrupted-audit/data/observations/0000.json": {
+      "bytes": 40939,
+      "sha256": "469e5fdfacd7468016207b8cd4717d77675557146e343a68c8143e50b2438017"
+    },
+    "interrupted-audit/data/raw/0000.json": {
+      "bytes": 78080,
+      "sha256": "b22a4f79710fef355e7be2dacff120282ba312a7b5686bc644a7eb7dfdd992bb"
+    },
+    "interrupted-audit/interrupted.json": {
+      "bytes": 10600,
+      "sha256": "bebe850a73e8fc92d4d35eafee6492aa5f2decb81c1b567c27fde219af94858e"
+    },
+    "interrupted-audit/mc/metadata.json": {
+      "bytes": 18789,
+      "sha256": "7ed3bfbf2c5fcb1bd3d67186051544d7ea07f3b46932399a189620c192d02315"
+    },
+    "interrupted-audit/progress.jsonl": {
+      "bytes": 121,
+      "sha256": "37b2f0f91e6838a8f03aefeefbc72de641f794149ea9467bef836f468855297c"
+    },
+    "interrupted-audit/stderr.log": {
+      "bytes": 2156,
+      "sha256": "f3bd656d916d8eab1212716974802ebf47066ce6496034f1723e3a43c7885fc8"
+    },
+    "interrupted-audit/stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-synthetic/guard.json": {
+      "bytes": 9091,
+      "sha256": "6d825c7263cc99c7431b1de9c85a33ce41b6e2ba758f0b63bb23ff2e0222b9ea"
+    },
+    "local-synthetic/probe.py": {
+      "bytes": 2921,
+      "sha256": "f8940a6e7830bf064d3afc15928578e2d0af5628f6dd97f0dd894c20e1bda14e"
+    },
+    "local-synthetic/stderr.txt": {
+      "bytes": 2285,
+      "sha256": "7b0b0f4d498dcdf67fb8ae977e363063f36a83802abd1b6e255c53562b595355"
+    },
+    "preflight/LIVE-STATE.md": {
+      "bytes": 21295,
+      "sha256": "3078e5abc147c18b0529b9ed3370049ba48a0dae945caa99789269d95e56ff1a"
+    },
+    "preflight/authorization.json": {
+      "bytes": 713,
+      "sha256": "2a89a3c7f98baa4e6aa97a93fcb571ffa8d118fc0e0424009ddd0ca0e815f2d5"
+    },
+    "preflight/check_runtime.py": {
+      "bytes": 846,
+      "sha256": "e633d1ecf980c7861809e025cd6f80e48f5d4fad17aaf3238bd7b308c16f8c16"
+    },
+    "preflight/check_runtime.sh": {
+      "bytes": 649,
+      "sha256": "46309bfec1dde19b52917027c8f25a35352d29d662f09e43535fd5f1682b721d"
+    },
+    "preflight/live-state-generation.log": {
+      "bytes": 370,
+      "sha256": "395f029cfb7dc209cdcb02ef3d4e81f4e2d7c154e12b9578f0a530826bcc5338"
+    },
+    "preflight/live-state-last-known.json": {
+      "bytes": 7364,
+      "sha256": "17668409815ac3892299ab2e030f3f4f384f1a637203358e6b3b9bde098bf95f"
+    },
+    "preflight/run_source_audit.sh": {
+      "bytes": 941,
+      "sha256": "1c4c0628bdf5f49b71e234d65f76d2c493df6730388b8b5a5addb28dde74a911"
+    },
+    "preflight/runtime-check.log": {
+      "bytes": 1717,
+      "sha256": "8afee67ea900e90c60bff67c75068acf4d12ea75cd71e6dceb24a33f49124922"
+    },
+    "preflight/runtime-guard.jsonl": {
+      "bytes": 8533,
+      "sha256": "2bdf1e521a763a00910e5bcfa3806527309ca8710a3005605b3541221d67f097"
+    },
+    "preflight/runtime-install.log": {
+      "bytes": 11388,
+      "sha256": "77f35f5781f494c3b164b6c0cbd095a2d912edc34f7ed0e23f9ea0488b8a087e"
+    },
+    "preflight/source-guard.jsonl": {
+      "bytes": 8357,
+      "sha256": "b1a2449ddc08a0d5563309d79518a6f65cb342c892d563eb517e8e922fa8c98f"
+    },
+    "preflight/source-launch.log": {
+      "bytes": 92,
+      "sha256": "b12c08f35b71ca68e317fb21b073a37ec1d61df0f21def92aaf6d036c1aa506e"
+    },
+    "remote-artifact-hashes.json": {
+      "bytes": 1037,
+      "sha256": "857fa108a2ff513d94e7a5b008f43d49c9fa265cf9a20bca09e85fa28e8f7c82"
+    },
+    "scheduler.txt": {
+      "bytes": 300,
+      "sha256": "5c45bd46d4db6fd18e43b6fb87617c4fcd019c459eca2c20019ac27c50af15e6"
+    }
+  },
+  "is_runtime_accounting": false,
+  "kind": "interrupted-source-audit-recovery-inventory",
+  "source_attempt_commit": "588328438e096680a2295bebc7cc93ad9fccc3ed",
+  "terminal": "INCOMPLETE"
+}

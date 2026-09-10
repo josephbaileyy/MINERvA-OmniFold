@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any, Callable, Mapping, Protocol
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 import typed_descriptor_source_smoke as source
 import typed_descriptors as typed
@@ -307,6 +308,12 @@ def expected_field(
     return safe.astype(dtype), valid
 
 
+def _require_array_equal(actual: ArrayLike, expected: ArrayLike) -> None:
+    """Require exact shape/value equality without importing NumPy test utilities."""
+    if not np.array_equal(actual, expected):
+        raise AssertionError("Array shape or values differ")
+
+
 def check_mapping(raw: Mapping[str, Any], batch: source.SourceContractBatch) -> None:
     """Require independent values/masks/membership equality for every typed token."""
     members = {
@@ -316,8 +323,8 @@ def check_mapping(raw: Mapping[str, Any], batch: source.SourceContractBatch) -> 
     }
     for family, indices in members.items():
         mapped = batch.descriptors.families[family]
-        np.testing.assert_array_equal(mapped.offsets, [0, len(indices)])
-        np.testing.assert_array_equal(mapped.counts, [len(indices)])
+        _require_array_equal(mapped.offsets, [0, len(indices)])
+        _require_array_equal(mapped.counts, [len(indices)])
         if not mapped.token_mask.all() or not mapped.enabled.all():
             raise AssertionError(f"{family}: structural presence or enablement changed")
         for field in FIELD_TABLE[family]:
@@ -328,7 +335,7 @@ def check_mapping(raw: Mapping[str, Any], batch: source.SourceContractBatch) -> 
                     raise AssertionError(
                         f"{family}.{field}[{raw_index}]: raw storage mismatch"
                     )
-                np.testing.assert_array_equal(mapped.masks[field][mapped_index], masks)
+                _require_array_equal(mapped.masks[field][mapped_index], masks)
 
 
 def identity_normalization() -> typed.FrozenNormalization:
@@ -386,13 +393,16 @@ class ForwardCheck:
             or not np.isfinite(expected).all()
         ):
             raise AssertionError("nonfinite or malformed forward output")
-        np.testing.assert_allclose(actual, expected, rtol=1e-5, atol=1e-6)
+        if actual.shape != expected.shape or not np.allclose(
+            actual, expected, rtol=1e-5, atol=1e-6
+        ):
+            raise AssertionError("NumPy/Keras forward outputs differ")
         for family in FIELD_TABLE:
             inputs[f"{family}_enabled"] = np.zeros_like(inputs[f"{family}_enabled"])
         disabled = self.model(inputs, training=False).numpy()
         if disabled.shape != actual.shape or np.any(disabled[:, 13:] != 0):
             raise AssertionError("C0 must have exactly zero 51 descriptor columns")
-        np.testing.assert_array_equal(disabled[:, :13], batch.detector_event_block)
+        _require_array_equal(disabled[:, :13], batch.detector_event_block)
         disabled_batch = typed.TypedDescriptorBatch(
             provenance=batch.descriptors.provenance,
             families={
@@ -403,7 +413,7 @@ class ForwardCheck:
         disabled_reference = self.reference.forward(
             disabled_batch, batch.detector_event_block
         ).conditioned_detector_event_features
-        np.testing.assert_array_equal(disabled, disabled_reference)
+        _require_array_equal(disabled, disabled_reference)
 
 
 def _display(value: Any) -> Any:
@@ -953,12 +963,10 @@ def run_audit(
                 groups.setdefault((spec.role, spec.playlist, *key), []).append(entry)
                 batch = map_row(raw, spec, entry)
                 check_mapping(raw, batch)
-                np.testing.assert_array_equal(batch.tuple_event_keys, [key])
-                np.testing.assert_array_equal(batch.source_role, [spec.role_code])
-                np.testing.assert_array_equal(
-                    batch.descriptors.provenance.source_entry, [entry]
-                )
-                np.testing.assert_array_equal(
+                _require_array_equal(batch.tuple_event_keys, [key])
+                _require_array_equal(batch.source_role, [spec.role_code])
+                _require_array_equal(batch.descriptors.provenance.source_entry, [entry])
+                _require_array_equal(
                     batch.descriptors.provenance.source_file_ordinal,
                     [spec.shard_file_ordinal],
                 )

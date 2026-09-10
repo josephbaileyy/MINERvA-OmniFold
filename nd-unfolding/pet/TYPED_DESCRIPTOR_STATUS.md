@@ -102,7 +102,7 @@ The 32-row packet does not support photon three-state rates, cross-playlist clai
 
 ## Next bounded task
 
-**Checker and launcher prepared, 2026-09-10; source execution remains unapproved.**
+**Source attempt interrupted, 2026-09-10; runtime repair is preparation only.**
 [SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md](SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md)
 pins the data/MC identities and proposes entries `[0,4096)` from each file,
 with explicit mechanical, semantic and release verdicts. It specifies a
@@ -126,8 +126,14 @@ the complete two-source, 8,192-entry path; no ROOT source has been opened for th
 preparation. The new checker tests and existing typed-descriptor suites pass
 112 tests and 10 subtests on CPU synthetic inputs. Black/Ruff pass for the new Python
 files, and targeted mypy passes for the two new source modules.
-The next decision remains the named, bounded source-audit authorization in the
-protocol's budget table. The existing fixed 16-entry smoke runner is not a launcher
+The separately authorized attempt at `58832843` stopped at data entry 0 when
+NumPy testing utilities requested a child process refused by the import guard.
+The partial artifacts and terminal scheduler state are preserved in
+[SOURCE_AUDIT_INTERRUPTION-20260910.md](SOURCE_AUDIT_INTERRUPTION-20260910.md).
+There is no completed source receipt or accepted mapping verdict. The runtime
+array checks now avoid that testing dependency; synthetic validation does not
+complete or replace the interrupted source attempt. A further source audit needs
+a new grant bound to the repaired code and current preparation digest. The existing fixed 16-entry smoke runner is not a launcher
 for the proposed 4,096-entry audit. Normalization and matched C0/C1 training
 have separate prerequisites, proposed ceilings and authorization boundaries.
 Preparation does not permit ROOT access or scientific training. Do not repeat

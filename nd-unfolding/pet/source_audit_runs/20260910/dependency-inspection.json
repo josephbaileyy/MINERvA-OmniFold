@@ -1,0 +1,8 @@
+[
+  {
+    "excerpt": "def check_support_sve():\n    \"\"\"\n    gh-22982\n    \"\"\"\n    \n    import subprocess\n    cmd = 'lscpu'\n    try:\n        output = subprocess.run(cmd, capture_output=True, text=True)\n        return 'sve' in output.stdout\n    except OSError:\n        return False\n\n\n_SUPPORTS_SVE = check_support_sve()",
+    "excerpt_start_line": 1239,
+    "file": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/testing/_private/utils.py",
+    "sha256": "dc5ad24cc8b439da43383043a27720883433768e4d280e9855f437b8a4524277"
+  }
+]

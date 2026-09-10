@@ -1,5 +1,20 @@
 # N-D OmniFold run log
 
+## 2026-09-10 — bounded PET v2 source audit interrupted
+
+The attempt at `58832843`, authorized by
+`pet/SOURCE_AUDIT_EXECUTION-20260910.md`, stopped at the first data row when the
+import guard refused NumPy testing utilities launching `lscpu`. No complete
+receipt, accounting file or typed shard exists. Allocation `58164405` is
+`COMPLETED`; source step `.2` is `FAILED`, exit `3:0`.
+
+The original partial artifacts, remote hash comparison and scheduler observation
+are bound by `pet/source_audit_runs/20260910/recovery-manifest.json` and explained
+in `pet/SOURCE_AUDIT_INTERRUPTION-20260910.md`. The runtime repair and its tests
+are local software preparation; there was no additional ROOT read, allocation,
+normalization or training. Further source execution requires a newly bound grant.
+
+
 The complete pre-compaction chronology is frozen at
 `evidence/prepublication-2026-08-20-0b329e8a` under this exact path:
 

@@ -24,6 +24,15 @@ from test_typed_descriptor_source_smoke import _raw_entry  # noqa: E402
 REPO_ROOT = PET_ROOT.parents[1]
 
 
+class RuntimeNumpy:
+    """Reject testing utilities in the audit without modifying NumPy itself."""
+
+    def __getattr__(self, name: str) -> Any:
+        if name == "testing":
+            raise AssertionError("Runtime audit must not import numpy.testing")
+        return getattr(np, name)
+
+
 def metadata(spec: source.FixedSourceSpec) -> dict:
     """Provide synthetic numeric declarations, not measured ROOT metadata."""
     return {
@@ -300,6 +309,7 @@ def test_output_limit_does_not_write_or_truncate_raw(tmp_path: Path) -> None:
     assert not list((tmp_path / "out").iterdir())
 
 
+@mock.patch.object(audit, "np", RuntimeNumpy())
 def test_exact_two_sources_and_full_range_with_fake_readers(tmp_path: Path) -> None:
     calls = []
     receipt, readers = run_fake(
@@ -331,6 +341,7 @@ def test_exact_two_sources_and_full_range_with_fake_readers(tmp_path: Path) -> N
     )
 
 
+@mock.patch.object(audit, "np", RuntimeNumpy())
 def test_real_forward_with_identity_statistics_only() -> None:
     pytest.importorskip("tensorflow")
     raw = _raw_entry(1)
