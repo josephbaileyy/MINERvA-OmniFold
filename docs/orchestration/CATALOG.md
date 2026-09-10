@@ -384,6 +384,43 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   Proposing the closing requirement would spend this lane's verdict on `A-7`; §J.2 declined once
   already. **§K.4: reviewer `F3`'s 500-trial split is NOT re-run or verified** — §4.3/`s_proj`/`δ_proj`
   are routed away, so the convergence is accepted on the strength of the `F6` half only.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partL.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partL.md)
+  - **PART L — the coverage items: §2's rows A-1/A-2, §5, and §7's residues**, at `05bf8647` against
+  `F1`-`F21` and §F.5's block conditions. No grade assigned.
+  ⚠ **A-1's "§3.3's FIFTEEN reject conditions" is NINETEEN.** Enumerated at `6f24fb00`, §3.3
+  (`:1242-1295`) carries `1`-`15` **plus `4b`, `4c`, `11b`, `11c`**. **And the omission is
+  load-bearing: `4c` is the condition this packet's own §3 depends on** — §3.1(e) cites
+  `reject_conditions=('4c',)` by name and Part I's probe reproduced it, so §3.3's *"costs nothing
+  today"* is true **because `4c` bites**. `11b`/`11c` are labelled REV. 16 additions, so "fifteen"
+  reads as a pre-rev-16 count quoted after the work that changed it — the expected-count shape, third
+  instance this campaign, one of them mine (`B8`). A-1's CLASS (FIXED by spec) is right; the count and
+  therefore the set are not.
+  ⚠ **A-2's stated ground supports ONE declaration and the row requires FOUR.** "Four" is correct
+  ((v) is A-6's) and I do not manufacture a count error. But against an endpoint that performs no
+  inversion: **(i)** has no inverse to declare and **(ii)** no `ndf` — **unsatisfiable** except as
+  "not applicable"; **(iii)** a rank-truncation scan is a NEW MEASUREMENT on a 10,694-bin object,
+  which `F20` forbids requiring; **(iv)** transfers cleanly and is the only one A-2's own sentence
+  argues for. **This hits §F.5's pre-registered `F18` condition** — inversion-grade criteria on an
+  endpoint releasing no significance, the condition I said I expected to have to defend.
+  **§5: the disposition is right and the characterization inverts the note's own scoping.** The three
+  code facts verify, but clause (ii) does not reach 2D — `:645` scopes it to *"an N-D covariance"* /
+  *"Any N-D χ²"*, `:628-634` **affirmatively justifies** the 2D choice (*"tested and holds… the scan
+  is the evidence; 205 is not assumed"*), `:636` says *"it does not transfer to the N-D covariances."*
+  **"LIVE" also unestablished:** `RANK-AND-INVERSION-20260810.md:56` verdicts the ours-only `252` as
+  *"safe — it is the illustration, not a result"* and as a **pseudo-inverse**, where this script's
+  branch is the **direct** inverse (`:126`). **Qualification 1 is unverified**: the inverted object is
+  `Cu + Cb` (`:117`,`:120`), which the note puts at rank `140→201` (`:693-696`), and
+  `np.linalg.inv` does **not** raise on a near-singular matrix, so `:127-133` does not cover it.
+  **Qualification 2 (*"out of scope is not conformance"*) is correct and well-made** — exactly `F17`.
+  Net: do-not-change survives because the file is a **diagnostic outside the released set**, which
+  overstates neither the defect nor the protection.
+  **§7 is an unusually good residue list** — residue 8 states the withdrawal-checker hole at severity
+  with a handoff and names its own detector; residue 11 re-pins a population **by set difference, not
+  by count**. **Two absences: `F2` is unmet AND unrecorded** (no released projection names its builder
+  and commit, with four non-equivalent builders and a `main` finding that they diverge on refusal) —
+  culpable; and the block-population assumption §I.2 falsified is unrecorded — **expected, not
+  culpable**, since a residue list cannot name an unnoticed assumption, but flagged so its absence is
+  not read as clearance.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
