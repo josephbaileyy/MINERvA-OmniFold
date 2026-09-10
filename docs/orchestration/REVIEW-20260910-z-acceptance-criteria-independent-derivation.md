@@ -883,3 +883,230 @@ Part A in full, including `A30`'s withdrawal in §B.7. `B1`–`B7` and `B9` as f
 `PROPOSAL-20260908`. The `BEN-381` self-recusal in §B.8, which now covers **both** documents: if
 `B3`/`B6`/the item-1 reframing are taken up in `RECOMMENDATION-20260910-…`, this lane is disqualified
 from grading `(cause 3, Z)`'s `M(ii)` there too. Nothing here adopts, grades, authorizes or merges.
+
+---
+---
+
+# PART D: the assessment of the criteria designer's RECOMMENDATION
+
+**Subject:** `docs/orchestration/RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md`, 885
+lines, sha256 `622a9dcd332d99d6d671c697b3a34003bd20080fe241d0b8147ab5349de3175f`, with
+`docs/orchestration/state/probe-z-criteria-acceptance-mathematics-20260910.py`, 341 lines, sha256
+`e54aa83de40e183d79b33d7b007e72355992ce971eabd12f8b3f5d1ee2cdf9de` — both measured by this lane at
+commit **`2ebdf095`** on `origin/lane/z-criteria-recommendation-20260910`, verified an ancestor of
+that ref. Assessed against Part A's `A1`–`A31`.
+
+**CITABLE FOR:** the verdict in §D.0; findings `D1`–`D5`; and the falsification result in §D.2, which
+is reproducible by
+`python3 docs/orchestration/state/probe-z-rho-bound-pinv-subspace-20260910.py`, committed beside this
+document.
+**NOT CITABLE FOR:** adopting or rejecting any criterion, boundary, designation or threshold; any
+grade, cell, count or gate movement; any authorization. `RZ(iv)` still withholds everything.
+
+## D.0 VERDICT — split, because the defect is one clause and the rest is decision-ready
+
+**READY FOR JOSEPH'S DECISION**, on: §2.1 and §2.2's mathematics; §5.3's inversion; `B.1(iii)`'s
+resolution of `cause3_agg`/`cause3_med` as exact display-invariance tests; `B.1(ii)`'s **withholding**
+of `cause3_corr` together with its stated consequence that `(cause 3, Z)` reads `UNRESOLVED` on one
+binding leg; `D.1(a)`–`(c)`'s three preconditions; the §0.0 supersession and its classification
+change; and §7's measurement list.
+
+**BLOCK**, narrowly, on: **`B.1(i)`'s and `D.2`'s leg-1 terminal-outcome rule**, pending one
+correction. The `INCONCLUSIVE` branch is stated on the retained **rank**; the quantity that governs
+is the retained **subspace**, as `D.1(c)` of the same document argues. I demonstrate below a member
+with `rho = 0.500`, **identical retained rank**, on which the bound is violated and the guard stays
+silent. **The fix is one clause and is derivable from the document's own §2.2.**
+
+**BLOCK here is not a judgement on the approach.** This artifact is a large advance on its
+predecessor and it answers Part B on the merits. Measured against my own yardstick, written before I
+saw either document:
+
+| Part A requirement | this artifact |
+|---|---|
+| `A25` — a diagonal bound is not a bound on `r' C^{-1} r`; either bound the quoted functional or state that passing licenses no significance | **met by the strongest available route**: §2.1 supplies a **two-sided bound on the consumed quadratic form itself**, for every `d`. I checked the proof analytically and it is correct |
+| `A26` — the statistic must be evaluated through the map the publication uses, and there are four | **met, and improved**: §2.2 proves `rho` non-increasing under projection, so a trunk-level `rho` bounds every marginal at once. `D.1(a)` enumerates four sites, independently measured |
+| `A18` — statistic, denominator, precision target and boundary approved **together** | **met explicitly**, cited to §6.6, with the packet *"re-put whole rather than amended"* |
+| `A15` / `B3` — three outcome classes, and the vacuity positive control | **met**: `B.1(i)` case (c) carries `INCONCLUSIVE / VACUOUS SEED VARIATION` by its ruled name at `PREDECLARE-20260901-cause3-mii:230`, and names it *"the POSITIVE CONTROL … the `g ≡ 1` shape"* |
+| `A21` — a construction that FAILS it, exhibited; bidirectional; call the existing instrument | **met**: three controls including an **opposite-direction** one and one that must report `INCONCLUSIVE` rather than pass; re-runnable |
+| `A8` — `UNRESOLVED` must not collapse to the nearer of PASS/FAIL | **met**: *"must not be read as the nearer of the other two"*, three distinct cases |
+| `A12` — no smallness requirement where a ruling removed it | **met**: legs are sensitivity, not magnitude, statistics; §0 lists §6.1–§6.5 as fixed and reopens none |
+| `A24` — a numerical tolerance is not a materiality threshold | **met**: §5.2 keeps the printed-precision route closed, and `B.1(iii)` carries **no tolerance by construction** |
+| `A29` — zero-variance projected cells excluded | **partially met** — see `D3` |
+| `A11` / `A30` — specifiable ≠ executable, priced | **met**: §7 marks items 7–8 as needing compute and requests none; the withdrawn affordability figure is not carried |
+| `A5` — `M` measured on Z's own inputs | **met**: `C_Z^(0)` is *"Z's own as-built `k = 0` member, per `D1b`"* |
+
+**Two things it does that are better than compliance.** It withholds `cause3_corr` and then states
+against its own interest that *"`(cause 3, Z)` has one binding leg, not two, and the cell should read
+`UNRESOLVED` on that ground rather than MET."* And it prices its own remedy before recommending it —
+supersession rather than folding, because rewriting the predecessor *"would leave that assessment
+pointing at a revision that no longer exists — destroying the evidence rather than answering it."*
+I verified that claim: the predecessor's bytes at `2ebdf095` hash to
+`3fc9fb87…`, **identical** to what Part B assessed, and `MANIFEST-overrides.tsv` moves it to
+`ARCHIVAL`/`superseded` with `canonical_successor` set — not `DEAD`.
+
+## D.1 The two proofs are correct — checked analytically, not just re-run
+
+**§2.1.** With `C_k = C_0^{1/2}(I+E)C_0^{1/2}`, `E = C_0^{-1/2}(C_k-C_0)C_0^{-1/2}` symmetric and
+`‖E‖_2 = rho`, we get `chi2_k = u'(I+E)^{-1}u` for `u = C_0^{-1/2}d`, and `chi2_0 = u'u`. The spectrum
+of `I+E` lies in `[1-rho, 1+rho]`, so that of `(I+E)^{-1}` lies in `[1/(1+rho), 1/(1-rho)]`, giving the
+stated interval; equality holds when `u` aligns with `E`'s extreme eigenvector, so **sharp** is
+correct, and `rho < 1` is exactly what keeps `I+E ≻ 0`. **Correct.**
+
+**§2.2.** With `B = M C_0^{1/2}`: `M C_0 M' = BB'`, `M(C_k-C_0)M' = BEB'`, and for
+`P = B'(BB')^{-1/2}` we have `P'P = (BB')^{-1/2}BB'(BB')^{-1/2} = I`, so `P` has orthonormal columns
+and `rho_proj = ‖P'EP‖_2 <= ‖E‖_2`. **Correct.**
+
+I re-ran the probe as documented, from the repo root of a worktree at `2ebdf095`: **`rc = 0`, all six
+sections**, and sections 1, 1b and 2 reproduce the document's tabulated numbers exactly.
+
+**My one attack that the document had already closed, recorded because a reviewer's failed attacks
+are evidence too.** I expected the bound to fail on structurally singular projected support — the
+kinematically unreachable `(E_avail,W)` cells of §A.4.4. `B.1(i)` case **(b)** already covers it:
+*"`C_Z^(0)` not positive definite on the compared support, so the metric does not exist"* →
+`INCONCLUSIVE`. That attack fails, and `D3` below is only what remains of it.
+
+## D.2 `D1` — BLOCKING: the bound is proven for the exact inverse, and the guard for the pinv gap is stated on the wrong quantity
+
+**The gap.** §2.1 bounds `d' C^{-1} d`. The consumer computes `d' pinv(C_y) d`
+(`eavail_generator_significance.py:107,132`), and the recommendation's own `_chi2` (probe `:81`) uses
+`pinv` as well — correctly, since that is the consumed form. But `pinv` **discards** modes below
+`rcond * sigma_max`, and when two members retain **different subspaces** the two quadratic forms are
+taken over different spaces, so the interval does not transfer.
+
+`D.2` and `B.1(i)` gate `INCONCLUSIVE` on *"the **retained rank** moved between members."*
+**`D.1(c)` of the same document already establishes that rank is not the governing quantity:**
+*"pinning `rcond` does **not** pin the retained subspace, because an eigenvalue crossing a *fixed*
+threshold changes it anyway."* The analysis is right and the branch is stated on the proxy.
+
+**Demonstrated, not argued.** `state/probe-z-rho-bound-pinv-subspace-20260910.py`, committed beside
+this review; `rho` and `chi2` are copied **verbatim** from the subject probe's `:65` and `:81`:
+
+| | |
+|---|---|
+| `rho(C_0, C_k)` | **`0.500000`** — well inside any `rho_crit` at large `ndf` |
+| retained rank, baseline / member | **`9 / 9` — IDENTICAL**, so `D.2`'s branch does not fire |
+| retained subspace | mode 3 in the baseline, mode 7 in the member — **changed** |
+| **control**, exact inverse | `chi2_0 = 8.333e+14`, `chi2_k = 1.250e+15`, bound `[5.556e+14, 1.667e+15]` → **holds. The theorem is confirmed, not attacked** |
+| **the consumed form**, `pinv` | `chi2_0 = 8.333e+14`, **`chi2_k = 0.000e+00`**, bound `[5.556e+14, 1.667e+15]` → **VIOLATED** |
+
+Two near-cutoff modes swap sides of the cutoff, so the rank is preserved while the subspace is not,
+and `d`'s weight sits on the mode that drops out. **`chi2` collapses to exactly zero**, so `p` rises
+and `Nsigma` falls: a *"stays ABOVE `T`"* claim is broken while `rho` reports `0.500`. This is an
+`A21` failure — a green state reachable without the property holding — in the leg that carries the
+whole use-facing bound.
+
+**Why §2.1's own numerical check did not find it.** Its ensemble is well-conditioned, so no eigenvalue
+sits near the cutoff and the retained subspace never changes. The bound held over `120,000`
+evaluations **because the ensemble does not reach the regime that breaks it** — which is the same
+domain-selection shape `FINDING-20260910`'s amendment 2 identified in `SPEC` §6 item 1, arriving one
+layer down in a probe written after that amendment. And the omitted regime is the one the consumer
+documents itself as operating in: *"a highly-correlated systematic covariance (flux is a coherent
+normalization) can be near-singular"* (`:98-101`).
+
+**The limit of this finding, stated so it is not over-read.** The construction is **synthetic**, at
+condition number `~1e15`, and it needs **two** modes swapping to hold rank fixed — with one mode
+crossing, the rank changes and `D.2` fires correctly. **Whether real Z members exhibit a same-rank
+subspace swap is UNMEASURED and I do not claim it.** What is established is that the guard as
+specified does not exclude it. The regime is not exotic here: the `(E_avail,W)` projector produces
+**exactly zero** rows for unreachable cells (`eavailW_covariance.py:425-434`), which is condition
+number infinity, and `D.1(a)` recommends designating the builder that *refuses* such cases partly on
+this ground.
+
+**Recommended correction — and it is derivable from the document's own §2.2, which is why this is one
+clause and not a redesign.** Gate the `INCONCLUSIVE` branch on **retained-subspace identity** rather
+than on rank: compare the orthogonal projectors onto the retained subspaces and report `INCONCLUSIVE`
+when they differ. Once subspace identity is required, the restriction to that common subspace is a
+map with **orthonormal columns**, so §2.2 makes the full-space `rho` a valid bound on the restricted
+quadratic form — the composition closes using the paper's own theorem. **The drafting is the
+designer's; I am naming the requirement, not writing the criterion.**
+
+**Tested in both directions**, because a one-directional check waves the other through:
+
+| case (both at `rho = 0.500000` exactly, so only the subspace varies) | bound holds under `pinv` | subspace guard fires | verdict |
+|---|---|---|---|
+| subspace swaps at fixed rank | **False** | **True** | **CAUGHT** |
+| both near-cutoff modes retained | True | False | **correctly silent** |
+
+## D.3 `D2` — worth fixing: the PD check is on the trunk, the inverted object is the projection
+
+`B.1(i)` case (b) tests positive-definiteness of **`C_Z^(0)`**, the 5D trunk. §2.2's hypothesis is
+*"any linear map `M` with `M C_0 M'` **nonsingular**"*. The object the consumer inverts is the
+**projected** covariance, and for the `(E_avail,W)` map `M C_0 M'` is **structurally singular**
+whenever a cell is kinematically unreachable — which that projector deliberately permits and prints.
+A trunk that is PD therefore does not entail a projected baseline that is, so `D.2`'s `MET` branch,
+quantified over *"every declared pair"*, can range over a pair whose projected baseline has no metric.
+
+Narrow, and the fix is a clause: extend case (b) to the **projected** baseline per declared pair, and
+state that the compared support is the projection restricted to its non-degenerate rows — after which
+§2.2 applies and `A29`'s exclusion list is the same object. §2.2's *"the BOUND is `M`-independent"* is
+then exact rather than approximately right, and it should carry the nonsingularity hypothesis where it
+is quoted, since that sentence is the one most likely to be lifted on its own.
+
+## D.4 `D3` — the `ndf` direction: `D.1(b)` and my `B7` are both right, about different comparisons
+
+`D.1(b)` recommends `ndf` = retained rank and says *"I do **not** claim a direction for the resulting
+change in `z`: dropping modes reduces `chi2` and reduces `ndf`, and the two move `z` oppositely."*
+Part B `B7` said today's procedure is *"conservative"*. **These are not in conflict, and naming both
+sides with each population — my own `A19` — resolves it:**
+
+| comparison | `chi2` | `ndf` | effect on `z` |
+|---|---|---|---|
+| **`P_now`** (χ² on `r` retained modes, `ndf = n`) vs **`P_fix`** (same χ², `ndf = r`) | identical | `n > r` | **determinate**: `P_now` gives larger `p`, so **smaller `z`** |
+| **`P_full`** (all `n` modes, were `C` nonsingular) vs **`P_fix`** | falls | falls | **indeterminate** — `D.1(b)`'s statement, and correct |
+
+`D.1(b)` is right about `P_full` vs `P_fix`; `B7` was right about `P_now` vs `P_fix`. **The
+practically important one is the determinate comparison, and neither document states it: adopting
+`ndf` = retained rank will INCREASE reported significances relative to today's procedure.** That is
+the distributionally correct change and it is also an **anti-conservative** one, so it should be put
+to Joseph as a change with a known direction rather than as a neutral correction. `A24` still applies
+— the current `ndf` may not be defended on the ground that its error is in the safe direction.
+
+## D.5 `D4`, `D5` — one concession, and one error of my own caught before it was asserted
+
+**`D4` — `D.1(a)` sharpens my `B6` and I concede the refinement.** It measures four construction
+sites, matching mine, and adds the discipline I did not state: `p4_lib.py:1484` is
+`build_projection_M`'s **own independent reconstruction** — *"a **control**, and counting it as a
+rival would be a category error"* — and `state/probe-projection-identity-leg-20260816.py:71` is a
+probe's own. I had not counted either, so there is no disagreement, but **"a control is not a rival
+implementation" is a real addition to the enumeration discipline** and it is the designer's. Its
+treatment of site 4 is exactly `A20`: *"a designation must exclude it deliberately, **by name**, rather
+than by nobody happening to call it — an exclusion that holds by luck is not an exclusion."*
+
+**`D5` — my own error, caught before assertion, recorded because the first two in this review were
+not.** I extracted the subject probe to a scratchpad and ran it there; section 3 died on
+`ModuleNotFoundError: No module named 'uq_math'` with `rc = 1`. I was one step from reporting that as
+a re-runnability defect. **It is not.** The probe appends `nd-unfolding` to `sys.path` at `:42-44`,
+with the comment *"Appended, NOT inserted at position 0: an entry at `sys.path[0]` shadows whatever
+the caller's…"* — the `OI-136` lesson applied correctly — and resolves `_ND` relative to **its own
+file location**, which my copy had moved. Run as documented from the repo root at `2ebdf095`: `rc = 0`,
+six sections. **The defect was my invocation, and a probe that resolves paths from its own location is
+behaving better than one that trusts the cwd.**
+
+## D.6 Two citation corrections, one of them to my own record
+
+**`rev. 5` is not a label `PROPOSAL-20260908` carries.** Measured here, case-insensitively: **zero**
+occurrences of `rev. 5`; its highest self-declared label is `REV. 4`. The string exists only in commit
+`610d0882`'s subject line. **Parts B and C of this review cite it as "rev. 5" and that is wrong** — I
+took a revision label from a commit message and attached it to the document. The citation that holds
+is the sha `3fc9fb87…`, which Parts A–C also carry. **This is the same family as §C.1's misroute**: a
+label that lives outside the artifact, used as though the artifact carried it. The designer caught it;
+it is corrected here rather than in place, since Parts B and C are the assessed record.
+
+**`sec_3d.tex`: the precise citation is `:225-226`, not `:223-226`.** Measured line by line: the
+withholding sentence — *"Consequently no 3D generator `$\chi^{2}$`, `$p$`-value or significance is
+quoted here."* — begins mid-`:225` and ends mid-`:226`; `:223-224` carry the preceding clause about
+the superseded covariance. **The loose four-line range is mine**, from Part A §A.3.1 and §A.6, not the
+coordinator's — I corrected its `:181-183` and overshot. The designer's `:225-226` is right and Part A
+should be read as amended.
+
+## D.7 What this lane did not do, and the recusal restated
+
+No criterion drafted, no boundary proposed, no threshold chosen, no `M` designated, no leg or cell
+graded, nothing merged, no compute. The falsification probe is a **review instrument**: it tests the
+subject's own claim in the subject's own arithmetic and proposes no criterion.
+
+**`BEN-381`, now on firmer ground and against my own interest.** `D1`'s recommended correction —
+gating on retained-subspace identity, with §2.2 supplying the composition — is **design input**, and
+more so than anything in Part B. **This lane must not grade `(cause 3, Z)`'s `M(ii)` or the
+significance leg**, on either document. §B.8 and §C.5 recorded that prospectively; `D1` is the act
+that makes it binding.
