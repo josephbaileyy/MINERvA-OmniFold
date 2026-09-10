@@ -175,3 +175,4 @@ docs/orchestration/state/live-state.schema.json	LIVE	open	""
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
 docs/orchestration/FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md	LIVE	open	
 docs/orchestration/state/probe-z-criteria-acceptance-mathematics-20260910.py	MACHINE	open	
+docs/orchestration/state/check-withdrawal-completeness-20260910.py	MACHINE	open	

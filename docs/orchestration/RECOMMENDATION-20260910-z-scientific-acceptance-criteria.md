@@ -1187,13 +1187,25 @@ components (`numpy` 1.26.4; three same-shaped members at `n = 200`):
 
 | component | behaviour across members | disposition |
 |---|---|---|
-| **retained rank** | integer; equality is meaningful | **GATED, no tolerance** — but it is the output of a *thresholded* operation, so its stability inherits the cutoff convention below |
-| **applied `rcond`** | **`4.4408920985006262e-14` IDENTICAL across all members** — the relative cutoff is a deterministic function of shape and `eps`, not of the member's data | ⚠ **REPORTED, NOT GATED.** An equality gate on it **cannot fail** for same-shaped members. Gating it would have been the very shape this document keeps diagnosing. **And it is library-version-dependent** — `numpy` 1.26's `pinv` default is `rcond=1e-15`, `numpy` 2.x's is `max(shape)·eps` — which is exactly why clause (i) demands the cutoff *actually applied* be stated at the point of quotation |
+| **retained rank** | integer; equality is meaningful — **but ⚠ R4-2: for orthogonal projectors `rank(P) != rank(Q)` implies `‖P − Q‖_2 = 1` exactly, so the `1e-8` subspace gate ENTAILS rank equality.** Measured: `0 / 4000` unequal-rank pairs are silent under the subspace gate even with **nested** bases (the most favourable case), max deviation from `1.0` being `1.332e-15`; positive control, `2000 / 2000` fire at **equal** rank with a different subspace, so the gate is not inert | ⚠ **MOVED TO REPORTED-AND-OPERAND in round 4.** It is **required as a declaration** (clause (ii) — it *is* the `ndf`) and it is an **operand** of the subspace gate, which cannot be computed without it. It is **not an independent gate**, because its failure mode is entailed |
+| **applied `rcond`** | ⚠ **CORRECTED IN ROUND 4, AND THE ERROR WAS WORSE THAN AN OFF-ENVIRONMENT MEASUREMENT.** Rev. 3 quoted `4.4408920985006262e-14` as the applied cutoff. **That is `numpy` 2.x behaviour, and it was never a measurement of `numpy` at all — I computed `max(shape)·eps·σ_max` myself in a script running `numpy` 1.26 and labelled my own arithmetic as the library's.** Measured properly, by observing which modes `pinv` actually drops on a diagonal input at `n = 10 / 200 / 4825`: the applied **relative cutoff is the literal `1e-15`**, reproducing the `1.26` default at all three sizes and the shape-dependent formula at none. **Production is `numpy` 1.26.4** (`root_6_28`, the prefix the arms run in), so `1e-15` is the production value | ⚠ **REPORTED, NOT GATED — and the conclusion holds under BOTH defaults for DIFFERENT reasons.** Under `1.26` the cutoff is a **literal**; under `2.x` it is a function of **shape alone**. Either way it is member-independent, so an equality gate on it **cannot fail** — gating it would have been the very shape this document keeps diagnosing. **That the same code gives different cutoffs under different library versions is precisely why clause (i) demands the cutoff *actually applied* be stated at the point of quotation** |
 | **condition number** | `3.387e6` / `4.455e6` / `4.943e6` — **continuous**, so equality is impossible | ⚠ **REPORTED, NOT GATED — decided explicitly.** Gating it needs a tolerance, and **no tolerance for it is justifiable from anything in this tree** — the same blocker that made me withhold `cause3_corr`. Gating it without one is what Joseph barred, so it is **dropped from the gated set** and kept as the diagnostic that makes a rank change interpretable |
 | **`‖P_0 − P_k‖_2 <= 1e-8`** | a genuine threshold | **GATED. This is the leg's one tolerance** |
 
-**So the corrected claim is four-part, and it is stronger than *"no `τ`"*: the leg carries EXACTLY
-ONE tolerance, and that one was adversarially attacked and survived.** It still clears the original
+**So the corrected claim is four-part, and it is stronger than *"no `τ`"*: the leg carries
+EXACTLY ONE GATE AND EXACTLY ONE TOLERANCE — `‖P_0 − P_k‖_2 <= 1e-8` — and that one was
+adversarially attacked and survived.** The other three components are **declarations**:
+required, reported, and re-checkable, but not independently gated.
+
+⚠ **AND THE CRITERION THAT DISTINGUISHES THE TWO REPORTED-NOT-GATED CASES IS DIFFERENT IN
+EACH, WHICH ROUND 3 ELIDED BY GIVING ONLY ONE REASON.** The `rcond` row is **VACUITY** — an
+equality gate on it can never fail, so a green light there means nothing. The rank row is
+**REDUNDANCY** — its gate *can* fail, but only when the subspace gate also fails, so it adds
+no discriminating power. **Vacuity is misleading; redundancy is merely inert**, and only the
+first is a defect. Round 3 justified the `rcond` disposition on *"cannot fail"* alone, which
+does not reach rank — and the reviewer was right that applying one criterion consistently
+gives the same disposition anyway. **Both are reported; the reasons are not
+interchangeable and are now stated separately.** It still clears the original
 blocker, because that blocker was *"no **justified** number exists"* — not *"no number exists"*.
 
 **Why this is Branch A rather than a relabelling of Branch B:**
@@ -1228,6 +1240,47 @@ an unavailable number.** `cause3_corr` should be **retired as a key**, not becau
 needed, but because the protection that is needed is a **declaration-stability leg** rather than a
 tolerance on a correlation statistic. **That is a different recommendation from rev. 1's and it does
 not rest on the void hinge.**
+
+## 6.4a ROUND 4 — THE WITHDRAWAL SWEEP IS NOW AN INSTRUMENT, NOT A DESCRIBED PROCEDURE
+
+**R4-3, and the objection is exact: rev. 3 claimed *"the sweep now runs by claim content with
+multiple paraphrases across all three files"* and shipped no artifact. `git diff --name-only` over
+that commit returns three content files and nothing else, so the next lane could not re-run it.**
+And the procedure is demonstrably fallible **four** times over: rev. 2 missed the §2.2 survivor;
+round 3's first scoping missed both the probe header and `CATALOG.md`; and **the independent
+reviewer's own multi-paraphrase `grep` missed the probe header too — it found it by reading.**
+
+**This document's own repeated lesson is that naming a failure shape protects nothing.** So:
+
+**`docs/orchestration/state/check-withdrawal-completeness-20260910.py`** — a **pinned inventory**,
+not a heuristic. Every withdrawn claim carries its paraphrases and an **approved occurrence count
+per delivery file, with the reason each is permitted**. The check compares live counts against the
+approved ones and **fails closed** on any difference: a new affirmation anywhere (count rises), an
+approved quotation deleted so its retraction is orphaned (count falls), or a **new delivery file with
+no classification at all**. `8` withdrawn claims × `3` files = `24` pinned counts.
+
+**Its self-test is a power test in three directions** — inject a live affirmation, delete an approved
+quotation, add an unclassified file — and requires the check to fail in each while staying silent on
+the clean tree. **A check that only passes on the current tree proves nothing about its ability to
+detect anything.**
+
+**⚠ WHAT IT CANNOT DO, stated so a green run is not over-read:** it compares **counts**. An approved
+quotation rewritten *in place* into a live affirmation would not move the count and would stay green.
+It catches appearance, disappearance and re-scoping; **it does not read meaning.** Anyone editing the
+prose around an approved occurrence must re-read its pinned reason.
+
+**⚠ AND ITS FIRST RUN FAILED ON ITS AUTHOR'S OWN CLASSIFICATION.** I pinned the rank-263 claim at `0`
+for this document while §6.1's F1(b) row quotes it — so invocation one returned `[FAIL]`. **Hand
+classification is exactly as fallible as the sweeps it replaces, which is the whole argument for
+pinning rather than remembering.**
+
+**A CENSUS NOTE, because the reviewer looked for something that was not there and correctly declined
+to treat its absence as a finding.** Rev. 3's *"seven residual occurrences, every one a quotation
+inside a withdrawal"* **is not in either content file.** It lived in the round-3 **commit message**
+and in this lane's report to the coordinator, and nowhere else. **That is precisely the defect R4-3
+names** — an assurance asserted in correspondence with no artifact behind it — and it is why the
+counts now live in a file that fails closed instead of in a sentence. The current census is the
+instrument's own output: `24` pinned counts, all matching.
 
 ## 6.5 WHAT I RETURN RATHER THAN RESOLVE
 

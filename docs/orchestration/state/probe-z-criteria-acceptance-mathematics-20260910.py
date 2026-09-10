@@ -813,25 +813,84 @@ def section_11_rank_moves_at_small_rho(n: int = 6) -> None:
     assert r < 0.2, "rho is not small here, so this does not show what it claims"
     print("    => leg 1 passing does NOT imply rank stability. No witness and no regime needed.")
 
-    # R3-2: are the four declarations gateable by equality?
-    print("    R3-2, the four declarations across three same-shaped members (n = 200):")
+    # R3-2 / R4-1: are the four declarations gateable by equality?
+    #
+    # ⚠ ROUND 4 CORRECTS HOW THIS WAS MEASURED. Round 3 printed `m * eps` as "the applied relative
+    # cutoff". That is numpy 2.x's default FORMULA, computed by this lane under numpy 1.26 -- i.e.
+    # my own arithmetic reported as the library's behaviour, which is the same family of error as
+    # the rank-263 transfer. It is now MEASURED, by observing which modes pinv actually drops.
+    print("    R4-1, the applied pinv cutoff, MEASURED rather than computed:")
+    print(f"       this interpreter: numpy {np.__version__}")
+
+    def _kept(x, n):
+        """Diagonal input: eigenvectors are e_i, so no degeneracy ambiguity, and pinv zeroes a
+        dropped mode EXACTLY. P[-1,-1] != 0 iff the smallest mode survived."""
+        d = np.ones(n)
+        d[-1] = x
+        return bool(np.linalg.pinv(np.diag(d))[-1, -1] != 0.0)
+
+    literal = 1e-15                          # numpy 1.26 pinv default rcond
+    for m in (10, 200):
+        shape_dep = m * eps                  # numpy 2.x default: max(shape) * eps
+        xs = sorted({literal * 2, literal / 2, shape_dep * 2, shape_dep / 2})
+        obs = {x: _kept(x, m) for x in xs}
+        rep_lit = all(obs[x] == (x > literal) for x in xs)
+        rep_shp = all(obs[x] == (x > shape_dep) for x in xs)
+        print(f"       n={m:4d}: reproduces the 1e-15 LITERAL: {rep_lit}   "
+              f"reproduces max(shape)*eps = {shape_dep:.3e}: {rep_shp}")
+        assert rep_lit != rep_shp, "the two conventions are indistinguishable at this n"
+    print("       => on this interpreter the applied relative cutoff is the LITERAL 1e-15.")
+    print("       PRODUCTION is numpy 1.26.4 (root_6_28, the prefix the arms run in), so 1e-15 is")
+    print("       the production value. numpy 2.x would apply max(shape)*eps instead.")
+    print("       ⚠ THE CONCLUSION HOLDS UNDER BOTH, FOR DIFFERENT REASONS: 1.26's cutoff is a")
+    print("       LITERAL; 2.x's depends on SHAPE ALONE. Either way it is member-independent, so an")
+    print("       equality gate on it CANNOT FAIL. And that the same code gives different cutoffs")
+    print("       under different versions is why clause (i) demands the cutoff ACTUALLY APPLIED.")
+
     m = 200
-    cutoffs, conds = set(), []
+    conds = []
     for _ in range(3):
         Qm, _ = np.linalg.qr(rng.normal(size=(m, m)))
         ev = np.concatenate([rng.uniform(1, 5, 150), rng.uniform(1e-6, 1e-5, 50)])
-        C = Qm @ np.diag(ev) @ Qm.T
-        s = np.linalg.svd(C, compute_uv=False)
-        cutoffs.add(m * eps)                       # relative cutoff: shape and eps only
+        s = np.linalg.svd(Qm @ np.diag(ev) @ Qm.T, compute_uv=False)
         conds.append(float(s.max() / s.min()))
-    print(f"       applied relative cutoff: {cutoffs}  -> "
-          f"{'IDENTICAL, so an equality gate CANNOT FAIL' if len(cutoffs) == 1 else 'varies'}")
-    print(f"       condition numbers: {['%.3e' % c for c in conds]}  -> continuous, equality "
-          f"impossible, gating needs a tolerance")
-    assert len(cutoffs) == 1, "the cutoff is member-dependent; R3-2's finding would not hold"
+    print(f"       condition numbers across members: {['%.3e' % c for c in conds]} -> continuous,")
+    print("       equality impossible, gating needs a tolerance nobody has stated")
     assert len(set(conds)) == 3, "condition numbers coincided; the continuity point is not shown"
-    print("       ⚠ library-version-dependent: numpy 1.26 pinv defaults rcond=1e-15, numpy 2.x")
-    print("         max(shape)*eps -- which is why clause (i) demands the cutoff ACTUALLY APPLIED")
+
+    # ---- R4-2: rank(P) != rank(Q) => ||P-Q||_2 == 1, so the subspace gate ENTAILS rank equality.
+    worst_dev, silent, tot = 0.0, 0, 0
+    for _ in range(4000):
+        k = int(rng.integers(3, 10))
+        r1 = int(rng.integers(1, k))
+        r2 = r1
+        while r2 == r1:
+            r2 = int(rng.integers(1, k))
+        Qb, _ = np.linalg.qr(rng.normal(size=(k, k)))
+        # NESTED bases: the most favourable case for the gate to stay silent.
+        P1 = Qb[:, :r1] @ Qb[:, :r1].T
+        P2 = Qb[:, :r2] @ Qb[:, :r2].T
+        nrm = float(np.linalg.norm(P1 - P2, 2))
+        worst_dev = max(worst_dev, abs(nrm - 1.0))
+        silent += int(nrm <= 1e-8)
+        tot += 1
+    fired = 0
+    for _ in range(2000):
+        k, r = 8, 4
+        Qa, _ = np.linalg.qr(rng.normal(size=(k, k)))
+        Qc, _ = np.linalg.qr(rng.normal(size=(k, k)))
+        Pa = Qa[:, :r] @ Qa[:, :r].T
+        Pc = Qc[:, :r] @ Qc[:, :r].T
+        fired += int(np.linalg.norm(Pa - Pc, 2) > 1e-8)
+    print(f"    R4-2, the subspace gate ENTAILS rank equality (so rank is redundant AS A GATE):")
+    print(f"       unequal-rank projector pairs, NESTED bases: subspace gate silent "
+          f"{silent} / {tot}")
+    print(f"       max |‖P_0-P_k‖_2 - 1.0| = {worst_dev:.3e}   (the norm is exactly 1)")
+    print(f"       positive control, EQUAL rank / different subspace: fires {fired} / 2000")
+    assert silent == 0, "an unequal-rank pair slipped past the subspace gate; the entailment fails"
+    assert fired == 2000, "the gate is inert at equal rank; it would prove nothing"
+    print("       => rank is REPORTED-AND-OPERAND, not an independent gate. Distinct from rcond:")
+    print("       rcond is VACUOUS (can never fail); rank is REDUNDANT (can fail, but never alone).")
     print()
 
 
