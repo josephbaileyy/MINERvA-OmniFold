@@ -373,11 +373,17 @@ HEAD**, for reasons that have nothing to do with the null.
 | **B** | patch the producer **+ a re-stamp migration** on the existing slabs, then one arm-7 invocation | **≤ 0.37 CPU task-h** | the re-stamp is **a ruling, not a step** — `:496` argues against a fallback *inside the driver*; whether a separate audited migration tool is a different object is Joseph's call |
 | **C** | a ~20-line standalone entrypoint | **≤ 0.37 CPU task-h** | `Z_BUILD.md` requirement 3 declines it: *"copying an external CV into either slot is not a substitute"* |
 
-**⚠ AN ORDERING CONSTRAINT THAT OUTRANKS THE CHOICE.** §3.7a's route (i) — pinning
-`num_threads`/`deterministic`/`force_row_wise` — **changes `x_cv` itself**, and therefore the
-support mask, `nrep`, and every downstream covariance. Operands produced today under the unpinned
-envelope are **superseded the moment route (i) is adopted**. If route (i) is on the table at all,
-it is decided BEFORE the operands are produced.
+**⚠ AN ORDERING CONSTRAINT THAT OUTRANKS THE CHOICE — RESTATED 2026-09-10, BECAUSE THE FIRST
+VERSION OVERCLAIMED.** It said route (i) *"**changes `x_cv` itself**, and therefore the support
+mask, `nrep`, and every downstream covariance."* **That is an assertion about an output, and it was
+never measured.** What is established is narrower and still sufficient: pinning
+`n_jobs`/`deterministic`/`force_row_wise` **changes the execution configuration**, so operands
+produced under the unpinned envelope were produced under a *different declared configuration* than
+operands produced after. Whether the numbers move is a separate, unmeasured question — see §8d.
+**The ordering constraint survives on the configuration alone**: §6.4 requires the null bound fixed
+*before* production, and a bound argued from a configuration cannot be fixed before that
+configuration is chosen. So route (i) is decided BEFORE the operands are produced **whatever it
+turns out to do to the numbers**.
 
 Two more: `z_build.py:519` requires the null mask to match the production CV's mask
 **elementwise** — cardinality agreement is known, elementwise is unmeasured and only the unfold
@@ -447,36 +453,40 @@ computes `x_cv` at `:369-371` and drops it at `:586`. A `find` over the whole da
 | sha256 | `038c6132…` | `4cb02ae7…` | `b1d0ceca…` |
 | producing revision | **UNKNOWN, unpinnable** | UNKNOWN (job bound) | `7ac0edec…`, dirty 0 |
 | receipt binding it | 12 files — **as `pre_j28_throw`** | **25 files, incl. G's own build receipt** | **none** |
-| producing job | **NO COMBINE JOB RAN — §8c** | `56429334` COMPLETED | `57753248` COMPLETED |
+| producing job | **none identified — §8c** | `56429334` COMPLETED | `57753248` COMPLETED |
 | J28 stamp on slabs | **30 of 40 UNSTAMPED** | 40/40 and 36/36 | 40/40 and 21/21 |
 | seed roles on slabs | legacy `seed` only | legacy `seed` only | `estimator_seed`+`draw_seed` |
 | population | complete | complete | complete |
 | gate | none | none | **Gate-2 restricted** |
 | **null bound to same execution** | **NO** | **NO** | **NO** |
 
-**A — DISQUALIFIED, and this packet was wrong to declare it.** Three independent confirmations
+**A — UNQUALIFIED, and this packet was wrong to declare it ready.** Three independent confirmations
 that it is the pre-J28 object: the repository's own `receipt_construction_contract_5d.json` names
 its entry **`pre_j28_throw`**; `RUNBOOK-20260807-gbdt-closeout.md:36` records the J28 fix landing
-on the Aug-6 object; and 30 of its 40 uthrow slabs carry no `flux_normalized` stamp. It has no
-producing log, no job record and no pinnable revision, and slabs 30–39 of its input set were
-**overwritten on 2026-08-06**. ⚠ **AND `adopt_unified_5d.py:76` DEFAULTS `--uthrow` TO IT**, so
+on the Aug-6 object; and 30 of its 40 uthrow slabs carry no `flux_normalized` stamp. No producing log, no job record and no
+pinnable revision has been **found** for it — §8c states that search and its denominator, and
+nothing beyond it is claimed — and slabs 30–39 of its input set were **overwritten on
+2026-08-06**. ⚠ **AND `adopt_unified_5d.py:76` DEFAULTS `--uthrow` TO IT**, so
 the pre-J28 object is also what an omitted flag selects.
 
-**C — the best-provenanced and nonetheless unavailable.** Only family with post-split seed stamps,
+**C — UNQUALIFIED, best-provenanced, and unavailable.** Only family with post-split seed stamps,
 a pinned revision and an import-closure receipt — and the only one **no receipt binds**. It is
 **arm 7 of the seven k=0 rehearsal jobs**, so using it as Z's `throw` is *consumption outside the
 seven rehearsal jobs*, which `DECISION-20260830` forbids independently of any technical merit.
 
-**B — the only viable base, incomplete rather than wrong.** Fully J28-corrected on both sides,
+**B — UNQUALIFIED, and the best available FOOTING nonetheless.** Incomplete rather than wrong: Fully J28-corrected on both sides,
 digest-bound in 25 places, bound to a completed job — and **it is the throw G itself was built
 from**: G's `receipt_candidate_stamps_5d.json` names it three times and names A zero times. It
 still fails 11b and carries no seed-role stamps.
 
-**THE RECOMMENDATION IS A CONSTRUCTION, NOT A SELECTION.** Z's `throw` should be a **new product
-built for Z**, on **B's footing** (`union_20260806_full160` / `rescaled_20260806_full160`), with
-the writer changed to persist the null operands in the same execution. That is the only route
-that makes item 4 and condition 11b satisfiable at all. B is not selected because its slabs would
-pass `:496`, and C is not rejected because its stamps pass — those tests decide nothing here.
+**THE RECOMMENDATION IS A CONSTRUCTION, NOT A SELECTION.** All three families are **UNQUALIFIED
+pending adequate evidence**; none is chosen. Z's `throw` should be a **new product built for Z**,
+on **B's footing** (`union_20260806_full160` / `rescaled_20260806_full160`), with the writer
+changed to persist the null operands in the same execution. That is the only route that makes item
+4 and condition 11b satisfiable at all. B is not selected because its slabs would pass `:496`, and
+C is not rejected because its stamps pass — those tests decide nothing here. **The prospective
+construction is specified in `Z_CONSTRUCTION_PLAN.md`, which supersedes this section's `null` and
+`throw` rows.**
 
 ## 8a. Decisions that are Joseph's
 
@@ -489,19 +499,28 @@ pass `:496`, and C is not rejected because its stamps pass — those tests decid
 3. **May the k=0 rehearsal slabs be consumed to build Z's throw?** They are the only post-split,
    fully-J28-stamped slab set in existence. Consuming them is squarely what the Gate-2 clause
    forbids, and **no authorization removes that gate — only the rehearsal work landing does.**
-4. **Route (i) still outranks all of it.** Pinning the estimator changes `x_cv`; operands produced
-   before that ruling are superseded by it.
+4. **Route (i) still outranks all of it — on ordering, not on magnitude.** Pinning the estimator
+   changes the declared execution configuration; §6.4 requires the null bound fixed before
+   production, so the configuration must be chosen first. **Whether pinning moves `x_cv` at all is
+   unmeasured on the real problem** (§8d), and the ordering does not depend on the answer.
 
 ## 8b. A correction to how `OI-172` is cited
 
 Its 36.5 h figure reproduces exactly — A's mtime and ctime are both `2026-07-13 02:15:41 −0700`,
 and `07c18aee` (2026-07-14) is the oldest commit adding `fixed_seed_null_norm`. But the conclusion
 *"no stamp for it can ever be produced"* does not follow, **because A's ROOT already contains
-`fixed_seed_null_norm`.** What the gap actually establishes is that A was written by **uncommitted
-code** — SPEC §3.3 condition 10, a stronger and differently-shaped defect than the row states.
+`fixed_seed_null_norm`.**
+
+**What the gap supports, at the strength the evidence carries.** *If* A's mtime is when its bytes
+were written and they were not rewritten afterwards, the code that wrote it carried
+`fixed_seed_null_norm` at a moment when no committed revision did — i.e. it was written from a
+working tree rather than from a commit. **That antecedent is not established.** An mtime is a
+filesystem field, not a production receipt, and nothing in the tree binds A's bytes to a write
+event. So this is a *supported reading*, not a measurement — and it is **not** what excludes A.
+What excludes A is in §8c and needs none of it.
 
 
-## 8c. Family A has no execution record at all — corrected, and firmer than first stated
+## 8c. No execution record has been FOUND for family A — corrected twice
 
 The first version of this section said A had *"no log, no job record."* The **no job record** half
 rested on a background probe that was **killed for memory**, whose empty output was read as "no
@@ -514,18 +533,76 @@ sacct -X -u josephrb -S 2026-07-12 -E 2026-07-14T23:59:59   ->  505 job rows   (
   claude-hold      55846803  2026-07-13T01:52:53 -> 02:24:53           <- contains A's write
 ```
 
-A's mtime/ctime is `2026-07-13 02:15:41 −0700`. **The only combine-shaped submission in the whole
-window was cancelled before it started, and A's write falls inside a bare resource-holding
-allocation.** So A was produced by an interactive or login-node invocation that left no log, no
-named job, and no receipt of execution.
+A's mtime/ctime is `2026-07-13 02:15:41 −0700`. **Within that user, that window and that store,
+the only combine-shaped submission was cancelled before it started, and A's mtime falls inside a
+bare resource-holding allocation.**
 
-**This strengthens the disqualification rather than softening it, and it explains the `OI-172`
-anomaly.** An unlogged interactive run is exactly how a file comes to contain
-`fixed_seed_null_norm` 36.5 h before that code was committed. A's producing revision is not merely
-unrecorded — **there is no execution record to bind one to**, so SPEC §3.3 condition 10 fails for
-A by construction rather than by omission.
+**⚠ SECOND CORRECTION, 2026-09-10, AND IT IS THE ONE THAT MATTERS.** The previous revision
+continued: *"So A was produced by an interactive or login-node invocation that left no log, no
+named job, and no receipt of execution"*, and offered that as the explanation of the `OI-172`
+anomaly. **That is a reconstruction of how A was produced, and it is WITHDRAWN.** It is consistent
+with the measurements and it is not entailed by them. *No record was found* is not *no execution
+occurred*: retention, a different account, a differently-named job, or a write post-dating the
+production would each satisfy every observation above. **Having found no record, the section
+supplied a mechanism instead of stopping** — this campaign's catalogued failure, committed in the
+act of correcting a different one.
+
+**A's exclusion does not need it and does not rest on it.** SPEC §3.3 condition 10 requires the
+producing revision to be **pinned** and the import-closure digests **bound to the run**. For A no
+such binding has been found. That is a statement about A's *evidence*, which is what the condition
+is about: a candidate is admitted by the presence of a binding, never by the absence of a
+disproof. **A is UNQUALIFIED pending adequate evidence — the same disposition as B and C**, and if
+a binding record is later produced the cell changes.
 
 **What did NOT depend on the killed probe:** the *no log* half (established in the foreground),
 and the "no receipt binds C" finding, which rests on a separate search carrying its own positive
 control — C: 0 files, B: 25, A: 12. The control resolving at 25 and 12 is what makes C's zero
 evidence rather than absence.
+
+**The scope of every negative in this section, so the next reader cannot widen it.** User
+`josephrb`; `sacct -X`; `2026-07-12` → `2026-07-14T23:59:59`; **505 job rows returned**, which is
+the denominator that makes the null informative. Outside that user, that window or that store,
+this section measures nothing.
+
+## 8d. Route (i)'s settings are ACCEPTED by the installed estimator — and that is all this measures
+
+**Measured 2026-09-10** in the environment the arms actually run under,
+`/global/u2/j/josephrb/.conda/envs/root_6_28` (`MNV_CONDA_PREFIX` in
+`RECORD-20260830-k0-quarantine-and-seven-arm-submission.md:166` and four sibling runbooks):
+**Python `3.11.14`, lightgbm `4.6.0`.**
+
+`make_estimators` (`omnifold_nn_core.py:143-148`) constructs
+`LGBMClassifier(n_estimators=100, num_leaves=8, learning_rate=0.1, verbose=-1)` plus
+`random_state`, and `LGBMRegressor` from the same dict — **re-read here, and the four keyword
+arguments are still the complete set.** Against that installed version:
+
+| parameter | explicit in `LGBMClassifier.__init__`? |
+|---|---|
+| `random_state`, `n_jobs` | **yes** |
+| `num_threads`, `deterministic`, `force_row_wise`, `force_col_wise` | **no** — reach the core through `**kwargs`, which the signature accepts |
+
+**A library parameter-acceptance check, on 400×4 synthetic normal data — not an analysis input,
+not the unfolding pipeline, not a scheduled job:**
+
+```
+current (random_state only)                    OK
+deterministic=True ALONE                       OK   (no force_row_wise requirement at 4.6.0)
+n_jobs=1, deterministic=True, force_row_wise=True   OK
+  -> repeated in-process: predictions bit-identical
+  -> equal to the current configuration on this synthetic set: True
+```
+
+**⚠ WHAT THIS DOES NOT SHOW, stated first because the row above is the one that will be
+misread.** It does **not** show that pinning leaves `x_cv` unchanged on the real problem. The
+synthetic fit is 400 rows at effectively one thread; the mechanism §3.7a names — *"thread count and
+reduction order are properties of the allocation"* — is precisely what a 400-row fit does not
+exercise. **The direction and magnitude of any change on the 5D bank are UNMEASURED, and the only
+instrument that settles them is a CV unfold on the real bank.**
+
+**What it does show, and it is worth having:** route (i) is **implementable at the installed
+version without a dependency change** — the three parameters are accepted, `deterministic=True`
+does not require a companion flag here, and pinning is not blocked by the library. Rev. 16's
+framing of route (i) as *"Tier 2 — code, no compute"* survives this check. **And the earlier
+packet's claim that route (i) necessarily changes every downstream covariance is withdrawn: on the
+one comparison anyone has actually run, it changed nothing.** One synthetic comparison is not
+evidence about the 5D bank in either direction.
