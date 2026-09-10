@@ -185,6 +185,28 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   owner rules: carry the MAXIMUM observed spend, never the latest; never sum or union captures;
   quote spend with its measurement instant.** A re-query returning less does not release budget.
   Routed to the `r5_meter` owner; **it changes no Z decision and no gate.**
+- [`DECISION-20260910-joseph-accepts-outcome-2-and-opens-replacement-packet.md`](DECISION-20260910-joseph-accepts-outcome-2-and-opens-replacement-packet.md)
+  - **Joseph, 2026-09-10T16:04Z, discontinues the universal 5D bound and opens a replacement.**
+  Accepts outcome (2) of the design/review loop: no further universal bound on projected objects
+  absent a direct-check need. Authorizes **design and independent review only** of a replacement
+  criteria proposal over a fixed, declared consumer set — not adoption, not an amendment by
+  implication. Splits **endpoint A** (covariance/projected-uncertainty release; `cause3_corr`
+  retained-with-criterion or explicitly replaced) from **endpoint B** (generator significances).
+  Threshold `T` is not universal: name the exact claim it gates, and do not select it from observed
+  results. Rejected approach preserved as history; its tooling not to be further extended. No
+  compute, grading, gate movement, or publication change authorized.
+- [`DECISION-20260910-joseph-b-deferred-and-finite-ensemble-disclosure.md`](DECISION-20260910-joseph-b-deferred-and-finite-ensemble-disclosure.md)
+  - **Joseph, 2026-09-10T19:31Z, rules endpoint B deferred and orders three follow-on checks.**
+  **Endpoint B is DEFERRED, NOT PASSED** — not to be marked MET, reopening it needs a separate
+  proposal. Endpoint A gets a **disclosure-only** finite-ensemble requirement (verified ensemble
+  size, normalization convention, inverted dimension or explicit not-applicable). Sets two
+  adequacy tasks for `z-criteria-designer`: the exact contract amendment (if any) to defer
+  `cause3_corr` from A without silently passing cause 3, and a criterion — distinct from A-4's
+  subspace-stability bound — controlling the actual released error bars under estimator-baseline
+  variation. **§0 records that this ruling and the one above were relayed correctly in chat but
+  reached this file only after `z-independent-assessor`'s `FINDING F-0` measured that neither
+  existed as a committed record across 131 refs** — this pair of files is that gap closed, not new
+  scientific content.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
