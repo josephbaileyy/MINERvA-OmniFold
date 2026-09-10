@@ -1,5 +1,34 @@
 # FINDING 2026-09-10 — the two projection builders agree on the weights and disagree on refusal
 
+**⚠ AMENDED 2026-09-10, SAME DAY, AFTER THE SPEC'S AUTHOR CHECKED IT. Two corrections, both
+making the finding STRONGER than first written, and the second is a correction to my framing
+rather than to my measurement. Carried at the top because a caveat at the end is not a caveat.**
+
+1. **`p4_lib` refuses in BOTH directions and I documented only one.** `p4_lib.py:1380` rejects a
+   reported HIGH bin landing in a non-reported LOW bin — that is the one I found. `:1393-1401`
+   ALSO rejects any reported LOW bin that no HIGH bin reaches, and carries a comment recording
+   that the one-directional version was a **MASKING defect** (BEN-064, 2026-08-09): five orphan
+   bins carrying 0.0000% of the 4D total reported `rel = 1.00e+00` and hid the real result — 62%
+   of bins over tolerance at a median of 4.4% — behind a number about bins nobody cares about.
+   Verified here at 48bace8e. So the asymmetry with `project_cov_nd`, which does neither check, is
+   wider than Result 2 below states.
+
+2. **"§6's check needs a second arm" UNDERSTATES IT. The comparison's UNIT is wrong.** A runner
+   implementing §6 item 1 literally would either crash on the refusing cases or skip them — and
+   skipping restricts the tested domain to exactly the region where the builders agree. The check
+   would then report agreement **over a domain selected for agreement**, which no exit code
+   catches. §6 item 1 further scopes the domain to *"every projection the publication quotes"*,
+   which may contain no non-nesting case at all, so a perfectly executed elementwise check could
+   return "identical everywhere" while the two carry opposite refusal semantics.
+   The unit must be the builders' **OUTCOME** — refuses / returns-with-drops / returns-clean —
+   with elementwise `M` equality tested only inside the both-returned cell.
+
+Both corrections are the spec's author's, made against the source rather than against this
+document, and they are recorded here rather than folded in silently because the second one
+changes what this finding means. Repairing §6 itself is theirs, not mine.
+
+---
+
 **CITABLE FOR:** that `p4_lib.build_projection_M` and `project_cov_nd.build_projection` produce
 BYTE-IDENTICAL `M` on canonical edges, for the single-axis `W` marginalisation, under masks whose
 low support covers the high support's image; and that they take OPPOSITE actions when it does not.
