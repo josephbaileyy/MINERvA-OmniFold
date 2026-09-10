@@ -175,6 +175,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `reusable-now`, with the two suspended-authority facts (`D-Y-CONSTRUCT` does not exist; `R4`
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation.md)
+  - **INDEPENDENT ASSESSMENT — adopts no criterion, grades nothing, authors nothing.** Part A is the
+  minimum acceptance requirements `A1`-`A31` for Z's criteria, derived from `RZ`, `R1`-`R6`,
+  `CRITERIA` §0's four legs and `SPEC` §6's rulings *plus the note and paper's own conditional
+  sentences*, and **committed before the proposal above was read** (its sha256 is recorded as
+  digested-not-read). Load-bearing: `A1`/`A2` separate assessment completeness from adoptability from
+  licensing a publication claim, and measure that the publication's own precondition is *"the
+  adopted, selection-complete"* covariance -- **two** properties, not seven discharged causes;
+  `A12` records that `R3` and §6.2 forbid rejecting Z for a LARGE magnitude on causes 7 and 1;
+  `A18` is §6.6's adopted statistic/denominator/precision-target/boundary-together constraint;
+  `A25` derives that no bound on a diagonal bounds `r^T C^-1 r`. Four re-measured findings, incl.
+  that the 42-bin `(E_avail,W)` object takes the 5D trunk in **through the statistical block only**
+  (`eavailW_covariance.py:441`, `C_lateral` diagonalized at `:469`), and that **four** projection
+  builders exist with one on the `R6`-diagnostic PET path. Part B applies `A1`-`A31` to the proposal.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
