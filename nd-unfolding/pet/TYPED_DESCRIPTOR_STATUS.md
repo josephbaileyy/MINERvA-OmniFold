@@ -102,7 +102,7 @@ The 32-row packet does not support photon three-state rates, cross-playlist clai
 
 ## Next bounded task
 
-**Protocol prepared, 2026-09-10; source execution remains unapproved.**
+**Checker and launcher prepared, 2026-09-10; source execution remains unapproved.**
 [SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md](SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md)
 pins the data/MC identities and proposes entries `[0,4096)` from each file,
 with explicit mechanical, semantic and release verdicts. It specifies a
@@ -118,9 +118,16 @@ before real-input use. No production normalization or pooling readiness is
 claimed. Photon/blob provenance, overlap and primary-lepton redundancy remain
 explicit questions.
 
-The next decision is the named, bounded source-audit authorization in the
-protocol's budget table, after its launcher and raw-preserving checker are
-prepared and bound. The existing fixed 16-entry smoke runner is not a launcher
+The raw-preserving checker and launcher are implemented and bound in
+[SOURCE_AUDIT_BINDINGS.json](SOURCE_AUDIT_BINDINGS.json). The exact future command,
+metadata acceptance contract, resource limits and receipt specification are in
+[SOURCE_AUDIT_RUNBOOK.md](SOURCE_AUDIT_RUNBOOK.md). Local fake readers exercise
+the complete two-source, 8,192-entry path; no ROOT source has been opened for this
+preparation. The new checker tests and existing typed-descriptor suites pass
+112 tests and 10 subtests on CPU synthetic inputs. Black/Ruff pass for the new Python
+files, and targeted mypy passes for the two new source modules.
+The next decision remains the named, bounded source-audit authorization in the
+protocol's budget table. The existing fixed 16-entry smoke runner is not a launcher
 for the proposed 4,096-entry audit. Normalization and matched C0/C1 training
 have separate prerequisites, proposed ceilings and authorization boundaries.
 Preparation does not permit ROOT access or scientific training. Do not repeat

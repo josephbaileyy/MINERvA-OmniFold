@@ -19,6 +19,14 @@ statistics and a frozen count/pooling policy can be reproduced without leakage.
 Neither measurement establishes population support, calibrated particle
 identification, improved unfolding, uncertainty coverage or publication readiness.
 
+Implementation preparation is now recorded in
+[SOURCE_AUDIT_RUNBOOK.md](SOURCE_AUDIT_RUNBOOK.md), with machine-readable
+[SOURCE_AUDIT_BINDINGS.json](SOURCE_AUDIT_BINDINGS.json). That runbook specifies
+metadata compatibility where the historical receipt has no type/shape snapshot,
+raw digest framing, resource failure behavior and the exact terminal artifacts.
+This addition changes no source identity, branch, entry interval or execution
+authorization.
+
 ## 1. Source identities and bounded access proposal
 
 Identity anchors come from the committed

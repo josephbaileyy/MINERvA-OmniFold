@@ -82,3 +82,38 @@ results validate the existing adapter, not the proposed pooling implementation
 or an inventory-aware fitter. No ROOT file was opened, scientific training
 performed or cluster job submitted. Documentation only; no new physics result
 or validation-ledger row, and no change to OI-126 or Gate 6.
+
+### 2026-09-10 — Bounded PET source-audit implementation preparation
+
+Implemented the raw-preserving checker and launcher from `34fec047` on
+`pet-prong-semantics`. [SOURCE_AUDIT_RUNBOOK.md](pet/SOURCE_AUDIT_RUNBOOK.md)
+contains the exact future command, separate authorization-file contract,
+metadata acceptance rules, resource limits, digest framing and terminal receipt
+specification. [SOURCE_AUDIT_BINDINGS.json](pet/SOURCE_AUDIT_BINDINGS.json)
+freezes the implementation dependencies, protocol, branch/schema/source identities,
+structural metadata contract and synthetic tests.
+
+The checker enforces the two pinned sources, ordered 75 branches and entries
+`[0,4096)` per source. It archives numeric observations before mapping, retains
+malformed rows and exceptions, checks typed values/masks against a separate
+field table, and keeps mapping, semantic, release and object-family verdicts
+separate. Diagnostic forward checks use identity normalization and fixed
+reference projectors, with no fitting. A partial failure never backfills,
+retries, filters rows or promotes an incomplete shard.
+
+Local CPU synthetic validation: 112 tests and 10 subtests passed across the new
+checker tests and the five existing typed-descriptor suites. This includes the
+complete 8,192-entry fake-reader path, pre-payload identity/metadata failures,
+raw non-finite bytes, malformed counts/vectors/keys, v2 masks, serialization,
+NumPy/Keras C0/C1 checks, resource failures and launcher accounting. Black and
+Ruff pass for all three new Python files; targeted mypy with
+`--follow-imports=silent` passes for the two new source modules. This is not a
+whole-package strict-typing claim. The preparation-only launcher check also
+passes against the committed-manifest bytes.
+
+No ROOT source was accessed, scientific training performed, GPU used or cluster
+compute launched. Native ROOT compatibility and the combined dependency
+footprint under the proposed ceilings remain unmeasured. Source execution still
+requires its named authorization; normalization and later training retain their
+separate prerequisites. No physics result or validation-ledger row is added.
+OI-126 and all five exact Gate-6 prohibition keys remain unchanged.

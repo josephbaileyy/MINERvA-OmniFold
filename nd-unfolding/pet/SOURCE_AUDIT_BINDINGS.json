@@ -1,0 +1,485 @@
+{
+  "branch_contract": {
+    "MasterAnaDev_BlobIs3D": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "MasterAnaDev_BlobIs3D_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "MasterAnaDev_BlobNClusters": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "MasterAnaDev_BlobNClusters_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "MasterAnaDev_BlobT": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "MasterAnaDev_BlobTPos": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "MasterAnaDev_BlobTPos_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "MasterAnaDev_BlobT_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "MasterAnaDev_BlobTotalE": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "MasterAnaDev_BlobTotalE_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "MasterAnaDev_BlobX": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "MasterAnaDev_BlobX_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "MasterAnaDev_BlobY": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "MasterAnaDev_BlobY_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "MasterAnaDev_BlobZ": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "MasterAnaDev_BlobZ_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "MasterAnaDev_leptonE": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        4
+      ]
+    },
+    "MasterAnaDev_minos_trk_is_ok": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "MasterAnaDev_minos_trk_p": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "MasterAnaDev_minos_trk_qp": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "cluster_energy": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "cluster_energy_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "cluster_isMuontrack": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "cluster_isMuontrack_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "cluster_pos": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "cluster_pos_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "cluster_time": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "cluster_time_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "cluster_view": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "cluster_view_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "cluster_z": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "cluster_z_sz": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "ev_gate": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "ev_run": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "ev_subrun": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_E": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_dEdx": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_direction": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        3
+      ]
+    },
+    "gamma1_energy_ecal": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_energy_hcal": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_energy_scal_UV": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_energy_scal_X": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_energy_trkr": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_evis_ecal": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_evis_hcal": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_evis_scal_UV": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_evis_scal_X": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_evis_trkr": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma1_time": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_E": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_dEdx": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_direction": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        3
+      ]
+    },
+    "gamma2_energy_ecal": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_energy_hcal": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_energy_scal_UV": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_energy_scal_X": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_energy_trkr": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_evis_ecal": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_evis_hcal": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_evis_scal_UV": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_evis_scal_X": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_evis_trkr": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "gamma2_time": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "isMinosMatchTrack": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "muon_thetaX": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "muon_thetaY": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "n_prongs": {
+      "numeric_kinds": "biuf",
+      "shape": []
+    },
+    "prong_dEdXMean": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "prong_part_E": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null,
+        4
+      ]
+    },
+    "prong_part_charge": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "prong_part_mass": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "prong_part_pid": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "prong_part_pos": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null,
+        4
+      ]
+    },
+    "prong_part_score": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        null
+      ]
+    },
+    "vtx": {
+      "numeric_kinds": "biuf",
+      "shape": [
+        4
+      ]
+    }
+  },
+  "branch_sha256": "a5704bb33229b51d7ed3e185374032d487427133a186c7198eaee29e52b21f69",
+  "entry_interval": [
+    0,
+    4096
+  ],
+  "execution_authorized": false,
+  "files": {
+    "docs/orchestration/state/gate6-member-trajectories-result-56847059.json": "8f40541f1d8fec92b0e37885b1d24b851843d06f4c220f8de5ad1bc47265b6a5",
+    "docs/orchestration/state/pet-typed-descriptor-fixed-source-smoke-20260901.json": "0a2bea96f2d6779fc98bca1ee9ad7c32578780ec35f42fc4875d974ddfc268b6",
+    "nd-unfolding/pet/PRONG_BRANCH_SEMANTICS.md": "529eff564bbe0c55953a42d54ac68bd304e093253e526d529c63b1f44f0b9a27",
+    "nd-unfolding/pet/SOURCE_AUDIT_RUNBOOK.md": "f31397bf07079f955578de2bea8581d2f165ea9e20c7a6f8feaa78f5f3923680",
+    "nd-unfolding/pet/SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md": "b6719f24e24b6096efde8f5eb4c2c2558e5c4db0137c9bfac980f42034c3530a",
+    "nd-unfolding/pet/atomic_write.py": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e",
+    "nd-unfolding/pet/launch_typed_descriptor_source_audit.py": "45107f8f914724e8304b60cc068f81d8c85de4790ec9f4f5685335e4c8d299ce",
+    "nd-unfolding/pet/typed_descriptor_keras.py": "dccc8c616c03c24db2ce29bd0b6de56d08d37468fbdff2b6d1935c6ff2c9348f",
+    "nd-unfolding/pet/typed_descriptor_source_audit.py": "a4a1ae55499bb37f164aadc6adf9a67a4b9251364905537144c87c2c314895d9",
+    "nd-unfolding/pet/typed_descriptor_source_smoke.py": "5dedaac877079c5ed68d20afd9fa08c8851e160898e34cf8b89b02e30c86bd40",
+    "nd-unfolding/pet/typed_descriptors.py": "1a0469778cc86948c7da2ff7d5795f8d19625b2ebd755eb429c8e57f4fedf08b",
+    "nd-unfolding/tests/test_typed_descriptor_source_audit.py": "478621656516dcb4907dea9c9bdebad9688c40afdfb32ab6bf8aca9bc20134f2"
+  },
+  "limits": {
+    "cpu_seconds": 3600,
+    "memory_bytes": 8589934592,
+    "output_bytes": 1073741824,
+    "threads": 2,
+    "wall_seconds": 1800
+  },
+  "ordered_branches": [
+    "ev_run",
+    "ev_subrun",
+    "ev_gate",
+    "cluster_energy",
+    "cluster_pos",
+    "cluster_z",
+    "cluster_view",
+    "cluster_time",
+    "cluster_isMuontrack",
+    "cluster_energy_sz",
+    "cluster_pos_sz",
+    "cluster_z_sz",
+    "cluster_view_sz",
+    "cluster_time_sz",
+    "cluster_isMuontrack_sz",
+    "MasterAnaDev_leptonE",
+    "MasterAnaDev_minos_trk_p",
+    "muon_thetaX",
+    "muon_thetaY",
+    "isMinosMatchTrack",
+    "MasterAnaDev_minos_trk_is_ok",
+    "MasterAnaDev_minos_trk_qp",
+    "vtx",
+    "gamma1_E",
+    "gamma1_dEdx",
+    "gamma1_time",
+    "gamma1_energy_trkr",
+    "gamma1_energy_ecal",
+    "gamma1_energy_hcal",
+    "gamma1_energy_scal_X",
+    "gamma1_energy_scal_UV",
+    "gamma1_evis_trkr",
+    "gamma1_evis_ecal",
+    "gamma1_evis_hcal",
+    "gamma1_evis_scal_X",
+    "gamma1_evis_scal_UV",
+    "gamma2_E",
+    "gamma2_dEdx",
+    "gamma2_time",
+    "gamma2_energy_trkr",
+    "gamma2_energy_ecal",
+    "gamma2_energy_hcal",
+    "gamma2_energy_scal_X",
+    "gamma2_energy_scal_UV",
+    "gamma2_evis_trkr",
+    "gamma2_evis_ecal",
+    "gamma2_evis_hcal",
+    "gamma2_evis_scal_X",
+    "gamma2_evis_scal_UV",
+    "gamma1_direction",
+    "gamma2_direction",
+    "MasterAnaDev_BlobX",
+    "MasterAnaDev_BlobY",
+    "MasterAnaDev_BlobZ",
+    "MasterAnaDev_BlobT",
+    "MasterAnaDev_BlobTPos",
+    "MasterAnaDev_BlobTotalE",
+    "MasterAnaDev_BlobIs3D",
+    "MasterAnaDev_BlobNClusters",
+    "MasterAnaDev_BlobX_sz",
+    "MasterAnaDev_BlobY_sz",
+    "MasterAnaDev_BlobZ_sz",
+    "MasterAnaDev_BlobT_sz",
+    "MasterAnaDev_BlobTPos_sz",
+    "MasterAnaDev_BlobTotalE_sz",
+    "MasterAnaDev_BlobIs3D_sz",
+    "MasterAnaDev_BlobNClusters_sz",
+    "n_prongs",
+    "prong_part_score",
+    "prong_part_mass",
+    "prong_part_charge",
+    "prong_part_pid",
+    "prong_dEdXMean",
+    "prong_part_pos",
+    "prong_part_E"
+  ],
+  "preparation_base": "34fec047",
+  "schema": "pet-v2-source-audit-preparation-v1",
+  "schema_sha256": "102a409635e422c6688ee9fa7d98206c1048ae87199679b1a8d5d59c46f1e879",
+  "sources": [
+    {
+      "expected_basename": "MasterAnaDev_data_AnaTuple_run00010068_Playlist.root",
+      "expected_manifest_sha256": "91fa4a24774bfa800cd021dd712e61c777f600a7fa0c77ef1f54dad289764b1e",
+      "expected_uuid": "bcd43694-ef17-11f0-9717-17a6e183beef",
+      "manifest_relative_path": "2d-unfolding/playlist_manifests/1B_Data.txt",
+      "playlist": "1B",
+      "role": "data",
+      "role_code": 1,
+      "shard_file_ordinal": 1
+    },
+    {
+      "expected_basename": "MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root",
+      "expected_manifest_sha256": "4100dca453de1beef0213a0feac1fe4faa77d769f2dd5f36f4e11c6cea4894f8",
+      "expected_uuid": "c0347da6-2a99-11ef-9717-31a7e183beef",
+      "manifest_relative_path": "2d-unfolding/playlist_manifests/1A_MC.txt",
+      "playlist": "1A",
+      "role": "mc",
+      "role_code": 2,
+      "shard_file_ordinal": 2
+    }
+  ]
+}
