@@ -748,3 +748,138 @@ findings are routed to owners rather than acted on: `CRITERIA` §1's decayed art
 design input. If any is taken up, **`BEN-381` should be read as disqualifying this lane from grading
 `(cause 3, Z)`'s `M(ii)`**, and this record is the evidence of why. Recorded now rather than argued
 later.
+
+---
+---
+
+# PART C: AMENDMENT 2026-09-10 — the subject was misrouted, and `B8` carried a false supporting claim
+
+**Read this before Part B's verdict.** Three corrections, two of them to Part B and one to what Part B
+is *about*. The verdict itself is unchanged **for the artifact Part B actually reviewed**, and that
+artifact is not the one the assignment intended.
+
+## C.1 ⚠ THE SUBJECT. Part B does NOT review the criteria designer's artifact, because it does not exist
+
+**Part B reviews `PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md` rev. 5
+(`3fc9fb87…`, `610d0882`) — the Z operand-schema lane's document.** `claude-orchestrator` reports
+(2026-09-10) that the artifact it had been withholding is a **different, not-yet-written** file:
+`docs/orchestration/RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md`, by
+`z-criteria-designer`, plus a re-runnable arithmetic probe. It is **not** a rev. 6 of the proposal.
+
+**So Part B's `BLOCK` is a verdict on `PROPOSAL-20260908`, and must not be read as a verdict on
+`z-criteria-designer`'s work.** No one has reviewed that; it does not exist yet.
+
+**How the misroute happened, because it is this campaign's catalogued shape and it caught two lanes.**
+The assignment named *"the designer's proposed answers"* — a **definite description**. The
+coordinator's route repeated it without a path. `CATALOG.md:178` resolved the description to a landed
+artifact on an overlapping subject, and **that artifact answered as though it were the right one**: it
+is a criteria proposal, over publication projections, under `RZ`, authored two days earlier. Nothing
+in it announced that it was the wrong object. *A definite description is not a citation; it re-points,
+and a misroute answers anyway.* The coordinator has named this as its own coordination failure; the
+half that is mine is that I recorded the proposal's sha256 in §A.0 as the subject **without ever
+confirming that digest against the assignment**, and a digest confirms identity only against something
+that names it.
+
+**What survives, stated precisely rather than generously:**
+
+- **Part A is unaffected.** It is derived from `RZ`, `R1`–`R6`, `CRITERIA` §0, `SPEC` §6 and the
+  publication sources, and names no proposal. `A1`–`A31` apply to whatever criteria artifact lands.
+- **`B1`–`B9` are legitimate findings about `PROPOSAL-20260908`** and are routed to its lane.
+- **`B1`, `B3` and `B6` bear on any criteria artifact on this subject**, because they are properties of
+  the publication's claim side, of `SPEC` §6.3(4)'s ruled branch structure, and of the tree's
+  projection builders — not of one document's wording.
+- **`B2`, `B4` and §B.6's item-1 point are about that proposal's §7** and do not transfer.
+
+I will re-run Part B against `RECOMMENDATION-20260910-…` when it lands, using the same committed
+yardstick. **Part A being committed before either document was read is what makes that re-run cheap
+and non-circular**, which is the one thing the misroute did not damage.
+
+## C.2 ⚠ `B8` CORRECTED — there are EIGHT launchers, one DOES pin literals, and I filtered my own measurement to fit an expected count
+
+**Part B `B8` asserted:** *"No arm of the seven pins `MKL_NUM_THREADS` or `OPENBLAS_NUM_THREADS` at
+all"*, and *"the quoted three-variable string is real but lives in `sbatch_uthrow_run_5d_fast.sh:122`,
+which is **not one of the seven**."* **Both are false, and the error is mine.**
+
+Re-measured at `d147880f`, `grep -rl MNV_EST_SEED_OFFSET nd-unfolding/sbatch_*.sh` returns **eight**
+files, not seven. `sbatch_uthrow_run_5d_fast.sh` **is** one of them — `:316`,
+`EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))` — and `:2` names the job `uthrow5d_runF`. It
+**does** pin all three literals at `:122`.
+
+**How I got it wrong, because the mechanism is worse than the error.** `sbatch_uthrow_run_5d_fast.sh`
+**was in my own `grep -rln` output**, on the line immediately before `seed_offset_policy.py`. I then
+hand-assembled "the seven launchers" for a per-file table, and dropped that one — because `SPEC` §3.7b
+says the member is *"one shared `MNV_EST_SEED_OFFSET` across exactly seven launchers"*, and my list had
+to total seven. **A count from a document selected which of my measured rows I kept**, and the row it
+discarded was the only one that contradicted the claim I went on to make. Every individual `grep -c`
+in the table is correct; the population was wrong. `A19`'s discipline — name the population — applied
+to my own table and I did not apply it.
+
+**Corrected measurement, all eight:**
+
+| | launcher | `OMP` | `MKL` | `OPENBLAS` | `--null` |
+|---|---|---|---|---|---|
+| 1 | `sbatch_uthrow_run_5d_fast.sh` | **`32` (literal)** | **`2`** | **`2`** | — |
+| 2 | `sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh` | `${SLURM_CPUS_PER_TASK:-32}` | — | — | — |
+| 3 | `sbatch_unfold_5d_detector_bkgaware_gpu.sh` | `${SLURM_CPUS_PER_TASK:-32}` | — | — | — |
+| 4 | `sbatch_bootstrap_5d_gpu.sh` | — | — | — | — |
+| 5 | `sbatch_seedscan_split_5d.sh` | — | — | — | — |
+| 6 | `sbatch_sweep_bank_5d_run_bkgaware_gpu.sh` | — | — | — | — |
+| 7 | `sbatch_uthrow_block_5d.sh` | — | — | — | — |
+| 8 | **`sbatch_uthrow_combine_5d_fast.sh`** | — | — | — | **yes, `:339`** |
+
+**`B8`'s conclusion survives, on a corrected and better ground — the coordinator's, adopted.**
+`${SLURM_CPUS_PER_TASK:-32}` is **not pinning; it is allocation-dependence written down.** So of eight
+launchers **one** pins literals, **two** float by construction, **five** say nothing, and **the arm
+where `--null` computes `x_cv`/`x_cv2` pins nothing.** `SPEC` §6.4 requires Z's null bound be
+*"justified by precision and sensitivity controls established before implementation"* (`A17`), and
+that justification cannot be established over a configuration that is not fixed.
+
+**The restraint in `B8` stands and is repeated:** I have **not** measured that thread count moves the
+null, and nothing here should be read as claiming it. G's null is `1.31e-12` of the sqrt-trace, well
+above a plausible `~1e-16` reordering term. The finding is about the **justification**, not the
+magnitude, and the remedy is to pin the three variables in the null arm and then measure.
+
+## C.3 `B1` — the caution is right about the boundary, and Part B does not cross it
+
+`claude-orchestrator` cautions that *"C-1's statistic is a max over an empty set, so as written it is
+undefined or vacuous"* is a legitimate finding, while *"therefore these quantities can never carry a
+use-based tolerance"* would be a different claim that **closes a loop — relaxing an acceptance
+criterion because the adoption it gates has not happened.** That distinction is correct and worth
+keeping.
+
+**Checked against Part B's own text: the second claim is not there.** §B.1 contains no *"never"*. Its
+recommendation is that C-1 *"**enumerate its (generator, projection) pairs explicitly and
+prospectively**"* — which is the opposite of the loop-closing reading, and its closing sentence is
+*"Until it exists, C-1 is a well-motivated shape without a population"*, a statement about **today**.
+No re-grounding is needed; the caution is recorded because a future reader could reach for the second
+claim from the first, and should not.
+
+**And the second measurement the caution supplies strengthens the recommendation.** Verified here:
+`PROCEDURE-gbdtFive-macro-update.md:1` is titled *"updating the four `\gbdtFive*` macros **when the
+J28 re-roll is adopted**"* and `:9` calls itself *"a contingency again, not a procedure about to be
+used. Nothing below authorizes an edit."* So the four macros are **staged for an adoption-gated note
+update**, not abandoned. That makes C-1's prospective pair set a **real, documented** object rather
+than a hypothetical one — which is exactly why enumerating it is the right fix and emptiness is not a
+reason to weaken the criterion.
+
+## C.4 Two findings now carry two independent measurements each
+
+Counted once, per the front door's *"trace agreeing statements to their first measurement and count
+shared origins once"*:
+
+- **`sec_3d.tex`'s withholding is at `:223-226`, not `:181-183`** — measured here first, then
+  re-measured and conceded by the coordinator, which is also correcting it to the designer. Two
+  measurements, one origin each.
+- **`B6`: at least four projection builders, and `pet/assemble_ctotal_bkgsub.py:36` is on the
+  `R6`-diagnostic path** — measured here from the tree; the coordinator reports its "three" came from
+  `Z_BUILD_PACKET.md` §4b item 7 **without re-derivation**, so that count and mine are **not** two
+  measurements: the packet's is a relay. Count one measurement, plus a corrected relay.
+- **`B1`'s empty-population measurement was reached independently by `z-criteria-designer`** — same
+  four macros, same absence. Two measurements, and neither depends on the other.
+
+## C.5 What this amendment does not change
+
+Part A in full, including `A30`'s withdrawal in §B.7. `B1`–`B7` and `B9` as findings about
+`PROPOSAL-20260908`. The `BEN-381` self-recusal in §B.8, which now covers **both** documents: if
+`B3`/`B6`/the item-1 reframing are taken up in `RECOMMENDATION-20260910-…`, this lane is disqualified
+from grading `(cause 3, Z)`'s `M(ii)` there too. Nothing here adopts, grades, authorizes or merges.
