@@ -208,8 +208,7 @@ three together:
     Checks: 12 passed
 
 So the two trailers coexist **including with this session's own guidance string**, and the value form
-is a **bare local session UUID** — 19 commits, dated **2026-09-02 → 2026-09-07**, i.e. the *most
-recent* practice. That is an identifier a session **does** know and that is **checkable against a live
+is a **bare local session UUID** — 19 commits, dated **2026-09-02 → 2026-09-07** — ⚠ **which I called *"the most recent practice"*. That is WRONG; see §4.5.** That is an identifier a session **does** know and that is **checkable against a live
 directory**: `bda4fd06-…` appears in **3 live worktree paths** on this machine right now, and my own
 `d93bf047-d359-4cf3-8156-bc83ffad8a69` is a live directory. There is no ID-space gap and no
 fabrication risk. **§4.1(b) was wrong and I withdraw it.**
@@ -235,3 +234,63 @@ does not catch it. Two independent broken instruments converged on the same fals
 own query before publishing a zero.** A zero is the one result that is indistinguishable between "the
 thing is absent" and "the query could not look", and this lane has that catalogued and still shipped
 one into a committed record.
+
+
+### 4.5 ⚠ SECOND CORRECTION — "most recent practice" is backwards, and my resolver was a third blind instrument
+
+**Withdrawn: the bare-UUID form is not the current practice.** Measured per value form:
+
+| | newest commit | span |
+|---|---|---|
+| **URL form** | **2026-09-08 19:54:17** (`419e4ed9`) | 2026-06-23 → **2026-09-08** |
+| bare UUID | 2026-09-07 05:09:55 (`0add4b95`) | 2026-09-02 → 2026-09-07 |
+
+The URL form is newer by about a day and a half, and the most recent session trailer of any kind is
+URL form. The UUID form is a **19-commit minority window sitting inside a URL era that continues past
+it** — neither legacy nor current.
+
+**And I already held both numbers.** §4.3 records the overall `Claude-Session` span as
+`2026-06-23 → 2026-09-08` and the UUID span as `2026-09-02 → 2026-09-07`, in the same section. The
+`09-08` endpoint could not have been UUID form. I never put the two side by side — fourth instance of
+asymmetric comparison in this campaign, and the two sides were four lines apart in my own text.
+
+**The coordinator's formulation is the precise one and I adopt it: reason (b) falls on FABRICATION and
+does not fall on CONVENTION.** The fabrication risk is genuinely gone — the UUID resolves — but the
+precedent is a minority pattern, not the prevailing one, so "it is what everyone was doing" was never
+available to me.
+
+**The resolver is the transcript store, not the worktree list — confirmed, with working controls.**
+Across all three `.claude*/projects` roots at `-maxdepth 2`:
+
+| value | hits |
+|---|---|
+| **positive control** — my own session `d93bf047-…` | **2** |
+| the four committed UUID values | **2 / 2 / 4 / 2** (coordinator reported 2 each; `bda4fd06` gives 4 here) |
+| **negative control** `00000000-…` | **0** |
+| URL form, `session_01D1mZ3gDuyvGUqXo1Rxb4ZU` | **0** |
+
+So routability does not depend on owning a worktree — worktrees are pruned when a session ends,
+transcripts persist — and the coordinator's own earlier qualification was false in its favour.
+
+**⚠ MY THIRD DISTINCT BLIND INSTRUMENT IN THIS ONE EXCHANGE, and the mechanism is in my own memory.**
+My first resolver run returned **0 for every value including the known-present ones**, because I wrote
+`ROOTS=$(...)` and then `for r in $ROOTS`. **zsh does not word-split unquoted parameter expansions**,
+so that loop iterated **once**, over the whole concatenated string as a single nonexistent path, and
+`2>/dev/null` swallowed the error. Fixed with a real array; controls then passed.
+
+Counting my own failures in this stretch honestly: **(a)** the `%(trailers:…)` newline breaking an
+`awk -F'|'` split — **shipped into a committed record as a false `0`**; **(b)** `awk 'NF>3'` with `$4-`
+over a `%ci` date, caught because it returned `3293` and `sample value: -0700`; **(c)** `sort -k2`
+over rows with inconsistent leading whitespace, caught because it printed a "newest overall" that
+contradicted the line above it; **(d)** this zsh one, caught by the positive control.
+
+**Every one that was caught was caught by an implausible output or a failing POSITIVE control. Not one
+was caught by a negative control.** A negative control returning `0` is consistent with a working
+instrument and with a dead one; a known-present value returning `0` is consistent with only one of
+them. **That asymmetry is the whole content of the rule.**
+
+**One quantity that is irreducible, and I am carrying it as an interval rather than a number:**
+distinct sessions across all `Claude-Session` commits is **17–21**. 17 distinct URL values and 4
+distinct UUID values, with **no cross-map between the two ID spaces**, so nobody can say from the
+trailers alone whether the 4 UUID sessions are new sessions or the same sessions relabelled. That is
+the mathematical reviewer's point, relayed and not independently verified beyond the two counts.
