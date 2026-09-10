@@ -1110,3 +1110,67 @@ gating on retained-subspace identity, with §2.2 supplying the composition — i
 more so than anything in Part B. **This lane must not grade `(cause 3, Z)`'s `M(ii)` or the
 significance leg**, on either document. §B.8 and §C.5 recorded that prospectively; `D1` is the act
 that makes it binding.
+
+---
+
+# PART E: the independence cost of `D1`, and two routing gaps it opens
+
+**Short, and here because it exists nowhere else.** The finding below was reached in coordination
+traffic between this lane and `claude-orchestrator`. Cross-session messages are not artifacts: a
+result that lives only in a transcript is not in the tree, and this one bears on who may review what
+next, so it is recorded rather than relayed.
+
+## E.1 This lane is NOT independent for `D1`'s own fix
+
+`D1`'s remedy is **mine** — gate the leg-1 `INCONCLUSIVE` branch on retained-**subspace** identity,
+with §2.2 supplying the composition, tested bidirectionally in
+`state/probe-z-rho-bound-pinv-subspace-20260910.py`. **So if the amended document's `D1` clause comes
+back to this lane, reviewing it would be certifying an implementation of this lane's own design
+input** — self-certification wearing a reviewer's label, and one step further out than §D.7's grading
+recusal.
+
+**The slices, so the boundary is operable rather than merely stated:**
+
+| slice | this lane |
+|---|---|
+| **`D1`'s clause** | **NOT independent.** A third party reviews it; failing that it ships **labelled non-independent on the artifact**, never in a message |
+| the three declared amendments, `D2`, `D3`, any new material | **independent** — not authored here |
+| grading `(cause 3, Z)`'s `M(ii)` or the significance leg | **recused on both documents**, per §D.7, whoever reviews what |
+
+## E.2 The general trade, stated as an operating rule
+
+**A reviewer who only finds defects stays independent; one who supplies a remedy buys the fix at the
+cost of its own next verdict.** Each remedy offered narrows what the reviewer can afterwards certify.
+
+That is a real trade and it was **worth making for `D1`**: one clause, derivable from the subject
+document's own theorem, tested in both directions — withholding it would have cost a round trip and
+produced the same clause. But it is a cost, and it should be **priced at briefing time, not
+discovered at re-check time**. Two operational forms, the second the coordinator's:
+
+1. **Say at briefing which mode the reviewer is in** — name requirements and stop short of remedies,
+   or offer remedies and spend the slot. Either is defensible; the default is silent.
+2. **Route the replacement reviewer BEFORE the fix is written.** The failure is silent otherwise: the
+   author would be handed their own clause back, and the non-independence label would be **true and
+   absent** — the shape this review has now found four times in two days.
+
+## E.3 Two routing gaps, reported rather than filled
+
+Recorded because they are prerequisites of the next step and neither is this lane's to close:
+
+1. **A third lane to grade `(cause 3, Z)`'s `M(ii)` and the significance leg.** Both criteria lanes
+   are disqualified — the designer by `BEN-381` as the contract's author, this lane by §D.7.
+2. **A reviewer for `D1`'s clause**, per §E.1.
+
+**One candidate is disqualified for a reason worth recording, and its ground is RELAYED, not measured
+here.** `claude-orchestrator` reports that the `spec author` session authored
+`PROPOSAL-20260908` — whose `C-1`/`C-2`/`C-3` are leg 1's ancestors and which
+`RECOMMENDATION-20260910` §0.0 supersedes — and has declared an interest in that supersession. **What
+this lane can measure is only what the documents say about themselves:** `PROPOSAL-20260908:3` reads
+*"Authored 2026-09-08 by the Z spec/implementation lane"*, and the recommendation's byline names the
+`z-criteria-designer` lane against `owners.tsv:14`. **Neither line names a session, so the mapping
+from lane to session is the coordinator's to evidence, not mine** — `authorship is not ownership; read
+the owner line`. The disqualification is plausible and unverified here, and it should be evidenced
+before it is relied on, in either direction.
+
+**The coordinator's own framing is adopted and is the right standard:** *"I would rather report a gap
+than manufacture a reviewer who is disqualified for a reason I did not look for."*
