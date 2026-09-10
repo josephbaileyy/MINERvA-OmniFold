@@ -64,6 +64,9 @@ Two further corroborations from the same verbatim text:
   non-independence for the retained-subspace clause is live only if the bound is adopted anyway, which
   the ruling forecloses.
 
+> **⚠ WITHDRAWN 2026-09-10, see Part J.** The mootness claim in this item is **FALSE**. Measured at `05bf8647`: the endpoint-A packet's §2 table carries **A-4** — *"retained rank and retained-subspace projector gap across members, `‖P_0 − P_k‖_2 ≤ 1e-8`"*, which is clause (d)'s exact test — as a live endpoint-A requirement **with no dependence on the ρ bound**. The claim is true only of clause (d) *as a terminal-outcome sub-clause of the ρ-leg* at `RECOMMENDATION:392`, and false of the **test** the clause states. **Anyone acting on "clause (d) is moot" drops a live A-4 requirement.** My disqualification is unchanged; what changes is that it is a spent verdict on a LIVE object, not a dead one.
+
+
 ---
 
 ## G.2 — F-III: MEASURED. THE PREMISE IS FALSE FOR ONE OF FIVE CONSUMERS, ON ITS OWN CITED LINES

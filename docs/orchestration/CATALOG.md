@@ -341,6 +341,28 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   pre-registered block list:** condition 3 covered population **over**-inclusion only, so the flux
   finding is under-inclusion my §F.5 did not pre-register — the one-directional-guard failure `F15`
   demands against, in my own pre-registration.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partJ.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partJ.md)
+  - ⚠ **PART J WITHDRAWS THIS LANE'S "clause (d) is moot" CLAIM — read it before relying on Parts F, G
+  or H's disqualification paragraphs.** Measured at `05bf8647`: the packet's §2 table carries **A-4**
+  (*"retained rank and retained-subspace projector gap across members, `‖P_0 − P_k‖_2 ≤ 1e-8`"*) as a
+  **live** endpoint-A requirement with **no reference to the ρ bound**. The claim was true only of
+  clause (d) as a terminal-outcome sub-clause of the ρ-leg at `RECOMMENDATION:392`, and false of the
+  **test** the clause states — a clause's ROLE conflated with its CONTENT. **Anyone acting on "clause
+  (d) is moot" drops a live A-4 requirement**, and the error's direction is permissive. Withdrawal
+  banners placed at **all three** sites, since the surviving site is the one a reader lands on.
+  **§J.1a: I held the disproof in a LATER part and did not collide it.** Part I §I.6 recuses from
+  A-4 *"including its row in §2's table"* — and a recusal presupposes the item is live, so Part I
+  contradicts F, G and H while quoting the row that disproves them. Same shape as `A14` vs `A30`;
+  writing it up once did not prevent the repeat. **The mechanical fix: when recusing from an item,
+  grep my own corpus for its name** — `grep -in moot` would have returned three of the four sites.
+  **§J.2 relays clause (d)'s substance and assesses none of it** (sound as necessary, not sufficient
+  since retained eigenvalues can move at fixed subspace, `1e-8` not load-bearing) — including the
+  parts favourable to what this lane supplied. **§J.3 accepts the sharing-structure finding as REAL
+  and rejects A-6 as its home:** Ruling 2's verbatim field list is `N` + convention + treatment + `p`,
+  so requiring sharing structure of A-6 is a proposal to EXTEND the ruling (Joseph's call), not an A-6
+  conformance defect — whereas the equal-`N` finding is an INTERNAL insufficiency, A-6's own part (a)
+  failing to substitute for its own part (b). One A-6 defect, one gap in whatever consumes `B`; **not
+  additive against the same requirement.**
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:

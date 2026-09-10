@@ -101,6 +101,9 @@ certifying my own design input. Likely moot in any case: Joseph's *"Do not reope
 approach"* removes the bound from the recommended gated set, so clause (d) binds only if the bound is
 adopted regardless.
 
+> **⚠ WITHDRAWN 2026-09-10, see Part J.** The mootness claim in this item is **FALSE**. Measured at `05bf8647`: the endpoint-A packet's §2 table carries **A-4** — *"retained rank and retained-subspace projector gap across members, `‖P_0 − P_k‖_2 ≤ 1e-8`"*, which is clause (d)'s exact test — as a live endpoint-A requirement **with no dependence on the ρ bound**. The claim is true only of clause (d) *as a terminal-outcome sub-clause of the ρ-leg* at `RECOMMENDATION:392`, and false of the **test** the clause states. **Anyone acting on "clause (d) is moot" drops a live A-4 requirement.** My disqualification is unchanged; what changes is that it is a spent verdict on a LIVE object, not a dead one.
+
+
 **NOT DISQUALIFIED — the projected-uncertainty boundary.** Part F left `F9` unanswered and Part G §G.1
 recorded the convergence with Joseph's adequacy check and stopped, both deliberately, to keep this
 slot spendable. **The line is between *"here is what must be true"* — a requirement, which does not
