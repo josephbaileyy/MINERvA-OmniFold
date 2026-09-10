@@ -184,9 +184,9 @@ and here is exactly what is and is not established.
   whether the fresh product's provenance is genuinely independent. This plan states the tension
   rather than resolving it in its own favour.
 
-**If Joseph reads it as a further member, there is no permitted path and this plan reports that
-plainly: Z's throw waits for Gate 2.** Nothing else in the plan changes; §3's reuse split, §4's
-estimator recommendation and §6's rulings all stand, and only §5's production block is deferred.
+**⚠ §2.6 SUPERSEDES THIS SECTION'S FRAMING.** §2.4 put the question as a bare reading and offered
+Joseph no recommendation, which is not what he asked for. §2.6 gives one, and it is built on **what
+the rehearsal actually failed** rather than on where a job writes.
 
 ## 2.5 ⚠ THE NAMESPACE HAZARD, and it is a real one measured today
 
@@ -207,6 +207,94 @@ And declaring an offset puts the output under `MII_CONTAINER` (`lib_member_resum
 without a code change. **Any authorization must name the container explicitly**; leaving it to a
 default is how an archive gets overwritten by an omitted variable, and this repository has already
 recorded that shape once in `adopt_unified_5d.py:76`'s defaulted `--uthrow`.
+
+**⚠ AND A NEW NAMESPACE IS NOT INDEPENDENCE.** It prevents a collision. It establishes nothing about
+provenance, and §2.6 does not rest on it.
+
+## 2.6 THE RECOMMENDED SCOPE RULING — built on what Gate 2 actually found
+
+### 2.6a What failed, quoted from the verdict
+
+`VERDICT-20260825-gate2-k0-rehearsal-nine-clauses.md`: **six of nine clauses PASS; three do not**,
+and §F's no-partial-credit rule makes any one a FAIL.
+
+| clause | requirement | why it failed |
+|---|---|---|
+| **F-7(b)** | *"the sets are recorded from the rehearsal and pinned"* | **No expected-set pin taken from this rehearsal exists anywhere in the repository, on any ref.** The far-end instrument does not produce one. Its own header records the adjacent gap: *"F-7(b) has no exclusion instrument — nothing mechanically enforces the exclusion the clause asserts, so it is satisfied by convention only."* The verdict: *"cheap to fix and it must not be graded as satisfied by convention."* |
+| **F-8(b)** | *"the receipt states the blind spots in the receipt's own words"* | **No run receipt for this rehearsal has been authored.** Every committed blind-spot document is pre-submission material dated 2026-08-22/23. *"A receipt that predates the run cannot state the run's blind spots."* |
+| **F-17(b)** | M-1…M-6 *"re-measured again after the path runs"*, differences reported | **Half performed, half IMPOSSIBLE.** The comparator reproduced bit for bit — 72 fields, **32 findings, still unexplained**. The second obligation cannot be performed because §7.0.6 unlocks only legs 1–5 |
+
+**The purposes, stated as purposes rather than as clause numbers, because that is what a scope
+ruling has to test against:** (F-7) *the run declares what it should produce, and the declaration is
+committed*; (F-8) *the producing execution self-reports what it could not see, after it ran*;
+(F-17) *the execution environment is verified unchanged across the run, and drift is disclosed.*
+
+**None of the three is about the arithmetic.** All three are about whether the run's own account of
+itself is trustworthy. That is what the quarantine protects, and it is the right test to apply.
+
+### 2.6b Does the proposed independent Z path satisfy those purposes?
+
+**Not by construction, and not by living in a different directory.** Measured against the three
+purposes, a fresh Z round as specified in §§3–5 satisfies **none of them automatically**:
+
+| purpose | does §§3–5 as written satisfy it? |
+|---|---|
+| F-7 — a committed expected-set pin taken from the run | **NO.** Nothing in §3 records one, and the instrument that would produce it **does not exist** — the same absence that failed the rehearsal |
+| F-8 — a post-run receipt stating blind spots in its own words | **PARTLY.** §3.4 binds objects to the job; it does **not** oblige a blind-spot statement, and §1.5's schema is *"written LAST"* but does not carry one |
+| F-17 — far-end re-measurement of M-1…M-6, drift disclosed | **NO.** §3 does not require it |
+
+**So the honest answer is that the Z path as drafted would reproduce two of the three failures.**
+Identical kernels in a clean namespace is precisely the configuration that *looks* independent and
+is not. **The remedy is not to argue the path is different; it is to make the path carry the
+requirements.**
+
+### 2.6c THE RULING I RECOMMEND
+
+> **Gate 2's restriction is scoped to (a) the rehearsal's PRODUCTS and (b) the M(ii) member axis.**
+> A production that reads no rehearsal product and adds no index to the M(ii) scan is **outside
+> prohibitions 1–3 and is not a "further member" under prohibition 4** — *provided it discharges,
+> for itself and before any product of it is read by anything, the three integrity requirements the
+> rehearsal failed:*
+>
+> 1. **F-7-equivalent** — an expected-set pin **recorded from the Z run and committed**, with the
+>    instrument that produces it landed first. Satisfaction by convention is refused.
+> 2. **F-8-equivalent** — a **post-run** receipt stating the run's blind spots in its own words,
+>    authored after the far end. A pre-submission document does not satisfy it.
+> 3. **F-17-equivalent** — M-1…M-6 re-measured **after** the Z path runs, every difference reported
+>    as a finding.
+>
+> **This waives nothing.** Gate 2 stays FAIL; the rehearsal's products stay unadopted, unconsumed,
+> unquoted; leg 6 and the M(ii) family stay sequenced behind it. The three conditions make the Z
+> path **harder** than the rehearsal was, which is the only ground on which its provenance can be
+> called independent.
+
+**Why this shape and not a waiver.** `DECISION-20260830` is explicit that *"no authorization from
+Joseph removes it — only the rehearsal work landing does."* The ruling above does not remove the
+gate; it **scopes** it, and then transplants the unmet obligations onto the new path so that
+nothing the gate protects is lost. **A ruling that let Z proceed without conditions 1–3 would be a
+waiver wearing a scope argument.**
+
+### 2.6d CONSEQUENCES OF EACH BRANCH — including the one that makes refusal expensive
+
+**If GRANTED, with conditions.** Z's throw may be authorized (§7). Additional work created by the
+conditions: the F-7 pin instrument (**code, does not exist**), a post-run receipt obligation added
+to §1.5's schema (**code**), and the F-17 far-end re-measurement (**the comparator already exists**
+— `measure_m1_m6.py` / `compare_m1_m6.py`, reproduced bit-for-bit by the grader). **No compute
+beyond §7's ask.** Gate 2, leg 6 and the M(ii) family are untouched.
+
+**If REFUSED — and this is the consequence that is easy to miss.** *"Z's throw waits for Gate 2"*
+does **not** mean waiting for a paperwork repair. **F-17(b) is impossible for the current rehearsal
+by construction** — the verdict says so and `DECISION-20260830` records the consequence: *"a new
+forward-only rehearsal is required because F-17(b) is impossible for the current one by
+construction."* So refusal means Z waits on **a complete new seven-arm rehearsal round** —
+`70` GPU / `113` CPU at ratified ceilings — **and then the Z throw round on top of it**, inside a
+usable window of `6 d 06 h` + `6 d 11 h`.
+
+**The comparison, stated so the trade is visible and not so it argues for one side:** granting costs
+`110` CPU / `0` GPU plus two code items; refusing costs `70` GPU / `113` CPU **plus** the same
+`110` CPU afterwards, and two sequential rounds inside two sub-7-day blocks. **Refusal may still be
+right** — if the purposes cannot be discharged on a path nobody has graded, cost does not settle
+it. **That judgement is Joseph's and this plan does not make it.**
 
 ---
 
@@ -363,14 +451,27 @@ downstream moves. **Both branches are live and this plan asserts neither.**
 
 **Adopt route (i), pin before production, and buy the measurement of (b) for ≤ 0.58 CPU task-h.**
 
-**Recommended settings**, to be added in `make_estimators` for the `lgbm` path:
+**⚠ CORRECTED 2026-09-10 — THE EARLIER FORM WOULD HAVE CHANGED EVERY NON-Z CALLER.** It gave the
+settings as a replacement for `make_estimators`' `d = dict(...)`, i.e. as a new **default**.
+`make_estimators` is shared: the 4D and FPS chains, the PET path and every historical reproduction
+call it. **Silently re-pinning the estimator underneath them would change numerics campaign-wide for
+objects that are not Z's and are not in question** — and several of them are quoted.
+
+**The change must be Z-SCOPED AND OPT-IN, with existing defaults preserved byte for byte:**
 
 ```
-d = dict(n_estimators=100, num_leaves=8, learning_rate=0.1, verbose=-1,
-         n_jobs=1, deterministic=True, force_row_wise=True)
+def make_estimators(kind, nvars, seed=None, *, pin_envelope=False):
+    ...
+    d = dict(n_estimators=100, num_leaves=8, learning_rate=0.1, verbose=-1)
+    if pin_envelope:                       # Z only; every existing caller keeps today's numerics
+        d = dict(d, n_jobs=1, deterministic=True, force_row_wise=True)
+    if seed is not None:
+        d = dict(d, random_state=int(seed))
 ```
 
-with `random_state` unchanged. Three reasons, in order:
+**`pin_envelope=False` is the default and no existing call site passes it**, so every non-Z product
+is bit-unchanged and that invariance is itself testable — a `T`-leg control should assert it rather
+than assume it. The flag is threaded from Z's launchers only. Three reasons for the settings:
 
 1. **It is the only route that reduces the quantity instead of measuring it**, it costs no
    compute, and it addresses Gap 1 at the source — *an envelope that is pinned has no
@@ -386,10 +487,43 @@ with `random_state` unchanged. Three reasons, in order:
    this plan has **not** verified against 4.6.0.
 3. **It makes `B` arguable rather than sampled**, which is what `D4` has been waiting on.
 
-**⚠ AND IT IS NOT A DISCHARGE.** Route (i) supplies a route to `B`. `D4` still needs `S`, still
-needs `B ≤ S`, and still needs `ε` argued within `[B, S]` — **`ε = n_iters · n_rep · eps` and the
-number `1.1873e-11` remain WITHHELD** and must not be cited. Pinning the envelope does not fix the
-boundary; it makes fixing it possible.
+**⚠ THIS IS A CONFIGURATION TO VALIDATE, NOT A BOUND.** Route (i) supplies a *route* to `B`.
+`D4` still needs `S`, still needs `B ≤ S`, and still needs `ε` argued within `[B, S]` —
+**`ε = n_iters · n_rep · eps` and the number `1.1873e-11` remain WITHHELD** and must not be cited.
+Pinning the envelope does not fix the boundary; it makes fixing it possible, **and only if the
+evidence below is produced.**
+
+### 4.4a The EXACT evidence a numerical bound would need — none of which exists
+
+**Route (i) makes `B` a design property only if the design is actually pinned and demonstrably
+reproducible.** Six items, in dependency order:
+
+1. **Bit-identical repeats of the FULL CV unfold chain**, not of one estimator fit. §4.2's synthetic
+   check exercised `LGBMClassifier.fit` alone; the quantity `B` bounds is the reproducibility floor
+   of `_xsec_for_weights` end to end.
+2. **Those repeats must span DIFFERENT ALLOCATIONS.** The claim route (i) makes is that *"the
+   envelope no longer varies with the allocation."* Repeats on one node do not test it — they test
+   in-process determinism, which is the easy half.
+3. **⚠ THE SURROUNDING NUMERICAL ENVIRONMENT MUST BE PINNED TOO, AND TODAY IT IS NOT — MEASURED.**
+   `sbatch_uthrow_run_5d_fast.sh:122-123` exports
+   `OMP_NUM_THREADS=32 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 NUMEXPR_NUM_THREADS=2
+   VECLIB_MAXIMUM_THREADS=2`. **`sbatch_uthrow_block_5d.sh` and `sbatch_uthrow_combine_5d_fast.sh`
+   export NONE of them** — grepped, and the only `export` lines are `PYTHONUNBUFFERED` and
+   `PYTHONDONTWRITEBYTECODE`. **Arm 7 is where `--null` computes `x_cv` and `x_cv2`.** So the arm
+   that produces the null operands runs with an unpinned thread environment, which is exactly the
+   mechanism §3.7a names. **A bound argued from "the configuration is pinned" must enumerate every
+   source of run-to-run variation it pins — pinning the classifier while leaving OMP free in the
+   arm that computes the null would be a bound over a configuration that is not fixed.**
+4. **A PREDECLARED estimator of `B`** — §3.7a Gap 3: two arms do not prevent tuning.
+5. **A coverage/confidence objective for the repeat count** — §3.7a Gap 2: *"4 repeats had no
+   justification."*
+6. **`S` argued independently, and `B ≤ S` demonstrated.** Note §3.7a's rev.-19 correction: a loose
+   `B` above `S` means `B ≤ S` **is not demonstrated**, which is a statement about the *evidence*;
+   it is not the same as *"the envelope is inadequate"*, which is a statement about the world.
+
+**If item 1 or 2 fails — the pinned chain is not bit-identical — route (i) does not deliver a design
+property at all**, `B` reverts to a measured quantity, and route (ii)'s three gaps reopen in full.
+**§5.9's pilot tests the cheapest corner of this** (throw-side, one node) and settles none of it.
 
 ## 4.5 The cheap measurement of (b), designed in rather than bolted on
 
@@ -427,24 +561,38 @@ different subject or hardware; **direction not established**. **DERIVED** — ar
 | attempts | `1888` (waker `57712764`: `1884`) | **`1826`** (waker: **`1822`**) |
 | headroom CPU | `485.02` | **`485.51`** |
 
-**⚠ THE SPEND DECREASED BY `0.4858` CPU TASK-HOURS AND `62` ATTEMPTS OVER A CLOSED HISTORICAL
-WINDOW.** Checks run before reporting it:
+**⚠ THIS SECTION'S FRAMING IS CORRECTED — SEE
+`docs/orchestration/FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md`.** It
+reported the difference as attempts going missing. **They were not shown to be missing.** Measured
+on one job over one span, the two captures agree to `≈2%` on both count and elapsed while sharing
+only **8** of `≈1,160` attempt identities — the `(JobID, Start, End)` key is **not stable across
+queries**, so a set difference measures the key rather than the population. **The `62` is an
+artifact of the key.**
+
+**The accounting rule that follows, and this plan uses it:** carry the **MAXIMUM observed** spend,
+never the latest — **`14.9756` CPU task-h, `0.0` GPU, headroom `≤ 485.02` CPU`. A re-query returning
+a lower number does not release budget, and captures are never summed. The raw rows of the 09-09
+capture were not retained (digest only); today's are preserved at
+`docs/orchestration/state/r5-capture-20260910/`.
+
+**The original observations, kept because they are the evidence:**
 
 - **Not query noise.** Three consecutive repetitions today return `1827` rows each.
 - **Not the moving `now`.** The same query with `--endtime 2026-09-09T19:38:19` — the receipt's own
   instant — returns **`1827`** today.
 - **Not new work.** The waker's last attempt ended `2026-09-09T07:39:30`, twelve hours *before* the
   receipt; job `57712764` is now `CANCELLED` and `squeue -u josephrb` returns **no rows**.
-- The `62` missing attempts at `≈28.2` s each account for the `0.4858` h exactly.
+- The `62`-attempt difference at `≈28.2` s each accounts for the `0.4858` h exactly — **which is
+  consistent with the unstable-key explanation and does not favour a loss explanation.**
 
-**The mechanism is NOT established and none is asserted here.** Retention, a purge boundary, or a
-dedup change would each fit; this plan measured the observation, not the cause. **What follows for
-this section is enough on its own:** an `R5` spend figure is a timestamped observation of an
-external store, **not a monotone state**, so a fail-closed admission gate reading it can see
-headroom *increase* between two honest reads, and every figure below carries its measurement time.
+**The mechanism is NOT established and none is asserted here.** The finding record states what is
+and is not supported, and it is filed to the meter's owner rather than adjudicated here —
+**accounting repair is kept separate from scientific scope, and nothing in it changes any Z
+decision.**
 
-**Neither ceiling is close to binding.** GPU `0.0 / 500`; CPU `14.49 / 500`. **The constraint on
-this campaign is the date and the open decisions, not the task-hours.**
+**Neither ceiling is close to binding under either reading.** GPU `0.0 / 500`; CPU `14.98 / 500` on
+the conservative figure. **The constraint on this campaign is the date and the open decisions, not
+the task-hours** — which is why adopting the conservative rule costs nothing.
 
 ## 5.2 Production — one Z throw on the recommended footing
 
@@ -454,11 +602,35 @@ this campaign is the date and the open decisions, not the task-hours.**
 | 6 `uthrow5d_block` (21 tasks) | `30.01` | `31.01` | **`40` CPU** | same |
 | 7 `uthrow5d_combF` (+`--null`) | `0.42` | `0.58` | **`5` CPU** | same |
 | **subtotal** | **`61.37`** | **`80.70`** | **`105` CPU / `0` GPU** | |
-| route-(i) diagnostic, second arm 7 (§4.5) | — | `≤ 0.58` | `5` CPU | **MEASURED UPPER BOUND** |
+| route-(i) diagnostic, second arm 7 (§4.5) | — | `0.58` | `5` CPU | **TRANSFERRED** — §5.2a |
 | **production total** | | **`≤ 81.28`** | **`110` CPU / `0` GPU** | **`22.0%` of the CPU ceiling** |
 
-**This is not a bound.** Every arm figure is a **prior from a different subject** — no Z arm has
-ever run — and §5.6 lists what can move them.
+### 5.2a ⚠ THESE ARE TRANSFERRED ESTIMATES, NOT MEASURED BOUNDS — CORRECTED 2026-09-10
+
+**Every estimator-bearing figure above was measured under a DIFFERENT estimator configuration than
+the one §4 proposes, so none of them bounds a Z arm.** The correction matters because the earlier
+revision labelled two of them `MEASURED UPPER BOUND`, and a bound is a much stronger claim than the
+evidence supports.
+
+**The subset-of-a-completed-job argument — *"one unfold ≤ the whole job"* — is only valid if the
+subset is executed the same way.** Under a changed configuration it does not hold at all, in either
+direction.
+
+| row | was labelled | **corrected class** | why |
+|---|---|---|---|
+| arms 5, 6, 7 | TRANSFERRED | **TRANSFERRED across a CONFIGURATION CHANGE** | measured with LightGBM at `OMP_NUM_THREADS=32`; §4 proposes `n_jobs=1` |
+| cause-4 second CV unfold, `0.5764` | **MEASURED UPPER BOUND** | **TRANSFERRED** | it is an estimator-bearing unfold; the historical job ran unpinned |
+| route-(i) diagnostic arm 7, `0.58` | **MEASURED UPPER BOUND** | **TRANSFERRED** | same |
+| the two assemblies, `0.5231` | **MEASURED UPPER BOUND** | **TRANSFERRED** | `adopt_unified_5d.py` runs **no estimator**, so the configuration does not touch it — but it is still a subset bound taken off a *different job's* four operations on different inputs, and `j28_adopt_5d` ran a J28 rescale Z never runs |
+| `eigvalsh`, outer products, replay I/O | DERIVED / MEASURED | **unchanged** | no estimator, and the hardware transfer was already declared |
+
+**⚠ AND THE DIRECTION IS NOT NEUTRAL HERE.** Measured today: `sbatch_uthrow_run_5d_fast.sh:122-123`
+exports **`OMP_NUM_THREADS=32`**, so LightGBM currently runs 32-way. `n_jobs=1` would take that to
+one thread. **A slowdown is the expected direction and its size is unmeasured**, which is what §5.9
+exists to fix. No number in §5.2 should be quoted for the Z configuration until it is.
+
+**Every arm figure remains a prior from a different subject** — no Z arm has ever run — and §5.6
+lists what else can move them.
 
 ## 5.3 Assembly, validation and independent replay
 
@@ -524,10 +696,13 @@ being fail-closed, closes.
    B's 36-file decomposition; unpriced, and it is code rather than compute.
 7. **The `z_build` memory peak is unmeasured** and the driver is memory-bound.
 
-## 5.7 Is completion before the existing stop credible? — split, because the two halves differ
+## 5.7 Is completion before the existing stop credible? — FEASIBILITY and READINESS are different questions
 
-**A CONSTRUCTED Z: YES, credibly.** `≤ 82.6` CPU task-h of estimated spend against `485.5` of
-measured headroom; `110` CPU / `0` GPU as a reservation, `22.0%` of the ceiling. Wall-clock for the
+**⚠ Read §5.8 first: it replaces this section's cost conclusion.** What survives here unchanged
+is the list of five READINESS items, which are prerequisites with no cost and no schedule.
+
+**A CONSTRUCTED Z: YES, credibly.** `≤ 82.6` CPU task-h of estimated spend against `485.02` of
+headroom on the conservative figure (§5.1); `110` CPU / `0` GPU as a reservation, `22.0%` of the ceiling. Wall-clock for the
 three arms is a few hours of compute at full concurrency — **but `AMENDMENT` §3c records one arm's
 tail running at two-way concurrency on `Reason=Resources` for eleven hours in a single round**, so
 plan on days, not hours. One round fits inside block A with margin, and inside block B if it slips.
@@ -547,12 +722,15 @@ of them, each independently sufficient:
 4. **Twenty-eight `(cause × leg)` cells are OPEN for Z** and Z inherits nothing from G. They need a
    grading lane that `BEN-381` does not disqualify, and `BEN-381` disqualifies the lane that drafted
    the contract.
-5. **`(cause 3, Z)`'s `M(ii)` is behind Gate 2 and 5×–9× over `R5` at the historical design.**
+5. **⚠ WITHDRAWN AS WRITTEN — see §5.8.** It said `(cause 3, Z)`'s `M(ii)` is *"behind Gate 2 and
+   5×–9× over `R5` at the historical design."* The `5×–9×` is the **historical 46/50-member M(ii)
+   family**, which §6.3 explicitly does not adopt as Z's design. **Z's own cause-3 design is
+   `N = 4`–`5` and it FITS inside `R5`.** Charging Z with another design's size is
+   asymmetric comparison, and it inverted the conclusion.
 
-**The honest one-line answer: the artifact is affordable and the decision is not.** Building Z
-before the stop buys a bound, auditable, non-passing product with real provenance — which is worth
-having and is not an adopted uncertainty product. **Nothing in this plan shortens the list above,
-and no resource authorization touches it.**
+**⚠ CORRECTED 2026-09-10 — "the decision is not affordable" WAS THE WRONG SENTENCE, and it made
+the wrong kind of claim.** It priced a *readiness* gap as if it were a *cost*, and it reached its
+number by charging Z with the historical M(ii) family's design. Both halves are replaced by §5.8.
 
 ---
 
@@ -628,3 +806,120 @@ twenty-eight cells. **It asks for no waiver of Gate 2 and treats none as obtaina
 authority of a decision already on `main`: *"the gate, not the family authorization, is the binding
 constraint, and no authorization from Joseph removes it — only the rehearsal work landing does."*
 No compute was launched in preparing it.
+
+## 5.8 ⚠ FEASIBILITY AND READINESS, SEPARATED — NEW, AND IT REPLACES §5.7's COST CONCLUSION
+
+**§5.7 said "the artifact is affordable and the decision is not." That sentence conflated two
+things that are not the same kind of thing, and it is withdrawn.**
+
+- **FEASIBILITY** is a resource question and it has a number.
+- **READINESS** is a set of unresolved prerequisites — missing criteria, an unassigned reviewer, an
+  unowned decision. **These are not cost estimates and must not be priced.** An unwritten criterion
+  does not become affordable or unaffordable; it becomes written or it does not.
+
+### Z's COMPLETE resource requirement, including its own cause-3 design
+
+**A Z member is not a historical seven-arm member.** It additionally carries the two assemblies, the
+inflated-object validation, and — conditional on `PM-3` — the standard-P4 lateral stages:
+
+| | GPU | CPU | class |
+|---|---:|---:|---|
+| historical seven-arm member, round-2 actuals | `54.90` | `86.53` | **TRANSFERRED** |
+| `+` two `adopt_unified_5d.py` assemblies | — | `0.5231` | **TRANSFERRED**, §5.9 |
+| `+` inflated-object validation, both variants | — | `0.07` | **DERIVED** |
+| `+` standard-P4 lateral stages 3–6 | `0.80` | — | **TRANSFERRED**, conditional on `PM-3` |
+| **one Z member** | **`55.70`** | **`87.12`** | **DERIVED on TRANSFERRED priors** |
+
+**§6.3 rules `(cause 3, Z)`'s `M(ii)` to be the joint-baseline composite over members, and §3.7b's
+planning estimate is `N = 4`–`5` total.** So Z's complete requirement is:
+
+| design | GPU | CPU | vs `R5` `500`/`500` |
+|---|---:|---:|---|
+| **Z at `N = 4`** | **`222.8`** | **`348.5`** | **`44.6%` / `69.7%` — FITS** |
+| **Z at `N = 5`** | **`278.5`** | **`435.6`** | **`55.7%` / `87.1%` — fits, with `12.9%` CPU margin** |
+
+**⚠ AND THE FIGURE §5.7 QUOTED IS A DIFFERENT DESIGN, MEASURED ON A DIFFERENT SUBJECT.** The
+`5×–9×` overrun is the **historical M(ii) family at 46–50 members**
+(`46 × (54.90, 86.53) = 2,525 GPU + 3,980 CPU`), which **§6.3 explicitly does not adopt as Z's
+design** and which `DECISION-20260830` authorizes as a separate object. Charging Z with it is the
+asymmetric comparison this campaign keeps catching — **the populations are 4–5 members and 46–50
+members, and no ratio between them is a statement about Z.**
+
+**So the corrected feasibility conclusion:** **Z's complete resource requirement, including its own
+cause-3 design, fits inside `R5` at `N = 4` and fits with a thin margin at `N = 5`.** Every figure
+inherits §5.6's contingencies, of which the `±60%` single-arm swing alone would move `N = 5` over
+the CPU ceiling.
+
+**The binding constraint is the SCHEDULE, not the ceiling.** Four to five rounds of **374 tasks
+each** must fit into blocks of `6 d 06 h` and `6 d 11 h` (§5.5). `AMENDMENT` §3c records one arm's
+tail running at two-way concurrency on `Reason=Resources` for **eleven hours in a single round**.
+**Whether four rounds fit is NOT established, and it is the question that decides `N`.**
+
+### READINESS — unresolved prerequisites, deliberately UNPRICED
+
+| # | prerequisite | state as of 2026-09-10 |
+|---|---|---|
+| 1 | the four withheld boundaries — `null_epsilon`, `cause3_agg`, `cause3_med`, `cause3_corr` | **UNRESOLVED.** `null_epsilon` needs `B`, `S`, `B ≤ S` and `ε ∈ [B, S]`; §4 supplies a *route* to `B` only |
+| 2 | a scientific-acceptance **criteria owner** | **ASSIGNED 2026-09-10** — `z-criteria-designer`, acknowledged; `owners.tsv` row added this commit |
+| 3 | an **independent assessor** of those criteria | **ASSIGNED 2026-09-10** — `z-independent-assessor`, acknowledged; row added this commit |
+| 4 | a **grading lane** for the 28 `(cause × leg)` cells that `BEN-381` does not disqualify | **UNRESOLVED** — and distinct from #3, which reviews the criteria, not the artifact |
+| 5 | the reuse-vs-regenerate rationale for `(cause 6, Z)` | **UNRESOLVED** — §3.2 |
+| 6 | `PM-4`'s binding gap and its phrasing amendment | **UNRESOLVED**, owner's to amend |
+| 7 | for any **significance**: the projection map designated, `ndf` and `norm.isf` declared, a decision threshold and margin | **UNRESOLVED — the threshold and margin exist nowhere in the tree** |
+
+**None of these has a task-hour cost and none is shortened by any resource authorization.** Two of
+the seven moved today, and they moved by assignment, not by spending.
+
+## 5.9 THE MECHANICS/COST PILOT — the smallest thing that would price the Z configuration
+
+**Requested in §7b. NOT run, and this section does not authorize it.**
+
+§5.2a leaves every estimator-bearing figure unpriced for the proposed configuration. The smallest
+representative measurement that fixes that is **three single-task arm-5 invocations**, because arm 5
+is the arm that runs an unfold per throw and carries the `±58.7%` swing.
+
+| task | configuration | `--out` | what it contributes |
+|---|---|---|---|
+| **P1** | **Z configuration** — `n_jobs=1, deterministic=True, force_row_wise=True` | Z container, slab `0` | elapsed and peak RSS under the proposed settings |
+| **P2** | **Z configuration, repeat** | Z container, slab `0`, second path | **within-configuration reproducibility at real scale** — does `deterministic=True` give byte-identical slabs? |
+| **P3** | **current configuration**, unchanged | Z container, slab `0`, third path | the baseline the multiplier is measured against, on **the same node type, same week** |
+
+**Why one throw index and not forty.** The quantity wanted is per-task, and forty tasks measure the
+same per-task quantity forty times while also measuring queue contention — which is real but is not
+what the pilot is for.
+
+### What it WOULD establish
+
+1. **The runtime multiplier of `n_jobs=1`** — `elapsed(P1)/elapsed(P3)`, the single largest unpriced
+   term in §5.2, and the one §4.4 created by recommending the pinning.
+2. **Peak memory** under the Z configuration, from `sacct MaxRSS` — currently unmeasured for every
+   Z row, and the driver is memory-bound.
+3. **Whether pinning changes the throw slab at all** — `sha256(P1) vs sha256(P3)`. This is the
+   throw-side half of §4.3(b), on the real bank rather than on 400 synthetic rows.
+4. **Whether the pinned configuration is reproducible run-to-run at real scale** —
+   `sha256(P1) vs sha256(P2)`. **If P1 ≠ P2, route (i) fails on its own terms** and `B` reverts to a
+   measured quantity with all three of §3.7a's gaps reopened. That is the single most decision-
+   relevant bit in the pilot, and it is cheap.
+
+### What it could NOT authorize or establish
+
+- **It cannot establish `B`.** A throw-side unfold is not the CV re-unfold chain; `--null` runs in
+  **arm 7**, which the pilot does not exercise. §4.4's list of required evidence is untouched.
+- **It produces no covariance**, no combine, no assembly, no receipt Z could consume.
+- **It authorizes no adoption, no grading, no discharge, no quoting, no further member**, and it
+  moves neither Gate 2 nor the `R5` stop.
+- **It does not price arms 6 or 7**, whose thread environments differ from arm 5's (§4.4).
+- Three tasks measure a per-task cost, **not** a 40-task round's wall-clock — which §5.8 identifies
+  as the binding constraint.
+
+### Cost
+
+| | figure | class |
+|---|---|---|
+| historical arm-5 per task | `46.4` min (R1) / `69.6` min (R2) | **TRANSFERRED** |
+| three tasks at historical rates | `≈ 2.3 – 3.5` CPU task-h | **DERIVED**, and **not valid for P1/P2** — that is the unknown being measured |
+| **reservation bound** | **`18` CPU task-h, `0` GPU** — `3 × --time=06:00:00`, the launcher's own request | **`3.6%` of the CPU ceiling** |
+
+**The reservation is what a breach is measured against, not a spend estimate.** If `n_jobs=1` is
+catastrophically slow, P1 and P2 hit the six-hour wall and the pilot reports that — which is itself
+the answer, and is why the cap belongs in the authorization.
