@@ -34,8 +34,14 @@ WHAT EACH SECTION ESTABLISHES, and what it does NOT
                       flipping the retained SUBSPACE -- and the bound then fails. Found by the
                       z-independent-assessor lane; reproduced here independently. SYNTHETIC, at
                       condition number ~1e15; whether real Z members do it is UNMEASURED.
-7  ndf direction     the `ndf` policy change INCREASES reported significances. I had declined to
-                      name a direction; that conflated two comparisons. Also the assessor's.
+7  ndf direction     the `ndf` policy change INCREASES reported significances WHERE retained rank
+                      < bin count. I had declined to name a direction; that conflated two
+                      comparisons. Also the assessor's.
+8  domination        THEOREM. `rho <= d` bounds EVERY `u' C u` functional, so s_agg, s_med, the
+                      per-bin distribution and s_proj are all COROLLARIES of leg 1, not independent
+                      constraints. Plus the measured concentration case: at equal trace change the
+                      per-bin MEDIAN reads exactly 0 while rho separates by n. This is the evidence
+                      for the cause3_corr recommendation.
 
 `uq_math` is imported, never restated: a rule retyped is a second implementation.
 """
@@ -343,6 +349,32 @@ def _retained_projector(C: np.ndarray, rcond: float = 1e-15):
     return U @ U.T, int(keep.sum())
 
 
+def _assert_comparison_is_live(build, a: float, b: float, label: str) -> None:
+    """PERTURB ONE OPERAND AND CONFIRM THE OUTPUT MOVES. The only test that a comparison is real.
+
+    Ruled by Joseph 2026-09-10, correcting a framing this lane had accepted: an exact `0.000e+00`
+    from a float comparison is **a prompt to check, never a finding**. Identical deterministic code
+    paths on identical inputs are legitimately bit-equal, and cancellation and underflow also give
+    hard zeros. So a near-zero result may NOT be read as evidence that two operands are distinct
+    objects, nor as evidence that they are the same one. Only a live response to a perturbation
+    distinguishes them.
+    """
+    C0, Ck = build(a, b), build(a, b)
+    P0, _ = _retained_projector(C0)
+    Pk, _ = _retained_projector(Ck)
+    gap_same = float(np.linalg.norm(P0 - Pk, 2))
+    # now move ONE operand across the cutoff and require the gap to respond
+    Ck_moved = build(b, a)
+    Pm, _ = _retained_projector(Ck_moved)
+    gap_moved = float(np.linalg.norm(P0 - Pm, 2))
+    print(f"   liveness control ({label}): identical operands -> gap {gap_same:.3e}; "
+          f"one operand perturbed -> gap {gap_moved:.4f}")
+    if not gap_moved > 0.5:
+        raise AssertionError(
+            "the comparison did NOT respond to a perturbation, so it is not measuring anything -- "
+            "this is the check that a near-zero gap cannot supply")
+
+
 def section_6_pinv_subspace(n: int = 9) -> None:
     """⚠ THE LIMIT OF SECTION 1, AND IT IS A DEFECT IN THE CRITERION THIS PROBE SUPPORTED.
 
@@ -409,9 +441,14 @@ def section_6_pinv_subspace(n: int = 9) -> None:
     P0b, kb0 = _retained_projector(C0b)
     # ⚠ `Ckb`, NOT `C0b`. The first version of this line passed `C0b` twice, so the silent control
     # compared an object with ITSELF and would have reported a zero gap whatever the perturbation
-    # did -- a control that cannot fail, in the probe whose subject is a guard that cannot fail.
-    # Caught by the exact zero: a genuine same-subspace comparison returns float noise (~1e-15),
-    # not 0.000e+00.
+    # did -- a control that cannot fail, inside a probe whose subject is a guard that cannot fail.
+    #
+    # ⚠ AND THE EXACT ZERO IS NOT WHAT ESTABLISHED THAT, though it is what made me look. Corrected
+    # on Joseph's ruling: an exact `0.000e+00` from a float comparison is a PROMPT TO CHECK, never a
+    # finding. Identical deterministic code paths on identical inputs are legitimately bit-equal, and
+    # cancellation and underflow also produce hard zeros. THE TEST IS TO PERTURB ONE OPERAND AND
+    # CONFIRM THE OUTPUT MOVES -- which `_assert_comparison_is_live` below does, and which is the
+    # only thing that distinguishes a real comparison from a self-comparison.
     Pkb, kbk = _retained_projector(Ckb)
     gap2 = float(np.linalg.norm(P0b - Pkb, 2))
     ck2 = _chi2(Ckb, d)
@@ -421,6 +458,7 @@ def section_6_pinv_subspace(n: int = 9) -> None:
     print(f"      chi2_k = {ck2:.6e} in [{lo2:.6e}, {hi2:.6e}]: "
           f"{lo2 * (1 - 1e-9) <= ck2 <= hi2 * (1 + 1e-9)}")
     print(f"      SUBSPACE branch fires: {gap2 > 1e-8}   <- must be False (correctly silent)")
+    _assert_comparison_is_live(build, 1.2e-15, 0.8e-15, "arm 1's straddling pair")
     assert abs(r2 - r) < 0.05, "rho is not held across the arms, so the arms are not comparable"
     assert gap2 < 1e-8, "arm 2's retained subspace moved; it is not the silent control"
     assert lo2 * (1 - 1e-9) <= ck2 <= hi2 * (1 + 1e-9), "arm 2 violated the bound"
@@ -457,6 +495,88 @@ def section_7_ndf_direction() -> None:
     print()
 
 
+def section_8_domination(trials: int = 3000) -> None:
+    """THEOREM. `rho <= d` bounds EVERY functional of the form `u' C u`, so leg 1 DOMINATES any
+    diagonal-based second leg. This is what decides Joseph's `cause3_corr` question.
+
+        rho(C0, Ck) <= d < 1   =>   for every u with u'C0 u > 0:
+                                    u' Ck u / u' C0 u  in  [1 - d, 1 + d]
+
+    Proof: with `w = C0^(1/2) u`, `u'Ck u = w'(I + E)w` and `u'C0 u = w'w`, and `E`'s eigenvalues
+    lie in `[-d, d]`. Sharp, for the same reason section 1 is.
+
+    COROLLARIES, each a statistic the specification asked for as a SECOND leg:
+      u = e_i        every per-bin VARIANCE moves within [1-d, 1+d], so every per-bin sigma within
+                     [sqrt(1-d), sqrt(1+d)] -- bounding s_med, the per-bin max, p90, the whole
+                     per-bin movement distribution
+      u = 1          the total
+      u = rows of M  s_proj, for EVERY projection, designated or not (with section 1b for the trunk)
+      Tr            a sum of e_i' C e_i, so s_agg too
+
+    So `s_agg`, `s_med`, the per-bin distribution and `s_proj` are all COROLLARIES of leg 1 rather
+    than independent constraints -- and section 1 additionally covers the inverse-quadratic consumer,
+    which no diagonal statistic can.
+    """
+    rng = np.random.default_rng(SEED + 3)
+    worst_lo, worst_hi, tight, checked = 1.0, 1.0, 0.0, 0
+    for _ in range(trials):
+        n = int(rng.integers(2, 10))
+        A = rng.normal(size=(n, n))
+        C0 = A @ A.T + n * np.eye(n)
+        B = rng.normal(size=(n, n))
+        Ck = C0 + 0.03 * (B + B.T)
+        if np.linalg.eigvalsh(Ck)[0] <= 0:
+            continue
+        r = rho(C0, Ck)
+        if r >= 1.0:
+            continue
+        functionals = [np.eye(n)[i] for i in range(n)] + [np.ones(n)]
+        functionals += [rng.normal(size=n) for _ in range(6)]
+        for u in functionals:
+            den = float(u @ C0 @ u)
+            if den <= 0:
+                continue
+            ratio = float(u @ Ck @ u) / den
+            worst_lo = min(worst_lo, ratio / (1.0 - r))
+            worst_hi = max(worst_hi, ratio / (1.0 + r))
+            tight = max(tight, ratio / (1.0 + r))
+            checked += 1
+    print("8. LEG 1 DOMINATES EVERY `u' C u` FUNCTIONAL  (this decides the cause3_corr question)")
+    print(f"   {checked} (pair, functional) evaluations, including every e_i and the all-ones vector")
+    print(f"   ratio / (1 - rho), min = {worst_lo:.12f}   must be >= 1")
+    print(f"   ratio / (1 + rho), max = {worst_hi:.12f}   must be <= 1")
+    print(f"   sharpness reached: {tight:.6f}")
+    assert worst_lo >= 1.0 - 1e-9, "DOMINATION LOWER SIDE VIOLATED"
+    assert worst_hi <= 1.0 + 1e-9, "DOMINATION UPPER SIDE VIOLATED"
+
+    # THE CONCENTRATION CASE -- the STATED reason SPEC 3.6b wanted a second, per-bin leg:
+    # "the same trace can be diffuse or concentrated, so the per-bin leg is independently binding."
+    # Measured: at EQUAL trace change, s_agg is identical and the per-bin MEDIAN is blind, while
+    # rho is n times larger. So the hazard the second leg exists for is one rho sees and the
+    # second leg does not.
+    n = 50
+    C0 = np.eye(n)
+    eps = 0.02
+    E_diffuse = eps * np.eye(n)
+    E_conc = np.zeros((n, n))
+    E_conc[0, 0] = eps * n                     # same trace, all in one direction
+    print("   CONCENTRATION, equal trace change, n = 50:")
+    rows = {}
+    for label, E in (("diffuse", E_diffuse), ("concentrated", E_conc)):
+        Ck = C0 + E
+        s_agg = abs(np.sqrt(np.trace(Ck)) - np.sqrt(np.trace(C0))) / np.sqrt(np.trace(C0))
+        s_med = abs(float(np.median(np.sqrt(np.diag(Ck)))) - 1.0)
+        rows[label] = (float(np.trace(E)), s_agg, s_med, rho(C0, Ck))
+        print(f"      {label:>12}: tr(dC) = {np.trace(E):.4f}  s_agg = {s_agg:.6f}  "
+              f"s_med = {s_med:.6f}  rho = {rho(C0, Ck):.6f}")
+    assert abs(rows["diffuse"][1] - rows["concentrated"][1]) < 1e-12, "s_agg is not equal: the case is not controlled"
+    assert rows["concentrated"][2] == 0.0, "the per-bin median is no longer blind to the concentrated case"
+    assert rows["concentrated"][3] > 10 * rows["diffuse"][3], "rho did not separate the two"
+    print("      -> s_agg IDENTICAL; the per-bin MEDIAN reads exactly 0 on the concentrated case;")
+    print("         rho separates them by n. The second leg's own motivating hazard is one rho sees.")
+    print()
+
+
 def main() -> int:
     print(__doc__.split("Run:")[0].strip())
     print("=" * 78)
@@ -469,6 +589,7 @@ def main() -> int:
     section_5_rev7_operand()
     section_6_pinv_subspace()
     section_7_ndf_direction()
+    section_8_domination()
     print("=" * 78)
     print("ALL ASSERTIONS PASSED. Nothing here adopts, grades or authorizes anything.")
     return 0

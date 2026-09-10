@@ -223,8 +223,19 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   margin and `epsilon` argued from `B`'s side because an `epsilon` near `S` would be a gate nothing
   can violate); and **generator significances** (a **sharp, proven** two-sided bound on the consumed
   quadratic form, **non-increasing under projection**, making the criterion closed-form in the
-  decision threshold rather than blocked on it). **Only `cause3_corr` is left without a proposal, and
-  it says so.** Its arithmetic is re-runnable at
+  decision threshold rather than blocked on it). **All four withheld boundaries now carry an explicit
+  recommendation.** `cause3_corr` is answered in **Part 6**, on Joseph's 2026-09-10 ruling that an
+  unexplained requirement may not be retained indefinitely: the recommendation is **Branch B —
+  retire the key and amend `SPEC` §3.6b**, grounded on §2.1b's **theorem** that leg 1 dominates every
+  `uᵀCu` functional (so `s_agg`, `s_med`, the per-bin distribution and `s_proj` are corollaries, not
+  independent constraints) plus the measured concentration case where the per-bin median reads
+  **exactly zero** while `rho` reads `1.0`. The amendment is a **trigger, not a deletion** — a second
+  binding leg becomes required without further amendment once a use is declared with a tighter
+  boundary. **§6.4 carries three objections to the recommendation, including that it is `17×`–`270×`
+  numerically looser than the withdrawn format-derived numbers**; they are part of the
+  recommendation and not separable from it. **`cause3_corr` remains WITHHELD and `(cause 3, Z)`
+  remains non-passing** — Joseph decides any amendment after independent review. Its arithmetic is
+  re-runnable at
   [`state/probe-z-criteria-acceptance-mathematics-20260910.py`](state/probe-z-criteria-acceptance-mathematics-20260910.py).
   Read its `CITABLE FOR` / `NOT CITABLE FOR` header first: no adopted boundary, and every `chi2`/`ndf`
   in it is a synthetic placeholder because **no MINERvA significance exists in this tree**.

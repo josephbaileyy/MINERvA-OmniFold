@@ -79,6 +79,9 @@ staleness.**
 - the **`pinv` retained-subspace limit** of §2.1a, its bidirectional remedy, and the
   **determinate direction** of the `ndf` change in `D.1(b)` — all three found by the
   `z-independent-assessor` lane and reproduced independently here;
+- the **domination theorem** of §2.1b and the **concentration measurement** beside it, and the
+  **`cause3_corr` recommendation** of Part 6 — including §6.4's three objections to it, which are
+  part of the recommendation and not separable from it;
 - the **reconciliation** of §0.0, including that the string `rev. 5` does not occur in the document
   being called that;
 - the **requirement lists** and the **ordered minimum measurements** of §7.
@@ -392,8 +395,8 @@ display test, replacing the two withdrawn format-derived boundaries.**
 | **intended use** | `SPEC` §3.6b requires the second leg to bind **independently** — *"the same trace can be diffuse or concentrated"*. `s_corr` cannot be satisfied by the diagonal, because the diagonal is divided out; and it is not implied by leg 1, because `rho` is a worst-direction bound while `s_corr` is a whole-matrix aggregate. One can be small while the other is not |
 | **statistic** | `s_corr = max_{k in K} ‖ R^(k) − R^(0) ‖_F / ‖ R^(0) ‖_F`, with `R = D^{-1} C_Z D^{-1}`, `D = diag(sqrt(diag C_Z))` — **already implemented at `z_statistics.py:240`, with `correlation_matrix` at `:233`. Do not reimplement** |
 | **denominator** | `‖R^(0)‖_F`, Z's own `k = 0` member, named in the same sentence as the numerator |
-| **tolerance** | ⚠ **NOT PROPOSED, and this is the one place in Part B where I have no number and say so.** `s_corr` is an aggregate over `1.14e8` entries with no established map to any reported quantity, so §3.6d's ordering rule — statistic first, boundary second, derived for *this* statistic's relationship to the affected reported quantity — is not satisfiable from the tree today. **Recommended disposition: `s_corr` is REPORTED as a binding-leg CANDIDATE with its boundary withheld, and `cause3_corr` stays withheld in `z_contract` until leg 1 has been evaluated on real members.** §7 item 5 names the measurement that would close it |
-| **why this is not a retreat to the diagnostic** | leg 1 already carries the *use-facing* bound, so `(cause 3, Z)` is not left ungated by withholding leg 2's boundary. What withholding costs is the independent second binding leg §3.6b requires — so **until `cause3_corr` is declared, `(cause 3, Z)` has one binding leg, not two, and the cell should read `UNRESOLVED` on that ground rather than MET.** Stating that plainly is the honest state and it is weaker than parity with the narrow scan |
+| **tolerance** | ⚠ **SUPERSEDED BY PART 6 — DO NOT READ THIS LEG AS STILL OPEN.** Rev. 1–2 of this cell proposed no number and recommended that `cause3_corr` stay withheld indefinitely. **Joseph ruled on 2026-09-10 that an unexplained requirement may not be retained forever and asked for one explicit recommendation; Part 6 gives it.** The recommendation is **Branch B** — retire `cause3_corr` as a key and amend §3.6b — on the ground that §2.1b **proves** leg 1 dominates every `uᵀCu` functional, `s_corr` included, so no second statistic can bind independently. The original reason still stands as far as it went: `s_corr` is an aggregate over `1.14e8` entries with no established map to a reported quantity, so §3.6d's ordering rule could not be satisfied for it. **What changed is that this is now an argued disposition rather than a withholding.** `s_corr` is retained as a REPORTED diagnostic |
+| **why this is not a retreat to the diagnostic** | leg 1 carries the *use-facing* bound, so `(cause 3, Z)` is not left ungated. **And the `UNRESOLVED`-not-`MET` position is UNCHANGED by Part 6:** `(cause 3, Z)` still has one binding leg where unamended §3.6b requires two, so until Joseph rules on the amendment the cell reads `UNRESOLVED` on that ground — and under the amendment it would still be non-passing, because leg 1's boundary needs `T` and `T` does not exist in the tree. **The recommendation changes what must be argued, not whether the cell passes** |
 | **population / outcomes** | as leg 1 |
 
 ### B.1(iii) The two withdrawn boundaries, given the only role they can honestly play
@@ -729,11 +732,21 @@ WRONG TO.** I wrote that *"dropping modes reduces `chi2` and reduces `ndf`, and 
 oppositely, so the net sign is not determined."* **That conflated two different comparisons.** The
 `ndf` **policy** change holds `chi2` fixed — `chi2` is *already* computed with `pinv` today — and at
 fixed `chi2` the map is strictly decreasing in `ndf`. Since the retained rank is `<=` the bin count,
-**adopting `ndf` = retained rank INCREASES every reported significance.** Measured at three
-synthetic `(chi2, bins, rank)` triples in the probe's section 7: `3.9937 → 4.2362`,
-`3.9976 → 4.3766`, `3.9956 → 4.6126`; the magnitudes are synthetic, the **sign is general** by
-monotonicity. **So this is a distributionally correct change that is also ANTI-CONSERVATIVE, and it
-must go to Joseph as a change with a known direction rather than as a neutral refinement.** The
+**adopting `ndf` = retained rank INCREASES every reported significance — ⚠ WHEREVER THE RETAINED
+RANK IS STRICTLY BELOW THE BIN COUNT.** Where `pinv` discards nothing the two policies coincide and
+the change is exactly zero; the qualifier is not decorative, because whether any mode is discarded
+is a property of the member's spectrum and is **unmeasured on Z**. Measured at three synthetic
+`(chi2, bins, rank)` triples in the probe's section 7: `3.9937 → 4.2362`, `3.9976 → 4.3766`,
+`3.9956 → 4.6126`; the magnitudes are synthetic, the **sign is general** by monotonicity.
+
+⚠ **AND THE WORD "ANTI-CONSERVATIVE" NEEDS ITS REFERENCE POINT, WHICH REV. 2 OF THIS SECTION LEFT
+OUT.** The increase is anti-conservative **relative to today's practice, not relative to truth** —
+and those two framings cannot both be asserted. **If `ndf` = retained rank is the distributionally
+correct policy, then current practice is OVER-CONSERVATIVE and this is a CORRECTION, not the
+introduction of a bias.** Calling it a bias would presuppose that the bin count is right, which is
+the thing being changed. What Joseph should get is: a change with a **known sign**, whose
+**interpretation** as correction-versus-loosening follows from whether the rank-based null
+distribution is accepted — and that is the decision, not a side effect of it. The
 indeterminate comparison — whether to discard modes at all — is a different question and is not
 what this recommends. *(Finding and framing: the `z-independent-assessor` lane.)*
 
@@ -871,12 +884,69 @@ attributable to the subspace and to nothing else** (probe section 6):
 
 *(One defect in my own control, recorded because it is the same shape as the subject: the silent arm
 first compared `C_0`'s projector **with itself**, so it would have reported a zero gap whatever the
-perturbation did. The exact `0.000e+00` gave it away — a genuine same-subspace comparison returns
-float noise near `1e-15`. A control that cannot fail, inside a probe about a guard that cannot fail.)*
+perturbation did — a control that cannot fail, inside a probe about a guard that cannot fail.*
+
+⚠ **AND MY FIRST ACCOUNT OF HOW I CAUGHT IT WAS ITSELF WRONG, RULED BY JOSEPH.** I wrote that the
+exact `0.000e+00` *"gave it away"* because a genuine comparison returns float noise. **That is not
+sound: identical deterministic code paths on identical inputs are legitimately bit-equal, and
+cancellation and underflow also produce hard zeros.** An exact zero is **a prompt to check, never a
+finding** — in either direction, so it is no more evidence of a live comparison than of a dead one.
+**The test is to perturb one operand and confirm the output moves**, which the probe now does at
+`_assert_comparison_is_live`: identical operands give a gap of `0.000e+00`, and moving one operand
+across the cutoff gives `0.9951`. **That** establishes the comparison is real; the zero only made me
+look.)
 
 **Drafting of this clause is mine, explicitly not the assessor's** — it identified the defect and the
 remedy's shape and declined to write the criterion, which keeps its later grading of this leg
 non-circular.
+
+## 2.1b Leg 1 DOMINATES every `uᵀ C u` functional — PROVEN
+
+**This is the result Part 6's recommendation rests on.**
+
+**Claim.** If `rho(C_0, C_k) <= δ < 1` then **for every** `u` with `uᵀ C_0 u > 0`:
+
+    (1 - δ)  <=  uᵀ C_k u / uᵀ C_0 u  <=  (1 + δ)
+
+**Proof.** With `w = C_0^{1/2} u`, `uᵀ C_k u = wᵀ(I + E)w` and `uᵀ C_0 u = wᵀw`, and `E`'s
+eigenvalues lie in `[−δ, δ]`. Sharp, for the same reason §2.1 is — and note it needs **no inverse**,
+so unlike §2.1 it is **untouched by §2.1a's `pinv` limit.**
+
+**Checked:** `37,378` (pair, functional) evaluations **including every `e_i` and the all-ones
+vector**; both sides hold at `1.000000000000` and sharpness is reached.
+
+**The corollaries are exactly the statistics `SPEC` §3.6b asked for as a SECOND leg:**
+
+| `u` | what it bounds |
+|---|---|
+| `e_i` | every per-bin **variance** within `[1−δ, 1+δ]`, so every per-bin **σ** within `[√(1−δ), √(1+δ)]` — hence `s_med`, the per-bin **max**, `p90`, the whole per-bin movement distribution |
+| `1` (all-ones) | the total |
+| rows of `M` | **`s_proj`, for every projection — designated or not** (with §2.2 carrying it from the trunk) |
+| — | `Tr C` is a sum of `e_iᵀ C e_i`, so **`s_agg`** too |
+
+**So `s_agg`, `s_med`, the per-bin distribution and `s_proj` are COROLLARIES of leg 1, not
+independent constraints.** And §2.1 additionally covers the inverse-quadratic consumer, which no
+diagonal statistic can reach at all.
+
+### And the second leg's own motivating hazard is one leg 1 sees and the second leg does not
+
+`SPEC` §3.6b gives its reason for requiring two legs in one sentence: *"the same trace can be diffuse
+or concentrated, so the per-bin leg is independently binding."* **That is a defect of TRACE-based
+statistics, and `rho` is not trace-based — it is a worst-direction statistic, so concentration is
+precisely what it is most sensitive to.** Measured (probe section 8), at `n = 50` and **equal trace
+change**:
+
+| | `Tr(ΔC)` | `s_agg` | per-bin median | `rho` |
+|---|---:|---:|---:|---:|
+| diffuse (`ε` on all `n` directions) | `1.0000` | `0.009950` | `0.009950` | `0.020000` |
+| concentrated (`nε` on one direction) | `1.0000` | `0.009950` | **`0.000000`** | **`1.000000`** |
+
+**`s_agg` is identical to twelve digits. The per-bin median reads EXACTLY ZERO on the concentrated
+case** — because one bin moved and a median cannot see it. **`rho` separates them by a factor `n`,
+and at `1.0` it would be refused as `INCONCLUSIVE` rather than passed.** So the hazard §3.6b
+introduced a per-bin leg to catch is one that an `f_med`-shaped leg is blind to and leg 1 catches.
+*(The `SPEC`'s own `D2` had already noticed half of this — that the median fixes the coverage
+fraction at `50%` "by default rather than by argument".)*
 
 ## 2.2 `rho` is non-increasing under projection — PROVEN
 
@@ -988,6 +1058,144 @@ of `5.26`, while the perturbation a real large-`ndf` claim can absorb is of orde
 
 ---
 
+# 6. THE `cause3_corr` RECOMMENDATION — ONE EXPLICIT ANSWER, AS RULED
+
+**Ruled by Joseph, 2026-09-10, quoted rather than summarized:** *"Ask the criteria designer for one
+explicit recommendation: **either a scientifically justified second binding criterion, or a proposed
+amendment explaining why the first criterion adequately covers the intended use and the second adds
+no necessary protection.** Do not retain an unexplained requirement forever, and do not remove it
+merely to obtain `MET`. I will decide any amendment after independent review."*
+
+**Both failure modes are real and symmetric, and my previous withholding was incurring the first
+one.** Leaving §3.6b's second binding leg standing with nothing behind it is an unexplained
+requirement retained indefinitely — a cost, not a safe default. I was treating abstention as the
+conservative option; it is not.
+
+## 6.1 THE RECOMMENDATION: **BRANCH B**, and the ground is a theorem rather than a judgement
+
+**Recommended: amend `SPEC` §3.6b. `cause3_corr` should be RETIRED as a key rather than declared as
+a number** — a different act from filling it, and Joseph's to approve.
+
+**Why, in one line:** §2.1b proves that leg 1 **dominates** every candidate second leg, so no second
+*statistic* can bind independently — and §3.6b's own stated reason for wanting a second leg names a
+hazard that leg 1 sees and the `f_med`-shaped leg is measurably blind to.
+
+**The argument, laid out so each step can be refused separately:**
+
+1. **§3.6b's requirement is for a second leg that "must bind independently."** Its reason is stated:
+   *"the same trace can be diffuse or concentrated."*
+2. **That is a defect of trace-based statistics.** Leg 1 is a **worst-direction** statistic, so it is
+   maximally sensitive to concentration rather than blind to it.
+3. **PROVEN (§2.1b):** `rho <= δ` bounds every `uᵀCu` functional within `[1−δ, 1+δ]`. So `s_agg`,
+   `s_med`, the per-bin max/`p90`/distribution and `s_proj` are all **corollaries** of leg 1.
+4. **MEASURED (§2.1b):** on the concentrated case at equal trace change, `s_agg` is identical and the
+   per-bin median reads **exactly `0.000000`**, while `rho` reads `1.000000`.
+5. **A dominated statistic cannot bind independently, by definition.** §3.6b's own criterion for a
+   second leg is therefore **unsatisfiable** by anything leg 1 bounds — which is every candidate
+   named in the `SPEC`, and every candidate in `z_statistics.py`.
+6. **Therefore the second leg adds no necessary protection**, and retaining it would require either a
+   statistic outside the `uᵀCu` family with a justified use, or an admission that the requirement is
+   unexplained.
+
+## 6.2 THE AMENDMENT — and it is a REPLACEMENT, not a deletion
+
+**Do not read this as "one leg instead of two."** The requirement is replaced by a stricter and
+checkable one:
+
+> **§3.6b item 3, as amended.** `(cause 3, Z)` is graded on **one binding leg that is not a function
+> of the diagonal alone**, together with a **declared inventory of the uses the assembled covariance
+> is accepted FOR**. The leg's boundary is the **minimum over that inventory** of each use's derived
+> boundary. **A second binding leg becomes REQUIRED, without further amendment, the moment a use is
+> declared whose derived boundary is tighter than the one currently binding** — and the receipt must
+> carry the inventory, so a reader can see which uses were priced and which were not.
+
+**This is what makes it an explanation rather than a removal.** The old requirement had a fixed leg
+count and no stated trigger; the amended one has **no fixed count and a stated trigger**. It cannot
+be satisfied by quietly having fewer legs, because the inventory is part of the receipt and adding a
+use tightens the gate automatically.
+
+**And it answers the "do not remove it merely to obtain `MET`" test structurally:** under this
+amendment, **`(cause 3, Z)` still does not pass today** — leg 1's boundary needs `T`, which does not
+exist in the tree, so the cell remains non-passing for the same reason it was before. The amendment
+changes what would have to be argued, not whether the cell passes.
+
+## 6.3 JOSEPH'S CONSTRAINT 1 — the predeclaration, which is part of this deliverable
+
+*"Do not choose a threshold from the same production members it will subsequently grade. If
+measurements are needed to design it, separate exploratory evidence from acceptance evidence
+explicitly and predeclare the validation arrangement."*
+
+**Leg 1's boundary is unusually well placed to satisfy this, because it is DERIVED rather than
+fitted:** `rho_crit = chi2_0/chi2_crit(T, ndf) − 1` is a closed form in `T`, `chi2_0` and `ndf`. `T`
+is a scientific choice and comes from outside the code entirely. **But `chi2_0` and `ndf` come from
+the `k = 0` member, so the constraint bites and is not vacuous.** Predeclared arrangement:
+
+| | |
+|---|---|
+| **the boundary's operands** | `chi2_0` and `ndf` are computed from the **`k = 0` member only**, which is Z's own build and exists **before any `k ≠ 0` member is submitted** |
+| **frozen when** | `rho_crit` is computed, **written to the receipt with its operands, and frozen BEFORE the first `k ≠ 0` task is submitted.** No `k ≠ 0` member may enter its computation, and the frozen value may not be recomputed afterwards |
+| **the graded set** | the max is over `k ≠ 0`; at `k = 0` the statistic is identically zero, so `k = 0` is the **denominator**, not a graded arm. It is used to *set* the boundary and cannot be *graded against* it |
+| **exploratory vs acceptance, declared separately** | if the `pinv` spectrum has to be examined to establish whether §2.1a's near-cutoff regime is reachable on real Z members, that is **EXPLORATORY** and runs on a **separately declared set that is excluded from the acceptance max**. Its members are named in the receipt as exploratory and may not be re-labelled afterwards |
+| **the validation arrangement** | the `T`-independent quantity `rho` is reported for every member **alongside** `rho_crit`, so a reader can re-derive the verdict at any other `T` without re-running anything — which is also what makes it impossible to move `T` after the fact without the move being visible |
+| **what would VOID the predeclaration** | recomputing `rho_crit` after any `k ≠ 0` member exists; re-labelling an exploratory member as an acceptance member; or choosing `T` after seeing `rho` |
+
+## 6.4 THE THREE STRONGEST OBJECTIONS TO MY OWN RECOMMENDATION
+
+**Stated here rather than left for review, because a recommendation whose weaknesses a reviewer has
+to find is not decision-ready.**
+
+**(i) ⚠ THE AMENDMENT IS NUMERICALLY MORE PERMISSIVE THAN THE WITHDRAWN NUMBERS, AND BY A LOT.**
+Measured: `rho_crit` at `z_0 = 4`, `T = 3` against the withdrawn format-derived `δ_agg = 0.0861%`
+and `δ_med = 0.0374%` —
+
+| `ndf` | `rho_crit` | vs `δ_agg` | vs `2·δ_med` |
+|---:|---:|---:|---:|
+| `42` | `0.201980` | `234.6×` | `270.0×` |
+| `247` | `0.089719` | `104.2×` | `119.9×` |
+| `4825` | `0.021140` | `24.6×` | `28.3×` |
+| `10694` | `0.014255` | `16.6×` | `19.1×` |
+
+**So `17×` to `270×` looser on those two statistics.** My defence is that the withdrawn numbers were
+ruled quotable *"as the historical printed format's resolution and as nothing else"* — they are not a
+scientific bar, so being looser than them is not being looser than a bar; display invariance is now
+covered **exactly** by `B.1(iii)`'s rounding-equality test, which has no tolerance to loosen. **But
+the direction is what it is and I am not going to bury it: if the intent behind §3.6b was that
+estimator-baseline sensitivity be held at the sub-`0.1%` level, this recommendation does not deliver
+that, and nothing in this document does, because nothing in the tree justifies `0.1%`
+scientifically.**
+
+**(ii) AT SMALL `ndf` LEG 1's BOUNDARY IS LOOSE ENOUGH TO BE NEARLY VACUOUS.** `rho_crit = 0.20` at
+`ndf = 42` — a `20%` relative spectral perturbation, which by §2.1b permits per-bin `σ` to move by
+`~9.5%`. That is correct *as a criterion on the significance* (a 42-bin `χ²` with a `1σ` margin is
+genuinely insensitive), and it is **wrong as a stability statement about the covariance.** So leg 1
+protects the significance and, at small `ndf`, little else.
+
+**(iii) AND THAT POINTS AT THE ONE CANDIDATE FOR A GENUINE SECOND USE, WHICH I INVESTIGATED AND
+COULD NOT GROUND.** The note **displays** uncertainty bands, and a band is a second use whose
+boundary need not follow the significance's. I looked for its decision content and it is not there:
+`sec_3d.tex:206-210` labels the 3D band *"shown for orientation only and is not final"*, and no
+adopted covariance stands behind any non-2D band. **So the second use is DEFERRED, not absent** — the
+same distinction I got wrong once and am applying deliberately here. **Which is exactly why §6.2's
+amendment is written as a trigger rather than a deletion:** the moment a band is quoted as a result,
+its boundary enters the inventory and, if tighter, a second binding leg is required with no further
+amendment.
+
+**A third branch exists and I am naming it rather than pretending the choice was binary:** a
+**stability requirement on the covariance as such**, justified by something other than a downstream
+decision — reproducibility of the trunk across rebuilds, say. **I cannot ground it from this tree**,
+and inventing a number for it would be the `D1c` error one more time.
+
+## 6.5 WHAT THE `cause3_corr` RECOMMENDATION SPECIFICALLY DOES NOT DO
+
+It does **not** declare `cause3_corr` — the key **stays withheld** in `z_contract.Z_BOUNDARIES`, and
+I have changed nothing in that file. **`(cause 3, Z)` stays non-passing** while this is open, and it
+would stay non-passing under the amendment too, because leg 1's boundary still needs `T`. It does
+not amend `SPEC` §3.6b — it **proposes** an amendment; the `SPEC` is another lane's and Joseph
+decides after independent review. And it does not touch §6.3's ruled *quantity*: the subject is still
+the assembled covariance `C_Z`.
+
+---
+
 # 7. THE SMALLEST MEASUREMENTS NEEDED, IN DEPENDENCY ORDER
 
 **None requires cluster compute except items 7 and 8, and neither of those is requested here.** No
@@ -999,7 +1207,7 @@ authorization is sought by this document and none is implied.
 | 2 | **Bind the operand of the mask/row-order invariant** — reconstruct both digests from G's production-CV input and bind that input's identity | `SPEC` §3.3(1), whose condition currently has no readable operand (§1.3d); `PM-4` | read-only |
 | 3 | **`PM-5`** — the band-family read on G's own `combined_source`, so `\|R\| = 27` is measured against G rather than S | A.3's complement gap | bounded read |
 | 4 | **The remaining CV-perturbation channels** — how a CV shift propagates into `C_unified` through the throw deviations and the completeness division (`unified_throw_cov_5d.py:66-80`) | the only gap in §C.2's `S`. Today `S` is bounded for the **F7** channel alone | arithmetic + one code read; **no mechanism should be asserted before it** |
-| 5 | **Evaluate leg 1 and leg 2 on real members, then derive `cause3_corr`** from the measured relationship between `s_corr` and `rho` | B.1(ii), the one boundary I do not propose | arithmetic on members `D3` would produce |
+| 5 | **Examine the `k = 0` member's `pinv` spectrum** for modes near the cutoff, to establish whether §2.1a's regime is reachable on real Z members at all | §2.1a's UNMEASURED limit — and under §6.3 this is **EXPLORATORY**, on a separately declared set excluded from the acceptance max | arithmetic on the `k = 0` member, which exists before any offset |
 | 6 | **Declare the intended claim set** — which `(generator, projection)` pairs will carry a significance, and whether any will | **Part D's first decision.** If none will, Part D collapses to Part B leg 1 | a decision, not a measurement |
 | 7 | **Re-scope `SPEC` §6's builder comparison so its unit is the OUTCOME**, then run it | D.1(a); `FINDING-20260910`'s own amendment 2 | Tier-2 code, no compute |
 | 8 | **`Z_CONSTRUCTION_PLAN` §4.5's pinned/unpinned arm-7 diagnostic** | §C.4 items 1–2, the load-bearing pair for `B` | one arm-7 invocation, `<= 0.58` CPU task-h measured on three historical `uthrow5d_combF` runs (`0.3875`/`0.4239`/`0.5764`), **TRANSFERRED** — a different bank and slab count, and the thread-count arm varies the quantity that sets elapsed |
