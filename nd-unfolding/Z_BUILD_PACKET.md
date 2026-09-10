@@ -447,7 +447,7 @@ computes `x_cv` at `:369-371` and drops it at `:586`. A `find` over the whole da
 | sha256 | `038c6132…` | `4cb02ae7…` | `b1d0ceca…` |
 | producing revision | **UNKNOWN, unpinnable** | UNKNOWN (job bound) | `7ac0edec…`, dirty 0 |
 | receipt binding it | 12 files — **as `pre_j28_throw`** | **25 files, incl. G's own build receipt** | **none** |
-| producing job | **no log, no job record** | `56429334` COMPLETED | `57753248` COMPLETED |
+| producing job | **NO COMBINE JOB RAN — §8c** | `56429334` COMPLETED | `57753248` COMPLETED |
 | J28 stamp on slabs | **30 of 40 UNSTAMPED** | 40/40 and 36/36 | 40/40 and 21/21 |
 | seed roles on slabs | legacy `seed` only | legacy `seed` only | `estimator_seed`+`draw_seed` |
 | population | complete | complete | complete |
@@ -499,3 +499,33 @@ and `07c18aee` (2026-07-14) is the oldest commit adding `fixed_seed_null_norm`. 
 *"no stamp for it can ever be produced"* does not follow, **because A's ROOT already contains
 `fixed_seed_null_norm`.** What the gap actually establishes is that A was written by **uncommitted
 code** — SPEC §3.3 condition 10, a stronger and differently-shaped defect than the row states.
+
+
+## 8c. Family A has no execution record at all — corrected, and firmer than first stated
+
+The first version of this section said A had *"no log, no job record."* The **no job record** half
+rested on a background probe that was **killed for memory**, whose empty output was read as "no
+results found" — a dead probe's silence taken for a measurement of zero. Re-measured in the
+foreground, **with a denominator so a null is informative**:
+
+```
+sacct -X -u josephrb -S 2026-07-12 -E 2026-07-14T23:59:59   ->  505 job rows   (the probe sees)
+  uthrow5d_combFL  55843238  CANCELLED  Start=None  Elapsed 00:00:00   <- never started
+  claude-hold      55846803  2026-07-13T01:52:53 -> 02:24:53           <- contains A's write
+```
+
+A's mtime/ctime is `2026-07-13 02:15:41 −0700`. **The only combine-shaped submission in the whole
+window was cancelled before it started, and A's write falls inside a bare resource-holding
+allocation.** So A was produced by an interactive or login-node invocation that left no log, no
+named job, and no receipt of execution.
+
+**This strengthens the disqualification rather than softening it, and it explains the `OI-172`
+anomaly.** An unlogged interactive run is exactly how a file comes to contain
+`fixed_seed_null_norm` 36.5 h before that code was committed. A's producing revision is not merely
+unrecorded — **there is no execution record to bind one to**, so SPEC §3.3 condition 10 fails for
+A by construction rather than by omission.
+
+**What did NOT depend on the killed probe:** the *no log* half (established in the foreground),
+and the "no receipt binds C" finding, which rests on a separate search carrying its own positive
+control — C: 0 files, B: 25, A: 12. The control resolving at 25 and 12 is what makes C's zero
+evidence rather than absence.
