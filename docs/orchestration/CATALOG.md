@@ -186,13 +186,41 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   quote spend with its measurement instant.** A re-query returning less does not release budget.
   Routed to the `r5_meter` owner; **it changes no Z decision and no gate.**
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
-  - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
-  publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
-  **C-1** direct sensitivity of the quoted significance, **C-2** a conditioning diagnostic, **C-3**
-  projected-bin sensitivity via the existing `s_proj`. **Projection and inversion policy are
-  unresolved** — the projection map has three implementations with none designated, and the
-  `pinv` cutoff, tail and `ndf` conventions are undeclared. Read its `CITABLE FOR` / `NOT CITABLE
-  FOR` header before quoting any part of it.
+  - **⚠ SUPERSEDED 2026-09-10 IN ITS CANDIDATE-CRITERIA ROLE, RETAINED AS EVIDENCE.** Successor:
+  `RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md` §0.0, which states the delta item by
+  item. **Its bytes are unchanged and an independent assessment against them stands.**
+  **STILL CITABLE FOR** its §1/§1a/§1b consumer analysis and the intended-versus-validated-path
+  distinction; §2a/§2c, that `s_agg`/`s_med`/`s_eig` cannot bound an inverse-quadratic consumer and
+  that a spectral summary cannot determine the quadratic form; §4a, that printed precision
+  establishes nothing scientific in either direction; and §4c, the `pinv`-cutoff and retained-rank
+  reporting requirement, which the successor carries forward. **NO LONGER CITABLE FOR** its §3
+  candidate criteria **C-1**/**C-2**/**C-3** as the criteria, its §6 builder-comparison premise —
+  which predates `FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md`
+  and as specified would test agreement over a domain selected for agreement — or its closing
+  *"No criteria owner exists"*, which `owners.tsv` refutes as of 2026-09-10. **Its "three
+  implementations" of the projection map is a UNDERCOUNT: four production/consumer construction
+  sites exist**, the fourth on the PET diagnostic path. It declares no threshold and adopts nothing;
+  read its own `CITABLE FOR` header too.
+- [`RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md`](RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md)
+  - **RECOMMENDATION ONLY — adopts nothing, grades nothing, authorizes no compute; Joseph retains
+  scientific approval.** The `z-criteria-designer` owner's answer to `Z_DECISION_PACKET` §5 items 1,
+  5, 7 and 8, in four parts: **covariance construction** (two proposed tolerances — the `g^c`
+  reconstruction gate at exact-or-`1e-12`, arguing that the standard-P4 `1e-9` closure tolerance is
+  six orders too loose for a six-operation expression; and a second per-element leg on the inflation
+  closure identity, because a Frobenius residual is an aggregate); **estimator-baseline sensitivity**
+  (a recommendation **on `SPEC` §3.7d's reserved disposition** — "add a leg": two binding
+  correlation-sensitive legs, `s_agg`/`s_med` demoted to diagnostics with an exact
+  rounding-equality display test replacing the two withdrawn format-derived boundaries);
+  **numerical reproducibility** (`epsilon = 1e-9` **proposed** for `r_null`, derived by a proven
+  inequality from `p4_lib.REPRO_RTOL_PER_BIN`, with `S` discharged by bounding via the F7 decision
+  margin and `epsilon` argued from `B`'s side because an `epsilon` near `S` would be a gate nothing
+  can violate); and **generator significances** (a **sharp, proven** two-sided bound on the consumed
+  quadratic form, **non-increasing under projection**, making the criterion closed-form in the
+  decision threshold rather than blocked on it). **Only `cause3_corr` is left without a proposal, and
+  it says so.** Its arithmetic is re-runnable at
+  [`state/probe-z-criteria-acceptance-mathematics-20260910.py`](state/probe-z-criteria-acceptance-mathematics-20260910.py).
+  Read its `CITABLE FOR` / `NOT CITABLE FOR` header first: no adopted boundary, and every `chi2`/`ndf`
+  in it is a synthetic placeholder because **no MINERvA significance exists in this tree**.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
   - **rev. 21. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by

@@ -114,7 +114,7 @@ docs/orchestration/PROMPTS-20260906-z-specification-session.md	LIVE	open
 docs/orchestration/PROPOSAL-20260830-k0r2-resubmission.md	LIVE	open	
 docs/orchestration/PROPOSAL-20260902-oi173-reissue-cause4-M-referent.md	LIVE	open	
 docs/orchestration/PROPOSAL-20260903-pet-gate6-branch-preservation-and-removal.md	LIVE	open	
-docs/orchestration/PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md	LIVE	open	
+docs/orchestration/PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md	ARCHIVAL	superseded	docs/orchestration/RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md
 docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md	LIVE	open	
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	LIVE	open	
 docs/orchestration/PUBLICATION-READINESS-20260822.md	LIVE	open	
@@ -124,6 +124,7 @@ docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	LIVE	open
 docs/orchestration/README.md	DEAD	superseded	docs/orchestration/CATALOG.md
 docs/orchestration/RECEIPT-20260822-k0-n1-and-guarded-arms.md	LIVE	open	
 docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md	LIVE	open	
+docs/orchestration/RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md	LIVE	open	
 docs/orchestration/RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md	LIVE	open	
 docs/orchestration/RECORD-20260830-k0-quarantine-and-seven-arm-submission.md	LIVE	open	
 docs/orchestration/RECORD-20260830-k0r2-round2-submission.md	LIVE	open	
@@ -173,3 +174,4 @@ docs/orchestration/state/live-state.json	LIVE	open
 docs/orchestration/state/live-state.schema.json	LIVE	open	""
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
 docs/orchestration/FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md	LIVE	open	
+docs/orchestration/state/probe-z-criteria-acceptance-mathematics-20260910.py	MACHINE	open	
