@@ -56,3 +56,29 @@ The next proposed preparation is the v2 source-validation and normalization
 protocol. This software result does not alter scalar results, the existing
 PET statistical pairing decision or publication adoption. No numerical physics
 result is added to the validation ledger.
+
+### 2026-09-10 — Typed-descriptor source and normalization protocol
+
+Prepared [SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md](pet/SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md)
+from software base `529f26ae` on `pet-prong-semantics`. It binds the two
+historical source identities, proposes 4,096 entries per file, separates
+mapping acceptance from semantic/release evidence, and states the remaining
+photon/blob, hypothesis and overlap questions. The normalization pilot specifies
+a single-file reco-MC inventory, historical-anchor reservation, deterministic
+event-group split, valid-only fitting and frozen score identity scaling.
+
+The required detector-selection sidecar does not yet have a bound producer;
+the 75-branch source mapper cannot supply `pass_reco`. Current raw counts and
+sum pooling remain implemented. The proposed mean/log-count representation
+needs separate implementation and validation. Source, normalization and later
+matched C0/C1 stages have explicit proposed resource ceilings and terminal
+non-claims; no execution authorization is inferred from this preparation.
+
+Local checks confirmed the two manifest SHA-256 values, source bindings,
+ordered 75-branch digest, v2 schema digest, document links and exact Gate-6
+restriction keys. The existing five-file synthetic suite passed 52 tests and
+10 subtests in 6.56 seconds in the repair's CPU test environment. These test
+results validate the existing adapter, not the proposed pooling implementation
+or an inventory-aware fitter. No ROOT file was opened, scientific training
+performed or cluster job submitted. Documentation only; no new physics result
+or validation-ledger row, and no change to OI-126 or Gate 6.

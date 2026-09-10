@@ -102,27 +102,28 @@ The 32-row packet does not support photon three-state rates, cross-playlist clai
 
 ## Next bounded task
 
-**Specify the v2 source-validation and normalization protocol on
-`pet-prong-semantics`.** The prong software repair is complete; do not repeat it
-or revive the older Gate-6 branch. The next preparation should name:
+**Protocol prepared, 2026-09-10; source execution remains unapproved.**
+[SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md](SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md)
+pins the data/MC identities and proposes entries `[0,4096)` from each file,
+with explicit mechanical, semantic and release verdicts. It specifies a
+single-file training reco-MC normalization pilot, historical-anchor exclusion,
+event-group split, valid-only statistics, score identity scaling and acceptance
+thresholds. A bound `pass_reco` sidecar is still required; the source mapper's
+75 branches do not supply that selection.
 
-1. Exact data/MC source identities, tuple-version evidence, bounded entry scope,
-   and checks of PID support, charge applicability, sentinel combinations and
-   primary-lepton ordering. Preserve unexpected observations; the correspondence
-   is not a substitute for checking those inputs.
-2. The treatment of remaining photon/blob semantics, object overlap and
-   primary-lepton redundancy. Distinguish the present raw-row policy from any
-   proposed filtered or role-aware comparison.
-3. A training reco-MC inventory and split for fitting valid-only continuous
-   normalization, with score identity scaling retained. Freeze that artifact
-   across data, validation, inference and controls. Decide count scaling and
-   multiplicity-dependent pooling before treating the adapter as production-ready.
-4. The measurement, source access and resource budget for a proposed source
-   check; later, the matched `C0/C1` training comparison and its terminal
-   non-claims. Execution needs the corresponding named run authorization.
+Current raw-row membership and sum/raw-count pooling remain implemented.
+Masked-mean pooling with a scaled log count is proposed for a later diagnostic
+pilot; it requires versioned configuration, implementation and synthetic checks
+before real-input use. No production normalization or pooling readiness is
+claimed. Photon/blob provenance, overlap and primary-lepton redundancy remain
+explicit questions.
 
-The current continuation authorized the local repair and synthetic checks.
-It does not supply a source-validation result or production normalization.
-Do not repeat the completed bootstrap/containment probes to advance this task.
+The next decision is the named, bounded source-audit authorization in the
+protocol's budget table, after its launcher and raw-preserving checker are
+prepared and bound. The existing fixed 16-entry smoke runner is not a launcher
+for the proposed 4,096-entry audit. Normalization and matched C0/C1 training
+have separate prerequisites, proposed ceilings and authorization boundaries.
+Preparation does not permit ROOT access or scientific training. Do not repeat
+the prong repair or completed bootstrap/containment probes, or revive Gate 6.
 
 This status authorizes no training, compute, Gate-6 action, `C_ML` construction, or publication claim.

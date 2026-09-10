@@ -190,9 +190,11 @@ alone do not establish improved unfolding or uncertainty coverage.
 
 ## Next step and publication boundary
 
-The next bounded implementation task and its acceptance criteria are in
-[TYPED_DESCRIPTOR_STATUS.md](TYPED_DESCRIPTOR_STATUS.md#next-bounded-task).
-This record supplies documentation and planning, not a new scientific run.
+The prepared [source-validation and normalization protocol](SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md)
+specifies exact proposed source scope, semantic checks, normalization split,
+count/pooling treatment, acceptance criteria and resource ceilings. Its current
+route is [TYPED_DESCRIPTOR_STATUS.md](TYPED_DESCRIPTOR_STATUS.md#next-bounded-task).
+Preparation supplies no source-validation result or scientific run authorization.
 
 PET remains diagnostic/method-development under
 [OI-126](../../docs/OPEN_ITEMS.md). Its existing `C_stat` construction remains
