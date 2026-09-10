@@ -239,6 +239,38 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   answered**, since answering it is a design choice. `F.6` re-measures this lane's independence: the
   `D1` retained-subspace remedy is live as clause (d) at `173baf44:392`, labelled RELAYED, and was
   attacked and bidirectionally tested by a THIRD lane — the routing Part E asked for.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partG.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partG.md)
+  - **PART G — the endpoint-A consumer set MEASURED, and two self-corrections where Part F demanded
+  more than Joseph's ruling does.** Adopts nothing, grades nothing, authors nothing.
+  **`F-0` is CLOSED:** both rulings are now committed verbatim at `a11d6cdd`, so Part F's `RELAYED`
+  labels point at a sha; the finding is retained rather than withdrawn, and **`F9` survives the landed
+  text** — neither record defines *"verified"*, so its two readings are still open and still differ by
+  a code change.
+  **`F-III`, the decisive measurement.** `PACKET-20260910:232-235` classifies all five endpoint-A
+  consumers as diagonal-only. Measured per consumer: **`C6` and `C7` are correct** (`coverage_valid_nd.py:44-54`
+  reads `GetBinContent(i+1,i+1)` off a stored TH2; `_sqrt_trace_from_diag` materialises no matrix),
+  **`D1`/`D2` are correct today** but acquire the dependence once the 5D→3D projection their own row
+  calls *"pending"* lands, and **`C5` is FALSE ON ITS OWN CITED LINES** — `:441` is
+  `project_covariance(C5stat, Mew)` and `:466` takes `np.diag` of `C_lat_e`, built two lines earlier at
+  `:464` as `Me @ C_b @ Me.T`. **The chain to Z is closed:** `eavailW_covariance.py:143,145` default to
+  `uq_cov_stat_5d.root:hCov_stat5d_reported`, which `SPEC-20260906:504` binds as *"Z's candidate `C_stat`
+  input"* (sha `6580016f…`) and `:610` puts in `C_Z`. So one released band is a functional of a Z block's
+  off-diagonals. **The defect is the classification METHOD** — classified by the last operation rather
+  than by the provenance of the matrix it reads — and the refuting words sat one column away, in `C5`'s
+  own *"**produces** `C_low`"*.
+  **Convergence recorded, and the criterion deliberately NOT supplied:** Joseph's verbatim adequacy
+  check (*"retained-rank and subspace stability do not by themselves establish stability of projected
+  uncertainties … show which criterion controls changes in the actual released error bars"*) asks from
+  the other side exactly what `F-I` answers mechanically — and `F-I` was committed at `c695f209` before
+  that text was read. Proposing the criterion is the designer's task; supplying it would spend this
+  lane's verdict on it (Part E §E.1). *"Do not reopen the universal-bound approach"* independently
+  confirms `F18` and makes the clause-(d) independence question **moot for the recommended path**.
+  **Two corrections against the verbatim ruling:** `F12` is reduced to the bare *"mark as not
+  applicable"* (the reason becomes a recommendation), and `F11` is **folded into `F9`** — the ruling
+  asks for one verified number, so demanding intended-and-achieved as two was over-reach; the surviving
+  point is that *verified* is unsatisfiable for one number when the two can differ, `--expected-ids`
+  being a launcher constant that proves consistency and never adequacy (`OI-17`, `122 of 160`, still
+  open). **§F.5's pre-registered block list is five items, not seven.**
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
