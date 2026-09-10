@@ -175,6 +175,16 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `reusable-now`, with the two suspended-authority facts (`D-Y-CONSTRUCT` does not exist; `R4`
   suspends the scan pending `D-C3-VOI` **and** `D-C3-RUN`) flagged so a dependency claim cannot
   launder authority. `BEN-381` will disqualify the drafting lane from grading the legs it defines.
+- [`FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md`](FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md)
+  - **ACCOUNTING INSTRUMENT ONLY — deliberately carries no scientific scope.** The `R5` attempt
+  identity `(JobID, Start, End)` is **not stable across `sacct` queries**: measured on one job over
+  one span, two captures agree to `1.9%` on count and `2.2%` on elapsed while sharing **8 of ~1,160**
+  attempt identities; over 542 overlapping 10-minute buckets, `96.5%` have identical row counts and
+  `0.2%` identical `Start` stamps. So a set difference between captures measures the KEY, not the
+  population, and an apparent 62-attempt loss is an artifact. **Accounting rule until the meter's
+  owner rules: carry the MAXIMUM observed spend, never the latest; never sum or union captures;
+  quote spend with its measurement instant.** A re-query returning less does not release budget.
+  Routed to the `r5_meter` owner; **it changes no Z decision and no gate.**
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
