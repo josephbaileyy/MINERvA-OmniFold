@@ -225,9 +225,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   quadratic form, **non-increasing under projection**, making the criterion closed-form in the
   decision threshold rather than blocked on it). ⚠ **ROUND 2 (2026-09-10) REJECTED THE UNIVERSAL 5D BOUND AS THE ACCEPTANCE INSTRUMENT** — stopping-rule outcome **(2)**, *narrower claim recommended*, which Joseph named as a legitimate result. `rho` needs a positive-definite baseline and **Z's own operands give `rank(C_Z) <= 265` of `10,694`** (Part 6 F1, derived — **rank `263` is S's, not Z's**). §2.1/§2.1b/§2.2 **remain theorems and stay adoptable as stated**; what is withdrawn is their ROLE, plus rev. 1's **`M`-independence** claim (F2: monotonicity needs `range(C_k−C_0) ⊆ range(C_0)`, unmeasured and probably false). **The recommended rule is now DIRECT CHECKS ON THE DECLARED PUBLICATION CONSUMERS** — `s_sig` over declared `(generator, projection)` pairs plus the four inversion declarations `app_statmethods.tex:645-658` already mandates — which also **reinstates `PROPOSAL-20260908`'s C-1 statistic**, superseded in rev. 1 on an asymmetric ground. **All four withheld boundaries carry an explicit recommendation.** `cause3_corr` is answered in **Part 6** as **BRANCH A**: a second binding leg that is the
   **inversion-declaration stability** of each declared projected object across members — retained
-  rank, applied `rcond`, condition number, retained-subspace gap. **It needs no tolerance**, which is
-  why it is available where a correlation-statistic boundary was not, and it is justified by
-  `app_statmethods.tex:645-658` clauses (i)/(ii)/(iv) rather than by this lane's judgement. ⚠ **Rev.
+  rank, applied `rcond`, condition number, retained-subspace gap. **It carries EXACTLY ONE
+  tolerance** — `‖P_0−P_k‖_2 <= 1e-8`, adversarially attacked over ~46,000 trials and survived —
+  while rank equality needs none and the applied `rcond` and condition number are **reported,
+  not gated** (an equality gate on the cutoff *cannot fail*, since it is a function of shape and
+  `eps`; the condition number is continuous and no tolerance for it is justifiable). ⚠ **An
+  earlier revision of this entry said "it needs no tolerance"; that was FALSE and is corrected.**
+  The leg is justified by `app_statmethods.tex:645-658` clauses (i)/(ii)/(iv) rather than by this
+  lane's judgement. ⚠ **Rev.
   1 recommended Branch B on the ground that domination implies non-bindingness; that hinge is VOID
   (F9 — the implication needs `rho_crit <= τ`, a relation between THRESHOLDS) and Branch B is
   WITHDRAWN.** §2.1b's domination theorem itself stands. **`cause3_corr` remains WITHHELD and `(cause 3, Z)`

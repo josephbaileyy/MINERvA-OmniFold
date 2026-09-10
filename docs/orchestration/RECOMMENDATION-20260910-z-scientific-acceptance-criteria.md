@@ -389,7 +389,7 @@ display test, replacing the two withdrawn format-derived boundaries.**
 | **justification** | **PROVEN BOUND**, §2.1 |
 | **population** | the **finite declared offset set** `K = {0, k_1, ..., k_{N-1}}`, predeclared in full before the first task. No inference to a distribution over offsets: nobody has a model of the offset population. This is `PREDECLARE-20260901-cause3-mii` §1's position, transferred because the same thing is true here |
 | **why the maximum** | the claim is quantified over **every** member of `K`, and **a universally quantified claim is graded by the extremum**. A standard deviation can be small while one member is far out, leaving the claim false with the gate green. The statistic follows from the quantifier in the sentence — *not* from the finiteness of the set, which is `SPEC` §3.7b's own correction of a withdrawn argument |
-| **terminal outcomes** | **MET** (`rho <= rho_max`) / **NOT MET** (`rho > rho_max`, with the argmax `k` and the extremal eigenvector's leading components reported) / **INCONCLUSIVE**, which covers three distinct cases and must not be read as the nearer of the other two: **(a)** `rho >= 1`, where the bound is vacuous — a *large* perturbation, never a pass; **(b)** the baseline is not positive definite **on the object that is actually inverted** — ⚠ **the check is on the PROJECTED covariance `M C_Z Mᵀ`, not on the trunk**, because the trunk being PD says nothing about a marginal, and the `(E_avail, W)` projection is **structurally singular by design**, so a trunk-level PD test would pass while the inverted object has no metric. Singular-by-design projections are handled by clause **(d)** below rather than refused here; **(c)** **`INCONCLUSIVE / VACUOUS SEED VARIATION`** — the branch's ruled name, `PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md:230`, beside `INCONCLUSIVE / WRONG FOOTING` at `:226`. `rho == 0` exactly, or a read-back offset set that does not match the declaration. **This branch is the POSITIVE CONTROL and it is why it may not be omitted:** `rho` is small both when the baseline genuinely does not move the covariance **and** when the offset never reached the estimator, and the two are indistinguishable from the statistic alone. It is the `g ≡ 1` shape — a green state reachable without the work being done — one cause over. **A zero spread is evidence the knob never arrived, not a favourable result** (`SPEC` §3.6b item 5); **(d) ⚠ NEW — THE RETAINED SUBSPACE MOVED.** See §2.1a: the consumer inverts with `pinv`, so **MET additionally requires that every member RETAIN THE SAME SUBSPACE as the `k = 0` member**, tested as `‖P_0 − P_k‖_2 <= 1e-8` on the orthogonal projectors onto the retained modes. **Retained RANK is NOT the test and must not be substituted for it** — `D.1(c)` of this document already says why (*"pinning `rcond` does not pin the retained subspace"*), and §2.1a exhibits a case with **identical rank**, `‖P_0 − P_k‖_2 = 0.9951` and the bound violated |
+| **terminal outcomes** | **MET** (`rho <= rho_max`) / **NOT MET** (`rho > rho_max`, with the argmax `k` and the extremal eigenvector's leading components reported) / **INCONCLUSIVE**, which covers three distinct cases and must not be read as the nearer of the other two: **(a)** `rho >= 1`, where the bound is vacuous — a *large* perturbation, never a pass; **(b)** the baseline is not positive definite **on the object that is actually inverted** — ⚠ **the check is on the PROJECTED covariance `M C_Z Mᵀ`, not on the trunk**, because the trunk being PD says nothing about a marginal, and the `(E_avail, W)` projection is **structurally singular by design**, so a trunk-level PD test would pass while the inverted object has no metric. Singular-by-design projections are handled by clause **(d)** below rather than refused here; **(c)** **`INCONCLUSIVE / VACUOUS SEED VARIATION`** — the branch's ruled name, `PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md:230`, beside `INCONCLUSIVE / WRONG FOOTING` at `:226`. `rho == 0` exactly, or a read-back offset set that does not match the declaration. **This branch is the POSITIVE CONTROL and it is why it may not be omitted:** `rho` is small both when the baseline genuinely does not move the covariance **and** when the offset never reached the estimator, and the two are indistinguishable from the statistic alone. It is the `g ≡ 1` shape — a green state reachable without the work being done — one cause over. **A zero spread is evidence the knob never arrived, not a favourable result** (`SPEC` §3.6b item 5); **(d) ⚠ NEW — THE RETAINED SUBSPACE MOVED.** See §2.1a: the consumer inverts with `pinv`, so **MET additionally requires that every member RETAIN THE SAME SUBSPACE as the `k = 0` member**, tested as `‖P_0 − P_k‖_2 <= 1e-8` on the orthogonal projectors onto the retained modes. **Retained RANK is NOT the test FOR THIS PURPOSE and must not be substituted for it** — `D.1(c)` of this document already says why (*"pinning `rcond` does not pin the retained subspace"*), and §2.1a exhibits a case with **identical rank**, `‖P_0 − P_k‖_2 = 0.9951` and the bound violated. ⚠ **This does NOT conflict with §6.4 gating rank equality, and the two purposes are named here so the adjacency cannot be misread:** rank equality is insufficient to validate **§2.1's bound** (this clause), and is separately **required as a declaration** by `app_statmethods.tex:648` clause (ii) (§6.4). **One is a sufficiency question about a bound; the other is a conformance obligation about a quoted number.** Neither substitutes for the other |
 
 ### B.1(ii) LEG 2 — `s_corr`, and it binds independently
 
@@ -400,7 +400,7 @@ display test, replacing the two withdrawn format-derived boundaries.**
 | **statistic** | `s_corr = max_{k in K} ‖ R^(k) − R^(0) ‖_F / ‖ R^(0) ‖_F`, with `R = D^{-1} C_Z D^{-1}`, `D = diag(sqrt(diag C_Z))` — **already implemented at `z_statistics.py:240`, with `correlation_matrix` at `:233`. Do not reimplement** |
 | **denominator** | `‖R^(0)‖_F`, Z's own `k = 0` member, named in the same sentence as the numerator |
 | **tolerance** | ⚠ **SUPERSEDED BY PART 6 — DO NOT READ THIS LEG AS STILL OPEN.** Rev. 1–2 of this cell proposed no number and recommended that `cause3_corr` stay withheld indefinitely. **Joseph ruled on 2026-09-10 that an unexplained requirement may not be retained forever and asked for one explicit recommendation; Part 6 gives it.** The recommendation is **Branch B** — retire `cause3_corr` as a key and amend §3.6b — on the ground that §2.1b **proves** leg 1 dominates every `uᵀCu` functional, `s_corr` included, so no second statistic can bind independently. The original reason still stands as far as it went: `s_corr` is an aggregate over `1.14e8` entries with no established map to a reported quantity, so §3.6d's ordering rule could not be satisfied for it. **What changed is that this is now an argued disposition rather than a withholding.** `s_corr` is retained as a REPORTED diagnostic |
-| **why this is not a retreat to the diagnostic** | leg 1 carries the *use-facing* bound, so `(cause 3, Z)` is not left ungated. **And the `UNRESOLVED`-not-`MET` position is UNCHANGED by Part 6:** `(cause 3, Z)` still has one binding leg where unamended §3.6b requires two, so until Joseph rules on the amendment the cell reads `UNRESOLVED` on that ground — and under the amendment it would still be non-passing, because leg 1's boundary needs `T` and `T` does not exist in the tree. **The recommendation changes what must be argued, not whether the cell passes** |
+| **why this is not a retreat to the diagnostic** | leg 1 carries the *use-facing* bound, so `(cause 3, Z)` is not left ungated. **And the `UNRESOLVED`-not-`MET` position is UNCHANGED by Part 6:** `(cause 3, Z)` still has one binding leg where unamended §3.6b requires two, so until Joseph rules on the amendment the cell reads `UNRESOLVED` on that ground — and it would still be non-passing under §6.3's recommended rule — ⚠ **re-grounded in round 3: rev. 2 rested this on LEG 1's boundary needing `T`, and §6.3 recommends retiring leg 1, so the guarantee was load-bearing on a retired object.** It holds on the surviving instrument directly: **`s_sig` is a movement of a quoted significance across a decision threshold, and `T` exists nowhere in the tree** (§D.0). That does not decay if leg 1 is dropped. **The recommendation changes what must be argued, not whether the cell passes** |
 | **population / outcomes** | as leg 1 |
 
 ### B.1(iii) The two withdrawn boundaries, given the only role they can honestly play
@@ -996,11 +996,26 @@ The proof needs `C_k − C_0 = C_0^{1/2} E C_0^{1/2}`, i.e. **`range(C_k − C_0
 
 **Range containment is neither stated, gated, nor measured on Z — and it is probably false in production**, because members at different estimator baselines give different band vectors and therefore different spans. **The cost of the withdrawal is stated rather than softened: `rho` can no longer be evaluated once on the trunk to cover every marginal, so the criterion re-couples to the `M`-designation question of `D.1(a)`.** §6.3 is the alternative, and it does not need this claim.
 
-**What still stands, unqualified:** the monotonicity theorem itself, for any `M` with `M C_0 Mᵀ` nonsingular and a positive-definite baseline. **It is the LIFT to a singular trunk that fails, not the theorem.** It does **not** make the *reported significance*
-`M`-independent — `chi2_0`, `ndf` and the retained rank all depend on which `M` is used, so D.1(a)–(c)
-remain preconditions. The practical consequence: `rho_5D` can be evaluated **before** the projection
-question is settled, and a small `rho_5D` discharges the sensitivity question for all marginals at
-once; a large one localizes the work.
+**What still stands, and the scope of the heading is deliberately narrow:** the monotonicity
+**theorem** itself — for any `M` with `M C_0 Mᵀ` nonsingular **and a positive-definite baseline**.
+**It is the LIFT to a singular trunk that fails, not the theorem.**
+
+⚠ **AND REV. 2's OWN EDIT LEFT THE WITHDRAWN CLAIM STANDING HERE, WHICH IS WORSE THAN NOT EDITING
+IT.** Rev. 1 closed this subsection with *"the practical consequence: `rho_5D` can be evaluated
+before the projection question is settled, and a small `rho_5D` discharges the sensitivity question
+for all marginals at once."* Rev. 2 added the retraction six lines above **and did not delete that
+sentence**, so it survived *inside* the paragraph headed *"what still stands, unqualified."*
+**It is deleted here. It does not stand, it never stood on a singular trunk, and no reader entering
+at §2.2 should find it affirmed.**
+
+*Why the edit missed: I anchored the replacement on the phrase "So the BOUND is `M`-independent" and
+the survivor said the same thing in different words. **I repaired the sentence I searched for rather
+than the claim I was withdrawing** — and a line-oriented `grep` acquitted me because the survivor is
+line-wrapped. A whitespace-insensitive count over the CLAIM, not the wording, is what found it: 1
+occurrence before the edit, 2 after.*
+
+**What is NOT `M`-independent, and never was:** the *reported significance*. `chi2_0`, `ndf` and the
+retained rank all depend on which `M` is used, so `D.1(a)`–`(c)` remain preconditions.
 
 ## 2.3 What it costs
 
@@ -1077,9 +1092,16 @@ variable moves.**
 
 **The structural content, and it is the one thing in this document that is a warning rather than a
 recommendation.** For a fixed significance margin, the admissible perturbation **falls as `ndf`
-grows**, asymptotically as `(z_0 - T) * sqrt(2/ndf)`. At a projection with thousands of bins a
-**one-to-two-percent** — ⚠ **at the BIN COUNT, which `D.1(b)` forbids as `ndf`. At the effective rank scale (`ndf = 263`, S's measured value and the scale Z's own bound implies) `rho_crit ≈ 0.087`, i.e. `8.7%`, looser by `4`–`6×`** (F4) relative spectral perturbation is enough to move a `4-sigma` claim below
-`3-sigma`. **Use the exact formula, not the asymptote:** the asymptote is conservative at large `ndf`
+grows**, asymptotically as `(z_0 - T) * sqrt(2/ndf)`.
+
+⚠ **AND THE HEADLINE FIGURE REV. 1 DREW FROM THIS WAS COMPUTED AT AN `ndf` THIS DOCUMENT'S OWN
+`D.1(b)` FORBIDS (F4).** Rev. 1 wrote that at a projection with thousands of bins a
+*"one-to-two-percent"* relative spectral perturbation suffices to move a `4-sigma` claim below
+`3-sigma`. **That is `rho_crit` at the BIN COUNT.** At the effective-rank scale — `ndf = 263`, which
+is S's measured value and the order Z's own bound implies (§6.1 F1) — **`rho_crit ≈ 0.087`, i.e.
+`8.7%`: looser by `4`–`6×`.** The table above had rows at `7/42/247/4825/10694` and **none at the
+scale the object actually has.** Arithmetic right, population wrong — and it cut *against* §6.4's own
+self-objection, whose *"least permissive"* `16.6×` row sat at the most-forbidden `ndf`. **Use the exact formula, not the asymptote:** the asymptote is conservative at large `ndf`
 and **permissive below `ndf ≈ 250`** (at `ndf = 7` it gives `0.535` against the true `0.417`), so
 quoting it as a shortcut errs in the unsafe direction exactly where projections are small.
 
@@ -1153,21 +1175,45 @@ consumer, with no universal bound and no support surgery.**
 | **cost** | zero incremental production — arithmetic on members `D3` would produce, on `42`-to-`4825`-bin objects rather than `10,694²` |
 | **what it does NOT do** | it makes **no** statement about the trunk as a whole, and none about projections outside the declared set. **A universal claim is exactly what I am giving up**, deliberately, per the steer |
 
-## 6.4 `cause3_corr` UNDER THE NEW FRAMING — BRANCH A, AND IT NEEDS NO TOLERANCE
+## 6.4 `cause3_corr` UNDER THE NEW FRAMING — BRANCH A, AND IT CARRIES EXACTLY ONE TOLERANCE
 
 **Recommended second binding leg: the INVERSION-DECLARATION STABILITY of each declared projected
 object across members** — retained rank, the `rcond` actually applied, the condition number, and the
 retained-subspace projector gap `‖P_0 − P_k‖_2`.
 
+**⚠ REV. 2 CLAIMED THIS LEG *"NEEDS NO `τ`"* AND, FOUR POINTS LATER, THAT ITS `1e-8` TOLERANCE
+*"WAS ATTACKED AND SURVIVED"*. BOTH CANNOT STAND, AND THE FIRST IS FALSE.** Measured across the four
+components (`numpy` 1.26.4; three same-shaped members at `n = 200`):
+
+| component | behaviour across members | disposition |
+|---|---|---|
+| **retained rank** | integer; equality is meaningful | **GATED, no tolerance** — but it is the output of a *thresholded* operation, so its stability inherits the cutoff convention below |
+| **applied `rcond`** | **`4.4408920985006262e-14` IDENTICAL across all members** — the relative cutoff is a deterministic function of shape and `eps`, not of the member's data | ⚠ **REPORTED, NOT GATED.** An equality gate on it **cannot fail** for same-shaped members. Gating it would have been the very shape this document keeps diagnosing. **And it is library-version-dependent** — `numpy` 1.26's `pinv` default is `rcond=1e-15`, `numpy` 2.x's is `max(shape)·eps` — which is exactly why clause (i) demands the cutoff *actually applied* be stated at the point of quotation |
+| **condition number** | `3.387e6` / `4.455e6` / `4.943e6` — **continuous**, so equality is impossible | ⚠ **REPORTED, NOT GATED — decided explicitly.** Gating it needs a tolerance, and **no tolerance for it is justifiable from anything in this tree** — the same blocker that made me withhold `cause3_corr`. Gating it without one is what Joseph barred, so it is **dropped from the gated set** and kept as the diagnostic that makes a rank change interpretable |
+| **`‖P_0 − P_k‖_2 <= 1e-8`** | a genuine threshold | **GATED. This is the leg's one tolerance** |
+
+**So the corrected claim is four-part, and it is stronger than *"no `τ`"*: the leg carries EXACTLY
+ONE tolerance, and that one was adversarially attacked and survived.** It still clears the original
+blocker, because that blocker was *"no **justified** number exists"* — not *"no number exists"*.
+
 **Why this is Branch A rather than a relabelling of Branch B:**
 
-1. **It needs no `τ`.** It is an identity/stability test, like `A.4`'s census — so the blocker that
-   made me withhold `cause3_corr` (no justified number exists) **does not apply to it.** That is the
-   whole reason it is available and the diagonal legs were not.
-2. **It binds independently, provably.** §2.1a is the witness: `rho = 0.455`, retained rank
-   identical, subspace flipped, bound violated. And conversely a small `rho` permits eigenvalues to
-   cross the cutoff, so leg 1 passing does **not** imply rank stability. **F9's threshold objection
-   does not reach it, because it is not a thresholded statistic in the dominated class.**
+1. **Its one tolerance is justified by a survived attack rather than by my judgement**, and its other
+   three components need none — two because they are reported rather than gated, one because integer
+   equality needs no `τ`. The blocker that made me withhold `cause3_corr` was the absence of a
+   *justifiable* number; here there is one number and it has a justification I did not supply.
+2. **It binds independently — and ⚠ REV. 2 GROUNDED THIS ON A REGIME-DEPENDENT WITNESS.** Rev. 2
+   cited §2.1a flatly (`rho = 0.455`, rank identical, subspace flipped). **But `rho = 0.4554` exceeds
+   `rho_crit` in most realistic regimes** — `0.202` at `ndf=42, z_0=4`; `0.177` at `ndf=263, z_0=5`;
+   `0.063` at `ndf=4825, z_0=6` — **so leg 1 has already failed there and §2.1a witnesses nothing.**
+   It is a valid witness only where `rho_crit > 0.455`, e.g. `ndf=42, z_0=6`.
+   **The conclusion survives on the better half, which needs no witness and no regime: a SMALL `rho`
+   permits an eigenvalue to cross the cutoff, so leg 1 passing does not imply rank stability.**
+   Measured (probe §11): `rho = 1.005e-01` — an order of magnitude inside any plausible `rho_crit` — with the retained rank moving `6 → 5`.
+   **And F9's threshold objection does not reach this leg because `‖P_0 − P_k‖_2` is NOT a `uᵀCu`
+   functional, so it is not in the dominated class.** ⚠ Rev. 2 wrote *"not a thresholded statistic in
+   the dominated class"*, welding two claims: **the class claim is true and carries the argument; the
+   "not thresholded" half is FALSE**, as the table above now says outright.
 3. **It is justified by a RATIFIED protocol, not by my judgement** — `app_statmethods.tex:645-658`
    clauses (i), (ii) and (iv) require exactly these declarations *at the point of quotation*, and
    clause (iv) exists because *"the 5D candidate, its 4D projection and the published 2D block have

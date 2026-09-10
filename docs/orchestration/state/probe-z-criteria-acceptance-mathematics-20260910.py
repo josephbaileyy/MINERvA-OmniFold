@@ -13,10 +13,14 @@ WHAT EACH SECTION ESTABLISHES, and what it does NOT
                       numerically in both directions with a tightness witness and three controls.
                       It is not a statement about any real covariance.
 1b projection        rho is non-increasing under any linear projection of the covariance. A THEOREM,
-                      checked with a tightness witness and a control. This is why a rho measured on
-                      the 5D trunk bounds rho on every marginal, so the BOUND does not depend on
-                      which projection map is designated -- but the reported chi2, ndf and retained
-                      rank still do, so the designation is still a precondition.
+                      checked with a tightness witness and a control.
+                      ⚠ AND THE PRACTICAL CLAIM THIS HEADER USED TO DRAW FROM IT IS WITHDRAWN. An
+                      earlier version said "this is why a rho measured on the 5D trunk bounds rho on
+                      every marginal, so the BOUND does not depend on which projection map is
+                      designated". That LIFT needs range(Ck-C0) contained in range(C0), which a
+                      singular baseline does not give -- section 9 measures it failing by 2340x.
+                      The THEOREM stands for a positive-definite baseline; the lift to Z's trunk
+                      does not. Found because a sweep of the recommendation missed this file.
 2  rho_crit           the closed-form inversion that makes the significance criterion
                       threshold-parametric. Synthetic (chi2_0, ndf) PLACEHOLDERS -- no chi2 for any
                       MINERvA projection exists in this tree, and none is asserted here.
@@ -51,6 +55,14 @@ WHAT EACH SECTION ESTABLISHES, and what it does NOT
                       ⚠ THE REPAIRS BELOW ARE DEMONSTRATIONS, NOT THE RECOMMENDED CRITERION: Joseph
                       ruled 2026-09-10 not to "add regularization, discard directions, or change
                       inference conventions merely to make a theorem applicable".
+
+10 Z's rank bound    Z's rank deficiency DERIVED from Z's own manifest and launchers -- 44
+                      two-endpoint bands at rank 1, Flux N_u=100, C_stat N=100, C_ML N=24 ->
+                      rank(C_Z) <= 265 of 10,694. No transfer. S's measured 263 is corroboration of
+                      the construction class and is NOT load-bearing.
+11 rank at small rho  the REGIME-FREE ground that leg 1 does not imply rank stability, replacing a
+                      regime-dependent witness. Plus: the applied pinv cutoff is IDENTICAL across
+                      same-shaped members, so an equality gate on it cannot fail.
 
 `uq_math` is imported, never restated: a rule retyped is a second implementation.
 """
@@ -249,8 +261,10 @@ def section_2_rho_crit() -> None:
         claim  z > T :  rho_crit = chi2_0 / chi2_crit(T) - 1
         claim  z < T :  rho_crit = 1 - chi2_0 / chi2_crit(T)
 
-    with ``chi2_crit(T) = chi2.isf(2 * norm.sf(T), ndf)``. So the criterion needs no tolerance
-    supplied in advance: it needs T, and reports rho_crit(T) for any T.
+    with ``chi2_crit(T) = chi2.isf(2 * norm.sf(T), ndf)``. So the criterion needs no FREE
+    PARAMETER supplied in advance: it needs T, and reports rho_crit(T) for any T. ⚠ That is NOT
+    the same as "no threshold" -- rho_crit IS a threshold, it is merely DERIVED rather than
+    chosen. Round 3 corrected exactly this conflation elsewhere in the recommendation.
     """
     try:
         from scipy import stats
@@ -756,6 +770,71 @@ def section_10_z_own_rank_bound() -> None:
     print()
 
 
+def section_11_rank_moves_at_small_rho(n: int = 6) -> None:
+    """The REGIME-FREE ground that leg 1 does not imply rank stability. Round 3, finding R3-3.
+
+    Rev. 2 grounded the independence of the declaration-stability leg on section 6's witness
+    (`rho = 0.4554`, rank identical, subspace flipped). **That witness is REGIME-DEPENDENT**: the
+    third review lane measured that `rho = 0.4554` already EXCEEDS `rho_crit` at `ndf=42, z0=4`
+    (0.202), `ndf=263, z0=5` (0.177) and `ndf=4825, z0=6` (0.063) -- so leg 1 has already failed
+    there and the witness establishes nothing about independence.
+
+    The better half needs no witness and no regime: a SMALL `rho` permits an eigenvalue to cross the
+    `pinv` cutoff, so leg 1 passing does not imply the retained rank is stable. That is what this
+    section measures.
+
+    ALSO MEASURED HERE (R3-2): whether the four declarations of the stability leg are gateable by
+    EQUALITY across members. The applied relative cutoff is a deterministic function of shape and
+    `eps`, so it is IDENTICAL across same-shaped members -- an equality gate on it CANNOT FAIL, and
+    gating it would be the very shape this document keeps diagnosing. The condition number is
+    continuous, so equality is impossible and gating it needs a tolerance nobody has stated.
+    """
+    eps = float(np.finfo(float).eps)
+    rng = np.random.default_rng(SEED + 5)
+    Q, _ = np.linalg.qr(rng.normal(size=(n, n)))
+    cut_rel = n * eps                     # the relative cutoff, as a fraction of lambda_max
+    lam = 1.0
+
+    def build(tail: float) -> np.ndarray:
+        return Q @ np.diag(np.array([lam] + [0.5] * (n - 2) + [tail])) @ Q.T
+
+    def retained_rank(C: np.ndarray) -> int:
+        s = np.linalg.svd(C, compute_uv=False)
+        return int((s > n * eps * s.max()).sum())
+
+    C0 = build(cut_rel * lam * 1.05)      # one mode JUST ABOVE the cutoff
+    C1 = build(cut_rel * lam * 0.95)      # nudged JUST BELOW
+    r = rho(C0, C1)
+    rk0, rk1 = retained_rank(C0), retained_rank(C1)
+    print("11. A SMALL rho PERMITS A RANK CHANGE  (regime-free; replaces a regime-dependent witness)")
+    print(f"    rho = {r:.6e}  -- small, and inside any plausible rho_crit")
+    print(f"    retained rank {rk0} -> {rk1}   CHANGED: {rk0 != rk1}")
+    assert rk0 != rk1, "the rank did not move; the construction has stopped reproducing"
+    assert r < 0.2, "rho is not small here, so this does not show what it claims"
+    print("    => leg 1 passing does NOT imply rank stability. No witness and no regime needed.")
+
+    # R3-2: are the four declarations gateable by equality?
+    print("    R3-2, the four declarations across three same-shaped members (n = 200):")
+    m = 200
+    cutoffs, conds = set(), []
+    for _ in range(3):
+        Qm, _ = np.linalg.qr(rng.normal(size=(m, m)))
+        ev = np.concatenate([rng.uniform(1, 5, 150), rng.uniform(1e-6, 1e-5, 50)])
+        C = Qm @ np.diag(ev) @ Qm.T
+        s = np.linalg.svd(C, compute_uv=False)
+        cutoffs.add(m * eps)                       # relative cutoff: shape and eps only
+        conds.append(float(s.max() / s.min()))
+    print(f"       applied relative cutoff: {cutoffs}  -> "
+          f"{'IDENTICAL, so an equality gate CANNOT FAIL' if len(cutoffs) == 1 else 'varies'}")
+    print(f"       condition numbers: {['%.3e' % c for c in conds]}  -> continuous, equality "
+          f"impossible, gating needs a tolerance")
+    assert len(cutoffs) == 1, "the cutoff is member-dependent; R3-2's finding would not hold"
+    assert len(set(conds)) == 3, "condition numbers coincided; the continuity point is not shown"
+    print("       ⚠ library-version-dependent: numpy 1.26 pinv defaults rcond=1e-15, numpy 2.x")
+    print("         max(shape)*eps -- which is why clause (i) demands the cutoff ACTUALLY APPLIED")
+    print()
+
+
 def main() -> int:
     print(__doc__.split("Run:")[0].strip())
     print("=" * 78)
@@ -771,6 +850,7 @@ def main() -> int:
     section_8_domination()
     section_9_support_and_range()
     section_10_z_own_rank_bound()
+    section_11_rank_moves_at_small_rho()
     print("=" * 78)
     print("ALL ASSERTIONS PASSED. Nothing here adopts, grades or authorizes anything.")
     return 0
