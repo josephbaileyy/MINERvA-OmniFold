@@ -5,10 +5,29 @@
 request for one.** It states what a real-input build would need, what it would produce, and what
 it still could not conclude.
 
-**AUTHORIZES NOTHING. `DECISION-20260906-joseph-authorizes-z-specification-only` (iv) is the
-governing stage gate: *"This authorizes no implementation, construction, compute, grading,
-adoption, or publication change. Each of those requires its own committed authorization."* No
-later record supersedes it — checked against every DECISION/AUTHORIZATION/RULING after 2026-09-06.**
+**AUTHORIZES NOTHING ITSELF.** The governing committed stage gate is
+`DECISION-20260906-joseph-authorizes-z-specification-only` (iv): *"This authorizes no
+implementation, construction, compute, grading, adoption, or publication change. Each of those
+requires its own committed authorization."* No later **committed** record supersedes it — checked
+against every DECISION/AUTHORIZATION/RULING after 2026-09-06.
+
+**THE AUTHORIZATIONS THAT DO EXIST, recorded exactly and read narrowly.**
+
+1. **An in-session instruction to BUILD, 2026-09-09.** Joseph directly asked a peer session to
+   implement the end-to-end Z integration, relayed and acted on. That is why `z_build.py` exists
+   and it is a real instruction — but it is a session instruction, not a committed record, and it
+   authorized *writing code and nothing else*. It did not authorize merging, running, adopting or
+   grading, and no such permission may be inferred from it.
+2. **A merge authorization, 2026-09-10.** Joseph authorized merging the reviewed integration and
+   this packet, *conditional on targeted reviewer confirmation passing*, after normal merge
+   checks, with an explicit instruction to identify and review any delta if the tip moved. He
+   scoped it in terms: **implementation landing only — not cluster execution, scientific
+   acceptance, adoption, or publication use.**
+
+**What follows from (2) and what does not.** It makes the code committed and citable, which is
+itself a prerequisite for the code leg. It does **not** license a real-input build, does not touch
+any of §4b, and leaves `DECISION-20260906` (iv) standing for everything except implementation
+landing. The resource authorization in §5 is still required and is still absent.
 
 ---
 
@@ -151,11 +170,21 @@ Everything in 4a, plus — and none of these is code:
 
 **Reuse versus regeneration of `C_stat` and `C_ML` is RESERVED, not authorized.** §1.1 records it
 as *"an open scientific question, not a settled requirement"*; §(v) reserves criterion changes for
-Joseph's separate decision; no committed record resolves it. The driver's manifest **requires**
-`stat` and `ml` files, so the architecture can only reuse them and there is nowhere a
-regeneration decision would attach. Declared and carried, not hidden — but **an open scientific
-question is currently settled by construction**, and that is a prerequisite for acceptance, not a
-defect in the code.
+Joseph's separate decision; no committed record resolves it.
+
+**⚠ CORRECTED. An earlier revision of this packet said the manifest's file inputs mean "the
+architecture can only reuse them" and that the question was "settled by construction". That is
+wrong, and Joseph caught it.** Requiring a *file* says nothing about that file's *provenance*.
+Measured in the driver: `sources["stat"]` is a path and `manifest["stat_key"]` an object name;
+`z_build.py:558-559` reads an `(n, n)` matrix and applies **no** lineage, provenance or identity
+constraint on which file it is. A freshly regenerated `C_stat`, written to a new path and
+declared in the manifest, is consumed identically to the historical one.
+
+So the driver **neither reuses nor regenerates** — it consumes a declared matrix. The decision
+lives **upstream of `z_build`**, in which file a manifest names, and it remains reserved rather
+than foreclosed. Nothing in the architecture settles it, and no code change is required to take
+either branch. The spec's author and I both over-read this in the same direction; the correction
+is Joseph's.
 
 **THE EXACT AUTHORIZATION NEEDED NEXT — one committed record, and it is narrow.**
 
