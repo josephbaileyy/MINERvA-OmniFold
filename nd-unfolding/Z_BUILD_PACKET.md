@@ -282,3 +282,141 @@ questions, and none is unblocked by a merge.
 decision, because it determines whether `stat`/`ml` are inputs at all and therefore what a
 manifest can even declare; (3) only then the null-operand route and its resource authorization.
 Doing (3) first would spend compute against a manifest whose input set is not yet decided.
+
+---
+
+# 7. THE INPUT PLAN — all three investigations in, 2026-09-10
+
+Read-only throughout. No compute was launched. Nothing below is adopted, graded or decided.
+
+## 7.1 `stat` and `ml` — **REUSE**, and the hypothesis I proposed was refuted and inverts
+
+I asked whether the stat and ML products sit outside the bkgaware correction, in which case reuse
+would mix footings inside one covariance. **Measured, and the opposite is true.**
+
+```
+hCov_combined5d_total − (hCov_universe5d_total + hCov_stat5d_reported + hCov_mlsplit5d_reported)
+    max abs residual 0.0, max rel residual 0.0    diagonal AND first off-diagonal, all 10,694 rows
+√Tr(hCov_combined5d_total), bkgaware support family   = 4.357790406860002e-38
+```
+
+That constant is **bit-identical** to three independent things: G's own stamp `sqrt_tr_old`
+(re-verified in our committed capture, job `58127048`), SPEC §1.1's *"the footing every arm is
+matched on"*, and this fresh measurement. So `C_stat` and `C_ML` are **already constituents of
+G's footing**, and `adopt_unified_5d.py:6-20` carries them through untouched.
+
+**The inversion: reuse PRESERVES the footing G's M-legs are measured against. Regeneration is
+the move that introduces a footing difference relative to G** — and SPEC §3.3's `(6, Z)` cell
+already lists *"replicas regenerated with no rationale"* as a reject condition.
+
+The filename-level worry was reasonable — the files predate the bkgaware event loop, and
+`sbatch_finalize_5d_bkgaware_gpu.sh:8-10` does say *"reuse existing"*. But #13 is a **per-universe**
+background reweight and it does not move the nominal: `bank_uthrow_5d/cv.npz` and
+`bank_uthrow_5d_bkgaware/cv.npz` are **md5-identical**, all three nominal CVs share one mask, and
+the bkgaware shift (Δ integrated `+2.567e-04`) is **smaller than the same-treatment run-to-run
+scatter** (`−5.657e-04`). Since `combine_cov_nd.py` uses the CV only through `rep = cv>0` and the
+mask is identical, these two would be **bit-identical** had they been built against the bkgaware CV.
+
+Both digests are **live, not stale** — `sha256sum` on disk today returns SPEC §1.1's values. Each
+file holds exactly one `TH2D`, 10694 × 10694. The estimator was reproduced from raw replicas:
+√Tr recomputed to `1.8063275906e-39` / `1.4934344281e-39` against on-disk
+`1.8063275905782307e-39` / `1.4934344281056095e-39`.
+
+**THREE DISCLOSURES, none of which regeneration fixes:**
+
+1. **Mixed normalization inside Z's own sum.** `C_stat`/`C_ML` use unbiased `1/(N−1)`; every
+   systematic term uses biased `1/N`. Effect: `+0.50%` on √Tr(`C_stat`), `+2.15%` on √Tr(`C_ML`).
+   This is `OI-137`'s surviving gap, and Joseph already ruled it **2026-08-22: disclose, do not
+   correct**. Switching to `1/N` would break bit-identity with G's footing constant.
+2. **`C_stat` has support flicker and `C_ML` does not** — 18,979 entries exactly zero inside the
+   reported mask, every one of the 100 replicas carrying at least one. **Not previously recorded
+   for the scalar-5D object.** Same class as `VL132`'s PET finding, different artifact.
+3. **`C_stat`'s ensemble spans two epochs** (seeds 1–2 on 07-11, the rest 07-13). Immaterial:
+   leave-2-out moves √Tr by `+0.271%`, and the two sit at z = `−0.053` and `−1.012`.
+
+**Provenance is thin and that is a real cost of reuse:** no stamps inside either ROOT, **no
+`RUNS.tsv` row** (0 of 346, with a positive control), and no producing receipt anywhere — only a
+consumer record. The producing revision is recoverable (`677e215d`, estimator line byte-identical
+to today's), but the population validator did not exist when these ran.
+
+**If regenerated instead:** arms 1 + 2 only, ≈ **20 GPU + 9 CPU task-h at ceilings** (≈14.9 + 5.8
+at actuals) — **not** §5.3's whole-campaign figure. And the sting: only one `of_inputs_5d.npz`
+exists with no bkgaware variant, so a regeneration off it reproduces the same background footing
+and buys nothing; one that genuinely changed the footing would need a 142 GB re-dump and would
+produce components that **no longer sum to G's `4.357790406860002e-38`**.
+
+## 7.2 `active` and `footing` — RESOLVED, values in §1a
+
+## 7.3 `null` — the decision point, and the blocker is not the one I expected
+
+**The hypothesis is CONFIRMED on the merits.** `x_cv` and `x_cv2` are the *same call with the same
+seed*, issued twice (`unified_throw_cov.py:369` and `:514`), and `x_cv` is computed **before the
+first slab is globbed**. Zero ensemble data dependency. **≤ 0.37 CPU task-h against 61–80 for arms
+5+6 — a factor of ~170–220, and zero GPU either way.**
+
+**But `unified_throw_cov.py:496` refuses every archived 5D slab set on pscratch.** They carry
+`seed`, not the post-split `estimator_seed`/`draw_seed`: *"There is deliberately no fallback…
+doing so would let a pre-split slab combine beside a post-split one whose draw seed differs, which
+is a silent mixed-estimator covariance."* So "re-run arm 7 with `--null`" is **not available at
+HEAD**, for reasons that have nothing to do with the null.
+
+| branch | what it is | cost | the catch |
+|---|---|---|---|
+| **A** | patch the producer, regenerate arms 5+6, re-run arm 7 | **61–80 CPU task-h** | arm 5 carries a measured ±59% swing |
+| **B** | patch the producer **+ a re-stamp migration** on the existing slabs, then one arm-7 invocation | **≤ 0.37 CPU task-h** | the re-stamp is **a ruling, not a step** — `:496` argues against a fallback *inside the driver*; whether a separate audited migration tool is a different object is Joseph's call |
+| **C** | a ~20-line standalone entrypoint | **≤ 0.37 CPU task-h** | `Z_BUILD.md` requirement 3 declines it: *"copying an external CV into either slot is not a substitute"* |
+
+**⚠ AN ORDERING CONSTRAINT THAT OUTRANKS THE CHOICE.** §3.7a's route (i) — pinning
+`num_threads`/`deterministic`/`force_row_wise` — **changes `x_cv` itself**, and therefore the
+support mask, `nrep`, and every downstream covariance. Operands produced today under the unpinned
+envelope are **superseded the moment route (i) is adopted**. If route (i) is on the table at all,
+it is decided BEFORE the operands are produced.
+
+Two more: `z_build.py:519` requires the null mask to match the production CV's mask
+**elementwise** — cardinality agreement is known, elementwise is unmeasured and only the unfold
+settles it. And `persist_null_operands` records no seed, bank or run id, so a standalone slab and
+a genuine in-producer one are **byte-indistinguishable after the fact**.
+
+## 7.4 THE RECOMMENDED INPUT PLAN
+
+| source | plan | state |
+|---|---|---|
+| `parent` | G, `4f168e83…` | ready |
+| `central` | `630306e20e4e…` | ready |
+| `support` | CS, `9f7b2f55d758…` | ready |
+| `active` | S, `950f8cb1…` — **name the digest, not the path** (an Aug-9 twin exists) | ready |
+| `stat` | **REUSE** `6580016fa713…` | ready, with three disclosures |
+| `ml` | **REUSE** `27b2e456f80e…` | ready, with three disclosures |
+| `throw` | `unified_throw_cov_5d.root`, 9 keys incl. `hJointMeanShift` | ready |
+| `null` | **branch B**, after the route-(i) ruling | **BLOCKED on two rulings** |
+| `footing.*` | computed, §1a | ready |
+| `producing_revision` | `93021448` or later | ready since the merge |
+
+**Nine of ten are ready. The whole plan waits on `null`, and `null` waits on two rulings rather
+than on compute.**
+
+## 7.5 THE EXACT RESOURCE AUTHORIZATION NEEDED
+
+**If branch B is chosen — the smallest faithful route:**
+
+> Authorize **one CPU invocation of `unified_throw_cov_5d.py --combine --null`**, `ntasks=1`,
+> `shared` queue, **≤ 0.5 CPU task-hours** and **0 GPU**, against `bank_uthrow_5d` and the
+> `union_20260806_full160` / `rescaled_20260806_full160` slabs, producing one null-operand `.npz`
+> and no covariance product for adoption.
+
+That is **≈ 0.1 %** of R5's CPU ceiling. It also needs, and these are **not** resource questions:
+
+1. **The route-(i) ruling first** — pin the estimator envelope or not. Operands produced before
+   this are superseded by it.
+2. **A ruling on the re-stamp migration** — whether writing `estimator_seed`/`draw_seed` onto
+   existing slabs via a separate audited tool is admissible, given `:496`'s deliberate refusal of
+   an in-driver fallback.
+3. Two Tier-2 code changes (move `[rep]` after the persist; add the persist call). Code, not compute.
+
+**If branch A is chosen instead:** ≈ **61–80 CPU task-h**, and it should be authorized as arms 5+6
+of a production round rather than as a null procedure.
+
+**Not needed for any of this:** the four withheld boundaries, a criteria owner, or any cause
+disposition. **And nothing produced under any branch can be accepted** — `null_epsilon` is
+withheld, so `assess_null` returns `NOT ASSESSABLE` with reject conditions `4c` and `11` in every
+case. This buys auditability, not acceptance.
