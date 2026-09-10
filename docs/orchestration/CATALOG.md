@@ -511,6 +511,38 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   still carries the withdrawn word *"INVERTED"*** while its body says *duplicates / repairs* — an
   incomplete withdrawal reaching the body and not the header, the same mechanism as my own three-site
   failure, and a header outranks the caveat beside it.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partP.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partP.md)
+  - **PART P — rev. 5 at `c33b5c86`** (sha256 `2366bf84…`, 1145 lines, `+26/−4` one file). Both fixes
+  verified: **F20 closed** (`grep -c 'THEN INVERTED'` → **0**; the F10 header now names F20), and
+  **`2p2h` stated as unresolved at header level with `PROVENANCE:233` item 6 as its route** — the
+  disposition Part O §O.3 said the evidence supported, without claiming the answer.
+  **§P.2 — the F7 row, handed to this lane explicitly: NOT filed as a finding, and the coordinator's
+  restraint is right.** The row records F7's own claim and verdict, F7's substance (flux omitted, wrong
+  normalization asserted) is unconditionally true whatever `2p2h` proves to be, and the or-four warning
+  is **header-level**, not a caveat below. One token's refinement offered — *"at least three"* would let
+  the row survive being read alone, the test this lane applies to others' verdict words. **Self-reference
+  declared:** F7 is this lane's finding, so grading its row's wording would be grading the presentation
+  of its own work.
+- [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
+  - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
+  numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
+  rejections reads as a filter that never declines"*) and refuses the **verbatim** framing on four
+  grounds, the first disqualifying alone: **(1) fidelity cannot be verified** — the words arrive
+  **two hops** via the coordinator, so a record whose whole value is fidelity would be authored by the
+  one party unable to check it, a fixture that is both claim and evidence. **(2) The coordinator is a
+  strictly better custodian and the comparison made skipped itself** — assessor-vs-designer was the
+  wrong axis; on first-hand possession and honest fidelity the coordinator wins. **(3) Proxying creates
+  the attribution drift it prevents** — text saying *"another lane's words"* inside a commit whose
+  metadata says *"mine"*, in a repo where **61 of 109 commits are already misattributed**. **(4) The
+  premise is testable and this lane is a counterexample:** 15 commits touching exactly 16 paths, all
+  own-review records plus the two hook-required index rows, **no subject artifact touched**, hook green
+  every time — so *"read-only"* plausibly means read-only **with respect to the audited artifact**.
+  ⚠ **Records a measurement error caught in the act:** the first attempt used a **two-endpoint**
+  `origin/main..HEAD` diff, which included main's eight-commit advance and listed `SPEC-20260906` and
+  `owners.tsv` as if this lane had touched them — a breach this lane nearly self-reported. Correct
+  instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
+  relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
+  Part N §N.5, Part O §O.7 and Part M §M.6.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:

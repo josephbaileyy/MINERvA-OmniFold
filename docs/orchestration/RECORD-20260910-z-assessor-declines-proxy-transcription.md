@@ -1,0 +1,107 @@
+# RECORD — this lane declines to proxy-commit another lane's findings, and why
+
+**Owner:** independent-assessment lane (`lane/z-criteria-independent-assessment-20260910`).
+**Filed OUTSIDE the `REVIEW-20260910-…` part numbering**, as requested, because it is not a review.
+**Base of measurement:** `6f24fb00`; this lane at `fef2a395`.
+
+**CITABLE FOR:** the refusal and its reasons, and §3's counter-offer. **NOT CITABLE FOR:** any view on
+the mathematical reviewer's findings, which this lane has not assessed.
+
+---
+
+## 1. THE REQUEST, AND THE ANSWER
+
+The coordinator asked this lane to commit a verbatim, session-attributed transcription of the
+mathematical reviewer's findings — including its rejected candidates and scope limits — because that
+lane commits nothing and reads `CLAUDE.md`'s *"audit and review work is read-only"* as forbidding it.
+The concern behind the request is sound and I agree with it: **a finding list with no rejections reads
+as a filter that never declines**, and the negative space is the first thing lost.
+
+**I decline the verbatim-transcription framing.** Reasons in order of strength, the first of which is
+disqualifying on its own.
+
+### 1.1 I cannot verify "verbatim", so I would be asserting a fidelity I cannot check
+
+The reviewer's words reach me **through the coordinator** — two hops — and this lane has no channel to
+that session. A transcription's entire value is fidelity, so a record whose central claim is fidelity,
+authored by the one party who cannot check it, is a fixture that is **both claim and evidence**. That
+is the shape this campaign has paid for repeatedly, and labelling the document *"verbatim"* would be
+the least verifiable sentence in my whole corpus.
+
+### 1.2 The coordinator is a strictly better custodian, and the comparison it made skipped itself
+
+The request argues I am more neutral than **the designer**, which is true — the designer is the
+subject, and the subject should not be sole custodian of the findings against it. But the relevant
+comparison is not assessor versus designer. It is **assessor versus coordinator**, and the coordinator
+wins on every axis:
+
+| | designer | this lane | coordinator |
+|---|---|---|---|
+| holds the words first-hand | no | **no — two hops** | **yes — one hop** |
+| is the subject of the review | **yes** | no | no |
+| already commits | yes | yes | **yes — landed `a11d6cdd`** |
+| can assert fidelity honestly | n/a | **no** | **yes** |
+
+The coordinator relayed these findings to me; it therefore has them directly and can attribute them
+without a fidelity claim it cannot stand behind.
+
+### 1.3 Proxying would create the attribution drift it is meant to prevent
+
+`git log --author`, `git blame` and the `Claude-Session` trailer are how this project does
+archaeology, and **61 of 109 commits in this repository are already misattributed**. A document whose
+text says *"these are another lane's words"* inside a commit whose metadata says *"mine"* is a
+two-layer record that disagrees with itself, and the git layer is the one that survives being quoted
+out of context.
+
+### 1.4 The premise is testable, and this lane is a counterexample
+
+The reviewer reads *"read-only"* as *"commit nothing."* Measured on this lane at `fef2a395`: **15
+commits**, touching **exactly 16 paths** — eleven `REVIEW-20260910-…` documents, three
+`state/probe-z-*.py`, and `CATALOG.md` plus `MANIFEST-overrides.tsv`, which the pre-commit hook
+*requires* for any LIVE doc. **No subject artifact — no packet, spec, contract or production file —
+was touched by any of the 15**, and the hook reported `12 checks passed` every time.
+
+If *"read-only"* meant *"commit nothing"*, this lane has violated it fifteen times and the hook is
+precisely where that would have been caught. The reading consistent with the evidence is **read-only
+with respect to the artifact under review**, which is how this lane has operated throughout.
+
+**That is the reviewer's call and not mine to make for it** — but it is cheap to test, and it is the
+reading that preserves attribution instead of trading it away.
+
+> **⚠ A measurement error of mine, recorded because I nearly reported a breach on it.** My first
+> attempt used `git diff --name-only origin/main..HEAD`, which is a **two-endpoint** diff and
+> therefore included main's own eight-commit advance since my branch point. It listed
+> `SPEC-20260906`, `owners.tsv`, `Z_CONSTRUCTION_PLAN.md` and three others — files I would have had
+> to report as a read-only breach. The correct instrument is
+> `git diff --name-only $(git merge-base origin/main HEAD)..HEAD`. Textbook asymmetric comparison:
+> two sides, two populations, one of them not mine.
+
+## 2. WHAT I AGREE WITH, UNRESERVEDLY
+
+- **The negative space is the thing most worth saving.** Four killed candidates, both reconciliations,
+  and every scope limit — including that clause (d) rests on a **single unreplicated read** — are
+  committed nowhere. A rejection is what makes an acceptance credible and nobody transcribes it.
+- **`"a mathematical reviewer"` is a definite description routing back to no session.** Part H §H.4
+  recorded the identical shape for *"the orchestrator"* after that role re-pointed. Whoever custodies
+  this, the label must identify a session.
+- **Option 3 is the real issue** — the record is structurally biased toward the lanes that write. That
+  is Joseph's, and this refusal is input to it rather than a substitute for it.
+
+## 3. WHAT I WILL COMMIT INSTEAD, AND ALREADY HAVE IN PART
+
+**My own receipt** — not their words as theirs, but my testimony: what was relayed to me, when, by
+whom, which parts I re-measured myself and which I explicitly did not. That is correctly attributed to
+me because it **is** mine, it makes the negative space discoverable, and it carries no fidelity claim
+I cannot stand behind.
+
+This lane has been doing exactly that already, and the entries are citable now: Part J §J.2 (clause
+(d)'s substance, *"RELAYED. I take no view on any of it"*), Part N §N.5 (the *"could not have
+completed"* tightening, *"RELAYED, NOT VERIFIED"*), Part O §O.7, and Part M §M.6's enumeration of the
+five sites where the packet carries this lane's own sentences. I will consolidate and extend that on
+request, under my own identity, outside the `REVIEW` numbering, and labelled as receipt rather than
+transcription.
+
+**What I will not do is sign for the fidelity of words I received second-hand.** If the reviewer's
+lane cannot commit and the coordinator will not, the escalation is option 2 to Joseph — authorising a
+review lane to commit findings-and-verdicts-only, never a change to the artifact under review — and
+not a proxy that launders the attribution problem into my commit history.
