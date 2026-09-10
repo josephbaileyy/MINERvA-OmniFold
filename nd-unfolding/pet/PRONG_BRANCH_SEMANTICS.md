@@ -115,7 +115,7 @@ He offers to investigate sharing specific source files with spokesperson
 permission; no such files accompany the reply. An analysis-code commit is not
 a substitute for tuple-production provenance.
 
-## Consequences for the current implementation
+## Consequences identified at the documentation base
 
 The code observations below refer to repository base
 `d147880fc7e4a4078e5b2d5e51aa4334d0e1736f`.
@@ -147,6 +147,20 @@ The code observations below refer to repository base
 
 These are contract and interpretation issues in an untrained adapter, not
 evidence of a new defect in the completed scalar central-value campaigns.
+
+## Implemented contract repair
+
+Schema `pet-typed-descriptors-v2` implements the charge categories and muon
+applicability, field-specific -1 masks and prong unit declarations. Raw values
+and all prong rows remain stored. Scores keep their native scale alongside PID,
+with identity normalization; hypothesis masses remain redundant standardized
+inputs with undefined values excluded. No score calibration, hypothesis winner
+rule, primary-role feature, or prong filtering is inferred from the reply.
+
+The [typed-descriptor status](TYPED_DESCRIPTOR_STATUS.md) records the exact
+software-validation scope and compatibility boundary. This supersedes the
+implementation gaps above for the repaired fields, not the correspondence's
+source-release limitations or the remaining representation decisions.
 
 ## Future PET studies and follow-up questions
 

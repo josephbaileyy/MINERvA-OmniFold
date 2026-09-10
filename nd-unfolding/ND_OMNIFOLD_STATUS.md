@@ -2,8 +2,9 @@
 
 **PET typed-descriptor continuation, 2026-09-10:** reconstruction-side prong
 definitions and their implementation implications are recorded in
-[the semantic reference](pet/PRONG_BRANCH_SEMANTICS.md). The next proposed task
-is a bounded contract repair with local synthetic validation, routed by
+[the semantic reference](pet/PRONG_BRANCH_SEMANTICS.md). The v2 prong contract
+repair passes local synthetic software checks. The next preparation is a bounded
+source-validation and normalization protocol, routed by
 [the typed-descriptor status](pet/TYPED_DESCRIPTOR_STATUS.md#next-bounded-task).
 PET remains diagnostic/method-development under `OI-126`; this documentation
 supplies no new covariance, coverage evidence, or compute authorization. Older

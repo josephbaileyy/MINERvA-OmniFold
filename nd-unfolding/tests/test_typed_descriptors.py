@@ -82,7 +82,7 @@ def _prong(
         "dedx": -999.0 if sentinel_pattern else 1.5 * base,
         "score": 0.1 * base,
         "mass": 100.0 + base,
-        "charge": -999.0 if sentinel_pattern else (-1 if index % 2 else 1),
+        "charge": -999.0 if sentinel_pattern else (2 if index % 2 else 1),
         "raw_pid": raw_pid,
     }
 
@@ -249,7 +249,7 @@ class TypedDescriptorRoundTripTest(unittest.TestCase):
             field for field in typed.PRONG_CONTRACT.fields if field.name == "raw_pid"
         )
         self.assertEqual(raw_pid.categories, (0, 3, 8, 9, 13))
-        self.assertIn("uninterpreted", raw_pid.unit)
+        self.assertIn("not PDG", raw_pid.unit)
 
     def test_exact_serialization_masks_and_provenance_round_trip(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

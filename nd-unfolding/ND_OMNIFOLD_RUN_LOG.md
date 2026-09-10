@@ -35,3 +35,24 @@ that base.
 Documentation only: no source access, probe, training, covariance construction,
 schema implementation or scientific result. No validation-ledger row is added.
 The scalar publication task and the `OI-126` PET disposition are unchanged.
+
+### 2026-09-10 — Prong contract v2 local repair
+
+Implemented the next task recorded at `ae9dfee5` on `pet-prong-semantics`:
+muon-only raw charge applicability, charge categories `0/1/2`, independent
+undefined-mass/unfilled-score masks, documented prong units and native score
+scaling alongside PID. Raw-row membership, raw PID storage and the default
+51-column descriptor contribution are preserved. Schema v2 rejects v1 shards,
+normalization and saved-model semantics instead of silently reinterpreting them.
+
+The synthetic suite passes 52 tests and 10 subtests, including NumPy/Keras
+agreement, mask behavior, matched controls, gradients and fresh-process model
+reload. Test command, environment and static-check limitations are recorded in
+[the typed-descriptor status](pet/TYPED_DESCRIPTOR_STATUS.md). Strict source
+mypy has 54 diagnostics both at the parent and after repair, with none added.
+No ROOT data were read and no scientific training or compute was launched.
+
+The next proposed preparation is the v2 source-validation and normalization
+protocol. This software result does not alter scalar results, the existing
+PET statistical pairing decision or publication adoption. No numerical physics
+result is added to the validation ledger.

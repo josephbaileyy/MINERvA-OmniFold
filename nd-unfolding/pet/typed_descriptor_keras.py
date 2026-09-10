@@ -311,10 +311,27 @@ def _keras_types() -> tuple[Any, type[Any], type[Any]]:
             prepared: list[Any] = []
             validity: list[Any] = []
             raw_offset = 0
+            field_offsets: dict[str, int] = {}
+            for field in self.contract.fields:
+                field_offsets[field.name] = raw_offset
+                raw_offset += field.width
+            raw_offset = 0
             for field in self.contract.fields:
                 field_values = values[:, raw_offset : raw_offset + field.width]
                 field_masks = masks[:, raw_offset : raw_offset + field.width]
                 field_masks = tf.logical_and(field_masks, token_mask[:, None])
+                if field.valid_when is not None:
+                    source_name, codes = field.valid_when
+                    source_offset = field_offsets[source_name]
+                    source_values = values[:, source_offset : source_offset + 1]
+                    source_masks = masks[:, source_offset : source_offset + 1]
+                    matches = tf.equal(
+                        source_values[..., None], tf.constant(codes, dtype=tf.float32)
+                    )
+                    applicable = tf.logical_and(
+                        source_masks, tf.reduce_any(matches, axis=-1)
+                    )
+                    field_masks = tf.logical_and(field_masks, applicable)
                 if field.kind == "continuous":
                     means = tf.constant(
                         self.family_normalization.means[field.name],
@@ -324,8 +341,11 @@ def _keras_types() -> tuple[Any, type[Any], type[Any]]:
                         self.family_normalization.scales[field.name],
                         dtype=tf.float32,
                     )
-                    safe_values = tf.where(field_masks, field_values, means)
-                    normalized = (safe_values - means) / scales
+                    if field.standardize:
+                        safe_values = tf.where(field_masks, field_values, means)
+                        normalized = (safe_values - means) / scales
+                    else:
+                        normalized = tf.where(field_masks, field_values, 0.0)
                     prepared.append(normalized)
                 else:
                     categories = tf.constant(field.categories, dtype=tf.float32)

@@ -6,17 +6,71 @@ PET typed descriptors remain diagnostic and method-development infrastructure.
 
 **PASS — trainable-adapter software smoke only.** The uncapped, CPU-only Keras adapter has passed its synthetic contract, gradient, masking, serialization, and fresh-process reload tests. It is not production-integrated, production-normalized, trained, or scientifically evaluated.
 
+## Prong contract repair — schema v2
+
+**PASS — local synthetic software validation, 2026-09-10.** The prong contract
+now uses raw charge categories `0, 1, 2`, applicable only when raw PID is valid
+and equals 3. Muon code 0 stays valid and means undetermined; non-muon fills are
+masked. Unexpected codes remain in raw storage and use the unknown-category
+channel when applicable. Mass -1 and score -1 are masked independently of token
+presence. Prong position/time/four-momentum/dE/dx units are documented from the
+correspondence. No physical-unit conversion is performed.
+
+Scores retain their native scale and enter the token model alongside raw PID;
+there is no pooled score standardization or common probability interpretation.
+Frozen score normalization must be identity. Hypothesis mass remains a
+redundant, standardized input with undefined values excluded from fitting;
+it is not an independent measurement. The vocabulary retains code 9 without
+asserting that released tuples emit it.
+
+**Membership policy for this repair:** retain every raw prong row, including
+prong zero and unknown/unfilled rows, with field masks and the existing
+structural presence flag. Prong zero stays in the permutation-invariant pool;
+the event-level muon remains separate. No role feature, primary-prong removal,
+energy/score cut, or hypothesis-selection algorithm is introduced. Choosing a
+different representation requires a later declared comparison. The default
+output remains 13 event columns plus 51 descriptor columns in both controls.
+
+`pet-typed-descriptors-v2` binds these semantics in the schema digest. The
+reader rejects v1 shards and frozen normalization; Keras rejects stale schema
+digests in configs and saved models even when tensor widths agree. Existing
+v1 evidence remains historical and must be read with its original contract.
+No v1 artifact or receipt was rewritten, relabeled, or replayed as v2 evidence.
+
+Validation: 52 tests and 10 subtests passed on synthetic inputs, including
+NumPy/Keras feature agreement, raw-row preservation, masks, native scores,
+serialization, fresh-process reload, trainable gradients and matched controls.
+The source-smoke tests use fake readers, not ROOT payloads. Test environment:
+Python 3.11, NumPy 1.26.4, TensorFlow 2.16.2, Keras 3.15.1, CPU only.
+All four new NumPy semantic regressions fail against parent `ae9dfee5` and pass
+with the repair; they detect the changed behavior rather than merely checking
+the new declaration.
+
+```bash
+python -m pytest -q nd-unfolding/tests/test_typed_descriptors.py \
+  nd-unfolding/tests/test_typed_descriptor_keras.py \
+  nd-unfolding/tests/test_typed_descriptor_source_smoke.py \
+  nd-unfolding/tests/test_typed_descriptor_compatibility.py \
+  nd-unfolding/tests/test_prong_semantics.py
+```
+
+Ruff passes on changed Python files. New test files pass Black and strict
+mypy; changed lines in existing files follow Black. Whole-file Black and
+strict source typing have pre-existing debt: strict mypy reports the same
+54 diagnostics at parent `ae9dfee5` and with this repair, with no added
+diagnostics. This is not a claim of a clean whole-package typing check.
+
 ## Semantic evidence
 
-**BLOCKED, NARROWED — prong definitions documented; implementation and broader
-representation gates remain open.** Reconstruction-side correspondence recorded
+**BLOCKED, NARROWED — prong contract repaired; source and broader representation
+gates remain open.** Reconstruction-side correspondence recorded
 2026-09-10 supplies PID meanings (`3 = Muon`, `8 = Proton`, `13 = EMLikeShower`),
 raw muon charge codes, units, hypothesis-dependent score/mass semantics and the
 primary-lepton role of prong zero. Definitions, source qualifications, code
 impact and follow-up questions live in
 [PRONG_BRANCH_SEMANTICS.md](PRONG_BRANCH_SEMANTICS.md). Exact source-release
 applicability remains unverified, and highest-score hypothesis selection is
-explicitly tentative. No code or training result changes with this record.
+explicitly tentative. The local repair above supplies no training result.
 
 The bounded 16-data plus 16-MC source sample had exposed a charge-vocabulary
 mismatch, raw-row versus filtered-object membership differences, and conflicting
@@ -38,8 +92,6 @@ The 32-row packet does not support photon three-state rates, cross-playlist clai
 
 ## Unresolved gates
 
-- implementation of the documented prong units, charge applicability and
-  field-specific missingness;
 - release-specific provenance, hypothesis selection, and remaining photon/blob
   semantics and calibration;
 - raw-row versus filtered-object membership, primary-lepton treatment, and
@@ -50,40 +102,27 @@ The 32-row packet does not support photon three-state rates, cross-playlist clai
 
 ## Next bounded task
 
-**Prepare and verify the prong contract repair on a dedicated PET branch.**
-The prior adapter branch (`pet-typed-keras-adapter`, head `9064d59f`) and semantic
-evidence integration branch (head `462d68be`) are both ancestors of the measured
-integration base `d147880f`. Continue from that integrated work rather than
-reviving the older Gate-6 branch. This documentation change is on
-`pet-prong-semantics`; branch position is a discovery aid, not scientific evidence.
+**Specify the v2 source-validation and normalization protocol on
+`pet-prong-semantics`.** The prong software repair is complete; do not repeat it
+or revive the older Gate-6 branch. The next preparation should name:
 
-The implementation proposal has the following acceptance criteria:
+1. Exact data/MC source identities, tuple-version evidence, bounded entry scope,
+   and checks of PID support, charge applicability, sentinel combinations and
+   primary-lepton ordering. Preserve unexpected observations; the correspondence
+   is not a substitute for checking those inputs.
+2. The treatment of remaining photon/blob semantics, object overlap and
+   primary-lepton redundancy. Distinguish the present raw-row policy from any
+   proposed filtered or role-aware comparison.
+3. A training reco-MC inventory and split for fitting valid-only continuous
+   normalization, with score identity scaling retained. Freeze that artifact
+   across data, validation, inference and controls. Decide count scaling and
+   multiplicity-dependent pooling before treating the adapter as production-ready.
+4. The measurement, source access and resource budget for a proposed source
+   check; later, the matched `C0/C1` training comparison and its terminal
+   non-claims. Execution needs the corresponding named run authorization.
 
-1. Preserve raw PID identities and unexpected-code diagnostics. Encode raw
-   charge codes `0, 1, 2` with an explicit muon-applicability mask; distinguish
-   undetermined muon charge from non-muon fills.
-2. Document the supplied prong units and mask undefined mass and unfilled score.
-   Preserve valid zeros and token presence. State how score handling depends on
-   hypothesis type and how redundant hypothesis masses are treated.
-3. Specify the primary-lepton role and raw-row membership policy before changing
-   either. Keep the unconfirmed hypothesis-selection algorithm out of code.
-   Version the semantic contract and reject incompatible saved normalization or
-   model metadata rather than silently reinterpreting it.
-4. Use synthetic fixtures to verify charge applicability, field-specific
-   missingness, unexpected codes, primary-role behavior if introduced, and
-   serialization/reload compatibility. Exercise the NumPy and Keras paths;
-   preserve all-masked behavior and the matched `C0/C1` control. If the schema
-   width changes, update both controls and their documented contract together.
-
-A passing local repair establishes software semantics only. Production
-normalization, representative source validation, remaining family semantics,
-count scaling and pooling behavior still precede a training comparison. A later
-source check or training proposal must name its source identities, measurement,
-budget and terminal non-claims and obtain the corresponding run authorization.
+The current continuation authorized the local repair and synthetic checks.
+It does not supply a source-validation result or production normalization.
 Do not repeat the completed bootstrap/containment probes to advance this task.
-
-The 2026-09-10 request authorizes recording the correspondence and continuation
-plan. The implementation above is the recommended next task, not a claim that
-the contract has already been repaired or that a scientific run is authorized.
 
 This status authorizes no training, compute, Gate-6 action, `C_ML` construction, or publication claim.

@@ -17,11 +17,12 @@ from types import MappingProxyType
 from typing import Literal, Mapping, Sequence, TypeAlias
 
 import numpy as np
+from numpy.typing import NDArray
 
 from atomic_write import atomic_savez_compressed
 
 
-SCHEMA_VERSION = "pet-typed-descriptors-v1"
+SCHEMA_VERSION = "pet-typed-descriptors-v2"
 TOKEN_PRESENT_KEY = "__present__"
 DETECTOR_EVENT_WIDTH = 13
 TRUTH_EVENT_WIDTH = 2
@@ -74,6 +75,12 @@ class FieldSpec:
     mask_policy : {"independent", "all_components"}
         Whether validity is retained component by component or cleared for the
         entire vector when any component is invalid.
+    valid_when : tuple or None
+        Optional scalar categorical field and allowed codes that determine
+        applicability. Its value must itself be valid.
+    standardize : bool
+        Whether to fit and apply continuous mean/scale normalization. False
+        preserves a tool-dependent score's native scale alongside its category.
     """
 
     name: str
@@ -83,6 +90,8 @@ class FieldSpec:
     sentinels: tuple[float, ...] = (-999.0, -9999.0)
     categories: tuple[int, ...] = ()
     mask_policy: MaskPolicy = "independent"
+    valid_when: tuple[str, tuple[int, ...]] | None = None
+    standardize: bool = True
 
     def __post_init__(self) -> None:
         if not self.name:
@@ -127,6 +136,8 @@ class FieldSpec:
             "sentinels": list(self.sentinels),
             "categories": list(self.categories),
             "mask_policy": self.mask_policy,
+            "valid_when": self.valid_when,
+            "standardize": self.standardize,
         }
 
 
@@ -206,6 +217,26 @@ class FamilyContract:
             raise ValueError(f"Family {self.name!r} must declare fields")
         if len(set(field_names)) != len(field_names):
             raise ValueError(f"Family {self.name!r} has repeated field names")
+        for field in self.fields:
+            if field.valid_when is None:
+                continue
+            source_name, codes = field.valid_when
+            source = next(
+                (
+                    candidate
+                    for candidate in self.fields
+                    if candidate.name == source_name
+                ),
+                None,
+            )
+            if (
+                source is None
+                or source.kind != "categorical"
+                or source.width != 1
+                or source.valid_when is not None
+                or not codes
+            ):
+                raise ValueError(f"Invalid applicability condition for {field.name!r}")
 
     @property
     def feature_width(self) -> int:
@@ -305,8 +336,22 @@ class FamilyContract:
             values=values,
             masks=masks,
         )
+        for field in self.fields:
+            masks[field.name] = self._field_mask(batch, field)
         self.validate_batch(batch)
         return batch
+
+    def _field_mask(
+        self, batch: RaggedFamilyBatch, field: FieldSpec
+    ) -> NDArray[np.bool_]:
+        mask = np.asarray(batch.masks[field.name], dtype=np.bool_).copy()
+        if field.valid_when is not None:
+            source_name, codes = field.valid_when
+            applicable = batch.masks[source_name] & np.isin(
+                batch.values[source_name], codes
+            )
+            mask &= applicable
+        return mask
 
     def _fit_normalization_from_selected_rows(
         self,
@@ -314,8 +359,9 @@ class FamilyContract:
     ) -> FamilyNormalization:
         """Fit component statistics from an already governed row selection.
 
-        Categorical codes are not normalized. Disabled-family rows remain in
-        the fit so the statistics can be held fixed across representation
+        Categorical codes and native-scale scores are not normalized.
+        Disabled-family rows remain in the fit so the statistics can be held
+        fixed across representation
         arms. The caller owns the row-selection policy; production code must
         supply only the predeclared training reco-MC pass_reco rows.
 
@@ -338,13 +384,13 @@ class FamilyContract:
             if field.kind == "categorical":
                 continue
             field_values = np.asarray(batch.values[field.name], dtype=np.float64)
-            field_masks = np.asarray(
-                batch.masks[field.name], dtype=np.bool_
-            ).copy()
+            field_masks = self._field_mask(batch, field)
             field_masks &= batch.token_mask[:, None]
             field_means = np.zeros(field.width, dtype=np.float32)
             field_scales = np.ones(field.width, dtype=np.float32)
             for component in range(field.width):
+                if not field.standardize:
+                    continue
                 valid_values = field_values[field_masks[:, component], component]
                 if valid_values.size == 0:
                     continue
@@ -363,6 +409,8 @@ class FamilyContract:
     ) -> np.ndarray:
         """Build finite projector inputs from raw values and masks.
 
+        Native-scale scores are retained alongside their hypothesis code;
+        their numerical scales do not imply a shared probability calibration.
         Invalid values are replaced after mask construction and cannot affect
         the projector. Categorical codes are represented only by code identity,
         with one channel per declared code and one unknown-code channel.
@@ -385,11 +433,13 @@ class FamilyContract:
         validity: list[np.ndarray] = []
         for field in self.fields:
             field_values = np.asarray(batch.values[field.name])
-            field_masks = np.asarray(
-                batch.masks[field.name], dtype=np.bool_
-            ).copy()
+            field_masks = self._field_mask(batch, field)
             field_masks &= batch.token_mask[:, None]
             if field.kind == "continuous":
+                if not field.standardize:
+                    prepared.append(np.where(field_masks, field_values, 0.0))
+                    validity.append(field_masks.astype(np.float32))
+                    continue
                 if field.name not in normalization.means:
                     raise ValueError(f"Missing normalization mean for {field.name!r}")
                 means = np.asarray(normalization.means[field.name], dtype=np.float32)
@@ -556,30 +606,42 @@ PRONG_CONTRACT = FamilyContract(
         FieldSpec(
             "position",
             3,
-            "tuple-native length (physical unit unresolved)",
+            "mm (candidate start point)",
             mask_policy="all_components",
         ),
-        FieldSpec("time", 1, "tuple-native time (physical unit unresolved)"),
+        FieldSpec("time", 1, "ns (from beam-gate start)"),
         FieldSpec(
             "four_momentum",
             4,
-            "tuple-native momentum/energy (unit unresolved)",
+            "(px, py, pz, E): (MeV/c, MeV/c, MeV/c, MeV)",
             mask_policy="all_components",
         ),
-        FieldSpec("dedx", 1, "tuple-native dE/dx (physical unit unresolved)"),
-        FieldSpec("score", 1, "unitless"),
-        FieldSpec("mass", 1, "tuple-native energy (physical unit unresolved)"),
+        FieldSpec("dedx", 1, "MeV/mm (total prong energy / length)"),
+        FieldSpec(
+            "score",
+            1,
+            "unitless (tool-dependent; interpreted with raw_pid)",
+            sentinels=(-999.0, -9999.0, -1.0),
+            standardize=False,
+        ),
+        FieldSpec(
+            "mass",
+            1,
+            "MeV (assigned hypothesis mass)",
+            sentinels=(-999.0, -9999.0, -1.0),
+        ),
         FieldSpec(
             "charge",
             1,
-            "raw charge code",
+            "muon charge code: 0 undetermined, 1 positive, 2 negative",
             kind="categorical",
-            categories=(-1, 0, 1),
+            categories=(0, 1, 2),
+            valid_when=("raw_pid", (3,)),
         ),
         FieldSpec(
             "raw_pid",
             1,
-            "raw uninterpreted categorical code",
+            "reconstruction hypothesis code (not PDG)",
             kind="categorical",
             sentinels=(-999.0, -9999.0),
             categories=(0, 3, 8, 9, 13),
@@ -866,6 +928,13 @@ class FrozenNormalization:
                 if normalization.means[field.name].shape != (field.width,):
                     raise ValueError(
                         f"{family_name}.{field.name} normalization has the wrong width"
+                    )
+                if not field.standardize and (
+                    np.any(normalization.means[field.name] != 0.0)
+                    or np.any(normalization.scales[field.name] != 1.0)
+                ):
+                    raise ValueError(
+                        f"{family_name}.{field.name} requires identity normalization"
                     )
             frozen_families[family_name] = normalization
         object.__setattr__(
