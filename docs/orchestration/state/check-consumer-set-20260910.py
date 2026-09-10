@@ -77,9 +77,18 @@ NONPY_READ = ("UnfoldHisto", "GetBinError", "Diagonal", "TMatrixDSym")
 SKIP_PARTS = {".git", "__pycache__", ".claude", "node_modules"}
 
 # Independent count, measured at 054e4d66 via `git ls-files '*.py' '*.tex'`.
-# 541 .py + 24 .tex tracked at 054e4d66, PLUS this checker itself = 542 .py. Verified that the
-# +1 was the ONLY untracked .py in the tree when it was pinned, rather than assumed.
-EXPECTED_TRACKED = {".C": 2, ".cpp": 6, ".py": 542, ".sh": 339, ".tex": 24}
+# RE-PINNED 542 -> 543 .py at 92b2c468. Provenance of every move, so a later reader can audit the
+# pin rather than trust it:
+#   054e4d66  541 .py tracked + 24 .tex; this checker itself was then UNTRACKED, so 542 was pinned
+#             after verifying the +1 was the ONLY untracked .py in the tree, rather than assuming it.
+#   92b2c468  543. The +1 is `state/probe-z-projected-stability-20260910.py`, the endpoint-A
+#             adequacy probe. ⚠ ESTABLISHED BY SET DIFFERENCE, NOT BY THE COUNT: the tracked .py
+#             path lists at 173baf44 and here differ by exactly that one path ADDED and NOTHING
+#             REMOVED. A count that moves by +1 is equally consistent with one addition, and with
+#             one addition plus a deletion plus another addition -- so the count is not the evidence
+#             for what changed, and re-pinning on the count alone would have been the cheap check.
+# This is a RE-PIN, not an extension: no signature, population rule or check was added or widened.
+EXPECTED_TRACKED = {".C": 2, ".cpp": 6, ".py": 543, ".sh": 339, ".tex": 24}
 
 # ---- SIGNATURES. Plain substrings; AND-groups (tuples) where one token alone is too generic.
 INVERSION = ("np.linalg.pinv", "np.linalg.inv(", "np.linalg.solve", "keep.sum()")

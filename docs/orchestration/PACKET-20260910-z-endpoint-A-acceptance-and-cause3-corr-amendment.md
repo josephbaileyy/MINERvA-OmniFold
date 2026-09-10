@@ -455,3 +455,17 @@ has already paid for twice. Two qualifications so the row is not misread later:
 6. **This packet reuses `RECOMMENDATION-…` Part 6 F1's rank result without re-deriving it.**
 7. **I have not graded any of this**, and by `BEN-381` I should not: the lane that measures does not
    grade. The independent assessor reviews; I did not ask it for a remedy.
+8. **⚠ THE WITHDRAWAL CHECKER WAS NOT EXTENDED TO THIS NINTH WITHDRAWN CLAIM, AND THAT IS A REAL
+   HOLE, NOT A TIDY EXEMPTION.** `state/check-withdrawal-completeness-20260910.py` pins **8**
+   withdrawn claims × 3 delivery files = 24 counts. §1's withdrawal of the `cause3_corr`-hazard
+   answer is the **ninth**, and it is **not pinned** — the instruction to stop extending that tooling
+   is explicit and I am following it rather than reinterpreting it. **Consequence, stated plainly:
+   the correction in §1 and in `CATALOG.md` rests on a manual edit that nothing re-checks**, so if a
+   later lane reintroduces *"`cause3_corr`'s hazard is unrealized"* the checker will stay green. The
+   detector that would have caught it is the one the checker already implements (a paraphrase count
+   that goes **up**, not down, on an incomplete withdrawal). **Whoever is authorised to extend that
+   instrument should add the ninth claim; I am not, and this row is the handoff.**
+9. **The population pin moved 542 → 543** and I re-pinned it. Verified by **set difference on the
+   tracked path lists**, not by the count: exactly one path added, none removed. A re-pin is not an
+   extension, but it is a deliberate act on an instrument and it is recorded here rather than left
+   in a diff.
