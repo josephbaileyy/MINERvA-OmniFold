@@ -421,6 +421,38 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   culpable; and the block-population assumption §I.2 falsified is unrecorded — **expected, not
   culpable**, since a residue list cannot name an unnoticed assumption, but flagged so its absence is
   not read as clearance.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partM.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partM.md)
+  - **PART M — rev. 3 assessment at `6bb8b32d`** (sha256 `dad55b57…`, 908 lines), against `F1`-`F21`
+  and §F.5's block conditions. No grade assigned.
+  **§M.1 records an ATTACK OF MINE THAT FAILED.** I expected rev. 3's *"constructions sharing the
+  biased normalizer: thirteen"* to be my own §I.2 population error recurring — `:460`'s loop runs over
+  `KNOB_BANDS`, not `VERT_BANDS`, and with `|R| = 27` the count could have been nearer 40. **Measured:
+  `unified_throw_cov.py:79-80` defines `KNOB_BANDS` as exactly 12, `"Flux"` excluded, zero entries
+  outside `VERT_BANDS`.** So 12 via `:460` + flux via `:467` = **thirteen is correct** and my
+  hypothesis was unfounded. Recorded because a review reporting only its successful attacks
+  misrepresents its coverage.
+  **§M.2: `F7` fully incorporated and correctly extended** — three blocks, `C_flux` named as *"one
+  level inside `Σ_V C_b`"*, per-block biased/unbiased split, and the normalization **verified
+  numerically against `Z'Z/N` rather than read from the docstring**, which is stronger than `F8` asked.
+  The `C_unified` restraint is preserved with its reason.
+  **§M.3: `F10` confirmed independently on every leg, and the composition question is sharper than
+  "supersede or duplicate."** `PROVENANCE-20260822-declaration-v-scalar5d-blocks.md` is **on
+  `origin/main`**, its `:143-144` gives the **same** `N=100`/`24` values and the **same** *"enforced,
+  not merely declared"* argument from the same raise, and rev. 3 cites it **zero** times. **New:** that
+  record evidences `N` from `sbatch_finalize_5d_bkgaware_gpu.sh:167,168`, which at `6f24fb00` are
+  `:422,423` — *"THE TWO MEMBER-LOCAL COMBINES"* (`:418`), i.e. **the member-scoped arm §2.1a says
+  cannot have produced the digested bytes.** So ruling 10's record may be **right about `N` and wrong
+  about the arm**, which makes "supersede / duplicate / extend" non-exhaustive — the equal-`N` finding
+  turned on the provenance record itself.
+  **§M.5: Part L's four findings are UNTOUCHED at `6bb8b32d`** (verified by `grep -c` on each claim
+  string, `1 → 1` for all four), so `F13`-`F16` transfer verbatim with no re-derivation; §3's mechanics
+  re-verified, probe `rc=0`, both controls passing.
+  ⚠ **§M.6 DECLARES FIVE SLICES that now carry this lane's own contributions** (`:116`, `:166`,
+  `:197`, `:294`, `:346`), enumerated rather than spot-declared. None is a remedy — each is
+  re-derivable from cited lines, so independence for the packet holds — **but `§2.1a(b)` and §3.1's
+  inertness paragraph are partial self-confirmation** (the equal-`N` framing and *"structurally
+  unreachable"* are mine), and a second reader should spot-check them. Extending the boundary rather
+  than waiting to be asked.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
