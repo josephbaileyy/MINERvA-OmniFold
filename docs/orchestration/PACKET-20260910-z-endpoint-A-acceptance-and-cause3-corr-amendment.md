@@ -4,8 +4,11 @@
 **Base of measurement:** `6f24fb00` (`origin/main`). Every file this packet quotes is **byte-identical
 at `6f24fb00` and at this lane's tip** — verified by `git diff` over the nine named paths, empty.
 **Predecessors, and ⚠ THE SHA THAT IS SAFE TO READ IS NOT THE SHA THAT IS FAMOUS:**
-- `RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md` — **read at the lane tip, NOT at
-  `2ebdf095`.** Measured: the blob is `98f22b3f…` at `2ebdf095` and moved in six later commits
+- `RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md` — **read at blob
+  `1b26e96d36d828223b0ee538493176beeb627e0f`, NOT at `2ebdf095`.** ⚠ *Rev. 2 wrote "at the lane
+  tip" — **a definite description that re-points, in the header whose whole subject is pin
+  discipline.** Caught in review. The blob id is the thing that cannot drift; the commit message
+  named it and the header did not.* Measured: the blob is `98f22b3f…` at `2ebdf095` and moved in six later commits
   (`3e6fb5b1`, `0d68b0c2`, `9b7380e7`, `c3a6dfd5`, `17f2ac67`, `cebcd995`; **+564 / −43**).
   **`2ebdf095` still answers `cause3_corr` by ρ-domination — withdrawn in `9b7380e7`, and its
   successor withdrawn again in §1 below.** So `2ebdf095` is a referent for **one** thing only: what
@@ -16,7 +19,8 @@ at `6f24fb00` and at this lane's tip** — verified by `git diff` over the nine 
 Neither is superseded as a whole; this packet **withdraws one answer in the second** and adds to both.
 *A commit sha beside a document is not a claim that the document is current, and "byte-identical" is
 meaningless unless it names **both** endpoints of the comparison. Rev. 1 of this header named one.*
-**Evidence:** `state/probe-z-projected-stability-20260910.py` — green, 37 checks, run at this tip.
+**Evidence:** `state/probe-z-projected-stability-20260910.py` — green, **59 checks** (37 + 22
+added in rev. 3 to verify the round-1 findings against my own claims), run at this tip.
 
 > ## ⚠ CITABLE FOR / NOT CITABLE FOR — at the top, because a verdict word outranks the caveat beside it
 >
@@ -44,6 +48,31 @@ those instruments; it is the measurement the three tasks required, and without i
 assertions. **The rejected universal-bound approach is not reopened:** no `ρ`, no `C_0^{-1/2}`, no
 bound over an unmeasured ensemble. Every section evaluates a *declared functional on a declared
 operand*, which is the shape outcome (2) left standing.
+
+---
+
+## 0. ROUND-1 REVIEW RESPONSE — seven findings, and what each did to this packet
+
+**Independent review at `05bf8647`: a mathematical reviewer (F1–F6) and the independent assessor
+(F7), neither supplying remedies, so both retain their verdict on this revision. I re-measured
+every finding rather than accepting it; all seven reproduce.** My figures differ from theirs in the
+third digit where constructions differ, and I report mine.
+
+| # | finding | disposition |
+|---|---|---|
+| **F2** | §4.4 and §4.4b ask two incompatible questions | ⚠ **UPHELD. §4.4b's "supply `S`" is WITHDRAWN.** §4.4's derivability claim is *also* withdrawn — it was wrong twice over (§4.4c) |
+| **F1** | `B` is computed on the wrong population | ⚠ **UPHELD, `B` withdrawn as a floor for `s_proj`.** Reproduced: null `s_proj` median **38.73%** vs `B` = **7.107%**, ratio **5.45**; control at `K=1`/one functional gives **0.97**. **And the direction REVERSES with replica-draw sharing** (4.78 → 3.38 → 1.73 → **0.84**), so `B`'s adequacy is undecidable without a sharing declaration A-6 does not require |
+| **F7** | the sample-covariance population is **three**, not two | ⚠ **UPHELD, and it is the most serious.** §2.1 omitted the flux band **and asserted the wrong normalization for it** — inside a *disclosure* requirement |
+| **F3** | the singularity claim is verified on a benign operand | ⚠ **UPHELD.** Reproduced: of 500 near-null functionals, **103 do not abort at all**, dividing by a round-off positive; **391** abort with a message blaming the *operand*; the message §4.3 advertised fires **6** times |
+| **F4** | the support residue conflates two mechanisms | ⚠ **UPHELD.** A **covariance** support loss saturates at **exactly 1.0** and names the functional — not silent. Only the **M-change** direction is blind |
+| **F5** | `B` is per-bin, `S` is a scalar, `B ≤ S` names no reduction | **UPHELD** — moot for `B`, which is withdrawn, but the reduction question transfers to its replacement and is answered in §4.4d |
+| **F8** | a round-off-positive baseline inside an acceptance statistic is required by **nothing** | ⚠ **UPHELD as a GAP in the requirement set, and the closing requirement is proposed in §4.3a.** Verified: `:429` gates on **exactly-empty** `M` rows while `:412-413` describes a **near-zero** hazard, and `s_proj` gates on **exactly-zero** while F3 shows the hazard is **round-off-positive** |
+| **F6** | clause (d)'s mootness argument fails | **NOT MY CLAIM — and I am not adopting it as one.** *"Clause (d)"* and *"moot"* appear **nowhere** in any of my three artifacts (grep, all three, zero hits). The reviewer is flagging **someone else's** inference, and correctly names **my A-4 row as what refutes it.** I confirm that refutation and add the robustness property it earned — see §4.1a |
+
+**One thing the review confirmed that I want stated as plainly as the corrections:** §4.1's table,
+the `+37.8%` figure, the `einsum`/`diag` identity, and §1/§1.1's five-consumer resolution
+**including the C6/C7 asymmetry** were all attacked and all held. The reviewer reports trying to
+break C7's diagonal-only status and failing. That asymmetry was the part of §1 I was least sure of.
 
 ---
 
@@ -118,10 +147,10 @@ requirements** and none is marked MET here.
 | **A-1** | construction | SPEC §1.3a algebra, §1.3b identity set incl. the `g^c` reconstruction gate, §3.3's fifteen reject conditions. Unchanged, not reopened | FIXED by spec |
 | **A-2** | provenance | the four inversion declarations of `app_statmethods.tex:645-658` travel with any released projection **even for a diagonal consumer** — clause (iv) exists because *"the 5D candidate, its 4D projection and the published 2D block have different ranks"* | CONFORMANCE |
 | **A-3** | numerical reproducibility | `r_null = ‖x_cv2 − x_cv‖/‖x_cv‖` over the reported support, **`ε = 1e-9`**, derived in `RECOMMENDATION-…` §C.3 from a proven inequality plus Joseph's declared `REPRO_RTOL_PER_BIN` (`p4_lib.py:93`). Carried forward unchanged | PROPOSED |
-| **A-4** | declaration stability | retained rank and retained-subspace projector gap across members, `‖P_0 − P_k‖_2 ≤ 1e-8`. ⚠ **NOW EXPLICITLY NARROWED BY §4: this bounds the subspace and is SILENT on the released error bars.** It is not a partial guarantee about them | PROPOSED, **narrowed** |
+| **A-4** | declaration stability | retained rank and retained-subspace projector gap across members, `‖P_0 − P_k‖_2 ≤ 1e-8`. ⚠ **NARROWED BY §4.1: this bounds the subspace and is SILENT on the released error bars** — not a partial guarantee about them. ⚠ **AND ITS TOLERANCE IS NOT LOAD-BEARING (§4.1a):** the statistic is ~binary (round-off vs exactly `1`), so every value in `[1e-12, 1e-3]` behaves identically. **It restates `RECOMMENDATION:392` clause (d)'s test with NO dependence on the ρ bound, so outcome (2) did not retire it** | PROPOSED, **narrowed** |
 | **A-5** | PSD | *"no eigenvalue below `−k·λ_max` for a declared `k`"*, never *"PSD"* or *"λ_min ≥ 0"*. `adopt_unified_5d.py:150-165` already uses `ev[0] >= -1e-12*ev[-1]`; the requirement is to make it a **receipt-recorded gate** with `k` declared | PROPOSED |
-| **A-6** | **finite-ensemble disclosure** — NEW, from Ruling 2 | §2.1 below. Per sample-covariance block: **verified** `N`, normalization convention, finite-ensemble treatment **or the explicit statement that none was applied**; inverted dimension marked **not applicable** | PROPOSED |
-| **A-7** | **stability of the RELEASED error bars** — NEW, from Task 3 | §4.3 below. `s_proj` over the declared functional set. **Statistic proposed; boundary WITHHELD with a named trigger (§4.4).** Precondition: destination-support identity across members | PROPOSED (statistic only) |
+| **A-6** | **finite-ensemble disclosure** — NEW, from Ruling 2 | §2.1. Per sample-covariance block — and there are **THREE**, not two (§2.1, F7): **verified** `N`, the normalization convention **which is NOT common across blocks** (two at unbiased `1/(N−1)`, `C_flux` at **biased `1/N`**), the finite-ensemble treatment **or the explicit statement that none was applied**, and — added by F1 (§4.4d) — **the REPLICA-DRAW SHARING STRUCTURE across the members of `K`**, without which A-7's floor cannot be sized. Inverted dimension **not applicable** at A. Plus part (b): **bind each product digest to its producing execution** (§2.1a) | PROPOSED |
+| **A-7** | **stability of the RELEASED error bars** — NEW, from Task 3 | §4.3. `s_proj` over the declared functional set. **Statistic proposed; boundary WITHHELD — and the ask is "NAME THE CLAIM", not "supply a scalar" (§4.4c).** Requires: a **declared relative degeneracy predicate** on each functional's baseline, evaluated **before** any PSD assertion and naming the **functional** (§4.3a, F8); and an `M`-change precondition (§4.3, F4). Its **floor** is the null quantile of `s_proj` itself, **not** a per-bar noise figure (§4.4d, F1) | PROPOSED (statistic only) |
 
 ### 2.1 A-6 — and why Ruling 2 lands on A rather than B
 
@@ -130,9 +159,49 @@ construction:
 
     C_Z^c  =  D_Z^c (Σ_V C_b) D_Z^c  +  Σ_R C_b  +  Σ_A L_b  +  C_stat  +  C_ML
 
-**Exactly two summands are sample covariances: `C_stat` and `C_ML`.** Everything else is a
-deterministic band or lateral sum. So clause (v)'s *"for every sample-covariance block entering the
-sum"* has a population of **two**, fixed by Z's own formula rather than by a search.
+> ## ⚠⚠ F7 — THE POPULATION IS **THREE**, AND REV. 1/2's NORMALIZATION CLAIM WAS FALSE OF THE THIRD
+>
+> **Rev. 1 read: *"Exactly two summands are sample covariances: `C_stat` and `C_ML`."* That is
+> false, and the second half of the error is worse than the first.** Raised by the independent
+> assessor, re-verified here end to end in tracked code.
+>
+> **The chain, measured:** `adopt_unified_5d.py:42-43` — `VERT_BANDS` has **13** entries and the
+> 13th is **`"Flux"`**; `z_contract.py:66` re-exports the same tuple with the comment *"V, 13 --
+> inflated through `D_Z`"*; so `Σ_V C_b` in `z_assembly.py:4` **carries the flux band, inflated**.
+> `unified_throw_cov.py:467` builds `C_flux = mat_covariance(...)` over the flux universes and
+> `:468` does `C_block += C_flux`. And `uq_math.py:96` — *"MAT production convention: universe-mean
+> centered, **biased 1/N**"* — returns `(Z.T @ Z) / X.shape[0]`. **Verified numerically, not read
+> off the docstring: it matches `Z'Z/N` and does NOT match `Z'Z/(N−1)`.**
+>
+> **So the worse half:** rev. 1's table asserted **one** convention for the whole population —
+> *"unbiased `1/(N−1)`… one script, one convention"* — **which is false of part of Z's own sum.**
+> Omitting a block is incompleteness. **Asserting the wrong convention for it, inside a requirement
+> whose entire purpose is disclosure, is affirmatively misleading**, and that is the failure mode
+> A-6 exists to prevent. `unified_throw_cov.py:470` even *prints* `"MAT mean-centered 1/N"`.
+>
+> **⚠ THE DIAGNOSIS, AND IT INDICTS THE THING I WAS PROUDEST OF.** Rev. 1's boast was *"CLOSED and
+> DERIVED, not enumerated by hand."* Reading the formula's surface is correct as far as it goes —
+> `C_stat` and `C_ML` are the only sample covariances **named** in it. But **`Σ_V C_b` is itself a
+> sum, and the third sample covariance sits one level inside it.** The population question recurred
+> one layer below where I answered it. **A derivation is not safer than an enumeration unless it
+> recurses** — and the derivation is what supplied the false confidence. Third instance of this
+> exact shape in this one document, after §1's projected diagonal and §2.1's wrong `C_ML` producer.
+>
+> **One refinement of my own, from re-reading `:460`:** `mat_covariance` is applied to **all 13**
+> vertical bands — the 12 knob bands over their two declared `±` endpoints, and flux over its
+> universes. **All 13 therefore carry the biased `1/N` normalizer.** But a two-point `±` endpoint
+> pair is a *deterministic* construction, not a random ensemble, so it has no ensemble size to
+> disclose and no sampling noise in A-7's sense. **Ensembles proper: three. Constructions sharing
+> the biased normalizer: thirteen.** Both belong in the disclosure; only the first three carry `N`.
+>
+> **`C_unified` (`N = 160`) is NOT added, and the assessor explicitly did not ask for it** — it
+> scales the sum through `g` rather than entering as a block. Recording the restraint because the
+> boundary is a real one and a later reader may re-litigate it.
+
+**Three summands are sample covariances with a random ensemble: `C_stat`, `C_ML`, and — one level
+inside `Σ_V C_b` — `C_flux`.** So clause (v)'s *"for every sample-covariance block entering the
+sum"* has a population of **three**, and the derivation only reaches it if it recurses into the
+inner sums.
 
 **⚠ AND MY OWN B-4 ROW CITED THE WRONG OPERAND. Corrected here.** It gave `N = 100` from
 `sbatch_bootstrap_5d_gpu.sh:5` and `N = 24` from `sbatch_seedscan_split_5d.sh:5`. Read verbatim, those
@@ -164,7 +233,21 @@ correction is to bind each field to the code that produces the number:
 |---|---|---|---|
 | **declared id set** | **`1-100`** — `sbatch_combine_5d_budget.sh:14`; member-scoped variant at `sbatch_finalize_5d_bkgaware_gpu.sh:422` | **`1-24`** — `sbatch_combine_5d_budget.sh:16` | **YES — in tracked launchers.** `--expected-ids` is `required=True` (`combine_cov_nd.py:13`), so it is always a caller declaration |
 | **verified `N`** | `combine_cov_nd.py:18` → `load_replica_manifest(paths, set(range(lo,hi+1)))` | **same script, same line** | **DERIVABLE, NOT STAMPED** — see the recovery argument below |
-| **normalization** | `combine_cov_nd.py:20` `C=(Z.T@Z)/(Xr.shape[0]-1)` → **unbiased `1/(N−1)`** | **same line — one script, one convention** | **NO — a code fact, not a recorded one** |
+| **normalization** | `combine_cov_nd.py:20` `C=(Z.T@Z)/(Xr.shape[0]-1)` → **unbiased `1/(N−1)`** | **same line, same script** | **NO — a code fact, not a recorded one** |
+
+**⚠ AND THE THIRD BLOCK, which the table above does not cover and rev. 1/2 omitted entirely:**
+
+| field (clause (v)) | `C_flux` |
+|---|---|
+| **declared ensemble** | the flux universes, count derived from the bank inventory at `unified_throw_cov.py:126` (`n_flux = len(expected_flux)`), **fail-closed in both directions** at `:120-125` and again at `:461-465`. `OI-137` records it as the PPFX universe set |
+| **normalization** | ⚠ **BIASED `1/N`** — `uq_math.py:96-104`, `mat_covariance`, `(Z.T @ Z) / X.shape[0]`. **Different from the other two blocks.** Verified numerically |
+| **effective `p` inverted** | **NOT APPLICABLE at endpoint A** |
+| **finite-ensemble treatment** | none applied; must be stated explicitly |
+| **recorded where?** | the count is **inventory-derived and fail-closed**, so it is the best-evidenced of the three; the convention is printed at `:470` and **not persisted** |
+
+**So A-6 must disclose, per block, a convention that is NOT common across blocks** — two blocks at
+unbiased `1/(N−1)` and one at biased `1/N`. A single sentence covering "the sample blocks" cannot
+be correct, which is precisely the shape rev. 1 shipped.
 | **effective `p` inverted** | — | — | **NOT APPLICABLE at endpoint A** (no inversion) |
 | **finite-ensemble treatment** | none applied | none applied | must be stated **explicitly**, per `OI-137` *"disclose, do not correct"* |
 
@@ -203,6 +286,15 @@ MEMBER-SCOPED**, its glob passing through `mr_prefix`, so it reads a per-member 
 rather than the top-level one. **The declared id range is the same; the population it ranges over is
 not.** Code alone therefore cannot say which execution produced the digested bytes. *(No value from
 the member-scoped tree is quoted here — only the launcher line.)*
+
+**⚠ AND (a) CANNOT SUBSTITUTE FOR (b), for a reason sharper than "the search was not done":
+`N` IS A COUNT, AND A COUNT CANNOT IDENTIFY A POPULATION.** Two ensembles of equal cardinality are
+indistinguishable by cardinality. So A-6 part (a) is satisfiable **in full** — declared id set,
+verified `N`, convention, treatment — while the **producing arm remains unnamed**, across a
+boundary at which the seed contract changed. Contributed by the assessor and adopted: it does not
+contradict §2.1a, it removes the escape route by which (a) might have looked sufficient. The
+committed record is reported to carry the equal-`N` fact already (`OI-160`), which is why this is a
+naming problem rather than a counting one.
 
 **A-6 is therefore phrased in two parts, and only the first is a disclosure obligation:**
 **(a)** record, beside each released block, its declared id set, its verified `N`, the `1/(N−1)`
@@ -250,6 +342,21 @@ Everything below is measured by executing `z_validator.assess`, not by reading i
 | (c) | **deleting `cause3_corr` from `Z_BOUNDARIES` entirely** and re-running gives an outcome whose `describe()` is **byte-identical** | **`z_contract.py:231-236` is inert to the outcome rule** |
 | (d) | `assess` reaches a boundary only through `leg.boundary_key` (`z_validator.py:247`). No leg names `cause3_corr` | the mechanism is **leg-driven, not registry-driven** |
 | (e) | declaring a `sees_correlations=True` leg on `cause3_corr` → `assessable=False`, `branch=None`, `reject_conditions=('4c',)` | adopting the leg is what makes the withholding **bind** |
+
+**⚠ AND "INERT" UNDERSTATES IT — the assessor's strengthening, adopted.** *"Inert"* reads as
+contingent, as though the entry happened not to matter. It is **structurally unreachable**: a
+boundary is looked up at exactly two places, `z_validator.py:247` inside `assess` and `:110` inside
+`describe()`, **and both are keyed on the declared legs.** A boundary no leg names is reachable from
+neither the outcome nor its description. That is the *mechanism* behind the byte-identity result
+rather than a restatement of it.
+
+**⚠ AND THE BYTE-IDENTITY RESULT NEEDED POSITIVE CONTROLS THAT REV. 1 DID NOT CARRY.** A
+byte-identical `describe()` with no positive control is exactly the shape of a check that cannot
+fail — my own catalogued rule, and I missed it on my own result. Both controls are the assessor's,
+now **executed in probe §11**: **(A)** deleting a *declared* leg's boundary (`cause3_agg`) **raises
+`ZContractError`**, proving `assess` does consult the registry at assess time, so §3.1(c)'s identity
+is a **real negative** and not a blind one; **(B)** the scope statement flips present → `None` when
+a `sees_correlations=True` leg is declared, proving the narrowing is leg-derived. Both pass.
 
 **So the docstring's guarantee — *"`assess()` never returns MET when any declared leg's boundary is
 withheld"* — is exact, and the load-bearing word is `declared`.** `cause3_corr` is a boundary **no leg
@@ -361,6 +468,39 @@ table, and the `+37.8%` entry *is* the released quantity, not an illustrative as
 
 **So: no criterion in A-1 … A-5 bounds the released error bars.** The gap is real.
 
+### 4.1a F6 — A-4's `1e-8` IS NOT A TUNED NUMBER, and clause (d)'s test survives through A-4
+
+**Two things, and the first is not my claim to withdraw.** *"Clause (d)"* and *"moot"* appear
+**nowhere** in any of my three artifacts — grepped, all three, zero hits. The mootness inference is
+**someone else's**, and the reviewer correctly identifies **my A-4 row as what refutes it**. I
+confirm the refutation and state it here so it is citable:
+
+> **A-4 states clause (d)'s exact test — `‖P_0 − P_k‖_2 ≤ 1e-8` on the retained-subspace projectors —
+> as a LIVE endpoint-A requirement with NO dependence on the ρ bound.** `RECOMMENDATION:392` carries
+> clause (d) as a sub-clause of the **ρ-leg's** terminal-outcome list, and outcome (2) retired that
+> leg's **role**. **Retiring the leg does not retire the test.** Anyone acting on *"clause (d) is
+> moot"* drops a live A-4 requirement.
+
+**And on the clause's own logic:** it is correct as a **necessary** condition, and *"MET additionally
+requires"* is the right form. It **cannot** be sufficient, for §4.1's own reason — the retained
+subspace can be identical while the retained eigenvalues, the quantities `pinv` actually inverts,
+move arbitrarily. That is §4.1's counterexample read in the other direction.
+
+**⚠ AND THE TOLERANCE IS NOT LOAD-BEARING — a robustness property, measured (probe §10), and it
+improves A-4's footing rather than weakening it.** For orthogonal projectors the statistic is
+essentially **binary**:
+
+| case | rank | `‖P_0 − P_k‖_2` |
+|---|---:|---:|
+| structural match (rescale) | 30 → 30 | **`3.420e-15`** — round-off |
+| one retained mode dropped | 30 → 29 | **exactly `1.000000`** |
+
+**Every tolerance in `[1e-12, 1e-3]` separates these identically** — nine orders of magnitude, same
+verdict in all of them. **So `1e-8` is not a fitted number and should stop being defended as one:
+it is any separator between round-off and `O(1)`.** Rev. 1 called it *"the only justified number
+this lane has"*; the honest and stronger statement is that **A-4 needs no justified number at all**,
+because it is a structural equality test wearing a tolerance.
+
 ### 4.2 The instrument already exists, and I am calling it
 
 Per the process constraint, I searched before proposing. **SPEC §3.7d names three candidates and all
@@ -404,24 +544,88 @@ ensemble nobody measured.
   `RECOMMENDATION-…` Part 6 F1): **irrelevant to `s_proj`.** `uᵀ C u` needs no inverse, no `rcond`, and
   no positive-definite baseline. Verified on a rank-3-of-12 operand: exact to `1e-12`. **This is the
   property that failed for the ρ-based approach and holds here.**
-- **Zero baseline projected sigma** — `eavailW_covariance.py:429-431` warns these bins are *"NOT
-  measured-and-precise; they are unsupported."* `s_proj` **ABORTS** (`require(np.all(base > 0))`,
-  `:221`) — verified: `ZContractError: s_proj: a predeclared functional has zero baseline
-  uncertainty`. **Abort, not a silent `0/0` and not a pass.** Consequence: the functional set must be
-  **declared over the supported destination bins**, and the predicate for that already exists as
-  `eavailW_covariance.ew_coverage_report:55-68` — verified to return exactly the empty rows. **An
-  abort on a bin declared SUPPORTED is a construction defect, not a tolerance question.**
-- **Support-changing members** — ⚠ **a RESIDUE, not a covered case.** `U` is predeclared and fixed, so
-  if member `k`'s destination support differs from the baseline's, `s_proj` measures the baseline's
-  functionals and is **silent** about a destination bin appearing or vanishing. Verified: support
-  changed `0 → 1` empty rows and `s_proj` was unchanged. **Therefore destination-support identity
-  across members is a PRECONDITION** in `Validity`'s style, belonging with the branch-1/2 falsifiers —
-  **never something the tolerance absorbs.** This is A-7's stated precondition.
+- **Zero baseline projected sigma** — ⚠ **REV. 1's CLAIM HERE IS FALSE, AND IT WAS VERIFIED ON A
+  BENIGN OPERAND (F3).** Rev. 1 said `s_proj` *"ABORTS, not a silent `0/0` and not a pass"*, on the
+  strength of an **exactly**-zero baseline (an empty `M` row) over a rank-3-of-12 matrix under pure
+  scaling — a case where every functional has healthy overlap with `range(C)`. **Z's case is 265 of
+  10,694, where a declared functional can be near-orthogonal to `range(C)`.** Re-measured there,
+  500 trials with the functional set to the numerically-null eigenvector (probe §8): **103 do NOT
+  abort at all**, passing `base > 0` on a round-off positive (`u'Cu ∈ [−1.1e-15, +2.2e-15]`) and
+  **dividing by it**; **391** abort with *"negative quadratic form — C is not PSD on these u"*,
+  which **blames the operand when `C` is PSD and the FUNCTIONAL is what is degenerate**; and only
+  **6** give the message rev. 1 advertised. **So the abort guarantee holds at EXACT zero and fails
+  at round-off.**
+  **⚠ And a second half: the declared predicate is not the predicate the code tests.**
+  `ew_coverage_report:55-68` tests **empty destination rows of `M`**; `s_proj:221` tests
+  **`m_iᵀ C m_i > 0`**. At rank 265 of 10,694 these differ — a bin with a perfectly supported `M`
+  row can still have negligible overlap with `range(C)`. **A-7 therefore needs a declared
+  degeneracy predicate on `m_iᵀ C_0 m_i` relative to `‖C_0‖`, not a support predicate on `M`**, and
+  that requirement is new in rev. 3 rather than inherited.
+- **Support-changing members** — ⚠ **REV. 1 CONFLATED TWO MECHANISMS AND VERIFIED ONE (F4).** The
+  probe changed the member's **projection matrix** with `C` untouched, where `s_proj` is correctly
+  silent. The prose then generalised to *"a destination bin appearing or vanishing"*, which covers
+  a second mechanism it never tested. Measured (probe §9): when the member's **COVARIANCE** loses
+  support on a declared destination bin, `s_proj` is **NOT silent — it saturates at exactly `1.0`
+  and names the argmax functional.** So:
+  **the blind spot is an `M`-change only**, and destination-support identity is a precondition
+  **for that mechanism**. One direction verified, one measured and found not to need it.
 
 **Power in both directions, plus a control (probe §6):** exactly `0.0` on identical members;
 `14.0175%` when bars inflate (`1.3×`); `16.3340%` when bars **shrink** (`0.7×`) — a filter must act in
 the direction it acts; and on a correlation-only change with a bit-identical diagonal, `s_agg` returns
 `1.8e-16` while `s_proj` returns `9.4010%`.
+
+### 4.3a ⚠ F8 — THE ROUND-OFF-POSITIVE BASELINE IS REQUIRED BY NOTHING. A-7 must close it.
+
+**This is a gap in the requirement set, not a defect in anyone's text, and it survived two reviews
+because each half looks covered from the other's side.** Verified at `6f24fb00` rather than relayed:
+
+- **The hazard is stated in the tree, exactly.** `eavailW_covariance.py:412-413`: *"a zero variance
+  does not look like missing data — it looks like a very good measurement, and any `chi2` or
+  significance built on it divides by it."*
+- **The release-point requirement does not reach `s_proj`.** The assessor's pre-registered F6
+  requires *"a released projected row with zero or near-zero variance must be refused or marked at
+  the point of release."* Its **subject** is a released row and its **predicate** is the release
+  point. `s_proj`'s baseline is an **acceptance statistic evaluated during grading** — not a
+  released product. **Wrong stage.** ⚠ **I am NOT citing assessor-F6 as covering the round-off case,
+  and it declined that widening itself, against its own interest.**
+- **My own abort claim does not reach it either.** §4.3 is exact for an **exactly**-zero baseline and
+  **fails at round-off** (F3). **Wrong condition.**
+
+**⚠ AND THE STRUCTURE IS THE SAME DISTINCTION RELOCATED ONE LEVEL DOWN, which is why it hides:**
+`:429` gates on `if _ew_empty.size:` — **exactly-empty** `M` rows — while `:412-413`'s hazard is
+**near-zero** and is reachable at a **fully populated** row through correlation structure alone.
+One level down, `s_proj:221` gates on **exactly-zero** while the hazard is **round-off-positive**.
+**Each gate tests the exact case adjacent to the one that bites it.**
+
+**THE REQUIREMENT I PROPOSE, and it must address all THREE cohorts F3 measured, because a
+requirement aimed only at the third leaves the first mislabelled:**
+
+> **A-7 must evaluate a DECLARED RELATIVE DEGENERACY PREDICATE on every declared functional's
+> baseline, BEFORE any positive-semidefiniteness assertion, and must terminate in a state that
+> names the FUNCTIONAL rather than the operand.**
+>
+> Predicate: **`m_iᵀ C_0 m_i ≥ κ · λ_max(C_0) · ‖m_i‖²`** for a declared `κ`.
+
+| cohort (probe §8, 500 trials) | current behaviour | required behaviour |
+|---|---|---|
+| **391** | aborts *"negative quadratic form — C is not PSD on these u"* | ⚠ **MISLABELLED — `C` IS PSD; the FUNCTIONAL is degenerate.** Must be caught by the predicate first and reported as a **functional-declaration** failure |
+| **6** | aborts *"a predeclared functional has zero baseline uncertainty"* | correct in kind, but reached only at exact zero — must be reached by the **relative** predicate |
+| **103** | **does not abort**; divides by `u'Cu ∈ [−1.1e-15, +2.2e-15]` | must be **refused**, never graded |
+
+**`κ`'s CLASS MATTERS AND I AM DECLARING IT: `κ` is a NUMERICAL CONDITIONING THRESHOLD, of the same
+class as the applied `rcond`, and NOT a scientific acceptance boundary.** It therefore does **not**
+belong in `Z_BOUNDARIES`, is **not** a fourth withheld boundary, and is **not** a decision for
+Joseph in the sense `S` is. It should follow the repo's existing `rcond` policy rather than being
+argued from scratch — the applied cutoff in the ratified `pinv` path was measured earlier in this
+campaign as the **`1e-15` literal**, and that is the precedent for `κ`'s *kind*, not for its value.
+**Conflating a conditioning threshold with an acceptance boundary is how a numerical convenience
+acquires scientific authority**, so the classification is stated rather than left to a reader.
+
+**Neither review lane can write this**: the assessor would spend its A-7 verdict, and the
+mathematical reviewer supplies no remedies by standing constraint. **So it is mine to propose and
+both will assess it — the routing happened before the fix was written**, which is the
+[BEN-381] ordering and the reason I am not also grading it.
 
 ### 4.4 THE BOUNDARY — withheld, with the reason measured and the trigger named
 
@@ -491,45 +695,107 @@ throughout. **A historical plot labelled "audit descriptor" does not block a pro
 it blocks only the attempt to read (c) off that plot's printed precision**, which is the one thing
 §4.4 refuses to do and refuses on precedent.
 
-**AND (c) ITSELF DECOMPOSES, exactly as `null_epsilon`'s own spec requires — `B ≤ S`, `δ ∈ [B, S]`:**
+### 4.4c ⚠ F2 — REV. 2 ASKED TWO INCOMPATIBLE QUESTIONS, AND JOSEPH WAS BEING HANDED THE WRONG ONE
 
-- **`B`, a DISCRIMINABILITY FLOOR — derivable, with a stated model.** Each released bar carries
-  irreducible sampling noise from the two sample blocks. For an `N`-member Gaussian ensemble the
-  relative standard error on an estimated variance of a fixed functional is `sqrt(2/(N−1))`, hence
-  `≈ 1/sqrt(2(N−1))` on the **bar**; scaled by the sample blocks' share of that bin's projected
-  variance, since `C_Z` is dominated by ~45 deterministic band contributions. **Estimator-baseline
-  movement below `B` is not distinguishable from the noise the bar already has.** `B` is computable
-  at build time from **A-6's verified `N`** — which is why A-6 and A-7 are coupled, and why A-6 is
-  worth having independently of any inversion. **Assumption stated, per the spec: iid-Gaussian
-  replicas. That is an assumption, not a measurement, and it should be checked rather than trusted.**
-- **`S`, a SCIENTIFIC CAP — one decision, and it is Joseph's.**
+**UPHELD, and this is the finding that determines what goes to Joseph, so it is resolved first.**
+Rev. 2's §4.4 said `δ_proj` *"becomes derivable, by §3.6d's direct form and with no new scientific
+decision, at the moment endpoint A declares (i) … and (ii) the claim it supports"*, and gave a rule
+(half the smallest adjacent-band fractional gap). Rev. 2's §4.4b said `S` is *"the single scientific
+input"* and priced two consequences of **choosing** it. **Under the first nobody chooses anything;
+under the second the first's "no new scientific decision" is false.** *"Name the claim"* and
+*"supply a scalar"* are different questions with different answers.
 
-**⚠ AND `B` MUST NOT BE USED AS `S`. This is the trap, and it has already been sprung once in this
-campaign.** `null_epsilon`'s `min(achievable, acceptable)` construction was **withdrawn in rev. 19**
-precisely because it used a feasibility floor as an **upper** bound, where such a floor bounds `ε`
-from **below**. `B` is achievability; `S` is acceptability. Setting `δ_proj = B` would repeat that
-error exactly, so I am naming it rather than quietly proposing the convenient number.
+**⚠ AND ON RE-EXAMINATION, §4.4's HALF IS WRONG TWICE OVER — so the resolution is not simply
+"pick the first".**
 
-### 4.4b THE ONE-LINE DECISION, WITH BOTH CHOICES PRICED
+1. **`§3.6d`'s δ construction is the printed-precision one I refuse.** §3.6d: *"δ = (half the last
+   printed unit) / (the printed value) … is the part that genuinely transfers."* **What I adopt from
+   §3.6d is its NORMALIZATION MODEL — direct rather than quadrature — not its δ.** Rev. 2 wrote
+   *"derivable by §3.6d's direct form"* and thereby invoked, as a derivation, the very construction
+   §4.4 refuses two paragraphs earlier. **Self-contradiction, mine, and not caught by the review.**
+2. **The band-ordering rule is over the WRONG QUANTITY.** Band ordering is an ordinal claim about
+   the relative sizes of **grouped systematic bands**. `s_proj` measures movement of the **total
+   per-bin released bar**. A threshold that protects an ordering among groups **does not bound**
+   the total — so §4.4's one concrete rule does not apply to A-7's statistic.
 
-> **For Joseph:** *"What is the largest fractional change in a released projected uncertainty that
-> would leave the scientific reading of the released result unchanged?"* — that scalar is `S`.
+**THE ASK, STATED ONCE:**
 
-**Consequences, so the choice is informed rather than open-ended:**
+> **Name the claim the released projected uncertainty supports.** That is the single input, and it
+> is **not** a request for a number.
 
-- **`S` large (tens of percent):** A-7 passes almost regardless and protects little. Note the scale
-  it must beat: §3.7d's own demonstration moves a released marginal bar by **37.8%**, so an `S` above
-  that would admit the exact failure the requirement exists to catch.
-- **`S` small (sub-percent):** may violate the precondition **`B ≤ S`**. ⚠ **If `B > S` the correct
-  reading is NOT "loosen `S`"** — it is that **the ensembles are too small to support a claim at that
-  precision**, which is a real, actionable finding and points straight back at `N` (A-6).
-- **`B ≤ S` is falsifiable at build time and should be checked BEFORE any grading**, in the
-  branch-1/2 style, so an unsatisfiable pair is reported as inconclusive rather than as a failure of
-  the object.
+**And its answer determines part (a) as well as part (c)** — which is why it cannot be replaced by a
+scalar. If the claim is *quantitative* (a bar quoted with a stated precision and a scientific
+consequence), `δ` follows from that claim's own falsification condition. If it is *ordinal* and over
+grouped bands, then **A-7's functional set is wrong as specified** and `U` must be built over the
+grouped-band quantity instead. If the released bar supports **no** claim, A-7 has nothing to protect
+and should be **reported, not graded**. **§4.4b's priced choices are withdrawn**: they priced a
+variable that is not free.
 
-**What I am not doing:** not choosing `S`, and not offering a placeholder for it. `B` is a rule I am
-proposing; `S` is the single scientific input, and the honest form of "reserved for Joseph" is the
-question above plus the two priced consequences — not a returned blank.
+### 4.4d ⚠ F1 — `B` IS THE NOISE FLOOR OF THE WRONG POPULATION. WITHDRAWN.
+
+**UPHELD and reproduced (probe §7).** `B = 1/sqrt(2(N−1))` is the noise floor of a **single bar,
+single-sample**. `s_proj` is a **maximum over `K` × functionals of a TWO-SAMPLE difference**. Those
+are different populations, so `B` is not `s_proj`'s floor:
+
+| construction (`N = 100`, true `C` identical across members — a NULL) | null `s_proj` | ratio to `B = 7.107%` |
+|---|---:|---:|
+| `K = 10`, 100 functionals, independent draws | **38.73%** | **5.45** |
+| **control:** `K = 1`, **one** functional | 6.91% | **0.97** |
+
+**The control is what makes this a population mismatch rather than a formula error** — collapse
+`s_proj`'s population to `B`'s and the ratio is 1. **My algebra was right and my population was
+wrong**, which is the same defect as F7 and §1, a third time.
+
+**The consequence defeats the precondition's own purpose:** at `S = 10%`, `B ≤ S` **passes**
+(7.1% ≤ 10%) while a **null** object returns `s_proj ≈ 39%` — so A-7 reports NOT MET on an object
+where nothing moved, and §4.4b's *"read `B > S` as the ensembles being too small"* is **never
+reached**, because the check that would trigger it is computed on the wrong population.
+
+**⚠ AND THE DIRECTION REVERSES, so this is not "`B` is 5× too small".** Measured (probe §7c), as
+members share replica draws:
+
+| shared fraction | 0.0 | 0.5 | 0.9 | 0.99 |
+|---|---:|---:|---:|---:|
+| ratio to `B` | 4.78 | 3.38 | 1.73 | **0.84** |
+
+**So `B` crosses from anti-conservative to conservative, and which side it is on depends on a fact
+about the members that A-6 as written does not declare.** *(The reviewer reports its own script had
+the opposite sentence written before the numbers came back, and the output falsified it. My
+independent run agrees on the monotonicity and the crossing; my per-row figures differ in the third
+digit. I also could not reproduce its invariance-in-`f` claim — my construction gives ratios drifting
+`8.28 → 5.59` as the variance share falls `1.0 → 0.05`, because a deterministic block enlarges the
+baseline bar as well. Reported as a discrepancy, not resolved; the qualitative conclusion is
+unaffected either way.)*
+
+**THE REPLACEMENT, and it also disposes of F5.** The floor for a maximum must be the null
+distribution **of that maximum**:
+
+> **`B'` = a declared upper quantile of `s_proj` computed under the null "every member statistically
+> identical", given `N` per block, `|K|`, `|U|`, the per-bin variance shares, and the replica-draw
+> sharing structure.** Simulated at build time; needs **no new scientific input**.
+
+**This answers F5 by construction:** `B` was per-bin while `S` was a scalar, leaving *"which
+reduction stands on the left of `B ≤ S`"* unspecified (a toy spread 6.7× between max and min).
+**`B'` is a max over the same population `s_proj` is**, so both sides are scalars of the same shape
+and no reduction has to be chosen. **Comparing like with like is the whole repair.**
+
+**⚠ `B'` IS STILL NOT `S`.** It is achievability, `S` is acceptability, and `null_epsilon`'s
+`min(achievable, acceptable)` was withdrawn in rev. 19 for exactly that substitution. `B'` bounds
+`δ_proj` from **below**; naming the claim bounds it from above.
+
+**WHAT F1 ADDS TO A-6, and it is the actionable part:**
+
+> **A-6 must declare, per sample-covariance block, the REPLICA-DRAW SHARING STRUCTURE across the
+> members of `K` — not only `N`.** Two ensembles with identical `N` give `B'` ratios differing by
+> **5.7×** between independent and 99%-shared draws, so `N` alone cannot size the null.
+
+**And I am not inventing a sharing figure.** What would measure it, stated exactly: `mr_prefix`
+(`lib_member_resume.sh:137-142`) **inserts a member path**, so under the member-scoped arm at
+`sbatch_finalize_5d_bkgaware_gpu.sh:422` each member reads **its own** replica directory —
+independent draws, sharing ≈ 0 — whereas `sbatch_combine_5d_budget.sh:14` reads a **single
+top-level** set. **So the sharing structure is determined by which arm produced the members, which
+is the SAME unresolved digest→execution binding as §2.1a(b).** One records search closes both. It
+has not been done, and I am not claiming its outcome.
 
 **WHAT I RECOMMEND IN THE MEANTIME, and it is actionable now:** adopt `s_proj` as a **reported
 statistic** under A-7 — computed on the baseline build, reported with its argmax offset and argmax
@@ -581,10 +847,15 @@ has already paid for twice. Two qualifications so the row is not misread later:
 
 ## 7. RESIDUES — what this packet does not establish
 
-1. **`δ_proj` is not derived.** §4.4. The trigger is a declaration, and it is Joseph's.
-2. **Destination-support change is a precondition, not a covered case.** §4.3. `s_proj` cannot see it,
-   and no existing criterion is proposed here to catch it — it is named as A-7's precondition and left
-   as a requirement on the producer's `Validity` record.
+1. **`δ_proj` is not derived, and the ASK is "name the claim" rather than "supply a scalar"**
+   (§4.4c). ⚠ Rev. 2's `S`-with-priced-consequences framing is **withdrawn**; so is its claim that
+   δ follows from §3.6d's direct form, which invoked the printed-precision construction §4.4
+   refuses. **Naming the claim may also change part (a)'s functional set**, so it is not a boundary
+   question alone.
+2. **Only the `M`-CHANGE direction of support change is a blind spot** (§4.3, F4). A member whose
+   **covariance** loses support on a declared destination bin makes `s_proj` saturate at exactly
+   `1.0` and name the functional — measured, not asserted. ⚠ Rev. 1/2 stated the residue over both
+   mechanisms having tested one; the precondition is needed for the `M`-change case only.
 3. **C6's hazard is CONDITIONAL and the condition is unmeasured.** Whether `coverage_valid_nd.py` is
    ever invoked with a projected `--cov` operand is a question about *invocations*, and no invocation
    record was searched. §1.1 says conditional; it does not say which.
@@ -615,9 +886,23 @@ has already paid for twice. Two qualifications so the row is not misread later:
    `required=True`. What is missing is an embedded stamp plus **one binding** — digest to producing
    execution — and **I did not search Slurm records, receipts or logs for it.** I am not claiming
    that search would fail; it has not been attempted. See §2.1a.
-10. **`B` in §4.4a rests on an iid-Gaussian replica model.** Stated as an assumption, not measured
-   here. If the replicas are not iid Gaussian the floor moves, and the direction is not established.
-11. **The population pin moved 542 → 543** and I re-pinned it. Verified by **set difference on the
+10. **⚠ `B` IS WITHDRAWN (F1) and its replacement `B'` is a RULE, not a number.** `B'` needs `N`
+   per block, `|K|`, `|U|`, the per-bin variance shares **and the replica-draw sharing structure**,
+   and the last of those is **undeclared**. It is not invented here. What would measure it is named
+   in §4.4d and is the **same records search** as §2.1a(b). `B'` also inherits an iid-Gaussian
+   replica model, stated rather than measured.
+11. **⚠ A DISCREPANCY WITH THE REVIEWER I DID NOT RESOLVE.** It reports the null/`B` ratio invariant
+   in the variance share `f` (*"~4.8 for every share tried, because `f` scales both sides"*). My
+   construction gives `8.28 → 5.59` as `f` falls `1.0 → 0.05`, because my deterministic block
+   enlarges the **baseline** bar as well as damping the noise. **Reported, not reconciled.** The
+   qualitative conclusion — ratio ≫ 1 at independent draws — holds in both.
+12. **`κ` (§4.3a) is proposed as a CLASS, not a value.** I anchor its kind on the applied `rcond`
+   policy and explicitly do not propose a number. If the policy does not in fact transfer, the
+   requirement stands and its threshold is open.
+13. **F8's closing requirement is UNREVIEWED BY CONSTRUCTION.** Both lanes were routed to assess it
+   before it was written, so it has no independent check yet — that is the intended sequencing, not
+   an oversight, but it means §4.3a is the least-tested thing in this document.
+14. **The population pin moved 542 → 543** and I re-pinned it. Verified by **set difference on the
    tracked path lists**, not by the count: exactly one path added, none removed. A re-pin is not an
    extension, but it is a deliberate act on an instrument and it is recorded here rather than left
    in a diff.

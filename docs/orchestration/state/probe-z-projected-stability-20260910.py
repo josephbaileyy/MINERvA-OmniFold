@@ -21,6 +21,15 @@ SECTIONS
   5  `s_proj` on the cases Z's contract permits: rank-deficient, zero-baseline, support-changing
   6  power in BOTH directions, plus a false-positive control
 
+REV. 2 -- ROUND-1 REVIEW. Every one of these FALSIFIES something this probe or its packet asserted:
+  7  F1  `B` is the noise floor of the WRONG POPULATION, and the direction REVERSES with sharing
+  8  F3  the abort claim holds at EXACT zero and FAILS at round-off; the declared predicate is not
+         the predicate the code tests
+  9  F4  section 5(c) tested an M-change; a COVARIANCE support loss is NOT silent, it saturates
+ 10  F6  A-4's `1e-8` is not tuned -- the statistic is ~binary, so 9 orders behave identically
+ 11      the two POSITIVE CONTROLS section 4 lacked, without which byte-identity is not evidence
+ 12  F7  the sample-covariance population is THREE, not two, and one of them is BIASED 1/N
+
 No production compute, no adoption, no grading. Local numpy arithmetic only.
 """
 import os
@@ -316,10 +325,227 @@ def section6():
     check("s_proj is NOT", out_off["s_proj"] > 1e-3)
 
 
+
+
+# ============================ REV. 2 -- ROUND-1 REVIEW FINDINGS ============================
+# Added after independent review at 05bf8647. Sections 7-12 verify findings F1, F3, F4, F6, F7 and
+# adopt the two positive controls the assessor supplied for section 4. ⚠ EVERY ONE OF THESE
+# FALSIFIES SOMETHING THIS PROBE OR ITS PACKET PREVIOUSLY ASSERTED.
+
+
+def section7():
+    """F1: B is the noise floor of the WRONG POPULATION, and the direction depends on sharing."""
+    print("\n7. F1 -- `B` IS COMPUTED ON THE WRONG POPULATION  (CONFIRMED; packet claim withdrawn)")
+    print("   `B = 1/sqrt(2(N-1))` is the noise floor of a SINGLE bar, single-sample.")
+    print("   `s_proj` is a MAXIMUM over K x functionals of a TWO-SAMPLE difference.")
+
+    def null_sproj(N, K, nbins, share=0.0, seed=0):
+        """Members statistically IDENTICAL (true C = I). Only finite-ensemble noise differs."""
+        rng = np.random.default_rng(seed)
+        n_shared = int(round(share * N))
+
+        def cov_from(X):
+            Z = X - X.mean(0)
+            return (Z.T @ Z) / (X.shape[0] - 1)
+
+        X0 = rng.normal(size=(N, nbins))
+        shared = X0[:n_shared]
+        covs = {0: cov_from(X0)}
+        for k in range(1, K + 1):
+            fresh = rng.normal(size=(N - n_shared, nbins))
+            covs[k] = cov_from(np.vstack([shared, fresh]) if n_shared else fresh)
+        return zs.s_proj(covs, np.eye(nbins), baseline_key=0)["s_proj"]
+
+    N = 100
+    B = 1.0 / np.sqrt(2 * (N - 1))
+    print(f"    B at N={N} = {100*B:.3f}%")
+    med = float(np.median([null_sproj(N, 10, 100, 0.0, seed=s) for s in range(9)]))
+    print(f"    (a) K=10, 100 functionals, independent draws: null s_proj median = "
+          f"{100*med:.2f}%  -> ratio {med/B:.2f}")
+    check("a NULL object exceeds B by several-fold", med / B > 3.0,
+          f"ratio {med/B:.2f} -- so `B <= S` can PASS while A-7 reports NOT MET on a null")
+    med1 = float(np.median([null_sproj(N, 1, 1, 0.0, seed=100 + s) for s in range(400)]))
+    print(f"    (b) CONTROL K=1, ONE functional -- s_proj's population collapses to B's: "
+          f"{100*med1:.2f}%  -> ratio {med1/B:.2f}")
+    check("at K=1 with one functional the ratio is ~1, so B's FORMULA is right",
+          0.8 < med1 / B < 1.2, f"ratio {med1/B:.2f} -- a POPULATION mismatch, not a formula error")
+
+    print("    (c) ⚠ AND THE DIRECTION REVERSES WITH REPLICA-DRAW SHARING:")
+    ratios = {}
+    for share in (0.0, 0.5, 0.9, 0.99):
+        m = float(np.median([null_sproj(N, 10, 100, share, seed=200 + s) for s in range(7)]))
+        ratios[share] = m / B
+        print(f"        share={share:<5} null s_proj median = {100*m:6.2f}%  ratio {m/B:.2f}")
+    check("B is ANTI-conservative at independent draws", ratios[0.0] > 3.0)
+    check("B becomes CONSERVATIVE as sharing -> 1", ratios[0.99] < 1.0,
+          f"{ratios[0.99]:.2f} -- adequacy cannot be settled without the SHARING DECLARATION")
+    check("and the ratio is monotone in sharing",
+          all(ratios[a] > ratios[b] for a, b in ((0.0, 0.5), (0.5, 0.9), (0.9, 0.99))))
+
+
+def section8():
+    """F3: the abort claim holds at EXACT zero and FAILS at round-off."""
+    print("\n8. F3 -- ABORT BEHAVIOUR ON A NEAR-NULL FUNCTIONAL  (packet claim FALSE at round-off)")
+    print("   Section 5(b) used an EMPTY M row (exact zero) on a benign rank-3-of-12 operand.")
+    print("   Z's case is 265 of 10,694, where a declared functional can be ~orthogonal to range(C).")
+    rng = np.random.default_rng(4)
+    msgs, noabort, bases = {}, 0, []
+    for _ in range(500):
+        n, r = 40, 4
+        Bm = rng.normal(size=(n, r))
+        C0 = Bm @ Bm.T
+        _w, V = np.linalg.eigh(C0)
+        u = V[:, 0]                                  # numerically-null eigenvector
+        U = np.vstack([u, u])
+        try:
+            zs.s_proj({0: C0, 1: 1.1 * C0}, U, baseline_key=0)
+            noabort += 1
+            bases.append(float(u @ C0 @ u))
+        except Exception as exc:                     # noqa: BLE001
+            k = str(exc).split(":")[-1].strip()[:52]
+            msgs[k] = msgs.get(k, 0) + 1
+    print(f"    of 500 trials: {noabort} did NOT abort. Aborts by message:")
+    for k, v in sorted(msgs.items(), key=lambda kv: -kv[1]):
+        print(f"        {v:4d}  {k!r}")
+    check("a near-null functional does NOT reliably abort", noabort > 0,
+          f"{noabort}/500 pass `base > 0` on a ROUND-OFF positive and divide by it")
+    check("the dominant abort BLAMES THE OPERAND, not the declaration",
+          any("not PSD" in k for k in msgs),
+          "'C is not PSD on these u' -- but C IS PSD; the FUNCTIONAL is the problem")
+    check("the message section 4.3 advertised is the RARE one",
+          sum(v for k, v in msgs.items() if "zero baseline" in k) < noabort)
+    if bases:
+        a = np.array(bases)
+        print(f"    non-aborting baseline u'Cu in [{a.min():.3e}, {a.max():.3e}] -- round-off")
+    print("    -> 'ABORT, not a silent 0/0 and not a pass' is true ONLY at EXACT zero.")
+    print("       And the DECLARED predicate (`ew_coverage_report`, empty M rows) is NOT the")
+    print("       predicate the code tests (`m_i' C m_i > 0`). At 265 of 10,694 these differ.")
+
+
+def section9():
+    """F4: the support residue conflated two mechanisms; only one was verified."""
+    print("\n9. F4 -- SUPPORT CHANGE HAS TWO MECHANISMS AND SECTION 5(c) TESTED ONE")
+    print("   5(c) changed the member's PROJECTION MATRIX with C untouched -> correctly silent.")
+    print("   The prose generalised to 'a destination bin appearing or vanishing'. Measured:")
+    rng = np.random.default_rng(9)
+    n = 12
+    Bm = rng.normal(size=(n, 6))
+    C0 = Bm @ Bm.T
+    M = np.zeros((2, n)); M[0, :6] = 1.0; M[1, 6:] = 1.0
+    Ck = C0.copy()
+    Ck[6:, :] = 0.0; Ck[:, 6:] = 0.0          # member's COVARIANCE loses that bin's support
+    out = zs.s_proj({0: C0, 1: Ck}, M, baseline_key=0)
+    print(f"    member's C zeroed on destination bin 1's source cells: "
+          f"s_proj = {out['s_proj']:.6f}, argmax_functional = {out['argmax_functional']}")
+    check("a COVARIANCE support loss is NOT silent -- it saturates", out["s_proj"] > 0.99,
+          "so only the M-CHANGE direction is a genuine blind spot")
+    check("and it names the responsible functional", out["argmax_functional"] == 1)
+
+
+def section10():
+    """F6: A-4's tolerance is not load-bearing -- the statistic is essentially binary."""
+    print("\n10. F6 -- IS A-4's `1e-8` A TUNED NUMBER?  (no: any separator behaves identically)")
+    rng = np.random.default_rng(11)
+    n = 30
+    A = rng.normal(size=(n, n))
+    C = A @ A.T
+    w, V = np.linalg.eigh(C)
+    P0, r0 = projector(C)
+    Pm, rm = projector(2.5 * C)                                    # structural match
+    Cdrop = V[:, 1:] @ np.diag(w[1:]) @ V[:, 1:].T                 # one retained mode removed
+    Pd, rd = projector(Cdrop)
+    g_match = float(np.linalg.norm(P0 - Pm, 2))
+    g_drop = float(np.linalg.norm(P0 - Pd, 2))
+    print(f"    structural MATCH (rescale): rank {r0}->{rm}  gap = {g_match:.3e}")
+    print(f"    RANK CHANGE (drop a mode):  rank {r0}->{rd}  gap = {g_drop:.6f}")
+    check("a structural match sits at round-off", g_match < 1e-12)
+    check("a rank change gives EXACTLY 1 for orthogonal projectors", abs(g_drop - 1.0) < 1e-12)
+    same = all((g_match <= tol) and (g_drop > tol) for tol in (1e-12, 1e-10, 1e-8, 1e-5, 1e-3))
+    check("every tolerance in [1e-12, 1e-3] separates them IDENTICALLY", same,
+          "so `1e-8` is a ROBUSTNESS property, not a fitted number -- 9 orders behave alike")
+
+
+def section11():
+    """The two positive controls the assessor supplied for section 4. Adopted, not paraphrased."""
+    print("\n11. POSITIVE CONTROLS FOR SECTION 4 -- without these, byte-identity is not evidence")
+    print("    A byte-identical `describe()` with no positive control is exactly the shape of a")
+    print("    check that CANNOT FAIL. Both controls are the assessor's, adopted here.")
+    AGG = zv.Leg("agg", "aggregate", "cause3_agg", "s_agg")
+    MED = zv.Leg("med", "per-bin", "cause3_med", "s_med")
+    L2 = zv.LegSet([AGG, MED], predeclared_at="PROBE")
+    ok = zv.Validity(footing_ok=True, digests_agree=True, partition_agrees=True,
+                     identities_pass=True, cv_held_fixed=True, offsets_match_K=True,
+                     offset_declared_nonzero=True, product_digests_distinct=True,
+                     all_members_finite=True)
+    stats = {"s_agg": 1e-4, "s_med": 1e-4}
+    saved = dict(zc.Z_BOUNDARIES)
+    try:
+        zc.Z_BOUNDARIES["cause3_agg"] = zc.Boundary.declared("cause3_agg", 1e-3, "PROBE")
+        zc.Z_BOUNDARIES["cause3_med"] = zc.Boundary.declared("cause3_med", 1e-3, "PROBE")
+        print("    CONTROL A: delete a DECLARED leg's own boundary -- is the registry consulted?")
+        del zc.Z_BOUNDARIES["cause3_agg"]
+        raised = None
+        try:
+            zv.assess(L2, stats, ok)
+        except Exception as exc:                     # noqa: BLE001
+            raised = type(exc).__name__
+        check("deleting a declared leg's boundary RAISES", raised == "ZContractError",
+              f"got {raised} -- so section 4(c)'s byte-identity is a REAL negative, not a blind one")
+        zc.Z_BOUNDARIES["cause3_agg"] = zc.Boundary.declared("cause3_agg", 1e-3, "PROBE")
+
+        print("    CONTROL B: does the scope statement FLIP when a corr leg is declared?")
+        out2 = zv.assess(L2, stats, ok)
+        CORR = zv.Leg("corr", "aggregate", "cause3_corr", "s_corr", sees_correlations=True)
+        out3 = zv.assess(zv.LegSet([AGG, MED, CORR], predeclared_at="PROBE"),
+                         dict(stats, s_corr=1e-3), ok)
+        check("present without a corr leg", out2.scope_statement == zv._DIAGONAL_ONLY_SCOPE)
+        check("None with one", out3.scope_statement is None,
+              "so the narrowing is LEG-DERIVED, not incidental")
+    finally:
+        zc.Z_BOUNDARIES.clear()
+        zc.Z_BOUNDARIES.update(saved)
+    check("registry restored", len(zc.Z_BOUNDARIES) == 4)
+
+
+def section12():
+    """F7: the sample-covariance population is THREE, and one of them is biased 1/N."""
+    print("\n12. F7 -- THE SAMPLE-COVARIANCE POPULATION IS THREE, NOT TWO  (packet claim FALSE)")
+    print("   `z_assembly.py:4`'s `sum_V C_b` is ITSELF A SUM, and a third sample covariance")
+    print("   sits one level inside it. Reading the formula's SURFACE answered a narrower question")
+    print("   than the one asked. A derivation is not safer than an enumeration unless it RECURSES.")
+    import adopt_unified_5d as au                    # noqa: PLC0415
+    from uq_math import mat_covariance               # noqa: PLC0415
+    vb = list(au.VERT_BANDS)
+    print(f"    adopt_unified_5d.VERT_BANDS ({len(vb)} entries); last = {vb[-1]!r}")
+    check("Flux is a VERTICAL band, hence a summand of sum_V", "Flux" in vb)
+    check("and there are 13 of them", len(vb) == 13, f"{len(vb)}")
+    check("z_contract re-exports the same tuple", tuple(zc.VERT_BANDS) == tuple(vb))
+
+    rng = np.random.default_rng(5)
+    N, nb = 40, 6
+    X = rng.normal(size=(N, nb))
+    got = mat_covariance(X)
+    Zc = X - X.mean(0)
+    biased = (Zc.T @ Zc) / N
+    unbiased = (Zc.T @ Zc) / (N - 1)
+    check("mat_covariance is BIASED 1/N -- measured, not read off its docstring",
+          bool(np.allclose(got, biased)), "matches Z'Z/N exactly")
+    check("and it is NOT unbiased 1/(N-1)", not bool(np.allclose(got, unbiased)),
+          f"ratio {float(got[0,0]/unbiased[0,0]):.6f} = (N-1)/N")
+    print("    -> `unified_throw_cov.py:467` builds `C_flux = mat_covariance(...)` over the flux")
+    print("       universes; `:468` does `C_block += C_flux`; `:470` PRINTS 'MAT mean-centered")
+    print("       1/N'. So the packet's 'one script, one convention -- unbiased 1/(N-1)' was FALSE")
+    print("       of part of Z's own sum, INSIDE A DISCLOSURE REQUIREMENT.")
+    print("    -> `:460` applies the SAME function to each of the 12 knob bands over 2 declared")
+    print("       +/- endpoints. Same biased normalizer -- but a 2-point endpoint pair is NOT a")
+    print("       random ensemble, so it is a construction to DISCLOSE, not an ensemble size.")
+
+
 if __name__ == "__main__":
     print(__doc__)
     print("=" * 78)
     section1(); section2(); section3(); section4(); section5(); section6()
+    section7(); section8(); section9(); section10(); section11(); section12()
     print("\n" + "=" * 78)
     if FAIL:
         print(f"PROBE FAILED: {len(FAIL)} check(s): {FAIL}")
