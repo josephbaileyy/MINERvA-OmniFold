@@ -1269,6 +1269,57 @@ quotation rewritten *in place* into a live affirmation would not move the count 
 It catches appearance, disappearance and re-scoping; **it does not read meaning.** Anyone editing the
 prose around an approved occurrence must re-read its pinned reason.
 
+### ⚠ ROUND 5 — TWO DEFECTS IN THAT INSTRUMENT, AND THE FIRST IS THE FIFTH INSTANCE OF ONE SHAPE
+
+**R5-1. The check DISCLAIMED in its docstring exactly what it ASSERTED in its output.** The prose
+above was right; the terminal line printed *"Every occurrence is an approved quotation inside a
+withdrawal. No live affirmation."* — **the meaning-level claim the docstring denies making.**
+Reproduced here before repair (the reviewer's **Test K**): rewriting an approved quotation *in
+place*, keeping the phrase and inverting the framing from *"REV. 2's OWN EDIT LEFT THE WITHDRAWN
+CLAIM STANDING"* to *"THIS REMAINS THE OPERATIVE PRACTICAL CONSEQUENCE, RESTORED AFTER REVIEW"*,
+left the counts at **`5 → 5`** and the checker **GREEN**.
+
+**That is the headline-overrides-body shape — the one §0.0 diagnoses in this document — inside the
+instrument built to prevent it. Fifth instance today.** The two halves are dispositioned
+**separately, not merged**: the count-only limitation is **inherent** and is carried to Joseph; the
+**wording was a defect** and is fixed at the print statement, which now states what the check
+establishes (*"no occurrence has appeared or vanished since it was classified"*) and what it does
+not.
+
+**R5-2. Injection (d) did not cover what its label advertised.** `DELIVERY` was a hardcoded
+three-entry dict with **no `glob`, `iterdir`, `walk` or `rglob` anywhere in the file** — zero
+filesystem discovery. Injection (d) mutated the *in-memory* dict, so it tested `audit()`'s handling
+of a key **someone had already remembered to add**; an unregistered fourth file carrying a live
+affirmation left the checker **green while blind. And that is round 3's own defect one layer down**
+— round 3's sweep was *"scoped to the `.md`"* and missed the probe header and `CATALOG.md`, and the
+instrument built to prevent that **reproduced the scoping assumption.**
+
+**Fixed by discovery rather than by a better label:** any file under `docs/orchestration/` whose
+content carries a registered paraphrase must be in `DELIVERY`, or the check fails closed. Measured
+cost `583` files / `12.0` MB / **`0.15` s**, so enumeration was never buying anything. Injection (d)
+is relabelled to what it actually tests, and a real coverage test **(e)** writes an unregistered file
+into a temp root and requires it to be found.
+
+**⚠ AND MY OWN FIX TAUGHT ME THE SYMMETRIC LESSON WITHIN MINUTES, TWICE.** Discovery's **first live
+run** flagged two August files from other lanes — `PREDECLARATION-20260816-hrowindex4d-readback.md:68`
+says *"An exact comparison **needs no tolerance** and must not be given one"*, an innocent sentence
+about a bit-exact readback. **A false positive**, because *"needs no tolerance"* is generic English.
+I tightened it, added a **false-positive control (f)** to the self-test, **and that control
+immediately caught a second one** — the four-word phrase naming a pipeline's main line matches
+ordinary prose. *(The literal strings are deliberately NOT reproduced here: this document is
+inside the audited corpus, so quoting a match string would inflate its own pinned count. The
+strings live in the checker, which excludes itself for the same reason.)*
+
+**So a paraphrase may now be an AND-GROUP**: the generic phrase **together with** the rank token,
+which is the difference between matching a **wording** and matching a **claim**. **Too-narrow wording gave
+false negatives (R3-1's survivor); too-generic wording gives false positives. Both are one error —
+the search string is not the claim** — and a discovery check without a false-positive control is
+one-directional: it would flag unrelated documents forever and train its reader to ignore it.
+
+**Self-test now fires in five directions and is silent in two:** injected affirmation, deleted
+quotation, unpinned corpus key, unregistered file on disk, and — negatively — a clean tree and a tree
+of innocent generic prose.
+
 **⚠ AND ITS FIRST RUN FAILED ON ITS AUTHOR'S OWN CLASSIFICATION.** I pinned the rank-263 claim at `0`
 for this document while §6.1's F1(b) row quotes it — so invocation one returned `[FAIL]`. **Hand
 classification is exactly as fallible as the sweeps it replaces, which is the whole argument for
