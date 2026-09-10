@@ -271,6 +271,36 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   point is that *verified* is unsatisfiable for one number when the two can differ, `--expected-ids`
   being a launcher constant that proves consistency and never adequacy (`OI-17`, `122 of 160`, still
   open). **§F.5's pre-registered block list is five items, not seven.**
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partH.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partH.md)
+  - **PART H — READ THIS BEFORE CITING ANY EARLIER PART AS CLEARANCE.** ⚠ **The latest designer commit
+  this lane reviewed is `173baf44`. Nothing in Parts A-G clears `8d3071a8` or `b40686ec`**, and the
+  unreviewed delta is an entire artifact, not a labelling fix: `PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md`
+  (**+505/−0, new**, sha256 `e04b4983…`, digested-NOT-read), `state/probe-z-projected-stability-20260910.py`
+  (**+327/−0, new**), plus `+35/−10` on the consumer-set packet and `+12/−3` on its check script. **A
+  `READY` in Part B or Part D is a verdict on `2ebdf095` and is two revisions stale.** §H.1 carries the
+  per-part referent table so no reader has to infer it.
+  **`F-0` is CLOSED on its own criterion** — Part F's criterion was existence on *any* ref with
+  diffability as the stated consequence, and that is met; re-reading it as requiring reachability from
+  `main` would be moving the criterion after the fact to keep a finding alive. **The criterion then did
+  its job, measured:** both records changed between `a11d6cdd` and `ae876e14`, the change was a
+  metadata timestamp placeholder (caught by the mathematical reviewer), and the **verbatim Appendix A
+  blocks are byte-identical** (`0bd716c2…`, `2d2587a4…`), so Part G's quotations of Joseph hold at the
+  decision lane's tip. **§H.2a files the residual NARROWLY instead: a ruling that governs `main` is not
+  reachable from `main`** — `origin/main`'s newest ruling record is `RULING-20260908` and both 09-10
+  records are ABSENT there, so a session pinning `origin/main` cannot see the constraint binding it.
+  Closing that is a merge, not requested here.
+  **§H.3 is the disqualification list.** DISQUALIFIED on exactly one item: the retained-subspace gate
+  `‖P_0 − P_k‖_2 <= 1e-8` and its tolerance (clause (d)) — found the hole, supplied the fix — and
+  likely moot since *"do not reopen the universal-bound approach"* removes the bound from the
+  recommended set. **NOT disqualified on the projected-uncertainty boundary**, because `F9` was left
+  unanswered and §G.1 stopped at the convergence deliberately: **the line is between "here is what must
+  be true" (a requirement, which does not disqualify, or no reviewer could review twice) and "here is
+  the statistic, denominator and number" (a remedy, which does).** RECUSED from *grading* per
+  `BEN-381` — assessment is not grading. **Declared weakness, not a disqualification:** if the new
+  packet's §1/§1.1 transcribe Part G's `F-III`, this lane confirming them is partly self-confirmation;
+  `F-III` is a measurement of the code and will be re-derived rather than cited, but a second reviewer
+  should spot-check that slice. §H.4: *"the orchestrator"* in Parts A-G re-points — that session ended
+  and a different one holds the role.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
