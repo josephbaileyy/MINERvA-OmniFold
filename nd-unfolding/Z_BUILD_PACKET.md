@@ -73,7 +73,7 @@ committed bindings and the 2026-09-09 capture (job `58127048`), re-measurable.
 | `active` | **S**, `nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root` | `950f8cb15c5a…`, **42,326,607,877 B**, 49 keys | **RESOLVED — §1a** |
 | `stat` | `uq_cov_stat_5d.root:hCov_stat5d_reported` | `6580016fa713…` | available; **reuse-vs-regenerate RESERVED, §4** |
 | `ml` | `uq_cov_mlsplit_5d.root:hCov_mlsplit5d_reported` | `27b2e456f80e…` | available; **same reservation** |
-| `throw` | `uq_5d/unified_throw_cov_5d.root` | 2.49 GB, 9 keys | available; supplies `C_unified`/`C_blocksum` **diagonals** and `hJointMeanShift` |
+| `throw` | ⚠ **WAS `uq_5d/unified_throw_cov_5d.root` — THAT IS THE PRE-J28 OBJECT AND IS WITHDRAWN.** See §8 | — | **NO QUALIFYING CANDIDATE** |
 | `null` | `x_cv`, `x_cv2`, `support_mask` | — | **DOES NOT EXIST — §0** |
 
 Plus `footing.mask_sha256` and `footing.row_order_sha256`, `producing_revision`, and
@@ -354,8 +354,15 @@ seed*, issued twice (`unified_throw_cov.py:369` and `:514`), and `x_cv` is compu
 first slab is globbed**. Zero ensemble data dependency. **≤ 0.37 CPU task-h against 61–80 for arms
 5+6 — a factor of ~170–220, and zero GPU either way.**
 
-**But `unified_throw_cov.py:496` refuses every archived 5D slab set on pscratch.** They carry
-`seed`, not the post-split `estimator_seed`/`draw_seed`: *"There is deliberately no fallback…
+**⚠ CORRECTED — THE SENTENCE BELOW IS FALSE AND IS RETAINED ONLY SO THE ERROR IS LEGIBLE.**
+A post-split slab set DOES exist: `mii/member_k000000` carries `estimator_seed=1000`,
+`draw_seed=1000` and `flux_normalized=1` on all 40 uthrow and 21 block slabs, and would pass
+`:477`, `:483`, `:489` and `:496`. My search covered `uq_5d/` and missed `mii/`. **So the blocker
+on the cheap route was never a tooling question — it is an AUTHORIZATION question, and the
+answer is that those slabs are Gate-2 restricted.** See §8.
+
+~~**But `unified_throw_cov.py:496` refuses every archived 5D slab set on pscratch.** They carry
+`seed`, not the post-split `estimator_seed`/`draw_seed`:~~ *"There is deliberately no fallback…
 doing so would let a pre-split slab combine beside a post-split one whose draw seed differs, which
 is a silent mixed-estimator covariance."* So "re-run arm 7 with `--null`" is **not available at
 HEAD**, for reasons that have nothing to do with the null.
@@ -420,3 +427,75 @@ of a production round rather than as a null procedure.
 disposition. **And nothing produced under any branch can be accepted** — `null_epsilon` is
 withheld, so `assess_null` returns `NOT ASSESSABLE` with reject conditions `4c` and `11` in every
 case. This buys auditability, not acceptance.
+
+---
+
+# 8. THE THROW SOURCE — corrected 2026-09-10. **NO CANDIDATE QUALIFIES.**
+
+A bounded read-only investigation compared the three candidate families. **The answer is uniform
+and it is not about any family individually: the `null` role has no candidate at all, so item 4 —
+binding the matrices and the null operands to one producing execution — fails for all three.**
+
+**MEASURED: the null operands were never produced by any execution.** `unified_throw_cov.py`
+computes `x_cv` at `:369-371` and drops it at `:586`. A `find` over the whole data root returns
+2,429 `.npz` files and the only matches are PET artifacts off the publication path. This is a
+**writer gap, not a lost file** — which is why no retrofit onto an existing ROOT can satisfy
+`REQUIREMENTS["null"]`'s *"at throw creation"*.
+
+| | **A** `unified_throw_cov_5d.root` | **B** `…_fluxfix_20260806_full160.root` | **C** `mii/member_k000000/…` |
+|---|---|---|---|
+| sha256 | `038c6132…` | `4cb02ae7…` | `b1d0ceca…` |
+| producing revision | **UNKNOWN, unpinnable** | UNKNOWN (job bound) | `7ac0edec…`, dirty 0 |
+| receipt binding it | 12 files — **as `pre_j28_throw`** | **25 files, incl. G's own build receipt** | **none** |
+| producing job | **no log, no job record** | `56429334` COMPLETED | `57753248` COMPLETED |
+| J28 stamp on slabs | **30 of 40 UNSTAMPED** | 40/40 and 36/36 | 40/40 and 21/21 |
+| seed roles on slabs | legacy `seed` only | legacy `seed` only | `estimator_seed`+`draw_seed` |
+| population | complete | complete | complete |
+| gate | none | none | **Gate-2 restricted** |
+| **null bound to same execution** | **NO** | **NO** | **NO** |
+
+**A — DISQUALIFIED, and this packet was wrong to declare it.** Three independent confirmations
+that it is the pre-J28 object: the repository's own `receipt_construction_contract_5d.json` names
+its entry **`pre_j28_throw`**; `RUNBOOK-20260807-gbdt-closeout.md:36` records the J28 fix landing
+on the Aug-6 object; and 30 of its 40 uthrow slabs carry no `flux_normalized` stamp. It has no
+producing log, no job record and no pinnable revision, and slabs 30–39 of its input set were
+**overwritten on 2026-08-06**. ⚠ **AND `adopt_unified_5d.py:76` DEFAULTS `--uthrow` TO IT**, so
+the pre-J28 object is also what an omitted flag selects.
+
+**C — the best-provenanced and nonetheless unavailable.** Only family with post-split seed stamps,
+a pinned revision and an import-closure receipt — and the only one **no receipt binds**. It is
+**arm 7 of the seven k=0 rehearsal jobs**, so using it as Z's `throw` is *consumption outside the
+seven rehearsal jobs*, which `DECISION-20260830` forbids independently of any technical merit.
+
+**B — the only viable base, incomplete rather than wrong.** Fully J28-corrected on both sides,
+digest-bound in 25 places, bound to a completed job — and **it is the throw G itself was built
+from**: G's `receipt_candidate_stamps_5d.json` names it three times and names A zero times. It
+still fails 11b and carries no seed-role stamps.
+
+**THE RECOMMENDATION IS A CONSTRUCTION, NOT A SELECTION.** Z's `throw` should be a **new product
+built for Z**, on **B's footing** (`union_20260806_full160` / `rescaled_20260806_full160`), with
+the writer changed to persist the null operands in the same execution. That is the only route
+that makes item 4 and condition 11b satisfiable at all. B is not selected because its slabs would
+pass `:496`, and C is not rejected because its stamps pass — those tests decide nothing here.
+
+## 8a. Decisions that are Joseph's
+
+1. **The footing is a contract change, not a source swap.** A versus B moves Z between the pre-
+   and post-J28 objects, and SPEC §1.1 already rules the July artifacts *"not evidence for Z."*
+2. **Can ANY pre-existing throw satisfy Z?** §1.3a says *"Z's own"*, 11b says *"in Z's own throw
+   product"*, `REQUIREMENTS["null"]` says *"at throw creation."* Read strictly, all three require a
+   throw produced FOR Z, which retires the three-way choice entirely. Nothing in the tree settles
+   strict versus loose.
+3. **May the k=0 rehearsal slabs be consumed to build Z's throw?** They are the only post-split,
+   fully-J28-stamped slab set in existence. Consuming them is squarely what the Gate-2 clause
+   forbids, and **no authorization removes that gate — only the rehearsal work landing does.**
+4. **Route (i) still outranks all of it.** Pinning the estimator changes `x_cv`; operands produced
+   before that ruling are superseded by it.
+
+## 8b. A correction to how `OI-172` is cited
+
+Its 36.5 h figure reproduces exactly — A's mtime and ctime are both `2026-07-13 02:15:41 −0700`,
+and `07c18aee` (2026-07-14) is the oldest commit adding `fixed_seed_null_norm`. But the conclusion
+*"no stamp for it can ever be produced"* does not follow, **because A's ROOT already contains
+`fixed_seed_null_norm`.** What the gap actually establishes is that A was written by **uncommitted
+code** — SPEC §3.3 condition 10, a stronger and differently-shaped defect than the row states.
