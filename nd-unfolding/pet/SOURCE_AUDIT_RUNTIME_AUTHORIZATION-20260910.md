@@ -39,3 +39,14 @@ do_not_move_central
 do_not_start_leg_2
 do_not_retry_unchanged
 ```
+
+## Numerical follow-up
+
+The first synthetic Linux run passed dependency initialization but failed the
+unchanged NumPy/Keras tolerance. The continuing runtime task covers a second
+shared interactive allocation capped at six reserved CPUs for fifteen minutes
+(at most 1.5 allocated CPU-hours). It may run fresh synthetic processes with
+oneDNN enabled and disabled in separate output directories to measure the
+numerical difference. Thread, memory and output ceilings remain unchanged.
+No tolerance adjustment, guard change or real-source access is authorized by
+this comparison.

@@ -393,10 +393,24 @@ class ForwardCheck:
             or not np.isfinite(expected).all()
         ):
             raise AssertionError("nonfinite or malformed forward output")
-        if actual.shape != expected.shape or not np.allclose(
-            actual, expected, rtol=1e-5, atol=1e-6
-        ):
-            raise AssertionError("NumPy/Keras forward outputs differ")
+        if actual.shape != expected.shape:
+            raise AssertionError(
+                f"NumPy/Keras forward shapes differ: {expected.shape} != {actual.shape}"
+            )
+        if not np.allclose(actual, expected, rtol=1e-5, atol=1e-6):
+            difference = np.abs(actual - expected)
+            tolerance = 1e-6 + 1e-5 * np.abs(expected)
+            row, column = np.unravel_index(
+                np.argmax(difference / tolerance), difference.shape
+            )
+            raise AssertionError(
+                "NumPy/Keras forward outputs differ: "
+                f"row={row}, column={column}, expected={expected[row, column]!r}, "
+                f"actual={actual[row, column]!r}, "
+                f"absolute_error={difference[row, column]!r}, "
+                f"allowed_error={tolerance[row, column]!r}, "
+                f"mismatched_values={int(np.count_nonzero(difference > tolerance))}"
+            )
         for family in FIELD_TABLE:
             inputs[f"{family}_enabled"] = np.zeros_like(inputs[f"{family}_enabled"])
         disabled = self.model(inputs, training=False).numpy()

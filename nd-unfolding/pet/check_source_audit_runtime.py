@@ -12,6 +12,7 @@ import argparse
 import copy
 import importlib
 import json
+import os
 from pathlib import Path
 import sys
 from typing import Any
@@ -93,10 +94,13 @@ def main() -> int:
 
     def check_forward(batch: source.SourceContractBatch) -> None:
         nonlocal forward
-        if forward is None:
-            forward = audit.ForwardCheck()
+        try:
+            if forward is None:
+                forward = audit.ForwardCheck()
+            forward(batch)
+        finally:
             record_versions()
-        forward(batch)
+            resources()
 
     receipt = audit.run_audit(
         launcher.REPO_ROOT,
@@ -107,6 +111,7 @@ def main() -> int:
         bindings={
             "execution_mode": "SYNTHETIC_FAKE_READER_NOT_SOURCE_EVIDENCE",
             "versions": versions,
+            "TF_ENABLE_ONEDNN_OPTS": os.environ.get("TF_ENABLE_ONEDNN_OPTS"),
             "fixture_sha256": launcher.digest_file(FIXTURE),
             "probe_sha256": launcher.digest_file(Path(__file__)),
             "preparation_sha256": launcher.digest_file(launcher.BINDING_FILE),
