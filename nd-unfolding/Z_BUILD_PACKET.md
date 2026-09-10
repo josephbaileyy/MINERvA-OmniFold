@@ -70,20 +70,87 @@ committed bindings and the 2026-09-09 capture (job `58127048`), re-measurable.
 | `parent` | G, `uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root` | `4f168e83eaeb…`, 0.83 GB | **available** |
 | `central` | `products/5d/xsec_5d_MEFHC_5iter_lgbm.root` | `630306e20e4e…`, 0.5 MB | **available** |
 | `support` | CS, `uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root` | `9f7b2f55d758…`, **38.59 GB**, 45 band keys | **available** |
-| `active` | the p4 candidate carrying the 5 active lateral bands | not pinned in this packet | **UNRESOLVED — must be named** |
+| `active` | **S**, `nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root` | `950f8cb15c5a…`, **42,326,607,877 B**, 49 keys | **RESOLVED — §1a** |
 | `stat` | `uq_cov_stat_5d.root:hCov_stat5d_reported` | `6580016fa713…` | available; **reuse-vs-regenerate RESERVED, §4** |
 | `ml` | `uq_cov_mlsplit_5d.root:hCov_mlsplit5d_reported` | `27b2e456f80e…` | available; **same reservation** |
-| `throw` | `uq_5d/unified_throw_cov_5d.root` | 2.49 GB, 9 keys | available for `C_unified`/`C_blocksum` **diagonals only** |
+| `throw` | `uq_5d/unified_throw_cov_5d.root` | 2.49 GB, 9 keys | available; supplies `C_unified`/`C_blocksum` **diagonals** and `hJointMeanShift` |
 | `null` | `x_cv`, `x_cv2`, `support_mask` | — | **DOES NOT EXIST — §0** |
 
 Plus `footing.mask_sha256` and `footing.row_order_sha256`, `producing_revision`, and
 `input_kind`.
 
+### 1a. `active` and `footing` — RESOLVED 2026-09-10, measured
+
+**`active` = S.** `/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root`,
+sha256 `950f8cb15c5a0bd785d65e7f85f4cb40fa86e27383973f82ef15c7ef525c1263`, 42,326,607,877 B,
+49 keys. All five band keys plus `hCov_active5d_total` present, every one `TH2D` 10694×10694 —
+the shape `z_build.py:545` demands. The five band names come from `p4_lib.BANDS` (imported, never
+retyped): `BeamAngleX`, `BeamAngleY`, `MuonResolution`, `Muon_Energy_MINERvA`,
+`Muon_Energy_MINOS`, each under `hCov_active5d_<band>`. Per-band traces reproduce
+`std_component_manifest.json`'s `active_traces` to every printed digit and sum to the recorded
+total, so `p4_lib.check_component_sum` will find it consistent at trace level.
+
+The pin is committed in seven places — `std_component_manifest.json`, `p4_standard_validation.json`,
+`std_proj4d_candidate_projmanifest.json`, SPEC §1.1, `PUBLICATION-READINESS-20260822.md`, and two
+2026-08-16 receipts — and **matches disk today**.
+
+**⚠ A SAME-SHAPED TRAP, NAMED SO NOBODY DECLARES THE WRONG ONE.** `p4_build_components.py` opens
+`--out` with `RECREATE`, and the Aug-16 rebuild is **not** byte-identical to the audited Aug-9
+object. Both exist:
+
+| | path | size | sha256 |
+|---|---|---|---|
+| live (Aug-16) | `…/standard/candidate/std_final5_candidate.root` | 42,326,607,877 | `950f8cb1…` |
+| preserved (Aug-9) | `/pscratch/sd/j/josephrb/PRESERVE-p4-candidate-20260816/…` | 42,326,583,908 | `602bbcf2…` |
+
+A manifest must name the digest, not the path alone.
+
+**`footing.*` — computed, and they are digests of the CENTRAL, not of G or of `active`.**
+`z_build` derives `mask = central > 0` over the full 65,856-bin grid and
+`rows = flatnonzero(mask).astype(int64)` (10,694 entries), then hashes each with
+`z_receipt.sha256_array`, which folds `dtype.str` and `shape` in before the buffer:
+
+```
+footing.mask_sha256      = eed021e93fd7ccc17330b3fcddbb326e3c0f2186309aed3a70c2ba31cae750e2
+footing.row_order_sha256 = 61a7c9fd70d7c7718d396afa5c92b6b1bb0b94e7280245d35c9f8c4117f8b461
+```
+
+computed from `products/5d/xsec_5d_MEFHC_5iter_lgbm.root` (`630306e20e4e…`, 479,553 B), with
+three controls: the inline hasher proved equivalent to `receipt.sha256_array` including a
+negative control; the same array in `pm_root_inspect`'s spelling reproduces the committed
+`S_ROW_INDEX_SHA256` / `S_REPORTED_MASK_HASH` exactly; and S's independently stored
+`hRowIndex5D` hashes identically. **These can be written into a manifest now.**
+
+**⚠ THE INSPECTION REPORT'S DIGESTS ARE NOT THESE, and pasting them in would fail the gate.**
+`pm-root-inspection-20260909c-report-58127048.json` computes `sha256(idx.tobytes()+b"|C")` and
+`sha256(idx.tobytes())` — over the int64 **index array**, with no `dtype|shape|` prefix and a
+trailing `|C` tag. `z_build` wants `sha256_array` over the 65,856-entry **boolean**. Different
+algorithm, different operand. Using them raises `central: mask_sha256 mismatch`. They are the
+S-family spelling and correct for what they are.
+
+**And the `NOT read_from_G` tag does NOT disqualify them for `footing` — that reading would be
+an error.** `z_build` never claims `footing` comes from G; it writes
+`row_order_basis: "…reconstructed from declared production CV; NOT read_from_G"` into every
+receipt. The producer-input route is the sanctioned one (SPEC §1.3d). What the tag disqualifies
+is any claim that these digests are evidence about **G**.
+
+**What actually remains on PM-4.** The producer input IS identified and pinned — it is
+`adopt_unified_5d.py:79`'s argparse default, invoked without `--prod` by
+`sbatch_adopt_stamped_footing.sh`. What is not established is that **G consumed those bytes**:
+G's build receipt binds four files and not this one. Closing it needs a committed record binding
+G's `--prod` input by digest at build time, or a re-run under a receipt that does.
+*(SPEC §1.3d cites `sbatch_adopt_stamped_footing.sh:29` as the supplying site; line 29 is a `cd`.
+The naming site is `adopt_unified_5d.py:79`. Worth correcting when PM-4 is amended.)*
+
+**A limit on what `footing` proves.** `z_build` derives the mask from the `central` it was given
+and compares it to the manifest, so the gate catches a manifest inconsistent with its own named
+central — swap the central and rewrite both digests and it passes. `footing` is self-consistency;
+the scientific weight rests on the unbound PM-4 claim.
+
 ## 2. UNRESOLVED BINDINGS
 
 1. **`null` does not exist.** §0. The binding constraint on the whole packet.
-2. **`active` is unnamed here.** The five active lateral bands' source file must be pinned by
-   path and digest before a manifest can be written.
+2. ~~**`active` is unnamed here.**~~ **RESOLVED — §1a.**
 3. **G's production-CV input is not bound by G's own hash receipt.** Measured: G carries 13 keys
    and `hRowIndex5D` is **not** among them, so §1.3's mask and row-order digests are
    *reconstructed through the producer-input route* and tagged `NOT read_from_G`. `footing.*`
@@ -97,10 +164,14 @@ Plus `footing.mask_sha256` and `footing.row_order_sha256`, `producing_revision`,
 
 ## 3. PRODUCING REVISION, ENVIRONMENT, RESOURCES, ARTIFACTS
 
-**Revision.** `bf2b7499` on `lane/z-build-integration`, *not merged*. The driver records
-`worktree_files_differing_from_revision`, which lists `z_build.py` itself while untracked — a
-record, not a gate. A real-input build should run from a **committed** revision or the code leg
-is unsatisfiable by construction.
+**Revision. ⚠ THIS GAP CLOSED WHILE THE INVESTIGATIONS RAN.** `_code_identity` at
+`z_build.py:260-266` requires `producing_revision` to EQUAL the executing checkout's `HEAD` and
+refuses otherwise. While the driver sat unmerged on `lane/z-build-integration`, that was
+unsatisfiable from any clean checkout: the code did not exist at any `HEAD`. It landed on `main`
+at **`93021448`** under Joseph's implementation-landing authorization, so a real-input build can
+now declare a committed `producing_revision` and the code leg stops being unsatisfiable by
+construction. The driver still records `worktree_files_differing_from_revision`, which is a
+record and not a gate — a build from a dirty checkout proceeds and says so.
 
 **Environment.** `/global/homes/j/josephrb/.conda/envs/root_6_28`, ROOT 6.28/12, **with the
 env's `bin` prepended to `PATH`** — without it cling cannot find `x86_64-conda-linux-gnu-c++`
@@ -108,9 +179,12 @@ and segfaults. That is the defect that killed job `58123269`; the fix is on `mai
 (`pm_root_inspect.path_with_inner_python_bin`). Local testing used ROOT 6.36 on macOS, which is
 **not** the cluster's ROOT.
 
-**Resources.** Reading eight files and assembling two variants is small: the arithmetic is a
-handful of `10,694²` operations plus two `eigvalsh` at ≈113 s each, dominated by **memory
-(~2–3 GB peak), not time**, and the 38.59 GB support file is read per-band, not resident.
+**Resources.** ⚠ **The memory figure below is CORRECTED UPWARD and is still not measured.** An
+earlier revision said ~2–3 GB peak. `z_build.py:544-549` holds all five active bands **plus** the
+total simultaneously — six `10,694²` float64 matrices ≈ **5.5 GB for `active` alone**, before the
+lateral sum, the two support sums, `cov_stat` and `cov_ml`. Reading eight files and assembling two
+variants is still small in TIME — a handful of `10,694²` operations plus two `eigvalsh` at ≈113 s
+each — but it is **memory-bound and the peak has not been measured**, and the 38.59 GB support file is read per-band, not resident.
 Replay I/O measured at **674 MB/s** on pscratch → the 41.18 GB component family is ≈61 s
 (≈0.017 CPU task-h). **If option (A) is taken, the throw run dominates and this estimate is
 irrelevant** — that is a production round, separately costed and separately authorized.
