@@ -7,8 +7,8 @@ verbatim in **Appendix A**.
 the same reason as, `DECISION-20260910-joseph-b-deferred-and-finite-ensemble-disclosure.md` — see
 that file's §0 for the declared interest and the sequence of events that surfaced the gap. This
 ruling predates that one by roughly 3.5 hours and is the ruling `PACKET-20260910-z-consumer-set-and-endpoint-requirements.md`
-was written under. **Recorded at:** 2026-09-10 (see commit timestamp), **tree at recording**
-`6f24fb00`.
+was written under. **Recorded at:** 2026-09-10T19:56:37Z (commit `a11d6cdd`, author and committer
+timestamp identical), **tree at recording** `6f24fb00`.
 **Rules on:** the design/review loop's outcome-(2) stop (`Z_DECISION_PACKET.md` era discussion of the
 universal 5D bound; see `probe-z-criteria-acceptance-mathematics-20260910.py` and the recommendation
 lane at `173baf44`), and opens the replacement-criteria work that produced `PACKET-20260910`.

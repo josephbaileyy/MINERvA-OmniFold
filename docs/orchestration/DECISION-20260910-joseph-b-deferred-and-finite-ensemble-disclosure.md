@@ -5,8 +5,14 @@
 **Appendix A**.
 **Recorded by:** the orchestrator session (`claude-orchestrator`), which coordinates the
 `z-criteria-designer` and `z-independent-assessor` lanes this ruling is addressed to, but authored
-neither PACKET-20260910 nor either lane's analysis. **Recorded at:** 2026-09-10T20:0X (see commit
-timestamp), **tree at recording** `6f24fb00`.
+neither PACKET-20260910 nor either lane's analysis. **Recorded at:** 2026-09-10T19:56:37Z (commit
+`a11d6cdd`, author and committer timestamp identical), **tree at recording** `6f24fb00`.
+**⚠ CORRECTED:** the first revision of this line read *"2026-09-10T20:0X (see commit timestamp)"* —
+a placeholder written before the commit landed, never replaced with the value the commit itself
+carries, and the field cited its own authority incorrectly by about four minutes. Caught by the
+mathematical reviewer, who checked the field against `git show -s --format='%ai%n%ci' a11d6cdd`
+rather than trusting it. Corrected here, in the same style `DECISION-20260907` uses for its own
+date-field correction.
 **Rules on:** the two reserved inputs left open by `PACKET-20260910-z-consumer-set-and-endpoint-requirements.md`
 §6 — whether any generator significance is quoted at all, and clause (v)'s finite-ensemble disclosure
 disposition for Z — plus three new adequacy tasks for the endpoint-A acceptance packet.
