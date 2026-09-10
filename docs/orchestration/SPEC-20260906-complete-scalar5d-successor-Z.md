@@ -1,5 +1,10 @@
 # SPECIFICATION 2026-09-06 — the complete scalar-5D successor **Z**: scientific contract, cause
 # dispositions, terminal criteria, dependency analysis, and a costed execution proposal
+# **rev. 22 — §7 item 4 was still stating rev. 16's WITHDRAWN `min(achievable, acceptable)` rule as
+# operative text — *"the bound is the smaller of the two"* — five revisions after rev. 17 withdrew it,
+# and while item 22 of the SAME section carried the replacement. It was the last surviving operative
+# instance; corrected in place with the withdrawn wording preserved. No criterion or number changes.**
+#
 # **rev. 21 — the uncorroborated ruling is now CORROBORATED: Joseph confirmed it and the decision
 # record exists on `main`. §7 item 19 CLOSES as declined, `D5` is RATIFIED, and §5.6c's covering
 # search is discharged by the artifact it said was missing.**
@@ -130,6 +135,15 @@ opens, and no count moves — §0.0p.
 | 6 | *"erring in both directions at `12.5%` each"*, unqualified in every summary | **the sampling model now travels with the number.** `12.5%` is exact **for a value uniform in its decade and a change uniform on `[0, one display unit)`** — a synthetic model, not a statement about rounding comparisons generally. The full statement in §3.7b item 4A always carried it; the summaries did not |
 | 7 | §3.7 *"This section completes them"*; receipts say the graded quantities *"did not move"* | **both corrected.** §3.7 completes neither criterion — it supplies no acceptance number. And **with a positive tolerance the claim is *"did not exceed their declared movement limits"***, never *"did not move"*; four sites fixed |
 | 8 | `D2` framed as waiting on *"two numbers"* from Joseph | **corrected.** `D1` and `D2` need **justified tolerances and scope**, which is scientific work — not a number Joseph supplies |
+
+**⚠ REV. 22 (2026-09-10) — ROW 1 ABOVE DID NOT REACH EVERY SITE.** Rev. 17 withdrew
+`min(achievable, acceptable)` here, and §3.7a, §6.8 and §7 item 22 all carry the replacement — but
+**§7 item 4 kept the withdrawn rule as operative text through revs. 17–21**, phrased as *"the bound
+is the smaller of the two"* rather than as `min(...)`, which is a large part of why five revisions
+of review did not catch it. Corrected at that site in rev. 22, with the wording preserved.
+**A withdrawal is not complete until every site that STATES the rule is measured**, and a rule
+restated in prose is not reached by a search for its formula. No criterion, number, disposition,
+count or cell changes.
 
 **Nothing is adopted and nothing moved.** §§1–2's dispositions, §1.3a–d, §6.1–6.5, the four rulings and
 the pin all stand. Counts, gates and cells are untouched.
@@ -4010,8 +4024,18 @@ adopted by accident.**
    and `n_rep` counts **output bins** while every accumulation in the chain runs over **events**
    (§3.7a item 3, measured against `unified_throw_cov_5d.py:47-89`). The **mechanisms** rev. 7 supplied
    and the **normalizer** stand; **the number does not**. **What it would take is now item 22 below**,
-   and it is two arguments, not one: a reproducibility model for this algorithm and envelope, and an
-   independently justified sensitivity limit. The bound is the **smaller** of the two.
+   and it is two arguments, not one: a reproducibility model for this algorithm and envelope
+   (**`B`**), and an independently justified sensitivity limit (**`S`**).
+   **⚠ REV. 22 — THIS ITEM WAS THE LAST PLACE THE WITHDRAWN RULE SURVIVED AS OPERATIVE TEXT.** It
+   read, verbatim and preserved here so nothing is erased: *"The bound is the **smaller** of the
+   two."* That is `min(B, S)`, **withdrawn as acceptance-blocking by rev. 17**: an observed
+   reproducibility floor is not an acceptance tolerance, and §3.6a bounds `ε` from **below** where
+   `min` used it as an **upper** bound. The structure is the precondition **`B ≤ S`** with **`ε`
+   argued within `[B, S]`** — §3.7a, §6.8, and **item 22 of this same section**, which carried the
+   correction while this item kept the rule it withdrew. **If `B > S` the finding is that the
+   execution envelope is not demonstrated adequate**, which is a conclusion about the envelope and
+   not a tolerance to adopt. Choosing mechanically is the forbidden act: `min` returns the tight end
+   when the interval is non-empty and a value **outside** it when it is empty.
 5. **⚠ PARTLY CLOSED IN REV. 7 — §5.8a is the delta; two of five rows are now estimated, three are
    still open.** **The unpriced cost rows (§5.2), enumerated there PER SUBTOTAL — five omitted from the
    spend estimate, three from the proposed reservation, and two campaign-level items in neither. Neither
