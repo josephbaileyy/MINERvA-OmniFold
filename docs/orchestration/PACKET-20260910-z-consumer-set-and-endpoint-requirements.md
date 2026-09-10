@@ -227,20 +227,45 @@ answered first, and the answer is REPORTED for his ruling rather than acted on.*
 are functions of the diagonal alone, so a `MET` licenses nothing about off-diagonal structure.*
 **Does that hazard arise for any declared consumer?**
 
+> ## ⚠⚠ THE ANSWER BELOW IS WITHDRAWN — REFUTED BY MEASUREMENT 2026-09-10, SAME DAY
+>
+> **`PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md` §1 refutes the premise of
+> this whole block, and the rows below are kept only so the withdrawal has a referent.**
+>
+> **The premise was an OPERAND error.** `sqrt(diag(·))` is what these consumers compute — but the
+> diagonal they take is the **PROJECTED** object's, and `diag(M C Mᵀ)_i = m_iᵀ C m_i` reads the
+> **off-diagonal entries of the source** whenever a row of `M` has more than one nonzero, which
+> `project_cov_nd.py:5-8` guarantees (M's rows are width-weighted **sums**). So the hazard **IS
+> realized inside endpoint A**, through the projection step.
+>
+> **Corrected per consumer, because "all of A" would be the mirror error:** **C5 REALIZED**
+> (`eavailW_covariance.py:442` projects, `:463` diagonalises); **D1/D2 REALIZED** (`sec_3d.tex:209`,
+> `:262` — the released bands are projections); **C6 CONDITIONAL** (reads a stored diagonal, never
+> projects itself); **C7 NOT REALIZED** (`_sqrt_trace_from_diag`, genuinely diagonal-only).
+> **One cell of five survives.**
+>
+> **Consequence for the recommendation, and it inverts:** `cause3_corr` does **not** belong to B
+> alone, and the deferral this block licensed is **unsound**. See the successor's §3.
+>
+> *Not corrected in place, because this document is the independent assessor's referent at
+> `173baf44`. The withdrawal is stated here so no reader reaches the claim without it.*
+
 **Measured against §1, and the answer is asymmetric across the endpoints:**
 
 | endpoint | consumers | do they read off-diagonal structure? |
 |---|---|---|
-| **A** | `C5`, `C6`, `C7`, `D1`, `D2` | **NO** — `sqrt(diag)`, `sqrt(trace)`, displayed bands. Every one is a function of the diagonal |
-| **B** | `C1`–`C4` | **YES** — each inverts a full matrix, so off-diagonal structure enters directly |
+| **A** | `C5`, `C6`, `C7`, `D1`, `D2` | ⚠ **WITHDRAWN — the stated "NO" is FALSE for C5, D1 and D2.** Was: *"NO — `sqrt(diag)`, `sqrt(trace)`, displayed bands. Every one is a function of the diagonal"* |
+| **B** | `C1`–`C4` | **YES** — each inverts a full matrix, so off-diagonal structure enters directly. **This row STANDS** |
 
-**So: the hazard does NOT arise for endpoint A at all, and it arises for endpoint B — whose
-population of quoted significances is currently EMPTY (`C1` gated, `C2`/`C3` deferred, `D3`–`D6`
-deferred, `C4` out of scope as 2D).**
+**⚠ WITHDRAWN:** ~~So: the hazard does NOT arise for endpoint A at all, and it arises for endpoint B~~
+— the first half is refuted. **What survives:** endpoint B's population of quoted significances is
+EMPTY (`C1` gated, `C2`/`C3` deferred, `D3`–`D6` deferred, `C4` out of scope as 2D), and under
+Ruling 1 of 2026-09-10 **B is DEFERRED, NOT PASSED**.
 
-**REPORTED FINDING, for Joseph's ruling and not adopted here:** on the declared consumer set,
-`cause3_corr`'s hazard is **unrealized** — no released consumer reads what it protects. It becomes
-live **the moment endpoint B declares a significance (B-1)**, and it belongs to **B**, not **A**.
+**⚠ WITHDRAWN FINDING** — ~~on the declared consumer set, `cause3_corr`'s hazard is unrealized; no
+released consumer reads what it protects; it belongs to B, not A~~. **Refuted: the hazard is
+realized in A through the projection.** `cause3_corr` is now recommended as **endpoint A's own
+boundary**, bound to A's own statistic — see the successor's §3.3.
 **That is a third answer to his question rather than a choice between his two**, and the trigger is
 checkable against §1 rather than remembered. **A-4 is recommended for endpoint A on its own merits
 (estimator-baseline declaration stability), NOT as a replacement for `cause3_corr`** — conflating

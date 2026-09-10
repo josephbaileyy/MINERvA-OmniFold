@@ -179,3 +179,5 @@ docs/orchestration/state/check-withdrawal-completeness-20260910.py	MACHINE	open
 docs/orchestration/PACKET-20260910-z-consumer-set-and-endpoint-requirements.md	LIVE	open	
 docs/orchestration/state/probe-z-consumer-inversion-20260910.py	MACHINE	open	
 docs/orchestration/state/check-consumer-set-20260910.py	MACHINE	open	
+docs/orchestration/PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md	LIVE	open	
+docs/orchestration/state/probe-z-projected-stability-20260910.py	MACHINE	open	

@@ -223,9 +223,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   use it, and on a *near*-singular matrix it returns a silently absurd `chi2` (`1.0e18` where `pinv`
   gives `2.0`); a Z-shaped sum has **zero exact zeros and a mixed-sign round-off tail**, so a PSD test
   at exactly `0` fails on a correct object. **`T` is a proper subset of endpoint B and none of A**, and
-  most claims need no threshold at all. **Reported, not adopted: on the declared consumer set
-  `cause3_corr`'s hazard is UNREALIZED** — no released consumer reads off-diagonal structure — and it
-  belongs to **B**, triggered by B-1. Stopping-rule outcome **(3)**: two named inputs required.
+  most claims need no threshold at all. ⚠ **NO LONGER CITABLE FOR: its `cause3_corr` answer.**
+  Rev. 1 reported *"on the declared consumer set `cause3_corr`'s hazard is UNREALIZED — no released
+  consumer reads off-diagonal structure — and it belongs to B, triggered by B-1."* **REFUTED BY
+  MEASUREMENT the same day and withdrawn at the claim site:** `diag(M C Mᵀ)_i = m_iᵀ C m_i` reads the
+  source's off-diagonals, so the hazard **IS realized inside endpoint A** via the projection —
+  **C5, D1 and D2 realized, C6 conditional, C7 not** (one cell of five survives). Route to
+  [`PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md`](PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md)
+  for the current answer. Everything else in this packet stands. Stopping-rule outcome **(3)**: two named inputs required.
   Arithmetic re-runnable at
   [`state/probe-z-consumer-inversion-20260910.py`](state/probe-z-consumer-inversion-20260910.py) —
   deliberately a **separate** file, so the retired `rho` machinery stays frozen as history.
@@ -235,6 +240,48 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   fails closed on any covariance-touching file a deliverable cites without a pinned
   classification. **The packet's first version declared three globs covering 25% of the tracked
   population**; the instrument exists because that scope statement was not checkable.
+- [`PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md`](PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md)
+  - **DESIGN AND REVIEW ONLY — adopts nothing, declares no boundary, grades nothing; Joseph retains
+  approval. Gate 2 remains FAIL, `cause3_corr` remains WITHHELD, cause 3 remains non-passing.**
+  Answers three tasks set after Joseph's rulings of 2026-09-10 (publication scope: **endpoint B
+  DEFERRED, NOT PASSED**; finite-ensemble **disclosure only**). **⚠ It opens by WITHDRAWING its
+  predecessor's `cause3_corr` answer** — `diag(M C Mᵀ)_i = m_iᵀ C m_i`, so the off-diagonal hazard
+  **is realized inside endpoint A** through the projection, and the "A reads only the diagonal"
+  premise was true of the *projected* object, not of the *operand*. Corrected **per consumer**: C5,
+  D1, D2 realized; C6 conditional; **C7 not** — one cell of five survives.
+  **Its two sharpest mechanical findings:**
+  **(1) `nd-unfolding/z_contract.py:231-236` is INERT to cause 3's verdict** — deleting the
+  `cause3_corr` entry outright leaves `assess()`'s outcome **byte-identical**, because `assess`
+  reaches a boundary only through `leg.boundary_key` and **no production leg names it** (every
+  `LegSet(...)` in the tree is in `tests/`). Cause 3 reaches **MET with `cause3_corr` still
+  withheld**, so scoping it out is *not* what would make cause 3 passable. **The binding site is
+  `z_validator.py:168-172`, `_DIAGONAL_ONLY_SCOPE`**, whose emitted text excludes
+  *"marginalization, projection, coverage validation"* **by name** — so a MET under the current leg
+  set disclaims exactly what endpoint A releases. **The requested deferral is therefore UNSOUND**:
+  it would need that sentence narrowed, which changes what a MET *licenses*. The one sound form —
+  narrowing endpoint A to release no projected uncertainty — is stated and **not** recommended.
+  **(2) A-4 IS SILENT ON THE RELEASED ERROR BARS, NOT MERELY WEAK.** With `C_k = (1+a)C_0` the
+  retained subspace and rank are invariant, so `‖P_0 − P_k‖_2` sits at **round-off (`~3e-15`, exactly
+  `0` at `a=1`) — seven orders inside its `1e-8`** — while the released bars move **41.4%**. So no
+  criterion in A-1…A-5 bounds them. **The instrument that does already exists and is CALLED, not
+  retyped:** `z_statistics.s_proj` (SPEC §3.7d's first candidate), whose internal
+  `einsum("ij,jk,ik->i", U, C, U)` **equals** `diag(U C Uᵀ)` — so with `U` = the rows of `M` it does
+  not approximate the release, **it evaluates it**. Rank-deficiency is irrelevant to it (no inverse,
+  no PD baseline), which is why it survives where the retired `rho` bound did not. **`s_corr` and
+  `s_eig` are rejected with reasons.** **⚠ The BOUNDARY is NOT proposed** — §4.4 measures why: δ needs
+  a declared publication uncertainty and `sec_3d.tex:251-252` says the 3D descriptors *"are audit
+  descriptors, not publication uncertainties"*, while `paper_body.tex:145-146` says every non-2D
+  result is a central value. **A format-derived number is refused on precedent in both directions**
+  (`REPRO_RTOL = 5e-4` legitimate for *reproduction*; `cause3_agg`'s withdrawn `0.0861%` illegitimate
+  for *acceptance*). Recommends adopting `s_proj` as a **reported statistic** now, boundary withheld
+  with a named trigger. **Ruling 2 is placed on A, not B**, on a closed two-block population derived
+  from `z_assembly.py:4` — and **⚠ neither block records its own `N`**: both `--array=` headers are
+  *declared* arrays, the verified count comes from `load_replica_manifest:44-48` failing closed, and
+  both producers `print` it and persist only a `TH2D`. **`C11`'s 2D `ndf` non-conformance is
+  explicitly OUT OF SCOPE under Ruling 1, in its own row** — and out of scope is not conformance.
+  Arithmetic re-runnable at
+  [`state/probe-z-projected-stability-20260910.py`](state/probe-z-projected-stability-20260910.py)
+  — a **new** file; the frozen `rho` probe is untouched and the universal bound is not reopened.
 - [`RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md`](RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md)
   - **RECOMMENDATION ONLY — adopts nothing, grades nothing, authorizes no compute; Joseph retains
   scientific approval.** The `z-criteria-designer` owner's answer to `Z_DECISION_PACKET` §5 items 1,
