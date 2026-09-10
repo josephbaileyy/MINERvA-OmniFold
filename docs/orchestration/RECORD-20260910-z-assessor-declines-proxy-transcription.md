@@ -105,3 +105,66 @@ transcription.
 lane cannot commit and the coordinator will not, the escalation is option 2 to Joseph — authorising a
 review lane to commit findings-and-verdicts-only, never a change to the artifact under review — and
 not a proxy that launders the attribution problem into my commit history.
+
+---
+
+## 4. ADDENDUM — THE DISTINGUISHING TRAILER EXISTS AND LAPSED; THIS LANE IS NOT REINSTATING IT UNILATERALLY
+
+**Relayed and re-measured.** The coordinator measured that `Claude-Session:` is an established trailer
+convention in this repository that stopped just before this campaign. Re-measured here across all
+refs:
+
+| quantity | measured here | as relayed |
+|---|---|---|
+| commits carrying `Claude-Session:` | **290** | 253 |
+| date range | **2026-06-23 → 2026-09-08** | 2026-06-23 → 2026-09-08 |
+| distinct session values | **21** | — |
+| value form | `https://claude.ai/code/session_01D1mZ3gDuyvGUqXo1Rxb4ZU` | session-identifying URL |
+| commits where both trailers coexist | **0** | 0 |
+| this lane's 17 commits carrying it | **0** | 0 of 17 |
+| the two `DECISION-20260910` records | **no trailer, and no `session_` in either body** | same |
+
+**The finding is substantiated.** The count differs — 290 against 253 — and I do not know the cause;
+it does not change the conclusion, and I report the discrepancy rather than adopting either figure as
+settled. **21 distinct values across 290 commits** is the part that matters: the field really did
+distinguish sessions, and its replacement names a **model**.
+
+**So §1's result now has a mechanism.** No field separated `a11d6cdd` from `ba9c2946` because the
+separating field was dropped, cleanly, in favour of one that cannot separate anything.
+
+### 4.1 Two reasons this lane is not adding the trailer on a peer's measurement
+
+**(a) It is not this lane's call.** This session's attribution instruction specifies
+`Co-Authored-By: Claude Opus 5 (1M context)` and states that it **replaces any earlier attribution
+guidance**. A peer's measurement that an earlier convention existed is evidence about the repository,
+**not authorization to change this session's commit format** — and attribution format is exactly the
+category a peer cannot grant. The coordinator said as much when supplying it, and was right to.
+**Surfaced to Joseph as his decision.**
+
+**(b) I could not supply a correct value even if authorized.** The convention's value is a
+`claude.ai/code/session_01…` identifier — a ULID-form string. The session identifier visible to this
+lane is a **UUID**, `d93bf047-d359-4cf3-8156-bc83ffad8a69`. Those are different ID spaces and I have no
+route from one to the other. Putting the UUID into a field whose 290 precedents all carry a URL, or
+constructing a URL around it, would produce a **plausible-looking wrong value** — and a label that
+resolves to a plausible wrong target is worse than one that resolves to nothing, which is the same
+argument this lane made about the `F6` label collision. **An absent field is honest; a fabricated one
+is not.**
+
+So the repair is real but it is **not** simply "add the trailer." It needs whoever controls the
+attribution guidance to supply both the instruction and a value the session can actually know.
+
+### 4.2 What this does to option 2, stated against this lane's own earlier framing
+
+The coordinator's inference is right and I adopt it: *"a review lane's commits could not be told from
+anyone else's"* is **not a property of review lanes** — it is a property of the current trailer set,
+and it is repairable. So the argument against a **proxy** stands untouched (§1.1's fidelity objection
+does not depend on trailers at all), while the argument against that lane **committing its own
+findings** gets weaker. My §1.3 should be read with that narrowing: proxying is bad because I cannot
+verify fidelity **and** because attribution is currently indistinguishable; only the second half is
+fixable, and fixing it helps direct commits rather than proxies.
+
+**The load-bearing consequence, which is not about this lane at all:** the two `DECISION-20260910`
+records — the durable text of Joseph's rulings, and the artifacts that closed `F-0` — carry **no
+session identification in trailer or body**. Their recording session is named in **prose**, which is
+the definite description Part H §H.4 flagged: prose re-points, a trailer does not. **The campaign's
+most load-bearing records are the least able to say who wrote them.**
