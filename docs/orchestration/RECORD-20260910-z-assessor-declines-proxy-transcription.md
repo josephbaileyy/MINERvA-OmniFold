@@ -118,9 +118,9 @@ refs:
 |---|---|---|
 | commits carrying `Claude-Session:` | **290** | 253 |
 | date range | **2026-06-23 → 2026-09-08** | 2026-06-23 → 2026-09-08 |
-| distinct session values | **21** | — |
+| distinct session values | **21** — *upheld; see §4.3* | — |
 | value form | `https://claude.ai/code/session_01D1mZ3gDuyvGUqXo1Rxb4ZU` | session-identifying URL |
-| commits where both trailers coexist | **0** | 0 |
+| commits where both trailers coexist | ~~**0**~~ ⚠ **WRONG — 292. See §4.3** | ~~0~~ **withdrawn by its author** |
 | this lane's 17 commits carrying it | **0** | 0 of 17 |
 | the two `DECISION-20260910` records | **no trailer, and no `session_` in either body** | same |
 
@@ -128,6 +128,10 @@ refs:
 it does not change the conclusion, and I report the discrepancy rather than adopting either figure as
 settled. **21 distinct values across 290 commits** is the part that matters: the field really did
 distinguish sessions, and its replacement names a **model**.
+
+> **⚠ THE MECHANISM BELOW IS FALSIFIED — see §4.3. The trailers were NOT alternatives; they coexist
+> in 292 of 294 `Claude-Session` commits.** The observation that no field separated `a11d6cdd` from
+> `ba9c2946` stands; the *explanation* that one trailer displaced the other does not.
 
 **So §1's result now has a mechanism.** No field separated `a11d6cdd` from `ba9c2946` because the
 separating field was dropped, cleanly, in favour of one that cannot separate anything.
@@ -141,7 +145,7 @@ guidance**. A peer's measurement that an earlier convention existed is evidence 
 category a peer cannot grant. The coordinator said as much when supplying it, and was right to.
 **Surfaced to Joseph as his decision.**
 
-**(b) I could not supply a correct value even if authorized.** The convention's value is a
+**(b) ⚠ RETIRED — SEE §4.3. This reason does not hold.** *I could not supply a correct value even if authorized.* The convention's value is a
 `claude.ai/code/session_01…` identifier — a ULID-form string. The session identifier visible to this
 lane is a **UUID**, `d93bf047-d359-4cf3-8156-bc83ffad8a69`. Those are different ID spaces and I have no
 route from one to the other. Putting the UUID into a field whose 290 precedents all carry a URL, or
@@ -168,3 +172,66 @@ records — the durable text of Joseph's rulings, and the artifacts that closed 
 session identification in trailer or body**. Their recording session is named in **prose**, which is
 the definite description Part H §H.4 flagged: prose re-points, a trailer does not. **The campaign's
 most load-bearing records are the least able to say who wrote them.**
+
+
+### 4.3 ⚠ CORRECTION — THREE FIGURES IN §4 WERE WRONG, AND ONE OF THEM WAS A ZERO I DID NOT CONTROL
+
+Every figure below re-measured here by body-based methods that use no `%(trailers:…)` placeholder and
+no `--fixed-strings`, **each with a positive control**.
+
+| quantity | §4 said | **correct** | control |
+|---|---|---|---|
+| `Claude-Session` commits | 290 | **294** | — |
+| coexisting with **any** `Co-Authored-By` | **0** ❌ | **292** | 294 / 1987 both nonzero |
+| coexisting with `Claude Opus 5 (1M context)` | implied 0 ❌ | **21** | **1325** carry that variant |
+| value forms | not measured | **275 URL, 19 bare UUID** | — |
+| distinct values | **21** ✅ | **21** | 17 URL-form + 4 UUID-form |
+
+**The `0` was a can't-look zero and it was mine as well as relayed.** My query put
+`%(trailers:key=…,valueonly)` inside a `|`-delimited `--format` and split with `awk -F'|'`. That
+placeholder emits a **trailing newline**, so every record broke across lines and the third field was
+always empty — the filter could never match. **Aggravating detail: in the *same command block* I had
+already caught this exact bug** in the adjacent query, where it returned `3293` commits with
+`sample value: -0700`, and fixed it — then did not carry the fix one query across. **The broken query
+that returned an absurd value announced itself; the one that returned `0` did not.**
+
+**The distinct-count discrepancy reconciles, and both parties were right about different
+populations:** 17 distinct **URL-form** values (the coordinator's figure, via `session_[A-Za-z0-9]*`)
+plus 4 distinct **UUID-form** values = **21** total (mine). Asymmetric comparison, arriving inside the
+reconciliation of an asymmetric comparison.
+
+**Reason (b) is retired.** `0add4b95`, **2026-09-07**, three days before this campaign, carries all
+three together:
+
+    Claude-Session: bda4fd06-8826-4742-a374-deae75a8dcbb
+    Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+    Checks: 12 passed
+
+So the two trailers coexist **including with this session's own guidance string**, and the value form
+is a **bare local session UUID** — 19 commits, dated **2026-09-02 → 2026-09-07**, i.e. the *most
+recent* practice. That is an identifier a session **does** know and that is **checkable against a live
+directory**: `bda4fd06-…` appears in **3 live worktree paths** on this machine right now, and my own
+`d93bf047-d359-4cf3-8156-bc83ffad8a69` is a live directory. There is no ID-space gap and no
+fabrication risk. **§4.1(b) was wrong and I withdraw it.**
+
+**§4.1(a) stands untouched:** attribution format is a category a peer cannot grant, it is Joseph's,
+and surfacing rather than acting was correct. That is now the *only* reason this lane has not added
+the trailer, and it is sufficient on its own.
+
+### 4.4 THE FINDING WORTH KEEPING IS ABOUT METHOD, NOT ABOUT TRAILERS
+
+Three lanes produced **three wrong answers** to one question, and **two were can't-look zeros from
+different mechanisms** — a trailers-placeholder newline breaking a field split (mine, and the
+coordinator's), and `--fixed-strings` turning `^Claude-Session:` into a literal caret string that
+matches nothing (the coordinator's second). Confirmed here: `--grep='^Claude-Session:' --fixed-strings`
+→ **0**, without → **294**.
+
+**And the agreement between two genuinely independent instruments was read as corroboration.**
+`AGENTS.md` says worker agreement is not independence and shared origins are counted once. **This
+passes that test** — the origins were not shared, the mechanisms differed, and the guard therefore
+does not catch it. Two independent broken instruments converged on the same false negative.
+
+**The rule that would have caught it, which none of the three applied: run a positive control on your
+own query before publishing a zero.** A zero is the one result that is indistinguishable between "the
+thing is absent" and "the query could not look", and this lane has that catalogued and still shipped
+one into a committed record.
