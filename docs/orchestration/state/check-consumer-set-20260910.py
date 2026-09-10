@@ -51,12 +51,24 @@ _LAST_UNCITED: list[str] = []
 SCAN_EXTS = {".py", ".tex", ".C", ".cpp", ".sh"}
 
 # ⚠ AND THE NON-PYTHON SIGNATURE SET IS DECLARED **UNVALIDATED**, on evidence rather than caution.
-# Two independent attempts to signature these languages EACH MISSED A DIFFERENT REAL FILE:
-#   * this lane's attempt matched `run_negweight_covariance_analysis.sh` -- a FALSE POSITIVE, a
-#     shell wrapper whose own filename contains "covariance", plus a stray `trace(` -- and MISSED
-#     `ExtractCrossSection.cpp`.
-#   * the reviewer's attempt found `ExtractCrossSection.cpp` (correctly: it populates an unfolding
-#     covariance via RooUnfold at :83-97) and did not report the `.sh`.
+# Two independent attempts to signature these languages both failed -- ⚠ BUT NOT IN THE SAME WAY,
+# and an earlier version of this comment wrongly implied they did. The asymmetry is the finding:
+#
+#   * THIS LANE'S: a FALSE POSITIVE from an UNINSTRUMENTED TOKEN SET. It matched
+#     `run_negweight_covariance_analysis.sh` on a filename containing "covariance" plus a stray
+#     `trace(`, and MISSED `ExtractCrossSection.cpp` entirely. A coverage failure -- and one that is
+#     invisible to its author, because a miss produces no output to inspect.
+#
+#   * THE REVIEWER'S: a TRUE POSITIVE DISCARDED BY CATEGORY, which it corrected against itself
+#     after the first version of this comment let it off more lightly. It DID surface the `.sh` --
+#     line 2 of its own printed output -- then wrote "92 non-.py files touch a covariance -- mostly
+#     .sh launchers" and moved on to the `.cpp` WITHOUT CHECKING ONE OF THE 92. So it is a JUDGEMENT
+#     failure, not a coverage one, and by its own reckoning the worse of the two: the evidence was
+#     on screen and was categorised away.
+#
+# Recorded this way at its request, in its words: "I would rather that be in the record correctly
+# than have my half read as the more forgivable failure."
+#
 # So membership for these extensions rests on NAMED REGISTRATION, not on candidacy. Widening the
 # population buys the ability to exclude by name; it does NOT buy signature coverage, and this
 # comment exists so a green run is not read as the latter.
@@ -380,8 +392,10 @@ def main(argv: list[str]) -> int:
     print("       (b) that the census files feed nothing. The citation test now covers filename AND")
     print("           figure stem; a file reached only through a RECEIPT, or through a product name")
     print("           differing from its own stem, is still invisible.")
-    print("       (c) that the NON-PYTHON signature set works. It is declared UNVALIDATED: two")
-    print("           independent attempts each missed a different real file. Membership for")
+    print("       (c) that the NON-PYTHON signature set works. It is declared UNVALIDATED on")
+    print("           evidence: two attempts failed differently -- one a FALSE POSITIVE from an")
+    print("           uninstrumented token set, one a TRUE POSITIVE dismissed by category without")
+    print("           checking any of 92 surfaced files. Membership for")
     print("           .C/.cpp/.sh rests on NAMED REGISTRATION, not on candidacy -- widening the")
     print("           population bought excludability by name, not signature coverage.")
     print("       (d) that a language ABSENT from this tree would be seen. SCAN_EXTS is chosen from")

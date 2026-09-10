@@ -183,9 +183,17 @@ argument that it has stopped growing.
    RooUnfold at `:83-97`, and is the **vendored reference framework**, not a consumer of Z — and a
    shell wrapper whose own filename contains *"covariance"*.
    **⚠ BUT WIDENING BOUGHT EXCLUDABILITY, NOT COVERAGE, AND THAT IS MEASURED.** Two independent
-   attempts to signature these languages **each missed a different real file**: this lane's matched
-   the shell wrapper (**a false positive**) and **missed the `.cpp`**; the reviewer's found the
-   `.cpp` and did not report the wrapper. **So the non-Python signature set is declared UNVALIDATED
+   attempts to signature these languages both failed — **⚠ and NOT in the same way, which rev. 1 of
+   this residue wrongly implied.** **This lane's was a FALSE POSITIVE from an uninstrumented token
+   set**: it matched the shell wrapper on a filename containing *"covariance"* plus a stray
+   `trace(`, and **missed the `.cpp` entirely** — a coverage failure, and one invisible to its
+   author, since a miss produces no output to inspect. **The reviewer's was a TRUE POSITIVE
+   DISCARDED BY CATEGORY**, which it corrected against itself: it **did** surface the `.sh` — line 2
+   of its own printed output — then wrote *"92 non-`.py` files touch a covariance — mostly `.sh`
+   launchers"* and moved to the `.cpp` **without checking one of the 92.** A **judgement** failure
+   rather than a coverage one, and **by its own reckoning the worse of the two**, because the
+   evidence was on screen and was categorised away. *Recorded at its request rather than left as
+   the symmetric version that flattered it.* **So the non-Python signature set is declared UNVALIDATED
    in the instrument, and membership for those extensions rests on NAMED REGISTRATION rather than on
    candidacy.** A language absent from this tree remains invisible; `SCAN_EXTS` is chosen from the
    languages present, and widening it is a one-line change plus a re-pinned count.
