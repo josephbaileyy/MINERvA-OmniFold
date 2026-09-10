@@ -501,6 +501,35 @@ class ZBuildIntegration(unittest.TestCase):
         with self.assertRaisesRegex(contract.ZContractError, "duplicate key"):
             self.build()
 
+    def test_a_usage_error_exits_1_with_the_envelope_not_2(self) -> None:
+        """F2's fix needs a control, or it is one edit away from silently regressing.
+
+        The confirming reviewer measured exactly that: reverting `_RefusingParser` to a plain
+        `argparse.ArgumentParser` reinstates the original defect -- exit 2, no envelope, nothing
+        written, indistinguishable by exit code from a finished non-passing build -- and the
+        whole suite stays green. F1 was closed by ADDING A CONTROL; F2 was closed by changing
+        behaviour and adding none, which is the same gap one level along.
+        """
+        with redirect_stderr(io.StringIO()) as error:
+            with self.assertRaises(SystemExit) as raised:
+                build.main([])
+        self.assertEqual(raised.exception.code, 1)
+        payload = json.loads(error.getvalue())
+        self.assertEqual(payload["construction_status"], "FAILED")
+        self.assertIn("usage:", payload["reason"])
+
+    def test_an_unrecognized_argument_also_exits_1(self) -> None:
+        """The other route into `error()`. argparse reports missing-required FIRST, so an
+        unrecognized flag alone never reaches this branch -- it needs a complete valid argv."""
+        args = ["--manifest", str(self.manifest)]
+        for key, path in self.outputs.items():
+            args.extend(["--" + key.replace("_", "-"), str(path)])
+        with redirect_stderr(io.StringIO()) as error:
+            with self.assertRaises(SystemExit) as raised:
+                build.main([*args, "--bogus", "1"])
+        self.assertEqual(raised.exception.code, 1)
+        self.assertIn("unrecognized", json.loads(error.getvalue())["reason"])
+
     def test_cli_runs_and_returns_nonpassing_exit_code(self) -> None:
         args = ["--manifest", str(self.manifest)]
         for key, path in self.outputs.items():

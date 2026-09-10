@@ -20,8 +20,8 @@ non-`ZContractError` still exits 1, but through the interpreter's traceback rath
 envelope, so stderr-JSON parsing is not total.
 
 **Test counts depend on the interpreter and the difference is not cosmetic.** Under an
-interpreter with PyROOT the suite reports 272 run / 271 passed / 1 skipped (LightGBM). Under the
-repository's default `python3` it reports 272 run / 269 passed / 3 skipped, because the two ROOT
+interpreter with PyROOT the suite reports 275 run / 274 passed / 1 skipped (LightGBM). Under the
+repository's default `python3` it reports 275 run / 272 passed / 3 skipped, because the two ROOT
 tests skip as `PyROOT unavailable`. Quote the interpreter with the count. This mattered
 concretely: the assertion that catches a forged product label used to live only in a
 PyROOT-gated test, so the default interpreter could not see it — that is F1, and the assertion
