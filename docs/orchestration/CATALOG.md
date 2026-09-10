@@ -479,6 +479,38 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instance** (`PROVENANCE-20260822` = right `N`, wrong arm); my content-discriminates-inputs hedge
   discharged in my favour; their *"inverts"* withdrawn with **(a) duplicates, (b) repairs** standing;
   the *"could not have completed"* tightening **relayed, not verified**.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partO.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partO.md)
+  - **PART O — rev. 4 at `d915fe00`** (sha256 `bb752c9d…`, 1123 lines). No grade assigned.
+  ⚠ **§O.1: the producer feeding `Σ_V C_b` is the UNIVERSE SWEEP, not `KNOB_BANDS`.** `SPEC:624` reads
+  `Σ_V C_b` as `hCov_universe5d_<band>`, *"the same sweep estimator as the rest of `C_syst`"*;
+  `analyze_universes_5d.py:290` writes those and `:213-222` builds each as `(Z.T @ Z)/D.shape[0]` —
+  **biased `1/N` with per-band variable `N`**, skipping `< 2`. `unified_throw_cov.py`'s twelve `±`
+  pairs (`:460`, arity forced at `:458-459`) plus flux produce **`C_unified`**, whose diagonal sets
+  `g^c` — **not** the summands of the sum. So rev. 3-4's *"thirteen constructions"* is accurate about
+  the **wrong producer** for A-6's purpose. **This also retires my own §M.1 reasoning:** I tested
+  whether `KNOB_BANDS` was the right cardinality and never asked whether it was the right producer.
+  **§O.2 answers the stability question: the two partitions RECONCILE EXACTLY** — same 45 bands cut two
+  ways, `|V|13 + |R|27 + |A|5 = 42 pairs + 2p2h + Flux + norm = 45`, with `42×2 + 3 + 100 = 187` (+1 =
+  the `188` file count). So *"stated and unreconciled"* is a choice, not an inconsistency, and the
+  caution is sound — **but the one-line identity belongs in the record**, because a disclosure
+  requirement quantified over "each block" is exactly where an unstated re-partition becomes a silent
+  population change.
+  ⚠ **§O.3: `2p2h` is OPEN and the code gives no basis for excluding it.** `analyze_universes_5d.py:220`
+  applies **one** estimator to every band and makes no distinction between `2p2h`'s `D.shape[0]=3` and
+  `Flux`'s `100`. **And `PROVENANCE-20260822` contradicts itself on it:** `:128` calls `Flux` *"the ONE
+  genuine multiverse draw"* — entailing `2p2h` is not one — while `:127` *"explicitly declines to
+  classify it"*. Not resolved here: it needs `PROVENANCE:233` item 6's bank read. If they are draws,
+  `F7`'s recursion runs **two → three → four**.
+  **§O.4: my §I.2 was a RE-DISCOVERY** — `PROVENANCE:128` has carried `Flux`/`100`/biased-`1/N` on main
+  since 2026-08-22, and rev. 4 discloses that at `:198-199` **against its own interest**, which is the
+  behaviour the review structure exists to produce.
+  **§O.5: `F14` acted on cleanly** (A-2 narrowed to clause (iv), with (i)/(ii) as not-applicable and
+  (iii) rejected as new compute — each with its reason, no silent drop; endorsement is **partial
+  self-confirmation**, added to the §M.6 list), and **`F17` resolved on the composition principle** of
+  Part J §J.3, returning A-6 to four fields with no Ruling-2 extension. **§O.6: the F10 row's HEADER
+  still carries the withdrawn word *"INVERTED"*** while its body says *duplicates / repairs* — an
+  incomplete withdrawal reaching the body and not the header, the same mechanism as my own three-site
+  failure, and a header outranks the caveat beside it.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
   - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
   publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
