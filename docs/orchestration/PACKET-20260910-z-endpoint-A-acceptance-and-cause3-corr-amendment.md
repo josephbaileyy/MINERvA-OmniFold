@@ -131,10 +131,30 @@ submitted, not what landed.** A throttled or partly-failed array yields fewer me
 header unchanged. This is the same defect class as reading a launch plan as a record, and the
 correction is to bind each field to the code that produces the number:
 
-| field (clause (v)) | `C_stat` | `C_ML` | recorded in an artifact? |
+> **⚠⚠ REV. 2 CORRECTS THIS SUBSECTION IN TWO PLACES, both found when a second orchestrator
+> refused the phrase *"no artifact records it"* and asked me to separate a MISSING STAMP from a
+> GENUINELY UNRECOVERABLE POPULATION. It was right to refuse it.**
+>
+> **(1) I READ THE WRONG PRODUCER FOR `C_ML`.** Rev. 1 attributed it to
+> `combine_seedscan_split.py`, which writes **`hCov_mlsplit3d_reported`** — a **3D** product — and
+> which is referenced by **no launcher in the tree at all**. Z's `C_ML` is
+> `uq_cov_mlsplit_5d.root:hCov_mlsplit5d_reported`. **Both** of Z's blocks are produced by
+> **`combine_cov_nd.py`** (`sbatch_combine_5d_budget.sh:14,16`, `--tag stat5d` / `--tag mlsplit5d`),
+> so the rev. 1 *"asymmetry"* — one producer requiring `--expected-ids`, the other defaulting it —
+> **is void for Z: it compared Z's producer against a script Z does not use.** Same defect class as
+> §1: right measurement, wrong operand.
+>
+> **(2) THE ID SET IS RECORDED, IN TRACKED CODE.** `sbatch_combine_5d_budget.sh:14,16` pass
+> **`--expected-ids 1-100`** (→ `stat5d`) and **`--expected-ids 1-24`** (→ `mlsplit5d`), and
+> `combine_cov_nd.py:13` makes the flag **`required=True`**, so it cannot default silently. Rev. 1's
+> *"no artifact records either field"* was **overstated**: what is missing is an **embedded stamp in
+> the product**, not the number.
+
+| field (clause (v)) | `C_stat` | `C_ML` | recorded where? |
 |---|---|---|---|
-| **verified `N`** | `combine_cov_nd.py:18` → `load_replica_manifest(paths, set(range(lo,hi+1)))`; `--expected-ids` is **`required=True`** (`:13`) | `combine_seedscan_split.py:41`, same loader; `--expected-ids` has a **default `"1-24"`** (`:33`) | **NO — stdout only** (`combine_cov_nd.py:22`, `combine_seedscan_split.py:49`) |
-| **normalization** | `:20` `C=(Z.T@Z)/(Xr.shape[0]-1)` → **unbiased `1/(N−1)`** | `:68` `cov = (Z.T @ Z)/(Xr.shape[0]-1)` → **unbiased `1/(N−1)`** | **NO — a code fact, not a recorded one** |
+| **declared id set** | **`1-100`** — `sbatch_combine_5d_budget.sh:14`; member-scoped variant at `sbatch_finalize_5d_bkgaware_gpu.sh:422` | **`1-24`** — `sbatch_combine_5d_budget.sh:16` | **YES — in tracked launchers.** `--expected-ids` is `required=True` (`combine_cov_nd.py:13`), so it is always a caller declaration |
+| **verified `N`** | `combine_cov_nd.py:18` → `load_replica_manifest(paths, set(range(lo,hi+1)))` | **same script, same line** | **DERIVABLE, NOT STAMPED** — see the recovery argument below |
+| **normalization** | `combine_cov_nd.py:20` `C=(Z.T@Z)/(Xr.shape[0]-1)` → **unbiased `1/(N−1)`** | **same line — one script, one convention** | **NO — a code fact, not a recorded one** |
 | **effective `p` inverted** | — | — | **NOT APPLICABLE at endpoint A** (no inversion) |
 | **finite-ensemble treatment** | none applied | none applied | must be stated **explicitly**, per `OI-137` *"disclose, do not correct"* |
 
@@ -144,24 +164,44 @@ correction is to bind each field to the code that produces the number:
 evidence that the declared id set landed in full. That is the verification instrument, it already
 exists, and it should be **called, not reimplemented**.
 
-**⚠ One asymmetry worth carrying:** `combine_cov_nd.py` makes `--expected-ids` **required**;
-`combine_seedscan_split.py` **defaults it to `"1-24"`**. Both fail closed, but a *default is not a
-declaration* — the second checks against an expectation the code supplied, the first against one the
-caller had to state. For disclosure purposes only the first is a declared `N`.
+### 2.1a ⚠ A MISSING STAMP IS NOT AN UNRECOVERABLE POPULATION — the two must be separated
 
-**⚠ AND NEITHER NUMBER SURVIVES ITS PRODUCER.** Measured: `combine_cov_nd.py:23-26` writes exactly one
-object (`hCov_{tag}_reported`); `combine_seedscan_split.py:97-105` writes exactly one
-(`hCov_mlsplit3d_reported`). **The counts are `print`ed and never persisted.** So the honest answer to
-*"bind each to the artifact that records it"* is: **for both of Z's sample-covariance blocks, no
-artifact records either field.** The requirement is therefore to **write them**, not to look harder.
+**(i) MISSING EMBEDDED STAMP — CONFIRMED.** `combine_cov_nd.py:23-26` writes **exactly one object**,
+`hCov_{tag}_reported`, and nothing else; `N` is `print`ed at `:22` and never persisted. And the
+binding manifest carries no ensemble field either: `std_component_manifest.json` holds
+`stat_cov`/`stat_sha256`/`ml_cov`/`ml_sha256` and **`n_reported = 10694`, which is a BIN count, not a
+member count** — a field a hurried reader could easily take for `N`.
 
-**⚠ AND DO NOT RESOLVE THIS FROM A DOCSTRING.** `combine_seedscan_split.py:9` states it *"Writes
-uq_cov_mlsplit_3d.root (`hCov_mlsplit3d_reported` + `hMean_*` projections)."* Measured: `hMean` occurs
-**once in the whole file — on that docstring line.** No `hMean_*` object is created or written. So the
-one place that advertises additional recorded content in that product is describing objects that do
-not exist, and a reader who trusted it would conclude `N` might be recoverable from the file when it
-is not. **This is a note about where NOT to look, and it is why A-6 is phrased as an obligation to
-write rather than an obligation to find.**
+**(ii) UNRECOVERABLE POPULATION — NOT ESTABLISHED, AND I SHOULD NOT HAVE IMPLIED IT.** There is a
+recovery route that needs neither the printed `N` nor the replica files:
+
+> **`--expected-ids` is a caller declaration (`required=True`), and
+> `replica_manifest.load_replica_manifest:44-48` FAILS CLOSED on any id-set mismatch —
+> `raise ValueError("replica id mismatch: missing=… extra=…")`. So a SUCCESSFUL execution of that
+> command line is itself proof that exactly the declared id set was present.** `N` is then the
+> declared range, recovered by logic rather than by a stamp.
+
+**So what is actually missing is one BINDING, not a number:** evidence that the execution which
+produced the bytes digested as `6580016f…` (`C_stat`) and `27b2e456…` (`C_ML`) was that command and
+exited 0. That is a receipt/jobid question about existing execution evidence, **not** a regeneration
+question — and **nothing here scopes or requests regeneration.**
+
+**⚠ AND THE BINDING IS GENUINELY AMBIGUOUS IN THE CODE, which is why it must be established rather
+than assumed.** At least three tracked sites issue an equivalent command: `sbatch_combine_5d_budget.sh:14,16`,
+`run_budget_5d.sh:18`, and `sbatch_finalize_5d_bkgaware_gpu.sh:422` — and **the third is
+MEMBER-SCOPED**, its glob passing through `mr_prefix`, so it reads a per-member replica directory
+rather than the top-level one. **The declared id range is the same; the population it ranges over is
+not.** Code alone therefore cannot say which execution produced the digested bytes. *(No value from
+the member-scoped tree is quoted here — only the launcher line.)*
+
+**A-6 is therefore phrased in two parts, and only the first is a disclosure obligation:**
+**(a)** record, beside each released block, its declared id set, its verified `N`, the `1/(N−1)`
+convention, and the explicit statement that no finite-ensemble treatment was applied — with the
+inverted dimension marked **not applicable** at A; and **(b)** bind the product digest to the
+producing execution, from evidence that already exists. **Rev. 1 said "the requirement is to write
+them, not to look harder." That was wrong in the second half: looking harder is exactly what (b)
+is, and it has not been done here.** I did not search Slurm records, receipts or logs for the
+producing job of either digest, and I am not claiming that search would fail.
 
 **WHY THIS IS A AND NOT B — three reasons, in ascending strength:**
 
@@ -171,8 +211,9 @@ write rather than an obligation to find.**
 2. **`N` bounds the rank of the released object.** A sample block from `N` members has rank `≤ N−1`,
    which feeds directly into A-2's clause-(iv) obligation to say *which* covariance is meant and at
    what rank. That obligation is A's, and it cannot be discharged without `N`.
-3. **⚠ DECISIVELY: the number does not exist at endpoint B.** It lives in the producer's stdout and
-   nowhere else. A later consumer opening the ROOT file finds a `TH2D` and no provenance. **A
+3. **⚠ DECISIVELY: the number is not IN the object at endpoint B.** A later consumer opening the
+   ROOT file finds a `TH2D` and no provenance — recovery requires the producing launcher and its
+   execution record, which are construction-time artifacts. **A
    requirement must sit where its operand exists** — if `N` is not recorded at construction time it is
    unrecoverable, and a B-stage disclosure requirement would be unsatisfiable in principle.
 
@@ -423,6 +464,63 @@ the smallest adjacent-band fractional gap, **measured on the `k=0` baseline** an
 members are compared. That keeps the tolerance derived from the baseline's structure and **not
 selected from the movements being graded** — which is the separation the constraint requires.
 
+### 4.4a ⚠ WHAT IS ACTUALLY WITHHELD IS ONE SCALAR, NOT THE CRITERION — rev. 1 framed this too widely
+
+**Rev. 1 read as though the whole boundary were blocked on the note's published figures. It is not,
+and the correction matters because it changes what Joseph is being asked.** A-7 has three parts and
+**only the third depends on any scientific choice**:
+
+| part | what it is | status |
+|---|---|---|
+| **(a)** the **prospective product** and the **declared functional set** | the exact projection of the adopted 5D covariance onto each released axis set; `U` = rows of that projection's `M` over the **supported** destination bins (predicate: `ew_coverage_report`), plus the all-ones vector | **FULLY SPECIFIED. Needs no published number** — it is a property of the prospective object and of `M`, both known at build time |
+| **(b)** the **denominator** | `sqrt(m_iᵀ C_0 m_i)` — the **baseline member's own released bar for the same bin**, computed from the same prospective product | **FULLY SPECIFIED. Needs no published number.** Same quantity, same units, same bin; dimensionless by construction |
+| **(c)** the **scientifically acceptable fractional change** | one scalar | **THE ONLY OPEN PIECE** |
+
+**So it is NOT a dependency on already-published uncertainty numbers.** (a) and (b) are prospective
+throughout. **A historical plot labelled "audit descriptor" does not block a prospective criterion —
+it blocks only the attempt to read (c) off that plot's printed precision**, which is the one thing
+§4.4 refuses to do and refuses on precedent.
+
+**AND (c) ITSELF DECOMPOSES, exactly as `null_epsilon`'s own spec requires — `B ≤ S`, `δ ∈ [B, S]`:**
+
+- **`B`, a DISCRIMINABILITY FLOOR — derivable, with a stated model.** Each released bar carries
+  irreducible sampling noise from the two sample blocks. For an `N`-member Gaussian ensemble the
+  relative standard error on an estimated variance of a fixed functional is `sqrt(2/(N−1))`, hence
+  `≈ 1/sqrt(2(N−1))` on the **bar**; scaled by the sample blocks' share of that bin's projected
+  variance, since `C_Z` is dominated by ~45 deterministic band contributions. **Estimator-baseline
+  movement below `B` is not distinguishable from the noise the bar already has.** `B` is computable
+  at build time from **A-6's verified `N`** — which is why A-6 and A-7 are coupled, and why A-6 is
+  worth having independently of any inversion. **Assumption stated, per the spec: iid-Gaussian
+  replicas. That is an assumption, not a measurement, and it should be checked rather than trusted.**
+- **`S`, a SCIENTIFIC CAP — one decision, and it is Joseph's.**
+
+**⚠ AND `B` MUST NOT BE USED AS `S`. This is the trap, and it has already been sprung once in this
+campaign.** `null_epsilon`'s `min(achievable, acceptable)` construction was **withdrawn in rev. 19**
+precisely because it used a feasibility floor as an **upper** bound, where such a floor bounds `ε`
+from **below**. `B` is achievability; `S` is acceptability. Setting `δ_proj = B` would repeat that
+error exactly, so I am naming it rather than quietly proposing the convenient number.
+
+### 4.4b THE ONE-LINE DECISION, WITH BOTH CHOICES PRICED
+
+> **For Joseph:** *"What is the largest fractional change in a released projected uncertainty that
+> would leave the scientific reading of the released result unchanged?"* — that scalar is `S`.
+
+**Consequences, so the choice is informed rather than open-ended:**
+
+- **`S` large (tens of percent):** A-7 passes almost regardless and protects little. Note the scale
+  it must beat: §3.7d's own demonstration moves a released marginal bar by **37.8%**, so an `S` above
+  that would admit the exact failure the requirement exists to catch.
+- **`S` small (sub-percent):** may violate the precondition **`B ≤ S`**. ⚠ **If `B > S` the correct
+  reading is NOT "loosen `S`"** — it is that **the ensembles are too small to support a claim at that
+  precision**, which is a real, actionable finding and points straight back at `N` (A-6).
+- **`B ≤ S` is falsifiable at build time and should be checked BEFORE any grading**, in the
+  branch-1/2 style, so an unsatisfiable pair is reported as inconclusive rather than as a failure of
+  the object.
+
+**What I am not doing:** not choosing `S`, and not offering a placeholder for it. `B` is a rule I am
+proposing; `S` is the single scientific input, and the honest form of "reserved for Joseph" is the
+question above plus the two priced consequences — not a returned blank.
+
 **WHAT I RECOMMEND IN THE MEANTIME, and it is actionable now:** adopt `s_proj` as a **reported
 statistic** under A-7 — computed on the baseline build, reported with its argmax offset and argmax
 functional, **grading nothing**. That is exactly the posture `z_statistics.py` already declares for
@@ -499,7 +597,17 @@ has already paid for twice. Two qualifications so the row is not misread later:
    detector that would have caught it is the one the checker already implements (a paraphrase count
    that goes **up**, not down, on an incomplete withdrawal). **Whoever is authorised to extend that
    instrument should add the ninth claim; I am not, and this row is the handoff.**
-9. **The population pin moved 542 → 543** and I re-pinned it. Verified by **set difference on the
+9. **⚠ REV. 2 CORRECTED TWO OF MY OWN CLAIMS, both in §2.1, both found by a peer refusing a phrase
+   rather than by any check I ran.** (a) I attributed Z's `C_ML` to `combine_seedscan_split.py` — a
+   **3D** script referenced by **no launcher** — so rev. 1's producer "asymmetry" compared Z's
+   producer against a script Z does not use, and is void. (b) *"No artifact records either field"*
+   was overstated: the declared id sets **are** in tracked launchers and `--expected-ids` is
+   `required=True`. What is missing is an embedded stamp plus **one binding** — digest to producing
+   execution — and **I did not search Slurm records, receipts or logs for it.** I am not claiming
+   that search would fail; it has not been attempted. See §2.1a.
+10. **`B` in §4.4a rests on an iid-Gaussian replica model.** Stated as an assumption, not measured
+   here. If the replicas are not iid Gaussian the floor moves, and the direction is not established.
+11. **The population pin moved 542 → 543** and I re-pinned it. Verified by **set difference on the
    tracked path lists**, not by the count: exactly one path added, none removed. A re-pin is not an
    extension, but it is a deliberate act on an instrument and it is recorded here rather than left
    in a diff.
