@@ -907,7 +907,11 @@ and no reduction has to be chosen. **Comparing like with like is the whole repai
 
 **⚠ `B'` IS STILL NOT `S`.** It is achievability, `S` is acceptability, and `null_epsilon`'s
 `min(achievable, acceptable)` was withdrawn in rev. 19 for exactly that substitution. `B'` bounds
-`δ_proj` from **below**; naming the claim bounds it from above.
+`δ_proj` from **below**; naming the claim bounds it from above. ⚠ **AND THE LOWER BOUND IS STRICT:
+`δ_proj ∈ (B', S]`.** Rev. 3-5 wrote this interval as **inclusive**, which *permitted* the very
+substitution §4.4e forbids — a prohibition stated in prose and contradicted by the notation two
+paragraphs above it. **Corrected here, and §8.6 amendment 1 makes it a `Validity` field
+(`floor_below_tolerance`, `B' < δ_proj`) so it is ENFORCED rather than asserted.**
 
 #### 4.4e ⚠ F18 — `B'`'s QUANTILE LEVEL `q` IS A PARAMETER, AND WHOSE IT IS DEPENDS ON A RULE
 
@@ -915,7 +919,7 @@ and no reduction has to be chosen. **Comparing like with like is the whole repai
 commits to.** The level moves `B'` materially — reported at ~45% between median and 99th at one
 configuration — but **the magnitude is not the finding.** The finding is:
 
-> **If `δ_proj` is set AT `B'` — the bottom of `[B', S]`, which is where a lane under pressure will
+> **If `δ_proj` were set AT `B'` — the bottom of `(B', S]`, now BARRED, and where a lane under pressure will
 > put it — then `1 − q` is EXACTLY the rate at which a perfectly stable object returns NOT MET.**
 > Declaring the 95th quantile would declare a **5% false-failure rate**.
 
@@ -1041,7 +1045,180 @@ first is withdrawn.**
 | **answer (a) is unavailable for endpoint A** | **SCIENTIFIC JUDGEMENT**, resting on the proven §1 identity plus the reading that A's purpose includes projected uncertainties |
 | **A-6 belongs to A rather than B** | **SCIENTIFIC JUDGEMENT**, with reason 3 (the operand does not exist at B) as its mechanical core |
 | `ε = 1e-9`; `‖P_0 − P_k‖_2 ≤ 1e-8` | unchanged from `RECOMMENDATION-…`; classes as recorded there |
-| **`δ_proj`** | **NOT PROPOSED.** §4.4 |
+| **`δ_proj`'s RULE** — smallest declared component (§8.3) | **DERIVED from the declared claim.** Its **value** needs a constructed `C_Z` and is not supplied |
+| **`q`** | ⚠ **SCIENTIFIC — Joseph's.** A declared confidence level on the FEASIBILITY assertion (§8.7). Rev. 4's "conditioning parameter" is **withdrawn**: it moves `B'` ~45% and can flip enforceable → *ensembles too small* even with `δ_proj ≠ B'` |
+| **`κ`** | conditioning threshold, `rcond` kind — **mine**, and NOT a scientific boundary (§4.3a) |
+
+---
+
+## 8. THE TOLERANCE — Joseph named the claim, so `δ_proj` is now DERIVABLE. Decision packet item 1.
+
+**The claim, as declared (intended use; NOT adoption of Z, NOT approval of any threshold):**
+
+> *"These are covariance-based uncertainty estimates for the fixed scalar-5D central measurement and
+> its explicitly named projections, incorporating the declared uncertainty components under the
+> stated construction. Their limitations are disclosed. They are not presented as calibrated
+> confidence intervals, generator-exclusion significances, or evidence of validated frequentist
+> coverage."*
+
+### 8.1 ⚠ FIRST, WHAT THE CLAIM'S SHAPE KILLS — including my own candidate
+
+**The claim is DESCRIPTIVE, not ordinal, and §4.4's concrete candidate is WITHDRAWN.** §4.4 named
+the band-ordering claim (`sec_3d.tex:250`, `:263`) and derived `δ` from *half the smallest adjacent-band
+fractional gap*. **Joseph's claim asserts no ordering, no ranking and no comparison.** I had already
+found that rule was over the wrong *quantity* (grouped bands vs the total per-bin bar); it is now
+also over the wrong *claim*. **Not carried forward, and not merely deprioritised — deleted as a
+basis.**
+
+**And the three disclaimers remove every anchor I had reached for:** *not calibrated confidence
+intervals* → no coverage-derived `δ`; *not generator-exclusion significances* → no `T`, and outcome
+(2) stays closed; *not evidence of validated frequentist coverage* → **C6's `68.27%` containment is
+not an anchor either**, which retires the route §4.4a's earlier drafts flirted with.
+
+**Part (a) survives and is now pinned by Joseph's own words** — *"its explicitly named
+projections"*. `U` = rows of `M` for each **explicitly named** released projection over supported
+destination bins, plus the all-ones total-rate functional. **§4.3's functional set needs no
+rebuilding.** Part (b), the denominator, unchanged.
+
+### 8.2 WHAT THE TOLERANCE PROTECTS: **construction-determinacy**, and nothing else
+
+**The load-bearing phrase is *"under the stated construction."*** That is the only proposition in
+the sentence a released bar can falsify. And the falsification is exact:
+
+> **If the released bar moves materially when the estimator baseline is varied, then the released
+> number is a property of WHICH BASELINE WAS PICKED, not of the declared construction — and the
+> sentence is false as a description of what determines it.**
+
+**The estimator baseline is NOT a declared uncertainty component.** It is an undeclared nuisance
+choice *inside* the construction. So the criterion is a **determinacy** criterion — not precision,
+not coverage, not significance. **That is narrower and more defensible than anything §4.4 was
+reaching for**, and it is derivable without inventing a number.
+
+### 8.3 THE DERIVATION — `δ_proj` from the claim's own words, not from formatting or from results
+
+**The claim says the bars incorporate *"the declared uncertainty components"*. A reader is therefore
+entitled to attribute the bar to those components — to any one of them.** Attribution fails when an
+**undeclared** choice moves the bar by more than a **declared** component contributes, because then
+a material part of the number is attributable to something the sentence does not name.
+
+**So the anchor is internal to the claim: the SMALLEST DECLARED COMPONENT'S OWN CONTRIBUTION.**
+
+For each declared functional `m_i`, decompose the released variance over the declared components —
+which is exactly what `z_assembly` already builds:
+
+    m_iᵀ C_Z m_i  =  Σ_components  m_iᵀ C_b m_i
+
+Let **`f_min,i`** = the **smallest non-zero** component's share of that bin's released **variance**.
+Removing that component changes the **bar** by `1 − sqrt(1 − f_min,i)` exactly. Then:
+
+> ### `δ_proj  =  min over declared functionals i of  [ 1 − sqrt(1 − f_min,i) ]`
+
+**Why the MINIMUM over `i`:** the claim is universally quantified over the named projections, so it
+is falsified at its weakest bin. **Why the SMALLEST component and not the median:** the claim names
+the declared components as a set and licenses attribution to any member, so the criterion must hold
+against the **weakest admissible attribution.** *(A median-based anchor was considered and rejected
+on that ground; it would license an undeclared effect larger than half the declared components.)*
+
+**Check it against the three prohibitions.** **Not from formatting** — no printed digit appears.
+**Not selected to make results pass** — it is computed from the `k = 0` baseline's own component
+decomposition, **before** any member is compared, and nothing in it reads the movements being
+graded. **Use-derived** — the use is Joseph's sentence, and the anchor is that sentence's own phrase.
+
+### 8.4 EVERY SYMBOL, IN PLAIN LANGUAGE
+
+| symbol | plain language |
+|---|---|
+| `m_i` | one row of the projection matrix for a named released projection — the recipe *"add up these 5D bins, with these bin-width weights, to make released bin `i`"* |
+| `C_Z` | the assembled scalar-5D covariance being released |
+| `s_proj` | **the biggest fractional change any released error bar shows when the estimator baseline is varied over the declared offsets.** One number, a worst case |
+| `δ_proj` | **the largest such change that still lets Joseph's sentence be true.** Set by the smallest declared uncertainty component's own contribution |
+| `f_min,i` | at released bin `i`, the fraction of the squared error bar contributed by the **smallest** declared component |
+| `B'` | **the biggest change `s_proj` would show even if nothing at all had changed** — pure finite-ensemble noise, obtained by simulating members that are statistically identical. A **noise floor** |
+| `q` | **how sure we insist on being before declaring the ensembles too small.** The quantile of that simulated noise distribution used as `B'` |
+| `κ` | a numerical-degeneracy cutoff: below it, a declared functional is numerically indistinguishable from having no support and cannot be graded. **Same kind as `rcond`; not a scientific threshold** |
+
+### 8.5 SCIENTIFIC CONSEQUENCE OF PASSING AND OF FAILING
+
+| outcome | what it means, scientifically |
+|---|---|
+| **`s_proj ≤ δ_proj`** | **Joseph's sentence stands.** The released bars are determined by the declared construction: varying the undeclared estimator baseline moves them by **less than the smallest declared component contributes**. It does **not** say the bars are accurate, well-calibrated, or that intervals cover — the claim already disclaims all three, and this criterion adds nothing there |
+| **`s_proj > δ_proj`** | ⚠ **the sentence is FALSE as written.** A material part of the released bar is attributable to which baseline happened to be chosen — something the sentence does not name. **The remedy is not a looser tolerance:** either declare the estimator baseline as an uncertainty component and propagate it, or narrow the claim to the projections that pass. **Report the argmax offset AND argmax functional**, which `s_proj` already returns, because the failure is usually concentrated |
+| **`B' > δ_proj`** (feasibility fails) | ⚠ **NOT a failure of the object and NOT a reason to loosen `δ_proj`.** It says the ensembles are **too small to detect** a violation at the granularity the construction itself declares — i.e. the criterion is unenforceable as specified, and the finding points at `N`. Must be reported **as inconclusive**, never as a pass and never as NOT MET |
+
+### 8.6 ⚠ CAN A-7 ENFORCE IT? NO — AND HERE IS THE EXACT AMENDMENT
+
+**Measured: A-7 cannot express a refusal.** Its terminal outcomes at `:657` are exactly three —
+within limit, NOT MET with argmaxes, abort as construction defect. **There is no state for
+"the declaration is defective"**, which both §4.3a (degeneracy) and §8.5 row 3 (infeasibility)
+require. So the amendment is **required, not optional.**
+
+**⚠ AND THE OBVIOUS AMENDMENT IS WRONG.** Adding a fourth grade token would extend `CRITERIA` §0's
+three-token vocabulary, which `z_validator`'s docstring explicitly refuses — *"An unassessable run is
+a REJECT, NOT A FOURTH GRADE TOKEN"*. **The correct amendment reuses the mechanism that already
+exists**, in the adoption-record form of §3.3 option 3:
+
+| # | site | amendment |
+|---|---|---|
+| **1** | `z_validator.Validity` (`:122-131`) | add two fields, **defaults `False`** per the class's stated safe-direction convention: **`functionals_nondegenerate`** (§4.3a's `κ` predicate passed for every declared functional) and **`floor_below_tolerance`** (`B' < δ_proj`, **strict**) |
+| **2** | `z_validator.Validity.branch1_failures` (`:133-136`) | extend the tuple to include both. **No new branch, no new label, no vocabulary change** — a failure routes to **branch 1, `INCONCLUSIVE / WRONG FOOTING`**, with the offending field named in `validity["branch1_failures"]`, which `assess` already does |
+| **3** | A-7's terminal-outcome list (this document, `:657`) | a **fourth reported state — `REFUSED / DECLARATION DEFECT`** — declared as **mapping to branch 1**, not as a new grade. It names the offending **declaration** (which functional, or the `(B', δ_proj)` pair), never the operand |
+
+**Why branch 1 is the right route and not a workaround:** a degenerate functional and an
+unenforceable tolerance are both defects in **what was declared**, not measured excesses in the
+object — and branch 1 is exactly *"INCONCLUSIVE / WRONG FOOTING"*, whose existing contract is that
+validity **dominates every numerical branch**. `assess` already returns branch 1 before any boundary
+is consulted, so a refusal cannot be overtaken by a favourable number.
+
+**⚠ AND ONE REPAIR TO MY OWN §4.4d, WHICH THE REVIEWER IS RIGHT ABOUT:** I wrote `δ ∈ [B', S]` with
+**inclusive** endpoints while §4.4e forbids `δ_proj = B'`. **The interval is corrected to
+`δ_proj ∈ (B', S]` — strict at the lower end** — and amendment 1 above implements the bar as
+`B' < δ_proj`, so **the prohibition is now enforced by a `Validity` field rather than asserted in
+prose.** That is what makes §4.4e's classification of `q` load-bearing rather than decorative.
+
+### 8.7 ⚠ `q` IS NOT CONSEQUENCE-FREE. My conditional table's row 2 was wrong and I am replacing it.
+
+**The surviving leg is correct and I am not restating the conditional against it.** Even when
+`δ_proj` never equals `B'`, `q` moves `B'` by ~45%, so through the feasibility check `B' < δ_proj`
+it can **flip *enforceable* to *the ensembles are too small*.** That is a consequence, so `q` is
+**not** a pure conditioning parameter.
+
+**Revised classification, and it is now unconditional:**
+
+> **`q` is a DECLARED CONFIDENCE LEVEL ON THE FEASIBILITY ASSERTION.** It does not set a
+> false-failure rate on the acceptance verdict — `δ_proj = B'` is barred, and now enforced. What it
+> sets is the confidence with which A-7 asserts **"this criterion is / is not enforceable with the
+> ensembles in hand."**
+
+**Whose it is: Joseph's, and I am not treating my recommendation as settling it.** The error it
+controls is a statement about **the experiment's adequacy**, not about numerical conditioning — the
+same class as `S`, not the same class as `κ`. **I recommend `q = 0.99`**, for the reason that a
+*floor* used in `B' < δ_proj` is conservative when **larger** (harder to assert enforceability, the
+opposite of a tolerance's direction), and with the standing obligation that **`q` is always reported
+beside `B'`, never bare.** But it is an input he accepts, not a convention I own, and §6's class
+table is corrected accordingly.
+
+### 8.8 ⚠ THE BRANCH I AM IN, AND THE ONE NUMBER I CANNOT SUPPLY
+
+**`δ_proj`'s RULE is complete and needs no further input.** It is computable at build time from the
+`k = 0` baseline alone. **Its VALUE I cannot state**, because it requires the component decomposition
+of a covariance that has not been constructed — and I will not substitute a figure from any other
+object for it.
+
+**`B'` is conditional on the replica-draw sharing structure, which is being measured now** (bounded
+read-only provenance search, Joseph-authorized, not mine). **Naming the branches so neither reads as
+a default:**
+
+| if the members' replica draws are… | then | consequence |
+|---|---|---|
+| **independent** (member-scoped arm) | `B'` is at its **largest** — ~5× the per-bar noise floor at `K=10`, 100 functionals | **`B' > δ_proj` is likely**, and §8.5 row 3 fires: the criterion is unenforceable and the finding points at `N` |
+| **shared** (single top-level replica set) | `B'` falls toward and below the per-bar floor (ratio `0.84` at 99% shared, measured) | **enforceable**, and `δ_proj` binds on its own terms |
+
+**⚠ I am not guessing which, and I am not lowering `δ_proj` to `B'` to close the gap** — that is the
+`min(achievable, acceptable)` substitution withdrawn in rev. 19 and now barred by amendment 1.
+**If the independent branch holds, the honest deliverable is the finding, not a tolerance**: the
+ensembles are too small to enforce construction-determinacy at the granularity the construction
+declares. That is my own priced consequence and I am standing on it rather than reaching for a
+number that would make it go away.
 
 ---
 
