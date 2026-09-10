@@ -208,6 +208,27 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   implementations" is an UNDERCOUNT** — four production/consumer construction sites exist, the fourth
   on the PET diagnostic path, which any designation must exclude **by name**. It declares no
   threshold and adopts nothing; read its own `CITABLE FOR` header too.
+- [`PACKET-20260910-z-consumer-set-and-endpoint-requirements.md`](PACKET-20260910-z-consumer-set-and-endpoint-requirements.md)
+  - **DESIGN AND REVIEW ONLY — adopts nothing; Joseph retains approval.** Supersedes the universal-bound
+  approach's ROLE, which he discontinued 2026-09-10. **§1 is the deliverable: Z's declared consumer
+  set, enumerated for the first time**, with five additions to the starting list — including the **2D
+  headline consumer**, which is LIVE and **already inverts by SVD pseudo-inverse (ratified,
+  `app_statmethods.tex:53-58`)**, so endpoint B's inversion requirement is **conformance, not
+  proposal**; a diagonal-only coverage consumer; and **three more deferred-declared sites, spanning
+  note, paper AND primer** — the three builds intersect in `{values}` alone, so **one criterion cannot
+  discharge them.** Splits into **endpoint A** (covariance/projected-uncertainty release; every
+  consumer reads a diagonal, trace or band) and **endpoint B** (significances; every consumer inverts
+  a full matrix), and keeps their requirements apart on that structural basis. **⚠ Its sharpest
+  measurement: `np.linalg.solve` does NOT fail loudly on Z's covariance class** — two N-D comparators
+  use it, and on a *near*-singular matrix it returns a silently absurd `chi2` (`1.0e18` where `pinv`
+  gives `2.0`); a Z-shaped sum has **zero exact zeros and a mixed-sign round-off tail**, so a PSD test
+  at exactly `0` fails on a correct object. **`T` is a proper subset of endpoint B and none of A**, and
+  most claims need no threshold at all. **Reported, not adopted: on the declared consumer set
+  `cause3_corr`'s hazard is UNREALIZED** — no released consumer reads off-diagonal structure — and it
+  belongs to **B**, triggered by B-1. Stopping-rule outcome **(3)**: two named inputs required.
+  Arithmetic re-runnable at
+  [`state/probe-z-consumer-inversion-20260910.py`](state/probe-z-consumer-inversion-20260910.py) —
+  deliberately a **separate** file, so the retired `rho` machinery stays frozen as history.
 - [`RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md`](RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md)
   - **RECOMMENDATION ONLY — adopts nothing, grades nothing, authorizes no compute; Joseph retains
   scientific approval.** The `z-criteria-designer` owner's answer to `Z_DECISION_PACKET` §5 items 1,
