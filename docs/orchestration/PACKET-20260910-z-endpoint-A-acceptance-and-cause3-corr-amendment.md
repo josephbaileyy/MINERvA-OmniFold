@@ -69,6 +69,29 @@ third digit where constructions differ, and I report mine.
 | **F8** | a round-off-positive baseline inside an acceptance statistic is required by **nothing** | ⚠ **UPHELD as a GAP in the requirement set, and the closing requirement is proposed in §4.3a.** Verified: `:429` gates on **exactly-empty** `M` rows while `:412-413` describes a **near-zero** hazard, and `s_proj` gates on **exactly-zero** while F3 shows the hazard is **round-off-positive** |
 | **F6** | clause (d)'s mootness argument fails | **NOT MY CLAIM — and I am not adopting it as one.** *"Clause (d)"* and *"moot"* appear **nowhere** in any of my three artifacts (grep, all three, zero hits). The reviewer is flagging **someone else's** inference, and correctly names **my A-4 row as what refutes it.** I confirm that refutation and add the robustness property it earned — see §4.1a |
 
+### 0a ROUND-2 REVIEW RESPONSE — F9–F18, all ten re-measured, all ten reproduce
+
+| # | finding | disposition |
+|---|---|---|
+| **F10** | A-6(a) re-issues committed, delivered work | ⚠⚠ **UPHELD IN PART, THEN INVERTED — and the inversion is the finding.** `PROVENANCE-20260822` is on main with all four fields for every block **including `Flux`**, so **F7 was not a discovery**, my rev.-3 *"refinement of my own"* was already at its `:126`, it holds a block I **still** lack (`2p2h`, N=3), and it identified my §2.1a(b) gap at `:157`. **But its evidence for `N` is `:167,168` — the MEMBER-LOCAL combines, measured at 3 of 100 and 0 of 24 the same day.** Right values, wrong arm. **So A-6 DUPLICATES on fields and REPAIRS on evidence**, and A-6(b) is load-bearing rather than leftover. §2.1 |
+| **F13** | A-1's *"fifteen"* reject conditions is **nineteen** | ⚠ **UPHELD.** Enumerated: `1 2 3 4 4b 4c 5 6 7 8 9 10 11 11b 11c 12 13 14 15`. **`4c` is the condition my own §3 depends on** — I declared a fixed set excluding it, in the same document |
+| **F17** | A-6's field list exceeds Ruling 2's under a Ruling-2 heading | ⚠ **UPHELD. CHOICE MADE: the sharing structure is an A-7 PRECONDITION on `B'`, not an A-6 disclosure.** It sizes a floor; it discloses nothing about the released object; **it therefore needs no extension of Ruling 2.** A-6 returns to exactly four fields |
+| **F15** | §5's disposition right, characterization backwards | ⚠ **UPHELD in both directions, and one of my two qualifications is FALSE.** Clause (ii) does not reach 2D; *"LIVE"* unestablished; `inv` does **not** raise on a near-singular operand. `do-not-change` survives on **different grounds**. §5 |
+| **F11** | A-3 does not enforce the per-bin tolerance it is derived from | ⚠ **UPHELD.** At `ε = 1e-9` a bin at `\|x_j\| = 2.11e-06` passes with **103%** per-bin error. **The declared per-bin standard is enforced by no endpoint-A criterion** |
+| **F14** | A-2 grounds one declaration and requires four | ⚠ **UPHELD. A-2 narrowed to clause (iv)** — the only one its own sentence argues for |
+| **F9** | §2.1a's *"DECISIVELY"* contradicts §2.1a's own withdrawal | ⚠ **UPHELD.** My withdrawal reached (ii)'s heading and body and **not** the reason carrying the routing. Weakened to the true version; **the conclusion is unharmed** |
+| **F12** | residue 4 **under**-claims | ⚠ **UPHELD — a rejection filed as judgement is PROVEN.** `s_corr` is scale-invariant: `~1.5e-16` while bars move to **200%** |
+| **F18** | `B'`'s quantile level is undeclared, and **is** the null NOT-MET rate | ⚠ **UPHELD; rev. 3's *"needs no new scientific input"* withdrawn as stated.** `q` **declared at `0.99`**, with its class stated **conditionally**: a conditioning parameter **only because `δ_proj = B'` is forbidden**; if anyone sets `δ_proj = B'` it becomes a false-failure-rate declaration and reverts to Joseph. §4.4e |
+| **F16** | §7 has one culpable absence | ⚠ **UPHELD.** No released projection names its **builder and commit**, while four non-equivalent builders exist and a **committed** finding records they diverge on refusal. Now residue 13 |
+
+**⚠ THE PATTERN ACROSS BOTH ROUNDS, STATED BECAUSE IT IS THE MOST USEFUL THING HERE.** Of the
+seventeen findings, the ones that cost most were not wrong measurements — they were **right
+measurements over a population or an operand I had not re-identified**: a diagonal after a
+projection (§1), a producer at the wrong dimension (F-Q4), a population that did not recurse into
+`Σ_V` (F7), a noise floor for a single bar compared against a max (F1), a fixed set that excluded
+its own load-bearing member (F13), and now **a whole deliverable I re-commissioned because I never
+searched for it** (F10). **Six instances, one shape.**
+
 **One thing the review confirmed that I want stated as plainly as the corrections:** §4.1's table,
 the `+37.8%` figure, the `einsum`/`diag` identity, and §1/§1.1's five-consumer resolution
 **including the C6/C7 asymmetry** were all attacked and all held. The reviewer reports trying to
@@ -144,13 +167,13 @@ requirements** and none is marked MET here.
 
 | # | requirement | statement | class |
 |---|---|---|---|
-| **A-1** | construction | SPEC §1.3a algebra, §1.3b identity set incl. the `g^c` reconstruction gate, §3.3's fifteen reject conditions. Unchanged, not reopened | FIXED by spec |
-| **A-2** | provenance | the four inversion declarations of `app_statmethods.tex:645-658` travel with any released projection **even for a diagonal consumer** — clause (iv) exists because *"the 5D candidate, its 4D projection and the published 2D block have different ranks"* | CONFORMANCE |
-| **A-3** | numerical reproducibility | `r_null = ‖x_cv2 − x_cv‖/‖x_cv‖` over the reported support, **`ε = 1e-9`**, derived in `RECOMMENDATION-…` §C.3 from a proven inequality plus Joseph's declared `REPRO_RTOL_PER_BIN` (`p4_lib.py:93`). Carried forward unchanged | PROPOSED |
+| **A-1** | construction | SPEC §1.3a algebra, §1.3b identity set incl. the `g^c` reconstruction gate, and §3.3's reject conditions — ⚠ **NINETEEN, not "fifteen" (F13).** Enumerated at `6f24fb00`, `SPEC:1242-1295`: `1 2 3 4 **4b 4c** 5 6 7 8 9 10 11 **11b 11c** 12 13 14 15`. **`4c` is the condition §3 of this document DEPENDS ON** — §3.1(e) cites `reject_conditions=('4c',)` by name, and §3.3's *"costs nothing today"* is true **because 4c bites**. So rev. 1–3 declared a fixed set that excluded the very condition the same document relies on. `11b`/`11c` are marked rev.-16 additions, so *"fifteen"* was a **pre-rev-16 count quoted after the work that changed it.** The class (FIXED by spec, not reopened) is unaffected | FIXED by spec, **count corrected** |
+| **A-2** | provenance | ⚠ **NARROWED TO CLAUSE (iv) (F14).** Rev. 1–3 required all four of `app_statmethods.tex:645-658` clauses (i)–(iv) on an endpoint that **performs no inversion**. Measured against that: **(i)** has no inverse to declare and **(ii)** no `ndf` — both are unsatisfiable except as *"not applicable"*, the form Ruling 2 already uses for `p`; **(iii)** a rank-truncation scan is a **NEW MEASUREMENT** on a 10,694-bin object, i.e. new compute, which A-set requirements must not need; **(iv)** transfers cleanly and **is the only one A-2's own sentence argues for** — *"the 5D candidate, its 4D projection and the published 2D block have different ranks."* **Requiring four while grounding one was inversion-grade criteria reaching an endpoint that releases no significance** | CONFORMANCE, **(iv) only** |
+| **A-3** | numerical reproducibility | `r_null = ‖x_cv2 − x_cv‖/‖x_cv‖` over the reported support, **`ε = 1e-9`**. ⚠ **WHAT IT ENFORCES, CORRECTED (F11): an L2-aggregate property of the CV pair — NOT Joseph's declared per-bin `REPRO_RTOL_PER_BIN`.** §C.3's inequality runs `r_null ≤ max_i|Δ_i/x_i|`, so `ε` on `r_null` is **never stricter** than the same numeral per bin; §C.3 called that *"the conservative one"*, which is true for false **failures** and **inverted for an acceptance gate**, where the risk is false **passes**. Measured on 10,694 bins at `ε = 1e-9`: a single bin with `|x_j| = 2.11e-06` gives `r_null` inside `ε` while its per-bin relative error is **1.03, i.e. 103%**. The `rep` predicate is `cv > 0`, so `|x_i|` has **no lower bound** and the gap is unbounded in principle. **⚠ So the declared per-bin standard is enforced by NO endpoint-A criterion**, and rev. 1–3's row read as if A-3 enforced it | PROPOSED, **claim narrowed** |
 | **A-4** | declaration stability | retained rank and retained-subspace projector gap across members, `‖P_0 − P_k‖_2 ≤ 1e-8`. ⚠ **NARROWED BY §4.1: this bounds the subspace and is SILENT on the released error bars** — not a partial guarantee about them. ⚠ **AND ITS TOLERANCE IS NOT LOAD-BEARING (§4.1a):** the statistic is ~binary (round-off vs exactly `1`), so every value in `[1e-12, 1e-3]` behaves identically. **It restates `RECOMMENDATION:392` clause (d)'s test with NO dependence on the ρ bound, so outcome (2) did not retire it** | PROPOSED, **narrowed** |
 | **A-5** | PSD | *"no eigenvalue below `−k·λ_max` for a declared `k`"*, never *"PSD"* or *"λ_min ≥ 0"*. `adopt_unified_5d.py:150-165` already uses `ev[0] >= -1e-12*ev[-1]`; the requirement is to make it a **receipt-recorded gate** with `k` declared | PROPOSED |
-| **A-6** | **finite-ensemble disclosure** — NEW, from Ruling 2 | §2.1. Per sample-covariance block — and there are **THREE**, not two (§2.1, F7): **verified** `N`, the normalization convention **which is NOT common across blocks** (two at unbiased `1/(N−1)`, `C_flux` at **biased `1/N`**), the finite-ensemble treatment **or the explicit statement that none was applied**, and — added by F1 (§4.4d) — **the REPLICA-DRAW SHARING STRUCTURE across the members of `K`**, without which A-7's floor cannot be sized. Inverted dimension **not applicable** at A. Plus part (b): **bind each product digest to its producing execution** (§2.1a) | PROPOSED |
-| **A-7** | **stability of the RELEASED error bars** — NEW, from Task 3 | §4.3. `s_proj` over the declared functional set. **Statistic proposed; boundary WITHHELD — and the ask is "NAME THE CLAIM", not "supply a scalar" (§4.4c).** Requires: a **declared relative degeneracy predicate** on each functional's baseline, evaluated **before** any PSD assertion and naming the **functional** (§4.3a, F8); and an `M`-change precondition (§4.3, F4). Its **floor** is the null quantile of `s_proj` itself, **not** a per-bar noise figure (§4.4d, F1) | PROPOSED (statistic only) |
+| **A-6** | finite-ensemble disclosure — **from Ruling 2, and ⚠ MOSTLY ALREADY DELIVERED** | §2.1, F10. **Ruling 2's FOUR fields, and exactly four** — `N`, convention, effective `p` (**not applicable** at A), finite-ensemble treatment. ⚠ **`PROVENANCE-20260822` on main already records all four for every block including `Flux`**, so A-6(a) **DUPLICATES** it — but **A-6(b) REPAIRS it**: that record evidences `N` from `:167,168`, which at `6f24fb00` are the **member-local** combines measured at **3 of 100** and **0 of 24** the same day (F10). **Right values, wrong arm.** So part (b) — **binding each product digest to its producing execution** — is the load-bearing half, and the defect it prevents is already instantiated in the committed record. ⚠ **The replica-draw sharing structure is NOT an A-6 field** — it moved to A-7 (F17), because Ruling 2 does not mandate it and presenting it here would read as conformance while being an extension | **REDUCED to (b)** |
+| **A-7** | **stability of the RELEASED error bars** — NEW, from Task 3 | §4.3. `s_proj` over the declared functional set. ⚠ **The REPLICA-DRAW SHARING STRUCTURE is an A-7 PRECONDITION here, not an A-6 disclosure (F17):** it is needed to *size `B'`*, not to disclose a property of the released object, and it therefore **requires no extension of Ruling 2**. **Statistic proposed; boundary WITHHELD — and the ask is "NAME THE CLAIM", not "supply a scalar" (§4.4c).** Requires: a **declared relative degeneracy predicate** on each functional's baseline, evaluated **before** any PSD assertion and naming the **functional** (§4.3a, F8); and an `M`-change precondition (§4.3, F4). Its **floor** is the null quantile of `s_proj` itself, **not** a per-bar noise figure (§4.4d, F1) | PROPOSED (statistic only) |
 
 ### 2.1 A-6 — and why Ruling 2 lands on A rather than B
 
@@ -159,7 +182,74 @@ construction:
 
     C_Z^c  =  D_Z^c (Σ_V C_b) D_Z^c  +  Σ_R C_b  +  Σ_A L_b  +  C_stat  +  C_ML
 
-> ## ⚠⚠ F7 — THE POPULATION IS **THREE**, AND REV. 1/2's NORMALIZATION CLAIM WAS FALSE OF THE THIRD
+> ## ⚠⚠⚠ F10 (REV. 4) — **A-6(a) RE-ISSUES A DELIVERED RULING-10 DELIVERABLE, AND F7 BELOW WAS NOT A DISCOVERY**
+>
+> **`docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md` is on `origin/main`
+> at `6f24fb00` — 367 lines, filed 2026-08-22 under Joseph's ruling 10, whose scope is A-6's four
+> fields verbatim.** I verified it exists and read it. **My rev.-3 packet cites it nowhere.**
+>
+> **What it already contains, measured — and this is worse than the finding as it was relayed to me:**
+>
+> | | already in the committed record |
+> |---|---|
+> | `C_stat` / `C_ML` | `:143-144` — **N = 100 / 24, unbiased `1/(N−1)`, `p` —, none applied.** Identical to my §2.1 on every field |
+> | the *"enforced, not merely declared"* argument | `:146-150`, from the **same** `load_replica_manifest` raise, citing `replica_manifest.py:41-47` |
+> | the launcher enumeration | `:150` already names `run_budget_5d.sh:15,17` and `sbatch_combine_5d_budget.sh:14,16` as *"three concordant"* sources |
+> | ⚠ **the FLUX band — F7's "discovery"** | `:128` — **`Flux` (PPFX), N = 100, biased `1/N`, none applied**, *"the one genuine multiverse draw in `C_syst`"* |
+> | ⚠ **my rev.-3 "refinement of my own"** | `:126` — the two-endpoint knob bands, *"a `±1σ` endpoint pair is a **deterministic rank-1 outer product with no sampling noise**"*. **I presented that as mine.** It was already there |
+> | ⚠ **a block I STILL do not have** | `:127` — **`2p2h`, N = 3, biased `1/N`**, with the record explicitly declining to classify it random-vs-deterministic. Neither my §2.1 nor F7 has it |
+> | ⚠ **and another** | `:129` — `__Normalization_flat`, deterministic rank-1, `n = null` |
+> | ⚠ **my §2.1a(b) gap** | `:157` already records both digests and says the census *"records no ensemble size"* |
+>
+> **Its census arithmetic closes: `42×2 + 3 + 100 = 187 = census.n_files_grouped`.** ⚠ **Note the
+> decomposition is NOT mine and must not be merged with it:** that census is
+> `analyze_universes_5d.py`'s band inventory (42 pair bands), while my §2.1 reads `VERT_BANDS` (13,
+> the unified-throw vertical set). **Two different decompositions of `C_syst`; conflating them
+> would manufacture a fourth error**, so I state both and reconcile neither here.
+>
+> ### ⚠⚠ AND THE ANSWER IS **REPAIR** — a fourth option neither the finding nor I had on the list
+>
+> **A-6(a) duplicates ruling 10's FIELDS. A-6(b) REPAIRS ruling 10's EVIDENCE. So A-6 is not
+> redundant work.** Found by the assessor, and I verified both legs myself — which mattered, because
+> this conclusion favours me and reverses the one I had drafted.
+>
+> **Leg 1.** `PROVENANCE-20260822` evidences `N` from `sbatch_finalize_5d_bkgaware_gpu.sh:167,168`.
+> At `6f24fb00` those `--expected-ids` invocations sit at **`:422,423`**, and `:417`'s own comment
+> reads ***"THE TWO MEMBER-LOCAL COMBINES"*** — they glob through `mr_prefix`. **So that record,
+> followed forward into the current tree, evidences `N = 100/24` from the MEMBER-SCOPED arm — the
+> arm §2.1a argues cannot have produced the digested bytes.**
+>
+> **Leg 2, and it is sharper.** `RUNBOOK-20260822-b1-lift-preflight.md:575-576` — same tree, **same
+> day** as the provenance record — measures those exact two calls:
+>
+> | call | validator | found |
+> |---|---|---|
+> | `:167` `STAT_COV` | `--expected-ids 1-100` over `<member>/boot_nd_5d/…` | **3** of 100 |
+> | `:168` `ML_COV` | `--expected-ids 1-24` over `<member>/seedscan_split_5d/…` | **0** of 24, and the directory is **absent entirely** |
+>
+> *"Verified across all three members 2026-08-22."* **So ruling 10's record cited, as its evidence
+> for `N = 100` and `N = 24`, an invocation whose populations were 3 and 0 on the day it was
+> written.** Its **values** are right — they match the **top-level** arm, complete at ids `1..100`
+> and `1..24`. Its **cited evidence names the wrong arm.**
+>
+> **THE FOUR-WAY ANSWER, STATED RATHER THAN LEFT TO A READER:** Ruling 2's A-6 **DUPLICATES** ruling
+> 10 on the four fields, and **REPAIRS** it on the evidence. **Not supersede** — the values stand.
+> **Not extend** — no new field. **⚠ The composition itself is Joseph's to pin**, and I am not
+> settling it; what I am doing is naming it, because *a record that does not state its relationship
+> to the prior deliverable will be read as duplicating it* — which is what F10 first said, and what
+> the evidence does not support.
+>
+> **⚠ AND THIS IS WHY A-6(b) IS THE LOAD-BEARING HALF, not the leftover.** Part (b) asks that each
+> product digest be bound to its producing execution. Ruling 10's record shows exactly what goes
+> wrong without it: **a correct value evidenced by the wrong arm, undetectably**, because `N` is a
+> count and both arms declare the same ranges (§2.1a). **The defect part (b) prevents is already
+> instantiated in the committed record**, which is stronger evidence for the requirement than any
+> argument I made for it.
+>
+> ## ⚠⚠ F7 (REV. 3) — THE POPULATION IS **THREE**, AND REV. 1/2's NORMALIZATION CLAIM WAS FALSE OF THE THIRD
+>
+> *Kept because the correction to rev. 1/2 stands on its own; **but see F10 above — none of it was
+> new**, and one paragraph of it claimed originality it did not have.*
 >
 > **Rev. 1 read: *"Exactly two summands are sample covariances: `C_stat` and `C_ML`."* That is
 > false, and the second half of the error is worse than the first.** Raised by the independent
@@ -187,7 +277,8 @@ construction:
 > recurses** — and the derivation is what supplied the false confidence. Third instance of this
 > exact shape in this one document, after §1's projected diagonal and §2.1's wrong `C_ML` producer.
 >
-> **One refinement of my own, from re-reading `:460`:** `mat_covariance` is applied to **all 13**
+> **One refinement of my own, from re-reading `:460` (the 12 knob bands) together with `:467`
+(flux) — ⚠ `:460` alone reaches only 12 of the 13:** `mat_covariance` is applied to **all 13**
 > vertical bands — the 12 knob bands over their two declared `±` endpoints, and flux over its
 > universes. **All 13 therefore carry the biased `1/N` normalizer.** But a two-point `±` endpoint
 > pair is a *deterministic* construction, not a random ensemble, so it has no ensemble size to
@@ -280,8 +371,14 @@ exited 0. That is a receipt/jobid question about existing execution evidence, **
 question — and **nothing here scopes or requests regeneration.**
 
 **⚠ AND THE BINDING IS GENUINELY AMBIGUOUS IN THE CODE, which is why it must be established rather
-than assumed.** At least three tracked sites issue an equivalent command: `sbatch_combine_5d_budget.sh:14,16`,
-`run_budget_5d.sh:18`, and `sbatch_finalize_5d_bkgaware_gpu.sh:422` — and **the third is
+than assumed.** The per-block candidate set, ⚠ **corrected in rev. 4 and now exact, because the whole
+point of the enumeration is that code alone cannot say which execution produced the digested bytes**:
+`sbatch_combine_5d_budget.sh:14` / `:16`; **`run_budget_5d.sh:15` (`C_stat`) and `:17` (`C_ML`)** —
+*rev. 2-3 cited `:18`, which is the `--out` CONTINUATION line, so the `C_stat` invocation went
+uncited*; and `sbatch_finalize_5d_bkgaware_gpu.sh:422` (`C_stat`) / **`:423`** (`C_ML`). A covering
+search also finds `run_ai1_combine.sh:13` (ids `1-12`), the 4D pair and the two FPS launchers —
+**different globs, tags and products, so not competitors for these two digests.** — and **the
+member-scoped site is
 MEMBER-SCOPED**, its glob passing through `mr_prefix`, so it reads a per-member replica directory
 rather than the top-level one. **The declared id range is the same; the population it ranges over is
 not.** Code alone therefore cannot say which execution produced the digested bytes. *(No value from
@@ -313,9 +410,16 @@ producing job of either digest, and I am not claiming that search would fail.
 2. **`N` bounds the rank of the released object.** A sample block from `N` members has rank `≤ N−1`,
    which feeds directly into A-2's clause-(iv) obligation to say *which* covariance is meant and at
    what rank. That obligation is A's, and it cannot be discharged without `N`.
-3. **⚠ DECISIVELY: the number is not IN the object at endpoint B.** A later consumer opening the
-   ROOT file finds a `TH2D` and no provenance — recovery requires the producing launcher and its
-   execution record, which are construction-time artifacts. **A
+3. ⚠ **REV. 4 WEAKENS THIS, BECAUSE REV. 2's VERSION CONTRADICTED §2.1a THIRTY LINES BELOW IT
+   (F9).** Rev. 2 asserted, under the word **DECISIVELY**, that *"if `N` is not recorded at
+   construction time it is unrecoverable"* — while §2.1a(ii), headed *"I SHOULD NOT HAVE IMPLIED
+   IT"*, establishes the exact counterexample: `N` **is** recoverable with no stamp and no replica
+   files. **My own withdrawal reached the heading and body of (ii) and not the reason carrying the
+   A-versus-B routing** — a withdrawal that stops at the site it was written for, which is a shape
+   this campaign has a standing rule about. **The true version, which still routes A-6 to A:** the
+   artifacts recovery depends on — the producing launcher and its execution record — are
+   **construction-time** artifacts. Weaker, and sufficient. **Reasons 1 and 2 are independent of
+   this and unaffected. A
    requirement must sit where its operand exists** — if `N` is not recorded at construction time it is
    unrecoverable, and a B-stage disclosure requirement would be unsatisfiable in principle.
 
@@ -783,6 +887,46 @@ and no reduction has to be chosen. **Comparing like with like is the whole repai
 `min(achievable, acceptable)` was withdrawn in rev. 19 for exactly that substitution. `B'` bounds
 `δ_proj` from **below**; naming the claim bounds it from above.
 
+#### 4.4e ⚠ F18 — `B'`'s QUANTILE LEVEL `q` IS A PARAMETER, AND WHOSE IT IS DEPENDS ON A RULE
+
+**UPHELD. Rev. 3 wrote *"a declared upper quantile"* and never said which, nor what declaring it
+commits to.** The level moves `B'` materially — reported at ~45% between median and 99th at one
+configuration — but **the magnitude is not the finding.** The finding is:
+
+> **If `δ_proj` is set AT `B'` — the bottom of `[B', S]`, which is where a lane under pressure will
+> put it — then `1 − q` is EXACTLY the rate at which a perfectly stable object returns NOT MET.**
+> Declaring the 95th quantile would declare a **5% false-failure rate**.
+
+**So *"needs no new scientific input"* was true of every input except that one.** Withdrawn as
+stated.
+
+**THE CLASSIFICATION, and it is CONDITIONAL — which is the honest form, because the same symbol is
+two different things depending on a rule stated elsewhere in this document:**
+
+| if… | then `q` is | whose |
+|---|---|---|
+| **`δ_proj = B'`** | a **SCIENTIFIC ACCEPTANCE INPUT** — it *is* the null NOT-MET rate | **Joseph's** |
+| **`δ_proj` set from the named claim, with `B' ≤ δ_proj` used only as a FEASIBILITY CHECK** | a **conditioning/convention parameter** — how conservatively feasibility is asserted | **mine to propose** |
+
+**And the second is the case, BECAUSE `δ_proj = B'` IS FORBIDDEN** — that substitution is precisely
+what rev. 19 withdrew for `null_epsilon`, and §4.4d already bars it. **So `q` is a conditioning
+parameter *only because of that bar*, and the bar is load-bearing rather than decorative.**
+⚠ **If anyone sets `δ_proj = B'`, `q` reverts to being Joseph's, and A-7 must refuse rather than
+silently reinterpret its own parameter.**
+
+**MY PROPOSAL: `q = 0.99`, with two obligations attached.**
+1. **Why high is the SAFE direction for a floor** — `B'` enters as `B' ≤ δ_proj`, so a **larger**
+   `B'` makes feasibility **harder** to assert. Conservatism here means refusing to call a tolerance
+   distinguishable from noise when it is marginal. The direction is the opposite of a tolerance's.
+2. **`q` must be reported WITH `B'`, never separately.** A `B'` quoted bare is uninterpretable, and
+   the number that would be quoted bare is the one this whole finding is about.
+
+**⚠ AND ONE IMPLEMENTATION CAUTION, adopted from the reviewer and not a finding:** `B'` must be
+simulated with the **`|U|` that actually runs**, not the nominal one. §4.3a's degeneracy predicate
+does not *remove* functionals — all three cohorts terminate in refusal, so `|U|` is unchanged and
+there is no mis-sizing — but a failing declaration must be repaired before a run succeeds, and the
+repaired `|U|` is the one `B'` must be sized for.
+
 **WHAT F1 ADDS TO A-6, and it is the actionable part:**
 
 > **A-6 must declare, per sample-covariance block, the REPLICA-DRAW SHARING STRUCTURE across the
@@ -814,14 +958,48 @@ changed.** Measured at `6f24fb00`: `:128` `Cinv = np.linalg.inv(Cs)`, `:130` pri
 `ndf = {n_rep}` — the **bin count**, where `app_statmethods.tex:648` clause (ii) (`:648`) mandates the
 **retained rank**. The file itself computes `rank_at_1em12` at `:123` and does not use it as `ndf`.
 
+> ## ⚠⚠ F15 (REV. 4) — THE DISPOSITION SURVIVES, THE CHARACTERIZATION RAN THE NOTE BACKWARDS
+>
+> **`do-not-change` stands. But rev. 1–3 overstated in BOTH directions, and one of my two
+> qualifications is simply wrong.**
+>
+> **(1) CLAUSE (ii) DOES NOT REACH A 2D OBJECT, so "non-conformer" inverts the scoping.** The note
+> says so twice — `:645` *"must not be used **for an N-D covariance**. Any **N-D** χ² shall instead
+> quote (i)…(v)"*; `:636` *"It does not transfer to the N-D covariances."* And `:628-634`
+> affirmatively **justifies** the 2D choice: *"dimension-conditional, and justified here by the
+> truncation scan — not by convention… the scan is the evidence; 205 is not assumed."* **2D is the
+> case where `ndf = n_reported` IS licensed.** So C11 is not a clause-(ii) non-conformer.
+>
+> **(2) "LIVE" IS UNESTABLISHED.** `RANK-AND-INVERSION-20260810.md:56` verdicts the ours-only
+> `χ²/ndf` as *"2D, diagnostic … safe — it is the illustration, not a result"* — and this script's
+> branch is the **direct** inverse (`:126` *"no pseudo-inverse"*), so it is not even that
+> illustration's source.
+>
+> **(3) ⚠ AND MY FIRST QUALIFICATION IS FALSE AS STATED.** I wrote *"`np.linalg.inv` is correct at
+> full rank."* The inverted object is `Cs = Cu + Cb` (`:117`, `:120`), which the note puts at rank
+> **140→201 of 205** (`:693-696`), and **`np.linalg.inv` does not raise on a NEAR-singular matrix —
+> only an exactly singular one** — so the `try/except` at `:127-133` does not cover the case. The
+> rank is only **printed** at `:124`, so the discriminating measurement exists at runtime and
+> nowhere in the tree. *(The assessor does not claim the object IS rank-deficient; it claims my
+> antecedent is unestablished. Correct.)*
+>
+> **(4) My SECOND qualification stands and I keep it:** being out of scope is **not** conformance.
+>
+> **NET: `do-not-change` survives on DIFFERENT GROUNDS.** Not *"a live conformance defect inside the
+> protected 2D scope"* — that told Joseph something false in the alarming direction — but: **a 2D
+> diagnostic to which clause (ii) does not apply, whose conditioning is unmeasured, and which Ruling
+> 1 does not in any case authorise anyone to touch.** ⚠ **And a diagnostic is not the "validated 2D
+> scope" either**, so rev. 1–3 also overstated its protection.
+
 **Ruling 1 preserves the validated 2D scope unchanged, so this is out of scope to change, and the
 exclusion is recorded here explicitly** — an unstated exclusion is the failure mode this packet family
-has already paid for twice. Two qualifications so the row is not misread later:
+has already paid for twice. **Read the F15 box above before citing either qualification below; the
+first is withdrawn.**
 
-- `np.linalg.inv` is **correct at full rank**, per N2's control; the non-conformance is the `ndf`
-  label, not the inverse.
-- Being out of scope is **not** conformance. C11 remains a non-conformer; it is a non-conformer
-  nobody is authorised to touch under this ruling.
+- ~~`np.linalg.inv` is **correct at full rank**, per N2's control~~ — **WITHDRAWN (F15(3)):** the
+  antecedent is unestablished and `inv` does not raise on a near-singular operand.
+- Being out of scope is **not** conformance. C11 remains outside the ruling's authorisation; it is
+  **not** thereby certified conformant.
 
 ---
 
@@ -859,9 +1037,16 @@ has already paid for twice. Two qualifications so the row is not misread later:
 3. **C6's hazard is CONDITIONAL and the condition is unmeasured.** Whether `coverage_valid_nd.py` is
    ever invoked with a projected `--cov` operand is a question about *invocations*, and no invocation
    record was searched. §1.1 says conditional; it does not say which.
-4. **The `s_corr` / `s_eig` rejections are judgements, not measurements.** I did not price `s_eig` at
-   Z's real dimension — its docstring's `1-3 min` is a **local** figure with runtime unestablished, and
-   I am quoting it as such rather than relying on it.
+4. ⚠ **REV. 4 CORRECTS THIS — IT UNDER-CLAIMED, IN MY OWN VOCABULARY (F12).** `s_corr`'s
+   rejection is **PROVEN, not a judgement**, and proven by a construction already in this document:
+   on §4.1's `C_k = (1+a)C_0`, a correlation matrix is **scale-invariant**, so `s_corr` sits at
+   `~1.5e-16` while the released bars move `2.4695%` / `41.4214%` / `200.0000%` at
+   `a = 0.05 / 1 / 8`. **`s_corr` is exactly zero while the bars move without bound** — which is
+   §4.2's stated reason for rejecting it (*"can stay quiet when one does"*), now demonstrated.
+   **This matters because §6 is the table a later lane cites to decide what needs re-deriving, and
+   a proven leg filed as a judgement invites re-derivation of something settled.** `s_eig` is
+   correctly a judgement: it tracks `a` exactly and is rejected on interpretability and cost, and
+   its `1-3 min` is a **local** figure with runtime unestablished.
 5. **No production leg set exists, so §3's mechanics are established over the leg sets that exist.**
    Adoption changes the mechanism — by design (probe §4(e)) — and that is the point of §3.3, but it
    means §3.1's finding is a statement about **today's** tree.
@@ -891,18 +1076,48 @@ has already paid for twice. Two qualifications so the row is not misread later:
    and the last of those is **undeclared**. It is not invented here. What would measure it is named
    in §4.4d and is the **same records search** as §2.1a(b). `B'` also inherits an iid-Gaussian
    replica model, stated rather than measured.
-11. **⚠ A DISCREPANCY WITH THE REVIEWER I DID NOT RESOLVE.** It reports the null/`B` ratio invariant
-   in the variance share `f` (*"~4.8 for every share tried, because `f` scales both sides"*). My
-   construction gives `8.28 → 5.59` as `f` falls `1.0 → 0.05`, because my deterministic block
-   enlarges the **baseline** bar as well as damping the noise. **Reported, not reconciled.** The
-   qualitative conclusion — ratio ≫ 1 at independent draws — holds in both.
+11. **✅ RESOLVED IN REV. 4, AND IT RESOLVES TOWARD THE REPLACEMENT.** The `f`-dependence
+   disagreement is closed: the reviewer **withdraws *"invariant"*** (it summarised four printed rows
+   by the last three), and at 4,000 trials gets `5.24 → 4.83` for `f = 1.0 → 0.01`. **The drift is
+   real and my mechanism is confirmed and now mechanical:** `f` *does* cancel in the **scale** to
+   two parts in a thousand, and the entire residual sits in the **max/SD ratio** — the shape of the
+   null maximum — because at `f = 1` the baseline bar itself fluctuates ~7.1%, so a low `bar_0`
+   inflates every relative difference, while a large deterministic block pins it. That is
+   *"enlarging the baseline bar"* made precise.
+   **⚠ And the magnitude gap was ESTIMAND, not error, on either side:** my `8.28 → 5.59` is an
+   **upper quantile over ~10×1000**; its `5.24 → 4.81` is a **median over 10×100**. Both reproduce.
+   **The transferable conclusion: the drift is real, it saturates below `f ≈ 0.5`, and no ratio
+   transfers without naming the QUANTILE and `|K|×|U|`.**
+   **⚠ Which is an argument FOR `B'`, not a footnote about it:** since the ratio moves with `f`,
+   with the quantile and with the set size, **no fixed multiplier converts `B` into a floor for the
+   maximum**, so simulation is the only route — and that is what `B'` is.
+   ⚠ *One correction to my own rev.-3 wording: I described the per-row sharing figures as agreeing
+   "in the third digit." `5.17` against `4.78` is **8%**. The estimand/set-size explanation covers
+   it, but the agreement is not as tight as I said it was.*
 12. **`κ` (§4.3a) is proposed as a CLASS, not a value.** I anchor its kind on the applied `rcond`
    policy and explicitly do not propose a number. If the policy does not in fact transfer, the
    requirement stands and its threshold is open.
-13. **F8's closing requirement is UNREVIEWED BY CONSTRUCTION.** Both lanes were routed to assess it
+13. ⚠ **A CULPABLE ABSENCE (F16): no released projection names its BUILDER and COMMIT.**
+   Pre-registered and **unmet and unrecorded** until now. Four non-equivalent builders exist at
+   `6f24fb00`, and `FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md`
+   — **in main** — records that they agree on weights and **diverge on refusal**. The finding is
+   committed and the requirement was pre-registered, so this gap is mine and not an oversight I get
+   to call expected. **A released projection must name its builder and commit**; without that,
+   `s_proj`'s `U` is not identified.
+14. **F8's closing requirement is UNREVIEWED BY CONSTRUCTION.** Both lanes were routed to assess it
    before it was written, so it has no independent check yet — that is the intended sequencing, not
    an oversight, but it means §4.3a is the least-tested thing in this document.
-14. **The population pin moved 542 → 543** and I re-pinned it. Verified by **set difference on the
+15. **⚠ TWO OF THIS DOCUMENT'S STRONGEST-SOUNDING CONFIRMATIONS ARE PARTLY SELF-CONFIRMATION, and
+   the assessor declared it rather than being caught.** It contributed material at five sites —
+   `:116`, `:166`, `:197`, `:294`, `:346`. It is not recused, because each is a measurement
+   re-derivable from the cited lines rather than a remedy. **But `:294` adopts its equal-`N`
+   framing verbatim and `:346-347` uses its *"structurally unreachable"* in place of my *"inert"*,
+   so those two paragraphs contain its sentences and it cannot be their only reader.** Both are
+   routed to the mathematical reviewer as spot-checks. **Recorded here so a later reader does not
+   read "confirmed by the assessor" as independent where it is partly the assessor reading its own
+   sentence back.** It enumerated all five itself rather than declaring one, which is the behaviour
+   that made this visible at all.
+16. **The population pin moved 542 → 543** and I re-pinned it. Verified by **set difference on the
    tracked path lists**, not by the count: exactly one path added, none removed. A re-pin is not an
    extension, but it is a deliberate act on an instrument and it is recorded here rather than left
    in a diff.
