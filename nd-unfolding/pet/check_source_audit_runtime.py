@@ -12,10 +12,11 @@ import argparse
 import copy
 import importlib
 import json
+import math
 import os
 from pathlib import Path
 import sys
-from typing import Any
+from typing import Any, cast
 
 import launch_typed_descriptor_source_audit as launcher
 
@@ -54,10 +55,37 @@ class SyntheticReader:
         """Copy a synthetic row with a distinct fake event key; never read ROOT."""
         raw = copy.deepcopy(self.rows[entry % len(self.rows)])
         raw["ev_gate"] = entry
-        return raw
+        return cast(dict[str, Any], raw)
 
     def close(self) -> None:
         """Satisfy the reader lifecycle without opening a file handle."""
+
+
+def check_activation_accuracy() -> dict[str, float]:
+    """Measure the elementary activation allowance on a fixture-independent grid."""
+    import numpy as np
+
+    tf = importlib.import_module("tensorflow")
+    values = np.concatenate(
+        (
+            np.linspace(-20, 20, 20001, dtype=np.float32),
+            np.array([-1e-30, 0, 1e-30], dtype=np.float32),
+        )
+    )
+    oracle = np.array([math.tanh(float(value)) for value in values])
+    errors = {
+        name: float(np.max(np.abs(actual - oracle)))
+        for name, actual in (
+            ("numpy", np.tanh(values)),
+            ("keras_tensorflow", tf.math.tanh(values).numpy()),
+        )
+    }
+    if any(
+        not math.isfinite(error) or error > audit.ACTIVATION_ATOL
+        for error in errors.values()
+    ):
+        raise AssertionError("Elementary tanh accuracy exceeds activation allowance")
+    return errors
 
 
 def main() -> int:
@@ -71,6 +99,7 @@ def main() -> int:
     initialized = False
     forward = None
     versions: dict[str, str] = {}
+    activation_errors: dict[str, float] = {}
 
     def record_versions() -> None:
         for name in ("numpy", "scipy", "tensorflow", "keras", "ROOT"):
@@ -97,6 +126,7 @@ def main() -> int:
         try:
             if forward is None:
                 forward = audit.ForwardCheck()
+                activation_errors.update(check_activation_accuracy())
             forward(batch)
         finally:
             record_versions()
@@ -129,6 +159,8 @@ def main() -> int:
         "peak_observed_threads": budget.peak_threads if budget else None,
         "peak_observed_rss_bytes": budget.peak_rss if budget else None,
         "source_execution_authorized": False,
+        "activation_grid_max_absolute_errors": activation_errors,
+        "numerical_checks_first_chunk": forward.numerical_checks if forward else [],
     }
     (args.output / "runtime-summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True) + "\n"

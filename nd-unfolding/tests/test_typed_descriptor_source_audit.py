@@ -378,7 +378,7 @@ def test_root_reader_rejects_repeated_extended_or_reordered_entries() -> None:
             reader.read_entry(entry)
 
 
-@pytest.mark.parametrize("name,observed", [("Threads", "3"), ("VmRSS", "9000000 kB")])
+@pytest.mark.parametrize("name,observed", [("Threads", "5"), ("VmRSS", "9000000 kB")])
 def test_runtime_budget_observes_native_thread_and_memory_limits(
     name: str, observed: str
 ) -> None:
@@ -580,3 +580,87 @@ def test_output_namespace_cannot_overwrite_evidence(tmp_path: Path) -> None:
     with pytest.raises(FileExistsError):
         run_fake(tmp_path)
     assert marker.read_text() == "retain"
+
+
+@pytest.mark.parametrize("threads", [2, 4])
+def test_runtime_accepts_authorized_thread_count(threads: int) -> None:
+    with mock.patch.object(
+        Path, "read_text", return_value=f"Threads: {threads}\nVmRSS: 100 kB"
+    ):
+        launcher.RuntimeBudget().check()
+
+
+def test_projection_oracle_matches_fsum_on_cancelling_fixture() -> None:
+    import math
+
+    fixture = json.loads((PET_ROOT / "runtime_fixtures/source_audit.json").read_text())
+    batch = audit.map_row(fixture["rows"][0], source.FIXED_SOURCES[0], 0)
+    reference = typed.ReferenceTypedDescriptorEncoder.initialize(
+        audit.identity_normalization(), projection_dim=16, seed=0
+    )
+    for name, encoder in reference.family_encoders.items():
+        features = encoder.contract.prepare_features(
+            batch.descriptors.families[name], encoder.normalization
+        )
+        oracle, budget = audit.projection_error_budget(
+            features, encoder.weight, encoder.bias
+        )
+        for row, values in enumerate(features):
+            for column in range(16):
+                linear = math.fsum(
+                    [
+                        float(x) * float(w)
+                        for x, w in zip(values, encoder.weight[:, column])
+                    ]
+                    + [float(encoder.bias[column])]
+                )
+                assert abs(oracle[row, column] - math.tanh(linear)) < 1e-12
+        audit.require_within_budget(
+            np.tanh(features @ encoder.weight + encoder.bias), oracle, budget, name
+        )
+        corrupted = oracle.copy()
+        corrupted[0, 0] += 2 * budget[0, 0]
+        with pytest.raises(AssertionError, match="rounding budget"):
+            audit.require_within_budget(corrupted, oracle, budget, name)
+
+
+def test_activation_allowance_against_scalar_float64_oracle() -> None:
+    import math
+
+    tf = pytest.importorskip("tensorflow")
+    # Include saturation, near-zero values and both signs independently of the fixture.
+    values = np.concatenate(
+        (
+            np.linspace(-20, 20, 20001, dtype=np.float32),
+            np.array([-1e-30, 0, 1e-30], dtype=np.float32),
+        )
+    )
+    oracle = np.array([math.tanh(float(value)) for value in values])
+    for actual in (np.tanh(values), tf.math.tanh(values).numpy()):
+        assert np.max(np.abs(actual - oracle)) < audit.ACTIVATION_ATOL
+
+
+@pytest.mark.parametrize("target", ["features", "weights", "output"])
+def test_forward_rejects_corrupted_backend(target: str) -> None:
+    pytest.importorskip("tensorflow")
+    batch = audit.map_row(_raw_entry(1), source.FIXED_SOURCES[0], 0)
+    forward = audit.ForwardCheck()
+    forward(batch)
+    layer = forward.model.family_encoders["prongs"]
+    if target == "weights":
+        weights = layer.token_mlp.get_weights()
+        weights[0][0, 0] += 0.1
+        layer.token_mlp.set_weights(weights)
+        with pytest.raises(AssertionError):
+            forward(batch)
+    else:
+        owner = layer if target == "features" else layer.token_mlp
+        method = "prepare_features" if target == "features" else "call"
+        original = getattr(owner, method)
+
+        def corrupt(*args: Any, **kwargs: Any) -> Any:
+            return original(*args, **kwargs) + 0.1
+
+        with mock.patch.object(owner, method, side_effect=corrupt):
+            with pytest.raises(AssertionError):
+                forward(batch)

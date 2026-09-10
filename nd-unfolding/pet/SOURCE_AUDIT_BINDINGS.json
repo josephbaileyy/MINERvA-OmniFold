@@ -363,24 +363,24 @@
     "docs/orchestration/state/gate6-member-trajectories-result-56847059.json": "8f40541f1d8fec92b0e37885b1d24b851843d06f4c220f8de5ad1bc47265b6a5",
     "docs/orchestration/state/pet-typed-descriptor-fixed-source-smoke-20260901.json": "0a2bea96f2d6779fc98bca1ee9ad7c32578780ec35f42fc4875d974ddfc268b6",
     "nd-unfolding/pet/PRONG_BRANCH_SEMANTICS.md": "529eff564bbe0c55953a42d54ac68bd304e093253e526d529c63b1f44f0b9a27",
-    "nd-unfolding/pet/SOURCE_AUDIT_RUNBOOK.md": "f31397bf07079f955578de2bea8581d2f165ea9e20c7a6f8feaa78f5f3923680",
+    "nd-unfolding/pet/SOURCE_AUDIT_RUNBOOK.md": "375ccb78887a9afb30ac001f456523bc7d868f7469633bd324d5cdde01816cad",
     "nd-unfolding/pet/SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md": "b6719f24e24b6096efde8f5eb4c2c2558e5c4db0137c9bfac980f42034c3530a",
     "nd-unfolding/pet/atomic_write.py": "71527c2af7a5c039d1ab103e000909f4b2ce793f9788e426369ef53c44c5395e",
-    "nd-unfolding/pet/check_source_audit_runtime.py": "3a49384d9fd2eb193b166a1aa75ab0974cbd7927d43bb5087fa99b2ce3433010",
+    "nd-unfolding/pet/check_source_audit_runtime.py": "541ed9a7c134c07d028c5dfcaf7f1d431ad998d024aba6043907e9cba656bafc",
     "nd-unfolding/pet/launch_typed_descriptor_source_audit.py": "45107f8f914724e8304b60cc068f81d8c85de4790ec9f4f5685335e4c8d299ce",
     "nd-unfolding/pet/runtime_fixtures/source_audit.json": "a870e99d84ab813ea4f0db3f0c56999f0b8088651ca3acd675abb4e901c03387",
     "nd-unfolding/pet/source_audit_runtime_requirements.txt": "3b9b836091979687e9ed3d331c90c5c7410da8605728d32fe8259fd02ba0a2c5",
     "nd-unfolding/pet/typed_descriptor_keras.py": "dccc8c616c03c24db2ce29bd0b6de56d08d37468fbdff2b6d1935c6ff2c9348f",
-    "nd-unfolding/pet/typed_descriptor_source_audit.py": "1b871a19c68172f1f35ceaf7472228ceb9133f34dd290252d8b84ca12dab4945",
+    "nd-unfolding/pet/typed_descriptor_source_audit.py": "e7674e325eca7d310aef82b343d4835f07a7c94f9fe87305108e68d15bd73393",
     "nd-unfolding/pet/typed_descriptor_source_smoke.py": "5dedaac877079c5ed68d20afd9fa08c8851e160898e34cf8b89b02e30c86bd40",
     "nd-unfolding/pet/typed_descriptors.py": "1a0469778cc86948c7da2ff7d5795f8d19625b2ebd755eb429c8e57f4fedf08b",
-    "nd-unfolding/tests/test_typed_descriptor_source_audit.py": "46852ad5f90dc20f429abb25e596c373bc007457554565a2ff38d59a5420a497"
+    "nd-unfolding/tests/test_typed_descriptor_source_audit.py": "b3ba9ddc6754babfcfd93560d7e14d6356ad2ea610ccf666b36805985428defe"
   },
   "limits": {
     "cpu_seconds": 3600,
     "memory_bytes": 8589934592,
     "output_bytes": 1073741824,
-    "threads": 2,
+    "threads": 4,
     "wall_seconds": 1800
   },
   "ordered_branches": [

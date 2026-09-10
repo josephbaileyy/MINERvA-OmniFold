@@ -33,7 +33,7 @@ LIMITS = {
     "wall_seconds": 1800,
     "memory_bytes": 8 * 2**30,
     "output_bytes": 2**30,
-    "threads": 2,
+    "threads": 4,
     "cpu_seconds": 3600,
 }
 # Reserve space for both native logs and a terminal receipt, including failures.
@@ -278,7 +278,7 @@ FIELD_TABLE: dict[str, dict[str, tuple[str | tuple[str, ...], slice | int | None
 
 def expected_field(
     raw: Mapping[str, Any], family: str, name: str, token: int
-) -> tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray[Any, Any], np.ndarray[Any, Any]]:
     """Independently calculate v2 storage and masks from the explicit table."""
     branch, component = FIELD_TABLE[family][name]
     if family == "photons":
@@ -352,6 +352,59 @@ def identity_normalization() -> typed.FrozenNormalization:
     )
 
 
+# Preserve the original absolute allowance at the elementary activation, where
+# outputs are bounded by one. Dot and pooling error scale with their operands.
+ACTIVATION_ATOL = 1e-6
+
+
+def projection_error_budget(
+    features: np.ndarray[Any, Any],
+    weight: np.ndarray[Any, Any],
+    bias: np.ndarray[Any, Any],
+) -> tuple[np.ndarray[Any, Any], np.ndarray[Any, Any]]:
+    """Return float64 tanh projections and float32 forward-error allowances.
+
+    The gamma bound covers products, arbitrary-order summation and bias addition.
+    Monotonic tanh propagates the dot interval, including saturation. The added
+    activation allowance is a checked numerical contract, not a libm guarantee.
+    Inputs are the identical float32 operands supplied to both backends.
+    """
+    values = features.astype(np.float64)
+    weights = weight.astype(np.float64)
+    offsets = bias.astype(np.float64)
+    operations = 2 * features.shape[1] + 2
+    unit_roundoff = 2.0**-24
+    gamma = operations * unit_roundoff / (1 - operations * unit_roundoff)
+    linear = values @ weights + offsets
+    magnitude = np.abs(values) @ np.abs(weights) + np.abs(offsets)
+    # Include the much smaller float64 oracle arithmetic error and gradual
+    # underflow allowance. No relative-to-output criterion is used here.
+    oracle_gamma = operations * 2.0**-53 / (1 - operations * 2.0**-53)
+    radius = (gamma + oracle_gamma) * magnitude + operations * 2.0**-149
+    projected = np.tanh(linear)
+    error = (
+        np.maximum(
+            np.tanh(linear + radius) - projected,
+            projected - np.tanh(linear - radius),
+        )
+        + ACTIVATION_ATOL
+    )
+    return projected, error
+
+
+def require_within_budget(
+    actual: np.ndarray[Any, Any],
+    oracle: np.ndarray[Any, Any],
+    budget: np.ndarray[Any, Any],
+    label: str,
+) -> float:
+    """Reject nonfinite results and report the largest used error fraction."""
+    difference = np.abs(actual.astype(np.float64) - oracle)
+    if not np.isfinite(difference).all() or np.any(difference > budget):
+        raise AssertionError(f"{label}: forward rounding budget exceeded")
+    return float(np.max(difference / np.maximum(budget, 2.0**-149), initial=0))
+
+
 class ForwardCheck:
     """Compare fixed seed-zero, width-16 NumPy and Keras projectors, without fit."""
 
@@ -370,6 +423,7 @@ class ForwardCheck:
             activation="tanh",
         )
         self.initialized = False
+        self.numerical_checks: list[dict[str, Any]] = []
 
     def __call__(self, batch: source.SourceContractBatch) -> None:
         """Require finite C0/C1 outputs, exact zero C0, and matched 64-wide rows."""
@@ -397,20 +451,8 @@ class ForwardCheck:
             raise AssertionError(
                 f"NumPy/Keras forward shapes differ: {expected.shape} != {actual.shape}"
             )
-        if not np.allclose(actual, expected, rtol=1e-5, atol=1e-6):
-            difference = np.abs(actual - expected)
-            tolerance = 1e-6 + 1e-5 * np.abs(expected)
-            row, column = np.unravel_index(
-                np.argmax(difference / tolerance), difference.shape
-            )
-            raise AssertionError(
-                "NumPy/Keras forward outputs differ: "
-                f"row={row}, column={column}, expected={expected[row, column]!r}, "
-                f"actual={actual[row, column]!r}, "
-                f"absolute_error={difference[row, column]!r}, "
-                f"allowed_error={tolerance[row, column]!r}, "
-                f"mismatched_values={int(np.count_nonzero(difference > tolerance))}"
-            )
+        _require_array_equal(actual[:, :13], expected[:, :13])
+        self._check_numerics(batch, inputs, expected, actual)
         for family in FIELD_TABLE:
             inputs[f"{family}_enabled"] = np.zeros_like(inputs[f"{family}_enabled"])
         disabled = self.model(inputs, training=False).numpy()
@@ -428,6 +470,88 @@ class ForwardCheck:
             disabled_batch, batch.detector_event_block
         ).conditioned_detector_event_features
         _require_array_equal(disabled, disabled_reference)
+
+    def _check_numerics(
+        self,
+        batch: source.SourceContractBatch,
+        inputs: dict[str, np.ndarray[Any, Any]],
+        expected: np.ndarray[Any, Any],
+        actual: np.ndarray[Any, Any],
+    ) -> None:
+        """Check operands exactly, then each backend against the float64 oracle."""
+        for family, encoder in self.reference.family_encoders.items():
+            ragged = batch.descriptors.families[family]
+            layer = self.model.family_encoders[family]
+            features = encoder.contract.prepare_features(ragged, encoder.normalization)
+            keras_features = layer.prepare_features(
+                inputs[f"{family}_values"],
+                inputs[f"{family}_masks"],
+                inputs[f"{family}_token_mask"],
+            ).numpy()
+            _require_array_equal(features, keras_features)
+            weights = layer.token_mlp.get_weights()
+            _require_array_equal(weights[0], encoder.weight)
+            _require_array_equal(weights[1], encoder.bias)
+            oracle, token_budget = projection_error_budget(
+                features, encoder.weight, encoder.bias
+            )
+            numpy_tokens = encoder.project(ragged)
+            keras_tokens = layer.token_mlp(keras_features, training=False).numpy()
+            keras_tokens *= ragged.token_mask[:, None]
+            oracle *= ragged.token_mask[:, None]
+            token_budget *= ragged.token_mask[:, None]
+            token_fractions = {
+                name: require_within_budget(tokens, oracle, token_budget, name)
+                for name, tokens in (("numpy", numpy_tokens), ("keras", keras_tokens))
+            }
+            output_slice = self.model.family_output_slice(family)
+            start_column = output_slice.start
+            fractions = {"numpy": 0.0, "keras": 0.0}
+            max_budget = 0.0
+            max_error = {"numpy": 0.0, "keras": 0.0}
+            for row in range(ragged.row_count):
+                start, stop = ragged.offsets[row : row + 2]
+                count = int(stop - start)
+                gamma = count * 2.0**-24 / (1 - count * 2.0**-24)
+                pooled = oracle[start:stop].sum(axis=0)
+                budget = token_budget[start:stop].sum(axis=0)
+                budget += gamma * (
+                    np.abs(oracle[start:stop]) + token_budget[start:stop]
+                ).sum(axis=0)
+                pooled *= ragged.enabled[row]
+                budget *= ragged.enabled[row]
+                max_budget = max(max_budget, float(budget.max(initial=0)))
+                for name, output in (("numpy", expected), ("keras", actual)):
+                    observed = output[row, start_column : start_column + 16]
+                    fractions[name] = max(
+                        fractions[name],
+                        require_within_budget(observed, pooled, budget, name),
+                    )
+                    max_error[name] = max(
+                        max_error[name],
+                        float(np.max(np.abs(observed - pooled), initial=0)),
+                    )
+            _require_array_equal(
+                actual[:, start_column + 16], expected[:, start_column + 16]
+            )
+            if len(self.numerical_checks) < len(FIELD_TABLE):
+                self.numerical_checks.append(
+                    {
+                        "family": family,
+                        "features_equal": True,
+                        "weights_equal": True,
+                        "features_sha256": hashlib.sha256(
+                            features.tobytes()
+                        ).hexdigest(),
+                        "weights_sha256": hashlib.sha256(
+                            encoder.weight.tobytes()
+                        ).hexdigest(),
+                        "max_token_error_fraction": token_fractions,
+                        "max_pool_error_fraction": fractions,
+                        "max_pool_absolute_error": max_error,
+                        "max_pool_budget": max_budget,
+                    }
+                )
 
 
 def _display(value: Any) -> Any:

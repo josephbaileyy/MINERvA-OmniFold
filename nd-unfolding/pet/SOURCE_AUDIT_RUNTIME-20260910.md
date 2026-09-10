@@ -1,6 +1,6 @@
 # PET source-audit runtime compatibility
 
-**Import compatibility repaired; full Linux runtime acceptance remains blocked.**
+**Revised local synthetic preflight passes; Linux resource acceptance is pending.**
 
 The locally passing synthetic runtime uses NumPy 1.26.4, SciPy 1.16.3,
 TensorFlow 2.16.2 and Keras 3.15.1. Installation pins are in
@@ -66,23 +66,58 @@ The source-audit unit suite passes all 60 tests after the diagnostic changes.
 Black, Ruff and targeted mypy pass on the changed source modules. The guard and
 comparison tolerance remain unchanged.
 
-## Contract decision still needed
+## Authorized follow-up and numerical criterion
 
-The current preparation still caps **all observed process threads at two** and
-uses `rtol=1e-5`, `atol=1e-6` for NumPy/Keras output agreement. Do not relax either
-criterion merely to obtain a pass, or call the local result Linux readiness.
+The user approved four observed process threads with two CPUs per step and one
+configured worker in each TensorFlow/native pool. Memory, CPU-time, wall-time,
+output and import-guard limits are unchanged. The revised preparation invalidates
+any authorization bound to an earlier preparation digest.
 
-A concrete proposed resource revision is four total process threads while
-retaining two allocated CPUs per step, one configured worker per TensorFlow
-pool, the 8 GiB process ceiling and the same bounded synthetic input. This is
-pending the user's answer; it has not been installed in the audit limits.
+The candidate comparison checks prepared feature arrays and copied kernel/bias
+arrays for exact equality on every chunk. Each backend's token projections and
+pooled outputs are then checked separately against a float64 oracle. Event
+columns, object counts and C0 remain exact checks. The first chunk's hashes,
+maximum absolute errors and fractions of the budget are included in the runtime
+summary. This is a synthetic numerical acceptance contract, not physics evidence.
 
-A numerical revision needs separate validation: compare identical prepared
-features and weights, measure each backend against a higher-precision oracle,
-and derive and power-test an error budget for the dot, activation and pooling
-operations. The observed failing fixture alone cannot set a new tolerance.
-Until that contract is supported, preserve the current FAIL and do not spend
-more allocations repeating the unchanged oneDNN comparison.
+For float32 unit roundoff `u = 2^-24`, a dot of width `n` uses the conservative
+`gamma_(2n+2) = (2n+2)u / (1-(2n+2)u)` bound, multiplied by
+`sum(abs(x_i*w_i)) + abs(bias)`. This covers separate products, arbitrary-order
+summation and bias addition; fused operations need no larger allowance.
+The calculation also includes float64 oracle roundoff and float32 underflow
+allowances. Applying monotonic `tanh` to both interval endpoints propagates
+this error while preserving saturation. The original `1e-6` absolute allowance
+is retained for each elementary activation, whose range is bounded by one;
+it is not a vendor-certified transcendental accuracy guarantee. Pooling adds
+the token bounds and `gamma_m * sum(abs(oracle_token) + token_bound)` for `m`
+tokens. Both backend results must fall within that independently calculated
+interval. There is no tolerance chosen from the observed final discrepancy.
+
+The activation allowance is tested against scalar float64 `math.tanh` on
+20,004 synthetic inputs spanning saturation, zero and both signs. The float64
+matrix oracle is separately checked against `math.fsum` products and scalar
+`tanh` for all coordinates of the first fixture row. Fault tests reject altered
+features, weights, token outputs and values outside the computed budget.
+These checks support the bounded synthetic runtime contract; they do not prove
+a universal error guarantee for arbitrary hardware or transcendental libraries.
+
+The revised local fake-reader run completes all 8,192 rows and 512 chunks under
+the unchanged import guard, with no foreign-checkout imports observed. Prepared
+features and weights agree exactly. The first-chunk maximum pooled absolute
+errors are `2.424e-6` for NumPy and `2.200e-6` for Keras; every individual
+comparison is inside its calculated budget. On the activation grid, maximum
+absolute errors are `5.885e-8` for NumPy and `2.385e-7` for TensorFlow, below the
+unchanged elementary activation allowance. These are development measurements
+from the uncommitted preparation, not committed Linux acceptance evidence.
+
+The audit suite passes 67 tests. Black, Ruff and strict targeted mypy pass on
+the changed source modules. An initial local invocation accidentally used the
+older SciPy 1.17.1 environment and reproduced the recorded guarded-import
+failure; the complete runs use the compatible SciPy 1.16.3 environment.
+
+Linux resource acceptance remains pending a committed preparation and bounded
+cluster run. Historical failed receipts above retain their original criteria
+and are not relabeled as passing.
 
 ## Reproduction
 

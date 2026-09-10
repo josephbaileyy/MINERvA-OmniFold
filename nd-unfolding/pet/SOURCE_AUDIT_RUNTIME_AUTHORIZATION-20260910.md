@@ -50,3 +50,21 @@ oneDNN enabled and disabled in separate output directories to measure the
 numerical difference. Thread, memory and output ceilings remain unchanged.
 No tolerance adjustment, guard change or real-source access is authorized by
 this comparison.
+
+
+## Authorized thread and numerical follow-up
+
+The user approved the following continuation with “okay do this,” and then
+requested continuation of that unfinished work:
+
+> Allow four total process threads while keeping two allocated CPUs, one configured worker per TensorFlow pool, and the existing memory and time limits.
+
+> Investigate the numerical difference before changing its tolerance. Check that both implementations receive identical features and weights, then compare their outputs against a higher-precision calculation. Any revised tolerance should follow a justified rounding-error budget—not simply exceed the observed discrepancy.
+
+> Then rerun the complete synthetic preflight. Keep real-source execution blocked until that passes.
+
+This supersedes the two-observed-thread ceiling for this continuation. The
+six-reserved-CPU, fifteen-minute shared allocation ceiling, two CPUs per step,
+one worker per native/TensorFlow pool, memory, process time and output limits
+remain unchanged. It permits a supported numerical criterion revision and the
+complete synthetic preflight; it does not authorize real-source execution.

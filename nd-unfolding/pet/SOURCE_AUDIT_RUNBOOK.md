@@ -80,8 +80,8 @@ The authority reference must identify the actual decision; setting a JSON boolea
 is not authorization. Pin the interpreter/environment in that decision. The
 launcher requires Linux process limits and `/proc` accounting, Python 3.11 or
 later, NumPy, PyROOT, TensorFlow and Keras. Synthetic validation used Python 3.11,
-NumPy 1.26.4, TensorFlow 2.16.2 and Keras 3.15.1. Native ROOT compatibility and the
-combined dependency footprint under these ceilings remain unmeasured.
+NumPy 1.26.4, TensorFlow 2.16.2 and Keras 3.15.1. The measured Linux dependency failures and current synthetic runtime
+qualification are recorded in [the runtime record](SOURCE_AUDIT_RUNTIME-20260910.md).
 
 After that decision, from the clean checkout of its `code_commit`, with the
 approved file at `../pet-v2-source-audit-authorization.json`, the exact command is:
@@ -105,9 +105,11 @@ cluster launcher and supplies no cluster authorization.
 The process uses no training or subprocess workers. Native compute thread
 settings are fixed to one, GPUs are hidden, and `/proc` checks actual thread
 count, RSS, wall time and process CPU use before source operations and writes
-and around forward checks. More than two observed native threads stops the run;
+and around forward checks. More than four observed process threads stops the run;
 an environment that creates extra dependency threads does not receive an
-exception to the protocol. Thread observations are boundary measurements, not
+exception to the protocol. Two CPUs per step and one configured worker in each
+TensorFlow pool remain the authorized synthetic allocation settings. Thread
+observations are boundary measurements, not
 continuous monitoring of transient native thread creation.
 
 Linux `RLIMIT_AS` caps address space at 8 GiB (a conservative bound, distinct
