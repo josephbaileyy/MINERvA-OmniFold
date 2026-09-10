@@ -28,6 +28,15 @@ WHAT EACH SECTION ESTABLISHES, and what it does NOT
 5  rev-7 arithmetic   MEASURED. Reproduces the withdrawn `5.00e-41` from its actual operand, which
                       is `values.tex`'s never-printed macro and not G's measured mean shift.
 
+6  pinv subspace     ⚠ THE LIMIT OF SECTION 1, and a defect in the criterion this probe supported.
+                      Section 1 bounds the TRUE inverse; the consumer uses `pinv`. Two near-equal
+                      modes straddling the cutoff can SWAP, holding retained RANK fixed while
+                      flipping the retained SUBSPACE -- and the bound then fails. Found by the
+                      z-independent-assessor lane; reproduced here independently. SYNTHETIC, at
+                      condition number ~1e15; whether real Z members do it is UNMEASURED.
+7  ndf direction     the `ndf` policy change INCREASES reported significances. I had declined to
+                      name a direction; that conflated two comparisons. Also the assessor's.
+
 `uq_math` is imported, never restated: a rule retyped is a second implementation.
 """
 from __future__ import annotations
@@ -322,6 +331,132 @@ def section_5_rev7_operand() -> None:
     print()
 
 
+def _retained_projector(C: np.ndarray, rcond: float = 1e-15):
+    """The orthogonal projector onto the subspace `pinv` RETAINS, and that subspace's dimension.
+
+    `numpy.linalg.pinv` keeps modes above `rcond * sigma_max`. The projector is the object the
+    criterion must gate on; the dimension is the proxy that is NOT sufficient -- section 6.
+    """
+    w, V = np.linalg.eigh(C)
+    keep = w > rcond * w.max()
+    U = V[:, keep]
+    return U @ U.T, int(keep.sum())
+
+
+def section_6_pinv_subspace(n: int = 9) -> None:
+    """⚠ THE LIMIT OF SECTION 1, AND IT IS A DEFECT IN THE CRITERION THIS PROBE SUPPORTED.
+
+    FOUND BY THE z-independent-assessor LANE. Reproduced here independently, from its description
+    rather than by running its probe, so the confirmation is a second measurement.
+
+    Section 1 bounds `d' C^-1 d` with the TRUE inverse. The consumer computes `d' pinv(C) d`
+    (`eavail_generator_significance.py:107,132`) -- and so does `_chi2` above. `pinv` DISCARDS modes
+    below `rcond * sigma_max`, so when two members RETAIN DIFFERENT SUBSPACES the interval does not
+    transfer, and the recommendation's first terminal-outcome rule gated INCONCLUSIVE on retained
+    RANK. Rank is a proxy and it is not sufficient: two near-equal eigenvalues straddling the cutoff
+    can SWAP, holding the rank fixed while flipping the retained subspace.
+
+    ⚠ THE CONSTRUCTION IS SYNTHETIC, at condition number ~1e15, and needs two modes to swap.
+    WHETHER REAL Z MEMBERS DO THIS IS UNMEASURED AND NOTHING HERE CLAIMS IT. What is established is
+    that the GUARD DOES NOT EXCLUDE IT.
+
+    WHY SECTION 1's 120,000 EVALUATIONS MISSED IT: that ensemble is well-conditioned, so nothing
+    sits near the cutoff and the subspace never moves. **That is agreement measured over a domain
+    that excludes the failing regime** -- the shape `FINDING-20260910`'s amendment 2 identified in
+    `SPEC` 6 item 1, reproduced one layer down in a probe written after it. And the excluded regime
+    is the one the consumer documents itself in, at `:98-101`: *"a highly-correlated systematic
+    covariance ... can be near-singular -> pinv amplifies shape directions"*.
+
+    THE REMEDY, and it chains this probe's own two theorems: gate on RETAINED-SUBSPACE IDENTITY. If
+    both members retain the same subspace `S`, let `U` be an orthonormal basis of `S`; the consumed
+    form is then `(U'd)' (U' C U)^-1 (U'd)` with a TRUE inverse, and `U'` has orthonormal rows, so
+    section 1b gives `rho(U' C0 U, U' Ck U) <= rho(C0, Ck)` and section 1 applies inside `S`.
+    """
+    rng = np.random.default_rng(SEED + 2)
+    Q, _ = np.linalg.qr(rng.normal(size=(n, n)))
+    large = [1.0] + [10.0 ** -k for k in range(1, n - 1)]
+
+    def build(a: float, b: float) -> np.ndarray:
+        ev = np.array(large[: n - 2] + [a, b])
+        return Q @ np.diag(ev) @ Q.T
+
+    d = Q[:, -2].copy()          # aligned with the mode that gets dropped in arm 1
+
+    print("6. THE pinv RETAINED-SUBSPACE LIMIT  (found by the assessor; reproduced independently)")
+
+    # ARM 1 -- the failing regime. Two near-equal modes STRADDLE the cutoff and swap.
+    C0, Ck = build(1.2e-15, 0.8e-15), build(0.8e-15, 1.2e-15)
+    r = rho(C0, Ck)
+    P0, k0 = _retained_projector(C0)
+    Pk, kk = _retained_projector(Ck)
+    subspace_gap = float(np.linalg.norm(P0 - Pk, 2))
+    c0, ck = _chi2(C0, d), _chi2(Ck, d)
+    floor = c0 / (1.0 + r)
+    print(f"   ARM 1, straddling and swapped: rho = {r:.6f}")
+    print(f"      retained rank {k0} vs {kk} -- IDENTICAL: {k0 == kk}")
+    print(f"      ||P_0 - P_k||_2 = {subspace_gap:.4f}   (0 = same subspace, 1 = a mode flipped)")
+    print(f"      chi2_0 = {c0:.3e}, chi2_k = {ck:.3e}, section-1 floor = {floor:.3e}")
+    print(f"      section-1 bound holds: {ck >= floor * (1 - 1e-9)}   <- FALSE is the finding")
+    print(f"      RANK branch would fire: {k0 != kk}    SUBSPACE branch fires: {subspace_gap > 1e-8}")
+    assert k0 == kk, "the construction no longer holds rank fixed, so it tests the wrong thing"
+    assert ck < floor, "the bound was not violated: the construction has stopped reproducing"
+    assert subspace_gap > 0.5, "the retained subspace did not move"
+
+    # ARM 2 -- the CORRECTLY-SILENT direction, with rho held at the SAME value so the difference
+    # between the arms is attributable to the subspace and to nothing else.
+    C0b, Ckb = build(1.2e-13, 0.8e-13), build(0.8e-13, 1.2e-13)
+    r2 = rho(C0b, Ckb)
+    P0b, kb0 = _retained_projector(C0b)
+    # ⚠ `Ckb`, NOT `C0b`. The first version of this line passed `C0b` twice, so the silent control
+    # compared an object with ITSELF and would have reported a zero gap whatever the perturbation
+    # did -- a control that cannot fail, in the probe whose subject is a guard that cannot fail.
+    # Caught by the exact zero: a genuine same-subspace comparison returns float noise (~1e-15),
+    # not 0.000e+00.
+    Pkb, kbk = _retained_projector(Ckb)
+    gap2 = float(np.linalg.norm(P0b - Pkb, 2))
+    ck2 = _chi2(Ckb, d)
+    lo2, hi2 = _chi2(C0b, d) / (1 + r2), _chi2(C0b, d) / (1 - r2)
+    print(f"   ARM 2, same swap but BOTH modes retained: rho = {r2:.6f}  (arm 1: {r:.6f})")
+    print(f"      ||P_0 - P_k||_2 = {gap2:.3e}   retained rank {kb0} vs {kbk}")
+    print(f"      chi2_k = {ck2:.6e} in [{lo2:.6e}, {hi2:.6e}]: "
+          f"{lo2 * (1 - 1e-9) <= ck2 <= hi2 * (1 + 1e-9)}")
+    print(f"      SUBSPACE branch fires: {gap2 > 1e-8}   <- must be False (correctly silent)")
+    assert abs(r2 - r) < 0.05, "rho is not held across the arms, so the arms are not comparable"
+    assert gap2 < 1e-8, "arm 2's retained subspace moved; it is not the silent control"
+    assert lo2 * (1 - 1e-9) <= ck2 <= hi2 * (1 + 1e-9), "arm 2 violated the bound"
+    print("   So the guard is BIDIRECTIONAL on the subspace test and BLIND on the rank test.")
+    print()
+
+
+def section_7_ndf_direction() -> None:
+    """The `ndf` policy change has a KNOWN DIRECTION, and the recommendation declined to name it.
+
+    FOUND BY THE ASSESSOR. `D.1(b)` recommends `ndf` = retained rank rather than the bin count
+    (`chi2_to_sigma(chi2, n_ea)`, `eavail_generator_significance.py:132`). I wrote that the net sign
+    was not determined -- that conflated TWO comparisons. Changing the `ndf` POLICY holds `chi2`
+    fixed (it is already computed with `pinv`), and at fixed `chi2` the map is strictly decreasing
+    in `ndf`. Since retained rank <= bin count, the change INCREASES reported significances. It is
+    distributionally correct AND anti-conservative, and Joseph should get it with its direction.
+    """
+    try:
+        from scipy import stats
+    except ImportError:
+        print("7. ndf direction -- SKIPPED, scipy is not importable\n")
+        return
+
+    def z_of(chi2: float, ndf: int) -> float:
+        return float(stats.norm.isf(stats.chi2.sf(chi2, ndf) / 2.0))
+
+    print("7. THE ndf POLICY CHANGE HAS A KNOWN DIRECTION  (synthetic chi2; the SIGN is the claim)")
+    print("     chi2      ndf=bins -> z      ndf=rank -> z    increases?")
+    for chi2_v, nbin, rank in ((5210.0, 4825, 4800), (86.5, 42, 38), (11263.0, 10694, 10600)):
+        zb, zr = z_of(chi2_v, nbin), z_of(chi2_v, rank)
+        print(f"   {chi2_v:9.1f}  {nbin:5d} -> {zb:6.4f}   {rank:5d} -> {zr:6.4f}      {zr > zb}")
+        assert zr > zb, "the direction claim failed: retained rank did not increase the significance"
+    print("   Monotone in ndf at fixed chi2, so the sign is general; the magnitudes are synthetic.")
+    print()
+
+
 def main() -> int:
     print(__doc__.split("Run:")[0].strip())
     print("=" * 78)
@@ -332,6 +467,8 @@ def main() -> int:
     section_3_f7_margin()
     section_4_normalizer_spread()
     section_5_rev7_operand()
+    section_6_pinv_subspace()
+    section_7_ndf_direction()
     print("=" * 78)
     print("ALL ASSERTIONS PASSED. Nothing here adopts, grades or authorizes anything.")
     return 0

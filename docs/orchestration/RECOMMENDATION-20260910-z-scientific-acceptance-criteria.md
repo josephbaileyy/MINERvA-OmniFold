@@ -22,17 +22,39 @@ Nothing else in the interval touched `owners.tsv`, the launchers, the note's `.t
 `receipt_candidate_stamps_5d.json`, `p4_lib.py`, `uq_math.py` or the `z_*` modules. **I do not
 re-assert the other measurements at `923e1323`, because I did not re-run them there.**
 
-**One gate will report a failure that is not this commit's, and it is measured rather than asserted.**
-`python3 docs/orchestration/generate_manifest.py --check` exits **`1`** with `OUT OF DATE` on a
-**completely clean tree at `c18f9daa`** — 0 untracked, none of this lane's work present. So
-`MANIFEST.tsv` staleness on `main` is **pre-existing**; another lane has deliberately declined to
-regenerate it, because a mass regeneration would sweep in unrelated rows, and has routed it to Joseph.
-**This commit therefore does not carry a regenerated `MANIFEST.tsv`** — bundling a 1,531-line
-inventory rewrite with a scientific recommendation would obscure this diff and silently settle a
-question routed elsewhere. Routability is secured the way the convention actually requires: a
-`MANIFEST-overrides.tsv` row and a `CATALOG.md` pointer, both irreducibly manual, neither checked by
-any hook. *(That exit code is read from the process, not through a pipe. A pipe reports `tail`'s
-status — `0` — and I made exactly that mistake once before catching it.)*
+**⚠ THE MANIFEST GATE — MEASURED AT `c18f9daa`, THEN ROOT-CAUSED AND REPAIRED BY ANOTHER LANE. Both
+states are recorded, because the first is a timestamped observation and only the second is current.**
+
+**What I measured, and it stands as a measurement:** `python3
+docs/orchestration/generate_manifest.py --check` exited **`1`** with `OUT OF DATE` on a **clean tree
+at `c18f9daa`** — `git status --short` empty, 0 untracked, none of this lane's work present. So the
+staleness was **not** produced by this commit. *(That exit code is read from the process, not through
+a pipe. A pipe reports `tail`'s status — `0` — and I made exactly that mistake before catching it.
+Separately: my tree was clean **by workflow**, because I had stashed with `-u`, rather than by
+design — and the very defect below is that untracked paths change the answer, so a clean-tree
+measurement is the only kind that means anything here.)*
+
+**What has since been established, verified here rather than accepted on report:** the cause was
+`generate_manifest.py:92-94`, which builds `inventory = tracked | intended` where `intended` is
+`git ls-files --others --exclude-standard`. **The committed manifest was encoding one machine's
+untracked files** — so this was an **oscillation, not a backlog**: every regeneration deleted the
+previous author's untracked rows and added its own. Repaired at **`6f24fb00`** by regenerating with
+the **pre-existing** `--committed-only` flag (`:69`, `:93` — the flag was not added by the repair;
+the generator is unchanged). I confirmed the result independently: `origin/main`'s `MANIFEST.tsv`
+censuses **`tracked: 780`** and `intended` does not appear at all.
+
+**What this commit does, unchanged by the repair:** it still does **not** carry a regenerated
+`MANIFEST.tsv`. Bundling a 1,531-line inventory rewrite with a scientific recommendation would
+obscure this diff, and at the time it would also have silently settled a question that had been
+routed to Joseph. **My two files will get rows on the next regeneration.** Routability meanwhile is
+secured the way the convention actually requires — a `MANIFEST-overrides.tsv` row and a `CATALOG.md`
+pointer, both irreducibly manual, **neither checked by any hook**, and both verified from the
+committed tree after the commit returned rather than before.
+
+**One residual, so the next lane does not repeat my measurement and read it as a defect:** in a
+checkout with untracked paths under `docs/orchestration/`, plain `--check` exits `1` while
+`--check --committed-only` exits `0`. **Re-run with the flag, on a clean tree, before reporting
+staleness.**
 
 ---
 
@@ -45,15 +67,18 @@ status — `0` — and I made exactly that mistake once before catching it.)*
   `state/probe-z-criteria-acceptance-mathematics-20260910.py`;
 - the **closed-form critical `rho`** of §5.3, which makes the significance criterion complete
   **modulo a threshold** rather than blocked on one;
-- the **normalizer argument** of §4.1 (three committed sqrt-traces exist for one null, spanning
+- the **normalizer argument** of §C.1 (three committed sqrt-traces exist for one null, spanning
   `20.9%`);
-- the **F7 decision-margin measurement** of §4.2 and its normalizer-free factor `1.7957e11`;
-- the **thread-environment measurement** of §4.4 — what the three launchers *declare*, and that
+- the **F7 decision-margin measurement** of §C.2 and its normalizer-free factor `1.7957e11`;
+- the **thread-environment measurement** of §C.4 — what the three launchers *declare*, and that
   `make_estimators` pins nothing;
 - that the withdrawn `5.00e-41` reproduces from `values.tex:115`'s macro and **not** from G's
-  measured mean shift (§4.3);
+  measured mean shift — in the probe's section 5, which is where that arithmetic lives; this document does not restate it;
 - the **projection-builder census** of D.1(a) — **four** production/consumer construction sites, not
   three, with `p4_lib.py:1484` identified as a control rather than a rival;
+- the **`pinv` retained-subspace limit** of §2.1a, its bidirectional remedy, and the
+  **determinate direction** of the `ndf` change in `D.1(b)` — all three found by the
+  `z-independent-assessor` lane and reproduced independently here;
 - the **reconciliation** of §0.0, including that the string `rev. 5` does not occur in the document
   being called that;
 - the **requirement lists** and the **ordered minimum measurements** of §7.
@@ -64,15 +89,17 @@ status — `0` — and I made exactly that mistake once before catching it.)*
   none of them; it **recommends** dispositions.
 - **any claim that the four `\gbdtFive*` macros have no scientific use.** They are not printed in
   any tracked `.tex` today **and they are staged for a post-adoption note update**
-  (`PROCEDURE-gbdtFive-macro-update.md`). §3.1 states why the tempting inference is circular and
+  (`PROCEDURE-gbdtFive-macro-update.md`). §B.0 states why the tempting inference is circular and
   must not be drawn from my measurement.
 - any current significance, `chi2`, `p` or `ndf` for any MINERvA projection. **None exists in this
   tree.** The `chi2_0`/`ndf` values in §5.3 and in the probe are **synthetic placeholders** exercising
   a formula.
-- any statement that the execution envelope is inadequate. §4.4 establishes that a bound argued from
+- any statement that the execution envelope is inadequate. §C.4 establishes that a bound argued from
   *"the configuration is pinned"* **cannot be made today**; that is a statement about the evidence,
   not about the world (`SPEC` §3.7a rev. 19).
 - the equivalence or designation of any projection map `M`.
+- **the `rho` bound as governing the CONSUMED form without §2.1a's subspace condition.** §2.1 is proven for the TRUE inverse; the consumer uses `pinv`, and §2.1a exhibits identical retained rank with the bound violated. **Quoting §2.1 for `pinv` without the retained-subspace gate is the one misuse of this document that would matter.**
+- **any claim that real Z members do or do not swap modes across the `pinv` cutoff.** §2.1a's construction is synthetic; the regime is UNMEASURED on Z.
 
 ---
 
@@ -86,10 +113,15 @@ sha256 **`3fc9fb87b170887cdc8be870f801e7228113c35669be455401bdb7f1e6e9ac4c`** me
 contract is how a repository acquires two conflicting criteria sets, with the winner decided by push
 timing rather than by evidence. So this section chooses, rather than landing beside it.**
 
-**⚠ ONE CITATION CORRECTION FIRST, because it will otherwise be propagated.** That document is
-being referred to in coordination traffic as *"rev. 5"*. **The string `rev. 5` occurs zero times in
-it** (measured, case-insensitive); its highest self-declared revision label is **`REV. 4`**. The sha
-above is the agreed object. **Cite it by sha, never by a revision number it does not carry.**
+**⚠ ONE CITATION CORRECTION FIRST, because it will otherwise be propagated — and it is stated more
+carefully here than rev. 1 stated it.** That document is referred to in coordination traffic as
+*"rev. 5"*. **The string `rev. 5` occurs zero times in its bytes** (measured, case-insensitive), and
+its highest self-declared changelog label is **`REV. 4`**. **But rev. 5 is a REAL revision, and rev. 1
+of this section could be read as denying that** — it is commit `610d0882`, *"[doc] Z criteria proposal
+rev. 5: the routing index stops carrying review history…"*. So the revision did work and simply left
+**no in-document label**; the label lives in a **commit subject** and nowhere in the file. **A commit
+subject is not a document label. Cite by sha — because the document's own changelog and its commit
+subjects disagree about which revision this is, and only the sha is unambiguous.**
 
 **THE CHOICE: this document SUPERSEDES its candidate-criteria role, and RETAINS it as evidence.
 Scoped, item by item, and its bytes are not touched.**
@@ -101,14 +133,58 @@ Scoped, item by item, and its bytes are not touched.**
 | its §4a — that printed precision establishes nothing scientific, in either direction | **RETAINED and CITED.** §5.2 |
 | its §4c — record the `pinv` cutoff, report the retained rank, treat a rank change as a reportable event | **RETAINED and CARRIED FORWARD** as D.1(c). This is the one element I judge already correct and separable |
 | its §3 C-1, C-2, C-3 — the three candidate criteria | **SUPERSEDED.** C-1 becomes the **reported** quantity and `rho` becomes the criterion (§D.2), because C-1 is a sampled maximum with no bound and no coverage argument, and its own §2b leaves `s_proj`'s coverage **unresolved with no method offered**. §2.1–§2.2 close that question by changing the statistic rather than by searching for a functional set |
-| its §6 — the builder-comparison premise | **SUPERSEDED by measurement**, and it predates `FINDING-20260910` (merged `ceb474cc`). As specified it would test agreement over a domain selected for agreement. D.1(a) restates it over **outcomes** |
+| its §6 — the *"which `M`?"* premise | **⚠ NOT SUPERSEDED. ITS PREMISE STANDS AND IS NOW WIDER.** ⚠ **This cell said `SUPERSEDED by measurement` and that was FALSE — see the correction note directly below the table, which is where it belongs rather than in a changelog.** Its §6 reads *"At least THREE projection-matrix implementations exist and this proposal does not assume any two agree"* (`:323`), and D.1(a) measures **four** sites, so the premise is **larger** than when they wrote it, not retired. Its operative half — that **none is designated** — is untouched by any measurement. **What IS superseded is only §6 item 1's METHOD**, and **not because the builders agree:** an elementwise `M₁ − M₂` check is **undefined when one side refuses**, so a runner implementing it literally skips the refusing cases and reports agreement from a domain **selected for** agreement — a gate that cannot fail, which no exit code catches. D.1(a) restates the comparison over **outcomes**. The narrow thing genuinely retired is §6's implicit worry that the `p4_lib`/`project_cov_nd` pair might disagree **numerically**, answered for **that pair** at three synthetic mask densities with a working detection control, and for nothing else |
 | its §7 items 1, 2, 3 — its four asks | **ANSWERED or RE-PUT.** Item 1 is answered (§D.2); item 2's threshold is made a **parameter** rather than a blocker (§5.3); item 3 is re-scoped (D.1(a)) |
 | its closing *"No criteria owner exists"* | **NO LONGER TRUE**, `owners.tsv:14` at `c18f9daa`. **That is the substantive reason supersession is the right form and folding is not: a proposal addressed to a missing owner is answered by the owner, not merged into.** |
+
+### ⚠ CORRECTION TO THE ROW ABOVE, 2026-09-10, AFTER THE AUTHORING LANE SUSTAINED AN OBJECTION
+
+**The §6 row read `SUPERSEDED by measurement`. That asserted coverage the evidence does not have, and
+it is corrected in place with the wrong verdict quoted rather than deleted.** The authoring lane —
+which claimed all five revisions from the inside, and whose claim I routed from **its own line 3**,
+*"Authored 2026-09-08 by the Z spec/implementation lane"*, after finding no `Claude-Session`,
+`Co-Authored-By` or `Signed-off-by` trailer on any of `b25db428`, `7as7047f299`, `8809a6c1`,
+`db135bea`, `610d0882` — objected that **a two-builder measurement cannot retire a
+three-implementation premise.** Verified here before accepting: `FINDING-20260910:109` states its own
+limit, *"The third builder is untouched … has not been compared to either of the other two."* Against
+D.1(a)'s four sites that is `C(4,2) = 6` unordered pairs with **exactly one measured**; the five
+unmeasured pairs are `p4_lib`×`eavail`, `p4_lib`×`pet`, `project_cov_nd`×`eavail`,
+`project_cov_nd`×`pet`, `eavail`×`pet`.
+
+**Three things about this correction are worth more than the correction.**
+
+1. **The right statement was already in the same cell.** Its second sentence read *"As specified it
+   would test agreement over a domain selected for agreement."* **The body was right and a wrong
+   headline verb overrode it** — a reviewer scanning a verdict column never reaches the sentence that
+   contradicts it. **So the repair is the label, not another caveat**; the caveat was already there.
+   The **worse** instance was in `CATALOG.md`, which listed this premise under `NO LONGER CITABLE
+   FOR` — mismarking a **live** premise in the file agents route from, which misroutes rather than
+   merely misleads. Both are corrected.
+2. **This is the second instance of one shape in this document.** §B.0 below withdraws an argument for
+   precisely this reason — a refutation outrunning what it refutes — and this cell committed the shape
+   again about a hundred lines later. **Writing a failure up as a lesson in a document does not
+   immunize the rest of that document against it**, and the covering search that followed found a
+   third class: seven internal `§`-pointers still aimed at a `§3`/`§4` numbering this document
+   abandoned when its parts were renamed `A`–`D`, six of them in the `CITABLE FOR` block a reader is
+   told to read first.
+3. **The durable lesson is the authoring lane's and is recorded as theirs.** Its own diagnosis of §6
+   was not that the builders agree — it was that §6 item 1's elementwise check is **undefined when one
+   side refuses**, so the tested domain self-selects for agreement. And its closing observation is the
+   sharpest thing in the exchange: **§6's own bullet already recorded that `p4_lib` *"carries a
+   bidirectional coverage check"* — the refuting fact sat one paragraph above the flawed check.** Its
+   handling of its own §2b is the same discipline: it withdrew a wrong test **without replacement**,
+   because *"inventing a second wrong one in the same document would be worse than leaving the
+   question open."*
 
 **Why NOT fold this into it as a further revision.** An independent assessment against those exact
 bytes has just landed (`origin/lane/z-criteria-independent-assessment-20260910`). Rewriting the
 document would leave that assessment pointing at a revision that no longer exists — **destroying the
 evidence rather than answering it.** Before recommending a remedy, price what it destroys.
+
+**⚠ And the authoring lane's reason is better than that one, so it governs here instead of mine.** In
+its words: *"the withdrawal tables in that document are the record of how it got where it got, and
+they only work if nobody edits them retroactively."* **That holds even when no assessment is
+running**, which mine does not. Adopted, and attributed.
 
 **What I do and do not do to that file.** I propose the classification change — `event_status` from
 `open` to `superseded`, `canonical_successor` this document — **and I do not edit a byte of it**,
@@ -144,7 +220,7 @@ required population/scope, terminal outcomes**, and an explicit evidence class.
 **The form constraint, from `SPEC` §6.6 and honoured throughout:** statistic, denominator, precision
 target and boundary are put **together**. A boundary detached from its statistic *"would be an
 authorization over an object nobody has defined."* Consequently, where I change a packet's
-membership, **the packet is re-put whole** rather than amended — §3 is written that way.
+membership, **the packet is re-put whole** rather than amended — Part B (§B.1) is written that way.
 
 **What is FIXED by ruling and is therefore not touched:** §6.1 `(cause 5, Z)`'s disposal-by-decision;
 §6.2 cause-1 measure-and-disclose irrespective of magnitude; §6.3's **quantity** — the variation of
@@ -306,7 +382,7 @@ display test, replacing the two withdrawn format-derived boundaries.**
 | **justification** | **PROVEN BOUND**, §2.1 |
 | **population** | the **finite declared offset set** `K = {0, k_1, ..., k_{N-1}}`, predeclared in full before the first task. No inference to a distribution over offsets: nobody has a model of the offset population. This is `PREDECLARE-20260901-cause3-mii` §1's position, transferred because the same thing is true here |
 | **why the maximum** | the claim is quantified over **every** member of `K`, and **a universally quantified claim is graded by the extremum**. A standard deviation can be small while one member is far out, leaving the claim false with the gate green. The statistic follows from the quantifier in the sentence — *not* from the finiteness of the set, which is `SPEC` §3.7b's own correction of a withdrawn argument |
-| **terminal outcomes** | **MET** (`rho <= rho_max`) / **NOT MET** (`rho > rho_max`, with the argmax `k` and the extremal eigenvector's leading components reported) / **INCONCLUSIVE**, which covers three distinct cases and must not be read as the nearer of the other two: **(a)** `rho >= 1`, where the bound is vacuous — a *large* perturbation, never a pass; **(b)** `C_Z^(0)` not positive definite on the compared support, so the metric does not exist; **(c)** **`INCONCLUSIVE / VACUOUS SEED VARIATION`** — the branch's ruled name, `PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md:230`, beside `INCONCLUSIVE / WRONG FOOTING` at `:226`. `rho == 0` exactly, or a read-back offset set that does not match the declaration. **This branch is the POSITIVE CONTROL and it is why it may not be omitted:** `rho` is small both when the baseline genuinely does not move the covariance **and** when the offset never reached the estimator, and the two are indistinguishable from the statistic alone. It is the `g ≡ 1` shape — a green state reachable without the work being done — one cause over. **A zero spread is evidence the knob never arrived, not a favourable result** (`SPEC` §3.6b item 5) |
+| **terminal outcomes** | **MET** (`rho <= rho_max`) / **NOT MET** (`rho > rho_max`, with the argmax `k` and the extremal eigenvector's leading components reported) / **INCONCLUSIVE**, which covers three distinct cases and must not be read as the nearer of the other two: **(a)** `rho >= 1`, where the bound is vacuous — a *large* perturbation, never a pass; **(b)** the baseline is not positive definite **on the object that is actually inverted** — ⚠ **the check is on the PROJECTED covariance `M C_Z Mᵀ`, not on the trunk**, because the trunk being PD says nothing about a marginal, and the `(E_avail, W)` projection is **structurally singular by design**, so a trunk-level PD test would pass while the inverted object has no metric. Singular-by-design projections are handled by clause **(d)** below rather than refused here; **(c)** **`INCONCLUSIVE / VACUOUS SEED VARIATION`** — the branch's ruled name, `PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md:230`, beside `INCONCLUSIVE / WRONG FOOTING` at `:226`. `rho == 0` exactly, or a read-back offset set that does not match the declaration. **This branch is the POSITIVE CONTROL and it is why it may not be omitted:** `rho` is small both when the baseline genuinely does not move the covariance **and** when the offset never reached the estimator, and the two are indistinguishable from the statistic alone. It is the `g ≡ 1` shape — a green state reachable without the work being done — one cause over. **A zero spread is evidence the knob never arrived, not a favourable result** (`SPEC` §3.6b item 5); **(d) ⚠ NEW — THE RETAINED SUBSPACE MOVED.** See §2.1a: the consumer inverts with `pinv`, so **MET additionally requires that every member RETAIN THE SAME SUBSPACE as the `k = 0` member**, tested as `‖P_0 − P_k‖_2 <= 1e-8` on the orthogonal projectors onto the retained modes. **Retained RANK is NOT the test and must not be substituted for it** — `D.1(c)` of this document already says why (*"pinning `rcond` does not pin the retained subspace"*), and §2.1a exhibits a case with **identical rank**, `‖P_0 − P_k‖_2 = 0.9951` and the bound violated |
 
 ### B.1(ii) LEG 2 — `s_corr`, and it binds independently
 
@@ -648,9 +724,18 @@ its **unit is the outcome**, with elementwise equality tested only inside the bo
 `chi2_to_sigma(chi2, n_ea)` at `:132` passes the **bin count** while `pinv` discards modes below its
 cutoff. A quadratic form evaluated on a rank-`r` retained subspace is referred to a
 `chi2`-distribution on `n` degrees of freedom. **Recommendation: `ndf` = the retained rank, reported
-per member.** This rests on a distributional fact, not a preference. **I do not claim a direction for
-the resulting change in `z`**: dropping modes reduces `chi2` and reduces `ndf`, and the two move `z`
-oppositely, so the net sign is not determined by this argument.
+per member.** This rests on a distributional fact, not a preference. **⚠ AND THE DIRECTION IS DETERMINATE — REV. 1 OF THIS DOCUMENT DECLINED TO NAME IT AND WAS
+WRONG TO.** I wrote that *"dropping modes reduces `chi2` and reduces `ndf`, and the two move `z`
+oppositely, so the net sign is not determined."* **That conflated two different comparisons.** The
+`ndf` **policy** change holds `chi2` fixed — `chi2` is *already* computed with `pinv` today — and at
+fixed `chi2` the map is strictly decreasing in `ndf`. Since the retained rank is `<=` the bin count,
+**adopting `ndf` = retained rank INCREASES every reported significance.** Measured at three
+synthetic `(chi2, bins, rank)` triples in the probe's section 7: `3.9937 → 4.2362`,
+`3.9976 → 4.3766`, `3.9956 → 4.6126`; the magnitudes are synthetic, the **sign is general** by
+monotonicity. **So this is a distributionally correct change that is also ANTI-CONSERVATIVE, and it
+must go to Joseph as a change with a known direction rather than as a neutral refinement.** The
+indeterminate comparison — whether to discard modes at all — is a different question and is not
+what this recommends. *(Finding and framing: the `z-independent-assessor` lane.)*
 
 **(c) The `pinv` cutoff must be recorded and a rank change must block a bare pass.** `np.linalg.pinv`
 is called with **no `rcond`** (measured: zero occurrences in that module), so the cutoff is relative
@@ -677,7 +762,7 @@ predecessor proposal mis-described this line in opposite ways.
 | **tolerance** | `rho <= rho_crit(T, chi2_0, ndf)`, **closed form in §5.3**. `T` is the only input from outside the code |
 | **justification** | **PROVEN BOUND** (§2.1, §2.2, §5.3) **+ SCIENTIFIC JUDGMENT confined to `T` alone** |
 | **population / scope** | the declared offset set `K`, **and** the declared set of `(generator, projection)` pairs the publication will quote. The `max` is exact over both and no distributional inference is made. **It says nothing about pairs outside the declared set** |
-| **terminal outcomes** | **MET** — the whole interval lies on the claim's side of `T`, for every declared pair and every `k`. **NOT MET** — some declared pair's interval crosses `T`; report the pair, the `k`, and the interval. **INCONCLUSIVE** — `rho >= 1` (bound vacuous), or the **retained rank moved** between members, or `p = 0` for some pair so `Nsigma` is infinite and the statistic is **undefined**, which must be reported as undefined and never as zero movement |
+| **terminal outcomes** | **MET** — the whole interval lies on the claim's side of `T`, for every declared pair and every `k`. **NOT MET** — some declared pair's interval crosses `T`; report the pair, the `k`, and the interval. **INCONCLUSIVE** — `rho >= 1` (bound vacuous), or ⚠ **the RETAINED SUBSPACE moved** (`‖P_0 − P_k‖_2 > 1e-8` on the projected covariance; **rank identity is insufficient and rev. 1 of this document wrongly gated on it** — §2.1a), or `p = 0` for some pair so `Nsigma` is infinite and the statistic is **undefined**, which must be reported as undefined and never as zero movement |
 | **claim supported when MET** | *"No declared estimator-baseline offset moves any quoted generator significance, among the declared `(generator, projection)` pairs, across the declared decision threshold."* **Not** a claim about pairs outside the set, and **not** a claim that `C_Z` is correct |
 | **cost** | zero incremental production. `rho` is arithmetic on members `D3` would produce; the significance interval is a closed-form evaluation costing microseconds |
 
@@ -730,6 +815,69 @@ spectral summary. `rho` does not "see" it in the sense of returning a small numb
 reports its own inapplicability is doing the right thing; a criterion that returns a passing number
 is not.**
 
+## 2.1a ⚠ THE LIMIT OF §2.1, AND IT WAS A DEFECT IN MY OWN TERMINAL-OUTCOME RULE
+
+**Found by the `z-independent-assessor` lane. Reproduced here independently — from its description
+rather than by running its probe, so the confirmation is a second measurement and not an echo.**
+
+**§2.1 bounds `dᵀ C⁻¹ d`, with the TRUE inverse. The consumer computes `dᵀ pinv(C) d`**
+(`eavail_generator_significance.py:107,132`) — **and so does this document's own probe**, at
+`_chi2`. `pinv` discards modes below `rcond·σ_max`, so **when two members retain different
+subspaces the interval does not transfer.** Rev. 1 of this document gated `INCONCLUSIVE` on retained
+**rank**, which is a **proxy**, and `D.1(c)` of the same document already said why it is the wrong
+one: *"pinning `rcond` does not pin the retained subspace."* **The analysis was right and the branch
+was stated on the proxy.**
+
+**The construction, measured in the probe's section 6.** Two near-equal eigenvalues **straddling**
+the cutoff, then **swapped** — which holds the rank fixed while flipping which eigenvector is kept:
+
+| | |
+|---|---|
+| `rho` | `0.455352` — comfortably inside any plausible `rho_crit` |
+| retained rank | `8` vs `8` — **identical**, so the rank branch **never fires** |
+| `‖P_0 − P_k‖_2` | **`0.9951`** — a mode has flipped |
+| `chi2_0` / `chi2_k` / §2.1 floor | `8.586e+14` / `3.613e+09` / `5.900e+14` |
+| §2.1 bound | **VIOLATED** |
+
+`chi2` collapses, so `p` rises and `Nsigma` **falls** — a *"stays above `T`"* claim breaks while
+`rho` reads `0.46`.
+
+**⚠ THE LIMIT OF THE COUNTEREXAMPLE, CARRIED BECAUSE IT IS DOING REAL WORK.** The construction is
+**synthetic**, at condition number `~1e15`, and needs **two** modes to swap in order to hold the rank
+fixed. **Whether real Z members do this is UNMEASURED and nothing here claims they do. What is
+established is that the guard did not exclude it.**
+
+**Why §2.1's 120,000 evaluations missed it, which is the part worth absorbing.** That ensemble is
+well-conditioned (`C_0 = AAᵀ + nI`), so nothing sits near the cutoff and the retained subspace never
+moves. **That is agreement measured over a domain that excludes the failing regime** — precisely the
+shape `FINDING-20260910`'s amendment 2 identified in `SPEC` §6 item 1, reproduced **one layer down,
+in a probe written after I had cited that amendment.** And the excluded regime is the one the
+consumer documents *itself* in, at `:98-101`: *"a highly-correlated systematic covariance (flux is a
+coherent normalization) can be near-singular -> pinv amplifies shape directions."*
+
+**THE REMEDY — one clause, and it chains this document's own two theorems.** Gate on
+**retained-subspace identity**, not rank. If both members retain the same subspace `S` with
+orthonormal basis `U`, the consumed form is `(Uᵀd)ᵀ (Uᵀ C U)⁻¹ (Uᵀd)` with a **true** inverse; `Uᵀ`
+has orthonormal rows, so §2.2 gives `rho(Uᵀ C_0 U, Uᵀ C_k U) <= rho(C_0, C_k)` and §2.1 applies
+inside `S`. **So subspace identity is sufficient, and it is checkable in one line.**
+
+**The remedy is power-tested in both directions, with `rho` held across the arms so the difference is
+attributable to the subspace and to nothing else** (probe section 6):
+
+| arm | `rho` | `‖P_0 − P_k‖_2` | subspace branch | §2.1 bound |
+|---|---:|---:|---|---|
+| straddling and swapped | `0.455` | `0.9951` | **fires** | violated |
+| same swap, both modes retained | `0.500` | `1.046e-15` | **silent** | holds |
+
+*(One defect in my own control, recorded because it is the same shape as the subject: the silent arm
+first compared `C_0`'s projector **with itself**, so it would have reported a zero gap whatever the
+perturbation did. The exact `0.000e+00` gave it away — a genuine same-subspace comparison returns
+float noise near `1e-15`. A control that cannot fail, inside a probe about a guard that cannot fail.)*
+
+**Drafting of this clause is mine, explicitly not the assessor's** — it identified the defect and the
+remedy's shape and declined to write the criterion, which keeps its later grading of this leg
+non-circular.
+
 ## 2.2 `rho` is non-increasing under projection — PROVEN
 
 **This is the result that makes the criterion robust to the undesignated `M`.**
@@ -747,7 +895,7 @@ above. Put `P = B'(BB')^{-1/2}`; then `P'P = I`, so `P` has orthonormal columns 
 
 **What this buys, stated precisely so it is not over-read.** A `rho` measured on the **5D trunk**
 bounds `rho` on **every** projection simultaneously, including projections not yet designated or
-built. **So the BOUND is `M`-independent.** It does **not** make the *reported significance*
+built, **provided `M C_Z^(0) Mᵀ` is nonsingular — the hypothesis of the claim above, which must travel with the next sentence because that sentence gets lifted alone.** **So the BOUND is `M`-independent.** It does **not** make the *reported significance*
 `M`-independent — `chi2_0`, `ndf` and the retained rank all depend on which `M` is used, so D.1(a)–(c)
 remain preconditions. The practical consequence: `rho_5D` can be evaluated **before** the projection
 question is settled, and a small `rho_5D` discharges the sensitivity question for all marginals at

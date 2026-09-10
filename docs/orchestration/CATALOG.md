@@ -192,15 +192,22 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **STILL CITABLE FOR** its §1/§1a/§1b consumer analysis and the intended-versus-validated-path
   distinction; §2a/§2c, that `s_agg`/`s_med`/`s_eig` cannot bound an inverse-quadratic consumer and
   that a spectral summary cannot determine the quadratic form; §4a, that printed precision
-  establishes nothing scientific in either direction; and §4c, the `pinv`-cutoff and retained-rank
-  reporting requirement, which the successor carries forward. **NO LONGER CITABLE FOR** its §3
-  candidate criteria **C-1**/**C-2**/**C-3** as the criteria, its §6 builder-comparison premise —
-  which predates `FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md`
-  and as specified would test agreement over a domain selected for agreement — or its closing
-  *"No criteria owner exists"*, which `owners.tsv` refutes as of 2026-09-10. **Its "three
-  implementations" of the projection map is a UNDERCOUNT: four production/consumer construction
-  sites exist**, the fourth on the PET diagnostic path. It declares no threshold and adopts nothing;
-  read its own `CITABLE FOR` header too.
+  establishes nothing scientific in either direction; §4c, the `pinv`-cutoff and retained-rank
+  reporting requirement, which the successor carries forward; **and — ⚠ CORRECTED 2026-09-10 — its
+  §6 *"which `M`?"* PREMISE, which STANDS.** An earlier revision of this entry listed that premise
+  under `NO LONGER CITABLE FOR`; **that was wrong and it mismarked a live premise in the file agents
+  route from.** The premise is that at least three projection-matrix implementations exist with none
+  designated; the successor's `D.1(a)` measures **four** sites, so the premise is **wider** than when
+  written, and the designation question is open (successor §7 item 7).
+  **NO LONGER CITABLE FOR** its §3 candidate criteria **C-1**/**C-2**/**C-3** as the criteria; its
+  closing *"No criteria owner exists"*, which `owners.tsv` refutes as of 2026-09-10; and **§6 item
+  1's METHOD only** — an elementwise `M₁ − M₂` comparison, which is **undefined when one side
+  refuses**, so a literal runner skips the refusing cases and reports agreement from a domain
+  **selected for** agreement (`FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md`,
+  amendment 2). The comparison's unit must be the builders' **outcome**. **Its "three
+  implementations" is an UNDERCOUNT** — four production/consumer construction sites exist, the fourth
+  on the PET diagnostic path, which any designation must exclude **by name**. It declares no
+  threshold and adopts nothing; read its own `CITABLE FOR` header too.
 - [`RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md`](RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md)
   - **RECOMMENDATION ONLY — adopts nothing, grades nothing, authorizes no compute; Joseph retains
   scientific approval.** The `z-criteria-designer` owner's answer to `Z_DECISION_PACKET` §5 items 1,
