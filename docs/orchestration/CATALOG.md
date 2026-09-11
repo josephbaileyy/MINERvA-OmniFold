@@ -694,6 +694,31 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **§W.5 recommends `κ` stay WHOLE with the reviewer** despite its population clause being this lane's
   subject: a package split across two lanes has a seam, and silent removal is exactly what lives in
   seams — better to take it late than fragment it early.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partX.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partX.md)
+  - **PART X — cause-3 amendment Part A (`1b7db825`): VERDICT = BLOCK, two consequential issues.**
+  ⚠ **§X.1 DECISIVE — the licensing clause is placed where it cannot travel.** A.5 item 2 says *"add
+  A.4's licensing clause to the contract, in `cause3_corr`'s existing template"*, and Part I §I.1 proved
+  **by execution** that entry is **inert to the outcome** — deleting it leaves `describe()`
+  byte-identical, since `assess` reaches boundaries only at `z_validator.py:247` and `LegSet.describe()`
+  only at `:107-111`, **both keyed on DECLARED legs**, and `cause3_corr` is named by none (its own
+  stated premise). `Boundary.describe()` does carry `reason` (`z_contract.py:206`), so a clause on a
+  **named** boundary would travel — this one would not. **The amendment records the licensing
+  consequence of the deferral inside the very entry whose unreachability IS the deferral.** And
+  `_DIAGONAL_ONLY_SCOPE` / `z_validator` / `scope_statement` appear **zero** times in the amendment,
+  though `z_validator.py:166-167` states the rule verbatim.
+  ⚠ **§X.2 — the "ambiguity" frame is wrong on the DATES, and it changes what Joseph decides.**
+  `MNV_EST_SEED_OFFSET` first commit **2026-08-18**; `SPEC-20260906` appears **2026-09-06**, nineteen
+  days later, against a **binary** launcher (`:417` own blocks / `:424` archive reuse). **So (a) and (b)
+  were not indistinguishable — (b) DID NOT EXIST**, and `SPEC:3550` was written when only (a) was
+  producible. Its natural referent is **(a) TOTAL**, so the decoupling **creates** (b): this is Part W's
+  response **(b) NARROW THE SUBJECT**, a contract change and therefore Joseph's. *"Which did you mean?"*
+  puts the burden on his memory; *"may I narrow the declared quantity, and here is why"* puts it on the
+  proposer — **and A.6 already contains that argument. Right question, wrong grammar.**
+  **§X.3 records what is satisfied, one of it well:** `W2` is met **honestly** — the amendment does not
+  claim invariance or negligibility, and A.4(i) says *"the components held fixed are exactly the ones
+  not tested"*; A.4(ii) adds a correct point this lane had not required (finite-ensemble is common-mode
+  under fixed digests and cancels in `C_k − C_0`). `W5` satisfied, with the mechanism noted as looser
+  than stated.
 - [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
   - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
   numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
