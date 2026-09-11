@@ -48,7 +48,7 @@ DETECTORS = {
     "overlap_detected",
     # rev. 4: the width-weighted rate functionals and Joseph's closure
     "all_ones_refused", "closure_detects_bad_edges", "duplicate_rate_names",
-    "span_not_declared",
+    "span_not_declared", "rayleigh_norms_required",
 }
 
 
@@ -223,13 +223,15 @@ class TestTerminalHandling(unittest.TestCase):
         self.assertIn("Blaming the OPERAND here would be wrong", out["reason"])
 
     def test_declared_kappa_catches_a_roundoff_positive(self):
-        out = zbp.classify_baseline_degeneracy([1.0, 1e-18], c_scale=1.0, kappa=1e-12)
+        out = zbp.classify_baseline_degeneracy([1.0, 1e-18], c_scale=1.0, kappa=1e-12,
+                                              u_norms_sq=[1.0, 1.0])
         self.assertEqual(out["state"], "DEGENERATE_FUNCTIONAL")
         self.assertEqual(out["functionals"], [1])
         FIRED.add("degenerate_by_kappa")
 
     def test_resolved_control(self):
-        out = zbp.classify_baseline_degeneracy([1.0, 0.5], c_scale=1.0, kappa=1e-12)
+        out = zbp.classify_baseline_degeneracy([1.0, 0.5], c_scale=1.0, kappa=1e-12,
+                                              u_norms_sq=[1.0, 1.0])
         self.assertEqual(out["state"], "RESOLVED")
 
     def test_support_change_is_a_declaration_defect(self):
@@ -490,7 +492,7 @@ class TestTheTwoSubstantiveRefusals(unittest.TestCase):
 
     def test_kappa_validity(self):
         for bad in (0.0, -1e-12, float("inf"), float("nan")):
-            _fires("kappa_invalid", zbp.classify_baseline_degeneracy, [1.0], 1.0, bad)
+            _fires("kappa_invalid", zbp.classify_baseline_degeneracy, [1.0], 1.0, bad, [1.0])
 
 
 class TestEnrolmentIsNotManual(unittest.TestCase):
@@ -520,7 +522,7 @@ class TestEnrolmentIsNotManual(unittest.TestCase):
         self.assertGreaterEqual(len(points), 18,
                                 f"expected >=18 refusal points, found {len(points)}")
         # the claim this suite may make, scoped to what it demonstrates
-        self.assertEqual(len(DETECTORS), 28,
+        self.assertEqual(len(DETECTORS), 29,
                          "DETECTORS must equal the demonstrated set; update both together")
         # ⚠ THESE ARE DIFFERENT SETS AND THE COUNTS MATCHING IS A COINCIDENCE. `points` are
         # `require`/`raise` sites in the module; `DETECTORS` are demonstrated behaviours, some of
@@ -800,6 +802,91 @@ class TestRateFunctionalsAreWidthWeighted(unittest.TestCase):
     def test_a_rate_functional_must_declare_its_span_explicitly(self):
         _fires("span_not_declared", zbp.RateFunctional, "x", np.ones(3), None)
         _fires("span_not_declared", zbp.RateFunctional, "x", np.ones(3), 1)
+
+
+class TestTheGuardIsScaleInvariantLikeTheStatistic(unittest.TestCase):
+    """⚠ REV. 4 IMPLEMENTED THE WRONG PREDICATE. The packet proposed
+    `m' C_0 m >= kappa * lambda_max * ||m||^2`; the code compared `q < kappa * scale` with
+    `||m||^2` DROPPED.
+
+    THE CRISPEST STATEMENT: `s_proj` is SCALE-INVARIANT in `u` -- it is a ratio of `sqrt(u'Cu)`
+    values -- and its guard was not. A guard whose verdict depends on a convention the statistic it
+    guards is indifferent to. And it couples to the width-weighting correction: re-expressing P2's
+    total from all-ones to width-weighted changes `||u||^2` by ~1344x.
+    """
+
+    def _case(self, s):
+        rng = np.random.default_rng(4)
+        n, r = 20, 3
+        Bm = rng.normal(size=(n, r))
+        C0 = Bm @ Bm.T
+        w, V = np.linalg.eigh(C0)
+        U = np.vstack([V[:, 0] * s])
+        q = np.einsum("ij,jk,ik->i", U, C0, U)
+        nsq = np.einsum("ij,ij->i", U, U)
+        return q, nsq, float(w.max())
+
+    def test_the_verdict_does_not_move_with_the_units(self):
+        verdicts = set()
+        for s in (1, 10, 100, 1e6):
+            q, nsq, scale = self._case(s)
+            verdicts.add(zbp.classify_baseline_degeneracy(
+                q, c_scale=scale, kappa=1e-12, u_norms_sq=nsq)["state"])
+        self.assertEqual(len(verdicts), 1,
+                         f"the verdict moved with the units: {verdicts} -- that is the defect")
+
+    def test_it_REFUSES_the_absolute_form_rather_than_applying_it(self):
+        _fires("rayleigh_norms_required", zbp.classify_baseline_degeneracy,
+               [1.0], 1.0, 1e-12)
+
+    def test_the_reported_quantity_is_the_invariant_one(self):
+        """⚠ My first version asserted `predicate == "rayleigh"` on an operand that reaches the
+        STRUCTURAL branch (a null eigenvector gives a round-off-NEGATIVE q). The code was right and
+        the expectation was wrong -- so the case is now built to reach the Rayleigh branch: a
+        strictly positive but small quotient on a positive-definite operand."""
+        scale = 1.0
+        q = np.array([1e-30, 0.5])          # both strictly positive
+        nsq = np.array([1.0, 1.0])
+        out = zbp.classify_baseline_degeneracy(q, c_scale=scale, kappa=1e-12, u_norms_sq=nsq)
+        self.assertEqual(out["predicate"], "rayleigh")
+        self.assertEqual(out["functionals"], [0], "only the small-quotient functional is degenerate")
+        self.assertIsNotNone(out["rayleigh"])
+
+    def test_the_structural_branch_names_itself_too(self):
+        out = zbp.classify_baseline_degeneracy(np.array([0.0]), c_scale=1.0, kappa=1e-12,
+                                               u_norms_sq=np.array([1.0]))
+        self.assertEqual(out["predicate"], "structural",
+                         "which test decided is what a receipt needs")
+
+    def test_every_return_carries_the_SAME_key_set(self):
+        """⚠ The absence-is-not-admissible BLOCK, recurring in a new function and caught here."""
+        cases = [
+            (np.array([float("nan")]), 1.0, None, np.array([1.0])),      # finiteness
+            (np.array([0.0]), 1.0, None, np.array([1.0])),               # structural
+            (np.array([1.0]), 1.0, None, np.array([1.0])),               # kappa undeclared
+            (np.array([1e-30]), 1.0, 1e-12, np.array([1.0])),            # rayleigh, degenerate
+            (np.array([1.0]), 1.0, 1e-12, np.array([1.0])),              # rayleigh, resolved
+        ]
+        keysets = []
+        for q, sc, k, nsq in cases:
+            out = zbp.classify_baseline_degeneracy(q, c_scale=sc, kappa=k, u_norms_sq=nsq)
+            keysets.append(frozenset(out))
+            self.assertIn("predicate", out)
+        self.assertEqual(len(set(keysets)), 1,
+                         f"key sets differ across branches: {[sorted(k) for k in keysets]}")
+
+    def test_a_healthy_functional_still_resolves_at_any_scale(self):
+        rng = np.random.default_rng(6)
+        n = 20
+        A = rng.normal(size=(n, n))
+        C0 = A @ A.T + np.eye(n)
+        scale = float(np.linalg.eigvalsh(C0).max())
+        for s in (1.0, 1e-3, 1e3):
+            U = np.vstack([np.ones(n) * s])
+            q = np.einsum("ij,jk,ik->i", U, C0, U)
+            nsq = np.einsum("ij,ij->i", U, U)
+            self.assertEqual(zbp.classify_baseline_degeneracy(
+                q, c_scale=scale, kappa=1e-12, u_norms_sq=nsq)["state"], "RESOLVED")
 
 
 def tearDownModule():

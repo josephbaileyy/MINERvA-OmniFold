@@ -251,7 +251,7 @@ A7_TERMINAL_ROUTING = {
 }
 
 
-def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float]):
+def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float], u_norms_sq=None):
     """Is a declared functional's baseline numerically resolvable?
 
     `q_baseline` = `m_i' C_0 m_i` per declared functional; `c_scale` = a declared scale for `C_0`
@@ -260,6 +260,12 @@ def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float]):
     ⚠ `kappa` HAS NO DEFAULT. If it is `None` this returns `KAPPA_UNDECLARED` rather than choosing
     a cutoff -- Joseph, 2026-09-11: *"do not invent an unapproved numerical kappa."* A silent
     default here would be a numerical convenience acquiring scientific authority.
+
+    ⚠ EVERY RETURN CARRIES THE SAME KEY SET (`state`, `reason`, `functionals`, `kappa`,
+    `predicate`, `rayleigh`). Rev. 4's branches returned different keys, so `out["predicate"]`
+    raised `KeyError` on the structural path -- the assessor's absence-is-not-admissible BLOCK
+    recurring in a NEW function, found by this module's own test rather than by review. `predicate`
+    names WHICH test decided, which is what a receipt needs and what a missing key cannot say.
 
     ⚠ AND THE STRUCTURAL ARM RUNS FIRST AND NEEDS NO `kappa`: an EXACTLY non-positive baseline is
     degenerate regardless of any threshold, so that case is caught even while `kappa` is withheld.
@@ -272,7 +278,8 @@ def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float]):
     nonfinite = np.nonzero(~np.isfinite(q))[0]
     if nonfinite.size:
         return {"state": "DEGENERATE_FUNCTIONAL", "reason": "non-finite baseline",
-                "functionals": nonfinite.tolist(), "kappa": kappa}
+                "functionals": nonfinite.tolist(), "kappa": kappa,
+                "predicate": "finiteness", "rayleigh": None}
 
     # structural arm: exact zero or negative. No threshold can make this resolvable.
     structural = np.nonzero(q <= 0.0)[0]
@@ -281,7 +288,8 @@ def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float]):
                 "reason": "baseline q = m' C_0 m is <= 0 EXACTLY; degenerate structurally, not "
                           "by threshold. ⚠ Blaming the OPERAND here would be wrong: C_0 may be "
                           "PSD and the FUNCTIONAL is what has no support.",
-                "functionals": structural.tolist(), "kappa": kappa}
+                "functionals": structural.tolist(), "kappa": kappa,
+                "predicate": "structural", "rayleigh": None}
 
     if kappa is None:
         return {"state": "KAPPA_UNDECLARED",
@@ -289,17 +297,57 @@ def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float]):
                           "structural arm is silent -- but distinguishing a ROUND-OFF positive "
                           "from a resolvable one requires a declared relative cutoff `kappa`, and "
                           "there is no approved value. REFUSING rather than defaulting.",
-                "functionals": [], "kappa": None}
+                "functionals": [], "kappa": None,
+                "predicate": "none -- kappa undeclared", "rayleigh": None}
 
     k = float(kappa)
     require(np.isfinite(k) and k > 0, f"kappa must be finite and positive, got {kappa!r}")
-    below = np.nonzero(q < k * scale)[0]
+
+    # ⚠⚠ THE RAYLEIGH FORM, AND REV. 4 IMPLEMENTED THE WRONG PREDICATE.
+    # The packet proposed `m' C_0 m >= kappa * lambda_max(C_0) * ||m||^2`. Rev. 4 implemented
+    # `q < kappa * scale` -- ||m||^2 DROPPED. That compares an ABSOLUTE quadratic form to an
+    # ABSOLUTE scale, which is coherent only if every row of U is unit-normalised. U's rows are
+    # M's rows, which are WIDTH PRODUCTS, not normalised.
+    #
+    # THE CRISPEST STATEMENT OF THE DEFECT: `s_proj` is SCALE-INVARIANT in u -- it is a ratio of
+    # sqrt(u'Cu) values -- and its guard was NOT. A guard whose verdict depends on a convention
+    # the statistic it guards is indifferent to. Reproduced: the same C_0, functional and kappa
+    # gave DEGENERATE at u x 1 and RESOLVED at u x 10.
+    #
+    # AND IT COUPLES TO THE WIDTH-WEIGHTING CORRECTION: re-expressing P2's extra functional from
+    # all-ones to width-weighted changes ||u||^2 by ~1344x, so the two forms of the SAME total
+    # could land on opposite sides of the boundary -- a classification moving for a reason that is
+    # not physical.
+    #
+    # WHY ||m||^2 IS RESTORED RATHER THAN NORMALISING U BY CONTRACT (the other admissible route):
+    #   (a) it keeps U's rows IDENTICAL to the declared M rows and rate functionals, so `s_proj`'s
+    #       argmax_functional names the object that was actually declared;
+    #   (b) the Rayleigh quotient is precisely an `rcond`-KIND ratio -- a comparison of a
+    #       directional eigenvalue to the largest -- which is what makes the numerical-validity
+    #       classification defensible under Joseph's role test;
+    #   (c) normalising by contract would require carrying both a normalised and an unnormalised
+    #       representation of one object, and the widths are physically meaningful (they ARE the
+    #       integration weights).
+    require(u_norms_sq is not None,
+            "kappa is declared but u_norms_sq is not. The degeneracy predicate is a RAYLEIGH "
+            "QUOTIENT -- q / ||u||^2 >= kappa * lambda_max -- and without ||u||^2 it is "
+            "unit-dependent while `s_proj` is scale-invariant. Refusing rather than silently "
+            "applying the absolute form.")
+    nsq = np.asarray(u_norms_sq, float)
+    require(nsq.shape == q.shape, f"u_norms_sq shape {nsq.shape} != q shape {q.shape}")
+    require(np.all(np.isfinite(nsq)) and np.all(nsq > 0), "u_norms_sq must be finite and positive")
+    rayleigh = q / nsq
+    below = np.nonzero(rayleigh < k * scale)[0]
     if below.size:
         return {"state": "DEGENERATE_FUNCTIONAL",
-                "reason": f"baseline below the declared relative cutoff kappa={k:.3e}",
-                "functionals": below.tolist(), "kappa": k}
-    return {"state": "RESOLVED", "reason": "every declared functional's baseline is resolvable",
-            "functionals": [], "kappa": k}
+                "reason": f"Rayleigh quotient q/||u||^2 below kappa*lambda_max with "
+                          f"kappa={k:.3e}; SCALE-INVARIANT in u",
+                "functionals": below.tolist(), "kappa": k,
+                "rayleigh": rayleigh.tolist(), "predicate": "rayleigh"}
+    return {"state": "RESOLVED",
+            "reason": "every declared functional's Rayleigh quotient clears kappa*lambda_max",
+            "functionals": [], "kappa": k,
+            "rayleigh": rayleigh.tolist(), "predicate": "rayleigh"}
 
 
 def classify_support_change(declared_support, observed_support):
@@ -669,7 +717,9 @@ def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa,
 
     C0 = np.asarray(cov_by_offset[baseline_key], float)
     q0 = np.einsum("ij,jk,ik->i", U, C0, U)
-    deg = classify_baseline_degeneracy(q0, c_scale=c_scale, kappa=kappa)
+    # the Rayleigh denominator, from the SAME U the statistic uses -- not a separate declaration
+    nsq = np.einsum("ij,ij->i", U, U)
+    deg = classify_baseline_degeneracy(q0, c_scale=c_scale, kappa=kappa, u_norms_sq=nsq)
     if deg["state"] != "RESOLVED":
         return {"state": deg["state"], "routed_to": A7_TERMINAL_ROUTING[deg["state"]],
                 "detail": deg, "s_proj": None}
