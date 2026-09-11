@@ -126,3 +126,68 @@ got an owner, a check and an answer inside one round. What killed it was **the o
 specified and declined to run from outside my slice**, which is the outcome §R.2 was written for. A
 question that dies to its own named falsifier is a different object from one that dies to an argument,
 and only the first kind is cheap to kill.
+
+### R.5 — A STRONGER CITATION, F22 AT ITS CORRECTED STRENGTH, AND THE RESIDUE NARROWED TO ONE CHECKABLE THING
+
+**Subject pin: rev. 8 is `e968da42`** (probe 71 checks), not `3e7c3271`.
+
+**The support question has a launcher-level citation, stronger than my mechanism trace.** Verified at
+`6f24fb00`:
+
+- `sbatch_finalize_5d_bkgaware_gpu.sh:8-10` — *"`C_stat`/`C_ML` are #13-invariant -> reuse existing
+  `uq_cov_stat_5d.root` / `uq_cov_mlsplit_5d.root`; only `analyze_universes_5d` is re-run on the
+  bkgaware vertical sweep."*
+- `:456` — `mr_run "${COMB}" … analyze_universes_5d.py`, i.e. the bands combine runs under the
+  **member-scoped** runner.
+
+**So the production launcher itself reuses the blocks and regenerates the bands per member.** My
+§R.4 route and the reviewer's both argue *where the bands come from*; this shows *how they are
+actually run*, and it would survive a change to the band construction. Better citation, same
+conclusion.
+
+**F22 CARRIED AT THE CORRECTED STRENGTH, which is stronger than the relay I first received.** I was
+told the survivor was *"a reporting defect, benign."* The correction: `s_proj` passes the cannot-fail
+audit through the bands, but **`B' < δ_proj` would not** — so requirement (i), report **NOT
+APPLICABLE** rather than **SATISFIED**, is **mandatory and not cosmetic**. `F22` stands alone; only
+the composition died.
+
+**The principle is one I can endorse on my own ground** rather than relay: I verified at
+`audit_gates_that_cannot_fail.py:592-593` that this repository **raises** rather than reporting when a
+detector is not shown to fire. A gate that cannot fail is therefore a defect *by the standing
+instrument*, whatever the cause — benign or not. **`F22`'s application to `B' < δ_proj` is the
+reviewer's and remains routed away from me; the "whatever the cause" half is the detector's own
+behaviour and needs no lane's authority.**
+
+### R.5a — THE WATCHED RESIDUE NARROWS TO **FIXED SUMMATION ORDER**, AND THE CITED CAUSE IS REFUTED
+
+§R.4's residue was *"the deterministic legs must be bit-reproducible"* — too broad to check. Measured
+here, 64×64 legs at production-like magnitudes:
+
+| legs `n` | \|sequential − pairwise\| | \|sequential − reversed\| | relative |
+|---|---|---|---|
+| 45 | **0.000e+00** | 6.68e-52 | 5.4e-16 |
+| 128 | **0.000e+00** | 2.01e-51 | 8.7e-16 |
+| **129** | **0.000e+00** | 1.84e-51 | 8.0e-16 |
+| 300 | **0.000e+00** | 4.01e-51 | 1.3e-15 |
+
+**Pairwise-versus-sequential is bit-identical at every size tested**, so
+`mii_anchor_comparator.py:241-246`'s summation-route mechanism does not fire at band-assembly scale —
+that docstring's case is a **trace over 10,694**, a different operation. **What perturbs is ORDER**:
+reversing the legs moves the result by `~5e-16`–`1.3e-15` relative, matching the reviewer's
+`4–5e-16`.
+
+**And the cited cause is not merely unconfirmed — it is refuted.** The designer attributes the
+bit-identity to numpy's 128 blocksize. **If blocksize were operative, `n = 129` would differ from
+`n = 128`; both are bit-identical, as is `n = 300`.** So blocksize is not the mechanism. The
+coordinator was right to hold the cause loosely and its 300-leg check was the right instinct; this
+pins it. *(A hypothesis I am labelling as such and have not verified in numpy's internals: a reduction
+over the **outer** axis of a stacked array is strided rather than contiguous, so the pairwise
+optimisation does not apply and the accumulation is sequential regardless of `n`.)*
+
+**Consequence, and it is what makes the residue actionable:** the silent precondition rev. 7 acquired
+is **not** bit-reproducibility in general. It is **a fixed summation order over the band legs** — one
+property, of one loop, checkable by re-running the assembly with the legs reversed and requiring
+bit-identity. That is a declaration `F21` can demand and a reviewer can verify, where the broad
+version was neither.
+
+**Not mine to adopt:** whether `F21` should require it, and in what form. Named and routed.
