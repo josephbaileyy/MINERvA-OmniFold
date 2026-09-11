@@ -19,6 +19,7 @@ metadata discovery before GPU validation or training. The
 [terminal record](direct_token_comparison/EXECUTION_STATUS-20260911.md) preserves
 79 seconds of allocation, the failure and a locally checked correction. No full
 jobs or retry were submitted; the explicit no-retry stop remains in force.
+Joseph subsequently authorized [one 118-minute retry](direct_token_comparison/RETRY_AUTHORIZATION-20260911.md); a second technical failure stops.
 The experiment is synthetic-only; producer, source release,
 selection/weight/truth-sidecar and real normalization prerequisites remain open.
 No mapping pass, historical pilot or software test is a learning-performance

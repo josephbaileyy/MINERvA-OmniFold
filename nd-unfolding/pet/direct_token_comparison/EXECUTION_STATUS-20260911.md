@@ -1,3 +1,9 @@
+# Retry authorized; terminal history retained below
+
+Joseph granted [one explicit retry exception](RETRY_AUTHORIZATION-20260911.md).
+The corrected 118-minute calibration is next; no retry result is yet claimed.
+The previous 79-second failed allocation remains part of aggregate accounting.
+
 # Terminal status: calibration technical stop
 
 **Job 58198332 FAILED before GPU validation or training. No retry and no full

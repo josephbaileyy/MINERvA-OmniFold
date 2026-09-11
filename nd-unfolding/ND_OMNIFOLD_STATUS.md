@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**PET representation comparison, 2026-09-11:** the [report](pet/direct_token_comparison/REPORT_FOR_BEN.md) and isolated candidate are prepared. Approved calibration `58198332` passed 49 tests plus 10 subtests, then failed in guarded package-version discovery before training. [Terminal evidence](pet/direct_token_comparison/EXECUTION_STATUS-20260911.md) records 79 allocated seconds, no full jobs, preservation and the no-retry stop. A corrected retry is prepared but not authorized. Real-source semantics remain unresolved.
+**PET representation comparison, 2026-09-11:** the [report](pet/direct_token_comparison/REPORT_FOR_BEN.md) and isolated candidate are prepared. Approved calibration `58198332` passed 49 tests plus 10 subtests, then failed in guarded package-version discovery before training. [Terminal evidence](pet/direct_token_comparison/EXECUTION_STATUS-20260911.md) records 79 allocated seconds, no full jobs, preservation and the no-retry stop. One corrected retry is now explicitly authorized; calibration is next. Real-source semantics remain unresolved.
 
 **PET typed-descriptor continuation, 2026-09-10:** reconstruction-side prong
 definitions and their implementation implications are recorded in

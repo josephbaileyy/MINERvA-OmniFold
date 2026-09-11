@@ -11,13 +11,15 @@ import pstats
 from typing import Any
 
 
-def evaluate(directory: Path, elapsed_seconds: int) -> dict[str, Any]:
+def evaluate(
+    directory: Path, elapsed_seconds: int, prior_allocation_seconds: int
+) -> dict[str, Any]:
     """Require closed calibration evidence before evaluating the resource gates.
 
     ``elapsed_seconds`` is the completed allocation's Slurm ElapsedRaw, not the
     Python process time. Call only after verifying COMPLETED and ExitCode 0:0.
     """
-    if elapsed_seconds <= 0:
+    if elapsed_seconds <= 0 or prior_allocation_seconds < 0:
         raise ValueError("Completed allocation accounting is required")
     if (directory / "terminal.txt").read_text().strip() != "COMPLETE":
         raise ValueError("Calibration did not complete")
@@ -98,12 +100,13 @@ def evaluate(directory: Path, elapsed_seconds: int) -> dict[str, Any]:
     # Reserve 6 GiB for the measured 4.87-GiB runtime, code and small receipts.
     working_GiB = 6 + output_bytes / 1024**3 + 24 * job_GiB
     campaign_gpu_hours = 24 * job_seconds / 3600
-    remaining_gpu_hours = 290 - elapsed_seconds / 3600
+    charged_seconds = elapsed_seconds + prior_allocation_seconds
+    remaining_gpu_hours = 290 - charged_seconds / 3600
     checks = {
         "per_job_time_20pct_headroom": job_seconds <= 0.8 * 12 * 3600,
         "campaign_gpu_20pct_headroom": campaign_gpu_hours <= 0.8 * remaining_gpu_hours,
         "campaign_cpu_20pct_headroom": campaign_gpu_hours * 32
-        <= 0.8 * (9296 - 16 - elapsed_seconds / 3600 * 32),
+        <= 0.8 * (9296 - 16 - charged_seconds / 3600 * 32),
         "host_memory_20pct_headroom": host_GiB <= 0.8 * 56,
         "per_job_storage_20pct_headroom": job_GiB <= 0.8 * 4,
         "working_storage_20pct_headroom": working_GiB <= 0.8 * 100,
@@ -114,6 +117,8 @@ def evaluate(directory: Path, elapsed_seconds: int) -> dict[str, Any]:
         "checks": checks,
         "measured": {
             "allocation_seconds": elapsed_seconds,
+            "prior_allocation_seconds": prior_allocation_seconds,
+            "total_charged_seconds": charged_seconds,
             "fit_seconds": fit_seconds,
             "inference_seconds": inference_seconds,
             "other_seconds": other_seconds,
@@ -137,7 +142,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
     parser.add_argument("--allocation-seconds", type=int, required=True)
+    parser.add_argument("--prior-allocation-seconds", type=int, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    result = evaluate(args.directory, args.allocation_seconds)
+    result = evaluate(
+        args.directory, args.allocation_seconds, args.prior_allocation_seconds
+    )
     args.output.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")

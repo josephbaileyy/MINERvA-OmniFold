@@ -288,3 +288,12 @@ No full jobs or retry were submitted. The [118-minute retry proposal](pet/direct
 requires an explicit exception to the agreed no-retry stop. No synthetic learning
 comparison, real-data representation conclusion, source access, covariance,
 adoption or Gate-6 action resulted.
+
+
+## 2026-09-11 — One calibration retry explicitly authorized
+
+Joseph approved the retry proposal at `c9def5d2`, granting one exception for
+`58198332`. [Exact authorization](pet/direct_token_comparison/RETRY_AUTHORIZATION-20260911.md).
+One A100 / 32 CPUs / 56 GiB / 118 minutes; prior 79 seconds charged to the same
+aggregate limits. A second technical failure stops; full jobs remain conditional
+on the unchanged integrity and 20% headroom gates.
