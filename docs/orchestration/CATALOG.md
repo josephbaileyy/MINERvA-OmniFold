@@ -671,6 +671,29 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   declared destination exclusion does **not** reach a functional dense over source columns. For P2 the
   `[3,100] GeV` catch bin **is** destination row 7, so an all-ones total rate would include support the
   displayed projection excludes. Possibly correct; **undeclared is the defect.**
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partW.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partW.md)
+  - **PART W — cause-3 amendment adequacy conditions, COMMITTED BEFORE THE AMENDMENT LANDS.** Objection
+  ground verified in three places: `SPEC:3550-3552` (*"the variation of the **assembled** `C_Z` … varied
+  **jointly**"*), `z_contract:222-225` (`cause3_agg`, **unqualified**), `:233-235` (*"licenses nothing"*).
+  ⚠ **§W.2 IS THE DECISIVE MEASUREMENT AND IT CLOSES TWO OF FOUR POSSIBLE ANSWERS IN ADVANCE.** The
+  subset argument alone leaves an opening — `SPEC:3550` varies the **sweep-side and throw-side**
+  baselines, and one could argue the blocks sit on neither. **Refuted:** `bootstrap_nd.py:47,55` passes
+  `_est_seed` into the estimator and stamps it at `:67`; `seedscan_split.py:69` passes
+  `args.estimator_seed` and stamps at `:99`. **Both excluded summands are functions of the estimator
+  seed**, so holding them digest-identical suppresses a real component of exactly the declared
+  variation. Response **(d) invariant is REFUTED**; **(c) negligible is unavailable as an assertion**;
+  only **(a) narrow the claim** and **(b) narrow the subject — a contract change, Joseph's** remain.
+  Plus Part T §T.3's independent tension: `:8-10`'s *"#13-invariant"* against `:421`'s member rebuild.
+  **§W.3 pre-registers five conditions** — name which of (a)-(d); supply the measurement if (c)/(d);
+  the operative word is ***licenses*** so changing what is MEASURED does not reach the objection;
+  `cause3_agg`'s unqualified purpose must be qualified too or knowingly left; **no fourth grade token**.
+  **§W.4: elements 3 and 4 must TRAVEL WITH THE GRADE** — `z_validator.py:166-167` already states the
+  principle (*"the narrowing that must travel WITH the grade, not sit in a specification the grader may
+  not open"*) and `_DIAGONAL_ONLY_SCOPE` is the non-suppressible mechanism, so licensing statements
+  written in prose are put where the code says they do not survive.
+  **§W.5 recommends `κ` stay WHOLE with the reviewer** despite its population clause being this lane's
+  subject: a package split across two lanes has a seam, and silent removal is exactly what lives in
+  seams — better to take it late than fragment it early.
 - [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
   - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
   numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
