@@ -8,6 +8,45 @@
 # universe (12 knob +1sigma + 100 Flux) is RE-UNFOLDED at the CV seed so its
 # OmniFold jitter cancels in (x_b - x_cv). task 0 = all 12 knobs; tasks 1-20 = a
 # 5-flux chunk each (5x20 = 100). Combine aggregates these into C_blocksum.
+#
+# ==================================================================================================
+# LIVE, UNREPAIRED DEFECT IN THIS LAUNCHER'S UNDECLARED PATH -- READ BEFORE THE `if` AT :382
+# ==================================================================================================
+# **CITABLE FOR:** the fact that an UNDECLARED run of this launcher writes its block slabs to a
+#   namespace the fast combine does not read, and for the reason that is deliberately not repaired.
+# **NOT CITABLE FOR:** any claim that the Z precursor is exposed to it (it is not -- see below), any
+#   grade, adoption, gate movement, spend, or authorization to change the literal at :390.
+# **Owner of the DEFECT:** unassigned. Its repair needs Joseph's authorization, which this
+#   launcher's own comment at :354-356 already said and which the Z-precursor authorization of
+#   2026-09-11 did NOT grant -- that one is scoped to the precursor.
+# **Owner of this RECORD:** the Z-precursor repair lane (`lane/z-precursor-repairs-bg-20260911`).
+#   Declining ownership of the defect is cheap and expected: an owner here is whoever would notice
+#   an archive-reproduction combine reading the wrong directory, and that is not this lane.
+#
+# THE DEFECT, PLAINLY. When `MNV_EST_SEED_OFFSET` is unset and `MNV_Z_PRECURSOR_NS` is unset, the
+# `else` branch at :390 writes `uq_5d/block_slabs_5d`, while `sbatch_uthrow_combine_5d_fast.sh`
+# reads `uq_5d/block_slabs_5d_sb` UNCONDITIONALLY, and `lib_member_resume.sh:145-149`'s
+# `mr_dir_prefix` returns its argument unchanged when undeclared, so nothing re-aligns them.
+# BOTH NAMESPACES ARE POPULATED, measured 2026-09-11 on the product globs (not on `ls`, which
+# counts the `knob_*.log` files too): `block_slabs_5d` holds 8 `block5d_*.npz` and
+# `block_slabs_5d_sb` holds 36, from separate campaigns. So such a run writes 21 fresh slabs and
+# its combine consumes 36 foreign ones -- AND IT DOES NOT FAIL CLOSED, because the glob MATCHES.
+#
+# WHY IT IS NOT REPAIRED HERE. Joseph's standing instruction is to preserve existing non-Z defaults
+# and validated reproduction paths. Repointing the `else` literal would change where an ARCHIVE
+# reproduction writes, with a destructive edge on receipt-bound slabs; that is a different subject
+# with its own blast radius and its own authorization.
+#
+# WHY THE Z PRECURSOR IS UNAFFECTED. The precursor does not take this branch at all: it requires
+# `MNV_Z_PRECURSOR_NS`, which has no default, and under it every arm resolves ONE namespace that
+# the producer verifies against `z_precursor.ARM_LAYOUT` and refuses if non-fresh. The precursor is
+# therefore never an undeclared run, which is relocation rather than repair -- and the distinction
+# is the whole reason this notice exists: THE NEXT USER OF THE GENERAL LAUNCHER IS PRECISELY THE
+# READER WHO WILL NOT HAVE READ THE Z REVIEW.
+#
+# IF YOU ARE ABOUT TO RUN THIS UNDECLARED: check which namespace your combine reads before you
+# trust its output. Nothing below will tell you.
+# ==================================================================================================
 set -eo pipefail
 # --- OI-136 / Joseph's ruling 17, 2026-08-22: TWO ROOTS, BOTH MANDATORY, NEITHER DEFAULTED -------
 # This line used to read `REPO="<the canonical checkout>"` unconditionally, and every `source`, every

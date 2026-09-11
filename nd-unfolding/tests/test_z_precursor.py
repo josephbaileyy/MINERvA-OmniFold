@@ -723,6 +723,68 @@ class TheNamespaceIsOneExplicitValueAndFreshnessRefuses(unittest.TestCase):
         with self.assertRaises(ZP.PrecursorError):
             ZP.check_namespace_fresh(plan, [])
 
+    def test_the_RESIDUAL_is_MARKED_ON_THE_LAUNCHER_ITSELF(self):
+        """The independent review's one condition, and its reasoning is the part that matters:
+        *"the general launcher's next user is precisely the reader who will not have read this
+        review."* A lane record cannot reach that reader; a notice in the file can.
+
+        Asserted ABOVE the branch it warns about, because a warning a reader meets after the code
+        it describes is not a warning.
+        """
+        text = LAUNCHER["block"].read_text()
+        lines = text.split("\n")
+        for required in ("**CITABLE FOR:**", "**NOT CITABLE FOR:**",
+                         "**Owner of the DEFECT:**", "**Owner of this RECORD:**"):
+            with self.subTest(field=required):
+                self.assertIn(required, text, f"the residual notice lacks {required}")
+        notice = next(i for i, line in enumerate(lines) if "**CITABLE FOR:**" in line)
+        branch = next(i for i, line in enumerate(lines)
+                      if line.startswith('if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]'))
+        undeclared = next(i for i, line in enumerate(lines)
+                          if line.strip() == 'BLOCK_DIR="uq_5d/block_slabs_5d"')
+        self.assertLess(notice, branch,
+                        "the notice must sit ABOVE the namespace branch, not below it")
+        self.assertLess(notice, undeclared)
+        # BOTH NAMESPACES NAMED, and the direction of the mismatch stated -- a notice that said
+        # only "there is a mismatch" would leave the reader to work out which way it runs.
+        for fact in ("block_slabs_5d_sb", "sbatch_uthrow_combine_5d_fast.sh",
+                     "does not take this branch", "did NOT grant"):
+            with self.subTest(fact=fact):
+                self.assertIn(fact, text)
+
+    def test_the_RESIDUAL_notices_LINE_CITATIONS_still_point_at_what_they_claim(self):
+        """A line citation in a comment is the most fragile receipt there is: the next edit above it
+        silently repoints it. So each one is resolved and compared against what the notice says is
+        there. This exists because I got all four wrong on the first write -- inserting the notice
+        shifted every line it cited."""
+        lines = LAUNCHER["block"].read_text().split("\n")
+        # FIRST TO LAST FENCE, not "the two fences": the notice's title is UNDERLINED, so there are
+        # three. My first version asserted exactly two and failed on my own formatting -- a test
+        # wrong about its own operand, which is the shape this file keeps finding elsewhere.
+        fence = [i for i, line in enumerate(lines) if line.startswith("# ===========")]
+        self.assertGreaterEqual(len(fence), 2, "the notice's fence lines are not where this looks")
+        block = lines[fence[0]: fence[-1] + 1]
+
+        # Citations of THIS file only. A reference like `lib_member_resume.sh:145-149` names another
+        # file and must not be resolved against these line numbers -- that would be the
+        # right-check-wrong-operand shape, and it is why the filename-qualified form is excluded.
+        cited = set()
+        for line in block:
+            for match in re.finditer(r"(\S*):(\d+)", line):
+                if not match.group(1).endswith((".sh", ".py")):
+                    cited.add(int(match.group(2)))
+        self.assertTrue(cited, "the notice cites no line of this file at all")
+
+        for code, what in (('if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]; then', "the namespace branch"),
+                           ('BLOCK_DIR="uq_5d/block_slabs_5d"', "the undeclared literal")):
+            target = next(i + 1 for i, line in enumerate(lines) if line.strip() == code)
+            with self.subTest(cites=what):
+                self.assertIn(target, cited,
+                              f"no citation in the notice resolves to line {target}, which is "
+                              f"where {what} ({code!r}) actually is. A citation that has drifted "
+                              f"points a reader at an unrelated line and reads exactly like a "
+                              f"correct one.")
+
     def test_the_CONTRACT_ADDS_NO_python3_LINE_TO_ANY_LAUNCHER(self):
         """RULING 21, AND MY FIRST IMPLEMENTATION VIOLATED IT FIFTEEN TIMES.
 
@@ -1401,6 +1463,58 @@ class AdmissionBoundsCommittedExposureNotElapsed(unittest.TestCase):
         self.assertEqual(report["decision"], "REFUSED_STOP_FIRED")
         self.assertEqual(report["exit_code"], 3)
         self.assertTrue(report["r5_fired"]["cpu"])
+
+    def test_the_meter_reuse_rides_a_DECLARED_private_surface(self):
+        """The independent review's durability point, made into an instrument instead of a note.
+
+        Reuse of an underscore name rides an unversioned interface and would break silently under a
+        refactor of the meter. A COMMENT saying so rots -- which is the failure mode being guarded
+        against -- so the set is declared in `METER_PRIVATE_DEPENDENCIES` and checked BOTH WAYS:
+
+          * every declared name must still EXIST on the meter, so a refactor that removes one fails
+            here rather than at runtime on the cluster;
+          * the declared set must EQUAL what the AST actually finds, so a future edit that reaches
+            for a SECOND private name fails too instead of widening the coupling unrecorded.
+
+        The second arm is the one that makes this more than a spelling check. Measured over
+        EXECUTABLE code, not text: the module docstring names three further private functions while
+        discussing them, and a grep would have counted those as dependencies.
+        """
+        for module, declared in ((ZPA, ZPA.METER_PRIVATE_DEPENDENCIES),
+                                 (None, ZPA.METER_PRIVATE_DEPENDENCIES_IN_TESTS)):
+            for name, reason in declared.items():
+                with self.subTest(name=name):
+                    self.assertTrue(hasattr(r5_meter, name),
+                                    f"r5_meter.{name} is GONE -- the meter was refactored and this "
+                                    f"module's reuse is broken. Declared reason: {reason}")
+                    self.assertTrue(reason.strip(), f"{name} is declared with no reason")
+            del module
+
+        def private_meter_attrs(path):
+            tree = ast.parse(Path(path).read_text())
+            return {node.attr for node in ast.walk(tree)
+                    if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name)
+                    and node.value.id == "r5_meter" and node.attr.startswith("_")}
+
+        self.assertEqual(private_meter_attrs(ND / "z_precursor_admission.py"),
+                         set(ZPA.METER_PRIVATE_DEPENDENCIES),
+                         "the module's ACTUAL private meter dependencies and the declared set have "
+                         "diverged; declare the new one with its reason rather than leaving the "
+                         "coupling unrecorded")
+        self.assertEqual(private_meter_attrs(ND / "tests" / "test_z_precursor.py"),
+                         set(ZPA.METER_PRIVATE_DEPENDENCIES_IN_TESTS),
+                         "this suite's ACTUAL private meter dependencies and the declared set have "
+                         "diverged")
+
+    def test_the_private_surface_detector_CATCHES_an_undeclared_name(self):
+        """POSITIVE CONTROL on the AST sweep above: a detector that matches nothing gives the same
+        answer as a module with no private dependencies at all."""
+        tree = ast.parse("import r5_meter\nx = r5_meter._brand_new_private(1)\n")
+        found = {node.attr for node in ast.walk(tree)
+                 if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name)
+                 and node.value.id == "r5_meter" and node.attr.startswith("_")}
+        self.assertEqual(found, {"_brand_new_private"})
+        self.assertNotIn("_brand_new_private", ZPA.METER_PRIVATE_DEPENDENCIES)
 
     def test_the_METER_is_REUSED_rather_than_reimplemented(self):
         """A rule retyped is a second implementation. The module must call the meter, not restate

@@ -80,6 +80,48 @@ PrecursorError = z_precursor.PrecursorError
 #: and it refuses -- a check that could not establish its operand is not a check that passed.
 SPEND_BASES = ("utc", "naive", "unknown")
 
+#: THE PRIVATE `r5_meter` SURFACE THIS MODULE RIDES, DECLARED SO A REFACTOR SURFACES IT.
+#:
+#: Raised by the independent review of 2026-09-11: reuse is right, but reuse of a NAME STARTING WITH
+#: AN UNDERSCORE rides an unversioned interface and would break silently when the meter is
+#: refactored. Measured rather than characterized -- an AST sweep for `r5_meter.<attr>` over
+#: executable code (not docstring prose, which names three more) finds exactly ONE private name
+#: here, and the test suite adds one more. Everything else is public.
+#:
+#: WHY A DECLARED CONSTANT AND NOT A COMMENT: a comment rots silently, which is the failure mode
+#: being guarded against. `test_z_precursor.TheMeterReuseRidesADeclaredPrivateSurface` checks this
+#: set in BOTH directions -- every declared name must still exist on the meter, AND the set must
+#: equal what the AST actually finds. So a meter refactor that removes one fails loudly, and a
+#: future edit here that reaches for a SECOND private name fails just as loudly instead of
+#: widening the coupling unrecorded.
+#:
+#: WHAT TO DO IF THE METER GROWS A PUBLIC EQUIVALENT: switch to it and delete the entry. Do not
+#: reimplement the parse -- `_parse_sacct_dump` owns the attempt-identity rule (`(JobID, Start)`),
+#: the t0 clip, the step/bracket exclusions and the refusal of contradictory duplicate
+#: observations. Restating any of that here is the second implementation this module exists not to be.
+METER_PRIVATE_DEPENDENCIES = {
+    "_parse_sacct_dump": "the attempt set and its exclusion rules; see `_charged_by_name`, which "
+                         "takes the ATTEMPTS from the meter and only the job NAMES from the raw "
+                         "rows, because `AttemptRecord` deliberately drops the name",
+}
+
+#: The same, for the test suite. Kept here rather than in the test so there is ONE record of the
+#: coupling and a reader of this module sees the whole of it.
+#:
+#: ⚠ THIS SET WAS INCOMPLETE ON ITS FIRST WRITE, AND THE BOTH-DIRECTIONS ARM IS WHAT CAUGHT IT.
+#: I declared `_calculate_spend` and missed `_parse_sacct_dump`, which the suite also calls
+#: directly. A one-directional check -- "every declared name still exists" -- would have passed on
+#: the incomplete declaration and the record would have understated the coupling it exists to
+#: record. That is the whole argument for the equality arm.
+METER_PRIVATE_DEPENDENCIES_IN_TESTS = {
+    "_calculate_spend": "re-measures the RUNNING-attempt charging fact this module is built on, "
+                        "rather than trusting it: one COMPLETED 3600 s + one RUNNING 7200 s + one "
+                        "PENDING must give 3.0 cpu_task_hours and attempt_count 2",
+    "_parse_sacct_dump": "feeds `_calculate_spend` in that same re-measurement, and is the operand "
+                         "for the PENDING-is-not-an-attempt assertion that justifies declaring the "
+                         "admitted set instead of deriving it",
+}
+
 #: Slurm states from which NO further attempt of that TASK can follow. Everything else is treated
 #: as non-terminal, so an unrecognised state fails closed towards having exposure.
 #:

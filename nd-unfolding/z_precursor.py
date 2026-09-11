@@ -228,11 +228,31 @@ def check_namespace_fresh(plan, arms=None):
 def check_no_member_axis(environ=None):
     """`mii/` stays empty because this REFUSES, not because nobody exported the variable.
 
-    `lib_member_resume.sh:230` treats ANY non-empty `MNV_EST_SEED_OFFSET` as a declaration, and
+    `lib_member_resume.sh:230`'s `mr_declared` is `[[ -n "${MNV_EST_SEED_OFFSET:-}" ]]`, and
     `:84`/`:120-135` then prepend `mii/member_kNNNNNN` to every product path. So the precursor's
     products would silently relocate under the member axis, into a tree the M(ii) grid owns. An
-    offset of `0` is still a DECLARATION there -- `-n` is a presence test, not a truth test -- so
-    `0` is refused here too, and that asymmetry is the whole reason this cannot be a value check.
+    offset of `0` is still a DECLARATION there -- `-n` is a NON-EMPTINESS test, not a truth test --
+    so `0` is refused here too, and that asymmetry is why this cannot be a value check.
+
+    ⚠ THIS GUARD AND THE SHELL PREDICATE DISAGREE ON ONE INPUT, DELIBERATELY, AND THE LEAN IS
+    STATED HERE SO NOBODY LATER "ALIGNS" THEM WITHOUT KNOWING WHICH WAY IT LEANS. Raised by the
+    independent review of 2026-09-11, which executed all four cases.
+
+        MNV_EST_SEED_OFFSET   this guard   shell `mr_declared`
+        unset                 passes       undeclared          -- agree
+        "0"                   REFUSES      declared            -- agree
+        "7"                   REFUSES      declared            -- agree
+        ""  (set, empty)      REFUSES      undeclared          -- DISAGREE
+
+    This keys on KEY PRESENCE (`env.get(...) is not None`); the shell keys on NON-EMPTINESS. On the
+    exported-but-empty case this is therefore STRICTLY STRICTER, and that is the SAFE DIRECTION: it
+    refuses a run the shell would have let through, and the cost is a false refusal rather than a
+    silent relocation into `mii/`. `test_z_precursor` pins both sides -- the four cases here and
+    the shell's own `("", False)` measured by executing `lib_member_resume.sh` itself -- so the
+    disagreement is on record as intended rather than as drift.
+    DO NOT "FIX" THIS BY SWITCHING TO NON-EMPTINESS. An exported-but-empty `MNV_EST_SEED_OFFSET` is
+    a caller who meant to set it and got it wrong; treating that as "no member axis" is exactly the
+    silently-empty-defaulted-variable failure the launchers' `${VAR:?}` forms exist to prevent.
     """
     env = os.environ if environ is None else environ
     value = env.get(MEMBER_OFFSET_ENV)
