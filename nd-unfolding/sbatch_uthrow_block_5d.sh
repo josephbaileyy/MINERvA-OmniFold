@@ -10,21 +10,21 @@
 # 5-flux chunk each (5x20 = 100). Combine aggregates these into C_blocksum.
 #
 # ==================================================================================================
-# LIVE, UNREPAIRED DEFECT IN THIS LAUNCHER'S UNDECLARED PATH -- READ BEFORE THE `if` AT :382
+# LIVE, UNREPAIRED DEFECT IN THIS LAUNCHER'S UNDECLARED PATH -- READ BEFORE THE `if` AT :398
 # ==================================================================================================
 # **CITABLE FOR:** the fact that an UNDECLARED run of this launcher writes its block slabs to a
 #   namespace the fast combine does not read, and for the reason that is deliberately not repaired.
 # **NOT CITABLE FOR:** any claim that the Z precursor is exposed to it (it is not -- see below), any
-#   grade, adoption, gate movement, spend, or authorization to change the literal at :390.
+#   grade, adoption, gate movement, spend, or authorization to change the literal at :406.
 # **Owner of the DEFECT:** unassigned. Its repair needs Joseph's authorization, which this
-#   launcher's own comment at :354-356 already said and which the Z-precursor authorization of
+#   launcher's own comment at :368-370 already said and which the Z-precursor authorization of
 #   2026-09-11 did NOT grant -- that one is scoped to the precursor.
 # **Owner of this RECORD:** the Z-precursor repair lane (`lane/z-precursor-repairs-bg-20260911`).
 #   Declining ownership of the defect is cheap and expected: an owner here is whoever would notice
 #   an archive-reproduction combine reading the wrong directory, and that is not this lane.
 #
 # THE DEFECT, PLAINLY. When `MNV_EST_SEED_OFFSET` is unset and `MNV_Z_PRECURSOR_NS` is unset, the
-# `else` branch at :390 writes `uq_5d/block_slabs_5d`, while `sbatch_uthrow_combine_5d_fast.sh`
+# `else` branch at :406 writes `uq_5d/block_slabs_5d`, while `sbatch_uthrow_combine_5d_fast.sh`
 # reads `uq_5d/block_slabs_5d_sb` UNCONDITIONALLY, and `lib_member_resume.sh:145-149`'s
 # `mr_dir_prefix` returns its argument unchanged when undeclared, so nothing re-aligns them.
 # BOTH NAMESPACES ARE POPULATED, measured 2026-09-11 on the product globs (not on `ls`, which
@@ -32,10 +32,24 @@
 # `block_slabs_5d_sb` holds 36, from separate campaigns. So such a run writes 21 fresh slabs and
 # its combine consumes 36 foreign ones -- AND IT DOES NOT FAIL CLOSED, because the glob MATCHES.
 #
-# WHY IT IS NOT REPAIRED HERE. Joseph's standing instruction is to preserve existing non-Z defaults
-# and validated reproduction paths. Repointing the `else` literal would change where an ARCHIVE
-# reproduction writes, with a destructive edge on receipt-bound slabs; that is a different subject
-# with its own blast radius and its own authorization.
+# WHY IT IS NOT REPAIRED HERE, AND THE DIRECTION MATTERS -- MY FIRST VERSION OF THIS SECTION HAD IT
+# BACKWARDS. I wrote that repointing the `else` literal "would change where an ARCHIVE reproduction
+# writes". THAT IS THE REASON `:364-367` BELOW EXPLICITLY WITHDRAWS. The archive IS `_sb`, so
+# repointing does NOT move the archive: it would let an UNDECLARED, NON-SCAN run write INTO the
+# live archive directory. The constraint is that `_sb` needs protecting FROM undeclared writers --
+# not that the archive sits at the current literal and should be left undisturbed.
+# THE TWO DIRECTIONS LICENSE DIFFERENT REPAIRS, which is why this is not a wording quibble. Under my
+# wrong version the prudent act is to leave the literal alone. Under the real constraint, pointing
+# the undeclared path at a THIRD namespace -- neither archive nor `_sb` -- would also satisfy it,
+# and would actually close the mismatch. That option is visible only once the direction is right.
+# WHAT DOES JUSTIFY LEAVING IT: Joseph's standing instruction to preserve existing non-Z defaults
+# and validated reproduction paths, plus the fact that any change here is a separate subject with
+# its own blast radius and its own authorization -- which the Z-precursor grant does not give.
+# ⚠ AND THE FIGURE AT `:366-367` DOES NOT RECONCILE. It says "124 receipt-bound slabs". Measured
+# 2026-09-11: `block_slabs_5d_sb` 36 + `uthrow_slabs_5d_sb` 40 = 76, and all SEVEN `uq_5d/*slab*`
+# directories together hold 271. No population measured equals 124. Pre-existing and not
+# introduced here; repeated without its denominator it would be an unreconciled number doing
+# rhetorical work, so it is named as unreconciled instead of quoted.
 #
 # WHY THE Z PRECURSOR IS UNAFFECTED. The precursor does not take this branch at all: it requires
 # `MNV_Z_PRECURSOR_NS`, which has no default, and under it every arm resolves ONE namespace that
@@ -360,13 +374,15 @@ source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) memb
 # unconditional `_sb` -- is closed for the precursor by making ALL FOUR ARMS resolve ONE explicit
 # namespace, and is left EXACTLY as it was when that namespace is unset.
 #
-# WHY THE UNSET PATH IS UNTOUCHED, and it is not timidity: Joseph's standing instruction is
-# "preserve all existing non-Z defaults and validated reproduction paths", and repointing the unset
-# literal would change where an ARCHIVE reproduction writes. That is a different subject with its
-# own blast radius (the destructive edge on receipt-bound slabs the comment above describes), and it
-# is NOT authorized here. THE RESIDUAL IS THEREFORE LIVE: an undeclared, non-precursor run of this
-# launcher still writes `block_slabs_5d` while the fast combine still reads `block_slabs_5d_sb`.
-# Recorded rather than silently half-fixed.
+# WHY THE UNSET PATH IS UNTOUCHED, and it is not timidity. THIS PARAGRAPH ALSO CARRIED THE WITHDRAWN
+# DIRECTION and is corrected: repointing the unset literal does NOT "change where an ARCHIVE
+# reproduction writes", because per `:364-367` the archive IS `_sb`. It would point an UNDECLARED
+# writer INTO the live archive. What justifies leaving it is Joseph's standing instruction to
+# "preserve all existing non-Z defaults and validated reproduction paths", and that any change here
+# is a separate subject with its own authorization, which the Z-precursor grant does not give.
+# THE RESIDUAL IS THEREFORE LIVE: an undeclared, non-precursor run of this launcher still writes
+# `block_slabs_5d` while the fast combine still reads `block_slabs_5d_sb`. Recorded rather than
+# silently half-fixed, and marked at the TOP OF THIS FILE where its next user will meet it.
 #
 # NON-EMPTINESS IS A REFUSAL, NOT AN ASSUMPTION, and so is the member axis. Without the second,
 # "nothing lands in mii/" holds only because nobody exported MNV_EST_SEED_OFFSET.

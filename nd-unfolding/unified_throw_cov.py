@@ -153,8 +153,20 @@ def _load_bank(bank):
 #   (2) THE NON-NPZ SUFFIX. A consumer that bypasses globbing -- `os.listdir` plus
 #       `endswith(".npz")` -- is covered by `.partial`, which no npz reader will accept either.
 #
+# ⚠ NEITHER GUARANTEE CAN BE MUTATION-TESTED ALONE, and that is worth writing down because it
+# reads as a weak test if you do not know it. Reverting ONLY the prefix leaves `.partial`, which
+# still fails `*.npz`; reverting ONLY the suffix leaves the leading dot, which still fails every
+# glob. A one-constant mutation therefore MISSES and invites the conclusion that the coverage test
+# is powerless. It is not -- the two guarantees are independently sufficient BY DESIGN, so a power
+# control has to revert BOTH, which is what the pre-repair-naming arm does. Measured: one-constant
+# MISSED, both-constant DETECTED.
+#
 # WHAT IS DELIBERATELY UNCHANGED: `os.replace(tmp, path)` below, in the SAME directory, so
-# publication of a COMPLETED product stays atomic. A repair that made incomplete writes
+# publication of a COMPLETED product stays atomic. Same-directory is what makes it same-DEVICE, and
+# `os.replace` is atomic only within one filesystem -- so relocating the temp to a sibling temp
+# directory, the obvious alternative fix, would have stopped being atomic the moment that directory
+# sat on another device, silently and only where it mattered. Proven rather than asserted: the
+# same-device arm captures the temp path mid-write and compares `st_dev`. A repair that made incomplete writes
 # unselectable by breaking the rename would trade a silent wrong answer for a lost product; the
 # successful-completion arm of the test suite exists to catch exactly that.
 INCOMPLETE_PREFIX = ".mnv-incomplete."

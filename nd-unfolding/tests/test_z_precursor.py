@@ -703,6 +703,137 @@ class ThePopulationIsCheckedByIDENTITYinBothDirections(ProducerFixture):
         self.assertEqual(report["n_expected"], len(names))
         self.assertEqual(report["n_found"], len(names))
 
+    #: Every `.npz` selection pattern in every tracked launcher, DERIVED not listed. The review's
+    #: scope correction: the consumer population is the launchers that SELECT these products, which
+    #: is far wider than the four precursor arms, and a list would have been my guess at it.
+    @staticmethod
+    def launcher_npz_globs():
+        pats = {}
+        for sh in sorted(ND.glob("sbatch_*.sh")):
+            for line in sh.read_text().split("\n"):
+                if line.lstrip().startswith("#"):
+                    continue
+                for m in re.finditer(r"[\'\"]([^\'\"]*\*[^\'\"]*\.npz)[\'\"]", line):
+                    pats.setdefault(os.path.basename(m.group(1)), set()).add(sh.name)
+        return pats
+
+    def test_the_CONSUMER_POPULATION_is_derived_and_the_NAME_is_unselectable_across_ALL_of_it(self):
+        """The review's points 1 and 2: re-derive the population from the CONSUMERS, and harden
+        BOTH selection surfaces.
+
+        SURFACE 1 is the bare launcher glob. SURFACE 2 is the declared-population check in
+        `check_slab_population`. A repair hardening one leaves the other exposed, so both are
+        asserted here for every pattern any tracked launcher actually uses.
+
+        THE PATTERNS ARE DERIVED FROM THE LAUNCHERS, not retyped: a list would be my guess at the
+        consumer set, and my guess is what the review corrected.
+        """
+        globs = self.launcher_npz_globs()
+        # THE PARTITION IS PINNED, so a NEW stem forces a decision instead of quietly joining the
+        # covered side. MEASURED 2026-09-11: 8 stems across 13 launchers -- which is wider than the
+        # "nine launchers over five stems" I was given, and wider again than the four precursor
+        # arms I started from. Scope of the derivation, stated because it bounds the claim:
+        # `.npz` selection patterns on NON-COMMENT lines of tracked `nd-unfolding/sbatch_*.sh`.
+        COVERED = {"block4d_*.npz", "block5d_*.npz", "blockfps_*.npz",
+                   "uthrow4d_slab_*.npz", "uthrow5d_slab_*.npz", "uthrowfps_slab_*.npz"}
+        UNCOVERED = {"res_boot_*.npz", "res_split_*.npz"}
+        self.assertEqual(set(globs), COVERED | UNCOVERED,
+                         "the consumer population moved. A new `.npz` selection pattern must be "
+                         "classified: COVERED if its producer routes through `_atomic_savez`, "
+                         "UNCOVERED if it writes straight to its --out (see the uncovered-producer "
+                         "arm). Defaulting it to either side is the widening this pin prevents.")
+        self.assertEqual(len({l for v in globs.values() for l in v}), 13,
+                         "the launcher count moved; re-derive the population before trusting any "
+                         "coverage claim about it")
+        for stem in sorted(UNCOVERED):
+            globs.pop(stem)
+        target = self.work / "population"
+        target.mkdir(parents=True, exist_ok=True)
+        real_replace = U.os.replace
+        for pattern, launchers in sorted(globs.items()):
+            product = pattern.replace("*", "7")
+            with self.subTest(pattern=pattern, launchers=sorted(launchers)):
+                # An interrupted write for THIS stem: publication suppressed so the temp survives.
+                U.os.replace = lambda *a, **k: None
+                try:
+                    U._atomic_savez(str(target / product), xs=np.arange(3))
+                finally:
+                    U.os.replace = real_replace
+                temps = U.find_incomplete_writes(target)
+                self.assertEqual(len(temps), 1, f"expected one temp, got {temps}")
+                # SURFACE 1: the launcher's own pattern must not select it.
+                selected = [os.path.basename(q) for q in
+                            __import__("glob").glob(str(target / pattern))]
+                self.assertEqual(selected, [],
+                                 f"{pattern!r} (used by {sorted(launchers)}) SELECTED an "
+                                 f"incomplete write: {temps}")
+                # SURFACE 2: the declared-population check must refuse it, as ITSELF.
+                with self.assertRaises(SystemExit) as caught:
+                    U.check_slab_population(str(target / pattern), [product], "population")
+                self.assertIn("INCOMPLETE write", str(caught.exception))
+                (target / temps[0]).unlink()
+
+    def test_PUBLICATION_stays_SAME_DIRECTORY_and_therefore_SAME_DEVICE(self):
+        """The review's point 3. `os.replace` is atomic only within one filesystem, so a repair
+        that relocated the temp to a sibling temp directory would stop being atomic the moment that
+        directory sat on another device -- silently, and only on the machine where it mattered.
+
+        THIS REPAIR RENAMED IN PLACE, so same-device holds BY CONSTRUCTION rather than by policy:
+        the temp is created with `dir=os.path.dirname(path)`. Proven rather than argued -- the temp
+        path is captured mid-write and both `st_dev` values compared.
+        """
+        target = self.work / "device"
+        target.mkdir(parents=True, exist_ok=True)
+        product = target / "block5d_knobs.npz"
+        captured = {}
+        real_replace = U.os.replace
+
+        def capture(src, dst):
+            captured["src"] = src
+            captured["dst"] = dst
+            captured["src_dev"] = os.stat(src).st_dev
+            captured["dir_dev"] = os.stat(os.path.dirname(dst)).st_dev
+            return real_replace(src, dst)
+
+        U.os.replace = capture
+        try:
+            U._atomic_savez(str(product), xs=np.arange(4))
+        finally:
+            U.os.replace = real_replace
+
+        self.assertEqual(os.path.dirname(captured["src"]), os.path.dirname(captured["dst"]),
+                         "the temp must be created in the PRODUCT's own directory")
+        self.assertEqual(captured["src_dev"], captured["dir_dev"],
+                         "same st_dev: the rename cannot cross a filesystem boundary")
+        self.assertEqual(os.stat(product).st_dev, captured["dir_dev"])
+        # And the rename really did publish, so this is not a proof about a no-op.
+        with np.load(product) as slab:
+            np.testing.assert_array_equal(slab["xs"], np.arange(4))
+
+    def test_the_UNCOVERED_producers_are_NAMED_rather_than_left_implicit(self):
+        """WHAT THIS REPAIR DOES NOT COVER, asserted so the gap lives in the suite and not only in
+        a report.
+
+        `_atomic_savez` derives its temp from `basename(path)`, so the repair covers every stem any
+        launcher asks it for -- 4d, 5d and fps alike. But `bootstrap_nd.py` and `seedscan_split.py`
+        write `res_boot_*.npz` / `res_split_*.npz` with a BARE `np.savez_compressed(args.out, ...)`:
+        no temp, no rename. Their interrupted write lands at the PRODUCT's own name, so it is
+        selected by `combine_cov_nd.py --glob` and by `--expected-ids`, which checks identities and
+        not integrity. That is STRICTLY WORSE than the defect just repaired, where at least the
+        partial file had a temp's name -- and it is outside the authorized scope, because there is
+        no temp to rename: it needs atomic publication added, which is a different repair.
+        """
+        for name in ("bootstrap_nd.py", "seedscan_split.py"):
+            src = (ND / name).read_text()
+            with self.subTest(producer=name):
+                self.assertNotIn("_atomic_savez", src,
+                                 f"{name} now routes through the repaired writer -- if that is "
+                                 f"deliberate, this exemption should be deleted")
+                self.assertIn("np.savez_compressed(a", src,
+                              f"{name} is expected to write straight to its --out argument")
+                self.assertNotIn("os.replace", src,
+                                 f"{name} is expected to have NO atomic publication")
+
     def test_MUTATION_the_PRE_REPAIR_naming_makes_ARMS_1_AND_2_FAIL(self):
         """POWER for arms 1 and 2. Without this, "an incomplete write is unselectable" is an
         assertion about code nobody has shown can be selectable.
@@ -985,6 +1116,73 @@ class TheNamespaceIsOneExplicitValueAndFreshnessRefuses(unittest.TestCase):
                      "does not take this branch", "did NOT grant"):
             with self.subTest(fact=fact):
                 self.assertIn(fact, text)
+
+    def test_the_RESIDUALS_REASON_is_the_SURVIVING_one_not_the_WITHDRAWN_one(self):
+        """A DIRECTION INVERSION, and the withdrawn form sat 317 lines above its own correction --
+        inside the section my marker tells the reader to read FIRST.
+
+        `:350-353` withdraws the reason "repointing would change where an ARCHIVE reproduction
+        writes": the archive IS `_sb`, so repointing points an UNDECLARED writer INTO it. The two
+        directions license different repairs -- under the withdrawn one the prudent act is to leave
+        the literal alone; under the surviving one, pointing the undeclared path at a THIRD
+        namespace would also satisfy the constraint. So this is not a wording quibble, and a
+        reader who stops at the top section must not be handed the weaker sentence.
+
+        The file states the withdrawal, so the withdrawn phrasing legitimately APPEARS. What must
+        not happen is for it to appear as a live reason. Checked positionally: every occurrence of
+        the withdrawn phrasing must be accompanied, in its own paragraph, by the correction.
+        """
+        raw = LAUNCHER["block"].read_text()
+        # PARAGRAPHS, NOT LINES. My own rewrite wrapped the withdrawn phrase across two comment
+        # lines, so a per-line search found nothing and this test reported the phrase "deleted".
+        # A guard that stops matching because the text reflowed is a guard that silently switches
+        # off -- the same failure as a comment-marker excision that stops locating its subject.
+        paragraphs = [" ".join(chunk.replace("#", " ").split())
+                      for chunk in re.split(r"\n#\s*\n", raw)]
+        needle = "change where an ARCHIVE reproduction"
+        hits = [q for q in paragraphs if needle in q]
+        self.assertTrue(hits, "the withdrawn phrasing is not where this test looks; if it has been "
+                              "deleted outright, delete this test with it")
+        for hit in hits:
+            with self.subTest(paragraph=hit[:70]):
+                self.assertTrue("archive IS `_sb`" in hit or "archive IS _sb" in hit,
+                                f"this paragraph states the withdrawn reason with no correction in "
+                                f"the same paragraph. A reader stopping there concludes the archive "
+                                f"sits at the current literal and the prudent act is to leave it "
+                                f"alone -- the opposite of the surviving constraint, which is that "
+                                f"`_sb` needs protecting FROM undeclared writers. Paragraph: {hit}")
+        lines = raw.split("\n")
+        # THE SURVIVING REASON IS IN THE TOP SECTION, which is the review's actual requirement.
+        fence = [i for i, line in enumerate(lines) if line.startswith("# ===========")]
+        top = "\n".join(lines[fence[0]: fence[-1] + 1])
+        # CASE-NORMALIZED, and this is the FOURTH time an assertion string of mine drifted from the
+        # prose it checks ("the archive" against "The archive"). A literal match over hand-written
+        # English is a brittle operand; normalizing removes the class of failure rather than fixing
+        # this instance of it.
+        top_norm = " ".join(top.replace("#", " ").split()).lower()
+        for required in ("archive is `_sb`", "write into the",
+                         "protecting from undeclared writers"):
+            with self.subTest(required=required):
+                self.assertIn(required, top_norm,
+                              "the top section must state the SURVIVING reason, because that is "
+                              "the section the marker sends the reader to first")
+
+    def test_the_UNRECONCILED_124_is_NAMED_rather_than_repeated(self):
+        """A figure doing rhetorical work without a denominator. Pre-existing at `:352-353`; what
+        would have been mine is repeating it.
+
+        Measured 2026-09-11: `block_slabs_5d_sb` 36 + `uthrow_slabs_5d_sb` 40 = 76, and all seven
+        `uq_5d/*slab*` directories hold 271. No measured population equals 124.
+        """
+        text = LAUNCHER["block"].read_text()
+        self.assertIn("does not reconcile", text.lower().replace("DOES NOT RECONCILE".lower(),
+                                                                 "does not reconcile"),
+                      "the figure must be named as unreconciled where a reader meets it")
+        for measured in ("36", "40", "76", "271"):
+            with self.subTest(figure=measured):
+                self.assertIn(measured, text,
+                              "the reconciliation must show its own populations, or it is one "
+                              "unexplained number replaced by another")
 
     def test_the_RESIDUAL_notices_LINE_CITATIONS_still_point_at_what_they_claim(self):
         """A line citation in a comment is the most fragile receipt there is: the next edit above it
@@ -1698,6 +1896,17 @@ class AdmissionBoundsCommittedExposureNotElapsed(unittest.TestCase):
         self.assertEqual(report["exit_code"], 3)
         self.assertTrue(report["r5_fired"]["cpu"])
 
+    #: THE ONE DETECTOR. Module level so the equality arm and its positive control call the SAME
+    #: code. The review's finding: my control re-typed the sweep, so a detector blind to a
+    #: particular spelling would have been confirmed blind by its own control -- a fixture derived
+    #: from the rule it tests, which cannot disagree with it.
+    @staticmethod
+    def private_meter_attrs_of(source):
+        tree = ast.parse(source)
+        return {node.attr for node in ast.walk(tree)
+                if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name)
+                and node.value.id == "r5_meter" and node.attr.startswith("_")}
+
     def test_the_meter_reuse_rides_a_DECLARED_private_surface(self):
         """The independent review's durability point, made into an instrument instead of a note.
 
@@ -1707,48 +1916,126 @@ class AdmissionBoundsCommittedExposureNotElapsed(unittest.TestCase):
 
           * every declared name must still EXIST on the meter, so a refactor that removes one fails
             here rather than at runtime on the cluster;
-          * the declared set must EQUAL what the AST actually finds, so a future edit that reaches
-            for a SECOND private name fails too instead of widening the coupling unrecorded.
+          * the declared set must EQUAL what the detector finds, so a future edit that reaches for a
+            SECOND private name fails too instead of widening the coupling unrecorded.
 
         The second arm is the one that makes this more than a spelling check. Measured over
-        EXECUTABLE code, not text: the module docstring names three further private functions while
-        discussing them, and a grep would have counted those as dependencies.
+        EXECUTABLE code, not text: the module docstring names FOUR further private functions while
+        discussing them, and a naive regex over the text returns more tokens than there are live
+        attribute accesses.
         """
-        for module, declared in ((ZPA, ZPA.METER_PRIVATE_DEPENDENCIES),
-                                 (None, ZPA.METER_PRIVATE_DEPENDENCIES_IN_TESTS)):
+        for declared in (ZPA.METER_PRIVATE_DEPENDENCIES, ZPA.METER_PRIVATE_DEPENDENCIES_IN_TESTS):
             for name, reason in declared.items():
                 with self.subTest(name=name):
                     self.assertTrue(hasattr(r5_meter, name),
                                     f"r5_meter.{name} is GONE -- the meter was refactored and this "
                                     f"module's reuse is broken. Declared reason: {reason}")
                     self.assertTrue(reason.strip(), f"{name} is declared with no reason")
-            del module
 
-        def private_meter_attrs(path):
-            tree = ast.parse(Path(path).read_text())
-            return {node.attr for node in ast.walk(tree)
-                    if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name)
-                    and node.value.id == "r5_meter" and node.attr.startswith("_")}
+        for path, expected in ((ND / "z_precursor_admission.py",
+                                set(ZPA.METER_PRIVATE_DEPENDENCIES)),
+                               (ND / "tests" / "test_z_precursor.py",
+                                set(ZPA.METER_PRIVATE_DEPENDENCIES_IN_TESTS))):
+            with self.subTest(file=path.name):
+                self.assertEqual(self.private_meter_attrs_of(path.read_text()), expected,
+                                 "the ACTUAL private meter dependencies and the declared set have "
+                                 "diverged; declare the new one with its reason rather than leaving "
+                                 "the coupling unrecorded")
 
-        self.assertEqual(private_meter_attrs(ND / "z_precursor_admission.py"),
-                         set(ZPA.METER_PRIVATE_DEPENDENCIES),
-                         "the module's ACTUAL private meter dependencies and the declared set have "
-                         "diverged; declare the new one with its reason rather than leaving the "
-                         "coupling unrecorded")
-        self.assertEqual(private_meter_attrs(ND / "tests" / "test_z_precursor.py"),
-                         set(ZPA.METER_PRIVATE_DEPENDENCIES_IN_TESTS),
-                         "this suite's ACTUAL private meter dependencies and the declared set have "
-                         "diverged")
+    def test_the_detectors_BLIND_SPOTS_are_ABSENT_from_both_files(self):
+        """WHAT THE EQUALITY ARM'S COMPLETENESS RESTS ON, named and checked.
+
+        The detector sees `r5_meter.<attr>` and nothing else. Four forms would evade it, so the
+        equality arm is a complete statement of the coupling only while all four are absent:
+        `getattr(r5_meter, "_x")`, `from r5_meter import _x`, an aliased import then `m._x`, and
+        `sys.modules["r5_meter"]._x`. Measured absent from both files -- which is what makes the
+        declared sets complete TODAY, and is exactly what the re-typed control did not establish.
+        If one is ever introduced, widen the DETECTOR rather than the declaration.
+        """
+        for path in (ND / "z_precursor_admission.py", ND / "tests" / "test_z_precursor.py"):
+            source = path.read_text()
+            tree = ast.parse(source)
+            with self.subTest(file=path.name, form="getattr"):
+                self.assertEqual(
+                    [n for n in ast.walk(tree) if isinstance(n, ast.Call)
+                     and isinstance(n.func, ast.Name) and n.func.id == "getattr"
+                     and n.args and isinstance(n.args[0], ast.Name)
+                     and n.args[0].id == "r5_meter"], [])
+            with self.subTest(file=path.name, form="from-import"):
+                self.assertEqual(
+                    [n for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)
+                     and n.module == "r5_meter"], [])
+            with self.subTest(file=path.name, form="alias"):
+                self.assertEqual(
+                    [a.asname for n in ast.walk(tree) if isinstance(n, ast.Import)
+                     for a in n.names if a.name == "r5_meter" and a.asname], [])
+            with self.subTest(file=path.name, form="sys.modules"):
+                # KEYED ON THE SUBSCRIPT, NOT ON THE SUBSTRING. My first version banned
+                # `sys.modules[` outright and fired on this file's own docstring, which discusses
+                # `sys.modules["ROOT"]` -- a right check over the wrong operand, and the form this
+                # suite keeps catching elsewhere. Only a subscript naming r5_meter evades the
+                # detector; one naming ROOT is the stubbed-ROOT instrument and is unrelated.
+                self.assertEqual(
+                    [n for n in ast.walk(tree) if isinstance(n, ast.Subscript)
+                     and isinstance(n.value, ast.Attribute) and n.value.attr == "modules"
+                     and isinstance(n.slice, ast.Constant) and n.slice.value == "r5_meter"], [])
 
     def test_the_private_surface_detector_CATCHES_an_undeclared_name(self):
-        """POSITIVE CONTROL on the AST sweep above: a detector that matches nothing gives the same
-        answer as a module with no private dependencies at all."""
-        tree = ast.parse("import r5_meter\nx = r5_meter._brand_new_private(1)\n")
-        found = {node.attr for node in ast.walk(tree)
-                 if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name)
-                 and node.value.id == "r5_meter" and node.attr.startswith("_")}
+        """POSITIVE CONTROL, now calling the SAME detector the equality arm uses.
+
+        My first version re-typed the sweep inline, so a detector blind to a spelling would have
+        been confirmed blind by its own control. This proves the detector is not vacuous; the blind
+        spots it CANNOT see are enumerated in the arm above, which is the honest division.
+        """
+        found = self.private_meter_attrs_of(
+            "import r5_meter\nx = r5_meter._brand_new_private(1)\n")
         self.assertEqual(found, {"_brand_new_private"})
         self.assertNotIn("_brand_new_private", ZPA.METER_PRIVATE_DEPENDENCIES)
+        # And it does NOT over-match: a public access must not be reported as private.
+        self.assertEqual(self.private_meter_attrs_of(
+            "import r5_meter\ny = r5_meter.build_receipt\n"), set())
+
+    def test_parse_sacct_dump_has_a_CONTRACT_arm_not_only_an_existence_check(self):
+        """`hasattr` catches REMOVAL, not semantic DRIFT -- the review's second residual, and it was
+        a real gap: `_calculate_spend` had a contract arm and `_parse_sacct_dump` had none.
+
+        The three properties this module's arithmetic depends on, asserted directly:
+          * STEP ROWS ARE EXCLUDED. `.batch`/`.extern` rows carry the same ElapsedRaw as their
+            allocation row, so counting them would double every job.
+          * AN ATTEMPT IS `(JobID, Start)`. Two executions of one requeued job id are TWO attempts;
+            keying on job id alone is the defect the meter's own repair closed.
+          * ONE ATTEMPT OBSERVED TWICE IS COUNTED ONCE, which is what makes concatenating two query
+            windows safe -- and `_charged_by_name` relies on it, because it takes the attempt SET
+            from here and only the job NAMES from the raw rows.
+        """
+        rows = sacct_rows([
+            ("900", "arm", "COMPLETED", 3600, "shared", "2026-09-05T00:00:00",
+             "2026-09-05T01:00:00", "cpu=8"),
+            ("900.batch", "batch", "COMPLETED", 3600, "shared", "2026-09-05T00:00:00",
+             "2026-09-05T01:00:00", "cpu=8"),
+            ("900.extern", "extern", "COMPLETED", 3600, "shared", "2026-09-05T00:00:00",
+             "2026-09-05T01:00:00", "cpu=8"),
+        ])
+        attempts = r5_meter._parse_sacct_dump(rows)
+        self.assertEqual(len(attempts), 1, f"step rows must be excluded; got {sorted(attempts)}")
+
+        requeued = sacct_rows([
+            ("901", "arm", "REQUEUED", 600, "shared", "2026-09-05T00:00:00",
+             "2026-09-05T00:10:00", "cpu=8"),
+            ("901", "arm", "COMPLETED", 1200, "shared", "2026-09-05T01:00:00",
+             "2026-09-05T01:20:00", "cpu=8"),
+        ])
+        self.assertEqual(len(r5_meter._parse_sacct_dump(requeued)), 2,
+                         "two executions of one job id are TWO attempts -- if this collapses to "
+                         "one, every retry is under-counted and the admission bound is too low")
+
+        twice = sacct_rows([
+            ("902", "arm", "RUNNING", 600, "shared", "2026-09-05T00:00:00", "Unknown", "cpu=8"),
+            ("902", "arm", "RUNNING", 600, "shared", "2026-09-05T00:00:00", "Unknown", "cpu=8"),
+        ])
+        self.assertEqual(len(r5_meter._parse_sacct_dump(twice)), 1,
+                         "one attempt observed twice is ONE attempt; otherwise concatenating two "
+                         "query windows double-charges")
 
     def test_the_METER_is_REUSED_rather_than_reimplemented(self):
         """A rule retyped is a second implementation. The module must call the meter, not restate
