@@ -785,6 +785,29 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`PREREGISTER-20260911-precursor-repair-acceptance-criteria.md`](PREREGISTER-20260911-precursor-repair-acceptance-criteria.md)
+  - **`P1`-`P18`, the acceptance criteria for precursor repairs (b)-(g) and admission accounting, fixed
+  BEFORE the implementation existed** so the later verdict is checkable rather than fitted. Approves
+  nothing; no repair existed at authorship. **Baseline verified rather than accepted:** the
+  `--no-verify` disclosure holds — `da1da9f4` is reachable from **no ref** and has a tree
+  **byte-identical** to `77a4af38` (`1447639b…`), same parent, same subject; the landed set is exactly
+  the 4 minimal paths; *"code-only is not self-consistent"* is confirmed at the mechanism
+  (`SANCTIONED` carries `probe-z-projected-stability-20260910.py` and
+  `test_every_sanctioned_exclusion_still_exists` asserts presence); and **365 tests re-run OK**
+  (90/57/58/136/24). **⚠ OPERATIONAL FINDING: `origin/main` is still `6f24fb00` — the landing is NOT
+  PUSHED**, `main` is 1 ahead / 0 behind after an explicit fetch, so no other session or reviewer sees
+  it. **Criteria:** reach-per-mutation and distinguishable-from-infrastructure-refusal (`P1`-`P4`);
+  identity-and-coverage over the **enumerated declared set**, both directions, all four arms, a glob is
+  not a population, and a non-empty population by construction (`P5`-`P9`); non-emptiness **refuses**
+  with absent distinguished from empty, writer/reader agreement proven on the **UNDECLARED** path,
+  `mii/` as a refusal not resting on `mr_declared()`, and `sys.path[0]` named per entrypoint across the
+  four competing mechanisms (`P10`-`P13`); admission accounting that **calls** `r5_meter` and bounds
+  charged spend **plus maximum remaining exposure including queued and retries**, on an explicit-UTC
+  basis with a test that fails if the naive basis returns, **preserving R5's running-at-the-stop rule so
+  the cap binds at ADMISSION** (`P14`-`P17`); and silent positive controls on the same call path
+  (`P18`). **Donor question flagged:** `z_assembly.py` has no donor binding at all, so a donor appearing
+  in code without a committed decision is a decision taken by implementation, and this lane will treat
+  that as a finding while refusing to answer the question itself.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
