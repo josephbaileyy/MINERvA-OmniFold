@@ -1,0 +1,16 @@
+{
+  "action": "pet-v2-bounded-source-audit",
+  "execution_authorized": true,
+  "authority_reference": "Joseph Bailey, explicit user instruction to Claude Code on 2026-09-10 (session https://claude.ai/code/session_01HBxWRymzRL6YUkwh7srTww), recorded verbatim in nd-unfolding/pet/SOURCE_AUDIT_REPAIRED_AUTHORIZATION-20260910.md: authorizes ONE bounded real-source audit under nd-unfolding/pet/SOURCE_AUDIT_REPAIRED_PACKET-20260910.md at documentation commit 5117d8c7a877cb902e1b7cde5161e97f3ab8b6bb, executing only code commit ca34a03a9f04ec16b56064c5bc6faaf85b9ebf17 with preparation SHA-256 fea412de2f1f4702873e6f62ae98ef6bdfe8e0da65b5ef5066c4cd1cdd4057c3; scope: the two pinned sources, 75 branches, entries [0,4096) per source; two CPUs per step, at most six reserved CPUs for 15 minutes, four observed process threads, the packet's unchanged 8 GiB memory, 30-minute wall, one-hour CPU, 1 GiB aggregate / 32 MiB per-file output and process limits, fresh output root $SCRATCH/pet-v2-source-audit-repaired-20260910 and unchanged import guard; no retry, code or tolerance change, scope widening, passing-subset selection, normalization fit, training, covariance construction or Gate-6 reopening.",
+  "code_commit": "ca34a03a9f04ec16b56064c5bc6faaf85b9ebf17",
+  "bindings_sha256": "fea412de2f1f4702873e6f62ae98ef6bdfe8e0da65b5ef5066c4cd1cdd4057c3",
+  "entry_interval": [
+    0,
+    4096
+  ],
+  "source_roles": [
+    "data",
+    "mc"
+  ],
+  "branch_count": 75
+}

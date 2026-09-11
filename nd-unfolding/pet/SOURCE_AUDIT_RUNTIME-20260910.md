@@ -182,3 +182,9 @@ digest, compatible runtime, resource budget and new output directory. The
 original audit remains incomplete; source mapping, release applicability,
 normalization and scientific training have not been established by this work.
 OI-126 and all five Gate-6 prohibitions remain unchanged.
+
+## Real-source follow-up
+
+The later authorized real-source run at the same code commit exercised `RootAuditReader` and
+the launcher's final `accounting.json` writer. Both completed. See
+[SOURCE_AUDIT_REPAIRED_RESULT-20260910.md](SOURCE_AUDIT_REPAIRED_RESULT-20260910.md).

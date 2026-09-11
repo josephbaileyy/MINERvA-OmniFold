@@ -8,8 +8,11 @@ repair passes local synthetic software checks. The bounded
 has an implemented checker and bound launcher. The first authorized source
 attempt was interrupted. The revised synthetic Linux runtime preflight passes all 8,192 rows and 512
 chunks at `ca34a03a`, with four observed threads and a derived rounding budget; see
-[the runtime record](pet/SOURCE_AUDIT_RUNTIME-20260910.md). A further real-source
-attempt still requires named execution authorization. Preparation and synthetic-check details
+[the runtime record](pet/SOURCE_AUDIT_RUNTIME-20260910.md). The single authorized
+repaired real-source audit (allocation `58186616`) is COMPLETE with `mapping=PASS`,
+`semantic=DISCREPANCY` (five out-of-window prong times), `release=RELEASE_UNVERIFIED` and all
+object families `UNRESOLVED`; see [the result record](pet/SOURCE_AUDIT_REPAIRED_RESULT-20260910.md).
+Its grant is consumed. Preparation and synthetic-check details
 are in [the source-audit runbook](pet/SOURCE_AUDIT_RUNBOOK.md). Normalization and training remain separately gated by
 [the typed-descriptor status](pet/TYPED_DESCRIPTOR_STATUS.md#next-bounded-task).
 PET remains diagnostic/method-development under `OI-126`; this documentation

@@ -102,7 +102,7 @@ The 32-row packet does not support photon three-state rates, cross-playlist clai
 
 ## Next bounded task
 
-**Synthetic runtime validated; a new source-execution grant is required.**
+**Repaired source audit COMPLETE: mapping PASS, semantic DISCREPANCY, release unverified.**
 [SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md](SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md)
 pins the data/MC identities and proposes entries `[0,4096)` from each file,
 with explicit mechanical, semantic and release verdicts. It specifies a
@@ -155,3 +155,25 @@ The [repaired source-audit packet](SOURCE_AUDIT_REPAIRED_PACKET-20260910.md)
 proposes one new, separately authorized source run pinned to that tested code.
 Its authorization template is deliberately disabled. No real-source audit,
 normalization or scientific training was performed under the synthetic grant.
+
+## Repaired real-source audit — 2026-09-10
+
+**COMPLETE — `mapping=PASS`, `semantic=DISCREPANCY`, `release=RELEASE_UNVERIFIED`;
+photon, blob, prong-hypothesis and shared-object/primary-lepton families `UNRESOLVED`.**
+The single grant recorded in
+[SOURCE_AUDIT_REPAIRED_AUTHORIZATION-20260910.md](SOURCE_AUDIT_REPAIRED_AUTHORIZATION-20260910.md)
+ran `ca34a03a` on allocation `58186616` (6 reserved CPUs, two-CPU step, `COMPLETED 0:0`).
+It read both pinned sources over entries `[0,4096)` with 75 branches, completing all 8,192 rows
+and 512 chunks with no exceptions. All six mandatory mapping checks pass. Four observed threads
+and 1.22 GB peak RSS stayed within the unchanged limits.
+
+The semantic discrepancy is five finite prong times above the `[0,10000]` window. Four are in
+data (of 6,050 eligible extension prongs) and one in MC (of 7,140). Every other correspondence
+check has zero discrepancies. The discrepancy is retained as a diagnostic, not a cut or
+explanation.
+
+Evidence, transfer digests and the complete result are in
+[SOURCE_AUDIT_REPAIRED_RESULT-20260910.md](SOURCE_AUDIT_REPAIRED_RESULT-20260910.md). A
+mechanical mapping pass does not establish release applicability, PID calibration, overlap,
+population support or coverage. The grant is consumed. Normalization, `pass_reco` sidecar
+production and training each remain separately gated; nothing here authorizes them.

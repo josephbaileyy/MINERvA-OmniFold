@@ -1,5 +1,37 @@
 # N-D OmniFold run log
 
+## 2026-09-10 — repaired PET real-source audit
+
+Under Joseph's single-attempt grant, recorded verbatim in
+`pet/SOURCE_AUDIT_REPAIRED_AUTHORIZATION-20260910.md`, the audit ran from a clean detached clone
+of `ca34a03a` (bindings `fea412de…`, authorization JSON `4e1b9b85…`). It ran on Perlmutter
+allocation `58186616`: `shared_interactive`, 2 CPUs requested and 6 reserved, 8 GiB, 15 minutes.
+The step used two CPUs. Allocation and step are both `COMPLETED 0:0`, elapsed 7 minutes 55
+seconds. Before source access, cluster-main freshness was `FRESH`, the queue was empty,
+`--check-preparation` passed, and the runtime pins and output-root absence were verified.
+
+The audit read the data and MC sources over entries `[0,4096)` with 75 branches: 8,192 rows and
+512 chunks, no exceptions, empty logs. Peak observed usage was four threads and 1,219,506,176
+bytes RSS; output was 283,206,787 bytes. Verdicts:
+
+- `mapping=PASS`: all six mandatory checks.
+- `semantic=DISCREPANCY`: five finite `prong_time` values above 10,000, at data entries 2121,
+  2704, 3418 and 3867 and at MC entry 3654. Every other correspondence check passes.
+- `release=RELEASE_UNVERIFIED`.
+- All four object families `UNRESOLVED`.
+
+Records:
+
+- `accounting.json` SHA-256: `3bb911e6be1e83209c94a0d47ed6f79ddaddd85d84998444913cfcd591a49543`.
+- `receipt.json` SHA-256: `5e8d545b6a8b45ed1872852417c13518472b0fbb07832faf78c39406e153b3da`.
+- All 16,899 receipt-bound artifacts were rehashed remotely with no mismatch.
+- The transferred subset matches its remote digests. It is preserved under
+  `pet/source_audit_runs/20260910-repaired/` with `preservation-manifest.json`.
+
+This is fixed-source diagnostic telemetry. No normalization, training, covariance, retry or
+Gate-6 action followed. The grant is consumed. `VALIDATION_LEDGER.md` is unchanged because no
+ledger-class quantity was measured.
+
 ## 2026-09-10 — complete synthetic runtime preflight
 
 Preparation `ca34a03a` installs the authorized four-thread ceiling and compares
