@@ -51,6 +51,11 @@ from z_contract import ZContractError, require
 #: campaign's provenance search is the worked example, where identical paths held different bytes).
 BLOCK_SOURCES = ("SHARED_DIGEST_BOUND", "PER_MEMBER")
 
+#: A THIRD VALUE, never a synonym for `True`. Joseph, item 4: *"do not confuse 'not applicable'
+#: with 'passed.'"* Used wherever a flag has no content in a configuration, so that a reader gets a
+#: stated value rather than an absent key -- absence reads as False and False reads as the defect.
+NOT_APPLICABLE = "NOT APPLICABLE"
+
 
 @dataclass(frozen=True)
 class BuildPath:
@@ -151,8 +156,23 @@ def enumerate_recomputation(path: BuildPath) -> dict:
     """
     require(isinstance(path, BuildPath), "enumerate_recomputation: need a BuildPath")
     if not path.is_member:
+        # ⚠ REV. 3: THIS BRANCH RETURNED THREE KEYS WHILE THE MEMBER BRANCH RETURNED EIGHT, so
+        # `covers_all_member_local` was ABSENT here and absence reads as False. This module's own
+        # comment below is true verbatim of that: "the coverage flag read False for a configuration
+        # that is fully specified, which would have looked like the omission it exists to detect."
+        # I fixed it for SHARED blocks and it survived here -- arriving by ABSENCE instead of by a
+        # computed value, on the MAJORITY path, since non-member IS the archive production run.
+        #
+        # And the value is NOT `True`: claiming coverage of components that are not in play is the
+        # other half of the same error. Ruling 2's shape and F22's mandatory distinction both apply
+        # -- NOT APPLICABLE is a THIRD value, never a synonym for passed.
         return {"recomputed": (), "pinned": MEMBER_LOCAL_TODAY,
-                "note": "not a member of K: the archive path, nothing member-local"}
+                "must_be_populated": {}, "not_used": {},
+                "uncovered": (), "disjoint": True,
+                "covers_all_member_local": NOT_APPLICABLE,
+                "dominant_cost_terms": (),
+                "note": "not a member of K: the archive path. Nothing is member-local, so coverage "
+                        "of the member-local set is NOT APPLICABLE rather than satisfied or failed."}
     recomputed = list(RECOMPUTED_UNDER_ESTIMATOR_CHANGE)
     if path.blocks_are_shared:
         pinned = list(INVARIANT_UNDER_SHARED_BLOCKS)
@@ -173,7 +193,13 @@ def enumerate_recomputation(path: BuildPath) -> dict:
     not_used = ({} if not path.blocks_are_shared
                 else {k: "not read: the member does not run the combines under SHARED blocks"
                       for k in MEMBER_LOCAL_INPUTS_REQUIRING_POPULATION})
-    covered = set(recomputed) | set(pinned) | set(must_populate) | set(not_used)
+    # ⚠ A UNION IS BLIND TO OVERLAP: a component in TWO categories would still make `covered`
+    # equal the population and the flag read True. Disjointness holds today by measurement and
+    # nothing would notice if it stopped, so it is now CHECKED rather than relied on.
+    groups = [set(recomputed), set(pinned), set(must_populate), set(not_used)]
+    total = sum(len(g) for g in groups)
+    covered = set().union(*groups)
+    disjoint = (total == len(covered))
     uncovered = [c for c in MEMBER_LOCAL_TODAY if c not in covered]
     # the universal is DERIVED, not asserted: rev. 1's note said "EVERY component varies" while the
     # code compared against a hand-listed set, so the comment quantified over the enumeration only.
@@ -181,7 +207,8 @@ def enumerate_recomputation(path: BuildPath) -> dict:
             "must_be_populated": must_populate,
             "not_used": not_used,
             "uncovered": tuple(uncovered),
-            "covers_all_member_local": not uncovered,
+            "disjoint": disjoint,
+            "covers_all_member_local": (not uncovered) and disjoint,
             "dominant_cost_terms": tuple(sorted(must_populate)),
             "note": ("blocks SHARED and digest-bound: only estimator-downstream components vary, "
                      "and the replica ensembles need NOT be repopulated -- which is where the "
@@ -431,7 +458,8 @@ import z_statistics as _zs                                            # noqa: E4
 
 
 def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa,
-                extra_functionals=(), declared_exclusions=(), declared_support=None,
+                extra_functionals=(), extras_span_excluded_support=None,
+                declared_exclusions=(), declared_support=None,
                 observed_support=None, baseline_key=0):
     """THE ONLY SANCTIONED ROUTE TO AN A-7 VERDICT. Guards first, `s_proj` last.
 
@@ -469,6 +497,31 @@ def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa,
     M = np.atleast_2d(np.asarray(projection_M, float))
     rep_support = require_projection_support(M, declared_exclusions, where="A-7 projection map")
     extras = np.asarray(extra_functionals, float)
+    if extras.size:
+        # ⚠ A SCIENTIFIC QUESTION, AND THIS REFUSES TO ANSWER IT SILENTLY.
+        # `declared_exclusions` are DESTINATION-scoped (`check_projection_support` indexes rows),
+        # while an all-ones total-rate functional is DENSE over SOURCE columns -- so a declared
+        # destination exclusion DOES NOT REACH IT. For P2 the `[3,100] GeV` catch bin is a declared
+        # excluded destination row, so an all-ones total would include support the displayed
+        # projection excludes, and "total rate" and "sum of displayed bins" would differ by exactly
+        # that bin's content.
+        # A total plausibly SHOULD be a total -- but which quantity is released is not a drafting
+        # choice, and leaving it undeclared violates "any exclusion must be explicit and accounted
+        # for." So the caller must SAY, and there is no default.
+        # ⚠ REV. 3 BUG, caught by this module's own tests: the ternary below was written INSIDE
+        # `require(...)`'s second argument, so it bound to the MESSAGE and not to the CONDITION --
+        # the guard fired on every call with extras, including the four legitimate ones with no
+        # exclusions at all. An `if` is clearer than a ternary here precisely because the ternary
+        # can attach to the wrong argument silently.
+        if len(np.atleast_1d(np.asarray(declared_exclusions))) > 0:
+            require(extras_span_excluded_support is not None,
+                    "extra functionals were supplied with declared_exclusions in play, and "
+                    "`extras_span_excluded_support` is undeclared. Exclusions are "
+                    "DESTINATION-scoped; a dense total-rate functional is SOURCE-scoped, so the "
+                    "exclusion does not reach it. Declare True (the total spans the excluded "
+                    "support -- a total is a total) or False (the extras are restricted to the "
+                    "displayed support). This is a SCIENTIFIC choice about which quantity is "
+                    "released and it has no default.")
     U = M if extras.size == 0 else np.vstack([M, np.atleast_2d(extras)])
     require(U.shape[1] == M.shape[1],
             f"extra functionals have width {U.shape[1]} != the map's {M.shape[1]}")

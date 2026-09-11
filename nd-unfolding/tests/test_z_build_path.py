@@ -44,6 +44,8 @@ DETECTORS = {
     "residue_demonstrated",        # the residue, CONSTRUCTED not sampled
     # the residue's TRIGGER -- the sentence that justified tolerating it, made executable
     "sufficiency_trigger_armed", "sufficiency_trigger_power",
+    # rev. 3: the assessor's BLOCK, the union blindness, and the extras declaration
+    "overlap_detected", "extras_exclusion_undeclared",
 }
 
 
@@ -510,7 +512,7 @@ class TestEnrolmentIsNotManual(unittest.TestCase):
         self.assertGreaterEqual(len(points), 18,
                                 f"expected >=18 refusal points, found {len(points)}")
         # the claim this suite may make, scoped to what it demonstrates
-        self.assertEqual(len(DETECTORS), 23,
+        self.assertEqual(len(DETECTORS), 25,
                          "DETECTORS must equal the demonstrated set; update both together")
         # ⚠ THESE ARE DIFFERENT SETS AND THE COUNTS MATCHING IS A COINCIDENCE. `points` are
         # `require`/`raise` sites in the module; `DETECTORS` are demonstrated behaviours, some of
@@ -618,6 +620,130 @@ class TestTheSufficiencyConditionIsExecutable(unittest.TestCase):
             self.assertIn("fake_production_consumer.py", offenders,
                           "the trigger did not see an injected production caller")
         FIRED.add("sufficiency_trigger_power")
+
+
+class TestAbsenceIsNotAdmissible(unittest.TestCase):
+    """⚠ THE ASSESSOR'S BLOCK: the non-member branch returned 3 keys, the member branch 8, so
+    `covers_all_member_local` was ABSENT on the non-member path -- and absence reads as False.
+
+    This module's own comment was true verbatim of that branch: *"the coverage flag read False for a
+    configuration that is fully specified, which would have looked like the omission it exists to
+    detect."* I fixed it for SHARED blocks and it survived for non-member, arriving by ABSENCE
+    rather than by a computed value, on the MAJORITY path -- non-member IS the archive production
+    run, so a receipt would have recorded False or crashed on every normal build.
+    """
+
+    ALL_SIX = [(off, src) for off in (None, 0, 7) for src in zbp.BLOCK_SOURCES]
+
+    def _enum(self, off, src):
+        kw = SHARED if src == "SHARED_DIGEST_BOUND" else {}
+        return zbp.enumerate_recomputation(zbp.BuildPath(member_offset=off, block_source=src, **kw))
+
+    def test_the_key_set_is_IDENTICAL_across_all_six_configurations(self):
+        """The structural fix: no configuration may answer by omitting a key."""
+        sets = {(off, src): frozenset(self._enum(off, src)) for off, src in self.ALL_SIX}
+        first = next(iter(sets.values()))
+        for k, v in sets.items():
+            self.assertEqual(v, first, f"{k}: key set differs by {set(v) ^ set(first)}")
+        self.assertIn("covers_all_member_local", first)
+        self.assertIn("disjoint", first)
+
+    def test_non_member_reads_NOT_APPLICABLE_and_not_a_boolean(self):
+        for src in zbp.BLOCK_SOURCES:
+            e = self._enum(None, src)
+            self.assertEqual(e["covers_all_member_local"], zbp.NOT_APPLICABLE)
+            self.assertIsNot(e["covers_all_member_local"], True,
+                             "claiming coverage of components not in play is the other half of "
+                             "the same error")
+            self.assertIsNot(e["covers_all_member_local"], False)
+
+    def test_the_get_versus_index_divergence_is_gone(self):
+        """The measured symptom: `.get(k, False)` returned False while `[k]` raised KeyError."""
+        for off, src in self.ALL_SIX:
+            e = self._enum(off, src)
+            self.assertEqual(e.get("covers_all_member_local", "ABSENT"),
+                             e["covers_all_member_local"])
+
+    def test_offset_ZERO_is_a_member_and_not_the_archive_path(self):
+        """⚠ `is_member` is `is not None`, NOT truthiness. `MNV_EST_SEED_OFFSET=0` is a real
+        declared offset, and a `bool()` implementation would route it to the archive path."""
+        p0 = zbp.BuildPath(member_offset=0, block_source="PER_MEMBER")
+        self.assertTrue(p0.is_member)
+        self.assertNotEqual(self._enum(0, "PER_MEMBER")["covers_all_member_local"],
+                            zbp.NOT_APPLICABLE)
+
+
+class TestDisjointnessIsCheckedNotAssumed(unittest.TestCase):
+    """⚠ `covered` was a UNION, and a union is blind to overlap: a component in TWO categories
+    would still make `covered` equal the population and the flag read True. Disjointness held by
+    measurement and nothing would have noticed if it stopped."""
+
+    def test_disjoint_is_reported_true_today(self):
+        for off in (0, 7):
+            for src in zbp.BLOCK_SOURCES:
+                kw = SHARED if src == "SHARED_DIGEST_BOUND" else {}
+                e = zbp.enumerate_recomputation(
+                    zbp.BuildPath(member_offset=off, block_source=src, **kw))
+                self.assertTrue(e["disjoint"])
+
+    def test_an_injected_OVERLAP_makes_coverage_false(self):
+        """POWER ARM: without this, `disjoint` is a field nobody has seen fail."""
+        saved = zbp.RECOMPUTED_UNDER_ESTIMATOR_CHANGE
+        try:
+            # put an INVARIANT component into the recomputed tuple as well -> overlap
+            zbp.RECOMPUTED_UNDER_ESTIMATOR_CHANGE = saved + ("STAT_COV",)
+            e = zbp.enumerate_recomputation(
+                zbp.BuildPath(member_offset=1, block_source="SHARED_DIGEST_BOUND", **SHARED))
+            self.assertFalse(e["disjoint"], "overlap was not detected")
+            self.assertFalse(e["covers_all_member_local"],
+                             "coverage must NOT read True when the categories overlap")
+            FIRED.add("overlap_detected")
+        finally:
+            zbp.RECOMPUTED_UNDER_ESTIMATOR_CHANGE = saved
+
+
+class TestTheExtrasExclusionIsDeclared(unittest.TestCase):
+    """⚠ A SCIENTIFIC QUESTION THE CODE REFUSES TO ANSWER SILENTLY.
+
+    `declared_exclusions` are DESTINATION-scoped; an all-ones total-rate functional is DENSE over
+    SOURCE columns, so a declared destination exclusion does not reach it. For P2 the `[3,100] GeV`
+    catch bin is an excluded destination row, so an all-ones total would include support the
+    displayed projection excludes -- *"total rate"* and *"sum of displayed bins"* differ by exactly
+    that bin's content. A total plausibly should be a total; the defect would be leaving it
+    undeclared. So the caller must say, and there is no default.
+    """
+
+    def _case(self):
+        rng = np.random.default_rng(11)
+        n = 12
+        A = rng.normal(size=(n, n))
+        C0 = A @ A.T + np.eye(n)
+        M = np.zeros((3, n))
+        M[0, :4] = 1.0
+        M[1, 4:8] = 1.0
+        M[2, 8:] = 1.0
+        return {0: C0, 1: 1.1 * C0}, M, np.ones((1, n)), float(np.linalg.eigvalsh(C0).max())
+
+    def test_undeclared_with_exclusions_in_play_REFUSES(self):
+        covs, M, ones, scale = self._case()
+        _fires("extras_exclusion_undeclared", zbp.evaluate_a7, covs, M,
+               extra_functionals=ones, declared_exclusions=[2],
+               declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+
+    def test_either_declared_value_is_accepted(self):
+        covs, M, ones, scale = self._case()
+        for decl in (True, False):
+            out = zbp.evaluate_a7(covs, M, extra_functionals=ones,
+                                  extras_span_excluded_support=decl,
+                                  declared_exclusions=[2], declared_K=[0, 1],
+                                  c_scale=scale, kappa=1e-12)
+            self.assertEqual(out["state"], "GRADED")
+
+    def test_no_declaration_needed_when_there_are_no_exclusions(self):
+        covs, M, ones, scale = self._case()
+        out = zbp.evaluate_a7(covs, M, extra_functionals=ones,
+                              declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+        self.assertEqual(out["state"], "GRADED")
 
 
 def tearDownModule():
