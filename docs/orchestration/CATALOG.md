@@ -617,6 +617,32 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   by enforcement** — not two arms coinciding. `N` cannot distinguish **any** two members, which is why
   *"record the ACTUAL seeds, sources and revisions"* is the right instruction. **§T.5 holds `S2`**
   pending the implementation's route.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partU.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partU.md)
+  - **PART U — pin 1 (`f4aa0f08`): VERDICT = BLOCK, narrowly, on the enumeration's population.**
+  Everything else in this lane's slice is READY.
+  ⚠ **§U.1: `MEMBER_LOCAL_TODAY` (`:105-113`) has SEVEN entries and each carries a line number
+  (`# :404-408` … `# :414`) — the population was selected by a 13-LINE WINDOW.** Measured against the
+  behaviour instead: the launcher has **eight** `mr_prefix`-family call sites, six inside `:403-415`
+  and **two at `:422-423` — `boot_nd_5d` and `seedscan_split_5d`, the REPLICA INPUT DIRECTORIES**,
+  member-prefixed on the same condition. They appear **nowhere** in the module (`grep -ci` → 0).
+  Consequential for three ascending reasons: they fall in **neither** returned category
+  (`recomputed`/`pinned`); `:141`'s note says *"**every** component varies"*, a universal over the
+  enumerated set only; and **the omitted two are the EXPENSIVE ones** — 100 bootstraps + 24 splits
+  against five cheap combines — so an enumeration used to price a member **understates cost by omitting
+  exactly the costly entries**, with `:418-420`'s full-range `--expected-ids` refusal leaving no cheap
+  third option. **The irony is the standing law:** `:103-104` warns against inferring the population
+  from *"the COMB line alone"*, then defines its own from a window of lines — fourth instance.
+  **§U.2 READY — decoupling sound**, verified directly: `:75-76` *"there is no default"*, `:80-82`
+  digests **required** under `SHARED_DIGEST_BOUND` (*"Sharing a PATH…"*), independence explicit at
+  `:67`. Part T §T.4 is why a digest is the only route: `N` cannot identify a member.
+  **§U.3 READY — additivity at BOTH levels:** two `A` lines / 690 insertions / zero modifications, and
+  **no file I/O** in the module (only hit for `open(`/`TFile`/`RECREATE` is a **comment** at `:355`
+  citing `SPEC` §1.6). So the `RECREATE`/defaulted-`--out` hazards are neither triggered nor mitigated
+  and stay live for a later pin — correctly **cited**, not claimed closed.
+  **§U.4 READY — suites re-run with the control first:** `136` control / `30` new / **`56` passed + `1`
+  skipped** (confirming *"57 OK"* was the COLLECTED count), and the skip is self-documenting at
+  `:628` (lightgbm absent, itself a recorded finding). **This lane's own harness failed first** — *"no
+  tests ran"* on all three, a can't-look zero from an uncreated worktree, caught by the control.
 - [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
   - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
   numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
