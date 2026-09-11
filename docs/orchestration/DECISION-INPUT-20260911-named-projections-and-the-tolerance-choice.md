@@ -352,8 +352,12 @@ yardstick on an intuition and never checking the algebra, two deliverables runni
 
 ### RESOLUTION: the third option, and it is a PROMOTION rather than a new implementation
 
-> **Producer: `project_cov_nd.build_projection` — the only candidate that implements all four maps.
-> Plus one gate: PROMOTE its existing `dropped` count to a REFUSAL against the declared support.**
+> ⚠⚠ **ONE-ARMED — SUPERSEDED BY ADDENDUM 3.** `dropped` is **source-side only** and cannot see
+> orphan DESTINATION rows; a `dropped == 0` gate **passes** while a destination row is all-zero.
+> **Two arms are specified in addendum 3.** The producer choice stands.
+>
+> ~~**Producer: `project_cov_nd.build_projection` — the only candidate that implements all four
+> maps. Plus one gate: PROMOTE its existing `dropped` count to a REFUSAL.**~~
 
 **`dropped` already exists at `:99-100` and is already computed.** The change is to require
 `dropped == 0` against the declared support and **fail closed** otherwise — so the refusal property
@@ -421,3 +425,113 @@ same condition as `max_i s_i ≤ 1%`. **There is no choice to present.** It was 
 thresholds** — and (A) is withdrawn. **The recommendation is therefore simply `s_proj ≤ 1%`**, with
 the max over `K` and both argmaxes reported, and the reporting of argmaxes is a **diagnostic
 obligation, not part of the condition.**
+
+---
+
+# ADDENDUM 3 — the gate was one-directional. Both arms, named, with what each catches.
+
+## ⚠⚠ `dropped == 0` IS HALF A GATE, and the missing half has a recorded real-product incident
+
+**Replicated on a toy where one destination row is reachable by no source bin:**
+
+    dropped (SOURCE-side)      = 0   <- my gate PASSES
+    all-zero DESTINATION rows  = 1   <- UNCAUGHT
+    M row sums                 = [2. 2. 0.]
+
+`dropped = int((~keep).sum())` counts **source columns whose destination row is `-1`**. It cannot
+see **destination rows no source column reaches** — those are all-zero rows of `M`, invisible to that
+count **by construction**.
+
+**And the masking mechanism reproduces.** Feeding those row sums to a central comparison against a
+nonzero frozen value gives per-row `rel = [0, 0, 1.0]` — **`max rel = 1.0`, contributed by the
+orphan alone.** `p4_lib:1382-1391` records the real-product incident verbatim: 5 orphan bins
+carrying `0.0000%` of the 4D total produced *"projection mutates central (max rel 1.00e+00)"* and
+**hid the actual result — 62% of bins over tolerance at a median of 4.4% — behind a number
+contributed by bins nobody would care about.** *"An error that is loudest about the least important
+thing is worse than no error, because it redirects the investigation."*
+
+**So the property I selected a builder FOR — refusal rather than silent discard — is exactly the
+property my bridge only half delivered, and the missing half is the one with the incident.**
+
+### ⚠ AND THIS IS THE SAME SHAPE A THIRD TIME. The diagnosis is the relayed one and it is sharper than mine.
+
+| # | instrument | property I selected it for | what it actually measures |
+|---|---|---|---|
+| 1 | `p4_lib.build_projection_M` | *"it refuses"* | refuses — **but is rigidly 5→4 and builds none of P1–P4** |
+| 2 | `1 − sqrt(1 − f_stat)` | *"the statistical contribution"* | the **variance-share** comparison, not the SD share my prose claimed |
+| 3 | `dropped` | *"the count already exists"* | **source-side only** |
+
+**The pattern: selecting an instrument by the property it ADVERTISES rather than by what it
+MEASURES.** In all three the advertised property was real — it just was not the one the claim needed.
+
+## THE SPECIFICATION: two arms, and which one catches what
+
+> **ARM 1 — SOURCE-SIDE.** `dropped == 0`, from `project_cov_nd.build_projection`'s existing
+> `dropped = int((~keep).sum())` (`:99-100`).
+> **Catches:** a reported **source** bin that lands in **no** reported destination row — i.e. support
+> silently discarded out of the map.
+>
+> **ARM 2 — DESTINATION-SIDE.** `empty = np.nonzero(~M.any(axis=1))[0]`, `require(empty.size == 0, …)`
+> — **lifted verbatim from `p4_lib:1395-1400`, not retyped**, with its orphan-index diagnostic.
+> **Catches:** a reported **destination** row reached by **no** source bin — an all-zero row of `M`
+> that would reach a central comparison as an exact zero and report `rel = 1.0` regardless of how
+> small the bin is.
+>
+> **Both run at CONSTRUCTION**, per that file's own instruction — *"Fail here, at construction, where
+> the diagnosis is the orphan list itself"* — **not at the central comparison**, which is where the
+> masking happens.
+
+**Neither arm subsumes the other, and the asymmetry is why:** arm 1 quantifies over source columns,
+arm 2 over destination rows. A map can be perfect in one direction and defective in the other, which
+is exactly the toy above. **A filter needs an arm in the direction it acts; mine had one.**
+
+## THE THREE OPTIONS, AND I AM CHOOSING — the assessor declined to, and it is my call
+
+**Its general form is correct and sharper than the instance: arity and refusal are SEPARATED in this
+tree and no existing builder has both.** `p4_lib` refuses both ways and is rigidly 5→4;
+`project_cov_nd` takes arbitrary keep-axis subsets and drops **by design** (`:81-82`,
+*"or −1 to drop"*), with the `FINDING` on main recording it performs **neither** orphan check.
+
+> **CHOSEN: EXTEND, single-call.** `project_cov_nd.build_projection` with **both arms** added.
+> **Not composed, and not giving up a property.**
+
+**Why not COMPOSE** — two reasons, and the second is the one that decides it:
+1. It triggers the assessor's **condition 6** (below), adding a declaration that a single call does
+   not need.
+2. **It converts one end-to-end support predicate into a CHAIN of per-stage ones** — a different
+   predicate, which I flagged against `p4_lib` in addendum 2 and would be adopting here if I
+   composed. **Rejecting an option for a reason and then choosing it is the failure I would be
+   repeating.**
+
+**Why not GIVE UP A PROPERTY:** nothing needs giving up. **Both arms exist as one-liners** in a
+file in this tree, and arity already exists in the other. **The extension adds no new mathematics
+and no new check — it moves two existing predicates to the only producer that can build the maps.**
+
+### Condition 6 — composition ORDER: DOES NOT BIND, and here is the condition under which it would
+
+**Single-call, so no composition order exists to declare.** Recorded because it is a live constraint
+on the option I rejected: the width weights compose exactly (`w_a·w_b`) so the **mathematics** is
+order-independent, but the **arithmetic** is not — measured at band-assembly scale, pairwise-vs-
+sequential is bit-identical while **reversing the order moves the result by ~`5e-16`–`1.3e-15`
+relative** (probe §14 measured the same mechanism at `4.3e-16`). **A composed projection is a
+summation over dropped-axis cells, so an undeclared order is an undeclared perturbation at exactly
+the scale a reproducibility gate sits at.** ⚠ **If anyone later composes any of P1–P4, the order
+becomes a required declaration.**
+
+## AND THE SCALE ARGUMENT IS WHY ARM 2 IS NOT A CORNER CASE
+
+Measured by the assessor: **P1 has 42 destination bins at mean row support 254.6; P2 has 7
+destination bins at mean row support 1527.7** — roughly **1.17 million off-diagonal entries entering
+a single released bar.**
+
+**Two consequences, and the first is worse than "harder to see":**
+
+- **A single orphan row in P2 is `1/7` of the released figure** — **14% of the deliverable reading
+  as an exact zero**, and by the masking mechanism `max rel = 1.0` would hide every other result
+  behind it. **Arm 2 is not a tail case for P2; it is an eighth of the figure.**
+- **A silent discard inside a 1,528-cell row is invisible in a way it is not inside a 254-cell one.**
+  This is the argument for how hard §item-5's **two ledgers, never one** has to hold: at P2's row
+  support, a discard summed into a declared-exclusion total would be undetectable by inspection.
+
+**So arm 2's priority is inverse to destination-bin count** — the fewer destination bins, the larger
+the fraction one orphan destroys, and P2/P3 have the fewest.
