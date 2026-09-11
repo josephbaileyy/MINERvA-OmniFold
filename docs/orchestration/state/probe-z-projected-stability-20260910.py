@@ -29,6 +29,8 @@ REV. 2 -- ROUND-1 REVIEW. Every one of these FALSIFIES something this probe or i
  10  F6  A-4's `1e-8` is not tuned -- the statistic is ~binary, so 9 orders behave identically
  11      the two POSITIVE CONTROLS section 4 lacked, without which byte-identity is not evidence
  12  F7  the sample-covariance population is THREE, not two, and one of them is BIASED 1/N
+ 13      `B'` is EXACTLY 0 when the sample blocks are reused byte-identically -- the arm is closed
+         to the top-level (shared) one, so this is the branch Z is in, and `q` is moot in it
 
 No production compute, no adoption, no grading. Local numpy arithmetic only.
 """
@@ -541,11 +543,61 @@ def section12():
     print("       random ensemble, so it is a construction to DISCLOSE, not an ensemble size.")
 
 
+def section13():
+    """REV. 3 / F-provenance: B' = 0 EXACTLY when the sample blocks are reused byte-identically."""
+    print("\n13. `B'` COLLAPSES TO EXACTLY ZERO IN THE REUSE BRANCH  (the arm is closed: top-level)")
+    print("   `s_proj` is a function of `C_k - C_0`. Byte-identical blocks CANCEL in that")
+    print("   difference, so their finite-ensemble noise is COMMON-MODE, not merely small.")
+    rng = np.random.default_rng(20260911)
+    n_src, n_dst, N, K = 60, 8, 40, 10
+
+    def sample_block(seed):
+        r = np.random.default_rng(seed)
+        X = r.normal(size=(N, n_src))
+        Z = X - X.mean(0)
+        return (Z.T @ Z) / (N - 1)
+
+    A = rng.normal(size=(n_src, n_src))
+    C_det = A @ A.T                       # the deterministic bands: identical across members
+    M = np.zeros((n_dst, n_src))
+    for r_, g in enumerate(np.array_split(np.arange(n_src), n_dst)):
+        M[r_, g] = rng.uniform(0.5, 2.0, size=g.size)
+
+    # --- REUSE: one shared sample block, byte-identical in every member
+    shared = sample_block(7)
+    reuse = {k: C_det + shared for k in range(K + 1)}
+    out_reuse = zs.s_proj(reuse, M, baseline_key=0)
+    check("REUSE: null s_proj is EXACTLY 0.0", out_reuse["s_proj"] == 0.0,
+          f"s_proj={out_reuse['s_proj']!r} -- so B' = 0 and the feasibility check passes for any "
+          f"positive delta_proj")
+    check("and it is exact, not merely small", abs(out_reuse["s_proj"]) < 1e-300)
+
+    # --- REGENERATE: each member draws its own sample block
+    regen = {k: C_det + sample_block(100 + k) for k in range(K + 1)}
+    out_regen = zs.s_proj(regen, M, baseline_key=0)
+    print(f"    REGENERATE: null s_proj = {100*out_regen['s_proj']:.3f}%  "
+          f"(argmax offset {out_regen['argmax_offset']}, functional {out_regen['argmax_functional']})")
+    check("REGENERATE: the null spread is NOT zero", out_regen["s_proj"] > 0.0,
+          "the same object, graded against a different reuse decision, gives a different floor")
+    check("so the two branches differ by construction, not by degree",
+          out_regen["s_proj"] > out_reuse["s_proj"])
+
+    # --- the common-mode property stated as an identity, not an outcome
+    d_reuse = reuse[1] - reuse[0]
+    check("REUSE: C_k - C_0 is identically zero", bool(np.all(d_reuse == 0.0)),
+          "byte-identical blocks cancel; this is the mechanism, measured")
+    print("    -> ⚠ AND THE SIGN IS COUNTERINTUITIVE: reuse makes A-7 ENFORCEABLE by removing the")
+    print("       noise that would mask a violation. It does NOT make the object more stable, and")
+    print("       it removes the only route by which ensemble-driven instability could be DETECTED.")
+    print("       A criterion becoming enforceable is a fact about the CRITERION, not the object.")
+
+
 if __name__ == "__main__":
     print(__doc__)
     print("=" * 78)
     section1(); section2(); section3(); section4(); section5(); section6()
     section7(); section8(); section9(); section10(); section11(); section12()
+    section13()
     print("\n" + "=" * 78)
     if FAIL:
         print(f"PROBE FAILED: {len(FAIL)} check(s): {FAIL}")

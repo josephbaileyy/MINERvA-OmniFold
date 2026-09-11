@@ -19,7 +19,7 @@ at `6f24fb00` and at this lane's tip** — verified by `git diff` over the nine 
 Neither is superseded as a whole; this packet **withdraws one answer in the second** and adds to both.
 *A commit sha beside a document is not a claim that the document is current, and "byte-identical" is
 meaningless unless it names **both** endpoints of the comparison. Rev. 1 of this header named one.*
-**Evidence:** `state/probe-z-projected-stability-20260910.py` — green, **59 checks** (37 + 22
+**Evidence:** `state/probe-z-projected-stability-20260910.py` — green, **64 checks** (37 + 27
 added in rev. 3 to verify the round-1 findings against my own claims), run at this tip.
 
 > ## ⚠ CITABLE FOR / NOT CITABLE FOR — at the top, because a verdict word outranks the caveat beside it
@@ -383,9 +383,46 @@ recovery route that needs neither the printed `N` nor the replica files:
 
 > **`--expected-ids` is a caller declaration (`required=True`), and
 > `replica_manifest.load_replica_manifest:44-48` FAILS CLOSED on any id-set mismatch —
-> `raise ValueError("replica id mismatch: missing=… extra=…")`. So a SUCCESSFUL execution of that
+> `raise ValueError("replica id mismatch: missing=… extra=…")`. So a successful execution of that
 > command line is itself proof that exactly the declared id set was present.** `N` is then the
 > declared range, recovered by logic rather than by a stamp.
+>
+> **⚠⚠ REV. 7 — AND THE BOUNDED PROVENANCE SEARCH HAS NOW RUN. TWO CORRECTIONS, BOTH AGAINST ME.**
+>
+> **(A) THE UNIT OF "SUCCESSFUL" WAS UNNAMED, AND IT MATTERS.** The sentence above says *"a
+> SUCCESSFUL execution"* without saying **successful at what level.** The one captured execution is
+> **`State TIMEOUT` at the JOB level** while **both combine STEPS succeeded** — each printed its
+> count and `[wrote]` its output before the wall clock killed later stages. **Job-success and
+> step-success are different predicates and my criterion did not choose one.** ⚠ *This is the
+> launch-plan-read-as-a-record shape again, one level in: I had corrected "declared array" to
+> "verified count" and left "successful" undefined over the same kind of gap.*
+> **CORRECTED: the unit is the STEP, and its evidence is the step's OWN STDOUT** — the printed
+> replica count together with its `[wrote]` line. **A job State is not the operand**; a `TIMEOUT`
+> job can contain a complete combine, and a `COMPLETED` job can contain a step that never ran.
+>
+> **(B) THE ONLY CAPTURED PRODUCING EXECUTION IS AFFIRMATIVELY EXCLUDED — not merely unconfirmed.**
+> The single log carrying the producer signature (`budget5d_55233707.out`, job `budget5d`, `State
+> TIMEOUT`, 2026-06-29) records `[stat5d] 100 replicas … sqrt-trace=1.873e-39` and `[mlsplit5d] 24
+> replicas … sqrt-trace=1.565e-39`. **The released products read `1.8063e-39` and `1.4934e-39` —
+> 3.6% and 4.6% apart.** Tested as a **content fingerprint** rather than inferred from mtimes. So
+> the 2026-07-13 write was a genuine rebuild with different content, **and the captured execution
+> did not produce `6580016f…`/`27b2e456…`. No execution record survives for the rebuild.**
+>
+> **SO WHAT `N` NOW RESTS ON, STATED AT EXACTLY ITS WORTH AND NOT SOFTENED:** the top-level replica
+> population measures **exactly 100 and 24 today**, contiguous, none missing and none extra; the
+> mtime ordering is consistent (replicas rewritten 07-11→07-13 15:56, products rebuilt 07-13 18:04,
+> **after** the last replica); and `--expected-ids` is fail-closed. **That is an inference from
+> PRESENT STATE plus a CONTRACT. It is not a captured execution, and it must not be cited as one.**
+> ⚠ **A-6(b) is therefore stronger than rev. 4 stated it:** not *"the binding has not been done"* but
+> ***"the one candidate execution record is ruled out, and the binding cannot be closed from
+> surviving records at all."*** The only thing that would positively bind the bytes to a population
+> is a recomputation from the 100 replicas, which is regeneration-adjacent and **not authorized —
+> and I am not requesting it.**
+>
+> *Search coverage, so its limits travel with its result: every tracked file for either digest and
+> for the producer's stdout signature; pscratch `*.out/*.log/*.err/*.txt` for that signature with a
+> positive control returning 272 files; `sacct` with a positive control confirming the daemon
+> answers. **Not searched: HPSS archives, and any log outside the pscratch tree.***
 
 **So what is actually missing is one BINDING, not a number:** evidence that the execution which
 produced the bytes digested as `6580016f…` (`C_stat`) and `27b2e456…` (`C_ML`) was that command and
@@ -1046,7 +1083,9 @@ first is withdrawn.**
 | **A-6 belongs to A rather than B** | **SCIENTIFIC JUDGEMENT**, with reason 3 (the operand does not exist at B) as its mechanical core |
 | `ε = 1e-9`; `‖P_0 − P_k‖_2 ≤ 1e-8` | unchanged from `RECOMMENDATION-…`; classes as recorded there |
 | **`δ_proj`'s RULE** — smallest declared component (§8.3) | **DERIVED from the declared claim.** Its **value** needs a constructed `C_Z` and is not supplied |
-| **`q`** | ⚠ **SCIENTIFIC — Joseph's.** A declared confidence level on the FEASIBILITY assertion (§8.7). Rev. 4's "conditioning parameter" is **withdrawn**: it moves `B'` ~45% and can flip enforceable → *ensembles too small* even with `δ_proj ≠ B'` |
+| **`q`** | ⚠ **SCIENTIFIC — Joseph's, AND MOOT IN THE REUSE BRANCH (§8.9).** A declared confidence level on the FEASIBILITY assertion (§8.7). Rev. 4's "conditioning parameter" is **withdrawn**: it moves `B'` ~45% and can flip enforceable → *ensembles too small* even with `δ_proj ≠ B'`. **But if Z reuses the sample blocks, `B' = 0` exactly and every `q` gives the same answer, so the parameter has no effect** — its ownership question is live only in the regenerate branch |
+| **`B' = 0` under reuse** | **DERIVED (§8.9)** — byte-identical blocks cancel exactly in `C_k − C_0`. ⚠ Derived from the closed arm, **not measured on `s_proj`**; both lanes to check |
+| **`263` is the combined object's measured rank** | **EMPIRICAL**, corroborated by the 06-29 log's `rank=263/10694` — consistent with this packet's standing caution that **`263` is not Z's `≤ 265`** |
 | **`κ`** | conditioning threshold, `rcond` kind — **mine**, and NOT a scientific boundary (§4.3a) |
 
 ---
@@ -1215,10 +1254,68 @@ a default:**
 
 **⚠ I am not guessing which, and I am not lowering `δ_proj` to `B'` to close the gap** — that is the
 `min(achievable, acceptable)` substitution withdrawn in rev. 19 and now barred by amendment 1.
-**If the independent branch holds, the honest deliverable is the finding, not a tolerance**: the
-ensembles are too small to enforce construction-determinacy at the granularity the construction
-declares. That is my own priced consequence and I am standing on it rather than reaching for a
-number that would make it go away.
+
+### 8.9 ⚠ REV. 7 — THE ARM IS CLOSED, AND `B'` COLLAPSES TO **EXACTLY ZERO** IN THE REUSE BRANCH
+
+**The provenance search closed the arm: both candidate executions resolve to the TOP-LEVEL unscoped
+globs** (the captured job is named `budget5d`, i.e. `run_budget_5d.sh` / `sbatch_combine_5d_budget.sh`),
+and **the member-scoped arm is excluded on dates alone** — its replicas did not exist until
+2026-08-30. **So there is ONE shared replica set, and §8.8's table no longer needs its first row.**
+
+**THE CONSEQUENCE, DERIVED HERE RATHER THAN ACCEPTED — and it is stronger than "sharing is high":**
+
+> **If Z REUSES these two products across every member of `K`, then `C_stat` and `C_ML` are
+> BYTE-IDENTICAL across members. `s_proj` is a function of `C_k − C_0`. Byte-identical blocks
+> cancel exactly in that difference. So their finite-ensemble noise is COMMON-MODE and contributes
+> EXACTLY ZERO — not "little" — to the null spread.**
+>
+> **And they are the only sample covariances in the construction.** Under the null "every member
+> statistically identical", every remaining block is deterministic and also identical, so
+> `C_k = C_0` **exactly** and `s_proj = 0` **exactly**. **`B' = 0`.**
+
+**Three things follow, and the third is the one I would not have predicted:**
+
+1. **The feasibility check `B' < δ_proj` is satisfied for any positive `δ_proj`.** A-7 is
+   **enforceable** in this branch. §8.5's third outcome does not fire.
+2. **`q` becomes MOOT.** A quantile of a point mass at zero is zero for every `q`, so F18's
+   parameter has no effect and its ownership question **dissolves** — in this branch only.
+3. **⚠ AND THE SIGN OF THIS IS COUNTERINTUITIVE, SO IT MUST NOT BE READ AS AN ARGUMENT FOR REUSE.**
+   Reuse makes the criterion *enforceable* by removing the noise that would have masked a violation
+   — **it does not make the object more stable, and it removes the only route by which
+   ensemble-driven instability could have been DETECTED at all.** Regeneration, which sounds more
+   rigorous, is what makes A-7 unenforceable. **A criterion becoming enforceable is a fact about the
+   criterion, never evidence about the object**, and anyone citing §8.9 as support for reusing the
+   blocks has inverted it.
+
+**⚠ SO THE REUSE-OR-REGENERATE DECISION NOW ALSO DECIDES WHETHER A-7 IS ENFORCEABLE — a coupling
+nobody has stated, and it is Joseph's.** That decision is already an open scientific question in the
+record (`SPEC:504`, *"an open scientific question, not a settled requirement"*; carried at `:3629`).
+**It was previously a question about Z's construction. It is now also a question about whether Z's
+released bars can be graded for determinacy at all.** Both branches, priced:
+
+| Joseph's decision | `B'` | A-7 | what is lost |
+|---|---|---|---|
+| **REUSE** the two products across `K` | **exactly `0`** (derived above) | **enforceable**; `q` moot | ⚠ **the ability to detect ensemble-driven instability** — the sample blocks cannot move, so a criterion on them is vacuous by construction |
+| **REGENERATE** per member | at its **largest** — independent draws, ~5× the per-bar floor at `K=10`, 100 functionals | **likely UNENFORCEABLE** (`B' > δ_proj`) | nothing detectable is lost, but the finding then fires: **the ensembles are too small** at the granularity the construction declares, and it points at `N` |
+
+**If the regenerate branch is chosen, the honest deliverable is the finding, not a tolerance.** That
+is my own priced consequence and I am standing on it rather than reaching for a number that would
+make it go away.
+
+**⚠ THE LIMITS ON §8.9, AND ONE OF THEM MOVED IN MY FAVOUR SO I AM RESTATING IT ACCURATELY.**
+**`B' = 0` is now MEASURED on `s_proj`, not only derived** — probe §13: with one shared sample block
+byte-identical across `K = 10` members, `s_proj` returns **exactly `0.0`**, and `C_k − C_0` is
+identically zero, which is the mechanism rather than the outcome. The regenerate arm of the same
+construction returns **`0.562%`**, so **the two branches differ by construction and not by degree.**
+*(An earlier draft of this paragraph said "it is not a measurement on `s_proj`." That was true when
+written and is no longer; I measured it rather than leave the key new claim asserted.)*
+
+**What remains genuinely unestablished:** the null assumes the **remaining** blocks are identical
+across members, which is what *"statistically identical members"* means but is a property of the
+**null construction**, not of the real members — so `B' = 0` is a statement about the floor, not a
+prediction that real members will agree. And the reviewer's `5.17 → 0.84` sharing sweep is
+consistent with the conservative end but **does not reach total sharing**, which is the case here.
+Both lanes should still check the derivation; what they are checking is now an executable section.
 
 ---
 
