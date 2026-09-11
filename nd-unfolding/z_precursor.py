@@ -184,22 +184,32 @@ def namespace_plan(data_root, namespace=None, environ=None):
 def check_namespace_fresh(plan, arms=None):
     """Every named arm's directory must be absent or hold NO product. Non-emptiness REFUSES.
 
-    ⚠ EMPTINESS IS JUDGED BY THE ARM'S OWN PRODUCT GLOB, NOT BY `os.listdir`. A directory holding
-    only a `.gitkeep`, a log, or a `*.tmp.npz` left by `_atomic_savez`'s interrupted rename is not
-    a populated namespace, and refusing on those would make the guard fire on correct runs. A
-    directory holding one real product IS populated, even though a count-based check calling it
-    "nearly empty" would wave it through.
+    ⚠ EMPTINESS IS JUDGED BY THE ARM'S OWN PRODUCT GLOB, NOT BY `os.listdir`, and this is measured
+    rather than stylistic. The live `uq_5d/block_slabs_5d` holds 18 directory entries and 8
+    products; the other 10 are `knob_<band>.log`. An `os.listdir` test would call that namespace
+    occupied for reasons that have nothing to do with products, and a guard that fires on every
+    correct run is not a guard. A directory holding ONE real product IS populated, even though a
+    count-based check calling it "nearly empty" would wave it through.
+
+    ⚠ AND THE IN-PROGRESS TEMPORARY IS EXCLUDED, which a test caught rather than a reading did.
+    `unified_throw_cov._atomic_savez` names its temp `<product>.<random>.tmp.npz`, which MATCHES
+    the product glob -- so a wall-killed task leaves a file this check would read as a product and
+    a fresh namespace would be refused. The suffix is IMPORTED from the producer, not retyped:
+    a second spelling could stop matching and nothing would say so.
 
     NO ARM DEFAULTS TO UNCHECKED: `arms=None` means ALL of them. A per-arm opt-in would let the
     caller shrink the sweep to the arms it already believes are fresh.
     """
+    import unified_throw_cov as producer
+
     names = sorted(plan["arms"]) if arms is None else sorted(set(arms))
     require(names, "check_namespace_fresh: no arms named; an empty sweep checks nothing")
     occupied = {}
     for arm in names:
         require(arm in plan["arms"], f"unknown arm {arm!r} in freshness sweep")
         entry = plan["arms"][arm]
-        hits = sorted(globmod.glob(entry["product_glob"]))
+        hits = sorted(p for p in globmod.glob(entry["product_glob"])
+                      if not p.endswith(producer.IN_PROGRESS_SUFFIX))
         if hits:
             occupied[arm] = {"dir": entry["dir"], "n": len(hits),
                              "examples": [os.path.basename(h) for h in hits[:6]]}
@@ -662,12 +672,13 @@ def main(argv=None):
                                         population_declared=args.population_declared)
             if args.extra_json:
                 extra.update(json.loads(args.extra_json))
-            plan = None
-            try:
-                plan = namespace_plan(os.environ.get("MNV_DATA_ROOT", "."),
-                                      namespace=args.namespace)
-            except PrecursorError:
-                plan = None
+            # THE PLAN IS RECORDED, NOT REQUIRED. `MNV_DATA_ROOT` is a property of the RUN, and a
+            # receipt written by hand over an archived product legitimately has no data root --
+            # refusing there would make the receipt writer refuse the one case it is most needed
+            # for. The plan is descriptive context in the receipt; the ARM's own product path is
+            # the load-bearing field and it is verified above.
+            data_root = os.environ.get("MNV_DATA_ROOT")
+            plan = (namespace_plan(data_root, namespace=args.namespace) if data_root else None)
             receipt = write_receipt(product=args.product, out_path=args.out, arm=args.arm,
                                     namespace=args.namespace, plan_json=plan, extra=extra,
                                     code_root=args.code_root,

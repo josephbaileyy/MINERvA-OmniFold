@@ -543,6 +543,52 @@ class ThePopulationIsCheckedByIDENTITYinBothDirections(ProducerFixture):
         self.assertTrue(declared["block_population_declared"])
         self.assertFalse(undeclared["block_population_declared"])
 
+    def test_an_INTERRUPTED_WRITE_is_reported_as_ITSELF_not_as_a_stale_file(self):
+        """A LIVE HAZARD FOUND BY A TEST, NOT BY READING: `_atomic_savez`'s temporary name falls
+        INSIDE the consumers' own globs.
+
+        It writes `<product>.<random>.tmp.npz`, so `block5d_knobs.npz.abc.tmp.npz` matches
+        `--block-slabs 'block5d_*.npz'`. Its `except` branch unlinks it, but a WALL-CLOCK KILL runs
+        no handler -- and `sbatch_uthrow_run_5d_fast.sh:14` claims a wall-kill "re-runs the whole
+        task cleanly" on the strength of this function. True of the PRODUCT; the leftover temp is
+        then a glob member the combine would try to `np.load`.
+
+        Reported as an incomplete write rather than as UNDECLARED, because they call for opposite
+        actions: re-run the producing task versus find out whose files these are. One refusal
+        carrying both would have two meanings and no way to tell which.
+        """
+        temp = (self.work / "blocks" /
+                f"block5d_knobs.npz.abc{U.IN_PROGRESS_SUFFIX}")
+        temp.write_bytes(b"partial")
+        self.assertIn(str(temp), __import__("glob").glob(self.block_glob),
+                      "the premise: the temp name must MATCH the production glob, or this hazard "
+                      "is not real and the exclusion below is unnecessary")
+        with self.assertRaises(SystemExit) as caught:
+            U.check_slab_population(self.block_glob, self.block_names, "block")
+        self.assertIn("INCOMPLETE write", str(caught.exception))
+        self.assertIn(temp.name, str(caught.exception))
+        self.assertNotIn("UNDECLARED", str(caught.exception))
+        temp.unlink()
+        self.assertEqual(
+            U.check_slab_population(self.block_glob, self.block_names, "block")["n_expected"],
+            len(self.block_names), "POSITIVE CONTROL: removing the temp restores a clean pass")
+
+    def test_the_FRESHNESS_check_does_not_read_a_temp_as_a_product(self):
+        """The other side of the same hazard, and the direction that refuses a CORRECT run.
+
+        The suffix is imported from the producer in both places, so the two cannot drift apart.
+        """
+        plan = ZP.namespace_plan(str(self.work / "fresh"), namespace="ns")
+        target = Path(plan["arms"]["block"]["dir"])
+        target.mkdir(parents=True, exist_ok=True)
+        (target / f"block5d_knobs.npz.abc{U.IN_PROGRESS_SUFFIX}").write_bytes(b"partial")
+        self.assertTrue(ZP.check_namespace_fresh(plan, ["block"])["fresh"],
+                        "an interrupted write is not a product and must not refuse a fresh "
+                        "namespace")
+        (target / "block5d_knobs.npz").write_bytes(b"real")
+        with self.assertRaises(ZP.PrecursorError):
+            ZP.check_namespace_fresh(plan, ["block"])
+
     def test_declaring_a_block_population_without_a_block_glob_refuses(self):
         with self.assertRaises(SystemExit) as caught:
             args = combine_args(bank=str(self.bank.path), combine=self.throw_glob,
@@ -613,14 +659,31 @@ class TheNamespaceIsOneExplicitValueAndFreshnessRefuses(unittest.TestCase):
         self.assertIn("uthrow5d_slab_0.npz", str(caught.exception))
 
     def test_POSITIVE_CONTROL_a_NON_PRODUCT_file_does_not_trip_freshness(self):
-        """A guard that fires on every correct run is not a guard. `_atomic_savez` leaves
-        `*.tmp.npz` behind on an interrupted rename, and a `.gitkeep` is not a product."""
+        """A guard that fires on every correct run is not a guard, and the benign names here are
+        MEASURED rather than invented.
+
+        The live `uq_5d/block_slabs_5d` holds 18 directory entries but only 8 products: the other
+        10 are `knob_<band>.log`. So an `os.listdir`-based emptiness test would call that namespace
+        occupied 10 times over for reasons that have nothing to do with products, and `.log` files
+        beside a product directory are the normal state of these arms. `_atomic_savez` also leaves
+        a `*.tmp.npz` on an interrupted rename.
+
+        ⚠ AND COUNTING THE WRONG POPULATION IS HOW I FIRST MIS-READ THIS. `ls -1 | wc -l` on those
+        four archive directories gave 18/41/320/40 against the 8/36/160/40 that the product globs
+        give. Same directories, different denominators, and only the second pair is a statement
+        about products.
+        """
         plan = ZP.namespace_plan(str(self.work), namespace="ns")
-        target = Path(plan["arms"]["run"]["dir"])
+        target = Path(plan["arms"]["block"]["dir"])
         target.mkdir(parents=True, exist_ok=True)
-        for benign in (".gitkeep", "uthrow5d_run_0_123.out", "notes.md"):
+        for benign in ("knob_2p2h.log", "knob_MaCCQE.log", ".gitkeep",
+                       "block5d_flux_1.npz.abc.tmp.npz"):
             (target / benign).write_text("x")
-        self.assertTrue(ZP.check_namespace_fresh(plan)["fresh"])
+        self.assertTrue(ZP.check_namespace_fresh(plan)["fresh"],
+                        "ten .log files and an interrupted-rename temp are not products")
+        (target / "block5d_knobs.npz").write_bytes(b"x")
+        with self.assertRaises(ZP.PrecursorError):
+            ZP.check_namespace_fresh(plan, ["block"])
 
     def test_the_freshness_sweep_covers_ALL_arms_by_DEFAULT(self):
         """`arms=None` means all four. A per-arm opt-in would let a caller shrink the sweep to the

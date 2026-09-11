@@ -131,12 +131,26 @@ def _load_bank(bank):
     return d, bands, n_flux
 
 
+#: The in-progress suffix `_atomic_savez` writes beside a slab, named so consumers can EXCLUDE it.
+#:
+#: ⚠ IT FALLS INSIDE THE CONSUMERS' OWN GLOBS, and that is a live hazard rather than a tidiness
+#: point. `_atomic_savez` names its temp file `<product>.<random>.tmp.npz`, so
+#: `block5d_knobs.npz.abc.tmp.npz` MATCHES `--block-slabs 'block5d_*.npz'` and
+#: `uthrow5d_slab_0.npz.abc.tmp.npz` matches the throw glob. The `except` branch below unlinks it,
+#: but a WALL-CLOCK KILL runs no handler -- and `sbatch_uthrow_run_5d_fast.sh:14` states that a
+#: wall-kill "re-runs the whole task cleanly" on the strength of this function. It does for the
+#: PRODUCT; the leftover temp is then a glob member the combine will try to `np.load`.
+#: Exported as a constant so the exclusion is derived from the producer rather than retyped: a
+#: second spelling of this suffix somewhere else could stop matching and nothing would say so.
+IN_PROGRESS_SUFFIX = ".tmp.npz"
+
+
 def _atomic_savez(path, **arrays):
     """Replace a slab only after the compressed NPZ has closed successfully."""
     path = os.path.abspath(os.fspath(path))
     os.makedirs(os.path.dirname(path), exist_ok=True)
     handle = tempfile.NamedTemporaryFile(
-        prefix=os.path.basename(path) + ".", suffix=".tmp.npz",
+        prefix=os.path.basename(path) + ".", suffix=IN_PROGRESS_SUFFIX,
         dir=os.path.dirname(path), delete=False)
     tmp = handle.name
     handle.close()
@@ -259,7 +273,21 @@ def check_slab_population(pattern, expected_names, label):
             raise SystemExit(f"[FAIL] {label}: expected-file entry {name!r} is not a plain "
                              f"basename. A glob or a path here would make the declaration match "
                              f"whatever is present, which is the absence of a declaration.")
-    found = {os.path.basename(p) for p in glob.glob(pattern)}
+    # AN IN-PROGRESS TEMP IS REPORTED SEPARATELY, NOT AS AN UNDECLARED MEMBER. `_atomic_savez`'s
+    # temp name falls INSIDE this glob (see `IN_PROGRESS_SUFFIX`), so a wall-killed task leaves one
+    # behind and it would otherwise read as a stale foreign file. It is neither: it is this run's
+    # own incomplete write, and conflating the two would give one refusal two meanings.
+    matched = [os.path.basename(p) for p in glob.glob(pattern)]
+    in_progress = sorted(n for n in matched if n.endswith(IN_PROGRESS_SUFFIX))
+    if in_progress:
+        raise SystemExit(
+            f"[FAIL] {label}: {len(in_progress)} INCOMPLETE write(s) left in the glob: "
+            f"{in_progress[:6]}{' ...' if len(in_progress) > 6 else ''}\n"
+            f"  glob: {pattern}\n"
+            f"  These are `_atomic_savez` temporaries, not stale foreign files -- the producer was "
+            f"killed mid-write (a wall-clock kill runs no cleanup handler) and the temp name falls "
+            f"inside this glob. Re-run the producing task; do not delete the declared products.")
+    found = set(matched)
     want = set(declared)
     missing, undeclared = sorted(want - found), sorted(found - want)
     if missing or undeclared:
