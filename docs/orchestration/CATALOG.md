@@ -785,6 +785,35 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`ASSESSMENT-20260911-endpoint-B-design-nine-claims.md`](ASSESSMENT-20260911-endpoint-B-design-nine-claims.md)
+  - **Pre-implementation assessment of `DESIGN-20260911-endpoint-B-generator-comparison-test.md`
+  (`8a42f8ea`), designer recused; nine load-bearing claims.** Authorizes nothing; endpoint B stays
+  **DEFERRED NOT PASSED**, Gate 2 FAIL, `cause3_corr` WITHHELD, `R4` suspended. **CONFIRMED (6):**
+  the truth samples are all present on pscratch (the size mismatches are decimal MB vs MiB — GENIE
+  `999.5`/`997.6` MB, 8 nuwro dirs, GiBUU 2020 MiB), so **no fresh generator production is needed**;
+  the existing instrument is aimed at the **opposite end of the axis** (`eavail_generator_significance.py:2`
+  *"high-E_avail excess"*, `:106` `>= 0.8` *"DIS tail"*, `:118` `chi2/ndf(DIS>=0.8)`) from the
+  manuscript's claim (`sec_3d.tex:268` **low**-available-energy excess); the **model swap is real**,
+  and the full-range column the requester had not verified **derives exactly** from `sec_3d.tex:194-197`
+  (`12.01/18.18/24.03/27.92`); **nesting** holds and was already recorded (`README.md:201` *"mec==0 for
+  all 1.48M CC events"*, exact `total CC=1484896`); the **target asymmetry** is documented
+  (`run_nuwro.sh:32-34` `nucleus_p=6 nucleus_n=6` vs `README.md:32` CH `/13`) and per-nucleon division
+  cannot absorb a component absent from one target; and **Tune v1 is the prior with no assembly term
+  covering it** (`build_fps_prior_nuwro_5d.py:11` denominator; `z_assembly.py:4` five terms, zero
+  prior/unfold matches) — a band reweights a fixed estimator, a prior change re-runs OmniFold.
+  **THREE BLOCKS: (1)** *"what is missing is an ND histogrammer"* is overstated —
+  `gen_to_xsec_eavailW.py` exists, takes an **arbitrary** `--gst` (`:67`) with a generator-agnostic
+  reader (`:68`), and declares binning *"identical to the 5D OmniFold W axis"*, with NuWro/GiBUU
+  siblings; the MEC sample is therefore already histogrammable and the gap must be **re-scoped**
+  (limits stated: existence verified, execution and Tune v1 coverage **not**). **(2)** The four
+  "implied catch fractions" `43.4/37.6/38.7/40.4` reproduce **exactly** from a single assumed **data**
+  catch fraction `44.96%` — i.e. from the **withdrawn** 43–46% band itself — so they inherit the
+  withdrawal, and even granted they show **no inconsistency**; §2's table does **not** depend on them
+  and **stands**, so the flagged check on the producing scripts has no premise. **(3)** Multiplicity:
+  `N=120` and `1.0870` reproduce, but **independence is not the worst case** — the union bound gives
+  `0.986`, more conservative by `0.101σ`, so *"at worst 1.09"* is not a bound. Also **reclassified:**
+  the *"one-sided"* label at `:111-113` is a **comment-only** defect — `isf(p/2)` is the conventional
+  HEP equivalent, so the printed number is right and "fixing" it would break a correct value.
 - [`CHECK-20260911-three-relayed-readings-gate2-mii-and-cost.md`](CHECK-20260911-three-relayed-readings-gate2-mii-and-cost.md)
   - **An independent check of three relayed readings plus one addendum, requested as preparation for a
   compute authorization. READY on reading 1; BLOCK on reading 2; BLOCK on two of reading 3's
