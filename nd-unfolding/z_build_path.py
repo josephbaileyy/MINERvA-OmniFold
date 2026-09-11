@@ -682,6 +682,61 @@ def check_rate_closure(full_rf, displayed_rf, edges, excluded_rows, values=None,
 
 
 
+# ==================== THE CONDITIONAL-SCOPE STATEMENT (it must TRAVEL) ======================
+# ⚠ WHY THIS IS HERE AND NOT IN THE CONTRACT ENTRY. The amendment's first draft proposed putting
+# this licensing clause in `z_contract.cause3_corr`'s `reason` -- and THIS LANE HAD ALREADY PROVEN
+# BY EXECUTION that that entry is INERT: deleting it from `Z_BOUNDARIES` leaves `assess`'s
+# `describe()` BYTE-IDENTICAL, because a boundary is reached only at `z_validator.py:247` via
+# `leg.boundary_key` and surfaced only at `:107-111` via the declared legs -- and `cause3_corr` is
+# named by NO leg. That unreachability is the entry's own stated premise.
+#
+# So the draft proposed recording the licensing consequence of a deferral inside the very entry
+# whose unreachability is what the deferral is about. The clause would have been true, committed,
+# and INVISIBLE TO EVERY GRADE. `z_validator.py:166-167` states the rule this violates verbatim:
+# "the narrowing that must travel WITH the grade, not sit in a specification the grader may not
+# open."
+#
+# ⚠ AND `_DIAGONAL_ONLY_SCOPE` IS THE WRONG HOST TOO, though it is the obvious one: it is emitted
+# on the presence or absence of a CORRELATION-SENSITIVE LEG, which is orthogonal to whether the
+# statistical and ML blocks are held fixed. Attaching this clause there would give it the wrong
+# TRIGGER -- it would appear when no corr leg is declared and vanish when one is, neither of which
+# is the condition it describes.
+#
+# So: a SEPARATE emitted statement, DERIVED from the build path's block source, returned with the
+# A-7 outcome. Same design as `_DIAGONAL_ONLY_SCOPE` -- derived, not assertable by a caller, and
+# it travels with the result.
+
+_CONDITIONAL_BLOCK_SCOPE = (
+    "A MET result on (cause 3, Z) under this build path states that the released projected "
+    "uncertainties did not exceed their declared movement limit across the declared offsets, WITH "
+    "THE STATISTICAL AND ML COMPONENTS HELD AT FIXED DIGESTS. It licenses NOTHING about: (i) "
+    "whether REGENERATED C_stat/C_ML would move the released bars under the same offsets -- the "
+    "components held fixed are exactly the ones not tested; (ii) the finite-ensemble contribution "
+    "to those bars, which is common-mode under fixed digests and cancels in C_k - C_0 by "
+    "construction; (iii) C_Z's off-diagonal structure beyond the directions the declared "
+    "functionals probe; (iv) calibration, coverage, or any frequentist property; (v) any "
+    "projection not in the declared set.")
+
+_UNCONDITIONAL_BLOCK_SCOPE = (
+    "This build path REGENERATES C_stat/C_ML per member, so the measured movement is the SUM of "
+    "estimator-baseline sensitivity and finite-ensemble resampling, and this statistic alone "
+    "cannot separate them.")
+
+
+def conditional_scope_statement(path: BuildPath) -> Optional[str]:
+    """The narrowing that travels with an A-7 outcome. DERIVED from the build path.
+
+    Returns the conditional clause when the blocks are shared, the unconditional caveat when they
+    are regenerated per member, and `None` for a non-member run where neither applies. A caller
+    cannot assert or suppress it -- it is a property of the declared build path, which is the same
+    reason `z_validator`'s `sees_correlations` is derived from the legs rather than passed in.
+    """
+    require(isinstance(path, BuildPath), "conditional_scope_statement: need a BuildPath")
+    if not path.is_member:
+        return None
+    return _CONDITIONAL_BLOCK_SCOPE if path.blocks_are_shared else _UNCONDITIONAL_BLOCK_SCOPE
+
+
 # =============================== THE INTERCEPTION POINT (wiring) ===============================
 # ⚠ WHY THIS SECTION EXISTS. Rev. 1 of this module was BLOCKED on review, and the ground was not the
 # classifiers -- they were verified correct on all three of F3's cohorts -- but that NOTHING
@@ -695,7 +750,7 @@ def check_rate_closure(full_rf, displayed_rf, edges, excluded_rows, values=None,
 import z_statistics as _zs                                            # noqa: E402  (the wiring)
 
 
-def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa,
+def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa, build_path=None,
                 extra_functionals=(), declared_exclusions=(), declared_support=None,
                 observed_support=None, baseline_key=0):
     """THE ONLY SANCTIONED ROUTE TO AN A-7 VERDICT. Guards first, `s_proj` last.
@@ -719,6 +774,7 @@ def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa,
     Joseph's *"do not invent an unapproved numerical kappa"* and makes the 1% criterion unevaluable
     until `kappa` exists. Whose act that declaration is has not been decided.
     """
+    scope = conditional_scope_statement(build_path) if build_path is not None else None
     K = declared_population(declared_K, "evaluate_a7 caller")
     require(set(cov_by_offset) == set(K),
             f"members supplied {sorted(cov_by_offset)} != declared K {list(K)}; a population that "
@@ -769,7 +825,7 @@ def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa,
         sup = classify_support_change(declared_support, observed_support)
         if sup["state"] != "RESOLVED":
             return {"state": sup["state"], "routed_to": A7_TERMINAL_ROUTING[sup["state"]],
-                    "detail": sup, "s_proj": None}
+                    "detail": sup, "s_proj": None, "scope_statement": scope}
 
     C0 = np.asarray(cov_by_offset[baseline_key], float)
     q0 = np.einsum("ij,jk,ik->i", U, C0, U)
@@ -778,8 +834,9 @@ def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa,
     deg = classify_baseline_degeneracy(q0, c_scale=c_scale, kappa=kappa, u_norms_sq=nsq)
     if deg["state"] != "RESOLVED":
         return {"state": deg["state"], "routed_to": A7_TERMINAL_ROUTING[deg["state"]],
-                "detail": deg, "s_proj": None}
+                "detail": deg, "s_proj": None, "scope_statement": scope}
 
     out = _zs.s_proj(cov_by_offset, U, baseline_key=baseline_key)
     return {"state": "GRADED", "routed_to": "A-7's numerical comparison against the proposed 1%",
-            "detail": {"support": rep_support, "degeneracy": deg}, "s_proj": out}
+            "detail": {"support": rep_support, "degeneracy": deg}, "s_proj": out,
+            "scope_statement": scope}

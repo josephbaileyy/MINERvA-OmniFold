@@ -73,8 +73,28 @@ digest-identical measures a **proper subset** and is silent on whether regenerat
 under the same offsets. So a conditional result does not discharge cause 3 as written, and recording
 it as discharging cause 3 would be the silent narrowing Joseph forbade.
 
-**MY ANSWER: THE OBJECTION IS CORRECT AS AGAINST THE UNCONDITIONAL READING — AND CAUSE 3 AS WRITTEN
-DOES NOT DISTINGUISH THE TWO READINGS. That ambiguity is the finding.** Verbatim at `6f24fb00`,
+> ## ⚠⚠ REV. 2 — THE "AMBIGUITY" FRAME IS WRONG ON THE DATES, AND THE GRAMMAR MATTERS
+>
+> **Measured, and I verified it rather than accepting the relay:** `MNV_EST_SEED_OFFSET` first
+> appears in the tree at **2026-08-18**; `SPEC-20260906-…` was added at **2026-09-06** — **nineteen
+> days later**. And the launcher at `6f24fb00` is **binary**: `:417` declared → own blocks, `:424`
+> else → archive reuse. *(`git log -S` dates the commit, not the artifact — but both bounds point
+> the same way here, so the ordering holds regardless.)*
+>
+> **So (a) and (b) were not two indistinguishable configurations — (b) DID NOT EXIST.** Only the
+> total reading was producible, and the contract text was written **after** the binary machinery,
+> against a world where the only expressible variation regenerates the blocks. **Its natural
+> referent is (a) TOTAL, and the decoupling CREATES (b) rather than revealing a latent ambiguity.**
+>
+> **THEREFORE WHAT I AM ASKING FOR IS A NARROWING OF THE DECLARED SUBJECT — a contract change, and
+> mine to argue.** The grammar is not cosmetic: *"which did you mean?"* invites a cheap answer and
+> **puts the burden on Joseph's memory**, while *"may I narrow the declared quantity from the
+> assembled `C_Z` to the estimator-attributable part, and here is why"* **puts it on the proposer,
+> where a contract change belongs.** §A.6's pricing is that argument; only its framing was wrong.
+
+**MY ANSWER: THE OBJECTION IS CORRECT AS AGAINST THE UNCONDITIONAL READING, and the two readings
+below are what a narrowing would move between — NOT, as rev. 1 had it, two readings the contract
+already failed to distinguish.** Verbatim at `6f24fb00`,
 `z_contract.py:222-225`: *"how much **estimator-baseline sensitivity** is scientifically
 acceptable"* — **unqualified**, with no statement of what is held fixed while it is measured. Two
 readings both fit that sentence:
@@ -94,20 +114,45 @@ therefore what makes the ambiguity actionable rather than academic.
 1. **Amend `cause3_agg`'s and `cause3_med`'s reasons to state what is held fixed** while
    estimator-baseline sensitivity is measured. Not a new boundary, not a changed statistic — the
    sentence currently omits a condition that changes what it means.
-2. **Add A.4's licensing clause to the contract**, in `cause3_corr`'s existing template, so the
-   narrowing travels with any MET result rather than living in a specification a grader may not
-   open. *(That template is why this is a form to follow, not a construct to invent.)*
+2. ⚠ **REV. 2 — THE CLAUSE'S DESTINATION IS CORRECTED, AND MY FIRST CHOICE WAS THE ONE PLACE I HAD
+   MYSELF PROVEN UNREACHABLE.** Rev. 1 put it in `cause3_corr`'s `reason`. **My own Part I §I.1
+   established by execution — with both positive controls passing — that that entry is INERT:**
+   deleting it from `Z_BOUNDARIES` leaves `assess`'s `describe()` **byte-identical**, because a
+   boundary is reached only at `z_validator.py:247` via `leg.boundary_key` and surfaced only at
+   `:107-111` through the declared legs — and **`cause3_corr` is named by no leg, which is the
+   entry's own stated premise.** So rev. 1 proposed recording the licensing consequence of a
+   deferral **inside the very entry whose unreachability is what the deferral is about**: true,
+   committed, and **invisible to every grade**. `z_validator.py:166-167` states the violated rule
+   verbatim — *"the narrowing that must travel WITH the grade, not sit in a specification the
+   grader may not open."*
+   **⚠ AND `_DIAGONAL_ONLY_SCOPE` IS ALSO THE WRONG HOST**, though it is the obvious one: it keys
+   on the presence of a **correlation-sensitive leg**, which is orthogonal to whether the blocks
+   are held fixed. Attached there, the clause would appear when no corr leg is declared and vanish
+   when one is — **the wrong trigger entirely.**
+   **DESTINATION, IMPLEMENTED at `z_build_path.conditional_scope_statement`:** a separate emitted
+   statement **derived from the build path's block source**, returned on **every** A-7 outcome —
+   graded *and* refused — with **no parameter by which a caller could assert or suppress it**
+   (verified by signature inspection, the same discipline as `sees_correlations` being derived from
+   the legs). Shared blocks emit the conditional clause; per-member blocks emit the caveat that the
+   measurement is the **sum** of two causes; a non-member run emits neither.
 3. **Record reading (b) as what the conditional test discharges, and reading (a) as EXPLICITLY
    UNDISCHARGED** — named in the receipt, not omitted from it.
 
 **WHAT THE AMENDMENT DOES NOT DO, stated so it cannot be read as more:** it does **not** make cause 3
-passable — `cause3_agg`, `cause3_med` and `cause3_corr` all remain **withheld**, and `assess` returns
-non-passing while any declared leg's boundary is withheld. It does **not** decide between (a) and
+passable. ⚠ **And rev. 1's stated mechanism was looser than the real one** — the same inertness the
+destination correction turns on: **`cause3_agg` and `cause3_med` are what force non-passing**,
+because legs name them; **`cause3_corr`, named by no leg, forces nothing.** All three remain
+withheld, but only two are load-bearing, and saying "all three" implies a guard that is not there. It does **not** decide between (a) and
 (b). It makes the conditional scope **statable** and the unconditional reading **visibly open**.
 
 ## A.6 ⚠ THE PRECISE SCIENTIFIC CHOICE, since one remains and it is Joseph's
 
-> **Does cause 3 require reading (a) or reading (b)?**
+> **May the declared subject of cause 3 be NARROWED from the assembled `C_Z` (reading (a), TOTAL)
+> to the estimator-attributable part (reading (b))?**
+>
+> *Rev. 1 asked "which did you mean?". That was the wrong grammar: the contract's referent is (a),
+> so there is nothing to recall — there is a change to authorise or refuse, and the burden of
+> argument is mine.*
 
 **Consequences, priced, because the branches differ by more than wording:**
 
@@ -146,7 +191,7 @@ revision.
 A **Rayleigh quotient** against the operand's largest eigenvalue. Evaluated **before** any PSD
 assertion, and it names the **functional**, never the operand.
 
-## B.2 Proposed value: `κ = 1e-12`
+## B.2 ~~Proposed value: `κ = 1e-12`~~ — ⚠ **WITHDRAWN in rev. 2; a placeholder pending `λ_min_retained/λ_max`.** See the box in B.3.
 
 ## B.3 Numerical justification — ⚠ and scale invariance is NOT it
 
@@ -173,8 +218,72 @@ declared functional either has genuine support — a quotient of order `λ/λ_ma
 direction — or essentially none. **There is no dense continuum between the two**, which is exactly
 what makes a resolution threshold the right instrument and a wide window safe.
 
+> ## ⚠⚠ REV. 2 — B.2's VALUE IS WITHDRAWN. I MEASURED THE BEST CASE, NOT THE BINDING ONE.
+>
+> **The separation below uses a supported direction whose Rayleigh quotient is `1.000` — and a
+> quotient of exactly 1 is the TOP EIGENVECTOR, the maximum attainable.** I measured `κ` against
+> the **easiest** supported direction and reported the window as if it were general.
+>
+> **The binding edge is `λ_min_retained / λ_max`** — the weakest of the 265 retained modes, a
+> genuinely supported direction carrying real variance. For an eigenvector `v_i`,
+> `v_iᵀCv_i / ‖v_i‖² = λ_i` exactly, so that direction's quotient **is** `λ_min_ret/λ_max`. Hence
+> the crossover sits at a **retained condition number of `1/κ`**:
+>
+> | retained cond | weakest retained quotient | verdict at `κ = 1e-12` |
+> |---|---:|---|
+> | `1e11` | `1.0e-11` | RESOLVED |
+> | `1e12` | `1.0e-12` | RESOLVED |
+> | **`1e13`** | `1.0e-13` | ⚠ **DEGENERATE — a REAL retained mode misclassified** |
+>
+> **⚠ AND UNDER JOSEPH'S ROLE TEST THAT IS `κ` ABSORBING SCIENTIFICALLY MEANINGFUL VARIATION,
+> which returns the value to his ownership regardless of the Rayleigh fix.**
+>
+> **AND MY RANK ARGUMENT DOES NOT COVER IT.** *"~97.5% of directions are null, so there is no dense
+> continuum"* establishes there is no continuum **between** the null space and the supported space.
+> It says nothing about the **dynamic range WITHIN the retained 265** — different properties of the
+> same spectrum. **A 265-dimensional subspace spanning twelve orders in eigenvalue has no continuum
+> down to round-off and still has modes below `κ`.** The tree already names this as the quantity
+> that matters: `RANK-AND-INVERSION-20260810.md:38-39`, *"the smallest retained eigenvalues dominate
+> the quadratic form and they are precisely the least determined directions."*
+>
+> **And `1e12` is not a stretch for `C_Z`:** the note's quoted densities alone span `2.19e-38` to
+> `6.8e-41`, a factor **322**, i.e. **~1e5 in variance from bin content before anything else** —
+> before the band-magnitude spread across ~44 bands and the `97×` width weighting.
+>
+> ### ⚠ AND IT CORRECTS MY OWN CONCESSION AGAINST ME
+> I said the one thing I could not close without the constructed `C_Z` was my **operand's SIZE**.
+> **It is the SPECTRUM.** And the size concern runs the *other* way: measured on rank-265 operands
+> with `u` from the exact null space, the accumulation floor **DECREASES** with dimension —
+> `n=500` worst `2.25e-17` → `n=6000` worst `6.84e-18` — because `λ_max` normalisation grows faster
+> than round-off. **So extrapolating from 1,200 to 10,694 is safe in the direction that matters, and
+> my `~560×` margin understated my own case.** The reviewer reported that against the finding it
+> went looking for, and I am recording it as such.
+>
+> ### THE ONE REQUIRED MEASUREMENT, AND ITS SCOPE — this is an authorization request, not a run
+> **Measure `λ_min_retained / λ_max` on the constructed `C_Z`**, or on the standard-P4 5D candidate
+> **stated as a proxy**, and state `κ`'s margin **below** it. If that ratio is at or under `κ`, `κ`
+> is absorbing real support and the value is Joseph's.
+>
+> **⚠ SCOPED: NOT RECOVERABLE FROM EXISTING WORK. I checked before asking.**
+> `RANK-AND-INVERSION-20260810.md:23` records the condition number as *"numerically infinite"* —
+> that is the **full** matrix including the null space, **not** the retained-edge ratio. The
+> `pinv`-rcond scan at `:57` is **2D only** (`app_statmethods:953`, 73 and 139 directions). And
+> `:99` lists the **ND** scan as **still required** — *"run the rank-truncation scan as in 2D and
+> show it, because in ND it will not be smooth."*
+> **So the spectrum at the retained edge is unmeasured, and the measurement `κ` needs IS clause
+> (iii)'s already-mandated rank-truncation scan** — `app_statmethods.tex:648-650`. **It is not a new
+> requirement; `κ` rides on a deliverable the protocol already demands for any N-D χ².**
+> **Cost: ONE eigendecomposition of the `k = 0` baseline — not one per member**, because the
+> degeneracy predicate is evaluated on `C_0` alone. *(Scale reference, quoted as what it is:
+> `z_statistics.s_eig`'s docstring gives `~1-3 min` at `10,694`, a LOCAL figure with runtime
+> unestablished.)*
+>
+> **B.2's `1e-12` is therefore WITHDRAWN as a proposed value and retained only as a placeholder
+> pending that ratio.** B.1's formula, B.3's floor and B.4's population handling stand.
+
 **⚠ AND THE ROBUSTNESS WINDOW IS WIDER THAN I FIRST WROTE — measured, and I am correcting my own
-understatement.** On a rank-4-of-40 operand the null direction's quotient is `8.86e-17` and a
+understatement. ⚠ BUT READ THE REV. 2 BOX ABOVE FIRST: this window is measured against the TOP
+eigenvector and is therefore the BEST case, not the binding one.** On a rank-4-of-40 operand the null direction's quotient is `8.86e-17` and a
 supported direction's is `1.000`: **a separation of `6.1e17`**. Every `κ` from **`1e-14` to `1e-3`**
 returns `DEGENERATE_FUNCTIONAL` on the null direction and `RESOLVED` on the supported one —
 **seventeen orders, identical verdicts.**

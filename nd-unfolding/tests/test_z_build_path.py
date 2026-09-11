@@ -53,6 +53,8 @@ DETECTORS = {
     "closure_rejects_excludes_nothing", "closure_rejects_excludes_wrong_row",
     "closure_rejects_excludes_extra_rows", "closure_rejects_different_edges",
     "closure_rejects_displayed_equals_full", "all_ones_sign_is_density_dependent",
+    # the narrowing must TRAVEL -- and no caller may assert or suppress it
+    "scope_not_caller_assertable",
 }
 
 
@@ -526,7 +528,7 @@ class TestEnrolmentIsNotManual(unittest.TestCase):
         self.assertGreaterEqual(len(points), 18,
                                 f"expected >=18 refusal points, found {len(points)}")
         # the claim this suite may make, scoped to what it demonstrates
-        self.assertEqual(len(DETECTORS), 35,
+        self.assertEqual(len(DETECTORS), 36,
                          "DETECTORS must equal the demonstrated set; update both together")
         # ⚠ THESE ARE DIFFERENT SETS AND THE COUNTS MATCHING IS A COINCIDENCE. `points` are
         # `require`/`raise` sites in the module; `DETECTORS` are demonstrated behaviours, some of
@@ -935,6 +937,96 @@ class TestTheGuardIsScaleInvariantLikeTheStatistic(unittest.TestCase):
             nsq = np.einsum("ij,ij->i", U, U)
             self.assertEqual(zbp.classify_baseline_degeneracy(
                 q, c_scale=scale, kappa=1e-12, u_norms_sq=nsq)["state"], "RESOLVED")
+
+
+class TestTheNarrowingTravelsWithTheGrade(unittest.TestCase):
+    """⚠ THE DECISIVE BLOCK ON THE AMENDMENT: its first draft put the licensing clause in
+    `z_contract.cause3_corr`'s `reason` -- an entry THIS LANE HAD ALREADY PROVEN INERT by
+    execution. Deleting it leaves `assess`'s `describe()` byte-identical, because a boundary is
+    reached only via `leg.boundary_key` and `cause3_corr` is named by no leg.
+
+    So the draft proposed recording the licensing consequence of a deferral inside the very entry
+    whose unreachability is what the deferral is about: true, committed, and invisible to every
+    grade. `z_validator.py:166-167` states the violated rule verbatim -- *"the narrowing that must
+    travel WITH the grade, not sit in a specification the grader may not open."*
+    """
+
+    S = dict(stat_digest="aaa111", ml_digest="bbb222")
+
+    def _case(self):
+        rng = np.random.default_rng(5)
+        n = 12
+        A = rng.normal(size=(n, n))
+        C0 = A @ A.T + np.eye(n)
+        M = np.zeros((3, n))
+        M[0, :4] = 1.0
+        M[1, 4:8] = 1.0
+        M[2, 8:] = 1.0
+        return {0: C0, 1: 1.1 * C0}, M, float(np.linalg.eigvalsh(C0).max())
+
+    def test_shared_blocks_emit_the_conditional_clause(self):
+        bp = zbp.BuildPath(member_offset=3, block_source="SHARED_DIGEST_BOUND", **self.S)
+        s = zbp.conditional_scope_statement(bp)
+        self.assertIsNotNone(s)
+        for phrase in ("HELD AT FIXED DIGESTS", "licenses NOTHING",
+                       "exactly the ones not tested", "common-mode"):
+            self.assertIn(phrase, s)
+
+    def test_per_member_blocks_emit_the_OTHER_caveat(self):
+        bp = zbp.BuildPath(member_offset=3, block_source="PER_MEMBER")
+        s = zbp.conditional_scope_statement(bp)
+        self.assertIn("REGENERATES", s)
+        self.assertIn("cannot separate them", s)
+
+    def test_a_non_member_run_emits_neither(self):
+        bp = zbp.BuildPath(member_offset=None, block_source="PER_MEMBER")
+        self.assertIsNone(zbp.conditional_scope_statement(bp))
+
+    def test_the_trigger_is_BLOCK_SHARING_not_the_correlation_leg(self):
+        """⚠ `_DIAGONAL_ONLY_SCOPE` was the obvious host and is the WRONG one: it keys on the
+        presence of a correlation-sensitive leg, which is orthogonal to whether the blocks are
+        fixed. Attached there, this clause would appear and vanish on the wrong condition."""
+        shared = zbp.conditional_scope_statement(
+            zbp.BuildPath(member_offset=1, block_source="SHARED_DIGEST_BOUND", **self.S))
+        regen = zbp.conditional_scope_statement(
+            zbp.BuildPath(member_offset=1, block_source="PER_MEMBER"))
+        self.assertNotEqual(shared, regen,
+                            "the statement must vary with the BLOCK SOURCE")
+
+    def test_it_travels_on_a_GRADED_outcome(self):
+        covs, M, scale = self._case()
+        bp = zbp.BuildPath(member_offset=3, block_source="SHARED_DIGEST_BOUND", **self.S)
+        out = zbp.evaluate_a7(covs, M, declared_K=[0, 1], c_scale=scale, kappa=1e-12,
+                              build_path=bp)
+        self.assertEqual(out["state"], "GRADED")
+        self.assertIsNotNone(out["scope_statement"])
+
+    def test_it_travels_on_a_REFUSAL_too(self):
+        """A narrowing that appears only on passes would be absent exactly where a reader is most
+        likely to go looking for what the result means."""
+        covs, M, scale = self._case()
+        bp = zbp.BuildPath(member_offset=3, block_source="SHARED_DIGEST_BOUND", **self.S)
+        out = zbp.evaluate_a7(covs, M, declared_K=[0, 1], c_scale=scale, kappa=None,
+                              build_path=bp)
+        self.assertEqual(out["state"], "KAPPA_UNDECLARED")
+        self.assertIsNotNone(out["scope_statement"])
+
+    def test_a_caller_cannot_ASSERT_or_SUPPRESS_it(self):
+        """POWER ARM on the derivation: it is a property of the declared build path, not a
+        keyword a caller supplies -- the same reason `sees_correlations` is derived from the legs.
+        `evaluate_a7` exposes no parameter that could set it."""
+        import inspect
+        params = set(inspect.signature(zbp.evaluate_a7).parameters)
+        for forbidden in ("scope_statement", "scope", "narrowing", "licensing"):
+            self.assertNotIn(forbidden, params)
+        FIRED.add("scope_not_caller_assertable")
+
+    def test_without_a_build_path_the_key_is_still_present(self):
+        """Uniform key set -- the absence-is-not-admissible lesson, applied pre-emptively here."""
+        covs, M, scale = self._case()
+        out = zbp.evaluate_a7(covs, M, declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+        self.assertIn("scope_statement", out)
+        self.assertIsNone(out["scope_statement"])
 
 
 def tearDownModule():
