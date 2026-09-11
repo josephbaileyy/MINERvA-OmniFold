@@ -42,6 +42,8 @@ DETECTORS = {
     # the wiring, and the arm-1-vs-U separation found by smoke-testing
     "a7_population_mismatch", "a7_extras_width",
     "residue_demonstrated",        # the residue, CONSTRUCTED not sampled
+    # the residue's TRIGGER -- the sentence that justified tolerating it, made executable
+    "sufficiency_trigger_armed", "sufficiency_trigger_power",
 }
 
 
@@ -508,7 +510,7 @@ class TestEnrolmentIsNotManual(unittest.TestCase):
         self.assertGreaterEqual(len(points), 18,
                                 f"expected >=18 refusal points, found {len(points)}")
         # the claim this suite may make, scoped to what it demonstrates
-        self.assertEqual(len(DETECTORS), 21,
+        self.assertEqual(len(DETECTORS), 23,
                          "DETECTORS must equal the demonstrated set; update both together")
         # ⚠ THESE ARE DIFFERENT SETS AND THE COUNTS MATCHING IS A COINCIDENCE. `points` are
         # `require`/`raise` sites in the module; `DETECTORS` are demonstrated behaviours, some of
@@ -517,6 +519,105 @@ class TestEnrolmentIsNotManual(unittest.TestCase):
         print(f"\n[enrolment] {len(points)} refusal points parsed from the module source. "
               f"{len(DETECTORS)} behaviours demonstrated by name -- a DIFFERENT set, not a "
               f"one-to-one cover. Unenrolled refusals are {list(self.WAIVED)[0]}")
+
+
+class TestTheSufficiencyConditionIsExecutable(unittest.TestCase):
+    """⚠ THE RESIDUE'S TRIGGER. Rev. 2 disclosed the residue and DEMONSTRATED it, then justified
+    tolerating it with a SENTENCE: *"sufficient because `s_proj` has no production callers."*
+
+    That census appeared exactly once, in a docstring, and nothing walked the tree. So:
+    `TestTheResidueIsReal` asserts raw `s_proj` GRADES -- a property of `s_proj` that stays true
+    when a production caller appears, so it cannot detect the event that matters. **The condition
+    had no trigger and was an obligation discharged by remembering.**
+
+    My own docstring made the argument one level up -- *"a sentence cannot notice when someone later
+    closes the gap and leaves the sentence behind"* -- and **a sentence cannot notice when someone
+    OPENS the gap either.** I applied the principle to the residue's existence and not to its
+    trigger, which is where it is load-bearing.
+
+    THIS is the trigger. It walks the tree and FAILS when `s_proj` acquires a production caller.
+    Census-based rather than structural, chosen because it needs no change to `z_statistics.py` and
+    so does not disturb that module's declared *"every function here returns a number and grades
+    nothing"* posture.
+    """
+
+    #: THE POPULATION, named rather than implied: every `.py` file under the repo root.
+    #: Excluded BY NAME, each with the reason, because an exclusion you cannot state is not an
+    #: exclusion -- and a silent skip list is how a census becomes decorative.
+    SANCTIONED = {
+        "z_statistics.py": "defines s_proj; the definition is not a call site",
+        "z_build_path.py": "THE SANCTIONED ROUTE -- evaluate_a7 calls it behind the guards",
+        "test_z_build_path.py": "this suite, which calls it deliberately to demonstrate the residue",
+        "test_z_validator.py": "a test, not production",
+        "probe-z-projected-stability-20260910.py": "a campaign PROBE that measures the unguarded "
+                                                   "behaviour on purpose; its §8 IS that measurement",
+    }
+
+    @staticmethod
+    def _repo_root():
+        # tests/ -> nd-unfolding/ -> REPO ROOT. Asserted, not trusted: an earlier instrument in
+        # this campaign resolved one level short, scanned a directory with no operands and EXITED 0.
+        root = pathlib.Path(__file__).resolve().parents[2]
+        assert (root / "nd-unfolding").is_dir(), f"repo root resolved to {root}, no nd-unfolding/"
+        return root
+
+    def test_population_is_non_empty_and_the_census_has_power(self):
+        """POSITIVE CONTROL. A census that finds nothing may be blind rather than clean."""
+        root = self._repo_root()
+        files = [f for f in root.rglob("*.py") if ".git" not in f.parts]
+        self.assertGreater(len(files), 100, f"population is {len(files)} files -- implausibly small")
+        hits = [f for f in files if "s_proj(" in f.read_text(errors="ignore")]
+        names = {f.name for f in hits}
+        self.assertIn("z_build_path.py", names,
+                      "POSITIVE CONTROL FAILED: the census cannot see the sanctioned caller, so a "
+                      "null result from it would carry no information")
+        print(f"\n[census] {len(files)} .py files scanned; s_proj( appears in {len(hits)}")
+
+    def test_every_sanctioned_exclusion_still_exists(self):
+        """A stale exclusion is a hole: it silences a file that no longer exists while the real
+        caller sits somewhere unnamed."""
+        root = self._repo_root()
+        present = {f.name for f in root.rglob("*.py") if ".git" not in f.parts}
+        for name in self.SANCTIONED:
+            self.assertIn(name, present, f"sanctioned exclusion {name!r} is not in the tree; "
+                                         f"remove it rather than leaving it to silence nothing")
+
+    def test_s_proj_has_no_UNSANCTIONED_caller(self):
+        """⚠ THE TRIGGER. This FAILS the moment a production module calls `s_proj`."""
+        root = self._repo_root()
+        offenders = []
+        for f in root.rglob("*.py"):
+            if ".git" in f.parts or f.name in self.SANCTIONED:
+                continue
+            body = f.read_text(errors="ignore")
+            if "s_proj(" in body and "def s_proj(" not in body:
+                offenders.append(str(f.relative_to(root)))
+        self.assertEqual(
+            offenders, [],
+            f"{len(offenders)} UNSANCTIONED caller(s) of s_proj: {offenders}. The residue in "
+            f"`evaluate_a7`'s docstring is tolerable ONLY while s_proj has no production caller. "
+            f"It now has one, so that justification is void and the guard must move INTO "
+            f"z_statistics.s_proj -- or this caller must route through evaluate_a7.")
+        FIRED.add("sufficiency_trigger_armed")
+
+    def test_the_trigger_itself_fires_on_an_injected_caller(self):
+        """POWER ARM on the trigger. A guard never shown to fire is untested, not working -- and
+        this one guards a FUTURE event, so it can never be demonstrated by the tree's real state."""
+        import tempfile
+        root = self._repo_root()
+        with tempfile.TemporaryDirectory(dir=str(root)) as d:
+            injected = pathlib.Path(d) / "fake_production_consumer.py"
+            injected.write_text("from z_statistics import s_proj\nx = s_proj({}, [[1.0]])\n")
+            offenders = []
+            for f in root.rglob("*.py"):
+                if ".git" in f.parts or f.name in self.SANCTIONED:
+                    continue
+                body = f.read_text(errors="ignore")
+                if "s_proj(" in body and "def s_proj(" not in body:
+                    offenders.append(f.name)
+            self.assertIn("fake_production_consumer.py", offenders,
+                          "the trigger did not see an injected production caller")
+        FIRED.add("sufficiency_trigger_power")
 
 
 def tearDownModule():

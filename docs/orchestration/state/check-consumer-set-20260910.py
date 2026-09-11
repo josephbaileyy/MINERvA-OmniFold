@@ -81,6 +81,12 @@ SKIP_PARTS = {".git", "__pycache__", ".claude", "node_modules"}
 # pin rather than trust it:
 #   054e4d66  541 .py tracked + 24 .tex; this checker itself was then UNTRACKED, so 542 was pinned
 #             after verifying the +1 was the ONLY untracked .py in the tree, rather than assuming it.
+#   cc42cc3e  545. +2 since 6de821c4: `nd-unfolding/z_build_path.py` and
+#             `nd-unfolding/tests/test_z_build_path.py`, the implementation authorized 2026-09-11.
+#             ⚠ ESTABLISHED BY SET DIFFERENCE AGAINST 6de821c4 (pre-implementation): exactly those
+#             two paths ADDED, NOTHING REMOVED. And the drift was already present at f4aa0f08 --
+#             the diff between f4aa0f08 and cc42cc3e is EMPTY, so re-pinning on "the count moved
+#             during my last change" would have attributed it to the wrong commit.
 #   92b2c468  543. The +1 is `state/probe-z-projected-stability-20260910.py`, the endpoint-A
 #             adequacy probe. ⚠ ESTABLISHED BY SET DIFFERENCE, NOT BY THE COUNT: the tracked .py
 #             path lists at 173baf44 and here differ by exactly that one path ADDED and NOTHING
@@ -88,7 +94,7 @@ SKIP_PARTS = {".git", "__pycache__", ".claude", "node_modules"}
 #             one addition plus a deletion plus another addition -- so the count is not the evidence
 #             for what changed, and re-pinning on the count alone would have been the cheap check.
 # This is a RE-PIN, not an extension: no signature, population rule or check was added or widened.
-EXPECTED_TRACKED = {".C": 2, ".cpp": 6, ".py": 543, ".sh": 339, ".tex": 24}
+EXPECTED_TRACKED = {".C": 2, ".cpp": 6, ".py": 545, ".sh": 339, ".tex": 24}
 
 # ---- SIGNATURES. Plain substrings; AND-groups (tuples) where one token alone is too generic.
 INVERSION = ("np.linalg.pinv", "np.linalg.inv(", "np.linalg.solve", "keep.sum()")
