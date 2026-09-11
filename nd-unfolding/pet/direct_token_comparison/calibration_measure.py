@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import cProfile
 import importlib.metadata
 import json
 import os
@@ -123,7 +124,9 @@ def main() -> None:
         batch_size=1024,
         output=args.output / "calibration.json",
     )
-    receipt = comparison.run(run_args)
+    profiler = cProfile.Profile()
+    receipt = profiler.runcall(comparison.run, run_args)
+    profiler.dump_stats(str(args.output / "calibration.pstats"))
     run_args.output.write_text(json.dumps(receipt, indent=2, allow_nan=False) + "\n")
     measurement = {
         "terminal": "COMPLETE",

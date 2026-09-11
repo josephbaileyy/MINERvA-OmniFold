@@ -2,7 +2,10 @@
 
 The [resource amendment is now authorized](RESOURCE_AUTHORIZATION-20260911.md).
 Calibration is the next action; the following preflight history remains intact.
-No result from the new allocation is yet claimed.
+No result from the new allocation is yet claimed. The calibration driver records
+Python call-profile timings so the headroom calculation can separate training
+and inference. Profiling wraps the unchanged scientific runner and adds no
+training operation; its overhead is retained in the conservative cost estimate.
 
 # Execution status: stopped at scheduler preflight
 
