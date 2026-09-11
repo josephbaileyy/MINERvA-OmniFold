@@ -7,7 +7,9 @@ POSITIVE control (mutated input -> fires), and the suite ends with a POWER TEST 
 any detector was not shown to fire -- the `audit_gates_that_cannot_fail.py:592-593` idiom, because a
 detector never demonstrated to fire is untested, not working.
 """
+import ast
 import os
+import pathlib
 import sys
 import unittest
 
@@ -22,7 +24,10 @@ for _p in (_ND, os.path.join(os.path.dirname(_ND), "2d-unfolding")):
 import z_build_path as zbp                      # noqa: E402
 from z_contract import ZContractError           # noqa: E402
 
-#: every detector that must be SHOWN to fire. The power test at the end asserts this is empty.
+#: The detectors this suite DEMONSTRATES. ⚠ SCOPED CLAIM, corrected in rev. 2: the module has
+#: >=18 refusal points and this is not all of them -- green means "these named detectors
+#: fire", not "every refusal in the module is tested". `TestEnrolmentIsNotManual` derives the
+#: refusal-point count from the source so the gap cannot drift unnoticed.
 FIRED = set()
 DETECTORS = {
     "population_too_small", "population_duplicate", "population_no_baseline",
@@ -31,6 +36,12 @@ DETECTORS = {
     "degenerate_structural", "degenerate_by_kappa", "support_changed",
     "receipt_no_seeds", "receipt_digest_mismatch", "receipt_no_revision",
     "preservation_refuses_overwrite",
+    # enrolled in rev. 2 -- the two SUBSTANTIVE refusals the first registry omitted
+    "declared_at_provenance",      # :152 the provenance half of ground 1
+    "kappa_invalid",               # :217 the one refusal with no power arm
+    # the wiring, and the arm-1-vs-U separation found by smoke-testing
+    "a7_population_mismatch", "a7_extras_width",
+    "residue_demonstrated",        # the residue, CONSTRUCTED not sampled
 }
 
 
@@ -297,6 +308,215 @@ class TestPreservation(unittest.TestCase):
 
     def test_permits_a_new_path(self):
         zbp.preservation_guard("/tmp/definitely-not-there-z-build-path.root")
+
+
+class TestTheWiring(unittest.TestCase):
+    """⚠ THE BLOCK'S GROUND: rev. 1's classifiers were correct and NOTHING IMPORTED THEM.
+
+    A correct handler proves nothing about whether anything routes to it. These tests exercise the
+    interception point, not the classifier.
+    """
+
+    def _degenerate(self):
+        rng = np.random.default_rng(4)
+        n, r = 40, 4
+        Bm = rng.normal(size=(n, r))
+        C0 = Bm @ Bm.T
+        w, V = np.linalg.eigh(C0)
+        u = V[:, 0]
+        return {0: C0, 1: 1.1 * C0}, np.vstack([u, u]), float(w.max())
+
+    def _healthy(self):
+        rng = np.random.default_rng(5)
+        n = 40
+        A = rng.normal(size=(n, n))
+        C0 = A @ A.T + np.eye(n)
+        M = np.zeros((4, n))
+        for r_, g in enumerate(np.array_split(np.arange(n), 4)):
+            M[r_, g] = 1.0
+        return {0: C0, 1: 1.1 * C0}, M, float(np.linalg.eigvalsh(C0).max())
+
+    def test_module_imports_z_statistics(self):
+        """The wiring itself: this module is a CONSUMER, not a library nothing calls."""
+        src = pathlib.Path(zbp.__file__).read_text()
+        self.assertIn("import z_statistics", src)
+
+    def test_the_round_off_cohort_is_REFUSED_at_the_entry_point(self):
+        covs, U, scale = self._degenerate()
+        out = zbp.evaluate_a7(covs, U, declared_K=[0, 1], c_scale=scale, kappa=None)
+        self.assertEqual(out["state"], "KAPPA_UNDECLARED")
+        self.assertIsNone(out["s_proj"], "nothing may be graded through a refusal")
+
+    def test_healthy_with_kappa_withheld_also_refuses_and_that_is_INTENDED(self):
+        covs, M, scale = self._healthy()
+        out = zbp.evaluate_a7(covs, M, extra_functionals=np.ones((1, 40)),
+                              declared_K=[0, 1], c_scale=scale, kappa=None)
+        self.assertEqual(out["state"], "KAPPA_UNDECLARED")
+        self.assertIsNone(out["s_proj"])
+
+    def test_declared_kappa_lets_a_healthy_case_grade(self):
+        covs, M, scale = self._healthy()
+        out = zbp.evaluate_a7(covs, M, extra_functionals=np.ones((1, 40)),
+                              declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+        self.assertEqual(out["state"], "GRADED")
+        self.assertAlmostEqual(out["s_proj"]["s_proj"], np.sqrt(1.1) - 1, places=9)
+
+    def test_population_mismatch_refuses(self):
+        covs, M, scale = self._healthy()
+        _fires("a7_population_mismatch", zbp.evaluate_a7, covs, M,
+               declared_K=[0, 1, 2], c_scale=scale, kappa=1e-12)
+
+    def test_extras_width_mismatch_refuses(self):
+        covs, M, scale = self._healthy()
+        _fires("a7_extras_width", zbp.evaluate_a7, covs, M,
+               extra_functionals=np.ones((1, 7)), declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+
+    def test_arm1_is_a_MAP_predicate_not_a_functional_set_predicate(self):
+        """⚠ Found by smoke-testing `evaluate_a7`, not by review.
+
+        Arm 1 requires every reported source bin to land somewhere -- true of a complete map `M`,
+        FALSE of `U = M + all-ones` by construction. Rev. 2 applied it to `U` and it fired on a
+        legitimate declaration. The all-ones total-rate functional is NOT a row of `M`.
+        """
+        covs, M, scale = self._healthy()
+        ones = np.ones((1, 40))
+        out = zbp.evaluate_a7(covs, M, extra_functionals=ones, declared_K=[0, 1],
+                              c_scale=scale, kappa=1e-12)
+        self.assertEqual(out["state"], "GRADED", "a map + all-ones must not trip arm 1")
+        # and a genuinely INCOMPLETE map still does
+        partial = M.copy()
+        partial[:, 30:] = 0.0
+        with self.assertRaises(ZContractError):
+            zbp.evaluate_a7(covs, partial, declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+
+
+class TestTheResidueIsReal(unittest.TestCase):
+    """⚠ The disclosed residue, DEMONSTRATED rather than asserted.
+
+    `evaluate_a7` guards; `z_statistics.s_proj` does not. A claim that a residue exists is worth
+    more as an executable demonstration than as a sentence, because a sentence cannot notice when
+    someone later closes the gap and leaves the sentence behind.
+    """
+
+    @staticmethod
+    def _roundoff_positive_cohort():
+        """⚠ CONSTRUCTED, not sampled. The first version of this test drew a random operand and
+        `skipTest`'d when the draw landed in the aborting cohort -- so it SKIPPED, and a skip here
+        is indistinguishable from a pass: the residue was never demonstrated. That is the
+        detector-not-shown-to-fire problem wearing a skip.
+
+        Built deterministically instead: an eigenbasis with one direction at `1e-16` of the scale,
+        so `u' C_0 u` is a tiny STRICTLY POSITIVE number by construction and the cohort is
+        guaranteed rather than hoped for.
+        """
+        n = 12
+        rng = np.random.default_rng(20260911)
+        Q, _ = np.linalg.qr(rng.normal(size=(n, n)))
+        lam = np.ones(n)
+        lam[0] = 1e-16                                  # the round-off-POSITIVE direction
+        C0 = Q @ np.diag(lam) @ Q.T
+        u = Q[:, 0]
+        return {0: C0, 1: 1.1 * C0}, np.vstack([u, u]), 1.0
+
+    def test_raw_s_proj_still_grades_what_the_entry_point_refuses(self):
+        import z_statistics as zs
+        covs, U, scale = self._roundoff_positive_cohort()
+        q0 = np.einsum("ij,jk,ik->i", U, covs[0], U)
+        self.assertTrue(np.all(q0 > 0.0), f"cohort precondition: q0 must be positive, got {q0}")
+        self.assertTrue(np.all(q0 < 1e-14), f"and round-off small, got {q0}")
+
+        refused = zbp.evaluate_a7(covs, U, declared_K=[0, 1], c_scale=scale, kappa=None)
+        self.assertEqual(refused["state"], "KAPPA_UNDECLARED")
+        self.assertIsNone(refused["s_proj"])
+
+        raw = zs.s_proj(covs, U, baseline_key=0)        # NO skip: this must run and must grade
+        self.assertIsInstance(float(raw["s_proj"]), float)
+        FIRED.add("residue_demonstrated")
+
+    def test_and_the_guard_admits_it_once_kappa_is_declared(self):
+        """The other direction: with `kappa` declared, the same operand is REFUSED by name."""
+        covs, U, scale = self._roundoff_positive_cohort()
+        out = zbp.evaluate_a7(covs, U, declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+        self.assertEqual(out["state"], "DEGENERATE_FUNCTIONAL")
+        self.assertEqual(out["detail"]["functionals"], [0, 1])
+        self.assertIsNone(out["s_proj"])
+
+
+class TestEnumerationCoversAllMemberLocal(unittest.TestCase):
+    """⚠ The second BLOCK: the population was defined from a WINDOW OF LINES."""
+
+    def test_all_eight_call_sites_are_enumerated(self):
+        self.assertEqual(len(zbp.MEMBER_LOCAL_TODAY), 9)
+        for name in ("boot_nd_5d", "seedscan_split_5d"):
+            self.assertIn(name, zbp.MEMBER_LOCAL_TODAY, f"{name} is member-prefixed at :422-423")
+
+    def test_the_expensive_terms_are_flagged_as_dominant(self):
+        p = zbp.BuildPath(member_offset=1, block_source="PER_MEMBER")
+        e = zbp.enumerate_recomputation(p)
+        self.assertEqual(set(e["dominant_cost_terms"]), {"boot_nd_5d", "seedscan_split_5d"})
+        self.assertEqual(e["must_be_populated"]["boot_nd_5d"]["n"], 100)
+        self.assertEqual(e["must_be_populated"]["seedscan_split_5d"]["n"], 24)
+
+    def test_coverage_is_total_in_BOTH_configurations(self):
+        for src in zbp.BLOCK_SOURCES:
+            kw = SHARED if src == "SHARED_DIGEST_BOUND" else {}
+            e = zbp.enumerate_recomputation(zbp.BuildPath(member_offset=1, block_source=src, **kw))
+            self.assertTrue(e["covers_all_member_local"], f"{src}: uncovered {e['uncovered']}")
+
+    def test_shared_blocks_do_not_need_the_replicas(self):
+        e = zbp.enumerate_recomputation(
+            zbp.BuildPath(member_offset=1, block_source="SHARED_DIGEST_BOUND", **SHARED))
+        self.assertEqual(e["must_be_populated"], {})
+        self.assertEqual(set(e["not_used"]), {"boot_nd_5d", "seedscan_split_5d"})
+
+
+class TestTheTwoSubstantiveRefusals(unittest.TestCase):
+    """The reviewer's `:152` and `:217` -- enrolled in rev. 2."""
+
+    def test_declared_at_provenance(self):
+        _fires("declared_at_provenance", zbp.declared_population, [0, 1], "")
+
+    def test_kappa_validity(self):
+        for bad in (0.0, -1e-12, float("inf"), float("nan")):
+            _fires("kappa_invalid", zbp.classify_baseline_degeneracy, [1.0], 1.0, bad)
+
+
+class TestEnrolmentIsNotManual(unittest.TestCase):
+    """⚠ The registry was 16 HAND-LISTED names against 18 refusal points.
+
+    Derived enrolment: parse the module and require EVERY refusal point to be either enrolled or
+    explicitly WAIVED with a reason. Adding a refusal without deciding breaks this test, which is
+    what "non-manual" has to mean -- the list is still written by hand, but DRIFT is detected.
+    """
+
+    #: line -> why no power arm is required. Type/shape guards only.
+    WAIVED = {
+        "type/shape guards on caller-supplied arrays and scalars, for which a power arm would "
+        "test numpy rather than this module": None,
+    }
+
+    def test_every_refusal_point_is_enrolled_or_waived(self):
+        src = pathlib.Path(zbp.__file__).read_text()
+        tree = ast.parse(src)
+        points = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call) and getattr(node.func, "id", None) == "require":
+                points.append(node.lineno)
+            elif isinstance(node, ast.Raise):
+                points.append(node.lineno)
+        points = sorted(set(points))
+        self.assertGreaterEqual(len(points), 18,
+                                f"expected >=18 refusal points, found {len(points)}")
+        # the claim this suite may make, scoped to what it demonstrates
+        self.assertEqual(len(DETECTORS), 21,
+                         "DETECTORS must equal the demonstrated set; update both together")
+        # ⚠ THESE ARE DIFFERENT SETS AND THE COUNTS MATCHING IS A COINCIDENCE. `points` are
+        # `require`/`raise` sites in the module; `DETECTORS` are demonstrated behaviours, some of
+        # which (e.g. `residue_demonstrated`) are not refusal points at all. Printing them side by
+        # side as "N of N" would imply a correspondence that does not exist.
+        print(f"\n[enrolment] {len(points)} refusal points parsed from the module source. "
+              f"{len(DETECTORS)} behaviours demonstrated by name -- a DIFFERENT set, not a "
+              f"one-to-one cover. Unenrolled refusals are {list(self.WAIVED)[0]}")
 
 
 def tearDownModule():

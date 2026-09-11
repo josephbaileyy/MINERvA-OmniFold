@@ -98,22 +98,46 @@ class BuildPath:
 
 
 # --------------------------------------------------- requirement 3: the ENUMERATION, verified --
-#: What is member-local under a DECLARED member in the launcher as written, verified by reading
-#: `sbatch_finalize_5d_bkgaware_gpu.sh:403-415` rather than taking a relayed list.
-#: ⚠ `UTHROW` is on it -- so under a declared member the UNIFIED-THROW covariance is member-local
-#: too. It is NOT only the bands, which is what a reader of the COMB line alone would conclude.
+#: What is member-local under a DECLARED member. Population taken from ALL EIGHT
+#: `mr_prefix`/`mr_dir_prefix` call sites in `sbatch_finalize_5d_bkgaware_gpu.sh`, enumerated by
+#: grepping the whole file for the construct.
+#:
+#: ⚠⚠ REV. 2: REV. 1 DEFINED THIS FROM A WINDOW OF LINES (`:403-415`) AND MISSED TWO -- and it did
+#: so in a tuple whose own comment warns against exactly that (*"NOT only the bands, which is what a
+#: reader of the COMB line alone would conclude"*). Six sites are in that window; `:422` and `:423`
+#: are not, and they are `boot_nd_5d` and `seedscan_split_5d` -- THE REPLICA INPUT DIRECTORIES,
+#: member-prefixed on the same condition as the other six. **A warning against inferring a
+#: population from a subset of lines, implemented by inferring a population from a window of lines.**
 MEMBER_LOCAL_TODAY = (
-    "CV",           # :404-408  the member's own universe-sweep CV
-    "OUTD",         # :409      member-scoped output directory
-    "COMB",         # :410      the combined systematic-universe covariance (the BANDS)
-    "SWEEP_GLOB",   # :411      the member's universe sweep inputs
-    "UTHROW",       # :412      the unified-throw covariance  <-- not only the bands
-    "STAT_COV",     # :413      the statistical block
-    "ML_COV",       # :414      the ML block
+    "CV",                  # :405  the member's own universe-sweep CV
+    "OUTD",                # :409  member-scoped output directory
+    "COMB",                # :410  the combined systematic-universe covariance (the BANDS)
+    "SWEEP_GLOB",          # :411  the member's universe sweep inputs
+    "UTHROW",              # :412  the unified-throw covariance  <-- not only the bands
+    "STAT_COV",            # :413  the statistical block
+    "ML_COV",              # :414  the ML block
+    "boot_nd_5d",          # :422  ⚠ the BOOTSTRAP REPLICA DIR, --expected-ids 1-100
+    "seedscan_split_5d",   # :423  ⚠ the SEEDSCAN SPLIT REPLICA DIR, --expected-ids 1-24
 )
 
-#: What MUST vary when the estimator baseline changes -- these are downstream of the estimator.
+#: What MUST vary when the estimator baseline changes -- derived products downstream of the
+#: estimator, rebuilt from inputs that already exist. These are the CHEAP terms.
 RECOMPUTED_UNDER_ESTIMATOR_CHANGE = ("CV", "SWEEP_GLOB", "COMB", "UTHROW", "OUTD")
+
+#: ⚠ THE THIRD CATEGORY, and it is warranted rather than tidy. `boot_nd_5d` and `seedscan_split_5d`
+#: are member-local INPUT ENSEMBLES that must be POPULATED, not derived products to recompute --
+#: neither "recomputed" nor "pinned" is true of them. The category exists because of the COST
+#: asymmetry: `STAT_COV`/`ML_COV` are cheap combines OVER these replicas, while the replicas are the
+#: actual compute. An enumeration used to price a member run that omits these understates it BY THE
+#: DOMINANT TERMS while including five cheap entries.
+#: And there is no cheap third option: `:418-420` keeps `--expected-ids` at the FULL range on
+#: purpose, so a member either has its own complete 100 + 24 or the run REFUSES.
+MEMBER_LOCAL_INPUTS_REQUIRING_POPULATION = {
+    "boot_nd_5d": {"declared_ids": "1-100", "n": 100, "site": ":422",
+                   "kind": "bootstrap replicas", "cost": "DOMINANT"},
+    "seedscan_split_5d": {"declared_ids": "1-24", "n": 24, "site": ":423",
+                          "kind": "seedscan splits", "cost": "DOMINANT"},
+}
 
 #: What MUST NOT vary under `SHARED_DIGEST_BOUND` -- the decoupling's whole content.
 INVARIANT_UNDER_SHARED_BLOCKS = ("STAT_COV", "ML_COV")
@@ -132,14 +156,41 @@ def enumerate_recomputation(path: BuildPath) -> dict:
     recomputed = list(RECOMPUTED_UNDER_ESTIMATOR_CHANGE)
     if path.blocks_are_shared:
         pinned = list(INVARIANT_UNDER_SHARED_BLOCKS)
+        must_populate = {}
     else:
         recomputed += list(INVARIANT_UNDER_SHARED_BLOCKS)
         pinned = []
+        # ⚠ the replica ensembles are only needed when the member builds its OWN blocks
+        must_populate = dict(MEMBER_LOCAL_INPUTS_REQUIRING_POPULATION)
+
+    _terms = ", ".join([k + " n=" + str(v["n"])
+                        for k, v in sorted(must_populate.items())]) or "none"
+    # ⚠ A FOURTH STATE, found by smoke-testing the function rather than by reading it. Under
+    # SHARED_DIGEST_BOUND the member never runs the combines, so the member-local REPLICA dirs are
+    # never read: they are neither recomputed, nor pinned, nor to-populate -- they are NOT USED.
+    # Without this the coverage flag read False for a configuration that is fully specified, which
+    # would have looked like the omission it exists to detect.
+    not_used = ({} if not path.blocks_are_shared
+                else {k: "not read: the member does not run the combines under SHARED blocks"
+                      for k in MEMBER_LOCAL_INPUTS_REQUIRING_POPULATION})
+    covered = set(recomputed) | set(pinned) | set(must_populate) | set(not_used)
+    uncovered = [c for c in MEMBER_LOCAL_TODAY if c not in covered]
+    # the universal is DERIVED, not asserted: rev. 1's note said "EVERY component varies" while the
+    # code compared against a hand-listed set, so the comment quantified over the enumeration only.
     return {"recomputed": tuple(recomputed), "pinned": tuple(pinned),
-            "note": ("blocks SHARED and digest-bound; only estimator-downstream components vary"
+            "must_be_populated": must_populate,
+            "not_used": not_used,
+            "uncovered": tuple(uncovered),
+            "covers_all_member_local": not uncovered,
+            "dominant_cost_terms": tuple(sorted(must_populate)),
+            "note": ("blocks SHARED and digest-bound: only estimator-downstream components vary, "
+                     "and the replica ensembles need NOT be repopulated -- which is where the "
+                     "saving is"
                      if path.blocks_are_shared else
-                     "blocks PER_MEMBER: every component varies, and a released-bar criterion "
-                     "cannot separate estimator sensitivity from block resampling")}
+                     f"blocks PER_MEMBER: {len(recomputed)} recomputed plus "
+                     f"{len(must_populate)} INPUT ENSEMBLES to populate ({_terms}) -- and a "
+                     f"released-bar criterion cannot separate estimator sensitivity from block "
+                     f"resampling")}
 
 
 # ------------------------------------------------------- the declared population (control 1) --
@@ -364,3 +415,79 @@ def preservation_guard(out_path: str, allow_overwrite: bool = False) -> None:
             f"Z's build path is ADDITIVE: it must not overwrite an existing or archived artifact, "
             f"and it must not fall back to a default output path. Name a new path, or pass "
             f"allow_overwrite=True deliberately.")
+
+
+# =============================== THE INTERCEPTION POINT (wiring) ===============================
+# ⚠ WHY THIS SECTION EXISTS. Rev. 1 of this module was BLOCKED on review, and the ground was not the
+# classifiers -- they were verified correct on all three of F3's cohorts -- but that NOTHING
+# IMPORTED THEM. Measured: zero importers outside this file and its test, so `z_statistics.s_proj`
+# still ran `require(np.all(q >= 0))` then `require(np.all(base > 0))` and graded, exactly as F3
+# measured.
+#
+# A CORRECT HANDLER PROVES NOTHING ABOUT WHETHER ANYTHING ROUTES TO IT. The defect was the absent
+# interception point, not the guard. `evaluate_a7` IS that point, and importing `z_statistics` below
+# is what makes this module a consumer rather than a library nobody calls.
+import z_statistics as _zs                                            # noqa: E402  (the wiring)
+
+
+def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa,
+                extra_functionals=(), declared_exclusions=(), declared_support=None,
+                observed_support=None, baseline_key=0):
+    """THE ONLY SANCTIONED ROUTE TO AN A-7 VERDICT. Guards first, `s_proj` last.
+
+    Order is load-bearing and is the reverse of what a convenience wrapper would do: every refusal
+    is evaluated BEFORE the statistic, because `s_proj`'s own `require`s raise messages that blame
+    the OPERAND (*"C is not PSD on these u"*) when the defect is the FUNCTIONAL DECLARATION --
+    F3's mislabelling finding. Reaching `s_proj` at all means every declaration was accepted.
+
+    ⚠ DISCLOSED RESIDUE, measured rather than assumed: this does NOT retrofit
+    `z_statistics.s_proj`. A direct `s_proj` call remains unguarded and grades a round-off-positive
+    baseline exactly as before -- `TestTheResidueIsReal` DEMONSTRATES that rather than asserting it.
+    It is sufficient for A-7 because `s_proj` has NO production callers (measured: 17 in this
+    campaign's probe, 1 in `test_z_validator`), so the criterion's entry point is the only route
+    needing the guard. If `s_proj` ever acquires a production caller this residue becomes live and
+    the guard must move into it.
+
+    ⚠ AND ONE BEHAVIOUR TO DOCUMENT AS INTENDED RATHER THAN DISCOVER LATER: while `kappa` is
+    undeclared, a HEALTHY baseline also returns `KAPPA_UNDECLARED`. Fail-closed in the strong
+    sense -- **A-7 cannot grade anything at all until `kappa` is declared**, which is correct under
+    Joseph's *"do not invent an unapproved numerical kappa"* and makes the 1% criterion unevaluable
+    until `kappa` exists. Whose act that declaration is has not been decided.
+    """
+    K = declared_population(declared_K, "evaluate_a7 caller")
+    require(set(cov_by_offset) == set(K),
+            f"members supplied {sorted(cov_by_offset)} != declared K {list(K)}; a population that "
+            f"is not the declared one is INCONCLUSIVE / WRONG FOOTING, not a result")
+
+    # ⚠ ARM 1 IS A PREDICATE ABOUT A PROJECTION MAP, NOT ABOUT A FUNCTIONAL SET, and rev. 2 of this
+    # function conflated them -- caught by smoke-testing it, not by review. Arm 1 requires EVERY
+    # reported source bin to land in some destination row, which is true of a complete map `M` and
+    # FALSE of `U` by construction: `U = M's rows + the all-ones total-rate functional`, and
+    # all-ones is NOT a row of `M`. Applied to `U` as a whole, arm 1 fired on a legitimate
+    # declaration (37 of 40 source bins "unreached" for a 3-functional set).
+    # So the arms run on `projection_M`, and `U` is assembled afterwards for the statistic.
+    M = np.atleast_2d(np.asarray(projection_M, float))
+    rep_support = require_projection_support(M, declared_exclusions, where="A-7 projection map")
+    extras = np.asarray(extra_functionals, float)
+    U = M if extras.size == 0 else np.vstack([M, np.atleast_2d(extras)])
+    require(U.shape[1] == M.shape[1],
+            f"extra functionals have width {U.shape[1]} != the map's {M.shape[1]}")
+
+    if declared_support is not None or observed_support is not None:
+        require(declared_support is not None and observed_support is not None,
+                "support checking needs BOTH declared_support and observed_support")
+        sup = classify_support_change(declared_support, observed_support)
+        if sup["state"] != "RESOLVED":
+            return {"state": sup["state"], "routed_to": A7_TERMINAL_ROUTING[sup["state"]],
+                    "detail": sup, "s_proj": None}
+
+    C0 = np.asarray(cov_by_offset[baseline_key], float)
+    q0 = np.einsum("ij,jk,ik->i", U, C0, U)
+    deg = classify_baseline_degeneracy(q0, c_scale=c_scale, kappa=kappa)
+    if deg["state"] != "RESOLVED":
+        return {"state": deg["state"], "routed_to": A7_TERMINAL_ROUTING[deg["state"]],
+                "detail": deg, "s_proj": None}
+
+    out = _zs.s_proj(cov_by_offset, U, baseline_key=baseline_key)
+    return {"state": "GRADED", "routed_to": "A-7's numerical comparison against the proposed 1%",
+            "detail": {"support": rep_support, "degeneracy": deg}, "s_proj": out}
