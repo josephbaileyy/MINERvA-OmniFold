@@ -594,6 +594,29 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **and makes `F-I` maximal** — P2's **seven** bars each aggregate ~**1,528** reported 5D cells, so
   **~1.17 million off-diagonal entries enter one released bar**, an order of magnitude past P1's 42-bin
   case, with `cause3_corr` still withheld.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partT.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partT.md)
+  - **PART T — the PRE-IMPLEMENTATION baseline, pinned at `6f24fb00` before any code lands**, because
+  *"additive only, no implicit fallback or overwrite"* can only be judged against a recorded before-state.
+  §T.1 verifies six handed claims with two citations corrected (`adopt_unified_5d` `:80-81` not `:79-80`;
+  `p4_lib`'s destination expression at `:1394`).
+  **§T.2 makes §S.1 concrete as two line numbers:** `project_cov_nd.py:99`'s `dropped = int((~keep).sum())`
+  is **source-side only** and sits in the builder that CAN express P1-P4's arity, while
+  `p4_lib.py:1394-1395`'s `empty = np.nonzero(~M.any(axis=1))[0]` is the **destination arm** and sits in
+  the builder that cannot. **The destination arm does not need writing — it needs moving, or the arity
+  does.**
+  ⚠ **§T.3 NEW FINDING: reuse-vs-regenerate is NOT open in code — it is selected by
+  `MNV_EST_SEED_OFFSET`.** `SPEC §2.6c` item 4 calls it an OPEN scientific decision *"this specification
+  does not decide"*, while `sbatch_finalize_5d_bkgaware_gpu.sh:421` prints *"MEMBER …: building **this
+  member's OWN C_stat and C_ML**"* and `:425` prints *"undeclared: **reusing the archive's**…, per this
+  script's original contract"* — and the `:8-10` header documents **only** the undeclared mode. The
+  scientific rationale is genuinely undecided; the **behaviour** is not, and is bound to the membership
+  variable. **This refines Part R against itself:** choosing a nontrivial `K` FORCES regenerate, so
+  Part R's *"if Joseph chooses reuse"* supposed a freedom the launcher does not offer.
+  **§T.4 strengthens the equal-`N` finding one level:** `:418-420` keeps `--expected-ids` at full ranges
+  *"on purpose"* so a partial member REFUSES, so `N = 100`/`24` holds across the **whole member family
+  by enforcement** — not two arms coinciding. `N` cannot distinguish **any** two members, which is why
+  *"record the ACTUAL seeds, sources and revisions"* is the right instruction. **§T.5 holds `S2`**
+  pending the implementation's route.
 - [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
   - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
   numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
