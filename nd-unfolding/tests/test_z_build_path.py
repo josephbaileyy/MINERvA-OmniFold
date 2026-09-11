@@ -49,6 +49,10 @@ DETECTORS = {
     # rev. 4: the width-weighted rate functionals and Joseph's closure
     "all_ones_refused", "closure_detects_bad_edges", "duplicate_rate_names",
     "span_not_declared", "rayleigh_norms_required",
+    # the closure repair -- rev. 1 was a tautology and could not fail
+    "closure_rejects_excludes_nothing", "closure_rejects_excludes_wrong_row",
+    "closure_rejects_excludes_extra_rows", "closure_rejects_different_edges",
+    "closure_rejects_displayed_equals_full", "all_ones_sign_is_density_dependent",
 }
 
 
@@ -522,7 +526,7 @@ class TestEnrolmentIsNotManual(unittest.TestCase):
         self.assertGreaterEqual(len(points), 18,
                                 f"expected >=18 refusal points, found {len(points)}")
         # the claim this suite may make, scoped to what it demonstrates
-        self.assertEqual(len(DETECTORS), 29,
+        self.assertEqual(len(DETECTORS), 35,
                          "DETECTORS must equal the demonstrated set; update both together")
         # ⚠ THESE ARE DIFFERENT SETS AND THE COUNTS MATCHING IS A COINCIDENCE. `points` are
         # `require`/`raise` sites in the module; `DETECTORS` are demonstrated behaviours, some of
@@ -759,18 +763,62 @@ class TestRateFunctionalsAreWidthWeighted(unittest.TestCase):
         self.assertEqual(disp.weights[self.CATCH_ROW], 0.0)
         self.assertNotEqual(full.name, disp.name, "the two must be NAMED separately")
 
-    def test_the_required_closure_holds_on_weights_and_on_values(self):
-        """full-support = displayed-range + excluded contribution."""
-        v = np.full(7, 1e-38)
-        out = zbp.check_rate_closure(self.P2_EDGES, [self.CATCH_ROW], values=v)
+    #: a falling spectrum in the spirit of the note's quoted peak/catch densities.
+    #: ILLUSTRATIVE -- not the note's measured vector, and labelled so.
+    SPECTRUM = np.array([2.19e-38, 1.6e-38, 9e-39, 3e-39, 8e-40, 2e-40, 6.8e-41])
+
+    def test_the_required_closure_holds_on_the_correct_declaration(self):
+        full = zbp.full_support_rate_functional(self.P2_EDGES)
+        disp = zbp.displayed_range_rate_functional(self.P2_EDGES, [self.CATCH_ROW])
+        out = zbp.check_rate_closure(full, disp, self.P2_EDGES, [self.CATCH_ROW],
+                                     values=self.SPECTRUM)
         self.assertTrue(out["weight_closure_exact"])
         self.assertTrue(out["value_closure"])
-        self.assertAlmostEqual(out["excluded_fraction_of_full"], 0.97, places=6)
+        self.assertTrue(out["span_declarations_consistent"])
+        self.assertAlmostEqual(out["excluded_fraction_of_full"], 0.4630, places=3)
+        self.assertAlmostEqual(out["full_over_displayed"], 1.862, places=2,
+                               msg="full-support and displayed-range are genuinely different "
+                                   "numbers -- which is why naming them separately is not a "
+                                   "formality")
 
-    def test_the_all_ones_error_is_QUANTIFIED_not_argued(self):
-        v = np.full(7, 1e-38)
-        out = zbp.check_rate_closure(self.P2_EDGES, [self.CATCH_ROW], values=v)
-        self.assertAlmostEqual(out["all_ones_error_factor"], 14.2857, places=3)
+    def test_THE_CLOSURE_CAN_FAIL_which_rev_1_could_not(self):
+        """⚠ REV. 1 WAS A TAUTOLOGY: it derived `w_excl = w_full - w_disp` and then asserted
+        `w_full == w_disp + w_excl`. Measured: exact=True for the correct row, the wrong row,
+        arbitrary rows, and FOR EXCLUDING NOTHING AT ALL. A gate that cannot fail.
+
+        Re-deriving all three legs from one `excluded_rows` would have been tautological a SECOND
+        time, so the operands are the functional OBJECTS a caller actually passes.
+        """
+        full = zbp.full_support_rate_functional(self.P2_EDGES)
+        mutants = {
+            "excludes_nothing": zbp.displayed_range_rate_functional(self.P2_EDGES, []),
+            "excludes_wrong_row": zbp.displayed_range_rate_functional(self.P2_EDGES, [0]),
+            "excludes_extra_rows": zbp.displayed_range_rate_functional(self.P2_EDGES, [5, 6]),
+            "different_edges": zbp.displayed_range_rate_functional(
+                [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], [6]),
+        }
+        for label, disp in mutants.items():
+            with self.subTest(mutant=label):
+                _fires(f"closure_rejects_{label}", zbp.check_rate_closure,
+                       full, disp, self.P2_EDGES, [self.CATCH_ROW], self.SPECTRUM)
+        _fires("closure_rejects_displayed_equals_full", zbp.check_rate_closure,
+               full, full, self.P2_EDGES, [self.CATCH_ROW], self.SPECTRUM)
+
+    def test_the_all_ones_DIRECTION_is_density_dependent_and_reported(self):
+        """⚠ I reported all-ones as "under-weighting by 97x exactly the bin Joseph ruled is in the
+        support". True OF THAT BIN -- and it does NOT fix the sign of the TOTAL error, which
+        depends on the density distribution against the width distribution."""
+        full = zbp.full_support_rate_functional(self.P2_EDGES)
+        disp = zbp.displayed_range_rate_functional(self.P2_EDGES, [self.CATCH_ROW])
+        falling = zbp.check_rate_closure(full, disp, self.P2_EDGES, [self.CATCH_ROW],
+                                         values=self.SPECTRUM)
+        flat = zbp.check_rate_closure(full, disp, self.P2_EDGES, [self.CATCH_ROW],
+                                      values=np.full(7, 1e-38))
+        self.assertLess(falling["all_ones_error_factor"], 1.0)
+        self.assertGreater(flat["all_ones_error_factor"], 1.0)
+        self.assertIn("OVERSTATES", falling["all_ones_direction"])
+        self.assertIn("UNDERSTATES", flat["all_ones_direction"])
+        FIRED.add("all_ones_sign_is_density_dependent")
 
     def test_closure_fires_when_it_is_broken(self):
         """POWER ARM: a closure check nobody has seen fail is a comment with parentheses."""

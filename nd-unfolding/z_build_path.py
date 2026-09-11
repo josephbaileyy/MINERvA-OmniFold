@@ -587,43 +587,99 @@ def displayed_range_rate_functional(edges, excluded_rows, name="displayed_range_
     return RateFunctional(name=name, weights=w, spans_excluded_support=False)
 
 
-def check_rate_closure(edges, excluded_rows, values=None, rtol=1e-12):
-    """⚠ JOSEPH'S REQUIRED CLOSURE, AS A CHECK RATHER THAN A COMMENT.
+def check_rate_closure(full_rf, displayed_rf, edges, excluded_rows, values=None, rtol=1e-12):
+    """⚠ JOSEPH'S REQUIRED CLOSURE -- AND REV. 1 OF THIS CHECK COULD NOT FAIL.
 
-        full-support integral  ==  displayed-range integral  +  excluded catch-bin contribution
+    THE DEFECT, reproduced before fixing: rev. 1 derived `w_excl = w_full - w_disp` and then
+    asserted `w_full ~= w_disp + w_excl`. That is `w_full == w_disp + (w_full - w_disp)` -- true by
+    construction for ANY `w_disp` whatsoever, and the value leg was the same identity under
+    linearity of the dot product. Measured: it returned `exact=True` for excluding row 6 (correct),
+    row 0, rows 1 and 3, and **for excluding NOTHING AT ALL**. A "displayed range" identical to
+    full support passed Joseph's required closure. **A gate that cannot fail, in a campaign whose
+    standing instrument exists to find exactly that.**
 
-    Verified on the WEIGHTS always, and additionally on a VALUE vector when one is supplied --
-    because the weight identity is arithmetic while the value identity is the thing a released
-    number depends on.
+    THE REPAIR: this takes the two FUNCTIONAL OBJECTS a caller will actually pass to `evaluate_a7`
+    and checks them against the DECLARATION, deriving the excluded leg from `edges` and
+    `excluded_rows` INDEPENDENTLY of either object. So the identity is a real test of the products:
+    it fails if `displayed_rf` zeroes the wrong rows, zeroes none, zeroes extra, or was built from
+    different edges.
+
+    ⚠ WHY RE-DERIVING ALL THREE FROM ONE `excluded_rows` WOULD NOT HAVE BEEN ENOUGH EITHER: it is
+    tautological a second time -- `(0 if i in excl else d_i) + (d_i if i in excl else 0) == d_i`
+    identically. The operands have to be the OBJECTS, not a re-derivation.
     """
-    w_full = destination_widths(edges)
-    disp = displayed_range_rate_functional(edges, excluded_rows)
-    w_disp = np.asarray(disp.weights, float)
-    w_excl = w_full - w_disp
+    w_full_declared = destination_widths(edges)
+    excl = {int(i) for i in np.atleast_1d(np.asarray(excluded_rows, int)).ravel()} \
+        if np.size(excluded_rows) else set()
+    for i in excl:
+        require(0 <= i < w_full_declared.size,
+                f"excluded row {i} outside 0..{w_full_declared.size - 1}")
 
-    out = {"weight_closure_exact": bool(np.allclose(w_full, w_disp + w_excl, rtol=0, atol=0)),
-           "full_weight_sum": float(w_full.sum()),
+    # the excluded leg, derived from the DECLARATION and from neither functional
+    w_excl = np.zeros_like(w_full_declared)
+    for i in excl:
+        w_excl[i] = w_full_declared[i]
+
+    w_full = np.asarray(full_rf.weights, float)
+    w_disp = np.asarray(displayed_rf.weights, float)
+    require(w_full.shape == w_full_declared.shape,
+            f"{full_rf.name}: width {w_full.shape} != declared {w_full_declared.shape}")
+    require(w_disp.shape == w_full_declared.shape,
+            f"{displayed_rf.name}: width {w_disp.shape} != declared {w_full_declared.shape}")
+
+    # ⚠ THREE INDEPENDENT PROPERTIES, each falsifiable
+    full_matches_edges = bool(np.allclose(w_full, w_full_declared, rtol=0, atol=0))
+    closure_exact = bool(np.allclose(w_full_declared, w_disp + w_excl, rtol=0, atol=0))
+    spans_declared = bool(full_rf.spans_excluded_support and not displayed_rf.spans_excluded_support)
+
+    out = {"full_matches_declared_edges": full_matches_edges,
+           "weight_closure_exact": closure_exact,
+           "span_declarations_consistent": spans_declared,
+           "full_weight_sum": float(w_full_declared.sum()),
            "displayed_weight_sum": float(w_disp.sum()),
            "excluded_weight_sum": float(w_excl.sum()),
-           "excluded_rows": sorted({int(i) for i in np.atleast_1d(
-               np.asarray(excluded_rows, int)).ravel()} if np.size(excluded_rows) else set())}
-    require(out["weight_closure_exact"], "weight closure failed: full != displayed + excluded")
+           "excluded_rows": sorted(excl)}
+    require(full_matches_edges,
+            f"{full_rf.name}: its weights are not the declared destination widths")
+    require(closure_exact,
+            f"closure FAILED: declared widths != {displayed_rf.name} + the declared excluded leg. "
+            f"displayed sum {w_disp.sum():.6e}, excluded sum {w_excl.sum():.6e}, declared total "
+            f"{w_full_declared.sum():.6e}. The displayed functional does not exclude exactly the "
+            f"declared rows {sorted(excl)}.")
+    require(spans_declared,
+            f"span declarations inconsistent: {full_rf.name}.spans={full_rf.spans_excluded_support}, "
+            f"{displayed_rf.name}.spans={displayed_rf.spans_excluded_support}. The full-support "
+            f"functional must span the excluded support and the displayed one must not.")
 
     if values is not None:
         v = np.asarray(values, float)
-        require(v.shape == w_full.shape,
-                f"values shape {v.shape} != destination shape {w_full.shape}")
+        require(v.shape == w_full_declared.shape,
+                f"values shape {v.shape} != destination shape {w_full_declared.shape}")
         full = float(w_full @ v)
         part = float(w_disp @ v) + float(w_excl @ v)
         out.update({"full_integral": full, "displayed_plus_excluded": part,
                     "value_closure": bool(np.isclose(full, part, rtol=rtol, atol=0.0)),
-                    "excluded_fraction_of_full": (float(w_excl @ v) / full) if full else None})
+                    "excluded_fraction_of_full": (float(w_excl @ v) / full) if full else None,
+                    "full_over_displayed": (full / float(w_disp @ v)) if float(w_disp @ v) else None})
         require(out["value_closure"],
-                f"value closure failed: full {full!r} != displayed+excluded {part!r}")
-        # and the diagnostic that makes the all-ones error visible rather than arguable
-        out["all_ones_would_give"] = float(v.sum())
-        out["all_ones_error_factor"] = (full / float(v.sum())) if v.sum() else None
+                f"value closure failed: {full!r} != {part!r}")
+
+        # ⚠ THE ALL-ONES DIAGNOSTIC, AND ITS SIGN IS NOT FIXED. I reported that all-ones
+        # "under-weights by 97x exactly the bin Joseph ruled is in the support". True OF THAT BIN,
+        # and it does NOT determine the direction of the TOTAL error -- which depends on the
+        # density distribution against the width distribution. Measured on P2's edges: a FALLING
+        # spectrum gives factor 0.28, i.e. all-ones OVERSTATES by ~3.6x, because it over-weights
+        # the six narrow bins by more than it under-weights the catch bin; a FLAT density gives
+        # 14.3, i.e. all-ones UNDERSTATES. Same edges, opposite sign.
+        # So the factor is REPORTED PER CALL and never inferred from the catch bin alone.
+        ones = float(v.sum())
+        out["all_ones_would_give"] = ones
+        out["all_ones_error_factor"] = (full / ones) if ones else None
+        out["all_ones_direction"] = (None if not ones else
+                                     "all-ones OVERSTATES the integral" if full < ones else
+                                     "all-ones UNDERSTATES the integral")
     return out
+
 
 
 # =============================== THE INTERCEPTION POINT (wiring) ===============================
