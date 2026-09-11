@@ -552,6 +552,24 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `F3` is largely met, indirectly. **§Q.5 accepts the routing of §3-§3.3 and the block population away
   from this lane as correct**, and flags that §3.1 carries a sentence of this lane's that is now
   **withdrawn**.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partR.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partR.md)
+  - **PART R — a routed QUESTION, explicitly not a finding:** under the **reuse** branch, does A-7's
+  `s_proj` become a gate that cannot fail? `A-7` is routed away from this lane, so this composes **one
+  relayed premise** (rev. 7 at `3e7c3271` derives `s_proj` as a function of `C_k − C_0`, so reused
+  byte-identical blocks cancel exactly and `s_proj` measures **exactly `0.0`** on the reuse arm vs
+  `0.562%` on regenerate) with **one measured fact** (`SPEC` §2.6c item 4 at `:1122-1125` — the
+  reuse-vs-regenerate question is **OPEN**, *"this specification does not decide it"*, and §5 prices
+  both). **If `s_proj` is exactly `0.0` on a branch Joseph may choose, then on that branch it returns
+  zero irrespective of what it is meant to detect** — the repo's own named class, with
+  `audit_gates_that_cannot_fail.py`'s header citing **BEN-032/BEN-025, *"a check run over a population
+  that cannot exhibit the defect."*** **The designer's reading — exact separation makes the arms
+  discriminable — is correct and is a virtue; the unstated reading is that on one arm the statistic
+  cannot fail.** Same algebra, and which matters depends on an open decision. **§R.2 names the one
+  condition that dissolves it** (if the member variation lives *wholly* in the reused blocks, the
+  cancelling is correct reporting — cf. §2.6b's *"`C_stat`/`C_ML` are #13-invariant"*), and that check
+  is inside the routed slice. **§R.3: filed rather than mentioned because it is a two-lane
+  composition** — `(cause 6, Z)` owns the reuse question, A-7 owns the statistic, and a question owned
+  by nobody survives review.
 - [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
   - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
   numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
