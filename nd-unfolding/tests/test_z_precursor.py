@@ -723,6 +723,69 @@ class TheNamespaceIsOneExplicitValueAndFreshnessRefuses(unittest.TestCase):
         with self.assertRaises(ZP.PrecursorError):
             ZP.check_namespace_fresh(plan, [])
 
+    def test_the_CONTRACT_ADDS_NO_python3_LINE_TO_ANY_LAUNCHER(self):
+        """RULING 21, AND MY FIRST IMPLEMENTATION VIOLATED IT FIFTEEN TIMES.
+
+        I had each arm run `python3 z_precursor.py require-fresh` and siblings before the science
+        invocation. `mnv_preflight_census.py` classifies every non-comment `python3` line as
+        guarded / declared-preflight / interpreter-probe / UNCLASSIFIED, pins unclassified at ZERO,
+        and refused. Neither escape was open: `z_precursor` fails exclusion criterion (5) because
+        it imports `unified_throw_cov` by design, and guarding the calls moves `guarded` off 14 --
+        ruling 21's pin and reserved for Joseph. So the contract travels as a FLAG on a call that
+        was already guarded.
+        """
+        for arm, path in LAUNCHER.items():
+            with self.subTest(arm=arm):
+                live = [line for line in path.read_text().split("\n")
+                        if "python3" in line and not line.lstrip().startswith("#")]
+                offenders = [line.strip() for line in live if "z_precursor" in line]
+                self.assertEqual(offenders, [],
+                                 f"{path.name} invokes z_precursor.py as a process: {offenders}")
+                self.assertTrue(any("--z-namespace-arm" in line for line in path.read_text()
+                                    .split("\n")),
+                                f"{path.name} must carry the contract as a producer FLAG instead")
+
+    def test_the_PREFLIGHT_CENSUS_itself_is_CLEAN_on_this_tree(self):
+        """The instrument that caught it, run rather than cited. `unclassified == 0` and
+        `guarded == 14` are the two numbers that matter, and the second is ruling 21's pin."""
+        census = ND / "mnv_preflight_census.py"
+        decl = ND / "mnv_preflight_exclusions.json"
+        self.assertTrue(census.exists() and decl.exists())
+        out = subprocess.run([sys.executable, str(census), "--declaration", str(decl)],
+                             capture_output=True, text=True, cwd=str(ND))
+        self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
+        self.assertIn("0 unclassified", out.stdout)
+        self.assertIn("14 guarded", out.stdout)
+        self.assertIn("boundary (guarded + declared-preflight) = 38", out.stdout)
+
+    def test_the_SHELL_path_expression_is_VERIFIED_against_the_python_layout(self):
+        """Two spellings of one layout, and the disagreement REFUSES rather than one winning.
+
+        The launcher builds `uq_5d/${MNV_Z_PRECURSOR_NS}/<subdir>` in shell because getting it out
+        of Python would need the very invocation ruling 21 forbids. So it is checked.
+        """
+        env = {ZP.NAMESPACE_ENV: "ns"}
+        saved = dict(os.environ)
+        os.environ.update(env)
+        self.addCleanup(lambda: (os.environ.clear(), os.environ.update(saved)))
+        good = ZP.arm_directory(str(self.work), "ns", "block")
+        contract = ZP.enforce_namespace_contract("block", str(self.work), good)
+        self.assertEqual(contract["dir"], good)
+        for wrong in (str(self.work / "nd-unfolding" / "uq_5d" / "ns" / "block_slabs_5d_sb"),
+                      str(self.work / "nd-unfolding" / "uq_5d" / "block_slabs_5d"),
+                      str(self.work / "nd-unfolding" / "uq_5d" / "other" / "block_slabs_5d")):
+            with self.subTest(declared=wrong):
+                with self.assertRaises(ZP.PrecursorError) as caught:
+                    ZP.enforce_namespace_contract("block", str(self.work), wrong)
+                self.assertIn("diverged", str(caught.exception))
+
+    def test_the_CONTRACT_IS_INERT_when_the_namespace_is_unset(self):
+        """The preservation instruction, asserted: every archive reproduction path is untouched."""
+        saved = os.environ.pop(ZP.NAMESPACE_ENV, None)
+        self.addCleanup(lambda: os.environ.update({ZP.NAMESPACE_ENV: saved}) if saved else None)
+        self.assertIsNone(ZP.enforce_namespace_contract("block", "/anything", "/whatever"),
+                          "with the namespace unset the contract must do NOTHING, not refuse")
+
     def test_the_MEMBER_AXIS_is_a_REFUSAL_not_an_assumption(self):
         """`lib_member_resume.sh:230`'s `mr_declared` is a PRESENCE test, so `0` DECLARES the member
         axis. Nothing landing in `mii/` held only because nobody exported the variable."""
@@ -1602,6 +1665,89 @@ class EndToEndTheProducerWritesWhatTheZReaderAccepts(ProducerFixture):
         self.assertEqual(support_indexed.size, NBIN - len(self.ZERO_BINS))
         self.assertEqual(result["cv_support_mask"].size, NBIN,
                          "the real mask spans the binning, so it CAN disagree")
+
+    def test_the_CONTRACT_FIRES_FROM_INSIDE_do_combine(self):
+        """The redesign's load-bearing claim: the refusals happen in the PRODUCER, not in a
+        launcher-side process. Same interpreter that does the writing, so nothing can change
+        between the check and the use."""
+        data_root = self.work / "dr"
+        saved = dict(os.environ)
+        os.environ[ZP.NAMESPACE_ENV] = "nsX"
+        os.environ["MNV_DATA_ROOT"] = str(data_root)
+        os.environ.pop("MNV_EST_SEED_OFFSET", None)
+        self.addCleanup(lambda: (os.environ.clear(), os.environ.update(saved)))
+        plan = ZP.namespace_plan(str(data_root), namespace="nsX")
+        run_dir, block_dir = Path(plan["arms"]["run"]["dir"]), Path(plan["arms"]["block"]["dir"])
+        # THE REAL DECLARED POPULATIONS, because the producer now DERIVES them from the arms' own
+        # `#SBATCH --array` lines: 40 slabs x 4 throws = 160, and 21 block slabs. A smaller
+        # fixture was this test disagreeing with the world rather than with the code.
+        throw_glob = write_throw_slabs(run_dir, n_slabs=40, per=4)
+        block_glob = write_block_slabs(block_dir)
+        out = Path(plan["arms"]["combine"]["dir"]) / "unified_throw_cov_5d.root"
+
+        def run(**kw):
+            fields = dict(bank=str(self.bank.path), combine=throw_glob,
+                          block_slabs=block_glob, expected_throws="0-159",
+                          out_root=str(out), z_namespace_arm="combine")
+            fields.update(kw)
+            with _StubbedRoot():
+                return U.do_combine(combine_args(**fields))
+
+        # (1) HEALTHY: the combine arm's own namespace is empty, so it proceeds -- and the expected
+        #     populations were DERIVED inside the producer with nothing passed in.
+        result = run()
+        self.assertTrue(result["throw_population_declared"])
+        self.assertTrue(result["block_population_declared"])
+
+        # (2) THE MEMBER AXIS refuses from in here, including at offset 0.
+        os.environ["MNV_EST_SEED_OFFSET"] = "0"
+        with self.assertRaises(ZP.PrecursorError) as caught:
+            run()
+        self.assertIn("mii/member_kNNNNNN", str(caught.exception))
+        os.environ.pop("MNV_EST_SEED_OFFSET")
+
+        # (3) A READER POINTED AT A DIFFERENT NAMESPACE refuses -- (c)'s defect, caught by the
+        #     producer rather than matched by a glob.
+        foreign = write_block_slabs(self.work / "foreign")
+        with self.assertRaises(SystemExit) as refused:
+            run(block_slabs=foreign)
+        self.assertIn("--block-slabs reads", str(refused.exception))
+        self.assertIn("is the (c) defect itself", str(refused.exception))
+
+        # (4) A NON-FRESH combine namespace refuses.
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_bytes(b"root" + b"\x00" * 300)
+        with self.assertRaises(ZP.PrecursorError) as stale:
+            run()
+        self.assertIn("NOT FRESH", str(stale.exception))
+
+    def test_the_RECEIPT_is_written_by_the_producer_AFTER_Close(self):
+        """(f) moved into the producer with the rest. `fo.Close()` is the only thing that
+        finalizes a `TFile`, so a receipt written before it could not have observed the product."""
+        data_root = self.work / "dr2"
+        saved = dict(os.environ)
+        os.environ[ZP.NAMESPACE_ENV] = "nsR"
+        os.environ["MNV_DATA_ROOT"] = str(data_root)
+        os.environ.pop("MNV_EST_SEED_OFFSET", None)
+        self.addCleanup(lambda: (os.environ.clear(), os.environ.update(saved)))
+        plan = ZP.namespace_plan(str(data_root), namespace="nsR")
+        throw_glob = write_throw_slabs(Path(plan["arms"]["run"]["dir"]), n_slabs=40, per=4)
+        block_glob = write_block_slabs(Path(plan["arms"]["block"]["dir"]))
+        out = Path(plan["arms"]["combine"]["dir"]) / "unified_throw_cov_5d.root"
+        receipt = out.with_suffix(".receipt.json")
+        args = combine_args(bank=str(self.bank.path), combine=throw_glob,
+                            block_slabs=block_glob, expected_throws="0-159",
+                            out_root=str(out), z_namespace_arm="combine",
+                            z_receipt=str(receipt))
+        # The recorder stands in for the TFile, so nothing lands at `out`. That is EXACTLY the
+        # state a receipt must refuse -- and it does, which is this arm's whole point.
+        with self.assertRaises(ZP.PrecursorError) as caught:
+            with _StubbedRoot():
+                U.do_combine(args)
+        self.assertIn("does not exist", str(caught.exception))
+        self.assertFalse(receipt.exists(),
+                         "a refused receipt leaves no file, so no record can claim a completion "
+                         "that did not happen")
 
     def test_the_WHOLE_CHAIN_from_a_fresh_namespace_to_a_gated_receipt(self):
         data_root = self.work / "data"

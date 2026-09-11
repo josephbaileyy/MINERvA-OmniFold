@@ -245,6 +245,64 @@ def check_no_member_axis(environ=None):
         f"axis just as 1200 does. The precursor is not a member of the M(ii) grid. Unset it.")
 
 
+# ---------------------------------- THE CONTRACT, ENFORCED INSIDE THE GUARDED PROCESS ----------
+def enforce_namespace_contract(arm, data_root, declared_dir, code_root=None):
+    """Resolve, refuse and report the namespace contract FROM INSIDE THE PRODUCER.
+
+    ⚠⚠ WHY THIS IS A LIBRARY CALL AND NOT A CLI STEP IN THE LAUNCHER, AND IT IS RULING 21.
+    My first implementation had each launcher run `python3 z_precursor.py require-fresh` and three
+    siblings before the science invocation. `mnv_preflight_census.py` classifies every non-comment
+    `python3` line as GUARDED, DECLARED-PREFLIGHT, INTERPRETER-PROBE or UNCLASSIFIED, and
+    UNCLASSIFIED must be zero -- it measured 15 of mine and refused. The two ways out were both
+    closed:
+
+      * DECLARE it a preflight tool. `mnv_preflight_exclusions.json`'s criterion (5) requires the
+        tool's repository imports to be a SUBSET OF {mnv_guarded_run}, and this module imports
+        `unified_throw_cov` on purpose, so the guard HAS something to contain. Criteria (2) and (3)
+        also require it in EVERY declared launcher at a FIXED per-launcher count, and it belongs to
+        four arms at four different counts.
+      * ROUTE it through the guard. That moves `guarded` off 14, which that file names as
+        "RULING 21's PIN and the only count here that still requires a ruling to move".
+
+    So the calls are GONE and the contract moved inside the process that is ALREADY guarded and
+    already `--pair` bound. Strictly better, not merely compliant: the refusal now happens in the
+    same interpreter that will do the writing, so nothing can change between the check and the use.
+
+    `declared_dir` IS THE LAUNCHER'S OWN PATH EXPRESSION, AND IT IS VERIFIED RATHER THAN TRUSTED.
+    The launcher still builds `uq_5d/${MNV_Z_PRECURSOR_NS}/<subdir>` in shell, because computing it
+    here would need a `python3` call to get it back out. Two spellings of one layout is a
+    divergence risk, so the shell spelling is CHECKED against this module's `ARM_LAYOUT` and a
+    disagreement REFUSES. That is the same shape the two-roots design already uses: shell computes,
+    Python verifies, and the composition is pinned in code rather than in prose.
+
+    Returns
+    -------
+    dict or None
+        ``None`` when `MNV_Z_PRECURSOR_NS` is unset -- the pre-existing behaviour, preserved
+        exactly, because the archive reproduction paths must not change. Otherwise the plan plus
+        the freshness and member-axis results.
+    """
+    if os.environ.get(NAMESPACE_ENV) is None:
+        return None
+    check_no_member_axis()
+    plan = namespace_plan(data_root, environ=os.environ)
+    expected = plan["arms"][arm]["dir"]
+    got = str(Path(declared_dir).resolve()) if Path(declared_dir).is_absolute() else declared_dir
+    require(os.path.normpath(got) == os.path.normpath(expected),
+            f"the launcher's own path expression for arm {arm!r} is {declared_dir!r}, which "
+            f"resolves to {got!r}, but this module's ARM_LAYOUT gives {expected!r}. The shell "
+            f"spelling and the Python layout have diverged. Refusing rather than preferring one: "
+            f"whichever is right, the other is writing or reading somewhere nobody declared.")
+    fresh = check_namespace_fresh(plan, [arm])
+    files = None
+    if arm in ("run", "block"):
+        root = Path(code_root) if code_root else Path(_REPO)
+        files = declare_arm_files(arm, root / ARM_LAUNCHERS[arm])
+    print(f"[z-precursor] namespace {plan['namespace']!r} arm {arm}: FRESH, no member axis, "
+          f"dir {expected}", flush=True)
+    return {"plan": plan, "arm": arm, "dir": expected, "fresh": fresh, "expected_files": files}
+
+
 # ------------------------------------------------- (d) declarations DERIVED from the launcher ----
 _ARRAY_RE = re.compile(r"^#SBATCH\s+.*?--array=(\S+)", re.MULTILINE)
 _TIME_RE = re.compile(r"^#SBATCH\s+.*?--time=(\S+)", re.MULTILINE)

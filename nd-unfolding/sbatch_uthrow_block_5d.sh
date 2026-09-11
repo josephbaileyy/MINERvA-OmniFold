@@ -329,19 +329,27 @@ source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) memb
 # launcher still writes `block_slabs_5d` while the fast combine still reads `block_slabs_5d_sb`.
 # Recorded rather than silently half-fixed.
 #
-# NON-EMPTINESS IS A REFUSAL, NOT AN ASSUMPTION, and so is the member axis: `z_precursor.py`'s
-# `require-fresh` and `require-no-member-axis` run BEFORE the producer. Without the second one,
+# NON-EMPTINESS IS A REFUSAL, NOT AN ASSUMPTION, and so is the member axis. Without the second,
 # "nothing lands in mii/" holds only because nobody exported MNV_EST_SEED_OFFSET.
-ZP="${CODE_ROOT}/nd-unfolding/z_precursor.py"
+#
+# ⚠ BOTH REFUSALS HAPPEN INSIDE THE GUARDED PRODUCER, VIA --z-namespace-arm, AND NOT IN A
+# LAUNCHER-SIDE INTERPRETER CALL. `mnv_preflight_census.py` pins unclassified invocations at
+# zero and measured 15 of mine; `z_precursor.py` cannot be a declared preflight tool (criterion (5)
+# requires its repository imports to be a subset of {mnv_guarded_run} and it imports
+# `unified_throw_cov` on purpose), and guarding the calls would move `guarded` off 14 -- ruling
+# 21's pin, reserved for Joseph. The contract therefore travels as a FLAG on a call that is already
+# guarded and already --pair bound. The path is still built here; the producer verifies it against
+# `z_precursor.ARM_LAYOUT` and refuses on disagreement.
 if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]; then
-  python3 "$ZP" require-no-member-axis || exit 2
-  python3 "$ZP" require-fresh --data-root "$DATA_ROOT" --arm block || exit 2
-  BLOCK_DIR="$(python3 "$ZP" arm-dir --data-root "$DATA_ROOT" --arm block)" || exit 2
+  BLOCK_DIR="${DATA_ROOT}/nd-unfolding/uq_5d/${MNV_Z_PRECURSOR_NS}/block_slabs_5d"
+  ZARM=(--z-namespace-arm block)
   mkdir -p "$BLOCK_DIR"
 elif mr_declared; then
   BLOCK_DIR="$(mr_dir_prefix uq_5d/block_slabs_5d_sb)"
+  ZARM=()
 else
   BLOCK_DIR="uq_5d/block_slabs_5d"
+  ZARM=()
 fi
 T=${SLURM_ARRAY_TASK_ID}
 # --invalid-ratio neutral: hold the ~5e-5 GENIE negative-weight artifacts
@@ -361,11 +369,11 @@ T=${SLURM_ARRAY_TASK_ID}
 EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
 if [[ "$T" -eq 0 ]]; then
   python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv uthrow_block_knobs)" -- "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py" --blockunits --block-knobs all --draw-seed 1000 --estimator-seed ${EST_SEED} \
-    --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
+    --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral "${ZARM[@]}" \
     --out "${BLOCK_DIR}/block5d_knobs.npz"
 else
   LO=$(( (T-1) * 5 )); HI=$(( LO + 4 ))
   python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv uthrow_block_flux)" -- "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py" --blockunits --block-knobs none --block-flux ${LO}-${HI} \
-    --draw-seed 1000 --estimator-seed ${EST_SEED} --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
+    --draw-seed 1000 --estimator-seed ${EST_SEED} --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral "${ZARM[@]}" \
     --out "${BLOCK_DIR}/block5d_flux_${T}.npz"
 fi

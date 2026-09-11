@@ -216,6 +216,27 @@ def cv_support_report(x_cv):
             "predicate": CV_SUPPORT_PREDICATE}
 
 
+def z_namespace_contract(args, arm, declared_dir):
+    """Z-precursor namespace contract, enforced HERE rather than by a launcher-side CLI call.
+
+    ⚠ THE IMPORT IS LAZY AND THAT IS DELIBERATE. `z_precursor` imports this module back (for
+    `code_provenance` and `IN_PROGRESS_SUFFIX`), so a top-level import either way is a cycle. It is
+    also a hard requirement that this module stay importable on a tree without `z_precursor`: it is
+    the shared nd-general driver and the 4D path has nothing to do with Z.
+
+    RETURNS `None` WHEN THE NAMESPACE IS UNSET, which is the pre-existing behaviour preserved
+    exactly. Every archive reproduction path keeps working and this contract is inert for it -- a
+    guard that fired on those runs would make them refuse themselves.
+    """
+    if arm is None:
+        return None
+    import z_precursor
+
+    return z_precursor.enforce_namespace_contract(
+        arm, os.environ.get("MNV_DATA_ROOT", "."), declared_dir,
+        code_root=os.environ.get("MNV_CODE_ROOT"))
+
+
 def check_slab_population(pattern, expected_names, label):
     """Exact FILE-IDENTITY validation of a slab glob: both directions, names not counts.
 
@@ -431,6 +452,11 @@ _OFF_DECLARED, _OFF_VALUE = seed_offset_policy.declared_offset()
 
 
 def do_throws(args):
+    # THE Z NAMESPACE CONTRACT, BEFORE THE BANK LOADS. Freshness, the member-axis refusal and
+    # the shell/Python layout agreement, enforced in this already-guarded process rather than
+    # by a launcher-side CLI call -- see `z_namespace_contract` and ruling 21.
+    z_namespace_contract(args, getattr(args, "z_namespace_arm", None),
+                         os.path.dirname(args.out) if args.out else ".")
     d, bands, n_flux = _load_bank(args.bank)
     edges = d["edges"]
     w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
@@ -502,6 +528,11 @@ def do_blockunits(args):
     block universe (both knob endpoints and/or flux index) and save them. Parallelises
     the otherwise-serial 112-unfold block-sum exactly like the throws. Combine
     aggregates these. --block-knobs all|csv ; --block-flux LO-HI (inclusive)."""
+    # THE Z NAMESPACE CONTRACT, BEFORE THE BANK LOADS. Freshness, the member-axis refusal and
+    # the shell/Python layout agreement, enforced in this already-guarded process rather than
+    # by a launcher-side CLI call -- see `z_namespace_contract` and ruling 21.
+    z_namespace_contract(args, getattr(args, "z_namespace_arm", None),
+                         os.path.dirname(args.out) if args.out else ".")
     d, bands, n_flux = _load_bank(args.bank)
     edges = d["edges"]
     w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
@@ -573,8 +604,40 @@ def do_combine(args):
     # is a fallback, and the reason it is safe is the direction it falls in: absent means UNDECLARED,
     # which writes `*_population_declared = 0` into the product, and `z_precursor.check_receipt`
     # REFUSES 0. A caller that omits the flag cannot silently obtain a validated product.
+    # THE Z NAMESPACE CONTRACT, FIRST OF ALL. Freshness, the member-axis refusal and the
+    # shell/Python layout agreement, all inside this guarded process. When it returns a plan it
+    # ALSO supplies the expected file declarations, which is how the launcher stopped needing a
+    # `declare-files` CLI call: the arms' populations come from their own `#SBATCH --array` lines,
+    # read here, so there is nothing to pass in and nothing to get wrong on the way.
+    arm = getattr(args, "z_namespace_arm", None)
+    contract = z_namespace_contract(
+        args, arm, os.path.dirname(args.out_root) if args.out_root else ".")
     expected_throw_files = getattr(args, "expected_throw_files", None)
     expected_block_files = getattr(args, "expected_block_files", None)
+    if contract is not None:
+        plan = contract["plan"]["arms"]
+        # The combine reads TWO other arms' namespaces, so both are verified too -- the whole point
+        # of (c) is that the reader and the writers agree, and checking only the arm this process
+        # writes would leave exactly the mismatch that started this.
+        for role, glob_arg, name in (("run", args.combine, "--combine"),
+                                     ("block", args.block_slabs, "--block-slabs")):
+            want = plan[role]["dir"]
+            got = os.path.dirname(glob_arg or "")
+            if os.path.normpath(got) != os.path.normpath(want):
+                raise SystemExit(
+                    f"[FAIL] {name} reads {got!r} but arm {role!r} of namespace "
+                    f"{contract['plan']['namespace']!r} is {want!r}. This is the (c) defect itself: "
+                    f"the reader and the writer disagreeing about where products live, and the "
+                    f"glob would MATCH whatever is in the wrong directory rather than fail closed.")
+        import z_precursor
+
+        code_root = Path(os.environ.get("MNV_CODE_ROOT") or _REPO)
+        if not expected_throw_files:
+            expected_throw_files = ",".join(z_precursor.declare_arm_files(
+                "run", code_root / z_precursor.ARM_LAUNCHERS["run"]))
+        if not expected_block_files:
+            expected_block_files = ",".join(z_precursor.declare_arm_files(
+                "block", code_root / z_precursor.ARM_LAUNCHERS["block"]))
     if expected_block_files and not args.block_slabs:
         raise SystemExit("[FAIL] --expected-block-files declares a block population but "
                          "--block-slabs names no glob to compare it against")
@@ -904,6 +967,26 @@ def do_combine(args):
                         band_donor[endpoint]).Write()
         fo.Close()
         print(f"[combine] wrote {args.out_root}")
+        # ---- (f) THE RECEIPT, STRICTLY AFTER `Close()` --------------------------------------
+        # AFTER, AND THE ORDERING IS THE CONTENT. `z_precursor.write_receipt` re-opens the file
+        # from disk, digests it and refuses if it is absent, empty or unreadable -- a `TFile` is
+        # finalized by `Close()` and nothing before this line could have observed that. It is
+        # NOT in a `finally`: a receipt emitted on the failure path would assert a completion
+        # that did not happen, and there is deliberately no `os._exit` anywhere on this path,
+        # because a record written from a bypassed `finally` is the same defect wearing a handler.
+        if getattr(args, "z_receipt", None):
+            import z_precursor
+
+            z_precursor.write_receipt(
+                product=args.out_root, out_path=args.z_receipt, arm="combine",
+                namespace=os.environ.get(z_precursor.NAMESPACE_ENV, ""),
+                code_root=os.environ.get("MNV_CODE_ROOT"),
+                extra=z_precursor.producer_provenance(
+                    bank=args.bank,
+                    population_declared=",".join(
+                        r for r, ok in (("throw", bool(throw_pop)), ("block", bool(block_pop)))
+                        if ok)))
+            print(f"[combine] receipt written AFTER the product: {args.z_receipt}")
     return {
         "C_unified": C_uni,
         "C_blocksum": C_block,
@@ -1009,6 +1092,20 @@ def main():
     ap.add_argument("--invalid-ratio", choices=("error", "neutral"), default="error",
                     help="policy for zero/non-finite bank ratios; default fails loudly")
     ap.add_argument("--out-root", default=None)
+    # THE Z PRECURSOR'S NAMESPACE CONTRACT, ENFORCED IN-PROCESS. Optional, and absent it changes
+    # nothing -- every archive reproduction path is untouched. See `z_namespace_contract` and
+    # `z_precursor.enforce_namespace_contract` for why this is a flag on the producer rather than a
+    # CLI step in the launcher: ruling 21 pins the launchers' python3 invocations, an unclassified
+    # one is a violation, and this module is not eligible to be a declared preflight tool.
+    ap.add_argument("--z-namespace-arm", default=None, choices=("run", "block", "combine"),
+                    help="enforce the Z-precursor namespace contract for this arm: refuse a "
+                         "non-fresh namespace, refuse a declared member-axis offset, require the "
+                         "launcher's path expression to agree with z_precursor.ARM_LAYOUT, and "
+                         "derive the expected slab populations from the arms' own #SBATCH lines. "
+                         "Inert unless MNV_Z_PRECURSOR_NS is set.")
+    ap.add_argument("--z-receipt", default=None,
+                    help="(combine) write a z_precursor run receipt to this path AFTER the ROOT "
+                         "file is closed and reopened. Refuses if the product did not land.")
     args = ap.parse_args()
     if args.combine:
         do_combine(args)

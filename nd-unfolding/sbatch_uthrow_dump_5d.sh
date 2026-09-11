@@ -348,16 +348,23 @@ source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) memb
 # shared one. See `z_precursor.py` for why the namespace is one explicit value and why non-emptiness
 # refuses; when MNV_Z_PRECURSOR_NS is unset this arm behaves exactly as it did before, which
 # preserves the existing archive path.
-ZP="${CODE_ROOT}/nd-unfolding/z_precursor.py"
+# NO NEW INTERPRETER INVOCATION HERE, AND RULING 21 IS WHY. This block first ran three
+# bare `z_precursor.py` preflight calls. `mnv_preflight_census.py` pins UNCLASSIFIED interpreter
+# invocations in the declared k=0 launchers at zero; `z_precursor.py` cannot be declared a preflight
+# tool (criterion (5) demands its repository imports be a subset of {mnv_guarded_run} and it imports
+# `unified_throw_cov` by design), and guarding the calls would move `guarded` off 14 -- ruling 21's
+# pin, reserved for Joseph. So the contract travels as `--z-namespace-arm` on the call that is
+# already guarded. This launcher is not in the census's declared eight, but it is written to the
+# same rule: a ninth launcher that needed an exemption would be a widening arriving by the back door.
 if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]; then
-  python3 "$ZP" require-no-member-axis || exit 2
-  python3 "$ZP" require-fresh --data-root "$DATA_ROOT" --arm dump || exit 2
-  BANK_DIR="$(python3 "$ZP" arm-dir --data-root "$DATA_ROOT" --arm dump)" || exit 2
+  BANK_DIR="${DATA_ROOT}/nd-unfolding/uq_5d/${MNV_Z_PRECURSOR_NS}/bank_uthrow_5d"
+  ZARM=(--z-namespace-arm dump)
 else
   BANK_DIR="${DATA_ROOT}/nd-unfolding/bank_uthrow_5d"
+  ZARM=()
 fi
 mkdir -p "$BANK_DIR"
 python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv uthrow_dump)" -- "${CODE_ROOT}/nd-unfolding/unified_throw.py" --dump --group ${SLURM_ARRAY_TASK_ID} --ngroups 8 \
   --omnifile "${DATA_ROOT}/nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full.root" \
-  --axes eavail,q3,W \
+  --axes eavail,q3,W "${ZARM[@]}" \
   --bankdir "$BANK_DIR"
