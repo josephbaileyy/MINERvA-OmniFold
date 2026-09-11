@@ -1,0 +1,23 @@
+{
+  "files": {
+    "COMPLETE.json": {
+      "bytes": 815,
+      "sha256": "67730c3d9051fbff9ee67825d4c8071c71ec6435c4b59ab9acf1f96e1120b503"
+    },
+    "STARTED.json": {
+      "bytes": 299,
+      "sha256": "9c327574218675aa342aa608f0e0f9d800a616f9fa8637cd6795d2a307835305"
+    },
+    "manifest.json.gz": {
+      "bytes": 790606,
+      "sha256": "23370275bf997ce1ac195c510803bc99ab23a9f8d64d32f91d1e9c7a698ebc30",
+      "uncompressed_bytes": 2388057,
+      "uncompressed_sha256": "41c85268be416ecd86c29e6919f030d87fa37ca01c8197a095ad63666f381719"
+    },
+    "preserve.py": {
+      "bytes": 4464,
+      "sha256": "d03fc32c8ce3a6710a77e39cf982bfa9ccc52d5debaa5c8fac3fffc2b60c01ed"
+    }
+  },
+  "kind": "CFS_PRESERVATION_RECORD_TRANSFER"
+}

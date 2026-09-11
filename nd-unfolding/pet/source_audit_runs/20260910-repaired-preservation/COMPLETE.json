@@ -1,0 +1,17 @@
+{
+  "accounting_auxiliary_files_verified": 4,
+  "completed_utc": "2026-09-11T08:33:32.327959+00:00",
+  "copied_bytes": 283225129,
+  "copied_files": 16915,
+  "destination": "/global/cfs/cdirs/m3246/josephrb/pet-source-audits/20260910-repaired/payload",
+  "destination_readback_equal": true,
+  "kind": "CFS_AUDIT_PRESERVATION_ONLY",
+  "manifest_sha256": "41c85268be416ecd86c29e6919f030d87fa37ca01c8197a095ad63666f381719",
+  "preserver_sha256": "d03fc32c8ce3a6710a77e39cf982bfa9ccc52d5debaa5c8fac3fffc2b60c01ed",
+  "receipt_artifacts_verified": 16899,
+  "receipt_sha256": "5e8d545b6a8b45ed1872852417c13518472b0fbb07832faf78c39406e153b3da",
+  "root_source_opens": 0,
+  "scratch_original_retained": true,
+  "source": "/pscratch/sd/j/josephrb/pet-v2-source-audit-repaired-20260910",
+  "source_before_after_equal": true
+}

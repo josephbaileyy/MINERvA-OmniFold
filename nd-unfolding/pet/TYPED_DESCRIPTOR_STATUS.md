@@ -122,18 +122,18 @@ The raw-preserving checker and launcher are implemented and bound in
 [SOURCE_AUDIT_BINDINGS.json](SOURCE_AUDIT_BINDINGS.json). The exact future command,
 metadata acceptance contract, resource limits and receipt specification are in
 [SOURCE_AUDIT_RUNBOOK.md](SOURCE_AUDIT_RUNBOOK.md). Local fake readers exercise
-the complete two-source, 8,192-entry path; no ROOT source has been opened for this
-preparation. The new checker tests and existing typed-descriptor suites pass
+the complete two-source, 8,192-entry path during preparation, without ROOT source
+access. The separately authorized real-source result is recorded below. The new checker tests and existing typed-descriptor suites pass
 112 tests and 10 subtests on CPU synthetic inputs. Black/Ruff pass for the new Python
 files, and targeted mypy passes for the two new source modules.
 The separately authorized attempt at `58832843` stopped at data entry 0 when
 NumPy testing utilities requested a child process refused by the import guard.
 The partial artifacts and terminal scheduler state are preserved in
 [SOURCE_AUDIT_INTERRUPTION-20260910.md](SOURCE_AUDIT_INTERRUPTION-20260910.md).
-There is no completed source receipt or accepted mapping verdict. The runtime
-array checks now avoid that testing dependency; synthetic validation does not
-complete or replace the interrupted source attempt. A further source audit needs
-a new grant bound to the repaired code and current preparation digest. The existing fixed 16-entry smoke runner is not a launcher
+That interrupted attempt has no completed source receipt. The later repaired
+audit at `ca34a03a` completed with mapping PASS, as recorded below; the original
+interruption remains historical evidence. Both grants are consumed. Any further
+source audit would require a new, explicitly bound grant. The existing fixed 16-entry smoke runner is not a launcher
 for the proposed 4,096-entry audit. Normalization and matched C0/C1 training
 have separate prerequisites, proposed ceilings and authorization boundaries.
 Preparation does not permit ROOT access or scientific training. Do not repeat
@@ -177,3 +177,20 @@ Evidence, transfer digests and the complete result are in
 mechanical mapping pass does not establish release applicability, PID calibration, overlap,
 population support or coverage. The grant is consumed. Normalization, `pass_reco` sidecar
 production and training each remain separately gated; nothing here authorizes them.
+
+
+## Preservation and documentary follow-up — 2026-09-11
+
+The complete output now has a [verified CFS copy](SOURCE_AUDIT_PRESERVATION-20260911.md),
+with the scratch original retained.
+
+The [semantic follow-up](SOURCE_AUDIT_SEMANTIC_FOLLOWUP-20260911.md) traces the
+10,000 ns range premise to the curated correspondence and leaves the five
+observations and semantic DISCREPANCY intact. The existing normalization proposal
+already keeps repeated group keys together; the recorded repetitions do not
+establish duplicate physical events or require deduplication. Producer evidence
+for time semantics, tuple-row granularity, exact release and object provenance
+remains outstanding. The follow-up includes an unsent inquiry draft.
+
+No new source read, selection, normalization, split or training is performed by
+this documentary work. The acceptance criteria and execution code are unchanged.

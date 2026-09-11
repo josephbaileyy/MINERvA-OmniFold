@@ -1,5 +1,23 @@
 # N-D OmniFold run log
 
+## 2026-09-11 — CFS preservation and documentary follow-up
+
+The completed PET source-audit output at `30de7f64` now has a verified CFS copy.
+All 16,915 files (283,225,129 bytes) were copied after checking all 16,899
+receipt-bound artifacts and four accounting-bound auxiliary files. Destination
+readback hashes equal the complete source inventory both before and after the
+copy. Scratch was retained; no ROOT source was opened. Exact paths, executable
+preserver, inventory hashes and recovery procedure are in
+`pet/SOURCE_AUDIT_PRESERVATION-20260911.md` and its linked committed records.
+
+`pet/SOURCE_AUDIT_SEMANTIC_FOLLOWUP-20260911.md` traces the 10,000 ns premise to
+the curated correspondence and notes that the existing proposed group split
+already keeps repeated keys together. It includes an unsent producer inquiry
+for time semantics, row granularity, release and object provenance. No bounds,
+verdicts, grouping rule, selection, normalization or training changed. Mapping
+PASS, semantic DISCREPANCY and the unresolved release/object-family gates stand.
+
+
 ## 2026-09-10 — repaired PET real-source audit
 
 Under Joseph's single-attempt grant, recorded verbatim in

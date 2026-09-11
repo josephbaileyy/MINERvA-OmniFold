@@ -124,8 +124,11 @@ They are preserved under [`source_audit_runs/20260910-repaired/`](source_audit_r
 with `preservation-manifest.json` and `verification.json`. Large JSON is gzip-compressed, and
 both compressed and uncompressed digests are recorded.
 
-The remaining raw, observation and typed shards are about 279 MB. They stay at the remote
-output root on Perlmutter scratch and are bound by the committed receipt.
+At audit completion, the remaining raw, observation and typed shards (about 279 MB)
+were only at the remote scratch output root. On 2026-09-11 the complete output root
+was copied to CFS and every copied file read back and verified; see
+[the preservation record](SOURCE_AUDIT_PRESERVATION-20260911.md). The scratch original
+and all audit verdicts are retained.
 
 ## Boundary
 
