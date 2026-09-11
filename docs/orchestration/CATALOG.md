@@ -785,6 +785,36 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`CHECK-20260911-three-relayed-readings-gate2-mii-and-cost.md`](CHECK-20260911-three-relayed-readings-gate2-mii-and-cost.md)
+  - **An independent check of three relayed readings plus one addendum, requested as preparation for a
+  compute authorization. READY on reading 1; BLOCK on reading 2; BLOCK on two of reading 3's
+  measurements with its conclusion surviving; READY on the addendum.** No compute launched; cluster
+  read-only. **(1)** The Gate-2/adoption conditional is **not absent** — `REVIEW-CONTRACT-20260822:636`
+  (§7.0.6) and `DECISION-20260824-f6b:65` both state it, but both bind *"the rehearsal's products"* and
+  so do not reach Z; reporting unresolved scope is right, and the withdrawal must not be over-read,
+  because §7.0.6's *"no further member is authorized"* is **not** product-scoped. **(2) BLOCK:** `R4`
+  (`DECISION-20260902:109-116`) **suspends the cause-3 seed scan by name** and is omitted — its two
+  prerequisites are measured unmet (the VOI note is committed only on `lane/cause3-voi-20260906`,
+  unreachable from `main`; no `D-C3-RUN` exists), so the binding constraint is an **authorization**, not
+  the M(ii) gate; and *"UNGRADED for `7ac0edec`"* is refuted by *"can never PASS"*
+  (`DECISION-20260830-accept-forward-only:42`), by `RECORD-20260901:5`'s bar on *"a claim that Gate 2 can
+  now pass"*, and by three post-08-30 decisions stating *"Gate 2 remains FAIL"* unscoped. **(3)**
+  CONFIRMED: quarantine **517**; the live member is a different family (**143** markers,
+  `57753239`…`57790088`, **0** shared job ids with the quarantined `57527866`…`57587242`); `boot 200`,
+  `split 48`; `banksweep5d` is **CPU** (`--constraint=cpu`, n=**175**, **30.5675** task-h, **0** rows
+  naming `gres/gpu`); both shared blocks byte-identical. **REFUTED:** `universe_sweep_bkgaware` is
+  **188**, not `0` (nor the earlier `207`) — corroborated by `PROVENANCE-20260822:230`'s `n_universes`
+  **188**; `universe_stage2_5d_bkgaware` is **4**, not `0`; both were `0` only in the **local** checkout.
+  **Spend is on the wrong timezone basis:** `r5_meter.py:_sacct_argv()` emits a naive `--starttime` that
+  `sacct` reads in the host TZ (PDT), starting the window 7 h late — `14.937222` (naive) vs
+  **`15.423056`** (UTC), `+62` attempts, `+0.485833` task-h, isolated by bit-identical 3x replication per
+  basis and strict-subset containment; operative headroom **CPU `≤ 484.58`**. CPU-binding **survives**.
+  **(4)** The addendum's diff and dates confirm, and **both** builders are implicated pre-`07c18aee`
+  (`bootstrap_nd.py:28` `seed=a.seed`; `seedscan_split.py:54` `seed=args.split_seed`); job `55912230`
+  did **not** write the blocks (it started ~19 h after their mtime) — the producer was an **interactive**
+  job, and `PROVENANCE-20260822` pins no producing revision, so the caveat is **unresolvable in-tree**.
+  **§7 records six method faults in this check, including a false mechanism withdrawn before it left the
+  lane.** **Moves no gate, grades nothing, adopts nothing, authorizes no compute.**
 - [`ASSESSMENT-20260911-scoped-letter-readiness.md`](ASSESSMENT-20260911-scoped-letter-readiness.md)
   - **VERDICT: READY as a manuscript, NOT READY for external review, on ONE evidence fault.** Measured at
   `origin/main = 6f24fb00`, note repo `d0c3768e`; **no compute launched**, builds local in a disposable
