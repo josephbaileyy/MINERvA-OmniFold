@@ -102,7 +102,7 @@ The 32-row packet does not support photon three-state rates, cross-playlist clai
 
 ## Next bounded task
 
-**Source attempt interrupted, 2026-09-10; runtime repair is preparation only.**
+**Synthetic runtime validated; a new source-execution grant is required.**
 [SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md](SOURCE_VALIDATION_NORMALIZATION_PROTOCOL.md)
 pins the data/MC identities and proposes entries `[0,4096)` from each file,
 with explicit mechanical, semantic and release verdicts. It specifies a
@@ -143,12 +143,15 @@ This status authorizes no training, compute, Gate-6 action, `C_ML` construction,
 
 ## Synthetic runtime follow-up — 2026-09-10
 
-The direct NumPy-testing dependency is removed, and a SciPy 1.16.3 runtime
-passes the complete local synthetic audit. Linux dependency initialization
-passes under the unchanged guard, but the full Linux preflight remains
-**BLOCKED** by four observed threads against the two-thread ceiling and a
-NumPy/Keras float32 discrepancy against the original tolerance. Both oneDNN
-settings fail identically. See [the runtime record](SOURCE_AUDIT_RUNTIME-20260910.md)
-for committed code, exact receipts, terminal scheduler state and the pending
-contract decision. No real-source audit, normalization or scientific training
-was performed under this synthetic grant.
+The complete Linux fake-reader preflight passes at `ca34a03a`: all 8,192 rows
+and 512 typed chunks, with four observed process threads, identical prepared
+features and weights, and both backends inside the derived float64 rounding
+budgets. Allocation `58178592` and its two-CPU step completed with exit `0:0`.
+The unchanged guard reports no foreign-checkout imports. ROOT was imported for
+compatibility, but no ROOT source was opened. The terminal evidence is committed
+at `a48fc6b0`; see [the runtime record](SOURCE_AUDIT_RUNTIME-20260910.md).
+
+The [repaired source-audit packet](SOURCE_AUDIT_REPAIRED_PACKET-20260910.md)
+proposes one new, separately authorized source run pinned to that tested code.
+Its authorization template is deliberately disabled. No real-source audit,
+normalization or scientific training was performed under the synthetic grant.
