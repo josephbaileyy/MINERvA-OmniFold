@@ -29,8 +29,13 @@ REV. 2 -- ROUND-1 REVIEW. Every one of these FALSIFIES something this probe or i
  10  F6  A-4's `1e-8` is not tuned -- the statistic is ~binary, so 9 orders behave identically
  11      the two POSITIVE CONTROLS section 4 lacked, without which byte-identity is not evidence
  12  F7  the sample-covariance population is THREE, not two, and one of them is BIASED 1/N
- 13      `B'` is EXACTLY 0 when the sample blocks are reused byte-identically -- the arm is closed
-         to the top-level (shared) one, so this is the branch Z is in, and `q` is moot in it
+ 13      the sample blocks CANCEL when reused -- the arm is closed to the top-level (shared)
+         one, so this is the branch Z is in. ⚠ REV. 4 CORRECTS ITS CONCLUSION: see 14
+ 14  F21 `B' = 0` is not exact -- but the CITED mechanism (pairwise vs sequential) does NOT
+         fire at 45 legs. ORDER is the real one. The precondition is FIXED SUMMATION ORDER
+ 15  F24 is `s_proj` unfalsifiable under reuse? NO -- the bands are member-scoped (`mr_run`), so
+         the variation has support OUTSIDE the reused blocks. F22's half stands; the composition
+         does not
 
 No production compute, no adoption, no grading. Local numpy arithmetic only.
 """
@@ -592,12 +597,104 @@ def section13():
     print("       A criterion becoming enforceable is a fact about the CRITERION, not the object.")
 
 
+def section14():
+    """F21: the route mechanism does NOT fire at band-assembly scale. ORDER is what matters."""
+    print("\n14. F21 -- `B' = 0` IS NOT EXACT, BUT THE CITED MECHANISM DOES NOT FIRE HERE")
+    print("   Section 13 summed ONE shared array onto ONE deterministic array, so both members used")
+    print("   the SAME route. It verified the ALGEBRA, not the world. Measured properly:")
+    rng = np.random.default_rng(1)
+    legs = [rng.normal(size=(40, 40)) for _ in range(45)]
+
+    a = np.sum(np.stack(legs), axis=0)          # numpy reduction
+    b = np.zeros_like(legs[0])
+    for L in legs:                              # sequential accumulation, SAME order
+        b = b + L
+    check("SAME order, pairwise vs sequential, 45 legs: BIT-IDENTICAL",
+          bool(np.array_equal(a, b)),
+          "numpy's pairwise blocksize is 128, so at 45 terms BOTH routes are sequential -- "
+          "so `mii_anchor_comparator:241-246`'s cited mechanism does NOT fire at this scale")
+
+    c = np.zeros_like(legs[0])
+    for i in reversed(range(45)):               # DIFFERENT order
+        c = c + legs[i]
+    diff = float(np.max(np.abs(b - c)))
+    rel = diff / float(np.max(np.abs(b)))
+    check("DIFFERENT order: NOT bit-identical", not bool(np.array_equal(b, c)),
+          f"max |diff| = {diff:.3e}, relative {rel:.1e} -- ORDER is the real mechanism")
+
+    x = rng.normal(size=10694) ** 2             # the docstring's own case: a long reduction
+    check("and a >128-element REDUCTION does differ by route",
+          np.sum(x) != sum(x),
+          f"relative {abs(np.sum(x)-sum(x))/np.sum(x):.1e} over 10,694 entries -- this is the "
+          f"docstring's case (a TRACE), a different operation from band assembly")
+
+    M = np.zeros((8, 40))
+    for r_, g in enumerate(np.array_split(np.arange(40), 8)):
+        M[r_, g] = rng.uniform(0.5, 2.0, size=g.size)
+    Ca, Cc = a @ a.T, c @ c.T
+    out = zs.s_proj({0: Ca, 1: Cc}, M, baseline_key=0)
+    print(f"    s_proj between order-variant assemblies = {out['s_proj']:.3e}")
+    check("so the reuse-branch floor is NONZERO but tiny", 0.0 < out["s_proj"] < 1e-10,
+          f"{out['s_proj']:.3e}")
+    print("    -> CORRECTED CONCLUSION: `B'` is nonzero, so `q` is moot under reuse because B' is")
+    print("       NEGLIGIBLE and not because it is ZERO. ⚠ AND THE PRECONDITION IS NARROWER THAN")
+    print("       F21 STATED: not 'bit-reproducibility' in general, but FIXED SUMMATION ORDER over")
+    print("       the band legs. At fixed order and 45 legs, assembly IS bit-reproducible.")
+    print("    ⚠ NOT ESTABLISHED: any of this on Z's real band assembly. Toy scale only.")
+
+
+def section15():
+    """F24: does the member variation have support OUTSIDE the reused blocks? Measured."""
+    print("\n15. F24 -- IS `s_proj` UNFALSIFIABLE ON THE REUSE BRANCH?  (no -- and this decides it)")
+    print("   `sbatch_finalize_5d_bkgaware_gpu.sh:456` runs COMB -- the systematic-universe combine,")
+    print("   i.e. THE BANDS -- through `mr_run`, the MEMBER-SCOPED runner. So the bands are")
+    print("   REGENERATED PER MEMBER while :8-10 reuses C_stat/C_ML as '#13-invariant'.")
+    rng = np.random.default_rng(99)
+    n_src, n_dst, N, K = 60, 8, 40, 6
+
+    def sample_block(seed):
+        r = np.random.default_rng(seed)
+        X = r.normal(size=(N, n_src))
+        Z = X - X.mean(0)
+        return (Z.T @ Z) / (N - 1)
+
+    shared = sample_block(7)                     # REUSED: identical bytes in every member
+    A = rng.normal(size=(n_src, n_src))
+    bands0 = A @ A.T
+    M = np.zeros((n_dst, n_src))
+    for r_, g in enumerate(np.array_split(np.arange(n_src), n_dst)):
+        M[r_, g] = rng.uniform(0.5, 2.0, size=g.size)
+
+    # THE NULL: bands identical too -> floor
+    null = {k: bands0 + shared for k in range(K + 1)}
+    out_null = zs.s_proj(null, M, baseline_key=0)
+    check("NULL (bands identical, blocks reused): s_proj ~ 0 -- this is B'",
+          out_null["s_proj"] == 0.0, f"{out_null['s_proj']!r}")
+
+    # REAL MEMBERS: blocks reused byte-identically, BANDS regenerated per member
+    real = {0: bands0 + shared}
+    for k in range(1, K + 1):
+        pert = 1.0 + 0.03 * k
+        real[k] = (bands0 * pert) + shared       # member-scoped COMB moves; block does not
+    out_real = zs.s_proj(real, M, baseline_key=0)
+    print(f"    REAL (blocks reused, bands per-member): s_proj = {100*out_real['s_proj']:.3f}%")
+    check("⚠ s_proj is NOT identically zero when the bands move", out_real["s_proj"] > 0.01,
+          "so the statistic RETAINS SUPPORT through the member-scoped band sum")
+    check("and it names the responsible offset", out_real["argmax_offset"] == K)
+    print("    -> SO F24's FIRST HALF IS REFUTED: the variation `s_proj` exists to detect has")
+    print("       support OUTSIDE the reused blocks, in member-scoped COMB. An exact 0.0 arises")
+    print("       ONLY under the null, which is what a null FLOOR is supposed to be.")
+    print("    -> ⚠ BUT F24's SECOND HALF (F22) STANDS INDEPENDENTLY: a ~0 floor still makes the")
+    print("       `B' < delta_proj` PRECONDITION contentless, so it must report NOT APPLICABLE.")
+    print("       One of the two halves survives; the COMPOSITION does not.")
+
+
 if __name__ == "__main__":
     print(__doc__)
     print("=" * 78)
     section1(); section2(); section3(); section4(); section5(); section6()
     section7(); section8(); section9(); section10(); section11(); section12()
-    section13()
+    section13(); section14(); section15()
     print("\n" + "=" * 78)
     if FAIL:
         print(f"PROBE FAILED: {len(FAIL)} check(s): {FAIL}")

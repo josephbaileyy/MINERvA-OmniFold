@@ -19,7 +19,7 @@ at `6f24fb00` and at this lane's tip** — verified by `git diff` over the nine 
 Neither is superseded as a whole; this packet **withdraws one answer in the second** and adds to both.
 *A commit sha beside a document is not a claim that the document is current, and "byte-identical" is
 meaningless unless it names **both** endpoints of the comparison. Rev. 1 of this header named one.*
-**Evidence:** `state/probe-z-projected-stability-20260910.py` — green, **64 checks** (37 + 27
+**Evidence:** `state/probe-z-projected-stability-20260910.py` — green, **71 checks** (37 + 34
 added in rev. 3 to verify the round-1 findings against my own claims), run at this tip.
 
 > ## ⚠ CITABLE FOR / NOT CITABLE FOR — at the top, because a verdict word outranks the caveat beside it
@@ -401,6 +401,16 @@ recovery route that needs neither the printed `N` nor the replica files:
 > job can contain a complete combine, and a `COMPLETED` job can contain a step that never ran.
 >
 > **(B) THE ONLY CAPTURED PRODUCING EXECUTION IS AFFIRMATIVELY EXCLUDED — not merely unconfirmed.**
+> ⚠ **AND THE EXCLUSION IS SINGLY SUPPORTED — the `State TIMEOUT` is NOT a second ground.** Placed
+> beside the fingerprint it reads as corroboration; it is **neutral at best and contrary at worst**,
+> because `load_replica_manifest` runs at `combine_cov_nd.py:18` **before** the `:22` print, so the
+> printed count and `[wrote]` are themselves evidence the id set **was** complete. **The exclusion
+> rests on the CONTENT FINGERPRINT alone.** *(Those `sqrt(trace)` figures were obtained by a
+> **sequential Python sum** over `GetBinContent(i,i)` — the route the docstring above warns differs
+> from the writer's numpy pairwise `np.trace`. At ~`1e-15` against gaps of `3.560%` and `4.573%` that
+> cannot touch the exclusion, but they are cited as a sequential sum, not as reproducing the
+> writer's route.)*
+>
 > The single log carrying the producer signature (`budget5d_55233707.out`, job `budget5d`, `State
 > TIMEOUT`, 2026-06-29) records `[stat5d] 100 replicas … sqrt-trace=1.873e-39` and `[mlsplit5d] 24
 > replicas … sqrt-trace=1.565e-39`. **The released products read `1.8063e-39` and `1.4934e-39` —
@@ -1238,8 +1248,14 @@ table is corrected accordingly.
 
 ### 8.8 ⚠ THE BRANCH I AM IN, AND THE ONE NUMBER I CANNOT SUPPLY
 
-**`δ_proj`'s RULE is complete and needs no further input.** It is computable at build time from the
-`k = 0` baseline alone. **Its VALUE I cannot state**, because it requires the component decomposition
+⚠ **`δ_proj`'s RULE IS COMPLETE BUT ITS VALUE IS BLOCKED ON AN ENUMERATION THAT DOES NOT EXIST.**
+Joseph's *"its explicitly named projections"* **entails** the list rather than supplying it — and
+because `δ_proj` is a **minimum over the declared functionals**, **the rule has no value until that
+list exists. A minimum over an unenumerated set is not a number.** *(Raised by the assessor; it is
+the cheapest unblocking item on this packet, and it is a declaration, not a measurement.)*
+
+**Otherwise the RULE needs no further input.** It is computable at build time from the `k = 0`
+baseline alone. **Its VALUE I cannot state**, because it requires the component decomposition
 of a covariance that has not been constructed — and I will not substitute a figure from any other
 object for it.
 
@@ -1273,12 +1289,79 @@ and **the member-scoped arm is excluded on dates alone** — its replicas did no
 > statistically identical", every remaining block is deterministic and also identical, so
 > `C_k = C_0` **exactly** and `s_proj = 0` **exactly**. **`B' = 0`.**
 
+> ## ⚠⚠ REV. 8 — F21/F22/F24. `B' = 0` IS NOT EXACT; THE **PRECONDITION** IS VACUOUS; THE **STATISTIC** IS NOT
+>
+> **F21 — UPHELD, and my own probe fixture is why I believed "exactly". But the mechanism it cites
+> does not fire at band-assembly scale, and measuring that NARROWS the precondition.**
+> `mii_anchor_comparator.py:241-246`, verified verbatim, warns that bit-exactness is *"A PROPERTY OF
+> THE SUMMATION ROUTE, NOT OF THE MATHEMATICS."* Correct. ⚠ **And probe §13 could not have caught
+> it: it added ONE shared array to ONE deterministic array, so both members used the same route — it
+> verified the ALGEBRA, not the world.** My own catalogued failure of a fixture that agrees with my
+> code instead of with the system.
+>
+> **Measured properly (probe §14), and the result is not what F21 predicted:**
+>
+> | construction over 45 band legs | bit-identical? |
+> |---|---|
+> | **same order**, numpy reduction vs sequential accumulation | ⚠ **YES — identical.** numpy's pairwise blocksize is **128**, so at 45 terms *both* routes are sequential. **F21's cited mechanism does not fire here** |
+> | **different ORDER**, sequential | **NO** — relative `4.3e-16`; `s_proj` between order-variants `4.227e-16` |
+> | a **>128-element reduction** (`np.sum` vs `sum` over 10,694) | **NO** — relative `2.5e-15`. *This is the docstring's own case: a **trace**, a different operation from band assembly* |
+>
+> **CORRECTED, and narrower than F21 asked for: `B'` is nonzero, so `q` is moot under reuse because
+> `B'` is NEGLIGIBLE and not because it is ZERO** — a **magnitude** claim, illustrated at toy scale
+> and **not established on Z's real assembly**. **And the precondition A-7 must declare is
+> specifically FIXED SUMMATION ORDER over the band legs**, not "bit-reproducibility" in general. At
+> fixed order and 45 legs, assembly *is* bit-reproducible. **A narrower precondition is a
+> checkable one.**
+>
+> **F22 — UPHELD, and it is the finding rather than the number. The PRECONDITION cannot fail.**
+> `B' < δ_proj` would be satisfied by **every** positive `δ_proj` — **vacuous by this campaign's own
+> vocabulary: a defect, not a pass.** It lands on F18's surviving third leg: the feasibility check was
+> **both** the route by which `q` retained a consequence **and** the route by which *"the ensembles
+> are too small"* could fire. ⚠ **And it would report *SATISFIED*, not *NOT APPLICABLE* — a passing
+> precondition where the correct state is "this check has no content in this branch." That is the
+> `g ≡ 1` shape: a green state reachable without the work being done.** My §8.9 stated the first half
+> of this and would have shipped the second.
+>
+> **F24 — ⚠ ITS FIRST HALF IS REFUTED, AND I RAN THE CHECK RATHER THAN ARGUING THE INTERPRETATION.**
+> The discriminating question was whether the member variation `s_proj` exists to detect has support
+> **outside** the reused blocks. **It does. `sbatch_finalize_5d_bkgaware_gpu.sh:456` runs `COMB` —
+> `uq_universe_5d_covariance_combined_bkgaware.root`, the systematic-universe combine, i.e. THE
+> BANDS — through `mr_run`, the MEMBER-SCOPED runner**, while `:8-10` reuses `C_stat`/`C_ML` as
+> *"#13-invariant"*. **So the bands are regenerated per member and the blocks are not.**
+> Measured (probe §15): with blocks reused byte-identically and bands moving per member,
+> **`s_proj = 8.554%`** and it names the responsible offset, while the **null** stays at `0.0`.
+> **So an exact `0.0` arises ONLY under the null — which is what a null FLOOR is supposed to be. The
+> statistic is ACCURATE, not blind, and it can fail.**
+>
+> **BOTH READINGS, SIDE BY SIDE, BECAUSE ONE OF THEM IS UNFAVOURABLE TO ME AND I WAS ASKED NOT TO
+> SHIP ONLY THE OTHER:** the favourable reading — exact separation of the arms makes them
+> discriminable, and cancellation is *correct behaviour* — **is the one the evidence supports**, on
+> the `mr_run` citation above. The unfavourable reading — that on one arm the statistic cannot fail —
+> **is refuted by that same citation.** ⚠ **But F24's SECOND half (F22) survives independently: the
+> PRECONDITION is still contentless. One of the two halves stands; the COMPOSITION does not.**
+> *(And the repo's own `audit_gates_that_cannot_fail.py` will sweep A-7 if it is implemented —
+> BEN-032/BEN-025, *"a check run over a population that cannot exhibit the defect"*. On the evidence
+> above `s_proj` passes that test through the bands; **the `B' < δ_proj` precondition would not**,
+> which is exactly why requirement (i) below is mandatory rather than cosmetic.)*
+>
+> **THREE REQUIREMENTS ON A-7, and the third is a precondition rev. 7 SILENTLY ACQUIRED:**
+> **(i)** in the reuse branch, report feasibility as **NOT APPLICABLE**, never as satisfied — a
+> distinct reported state, routed like §8.6's refusal rather than as a pass;
+> **(ii)** state `B'` as the **band-assembly reproducibility floor**, never as `0`;
+> **(iii)** ⚠ **declare the FIXED-SUMMATION-ORDER precondition on band assembly across members.**
+> This did **not exist** before rev. 7 chose exact cancellation as the mechanism, and the docstring
+> above is evidence the repo **already treats the area as fragile** — *"that change reviews as a
+> no-op and breaks a bit-exact gate, which is the worst combination a diff can have."* **A criterion
+> that acquires a fragile precondition and does not declare it has moved its own failure mode
+> somewhere nobody is looking.**
+
 **Three things follow, and the third is the one I would not have predicted:**
 
-1. **The feasibility check `B' < δ_proj` is satisfied for any positive `δ_proj`.** A-7 is
-   **enforceable** in this branch. §8.5's third outcome does not fire.
-2. **`q` becomes MOOT.** A quantile of a point mass at zero is zero for every `q`, so F18's
-   parameter has no effect and its ownership question **dissolves** — in this branch only.
+1. **The feasibility precondition is NOT APPLICABLE in this branch — not satisfied (F22).** A-7 is
+   **gradable** here and `s_proj` **can fail** (F24 refuted), but `B' < δ_proj` has **no content**.
+2. **`q` becomes MOOT — because `B'` is NEGLIGIBLE, not zero (F21).** A magnitude claim, and Z's
+   real floor is **unmeasured**, so F18's ownership question is **suspended** here, not dissolved.
 3. **⚠ AND THE SIGN OF THIS IS COUNTERINTUITIVE, SO IT MUST NOT BE READ AS AN ARGUMENT FOR REUSE.**
    Reuse makes the criterion *enforceable* by removing the noise that would have masked a violation
    — **it does not make the object more stable, and it removes the only route by which
@@ -1307,6 +1390,11 @@ make it go away.
 byte-identical across `K = 10` members, `s_proj` returns **exactly `0.0`**, and `C_k − C_0` is
 identically zero, which is the mechanism rather than the outcome. The regenerate arm of the same
 construction returns **`0.562%`**, so **the two branches differ by construction and not by degree.**
+⚠ **BUT THE TWO SIDES ARE NOT THE SAME KIND OF STATEMENT (F23), and a table putting `0.0` beside
+`0.562%` reads as two measurements.** The reuse side is a **THEOREM** — exact algebraic
+cancellation, now corrected by F21 to *cancellation up to the assembly ORDER*. The regenerate side
+is a **SINGLE MEASURED DRAW** from one seed: not a distribution, not a bound. **Labelled, because
+the pairing invites exactly the wrong inference.**
 *(An earlier draft of this paragraph said "it is not a measurement on `s_proj`." That was true when
 written and is no longer; I measured it rather than leave the key new claim asserted.)*
 
