@@ -1,0 +1,8 @@
+{
+  "command": "squeue -u josephrb -h -o \"%i %j %T %M %C %b\"",
+  "start_utc": "2026-09-11T10:14:37.334141+00:00",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "scope": "read-only scheduler test; no job submitted"
+}

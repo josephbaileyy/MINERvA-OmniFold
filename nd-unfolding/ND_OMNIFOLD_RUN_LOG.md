@@ -240,3 +240,24 @@ The [bounded execution proposal](pet/direct_token_comparison/EXECUTION_PROPOSAL.
 is pending approval. No ROOT payload, cluster allocation, real-source fitting,
 correspondence, covariance, publication adoption or Gate-6 work occurred.
 Release applicability and all four object-family questions remain unresolved.
+
+
+## 2026-09-11 — PET execution grant recorded; scheduler preflight blocks allocation
+
+Joseph approved the synthetic campaign and the preparation commit/push. The
+reviewed package was frozen and pushed at `9d598c083bca742944e30b4079c7390ece2be9d1`
+on `pet-direct-token-comparison`, with 12 commit checks passing.
+
+The [preflight evidence](pet/direct_token_comparison/execution_runs/20260911-preflight/)
+records that Perlmutter rejects one GPU/eight CPUs/64 GiB, adjusts memory to 38
+CPUs, and requires exactly 32 CPUs per GPU for this queue. An eight-CPU control
+with lower memory also fails. One GPU/32 CPUs/56 GiB passes `sbatch --test-only`;
+no test-only number is a submitted job. No calibration or training allocation
+was submitted; campaign GPU spend remains zero.
+
+[Execution status](pet/direct_token_comparison/EXECUTION_STATUS-20260911.md) holds
+execution for the [specific resource amendment](pet/direct_token_comparison/RESOURCE_AMENDMENT-20260911.md).
+The GPU limit, events, seeds, algorithm and acceptance criteria remain frozen.
+The original CPU reservation estimate was wrong; it has not been silently
+reinterpreted as an application-thread limit. No source access, covariance,
+adoption, real-input training or Gate-6 work occurred.

@@ -1,0 +1,8 @@
+{
+  "command": "scontrol show partition shared_gpu_ss11 | sed -n '/DefMemPerCPU/p;/State=/p'",
+  "start_utc": "2026-09-11T10:14:40.003725+00:00",
+  "exit_code": 0,
+  "stdout": "   State=UP TotalCPUs=212992 TotalNodes=1664 SelectTypeParameters=CR_CORE_MEMORY\n   DefMemPerCPU=1796 MaxMemPerCPU=1796\n",
+  "stderr": "",
+  "scope": "read-only scheduler test; no job submitted"
+}

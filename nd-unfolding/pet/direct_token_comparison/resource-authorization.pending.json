@@ -1,0 +1,12 @@
+{
+  "status": "PENDING_APPROVAL",
+  "profile": {
+    "gpus": 1,
+    "cpus": 32,
+    "memory_GiB": 56
+  },
+  "calibration_gpu_hours": 2,
+  "total_gpu_hours": 290,
+  "total_cpu_core_hours": 9296,
+  "resource_amendment_sha256": "d419c4fa69b8f86f027831169861590924c718b99f35c79b6d2db912ced3af37"
+}

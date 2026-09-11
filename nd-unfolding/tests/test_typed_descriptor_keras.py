@@ -11,7 +11,6 @@ from pathlib import Path
 
 import numpy as np
 
-
 os.environ.setdefault("CUDA_VISIBLE_DEVICES", "-1")
 
 TEST_ROOT = Path(__file__).resolve().parent
@@ -24,7 +23,6 @@ for path in (str(TEST_ROOT), str(PET_ROOT)):
 import typed_descriptor_keras as keras_adapter  # noqa: E402
 import typed_descriptors as typed  # noqa: E402
 from test_typed_descriptors import _synthetic_fixture  # noqa: E402
-
 
 SMOKE_FIT_DIGEST = "e" * 64
 
@@ -273,7 +271,7 @@ class TypedDescriptorKerasTest(unittest.TestCase):
                     "observed = np.asarray(model(inputs, training=False))",
                     f"expected = np.load({str(expected_path)!r})",
                     "assert np.all(np.isfinite(observed))",
-                    "np.testing.assert_array_equal(expected, observed)",
+                    "assert np.array_equal(expected, observed)",
                 ]
             )
             environment = os.environ.copy()
@@ -297,9 +295,7 @@ class TypedDescriptorKerasTest(unittest.TestCase):
         )
         self.assertEqual(typed.TRUTH_EVENT_WIDTH, 2)
         with self.assertRaisesRegex(ValueError, "truth descriptors are not defined"):
-            keras_adapter.prepare_keras_inputs(
-                self.batch, self.truth_event_block
-            )
+            keras_adapter.prepare_keras_inputs(self.batch, self.truth_event_block)
         truth_inputs = _copy_inputs(self.inputs)
         truth_inputs[keras_adapter.DETECTOR_INPUT_KEY] = self.truth_event_block
         with self.assertRaisesRegex(ValueError, "truth block is not augmented"):
