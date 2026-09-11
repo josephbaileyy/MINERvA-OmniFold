@@ -719,6 +719,29 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   not tested"*; A.4(ii) adds a correct point this lane had not required (finite-ensemble is common-mode
   under fixed digests and cancels in `C_k − C_0`). `W5` satisfied, with the mechanism noted as looser
   than stated.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partY.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partY.md)
+  - **PART Y — cause-3 Part A at `f00e4bee`: VERDICT = BLOCK on ONE LINE.** Supersedes Part X, which
+  does not carry forward. Content, destination and derivation all correct, and the clause **does** travel
+  on refused outcomes — verified by execution.
+  ⚠ **§Y.1 THE BLOCK: the interception point is OPTIONAL.** `:753` `def evaluate_a7(…, build_path=None, …)`
+  and `:25` `scope = … if build_path is not None else None`. **Measured: the default call returns
+  `state=GRADED`, `scope_statement=None`.** The cited model does not have this property —
+  `z_validator.assess(leg_set: LegSet, …)` takes the leg set **positionally and required** (`:217`), so
+  `sees_correlations` cannot be bypassed. **The discipline was copied at the function level and broken at
+  the signature level.** Second reachability: a **non-member** build path plus a **multi-offset**
+  `declared_K` — an inconsistent pair — grades with `scope_statement=None`. **Third instance of one shape
+  in this module** (Part U's window-selected population, Part V's absent coverage flag, now this): the
+  thing exists, is correct, and the path that matters does not reach it. One-line fix, not this lane's to
+  choose.
+  **§Y.2 — Part X both discharged, and the designer improved on what this lane offered.** It **rejected**
+  `_DIAGONAL_ONLY_SCOPE` as host, **correctly**: `z_validator:237/276/282` key it on
+  `correlation_leg_present`, **orthogonal to block sharing**, so the clause would appear with no corr leg
+  and vanish with one — *this lane would have accepted a worse destination than the one built.* Travel on
+  refusal verified by execution: `DEGENERATE_FUNCTIONAL` carries a non-`None` scope with `s_proj=None`;
+  the three return sites all carry it, computed **before** any guard, and the `require` paths raise rather
+  than return, which is correct since a raise is not an outcome to mis-license. Frame withdrawn, dates
+  independently verified, ask now a **narrowing**. `W5` tightened: `cause3_corr` forces nothing.
+  **§Y.3** suites `136` / `80` / `56+1`, control first.
 - [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
   - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
   numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
