@@ -240,6 +240,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   fails closed on any covariance-touching file a deliverable cites without a pinned
   classification. **The packet's first version declared three globs covering 25% of the tracked
   population**; the instrument exists because that scope statement was not checkable.
+- [`AMENDMENT-20260911-cause3-conditional-scope-and-kappa.md`](AMENDMENT-20260911-cause3-conditional-scope-and-kappa.md)
+  - **PROPOSED amendment — adopts nothing; cause 3 remains NON-PASSING and all three cause-3
+  boundaries remain WITHHELD.** Part A answers the standing `z_contract.py:231-235` objection, and
+  the answer is that **cause 3 as written does not distinguish two readings**: *(a)* how much `C_Z`
+  moves when the estimator baseline changes **as production changes it** (which regenerates the
+  blocks), versus *(b)* how much is **attributable to the estimator-baseline choice**.
+  `:222-225`'s *"estimator-baseline sensitivity"* is **unqualified** and omits what is held fixed.
+  ⚠ **The ambiguity was invisible until the decoupling**, because with one switch the two were not
+  distinguishable configurations. Recommends amending the reasons to state what is held fixed,
+  adding a **licensing clause in `cause3_corr`'s own existing template**, and recording (b) as
+  discharged / **(a) as explicitly UNDISCHARGED** — and names the remaining scientific choice for
+  Joseph with both branches priced, (a) requiring **per-member regeneration of 100 + 24 replicas**.
+  Part B is `κ`'s package: the **Rayleigh** formula, `κ = 1e-12`, and a numerical justification that
+  is **not** scale invariance — the measured accumulation floor is `~2e-15` (pairwise), **three
+  orders tighter than the `n·eps` worst case**, and `rank(C_Z) ≤ 265 of 10,694` means there is no
+  continuum between round-off and support, so the verdict is identical across **`1e-14`–`1e-3`**.
+  ⚠ **The acceptance population never shrinks:** a degenerate functional **refuses the whole
+  evaluation** rather than being dropped from the max over `U`, so `s_proj` is never reported over a
+  reduced set. Assessment scope is stated, not inferred.
 - [`DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md`](DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md)
   - **DECISION INPUT ONLY — adopts nothing; Joseph's items 1 and 3.** ⚠ **`δ_proj`'s DERIVATION IS
   WITHDRAWN IN FULL** on his objection: measured, the threshold moves **`102.6×`** on ONE covariance
