@@ -251,7 +251,8 @@ A7_TERMINAL_ROUTING = {
 }
 
 
-def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float], u_norms_sq=None):
+def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float], u_norms_sq=None,
+                                 scale_kind=None, c_diag_max=None, c_trace=None):
     """Is a declared functional's baseline numerically resolvable?
 
     `q_baseline` = `m_i' C_0 m_i` per declared functional; `c_scale` = a declared scale for `C_0`
@@ -275,11 +276,39 @@ def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float], u_
     scale = float(c_scale)
     require(np.isfinite(scale) and scale > 0, f"c_scale must be finite and positive, got {scale!r}")
 
+    # ⚠ RESIDUAL 1: THE FORMULA NAMES `lambda_max(C_0)`; REV. 2 ACCEPTED ANY POSITIVE SCALE.
+    # The only validation was finite-and-positive, and the docstring said "e.g. its largest
+    # eigenvalue" -- "e.g.", not "must be". A caller passing `trace(C_0)` instead shifts the
+    # predicate by up to the RANK (~265), or up to the DIMENSION (10,694) in the degenerate case:
+    # two to four orders, comparable to the margin under discussion. This is the unit-dependence
+    # finding surviving in the SCALE rather than in the functional.
+    # And it matters more now that B.2's value is withdrawn pending a measured
+    # `lambda_min_retained / lambda_max`: that ratio will be measured AGAINST lambda_max, so
+    # `kappa`'s meaning at evaluation time is well-defined only if the denominator is the SAME
+    # lambda_max.
+    if kappa is not None:
+        require(scale_kind == "lambda_max",
+                f"c_scale's KIND must be declared as 'lambda_max', got {scale_kind!r}. The formula "
+                f"names lambda_max(C_0) and nothing else: trace(C_0) would shift the predicate by "
+                f"up to the rank. There is no default kind.")
+        # ⚠ A BOUND CHECK, NOT A VERIFICATION, AND THE DIFFERENCE IS STATED: for a PSD operand
+        # `max(diag) <= lambda_max <= trace`. This catches a gross substitution; it does NOT prove
+        # the value IS lambda_max, which needs the decomposition the scan will supply. Both bounds
+        # are cheap (O(n) and O(n)) and are required when available rather than optional.
+        if c_diag_max is not None:
+            require(float(c_diag_max) <= scale * (1 + 1e-12),
+                    f"c_scale {scale:.6e} is below max(diag(C_0)) {float(c_diag_max):.6e}; for a "
+                    f"PSD operand lambda_max >= max(diag), so this cannot be lambda_max.")
+        if c_trace is not None:
+            require(scale <= float(c_trace) * (1 + 1e-12),
+                    f"c_scale {scale:.6e} exceeds trace(C_0) {float(c_trace):.6e}; lambda_max <= "
+                    f"trace for a PSD operand, so this cannot be lambda_max.")
+
     nonfinite = np.nonzero(~np.isfinite(q))[0]
     if nonfinite.size:
         return {"state": "DEGENERATE_FUNCTIONAL", "reason": "non-finite baseline",
                 "functionals": nonfinite.tolist(), "kappa": kappa,
-                "predicate": "finiteness", "rayleigh": None}
+                "predicate": "finiteness", "rayleigh": None, "c_scale": scale, "scale_kind": scale_kind}
 
     # structural arm: exact zero or negative. No threshold can make this resolvable.
     structural = np.nonzero(q <= 0.0)[0]
@@ -289,7 +318,7 @@ def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float], u_
                           "by threshold. ⚠ Blaming the OPERAND here would be wrong: C_0 may be "
                           "PSD and the FUNCTIONAL is what has no support.",
                 "functionals": structural.tolist(), "kappa": kappa,
-                "predicate": "structural", "rayleigh": None}
+                "predicate": "structural", "rayleigh": None, "c_scale": scale, "scale_kind": scale_kind}
 
     if kappa is None:
         return {"state": "KAPPA_UNDECLARED",
@@ -298,7 +327,7 @@ def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float], u_
                           "from a resolvable one requires a declared relative cutoff `kappa`, and "
                           "there is no approved value. REFUSING rather than defaulting.",
                 "functionals": [], "kappa": None,
-                "predicate": "none -- kappa undeclared", "rayleigh": None}
+                "predicate": "none -- kappa undeclared", "rayleigh": None, "c_scale": scale, "scale_kind": scale_kind}
 
     k = float(kappa)
     require(np.isfinite(k) and k > 0, f"kappa must be finite and positive, got {kappa!r}")
@@ -343,11 +372,13 @@ def classify_baseline_degeneracy(q_baseline, c_scale, kappa: Optional[float], u_
                 "reason": f"Rayleigh quotient q/||u||^2 below kappa*lambda_max with "
                           f"kappa={k:.3e}; SCALE-INVARIANT in u",
                 "functionals": below.tolist(), "kappa": k,
-                "rayleigh": rayleigh.tolist(), "predicate": "rayleigh"}
+                "rayleigh": rayleigh.tolist(), "predicate": "rayleigh",
+                "c_scale": scale, "scale_kind": scale_kind}
     return {"state": "RESOLVED",
             "reason": "every declared functional's Rayleigh quotient clears kappa*lambda_max",
             "functionals": [], "kappa": k,
-            "rayleigh": rayleigh.tolist(), "predicate": "rayleigh"}
+            "rayleigh": rayleigh.tolist(), "predicate": "rayleigh",
+            "c_scale": scale, "scale_kind": scale_kind}
 
 
 def classify_support_change(declared_support, observed_support):
@@ -750,9 +781,9 @@ def conditional_scope_statement(path: BuildPath) -> Optional[str]:
 import z_statistics as _zs                                            # noqa: E402  (the wiring)
 
 
-def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa, build_path=None,
-                extra_functionals=(), declared_exclusions=(), declared_support=None,
-                observed_support=None, baseline_key=0):
+def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa, build_path,
+                scale_kind=None, extra_functionals=(), declared_exclusions=(),
+                declared_support=None, observed_support=None, baseline_key=0):
     """THE ONLY SANCTIONED ROUTE TO AN A-7 VERDICT. Guards first, `s_proj` last.
 
     Order is load-bearing and is the reverse of what a convenience wrapper would do: every refusal
@@ -774,7 +805,29 @@ def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa, buil
     Joseph's *"do not invent an unapproved numerical kappa"* and makes the 1% criterion unevaluable
     until `kappa` exists. Whose act that declaration is has not been decided.
     """
-    scope = conditional_scope_statement(build_path) if build_path is not None else None
+    # ⚠ RESIDUAL 2: REV. 2's SCOPE STATEMENT WAS SUPPRESSIBLE -- BY OMISSION.
+    # `build_path` defaulted to `None`, so `scope` was `None` whenever a caller omitted it, and a
+    # fully formed `state="GRADED"` verdict came back with `scope_statement: None` -- a PASS with
+    # no conditionality attached, which is exactly what the clause exists to prevent. Suppression
+    # by omission needs no positive act, so it is EASIER than a flag, not harder.
+    # ⚠ AND I VERIFIED THE PRODUCER AND ASSERTED A PROPERTY OF THE SYSTEM: I checked that
+    # `conditional_scope_statement` has no suppression parameter and reported "no channel by which
+    # a caller could suppress it". The channel was the CALL SITE.
+    # THE CORRECT PATTERN WAS ALREADY IN THIS FILE: `kappa` is a REQUIRED argument, and when it is
+    # declared without `u_norms_sq` the code REFUSES. One optional argument whose absence silently
+    # changes the meaning of the result refused; the other defaulted and graded. So `build_path` is
+    # now REQUIRED, and a non-member path is refused because A-7 grades ACROSS members -- there is
+    # no configuration in which a graded outcome legitimately carries no scope statement.
+    require(isinstance(build_path, BuildPath),
+            f"build_path is REQUIRED and must be a BuildPath, got {type(build_path).__name__}. "
+            f"A-7's verdict cannot be interpreted without knowing what was held fixed, so the "
+            f"scope statement is part of the verdict rather than an annotation on it.")
+    require(build_path.is_member,
+            "build_path declares no member offset, but A-7 grades ACROSS the declared offsets. A "
+            "non-member path cannot produce an A-7 verdict, and would yield a graded outcome with "
+            "no conditionality attached.")
+    scope = conditional_scope_statement(build_path)
+    require(scope is not None, "internal: a member build path must yield a scope statement")
     K = declared_population(declared_K, "evaluate_a7 caller")
     require(set(cov_by_offset) == set(K),
             f"members supplied {sorted(cov_by_offset)} != declared K {list(K)}; a population that "
@@ -831,7 +884,9 @@ def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa, buil
     q0 = np.einsum("ij,jk,ik->i", U, C0, U)
     # the Rayleigh denominator, from the SAME U the statistic uses -- not a separate declaration
     nsq = np.einsum("ij,ij->i", U, U)
-    deg = classify_baseline_degeneracy(q0, c_scale=c_scale, kappa=kappa, u_norms_sq=nsq)
+    deg = classify_baseline_degeneracy(
+        q0, c_scale=c_scale, kappa=kappa, u_norms_sq=nsq, scale_kind=scale_kind,
+        c_diag_max=float(np.max(np.diag(C0))), c_trace=float(np.trace(C0)))
     if deg["state"] != "RESOLVED":
         return {"state": deg["state"], "routed_to": A7_TERMINAL_ROUTING[deg["state"]],
                 "detail": deg, "s_proj": None, "scope_statement": scope}

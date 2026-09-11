@@ -55,6 +55,10 @@ DETECTORS = {
     "closure_rejects_displayed_equals_full", "all_ones_sign_is_density_dependent",
     # the narrowing must TRAVEL -- and no caller may assert or suppress it
     "scope_not_caller_assertable",
+    # residual 2: suppression BY OMISSION; residual 1: the scale was not pinned
+    "build_path_required", "build_path_none_refused", "build_path_nonmember_refused",
+    "scale_kind_undeclared", "scale_kind_trace_refused",
+    "scale_below_diag_max", "scale_above_trace",
 }
 
 
@@ -73,6 +77,13 @@ SHARED = dict(stat_digest="aaa111", ml_digest="bbb222")
 #: A WIDTH-WEIGHTED rate functional over 4 destination bins, for the wiring tests.
 #: Deliberately NOT an all-ones vector: the stored values are differential densities.
 _RATE4 = zbp.full_support_rate_functional([0.0, 1.0, 2.0, 4.0, 8.0], name="rate4")
+
+#: a member build path with shared blocks -- `build_path` is REQUIRED on evaluate_a7
+#: and a non-member path is refused, so every call site must supply one.
+_BP = zbp.BuildPath(member_offset=3, block_source="SHARED_DIGEST_BOUND",
+                    stat_digest="aaa111", ml_digest="bbb222")
+#: and the scale KIND is pinned to what the formula names
+_SK = "lambda_max"
 
 
 
@@ -230,14 +241,16 @@ class TestTerminalHandling(unittest.TestCase):
 
     def test_declared_kappa_catches_a_roundoff_positive(self):
         out = zbp.classify_baseline_degeneracy([1.0, 1e-18], c_scale=1.0, kappa=1e-12,
-                                              u_norms_sq=[1.0, 1.0])
+                                              u_norms_sq=[1.0, 1.0],
+                                              scale_kind="lambda_max")
         self.assertEqual(out["state"], "DEGENERATE_FUNCTIONAL")
         self.assertEqual(out["functionals"], [1])
         FIRED.add("degenerate_by_kappa")
 
     def test_resolved_control(self):
         out = zbp.classify_baseline_degeneracy([1.0, 0.5], c_scale=1.0, kappa=1e-12,
-                                              u_norms_sq=[1.0, 1.0])
+                                              u_norms_sq=[1.0, 1.0],
+                                              scale_kind="lambda_max")
         self.assertEqual(out["state"], "RESOLVED")
 
     def test_support_change_is_a_declaration_defect(self):
@@ -363,34 +376,34 @@ class TestTheWiring(unittest.TestCase):
 
     def test_the_round_off_cohort_is_REFUSED_at_the_entry_point(self):
         covs, U, scale = self._degenerate()
-        out = zbp.evaluate_a7(covs, U, declared_K=[0, 1], c_scale=scale, kappa=None)
+        out = zbp.evaluate_a7(covs, U, build_path=_BP, declared_K=[0, 1], c_scale=scale, kappa=None)
         self.assertEqual(out["state"], "KAPPA_UNDECLARED")
         self.assertIsNone(out["s_proj"], "nothing may be graded through a refusal")
 
     def test_healthy_with_kappa_withheld_also_refuses_and_that_is_INTENDED(self):
         covs, M, scale = self._healthy()
         out = zbp.evaluate_a7(covs, M, extra_functionals=[_RATE4],
-                              declared_K=[0, 1], c_scale=scale, kappa=None)
+                              build_path=_BP, declared_K=[0, 1], c_scale=scale, kappa=None)
         self.assertEqual(out["state"], "KAPPA_UNDECLARED")
         self.assertIsNone(out["s_proj"])
 
     def test_declared_kappa_lets_a_healthy_case_grade(self):
         covs, M, scale = self._healthy()
         out = zbp.evaluate_a7(covs, M, extra_functionals=[_RATE4],
-                              declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+                              build_path=_BP, declared_K=[0, 1], c_scale=scale, kappa=1e-12, scale_kind=_SK)
         self.assertEqual(out["state"], "GRADED")
         self.assertAlmostEqual(out["s_proj"]["s_proj"], np.sqrt(1.1) - 1, places=9)
 
     def test_population_mismatch_refuses(self):
         covs, M, scale = self._healthy()
         _fires("a7_population_mismatch", zbp.evaluate_a7, covs, M,
-               declared_K=[0, 1, 2], c_scale=scale, kappa=1e-12)
+               build_path=_BP, declared_K=[0, 1, 2], c_scale=scale, kappa=1e-12)
 
     def test_extras_width_mismatch_refuses(self):
         covs, M, scale = self._healthy()
         bad = zbp.RateFunctional("wrong_width", np.ones(7), True)
         _fires("a7_extras_width", zbp.evaluate_a7, covs, M,
-               extra_functionals=[bad], declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+               extra_functionals=[bad], build_path=_BP, declared_K=[0, 1], c_scale=scale, kappa=1e-12)
 
     def test_arm1_is_a_MAP_predicate_not_a_functional_set_predicate(self):
         """⚠ Found by smoke-testing `evaluate_a7`, not by review.
@@ -400,14 +413,14 @@ class TestTheWiring(unittest.TestCase):
         legitimate declaration. The all-ones total-rate functional is NOT a row of `M`.
         """
         covs, M, scale = self._healthy()
-        out = zbp.evaluate_a7(covs, M, extra_functionals=[_RATE4], declared_K=[0, 1],
-                              c_scale=scale, kappa=1e-12)
+        out = zbp.evaluate_a7(covs, M, extra_functionals=[_RATE4], build_path=_BP, declared_K=[0, 1],
+                              c_scale=scale, kappa=1e-12, scale_kind=_SK)
         self.assertEqual(out["state"], "GRADED", "a map + a rate functional must not trip arm 1")
         # and a genuinely INCOMPLETE map still does
         partial = M.copy()
         partial[:, 30:] = 0.0
         with self.assertRaises(ZContractError):
-            zbp.evaluate_a7(covs, partial, declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+            zbp.evaluate_a7(covs, partial, build_path=_BP, declared_K=[0, 1], c_scale=scale, kappa=1e-12, scale_kind=_SK)
 
 
 class TestTheResidueIsReal(unittest.TestCase):
@@ -445,7 +458,7 @@ class TestTheResidueIsReal(unittest.TestCase):
         self.assertTrue(np.all(q0 > 0.0), f"cohort precondition: q0 must be positive, got {q0}")
         self.assertTrue(np.all(q0 < 1e-14), f"and round-off small, got {q0}")
 
-        refused = zbp.evaluate_a7(covs, U, declared_K=[0, 1], c_scale=scale, kappa=None)
+        refused = zbp.evaluate_a7(covs, U, build_path=_BP, declared_K=[0, 1], c_scale=scale, kappa=None)
         self.assertEqual(refused["state"], "KAPPA_UNDECLARED")
         self.assertIsNone(refused["s_proj"])
 
@@ -456,7 +469,7 @@ class TestTheResidueIsReal(unittest.TestCase):
     def test_and_the_guard_admits_it_once_kappa_is_declared(self):
         """The other direction: with `kappa` declared, the same operand is REFUSED by name."""
         covs, U, scale = self._roundoff_positive_cohort()
-        out = zbp.evaluate_a7(covs, U, declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+        out = zbp.evaluate_a7(covs, U, build_path=_BP, declared_K=[0, 1], c_scale=scale, kappa=1e-12, scale_kind=_SK)
         self.assertEqual(out["state"], "DEGENERATE_FUNCTIONAL")
         self.assertEqual(out["detail"]["functionals"], [0, 1])
         self.assertIsNone(out["s_proj"])
@@ -498,7 +511,8 @@ class TestTheTwoSubstantiveRefusals(unittest.TestCase):
 
     def test_kappa_validity(self):
         for bad in (0.0, -1e-12, float("inf"), float("nan")):
-            _fires("kappa_invalid", zbp.classify_baseline_degeneracy, [1.0], 1.0, bad, [1.0])
+            _fires("kappa_invalid", zbp.classify_baseline_degeneracy, [1.0], 1.0, bad, [1.0],
+                   "lambda_max")
 
 
 class TestEnrolmentIsNotManual(unittest.TestCase):
@@ -528,7 +542,7 @@ class TestEnrolmentIsNotManual(unittest.TestCase):
         self.assertGreaterEqual(len(points), 18,
                                 f"expected >=18 refusal points, found {len(points)}")
         # the claim this suite may make, scoped to what it demonstrates
-        self.assertEqual(len(DETECTORS), 36,
+        self.assertEqual(len(DETECTORS), 43,
                          "DETECTORS must equal the demonstrated set; update both together")
         # ⚠ THESE ARE DIFFERENT SETS AND THE COUNTS MATCHING IS A COINCIDENCE. `points` are
         # `require`/`raise` sites in the module; `DETECTORS` are demonstrated behaviours, some of
@@ -747,7 +761,9 @@ class TestRateFunctionalsAreWidthWeighted(unittest.TestCase):
         M = np.eye(n)
         try:
             zbp.evaluate_a7({0: C0, 1: 1.1 * C0}, M, extra_functionals=np.ones((1, n)),
-                            declared_K=[0, 1], c_scale=1.0, kappa=1e-12)
+                            build_path=_BP, declared_K=[0, 1],
+                            c_scale=float(np.linalg.eigvalsh(C0).max()),
+                            kappa=1e-12, scale_kind="lambda_max")
         except ZContractError as exc:
             self.assertIn("DIFFERENTIAL DENSITIES", str(exc))
             self.assertIn("WIDTH-WEIGHTED", str(exc))
@@ -839,7 +855,7 @@ class TestRateFunctionalsAreWidthWeighted(unittest.TestCase):
         A = rng.normal(size=(n, n))
         C0 = A @ A.T + np.eye(n)
         out = zbp.evaluate_a7({0: C0, 1: 1.1 * C0}, np.eye(n), extra_functionals=[full, disp],
-                              declared_K=[0, 1], c_scale=1.0, kappa=1e-12)
+                              build_path=_BP, declared_K=[0, 1], c_scale=float(np.linalg.eigvalsh(C0).max()), kappa=1e-12, scale_kind=_SK)
         self.assertEqual(out["state"], "GRADED")
 
     def test_duplicate_names_refused(self):
@@ -847,7 +863,7 @@ class TestRateFunctionalsAreWidthWeighted(unittest.TestCase):
         rng = np.random.default_rng(9)
         C0 = np.eye(7) * 2.0
         _fires("duplicate_rate_names", zbp.evaluate_a7, {0: C0, 1: 1.1 * C0}, np.eye(7),
-               extra_functionals=[f, f], declared_K=[0, 1], c_scale=1.0, kappa=1e-12)
+               extra_functionals=[f, f], build_path=_BP, declared_K=[0, 1], c_scale=1.0, kappa=1e-12)
 
     def test_a_rate_functional_must_declare_its_span_explicitly(self):
         _fires("span_not_declared", zbp.RateFunctional, "x", np.ones(3), None)
@@ -881,7 +897,7 @@ class TestTheGuardIsScaleInvariantLikeTheStatistic(unittest.TestCase):
         for s in (1, 10, 100, 1e6):
             q, nsq, scale = self._case(s)
             verdicts.add(zbp.classify_baseline_degeneracy(
-                q, c_scale=scale, kappa=1e-12, u_norms_sq=nsq)["state"])
+                q, c_scale=scale, kappa=1e-12, u_norms_sq=nsq, scale_kind="lambda_max")["state"])
         self.assertEqual(len(verdicts), 1,
                          f"the verdict moved with the units: {verdicts} -- that is the defect")
 
@@ -897,14 +913,15 @@ class TestTheGuardIsScaleInvariantLikeTheStatistic(unittest.TestCase):
         scale = 1.0
         q = np.array([1e-30, 0.5])          # both strictly positive
         nsq = np.array([1.0, 1.0])
-        out = zbp.classify_baseline_degeneracy(q, c_scale=scale, kappa=1e-12, u_norms_sq=nsq)
+        out = zbp.classify_baseline_degeneracy(q, c_scale=scale, kappa=1e-12, u_norms_sq=nsq, scale_kind="lambda_max")
         self.assertEqual(out["predicate"], "rayleigh")
         self.assertEqual(out["functionals"], [0], "only the small-quotient functional is degenerate")
         self.assertIsNotNone(out["rayleigh"])
 
     def test_the_structural_branch_names_itself_too(self):
         out = zbp.classify_baseline_degeneracy(np.array([0.0]), c_scale=1.0, kappa=1e-12,
-                                               u_norms_sq=np.array([1.0]))
+                                               u_norms_sq=np.array([1.0]),
+                                               scale_kind="lambda_max")
         self.assertEqual(out["predicate"], "structural",
                          "which test decided is what a receipt needs")
 
@@ -919,7 +936,8 @@ class TestTheGuardIsScaleInvariantLikeTheStatistic(unittest.TestCase):
         ]
         keysets = []
         for q, sc, k, nsq in cases:
-            out = zbp.classify_baseline_degeneracy(q, c_scale=sc, kappa=k, u_norms_sq=nsq)
+            out = zbp.classify_baseline_degeneracy(q, c_scale=sc, kappa=k, u_norms_sq=nsq,
+                                                   scale_kind="lambda_max")
             keysets.append(frozenset(out))
             self.assertIn("predicate", out)
         self.assertEqual(len(set(keysets)), 1,
@@ -936,7 +954,7 @@ class TestTheGuardIsScaleInvariantLikeTheStatistic(unittest.TestCase):
             q = np.einsum("ij,jk,ik->i", U, C0, U)
             nsq = np.einsum("ij,ij->i", U, U)
             self.assertEqual(zbp.classify_baseline_degeneracy(
-                q, c_scale=scale, kappa=1e-12, u_norms_sq=nsq)["state"], "RESOLVED")
+                q, c_scale=scale, kappa=1e-12, u_norms_sq=nsq, scale_kind="lambda_max")["state"], "RESOLVED")
 
 
 class TestTheNarrowingTravelsWithTheGrade(unittest.TestCase):
@@ -996,7 +1014,7 @@ class TestTheNarrowingTravelsWithTheGrade(unittest.TestCase):
     def test_it_travels_on_a_GRADED_outcome(self):
         covs, M, scale = self._case()
         bp = zbp.BuildPath(member_offset=3, block_source="SHARED_DIGEST_BOUND", **self.S)
-        out = zbp.evaluate_a7(covs, M, declared_K=[0, 1], c_scale=scale, kappa=1e-12,
+        out = zbp.evaluate_a7(covs, M, declared_K=[0, 1], c_scale=scale, kappa=1e-12, scale_kind=_SK,
                               build_path=bp)
         self.assertEqual(out["state"], "GRADED")
         self.assertIsNotNone(out["scope_statement"])
@@ -1021,12 +1039,127 @@ class TestTheNarrowingTravelsWithTheGrade(unittest.TestCase):
             self.assertNotIn(forbidden, params)
         FIRED.add("scope_not_caller_assertable")
 
-    def test_without_a_build_path_the_key_is_still_present(self):
-        """Uniform key set -- the absence-is-not-admissible lesson, applied pre-emptively here."""
+    def test_the_old_no_build_path_behaviour_is_GONE(self):
+        """⚠ THIS TEST PREVIOUSLY ENCODED THE DEFECT. It asserted that omitting `build_path` gave
+        a present key with a `None` value -- which was rev. 2's residual 2: a graded verdict with
+        no conditionality attached. A test can pin a bug as firmly as it pins a fix, and this one
+        did. It now asserts the opposite: omission is refused outright."""
         covs, M, scale = self._case()
-        out = zbp.evaluate_a7(covs, M, declared_K=[0, 1], c_scale=scale, kappa=1e-12)
-        self.assertIn("scope_statement", out)
-        self.assertIsNone(out["scope_statement"])
+        with self.assertRaises(TypeError):
+            zbp.evaluate_a7(covs, M, declared_K=[0, 1], c_scale=scale, kappa=1e-12,
+                            scale_kind=_SK)
+
+
+class TestTheScopeIsNotSuppressibleByOmission(unittest.TestCase):
+    """⚠ RESIDUAL 2. Rev. 2 gave `build_path` a default of `None`, so `scope` was `None` whenever a
+    caller omitted it -- a fully formed `state="GRADED"` verdict with `scope_statement: None`, a
+    PASS with no conditionality attached. **Suppression by omission needs no positive act, so it is
+    EASIER than a flag, not harder.**
+
+    ⚠ And the relaying lane verified the PRODUCER and asserted a property of the SYSTEM: it checked
+    that `conditional_scope_statement` has no suppression parameter. The channel was the CALL SITE.
+
+    THE CORRECT PATTERN WAS ALREADY IN THIS FILE: `kappa` is required, and declared-without-
+    `u_norms_sq` REFUSES. One optional argument whose absence changes the result's meaning refused;
+    the other defaulted and graded. An internal inconsistency, not a missing idea.
+    """
+
+    def _case(self):
+        rng = np.random.default_rng(5)
+        n = 12
+        A = rng.normal(size=(n, n))
+        C0 = A @ A.T + np.eye(n)
+        M = np.zeros((3, n))
+        M[0, :4] = 1.0
+        M[1, 4:8] = 1.0
+        M[2, 8:] = 1.0
+        return {0: C0, 1: 1.1 * C0}, M, float(np.linalg.eigvalsh(C0).max())
+
+    def test_build_path_is_REQUIRED_like_kappa(self):
+        import inspect
+        params = inspect.signature(zbp.evaluate_a7).parameters
+        self.assertIs(params["build_path"].default, inspect._empty,
+                      "an argument whose absence changes the verdict's meaning must be required")
+        self.assertIs(params["kappa"].default, inspect._empty, "the pattern it follows")
+
+    def test_omitting_it_is_a_TypeError_not_a_silent_None(self):
+        covs, M, scale = self._case()
+        with self.assertRaises(TypeError):
+            zbp.evaluate_a7(covs, M, declared_K=[0, 1], c_scale=scale, kappa=1e-12,
+                            scale_kind="lambda_max")
+        FIRED.add("build_path_required")
+
+    def test_passing_None_refuses(self):
+        covs, M, scale = self._case()
+        _fires("build_path_none_refused", zbp.evaluate_a7, covs, M, build_path=None,
+               declared_K=[0, 1], c_scale=scale, kappa=1e-12, scale_kind="lambda_max")
+
+    def test_a_NON_MEMBER_path_refuses_because_A7_grades_across_members(self):
+        covs, M, scale = self._case()
+        nonmem = zbp.BuildPath(member_offset=None, block_source="PER_MEMBER")
+        _fires("build_path_nonmember_refused", zbp.evaluate_a7, covs, M, build_path=nonmem,
+               declared_K=[0, 1], c_scale=scale, kappa=1e-12, scale_kind="lambda_max")
+
+    def test_no_reachable_graded_outcome_lacks_a_scope_statement(self):
+        """The property rev. 2 claimed and did not have."""
+        covs, M, scale = self._case()
+        out = zbp.evaluate_a7(covs, M, build_path=_BP, declared_K=[0, 1], c_scale=scale,
+                              kappa=1e-12, scale_kind="lambda_max")
+        self.assertEqual(out["state"], "GRADED")
+        self.assertIsNotNone(out["scope_statement"])
+
+
+class TestTheScaleIsPinnedToWhatTheFormulaNames(unittest.TestCase):
+    """⚠ RESIDUAL 1. B.1 names `κ · λ_max(C_0)`; rev. 2 validated only finite-and-positive, and its
+    docstring said *"e.g. its largest eigenvalue"* -- **"e.g.", not "must be."** A caller passing
+    `trace(C_0)` shifts the predicate by up to the RANK (~265), or the DIMENSION (10,694) in the
+    degenerate case. **The unit-dependence finding surviving in the SCALE rather than the
+    functional** -- and it matters more now that B.2's value awaits a ratio measured AGAINST
+    `λ_max`.
+    """
+
+    def _c0(self):
+        rng = np.random.default_rng(7)
+        n = 10
+        A = rng.normal(size=(n, n))
+        return A @ A.T + np.eye(n)
+
+    def test_the_kind_must_be_DECLARED_and_has_no_default(self):
+        C0 = self._c0()
+        q = np.array([1.0]); nsq = np.array([1.0])
+        _fires("scale_kind_undeclared", zbp.classify_baseline_degeneracy,
+               q, float(np.linalg.eigvalsh(C0).max()), 1e-12, nsq)
+
+    def test_trace_is_REFUSED_by_name(self):
+        C0 = self._c0()
+        q = np.array([1.0]); nsq = np.array([1.0])
+        _fires("scale_kind_trace_refused", zbp.classify_baseline_degeneracy,
+               q, float(np.trace(C0)), 1e-12, nsq, "trace")
+
+    def test_the_PSD_bounds_catch_a_gross_substitution(self):
+        """⚠ A BOUND CHECK, NOT A VERIFICATION, and the difference is stated in the code:
+        `max(diag) <= λ_max <= trace` for a PSD operand. It cannot prove the value IS `λ_max`."""
+        C0 = self._c0()
+        q = np.array([1.0]); nsq = np.array([1.0])
+        dmax, tr = float(np.max(np.diag(C0))), float(np.trace(C0))
+        _fires("scale_below_diag_max", zbp.classify_baseline_degeneracy,
+               q, dmax * 0.5, 1e-12, nsq, "lambda_max", dmax, tr)
+        _fires("scale_above_trace", zbp.classify_baseline_degeneracy,
+               q, tr * 2.0, 1e-12, nsq, "lambda_max", dmax, tr)
+
+    def test_the_scale_and_its_kind_are_CARRIED_in_the_outcome(self):
+        """So a receipt records what was used rather than what a document said would be."""
+        C0 = self._c0()
+        lam = float(np.linalg.eigvalsh(C0).max())
+        out = zbp.classify_baseline_degeneracy(np.array([1.0]), lam, 1e-12, np.array([1.0]),
+                                               "lambda_max")
+        self.assertEqual(out["scale_kind"], "lambda_max")
+        self.assertAlmostEqual(out["c_scale"], lam)
+
+    def test_kind_is_not_required_when_kappa_is_withheld(self):
+        """Nothing is graded then, so there is no predicate to mis-scale."""
+        out = zbp.classify_baseline_degeneracy(np.array([1.0]), 1.0, None, np.array([1.0]))
+        self.assertEqual(out["state"], "KAPPA_UNDECLARED")
 
 
 def tearDownModule():
