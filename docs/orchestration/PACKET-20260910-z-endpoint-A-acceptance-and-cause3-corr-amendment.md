@@ -1160,7 +1160,24 @@ which is exactly what `z_assembly` already builds:
 Let **`f_min,i`** = the **smallest non-zero** component's share of that bin's released **variance**.
 Removing that component changes the **bar** by `1 − sqrt(1 − f_min,i)` exactly. Then:
 
-> ### `δ_proj  =  min over declared functionals i of  [ 1 − sqrt(1 − f_min,i) ]`
+> ### ~~`δ_proj  =  min over declared functionals i of  [ 1 − sqrt(1 − f_min,i) ]`~~
+>
+> ## ⚠⚠ WITHDRAWN 2026-09-11 — JOSEPH DID NOT ADOPT IT, AND THE DERIVATION IS GRANULARITY-DEPENDENT
+>
+> **Measured: the threshold moves `102.6×` on ONE covariance, regrouped only** — splitting the
+> largest component changes nothing, splitting or merging the **smallest** changes everything. So
+> the criterion is a property of the **bookkeeping**, not of the construction.
+> **And the "the grouping is physically meaningful" defence fails on evidence from THIS packet:**
+> §2.1 records that the repo declares the same `C_syst` at **13** (`VERT_BANDS`) and **45**
+> (`analyze_universes_3d`/`_5d` census) components — measured `0.985%` vs `0.280%` on one bin shape.
+> **There is no privileged grouping, so there is no granularity-invariant reading of "the smallest
+> component."**
+> **The claim that the rule FOLLOWS FROM Joseph's statement is withdrawn in full.** His sentence
+> licenses **attribution** to the declared set; it does not make the declaration's **granularity** an
+> accuracy requirement. That step was mine and was not in his words.
+> **Successor — a CHOICE, not a derivation:**
+> `DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md` §item 3, recommending a
+> yardstick pinned to a **named** block (`C_stat`) rather than to a **selector** over the grouping.
 
 **Why the MINIMUM over `i`:** the claim is universally quantified over the named projections, so it
 is falsified at its weakest bin. **Why the SMALLEST component and not the median:** the claim names

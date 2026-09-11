@@ -240,6 +240,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   fails closed on any covariance-touching file a deliverable cites without a pinned
   classification. **The packet's first version declared three globs covering 25% of the tracked
   population**; the instrument exists because that scope statement was not checkable.
+- [`DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md`](DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md)
+  - **DECISION INPUT ONLY — adopts nothing; Joseph's items 1 and 3.** ⚠ **`δ_proj`'s DERIVATION IS
+  WITHDRAWN IN FULL** on his objection: measured, the threshold moves **`102.6×`** on ONE covariance
+  with the total preserved and only the component **grouping** varying, and the dependence is
+  entirely on the granularity of the **tail**. **The "grouping is physically meaningful" defence
+  fails on this repo's own evidence** — the same `C_syst` is declared at **13** (`VERT_BANDS`) and
+  **45** (`analyze_universes` census) components, `0.985%` vs `0.280%`. **His sentence licenses
+  ATTRIBUTION to the declared set; it does not make the declaration's GRANULARITY an accuracy
+  requirement** — that step was the lane's, not his. **The remaining requirement is presented as an
+  explicit CHOICE**, with the one hard constraint the invariance test yields: **a yardstick must be
+  a NAMED object, not a SELECTOR over the grouping.** Recommends **(A) the statistical block
+  `C_stat`'s contribution**, with its weaknesses priced (it is provisional and reused under item 2,
+  and it is a judgement rather than a consequence). **Item 1 proposes FOUR named projections** —
+  `(E_avail,W)`, `E_avail`, `p_T`, `p_∥` — derived from **what the deliverables display**, not from
+  what would pass, with **five exclusions by name**. ⚠ **Its revision column is empty ON PURPOSE:
+  no released projection names its builder and commit** (the assessor's pre-registered F2), and
+  **P4's builder could not be determined at all** — which is live, not formal, because
+  `FINDING-20260910-projection-builders-…` on main records four non-equivalent builders that
+  **diverge on refusal**.
 - [`PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md`](PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md)
   - **DESIGN AND REVIEW ONLY — adopts nothing, declares no boundary, grades nothing; Joseph retains
   approval. Gate 2 remains FAIL, `cause3_corr` remains WITHHELD, cause 3 remains non-passing.**
