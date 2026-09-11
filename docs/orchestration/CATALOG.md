@@ -785,6 +785,23 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`REVIEW-20260911-temp-file-repair-against-T1-T14.md`](REVIEW-20260911-temp-file-repair-against-T1-T14.md)
+  - **VERDICT: 12 of 14 MET, four EXCEEDED; `T9` UNEVIDENCED, `T14` PARTIAL.** Subject `05cf2d00`
+  against the yardstick committed at `e92d4a85` **before the work existed**. Authorizes no launch.
+  `T1` exceeded because the repair is a **property** not an enumeration -- a leading-dot temp name,
+  verified invisible to `glob.glob` for `*`, `*.npz`, `block5d_*.npz`, `*.np[yz]` and to a bash glob.
+  `T4` exceeded **and it did its job**: the first attempt broke publication exactly as predicted,
+  because `np.savez_compressed` appends `.npz` to a NAME but not to a HANDLE (verified), and the
+  completion arm caught it on first run. `T2` exceeded -- real child, `SIGKILL`, fixture precondition
+  asserted. **FINDING F1:** `find_incomplete_writes` returns `[]` for a directory it cannot read, so
+  "could not look" reads as "clean" (demonstrated by `chmod 000`, and again via a dir-wildcard
+  pattern where `check_slab_population` PASSES with a temp present) -- latent, all **18** launcher
+  patterns across three glob-bearing flags are fixed-directory, and Joseph's primary guarantee is
+  unaffected because it rests on the name. **FINDING F2:** two figures the author has withdrawn
+  (`n=74`, `7.7x`) now sit in a production comment; only `8.6389 h` and `1.39x` survive
+  re-measurement. Also **corrects my own record**: the `-X` mechanism I published for the `MaxRSS`
+  zero was not the one that produced it (a JobName filter alone suffices -- step rows are named
+  `batch`), and my reachability flag is **withdrawn** (`10eb1bac` is contained in a remote ref).
 - [`REVIEW-20260911-precursor-delta-10eb1bac.md`](REVIEW-20260911-precursor-delta-10eb1bac.md)
   - **Extends the `P1`-`P18` review's coverage from `8111a951` to `10eb1bac`**, which `a51c6503` did
   NOT cover; the `P1`-`P18` verdict is unchanged (all MET, admission still REFUSES at `558.42`
