@@ -260,6 +260,31 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   lead to the same next action. **And a third state: today it can produce neither outcome**, since
   `κ = None` refuses even healthy baselines. **Hence the sequencing recommendation — the cause-3
   decision is free and prices the most expensive item.**
+- [`DESIGN-20260911-endpoint-B-generator-comparison-test.md`](DESIGN-20260911-endpoint-B-generator-comparison-test.md)
+  - **PROPOSED DESIGN for endpoint B's generator-significance test — nothing adopted, run or
+  authorized; endpoint B remains DEFERRED NOT PASSED and Gate 2 remains FAIL.** ⚠ **Authored by the
+  `z-criteria-owner` lane, which therefore CANNOT assess it** — route to the independent assessor
+  BEFORE any part is implemented. ⚠ **CORRECTS the brief's premise: no fresh generator production
+  is needed** — all four candidates' truth event samples survive on pscratch (plus GENIE+MEC); what
+  is missing is an ND histogrammer. ⚠ **The existing instrument tests the OPPOSITE end of the axis**
+  — `eavail_generator_significance.py` is by its own docstring the *high*-`E_avail` DIS-tail corner,
+  while the manuscript's claim is *low*-`E_avail`. ⚠ **The catch bin is NOT inert: including or
+  excluding it SWAPS which of the two best models is closest** (Tune v1 full-range, GENIE CV
+  catch-dropped), derived from the note's own published numbers and checked against its own stated
+  12–28%. **Three independent constraints all cap the test's dimension** — rank (a proven bound: 42
+  two-point bands give rank 1 each, so 141 is explained by construction), generator MC statistics
+  (8.5% per bin at full grid, comparable to the smallest deficit), and **the uthrow inflation, which
+  is the strongest: a nominal 3σ survives as 1.75σ at `ndf=6` but only 0.73σ at `ndf=36`.** Hence a
+  **1-dof primary test**: the nested 2p2h-strength fit on the GENIE CV / GENIE+MEC pair, the only
+  nested and target-matched pair. **Normalization treated as three options with standalone
+  verdicts** (absolute REJECTED as primary for lack of discrimination; area-normalized ACCEPTED;
+  profiled ACCEPTED only with a derived penalty width — `__Normalization_flat`'s σ=0.014 cannot
+  serve). ⚠ **Tune v1 IS the unfolding prior and no assembly term covers the pull toward it**; the
+  prior-dependence measurement costs **0.9–1.4% of the endpoint-A pilot**. **Multiplicity priced:**
+  the design's own axes span 120 candidate significances, so the pre-declared primary set must be
+  ≤4. ⚠ **One of its own arguments was WITHDRAWN during review and the withdrawal recorded in
+  place** — an absence claim over 22 of 45 band names, void rather than weak because `R = 27` is
+  derived and never listed.
 - [`AMENDMENT-20260911-cause3-conditional-scope-and-kappa.md`](AMENDMENT-20260911-cause3-conditional-scope-and-kappa.md)
   - **PROPOSED amendment — adopts nothing; cause 3 remains NON-PASSING and all three cause-3
   boundaries remain WITHHELD.** Part A answers the standing `z_contract.py:231-235` objection, and
