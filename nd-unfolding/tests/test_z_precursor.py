@@ -565,35 +565,269 @@ class ThePopulationIsCheckedByIDENTITYinBothDirections(ProducerFixture):
             self.run_combine(expected_block_files=",".join(self.block_names))
         self.assertIn("ran before the population was validated", str(reached.exception))
 
-    def test_an_INTERRUPTED_WRITE_is_reported_as_ITSELF_not_as_a_stale_file(self):
-        """A LIVE HAZARD FOUND BY A TEST, NOT BY READING: `_atomic_savez`'s temporary name falls
-        INSIDE the consumers' own globs.
+    # ---- JOSEPH'S THREE DIRECTIONS, 2026-09-11 -------------------------------------------------
+    # "incomplete outputs must never match the consumer's input selection. Preserve atomic
+    #  publication of completed products, and test interrupted writes, stale temporary files, and
+    #  successful completion."
+    #
+    # All three below can fail, and the third is the one that catches a repair which fixes
+    # SELECTION by breaking PUBLICATION -- mutation-controlled in
+    # `test_MUTATION_breaking_publication_is_caught_by_the_completion_arm`.
 
-        It writes `<product>.<random>.tmp.npz`, so `block5d_knobs.npz.abc.tmp.npz` matches
-        `--block-slabs 'block5d_*.npz'`. Its `except` branch unlinks it, but a WALL-CLOCK KILL runs
-        no handler -- and `sbatch_uthrow_run_5d_fast.sh:14` claims a wall-kill "re-runs the whole
-        task cleanly" on the strength of this function. True of the PRODUCT; the leftover temp is
-        then a glob member the combine would try to `np.load`.
+    def test_ARM1_an_INTERRUPTED_write_cannot_be_SELECTED(self):
+        """Joseph's direction 1. A temp left by a KILLED process, manufactured not asserted.
 
-        Reported as an incomplete write rather than as UNDECLARED, because they call for opposite
-        actions: re-run the producing task versus find out whose files these are. One refusal
-        carrying both would have two meanings and no way to tell which.
+        `sys.path[0]` and process death are both properties of an interpreter's own lifetime, so
+        the only honest fixture is a CHILD that really dies mid-write. SIGKILL, so no handler of
+        any kind runs -- which is the whole point: `_atomic_savez`'s `except` branch would have
+        cleaned up, and a wall-clock kill does not give it the chance.
         """
-        temp = (self.work / "blocks" /
-                f"block5d_knobs.npz.abc{U.IN_PROGRESS_SUFFIX}")
-        temp.write_bytes(b"partial")
-        self.assertIn(str(temp), __import__("glob").glob(self.block_glob),
-                      "the premise: the temp name must MATCH the production glob, or this hazard "
-                      "is not real and the exclusion below is unnecessary")
+        target = self.work / "arm1"
+        target.mkdir(parents=True, exist_ok=True)
+        script = target / "victim.py"
+        # THE STAND-IN TAKES THE HANDLE, BECAUSE THAT IS THE REAL INTERFACE. `_atomic_savez` passes
+        # an open FILE OBJECT to `savez_compressed` (it must -- passing a name makes numpy append
+        # `.npz`), so a stand-in taking a path would be testing an interface the producer does not
+        # use. My first version took a path and failed for that reason, which is the fixture
+        # disagreeing with the producer rather than with the world.
+        script.write_text(
+            "import os, signal, sys\n"
+            f"sys.path.insert(0, {str(ND)!r})\n"
+            "import numpy as np, unified_throw_cov as U\n"
+            "def die(fh, **kw):\n"
+            "    fh.write(b'PARTIAL'); fh.flush(); os.fsync(fh.fileno())\n"
+            "    sys.stderr.write('wrote-partial\\n'); sys.stderr.flush()\n"
+            "    os.kill(os.getpid(), signal.SIGKILL)\n"
+            "U.np.savez_compressed = die\n"
+            f"U._atomic_savez({str(target / 'block5d_knobs.npz')!r}, xs=np.arange(3))\n")
+        proc = subprocess.run([sys.executable, str(script)], capture_output=True, text=True)
+        self.assertIn("wrote-partial", proc.stderr,
+                      "fixture precondition: the child must have written a partial temp")
+        self.assertNotEqual(proc.returncode, 0, "the child must have died, not returned")
+
+        leftovers = U.find_incomplete_writes(target)
+        self.assertEqual(len(leftovers), 1,
+                         f"the kill must leave exactly one incomplete write, got {leftovers}")
+        self.assertFalse((target / "block5d_knobs.npz").exists(),
+                         "and NO product: the rename never happened")
+
+        # THE PROPERTY JOSEPH STATED, over every pattern a consumer could plausibly write.
+        for pattern in ("block5d_*.npz", "*.npz", "*.np[yz]", "*"):
+            with self.subTest(pattern=pattern):
+                selected = __import__("glob").glob(str(target / pattern))
+                self.assertEqual([p for p in selected if U.is_incomplete_write(p)], [],
+                                 f"an interrupted write was SELECTED by {pattern!r}")
+        # And the shell agrees, which matters because a future consumer may glob in bash.
+        shell = subprocess.run(["bash", "-c", f'cd {target!s} && ls block5d_*.npz 2>/dev/null'],
+                               capture_output=True, text=True)
+        self.assertEqual(shell.stdout.strip(), "",
+                         "a shell glob selected the interrupted write")
+        # The DIRECTED scan still reports it, as ITSELF.
         with self.assertRaises(SystemExit) as caught:
-            U.check_slab_population(self.block_glob, self.block_names, "block")
+            U.check_slab_population(str(target / "block5d_*.npz"),
+                                    ["block5d_knobs.npz"], "block")
         self.assertIn("INCOMPLETE write", str(caught.exception))
-        self.assertIn(temp.name, str(caught.exception))
         self.assertNotIn("UNDECLARED", str(caught.exception))
-        temp.unlink()
-        self.assertEqual(
-            U.check_slab_population(self.block_glob, self.block_names, "block")["n_expected"],
-            len(self.block_names), "POSITIVE CONTROL: removing the temp restores a clean pass")
+
+    def test_ARM2_a_STALE_temp_from_an_EARLIER_run_is_present_at_selection_time(self):
+        """Joseph's direction 2, in BOTH eras, because the cluster holds products from both.
+
+        A pre-repair temp is glob-VISIBLE, so it is the case that can still be selected by an
+        UNREPAIRED consumer -- which is why the legacy spelling is kept as a live predicate rather
+        than deleted as superseded.
+        """
+        target = self.work / "arm2"
+        target.mkdir(parents=True, exist_ok=True)
+        for name in ("block5d_knobs.npz", "block5d_flux_1.npz"):
+            U._atomic_savez(str(target / name), xs=np.arange(3))
+        declared = ["block5d_knobs.npz", "block5d_flux_1.npz"]
+
+        stale_new = target / U.incomplete_name("block5d_flux_9.npz", "deadbeef")
+        stale_old = target / f"block5d_flux_9.npz.cafe{U.LEGACY_IN_PROGRESS_SUFFIX}"
+        for stale in (stale_new, stale_old):
+            with self.subTest(stale=stale.name):
+                stale.write_bytes(b"stale from an earlier run")
+                self.assertTrue(U.is_incomplete_write(stale.name))
+                with self.assertRaises(SystemExit) as caught:
+                    U.check_slab_population(str(target / "block5d_*.npz"), declared, "block")
+                self.assertIn("INCOMPLETE write", str(caught.exception))
+                self.assertIn(stale.name, str(caught.exception))
+                stale.unlink()
+
+        # THE ERA IS NAMED, so a reader can tell today's kill from a June leftover.
+        stale_old.write_bytes(b"x")
+        self.addCleanup(stale_old.unlink)
+        with self.assertRaises(SystemExit) as caught:
+            U.check_slab_population(str(target / "block5d_*.npz"), declared, "block")
+        self.assertIn("1 pre-repair", str(caught.exception))
+        self.assertIn("0 post-repair", str(caught.exception))
+        # ...and ONLY the legacy one is glob-visible, which is the asymmetry that justifies keeping
+        # the legacy predicate at all.
+        visible = __import__("glob").glob(str(target / "block5d_*.npz"))
+        self.assertIn(stale_old.name, [os.path.basename(v) for v in visible])
+        stale_new.write_bytes(b"x")
+        self.addCleanup(stale_new.unlink)
+        visible = [os.path.basename(v) for v in
+                   __import__("glob").glob(str(target / "block5d_*.npz"))]
+        self.assertNotIn(stale_new.name, visible)
+
+    def test_ARM3_SUCCESSFUL_COMPLETION_publishes_atomically_and_IS_selected(self):
+        """Joseph's direction 3, the positive control, and the arm that catches a repair which
+        fixes selection by BREAKING publication.
+
+        A guard that made incomplete writes unselectable by never renaming would satisfy arms 1
+        and 2 perfectly and lose every product.
+        """
+        target = self.work / "arm3"
+        names = ["block5d_knobs.npz"] + [f"block5d_flux_{t}.npz" for t in range(1, 4)]
+        for name in names:
+            U._atomic_savez(str(target / name), xs=np.arange(5), seed=np.int64(7))
+
+        # PUBLISHED: present, readable, complete, and with its content intact.
+        for name in names:
+            with np.load(target / name) as slab:
+                np.testing.assert_array_equal(slab["xs"], np.arange(5))
+                self.assertEqual(int(slab["seed"]), 7)
+
+        # NOTHING LEFT BEHIND -- the completed path cleans up after itself.
+        self.assertEqual(U.find_incomplete_writes(target), [])
+        self.assertEqual(sorted(p.name for p in target.iterdir()), sorted(names),
+                         "the directory holds exactly the published products")
+
+        # AND SELECTED: the whole point of the repair is that this still works.
+        selected = sorted(os.path.basename(p) for p in
+                          __import__("glob").glob(str(target / "block5d_*.npz")))
+        self.assertEqual(selected, sorted(names),
+                         "a completed product must still be SELECTED by the consumer's glob")
+        report = U.check_slab_population(str(target / "block5d_*.npz"), names, "block")
+        self.assertEqual(report["n_expected"], len(names))
+        self.assertEqual(report["n_found"], len(names))
+
+    def test_MUTATION_the_PRE_REPAIR_naming_makes_ARMS_1_AND_2_FAIL(self):
+        """POWER for arms 1 and 2. Without this, "an incomplete write is unselectable" is an
+        assertion about code nobody has shown can be selectable.
+
+        The two naming constants are set back to the PRE-REPAIR shape -- no leading dot, `.npz`
+        suffix -- which is exactly `<product>.<token>.tmp.npz`. `_atomic_savez` reads both at call
+        time, so the temp it produces is the old one, and the selection property arms 1 and 2
+        assert must then be FALSE.
+        """
+        target = self.work / "power"
+        target.mkdir(parents=True, exist_ok=True)
+        saved = (U.INCOMPLETE_PREFIX, U.INCOMPLETE_SUFFIX)
+        U.INCOMPLETE_PREFIX, U.INCOMPLETE_SUFFIX = "", ".tmp.npz"
+        try:
+            # Publication removed so the temp SURVIVES, which is the interrupted-write state.
+            real_replace = U.os.replace
+            U.os.replace = lambda *a, **k: None
+            try:
+                U._atomic_savez(str(target / "block5d_knobs.npz"), xs=np.arange(3))
+            finally:
+                U.os.replace = real_replace
+            leftovers = sorted(p.name for p in target.iterdir())
+            self.assertEqual(len(leftovers), 1, f"expected one pre-repair temp, got {leftovers}")
+            self.assertTrue(leftovers[0].endswith(".tmp.npz"))
+            self.assertFalse(leftovers[0].startswith("."))
+            # ARM 1's AND ARM 2's CENTRAL PROPERTY, NOW FALSE: the temp IS selected.
+            selected = [os.path.basename(q) for q in
+                        __import__("glob").glob(str(target / "block5d_*.npz"))]
+            self.assertEqual(selected, leftovers,
+                             "under the pre-repair naming the incomplete write MUST be selectable "
+                             "-- if it is not, arms 1 and 2 are asserting something that was never "
+                             "capable of being false and they prove nothing")
+            shell = subprocess.run(
+                ["bash", "-c", f'cd {target!s} && ls block5d_*.npz 2>/dev/null'],
+                capture_output=True, text=True)
+            self.assertNotEqual(shell.stdout.strip(), "",
+                                "and a shell glob selects it too, which is the form the launchers "
+                                "would have used")
+        finally:
+            U.INCOMPLETE_PREFIX, U.INCOMPLETE_SUFFIX = saved
+        # POSITIVE CONTROL ON THE RESTORE: the constants are back, so a fresh write is unselectable
+        # again. A mutation harness that leaked its mutation would silently weaken every later test.
+        fresh = self.work / "power_restored"
+        fresh.mkdir(parents=True, exist_ok=True)
+        real_replace = U.os.replace
+        U.os.replace = lambda *a, **k: None
+        try:
+            U._atomic_savez(str(fresh / "block5d_knobs.npz"), xs=np.arange(3))
+        finally:
+            U.os.replace = real_replace
+        self.assertEqual(__import__("glob").glob(str(fresh / "block5d_*.npz")), [])
+
+    def test_the_LAUNCHERS_wall_kill_CLAIM_is_now_true_in_the_part_it_asserts(self):
+        """`sbatch_uthrow_run_5d_fast.sh:14`: *"Atomic-save (os.replace) means a wall-kill re-runs
+        the whole task cleanly."* The coordinator asked whether the repair makes that true. Each
+        clause is checked rather than argued, and the one that is still false is named.
+
+        TRUE (1): the product is never partial -- one `os.replace` in the destination directory.
+        TRUE (2): an incomplete write is never SELECTED. This clause is what the repair bought; it
+                  was FALSE before, and the claim asserted it without warrant.
+        TRUE (3): a re-run reproduces the full slab, because `do_throws` rewrites the WHOLE slab on
+                  every throw (`:594-596`), so a short slab is overwritten rather than merged.
+        FALSE (4): "cleanly" does not extend to litter. SIGKILL runs no handler, so one temp
+                  survives per kill, and the repair made it invisible to `ls *.npz`. Measured
+                  sizes: a throw slab is 372 086 B and a block slab 464 850 B on the cluster, so
+                  the litter is sub-MB per kill -- real, small, and findable only by
+                  `find_incomplete_writes`.
+        """
+        target = self.work / "claim"
+        target.mkdir(parents=True, exist_ok=True)
+        product = target / "uthrow5d_slab_0.npz"
+
+        # (3) A SHORT SLAB IS OVERWRITTEN, NOT MERGED. Two throws, then the full four.
+        U._atomic_savez(str(product), xs=np.zeros((2, NBIN)), throws=np.arange(2))
+        U._atomic_savez(str(product), xs=np.ones((4, NBIN)), throws=np.arange(4))
+        with np.load(product) as slab:
+            self.assertEqual(slab["throws"].tolist(), [0, 1, 2, 3],
+                             "a re-run must REPLACE the short slab, not append to it")
+
+        # (1) + (2) after an interrupted write beside an already-published product.
+        orphan = target / U.incomplete_name("uthrow5d_slab_0.npz", "killed")
+        orphan.write_bytes(b"PARTIAL")
+        with np.load(product) as slab:
+            self.assertEqual(slab["throws"].tolist(), [0, 1, 2, 3],
+                             "(1) the published product is untouched by the interrupted write")
+        selected = [os.path.basename(q) for q in
+                    __import__("glob").glob(str(target / "uthrow5d_slab_*.npz"))]
+        self.assertEqual(selected, ["uthrow5d_slab_0.npz"],
+                         "(2) only the product is selected; the orphan is not")
+
+        # (4) THE CLAUSE THAT IS STILL FALSE, asserted so the residual cannot be forgotten.
+        self.assertTrue(orphan.exists(),
+                        "(4) nothing removes the orphan -- 'cleanly' does not cover litter")
+        listing = subprocess.run(["bash", "-c", f'cd {target!s} && ls'],
+                                 capture_output=True, text=True)
+        self.assertNotIn(orphan.name, listing.stdout,
+                         "(4) and the repair made it invisible to a plain `ls`, which is a real "
+                         "downside of the repair and the reason the directed scan exists")
+        self.assertEqual(U.find_incomplete_writes(target), [orphan.name],
+                         "the directed scan is the only thing that finds it")
+
+    def test_MUTATION_breaking_publication_is_caught_by_the_completion_arm(self):
+        """POWER for arm 3. Without this, "publication still works" is an assertion about code
+        nobody has shown can fail this way.
+
+        `os.replace` is neutralized, which is exactly the shape of a repair that makes incomplete
+        writes unselectable by never publishing. Arm 3's three properties -- product present,
+        no leftover, product selected -- must all fail.
+        """
+        target = self.work / "mut"
+        target.mkdir(parents=True, exist_ok=True)
+        product = target / "block5d_knobs.npz"
+        real_replace = U.os.replace
+        U.os.replace = lambda *a, **k: None          # publication removed, write still happens
+        try:
+            U._atomic_savez(str(product), xs=np.arange(5))
+        finally:
+            U.os.replace = real_replace
+        self.assertFalse(product.exists(),
+                         "the mutation must reach publication: no product may appear")
+        self.assertEqual(len(U.find_incomplete_writes(target)), 1,
+                         "and the temp must survive, which is what arm 3's leftover check sees")
+        self.assertEqual(__import__("glob").glob(str(target / "block5d_*.npz")), [],
+                         "nothing is selectable, so arm 3's selection check fails too -- three "
+                         "independent properties of arm 3 all break under this mutation")
 
     def test_the_FRESHNESS_check_does_not_read_a_temp_as_a_product(self):
         """The other side of the same hazard, and the direction that refuses a CORRECT run.
@@ -603,7 +837,7 @@ class ThePopulationIsCheckedByIDENTITYinBothDirections(ProducerFixture):
         plan = ZP.namespace_plan(str(self.work / "fresh"), namespace="ns")
         target = Path(plan["arms"]["block"]["dir"])
         target.mkdir(parents=True, exist_ok=True)
-        (target / f"block5d_knobs.npz.abc{U.IN_PROGRESS_SUFFIX}").write_bytes(b"partial")
+        (target / f"block5d_knobs.npz.abc{U.LEGACY_IN_PROGRESS_SUFFIX}").write_bytes(b"partial")
         self.assertTrue(ZP.check_namespace_fresh(plan, ["block"])["fresh"],
                         "an interrupted write is not a product and must not refuse a fresh "
                         "namespace")

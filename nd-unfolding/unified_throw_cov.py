@@ -131,33 +131,110 @@ def _load_bank(bank):
     return d, bands, n_flux
 
 
-#: The in-progress suffix `_atomic_savez` writes beside a slab, named so consumers can EXCLUDE it.
+# ------------------------------------------- INCOMPLETE OUTPUTS ARE UNSELECTABLE BY CONSTRUCTION --
+# JOSEPH, 2026-09-11, authorizing this bounded repair: *"incomplete outputs must never match the
+# consumer's input selection. Preserve atomic publication of completed products, and test
+# interrupted writes, stale temporary files, and successful completion."*
+#
+# THE DEFECT THIS REPLACES. `_atomic_savez` used to name its temp `<product>.<random>.tmp.npz`, so
+# `block5d_knobs.npz.abc.tmp.npz` MATCHED `--block-slabs 'block5d_*.npz'` and the throw equivalent
+# matched the throw glob. Its `except` branch unlinks it, but a WALL-CLOCK KILL runs no handler, so
+# an interrupted write left a file the combine would select and try to `np.load`.
+# AND THE KILL PATH IS LIVE AT THE REAL LIMITS, not only at artificially short ones: the block arm's
+# 12 h ceiling is 1.39x its observed maximum of 8.6389 h over 74 tasks, with a 7.7x runtime spread.
+#
+# TWO INDEPENDENT GUARANTEES, EITHER OF WHICH SUFFICES, because one naming rule with one failure
+# mode is a single point of failure for a property Joseph stated absolutely:
+#
+#   (1) THE LEADING DOT. `glob.glob` and every shell glob refuse to match a leading `.` unless the
+#       PATTERN itself begins with one. So an incomplete write is invisible to `*.npz`,
+#       `block5d_*.npz`, `*.np[yz]` and even `*` -- not merely to the patterns in use today, which
+#       is what makes this a property rather than a list of exceptions.
+#   (2) THE NON-NPZ SUFFIX. A consumer that bypasses globbing -- `os.listdir` plus
+#       `endswith(".npz")` -- is covered by `.partial`, which no npz reader will accept either.
+#
+# WHAT IS DELIBERATELY UNCHANGED: `os.replace(tmp, path)` below, in the SAME directory, so
+# publication of a COMPLETED product stays atomic. A repair that made incomplete writes
+# unselectable by breaking the rename would trade a silent wrong answer for a lost product; the
+# successful-completion arm of the test suite exists to catch exactly that.
+INCOMPLETE_PREFIX = ".mnv-incomplete."
+INCOMPLETE_SUFFIX = ".partial"
+
+#: The PRE-REPAIR temp name, which is glob-VISIBLE and therefore still excluded and reported.
 #:
-#: ⚠ IT FALLS INSIDE THE CONSUMERS' OWN GLOBS, and that is a live hazard rather than a tidiness
-#: point. `_atomic_savez` names its temp file `<product>.<random>.tmp.npz`, so
-#: `block5d_knobs.npz.abc.tmp.npz` MATCHES `--block-slabs 'block5d_*.npz'` and
-#: `uthrow5d_slab_0.npz.abc.tmp.npz` matches the throw glob. The `except` branch below unlinks it,
-#: but a WALL-CLOCK KILL runs no handler -- and `sbatch_uthrow_run_5d_fast.sh:14` states that a
-#: wall-kill "re-runs the whole task cleanly" on the strength of this function. It does for the
-#: PRODUCT; the leftover temp is then a glob member the combine will try to `np.load`.
-#: Exported as a constant so the exclusion is derived from the producer rather than retyped: a
-#: second spelling of this suffix somewhere else could stop matching and nothing would say so.
-IN_PROGRESS_SUFFIX = ".tmp.npz"
+#: ⚠ I FIRST JUSTIFIED THIS BY SAYING A LEGACY TEMP IS "A REACHABLE INPUT TODAY", AND THEN MEASURED
+#: IT: `find` over `uq_5d/` and `bank_uthrow_5d/` on 2026-09-11 returns ZERO files of either naming
+#: era. So that justification was false as written -- my unchecked claim leaned toward the argument
+#: I was making. The predicate is KEPT on the narrower and still-true ground: the pscratch tree runs
+#: a divergent local main, so an UNREPAIRED checkout can still create one, and a leftover would then
+#: be selectable by an unrepaired consumer. Defence against a reachable-in-principle state, not a
+#: response to an observed population. Keeping the two spellings distinct is what lets a consumer
+#: say which era a leftover came from.
+LEGACY_IN_PROGRESS_SUFFIX = ".tmp.npz"
+
+
+def incomplete_name(product_basename, token):
+    """The single source of the unselectable temp name. One spelling, derived by every consumer."""
+    return f"{INCOMPLETE_PREFIX}{product_basename}.{token}{INCOMPLETE_SUFFIX}"
+
+
+def is_incomplete_write(name):
+    """True for a temp of EITHER era. The operand is a basename, never a full path."""
+    base = os.path.basename(name)
+    return (base.startswith(INCOMPLETE_PREFIX) and base.endswith(INCOMPLETE_SUFFIX)) or \
+        base.endswith(LEGACY_IN_PROGRESS_SUFFIX)
+
+
+def find_incomplete_writes(directory):
+    """Every incomplete write in a directory, found by a DIRECTED scan.
+
+    ⚠ DIRECTED, BECAUSE THE REPAIR MADE THEM GLOB-INVISIBLE. Before it, an in-progress temp turned
+    up in the consumer's own glob -- which was the defect, and also, accidentally, how it got
+    reported. Relying on that would mean the diagnostic only worked while the defect existed. So
+    the scan is explicit and the report is deliberate.
+    """
+    try:
+        entries = os.listdir(directory or ".")
+    except OSError:
+        return []
+    return sorted(n for n in entries if is_incomplete_write(n))
 
 
 def _atomic_savez(path, **arrays):
-    """Replace a slab only after the compressed NPZ has closed successfully."""
+    """Replace a slab only after the compressed NPZ has closed successfully.
+
+    The temp is named so that an interrupted write CANNOT be selected as an input; see
+    `INCOMPLETE_PREFIX`. Publication of a completed product is unchanged: one `os.replace` within
+    the destination directory.
+
+    ⚠⚠ THE ARRAYS ARE WRITTEN THROUGH THE OPEN HANDLE, NOT BY NAME, AND THIS IS THE WHOLE REASON
+    THE OLD TEMP NAME ENDED IN `.npz`. `np.savez_compressed(<path not ending in .npz>)` APPENDS
+    `.npz` to what you asked for -- measured: asking for `x.partial` produces `x.partial.npz`. So
+    renaming the temp to `.partial` while still passing a NAME silently wrote the arrays to a
+    fourth filename and `os.replace` then published the EMPTY placeholder `NamedTemporaryFile` had
+    created. Every reader got `EOFError: No data left in file`.
+    That regression was caught by the successful-completion arm of this repair's own test suite, on
+    its first run, which is precisely the failure Joseph named that arm for: a change that makes
+    incomplete writes unselectable by breaking publication. A file OBJECT gets no suffix appended,
+    measured in the same probe, so the name on disk is the name we chose.
+    """
     path = os.path.abspath(os.fspath(path))
     os.makedirs(os.path.dirname(path), exist_ok=True)
     handle = tempfile.NamedTemporaryFile(
-        prefix=os.path.basename(path) + ".", suffix=IN_PROGRESS_SUFFIX,
+        prefix=f"{INCOMPLETE_PREFIX}{os.path.basename(path)}.", suffix=INCOMPLETE_SUFFIX,
         dir=os.path.dirname(path), delete=False)
     tmp = handle.name
-    handle.close()
     try:
-        np.savez_compressed(tmp, **arrays)
+        with handle:
+            np.savez_compressed(handle, **arrays)
+            handle.flush()
+            os.fsync(handle.fileno())
         os.replace(tmp, path)
-    except Exception:
+    # `BaseException`, widened from `Exception` with this repair and inside its subject: a SIGINT
+    # mid-write IS an interrupted write, and under `Exception` it left the temp behind. SIGKILL
+    # still bypasses every handler -- that case is covered by the NAME, not by cleanup, which is
+    # the point of the repair.
+    except BaseException:
         if os.path.exists(tmp):
             os.unlink(tmp)
         raise
@@ -294,20 +371,31 @@ def check_slab_population(pattern, expected_names, label):
             raise SystemExit(f"[FAIL] {label}: expected-file entry {name!r} is not a plain "
                              f"basename. A glob or a path here would make the declaration match "
                              f"whatever is present, which is the absence of a declaration.")
-    # AN IN-PROGRESS TEMP IS REPORTED SEPARATELY, NOT AS AN UNDECLARED MEMBER. `_atomic_savez`'s
-    # temp name falls INSIDE this glob (see `IN_PROGRESS_SUFFIX`), so a wall-killed task leaves one
-    # behind and it would otherwise read as a stale foreign file. It is neither: it is this run's
-    # own incomplete write, and conflating the two would give one refusal two meanings.
+    # AN INCOMPLETE WRITE IS REPORTED SEPARATELY, NOT AS AN UNDECLARED MEMBER -- ONE REFUSAL, ONE
+    # MEANING. They call for opposite actions: re-run the producing task, versus find out whose
+    # files these are.
+    #
+    # THE SCAN IS DIRECTED, NOT TAKEN FROM THE GLOB, AND THAT IS THE REPAIR'S CONSEQUENCE. Post
+    # repair an incomplete write is glob-INVISIBLE by construction, so reading it out of `matched`
+    # would report nothing -- a diagnostic that worked only while the defect existed. A LEGACY temp
+    # (pre-repair, `.tmp.npz`) is still glob-visible and is still caught, which is why both eras are
+    # scanned and why the era is named in the message: it tells the reader whether they are looking
+    # at today's kill or at a leftover from June.
     matched = [os.path.basename(p) for p in glob.glob(pattern)]
-    in_progress = sorted(n for n in matched if n.endswith(IN_PROGRESS_SUFFIX))
-    if in_progress:
+    incomplete = find_incomplete_writes(os.path.dirname(pattern))
+    if incomplete:
+        legacy = [n for n in incomplete if n.endswith(LEGACY_IN_PROGRESS_SUFFIX)]
         raise SystemExit(
-            f"[FAIL] {label}: {len(in_progress)} INCOMPLETE write(s) left in the glob: "
-            f"{in_progress[:6]}{' ...' if len(in_progress) > 6 else ''}\n"
+            f"[FAIL] {label}: {len(incomplete)} INCOMPLETE write(s) in the slab directory: "
+            f"{incomplete[:6]}{' ...' if len(incomplete) > 6 else ''}\n"
             f"  glob: {pattern}\n"
-            f"  These are `_atomic_savez` temporaries, not stale foreign files -- the producer was "
-            f"killed mid-write (a wall-clock kill runs no cleanup handler) and the temp name falls "
-            f"inside this glob. Re-run the producing task; do not delete the declared products.")
+            f"  era: {len(legacy)} pre-repair (`{LEGACY_IN_PROGRESS_SUFFIX}`, glob-VISIBLE and "
+            f"therefore selectable by an unrepaired consumer), "
+            f"{len(incomplete) - len(legacy)} post-repair "
+            f"(`{INCOMPLETE_PREFIX}...{INCOMPLETE_SUFFIX}`, glob-invisible by construction).\n"
+            f"  These are `_atomic_savez` temporaries, not stale foreign files: a producer was "
+            f"killed mid-write and a wall-clock kill runs no cleanup handler. Re-run the producing "
+            f"task; do not delete the declared products.")
     found = set(matched)
     want = set(declared)
     missing, undeclared = sorted(want - found), sorted(found - want)

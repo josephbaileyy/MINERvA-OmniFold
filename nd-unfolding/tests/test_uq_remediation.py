@@ -148,7 +148,16 @@ class UnifiedThrowTests(unittest.TestCase):
             with np.load(out) as slab:
                 np.testing.assert_array_equal(slab["xs"], np.arange(4))
                 self.assertEqual(int(slab["seed"]), 42)
-            self.assertEqual(list(Path(td).glob("*.tmp.npz")), [])
+            # REPOINTED 2026-09-11 WITH THE TEMP-NAME REPAIR, AND IT HAD TO BE. This asserted
+            # `glob("*.tmp.npz") == []`; the repair renamed the temp, so that glob is now empty
+            # WHATEVER the cleanup does and the assertion would have passed vacuously -- a check
+            # neutered by an unrelated change, which is worse than deleting it. The operand is now
+            # the producer's OWN predicate over the whole directory, so it follows any future
+            # rename instead of having to be chased.
+            leftovers = utc.find_incomplete_writes(td)
+            self.assertEqual(leftovers, [], f"a completed write left a temp behind: {leftovers}")
+            self.assertEqual([p.name for p in Path(td).iterdir()], ["slab.npz"],
+                             "the directory must hold the published product and nothing else")
 
     def test_truth_ratio_bank_requires_exact_inventory(self):
         from uq_math import require_truth_ratio_bank

@@ -191,11 +191,16 @@ def check_namespace_fresh(plan, arms=None):
     correct run is not a guard. A directory holding ONE real product IS populated, even though a
     count-based check calling it "nearly empty" would wave it through.
 
-    ⚠ AND THE IN-PROGRESS TEMPORARY IS EXCLUDED, which a test caught rather than a reading did.
-    `unified_throw_cov._atomic_savez` names its temp `<product>.<random>.tmp.npz`, which MATCHES
-    the product glob -- so a wall-killed task leaves a file this check would read as a product and
-    a fresh namespace would be refused. The suffix is IMPORTED from the producer, not retyped:
-    a second spelling could stop matching and nothing would say so.
+    ⚠ AND AN INCOMPLETE WRITE IS EXCLUDED, which a test caught rather than a reading did.
+    Post-repair (Joseph, 2026-09-11) `_atomic_savez` names its temp `.mnv-incomplete.<product>.
+    <token>.partial`, which is glob-INVISIBLE, so it cannot reach `hits` at all. The filter below
+    is still live because a PRE-REPAIR temp is `<product>.<token>.tmp.npz`, which IS glob-visible
+    and would read as a product, refusing a genuinely fresh namespace. NOT because such a file
+    exists now: `find` over `uq_5d/` and `bank_uthrow_5d/` on 2026-09-11 returns ZERO of either
+    era, and the over-claim is corrected at `unified_throw_cov.LEGACY_IN_PROGRESS_SUFFIX`. The
+    ground is that an unrepaired checkout -- the pscratch tree runs a divergent local main -- can
+    still create one. The predicate is IMPORTED from the producer, not retyped: a second spelling
+    could stop matching and nothing would say so.
 
     NO ARM DEFAULTS TO UNCHECKED: `arms=None` means ALL of them. A per-arm opt-in would let the
     caller shrink the sweep to the arms it already believes are fresh.
@@ -209,7 +214,7 @@ def check_namespace_fresh(plan, arms=None):
         require(arm in plan["arms"], f"unknown arm {arm!r} in freshness sweep")
         entry = plan["arms"][arm]
         hits = sorted(p for p in globmod.glob(entry["product_glob"])
-                      if not p.endswith(producer.IN_PROGRESS_SUFFIX))
+                      if not producer.is_incomplete_write(p))
         if hits:
             occupied[arm] = {"dir": entry["dir"], "n": len(hits),
                              "examples": [os.path.basename(h) for h in hits[:6]]}

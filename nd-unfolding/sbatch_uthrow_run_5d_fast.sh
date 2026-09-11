@@ -12,6 +12,21 @@
 # id-layout (4 throws/file) never collides with the interactive layout (1/file);
 # do_combine hard-fails on duplicate throw ids, so the two must stay in separate
 # globs. Atomic-save (os.replace) means a wall-kill re-runs the whole task cleanly.
+# --- THAT CLAIM WAS OVERSTATED UNTIL 2026-09-11, AND IS NOW TRUE IN THREE PARTS OF FOUR ---------
+# It rested on `_atomic_savez`, whose temp used to be named `<product>.<token>.tmp.npz` -- INSIDE
+# this arm's own consumer glob. So a wall-kill left a file the combine would SELECT and try to
+# read, which is the opposite of clean, and the sentence above asserted otherwise without warrant.
+# Joseph authorized the bounded repair on 2026-09-11; the temp is now `.mnv-incomplete.<product>.
+# <token>.partial`, unselectable by construction. Each clause is now checked by a test rather than
+# argued (`tests/test_z_precursor.py`, the wall-kill-claim arm):
+#   TRUE  the published product is never partial -- one rename in the destination directory;
+#   TRUE  an incomplete write is never selected (this is the half the repair bought);
+#   TRUE  a re-run REPLACES a short slab rather than merging, because the whole slab is rewritten
+#         on every throw;
+#   FALSE "cleanly" does not extend to LITTER. A SIGKILL runs no cleanup handler, so one temp
+#         survives per kill -- sub-MB (a throw slab is 372 086 B measured) but never removed, and
+#         the repair also made it invisible to a plain `ls`. Use the directed scan
+#         `unified_throw_cov.find_incomplete_writes` to see it; do not expect a glob to.
 set -eo pipefail
 # --- OI-136 / Joseph's ruling 17, 2026-08-22: TWO ROOTS, BOTH MANDATORY, NEITHER DEFAULTED -------
 # This line used to read `REPO="<the canonical checkout>"` unconditionally, and every `source`, every
