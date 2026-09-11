@@ -191,3 +191,50 @@ bit-identity. That is a declaration `F21` can demand and a reviewer can verify, 
 version was neither.
 
 **Not mine to adopt:** whether `F21` should require it, and in what form. Named and routed.
+
+### R.5b — THE HYPOTHESIS IS SUPPORTED WITH A CONTROL, AND THE THRESHOLD OFFERED WITH IT IS AN ARTIFACT
+
+§R.5a's hypothesis — that the axis-0 reduction is strided so pairwise does not apply — now has a
+positive control, and it holds. But the control as first relayed carried a threshold
+(*"pairwise fires on a flat 1-D array from about `n ≈ 1000`"*) that **does not survive replication.**
+
+**Single draw per `n`, flat 1-D, `np.sum(a) == sum(a.tolist())`:** the relay reported equal at
+`n = 45` and unequal at `1000` and `100000`. **I got the opposite pattern** — unequal at `45`, `127`,
+`128`, `129` and `100000`, **equal** at `300` and `1000`. Non-monotonic, and contradicting the relay.
+
+**Because the comparison is data-dependent. Twenty seeds at fixed `n`:**
+
+| `n` | bit-equal draws |
+|---|---|
+| 45 | 2 / 20 |
+| 300 | 7 / 20 |
+| 1000 | 3 / 20 |
+
+At fixed `n` the outcome is a weighted coin flip, so **a single draw per `n` measures the draw, not
+`n`.** Neither my pattern nor the relayed one was signal, and *"from about `n ≈ 1000`"* is an artifact
+of one sample. **Nobody should carry that threshold.**
+
+**The robust asymmetry, 20 seeds per cell, is the real result:**
+
+| `n` | flat 1-D differs | axis-0 differs |
+|---|---|---|
+| 45 | 13 / 20 | **0 / 20** |
+| 300 | 14 / 20 | **0 / 20** |
+| 1000 | 19 / 20 | **0 / 20** |
+
+**So the hypothesis is supported and the axis-0 zero is a real zero rather than a can't-look zero —
+because the same comparison, on the flat arm, returns non-zero in 46 of 60 draws.** The positive
+control is built into the instrument: one arm must fire and does. The *implementation* reason inside
+numpy remains unread by me and is still labelled unverified; the **behavioural** claim is now
+controlled.
+
+**And this retires the regime confusion cleanly.** `mii_anchor_comparator.py:241-246` concerns a
+**trace over 10,694 contiguous values** — the flat regime, where pairwise demonstrably does fire.
+Band assembly is the **axis-0** regime, where it demonstrably does not. **One docstring, two regimes,
+and the citation was being carried across them** — which is why the precondition narrows to **fixed
+summation order**, order being the only thing that perturbs in the regime that actually applies.
+
+**One more instance of this exchange's single recurring failure, and it is the eighth:** a plausible
+number read off one draw. It was mine to catch only because I ran the same command and got a
+different answer — which is the *weakest* possible reason to re-measure, and the only one available
+when a result looks reasonable.
