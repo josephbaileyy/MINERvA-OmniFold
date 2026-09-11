@@ -1,0 +1,7 @@
+{
+  "representation": "pet-fullevent-fps-v1",
+  "background": "negweight-refined",
+  "target_npy": "/data/certified_target.npy",
+  "target_receipt": "/data/target_receipt.json",
+  "gate3_manifest": "/data/gate3_manifest.json"
+}

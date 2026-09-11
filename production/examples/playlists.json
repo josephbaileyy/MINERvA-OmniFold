@@ -1,0 +1,6 @@
+{
+  "playlists": [
+    {"name": "minervame1A", "data_manifest": "/data/data_minervame1A.txt", "mc_manifest": "/data/mc_minervame1A.txt"},
+    {"name": "minervame1B", "data_manifest": "/data/data_minervame1B.txt", "mc_manifest": "/data/mc_minervame1B.txt"}
+  ]
+}

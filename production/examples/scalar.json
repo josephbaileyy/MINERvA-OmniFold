@@ -1,0 +1,8 @@
+{
+  "features": ["pt", "pparallel"],
+  "selection": "synthetic-cuts-v1",
+  "background": "signal-only",
+  "iterations": 2,
+  "estimator_seed": 42,
+  "split_seed": 0
+}

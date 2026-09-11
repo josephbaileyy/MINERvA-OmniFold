@@ -1,0 +1,6 @@
+{
+  "mode": "root-plan",
+  "event_loop": "/opt/minerva/bin/runEventLoopOmniFold",
+  "flux_file": "/data/baseline_flux/runEventLoopMC_MEFHC.root",
+  "n_nucleons": 3.2353e30
+}
