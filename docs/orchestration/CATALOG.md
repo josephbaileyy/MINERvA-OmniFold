@@ -240,6 +240,26 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   fails closed on any covariance-touching file a deliverable cites without a pinned
   classification. **The packet's first version declared three globs covering 25% of the tracked
   population**; the instrument exists because that scope statement was not checkable.
+- [`COSTMODEL-20260911-z-pilot-and-scan.md`](COSTMODEL-20260911-z-pilot-and-scan.md)
+  - **INPUT to the adoption plan — prices nothing authorized and requests no compute.** ⚠ **Every
+  figure is a `--time` REQUEST, not a measurement** — an upper bound from the launcher walls; the
+  measured `ElapsedRaw` was deliberately not queried and is named as a separate cheap ask.
+  **Two cost groups:** estimator-downstream **304 task-h per member in BOTH branches** (the
+  universe sweep dominates it at 301.5), and the two dominant block terms **372 task-h**, paid
+  **once under (b)** and **per member under (a)**. ⚠ **This CORRECTS the expectation that the
+  (a)/(b) delta is the plan's largest number:** it is `372 × (|K|−1)` — 37% at `|K|=3` — and
+  **never exceeds 2×**, because the sweep is paid either way. `|K|` is named as a SCIENTIFIC choice
+  (precedent 3) and priced at 3/5/10. **The clause-(iii) scan is one decomposition of `C_0`, ≪1
+  task-hour, and ⚠ the grid-resolution requirement costs NOTHING** — retained rank at any `rcond`
+  is a count over the already-computed spectrum, so it is a reporting obligation, not compute.
+  **Gap list CORRECTED rather than confirmed** (A-1 is fixed-by-spec and A-2 conformance, so "all
+  proposed" overstates; P1–P4 are approved and what is open is the builder revision plus the
+  arity/refusal code) with **five additions**, including A-5's undeclared `k` and the missing ND
+  rank-truncation scan. **Pilot classified CONTINGENTLY: ESSENTIAL under (b), OPTIONAL under (a)**
+  — since under (a) it holds fixed the very blocks the declared subject includes, so pass and fail
+  lead to the same next action. **And a third state: today it can produce neither outcome**, since
+  `κ = None` refuses even healthy baselines. **Hence the sequencing recommendation — the cause-3
+  decision is free and prices the most expensive item.**
 - [`AMENDMENT-20260911-cause3-conditional-scope-and-kappa.md`](AMENDMENT-20260911-cause3-conditional-scope-and-kappa.md)
   - **PROPOSED amendment — adopts nothing; cause 3 remains NON-PASSING and all three cause-3
   boundaries remain WITHHELD.** Part A answers the standing `z_contract.py:231-235` objection, and
