@@ -643,6 +643,34 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   skipped** (confirming *"57 OK"* was the COLLECTED count), and the skip is self-documenting at
   `:628` (lightgbm absent, itself a recorded finding). **This lane's own harness failed first** — *"no
   tests ran"* on all three, a can't-look zero from an uncreated worktree, caught by the control.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partV.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partV.md)
+  - **PART V — pin 2 (`cc42cc3e`): Part U's BLOCK is DISCHARGED; new BLOCK on the non-member return
+  contract.** Population now nine with the two replica dirs flagged and costed `DOMINANT`; the third
+  category is warranted; the universal is **derived** at `:177`.
+  **§V.1 PROVES exhaustiveness AND disjointness over the whole finite configuration space** (`member_offset
+  ∈ {None,0,7}` × `block_source`): ✅/✅ in all six. **And supplies a property the code does not check** —
+  `:176`'s `covered` is a **union**, which tests coverage and is blind to overlap, so a component in two
+  categories would still read `covers_all_member_local = True`. Disjointness holds today and nothing in
+  the artifact would notice if it stopped.
+  ⚠ **§V.2 THE BLOCK: the non-member branch (`:153-155`) returns THREE keys where the member branch
+  returns eight**, so on a fully correct non-member path `r.get("covers_all_member_local", False)` →
+  **False** and direct access → **KeyError**. **That is verbatim the failure mode `:171-172` says the
+  `not_used` category exists to prevent** — *"the coverage flag read False for a configuration that is
+  fully specified, which would have looked like the omission it exists to detect"* — surviving one branch
+  over, by **absence** instead of a computed value. Worse on the **majority** path, since non-member is
+  the archive path. The campaign already ruled the shape: Ruling 2's *not applicable* and `F22`'s
+  mandatory not-applicable-versus-satisfied. **Absence is not an admissible option;** which replacement
+  is, is the designer's.
+  **§V.3 credits a silently-failing trap avoided:** `:88` `is_member` is `member_offset is not None`, not
+  truthiness, so **offset `0` is a member** — and `est_seed_offset=0` is a real declared value measured
+  back in Part I. **§V.4** additivity cumulative: eleven `A`, only the three hook-required router files
+  `M`, no production `.py` touched. **§V.5** suites `136` / `46` / `56+1`, control first.
+  **§V.6 takes the offered `U` question:** the map-arm exemption is **correct** (a dense all-ones row
+  cannot orphan a source bin), **but** `:470` applies `declared_exclusions` to **`M` only** while
+  `:471-472` `vstack`s the extras unhandled, and `:307` scopes exclusions to **destination rows** — so a
+  declared destination exclusion does **not** reach a functional dense over source columns. For P2 the
+  `[3,100] GeV` catch bin **is** destination row 7, so an all-ones total rate would include support the
+  displayed projection excludes. Possibly correct; **undeclared is the defect.**
 - [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
   - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
   numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
