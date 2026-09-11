@@ -785,6 +785,30 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`ASSESSMENT-20260911-scoped-letter-readiness.md`](ASSESSMENT-20260911-scoped-letter-readiness.md)
+  - **VERDICT: READY as a manuscript, NOT READY for external review, on ONE evidence fault.** Measured at
+  `origin/main = 6f24fb00`, note repo `d0c3768e`; **no compute launched**, builds local in a disposable
+  worktree. **(1) `build_all.sh` PASSES**, exit `0` — note 90pp / primer 5pp / paper 3pp, **all three
+  confirmed written by the run**, `SELF-TEST` and `RESULT` PASS, `FAIL` count 0, containment `note 10/10`
+  vs `paper 0/10`; toolchain checked first, **no biber/PAR fault**. **(2) The scope claim HOLDS and is
+  stronger than quoted** — `paper_body.tex:145-148` adds *"no superseded or historical covariance is
+  used here"*; exhaustive counts give `p-value`/`chi^{2}`/`chiCombined`/`exclusion`/`Nsigma`/`gbdtFive`
+  all **0**, and *"No significance is assigned"* appears **twice** in captions. **(3) No quarantined
+  value reaches the Letter, and the 3D descriptors are absent from it entirely** — `main_paper.tex`
+  inputs only `values` + `paper_body`, so `sec_3d.tex` is out of closure; the Letter's **8** value macros
+  carry no quarantine marker, agreeing with the build's independent containment. **(4) The standalone
+  note repo is IN SYNC** — 25/25 `.tex`/`.bib` byte-identical, 0 of 89 files absent, and the two heads
+  are **seven seconds apart in one synchronisation operation**; ⚠ **a date-only read would have called it
+  two weeks stale.**
+  ⚠ **(5a) THE BLOCKER — Ruling 1's record is unreachable from `main`.** The Letter's defensibility rests
+  on a deliberate exclusion whose authority is `DECISION-20260910-joseph-b-deferred-…`, committed only on
+  an unmerged lane and therefore in **neither** repository a referee is given. Manuscript correct,
+  authority unreachable — an **EVIDENCE** fault, closed by a merge this lane cannot authorize. **(5b)**
+  *"the corrected contract"* at `sec_3d.tex:252` is a definite description a referee cannot resolve.
+  **(5c)** 18 `\dead{}` struck values in the note: correctly contained and honest, but expect the
+  question. **Method note: the first grep of the build log returned nothing for `PASS`, `FAIL` and
+  `written by this run` alike** — *Non-ISO extended-ASCII*, so grep went binary-silent; the **positive
+  control** caught it.
 - [`RECORD-20260910-z-assessor-receipt-of-relayed-findings.md`](RECORD-20260910-z-assessor-receipt-of-relayed-findings.md)
   - **RECEIPT, not a transcription** — this lane's own testimony about what was relayed to it, at two
   hops, with **no fidelity claim** on any item. Companion to the decline record. **§4 is the point:
