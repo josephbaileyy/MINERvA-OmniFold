@@ -523,6 +523,35 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   the row survive being read alone, the test this lane applies to others' verdict words. **Self-reference
   declared:** F7 is this lane's finding, so grading its row's wording would be grading the presentation
   of its own work.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partQ.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partQ.md)
+  - **PART Q — A-6(b) after the authorized provenance search.** No grade assigned.
+  **§Q.1 resolves the coordinator's pending OPERAND question:** `combine_cov_nd.py:20` computes `C`,
+  `:22` prints `sqrt(Σ C[i,i])`, and `:23-26` writes **that same `C`** — so the logged `sqrt-trace` and
+  `sqrt(Σ h(i,i))` are the same object up to an exact double round trip, and neither `.3e` formatting
+  (~0.03%) nor ROOT under/overflow can explain gaps of **3.6%** / **4.6%**. **But that closes the
+  operand question, not the READER question** — their stated weakness (no known-matching case, so no
+  demonstration the instrument returns `True`) stands. **A positive control is available in the same
+  log line** — `reported 10694 bins` against the stored `n × n`, which tests addressing without
+  needing a matching trace — **named, deliberately not run**, since running it would spend this lane's
+  verdict on the fingerprint.
+  ⚠ **§Q.2: the two exclusion grounds point OPPOSITE ways and the exclusion is SINGLY supported.** The
+  fingerprint excludes; the job-level `TIMEOUT` does **not**, because the `--expected-ids` enforcement
+  runs at `replica_manifest.py:44-48` via `:18`, **before** the `:22` print and `:23-26` write — so the
+  logged *"100 replicas … [wrote] …"* lines are themselves evidence the check passed and the product
+  was written. A timeout killing later stages cannot retroactively falsify a completed step. **If the
+  fingerprint falls, nothing else excludes this execution.**
+  ⚠ **§Q.3: §2.1a(ii) is underspecified at the word "SUCCESSFUL", and with one candidate execution the
+  unit IS the answer** — job-level (`sacct -X` → `TIMEOUT`) fails, step-level (both combines printed and
+  wrote) holds. The launch-plan-versus-record shape at the level of a single word. What would settle it
+  is named (`sacct -j <job>.<step>`, a step exit code, or the log lines) and **not chosen** — the
+  adjacent "what does *verified* mean" is already reserved to Joseph by `F9`.
+  **§Q.4: the equal-`N` finding is STRONGER than when filed** — `N` for the released bytes rests on no
+  surviving execution record, so part (b)'s only candidate evidence is under exclusion — **and the arm
+  ambiguity closes** to top-level. **Joseph's intended-use declaration ENTAILS `F1` rather than
+  satisfying it:** *"its explicitly named projections"* requires the enumeration without supplying it.
+  `F3` is largely met, indirectly. **§Q.5 accepts the routing of §3-§3.3 and the block population away
+  from this lane as correct**, and flags that §3.1 carries a sentence of this lane's that is now
+  **withdrawn**.
 - [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
   - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
   numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
