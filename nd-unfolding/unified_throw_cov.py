@@ -662,6 +662,15 @@ def do_combine(args):
         raise SystemExit(f"no block-unit slabs match {args.block_slabs}; run --blockunits first")
     flux_x = {}
     knob_x = {}
+    # EXPLICIT PER-BAND DONOR BINDING -- WHICH FILE SUPPLIED EACH BAND, RECORDED.
+    #
+    # ⚠ THIS IS PROVENANCE, NOT A DONOR DECISION, AND THE DISTINCTION IS THE WHOLE POINT. Nothing
+    # here chooses or changes which file supplies a band: the glob and the labels inside the slabs
+    # decide that exactly as before, and this only WRITES DOWN what they decided. `z_assembly.py`
+    # carries no donor binding at all and `z_build_path.py` binds only the C_stat/C_ML block
+    # source, so today the answer to "which file supplied MaCCQE's endpoints" is not recoverable
+    # from any product -- it is a property of whatever the glob happened to match at run time.
+    band_donor = {}
     for s in bslabs:
         z = np.load(s, allow_pickle=True)
         if "estimator_seed" in z.files:
@@ -679,6 +688,9 @@ def do_combine(args):
                 if idx not in ("0", "1") or idx in knob_x.setdefault(band, {}):
                     raise SystemExit(f"[FAIL] duplicate/malformed knob endpoint {label}")
                 knob_x[band][idx] = x[rep]
+                # Keyed per ENDPOINT, not per band: the two endpoints of one band could come from
+                # different files and a band-level record would silently name only one of them.
+                band_donor[f"{band}:{idx}"] = os.path.basename(s)
             elif str(kind) == "flux":
                 text = str(label)
                 if not text.startswith("flux") or not text[4:].isdigit():
@@ -687,6 +699,7 @@ def do_combine(args):
                 if flux_id in flux_x:
                     raise SystemExit(f"[FAIL] duplicate flux block universe {flux_id}")
                 flux_x[flux_id] = x[rep]
+                band_donor[f"flux{flux_id}"] = os.path.basename(s)
             else:
                 raise SystemExit(f"[FAIL] unknown block kind {kind}")
     if set(knob_x) != set(bands):
@@ -875,6 +888,15 @@ def do_combine(args):
                                int(throw_pop["n_expected"]) if throw_pop else 0).Write()
         ROOT.TParameter("int")("n_block_files_declared",
                                int(block_pop["n_expected"]) if block_pop else 0).Write()
+        # PER-BAND DONOR BINDING, in the artifact. One `TNamed` per endpoint rather than one
+        # serialized blob: a blob needs a parser, and a consumer asking "which file supplied
+        # MaCCQE:1" should be able to read one key. The COUNT is written beside them so a consumer
+        # can tell a truncated set from a complete one -- the same reason the support count is
+        # written beside the support mask.
+        ROOT.TParameter("int")("n_band_donors", len(band_donor)).Write()
+        for endpoint in sorted(band_donor):
+            ROOT.TNamed(f"band_donor_{endpoint.replace(':', '_')}",
+                        band_donor[endpoint]).Write()
         fo.Close()
         print(f"[combine] wrote {args.out_root}")
     return {
@@ -912,6 +934,10 @@ def do_combine(args):
         "bank_cv_sha256": _bank_cv_digest(args.bank),
         "throw_population_declared": bool(throw_pop),
         "block_population_declared": bool(block_pop),
+        # PROVENANCE, NOT A DECISION: endpoint label -> the basename that supplied it. Nothing in
+        # this function chooses a donor; this records the choice the glob and the labels made.
+        "band_donor": dict(band_donor),
+        "n_band_donors": len(band_donor),
         "throw_population": throw_pop,
         "block_population": block_pop,
         **code_provenance(),

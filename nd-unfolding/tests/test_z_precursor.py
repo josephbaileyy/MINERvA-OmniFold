@@ -1462,6 +1462,58 @@ class ThePartitionIsEnforcedAndNoDonorIsChosen(unittest.TestCase):
                 if isinstance(node, ast.Constant) and isinstance(node.value, str)]
         self.assertTrue(any("fluxfix" in text for text in live))
 
+    def test_PER_BAND_DONOR_BINDING_is_RECORDED_and_is_not_a_DECISION(self):
+        """Joseph permits recording which file supplied each band; he forbids deciding it.
+
+        The record is checked against the fixture's own file layout rather than against a template:
+        the knob endpoints come from `block5d_knobs.npz` and flux universe `u` from the flux task
+        that tiles it, and those are the launcher's own placements.
+        """
+        work = Path(tempfile.mkdtemp(dir=os.environ.get("TMPDIR") or None))
+        self.addCleanup(__import__("shutil").rmtree, str(work), True)
+        bank = SyntheticBank(work)
+        saved = U._xsec_for_weights
+        U._xsec_for_weights = kernel()
+        self.addCleanup(setattr, U, "_xsec_for_weights", saved)
+        block_glob = write_block_slabs(work / "b")
+        throw_glob = write_throw_slabs(work / "t")
+        with _StubbedRoot() as rec:
+            result = U.do_combine(combine_args(
+                bank=str(bank.path), combine=throw_glob, block_slabs=block_glob,
+                expected_throws="0-7", out_root=str(work / "o.root")))
+        donors = result["band_donor"]
+        self.assertEqual(result["n_band_donors"], len(U.KNOB_BANDS) * 2
+                         + U.EXPECTED_FLUX_UNIVERSES)
+        for band in U.KNOB_BANDS:
+            for idx in ("0", "1"):
+                self.assertEqual(donors[f"{band}:{idx}"], "block5d_knobs.npz")
+        per = U.EXPECTED_FLUX_UNIVERSES // 20
+        for u in range(U.EXPECTED_FLUX_UNIVERSES):
+            self.assertEqual(donors[f"flux{u}"], f"block5d_flux_{u // per + 1}.npz")
+        self.assertIn("n_band_donors", rec.written)
+        self.assertEqual(rec.params["band_donor_MaCCQE_1"], "block5d_knobs.npz")
+
+    def test_the_donor_binding_FOLLOWS_the_files_rather_than_prescribing_them(self):
+        """THE PROOF THAT IT IS A RECORD AND NOT A CHOICE: move a band's endpoints to a different
+        file and the binding must FOLLOW, with no list in the code to contradict it."""
+        work = Path(tempfile.mkdtemp(dir=os.environ.get("TMPDIR") or None))
+        self.addCleanup(__import__("shutil").rmtree, str(work), True)
+        bank = SyntheticBank(work)
+        saved = U._xsec_for_weights
+        U._xsec_for_weights = kernel()
+        self.addCleanup(setattr, U, "_xsec_for_weights", saved)
+        # Ten flux tasks of ten universes instead of twenty of five: a DIFFERENT donor layout that
+        # no code path here knows about.
+        block_glob = write_block_slabs(work / "b", n_flux_tasks=10)
+        throw_glob = write_throw_slabs(work / "t")
+        result = U.do_combine(combine_args(
+            bank=str(bank.path), combine=throw_glob, block_slabs=block_glob,
+            expected_throws="0-7"))
+        self.assertEqual(result["band_donor"]["flux0"], "block5d_flux_1.npz")
+        self.assertEqual(result["band_donor"]["flux15"], "block5d_flux_2.npz",
+                         "under a ten-task layout universe 15 comes from task 2, and the record "
+                         "must say so rather than what a twenty-task layout would give")
+
     def test_Gs_THROW_IS_NOT_SUBSTITUTED_FOR_Zs(self):
         """`SPEC` §1.3a: Z derives its OWN. G's throw exists and must not be substituted."""
         plan = ZP.namespace_plan("/data", namespace="ns")
