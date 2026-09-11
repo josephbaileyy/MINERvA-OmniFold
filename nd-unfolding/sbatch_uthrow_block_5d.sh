@@ -314,7 +314,31 @@ source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) memb
 # receipt-bound slabs. Right action, wrong reason, and the real reason is worse than the one I gave.
 # The tracked producer's wrong literal is a PRE-EXISTING defect needing its own change and its own
 # authorization; it is not folded into the scan.
-if mr_declared; then
+#
+# --- REPAIR (c), 2026-09-11, ON JOSEPH'S AUTHORIZATION FOR THE Z PRECURSOR ------------------------
+# The authorization the comment above asks for exists, and it is SCOPED TO THE PRECURSOR. So the
+# THREE-WAY disagreement below -- this launcher's two literals against the fast combine's
+# unconditional `_sb` -- is closed for the precursor by making ALL FOUR ARMS resolve ONE explicit
+# namespace, and is left EXACTLY as it was when that namespace is unset.
+#
+# WHY THE UNSET PATH IS UNTOUCHED, and it is not timidity: Joseph's standing instruction is
+# "preserve all existing non-Z defaults and validated reproduction paths", and repointing the unset
+# literal would change where an ARCHIVE reproduction writes. That is a different subject with its
+# own blast radius (the destructive edge on receipt-bound slabs the comment above describes), and it
+# is NOT authorized here. THE RESIDUAL IS THEREFORE LIVE: an undeclared, non-precursor run of this
+# launcher still writes `block_slabs_5d` while the fast combine still reads `block_slabs_5d_sb`.
+# Recorded rather than silently half-fixed.
+#
+# NON-EMPTINESS IS A REFUSAL, NOT AN ASSUMPTION, and so is the member axis: `z_precursor.py`'s
+# `require-fresh` and `require-no-member-axis` run BEFORE the producer. Without the second one,
+# "nothing lands in mii/" holds only because nobody exported MNV_EST_SEED_OFFSET.
+ZP="${CODE_ROOT}/nd-unfolding/z_precursor.py"
+if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]; then
+  python3 "$ZP" require-no-member-axis || exit 2
+  python3 "$ZP" require-fresh --data-root "$DATA_ROOT" --arm block || exit 2
+  BLOCK_DIR="$(python3 "$ZP" arm-dir --data-root "$DATA_ROOT" --arm block)" || exit 2
+  mkdir -p "$BLOCK_DIR"
+elif mr_declared; then
   BLOCK_DIR="$(mr_dir_prefix uq_5d/block_slabs_5d_sb)"
 else
   BLOCK_DIR="uq_5d/block_slabs_5d"

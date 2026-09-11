@@ -1012,6 +1012,16 @@ class _RootRecorder:
             self._rec.written.add(self._name)
             self._rec.params[self._name] = self._value
 
+    #: `TNamed` ADDED 2026-09-11 for `unified_throw_cov`'s support-predicate and provenance stamps.
+    #: Recorded through the SAME written/built split as everything else: a `TNamed` built and not
+    #: written must be indistinguishable from absent, which is lane D's finding 3 one class over.
+    class _Named:
+        def __init__(self, rec, name, title):
+            self._rec, self._name, self._title = rec, name, title
+        def Write(self):
+            self._rec.written.add(self._name)
+            self._rec.params[self._name] = self._title
+
     def TFile(self):  # pragma: no cover - shape only
         raise AssertionError("use TFile.Open")
 
@@ -1027,6 +1037,9 @@ class _RootRecorder:
     def TH1D(self, name, *a):
         return _RootRecorder._Obj(self, name)
 
+    def TNamed(self, name, title):
+        return _RootRecorder._Named(self, name, title)
+
 
 class _StubbedRoot:
     """Install a recorder as `ROOT` for the duration of a with-block."""
@@ -1041,6 +1054,7 @@ class _StubbedRoot:
         mod.TH2D = self.rec.TH2D
         mod.TH1I = self.rec.TH1I
         mod.TH1D = self.rec.TH1D
+        mod.TNamed = self.rec.TNamed
         opened = types.SimpleNamespace(Close=lambda: setattr(self.rec, "closed", True))
         mod.TFile = types.SimpleNamespace(Open=lambda *a, **k: opened)
         self._saved = sys.modules.get("ROOT")
@@ -3657,11 +3671,21 @@ class SubstitutionFenceS1(unittest.TestCase):
         rather than letting the default be "unfenced".
         """
         hooked, fenced, both, neither = self._partition()
-        self.assertEqual(len(neither), 199,
+        # 198 AS OF 2026-09-11, AND THE REMAINDER SHRANK RATHER THAN GREW. Repair (e) gave
+        # `sbatch_uthrow_dump_5d.sh` the guarded preamble and the member-axis source, so it moved
+        # out of NEITHER and into HOOKED -- which is the classification this ratchet exists to
+        # force. Reclassified rather than left at 199: at 199 this assertion fails FIRST and hides
+        # the pre-existing `217 != 216` total below it, and masking a standing finding with a new
+        # one is worse than either.
+        self.assertEqual(len(neither), 198,
                          "if this moved, a launcher was added or removed and needs classifying as "
                          "hooked, fenced, or explicitly out of scope. The reviewed compaction moved "
                          "47 unreferenced launchers to the evidence tag; exact inventory sha256 "
                          "5ec9f1184d4bd6cfdcc2ef33e3bfb854ccb4a8c928713e532b6ab023ae6bded8.")
+        self.assertIn("nd-unfolding/sbatch_uthrow_dump_5d.sh", hooked,
+                      "the dump arm must be in HOOKED, not merely absent from NEITHER: a count "
+                      "that moved for the wrong reason reads exactly like one that moved for the "
+                      "right one")
         self.assertEqual(len(hooked) + len(fenced) + len(both) + len(neither), 216,
                          "216 LAUNCHERS = the pre-compaction 263 minus the reviewed 47-path "
                          "unreferenced-launcher family.")
@@ -3795,8 +3819,12 @@ class LibraryResolverSurvivesSbatch(unittest.TestCase):
         """It has to be inlined -- it is the code that FINDS the library, so it cannot live in it.
         Inlined copies drift, so identity is pinned instead. EIGHT as of B1: the seven legs plus
         `sbatch_finalize_5d_bkgaware_gpu.sh`, and the list is derived so a ninth is covered on arrival."""
-        self.assertEqual(len(self.LAUNCHERS), 8,
-                         f"expected 8 resolver-carrying launchers, found {self.LAUNCHERS}")
+        # NINE as of 2026-09-11: `sbatch_uthrow_dump_5d.sh` gained the guarded preamble and the
+        # resolver under repair (e). The LIST is derived, so it covered the new copy on arrival
+        # exactly as this docstring promised; only the COUNT is pinned, and its job is to stop the
+        # derivation quietly returning nothing rather than to freeze the population.
+        self.assertEqual(len(self.LAUNCHERS), 9,
+                         f"expected 9 resolver-carrying launchers, found {self.LAUNCHERS}")
         import hashlib
         digests = {}
         for f in self.LAUNCHERS:

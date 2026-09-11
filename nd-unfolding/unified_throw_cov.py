@@ -33,7 +33,9 @@ Two phases (throws array-parallelise; combine aggregates):
 """
 import argparse
 import glob
+import hashlib
 import os
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -145,6 +147,167 @@ def _atomic_savez(path, **arrays):
         if os.path.exists(tmp):
             os.unlink(tmp)
         raise
+
+
+# ------------------------------------------------------------------ CV SUPPORT, PERSISTED ----
+#: The support predicate's own text, stamped beside the mask. A consumer comparing an observed
+#: support against a declared one (`z_build_path.classify_support_change`) is comparing two boolean
+#: arrays; without the PREDICATE that produced each, two masks of equal shape that disagree are
+#: indistinguishable from one mask under two definitions. That is the distinction
+#: `classify_support_change` is named for and it cannot make it from the arrays alone.
+CV_SUPPORT_PREDICATE = "x_cv > 0"
+
+
+def cv_support_report(x_cv):
+    """Characterize the reported-bin support of a CV cross-section vector, AND its complement.
+
+    ⚠ THIS DOES NOT CHANGE THE SUPPORT. `rep = x_cv > 0` is unchanged and still selects the
+    reported bins; redefining it would change `nrep`, the covariance dimension and every
+    downstream consumer, which is a criterion change and not what this function is.
+
+    WHAT IT ADDS is that the complement becomes READABLE. Under a strictly-positive predicate a
+    GENUINELY ZERO bin and a bin that was never in the binning are the same absence: both are
+    simply not in `base`, at no index, under no name. Joseph's ruling -- *"a pinned-zero inflation
+    bin is not a null operand"* -- names exactly that line, and the defect is not the threshold, it
+    is that the excluded set was computed and then thrown away. So the mask, the counts, and the
+    two disjoint reasons a bin can be out of support are all reported here, from ONE place.
+
+    Zero and negative are split deliberately. A zero is a physically meaningful pinned bin; a
+    NEGATIVE CV cross section is an arithmetic fault in the extraction. One count carrying both
+    would have two meanings and no way to tell which -- the same reason
+    `eavailW_covariance.check_projection_support` keeps declared exclusions off the defect ledger.
+
+    Parameters
+    ----------
+    x_cv : array_like
+        Raveled CV cross section over every bin of the binning, before any masking.
+
+    Returns
+    -------
+    dict
+        ``mask`` is a bool array index-aligned to ``x_cv``; ``n_total``, ``n_support``,
+        ``n_zero`` and ``n_negative`` are ints; ``zero_indices`` and ``negative_indices`` are
+        int arrays. ``n_support + n_zero + n_negative == n_total`` always holds.
+    """
+    x = np.asarray(x_cv, dtype=float).ravel(order="C")
+    if not np.all(np.isfinite(x)):
+        raise SystemExit(f"[FAIL] CV cross section has {int((~np.isfinite(x)).sum())} "
+                         f"non-finite bin(s); the support mask would be meaningless")
+    mask = x > 0
+    zero = np.nonzero(x == 0.0)[0]
+    negative = np.nonzero(x < 0.0)[0]
+    return {"mask": mask, "n_total": int(x.size), "n_support": int(mask.sum()),
+            "n_zero": int(zero.size), "n_negative": int(negative.size),
+            "zero_indices": zero, "negative_indices": negative,
+            "predicate": CV_SUPPORT_PREDICATE}
+
+
+def check_slab_population(pattern, expected_names, label):
+    """Exact FILE-IDENTITY validation of a slab glob: both directions, names not counts.
+
+    ⚠ WHAT THIS COVERS AND WHAT IT DOES NOT, measured against this file's own guards rather than
+    assumed. A SHORT arm is ALREADY refused: the 20 flux block tasks tile 0-99 exactly, so a
+    missing task leaves `expected_flux_ids` short at `:462` and a missing knob task leaves the knob
+    inventory short at `:453`; a missing throw slab leaves `--expected-throws` short at `:407`. I
+    measured all three refusing. So "a short arm combines silently" is FALSE of this producer and
+    is not the defect this adds.
+
+    WHAT IS UNCOVERED, and it is the one I measured PASSING: a COMPLETE set of slabs from a
+    DIFFERENT campaign. Every content check is satisfied by any inventory-complete population at the
+    same seed, so a glob resolving into a foreign namespace combines silently and the covariance is
+    built from another run's endpoints. The content is right; the POPULATION is not the one this run
+    produced. Identities are the only thing that can tell those apart, which is Joseph's point --
+    *"expected identities and coverage, not merely file counts"* -- and a count cannot: the foreign
+    population I measured had the RIGHT count.
+
+    BOTH DIRECTIONS, because a one-directional check waves the other through:
+      * MISSING -- a declared file the glob did not find;
+      * UNDECLARED -- a file the glob DID find that was never declared, which is the stale/extra
+        case and the one a count of a complete-but-foreign set cannot see.
+
+    Parameters
+    ----------
+    pattern : str
+        The glob actually passed to `--combine` / `--block-slabs`.
+    expected_names : sequence of str
+        Exact expected BASENAMES. No globs, no ranges: a range expression here would be a second
+        implementation of the arm's task layout, and the two could disagree.
+    label : str
+        Named in the refusal so a failure says which arm.
+
+    Returns
+    -------
+    dict
+        ``{"label", "n_expected", "n_found", "names"}`` on success.
+
+    Raises
+    ------
+    SystemExit
+        On any missing or undeclared member, with the offending names.
+    """
+    declared = [str(n).strip() for n in expected_names if str(n).strip()]
+    if not declared:
+        raise SystemExit(f"[FAIL] {label}: an EMPTY expected-file declaration is not a "
+                         f"declaration. Every name would be undeclared and every absence "
+                         f"invisible, so the check would pass on any population including none.")
+    if len(set(declared)) != len(declared):
+        dupes = sorted({n for n in declared if declared.count(n) > 1})
+        raise SystemExit(f"[FAIL] {label}: the expected-file declaration repeats {dupes}; a "
+                         f"declaration that names a file twice cannot be compared as a set")
+    for name in declared:
+        if os.path.basename(name) != name or any(c in name for c in "*?["):
+            raise SystemExit(f"[FAIL] {label}: expected-file entry {name!r} is not a plain "
+                             f"basename. A glob or a path here would make the declaration match "
+                             f"whatever is present, which is the absence of a declaration.")
+    found = {os.path.basename(p) for p in glob.glob(pattern)}
+    want = set(declared)
+    missing, undeclared = sorted(want - found), sorted(found - want)
+    if missing or undeclared:
+        raise SystemExit(
+            f"[FAIL] {label}: the slab population is not the declared one.\n"
+            f"  glob: {pattern}\n"
+            f"  MISSING ({len(missing)}): {missing[:12]}{' ...' if len(missing) > 12 else ''}\n"
+            f"  UNDECLARED ({len(undeclared)}): {undeclared[:12]}"
+            f"{' ...' if len(undeclared) > 12 else ''}\n"
+            f"  An UNDECLARED member is a stale or foreign file: this producer's content checks "
+            f"are satisfied by ANY inventory-complete population at the matching seed, so a glob "
+            f"resolving into another campaign's namespace passes all of them. The count can be "
+            f"exactly right and the population still wrong.")
+    return {"label": label, "n_expected": len(want), "n_found": len(found),
+            "names": sorted(want)}
+
+
+def _bank_cv_digest(bank):
+    """SHA-256 of the bank's `cv.npz`, or ``UNAVAILABLE``. Same reason as `code_provenance`."""
+    try:
+        return hashlib.sha256(Path(bank, "cv.npz").read_bytes()).hexdigest()
+    except OSError:
+        return "UNAVAILABLE"
+
+
+def code_provenance():
+    """The executing tree's revision and this producer's own file digest.
+
+    NOT A GATE, deliberately. Every field has an explicit ``UNAVAILABLE`` value rather than a
+    fallback or an omission, because a MISSING key is indistinguishable from a key nobody could
+    compute -- the `fixed_seed_null_checked` lesson at `:554`, one object over. Refusing on
+    ``UNAVAILABLE`` belongs to the receipt gate (`z_precursor.check_receipt`), which is a
+    different subject from stamping: a producer that refused to run because git was absent would
+    make provenance a scheduler dependency.
+    """
+    unavailable = "UNAVAILABLE"
+    try:
+        revision = subprocess.run(["git", "-C", _REPO, "rev-parse", "HEAD"],
+                                  stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                                  check=True).stdout.decode().strip() or unavailable
+    except (OSError, subprocess.CalledProcessError):
+        revision = unavailable
+    try:
+        digest = hashlib.sha256(Path(__file__).resolve().read_bytes()).hexdigest()
+    except OSError:
+        digest = unavailable
+    return {"code_revision": revision, "producer_file": os.path.basename(__file__),
+            "producer_sha256": digest}
 
 
 def _ratio(rho, label, invalid_policy="error"):
@@ -367,10 +530,58 @@ def do_combine(args):
 
     # CV xsec (reported-bin mask)
     x_cv = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters, args.estimator_seed).ravel(order="C")
-    rep = x_cv > 0
+    # THE SUPPORT AND ITS COMPLEMENT, FROM ONE PLACE. `rep` is still `x_cv > 0` -- the predicate is
+    # unchanged, see `cv_support_report`. What changed is that the excluded set is now an object
+    # that reaches the product instead of a local that dies at the end of this function.
+    cv_support = cv_support_report(x_cv)
+    rep = cv_support["mask"]
     base = x_cv[rep]
-    nrep = int(rep.sum())
-    print(f"[combine] reported bins = {nrep}")
+    nrep = cv_support["n_support"]
+    print(f"[combine] reported bins = {nrep} of {cv_support['n_total']} "
+          f"(predicate {cv_support['predicate']}; {cv_support['n_zero']} genuinely zero, "
+          f"{cv_support['n_negative']} negative)")
+    if cv_support["n_zero"]:
+        print(f"[combine] genuinely-zero CV bins EXCLUDED from the support, by index: "
+              f"{cv_support['zero_indices'].tolist()}", flush=True)
+    # THE GENUINE CV EXECUTIONS, kept as objects. There are at most two and the second exists only
+    # under `--null`; today the second is reduced to a scalar norm at `:516` and the first survives
+    # only masked, as `base`. Both full vectors are persisted below.
+    cv_executions = [x_cv]
+
+    # POPULATION IDENTITY, BEFORE ANY CONTENT IS READ. Declared per arm and checked in both
+    # directions; see `check_slab_population` for what the content checks below already cover and
+    # for the one case they do not. Both declarations are OPTIONAL, and the flags written into the
+    # product say whether each ran -- a required flag would make the two pre-existing `--combine`
+    # launchers refuse themselves, and a guard that fires on every correct run is not a guard.
+    # THE OPERAND IS CHECKED BEFORE IT IS USED. A declaration with no glob to compare it against
+    # used to reach `glob.glob(None)` and die as a TypeError -- a real refusal reported as a crash,
+    # which is the wrong diagnosis of a right refusal.
+    #
+    # READ WITH `getattr`, AND THE DEFAULT IS THE REFUSING DIRECTION. `do_combine` is called
+    # programmatically from five places in `tests/test_uq_remediation.py` with a hand-built
+    # namespace carrying only the attributes it needs -- it does not carry `invalid_ratio` or
+    # `flux_universe_file` either -- so a newly REQUIRED attribute breaks every such caller. This
+    # is a fallback, and the reason it is safe is the direction it falls in: absent means UNDECLARED,
+    # which writes `*_population_declared = 0` into the product, and `z_precursor.check_receipt`
+    # REFUSES 0. A caller that omits the flag cannot silently obtain a validated product.
+    expected_throw_files = getattr(args, "expected_throw_files", None)
+    expected_block_files = getattr(args, "expected_block_files", None)
+    if expected_block_files and not args.block_slabs:
+        raise SystemExit("[FAIL] --expected-block-files declares a block population but "
+                         "--block-slabs names no glob to compare it against")
+    if expected_throw_files and not args.combine:
+        raise SystemExit("[FAIL] --expected-throw-files declares a throw population but "
+                         "--combine names no glob to compare it against")
+    throw_pop = (check_slab_population(args.combine, expected_throw_files.split(","),
+                                       "throw slab population")
+                 if expected_throw_files else None)
+    block_pop = (check_slab_population(args.block_slabs, expected_block_files.split(","),
+                                       "block slab population")
+                 if expected_block_files else None)
+    for pop in (throw_pop, block_pop):
+        if pop:
+            print(f"[population] {pop['label']}: {pop['n_expected']} declared file(s), "
+                  f"exact identity match", flush=True)
 
     # unified covariance over all throws
     slabs = sorted(glob.glob(args.combine))
@@ -511,8 +722,13 @@ def do_combine(args):
     # mean-centered, fixed-estimator systematic covariance. ML lives only in C_ML.
     null_norm = None
     if args.null:
-        x_cv2 = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters,
-                                  args.estimator_seed).ravel(order="C")[rep]
+        x_cv2_full = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters,
+                                       args.estimator_seed).ravel(order="C")
+        # THE SECOND GENUINE CV EXECUTION IS AN OPERAND, NOT A SCALAR. Before this line it was
+        # masked and differenced in one expression, so the only trace it ever ran was `null_norm` --
+        # and a norm cannot say WHICH bin moved, nor can it be re-checked under a different support.
+        cv_executions.append(x_cv2_full)
+        x_cv2 = x_cv2_full[rep]
         null_norm = float(np.linalg.norm(x_cv2 - base))
         tol = 1e-12 * max(float(np.linalg.norm(base)), 1.0)
         print(f"\n[null] fixed-seed ||CV2-CV|| = {null_norm:.3e} (tol={tol:.3e})")
@@ -577,6 +793,60 @@ def do_combine(args):
         for i, value in enumerate(mean_shift):
             hs.SetBinContent(i + 1, float(value))
         hs.Write()
+        # ---- THE SUPPORT MASK AND THE GENUINE CV EXECUTIONS, IN THE ARTIFACT ------------------
+        # `BEN-450`'s repaired shape, transferred from `eavailW_covariance.write_ew_outputs:116-124`
+        # WITH its condition rather than only its form: the COUNTS are written UNCONDITIONALLY
+        # INCLUDING ZERO, the SET is written as an INDEX-ALIGNED MASK, and `n_cv_executions` is a
+        # flag with TWO REACHABLE VALUES (1 without `--null`, 2 with it) rather than a literal 1 on
+        # the only path -- which is the vacuous form lane D made us delete from that same writer.
+        #
+        # ⚠ `hCvSupportMask` IS OVER `n_total` BINS, NOT `nrep`. Every other histogram in this file
+        # is `nrep x nrep`, i.e. indexed in the SUPPORT. A mask indexed in the support would be
+        # all-ones by construction -- it would be the vacuous flag again, in array form. The mask's
+        # whole content is the bins the support does NOT contain, so it must be indexed in the
+        # BINNING. Bin i is 1 iff bin i of the binning is in the support.
+        n_total = int(cv_support["n_total"])
+        ROOT.TParameter("int")("n_cv_bins_total", n_total).Write()
+        ROOT.TParameter("int")("n_cv_support", int(cv_support["n_support"])).Write()
+        ROOT.TParameter("int")("n_cv_genuine_zero", int(cv_support["n_zero"])).Write()
+        ROOT.TParameter("int")("n_cv_negative", int(cv_support["n_negative"])).Write()
+        ROOT.TNamed("cv_support_predicate", cv_support["predicate"]).Write()
+        hmask = ROOT.TH1I("hCvSupportMask",
+                          "1 = CV bin is in the reported support (" + cv_support["predicate"] + ")",
+                          n_total, 0, n_total)
+        for i in np.nonzero(cv_support["mask"])[0]:
+            hmask.SetBinContent(int(i) + 1, 1)
+        hmask.Write()
+        # The EXECUTIONS themselves, unmasked. `n_cv_executions` says how many of `hCvExecution*`
+        # exist, so a consumer reads a count rather than probing for keys.
+        ROOT.TParameter("int")("n_cv_executions", len(cv_executions)).Write()
+        for k, vector in enumerate(cv_executions):
+            he = ROOT.TH1D(f"hCvExecution{k}",
+                           f"genuine CV execution {k} over all {n_total} bins, unmasked",
+                           n_total, 0, n_total)
+            for i, value in enumerate(np.asarray(vector, float).ravel(order="C")):
+                he.SetBinContent(i + 1, float(value))
+            he.Write()
+        # RUN, BANK AND CODE PROVENANCE beside the operand. The seed provenance at `:569-575` above
+        # already says WHICH seeds; these say which BANK and which CODE produced the mask, which is
+        # what makes the mask re-derivable rather than merely present.
+        prov = code_provenance()
+        ROOT.TNamed("cv_code_revision", prov["code_revision"]).Write()
+        ROOT.TNamed("cv_producer_file", prov["producer_file"]).Write()
+        ROOT.TNamed("cv_producer_sha256", prov["producer_sha256"]).Write()
+        ROOT.TNamed("cv_bank_path", os.path.abspath(args.bank)).Write()
+        ROOT.TNamed("cv_bank_cv_sha256", _bank_cv_digest(args.bank)).Write()
+        # POPULATION-VALIDATION FLAGS. Two reachable values each, because both declarations are
+        # optional -- same condition as `fixed_seed_null_checked` at `:561` and NOT the vacuous
+        # literal-1 form. 0 means the glob's file identities were never declared, so this product
+        # cannot say the population was the one its own run produced. `z_precursor.check_receipt`
+        # refuses 0 for the precursor; a 4D combine may legitimately carry 0.
+        ROOT.TParameter("int")("throw_population_declared", 1 if throw_pop else 0).Write()
+        ROOT.TParameter("int")("block_population_declared", 1 if block_pop else 0).Write()
+        ROOT.TParameter("int")("n_throw_files_declared",
+                               int(throw_pop["n_expected"]) if throw_pop else 0).Write()
+        ROOT.TParameter("int")("n_block_files_declared",
+                               int(block_pop["n_expected"]) if block_pop else 0).Write()
         fo.Close()
         print(f"[combine] wrote {args.out_root}")
     return {
@@ -596,6 +866,27 @@ def do_combine(args):
         "draw_seed": int(args.draw_seed),
         "est_seed_offset_declared": int(_OFF_DECLARED),
         "est_seed_offset": int(_OFF_VALUE),
+        # THE SAME OPERAND THE ROOT FILE CARRIES. An in-process consumer -- and every local
+        # integration test -- must read the mask and the executions from the producer rather than
+        # rebuild them, or the test's fixture would be derived from the rule it is checking.
+        # `cv_support_mask` is index-aligned to the BINNING, not to the support; see the ROOT block.
+        "cv_support_mask": cv_support["mask"],
+        "cv_support_predicate": cv_support["predicate"],
+        "n_cv_bins_total": int(cv_support["n_total"]),
+        "n_cv_support": int(cv_support["n_support"]),
+        "n_cv_genuine_zero": int(cv_support["n_zero"]),
+        "n_cv_negative": int(cv_support["n_negative"]),
+        "cv_genuine_zero_indices": cv_support["zero_indices"],
+        "cv_negative_indices": cv_support["negative_indices"],
+        "cv_executions": [np.asarray(v, float) for v in cv_executions],
+        "n_cv_executions": len(cv_executions),
+        "bank_path": os.path.abspath(args.bank),
+        "bank_cv_sha256": _bank_cv_digest(args.bank),
+        "throw_population_declared": bool(throw_pop),
+        "block_population_declared": bool(block_pop),
+        "throw_population": throw_pop,
+        "block_population": block_pop,
+        **code_provenance(),
     }
 
 
@@ -641,6 +932,16 @@ def main():
     ap.add_argument("--block-slabs", default=None, help="glob of block-unit slabs (combine)")
     ap.add_argument("--expected-throws", default=None,
                     help="required exact throw-ID range LO-HI for combine")
+    # FILE IDENTITIES, a different object from the ID range above. `--expected-throws` is a claim
+    # about the throw ids INSIDE the slabs; these are claims about WHICH FILES the glob resolved to.
+    # An inventory-complete population from another campaign satisfies the first and fails these.
+    ap.add_argument("--expected-throw-files", default=None,
+                    help="(combine) comma-separated exact BASENAMES the --combine glob must "
+                         "resolve to. Both directions: a missing member and an undeclared "
+                         "(stale/foreign) member each refuse. No globs or ranges accepted.")
+    ap.add_argument("--expected-block-files", default=None,
+                    help="(combine) comma-separated exact BASENAMES the --block-slabs glob must "
+                         "resolve to. Same both-direction check as --expected-throw-files.")
     ap.add_argument("--blockunits", action="store_true", help="producer for block-sum units")
     ap.add_argument("--block-knobs", default="all", help="all|csv of knob bands")
     ap.add_argument("--block-flux", default=None, help="flux index range LO-HI (inclusive)")

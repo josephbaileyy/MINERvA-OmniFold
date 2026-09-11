@@ -332,9 +332,49 @@ THROW_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
 # agree, wrong about WHICH one to agree on. The consumer was never the misaligned side.
 BLOCK_DIR_SB="$(mr_dir_prefix uq_5d/block_slabs_5d_sb)"
 ROOT_OUT="$(mr_prefix uq_5d/unified_throw_cov_5d.root)"
+# --- REPAIRS (c), (d) AND (f), 2026-09-11 ---------------------------------------------------------
+# (c) ONE NAMESPACE. When MNV_Z_PRECURSOR_NS is set, all three directories here come from the SAME
+#     resolution the block, run and dump arms use, which is what closes the mismatch the block
+#     comment above describes. Unset, every path is exactly what it was.
+# (d) EXACT EXPECTED POPULATION. `--expected-ids` occurs ZERO times in any of these four launchers
+#     -- it belongs to the FINALIZE launcher -- and `--block-slabs` was a bare glob with no declared
+#     population at all. The declarations below are DERIVED from each arm's own `#SBATCH --array`
+#     line by `z_precursor declare-files`, never retyped here: a range literal in this file would be
+#     a second implementation of the arm's layout and the two could disagree.
+#     ⚠ THIS DOES NOT CLOSE THE FOREIGN-NAMESPACE CASE, measured: a complete set of another
+#     campaign's slabs has the SAME basenames, so it passes the identity check. (c)'s freshness is
+#     what catches that, and (d) is what catches a stale or extra member inside the right directory.
+#     Neither subsumes the other.
+# (f) RECEIPT LAST. The receipt is written AFTER the guarded producer returns, from the product on
+#     disk. There is no `os._exit` on this path and none in either producer entrypoint, so the
+#     bypassed-`finally` hazard does not arise -- and the receipt is not in a `finally` anyway,
+#     because a receipt emitted on the failure path would assert a completion that did not happen.
+ZP="${CODE_ROOT}/nd-unfolding/z_precursor.py"
+EXPECT_POP=()
+if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]; then
+  python3 "$ZP" require-no-member-axis || exit 2
+  THROW_DIR="$(python3 "$ZP" arm-dir --data-root "$DATA_ROOT" --arm run)" || exit 2
+  BLOCK_DIR_SB="$(python3 "$ZP" arm-dir --data-root "$DATA_ROOT" --arm block)" || exit 2
+  COMB_DIR="$(python3 "$ZP" arm-dir --data-root "$DATA_ROOT" --arm combine)" || exit 2
+  ROOT_OUT="${COMB_DIR}/unified_throw_cov_5d.root"
+  # The combine arm's OWN namespace must be fresh: its product must not overwrite one.
+  python3 "$ZP" require-fresh --data-root "$DATA_ROOT" --arm combine || exit 2
+  _zp_throw_files="$(python3 "$ZP" declare-files --arm run --launcher "${CODE_ROOT}/nd-unfolding/sbatch_uthrow_run_5d_fast.sh")" || exit 2
+  _zp_block_files="$(python3 "$ZP" declare-files --arm block --launcher "${CODE_ROOT}/nd-unfolding/sbatch_uthrow_block_5d.sh")" || exit 2
+  EXPECT_POP=(--expected-throw-files "$_zp_throw_files" --expected-block-files "$_zp_block_files")
+  mkdir -p "$COMB_DIR"
+fi
 python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv uthrow_combine)" -- "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py" --draw-seed 1000 --estimator-seed ${EST_SEED} \
   --combine "${THROW_DIR}/uthrow5d_slab_*.npz" \
   --expected-throws 0-159 \
   --block-slabs "${BLOCK_DIR_SB}/block5d_*.npz" \
+  "${EXPECT_POP[@]}" \
   --bank bank_uthrow_5d --iters 5 --null \
   --out-root "${ROOT_OUT}"
+if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]; then
+  python3 "$ZP" receipt --product "${ROOT_OUT}" \
+    --out "${ROOT_OUT%.root}.receipt.json" \
+    --arm combine --namespace "${MNV_Z_PRECURSOR_NS}" --code-root "$CODE_ROOT" \
+    --bank bank_uthrow_5d --population-declared throw,block || exit 2
+  python3 "$ZP" check-receipt --receipt "${ROOT_OUT%.root}.receipt.json" || exit 2
+fi

@@ -306,7 +306,18 @@ if [[ "$(cd "$_mr_lib" 2>/dev/null && pwd -P)" != "$(cd "${CODE_ROOT}/nd-unfoldi
   exit 2
 fi
 source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
-SLAB_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
+# --- REPAIR (c), 2026-09-11: ONE EXPLICIT NAMESPACE SHARED BY ALL FOUR PRECURSOR ARMS ------------
+# See `sbatch_uthrow_block_5d.sh`'s copy of this block for the full reason and for the residual it
+# deliberately leaves live. When MNV_Z_PRECURSOR_NS is unset this arm behaves exactly as before.
+ZP="${CODE_ROOT}/nd-unfolding/z_precursor.py"
+if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]; then
+  python3 "$ZP" require-no-member-axis || exit 2
+  python3 "$ZP" require-fresh --data-root "$DATA_ROOT" --arm run || exit 2
+  SLAB_DIR="$(python3 "$ZP" arm-dir --data-root "$DATA_ROOT" --arm run)" || exit 2
+  mkdir -p "$SLAB_DIR"
+else
+  SLAB_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
+fi
 OFF=$(( SLURM_ARRAY_TASK_ID * 4 ))
 # M(ii) OFFSET HOOK (spec (B) option (ii), BEN-461). The launcher keeps its OWN baseline
 # literal, so MNV_EST_SEED_OFFSET=0 -- the default -- reproduces the archive EXACTLY and the
