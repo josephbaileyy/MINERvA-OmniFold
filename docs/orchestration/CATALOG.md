@@ -785,6 +785,36 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`REVIEW-20260911-precursor-repairs-against-P1-P18.md`](REVIEW-20260911-precursor-repairs-against-P1-P18.md)
+  - **VERDICT: every one of `P1`-`P18` is MET; the finding is that the admission accounting REFUSES the
+  run.** Subject `lane/z-precursor-repairs-bg-20260911` @ `8111a951` against the yardstick committed at
+  `2d61d81f` **before** the work existed. Authorizes no launch; guards **executed**, not only read, in
+  an isolated worktree. **Reproduced to the cent:** committed `48 + 252 + 240 + 3 = 543` CPU task-h at
+  zero retries, `+ 15.4231` charged = **`558.42` against R5's `500`, headroom `-58.42`**, with arms
+  parsed from the real `#SBATCH` lines. `P14` reuse confirmed (`import r5_meter`, its parser and
+  validator; durability note only — it rides **private** functions). `P15` **improved on this lane's own
+  wording**: the throttle bounds concurrency, not total spend, so for a total cap it is irrelevant.
+  `P17` binds at **admission** and touches no running job. `P12` **executed**: `='0'` refuses, `='7'`
+  refuses, unset passes — and the Python guard tests key presence while the shell tests non-emptiness,
+  disagreeing on `=''` **in the safe direction**, deliberately. `P1`/`P2` exceeded: the decisive arm
+  asserts the mask is still **BUILT** but not **WRITTEN**, the exact `3be8c052` distinction, with
+  `ast.parse` guarding the harness and a reach precondition — and there are **five** mutation targets,
+  not the three relayed. `P13` repairs this lane's own dim-2 finding: the dump arm goes from
+  `GUARD=0 mnv_inv=0 member_gate=0` to full parity with both roots mandatory via `:?`. `P18`'s
+  inertness control asserts the contract returns **`None`** — *"must do NOTHING, not refuse"* — which
+  is what separates a guard from a run-blocker. **(b) confirmed correct:** `x_cv > 0` unchanged, and the
+  mask is indexed over the **binning** not the support, because a support-indexed mask is all-ones by
+  construction. **Donor confirmed a record:** derived from the glob and labels, with a detector carrying
+  its **own positive control**. **⚠ `_atomic_savez`'s temp-name fix is a PRECONDITION for the cap
+  remedy** — cutting `--time` (the `252` h block term) raises wall-kill probability, the exact path that
+  leaves a temp inside the consumer's glob. **Residual scoping judged RIGHT** — `P11` is satisfied by
+  **relocation** (the precursor now runs under a mandatory declared namespace, so it is no longer an
+  undeclared run) — **on one condition: a `CITABLE FOR`/`NOT CITABLE FOR` marker and an owner on the
+  launcher itself**, since the general launcher's next user will not have read this review.
+  **WITHDRAWN HERE: this lane's `r5_meter` timezone finding** — `:551-557` sets `TZ=UTC` in the child,
+  so the live path was always on the UTC basis; what I measured was my own hand-rolled capture, and I
+  attributed it to the argv after having just written that the environment, not the argv, determines the
+  window. **Not verified:** the `14 / 2997 / 6` regression counts (the `+102` **is** verified).
 - [`PREREGISTER-20260911-precursor-repair-acceptance-criteria.md`](PREREGISTER-20260911-precursor-repair-acceptance-criteria.md)
   - **`P1`-`P18`, the acceptance criteria for precursor repairs (b)-(g) and admission accounting, fixed
   BEFORE the implementation existed** so the later verdict is checkable rather than fitted. Approves
