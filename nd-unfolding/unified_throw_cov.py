@@ -552,30 +552,11 @@ def do_blockunits(args):
 
 
 def do_combine(args):
-    d, bands, n_flux = _load_bank(args.bank)
-    edges = d["edges"]
-    w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
-
-    # CV xsec (reported-bin mask)
-    x_cv = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters, args.estimator_seed).ravel(order="C")
-    # THE SUPPORT AND ITS COMPLEMENT, FROM ONE PLACE. `rep` is still `x_cv > 0` -- the predicate is
-    # unchanged, see `cv_support_report`. What changed is that the excluded set is now an object
-    # that reaches the product instead of a local that dies at the end of this function.
-    cv_support = cv_support_report(x_cv)
-    rep = cv_support["mask"]
-    base = x_cv[rep]
-    nrep = cv_support["n_support"]
-    print(f"[combine] reported bins = {nrep} of {cv_support['n_total']} "
-          f"(predicate {cv_support['predicate']}; {cv_support['n_zero']} genuinely zero, "
-          f"{cv_support['n_negative']} negative)")
-    if cv_support["n_zero"]:
-        print(f"[combine] genuinely-zero CV bins EXCLUDED from the support, by index: "
-              f"{cv_support['zero_indices'].tolist()}", flush=True)
-    # THE GENUINE CV EXECUTIONS, kept as objects. There are at most two and the second exists only
-    # under `--null`; today the second is reduced to a scalar norm at `:516` and the first survives
-    # only masked, as `base`. Both full vectors are persisted below.
-    cv_executions = [x_cv]
-
+    # ⚠ FIRST, BEFORE THE BANK LOADS AND BEFORE THE CV RE-UNFOLD. This block used to sit
+    # after the CV execution, so a glob mismatch was reported only after paying for a
+    # 5-iteration LightGBM re-unfold over the 5D bank -- the expensive part of a 3 h job --
+    # and the comment below claimed it ran "before any content is read", which was true of
+    # SLAB content and read as if it were first. It needs nothing but `args`.
     # POPULATION IDENTITY, BEFORE ANY CONTENT IS READ. Declared per arm and checked in both
     # directions; see `check_slab_population` for what the content checks below already cover and
     # for the one case they do not. Both declarations are OPTIONAL, and the flags written into the
@@ -610,6 +591,30 @@ def do_combine(args):
         if pop:
             print(f"[population] {pop['label']}: {pop['n_expected']} declared file(s), "
                   f"exact identity match", flush=True)
+
+    d, bands, n_flux = _load_bank(args.bank)
+    edges = d["edges"]
+    w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
+
+    # CV xsec (reported-bin mask)
+    x_cv = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters, args.estimator_seed).ravel(order="C")
+    # THE SUPPORT AND ITS COMPLEMENT, FROM ONE PLACE. `rep` is still `x_cv > 0` -- the predicate is
+    # unchanged, see `cv_support_report`. What changed is that the excluded set is now an object
+    # that reaches the product instead of a local that dies at the end of this function.
+    cv_support = cv_support_report(x_cv)
+    rep = cv_support["mask"]
+    base = x_cv[rep]
+    nrep = cv_support["n_support"]
+    print(f"[combine] reported bins = {nrep} of {cv_support['n_total']} "
+          f"(predicate {cv_support['predicate']}; {cv_support['n_zero']} genuinely zero, "
+          f"{cv_support['n_negative']} negative)")
+    if cv_support["n_zero"]:
+        print(f"[combine] genuinely-zero CV bins EXCLUDED from the support, by index: "
+              f"{cv_support['zero_indices'].tolist()}", flush=True)
+    # THE GENUINE CV EXECUTIONS, kept as objects. There are at most two and the second exists only
+    # under `--null`; today the second is reduced to a scalar norm at `:516` and the first survives
+    # only masked, as `base`. Both full vectors are persisted below.
+    cv_executions = [x_cv]
 
     # unified covariance over all throws
     slabs = sorted(glob.glob(args.combine))

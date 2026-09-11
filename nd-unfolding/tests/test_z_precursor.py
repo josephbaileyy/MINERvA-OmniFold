@@ -543,6 +543,28 @@ class ThePopulationIsCheckedByIDENTITYinBothDirections(ProducerFixture):
         self.assertTrue(declared["block_population_declared"])
         self.assertFalse(undeclared["block_population_declared"])
 
+    def test_the_population_check_refuses_BEFORE_the_CV_RE_UNFOLD(self):
+        """ORDERING, PINNED. The check first sat after the CV execution, so a glob mismatch cost a
+        5-iteration LightGBM re-unfold over the 5D bank -- the expensive part of a 3 h job --
+        before anyone was told the population was wrong.
+
+        Proved by making the re-unfold FATAL: a kernel that raises. If the refusal still arrives as
+        the population SystemExit, nothing reached the kernel. A test asserting on elapsed time or
+        on print order could not settle this.
+        """
+        def explode(*_a, **_k):
+            raise AssertionError("the CV re-unfold ran before the population was validated")
+
+        U._xsec_for_weights = explode
+        with self.assertRaises(SystemExit) as caught:
+            self.run_combine(expected_block_files="block5d_nonexistent.npz")
+        self.assertIn("block slab population", str(caught.exception))
+        # POSITIVE CONTROL on the harness: with a VALID declaration the kernel IS reached, so the
+        # arm above is not passing merely because this fixture never gets that far.
+        with self.assertRaises(AssertionError) as reached:
+            self.run_combine(expected_block_files=",".join(self.block_names))
+        self.assertIn("ran before the population was validated", str(reached.exception))
+
     def test_an_INTERRUPTED_WRITE_is_reported_as_ITSELF_not_as_a_stale_file(self):
         """A LIVE HAZARD FOUND BY A TEST, NOT BY READING: `_atomic_savez`'s temporary name falls
         INSIDE the consumers' own globs.
