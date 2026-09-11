@@ -336,11 +336,17 @@ ROOT_OUT="$(mr_prefix uq_5d/unified_throw_cov_5d.root)"
 # (c) ONE NAMESPACE. When MNV_Z_PRECURSOR_NS is set, all three directories here come from the SAME
 #     resolution the block, run and dump arms use, which is what closes the mismatch the block
 #     comment above describes. Unset, every path is exactly what it was.
-# (d) EXACT EXPECTED POPULATION. `--expected-ids` occurs ZERO times in any of these four launchers
-#     -- it belongs to the FINALIZE launcher -- and `--block-slabs` was a bare glob with no declared
-#     population at all. The declarations below are DERIVED from each arm's own `#SBATCH --array`
-#     line by `z_precursor declare-files`, never retyped here: a range literal in this file would be
-#     a second implementation of the arm's layout and the two could disagree.
+# (d) EXACT EXPECTED POPULATION. `--expected-ids` occurs ZERO times in any of the four precursor
+#     arms, and `--block-slabs` was a bare glob with no declared population at all. WHERE IT DOES
+#     LIVE, listed rather than described: `sbatch_combine_4d_corrected_gpu.sh`,
+#     `sbatch_combine_5d_budget.sh`, `sbatch_combine_boot_fps_corrected_gpu.sh`,
+#     `sbatch_combine_split_fps_corrected_gpu.sh` and `sbatch_finalize_5d_bkgaware_gpu.sh` -- FIVE,
+#     not "the finalize launcher". I wrote the singular first and it was an ordinal hiding a
+#     population claim; a reader checking the one named site would have concluded the mechanism was
+#     rarer than it is.
+#     The declarations below are DERIVED from each arm's own `#SBATCH --array` line by
+#     `z_precursor declare-files`, never retyped here: a range literal in this file would be a
+#     second implementation of the arm's layout and the two could disagree.
 #     ⚠ THIS DOES NOT CLOSE THE FOREIGN-NAMESPACE CASE, measured: a complete set of another
 #     campaign's slabs has the SAME basenames, so it passes the identity check. (c)'s freshness is
 #     what catches that, and (d) is what catches a stale or extra member inside the right directory.
