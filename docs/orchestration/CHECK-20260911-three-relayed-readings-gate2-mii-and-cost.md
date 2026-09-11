@@ -266,11 +266,43 @@ propose the remedy** (`offering-a-remedy-spends-my-next-verdict`).
 
 ## 7. Withdrawals and method faults in THIS check, recorded against my own interest
 
+> **⚠ CORRECTION 2026-09-11, SAME DAY, AGAINST THE ITEM BELOW.** Item 1's withdrawal was itself
+> **WRONG, and it is hereby withdrawn.** The hypothesis it retracted is **CONFIRMED by direct
+> measurement on the CLOSED window** `t0 → 2026-09-09T19:38:19Z` (the receipt's own instant), run today
+> and differing in **nothing but the process timezone**:
+>
+> ```
+> basis=local   attempts=1826   task-h=14.489722   <- the 2026-09-10 "re-run" figures, exactly
+> basis=utc     attempts=1888   task-h=14.975556   <- the 2026-09-09 receipt's figures, exactly
+> ```
+>
+> Both historical numbers are **reproducible today, on a closed window, by changing only `TZ`**. So the
+> `1888 → 1826` / `14.9756 → 14.4897` pair is **not** attempt-identity instability and **not**
+> non-monotone accounting: it is the same 7-hour boundary defect in §5.3, observed once from each side.
+> **`FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md`'s diagnosis is therefore
+> mistaken**, and so is this lane's own memory note asserting non-monotonicity. Routed to the
+> `r5_meter` owner; **not adjudicated here.**
+>
+> **The reasoning error in the retraction, stated plainly, because it is the reusable part.** I argued
+> the hypothesis was refuted because `state/r5-meter-receipt.json` records the **naive argv** and still
+> reported the higher number. But the argv does **not** determine the window — **the process's
+> environment does**, and `TZ` is **not a recorded field of the receipt**. I treated "the argv contains
+> no timezone" as "the query ran in local time", which is precisely the inference the finding is about.
+> **A receipt constrains only the fields it carries; the decisive variable here is one it omits.**
+>
+> **Why every control missed it, which is the part worth keeping.** The original observation was
+> defended with four checks — three same-minute replicates (`1827, 1827, 1827`), a closed `--endtime`,
+> no new work, and closing arithmetic. **All four were run on ONE side of the boundary**, from one login
+> node, so not one of them could vary with the quantity that mattered. That is a control run over a
+> population that cannot exhibit the defect — `BEN-032`/`BEN-025`, arriving inside a spend meter.
+> **Replication cannot catch a deterministic difference in an unvaried parameter**; only crossing the
+> parameter catches it.
+
 1. **A false mechanism, withdrawn before it left this lane.** On measuring the `+62` attempts /
    `+0.485833` task-h timezone delta, this lane hypothesised that
    `FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md`'s reported drop
    (`1888 → 1826` attempts, `14.9756 → 14.4897` CPU task-h — **also 62, also ≈0.486**) was the *same*
-   artifact, measured once under each timezone. **REFUTED by the receipt's own record:**
+   artifact, measured once under each timezone. **~~REFUTED by the receipt's own record:~~ THIS RETRACTION IS ITSELF WITHDRAWN — see the correction banner immediately above.** The argument was:
    `state/r5-meter-receipt.json` stores `source.argv_or_path` with the **naive** stamp and
    `measured_on_host: login36`, and still reports the **higher** `14.9756`. So the two phenomena are
    distinct and the numeric coincidence is **unexplained**; it is reported as a coincidence, not a
