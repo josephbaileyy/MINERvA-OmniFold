@@ -172,7 +172,12 @@ four builders **agree on the weights** and carry **opposite refusal semantics** 
 refuses to build a map that would discard reported"* (`p4_lib.py:1380`), while the permissive path
 returns with drops.
 
-> **SELECTED: the REFUSING builder (`p4_lib`'s map construction), for all four projections.**
+> ⚠⚠ **SUPERSEDED BY ADDENDUM 2 — `p4_lib` CANNOT BUILD ANY OF P1-P4.** It marginalizes **one**
+> axis and hardcodes a 5-axis input (`:1354`, `:1361`); none of the four is a single-axis drop. The
+> **selection ARGUMENT below stands**; the claim that this function delivers it **does not**.
+> **Producer is now `project_cov_nd.build_projection` plus a `dropped == 0` gate.** Read addendum 2.
+>
+> ~~**SELECTED: the REFUSING builder (`p4_lib`'s map construction), for all four projections.**~~
 > **Reason, and it is the whole point:** a map that silently **discards reported bins** produces a
 > released bar over a support that is not the declared support — and `s_proj`'s functional set `U`
 > **is** the rows of that map. **The permissive builder is what `s_proj` would otherwise reach**, and
@@ -318,3 +323,101 @@ why I am recommending against my own earlier preference.
 
 **Per-functional, not global-min** — so a single pathological bin reports as one failing functional
 rather than voiding the criterion, which is the F13 lesson applied to my own reduction.
+
+---
+
+# ADDENDUM 2 — the builder claim was WRONG, and the manifest completed
+
+## ⚠⚠ THE VERIFICATION FAILED, AND NEITHER CANDIDATE IS ADEQUATE
+
+**Joseph required verification that the selected builder implements every proposed map.** I ran it.
+**It does not — and the correct answer is not the other builder either.**
+
+| builder | can it build P1–P4? | does it refuse on discarded support? |
+|---|---|---|
+| **`p4_lib.build_projection_M`** (`:1353`) | ⚠ **NO, none of them.** Docstring: *"marginalization of **one** axis"*; `drop_axis` is a single int; and `require(len(nb) == 5)` at `:1361` **hardcodes a 5-axis input** | **YES** — `:1380` |
+| **`project_cov_nd.build_projection`** (`:79`) | **YES, all four in ONE call.** `drop_axes = [a for a in src_axes if a not in keep_axes]` — arbitrary keep-axis subsets, same width-weighted convention | ⚠ **NO** — it **counts** them: `dropped = int((~keep).sum())` at `:99-100`, and returns |
+
+**None of P1–P4 is a single-axis drop** — P1 drops three axes, P2/P3/P4 drop four — **so `p4_lib`
+implements none of them as specified.** And composition is not a free repair: `:1361` means it
+**cannot be called on its own 4D output**, and a chain of per-stage support checks is a **different
+predicate** from one end-to-end check — which matters precisely because the support check was my
+entire stated reason for selecting it.
+
+**⚠ MY SELECTION ARGUMENT STANDS; MY IMPLEMENTATION CLAIM IS WITHDRAWN.** *"A criterion cannot
+police a map that drops its own operand"* is still right, and refusal is still the property to
+require. **What I asserted without checking is that this function delivers it for these maps.** I
+selected a producer on a property and never verified capability — the same shape as selecting a
+yardstick on an intuition and never checking the algebra, two deliverables running.
+
+### RESOLUTION: the third option, and it is a PROMOTION rather than a new implementation
+
+> **Producer: `project_cov_nd.build_projection` — the only candidate that implements all four maps.
+> Plus one gate: PROMOTE its existing `dropped` count to a REFUSAL against the declared support.**
+
+**`dropped` already exists at `:99-100` and is already computed.** The change is to require
+`dropped == 0` against the declared support and **fail closed** otherwise — so the refusal property
+is obtained by **binding an existing measurement to an outcome**, not by re-implementing a check.
+*(A retyped rule is a second implementation; this campaign has that catalogued, and `project_cov_nd`
+already refuses on edge drift at `:64` and on axis subset/order at `:121-124`, so the fail-closed
+idiom is the file's own.)* **⚠ This is a code change I am specifying, not making.**
+
+## MANIFEST COMPLETION — Joseph's five items
+
+**1. Bar types, all four explicit and justified.**
+
+| | bar type | ground |
+|---|---|---|
+| **P1** | **TOTAL** | `eavailW_covariance.py` sums `C_stat` (`:442`) **and** the lateral block (`:456-460`) into the released object |
+| **P2, P3** | **SYSTEMATIC-ONLY** | `sec_3d.tex:262` — *"Grouped fractional **systematic** bands"* |
+| **P4** | **TOTAL** | `sec_3d.tex:193` — the *"**combined**-covariance systematic band"*, i.e. `C_syst + C_stat + C_ML` per `:245-248` |
+
+**2. Dropped axes, per map.** Source order is the C-order ravel `(p_T, p_∥, E_avail, q_3, W)`.
+
+| | kept | **dropped** | count |
+|---|---|---|---|
+| **P1** | `E_avail, W` | **`p_T, p_∥, q_3`** | 3 |
+| **P2** | `E_avail` | **`p_T, p_∥, q_3, W`** | 4 |
+| **P3** | `p_T` | **`p_∥, E_avail, q_3, W`** | 4 |
+| **P4** | `p_∥` | **`p_T, E_avail, q_3, W`** | 4 |
+
+**3. Q1 and Q2 retained axes.** **Q1** retains `(p_T, p_∥, E_avail, q_3)`, drops `W` — **the one
+single-axis drop in either list, and therefore the only map `p4_lib` could build.** **Q2** retains
+`(p_T, p_∥, E_avail)`, drops `q_3, W`.
+
+**4. Source and destination bindings — and ⚠ the source CANNOT be bound yet, which is a statement
+about Z and not an omission.**
+
+| field | source | destination |
+|---|---|---|
+| **artifact** | ⚠ **`C_Z` — DOES NOT EXIST.** `SPEC` §1.6: *"PATHS, RECEIPT SCHEMA/VERSION, AND PRODUCING REVISION DO NOT EXIST."* **A forward binding, to be pinned at build** | the frozen lower-D CV products, by path — `products/5d/xsec_5d_MEFHC_5iter_lgbm.root` and the 4D/3D siblings |
+| **key** | the assembled trunk's covariance key, declared with the receipt schema | `hXSecND_flat` (`project_cov_nd.py:19`) / `hXSec3D` for 3D |
+| **edges** | Z's own 5D grid | **P2's are CITABLE NOW: `[0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100] GeV`, `sec_3d.tex:97`.** Otherwise `--dst-cv`, which takes mask **and shape** from the frozen product |
+| **units** | `d⁵σ/…` density per unit bin-volume (`xsec_nd.extract_cross_section_nd` divides by `Π dx_a`) | as tabled in addendum 1 |
+| **support** | Z's reported mask | `CV > 0` on the destination product |
+| **builder revision** | `project_cov_nd.py` **+ the `dropped == 0` gate**, pinned at the approving commit | same |
+
+**⚠ AND THE DESTINATION PRODUCTS ARE NOT IN THIS CHECKOUT** — `products/*/xsec_*.root` matches
+nothing here; they are untracked build outputs. **So "bound" means path + digest recorded at build
+time**, and I am naming paths I cannot digest today rather than implying I have.
+
+**5. Declared exclusions vs silently discarded support — TWO LEDGERS, never one.**
+
+| | ledger |
+|---|---|
+| **DECLARED EXCLUSIONS** | intentional, enumerated, each with its reason. **Worked example: P2's wide `[3, 100] GeV` catch bin**, excluded from `fig:eavail`'s axis (`sec_3d.tex:113`, `:216`) — it is the **7th** `E_avail` bin of the edge list above. **Declared, accounted, and still part of the support** |
+| **DISCARDED SUPPORT** | `project_cov_nd`'s `dropped` count. **Must be `0`.** Anything else is a construction defect and the new gate refuses it |
+
+**Conflating the two is the failure mode this item exists to prevent:** a declared exclusion is a
+**scientific** choice with a reason attached; a dropped bin is a **map** defect with none. **They
+must never be summed into one number**, because a nonzero total would then have two possible
+meanings and no way to tell which.
+
+## ⚠ AND ONE FRAMING OF MINE WITHDRAWN: "per-functional rather than global-min" IS NOT A CHOICE
+
+**Joseph is right and I am not restating it.** With a **uniform** limit, `∀i: s_i ≤ 1%` **is** the
+same condition as `max_i s_i ≤ 1%`. **There is no choice to present.** It was substantive only for
+**(A)**, where the *threshold itself* varied per functional and the reduction was a **min over
+thresholds** — and (A) is withdrawn. **The recommendation is therefore simply `s_proj ≤ 1%`**, with
+the max over `K` and both argmaxes reported, and the reporting of argmaxes is a **diagnostic
+obligation, not part of the condition.**
