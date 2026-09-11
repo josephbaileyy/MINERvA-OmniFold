@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 import cProfile
-import importlib.metadata
+import importlib
 import json
 import os
 import platform
@@ -24,13 +24,35 @@ import run_typed_token_comparison as comparison  # noqa: E402
 import typed_descriptor_keras as adapter  # noqa: E402
 
 
+def runtime_versions() -> dict[str, str]:
+    """Check versions of guarded imports without distribution-discovery hooks."""
+    versions = {
+        name: str(importlib.import_module(name).__version__)
+        for name in ("numpy", "tensorflow", "keras", "scipy", "pytest")
+    }
+    expected = {
+        "numpy": "1.26.4",
+        "tensorflow": "2.16.2",
+        "keras": "3.15.1",
+        "scipy": "1.16.3",
+        "pytest": "9.1.1",
+    }
+    if versions != expected:
+        raise RuntimeError(f"Environment mismatch: {versions}")
+    return versions
+
+
 def main() -> None:
     """Check the runtime and device, then call the unchanged calibration runner."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--tests-only", action="store_true")
     parser.add_argument("--include-source-smoke-tests", action="store_true")
+    parser.add_argument("--runtime-versions-only", action="store_true")
     args = parser.parse_args()
+    if args.runtime_versions_only:
+        args.output.write_text(json.dumps(runtime_versions(), indent=2) + "\n")
+        return
     if args.tests_only:
         # NumPy's optional SVE probe launches lscpu. This test dependency falls
         # back on OSError; use that fallback without launching an unmodeled tool.
@@ -75,19 +97,7 @@ def main() -> None:
     if len(affinity) < 8:
         raise RuntimeError("Fewer than eight CPUs available to the application")
     os.sched_setaffinity(0, set(affinity[:8]))
-    versions = {
-        name: importlib.metadata.version(name)
-        for name in ("numpy", "tensorflow", "keras", "scipy", "pytest")
-    }
-    expected = {
-        "numpy": "1.26.4",
-        "tensorflow": "2.16.2",
-        "keras": "3.15.1",
-        "scipy": "1.16.3",
-        "pytest": "9.1.1",
-    }
-    if versions != expected:
-        raise RuntimeError(f"Environment mismatch: {versions}")
+    versions = runtime_versions()
     tf = adapter.require_tensorflow()
     tf.config.threading.set_intra_op_parallelism_threads(7)
     tf.config.threading.set_inter_op_parallelism_threads(1)

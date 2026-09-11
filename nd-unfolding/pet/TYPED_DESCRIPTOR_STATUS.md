@@ -13,10 +13,13 @@ and test evidence are recorded in
 [the comparison setup](direct_token_comparison/README.md).
 
 The [bounded execution proposal](direct_token_comparison/EXECUTION_PROPOSAL.md)
-was approved on 2026-09-11, but scheduler preflight proves its eight-CPU GPU
-reservation cannot run. No allocation was submitted. The
-[execution status](direct_token_comparison/EXECUTION_STATUS-20260911.md) records
-the historical stop and the now-authorized resource amendment; calibration is next. It is synthetic-only; the producer, source release,
+and corrected resource envelope were approved. Calibration job `58198332`
+passed 49 Linux tests plus 10 subtests, then failed in guarded package-version
+metadata discovery before GPU validation or training. The
+[terminal record](direct_token_comparison/EXECUTION_STATUS-20260911.md) preserves
+79 seconds of allocation, the failure and a locally checked correction. No full
+jobs or retry were submitted; the explicit no-retry stop remains in force.
+The experiment is synthetic-only; producer, source release,
 selection/weight/truth-sidecar and real normalization prerequisites remain open.
 No mapping pass, historical pilot or software test is a learning-performance
 result. This preparation changes none of the source-audit verdicts or bindings.

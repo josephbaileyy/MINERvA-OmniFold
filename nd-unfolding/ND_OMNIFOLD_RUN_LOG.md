@@ -270,3 +270,21 @@ CPUs, 56 GiB, total ceilings 290 GPU-hours / 9,296 CPU-hours / 200 GiB, and two
 concurrent full jobs. [Exact authorization](pet/direct_token_comparison/RESOURCE_AUTHORIZATION-20260911.md).
 Calibration is next; full jobs remain conditional on the existing integrity and
 20% headroom gates. All scientific restrictions and no-retry stops remain.
+
+
+## 2026-09-11 — PET calibration 58198332: technical stop before training
+
+Executed the authorized corrected profile from `106ba9a8`: one A100, 32 reserved
+CPUs and 56 GiB. Slurm records `FAILED`, exit `1:0`, 79 seconds: 0.021944 GPU-hours
+and 0.702222 reserved CPU-hours. The Linux suite passed 49 tests and 10 subtests
+in 39.64 seconds. The calibration process then failed at package metadata lookup
+under the unchanged import guard, before GPU validation or training.
+
+[Terminal evidence and accounting](pet/direct_token_comparison/execution_runs/20260911-calibration/terminal.json).
+All 13 files / 51,619 bytes were preserved on CFS with matching source-before,
+source-after and destination hashes, then independently verified in the local
+committed copy. A guard-compatible imported-module version check passes locally.
+No full jobs or retry were submitted. The [118-minute retry proposal](pet/direct_token_comparison/RETRY_PROPOSAL-20260911.md)
+requires an explicit exception to the agreed no-retry stop. No synthetic learning
+comparison, real-data representation conclusion, source access, covariance,
+adoption or Gate-6 action resulted.

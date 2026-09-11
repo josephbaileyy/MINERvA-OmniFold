@@ -1,0 +1,24 @@
+{
+  "scope": "Post-stop preparation only; no allocation or training retry",
+  "runtime_version_check_exit_code": 0,
+  "versions": {
+    "numpy": "1.26.4",
+    "tensorflow": "2.16.2",
+    "keras": "3.15.1",
+    "scipy": "1.16.3",
+    "pytest": "9.1.1"
+  },
+  "failed_receipt_evaluator": "Refused actual failed calibration before extrapolation; no positive resource gate exercised",
+  "ruff": "PASS",
+  "black": "PASS",
+  "mypy_strict_linux": "PASS",
+  "retry_launcher_bash_syntax": "PASS",
+  "scientific_files_and_guard_unchanged_from": "106ba9a872989e2617a68f48333e7c831f94c67e",
+  "files_sha256": {
+    "calibration_measure.py": "e3458a17592588b78dca442cf586abd7d9133b1b6ed30a228c95db0370cdf51a",
+    "evaluate_calibration.py": "677044fd5577c44d21e8099828add6312731a24cb2ccc3fc0ac9d06403f8dfeb",
+    "sbatch_calibration_retry.sh": "7db674d90f24398a4d3b5b4353dfa8a29c22e715b89fae4f0c3e858f4b944190",
+    "RETRY_PROPOSAL-20260911.md": "de0f450726320be45c534309ee93750f94b8f6c368040f3399d60f26d8df36ed",
+    "retry-authorization.pending.json": "2bba4bd1c4e7a9f720e311176f99d37506903bccaa37e8796edd2197b1479244"
+  }
+}

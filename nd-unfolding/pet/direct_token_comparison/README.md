@@ -2,9 +2,11 @@
 
 Start from the repository root. These files add an isolated diagnostic candidate;
 no existing mapper, model, source-audit binding or production launcher is edited.
-The report is [REPORT_FOR_BEN.md](REPORT_FOR_BEN.md); resource approval is requested
-only for [EXECUTION_PROPOSAL.md](EXECUTION_PROPOSAL.md). The machine-readable matrix
-is [run-card.json](run-card.json), with authorization explicitly pending.
+The report is [REPORT_FOR_BEN.md](REPORT_FOR_BEN.md). The approved execution and
+resource amendment reached a [technical calibration stop](EXECUTION_STATUS-20260911.md)
+before training. The [single corrected retry](RETRY_PROPOSAL-20260911.md) remains
+pending. The frozen proposal and [run-card.json](run-card.json) retain their
+historical pending wording; the linked authorization records govern their scope.
 
 Use the existing Python 3.11 environment with NumPy 1.26.4, TensorFlow 2.16.2,
 Keras 3.15.1, SciPy and pytest. Imports of TensorFlow are lazy. The CPU synthetic

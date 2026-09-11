@@ -1,0 +1,46 @@
+{
+  "terminal": "TECHNICAL_STOP_NO_RETRY",
+  "job_id": "58198332",
+  "slurm_state": "FAILED",
+  "slurm_exit_code": "1:0",
+  "allocation_seconds": 79,
+  "allocated_gpus": 1,
+  "allocated_slurm_cpus": 32,
+  "gpu_hours": 0.021944444444444444,
+  "reserved_slurm_cpu_hours": 0.7022222222222222,
+  "batch_MaxRSS_KiB": 1031876,
+  "cluster_allocated_storage_KiB": {
+    "runtime": 5102652,
+    "execution_checkout": 89724,
+    "base_bundle": 9520,
+    "profile_bundle": 4,
+    "scratch_output": 88,
+    "cfs_output_and_receipt": 57
+  },
+  "cluster_allocated_storage_total_GiB": 4.961056709289551,
+  "storage_scope": "du allocated blocks for the named new cluster paths; excludes local development environments, local evidence copies and pre-existing shared Git objects",
+  "test_result": {
+    "passed": 49,
+    "subtests_passed": 10,
+    "seconds": 39.64
+  },
+  "gpu_runtime_validation": "NOT_REACHED",
+  "training": "NOT_STARTED",
+  "full_jobs_submitted": 0,
+  "resource_headroom_gate": "NOT_EVALUATED: calibration incomplete",
+  "learning_conclusion": "NONE",
+  "failure": "PackageNotFoundError from guarded importlib.metadata.version(numpy)",
+  "correction": "Read versions from guarded imports; local version-only check passed; no cluster retry",
+  "local_version_check_exit_code": 0,
+  "failed_calibration_evaluator_exit_code": 1,
+  "failed_calibration_evaluator_output_written": false,
+  "local_copy_verified_files": 13,
+  "local_copy_verified_bytes": 51619,
+  "scientific_file_sha256": {
+    "typed_token_comparison.py": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95",
+    "run_typed_token_comparison.py": "7597d48826fe0b1913dc89bb6a15bf5a4befa773ac2970bd7b7e3525080e51fb",
+    "typed_descriptor_keras.py": "dccc8c616c03c24db2ce29bd0b6de56d08d37468fbdff2b6d1935c6ff2c9348f",
+    "typed_descriptors.py": "1a0469778cc86948c7da2ff7d5795f8d19625b2ebd755eb429c8e57f4fedf08b"
+  },
+  "next_action": "One proposed 118-minute retry requires explicit exception to the no-retry stop; authorization remains pending"
+}

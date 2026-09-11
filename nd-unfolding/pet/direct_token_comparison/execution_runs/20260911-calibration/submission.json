@@ -1,0 +1,20 @@
+{
+  "job_id": "58198332",
+  "execution_commit": "106ba9a872989e2617a68f48333e7c831f94c67e",
+  "authorization_commit": "74c149bb",
+  "approved_amendment_commit": "41a216544a526999d8af54d971808bc39dc97aa5",
+  "approval_sha256": "1da020d4233f2ae324ea5ea64ba7546171d57227e390fbb8f3812d0734a9302b",
+  "remote_checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-pet-routing-20260911",
+  "remote_runtime": "/pscratch/sd/j/josephrb/pet-direct-token-runtime-20260911",
+  "remote_output": "/pscratch/sd/j/josephrb/pet-routing-campaign-20260911/calibration",
+  "observed_submit_time_scheduler": "2026-09-11T07:33:13",
+  "observation": "PENDING (Priority); no start time estimated",
+  "profile": {
+    "gpu": 1,
+    "cpu": 32,
+    "memory_GiB": 56,
+    "wall_hours": 2
+  },
+  "full_jobs_submitted": 0,
+  "terminal_authority": "Synthetic routing calibration only; no real-data representation performance, source access, covariance, adoption or Gate 6."
+}

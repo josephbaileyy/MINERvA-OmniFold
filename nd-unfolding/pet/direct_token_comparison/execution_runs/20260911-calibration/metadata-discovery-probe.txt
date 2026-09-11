@@ -1,0 +1,9 @@
+import importlib.metadata
+import json
+import sys
+import numpy
+try:
+    installed = importlib.metadata.version('numpy')
+except importlib.metadata.PackageNotFoundError:
+    installed = 'PackageNotFoundError'
+print(json.dumps({'loaded_numpy_version': numpy.__version__, 'metadata_discovery': installed, 'finder_hooks': [{'name': getattr(f, '__name__', type(f).__name__), 'find_distributions': hasattr(f, 'find_distributions')} for f in sys.meta_path]}, indent=2))

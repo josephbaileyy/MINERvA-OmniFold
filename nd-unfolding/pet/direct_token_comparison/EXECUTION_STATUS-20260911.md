@@ -1,13 +1,58 @@
-# Current authorization
+# Terminal status: calibration technical stop
 
-The [resource amendment is now authorized](RESOURCE_AUTHORIZATION-20260911.md).
-Calibration is the next action; the following preflight history remains intact.
-No result from the new allocation is yet claimed. The calibration driver records
-Python call-profile timings so the headroom calculation can separate training
-and inference. Profiling wraps the unchanged scientific runner and adds no
-training operation; its overhead is retained in the conservative cost estimate.
+**Job 58198332 FAILED before GPU validation or training. No retry and no full
+campaign jobs were submitted.** The approved no-retry stop is in force.
 
-# Execution status: stopped at scheduler preflight
+The [resource amendment was authorized](RESOURCE_AUTHORIZATION-20260911.md), and
+calibration executed from clean isolated commit
+`106ba9a872989e2617a68f48333e7c831f94c67e`. Canonical Perlmutter main remained at
+`32e403b84e9e8f9d9bc435028749f896653c7a43`; freshness passed before submission.
+The original occupied checkouts and remote `pet-prong-semantics` were untouched.
+
+[Exact terminal evidence](execution_runs/20260911-calibration/terminal.json)
+binds the Slurm accounting, logs, imports, local correction check and preserved
+payload. Slurm recorded `FAILED`, `1:0`, **79 seconds**, **one A100 / 32 CPUs /
+56 GiB**: **0.021944 GPU-hours and 0.702222 reserved CPU-hours**. Batch MaxRSS was
+**1,031,876 KiB**; it includes the CPU test process and is not training memory.
+The measured new cluster paths occupy **4.961057 GiB** of allocated blocks
+(runtime, isolated checkout, deployment bundles, scratch and CFS). Local
+development environments/evidence copies are outside that storage measurement.
+No extrapolated training throughput, headroom pass or learning result exists.
+
+The guarded Linux rehearsal passed **49 tests and 10 subtests in 39.64 seconds**.
+The next process failed at `importlib.metadata.version('numpy')`. The guard's
+replacement `PathFinder` exposes no `find_distributions` hook. A local read-only
+probe reproduces missing metadata while the guarded NumPy import reports
+`1.26.4`. This is an instrumentation compatibility failure, not evidence that
+NumPy is absent or that either representation learns poorly. No GPU operation
+validation, fit, prediction, weight artifact or source access occurred.
+
+The correction reads `__version__` from each actually imported module through
+the unchanged guard. Its local version-only check confirms NumPy 1.26.4,
+TensorFlow 2.16.2, Keras 3.15.1, SciPy 1.16.3 and pytest 9.1.1. The guard and
+scientific runner/model bytes are unchanged. Linux/A100 operation remains
+unverified. The prepared headroom evaluator rejects the closed failed receipt
+before attempting extrapolation; its positive resource gate has not been run.
+
+All **13 closed output files / 51,619 bytes** were copied to
+`/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260911-calibration-58198332/payload`.
+Source-before, source-after and destination inventories match file-by-file;
+the local copy and its committed `preserved/payload.tar.gz` archive were each
+independently read and matched to the same hashes. The unmodified raw receipt
+is historical; [its code binding](execution_runs/20260911-calibration/execution-revision-binding.json)
+uses the exact executed revision, not the corrected working-tree file.
+The [preservation receipt](execution_runs/20260911-calibration/preserved/preservation.json)
+is the evidence, not the path alone.
+
+A [single 118-minute retry is prepared](RETRY_PROPOSAL-20260911.md), requiring an
+explicit exception to the no-retry stop. It counts the failed 79 seconds and fits
+inside the existing aggregate GPU/CPU ceilings even if all 24 full jobs reach
+their 12-hour caps. Its authorization remains pending. No scientific criterion
+or scope restriction changes. Synthetic results, if eventually obtained, cannot
+establish real-data representation performance or authorize adoption, covariance
+or Gate-6 work.
+
+# Historical preflight record — superseded by the terminal result above
 
 **Calibration NOT STARTED; full matrix NOT STARTED. Zero training allocations
 submitted and zero GPU-hours consumed by this campaign.**

@@ -1,0 +1,10 @@
+{
+  "scope": "Historical executed driver; raw unmodified guard receipt is in preserved/payload.tar.gz and CFS",
+  "path": "nd-unfolding/pet/direct_token_comparison/calibration_measure.py",
+  "revision": "106ba9a872989e2617a68f48333e7c831f94c67e",
+  "sha256": "70abab75ca3fc25df89bc71bfb79fd28c97e5fbd48f5331f02042f1314836aa3",
+  "raw_receipt": "payload/calibration/guard.json",
+  "archive_sha256": "0f48405d4fc26ea66a9816bdde371e1b49884118bcb87640aeda909722dcb0d4",
+  "archive_readback_files": 13,
+  "archive_readback_bytes": 51619
+}

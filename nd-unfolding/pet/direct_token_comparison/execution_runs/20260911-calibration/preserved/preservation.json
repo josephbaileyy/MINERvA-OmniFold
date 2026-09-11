@@ -1,0 +1,63 @@
+{
+  "scope": "Closed failed calibration, no training or full jobs",
+  "source": "/pscratch/sd/j/josephrb/pet-routing-campaign-20260911",
+  "destination": "/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260911-calibration-58198332/payload",
+  "copied_at_utc": "2026-09-11T14:43:00.222523+00:00",
+  "source_before_equals_after_equals_destination": true,
+  "file_count": 13,
+  "bytes": 51619,
+  "files": {
+    "accounting.txt": {
+      "bytes": 407,
+      "sha256": "752057ebf57b34f6cf9492c6d3e0b2942c887f145adbd96195b113bc81b8e092"
+    },
+    "calibration/allocation.txt": {
+      "bytes": 2171,
+      "sha256": "13f854eb1a64658c5ba3d6809373060e8ff93314d01e41fae1d5e1365b8ec95a"
+    },
+    "calibration/calibration.log": {
+      "bytes": 3123,
+      "sha256": "00105e3774082605f724152dd0326fe4870a103dd72efcc1e8fadec5096288ed"
+    },
+    "calibration/exit-code.txt": {
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    "calibration/guard.json": {
+      "bytes": 8577,
+      "sha256": "8abf550367b293075284da7165e025702137c941cd781ce2be0c3e625160a2b6"
+    },
+    "calibration/storage-meter.log": {
+      "bytes": 24,
+      "sha256": "9e40ed50271de1a65d9dd5f90e39c8f2511715ef557a3faffbb36e645f5cb958"
+    },
+    "calibration/terminal.txt": {
+      "bytes": 7,
+      "sha256": "03cbb6c52e522ce55e217e3f9d66dbd66d21ef6bf85024016a3b7f3080c7944f"
+    },
+    "calibration/tests-guard.json": {
+      "bytes": 32151,
+      "sha256": "b608749cfaf9828c5b42a8d6bdb25f09d9b30415e80e249746736226902d58d2"
+    },
+    "calibration/tests.log": {
+      "bytes": 1439,
+      "sha256": "2e05dab76780e8272518bfc836503096b92c864b25c507a25b86a6ba4bd69795"
+    },
+    "calibration-58198332.slurm.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "checkout-status-after.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "scheduler-after.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "scheduler-job.txt": {
+      "bytes": 3718,
+      "sha256": "b7d1367ee7d13fbc7cb8ed40d13eade54cdd772ccffe6701cc033d2fc59493af"
+    }
+  }
+}

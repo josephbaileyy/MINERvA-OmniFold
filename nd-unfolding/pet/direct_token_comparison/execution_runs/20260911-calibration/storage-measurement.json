@@ -1,0 +1,13 @@
+{
+  "observed_utc": "2026-09-11T14:48:05.670471+00:00",
+  "argv": [
+    "ssh",
+    "-o",
+    "BatchMode=yes",
+    "perlmutter.nersc.gov",
+    "du -sk /pscratch/sd/j/josephrb/pet-direct-token-runtime-20260911 /pscratch/sd/j/josephrb/MINERvA-OmniFold-pet-routing-20260911 /pscratch/sd/j/josephrb/pet-routing-execution-74c149bb.bundle /pscratch/sd/j/josephrb/pet-routing-execution-106ba9a8.bundle /pscratch/sd/j/josephrb/pet-routing-campaign-20260911 /global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260911-calibration-58198332"
+  ],
+  "exit_code": 0,
+  "stdout": "5102652\t/pscratch/sd/j/josephrb/pet-direct-token-runtime-20260911\n89724\t/pscratch/sd/j/josephrb/MINERvA-OmniFold-pet-routing-20260911\n9520\t/pscratch/sd/j/josephrb/pet-routing-execution-74c149bb.bundle\n4\t/pscratch/sd/j/josephrb/pet-routing-execution-106ba9a8.bundle\n88\t/pscratch/sd/j/josephrb/pet-routing-campaign-20260911\n57\t/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260911-calibration-58198332\n",
+  "stderr": ""
+}
