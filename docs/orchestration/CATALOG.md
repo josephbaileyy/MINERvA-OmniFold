@@ -571,6 +571,29 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   is inside the routed slice. **§R.3: filed rather than mentioned because it is a two-lane
   composition** — `(cause 6, Z)` owns the reuse question, A-7 owns the statistic, and a question owned
   by nobody survives review.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partS.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partS.md)
+  - **PART S — the projection-manifest yardstick, COMMITTED BEFORE THE MANIFEST EXISTS** (designer
+  `cc2a71aa`, sha256 `41704ebe…`, 1524 lines, **digested-NOT-read**), same discipline as Parts A and F.
+  **§S.1 verifies the blocker and gives its sharper form:** `p4_lib.build_projection_M:1354` is
+  *"marginalization of **one** axis"* with `require(len(nb) == 5)` at `:1361` and `strides_l` over
+  `range(4)` at `:1369`, while P1 drops **3** axes and P2/P3/P4 drop **4** each — so none is a
+  single-axis drop and iteration is closed off. ⚠ **But the sharper problem is that NO EXISTING BUILDER
+  HAS BOTH PROPERTIES:** `project_cov_nd.build_projection:79-84` does arbitrary keep-axis subsets yet
+  its own docstring has `dst_index_of` returning *"-1 to drop"* (**silent dropping by design**, neither
+  orphan check), while `p4_lib` refuses in **both** directions (`:1380`, `:1395`, `BEN-064` masking
+  defect) with the wrong arity. **So the manifest cannot be completed by naming a different existing
+  builder either** — and this lane is not designing the resolution.
+  **§S.2 pre-registers six BLOCK conditions.** `S2` is the one nobody else has raised and it transfers
+  this lane's own measurement: **if any map composes single-axis drops, the composition ORDER must be
+  declared** — width weights compose exactly so the mathematics is order-free, but Part R §R.5a
+  measured that **order perturbs at `~5e-16`–`1.3e-15`** while pairwise-vs-sequential is bit-identical,
+  which is exactly the scale a reproducibility gate sits at. `S3` is Joseph's declared-exclusion-vs-
+  silent-discard item with its mechanism named (`dst_index_of` → `-1`), `S6` bars Q3's rank declaration
+  from being read as an `ndf`.
+  **§S.3: the manifest CLOSES `F1`** (the enumeration Joseph's declaration entailed but did not supply)
+  **and makes `F-I` maximal** — P2's **seven** bars each aggregate ~**1,528** reported 5D cells, so
+  **~1.17 million off-diagonal entries enter one released bar**, an order of magnitude past P1's 42-bin
+  case, with `cause3_corr` still withheld.
 - [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
   - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
   numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
