@@ -785,6 +785,23 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`REVIEW-20260911-precursor-delta-10eb1bac.md`](REVIEW-20260911-precursor-delta-10eb1bac.md)
+  - **Extends the `P1`-`P18` review's coverage from `8111a951` to `10eb1bac`**, which `a51c6503` did
+  NOT cover; the `P1`-`P18` verdict is unchanged (all MET, admission still REFUSES at `558.42`
+  against `500`). Delta re-measured: 1 commit, 4 files, +218/-3. **FINDING: the new marker at
+  `sbatch_uthrow_block_5d.sh:33-35` re-states the reason the same file WITHDRAWS at `:350-353`** --
+  the archive is `_sb`, so repointing does not move the archive, it lets an undeclared run write
+  INTO it; the two readings license different repairs and the withdrawn one sits 317 lines above its
+  own correction. Confirmed independently: the private-meter surface is **1** name in the module and
+  **2** in the suite (AST over executable code; four docstring-only names, not three); the P12 lean
+  table **by executing all four cases on both sides**; the marker's populations 8 and 36.
+  **Regression CLOSED with a matched control:** `77a4af38` = 14 failed / 2895 passed / 6 skipped,
+  `10eb1bac` = 14 / **3001** / 6, failure set **identical** (zero either way), `+106` = exactly
+  `test_z_precursor`'s tests, zero `z_precursor` failures. **CONTRADICTED:** `MaxRSS` is not empty --
+  `-X` hides a step-level field; **206** step rows carry it, peaks 16-48 GiB against 80-110 G
+  requested. Maxima table's MAX column confirmed on all three populations (block 12 h = **1.39x**
+  its 8.6389 h max); its `n`/`mean` do not reconcile. Bank cleared against a **second** consumer the
+  relay did not check, including the pre-J28 all-ones signature.
 - [`REVIEW-20260911-precursor-repairs-against-P1-P18.md`](REVIEW-20260911-precursor-repairs-against-P1-P18.md)
   - **VERDICT: every one of `P1`-`P18` is MET; the finding is that the admission accounting REFUSES the
   run.** Subject `lane/z-precursor-repairs-bg-20260911` @ `8111a951` against the yardstick committed at
@@ -815,6 +832,16 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   so the live path was always on the UTC basis; what I measured was my own hand-rolled capture, and I
   attributed it to the argv after having just written that the environment, not the argv, determines the
   window. **Not verified:** the `14 / 2997 / 6` regression counts (the `+102` **is** verified).
+- [`PREREGISTER-20260911-temp-file-repair-acceptance-criteria.md`](PREREGISTER-20260911-temp-file-repair-acceptance-criteria.md)
+  - **`T1`-`T14` for the temporary-file repair, fixed BEFORE the implementation existed.** Approves
+  nothing. `T1`-`T4` are the four clauses of Joseph's verbatim requirement; `T5`-`T14` are what makes
+  them provable. Anchored on measured facts: publication is ALREADY atomic (`os.replace` in the
+  product directory) and must stay so; the `except` branch cannot be the mitigation because a
+  wall-kill is `SIGKILL`; there are **TWO** selection surfaces (the bare launcher glob and the
+  declared-population check at `:294-315`); the consumer population is **nine** launchers over five
+  product stems across 4d/5d/fps/corrected, not the precursor's four arms. Heaviest weight on `T4`,
+  the successful-completion arm -- but only its **contents** assertion catches a repair that fixes
+  selection by breaking publication, which is why `T5` (same-filesystem rename) sits beside it.
 - [`PREREGISTER-20260911-precursor-repair-acceptance-criteria.md`](PREREGISTER-20260911-precursor-repair-acceptance-criteria.md)
   - **`P1`-`P18`, the acceptance criteria for precursor repairs (b)-(g) and admission accounting, fixed
   BEFORE the implementation existed** so the later verdict is checkable rather than fitted. Approves
