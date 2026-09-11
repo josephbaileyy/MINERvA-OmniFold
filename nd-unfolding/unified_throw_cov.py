@@ -141,17 +141,36 @@ def _load_bank(bank):
 # matched the throw glob. Its `except` branch unlinks it, but a WALL-CLOCK KILL runs no handler, so
 # an interrupted write left a file the combine would select and try to `np.load`.
 # AND THE KILL PATH IS LIVE AT THE REAL LIMITS, not only at artificially short ones: the block arm's
-# 12 h ceiling is 1.39x its observed maximum of 8.6389 h over 74 tasks, with a 7.7x runtime spread.
+# 12 h ceiling is only 1.39x its observed MAXIMUM of 8.6389 h.
+# POPULATION AND FILTER, because a ratio without them is not a measurement: `sacct -X -D` allocation
+# rows with `JobName == uthrow5d_block`, re-measured 2026-09-11 over three chunked windows (NERSC
+# refuses a span wider than 30 days) covering 2026-06-25 to 2026-09-11 -- 77 rows all-states, 63
+# COMPLETED. Max `ElapsedRaw` 31 100 s = 8.6389 h, and 12 / 8.6389 = 1.39. Both figures confirmed
+# independently here.
+# ⚠ A "RUNTIME SPREAD" FIGURE WAS WITHDRAWN FROM THIS COMMENT AND IS NOT REPLACED. It read "over 74
+# tasks, with a 7.7x runtime spread"; the task count came from a sweep that collapsed array indices,
+# and 7.7x turns out to be max/MEAN computed from a mean that has since been withdrawn. The word
+# "spread" is the actual trouble -- it does not say which statistic: max/min over COMPLETED is
+# 13.2x on the population above, so two defensible readings differ by 1.7x. One unreconciled number
+# is not repaired by adding a second, so the clause is gone. The ceiling ratio carries the point on
+# its own: an 8.64 h observation under a 12 h wall is a real chance of being killed.
 #
 # TWO INDEPENDENT GUARANTEES, EITHER OF WHICH SUFFICES, because one naming rule with one failure
 # mode is a single point of failure for a property Joseph stated absolutely:
 #
-#   (1) THE LEADING DOT. `glob.glob` and every shell glob refuse to match a leading `.` unless the
-#       PATTERN itself begins with one. So an incomplete write is invisible to `*.npz`,
-#       `block5d_*.npz`, `*.np[yz]` and even `*` -- not merely to the patterns in use today, which
-#       is what makes this a property rather than a list of exceptions.
-#   (2) THE NON-NPZ SUFFIX. A consumer that bypasses globbing -- `os.listdir` plus
-#       `endswith(".npz")` -- is covered by `.partial`, which no npz reader will accept either.
+#   (1) THE LEADING DOT, and the claim is SCOPED to the idioms it actually covers. `glob.glob` and
+#       every shell glob refuse to match a leading `.` unless the PATTERN begins with one, so an
+#       incomplete write is invisible to `*.npz`, `block5d_*.npz`, `*.np[yz]` and even a bare `*`
+#       under BOTH -- a property, not a list of today's patterns.
+#       ⚠ NOT TRUE OF `pathlib`, MEASURED: `Path().glob('*')` and `Path().iterdir()` DO return the
+#       dotfile. `Path().glob('*.npz')` does not, so only a SUFFIXLESS pathlib pattern or a raw
+#       directory walk reaches it -- and that is exactly the hole guarantee (2) is here to close.
+#       Not live: no production module under `nd-unfolding/` selects slabs via
+#       `Path().glob/rglob/iterdir` or `os.scandir` (measured: zero). Written down because the
+#       universal form of this sentence would send a future consumer to the one idiom it excludes.
+#   (2) THE NON-NPZ SUFFIX. A consumer that bypasses globbing -- `os.listdir` or `Path().iterdir()`
+#       plus `endswith(".npz")` -- is covered by `.partial`, which no npz reader will accept
+#       either. This is the guarantee that carries the pathlib and directory-walk cases.
 #
 # ⚠ NEITHER GUARANTEE CAN BE MUTATION-TESTED ALONE, and that is worth writing down because it
 # reads as a weak test if you do not know it. Reverting ONLY the prefix leaves `.partial`, which
@@ -197,6 +216,34 @@ def is_incomplete_write(name):
         base.endswith(LEGACY_IN_PROGRESS_SUFFIX)
 
 
+class ScanBlind(RuntimeError):
+    """The incomplete-write scan could not look. Distinct from "looked and found nothing".
+
+    A CHECK THAT COULD NOT RUN IS NOT A CHECK THAT PASSED. `find_incomplete_writes` used to
+    `return []` on `OSError`, which made an unreadable directory indistinguishable from a clean one
+    -- demonstrated with `chmod 000`, and the reason this is a class rather than a log line.
+    """
+
+
+def incomplete_write_scan_dirs(pattern):
+    """The directories a slab pattern actually selects from, EXPANDED.
+
+    ⚠ `os.path.dirname(pattern)` IS NOT A DIRECTORY WHEN THE PATTERN HAS A WILDCARD IN ITS
+    DIRECTORY COMPONENT. For `.../ns_*/block5d_*.npz` it is the unopenable literal `.../ns_*`, so
+    the old scan hit `OSError`, returned `[]`, and `check_slab_population` PASSED with an
+    incomplete write sitting in the very directory it selected from. Measured before fixing.
+    LATENT TODAY -- all 18 launcher patterns across the three glob-bearing flags have fixed
+    directory components -- and repaired anyway, because "no current caller does this" is a
+    property of today's callers and not of the function.
+    """
+    directory = os.path.dirname(pattern) or "."
+    if any(ch in directory for ch in "*?["):
+        # No match means the pattern selects nothing at all; the population check's MISSING arm is
+        # what reports that, so an empty list here is correct rather than blind.
+        return sorted(d for d in glob.glob(directory) if os.path.isdir(d))
+    return [directory]
+
+
 def find_incomplete_writes(directory):
     """Every incomplete write in a directory, found by a DIRECTED scan.
 
@@ -204,12 +251,34 @@ def find_incomplete_writes(directory):
     up in the consumer's own glob -- which was the defect, and also, accidentally, how it got
     reported. Relying on that would mean the diagnostic only worked while the defect existed. So
     the scan is explicit and the report is deliberate.
+
+    RAISES `ScanBlind` RATHER THAN RETURNING `[]` when the directory cannot be read. The empty list
+    was a could-not-look reported as a clean result, one layer below the name-based guarantee.
+    NOTE WHAT THIS DOES AND DOES NOT AFFECT: Joseph's primary guarantee is that an incomplete write
+    is never SELECTED, and that rests on the NAME, so it was never touched by this. What was
+    degraded is the OPERATOR REPORT -- nobody was told a task had died. That is what is repaired.
     """
     try:
         entries = os.listdir(directory or ".")
-    except OSError:
-        return []
+    except OSError as exc:
+        raise ScanBlind(
+            f"cannot scan {directory!r} for incomplete writes ({exc}). This is NOT 'no incomplete "
+            f"writes': it is a check that could not look, and returning an empty list here would "
+            f"report a directory nobody could read as a clean one.") from exc
     return sorted(n for n in entries if is_incomplete_write(n))
+
+
+def find_incomplete_writes_for_pattern(pattern):
+    """`find_incomplete_writes` over every directory a pattern selects from.
+
+    Returns ``(names, scanned_dirs)``. Propagates `ScanBlind`: if ANY selected directory is
+    unreadable the answer is unknown, not empty.
+    """
+    found, scanned = [], []
+    for directory in incomplete_write_scan_dirs(pattern):
+        scanned.append(directory)
+        found.extend(os.path.join(directory, n) for n in find_incomplete_writes(directory))
+    return sorted(found), scanned
 
 
 def _atomic_savez(path, **arrays):
@@ -394,7 +463,15 @@ def check_slab_population(pattern, expected_names, label):
     # scanned and why the era is named in the message: it tells the reader whether they are looking
     # at today's kill or at a leftover from June.
     matched = [os.path.basename(p) for p in glob.glob(pattern)]
-    incomplete = find_incomplete_writes(os.path.dirname(pattern))
+    try:
+        incomplete_paths, scanned = find_incomplete_writes_for_pattern(pattern)
+    except ScanBlind as exc:
+        raise SystemExit(
+            f"[FAIL] {label}: {exc}\n"
+            f"  glob: {pattern}\n"
+            f"  Refusing rather than proceeding: an unreadable slab directory could be hiding an "
+            f"incomplete write, and this check exists to tell the operator a task died.") from exc
+    incomplete = [os.path.basename(p) for p in incomplete_paths]
     if incomplete:
         legacy = [n for n in incomplete if n.endswith(LEGACY_IN_PROGRESS_SUFFIX)]
         raise SystemExit(

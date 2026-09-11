@@ -773,6 +773,208 @@ class ThePopulationIsCheckedByIDENTITYinBothDirections(ProducerFixture):
                 self.assertIn("INCOMPLETE write", str(caught.exception))
                 (target / temps[0]).unlink()
 
+    def test_a_COULD_NOT_LOOK_scan_REFUSES_instead_of_reporting_CLEAN(self):
+        """F1. `find_incomplete_writes` returned `[]` for a directory it could not read, so
+        could-not-look was indistinguishable from clean -- one layer BELOW the name-based
+        guarantee.
+
+        WHAT THIS DOES AND DOES NOT AFFECT, stated because the severity matters: Joseph's primary
+        guarantee is that an incomplete write is never SELECTED, and that rests on the NAME, so it
+        was never touched by this. What was degraded is the OPERATOR REPORT -- nobody was told a
+        task had died. So the blindness is fixed rather than the guarantee re-scoped.
+        """
+        blind = self.work / "blind"
+        blind.mkdir(parents=True, exist_ok=True)
+        (blind / U.incomplete_name("block5d_knobs.npz", "tok")).write_bytes(b"PARTIAL")
+        os.chmod(blind, 0o000)
+        self.addCleanup(os.chmod, blind, 0o700)
+        with self.assertRaises(U.ScanBlind) as caught:
+            U.find_incomplete_writes(blind)
+        self.assertIn("could not look", str(caught.exception))
+        # AND THE CONSUMER TURNS IT INTO A REFUSAL, not a pass.
+        with self.assertRaises(SystemExit) as refused:
+            U.check_slab_population(str(blind / "block5d_*.npz"), ["block5d_knobs.npz"], "block")
+        self.assertIn("could not look", str(refused.exception))
+        # POSITIVE CONTROL: readable and clean must still pass silently, or this guard refuses
+        # every correct run.
+        os.chmod(blind, 0o700)
+        for name in U.find_incomplete_writes(blind):
+            (blind / name).unlink()
+        U._atomic_savez(str(blind / "block5d_knobs.npz"), xs=np.arange(3))
+        self.assertEqual(U.find_incomplete_writes(blind), [])
+        self.assertEqual(
+            U.check_slab_population(str(blind / "block5d_*.npz"),
+                                    ["block5d_knobs.npz"], "block")["n_found"], 1)
+
+    def test_a_WILDCARD_DIRECTORY_component_is_EXPANDED_not_treated_as_a_literal(self):
+        """F1's second case, and the one that actually PASSED with an incomplete write present.
+
+        `check_slab_population` derived its scan directory as `os.path.dirname(pattern)`. For
+        `.../ns_*/block5d_*.npz` that is the unopenable literal `.../ns_*`, so the scan hit
+        `OSError`, returned `[]`, and the check passed while an incomplete write sat in the very
+        directory it selected from. Reproduced before fixing.
+
+        LATENT TODAY: all 18 launcher patterns across the THREE glob-bearing flags -- `--combine`
+        (`:735`), `--block-slabs`, and the population declarations -- have fixed directory
+        components. Repaired regardless: "no current caller does this" is a property of today's
+        callers, not of the function.
+        """
+        root = self.work / "wild"
+        member = root / "ns_run7"
+        member.mkdir(parents=True, exist_ok=True)
+        U._atomic_savez(str(member / "block5d_knobs.npz"), xs=np.arange(3))
+        (member / U.incomplete_name("block5d_flux_1.npz", "tok")).write_bytes(b"PARTIAL")
+        pattern = str(root / "ns_*" / "block5d_*.npz")
+
+        self.assertEqual(U.incomplete_write_scan_dirs(pattern), [str(member)],
+                         "the wildcard directory component must be EXPANDED")
+        found, scanned = U.find_incomplete_writes_for_pattern(pattern)
+        self.assertEqual(len(found), 1, f"the scan must reach into the matched directory: {found}")
+        self.assertEqual(scanned, [str(member)])
+        with self.assertRaises(SystemExit) as caught:
+            U.check_slab_population(pattern, ["block5d_knobs.npz"], "block")
+        self.assertIn("INCOMPLETE write", str(caught.exception))
+
+        # A wildcard matching NOTHING must not be blind either: the MISSING arm reports it.
+        with self.assertRaises(SystemExit) as missing:
+            U.check_slab_population(str(root / "nomatch_*" / "block5d_*.npz"),
+                                    ["block5d_knobs.npz"], "block")
+        self.assertIn("MISSING", str(missing.exception))
+        self.assertEqual(U.incomplete_write_scan_dirs(str(root / "nomatch_*" / "x_*.npz")), [])
+
+    def test_CONCURRENT_writes_to_ONE_product_get_DISTINCT_temps(self):
+        """F3 / T9: the concurrency property had nothing asserting it.
+
+        It HOLDS -- `NamedTemporaryFile` yields a distinct token per call -- but nothing would have
+        noticed if the token were dropped "for readability", and every other arm would have stayed
+        green: one writer still publishes correctly, and the name is still unselectable. What
+        breaks is two array tasks writing the same product concurrently, where a shared temp name
+        means one clobbers the other's partial file and the survivor publishes a mixture.
+
+        THIS ARM FAILS IF THE TOKEN GOES, which is the only thing that makes the property defended
+        rather than merely true.
+        """
+        target = self.work / "concurrent"
+        target.mkdir(parents=True, exist_ok=True)
+        product = str(target / "block5d_knobs.npz")
+        real_replace = U.os.replace
+        temps = []
+        U.os.replace = lambda src, dst: temps.append(src)
+        try:
+            for _ in range(4):
+                U._atomic_savez(product, xs=np.arange(3))
+        finally:
+            U.os.replace = real_replace
+        self.assertEqual(len(temps), 4)
+        self.assertEqual(len(set(temps)), 4,
+                         f"four writes to ONE product produced {len(set(temps))} distinct temp "
+                         f"name(s): {[os.path.basename(x) for x in temps]}. A shared name means "
+                         f"concurrent array tasks clobber each other's partial file and the "
+                         f"survivor publishes a mixture of two writes.")
+        # The token is what carries it: the names differ ONLY in the token position.
+        for path in temps:
+            base = os.path.basename(path)
+            self.assertTrue(base.startswith(f"{U.INCOMPLETE_PREFIX}block5d_knobs.npz."))
+            self.assertTrue(base.endswith(U.INCOMPLETE_SUFFIX))
+            token = base[len(U.INCOMPLETE_PREFIX) + len("block5d_knobs.npz."):
+                         -len(U.INCOMPLETE_SUFFIX)]
+            self.assertTrue(token, "the token is empty -- distinctness has been removed")
+        self.assertEqual(len({os.path.basename(x) for x in temps}), 4)
+
+    def test_the_INVISIBILITY_claim_is_SCOPED_to_the_idioms_it_covers(self):
+        """The universally-stated claim, bounded by measurement.
+
+        `glob.glob` and shell globs refuse a leading dot under ANY pattern including bare `*`.
+        `pathlib` does NOT: `Path().glob('*')` and `Path().iterdir()` both return the dotfile. That
+        is not live -- no production module under `nd-unfolding/` selects slabs that way -- and it
+        is the hole guarantee (2), the `.partial` suffix, exists to close. Asserted rather than
+        described, because the universal form of the sentence would send a future consumer straight
+        at the one idiom it excludes.
+        """
+        target = self.work / "idioms"
+        target.mkdir(parents=True, exist_ok=True)
+        temp = target / U.incomplete_name("block5d_knobs.npz", "tok")
+        temp.write_bytes(b"PARTIAL")
+        U._atomic_savez(str(target / "block5d_knobs.npz"), xs=np.arange(3))
+
+        for pattern in ("*", "*.npz", "block5d_*.npz", "*.np[yz]"):
+            with self.subTest(idiom="glob.glob", pattern=pattern):
+                self.assertNotIn(temp.name, [os.path.basename(q) for q in
+                                             __import__("glob").glob(str(target / pattern))])
+        shell = subprocess.run(["bash", "-c", f'cd {target!s} && ls *'],
+                               capture_output=True, text=True)
+        self.assertNotIn(temp.name, shell.stdout.split())
+
+        # THE EXCLUDED IDIOMS, measured so the boundary is a fact and not a caveat.
+        self.assertIn(temp.name, [q.name for q in target.glob("*")],
+                      "pathlib DOES see it; if that ever changes, the scoping comment is stale")
+        self.assertIn(temp.name, [q.name for q in target.iterdir()])
+        # ...and guarantee (2) is what covers them: the suffix keeps it out of any .npz selection.
+        self.assertNotIn(temp.name, [q.name for q in target.glob("*.npz")])
+        self.assertFalse(temp.name.endswith(".npz"))
+        # No production module CALLS the excluded idioms.
+        #
+        # ⚠ AST, NOT SUBSTRING, and my first version proved why: it banned the text `.iterdir()`
+        # and fired on `unified_throw_cov.py`'s own comment explaining that pathlib sees these
+        # files. Banning the warning is not a check -- right check, wrong operand, the same shape
+        # this suite has caught four times now. Only a CALL can select anything.
+        # `os.walk` IS DELIBERATELY NOT IN THIS SET, and measuring is what removed it. Four
+        # production modules call it -- `mnv_guard_firing_census.py`, `mnv_source_manifest.py`,
+        # `p4_lib.py`, `protect_throw_slabs.py` -- so banning it would have failed on four correct
+        # modules. A tree walk is not by itself a product selection; what matters is the FILTER
+        # applied to what it yields. `protect_throw_slabs` is the one that filters for slabs and it
+        # gets its own arm below.
+        excluded = {"iterdir", "rglob", "scandir"}
+        for module in sorted(ND.glob("*.py")):
+            with self.subTest(module=module.name):
+                calls = {node.func.attr for node in ast.walk(ast.parse(module.read_text()))
+                         if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                         and node.func.attr in excluded}
+                self.assertEqual(calls, set(),
+                                 f"{module.name} CALLS {sorted(calls)}, which SEE incomplete "
+                                 f"writes; the scoping comment at INCOMPLETE_PREFIX must be "
+                                 f"revisited, and guarantee (2) is what would have to carry it")
+
+    def test_protect_throw_slabs_REJECTS_an_incomplete_write_via_GUARANTEE_2(self):
+        """A REAL CONSUMER THAT WALKS, so the leading dot does NOT protect it -- and the concrete
+        demonstration that guarantee (2) is load-bearing rather than belt-and-braces.
+
+        `protect_throw_slabs.find_slabs` (`:67-71`) walks the tree and collects
+        `fn.endswith(".npz") and ("slab" in fn.lower() or in_slab_dir)`. `os.walk` yields dotfiles,
+        so guarantee (1) is no help here at all.
+
+        PRE-REPAIR the legacy temp `uthrow5d_slab_0.npz.<tok>.tmp.npz` satisfies BOTH clauses, so
+        this tool would have collected a partial file and then either failed its own `np.load`
+        integrity pass or archived it as a "protected slab" -- in a tool whose entire purpose is
+        that a byte copy of a corrupt npz is still corrupt. POST-REPAIR `.partial` fails the
+        `endswith(".npz")` clause and it is rejected. Measured both ways.
+        """
+        import protect_throw_slabs
+
+        root = self.work / "protect"
+        slabdir = root / "nd-unfolding" / "uq_5d" / "uthrow_slabs_5d"
+        slabdir.mkdir(parents=True, exist_ok=True)
+        U._atomic_savez(str(slabdir / "uthrow5d_slab_0.npz"), xs=np.arange(3))
+
+        post = slabdir / U.incomplete_name("uthrow5d_slab_1.npz", "tok")
+        post.write_bytes(b"PARTIAL")
+        hits = protect_throw_slabs.find_slabs(str(root))
+        self.assertEqual([os.path.basename(h) for h in hits], ["uthrow5d_slab_0.npz"],
+                         "the post-repair temp must be rejected by this tool's own filter")
+        post.unlink()
+
+        legacy = slabdir / f"uthrow5d_slab_1.npz.tok{U.LEGACY_IN_PROGRESS_SUFFIX}"
+        legacy.write_bytes(b"PARTIAL")
+        legacy_hits = [os.path.basename(h) for h in protect_throw_slabs.find_slabs(str(root))]
+        self.assertIn(legacy.name, legacy_hits,
+                      "PRECONDITION of the finding: the PRE-REPAIR name satisfies this tool's "
+                      "filter, so it would have been collected as a slab worth protecting. If this "
+                      "stops being true the finding above is stale and should be re-measured.")
+        self.assertTrue(legacy.name.endswith(".npz"))
+        self.assertFalse(post.name.endswith(".npz"),
+                         "and guarantee (2) -- the suffix, not the dot -- is what excludes the new "
+                         "name from a walker")
+
     def test_PUBLICATION_stays_SAME_DIRECTORY_and_therefore_SAME_DEVICE(self):
         """The review's point 3. `os.replace` is atomic only within one filesystem, so a repair
         that relocated the temp to a sibling temp directory would stop being atomic the moment that
