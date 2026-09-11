@@ -198,7 +198,11 @@ capture — `only in naive = 0` — and **all 62** extra attempts fall inside th
 **The operative figures.** On the mandated UTC basis: **CPU `15.4231` task-h, GPU `0.0`**, headroom
 **CPU `≤ 484.58`**, GPU `500.0`. `FINDING-20260910` §4's adopted rule is *"carry the **MAXIMUM**
 observed spend, never the latest"*; the reported `14.9372` is the **latest**, and is also the lower
-basis. The reported headroom `485.1` is therefore ~`0.5` task-h optimistic. **Routed to the
+basis. The reported headroom `485.1` is therefore ~`0.5` task-h optimistic. **That rule selects the right
+number for the wrong reason** — the maximum it carries (`14.9756`) **IS** the UTC-basis reading, so a
+rule adopted as a hedge against supposed accounting instability has been working as an accidental
+timezone correction. **See the correction banner at §7 item 1: the instability that motivated the rule
+is this same boundary defect, and `FINDING-20260910`'s diagnosis is mistaken.** **Routed to the
 `r5_meter` owner; not adjudicated here.**
 
 ### 5.4 The conclusion survives, and two cautions attach to it

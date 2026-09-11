@@ -808,7 +808,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **Spend is on the wrong timezone basis:** `r5_meter.py:_sacct_argv()` emits a naive `--starttime` that
   `sacct` reads in the host TZ (PDT), starting the window 7 h late — `14.937222` (naive) vs
   **`15.423056`** (UTC), `+62` attempts, `+0.485833` task-h, isolated by bit-identical 3x replication per
-  basis and strict-subset containment; operative headroom **CPU `≤ 484.58`**. CPU-binding **survives**.
+  basis and strict-subset containment; operative headroom **CPU `≤ 484.58`**. CPU-binding **survives**. **The same boundary explains
+  `FINDING-20260910`:** on the CLOSED window to the receipt's own instant, `TZ=local` reproduces
+  `1826 / 14.489722` and `TZ=UTC` reproduces `1888 / 14.975556` — **both** historical figures,
+  differing in nothing but the timezone, so that finding's attempt-identity diagnosis is **mistaken**
+  and this lane's own retraction of that hypothesis is **WITHDRAWN** (§7 item 1 banner). Its four
+  original controls all ran on **one side** of the boundary — a control over a population that cannot
+  exhibit the defect, `BEN-032` inside a spend meter.
   **(4)** The addendum's diff and dates confirm, and **both** builders are implicated pre-`07c18aee`
   (`bootstrap_nd.py:28` `seed=a.seed`; `seedscan_split.py:54` `seed=args.split_seed`); job `55912230`
   did **not** write the blocks (it started ~19 h after their mtime) — the producer was an **interactive**
