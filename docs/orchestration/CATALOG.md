@@ -785,6 +785,40 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
+  - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
+  precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
+  launched, cluster read-only. **CERTIFIED (1):** all four launchers exist with exactly the pinned
+  specs — **70 CPU tasks, 0 GPU**, arrays read from the scripts never from a `sacct` bracket — with two
+  corrections: the **dump arm runs a different producer** (`unified_throw.py --dump`), and of 24
+  `sbatch_uthrow*` siblings the near-name `run_5d.sh` declares `0-19%10`/`12 h` against the fast arm's
+  `0-39%40`/`6 h`, a budget fact (all siblings are cpu, so no resource-class flip). **BLOCK (4):**
+  **(2)** `sbatch_uthrow_dump_5d.sh:12-14` hardcodes an absolute `REPO`, `cd`s there and runs a bare
+  `python3`, so `sys.path[0]` is the pscratch tree regardless of `MNV_CODE_ROOT` — **the OI-136 shape
+  (the 211-behind / 3 h 08 m A100 case) achieved by `cd` instead of a Python insert, hence invisible to
+  the sweep that repaired the inserts** — and it is the only arm with `GUARD=0 mnv_inv=0
+  mr_require_valid_offset=0`; it also has **0** `DATA_ROOT` references against 5/5/5, breaking the
+  invariant `unified_throw_cov.py:63-68` relies on. **(3)** *No* namespace is fresh (`block_slabs_5d` 8,
+  `block_slabs_5d_sb` **36**, `uthrow_slabs_5d_sb` 40, `uthrow_slabs_5d` 160, `bank_uthrow_5d` **374**,
+  all July or earlier), and on the **undeclared** path the block leg writes `block_slabs_5d` (`:320`)
+  while the combine reads `_sb` **unconditionally** (`:333`) — so the precursor's combine would consume
+  **36 stale July products** and never see its own 21, and because the glob matches it **does not fail
+  closed**; the launcher's own `:321-331` says members die loudly and *"an UNDECLARED run reads exactly
+  what it read before"*, with canonicity **still open**. `mii/` is safe **only if**
+  `MNV_EST_SEED_OFFSET` is unset — conditional, resting on the `mr_declared()` conflation, and should be
+  a refusal. **(4)** `--expected-ids` occurs **zero** times in all four arms; only `--expected-throws
+  0-159` is asserted, while `--block-slabs` is a **bare glob with no expected count**, so a short block
+  arm combines silently. **(6)** RUNNING **is** charged — proven by fixture (3.0 h = 1.0 COMPLETED +
+  2.0 RUNNING; PENDING skipped), refuting the feared mechanism — but the meter charges elapsed-so-far,
+  so up to **240 CPU task-h** is committed-but-unmetered in flight (R5's own design), and **the cap
+  arithmetic does not close: measured 58.84 + unmeasured `--time` ceilings 51 = 109.84 against a 100
+  cap**, 48 h of it in the dump arm. **CANNOT CERTIFY (5):** there is **no separate receipt** to order —
+  provenance is in-product `TParameter`s (`:550-579`) and `_atomic_savez`, and no `os._exit` exists, so
+  the property holds **vacuously**, not by enforcement. **The OPEN item is CONFIRMED by an independent
+  method:** 4 distinct blobs of `unified_throw_cov.py` across every ref, **zero** mask-write hits in all
+  four, positive control **3** on `eavailW_covariance.py`; `:368-372` computes `rep = x_cv > 0` and
+  discards it — and because support is **strictly positive**, a pinned-zero bin is excluded from `rep`,
+  so Joseph's *"a pinned-zero bin is not a null operand"* **names this line**.
 - [`ASSESSMENT-20260911-endpoint-B-design-nine-claims.md`](ASSESSMENT-20260911-endpoint-B-design-nine-claims.md)
   - **Pre-implementation assessment of `DESIGN-20260911-endpoint-B-generator-comparison-test.md`
   (`8a42f8ea`), designer recused; nine load-bearing claims.** Authorizes nothing; endpoint B stays
