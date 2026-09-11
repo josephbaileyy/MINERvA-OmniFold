@@ -1,0 +1,6 @@
+{
+  "push": "/data/pet_inference/push.npz",
+  "mcfile": "/data/baseline_flux/runEventLoopMC_MEFHC.root",
+  "flux_hist": "pTmu_reweightedflux_integrated",
+  "n_nucleons": 3.2353e30
+}

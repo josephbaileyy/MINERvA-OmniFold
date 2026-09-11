@@ -1,0 +1,5 @@
+{
+  "weights": "/data/pet_diagnostic/weights.npz",
+  "chunk": 250000,
+  "batch_size": 4096
+}

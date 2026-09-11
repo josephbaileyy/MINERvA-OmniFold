@@ -54,35 +54,72 @@ def legacy_module(name: str) -> ModuleType:
     return module
 
 
-@lru_cache
-def code_identity() -> dict[str, Any]:
-    """Record actual source bytes, revision, and numerical dependency versions."""
+def code_identity(scope: str = "scalar") -> dict[str, Any]:
+    """Bind calculation dependencies, independently of repository revision.
+
+    Parameters
+    ----------
+    scope : str
+        Calculation family whose implementation and runtime must match.
+
+    Returns
+    -------
+    dict
+        Source digests, output protocol version and runtime dependencies.
+        Documentation and unrelated calculation families are excluded.
+    """
     from importlib.metadata import PackageNotFoundError, version
 
-    paths = sorted((ROOT / "production/minerva_production").glob("*.py"))
-    paths += sorted((ROOT / "production").glob("*.py"))
-    paths += [ROOT / "production" / "prepare_events"]
-    paths += [
-        ROOT / "nd-unfolding" / f"{name}.py"
-        for name in ("omnifold_nn_core", "xsec_nd", "uq_math", "mnv_guarded_run")
+    shared = [
+        "production/minerva_production/" + name + ".py"
+        for name in ("__init__", "storage", "cli")
     ]
+    families = {
+        "scalar": [
+            "production/minerva_production/scalar.py",
+            "production/minerva_production/uncertainty.py",
+            "production/unfold_gbdt.py",
+            "production/uncertainties.py",
+            "production/closure.py",
+            "nd-unfolding/omnifold_nn_core.py",
+            "nd-unfolding/xsec_nd.py",
+        ],
+        "projection": [
+            "production/minerva_production/projection.py",
+            "production/minerva_production/scalar.py",
+            "production/project.py",
+            "nd-unfolding/uq_math.py",
+        ],
+    }
+    if scope not in families:
+        raise ValueError(f"unknown calculation scope: {scope}")
+    paths = shared + families[scope] + ["nd-unfolding/mnv_guarded_run.py"]
     versions: dict[str, str | None] = {}
-    for name in ("numpy", "lightgbm", "scikit-learn"):
+    packages = ["numpy"]
+    if scope == "scalar":
+        packages += ["lightgbm", "scikit-learn", "scipy", "joblib", "threadpoolctl"]
+    for name in packages:
         try:
             versions[name] = version(name)
         except PackageNotFoundError:
             versions[name] = None
+    return {
+        "scope": scope,
+        "output_schema": 2,
+        "sources": {path: digest(ROOT / path) for path in sorted(paths)},
+        "versions": versions,
+        "python": sys.version,
+    }
+
+
+def provenance() -> dict[str, str]:
+    """Record the full checkout revision without making it a resume constraint."""
     revision = subprocess.check_output(
         ["git", "-C", str(ROOT), "rev-parse", "HEAD"],
         text=True,
         env={key: value for key, value in os.environ.items() if key != "GIT_PAGER"},
     ).strip()
-    return {
-        "revision": revision,
-        "sources": {str(p.relative_to(ROOT)): digest(p) for p in paths},
-        "versions": versions,
-        "python": sys.version,
-    }
+    return {"revision": revision}
 
 
 def check_output(path: Path, identity: dict[str, Any], resume: bool) -> bool:
@@ -107,7 +144,8 @@ def save_result(path: Path, arrays: dict[str, Any], record: dict[str, Any]) -> N
     np.savez_compressed(path / "result.npz", **arrays)
     complete = {
         **record,
-        "schema": 1,
+        "schema": 2,
+        "provenance": provenance(),
         "status": "complete",
         "scientific_status": "diagnostic; no publication adoption",
         "result_sha256": digest(path / "result.npz"),
@@ -124,7 +162,7 @@ def load_result(path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     import numpy as np
 
     record = read_json(path / "record.json")
-    if record.get("schema") != 1 or record.get("status") != "complete":
+    if record.get("schema") != 2 or record.get("status") != "complete":
         raise ValueError(f"{path}: missing compatible completion record")
     if record.get("result_sha256") != digest(path / "result.npz"):
         raise ValueError(f"{path}: payload digest mismatch")

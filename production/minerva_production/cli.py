@@ -24,7 +24,6 @@ from .storage import (
 DESCRIPTIONS = {
     "prepare_events": "Prepare a synthetic event fixture or plan per-playlist ROOT production with separate flux normalization.",
     "unfold_gbdt": "Unfold validated cached scalar arrays with the shared nominal/replica GBDT calculation.",
-    "unfold_pet": "Run the guarded full-event PET diagnostic trainer in its TensorFlow environment.",
     "uncertainties": "Run statistical or ML split members and combine a declared, matched family; systematic paths require their governing construction.",
     "closure": "Construct strict signal-MC pseudo-data and reuse nominal unfolding; this does not measure coverage.",
     "project": "Project compatible cross sections and covariance without retraining, preserving widths and support.",
@@ -256,7 +255,7 @@ def _project(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
         "operation": "project",
         "config": cfg,
         "input_record": fingerprint(record),
-        "code": code_identity(),
+        "code": code_identity("projection"),
     }
     if check_output(args.output, identity, args.resume):
         return
@@ -306,17 +305,6 @@ def main(operation: str, argv: list[str] | None = None) -> int:
                     synthetic(args.output, cfg)
             else:
                 raise ValueError("prepare_events mode must be synthetic or root-plan")
-            return 0
-        if operation == "unfold_pet":
-            from .pet import plan, run
-
-            if args.input is None:
-                raise ValueError("PET requires --input")
-            resolved = plan(cfg, args.input, args.output)
-            if args.plan:
-                print(json.dumps(resolved, indent=2))
-            else:
-                run(resolved, args.output)
             return 0
         if operation == "project":
             if (

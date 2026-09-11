@@ -2,8 +2,8 @@
 
 This interface supports a matched cached-input LightGBM calculation, statistical
 replicas, training-split diagnostics, strict MC closure, and linear projection.
-It also plans per-playlist ROOT preparation and invokes the retained guarded PET
-diagnostic trainer. Local fixture equivalence does not authorize a production
+It also plans per-playlist ROOT preparation and exposes retained guarded PET
+diagnostic training, full-inventory inference and extraction. Local fixture equivalence does not authorize a production
 switchover, retirement of a frozen reference, or scientific adoption.
 
 ## Local smoke
@@ -88,7 +88,12 @@ fibers fail explicitly. Normalized-shape propagation is unsupported.
 Scalar outputs are fresh directories with `result.npz` and a final `record.json`.
 Only supported bins enter `xsec`; intermediate histograms retain the full grid.
 `--resume` checks complete status, payload digest, resolved configuration, input
-digest, source digests, revision, and dependency versions. Partial outputs require
+digest, calculation-scoped source digests and dependency versions. Full Git
+revision is recorded separately as provenance: documentation and unrelated PET
+changes do not invalidate scalar resume or member assembly. Relevant engine,
+extraction, perturbation and guard changes still reject reuse. Schema-1 products
+from the initial interface remain historical and are not resumed as schema-2
+products; no bypass is provided. Partial outputs require
 a fresh destination. Members load and hash the event input once per invocation.
 Completion means software execution succeeded, and carries no scientific adoption.
 
@@ -98,7 +103,7 @@ Plan event preparation using an explicit playlist inventory and separate flux:
 
 ```sh
 python production/prepare_events --config production/examples/prepare_root.json --input production/examples/playlists.json --output /data/prepared --plan
-python production/unfold_pet.py --config production/examples/pet.json --input /data/full_event.npz --output /data/pet_diagnostic --plan
+python production/unfold_pet.py train --config production/examples/pet.json --input /data/full_event.npz --output /data/pet_diagnostic --plan
 ```
 
 Replace the example paths with actual prerequisites. `root-plan` always plans; it
@@ -108,14 +113,35 @@ under its governing launcher. The safe merger handles large TTrees. Prepare flux
 with the baseline event loop and `combine_flux_MEFHC.py` separately; do not use
 summed nucleon metadata from a merged file.
 
-PET execution uses the same command without `--plan` in the TensorFlow environment,
-after the named run is authorized. It requires the certified target NPY, target
-receipt, full-event input, and Gate-3 manifest. It retains the existing full-event
-representation, annealed training policy, native weights/marker formats, and import
-guard. A legacy import resolving to another checkout is a prerequisite failure;
-the adapter does not bypass it. PET output is training weights, not a cross section.
-Full-inventory inference and ROOT extraction remain separate stages; exact
-commands and unavailable checks are in [tests/README.md](tests/README.md).
+For a separately authorized PET diagnostic run, edit the three example JSON files
+to use immutable inputs. In the established TensorFlow environment, train and then
+infer over the **full** inventory, not just the training subsample:
+
+```sh
+python production/unfold_pet.py train --config production/examples/pet.json --input /data/full_event.npz --output /data/pet_diagnostic
+python production/unfold_pet.py infer --config production/examples/pet_infer.json --input /data/full_event.npz --output /data/pet_inference
+```
+
+The inference config points to `/data/pet_diagnostic/weights.npz`; the weights'
+native inference contract supplies architecture, checkpoint and fitted scaling.
+Training requires the certified target NPY, target receipt and Gate-3 manifest.
+The existing annealed training policy and inference agreement tolerance are fixed.
+
+In a separate established ROOT/MAT process (`source setup_salloc_env.sh` from the
+repository root), extract with the independent baseline-flux product:
+
+```sh
+python production/unfold_pet.py extract --config production/examples/pet_extract.json --input /data/full_event.npz --output /data/pet_extraction
+```
+
+The extraction config consumes `/data/pet_inference/push.npz`. Each stage accepts
+`--plan` without loading arrays or either numerical runtime. Outputs are fresh
+directories holding native NPZ/`.done` products and `production.json`; extraction
+also writes `summary.json`. The supplied inventory must match the weights/push
+content digest. The checkout guard remains mandatory and rejects imports from
+another checkout; no checkpoint override or overwrite is exposed. These commands
+do not submit jobs, authorize compute, construct PET uncertainty or promote a
+result. PET remains diagnostic with its central/statistical pairing declined.
 
 ## Compatibility and workflow size
 
@@ -125,6 +151,7 @@ commands and unavailable checks are in [tests/README.md](tests/README.md).
 | `unfold_nd_omnifold_unbinned.py` | `unfold_gbdt.py` for explicitly contracted caches |
 | `bootstrap_nd.py`, `combine_cov_nd.py` | `uncertainties.py run`, then `combine` |
 | `train_fullevent_nominal.py` | `unfold_pet.py`, preserving guarded native execution |
+| `extract_fullevent_fps.py --stage push`, then `--stage xsec` | `unfold_pet.py infer`, then `extract` in separate environments |
 | N-D `--closure` | `closure.py` for strict signal-MC closure |
 | `project_cov_nd.py`, `xsec_nd.py` | `project.py` for compatible interface products |
 
