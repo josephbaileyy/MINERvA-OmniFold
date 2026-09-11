@@ -1,0 +1,17 @@
+{
+  "status": "AUTHORIZED",
+  "profile": {
+    "gpus": 1,
+    "cpus": 32,
+    "memory_GiB": 56
+  },
+  "calibration_gpu_hours": 2,
+  "total_gpu_hours": 290,
+  "total_cpu_core_hours": 9296,
+  "resource_amendment_sha256": "d419c4fa69b8f86f027831169861590924c718b99f35c79b6d2db912ced3af37",
+  "approved_commit": "41a216544a526999d8af54d971808bc39dc97aa5",
+  "authority": "Joseph, task conversation, 2026-09-11",
+  "verbatim_approval": "I approve RESOURCE_AMENDMENT-20260911.md at commit 41a21654: one A100, 32 reserved Slurm CPUs and 56 GiB RAM per allocation, with ceilings of 290 GPU-hours, 9,296 reserved Slurm CPU-hours, 200 GiB storage, and two concurrent full jobs. Proceed through calibration and, only if its existing headroom and integrity gates pass, the frozen campaign without further permission requests for covered steps. Preserve all existing scientific criteria, stop conditions and scope restrictions. Report measured resource usage and distinguish synthetic routing conclusions from real-data representation performance.",
+  "total_storage_GiB": 200,
+  "max_concurrent_full_jobs": 2
+}

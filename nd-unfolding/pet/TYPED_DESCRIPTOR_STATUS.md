@@ -16,7 +16,7 @@ The [bounded execution proposal](direct_token_comparison/EXECUTION_PROPOSAL.md)
 was approved on 2026-09-11, but scheduler preflight proves its eight-CPU GPU
 reservation cannot run. No allocation was submitted. The
 [execution status](direct_token_comparison/EXECUTION_STATUS-20260911.md) records
-the stop and a concrete resource amendment awaiting approval. It is synthetic-only; the producer, source release,
+the historical stop and the now-authorized resource amendment; calibration is next. It is synthetic-only; the producer, source release,
 selection/weight/truth-sidecar and real normalization prerequisites remain open.
 No mapping pass, historical pilot or software test is a learning-performance
 result. This preparation changes none of the source-audit verdicts or bindings.

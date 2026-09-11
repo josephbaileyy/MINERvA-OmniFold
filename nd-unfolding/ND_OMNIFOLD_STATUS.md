@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**PET representation preparation, 2026-09-11:** the [comparison report](pet/direct_token_comparison/REPORT_FOR_BEN.md), isolated Keras pooled/direct candidate and synthetic runner are prepared. The execution proposal was approved, but [scheduler preflight](pet/direct_token_comparison/EXECUTION_STATUS-20260911.md) rejected its resource profile. No allocation was submitted; the 32-CPU resource amendment awaits approval. Real-source semantics and input bindings remain blocking prerequisites.
+**PET representation preparation, 2026-09-11:** the [comparison report](pet/direct_token_comparison/REPORT_FOR_BEN.md), isolated Keras pooled/direct candidate and synthetic runner are prepared. The execution proposal was approved, but [scheduler preflight](pet/direct_token_comparison/EXECUTION_STATUS-20260911.md) rejected its resource profile. No allocation was submitted; the [32-CPU resource amendment is authorized](pet/direct_token_comparison/RESOURCE_AUTHORIZATION-20260911.md), with calibration next. Real-source semantics and input bindings remain blocking prerequisites.
 
 **PET typed-descriptor continuation, 2026-09-10:** reconstruction-side prong
 definitions and their implementation implications are recorded in

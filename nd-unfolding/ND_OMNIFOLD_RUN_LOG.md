@@ -261,3 +261,12 @@ The GPU limit, events, seeds, algorithm and acceptance criteria remain frozen.
 The original CPU reservation estimate was wrong; it has not been silently
 reinterpreted as an application-thread limit. No source access, covariance,
 adoption, real-input training or Gate-6 work occurred.
+
+
+## 2026-09-11 — Corrected PET resource envelope authorized
+
+Joseph explicitly approved the amendment at `41a21654`: one A100, 32 reserved
+CPUs, 56 GiB, total ceilings 290 GPU-hours / 9,296 CPU-hours / 200 GiB, and two
+concurrent full jobs. [Exact authorization](pet/direct_token_comparison/RESOURCE_AUTHORIZATION-20260911.md).
+Calibration is next; full jobs remain conditional on the existing integrity and
+20% headroom gates. All scientific restrictions and no-retry stops remain.

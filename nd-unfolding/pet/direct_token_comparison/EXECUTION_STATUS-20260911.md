@@ -1,3 +1,9 @@
+# Current authorization
+
+The [resource amendment is now authorized](RESOURCE_AUTHORIZATION-20260911.md).
+Calibration is the next action; the following preflight history remains intact.
+No result from the new allocation is yet claimed.
+
 # Execution status: stopped at scheduler preflight
 
 **Calibration NOT STARTED; full matrix NOT STARTED. Zero training allocations
