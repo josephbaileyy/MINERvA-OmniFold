@@ -742,6 +742,29 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   than return, which is correct since a raise is not an outcome to mis-license. Frame withdrawn, dates
   independently verified, ask now a **narrowing**. `W5` tightened: `cause3_corr` forces nothing.
   **§Y.3** suites `136` / `80` / `56+1`, control first.
+- [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partZ.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partZ.md)
+  - **PART Z — cause-3 Part A at `6f587e59`: VERDICT = READY FOR JOSEPH'S DECISION** on this lane's
+  slice. Supersedes Part Y. Block closed and verified by execution on five cases **including a positive
+  control**: `build_path` default is `inspect._empty` (**required**, same as `kappa`); omit → `TypeError`;
+  `None` → refused; **non-member → refused**; member + `scale_kind='lambda_max'` → **GRADED with scope
+  present**. Pinned by **signature inspection**, which is the level this lane named the defect at. Key
+  sets identical across `GRADED` and `DEGENERATE_FUNCTIONAL`, scope present on the refusal. Suites
+  `136`/`90`/`56+1`.
+  ⚠ **§Z.2 — A SHAPE WORTH KEEPING, AND THIS LANE'S OWN PART V REQUIREMENT CREATED IT.** The designer
+  found one of its tests had **encoded** the defect: `test_without_a_build_path_the_key_is_still_present`
+  asserted a present key with a `None` value — the suppressibility bug as a passing assertion. Its
+  generalisation: *a test written for property A can lock in a defect in property B, and the more
+  rigorously it enforces A the more firmly it holds B.* **The correct rule was Part V's** *"one identical
+  key set across all branches"*, and the test implemented it faithfully. **The specific failure: a
+  uniformity requirement can be satisfied by NORMALISING THE DEFECTIVE CASE INTO THE UNIFORM SHAPE
+  rather than eliminating it.** So the requirement was under-specified — *"uniform keys"* needed
+  *"uniform keys over the configurations that SHOULD EXIST"*, and the second clause does the work.
+  **§Z.3 corrects a relayed claim without blocking on it:** `scale`/`scale_kind` are **not** top-level
+  return keys — they are nested at `detail['degeneracy']`, so a top-level `.get('scale_kind')` returns
+  `None`, indistinguishable from *"no scale declared."* Whether the **support-refusal** branch (which
+  returns before the degeneracy classifier) carries them **could not be determined** and is not
+  asserted. Residual 1 is the reviewer's. **Method note: this lane's own first read used `.get('scale')`,
+  got `None` from a MISSING key, and checked the full key set before asserting.**
 - [`RECORD-20260910-z-assessor-declines-proxy-transcription.md`](RECORD-20260910-z-assessor-declines-proxy-transcription.md)
   - **DECLINES to proxy-commit another lane's findings, with reasons — filed outside the `REVIEW`
   numbering because it is not a review.** Agrees the concern is sound (*"a finding list with no
