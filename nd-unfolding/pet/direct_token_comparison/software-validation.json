@@ -1,0 +1,49 @@
+{
+  "scope": "local CPU synthetic software validation only; not learning-performance evidence",
+  "tests": {
+    "passed": 62,
+    "subtests_passed": 10,
+    "failures": 0
+  },
+  "ruff": "PASS",
+  "black": "PASS",
+  "targeted_strict_mypy": "PASS, five changed Python files; imported dependency debt excluded",
+  "smokes": [
+    {
+      "mode": "ordinary",
+      "training_rows": 32,
+      "test_rows": 16,
+      "epochs_per_fit": 1,
+      "iterations": 1,
+      "terminal": "COMPLETE",
+      "receipt_sha256": "ea48a3d6009bd5b21264fe1f673043d5c66b1ff0bc1393d2525ad82e3d871871",
+      "closed_artifacts_verified": 6,
+      "paired_initial_arrays_equal": true
+    },
+    {
+      "mode": "injected",
+      "training_rows": 32,
+      "test_rows": 16,
+      "epochs_per_fit": 1,
+      "iterations": 1,
+      "terminal": "COMPLETE",
+      "receipt_sha256": "f605011bd820771ed98e81cbb3fbbd8003d1b166e5209232560aed158a2846c9",
+      "closed_artifacts_verified": 6,
+      "paired_initial_arrays_equal": true
+    },
+    {
+      "mode": "shuffle",
+      "training_rows": 32,
+      "test_rows": 16,
+      "epochs_per_fit": 1,
+      "iterations": 1,
+      "terminal": "COMPLETE",
+      "receipt_sha256": "e3c4d7ba29150d4acf890ac3db71f23ab11e92a94fc4047995721894b55ab20f",
+      "closed_artifacts_verified": 6,
+      "paired_initial_arrays_equal": true
+    }
+  ],
+  "smoke_artifact_boundary": "Temporary models and weights were read back and hashed locally; not preserved as scientific products. Reproduce with README commands.",
+  "new_source_access": false,
+  "new_cluster_compute": false
+}

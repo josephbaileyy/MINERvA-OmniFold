@@ -1,0 +1,267 @@
+{
+  "base": "57b707b737ce817c1ef8d8bd0f0a39ce4becb7ba",
+  "source_receipt_sha256": "5e8d545b6a8b45ed1872852417c13518472b0fbb07832faf78c39406e153b3da",
+  "telemetry_sha256": "12c340ae7405603484a1eab084f03a931fd73caae469595dc3a65e0af32c71a1",
+  "fixed_sample_sha256": "855eaa6bee58341d8368a239d0fc28050873446721624bb47808d5345f8cbeec",
+  "extension": {
+    "data": {
+      "rows": 4080,
+      "prongs": 6050,
+      "pid_counts": {
+        "0": 216,
+        "13": 1053,
+        "3": 3254,
+        "8": 1314,
+        "-999": 213
+      },
+      "pid_filter_lower_bound": 429,
+      "masked_dedx": 4614,
+      "masked_mass": 1482,
+      "prong_zero_lepton_match": {
+        "false": 7,
+        "true": 4073
+      },
+      "time_check": {
+        "discrepancies": 4,
+        "eligible": 6050,
+        "missing": 0,
+        "verdict": "DISCREPANCY"
+      },
+      "fixed_16_blob_counts": {
+        "counts_sha256": "06d1f95b2c0b62ee8e7c33fc17300b44b47dde3cba9b7c01fea31d4cc3097287",
+        "maximum_per_row": 90,
+        "minimum_per_row": 0,
+        "object_count": 208,
+        "row_count": 16,
+        "rows_with_objects": 13
+      }
+    },
+    "mc": {
+      "rows": 4080,
+      "prongs": 7140,
+      "pid_counts": {
+        "0": 421,
+        "13": 1530,
+        "3": 2900,
+        "-999": 311,
+        "8": 1978
+      },
+      "pid_filter_lower_bound": 732,
+      "masked_dedx": 5080,
+      "masked_mass": 2262,
+      "prong_zero_lepton_match": {
+        "false": 1182,
+        "true": 2898
+      },
+      "time_check": {
+        "discrepancies": 1,
+        "eligible": 7140,
+        "missing": 0,
+        "verdict": "DISCREPANCY"
+      },
+      "fixed_16_blob_counts": {
+        "counts_sha256": "8587a5caa3d71c3f8662de3cc38c7657e36ec81255790770310fe54476dc6a84",
+        "maximum_per_row": 42,
+        "minimum_per_row": 0,
+        "object_count": 155,
+        "row_count": 16,
+        "rows_with_objects": 10
+      }
+    }
+  },
+  "historical_tag": "evidence/prepublication-excluded-gregor-b65f9ff2",
+  "historical_aggregate_sha256": "320840619b711829bd8c070d8d1614341988cdae64af206e911a2b56a5a27db7",
+  "historical_signal": {
+    "muon-token": {
+      "improvement_percent": {
+        "direction_favorable_all_seeds": true,
+        "per_seed_push_rmse_improvement_percent": [
+          26.264052305299728,
+          30.79311774404188,
+          26.464032201905745
+        ],
+        "push_log_ratio_rmse_improvement_percent": 27.85617272779063
+      },
+      "gate_pass": false,
+      "verified_receipts": [
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_muon_token_signal_seed101_job20441212/E-muon-global_seed_101/receipt.json",
+          "sha256": "b182138b41c323f4c02ab8ef1215fee5f25cee538e055779e490d73c5bffabaf"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_muon_token_signal_seed101_job20441212/E-muon-global-plus-token_seed_101/receipt.json",
+          "sha256": "cd85e93dbe335b6f608cfeef2b0b41cd435f2cf6619d01c826144d220a81e34f"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_muon_token_signal_seed202_job20441214/E-muon-global_seed_202/receipt.json",
+          "sha256": "3782149614f84d1cd85e7adb794bea203e7811698a2c524454a280b1f1ee639b"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_muon_token_signal_seed202_job20441214/E-muon-global-plus-token_seed_202/receipt.json",
+          "sha256": "cdae3f2d0c244e658a27a576e3955f5d52a5b6975baec4958d7376fa9f714ad7"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_muon_token_signal_seed303_job20441215/E-muon-global_seed_303/receipt.json",
+          "sha256": "5605e46edcfaed3e0f9f36f1f694bd29c1f48807a16b535b946354dbfece6859"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_muon_token_signal_seed303_job20441215/E-muon-global-plus-token_seed_303/receipt.json",
+          "sha256": "6d40e7d9e061f7c4d1c5511d8b3950579eb5589b80c37b404aeb767d7a7176f0"
+        }
+      ]
+    },
+    "overflow": {
+      "improvement_percent": {
+        "direction_favorable_all_seeds": true,
+        "per_seed_push_rmse_improvement_percent": [
+          26.652732955809046,
+          29.515670972455702,
+          26.39800254745307
+        ],
+        "push_log_ratio_rmse_improvement_percent": 27.531983571221488
+      },
+      "gate_pass": false,
+      "verified_receipts": [
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_overflow_signal_seed101_job20441227/C-truncated_seed_101/receipt.json",
+          "sha256": "6905f234ecc58b9cf52b2fa14bc743c964d22547a334006e37dbd03fedd0edfd"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_overflow_signal_seed101_job20441227/C-plus-overflow_seed_101/receipt.json",
+          "sha256": "39b56b2fdc72d8ab115a8bcff6bd1b0ca83be57158da8414849973c48ca04c7e"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_overflow_signal_seed202_job20441228/C-truncated_seed_202/receipt.json",
+          "sha256": "86e4c514ee1b7ad653b800fa5f3f75241064b99b9f1be6edf5385e84de4e1452"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_overflow_signal_seed202_job20441228/C-plus-overflow_seed_202/receipt.json",
+          "sha256": "4cba473b64ded61df42ac4dcbb69921df2acb93f885da461c31c32f5feff59d8"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_overflow_signal_seed303_job20441229/C-truncated_seed_303/receipt.json",
+          "sha256": "1d2c1316dd960973d145b253e039a179a2f82e9fc783b7b73ae6fc71877c35df"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_overflow_signal_seed303_job20441229/C-plus-overflow_seed_303/receipt.json",
+          "sha256": "757eb3985d27dd69ddd48bf60becd2bf4383ffd792f034d8b007d4b756362e2b"
+        }
+      ]
+    },
+    "rich": {
+      "improvement_percent": {
+        "direction_favorable_all_seeds": true,
+        "per_seed_push_rmse_improvement_percent": [
+          26.356215946661017,
+          29.78906889609698,
+          29.36174552997489
+        ],
+        "push_log_ratio_rmse_improvement_percent": 28.519574453614993
+      },
+      "gate_pass": false,
+      "verified_receipts": [
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_rich_signal_seed101_job20441192/E-muon_seed_101/receipt.json",
+          "sha256": "b9ffaedb9e4338444ddf221f62fdb2190e7a830b8c4f144fc49f6a6c5492a75b"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_rich_signal_seed101_job20441192/E-rich-no-charge_seed_101/receipt.json",
+          "sha256": "7e2f6c5aa5b7d2fd7da362919860357b234b3a802c8e66b1b548714ea4beaa91"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_rich_signal_seed202_job20441193/E-muon_seed_202/receipt.json",
+          "sha256": "90270d6b94e939061db8457c281b28aaae934fdff8142701190cd32cdb130ac0"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_rich_signal_seed202_job20441193/E-rich-no-charge_seed_202/receipt.json",
+          "sha256": "823e366bb18ec0f6be3833f7c33c1a4cd95794bd9df37bb18343a4486b7aedfa"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_rich_signal_seed303_job20441197/E-muon_seed_303/receipt.json",
+          "sha256": "414ea1ea50e9a4368704c07273c6bd114f0d15f8942492eca7aec6aee99be1b7"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_rich_signal_seed303_job20441197/E-rich-no-charge_seed_303/receipt.json",
+          "sha256": "893aa21eae0bda76a2a88061db2b5521b6c4982830e6462f938ab2fd640adeb0"
+        }
+      ]
+    },
+    "type": {
+      "improvement_percent": {
+        "direction_favorable_all_seeds": true,
+        "per_seed_push_rmse_improvement_percent": [
+          26.967360627386054,
+          30.40048180235079,
+          26.343344478486646
+        ],
+        "push_log_ratio_rmse_improvement_percent": 27.914927082583226
+      },
+      "gate_pass": false,
+      "verified_receipts": [
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_type_signal_seed101_job20441112/C_seed_101/receipt.json",
+          "sha256": "bfb5d8d0cc1de243c6ab43e306f79b63f590dc8b54838a99543e7a1c63e5eccc"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_type_signal_seed101_job20441112/D-typed_seed_101/receipt.json",
+          "sha256": "da7926b6d05dbd02d7c468910620def0d7c09119c0e50fa4586e221779d7342e"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_type_signal_seed202_job20441123/C_seed_202/receipt.json",
+          "sha256": "359fda9c9ee9ef1df0ad03eb4fc2b0c55dd6038455b44af761566866a94e5fb3"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_type_signal_seed202_job20441123/D-typed_seed_202/receipt.json",
+          "sha256": "8726edd7bbe2133317f0ca7f0117fae6b8b982aa014fe6ef6fb1b47c941d13c9"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_type_signal_seed303_job20441141/C_seed_303/receipt.json",
+          "sha256": "376e1e3b4553f0c0bbec656ba49789e1e851f781f17f919b487d3b57b06512d1"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_type_signal_seed303_job20441141/D-typed_seed_303/receipt.json",
+          "sha256": "ffc50ec8eb382b4e0f92f814fd559dd19f6f807668601a1da6c1287a1a6459ce"
+        }
+      ]
+    },
+    "view": {
+      "improvement_percent": {
+        "direction_favorable_all_seeds": true,
+        "per_seed_push_rmse_improvement_percent": [
+          25.553192754851874,
+          30.13888788890742,
+          26.29604691220567
+        ],
+        "push_log_ratio_rmse_improvement_percent": 27.346965154300758
+      },
+      "gate_pass": false,
+      "verified_receipts": [
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_view_signal_seed101_job20441097/C_seed_101/receipt.json",
+          "sha256": "11f6de07fbe3da322988327cecaeab5f9847ca52b77a1e59fe4f64676ec2f965"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_view_signal_seed101_job20441097/D-view_seed_101/receipt.json",
+          "sha256": "f46b130b4dd988796daa6803866c5cfc0f2852cac3f826728b2af0da504fd5ad"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_view_signal_seed202_job20441098/C_seed_202/receipt.json",
+          "sha256": "6aaadd89670abb5507667444f4d71fe3cc8d540b5facdc7a42244bb10f4ae5e0"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_view_signal_seed202_job20441098/D-view_seed_202/receipt.json",
+          "sha256": "3353b8da98980c4838a895ba8d7342ddb33e4c9280151647331e5dc09d7930a7"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_view_signal_seed303_job20441099/C_seed_303/receipt.json",
+          "sha256": "27c42687809ce9d661847769fcf4123911ee0998063025fdc63aa79901bac6a2"
+        },
+        {
+          "path": "nd-unfolding/pet2_torch/products/conditional_stress/recovery_job20441096/runs/pet2cs_view_signal_seed303_job20441099/D-view_seed_303/receipt.json",
+          "sha256": "41ec829cac4bbd38d1065f4f4f6fa483ddb3194667d96803efbb64d20c74cf41"
+        }
+      ]
+    }
+  },
+  "scope": "Derived from committed convenience-sample and synthetic receipts; no new source measurement"
+}

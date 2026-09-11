@@ -1,0 +1,21 @@
+{
+  "pin": "78ebc0d6af04a5b6ab8114a9560dcc9c2a0b99bb",
+  "paper": "https://arxiv.org/abs/2604.12364v2",
+  "files": {
+    "src/dataset/preprocessing.py": {
+      "git_blob": "73e88ea52bdb90783779e56dd9ecadcb5e397e8c",
+      "sha256": "8348a5d7ee6beec68f0a22a6e85830db6f988eb95edd76b5ac7394f6909d5880",
+      "bytes": 35170
+    },
+    "src/dataset/dataloader.py": {
+      "git_blob": "ccb0c449652d68463d2ecb94fc178b727521b33a",
+      "sha256": "55546b9a4681600c14cb021fdd22bff885a7004bc1f97acd4935a50f151a20e4",
+      "bytes": 31098
+    },
+    "src/models/omnilearned/network.py": {
+      "git_blob": "281bc54adc545dc4235e6c51a83c39ea1cb3dedf",
+      "sha256": "50162ae09fdc6e08ec2cdaa0ef24fc60c0e1f01e55206befebdbd224f065feea",
+      "bytes": 21770
+    }
+  }
+}

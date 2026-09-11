@@ -219,3 +219,24 @@ footprint under the proposed ceilings remain unmeasured. Source execution still
 requires its named authorization; normalization and later training retain their
 separate prerequisites. No physics result or validation-ledger row is added.
 OI-126 and all five exact Gate-6 prohibition keys remain unchanged.
+
+
+## 2026-09-11 — PET pooled/direct representation preparation
+
+Prepared from remote `pet-prong-semantics` at `57b707b737ce817c1ef8d8bd0f0a39ce4becb7ba`
+in a separate checkout, preserving the occupied local branch and its staged changes.
+The [report for Ben](pet/direct_token_comparison/REPORT_FOR_BEN.md) separates
+measured source telemetry and historical synthetic receipts from proposed choices.
+The evidence reproducer verifies 30 historical signal-arm receipt digests.
+
+The new Keras candidate and pooled attention bridge reuse the current family
+encoders, field masks and normalization, with identical trainable parameter
+shapes. A separate synthetic runner exercises two-step unfolding with ordinary,
+injected and shuffled targets. The [setup](pet/direct_token_comparison/README.md)
+and preparation validation record bind the local software checks; those checks
+are not a scientific closure acceptance or a real-input performance result.
+
+The [bounded execution proposal](pet/direct_token_comparison/EXECUTION_PROPOSAL.md)
+is pending approval. No ROOT payload, cluster allocation, real-source fitting,
+correspondence, covariance, publication adoption or Gate-6 work occurred.
+Release applicability and all four object-family questions remain unresolved.

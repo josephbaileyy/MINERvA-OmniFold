@@ -2,6 +2,22 @@
 
 PET typed descriptors remain diagnostic and method-development infrastructure.
 
+## Direct-token comparison preparation — 2026-09-11
+
+The [report for Ben](direct_token_comparison/REPORT_FOR_BEN.md) compares the
+current pooled representation with individual typed objects in attention.
+The isolated candidate reuses the v2 family encoders, masks and raw membership;
+a matched pooled attention bridge separates token routing from the change of
+architecture. Its small synthetic two-step runner is implemented. Preparation
+and test evidence are recorded in
+[the comparison setup](direct_token_comparison/README.md).
+
+The [bounded execution proposal](direct_token_comparison/EXECUTION_PROPOSAL.md)
+is pending approval. It is synthetic-only; the producer, source release,
+selection/weight/truth-sidecar and real normalization prerequisites remain open.
+No mapping pass, historical pilot or software test is a learning-performance
+result. This preparation changes none of the source-audit verdicts or bindings.
+
 ## R1 software smoke
 
 **PASS — trainable-adapter software smoke only.** The uncapped, CPU-only Keras adapter has passed its synthetic contract, gradient, masking, serialization, and fresh-process reload tests. It is not production-integrated, production-normalized, trained, or scientifically evaluated.
