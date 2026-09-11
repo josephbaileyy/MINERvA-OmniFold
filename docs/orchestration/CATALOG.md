@@ -553,7 +553,8 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   from this lane as correct**, and flags that §3.1 carries a sentence of this lane's that is now
   **withdrawn**.
 - [`REVIEW-20260910-z-acceptance-criteria-independent-derivation-partR.md`](REVIEW-20260910-z-acceptance-criteria-independent-derivation-partR.md)
-  - **PART R — a routed QUESTION, explicitly not a finding:** under the **reuse** branch, does A-7's
+  - ⚠ **PART R — ANSWERED AND WITHDRAWN (§R.4): the answer is YES and it resolves AGAINST the question.** `unified_throw_cov.py:434` reads `xx = z["xs"]` (**unfolded cross-sections**) and `:437-442` assigns them to `knob_x[band][idx]`, so the ~45 MAT bands are built from **per-member unfoldings**, not the replicas — the population CAN exhibit the defect, `BEN-032` does not reach it, and §R.1's conjunction falls. **§R.4a: the detector's prior art is stricter than any lane stated** — `audit_gates_that_cannot_fail.py:585-587` names *"BEN-032 / SHELL_PIN_FLOOR"* in a `--min-files` refusal, `:592-593` **raises** on a detector failing its own power test, and `:471-474` records a step that *"silently blanked 95% of a file for eight days"* while *"provably powerful"* detectors reported clean. **The instrument enforcing the rule existed while three lanes violated it by hand.** §R.4b keeps why filing it was still right: it died to the one-line falsifier this lane specified and declined to run. Original framing retained below.
+  - **PART R as filed — a routed QUESTION, explicitly not a finding:** under the **reuse** branch, does A-7's
   `s_proj` become a gate that cannot fail? `A-7` is routed away from this lane, so this composes **one
   relayed premise** (rev. 7 at `3e7c3271` derives `s_proj` as a function of `C_k − C_0`, so reused
   byte-identical blocks cancel exactly and `s_proj` measures **exactly `0.0`** on the reuse arm vs
