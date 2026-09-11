@@ -45,7 +45,10 @@ DETECTORS = {
     # the residue's TRIGGER -- the sentence that justified tolerating it, made executable
     "sufficiency_trigger_armed", "sufficiency_trigger_power",
     # rev. 3: the assessor's BLOCK, the union blindness, and the extras declaration
-    "overlap_detected", "extras_exclusion_undeclared",
+    "overlap_detected",
+    # rev. 4: the width-weighted rate functionals and Joseph's closure
+    "all_ones_refused", "closure_detects_bad_edges", "duplicate_rate_names",
+    "span_not_declared",
 }
 
 
@@ -60,6 +63,11 @@ def _fires(name, fn, *a, **k):
 
 
 SHARED = dict(stat_digest="aaa111", ml_digest="bbb222")
+
+#: A WIDTH-WEIGHTED rate functional over 4 destination bins, for the wiring tests.
+#: Deliberately NOT an all-ones vector: the stored values are differential densities.
+_RATE4 = zbp.full_support_rate_functional([0.0, 1.0, 2.0, 4.0, 8.0], name="rate4")
+
 
 
 class TestControlSeparation(unittest.TestCase):
@@ -353,14 +361,14 @@ class TestTheWiring(unittest.TestCase):
 
     def test_healthy_with_kappa_withheld_also_refuses_and_that_is_INTENDED(self):
         covs, M, scale = self._healthy()
-        out = zbp.evaluate_a7(covs, M, extra_functionals=np.ones((1, 40)),
+        out = zbp.evaluate_a7(covs, M, extra_functionals=[_RATE4],
                               declared_K=[0, 1], c_scale=scale, kappa=None)
         self.assertEqual(out["state"], "KAPPA_UNDECLARED")
         self.assertIsNone(out["s_proj"])
 
     def test_declared_kappa_lets_a_healthy_case_grade(self):
         covs, M, scale = self._healthy()
-        out = zbp.evaluate_a7(covs, M, extra_functionals=np.ones((1, 40)),
+        out = zbp.evaluate_a7(covs, M, extra_functionals=[_RATE4],
                               declared_K=[0, 1], c_scale=scale, kappa=1e-12)
         self.assertEqual(out["state"], "GRADED")
         self.assertAlmostEqual(out["s_proj"]["s_proj"], np.sqrt(1.1) - 1, places=9)
@@ -372,8 +380,9 @@ class TestTheWiring(unittest.TestCase):
 
     def test_extras_width_mismatch_refuses(self):
         covs, M, scale = self._healthy()
+        bad = zbp.RateFunctional("wrong_width", np.ones(7), True)
         _fires("a7_extras_width", zbp.evaluate_a7, covs, M,
-               extra_functionals=np.ones((1, 7)), declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+               extra_functionals=[bad], declared_K=[0, 1], c_scale=scale, kappa=1e-12)
 
     def test_arm1_is_a_MAP_predicate_not_a_functional_set_predicate(self):
         """⚠ Found by smoke-testing `evaluate_a7`, not by review.
@@ -383,10 +392,9 @@ class TestTheWiring(unittest.TestCase):
         legitimate declaration. The all-ones total-rate functional is NOT a row of `M`.
         """
         covs, M, scale = self._healthy()
-        ones = np.ones((1, 40))
-        out = zbp.evaluate_a7(covs, M, extra_functionals=ones, declared_K=[0, 1],
+        out = zbp.evaluate_a7(covs, M, extra_functionals=[_RATE4], declared_K=[0, 1],
                               c_scale=scale, kappa=1e-12)
-        self.assertEqual(out["state"], "GRADED", "a map + all-ones must not trip arm 1")
+        self.assertEqual(out["state"], "GRADED", "a map + a rate functional must not trip arm 1")
         # and a genuinely INCOMPLETE map still does
         partial = M.copy()
         partial[:, 30:] = 0.0
@@ -512,7 +520,7 @@ class TestEnrolmentIsNotManual(unittest.TestCase):
         self.assertGreaterEqual(len(points), 18,
                                 f"expected >=18 refusal points, found {len(points)}")
         # the claim this suite may make, scoped to what it demonstrates
-        self.assertEqual(len(DETECTORS), 25,
+        self.assertEqual(len(DETECTORS), 28,
                          "DETECTORS must equal the demonstrated set; update both together")
         # ⚠ THESE ARE DIFFERENT SETS AND THE COUNTS MATCHING IS A COINCIDENCE. `points` are
         # `require`/`raise` sites in the module; `DETECTORS` are demonstrated behaviours, some of
@@ -702,48 +710,96 @@ class TestDisjointnessIsCheckedNotAssumed(unittest.TestCase):
             zbp.RECOMPUTED_UNDER_ESTIMATOR_CHANGE = saved
 
 
-class TestTheExtrasExclusionIsDeclared(unittest.TestCase):
-    """⚠ A SCIENTIFIC QUESTION THE CODE REFUSES TO ANSWER SILENTLY.
+class TestRateFunctionalsAreWidthWeighted(unittest.TestCase):
+    """⚠ MY DEFECT, AND THE WARNING WAS IN THE FILE I CITED FOR THE CONVENTION.
 
-    `declared_exclusions` are DESTINATION-scoped; an all-ones total-rate functional is DENSE over
-    SOURCE columns, so a declared destination exclusion does not reach it. For P2 the `[3,100] GeV`
-    catch bin is an excluded destination row, so an all-ones total would include support the
-    displayed projection excludes -- *"total rate"* and *"sum of displayed bins"* differ by exactly
-    that bin's content. A total plausibly should be a total; the defect would be leaving it
-    undeclared. So the caller must say, and there is no default.
+    §4.3 declared `U` = rows of `M` *"plus the all-ones vector (the total-rate functional)"*. Under
+    this repo's storage convention that label is FALSE: `project_cov_nd.py:4-8` says the stored
+    cross section is a *"DIFFERENTIAL DENSITY per unit bin-volume"* and that *"unit-weight M would
+    be WRONG for this convention"* -- the file the packet cites for the weights is the file that
+    warns against them. `xsec_nd.py:14` confirms the divide at the producer.
     """
 
-    def _case(self):
-        rng = np.random.default_rng(11)
-        n = 12
+    #: P2's declared edges, `sec_3d.tex:97`. Widths DERIVED, never transcribed.
+    P2_EDGES = [0.0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100.0]
+    CATCH_ROW = 6                                    # the [3,100] GeV display exclusion
+
+    def test_widths_are_derived_from_the_declared_edges(self):
+        w = zbp.destination_widths(self.P2_EDGES)
+        self.assertEqual([round(x, 6) for x in w.tolist()],
+                         [0.1, 0.1, 0.2, 0.4, 0.7, 1.5, 97.0])
+        self.assertAlmostEqual(w[-1] / (self.P2_EDGES[-1] - self.P2_EDGES[0]), 0.97, places=6,
+                               msg="the catch bin is 97% of the range")
+
+    def test_an_all_ones_array_is_REFUSED_with_the_reason(self):
+        rng = np.random.default_rng(3)
+        n = 7
         A = rng.normal(size=(n, n))
         C0 = A @ A.T + np.eye(n)
-        M = np.zeros((3, n))
-        M[0, :4] = 1.0
-        M[1, 4:8] = 1.0
-        M[2, 8:] = 1.0
-        return {0: C0, 1: 1.1 * C0}, M, np.ones((1, n)), float(np.linalg.eigvalsh(C0).max())
+        M = np.eye(n)
+        try:
+            zbp.evaluate_a7({0: C0, 1: 1.1 * C0}, M, extra_functionals=np.ones((1, n)),
+                            declared_K=[0, 1], c_scale=1.0, kappa=1e-12)
+        except ZContractError as exc:
+            self.assertIn("DIFFERENTIAL DENSITIES", str(exc))
+            self.assertIn("WIDTH-WEIGHTED", str(exc))
+            FIRED.add("all_ones_refused")
+            return
+        self.fail("a bare all-ones array must be refused")
 
-    def test_undeclared_with_exclusions_in_play_REFUSES(self):
-        covs, M, ones, scale = self._case()
-        _fires("extras_exclusion_undeclared", zbp.evaluate_a7, covs, M,
-               extra_functionals=ones, declared_exclusions=[2],
-               declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+    def test_full_support_spans_the_catch_bin_and_displayed_does_not(self):
+        """Joseph's ruling: a DISPLAY exclusion, not an exclusion from the measurement support."""
+        full = zbp.full_support_rate_functional(self.P2_EDGES)
+        disp = zbp.displayed_range_rate_functional(self.P2_EDGES, [self.CATCH_ROW])
+        self.assertTrue(full.spans_excluded_support)
+        self.assertFalse(disp.spans_excluded_support)
+        self.assertAlmostEqual(full.weights[self.CATCH_ROW], 97.0)
+        self.assertEqual(disp.weights[self.CATCH_ROW], 0.0)
+        self.assertNotEqual(full.name, disp.name, "the two must be NAMED separately")
 
-    def test_either_declared_value_is_accepted(self):
-        covs, M, ones, scale = self._case()
-        for decl in (True, False):
-            out = zbp.evaluate_a7(covs, M, extra_functionals=ones,
-                                  extras_span_excluded_support=decl,
-                                  declared_exclusions=[2], declared_K=[0, 1],
-                                  c_scale=scale, kappa=1e-12)
-            self.assertEqual(out["state"], "GRADED")
+    def test_the_required_closure_holds_on_weights_and_on_values(self):
+        """full-support = displayed-range + excluded contribution."""
+        v = np.full(7, 1e-38)
+        out = zbp.check_rate_closure(self.P2_EDGES, [self.CATCH_ROW], values=v)
+        self.assertTrue(out["weight_closure_exact"])
+        self.assertTrue(out["value_closure"])
+        self.assertAlmostEqual(out["excluded_fraction_of_full"], 0.97, places=6)
 
-    def test_no_declaration_needed_when_there_are_no_exclusions(self):
-        covs, M, ones, scale = self._case()
-        out = zbp.evaluate_a7(covs, M, extra_functionals=ones,
-                              declared_K=[0, 1], c_scale=scale, kappa=1e-12)
+    def test_the_all_ones_error_is_QUANTIFIED_not_argued(self):
+        v = np.full(7, 1e-38)
+        out = zbp.check_rate_closure(self.P2_EDGES, [self.CATCH_ROW], values=v)
+        self.assertAlmostEqual(out["all_ones_error_factor"], 14.2857, places=3)
+
+    def test_closure_fires_when_it_is_broken(self):
+        """POWER ARM: a closure check nobody has seen fail is a comment with parentheses."""
+        _fires("closure_detects_bad_edges", zbp.destination_widths, [0.0, 1.0, 0.5])
+        _fires("closure_detects_bad_edges", zbp.displayed_range_rate_functional,
+               self.P2_EDGES, [99])
+
+    def test_the_span_declaration_is_bound_to_the_FUNCTIONAL_not_the_call(self):
+        """Joseph: *"bind that declaration to the functional's identity."* Two extras in one call
+        may legitimately differ, which a single call-level flag could not express."""
+        full = zbp.full_support_rate_functional(self.P2_EDGES)
+        disp = zbp.displayed_range_rate_functional(self.P2_EDGES, [self.CATCH_ROW])
+        self.assertNotEqual(full.spans_excluded_support, disp.spans_excluded_support)
+        rng = np.random.default_rng(8)
+        n = 7
+        A = rng.normal(size=(n, n))
+        C0 = A @ A.T + np.eye(n)
+        out = zbp.evaluate_a7({0: C0, 1: 1.1 * C0}, np.eye(n), extra_functionals=[full, disp],
+                              declared_K=[0, 1], c_scale=1.0, kappa=1e-12)
         self.assertEqual(out["state"], "GRADED")
+
+    def test_duplicate_names_refused(self):
+        f = zbp.full_support_rate_functional(self.P2_EDGES)
+        rng = np.random.default_rng(9)
+        C0 = np.eye(7) * 2.0
+        _fires("duplicate_rate_names", zbp.evaluate_a7, {0: C0, 1: 1.1 * C0}, np.eye(7),
+               extra_functionals=[f, f], declared_K=[0, 1], c_scale=1.0, kappa=1e-12)
+
+    def test_a_rate_functional_must_declare_its_span_explicitly(self):
+        _fires("span_not_declared", zbp.RateFunctional, "x", np.ones(3), None)
+        _fires("span_not_declared", zbp.RateFunctional, "x", np.ones(3), 1)
 
 
 def tearDownModule():

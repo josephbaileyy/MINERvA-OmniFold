@@ -444,6 +444,140 @@ def preservation_guard(out_path: str, allow_overwrite: bool = False) -> None:
             f"allow_overwrite=True deliberately.")
 
 
+# ====================== RATE FUNCTIONALS: WIDTH-WEIGHTED, NOT ALL-ONES =======================
+# ⚠⚠ A DEFECT OF MINE, AND THE WARNING WAS IN THE FILE I CITED FOR THE CONVENTION.
+# §4.3 of the packet declared `U` = rows of `M` *"plus the all-ones vector (the total-rate
+# functional)"*. That label is FALSE under this repository's storage convention, and
+# `project_cov_nd.py:4-8` -- the file the packet cites for the weight convention -- says so
+# outright:
+#
+#     "The stored cross section is a DIFFERENTIAL DENSITY per unit bin-volume
+#      (xsec_nd.extract_cross_section_nd divides by prod_a dx_a). ...
+#      Unit-weight M would be WRONG for this convention."
+#
+# Confirmed at the producer: `xsec_nd.py:14` computes `dsigma = U * 1e4 / (c . Phi . N . POT .
+# prod_a dx_a)`, `_bin_volume` at `:36`, the divide at `:82`. So destination values are DENSITIES
+# per unit kept-axis volume, and an all-ones vector SUMS DENSITIES -- it is not a rate.
+#
+# AND THE ERROR IS LARGE, NOT PEDANTIC. P2's declared edges give destination widths
+# [0.1, 0.1, 0.2, 0.4, 0.7, 1.5, 97.0]: the catch bin is 97% of the range. On a flat density an
+# all-ones sum and the true integral differ by 14.3x, and using the note's own quoted densities
+# the catch bin INTEGRATES TO ~3x the peak bin despite a density 322x smaller. An all-ones vector
+# under-weights by 97 exactly the bin Joseph ruled IS in the measurement support.
+#
+# JOSEPH'S RULING (2026-09-11), implemented here:
+#   * the `[3,100] GeV` catch bin is a DISPLAY exclusion, NOT an exclusion from the declared
+#     measurement support;
+#   * the FULL-SUPPORT integrated rate INCLUDES it;
+#   * a DISPLAYED-RANGE integral EXCLUDES it and MUST BE NAMED SEPARATELY;
+#   * the span declaration BINDS TO THE FUNCTIONAL'S IDENTITY, not to the projection;
+#   * required closure: full-support = displayed-range + excluded contribution.
+
+
+@dataclass(frozen=True)
+class RateFunctional:
+    """A named extra functional whose span declaration is bound to ITS OWN identity.
+
+    Rev. 3 carried `extras_span_excluded_support` as ONE call-level flag for all extras. Joseph:
+    *"BIND THAT DECLARATION TO THE FUNCTIONAL'S IDENTITY. Not to the projection -- to the
+    functional."* Two extras in one call may legitimately differ, and a single flag cannot say so.
+    """
+
+    name: str
+    weights: np.ndarray
+    spans_excluded_support: bool
+
+    def __post_init__(self):
+        require(bool(self.name), "a rate functional must be named")
+        w = np.asarray(self.weights, float)
+        require(w.ndim == 1 and w.size > 0, f"{self.name}: weights must be 1-D non-empty")
+        require(np.all(np.isfinite(w)), f"{self.name}: non-finite weight")
+        require(not np.all(w == 0.0), f"{self.name}: all weights are zero")
+        require(isinstance(self.spans_excluded_support, bool),
+                f"{self.name}: spans_excluded_support must be an explicit bool -- there is no "
+                f"default, and which quantity is released is a scientific choice")
+
+
+def destination_widths(edges):
+    """Kept-axis destination bin widths, DERIVED from the declared edges.
+
+    Derived and not transcribed, for the same reason the manifest's edge field is a pointer: a
+    transcribed width list is a second implementation of the binning.
+    """
+    e = np.asarray(edges, float)
+    require(e.ndim == 1 and e.size >= 2, f"edges must be 1-D with >=2 entries, got {e.shape}")
+    require(np.all(np.diff(e) > 0), "edges must be strictly increasing")
+    return np.diff(e)
+
+
+def full_support_rate_functional(edges, name="full_support_rate"):
+    """`u_i = Delta_i` over EVERY declared destination bin. The total rate, width-weighted.
+
+    Spans the excluded support by construction -- that is what "full support" means, and it is
+    Joseph's ruling for P2's catch bin.
+    """
+    return RateFunctional(name=name, weights=destination_widths(edges),
+                          spans_excluded_support=True)
+
+
+def displayed_range_rate_functional(edges, excluded_rows, name="displayed_range_rate"):
+    """`u_i = Delta_i` on DISPLAYED bins and 0 on display-excluded ones. A DISTINCT quantity.
+
+    Named separately per the ruling: *"a displayed-range integral excludes it and must be named
+    separately."* Same weights, different support -- so the two functionals are not
+    interchangeable and a reader cannot mistake one for the other.
+    """
+    w = destination_widths(edges)
+    excl = {int(i) for i in np.atleast_1d(np.asarray(excluded_rows, int)).ravel()} \
+        if np.size(excluded_rows) else set()
+    for i in excl:
+        require(0 <= i < w.size, f"excluded row {i} outside 0..{w.size - 1}")
+    w = w.copy()
+    for i in excl:
+        w[i] = 0.0
+    require(not np.all(w == 0.0), "every destination bin is display-excluded; no displayed range")
+    return RateFunctional(name=name, weights=w, spans_excluded_support=False)
+
+
+def check_rate_closure(edges, excluded_rows, values=None, rtol=1e-12):
+    """⚠ JOSEPH'S REQUIRED CLOSURE, AS A CHECK RATHER THAN A COMMENT.
+
+        full-support integral  ==  displayed-range integral  +  excluded catch-bin contribution
+
+    Verified on the WEIGHTS always, and additionally on a VALUE vector when one is supplied --
+    because the weight identity is arithmetic while the value identity is the thing a released
+    number depends on.
+    """
+    w_full = destination_widths(edges)
+    disp = displayed_range_rate_functional(edges, excluded_rows)
+    w_disp = np.asarray(disp.weights, float)
+    w_excl = w_full - w_disp
+
+    out = {"weight_closure_exact": bool(np.allclose(w_full, w_disp + w_excl, rtol=0, atol=0)),
+           "full_weight_sum": float(w_full.sum()),
+           "displayed_weight_sum": float(w_disp.sum()),
+           "excluded_weight_sum": float(w_excl.sum()),
+           "excluded_rows": sorted({int(i) for i in np.atleast_1d(
+               np.asarray(excluded_rows, int)).ravel()} if np.size(excluded_rows) else set())}
+    require(out["weight_closure_exact"], "weight closure failed: full != displayed + excluded")
+
+    if values is not None:
+        v = np.asarray(values, float)
+        require(v.shape == w_full.shape,
+                f"values shape {v.shape} != destination shape {w_full.shape}")
+        full = float(w_full @ v)
+        part = float(w_disp @ v) + float(w_excl @ v)
+        out.update({"full_integral": full, "displayed_plus_excluded": part,
+                    "value_closure": bool(np.isclose(full, part, rtol=rtol, atol=0.0)),
+                    "excluded_fraction_of_full": (float(w_excl @ v) / full) if full else None})
+        require(out["value_closure"],
+                f"value closure failed: full {full!r} != displayed+excluded {part!r}")
+        # and the diagnostic that makes the all-ones error visible rather than arguable
+        out["all_ones_would_give"] = float(v.sum())
+        out["all_ones_error_factor"] = (full / float(v.sum())) if v.sum() else None
+    return out
+
+
 # =============================== THE INTERCEPTION POINT (wiring) ===============================
 # ⚠ WHY THIS SECTION EXISTS. Rev. 1 of this module was BLOCKED on review, and the ground was not the
 # classifiers -- they were verified correct on all three of F3's cohorts -- but that NOTHING
@@ -458,8 +592,7 @@ import z_statistics as _zs                                            # noqa: E4
 
 
 def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa,
-                extra_functionals=(), extras_span_excluded_support=None,
-                declared_exclusions=(), declared_support=None,
+                extra_functionals=(), declared_exclusions=(), declared_support=None,
                 observed_support=None, baseline_key=0):
     """THE ONLY SANCTIONED ROUTE TO AN A-7 VERDICT. Guards first, `s_proj` last.
 
@@ -496,35 +629,35 @@ def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa,
     # So the arms run on `projection_M`, and `U` is assembled afterwards for the statistic.
     M = np.atleast_2d(np.asarray(projection_M, float))
     rep_support = require_projection_support(M, declared_exclusions, where="A-7 projection map")
-    extras = np.asarray(extra_functionals, float)
-    if extras.size:
-        # ⚠ A SCIENTIFIC QUESTION, AND THIS REFUSES TO ANSWER IT SILENTLY.
-        # `declared_exclusions` are DESTINATION-scoped (`check_projection_support` indexes rows),
-        # while an all-ones total-rate functional is DENSE over SOURCE columns -- so a declared
-        # destination exclusion DOES NOT REACH IT. For P2 the `[3,100] GeV` catch bin is a declared
-        # excluded destination row, so an all-ones total would include support the displayed
-        # projection excludes, and "total rate" and "sum of displayed bins" would differ by exactly
-        # that bin's content.
-        # A total plausibly SHOULD be a total -- but which quantity is released is not a drafting
-        # choice, and leaving it undeclared violates "any exclusion must be explicit and accounted
-        # for." So the caller must SAY, and there is no default.
-        # ⚠ REV. 3 BUG, caught by this module's own tests: the ternary below was written INSIDE
-        # `require(...)`'s second argument, so it bound to the MESSAGE and not to the CONDITION --
-        # the guard fired on every call with extras, including the four legitimate ones with no
-        # exclusions at all. An `if` is clearer than a ternary here precisely because the ternary
-        # can attach to the wrong argument silently.
-        if len(np.atleast_1d(np.asarray(declared_exclusions))) > 0:
-            require(extras_span_excluded_support is not None,
-                    "extra functionals were supplied with declared_exclusions in play, and "
-                    "`extras_span_excluded_support` is undeclared. Exclusions are "
-                    "DESTINATION-scoped; a dense total-rate functional is SOURCE-scoped, so the "
-                    "exclusion does not reach it. Declare True (the total spans the excluded "
-                    "support -- a total is a total) or False (the extras are restricted to the "
-                    "displayed support). This is a SCIENTIFIC choice about which quantity is "
-                    "released and it has no default.")
-    U = M if extras.size == 0 else np.vstack([M, np.atleast_2d(extras)])
-    require(U.shape[1] == M.shape[1],
-            f"extra functionals have width {U.shape[1]} != the map's {M.shape[1]}")
+    # ⚠ extras are now NAMED `RateFunctional`s, each carrying its OWN span declaration bound to
+    # its identity (Joseph: "not to the projection -- to the functional"). A single call-level
+    # flag could not express two extras that legitimately differ.
+    # ⚠ NOT `extra_functionals or ()`: truthiness on a numpy array raises ValueError BEFORE
+    # the isinstance check below, so a caller passing an all-ones array got numpy's
+    # "truth value is ambiguous" instead of the message explaining WHY it is wrong.
+    # An unhelpful error in place of a helpful one is still a defect.
+    rates = [] if extra_functionals is None else list(extra_functionals)
+    for rf in rates:
+        require(isinstance(rf, RateFunctional),
+                f"extra functionals must be RateFunctional instances carrying their own span "
+                f"declaration; got {type(rf).__name__}. ⚠ An all-ones array is NOT a total-rate "
+                f"functional here: the stored values are DIFFERENTIAL DENSITIES per unit "
+                f"bin-volume (project_cov_nd.py:4-8, xsec_nd.py:14), so a rate functional must be "
+                f"WIDTH-WEIGHTED. Use full_support_rate_functional / "
+                f"displayed_range_rate_functional.")
+    names = [rf.name for rf in rates]
+    require(len(set(names)) == len(names), f"duplicate rate-functional names: {names}")
+
+    if rates:
+        W = np.vstack([np.asarray(rf.weights, float) for rf in rates])
+        require(W.shape[1] == M.shape[0],
+                f"rate functionals are weights over the {M.shape[0]} DESTINATION bins, got width "
+                f"{W.shape[1]}. A rate functional acts on the PROJECTED vector, so it is lifted "
+                f"through M rather than declared over source columns.")
+        # lift each destination-space rate functional into source space: u = w' M
+        U = np.vstack([M, W @ M])
+    else:
+        U = M
 
     if declared_support is not None or observed_support is not None:
         require(declared_support is not None and observed_support is not None,
