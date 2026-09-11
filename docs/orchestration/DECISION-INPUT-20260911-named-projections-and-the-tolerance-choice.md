@@ -59,8 +59,21 @@ grouping; a named block survives regrouping.
 | **B** | a declared fraction of the **released bar itself** | *the bar is determined to within `x%`* | YES, but `x` is a number from nowhere — it reintroduces exactly the invention this campaign has refused five times |
 | **C** | the **largest** declared component | invariant under splitting the tail, but **it is still a selector**, and it is the *weakest* possible standard — it would admit almost any movement | YES, and useless |
 
-**MY RECOMMENDATION: (A), the statistical block.** Four reasons, and the second is the one I would
-defend hardest:
+> ## ⚠⚠ SUPERSEDED BY THE ADDENDUM — (A) IS WITHDRAWN AS THE RECOMMENDATION
+>
+> **Read the addendum before citing anything below.** (A) is **unsatisfiable on P2 and P3**, which
+> are **systematic-only** by their own caption (`sec_3d.tex:262`): at `f_stat = 0` its threshold is
+> **exactly 0**, so it voids on half the set Joseph approved. **And my verbal justification for it
+> described `sqrt(f_stat)` while the formula computed the variance-share comparison** — the same
+> prose-vs-algebra gap that killed the smallest-component rule, one layer in.
+> **The recommendation is now (B), a fixed fraction.** Row (B)'s dismissal below — *"a number from
+> nowhere… the invention this campaign has refused five times"* — **is also withdrawn**: those
+> refusals were against **formatting-derived** and **results-selected** numbers, and a declared
+> fraction is neither. **The four reasons below are left standing as the record of what (A) had
+> going for it, not as a live recommendation.**
+
+**SUPERSEDED RECOMMENDATION — (A), the statistical block.** Four reasons, and the second is the one
+I would have defended hardest:
 
 1. **It is named, unique and grouping-invariant.** `C_stat` appears as its own summand in the
    construction formula; no regrouping of the systematic bands touches it.
@@ -137,3 +150,171 @@ Not adopting anything; not proposing `q` (deferred — recommendation `0.99` sta
 recommendation); not treating item 2's provisional reuse as discharging A-6(a), A-6(b), the excluded
 producing execution, or the three-or-four block population; and **not confusing *not applicable*
 with *passed*** — item 4 makes requirement (i) a ruling, and the packet's §8.9 carries it as one.
+
+---
+
+# ADDENDUM — the prospective projection manifest, and the accuracy choice re-answered
+
+*Added after Joseph approved **P1–P4** and corrected what `1 − sqrt(1 − f_stat)` measures. The
+smallest-component investigation is **closed** and is not reopened here.*
+
+## DELIVERABLE 1 — the prospective Z projection manifest
+
+**Method, and it is not inheritance.** Historical plotting code is evidence about **presentation**.
+The prospective producer is selected below **on its refusal semantics**, and the maps are specified
+by **naming the single authoritative source for each field** rather than transcribing edges into
+prose — a transcribed edge list is a second implementation, and this campaign has paid for that.
+
+### The builder, selected rather than inherited — and the selection criterion is refusal
+
+`FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md` (on `main`):
+four builders **agree on the weights** and carry **opposite refusal semantics** — *"`p4_lib`
+refuses to build a map that would discard reported"* (`p4_lib.py:1380`), while the permissive path
+returns with drops.
+
+> **SELECTED: the REFUSING builder (`p4_lib`'s map construction), for all four projections.**
+> **Reason, and it is the whole point:** a map that silently **discards reported bins** produces a
+> released bar over a support that is not the declared support — and `s_proj`'s functional set `U`
+> **is** the rows of that map. **The permissive builder is what `s_proj` would otherwise reach**, and
+> it would make `U` silently narrower than the declaration. **A criterion cannot police a map that
+> drops its own operand.** ⚠ **Revision to be pinned at the commit Joseph approves this manifest
+> at**, before anything runs — for prospective maps this is a requirement I can meet, unlike the
+> historical bands.
+
+### The four maps
+
+| | axes kept | dropped axes (integrated) | integration weight | support | units of the released bar | bar type |
+|---|---|---|---|---|---|---|
+| **P1** | `(E_avail, W)` | `p_T, p_∥, q_3` | product of dropped-axis bin widths — `project_cov_nd.py:5-8`'s width-weighted sum, **not unit weight** | destination cells receiving ≥1 reported 5D bin; predicate `eavailW_covariance.ew_coverage_report` | `d²σ/(dE_avail dW)`, same units as the CV it bands | **TOTAL** (`C_stat` + lateral + vertical) |
+| **P2** | `E_avail` | `p_T, p_∥` | same convention | reported `E_avail` bins; **wide catch bin excluded from the axis** (`sec_3d.tex:216`) | `dσ/dE_avail` | ⚠ **SYSTEMATIC-ONLY** (`sec_3d.tex:262`) |
+| **P3** | `p_T` | `p_∥, E_avail` | same convention | reported `p_T` bins | `dσ/dp_T` | ⚠ **SYSTEMATIC-ONLY** |
+| **P4** | `p_∥` | `p_T, E_avail` | same convention | reported `p_∥` bins | `dσ/dp_∥` | **TOTAL** (combined-covariance band, `sec_3d.tex:193`) |
+
+**Edges: not transcribed, by design.** The single authoritative source is the frozen CV product's
+own binning — `--dst-cv` in `project_cov_nd.py:23`, which takes the destination mask **and shape**
+from the frozen lower-D central product *"so masks match a real result"*. **The manifest's edge
+field is therefore a POINTER — the CV product path and its commit — not a number**, and the
+producer must **fail closed** if the destination mask it derives disagrees with that product.
+
+**⚠ P4's historical builder remains UNDETERMINED and that disclosure stands** (§item 1). It no
+longer blocks: P4's **prospective** producer is the selected refusing builder, same as P1–P3.
+
+**All four derive from `Z` through these exact maps. No new uncertainty derives from any other
+object** — which is what makes the *"not automatically the future producer"* constraint binding
+rather than stylistic.
+
+### The SECOND, DISJOINT LIST — covariance products required for their own sake
+
+**Not displayed bands. Enumerated separately, as instructed.**
+
+| | product | why it is required independently of any figure |
+|---|---|---|
+| **Q1** | the **4D marginal** (drop `W`) — `project_cov_nd.py:26`'s `cov_5d_to_4d_marginal.root` | ⚠ **Reclassified: it is NOT P5.** Displayed nowhere, so it is not a band; but it is the operand the 4D-consuming paths read, and `app_statmethods.tex` clause (iv) requires saying *which* covariance is meant *because* the 5D candidate, its 4D projection and the 2D block have different ranks |
+| **Q2** | the **3D projection** (`p_T, p_∥, E_avail`) | `sec_3d.tex:252-256`: *"the quotable 3D covariance is the exact projection of the final adopted 5D covariance… all covariance-dependent 3D comparisons are gated on that product."* **Required by that gate, not by a figure** |
+| **Q3** | the **assembled 5D trunk** `C_Z` itself, with its rank declaration | A-2 clause (iv); it is the parent every P and Q derives from |
+
+**Deliberately still excluded, and each still by name:** `compare_3d_fullcov` (quarantined; *"no
+value is interpreted"*), `C6`/`coverage_valid_nd.py` (diagnostic), `C7`/`mii_anchor_comparator.py`
+(Gate-2 blocked), and the central-value-only figures. **⚠ Q1–Q3 are a list I can propose and not
+one I can close** — a product required "for its own sake" is required by a *consumer*, and §1.1's
+C6 condition is still unmeasured, so a fourth may exist.
+
+---
+
+## DELIVERABLE 2 — the accuracy choice. Joseph's correction lands, and it changes my recommendation.
+
+### (i) Which quantity I intend: the VARIANCE-share comparison. The formula was right; my words were wrong.
+
+**His correction is exact and I verified the table.** `1 − sqrt(1 − f_stat)` is the fractional
+reduction in the total SD when the statistical variance is **removed**; `sqrt(f_stat)` is the
+statistical **SD's share** of the total. They differ by **63× / 20× / 6.2× / 2.4×** at
+`f_stat = 0.001 / 0.01 / 0.1 / 0.5`.
+
+**What I intend, stated once:** *an undeclared estimator choice must not contribute more VARIANCE to
+the released bar than the statistical component does.* **That is what the formula implements**, and
+here is the identity that shows it — an undeclared component of variance share `f` moves the bar by
+`sqrt(1 + f) − 1`:
+
+| `f` | `sqrt(1+f) − 1` (what an undeclared share `f` does) | `1 − sqrt(1−f)` (the rule) |
+|---:|---:|---:|
+| 0.001 | 0.049988% | 0.050013% |
+| 0.010 | 0.498756% | 0.501256% |
+| 0.100 | 4.880885% | 5.131670% |
+
+**So the rule is the variance-share comparison to within a fraction of a percent, and `sqrt(f_stat)`
+is a DIFFERENT standard** — it compares a relative bar movement to an SD share, which would admit an
+undeclared component roughly `2·sqrt(f_stat)` in variance, i.e. **far larger than the declared
+statistical component.** ⚠ **My earlier gloss — *"by more than the measurement's own statistical
+precision contributes"* — described `sqrt(f_stat)` while the formula computed the variance
+comparison. The gap Joseph identified is real, it is in my prose, and the same failure mode as the
+smallest-component derivation: a verbal justification that did not match the algebra.**
+
+### (ii) The zero case is structural and it KILLS (A) on two of the four approved projections
+
+At `f_stat = 0` the threshold is **exactly 0**. With a **global minimum** over functionals, one
+systematic-only bin sets `δ_proj = 0` and **no member may move any bar at all — unsatisfiable.**
+
+⚠ **AND THIS IS NOT HYPOTHETICAL: P2 AND P3 ARE SYSTEMATIC-ONLY BY THEIR OWN CAPTION**
+(`sec_3d.tex:262`, *"Grouped fractional **systematic** bands"*). **So (A) yields `δ_proj = 0` for
+half of the set Joseph just approved.**
+
+**Global-minimum vs per-functional, both stated with consequences, because the min is what
+propagates one zero:**
+
+| | consequence |
+|---|---|
+| **global min over functionals** | one systematic-only bin → `δ_proj = 0` → **the whole criterion is unsatisfiable**, including on P1 and P4 where it would otherwise be meaningful |
+| **per-functional `δ_i`** | P1/P4 get workable thresholds; **P2/P3 get `δ_i = 0` and remain unsatisfiable.** Contains the damage; does not repair it |
+
+**Neither repairs it, because the defect is in the yardstick and not in the reduction. (A) cannot be
+the appropriate standard for a systematic-only band: it measures the bar against a component that
+band does not contain.**
+
+### (iii) The fixed fractional-precision option, in its strongest form
+
+**Presented on its merits, not as a fallback — and Joseph is right that (A) embodies a judgement
+too.** ⚠ **My earlier grounds for refusing a chosen scalar do not transfer:** they were against
+deriving a number from **formatting** and against **selecting it from observed results**. A
+scientifically justified fixed fraction requires **neither**.
+
+> **(B) `s_proj ≤ δ_proj` with `δ_proj` a single declared fraction, uniform across every released
+> bar.**
+
+| property | (A) statistical-share | **(B) fixed fraction** |
+|---|---|---|
+| grouping-invariant | yes | **yes** |
+| defined at `f_stat = 0` | ⚠ **no — it is 0** | **yes** |
+| identical across total / systematic-only / component-specific | ⚠ **no — undefined for systematic-only** | **yes, by construction** |
+| pinned to an object still under review | ⚠ **yes — `C_stat` is provisional, adequacy not approved** | **no** |
+| embodies a judgement | **yes** (which component, which reduction) | **yes** (the value) |
+
+**And the admissible range is DERIVED even though the value is not:**
+
+- **lower bound — `B'`**, the band-assembly reproducibility floor. Below it the criterion is
+  unenforceable. Measured at toy scale `~4e-16` relative; **unmeasured on Z's real assembly**.
+- **upper bound — `~37.8%`**, the released-bar movement SPEC §3.7d demonstrates from a
+  correlation-only change. **At or above this the criterion admits the exact failure A-7 exists to
+  catch.**
+
+**RECOMMENDED: `δ_proj = 1%`, uniform, with the reasoning stated as a judgement.** It sits **~1.6
+orders below** the demonstrated failure scale and far above the reproducibility floor, leaving
+margin on both sides; it is **uniform across all three bar types and all four projections**, which
+is the property (A) structurally lacks; and it is **round** — chosen for being round rather than
+fitted, which is itself evidence it was not selected from observed results. **I have not evaluated
+`s_proj` on any member, so this cannot have been chosen to make an outcome pass.**
+
+**⚠ What (B) gives up, so the choice is priced on both sides:** it has **no physical referent**. It
+does not say *why* 1% rather than 0.5% or 2%, and no measurement in this tree distinguishes them.
+(A)'s appeal was exactly that referent — and (A) is unsatisfiable on half the approved set, which is
+why I am recommending against my own earlier preference.
+
+### (iv) ONE coherent rule, recommended
+
+> **`s_proj ≤ 1%`, evaluated per declared functional over the rows of the four approved projection
+> maps, with the maximum over the declared offset set `K` reported together with its argmax offset
+> and argmax functional. Uniform across total, systematic-only and component-specific bars.**
+> **`B'` reported beside it as the enforceability floor** — and **NOT APPLICABLE**, never
+> *satisfied*, in the reuse branch (item 4's ruling).
+
+**Per-functional, not global-min** — so a single pathological bin reports as one failing functional
+rather than voiding the criterion, which is the F13 lesson applied to my own reduction.
