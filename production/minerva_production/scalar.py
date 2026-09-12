@@ -315,7 +315,7 @@ def extract(
         flux_axis=meta["flux_axis"],
     )
     support = np.asarray(contract["support"])
-    empty = (prior == 0) & (unfolded == 0) & (inputs["denom_nd"] > 0)
+    empty = (prior == 0) & (unfolded == 0) & (inputs["denom_nd"] >= 0)
     if np.any(support & ~good.ravel() & ~empty.ravel()):
         raise ValueError(
             "reported support contains undefined completeness; no bin may silently become zero"

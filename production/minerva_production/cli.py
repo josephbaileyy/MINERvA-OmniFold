@@ -24,7 +24,7 @@ from .storage import (
 DESCRIPTIONS = {
     "prepare_events": "Adapt a scalar ROOT inventory, prepare a synthetic fixture, or plan per-playlist ROOT production with separate flux normalization.",
     "unfold_gbdt": "Unfold validated scalar arrays with an explicit nominal or cached estimator shared by nominal and replicas.",
-    "uncertainties": "Run statistical or ML split members and combine a declared, matched family; systematic paths require their governing construction.",
+    "uncertainties": "Run matched statistical, systematic or ML split members; combine one declared family only, never a total covariance.",
     "closure": "Construct strict signal-MC pseudo-data and reuse nominal unfolding; this does not measure coverage.",
     "project": "Project compatible cross sections and covariance without retraining, preserving widths and support.",
 }
@@ -73,8 +73,12 @@ def parser(operation: str) -> argparse.ArgumentParser:
             "--seeds",
             type=int,
             nargs="+",
-            required=True,
             help="exact nonnegative member seed inventory",
+        )
+        ap.add_argument(
+            "--inventory",
+            type=Path,
+            help="required systematic JSON: band, expected_indices, member ROOT paths; lateral inputs must be selection-complete",
         )
         ap.add_argument(
             "--nominal",
@@ -325,10 +329,8 @@ def main(operation: str, argv: list[str] | None = None) -> int:
 
             cfg = resolve_config(cfg)
         if operation == "uncertainties":
-            from .uncertainty import require_systematic_path, training_config
+            from .uncertainty import training_config
 
-            if len(set(args.seeds)) != len(args.seeds) or min(args.seeds) < 0:
-                raise ValueError("seeds must be distinct nonnegative integers")
             if args.source == "statistical" and args.mode is None:
                 raise ValueError(
                     "statistical source requires explicit --mode data-only or data-plus-mc"
@@ -336,11 +338,26 @@ def main(operation: str, argv: list[str] | None = None) -> int:
             if args.source != "statistical" and args.mode is not None:
                 raise ValueError("--mode applies only to statistical perturbations")
             if args.source == "systematic":
-                require_systematic_path()
-            if args.source == "ml":
-                training_config(cfg, args.seeds[0])
-            if args.action == "combine" and len(args.seeds) < 2:
-                raise ValueError("combination requires at least two declared seeds")
+                from .systematics import inventory
+
+                if args.inventory is None or args.seeds is not None:
+                    raise ValueError(
+                        "systematics require --inventory with selection-complete lateral inputs; omit --seeds"
+                    )
+                family = inventory(read_json(args.inventory))
+            else:
+                if args.inventory is not None:
+                    raise ValueError("--inventory applies only to systematic families")
+                if (
+                    not args.seeds
+                    or len(set(args.seeds)) != len(args.seeds)
+                    or min(args.seeds) < 0
+                ):
+                    raise ValueError("seeds must be distinct nonnegative integers")
+                if args.action == "combine" and len(args.seeds) < 2:
+                    raise ValueError("combination requires at least two declared seeds")
+                if args.source == "ml":
+                    training_config(cfg, args.seeds[0])
         if args.plan:
             if args.input is None:
                 raise ValueError("operation requires --input")
@@ -354,6 +371,15 @@ def main(operation: str, argv: list[str] | None = None) -> int:
                         "input_exists": args.input.exists(),
                         "output": str(args.output),
                         "requirements": "Execution validates arrays, alignment, normalization and supported backend dependencies.",
+                        **(
+                            {
+                                "inventory": family,
+                                "combination": "single declared band only; total scalar and PET covariance remain blocked",
+                            }
+                            if operation == "uncertainties"
+                            and args.source == "systematic"
+                            else {}
+                        ),
                     },
                     indent=2,
                 )
@@ -374,7 +400,12 @@ def main(operation: str, argv: list[str] | None = None) -> int:
         if operation in {"unfold_gbdt", "closure"}:
             _unfold(args, cfg, operation)
         elif operation == "uncertainties":
-            _uncertainties(args, cfg)
+            if args.source == "systematic":
+                from .systematics import execute
+
+                execute(args, cfg, family)
+            else:
+                _uncertainties(args, cfg)
         else:
             _project(args, cfg)
         print(
@@ -386,6 +417,7 @@ def main(operation: str, argv: list[str] | None = None) -> int:
         KeyError,
         OSError,
         ImportError,
+        RuntimeError,
         subprocess.CalledProcessError,
     ) as exc:
         ap.error(str(exc))

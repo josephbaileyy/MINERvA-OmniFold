@@ -1,0 +1,8 @@
+{
+  "band": "BeamAngleX",
+  "expected_indices": [0, 1],
+  "members": [
+    {"index": 0, "input": "BeamAngleX_0.root"},
+    {"index": 1, "input": "BeamAngleX_1.root"}
+  ]
+}

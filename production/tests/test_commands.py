@@ -220,6 +220,33 @@ def test_systematic_and_implicit_statistical_modes_fail(tmp_path: Path) -> None:
     assert result.returncode != 0 and "explicit --mode" in result.stderr
 
 
+def test_systematic_plan_declares_single_band_without_loading_root(
+    tmp_path: Path,
+) -> None:
+    output = tmp_path / "no-output"
+    result = command(
+        "uncertainties.py",
+        "run",
+        "--source",
+        "systematic",
+        "--inventory",
+        "production/examples/systematic.json",
+        "--config",
+        "production/examples/nominal_5d.json",
+        "--input",
+        "absent-root-directory",
+        "--nominal",
+        "absent-nominal",
+        "--output",
+        str(output),
+        "--plan",
+    )
+    plan = json.loads(result.stdout)
+    assert plan["inventory"]["expected_indices"] == [0, 1]
+    assert "total scalar and PET covariance remain blocked" in plan["combination"]
+    assert not output.exists()
+
+
 def test_scalar_root_plan_is_standard_library_only(tmp_path: Path) -> None:
     source = tmp_path / "source.root"
     source.write_bytes(b"planning must not open this as ROOT")

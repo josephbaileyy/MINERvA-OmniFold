@@ -161,15 +161,22 @@ def test_nominal_loader_requires_real_root_when_unavailable() -> None:
         legacy_module("nominal_omnifold")
 
 
+@pytest.mark.parametrize("denominator_empty", [False, True])
 def test_empty_resampled_bin_keeps_nominal_support(
     inputs: tuple[dict[str, Any], dict[str, Any]],
+    denominator_empty: bool,
 ) -> None:
     arrays, metadata = inputs
     selected = arrays["pass_truth"]
     weights = arrays["w_truth"].copy()
     weights[(arrays["MCgen"][:, 0] < 1) & (arrays["MCgen"][:, 1] < 2)] = 0
+    denominator = arrays["denom_nd"].copy()
+    if denominator_empty:
+        denominator.flat[0] = 0
     result = scalar.extract(
-        {**arrays, "w_truth": weights}, metadata, np.ones(int(selected.sum()))
+        {**arrays, "w_truth": weights, "denom_nd": denominator},
+        metadata,
+        np.ones(int(selected.sum())),
     )
     assert result["xsec"][0] == 0
     assert result["empty_supported_bins"][0]

@@ -50,9 +50,21 @@ def test_unequal_widths_reordered_axes_and_correlations(
     central = np.arange(1, 9) * 1e-39
     covariance = (np.eye(8) * 2 + np.ones((8, 8))) * 1e-80
     arrays, output = project(
-        {"xsec": central, "covariance": covariance}, source, ["c", "a"]
+        {
+            "xsec": central,
+            "covariance": covariance,
+            "covariance_cv_centered": covariance * 3,
+        },
+        source,
+        ["c", "a"],
     )
     np.testing.assert_array_equal(arrays["projection"], expected_map)
+    np.testing.assert_allclose(
+        arrays["covariance_cv_centered"],
+        expected_map @ (covariance * 3) @ expected_map.T,
+        rtol=1e-14,
+        atol=0,
+    )
     expected_central = [11, 31, 16, 36] if meaning == "density" else [4, 12, 6, 14]
     np.testing.assert_allclose(
         arrays["xsec"], np.array(expected_central) * 1e-39, rtol=1e-14, atol=0

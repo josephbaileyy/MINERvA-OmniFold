@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 from array import array
@@ -9,9 +10,18 @@ from pathlib import Path
 from typing import Any
 
 from .storage import ROOT, digest, legacy_module, provenance
+from .universe_input import resolve_universe, source_contract
 
 ENTRY_BRANCH = "__production_source_entry__"
 SUPPORTED_AXES = [["eavail"], ["eavail", "q3"], ["eavail", "q3", "W"]]
+ADAPTER_SOURCES = (
+    "production/minerva_production/root_input.py",
+    "production/minerva_production/universe_input.py",
+    "production/minerva_production/storage.py",
+    "nd-unfolding/unfold_nd_omnifold_unbinned.py",
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "nd-unfolding/flux_universe.py",
+)
 
 
 class EntryIndexedTree:
@@ -77,19 +87,36 @@ class EntryIndexedTree:
 def plan(config: dict[str, Any], source: Path, output: Path) -> dict[str, Any]:
     """Resolve a standard scalar preparation without opening event or flux files."""
     required = {"mode", "axes", "flux_file"}
-    if set(config) != required or config["mode"] != "scalar-root":
-        raise ValueError("scalar-root config requires exactly mode, axes and flux_file")
+    if (
+        required - config.keys()
+        or set(config) - (required | {"universe", "flux_universe_file"})
+        or config["mode"] != "scalar-root"
+    ):
+        raise ValueError(
+            "scalar-root config requires exactly mode, axes and flux_file, with optional universe and flux_universe_file"
+        )
     if config["axes"] not in SUPPORTED_AXES:
         raise ValueError(f"scalar-root axes must be one of {SUPPORTED_AXES}")
     flux_file = Path(config["flux_file"]).expanduser().resolve()
+    paths = [source, flux_file]
+    resolved_config = {**config, "flux_file": str(flux_file)}
+    if "universe" in config:
+        resolved_config["universe"] = resolve_universe(config["universe"])
+    is_flux = resolved_config.get("universe", {}).get("band") == "Flux"
+    if is_flux != ("flux_universe_file" in config):
+        raise ValueError(
+            "Flux variation requires flux_universe_file; other bands do not use it"
+        )
+    if is_flux:
+        flux_universe_file = Path(config["flux_universe_file"]).expanduser().resolve()
+        resolved_config["flux_universe_file"] = str(flux_universe_file)
+        paths.append(flux_universe_file)
     return {
         "status": "plan-only",
         "input": str(source),
         "output": str(output),
-        "resolved_config": {**config, "flux_file": str(flux_file)},
-        "missing_paths": [
-            str(path) for path in (source, flux_file) if not path.is_file()
-        ],
+        "resolved_config": resolved_config,
+        "missing_paths": [str(path) for path in paths if not path.is_file()],
         "selection": "nd-standard-v1",
         "background": "preweighted-purity",
         "features": ["pt", "pparallel", *config["axes"]],
@@ -98,7 +125,7 @@ def plan(config: dict[str, Any], source: Path, output: Path) -> dict[str, Any]:
             "Input is the per-playlist merged scalar event-loop ROOT product, not an unidentified row cache.",
             "Flux is the separate baseline POT-weighted MEFHC product.",
             "Reads the full declared input; this command grants no compute authority.",
-            "Standard muon phase space, native weighted collectors and purity target only; no universe substitution.",
+            "Standard phase space and native purity target; lateral universes require active selection metadata.",
         ],
     }
 
@@ -118,6 +145,7 @@ def prepare(config: dict[str, Any], source: Path, output: Path) -> None:
     import numpy as np
 
     resolved = plan(config, source, output)
+    config = resolved["resolved_config"]
     if resolved["missing_paths"]:
         raise ValueError(
             f"scalar ROOT prerequisites missing: {resolved['missing_paths']}"
@@ -129,13 +157,20 @@ def prepare(config: dict[str, Any], source: Path, output: Path) -> None:
     root = driver.ROOT
 
     flux_file = Path(resolved["resolved_config"]["flux_file"])
-    snapshots = {path: path.stat() for path in (source, flux_file)}
+    paths = [source, flux_file]
+    if "flux_universe_file" in config:
+        paths.append(Path(config["flux_universe_file"]))
+    snapshots = {path: path.stat() for path in paths}
     sources = {str(path): digest(path) for path in snapshots}
     source_file = root.TFile.Open(str(source), "READ")
     if not source_file or source_file.IsZombie():
         raise ValueError(f"cannot open ROOT input: {source}")
     views = {}
     try:
+        variation = source_contract(source_file, config.get("universe"), driver)
+        universe_branch = None
+        if variation["mode"] == "vertical-branches":
+            universe_branch = (config["universe"]["band"], config["universe"]["index"])
         for name in ("mc_signal_reco", "data", "mc_background", "mc_truth_denom"):
             tree = source_file.Get(name)
             if not tree or not tree.InheritsFrom("TTree"):
@@ -158,17 +193,38 @@ def prepare(config: dict[str, Any], source: Path, output: Path) -> None:
         flux, _ = driver.u2d.load_flux_bins(
             str(flux_file), "pTmu_reweightedflux_integrated", edges[0]
         )
+        if "flux_universe_file" in config:
+            flux = driver.fluxu.flux_universe_bins(
+                config["flux_universe_file"],
+                config["universe"]["index"],
+                edges[0],
+                flux,
+            )
         signal = driver.collect_signal_nd(
-            views["mc_signal_reco"], collect_axes, *bounds, pot_scale, use_weights=True
+            views["mc_signal_reco"],
+            collect_axes,
+            *bounds,
+            pot_scale,
+            use_weights=True,
+            universe_branch=universe_branch,
         )
         measured_pt, measured_pz, measured_extra = driver.collect_data_nd(
             views["data"], collect_axes, *bounds
         )
         bkg_pt, bkg_pz, bkg_extra, bkg_weights = driver.collect_bkg_nd(
-            views["mc_background"], collect_axes, pot_scale, *bounds
+            views["mc_background"],
+            collect_axes,
+            pot_scale,
+            *bounds,
+            universe_branch=universe_branch,
         )
         denominator = driver.collect_truth_denom_nd(
-            views["mc_truth_denom"], collect_axes, *bounds, pot_scale, use_weights=True
+            views["mc_truth_denom"],
+            collect_axes,
+            *bounds,
+            pot_scale,
+            use_weights=True,
+            universe_branch=universe_branch,
         )
         signal_entries = signal["truth_extras"].pop().astype(np.int64)
         signal["reco_extras"].pop()
@@ -182,6 +238,9 @@ def prepare(config: dict[str, Any], source: Path, output: Path) -> None:
         ):
             raise ValueError("finite-support signal/truth-denominator closure failed")
         measured_columns = [measured_pt, measured_pz, *measured_extra]
+        measured_matrix = np.column_stack(measured_columns)
+        measured_digest = hashlib.sha256(measured_matrix.tobytes())
+        measured_digest.update(data_entries.tobytes())
         data_hist, _ = driver.histnd(measured_columns, np.ones(len(measured_pt)), edges)
         background_hist, _ = driver.histnd(
             [bkg_pt, bkg_pz, *bkg_extra], bkg_weights, edges
@@ -244,6 +303,9 @@ def prepare(config: dict[str, Any], source: Path, output: Path) -> None:
                 "data_tree": "data",
             },
             "has_native_misses": has_native_misses,
+            "variation": variation,
+            "measured_inventory_sha256": measured_digest.hexdigest(),
+            "source_digests": sources,
             "background_contract": "native N-D purity max(0,D-B)/D; background tree varies only during universe preparation; fixed under the two-stream bootstrap",
             "output_contract": {
                 "axes": [
@@ -256,22 +318,14 @@ def prepare(config: dict[str, Any], source: Path, output: Path) -> None:
                 "projection_domain": "reported-source",
                 "support": ((prior > 0) & (denominator_hist > 0)).ravel().tolist(),
             },
-            "adapter_sources": {
-                name: digest(ROOT / name)
-                for name in (
-                    "production/minerva_production/root_input.py",
-                    "production/minerva_production/storage.py",
-                    "nd-unfolding/unfold_nd_omnifold_unbinned.py",
-                    "2d-unfolding/unfold_2d_omnifold_unbinned.py",
-                )
-            },
+            "adapter_sources": {name: digest(ROOT / name) for name in ADAPTER_SOURCES},
         }
         payload = {
             "MCgen": truth,
             "MCreco": np.column_stack(
                 [signal["reco_pt"], signal["reco_pz"], *signal["reco_extras"]]
             ),
-            "measured": np.column_stack(measured_columns),
+            "measured": measured_matrix,
             "measured_weights": measured_weights,
             "pass_truth": signal["pass_truth"],
             "pass_reco": signal["pass_reco"],

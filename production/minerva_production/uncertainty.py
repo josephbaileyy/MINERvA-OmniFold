@@ -54,13 +54,6 @@ def training_config(cfg: dict[str, Any], seed: int) -> dict[str, Any]:
     return {**cfg, "split_seed": seed}
 
 
-def require_systematic_path() -> None:
-    """Refuse a cached adapter that cannot represent selection-complete systematics."""
-    raise ValueError(
-        "systematic members require selection-complete lateral inputs, per-universe background and flux contracts, and a governing construction; use the retained scalar-5D route. Cached weight-only substitution is unsupported"
-    )
-
-
 def assemble(nominal: dict[str, Any], members: list[dict[str, Any]]) -> dict[str, Any]:
     """Compute the retained sample convention, with mean shift reported separately.
 

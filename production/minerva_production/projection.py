@@ -78,8 +78,10 @@ def project(
     if central.shape != (projection.shape[1],) or not np.all(np.isfinite(central)):
         raise ValueError("central vector does not match declared supported cells")
     projected = {"xsec": projection @ central, "projection": projection}
-    if "covariance" in arrays:
-        covariance = arrays["covariance"]
+    for key in ("covariance", "covariance_cv_centered"):
+        if key not in arrays:
+            continue
+        covariance = arrays[key]
         if covariance.shape != (len(central), len(central)) or not np.all(
             np.isfinite(covariance)
         ):
@@ -87,7 +89,7 @@ def project(
         scale = np.max(np.abs(covariance))
         if np.max(np.abs(covariance - covariance.T)) > 1e-12 * scale:
             raise ValueError("covariance is not symmetric at relative tolerance 1e-12")
-        projected["covariance"] = legacy_module("uq_math").project_covariance(
+        projected[key] = legacy_module("uq_math").project_covariance(
             covariance, projection
         )
     for key in ("mean", "mean_shift"):

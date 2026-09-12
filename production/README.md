@@ -1,7 +1,7 @@
 # Production commands
 
 This interface adapts standard scalar ROOT inputs and supports explicit nominal
-and cached LightGBM estimators, statistical replicas, training-split diagnostics,
+and cached LightGBM estimators, statistical replicas, single-band systematic diagnostics, training-split diagnostics,
 strict MC closure, and linear projection.
 It also plans per-playlist ROOT preparation and exposes retained guarded PET
 diagnostic training, full-inventory inference and extraction. Local fixture equivalence does not authorize a production
@@ -120,12 +120,41 @@ applies one MC Poisson draw to both truth and reco. The MC stream uses bootstrap
 seed + 10,000,000. The denominator stays fixed and completeness is recomputed,
 matching `bootstrap_nd.py`. This convention is explicit, not a new UQ adoption.
 
-`uncertainties.py combine` requires the exact nominal, member seeds, code,
-configuration, and support. It assembles one source using the retained
-mean-centered sample covariance with divisor `N-1`, and records the mean shift
-separately. It does not sum covariance families. Cached systematic execution is
-refused: selection-complete lateral inputs, per-universe background, and the
-governing construction are required. PET statistical/ML products are not exposed.
+Statistical/ML `uncertainties.py combine` requires the exact nominal, member seeds,
+code, configuration and support. It uses mean-centered sample covariance with
+divisor `N-1` and reports the mean shift separately. PET statistical/ML products
+and cross-source totals are not exposed.
+
+### Systematic families
+
+Edit `examples/systematic.json` to declare a complete native band inventory.
+Paths are relative to `--input` during `run` (absolute paths also work). Both
+operations require the same inventory and an unshifted `scalar-root` nominal
+produced with matching adapter dependencies, data, baseline flux and estimator.
+In the ROOT environment and a separately authorized allocation:
+
+```sh
+python production/uncertainties.py run --source systematic --inventory production/examples/systematic.json --config production/examples/nominal_5d.json --input /data/universes --nominal /data/scalar_nominal --output /data/systematic_members
+python production/uncertainties.py combine --source systematic --inventory production/examples/systematic.json --config production/examples/nominal_5d.json --input /data/systematic_members --nominal /data/scalar_nominal --output /data/systematic_covariance
+python production/project.py --config production/examples/project_5d.json --input /data/systematic_covariance --output /data/systematic_4d
+```
+
+Lateral bands require per-playlist active-universe ordinary trees, exact native
+band/index metadata, all four migration counts and finite-support denominator
+closure. Dump-all CV-support lateral branches are refused. Vertical bands reuse
+the native signal, truth-denominator and background weight branches together;
+purity is rebuilt per universe. `Flux` additionally requires `flux_universe_file`
+in the inventory, with the native `hFluxCV`/`hFluxUniv` table: the same universe
+index varies both event weights and flux, and the table CV must match baseline.
+Temporary prepared caches are removed after each member; member products bind
+the raw sources and retain preparation metadata and source support.
+
+Combination is **one declared band only**: native MAT mean-centered `1/N`
+covariance, CV-centered second moment and common shift are all retained. Both
+covariance variants project with the same linear map. These are quarantined
+diagnostics, not an adopted scalar-5D uncertainty; mean-centering alone does not
+resolve its gate. No block sum, unified-throw total or PET covariance is inferred.
+Neither inventory completeness nor successful execution supplies adoption.
 
 Closure copies selected signal reco rows and weights into pseudo-data and compares
 the reused calculation with the known truth extraction. Nominal-driver closure

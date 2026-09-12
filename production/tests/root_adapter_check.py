@@ -11,7 +11,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
 
-from numpy.testing import assert_array_equal
+from numpy.testing import assert_allclose, assert_array_equal
 
 from production.minerva_production.root_input import (
     ENTRY_BRANCH,
@@ -69,6 +69,8 @@ def main() -> None:
         "MC_pz": [6.0, 5.0, 5.0, 2.0, 5.0, 7.0],
         "MC_eavail": [0.2] * 6,
         "w_truth": [1.0, 1.0, -1.0, 1.0, 1.0, 1.0],
+        "w_truth_MinosEfficiency_0": [2.0, 2.0, -2.0, 2.0, 2.0, 2.0],
+        "w_truth_Flux_0": [2.0, 2.0, -2.0, 2.0, 2.0, 2.0],
     }
     signal_tree = tree(
         "mc_signal_reco",
@@ -78,6 +80,8 @@ def main() -> None:
             "sim_pz": [6.0] * 6,
             "sim_eavail": [0.3] * 6,
             "w_reco": [1.0] * 6,
+            "w_reco_MinosEfficiency_0": [3.0] * 6,
+            "w_reco_Flux_0": [3.0] * 6,
             "sim_pass": [1, 1, 1, 1, 1, 0],
         },
     )
@@ -117,6 +121,8 @@ def main() -> None:
         arguments = bounds
         if name == "mc_background":
             columns["w_bkg"] = [0.1] * 6
+            columns["w_bkg_MinosEfficiency_0"] = [0.2] * 6
+            columns["w_bkg_Flux_0"] = [0.2] * 6
             arguments = (2.0, *bounds)
         source = tree(name, columns)
         trees[name] = source
@@ -175,6 +181,90 @@ def main() -> None:
         assert_array_equal(arrays["measured_weights"], [0.8, 0.8])
         print(
             "PASS: tiny ROOT fixture adapts to the validated scalar input contract; no fit performed"
+        )
+        preparation = {
+            "mode": "scalar-root",
+            "axes": ["eavail"],
+            "flux_file": str(flux_path),
+        }
+        varied_output = directory / "vertical.npz"
+        prepare(
+            {**preparation, "universe": {"band": "MinosEfficiency", "index": 0}},
+            source_path,
+            varied_output,
+        )
+        varied, varied_metadata = load_inputs(varied_output, config)
+        for key, factor in (
+            ("w_truth", 2),
+            ("w_reco", 3),
+            ("denom_nd", 2),
+            ("background_histogram", 2),
+        ):
+            assert_array_equal(varied[key], factor * arrays[key])
+        assert_array_equal(varied["measured_weights"], [0.6, 0.6])
+        assert varied_metadata["variation"]["mode"] == "vertical-branches"
+        assert (
+            varied_metadata["measured_inventory_sha256"]
+            == metadata["measured_inventory_sha256"]
+        )
+        import numpy as np
+
+        flux_table = directory / "flux-universes.npz"
+        np.savez(
+            flux_table,
+            hFluxCV=arrays["flux"],
+            hFluxUniv=np.stack([arrays["flux"] * 1.1, arrays["flux"] * 0.9], axis=1),
+        )
+        flux_output = directory / "flux-events.npz"
+        prepare(
+            {
+                **preparation,
+                "universe": {"band": "Flux", "index": 0},
+                "flux_universe_file": str(flux_table),
+            },
+            source_path,
+            flux_output,
+        )
+        flux_varied, _ = load_inputs(flux_output, config)
+        assert_array_equal(flux_varied["w_truth"], varied["w_truth"])
+        assert_allclose(flux_varied["flux"], arrays["flux"] * 1.1, rtol=1e-14, atol=0)
+        active_path = directory / "active.root"
+        active_file = root.TFile.Open(str(active_path), "RECREATE")
+        for source_tree in trees.values():
+            source_tree.Write()
+        root.TParameter("double")("dataPOTUsed", 2e20).Write()
+        root.TParameter("double")("mcPOTUsed", 1e20).Write()
+        root.TNamed("activeUniverseBand", "BeamAngleX").Write()
+        from production.minerva_production.universe_input import MIGRATION_KEYS
+
+        for name, value in {
+            "hasActiveUniverse": 1,
+            "activeUniverseIndex": 0,
+            "activeUniverseIsLateral": 1,
+            "hasTruthOnlyMisses": 1,
+            **dict.fromkeys(MIGRATION_KEYS, 0),
+        }.items():
+            root.TParameter("int")(name, value).Write()
+        active_file.Close()
+        active_output = directory / "active.npz"
+        prepare(
+            {**preparation, "universe": {"band": "BeamAngleX", "index": 0}},
+            active_path,
+            active_output,
+        )
+        active, active_metadata = load_inputs(active_output, config)
+        assert active_metadata["variation"]["mode"] == "active-selection"
+        for key in (
+            "MCgen",
+            "MCreco",
+            "w_truth",
+            "w_reco",
+            "denom_nd",
+            "measured_weights",
+        ):
+            assert_array_equal(active[key], arrays[key])
+        print(
+            "PASS: vertical signal/denominator/background swaps, same-index flux and active ordinary-tree routing; no fit performed"
         )
 
 
