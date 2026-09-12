@@ -1,0 +1,87 @@
+{
+  "scope": "Failed calibration retry, partial pooled-arm artifacts; no completed paired calibration or full jobs",
+  "source": "/pscratch/sd/j/josephrb/pet-routing-retry1-20260911",
+  "destination": "/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260911-retry1-58201775/payload",
+  "copied_at_utc": "2026-09-12T08:36:54.514729+00:00",
+  "source_before_equals_after_equals_destination": true,
+  "file_count": 19,
+  "bytes": 511304,
+  "files": {
+    "accounting.txt": {
+      "bytes": 817,
+      "sha256": "268679735a97fd5df01df81ba233c71d072085bf1c721a6e7c938520e4ed2da2"
+    },
+    "calibration/allocation.txt": {
+      "bytes": 2202,
+      "sha256": "e800be7fd89656289ac255e7169d3878aff40a6133e0ebfe9590901f0f3391fd"
+    },
+    "calibration/calibration.log": {
+      "bytes": 6566,
+      "sha256": "dabc6deba5a780200e5b7c70d49a8adfcf91cdc3902e7e9e9237534aebb6cc90"
+    },
+    "calibration/exit-code.txt": {
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    "calibration/guard.json": {
+      "bytes": 8793,
+      "sha256": "572680d6c1f063f4fb9a3bbbd8f02ffa22b1bb4298a023317bae4889db93b348"
+    },
+    "calibration/measurement/calibration.pooled.keras": {
+      "bytes": 160221,
+      "sha256": "15ee247c9f84acf5b546120cc63566374179be878dfe6b65758726bed09ae5d7"
+    },
+    "calibration/measurement/calibration.pooled.npz": {
+      "bytes": 263138,
+      "sha256": "09221c74607a8f5b45fc6038a7bb28b2d51b6fd52c702fd14fecebecaf0db03f"
+    },
+    "calibration/measurement/calibration.pooled.truth.keras": {
+      "bytes": 23289,
+      "sha256": "3969499e5fee8fdb76b6edc9a91e4e1fab1dfac066bc6eca99b4d519579fefa6"
+    },
+    "calibration/measurement/environment.json": {
+      "bytes": 1168,
+      "sha256": "52dd99055f0239b547701f5f07e885cfebc4e11034a158f2243788949fb6200f"
+    },
+    "calibration/storage-meter.log": {
+      "bytes": 47,
+      "sha256": "cf3be10f7d78b8d1ec13f6127cd627d8501fe3b0f8ed5fb46d4b265820f07ace"
+    },
+    "calibration/terminal.txt": {
+      "bytes": 7,
+      "sha256": "03cbb6c52e522ce55e217e3f9d66dbd66d21ef6bf85024016a3b7f3080c7944f"
+    },
+    "calibration/tests-guard.json": {
+      "bytes": 32479,
+      "sha256": "9d75b15bed9188bc9df54d1f076dbeafb02a513806d58e945a8325ae0fe2eb96"
+    },
+    "calibration/tests.log": {
+      "bytes": 1444,
+      "sha256": "0505f388202cf9040e673159e60b7a0d30400014322887cc9254c77bee5c8104"
+    },
+    "calibration-58201775.slurm.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "checkout-status-after.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "scheduler-after.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "version-preflight-guard.json": {
+      "bytes": 8765,
+      "sha256": "aa8f58d9948fcffaea7d3c2a774b583761757acc1a4b8cee8c645e5928a90252"
+    },
+    "version-preflight.json": {
+      "bytes": 113,
+      "sha256": "e16a2cca304254b57ce00e9135ed40f4a65d159af59f7416f8d3d45d57e47908"
+    },
+    "version-preflight.log": {
+      "bytes": 2253,
+      "sha256": "fb36e8f2d1f099e8d1e944af1c1e01c6e6cd2cb435602f0a7d6e1bead42018c8"
+    }
+  }
+}

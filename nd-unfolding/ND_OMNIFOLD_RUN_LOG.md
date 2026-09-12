@@ -297,3 +297,22 @@ Joseph approved the retry proposal at `c9def5d2`, granting one exception for
 One A100 / 32 CPUs / 56 GiB / 118 minutes; prior 79 seconds charged to the same
 aggregate limits. A second technical failure stops; full jobs remain conditional
 on the unchanged integrity and 20% headroom gates.
+
+
+## 2026-09-12 — Retry 58201775 verified: second technical failure, stop
+
+The one authorized retry ran from `46fe3d7c` on 2026-09-11 (scheduler Pacific
+11:01:49–11:03:40). It passed 49 tests plus 10 subtests in 38.80 s, the package
+pins and an A100 operation check. The pooled arm saved two models and an NPZ;
+the direct arm then failed in `RaggedTensor.from_value_rowids` because GPU
+`DenseBincount` does not support the required deterministic mode. No paired
+receipt or timing profile completed. No full jobs or third attempt were submitted.
+
+[Terminal result](pet/direct_token_comparison/RETRY_RESULT-20260912.md) binds logs,
+partial artifacts, preservation and accounting. The parent allocation was 111 s;
+including the first failure gives 190 s = 0.052778 GPU-hours / 1.688889 reserved
+CPU-hours. The retry extern cleanup lasted 114 s; a conservative longest-step
+sum is 193 s, reported separately without double-counting overlapping steps.
+All 19 files / 511,304 bytes were preserved and hash-verified on CFS and in the
+committed archive. No headroom gate, routing-performance conclusion, real-data
+training, covariance, publication adoption or Gate-6 action resulted.

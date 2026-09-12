@@ -2,11 +2,11 @@
 
 Start from the repository root. These files add an isolated diagnostic candidate;
 no existing mapper, model, source-audit binding or production launcher is edited.
-The report is [REPORT_FOR_BEN.md](REPORT_FOR_BEN.md). The approved execution and
-resource amendment reached a [technical calibration stop](EXECUTION_STATUS-20260911.md)
-before training. The [single corrected retry](RETRY_PROPOSAL-20260911.md) is now
-[explicitly authorized](RETRY_AUTHORIZATION-20260911.md). The frozen proposal and [run-card.json](run-card.json) retain their
-historical pending wording; the linked authorization records govern their scope.
+The report is [REPORT_FOR_BEN.md](REPORT_FOR_BEN.md). The authorized retry reached
+a [second technical stop](RETRY_RESULT-20260912.md): partial pooled artifacts
+exist, but the direct arm failed and the paired calibration is incomplete.
+No full jobs or third attempt were submitted. Historical proposals and pending
+JSON remain preserved; the authorization and terminal records govern their scope.
 
 Use the existing Python 3.11 environment with NumPy 1.26.4, TensorFlow 2.16.2,
 Keras 3.15.1, SciPy and pytest. Imports of TensorFlow are lazy. The CPU synthetic

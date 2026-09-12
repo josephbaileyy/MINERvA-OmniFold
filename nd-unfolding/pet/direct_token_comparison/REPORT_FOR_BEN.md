@@ -91,7 +91,8 @@ inconclusive or failed. Real-source training remains dependent on producer,
 selection, weight and normalization prerequisites. Neither a synthetic pass nor
 source mapping agreement authorizes a scientific estimator choice.
 
-Execution update: the approved A100 calibration passed 49 software tests plus
-10 subtests, then stopped in package-version metadata discovery before training.
-Its 79 allocated seconds produced no routing-performance measurement; the
-24-job comparison remains unrun. [Exact terminal evidence](execution_runs/20260911-calibration/terminal.json).
+Execution update: the authorized retry passed 49 software tests plus 10 subtests
+and an A100 operation check. The pooled calibration arm saved artifacts; the
+direct arm failed because GPU `DenseBincount` does not support the required
+determinism. The paired calibration is incomplete; no full jobs ran and no
+routing-performance conclusion follows. [Exact terminal evidence](RETRY_RESULT-20260912.md).

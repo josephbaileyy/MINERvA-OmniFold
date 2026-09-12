@@ -1,10 +1,16 @@
-# Retry authorized; terminal history retained below
+# Current state: second technical failure; execution stopped
 
-Joseph granted [one explicit retry exception](RETRY_AUTHORIZATION-20260911.md).
-The corrected 118-minute calibration is next; no retry result is yet claimed.
-The previous 79-second failed allocation remains part of aggregate accounting.
+Retry `58201775` passed the Linux tests, package pins and A100 operation check.
+The pooled calibration arm saved three artifacts; the direct-token arm failed
+at deterministic GPU `DenseBincount` during model construction. The paired
+calibration is incomplete, so no headroom pass or full-matrix launch is possible.
+No third attempt was submitted. [Exact retry result and accounting](RETRY_RESULT-20260912.md).
 
-# Terminal status: calibration technical stop
+The two Slurm parent allocations total 190 seconds: 0.052778 GPU-hours and
+1.688889 reserved CPU-hours. Partial artifacts and failure evidence are preserved.
+No learning-performance conclusion or change of scientific scope follows.
+
+# First calibration — historical terminal record
 
 **Job 58198332 FAILED before GPU validation or training. No retry and no full
 campaign jobs were submitted.** The approved no-retry stop is in force.

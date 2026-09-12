@@ -1,6 +1,6 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
-**PET representation comparison, 2026-09-11:** the [report](pet/direct_token_comparison/REPORT_FOR_BEN.md) and isolated candidate are prepared. Approved calibration `58198332` passed 49 tests plus 10 subtests, then failed in guarded package-version discovery before training. [Terminal evidence](pet/direct_token_comparison/EXECUTION_STATUS-20260911.md) records 79 allocated seconds, no full jobs, preservation and the no-retry stop. One corrected retry is now explicitly authorized; calibration is next. Real-source semantics remain unresolved.
+**PET representation comparison, terminal update 2026-09-12:** retry `58201775` passed 49 tests plus 10 subtests and an A100 operation check. The pooled calibration arm saved artifacts; the direct arm failed during model construction because GPU `DenseBincount` does not support the required determinism. [Exact result](pet/direct_token_comparison/RETRY_RESULT-20260912.md). This second technical failure stops execution: no full jobs or third attempt, and no paired learning conclusion. Source semantics remain unresolved.
 
 **PET typed-descriptor continuation, 2026-09-10:** reconstruction-side prong
 definitions and their implementation implications are recorded in

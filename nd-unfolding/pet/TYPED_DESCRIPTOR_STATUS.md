@@ -12,14 +12,13 @@ architecture. Its small synthetic two-step runner is implemented. Preparation
 and test evidence are recorded in
 [the comparison setup](direct_token_comparison/README.md).
 
-The [bounded execution proposal](direct_token_comparison/EXECUTION_PROPOSAL.md)
-and corrected resource envelope were approved. Calibration job `58198332`
-passed 49 Linux tests plus 10 subtests, then failed in guarded package-version
-metadata discovery before GPU validation or training. The
-[terminal record](direct_token_comparison/EXECUTION_STATUS-20260911.md) preserves
-79 seconds of allocation, the failure and a locally checked correction. No full
-jobs or retry were submitted; the explicit no-retry stop remains in force.
-Joseph subsequently authorized [one 118-minute retry](direct_token_comparison/RETRY_AUTHORIZATION-20260911.md); a second technical failure stops.
+The approved calibration and its one authorized retry both ended in technical
+stops. Retry `58201775` passed the Linux tests and A100 operation check, then
+failed constructing the direct-token arm because GPU `DenseBincount` does not
+support the required deterministic mode. The pooled calibration arm had saved
+three artifacts; no paired calibration completed. [Exact terminal result](direct_token_comparison/RETRY_RESULT-20260912.md).
+No full jobs or third attempt were submitted. There is no routing-performance
+conclusion; the explicit second-failure stop remains effective.
 The experiment is synthetic-only; producer, source release,
 selection/weight/truth-sidecar and real normalization prerequisites remain open.
 No mapping pass, historical pilot or software test is a learning-performance

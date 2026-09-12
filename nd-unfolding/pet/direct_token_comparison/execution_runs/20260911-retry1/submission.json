@@ -1,0 +1,19 @@
+{
+  "job_id": "58201775",
+  "retry_of": "58198332",
+  "execution_commit": "46fe3d7cd3c88570d7449a884adc4f8ffc44f041",
+  "approved_proposal_commit": "c9def5d21dcffae34ab819734e94c418dac253af",
+  "approval_sha256": "aed90259b96adc25593ffeb7841ea60c85b4f32ccbc403d537fd8b98b058a633",
+  "remote_checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-pet-routing-retry1-20260911",
+  "remote_runtime": "/pscratch/sd/j/josephrb/pet-direct-token-runtime-20260911",
+  "remote_output": "/pscratch/sd/j/josephrb/pet-routing-retry1-20260911",
+  "prior_allocation_seconds": 79,
+  "profile": {
+    "gpus": 1,
+    "cpus": 32,
+    "memory_GiB": 56,
+    "wall_seconds": 7080
+  },
+  "full_jobs_submitted": 0,
+  "scope": "Single synthetic calibration retry; a second technical failure stops execution"
+}
