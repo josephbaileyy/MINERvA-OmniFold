@@ -16,6 +16,7 @@ from production.minerva_production import cli, storage
 def checkout(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     root = tmp_path / "checkout"
     sources = set(storage.code_identity()["sources"])
+    sources.update(storage.code_identity(backend="nominal-lgbm-v1")["sources"])
     sources.update(storage.code_identity("projection")["sources"])
     sources.update(
         {
@@ -81,7 +82,7 @@ def test_resume_rejects_relevant_source_changes(
 
 
 def test_assembly_after_unrelated_changes(checkout: Path, tmp_path: Path) -> None:
-    config = {"estimator_seed": 42}
+    config = {"estimator_seed": 42, "backend": "cached-lgbm-v1"}
     nominal_identity = {
         "operation": "unfold_gbdt",
         "code": storage.code_identity(),
@@ -145,3 +146,12 @@ def test_projection_excludes_training_engine(checkout: Path) -> None:
     assert storage.code_identity("projection") == identity
     (checkout / "nd-unfolding/uq_math.py").write_text("different projection\n")
     assert storage.code_identity("projection") != identity
+
+
+def test_each_estimator_binds_only_its_engine(checkout: Path) -> None:
+    nominal = storage.code_identity(backend="nominal-lgbm-v1")
+    cached = storage.code_identity()
+    source = checkout / "unbinned_unfolding/python/omnifold.py"
+    source.write_text("changed nominal estimator\n")
+    assert storage.code_identity(backend="nominal-lgbm-v1") != nominal
+    assert storage.code_identity() == cached

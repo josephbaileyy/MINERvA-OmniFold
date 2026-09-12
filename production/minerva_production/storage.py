@@ -40,12 +40,25 @@ def fingerprint(value: Any) -> str:
 @lru_cache
 def legacy_module(name: str) -> ModuleType:
     """Load a pure calculation from this checkout without changing import paths."""
-    if name not in {"omnifold_nn_core", "xsec_nd", "uq_math", "mnv_guarded_run"}:
+    if name not in {
+        "omnifold_nn_core",
+        "xsec_nd",
+        "uq_math",
+        "mnv_guarded_run",
+        "nominal_omnifold",
+        "scalar_driver",
+        "projection_driver",
+    }:
         raise ValueError(f"unsupported calculation module: {name}")
     module_name = f"_production_{name}"
-    spec = importlib.util.spec_from_file_location(
-        module_name, ROOT / "nd-unfolding" / f"{name}.py"
-    )
+    source = ROOT / "nd-unfolding" / f"{name}.py"
+    if name == "nominal_omnifold":
+        source = ROOT / "unbinned_unfolding/python/omnifold.py"
+    elif name == "scalar_driver":
+        source = ROOT / "nd-unfolding/unfold_nd_omnifold_unbinned.py"
+    elif name == "projection_driver":
+        source = ROOT / "nd-unfolding/project_cov_nd.py"
+    spec = importlib.util.spec_from_file_location(module_name, source)
     if spec is None or spec.loader is None:
         raise ImportError(name)
     module = importlib.util.module_from_spec(spec)
@@ -54,13 +67,17 @@ def legacy_module(name: str) -> ModuleType:
     return module
 
 
-def code_identity(scope: str = "scalar") -> dict[str, Any]:
+def code_identity(
+    scope: str = "scalar", *, backend: str = "cached-lgbm-v1"
+) -> dict[str, Any]:
     """Bind calculation dependencies, independently of repository revision.
 
     Parameters
     ----------
     scope : str
         Calculation family whose implementation and runtime must match.
+    backend : str
+        Scalar estimator implementation; irrelevant to projection.
 
     Returns
     -------
@@ -81,7 +98,6 @@ def code_identity(scope: str = "scalar") -> dict[str, Any]:
             "production/unfold_gbdt.py",
             "production/uncertainties.py",
             "production/closure.py",
-            "nd-unfolding/omnifold_nn_core.py",
             "nd-unfolding/xsec_nd.py",
         ],
         "projection": [
@@ -94,6 +110,14 @@ def code_identity(scope: str = "scalar") -> dict[str, Any]:
     if scope not in families:
         raise ValueError(f"unknown calculation scope: {scope}")
     paths = shared + families[scope] + ["nd-unfolding/mnv_guarded_run.py"]
+    if scope == "scalar":
+        engines = {
+            "cached-lgbm-v1": "nd-unfolding/omnifold_nn_core.py",
+            "nominal-lgbm-v1": "unbinned_unfolding/python/omnifold.py",
+        }
+        if backend not in engines:
+            raise ValueError(f"unknown scalar backend: {backend}")
+        paths.append(engines[backend])
     versions: dict[str, str | None] = {}
     packages = ["numpy"]
     if scope == "scalar":

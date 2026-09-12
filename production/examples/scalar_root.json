@@ -1,0 +1,5 @@
+{
+  "mode": "scalar-root",
+  "axes": ["eavail", "q3", "W"],
+  "flux_file": "/data/baseline_flux/runEventLoopMC_MEFHC.root"
+}

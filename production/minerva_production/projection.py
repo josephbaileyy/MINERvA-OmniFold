@@ -14,7 +14,7 @@ from .storage import legacy_module
 def projection_map(
     contract: dict[str, Any], keep: list[str]
 ) -> tuple[NDArray[np.float64], dict[str, Any]]:
-    """Build a linear map onto complete fibers of the declared source support.
+    """Build the width-weighted map for the declared source-support domain.
 
     Parameters
     ----------
@@ -27,7 +27,8 @@ def projection_map(
     -------
     ndarray, dict
         Map from supported source cells to supported destination cells and its
-        contract. Partial fibers fail rather than implying missing cells are zero.
+        contract. Partial fibers require the retained reported-source convention;
+        their missing cells are not interpreted as measured zero cross sections.
     """
     edges, shape = validate_contract(contract)
     names = [axis["name"] for axis in contract["axes"]]
@@ -44,7 +45,10 @@ def projection_map(
     full_counts = np.bincount(dest_flat, minlength=int(np.prod(dest_shape)))
     present_counts = np.bincount(dest_flat[support], minlength=len(full_counts))
     partial = (present_counts > 0) & (present_counts != full_counts)
-    if np.any(partial):
+    if (
+        np.any(partial)
+        and contract.get("projection_domain", "complete-fibers") != "reported-source"
+    ):
         raise ValueError(
             f"incomplete source support in destination cells {np.flatnonzero(partial).tolist()}; a partial marginal needs an explicit scientific contract"
         )
@@ -60,6 +64,7 @@ def projection_map(
         **contract,
         "axes": [contract["axes"][axis] for axis in retained],
         "support": dest_support.tolist(),
+        "partial_source_fibers": partial.tolist(),
     }
     return projection, output
 

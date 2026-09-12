@@ -9,7 +9,11 @@ import numpy as np
 import pytest
 
 from production.minerva_production.projection import project, projection_map
-from production.minerva_production.storage import load_result, save_result
+from production.minerva_production.storage import (
+    legacy_module,
+    load_result,
+    save_result,
+)
 
 
 def contract(meaning: str = "density") -> dict[str, Any]:
@@ -95,3 +99,47 @@ def test_shape_normalization_and_bad_covariance_are_refused() -> None:
     covariance[0, 1] = 1e-80
     with pytest.raises(ValueError, match="symmetric"):
         project({"xsec": np.ones(8) * 1e-39, "covariance": covariance}, source, ["a"])
+
+
+def test_reported_source_projection_matches_retained_map() -> None:
+    native = legacy_module("projection_driver")
+    names = ["pt", "pz", "eavail"]
+    edges = [native.AXIS_EDGES[name] for name in names]
+    shape = tuple(len(axis_edges) - 1 for axis_edges in edges)
+    support = np.zeros(int(np.prod(shape)), bool)
+    support[[0, 1, 9]] = True
+    source = {
+        "axes": [
+            {"name": name, "unit": "GeV", "edges": axis_edges.tolist()}
+            for name, axis_edges in zip(names, edges)
+        ],
+        "ordering": "C",
+        "meaning": "density",
+        "value_unit": "cm^2/nucleon",
+        "support": support.tolist(),
+        "projection_domain": "reported-source",
+    }
+    migrated, output = projection_map(source, ["pt", "pz"])
+    destination = np.asarray(output["support"])
+    destination_index = np.full(destination.shape, -1, dtype=int)
+    destination_index[destination] = np.arange(int(destination.sum()))
+    expected, dropped = native.build_projection(
+        names,
+        ["pt", "pz"],
+        np.flatnonzero(support),
+        shape,
+        shape[:2],
+        destination_index,
+    )
+    assert dropped == 0
+    np.testing.assert_array_equal(migrated, expected)
+    assert np.asarray(output["partial_source_fibers"])[destination].all()
+    central = np.array([1.0, 2.0, 3.0]) * 1e-39
+    covariance = (np.eye(3) + 1) * 1e-80
+    result, _ = project(
+        {"xsec": central, "covariance": covariance}, source, ["pt", "pz"]
+    )
+    np.testing.assert_array_equal(result["xsec"], expected @ central)
+    np.testing.assert_array_equal(
+        result["covariance"], expected @ covariance @ expected.T
+    )

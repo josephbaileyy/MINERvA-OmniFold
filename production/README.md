@@ -1,7 +1,8 @@
 # Production commands
 
-This interface supports a matched cached-input LightGBM calculation, statistical
-replicas, training-split diagnostics, strict MC closure, and linear projection.
+This interface adapts standard scalar ROOT inputs and supports explicit nominal
+and cached LightGBM estimators, statistical replicas, training-split diagnostics,
+strict MC closure, and linear projection.
 It also plans per-playlist ROOT preparation and exposes retained guarded PET
 diagnostic training, full-inventory inference and extraction. Local fixture equivalence does not authorize a production
 switchover, retirement of a frozen reference, or scientific adoption.
@@ -38,6 +39,44 @@ External cluster execution still needs the governing launcher and authorization.
 
 ## Calculation and input contract
 
+### Standard scalar production input
+
+ROOT adaptation and `nominal-lgbm-v1` use the established `root_6_28` conda
+environment with NumPy and LightGBM. Activate it using the conda hook and full
+environment prefix in `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`; the pure Python
+scalar adapter does not need the compiled RooUnfold wrapper. The per-playlist C++
+event loop still requires the separately built ROOT/MAT environment. Do not run
+full-file preparation, training or ensembles on a login node. The following are
+commands for a **separately authorized allocation**, not a grant to launch one.
+
+Edit `examples/scalar_root.json` to name the independent baseline flux file. It
+accepts the native axis sets `eavail`, `eavail,q3` and `eavail,q3,W`; standard
+muon phase space and purity background treatment are fixed. Starting from the
+merged `events.root` named by the per-playlist preparation plan:
+
+```sh
+python production/prepare_events --config production/examples/scalar_root.json --input /data/prepared/events.root --output /data/scalar_5d.npz
+python production/unfold_gbdt.py --config production/examples/nominal_5d.json --input /data/scalar_5d.npz --output /data/scalar_nominal
+python production/uncertainties.py run --source statistical --mode data-plus-mc --seeds 7 8 9 --config production/examples/nominal_5d.json --input /data/scalar_5d.npz --nominal /data/scalar_nominal --output /data/scalar_members
+python production/uncertainties.py combine --source statistical --mode data-plus-mc --seeds 7 8 9 --config production/examples/nominal_5d.json --input /data/scalar_members --nominal /data/scalar_nominal --output /data/scalar_covariance
+python production/project.py --config production/examples/project_5d.json --input /data/scalar_covariance --output /data/scalar_4d_projection
+python production/closure.py --config production/examples/nominal_5d.json --input /data/scalar_5d.npz --output /data/scalar_closure
+```
+
+Three seeds illustrate command wiring, not a sufficient scientific ensemble.
+For 3D/4D, change the preparation axis list, scalar features and projection axes
+together. Add `--plan` to resolve prerequisites without reading event arrays.
+The adapter reuses the retained collectors, POT/flux loaders and purity builder.
+The source entry index travels through those same collectors as an extra finite
+coordinate and is removed before binning/training. IDs are actual
+`source-file SHA256 / tree / entry` identities, **not** invented run/event numbers
+or claims of identity across separately merged files. Reco and truth share one
+signal-tree entry, including native misses. Geometry normalization comes from the
+retained tracker constant, never summed ROOT nucleon metadata. The full Git
+revision, source hashes, original paths and producer configuration are recorded.
+
+### Estimator variants
+
 `examples/scalar.json` selects features in training order. The backend is
 `cached-lgbm-v1`, with fixed-final iteration policy, no feature scaling, and one
 seed shared by both classifiers and the miss regressor. The model settings are
@@ -45,6 +84,16 @@ seed shared by both classifiers and the miss regressor. The model settings are
 dependency versions and complete runtime estimator parameters are recorded.
 Training-split studies set `train_fraction < 1`
 in the nominal configuration; `--source ml` varies only `split_seed`.
+
+`examples/nominal_5d.json` instead selects `nominal-lgbm-v1`: it calls the exact
+`OmniFold_helper_functions.omnifold` used by the retained N-D nominal driver,
+with classifier/regressor seeds `s,s+1,s+2`, all training rows and no feature
+scaling. Its nominal, statistical members and strict closure use that same
+engine. The cached variant calls `omnifold_nn_core.omnifold_loop` with `s,s,s`
+and supports explicit split studies. Both retain 100 trees, eight leaves,
+learning rate 0.1, native masks and miss regression. Neither variant replaces or
+adopts the other. The split variant cannot provide ML uncertainty for the
+all-row nominal merely because its output dimensions agree.
 
 An event NPZ must contain the following, with no pickle objects:
 
@@ -60,9 +109,9 @@ An event NPZ must contain the following, with no pickle objects:
 The output contract declares ordered named axes, units, edges, C flattening,
 full-grid boolean support, density/yield meaning, and base value units. Scalar
 densities use `cm^2/nucleon` divided by the product of declared axis units. The
-synthetic preparation code is a complete input-format example. There is no
-automatic conversion from unidentified historical row caches: a real-data adapter
-must establish IDs, selections, background, normalization and support first.
+synthetic preparation code is an input-format example. `scalar-root` establishes
+these fields from the native source; unidentified historical caches are not
+accepted as substitutes for that source.
 
 `signal-only` and already `preweighted-purity` inputs are supported. Signed and
 refined targets retain their original drivers. Statistical mode is mandatory:
@@ -79,11 +128,18 @@ refused: selection-complete lateral inputs, per-universe background, and the
 governing construction are required. PET statistical/ML products are not exposed.
 
 Closure copies selected signal reco rows and weights into pseudo-data and compares
-the reused calculation with the known truth extraction. It is strict signal-MC
-closure, not independent pseudo-experiment coverage. Projection applies `P x` and
+the reused calculation with the known truth extraction. Nominal-driver closure
+uses unity completeness, including when the real-data input has a purity target;
+cached signal-only closure retains its declared denominator convention. These are
+strict signal-MC closures, not independent pseudo-experiment coverage. Projection applies `P x` and
 `P C P.T`, including off-diagonal terms and integrated-axis widths for densities.
-Reordered axes are supported. Entire excluded fibers remain excluded; partial
-fibers fail explicitly. Normalized-shape propagation is unsupported.
+Reordered axes are supported. Native scalar inputs declare `reported-source`
+projection, matching `project_cov_nd.py`: each destination receives the supported
+source cells with their widths, and partial fibers are explicitly marked. This
+does not claim a full-domain marginal over unreported cells. Inputs without that
+contract require complete fibers. Normalized-shape propagation is unsupported.
+Empty resampled bins keep the nominal support with the retained zero result and
+an `empty_supported_bins` flag; the interface does not silently select a new mask.
 
 Scalar outputs are fresh directories with `result.npz` and a final `record.json`.
 Only supported bins enter `xsec`; intermediate histograms retain the full grid.
@@ -148,7 +204,8 @@ result. PET remains diagnostic with its central/statistical pairing declined.
 | Retained route | Interface for the migrated scope |
 |---|---|
 | Per-playlist C++ event loop and separate flux preparation | `prepare_events --config ... --plan` |
-| `unfold_nd_omnifold_unbinned.py` | `unfold_gbdt.py` for explicitly contracted caches |
+| `nn_dump_inputs.py` / N-D collectors | `prepare_events` with `scalar-root`, retaining source-entry identity and native double precision |
+| `unfold_nd_omnifold_unbinned.py` | `unfold_gbdt.py` with explicit `nominal-lgbm-v1` |
 | `bootstrap_nd.py`, `combine_cov_nd.py` | `uncertainties.py run`, then `combine` |
 | `train_fullevent_nominal.py` | `unfold_pet.py`, preserving guarded native execution |
 | `extract_fullevent_fps.py --stage push`, then `--stage xsec` | `unfold_pet.py infer`, then `extract` in separate environments |
@@ -159,7 +216,9 @@ The retained nominal driver calls `OmniFold_helper_functions.omnifold` and uses
 seeds `s,s+1,s+2`. Cached replicas call `omnifold_nn_core.omnifold_loop` with
 `s,s,s`. They are explicit variants. Here nominal, statistical members, training
 members, and closure all call `scalar.calculate`, which owns extraction and calls
-the existing cached loop. No new unfolding loop was copied. The frozen 2D path
+the selected retained engine. No new unfolding loop or selection implementation
+was copied. Receipt-bound engines and collectors are retained; the adapter adds
+source identity without editing them. The frozen 2D path
 and all existing files remain intact.
 
 For three cached replicas plus assembly, retained commands require four Python

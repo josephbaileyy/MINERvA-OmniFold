@@ -1,4 +1,4 @@
-"""One cached-input GBDT calculation for nominal, replicas, and closure."""
+"""Explicit scalar estimators shared by nominal, replicas, and closure."""
 
 from __future__ import annotations
 
@@ -12,7 +12,16 @@ from numpy.typing import NDArray
 
 from .storage import legacy_module
 
-MODEL = {"n_estimators": 100, "num_leaves": 8, "learning_rate": 0.1, "verbose": -1}
+MODEL: dict[str, Any] = {
+    "n_estimators": 100,
+    "num_leaves": 8,
+    "learning_rate": 0.1,
+    "verbose": -1,
+}
+SEED_POLICIES = {
+    "cached-lgbm-v1": "same-seed-for-both-classifiers-and-regressor",
+    "nominal-lgbm-v1": "classifier1-s-classifier2-s+1-regressor-s+2",
+}
 DEFAULTS: dict[str, Any] = {
     "backend": "cached-lgbm-v1",
     "iterations": 5,
@@ -27,7 +36,7 @@ DEFAULTS: dict[str, Any] = {
 
 
 def resolve_config(raw: dict[str, Any]) -> dict[str, Any]:
-    """Resolve and validate the supported cached estimator, without loading events.
+    """Resolve and validate an explicit scalar estimator, without loading events.
 
     Parameters
     ----------
@@ -43,10 +52,18 @@ def resolve_config(raw: dict[str, Any]) -> dict[str, Any]:
     if set(raw) - allowed:
         raise ValueError(f"unknown scalar settings: {sorted(set(raw) - allowed)}")
     cfg = {**copy.deepcopy(DEFAULTS), **raw}
+    if cfg["backend"] not in SEED_POLICIES:
+        raise ValueError(f"backend must be one of {sorted(SEED_POLICIES)}")
+    expected_seed_policy = SEED_POLICIES[cfg["backend"]]
+    cfg["seed_policy"] = raw.get("seed_policy", expected_seed_policy)
+    if cfg["seed_policy"] != expected_seed_policy:
+        raise ValueError(
+            f"seed_policy: {cfg['backend']} requires {expected_seed_policy}"
+        )
     for key in ("features", "selection", "background"):
         if not cfg.get(key):
             raise ValueError(f"scalar config requires {key}")
-    for key in ("backend", "iteration_policy", "seed_policy", "model", "normalization"):
+    for key in ("iteration_policy", "model", "normalization"):
         if cfg[key] != DEFAULTS[key]:
             raise ValueError(f"{key}: only {DEFAULTS[key]!r} is supported")
     if cfg["background"] not in {"signal-only", "preweighted-purity"}:
@@ -66,7 +83,34 @@ def resolve_config(raw: dict[str, Any]) -> dict[str, Any]:
             )
     if not 0 < cfg["train_fraction"] <= 1:
         raise ValueError("train_fraction must be in (0, 1]")
+    if cfg["backend"] == "nominal-lgbm-v1" and (
+        cfg["train_fraction"] != 1.0 or cfg["split_seed"] != 0
+    ):
+        raise ValueError(
+            "nominal-lgbm-v1 uses all training rows, with no split; split studies require the explicit cached estimator"
+        )
     return cfg
+
+
+def estimator_parameters(cfg: dict[str, Any]) -> dict[str, Any]:
+    """Describe the actual resolved LightGBM constructors without fitting models."""
+    if cfg["backend"] == "cached-lgbm-v1":
+        estimators = legacy_module("omnifold_nn_core").make_estimators(
+            "lgbm", len(cfg["features"]), seed=cfg["estimator_seed"]
+        )
+    else:
+        from lightgbm import LGBMClassifier, LGBMRegressor
+
+        seed = cfg["estimator_seed"]
+        estimators = (
+            LGBMClassifier(**MODEL, random_state=seed),
+            LGBMClassifier(**MODEL, random_state=seed + 1),
+            LGBMRegressor(**MODEL, random_state=seed + 2),
+        )
+    return {
+        name: model.get_params()
+        for name, model in zip(("classifier1", "classifier2", "regressor"), estimators)
+    }
 
 
 def validate_contract(
@@ -107,6 +151,11 @@ def validate_contract(
         )
     if not contract.get("value_unit"):
         raise ValueError("contract requires value_unit")
+    if contract.get("projection_domain", "complete-fibers") not in {
+        "complete-fibers",
+        "reported-source",
+    }:
+        raise ValueError("unsupported projection domain")
     return edges, shape
 
 
@@ -234,7 +283,11 @@ def load_inputs(
 
 
 def extract(
-    inputs: dict[str, Any], meta: dict[str, Any], push: NDArray[np.float64]
+    inputs: dict[str, Any],
+    meta: dict[str, Any],
+    push: NDArray[np.float64],
+    *,
+    unity_completeness: bool = False,
 ) -> dict[str, Any]:
     """Apply the existing cached-replica histogram/completeness normalization."""
     contract = meta["output_contract"]
@@ -245,8 +298,13 @@ def extract(
     weights = inputs["w_truth"][mask]
     prior = np.histogramdd(truth, bins=edges, weights=weights)[0]
     unfolded = np.histogramdd(truth, bins=edges, weights=push * weights)[0]
-    completeness = np.zeros_like(prior)
-    np.divide(prior, inputs["denom_nd"], out=completeness, where=inputs["denom_nd"] > 0)
+    if unity_completeness:
+        completeness = np.ones_like(prior)
+    else:
+        completeness = np.zeros_like(prior)
+        np.divide(
+            prior, inputs["denom_nd"], out=completeness, where=inputs["denom_nd"] > 0
+        )
     xsec, good = legacy_module("xsec_nd").extract_cross_section_nd(
         unfolded,
         completeness,
@@ -257,7 +315,8 @@ def extract(
         flux_axis=meta["flux_axis"],
     )
     support = np.asarray(contract["support"])
-    if np.any(support & ~good.ravel()):
+    empty = (prior == 0) & (unfolded == 0) & (inputs["denom_nd"] > 0)
+    if np.any(support & ~good.ravel() & ~empty.ravel()):
         raise ValueError(
             "reported support contains undefined completeness; no bin may silently become zero"
         )
@@ -267,11 +326,16 @@ def extract(
         "prior": prior,
         "completeness": completeness,
         "normalization_valid": good,
+        "empty_supported_bins": empty.ravel()[support],
     }
 
 
 def calculate(
-    inputs: dict[str, Any], meta: dict[str, Any], cfg: dict[str, Any]
+    inputs: dict[str, Any],
+    meta: dict[str, Any],
+    cfg: dict[str, Any],
+    *,
+    closure: bool = False,
 ) -> dict[str, Any]:
     """Run the same existing two-step loop and extraction for every perturbation.
 
@@ -281,6 +345,8 @@ def calculate(
         Validated arrays and their row/normalization contract.
     cfg : dict
         Resolved estimator settings. Event perturbations belong in inputs.
+    closure : bool
+        Use the selected estimator's strict signal-MC closure extraction.
 
     Returns
     -------
@@ -288,7 +354,7 @@ def calculate(
         Pull/push factors, aligned identities, intermediate spectra, and density.
     """
     columns = [meta["feature_names"].index(name) for name in cfg["features"]]
-    pull, push = legacy_module("omnifold_nn_core").omnifold_loop(
+    arguments = (
         inputs["MCgen"][:, columns],
         inputs["MCreco"][:, columns],
         inputs["measured"][:, columns],
@@ -296,19 +362,44 @@ def calculate(
         inputs["pass_truth"],
         inputs["meas_pass_reco"],
         cfg["iterations"],
-        kind="lgbm",
-        MCgen_weights=inputs["w_truth"],
-        MCreco_weights=inputs["w_reco"],
-        measured_weights=inputs["measured_weights"],
-        seed=cfg["estimator_seed"],
-        verbose=False,
-        train_frac=cfg["train_fraction"],
-        split_seed=cfg["split_seed"],
     )
+    weights = {
+        "MCgen_weights": inputs["w_truth"],
+        "MCreco_weights": inputs["w_reco"],
+        "measured_weights": inputs["measured_weights"],
+    }
+    if cfg["backend"] == "nominal-lgbm-v1":
+        engine = legacy_module("nominal_omnifold").OmniFold_helper_functions.omnifold
+        seed = cfg["estimator_seed"]
+        pull, push = engine(
+            *arguments,
+            **weights,
+            classifier1_params={"random_state": seed},
+            classifier2_params={"random_state": seed + 1},
+            regressor_params={"random_state": seed + 2},
+            parameter_format="dict",
+            estimator="lgbm",
+            device="cpu",
+        )
+    else:
+        pull, push = legacy_module("omnifold_nn_core").omnifold_loop(
+            *arguments,
+            **weights,
+            kind="lgbm",
+            seed=cfg["estimator_seed"],
+            verbose=False,
+            train_frac=cfg["train_fraction"],
+            split_seed=cfg["split_seed"],
+        )
     if not np.all(np.isfinite(pull)) or not np.all(np.isfinite(push)):
         raise ValueError("nonfinite unfolding factors")
     return {
-        **extract(inputs, meta, push),
+        **extract(
+            inputs,
+            meta,
+            push,
+            unity_completeness=closure and cfg["backend"] == "nominal-lgbm-v1",
+        ),
         "pull": pull,
         "push": push,
         "truth_id": inputs["truth_id"][inputs["pass_truth"]],
@@ -316,10 +407,14 @@ def calculate(
 
 
 def closure_inputs(
-    inputs: dict[str, Any], meta: dict[str, Any]
+    inputs: dict[str, Any],
+    meta: dict[str, Any],
+    cfg: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Construct the existing strict signal-MC closure, without bootstrap draws."""
-    if meta["background"] != "signal-only":
+    if meta["background"] != "signal-only" and (
+        cfg is None or cfg["backend"] != "nominal-lgbm-v1"
+    ):
         raise ValueError(
             "closure requires signal-only input; purity/refined background closure needs its original driver"
         )
@@ -331,5 +426,10 @@ def closure_inputs(
         "meas_pass_reco": np.ones(int(mask.sum()), bool),
         "data_id": inputs["reco_id"][mask].copy(),
     }
-    reference = extract(inputs, meta, np.ones(int(inputs["pass_truth"].sum())))
+    reference = extract(
+        inputs,
+        meta,
+        np.ones(int(inputs["pass_truth"].sum())),
+        unity_completeness=cfg is not None and cfg["backend"] == "nominal-lgbm-v1",
+    )
     return pseudo, reference

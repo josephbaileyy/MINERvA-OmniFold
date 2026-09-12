@@ -1,0 +1,8 @@
+{
+  "backend": "nominal-lgbm-v1",
+  "features": ["pt", "pparallel"],
+  "selection": "synthetic-cuts-v1",
+  "background": "signal-only",
+  "iterations": 2,
+  "estimator_seed": 42
+}

@@ -220,6 +220,68 @@ def test_systematic_and_implicit_statistical_modes_fail(tmp_path: Path) -> None:
     assert result.returncode != 0 and "explicit --mode" in result.stderr
 
 
+def test_scalar_root_plan_is_standard_library_only(tmp_path: Path) -> None:
+    source = tmp_path / "source.root"
+    source.write_bytes(b"planning must not open this as ROOT")
+    output = tmp_path / "events.npz"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-S",
+            str(ROOT / "production/prepare_events"),
+            "--config",
+            str(ROOT / "production/examples/scalar_root.json"),
+            "--input",
+            str(source),
+            "--output",
+            str(output),
+            "--plan",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    plan = json.loads(result.stdout)
+    assert plan["selection"] == "nd-standard-v1"
+    assert plan["features"] == ["pt", "pparallel", "eavail", "q3", "W"]
+    assert not output.exists()
+
+
+def test_guarded_projection_command_and_resume(tmp_path: Path) -> None:
+    source = tmp_path / "source"
+    output = tmp_path / "projection"
+    contract = {
+        "axes": [
+            {"name": "pt", "unit": "GeV", "edges": [0, 1, 3]},
+            {"name": "pparallel", "unit": "GeV", "edges": [0, 2, 5]},
+        ],
+        "ordering": "C",
+        "meaning": "density",
+        "value_unit": "cm^2/nucleon",
+        "support": [True] * 4,
+    }
+    save_result(
+        source,
+        {"xsec": np.arange(1, 5) * 1e-39, "covariance": np.eye(4) * 1e-80},
+        {"identity": {"fixture": "projection"}, "output_contract": contract},
+    )
+    args = [
+        "--config",
+        "production/examples/project.json",
+        "--input",
+        str(source),
+        "--output",
+        str(output),
+    ]
+    command("project.py", *args)
+    command("project.py", *args, "--resume")
+    arrays, record = load_result(output)
+    np.testing.assert_allclose(
+        arrays["xsec"], np.array([7, 10]) * 1e-39, rtol=1e-14, atol=0
+    )
+    assert len(record["provenance"]["revision"]) == 40
+
+
 @pytest.mark.skipif(
     __import__("importlib.util").util.find_spec("ROOT") is None,
     reason="ROOT integration not run: ROOT is unavailable",

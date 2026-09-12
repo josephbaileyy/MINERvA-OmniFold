@@ -22,8 +22,8 @@ from .storage import (
 )
 
 DESCRIPTIONS = {
-    "prepare_events": "Prepare a synthetic event fixture or plan per-playlist ROOT production with separate flux normalization.",
-    "unfold_gbdt": "Unfold validated cached scalar arrays with the shared nominal/replica GBDT calculation.",
+    "prepare_events": "Adapt a scalar ROOT inventory, prepare a synthetic fixture, or plan per-playlist ROOT production with separate flux normalization.",
+    "unfold_gbdt": "Unfold validated scalar arrays with an explicit nominal or cached estimator shared by nominal and replicas.",
     "uncertainties": "Run statistical or ML split members and combine a declared, matched family; systematic paths require their governing construction.",
     "closure": "Construct strict signal-MC pseudo-data and reuse nominal unfolding; this does not measure coverage.",
     "project": "Project compatible cross sections and covariance without retraining, preserving widths and support.",
@@ -88,7 +88,7 @@ def parser(operation: str) -> argparse.ArgumentParser:
 def _scalar_context(
     args: argparse.Namespace, cfg: dict[str, Any]
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
-    from .scalar import load_inputs
+    from .scalar import estimator_parameters, load_inputs
 
     before = args.input.stat()
     inputs, meta = load_inputs(args.input, cfg)
@@ -100,9 +100,6 @@ def _scalar_context(
         after.st_mtime_ns,
     ):
         raise ValueError("input changed while loading/hashing; use an immutable cache")
-    classifiers = legacy_module("omnifold_nn_core").make_estimators(
-        "lgbm", len(cfg["features"]), seed=cfg["estimator_seed"]
-    )
     meta = {
         **meta,
         "normalization_values": {
@@ -114,13 +111,8 @@ def _scalar_context(
     identity = {
         "config": cfg,
         "input_sha256": input_digest,
-        "code": code_identity(),
-        "estimator_parameters": {
-            name: model.get_params()
-            for name, model in zip(
-                ("classifier1", "classifier2", "regressor"), classifiers
-            )
-        },
+        "code": code_identity(backend=cfg["backend"]),
+        "estimator_parameters": estimator_parameters(cfg),
     }
     return inputs, meta, identity
 
@@ -133,8 +125,8 @@ def _unfold(args: argparse.Namespace, cfg: dict[str, Any], operation: str) -> No
     if check_output(args.output, identity, args.resume):
         return
     if operation == "closure":
-        inputs, reference = closure_inputs(inputs, meta)
-        arrays = calculate(inputs, meta, cfg)
+        inputs, reference = closure_inputs(inputs, meta, cfg)
+        arrays = calculate(inputs, meta, cfg, closure=True)
         arrays.update(
             {
                 "truth_xsec": reference["xsec"],
@@ -167,7 +159,7 @@ def _uncertainties(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
         raise ValueError(
             "uncertainties require a matched nominal procedure and configuration"
         )
-    if nominal_identity["code"] != code_identity():
+    if nominal_identity["code"] != code_identity(backend=cfg["backend"]):
         raise ValueError("nominal code/dependencies differ; use a matched nominal")
     perturbation = {"source": args.source, "mode": args.mode}
     if args.action == "run":
@@ -225,7 +217,7 @@ def _uncertainties(args: argparse.Namespace, cfg: dict[str, Any]) -> None:
         "members": bindings,
         "perturbation": perturbation,
         "config": cfg,
-        "code": code_identity(),
+        "code": code_identity(backend=cfg["backend"]),
     }
     if check_output(args.output, identity, args.resume):
         return
@@ -286,6 +278,17 @@ def main(operation: str, argv: list[str] | None = None) -> int:
                 if args.input is None:
                     raise ValueError("root-plan requires --input playlist inventory")
                 print(json.dumps(root_plan(cfg, args.input, args.output), indent=2))
+            elif cfg.get("mode") == "scalar-root":
+                from .root_input import plan, prepare
+
+                if args.input is None:
+                    raise ValueError(
+                        "scalar-root requires --input ROOT event inventory"
+                    )
+                if args.plan:
+                    print(json.dumps(plan(cfg, args.input, args.output), indent=2))
+                else:
+                    prepare(cfg, args.input, args.output)
             elif cfg.get("mode") == "synthetic":
                 if args.input is not None:
                     raise ValueError(
@@ -304,7 +307,9 @@ def main(operation: str, argv: list[str] | None = None) -> int:
                 else:
                     synthetic(args.output, cfg)
             else:
-                raise ValueError("prepare_events mode must be synthetic or root-plan")
+                raise ValueError(
+                    "prepare_events mode must be synthetic, root-plan or scalar-root"
+                )
             return 0
         if operation == "project":
             if (

@@ -1,0 +1,8 @@
+{
+  "backend": "nominal-lgbm-v1",
+  "features": ["pt", "pparallel", "eavail", "q3", "W"],
+  "selection": "nd-standard-v1",
+  "background": "preweighted-purity",
+  "iterations": 5,
+  "estimator_seed": 42
+}
