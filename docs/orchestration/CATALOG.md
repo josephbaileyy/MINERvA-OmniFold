@@ -785,6 +785,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`REVIEW-20260912-temp-repair-delta-41a64f02-and-consumer-list.md`](REVIEW-20260912-temp-repair-delta-41a64f02-and-consumer-list.md)
+  - **F1, F2 and F3 CLOSED; all four mutation controls independently reproduced; the asymmetry claim
+  CONFIRMED and stronger than stated.** Coverage extends to `41a64f02` and no further. **⚠ The
+  landing authorization in this round is RELAYED and unverified — this verdict is not an
+  authorization.** I applied each mutation myself (revert `ScanBlind`, dirname-as-literal, drop the
+  token, restore `.npz`): baseline OK at 123 tests, **all four FAILED**, tree restored clean.
+  **Asymmetry tested at every site with real `glob`** (not `fnmatch`, which does not special-case the
+  dot): **0 of 18** sites select the post-repair temp, **18 of 18** selected the pre-repair one, zero
+  patterns lack a terminal `.npz`, zero begin with a dot, zero use `include_hidden`. **Consumer list
+  corrected:** 18 slab-selection sites across **8** launchers and **3** flags, not 14/7/2 --
+  `sbatch_j28_adopt_5d.sh` was absent (4 sites) and `--throw-slabs` belongs to a **second** consumer
+  program (`rescale_flux_universes.py:200-201`); the delta's own code comment already carries the
+  right 18/3. F2's named population re-measured: 63 COMPLETED, 31 100 s, 8.6389 h, 1.39x and 13.2x
+  all confirmed; its `77` all-states **not reproduced** (I get 74 on their own window, a fourth value
+  for that column). **Corrects my own count:** the `test_uq_remediation` failure set is **four**
+  tests, not five -- one is `subTest`-parameterised and emits two records, and I reported a line
+  count as a test count. My "not live" pathlib verdict also rested on a sweep that omitted `os.walk`.
+  `protect_throw_slabs` recorded OUT OF SCOPE per the relayed ruling, with its finding confirmed by
+  execution first.
 - [`REVIEW-20260911-temp-file-repair-against-T1-T14.md`](REVIEW-20260911-temp-file-repair-against-T1-T14.md)
   - **VERDICT: 12 of 14 MET, four EXCEEDED; `T9` UNEVIDENCED, `T14` PARTIAL.** Subject `05cf2d00`
   against the yardstick committed at `e92d4a85` **before the work existed**. Authorizes no launch.
