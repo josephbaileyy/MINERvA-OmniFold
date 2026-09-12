@@ -100,7 +100,8 @@ routing-performance conclusion follows. [Exact terminal evidence](RETRY_RESULT-2
 **13 September compatibility update:** the deterministic packing repair matches
 its frozen CPU implementation exactly in all eight model/case comparisons,
 including gradients and updated weights; 73 tests plus 10 subtests pass locally.
-[Exact evidence and patch](COMPATIBILITY_REPAIR-20260913.md). GPU compatibility
-and paired calibration remain unverified, with a new bounded proposal pending
-approval. These software checks do not change any keep/modify/exclude/unresolved
+[Exact evidence and patch](COMPATIBILITY_REPAIR-20260913.md). The approved GPU attempt subsequently failed the first pooled CPU/GPU
+embedding tolerance check; calibration did not start.
+[Terminal evidence and resource accounting](COMPATIBILITY_RESULT-20260913.md).
+Direct-model GPU validation and paired calibration remain incomplete. These software checks do not change any keep/modify/exclude/unresolved
 recommendation or supply a learning-performance winner.

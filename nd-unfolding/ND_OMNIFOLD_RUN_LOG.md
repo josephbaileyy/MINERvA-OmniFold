@@ -346,3 +346,22 @@ covers one A100 / 32 reserved CPUs / 56 GiB / 110 minutes, with separate
 included; full-matrix execution requires every unchanged prerequisite and
 headroom gate. No retry, tolerance relaxation, scientific-design change or
 extension beyond diagnostic synthetic method development is authorized.
+
+## 2026-09-13 — GPU compatibility 58240587 failed; stop applied
+
+The single approved attempt ran clean `7673b2de` on the approved A100 / 32 CPUs /
+56 GiB profile. It passed 60 tests plus 10 subtests in 42.58 s, then failed the
+first nominal pooled-model CPU/GPU routed-embedding comparison at fixed atol
+1e-5 / rtol 1e-4; logged maximum absolute difference 0.0004892349243164062.
+Full-model gradient/update/reload checks and direct-model GPU validation were
+not reached. Calibration did not start, and no full job or retry was submitted.
+
+[Terminal evidence](pet/direct_token_comparison/COMPATIBILITY_RESULT-20260913.md)
+binds the executed revision and complete 29-file / 76,082-byte preserved bundle,
+including the 9-file / 58,406-byte job output. Source/destination and committed
+archive readbacks pass. Parent allocation time was 95 s; all attempts total
+285 s = 0.079167 GPU-hours / 2.533333 reserved CPU-hours. Using longest overlapping
+steps once gives 290 s = 0.080556 GPU-hours / 2.577778 reserved CPU-hours.
+The named cluster footprint measured 5.116897 GiB with exclusions in the receipt.
+The numerical cause remains unresolved; no tolerance/determinism/scientific
+change was made. No learning-performance or real-data conclusion follows.

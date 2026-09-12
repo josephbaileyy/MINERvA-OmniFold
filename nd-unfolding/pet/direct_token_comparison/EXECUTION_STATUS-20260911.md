@@ -1,5 +1,17 @@
 # Current state: second technical failure; execution stopped
 
+## 2026-09-13 — GPU preflight failed; additional attempt exhausted
+
+**Job 58240587 FAILED 1:0 after 95 seconds. Calibration NOT STARTED; full
+matrix NOT STARTED; no retry submitted.** The first pooled-model CPU/GPU
+embedding comparison exceeded the fixed tolerance (maximum absolute difference
+0.0004892349243164062). The guarded Linux suite passed 60 tests + 10 subtests.
+Direct-model GPU validation and full-model gradient/update/reload checks were not
+reached. [Exact result, accounting and preservation](COMPATIBILITY_RESULT-20260913.md).
+All three allocations total 285 parent seconds, or 290 conservative longest-step
+seconds; failed/partial outputs remain excluded from performance comparisons.
+
+
 ## 2026-09-13 — single compatibility/calibration attempt authorized
 
 Joseph approved `21c0d163` and its bound proposal.

@@ -1,0 +1,10 @@
+JobID|State|ExitCode|Start|End|ElapsedRaw|AllocCPUS|TotalCPU|MaxRSS|AllocTRES
+58198332|FAILED|1:0|2026-09-11T07:38:25|2026-09-11T07:39:44|79|32|00:31.872||billing=32,cpu=32,energy=68430,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58198332.batch|FAILED|1:0|2026-09-11T07:38:25|2026-09-11T07:39:44|79|32|00:31.872|1031876K|cpu=32,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58198332.extern|COMPLETED|0:0|2026-09-11T07:38:25|2026-09-11T07:39:44|79|32|00:00:00||billing=32,cpu=32,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58201775|FAILED|1:0|2026-09-11T11:01:49|2026-09-11T11:03:40|111|32|01:13.212||billing=32,cpu=32,energy=82357,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58201775.batch|FAILED|1:0|2026-09-11T11:01:49|2026-09-11T11:03:40|111|32|01:13.212|1371956K|cpu=32,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58201775.extern|COMPLETED|0:0|2026-09-11T11:01:49|2026-09-11T11:03:43|114|32|00:00:00||billing=32,cpu=32,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58240587|FAILED|1:0|2026-09-12T09:48:06|2026-09-12T09:49:41|95|32|00:42.499||billing=32,cpu=32,energy=70785,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58240587.batch|FAILED|1:0|2026-09-12T09:48:06|2026-09-12T09:49:41|95|32|00:42.499|1258016K|cpu=32,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58240587.extern|COMPLETED|0:0|2026-09-12T09:48:06|2026-09-12T09:49:43|97|32|00:00:00||billing=32,cpu=32,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1

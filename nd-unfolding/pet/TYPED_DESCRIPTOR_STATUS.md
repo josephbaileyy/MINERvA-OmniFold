@@ -225,3 +225,12 @@ GPU preflight preparation. The [new bounded allocation proposal](direct_token_co
 awaits approval after two technical failures. No new source access, source
 normalization, real-data training or semantic decision occurred. Synthetic
 software equivalence does not establish representation learning performance.
+
+## 2026-09-13 — GPU compatibility attempt terminal; no calibration
+
+[Job 58240587 failed](direct_token_comparison/COMPATIBILITY_RESULT-20260913.md)
+at the first pooled-model CPU/GPU embedding tolerance check. The single grant
+is consumed. CPU regression tests passed, but direct-model GPU validation,
+paired calibration and headroom gates remain incomplete. No full matrix or
+retry was submitted. Source-semantic prerequisites and diagnostic scope are
+unchanged; this numerical compatibility stop supplies no learning comparison.

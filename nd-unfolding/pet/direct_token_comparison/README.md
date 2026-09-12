@@ -1,5 +1,10 @@
 # Reproduce the typed-token comparison preparation
 
+**Latest execution:** [GPU preflight 58240587 failed](COMPATIBILITY_RESULT-20260913.md)
+in the first pooled CPU/GPU embedding comparison. The additional attempt is
+exhausted; no calibration, full matrix or retry proceeded.
+
+
 Start from the repository root. These files add an isolated diagnostic candidate;
 no existing mapper, model, source-audit binding or production launcher is edited.
 The report is [REPORT_FOR_BEN.md](REPORT_FOR_BEN.md). The authorized retry reached
