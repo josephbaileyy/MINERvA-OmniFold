@@ -336,3 +336,13 @@ partial pooled outputs remain preserved and excluded from learning comparisons.
 GPU compatibility and paired calibration remain unverified. No source-semantic
 resolution, real-data performance, publication adoption, covariance or Gate-6
 conclusion follows. Scientific criteria and original campaign samples are unchanged.
+
+## 2026-09-13 — Single compatibility/calibration attempt approved
+
+Joseph approved the proposal and bound repair at `21c0d163`.
+[Authorization](pet/direct_token_comparison/COMPATIBILITY_AUTHORIZATION-20260913.md)
+covers one A100 / 32 reserved CPUs / 56 GiB / 110 minutes, with separate
+20-minute preflight and 90-minute calibration caps. All prior charges remain
+included; full-matrix execution requires every unchanged prerequisite and
+headroom gate. No retry, tolerance relaxation, scientific-design change or
+extension beyond diagnostic synthetic method development is authorized.

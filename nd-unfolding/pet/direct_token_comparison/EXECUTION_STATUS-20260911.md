@@ -1,5 +1,16 @@
 # Current state: second technical failure; execution stopped
 
+## 2026-09-13 — single compatibility/calibration attempt authorized
+
+Joseph approved `21c0d163` and its bound proposal.
+[Exact authorization](COMPATIBILITY_AUTHORIZATION-20260913.md): one A100,
+32 reserved CPUs, 56 GiB, 110 minutes total, with 20-minute preflight and
+90-minute calibration caps. Both prior attempts remain charged. The full matrix
+requires GPU compatibility, complete paired calibration, integrity and all
+existing 20% headroom gates. No automatic retry or criterion change is covered.
+Deployment and direct scheduler checks precede the single submission.
+
+
 ## 2026-09-13 — compatibility repair prepared; no new allocation
 
 Local deterministic packing validation and a stronger two-arm GPU preflight are
