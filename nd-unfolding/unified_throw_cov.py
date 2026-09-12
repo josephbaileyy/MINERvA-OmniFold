@@ -33,7 +33,9 @@ Two phases (throws array-parallelise; combine aggregates):
 """
 import argparse
 import glob
+import hashlib
 import os
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -129,22 +131,409 @@ def _load_bank(bank):
     return d, bands, n_flux
 
 
+# ------------------------------------------- INCOMPLETE OUTPUTS ARE UNSELECTABLE BY CONSTRUCTION --
+# JOSEPH, 2026-09-11, authorizing this bounded repair: *"incomplete outputs must never match the
+# consumer's input selection. Preserve atomic publication of completed products, and test
+# interrupted writes, stale temporary files, and successful completion."*
+#
+# THE DEFECT THIS REPLACES. `_atomic_savez` used to name its temp `<product>.<random>.tmp.npz`, so
+# `block5d_knobs.npz.abc.tmp.npz` MATCHED `--block-slabs 'block5d_*.npz'` and the throw equivalent
+# matched the throw glob. Its `except` branch unlinks it, but a WALL-CLOCK KILL runs no handler, so
+# an interrupted write left a file the combine would select and try to `np.load`.
+# AND THE KILL PATH IS LIVE AT THE REAL LIMITS, not only at artificially short ones: the block arm's
+# 12 h ceiling is only 1.39x its observed MAXIMUM of 8.6389 h.
+# POPULATION AND FILTER, because a ratio without them is not a measurement: `sacct -X -D` allocation
+# rows with `JobName == uthrow5d_block`, re-measured 2026-09-11 over three chunked windows (NERSC
+# refuses a span wider than 30 days) covering 2026-06-25 to 2026-09-11 -- 77 rows all-states, 63
+# COMPLETED. Max `ElapsedRaw` 31 100 s = 8.6389 h, and 12 / 8.6389 = 1.39. Both figures confirmed
+# independently here.
+# ⚠ A "RUNTIME SPREAD" FIGURE WAS WITHDRAWN FROM THIS COMMENT AND IS NOT REPLACED. It read "over 74
+# tasks, with a 7.7x runtime spread"; the task count came from a sweep that collapsed array indices,
+# and 7.7x turns out to be max/MEAN computed from a mean that has since been withdrawn. The word
+# "spread" is the actual trouble -- it does not say which statistic: max/min over COMPLETED is
+# 13.2x on the population above, so two defensible readings differ by 1.7x. One unreconciled number
+# is not repaired by adding a second, so the clause is gone. The ceiling ratio carries the point on
+# its own: an 8.64 h observation under a 12 h wall is a real chance of being killed.
+#
+# TWO INDEPENDENT GUARANTEES, EITHER OF WHICH SUFFICES, because one naming rule with one failure
+# mode is a single point of failure for a property Joseph stated absolutely:
+#
+#   (1) THE LEADING DOT, and the claim is SCOPED to the idioms it actually covers. `glob.glob` and
+#       every shell glob refuse to match a leading `.` unless the PATTERN begins with one, so an
+#       incomplete write is invisible to `*.npz`, `block5d_*.npz`, `*.np[yz]` and even a bare `*`
+#       under BOTH -- a property, not a list of today's patterns.
+#       ⚠ NOT TRUE OF `pathlib`, MEASURED: `Path().glob('*')` and `Path().iterdir()` DO return the
+#       dotfile. `Path().glob('*.npz')` does not, so only a SUFFIXLESS pathlib pattern or a raw
+#       directory walk reaches it -- and that is exactly the hole guarantee (2) is here to close.
+#       Not live: no production module under `nd-unfolding/` selects slabs via
+#       `Path().glob/rglob/iterdir` or `os.scandir` (measured: zero). Written down because the
+#       universal form of this sentence would send a future consumer to the one idiom it excludes.
+#   (2) THE NON-NPZ SUFFIX. A consumer that bypasses globbing -- `os.listdir` or `Path().iterdir()`
+#       plus `endswith(".npz")` -- is covered by `.partial`, which no npz reader will accept
+#       either. This is the guarantee that carries the pathlib and directory-walk cases.
+#
+# ⚠ NEITHER GUARANTEE CAN BE MUTATION-TESTED ALONE, and that is worth writing down because it
+# reads as a weak test if you do not know it. Reverting ONLY the prefix leaves `.partial`, which
+# still fails `*.npz`; reverting ONLY the suffix leaves the leading dot, which still fails every
+# glob. A one-constant mutation therefore MISSES and invites the conclusion that the coverage test
+# is powerless. It is not -- the two guarantees are independently sufficient BY DESIGN, so a power
+# control has to revert BOTH, which is what the pre-repair-naming arm does. Measured: one-constant
+# MISSED, both-constant DETECTED.
+#
+# WHAT IS DELIBERATELY UNCHANGED: `os.replace(tmp, path)` below, in the SAME directory, so
+# publication of a COMPLETED product stays atomic. Same-directory is what makes it same-DEVICE, and
+# `os.replace` is atomic only within one filesystem -- so relocating the temp to a sibling temp
+# directory, the obvious alternative fix, would have stopped being atomic the moment that directory
+# sat on another device, silently and only where it mattered. Proven rather than asserted: the
+# same-device arm captures the temp path mid-write and compares `st_dev`. A repair that made incomplete writes
+# unselectable by breaking the rename would trade a silent wrong answer for a lost product; the
+# successful-completion arm of the test suite exists to catch exactly that.
+INCOMPLETE_PREFIX = ".mnv-incomplete."
+INCOMPLETE_SUFFIX = ".partial"
+
+#: The PRE-REPAIR temp name, which is glob-VISIBLE and therefore still excluded and reported.
+#:
+#: ⚠ I FIRST JUSTIFIED THIS BY SAYING A LEGACY TEMP IS "A REACHABLE INPUT TODAY", AND THEN MEASURED
+#: IT: `find` over `uq_5d/` and `bank_uthrow_5d/` on 2026-09-11 returns ZERO files of either naming
+#: era. So that justification was false as written -- my unchecked claim leaned toward the argument
+#: I was making. The predicate is KEPT on the narrower and still-true ground: the pscratch tree runs
+#: a divergent local main, so an UNREPAIRED checkout can still create one, and a leftover would then
+#: be selectable by an unrepaired consumer. Defence against a reachable-in-principle state, not a
+#: response to an observed population. Keeping the two spellings distinct is what lets a consumer
+#: say which era a leftover came from.
+LEGACY_IN_PROGRESS_SUFFIX = ".tmp.npz"
+
+
+def incomplete_name(product_basename, token):
+    """The single source of the unselectable temp name. One spelling, derived by every consumer."""
+    return f"{INCOMPLETE_PREFIX}{product_basename}.{token}{INCOMPLETE_SUFFIX}"
+
+
+def is_incomplete_write(name):
+    """True for a temp of EITHER era. The operand is a basename, never a full path."""
+    base = os.path.basename(name)
+    return (base.startswith(INCOMPLETE_PREFIX) and base.endswith(INCOMPLETE_SUFFIX)) or \
+        base.endswith(LEGACY_IN_PROGRESS_SUFFIX)
+
+
+class ScanBlind(RuntimeError):
+    """The incomplete-write scan could not look. Distinct from "looked and found nothing".
+
+    A CHECK THAT COULD NOT RUN IS NOT A CHECK THAT PASSED. `find_incomplete_writes` used to
+    `return []` on `OSError`, which made an unreadable directory indistinguishable from a clean one
+    -- demonstrated with `chmod 000`, and the reason this is a class rather than a log line.
+    """
+
+
+def incomplete_write_scan_dirs(pattern):
+    """The directories a slab pattern actually selects from, EXPANDED.
+
+    ⚠ `os.path.dirname(pattern)` IS NOT A DIRECTORY WHEN THE PATTERN HAS A WILDCARD IN ITS
+    DIRECTORY COMPONENT. For `.../ns_*/block5d_*.npz` it is the unopenable literal `.../ns_*`, so
+    the old scan hit `OSError`, returned `[]`, and `check_slab_population` PASSED with an
+    incomplete write sitting in the very directory it selected from. Measured before fixing.
+    LATENT TODAY -- all 18 launcher patterns across the three glob-bearing flags have fixed
+    directory components -- and repaired anyway, because "no current caller does this" is a
+    property of today's callers and not of the function.
+    """
+    directory = os.path.dirname(pattern) or "."
+    if any(ch in directory for ch in "*?["):
+        # No match means the pattern selects nothing at all; the population check's MISSING arm is
+        # what reports that, so an empty list here is correct rather than blind.
+        return sorted(d for d in glob.glob(directory) if os.path.isdir(d))
+    return [directory]
+
+
+def find_incomplete_writes(directory):
+    """Every incomplete write in a directory, found by a DIRECTED scan.
+
+    ⚠ DIRECTED, BECAUSE THE REPAIR MADE THEM GLOB-INVISIBLE. Before it, an in-progress temp turned
+    up in the consumer's own glob -- which was the defect, and also, accidentally, how it got
+    reported. Relying on that would mean the diagnostic only worked while the defect existed. So
+    the scan is explicit and the report is deliberate.
+
+    RAISES `ScanBlind` RATHER THAN RETURNING `[]` when the directory cannot be read. The empty list
+    was a could-not-look reported as a clean result, one layer below the name-based guarantee.
+    NOTE WHAT THIS DOES AND DOES NOT AFFECT: Joseph's primary guarantee is that an incomplete write
+    is never SELECTED, and that rests on the NAME, so it was never touched by this. What was
+    degraded is the OPERATOR REPORT -- nobody was told a task had died. That is what is repaired.
+    """
+    try:
+        entries = os.listdir(directory or ".")
+    except OSError as exc:
+        raise ScanBlind(
+            f"cannot scan {directory!r} for incomplete writes ({exc}). This is NOT 'no incomplete "
+            f"writes': it is a check that could not look, and returning an empty list here would "
+            f"report a directory nobody could read as a clean one.") from exc
+    return sorted(n for n in entries if is_incomplete_write(n))
+
+
+def find_incomplete_writes_for_pattern(pattern):
+    """`find_incomplete_writes` over every directory a pattern selects from.
+
+    Returns ``(names, scanned_dirs)``. Propagates `ScanBlind`: if ANY selected directory is
+    unreadable the answer is unknown, not empty.
+    """
+    found, scanned = [], []
+    for directory in incomplete_write_scan_dirs(pattern):
+        scanned.append(directory)
+        found.extend(os.path.join(directory, n) for n in find_incomplete_writes(directory))
+    return sorted(found), scanned
+
+
 def _atomic_savez(path, **arrays):
-    """Replace a slab only after the compressed NPZ has closed successfully."""
+    """Replace a slab only after the compressed NPZ has closed successfully.
+
+    The temp is named so that an interrupted write CANNOT be selected as an input; see
+    `INCOMPLETE_PREFIX`. Publication of a completed product is unchanged: one `os.replace` within
+    the destination directory.
+
+    ⚠⚠ THE ARRAYS ARE WRITTEN THROUGH THE OPEN HANDLE, NOT BY NAME, AND THIS IS THE WHOLE REASON
+    THE OLD TEMP NAME ENDED IN `.npz`. `np.savez_compressed(<path not ending in .npz>)` APPENDS
+    `.npz` to what you asked for -- measured: asking for `x.partial` produces `x.partial.npz`. So
+    renaming the temp to `.partial` while still passing a NAME silently wrote the arrays to a
+    fourth filename and `os.replace` then published the EMPTY placeholder `NamedTemporaryFile` had
+    created. Every reader got `EOFError: No data left in file`.
+    That regression was caught by the successful-completion arm of this repair's own test suite, on
+    its first run, which is precisely the failure Joseph named that arm for: a change that makes
+    incomplete writes unselectable by breaking publication. A file OBJECT gets no suffix appended,
+    measured in the same probe, so the name on disk is the name we chose.
+    """
     path = os.path.abspath(os.fspath(path))
     os.makedirs(os.path.dirname(path), exist_ok=True)
     handle = tempfile.NamedTemporaryFile(
-        prefix=os.path.basename(path) + ".", suffix=".tmp.npz",
+        prefix=f"{INCOMPLETE_PREFIX}{os.path.basename(path)}.", suffix=INCOMPLETE_SUFFIX,
         dir=os.path.dirname(path), delete=False)
     tmp = handle.name
-    handle.close()
     try:
-        np.savez_compressed(tmp, **arrays)
+        with handle:
+            np.savez_compressed(handle, **arrays)
+            handle.flush()
+            os.fsync(handle.fileno())
         os.replace(tmp, path)
-    except Exception:
+    # `BaseException`, widened from `Exception` with this repair and inside its subject: a SIGINT
+    # mid-write IS an interrupted write, and under `Exception` it left the temp behind. SIGKILL
+    # still bypasses every handler -- that case is covered by the NAME, not by cleanup, which is
+    # the point of the repair.
+    except BaseException:
         if os.path.exists(tmp):
             os.unlink(tmp)
         raise
+
+
+# ------------------------------------------------------------------ CV SUPPORT, PERSISTED ----
+#: The support predicate's own text, stamped beside the mask. A consumer comparing an observed
+#: support against a declared one (`z_build_path.classify_support_change`) is comparing two boolean
+#: arrays; without the PREDICATE that produced each, two masks of equal shape that disagree are
+#: indistinguishable from one mask under two definitions. That is the distinction
+#: `classify_support_change` is named for and it cannot make it from the arrays alone.
+CV_SUPPORT_PREDICATE = "x_cv > 0"
+
+
+def cv_support_report(x_cv):
+    """Characterize the reported-bin support of a CV cross-section vector, AND its complement.
+
+    ⚠ THIS DOES NOT CHANGE THE SUPPORT. `rep = x_cv > 0` is unchanged and still selects the
+    reported bins; redefining it would change `nrep`, the covariance dimension and every
+    downstream consumer, which is a criterion change and not what this function is.
+
+    WHAT IT ADDS is that the complement becomes READABLE. Under a strictly-positive predicate a
+    GENUINELY ZERO bin and a bin that was never in the binning are the same absence: both are
+    simply not in `base`, at no index, under no name. Joseph's ruling -- *"a pinned-zero inflation
+    bin is not a null operand"* -- names exactly that line, and the defect is not the threshold, it
+    is that the excluded set was computed and then thrown away. So the mask, the counts, and the
+    two disjoint reasons a bin can be out of support are all reported here, from ONE place.
+
+    Zero and negative are split deliberately. A zero is a physically meaningful pinned bin; a
+    NEGATIVE CV cross section is an arithmetic fault in the extraction. One count carrying both
+    would have two meanings and no way to tell which -- the same reason
+    `eavailW_covariance.check_projection_support` keeps declared exclusions off the defect ledger.
+
+    Parameters
+    ----------
+    x_cv : array_like
+        Raveled CV cross section over every bin of the binning, before any masking.
+
+    Returns
+    -------
+    dict
+        ``mask`` is a bool array index-aligned to ``x_cv``; ``n_total``, ``n_support``,
+        ``n_zero`` and ``n_negative`` are ints; ``zero_indices`` and ``negative_indices`` are
+        int arrays. ``n_support + n_zero + n_negative == n_total`` always holds.
+    """
+    x = np.asarray(x_cv, dtype=float).ravel(order="C")
+    if not np.all(np.isfinite(x)):
+        raise SystemExit(f"[FAIL] CV cross section has {int((~np.isfinite(x)).sum())} "
+                         f"non-finite bin(s); the support mask would be meaningless")
+    mask = x > 0
+    zero = np.nonzero(x == 0.0)[0]
+    negative = np.nonzero(x < 0.0)[0]
+    return {"mask": mask, "n_total": int(x.size), "n_support": int(mask.sum()),
+            "n_zero": int(zero.size), "n_negative": int(negative.size),
+            "zero_indices": zero, "negative_indices": negative,
+            "predicate": CV_SUPPORT_PREDICATE}
+
+
+def z_namespace_contract(args, arm, declared_dir):
+    """Z-precursor namespace contract, enforced HERE rather than by a launcher-side CLI call.
+
+    ⚠ THE IMPORT IS LAZY AND THAT IS DELIBERATE. `z_precursor` imports this module back (for
+    `code_provenance` and `IN_PROGRESS_SUFFIX`), so a top-level import either way is a cycle. It is
+    also a hard requirement that this module stay importable on a tree without `z_precursor`: it is
+    the shared nd-general driver and the 4D path has nothing to do with Z.
+
+    RETURNS `None` WHEN THE NAMESPACE IS UNSET, which is the pre-existing behaviour preserved
+    exactly. Every archive reproduction path keeps working and this contract is inert for it -- a
+    guard that fired on those runs would make them refuse themselves.
+    """
+    if arm is None:
+        return None
+    import z_precursor
+
+    return z_precursor.enforce_namespace_contract(
+        arm, os.environ.get("MNV_DATA_ROOT", "."), declared_dir,
+        code_root=os.environ.get("MNV_CODE_ROOT"))
+
+
+def check_slab_population(pattern, expected_names, label):
+    """Exact FILE-IDENTITY validation of a slab glob: both directions, names not counts.
+
+    ⚠ WHAT THIS COVERS AND WHAT IT DOES NOT, measured against this file's own guards rather than
+    assumed. A SHORT arm is ALREADY refused: the 20 flux block tasks tile 0-99 exactly, so a
+    missing task leaves `expected_flux_ids` short at `:462` and a missing knob task leaves the knob
+    inventory short at `:453`; a missing throw slab leaves `--expected-throws` short at `:407`. I
+    measured all three refusing. So "a short arm combines silently" is FALSE of this producer and
+    is not the defect this adds.
+
+    WHAT IS UNCOVERED, and it is the one I measured PASSING: a COMPLETE set of slabs from a
+    DIFFERENT campaign. Every content check is satisfied by any inventory-complete population at the
+    same seed, so a glob resolving into a foreign namespace combines silently and the covariance is
+    built from another run's endpoints. The content is right; the POPULATION is not the one this run
+    produced. Identities are the only thing that can tell those apart, which is Joseph's point --
+    *"expected identities and coverage, not merely file counts"* -- and a count cannot: the foreign
+    population I measured had the RIGHT count.
+
+    BOTH DIRECTIONS, because a one-directional check waves the other through:
+      * MISSING -- a declared file the glob did not find;
+      * UNDECLARED -- a file the glob DID find that was never declared, which is the stale/extra
+        case and the one a count of a complete-but-foreign set cannot see.
+
+    Parameters
+    ----------
+    pattern : str
+        The glob actually passed to `--combine` / `--block-slabs`.
+    expected_names : sequence of str
+        Exact expected BASENAMES. No globs, no ranges: a range expression here would be a second
+        implementation of the arm's task layout, and the two could disagree.
+    label : str
+        Named in the refusal so a failure says which arm.
+
+    Returns
+    -------
+    dict
+        ``{"label", "n_expected", "n_found", "names"}`` on success.
+
+    Raises
+    ------
+    SystemExit
+        On any missing or undeclared member, with the offending names.
+    """
+    declared = [str(n).strip() for n in expected_names if str(n).strip()]
+    if not declared:
+        raise SystemExit(f"[FAIL] {label}: an EMPTY expected-file declaration is not a "
+                         f"declaration. Every name would be undeclared and every absence "
+                         f"invisible, so the check would pass on any population including none.")
+    if len(set(declared)) != len(declared):
+        dupes = sorted({n for n in declared if declared.count(n) > 1})
+        raise SystemExit(f"[FAIL] {label}: the expected-file declaration repeats {dupes}; a "
+                         f"declaration that names a file twice cannot be compared as a set")
+    for name in declared:
+        if os.path.basename(name) != name or any(c in name for c in "*?["):
+            raise SystemExit(f"[FAIL] {label}: expected-file entry {name!r} is not a plain "
+                             f"basename. A glob or a path here would make the declaration match "
+                             f"whatever is present, which is the absence of a declaration.")
+    # AN INCOMPLETE WRITE IS REPORTED SEPARATELY, NOT AS AN UNDECLARED MEMBER -- ONE REFUSAL, ONE
+    # MEANING. They call for opposite actions: re-run the producing task, versus find out whose
+    # files these are.
+    #
+    # THE SCAN IS DIRECTED, NOT TAKEN FROM THE GLOB, AND THAT IS THE REPAIR'S CONSEQUENCE. Post
+    # repair an incomplete write is glob-INVISIBLE by construction, so reading it out of `matched`
+    # would report nothing -- a diagnostic that worked only while the defect existed. A LEGACY temp
+    # (pre-repair, `.tmp.npz`) is still glob-visible and is still caught, which is why both eras are
+    # scanned and why the era is named in the message: it tells the reader whether they are looking
+    # at today's kill or at a leftover from June.
+    matched = [os.path.basename(p) for p in glob.glob(pattern)]
+    try:
+        incomplete_paths, scanned = find_incomplete_writes_for_pattern(pattern)
+    except ScanBlind as exc:
+        raise SystemExit(
+            f"[FAIL] {label}: {exc}\n"
+            f"  glob: {pattern}\n"
+            f"  Refusing rather than proceeding: an unreadable slab directory could be hiding an "
+            f"incomplete write, and this check exists to tell the operator a task died.") from exc
+    incomplete = [os.path.basename(p) for p in incomplete_paths]
+    if incomplete:
+        legacy = [n for n in incomplete if n.endswith(LEGACY_IN_PROGRESS_SUFFIX)]
+        raise SystemExit(
+            f"[FAIL] {label}: {len(incomplete)} INCOMPLETE write(s) in the slab directory: "
+            f"{incomplete[:6]}{' ...' if len(incomplete) > 6 else ''}\n"
+            f"  glob: {pattern}\n"
+            f"  era: {len(legacy)} pre-repair (`{LEGACY_IN_PROGRESS_SUFFIX}`, glob-VISIBLE and "
+            f"therefore selectable by an unrepaired consumer), "
+            f"{len(incomplete) - len(legacy)} post-repair "
+            f"(`{INCOMPLETE_PREFIX}...{INCOMPLETE_SUFFIX}`, glob-invisible by construction).\n"
+            f"  These are `_atomic_savez` temporaries, not stale foreign files: a producer was "
+            f"killed mid-write and a wall-clock kill runs no cleanup handler. Re-run the producing "
+            f"task; do not delete the declared products.")
+    found = set(matched)
+    want = set(declared)
+    missing, undeclared = sorted(want - found), sorted(found - want)
+    if missing or undeclared:
+        raise SystemExit(
+            f"[FAIL] {label}: the slab population is not the declared one.\n"
+            f"  glob: {pattern}\n"
+            f"  MISSING ({len(missing)}): {missing[:12]}{' ...' if len(missing) > 12 else ''}\n"
+            f"  UNDECLARED ({len(undeclared)}): {undeclared[:12]}"
+            f"{' ...' if len(undeclared) > 12 else ''}\n"
+            f"  An UNDECLARED member is a stale or foreign file: this producer's content checks "
+            f"are satisfied by ANY inventory-complete population at the matching seed, so a glob "
+            f"resolving into another campaign's namespace passes all of them. The count can be "
+            f"exactly right and the population still wrong.")
+    return {"label": label, "n_expected": len(want), "n_found": len(found),
+            "names": sorted(want)}
+
+
+def _bank_cv_digest(bank):
+    """SHA-256 of the bank's `cv.npz`, or ``UNAVAILABLE``. Same reason as `code_provenance`."""
+    try:
+        return hashlib.sha256(Path(bank, "cv.npz").read_bytes()).hexdigest()
+    except OSError:
+        return "UNAVAILABLE"
+
+
+def code_provenance():
+    """The executing tree's revision and this producer's own file digest.
+
+    NOT A GATE, deliberately. Every field has an explicit ``UNAVAILABLE`` value rather than a
+    fallback or an omission, because a MISSING key is indistinguishable from a key nobody could
+    compute -- the `fixed_seed_null_checked` lesson at `:554`, one object over. Refusing on
+    ``UNAVAILABLE`` belongs to the receipt gate (`z_precursor.check_receipt`), which is a
+    different subject from stamping: a producer that refused to run because git was absent would
+    make provenance a scheduler dependency.
+    """
+    unavailable = "UNAVAILABLE"
+    try:
+        revision = subprocess.run(["git", "-C", _REPO, "rev-parse", "HEAD"],
+                                  stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                                  check=True).stdout.decode().strip() or unavailable
+    except (OSError, subprocess.CalledProcessError):
+        revision = unavailable
+    try:
+        digest = hashlib.sha256(Path(__file__).resolve().read_bytes()).hexdigest()
+    except OSError:
+        digest = unavailable
+    return {"code_revision": revision, "producer_file": os.path.basename(__file__),
+            "producer_sha256": digest}
 
 
 def _ratio(rho, label, invalid_policy="error"):
@@ -240,6 +629,11 @@ _OFF_DECLARED, _OFF_VALUE = seed_offset_policy.declared_offset()
 
 
 def do_throws(args):
+    # THE Z NAMESPACE CONTRACT, BEFORE THE BANK LOADS. Freshness, the member-axis refusal and
+    # the shell/Python layout agreement, enforced in this already-guarded process rather than
+    # by a launcher-side CLI call -- see `z_namespace_contract` and ruling 21.
+    z_namespace_contract(args, getattr(args, "z_namespace_arm", None),
+                         os.path.dirname(args.out) if args.out else ".")
     d, bands, n_flux = _load_bank(args.bank)
     edges = d["edges"]
     w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
@@ -311,6 +705,11 @@ def do_blockunits(args):
     block universe (both knob endpoints and/or flux index) and save them. Parallelises
     the otherwise-serial 112-unfold block-sum exactly like the throws. Combine
     aggregates these. --block-knobs all|csv ; --block-flux LO-HI (inclusive)."""
+    # THE Z NAMESPACE CONTRACT, BEFORE THE BANK LOADS. Freshness, the member-axis refusal and
+    # the shell/Python layout agreement, enforced in this already-guarded process rather than
+    # by a launcher-side CLI call -- see `z_namespace_contract` and ruling 21.
+    z_namespace_contract(args, getattr(args, "z_namespace_arm", None),
+                         os.path.dirname(args.out) if args.out else ".")
     d, bands, n_flux = _load_bank(args.bank)
     edges = d["edges"]
     w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
@@ -361,16 +760,101 @@ def do_blockunits(args):
 
 
 def do_combine(args):
+    # ⚠ FIRST, BEFORE THE BANK LOADS AND BEFORE THE CV RE-UNFOLD. This block used to sit
+    # after the CV execution, so a glob mismatch was reported only after paying for a
+    # 5-iteration LightGBM re-unfold over the 5D bank -- the expensive part of a 3 h job --
+    # and the comment below claimed it ran "before any content is read", which was true of
+    # SLAB content and read as if it were first. It needs nothing but `args`.
+    # POPULATION IDENTITY, BEFORE ANY CONTENT IS READ. Declared per arm and checked in both
+    # directions; see `check_slab_population` for what the content checks below already cover and
+    # for the one case they do not. Both declarations are OPTIONAL, and the flags written into the
+    # product say whether each ran -- a required flag would make the two pre-existing `--combine`
+    # launchers refuse themselves, and a guard that fires on every correct run is not a guard.
+    # THE OPERAND IS CHECKED BEFORE IT IS USED. A declaration with no glob to compare it against
+    # used to reach `glob.glob(None)` and die as a TypeError -- a real refusal reported as a crash,
+    # which is the wrong diagnosis of a right refusal.
+    #
+    # READ WITH `getattr`, AND THE DEFAULT IS THE REFUSING DIRECTION. `do_combine` is called
+    # programmatically from five places in `tests/test_uq_remediation.py` with a hand-built
+    # namespace carrying only the attributes it needs -- it does not carry `invalid_ratio` or
+    # `flux_universe_file` either -- so a newly REQUIRED attribute breaks every such caller. This
+    # is a fallback, and the reason it is safe is the direction it falls in: absent means UNDECLARED,
+    # which writes `*_population_declared = 0` into the product, and `z_precursor.check_receipt`
+    # REFUSES 0. A caller that omits the flag cannot silently obtain a validated product.
+    # THE Z NAMESPACE CONTRACT, FIRST OF ALL. Freshness, the member-axis refusal and the
+    # shell/Python layout agreement, all inside this guarded process. When it returns a plan it
+    # ALSO supplies the expected file declarations, which is how the launcher stopped needing a
+    # `declare-files` CLI call: the arms' populations come from their own `#SBATCH --array` lines,
+    # read here, so there is nothing to pass in and nothing to get wrong on the way.
+    arm = getattr(args, "z_namespace_arm", None)
+    contract = z_namespace_contract(
+        args, arm, os.path.dirname(args.out_root) if args.out_root else ".")
+    expected_throw_files = getattr(args, "expected_throw_files", None)
+    expected_block_files = getattr(args, "expected_block_files", None)
+    if contract is not None:
+        plan = contract["plan"]["arms"]
+        # The combine reads TWO other arms' namespaces, so both are verified too -- the whole point
+        # of (c) is that the reader and the writers agree, and checking only the arm this process
+        # writes would leave exactly the mismatch that started this.
+        for role, glob_arg, name in (("run", args.combine, "--combine"),
+                                     ("block", args.block_slabs, "--block-slabs")):
+            want = plan[role]["dir"]
+            got = os.path.dirname(glob_arg or "")
+            if os.path.normpath(got) != os.path.normpath(want):
+                raise SystemExit(
+                    f"[FAIL] {name} reads {got!r} but arm {role!r} of namespace "
+                    f"{contract['plan']['namespace']!r} is {want!r}. This is the (c) defect itself: "
+                    f"the reader and the writer disagreeing about where products live, and the "
+                    f"glob would MATCH whatever is in the wrong directory rather than fail closed.")
+        import z_precursor
+
+        code_root = Path(os.environ.get("MNV_CODE_ROOT") or _REPO)
+        if not expected_throw_files:
+            expected_throw_files = ",".join(z_precursor.declare_arm_files(
+                "run", code_root / z_precursor.ARM_LAUNCHERS["run"]))
+        if not expected_block_files:
+            expected_block_files = ",".join(z_precursor.declare_arm_files(
+                "block", code_root / z_precursor.ARM_LAUNCHERS["block"]))
+    if expected_block_files and not args.block_slabs:
+        raise SystemExit("[FAIL] --expected-block-files declares a block population but "
+                         "--block-slabs names no glob to compare it against")
+    if expected_throw_files and not args.combine:
+        raise SystemExit("[FAIL] --expected-throw-files declares a throw population but "
+                         "--combine names no glob to compare it against")
+    throw_pop = (check_slab_population(args.combine, expected_throw_files.split(","),
+                                       "throw slab population")
+                 if expected_throw_files else None)
+    block_pop = (check_slab_population(args.block_slabs, expected_block_files.split(","),
+                                       "block slab population")
+                 if expected_block_files else None)
+    for pop in (throw_pop, block_pop):
+        if pop:
+            print(f"[population] {pop['label']}: {pop['n_expected']} declared file(s), "
+                  f"exact identity match", flush=True)
+
     d, bands, n_flux = _load_bank(args.bank)
     edges = d["edges"]
     w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
 
     # CV xsec (reported-bin mask)
     x_cv = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters, args.estimator_seed).ravel(order="C")
-    rep = x_cv > 0
+    # THE SUPPORT AND ITS COMPLEMENT, FROM ONE PLACE. `rep` is still `x_cv > 0` -- the predicate is
+    # unchanged, see `cv_support_report`. What changed is that the excluded set is now an object
+    # that reaches the product instead of a local that dies at the end of this function.
+    cv_support = cv_support_report(x_cv)
+    rep = cv_support["mask"]
     base = x_cv[rep]
-    nrep = int(rep.sum())
-    print(f"[combine] reported bins = {nrep}")
+    nrep = cv_support["n_support"]
+    print(f"[combine] reported bins = {nrep} of {cv_support['n_total']} "
+          f"(predicate {cv_support['predicate']}; {cv_support['n_zero']} genuinely zero, "
+          f"{cv_support['n_negative']} negative)")
+    if cv_support["n_zero"]:
+        print(f"[combine] genuinely-zero CV bins EXCLUDED from the support, by index: "
+              f"{cv_support['zero_indices'].tolist()}", flush=True)
+    # THE GENUINE CV EXECUTIONS, kept as objects. There are at most two and the second exists only
+    # under `--null`; today the second is reduced to a scalar norm at `:516` and the first survives
+    # only masked, as `base`. Both full vectors are persisted below.
+    cv_executions = [x_cv]
 
     # unified covariance over all throws
     slabs = sorted(glob.glob(args.combine))
@@ -423,6 +907,15 @@ def do_combine(args):
         raise SystemExit(f"no block-unit slabs match {args.block_slabs}; run --blockunits first")
     flux_x = {}
     knob_x = {}
+    # EXPLICIT PER-BAND DONOR BINDING -- WHICH FILE SUPPLIED EACH BAND, RECORDED.
+    #
+    # ⚠ THIS IS PROVENANCE, NOT A DONOR DECISION, AND THE DISTINCTION IS THE WHOLE POINT. Nothing
+    # here chooses or changes which file supplies a band: the glob and the labels inside the slabs
+    # decide that exactly as before, and this only WRITES DOWN what they decided. `z_assembly.py`
+    # carries no donor binding at all and `z_build_path.py` binds only the C_stat/C_ML block
+    # source, so today the answer to "which file supplied MaCCQE's endpoints" is not recoverable
+    # from any product -- it is a property of whatever the glob happened to match at run time.
+    band_donor = {}
     for s in bslabs:
         z = np.load(s, allow_pickle=True)
         if "estimator_seed" in z.files:
@@ -440,6 +933,9 @@ def do_combine(args):
                 if idx not in ("0", "1") or idx in knob_x.setdefault(band, {}):
                     raise SystemExit(f"[FAIL] duplicate/malformed knob endpoint {label}")
                 knob_x[band][idx] = x[rep]
+                # Keyed per ENDPOINT, not per band: the two endpoints of one band could come from
+                # different files and a band-level record would silently name only one of them.
+                band_donor[f"{band}:{idx}"] = os.path.basename(s)
             elif str(kind) == "flux":
                 text = str(label)
                 if not text.startswith("flux") or not text[4:].isdigit():
@@ -448,6 +944,7 @@ def do_combine(args):
                 if flux_id in flux_x:
                     raise SystemExit(f"[FAIL] duplicate flux block universe {flux_id}")
                 flux_x[flux_id] = x[rep]
+                band_donor[f"flux{flux_id}"] = os.path.basename(s)
             else:
                 raise SystemExit(f"[FAIL] unknown block kind {kind}")
     if set(knob_x) != set(bands):
@@ -511,8 +1008,13 @@ def do_combine(args):
     # mean-centered, fixed-estimator systematic covariance. ML lives only in C_ML.
     null_norm = None
     if args.null:
-        x_cv2 = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters,
-                                  args.estimator_seed).ravel(order="C")[rep]
+        x_cv2_full = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters,
+                                       args.estimator_seed).ravel(order="C")
+        # THE SECOND GENUINE CV EXECUTION IS AN OPERAND, NOT A SCALAR. Before this line it was
+        # masked and differenced in one expression, so the only trace it ever ran was `null_norm` --
+        # and a norm cannot say WHICH bin moved, nor can it be re-checked under a different support.
+        cv_executions.append(x_cv2_full)
+        x_cv2 = x_cv2_full[rep]
         null_norm = float(np.linalg.norm(x_cv2 - base))
         tol = 1e-12 * max(float(np.linalg.norm(base)), 1.0)
         print(f"\n[null] fixed-seed ||CV2-CV|| = {null_norm:.3e} (tol={tol:.3e})")
@@ -577,8 +1079,91 @@ def do_combine(args):
         for i, value in enumerate(mean_shift):
             hs.SetBinContent(i + 1, float(value))
         hs.Write()
+        # ---- THE SUPPORT MASK AND THE GENUINE CV EXECUTIONS, IN THE ARTIFACT ------------------
+        # `BEN-450`'s repaired shape, transferred from `eavailW_covariance.write_ew_outputs:116-124`
+        # WITH its condition rather than only its form: the COUNTS are written UNCONDITIONALLY
+        # INCLUDING ZERO, the SET is written as an INDEX-ALIGNED MASK, and `n_cv_executions` is a
+        # flag with TWO REACHABLE VALUES (1 without `--null`, 2 with it) rather than a literal 1 on
+        # the only path -- which is the vacuous form lane D made us delete from that same writer.
+        #
+        # ⚠ `hCvSupportMask` IS OVER `n_total` BINS, NOT `nrep`. Every other histogram in this file
+        # is `nrep x nrep`, i.e. indexed in the SUPPORT. A mask indexed in the support would be
+        # all-ones by construction -- it would be the vacuous flag again, in array form. The mask's
+        # whole content is the bins the support does NOT contain, so it must be indexed in the
+        # BINNING. Bin i is 1 iff bin i of the binning is in the support.
+        n_total = int(cv_support["n_total"])
+        ROOT.TParameter("int")("n_cv_bins_total", n_total).Write()
+        ROOT.TParameter("int")("n_cv_support", int(cv_support["n_support"])).Write()
+        ROOT.TParameter("int")("n_cv_genuine_zero", int(cv_support["n_zero"])).Write()
+        ROOT.TParameter("int")("n_cv_negative", int(cv_support["n_negative"])).Write()
+        ROOT.TNamed("cv_support_predicate", cv_support["predicate"]).Write()
+        hmask = ROOT.TH1I("hCvSupportMask",
+                          "1 = CV bin is in the reported support (" + cv_support["predicate"] + ")",
+                          n_total, 0, n_total)
+        for i in np.nonzero(cv_support["mask"])[0]:
+            hmask.SetBinContent(int(i) + 1, 1)
+        hmask.Write()
+        # The EXECUTIONS themselves, unmasked. `n_cv_executions` says how many of `hCvExecution*`
+        # exist, so a consumer reads a count rather than probing for keys.
+        ROOT.TParameter("int")("n_cv_executions", len(cv_executions)).Write()
+        for k, vector in enumerate(cv_executions):
+            he = ROOT.TH1D(f"hCvExecution{k}",
+                           f"genuine CV execution {k} over all {n_total} bins, unmasked",
+                           n_total, 0, n_total)
+            for i, value in enumerate(np.asarray(vector, float).ravel(order="C")):
+                he.SetBinContent(i + 1, float(value))
+            he.Write()
+        # RUN, BANK AND CODE PROVENANCE beside the operand. The seed provenance at `:569-575` above
+        # already says WHICH seeds; these say which BANK and which CODE produced the mask, which is
+        # what makes the mask re-derivable rather than merely present.
+        prov = code_provenance()
+        ROOT.TNamed("cv_code_revision", prov["code_revision"]).Write()
+        ROOT.TNamed("cv_producer_file", prov["producer_file"]).Write()
+        ROOT.TNamed("cv_producer_sha256", prov["producer_sha256"]).Write()
+        ROOT.TNamed("cv_bank_path", os.path.abspath(args.bank)).Write()
+        ROOT.TNamed("cv_bank_cv_sha256", _bank_cv_digest(args.bank)).Write()
+        # POPULATION-VALIDATION FLAGS. Two reachable values each, because both declarations are
+        # optional -- same condition as `fixed_seed_null_checked` at `:561` and NOT the vacuous
+        # literal-1 form. 0 means the glob's file identities were never declared, so this product
+        # cannot say the population was the one its own run produced. `z_precursor.check_receipt`
+        # refuses 0 for the precursor; a 4D combine may legitimately carry 0.
+        ROOT.TParameter("int")("throw_population_declared", 1 if throw_pop else 0).Write()
+        ROOT.TParameter("int")("block_population_declared", 1 if block_pop else 0).Write()
+        ROOT.TParameter("int")("n_throw_files_declared",
+                               int(throw_pop["n_expected"]) if throw_pop else 0).Write()
+        ROOT.TParameter("int")("n_block_files_declared",
+                               int(block_pop["n_expected"]) if block_pop else 0).Write()
+        # PER-BAND DONOR BINDING, in the artifact. One `TNamed` per endpoint rather than one
+        # serialized blob: a blob needs a parser, and a consumer asking "which file supplied
+        # MaCCQE:1" should be able to read one key. The COUNT is written beside them so a consumer
+        # can tell a truncated set from a complete one -- the same reason the support count is
+        # written beside the support mask.
+        ROOT.TParameter("int")("n_band_donors", len(band_donor)).Write()
+        for endpoint in sorted(band_donor):
+            ROOT.TNamed(f"band_donor_{endpoint.replace(':', '_')}",
+                        band_donor[endpoint]).Write()
         fo.Close()
         print(f"[combine] wrote {args.out_root}")
+        # ---- (f) THE RECEIPT, STRICTLY AFTER `Close()` --------------------------------------
+        # AFTER, AND THE ORDERING IS THE CONTENT. `z_precursor.write_receipt` re-opens the file
+        # from disk, digests it and refuses if it is absent, empty or unreadable -- a `TFile` is
+        # finalized by `Close()` and nothing before this line could have observed that. It is
+        # NOT in a `finally`: a receipt emitted on the failure path would assert a completion
+        # that did not happen, and there is deliberately no `os._exit` anywhere on this path,
+        # because a record written from a bypassed `finally` is the same defect wearing a handler.
+        if getattr(args, "z_receipt", None):
+            import z_precursor
+
+            z_precursor.write_receipt(
+                product=args.out_root, out_path=args.z_receipt, arm="combine",
+                namespace=os.environ.get(z_precursor.NAMESPACE_ENV, ""),
+                code_root=os.environ.get("MNV_CODE_ROOT"),
+                extra=z_precursor.producer_provenance(
+                    bank=args.bank,
+                    population_declared=",".join(
+                        r for r, ok in (("throw", bool(throw_pop)), ("block", bool(block_pop)))
+                        if ok)))
+            print(f"[combine] receipt written AFTER the product: {args.z_receipt}")
     return {
         "C_unified": C_uni,
         "C_blocksum": C_block,
@@ -596,6 +1181,31 @@ def do_combine(args):
         "draw_seed": int(args.draw_seed),
         "est_seed_offset_declared": int(_OFF_DECLARED),
         "est_seed_offset": int(_OFF_VALUE),
+        # THE SAME OPERAND THE ROOT FILE CARRIES. An in-process consumer -- and every local
+        # integration test -- must read the mask and the executions from the producer rather than
+        # rebuild them, or the test's fixture would be derived from the rule it is checking.
+        # `cv_support_mask` is index-aligned to the BINNING, not to the support; see the ROOT block.
+        "cv_support_mask": cv_support["mask"],
+        "cv_support_predicate": cv_support["predicate"],
+        "n_cv_bins_total": int(cv_support["n_total"]),
+        "n_cv_support": int(cv_support["n_support"]),
+        "n_cv_genuine_zero": int(cv_support["n_zero"]),
+        "n_cv_negative": int(cv_support["n_negative"]),
+        "cv_genuine_zero_indices": cv_support["zero_indices"],
+        "cv_negative_indices": cv_support["negative_indices"],
+        "cv_executions": [np.asarray(v, float) for v in cv_executions],
+        "n_cv_executions": len(cv_executions),
+        "bank_path": os.path.abspath(args.bank),
+        "bank_cv_sha256": _bank_cv_digest(args.bank),
+        "throw_population_declared": bool(throw_pop),
+        "block_population_declared": bool(block_pop),
+        # PROVENANCE, NOT A DECISION: endpoint label -> the basename that supplied it. Nothing in
+        # this function chooses a donor; this records the choice the glob and the labels made.
+        "band_donor": dict(band_donor),
+        "n_band_donors": len(band_donor),
+        "throw_population": throw_pop,
+        "block_population": block_pop,
+        **code_provenance(),
     }
 
 
@@ -641,6 +1251,16 @@ def main():
     ap.add_argument("--block-slabs", default=None, help="glob of block-unit slabs (combine)")
     ap.add_argument("--expected-throws", default=None,
                     help="required exact throw-ID range LO-HI for combine")
+    # FILE IDENTITIES, a different object from the ID range above. `--expected-throws` is a claim
+    # about the throw ids INSIDE the slabs; these are claims about WHICH FILES the glob resolved to.
+    # An inventory-complete population from another campaign satisfies the first and fails these.
+    ap.add_argument("--expected-throw-files", default=None,
+                    help="(combine) comma-separated exact BASENAMES the --combine glob must "
+                         "resolve to. Both directions: a missing member and an undeclared "
+                         "(stale/foreign) member each refuse. No globs or ranges accepted.")
+    ap.add_argument("--expected-block-files", default=None,
+                    help="(combine) comma-separated exact BASENAMES the --block-slabs glob must "
+                         "resolve to. Same both-direction check as --expected-throw-files.")
     ap.add_argument("--blockunits", action="store_true", help="producer for block-sum units")
     ap.add_argument("--block-knobs", default="all", help="all|csv of knob bands")
     ap.add_argument("--block-flux", default=None, help="flux index range LO-HI (inclusive)")
@@ -649,6 +1269,20 @@ def main():
     ap.add_argument("--invalid-ratio", choices=("error", "neutral"), default="error",
                     help="policy for zero/non-finite bank ratios; default fails loudly")
     ap.add_argument("--out-root", default=None)
+    # THE Z PRECURSOR'S NAMESPACE CONTRACT, ENFORCED IN-PROCESS. Optional, and absent it changes
+    # nothing -- every archive reproduction path is untouched. See `z_namespace_contract` and
+    # `z_precursor.enforce_namespace_contract` for why this is a flag on the producer rather than a
+    # CLI step in the launcher: ruling 21 pins the launchers' python3 invocations, an unclassified
+    # one is a violation, and this module is not eligible to be a declared preflight tool.
+    ap.add_argument("--z-namespace-arm", default=None, choices=("run", "block", "combine"),
+                    help="enforce the Z-precursor namespace contract for this arm: refuse a "
+                         "non-fresh namespace, refuse a declared member-axis offset, require the "
+                         "launcher's path expression to agree with z_precursor.ARM_LAYOUT, and "
+                         "derive the expected slab populations from the arms' own #SBATCH lines. "
+                         "Inert unless MNV_Z_PRECURSOR_NS is set.")
+    ap.add_argument("--z-receipt", default=None,
+                    help="(combine) write a z_precursor run receipt to this path AFTER the ROOT "
+                         "file is closed and reopened. Refuses if the product did not land.")
     args = ap.parse_args()
     if args.combine:
         do_combine(args)

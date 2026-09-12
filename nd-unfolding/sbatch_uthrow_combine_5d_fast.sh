@@ -332,9 +332,55 @@ THROW_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
 # agree, wrong about WHICH one to agree on. The consumer was never the misaligned side.
 BLOCK_DIR_SB="$(mr_dir_prefix uq_5d/block_slabs_5d_sb)"
 ROOT_OUT="$(mr_prefix uq_5d/unified_throw_cov_5d.root)"
+# --- REPAIRS (c), (d) AND (f), 2026-09-11 ---------------------------------------------------------
+# (c) ONE NAMESPACE. When MNV_Z_PRECURSOR_NS is set, all three directories here come from the SAME
+#     resolution the block, run and dump arms use, which is what closes the mismatch the block
+#     comment above describes. Unset, every path is exactly what it was.
+# (d) EXACT EXPECTED POPULATION. `--expected-ids` occurs ZERO times in any of the four precursor
+#     arms, and `--block-slabs` was a bare glob with no declared population at all. WHERE IT DOES
+#     LIVE, listed rather than described: `sbatch_combine_4d_corrected_gpu.sh`,
+#     `sbatch_combine_5d_budget.sh`, `sbatch_combine_boot_fps_corrected_gpu.sh`,
+#     `sbatch_combine_split_fps_corrected_gpu.sh` and `sbatch_finalize_5d_bkgaware_gpu.sh` -- FIVE,
+#     not "the finalize launcher". I wrote the singular first and it was an ordinal hiding a
+#     population claim; a reader checking the one named site would have concluded the mechanism was
+#     rarer than it is.
+#     The declarations are DERIVED from each arm's own `#SBATCH --array` line INSIDE the producer,
+#     never retyped here: a range literal in this file would be a second implementation of the
+#     arm's layout and the two could disagree.
+#     ⚠ THIS DOES NOT CLOSE THE FOREIGN-NAMESPACE CASE, measured: a complete set of another
+#     campaign's slabs has the SAME basenames, so it passes the identity check. (c)'s freshness is
+#     what catches that, and (d) is what catches a stale or extra member inside the right directory.
+#     Neither subsumes the other.
+# (f) RECEIPT LAST, written by the producer AFTER `TFile::Close()` and from the reopened file. Not
+#     in a `finally`: a receipt emitted on the failure path would assert a completion that did not
+#     happen, and there is no `os._exit` anywhere on this path.
+#
+# ⚠⚠ NOT ONE NEW INTERPRETER INVOCATION HERE, AND THAT IS RULING 21. This block first ran NINE
+# bare `z_precursor.py` calls -- three arm-dir, require-fresh, require-no-member-axis, two
+# declare-files, receipt and check-receipt. `mnv_preflight_census.py` classifies every non-comment
+# interpreter line as guarded / declared-preflight / interpreter-probe / UNCLASSIFIED, pins unclassified
+# at ZERO, and refused with 15 violations across three launchers. Neither escape was open:
+# `z_precursor.py` fails exclusion criterion (5) because it imports `unified_throw_cov` by design,
+# and routing the calls through the guard would move `guarded` off 14 -- which
+# `mnv_preflight_exclusions.json` names as ruling 21's pin and reserved for Joseph.
+# SO EVERY CAPABILITY MOVED INTO THE PRODUCER, which is already guarded and already --pair bound,
+# and travels as `--z-namespace-arm` / `--z-receipt`. The three paths are still built in shell,
+# because getting them out of Python would need the very call this removes; the producer VERIFIES
+# all three against `z_precursor.ARM_LAYOUT` and refuses on disagreement, so the two spellings
+# cannot drift apart silently. Shell computes, Python verifies.
+ZARM=()
+if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]; then
+  _ZNS="${DATA_ROOT}/nd-unfolding/uq_5d/${MNV_Z_PRECURSOR_NS}"
+  THROW_DIR="${_ZNS}/uthrow_slabs_5d"
+  BLOCK_DIR_SB="${_ZNS}/block_slabs_5d"
+  ROOT_OUT="${_ZNS}/unified_throw_cov_5d.root"
+  ZARM=(--z-namespace-arm combine --z-receipt "${_ZNS}/unified_throw_cov_5d.receipt.json")
+  mkdir -p "${_ZNS}"
+fi
 python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv uthrow_combine)" -- "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py" --draw-seed 1000 --estimator-seed ${EST_SEED} \
   --combine "${THROW_DIR}/uthrow5d_slab_*.npz" \
   --expected-throws 0-159 \
   --block-slabs "${BLOCK_DIR_SB}/block5d_*.npz" \
+  "${ZARM[@]}" \
   --bank bank_uthrow_5d --iters 5 --null \
   --out-root "${ROOT_OUT}"

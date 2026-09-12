@@ -12,6 +12,21 @@
 # id-layout (4 throws/file) never collides with the interactive layout (1/file);
 # do_combine hard-fails on duplicate throw ids, so the two must stay in separate
 # globs. Atomic-save (os.replace) means a wall-kill re-runs the whole task cleanly.
+# --- THAT CLAIM WAS OVERSTATED UNTIL 2026-09-11, AND IS NOW TRUE IN THREE PARTS OF FOUR ---------
+# It rested on `_atomic_savez`, whose temp used to be named `<product>.<token>.tmp.npz` -- INSIDE
+# this arm's own consumer glob. So a wall-kill left a file the combine would SELECT and try to
+# read, which is the opposite of clean, and the sentence above asserted otherwise without warrant.
+# Joseph authorized the bounded repair on 2026-09-11; the temp is now `.mnv-incomplete.<product>.
+# <token>.partial`, unselectable by construction. Each clause is now checked by a test rather than
+# argued (`tests/test_z_precursor.py`, the wall-kill-claim arm):
+#   TRUE  the published product is never partial -- one rename in the destination directory;
+#   TRUE  an incomplete write is never selected (this is the half the repair bought);
+#   TRUE  a re-run REPLACES a short slab rather than merging, because the whole slab is rewritten
+#         on every throw;
+#   FALSE "cleanly" does not extend to LITTER. A SIGKILL runs no cleanup handler, so one temp
+#         survives per kill -- sub-MB (a throw slab is 372 086 B measured) but never removed, and
+#         the repair also made it invisible to a plain `ls`. Use the directed scan
+#         `unified_throw_cov.find_incomplete_writes` to see it; do not expect a glob to.
 set -eo pipefail
 # --- OI-136 / Joseph's ruling 17, 2026-08-22: TWO ROOTS, BOTH MANDATORY, NEITHER DEFAULTED -------
 # This line used to read `REPO="<the canonical checkout>"` unconditionally, and every `source`, every
@@ -306,7 +321,30 @@ if [[ "$(cd "$_mr_lib" 2>/dev/null && pwd -P)" != "$(cd "${CODE_ROOT}/nd-unfoldi
   exit 2
 fi
 source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) member axis
-SLAB_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
+# --- REPAIR (c), 2026-09-11: ONE EXPLICIT NAMESPACE SHARED BY ALL FOUR PRECURSOR ARMS ------------
+# See `sbatch_uthrow_block_5d.sh`'s copy of this block for the full reason and for the residual it
+# deliberately leaves live. When MNV_Z_PRECURSOR_NS is unset this arm behaves exactly as before.
+#
+# ⚠ NO NEW INTERPRETER INVOCATION HERE, AND RULING 21 IS WHY. My first version ran four
+# bare `z_precursor.py` preflight calls here. `mnv_preflight_census.py` classifies every
+# non-comment interpreter line as guarded / declared-preflight / interpreter-probe / UNCLASSIFIED and
+# pins unclassified at zero; it measured 15 of mine across three launchers and refused. Declaring
+# `z_precursor.py` a preflight tool is not available either -- criterion (5) demands its repository
+# imports be a subset of {mnv_guarded_run} and it imports `unified_throw_cov` by design -- and
+# routing them through the guard would move `guarded` off 14, which that declaration names as
+# ruling 21's pin and reserved for Joseph.
+# SO THE WHOLE CONTRACT MOVED INSIDE THE ALREADY-GUARDED PRODUCER, via --z-namespace-arm. The path
+# below is still built in shell, because getting it out of Python would need the very call this
+# removes; the producer VERIFIES it against `z_precursor.ARM_LAYOUT` and refuses on disagreement.
+# Shell computes, Python verifies -- the same shape the two-roots design uses.
+if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]; then
+  SLAB_DIR="${DATA_ROOT}/nd-unfolding/uq_5d/${MNV_Z_PRECURSOR_NS}/uthrow_slabs_5d"
+  ZARM=(--z-namespace-arm run)
+  mkdir -p "$SLAB_DIR"
+else
+  SLAB_DIR="$(mr_dir_prefix uq_5d/uthrow_slabs_5d_sb)"
+  ZARM=()
+fi
 OFF=$(( SLURM_ARRAY_TASK_ID * 4 ))
 # M(ii) OFFSET HOOK (spec (B) option (ii), BEN-461). The launcher keeps its OWN baseline
 # literal, so MNV_EST_SEED_OFFSET=0 -- the default -- reproduces the archive EXACTLY and the
@@ -315,5 +353,5 @@ OFF=$(( SLURM_ARRAY_TASK_ID * 4 ))
 # absolute-seed override; that hands the group structure back to the caller.
 EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
 python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv uthrow_run)" -- "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py" --throws 4 --throw-offset ${OFF} --draw-seed 1000 --estimator-seed ${EST_SEED} \
-  --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
+  --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral "${ZARM[@]}" \
   --out "${SLAB_DIR}/uthrow5d_slab_${SLURM_ARRAY_TASK_ID}.npz"

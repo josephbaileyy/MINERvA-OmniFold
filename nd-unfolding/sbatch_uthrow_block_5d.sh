@@ -8,6 +8,59 @@
 # universe (12 knob +1sigma + 100 Flux) is RE-UNFOLDED at the CV seed so its
 # OmniFold jitter cancels in (x_b - x_cv). task 0 = all 12 knobs; tasks 1-20 = a
 # 5-flux chunk each (5x20 = 100). Combine aggregates these into C_blocksum.
+#
+# ==================================================================================================
+# LIVE, UNREPAIRED DEFECT IN THIS LAUNCHER'S UNDECLARED PATH -- READ BEFORE THE `if` AT :398
+# ==================================================================================================
+# **CITABLE FOR:** the fact that an UNDECLARED run of this launcher writes its block slabs to a
+#   namespace the fast combine does not read, and for the reason that is deliberately not repaired.
+# **NOT CITABLE FOR:** any claim that the Z precursor is exposed to it (it is not -- see below), any
+#   grade, adoption, gate movement, spend, or authorization to change the literal at :406.
+# **Owner of the DEFECT:** unassigned. Its repair needs Joseph's authorization, which this
+#   launcher's own comment at :368-370 already said and which the Z-precursor authorization of
+#   2026-09-11 did NOT grant -- that one is scoped to the precursor.
+# **Owner of this RECORD:** the Z-precursor repair lane (`lane/z-precursor-repairs-bg-20260911`).
+#   Declining ownership of the defect is cheap and expected: an owner here is whoever would notice
+#   an archive-reproduction combine reading the wrong directory, and that is not this lane.
+#
+# THE DEFECT, PLAINLY. When `MNV_EST_SEED_OFFSET` is unset and `MNV_Z_PRECURSOR_NS` is unset, the
+# `else` branch at :406 writes `uq_5d/block_slabs_5d`, while `sbatch_uthrow_combine_5d_fast.sh`
+# reads `uq_5d/block_slabs_5d_sb` UNCONDITIONALLY, and `lib_member_resume.sh:145-149`'s
+# `mr_dir_prefix` returns its argument unchanged when undeclared, so nothing re-aligns them.
+# BOTH NAMESPACES ARE POPULATED, measured 2026-09-11 on the product globs (not on `ls`, which
+# counts the `knob_*.log` files too): `block_slabs_5d` holds 8 `block5d_*.npz` and
+# `block_slabs_5d_sb` holds 36, from separate campaigns. So such a run writes 21 fresh slabs and
+# its combine consumes 36 foreign ones -- AND IT DOES NOT FAIL CLOSED, because the glob MATCHES.
+#
+# WHY IT IS NOT REPAIRED HERE, AND THE DIRECTION MATTERS -- MY FIRST VERSION OF THIS SECTION HAD IT
+# BACKWARDS. I wrote that repointing the `else` literal "would change where an ARCHIVE reproduction
+# writes". THAT IS THE REASON `:364-367` BELOW EXPLICITLY WITHDRAWS. The archive IS `_sb`, so
+# repointing does NOT move the archive: it would let an UNDECLARED, NON-SCAN run write INTO the
+# live archive directory. The constraint is that `_sb` needs protecting FROM undeclared writers --
+# not that the archive sits at the current literal and should be left undisturbed.
+# THE TWO DIRECTIONS LICENSE DIFFERENT REPAIRS, which is why this is not a wording quibble. Under my
+# wrong version the prudent act is to leave the literal alone. Under the real constraint, pointing
+# the undeclared path at a THIRD namespace -- neither archive nor `_sb` -- would also satisfy it,
+# and would actually close the mismatch. That option is visible only once the direction is right.
+# WHAT DOES JUSTIFY LEAVING IT: Joseph's standing instruction to preserve existing non-Z defaults
+# and validated reproduction paths, plus the fact that any change here is a separate subject with
+# its own blast radius and its own authorization -- which the Z-precursor grant does not give.
+# ⚠ AND THE FIGURE AT `:366-367` DOES NOT RECONCILE. It says "124 receipt-bound slabs". Measured
+# 2026-09-11: `block_slabs_5d_sb` 36 + `uthrow_slabs_5d_sb` 40 = 76, and all SEVEN `uq_5d/*slab*`
+# directories together hold 271. No population measured equals 124. Pre-existing and not
+# introduced here; repeated without its denominator it would be an unreconciled number doing
+# rhetorical work, so it is named as unreconciled instead of quoted.
+#
+# WHY THE Z PRECURSOR IS UNAFFECTED. The precursor does not take this branch at all: it requires
+# `MNV_Z_PRECURSOR_NS`, which has no default, and under it every arm resolves ONE namespace that
+# the producer verifies against `z_precursor.ARM_LAYOUT` and refuses if non-fresh. The precursor is
+# therefore never an undeclared run, which is relocation rather than repair -- and the distinction
+# is the whole reason this notice exists: THE NEXT USER OF THE GENERAL LAUNCHER IS PRECISELY THE
+# READER WHO WILL NOT HAVE READ THE Z REVIEW.
+#
+# IF YOU ARE ABOUT TO RUN THIS UNDECLARED: check which namespace your combine reads before you
+# trust its output. Nothing below will tell you.
+# ==================================================================================================
 set -eo pipefail
 # --- OI-136 / Joseph's ruling 17, 2026-08-22: TWO ROOTS, BOTH MANDATORY, NEITHER DEFAULTED -------
 # This line used to read `REPO="<the canonical checkout>"` unconditionally, and every `source`, every
@@ -314,10 +367,44 @@ source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) memb
 # receipt-bound slabs. Right action, wrong reason, and the real reason is worse than the one I gave.
 # The tracked producer's wrong literal is a PRE-EXISTING defect needing its own change and its own
 # authorization; it is not folded into the scan.
-if mr_declared; then
+#
+# --- REPAIR (c), 2026-09-11, ON JOSEPH'S AUTHORIZATION FOR THE Z PRECURSOR ------------------------
+# The authorization the comment above asks for exists, and it is SCOPED TO THE PRECURSOR. So the
+# THREE-WAY disagreement below -- this launcher's two literals against the fast combine's
+# unconditional `_sb` -- is closed for the precursor by making ALL FOUR ARMS resolve ONE explicit
+# namespace, and is left EXACTLY as it was when that namespace is unset.
+#
+# WHY THE UNSET PATH IS UNTOUCHED, and it is not timidity. THIS PARAGRAPH ALSO CARRIED THE WITHDRAWN
+# DIRECTION and is corrected: repointing the unset literal does NOT "change where an ARCHIVE
+# reproduction writes", because per `:364-367` the archive IS `_sb`. It would point an UNDECLARED
+# writer INTO the live archive. What justifies leaving it is Joseph's standing instruction to
+# "preserve all existing non-Z defaults and validated reproduction paths", and that any change here
+# is a separate subject with its own authorization, which the Z-precursor grant does not give.
+# THE RESIDUAL IS THEREFORE LIVE: an undeclared, non-precursor run of this launcher still writes
+# `block_slabs_5d` while the fast combine still reads `block_slabs_5d_sb`. Recorded rather than
+# silently half-fixed, and marked at the TOP OF THIS FILE where its next user will meet it.
+#
+# NON-EMPTINESS IS A REFUSAL, NOT AN ASSUMPTION, and so is the member axis. Without the second,
+# "nothing lands in mii/" holds only because nobody exported MNV_EST_SEED_OFFSET.
+#
+# ⚠ BOTH REFUSALS HAPPEN INSIDE THE GUARDED PRODUCER, VIA --z-namespace-arm, AND NOT IN A
+# LAUNCHER-SIDE INTERPRETER CALL. `mnv_preflight_census.py` pins unclassified invocations at
+# zero and measured 15 of mine; `z_precursor.py` cannot be a declared preflight tool (criterion (5)
+# requires its repository imports to be a subset of {mnv_guarded_run} and it imports
+# `unified_throw_cov` on purpose), and guarding the calls would move `guarded` off 14 -- ruling
+# 21's pin, reserved for Joseph. The contract therefore travels as a FLAG on a call that is already
+# guarded and already --pair bound. The path is still built here; the producer verifies it against
+# `z_precursor.ARM_LAYOUT` and refuses on disagreement.
+if [[ -n "${MNV_Z_PRECURSOR_NS:-}" ]]; then
+  BLOCK_DIR="${DATA_ROOT}/nd-unfolding/uq_5d/${MNV_Z_PRECURSOR_NS}/block_slabs_5d"
+  ZARM=(--z-namespace-arm block)
+  mkdir -p "$BLOCK_DIR"
+elif mr_declared; then
   BLOCK_DIR="$(mr_dir_prefix uq_5d/block_slabs_5d_sb)"
+  ZARM=()
 else
   BLOCK_DIR="uq_5d/block_slabs_5d"
+  ZARM=()
 fi
 T=${SLURM_ARRAY_TASK_ID}
 # --invalid-ratio neutral: hold the ~5e-5 GENIE negative-weight artifacts
@@ -337,11 +424,11 @@ T=${SLURM_ARRAY_TASK_ID}
 EST_SEED=$(( 1000 + ${MNV_EST_SEED_OFFSET:-0} ))
 if [[ "$T" -eq 0 ]]; then
   python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv uthrow_block_knobs)" -- "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py" --blockunits --block-knobs all --draw-seed 1000 --estimator-seed ${EST_SEED} \
-    --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
+    --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral "${ZARM[@]}" \
     --out "${BLOCK_DIR}/block5d_knobs.npz"
 else
   LO=$(( (T-1) * 5 )); HI=$(( LO + 4 ))
   python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv uthrow_block_flux)" -- "${CODE_ROOT}/nd-unfolding/unified_throw_cov_5d.py" --blockunits --block-knobs none --block-flux ${LO}-${HI} \
-    --draw-seed 1000 --estimator-seed ${EST_SEED} --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral \
+    --draw-seed 1000 --estimator-seed ${EST_SEED} --bank bank_uthrow_5d --iters 5 --invalid-ratio neutral "${ZARM[@]}" \
     --out "${BLOCK_DIR}/block5d_flux_${T}.npz"
 fi

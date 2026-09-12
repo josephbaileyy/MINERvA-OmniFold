@@ -464,8 +464,24 @@ def main():
     ap.add_argument("--cv", default=f"{_REPO}/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root")
     ap.add_argument("--blocksum",
                     default=f"{_REPO}/3d-unfolding/uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root")
+    # THE Z PRECURSOR'S NAMESPACE CONTRACT, ENFORCED IN-PROCESS. The dump arm produces the BANK,
+    # which is the next three arms' input, so its namespace is the shared one. A flag on the
+    # producer rather than a CLI step in the launcher: `mnv_preflight_census.py` treats an
+    # unclassified `python3` line in a k=0 launcher as a violation, and `z_precursor` cannot be a
+    # declared preflight tool because it imports repository modules (criterion 5). Inert unless
+    # MNV_Z_PRECURSOR_NS is set, so every existing dump reproduction is unaffected.
+    ap.add_argument("--z-namespace-arm", default=None, choices=("dump",),
+                    help="enforce the Z-precursor namespace contract for the dump arm: refuse a "
+                         "non-fresh bank namespace, refuse a declared member-axis offset, and "
+                         "require --bankdir to agree with z_precursor.ARM_LAYOUT")
     args = ap.parse_args()
     if args.dump:
+        if args.z_namespace_arm:
+            import z_precursor
+
+            z_precursor.enforce_namespace_contract(
+                args.z_namespace_arm, os.environ.get("MNV_DATA_ROOT", "."), args.bankdir,
+                code_root=os.environ.get("MNV_CODE_ROOT"))
         do_dump(args)
     elif args.run:
         raise SystemExit("[FAIL] legacy --run is disabled; use unified_throw_cov.py "

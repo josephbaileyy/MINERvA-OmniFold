@@ -42,6 +42,13 @@ LAUNCHERS = (
     ("sbatch_unfold_5d_detector_bkgaware_gpu.sh", ["unfold_nd_omnifold_unbinned.py"],
      ["unfold_nd_universe"]),
     ("sbatch_sweep_bank_5d_run_bkgaware_gpu.sh", ["sweep_bank_5d.py"], ["sweep_bank_5d"]),
+    # ADDED 2026-09-11 BY REPAIR (e), and it must be in THIS tuple rather than merely carrying the
+    # preamble. Every byte-identity assertion in this file quantifies over `LAUNCHERS`, so a ninth
+    # launcher that copied the preamble WITHOUT joining the population would be a ninth copy with
+    # nothing asserting it had not drifted -- the duplication is only acceptable because this
+    # tuple makes it checkable. The dump arm runs a DIFFERENT producer (`unified_throw.py --dump`,
+    # not `unified_throw_cov_5d.py`) and carries the only `uthrow_dump` tag.
+    ("sbatch_uthrow_dump_5d.sh", ["unified_throw.py"], ["uthrow_dump"]),
     ("sbatch_uthrow_run_5d_fast.sh", ["unified_throw_cov_5d.py"], ["uthrow_run"]),
     ("sbatch_uthrow_block_5d.sh", ["unified_throw_cov_5d.py"], ["uthrow_block_flux"]),
     ("sbatch_uthrow_combine_5d_fast.sh", ["unified_throw_cov_5d.py"], ["uthrow_combine"]),
@@ -171,7 +178,8 @@ class LauncherFixture(unittest.TestCase):
         (cnd / f"{SIBLING}.py").write_text("MARK = 'code root sibling'\n")
 
         # REAL tools, byte-copied. The launchers refuse a symlink here on purpose.
-        for src, dst in ((ND / "mnv_guarded_run.py", cnd / "mnv_guarded_run.py"),
+        for src, dst in ((ND / "z_precursor.py", cnd / "z_precursor.py"),
+                         (ND / "mnv_guarded_run.py", cnd / "mnv_guarded_run.py"),
                          (ND / "mnv_guard_shim" / "sitecustomize.py",
                           cnd / "mnv_guard_shim" / "sitecustomize.py"),
                          (ND / "mnv_env_provenance.py", cnd / "mnv_env_provenance.py"),
@@ -191,6 +199,9 @@ class LauncherFixture(unittest.TestCase):
         (dnd / "uq_4d").mkdir(parents=True)
         (dnd / "uq_5d").mkdir(parents=True)
         (dnd / "runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root").write_text("stub\n")
+        # The dump arm's `--omnifile`, which is the NON-bkgaware one. Added with that arm: the
+        # fixture had only the bkgaware name, so this is the input its launcher actually passes.
+        (dnd / "runEventLoopOmniFold_5D_MEFHC_universes_full.root").write_text("stub\n")
         (dnd / "uq_4d" / "vertical_run_bkgaware.txt").write_text("Flux:0\n")
         (dnd / "uq_5d" / "detector_universes.txt").write_text("Flux:0\n")
 
