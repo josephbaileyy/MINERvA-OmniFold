@@ -14,39 +14,6 @@ import typed_descriptor_keras as adapter
 import typed_descriptors as typed
 
 
-def packed_row_splits(segment: Any, rows: Any) -> Any:
-    """Partition sorted stored slots, including masked slots, on the CPU.
-
-    Parameters
-    ----------
-    segment : Tensor
-        Nondecreasing int32 event IDs, one per stored slot.
-    rows : Tensor
-        Scalar int32 event count, including empty trailing events.
-
-    Returns
-    -------
-    Tensor
-        Int32 row boundaries. Only integer indexing runs on the CPU; embeddings
-        and their gradients retain their existing placement and order.
-    """
-    tf = adapter.require_tensorflow()
-    with tf.device("/CPU:0"):
-        segment = tf.convert_to_tensor(segment, dtype=tf.int32)
-        rows = tf.convert_to_tensor(rows, dtype=tf.int32)
-        checks = [
-            tf.debugging.assert_rank(segment, 1),
-            tf.debugging.assert_rank(rows, 0),
-            tf.debugging.assert_non_negative(rows),
-            tf.debugging.assert_non_negative(segment),
-            tf.debugging.assert_less(segment, rows),
-            tf.debugging.assert_greater_equal(segment[1:], segment[:-1]),
-        ]
-        with tf.control_dependencies(checks):
-            lengths = tf.math.unsorted_segment_sum(tf.ones_like(segment), segment, rows)
-            return tf.concat([tf.zeros((1,), tf.int32), tf.cumsum(lengths)], 0)
-
-
 @cache
 def comparison_model_type() -> type[Any]:
     """Register and return the lazily imported Keras comparison model class."""
@@ -150,14 +117,15 @@ def comparison_model_type() -> type[Any]:
                     presence.append((enabled & (count > 0))[:, None])
                 else:
                     # Padding is local to this batch and never truncates objects.
-                    splits = packed_row_splits(segment, rows)
                     clouds.append(
-                        tf.RaggedTensor.from_row_splits(projected, splits).to_tensor()
+                        tf.RaggedTensor.from_value_rowids(
+                            projected, segment, nrows=rows
+                        ).to_tensor()
                     )
                     presence.append(
-                        tf.RaggedTensor.from_row_splits(active, splits).to_tensor(
-                            default_value=False
-                        )
+                        tf.RaggedTensor.from_value_rowids(
+                            active, segment, nrows=rows
+                        ).to_tensor(default_value=False)
                     )
             return (
                 tf.concat(clouds, axis=1),

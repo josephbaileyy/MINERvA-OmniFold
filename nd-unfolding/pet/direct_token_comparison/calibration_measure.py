@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import cProfile
 import importlib
+import hashlib
 import json
 import os
 import platform
@@ -47,6 +48,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--tests-only", action="store_true")
+    parser.add_argument("--preflight", type=Path)
     parser.add_argument("--include-source-smoke-tests", action="store_true")
     parser.add_argument("--runtime-versions-only", action="store_true")
     args = parser.parse_args()
@@ -80,6 +82,7 @@ def main() -> None:
             "test_typed_descriptor_compatibility.py",
             "test_prong_semantics.py",
             "test_typed_token_comparison.py",
+            "test_token_packing_preflight.py",
         ]
         if args.include_source_smoke_tests:
             names.append("test_typed_descriptor_source_smoke.py")
@@ -91,6 +94,11 @@ def main() -> None:
                 ]
             )
         )
+    if args.preflight is None:
+        parser.error("training requires --preflight from a completed GPU smoke process")
+    from compatibility_preflight import verify_receipt
+
+    verify_receipt(args.preflight)
     args.output.mkdir(exist_ok=False)
     started = time.monotonic()
     affinity = sorted(os.sched_getaffinity(0))
@@ -144,6 +152,9 @@ def main() -> None:
         "peak_rss_KiB": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         "gpu_memory": tf.config.experimental.get_memory_info("GPU:0"),
         "scope": "calibration and runtime validation only; excluded from the seed matrix",
+        "preflight_sha256": hashlib.sha256(
+            (args.preflight / "preflight.json").read_bytes()
+        ).hexdigest(),
     }
     (args.output / "measurement.json").write_text(json.dumps(measurement, indent=2))
     print(json.dumps(measurement), flush=True)

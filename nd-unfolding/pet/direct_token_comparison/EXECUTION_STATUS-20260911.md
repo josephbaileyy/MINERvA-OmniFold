@@ -1,5 +1,15 @@
 # Current state: second technical failure; execution stopped
 
+## 2026-09-13 — compatibility repair prepared; no new allocation
+
+Local deterministic packing validation and a stronger two-arm GPU preflight are
+recorded in [the repair](COMPATIBILITY_REPAIR-20260913.md). The
+[110-minute smoke/calibration proposal](COMPATIBILITY_PROPOSAL-20260913.md) is
+pending explicit approval. Both previous attempts remain terminal failures;
+partial pooled outputs are excluded from comparisons. GPU compatibility and
+paired calibration remain unverified. No full matrix or real-data run is released.
+
+
 Retry `58201775` passed the Linux tests, package pins and A100 operation check.
 The pooled calibration arm saved three artifacts; the direct-token arm failed
 at deterministic GPU `DenseBincount` during model construction. The paired

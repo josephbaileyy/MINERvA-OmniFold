@@ -216,3 +216,12 @@ remains outstanding. The follow-up includes an unsent inquiry draft.
 
 No new source read, selection, normalization, split or training is performed by
 this documentary work. The acceptance criteria and execution code are unchanged.
+
+## 2026-09-13 — Isolated routing compatibility repair
+
+The [direct-token repair record](direct_token_comparison/COMPATIBILITY_REPAIR-20260913.md)
+reports exact local CPU equivalence with the frozen candidate and stronger
+GPU preflight preparation. The [new bounded allocation proposal](direct_token_comparison/COMPATIBILITY_PROPOSAL-20260913.md)
+awaits approval after two technical failures. No new source access, source
+normalization, real-data training or semantic decision occurred. Synthetic
+software equivalence does not establish representation learning performance.

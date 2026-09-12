@@ -316,3 +316,23 @@ sum is 193 s, reported separately without double-counting overlapping steps.
 All 19 files / 511,304 bytes were preserved and hash-verified on CFS and in the
 committed archive. No headroom gate, routing-performance conclusion, real-data
 training, covariance, publication adoption or Gate-6 action resulted.
+
+## 2026-09-13 — Deterministic packing repair, local validation only
+
+The [compatibility repair](pet/direct_token_comparison/COMPATIBILITY_REPAIR-20260913.md)
+replaces direct-token value-row-ID packing with explicit CPU integer row splits,
+retaining all stored slots, masks and floating gradients. The frozen CPU model
+is an exact oracle: all eight model/case combinations match outputs, gradients
+and updated weights; 16/16 low-level packing comparisons are exact. The guarded
+local suite passes 73 tests plus 10 subtests in 16.74 s; the complete local
+preflight takes 50.484469 s and includes a fresh-process reload of both arms.
+Evidence and readback inventory are committed under `local_validation/20260913/`.
+
+GPU preflight must now exercise construction, forward, gradients, eager/traced
+Adam updates and save/reload before calibration in a fresh process. A new
+[110-minute proposal](pet/direct_token_comparison/COMPATIBILITY_PROPOSAL-20260913.md)
+is pending approval. No allocation was submitted; both failed attempts and their
+partial pooled outputs remain preserved and excluded from learning comparisons.
+GPU compatibility and paired calibration remain unverified. No source-semantic
+resolution, real-data performance, publication adoption, covariance or Gate-6
+conclusion follows. Scientific criteria and original campaign samples are unchanged.

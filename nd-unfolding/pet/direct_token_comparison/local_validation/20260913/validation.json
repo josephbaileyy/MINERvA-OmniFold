@@ -1,0 +1,28 @@
+{
+  "status": "LOCAL_CPU_PASS_GPU_UNVERIFIED",
+  "date": "2026-09-13",
+  "preflight_seconds": 50.48446941701695,
+  "pytest": "73 passed, 10 subtests passed in 16.74s",
+  "scope": "CPU synthetic compatibility and regression only; no allocation or performance comparison",
+  "guard_records": {
+    "preflight_parent_and_reload": 2,
+    "tests": 4,
+    "all_without_allowances": true
+  },
+  "tools": {
+    "black": "5 files checked",
+    "ruff": "PASS",
+    "mypy": "5 files checked; Linux target",
+    "bash_syntax": "PASS"
+  },
+  "new_GPU_hours": 0,
+  "new_reserved_Slurm_CPU_hours": 0,
+  "local_CPU_consumption": "not separately metered; test and preflight wall times recorded",
+  "failed_attempts_preservation": "Unchanged, excluded from learning comparisons",
+  "oracle": {
+    "revision": "46fe3d7cd3c88570d7449a884adc4f8ffc44f041",
+    "path": "nd-unfolding/pet/typed_token_comparison.py",
+    "sha256": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95"
+  },
+  "archive_readback": "PASS"
+}

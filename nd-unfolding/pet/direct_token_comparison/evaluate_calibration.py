@@ -10,6 +10,8 @@ from pathlib import Path
 import pstats
 from typing import Any
 
+from compatibility_preflight import verify_receipt
+
 
 def evaluate(
     directory: Path, elapsed_seconds: int, prior_allocation_seconds: int
@@ -25,9 +27,9 @@ def evaluate(
         raise ValueError("Calibration did not complete")
     if (directory / "exit-code.txt").read_text().strip() != "0":
         raise ValueError("Calibration process failed")
-    if "49 passed, 10 subtests passed" not in (directory / "tests.log").read_text():
+    if "60 passed, 10 subtests passed" not in (directory / "tests.log").read_text():
         raise ValueError("Cluster test scope did not pass completely")
-    for name in ("tests-guard.json", "guard.json"):
+    for name in ("tests-guard.json", "preflight-guard.json", "guard.json"):
         records = [
             json.loads(line) for line in (directory / name).read_text().splitlines()
         ]
@@ -36,9 +38,17 @@ def evaluate(
         for record in records:
             if record["verdict"] != "REPOSITORY-ORIGINS-INSPECTED" or record["allow"]:
                 raise ValueError(f"Guard refusal or allowance: {name}")
+    verify_receipt(directory / "preflight")
     measured = directory / "measurement"
     run = json.loads((measured / "calibration.json").read_text())
     usage = json.loads((measured / "measurement.json").read_text())
+    if (
+        usage["preflight_sha256"]
+        != hashlib.sha256(
+            (directory / "preflight/preflight.json").read_bytes()
+        ).hexdigest()
+    ):
+        raise ValueError("Calibration/preflight binding mismatch")
     if (
         run["terminal"],
         run["mode"],

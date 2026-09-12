@@ -1,0 +1,110 @@
+{
+  "files": {
+    "preflight-guard.json": {
+      "sha256": "67aace8cf928c985ad5731af4e6d151b8c98d5fc23f3bed9551df1f4bda7bc1b",
+      "bytes": 19028
+    },
+    "preflight.log": {
+      "sha256": "3d757f8acd80c5276b0c801afcc57cdcbfe6c298819d42a187ff299e8345e3b4",
+      "bytes": 8410
+    },
+    "preflight/empty-direct.keras": {
+      "sha256": "76144bbe58ff63ccfa22e11d0d352995fe29e75a725a0aa1c748dc7c6aa785f1",
+      "bytes": 160219
+    },
+    "preflight/empty-direct.npy": {
+      "sha256": "b4002aaf541833359f90aebf8509f657541679d0283d2a7632059a93fd595551",
+      "bytes": 144
+    },
+    "preflight/empty-pooled.keras": {
+      "sha256": "1248b1f2af353c854e5567e7a0e30bc9bedf5a34dc9fee017cce92507d0d9a61",
+      "bytes": 160219
+    },
+    "preflight/empty-pooled.npy": {
+      "sha256": "754f31f51fa8337bb2a4104a467d35933df644eb0dec7956d364d6977309713f",
+      "bytes": 144
+    },
+    "preflight/empty.npz": {
+      "sha256": "593068dc1b9655ca3d56e08ba819dfd7a582d9f58da003b478dee0ff3a139c14",
+      "bytes": 6790
+    },
+    "preflight/masked-direct.keras": {
+      "sha256": "200d6c4faede106b77a88ac9881a5fbf19763284f89a1f97adb811cff1deb432",
+      "bytes": 160223
+    },
+    "preflight/masked-direct.npy": {
+      "sha256": "67393e17dd1d187bed627290308d97284f463cc11cff6762737f467d1349046b",
+      "bytes": 144
+    },
+    "preflight/masked-pooled.keras": {
+      "sha256": "4ca5adf52590cbd3f29148463272df7af6a95644dab701c2d0004a9c5dd31af5",
+      "bytes": 160222
+    },
+    "preflight/masked-pooled.npy": {
+      "sha256": "aab65b21511c68a2aeb066e435cddfe9fcae084e01c3b69b89b7271bd7a44884",
+      "bytes": 144
+    },
+    "preflight/masked.npz": {
+      "sha256": "cfba1952ebdd45b45556d1e24f8bd1f66f591f91278ecf6a3a90c43b11121267",
+      "bytes": 11530
+    },
+    "preflight/nominal-direct.keras": {
+      "sha256": "f1883599208969396411d7b39f6b10411c6955f99b352f38a8996acdadfbfa79",
+      "bytes": 160218
+    },
+    "preflight/nominal-direct.npy": {
+      "sha256": "594af6fa0ef594ae884baf451247c1d350a8307ae8e4ee9c2228e3f2652c5d9f",
+      "bytes": 144
+    },
+    "preflight/nominal-pooled.keras": {
+      "sha256": "531063e7500f819fd93e2104736dc3ae272622d4ceb77c3fa0ffb2711f954cc1",
+      "bytes": 160218
+    },
+    "preflight/nominal-pooled.npy": {
+      "sha256": "c4ce10506e06470a1f547f6ca4f51ce8e04c19607a53a2335edaf7cd016042b6",
+      "bytes": 144
+    },
+    "preflight/nominal.npz": {
+      "sha256": "a90711c38818c400bf317ec55bed195883abf4da1c54e56f57c0633532fb44ef",
+      "bytes": 7850
+    },
+    "preflight/preflight.json": {
+      "sha256": "65f160469fb550956774f82884ab22dad80d63fec6422e0caccbb52d9b133fac",
+      "bytes": 7109
+    },
+    "preflight/reload.json": {
+      "sha256": "e66f04010ed91c341e174d7b8be6d32952e4f0af587b8137ca91a0bf24defbe5",
+      "bytes": 1239
+    },
+    "preflight/variable-direct.keras": {
+      "sha256": "caf9b9533dba521d7837ca405a0350a8685490dc26bf55f877ff85803af8a239",
+      "bytes": 160222
+    },
+    "preflight/variable-direct.npy": {
+      "sha256": "4eff9dfe712fe79bf1ff00705fa92090c4036e763d8f329daff6eccf38eb2594",
+      "bytes": 144
+    },
+    "preflight/variable-pooled.keras": {
+      "sha256": "5baf09108d7943f1ea0c24ed04e9b483511c6001ec7be2c1a3e91d6f3745b00d",
+      "bytes": 160222
+    },
+    "preflight/variable-pooled.npy": {
+      "sha256": "2c7dbb7013e7bb87898964c033361eefce0c143c4cabed3f3844de7f05e42acc",
+      "bytes": 144
+    },
+    "preflight/variable.npz": {
+      "sha256": "d105b5a0dd7c33439d6e9545182656848c900f3063dbffb8382718ebf714efef",
+      "bytes": 11530
+    },
+    "tests-guard.json": {
+      "sha256": "1e5f5b5dff85611f9b569e14b5ab7d6d9018ddb160b010cfd815b72b421ee065",
+      "bytes": 36299
+    },
+    "tests.log": {
+      "sha256": "d479739ec894313462b05347acb2309c93643cd041b0af6e111890a290eccc9d",
+      "bytes": 1701
+    }
+  },
+  "archive_sha256": "f92ddc7b4e7ef35bf08eff8c48e66e71a9c3147897f04c1da0305456015755c0",
+  "readback": "PASS"
+}

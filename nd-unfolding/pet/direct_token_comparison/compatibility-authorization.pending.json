@@ -1,0 +1,24 @@
+{
+  "status": "PENDING",
+  "decision": "deterministic-packing-single-attempt",
+  "prior_failed_jobs": [
+    "58198332",
+    "58201775"
+  ],
+  "prior_charged_seconds": 193,
+  "wall_seconds": 6600,
+  "preflight_seconds": 1200,
+  "calibration_seconds": 5400,
+  "profile": {
+    "gpus": 1,
+    "cpus": 32,
+    "memory_GiB": 56
+  },
+  "total_gpu_hours": 290,
+  "total_cpu_core_hours": 9296,
+  "storage_GiB": 200,
+  "scope": "synthetic-only",
+  "automatic_retry": false,
+  "full_matrix": "Only after completed calibration and unchanged integrity/20pct-headroom gates",
+  "repair_manifest_sha256": "74ec7606e12eb43e29f98d23a70601913e00835b1853d9bcfdb91914aaf10074"
+}

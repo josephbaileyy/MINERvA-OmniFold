@@ -77,3 +77,23 @@ For delivery, freeze the listed files and preparation hashes in a dedicated
 commit based on `57b707b7`; preserve the occupied `pet-prong-semantics` checkout.
 Do not run the large matrix before approval. The old audit's authorization is
 consumed and cannot be reused.
+
+## Deterministic packing compatibility
+
+The [repair record](COMPATIBILITY_REPAIR-20260913.md) binds the exact patch and
+CPU evidence. [GPU smoke/calibration](COMPATIBILITY_PROPOSAL-20260913.md) remains
+pending a new grant. To reproduce local compatibility in a new directory:
+
+```bash
+CUDA_VISIBLE_DEVICES=-1 python nd-unfolding/mnv_guarded_run.py \
+  --expect-root "$PWD" --inventory /tmp/pet-packing-guard.json \
+  -- nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py \
+  --device cpu --output /tmp/pet-packing-local
+```
+
+Use the five pinned package versions in the proposal. CPU PASS cannot satisfy
+the GPU calibration prerequisite. The preflight does not import GPU-disabling
+pytest fixtures. The byte-identical historical model in `reference/` is loaded
+only as a CPU equivalence oracle; it is not a campaign arm or performance output.
+Historical preparation manifests and proposals describe their original revisions;
+`repair-manifest.json` binds this compatibility update.
