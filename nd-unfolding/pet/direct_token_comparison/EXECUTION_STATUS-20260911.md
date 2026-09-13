@@ -1,5 +1,14 @@
 # Current state: second technical failure; execution stopped
 
+## 2026-09-13 — numerical diagnostic prepared; execution still blocked
+
+The [numerical preparation](NUMERICAL_PREPARATION-20260913.md) adds saved
+intermediate tensors, common-operand and float64 comparisons, and four isolated
+TF32-mode captures. Local CPU validation is complete. The [20-minute GPU-only
+diagnostic proposal](NUMERICAL_PROPOSAL-20260913.md) is pending; it cannot release
+calibration or the full matrix. The cause of `58240587` remains unresolved.
+
+
 ## 2026-09-13 — GPU preflight failed; additional attempt exhausted
 
 **Job 58240587 FAILED 1:0 after 95 seconds. Calibration NOT STARTED; full

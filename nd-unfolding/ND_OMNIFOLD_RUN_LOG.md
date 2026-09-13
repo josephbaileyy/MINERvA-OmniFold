@@ -1,5 +1,15 @@
 # N-D OmniFold run log
 
+## 2026-09-13 — PET pooled numerical diagnostic prepared locally
+
+Completed the numerical capture/reduction setup following GPU failure `58240587`.
+The source-bound CPU rehearsal, exact archived-fixture provenance, reconstructed
+weight qualification, test results and read-back archive are routed from
+`pet/direct_token_comparison/NUMERICAL_PREPARATION-20260913.md`. No GPU allocation,
+calibration, scientific matrix or source access occurred. The separate 20-minute
+diagnostic proposal remains pending and has no automatic training continuation.
+
+
 ## 2026-09-11 — CFS preservation and documentary follow-up
 
 The completed PET source-audit output at `30de7f64` now has a verified CFS copy.

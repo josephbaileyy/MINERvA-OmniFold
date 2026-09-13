@@ -1,0 +1,19 @@
+{
+  "status": "PENDING",
+  "decision": "pooled-numerical-diagnostic-only",
+  "failed_job": "58240587",
+  "prior_charged_seconds": 290,
+  "wall_seconds": 1200,
+  "profile": {
+    "gpus": 1,
+    "cpus": 32,
+    "memory_GiB": 56
+  },
+  "automatic_retry": false,
+  "calibration_authorized": false,
+  "full_matrix_authorized": false,
+  "total_gpu_hours": 290,
+  "total_reserved_cpu_hours": 9296,
+  "storage_GiB": 200,
+  "manifest_sha256": "17ec374fc99014d87ee881198ee1606a2f5c2fe5afb5a78bbebd8b40a252f845"
+}

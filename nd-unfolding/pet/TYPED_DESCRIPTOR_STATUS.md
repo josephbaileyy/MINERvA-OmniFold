@@ -2,6 +2,14 @@
 
 PET typed descriptors remain diagnostic and method-development infrastructure.
 
+## Numerical diagnostic preparation — 2026-09-13
+
+The [pooled CPU/GPU diagnostic](direct_token_comparison/NUMERICAL_PREPARATION-20260913.md)
+is implemented and locally CPU-validated. Its isolated four-process TF32
+comparison saves numerical evidence before reporting failures. A single 20-minute
+GPU diagnostic is proposed, not authorized. The earlier GPU mismatch remains
+unresolved; calibration, full training and real-source work remain blocked.
+
 ## Direct-token comparison preparation — 2026-09-11
 
 The [report for Ben](direct_token_comparison/REPORT_FOR_BEN.md) compares the
