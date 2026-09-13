@@ -56,6 +56,7 @@ import re
 import subprocess
 import sys
 import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Same rooted-insert idiom, and the same reason (OI-136), as `unified_throw_cov_5d.py:39-42` and
@@ -271,7 +272,8 @@ def check_no_member_axis(environ=None):
 
 
 # ---------------------------------- THE CONTRACT, ENFORCED INSIDE THE GUARDED PROCESS ----------
-def enforce_namespace_contract(arm, data_root, declared_dir, code_root=None):
+def enforce_namespace_contract(arm, data_root, declared_dir, code_root=None, product=None,
+                               bank=None, estimator_seed=None, draw_seed=None):
     """Resolve, refuse and report the namespace contract FROM INSIDE THE PRODUCER.
 
     ⚠⚠ WHY THIS IS A LIBRARY CALL AND NOT A CLI STEP IN THE LAUNCHER, AND IT IS RULING 21.
@@ -300,17 +302,26 @@ def enforce_namespace_contract(arm, data_root, declared_dir, code_root=None):
     disagreement REFUSES. That is the same shape the two-roots design already uses: shell computes,
     Python verifies, and the composition is pinned in code rather than in prose.
 
+    ⚠⚠ THE FRESHNESS CLAUSE MOVED, AND THIS IS WHERE THE ARRAY DEFECT WAS. Until 2026-09-13 this
+    function ended in `check_namespace_fresh(plan, [arm])`, which is correct for ONE invocation and
+    refuses every task of an ARRAY after the first one publishes -- see section (h) for the
+    measured shape and for why a single-task probe could not find it. Freshness now lives at
+    `initialize_campaign`, atomically, and the per-task predicate is `verify_task_ownership`.
+    The `dump` arm is the one exception and it keeps the old predicate; the branch below says why.
+
     Returns
     -------
     dict or None
         ``None`` when `MNV_Z_PRECURSOR_NS` is unset -- the pre-existing behaviour, preserved
-        exactly, because the archive reproduction paths must not change. Otherwise the plan plus
-        the freshness and member-axis results.
+        exactly, because the archive reproduction paths must not change. Otherwise the plan, the
+        member-axis result, and either the ownership result (covered arms) or the freshness result
+        (the content-addressed `dump` arm).
     """
     if os.environ.get(NAMESPACE_ENV) is None:
         return None
     check_no_member_axis()
     plan = namespace_plan(data_root, environ=os.environ)
+    require(arm in plan["arms"], f"unknown arm {arm!r}; known arms are {sorted(ARM_LAYOUT)}")
     expected = plan["arms"][arm]["dir"]
     got = str(Path(declared_dir).resolve()) if Path(declared_dir).is_absolute() else declared_dir
     require(os.path.normpath(got) == os.path.normpath(expected),
@@ -318,14 +329,34 @@ def enforce_namespace_contract(arm, data_root, declared_dir, code_root=None):
             f"resolves to {got!r}, but this module's ARM_LAYOUT gives {expected!r}. The shell "
             f"spelling and the Python layout have diverged. Refusing rather than preferring one: "
             f"whichever is right, the other is writing or reading somewhere nobody declared.")
-    fresh = check_namespace_fresh(plan, [arm])
+    if arm in CONTENT_ADDRESSED_ARMS:
+        # THE ONE ARM THE CAMPAIGN DOES NOT COVER, AND ITS RESIDUAL IS LIVE. `unified_throw.do_dump`
+        # addresses the bank by CONTENT -- bands and flux ids split round-robin over `--ngroups` --
+        # so there is no (task id -> basename) map for a task to own, and `declare_arm_task_outputs`
+        # refuses to invent one. This arm therefore keeps the per-invocation freshness predicate
+        # EXACTLY as it was, which means its 8-task array (`--array=0-7`, no throttle) still has the
+        # composition defect section (h) describes: the group that publishes first passes and the
+        # rest refuse. Not repaired here because the authorized campaign consumes the digest-bound,
+        # unmoved bank as an INPUT rather than re-dumping it, so no authorized task takes this path
+        # -- and widening the repair to an arm with no ownable layout would need a second, weaker
+        # ownership model, which is a separate subject with its own authorization.
+        fresh = check_namespace_fresh(plan, [arm])
+        print(f"[z-precursor] namespace {plan['namespace']!r} arm {arm}: FRESH, no member axis, "
+              f"dir {expected} (content-addressed: NOT campaign-owned, and its array composition "
+              f"defect is UNREPAIRED)", flush=True)
+        return {"plan": plan, "arm": arm, "dir": expected, "fresh": fresh,
+                "campaign": None, "expected_files": None}
+    ownership = verify_task_ownership(arm=arm, plan=plan, product=product, bank=bank,
+                                      estimator_seed=estimator_seed, draw_seed=draw_seed)
     files = None
     if arm in ("run", "block"):
         root = Path(code_root) if code_root else Path(_REPO)
         files = declare_arm_files(arm, root / ARM_LAUNCHERS[arm])
-    print(f"[z-precursor] namespace {plan['namespace']!r} arm {arm}: FRESH, no member axis, "
-          f"dir {expected}", flush=True)
-    return {"plan": plan, "arm": arm, "dir": expected, "fresh": fresh, "expected_files": files}
+    print(f"[z-precursor] campaign {ownership['campaign']['campaign_digest'][:12]} namespace "
+          f"{plan['namespace']!r} arm {arm} task {ownership['task_id']}: MEMBER, owns "
+          f"{ownership['output']}, {ownership['n_sibling_products']} bound sibling product(s), "
+          f"no member axis, dir {expected}", flush=True)
+    return {"plan": plan, "arm": arm, "dir": expected, "expected_files": files, **ownership}
 
 
 # ------------------------------------------------- (d) declarations DERIVED from the launcher ----
@@ -428,19 +459,32 @@ def declare_arm_files(arm, launcher_path):
     arm's task 0 writes the knob slab and tasks 1..N write flux slabs -- that branch is in
     `sbatch_uthrow_block_5d.sh:338-346` and is mirrored, not reinvented.
     """
+    outputs = declare_arm_task_outputs(arm, launcher_path)
+    return [outputs[task] for task in sorted(outputs)]
+
+
+def declare_arm_task_outputs(arm, launcher_path):
+    """`{task id: product BASENAME}` for a per-task arm, derived from its own `#SBATCH --array`.
+
+    THE MAPPING IS THE PRIMITIVE AND `declare_arm_files` RETURNS ITS VALUES, so the population
+    declaration and the task-to-file binding are ONE implementation. They were one list until the
+    campaign needed the mapping, and re-zipping a list against `task_ids` in the caller would have
+    been an implicit ordering contract between two functions -- the shape that lets a layout change
+    move one and leave the other silently plausible.
+    """
     info = parse_sbatch_arm(launcher_path)
     if arm == "run":
-        names = [f"uthrow5d_slab_{t}.npz" for t in info["task_ids"]]
+        names = {t: f"uthrow5d_slab_{t}.npz" for t in info["task_ids"]}
     elif arm == "block":
-        names = ["block5d_knobs.npz" if t == 0 else f"block5d_flux_{t}.npz"
-                 for t in info["task_ids"]]
+        names = {t: ("block5d_knobs.npz" if t == 0 else f"block5d_flux_{t}.npz")
+                 for t in info["task_ids"]}
     else:
         raise PrecursorError(
             f"declare_arm_files: arm {arm!r} has no per-task file layout. The dump arm's bank is "
             f"addressed by content (band and universe ids, checked by "
             f"`unified_throw_cov._load_bank`) rather than by task, and the combine arm writes one "
             f"named file. Declaring a task-derived basename list for either would be a fiction.")
-    require(len(set(names)) == len(names),
+    require(len(set(names.values())) == len(names),
             f"declare_arm_files({arm!r}): the derived names repeat; the array declaration and the "
             f"launcher's file layout disagree")
     return names
@@ -672,6 +716,929 @@ def check_receipt(receipt_path, *, require_population=True):
     return {"ok": True, "receipt": str(path), "product": product["path"], "sha256": live}
 
 
+# ======================= (h) THE CAMPAIGN: OWNERSHIP REPLACES PER-TASK EMPTINESS ================
+# JOSEPH, 2026-09-13, authorizing this bounded repair. Three phases, verbatim in substance:
+#
+#   (1) CAMPAIGN INITIALIZATION -- *"Atomically establish a fresh namespace and bind it to one
+#       immutable campaign manifest, including expected task identities, outputs, input digests,
+#       and code revision."*
+#   (2) TASK EXECUTION -- *"Verify campaign membership and exclusive ownership of that task's
+#       output. Permit correctly bound sibling outputs from the same campaign. Refuse foreign
+#       artifacts, duplicate execution, and overwrites."*
+#   (3) COMBINATION -- *"Require the exact completed population and its bindings before
+#       consumption."*
+#
+# THE DEFECT THIS REPLACES IS AN ARRAY DEFECT, NOT A CALL DEFECT, AND THAT DISTINCTION IS THE WHOLE
+# REPAIR. `check_namespace_fresh` above is correct for ONE invocation and wrong for an ARRAY. The
+# contract is enforced PER INVOCATION inside the producer (`unified_throw_cov.py` `do_throws`,
+# `do_blockunits`, `do_combine`) while `sbatch_uthrow_block_5d.sh:398-402` passes
+# `--z-namespace-arm block` for EVERY task whenever the namespace is set. So in the authorized
+# 21-task block array (`--array=0-20%10`) task 0 writes `block5d_knobs.npz` and tasks 1-20 then
+# glob `block5d_*.npz`, MATCH it, and REFUSE. The `run` arm's 40 tasks (`--array=0-39%40`) have
+# the identical shape. At `%10` this is a RACE -- the tasks that start before task 0 publishes
+# pass, the later ones refuse -- so the failure is timing-dependent and leaves a partially
+# populated namespace that the next attempt also refuses.
+# A SINGLE-TASK PROBE PASSED AND COMPLETED (array index 0, 3.3253 h). Index 0 is the one case that
+# cannot hit this, so the probe could not have found it: a contract validated for one task did not
+# compose to the array, and the composition is what is repaired here.
+#
+# FRESHNESS IS RELOCATED, NOT WEAKENED AND NOT BYPASSED. The empty-directory predicate moves to
+# `initialize_campaign`, which is the only place it can hold once tasks are staggered, and there it
+# becomes ATOMIC -- an exclusive `mkdir` rather than a glob another task can invalidate a second
+# later. At task level it is replaced by an ownership predicate that is strictly stronger about the
+# things that matter, and each clause names what the old predicate could not do:
+#
+#   * NOTHING FOREIGN. Every product in the arm directory must carry a CLAIM from THIS campaign.
+#     The old predicate refused the NAME whoever wrote it, which is why it refused siblings -- and
+#     it could not tell a foreign campaign's product at a DECLARED basename from this campaign's
+#     own. `uq_5d/z_probe_20260912/block_slabs_5d/block5d_knobs.npz` is exactly that artifact: a
+#     real, valid product of a DIFFERENT campaign, at a basename this campaign also declares.
+#   * NOTHING DUPLICATED. One `O_EXCL` claim per (arm, task id). Two processes for one task id race
+#     for one create and the loser refuses. The old predicate passed BOTH of them for as long as
+#     neither had published, which is precisely the `%10` race window.
+#   * NOTHING OVERWRITTEN. The task's declared product must not already exist.
+#   * AND THREE BINDINGS THE OLD PREDICATE DID NOT CHECK AT ALL: the A-2(f) code listing digest,
+#     the input digests, and the estimator/draw seeds.
+#
+# WHAT IS NOT COVERED, NAMED RATHER THAN LEFT TO BE DISCOVERED: the `dump` arm. Its 8-task array
+# (`--array=0-7`, no throttle) has the same composition defect and is NOT repaired here. Two
+# reasons, both measured: the authorized campaign CONSUMES the digest-bound, unmoved bank at
+# `<data root>/nd-unfolding/bank_uthrow_5d` (374 entries, 2026-09-13) rather than re-dumping it, so
+# no authorized task takes that path; and the dump arm has no derivable per-task output layout --
+# `declare_arm_task_outputs` refuses to invent one because `unified_throw.do_dump` addresses its
+# bank files by CONTENT (a round-robin of bands and flux ids over `--ngroups`), so there is no
+# (task id -> basename) map to take ownership of. That arm therefore keeps the pre-existing
+# per-invocation freshness predicate unchanged, and `enforce_namespace_contract` says so at the
+# branch rather than here, where its next user would not meet it.
+
+#: Refused rather than migrated, on `RECEIPT_SCHEMA_VERSION`'s precedent: a campaign is the
+#: identity every product of one production binds to, and a silently migrated manifest is a
+#: different campaign wearing the same digest.
+CAMPAIGN_SCHEMA_VERSION = "z-campaign/1"
+
+#: ONE directory inside the namespace holds the manifest, the claims and the completion records.
+#: `_campaign` matches NO arm product glob -- not `block5d_*.npz`, not `uthrow5d_slab_*.npz`, not
+#: `*.np[yz]`, not `unified_throw_cov_5d.root` -- and the test asserts that over `ARM_LAYOUT`
+#: rather than over today's four literals. A campaign directory that its own freshness sweep or
+#: population check selected would be self-defeating.
+CAMPAIGN_DIR = "_campaign"
+CAMPAIGN_MANIFEST_NAME = "campaign.json"
+
+#: The A-2(f) source-manifest RECORD the launchers already require -- `sbatch_uthrow_run_5d_fast.sh
+#: :161` makes `MNV_SOURCE_MANIFEST` mandatory with no default -- and already `--compare` against
+#: the live code root with `--require-clean --require-checkout --require-no-nested-checkout
+#: --require-not-nested --require-readonly` BEFORE the producer starts. The campaign binds the code
+#: revision THROUGH that record rather than through a scheme of its own, and the composition is:
+#: the launcher's preflight establishes record == live tree, `verify_campaign_code` establishes
+#: manifest == record, so together manifest == live. BOTH HALVES ARE PINNED BY A TEST, because two
+#: rulings that each hold only under the other's precondition compose into a defect when only prose
+#: joins them.
+#:
+#: ⚠ READ, NOT IMPORTED, AND THE LAZINESS IS LOAD-BEARING. Importing `mnv_source_manifest` on the
+#: task path would add a repository module to the guarded process's resolved import set, which
+#: `mnv_import_set_ratchet.py` pins per entrypoint as an IDENTITY and not a floor -- so the binding
+#: would be paid for with a pin that can only be rewritten from a clean guarded run. The import
+#: happens ONLY inside `campaign_code_binding`, which runs at initialization, off the guarded path.
+SOURCE_MANIFEST_ENV = "MNV_SOURCE_MANIFEST"
+
+#: The array task id. This is the OTHER half of the ownership binding: the campaign says which
+#: basename task N owns, and this says which task is running. Without it, the basename check
+#: compares the product against itself.
+ARRAY_TASK_ENV = "SLURM_ARRAY_TASK_ID"
+
+#: Arms whose products are addressed by CONTENT rather than by task, so no (task -> basename)
+#: ownership map exists. See the section header for why this is a named residual, not a hole.
+CONTENT_ADDRESSED_ARMS = frozenset({"dump"})
+
+#: Arm -> the arms it CONSUMES. Stated once, here, because it is the SAME relation `do_combine`
+#: already enforces when it refuses a `--combine` or `--block-slabs` glob that does not resolve to
+#: those two arms' directories. Phase 3 runs over this relation, and it runs BEFORE the consuming
+#: task takes its claim -- which is not a detail:
+#:
+#:   ⚠ A CONSUMPTION GATE AFTER THE CLAIM WOULD BURN THE CLAIM ON A PREMATURE RUN. The combine is
+#:   normally submitted while the arrays are still draining, so refusing it is the ORDINARY case,
+#:   not an error; if the refusal happened after the `O_EXCL` create, the combine task would hold
+#:   its own claim for a run that never happened and every later attempt would refuse itself as a
+#:   duplicate. Measured: the first version of this repair did exactly that, and the integration
+#:   test that runs the real `do_combine` twice -- once incomplete, once complete -- is what showed
+#:   it. A guard that fires on every correct run is not a guard, and that one fired on the second.
+CONSUMED_ARMS = {"combine": ("run", "block")}
+
+_CLAIM_RE = re.compile(r"^(?P<arm>[a-z]+)\.task-(?P<task>\d+)\.claim\.json$")
+
+
+def campaign_arms():
+    """The arms a campaign can own, DERIVED as the complement of the content-addressed set.
+
+    Never a second literal list: one hand-written population here and another in `ARM_LAYOUT` is
+    how two spellings of one set start disagreeing, and the disagreement would be invisible.
+    """
+    return tuple(sorted(set(ARM_LAYOUT) - CONTENT_ADDRESSED_ARMS))
+
+
+def campaign_paths(data_root, namespace):
+    """Every campaign-owned path under one namespace.
+
+    Anchored on the COMBINE arm's directory, because that IS the namespace root (`ARM_LAYOUT`'s
+    `"."`), so this cannot drift from `arm_directory`'s idea of where the namespace is.
+    """
+    root = Path(arm_directory(data_root, namespace, "combine")) / CAMPAIGN_DIR
+    return {"root": str(root),
+            "manifest": str(root / CAMPAIGN_MANIFEST_NAME),
+            "claims": str(root / "claims"),
+            "receipts": str(root / "receipts")}
+
+
+def _canonical_json(body):
+    """The exact bytes a campaign digest is taken over: sorted keys, no insignificant whitespace."""
+    return json.dumps(body, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+
+def campaign_digest(body):
+    """The campaign's IDENTITY: sha256 over its own canonical body.
+
+    Self-describing on purpose. A random token would identify the campaign without being able to
+    detect an edit to it; this makes "what campaign is this" and "is this still the manifest that
+    was written" the same question -- and `load_campaign` recomputes it on every read rather than
+    trusting the stored value, which is the same rule `check_receipt` applies to a product digest.
+    """
+    return hashlib.sha256(_canonical_json(body)).hexdigest()
+
+
+def claim_name(arm, task_id):
+    """The claim filename. THE TASK IDENTITY IS IN THE NAME, and that is not cosmetic.
+
+    A concurrent reader of the claims directory must be able to attribute a claim to a task WITHOUT
+    parsing its body: the claim is created by `O_EXCL` at its final name and only then filled, so a
+    reader can legitimately observe it empty. Putting the identity in the name makes the ownership
+    scan a set operation over filenames, with no window in which a real claim reads as unparseable.
+    """
+    return f"{arm}.task-{int(task_id)}.claim.json"
+
+
+def receipt_name(arm, task_id):
+    """The completion-record filename, keyed the same way as the claim it closes."""
+    return f"{arm}.task-{int(task_id)}.receipt.json"
+
+
+def _utc_now():
+    """One spelling of the timestamp, so the manifest and the claims cannot disagree in format."""
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _write_json_exclusive(path, payload):
+    """Create a JSON record at `path` with `O_EXCL`, or REFUSE.
+
+    NOT tmp-then-rename, and the difference is the whole point. `_atomic_write_json` publishes by
+    `os.replace`, which SILENTLY REPLACES an existing file -- right for a receipt written once by a
+    process that has already proved it may, and wrong for the two records here, whose entire job is
+    to fail when somebody got there first. `O_CREAT|O_EXCL` is the create-or-fail primitive: POSIX
+    requires it to be atomic against other creates, and `/pscratch` is Lustre (measured
+    2026-09-13), which serializes the create on the metadata server.
+    ⚠ NOT MEASURED ON LUSTRE ITSELF. The concurrency controls in the test suite run on a local
+    filesystem, because writing to `/pscratch` was outside this repair's authorization. The Lustre
+    claim rests on POSIX `O_EXCL` semantics, not on an observation.
+    """
+    path = Path(path)
+    body = json.dumps(payload, indent=2, sort_keys=True).encode("utf-8") + b"\n"
+    try:
+        fd = os.open(str(path), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+    except FileExistsError as exc:
+        raise PrecursorError(f"{path} already exists and this record is written EXCLUSIVELY: "
+                             f"whoever created it got there first") from exc
+    with os.fdopen(fd, "wb") as handle:
+        handle.write(body)
+        handle.flush()
+        os.fsync(handle.fileno())
+    return str(path)
+
+
+# ------------------------------------------------- PHASE 1: the immutable campaign manifest ----
+def campaign_code_binding(code_root, source_manifest):
+    """Bind the code revision through the EXISTING A-2(f) listing digest.
+
+    Not a new scheme: `mnv_source_manifest.build` already defines "the digest of this tree's
+    tracked sources" as sha256 over the `<sha256>  <relpath>` listing, and already has a
+    both-directions `compare`. The recorded manifest supplied here must be IDENTICAL to the live
+    tree, so the campaign binds BYTES rather than a branch name.
+
+    ⚠ CLEANLINESS IS NOT RE-ASSERTED HERE, DELIBERATELY. `--require-clean` and `--require-readonly`
+    are enforced by each launcher's own preflight against the EXECUTING tree at run time
+    (`sbatch_uthrow_run_5d_fast.sh:206-210`). Repeating them would be a second implementation of a
+    rule that already has an instrument, and it would fire on a correct initialization from a tree
+    carrying untracked scratch. `dirty_count` and `head` are RECORDED so a reader can see what the
+    tree was; the LISTING digest -- over tracked content, so unaffected by untracked files -- is
+    what is gated.
+    """
+    import mnv_source_manifest as srcman
+
+    record_path = Path(source_manifest)
+    require(record_path.is_file(),
+            f"--source-manifest {source_manifest!r} is not a file. It must be the A-2(f) record "
+            f"written by `mnv_source_manifest.py --repo <code root> --write`, which is the same "
+            f"record the launchers require as {SOURCE_MANIFEST_ENV} and compare against the "
+            f"executing tree before the producer starts.")
+    try:
+        recorded = json.loads(record_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise PrecursorError(f"the A-2(f) record {source_manifest} is not readable JSON: "
+                             f"{exc}") from exc
+    live = srcman.build(str(code_root))
+    diff = srcman.compare(recorded, live)
+    require(diff["identical"],
+            f"the A-2(f) record {source_manifest} is NOT the code root {code_root}: "
+            f"{len(diff['removed'])} removed, {len(diff['added'])} added, "
+            f"{len(diff['changed'])} changed (recorded digest {diff['recorded_digest']}, live "
+            f"{diff['live_digest']}). A campaign cannot bind a code revision it cannot name: "
+            f"either the record is stale or the tree is not the one it describes.")
+    return {"code_root": str(Path(code_root).resolve()),
+            "listing_sha256": live["listing_sha256"],
+            "file_count": live["file_count"],
+            "head": live["head"],
+            "dirty_count": live["dirty_count"],
+            "source_manifest": str(record_path.resolve()),
+            "source_manifest_sha256": sha256_file(str(record_path))}
+
+
+def bank_listing(bank):
+    """`(entry count, listing digest)` over the bank's regular files, by NAME and SIZE.
+
+    The same listing IDIOM as `mnv_source_manifest.build`, for the reason recorded there: the
+    digest is over a sorted listing rather than over a set, so a RENAME moves it even when no byte
+    changed. `<size>  <name>` rather than `<sha256>  <name>` because the bank's `cv.npz` alone is
+    2 939 596 884 bytes (measured 2026-09-13) -- a content digest over 374 entries totalling ~26 GB
+    is affordable ONCE, at initialization, and is not affordable in each of 61 tasks.
+    THE RESIDUAL IS STATED WHERE IT IS RELIED ON: this cannot see a same-size content change. The
+    content binding for the two inputs carrying the physics is in `campaign_inputs` -- `cv.npz`
+    once at initialization, and the 11 328-byte flux ratio table on EVERY task.
+
+    ⚠ `os.listdir` AND NOT `Path.iterdir`, AND AN INCOMPLETE WRITE IS EXCLUDED. `iterdir` is on
+    this repository's banned-call list (`test_the_INVISIBILITY_claim_is_SCOPED_to_the_idioms_it_
+    covers`, enforced by AST over every `nd-unfolding/*.py`) precisely because it SEES the
+    glob-invisible `.mnv-incomplete.<product>.<token>.partial` temps -- so a listing built with it
+    would move when a producer died mid-write in the bank, making a transient look like a changed
+    input. The predicate is IMPORTED from the producer rather than respelled here.
+    """
+    import unified_throw_cov as producer
+
+    path = Path(bank)
+    require(path.is_dir(), f"bank {bank!r} is not a directory")
+    names = sorted(n for n in os.listdir(str(path))
+                   if os.path.isfile(os.path.join(str(path), n))
+                   and not producer.is_incomplete_write(n))
+    listing = "".join(f"{os.path.getsize(os.path.join(str(path), n))}  {n}\n" for n in names)
+    return len(names), hashlib.sha256(listing.encode()).hexdigest()
+
+
+def campaign_inputs(bank):
+    """The campaign's input bindings, measured ONCE, at initialization.
+
+    `flux_univ_ratio.npy` is a REQUIRED validated input and not an incidental extra:
+    `unified_throw_cov._flux_ratio_table` divides each flux universe by THAT universe's flux
+    integral (J28), its fallback needs ROOT and a separate universe file, and the live table is
+    measurably not all-ones (min 0.9104, max 1.1371 over shape (100, 14)) -- so a campaign that did
+    not bind it could silently consume a different normalization. Its NAME comes from
+    `flux_universe.BANKED_RATIO_NAME`, the producer's own constant, never from a literal here.
+    """
+    import flux_universe
+    import unified_throw_cov as producer
+
+    path = Path(bank)
+    count, listing = bank_listing(path)
+    cv_digest = producer._bank_cv_digest(str(path))
+    require(cv_digest != "UNAVAILABLE",
+            f"the bank {bank} has no readable cv.npz. `_bank_cv_digest` stamps the literal "
+            f"UNAVAILABLE rather than omitting a key so that a gate can see it, and it is refused "
+            f"here: a campaign whose central input cannot be digested binds nothing.")
+    ratio = path / flux_universe.BANKED_RATIO_NAME
+    require(ratio.is_file(),
+            f"the bank {bank} carries no {flux_universe.BANKED_RATIO_NAME}. That table is a "
+            f"REQUIRED validated input, not an incidental extra -- without it "
+            f"`unified_throw_cov._flux_ratio_table` falls back to a ROOT-dependent rebuild from "
+            f"--flux-universe-file, which is a different input with a different provenance.")
+    return {"bank": str(path.resolve()),
+            "entry_count": count,
+            "listing_sha256": listing,
+            "bank_cv_sha256": cv_digest,
+            "flux_ratio_name": flux_universe.BANKED_RATIO_NAME,
+            "flux_ratio_bytes": ratio.stat().st_size,
+            "flux_ratio_sha256": sha256_file(str(ratio))}
+
+
+def campaign_seeds(environ=None):
+    """The seeds a campaign pins, DERIVED from `seed_offset_policy` rather than from a launcher.
+
+    The precursor is coherence group 2, whose archive estimator baseline is 1000, and
+    `ARCHIVE_DRAW_SEED` pins the draw seed at the literal 1000 for every offset. Both come from the
+    policy module, which is their single source. A literal here would be a second statement of the
+    grouping, and THE BASELINES ARE NOT SHARED -- group 1's is 42 -- so a wrong one would be
+    silently plausible. Nothing is unified: only group 2's row is read.
+    """
+    import seed_offset_policy as policy
+
+    group, baseline = policy.LEG_BASELINES["unified_throw_cov"]
+    declared, value = policy.declared_offset(environ)
+    return {"estimator_group": group,
+            "estimator_baseline": int(baseline),
+            "estimator_seed": int(baseline) + int(value),
+            "draw_seed": int(policy.ARCHIVE_DRAW_SEED),
+            "member_offset_declared": int(declared),
+            "member_offset": int(value)}
+
+
+def campaign_arm_table(code_root, arms=None):
+    """Every covered arm's declared task identities and outputs, from its OWN `#SBATCH` lines.
+
+    DERIVED, NEVER RETYPED, which is the rule `parse_sbatch_arm` already exists to keep: a range
+    literal here would be a second implementation of the arm's population, and a declaration
+    derived from anything but the launcher cannot be right about what the launcher will produce.
+    """
+    names = campaign_arms() if arms is None else tuple(sorted(set(arms)))
+    require(names, "a campaign with no arms declares no task identities and can own nothing")
+    table = {}
+    for arm in names:
+        require(arm in ARM_LAYOUT, f"unknown arm {arm!r}; known arms are {sorted(ARM_LAYOUT)}")
+        require(arm not in CONTENT_ADDRESSED_ARMS,
+                f"arm {arm!r} cannot be campaign-owned: its products are addressed by CONTENT and "
+                f"not by task, so there is no (task id -> basename) map to take exclusive "
+                f"ownership of. `unified_throw.do_dump` splits bands and flux ids round-robin over "
+                f"--ngroups, and `declare_arm_task_outputs` refuses to invent a layout for it. The "
+                f"authorized campaign consumes the digest-bound bank as an INPUT; see "
+                f"`enforce_namespace_contract`, which leaves that arm's pre-existing "
+                f"per-invocation freshness predicate exactly as it was.")
+        launcher = Path(code_root) / ARM_LAUNCHERS[arm]
+        require(launcher.is_file(),
+                f"arm {arm!r}'s launcher {launcher} is absent from the code root. The declaration "
+                f"is derived from that file's own #SBATCH lines, so without it there is nothing to "
+                f"derive and a hand-written population would be a fiction.")
+        info = parse_sbatch_arm(launcher)
+        if arm == "combine":
+            # NOT `declare_arm_task_outputs`, which refuses here and is RIGHT to. The combine arm's
+            # basename is not DERIVED from the array -- it is the arm's single declared product in
+            # `ARM_LAYOUT`, and the launcher's absence of an `--array` line only says there is one
+            # task. Two different derivations, kept apart so neither borrows the other's warrant.
+            require(info["array_spec"] is None and info["task_ids"] == [0],
+                    f"the combine launcher now declares an array ({info['array_spec']!r}); its "
+                    f"single-product layout no longer describes it, and the campaign must not "
+                    f"guess which task writes the one file")
+            outputs = {"0": ARM_LAYOUT["combine"][1]}
+        else:
+            outputs = {str(t): n for t, n in declare_arm_task_outputs(arm, launcher).items()}
+        table[arm] = {"launcher": ARM_LAUNCHERS[arm],
+                      "array_spec": info["array_spec"],
+                      "task_ids": info["task_ids"],
+                      "n_tasks": info["n_tasks"],
+                      "throttle": info["throttle"],
+                      "time_limit_seconds": info["time_limit_seconds"],
+                      "product_glob": ARM_LAYOUT[arm][1],
+                      "outputs": outputs}
+    for consumer, consumed in CONSUMED_ARMS.items():
+        missing = sorted(set(consumed) - set(table)) if consumer in table else []
+        require(not missing,
+                f"this campaign declares the consuming arm {consumer!r} but not {missing}, which "
+                f"it reads. Phase 3 requires the exact completed population of every consumed arm, "
+                f"and an undeclared arm has no declared population to require -- so the consumer "
+                f"would proceed with its inputs ungated. Declare them, or drop the consumer.")
+    return table
+
+
+def initialize_campaign(*, data_root, code_root, source_manifest, bank, namespace=None,
+                        arms=None, label="", environ=None):
+    """PHASE 1. Establish a fresh namespace ATOMICALLY and bind it to one immutable manifest.
+
+    THE ORDER OF THE FIRST TWO STEPS IS THE DESIGN, and neither replaces the other:
+
+      * `check_namespace_fresh` first, for the DIAGNOSTIC. It names the arm, the product count and
+        example basenames, which is what an operator needs; an `EEXIST` from the step below says
+        only that a directory is there.
+      * then an EXCLUSIVE `os.makedirs(..., exist_ok=False)`, for the ATOMICITY Joseph asked for.
+        This is the step that makes "fresh" a fact rather than an observation: the glob above is
+        true of an instant, and two operators initializing the same namespace concurrently both
+        pass it. Exactly one can win the create.
+
+    AN EXISTING BUT EMPTY NAMESPACE IS REFUSED, deliberately rather than by oversight: an empty
+    directory somebody else made is indistinguishable from one this initialization made, so it
+    cannot be claimed. There is NO `--force`. Overriding this is "bypassing freshness", which the
+    authorization excludes by name; the remedy is a new namespace.
+    """
+    env = os.environ if environ is None else environ
+    ns = (resolve_namespace(env) if namespace is None
+          else resolve_namespace({NAMESPACE_ENV: namespace}))
+    check_no_member_axis(env)
+    require(Path(data_root).is_absolute(),
+            f"--data-root {data_root!r} is relative. Every path in the manifest is resolved once, "
+            f"here, and a relative root would anchor the campaign to whichever directory the "
+            f"operator happened to be standing in.")
+    plan = namespace_plan(data_root, namespace=ns)
+    check_namespace_fresh(plan)
+    ns_root = Path(arm_directory(data_root, ns, "combine"))
+    try:
+        os.makedirs(ns_root, exist_ok=False)
+    except FileExistsError as exc:
+        raise PrecursorError(
+            f"the namespace root {ns_root} ALREADY EXISTS. Initialization establishes a fresh "
+            f"namespace atomically, by an exclusive create, so an existing directory is refused "
+            f"even when its product globs are empty: an empty directory somebody else made cannot "
+            f"be told from one this command made, and claiming it would be the adopt-what-is-"
+            f"already-there move the authorization excludes. Name a fresh namespace.") from exc
+    except OSError as exc:
+        raise PrecursorError(f"cannot create the namespace root {ns_root}: {exc}") from exc
+    paths = campaign_paths(data_root, ns)
+    for directory in (paths["root"], paths["claims"], paths["receipts"]):
+        os.makedirs(directory, exist_ok=False)
+    for arm, entry in plan["arms"].items():
+        if arm != "combine":
+            os.makedirs(entry["dir"], exist_ok=False)
+    body = {
+        "schema_version": CAMPAIGN_SCHEMA_VERSION,
+        "subject": "z-prospective-unified-throw-precursor-campaign",
+        "label": str(label),
+        "created_at_utc": _utc_now(),
+        "namespace": ns,
+        "data_root": str(Path(data_root).resolve()),
+        "campaign_dir": CAMPAIGN_DIR,
+        "arm_dirs": {arm: entry["dir"] for arm, entry in plan["arms"].items()},
+        "code": campaign_code_binding(code_root, source_manifest),
+        "inputs": campaign_inputs(bank),
+        "seeds": campaign_seeds(env),
+        "arms": campaign_arm_table(code_root, arms),
+    }
+    document = {"body": body, "campaign_digest": campaign_digest(body)}
+    _write_json_exclusive(paths["manifest"], document)
+    return {"campaign": {"body": body, "campaign_digest": document["campaign_digest"],
+                         "path": paths["manifest"]},
+            "plan": plan, "paths": paths}
+
+
+def load_campaign(manifest_path):
+    """Read a campaign manifest and RE-DERIVE its digest. Immutability is checked, not assumed.
+
+    The stored digest is never trusted: `campaign_digest` is recomputed over the body on every
+    read, so an edited manifest is a refusal rather than a differently-identified campaign. Same
+    rule and the same reason as `check_receipt` re-reading the product digest from disk -- a
+    recorded field is a timestamped observation, never a current state.
+    """
+    path = Path(manifest_path)
+    require(path.is_file(),
+            f"no campaign manifest at {manifest_path}. A precursor task must be a MEMBER of a "
+            f"declared campaign: {NAMESPACE_ENV} names a namespace, and a namespace with no "
+            f"manifest has no expected task identities, no bound inputs and no code revision, so "
+            f"there is nothing for this task to own. Run `z_precursor.py campaign-init` first. "
+            f"Freshness has not been bypassed -- it moved there, where it is atomic.")
+    try:
+        document = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise PrecursorError(f"campaign manifest {manifest_path} is not readable JSON: "
+                             f"{exc}") from exc
+    require(isinstance(document, dict) and isinstance(document.get("body"), dict)
+            and document.get("campaign_digest"),
+            f"campaign manifest {manifest_path} is not a {{body, campaign_digest}} document")
+    body = document["body"]
+    require(body.get("schema_version") == CAMPAIGN_SCHEMA_VERSION,
+            f"campaign schema_version {body.get('schema_version')!r} != "
+            f"{CAMPAIGN_SCHEMA_VERSION}; refused rather than migrated")
+    live = campaign_digest(body)
+    require(live == document["campaign_digest"],
+            f"the campaign manifest {manifest_path} has been EDITED since it was written: its body "
+            f"now digests to {live}, the file records {document['campaign_digest']}. A campaign "
+            f"manifest is IMMUTABLE -- every claim and every completion record binds that digest, "
+            f"so an edit silently re-identifies the whole production.")
+    return {"body": body, "campaign_digest": live, "path": str(path.resolve())}
+
+
+# -------------------------------------------------------- PHASE 2: membership and ownership ----
+def verify_campaign_code(campaign, environ):
+    """The task's half of the code-revision binding: the A-2(f) record must be the bound one."""
+    record = environ.get(SOURCE_MANIFEST_ENV)
+    require(record not in (None, ""),
+            f"{SOURCE_MANIFEST_ENV} is unset. The campaign binds the code revision through the "
+            f"A-2(f) listing digest, and the launchers already make this variable mandatory with "
+            f"no default (`sbatch_uthrow_run_5d_fast.sh:161`) and already compare the record "
+            f"against the executing tree before the producer starts. Without it this task cannot "
+            f"say which code revision it is running.")
+    require(os.path.isfile(record),
+            f"{SOURCE_MANIFEST_ENV}={record!r} does not name a readable file")
+    try:
+        recorded = json.loads(Path(record).read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise PrecursorError(f"the A-2(f) record {record} is not readable JSON: {exc}") from exc
+    bound = campaign["body"]["code"]
+    live = recorded.get("listing_sha256")
+    require(live == bound["listing_sha256"],
+            f"this task's A-2(f) record digests the tree to {live!r}, but the campaign is bound to "
+            f"{bound['listing_sha256']!r} ({bound['file_count']} tracked files, HEAD "
+            f"{bound['head']}). The code revision moved under the campaign. A staggered task must "
+            f"run the revision its siblings ran, or the products are not one production.")
+    # RECORDED, NOT GATED: re-emitting the record from a byte-identical tree changes `built_at_utc`
+    # and therefore the FILE digest while the code revision is unchanged, so gating on the file
+    # would refuse a correct run. The LISTING digest above is the code revision.
+    return {"source_manifest": record,
+            "listing_sha256": live,
+            "source_manifest_sha256_bound": bound["source_manifest_sha256"],
+            "source_manifest_sha256_live": sha256_file(record)}
+
+
+def verify_campaign_inputs(campaign, bank):
+    """The task's half of the input binding: the same bank, still the same listing and flux table.
+
+    WHAT IS RE-VERIFIED PER TASK AND WHY IT IS NOT EVERYTHING, stated where it is relied on: the
+    bank's listing (names and sizes, one `stat` per entry) and the 11 328-byte flux ratio table by
+    CONTENT. `cv.npz` is 2 939 596 884 bytes and its content digest is bound ONCE, at
+    initialization; re-reading 2.94 GB in each of 61 tasks to re-prove a fact the manifest already
+    records would buy a same-size-content-change guarantee at a price the campaign does not have.
+    """
+    bound = campaign["body"]["inputs"]
+    path = Path(bank)
+    require(path.is_dir(), f"--bank {bank!r} is not a directory")
+    require(str(path.resolve()) == bound["bank"],
+            f"this task reads the bank at {path.resolve()}, but the campaign is bound to "
+            f"{bound['bank']}. The inputs are part of the campaign identity: a task pointed at a "
+            f"different bank is not a member of this production.")
+    count, listing = bank_listing(path)
+    require(count == bound["entry_count"] and listing == bound["listing_sha256"],
+            f"the bank {bound['bank']} has CHANGED since the campaign was initialized: {count} "
+            f"entries digesting to {listing}, bound {bound['entry_count']} entries at "
+            f"{bound['listing_sha256']}. The listing is by name and size, so this is an added, "
+            f"removed, renamed or resized input.")
+    ratio = path / bound["flux_ratio_name"]
+    require(ratio.is_file(), f"the bound input {ratio} is gone")
+    live_ratio = sha256_file(str(ratio))
+    require(live_ratio == bound["flux_ratio_sha256"],
+            f"{bound['flux_ratio_name']} has CHANGED: on disk {live_ratio}, bound "
+            f"{bound['flux_ratio_sha256']}. That table sets each flux universe's flux integral "
+            f"(J28), so a changed one is a different normalization and not merely a different "
+            f"file at the same name.")
+    return {"bank": bound["bank"], "entry_count": count, "listing_sha256": listing,
+            "flux_ratio_sha256": live_ratio}
+
+
+def resolve_task_id(campaign, arm, environ):
+    """WHICH task is this. The other half of every ownership statement below.
+
+    REQUIRED FOR AN ARRAY ARM, and refused rather than inferred from the output path. Inferring it
+    would make the basename check compare the product against itself -- a criterion that cannot
+    disagree with the thing it checks. Every authorized precursor task of an array arm is an
+    `sbatch` array task, so this variable is present on every correct run.
+    """
+    entry = campaign["body"]["arms"][arm]
+    ids = sorted(int(t) for t in entry["task_ids"])
+    raw = environ.get(ARRAY_TASK_ENV)
+    if entry["array_spec"] is None:
+        require(len(ids) == 1,
+                f"arm {arm!r} declares no --array but carries {len(ids)} task ids; the campaign "
+                f"cannot say which one is running")
+        if raw not in (None, ""):
+            require(raw.strip().isdigit() and int(raw) == ids[0],
+                    f"{ARRAY_TASK_ENV}={raw!r}, but arm {arm!r} is the single non-array task "
+                    f"{ids[0]}; this was submitted as something the campaign did not declare")
+        return ids[0]
+    require(raw not in (None, ""),
+            f"{ARRAY_TASK_ENV} is unset and arm {arm!r} is an array ({entry['array_spec']}). "
+            f"Ownership binds the ARRAY TASK to the one basename the campaign says it writes; "
+            f"with no task id that binding compares the output to itself and holds vacuously.")
+    text = raw.strip()
+    require(text.isdigit(), f"{ARRAY_TASK_ENV}={raw!r} is not a non-negative integer")
+    task = int(text)
+    require(task in ids,
+            f"{ARRAY_TASK_ENV}={task} is not a declared task of arm {arm!r}, whose campaign table "
+            f"holds {len(ids)} ids derived from {entry['array_spec']}. A task outside the declared "
+            f"population owns nothing here -- and note that a declared bracket must never be read "
+            f"back from `sacct -X`, which Slurm REWRITES under throttling.")
+    return task
+
+
+def claimed_task_ids(claims_dir, arm):
+    """Every task id of `arm` that holds a claim, read from FILENAMES only.
+
+    RAISES rather than returning an empty set when the directory cannot be read -- the distinction
+    `unified_throw_cov.ScanBlind` exists for. An unreadable claims directory is a check that could
+    not look, and reporting it as "nothing is claimed" would make every product in the arm
+    directory read as unclaimed and, worse, would leave a duplicate execution with no claim to
+    collide with.
+    """
+    try:
+        entries = os.listdir(claims_dir)
+    except OSError as exc:
+        raise PrecursorError(
+            f"cannot read the campaign's claims directory {claims_dir} ({exc}). This is NOT "
+            f"'no task has claimed anything': it is a check that could not look, and an empty "
+            f"answer here would let a duplicate execution find no claim to collide with.") from exc
+    found = set()
+    for name in entries:
+        match = _CLAIM_RE.match(name)
+        if match is not None and match.group("arm") == arm:
+            found.add(int(match.group("task")))
+    return found
+
+
+def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed, environ=None):
+    """PHASE 2. Campaign membership, then exclusive ownership of THIS task's output.
+
+    The clauses run in an order chosen so each is REACHABLE by a fault aimed at it -- a guard that
+    another guard refuses first, with the same exit status, is untested rather than proven:
+
+      1. the manifest exists, is unedited, and belongs to this namespace
+      2. this arm is one the campaign covers, at the directory it was bound to
+      3. the code revision is the bound one
+      4. the inputs are the bound ones
+      5. the seeds are the bound ones
+      6. this task id is declared, and the product it is writing is the basename it owns
+      7. NOTHING FOREIGN: every product present in the arm directory is claimed by this campaign
+      8. NOTHING OVERWRITTEN: this task's own product does not already exist
+      9. NOTHING DUPLICATED: the `O_EXCL` claim
+
+    7 before 8 because a product at this task's own declared name with NO claim is FOREIGN, and
+    calling it an overwrite would send the reader after the wrong thing. 8 before 9 because (claim
+    present, product present) means this task already ran to completion while (claim present,
+    product absent) means an attempt died before publishing; those call for different actions and
+    are reported as different findings rather than one message that half-fits both.
+
+    SIBLINGS ARE PERMITTED, which is the clause the old predicate got wrong: a product whose
+    basename this campaign declares AND whose task holds a claim is a correctly bound sibling, and
+    clause 7 passes it silently however many of them there are.
+    """
+    environ = os.environ if environ is None else environ
+    paths = campaign_paths(plan["data_root"], plan["namespace"])
+    campaign = load_campaign(paths["manifest"])
+    body = campaign["body"]
+    require(body["namespace"] == plan["namespace"],
+            f"the manifest found in namespace {plan['namespace']!r} declares namespace "
+            f"{body['namespace']!r}; a campaign manifest moved between namespaces identifies the "
+            f"wrong production")
+    require(arm in body["arms"],
+            f"arm {arm!r} is not covered by this campaign, which declares {sorted(body['arms'])}. "
+            f"Running it would write into a campaign's namespace with no declared identity and no "
+            f"ownership. Initialize a campaign that declares it.")
+    entry = body["arms"][arm]
+    require(os.path.normpath(body["arm_dirs"][arm]) == os.path.normpath(plan["arms"][arm]["dir"]),
+            f"the campaign binds arm {arm!r} to {body['arm_dirs'][arm]}, but this run resolves "
+            f"{plan['arms'][arm]['dir']}; the namespace layout moved under the campaign")
+    code = verify_campaign_code(campaign, environ)
+    require(bank not in (None, ""),
+            f"arm {arm!r} consumes the bank, so --bank must be supplied for the campaign's input "
+            f"binding to have an operand")
+    inputs = verify_campaign_inputs(campaign, bank)
+    seeds = body["seeds"]
+    require(estimator_seed is not None and draw_seed is not None,
+            f"arm {arm!r} runs the estimator, so --estimator-seed and --draw-seed are both present "
+            f"on every authorized invocation and are both bound by the campaign")
+    require(int(estimator_seed) == seeds["estimator_seed"],
+            f"--estimator-seed {int(estimator_seed)}, but the campaign is bound to "
+            f"{seeds['estimator_seed']} (group {seeds['estimator_group']}, baseline "
+            f"{seeds['estimator_baseline']} + offset {seeds['member_offset']}). Throws, block "
+            f"units and the CV must share ONE estimator seed, or ML variation leaks out of C_ML "
+            f"and into C_syst.")
+    require(int(draw_seed) == seeds["draw_seed"],
+            f"--draw-seed {int(draw_seed)}, but the campaign is bound to {seeds['draw_seed']}. The "
+            f"throw realization for global index j is --draw-seed + j, so a second draw seed in "
+            f"one campaign is a second throw ensemble -- and the combine's own seed guard cannot "
+            f"see it, because per-member coherence is not ensemble coherence.")
+    task_id = resolve_task_id(campaign, arm, environ)
+    expected_name = entry["outputs"][str(task_id)]
+    require(product not in (None, ""),
+            f"arm {arm!r} task {task_id} owns the output {expected_name!r}, and no output path was "
+            f"supplied to compare against it")
+    product_path = Path(product)
+    require(product_path.name == expected_name,
+            f"task {task_id} of arm {arm!r} owns {expected_name!r}, but this invocation writes "
+            f"{product_path.name!r}. The task and the file it is writing disagree, so whichever is "
+            f"right the other names a product nobody declared -- and a task writing a SIBLING's "
+            f"basename would destroy that sibling's output.")
+    product_dir = (str(product_path.parent.resolve()) if product_path.is_absolute()
+                   else os.path.normpath(str(product_path.parent)))
+    require(os.path.normpath(product_dir) == os.path.normpath(plan["arms"][arm]["dir"]),
+            f"task {task_id} of arm {arm!r} would write into {product_dir}, which is not the "
+            f"campaign's arm directory {plan['arms'][arm]['dir']}")
+
+    import unified_throw_cov as producer
+
+    declared = {str(t): n for t, n in entry["outputs"].items()}
+    declared_names = set(declared.values())
+    claimed = claimed_task_ids(paths["claims"], arm)
+    stray = sorted(t for t in claimed if str(t) not in declared)
+    require(not stray,
+            f"the campaign holds claims for UNDECLARED tasks of arm {arm!r}: {stray}. A claim "
+            f"outside the declared population means something ran under this campaign's name that "
+            f"the campaign never expected.")
+    claimed_names = {declared[str(t)] for t in claimed}
+    present = sorted(p for p in globmod.glob(plan["arms"][arm]["product_glob"])
+                     if not producer.is_incomplete_write(p))
+    present_names = {os.path.basename(p) for p in present}
+    undeclared = sorted(present_names - declared_names)
+    require(not undeclared,
+            f"arm {arm!r} of namespace {plan['namespace']!r} holds {len(undeclared)} product(s) "
+            f"this campaign never declared: {undeclared[:8]}"
+            f"{' ...' if len(undeclared) > 8 else ''}. That is a FOREIGN or STALE product: every "
+            f"content check this producer makes is satisfied by any inventory-complete population "
+            f"at the matching seed, so a foreign member combines silently.")
+    unclaimed = sorted(present_names - claimed_names)
+    require(not unclaimed,
+            f"arm {arm!r} of namespace {plan['namespace']!r} holds {len(unclaimed)} product(s) "
+            f"whose basename this campaign DECLARES but which no task of this campaign has "
+            f"CLAIMED: {unclaimed[:8]}{' ...' if len(unclaimed) > 8 else ''}. That is a valid "
+            f"product of a DIFFERENT campaign sitting at a name this one owns -- the exact shape "
+            f"of `uq_5d/z_probe_20260912/block_slabs_5d/block5d_knobs.npz` -- and a basename check "
+            f"alone passes it, which is why ownership is by CLAIM and not by name.")
+    # PHASE 3, FOR A CONSUMING ARM, AND BEFORE THE CLAIM. See `CONSUMED_ARMS` for why the order is
+    # load-bearing: refusing a combine submitted while the arrays are still draining is the
+    # ORDINARY case, and a refusal taken after the `O_EXCL` create would leave that task holding a
+    # claim for a run that never happened.
+    consumed = {}
+    for role in CONSUMED_ARMS.get(arm, ()):
+        consumed[role] = require_campaign_complete(
+            campaign, role,
+            os.path.join(body["arm_dirs"][role], body["arms"][role]["product_glob"]))
+    require(not product_path.exists(),
+            f"task {task_id} of arm {arm!r} would write {product_path}, which ALREADY EXISTS and "
+            f"is claimed by this campaign: this task has already run. Adopting or overwriting a "
+            f"pre-existing output is not authorized -- the authorization covers ordinary staggered "
+            f"execution of ONE campaign, not resuming it. Initialize a new campaign in a fresh "
+            f"namespace.")
+    claim_path = os.path.join(paths["claims"], claim_name(arm, task_id))
+    try:
+        _write_json_exclusive(claim_path, {
+            "schema_version": CAMPAIGN_SCHEMA_VERSION,
+            "campaign_digest": campaign["campaign_digest"],
+            "arm": arm,
+            "task_id": int(task_id),
+            "output": expected_name,
+            "product": str(product_path),
+            "claimed_at_utc": _utc_now(),
+            "slurm": {key: environ.get(key, "") for key in
+                      ("SLURM_JOB_ID", "SLURM_ARRAY_JOB_ID", "SLURM_ARRAY_TASK_ID",
+                       "SLURM_JOB_NAME", "SLURM_NODELIST")},
+            "code_listing_sha256": code["listing_sha256"],
+            "inputs_listing_sha256": inputs["listing_sha256"],
+        })
+    except PrecursorError as exc:
+        raise PrecursorError(
+            f"DUPLICATE EXECUTION: task {task_id} of arm {arm!r} is ALREADY CLAIMED in campaign "
+            f"{campaign['campaign_digest'][:12]} ({exc}). Another process holds this task's "
+            f"exclusive claim and no product has been published, so it is either still running or "
+            f"it died before publishing. The claim is created with O_CREAT|O_EXCL, so exactly one "
+            f"of two concurrent attempts can hold it. Automatic retries and resumption are "
+            f"outside the authorization: re-running this task is an explicit decision, never a "
+            f"default.") from exc
+    # `arm` is IN the return so this result is self-sufficient: `record_task_completion` takes only
+    # a contract, and a caller that had to remember to add the arm afterwards would be a contract
+    # completed by convention.
+    return {"campaign": campaign,
+            "arm": arm,
+            "task_id": int(task_id),
+            "output": expected_name,
+            "claim": claim_path,
+            "receipt": os.path.join(paths["receipts"], receipt_name(arm, task_id)),
+            "campaign_paths": paths,
+            "code": code,
+            "inputs": inputs,
+            "consumed": consumed,
+            "n_sibling_products": len(present),
+            "n_sibling_claims": len(claimed)}
+
+
+def record_task_completion(contract, *, product):
+    """Close this task's claim with a completion record, written STRICTLY AFTER the product.
+
+    `write_receipt` is the mechanism, unchanged: it refuses unless the product exists, is non-empty
+    and OPENS, so the record is an observation rather than a declaration made in parallel with the
+    thing it describes. What is added is the campaign binding -- the digest, the arm and the task
+    id -- which is what phase 3 reads. There is no `try`/`finally` and no `os._exit` on this path,
+    for the reason stated at `write_receipt`: a record emitted from a bypassed handler would assert
+    a completion that did not happen.
+
+    `bank_cv_sha256` comes from the CAMPAIGN rather than from `producer_provenance(bank=...)`,
+    which would re-digest a 2 939 596 884-byte `cv.npz` in each of 61 tasks to re-derive a value
+    the manifest already binds.
+    """
+    require(contract is not None and contract.get("campaign") is not None,
+            "record_task_completion: this run has no campaign contract, so there is no claim to "
+            "close and no campaign to bind the product to")
+    import unified_throw_cov as producer
+
+    campaign = contract["campaign"]
+    arm, task_id = contract["arm"], contract["task_id"]
+    extra = dict(producer.code_provenance())
+    extra.update({
+        "campaign_digest": campaign["campaign_digest"],
+        "campaign_schema_version": CAMPAIGN_SCHEMA_VERSION,
+        "arm": arm,
+        "task_id": int(task_id),
+        "output": os.path.basename(product),
+        "claim": os.path.basename(contract["claim"]),
+        "bank_cv_sha256": campaign["body"]["inputs"]["bank_cv_sha256"],
+        "bank_listing_sha256": campaign["body"]["inputs"]["listing_sha256"],
+        "code_listing_sha256": campaign["body"]["code"]["listing_sha256"],
+    })
+    return write_receipt(product=product, out_path=contract["receipt"], arm=arm,
+                         namespace=campaign["body"]["namespace"], plan_json=contract.get("plan"),
+                         extra=extra, code_root=os.environ.get("MNV_CODE_ROOT"))
+
+
+# ------------------------------------------------- PHASE 3: the completed population, bound ----
+def check_task_completion(campaign, arm, task_id, receipts_dir):
+    """One task's completion record, gated against the product on disk AND against the campaign."""
+    path = os.path.join(receipts_dir, receipt_name(arm, task_id))
+    # `require_population=False`: the two population flags are a COMBINE-level declaration about
+    # slab globs, and a per-task receipt has no population to declare. THE PROVENANCE FIELDS ARE
+    # RE-CHECKED BELOW, because `check_receipt` gates them inside the same branch as the flags --
+    # so turning the flag off silently drops them too, which is a relaxation wider than it reads.
+    base = check_receipt(path, require_population=False)
+    receipt = json.loads(Path(path).read_text(encoding="utf-8"))
+    extra = receipt.get("extra") or {}
+    require(extra.get("campaign_digest") == campaign["campaign_digest"],
+            f"the completion record {path} binds campaign "
+            f"{str(extra.get('campaign_digest'))[:12]!r}, not this one "
+            f"{campaign['campaign_digest'][:12]!r}. A product completed under another campaign is "
+            f"a foreign artifact however correct its own record is.")
+    require(extra.get("arm") == arm and int(extra.get("task_id", -1)) == int(task_id),
+            f"the completion record {path} claims arm {extra.get('arm')!r} task "
+            f"{extra.get('task_id')!r}, not {arm!r} task {task_id}")
+    expected = campaign["body"]["arms"][arm]["outputs"][str(task_id)]
+    require(os.path.basename(receipt["product"]["path"]) == expected,
+            f"the completion record for {arm} task {task_id} names product "
+            f"{os.path.basename(receipt['product']['path'])!r}, but the campaign says that task "
+            f"owns {expected!r}")
+    for field in REQUIRED_PROVENANCE:
+        value = extra.get(field)
+        require(value not in (None, "", "UNAVAILABLE"),
+                f"completion record {path}: extra.{field} = {value!r}. UNAVAILABLE is stamped "
+                f"deliberately by the producer so that a gate can see it.")
+    return {"receipt": path, "product": base["product"], "sha256": base["sha256"]}
+
+
+def campaign_arm_status(campaign, arm):
+    """Per-task state of one arm: claimed, published, recorded. READ-ONLY, and it never refuses.
+
+    Separate from `require_campaign_complete` on purpose. An operator asking "where is this
+    campaign" must not be answered with an exception, and a GATE must not be satisfiable by a
+    summary: this is the view, that is the gate, and neither is the other's evidence.
+    """
+    body = campaign["body"]
+    require(arm in body["arms"], f"arm {arm!r} is not covered by this campaign")
+    entry = body["arms"][arm]
+    paths = campaign_paths(body["data_root"], body["namespace"])
+    claimed = claimed_task_ids(paths["claims"], arm)
+    rows = []
+    for task in sorted(int(t) for t in entry["task_ids"]):
+        name = entry["outputs"][str(task)]
+        rows.append({"task_id": task, "output": name,
+                     "claimed": task in claimed,
+                     "published": os.path.exists(os.path.join(body["arm_dirs"][arm], name)),
+                     "recorded": os.path.exists(
+                         os.path.join(paths["receipts"], receipt_name(arm, task)))})
+    return {"arm": arm, "campaign_digest": campaign["campaign_digest"], "n_tasks": len(rows),
+            "tasks": rows,
+            "n_complete": sum(1 for r in rows if r["claimed"] and r["published"] and r["recorded"])}
+
+
+def require_campaign_complete(campaign, arm, pattern):
+    """PHASE 3. The EXACT completed population and its bindings, before anything consumes it.
+
+    THREE THINGS, AND NONE SUBSUMES ANOTHER -- the same neither-subsumes discipline
+    `check_slab_population` and `check_namespace_fresh` already divide between them:
+
+      * FILE IDENTITY, both directions, by `unified_throw_cov.check_slab_population`: a declared
+        member the glob did not find, and a member the glob found that was never declared.
+      * COMPLETION, per task: a claim AND a completion record. A population whose files are all
+        present but one of which was never recorded as finished is a DIFFERENT state from a missing
+        file, and the incremental `_atomic_savez` in `do_blockunits` makes it reachable -- a killed
+        task leaves a SHORT but perfectly loadable slab at the declared name.
+      * BINDING, per record: the product digest re-read from disk, and the campaign digest, arm and
+        task id checked against this campaign.
+
+    Refuses ONCE with the whole incomplete set rather than at the first gap, so the operator sees
+    the population and not a sample of it.
+    """
+    body = campaign["body"]
+    require(arm in body["arms"],
+            f"arm {arm!r} is not covered by campaign {campaign['campaign_digest'][:12]}")
+    entry = body["arms"][arm]
+    tasks = sorted(int(t) for t in entry["task_ids"])
+    expected = [entry["outputs"][str(t)] for t in tasks]
+
+    import unified_throw_cov as producer
+
+    population = producer.check_slab_population(
+        pattern, expected, f"campaign {campaign['campaign_digest'][:12]} arm {arm!r} population")
+    paths = campaign_paths(body["data_root"], body["namespace"])
+    claimed = claimed_task_ids(paths["claims"], arm)
+    unclaimed = [t for t in tasks if t not in claimed]
+    unrecorded = [t for t in tasks
+                  if not os.path.exists(os.path.join(paths["receipts"], receipt_name(arm, t)))]
+    require(not unclaimed and not unrecorded,
+            f"campaign {campaign['campaign_digest'][:12]} arm {arm!r} is INCOMPLETE: "
+            f"{len(unclaimed)} of {len(tasks)} task(s) never claimed their output "
+            f"{unclaimed[:12]}{' ...' if len(unclaimed) > 12 else ''}; {len(unrecorded)} never "
+            f"recorded a completion {unrecorded[:12]}{' ...' if len(unrecorded) > 12 else ''}. "
+            f"The glob population can be exactly right while a task is still running or died "
+            f"mid-write: `_atomic_savez` is called after every unit, so a killed task leaves a "
+            f"SHORT slab at the declared name that loads cleanly. Consumption needs the COMPLETED "
+            f"population, not the present one.")
+    bindings = [check_task_completion(campaign, arm, task, paths["receipts"]) for task in tasks]
+    return {"arm": arm, "campaign_digest": campaign["campaign_digest"], "n_tasks": len(tasks),
+            "population": population, "bindings": bindings}
+
+
 # ----------------------------------------------------------------------------------- the CLI ----
 def _build_parser():
     parser = argparse.ArgumentParser(description=__doc__,
@@ -728,7 +1695,50 @@ def _build_parser():
     chk = sub.add_parser("check-receipt", help="gate a receipt against the product on disk")
     chk.add_argument("--receipt", required=True)
     chk.add_argument("--no-require-population", action="store_true")
+
+    # ⚠ THESE THREE ARE OPERATOR COMMANDS, RUN BEFORE THE FIRST `sbatch` AND AFTER THE LAST ONE.
+    # They are NOT added to any launcher, and that is ruling 21 again: `mnv_preflight_census.py`
+    # pins UNCLASSIFIED interpreter invocations in the declared launchers at zero, and this module
+    # still cannot be a declared preflight tool (criterion (5) requires its repository imports to be
+    # a subset of {mnv_guarded_run}, and it imports `unified_throw_cov` by design). The task-side
+    # half of the campaign needs no launcher line at all: the producer already receives
+    # `--z-namespace-arm`, and the namespace, the arm, the task id (`SLURM_ARRAY_TASK_ID`) and the
+    # output path are all things it already has.
+    init = sub.add_parser("campaign-init",
+                          help="PHASE 1: establish a fresh namespace atomically and bind it to one "
+                               "immutable campaign manifest")
+    init.add_argument("--data-root", required=True,
+                      help="absolute data root; every path in the manifest is resolved against it")
+    init.add_argument("--namespace", default=None,
+                      help=f"the namespace segment; defaults to ${NAMESPACE_ENV}")
+    init.add_argument("--code-root", required=True,
+                      help="the approved clean execution tree the campaign binds")
+    init.add_argument("--source-manifest", required=True,
+                      help=f"the A-2(f) record written by `mnv_source_manifest.py --write` from "
+                           f"--code-root; the SAME record the launchers pass as "
+                           f"${SOURCE_MANIFEST_ENV}. It is compared against the live tree here.")
+    init.add_argument("--bank", required=True,
+                      help="the bank directory the block/run/combine arms consume, bound by digest")
+    init.add_argument("--arm", action="append", default=None, dest="arms",
+                      help="restrict the campaign's arms (default: every campaign-ownable arm)")
+    init.add_argument("--label", default="", help="free text carried into the manifest")
+
+    show = sub.add_parser("campaign-show", help="print a namespace's campaign manifest and digest")
+    show.add_argument("--data-root", required=True)
+    show.add_argument("--namespace", default=None)
+
+    status = sub.add_parser("campaign-status",
+                            help="per-task claimed/published/recorded state of one arm (read-only)")
+    status.add_argument("--data-root", required=True)
+    status.add_argument("--namespace", default=None)
+    status.add_argument("--arm", required=True, choices=campaign_arms())
     return parser
+
+
+def _cli_namespace(args):
+    """The namespace for an operator command: the flag, else the environment, never a default."""
+    return (resolve_namespace() if getattr(args, "namespace", None) is None
+            else resolve_namespace({NAMESPACE_ENV: args.namespace}))
 
 
 def main(argv=None):
@@ -772,6 +1782,45 @@ def main(argv=None):
             result = check_receipt(args.receipt,
                                    require_population=not args.no_require_population)
             print(f"[z-precursor] receipt OK: {result['receipt']} -> {result['product']}")
+        elif args.command == "campaign-init":
+            started = initialize_campaign(
+                data_root=args.data_root, namespace=args.namespace, code_root=args.code_root,
+                source_manifest=args.source_manifest, bank=args.bank, arms=args.arms,
+                label=args.label)
+            campaign, body = started["campaign"], started["campaign"]["body"]
+            print(f"[z-precursor] campaign {campaign['campaign_digest']} INITIALIZED")
+            print(f"  namespace     {body['namespace']}  (established by an exclusive create)")
+            print(f"  manifest      {campaign['path']}")
+            print(f"  code          A-2(f) listing {body['code']['listing_sha256']} over "
+                  f"{body['code']['file_count']} tracked files, HEAD {body['code']['head']}")
+            print(f"  inputs        {body['inputs']['entry_count']} bank entries, listing "
+                  f"{body['inputs']['listing_sha256']}, cv.npz "
+                  f"{body['inputs']['bank_cv_sha256']}")
+            print(f"  seeds         estimator {body['seeds']['estimator_seed']} "
+                  f"({body['seeds']['estimator_group']} baseline "
+                  f"{body['seeds']['estimator_baseline']}), draw {body['seeds']['draw_seed']}")
+            for arm in sorted(body["arms"]):
+                entry = body["arms"][arm]
+                print(f"  arm {arm:<8} {entry['n_tasks']} task(s) from "
+                      f"{entry['array_spec'] or '<no --array>'} -> "
+                      f"{len(entry['outputs'])} declared output(s)")
+        elif args.command == "campaign-show":
+            ns = _cli_namespace(args)
+            campaign = load_campaign(campaign_paths(args.data_root, ns)["manifest"])
+            print(json.dumps({"campaign_digest": campaign["campaign_digest"],
+                              "body": campaign["body"]}, indent=2, sort_keys=True))
+        elif args.command == "campaign-status":
+            ns = _cli_namespace(args)
+            campaign = load_campaign(campaign_paths(args.data_root, ns)["manifest"])
+            status = campaign_arm_status(campaign, args.arm)
+            print(f"[z-precursor] campaign {status['campaign_digest'][:12]} arm {status['arm']}: "
+                  f"{status['n_complete']} of {status['n_tasks']} task(s) complete "
+                  f"(claimed AND published AND recorded)")
+            for row in status["tasks"]:
+                flags = "".join(("C" if row["claimed"] else "-",
+                                 "P" if row["published"] else "-",
+                                 "R" if row["recorded"] else "-"))
+                print(f"  task {row['task_id']:>4}  {flags}  {row['output']}")
     except PrecursorError as exc:
         print(f"[z-precursor] FAIL: {exc}", file=sys.stderr)
         return 2
