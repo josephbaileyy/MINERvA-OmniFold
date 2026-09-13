@@ -1352,14 +1352,21 @@ def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed
       5. the seeds are the bound ones
       6. this task id is declared, and the product it is writing is the basename it owns
       7. NOTHING FOREIGN: every product present in the arm directory is claimed by this campaign
-      8. NOTHING OVERWRITTEN: this task's own product does not already exist
-      9. NOTHING DUPLICATED: the `O_EXCL` claim
+      8. PHASE 3, for a CONSUMING arm only: every arm in `CONSUMED_ARMS[arm]` is complete
+      9. NOTHING OVERWRITTEN: this task's own product does not already exist
+     10. NOTHING DUPLICATED: the `O_EXCL` claim
 
-    7 before 8 because a product at this task's own declared name with NO claim is FOREIGN, and
-    calling it an overwrite would send the reader after the wrong thing. 8 before 9 because (claim
+    7 before 9 because a product at this task's own declared name with NO claim is FOREIGN, and
+    calling it an overwrite would send the reader after the wrong thing. 9 before 10 because (claim
     present, product present) means this task already ran to completion while (claim present,
     product absent) means an attempt died before publishing; those call for different actions and
-    are reported as different findings rather than one message that half-fits both.
+    are reported as different findings rather than one message that half-fits both. 8 before 10 for
+    the reason recorded at `CONSUMED_ARMS`: a consumption refusal taken AFTER the create would burn
+    the consuming task's own claim on the ordinary case.
+    ⚠ THIS LIST IS TEN ITEMS AND THE FIRST COMMIT BODY OF THIS REPAIR SAID NINE. Step 8 moved here
+    from `do_combine` during the same review and the list was not renumbered with it. Corrected
+    rather than left, because an ordered list that silently omits a step is the shape where a
+    reviewer checks every item and still misses one.
 
     SIBLINGS ARE PERMITTED, which is the clause the old predicate got wrong: a product whose
     basename this campaign declares AND whose task holds a claim is a correctly bound sibling, and
