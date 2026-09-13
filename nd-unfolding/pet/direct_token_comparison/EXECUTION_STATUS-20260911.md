@@ -1,5 +1,16 @@
 # Current state: second technical failure; execution stopped
 
+## 2026-09-14 — numerical diagnostic authorized and submitted
+
+Job `58277208` was submitted from clean standalone revision `6298efc2` under
+[the numerical authorization](NUMERICAL_AUTHORIZATION-20260914.md). The deployed
+manifest and runtime lock match. Canonical main's freshness check passed for its
+own `32e403b8` HEAD; direct queue observation was empty before submission. Latest
+observation: PENDING (Priority), no start time supplied. The grant permits one
+20-minute diagnostic only; calibration and the full matrix remain blocked.
+[Submission and preallocation evidence](execution_runs/20260914-numerical/submission.json).
+
+
 ## 2026-09-13 — numerical diagnostic prepared; execution still blocked
 
 The [numerical preparation](NUMERICAL_PREPARATION-20260913.md) adds saved
