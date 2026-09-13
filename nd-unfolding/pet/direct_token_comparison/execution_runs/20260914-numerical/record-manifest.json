@@ -1,0 +1,20 @@
+{
+  "files": {
+    "accounting-and-final-state.txt": "16b385f80e990da85d519c17f074140695a1ba1c04db2ed6a0bdb05f4270c02b",
+    "deployment-test.txt": "f3f15c139800de205b4cec9932d0468a0aa005d2d9c42b682f522ca4d56fbedb",
+    "payload.tar.gz": "47040ea04bd6d9fb35f616c98f48ca2d1f47e4f8d2236ebe5400b1ab0f796445",
+    "preallocation.txt": "5cbedd4b1aa61a12d2b214985a98948877b9c40e77732816c12467d4800c27ae",
+    "preservation-run.txt": "345895eaae6c0a80e12f4cfbcb0825c350f8c10446fca2b4369726f2fe57fb25",
+    "preservation.json": "c785d386f68ea8bc283fbe1465038a0cd0fe3f15a8122ef6dcb43aac17fb25ba",
+    "preserve.py": "1bc069fb8175ba7473fe9682d412aa092abc04f053889213fc916c0f210a2483",
+    "runtime-lock.txt": "41b9cbdb473e604bd482f5de77bfe8cf3bb36084cb0ab7f27bcb3295c9299895",
+    "settings-off.json": "a0d0f8f9f1f000c4c721f03b213e202c237d47e487c68e7b69d483c29b542a9e",
+    "settings-on.json": "eb940ed7a77b047f18abd4594825737897db816b610ee4264066555b291e0164",
+    "slurm.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission.json": "2b317bfd71dec0fd1b12d78a476072382e363970bd3f62baea1db1f99f810ad8",
+    "submission.txt": "cb44c1fe3cd5f7fee33d3a7b388362637ab45faf3ff9d606f0dcbbfc472b194e",
+    "summary.json": "0bec5559d08b6fa6f108ef012ddab061584e85f1beb827d6413117a5bd470fec",
+    "terminal.json": "f752e5c07749d835d6eb194147ae519bf33e46de5ed41e888bd466d07124dc94"
+  },
+  "scope": "Closed local run records; payload.tar.gz verified against preservation.json"
+}

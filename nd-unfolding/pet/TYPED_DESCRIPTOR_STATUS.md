@@ -2,6 +2,16 @@
 
 PET typed descriptors remain diagnostic and method-development infrastructure.
 
+## Numerical diagnostic result — 2026-09-14
+
+[Job 58277208](direct_token_comparison/NUMERICAL_RESULT-20260914.md) completed the
+four-process TF32 diagnosis. TF32 enabled reproduces the earlier pooled maximum
+error exactly; disabled yields zero fixed-tolerance failures. The effect begins
+in the token MLP, before pooling. Historical weights are reconstructed, not
+verified original bytes. No campaign precision policy changed; direct-model GPU
+validation, calibration and training remain blocked. Evidence is preserved on CFS
+and in the committed archive; no learning-performance conclusion follows.
+
 ## Numerical diagnostic preparation — 2026-09-13
 
 The [pooled CPU/GPU diagnostic](direct_token_comparison/NUMERICAL_PREPARATION-20260913.md)

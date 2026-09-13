@@ -105,3 +105,11 @@ embedding tolerance check; calibration did not start.
 [Terminal evidence and resource accounting](COMPATIBILITY_RESULT-20260913.md).
 Direct-model GPU validation and paired calibration remain incomplete. These software checks do not change any keep/modify/exclude/unresolved
 recommendation or supply a learning-performance winner.
+
+**14 September numerical update:** a controlled TF32 on/off diagnostic reproduced
+the pooled CPU/GPU discrepancy. At unchanged tolerance, 112/192 pooled components
+fail with TF32 enabled and 0/192 fail with it disabled; maximum differences are
+4.89235e-4 and 2.38419e-7 respectively. The first discrepancy occurs in a Dense
+matrix product before pooling. [Exact measurements and provenance limits](NUMERICAL_RESULT-20260914.md).
+This supports a future explicit full-FP32 compatibility check, not a representation
+winner. Direct-model GPU validation and paired training remain incomplete.

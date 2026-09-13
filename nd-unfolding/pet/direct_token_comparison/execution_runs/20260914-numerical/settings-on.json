@@ -1,0 +1,180 @@
+{
+  "versions": {
+    "numpy": "1.26.4",
+    "tensorflow": "2.16.2",
+    "keras": "3.15.1",
+    "scipy": "1.16.3",
+    "pytest": "9.1.1"
+  },
+  "requested_device": "gpu",
+  "source_sha256": {
+    "typed_token_comparison.py": "36306f3500a07764b537f8e1264bab757438a3610e26ed954b4327dcd14c70b7",
+    "typed_descriptor_keras.py": "dccc8c616c03c24db2ce29bd0b6de56d08d37468fbdff2b6d1935c6ff2c9348f",
+    "typed_descriptors.py": "1a0469778cc86948c7da2ff7d5795f8d19625b2ebd755eb429c8e57f4fedf08b",
+    "run_typed_token_comparison.py": "7597d48826fe0b1913dc89bb6a15bf5a4befa773ac2970bd7b7e3525080e51fb",
+    "direct_token_comparison/compatibility_preflight.py": "b4092b3ac46ec5fcb3ea95f0903a8acae15042e80ec261edec0bd20ab0794d6c",
+    "direct_token_comparison/calibration_measure.py": "000dffd97ffc2cb43826ac2d1319b08e5bfdb8011e18d381b4c2e0434c2fee01",
+    "direct_token_comparison/reference/typed_token_comparison_cpu.py": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95",
+    "numerical_diagnostic.py": "daf5779bd370558e94c8a321513cdc4c6381f04e79b7e81fe830bff8bf7b1751"
+  },
+  "python": "3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]",
+  "application_affinity": [
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55
+  ],
+  "pid": 1365405,
+  "tf32_requested": "on",
+  "tf32_enabled": true,
+  "determinism_enabled": true,
+  "mixed_precision_global_policy": "float32",
+  "floatx": "float32",
+  "tensorflow_build": {
+    "cpu_compiler": "/usr/lib/llvm-17/bin/clang",
+    "cuda_compute_capabilities": [
+      "sm_50",
+      "sm_60",
+      "sm_70",
+      "sm_80",
+      "compute_90"
+    ],
+    "cuda_version": "12.3",
+    "cudnn_version": "8",
+    "is_cuda_build": true,
+    "is_rocm_build": false,
+    "is_tensorrt_build": true
+  },
+  "device_details": {
+    "compute_capability": [
+      8,
+      0
+    ],
+    "device_name": "NVIDIA A100-SXM4-40GB"
+  },
+  "environment": {
+    "TF_DETERMINISTIC_OPS": "1",
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+    "NVIDIA_TF32_OVERRIDE": null,
+    "TF_ENABLE_ONEDNN_OPTS": null,
+    "CUDA_VISIBLE_DEVICES": "0"
+  },
+  "layer_policies": {
+    "cpu": [
+      {
+        "name": "photons_token_dense_0",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "photons_token_dense_1",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "photons_token_embedding",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "blobs_token_dense_0",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "blobs_token_dense_1",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "blobs_token_embedding",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "prongs_token_dense_0",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "prongs_token_dense_1",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "prongs_token_embedding",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      }
+    ],
+    "target": [
+      {
+        "name": "photons_token_dense_0",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "photons_token_dense_1",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "photons_token_embedding",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "blobs_token_dense_0",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "blobs_token_dense_1",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "blobs_token_embedding",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "prongs_token_dense_0",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "prongs_token_dense_1",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      },
+      {
+        "name": "prongs_token_embedding",
+        "compute_dtype": "float32",
+        "variable_dtype": "float32",
+        "activation": "relu"
+      }
+    ]
+  }
+}

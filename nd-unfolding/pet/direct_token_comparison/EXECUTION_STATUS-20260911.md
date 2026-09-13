@@ -1,4 +1,14 @@
-# Current state: second technical failure; execution stopped
+# PET routing comparison: calibration and training remain blocked
+
+## 2026-09-14 — diagnostic complete; TF32 isolates reproduced discrepancy
+
+Job `58277208` completed in 105 seconds. TF32-on reproduces the old pooled maximum
+exactly (112/192 components fail); TF32-off reduces it to 2.384185791015625e-7
+(0/192 fail), with unchanged tolerance. All 20 repeatability comparisons and
+instrumentation parity checks are exact. [Result and qualifications](NUMERICAL_RESULT-20260914.md).
+Evidence is verified on CFS and in the committed archive. The diagnostic grant
+is consumed. No precision-policy change, calibration or full matrix is authorized.
+
 
 ## 2026-09-14 — numerical diagnostic authorized and submitted
 

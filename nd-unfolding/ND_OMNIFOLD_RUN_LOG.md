@@ -1,5 +1,16 @@
 # N-D OmniFold run log
 
+## 2026-09-14 — PET numerical diagnostic completed
+
+Authorized job `58277208`, clean execution revision `6298efc2`, completed in
+105 seconds. TF32-on reproduces the failed pooled maximum; TF32-off passes the
+unchanged component tolerance. Exact measurements, historical-weight qualification,
+float64 comparisons and verified CFS/archive inventory are recorded in
+`pet/direct_token_comparison/NUMERICAL_RESULT-20260914.md`. All four allocations
+sum to 395 conservative seconds. No calibration, training, precision-policy
+adoption, real-source access, covariance or Gate-6 work occurred.
+
+
 ## 2026-09-13 — PET pooled numerical diagnostic prepared locally
 
 Completed the numerical capture/reduction setup following GPU failure `58240587`.
