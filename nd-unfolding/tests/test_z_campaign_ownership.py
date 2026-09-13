@@ -801,7 +801,13 @@ class InitializationIsAtomicAndFresh(CampaignFixture):
             self.init_campaign(self.namespace)
         self.assertIn("ALREADY EXISTS", str(caught.exception))
 
-    def test_a_STALE_A2f_RECORD_refuses_initialization(self):
+    def test_a_STALE_A2f_RECORD_refuses_initialization_and_CREATES_NOTHING(self):
+        """A failed measurement must leave the namespace UNTOUCHED, or it is unusable both ways.
+
+        An earlier version created the directory tree before measuring, so a stale record left a
+        namespace root with no manifest in it: refused by every task (no campaign) AND by a second
+        attempt (the exclusive create). Every measurement now precedes the first `mkdir`.
+        """
         record = json.loads(Path(self.srcman).read_text())
         record["files"]["nd-unfolding/z_precursor.py"] = "2" * 64
         stale = self.work / "stale-source-manifest.json"
@@ -811,6 +817,28 @@ class InitializationIsAtomicAndFresh(CampaignFixture):
                                    code_root=str(REPO), source_manifest=str(stale),
                                    bank=str(self.bank.path), arms=list(self.ARMS), environ={})
         self.assertIn("is NOT the code root", str(caught.exception))
+        self.assertFalse(
+            os.path.exists(ZP.arm_directory(str(self.data_root), "zcamp_stale", "combine")),
+            "a refused initialization must create NO directory, or the namespace is poisoned")
+
+    def test_an_UNREADABLE_BANK_refuses_initialization_and_CREATES_NOTHING(self):
+        """The other failable measurement, in the same direction: the bank digest."""
+        os.unlink(self.bank.path / "cv.npz")
+        with self.assertRaises(ZP.PrecursorError) as caught:
+            self.init_campaign("zcamp_nocv")
+        self.assertIn("no readable cv.npz", str(caught.exception))
+        self.assertFalse(
+            os.path.exists(ZP.arm_directory(str(self.data_root), "zcamp_nocv", "combine")))
+
+    def test_POSITIVE_CONTROL_a_SUCCESSFUL_init_creates_every_directory_it_declares(self):
+        """The other direction of the arm above: measuring first must not stop it creating."""
+        started = self.init_campaign("zcamp_created")
+        for arm, directory in started["campaign"]["body"]["arm_dirs"].items():
+            with self.subTest(arm=arm):
+                self.assertTrue(os.path.isdir(directory), directory)
+        for key in ("root", "claims", "receipts"):
+            self.assertTrue(os.path.isdir(started["paths"][key]), key)
+        self.assertTrue(os.path.isfile(started["paths"]["manifest"]))
 
     def test_a_bank_with_NO_FLUX_RATIO_TABLE_refuses_initialization(self):
         """`flux_univ_ratio.npy` is a REQUIRED validated input; its absence sends

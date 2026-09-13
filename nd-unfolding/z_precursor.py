@@ -1131,6 +1131,28 @@ def initialize_campaign(*, data_root, code_root, source_manifest, bank, namespac
             f"operator happened to be standing in.")
     plan = namespace_plan(data_root, namespace=ns)
     check_namespace_fresh(plan)
+    # EVERY MEASUREMENT HAPPENS BEFORE THE FIRST `mkdir`, and that ordering is the difference
+    # between a refusal and a namespace nobody can use. The A-2(f) rebuild and the bank digest can
+    # both fail -- a stale record, an unreadable `cv.npz` -- and an earlier version of this
+    # function created the directory tree first, so such a failure left a namespace root with no
+    # manifest in it: unusable by every task (no campaign) AND unusable by a second attempt (the
+    # exclusive create refuses it). Measuring first means a failure leaves NOTHING behind.
+    # The window this opens is closed by the create itself: another operator who claims the
+    # namespace while the 2.94 GB `cv.npz` is being digested wins, and this call refuses.
+    body = {
+        "schema_version": CAMPAIGN_SCHEMA_VERSION,
+        "subject": "z-prospective-unified-throw-precursor-campaign",
+        "label": str(label),
+        "created_at_utc": _utc_now(),
+        "namespace": ns,
+        "data_root": str(Path(data_root).resolve()),
+        "campaign_dir": CAMPAIGN_DIR,
+        "arm_dirs": {arm: entry["dir"] for arm, entry in plan["arms"].items()},
+        "code": campaign_code_binding(code_root, source_manifest),
+        "inputs": campaign_inputs(bank),
+        "seeds": campaign_seeds(env),
+        "arms": campaign_arm_table(code_root, arms),
+    }
     ns_root = Path(arm_directory(data_root, ns, "combine"))
     try:
         os.makedirs(ns_root, exist_ok=False)
@@ -1149,20 +1171,6 @@ def initialize_campaign(*, data_root, code_root, source_manifest, bank, namespac
     for arm, entry in plan["arms"].items():
         if arm != "combine":
             os.makedirs(entry["dir"], exist_ok=False)
-    body = {
-        "schema_version": CAMPAIGN_SCHEMA_VERSION,
-        "subject": "z-prospective-unified-throw-precursor-campaign",
-        "label": str(label),
-        "created_at_utc": _utc_now(),
-        "namespace": ns,
-        "data_root": str(Path(data_root).resolve()),
-        "campaign_dir": CAMPAIGN_DIR,
-        "arm_dirs": {arm: entry["dir"] for arm, entry in plan["arms"].items()},
-        "code": campaign_code_binding(code_root, source_manifest),
-        "inputs": campaign_inputs(bank),
-        "seeds": campaign_seeds(env),
-        "arms": campaign_arm_table(code_root, arms),
-    }
     document = {"body": body, "campaign_digest": campaign_digest(body)}
     _write_json_exclusive(paths["manifest"], document)
     return {"campaign": {"body": body, "campaign_digest": document["campaign_digest"],
@@ -1567,11 +1575,15 @@ def check_task_completion(campaign, arm, task_id, receipts_dir):
 
 
 def campaign_arm_status(campaign, arm):
-    """Per-task state of one arm: claimed, published, recorded. READ-ONLY, and it never refuses.
+    """Per-task state of one arm: claimed, published, recorded. A VIEW, never a gate.
 
-    Separate from `require_campaign_complete` on purpose. An operator asking "where is this
-    campaign" must not be answered with an exception, and a GATE must not be satisfiable by a
-    summary: this is the view, that is the gate, and neither is the other's evidence.
+    Separate from `require_campaign_complete` on purpose: a GATE must not be satisfiable by a
+    summary, and a summary must not be mistaken for a gate. This is the view, that is the gate, and
+    neither is the other's evidence.
+    ⚠ IT IS NOT EXCEPTION-FREE, and saying so would be the over-claim. It raises on an arm the
+    campaign does not cover, and it propagates `claimed_task_ids`'s could-not-look refusal on an
+    unreadable claims directory -- because an operator shown "0 of 21 claimed" when nobody could
+    read the directory is being shown a blind zero as a measurement.
     """
     body = campaign["body"]
     require(arm in body["arms"], f"arm {arm!r} is not covered by this campaign")
