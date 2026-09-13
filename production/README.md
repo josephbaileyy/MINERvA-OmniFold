@@ -1,58 +1,43 @@
-# Production commands
+# Production workflows
 
-This interface adapts standard scalar ROOT inputs and supports explicit nominal
-and cached LightGBM estimators, statistical replicas, single-band systematic diagnostics, training-split diagnostics,
-strict MC closure, and linear projection.
-It also plans per-playlist ROOT preparation and exposes retained guarded PET
-diagnostic training, full-inventory inference and extraction. Local fixture equivalence does not authorize a production
-switchover, retirement of a frozen reference, or scientific adoption.
+Run from the repository root. These commands grant **no compute authority**:
+full-file preparation, fits and ensembles need a separately authorized allocation,
+not a login node. Keep the governing workstream/OI routes and checkout guard.
+PET remains diagnostic with central/statistical pairing declined; non-2D
+covariances remain quarantined. Successful execution is not adoption.
 
-## Local smoke
+## Environments and inputs
 
-Use Python 3.11 or newer. Install the CPU dependencies in an isolated environment:
+- Scalar ROOT preparation and `nominal-lgbm-v1`: Python 3.11, ROOT 6.28,
+  NumPy and LightGBM. The pure-Python adapter needs no compiled RooUnfold wrapper.
+- Cached fits, covariance assembly and projection: Python 3.11 and
+  `production/requirements.txt`; LightGBM also needs its OpenMP runtime.
+- C++ event preparation and PET extraction: built ROOT/MAT environment,
+  initialized by `source setup_salloc_env.sh` from this checkout.
+- PET training/inference: the established `tensorflow/2.15.0` module, in a
+  separate process from ROOT extraction. Do not load TensorFlow into a ROOT
+  extraction process or borrow another checkout's Python modules.
+
+Activate the scalar ROOT environment on Perlmutter (without `set -u`):
 
 ```sh
-python3 -m venv .venv-production
-.venv-production/bin/python -m pip install -r production/requirements.txt
+source /global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/etc/profile.d/conda.sh
+conda activate "${ROOT628_PREFIX:-$HOME/.conda/envs/root_6_28}"
 ```
 
-Run from the repository root, choosing a fresh output directory:
+All six entry points accept `--config`, `--input`, `--output` and `--plan`;
+synthetic preparation omits `--input`. Help needs only the standard library.
+Plans read configuration and check paths, never scan arrays or write products.
+Replace example `/data` paths with immutable prerequisites. Outputs must be fresh.
 
-```sh
-PYTHON=.venv-production/bin/python bash production/smoke.sh /tmp/omnifold-smoke
-.venv-production/bin/python -m pytest -q production/tests
-```
+## Scalar nominal → members → covariance → projection
 
-The smoke script contains the six exact Python invocations: event generation,
-nominal training, three statistical members in one process, covariance assembly,
-closure, and projection. All unfolding uses real LightGBM, 800 synthetic events,
-100 trees per fit, two iterations, weighted events, reconstruction misses, and
-truth cuts. ROOT and TensorFlow are unnecessary. LightGBM also needs its platform
-OpenMP runtime. This is a functionality test, not a production performance test.
+Edit `production/examples/scalar_root.json` for the **independent baseline flux** file.
+It reads the native merged ROOT inventory with signal, data, background and
+truth-denominator trees. Supported extra axes are `eavail`, `eavail,q3` and
+`eavail,q3,W`; standard muon phase space and native purity treatment are fixed.
 
-Every entry point accepts `--config`, `--input`, `--output`, and `--plan`; synthetic
-preparation omits `--input`. Help needs only the standard library. Plans read small
-JSON files and check path existence, without loading event arrays or writing
-outputs. Scalar execution installs `mnv_guarded_run.py` before training; numerical
-package initialization and hardware discovery occur in read-only preflight.
-External cluster execution still needs the governing launcher and authorization.
-
-## Calculation and input contract
-
-### Standard scalar production input
-
-ROOT adaptation and `nominal-lgbm-v1` use the established `root_6_28` conda
-environment with NumPy and LightGBM. Activate it using the conda hook and full
-environment prefix in `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`; the pure Python
-scalar adapter does not need the compiled RooUnfold wrapper. The per-playlist C++
-event loop still requires the separately built ROOT/MAT environment. Do not run
-full-file preparation, training or ensembles on a login node. The following are
-commands for a **separately authorized allocation**, not a grant to launch one.
-
-Edit `examples/scalar_root.json` to name the independent baseline flux file. It
-accepts the native axis sets `eavail`, `eavail,q3` and `eavail,q3,W`; standard
-muon phase space and purity background treatment are fixed. Starting from the
-merged `events.root` named by the per-playlist preparation plan:
+Execute the standard 5D path in an authorized allocation:
 
 ```sh
 python production/prepare_events --config production/examples/scalar_root.json --input /data/prepared/events.root --output /data/scalar_5d.npz
@@ -63,75 +48,45 @@ python production/project.py --config production/examples/project_5d.json --inpu
 python production/closure.py --config production/examples/nominal_5d.json --input /data/scalar_5d.npz --output /data/scalar_closure
 ```
 
-Three seeds illustrate command wiring, not a sufficient scientific ensemble.
-For 3D/4D, change the preparation axis list, scalar features and projection axes
-together. Add `--plan` to resolve prerequisites without reading event arrays.
-The adapter reuses the retained collectors, POT/flux loaders and purity builder.
-The source entry index travels through those same collectors as an extra finite
-coordinate and is removed before binning/training. IDs are actual
-`source-file SHA256 / tree / entry` identities, **not** invented run/event numbers
-or claims of identity across separately merged files. Reco and truth share one
-signal-tree entry, including native misses. Geometry normalization comes from the
-retained tracker constant, never summed ROOT nucleon metadata. The full Git
-revision, source hashes, original paths and producer configuration are recorded.
+Three seeds demonstrate wiring, not adequate scientific ensemble size. For 3D/4D,
+change preparation axes, training features and projection axes together.
+Statistical mode is explicit: `data-only` resamples measured weights;
+`data-plus-mc` additionally applies the same Poisson factor to paired truth/reco
+MC, using seed + 10,000,000. The denominator and background remain fixed under
+this two-stream bootstrap; completeness is recomputed. This is not a new UQ model.
 
-### Estimator variants
+### Estimators and split diagnostics
 
-`examples/scalar.json` selects features in training order. The backend is
-`cached-lgbm-v1`, with fixed-final iteration policy, no feature scaling, and one
-seed shared by both classifiers and the miss regressor. The model settings are
-100 estimators, eight leaves, learning rate 0.1. The resolved configuration and
-dependency versions and complete runtime estimator parameters are recorded.
-Training-split studies set `train_fraction < 1`
-in the nominal configuration; `--source ml` varies only `split_seed`.
-
-`examples/nominal_5d.json` instead selects `nominal-lgbm-v1`: it calls the exact
-`OmniFold_helper_functions.omnifold` used by the retained N-D nominal driver,
-with classifier/regressor seeds `s,s+1,s+2`, all training rows and no feature
-scaling. Its nominal, statistical members and strict closure use that same
-engine. The cached variant calls `omnifold_nn_core.omnifold_loop` with `s,s,s`
-and supports explicit split studies. Both retain 100 trees, eight leaves,
-learning rate 0.1, native masks and miss regression. Neither variant replaces or
-adopts the other. The split variant cannot provide ML uncertainty for the
-all-row nominal merely because its output dimensions agree.
-
-An event NPZ must contain the following, with no pickle objects:
-
-| Fields | Meaning |
+| Backend | Retained implementation and policy |
 |---|---|
-| `MCgen`, `MCreco`, `measured` | Finite `(events, features)` matrices, with names in metadata |
-| `truth_id`, `reco_id`, `data_id` | Unique stable event IDs; truth/reco IDs must agree row for row |
-| `pass_truth`, `pass_reco`, `meas_pass_reco` | Explicit boolean selection masks |
-| `w_truth`, `w_reco`, `measured_weights` | Aligned nonnegative weights, already POT scaled as required by the input procedure |
-| `denom_nd`, `flux`, `data_pot`, `n_nucleons` | Full denominator grid, per-flux-axis integrals in m^-2/POT, POT, and geometry normalization |
-| `metadata` | JSON scalar with selection/background identity, feature names/units, normalization units/source, flux axis, fixed denominator policy, and output contract |
+| `nominal-lgbm-v1` | Original `OmniFold_helper_functions.omnifold`; classifier/regressor seeds `s,s+1,s+2`; all rows |
+| `cached-lgbm-v1` | `omnifold_nn_core.omnifold_loop`; seeds `s,s,s`; optional explicit training split |
 
-The output contract declares ordered named axes, units, edges, C flattening,
-full-grid boolean support, density/yield meaning, and base value units. Scalar
-densities use `cm^2/nucleon` divided by the product of declared axis units. The
-synthetic preparation code is an input-format example. `scalar-root` establishes
-these fields from the native source; unidentified historical caches are not
-accepted as substitutes for that source.
+Both preserve 100 trees, eight leaves, learning rate 0.1, native masks, miss
+regression, no feature scaling and fixed-final iteration choice. Nominal,
+replicas and closure call the same selected engine and shared extraction.
+Resolved settings and runtime estimator parameters are recorded.
 
-`signal-only` and already `preweighted-purity` inputs are supported. Signed and
-refined targets retain their original drivers. Statistical mode is mandatory:
-`--mode data-only` varies measured weights; `--mode data-plus-mc` additionally
-applies one MC Poisson draw to both truth and reco. The MC stream uses bootstrap
-seed + 10,000,000. The denominator stays fixed and completeness is recomputed,
-matching `bootstrap_nd.py`. This convention is explicit, not a new UQ adoption.
+ML split diagnostics require their **own matching split nominal**, never the
+all-row nominal above. The example sets `train_fraction=0.8`; only
+`split_seed` changes across these members:
 
-Statistical/ML `uncertainties.py combine` requires the exact nominal, member seeds,
-code, configuration and support. It uses mean-centered sample covariance with
-divisor `N-1` and reports the mean shift separately. PET statistical/ML products
-and cross-source totals are not exposed.
+```sh
+python production/unfold_gbdt.py --config production/examples/cached_split_5d.json --input /data/scalar_5d.npz --output /data/split_nominal
+python production/uncertainties.py run --source ml --seeds 7 8 9 --config production/examples/cached_split_5d.json --input /data/scalar_5d.npz --nominal /data/split_nominal --output /data/split_members
+python production/uncertainties.py combine --source ml --seeds 7 8 9 --config production/examples/cached_split_5d.json --input /data/split_members --nominal /data/split_nominal --output /data/split_covariance
+```
+
+Statistical/ML assembly uses mean-centered `1/(N-1)` sample covariance and
+reports the mean shift separately. Identical shape does not authorize pairing a
+split covariance with a different estimator. No cross-source total is exposed.
 
 ### Systematic families
 
-Edit `examples/systematic.json` to declare a complete native band inventory.
-Paths are relative to `--input` during `run` (absolute paths also work). Both
-operations require the same inventory and an unshifted `scalar-root` nominal
-produced with matching adapter dependencies, data, baseline flux and estimator.
-In the ROOT environment and a separately authorized allocation:
+Edit `production/examples/systematic.json` to declare one complete native band inventory.
+Member paths are relative to `--input` during `run` (absolute paths also work).
+Use the same inventory for assembly and a matching, unshifted `scalar-root`
+nominal. Run in the scalar ROOT environment:
 
 ```sh
 python production/uncertainties.py run --source systematic --inventory production/examples/systematic.json --config production/examples/nominal_5d.json --input /data/universes --nominal /data/scalar_nominal --output /data/systematic_members
@@ -139,125 +94,133 @@ python production/uncertainties.py combine --source systematic --inventory produ
 python production/project.py --config production/examples/project_5d.json --input /data/systematic_covariance --output /data/systematic_4d
 ```
 
-Lateral bands require per-playlist active-universe ordinary trees, exact native
-band/index metadata, all four migration counts and finite-support denominator
-closure. Dump-all CV-support lateral branches are refused. Vertical bands reuse
-the native signal, truth-denominator and background weight branches together;
-purity is rebuilt per universe. `Flux` additionally requires `flux_universe_file`
-in the inventory, with the native `hFluxCV`/`hFluxUniv` table: the same universe
-index varies both event weights and flux, and the table CV must match baseline.
-Temporary prepared caches are removed after each member; member products bind
-the raw sources and retain preparation metadata and source support.
+- Lateral bands require active-universe ordinary trees, exact native band/index,
+  all four migration counts, native misses and finite-support denominator closure.
+  Dump-all CV-support lateral branches are refused.
+- Vertical bands vary native signal, denominator and background weights together;
+  purity is rebuilt. `Flux` also requires `flux_universe_file` in the inventory:
+  native `hFluxCV`/`hFluxUniv` arrays, the same universe index as event weights,
+  and a table CV matching baseline flux.
+- Assembly is **one declared band only**: native MAT mean-centered `1/N`
+  covariance, CV-centered second moment and common shift are all retained.
+  Neither centering is adopted; mean-centering alone cannot resolve the 5D gate.
+  No block-sum, unified-throw total or PET uncertainty is inferred.
+- Temporary prepared caches are removed per member. Results retain source
+  hashes, preparation metadata and source support; extraction uses nominal support.
 
-Combination is **one declared band only**: native MAT mean-centered `1/N`
-covariance, CV-centered second moment and common shift are all retained. Both
-covariance variants project with the same linear map. These are quarantined
-diagnostics, not an adopted scalar-5D uncertainty; mean-centering alone does not
-resolve its gate. No block sum, unified-throw total or PET covariance is inferred.
-Neither inventory completeness nor successful execution supplies adoption.
+## Preparation and PET stages
 
-Closure copies selected signal reco rows and weights into pseudo-data and compares
-the reused calculation with the known truth extraction. Nominal-driver closure
-uses unity completeness, including when the real-data input has a purity target;
-cached signal-only closure retains its declared denominator convention. These are
-strict signal-MC closures, not independent pseudo-experiment coverage. Projection applies `P x` and
-`P C P.T`, including off-diagonal terms and integrated-axis widths for densities.
-Reordered axes are supported. Native scalar inputs declare `reported-source`
-projection, matching `project_cov_nd.py`: each destination receives the supported
-source cells with their widths, and partial fibers are explicitly marked. This
-does not claim a full-domain marginal over unreported cells. Inputs without that
-contract require complete fibers. Normalized-shape propagation is unsupported.
-Empty resampled bins keep the nominal support with the retained zero result and
-an `empty_supported_bins` flag; the interface does not silently select a new mask.
-
-Scalar outputs are fresh directories with `result.npz` and a final `record.json`.
-Only supported bins enter `xsec`; intermediate histograms retain the full grid.
-`--resume` checks complete status, payload digest, resolved configuration, input
-digest, calculation-scoped source digests and dependency versions. Full Git
-revision is recorded separately as provenance: documentation and unrelated PET
-changes do not invalidate scalar resume or member assembly. Relevant engine,
-extraction, perturbation and guard changes still reject reuse. Schema-1 products
-from the initial interface remain historical and are not resumed as schema-2
-products; no bypass is provided. Partial outputs require
-a fresh destination. Members load and hash the event input once per invocation.
-Completion means software execution succeeded, and carries no scientific adoption.
-
-## ROOT and PET environments
-
-Plan event preparation using an explicit playlist inventory and separate flux:
+Plan per-playlist C++ preparation with separate baseline-flux normalization:
 
 ```sh
 python production/prepare_events --config production/examples/prepare_root.json --input production/examples/playlists.json --output /data/prepared --plan
-python production/unfold_pet.py train --config production/examples/pet.json --input /data/full_event.npz --output /data/pet_diagnostic --plan
 ```
 
-Replace the example paths with actual prerequisites. `root-plan` always plans; it
-never executes a C++ binary or submits a job. Each manifest pair must belong to
-one playlist. Run the resulting commands in the established ROOT/MAT environment
-under its governing launcher. The safe merger handles large TTrees. Prepare flux
-with the baseline event loop and `combine_flux_MEFHC.py` separately; do not use
-summed nucleon metadata from a merged file.
+`root-plan` never runs a binary or submits a job. Execute its returned commands
+only under the governing ROOT/MAT launcher: one playlist per manifest pair,
+installed event-loop binary, safe merger. Its `events.root` output feeds the
+scalar adapter above. Prepare flux separately with the baseline event loop and
+`combine_flux_MEFHC.py`; merged nucleon metadata is not geometry normalization.
 
-For a separately authorized PET diagnostic run, edit the three example JSON files
-to use immutable inputs. In the established TensorFlow environment, train and then
-infer over the **full** inventory, not just the training subsample:
+For authorized PET work, edit `production/examples/pet.json`,
+`production/examples/pet_infer.json` and `production/examples/pet_extract.json`.
+Training requires the certified target NPY, receipt and
+Gate-3 manifest. In the established TensorFlow shell, run training and
+**full-inventory** inference, not inference on only the training subsample:
 
 ```sh
+module load tensorflow/2.15.0
 python production/unfold_pet.py train --config production/examples/pet.json --input /data/full_event.npz --output /data/pet_diagnostic
 python production/unfold_pet.py infer --config production/examples/pet_infer.json --input /data/full_event.npz --output /data/pet_inference
 ```
 
-The inference config points to `/data/pet_diagnostic/weights.npz`; the weights'
-native inference contract supplies architecture, checkpoint and fitted scaling.
-Training requires the certified target NPY, target receipt and Gate-3 manifest.
-The existing annealed training policy and inference agreement tolerance are fixed.
-
-In a separate established ROOT/MAT process (`source setup_salloc_env.sh` from the
-repository root), extract with the independent baseline-flux product:
+In a separate ROOT/MAT shell, extract using the independent baseline flux:
 
 ```sh
+source setup_salloc_env.sh
 python production/unfold_pet.py extract --config production/examples/pet_extract.json --input /data/full_event.npz --output /data/pet_extraction
 ```
 
-The extraction config consumes `/data/pet_inference/push.npz`. Each stage accepts
-`--plan` without loading arrays or either numerical runtime. Outputs are fresh
-directories holding native NPZ/`.done` products and `production.json`; extraction
-also writes `summary.json`. The supplied inventory must match the weights/push
-content digest. The checkout guard remains mandatory and rejects imports from
-another checkout; no checkpoint override or overwrite is exposed. These commands
-do not submit jobs, authorize compute, construct PET uncertainty or promote a
-result. PET remains diagnostic with its central/statistical pairing declined.
+Inference consumes `pet_diagnostic/weights.npz` and its native architecture,
+checkpoint and fitted scaling contract. Extraction consumes
+`pet_inference/push.npz`. Inventory digests must match. The annealed training
+policy, inference tolerance, native completion checks and checkout guard remain
+mandatory. No overwrite, checkpoint override, PET covariance or Gate-6 action
+is exposed. Native products and `production.json` remain in each output directory.
 
-## Compatibility and workflow size
+## Contracts, resume and validation
 
-| Retained route | Interface for the migrated scope |
+The scalar adapter reuses native collectors, selections, POT/flux loaders and
+purity construction. IDs are actual `source-file SHA256/tree/entry`; paired
+truth/reco entries include misses. They are not invented run/event identities or
+cross-merge identity claims. Source-entry transport is removed before training.
+Geometry uses the retained tracker constant.
+
+NPZ inputs contain aligned feature matrices/weights/masks/IDs, denominator,
+flux/POT/nucleons and JSON metadata declaring selection, background, units,
+normalization source and full-grid output support. Unidentified old caches are
+not substitutes. Signed/refined scalar targets retain their original drivers.
+
+Products contain `result.npz` and final `record.json`. `--resume` requires
+complete status, payload digest, inputs, resolved settings, relevant code/runtime
+dependencies and compatible contracts. Full Git revision is separate provenance:
+docs and unrelated PET changes do not invalidate scalar reuse. Partial outputs
+need fresh destinations; schema-1 products cannot resume as schema-2. No bypass.
+
+Projection applies `P x` and `P C P.T`, including correlations and integrated
+axis widths. Native inputs use reported-source marginals and mark partial fibers;
+generic inputs require complete fibers. Empty varied bins keep nominal support
+and an explicit flag. Normalized-shape propagation is unsupported. Closure is
+strict signal-MC closure (native nominal unity completeness; cached signal-only
+denominator convention), not coverage.
+
+For synthetic smoke in an authorized compute environment:
+
+```sh
+python3 -m venv .venv-production
+.venv-production/bin/python -m pip install -r production/requirements.txt
+PYTHON=.venv-production/bin/python bash production/smoke.sh /tmp/omnifold-smoke
+.venv-production/bin/python -m pytest -q production/tests
+```
+
+The smoke runs real LightGBM on 800 synthetic events. For measured no-fit checks
+and precise outstanding real-input parity, see [tests/README.md](tests/README.md).
+Synthetic checks cannot substitute for real-input or trained-chain evidence.
+
+## Old-to-new map and execution ownership
+
+| Retained command / implementation | Migrated operation |
 |---|---|
-| Per-playlist C++ event loop and separate flux preparation | `prepare_events --config ... --plan` |
-| `nn_dump_inputs.py` / N-D collectors | `prepare_events` with `scalar-root`, retaining source-entry identity and native double precision |
-| `unfold_nd_omnifold_unbinned.py` | `unfold_gbdt.py` with explicit `nominal-lgbm-v1` |
-| `bootstrap_nd.py`, `combine_cov_nd.py` | `uncertainties.py run`, then `combine` |
-| `train_fullevent_nominal.py` | `unfold_pet.py`, preserving guarded native execution |
-| `extract_fullevent_fps.py --stage push`, then `--stage xsec` | `unfold_pet.py infer`, then `extract` in separate environments |
-| N-D `--closure` | `closure.py` for strict signal-MC closure |
-| `project_cov_nd.py`, `xsec_nd.py` | `project.py` for compatible interface products |
+| Per-playlist C++ loop + independent flux preparation | `prepare_events --plan` |
+| `nn_dump_inputs.py` / native N-D collectors | `prepare_events` scalar-root mode, preserving native double precision |
+| `unfold_nd_omnifold_unbinned.py` | `unfold_gbdt.py`, explicit nominal backend |
+| `bootstrap_nd.py`, `combine_cov_nd.py` | `uncertainties.py run/combine` |
+| N-D `--universe` + native MAT covariance math | `uncertainties.py --source systematic` |
+| N-D `--closure`, `project_cov_nd.py` | `closure.py`, `project.py` |
+| `train_fullevent_nominal.py` | `unfold_pet.py train` |
+| `extract_fullevent_fps.py --stage push/xsec` | `unfold_pet.py infer/extract` |
 
-The retained nominal driver calls `OmniFold_helper_functions.omnifold` and uses
-seeds `s,s+1,s+2`. Cached replicas call `omnifold_nn_core.omnifold_loop` with
-`s,s,s`. They are explicit variants. Here nominal, statistical members, training
-members, and closure all call `scalar.calculate`, which owns extraction and calls
-the selected retained engine. No new unfolding loop or selection implementation
-was copied. Receipt-bound engines and collectors are retained; the adapter adds
-source identity without editing them. The frozen 2D path
-and all existing files remain intact.
+The previous cached-member recipe, with its own native cache and ROOT CV, was:
 
-For three cached replicas plus assembly, retained commands require four Python
-invocations (three `bootstrap_nd.py`, one `combine_cov_nd.py`); this interface
-requires two. The complete local smoke has one user command and six internal
-Python invocations. There was no complete bounded local recipe to count before.
-Operational references for those cached tasks were four implementation files
-(nominal, bootstrap, combine, projection); the supported fixture uses this guide.
-This is not a reduction of mandatory instruction context: `AGENTS.md` (145 lines
-at the migration base), `docs/CURRENT_WORK.md` (35 lines), the governing OI record,
-and supplied session instructions remain required, with `production/AGENTS.md`
-added. Workstream status/reference routes still apply to production. No speedup
-or context-token reduction is inferred from these command/document counts.
+```sh
+for seed in 7 8 9; do
+  python nd-unfolding/bootstrap_nd.py --npz /data/legacy/of_inputs_5d.npz --seed "$seed" --iters 5 --estimator-seed 42 --out "/data/legacy/members/res_boot_${seed}.npz"
+done
+python nd-unfolding/combine_cov_nd.py --glob '/data/legacy/members/res_boot_*.npz' --expected-ids 7-9 --cv /data/legacy/cached_cv.root --tag stat5d --out /data/legacy/covariance.root
+```
+
+The statistical `run`/`combine` commands above replace those four Python
+invocations with two. To retain the cached estimator, set `backend` to
+`cached-lgbm-v1` in the same all-row config for its nominal and members; the
+split example defines a different estimator. Old anonymous caches and ROOT
+products are not interface inputs. This command count does not establish parity.
+PET still uses three runtime-separated invocations but one
+command interface. Operational recipes live here, not across nominal, bootstrap,
+combine, projection and PET verification files. Mandatory AGENTS/workstream/OI
+routes are unchanged; no context-token or runtime-speedup claim follows.
+
+Scalar operations share `scalar.calculate`; there is no copied unfolding loop or
+selection implementation. Native engines, collectors, math and receipt-bound
+launchers retain calculation ownership and remain intact, including frozen 2D
+reproduction. They are dependencies, not newly competing production recipes.
+Historical interface guidance is recoverable at `972face8:production/README.md`.

@@ -10,13 +10,16 @@ Historical verification at the initial interface is preserved in Git at
 These checks perform no training, event-file scans, ROOT jobs or GPU work:
 
 ```sh
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m pytest -q production/tests/test_compatibility.py production/tests/test_pet_stages.py production/tests/test_projection.py production/tests/test_nominal_backend.py production/tests/test_root_input.py production/tests/test_systematics.py
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m pytest -q production/tests/test_compatibility.py production/tests/test_pet_stages.py production/tests/test_projection.py production/tests/test_nominal_backend.py production/tests/test_root_input.py production/tests/test_systematics.py production/tests/test_uncertainty_run.py
 python -m ruff check production
 python -m black --check --workers 1 production
 python -m mypy --strict production/minerva_production
 ```
 
-The first command passes 46 tests on Python 3.11, NumPy 2.4.6 and pytest 9.1.1.
+The six-file checkpoint passed 46 tests on Python 3.11, NumPy 2.4.6 and pytest
+9.1.1. The final run-stage additions pass another 14 no-fit cases: nine systematic
+cases and five scalar statistical/ML cases. Unchanged checks are not rerun merely
+for documentation edits.
 Compatibility tests mutate actual dependency-file copies and exercise resume and
 covariance assembly: unrelated PET/document changes remain compatible; relevant
 engine, extraction, perturbation and guard changes fail. Full revisions remain
@@ -26,7 +29,10 @@ subprocess, **not** a PET backend execution. Projection tests check unequal bin
 widths, source correlations, support and reordered axes independently.
 
 The seven no-fit command tests and six-entrypoint standard-library-only help check
-also pass. Run subprocess checks outside a sandbox that denies the site's MUNGE
+also pass at the implementation checkpoint. The final guide's 16 workflow
+commands additionally pass `--plan` with their checked-in example configurations;
+these plans read no event arrays and create no products. Run subprocess checks
+outside a sandbox that denies the site's MUNGE
 socket: its authentication error can pollute JSON stdout. Ruff, Black and strict
 mypy pass. This does not certify retained production runtimes.
 
@@ -50,6 +56,12 @@ They compare MAT `1/N` covariance, its common shift and the CV-centered second
 moment; neither numerical variant is an adopted product. Member assembly/resume
 binds its nominal, declared inventory and calculation dependencies. These checks
 do not yet exercise end-to-end systematic training or a real migration census.
+Run-stage tests exercise cache IO, nominal-to-member-to-assembly wiring for both
+scalar engines, both statistical modes and the cached split policy. Systematic
+run tests cover lateral, vertical and Flux routing, preservation of nominal
+support, changed-input resume refusal, and cache removal on success, source
+mismatch or fit failure. Their preparation/training stand-ins never read ROOT
+events or fit models; they supplement the native fixtures, not replace them.
 Nominal backend tests inspect dispatch to the original engine, seeds, inputs,
 weights and closure normalization using a no-fit stand-in. Actual training parity
 still needs an authorized compute allocation.
@@ -76,14 +88,53 @@ the scope; this checklist is a progress record, not authorization.
 | PET operations | Implemented train/infer/extract routing; actual TensorFlow/ROOT execution remains unverified and needs the named compute authority |
 | Uncertainty operations | Statistical/split and native systematic single-band operations implemented, including background/flux variations and active selections; native tiny ROOT and no-fit assembly tests pass; full training and scientific integration remain unverified; totals stay blocked |
 | Compatibility | Scoped dependency hashes bind the selected engine only; full revision is separate provenance, including ROOT preparation |
-| Operational burden | Standard scalar and PET commands live in the operational guide; finish uncertainty commands and final guidance/ownership cleanup |
+| Operational burden | Guide contains scalar, statistical, split, systematic and PET commands, environments, old/new mapping and retained ownership; historical guide remains in Git |
 | Demonstration | Real-input bounded parity remains unmet; requires data/runtime and exact existing allocation authority, never a login-node fit |
 
-Next finish no-fit run-stage orchestration coverage, inspect the remaining
-applicable uncertainty scope against governing contracts, and condense the
-operational guide and ownership report. Real-input and trained-chain parity remain
-external prerequisites. Do not substitute a weight-only cache for selection-complete
-lateral inputs or mix the original nominal with the cached split estimator.
-Preserve receipt-bound engines and historical evidence.
-No scientific result, pairing or gate has changed. The standard ROOT path is
-implemented but has not read a real production event file or run training.
+All seven requirements have software implementations or, for integration evidence,
+the explicit external checks below. No required adapter or operation is left as
+a software plan. Frozen 2D, signed/refined targets and receipt-bound launchers
+retain their original execution routes. The single-band boundary does not expose
+quarantined block sums, unified throws or PET covariance. No scientific result,
+pairing or gate has changed, and production replacement is not verified.
+
+## Remaining external integration checks
+
+The migration instruction grants no allocation or training campaign. No real
+production event file was scanned and no fit was run during this continuation.
+Existing authorization for a named research campaign cannot be borrowed for
+migration parity. These checks remain **unmet**, including real-input preparation:
+
+1. Supply an immutable, bounded native ROOT inventory with signal, data,
+   background, truth denominator and the independent baseline flux, plus exact
+   authorization for its preparation and CPU fits. Define any subsampling before
+   running it, including denominator/support treatment; do not truncate unrelated
+   trees independently or invent missing identities. Run the guide's adapter in
+   the ROOT environment. Compare native collectors against prepared arrays for
+   entry IDs, row order, masks, truth/reco pairing, features, weights, purity,
+   denominator, flux, POT, nucleons and reported support. The existing native
+   fixture check uses exact equality for transported collector arrays.
+2. On those same inputs, execute the guide's nominal, seeds 7/8/9, covariance,
+   projection and closure sequence. Compare the original nominal engine with
+   `nominal-lgbm-v1`, and the cached engine with `cached-lgbm-v1`, separately.
+   Hold training settings, runtime, thread count, masks and draw order fixed.
+   Compare pull/push weights before cross sections, then unfolded yields,
+   completeness, cross sections, common shifts and full covariance. Use
+   `rtol=1e-12, atol=0` for deterministic same-runtime calculations (as in
+   `test_scalar.py`), exact equality for identities/masks/support, and investigate
+   failures without widening tolerances after seeing them. Verify projections
+   independently with native bin-width factors and `P C P.T`. A comparison of
+   cached replicas against the distinct nominal engine cannot establish parity.
+3. With a separately authorized complete native band, execute systematic
+   `run`/`combine` and compare varied signal/background/denominator weights,
+   lateral migration census, Flux universe index/normalization, both covariance
+   centerings and common shift against retained calculations. A weight-only
+   lateral cache cannot satisfy this check. No total covariance is authorized.
+4. PET wiring is covered by stand-in processes only. Actual train/infer/extract
+   requires its own named authority, certified target and full inventory in the
+   separate TensorFlow/ROOT runtimes. Verify the native checkpoints, completion
+   products and inference contract; preserve diagnostic status and all gates.
+
+Retain commands, input/code digests, resolved settings, intermediate comparisons,
+tolerances and terminal outcomes with any future integration evidence. A passing
+software chain would still establish neither coverage nor scientific adoption.

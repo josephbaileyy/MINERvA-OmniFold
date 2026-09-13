@@ -1,0 +1,10 @@
+{
+  "backend": "cached-lgbm-v1",
+  "features": ["pt", "pparallel", "eavail", "q3", "W"],
+  "selection": "nd-standard-v1",
+  "background": "preweighted-purity",
+  "iterations": 5,
+  "estimator_seed": 42,
+  "train_fraction": 0.8,
+  "split_seed": 0
+}
