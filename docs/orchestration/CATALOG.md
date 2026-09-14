@@ -785,6 +785,22 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`REVIEW-20260914-namespace-ownership-a71087e3.md`](REVIEW-20260914-namespace-ownership-a71087e3.md)
+  - **ONE DEFECT: clause 7 refuses a correctly-bound SIBLING under a read-ordering race.** Subject
+  `lane/z-campaign-ownership-20260913` @ `a71087e3`; coverage does NOT extend to `79badb2f`.
+  `verify_task_ownership` reads CLAIMS at `z_precursor.py:1432` and PRODUCTS at `:1439`, so a sibling
+  that claims AND publishes between the two snapshots is reported unclaimed and the innocent task
+  refuses at `:1450`. **Proven deterministically with a control** (sibling completing BETWEEN the
+  reads refuses; the same sibling completing BEFORE succeeds — timing the only variable) and observed
+  once in the wild at the `run` arm's real 40-wide concurrency. **Fails CLOSED** — cannot admit a
+  foreign product, only reject a legitimate one — but the message misdirects, naming "a DIFFERENT
+  campaign" for this campaign's own claimed sibling. Assessed as an **ARRAY** per instruction: block's
+  full 21 tasks in waves of its own `%10` PASS; `run` is `%40`, i.e. **no throttle**, against a suite
+  arm of seven. **`O_EXCL` on Lustre partially closed before access died:** `/pscratch` confirmed
+  `lustre`, 1,920 real create attempts over 100 trials, exactly 100 winners, 0 anomalies — but
+  **single-client**; the cross-client case is unmeasured and my own cleanup race destroyed the
+  two-node attempt. Counts verified independently: 89 / 123 / 90 / 231 = **533 passed, 4 failed, 2
+  skipped**. Launcher byte-identity confirmed by blob hash for all six.
 - [`REVIEW-20260912-temp-repair-delta-41a64f02-and-consumer-list.md`](REVIEW-20260912-temp-repair-delta-41a64f02-and-consumer-list.md)
   - **F1, F2 and F3 CLOSED; all four mutation controls independently reproduced; the asymmetry claim
   CONFIRMED and stronger than stated.** Coverage extends to `41a64f02` and no further. **⚠ The
