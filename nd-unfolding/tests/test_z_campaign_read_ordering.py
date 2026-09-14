@@ -560,9 +560,16 @@ class TheClaimsDirectoryIsNeverMutated(unittest.TestCase):
         return [(line, text) for line, text in sorted(prose)
                 if self.matches_premise_prose(text)]
 
-    #: Pinned population size for `premise_prose`. MEASURED on the tree this was written against,
-    #: not chosen to fit -- my first value was 22 and the measurement said 21.
-    PREMISE_PROSE_LINES = 21
+    #: Pinned population size for `premise_prose`. MEASURED, never chosen to fit -- my first value
+    #: was 22 and the measurement said 21.
+    #:
+    #: ⚠ IT HAS MOVED ONCE, 21 -> 23, AND THE MOVE IS THE INSTRUMENT WORKING RATHER THAN NOISE.
+    #: Correcting the outside-deletion bound to cover both states added prose about claims and
+    #: deletion, the pin fired, and the 23 lines were READ before it was re-pinned: the six new
+    #: ones are the two-state bound and `_confirm_unclaimed`'s scoped citation, and none restates
+    #: premise (B) as an unqualified invariant. Bumping this number without reading them is the one
+    #: way to make this guard worthless.
+    PREMISE_PROSE_LINES = 23
 
     def test_the_PREMISE_IS_STATED_IN_ONE_PLACE_AND_CITED_EVERYWHERE_ELSE(self):
         """THE WITHDRAWAL REACHED THE PARAPHRASE ONLY BECAUSE A REVIEWER LOOKED, so this is the
@@ -668,6 +675,115 @@ class TheClaimsDirectoryIsNeverMutated(unittest.TestCase):
         # with more words.
         self.assertIn("(B) IS SCOPED TO THIS MODULE", source)
         self.assertIn("FAILS CLOSED", source)
+
+
+class AnOutsideDeletionOfAClaimCostsTwoDifferentThings(CampaignFixture):
+    """The STATED COST of a claim removed from outside the module, measured in BOTH states.
+
+    ⚠ THIS IS NOT A DEFECT IN A GUARD, AND THAT IS WHY IT IS TESTED RATHER THAN FIXED.
+    `FILESYSTEM_MUTATIONS` stops the MODULE removing a claim and it does. What was wrong was the
+    BOUND I wrote on an outside removal -- "a legitimately claimed product reads as unclaimed, so
+    the clause refuses, fails closed". Both halves are true and they describe ONE of two states.
+    The review found the other, and a stated cost is load-bearing: someone who reads "it just
+    refuses" may treat a deleted claim as recoverable by re-running, which in the pre-publication
+    state quietly produces an UNAPPROVED attempt.
+
+    The two states are the ones `verify_task_ownership`'s own clause ordering already distinguishes
+    -- (claim present, product present) versus (claim present, product absent) -- and an outside
+    `rm` lands in whichever one the attempt had reached.
+    """
+
+    ARM = "block"
+    TASK = 4
+
+    def start_and_delete_claim(self, *, publish):
+        """Start the task, optionally publish, then remove its claim the way an operator would."""
+        contract = self.own(self.ARM, self.TASK)
+        product = self.product_path(self.ARM, self.TASK)
+        if publish:
+            U._atomic_savez(product, xs=np.arange(3, dtype=float))
+        os.unlink(contract["claim"])
+        self.assertFalse(os.path.exists(contract["claim"]))
+        self.assertEqual(os.path.exists(product), publish)
+        return contract, product
+
+    def test_STATE_1_claim_deleted_and_product_PRESENT_REFUSES(self):
+        """Post-publication: the product is independent evidence that something ran, so the
+        deletion leaves a contradiction the clause can see."""
+        self.start_and_delete_claim(publish=True)
+        with self.assertRaises(ZP.PrecursorError) as caught:
+            self.own(self.ARM, self.TASK)
+        self.assertIn("NO task of this campaign has CLAIMED", str(caught.exception))
+
+    def test_STATE_2_claim_deleted_and_product_ABSENT_is_ADMITTED_as_a_FIRST_ATTEMPT(self):
+        """Pre-publication: NOT a refusal -- an AUTHORIZATION BYPASS.
+
+        Both gating clauses key on the PRODUCT, so with neither claim nor product nothing objects.
+        The re-run takes a fresh `O_EXCL` claim wearing a FIRST-ATTEMPT identity, so
+        `campaign-recover` and its per-task approval are never entered -- Joseph's prohibition
+        achieved from outside the module. Asserted as the OBSERVED behaviour, not as desired
+        behaviour: it is what the stated cost has to say.
+        """
+        self.start_and_delete_claim(publish=False)
+        again = self.own(self.ARM, self.TASK)
+        self.assertEqual(again["attempt"], ZP.FIRST_ATTEMPT)
+        self.assertEqual(sorted(ZP.task_recoveries(self.paths, self.ARM, self.TASK)), [],
+                         "no recovery record was created, so no approval was ever required")
+        self.assertTrue(again["claim"].endswith("block.task-4.claim.json"))
+
+    def test_WHY_STATE_2_IS_NOT_CLOSABLE_the_state_is_IDENTICAL_to_never_started(self):
+        """The reason it is stated rather than fixed, measured rather than argued.
+
+        A claim is the ONLY record of a pre-publication attempt. After the deletion the campaign's
+        own observable state equals that of a task which never started -- so no predicate over it
+        can distinguish them, and a guard that refused it would refuse EVERY first attempt.
+        """
+        def snapshot():
+            out = {}
+            for root in (self.paths["root"], self.plan["arms"][self.ARM]["dir"]):
+                for base, dirs, files in os.walk(root):
+                    for name in sorted(dirs):
+                        out[os.path.relpath(os.path.join(base, name), root) + "/"] = "dir"
+                    for name in sorted(files):
+                        full = os.path.join(base, name)
+                        out[os.path.relpath(full, root)] = os.path.getsize(full)
+            return out
+
+        never_started = snapshot()
+        self.start_and_delete_claim(publish=False)
+        self.assertEqual(snapshot(), never_started,
+                         "if these ever differ, the difference is a witness a guard could key on "
+                         "and this residual may be closable after all -- reopen it rather than "
+                         "deleting this arm")
+
+    def test_the_ONLY_SURVIVING_TRACE_is_a_DIAGNOSTIC_and_the_scan_finds_it(self):
+        """What an operator can still see, and why it cannot be a gate: a task killed mid-write
+        leaves an incomplete-write temp, which the DIRECTED scan reports and the ownership scan
+        deliberately filters out. Absent entirely if the attempt died before its first save."""
+        contract = self.own(self.ARM, self.TASK)
+        target = Path(self.plan["arms"][self.ARM]["dir"])
+        temp = target / U.incomplete_name("block5d_flux_4.npz", "tok")
+        temp.write_bytes(b"PARTIAL")
+        os.unlink(contract["claim"])
+        found, _scanned = U.find_incomplete_writes_for_pattern(
+            self.plan["arms"][self.ARM]["product_glob"])
+        self.assertEqual([os.path.basename(p) for p in found], [temp.name])
+        # ...and it does NOT gate: the task is still admitted, because a temp is litter.
+        self.assertEqual(self.own(self.ARM, self.TASK)["attempt"], ZP.FIRST_ATTEMPT)
+
+    def test_the_BOUND_IN_THE_SOURCE_STATES_BOTH_STATES(self):
+        """The stated cost is the artifact this finding was about, so it is pinned. A bound that
+        covers one of two states is the shape that told an operator a bypass was a refusal."""
+        source = (ND / "z_precursor.py").read_text()
+        start = source.index("WHAT A VIOLATION FROM OUTSIDE COSTS")
+        bound = source[start:source.index("Read products at t1", start)]
+        self.assertIn("CLAIM DELETED, PRODUCT PRESENT", bound)
+        self.assertIn("CLAIM DELETED, PRODUCT ABSENT", bound)
+        self.assertIn("AUTHORIZATION BYPASS", bound)
+        self.assertIn("NOT CLOSABLE BY A GUARD HERE", bound)
+        self.assertIn('NOT "JUST RE-RUN IT"', bound)
+        # ...and the half-bound must not survive anywhere as the WHOLE bound.
+        self.assertNotIn("this clause REFUSES. That resurrects", source)
 
 
 class TheFullDeclaredPopulationsRunAtTheirRealWidths(CampaignFixture):

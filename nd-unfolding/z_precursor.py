@@ -1744,8 +1744,13 @@ def _confirm_unclaimed(paths, arm, declared, candidates):
     correctness note now points at the one place the invariant lives instead of saying it again.
     WHAT THE CORRECTED PREMISE ADMITS, and it does not change this function's behaviour: a
     module-EXTERNAL `rm` between the two reads CAN remove a claim, so the second read can LOSE one.
-    Then the candidate survives and the clause refuses -- the fail-closed outcome the premise's own
-    note already bounds. The conclusion above holds; only the reason had to be narrowed.
+    Then the candidate survives and the clause refuses -- fail-closed.
+    ⚠ AND THAT IS THE POST-PUBLICATION HALF ONLY, WHICH IS ALL THIS FUNCTION EVER SEES. A candidate
+    reaching here IS a product on disk, so the state where an outside deletion is NOT a refusal --
+    claim gone, product not yet written, which is an authorization BYPASS rather than a refusal --
+    cannot arrive at this function at all. The full two-state bound is at premise (B); this note
+    deliberately claims only the half it can. The conclusion above holds; only the reason had to be
+    narrowed.
 
     ⚠ THIS IS NOT THE FIX; THE READ ORDER IS. This is the belt for the one leg of the ordering
     argument that is a property of the FILESYSTEM rather than of this code: cross-client metadata
@@ -1902,11 +1907,44 @@ def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed
     #       another module, or a filesystem tool can remove a claim and no guard in this file will
     #       stop it. What the guards establish is the narrower statement above, and the narrower
     #       statement is what the sufficiency argument is entitled to use.
-    #       WHAT A VIOLATION FROM OUTSIDE WOULD COST IS BOUNDED, WHICH IS WHY THE NARROWING IS
-    #       TOLERABLE: a deleted claim makes a legitimately claimed product read as unclaimed, so
-    #       this clause REFUSES. That resurrects the original symptom -- an innocent task rejected
-    #       -- and it FAILS CLOSED. No deletion of a claim can make this clause ADMIT a foreign
-    #       product, because admitting requires a claim to exist, and deleting one never creates one.
+    #       WHAT A VIOLATION FROM OUTSIDE COSTS, IN BOTH STATES -- and it is TWO states, which the
+    #       first version of this bound collapsed into one. They are the same two this function's
+    #       own clause ordering already distinguishes: (claim, product) present or absent.
+    #
+    #         * CLAIM DELETED, PRODUCT PRESENT (post-publication) -> REFUSES. The clause sees a
+    #           declared product no task has claimed. It FAILS CLOSED: it resurrects the original
+    #           symptom -- an innocent task rejected -- and cannot ADMIT a foreign product, because
+    #           admitting requires a claim to exist and deleting one never creates one.
+    #         * CLAIM DELETED, PRODUCT ABSENT (pre-publication) -> ADMITTED, AND THAT IS NOT A
+    #           REFUSAL, IT IS AN AUTHORIZATION BYPASS. Both gating clauses key on the PRODUCT --
+    #           `present_names - claimed_names` needs one present, and the overwrite refusal needs
+    #           one present -- so with neither claim nor product, nothing objects. The next run
+    #           takes a fresh `O_EXCL` claim and proceeds wearing a FIRST-ATTEMPT identity, so
+    #           `campaign-recover` and its per-task approval are never entered. That is Joseph's
+    #           prohibition -- *"do not implement recovery by deleting a claim and pretending the
+    #           first attempt never existed"* -- achieved from OUTSIDE the module. Both states are
+    #           measured in `test_z_campaign_read_ordering`, not argued.
+    #
+    #       ⚠ THE SECOND STATE IS NOT CLOSABLE BY A GUARD HERE, and that is a statement about what
+    #       is possible rather than a decision not to try. A claim is the ONLY record of a
+    #       pre-publication attempt; delete it and the campaign's own state is IDENTICAL to a task
+    #       that never started -- measured, snapshotting `_campaign/` and the arm directory in both
+    #       situations and comparing. No predicate over that state can tell them apart, and a guard
+    #       that refused it would refuse EVERY first attempt. THE ASYMMETRY IS THE WHOLE OF IT:
+    #       after publication the PRODUCT is independent evidence that something ran, so deleting
+    #       the claim leaves a contradiction this clause can see; before publication there is no
+    #       second witness to contradict.
+    #       WHAT SOMETIMES SURVIVES IS A DIAGNOSTIC, NOT A GATE: a task killed mid-write leaves a
+    #       `.mnv-incomplete.<product>.<token>.partial` temp, which
+    #       `unified_throw_cov.find_incomplete_writes` reports by directed scan. It is ABSENT when
+    #       the attempt died before its first save, and the ownership scan filters it out on
+    #       purpose, so it cannot gate anything -- but an operator investigating a suspected
+    #       deletion should run that scan.
+    #       OPERATOR CONSEQUENCE, which is why a stated cost is load-bearing: A DELETED CLAIM IS
+    #       NOT "JUST RE-RUN IT". In the pre-publication state a re-run silently produces an
+    #       unapproved attempt carrying a first-attempt identity. If a claim is known or suspected
+    #       to have been removed, the campaign's attempt history is no longer complete, and that is
+    #       a matter for Joseph rather than for a re-run.
     #
     #   Read products at t1 and claims at t2 > t1. Any product p observed at t1 was published at
     #   some time <= t1; by (A) its claim was created strictly earlier; by (B) that claim still
