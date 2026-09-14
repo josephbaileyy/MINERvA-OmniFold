@@ -1,5 +1,16 @@
 # PET routing comparison: calibration and training remain blocked
 
+## 2026-09-15 — full-FP32 attempt failed; execution stopped
+
+Job `58301971` passed 69 tests plus 10 subtests and both nominal GPU model cases,
+then failed an updated-weight comparison in variable/pooled (inferred from loop
+order). Maximum reported difference: `1.204535385568306e-5`; cause unresolved.
+Calibration and full matrix were not reached. No retry is authorized.
+[Terminal result and verified evidence](FP32_RESULT-20260915.md).
+All five allocations total 523 conservative seconds, 0.145278 GPU-hours and
+4.648889 reserved CPU-hours, before preparation/accounting CPU.
+
+
 ## 2026-09-14 — full-FP32 attempt authorized and submitted
 
 Job `58301971` is submitted from clean standalone revision `5de944f8` under

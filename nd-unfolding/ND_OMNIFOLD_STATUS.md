@@ -1,5 +1,7 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
+**PET terminal update, 2026-09-15:** full-FP32 job `58301971` failed an updated-weight CPU/GPU check after both nominal cases passed. Calibration and full matrix remain blocked; no retry was launched. [Verified result and limits](pet/direct_token_comparison/FP32_RESULT-20260915.md). This supersedes the older execution posture below.
+
 **PET representation comparison, terminal update 2026-09-12:** retry `58201775` passed 49 tests plus 10 subtests and an A100 operation check. The pooled calibration arm saved artifacts; the direct arm failed during model construction because GPU `DenseBincount` does not support the required determinism. [Exact result](pet/direct_token_comparison/RETRY_RESULT-20260912.md). This second technical failure stops execution: no full jobs or third attempt, and no paired learning conclusion. Source semantics remain unresolved.
 
 **PET typed-descriptor continuation, 2026-09-10:** reconstruction-side prong

@@ -1,0 +1,70 @@
+{
+  "job_id": "58301971",
+  "source": "/pscratch/sd/j/josephrb/pet-fp32-output-20260914",
+  "destination": "/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260914-fp32-58301971/payload",
+  "files": {
+    "allocation.txt": {
+      "bytes": 2036,
+      "sha256": "8c37a142e57201534ebdc800e198740bf3d4e99a10d5a7c497d7ead5065ba912"
+    },
+    "exit-code.txt": {
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    "preflight/nominal-direct.keras": {
+      "bytes": 160218,
+      "sha256": "0dc236ffe40f469c37e89b5bddbb7492a2bbfb68f85292c67925088a710c3cec"
+    },
+    "preflight/nominal-direct.npy": {
+      "bytes": 144,
+      "sha256": "9759de1f93900def362a34755c34d3819338e20f6417768c25fa9643f8220b87"
+    },
+    "preflight/nominal-pooled.keras": {
+      "bytes": 160218,
+      "sha256": "7739b48e623a480dc7e0199c70927b02ef125d3ed7b08cbb4be699890e4478d0"
+    },
+    "preflight/nominal-pooled.npy": {
+      "bytes": 144,
+      "sha256": "908157a2ec862f89f48fd6ce5eaebf5ac60be48f11142ce230363d8deebe2a78"
+    },
+    "preflight/nominal.npz": {
+      "bytes": 7850,
+      "sha256": "a90711c38818c400bf317ec55bed195883abf4da1c54e56f57c0633532fb44ef"
+    },
+    "preflight/variable.npz": {
+      "bytes": 11530,
+      "sha256": "d105b5a0dd7c33439d6e9545182656848c900f3063dbffb8382718ebf714efef"
+    },
+    "preflight-guard.json": {
+      "bytes": 8862,
+      "sha256": "9ef5b5694ef0095f74d64b9c8db8eff3c08e7ddfab7bcf952ebcb5243e8428dc"
+    },
+    "preflight.log": {
+      "bytes": 7838,
+      "sha256": "11926eba5df544aa3e7d0cfbd8c80694e18110401b52934f4e1c5844c7046b1d"
+    },
+    "storage-meter.log": {
+      "bytes": 94,
+      "sha256": "ef5aec131fda12e390a9242170be4552234add05678666eaa37a59b9e559a715"
+    },
+    "terminal.txt": {
+      "bytes": 7,
+      "sha256": "03cbb6c52e522ce55e217e3f9d66dbd66d21ef6bf85024016a3b7f3080c7944f"
+    },
+    "tests-guard.json": {
+      "bytes": 32755,
+      "sha256": "2f625a5078dbaabb36de0828b433e1ff9e26f78837c159f78eb222c4341b62a4"
+    },
+    "tests.log": {
+      "bytes": 1585,
+      "sha256": "84b3880a7290ecd0759c4dcfecf2d798cb8e9597ee749bea7b61aa19784f64fb"
+    }
+  },
+  "file_count": 14,
+  "bytes": 393283,
+  "readback_exact": true,
+  "archive_sha256": "bc8c8d4f9abc18757f11ade9c73e4bbbf7d08f0807818be97130a03b5040d7f2",
+  "slurm_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "wall_seconds": 0.13349647296126932,
+  "preservation_cpu_seconds": 0.12700499999999998
+}

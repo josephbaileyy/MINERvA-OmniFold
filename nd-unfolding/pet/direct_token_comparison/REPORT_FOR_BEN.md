@@ -113,3 +113,10 @@ fail with TF32 enabled and 0/192 fail with it disabled; maximum differences are
 matrix product before pooling. [Exact measurements and provenance limits](NUMERICAL_RESULT-20260914.md).
 This supports a future explicit full-FP32 compatibility check, not a representation
 winner. Direct-model GPU validation and paired training remain incomplete.
+
+**15 September full-FP32 update:** both nominal pooled/direct GPU cases pass,
+but the variable pooled case fails a CPU/GPU weight comparison after two Adam
+updates (reported maximum `1.20454e-5`; cause unresolved). Calibration and the
+learning matrix did not run. Thus there is still no measured learning-performance
+winner or basis to revise representation choices from this attempt.
+[Terminal evidence and qualifications](FP32_RESULT-20260915.md).
