@@ -785,6 +785,23 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`REVIEW-20260914-per-task-recovery-79badb2f.md`](REVIEW-20260914-per-task-recovery-79badb2f.md)
+  - **The delta does what it says; no NEW defect. One CARRIED-FORWARD defect: the clause-7 race
+  persists at `79badb2f` and recovery RE-ENTERS it.** Kept separate from the `a71087e3` review per
+  instruction. **Power question answered by execution:** the new subprocess arms, run against the
+  broken `0636a786`, both FAIL with the original `ModuleNotFoundError: No module named 'r5_meter'` —
+  so they would have caught it, and the in-process `main(argv)` arm provably could not, because it
+  inherits the test module's `sys.path`. **Terminality executed across states:** `COMPLETING`,
+  `SPECIAL_EXIT`, `RUNNING` refuse as live; an INVENTED state (`FLUXCAPACITOR`) refuses as
+  unclassified — fails closed on a future Slurm state; all-`REQUEUED` and zero-rows refuse. The
+  `SPECIAL_EXIT` asymmetry confirmed at both ends (`True` in admission's TERMINAL_STATES AND in
+  `ATTEMPT_MAY_STILL_WRITE_STATES`) — two different questions, deliberate. **AST deletion ban
+  mutation-tested both ways by me:** adding `os.unlink` to `recover_task` FAILS, and renaming a
+  covered function FAILS, so it cannot silently cover less. **Non-Z guarantee reproduced on all four
+  shipped launchers:** rc=0 with EMPTY stderr under `SLURM_RESTART_COUNT=9`, rc=3 for a Z requeue,
+  rc=3 for a non-numeric count. Counts verified: 65 + 89 + 123 = **277**. **Withheld — NERSC dead
+  (rc=255, cert Sep 13 08:42):** `mkdir` EEXIST on Lustre (a DIFFERENT primitive; my `O_EXCL`
+  measurement does not transfer), cross-client `O_EXCL`, `JobRequeue`, and the eight-suite total.
 - [`REVIEW-20260914-namespace-ownership-a71087e3.md`](REVIEW-20260914-namespace-ownership-a71087e3.md)
   - **ONE DEFECT: clause 7 refuses a correctly-bound SIBLING under a read-ordering race.** Subject
   `lane/z-campaign-ownership-20260913` @ `a71087e3`; coverage does NOT extend to `79badb2f`.
