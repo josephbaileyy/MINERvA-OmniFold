@@ -782,18 +782,85 @@ class RecoveryGuardsHaveAPositiveControlEach(RecoveryFixture):
         self.assertEqual(ZP.authorized_attempt(self.paths, self.ARM, self.TASK), 2)
         self.assertIn("does not submit it", record["submits_nothing"])
 
+    def cli_argv(self, **kw):
+        fields = {"--data-root": str(self.data_root), "--namespace": self.namespace,
+                  "--arm": self.ARM, "--task-id": str(self.TASK),
+                  "--previous-job-id": self.job_id, "--sacct-dump": str(self.dump()),
+                  "--log-dir": str(self.logs), "--authorization": str(self.authorization()),
+                  "--code-root": str(REPO), "--spend-basis": "utc", "--max-retries": "1",
+                  "--now": "2026-09-13T12:00:00+00:00"}
+        fields.update(kw)
+        argv = ["campaign-recover"]
+        for flag, value in fields.items():
+            argv.extend([flag, value])
+        return argv
+
     def test_the_CLI_exits_0_on_a_healthy_recovery_and_2_on_a_repeat(self):
         self.start_attempt()
         self.write_logs()
-        argv = ["campaign-recover", "--data-root", str(self.data_root),
-                "--namespace", self.namespace, "--arm", self.ARM, "--task-id", str(self.TASK),
-                "--previous-job-id", self.job_id, "--sacct-dump", str(self.dump()),
-                "--log-dir", str(self.logs),
-                "--authorization", str(self.authorization()),
-                "--code-root", str(REPO), "--spend-basis", "utc", "--max-retries", "1",
-                "--now", "2026-09-13T12:00:00+00:00"]
+        argv = self.cli_argv()
         self.assertEqual(ZP.main(argv), 0)
         self.assertEqual(ZP.main(argv), 2)
+
+    def test_the_CLI_RUNS_AS_A_SUBPROCESS_the_way_an_operator_runs_it(self):
+        """⚠ THE ARM THAT WOULD HAVE CAUGHT THE ONE REAL DEFECT IN THIS DELTA, and it is here
+        because it did not exist and the defect shipped past every other arm.
+
+        `z_precursor.py`'s rooted insert covers `2d-unfolding` and `nd-unfolding`; `r5_meter` lives
+        in `docs/orchestration`. EVERY test module in this repository puts that directory on
+        `sys.path` at import scope, so `ZP.main(argv)` above -- which runs IN THIS PROCESS and
+        inherits this module's path -- passed while the shipped CLI died with
+        `ModuleNotFoundError: No module named 'r5_meter'` on all three of its arms, before reaching
+        a single guard. It was found by running the real CLI from a real deployment clone.
+
+        So this arm executes `python3 nd-unfolding/z_precursor.py` as a CHILD, from a working
+        directory that is not the repository, with `PYTHONPATH` explicitly EMPTIED so nothing the
+        harness happens to export can supply the path for it. Both directions: a healthy recovery
+        exits 0, and a live previous attempt exits 2 with the refusal on stderr.
+        """
+        self.start_attempt()
+        self.write_logs()
+        script = str(ND / "z_precursor.py")
+        env = {"PATH": os.environ.get("PATH", "/bin:/usr/bin"),
+               "TMPDIR": os.environ.get("TMPDIR", "/tmp"), "PYTHONPATH": ""}
+
+        live = self.work / "sacct-live.txt"
+        live.write_text(sacct_rows([(self.job_id, "uthrow5d_block", "RUNNING", 100, "shared",
+                                     "2026-09-12T00:00:00", "Unknown", "cpu=32")]),
+                        encoding="utf-8")
+        refused = subprocess.run(
+            [sys.executable, script] + self.cli_argv(**{"--sacct-dump": str(live)}),
+            capture_output=True, text=True, cwd=str(self.work), env=env)
+        self.assertEqual(refused.returncode, 2, refused.stderr)
+        self.assertIn("is NOT terminal", refused.stderr)
+        self.assertNotIn("ModuleNotFoundError", refused.stderr)
+
+        ok = subprocess.run([sys.executable, script] + self.cli_argv(),
+                            capture_output=True, text=True, cwd=str(self.work), env=env)
+        self.assertEqual(ok.returncode, 0, ok.stderr)
+        self.assertIn("AUTHORIZED", ok.stdout)
+        self.assertIn("NOTHING WAS SUBMITTED", ok.stdout)
+
+    def test_EVERY_operator_subcommand_runs_as_a_SUBPROCESS(self):
+        """The same blind spot, swept across the whole operator surface rather than the one
+        subcommand that happened to break: an in-process `main()` cannot see a missing path."""
+        self.start_attempt()
+        self.write_logs()
+        script = str(ND / "z_precursor.py")
+        env = {"PATH": os.environ.get("PATH", "/bin:/usr/bin"),
+               "TMPDIR": os.environ.get("TMPDIR", "/tmp"), "PYTHONPATH": ""}
+        for argv in (["campaign-show", "--data-root", str(self.data_root),
+                      "--namespace", self.namespace],
+                     ["campaign-status", "--data-root", str(self.data_root),
+                      "--namespace", self.namespace, "--arm", self.ARM],
+                     ["plan", "--data-root", str(self.data_root)],
+                     self.cli_argv()):
+            with self.subTest(command=argv[0]):
+                out = subprocess.run([sys.executable, script] + argv, capture_output=True,
+                                     text=True, cwd=str(self.work),
+                                     env=dict(env, MNV_Z_PRECURSOR_NS=self.namespace))
+                self.assertEqual(out.returncode, 0, out.stderr)
+                self.assertNotIn("Traceback", out.stderr)
 
     def test_the_STATUS_view_reports_the_attempt_history(self):
         self.start_attempt()

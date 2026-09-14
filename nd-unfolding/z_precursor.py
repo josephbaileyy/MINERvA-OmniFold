@@ -1517,6 +1517,7 @@ def confirm_attempt_terminal(raw_text, job_id):
       * NO TERMINAL STATE AT ALL, which is the all-`REQUEUED` history: every attempt ended and the
         task is still going.
     """
+    _add_orchestration_to_path()
     import r5_meter
     import z_precursor_admission as admission
 
@@ -1568,6 +1569,30 @@ def confirm_attempt_terminal(raw_text, job_id):
 
 
 RECOVERY_SCHEMA_VERSION = "z-campaign-recovery/1"
+
+
+def _add_orchestration_to_path():
+    """Put `<repo>/docs/orchestration` on `sys.path`, for the OPERATOR paths ONLY.
+
+    ⚠⚠ THIS MODULE'S ROOTED INSERT COVERS `2d-unfolding` AND `nd-unfolding`, AND `r5_meter` LIVES
+    IN `docs/orchestration`. Every test module in this repository puts that directory on the path
+    at import scope, so the whole recovery suite imported it happily while THE SHIPPED CLI COULD
+    NOT: running `z_precursor.py campaign-recover` from a real deployment clone died with
+    `ModuleNotFoundError: No module named 'r5_meter'`, on all three of its arms, before reaching a
+    single guard. Measured by executing the real CLI from a real deployment -- not by reading.
+    THE TEST ENVIRONMENT SUPPLIED A PATH THE REAL INVOCATION DOES NOT HAVE, which is the
+    fixture-agreeing-with-my-code failure in its purest form, and the in-process
+    `main(argv)` arm could not have caught it because it inherits the test module's `sys.path`.
+    There is now a subprocess arm that runs the CLI the way an operator does.
+
+    NOT FOLDED INTO THE MODULE-LEVEL INSERT, deliberately: that would put `docs/orchestration` on
+    `sys.path` inside the GUARDED PRODUCER too, where nothing needs it and where the resolved
+    repository import set is pinned as an IDENTITY by `mnv_import_set_ratchet.py`. The insert is
+    DERIVED from `__file__` like the other two, never hardcoded -- OI-136's idiom, not its defect.
+    """
+    orchestration = f"{_REPO}/docs/orchestration"
+    if orchestration not in sys.path:
+        sys.path.insert(0, orchestration)
 
 #: ⚠ SCANNED PER `#SBATCH` LINE, NOT ANCHORED PER MATCH, AND THE FIRST VERSION WAS WRONG. All four
 #: launchers put BOTH flags on ONE line -- `#SBATCH --output=... --error=...` -- and a pattern
@@ -2145,6 +2170,7 @@ def recover_task(*, data_root, namespace, arm, task_id, previous_job_id, sacct_d
     human act, and this module contains no `sbatch`.
     """
     environ = os.environ if environ is None else environ
+    _add_orchestration_to_path()
     import z_precursor_admission as admission
 
     paths = campaign_paths(data_root, namespace)
@@ -2219,6 +2245,7 @@ def recover_task(*, data_root, namespace, arm, task_id, previous_job_id, sacct_d
     # `ValueError` and the CLI below catches `PrecursorError`; letting it escape would turn a real
     # refusal -- a malformed or unparseable dump -- into a traceback, which is the wrong diagnosis
     # of a right refusal, the shape `do_combine` already carries a note about.
+    _add_orchestration_to_path()
     import r5_meter
 
     try:
@@ -2559,6 +2586,7 @@ def main(argv=None):
                             if row["attempts"] not in ([], [FIRST_ATTEMPT]) else "")
                 print(f"  task {row['task_id']:>4}  {flags}  {row['output']}{attempts}")
         elif args.command == "campaign-recover":
+            _add_orchestration_to_path()
             import r5_meter
 
             ns = _cli_namespace(args)
