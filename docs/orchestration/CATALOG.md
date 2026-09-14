@@ -785,6 +785,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`REVIEW-20260914-clause7-race-fix-8b89ff36.md`](REVIEW-20260914-clause7-race-fix-8b89ff36.md)
+  - **⚠ PARTIAL RECUSAL: I am NOT independent of the ordering choice** — I named the requirement but
+  then pointed at `require_campaign_complete` as the exemplar, and that became the design rationale.
+  Not certification of that slice; independent on the re-read, the premises, the tests and the
+  mutation analysis. **The defect is CLOSED, measured with the instrument that proved it:** my own
+  probe's defect arm no longer reproduces it (`Exception not raised`) while its control still passes.
+  Site dispositions verified by AST — `require_campaign_complete` byte-identical,
+  `campaign_arm_status` **executable code identical** (docstring-only, confirmed by AST with
+  docstrings stripped). **FINDING: premise (B) "claims are never deleted" is now load-bearing and
+  BOTH its guards are narrower than it** — the AST ban covers 7 named recovery functions, the
+  behavioural arm covers the happy path. Demonstrated: a claim-deleting helper added OUTSIDE that set
+  leaves the ban passing **OK**. Not a live defect — my whole-module AST sweep finds only 3
+  deleting/moving calls, none touching a claim, and claims are written only by
+  `_write_json_exclusive` at `:1925`. **Mutation limitation judged GENUINE, not a harness artifact:**
+  M8 and M9 each pass because each half is independently sufficient, so a behavioural mutant cannot
+  reach either — and the protection is correctly structural instead (order pinned in source, re-read
+  pinned both ways). Premise (A) IS bound to the real producers via a source-text arm on
+  `do_blockunits`/`do_throws`. Counts verified: 17 + 65 + 89 + 123 + 90 = **384 OK**. Withheld:
+  cross-client `O_EXCL` and `mkdir` EEXIST on Lustre — cluster still dead.
 - [`REVIEW-20260914-per-task-recovery-79badb2f.md`](REVIEW-20260914-per-task-recovery-79badb2f.md)
   - **The delta does what it says; no NEW defect. One CARRIED-FORWARD defect: the clause-7 race
   persists at `79badb2f` and recovery RE-ENTERS it.** Kept separate from the `a71087e3` review per
