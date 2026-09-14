@@ -1494,8 +1494,9 @@ def authorized_attempt(paths, arm, task_id):
 # SO RECOVERY IS ADDITIVE. Nothing is deleted and nothing is rewritten: attempt 1's claim keeps its
 # name and its bytes, its partial output is MOVED INTO EVIDENCE rather than overwritten, its logs
 # are copied beside it, its charged expenditure is read from the meter and recorded, and a NEW
-# attempt identity is created alongside. `authorized_attempt` counts forwards; there is no path in
-# this module that unlinks a claim.
+# attempt identity is created alongside. `authorized_attempt` counts forwards, and that no path in
+# this module removes a claim is not asserted here in its own words -- it is `FILESYSTEM_MUTATIONS`,
+# an inventory of every file-removing call in the file, pinned both ways.
 #
 # WHY THE UNCERTAIN CASE IS THE HARD ONE, and it is the reason `confirm_attempt_terminal` refuses
 # three different ways rather than one. A can't-look must not read as terminal: `sacct` prints a
@@ -1731,10 +1732,20 @@ def resolve_log_names(launcher_path, *, array_job_id, task_id, job_id, job_name)
 def _confirm_unclaimed(paths, arm, declared, candidates):
     """Re-read the claims and return only the products STILL unclaimed. Refusal path only.
 
-    THE SECOND READ CAN ONLY ADD CLAIMS -- claims are never deleted -- so a candidate that
-    disappears here was claimed all along and the first read was stale. Returning the survivors
-    rather than a boolean keeps the refusal naming the exact files, which is what an operator
-    hunting for their owner needs.
+    A CANDIDATE THAT DISAPPEARS HERE WAS CLAIMED ALL ALONG AND THE FIRST READ WAS STALE. Returning
+    the survivors rather than a boolean keeps the refusal naming the exact files, which is what an
+    operator hunting for their owner needs.
+
+    ⚠ THE REASON IS PREMISE (B), CITED AND NOT RESTATED -- see `verify_task_ownership`'s ordering
+    block and `FILESYSTEM_MUTATIONS`. This docstring used to say "claims are never deleted", full
+    stop, which is the UNQUALIFIED form that nothing in this file establishes; the premise was
+    narrowed and this paraphrase survived the narrowing. A rule retyped is a second implementation,
+    and that applies to the prose statement of an invariant as much as to the code -- so the
+    correctness note now points at the one place the invariant lives instead of saying it again.
+    WHAT THE CORRECTED PREMISE ADMITS, and it does not change this function's behaviour: a
+    module-EXTERNAL `rm` between the two reads CAN remove a claim, so the second read can LOSE one.
+    Then the candidate survives and the clause refuses -- the fail-closed outcome the premise's own
+    note already bounds. The conclusion above holds; only the reason had to be narrowed.
 
     ⚠ THIS IS NOT THE FIX; THE READ ORDER IS. This is the belt for the one leg of the ordering
     argument that is a property of the FILESYSTEM rather than of this code: cross-client metadata

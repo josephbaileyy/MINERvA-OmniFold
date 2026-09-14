@@ -67,6 +67,7 @@ and a test that cannot fail on the pre-repair code is not evidence about the rep
 import glob as globmod
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -506,6 +507,150 @@ class TheClaimsDirectoryIsNeverMutated(unittest.TestCase):
         eroded.pop(("_atomic_write_json", "os.unlink", ("temporary",)))
         found = mutating_calls((ND / "z_precursor.py").read_text())
         self.assertNotEqual(set(found), set(eroded))
+
+    #: ONE predicate, used by the population sweep AND by both power arms. A re-typed copy in the
+    #: controls would be a fixture derived from the rule it tests: a predicate blind to a wording
+    #: would be confirmed blind by its own control.
+    PREMISE_SUBJECT = re.compile(r"\bclaim(s|ed|ing)?\b", re.I)
+    PREMISE_VERB = re.compile(
+        r"\b(delet\w*|remov\w*|unlink\w*|disappear\w*|vanish\w*|erase\w*|drop\w*|purge\w*|grow\w*|"
+        r"persist\w*|surviv\w*|add\w*|only ever|never|retain\w*|preserv\w*|destroy\w*|replac\w*)\b",
+        re.I)
+
+    def matches_premise_prose(self, text):
+        """Could this line be stating premise (B)? Subject AND a persistence/removal verb."""
+        return bool(self.PREMISE_SUBJECT.search(text) and self.PREMISE_VERB.search(text))
+
+    def premise_prose(self):
+        """Every PROSE line in the module that mentions a claim alongside a persistence verb.
+
+        ⚠ WIDER THAN THE KEYWORD SET THAT MISSED THE PARAPHRASE, deliberately. The surviving
+        overclaim was found by a reviewer grepping "never delet"; MY OWN sweep, and the one before
+        it, missed it. So this keys on the SUBJECT (a claim) co-occurring with ANY
+        persistence/removal verb, over comments AND docstrings, and pins the POPULATION rather than
+        trying to decide which lines state the premise.
+
+        ⚠⚠ AND ITS SCOPE IS EXACTLY THAT, NOT "ANY PARAPHRASE". My first version of the arm below
+        claimed the pin catches a restatement "whatever words it chooses", and then the arm FAILED
+        because the rewording I wrote to demonstrate it -- "a claim, once written, will always
+        still be there when the second read runs" -- uses none of the verbs and is invisible to the
+        pin too. That is the same over-general claim the module docstring warns about one guard
+        over. The honest statement: this catches a paraphrase drawn from the persistence/removal
+        family, which is where the ones written so far have come from; a paraphrase that avoids the
+        whole family is invisible, and `test_THE_BLIND_SPOT_of_the_population_pin` pins that
+        boundary as a fact rather than leaving it to be rediscovered.
+        """
+        import io
+        import tokenize
+
+        source = (ND / "z_precursor.py").read_text()
+        prose = []
+        for token in tokenize.generate_tokens(io.StringIO(source).readline):
+            if token.type == tokenize.COMMENT:
+                prose.append((token.start[0], token.string.lstrip("# ")))
+        import ast as _ast
+        for node in _ast.walk(_ast.parse(source)):
+            if isinstance(node, (_ast.FunctionDef, _ast.ClassDef, _ast.Module)):
+                doc = _ast.get_docstring(node, clean=False)
+                if not doc:
+                    continue
+                base = getattr(node, "lineno", 1)
+                for offset, line in enumerate(doc.splitlines()):
+                    prose.append((base + offset, line.strip()))
+        return [(line, text) for line, text in sorted(prose)
+                if self.matches_premise_prose(text)]
+
+    #: Pinned population size for `premise_prose`. MEASURED on the tree this was written against,
+    #: not chosen to fit -- my first value was 22 and the measurement said 21.
+    PREMISE_PROSE_LINES = 21
+
+    def test_the_PREMISE_IS_STATED_IN_ONE_PLACE_AND_CITED_EVERYWHERE_ELSE(self):
+        """THE WITHDRAWAL REACHED THE PARAPHRASE ONLY BECAUSE A REVIEWER LOOKED, so this is the
+        instrument that does not need one next time.
+
+        `_confirm_unclaimed`'s docstring said "claims are never deleted" -- the unqualified form
+        narrowed two commits earlier -- in the correctness note of the belt itself. The conclusion
+        held; the stated reason asserted an invariant broader than the guards support. That is the
+        third time in this campaign a withdrawal has reached the code and missed a paraphrase.
+        """
+        source = (ND / "z_precursor.py").read_text()
+        # (1) THE WITHDRAWN WORDING IS GONE EXCEPT WHERE IT IS BEING QUOTED AS WITHDRAWN.
+        #     ⚠ MY FIRST VERSION BANNED IT OUTRIGHT AND FIRED ON THE CORRECTION NOTE ITSELF -- the
+        #     `_confirm_unclaimed` docstring quotes the old phrase in order to say it was narrowed.
+        #     Banning the warning is not a check; it is the right check over the wrong operand, and
+        #     this repository has caught that shape four times. So the ban is LINE-WISE and exempts
+        #     a line that marks itself as quoting a withdrawal -- and the exemption is COUNTED, so
+        #     it cannot quietly multiply into a way of keeping the old wording around.
+        #     Weakest leg regardless -- a reword defeats it -- which is what (3) is for.
+        withdrawn_phrases = ("claims are never deleted", "a claim is never deleted",
+                             "claims can never be deleted", "no claim is ever deleted")
+        exempted = []
+        for number, line in enumerate(source.splitlines(), 1):
+            lowered = line.lower()
+            if not any(phrase in lowered for phrase in withdrawn_phrases):
+                continue
+            self.assertIn("used to say", lowered,
+                          f"z_precursor.py:{number} states the WITHDRAWN unqualified premise and "
+                          f"does not mark itself as quoting it: {line.strip()!r}")
+            exempted.append(number)
+        self.assertEqual(len(exempted), 1,
+                         f"exactly one site may quote the withdrawn wording -- the note recording "
+                         f"that it was narrowed. Found {exempted}.")
+        # (2) THE PREMISE IS STATED ONCE and every other site CITES the inventory.
+        self.assertEqual(
+            source.count("NOTHING IN THIS MODULE REMOVES OR REPLACES ANYTHING IN THE CLAIMS"), 1,
+            "the premise must have exactly ONE canonical statement; a second copy is a second "
+            "implementation and the two will diverge")
+        body = source[source.index("def _confirm_unclaimed"):
+                      source.index("def verify_task_ownership")]
+        self.assertIn("FILESYSTEM_MUTATIONS", body,
+                      "the belt's correctness note must CITE the premise, not restate it")
+        self.assertIn("module-EXTERNAL `rm`", body,
+                      "and it must say what the CORRECTED premise admits, or the narrowing did "
+                      "not actually reach this site")
+        # (3) THE POPULATION IS PINNED. A new paraphrase changes this whatever words it uses.
+        found = self.premise_prose()
+        self.assertEqual(
+            len(found), self.PREMISE_PROSE_LINES,
+            "the set of prose lines mentioning a claim alongside a persistence verb changed.\n"
+            "That is not automatically wrong -- but premise (B) has now been restated once and "
+            "paraphrased once, so READ THESE and check none of them states the invariant in its "
+            "own words instead of citing `FILESYSTEM_MUTATIONS`:\n  "
+            + "\n  ".join(f":{line} {text[:100]}" for line, text in found))
+
+    def test_POWER_a_REINTRODUCED_paraphrase_is_DETECTED_by_the_population_pin(self):
+        """Not by the phrase ban -- by the pin, using words the ban does not contain. That is the
+        difference between a guard that catches the mistake I already made and one that catches the
+        next one."""
+        found = len(self.premise_prose())
+        self.assertEqual(found, self.PREMISE_PROSE_LINES)
+        # A REWORDING THE PHRASE BAN CANNOT SEE but which stays inside the persistence family.
+        reworded = "# A claim, once written, is never removed before the second read happens."
+        for withdrawn in ("claims are never deleted", "a claim is never deleted",
+                          "claims can never be deleted", "no claim is ever deleted"):
+            self.assertNotIn(withdrawn, reworded.lower(),
+                             "the phrase ban must be blind to this line, or the arm is measuring "
+                             "the ban rather than the pin")
+        self.assertTrue(self.matches_premise_prose(reworded),
+                        "the reworded paraphrase must fall inside the pinned population, or this "
+                        "arm proves nothing about the pin")
+        self.assertNotEqual(found + 1, self.PREMISE_PROSE_LINES,
+                            "a reworded paraphrase must move the pinned population")
+
+    def test_THE_BLIND_SPOT_of_the_population_pin_is_RECORDED_not_discovered(self):
+        """⚠ THE PIN IS NOT UNIVERSAL, and the boundary is asserted rather than caveated.
+
+        A paraphrase that avoids the whole persistence/removal verb family is invisible to it. This
+        is not hypothetical: it is the exact sentence I first wrote to demonstrate the pin's power,
+        which failed the arm and is how the over-general claim was caught. Widening the verb list
+        until it covers this one is the losing game -- the next paraphrase picks the next word --
+        so the residual is named instead, and `FILESYSTEM_MUTATIONS` remains the durable guard
+        because it keys on CODE rather than on prose.
+        """
+        invisible = "# A claim, once written, will always still be there when the second read runs."
+        self.assertFalse(self.matches_premise_prose(invisible),
+                         "if this now matches, the verb family was widened -- update the recorded "
+                         "boundary rather than deleting this arm, or the residual goes unstated")
 
     def test_the_TWO_GUARDS_have_DIFFERENT_SUBJECTS_and_neither_subsumes_the_other(self):
         """Recorded because two guards over the same-looking thing invite a later merge.
