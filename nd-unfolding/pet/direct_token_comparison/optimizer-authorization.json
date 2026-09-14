@@ -1,0 +1,18 @@
+{
+  "status": "AUTHORIZED",
+  "decision": "optimizer-numerical-diagnostic-only",
+  "failed_job": "58301971",
+  "prior_charged_seconds": 523,
+  "wall_seconds": 1200,
+  "profile": {
+    "gpus": 1,
+    "cpus": 32,
+    "memory_GiB": 56
+  },
+  "automatic_retry": false,
+  "calibration_authorized": false,
+  "full_matrix_authorized": false,
+  "manifest_sha256": "111beef2f6642f73134ed68d733f66890ff0bc4fd8f6a29cf0f6a73abc3a6c92",
+  "user_instruction": "Fix that and I authorize another GPU allocation",
+  "approval_date": "2026-09-15 Asia/Seoul"
+}

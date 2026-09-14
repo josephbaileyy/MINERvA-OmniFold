@@ -1,5 +1,13 @@
 # PET routing comparison: calibration and training remain blocked
 
+## 2026-09-15 — optimizer evidence repair prepared; new diagnostic authorized
+
+Capture-first diagnostic passes all eight CPU instrumentation checks and the
+69-test/10-subtest suite plus two arithmetic tests. [Preparation](OPTIMIZER_PREPARATION-20260915.md)
+and [explicit new authorization](OPTIMIZER_AUTHORIZATION-20260915.md) cover one
+20-minute A100 diagnostic. Calibration and learning remain blocked.
+
+
 ## 2026-09-15 — full-FP32 attempt failed; execution stopped
 
 Job `58301971` passed 69 tests plus 10 subtests and both nominal GPU model cases,

@@ -1,0 +1,27 @@
+{
+  "base_commit": "be1fadef5385e6eea2132f6329ff226126ae8127",
+  "scope": "optimizer-numerical-diagnostic-only",
+  "files": {
+    "nd-unfolding/pet/run_typed_token_comparison.py": "71a69b914f0926c59d07e130e8f2c11a8e5f021e349909d790d124935e8a425d",
+    "nd-unfolding/pet/typed_token_comparison.py": "36306f3500a07764b537f8e1264bab757438a3610e26ed954b4327dcd14c70b7",
+    "nd-unfolding/pet/typed_descriptor_keras.py": "dccc8c616c03c24db2ce29bd0b6de56d08d37468fbdff2b6d1935c6ff2c9348f",
+    "nd-unfolding/pet/typed_descriptors.py": "1a0469778cc86948c7da2ff7d5795f8d19625b2ebd755eb429c8e57f4fedf08b",
+    "nd-unfolding/pet/direct_token_comparison/calibration_measure.py": "1d924616a6d9925143db5a24f23fae8c3aacb7283f9a7a0f8e429068cabf686c",
+    "nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py": "843a094101852e5797dcb9b1661fb2228aee3967028557b8f6d340cef41e04b2",
+    "nd-unfolding/pet/direct_token_comparison/evaluate_calibration.py": "623ae2fcef404b287bff2852175ca7f9c89e420c05cbdf810348ce25bbb57787",
+    "nd-unfolding/pet/direct_token_comparison/sbatch_fp32_calibration.sh": "66176de60f678509a8eee9965453b2427aa8da6271f627d4a5b3b31ac2bc21cc",
+    "nd-unfolding/pet/direct_token_comparison/reference/typed_token_comparison_cpu.py": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95",
+    "nd-unfolding/pet/direct_token_comparison/run-card.json": "567e3eabe16b7c3fc79f597621880f882783d4caca00dff1beb54462b6f96284",
+    "nd-unfolding/pet/direct_token_comparison/FP32_PROPOSAL-20260914.md": "cc67c355a56bc510071df438e753e0f9a46a6bc90f21728aa99062a09767f1bb",
+    "nd-unfolding/pet/direct_token_comparison/FP32_PREPARATION-20260914.md": "2309bf3b8b5f61e2115236345a03cb6706c5b49cd48e71dc286a2904a7ec5206",
+    "nd-unfolding/pet/direct_token_comparison/full-fp32.patch": "a3fb2427bf8014e8351b4aebdefa36a4e03d9ed5adeb61fbbd0676ff013f1969",
+    "nd-unfolding/tests/test_token_packing_preflight.py": "d80e5595cbc6ebacbe34085dc6ad20367ef10855b7cd7ef5ed9a8dfc19916598",
+    "nd-unfolding/mnv_guarded_run.py": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b",
+    "nd-unfolding/pet/direct_token_comparison/optimizer_diagnostic.py": "b4b5761a70d56b7ba0ac5b1be885f34d6b79d2f737ce1afd018897dc026f5184",
+    "nd-unfolding/pet/direct_token_comparison/test_optimizer_diagnostic.py": "8541d2462075c8f3ec1063f5f431321cf351319a8f422b6b9b842abdc5f4f5a5",
+    "nd-unfolding/pet/direct_token_comparison/sbatch_optimizer_diagnostic.sh": "36d5d90d4263906c54146249f2cd6d670d2fbce3f2c5d5c68f574349db952f46",
+    "nd-unfolding/pet/direct_token_comparison/OPTIMIZER_AUTHORIZATION-20260915.md": "2a7086e977bbcdc57b1363fb609ce12d82d0090f1f4305c53236d291ac86ff4f",
+    "nd-unfolding/pet/direct_token_comparison/OPTIMIZER_PREPARATION-20260915.md": "877f674af07b27e7376f211d39cd23d78fe3b63571d1108a1597192a8cbae220",
+    "nd-unfolding/pet/direct_token_comparison/local_validation/20260915-optimizer/validation.json": "1398af3da0466ec7482af1b77ead2844c31ff3e8c50823d34809bdd7b276184b"
+  }
+}

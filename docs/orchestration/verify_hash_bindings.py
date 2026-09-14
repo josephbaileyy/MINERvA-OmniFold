@@ -229,8 +229,11 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: file report
 #:   MISMATCH docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md
 #: and *** BINDINGS BROKEN ***, measured before the bump and then reverted, not argued.
-RECEIPT_BINDING_COUNT = 120
-RECEIPT_BINDING_SHA256 = "0b29b654ea4a6586bc9ac8fae08158450a7b0a898e7859d1b2ceb88fb6111fa8"
+# 120 -> 121: the PET optimizer diagnostic guard pins its new script.
+# Removing that receipt reproduces the prior 120-row digest exactly; see
+# nd-unfolding/pet/direct_token_comparison/execution_runs/20260915-optimizer/binding-inventory-delta.json.
+RECEIPT_BINDING_COUNT = 121
+RECEIPT_BINDING_SHA256 = "e1e792a2610d47c3f20d31b64fafc379de35a98c27c9633658147960112cb99b"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

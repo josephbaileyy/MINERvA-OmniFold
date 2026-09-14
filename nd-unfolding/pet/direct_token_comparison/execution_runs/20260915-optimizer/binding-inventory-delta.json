@@ -1,0 +1,13 @@
+{
+  "before_count": 120,
+  "before_sha256": "0b29b654ea4a6586bc9ac8fae08158450a7b0a898e7859d1b2ceb88fb6111fa8",
+  "after_count": 121,
+  "after_sha256": "e1e792a2610d47c3f20d31b64fafc379de35a98c27c9633658147960112cb99b",
+  "added_binding": [
+    [
+      "nd-unfolding/pet/direct_token_comparison/optimizer_diagnostic.py",
+      "b4b5761a70d56b7ba0ac5b1be885f34d6b79d2f737ce1afd018897dc026f5184"
+    ]
+  ],
+  "owning_receipt": "nd-unfolding/pet/direct_token_comparison/local_validation/20260915-optimizer/diagnostic-guard.json"
+}
