@@ -35,9 +35,20 @@ set -eo pipefail
 # launchers"* AND *"Preserve existing non-Z behavior"*. Those pull against each other: an `#SBATCH`
 # header applies to EVERY submission of this shared script -- archive reproduction, the member-axis
 # path, every non-Z caller -- so it would change behaviour for callers this extension does not
-# cover. Pricing that change needs the cluster's `JobRequeue` default, and that could NOT be
-# measured: the NERSC sshproxy certificate expired mid-session and `ssh` now returns 255. An
-# unmeasured change to a shared launcher is not one that can be defended, so the header is absent.
+# cover. Pricing that change needs the cluster's `JobRequeue` default.
+# ⚠ THAT FACT IS NOW MEASURED, AND IT CONFIRMS THE READING RATHER THAN CHANGING IT (2026-09-14,
+# after cluster access was restored; it was UNMEASURABLE when this was written, because the NERSC
+# sshproxy certificate had expired and `ssh` returned 255 -- that is why the note below was
+# originally phrased as an unmeasured risk). MEASURED HERE, NOT RELAYED: `scontrol show config`
+# on login02, 2026-09-14, gives `JobRequeue = 0` -- so Slurm does not requeue these jobs of
+# its own accord at all. Re-measure it rather than quoting this line: it is site
+# configuration and it can change under us.
+# WHAT THAT CHANGES: an `#SBATCH --no-requeue` header would have been a no-op for every caller,
+# so the tension was narrower than it looked. WHAT IT DOES NOT CHANGE: the header is still absent.
+# Adding it now would be an unauthorized behaviour change to four SHARED launchers in exchange for
+# nothing, since the default already does what the header would ask for; and the guard below is
+# still worth its six lines, because `JobRequeue` is a site configuration this repository does not
+# own and an explicit `scontrol requeue` bypasses it regardless.
 #
 # WHAT IS HERE INSTEAD IS THE SAME OUTCOME, CONDITIONAL ON THE Z NAMESPACE, so it is invisible to
 # every non-Z caller by construction: a requeued attempt of a Z task refuses in seconds instead of

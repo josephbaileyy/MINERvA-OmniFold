@@ -1758,6 +1758,19 @@ def _confirm_unclaimed(paths, arm, declared, candidates):
     ordering argument holds, this function never changes the answer -- and a guard whose belt never
     fires is exactly what you want, so its no-op-on-the-happy-path behaviour is asserted rather
     than assumed.
+
+    ⚠⚠ AND IT IS NOT "INDEPENDENTLY SUFFICIENT" ALONGSIDE THE ORDERING, which is how the pair was
+    once described. Three legs, three different answers:
+      * against the ORDERING RACE it is not independent at all -- re-reading the claims later
+        reconstructs the correct order, so the belt silently implements the fix;
+      * against PREMISE (B) FAILING it adds NOTHING, because it rests entirely on (B) -- the
+        defence there is one-deep;
+      * against CROSS-CLIENT READDIR STALENESS it is the ONLY cover, and that leg is unmeasured.
+        The Lustre measurements that exist are `O_EXCL`/`mkdir` CREATE atomicity, a different
+        property from readdir visibility latency.
+    So deleting this function loses the only cover for the unmeasured leg, while deleting the
+    ordering loses nothing measurable -- the exact opposite of what "either one suffices" implies.
+    It is kept for that reason, not as redundancy.
     """
     still = set(candidates)
     reread = claimed_task_ids(paths["claims"], arm)
@@ -1952,6 +1965,43 @@ def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed
     #   claims snapshot, and `present_names - claimed_names` cannot contain it. A genuinely foreign
     #   product -- one for which no claim was ever created -- is still caught, because no ordering
     #   can conjure a claim that never existed.
+    #   ⚠ NOTICE WHAT THAT ARGUMENT DOES *NOT* USE: it never assumes a product stays put. Safety
+    #   here needs (A) and (B) ONLY. That matters because products are NOT monotone in this module
+    #   -- see the scoping note below.
+    #
+    # CERTIFIED OPTIMAL AMONG ORDERINGS, by an uninvolved reviewer, 2026-09-14, and the ground is
+    # stronger than the argument above. Under (B) the claims set is monotone non-decreasing, so the
+    # UNION of any number of claims reads equals the LATEST; if products were likewise monotone the
+    # INTERSECTION of any number of product reads would equal the EARLIEST. For any read schedule
+    # whatsoever the computed difference then reduces to `P(earliest) - C(latest)`, so
+    # claims-then-products-then-claims gives `P(t1) - (C(t0) | C(t2)) = P(t1) - C(t2)` -- identical
+    # to products-first -- and NO schedule can produce a smaller difference. There is therefore no
+    # materially better ordering to find, for the whole class rather than against the one this
+    # replaced. AND THE SAFETY IS A MONOTONICITY PROPERTY, NOT A WIDENED WINDOW: it does not depend
+    # on the gap between these two lines, on I/O latency, or on array width -- which is what most
+    # fixes in this family actually are.
+    # CITABLE FOR the mechanism selection only: products-first is correct and optimal among
+    # orderings, conditional on (A) and (B) as established above, with (B) in its module-scoped
+    # form. NOT CITABLE FOR the implementation, the tests, the premises, or the residual -- none of
+    # those were reviewed -- and NOT for any claim that the re-read gives depth against (B).
+    #
+    # ⚠ THE OPTIMALITY ARGUMENT ASSUMES PRODUCTS ARE MONOTONE, AND IN THIS MODULE THEY ARE NOT, so
+    # the claim is SCOPED here rather than the premise being named -- naming it was not available,
+    # because it is false: `recover_task` MOVES a partial output out of the arm directory into
+    # `_campaign/evidence/`. Products can shrink.
+    #   WHAT THAT DOES AND DOES NOT COST:
+    #     * SAFETY IS UNAFFECTED. The argument above never uses product monotonicity.
+    #     * THE MODULE'S OWN REMOVAL CANNOT AFFECT THE DIFFERENCE EITHER: recovery preserves the
+    #       claim while it moves the product, so the moved product's name is still in
+    #       `claimed_names` and was never in `present_names - claimed_names` to begin with.
+    #     * THE RESIDUAL IS AN OUTSIDE REMOVAL OF AN *UNCLAIMED* PRODUCT between the two reads: the
+    #       refusal then names a path that no longer exists. It fails closed and the cost is a
+    #       confusing filename in a message, not a wrong verdict.
+    #   AND `_confirm_unclaimed` RE-READS THE CLAIMS ONLY, DELIBERATELY -- it does not re-glob the
+    #   products. Re-globbing would DROP a candidate that had vanished, which is the wrong
+    #   direction for a foreignness gate: a foreign product deleted after it was seen would be
+    #   forgiven. Refusing on a vanished object is the safe direction, and that is a choice rather
+    #   than an omission.
     #
     # AND THE REFUSAL PATH RE-READS, which is belt and braces for the one leg of the argument that
     # is NOT measured here: (A) and (B) are properties of this code, but "a create visible to
@@ -1975,6 +2025,18 @@ def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed
     #     refusing a task. Deliberately left, with the reason recorded at the function.
     # Neither is changed by this repair: a fix applied to a gate that never had the defect can only
     # add risk.
+    # ⚠⚠ THESE TWO READS ARE ADJACENT ON PURPOSE AND MUST STAY ADJACENT. DO NOT MOVE WORK BETWEEN
+    # THEM. Safety and detection come from DIFFERENT properties here, and only one of them is
+    # visible to the tests:
+    #   * SAFETY comes from the ORDER and holds for any `t_products <= t_claims`, however far
+    #     apart -- it is the monotonicity argument above, not a small window.
+    #   * DETECTION POWER comes from the TIGHTNESS. A foreign product created AFTER the products
+    #     read is missed this pass (see `test_THE_BOUNDARY_a_foreign_product_that_LANDS_AFTER_the_
+    #     products_read_is_NOT_seen`), so the later the products are read the more this pass sees.
+    #     The optimum is therefore: products read IMMEDIATELY before the claims.
+    # A "tidy-up" that hoisted the glob higher, or inserted a check between them, would silently
+    # trade away detection WHILE EVERY TEST STILL PASSED -- which is why this warning is here, at
+    # the two lines, rather than only in the block above.
     present = sorted(p for p in globmod.glob(plan["arms"][arm]["product_glob"])
                      if not producer.is_incomplete_write(p))
     present_names = {os.path.basename(p) for p in present}

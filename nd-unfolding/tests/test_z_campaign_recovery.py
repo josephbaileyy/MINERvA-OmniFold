@@ -985,14 +985,31 @@ class TheRecoveryDesignIsRecordedWhereItsReaderWillMeetIt(unittest.TestCase):
         text = (ND / "z_precursor.py").read_text()
         self.assertIn("`SPECIAL_EXIT` IS LIVE HERE AND TERMINAL THERE", text)
 
-    def test_the_UNMEASURABLE_JobRequeue_default_is_disclosed_in_the_launchers(self):
-        """The reading depends on a fact that could not be measured, and saying so is part of the
-        reading. Every named launcher carries the disclosure, not just one."""
+    def test_the_JobRequeue_default_is_now_MEASURED_and_the_launchers_say_so(self):
+        """⚠ THIS ARM CHANGED SUBJECT WHEN THE FACT BECAME MEASURABLE, 2026-09-14.
+
+        It used to assert that the launchers DISCLOSE an unmeasurable fact -- the cluster's
+        `JobRequeue` default -- because the sshproxy certificate had expired and `ssh` returned
+        255. Access was restored and the default is `JobRequeue = 0`, so the disclosure would now
+        be stale, and a stated cost that has gone stale is what this campaign has been paying for
+        all week. The reading is UNCHANGED: no `#SBATCH --no-requeue` header, because it would be a
+        no-op for every caller and adding it is still an unauthorized change to four shared
+        launchers. What changed is that the note now records the measurement AND why the guard is
+        still worth keeping -- `JobRequeue` is site configuration this repository does not own, and
+        an explicit `scontrol requeue` bypasses it regardless.
+        """
         for arm in ("block", "run", "combine", "dump"):
             with self.subTest(arm=arm):
                 text = LAUNCHER[arm].read_text()
-                self.assertIn("JobRequeue", text)
-                self.assertIn("sshproxy certificate expired mid-session", text)
+                self.assertIn("`JobRequeue = 0`", text)
+                self.assertIn("THAT FACT IS NOW MEASURED", text)
+                # MEASURED HERE rather than carried from a relay -- `scontrol show config` on
+                # login02 -- so the note is this lane's own observation and says so.
+                self.assertIn("MEASURED HERE, NOT RELAYED", text)
+                self.assertIn("the header is still absent", text)
+                # ...and the history of the claim survives, so a reader knows why it was once
+                # phrased as a risk rather than as a measurement.
+                self.assertIn("sshproxy certificate had expired", text)
 
     def test_the_APPROVAL_gate_states_what_it_CANNOT_establish(self):
         text = (ND / "z_precursor.py").read_text()

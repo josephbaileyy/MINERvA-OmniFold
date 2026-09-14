@@ -50,14 +50,29 @@ detecting arm below:
     M8    claims-first  + re-check kept  PASSED   <- a one-part mutation MISSES
     M9    products-first + NO re-check   PASSED   <- a one-part mutation MISSES
 
-The two parts are INDEPENDENTLY SUFFICIENT for the interleaving this test can construct, so a
-one-part mutation misses and invites the conclusion that the arm is powerless. It is not -- the
-power control has to revert BOTH, which is M7. This is the same shape, and the same warning, that
-`unified_throw_cov.INCOMPLETE_PREFIX` already carries for its two naming guarantees.
-AND THE TWO PARTS ARE NOT INTERCHANGEABLE, which is why both are kept: the ORDERING is the fix and
-it rests on properties of this code that are proven; the RE-CHECK is a belt for the cross-client
-filesystem leg that is not. A reader who deletes the ordering because "M8 passes" would be keeping
-the mitigation and throwing away the proof.
+A ONE-PART MUTATION MISSES, so the power control has to revert BOTH, which is M7 -- the same shape,
+and the same warning, that `unified_throw_cov.INCOMPLETE_PREFIX` already carries for its two naming
+guarantees.
+
+⚠⚠ BUT "THE TWO PARTS ARE INDEPENDENTLY SUFFICIENT" IS THE WRONG READING OF M8 AND M9, and it was
+the phrasing carried out of this suite and relayed to Joseph. It is right on ONE leg of three and
+MISLEADING on the other two. Three legs, because there are three different things the pair defends
+against:
+
+  * AGAINST THE ORDERING RACE -- the belt is NOT independent of the fix. M8 passes because
+    re-reading the claims LATER reconstructs the correct ordering: the belt silently implements the
+    fix. One mechanism applied twice, not two mechanisms.
+  * AGAINST PREMISE (B) FAILING (an outside `rm` on a claim) -- both fail TOGETHER. The belt rests
+    entirely on (B), so the defence there is ONE-DEEP, not two.
+  * AGAINST CROSS-CLIENT READDIR STALENESS ON LUSTRE -- only the belt covers it. The ordering does
+    not help at all, and this is the leg that is UNMEASURED. The Lustre figures that exist measure
+    `O_EXCL`/`mkdir` CREATE atomicity, which is a different property from readdir visibility
+    latency, so nothing has closed it.
+
+THE CONSEQUENCE IS THE OPPOSITE OF WHAT "INDEPENDENTLY SUFFICIENT" SUGGESTS: dropping the BELT
+loses the only cover for the Lustre leg, while dropping the ORDERING loses nothing measurable --
+and yet the ordering is the part with a proof and the belt is the part without one. Keep both, for
+those reasons, not because either is redundant.
 
 ⚠ THE FIRST VERSION OF THE DETECTING ARM DETECTED NOTHING, and the mutation run is what said so.
 It fired the hook BEFORE the claims snapshot, so the sibling was already claimed by the time either

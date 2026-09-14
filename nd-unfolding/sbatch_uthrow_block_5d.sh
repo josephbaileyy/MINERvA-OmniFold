@@ -10,21 +10,21 @@
 # 5-flux chunk each (5x20 = 100). Combine aggregates these into C_blocksum.
 #
 # ==================================================================================================
-# LIVE, UNREPAIRED DEFECT IN THIS LAUNCHER'S UNDECLARED PATH -- READ BEFORE THE `if` AT :432
+# LIVE, UNREPAIRED DEFECT IN THIS LAUNCHER'S UNDECLARED PATH -- READ BEFORE THE `if` AT :443
 # ==================================================================================================
 # **CITABLE FOR:** the fact that an UNDECLARED run of this launcher writes its block slabs to a
 #   namespace the fast combine does not read, and for the reason that is deliberately not repaired.
 # **NOT CITABLE FOR:** any claim that the Z precursor is exposed to it (it is not -- see below), any
-#   grade, adoption, gate movement, spend, or authorization to change the literal at :440.
+#   grade, adoption, gate movement, spend, or authorization to change the literal at :451.
 # **Owner of the DEFECT:** unassigned. Its repair needs Joseph's authorization, which this
-#   launcher's own comment at :402-404 already said and which the Z-precursor authorization of
+#   launcher's own comment at :413-414 already said and which the Z-precursor authorization of
 #   2026-09-11 did NOT grant -- that one is scoped to the precursor.
 # **Owner of this RECORD:** the Z-precursor repair lane (`lane/z-precursor-repairs-bg-20260911`).
 #   Declining ownership of the defect is cheap and expected: an owner here is whoever would notice
 #   an archive-reproduction combine reading the wrong directory, and that is not this lane.
 #
 # THE DEFECT, PLAINLY. When `MNV_EST_SEED_OFFSET` is unset and `MNV_Z_PRECURSOR_NS` is unset, the
-# `else` branch at :440 writes `uq_5d/block_slabs_5d`, while `sbatch_uthrow_combine_5d_fast.sh`
+# `else` branch at :451 writes `uq_5d/block_slabs_5d`, while `sbatch_uthrow_combine_5d_fast.sh`
 # reads `uq_5d/block_slabs_5d_sb` UNCONDITIONALLY, and `lib_member_resume.sh:145-149`'s
 # `mr_dir_prefix` returns its argument unchanged when undeclared, so nothing re-aligns them.
 # BOTH NAMESPACES ARE POPULATED, measured 2026-09-11 on the product globs (not on `ls`, which
@@ -34,7 +34,7 @@
 #
 # WHY IT IS NOT REPAIRED HERE, AND THE DIRECTION MATTERS -- MY FIRST VERSION OF THIS SECTION HAD IT
 # BACKWARDS. I wrote that repointing the `else` literal "would change where an ARCHIVE reproduction
-# writes". THAT IS THE REASON `:398-401` BELOW EXPLICITLY WITHDRAWS. The archive IS `_sb`, so
+# writes". THAT IS THE REASON `:409-412` BELOW EXPLICITLY WITHDRAWS. The archive IS `_sb`, so
 # repointing does NOT move the archive: it would let an UNDECLARED, NON-SCAN run write INTO the
 # live archive directory. The constraint is that `_sb` needs protecting FROM undeclared writers --
 # not that the archive sits at the current literal and should be left undisturbed.
@@ -45,7 +45,7 @@
 # WHAT DOES JUSTIFY LEAVING IT: Joseph's standing instruction to preserve existing non-Z defaults
 # and validated reproduction paths, plus the fact that any change here is a separate subject with
 # its own blast radius and its own authorization -- which the Z-precursor grant does not give.
-# ⚠ AND THE FIGURE AT `:400-401` DOES NOT RECONCILE. It says "124 receipt-bound slabs". Measured
+# ⚠ AND THE FIGURE AT `:411-412` DOES NOT RECONCILE. It says "124 receipt-bound slabs". Measured
 # 2026-09-11: `block_slabs_5d_sb` 36 + `uthrow_slabs_5d_sb` 40 = 76, and all SEVEN `uq_5d/*slab*`
 # directories together hold 271. No population measured equals 124. Pre-existing and not
 # introduced here; repeated without its denominator it would be an unreconciled number doing
@@ -69,9 +69,20 @@ set -eo pipefail
 # launchers"* AND *"Preserve existing non-Z behavior"*. Those pull against each other: an `#SBATCH`
 # header applies to EVERY submission of this shared script -- archive reproduction, the member-axis
 # path, every non-Z caller -- so it would change behaviour for callers this extension does not
-# cover. Pricing that change needs the cluster's `JobRequeue` default, and that could NOT be
-# measured: the NERSC sshproxy certificate expired mid-session and `ssh` now returns 255. An
-# unmeasured change to a shared launcher is not one that can be defended, so the header is absent.
+# cover. Pricing that change needs the cluster's `JobRequeue` default.
+# ⚠ THAT FACT IS NOW MEASURED, AND IT CONFIRMS THE READING RATHER THAN CHANGING IT (2026-09-14,
+# after cluster access was restored; it was UNMEASURABLE when this was written, because the NERSC
+# sshproxy certificate had expired and `ssh` returned 255 -- that is why the note below was
+# originally phrased as an unmeasured risk). MEASURED HERE, NOT RELAYED: `scontrol show config`
+# on login02, 2026-09-14, gives `JobRequeue = 0` -- so Slurm does not requeue these jobs of
+# its own accord at all. Re-measure it rather than quoting this line: it is site
+# configuration and it can change under us.
+# WHAT THAT CHANGES: an `#SBATCH --no-requeue` header would have been a no-op for every caller,
+# so the tension was narrower than it looked. WHAT IT DOES NOT CHANGE: the header is still absent.
+# Adding it now would be an unauthorized behaviour change to four SHARED launchers in exchange for
+# nothing, since the default already does what the header would ask for; and the guard below is
+# still worth its six lines, because `JobRequeue` is a site configuration this repository does not
+# own and an explicit `scontrol requeue` bypasses it regardless.
 #
 # WHAT IS HERE INSTEAD IS THE SAME OUTCOME, CONDITIONAL ON THE Z NAMESPACE, so it is invisible to
 # every non-Z caller by construction: a requeued attempt of a Z task refuses in seconds instead of
@@ -410,7 +421,7 @@ source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) memb
 #
 # WHY THE UNSET PATH IS UNTOUCHED, and it is not timidity. THIS PARAGRAPH ALSO CARRIED THE WITHDRAWN
 # DIRECTION and is corrected: repointing the unset literal does NOT "change where an ARCHIVE
-# reproduction writes", because per `:398-401` the archive IS `_sb`. It would point an UNDECLARED
+# reproduction writes", because per `:409-412` the archive IS `_sb`. It would point an UNDECLARED
 # writer INTO the live archive. What justifies leaving it is Joseph's standing instruction to
 # "preserve all existing non-Z defaults and validated reproduction paths", and that any change here
 # is a separate subject with its own authorization, which the Z-precursor grant does not give.
