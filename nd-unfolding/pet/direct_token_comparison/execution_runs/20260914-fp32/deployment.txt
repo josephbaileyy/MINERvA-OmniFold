@@ -1,0 +1,38 @@
+Cloning into '/pscratch/sd/j/josephrb/pet-fp32-exec-20260914'...
+Note: switching to '5de944f8141abb72e56518abaf18a5622fa62028'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+Updating files:  45% (1057/2334)Updating files:  46% (1074/2334)Updating files:  47% (1097/2334)Updating files:  48% (1121/2334)Updating files:  49% (1144/2334)Updating files:  50% (1167/2334)Updating files:  51% (1191/2334)Updating files:  52% (1214/2334)Updating files:  53% (1238/2334)Updating files:  54% (1261/2334)Updating files:  55% (1284/2334)Updating files:  56% (1308/2334)Updating files:  57% (1331/2334)Updating files:  58% (1354/2334)Updating files:  59% (1378/2334)Updating files:  60% (1401/2334)Updating files:  61% (1424/2334)Updating files:  62% (1448/2334)Updating files:  63% (1471/2334)Updating files:  64% (1494/2334)Updating files:  65% (1518/2334)Updating files:  66% (1541/2334)Updating files:  67% (1564/2334)Updating files:  68% (1588/2334)Updating files:  69% (1611/2334)Updating files:  70% (1634/2334)Updating files:  71% (1658/2334)Updating files:  72% (1681/2334)Updating files:  73% (1704/2334)Updating files:  74% (1728/2334)Updating files:  75% (1751/2334)Updating files:  76% (1774/2334)Updating files:  77% (1798/2334)Updating files:  78% (1821/2334)Updating files:  79% (1844/2334)Updating files:  80% (1868/2334)Updating files:  81% (1891/2334)Updating files:  81% (1904/2334)Updating files:  82% (1914/2334)Updating files:  83% (1938/2334)Updating files:  84% (1961/2334)Updating files:  85% (1984/2334)Updating files:  86% (2008/2334)Updating files:  87% (2031/2334)Updating files:  88% (2054/2334)Updating files:  89% (2078/2334)Updating files:  90% (2101/2334)Updating files:  91% (2124/2334)Updating files:  92% (2148/2334)Updating files:  93% (2171/2334)Updating files:  94% (2194/2334)Updating files:  95% (2218/2334)Updating files:  96% (2241/2334)Updating files:  97% (2264/2334)Updating files:  98% (2288/2334)Updating files:  99% (2311/2334)Updating files: 100% (2334/2334)Updating files: 100% (2334/2334), done.
+real 5.87
+user 5.14
+sys 2.89
+HEAD is now at 5de944f8 [pet] Authorize full-FP32 compatibility and conditional execution
+nd-unfolding/pet/run_typed_token_comparison.py: OK
+nd-unfolding/pet/typed_token_comparison.py: OK
+nd-unfolding/pet/typed_descriptor_keras.py: OK
+nd-unfolding/pet/typed_descriptors.py: OK
+nd-unfolding/pet/direct_token_comparison/calibration_measure.py: OK
+nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py: OK
+nd-unfolding/pet/direct_token_comparison/evaluate_calibration.py: OK
+nd-unfolding/pet/direct_token_comparison/sbatch_fp32_calibration.sh: OK
+nd-unfolding/pet/direct_token_comparison/reference/typed_token_comparison_cpu.py: OK
+nd-unfolding/pet/direct_token_comparison/run-card.json: OK
+nd-unfolding/pet/direct_token_comparison/FP32_PROPOSAL-20260914.md: OK
+nd-unfolding/pet/direct_token_comparison/FP32_PREPARATION-20260914.md: OK
+nd-unfolding/pet/direct_token_comparison/full-fp32.patch: OK
+nd-unfolding/tests/test_token_packing_preflight.py: OK
+nd-unfolding/mnv_guarded_run.py: OK

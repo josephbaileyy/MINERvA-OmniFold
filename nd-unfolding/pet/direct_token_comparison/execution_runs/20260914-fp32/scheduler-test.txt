@@ -1,0 +1,2 @@
+sbatch: Job 58301968 to start at 2026-09-15T09:13:21 a using 32 processors on nodes nid001320 in partition shared_gpu_ss11
+193052	/pscratch/sd/j/josephrb/pet-fp32-exec-20260914

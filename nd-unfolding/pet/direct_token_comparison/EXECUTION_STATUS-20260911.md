@@ -1,5 +1,15 @@
 # PET routing comparison: calibration and training remain blocked
 
+## 2026-09-14 — full-FP32 attempt authorized and submitted
+
+Job `58301971` is submitted from clean standalone revision `5de944f8` under
+[the explicit approval](FP32_AUTHORIZATION-20260914.md). Deployment hashes and
+runtime lock match; the direct queue was empty and canonical main freshness
+passed for its own HEAD. GPU compatibility and calibration must complete before
+any full job; the unchanged integrity and 20% headroom gates govern continuation.
+[Submission record](execution_runs/20260914-fp32/submission.json). No automatic retry.
+
+
 ## 2026-09-14 — explicit full-FP32 policy prepared, GPU attempt pending
 
 The [policy implementation and CPU validation](FP32_PREPARATION-20260914.md) pass

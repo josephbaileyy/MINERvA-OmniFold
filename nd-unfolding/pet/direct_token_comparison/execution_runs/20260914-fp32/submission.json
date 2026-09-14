@@ -1,0 +1,12 @@
+{
+  "job_id": "58301971",
+  "execution_commit": "5de944f8141abb72e56518abaf18a5622fa62028",
+  "authorization_sha256": "12e94139bf4f4dae356046cdaa53facfae5ef94a0233fda09860fcba9c8c68b5",
+  "scope": "full-FP32 GPU preflight and calibration; frozen matrix conditional on all gates",
+  "prior_conservative_seconds": 395,
+  "runtime_lock_matches": true,
+  "execution_checkout": "/pscratch/sd/j/josephrb/pet-fp32-exec-20260914",
+  "output": "/pscratch/sd/j/josephrb/pet-fp32-output-20260914",
+  "slurm_log": "/pscratch/sd/j/josephrb/pet-fp32-20260914.slurm.log",
+  "automatic_retry": false
+}
