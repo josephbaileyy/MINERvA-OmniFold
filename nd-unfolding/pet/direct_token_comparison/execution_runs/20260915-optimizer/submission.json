@@ -1,0 +1,12 @@
+{
+  "job_id": "58320923",
+  "execution_commit": "98fde50e80958659045e385aad762f91ab0364c0",
+  "checkout": "/pscratch/sd/j/josephrb/pet-optimizer-exec-20260915",
+  "output": "/pscratch/sd/j/josephrb/pet-optimizer-output-20260915",
+  "slurm_log": "/pscratch/sd/j/josephrb/pet-optimizer-20260915.slurm.log",
+  "authorization_sha256": "59822b41231f026cda5e600fb3597dbbc789be2b70cad3e6e80f92f1d18c702c",
+  "prior_charged_seconds": 523,
+  "allocation_limit_seconds": 1200,
+  "calibration_authorized": false,
+  "full_matrix_authorized": false
+}

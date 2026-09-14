@@ -1,5 +1,16 @@
 # N-D OmniFold run log
 
+## 2026-09-15 — PET optimizer diagnostic authorized and submitted
+
+Job `58320923`, clean standalone `98fde50e`, follows the user's explicit new
+allocation approval. Capture-first instrumentation matches all eight CPU cases
+exactly; 69 tests, 10 subtests and two arithmetic tests pass. The 20-minute
+A100 diagnostic preserves unchanged scientific code and acceptance tolerances.
+[Authorization](pet/direct_token_comparison/OPTIMIZER_AUTHORIZATION-20260915.md)
+and [submission](pet/direct_token_comparison/execution_runs/20260915-optimizer/submission.json).
+No learning comparison or calibration is released.
+
+
 ## 2026-09-15 — full-FP32 attempt failed; execution stopped
 
 Job `58301971` passed 69 tests plus 10 subtests and both nominal GPU model cases,

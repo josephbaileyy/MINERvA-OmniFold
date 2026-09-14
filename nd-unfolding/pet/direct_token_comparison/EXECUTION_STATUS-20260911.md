@@ -1,5 +1,14 @@
 # PET routing comparison: calibration and training remain blocked
 
+## 2026-09-15 — optimizer diagnostic submitted
+
+Authorized job `58320923` uses clean standalone revision `98fde50e`. All manifest
+hashes and the runtime lock match; queue was empty and main freshness passed
+for its own HEAD. One A100/32 CPUs/56 GiB/20 minutes; prior charge 523 seconds.
+[Submission and deployment](execution_runs/20260915-optimizer/submission.json).
+No calibration, full matrix or automatic retry is authorized by this diagnostic.
+
+
 ## 2026-09-15 — optimizer evidence repair prepared; new diagnostic authorized
 
 Capture-first diagnostic passes all eight CPU instrumentation checks and the
