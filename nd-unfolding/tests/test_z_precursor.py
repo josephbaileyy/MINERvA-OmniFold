@@ -2633,7 +2633,7 @@ class EndToEndTheProducerWritesWhatTheZReaderAccepts(ProducerFixture):
         out.write_bytes(b"root" + b"\x00" * 300)
         with self.assertRaises(ZP.PrecursorError) as stale:
             run()
-        self.assertIn("no task of this campaign has CLAIMED", str(stale.exception))
+        self.assertIn("NO task of this campaign has CLAIMED", str(stale.exception))
         self.assertIn("unified_throw_cov_5d.root", str(stale.exception))
         os.unlink(out)
         self.assertEqual(

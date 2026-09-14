@@ -961,11 +961,20 @@ def _write_json_exclusive(path, payload):
     `os.replace`, which SILENTLY REPLACES an existing file -- right for a receipt written once by a
     process that has already proved it may, and wrong for the two records here, whose entire job is
     to fail when somebody got there first. `O_CREAT|O_EXCL` is the create-or-fail primitive: POSIX
-    requires it to be atomic against other creates, and `/pscratch` is Lustre (measured
+    requires it to be atomic against other creates, and `/pscratch` is Lustre (measured by `stat`,
     2026-09-13), which serializes the create on the metadata server.
-    ⚠ NOT MEASURED ON LUSTRE ITSELF. The concurrency controls in the test suite run on a local
-    filesystem, because writing to `/pscratch` was outside this repair's authorization. The Lustre
-    claim rests on POSIX `O_EXCL` semantics, not on an observation.
+
+    ⚠ THE LUSTRE CLAIM IS NOW PART MEASURED AND PART NOT, AND THE LINE BETWEEN THEM IS EXACT.
+    MEASURED, BY THE INDEPENDENT REVIEWER AND RELAYED 2026-09-13 -- not by this lane, and not
+    reproduced here because cluster access is dead (rc=255, expired sshproxy certificate): this
+    exact primitive, `os.open(O_CREAT|O_EXCL|O_WRONLY, 0o644)`, raced under a spin barrier on a
+    real Lustre directory -- 12 processes x 40 trials then 24 x 60 trials, 1 920 create attempts
+    across 100 trials, EXACTLY 100 winners, zero anomalies, zero errors.
+    ⚠ SCOPE IT EXACTLY: that is SINGLE-CLIENT, ONE LOGIN NODE. The CROSS-CLIENT case -- which is
+    the one a multi-node Slurm array actually exercises -- remains UNMEASURED; the reviewer's
+    two-node attempt was destroyed by its own cleanup `rm` and disclosed as such. And `os.mkdir`'s
+    EEXIST, which the per-attempt evidence directory relies on, is unmeasured on Lustre in BOTH
+    cases. The concurrency arms in this repository's test suite run on APFS.
     """
     path = Path(path)
     body = json.dumps(payload, indent=2, sort_keys=True).encode("utf-8") + b"\n"
@@ -1675,6 +1684,30 @@ def resolve_log_names(launcher_path, *, array_job_id, task_id, job_id, job_name)
     return out
 
 
+def _confirm_unclaimed(paths, arm, declared, candidates):
+    """Re-read the claims and return only the products STILL unclaimed. Refusal path only.
+
+    THE SECOND READ CAN ONLY ADD CLAIMS -- claims are never deleted -- so a candidate that
+    disappears here was claimed all along and the first read was stale. Returning the survivors
+    rather than a boolean keeps the refusal naming the exact files, which is what an operator
+    hunting for their owner needs.
+
+    ⚠ THIS IS NOT THE FIX; THE READ ORDER IS. This is the belt for the one leg of the ordering
+    argument that is a property of the FILESYSTEM rather than of this code: cross-client metadata
+    visibility on Lustre, which a multi-node array exercises and which nobody has measured. If the
+    ordering argument holds, this function never changes the answer -- and a guard whose belt never
+    fires is exactly what you want, so its no-op-on-the-happy-path behaviour is asserted rather
+    than assumed.
+    """
+    still = set(candidates)
+    reread = claimed_task_ids(paths["claims"], arm)
+    for task in reread:
+        name = declared.get(str(task))
+        if name in still:
+            still.discard(name)
+    return sorted(still)
+
+
 def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed, environ=None):
     """PHASE 2. Campaign membership, then exclusive ownership of THIS task's output.
 
@@ -1785,6 +1818,62 @@ def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed
 
     declared = {str(t): n for t, n in entry["outputs"].items()}
     declared_names = set(declared.values())
+
+    # ============ THE TWO READS ARE ORDERED PRODUCTS-THEN-CLAIMS, AND THE ORDER IS THE FIX ========
+    # ⚠ THIS WAS A LIVE DEFECT AT `a71087e3`, OF THE EXACT CLASS THIS MODULE EXISTS TO ELIMINATE,
+    # found by the independent review of 2026-09-13 and reproduced deterministically. The two reads
+    # used to run claims-first, products-second, and a CORRECTLY BOUND SIBLING that created its
+    # claim and published its product BETWEEN them was absent from the claims snapshot and present
+    # in the products snapshot -- so `unclaimed` was non-empty and the innocent subject task
+    # REFUSED, naming the sibling. Observed in the wild driving the real populations: `block`'s
+    # 21 tasks at the launcher's own `%10` are clean, but `run` is `--array=0-39%40`, which is NO
+    # effective throttle, and at that width task 7 refused naming `uthrow5d_slab_18.npz`.
+    # It failed CLOSED -- it could only reject a legitimate product, never admit a foreign one --
+    # but it killed array tasks under exactly the conditions this repair was built for, and its
+    # message sent the operator hunting for a foreign campaign that did not exist.
+    #
+    # WHY PRODUCTS-FIRST IS CORRECT, AND THE ARGUMENT RESTS ON TWO STATED FACTS RATHER THAN ON THE
+    # WINDOW BEING SMALL:
+    #
+    #   (A) CLAIM-BEFORE-PUBLISH is the producer's discipline and it is enforced here, not assumed:
+    #       `verify_task_ownership` creates the `O_EXCL` claim as its LAST act and only then does
+    #       the producer write anything, so for any task, claim(t) < publish(t) strictly.
+    #   (B) CLAIMS ARE NEVER DELETED. Recovery is additive -- Joseph's prohibition -- and
+    #       `test_NOTHING_IN_THE_MODULE_UNLINKS_A_CLAIM` walks the recovery path's AST for every
+    #       deleting call. So the claims set only ever GROWS.
+    #
+    #   Read products at t1 and claims at t2 > t1. Any product p observed at t1 was published at
+    #   some time <= t1; by (A) its claim was created strictly earlier; by (B) that claim still
+    #   exists at t2. So every legitimately claimed product in the snapshot has its claim in the
+    #   claims snapshot, and `present_names - claimed_names` cannot contain it. A genuinely foreign
+    #   product -- one for which no claim was ever created -- is still caught, because no ordering
+    #   can conjure a claim that never existed.
+    #
+    # AND THE REFUSAL PATH RE-READS, which is belt and braces for the one leg of the argument that
+    # is NOT measured here: (A) and (B) are properties of this code, but "a create visible to
+    # client X at t1 is visible to client Y at t2 > t1" is a property of LUSTRE'S CROSS-CLIENT
+    # METADATA COHERENCE, and a multi-node array is exactly the case nobody has measured. A stale
+    # readdir could still produce a phantom. So a non-empty `unclaimed` is not a refusal yet: the
+    # claims are re-read, strictly later, and only what survives BOTH reads is refused. This costs
+    # nothing on the passing path -- it runs only when the guard is about to fire.
+    #
+    # THIS MAKES THE CLAUSE CONSISTENT WITH THE FILE RATHER THAN INVENTING A ROUTE. This module has
+    # THREE sites that read the claims directory, and the review mapped all three by AST at both
+    # shas rather than by grep. `require_campaign_complete` already reads PRODUCTS FIRST, so the
+    # order adopted here is the one the file's other GATE was using all along -- this clause was the
+    # outlier, not the pattern.
+    #   * `require_campaign_complete` is a GATE and was ASSESSED, NOT MERELY UNTOUCHED: besides
+    #     reading in this order, it never forms `products - claims` at all. Its set is
+    #     `[t for t in tasks if t not in claimed]` over `tasks`, the STATIC declared task list from
+    #     the manifest -- an operand that cannot change under it. The difference of two
+    #     independently-timed snapshots is what refuses here, and it does not exist there.
+    #   * `campaign_arm_status` is a labelled VIEW, not a gate; a skew misreports a row rather than
+    #     refusing a task. Deliberately left, with the reason recorded at the function.
+    # Neither is changed by this repair: a fix applied to a gate that never had the defect can only
+    # add risk.
+    present = sorted(p for p in globmod.glob(plan["arms"][arm]["product_glob"])
+                     if not producer.is_incomplete_write(p))
+    present_names = {os.path.basename(p) for p in present}
     claimed = claimed_task_ids(paths["claims"], arm)
     stray = sorted(t for t in claimed if str(t) not in declared)
     require(not stray,
@@ -1792,9 +1881,6 @@ def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed
             f"outside the declared population means something ran under this campaign's name that "
             f"the campaign never expected.")
     claimed_names = {declared[str(t)] for t in claimed}
-    present = sorted(p for p in globmod.glob(plan["arms"][arm]["product_glob"])
-                     if not producer.is_incomplete_write(p))
-    present_names = {os.path.basename(p) for p in present}
     undeclared = sorted(present_names - declared_names)
     require(not undeclared,
             f"arm {arm!r} of namespace {plan['namespace']!r} holds {len(undeclared)} product(s) "
@@ -1803,13 +1889,20 @@ def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed
             f"content check this producer makes is satisfied by any inventory-complete population "
             f"at the matching seed, so a foreign member combines silently.")
     unclaimed = sorted(present_names - claimed_names)
+    if unclaimed:
+        unclaimed = _confirm_unclaimed(paths, arm, declared, unclaimed)
     require(not unclaimed,
             f"arm {arm!r} of namespace {plan['namespace']!r} holds {len(unclaimed)} product(s) "
-            f"whose basename this campaign DECLARES but which no task of this campaign has "
-            f"CLAIMED: {unclaimed[:8]}{' ...' if len(unclaimed) > 8 else ''}. That is a valid "
-            f"product of a DIFFERENT campaign sitting at a name this one owns -- the exact shape "
-            f"of `uq_5d/z_probe_20260912/block_slabs_5d/block5d_knobs.npz` -- and a basename check "
-            f"alone passes it, which is why ownership is by CLAIM and not by name.")
+            f"whose basename this campaign DECLARES but which NO task of this campaign has "
+            f"CLAIMED, on TWO reads of the claims directory taken at different instants: "
+            f"{unclaimed[:8]}{' ...' if len(unclaimed) > 8 else ''}. That is a valid product of a "
+            f"DIFFERENT campaign sitting at a name this one owns -- the shape of "
+            f"`uq_5d/z_probe_20260912/block_slabs_5d/block5d_knobs.npz` -- and a basename check "
+            f"alone passes it, which is why ownership is by CLAIM and not by name.\n"
+            f"  This is NOT a sibling that finished while this task was looking: the products are "
+            f"read BEFORE the claims and the claims are then re-read, so a sibling completing in "
+            f"between is claimed by the time either read sees its product. Do not go looking for a "
+            f"timing explanation -- look for whose files these are.")
     # PHASE 3, FOR A CONSUMING ARM, AND BEFORE THE CLAIM. See `CONSUMED_ARMS` for why the order is
     # load-bearing: refusing a combine submitted while the arrays are still draining is the
     # ORDINARY case, and a refusal taken after the `O_EXCL` create would leave that task holding a
@@ -1987,6 +2080,14 @@ def campaign_arm_status(campaign, arm):
     campaign does not cover, and it propagates `claimed_task_ids`'s could-not-look refusal on an
     unreadable claims directory -- because an operator shown "0 of 21 claimed" when nobody could
     read the directory is being shown a blind zero as a measurement.
+
+    ⚠ THIS FUNCTION HAS THE SAME CLAIMS/PRODUCTS READ SKEW `verify_task_ownership` WAS REPAIRED FOR
+    ON 2026-09-13, AND IT IS DELIBERATELY LEFT. The independent review checked it and is not
+    raising it: a skew in a GATE refuses a legitimate task, while a skew in a VIEW misreports one
+    row of a status table for the length of one read. Ordering it would cost nothing, and that is
+    exactly why the note is here instead -- "it was cheap" is not a reason to change a function
+    whose contract is "reports what it saw", and a future reader who spots the pattern should know
+    it was seen, weighed and left rather than missed.
     """
     body = campaign["body"]
     require(arm in body["arms"], f"arm {arm!r} is not covered by this campaign")

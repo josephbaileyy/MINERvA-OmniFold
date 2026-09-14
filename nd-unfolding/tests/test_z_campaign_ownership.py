@@ -427,7 +427,7 @@ class DuplicatesAndForeignArtifactsRefuse(CampaignFixture):
         with self.assertRaises(ZP.PrecursorError) as caught:
             self.own("block", 1)
         message = str(caught.exception)
-        self.assertIn("no task of this campaign has CLAIMED", message)
+        self.assertIn("NO task of this campaign has CLAIMED", message)
         self.assertIn("block5d_knobs.npz", message)
 
     def test_a_STALE_UNDECLARED_product_refuses_and_NAMES_it(self):
@@ -1450,7 +1450,7 @@ class TheRepairIsRecordedWhereItsNextReaderWillMeetIt(unittest.TestCase):
         """
         text = (ND / "z_precursor.py").read_text()
         for phrase in ("DUPLICATE EXECUTION", "ALREADY EXISTS and ",
-                       "no task of this campaign has", "this campaign never declared",
+                       "NO task of this campaign has", "this campaign never declared",
                        "holds vacuously", "has been EDITED",
                        "The code revision moved under the campaign",
                        "is not a member of this production", "is INCOMPLETE"):
