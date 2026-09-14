@@ -40,9 +40,43 @@ here rather than leaving it in the other record:
 
 1. **Recovery re-enters the window.** A recovered attempt runs `verify_task_ownership` again, so
    every recovery is another traversal of the race.
-2. **The claim-reading surface grew from two call sites to three** (`z_precursor.py:1788, 1995,
-   2055`). I have not assessed the two new sites for the same ordering property; that was not in
-   this delta's scope and I am naming it as unassessed rather than implying it is clean.
+2. **CORRECTED 2026-09-14 — the claim-reading surface did NOT grow, and the second gate is now
+   ASSESSED rather than merely named.**
+
+   **What I wrote was wrong.** I said the surface "grew from two call sites to three" and named
+   `:1995` and `:2055` as new. Re-measured by AST at both shas, mapping every `claimed_task_ids`
+   call to its enclosing function:
+
+   | function | `a71087e3` | `79badb2f` | kind |
+   |---|---|---|---|
+   | `verify_task_ownership` | `:1432` | `:1788` | GATE — the finding |
+   | `campaign_arm_status` | `:1599` | `:1995` | view |
+   | `require_campaign_complete` | `:1643` | `:2055` | **GATE** |
+
+   **Three sites at both shas, the same three functions; the delta added none.** The line numbers
+   moved because ~350 lines landed above them. My error came from a `grep … | head` that truncated
+   before `:1643`, so I never saw the third site at `a71087e3` and read the two survivors as new —
+   a population claim built on a truncated command
+   (`inference-from-absence-needs-a-covering-search`).
+
+   **The half that survives is the one that matters, and I have now assessed it rather than leaving
+   it open.** `require_campaign_complete` is a second GATE that reads claims. It is **NOT exposed to
+   the clause-7 property**, and the reason is the operand, not luck:
+
+   - it reads **products first** (`:2052`, via `check_slab_population`) and **claims second**
+     (`:2055`) — the opposite order to clause 7;
+   - and its `unclaimed` set is computed as `[t for t in tasks if t not in claimed]` — over the
+     **declared task list**, which is static, *not* over the product snapshot. It never forms
+     `products − claims`, which is the difference clause 7 refuses on.
+
+   Its failure mode under concurrency is therefore *"refuses an incomplete population"* — true at
+   the instant it looked, conservative, and the intended behaviour for a combine that runs after the
+   arrays drain. **So the same file already contains the safe ordering 250 lines below the unsafe
+   one**; clause 7 is the outlier rather than the pattern. I state that as a comparison between two
+   existing gates, not as a design: the mechanism remains the author's to choose.
+
+   `campaign_arm_status` stays excluded on the reasoning in the other record — a labelled view,
+   where a skew misreports rather than refuses.
 
 ---
 

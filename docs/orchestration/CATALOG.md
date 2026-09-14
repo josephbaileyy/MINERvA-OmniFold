@@ -799,7 +799,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   mutation-tested both ways by me:** adding `os.unlink` to `recover_task` FAILS, and renaming a
   covered function FAILS, so it cannot silently cover less. **Non-Z guarantee reproduced on all four
   shipped launchers:** rc=0 with EMPTY stderr under `SLURM_RESTART_COUNT=9`, rc=3 for a Z requeue,
-  rc=3 for a non-numeric count. Counts verified: 65 + 89 + 123 = **277**. **Withheld — NERSC dead
+  rc=3 for a non-numeric count. Counts verified: 65 + 89 + 123 = **277**. **CORRECTED 2026-09-14:** my "the claim-reading surface grew from two sites to three" was WRONG —
+  AST at both shas gives **three sites at BOTH**, same three functions, none added by the delta (my
+  `grep | head` truncated before the third). The surviving half is assessed rather than left open:
+  `require_campaign_complete` is a second GATE but is **NOT exposed** to the clause-7 property — it
+  reads products FIRST and claims second, and computes `unclaimed` over the static declared task
+  list, never `products − claims`. So the safe ordering already exists 250 lines below the unsafe
+  one and clause 7 is the outlier. **Withheld — NERSC dead
   (rc=255, cert Sep 13 08:42):** `mkdir` EEXIST on Lustre (a DIFFERENT primitive; my `O_EXCL`
   measurement does not transfer), cross-client `O_EXCL`, `JobRequeue`, and the eight-suite total.
 - [`REVIEW-20260914-namespace-ownership-a71087e3.md`](REVIEW-20260914-namespace-ownership-a71087e3.md)
