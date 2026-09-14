@@ -10,21 +10,21 @@
 # 5-flux chunk each (5x20 = 100). Combine aggregates these into C_blocksum.
 #
 # ==================================================================================================
-# LIVE, UNREPAIRED DEFECT IN THIS LAUNCHER'S UNDECLARED PATH -- READ BEFORE THE `if` AT :398
+# LIVE, UNREPAIRED DEFECT IN THIS LAUNCHER'S UNDECLARED PATH -- READ BEFORE THE `if` AT :432
 # ==================================================================================================
 # **CITABLE FOR:** the fact that an UNDECLARED run of this launcher writes its block slabs to a
 #   namespace the fast combine does not read, and for the reason that is deliberately not repaired.
 # **NOT CITABLE FOR:** any claim that the Z precursor is exposed to it (it is not -- see below), any
-#   grade, adoption, gate movement, spend, or authorization to change the literal at :406.
+#   grade, adoption, gate movement, spend, or authorization to change the literal at :440.
 # **Owner of the DEFECT:** unassigned. Its repair needs Joseph's authorization, which this
-#   launcher's own comment at :368-370 already said and which the Z-precursor authorization of
+#   launcher's own comment at :402-404 already said and which the Z-precursor authorization of
 #   2026-09-11 did NOT grant -- that one is scoped to the precursor.
 # **Owner of this RECORD:** the Z-precursor repair lane (`lane/z-precursor-repairs-bg-20260911`).
 #   Declining ownership of the defect is cheap and expected: an owner here is whoever would notice
 #   an archive-reproduction combine reading the wrong directory, and that is not this lane.
 #
 # THE DEFECT, PLAINLY. When `MNV_EST_SEED_OFFSET` is unset and `MNV_Z_PRECURSOR_NS` is unset, the
-# `else` branch at :406 writes `uq_5d/block_slabs_5d`, while `sbatch_uthrow_combine_5d_fast.sh`
+# `else` branch at :440 writes `uq_5d/block_slabs_5d`, while `sbatch_uthrow_combine_5d_fast.sh`
 # reads `uq_5d/block_slabs_5d_sb` UNCONDITIONALLY, and `lib_member_resume.sh:145-149`'s
 # `mr_dir_prefix` returns its argument unchanged when undeclared, so nothing re-aligns them.
 # BOTH NAMESPACES ARE POPULATED, measured 2026-09-11 on the product globs (not on `ls`, which
@@ -34,7 +34,7 @@
 #
 # WHY IT IS NOT REPAIRED HERE, AND THE DIRECTION MATTERS -- MY FIRST VERSION OF THIS SECTION HAD IT
 # BACKWARDS. I wrote that repointing the `else` literal "would change where an ARCHIVE reproduction
-# writes". THAT IS THE REASON `:364-367` BELOW EXPLICITLY WITHDRAWS. The archive IS `_sb`, so
+# writes". THAT IS THE REASON `:398-401` BELOW EXPLICITLY WITHDRAWS. The archive IS `_sb`, so
 # repointing does NOT move the archive: it would let an UNDECLARED, NON-SCAN run write INTO the
 # live archive directory. The constraint is that `_sb` needs protecting FROM undeclared writers --
 # not that the archive sits at the current literal and should be left undisturbed.
@@ -45,7 +45,7 @@
 # WHAT DOES JUSTIFY LEAVING IT: Joseph's standing instruction to preserve existing non-Z defaults
 # and validated reproduction paths, plus the fact that any change here is a separate subject with
 # its own blast radius and its own authorization -- which the Z-precursor grant does not give.
-# ⚠ AND THE FIGURE AT `:366-367` DOES NOT RECONCILE. It says "124 receipt-bound slabs". Measured
+# ⚠ AND THE FIGURE AT `:400-401` DOES NOT RECONCILE. It says "124 receipt-bound slabs". Measured
 # 2026-09-11: `block_slabs_5d_sb` 36 + `uthrow_slabs_5d_sb` 40 = 76, and all SEVEN `uq_5d/*slab*`
 # directories together hold 271. No population measured equals 124. Pre-existing and not
 # introduced here; repeated without its denominator it would be an unreconciled number doing
@@ -62,6 +62,40 @@
 # trust its output. Nothing below will tell you.
 # ==================================================================================================
 set -eo pipefail
+
+# --- REQUEUE REFUSAL, Z-SCOPED (2026-09-13, Joseph's bounded recovery extension) ------------------
+# ⚠ THIS IS DELIBERATELY *NOT* AN `#SBATCH --no-requeue` HEADER, AND THE CHOICE IS RECORDED HERE
+# RATHER THAN LEFT INVISIBLE. Joseph authorized *"--no-requeue on the named prospective precursor
+# launchers"* AND *"Preserve existing non-Z behavior"*. Those pull against each other: an `#SBATCH`
+# header applies to EVERY submission of this shared script -- archive reproduction, the member-axis
+# path, every non-Z caller -- so it would change behaviour for callers this extension does not
+# cover. Pricing that change needs the cluster's `JobRequeue` default, and that could NOT be
+# measured: the NERSC sshproxy certificate expired mid-session and `ssh` now returns 255. An
+# unmeasured change to a shared launcher is not one that can be defended, so the header is absent.
+#
+# WHAT IS HERE INSTEAD IS THE SAME OUTCOME, CONDITIONAL ON THE Z NAMESPACE, so it is invisible to
+# every non-Z caller by construction: a requeued attempt of a Z task refuses in seconds instead of
+# re-running. `SLURM_RESTART_COUNT` is set by Slurm on a restarted or requeued job and is absent
+# otherwise, and the comparison is a STRING comparison so a non-numeric value refuses rather than
+# making the test itself an error.
+#
+# TWO MECHANISMS, NEITHER SUBSUMING THE OTHER. This one refuses EARLY -- before the preamble, the
+# A-2(f) comparison and the science invocation -- and says why. The campaign's per-attempt `O_EXCL`
+# claim refuses a requeue even if this variable is absent, if this block is deleted, or if the job
+# was never a Z job at submission time. The CORRECTNESS property was already held by the claim;
+# what this adds is that a requeue does not burn a fresh allocation to discover it.
+#
+# THE SUBMISSION-TIME FLAG IS THE OPERATOR'S HALF AND IS STILL RECOMMENDED: submit the Z arms with
+# `sbatch --no-requeue ...`, which PREVENTS the requeue rather than refusing it after the fact, and
+# which touches no other caller of this script at all.
+if [[ -n "${MNV_Z_PRECURSOR_NS:-}" && "${SLURM_RESTART_COUNT:-0}" != "0" ]]; then
+  echo "[z-campaign] FAIL: this is restart/requeue ${SLURM_RESTART_COUNT} of job ${SLURM_JOB_ID:-<none>}" >&2
+  echo "[z-campaign]   under Z namespace '${MNV_Z_PRECURSOR_NS}'. A requeued attempt is a SECOND" >&2
+  echo "[z-campaign]   attempt of a task whose claim already exists, and it would refuse anyway." >&2
+  echo "[z-campaign]   Recovery is EXPLICIT and PER TASK: z_precursor.py campaign-recover, against" >&2
+  echo "[z-campaign]   Joseph's own approval line. Nothing here retries by default." >&2
+  exit 3
+fi
 # --- OI-136 / Joseph's ruling 17, 2026-08-22: TWO ROOTS, BOTH MANDATORY, NEITHER DEFAULTED -------
 # This line used to read `REPO="<the canonical checkout>"` unconditionally, and every `source`, every
 # `cd` and every `python3` below hung off it. That decides the EXECUTING TREE before any interpreter
@@ -376,7 +410,7 @@ source "${_mr_lib}/lib_member_resume.sh"; mr_require_valid_offset   # M(ii) memb
 #
 # WHY THE UNSET PATH IS UNTOUCHED, and it is not timidity. THIS PARAGRAPH ALSO CARRIED THE WITHDRAWN
 # DIRECTION and is corrected: repointing the unset literal does NOT "change where an ARCHIVE
-# reproduction writes", because per `:364-367` the archive IS `_sb`. It would point an UNDECLARED
+# reproduction writes", because per `:398-401` the archive IS `_sb`. It would point an UNDECLARED
 # writer INTO the live archive. What justifies leaving it is Joseph's standing instruction to
 # "preserve all existing non-Z defaults and validated reproduction paths", and that any change here
 # is a separate subject with its own authorization, which the Z-precursor grant does not give.

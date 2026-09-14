@@ -557,14 +557,26 @@ class AnIncompletePopulationCannotBeConsumed(CampaignFixture):
         self.assertIn("14", str(caught.exception))
 
     def test_a_completion_record_whose_PRODUCT_CHANGED_refuses(self):
-        """A binding is re-read from disk, never trusted from the record."""
+        """A binding is re-read from disk, never trusted from the record.
+
+        ⚠ THE MESSAGE CHANGED WITH THE 2026-09-13 RECOVERY DELTA AND THE CHANGE IS THE POINT.
+        Before attempts existed, a record that no longer matched its product could only be
+        `check_receipt`'s "CHANGED since it was measured". Now it has two readings -- a SUPERSEDED
+        attempt, which recovery creates deliberately, or a changed product, which is a corruption
+        finding -- and phase 3 says WHICH by asking whether a recovery record supersedes it.
+        The refusal is strictly more specific; it is not a relaxation, and the arm below pins that
+        the corruption reading is the one taken when nothing supersedes.
+        """
         self.stage()
         product = self.product_path("block", 2)
         U._atomic_savez(product, xs=np.arange(99, dtype=float))
         with self.assertRaises(ZP.PrecursorError) as caught:
             ZP.require_campaign_complete(self.campaign, "block",
                                          self.plan["arms"]["block"]["product_glob"])
-        self.assertIn("CHANGED since it was measured", str(caught.exception))
+        message = str(caught.exception)
+        self.assertIn("NO LONGER validates against the product on disk", message)
+        self.assertIn("no recovery record supersedes them", message)
+        self.assertIn("corruption finding", message)
 
     def test_a_completion_record_bound_to_ANOTHER_CAMPAIGN_refuses(self):
         """A foreign record is a foreign artifact however internally correct it is."""
@@ -980,6 +992,10 @@ class TheContractAddsNoInterpreterInvocationToAnyLauncher(unittest.TestCase):
         `sbatch_uthrow_dump_5d.sh:234` names `z_precursor.py` in a `--pair` deployment-parity
         BINDING, which is the opposite of an invocation, and a filename search reports it as a
         violation. Only a line that hands the file to an interpreter can be one.
+        ⚠ AND THE NARROWING "IT MUST BE A `--pair` LINE" WAS ALSO WRONG, measured when the 2026-09-13
+        requeue refusal added an `echo` that NAMES `z_precursor.py campaign-recover` to tell an
+        operator what to run. That is prose in a message, not an invocation, and requiring every
+        mention to be a parity binding banned a correct line. The rule is about the INTERPRETER.
 
         The census itself is the instrument for this rule and is run by `test_z_precursor.py::
         test_the_PREFLIGHT_CENSUS_itself_is_CLEAN_on_this_tree`; this arm is the narrower statement
@@ -993,9 +1009,6 @@ class TheContractAddsNoInterpreterInvocationToAnyLauncher(unittest.TestCase):
                         continue
                     self.assertNotIn("python3", stripped,
                                      f"{path.name}:{number} invokes z_precursor.py: {stripped!r}")
-                    self.assertIn("--pair", stripped,
-                                  f"{path.name}:{number} names z_precursor.py outside a parity "
-                                  f"binding: {stripped!r}")
 
     def test_the_producer_receives_the_contract_as_a_FLAG_it_already_had(self):
         block = LAUNCHER["block"].read_text()

@@ -824,7 +824,44 @@ CONTENT_ADDRESSED_ARMS = frozenset({"dump"})
 #:   it. A guard that fires on every correct run is not a guard, and that one fired on the second.
 CONSUMED_ARMS = {"combine": ("run", "block")}
 
-_CLAIM_RE = re.compile(r"^(?P<arm>[a-z]+)\.task-(?P<task>\d+)\.claim\.json$")
+#: The first attempt of a logical task. Recovery adds attempts 2, 3, ... ALONGSIDE it.
+FIRST_ATTEMPT = 1
+
+#: Where the per-attempt authorization records and the preserved evidence live, both under
+#: `_campaign/`. Created by `initialize_campaign` for a new campaign and, for a campaign that was
+#: initialized before recovery existed, by `recover_task` -- which ADDS two empty directories and
+#: touches neither the manifest nor any existing record.
+RECOVERY_DIRNAME = "recovery"
+EVIDENCE_DIRNAME = "evidence"
+
+#: Slurm states in which the previous attempt's process MAY STILL BE WRITING, so recovery refuses.
+#:
+#: ⚠ THIS IS NOT THE COMPLEMENT OF `z_precursor_admission.TERMINAL_STATES`, and reading it as one
+#: is the mistake that module already recorded paying for. `REQUEUED` is in NEITHER set: it is a
+#: historical attempt state -- that execution ended, and the TASK continued -- and a task whose
+#: dump is 1882 `REQUEUED` rows plus a final `CANCELLED` is finished. Treating "not terminal" as
+#: "live" made that guard fire on a correct state.
+#:
+#: ⚠ `SPECIAL_EXIT` IS LIVE HERE AND TERMINAL THERE, DELIBERATELY, AND THE DIVERGENCE IS THE POINT.
+#: For ACCOUNTING it is terminal: nothing further will be charged unless somebody acts. For
+#: "can the previous attempt still write", it is not: `SPECIAL_EXIT` is a requeue held in place,
+#: and a release makes it run again. Two questions, two answers; the accounting module stays the
+#: authority for charged hours and this stays the authority for whether a writer can reappear.
+ATTEMPT_MAY_STILL_WRITE_STATES = frozenset({
+    "PENDING", "RUNNING", "SUSPENDED", "COMPLETING", "CONFIGURING", "RESIZING", "STAGE_OUT",
+    "SIGNALING", "REQUEUE_HOLD", "REQUEUE_FED", "RESV_DEL_HOLD", "SPECIAL_EXIT",
+})
+
+#: States that end an ATTEMPT without ending the TASK. Enumerated rather than inferred so an
+#: unrecognised state falls through to the refusal below instead of being silently tolerated.
+ATTEMPT_HISTORICAL_STATES = frozenset({"REQUEUED"})
+
+_CLAIM_RE = re.compile(
+    r"^(?P<arm>[a-z]+)\.task-(?P<task>\d+)(?:\.attempt-(?P<attempt>\d+))?\.claim\.json$")
+_RECEIPT_RE = re.compile(
+    r"^(?P<arm>[a-z]+)\.task-(?P<task>\d+)(?:\.attempt-(?P<attempt>\d+))?\.receipt\.json$")
+_RECOVERY_RE = re.compile(
+    r"^(?P<arm>[a-z]+)\.task-(?P<task>\d+)\.recovery-(?P<attempt>\d+)\.json$")
 
 
 def campaign_arms():
@@ -846,7 +883,9 @@ def campaign_paths(data_root, namespace):
     return {"root": str(root),
             "manifest": str(root / CAMPAIGN_MANIFEST_NAME),
             "claims": str(root / "claims"),
-            "receipts": str(root / "receipts")}
+            "receipts": str(root / "receipts"),
+            "recovery": str(root / RECOVERY_DIRNAME),
+            "evidence": str(root / EVIDENCE_DIRNAME)}
 
 
 def _canonical_json(body):
@@ -865,20 +904,49 @@ def campaign_digest(body):
     return hashlib.sha256(_canonical_json(body)).hexdigest()
 
 
-def claim_name(arm, task_id):
+def claim_name(arm, task_id, attempt=FIRST_ATTEMPT):
     """The claim filename. THE TASK IDENTITY IS IN THE NAME, and that is not cosmetic.
 
     A concurrent reader of the claims directory must be able to attribute a claim to a task WITHOUT
     parsing its body: the claim is created by `O_EXCL` at its final name and only then filled, so a
     reader can legitimately observe it empty. Putting the identity in the name makes the ownership
     scan a set operation over filenames, with no window in which a real claim reads as unparseable.
+
+    ⚠ ATTEMPT 1'S NAME IS UNSUFFIXED, AND THAT ASYMMETRY IS DELIBERATE. Recovery is ADDITIVE --
+    Joseph: *"Do not implement recovery by deleting a claim and pretending the first attempt never
+    existed"* -- so attempt 1's artifacts keep the exact names a campaign initialized before
+    recovery existed already wrote. Renaming them to `attempt-1` would be a migration of the very
+    records that prohibition protects, over a namespace that may already be populated.
     """
-    return f"{arm}.task-{int(task_id)}.claim.json"
+    attempt = int(attempt)
+    require(attempt >= FIRST_ATTEMPT, f"attempt {attempt} is below the first attempt")
+    if attempt == FIRST_ATTEMPT:
+        return f"{arm}.task-{int(task_id)}.claim.json"
+    return f"{arm}.task-{int(task_id)}.attempt-{attempt}.claim.json"
 
 
-def receipt_name(arm, task_id):
+def receipt_name(arm, task_id, attempt=FIRST_ATTEMPT):
     """The completion-record filename, keyed the same way as the claim it closes."""
-    return f"{arm}.task-{int(task_id)}.receipt.json"
+    attempt = int(attempt)
+    require(attempt >= FIRST_ATTEMPT, f"attempt {attempt} is below the first attempt")
+    if attempt == FIRST_ATTEMPT:
+        return f"{arm}.task-{int(task_id)}.receipt.json"
+    return f"{arm}.task-{int(task_id)}.attempt-{attempt}.receipt.json"
+
+
+def recovery_name(arm, task_id, attempt):
+    """The record that AUTHORIZES attempt `attempt` (>= 2) of a logical task.
+
+    Its existence is what makes a later attempt runnable at all: `authorized_attempt` counts these
+    and a task's current attempt is `1 + <how many recovery records it has>`. That is why the task
+    side needs no new environment variable, and therefore no launcher flag -- the producer already
+    knows the namespace, the arm and `SLURM_ARRAY_TASK_ID`, which is the whole key.
+    """
+    attempt = int(attempt)
+    require(attempt > FIRST_ATTEMPT,
+            f"recovery authorizes attempt {FIRST_ATTEMPT + 1} onwards; attempt {attempt} is the "
+            f"first attempt and needs no authorization")
+    return f"{arm}.task-{int(task_id)}.recovery-{attempt}.json"
 
 
 def _utc_now():
@@ -1166,7 +1234,8 @@ def initialize_campaign(*, data_root, code_root, source_manifest, bank, namespac
     except OSError as exc:
         raise PrecursorError(f"cannot create the namespace root {ns_root}: {exc}") from exc
     paths = campaign_paths(data_root, ns)
-    for directory in (paths["root"], paths["claims"], paths["receipts"]):
+    for directory in (paths["root"], paths["claims"], paths["receipts"], paths["recovery"],
+                      paths["evidence"]):
         os.makedirs(directory, exist_ok=False)
     for arm, entry in plan["arms"].items():
         if arm != "combine":
@@ -1339,6 +1408,248 @@ def claimed_task_ids(claims_dir, arm):
     return found
 
 
+def _scan_attempts(directory, pattern, arm, task_id, *, kind):
+    """`{attempt number: filename}` for one (arm, task) under `directory`, from FILENAMES only.
+
+    Same could-not-look discipline as `claimed_task_ids`, and the same reason for reading names
+    rather than bodies: a claim is created by `O_EXCL` and filled afterwards, so a concurrent
+    reader can legitimately see it empty. An UNREADABLE directory raises; an ABSENT one is an empty
+    result, because a campaign initialized before recovery existed has no `recovery/` directory and
+    that is "no attempt has been authorized", not "nobody could look".
+    """
+    if not os.path.exists(directory):
+        return {}
+    try:
+        entries = os.listdir(directory)
+    except OSError as exc:
+        raise PrecursorError(
+            f"cannot read the campaign's {kind} directory {directory} ({exc}). This is NOT "
+            f"'there are none': it is a check that could not look, and an empty answer here would "
+            f"let a task run an attempt nobody authorized.") from exc
+    found = {}
+    for name in entries:
+        match = pattern.match(name)
+        if match is None or match.group("arm") != arm or int(match.group("task")) != int(task_id):
+            continue
+        raw = match.groupdict().get("attempt")
+        found[FIRST_ATTEMPT if raw is None else int(raw)] = name
+    return found
+
+
+def task_claims(paths, arm, task_id):
+    """`{attempt: claim filename}` for one logical task."""
+    return _scan_attempts(paths["claims"], _CLAIM_RE, arm, task_id, kind="claims")
+
+
+def task_receipts(paths, arm, task_id):
+    """`{attempt: completion-record filename}` for one logical task."""
+    return _scan_attempts(paths["receipts"], _RECEIPT_RE, arm, task_id, kind="receipts")
+
+
+def task_recoveries(paths, arm, task_id):
+    """`{attempt: recovery-record filename}` for one logical task; attempt numbers are >= 2."""
+    return _scan_attempts(paths["recovery"], _RECOVERY_RE, arm, task_id, kind="recovery")
+
+
+def authorized_attempt(paths, arm, task_id):
+    """WHICH attempt of this logical task is authorized to run: `1 + <recovery records>`.
+
+    THE RECOVERY RECORDS ARE THE AUTHORIZATION AND THE COUNTER AT ONCE, which is what keeps the
+    task side free of a new flag: the producer already knows the namespace, the arm and
+    `SLURM_ARRAY_TASK_ID`, and the campaign directory supplies the rest.
+
+    A GAP REFUSES. Attempts must be authorized contiguously from 2, so `{2, 4}` is not "attempt 5
+    is next" -- it is a record that was removed or hand-made, and either way the attempt history
+    this repair exists to preserve is no longer intact.
+    """
+    numbers = sorted(task_recoveries(paths, arm, task_id))
+    require(all(n > FIRST_ATTEMPT for n in numbers),
+            f"{arm} task {task_id} has a recovery record for attempt {FIRST_ATTEMPT}, which needs "
+            f"no authorization; the recovery directory has been hand-edited")
+    expected = list(range(FIRST_ATTEMPT + 1, FIRST_ATTEMPT + 1 + len(numbers)))
+    require(numbers == expected,
+            f"{arm} task {task_id} has recovery records for attempts {numbers} but they must be "
+            f"contiguous from {FIRST_ATTEMPT + 1}: {expected}. A gap means a record was removed or "
+            f"written by hand, and the attempt history is no longer a record of what happened.")
+    return FIRST_ATTEMPT + len(numbers)
+
+
+# ------------------------------------------- (i) RECOVERY: a new attempt, never a reset --------
+# JOSEPH, 2026-09-13, authorizing this bounded extension: *"explicitly approved per-task recovery"*,
+# *"This authorizes implementation and tests, not any actual retry. Each retry still requires my
+# explicit approval."* And the prohibition this whole design is shaped by, verbatim:
+#
+#     "Do not implement recovery by deleting a claim and pretending the first attempt never
+#      existed."
+#
+# SO RECOVERY IS ADDITIVE. Nothing is deleted and nothing is rewritten: attempt 1's claim keeps its
+# name and its bytes, its partial output is MOVED INTO EVIDENCE rather than overwritten, its logs
+# are copied beside it, its charged expenditure is read from the meter and recorded, and a NEW
+# attempt identity is created alongside. `authorized_attempt` counts forwards; there is no path in
+# this module that unlinks a claim.
+#
+# WHY THE UNCERTAIN CASE IS THE HARD ONE, and it is the reason `confirm_attempt_terminal` refuses
+# three different ways rather than one. A can't-look must not read as terminal: `sacct` prints a
+# HEADER and ZERO ROWS with rc=1 when slurmdbd is down, so "no rows for this job" is exactly what a
+# dead accounting database and a finished job look like alike. Zero rows REFUSE. An unresolvable
+# state REFUSES. `COMPLETING` REFUSES. Only a job that is PRESENT in the dump, has no state in
+# which it could still write, no state this module does not recognise, and at least one terminal
+# state, is terminal.
+
+
+def confirm_attempt_terminal(raw_text, job_id):
+    """REQUIREMENT 1. The previous attempt is finished AND cannot still write -- or this refuses.
+
+    `raw_text` is an `sacct` dump in `r5_meter.SACCT_FIELDS` order, the same operand
+    `z_precursor_admission` takes, so ONE captured dump answers both this question and the
+    admission recheck rather than two queries that could disagree about the instant they describe.
+
+    FOUR REFUSALS, and they are four because they call for four different actions:
+
+      * ZERO ROWS for this job id. `sacct` emits a header and no rows with rc=1 when slurmdbd is
+        unreachable, and it emits no rows with rc=0 for a job id that never existed or has been
+        purged. Neither is evidence of termination. This is the can't-look, and reading it as
+        terminal is the failure shape this campaign has paid for repeatedly.
+      * A STATE IN WHICH IT COULD STILL WRITE (`ATTEMPT_MAY_STILL_WRITE_STATES`), which includes
+        `COMPLETING` -- a job in `COMPLETING` still holds its allocation and its file descriptors.
+      * A STATE THIS MODULE DOES NOT RECOGNISE. Fail closed: an unclassified state is an unresolved
+        state, and Slurm grows states faster than this list does.
+      * NO TERMINAL STATE AT ALL, which is the all-`REQUEUED` history: every attempt ended and the
+        task is still going.
+    """
+    import r5_meter
+    import z_precursor_admission as admission
+
+    want = str(job_id)
+    rows, unresolved, live, terminal = [], [], [], []
+    for line in raw_text.splitlines():
+        fields = line.split("|")
+        if len(fields) == len(r5_meter.SACCT_FIELDS) + 1 and fields[-1] == "":
+            fields = fields[:-1]
+        if len(fields) != len(r5_meter.SACCT_FIELDS):
+            continue
+        if admission._row_task_id(fields[0]) != want:
+            continue
+        state = (fields[2].split() or [""])[0].upper()
+        rows.append({"job_id": fields[0], "job_name": fields[1], "state": fields[2],
+                     "elapsed_raw": fields[3], "start": fields[5], "end": fields[6]})
+        if state in ATTEMPT_MAY_STILL_WRITE_STATES:
+            live.append(fields[2])
+        elif state in admission.TERMINAL_STATES and state not in ATTEMPT_MAY_STILL_WRITE_STATES:
+            terminal.append(fields[2])
+        elif state in ATTEMPT_HISTORICAL_STATES:
+            pass
+        else:
+            unresolved.append(fields[2])
+    require(rows,
+            f"the accounting dump contains NO rows for job {want}. That is a CANNOT-LOOK, not a "
+            f"finished job: `sacct` prints a header and zero rows with rc=1 when slurmdbd is "
+            f"unreachable, and zero rows with rc=0 for an id that never existed or has been "
+            f"purged. Recovery may not assume termination from an absence -- capture a dump that "
+            f"contains this job, and check the exit status of the command that captured it.")
+    require(not unresolved,
+            f"job {want} carries {len(unresolved)} state(s) this module does not classify: "
+            f"{sorted(set(unresolved))}. Refusing rather than guessing: an unrecognised state is "
+            f"an UNRESOLVED state, and the only safe reading of 'I do not know whether it can "
+            f"still write' is that it can.")
+    require(not live,
+            f"job {want} is NOT terminal: {len(live)} row(s) in {sorted(set(live))}. It may still "
+            f"be writing, so a new attempt would be a second concurrent writer to one product. "
+            f"Note `COMPLETING` counts as live here -- a completing job still holds its allocation "
+            f"and its open file descriptors -- and `SPECIAL_EXIT` counts as live because a held "
+            f"requeue can be released, which is a deliberate divergence from "
+            f"`z_precursor_admission.TERMINAL_STATES`, whose question is about ACCOUNTING.")
+    require(terminal,
+            f"job {want} has {len(rows)} row(s) and NONE of them is terminal "
+            f"({sorted({r['state'] for r in rows})}). An all-REQUEUED history is a task that is "
+            f"still going, not one that has finished.")
+    return {"job_id": want, "n_rows": len(rows), "terminal_states": sorted(set(terminal)),
+            "historical_rows": len(rows) - len(terminal), "rows": rows}
+
+
+RECOVERY_SCHEMA_VERSION = "z-campaign-recovery/1"
+
+#: ⚠ SCANNED PER `#SBATCH` LINE, NOT ANCHORED PER MATCH, AND THE FIRST VERSION WAS WRONG. All four
+#: launchers put BOTH flags on ONE line -- `#SBATCH --output=... --error=...` -- and a pattern
+#: anchored at `^#SBATCH` finds only the first of them, because `finditer` resumes after the match
+#: and the anchor cannot match again mid-line. It reported "no #SBATCH --error" on a launcher that
+#: declares one, which is a right-looking check over the wrong operand.
+_SBATCH_LINE_RE = re.compile(r"^#SBATCH\s", re.MULTILINE)
+_LOG_FLAG_RE = re.compile(r"--(?P<flag>output|error)=(?P<value>\S+)")
+
+
+def _load_recovery_record(path):
+    """Read and shape-check one recovery record. Refused rather than migrated, like the manifest."""
+    p = Path(path)
+    require(p.is_file(), f"recovery record {path} does not exist")
+    try:
+        record = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise PrecursorError(f"recovery record {path} is not readable JSON: {exc}") from exc
+    require(isinstance(record, dict)
+            and record.get("schema_version") == RECOVERY_SCHEMA_VERSION,
+            f"recovery record {path} has schema_version "
+            f"{record.get('schema_version') if isinstance(record, dict) else None!r} != "
+            f"{RECOVERY_SCHEMA_VERSION}; refused rather than migrated")
+    for field in ("campaign_digest", "arm", "task_id", "attempt", "previous_attempt",
+                  "previous_job_id", "terminal_evidence", "preserved", "admission",
+                  "authorization"):
+        require(field in record, f"recovery record {path} carries no {field!r}")
+    return record
+
+
+def launcher_log_patterns(launcher_path):
+    """`{"output": pattern, "error": pattern}` from the launcher's OWN `#SBATCH` lines.
+
+    DERIVED, like every other declaration in this module. A retyped log pattern is a second
+    implementation of where a launcher puts its logs, and the four arms genuinely differ -- the
+    array arms use `%a_%A` and the combine, which declares no array, uses `%j`. Reading the wrong
+    one gives a well-formed answer about the wrong file.
+    """
+    found = {}
+    for line in Path(launcher_path).read_text().splitlines():
+        if not _SBATCH_LINE_RE.match(line):
+            continue
+        for match in _LOG_FLAG_RE.finditer(line):
+            found.setdefault(match.group("flag"), match.group("value"))
+    for flag in ("output", "error"):
+        require(flag in found,
+                f"{launcher_path}: no #SBATCH --{flag}. Recovery must PRESERVE the failed "
+                f"attempt's logs, and it cannot name a file the launcher does not declare.")
+    return found
+
+
+def resolve_log_names(launcher_path, *, array_job_id, task_id, job_id, job_name):
+    """Slurm's filename patterns, expanded. Only the four this repository's launchers use.
+
+    `%%` first, so an escaped percent cannot be re-expanded by a later substitution -- the classic
+    ordering bug in any substitution table. An UNRECOGNISED `%` token REFUSES rather than being
+    left in the name: a literal `%x` in a filename is a file nobody will find.
+    """
+    out = {}
+    for flag, pattern in launcher_log_patterns(launcher_path).items():
+        pieces, index = [], 0
+        while index < len(pattern):
+            char = pattern[index]
+            if char != "%":
+                pieces.append(char)
+                index += 1
+                continue
+            require(index + 1 < len(pattern), f"{pattern!r} ends in a bare '%'")
+            token = pattern[index + 1]
+            mapping = {"%": "%", "A": str(array_job_id), "a": str(task_id), "j": str(job_id),
+                       "x": str(job_name)}
+            require(token in mapping,
+                    f"{pattern!r} uses the Slurm filename token %{token}, which this expansion "
+                    f"does not know. Refusing rather than leaving it literal: a log path with an "
+                    f"unexpanded token names a file nobody will find, and recovery would then "
+                    f"report a preserved log that is not the attempt's.")
+            pieces.append(mapping[token])
+            index += 2
+        out[flag] = "".join(pieces)
+    return out
+
+
 def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed, environ=None):
     """PHASE 2. Campaign membership, then exclusive ownership of THIS task's output.
 
@@ -1425,6 +1736,26 @@ def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed
             f"task {task_id} of arm {arm!r} would write into {product_dir}, which is not the "
             f"campaign's arm directory {plan['arms'][arm]['dir']}")
 
+    # WHICH ATTEMPT AM I, AND WAS IT AUTHORIZED. Attempt 1 needs nothing; every later attempt exists
+    # only because a recovery record authorizes it, and each of those records is re-validated
+    # against THIS campaign here rather than trusted for existing -- requirement 3's "linked to the
+    # same logical task and immutable campaign inputs" is a binding that has to be CHECKED at the
+    # point of use, or a recovered attempt could drift onto a different manifest.
+    attempt = authorized_attempt(paths, arm, task_id)
+    recoveries = task_recoveries(paths, arm, task_id)
+    for number, filename in sorted(recoveries.items()):
+        record = _load_recovery_record(os.path.join(paths["recovery"], filename))
+        require(record["campaign_digest"] == campaign["campaign_digest"],
+                f"the recovery record authorizing attempt {number} of {arm} task {task_id} binds "
+                f"campaign {str(record['campaign_digest'])[:12]!r}, not this one "
+                f"{campaign['campaign_digest'][:12]!r}. A recovered attempt inherits the campaign "
+                f"binding; it does not get to re-derive one.")
+        require(record["arm"] == arm and int(record["task_id"]) == int(task_id)
+                and int(record["attempt"]) == number,
+                f"the recovery record {filename} authorizes {record['arm']!r} task "
+                f"{record['task_id']} attempt {record['attempt']}, which is not {arm!r} task "
+                f"{task_id} attempt {number}")
+
     import unified_throw_cov as producer
 
     declared = {str(t): n for t, n in entry["outputs"].items()}
@@ -1464,45 +1795,52 @@ def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed
             campaign, role,
             os.path.join(body["arm_dirs"][role], body["arms"][role]["product_glob"]))
     require(not product_path.exists(),
-            f"task {task_id} of arm {arm!r} would write {product_path}, which ALREADY EXISTS and "
-            f"is claimed by this campaign: this task has already run. Adopting or overwriting a "
-            f"pre-existing output is not authorized -- the authorization covers ordinary staggered "
-            f"execution of ONE campaign, not resuming it. Initialize a new campaign in a fresh "
-            f"namespace.")
-    claim_path = os.path.join(paths["claims"], claim_name(arm, task_id))
+            f"attempt {attempt} of task {task_id} of arm {arm!r} would write {product_path}, which "
+            f"ALREADY EXISTS and is claimed by this campaign. Adopting or overwriting a "
+            f"pre-existing output is not authorized: at attempt 1 this means the task already ran, "
+            f"and at a later attempt it means the PREVIOUS attempt's partial output is still "
+            f"sitting there -- `campaign-recover` moves it into `_campaign/evidence/` before it "
+            f"authorizes anything, so a product still in place says the preservation step did not "
+            f"happen and the evidence would be destroyed by this write.")
+    claim_path = os.path.join(paths["claims"], claim_name(arm, task_id, attempt))
     try:
         _write_json_exclusive(claim_path, {
             "schema_version": CAMPAIGN_SCHEMA_VERSION,
             "campaign_digest": campaign["campaign_digest"],
             "arm": arm,
             "task_id": int(task_id),
+            "attempt": int(attempt),
+            "authorized_by": (None if attempt == FIRST_ATTEMPT
+                              else recovery_name(arm, task_id, attempt)),
             "output": expected_name,
             "product": str(product_path),
             "claimed_at_utc": _utc_now(),
             "slurm": {key: environ.get(key, "") for key in
                       ("SLURM_JOB_ID", "SLURM_ARRAY_JOB_ID", "SLURM_ARRAY_TASK_ID",
-                       "SLURM_JOB_NAME", "SLURM_NODELIST")},
+                       "SLURM_JOB_NAME", "SLURM_NODELIST", "SLURM_RESTART_COUNT")},
             "code_listing_sha256": code["listing_sha256"],
             "inputs_listing_sha256": inputs["listing_sha256"],
         })
     except PrecursorError as exc:
         raise PrecursorError(
-            f"DUPLICATE EXECUTION: task {task_id} of arm {arm!r} is ALREADY CLAIMED in campaign "
-            f"{campaign['campaign_digest'][:12]} ({exc}). Another process holds this task's "
-            f"exclusive claim and no product has been published, so it is either still running or "
-            f"it died before publishing. The claim is created with O_CREAT|O_EXCL, so exactly one "
-            f"of two concurrent attempts can hold it. Automatic retries and resumption are "
-            f"outside the authorization: re-running this task is an explicit decision, never a "
-            f"default.") from exc
+            f"DUPLICATE EXECUTION: attempt {attempt} of task {task_id} of arm {arm!r} is ALREADY "
+            f"CLAIMED in campaign {campaign['campaign_digest'][:12]} ({exc}). Another process "
+            f"holds this attempt's exclusive claim and no product has been published, so it is "
+            f"either still running or it died before publishing. The claim is created with "
+            f"O_CREAT|O_EXCL, so exactly one of two concurrent attempts can hold it. A LATER "
+            f"attempt is not what this refuses -- that is what `z_precursor.py campaign-recover` "
+            f"authorizes, per task, against Joseph's explicit approval -- what it refuses is a "
+            f"SECOND process running the attempt this one is already running.") from exc
     # `arm` is IN the return so this result is self-sufficient: `record_task_completion` takes only
     # a contract, and a caller that had to remember to add the arm afterwards would be a contract
     # completed by convention.
     return {"campaign": campaign,
             "arm": arm,
             "task_id": int(task_id),
+            "attempt": int(attempt),
             "output": expected_name,
             "claim": claim_path,
-            "receipt": os.path.join(paths["receipts"], receipt_name(arm, task_id)),
+            "receipt": os.path.join(paths["receipts"], receipt_name(arm, task_id, attempt)),
             "campaign_paths": paths,
             "code": code,
             "inputs": inputs,
@@ -1538,6 +1876,7 @@ def record_task_completion(contract, *, product):
         "campaign_schema_version": CAMPAIGN_SCHEMA_VERSION,
         "arm": arm,
         "task_id": int(task_id),
+        "attempt": int(contract.get("attempt", FIRST_ATTEMPT)),
         "output": os.path.basename(product),
         "claim": os.path.basename(contract["claim"]),
         "bank_cv_sha256": campaign["body"]["inputs"]["bank_cv_sha256"],
@@ -1550,9 +1889,9 @@ def record_task_completion(contract, *, product):
 
 
 # ------------------------------------------------- PHASE 3: the completed population, bound ----
-def check_task_completion(campaign, arm, task_id, receipts_dir):
-    """One task's completion record, gated against the product on disk AND against the campaign."""
-    path = os.path.join(receipts_dir, receipt_name(arm, task_id))
+def check_task_completion(campaign, arm, task_id, receipts_dir, attempt=FIRST_ATTEMPT):
+    """One ATTEMPT's completion record, gated against the product on disk AND against the campaign."""
+    path = os.path.join(receipts_dir, receipt_name(arm, task_id, attempt))
     # `require_population=False`: the two population flags are a COMBINE-level declaration about
     # slab globs, and a per-task receipt has no population to declare. THE PROVENANCE FIELDS ARE
     # RE-CHECKED BELOW, because `check_receipt` gates them inside the same branch as the flags --
@@ -1573,12 +1912,44 @@ def check_task_completion(campaign, arm, task_id, receipts_dir):
             f"the completion record for {arm} task {task_id} names product "
             f"{os.path.basename(receipt['product']['path'])!r}, but the campaign says that task "
             f"owns {expected!r}")
+    require(int(extra.get("attempt", FIRST_ATTEMPT)) == int(attempt),
+            f"the completion record {path} records attempt {extra.get('attempt')!r}, not "
+            f"{attempt}; an attempt's record must name the attempt that wrote it or the "
+            f"one-completion-per-logical-task count is over the wrong population")
     for field in REQUIRED_PROVENANCE:
         value = extra.get(field)
         require(value not in (None, "", "UNAVAILABLE"),
                 f"completion record {path}: extra.{field} = {value!r}. UNAVAILABLE is stamped "
                 f"deliberately by the producer so that a gate can see it.")
-    return {"receipt": path, "product": base["product"], "sha256": base["sha256"]}
+    return {"receipt": path, "attempt": int(attempt), "product": base["product"],
+            "sha256": base["sha256"]}
+
+
+def _completion_is_current(campaign, arm, task_id, receipts_dir, attempt):
+    """Does this attempt's record still describe the product on disk? `None` = cannot tell.
+
+    THREE-VALUED ON PURPOSE. `True` and `False` are the two answers `require_campaign_complete`
+    classifies on -- a stale record is expected for a SUPERSEDED attempt and is a corruption
+    finding for any other. `None` is the case that must NOT be classified here: an absent,
+    unreadable or shapeless record is a defect `check_receipt` already knows how to describe, and
+    guessing at it would be this function inventing a diagnosis it has no evidence for.
+
+    ONLY THE DIGEST QUESTION LIVES HERE. Campaign binding, arm, task, attempt, product name and
+    provenance are NOT consulted: they are never supersedable, and folding them in is exactly the
+    over-broad classification this function was written to replace.
+    """
+    path = Path(receipts_dir) / receipt_name(arm, task_id, attempt)
+    try:
+        receipt = json.loads(path.read_text(encoding="utf-8"))
+        recorded = receipt["product"]["sha256"]
+        product = receipt["product"]["path"]
+    except (OSError, UnicodeError, json.JSONDecodeError, KeyError, TypeError):
+        return None
+    if not isinstance(recorded, str) or not isinstance(product, str):
+        return None
+    if not os.path.exists(product):
+        return False
+    return sha256_file(product) == recorded
 
 
 def campaign_arm_status(campaign, arm):
@@ -1600,11 +1971,13 @@ def campaign_arm_status(campaign, arm):
     rows = []
     for task in sorted(int(t) for t in entry["task_ids"]):
         name = entry["outputs"][str(task)]
+        attempts = sorted(task_claims(paths, arm, task))
         rows.append({"task_id": task, "output": name,
                      "claimed": task in claimed,
+                     "attempts": attempts,
+                     "recovered_attempts": sorted(task_recoveries(paths, arm, task)),
                      "published": os.path.exists(os.path.join(body["arm_dirs"][arm], name)),
-                     "recorded": os.path.exists(
-                         os.path.join(paths["receipts"], receipt_name(arm, task)))})
+                     "recorded": bool(task_receipts(paths, arm, task))})
     return {"arm": arm, "campaign_digest": campaign["campaign_digest"], "n_tasks": len(rows),
             "tasks": rows,
             "n_complete": sum(1 for r in rows if r["claimed"] and r["published"] and r["recorded"])}
@@ -1627,6 +2000,20 @@ def require_campaign_complete(campaign, arm, pattern):
 
     Refuses ONCE with the whole incomplete set rather than at the first gap, so the operator sees
     the population and not a sample of it.
+
+    ⚠ ATTEMPT-AWARE WITHOUT BEING ATTEMPT-AGNOSTIC (2026-09-13, requirement 5). A recovered task has
+    N attempts and must contribute EXACTLY ONE consumed completion. Two ways to get that wrong, and
+    this avoids both:
+      * ATTEMPT-BLIND would look only for `<arm>.task-<id>.receipt.json`, so a task completed by
+        attempt 2 would read as "never recorded a completion" and the combine would refuse a
+        finished campaign forever.
+      * ATTEMPT-AGNOSTIC would accept any receipt it found, so two records for one logical task
+        would both count and a superseded attempt could supply the binding for a product it did
+        not write.
+    So: every attempt's record is gated, EXACTLY ONE must still validate against the product on
+    disk, and every record that does NOT validate must be SUPERSEDED -- attempt k's record is
+    allowed to be stale only if a recovery record authorized attempt k+1. A record that silently
+    stopped matching with nothing superseding it is a finding, not a spare.
     """
     body = campaign["body"]
     require(arm in body["arms"],
@@ -1642,8 +2029,7 @@ def require_campaign_complete(campaign, arm, pattern):
     paths = campaign_paths(body["data_root"], body["namespace"])
     claimed = claimed_task_ids(paths["claims"], arm)
     unclaimed = [t for t in tasks if t not in claimed]
-    unrecorded = [t for t in tasks
-                  if not os.path.exists(os.path.join(paths["receipts"], receipt_name(arm, t)))]
+    unrecorded = [t for t in tasks if not task_receipts(paths, arm, t)]
     require(not unclaimed and not unrecorded,
             f"campaign {campaign['campaign_digest'][:12]} arm {arm!r} is INCOMPLETE: "
             f"{len(unclaimed)} of {len(tasks)} task(s) never claimed their output "
@@ -1653,9 +2039,302 @@ def require_campaign_complete(campaign, arm, pattern):
             f"mid-write: `_atomic_savez` is called after every unit, so a killed task leaves a "
             f"SHORT slab at the declared name that loads cleanly. Consumption needs the COMPLETED "
             f"population, not the present one.")
-    bindings = [check_task_completion(campaign, arm, task, paths["receipts"]) for task in tasks]
+    bindings, attempt_rows = [], []
+    for task in tasks:
+        recovered = set(task_recoveries(paths, arm, task))
+        validating, superseded, stale = [], [], []
+        for number in sorted(task_receipts(paths, arm, task)):
+            # ⚠ CURRENCY IS DECIDED FIRST, AND THE FULL GATE IS ONLY CALLED ON A CURRENT RECORD.
+            # My first version wrapped `check_task_completion` in `except PrecursorError` and
+            # relabelled EVERY refusal as "stale" -- so a record bound to ANOTHER CAMPAIGN, or one
+            # naming the wrong arm, or one carrying UNAVAILABLE provenance, was reported as a
+            # superseded attempt. That is one message half-fitting four findings, and it silently
+            # WEAKENED a guard that existed before recovery did: the foreign-campaign arm of
+            # `test_z_campaign_ownership` caught it. Only the DIGEST question is supersedable;
+            # every other defect must still speak for itself.
+            current = _completion_is_current(campaign, arm, task, paths["receipts"], number)
+            if current is False:
+                (superseded if (number + 1) in recovered else stale).append(number)
+                continue
+            # `None` means the record could not be read well enough to answer -- pass it to the
+            # gate, which is the thing that knows how to refuse an unreadable record.
+            bound = check_task_completion(campaign, arm, task, paths["receipts"], number)
+            validating.append((number, bound))
+        require(not stale,
+                f"campaign {campaign['campaign_digest'][:12]} arm {arm!r} task {task}: "
+                f"attempt(s) {stale} recorded a completion that NO LONGER validates against the "
+                f"product on disk, and no recovery record supersedes them. A superseded attempt's "
+                f"record is allowed to go stale -- that is what recovery does -- but a record that "
+                f"stopped matching on its own is a changed or replaced product, which is a "
+                f"corruption finding and not a spare completion.")
+        require(len(validating) == 1,
+                f"campaign {campaign['campaign_digest'][:12]} arm {arm!r} task {task} contributes "
+                f"{len(validating)} validated completion(s) "
+                f"{[n for n, _b in validating]} across attempts "
+                f"{sorted(task_receipts(paths, arm, task))}; the combine consumes EXACTLY ONE per "
+                f"logical task. Zero means nothing finished; more than one means two attempts both "
+                f"claim to have produced the single product at this task's declared name.")
+        number, bound = validating[0]
+        bindings.append(bound)
+        attempt_rows.append({"task_id": task, "consumed_attempt": number,
+                             "superseded_attempts": superseded,
+                             "recovered_attempts": sorted(recovered)})
     return {"arm": arm, "campaign_digest": campaign["campaign_digest"], "n_tasks": len(tasks),
-            "population": population, "bindings": bindings}
+            "population": population, "bindings": bindings, "attempts": attempt_rows,
+            "n_recovered_tasks": sum(1 for r in attempt_rows if r["recovered_attempts"])}
+
+
+def check_recovery_authorization(path, *, campaign_digest, arm, task_id, attempt):
+    """Joseph's approval for THIS retry, named and digested. It is a GATE, not a verification.
+
+    ⚠ WHAT THIS CAN AND CANNOT ESTABLISH, said plainly because the difference matters. It can
+    establish that a named artifact exists, that it is bound to THIS campaign digest, and that it
+    names THIS arm, task and attempt -- so one approval cannot be recycled across 61 tasks, across
+    two campaigns, or across two attempts of one task. It CANNOT establish that Joseph wrote it.
+    There is no channel here that could: the record ATTESTS an approval and carries its digest so a
+    later reader can check what was shown, and that is the whole of the claim.
+
+    The required line is machine-checkable and short, so an approval cannot be satisfied by prose
+    that happens to mention the words:
+
+        z-campaign-recover <campaign digest> <arm> task <id> attempt <n>
+    """
+    p = Path(path)
+    require(p.is_file(),
+            f"--authorization {path!r} is not a file. Joseph: *\"Each retry still requires my "
+            f"explicit approval.\"* There is no default and no implicit approval.")
+    try:
+        text = p.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        raise PrecursorError(f"--authorization {path} is not readable text: {exc}") from exc
+    wanted = (f"z-campaign-recover {campaign_digest} {arm} task {int(task_id)} "
+              f"attempt {int(attempt)}")
+    matched = [line.strip() for line in text.splitlines() if line.strip() == wanted]
+    require(matched,
+            f"--authorization {path} does not authorize THIS retry. It must contain, on a line of "
+            f"its own:\n    {wanted}\nAn approval that does not name the campaign digest, the arm, "
+            f"the task and the attempt is an approval that can be recycled -- across the other 60 "
+            f"tasks of this arm, across a second attempt of this one, or across another campaign "
+            f"entirely.")
+    return {"path": str(p.resolve()), "sha256": sha256_file(str(p)), "line": wanted,
+            "bytes": p.stat().st_size,
+            "attests_only": ("this gate establishes that a named artifact exists and names this "
+                             "exact retry; it cannot establish who wrote it")}
+
+
+def recover_task(*, data_root, namespace, arm, task_id, previous_job_id, sacct_dump,
+                 spend_basis, max_retries, now, authorization, log_dir, code_root,
+                 admitted_launchers=(), environ=None):
+    """Authorize ONE further attempt of ONE logical task. ADDITIVE: nothing is deleted.
+
+    THE SIX REQUIREMENTS, in the order they are discharged, and every CHECK precedes every
+    MUTATION for the reason `initialize_campaign` records: a failure after the first `mkdir` leaves
+    a state that is neither recovered nor recoverable.
+
+      (1) the previous attempt is terminal and cannot still write  -> `confirm_attempt_terminal`
+      (6) charged expenditure and admitted exposure are re-checked -> `z_precursor_admission`
+          (before any mutation, so a refused admission changes nothing)
+      (2) the claim, the logs, the partial output and the charged expenditure are PRESERVED
+      (3) a new attempt identity, inheriting the campaign binding rather than re-deriving it
+      (4) concurrency and completed products are protected -- here by refusing to recover a task
+          that has ANY completion record, and at run time by the `O_EXCL` claim per attempt
+      (5) is not here: it is `require_campaign_complete`, which consumes exactly one per task.
+
+    NOTHING IS SUBMITTED. Joseph: *"This authorizes implementation and tests, not any actual
+    retry."* This writes a record that would PERMIT one attempt; the submission is a separate,
+    human act, and this module contains no `sbatch`.
+    """
+    environ = os.environ if environ is None else environ
+    import z_precursor_admission as admission
+
+    paths = campaign_paths(data_root, namespace)
+    campaign = load_campaign(paths["manifest"])
+    body = campaign["body"]
+    require(arm in body["arms"],
+            f"arm {arm!r} is not covered by campaign {campaign['campaign_digest'][:12]}, which "
+            f"declares {sorted(body['arms'])}")
+    entry = body["arms"][arm]
+    require(str(int(task_id)) in entry["outputs"],
+            f"task {task_id} is not a declared task of arm {arm!r}")
+    output_name = entry["outputs"][str(int(task_id))]
+    product = os.path.join(body["arm_dirs"][arm], output_name)
+
+    # (4a) A TASK THAT RECORDED A COMPLETION IS NOT A CANDIDATE FOR RECOVERY, whatever the product
+    # looks like now. If the record still validates the task is done; if it does not, the product
+    # was changed or replaced after a real completion, and that is a corruption finding with its
+    # own owner -- not a retry. Either way, retrying would overwrite a completed valid product or
+    # bury the evidence of one.
+    existing_receipts = task_receipts(paths, arm, task_id)
+    require(not existing_receipts,
+            f"{arm} task {task_id} already has completion record(s) for attempt(s) "
+            f"{sorted(existing_receipts)}. A task that recorded a completion DID complete. If its "
+            f"product no longer matches that record, that is a changed or replaced product and a "
+            f"corruption finding, not a failed attempt -- route it, do not retry it.")
+
+    previous = authorized_attempt(paths, arm, task_id)
+    attempt = previous + 1
+    claims = task_claims(paths, arm, task_id)
+    require(previous in claims,
+            f"{arm} task {task_id} attempt {previous} holds NO claim, so it never started. There "
+            f"is nothing to recover: submit the campaign, do not recover it.")
+    previous_claim = os.path.join(paths["claims"], claims[previous])
+    try:
+        claim_body = json.loads(Path(previous_claim).read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise PrecursorError(
+            f"the previous attempt's claim {previous_claim} is not readable JSON ({exc}). It is "
+            f"the record recovery exists to preserve; refusing rather than proceeding over it."
+        ) from exc
+    slurm = claim_body.get("slurm") or {}
+    array_job = (slurm.get("SLURM_ARRAY_JOB_ID") or "").strip()
+    plain_job = (slurm.get("SLURM_JOB_ID") or "").strip()
+    recorded_ids = {i for i in (f"{array_job}_{int(task_id)}" if array_job else "",
+                                array_job, plain_job) if i}
+    require(recorded_ids,
+            f"the claim for {arm} task {task_id} attempt {previous} recorded NO Slurm identity "
+            f"({slurm!r}), so there is no job whose terminality could be established. Refusing: "
+            f"an attempt that cannot be pointed at a job cannot be shown to have stopped.")
+    require(str(previous_job_id) in recorded_ids,
+            f"--previous-job-id {previous_job_id!r} is not one of the identities the claim for "
+            f"attempt {previous} recorded ({sorted(recorded_ids)}). The terminality evidence must "
+            f"be about the job that ACTUALLY RAN this attempt; a dump for some other job is a "
+            f"well-formed check over the wrong object.")
+
+    # (1) TERMINAL, AND UNABLE TO WRITE. Reads the dump; refuses on zero rows, on an unresolvable
+    # state, on any state in which it could still be writing, and on an all-historical history.
+    try:
+        raw_text = Path(sacct_dump).read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        raise PrecursorError(f"cannot read the accounting dump {sacct_dump}: {exc}") from exc
+    terminal_evidence = confirm_attempt_terminal(raw_text, previous_job_id)
+
+    # (6) EXPENDITURE AND EXPOSURE, RE-CHECKED, BEFORE ANYTHING IS MOVED. The proposed arm is this
+    # ONE task at the arm's own wall ceiling -- `committed_task_hours` is `n_tasks * (1 + retries) *
+    # ceiling`, so a single-task proposal is the same function over `n_tasks = 1`. The job NAME is
+    # left as the arm's, because that is how the meter attributes the hours already charged.
+    launcher = Path(code_root) / ARM_LAUNCHERS[arm]
+    arm_declaration = parse_sbatch_arm(launcher)
+    proposed = dict(arm_declaration, n_tasks=1, task_ids=[int(task_id)])
+    # THE METER'S OWN EXCEPTION IS CONVERTED, NOT LET THROUGH. `r5_meter.MeterError` is a
+    # `ValueError` and the CLI below catches `PrecursorError`; letting it escape would turn a real
+    # refusal -- a malformed or unparseable dump -- into a traceback, which is the wrong diagnosis
+    # of a right refusal, the shape `do_combine` already carries a note about.
+    import r5_meter
+
+    try:
+        report = admission.admission_report(
+            raw_text=raw_text,
+            admitted=[parse_sbatch_arm(p) for p in admitted_launchers],
+            proposed=[proposed], max_retries=max_retries, spend_basis=spend_basis, now=now)
+    except r5_meter.MeterError as exc:
+        raise PrecursorError(
+            f"the accounting dump {sacct_dump} could not be metered ({exc}). That is a "
+            f"CANNOT-LOOK on the expenditure half, and recovery may not proceed on an unpriced "
+            f"retry any more than on an unproven termination.") from exc
+    require(report["decision"] == "PERMITTED",
+            f"admission REFUSED this retry: {report['decision']} -- bound "
+            f"{report['bound_cpu_task_hours']:.4f} CPU task-h against ceiling "
+            f"{report['ceilings']['cpu_task_hours']:.1f}. Recovery re-prices the whole campaign, "
+            f"not just this task: a retry is new committed exposure and R5's ceiling is over the "
+            f"total.")
+    charged = admission.charged_task_hours_for(raw_text, previous_job_id)
+
+    # AUTHORIZATION, still before any mutation.
+    approval = check_recovery_authorization(
+        authorization, campaign_digest=campaign["campaign_digest"], arm=arm, task_id=task_id,
+        attempt=attempt)
+
+    # THE LOGS THIS ATTEMPT WROTE, derived from the launcher's OWN #SBATCH patterns.
+    log_names = resolve_log_names(launcher, array_job_id=array_job or plain_job, task_id=task_id,
+                                  job_id=plain_job or array_job,
+                                  job_name=arm_declaration["job_name"])
+    sources = {flag: Path(log_dir) / os.path.basename(name) for flag, name in log_names.items()}
+    missing = sorted(str(p) for p in sources.values() if not p.is_file())
+    require(not missing,
+            f"the failed attempt's log(s) are not in --log-dir {log_dir}: {missing}. The names are "
+            f"DERIVED from {ARM_LAUNCHERS[arm]}'s own #SBATCH --output/--error "
+            f"({sorted(log_names.values())}). Requirement 2 is that the logs are PRESERVED, and a "
+            f"recovery that cannot show the attempt's log has not preserved it -- say where it is "
+            f"rather than proceeding without it.")
+
+    # ---- MUTATIONS BEGIN. Everything above can refuse without changing a byte. -----------------
+    os.makedirs(paths["recovery"], exist_ok=True)
+    os.makedirs(paths["evidence"], exist_ok=True)
+    evidence_dir = Path(paths["evidence"]) / f"{arm}.task-{int(task_id)}.attempt-{previous}"
+    try:
+        os.makedirs(evidence_dir, exist_ok=False)
+    except FileExistsError as exc:
+        raise PrecursorError(
+            f"the evidence directory {evidence_dir} already exists, so attempt {previous} has "
+            f"already been preserved once. Refusing rather than adding to it: a second preservation "
+            f"would either overwrite the first attempt's evidence or leave two partial answers "
+            f"about one attempt.") from exc
+
+    preserved = {"claim": {"path": previous_claim, "name": claims[previous],
+                           "sha256": sha256_file(previous_claim),
+                           "bytes": os.path.getsize(previous_claim),
+                           "note": "PRESERVED IN PLACE. Not moved and not rewritten -- the claim "
+                                   "is the record that the first attempt existed."},
+                 "logs": {}, "partial_output": None,
+                 "charged_expenditure": dict(charged,
+                                             source="z_precursor_admission."
+                                                    "charged_task_hours_for")}
+    for flag, source in sources.items():
+        target = evidence_dir / source.name
+        target.write_bytes(source.read_bytes())
+        preserved["logs"][flag] = {"source": str(source.resolve()), "preserved": str(target),
+                                   "bytes": target.stat().st_size,
+                                   "sha256": sha256_file(str(target))}
+    if os.path.exists(product):
+        # MOVED, NOT COPIED AND NOT DELETED. `os.rename` within one namespace is same-filesystem and
+        # atomic, and moving is what makes the arm directory ready for the next attempt WITHOUT
+        # destroying what the last one wrote -- a copy would leave the partial in place and the
+        # next attempt's overwrite refusal would (correctly) refuse forever.
+        before = {"bytes": os.path.getsize(product), "sha256": sha256_file(product)}
+        target = evidence_dir / os.path.basename(product)
+        os.replace(product, target)
+        after = {"bytes": target.stat().st_size, "sha256": sha256_file(str(target))}
+        require(before == after,
+                f"the partial output changed while it was being preserved: {before} -> {after}. "
+                f"That is a writer this recovery believed was terminal.")
+        preserved["partial_output"] = {"from": product, "preserved": str(target), **after}
+
+    record = {
+        "schema_version": RECOVERY_SCHEMA_VERSION,
+        "campaign_digest": campaign["campaign_digest"],
+        "arm": arm,
+        "task_id": int(task_id),
+        "attempt": attempt,
+        "previous_attempt": previous,
+        "previous_job_id": str(previous_job_id),
+        "output": output_name,
+        "authorized_at_utc": _utc_now(),
+        # (3) THE BINDING IS INHERITED, NOT RE-DERIVED. These three fields are copied out of the
+        # manifest rather than re-measured, so a recovered attempt cannot drift onto a different
+        # code revision or a different bank: `verify_task_ownership` re-checks the LIVE values
+        # against the manifest, and the manifest is what this record points at.
+        "inherited": {"code_listing_sha256": body["code"]["listing_sha256"],
+                      "inputs_listing_sha256": body["inputs"]["listing_sha256"],
+                      "bank_cv_sha256": body["inputs"]["bank_cv_sha256"],
+                      "seeds": body["seeds"]},
+        "terminal_evidence": terminal_evidence,
+        "preserved": preserved,
+        "admission": {"decision": report["decision"],
+                      "bound_cpu_task_hours": report["bound_cpu_task_hours"],
+                      "ceiling_cpu_task_hours": report["ceilings"]["cpu_task_hours"],
+                      "spend_basis": report["spend_basis"],
+                      "max_retries": int(max_retries)},
+        "authorization": approval,
+        "submits_nothing": ("this record authorizes ONE further attempt; it does not submit it. "
+                            "Joseph, 2026-09-13: this authorizes implementation and tests, not "
+                            "any actual retry."),
+    }
+    _write_json_exclusive(os.path.join(paths["recovery"], recovery_name(arm, task_id, attempt)),
+                          record)
+    return {"campaign": campaign, "record": record, "paths": paths,
+            "evidence_dir": str(evidence_dir),
+            "recovery_record": os.path.join(paths["recovery"],
+                                            recovery_name(arm, task_id, attempt))}
 
 
 # ----------------------------------------------------------------------------------- the CLI ----
@@ -1751,6 +2430,43 @@ def _build_parser():
     status.add_argument("--data-root", required=True)
     status.add_argument("--namespace", default=None)
     status.add_argument("--arm", required=True, choices=campaign_arms())
+
+    # ⚠ THIS SUBMITS NOTHING, and the help text says so because an operator reading `--help` is
+    # exactly the reader who might assume otherwise. It writes a record that would PERMIT one
+    # further attempt; submitting it is a separate human act and this module contains no `sbatch`.
+    rec = sub.add_parser("campaign-recover",
+                         help="PHASE 2b: authorize ONE further attempt of ONE task, additively. "
+                              "Preserves the previous attempt's claim, logs, partial output and "
+                              "charged expenditure. SUBMITS NOTHING.")
+    rec.add_argument("--data-root", required=True)
+    rec.add_argument("--namespace", default=None)
+    rec.add_argument("--arm", required=True, choices=campaign_arms())
+    rec.add_argument("--task-id", type=int, required=True)
+    rec.add_argument("--previous-job-id", required=True,
+                     help="the Slurm id of the attempt that failed, as its claim recorded it "
+                          "(`<arrayjob>_<task>`, the array job id, or the plain job id)")
+    rec.add_argument("--sacct-dump", required=True,
+                     help="captured sacct dump in r5_meter.SACCT_FIELDS order. ONE dump answers "
+                          "both the terminality question and the admission recheck, so the two "
+                          "cannot disagree about the instant they describe. CHECK THE EXIT STATUS "
+                          "OF THE COMMAND THAT CAPTURED IT: sacct prints a header and zero rows "
+                          "with rc=1 when slurmdbd is down, and zero rows here REFUSE.")
+    rec.add_argument("--log-dir", required=True,
+                     help="directory holding the failed attempt's Slurm logs. The FILENAMES are "
+                          "derived from the launcher's own #SBATCH --output/--error.")
+    rec.add_argument("--authorization", required=True,
+                     help="file containing Joseph's explicit approval line for THIS retry: "
+                          "`z-campaign-recover <campaign digest> <arm> task <id> attempt <n>`")
+    rec.add_argument("--code-root", required=True,
+                     help="the approved execution tree, for the arm's own #SBATCH declarations")
+    rec.add_argument("--spend-basis", required=True,
+                     choices=("utc", "naive", "unknown"),
+                     help="passed to z_precursor_admission; only 'utc' proceeds")
+    rec.add_argument("--max-retries", type=int, required=True,
+                     help="passed to z_precursor_admission; REQUIRED, no default")
+    rec.add_argument("--now", required=True, help="ISO-8601 UTC decision instant")
+    rec.add_argument("--admitted-launcher", action="append", default=[],
+                     help="launcher PATH of an already-admitted arm (repeatable)")
     return parser
 
 
@@ -1839,7 +2555,50 @@ def main(argv=None):
                 flags = "".join(("C" if row["claimed"] else "-",
                                  "P" if row["published"] else "-",
                                  "R" if row["recorded"] else "-"))
-                print(f"  task {row['task_id']:>4}  {flags}  {row['output']}")
+                attempts = (f"  attempts {row['attempts']}"
+                            if row["attempts"] not in ([], [FIRST_ATTEMPT]) else "")
+                print(f"  task {row['task_id']:>4}  {flags}  {row['output']}{attempts}")
+        elif args.command == "campaign-recover":
+            import r5_meter
+
+            ns = _cli_namespace(args)
+            try:
+                decision_instant = r5_meter.parse_iso_utc(args.now)
+            except r5_meter.MeterError as exc:
+                raise PrecursorError(f"--now {args.now!r} is not an ISO-8601 UTC instant: "
+                                     f"{exc}") from exc
+            started = recover_task(
+                data_root=args.data_root, namespace=ns, arm=args.arm, task_id=args.task_id,
+                previous_job_id=args.previous_job_id, sacct_dump=args.sacct_dump,
+                spend_basis=args.spend_basis, max_retries=args.max_retries,
+                now=decision_instant, authorization=args.authorization,
+                log_dir=args.log_dir, code_root=args.code_root,
+                admitted_launchers=args.admitted_launcher)
+            record = started["record"]
+            print(f"[z-precursor] campaign {record['campaign_digest'][:12]} {record['arm']} task "
+                  f"{record['task_id']}: attempt {record['attempt']} AUTHORIZED")
+            print(f"  previous      attempt {record['previous_attempt']}, job "
+                  f"{record['previous_job_id']}, TERMINAL in "
+                  f"{record['terminal_evidence']['terminal_states']} over "
+                  f"{record['terminal_evidence']['n_rows']} accounting row(s)")
+            preserved = record["preserved"]
+            print(f"  preserved     claim {preserved['claim']['name']} (in place, "
+                  f"{preserved['claim']['sha256'][:12]})")
+            for flag, entry in sorted(preserved["logs"].items()):
+                print(f"                {flag} log -> {entry['preserved']} "
+                      f"({entry['bytes']} B, {entry['sha256'][:12]})")
+            partial = preserved["partial_output"]
+            print(f"                partial output -> "
+                  + (f"{partial['preserved']} ({partial['bytes']} B, {partial['sha256'][:12]})"
+                     if partial else "NONE (the attempt published nothing)"))
+            print(f"                charged {preserved['charged_expenditure']['cpu_task_hours']:.4f}"
+                  f" CPU task-h over "
+                  f"{preserved['charged_expenditure']['attempts']} counted attempt(s)")
+            print(f"  admission     {record['admission']['decision']}, bound "
+                  f"{record['admission']['bound_cpu_task_hours']:.4f} against ceiling "
+                  f"{record['admission']['ceiling_cpu_task_hours']:.1f} CPU task-h")
+            print(f"  record        {started['recovery_record']}")
+            print(f"  NOTHING WAS SUBMITTED. {record['submits_nothing']}")
     except PrecursorError as exc:
         print(f"[z-precursor] FAIL: {exc}", file=sys.stderr)
         return 2

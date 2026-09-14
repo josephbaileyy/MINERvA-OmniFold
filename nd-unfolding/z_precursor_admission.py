@@ -217,6 +217,38 @@ def _charged_by_name(raw_text):
     return per_name, live_by_name
 
 
+def charged_task_hours_for(raw_text, task_id):
+    """The CHARGED task-hours and attempt count of ONE Slurm task id, from the meter's own attempts.
+
+    ADDED FOR CAMPAIGN RECOVERY (2026-09-13), and it lives HERE rather than in `z_precursor`
+    deliberately: `r5_meter._parse_sacct_dump` is a PRIVATE name, this module is the one place that
+    declares riding it (`METER_PRIVATE_DEPENDENCIES`), and a second module reaching for the same
+    private surface would widen the coupling in a place the both-directions test does not look.
+    Recovery must PRESERVE the failed attempt's charged expenditure; summing `ElapsedRaw` myself
+    would be a second implementation of the meter's exclusion rules -- the step and bracket rows,
+    the t0 clip, the duplicate-observation refusal -- and the two would disagree.
+
+    Returns
+    -------
+    dict
+        ``cpu_task_hours``, ``gpu_task_hours``, ``attempts`` (COUNTED attempts only) and
+        ``observed_attempts`` (every attempt the meter parsed for this id, counted or not), so a
+        reader can tell "charged nothing" from "the meter saw nothing".
+    """
+    attempts = r5_meter._parse_sacct_dump(raw_text)
+    total = {"cpu_task_hours": 0.0, "gpu_task_hours": 0.0, "attempts": 0, "observed_attempts": 0}
+    for (row_task_id, _start), record in attempts.items():
+        if _row_task_id(row_task_id) != str(task_id):
+            continue
+        total["observed_attempts"] += 1
+        if not record.counted:
+            continue
+        key = "gpu_task_hours" if record.is_gpu else "cpu_task_hours"
+        total[key] += record.elapsed_seconds / 3600.0
+        total["attempts"] += 1
+    return total
+
+
 def admission_report(*, raw_text, admitted, proposed, max_retries, spend_basis, now,
                      receipt=None):
     """Decide whether one more arm may be admitted, bounding committed exposure.
