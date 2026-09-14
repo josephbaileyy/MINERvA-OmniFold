@@ -785,6 +785,21 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`REVIEW-20260914-final-clearance-e09513d8.md`](REVIEW-20260914-final-clearance-e09513d8.md)
+  - **VERDICT: CLEAR on `68a3da8a..e09513d8`; no block. THREE FLAGS on the SUBMISSION step, which are
+  not blocks on this delta.** ⚠ The authorization reached me **relayed** — this record is the review
+  and clears; it is **not** the authorization. All four requested items hold: the two-state test
+  asserts the **equality** (recursive directory snapshot vs never-started, with a reopen-don't-delete
+  instruction) rather than the conclusion; **Finding 1's load-bearing middle leg CONFIRMED BY
+  EXECUTION** — recovery preserves the claim while the product moves out, so the difference can only
+  shrink; `_confirm_unclaimed`'s claims-only re-read is monotone by (B) while re-globbing would
+  forgive a deleted foreign product; and all **7** bare self-citations in the block launcher resolve
+  **by content**, the other three launchers carrying none. Suites run: 123 / 65 / 31 OK. **Submission
+  flags, modelled locally:** (a) `grep Requeue` matches `Requeue=1` too, so a green grep proves
+  nothing about the value; (b) the pipe destroys `scontrol`'s status, so a purged record (`MinJobAge`
+  300 s) reads as "no match" rather than "could not look"; (c) up to **four** `sbatch` invocations
+  (`0-7`, `0-20%10`, `0-39%40`, combine) but the plan verifies one job id. Withheld: cross-client
+  `O_EXCL`, `mkdir` EEXIST on Lustre, `JobRequeue`.
 - [`REVIEW-20260914-premise-B-durability-68a3da8a.md`](REVIEW-20260914-premise-B-durability-68a3da8a.md)
   - **My premise-(B) finding is CLOSED; ONE NEW FINDING: the stated cost of violating (B) is
   incomplete, and the omitted case is an AUTHORIZATION BYPASS rather than a refusal.** Eligible to
