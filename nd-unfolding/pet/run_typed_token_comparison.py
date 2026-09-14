@@ -21,6 +21,38 @@ import typed_descriptor_keras as adapter
 import typed_descriptors as typed
 from typed_token_comparison import build_comparison
 
+PRECISION_POLICY = {
+    "tf32_enabled": False,
+    "determinism_enabled": True,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32",
+}
+
+
+def precision_settings() -> dict[str, Any]:
+    """Measure and verify the required full-FP32 execution policy."""
+    import importlib
+
+    tf = adapter.require_tensorflow()
+    config = importlib.import_module("tensorflow.python.framework.config")
+    observed = {
+        "tf32_enabled": tf.config.experimental.tensor_float_32_execution_enabled(),
+        "determinism_enabled": config.is_op_determinism_enabled(),
+        "mixed_precision_policy": tf.keras.mixed_precision.global_policy().name,
+        "floatx": tf.keras.backend.floatx(),
+    }
+    if observed != PRECISION_POLICY:
+        raise RuntimeError(f"Precision policy mismatch: {observed}")
+    return observed
+
+
+def configure_precision() -> dict[str, Any]:
+    """Disable TF32 and enable determinism before any model operations."""
+    tf = adapter.require_tensorflow()
+    tf.config.experimental.enable_tensor_float_32_execution(False)
+    tf.config.experimental.enable_op_determinism()
+    return precision_settings()
+
 
 def digest_arrays(arrays: list[NDArray[Any]]) -> str:
     """Hash ordered dtype, shape and contiguous bytes."""
@@ -195,6 +227,7 @@ def predict_ratio(
 def run(args: argparse.Namespace) -> dict[str, Any]:
     """Run both routes with identical rows, initialization, truth network and budgets."""
     tf = adapter.require_tensorflow()
+    configure_precision()
     started = time.monotonic()
     training_batch, training_event, training_generic, training_truth = make_fixture(
         args.rows, 2401
@@ -332,6 +365,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         }
     return {
         "evidence_class": "synthetic-method-development",
+        "precision_policy": precision_settings(),
         "terminal": "COMPLETE",
         "code_sha256": {
             name: hashlib.sha256(

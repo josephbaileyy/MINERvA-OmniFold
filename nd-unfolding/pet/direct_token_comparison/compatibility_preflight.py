@@ -270,7 +270,7 @@ def exercise(
             zip(eager[2][: len(model.trainable_variables)], model.trainable_variables)
         )
 
-        @tf.function
+        @tf.function  # type: ignore[untyped-decorator]
         def update() -> Any:
             _, loss, gradients = differentiate()
             optimizer.apply_gradients(
@@ -300,7 +300,7 @@ def exercise(
 
 def verify_receipt(directory: Path, *, require_gpu: bool = True) -> dict[str, Any]:
     """Fail closed on incomplete, CPU-only, stale or altered preflight evidence."""
-    receipt = json.loads((directory / "preflight.json").read_text())
+    receipt: dict[str, Any] = json.loads((directory / "preflight.json").read_text())
     if receipt["terminal"] != "PASS" or (require_gpu and receipt["mode"] != "gpu"):
         raise ValueError("Complete GPU compatibility preflight is required")
     if (
@@ -322,7 +322,8 @@ def verify_receipt(directory: Path, *, require_gpu: bool = True) -> dict[str, An
     if set(receipt["artifacts"]) != expected_artifacts or len(receipt["models"]) != 8:
         raise ValueError("Incomplete artifact inventory")
     if (
-        receipt["determinism"] is not True
+        receipt.get("precision_policy") != runner.PRECISION_POLICY
+        or receipt["determinism"] is not True
         or receipt["cpu_oracle_sha256"] != REFERENCE_SHA
     ):
         raise ValueError("Preflight determinism/oracle mismatch")
@@ -335,7 +336,11 @@ def verify_receipt(directory: Path, *, require_gpu: bool = True) -> dict[str, An
         ):
             raise ValueError("Preflight artifact mismatch")
     reload_receipt = json.loads((directory / "reload.json").read_text())
-    if reload_receipt["terminal"] != "PASS" or len(reload_receipt["models"]) != 8:
+    if (
+        reload_receipt["terminal"] != "PASS"
+        or len(reload_receipt["models"]) != 8
+        or reload_receipt.get("precision_policy") != runner.PRECISION_POLICY
+    ):
         raise ValueError("Fresh process reload did not pass")
     return receipt
 
@@ -351,7 +356,7 @@ def main() -> None:
     initial_hashes = code_hashes()
     versions = runtime_versions()
     tf = adapter.require_tensorflow()
-    tf.config.experimental.enable_op_determinism()
+    runner.configure_precision()
     tf.config.threading.set_intra_op_parallelism_threads(7)
     tf.config.threading.set_inter_op_parallelism_threads(1)
     devices = tf.config.list_physical_devices("GPU")
@@ -390,7 +395,15 @@ def main() -> None:
                     }
                 )
         (args.output / "reload.json").write_text(
-            json.dumps({"terminal": "PASS", "models": rows}, indent=2) + "\n"
+            json.dumps(
+                {
+                    "terminal": "PASS",
+                    "models": rows,
+                    "precision_policy": runner.precision_settings(),
+                },
+                indent=2,
+            )
+            + "\n"
         )
         return
     args.output.mkdir(parents=True, exist_ok=False)
@@ -490,6 +503,7 @@ def main() -> None:
         "tensorflow_build": tf.sysconfig.get_build_info(),
         "device_details": details,
         "determinism": True,
+        "precision_policy": runner.precision_settings(),
         "cpu_oracle_sha256": REFERENCE_SHA,
         "tolerance": {"cpu_equivalence": "exact", "gpu_atol": ATOL, "gpu_rtol": RTOL},
         "packing": packing,

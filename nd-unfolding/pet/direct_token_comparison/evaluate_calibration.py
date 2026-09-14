@@ -11,6 +11,7 @@ import pstats
 from typing import Any
 
 from compatibility_preflight import verify_receipt
+from run_typed_token_comparison import PRECISION_POLICY
 
 
 def evaluate(
@@ -27,7 +28,7 @@ def evaluate(
         raise ValueError("Calibration did not complete")
     if (directory / "exit-code.txt").read_text().strip() != "0":
         raise ValueError("Calibration process failed")
-    if "60 passed, 10 subtests passed" not in (directory / "tests.log").read_text():
+    if "69 passed, 10 subtests passed" not in (directory / "tests.log").read_text():
         raise ValueError("Cluster test scope did not pass completely")
     for name in ("tests-guard.json", "preflight-guard.json", "guard.json"):
         records = [
@@ -42,6 +43,12 @@ def evaluate(
     measured = directory / "measurement"
     run = json.loads((measured / "calibration.json").read_text())
     usage = json.loads((measured / "measurement.json").read_text())
+    environment = json.loads((measured / "environment.json").read_text())
+    if any(
+        record.get("precision_policy") != PRECISION_POLICY
+        for record in (run, usage, environment)
+    ):
+        raise ValueError("Calibration precision policy mismatch")
     if (
         usage["preflight_sha256"]
         != hashlib.sha256(

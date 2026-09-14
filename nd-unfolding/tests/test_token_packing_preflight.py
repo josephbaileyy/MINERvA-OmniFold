@@ -43,7 +43,13 @@ def receipt(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     for name in names:
         (tmp_path / name).write_bytes(b"fixture")
     (tmp_path / "reload.json").write_text(
-        json.dumps({"terminal": "PASS", "models": models})
+        json.dumps(
+            {
+                "terminal": "PASS",
+                "models": models,
+                "precision_policy": preflight.runner.PRECISION_POLICY,
+            }
+        )
     )
     artifacts = {
         path.name: hashlib.sha256(path.read_bytes()).hexdigest()
@@ -57,6 +63,7 @@ def receipt(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
         "models": models,
         "artifacts": artifacts,
         "determinism": True,
+        "precision_policy": preflight.runner.PRECISION_POLICY,
         "cpu_oracle_sha256": preflight.REFERENCE_SHA,
     }
     (tmp_path / "preflight.json").write_text(json.dumps(record))
@@ -95,3 +102,96 @@ def test_reject_changed_artifact(receipt: Path) -> None:
     (receipt / "empty-direct.keras").write_bytes(b"changed")
     with pytest.raises(ValueError, match="artifact mismatch"):
         preflight.verify_receipt(receipt)
+
+
+@pytest.mark.parametrize(
+    "policy", [{}, {**preflight.runner.PRECISION_POLICY, "tf32_enabled": True}]
+)
+def test_reject_wrong_precision_receipt(receipt: Path, policy: dict[str, Any]) -> None:
+    path = receipt / "preflight.json"
+    record = json.loads(path.read_text())
+    record["precision_policy"] = policy
+    path.write_text(json.dumps(record))
+    with pytest.raises(ValueError, match="determinism/oracle"):
+        preflight.verify_receipt(receipt)
+
+
+def test_reject_reload_precision_even_with_matching_hash(receipt: Path) -> None:
+    path = receipt / "reload.json"
+    record = json.loads(path.read_text())
+    record["precision_policy"]["tf32_enabled"] = True
+    path.write_text(json.dumps(record))
+    parent = receipt / "preflight.json"
+    outer = json.loads(parent.read_text())
+    outer["artifacts"]["reload.json"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    parent.write_text(json.dumps(outer))
+    with pytest.raises(ValueError, match="reload"):
+        preflight.verify_receipt(receipt)
+
+
+def test_precision_setup_and_drift_detection() -> None:
+    tf = preflight.adapter.require_tensorflow()
+    tf.config.experimental.enable_tensor_float_32_execution(True)
+    assert preflight.runner.configure_precision() == preflight.runner.PRECISION_POLICY
+    tf.config.experimental.enable_tensor_float_32_execution(True)
+    try:
+        with pytest.raises(RuntimeError, match="Precision policy mismatch"):
+            preflight.runner.precision_settings()
+    finally:
+        preflight.runner.configure_precision()
+
+
+def test_mixed_precision_is_rejected() -> None:
+    tf = preflight.adapter.require_tensorflow()
+    original = tf.keras.mixed_precision.global_policy()
+    tf.keras.mixed_precision.set_global_policy("mixed_float16")
+    try:
+        with pytest.raises(RuntimeError, match="Precision policy mismatch"):
+            preflight.runner.configure_precision()
+    finally:
+        tf.keras.mixed_precision.set_global_policy(original)
+        preflight.runner.configure_precision()
+
+
+def test_runner_configures_before_fixture(monkeypatch: pytest.MonkeyPatch) -> None:
+    import argparse
+
+    tf = preflight.adapter.require_tensorflow()
+    tf.config.experimental.enable_tensor_float_32_execution(True)
+
+    def fixture(*args: Any) -> Any:
+        assert (
+            preflight.runner.precision_settings() == preflight.runner.PRECISION_POLICY
+        )
+        raise LookupError("fixture boundary")
+
+    monkeypatch.setattr(preflight.runner, "make_fixture", fixture)
+    with pytest.raises(LookupError, match="fixture boundary"):
+        preflight.runner.run(argparse.Namespace(rows=4))
+
+
+@pytest.mark.parametrize(
+    "name", ["calibration.json", "measurement.json", "environment.json"]
+)
+def test_calibration_rejects_policy_drift(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, name: str
+) -> None:
+    import evaluate_calibration as evaluator
+
+    monkeypatch.setattr(evaluator, "verify_receipt", lambda path: {})
+    (tmp_path / "terminal.txt").write_text("COMPLETE")
+    (tmp_path / "exit-code.txt").write_text("0")
+    (tmp_path / "tests.log").write_text("69 passed, 10 subtests passed")
+    for guard in ("tests-guard.json", "preflight-guard.json", "guard.json"):
+        (tmp_path / guard).write_text(
+            json.dumps({"verdict": "REPOSITORY-ORIGINS-INSPECTED", "allow": []}) + "\n"
+        )
+    measured = tmp_path / "measurement"
+    measured.mkdir()
+    for filename in ("calibration.json", "measurement.json", "environment.json"):
+        policy = dict(preflight.runner.PRECISION_POLICY)
+        if filename == name:
+            policy["tf32_enabled"] = True
+        (measured / filename).write_text(json.dumps({"precision_policy": policy}))
+    with pytest.raises(ValueError, match="precision policy"):
+        evaluator.evaluate(tmp_path, 100, 395)

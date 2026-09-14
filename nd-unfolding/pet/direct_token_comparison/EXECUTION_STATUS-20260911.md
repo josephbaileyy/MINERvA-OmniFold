@@ -1,5 +1,15 @@
 # PET routing comparison: calibration and training remain blocked
 
+## 2026-09-14 — explicit full-FP32 policy prepared, GPU attempt pending
+
+The [policy implementation and CPU validation](FP32_PREPARATION-20260914.md) pass
+69 tests plus 10 subtests and all eight CPU model/case preflight comparisons.
+Parent/reload/calibration receipts must explicitly record the same full-FP32
+policy. The [110-minute proposal](FP32_PROPOSAL-20260914.md) is pending approval;
+no new GPU allocation or learning comparison has run. Previous 395 seconds remain
+charged. Original scientific criteria, tolerances and source restrictions stand.
+
+
 ## 2026-09-14 — diagnostic complete; TF32 isolates reproduced discrepancy
 
 Job `58277208` completed in 105 seconds. TF32-on reproduces the old pooled maximum

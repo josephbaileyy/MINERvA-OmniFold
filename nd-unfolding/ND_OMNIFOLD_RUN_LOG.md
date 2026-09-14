@@ -1,5 +1,14 @@
 # N-D OmniFold run log
 
+## 2026-09-14 — PET full-FP32 policy prepared
+
+Implemented uniform precision setup/verification for the synthetic runner,
+preflight, reload and calibration. Local 69-test/10-subtest validation and all
+eight CPU model/case comparisons pass; exact evidence and the pending 110-minute
+GPU proposal are routed from `pet/direct_token_comparison/FP32_PREPARATION-20260914.md`.
+No new allocation, source access, calibration or learning comparison occurred.
+
+
 ## 2026-09-14 — PET numerical diagnostic completed
 
 Authorized job `58277208`, clean execution revision `6298efc2`, completed in

@@ -109,7 +109,7 @@ def main() -> None:
     tf = adapter.require_tensorflow()
     tf.config.threading.set_intra_op_parallelism_threads(7)
     tf.config.threading.set_inter_op_parallelism_threads(1)
-    tf.config.experimental.enable_op_determinism()
+    comparison.configure_precision()
     devices = tf.config.list_physical_devices("GPU")
     if len(devices) != 1:
         raise RuntimeError(f"Expected one visible GPU, observed {devices}")
@@ -123,6 +123,7 @@ def main() -> None:
         raise RuntimeError("GPU operation validation failed")
     environment: dict[str, Any] = {
         "versions": versions,
+        "precision_policy": comparison.precision_settings(),
         "python": sys.version,
         "gpu_details": details,
         "tensorflow_build": tf.sysconfig.get_build_info(),
@@ -148,6 +149,7 @@ def main() -> None:
     run_args.output.write_text(json.dumps(receipt, indent=2, allow_nan=False) + "\n")
     measurement = {
         "terminal": "COMPLETE",
+        "precision_policy": comparison.precision_settings(),
         "wall_seconds": time.monotonic() - started,
         "peak_rss_KiB": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         "gpu_memory": tf.config.experimental.get_memory_info("GPU:0"),

@@ -2,6 +2,14 @@
 
 PET typed descriptors remain diagnostic and method-development infrastructure.
 
+## Full-FP32 execution policy preparation — 2026-09-14
+
+[Policy preparation](direct_token_comparison/FP32_PREPARATION-20260914.md) applies
+TF32-disabled deterministic float32 execution uniformly and verifies parent,
+reload and calibration records. Local CPU checks pass; the bounded GPU
+compatibility/calibration proposal remains pending. No new representation,
+numerical tolerance or scientific acceptance criterion changed.
+
 ## Numerical diagnostic result — 2026-09-14
 
 [Job 58277208](direct_token_comparison/NUMERICAL_RESULT-20260914.md) completed the

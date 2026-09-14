@@ -1,0 +1,326 @@
+diff --git a/nd-unfolding/pet/direct_token_comparison/calibration_measure.py b/nd-unfolding/pet/direct_token_comparison/calibration_measure.py
+index 39db0cb2..43217e70 100644
+--- a/nd-unfolding/pet/direct_token_comparison/calibration_measure.py
++++ b/nd-unfolding/pet/direct_token_comparison/calibration_measure.py
+@@ -112 +112 @@ def main() -> None:
+-    tf.config.experimental.enable_op_determinism()
++    comparison.configure_precision()
+@@ -125,0 +126 @@ def main() -> None:
++        "precision_policy": comparison.precision_settings(),
+@@ -150,0 +152 @@ def main() -> None:
++        "precision_policy": comparison.precision_settings(),
+diff --git a/nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py b/nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py
+index c89eefb1..954cd2c7 100644
+--- a/nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py
++++ b/nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py
+@@ -273 +273 @@ def exercise(
+-        @tf.function
++        @tf.function  # type: ignore[untyped-decorator]
+@@ -303 +303 @@ def verify_receipt(directory: Path, *, require_gpu: bool = True) -> dict[str, An
+-    receipt = json.loads((directory / "preflight.json").read_text())
++    receipt: dict[str, Any] = json.loads((directory / "preflight.json").read_text())
+@@ -325 +325,2 @@ def verify_receipt(directory: Path, *, require_gpu: bool = True) -> dict[str, An
+-        receipt["determinism"] is not True
++        receipt.get("precision_policy") != runner.PRECISION_POLICY
++        or receipt["determinism"] is not True
+@@ -338 +339,5 @@ def verify_receipt(directory: Path, *, require_gpu: bool = True) -> dict[str, An
+-    if reload_receipt["terminal"] != "PASS" or len(reload_receipt["models"]) != 8:
++    if (
++        reload_receipt["terminal"] != "PASS"
++        or len(reload_receipt["models"]) != 8
++        or reload_receipt.get("precision_policy") != runner.PRECISION_POLICY
++    ):
+@@ -354 +359 @@ def main() -> None:
+-    tf.config.experimental.enable_op_determinism()
++    runner.configure_precision()
+@@ -393 +398,9 @@ def main() -> None:
+-            json.dumps({"terminal": "PASS", "models": rows}, indent=2) + "\n"
++            json.dumps(
++                {
++                    "terminal": "PASS",
++                    "models": rows,
++                    "precision_policy": runner.precision_settings(),
++                },
++                indent=2,
++            )
++            + "\n"
+@@ -492,0 +506 @@ def main() -> None:
++        "precision_policy": runner.precision_settings(),
+diff --git a/nd-unfolding/pet/direct_token_comparison/evaluate_calibration.py b/nd-unfolding/pet/direct_token_comparison/evaluate_calibration.py
+index 2195b8d4..ca29bee7 100644
+--- a/nd-unfolding/pet/direct_token_comparison/evaluate_calibration.py
++++ b/nd-unfolding/pet/direct_token_comparison/evaluate_calibration.py
+@@ -13,0 +14 @@ from compatibility_preflight import verify_receipt
++from run_typed_token_comparison import PRECISION_POLICY
+@@ -30 +31 @@ def evaluate(
+-    if "60 passed, 10 subtests passed" not in (directory / "tests.log").read_text():
++    if "69 passed, 10 subtests passed" not in (directory / "tests.log").read_text():
+@@ -44,0 +46,6 @@ def evaluate(
++    environment = json.loads((measured / "environment.json").read_text())
++    if any(
++        record.get("precision_policy") != PRECISION_POLICY
++        for record in (run, usage, environment)
++    ):
++        raise ValueError("Calibration precision policy mismatch")
+diff --git a/nd-unfolding/pet/direct_token_comparison/sbatch_fp32_calibration.sh b/nd-unfolding/pet/direct_token_comparison/sbatch_fp32_calibration.sh
+new file mode 100644
+index 00000000..3cda837c
+--- /dev/null
++++ b/nd-unfolding/pet/direct_token_comparison/sbatch_fp32_calibration.sh
+@@ -0,0 +1,106 @@
++#!/bin/bash
++# Prepared only: a new explicit single-attempt authorization is required.
++#SBATCH --account=m3246_g
++#SBATCH --constraint=gpu
++#SBATCH --qos=shared
++#SBATCH --nodes=1
++#SBATCH --ntasks=1
++#SBATCH --cpus-per-task=32
++#SBATCH --gpus=1
++#SBATCH --mem=56G
++#SBATCH --time=01:50:00
++#SBATCH --job-name=pet-fp32-calibration
++set -euo pipefail
++
++checkout=$1
++runtime=$2
++output=$3
++expected_commit=$4
++approval=$5
++approval_sha=$6
++cd "$checkout"
++[[ "$(git rev-parse HEAD)" == "$expected_commit" ]]
++[[ -z "$(git status --porcelain)" ]]
++[[ ! -e "$output" ]]
++"$runtime/bin/python" - "$approval" "$approval_sha" <<'PY'
++import hashlib, json, pathlib, sys
++payload = pathlib.Path(sys.argv[1]).read_bytes()
++assert hashlib.sha256(payload).hexdigest() == sys.argv[2]
++authority = json.loads(payload)
++assert authority['status'] == 'AUTHORIZED'
++assert authority['decision'] == 'full-fp32-single-attempt'
++assert authority['prior_jobs'] == ['58198332', '58201775', '58240587', '58277208']
++assert authority['precision_policy'] == {'tf32_enabled': False, 'determinism_enabled': True, 'mixed_precision_policy': 'float32', 'floatx': 'float32'}
++assert authority['prior_charged_seconds'] >= 395
++assert authority['wall_seconds'] == 6600
++assert authority['preflight_seconds'] == 1200
++assert authority['calibration_seconds'] == 5400
++assert authority['profile'] == {'gpus': 1, 'cpus': 32, 'memory_GiB': 56}
++assert authority['total_gpu_hours'] == 290
++assert authority['total_cpu_core_hours'] == 9296
++assert authority['storage_GiB'] == 200
++assert authority['scope'] == 'synthetic-only'
++assert authority['automatic_retry'] is False
++manifest = pathlib.Path('nd-unfolding/pet/direct_token_comparison/precision-manifest.json')
++assert hashlib.sha256(manifest.read_bytes()).hexdigest() == authority['precision_manifest_sha256']
++for name, digest in json.loads(manifest.read_text())['files'].items():
++    assert hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest() == digest, name
++PY
++mkdir -p "$output"
++trap 'status=$?; if (( status != 0 )); then echo FAILED > "$output/terminal.txt"; printf "%s\n" "$status" > "$output/exit-code.txt"; fi' EXIT
++scontrol show job -o "$SLURM_JOB_ID" > "$output/allocation.txt"
++"$runtime/bin/python" - "$output/allocation.txt" <<'PY'
++import pathlib, re, sys
++allocation = pathlib.Path(sys.argv[1]).read_text()
++assert int(re.search(r'NumCPUs=(\d+)', allocation)[1]) == 32
++assert int(re.search(r'NumNodes=(\d+)', allocation)[1]) == 1
++assert 'TimeLimit=01:50:00' in allocation
++assert 'MinMemoryNode=56G' in allocation or 'mem=56G' in allocation
++PY
++export PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
++export OMP_NUM_THREADS=8 OPENBLAS_NUM_THREADS=8 MKL_NUM_THREADS=8
++export TF_NUM_INTRAOP_THREADS=7 TF_NUM_INTEROP_THREADS=1 TF_DETERMINISTIC_OPS=1
++export CUBLAS_WORKSPACE_CONFIG=:4096:8
++
++stages() (
++  # One shared 20-minute preflight budget includes tests, model checks and reload.
++  deadline=$((SECONDS + 1200))
++  CUDA_VISIBLE_DEVICES=-1 timeout --kill-after=10s 1200s "$runtime/bin/python" \
++    nd-unfolding/mnv_guarded_run.py --expect-root "$checkout" \
++    --inventory "$output/tests-guard.json" \
++    -- nd-unfolding/pet/direct_token_comparison/calibration_measure.py \
++    --tests-only --output "$output/tests" > "$output/tests.log" 2>&1
++  remaining=$((deadline - SECONDS))
++  (( remaining > 0 ))
++  timeout --kill-after=10s "${remaining}s" "$runtime/bin/python" \
++    nd-unfolding/mnv_guarded_run.py --expect-root "$checkout" \
++    --inventory "$output/preflight-guard.json" \
++    -- nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py \
++    --device gpu --output "$output/preflight" > "$output/preflight.log" 2>&1
++  [[ -z "$(git status --porcelain)" ]]
++  # A fresh process restores the frozen training seed and excludes smoke weights.
++  timeout --kill-after=10s 5400s "$runtime/bin/python" \
++    nd-unfolding/mnv_guarded_run.py --expect-root "$checkout" \
++    --inventory "$output/guard.json" \
++    -- nd-unfolding/pet/direct_token_comparison/calibration_measure.py \
++    --preflight "$output/preflight" --output "$output/measurement" \
++    > "$output/calibration.log" 2>&1
++)
++stages &
++worker=$!
++while kill -0 "$worker" 2>/dev/null; do
++  bytes_kib=$(du -sk "$output" | cut -f1)
++  printf '%s %s\n' "$(date -u +%FT%TZ)" "$bytes_kib" >> "$output/storage-meter.log"
++  if (( bytes_kib > 4194304 )); then
++    echo STORAGE_LIMIT > "$output/terminal.txt"
++    scancel "$SLURM_JOB_ID"
++    exit 1
++  fi
++  sleep 30
++done
++wait "$worker"
++[[ -z "$(git status --porcelain)" ]]
++echo 0 > "$output/exit-code.txt"
++echo COMPLETE > "$output/terminal.txt"
++# Scheduler completion, guard receipts and headroom are evaluated after exit.
++# This launcher cannot submit full jobs or retry itself.
+diff --git a/nd-unfolding/pet/run_typed_token_comparison.py b/nd-unfolding/pet/run_typed_token_comparison.py
+index 41ae2e0d..b700d256 100644
+--- a/nd-unfolding/pet/run_typed_token_comparison.py
++++ b/nd-unfolding/pet/run_typed_token_comparison.py
+@@ -23,0 +24,32 @@ from typed_token_comparison import build_comparison
++PRECISION_POLICY = {
++    "tf32_enabled": False,
++    "determinism_enabled": True,
++    "mixed_precision_policy": "float32",
++    "floatx": "float32",
++}
++
++
++def precision_settings() -> dict[str, Any]:
++    """Measure and verify the required full-FP32 execution policy."""
++    import importlib
++
++    tf = adapter.require_tensorflow()
++    config = importlib.import_module("tensorflow.python.framework.config")
++    observed = {
++        "tf32_enabled": tf.config.experimental.tensor_float_32_execution_enabled(),
++        "determinism_enabled": config.is_op_determinism_enabled(),
++        "mixed_precision_policy": tf.keras.mixed_precision.global_policy().name,
++        "floatx": tf.keras.backend.floatx(),
++    }
++    if observed != PRECISION_POLICY:
++        raise RuntimeError(f"Precision policy mismatch: {observed}")
++    return observed
++
++
++def configure_precision() -> dict[str, Any]:
++    """Disable TF32 and enable determinism before any model operations."""
++    tf = adapter.require_tensorflow()
++    tf.config.experimental.enable_tensor_float_32_execution(False)
++    tf.config.experimental.enable_op_determinism()
++    return precision_settings()
++
+@@ -197,0 +230 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
++    configure_precision()
+@@ -334,0 +368 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
++        "precision_policy": precision_settings(),
+diff --git a/nd-unfolding/tests/test_token_packing_preflight.py b/nd-unfolding/tests/test_token_packing_preflight.py
+index 009cedac..8897d84d 100644
+--- a/nd-unfolding/tests/test_token_packing_preflight.py
++++ b/nd-unfolding/tests/test_token_packing_preflight.py
+@@ -46 +46,7 @@ def receipt(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+-        json.dumps({"terminal": "PASS", "models": models})
++        json.dumps(
++            {
++                "terminal": "PASS",
++                "models": models,
++                "precision_policy": preflight.runner.PRECISION_POLICY,
++            }
++        )
+@@ -59,0 +66 @@ def receipt(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
++        "precision_policy": preflight.runner.PRECISION_POLICY,
+@@ -97,0 +105,93 @@ def test_reject_changed_artifact(receipt: Path) -> None:
++
++
++@pytest.mark.parametrize(
++    "policy", [{}, {**preflight.runner.PRECISION_POLICY, "tf32_enabled": True}]
++)
++def test_reject_wrong_precision_receipt(receipt: Path, policy: dict[str, Any]) -> None:
++    path = receipt / "preflight.json"
++    record = json.loads(path.read_text())
++    record["precision_policy"] = policy
++    path.write_text(json.dumps(record))
++    with pytest.raises(ValueError, match="determinism/oracle"):
++        preflight.verify_receipt(receipt)
++
++
++def test_reject_reload_precision_even_with_matching_hash(receipt: Path) -> None:
++    path = receipt / "reload.json"
++    record = json.loads(path.read_text())
++    record["precision_policy"]["tf32_enabled"] = True
++    path.write_text(json.dumps(record))
++    parent = receipt / "preflight.json"
++    outer = json.loads(parent.read_text())
++    outer["artifacts"]["reload.json"] = hashlib.sha256(path.read_bytes()).hexdigest()
++    parent.write_text(json.dumps(outer))
++    with pytest.raises(ValueError, match="reload"):
++        preflight.verify_receipt(receipt)
++
++
++def test_precision_setup_and_drift_detection() -> None:
++    tf = preflight.adapter.require_tensorflow()
++    tf.config.experimental.enable_tensor_float_32_execution(True)
++    assert preflight.runner.configure_precision() == preflight.runner.PRECISION_POLICY
++    tf.config.experimental.enable_tensor_float_32_execution(True)
++    try:
++        with pytest.raises(RuntimeError, match="Precision policy mismatch"):
++            preflight.runner.precision_settings()
++    finally:
++        preflight.runner.configure_precision()
++
++
++def test_mixed_precision_is_rejected() -> None:
++    tf = preflight.adapter.require_tensorflow()
++    original = tf.keras.mixed_precision.global_policy()
++    tf.keras.mixed_precision.set_global_policy("mixed_float16")
++    try:
++        with pytest.raises(RuntimeError, match="Precision policy mismatch"):
++            preflight.runner.configure_precision()
++    finally:
++        tf.keras.mixed_precision.set_global_policy(original)
++        preflight.runner.configure_precision()
++
++
++def test_runner_configures_before_fixture(monkeypatch: pytest.MonkeyPatch) -> None:
++    import argparse
++
++    tf = preflight.adapter.require_tensorflow()
++    tf.config.experimental.enable_tensor_float_32_execution(True)
++
++    def fixture(*args: Any) -> Any:
++        assert (
++            preflight.runner.precision_settings() == preflight.runner.PRECISION_POLICY
++        )
++        raise LookupError("fixture boundary")
++
++    monkeypatch.setattr(preflight.runner, "make_fixture", fixture)
++    with pytest.raises(LookupError, match="fixture boundary"):
++        preflight.runner.run(argparse.Namespace(rows=4))
++
++
++@pytest.mark.parametrize(
++    "name", ["calibration.json", "measurement.json", "environment.json"]
++)
++def test_calibration_rejects_policy_drift(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, name: str
++) -> None:
++    import evaluate_calibration as evaluator
++
++    monkeypatch.setattr(evaluator, "verify_receipt", lambda path: {})
++    (tmp_path / "terminal.txt").write_text("COMPLETE")
++    (tmp_path / "exit-code.txt").write_text("0")
++    (tmp_path / "tests.log").write_text("69 passed, 10 subtests passed")
++    for guard in ("tests-guard.json", "preflight-guard.json", "guard.json"):
++        (tmp_path / guard).write_text(
++            json.dumps({"verdict": "REPOSITORY-ORIGINS-INSPECTED", "allow": []}) + "\n"
++        )
++    measured = tmp_path / "measurement"
++    measured.mkdir()
++    for filename in ("calibration.json", "measurement.json", "environment.json"):
++        policy = dict(preflight.runner.PRECISION_POLICY)
++        if filename == name:
++            policy["tf32_enabled"] = True
++        (measured / filename).write_text(json.dumps({"precision_policy": policy}))
++    with pytest.raises(ValueError, match="precision policy"):
++        evaluator.evaluate(tmp_path, 100, 395)
