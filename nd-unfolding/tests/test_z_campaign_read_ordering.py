@@ -371,7 +371,158 @@ class TheSiblingWindowIsClosed(CampaignFixture):
         self.assertLess(products, claims,
                         "the products must be read BEFORE the claims; claims-first is the defect")
         self.assertIn("CLAIM-BEFORE-PUBLISH", body)
-        self.assertIn("CLAIMS ARE NEVER DELETED", body)
+        # ⚠ THE PREMISE WAS RESTATED AND THIS ASSERTION HAD TO MOVE WITH IT. It read
+        # "CLAIMS ARE NEVER DELETED" -- the overclaimed wording -- and kept passing until the
+        # wording changed, which is the withdrawal-that-does-not-reach-every-site shape in
+        # miniature. The narrower premise is what the guards establish, so it is what is pinned.
+        self.assertIn("NOTHING IN THIS MODULE REMOVES OR REPLACES ANYTHING IN THE CLAIMS", body)
+        self.assertIn("FILESYSTEM_MUTATIONS", body)
+
+
+def mutating_calls(source):
+    """`{(function, callee, operand expressions)}` for every file-removing call in `source`.
+
+    ONE DETECTOR, used by the equality arm AND by its power control. A control that re-typed the
+    sweep would be a fixture derived from the rule it tests: a detector blind to a spelling would
+    be confirmed blind by its own control.
+    """
+    import ast
+
+    tree = ast.parse(source)
+    parent = {}
+    for node in ast.walk(tree):
+        for child in ast.iter_child_nodes(node):
+            parent[child] = node
+
+    def enclosing(node):
+        cur = parent.get(node)
+        while cur is not None and not isinstance(cur, ast.FunctionDef):
+            cur = parent.get(cur)
+        return cur.name if cur is not None else "<module>"
+
+    found = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        name = getattr(node.func, "attr", None) or getattr(node.func, "id", None)
+        if name not in ZP.FILESYSTEM_MUTATORS:
+            continue
+        found[(enclosing(node), ast.unparse(node.func),
+               tuple(ast.unparse(a) for a in node.args))] = node.lineno
+    return found
+
+
+class TheClaimsDirectoryIsNeverMutated(unittest.TestCase):
+    """PREMISE (B), guarded by an inventory keyed on the OPERAND rather than on the call site.
+
+    ⚠ WHY THIS EXISTS: THE PREMISE BECAME LOAD-BEARING AND ITS GUARDS DID NOT MOVE WITH IT. The
+    read-ordering repair is SUFFICIENT rather than merely better only because a claim, once
+    created, still exists at the later read. Two guards were protecting that and both were
+    narrower than the premise:
+
+      * the recovery-path AST ban iterates a SEVEN-NAME list, so a NEW uncovered function is
+        invisible to it -- demonstrated by the review, which added `_tidy_claims` calling
+        `os.unlink(paths['claims'])` outside those names and watched the ban still report OK;
+      * `test_FACT_B_the_claims_set_only_GROWS` is behavioural over five happy-path tasks and
+        never exercises a deleting path at all.
+
+    Neither was WRONG; both were about a narrower subject than the premise they were being read as
+    establishing. Not a live defect -- nothing deletes a claim today, and this suite's own detector
+    finds exactly three mutating calls in the module, none of them near the claims directory.
+
+    ⚠ AND "JUST WIDEN THE BAN" IS THE THING THAT WAS ALREADY TRIED AND REJECTED FOR CAUSE: a
+    module-wide deletion ban fires on `_atomic_write_json` removing ITS OWN temporary file, which
+    is correct and predates all of this work. Banning the CALL is the wrong shape. The question is
+    never "does this module delete" but "does this module delete THAT" -- so the operand is the
+    key, nothing is forbidden, and every mutating call is enumerated with the thing it acts on.
+    """
+
+    def test_the_INVENTORY_matches_the_module_in_BOTH_DIRECTIONS(self):
+        found = mutating_calls((ND / "z_precursor.py").read_text())
+        self.assertEqual(set(found), set(ZP.FILESYSTEM_MUTATIONS),
+                         "every file-removing call in z_precursor.py must be declared with its "
+                         "operands, and every declared one must still exist -- a floor catches "
+                         "collapse and permits erosion")
+        self.assertEqual(len(found), 3, f"the mutation surface changed: {sorted(found)}")
+        for key, reason in ZP.FILESYSTEM_MUTATIONS.items():
+            with self.subTest(call=key):
+                self.assertTrue(reason.strip(), f"{key} is declared with no reason")
+
+    def test_NO_DECLARED_MUTATION_NAMES_A_CLAIMS_PATH(self):
+        """The premise itself, over the declared operands. Three calls; none of them is a claim."""
+        for (function, callee, operands) in ZP.FILESYSTEM_MUTATIONS:
+            with self.subTest(function=function, callee=callee):
+                for operand in operands:
+                    self.assertNotIn("claim", operand.lower(),
+                                     f"{function} calls {callee} on {operand!r}, which names a "
+                                     f"claim -- premise (B) of the read-ordering argument is that "
+                                     f"nothing in this module removes or replaces one")
+
+    def test_POWER_a_NEW_function_deleting_the_claims_directory_is_DETECTED(self):
+        """The exact mutant the review demonstrated the OLD guard was blind to.
+
+        Added OUTSIDE the seven names the recovery ban iterates, so the old guard passes it and
+        this one must not. Run over the module's source text rather than a hand-written snippet,
+        so the detector meets the real file.
+        """
+        source = (ND / "z_precursor.py").read_text()
+        mutant = source + (
+            "\n\ndef _tidy_claims(paths, arm):\n"
+            "    os.unlink(paths['claims'])\n")
+        found = mutating_calls(mutant)
+        self.assertNotEqual(set(found), set(ZP.FILESYSTEM_MUTATIONS),
+                            "a new deleting function must break the inventory")
+        new = set(found) - set(ZP.FILESYSTEM_MUTATIONS)
+        self.assertEqual(new, {("_tidy_claims", "os.unlink", ("paths['claims']",))})
+
+    def test_POWER_the_same_mutant_slips_past_the_SEVEN_NAME_recovery_ban(self):
+        """The old guard's blind spot, reproduced here rather than taken on trust -- so the reason
+        this inventory exists is a measurement in the suite and not a claim in a commit body."""
+        import ast
+
+        source = (ND / "z_precursor.py").read_text()
+        mutant = source + (
+            "\n\ndef _tidy_claims(paths, arm):\n"
+            "    os.unlink(paths['claims'])\n")
+        covered = {"recover_task", "check_recovery_authorization", "confirm_attempt_terminal",
+                   "authorized_attempt", "_load_recovery_record", "resolve_log_names",
+                   "launcher_log_patterns"}
+        offenders = []
+        for function in ast.walk(ast.parse(mutant)):
+            if not isinstance(function, ast.FunctionDef) or function.name not in covered:
+                continue
+            for node in ast.walk(function):
+                if isinstance(node, ast.Call):
+                    name = getattr(node.func, "attr", None) or getattr(node.func, "id", None)
+                    if name in {"unlink", "remove", "rmtree", "removedirs", "rmdir"}:
+                        offenders.append((function.name, name))
+        self.assertEqual(offenders, [],
+                         "the seven-name ban sees nothing here -- which is the point: it is a "
+                         "guard about RECOVERY being additive, not about the claims directory")
+
+    def test_POWER_a_REMOVED_declaration_is_DETECTED_TOO(self):
+        """Erosion, not just collapse. Dropping an entry must fail as loudly as adding a call."""
+        eroded = dict(ZP.FILESYSTEM_MUTATIONS)
+        eroded.pop(("_atomic_write_json", "os.unlink", ("temporary",)))
+        found = mutating_calls((ND / "z_precursor.py").read_text())
+        self.assertNotEqual(set(found), set(eroded))
+
+    def test_the_TWO_GUARDS_have_DIFFERENT_SUBJECTS_and_neither_subsumes_the_other(self):
+        """Recorded because two guards over the same-looking thing invite a later merge.
+
+        The recovery ban is Joseph's prohibition -- recovery must not delete ANYTHING, claims or
+        logs or evidence or products -- over a narrow set of functions. This inventory is premise
+        (B) -- nothing anywhere in the module touches the CLAIMS directory -- over every function.
+        Broader forbidding on fewer functions, versus narrower forbidding on all of them.
+        """
+        source = (ND / "z_precursor.py").read_text()
+        self.assertIn("KEYED ON THE OPERAND, NOT ON THE CALL SITE", source)
+        self.assertIn("NOTHING IN THIS MODULE REMOVES OR REPLACES ANYTHING IN THE CLAIMS "
+                      "DIRECTORY", source)
+        # ...and the restated premise must say what it does NOT cover, or it is the old overclaim
+        # with more words.
+        self.assertIn("(B) IS SCOPED TO THIS MODULE", source)
+        self.assertIn("FAILS CLOSED", source)
 
 
 class TheFullDeclaredPopulationsRunAtTheirRealWidths(CampaignFixture):

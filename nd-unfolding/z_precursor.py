@@ -1577,6 +1577,50 @@ def confirm_attempt_terminal(raw_text, job_id):
             "historical_rows": len(rows) - len(terminal), "rows": rows}
 
 
+#: The calls that can REMOVE OR REPLACE a file. `chmod` and `makedirs` are deliberately absent:
+#: this set exists to protect an invariant about files DISAPPEARING, and widening it to everything
+#: that touches the filesystem would make the inventory below unreadable without making it stronger.
+FILESYSTEM_MUTATORS = frozenset({"unlink", "remove", "removedirs", "rmdir", "rmtree", "replace",
+                                 "rename", "renames", "truncate"})
+
+#: EVERY filesystem-mutating call in this module, keyed by `(function, callee, operand expressions)`
+#: and pinned as an IDENTITY, both directions, by
+#: `test_z_campaign_read_ordering.TheClaimsDirectoryIsNeverMutated`.
+#:
+#: ⚠⚠ THIS EXISTS BECAUSE PREMISE (B) OF THE READ-ORDERING ARGUMENT BECAME LOAD-BEARING AND ITS
+#: GUARDS DID NOT MOVE WITH IT. `verify_task_ownership` reads products before claims, and that is
+#: SUFFICIENT rather than merely better only because a claim, once created, still exists when the
+#: later read happens. Two guards were protecting that and both were narrower than the premise:
+#: the recovery-path AST ban iterates a SEVEN-NAME list, so a NEW uncovered function is invisible
+#: to it -- demonstrated by the review, which added `_tidy_claims` calling
+#: `os.unlink(paths['claims'])` outside the seven names and watched the ban still report OK -- and
+#: the behavioural arm only ever walks five happy-path tasks and touches no deleting path at all.
+#:
+#: ⚠ KEYED ON THE OPERAND, NOT ON THE CALL SITE, AND THAT IS THE WHOLE DESIGN. A module-wide ban on
+#: `unlink` was tried and rejected for cause: it fires on `_atomic_write_json` removing ITS OWN
+#: temporary file, which is correct and predates all of this work. Banning the call is the wrong
+#: shape; the question is never "does this module delete" but "does this module delete THAT". So
+#: nothing is forbidden here -- every mutating call is ENUMERATED with the thing it acts on, and a
+#: new one anywhere in the file, in any function, named or not, is an unlisted key and fails.
+#:
+#: BOTH DIRECTIONS, on the `METER_PRIVATE_DEPENDENCIES` precedent one module over: a REMOVED entry
+#: fails too, because a floor catches collapse and permits erosion.
+FILESYSTEM_MUTATIONS = {
+    ("_atomic_write_json", "os.replace", ("temporary", "path")):
+        "publishes a receipt by renaming ITS OWN NamedTemporaryFile over the destination. The "
+        "destination is a receipt path; `path` is never a claims path, because claims are written "
+        "by `_write_json_exclusive`, which creates and never replaces.",
+    ("_atomic_write_json", "os.unlink", ("temporary",)):
+        "removes ITS OWN temporary file on the failure path. This is the call a module-wide "
+        "deletion ban fires on, and it is correct: the operand is the temp this function just "
+        "created, never a record anybody else wrote.",
+    ("recover_task", "os.replace", ("product", "target")):
+        "MOVES the previous attempt's partial output into `_campaign/evidence/`. The operand is a "
+        "product path and the destination is inside the evidence directory -- this is the one "
+        "move recovery makes, and Joseph's prohibition permits it precisely because it PRESERVES "
+        "rather than deletes. It does not touch `_campaign/claims/`.",
+}
+
 RECOVERY_SCHEMA_VERSION = "z-campaign-recovery/1"
 
 
@@ -1838,9 +1882,20 @@ def verify_task_ownership(*, arm, plan, product, bank, estimator_seed, draw_seed
     #   (A) CLAIM-BEFORE-PUBLISH is the producer's discipline and it is enforced here, not assumed:
     #       `verify_task_ownership` creates the `O_EXCL` claim as its LAST act and only then does
     #       the producer write anything, so for any task, claim(t) < publish(t) strictly.
-    #   (B) CLAIMS ARE NEVER DELETED. Recovery is additive -- Joseph's prohibition -- and
-    #       `test_NOTHING_IN_THE_MODULE_UNLINKS_A_CLAIM` walks the recovery path's AST for every
-    #       deleting call. So the claims set only ever GROWS.
+    #   (B) NOTHING IN THIS MODULE REMOVES OR REPLACES ANYTHING IN THE CLAIMS DIRECTORY, so the
+    #       claims set only ever GROWS. Established by `FILESYSTEM_MUTATIONS`: an inventory of
+    #       EVERY mutating call in this file, keyed by its OPERANDS and pinned both ways -- three
+    #       calls, none of which names a claims path.
+    #       ⚠ (B) IS SCOPED TO THIS MODULE, AND THE FIRST WORDING OVERCLAIMED IT. It said "claims
+    #       are never deleted", full stop, which nothing here can establish: an operator's `rm`,
+    #       another module, or a filesystem tool can remove a claim and no guard in this file will
+    #       stop it. What the guards establish is the narrower statement above, and the narrower
+    #       statement is what the sufficiency argument is entitled to use.
+    #       WHAT A VIOLATION FROM OUTSIDE WOULD COST IS BOUNDED, WHICH IS WHY THE NARROWING IS
+    #       TOLERABLE: a deleted claim makes a legitimately claimed product read as unclaimed, so
+    #       this clause REFUSES. That resurrects the original symptom -- an innocent task rejected
+    #       -- and it FAILS CLOSED. No deletion of a claim can make this clause ADMIT a foreign
+    #       product, because admitting requires a claim to exist, and deleting one never creates one.
     #
     #   Read products at t1 and claims at t2 > t1. Any product p observed at t1 was published at
     #   some time <= t1; by (A) its claim was created strictly earlier; by (B) that claim still
