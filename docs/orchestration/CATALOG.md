@@ -785,6 +785,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
+- [`REVIEW-20260914-premise-B-durability-68a3da8a.md`](REVIEW-20260914-premise-B-durability-68a3da8a.md)
+  - **My premise-(B) finding is CLOSED; ONE NEW FINDING: the stated cost of violating (B) is
+  incomplete, and the omitted case is an AUTHORIZATION BYPASS rather than a refusal.** Eligible to
+  review this — I named a two-disjunct requirement and declined a mechanism; the ordering recusal
+  does not reach here. **Power control reproduced with my own `_tidy_claims` mutant:** operand-keyed
+  inventory **FAILS (detects)**, seven-name ban **passes (slips)**, baseline and restored both OK.
+  `FILESYSTEM_MUTATIONS` is genuinely operand-keyed and its three entries match my whole-module
+  sweep exactly. Their three self-caught items verified: the blind-spot arm **asserts** the blindness
+  with the invented rewording, the phrase-ban exemption is **counted** at exactly 1, and
+  `PREMISE_PROSE_LINES = 21` is the measured value. "No behaviour change" verified — executable AST
+  identical between `689e2cb6` and `68a3da8a` with docstrings stripped. **NEW FINDING, measured:**
+  claim deleted + product PRESENT → refuses (as stated); claim deleted + product **ABSENT** →
+  **ADMITTED**, a fresh attempt runs as a first attempt, bypassing `campaign-recover` and its
+  per-retry approval — the exact act Joseph's prohibition names. Counts verified: 26 / 65 / 89 / 123.
 - [`REVIEW-20260914-clause7-race-fix-8b89ff36.md`](REVIEW-20260914-clause7-race-fix-8b89ff36.md)
   - **⚠ PARTIAL RECUSAL: I am NOT independent of the ordering choice** — I named the requirement but
   then pointed at `require_campaign_complete` as the exemplar, and that became the design rationale.
