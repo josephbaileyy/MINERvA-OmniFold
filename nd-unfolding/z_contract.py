@@ -56,7 +56,49 @@ for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
         sys.path.insert(0, _p)
 
 import p4_lib                      # noqa: E402
+
+# ⚠ OI-136 CONTAINMENT, 2026-09-15, authorized by Joseph. `adopt_unified_5d.py:35` pins an ABSOLUTE
+# data-root path -- `_REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"` -- and inserts it at
+# `sys.path` position 0 at import time. That module's BYTES CANNOT BE EDITED: its
+# `implementation_sha256` is bound by `docs/orchestration/state/ben106-stamp-verify-active-56695424.json`
+# and checked AT RUNTIME by `mii_adopt_unified_5d_stamped.assert_pinned_writer_is_intact`, which
+# refuses to launch against modified bytes and says so in terms -- "Do not update the digest --
+# re-issue or retire the owning receipt". Lane C's ruling at `783d648a` §25 and
+# `RULING-20260817-lanec-pinned-readers-get-wrappers-not-copies.md` are the same instruction:
+# pinned readers get wrappers, never edits. So the side effect is CONTAINED HERE, at the import
+# site, instead.
+#
+# WHAT WENT WRONG WITHOUT THIS, measured 2026-09-15 against
+# `/pscratch/sd/j/josephrb/zdeploy-20b97fa9`: the insert landed before `import uq_math` below and
+# before every later unqualified import in the Z chain, so `z_receipt`'s
+# `from unified_throw_cov import _atomic_savez` -- the idiom that publishes every product -- bound
+# the DATA-ROOT copy while A-2(f) certified the deployment.
+# `mnv_guarded_run.py --expect-root <deployment>` returned
+# `REFUSED -- AN IMPORT RESOLVED OUTSIDE THE EXPECTED TREE` (checked=128, outside_expect_root=1).
+#
+# WHY RESTORING THE WHOLE LIST IS SAFE HERE, AND IT IS A MEASURED CLAIM RATHER THAN AN ASSUMPTION.
+# `adopt_unified_5d` imports NO repository module: at module level it takes only argparse, gc, os,
+# sys and numpy, and its only lazy imports are `import ROOT` inside two functions -- not repo
+# modules, and not resolved through the entries removed here. Measured in a child interpreter: it
+# adds exactly `<data-root>/nd-unfolding` and `<data-root>/2d-unfolding`, and the only repository
+# module in `sys.modules` after its import is ITSELF. So nothing it needs is dropped, and a later
+# lazy `import ROOT` is unaffected.
+#
+# THE SNAPSHOT IS TAKEN AFTER THIS MODULE'S OWN INSERTS, so restoring KEEPS them and drops only
+# what the pinned module added. Unrelated entries and THEIR ORDER survive exactly: the list is
+# restored by assignment, not rebuilt by filtering, so no entry is reordered, deduplicated or
+# dropped by a predicate that might not match what a future caller put there.
+#
+# WHAT THIS DELIBERATELY DOES NOT DO. It does not touch `sys.modules`, does not alter any module's
+# recorded origin, and adds no guard exception. If the pinned module ever genuinely LOADS a foreign
+# module during its import, that module stays loaded with its foreign `__file__` and
+# `mnv_guarded_run` still REFUSES -- containment of a path is not concealment of an import, and
+# there is a control asserting exactly that.
+_PATH_BEFORE_PINNED_IMPORT = list(sys.path)
 import adopt_unified_5d as _adopt  # noqa: E402
+sys.path[:] = _PATH_BEFORE_PINNED_IMPORT
+del _PATH_BEFORE_PINNED_IMPORT
+
 import uq_math                     # noqa: E402
 
 
