@@ -12,6 +12,28 @@ Authorized by Joseph 2026-09-15: one execution of `sbatch_z_pilot_5d.sh`, one CP
 64G, four CPUs, `OMP_NUM_THREADS=4`, maximum admitted exposure **1.5 CPU task-hours** (R5's unit:
 wall-hours per execution attempt), **no GPU allocation**.
 
+## Deployed revision
+
+**`15315e75ac81600a8b59a77f68bfeaebb506357f`**, deployed to
+`/pscratch/sd/j/josephrb/zdeploy-15315e75` through the verified bundle route
+(bundle sha256 `967736b9d5c66d54f9848220e1a07060b4982ab6d8d6c58d49e4dd6032f48ca3`, digest matched
+end to end). Independent review cleared this exact revision for deployment and one bounded
+execution.
+
+It is the descendant of `20b97fa9` carrying the **OI-136 containment**: `z_contract` snapshots
+`sys.path`, imports `adopt_unified_5d`, and restores the snapshot before `import uq_math`.
+`adopt_unified_5d.py` is **byte-unchanged** at
+`e1260e8dec2d39cb4653a8b4b02a198d04ea103d548a2d90b5f003f0b8044c35`, so
+`ben106-stamp-verify-active-56695424.json` and the runtime pin in
+`mii_adopt_unified_5d_stamped.assert_pinned_writer_is_intact` both still hold. No supersession
+table, no receipt re-issue and no ben106 compute were used.
+
+WHY THAT MATTERS TO THIS EXECUTION: without it,
+`mnv_guarded_run.py --expect-root /pscratch/sd/j/josephrb/zdeploy-20b97fa9` returned
+`REFUSED -- AN IMPORT RESOLVED OUTSIDE THE EXPECTED TREE` and the pilot could not run at all --
+`z_receipt`'s `from unified_throw_cov import _atomic_savez`, the idiom that publishes every
+product, bound the data-root copy while A-2(f) certified the deployment.
+
 ## The eight source roles, bound by measured digest
 
 Every digest below was recomputed from the file on disk with `sha256sum`, not copied from a
