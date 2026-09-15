@@ -112,3 +112,47 @@ The spectrum is **reported, never clipped, floored or regularized**, and it is a
 independent `eigvalsh` on the closed artifact rather than a harvest of the PSD gate's internal
 decomposition — the cost is priced in the execution request, per `Z_BUILD.md` requirement 8.
 `z_assembly.gate_symmetry_psd` keeps sole ownership of the PSD verdict.
+
+**INDEPENDENT REVIEW, 2026-09-14: three blockers, five should-fixes, all landed.** The reviewer
+verified the "no pre-existing module modified" claim independently (`git diff --numstat`: 9 files,
+all 4 deletions in `Z_BUILD.md`) and killed 11 of 14 mutants. The three that SURVIVED were all
+launcher-side and all real:
+
+1. **The job exited 0 for a NON-PASSING construction.** The script's last statement was an `echo`,
+   so `sacct` would record `COMPLETED 0:0`. `z_pilot.py` takes care to preserve 2 and the launcher
+   discarded it at the last hop — worse than never preserving it, because the inner discipline made
+   the outer artifact look trustworthy. Fixed with `exit "$PILOT_RC"`. The guard test asserted
+   `"exit 0" not in text`, a SPELLING check blind to falling off the end; it is replaced by one
+   that executes the launcher's own `case` block, which also kills a `PILOT_RC=0`-inside-the-arm
+   mutant that survived the first repair.
+2. **`--no-requeue` was satisfied by its own prose comment**, so deleting the real `#SBATCH`
+   directive passed. Now anchored on the directive line, with a negative control proving the
+   comment alone does not satisfy it.
+3. **The fresh-output guard asserted its MESSAGE, not its predicate**, so replacing the predicate
+   with `[ -e /nonexistent-sentinel ]` passed. Now executed as a fragment against five cases:
+   empty, non-empty, a regular file, an unlistable directory, and a dangling symlink.
+
+Should-fixes landed: exact `TNamed` class check; 40-hex producer revision (it had a weaker standard
+than the assembling revision); `OMP_NUM_THREADS` cap (measured 0.480 s vs 4.248 s at n=2800, ~9×);
+`ls` status read directly instead of `2>/dev/null`; the guard's CANNOT-LOOK exit 2 distinguished
+from the pilot's completion 2 by requiring the receipt; `json.loads` on a receipt wrapped so a torn
+file raises `ZContractError` rather than escaping; the bridge record written atomically behind the
+preservation guard; and scope item 7 enforced in code for the first time.
+
+**THE LAUNCHER-COUNT RATCHET FIRED, AND MY FIRST READING OF IT WAS WRONG.** I reported that the
+count was "still 217 before and after, so the new launcher does not enter that population" — I had
+compared the wrong assertion. Measured properly: at `e09513d8` `SubstitutionFenceS1` fails
+`217 != 216` (the standing total); at the first pilot commit it failed `199 != 198`, a DIFFERENT
+assertion, because `sbatch_z_pilot_5d.sh` landed in the unclassified remainder. The ratchet exists
+for exactly that event, and leaving it would have **masked** the standing finding behind a new one.
+Classified rather than incremented: the pilot is not `hooked` (that set is closed at the seven
+driver legs plus declared consumers), and not `fenced` (nine frozen substitution hazards; the pilot
+writes only into a refusing fresh namespace and never a canonical product), so `neither` at 199 is
+the honest bucket, pinned with a positive membership assertion so a count that moved for the wrong
+reason cannot pass. **The total pin is deliberately left at 216**: it is a standing finding, not
+this change's to close, and the arithmetic is recorded instead — 216 pinned + 1 pre-existing and
+unexplained + 1 this pilot = 218.
+
+Suites after the fixes: `test_z_pilot.py` 50 passed / 4 skipped (default `python3`); 29 of 29 OK
+under ROOT 6.28/12 / Python 3.11.14 on Perlmutter; all Z suites 276 passed / 7 skipped;
+`test_uq_remediation` 3 failed / 232 passed — the same three test IDs as at `e09513d8`.

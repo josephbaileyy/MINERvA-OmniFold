@@ -230,12 +230,30 @@ change a function every existing Z test exercises, and measuring the shipped byt
 check. The extra decomposition per variant is the cost requirement 8 defers to a resource plan, and
 it is priced in the execution request rather than absorbed silently.
 
-**Test counts, with the interpreter.** `tests/test_z_pilot.py` reports 40 passed / 4 skipped under
-the repository default `python3` — the 4 skips are the PyROOT-gated ROOT round trip, so on that
-interpreter the ROOT reading and the `TParameter`/`TNamed` accessors are **unverified**. They were
-run separately under ROOT 6.28/12 / Python 3.11.14 on Perlmutter, where that class selection
-reports 23 of 23 OK. Every refusal in the transcription is also exercised over plain arrays by
-`validate_transcription`, so none of them depends on a skipping test.
+**Test counts, with the interpreter.** `tests/test_z_pilot.py` reports **50 passed / 4 skipped**
+under the repository default `python3`; the 4 skips are the PyROOT-gated ROOT round trip. Run
+separately under ROOT 6.28/12 / Python 3.11.14 on Perlmutter, the ROOT, accessor, identity,
+transcription and spectrum classes report **29 of 29 OK**. Every refusal in the transcription is
+also exercised over plain arrays by `validate_transcription`, and `_named`/`_count` are exercised
+through a stub store, so no refusal depends on a skipping test.
+
+**What independent review changed (2026-09-14).** Three blockers and five should-fixes, all landed:
+the launcher's last statement was an `echo`, so the job exited **0** for a NON-PASSING
+construction — it now ends `exit "$PILOT_RC"`, and the test that was supposed to forbid this was a
+spelling check (`"exit 0" not in text`) blind to an exit code reached by falling off the end, so it
+was replaced by one that RUNS the launcher's own `case` block. `--no-requeue` and the fresh-output
+refusal were asserted by string presence and both survived deletion of the mechanism; they are now
+anchored on the directive and executed as a fragment. `_named` accepted any `TNamed` **subclass**
+(`TH1`, `TTree`, `TGraph` all qualify), so a histogram named `cv_code_revision` could supply its
+title as the producer's revision; the class is now exact. The producer's revision was held to a
+weaker standard than the assembling one — non-empty string versus 40 hex characters — and the
+weaker check guarded the more important field; both are 40-hex now. `OMP_NUM_THREADS` was unset:
+**measured 0.480 s versus 4.248 s at n=2800** on a 244-core node, ~9× the wrong way, so the cap is
+now explicit. The output-freshness check ended `2>/dev/null`, turning "cannot look" into "empty";
+it now reads `ls`'s status directly, unpiped. And scope item 7 — the producer's revision must
+differ from the assembling one — was asserted in three docstrings and enforced nowhere; it is now
+one `contract.require`, reading the producer's revision from the **declared input slab** rather
+than from `out_null`, which `z_build` re-stamps with the assembling identity by design.
 
 ## Remaining real-input and authorization requirements
 

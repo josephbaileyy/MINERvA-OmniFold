@@ -353,7 +353,18 @@ def _validate_completion(rc: int, stdout: str, artifacts: dict) -> dict:
     for variant in ("cv", "mean"):
         receipt_path = Path(artifacts[f"receipt_{variant}"])
         product_path = Path(artifacts[f"out_{variant}"])
-        record = json.loads(receipt_path.read_text())
+        # A torn or foreign receipt raises json.JSONDecodeError (a ValueError) or OSError, and
+        # `main` catches only ZContractError -- so without this the structured
+        # {"pilot_status": "FAILED", ...} envelope is lost and the launcher mislabels a crash as
+        # "the pilot refused". This writer cannot tear a receipt (atomic_write_json uses
+        # os.replace); a foreign or interrupted writer can.
+        try:
+            record = json.loads(receipt_path.read_text())
+        except (ValueError, OSError) as exc:
+            raise contract.ZContractError(
+                f"pilot: receipt {receipt_path.name} could not be read back as JSON ({exc}). "
+                f"An unreadable receipt is an incomplete build, not a missing check."
+            ) from exc
         recorded = _find_product_sha(record, product_path)
         actual = receipt.sha256_file(product_path)
         contract.require(
@@ -401,6 +412,22 @@ def _find_product_sha(record: dict, product_path: Path) -> str:
     return found[0]
 
 
+def _producer_revision(null_slab) -> str:
+    """The revision recorded INSIDE the null slab's declaration, i.e. the producer's own.
+
+    Read from the slab rather than taken from a caller, because the whole point of the field is
+    that it describes an execution this process did not perform.
+    """
+    with np.load(null_slab, allow_pickle=False) as store:
+        decl = json.loads(str(store["declaration_json"]))
+    revision = decl["writer"]["code_identity"]["revision"]
+    contract.require(
+        isinstance(revision, str) and revision.strip(),
+        f"pilot: the null slab at {null_slab} names no producing revision",
+    )
+    return revision
+
+
 def run_pilot(
     manifest,
     *,
@@ -443,6 +470,34 @@ def run_pilot(
     completion = _validate_completion(proc.returncode, proc.stdout,
                                       {k: str(v) for k, v in artifacts.items()})
 
+    # ⚠ THE PRODUCER'S REVISION MUST DIFFER FROM THE ASSEMBLING ONE, AND NOTHING ASSERTED IT.
+    # Three docstrings and Z_BUILD.md said the two must stay distinct; no code compared them, so
+    # the property held only because this pilot's modules do not exist at the precursor's
+    # revision -- an accident of file existence, which the parity check would catch for a
+    # different reason. An accident is not an assertion.
+    # READ FROM THE DECLARED INPUT SLAB, NOT FROM `out_null`. `build_z` re-stamps its own copy
+    # with the ASSEMBLING identity (z_build.py: persist_null_operands(..., code_identity=code)),
+    # so `out_null` carries the assembling revision by design -- reading the producer's revision
+    # from it would compare the assembling revision with itself and this check would fail on every
+    # correct run. The producer's identity survives in the INPUT slab the bridge wrote.
+    declared = json.loads(manifest.read_text())
+    # RESOLVED AGAINST THE MANIFEST DIRECTORY, exactly as `z_build.Source` resolves it. The
+    # manifest contract allows relative source paths ("relative inputs resolve against the
+    # manifest directory"), and `build_manifest` happens to write absolute ones -- so reading the
+    # field literally worked for manifests this module wrote and failed for every hand-written or
+    # fixture manifest, which is the larger population.
+    producer_revision = _producer_revision(
+        manifest.parent / declared["sources"]["null"]["path"]
+    )
+    assembling_revision = declared["producing_revision"]
+    contract.require(
+        producer_revision != assembling_revision,
+        f"pilot: the null slab's producing revision and this assembly's revision are both "
+        f"{producer_revision}. The precursor's producer revision is the evidence for where the "
+        f"operands came from; if the assembling code is the same revision, that evidence says "
+        f"nothing and the two roles have been collapsed.",
+    )
+
     # The spectrum, from the CLOSED artifacts, bound by their digests.
     spectra = {}
     for variant in ("cv", "mean"):
@@ -468,6 +523,9 @@ def run_pilot(
         ),
         **completion,
         "spectra": spectra,
+        "producer_revision": producer_revision,
+        "assembling_revision": assembling_revision,
+        "revisions_distinct": True,
         "artifacts": {k: receipt.stamp_file(v) for k, v in artifacts.items()},
         "scientific_acceptance": "NON-PASSING",
         "adoptable": False,

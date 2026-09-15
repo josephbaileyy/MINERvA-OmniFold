@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=z_pilot5d
 #SBATCH --account=m3246
-#SBATCH --qos=shared --constraint=cpu --nodes=1 --ntasks=1 --cpus-per-task=16 --mem=64G --time=01:30:00
+#SBATCH --qos=shared --constraint=cpu --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=64G --time=01:30:00
 #SBATCH --no-requeue
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
 #SBATCH --output=uq_5d/z_pilot5d_%j.out --error=uq_5d/z_pilot5d_%j.err
@@ -50,12 +50,29 @@ Z_ML_KEY="${MNV_Z_ML_KEY:?set MNV_Z_ML_KEY to the exact covariance key inside MN
 # Non-emptiness REFUSES. The same rule the precursor's namespace check uses: a pilot that cleared
 # its own output directory would destroy the evidence of whatever ran there before, and "it was
 # probably mine" is not a property of a filesystem.
-if [ -e "${PILOT_OUT}" ] && [ -n "$(ls -A "${PILOT_OUT}" 2>/dev/null)" ]; then
-  echo "[z-pilot] FAIL: ${PILOT_OUT} exists and is NOT empty. Name a fresh directory." >&2
-  echo "[z-pilot]   It is not cleaned: removing another run's products to make room is not" >&2
-  echo "[z-pilot]   this launcher's call, and an emptied directory cannot be told from a new one." >&2
+# CANNOT-LOOK IS NOT EMPTY. The first version ended `ls -A ... 2>/dev/null`, so a directory this
+# job may enter and write but not READ (mode 300) produced empty output and the check PROCEEDED --
+# a zero that means "I could not look" read as "there is nothing there". The status is read from
+# `ls` directly and NOT through a pipe, because a pipe would hand back the pipe's status instead.
+if [ -e "${PILOT_OUT}" ] && [ ! -d "${PILOT_OUT}" ]; then
+  echo "[z-pilot] FAIL: ${PILOT_OUT} exists and is not a directory." >&2
   exit 3
 fi
+if [ -d "${PILOT_OUT}" ]; then
+  _mnv_listing=$(ls -A "${PILOT_OUT}"); _mnv_ls_rc=$?
+  if [ "$_mnv_ls_rc" -ne 0 ]; then
+    echo "[z-pilot] FAIL: cannot list ${PILOT_OUT} (ls rc=$_mnv_ls_rc). That is CANNOT-LOOK, not" >&2
+    echo "[z-pilot]   empty, and it must not be read as a fresh namespace." >&2
+    exit 3
+  fi
+  if [ -n "$_mnv_listing" ]; then
+    echo "[z-pilot] FAIL: ${PILOT_OUT} exists and is NOT empty. Name a fresh directory." >&2
+    echo "[z-pilot]   It is not cleaned: removing another run's products to make room is not" >&2
+    echo "[z-pilot]   this launcher's call, and an emptied directory cannot be told from a new one." >&2
+    exit 3
+  fi
+fi
+unset _mnv_listing _mnv_ls_rc
 mkdir -p "${PILOT_OUT}"
 
 # (1)-(4) THE SAME ENVIRONMENT CLOSURE THE PRECURSOR USED. Not re-derived: these are the existing
@@ -73,6 +90,15 @@ if ! python3 -c 'import sys; sys.exit(0 if sys.version_info[:2] >= (3, 7) else 9
   exit 3
 fi
 export PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+# --- BLAS THREAD CAP, AND IT IS NOT COSMETIC -----------------------------------------------------
+# MEASURED on a 244-core login node at n=2800: 0.480 s with OMP_NUM_THREADS=16 against 4.248 s with
+# it UNSET -- ~9x, the wrong way, because an OpenBLAS that reads the node's core count rather than
+# the cgroup spawns a thread per visible core onto the few this job was given and thrashes. Every
+# cost estimate for this pilot assumes the capped rate, so leaving it unset would make the wall
+# limit a measurement of oversubscription. 32 sibling launchers in this directory set these three.
+export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-4}"
+export OPENBLAS_NUM_THREADS="${OMP_NUM_THREADS}"
+export MKL_NUM_THREADS="${OMP_NUM_THREADS}"
 cd "${DATA_ROOT}/nd-unfolding"
 
 GUARD="${CODE_ROOT}/nd-unfolding/mnv_guarded_run.py"
@@ -125,7 +151,7 @@ NULL_SLAB="${PILOT_OUT}/z-null-source.npz"
 python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv z_null_bridge)" -- \
   "${CODE_ROOT}/nd-unfolding/z_null_bridge.py" \
   --product "$PRODUCT" --sha256 "$PRODUCT_SHA" --out-null "$NULL_SLAB" \
-  > "${PILOT_OUT}/bridge.json" || {
+  --record "${PILOT_OUT}/bridge.json" || {
   echo "[z-pilot] FAIL: the null bridge refused. Its stderr envelope is above." >&2
   exit 4; }
 [ -s "$NULL_SLAB" ] || { echo "[z-pilot] FAIL: bridge reported success and wrote no slab." >&2; exit 4; }
@@ -154,8 +180,21 @@ python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv z_pilot)" -- 
   --receipt "${PILOT_OUT}/z-pilot-receipt.json"
 PILOT_RC=$?
 set -e
+# ⚠ TWO DIFFERENT 2s, AND THEY MUST NOT BE CONFLATED. `mnv_guarded_run.py` uses exit 2 for
+# CANNOT-LOOK ("2 is deliberately not 3, so 'we could not look' can never be read as 'we checked
+# and it was clean'"), and it can return 2 WITHOUT EVER RUNNING the payload. `z_pilot.py` uses 2
+# for "construction complete, science NON-PASSING". Same integer, opposite meanings, and the guard
+# wraps the pilot -- so the receipt the pilot writes LAST is required before 2 is read as
+# completion. Without this, a refused guard prints a completed-construction line for a run that
+# never happened.
 case "$PILOT_RC" in
-  2) echo "[z-pilot] construction COMPLETE, science NON-PASSING (exit 2, as specified)." ;;
+  2)
+    if [ ! -s "${PILOT_OUT}/z-pilot-receipt.json" ]; then
+      echo "[z-pilot] FAIL: exit 2 with no pilot receipt. That is the GUARD's CANNOT-LOOK 2, not" >&2
+      echo "[z-pilot]   the pilot's completion 2 -- the payload may never have run." >&2
+      exit 8
+    fi
+    echo "[z-pilot] construction COMPLETE, science NON-PASSING (exit 2, as specified)." ;;
   1) echo "[z-pilot] FAIL: the pilot refused (exit 1). Nothing is validated." >&2; exit 1 ;;
   *) echo "[z-pilot] FAIL: unexpected exit ${PILOT_RC}. Not mapped onto 1 or 2." >&2; exit 6 ;;
 esac
@@ -185,3 +224,13 @@ for name, stamp in r["artifacts"].items():
 print("[z-pilot] receipt-last verified; NON-PASSING and NON-ADOPTABLE recorded.")
 PY
 echo "[z-pilot] done. Outputs in ${PILOT_OUT}. Nothing here is adopted, graded or projected."
+
+# --- THE JOB'S EXIT STATUS IS THE PILOT'S, AND THIS LINE IS THE WHOLE POINT ----------------------
+# ⚠ REVIEWER BLOCKER. Without it the script's last statement was an `echo`, so the script exited 0
+# and `sacct` recorded COMPLETED / ExitCode 0:0 for a construction whose science is permanently
+# NON-PASSING. `z_pilot.py` goes to real trouble to preserve 2 -- "returning 0 would tell a
+# launcher the science passed" -- and the launcher then threw it away at the last hop, which is
+# worse than never having preserved it, because the inner discipline made the outer artifact look
+# trustworthy. The guard test that was supposed to forbid this asserted `"exit 0" not in text`: a
+# SPELLING check, blind to an exit code arrived at by falling off the end of the file.
+exit "$PILOT_RC"

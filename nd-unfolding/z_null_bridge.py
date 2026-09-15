@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 from typing import Any
 
 import numpy as np
@@ -65,12 +66,22 @@ EXPECTED_PREDICATE = "x_cv > 0"
 
 
 def _named(store: Any, key: str) -> str:
-    """Read a `TNamed` title, refusing a missing or wrongly-typed object."""
+    """Read a `TNamed` title, refusing a missing or wrongly-typed object.
+
+    ⚠ REVIEWER FINDING. This used `InheritsFrom("TNamed")`, and `TH1`, `TTree` and `TGraph` ALL
+    satisfy that -- so a histogram that happened to be named `cv_code_revision` would hand back
+    its TITLE as the producer's revision. The class is now required EXACTLY, matching the
+    exactness `_count` already had for `TParameter<int>`. The two checks were asymmetric and the
+    looser one guarded the provenance field, which is the one that matters most.
+    """
     contract.require(store.GetListOfKeys().Contains(key), f"null bridge: missing {key!r}")
     obj = store.Get(key)
+    contract.require(obj is not None, f"null bridge: {key!r} did not load")
     contract.require(
-        obj is not None and obj.InheritsFrom("TNamed"),
-        f"null bridge: {key!r} is not a TNamed",
+        obj.ClassName() == "TNamed",
+        f"null bridge: {key!r} is {obj.ClassName()}, expected exactly TNamed. TH1, TTree and "
+        f"TGraph all inherit from TNamed, so an inheritance test would accept a histogram's title "
+        f"as this field's value.",
     )
     value = str(obj.GetTitle())
     contract.require(value.strip() != "", f"null bridge: {key!r} is blank")
@@ -225,6 +236,18 @@ def transcribe_identity(provenance, extra_import_closure=None) -> dict:
         f"null bridge: provenance must be exactly {sorted(PROVENANCE_KEYS)}, got "
         f"{sorted(provenance)}",
     )
+    revision = provenance["cv_code_revision"]
+    # ⚠ REVIEWER FINDING: ASYMMETRIC STANDARDS. `z_pilot.build_manifest` requires the ASSEMBLING
+    # revision to be a full 40-character sha, while the PRODUCER's went through
+    # `z_receipt._require_code_identity`, which asks only for a non-empty string -- so "unknown"
+    # was an acceptable identity for the field that IS the original execution provenance. The
+    # weaker check guarded the more important field. Same standard now applies to both.
+    contract.require(
+        bool(re.fullmatch(r"[0-9a-f]{40}", revision)),
+        f"null bridge: the product records cv_code_revision {revision!r}, which is not a full "
+        f"40-character lowercase hex commit sha. A producer whose revision cannot be resolved is "
+        f"not provenance, and this is the field a reader acts on when the bytes turn out wrong.",
+    )
     closure = {provenance["cv_producer_file"]: provenance["cv_producer_sha256"]}
     for module_id, digest in (extra_import_closure or {}).items():
         if module_id in closure:
@@ -235,10 +258,7 @@ def transcribe_identity(provenance, extra_import_closure=None) -> dict:
                 f"than resolved by precedence.",
             )
         closure[module_id] = digest
-    return {
-        "revision": provenance["cv_code_revision"],
-        "import_closure_digests": closure,
-    }
+    return {"revision": revision, "import_closure_digests": closure}
 
 
 def bridge_null_operands(
@@ -358,12 +378,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--sha256", required=True)
     parser.add_argument("--out-null", required=True, type=Path)
     parser.add_argument("--allow-overwrite", action="store_true")
+    parser.add_argument("--record", type=Path, default=None,
+                        help="write this transcription's full record here, atomically. A bare "
+                             "shell redirect would truncate an existing file silently and leave "
+                             "the richest provenance record of the transcription unbound.")
     args = parser.parse_args(argv)
     try:
         result = bridge_null_operands(
             args.product, args.out_null, expect_sha256=args.sha256,
             allow_overwrite=args.allow_overwrite,
         )
+        if args.record is not None:
+            build_path.preservation_guard(str(args.record),
+                                          allow_overwrite=args.allow_overwrite)
+            receipt.atomic_write_json(args.record, {"bridge_status": "TRANSCRIBED", **result})
+            result["record"] = str(args.record)
+            result["record_stamp"] = receipt.stamp_file(args.record)
     except contract.ZContractError as exc:
         print(json.dumps({"bridge_status": "FAILED", "reason": str(exc)}), file=__import__("sys").stderr)
         return 1

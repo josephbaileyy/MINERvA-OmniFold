@@ -197,6 +197,74 @@ class NullBridgeIdentity(unittest.TestCase):
             )
 
 
+class _StubKeys:
+    def __init__(self, names): self._n = set(names)
+    def Contains(self, k): return k in self._n
+
+
+class _StubObj:
+    """Minimal stand-in: a class name, a title, and ROOT's inheritance answer."""
+    def __init__(self, cls, title="", inherits=("TNamed",), val=None):
+        self._c, self._t, self._i, self._v = cls, title, set(inherits), val
+    def ClassName(self): return self._c
+    def GetTitle(self): return self._t
+    def InheritsFrom(self, c): return c in self._i
+    def GetVal(self): return self._v
+
+
+class _StubStore:
+    def __init__(self, objs): self._o = objs
+    def GetListOfKeys(self): return _StubKeys(self._o)
+    def Get(self, k): return self._o.get(k)
+
+
+class NamedAndCountAccessors(unittest.TestCase):
+    """⚠ THESE REFUSALS HAD NO TEST AT ALL.
+
+    `validate_transcription` was factored out so the transcription's refusals would not depend on
+    a PyROOT-gated test -- but `_named` and `_count` were left behind, so exactly their refusals
+    were the unexercised ones. A stub store supplies ROOT's three relevant answers without ROOT.
+    """
+
+    def test_a_TNamed_title_is_read(self):
+        store = _StubStore({"k": _StubObj("TNamed", "x_cv > 0")})
+        self.assertEqual(bridge._named(store, "k"), "x_cv > 0")
+
+    def test_a_TH1_named_like_the_field_is_REFUSED_though_it_INHERITS_from_TNamed(self):
+        """The hazard: TH1, TTree and TGraph all inherit from TNamed, so an inheritance test
+        would hand back a histogram's TITLE as the producer's revision."""
+        hist = _StubObj("TH1D", "not a revision", inherits=("TNamed", "TH1", "TH1D"))
+        self.assertTrue(hist.InheritsFrom("TNamed"), "control: it really does inherit")
+        with self.assertRaisesRegex(contract.ZContractError, "expected exactly TNamed"):
+            bridge._named(_StubStore({"cv_code_revision": hist}), "cv_code_revision")
+
+    def test_a_blank_title_is_REFUSED(self):
+        with self.assertRaisesRegex(contract.ZContractError, "blank"):
+            bridge._named(_StubStore({"k": _StubObj("TNamed", "   ")}), "k")
+
+    def test_a_missing_key_is_REFUSED(self):
+        with self.assertRaisesRegex(contract.ZContractError, "missing"):
+            bridge._named(_StubStore({}), "k")
+
+    def test_a_count_is_read_and_a_wrong_class_is_REFUSED(self):
+        ok = _StubObj("TParameter<int>", val=10694, inherits=("TNamed",))
+        self.assertEqual(bridge._count(_StubStore({"n": ok}), "n"), 10694)
+        bad = _StubObj("TParameter<double>", val=1.5, inherits=("TNamed",))
+        with self.assertRaisesRegex(contract.ZContractError, "expected TParameter<int>"):
+            bridge._count(_StubStore({"n": bad}), "n")
+        with self.assertRaisesRegex(contract.ZContractError, "missing"):
+            bridge._count(_StubStore({}), "n")
+
+    def test_a_non_hex_producer_revision_is_REFUSED(self):
+        """The assembling revision had to be 40 hex chars; the producer's only had to be truthy."""
+        prov = dict(NullBridgeIdentity.PROV, cv_code_revision="unknown")
+        with self.assertRaisesRegex(contract.ZContractError, "40-character lowercase hex"):
+            bridge.transcribe_identity(prov)
+        prov2 = dict(NullBridgeIdentity.PROV, cv_code_revision="E" * 40)
+        with self.assertRaisesRegex(contract.ZContractError, "40-character lowercase hex"):
+            bridge.transcribe_identity(prov2)
+
+
 class SpectrumDiagnostics(unittest.TestCase):
     def test_the_spectrum_is_reported_and_NOT_clipped(self):
         C = np.diag([3.0, 2.0, 1.0])
@@ -471,10 +539,61 @@ class LauncherStaticChecks(unittest.TestCase):
     def setUp(self) -> None:
         self.text = self.LAUNCHER.read_text()
 
-    def test_the_launcher_declares_no_requeue_and_explicit_limits(self):
-        self.assertIn("#SBATCH --no-requeue", self.text)
+    def test_the_launcher_declares_no_requeue_as_a_DIRECTIVE_not_a_comment(self):
+        """⚠ ANCHORED ON THE DIRECTIVE. `assertIn("#SBATCH --no-requeue", text)` was satisfied by
+        the PROSE COMMENT that quotes the flag, so a reviewer deleted the real header and the test
+        still passed. The line must be a directive: start of line, nothing after it.
+        """
+        import re
+        directives = [ln for ln in self.text.splitlines()
+                      if re.fullmatch(r"#SBATCH\s+--no-requeue", ln.strip())
+                      and ln.lstrip().startswith("#SBATCH")]
+        self.assertEqual(len(directives), 1,
+                         "exactly one `#SBATCH --no-requeue` DIRECTIVE line is required; found "
+                         f"{len(directives)}. A mention inside a comment does not disable requeue.")
+        # NEGATIVE CONTROL: the prose comment alone must NOT satisfy this test.
+        prose_only = self.text.replace("\n#SBATCH --no-requeue\n", "\n")
+        self.assertIn("`#SBATCH --no-requeue` IS PRESENT HERE", prose_only,
+                      "the comment survives the deletion, so it is a real decoy")
+        survivors = [ln for ln in prose_only.splitlines()
+                     if re.fullmatch(r"#SBATCH\s+--no-requeue", ln.strip())]
+        self.assertEqual(survivors, [], "with the directive removed nothing may match")
+
+    def test_the_launcher_declares_explicit_resource_limits(self):
         for flag in ("--time=", "--mem=", "--cpus-per-task="):
             self.assertIn(flag, self.text, flag)
+
+    def test_the_freshness_predicate_REFUSES_and_does_not_read_cannot_look_as_empty(self):
+        """RUN the guard fragment. ⚠ The previous test asserted the MESSAGE ("is NOT empty"), so a
+        reviewer replaced the predicate with `[ -e /nonexistent-sentinel ]`, kept the message, and
+        the test passed. A message is not a mechanism.
+        """
+        import subprocess, os, stat
+        frag = self.text.split("# --- FRESH OUTPUTS", 1)[1].split("# (1)-(4)", 1)[0]
+        def run(path):
+            script = f'PILOT_OUT={path!r}\n{frag}\necho PROCEEDED\n'
+            return subprocess.run(["bash", "-c", script], capture_output=True, text=True)
+        with tempfile.TemporaryDirectory() as td:
+            empty = Path(td) / "empty"; empty.mkdir()
+            self.assertIn("PROCEEDED", run(str(empty)).stdout, "an empty dir must proceed")
+            full = Path(td) / "full"; full.mkdir(); (full / "prior.npz").write_bytes(b"x")
+            r = run(str(full))
+            self.assertNotIn("PROCEEDED", r.stdout, "a non-empty dir must REFUSE")
+            self.assertEqual(r.returncode, 3)
+            afile = Path(td) / "afile"; afile.write_bytes(b"x")
+            self.assertNotIn("PROCEEDED", run(str(afile)).stdout, "a file must REFUSE")
+            # CANNOT-LOOK: writable and enterable, NOT readable. This is the case that used to
+            # read as empty because `ls -A 2>/dev/null` printed nothing.
+            noread = Path(td) / "noread"; noread.mkdir(); (noread / "prior.npz").write_bytes(b"x")
+            os.chmod(noread, stat.S_IWUSR | stat.S_IXUSR)
+            try:
+                r = run(str(noread))
+                if os.geteuid() != 0:
+                    self.assertNotIn("PROCEEDED", r.stdout,
+                                     "a directory we cannot LIST must not read as empty")
+                    self.assertIn("CANNOT-LOOK", r.stderr)
+            finally:
+                os.chmod(noread, stat.S_IRWXU)
 
     def test_every_module_the_pilot_executes_is_bound_by_a_parity_pair(self):
         """A module that does the work while unbound is the gap parity exists to close."""
@@ -483,9 +602,75 @@ class LauncherStaticChecks(unittest.TestCase):
                        "z_statistics.py", "z_validator.py", "z_build_path.py"):
             self.assertIn(f"=nd-unfolding/{module}", self.text, module)
 
-    def test_the_launcher_does_not_convert_exit_two_to_zero(self):
-        self.assertIn("2) echo \"[z-pilot] construction COMPLETE", self.text)
-        self.assertNotIn("exit 0", self.text)
+    def test_the_launcher_PROPAGATES_the_pilot_exit_code_behaviourally(self):
+        """RUN the tail of the launcher, do not grep it.
+
+        ⚠ THIS TEST REPLACES A SPELLING CHECK. The previous version asserted
+        `"exit 0" not in text`, which a reviewer killed by pointing out the launcher's last
+        statement was an `echo` -- so the script exited 0 by FALLING OFF THE END, with no `exit 0`
+        anywhere to grep for. A mutant that set `PILOT_RC=0` inside the completion arm also
+        survived it. The only thing that settles an exit code is running something and reading
+        `$?`, so this executes a fragment with the launcher's own final line.
+        """
+        import subprocess
+        tail = self.text.rsplit("# --- THE JOB'S EXIT STATUS", 1)
+        self.assertEqual(len(tail), 2, "the launcher no longer has the exit-status block")
+        final = "exit \"$PILOT_RC\""
+        self.assertIn(final, self.text, "the launcher must end by propagating PILOT_RC")
+        for rc in (2, 1, 7):
+            script = f'PILOT_RC={rc}\necho done\n{final}\n'
+            proc = subprocess.run(["bash", "-c", script], capture_output=True, text=True)
+            self.assertEqual(proc.returncode, rc,
+                             f"a launcher ending in {final!r} must exit {rc}, got "
+                             f"{proc.returncode}")
+        # And the mutant the old test could not see: a trailing echo swallows the status.
+        swallow = subprocess.run(
+            ["bash", "-c", 'PILOT_RC=2\nexit "$PILOT_RC"\n'], capture_output=True, text=True)
+        self.assertEqual(swallow.returncode, 2)
+        trailing = subprocess.run(
+            ["bash", "-c", 'PILOT_RC=2\necho done\n'], capture_output=True, text=True)
+        self.assertEqual(trailing.returncode, 0,
+                         "control: falling off the end DOES yield 0 -- which is exactly the "
+                         "defect, so the launcher must not end that way")
+        self.assertFalse(self.text.rstrip().endswith("projected.\""),
+                         "the launcher must not end on an echo")
+
+    def test_the_REAL_case_block_propagates_two_and_refuses_a_receiptless_two(self):
+        """Execute the launcher's OWN `case` block plus its final `exit`.
+
+        ⚠ WHY THIS EXISTS. A mutant that sets `PILOT_RC=0` INSIDE the completion arm survived
+        every earlier test: the arm still printed the right message, the script still ended in
+        `exit "$PILOT_RC"`, and no assertion ever ran the arm. The only thing that catches an
+        assignment inside a branch is taking the branch.
+        """
+        import subprocess
+        block = self.text.split('case "$PILOT_RC" in', 1)[1].split("esac", 1)[0]
+        case_block = 'case "$PILOT_RC" in' + block + "esac\n"
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            (out / "z-pilot-receipt.json").write_text("{}")
+            script = (f'set -eo pipefail\nPILOT_OUT={str(out)!r}\nPILOT_RC=2\n'
+                      f'{case_block}exit "$PILOT_RC"\n')
+            proc = subprocess.run(["bash", "-c", script], capture_output=True, text=True)
+            self.assertEqual(
+                proc.returncode, 2,
+                "the completion arm must leave PILOT_RC at 2 and the script must exit it; got "
+                f"{proc.returncode}. stdout={proc.stdout!r} stderr={proc.stderr!r}")
+            # A receiptless 2 is the GUARD's cannot-look 2 and must NOT read as completion.
+            (out / "z-pilot-receipt.json").unlink()
+            proc = subprocess.run(["bash", "-c", script], capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 8, proc.stderr)
+            self.assertIn("CANNOT-LOOK", proc.stderr)
+            # And a refusal stays a refusal.
+            script1 = (f'set -eo pipefail\nPILOT_OUT={str(out)!r}\nPILOT_RC=1\n'
+                       f'{case_block}exit "$PILOT_RC"\n')
+            self.assertEqual(
+                subprocess.run(["bash", "-c", script1], capture_output=True).returncode, 1)
+
+    def test_the_launcher_distinguishes_the_guards_cannot_look_2_from_completion(self):
+        """mnv_guarded_run uses exit 2 for CANNOT-LOOK; the pilot uses it for completion."""
+        self.assertIn("CANNOT-LOOK", self.text)
+        self.assertIn('[ ! -s "${PILOT_OUT}/z-pilot-receipt.json" ]', self.text)
 
     def test_the_launcher_refuses_a_non_empty_output_directory_rather_than_cleaning_it(self):
         self.assertIn("is NOT empty", self.text)
