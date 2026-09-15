@@ -1,6 +1,15 @@
 # PET representation comparison for Ben
 
-**11 September 2026 · preparation for diagnostic method development**
+**Drafted 11 September 2026 · last measured 15 September 2026 · diagnostic method
+development, not a publication product**
+
+> Read [the three-way answer](#the-three-way-answer-as-of-15-september-2026) first if
+> you want the recommendation. In short: **still no measured learning-performance
+> winner** for pooled versus individual tokens, because every GPU attempt has stopped
+> in software equivalence checking and the latest one exposed a real numerical
+> obstacle in exactly the individual-token configuration we need. But the
+> aggregate-overflow question *does* now have an answer that does not depend on
+> learning results, from reading and executing the pinned upstream code.
 
 We propose testing individual typed objects in attention while retaining the
 current field definitions, masks and raw-row membership. There is **no measured
