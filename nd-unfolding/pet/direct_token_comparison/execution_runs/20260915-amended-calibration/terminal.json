@@ -1,0 +1,122 @@
+{
+  "job_id": "58354898",
+  "job_name": "pet-amended-calibration",
+  "slurm_state": "FAILED",
+  "exit_code": "1:0",
+  "elapsed_raw_seconds": 279,
+  "rows": {
+    "parent": 279,
+    "batch": 279,
+    "extern": 279
+  },
+  "start_utc": "2026-09-15T12:46:56",
+  "end_utc": "2026-09-15T12:51:35",
+  "launcher_terminal_marker": "FAILED",
+  "launcher_exit_code_file": "1",
+  "execution_commit": "604337880b3e414db8a9f4dd49340e85e4db3705",
+  "device": "/job:localhost/replica:0/task:0/device:GPU:0",
+  "stages_passed_before_stop": {
+    "cluster_tests": "69 passed, 10 subtests passed",
+    "adversarial_gate_tests": "25 passed",
+    "test_log_failure_signatures": 0,
+    "cpu_initialization_pairs_captured": 8,
+    "guard_records": {
+      "tests": 4,
+      "initialization": 2,
+      "preflight": 1
+    },
+    "guard_verdicts": [
+      "REPOSITORY-ORIGINS-INSPECTED"
+    ],
+    "guard_allowances": false,
+    "distinct_checkout_roots": 1
+  },
+  "gpu_preflight": {
+    "required_pairs": 8,
+    "pairs_reached": 4,
+    "pairs_passed": [
+      "nominal/pooled",
+      "nominal/direct",
+      "variable/pooled"
+    ],
+    "pair_failed": "variable/direct",
+    "pairs_never_run": [
+      "empty/pooled",
+      "empty/direct",
+      "masked/pooled",
+      "masked/direct"
+    ],
+    "incomplete_and_failed": true
+  },
+  "failure": {
+    "site": "optimizer_equivalence.py:85 (native trajectory optimizer-state comparison, steps 1 and 2)",
+    "message": "Equivalence failed: exact=False, max_abs=0.0001443326473236084",
+    "tensor": "weight_24",
+    "tensor_path_from_run_inventory": "multi_head_attention/query/kernel",
+    "tensor_shape": [
+      32,
+      4,
+      8
+    ],
+    "max_abs_step1": 0.0001443326473236084,
+    "max_abs_step2": 0.0001548975706,
+    "is_the_exempted_tensor": false,
+    "exempted_tensor": "weight_27",
+    "exempted_tensor_path": "multi_head_attention/key/bias",
+    "why_not_exempt": "The approved exemption rests on exact softmax shift invariance of a key bias; a query kernel moves the attention logits and has no such invariance. The proposal explicitly declined to exclude the query bias, other biases or optimizer slots.",
+    "tolerance": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "corroborating_measurements": {
+    "prediction_max_abs_all_cases": {
+      "nominal/pooled": 2.38e-07,
+      "nominal/direct": 8.34e-07,
+      "variable/pooled": 5.22e-07,
+      "variable/direct": 8.34e-07
+    },
+    "optimizer_slot_violations_anywhere": 0,
+    "worst_slot_max_abs_anywhere": 2.5183e-06,
+    "worst_nonexempt_weight_by_case": {
+      "nominal/pooled": 4.17233e-07,
+      "nominal/direct": 3.72529e-06,
+      "variable/pooled": 2.86102e-06,
+      "variable/direct": 0.000154898
+    }
+  },
+  "mechanism_status": "The ragged-repacking reduction-order explanation is an UNTESTED HYPOTHESIS. No command in this run varied padding width or reduction order while holding other inputs fixed.",
+  "fp32_relationship": {
+    "variable_pooled_key_bias_step2": 1.204535385568306e-05,
+    "fp32_reported_failure": 1.20454e-05,
+    "relationship": "magnitude agreement to six significant figures",
+    "limit": "Not a reproduction: the earlier run's failing weights were never saved, so no byte-level comparison is possible and the historical reconstruction limit stands."
+  },
+  "resources": {
+    "this_allocation_seconds": 279,
+    "prior_conservative_seconds": 742,
+    "new_conservative_total_seconds": 1021,
+    "gpu_hours_consumed": 0.2836111111111111,
+    "reserved_cpu_hours_consumed": 9.075555555555555,
+    "preserved_output_KiB": 25504,
+    "preserved_file_count": 243,
+    "archive": "local_validation/20260915-amended-failure/pet-amended-failure-20260915.tar.gz",
+    "archive_bytes": 15564745,
+    "archive_sha256": "ad27ca25fe774665c93a06c1d66efbfe5b43f11f265c9ded4b39baf6ace0eb7d",
+    "ceilings_unchanged": {
+      "gpu_hours": 290,
+      "reserved_cpu_hours": 9296,
+      "storage_GiB": 200
+    }
+  },
+  "consequences": {
+    "calibration_started": false,
+    "headroom_gate_evaluated": false,
+    "frozen_matrix_released": false,
+    "overflow_contrast_executable": false,
+    "retry_submitted": false,
+    "retry_authorized": false,
+    "learning_conclusion_available": false
+  },
+  "non_claim": "A technical failure stops dependent compute. This record authorizes no retry, no tolerance change, no additional exemption, no matrix release and no representation conclusion."
+}

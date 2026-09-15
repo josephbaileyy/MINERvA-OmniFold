@@ -1,8 +1,12 @@
 # Reproduce the typed-token comparison preparation
 
-**Latest execution:** [GPU preflight 58240587 failed](COMPATIBILITY_RESULT-20260913.md)
-in the first pooled CPU/GPU embedding comparison. The additional attempt is
-exhausted; no calibration, full matrix or retry proceeded.
+**Latest execution:** [amended GPU preflight 58354898 failed](AMENDED_RESULT-20260915.md)
+on 15 September in the `variable/direct` case, at the attention `query/kernel`
+(`max_abs=1.55e-04`) — a tensor the approved key-bias exemption does not cover. The
+cluster suite, the eight-pair CPU initialization capture and three of the four reached
+GPU cases passed first. Calibration never started, so no headroom verdict exists, the
+frozen 24-job matrix stays unreleased and the specified overflow contrast cannot
+execute. No retry is authorized. Conservative charge to date: 1,021 GPU-seconds.
 
 
 Start from the repository root. These files add an isolated diagnostic candidate;

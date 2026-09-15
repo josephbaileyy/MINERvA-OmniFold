@@ -1,5 +1,20 @@
 # N-D OmniFold run log
 
+## 2026-09-15 — amended GPU preflight failed; calibration never started
+
+Job `58354898` FAILED (ExitCode `1:0`, 279 parent seconds). The cluster suite
+(69 tests, 10 subtests, 25 adversarial), the eight-pair original-sequence CPU
+initialization capture and every import-guard record passed first. The GPU preflight
+reached four of eight pairs: `nominal/pooled`, `nominal/direct` and `variable/pooled`
+passed; `variable/direct` failed at `weight_24`, recorded by the run's own inventory
+as `multi_head_attention/query/kernel`, `max_abs=1.443e-04` (step 1) and `1.549e-04`
+(step 2). That tensor is not the approved key-bias exemption, whose rationale is
+softmax shift invariance the query kernel does not have. Calibration did not start,
+so no 20% headroom verdict exists, the frozen 24-job matrix stays unreleased and the
+specified overflow contrast cannot execute. No retry was submitted or authorized.
+Conservative charge is now 1,021 seconds (742 prior + 279).
+[Terminal evidence](pet/direct_token_comparison/AMENDED_RESULT-20260915.md).
+
 ## 2026-09-15 — amended comparison preflight prepared
 
 Complete CPU preflight/reload and original-sequence initialization readback pass;

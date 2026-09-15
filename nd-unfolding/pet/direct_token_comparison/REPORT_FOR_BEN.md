@@ -80,16 +80,115 @@ aggregate and per-seed receipts survive under
 `evidence/prepublication-excluded-gregor-b65f9ff2`; the new evidence file verifies
 their hashes without promoting them.
 
-## Next decision
+## The three-way answer, as of 15 September 2026
 
-Approve the bounded [execution proposal](EXECUTION_PROPOSAL.md) after reviewing
-preparation. It tests routing on one million synthetic training events, eight
-paired seeds, ordinary and injected closure, and a shuffle control, with frozen
-truth representation and training budgets. Acceptance requires a material paired
-closure improvement plus stability, tail and ESS gates; otherwise report
-inconclusive or failed. Real-source training remains dependent on producer,
-selection, weight and normalization prerequisites. Neither a synthetic pass nor
-source mapping agreement authorizes a scientific estimator choice.
+Ben asked whether we should adopt individual typed-object tokens, Gregor's
+aggregate-overflow setup, or other separately tested changes. Taking them in turn,
+and separating what is measured from what is still open:
+
+### 1. Individual typed-object tokens — do not adopt yet; the question is still unmeasured
+
+**There is no learning-performance evidence either way.** The 24-job paired matrix
+that would answer it has never run. Every GPU attempt so far has stopped in software
+equivalence checking, before any training comparison.
+
+A new and concrete obstacle emerged on 15 September: the direct (individual-token)
+route **does not currently reproduce across CPU and GPU in the variable-multiplicity
+case**. After two Adam steps the attention `query/kernel` diverges by `1.55e-04`
+against an unchanged `atol=1e-5, rtol=1e-4` tolerance, while the same model's
+`pooled` route in the same case stays within tolerance. Details and limits in
+[the terminal record](AMENDED_RESULT-20260915.md).
+
+This is a numerical-reproducibility obstacle, not a verdict on the representation.
+But it bears directly on the recommendation: variable multiplicity with individual
+tokens is precisely the configuration the science needs, and we cannot yet run a
+trustworthy paired comparison in it. The reasonable next step is a diagnostic that
+establishes whether the divergence comes from padded-width-dependent reduction order
+in the ragged repacking — a hypothesis we have **not** yet tested — and whether a
+deterministic packing order is reachable without changing the model being compared.
+
+Two things argue for keeping the hypothesis alive rather than dropping it: the
+forward pass is unaffected (predictions agree to ~1e-6 in all four cases measured,
+including the failing one), and no optimizer slot diverged anywhere. So the issue
+looks localized to weight updates in one routing/multiplicity combination, not to the
+representation's viability.
+
+### 2. Aggregate overflow — adopting it as an improvement would be backwards
+
+This is where the position changed most, and it does **not** depend on any learning
+result. We read the pinned upstream code rather than the paper's description, verified
+it byte-for-byte against the digests already recorded here, and executed its
+aggregation function. Full measurements in
+[the overflow specification](OVERFLOW_SPECIFICATION-20260915.md), §2.
+
+Three findings reframe the question:
+
+- **Aggregate overflow is not Gregor's default.** In the pinned code the defaults are
+  `max_objects=150`, `max_blobs=-1`, `max_prongs=-1`. The default path is
+  **energy-ordered truncation** at 150 objects; per-family aggregation is opt-in and
+  requires *both* `max_blobs` and `max_prongs` > 0, at which point `max_objects` is
+  ignored. So "Gregor's setup" names two different behaviours and we should say which.
+- **Our implementation applies no cap at all.** Every object is retained individually,
+  padding is per-batch and nothing is truncated. Relative to *either* upstream path we
+  currently keep strictly more information.
+- Therefore aggregate overflow is a **mitigation for a cap we do not have**. Adopting
+  it as an enhancement over our current state would mean first introducing a cap and
+  then partially compensating for it. That is a cost/memory decision, not an accuracy
+  improvement, and nothing we have measured suggests we need it.
+
+**If a cap ever becomes necessary**, the measured properties do give a clear
+preference, and this is the actionable part:
+
+- Prefer **aggregation over truncation**: aggregation conserves total four-momentum
+  exactly (verified across every multiplicity we tried), whereas truncation discards
+  the tail's energy from both the token sequence *and* the per-PID energy-sum globals,
+  because upstream computes those sums after truncating.
+- **Add an explicit merged-count feature**, which upstream lacks. Its aggregate token
+  erases multiplicity: 21, 30 and 90 objects all collapse to exactly 20 tokens, with
+  the merged count recoverable only indirectly through the summed energy.
+- Expect to **lose per-object tail structure regardless**: the merged `[dE/dx, x, y,
+  z, t]` block is an arithmetic *mean*, so the tail survives only as a centroid.
+- Implement the **code, not the docstring**. When the cap binds, the function returns
+  exactly `n_keep` tokens (`n_keep - 1` individual plus one aggregate), not the
+  `min(n_keep+1, n_blobs)` its docstring advertises.
+
+On whether a cap would bind on real data: the completed audit's separate historical
+16-row anchor recorded blob counts up to **90** (data) and **42** (MC), so a
+20-object per-family cap would bind and a hypothetical cap of 20 would discard at
+least 70 and 22 blobs respectively. That is a bound from a small unselected anchor,
+not a measurement of Gregor's overflow rate, and the v1 anchor's counts must not be
+relabelled as v2 mask measurements.
+
+### 3. Other differences — each needs its own isolated evidence
+
+The keep/modify/exclude/unresolved table above is unchanged by this work; no entry in
+it has been revised by a measurement. Two items are worth Ben's attention because
+they are cheap to get wrong by copying upstream conventions:
+
+- **Do not copy the padding convention.** The pinned PET2 forward code has
+  `padding_idx=0` while upstream also uses PID 0 for a real category, so copying it
+  would merge valid objects with padding. Keep index 0 reserved for padding only.
+- **The upstream prong filter (PID −999, PID 0, or energy ≤ 1e-6) is a membership
+  change**, not a representation change, and our audit gives only lower bounds on
+  what it would remove (429/6,050 data and 732/7,140 MC prongs). It needs its own
+  comparison before adoption.
+
+A swap of the whole network or preprocessing pipeline would confound all of these at
+once and could not attribute any difference to a cause; each candidate change needs
+isolated evidence.
+
+### What none of this establishes
+
+Everything above is synthetic method development or a reading of upstream source.
+None of it is a real-data result, and none of it authorizes publication adoption, a
+covariance, a statistical pairing, a coverage claim or any Gate-6 action. PET remains
+diagnostic and method-development. The source-semantic prerequisites are still
+unresolved — photon/blob meaning and calibration, prong hypotheses, shared objects
+and the primary lepton, and the exact tuple release and time range — and no
+representation choice can be settled on real data while they are. Producer questions
+remain unsent.
+
+## Execution history
 
 Execution update: the authorized retry passed 49 software tests plus 10 subtests
 and an A100 operation check. The pooled calibration arm saved artifacts; the
@@ -131,3 +230,35 @@ not a routing-performance claim. The earlier failure is not yet reproduced:
 checkpoint interleaving changes initialization after the first model pair.
 [Exact evidence and qualification](OPTIMIZER_RESULT-20260915.md). No learning
 comparison has run, and keep/modify/exclude recommendations remain unchanged.
+
+**15 September amended preflight — terminal failure.** The approved key-bias gate was
+implemented and locally validated, then deployed and run in one authorized allocation,
+job `58354898`. On the cluster the suite passed **69 tests + 10 subtests** and the
+**25** adversarial gate controls, the original-sequence CPU initialization capture
+covered **all eight** case/routing pairs, and every import-guard record reported
+inspected repository origins with no allowances.
+
+The GPU preflight then reached four of the eight pairs. Three passed and wrote gate
+records — `nominal/pooled`, `nominal/direct`, `variable/pooled` — and the fourth,
+`variable/direct`, **failed**: Slurm `FAILED`, ExitCode `1:0`, **279 s**. The failing
+tensor is `weight_24`, which the run's own saved inventory names
+`multi_head_attention/query/kernel`, at `max_abs=1.443e-04` on step 1 and
+`1.549e-04` on step 2. It is *not* the exempted tensor. The approved exemption covers
+only the key **bias**, and only because a key bias cancels from softmax by exact shift
+invariance; a query **kernel** has no such invariance, and the proposal explicitly
+declined to exclude it. So this is a real stop, not a candidate for the same
+treatment.
+
+Calibration never started. Consequently the 20% resource-headroom gate was never
+evaluated, the frozen 24-job matrix stays unreleased, and the specified overflow
+contrast cannot execute because it is conditioned on measured calibration headroom
+that does not exist. No retry was submitted and none is authorized. Conservative
+charge is now **1,021 s** (742 prior + 279), and all aggregate ceilings remain far
+from binding — the constraint here was a technical failure, not budget.
+
+One incidental confirmation, with its limit: the `variable/pooled` key-bias
+discrepancy measured `1.204535385568306e-05`, agreeing to six significant figures
+with the FP32 attempt's reported `1.20454e-5`. That is strong evidence the earlier
+failure involved the same redundant parameter, but it remains magnitude agreement
+rather than reproduction, because the earlier run's failing weights were never saved.
+[Terminal evidence, resource accounting and the untested mechanism](AMENDED_RESULT-20260915.md).
