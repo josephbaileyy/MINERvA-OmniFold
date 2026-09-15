@@ -170,22 +170,57 @@ python3 "$PARITY" --repo "$CODE_ROOT" \
 # wrong diagnosis of a right refusal is worse than no diagnosis, so the three outcomes are now
 # reported as the different things they are.
 set +e
+_envprov_err=$(mktemp)
 python3 "$ENVPROV" --check-inherited "$ENVPROV_RECORD" \
-  --record "${INVDIR}/env-provenance.${SLURM_JOB_NAME:-nojob}.${SLURM_JOB_ID:-nojid}.json"
+  --record "${INVDIR}/env-provenance.${SLURM_JOB_NAME:-nojob}.${SLURM_JOB_ID:-nojid}.json" \
+  2> >(tee "$_envprov_err" >&2)
 _envprov_rc=$?
 set -e
+# ⚠ KEYED ON THE TOOL'S OWN DOCUMENTED CONTRACT, NOT ON A GUESS.
+# `mnv_env_provenance.py:65` declares `EXIT_OK, EXIT_CANNOT_LOOK, EXIT_DRIFT = 0, 2, 3`.
+# A REVIEWER CAUGHT THE FIRST VERSION OF THIS BLOCK GETTING TWO OF THREE WRONG, and both
+# misattributions were confident:
+#   * it mapped rc=2 to "MALFORMED INVOCATION". But 2 is ALSO the tool's CANNOT-LOOK -- returned
+#     when the baseline is absent or unreadable (`:232-243`), which is the single most likely real
+#     fault here, because MNV_ENV_PROVENANCE is emitted on a login node and read from a compute
+#     node. The operator would have been sent to re-audit flags that were correct.
+#   * its `*)` catch-all announced "This IS a measured mismatch" for ANY other code. The tool never
+#     returns 1; a python-level crash lands there and the launcher would assert a comparison that
+#     never happened.
+# argparse's 2 and the tool's 2 ARE THE SAME INTEGER. The only thing that separates them is what
+# was printed, so stderr is captured and read rather than guessed at.
 case "$_envprov_rc" in
   0) : ;;
-  2) echo "[z-pilot] FAIL: MALFORMED INVOCATION of mnv_env_provenance.py (argparse exit 2)." >&2
-     echo "[z-pilot]   This is NOT an environment mismatch and must not be read as one: the" >&2
-     echo "[z-pilot]   command itself was wrong. Check the flags against the tool, not the env." >&2
-     exit 9 ;;
-  *) echo "[z-pilot] FAIL: the submission environment did not reach this task intact" >&2
-     echo "[z-pilot]   (mnv_env_provenance.py exit ${_envprov_rc}). This IS a measured mismatch:" >&2
+  3) echo "[z-pilot] FAIL: MEASURED ENVIRONMENT MISMATCH (env-provenance DRIFT, exit 3)." >&2
+     echo "[z-pilot]   The tool looked and the environment disagreed with the recorded baseline:" >&2
      echo "[z-pilot]   a declared MNV_* variable was dropped or changed between submission and here." >&2
-     exit 3 ;;
+     rm -f "$_envprov_err"; exit 3 ;;
+  2) if grep -q "^usage:" "$_envprov_err"; then
+       echo "[z-pilot] FAIL: MALFORMED INVOCATION of mnv_env_provenance.py (argparse usage, exit 2)." >&2
+       echo "[z-pilot]   NOT an environment mismatch and NOT a failure to look: the command itself" >&2
+       echo "[z-pilot]   was wrong. Check the flags against THAT tool -- its verbs are --emit," >&2
+       echo "[z-pilot]   --check, --check-inherited, --self-test. Job 58354056 died exactly here." >&2
+       rm -f "$_envprov_err"; exit 9
+     elif grep -q "COULD NOT LOOK" "$_envprov_err"; then
+       echo "[z-pilot] FAIL: COULD NOT LOOK (env-provenance exit 2)." >&2
+       echo "[z-pilot]   The baseline at MNV_ENV_PROVENANCE is absent or unreadable from this node." >&2
+       echo "[z-pilot]   This is NOT a measured mismatch and must never be read as a clean check:" >&2
+       echo "[z-pilot]   nothing was compared. Emit the baseline before sbatch and confirm the" >&2
+       echo "[z-pilot]   compute node can read it." >&2
+       rm -f "$_envprov_err"; exit 10
+     else
+       echo "[z-pilot] FAIL: env-provenance exit 2 with neither a usage block nor a" >&2
+       echo "[z-pilot]   COULD-NOT-LOOK line. The outcome is INDETERMINATE and is reported as" >&2
+       echo "[z-pilot]   such rather than assigned to whichever branch looks plausible." >&2
+       rm -f "$_envprov_err"; exit 11
+     fi ;;
+  *) echo "[z-pilot] FAIL: mnv_env_provenance.py DID NOT COMPLETE (exit ${_envprov_rc})." >&2
+     echo "[z-pilot]   Its contract is 0/2/3, so this is neither a measured mismatch nor a" >&2
+     echo "[z-pilot]   refusal -- the tool itself failed. No claim is made about the environment." >&2
+     rm -f "$_envprov_err"; exit 11 ;;
 esac
-unset _envprov_rc
+rm -f "$_envprov_err"
+unset _envprov_rc _envprov_err
 
 # --- STEP 1: transcribe the precursor's ROOT null operands into the NPZ slab --------------------
 NULL_SLAB="${PILOT_OUT}/z-null-source.npz"
@@ -221,15 +256,36 @@ python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv z_manifest)" 
 # truncate a production pilot, and there is a test asserting the default. A rehearsal that stopped
 # here is NOT a pilot: it writes no covariance, no spectra and no pilot receipt, and says so.
 if [ "${MNV_Z_PILOT_REHEARSE:-}" = "manifest" ]; then
+  # ⚠ TWO HARDENINGS A REVIEWER REQUIRED, AND BOTH MATTER MORE THAN THE STOP ITSELF.
+  #
+  # (1) A REHEARSAL MAY ONLY RUN IN A NAMESPACE NAMED FOR ONE. `#SBATCH --export=ALL` carries the
+  #     submitter's environment, so an operator who exports MNV_Z_PILOT_REHEARSE for the rehearsal
+  #     and then submits the PILOT from the same shell would silently get a truncated run. The
+  #     variable alone is therefore not enough: the output namespace must also say "rehearsal", so
+  #     a stale variable in a pilot namespace REFUSES loudly instead of truncating quietly.
+  # (2) IT EXITS NON-ZERO. Exiting 0 would make `sacct` record COMPLETED 0:0 for a run that built
+  #     no covariance -- the exact state this launcher's own reviewer blocker forbids for the
+  #     pilot. 12 means "rehearsal completed"; it is deliberately not 0 and not 2, because 2 is
+  #     "construction complete, science NON-PASSING" elsewhere in this file.
+  case "$(basename "$PILOT_OUT")" in
+    *rehears*) : ;;
+    *) echo "[z-pilot] FAIL: MNV_Z_PILOT_REHEARSE=manifest but the output namespace" >&2
+       echo "[z-pilot]   $(basename "$PILOT_OUT") is not named for a rehearsal. Refusing rather" >&2
+       echo "[z-pilot]   than truncating: a stale exported variable must not silently shorten a" >&2
+       echo "[z-pilot]   pilot. Name the namespace *rehearsal* or unset the variable." >&2
+       exit 13 ;;
+  esac
+  [ -s "$NULL_SLAB" ] || { echo "[z-pilot] FAIL: rehearsal has no null slab." >&2; exit 4; }
+  [ -s "$MANIFEST" ] || { echo "[z-pilot] FAIL: rehearsal has no manifest." >&2; exit 5; }
   echo "[z-pilot] REHEARSAL STOP: startup sequence complete through manifest creation."
   echo "[z-pilot]   Verified: environment closure, source manifest, executing-copy parity,"
   echo "[z-pilot]   environment provenance, null transcription, digest-bound manifest."
   echo "[z-pilot]   NOT RUN: covariance assembly, spectra, pilot receipt. This is NOT a pilot"
   echo "[z-pilot]   result and establishes NOTHING about the science."
-  [ -s "$NULL_SLAB" ] || { echo "[z-pilot] FAIL: rehearsal has no null slab." >&2; exit 4; }
-  [ -s "$MANIFEST" ] || { echo "[z-pilot] FAIL: rehearsal has no manifest." >&2; exit 5; }
   echo "[z-pilot] rehearsal artifacts: $(basename "$NULL_SLAB"), $(basename "$MANIFEST")"
-  exit 0
+  echo "[z-pilot] exiting 12 = REHEARSAL COMPLETED (deliberately non-zero; a rehearsal must never"
+  echo "[z-pilot]   be recorded by the scheduler as a completed pilot)."
+  exit 12
 fi
 
 # --- STEP 3: build both variants and persist both spectra ---------------------------------------
