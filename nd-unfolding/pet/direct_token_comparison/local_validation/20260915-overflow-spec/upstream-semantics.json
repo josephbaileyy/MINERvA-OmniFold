@@ -1,0 +1,95 @@
+{
+  "scope": "synthetic semantics probe of pinned upstream code; not a learning result",
+  "upstream_file": "src/dataset/preprocessing.py",
+  "function": "aggregate_low_energy_blobs_from_four_momentum",
+  "cases": [
+    {
+      "n_objects": 5,
+      "n_keep": 20,
+      "cap_binds": false,
+      "output_tokens": 5,
+      "docstring_predicted_tokens": 5,
+      "energy_in": 15.0,
+      "energy_out": 15.0,
+      "aggregate_pid_present": false,
+      "auxiliary_aggregate_is_tail_mean": false
+    },
+    {
+      "n_objects": 19,
+      "n_keep": 20,
+      "cap_binds": false,
+      "output_tokens": 19,
+      "docstring_predicted_tokens": 19,
+      "energy_in": 190.0,
+      "energy_out": 190.0,
+      "aggregate_pid_present": false,
+      "auxiliary_aggregate_is_tail_mean": false
+    },
+    {
+      "n_objects": 20,
+      "n_keep": 20,
+      "cap_binds": false,
+      "output_tokens": 20,
+      "docstring_predicted_tokens": 20,
+      "energy_in": 210.0,
+      "energy_out": 210.0,
+      "aggregate_pid_present": false,
+      "auxiliary_aggregate_is_tail_mean": false
+    },
+    {
+      "n_objects": 21,
+      "n_keep": 20,
+      "cap_binds": true,
+      "output_tokens": 20,
+      "docstring_predicted_tokens": 21,
+      "energy_in": 231.0,
+      "energy_out": 231.0,
+      "aggregate_pid_present": true,
+      "auxiliary_aggregate_is_tail_mean": true
+    },
+    {
+      "n_objects": 30,
+      "n_keep": 20,
+      "cap_binds": true,
+      "output_tokens": 20,
+      "docstring_predicted_tokens": 21,
+      "energy_in": 465.0,
+      "energy_out": 465.0,
+      "aggregate_pid_present": true,
+      "auxiliary_aggregate_is_tail_mean": true
+    },
+    {
+      "n_objects": 90,
+      "n_keep": 20,
+      "cap_binds": true,
+      "output_tokens": 20,
+      "docstring_predicted_tokens": 21,
+      "energy_in": 4095.0,
+      "energy_out": 4095.0,
+      "aggregate_pid_present": true,
+      "auxiliary_aggregate_is_tail_mean": true
+    },
+    {
+      "n_objects": 21,
+      "n_keep": 5,
+      "cap_binds": true,
+      "output_tokens": 5,
+      "docstring_predicted_tokens": 6,
+      "energy_in": 231.0,
+      "energy_out": 231.0,
+      "aggregate_pid_present": true,
+      "auxiliary_aggregate_is_tail_mean": true
+    }
+  ],
+  "properties": {
+    "binding_output_equals_n_keep": true,
+    "docstring_is_off_by_one_when_binding": true,
+    "total_energy_conserved": true,
+    "auxiliary_aggregate_is_tail_mean": true,
+    "multiplicity_collapses_to_one_width": true,
+    "inert_below_cap": true
+  },
+  "verdict": "UPSTREAM-SEMANTICS-AS-SPECIFIED",
+  "pin": "78ebc0d6af04a5b6ab8114a9560dcc9c2a0b99bb",
+  "upstream_sha256": "8348a5d7ee6beec68f0a22a6e85830db6f988eb95edd76b5ac7394f6909d5880"
+}
