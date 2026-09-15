@@ -95,7 +95,7 @@ Ben asked whether we should adopt individual typed-object tokens, Gregor's
 aggregate-overflow setup, or other separately tested changes. Taking them in turn,
 and separating what is measured from what is still open:
 
-### 1. Individual typed-object tokens — do not adopt yet; the question is still unmeasured
+### 1. Individual typed-object tokens — unmeasured, not disfavoured
 
 **There is no learning-performance evidence either way.** The 24-job paired matrix
 that would answer it has never run. Every GPU attempt so far has stopped in software
@@ -108,10 +108,11 @@ against an unchanged `atol=1e-5, rtol=1e-4` tolerance, while the same model's
 `pooled` route in the same case stays within tolerance. Details and limits in
 [the terminal record](AMENDED_RESULT-20260915.md).
 
-This is a numerical-reproducibility obstacle, not a verdict on the representation.
-But it bears directly on the recommendation: variable multiplicity with individual
-tokens is precisely the configuration the science needs, and we cannot yet run a
-trustworthy paired comparison in it. The reasonable next step is a diagnostic that
+**This is a reproducibility fact about one code path, and it is not evidence that
+individual tokens are scientifically worse.** It says nothing about learning, closure
+or compute efficiency; it says we cannot yet run a *trustworthy* paired comparison in
+the configuration the science needs, because variable multiplicity with individual
+tokens is exactly where the divergence appears. The reasonable next step is a diagnostic that
 establishes whether the divergence comes from padded-width-dependent reduction order
 in the ragged repacking — a hypothesis we have **not** yet tested — and whether a
 deterministic packing order is reachable without changing the model being compared.
@@ -122,7 +123,7 @@ including the failing one), and no optimizer slot diverged anywhere. So the issu
 looks localized to weight updates in one routing/multiplicity combination, not to the
 representation's viability.
 
-### 2. Aggregate overflow — adopting it as an improvement would be backwards
+### 2. Aggregate overflow — its implementation properties are settled; whether it helps is not
 
 This is where the position changed most, and it does **not** depend on any learning
 result. We read the pinned upstream code rather than the paper's description, verified
@@ -140,10 +141,20 @@ Three findings reframe the question:
 - **Our implementation applies no cap at all.** Every object is retained individually,
   padding is per-batch and nothing is truncated. Relative to *either* upstream path we
   currently keep strictly more information.
-- Therefore aggregate overflow is a **mitigation for a cap we do not have**. Adopting
-  it as an enhancement over our current state would mean first introducing a cap and
-  then partially compensating for it. That is a cost/memory decision, not an accuracy
-  improvement, and nothing we have measured suggests we need it.
+- Therefore aggregate overflow is, relative to our current state, a **compression
+  scheme rather than an addition**: adopting it means introducing a cap and then
+  partially compensating for it.
+
+**A distinction this report must not blur.** Everything above is about *information
+retention*, which is an established implementation property. It is **not** a claim
+that retaining more information learns better, closes better, or costs less. All three
+of those are open, and compression could plausibly help on any of them — fewer tokens
+means less padding waste and cheaper attention, so more epochs per unit compute, and a
+summed tail token is a coarser but possibly more robust input. Whether compression
+improves practical performance is a separate question that we have not measured and
+that this report does not answer. What the measurements do support is narrower and
+conditional: *if* a cap is imposed, aggregation dominates truncation on information
+grounds, and the specific properties below say how to implement it.
 
 **If a cap ever becomes necessary**, the measured properties do give a clear
 preference, and this is the actionable part:
