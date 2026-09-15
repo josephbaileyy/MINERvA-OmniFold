@@ -161,9 +161,31 @@ python3 "$PARITY" --repo "$CODE_ROOT" \
   echo "[z-pilot] FAIL: deployment parity -- the executing copies are not the committed ones in $CODE_ROOT" >&2
   exit 3; }
 
-python3 "$ENVPROV" --compare "$ENVPROV_RECORD" --record "${INVDIR}/env-provenance.${SLURM_JOB_NAME:-nojob}.${SLURM_JOB_ID:-nojid}.json" || {
-  echo "[z-pilot] FAIL: the submission environment did not reach this task intact." >&2
-  exit 3; }
+# ⚠ THE FLAG IS `--check-inherited`, NOT `--compare`, AND JOB 58354056 DIED ON EXACTLY THAT.
+# `mnv_source_manifest.py` takes `--compare`; `mnv_env_provenance.py` does not -- its verbs are
+# --emit / --check / --check-inherited / --self-test. Two tools invoked four lines apart with
+# different interfaces, and the first one's flag was carried onto the second. argparse rejected it,
+# and the launcher then printed "the submission environment did not reach this task intact" -- a
+# claim about the ENVIRONMENT when the environment was fine and the INVOCATION was malformed. A
+# wrong diagnosis of a right refusal is worse than no diagnosis, so the three outcomes are now
+# reported as the different things they are.
+set +e
+python3 "$ENVPROV" --check-inherited "$ENVPROV_RECORD" \
+  --record "${INVDIR}/env-provenance.${SLURM_JOB_NAME:-nojob}.${SLURM_JOB_ID:-nojid}.json"
+_envprov_rc=$?
+set -e
+case "$_envprov_rc" in
+  0) : ;;
+  2) echo "[z-pilot] FAIL: MALFORMED INVOCATION of mnv_env_provenance.py (argparse exit 2)." >&2
+     echo "[z-pilot]   This is NOT an environment mismatch and must not be read as one: the" >&2
+     echo "[z-pilot]   command itself was wrong. Check the flags against the tool, not the env." >&2
+     exit 9 ;;
+  *) echo "[z-pilot] FAIL: the submission environment did not reach this task intact" >&2
+     echo "[z-pilot]   (mnv_env_provenance.py exit ${_envprov_rc}). This IS a measured mismatch:" >&2
+     echo "[z-pilot]   a declared MNV_* variable was dropped or changed between submission and here." >&2
+     exit 3 ;;
+esac
+unset _envprov_rc
 
 # --- STEP 1: transcribe the precursor's ROOT null operands into the NPZ slab --------------------
 NULL_SLAB="${PILOT_OUT}/z-null-source.npz"
@@ -187,6 +209,28 @@ python3 "$GUARD" --expect-root "$CODE_ROOT" --inventory "$(mnv_inv z_manifest)" 
   --null "$NULL_SLAB" --stat-key "$Z_STAT_KEY" --ml-key "$Z_ML_KEY" || {
   echo "[z-pilot] FAIL: the manifest could not be built and bound." >&2
   exit 5; }
+
+# --- REHEARSAL STOP POINT, AND IT DEFAULTS TO A FULL RUN ----------------------------------------
+# `MNV_Z_PILOT_REHEARSE=manifest` stops here, AFTER null transcription and manifest creation and
+# BEFORE any covariance assembly. Authorized 2026-09-15 for one bounded startup rehearsal, because
+# three attempts had been spent on startup faults that no test reached -- the sequence above is the
+# part that kept failing, and rehearsing it needs the REAL launcher rather than a reconstruction.
+#
+# IT WEAKENS NOTHING. Every check above still runs in full; the variable only decides whether to
+# CONTINUE. Unset or any other value means a complete run, so a forgotten variable cannot silently
+# truncate a production pilot, and there is a test asserting the default. A rehearsal that stopped
+# here is NOT a pilot: it writes no covariance, no spectra and no pilot receipt, and says so.
+if [ "${MNV_Z_PILOT_REHEARSE:-}" = "manifest" ]; then
+  echo "[z-pilot] REHEARSAL STOP: startup sequence complete through manifest creation."
+  echo "[z-pilot]   Verified: environment closure, source manifest, executing-copy parity,"
+  echo "[z-pilot]   environment provenance, null transcription, digest-bound manifest."
+  echo "[z-pilot]   NOT RUN: covariance assembly, spectra, pilot receipt. This is NOT a pilot"
+  echo "[z-pilot]   result and establishes NOTHING about the science."
+  [ -s "$NULL_SLAB" ] || { echo "[z-pilot] FAIL: rehearsal has no null slab." >&2; exit 4; }
+  [ -s "$MANIFEST" ] || { echo "[z-pilot] FAIL: rehearsal has no manifest." >&2; exit 5; }
+  echo "[z-pilot] rehearsal artifacts: $(basename "$NULL_SLAB"), $(basename "$MANIFEST")"
+  exit 0
+fi
 
 # --- STEP 3: build both variants and persist both spectra ---------------------------------------
 # EXIT 2 IS THE COMPLETION CODE AND IT IS NOT CONVERTED. z_pilot.py validates the artifacts and
