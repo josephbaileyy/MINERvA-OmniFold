@@ -129,6 +129,25 @@ dropping objects, so minibatches keep the same uniform shape.
 The amended preflight nonetheless requires all eight case/routing pairs, so a stress
 geometry the experiment never runs is currently blocking the experiment.
 
+Measured over 64 production rows, the other two unreached geometries are absent too:
+
+| family | slots/row | uniform | token_mask all true | enabled all true | any empty row |
+|---|---|---|---|---|---|
+| photons | 1 | yes | yes | yes | no |
+| blobs | 1 | yes | yes | yes | no |
+| prongs | 2 | yes | yes | yes | no |
+
+So the matrix never constructs `variable` (multiplicity is uniform), `empty` (no family
+is ever absent) or `masked` (no token mask is ever false and no family is ever
+disabled). Field-level masks *are* exercised — `prongs` field masks are not all true,
+from undefined score/mass — and the preflight's `nominal` case is built by the very
+same calls, `prepare_keras_inputs(make_fixture(..., 2401))`. **`nominal` is the
+production fixture**, field masking included, and both of its routes passed on GPU.
+
+The practical consequence: scoping the required geometries to what the matrix actually
+builds needs **no new GPU validation at all**, because the required evidence already
+exists in job `58354898`.
+
 ## Why there is no implementation fix
 
 Each candidate was considered against the requirement to preserve the intended
