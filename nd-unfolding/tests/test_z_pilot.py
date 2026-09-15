@@ -746,6 +746,19 @@ class LauncherStaticChecks(unittest.TestCase):
             self.assertNotIn(destructive, self.text, destructive)
 
     def test_every_pilot_operand_is_mandatory_with_no_default(self):
+        """⚠ SUPERSEDED AS EVIDENCE, kept as a cheap tripwire. THIS TEST PASSED WHILE TWO OF THE
+        ELEVEN GUARDS WERE INERT.
+
+        Job 58347943 died in 4 s because an apostrophe in one `:?` message swallowed the next
+        line on bash 4.4, so the `PILOT_OUT` and `Z_RUN_ID` assignments never executed and their
+        guards never evaluated. The text this test looks for was present the whole time --
+        presence in source is not evaluation at runtime.
+
+        The evidence now lives in `tests/test_z_pilot_launcher_init.py`, which EXECUTES the real
+        launcher under bash >= 4.4, asserts all eleven bound values exactly, unsets each operand
+        in turn and requires an attributable refusal before any output is created, and shows the
+        pre-repair launcher failing the same positive control.
+        """
         for var in ("MNV_Z_PRECURSOR_PRODUCT", "MNV_Z_PRECURSOR_SHA256", "MNV_Z_PILOT_OUT",
                     "MNV_Z_CENTRAL", "MNV_Z_SUPPORT", "MNV_Z_ACTIVE", "MNV_Z_STAT",
                     "MNV_Z_ML", "MNV_Z_PARENT", "MNV_Z_STAT_KEY", "MNV_Z_ML_KEY"):

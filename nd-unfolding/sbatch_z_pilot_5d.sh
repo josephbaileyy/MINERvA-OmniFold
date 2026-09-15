@@ -27,13 +27,26 @@ ENV_ROOT="${MNV_ENV_ROOT:?set MNV_ENV_ROOT to the verified environment tree -- a
 ENV_MANIFEST="${MNV_ENV_MANIFEST:-${CODE_ROOT}/nd-unfolding/mnv_env_manifest.tsv}"
 : "${MNV_CONDA_PREFIX:?set MNV_CONDA_PREFIX to the conda env whose activate.d scripts the manifest binds. It has no default.}"
 
-# The pilot's own operands. All FOUR have no default, for the same reason the precursor's do not:
+# ⚠ NO APOSTROPHE MAY APPEAR INSIDE ANY `${VAR:?...}` MESSAGE IN THIS BLOCK. On bash 4.4.23
+# (Perlmutter; a local 3.2 cannot see it) an apostrophe inside `${VAR:?word}` within double quotes
+# opens a single-quote context THAT SPANS NEWLINES. Job 58347943 died in 4 s because line 34's
+# "that product's" swallowed line 35 whole and closed on line 36's "run's", consuming the
+# PILOT_OUT and Z_RUN_ID assignments outright -- so their `:?` guards never evaluated, the
+# variables were unset rather than refused, and the first symptom was `mkdir -p ''` forty-seven
+# lines downstream. Measured with a three-line reproducer: put an apostrophe in the FIRST
+# guard message and the SECOND and THIRD variables come back empty; remove it and all three
+# bind. The example is described rather than written out, because a comment containing the
+# literal pattern would trip any detector for it -- the same decoy problem that let a prose
+# mention of `#SBATCH --no-requeue` satisfy a test for the directive.
+# apostrophe Y binds. The guards below are only load-bearing while this line stays true, and
+# tests/test_z_pilot_launcher_init.py enforces it by EXECUTING this block, not by reading it.
+# The pilot operands. All have no default, for the same reason the precursor operands do not:
 # a defaulted output namespace would put one run over another, and a defaulted input would let this
 # run choose its own evidence.
 PRODUCT="${MNV_Z_PRECURSOR_PRODUCT:?set MNV_Z_PRECURSOR_PRODUCT to the completed precursor combine product (unified_throw_cov_5d.root). No default: the pilot must not select its own input.}"
-PRODUCT_SHA="${MNV_Z_PRECURSOR_SHA256:?set MNV_Z_PRECURSOR_SHA256 to that product's authorized sha256. No default: a digest computed here would compare the file to itself.}"
+PRODUCT_SHA="${MNV_Z_PRECURSOR_SHA256:?set MNV_Z_PRECURSOR_SHA256 to that product authorized sha256. No default: a digest computed here would compare the file to itself.}"
 PILOT_OUT="${MNV_Z_PILOT_OUT:?set MNV_Z_PILOT_OUT to a FRESH output directory for this pilot. No default, and it must not already contain pilot artifacts.}"
-Z_RUN_ID="${MNV_Z_PILOT_RUN_ID:?set MNV_Z_PILOT_RUN_ID to this pilot run's identifier, recorded in the manifest. No default.}"
+Z_RUN_ID="${MNV_Z_PILOT_RUN_ID:?set MNV_Z_PILOT_RUN_ID to this pilot run identifier, recorded in the manifest. No default.}"
 
 # The four remaining source roles Z needs and the precursor does NOT supply. Each is an existing
 # digest-bound artifact; none is produced here, and none may be defaulted.
