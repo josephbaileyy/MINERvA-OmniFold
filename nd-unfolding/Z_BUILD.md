@@ -109,6 +109,16 @@ copy's writer identity names this integration, while its source stamp binds the
 original slab. Capturing the internal vectors in a future real throw run remains
 a producer requirement, not a claim that this local copy ran an estimator.
 
+**THAT PRODUCER REQUIREMENT IS NOW MET, AND THE SENTENCE ABOVE IS BANNER-CORRECTED RATHER THAN
+REWRITTEN so the limitation is visible as the one it was.** The prospective Z precursor
+`z_precursor_20260914` (completed 2026-09-14, campaign digest `e6426e25ec06`) persists
+`hCvExecution0`, `hCvExecution1` and `hCvSupportMask` with `cv_support_predicate = "x_cv > 0"`,
+bound by `cv_code_revision` and `cv_producer_sha256`. `n_cv_executions = 2` and the two vectors
+are **not bitwise identical**, which is what separates two executions from one result written
+twice. What is still missing is the APPROVAL, not the capture: `B`, `S`, `B <= S` and an argued
+`epsilon` in `[B, S]` remain unapproved, so requirement 3 below is **half discharged** and no
+tolerance has been invented in its place.
+
 ## Output and provenance contract
 
 Both `--out-cv` and `--out-mean` are required, distinct new `.npz` or `.root`
@@ -181,6 +191,52 @@ exercise actual ROOT inputs and outputs and asymmetric matrix orientation; they
 skip explicitly when PyROOT is unavailable. A green construction test does not
 verify real-input scientific provenance.
 
+## The assembly/spectrum pilot
+
+Four files connect a completed precursor product to this build. None changes a construction gate,
+a criterion, a tolerance or an assembly step, and no existing module was modified.
+
+| File | What it adds | What it reuses |
+| --- | --- | --- |
+| `z_null_bridge.py` | ROOT → versioned-NPZ transcription of the producer's null operands | `z_build.Source`, `z_receipt.persist_null_operands`, `z_statistics.support_mask`, `z_build_path.preservation_guard` |
+| `z_pilot_manifest_cli.py` | The manifest entry point, separate from the consumer | `z_pilot.build_manifest` |
+| `z_pilot.py` | Digest-bound manifest, exit-code validation, spectrum persistence | `z_build.build_z` via its CLI, `z_contract.check_band_partition`, `p4_lib` donor keys |
+| `sbatch_z_pilot_5d.sh` | Guarded launcher, fresh outputs, `--no-requeue`, receipt-last check | the existing env preflight/pathcheck/source-manifest/env-provenance closure |
+
+**THE BRIDGE TRANSCRIBES AND NEVER REPAIRS.** The mask's values must be exactly `{0, 1}` *before*
+any bool cast, because `np.asarray(x, bool)` maps every non-zero to `True` and a `TH1I` holding a
+count would otherwise be laundered into a plausible predicate — a control measures that hazard
+directly rather than only asserting the refusal. The predicate is recomputed and the producer's
+must agree exactly, the four recorded counts are checked against the arrays, and the slab carries
+the **producer's** code identity. `z_build` then re-stamps its own copy with the **assembling**
+revision, so the two revisions stay distinct and the precursor's remains the evidence for where
+the numbers came from.
+
+**EXIT 2 IS NEITHER SUCCESS NOR FAILURE, AND IT IS NOT CONVERTED.** `z_pilot.py` requires exit 2
+*and* stdout JSON reporting `CHECKED`/`NON-PASSING`/`adoptable: false` *and* both products, both
+receipts and the null slab on disk, *and* each receipt's recorded product digest to match the file
+beside it — matched **by path**, because a receipt carries both variants' stamps and selecting by
+position would compare the cv product against the mean product's digest and pass either way. Its
+own exit code stays 2: returning 0 would tell a launcher the science passed.
+
+**THE SPECTRUM IS REPORTED, NOT CLIPPED.** `spectrum_diagnostics` records the extrema, fixed
+quantiles, the negative tail's count and its magnitude relative to `lambda_max` — the same ratio
+`z_assembly.gate_symmetry_psd` uses for its scale-free verdict, so a reader can apply that
+criterion to this measurement. It states **no verdict of its own**; the PSD gate keeps sole
+ownership. No `kappa`, null tolerance, eigenvalue floor or regularization is introduced. It is a
+deliberate **second, independent** `eigvalsh` on the closed artifact rather than a harvest of the
+gate's internal decomposition: threading a sink through `build_z` and `_verify_products` would
+change a function every existing Z test exercises, and measuring the shipped bytes is the stronger
+check. The extra decomposition per variant is the cost requirement 8 defers to a resource plan, and
+it is priced in the execution request rather than absorbed silently.
+
+**Test counts, with the interpreter.** `tests/test_z_pilot.py` reports 40 passed / 4 skipped under
+the repository default `python3` — the 4 skips are the PyROOT-gated ROOT round trip, so on that
+interpreter the ROOT reading and the `TParameter`/`TNamed` accessors are **unverified**. They were
+run separately under ROOT 6.28/12 / Python 3.11.14 on Perlmutter, where that class selection
+reports 23 of 23 OK. Every refusal in the transcription is also exercised over plain arrays by
+`validate_transcription`, so none of them depends on a skipping test.
+
 ## Remaining real-input and authorization requirements
 
 These are carried under `remaining_requirements` in every receipt and command
@@ -192,10 +248,15 @@ result. They are obligations, not approvals or completed gates.
    statistical block, ML block and unified-throw operands. Verify matching row
    ordering, full-grid mask, normalization, estimator and background treatment for
    every input. A same-sized matrix or a matching declared hash is insufficient.
-3. Capture both same-run internal fixed-seed CV vectors and the predicate in the
-   throw producer. Verify their seed/run provenance; copying an external CV into
-   either slot is not a substitute. Approve the null construction `B`, `S`,
-   `B <= S` and an argued `epsilon` in `[B, S]` before production.
+3. **PERSISTENCE DISCHARGED 2026-09-14; APPROVAL OUTSTANDING.** Capture both same-run internal
+   fixed-seed CV vectors and the predicate in the throw producer — done by
+   `z_precursor_20260914`, product sha256 `09a029ed…`, and transcribed into the reader's schema by
+   `z_null_bridge.py`. Their seed/run provenance is bound (`cv_code_revision`,
+   `cv_producer_file`, `cv_producer_sha256`); copying an external CV into either slot is still not
+   a substitute, and the bridge refuses a mask that disagrees with `x_cv > 0` recomputed from the
+   persisted CV rather than correcting it. **STILL REQUIRED:** approve the null construction `B`,
+   `S`, `B <= S` and an argued `epsilon` in `[B, S]` before production. The measured agreement
+   (relative L2 4.452e-14 over the support) is RECORDED for that approver and is NOT a verdict.
 4. Supply cause 1's scoped interpolation counterfactual and disclosure, cause 2's
    F7 operands and `k` provenance, and cause 4's jitter add-back value, seed and
    both operand identities.

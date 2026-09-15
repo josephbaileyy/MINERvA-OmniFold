@@ -2104,3 +2104,44 @@ repaired 2026-08-16 to emit `anneal_lr_proof` and the launcher's `G3` now refuse
 unmodified as the record.
 
 **Nothing here is quotable, nothing is promoted, the central did not move.**
+
+## 2026-09-14 — prospective Z precursor `z_precursor_20260914`: operands EXIST and are BOUND, nothing is adopted
+
+**NOT A QUOTABLE NUMBER, NOT AN ADOPTION, NOT A SIGNIFICANCE — AND DELIBERATELY NOT A `VL` ROW.**
+This section carries no `VL` id and no table on purpose: a `VL` row is the shape this ledger uses
+for a validated quantity, and giving one to a construction record would let the entry be read as
+the promotion it is not. It records that a 62-task measurement-only campaign completed and that
+its operands are digest-bound to a named execution. It promotes no covariance, moves no central
+value, and discharges none of `Z_BUILD.md`'s scientific criteria.
+
+- **Campaign digest** `e6426e25ec06798739730d4a2e7f9c31cbbd04f1a61b8a9f2b8e62646d0ff993`,
+  namespace `z_precursor_20260914`.
+- **Producing revision** `e09513d842ad3acc1964c1af740696f02eaed7d9`, deployment
+  `/pscratch/sd/j/josephrb/zdeploy-e09513d8` (immutable, `dr-xr-x---`).
+- **Jobs** `58302605` (21 tasks), `58302608` (40 tasks), `58302610` (1 task) — all
+  `COMPLETED 0:0`; `sacct --duplicates` gave 62 rows with no repeated JobID, so no requeue ran.
+- **Product** `unified_throw_cov_5d.root`, 2,668,265,910 B, sha256
+  `09a029ed2a7de0ffd144b1ad0ad8d3e0bf8e8b9788797b0af58693c753795560`, `Recovered: False`,
+  `C_unified` 10694x10694.
+- **Reported support** 10694 of 65856 under `x_cv > 0`; 55162 genuinely zero, 0 negative.
+- **Null operands** `n_cv_executions` 2, the two vectors NOT bitwise identical (max abs difference
+  2.584e-51, relative L2 over the support 4.452e-14), `fixed_seed_null_norm` 1.430183e-50.
+- **Support mask** `hCvSupportMask` sums to 10694 and equals `x_cv > 0` recomputed from the
+  persisted CV, elementwise.
+- **Seeds** draw 1000, estimator 1000, offset 0 (declared 0).
+- **Completion** 62/62 by identity; 62 receipts, every one `attempt: 1`; receipt-last verified by
+  mtime; `z_precursor.require_campaign_complete` passes all three declared arms.
+- **Charged** ~77.0 CPU task-hours of the 393.5 authorized; meter total CPU 95.7617 / 500,
+  GPU 0.1439 / 500, no stop fired.
+
+**What this DOES discharge:** the *persistence* half of `Z_BUILD.md` remaining requirement 3 —
+both same-run internal fixed-seed CV vectors and the predicate are now captured in the throw
+producer and bound to it by `cv_code_revision` / `cv_producer_sha256`.
+
+**What it does NOT discharge, stated so the entry cannot be read as more than it is:** `B`, `S`,
+`B <= S` and an argued `epsilon` in `[B, S]` remain **UNAPPROVED**; requirements 1, 2, 4, 5, 6, 7,
+8 and 9 are untouched; all seven causes remain `UNRESOLVED`; and the invalid-ratio policy
+(non-finite or `<= 0` to neutral ratio 1, worst 576/32,849,103; clipping to `(0.01, 100.0)`, worst
+387/32,849,103) is **preserved unchanged and unvalidated** — its rarity is not its justification.
+
+Full entry with every measured operand: `nd-unfolding/ND_OMNIFOLD_RUN_LOG.md` § 2026-09-14.

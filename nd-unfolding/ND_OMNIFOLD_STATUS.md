@@ -114,6 +114,22 @@ replacement is implied for 4D/FPS or dependent significances. See
 
 ## Remediation in flight
 
+- **Prospective Z precursor `z_precursor_20260914` COMPLETED 2026-09-14 (construction evidence,
+  NOT adoption).** 62/62 tasks validated by identity at deployment `zdeploy-e09513d8`
+  (`e09513d8`), campaign digest `e6426e25ec06`, product sha256 `09a029ed…`, reported support
+  10694 of 65856 under `x_cv > 0`. The producer now persists **both** same-run internal
+  fixed-seed CVs and the predicate, which discharges the *persistence* half of `Z_BUILD.md`
+  requirement 3; `B`, `S` and `epsilon` remain **UNAPPROVED** and every other remaining
+  requirement is untouched. Invalid-ratio policy preserved unchanged and unvalidated.
+  **No covariance is adopted, no significance is authorized, no central value moved.**
+  Evidence: `ND_OMNIFOLD_RUN_LOG.md` § 2026-09-14; `VALIDATION_LEDGER.md` § 2026-09-14.
+- **Stage-1 assembly/spectrum pilot implemented 2026-09-14 — code and tests only, NOT RUN in
+  production.** `z_null_bridge.py`, `z_pilot.py`, `z_pilot_manifest_cli.py` and
+  `sbatch_z_pilot_5d.sh` added; no existing module changed. Exit 2 (construction complete,
+  science NON-PASSING) is preserved and independently validated against the artifacts. Awaiting
+  independent review, a new immutable deployment, and a separately bounded execution
+  authorization. See `Z_BUILD.md` § "The assembly/spectrum pilot".
+
 - Branch C annealed checkpoint trajectory: the four-GPU interactive twin `56693776` failed before
   producing any control or treatment receipt because a bare `srun` inherited four tasks; three ranks
   failed Horovod GPU selection and the remaining rank was terminated after entering ARM 1. This is
