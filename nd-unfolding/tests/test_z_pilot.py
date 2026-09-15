@@ -461,6 +461,61 @@ class PilotEndToEnd(unittest.TestCase):
         )
         self.assertEqual(pilot._find_product_sha(record, cv), receipt.sha256_file(cv))
 
+    def test_EQUAL_producer_and_assembling_revisions_are_REFUSED(self):
+        """Scope item 7, in the direction the guard ACTS.
+
+        ⚠ A one-directional guard waves the other way through. The distinctness check ran on every
+        build, so a mutant that made it vacuous (`True`) passed 50 tests -- the property was
+        verified where it holds and nowhere where it bites. This crafts a slab whose producer
+        revision EQUALS the manifest's `producing_revision` and requires the refusal.
+        """
+        manifest = json.loads(self.fixture_manifest.read_text())
+        slab = self.fixture_manifest.parent / manifest["sources"]["null"]["path"]
+        x_cv, x_cv2, mask = receipt.load_null_operands(slab)
+        collided = self.td / "collided-null.npz"
+        # Rewrite the slab with the ASSEMBLING revision as its producer identity.
+        receipt.persist_null_operands(
+            collided, x_cv, x_cv2, mask,
+            code_identity={"revision": manifest["producing_revision"],
+                           "import_closure_digests": {"z_receipt.py": "a" * 64}})
+        manifest["sources"]["null"] = {
+            "path": str(collided), "format": "npz",
+            "sha256": receipt.sha256_file(collided),
+        }
+        # BESIDE THE FIXTURE, not in a sibling directory: the fixture manifest's other seven
+        # sources are RELATIVE and resolve against the manifest's own parent, so a manifest moved
+        # elsewhere refuses on a missing `support.npz` long before reaching the check under test --
+        # a refusal for the wrong reason, which reads exactly like the right one.
+        bad = self.fixture_manifest.parent / "collided-manifest.json"
+        bad.write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(contract.ZContractError, "are both"):
+            pilot.run_pilot(bad, out_dir=self.td / "collided-out")
+
+    def test_a_TRUNCATED_receipt_is_refused_through_the_structured_envelope(self):
+        """The wrapped `json.loads`, in the direction it acts.
+
+        A mutant narrowing `except (ValueError, OSError)` to `KeyError` passed 50 tests: the fix
+        was correct and unpinned, so a future edit would revert it silently. A torn receipt must
+        surface as a ZContractError, not as a traceback that the launcher relabels "refused".
+        """
+        out = self.td / "torn"
+        result = pilot.run_pilot(self.fixture_manifest, out_dir=out)
+        receipt_path = Path(result["artifacts"]["receipt_cv"]["path"])
+        receipt_path.write_text('{"z_stamp": {"path": "x", "sha256":')  # truncated mid-JSON
+        artifacts = {k: v["path"] for k, v in result["artifacts"].items()}
+        with self.assertRaisesRegex(contract.ZContractError, "could not be read back as JSON"):
+            pilot._validate_completion(
+                pilot.BUILD_COMPLETION_RC, json.dumps(result["build_result"]), artifacts)
+
+    def test_a_null_slab_with_no_readable_revision_is_REFUSED(self):
+        """`_producer_revision`'s guarded reads, in the direction they act."""
+        broken = self.td / "broken-null.npz"
+        np.savez(broken, declaration_json=np.asarray("not json at all"))
+        with self.assertRaisesRegex(contract.ZContractError, "readable producing revision"):
+            pilot._producer_revision(broken)
+        with self.assertRaisesRegex(contract.ZContractError, "readable producing revision"):
+            pilot._producer_revision(self.td / "does-not-exist.npz")
+
     def test_an_INPUT_SUPPORT_mismatch_refuses_the_build_and_the_pilot_reports_it(self):
         """A footing digest that does not describe the declared central must not build."""
         manifest = json.loads(self.fixture_manifest.read_text())
@@ -569,9 +624,20 @@ class LauncherStaticChecks(unittest.TestCase):
         the test passed. A message is not a mechanism.
         """
         import subprocess, os, stat
-        frag = self.text.split("# --- FRESH OUTPUTS", 1)[1].split("# (1)-(4)", 1)[0]
+        # ANCHOR PAST THE END OF THE HEADER LINE. Splitting on "# --- FRESH OUTPUTS" left the
+        # REST of that comment line (", REFUSED RATHER THAN CLEANED ---...") as the fragment's
+        # first line, which bash tried to execute as the command `,`. Harmless while the test ran
+        # without `set -e` -- it printed "command not found" and carried on -- and fatal once the
+        # fragment was run in the launcher's own mode. The extraction was wrong the whole time.
+        after = self.text.split("# --- FRESH OUTPUTS", 1)[1]
+        frag = after.split("\n", 1)[1].split("# (1)-(4)", 1)[0]
+        self.assertNotIn("REFUSED RATHER THAN CLEANED", frag.splitlines()[0] if frag.splitlines() else "")
         def run(path):
-            script = f'PILOT_OUT={path!r}\n{frag}\necho PROCEEDED\n'
+            # `set -eo pipefail` PREPENDED: the launcher sets it at the top and the extracted
+            # fragment starts below that line, so without this the test measured a shell mode the
+            # launcher does not use -- and the reviewer showed the two modes disagree, one
+            # refusing with exit 3 and the diagnostic, the other with ls's status and silence.
+            script = f'set -eo pipefail\nPILOT_OUT={path!r}\n{frag}\necho PROCEEDED\n'
             return subprocess.run(["bash", "-c", script], capture_output=True, text=True)
         with tempfile.TemporaryDirectory() as td:
             empty = Path(td) / "empty"; empty.mkdir()
@@ -613,27 +679,29 @@ class LauncherStaticChecks(unittest.TestCase):
         `$?`, so this executes a fragment with the launcher's own final line.
         """
         import subprocess
-        tail = self.text.rsplit("# --- THE JOB'S EXIT STATUS", 1)
-        self.assertEqual(len(tail), 2, "the launcher no longer has the exit-status block")
-        final = "exit \"$PILOT_RC\""
-        self.assertIn(final, self.text, "the launcher must end by propagating PILOT_RC")
+        # ⚠ THE LAUNCHER'S OWN TAIL IS EXECUTED, NOT A RECONSTRUCTION. The previous version built a
+        # SYNTHETIC script from the literal string `exit "$PILOT_RC"` and ran that -- which proves
+        # bash's semantics, not this file's. A reviewer killed it with two mutants that comment the
+        # real `exit` out (or make it unreachable) and append a different trailing echo: 50 tests
+        # passed and the job exited 0, restoring the exact blocker. `assertIn` is satisfied by a
+        # COMMENTED-OUT line, so the tie to the file was another spelling check.
+        parts = self.text.rsplit("# --- THE JOB'S EXIT STATUS", 1)
+        self.assertEqual(len(parts), 2, "the launcher no longer has the exit-status block")
+        real_tail = "# --- THE JOB'S EXIT STATUS" + parts[1]
         for rc in (2, 1, 7):
-            script = f'PILOT_RC={rc}\necho done\n{final}\n'
-            proc = subprocess.run(["bash", "-c", script], capture_output=True, text=True)
-            self.assertEqual(proc.returncode, rc,
-                             f"a launcher ending in {final!r} must exit {rc}, got "
-                             f"{proc.returncode}")
-        # And the mutant the old test could not see: a trailing echo swallows the status.
-        swallow = subprocess.run(
-            ["bash", "-c", 'PILOT_RC=2\nexit "$PILOT_RC"\n'], capture_output=True, text=True)
-        self.assertEqual(swallow.returncode, 2)
-        trailing = subprocess.run(
-            ["bash", "-c", 'PILOT_RC=2\necho done\n'], capture_output=True, text=True)
-        self.assertEqual(trailing.returncode, 0,
-                         "control: falling off the end DOES yield 0 -- which is exactly the "
-                         "defect, so the launcher must not end that way")
-        self.assertFalse(self.text.rstrip().endswith("projected.\""),
-                         "the launcher must not end on an echo")
+            proc = subprocess.run(
+                ["bash", "-c", f'set -eo pipefail\nPILOT_RC={rc}\n{real_tail}'],
+                capture_output=True, text=True)
+            self.assertEqual(
+                proc.returncode, rc,
+                f"the launcher's REAL tail must exit {rc} when PILOT_RC={rc}; got "
+                f"{proc.returncode}. A commented-out or unreachable `exit` yields 0 here.")
+        # CONTROL, so the test cannot pass by the tail being empty: falling off the end DOES give 0.
+        fell_off = subprocess.run(
+            ["bash", "-c", 'set -eo pipefail\nPILOT_RC=2\necho done\n'],
+            capture_output=True, text=True)
+        self.assertEqual(fell_off.returncode, 0,
+                         "control: a tail that only echoes yields 0 -- the defect being excluded")
 
     def test_the_REAL_case_block_propagates_two_and_refuses_a_receiptless_two(self):
         """Execute the launcher's OWN `case` block plus its final `exit`.

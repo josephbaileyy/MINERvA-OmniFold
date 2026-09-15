@@ -418,9 +418,21 @@ def _producer_revision(null_slab) -> str:
     Read from the slab rather than taken from a caller, because the whole point of the field is
     that it describes an execution this process did not perform.
     """
-    with np.load(null_slab, allow_pickle=False) as store:
-        decl = json.loads(str(store["declaration_json"]))
-    revision = decl["writer"]["code_identity"]["revision"]
+    # ⚠ THE SAME DEFECT CLASS THE RECEIPT READ ABOVE JUST REPAIRED, one function away, and the
+    # reviewer found it there. Five unguarded paths -- absent key, non-JSON declaration, missing
+    # `writer`, missing `code_identity`, absent file -- raise KeyError / JSONDecodeError /
+    # FileNotFoundError, none of which is a ZContractError, so `main`'s handler misses them and the
+    # launcher's `1)` arm mislabels a crash as "the pilot refused".
+    try:
+        with np.load(null_slab, allow_pickle=False) as store:
+            decl = json.loads(str(store["declaration_json"]))
+        revision = decl["writer"]["code_identity"]["revision"]
+    except (KeyError, TypeError, ValueError, OSError) as exc:
+        raise contract.ZContractError(
+            f"pilot: the null slab at {null_slab} does not carry a readable producing revision "
+            f"({type(exc).__name__}: {exc}). The slab's own declaration is where the producer's "
+            f"identity lives; a slab that cannot supply it cannot support the distinctness check."
+        ) from exc
     contract.require(
         isinstance(revision, str) and revision.strip(),
         f"pilot: the null slab at {null_slab} names no producing revision",
@@ -525,7 +537,9 @@ def run_pilot(
         "spectra": spectra,
         "producer_revision": producer_revision,
         "assembling_revision": assembling_revision,
-        "revisions_distinct": True,
+        # COMPUTED, not asserted. A hardcoded `True` is a verdict field that claims the property
+        # instead of recording it, and would keep claiming it if the require above were weakened.
+        "revisions_distinct": producer_revision != assembling_revision,
         "artifacts": {k: receipt.stamp_file(v) for k, v in artifacts.items()},
         "scientific_acceptance": "NON-PASSING",
         "adoptable": False,

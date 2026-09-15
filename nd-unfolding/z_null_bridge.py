@@ -384,13 +384,18 @@ def main(argv: list[str] | None = None) -> int:
                              "the richest provenance record of the transcription unbound.")
     args = parser.parse_args(argv)
     try:
+        # CHECKED BEFORE THE SLAB IS WRITTEN. Guarding --record only after the transcription
+        # succeeded meant an existing record refused AFTER z-null-source.npz already existed,
+        # leaving an orphan slab behind a non-zero exit. `bridge_null_operands` guards its own
+        # output up front; this one has to as well.
+        if args.record is not None:
+            build_path.preservation_guard(str(args.record),
+                                          allow_overwrite=args.allow_overwrite)
         result = bridge_null_operands(
             args.product, args.out_null, expect_sha256=args.sha256,
             allow_overwrite=args.allow_overwrite,
         )
         if args.record is not None:
-            build_path.preservation_guard(str(args.record),
-                                          allow_overwrite=args.allow_overwrite)
             receipt.atomic_write_json(args.record, {"bridge_status": "TRANSCRIBED", **result})
             result["record"] = str(args.record)
             result["record_stamp"] = receipt.stamp_file(args.record)

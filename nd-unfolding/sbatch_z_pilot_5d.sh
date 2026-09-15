@@ -59,9 +59,15 @@ if [ -e "${PILOT_OUT}" ] && [ ! -d "${PILOT_OUT}" ]; then
   exit 3
 fi
 if [ -d "${PILOT_OUT}" ]; then
-  _mnv_listing=$(ls -A "${PILOT_OUT}"); _mnv_ls_rc=$?
-  if [ "$_mnv_ls_rc" -ne 0 ]; then
-    echo "[z-pilot] FAIL: cannot list ${PILOT_OUT} (ls rc=$_mnv_ls_rc). That is CANNOT-LOOK, not" >&2
+  # ⚠ THE `if !` FORM IS LOAD-BEARING UNDER `set -e`. Written as
+  #     _mnv_listing=$(ls -A "$PILOT_OUT"); _mnv_ls_rc=$?
+  # bash aborts AT THE ASSIGNMENT when the substitution fails, so `_mnv_ls_rc` was never read: the
+  # refusal happened (fail-closed) but with `ls`'s status instead of 3 and with the operator
+  # diagnostic never printed. Worse, GNU `ls` documents status 2 for an unreadable directory named
+  # as an argument -- the same integer this launcher just established as "construction complete,
+  # science NON-PASSING". A condition is exempt from `set -e`, so the status is ours again.
+  if ! _mnv_listing=$(ls -A "${PILOT_OUT}"); then
+    echo "[z-pilot] FAIL: cannot list ${PILOT_OUT}. That is CANNOT-LOOK, not" >&2
     echo "[z-pilot]   empty, and it must not be read as a fresh namespace." >&2
     exit 3
   fi
@@ -72,7 +78,7 @@ if [ -d "${PILOT_OUT}" ]; then
     exit 3
   fi
 fi
-unset _mnv_listing _mnv_ls_rc
+unset _mnv_listing
 mkdir -p "${PILOT_OUT}"
 
 # (1)-(4) THE SAME ENVIRONMENT CLOSURE THE PRECURSOR USED. Not re-derived: these are the existing
