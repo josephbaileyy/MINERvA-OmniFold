@@ -1,0 +1,16 @@
+{
+  "before_count": 121,
+  "before_sha256": "e1e792a2610d47c3f20d31b64fafc379de35a98c27c9633658147960112cb99b",
+  "after_count": 122,
+  "after_sha256": "3374bde8558b64d3ae891cfbd540444462ec2eca88c3a9a38ea320ba9f3942c1",
+  "added_bindings": [
+    [
+      "nd-unfolding/pet/direct_token_comparison/BEN_COMPARISON_AUTHORIZATION-20260915.md",
+      "5fce2195088cf1241b9706c7c6ddcee855bd7fd07922f567532fc1b00ca1af26"
+    ]
+  ],
+  "removed_bindings": [],
+  "owning_receipts": [
+    "nd-unfolding/pet/direct_token_comparison/amended-execution-authorization.json"
+  ]
+}

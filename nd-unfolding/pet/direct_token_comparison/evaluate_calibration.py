@@ -10,7 +10,7 @@ from pathlib import Path
 import pstats
 from typing import Any
 
-from compatibility_preflight import verify_receipt
+from amended_preflight import verify_receipt
 from run_typed_token_comparison import PRECISION_POLICY
 
 
@@ -30,7 +30,14 @@ def evaluate(
         raise ValueError("Calibration process failed")
     if "69 passed, 10 subtests passed" not in (directory / "tests.log").read_text():
         raise ValueError("Cluster test scope did not pass completely")
-    for name in ("tests-guard.json", "preflight-guard.json", "guard.json"):
+    if "25 passed" not in (directory / "tests.log").read_text():
+        raise ValueError("Amended gate tests did not pass completely")
+    for name in (
+        "tests-guard.json",
+        "initialization-guard.json",
+        "preflight-guard.json",
+        "guard.json",
+    ):
         records = [
             json.loads(line) for line in (directory / name).read_text().splitlines()
         ]

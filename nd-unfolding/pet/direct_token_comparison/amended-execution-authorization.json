@@ -1,0 +1,36 @@
+{
+  "status": "AUTHORIZED",
+  "decision": "amended-preflight-calibration-and-conditional-matrix",
+  "prior_jobs": [
+    "58198332",
+    "58201775",
+    "58240587",
+    "58277208",
+    "58301971",
+    "58320923"
+  ],
+  "prior_charged_seconds": 742,
+  "wall_seconds": 6000,
+  "preflight_seconds": 1200,
+  "calibration_seconds": 4800,
+  "profile": {
+    "gpus": 1,
+    "cpus": 32,
+    "memory_GiB": 56
+  },
+  "total_gpu_hours": 290,
+  "total_cpu_core_hours": 9296,
+  "storage_GiB": 200,
+  "scope": "synthetic-only",
+  "automatic_retry": false,
+  "precision_policy": {
+    "tf32_enabled": false,
+    "determinism_enabled": true,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32"
+  },
+  "manifest_sha256": "3f545110f11d6490f992196a06c53a603601e53ec421a499a4254b33901c6ed0",
+  "authority_source": "nd-unfolding/pet/direct_token_comparison/BEN_COMPARISON_AUTHORIZATION-20260915.md",
+  "authority_source_sha256": "5fce2195088cf1241b9706c7c6ddcee855bd7fd07922f567532fc1b00ca1af26",
+  "approval_date": "2026-09-15 Asia/Seoul"
+}

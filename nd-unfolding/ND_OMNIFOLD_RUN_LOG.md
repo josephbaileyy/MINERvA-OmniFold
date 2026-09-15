@@ -1,5 +1,13 @@
 # N-D OmniFold run log
 
+## 2026-09-15 — amended comparison preflight prepared
+
+Complete CPU preflight/reload and original-sequence initialization readback pass;
+69 regression tests, 10 subtests and 25 adversarial tests pass. The next bounded
+GPU attempt is covered by the continuation authorization. Six prior allocations
+remain 742 conservative seconds; no new job has launched at this preparation
+point. [Bound preparation](pet/direct_token_comparison/AMENDED_PREPARATION-20260915.md).
+
 ## 2026-09-15 — optimizer diagnostic completed; gate amendment proposed
 
 Job `58320923` completed (216 parent / 219 conservative seconds). All eight

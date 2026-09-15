@@ -232,8 +232,11 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 # 120 -> 121: the PET optimizer diagnostic guard pins its new script.
 # Removing that receipt reproduces the prior 120-row digest exactly; see
 # nd-unfolding/pet/direct_token_comparison/execution_runs/20260915-optimizer/binding-inventory-delta.json.
-RECEIPT_BINDING_COUNT = 121
-RECEIPT_BINDING_SHA256 = "e1e792a2610d47c3f20d31b64fafc379de35a98c27c9633658147960112cb99b"
+# 121 -> 122: the amended PET execution receipt binds its continuation grant.
+# Exact added binding and unchanged prior inventory are recorded in
+# nd-unfolding/pet/direct_token_comparison/local_validation/20260915-amended/binding-inventory-delta.json.
+RECEIPT_BINDING_COUNT = 122
+RECEIPT_BINDING_SHA256 = "3374bde8558b64d3ae891cfbd540444462ec2eca88c3a9a38ea320ba9f3942c1"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

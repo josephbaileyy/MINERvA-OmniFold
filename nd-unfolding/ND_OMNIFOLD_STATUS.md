@@ -1,5 +1,7 @@
 # N-D OmniFold (4D q3 / 5D W / PET / FPS) — Status
 
+**PET comparison continuation, 2026-09-15:** the approved optimizer gate is implemented; complete CPU preflight, original initialization and fresh reload pass. The bounded GPU preflight/calibration is authorized but not yet launched. [Preparation](pet/direct_token_comparison/AMENDED_PREPARATION-20260915.md) and [continuation scope](pet/direct_token_comparison/BEN_COMPARISON_AUTHORIZATION-20260915.md). No learning winner is measured. This supersedes the older execution posture below.
+
 **PET optimizer diagnostic, 2026-09-15:** job `58320923` completed. A captured masked/direct weight discrepancy is explained by Adam amplification of tiny gradients in redundant attention key bias; all prediction and common-operand optimizer checks pass. The prior variable/pooled failure is not reproduced because the initialization sequence differs. [Evidence and limitations](pet/direct_token_comparison/OPTIMIZER_RESULT-20260915.md). No gate change, calibration or learning matrix is released.
 
 **PET terminal update, 2026-09-15:** full-FP32 job `58301971` failed an updated-weight CPU/GPU check after both nominal cases passed. Calibration and full matrix remain blocked; no retry was launched. [Verified result and limits](pet/direct_token_comparison/FP32_RESULT-20260915.md). This supersedes the older execution posture below.

@@ -96,7 +96,7 @@ def main() -> None:
         )
     if args.preflight is None:
         parser.error("training requires --preflight from a completed GPU smoke process")
-    from compatibility_preflight import verify_receipt
+    from amended_preflight import verify_receipt
 
     verify_receipt(args.preflight)
     args.output.mkdir(exist_ok=False)
