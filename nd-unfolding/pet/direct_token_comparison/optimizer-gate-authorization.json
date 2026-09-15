@@ -1,0 +1,12 @@
+{
+  "status": "AUTHORIZED",
+  "decision": "optimizer-equivalence-gate-amendment",
+  "proposal_revision": "02ac78e3b4d8a126665c30c41397e242f5f1788b",
+  "proposal_file": "nd-unfolding/pet/direct_token_comparison/OPTIMIZER_GATE_PROPOSAL-20260915.md",
+  "proposal_digest": "ebac7705b933f449b0d60567918a22a63cf20c220e862e5e94b8ca67f288fe92",
+  "user_instruction": "Yes I approve the amendment, so can you summarize the results to me and suggest what the next steps are?",
+  "scope": "Implement and locally validate the exact proposed gate amendment; preserve all remaining scientific and numerical criteria.",
+  "new_gpu_allocation_authorized": false,
+  "full_matrix_released": false,
+  "implementation_status": "PENDING"
+}

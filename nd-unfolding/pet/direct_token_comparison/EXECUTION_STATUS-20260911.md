@@ -1,5 +1,13 @@
 # PET routing comparison: calibration and training remain blocked
 
+## 2026-09-15 — optimizer gate amendment approved
+
+Joseph approved [the exact amendment](OPTIMIZER_GATE_AUTHORIZATION-20260915.md).
+Implementation and local adversarial validation are now authorized and pending.
+No new GPU allocation is authorized by this approval; calibration and the full
+matrix remain blocked until the amended preflight and remaining gates pass.
+
+
 ## 2026-09-15 — optimizer diagnostic completed; gate amendment proposed
 
 Job `58320923` completed (216 parent / 219 conservative seconds). All eight
