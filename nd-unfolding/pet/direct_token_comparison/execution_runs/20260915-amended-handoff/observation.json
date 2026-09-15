@@ -1,0 +1,13 @@
+{
+  "execution_commit": "604337880b3e414db8a9f4dd49340e85e4db3705",
+  "remote_branch_verified": "pet-direct-token-comparison",
+  "new_job_submitted": false,
+  "last_queue_rows": 0,
+  "checkout_observed_absent": "/pscratch/sd/j/josephrb/pet-amended-exec-20260915",
+  "output_observed_absent": "/pscratch/sd/j/josephrb/pet-amended-output-20260915",
+  "transferred_bundle_sha256": "494ad09af59166dfe6c3fbb4aee4e876c5d9cb7be376e5f7b992f79e635d6dcd",
+  "transferred_deploy_script_sha256": "3eb0d0c5d399b3f9cb122ab8d7276a77cbac123ad8c1ca2685227d96fd364a26",
+  "deployment_attempt_exit": 127,
+  "deployment_attempt_reason": "Script invocation preceded completed transfer; no deployment stages ran.",
+  "observations_are_volatile": true
+}
