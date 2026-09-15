@@ -1,5 +1,20 @@
 # PET routing comparison: calibration and training remain blocked
 
+## 2026-09-15 — optimizer diagnostic completed; gate amendment proposed
+
+Job `58320923` completed (216 parent / 219 conservative seconds). All eight
+instrumentation and same-device replay checks are exact. The captured masked/direct
+failure is two attention key-bias components: Adam amplifies tiny native gradient
+differences; common-operand CPU/GPU replay and all predictions pass unchanged
+thresholds. The historical variable/pooled failure remains unverified because
+initialization/checkpoint interleaving differs after the first model pair.
+[Exact result and verified evidence](OPTIMIZER_RESULT-20260915.md).
+Six allocations total 742 conservative seconds (0.206111 GPU-hours / 6.595556
+reserved CPU-hours), before preparation/accounting. No allocation is running,
+no calibration/matrix was launched, and the [gate amendment](OPTIMIZER_GATE_PROPOSAL-20260915.md)
+is proposed only. The current acceptance rule and training block remain.
+
+
 ## 2026-09-15 — optimizer diagnostic submitted
 
 Authorized job `58320923` uses clean standalone revision `98fde50e`. All manifest

@@ -1,5 +1,20 @@
 # N-D OmniFold run log
 
+## 2026-09-15 — optimizer diagnostic completed; gate amendment proposed
+
+Job `58320923` completed (216 parent / 219 conservative seconds). All eight
+instrumentation and same-device replay checks are exact. The captured masked/direct
+failure is two attention key-bias components: Adam amplifies tiny native gradient
+differences; common-operand CPU/GPU replay and all predictions pass unchanged
+thresholds. The historical variable/pooled failure remains unverified because
+initialization/checkpoint interleaving differs after the first model pair.
+[Exact result and verified evidence](pet/direct_token_comparison/OPTIMIZER_RESULT-20260915.md).
+Six allocations total 742 conservative seconds (0.206111 GPU-hours / 6.595556
+reserved CPU-hours), before preparation/accounting. No allocation is running,
+no calibration/matrix was launched, and the [gate amendment](pet/direct_token_comparison/OPTIMIZER_GATE_PROPOSAL-20260915.md)
+is proposed only. The current acceptance rule and training block remain.
+
+
 ## 2026-09-15 — PET optimizer diagnostic authorized and submitted
 
 Job `58320923`, clean standalone `98fde50e`, follows the user's explicit new

@@ -120,3 +120,14 @@ updates (reported maximum `1.20454e-5`; cause unresolved). Calibration and the
 learning matrix did not run. Thus there is still no measured learning-performance
 winner or basis to revise representation choices from this attempt.
 [Terminal evidence and qualifications](FP32_RESULT-20260915.md).
+
+**15 September optimizer follow-up:** the new diagnostic completes both routes
+in all four cases. Two attention key-bias components fail raw CPU/GPU weight
+agreement; identical-gradient Adam replay passes (maximum difference `2.98e-8`),
+and all prediction checks pass (maximum `7.75e-7`). Float64 replay explains the
+captured discrepancy as amplification of tiny gradient differences in a redundant
+attention parameter. This supports a specific proposed software-gate amendment,
+not a routing-performance claim. The earlier failure is not yet reproduced:
+checkpoint interleaving changes initialization after the first model pair.
+[Exact evidence and qualification](OPTIMIZER_RESULT-20260915.md). No learning
+comparison has run, and keep/modify/exclude recommendations remain unchanged.

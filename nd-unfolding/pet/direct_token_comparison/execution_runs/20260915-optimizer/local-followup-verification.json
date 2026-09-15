@@ -1,0 +1,131 @@
+{
+  "files": {
+    "key-bias.json": {
+      "sha256": "175230c2e9b38fdb13a7a083db96328116f481de80d9b02776ff40d2994a8cdd",
+      "bytes": 14288
+    },
+    "key-bias.log": {
+      "sha256": "2f10b74bb1cfed5cfe856deeb14cebc16752c65de97e80c8db4b21c75f5340c1",
+      "bytes": 1213
+    },
+    "key-bias-guard.json": {
+      "sha256": "1872029e64260b271136919959be136eda264e79fa1465241591f946f0f1833d",
+      "bytes": 10171
+    },
+    "check_key_bias_invariance.py": {
+      "sha256": "0f1c259dc7fc321b9b092bb708869f30d1087f010ab6aa65be73c628106164fb",
+      "bytes": 3854
+    },
+    "check_preflight_seed_sequence.py": {
+      "sha256": "35b62a4833cb9342580fc09eb7b9aea3d64bcd9712b3976b9ffb73bf3b536726",
+      "bytes": 1405
+    },
+    "seed.log": {
+      "sha256": "864624b3786dc1271c69fc226fc0184fd2daba40a9569c70c2649da41fe61565",
+      "bytes": 8441
+    },
+    "seed-guard.json": {
+      "sha256": "b47daecd735e5e79acfc5a31e70f25127efe29fc3a4008c024e207fdac9642fd",
+      "bytes": 19240
+    },
+    "initial-weight-hashes.json": {
+      "sha256": "be9e0287b76c420d2081d15729c5c1c7c3b18fb7b6b580d73127f52c10ae955c",
+      "bytes": 50473
+    },
+    "seed-observer-first-attempt.log": {
+      "sha256": "19fae19f8de340121cf0d17e0968fb451ce3ec6283f6b3f7c48718880ec07650",
+      "bytes": 9748
+    },
+    "seed-preflight/empty-direct.keras": {
+      "sha256": "7ca9f2da8817b3d8ea8d2c26f5c0aad7d9e2c44053c70676e6c5c7093f948e0c",
+      "bytes": 160219
+    },
+    "seed-preflight/empty-pooled.keras": {
+      "sha256": "8b0d77556446eb0889e890dd6687006802937a7d4bc64d34a46d30b5f60667f0",
+      "bytes": 160219
+    },
+    "seed-preflight/variable-pooled.npy": {
+      "sha256": "2c7dbb7013e7bb87898964c033361eefce0c143c4cabed3f3844de7f05e42acc",
+      "bytes": 144
+    },
+    "seed-preflight/variable.npz": {
+      "sha256": "d105b5a0dd7c33439d6e9545182656848c900f3063dbffb8382718ebf714efef",
+      "bytes": 11530
+    },
+    "seed-preflight/nominal-direct.npy": {
+      "sha256": "594af6fa0ef594ae884baf451247c1d350a8307ae8e4ee9c2228e3f2652c5d9f",
+      "bytes": 144
+    },
+    "seed-preflight/empty-direct.npy": {
+      "sha256": "b4002aaf541833359f90aebf8509f657541679d0283d2a7632059a93fd595551",
+      "bytes": 144
+    },
+    "seed-preflight/empty.npz": {
+      "sha256": "593068dc1b9655ca3d56e08ba819dfd7a582d9f58da003b478dee0ff3a139c14",
+      "bytes": 6790
+    },
+    "seed-preflight/reload.json": {
+      "sha256": "319c65cc5eaebd1fcf693946a54ee088c2876f85d61d2bc005f1be5a27e82f62",
+      "bytes": 1393
+    },
+    "seed-preflight/nominal.npz": {
+      "sha256": "a90711c38818c400bf317ec55bed195883abf4da1c54e56f57c0633532fb44ef",
+      "bytes": 7850
+    },
+    "seed-preflight/nominal-direct.keras": {
+      "sha256": "7433cdf3837e13df5e2d2d59c63baf9b15e3eb5c8477b167613cf2c65b74fbfd",
+      "bytes": 160218
+    },
+    "seed-preflight/nominal-pooled.keras": {
+      "sha256": "7def9119170b0a1298c7585ce9ec9dda1e2914805afbd4703c5d43abd6597d45",
+      "bytes": 160218
+    },
+    "seed-preflight/masked.npz": {
+      "sha256": "cfba1952ebdd45b45556d1e24f8bd1f66f591f91278ecf6a3a90c43b11121267",
+      "bytes": 11530
+    },
+    "seed-preflight/masked-pooled.npy": {
+      "sha256": "aab65b21511c68a2aeb066e435cddfe9fcae084e01c3b69b89b7271bd7a44884",
+      "bytes": 144
+    },
+    "seed-preflight/variable-direct.npy": {
+      "sha256": "4eff9dfe712fe79bf1ff00705fa92090c4036e763d8f329daff6eccf38eb2594",
+      "bytes": 144
+    },
+    "seed-preflight/variable-direct.keras": {
+      "sha256": "85fb656f5654499d374ece56f3e8f9df890ec4f31fbbb08ce40b4997acbd17dc",
+      "bytes": 160222
+    },
+    "seed-preflight/variable-pooled.keras": {
+      "sha256": "1ba1e54091771459d8064e709205eba9a9bd2064ab95868ac8e8990121382d14",
+      "bytes": 160222
+    },
+    "seed-preflight/masked-pooled.keras": {
+      "sha256": "772e4c5566d23faef0ec5eccce872d22a170aa7f9893955b548d15d3c526a3cd",
+      "bytes": 160222
+    },
+    "seed-preflight/masked-direct.keras": {
+      "sha256": "18bed6aaceed861c9d4690099ba12686da37528345ca29efe901fe3acdf022fc",
+      "bytes": 160223
+    },
+    "seed-preflight/nominal-pooled.npy": {
+      "sha256": "c4ce10506e06470a1f547f6ca4f51ce8e04c19607a53a2335edaf7cd016042b6",
+      "bytes": 144
+    },
+    "seed-preflight/empty-pooled.npy": {
+      "sha256": "754f31f51fa8337bb2a4104a467d35933df644eb0dec7956d364d6977309713f",
+      "bytes": 144
+    },
+    "seed-preflight/preflight.json": {
+      "sha256": "acaf8ac55385c9bcf0012cf90b25fad0e117e1eeb9af21eb4ae2556581e74b99",
+      "bytes": 7264
+    },
+    "seed-preflight/masked-direct.npy": {
+      "sha256": "67393e17dd1d187bed627290308d97284f463cc11cff6762737f467d1349046b",
+      "bytes": 144
+    }
+  },
+  "readback_exact": true,
+  "archive_sha256": "3fc3c45b488977caa1a7439b4d59b9e9817d2a77ce1765f918797b6a280b7c00",
+  "qualification": "The first seed observer wrote into the gated output and was correctly rejected for an unexpected artifact. The corrected observer writes beside it; the complete CPU preflight and fresh reload pass. The delivered observer adds only a type annotation after this execution; exact executed source is archived."
+}
