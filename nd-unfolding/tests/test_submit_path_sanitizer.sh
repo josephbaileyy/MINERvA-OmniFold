@@ -21,13 +21,46 @@ pass=0; fail=0
 ok()   { pass=$((pass+1)); }
 bad()  { fail=$((fail+1)); echo "  FAIL  $*"; }
 
-echo "=== 1. the PROCEDURE uses this library, and holds no competing inline loop ==="
+echo "=== 1. the PROCEDURE actually sanitizes, and EXPORTS WHAT IT SANITIZED ==="
 [ -f "$PROC" ] || { echo "  FAIL  procedure not found at $PROC"; exit 1; }
-if grep -q 'lib_mnv_path_sanitize.sh' "$PROC"; then ok; else bad "procedure does not reference the sanitizer library"; fi
-if grep -q 'mnv_sanitize_path "\$PATH_ORIG"' "$PROC"; then ok; else bad "procedure does not call mnv_sanitize_path on PATH_ORIG"; fi
-# A live IFS assignment anywhere in the procedure is the defect class; comments are fine.
-if grep -qE '^[^#]*IFS=' "$PROC"; then bad "procedure contains a LIVE IFS assignment"; else ok; fi
-if grep -qE '^[^#]*for _p in \$PATH' "$PROC"; then bad "procedure still has an inline PATH loop"; else ok; fi
+# ⚠ STRIP COMMENTS FIRST. Review found 14 of 14 procedure mutants surviving this section.
+# Two causes: a bare `grep -q` let the sanitize call be COMMENTED OUT and still match, and
+# `grep -E '^[^#]*IFS='` has a false negative on GNU grep whenever any `#` precedes the
+# assignment on the same line. Both are gone once the greps run over comment-free text.
+STRIPPED="$(mktemp)"; trap 'rm -f "$STRIPPED"' EXIT
+sed 's/#.*//' "$PROC" > "$STRIPPED"
+pgrep_live() { grep -qE "$1" "$STRIPPED"; }
+
+if pgrep_live 'lib_mnv_path_sanitize\.sh'; then ok; else bad "procedure does not source the sanitizer library"; fi
+if pgrep_live 'mnv_sanitize_path[[:space:]]+"\$PATH_ORIG"'; then ok; else bad "procedure does not call mnv_sanitize_path on PATH_ORIG"; fi
+# THE POINT OF THE WHOLE EXERCISE: the value exported must be the value produced. Mutants
+# M1 (export the unsanitized PATH) and M13 (sanitize one variable, export another) both
+# survived every assertion this section used to make.
+if pgrep_live 'CLEAN="\$MNV_PATH_CLEAN"'; then ok; else bad "procedure does not take CLEAN from MNV_PATH_CLEAN"; fi
+if pgrep_live 'export[[:space:]]+PATH="\$CLEAN"'; then ok; else bad "procedure does not export exactly \$CLEAN"; fi
+if grep -qE 'export[[:space:]]+PATH="\$PATH_ORIG"|export[[:space:]]+PATH="\$CLEAN:' "$STRIPPED"; then
+  bad "procedure exports an unsanitized or augmented PATH"; else ok; fi
+# F1: the ambient allowlist must be discarded, not trusted.
+if pgrep_live 'unset[[:space:]]+MNV_ENV_SYSTEM_PREFIXES'; then ok; else bad "procedure does not unset an ambient MNV_ENV_SYSTEM_PREFIXES"; fi
+if pgrep_live 'ALLOW_EXPECTED'; then ok; else bad "procedure does not compare the allowlist against the library default"; fi
+# no live IFS assignment, and no resurrected inline loop of any spelling
+# The `IFS`-blank-read form is a COMMAND PREFIX: scoped to that one command, it is the safe idiom and is
+# how the library itself splits. What must not appear is an assignment that changes the
+# SHELL's IFS for subsequent commands -- which is the defect that dropped every system path.
+# This distinction was found by this assertion firing on a legitimate `while IFS= read`.
+# Scanned on the RAW file, excluding only lines that BEGIN with `#`. Stripping comments with
+# `sed 's/#.*//'` hides `say "step #1"; IFS=":"` -- a live assignment after a quoted hash --
+# and `^[^#]*IFS=` never matches it either. A full-line comment is still allowed, so prose
+# about this defect must not write the token followed by `=`.
+_bad_ifs="$(grep -nE 'IFS=' "$PROC" | grep -vE '^[0-9]+:[[:space:]]*#' \
+            | grep -vE 'IFS=[^[:space:]]*[[:space:]]+read' || true)"
+if [ -n "${_bad_ifs}" ]; then bad "procedure has a shell-wide IFS assignment: ${_bad_ifs}"; else ok; fi
+if grep -qE 'for[[:space:]]+[A-Za-z_]+[[:space:]]+in[[:space:]]+\$\{?PATH' "$STRIPPED"; then
+  bad "procedure has an inline PATH loop"; else ok; fi
+# F3: non-acceptance must not be asserted blind
+if pgrep_live 'sbatch_exit_status'; then ok; else bad "procedure does not record the sbatch exit status"; fi
+# F5: both log paths verified
+if pgrep_live 'StdErr='; then ok; else bad "procedure does not verify StdErr"; fi
 
 # THE IMPLEMENTATION UNDER TEST. Sourced, never copied.
 MNV_ENV_ROOT=/pscratch/sd/j/josephrb/k0env
@@ -78,6 +111,40 @@ for hostile in ':' $'\n' '' ' ' ':x'; do
     if [ -n "$miss" ]; then echo "  FAIL  IFS=$(printf %q "$hostile") lost/leaked:${miss}"; exit 1; fi
     exit 0
   ) && ok || bad "IFS=$(printf %q "$hostile") regression"
+done
+
+echo "=== 7. EXECUTE the procedure's REAL PATH block -- text assertions cannot see a value ==="
+# ⚠ SECTIONS 1-6 ARE TEXT CHECKS, AND TWO FAITHFUL MUTANTS SURVIVED THEM ALL.
+#   M13: corrupt MNV_PATH_CLEAN between mnv_sanitize_path and CLEAN="$MNV_PATH_CLEAN".
+#        Every spelling assertion still matched -- a grep cannot see a VALUE.
+#   M4 : `say "step #1"; IFS=":"` -- a LIVE shell-wide IFS after a quoted `#` on the same
+#        line. The comment-strip removes from the `#` onward, and `^[^#]*IFS=` never
+#        matches, so the assignment is invisible to BOTH forms of text check.
+# So the block is extracted from the real file and RUN. That is the only check here that
+# constrains behaviour rather than spelling.
+BLOCK="$(awk '/^PATH_ORIG="\$PATH"$/,/^export PATH="\$CLEAN"$/' "$PROC")"
+case "$BLOCK" in
+  *mnv_sanitize_path*export*) ok ;;
+  *) bad "could not extract the procedure's PATH block (anchors moved?)" ;;
+esac
+
+got="$(
+  env -u IFS MNV_ENV_ROOT="$MNV_ENV_ROOT" MNV_CONDA_PREFIX="$MNV_CONDA_PREFIX" \
+      MNV_ENV_SYSTEM_PREFIXES="$MNV_ENV_SYSTEM_PREFIXES" \
+  bash -c '
+    say(){ :; }
+    die(){ printf "DIE:%s\n" "$1"; exit 1; }
+    source "'"$LIB"'"
+    PATH="/usr/bin:/global/homes/j/josephrb/.local/bin:/bin:'"$MNV_ENV_ROOT"'/x:/global/homes/j/josephrb/bin"
+    '"$BLOCK"'
+    printf "%s" "$PATH"
+  ' 2>&1
+)"
+for need in /usr/bin /bin "${MNV_ENV_ROOT}/x"; do
+  case ":${got}:" in *":${need}:"*) ok ;; *) bad "executed block lost required entry ${need} (PATH=${got})" ;; esac
+done
+for forbid in /global/homes/j/josephrb/.local/bin /global/homes/j/josephrb/bin; do
+  case ":${got}:" in *":${forbid}:"*) bad "executed block EXPORTED an undeclared entry ${forbid}" ;; *) ok ;; esac
 done
 
 echo "=== 6. NEGATIVE CONTROL ON THIS HARNESS: a wrong expectation must be reported ==="

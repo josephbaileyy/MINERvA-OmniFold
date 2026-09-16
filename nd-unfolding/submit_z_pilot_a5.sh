@@ -45,8 +45,18 @@ die()  { echo "[submit] REFUSING: $*" >&2; exit "${2:-1}"; }
 say "procedure starting $(date -u +%Y-%m-%dT%H:%M:%SZ) on $(hostname)"
 
 # --- binding gate --------------------------------------------------------------------------
+# Both halves of the binding refuse here, before `setup_salloc_env.sh` is sourced. Previously
+# the library-digest placeholder was checked after that source, so an unbound procedure exited
+# 20 ("setup_salloc_env.sh failed") off-target -- a refusal that named the wrong cause.
 case "${REVIEWED_COMMIT}" in
   __REVIEWED_*) die "this procedure is not bound to a reviewed commit yet" 10 ;;
+  # A provenance claim goes into the record verbatim, so it must be a full revision: `main`,
+  # an abbreviation and the empty string were all accepted before.
+  [0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ;;
+  *) die "REVIEWED_COMMIT '${REVIEWED_COMMIT}' is not a 40-hex revision" 12 ;;
+esac
+case "${REVIEWED_LIB_SHA256}" in
+  __REVIEWED_*) die "the sanitizer library digest is not pinned yet" 11 ;;
 esac
 SELF_SHA="$(sha256sum "${BASH_SOURCE[0]}" 2>/dev/null | cut -d" " -f1)"
 say "procedure self digest ${SELF_SHA:-<unavailable>} (recorded, NOT self-verified)"
@@ -60,11 +70,30 @@ set -u
 # --- 1. SANITIZE PATH, WITHOUT WIDENING THE ALLOWLIST --------------------------------------
 # The allowlist is READ FROM THE GUARD LIBRARY, not retyped: a hand-copied copy of a guard
 # table in this campaign had already drifted to 9 of 11 names once.
-source "${DEPLOY}/nd-unfolding/lib_mnv_env_pathcheck.sh" || die "cannot source pathcheck lib" 21
-[ -n "${MNV_ENV_SYSTEM_PREFIXES:-}" ] || die "the library did not define MNV_ENV_SYSTEM_PREFIXES" 22
+# ⚠ THE LIBRARY DEFERS TO THE ENVIRONMENT, AND A WORD COUNT DOES NOT NOTICE.
+# lib_mnv_env_pathcheck.sh:41 is `MNV_ENV_SYSTEM_PREFIXES="${MNV_ENV_SYSTEM_PREFIXES:-...}"`,
+# so an ambient value WINS. Measured: exporting
+#   MNV_ENV_SYSTEM_PREFIXES="/usr /bin /sbin /lib /lib64 /etc /opt /global/homes"
+# is 8 words, passed the old count-only gate, and the sanitizer then dropped NOTHING -- a
+# silent recurrence of exactly what refused job 58403564. And this is realistic: a sibling
+# launcher, sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh:18, documents the variable as the
+# submitter-declared allowlist "including required home prefixes" and :35 requires it.
+# So: UNSET it, take the library's own default, and compare against the default READ OUT OF
+# THE LIBRARY TEXT rather than retyped here.
+PATHCHECK_LIB="${DEPLOY}/nd-unfolding/lib_mnv_env_pathcheck.sh"
+[ -f "${PATHCHECK_LIB}" ] || die "pathcheck library not found at ${PATHCHECK_LIB}" 21
+ALLOW_EXPECTED="$(sed -n 's/^MNV_ENV_SYSTEM_PREFIXES="${MNV_ENV_SYSTEM_PREFIXES:-\(.*\)}"$/\1/p' "${PATHCHECK_LIB}")"
+[ -n "${ALLOW_EXPECTED}" ] || die "cannot read the allowlist default out of ${PATHCHECK_LIB}" 22
+if [ -n "${MNV_ENV_SYSTEM_PREFIXES:-}" ]; then
+  say "⚠ an ambient MNV_ENV_SYSTEM_PREFIXES was set and is being UNSET: ${MNV_ENV_SYSTEM_PREFIXES}"
+fi
+unset MNV_ENV_SYSTEM_PREFIXES
+source "${PATHCHECK_LIB}" || die "cannot source pathcheck lib" 23
+[ "${MNV_ENV_SYSTEM_PREFIXES:-}" = "${ALLOW_EXPECTED}" ] \
+  || die "allowlist is '${MNV_ENV_SYSTEM_PREFIXES:-}', library default is '${ALLOW_EXPECTED}'" 24
 n_allow=$(echo ${MNV_ENV_SYSTEM_PREFIXES} | wc -w)
-say "allowlist: ${n_allow} prefix(es) -- ${MNV_ENV_SYSTEM_PREFIXES}"
-[ "${n_allow}" -eq 8 ] || die "allowlist is ${n_allow} prefixes, expected 8; the library changed" 23
+[ "${n_allow}" -eq 8 ] || die "allowlist is ${n_allow} prefixes, expected 8; the library changed" 55
+say "allowlist (library default, ambient value discarded): ${n_allow} -- ${MNV_ENV_SYSTEM_PREFIXES}"
 
 # ONE IMPLEMENTATION, SOURCED -- not a loop here plus a copy in the test. See the header of
 # lib_mnv_path_sanitize.sh: the inlined version set IFS=':' for the PATH split while the
@@ -74,9 +103,6 @@ say "allowlist: ${n_allow} prefix(es) -- ${MNV_ENV_SYSTEM_PREFIXES}"
 LIB_SANITIZE="$(dirname "${BASH_SOURCE[0]}")/lib_mnv_path_sanitize.sh"
 [ -f "${LIB_SANITIZE}" ] || die "lib_mnv_path_sanitize.sh not found beside this procedure" 50
 LIB_SHA="$(sha256sum "${LIB_SANITIZE}" | cut -d" " -f1)"
-case "${REVIEWED_LIB_SHA256}" in
-  __REVIEWED_*) die "the sanitizer library digest is not pinned yet" 11 ;;
-esac
 [ "${LIB_SHA}" = "${REVIEWED_LIB_SHA256}" ] \
   || die "sanitizer library digest ${LIB_SHA} != reviewed ${REVIEWED_LIB_SHA256}" 51
 say "sanitizer library verified by digest: ${LIB_SHA}"
@@ -103,7 +129,12 @@ head_now="$(git rev-parse HEAD)"
 dirty="$(git status --porcelain | wc -l)"
 [ "${dirty}" -eq 0 ] || die "deployment is dirty (${dirty} line(s))" 27
 say "deployment ${DEPLOY} HEAD ${head_now} porcelain ${dirty}"
-say "shim wrappers executable: $(find ${DEPLOY}/nd-unfolding/mnv_guard_shim/bin -type f -perm -u+x | wc -l) of $(ls ${DEPLOY}/nd-unfolding/mnv_guard_shim/bin | wc -l)"
+# A count printed and never compared is a report shaped like a check.
+_wrap_x=$(find "${DEPLOY}/nd-unfolding/mnv_guard_shim/bin" -type f -perm -u+x | wc -l | tr -d ' ')
+_wrap_n=$(find "${DEPLOY}/nd-unfolding/mnv_guard_shim/bin" -type f | wc -l | tr -d ' ')
+[ "${_wrap_x}" -eq "${_wrap_n}" ] && [ "${_wrap_n}" -gt 0 ] \
+  || die "guard PATH wrappers: only ${_wrap_x} of ${_wrap_n} are executable" 56
+say "shim wrappers executable: ${_wrap_x} of ${_wrap_n} (checked, not just reported)"
 
 # --- 3. GENERATE ENV PROVENANCE UNDER THE SANITIZED ENVIRONMENT ----------------------------
 mkdir -p "${NS}" "${NS}/inv-a5" "${LOGDIR}" || die "cannot create run directories" 28
@@ -121,6 +152,11 @@ say "env-provenance --check: OK"
 mnv_env_pathcheck "${MNV_ENV_ROOT}" "${DEPLOY}" "${DATA_ROOT}" \
   || die "mnv_env_pathcheck refused THIS shell; sanitization is insufficient" 31
 say "mnv_env_pathcheck: OK in the submitting shell"
+# NOTE, fail-safe and unrepaired: this sanitizer matches prefixes TEXTUALLY while
+# mnv_env_pathcheck canonicalizes both sides (lib_mnv_env_pathcheck.sh:83-95). So a path like
+# /opt/../tmp/evil is kept here and would be rejected there. The disagreement can only make
+# the gate above refuse BEFORE sbatch, never admit something it should not, so it is recorded
+# rather than fixed -- fixing it means canonicalizing in two places that must then agree.
 
 python3 "${DEPLOY}/nd-unfolding/mnv_source_manifest.py" --repo "${DEPLOY}" \
   --write "${SRCMAN}" --label zdeploy-fb9ec356-a5 \
@@ -225,7 +261,13 @@ RECORD="${NS}/submission-a5.txt"
   echo "--- PATH ---"
   echo "PATH_original         ${PATH_ORIG}"
   echo "PATH_sanitized        ${PATH}"
-  echo "PATH_dropped          ${DROPPED}"
+  # One per line and %q-quoted: space-joined, a single dropped entry containing a space and
+  # two dropped entries were indistinguishable in this record.
+  echo "PATH_dropped_count    ${MNV_PATH_N_BEFORE} - ${MNV_PATH_N_AFTER}"
+  while IFS= read -r _dl; do [ -n "$_dl" ] && printf 'PATH_dropped_entry    %q\n' "$_dl"; done \
+    <<< "$(printf '%s' "${DROPPED}" | tr ' ' '\n')"
+  echo "--- note: the job inherits the FULL environment via --export=ALL, so the MNV_* list"
+  echo "--- below is not the whole story; ${ENVPROV} captures PATH and LD_LIBRARY_PATH."
   echo "--- inherited MNV_* in the submitting shell ---"
   env | grep '^MNV_' | sort | sed 's/^/  /'
 } > "${RECORD}" || die "cannot write the submission record" 41
@@ -234,9 +276,32 @@ say "final settings assembled and recorded at ${RECORD}"
 # --- 8. submit -----------------------------------------------------------------------------
 cd "${R}" || die "cannot cd to the submitting directory ${R}" 42
 say "submitting from $(pwd)"
-JOBID="$(env "${MNV_ASSIGNMENTS[@]}" sbatch "${SBATCH_ARGS[@]}" "${SCRIPT}")" \
-  || die "sbatch did not accept the submission" 43
-[ -n "${JOBID}" ] || die "sbatch returned an empty job id" 44
+# ⚠ NEVER ASSERT NON-ACCEPTANCE BLIND. The previous version ran sbatch in a command
+# substitution and, on nonzero status, said "sbatch did not accept the submission" while
+# recording nothing -- even though it was holding the id sbatch had just printed. That is the
+# step-9 defect (a verdict from no data) mirrored onto the failure side, and "did not accept"
+# is the one claim this procedure must never make without evidence.
+set +e
+SB_OUT="$(env "${MNV_ASSIGNMENTS[@]}" sbatch "${SBATCH_ARGS[@]}" "${SCRIPT}" 2> "${NS}/sbatch-a5.err")"
+SB_RC=$?
+set -e
+SB_ERR="$(cat "${NS}/sbatch-a5.err" 2>/dev/null || true)"
+{
+  echo "sbatch_exit_status    ${SB_RC}"
+  echo "sbatch_stdout         ${SB_OUT}"
+  echo "sbatch_stderr         ${SB_ERR}"
+} >> "${RECORD}"
+# `--parsable` can return `id;cluster` in a federated setup; the identity grep needs the bare id.
+JOBID="${SB_OUT%%;*}"
+case "${JOBID}" in
+  ""|*[!0-9]*)
+    echo "[submit] sbatch exit ${SB_RC}; stdout '${SB_OUT}'; stderr '${SB_ERR}'" >&2
+    die "no numeric job id in sbatch stdout -- a job MAY STILL have been accepted; check \`squeue --me\` before concluding anything" 44 ;;
+esac
+if [ "${SB_RC}" -ne 0 ]; then
+  echo "[submit] sbatch exit ${SB_RC} BUT stdout carried job id ${JOBID}; stderr '${SB_ERR}'" >&2
+  die "sbatch exited ${SB_RC} while reporting job ${JOBID} -- the job MAY have been accepted; check \`squeue --me\` before concluding, and do NOT resubmit" 43
+fi
 say "SCHEDULER ACCEPTED: job ${JOBID}"
 echo "jobid                 ${JOBID}" >> "${RECORD}"
 
@@ -248,7 +313,13 @@ echo "jobid                 ${JOBID}" >> "${RECORD}"
 # verify the ABSENCE of anything.
 SC="${NS}/scontrol-a5.txt"
 VERIFY_FAILED=0
-vfail() { echo "[submit] VERIFICATION FAILURE: $*" >&2; VERIFY_FAILED=1; }
+VERIFY_LOG=""
+# The REASON must reach the durable record, not only the terminal: for a one-shot submission
+# whose terminal may not survive, "verification_status FAIL" with no reason is unusable.
+vfail()    { echo "[submit] VERIFICATION FAILURE: $*" >&2; VERIFY_LOG="${VERIFY_LOG}
+  FAIL     $*"; VERIFY_FAILED=1; }
+vverified(){ say "  verified $*"; VERIFY_LOG="${VERIFY_LOG}
+  verified $*"; }
 
 if ! scontrol show job "${JOBID}" > "${SC}" 2>&1; then
   vfail "scontrol show job ${JOBID} did not succeed; NO field below can be interpreted"
@@ -256,22 +327,35 @@ elif ! grep -qE "(^|[[:space:]])JobId=${JOBID}([[:space:]]|$)" "${SC}"; then
   vfail "the scontrol record does not carry JobId=${JOBID}; identity unconfirmed, fields not interpretable"
 else
   say "scontrol retrieved and identity confirmed: JobId=${JOBID}"
+  # ⚠ THE EXPECTED VALUES ARE CERTAIN; THE KEY SPELLINGS ARE NOT VALIDATED AGAINST A REAL
+  # RECORD FROM THIS CLUSTER. Every value below is what the launcher itself declares
+  # (sbatch_z_pilot_5d.sh:4-5) or what this procedure passes, so a VALUE mismatch is a real
+  # finding. A missing KEY may instead be a Slurm-version spelling difference -- `NumTasks=`
+  # appears nowhere else in this repository. Either way it is reported as a verification
+  # failure rather than waved through, and ${SC} is preserved so a human can adjudicate.
   for kv in "Requeue=0" "Restarts=0" "TimeLimit=01:30:00" "NumTasks=1"; do
-    if grep -qE "(^|[[:space:]])${kv}([[:space:]]|$)" "${SC}"; then say "  verified ${kv}"
+    if grep -qE "(^|[[:space:]])${kv}([[:space:]]|$)" "${SC}"; then vverified "${kv}"
     else vfail "expected ${kv} not present in the job record"; fi
   done
-  if grep -qE 'gres/gpu' "${SC}"; then vfail "GPU TRES present in the job record"
-  else say "  verified no GPU TRES (from a retrieved, identity-matched record)"; fi
-  _stdout="$(grep -oE 'StdOut=[^[:space:]]*' "${SC}" | head -1)"
-  case "${_stdout}" in
-    "StdOut=${OUT_LOG}") say "  verified ${_stdout}" ;;
-    *) vfail "StdOut is '${_stdout}', expected StdOut=${OUT_LOG}" ;;
-  esac
+  # ANCHORED TO THE TRES FIELDS. An unanchored `gres/gpu` matches Command=, WorkDir= or
+  # StdOut= too, so a path containing that string would read as a GPU allocation.
+  if grep -qE '(^|[[:space:]])(Tres|TRES|TresPerNode|TresPerTask|TresPerJob|ReqTRES|AllocTRES)[^[:space:]]*gres/gpu' "${SC}"; then
+    vfail "GPU TRES present in the job record"
+  else vverified "no GPU TRES (from a retrieved, identity-matched record)"; fi
+  # BOTH log paths. `sbatch_z_pilot_5d.sh:7` declares --output AND --error relative with %j,
+  # so the failure that cancelled 58403491 applies identically to stderr.
+  for _pair in "StdOut=${OUT_LOG}" "StdErr=${ERR_LOG}"; do
+    _key="${_pair%%=*}"
+    _got="$(grep -oE "${_key}=[^[:space:]]*" "${SC}" | head -1)"
+    if [ "${_got}" = "${_pair}" ]; then vverified "${_got}"
+    else vfail "${_key} is '${_got}', expected ${_pair}"; fi
+  done
 fi
 
 {
   echo "verification_utc      $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "verification_status   $([ "${VERIFY_FAILED}" -eq 0 ] && echo PASS || echo FAIL)"
+  echo "verification_detail   ${VERIFY_LOG}"
 } >> "${RECORD}"
 
 if [ "${VERIFY_FAILED}" -ne 0 ]; then
