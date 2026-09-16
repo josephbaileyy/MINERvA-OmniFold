@@ -1003,6 +1003,35 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   rev. 17's *"never taken as an endpoint"* is withdrawn (`:1764-1769`). **Naming hazard filed:** at
   least three live objects are called `B` (§3.7a's bound, publication **Endpoint B**, and the `lane_b`
   owner rows), two of them in one sentence of the routing record.
+- [`ASSESSMENT-20260915-epsilon-1e-9-and-B.md`](ASSESSMENT-20260915-epsilon-1e-9-and-B.md)
+  - **`ε = 1e-9`: UNGRADEABLE AS AN `ε`. `B`: NOTHING TO GRADE.** Both are complete answers, neither
+  is a block, and **`ε = 1e-9` is NOT refuted.** Graded against `E1`-`E12` / `B1`-`B9` committed at
+  `923a321c` beforehand. **All three of `ε`'s steps confirmed**, step 1 in **exact rational
+  arithmetic** against the real `support_mask` (3,998 draws with zeros and negatives + 4 adversarial
+  cases, 0 violations; bound TIGHT at equality) — the load-bearing detail being that `null_ratio`
+  masks BOTH operands (`z_statistics.py:71-79`). Step 2's authority is **stronger than the proposal
+  claims**: `REPRO_RTOL_PER_BIN` enters at `5d617da8`, **author Joseph Bailey**, so *"Joseph
+  declared"* is git-corroborated, not just comment-sourced. **Why it is still ungradeable:** steps
+  1-3 establish a **feasibility floor**, the exact role `SPEC:1406-1409` says *"cannot justify
+  `ε`"*; taking it as the value needs it to be `B`, and it is not — the proposal says so itself.
+  `SPEC:1257` `4c` makes running against an un-derived boundary a REJECT. **`F1` NEW:** a THIRD
+  transfer limit — the imported floor is a **cross-concurrency** comparison (`conc_new: 6,
+  conc_reference: 4`, `p4_lib.py:197`) sized so *"a CONC change does not force a re-derivation"*;
+  cuts both ways and both are reported. **`F2` NEW, the concrete threat:** BOTH endpoints are
+  missing — `S` covers the F7 channel only and `SPEC:1662` calls the uncovered completeness division
+  *"an amplification channel with no `n`-dependent bound"*, so `ε ≤ S` is undemonstrated and the
+  routing sentence needs the scope repair *"not binding THROUGH THE F7 CHANNEL"*. **`F3` NEW:** the
+  consistency check §C.3 left UNRESOLVED is now answerable on the precursor — `ε / r_null =
+  **2.246e4**` — against §C.2's own *"a gate essentially nothing can violate"* standard; recorded as
+  an observation only, since `SPEC:1410` forbids setting `ε` from it. **`F4`:** the falsifier is
+  **unevaluable**, not merely unevaluated — both operands unbuilt; `B_loose`'s withdrawal
+  independently confirmed (`1.831e-11` is the coherent ceiling at `:158`, a different figure from
+  `56471429`'s `1.9e-11`). **Checked and NOT faulted:** the p4/rep mask mismatch is safe in
+  direction AND empirically void (`n_cv_negative = 0`). **On `B`:** the relayed evidence leg is
+  §4.5's diagnostic, which measures *"sensitivity to the envelope"* — **pinned-vs-unpinned is the
+  divergence, not the bound** — failing `B1`/`B2`/`B5`/`B7` on the proposing lane's **own**
+  `Z_CONSTRUCTION_PLAN:501-506` items 1-2. **⚠ `owners.tsv:15` names session `[cb0b6b]`; this
+  session is `d93bf047` and no mapping exists in the repo** — proceeding on the owner_id role only.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
