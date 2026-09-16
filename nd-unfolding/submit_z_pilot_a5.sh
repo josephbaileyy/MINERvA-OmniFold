@@ -10,6 +10,19 @@
 # the script starts. So every gate here refuses BEFORE `sbatch` is reached.
 set -u -o pipefail
 
+# BOUND TO ITS REVIEWED COMMIT, with the limit of that binding stated rather than implied.
+# This procedure is transferred standalone to a login node -- the reviewed deployment at
+# fb9ec356 predates it and MUST NOT CHANGE -- so there is no git checkout beside it to diff
+# against. Therefore:
+#   * the LIBRARY it depends on is pinned BY DIGEST and verified below. That is the part that
+#     was broken, is now tested, and carries no self-reference.
+#   * this file records its OWN digest into the submission record for audit. It does NOT
+#     verify it: a file cannot contain the digest of itself, and pretending otherwise would be
+#     a check that cannot fail. Compare the recorded digest against the reviewed commit.
+REVIEWED_COMMIT=__REVIEWED_COMMIT__
+REVIEWED_LIB_SHA256=__REVIEWED_LIB_SHA256__
+SELF_REL=nd-unfolding/submit_z_pilot_a5.sh
+
 DEPLOY=/pscratch/sd/j/josephrb/zdeploy-fb9ec356
 DEPLOY_SHA=fb9ec3560fd6d62295dffc81b5694c9e26667d5b
 DATA_ROOT=/pscratch/sd/j/josephrb/MINERvA-OmniFold
@@ -31,6 +44,14 @@ die()  { echo "[submit] REFUSING: $*" >&2; exit "${2:-1}"; }
 
 say "procedure starting $(date -u +%Y-%m-%dT%H:%M:%SZ) on $(hostname)"
 
+# --- binding gate --------------------------------------------------------------------------
+case "${REVIEWED_COMMIT}" in
+  __REVIEWED_*) die "this procedure is not bound to a reviewed commit yet" 10 ;;
+esac
+SELF_SHA="$(sha256sum "${BASH_SOURCE[0]}" 2>/dev/null | cut -d" " -f1)"
+say "procedure self digest ${SELF_SHA:-<unavailable>} (recorded, NOT self-verified)"
+say "procedure reviewed at ${REVIEWED_COMMIT}"
+
 # --- 0. the environment closure, exactly as the launcher will source it -------------------
 set +u
 source "${MNV_ENV_ROOT}/setup_salloc_env.sh" || die "setup_salloc_env.sh failed" 20
@@ -45,34 +66,33 @@ n_allow=$(echo ${MNV_ENV_SYSTEM_PREFIXES} | wc -w)
 say "allowlist: ${n_allow} prefix(es) -- ${MNV_ENV_SYSTEM_PREFIXES}"
 [ "${n_allow}" -eq 8 ] || die "allowlist is ${n_allow} prefixes, expected 8; the library changed" 23
 
-mnv_keep_entry() {   # 0 = keep
-  local p="$1" q
-  case "$p" in
-    "${MNV_ENV_ROOT}"|"${MNV_ENV_ROOT}"/*)       return 0 ;;
-    "${MNV_CONDA_PREFIX}"|"${MNV_CONDA_PREFIX}"/*) return 0 ;;
-  esac
-  for q in ${MNV_ENV_SYSTEM_PREFIXES}; do
-    case "$p" in "$q"|"$q"/*) return 0 ;; esac
-  done
-  return 1
-}
+# ONE IMPLEMENTATION, SOURCED -- not a loop here plus a copy in the test. See the header of
+# lib_mnv_path_sanitize.sh: the inlined version set IFS=':' for the PATH split while the
+# predicate splits the allowlist on WHITESPACE, so the allowlist loop ran ONCE over the whole
+# string and dropped /usr/bin, /bin, /opt/cray/pe/bin and /global/common/software/nersc/bin.
+# The duplicate in the test never saw that IFS and passed 14/14.
+LIB_SANITIZE="$(dirname "${BASH_SOURCE[0]}")/lib_mnv_path_sanitize.sh"
+[ -f "${LIB_SANITIZE}" ] || die "lib_mnv_path_sanitize.sh not found beside this procedure" 50
+LIB_SHA="$(sha256sum "${LIB_SANITIZE}" | cut -d" " -f1)"
+case "${REVIEWED_LIB_SHA256}" in
+  __REVIEWED_*) die "the sanitizer library digest is not pinned yet" 11 ;;
+esac
+[ "${LIB_SHA}" = "${REVIEWED_LIB_SHA256}" ] \
+  || die "sanitizer library digest ${LIB_SHA} != reviewed ${REVIEWED_LIB_SHA256}" 51
+say "sanitizer library verified by digest: ${LIB_SHA}"
+source "${LIB_SANITIZE}" || die "cannot source ${LIB_SANITIZE}" 52
 
 PATH_ORIG="$PATH"
-CLEAN=""; DROPPED=""
-_oldifs="$IFS"; IFS=':'
-for _p in $PATH_ORIG; do
-  if mnv_keep_entry "$_p"; then CLEAN="${CLEAN:+$CLEAN:}$_p"; else DROPPED="${DROPPED:+$DROPPED }$_p"; fi
-done
-IFS="$_oldifs"
-n_before=$(printf '%s' "$PATH_ORIG" | tr ':' '\n' | grep -c .)
-n_after=$(printf '%s' "$CLEAN" | tr ':' '\n' | grep -c .)
-say "PATH entries ${n_before} -> ${n_after}; dropped $((n_before-n_after))"
+mnv_sanitize_path "$PATH_ORIG"
+CLEAN="$MNV_PATH_CLEAN"; DROPPED="$MNV_PATH_DROPPED"
+say "PATH entries ${MNV_PATH_N_BEFORE} -> ${MNV_PATH_N_AFTER}; dropped $((MNV_PATH_N_BEFORE-MNV_PATH_N_AFTER))"
 for _d in ${DROPPED}; do say "  dropped: ${_d}"; done
+[ "${MNV_PATH_N_AFTER}" -gt 0 ] || die "sanitization emptied PATH" 53
 export PATH="$CLEAN"
 
 # The tools this procedure and the job both need must survive sanitization.
 for t in sbatch scontrol sacct python3 git; do
-  command -v "$t" >/dev/null 2>&1 || die "sanitization removed ${t} from PATH" 24
+  command -v "$t" >/dev/null 2>&1 || die "sanitization removed ${t} from PATH" 54
 done
 say "tools after sanitization: $(for t in sbatch scontrol sacct python3 git; do printf '%s=%s ' "$t" "$(command -v $t)"; done)"
 
@@ -144,68 +164,125 @@ probe="${LOGDIR}/.writeprobe.$$"
 rm -f "${probe}"
 say "log directory ${LOGDIR} verified writable by probe"
 
-# --- 7. record the exact command and exported settings BEFORE submitting -------------------
+# --- 7. ASSEMBLE the final job settings, then record THOSE ---------------------------------
+# Assembled BEFORE being recorded, and executed from the same arrays that were recorded, so the
+# record cannot describe a different command than the one submitted. The previous version wrote
+# hand-typed `echo` lines describing the intended flags and then submitted a separately spelled
+# command -- two spellings that could drift apart silently.
+SCRIPT="${DEPLOY}/nd-unfolding/sbatch_z_pilot_5d.sh"
+OUT_LOG="${LOGDIR}/z_pilot5d_a5.out"
+ERR_LOG="${LOGDIR}/z_pilot5d_a5.err"
+
+SBATCH_ARGS=(
+  --parsable
+  --chdir="${R}"
+  --output="${OUT_LOG}"
+  --error="${ERR_LOG}"
+  --time="${WALL}"
+  --cpus-per-task="${CPUS}"
+  --mem="${MEM}"
+  --no-requeue
+)
+MNV_ASSIGNMENTS=(
+  MNV_CODE_ROOT="${DEPLOY}"
+  MNV_CONDA_PREFIX="${MNV_CONDA_PREFIX}"
+  MNV_DATA_ROOT="${DATA_ROOT}"
+  MNV_ENV_ROOT="${MNV_ENV_ROOT}"
+  MNV_ENV_PROVENANCE="${ENVPROV}"
+  MNV_SOURCE_MANIFEST="${SRCMAN}"
+  MNV_GUARD_INVENTORY_DIR="${NS}/inv-a5"
+  MNV_LAUNCHER_DIR="${DEPLOY}/nd-unfolding"
+  MNV_Z_ACTIVE="${R}/active_universe_5d/standard/candidate/std_final5_candidate.root"
+  MNV_Z_SUPPORT="${R}/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root"
+  MNV_Z_CENTRAL="${R}/products/5d/xsec_5d_MEFHC_5iter_lgbm.root"
+  MNV_Z_ML="${R}/uq_cov_mlsplit_5d.root"
+  MNV_Z_ML_KEY=hCov_mlsplit5d_reported
+  MNV_Z_STAT="${R}/uq_cov_stat_5d.root"
+  MNV_Z_STAT_KEY=hCov_stat5d_reported
+  MNV_Z_PARENT="${R}/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root"
+  MNV_Z_PRECURSOR_PRODUCT="${R}/uq_5d/z_precursor_20260914/unified_throw_cov_5d.root"
+  MNV_Z_PRECURSOR_SHA256=09a029ed2a7de0ffd144b1ad0ad8d3e0bf8e8b9788797b0af58693c753795560
+  MNV_Z_PILOT_OUT="${PILOT_OUT}"
+  MNV_Z_PILOT_RUN_ID="${RUN_ID}"
+)
+
 RECORD="${NS}/submission-a5.txt"
 {
   echo "recorded_utc          $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "host                  $(hostname)"
+  echo "procedure_reviewed_at ${REVIEWED_COMMIT}"
+  echo "procedure_self        ${SELF_REL}"
   echo "deployment            ${DEPLOY} @ ${DEPLOY_SHA}"
   echo "submitting_cwd        ${R}"
-  echo "sbatch --chdir        ${R}"
-  echo "sbatch --output       ${LOGDIR}/z_pilot5d_a5.out"
-  echo "sbatch --error        ${LOGDIR}/z_pilot5d_a5.err"
-  echo "sbatch --time         ${WALL}"
-  echo "sbatch --cpus-per-task ${CPUS}"
-  echo "sbatch --mem          ${MEM}"
-  echo "sbatch --no-requeue   yes"
-  echo "script                ${DEPLOY}/nd-unfolding/sbatch_z_pilot_5d.sh"
+  echo "--- the exact submitted command, from the arrays that execute it ---"
+  printf 'env'
+  for _a in "${MNV_ASSIGNMENTS[@]}"; do printf ' \\\n  %q' "$_a"; done
+  printf ' \\\n  sbatch'
+  for _a in "${SBATCH_ARGS[@]}"; do printf ' \\\n  %q' "$_a"; done
+  printf ' \\\n  %q\n' "${SCRIPT}"
+  echo "--- inline MNV assignments, one per line ---"
+  for _a in "${MNV_ASSIGNMENTS[@]}"; do echo "  ${_a}"; done
+  echo "--- PATH ---"
   echo "PATH_original         ${PATH_ORIG}"
   echo "PATH_sanitized        ${PATH}"
   echo "PATH_dropped          ${DROPPED}"
-  echo "--- exported MNV_* settings ---"
-  env | grep '^MNV_' | sort
+  echo "--- inherited MNV_* in the submitting shell ---"
+  env | grep '^MNV_' | sort | sed 's/^/  /'
 } > "${RECORD}" || die "cannot write the submission record" 41
-say "exact command and exported settings recorded at ${RECORD}"
+say "final settings assembled and recorded at ${RECORD}"
 
 # --- 8. submit -----------------------------------------------------------------------------
 cd "${R}" || die "cannot cd to the submitting directory ${R}" 42
 say "submitting from $(pwd)"
-JOBID="$(
-  MNV_CODE_ROOT="${DEPLOY}" \
-  MNV_DATA_ROOT="${DATA_ROOT}" \
-  MNV_ENV_PROVENANCE="${ENVPROV}" \
-  MNV_SOURCE_MANIFEST="${SRCMAN}" \
-  MNV_GUARD_INVENTORY_DIR="${NS}/inv-a5" \
-  MNV_LAUNCHER_DIR="${DEPLOY}/nd-unfolding" \
-  MNV_Z_ACTIVE="${R}/active_universe_5d/standard/candidate/std_final5_candidate.root" \
-  MNV_Z_SUPPORT="${R}/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root" \
-  MNV_Z_CENTRAL="${R}/products/5d/xsec_5d_MEFHC_5iter_lgbm.root" \
-  MNV_Z_ML="${R}/uq_cov_mlsplit_5d.root" \
-  MNV_Z_ML_KEY=hCov_mlsplit5d_reported \
-  MNV_Z_STAT="${R}/uq_cov_stat_5d.root" \
-  MNV_Z_STAT_KEY=hCov_stat5d_reported \
-  MNV_Z_PARENT="${R}/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root" \
-  MNV_Z_PRECURSOR_PRODUCT="${R}/uq_5d/z_precursor_20260914/unified_throw_cov_5d.root" \
-  MNV_Z_PRECURSOR_SHA256=09a029ed2a7de0ffd144b1ad0ad8d3e0bf8e8b9788797b0af58693c753795560 \
-  MNV_Z_PILOT_OUT="${PILOT_OUT}" \
-  MNV_Z_PILOT_RUN_ID="${RUN_ID}" \
-  sbatch --parsable \
-    --chdir="${R}" \
-    --output="${LOGDIR}/z_pilot5d_a5.out" \
-    --error="${LOGDIR}/z_pilot5d_a5.err" \
-    --time="${WALL}" --cpus-per-task="${CPUS}" --mem="${MEM}" --no-requeue \
-    "${DEPLOY}/nd-unfolding/sbatch_z_pilot_5d.sh"
-)" || die "sbatch did not accept the submission" 43
+JOBID="$(env "${MNV_ASSIGNMENTS[@]}" sbatch "${SBATCH_ARGS[@]}" "${SCRIPT}")" \
+  || die "sbatch did not accept the submission" 43
+[ -n "${JOBID}" ] || die "sbatch returned an empty job id" 44
 say "SCHEDULER ACCEPTED: job ${JOBID}"
 echo "jobid                 ${JOBID}" >> "${RECORD}"
 
-# --- 9. verify the resulting job setting ---------------------------------------------------
-sleep 3
-scontrol show job "${JOBID}" > "${NS}/scontrol-a5.txt" 2>&1 || true
-for kv in "Requeue=0" "Restarts=0" "TimeLimit=01:30:00" "NumTasks=1"; do
-  if grep -qE "(^| )${kv}( |$)" "${NS}/scontrol-a5.txt"; then say "verified ${kv}"
-  else say "⚠ COULD NOT VERIFY ${kv} -- read ${NS}/scontrol-a5.txt"; fi
-done
-if grep -qE 'gres/gpu' "${NS}/scontrol-a5.txt"; then say "⚠ GPU TRES PRESENT -- unexpected"; else say "verified no GPU TRES"; fi
-say "StdOut: $(grep -oE 'StdOut=[^ ]*' "${NS}/scontrol-a5.txt" | head -1)"
-say "procedure complete; job ${JOBID} submitted and its settings recorded"
+# --- 9. VERIFY the resulting job settings ---------------------------------------------------
+# ⚠ RETRIEVAL AND IDENTITY FIRST. The previous version ran `scontrol ... || true` and then
+# grepped the output file. A FAILED retrieval left an error message in that file, `grep -qE
+# 'gres/gpu'` found nothing, and the script printed "verified no GPU TRES" -- a success-looking
+# line derived from no data at all, followed by "procedure complete". A missing record cannot
+# verify the ABSENCE of anything.
+SC="${NS}/scontrol-a5.txt"
+VERIFY_FAILED=0
+vfail() { echo "[submit] VERIFICATION FAILURE: $*" >&2; VERIFY_FAILED=1; }
+
+if ! scontrol show job "${JOBID}" > "${SC}" 2>&1; then
+  vfail "scontrol show job ${JOBID} did not succeed; NO field below can be interpreted"
+elif ! grep -qE "(^|[[:space:]])JobId=${JOBID}([[:space:]]|$)" "${SC}"; then
+  vfail "the scontrol record does not carry JobId=${JOBID}; identity unconfirmed, fields not interpretable"
+else
+  say "scontrol retrieved and identity confirmed: JobId=${JOBID}"
+  for kv in "Requeue=0" "Restarts=0" "TimeLimit=01:30:00" "NumTasks=1"; do
+    if grep -qE "(^|[[:space:]])${kv}([[:space:]]|$)" "${SC}"; then say "  verified ${kv}"
+    else vfail "expected ${kv} not present in the job record"; fi
+  done
+  if grep -qE 'gres/gpu' "${SC}"; then vfail "GPU TRES present in the job record"
+  else say "  verified no GPU TRES (from a retrieved, identity-matched record)"; fi
+  _stdout="$(grep -oE 'StdOut=[^[:space:]]*' "${SC}" | head -1)"
+  case "${_stdout}" in
+    "StdOut=${OUT_LOG}") say "  verified ${_stdout}" ;;
+    *) vfail "StdOut is '${_stdout}', expected StdOut=${OUT_LOG}" ;;
+  esac
+fi
+
+{
+  echo "verification_utc      $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  echo "verification_status   $([ "${VERIFY_FAILED}" -eq 0 ] && echo PASS || echo FAIL)"
+} >> "${RECORD}"
+
+if [ "${VERIFY_FAILED}" -ne 0 ]; then
+  echo "[submit] ==============================================================" >&2
+  echo "[submit] PROCEDURE FAILED AT VERIFICATION. Job ${JOBID} WAS ACCEPTED by the" >&2
+  echo "[submit]   scheduler and may be queued or running; its settings could NOT be" >&2
+  echo "[submit]   confirmed. The single-submission authorization is CONSUMED by" >&2
+  echo "[submit]   scheduler acceptance, so NO REPLACEMENT SUBMISSION IS AUTHORIZED." >&2
+  echo "[submit]   Read ${SC} and ${RECORD}; do not resubmit." >&2
+  echo "[submit] ==============================================================" >&2
+  exit 45
+fi
+
+say "procedure complete AND VERIFIED: job ${JOBID}, settings confirmed against a retrieved record"
