@@ -1,0 +1,32 @@
+{
+  "decision": "PASS",
+  "checks": {
+    "per_job_time_20pct_headroom": true,
+    "campaign_gpu_20pct_headroom": true,
+    "campaign_cpu_20pct_headroom": true,
+    "host_memory_20pct_headroom": true,
+    "per_job_storage_20pct_headroom": true,
+    "working_storage_20pct_headroom": true,
+    "total_storage_20pct_headroom": true
+  },
+  "measured": {
+    "allocation_seconds": 426,
+    "prior_allocation_seconds": 1021,
+    "total_charged_seconds": 1447,
+    "fit_seconds": 15.901190217002295,
+    "inference_seconds": 8.095854663,
+    "other_seconds": 23.329640678070927,
+    "peak_rss_KiB": 1060768,
+    "output_bytes": 47129222
+  },
+  "extrapolated": {
+    "job_hours": 2.533110670712151,
+    "campaign_gpu_hours": 60.794656097091625,
+    "campaign_reserved_cpu_hours": 1945.428995106932,
+    "host_GiB": 30.981082916259766,
+    "job_GiB": 1.3442080689128488,
+    "working_GiB": 38.304886162281036
+  },
+  "method": "Upper batch-count scaling; training x15, inference x3; fixed process memory and all other overhead also scaled with rows. Measured GPU batch peak retained separately; batch size is unchanged.",
+  "non_claim": "Resource/integrity gate only; calibration learning scores do not enter this decision."
+}

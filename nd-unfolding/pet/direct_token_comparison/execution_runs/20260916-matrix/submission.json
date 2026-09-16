@@ -1,0 +1,100 @@
+{
+  "calibration": {
+    "job_id": "58395631",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_raw_seconds": 426,
+    "execution_commit": "a0f5c274036ce557205b2ecd457297c1dda80bf4",
+    "preflight_terminal": "PASS-WITH-RECORDED-STRESS-FAILURE",
+    "stress_only_cases": [
+      "variable"
+    ],
+    "stress_failures": [
+      "variable/direct"
+    ],
+    "pairs_on_gpu": 8,
+    "pairs_passed": 7,
+    "pairs_recorded_failed": 1,
+    "stress_failure_max_abs": 0.0001443326473236084,
+    "stress_failure_bit_identical_to_58354898": true,
+    "cluster_tests": "69 passed, 10 subtests passed",
+    "adversarial_tests": "40 passed",
+    "resource_gate_decision": "PASS",
+    "resource_checks_all_pass": true,
+    "measured": {
+      "fit_seconds": 15.901190217002295,
+      "inference_seconds": 8.095854663,
+      "other_seconds": 23.329640678070927,
+      "peak_rss_KiB": 1060768,
+      "output_bytes": 47129222
+    },
+    "extrapolated": {
+      "job_hours": 2.53311,
+      "campaign_gpu_hours": 60.7947,
+      "campaign_reserved_cpu_hours": 1945.43,
+      "host_GiB": 30.9811,
+      "job_GiB": 1.34421,
+      "working_GiB": 38.3049
+    },
+    "evidence": {
+      "full_archive_sha256": "9530dc8eb81f13d7d52585cf20b61d161212aacd10ca09647c2dc1eb373cfec9",
+      "full_archive_files": 419,
+      "receipts_archive_sha256": "5ff8fb535563c415a09d2e276ab326f20cf23b786d72ad8614f74d3fba851da8",
+      "receipts_archive_files": 64
+    }
+  },
+  "matrix": {
+    "array_job_id": "58396676",
+    "array_rows_measured": 24,
+    "rows_measured_with": "squeue --me -r (real rows, not the bracket Slurm rewrites for arrays)",
+    "execution_commit": "d98d94cc54650c92f687b4b6c391f4dd085d2d22",
+    "scientific_code_identical_to_calibrated_commit": true,
+    "checkout": "/pscratch/sd/j/josephrb/pet-matrix-exec-20260916",
+    "output": "/pscratch/sd/j/josephrb/pet-matrix-output-20260916",
+    "launcher": "nd-unfolding/pet/direct_token_comparison/sbatch_full_matrix.sh",
+    "launcher_bound_sha256_in_authorization": true,
+    "authorization_sha256": "3d3d6f6c75637031d74f615b596e54ff7539b8ec4af0be5f46a1e93b048cb82c",
+    "manifest_entries_verified": 54,
+    "concurrency_limit_enforced_by": "--array=0-23%2",
+    "per_job_time_limit": "12:00:00",
+    "jobs": {
+      "modes": [
+        "ordinary",
+        "injected",
+        "shuffle"
+      ],
+      "seeds": [
+        17,
+        29,
+        43,
+        59,
+        71,
+        89,
+        101,
+        113
+      ],
+      "total": 24
+    },
+    "per_job_config": {
+      "rows": 1000000,
+      "test_rows": 250000,
+      "iterations": 3,
+      "epochs_per_fit": 5,
+      "batch_size": 1024
+    },
+    "status_at_record_time": "submitted; 0 of 24 terminal"
+  },
+  "charge": {
+    "prior_conservative_seconds": 1021,
+    "calibration_seconds": 426,
+    "total_conservative_seconds": 1447,
+    "gpu_hours": 0.4019444444444444,
+    "reserved_cpu_hours": 12.862222222222222,
+    "ceilings": {
+      "gpu_hours": 290,
+      "reserved_cpu_hours": 9296,
+      "storage_GiB": 200
+    }
+  },
+  "non_claim": "No learning, closure, compute-efficiency or representation conclusion. Calibration scores are excluded from the comparison. A NO_PASS from the reducer would be inconclusive or a safeguard failure, never a statement of inferiority."
+}

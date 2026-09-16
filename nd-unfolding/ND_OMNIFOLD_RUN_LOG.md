@@ -1,5 +1,22 @@
 # N-D OmniFold run log
 
+## 2026-09-16 — calibration passed; frozen 24-job matrix released and submitted
+
+Job `58395631` COMPLETED (ExitCode `0:0`, 426 s). The amended GPU preflight ran all
+eight case/routing pairs on a real GPU: seven PASS, and `variable/direct` recorded as
+`FAILED-STRESS` under Joseph's 2026-09-16 gate-scope decision, with the receipt verdict
+`PASS-WITH-RECORDED-STRESS-FAILURE` so the word itself carries the failure. `masked` and
+`empty` had never been reached before and pass on both routes. The recorded stress
+discrepancy is bit-identical to `58354898`'s, so it is deterministic. Cluster tests
+`69 passed, 10 subtests passed` and `40 passed`.
+
+`evaluate_calibration.py` returned **PASS** on all seven 20% headroom gates: job 2.533 h
+against 9.6, campaign 60.79 GPU-hours, host 30.98 GiB against 44.8, per job 1.344 GiB
+against 3.2. Charge is now 1,447 conservative seconds. The frozen matrix was therefore
+deployed at `d98d94cc` — scientific code byte-identical to the calibrated `a0f5c274` —
+and submitted as array `58396676`, 24 real rows. No learning result exists yet.
+[Calibration evidence](pet/direct_token_comparison/CALIBRATION_RESULT-20260916.md).
+
 ## 2026-09-15 — amended GPU preflight failed; calibration never started
 
 Job `58354898` FAILED (ExitCode `1:0`, 279 parent seconds). The cluster suite
