@@ -1,15 +1,61 @@
 # PET representation comparison for Ben
 
-**Drafted 11 September 2026 · last measured 15 September 2026 · diagnostic method
+**Drafted 11 September 2026 · last measured 16 September 2026 · diagnostic method
 development, not a publication product**
 
-> Read [the three-way answer](#the-three-way-answer-as-of-15-september-2026) first if
-> you want the recommendation. In short: **still no measured learning-performance
-> winner** for pooled versus individual tokens, because every GPU attempt has stopped
-> in software equivalence checking and the latest one exposed a real numerical
-> obstacle in exactly the individual-token configuration we need. But the
-> aggregate-overflow question *does* now have an answer that does not depend on
-> learning results, from reading and executing the pinned upstream code.
+## Recommendation
+
+*Plain language, up front. One part is settled; the other is being measured now.*
+
+**On aggregate-overflow tokens: don't adopt them as an upgrade — we don't have the
+problem they solve.** Gregor's code caps how many objects an event may carry; ours
+doesn't cap at all. His cap has two modes, and the one that runs by default simply
+throws away the lowest-energy objects past a limit of 150. The aggregate-overflow mode
+he also offers is better than that, because it keeps the discarded objects' total
+energy in one summary token — but both modes are ways of coping with a cap, and we
+currently keep everything. So adopting overflow tokens would mean introducing a cap
+first and then partly compensating for it.
+
+That said, **keeping more information is not the same as performing better.** Fewer
+tokens is cheaper to train and might even generalise better, so if we ever do need a
+cap — for memory or speed — the measurements say: prefer aggregation over truncation,
+add an explicit count of how many objects were merged (his version loses that), and
+expect the merged objects' positions and timing to survive only as an average. Whether
+compression helps or hurts in practice is a separate question we have **not** measured.
+
+**On individual typed-object tokens versus family pooling: being measured right now.**
+The 24-job paired comparison is running. Until it finishes there is **no
+learning-performance winner**, and nothing so far implies one. In particular, the
+numerical CPU/GPU disagreement we hit along the way is a floating-point reproducibility
+property of longer attention sequences — **not** evidence that individual tokens are
+scientifically worse.
+
+This section will be replaced with the measured recommendation — closure accuracy,
+stability across seeds, and per-arm compute cost — as soon as the matrix closes. If the
+evidence is inconclusive, it will say so rather than name a winner.
+
+## What this tests, and what it does not
+
+**It tests one thing:** family-pooled attention versus individual-object attention, on
+a specified synthetic fixture, with the information content, model size, training
+budget, initialization and seeds held identical between the two arms.
+
+**It does not:**
+
+- **compare our complete pipeline against Gregor's.** His objective (supervised
+  regression and pion classification), his event selection, and his metrics all differ
+  from ours, so no number here is a head-to-head. What a real comparison would require
+  is set out separately in
+  [MATCHED_COMPARISON_LADDER-20260916.md](MATCHED_COMPARISON_LADDER-20260916.md).
+- **settle high-multiplicity overflow performance.** The fixture gives every event
+  exactly four objects, so a cap never binds and compression is never exercised. The
+  overflow findings in this report are properties of the *implementation*, established
+  by reading and running the pinned code — not measurements of how compression performs.
+- **say anything about real data.** This is synthetic method development. Publication
+  adoption, uncertainty construction, covariance, statistical pairing, coverage and
+  Gate 6 are all outside it, and the outstanding source-semantic questions — photon and
+  blob meaning and calibration, prong hypotheses, shared objects and the primary lepton,
+  the exact tuple release and time range — remain unresolved.
 
 We propose testing individual typed objects in attention while retaining the
 current field definitions, masks and raw-row membership. There is **no measured
