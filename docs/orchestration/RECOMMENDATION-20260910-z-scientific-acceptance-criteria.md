@@ -563,19 +563,21 @@ be claimed yet, and the reason is measurable rather than arguable.**
 arm producing the null operands declares no thread environment **and requests half the CPUs of the
 arm that produced the throws.**
 
-**Widened to a covering census, because a three-file sample is not a census.** All **11** `.sh` files
-referencing `MNV_EST_SEED_OFFSET` — 9 `sbatch_*` launchers and 2 `lib_*` helpers:
+**Widened to a covering census, because a three-file sample is not a census.** ⚠ **CORRECTED 2026-09-16 — THIS CENSUS SAID 11 FILES AND ITS CELLS SUMMED TO 11 OVER A 10-FILE POPULATION.** Re-measured with `grep -rl MNV_EST_SEED_OFFSET nd-unfolding/ --include="*.sh"`: **10** `.sh` files, **8** `sbatch_*` launchers and 2 `lib_*` helpers — not 11 and 9. The **"not set at all"** row below claimed **8** while **listing only 7 items**, so one phantom file sat in both cells consistently, and `1 + 2 + 7 = 10` closes. **The ratio is therefore ONE OF TEN, not one of eleven.** ⚠ **AND THE WRONG FIGURE PROPAGATED:** `DECISION-SUPPORT-20260916-z-to-adopted-5d-covariance.md` §2.3 (committed `df0a8603`) reads *"Exactly one launcher of eleven pins a literal `OMP_NUM_THREADS`"* — my number, with the wrong denominator **and stripped of the population qualifier this sentence carries.** My document named the population; my message naming the ratio did not, and the unqualified form is what travelled. **Routed for correction, not edited here — that record is not this lane's.** A peer's independent census over a different population (`nd-unfolding/sbatch_uthrow*.sh`, 24 files) finds 4 with an `OMP_NUM_THREADS` assignment in their tree and 3 in this one — a genuine fork, `sbatch_uthrow_dump_5d.sh` carrying the line at `9dba1194` and not here, the file differing by 360 lines. **Both censuses are correct over their own populations, which is why the population must travel with the ratio.** The load-bearing fact is unaffected in both: **arm 7 pins none.** The corrected population, all **10** `.sh` files referencing `MNV_EST_SEED_OFFSET`:
 
 | how `OMP_NUM_THREADS` is set | count | which |
 |---|---:|---|
 | **a literal** | **1** | `sbatch_uthrow_run_5d_fast.sh:122` (`=32`), arm 5 |
 | **derived from the allocation** — `${SLURM_CPUS_PER_TASK:-32}` | **2** | `sbatch_unfold_5d_detector_bkgaware_gpu.sh` (arm 3); `sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh` (the launcher that **refuses** the offset) |
-| **not set at all** | **8** | arms 1, 2, 4, **6**, **7**, plus `lib_member_resume.sh`, `lib_substitution_fence.sh` |
+| **not set at all** | **7** (corrected from **8**; the eighth was never listed) | arms 1, 2, 4, **6**, **7**, plus `lib_member_resume.sh`, `lib_substitution_fence.sh` — **seven items, MEASURED, including `sbatch_uthrow_combine_5d_fast.sh` which is arm 7** |
 
 **The two derived cases are the sharpest part of the census and they are easy to misread as pinning.**
 `OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-32}` is **allocation-dependence written down**, not a pin: it
-makes the thread count a function of what Slurm granted. **So exactly one launcher in the family pins
-a literal, it is not arm 7, and arm 7 is where the null is computed.**
+makes the thread count a function of what Slurm granted. **So exactly one launcher of the TEN `.sh` files referencing `MNV_EST_SEED_OFFSET` pins a
+literal, it is not arm 7, and arm 7 is where the null is computed.** ⚠ **The population is named IN
+this sentence deliberately** — an earlier version said *"one launcher in the family"*, and "the
+family" is a definite description that re-points. That is the sentence the ratio was lifted from
+when it travelled into `df0a8603` §2.3 without its denominator or its population.
 
 **And nothing pins LightGBM as an estimator parameter.** `omnifold_nn_core.make_estimators:143-148`
 builds `LGBMClassifier(n_estimators=100, num_leaves=8, learning_rate=0.1, verbose=-1)` with
