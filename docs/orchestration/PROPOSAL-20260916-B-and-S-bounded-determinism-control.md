@@ -69,46 +69,122 @@ exactly what `B` must bound.
 **no** `n_jobs`, `num_threads`, `deterministic`, or `force_row_wise`. So thread count is governed
 by the OpenMP environment, and the histogram construction method is chosen by LightGBM at runtime.
 
-### What is in the CV path, measured
+### The CV numerical path — a BOUNDED TRACE, replacing a two-file name search
 
-- **The CV repeat runs at `train_frac=1.0`**, which the docstring says "reproduces the original loop
-  exactly". At that setting `keep` is all-true, so **the split RNG does not enter the CV path.** The
-  dominant ML variance the module describes is therefore *not* the channel `B` must bound.
-- **No BLAS-threaded reduction exists in the CV path.** `.dot(`, `np.matmul` and `np.einsum` each
-  occur **0** times in `omnifold_nn_core.py` and **0** times in `unified_throw_cov.py`. So
-  `OPENBLAS_NUM_THREADS` / `MKL_NUM_THREADS` are **not material to the CV numerics**. (They are
-  material to the assembly's eigensolve — a different step, and not what `B` bounds.)
-- **Prediction is a per-row map.** `_reweight` (`:152-155`) uses `clf.predict_proba` with clipping
-  and `nan_to_num`; there is no cross-row reduction, so thread count does not change it.
+⚠ **My earlier evidence was a name search over two files and it missed the kernel.** I grepped
+`omnifold_nn_core.py` and `unified_throw_cov.py` for `.dot(`/`matmul`/`einsum`, found zero, and
+concluded the BLAS variables were immaterial. The conclusion happens to survive, but the search
+did not cover the path: `_xsec_for_weights` is **imported**, not defined in either file
+(`unified_throw_cov.py:75`), and at `unified_throw_cov_5d.py:91` the base module's symbol is
+**monkey-patched** — `base._xsec_for_weights = _xsec_for_weights_5d` — so the function that
+actually runs is in a third file I never opened, and it contains both the histogramming and the
+completeness division.
 
-**So the material channel is narrow and specific: LightGBM's training-time histogram construction,
-which is where the cross-thread reduction lives.**
+The path, traced:
+
+| stage | site | what it does |
+|---|---|---|
+| 1 | `unified_throw_cov.py:907` | calls `_xsec_for_weights(...)` — resolved to the 5D kernel by the patch at `unified_throw_cov_5d.py:91` |
+| 2 | `unified_throw_cov_5d.py:57-62` | `omnifold_loop(...)` from `omnifold_nn_core` → `w_pull`, `w_push`. LightGBM fits live here |
+| 3 | `unified_throw_cov_5d.py:66-68` | `np.histogramdd(sample, bins, weights=w_push * wt_sig[m])` → `unfold_nd` |
+| 4 | `unified_throw_cov_5d.py:68`, `:76-77` | `np.histogramdd(..., weights=wt_sig[m])` → `of_in`; `np.histogramdd(..., weights=wt_td)` → `denom_nd` |
+| 5 | `unified_throw_cov_5d.py:78-80` | `completeness[nz] = of_in[nz] / denom_nd[nz]` |
+| 6 | `xsec_nd.py:54-83` | `extract_cross_section_nd(unfold_nd, completeness, flux, pot, nucleons, edges)` |
+
+**Five modules, not two.** `unified_throw_cov.py` → `unified_throw_cov_5d.py` → `omnifold_nn_core.py`
+→ `numpy.histogramdd` (three calls) → `xsec_nd.py`.
+
+### DEMONSTRATED versus NOT ESTABLISHED
+
+**DEMONSTRATED source of variation — exactly one.** Stage 2, the LightGBM fits. Evidence: the
+module's own hedge (`omnifold_nn_core.py:203-204`, "**nearly** deterministic in `seed` alone") and
+the precursor's measured `operands_bitwise_identical: False` at relative L2
+`4.4520002137582904e-14`.
+
+**ESTABLISHED DETERMINISTIC-AND-LINEAR.** Stage 6. `xsec_nd.py:79-82` computes
+`denom = completeness * flux_b * n_nucleons * data_pot * vol` and then
+`np.divide(counts * 1.0e4, denom, out=xsec, where=good)` — elementwise only, with `denom`
+independent of `counts`. Measured through the real function on synthetic arrays: the per-bin
+relative deviation in `xsec` equals that in `counts` to **2e-16** at perturbation scales `1e-3`
+through `1e-12`.
+
+**NOT ESTABLISHED — behaviour not determined, and recorded as such rather than assumed.**
+Stages 3-5, the three `np.histogramdd` calls and the division. NumPy's `histogramdd` is expected
+to be single-threaded with an accumulation order fixed by input order, but **I have not measured
+it**, so it is not claimed. Stage 1's `np.column_stack` and the boolean indexing are copies, not
+reductions.
+
+**So the BLAS conclusion stands but on different evidence:** no stage in the traced path performs
+a matrix product. The relevant variables are immaterial to the CV numerics because the path has no
+BLAS reduction, not because two files lacked a substring.
 
 ### Classification
 
 | class | settings | why |
 |---|---|---|
-| **MUST BE FIXED — changes numerics** | LightGBM `num_threads`; `force_row_wise` (or `force_col_wise`); `deterministic=True` | Thread count changes histogram reduction **order**. The row/col-wise choice is selected **at runtime from data shape and thread count**, so without fixing it the *algorithm* can differ between allocations, not merely the summation order. `deterministic` is the only documented reproducibility guarantee, and LightGBM requires one of the force flags for it. |
-| **MUST BE RECORDED — can change the effective TEAM SIZE, hence numerics** | `OMP_NUM_THREADS`, `OMP_DYNAMIC`, `OMP_THREAD_LIMIT`, and the process-visible value of whatever LightGBM resolves as its thread count | `OMP_DYNAMIC` permits the runtime to return a **smaller** team than requested; a varying team size varies reduction order even with everything else pinned. Recording is sufficient where fixing is a code change. |
-| **NOT ESTABLISHED AS MATERIAL — do not require on present evidence** | `OMP_PROC_BIND`, `OMP_PLACES` | Affinity and placement. For a **fixed team size** they change performance and NUMA locality, not floating-point reduction order. Listing them as required pins over-claims. |
-| **UNDETERMINABLE FROM THIS TREE** | `OMP_SCHEDULE` | Affects only loops compiled `schedule(runtime)`. Whether the installed LightGBM contains any cannot be answered from this checkout. Record it; do not assert it matters or does not. |
+| **MANDATED BY THE DOCUMENTATION** | `force_row_wise=true` **or** `force_col_wise=true`, together with `deterministic=true` | LightGBM v4.5.0's `deterministic` entry, Note 2: *"to avoid potential instability due to numerical issues, please set `force_col_wise=true` or `force_row_wise=true` when setting `deterministic=true`"*. Not advisory — it is the documented precondition of the guarantee. |
+| **THE GUARANTEE ITSELF** | `deterministic=true` | *"used only with `cpu` device type"*; absent it, LightGBM promises nothing. |
+| **USEFUL, NOT REQUIRED BY THE GUARANTEE** | `num_threads` | See the correction below. |
+| **MUST BE RECORDED** | `OMP_NUM_THREADS`, `OMP_DYNAMIC`, `OMP_THREAD_LIMIT`, and the thread count the process resolves | Cheap, and it is what distinguishes the failure modes in §4. |
+| **NOT ESTABLISHED AS MATERIAL** | `OMP_PROC_BIND`, `OMP_PLACES` | Affinity and placement, not reduction order. Listing them as required pins over-claims. |
+| **UNDETERMINABLE FROM THIS TREE** | `OMP_SCHEDULE` | Affects only `schedule(runtime)` loops; whether the installed build has any is not answerable here. |
 
-### ⚠ The enforcement gap that §1(b) requires, named
+### ⚠ CORRECTION: I had the thread-count claim BACKWARDS
 
-`deterministic=True` is documented as reproducible **for the same data and the same number of
-threads**. It therefore does **not** extend across thread counts, so the thread count must be a
-**fixed member of the envelope** rather than something the envelope ranges over. And it says nothing
-about **different CPU models**: a build may dispatch different SIMD widths on different
-microarchitectures, changing reduction order at identical thread count.
+I wrote that `deterministic=true` is *"documented as reproducible for the same data and the same
+number of threads"* and therefore *"does not extend across thread counts, so the thread count must
+be a fixed member of the envelope"*. **The documentation says the opposite.** LightGBM **v4.5.0**,
+`deterministic`, bullet 2, verbatim:
 
-**Consequence, and it upgrades the receipt requirement from good practice to necessity:** if the
-runs disagree, "route (i) is falsified" is ambiguous between *the design cannot be pinned*, *the
-design was never fully pinned*, and *the envelope spans microarchitectures the guarantee never
-covered*. Recording node name, **CPU model**, and process-visible thread settings per run is what
-separates the three. Without the CPU model, a disagreement is uninterpretable.
+> setting this to `true` should ensure the stable results when using the same data and the same
+> parameters (**and different `num_threads`**)
 
-**The guarantee must be checked against the INSTALLED LightGBM**, whose version is not readable
-from this checkout (it is not importable here). That check is a prerequisite, not a result.
+So the guarantee **explicitly covers differing thread counts**, and pinning `num_threads` is not
+required by it. Pinning it remains harmless and removes one variable from the receipt, but it is
+not the load-bearing pin — `deterministic` plus a `force_*_wise` flag is. (Text verified identical
+on the pinned `v4.5.0` page and on `latest`; the `latest` page states no version, which is why the
+citation is to v4.5.0.)
+
+### ⚠ AND THE REAL OBSTACLE IS THE ONE I MISSED — "different systems"
+
+The same entry, bullet 3, verbatim:
+
+> when you use the different seeds, **different LightGBM versions**, the binaries compiled by
+> **different compilers**, or **in different systems**, the results are expected to be different
+
+**This is in direct tension with `§4.4a` item 2**, which requires the repeats to **span DIFFERENT
+ALLOCATIONS** on the ground that *"repeats on one node do not test it — they test in-process
+determinism, which is the easy half."* If different allocations deliver different systems —
+different CPU models, which `--qos=shared --constraint=cpu` neither controls nor guarantees — then
+**LightGBM's documentation PREDICTS disagreement**, and a cross-allocation disagreement would
+*confirm documented behaviour rather than falsify the pinning*.
+
+That matters because `§4.4a`'s closing line says *"if item 1 or 2 fails — the pinned chain is not
+bit-identical — route (i) does **not** deliver a design property at all."* Under this reading item 2
+can fail for a reason that is **not a defect in the pin set**, and the closing line would retire
+route (i) on evidence that never bore on it.
+
+**So the envelope has to be defined, and the definition is now a substantive choice, not a
+formality:**
+
+- **Scoped envelope** — same CPU model, same LightGBM build, same compiler. `B = 0` is then
+  claimable **within that class only**, and cross-class variation becomes a separate term that is
+  *not* bounded by this experiment and would need its own argument. This is the only option the
+  documentation supports.
+- **Allocation-spanning envelope** — what item 2 asks for. The documentation declines to support
+  it, so route (i) cannot deliver a design property over it, and `B` would have to be measured
+  (route (ii), gated) rather than argued.
+
+**The per-run CPU-model receipt is therefore necessary for a different and stronger reason than I
+first gave:** not merely to disambiguate a failure after the fact, but because **the envelope
+cannot be stated without it.** The LightGBM version and compiler identity belong in the same
+receipt, for the same reason.
+
+**And this is why the installed build must be read before any run.** The quoted text is v4.5.0's;
+the installed version is not readable from this checkout (`import lightgbm` →
+`ModuleNotFoundError` here). If the installed build predates the `deterministic` parameter, or
+documents it differently, every line above is void. That check is a prerequisite and costs no
+compute.
 
 ---
 
@@ -190,20 +266,89 @@ independently; and §7 item 4, below.
 
 ---
 
-## 5. What remains of `S`
+## 5. `S` — the completeness channel, BOUNDED, with the premise named
 
-`S` is discharged **for the F7 channel only**. The uncovered channel is not a rounding detail:
-`SPEC:1662` records the completeness division `completeness[nz] = of_in[nz] / denom_nd[nz]` as
-*"an elementwise division by a quantity that can be small"* bounded by **"nothing, and it is an
-amplification channel with no `n`-dependent bound"**.
+`S` is discharged for the F7 channel. §C.2 named **two** uncovered channels by which a CV
+perturbation reaches `C_unified`: the **throw deviations** and the **completeness division**. This
+section closes the second. **It does not close the first.**
 
-**So `ε ≤ S` is also undemonstrated, and the defensible sentence is "`S` is not binding THROUGH THE
-F7 CHANNEL".** The unqualified form — "`S` is not binding" — is the sentence that travelled into a
-decision-support record, and it is the stated reason `ε` is argued from `B`'s side at all. If an
-uncovered channel's cap were tight, `S` could be binding after all. **§7 item 4 is upstream of more
-than its placement suggests**, and it is arithmetic plus one code read.
+Restating that no `n`-dependent bound exists does not finish the task, so here is the premise that
+does, and the measurement of it.
 
----
+### The premise
+
+**(i) The perturbation enters through `unfold_nd` ALONE.** Of the three histograms in the kernel,
+only `unfold_nd` carries the OmniFold output: `weights=w_push * wt_sig[m]`
+(`unified_throw_cov_5d.py:66-68`). `of_in` uses `weights=wt_sig[m]` and `denom_nd` uses
+`weights=wt_td` — the **input** weights. So `completeness = of_in/denom_nd` is
+**independent of `w_push`**, and a null-comparison perturbation, which by construction differs
+only through the estimator while holding the input weights identical, **cannot move it**.
+
+**(ii) The cross-section is EXACTLY LINEAR in that histogram, with a perturbation-independent
+gain.** `xsec_nd.py:79-82`:
+
+```python
+denom = completeness * flux_b * n_nucleons * data_pot * vol
+np.divide(counts * 1.0e4, denom, out=xsec, where=good)
+```
+
+`denom` is a function of `completeness`, the flux, the POT, the nucleon count and the bin volume —
+**none of which depends on `counts`**. So `xsec = counts · 1e4 / denom` is linear with per-bin
+gain `1e4/denom_i`.
+
+### What follows, and it is the answer
+
+Under (i) and (ii), a perturbation `Δ` in `unfold_nd` produces `Δxsec_i = 1e4·Δ_i/denom_i`, so the
+**per-bin RELATIVE deviation is preserved exactly**: `Δxsec_i/xsec_i = Δ_i/unfold_nd_i`. **The gain
+cancels.** And `r_null = ‖x_cv2 − x_cv‖ / ‖x_cv‖` is an `x²`-weighted RMS of per-bin relatives, so
+it is a convex combination of preserved quantities.
+
+**Therefore the completeness division contributes gain exactly 1 to the statistic the null
+criterion grades, and needs no `n`-dependent bound for it.**
+
+### Measured, not just read
+
+Through the real `extract_cross_section_nd`, on synthetic arrays with `completeness` spanning four
+orders of magnitude including a `1e-12` bin:
+
+```
+per-bin relative deviation, xsec vs counts:  max|difference| = 2e-16  at eps = 1e-3 … 1e-12
+r_null-shaped statistic, completeness as-is:  8.037319650110e-10
+                         completeness x1e-3:  8.037317394100e-10
+                         completeness x1e3 :  8.037318622973e-10
+```
+
+**Rescaling the completeness by six orders of magnitude moves the statistic in the seventh
+significant figure** — round-off, not amplification.
+
+The `1e-12` bin was **not** excluded by `where=good` (its `denom` is still positive); it yields a
+*tiny* `xsec`, which the `x²` weighting then **down**-weights. So the pathological case is
+suppressed in this statistic rather than amplified — the opposite of the concern.
+
+### So what is `SPEC:1662` right about?
+
+It is right, and about a different quantity. *"An elementwise division by a quantity that can be
+small"* bounded by *"nothing, and it is an amplification channel with no `n`-dependent bound"*
+describes the **absolute** cross-section scale: a small `completeness_i` does make `xsec_i` large,
+without bound. **That characterisation simply does not reach a RELATIVE statistic**, because the
+same factor sits in numerator and denominator.
+
+**The consequence for `S` is conditional and worth stating precisely.** If `S` is expressed as a
+cap on a **relative** CV movement — which is the form `r_null` takes, and the form §C.1 adopted —
+the completeness channel is bounded and the F7 argument extends through it. If `S` were expressed
+as an **absolute** cap, as the withdrawn `5.00e-41` was, the amplification is real and unbounded,
+and this section does not help. **The relative form is therefore not merely convenient; it is what
+makes this channel boundable at all.**
+
+### What remains uncovered
+
+- **The throw-deviation channel.** Not addressed here, and I make no claim about it. §7 item 4.
+- **Stages 3-5 of the trace** are *not established* deterministic (§2). The bound above is on
+  **propagation** of a perturbation, and assumes the histogramming is a fixed linear map of its
+  weights. That is a property I have not measured.
+- **Premise (i) is specific to the NULL comparison.** Two executions differing in their input
+  weights — a different throw — *would* move `completeness`, and then it is not perturbation-
+  independent. The bound covers the null, not the throw ensemble.
 
 ## 6. The independent assessor — resolved operationally
 
