@@ -19,6 +19,10 @@ def summarize(directory: Path) -> dict[str, Any]:
     reference = None
     gains = []
     checks: dict[str, bool] = {}
+    # Compute cost is reported, never gated: the frozen acceptance criteria below are
+    # unchanged, and a cheaper arm does not thereby become the better one.
+    costs: dict[str, list[float]] = {"pooled": [], "direct": []}
+    wall_seconds: list[float] = []
     for mode in ("ordinary", "injected", "shuffle"):
         for seed in SEEDS:
             name = f"{mode}-{seed}"
@@ -62,6 +66,15 @@ def summarize(directory: Path) -> dict[str, Any]:
             for key in ("parameters", "initial_reco_sha256", "initial_truth_sha256"):
                 if pooled[key] != direct[key]:
                     raise ValueError(f"Unmatched initial model: {name}/{key}")
+            wall_seconds.append(float(receipt["wall_seconds"]))
+            for route, arm in (("pooled", pooled), ("direct", direct)):
+                costs[route].append(
+                    sum(
+                        float(step[key])
+                        for step in arm["iterations"]
+                        for key in ("reco_fit_seconds", "truth_fit_seconds")
+                    )
+                )
             parent, child = [arm["iterations"][-1] for arm in (pooled, direct)]
             if mode == "injected":
                 if parent["log_ratio_rmse"] <= 0:
@@ -106,10 +119,34 @@ def summarize(directory: Path) -> dict[str, Any]:
             )
     mean = float(np.mean(gains))
     half_width = float(t.ppf(0.975, 7) * np.std(gains, ddof=1) / np.sqrt(8))
+    ratios = [
+        direct_cost / pooled_cost
+        for pooled_cost, direct_cost in zip(costs["pooled"], costs["direct"])
+        if pooled_cost > 0
+    ]
+    compute = {
+        "pooled_fit_seconds_total": float(np.sum(costs["pooled"])),
+        "direct_fit_seconds_total": float(np.sum(costs["direct"])),
+        "pooled_fit_seconds_median": float(np.median(costs["pooled"])),
+        "direct_fit_seconds_median": float(np.median(costs["direct"])),
+        "paired_direct_over_pooled_ratio": {
+            "n": len(ratios),
+            "min": float(np.min(ratios)) if ratios else None,
+            "median": float(np.median(ratios)) if ratios else None,
+            "max": float(np.max(ratios)) if ratios else None,
+        },
+        "job_wall_seconds_total": float(np.sum(wall_seconds)),
+        "note": (
+            "Paired per-job fit seconds from the run receipts. Reported, not gated. "
+            "Retaining more information is expected to cost more; that is a price to "
+            "state, not a penalty and not a performance verdict."
+        ),
+    }
     checks["favorable_seeds"] = sum(gain > 0 for gain in gains) >= 7
     checks["material_paired_gain"] = mean - half_width > 5
     return {
         "scope": "synthetic routing only; no adoption or uncertainty authority",
+        "compute": compute,
         "paired_improvement_percent": gains,
         "paired_mean_95_percent_interval": [mean - half_width, mean + half_width],
         "checks": checks,
