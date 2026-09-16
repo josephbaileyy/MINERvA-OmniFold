@@ -260,6 +260,30 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   lead to the same next action. **And a third state: today it can produce neither outcome**, since
   `κ = None` refuses even healthy baselines. **Hence the sequencing recommendation — the cause-3
   decision is free and prices the most expensive item.**
+- [`RECOMMENDATION-20260916-theta-per-bin-uncertainty-tolerance.md`](RECOMMENDATION-20260916-theta-per-bin-uncertainty-tolerance.md)
+  - **RECOMMENDATION on `θ`, a tolerance on the reported per-bin uncertainty's relative movement.**
+  Routed by Joseph 2026-09-16 for `[cb0b6b]` assessment then his decision. ⚠ **`S` IS NOT CLOSED and
+  this does not close it** — §6 explains why the author is structurally unable to: the arguments that
+  would discharge `SPEC` §7 item 4 would be discharging the author's own recorded residue. ⚠
+  **Authored by the owning lane, which therefore cannot assess it.** **THE ANSWER IS JOINT, and the
+  ground is stronger than "necessary and not sufficient":** a diagonal rescaling preserves
+  correlations **exactly** (MEASURED `3.3e-16` for the V-block alone), but `D_Z` multiplies `Σ_V`
+  **only** (`z_assembly.py:4`), so `g` reweights V against four untouched terms and the **total**
+  correlation moves (`5.9e-2` on the same fixture). The grip is exact — **`dσ_i/σ_i =
+  f_i·(dg_i/g_i)`**, MEASURED to six figures — so `θ` permits `|dg/g| ≤ θ/f_i` and the off-diagonal
+  V-part moves by `2θ/f_i`: **20× `θ` at `f=0.1`, 200× at `f=0.01`, and `f_i` is UNMEASURED.**
+  Decisive for the *declared* use, because SPEC requires the 3D/4D covariances to be **exact
+  projections** and a projection contracts the full matrix — sampling exactly where `θ` has least
+  grip. **THREE ROUTES BARRED and named:** display precision (the `:2109`/`:3909` formatting borrow
+  that produced `5.00e-41`), significance preservation (founds a determinism gate on **DEFERRED**
+  endpoint B), and fitting to `4.452e-14` (`SPEC:1410`). **ADMISSIBLE ROUTE:** `σ` is not *known* to
+  better than its own ensemble sampling error — `7.11%` at `C_stat`'s `N=100`, `14.74%` at `C_ML`'s
+  `N=24`, both frozen and pre-dating Z. ⚠ **But `θ` IS NON-BINDING BY 12.2 ORDERS** (`1.60e12 ×` the
+  observed null), so it is **`S`'s per-bin shadow** and inherits `S`'s vacuity: **declare it as a
+  CEILING, never as the operative gate**, which stays `ε` argued from `B`'s side. Seven alternatives
+  tabulated with consequences. **ONE MEASUREMENT settles both open ends** — the per-bin variance
+  decomposition `f_i` — and whether the five per-term diagonals are even persisted is explicitly
+  **NOT** established here. **Nothing adopted; no compute authorized, requested or run.**
 - [`PREDECLARATION-20260916-B-estimator-and-coverage.md`](PREDECLARATION-20260916-B-estimator-and-coverage.md)
   - **PREDECLARATION of `Z_CONSTRUCTION_PLAN` §4.4a items 4 and 5 — zero compute, judgement, and
   they GATE the arm-7 evidence.** Owner `owners.tsv:14`; accountability for `B`'s justification
