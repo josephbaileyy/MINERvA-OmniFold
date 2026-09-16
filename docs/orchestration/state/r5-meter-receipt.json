@@ -8,18 +8,18 @@
     "cpu_task_hours": 500.0
   },
   "unit": "task-hours: sum of post-t0 ElapsedRaw over every execution attempt, with the attempts of one job id summed; an attempt is (JobID, Start, End) and a repeated observation of one attempt is counted once; attempts straddling t0 are clipped at t0; .batch/.extern/step and array-bracket rows excluded",
-  "measured_at_utc": "2026-09-16T00:58:55.399327Z",
+  "measured_at_utc": "2026-09-16T04:43:35.064686Z",
   "measured_on_host": "login05",
   "source": {
     "kind": "sacct",
     "argv_or_path": "sacct --user josephrb -X -D --parsable2 --noheader --starttime 2026-09-02T13:44:27 --endtime now --format=JobID,JobName,State,ElapsedRaw,Partition,Start,End,AllocTRES",
-    "raw_sha256": "3a868b6aa4c66c61ca818da4451d619ebd90bc390c567d423cec80d972d1e0ac"
+    "raw_sha256": "7f96d6735e4e810d75b860ddab1765873c6e562f5c8eab859ab1cf00ec218a80"
   },
   "spend": {
-    "gpu_task_hours": 1.278888888888889,
-    "cpu_task_hours": 95.87777777777778,
-    "task_count": 90,
-    "attempt_count": 1973,
+    "gpu_task_hours": 1.4719444444444445,
+    "cpu_task_hours": 95.90805555555555,
+    "task_count": 93,
+    "attempt_count": 1976,
     "metered_task_ids": [
       "57712764",
       "58106332",
@@ -110,7 +110,10 @@
       "58396676_0",
       "58397664_0",
       "58397664_1",
-      "58398465"
+      "58398465",
+      "58403382",
+      "58403491",
+      "58403564"
     ],
     "attempts_by_task_id": {
       "57712764": 1884,
@@ -202,14 +205,16 @@
       "58396676_0": 1,
       "58397664_0": 1,
       "58397664_1": 1,
-      "58398465": 1
+      "58398465": 1,
+      "58403382": 1,
+      "58403491": 1,
+      "58403564": 1
     },
     "by_state": {
-      "COMPLETED": 71,
-      "FAILED": 16,
+      "COMPLETED": 74,
+      "FAILED": 18,
       "NODE_FAIL": 2,
-      "REQUEUED": 1882,
-      "RUNNING": 2
+      "REQUEUED": 1882
     }
   },
   "fired": {
@@ -219,7 +224,7 @@
     "any": false
   },
   "headroom": {
-    "gpu_task_hours": 498.7211111111111,
-    "cpu_task_hours": 404.1222222222222
+    "gpu_task_hours": 498.52805555555557,
+    "cpu_task_hours": 404.09194444444444
   }
 }
