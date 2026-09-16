@@ -260,6 +260,33 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   lead to the same next action. **And a third state: today it can produce neither outcome**, since
   `κ = None` refuses even healthy baselines. **Hence the sequencing recommendation — the cause-3
   decision is free and prices the most expensive item.**
+- [`PREDECLARATION-20260916-B-estimator-and-coverage.md`](PREDECLARATION-20260916-B-estimator-and-coverage.md)
+  - **PREDECLARATION of `Z_CONSTRUCTION_PLAN` §4.4a items 4 and 5 — zero compute, judgement, and
+  they GATE the arm-7 evidence.** Owner `owners.tsv:14`; accountability for `B`'s justification
+  assigned at `df0a8603` §2.3, verified in the record rather than accepted on relay. ⚠ **Authored by
+  the owning lane, which therefore CANNOT assess it** — `owners.tsv:15` `[cb0b6b]`. ⚠ **The
+  independence residual is on the document's face:** route (i) makes `B` a design property, which
+  weakens the objection that `S` must be independent of `B`, but **item 4 is a judgement made while
+  owning `S`** — reduced, not removed. **ITEM 4:** `B = 0` asserted as a property of the pinned
+  design and verified by a **BOOLEAN** bitwise-identity test; `B` is **UNDEFINED** (never "the
+  observed difference") if the test fails. Discharges Gap 3 **by construction** — the estimator's
+  range is `{0, undefined}`, so there is no knob to tune. ⚠ **And a boolean is why route (i) is
+  admissible where the withdrawn fallback was BARRED: it reads no VALUE off Z's null**, where the
+  fallback read a magnitude; replacing the boolean with a tolerance re-enters `SPEC:1410`. Note
+  `sbatch_uthrow_combine_5d_fast.sh:9` **already asserts** the null "must be zero". ⚠ `B = 0` gives
+  `B ≤ S` trivially **and does not give `ε`** — `ε = 1e-9` still stands on §C.3's transfer argument
+  alone, its own falsifier **UNEVALUATED**. **ITEM 5:** the objective is over **allocation shapes, not
+  repeat count**, because the mechanism is deterministic-given-allocation; **Model A declared**,
+  minimum **n = 3** (A1/A2 same node for item 1, B1 different node for item 2) at a **1.73 CPU
+  task-h** reservation bound, 4 to attribute. Model B retained only as a falsification branch, priced:
+  **6 runs to exclude a coin flip, 30 to exclude p ≥ 0.1** — which is Gap 2's "4 repeats had no
+  justification" made quantitative. **Receipt requirement:** ≥2 distinct node names or item 2 is
+  **NOT TESTED and the run INCONCLUSIVE**, and an unprovided microarchitecture arm is **UNEVALUATED**,
+  never folded into a pass. ⚠ **A MEASURED OBSTACLE NO DOCUMENT NAMED: the pin set is incomplete** —
+  `OMP_DYNAMIC`/`OMP_SCHEDULE`/`OMP_PROC_BIND`/`OMP_PLACES` have **zero occurrences** in
+  `nd-unfolding/`, including in the arm treated as the pinned reference, so "route (i) is falsified"
+  would be ambiguous between *cannot be pinned* and *was never fully pinned*. **Nothing adopted, no
+  compute authorized or requested, nothing run.**
 - [`DESIGN-20260911-endpoint-B-generator-comparison-test.md`](DESIGN-20260911-endpoint-B-generator-comparison-test.md)
   - **PROPOSED DESIGN for endpoint B's generator-significance test — nothing adopted, run or
   authorized; endpoint B remains DEFERRED NOT PASSED and Gate 2 remains FAIL.** ⚠ **Authored by the
