@@ -198,7 +198,7 @@ docs/orchestration/PROPOSAL-20260830-k0r2-resubmission.md	tracked	LIVE	document	
 docs/orchestration/PROPOSAL-20260902-oi173-reissue-cause4-M-referent.md	tracked	LIVE	document		20260902	open		route-only		no	5	277	19585
 docs/orchestration/PROPOSAL-20260903-pet-gate6-branch-preservation-and-removal.md	tracked	LIVE	document		20260903	open		route-only		no	3	394	26508
 docs/orchestration/PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md	tracked	LIVE	document		20260908	open		route-only		no	3	369	25676
-docs/orchestration/PROPOSAL-20260916-B-and-S-bounded-determinism-control.md	tracked	LIVE	document		20260916	open		route-only		no	2	559	35766
+docs/orchestration/PROPOSAL-20260916-B-and-S-bounded-determinism-control.md	tracked	LIVE	document		20260916	open		route-only		no	2	590	38071
 docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	no	6	367	28401
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	tracked	LIVE	document		20260810	open		route-only	docs/open-items/verify_open_items_restructure.py	no	9	398	26929
 docs/orchestration/PUBLICATION-READINESS-20260822.md	tracked	LIVE	document		20260822	open		route-only		no	9	1352	101099

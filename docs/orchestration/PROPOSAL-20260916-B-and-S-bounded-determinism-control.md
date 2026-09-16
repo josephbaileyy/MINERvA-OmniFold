@@ -524,6 +524,37 @@ parametrisations depend on it — one for its scientific justification, the othe
 off-diagonal grip. This is the operative dependency: the open item is a measurement (or, if the
 per-term diagonals are not persisted, a Tier-2 writer requirement), not a further judgement.
 
+**(4a) AND "ONE TOLERANCE PLUS ONE MEASUREMENT" MUST NOT BE READ AS "THE CORRELATION SIDE IS
+SETTLED ONCE `f_i` IS KNOWN".** The criteria owner adopted the §5.7 simplification into its own §1
+and returned two qualifications it does not carry. Both verified here:
+
+- **The derived bound degrades fast in `min_i f_i`.** Composing `γ ≤ θ/min_i f_i` with §5.7's
+  `((1+γ)²−1)`, at `θ = 7.11e-2`: `min_f = 1.0 → 14.7%`, `0.5 → 30.5%`, `0.2 → 83.7%`,
+  `0.1 → 192.8%`, `0.01 → 6477%`. **Below `min_f ≈ 0.2` the bound exceeds 100% and settles
+  nothing.** Sufficiency is conditional on the measured value, and the conditional must travel
+  with the simplification.
+- **`min_i f_i` is an extreme-order statistic over a 10,694-bin support**, so a uniform-`γ` bound
+  is set by the single worst bin — by construction a bin where the unified throw contributes
+  almost nothing. Measured on a 4,000-bin fixture, `min f` falls monotonically with population
+  size: `9.25e-2` over 100 active bins, `2.05e-2` over 1,000, `1.11e-2` over 1,975. A vacuous
+  derived bound may therefore be an artifact of maximising over a large population rather than
+  evidence of a defect.
+
+**The owner's remedy — an active-set restriction rather than a tighter `θ` — is right in
+principle, and I measure it to be PARTIAL.** Tightening `θ` below its scientific ceiling to rescue
+a bound set by a dead bin would be choosing a tolerance to obtain a verdict. But the deadband
+population and the small-`f` population are **not the same set**: on the fixture the global worst
+bin *is* a deadband bin (`min f` all = `1.546e-3`, deadband = `1.546e-3`), yet **`min f` over the
+ACTIVE bins is still `1.106e-2`**, giving `γ = 6.4` and a bound that remains vacuous. Excluding the
+deadband is correct — those bins have `Δ = 0` exactly and `g` pinned, so they impose no constraint
+— and it buys about an order of magnitude here, **but it does not by itself make the derived bound
+non-vacuous.**
+
+**So the joint character survives in a weaker form: not two tolerances, but a tolerance and a
+POPULATION — and the population is a declaration.** Which further restriction beyond the deadband
+is defensible is a scientific judgement about which bins' covariance is actually consumed, not
+something derivable here.
+
 **Analysis paused here** pending these four. Nothing in §5 is a criterion; nothing is adopted.
 
 **One consequence recorded and deliberately NOT acted on.** The criteria owner states that §5.1's
