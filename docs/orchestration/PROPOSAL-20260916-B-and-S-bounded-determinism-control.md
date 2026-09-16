@@ -340,15 +340,93 @@ as an **absolute** cap, as the withdrawn `5.00e-41` was, the amplification is re
 and this section does not help. **The relative form is therefore not merely convenient; it is what
 makes this channel boundable at all.**
 
-### What remains uncovered
+### The THROW-DEVIATION channel — closed too, and exactly
 
-- **The throw-deviation channel.** Not addressed here, and I make no claim about it. §7 item 4.
-- **Stages 3-5 of the trace** are *not established* deterministic (§2). The bound above is on
-  **propagation** of a perturbation, and assumes the histogramming is a fixed linear map of its
-  weights. That is a property I have not measured.
-- **Premise (i) is specific to the NULL comparison.** Two executions differing in their input
-  weights — a different throw — *would* move `completeness`, and then it is not perturbation-
-  independent. The bound covers the null, not the throw ensemble.
+§C.2 named this as the second uncovered channel and declined to assert a mechanism. The
+mechanism is an algebraic identity **the code itself asserts in one place and gates in another**.
+
+**The covariance never sees the CV.** `uq_math.py:107-116`:
+
+```python
+def joint_throw_covariance(throws, cv):
+    """Mean-centered joint covariance plus the separately reported mean shift."""
+    mean = X.mean(axis=0)
+    return mat_covariance(X), mean - cv
+```
+
+and `mat_covariance` (`uq_math.py:96-104`) is `Z = X - X.mean(axis=0); (Z.T @ Z)/N` — **universe-mean
+centered, CV absent**. So the entire CV dependence of the output is the second return value,
+`mean - cv`, which is `hJointMeanShift`.
+
+**The two variants differ by exactly the square of that shift.** `z_assembly.py:182-215`, the
+single-source transformation (written because *"two callers disagreed about it"*):
+
+```
+v_uni^mean = clip(diag(C_unified), 0, inf)
+v_uni^cv   = v_uni^mean + mean_shift**2        (added AFTER the clip -- the order matters)
+```
+
+and `check_variant_coupling` (`:221`, `:320`) **gates** `v_uni^cv == v_uni^mean + ms²`.
+
+**Therefore, under a CV perturbation `δ` (so `ms → ms − δ`), per bin:**
+
+| variant | movement |
+|---|---|
+| mean-centered | **Δv = 0, exactly** — the CV is not an input |
+| CV-centered | **Δv = −2·ms·δ + δ²**, exactly — first order with coefficient `2\|ms\|` |
+
+Verified against the real `derive_variant_diagonals`: the identity reproduces at
+`max relative error 0.000e+00`; `Δv_mean = 0.000e+00` exactly; and the closed form matches the
+function's output to 1.4e-11 at `eps = 1e-3`. (The apparent degradation to 1.3e-5 at `eps = 1e-9`
+is cancellation in the *check* — differencing two ~1e-78 values whose difference is 1e-78·eps
+leaves ~2.2e-16/eps of relative precision — not an error in the algebra. The same artefact the
+independent assessor reported and discarded in its own step-1 probe.)
+
+**So F7 was never a special case — it is the whole channel.** Both uncovered channels are now
+closed: the completeness division contributes gain exactly 1 to the relative statistic, and the
+throw deviations contribute through `ms` alone, which is precisely the operand §C.2's triangle
+inequality already bounds.
+
+### The concrete dependency that remains, and the smallest action that resolves it
+
+Every quantity in the propagation chain is now **measured** (`ms` as `hJointMeanShift`,
+`v_uni^mean` as `diag(C_unified)`, both persisted in the throw product) or an **algebraic identity
+the repository gates**. Exactly one quantity is free:
+
+> **A declared tolerance `τ` on the relative movement of the reported per-bin variance
+> `v_uni^cv`.**
+
+That is `S`, expressed where the propagation actually lands. It is a scientific judgement, it is
+one number, and it is not this lane's to choose.
+
+**It resolves the whole chain by inversion, with no new measurement.** Requiring
+`|Δv| ≤ τ·v^cv` and solving the exact quadratic gives a per-bin cap on the CV perturbation:
+
+```
+|δ_i|  ≤  τ·v_i^cv / ( sqrt(ms_i² + τ·v_i^cv) + |ms_i| )
+```
+
+— which converts a declared covariance tolerance into a cap on CV movement **in the units
+`r_null` measures**. `ms` and `v^cv` are already in the product, so this needs `τ` and nothing else.
+
+⚠ **It must be written in that form, not as `sqrt(ms² + τv) − |ms|`.** The two are algebraically
+identical and the subtraction **silently violates its own cap** once `τ·v ≪ ms²`. Measured: the
+naive form respects the bound at `τ = 1e-2` and `1e-6` and **fails at `1e-9`, `1e-12` and
+`1e-16`** — the regime a determinism tolerance actually lives in — while the stable form achieves
+exactly `τ` at every value from `1e-2` to `1e-20`. The naive form's apparent "pass" at `1e-20` is
+underflow to a zero cap, which is vacuous rather than correct. **A tolerance implemented the
+obvious way would be looser than declared, in the direction that weakens the gate.**
+
+### What is still NOT covered
+
+- **`ε` still does not follow.** This bounds *propagation*, which is `S`'s side. `SPEC:1410` forbids
+  reading `ε` off Z's own null, and §C.2 establishes `ε` must be argued from `B`'s side. A complete
+  `S` does not produce an `ε`.
+- **Stages 3-5 of the CV trace** remain *not established* deterministic (§2). This argument assumes
+  the histogramming is a fixed linear map of its weights; that is unmeasured.
+- **Premise (i) of §5's completeness bound is null-specific.** Two executions with different input
+  weights would move `completeness`; the bound covers the null, not the throw ensemble.
+- **`τ` itself is undeclared**, and declaring it is the action above.
 
 ## 6. The independent assessor — resolved operationally
 
