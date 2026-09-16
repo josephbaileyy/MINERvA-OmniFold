@@ -539,6 +539,24 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   movement limits"** rather than *"did not move"*; and `D1`/`D2` need **justified tolerances and scope**,
   not two numbers.
 
+- [`DECISION-SUPPORT-20260916-z-to-adopted-5d-covariance.md`](DECISION-SUPPORT-20260916-z-to-adopted-5d-covariance.md)
+  - **DECISION SUPPORT ONLY — ratifies no criterion, adopts nothing, grades nothing, and no Z
+  covariance has ever been constructed.** The route from Z's outputs to an adopted 5D covariance,
+  measured 2026-09-16. Leads with §3.5's ruling that a complete favourable Z *"would establish
+  exactly one thing... Nothing else"* and does not move **Gate 2** — so the cause cells are
+  necessary and not sufficient. Corrects the cell population to **26, not 28** (cause 5 is one
+  disposition, cause 3's `M` splits into `M(i)`/`M(ii)`), with **zero RESOLVED and none droppable**.
+  **A1 is OPEN:** `S` is discharged by bounding **for the F7 channel only** — the throw-deviation
+  and completeness-division channels are unbounded, §7 item 4 — `ε = 1e-9` is **PROPOSED and
+  UNGRADED** with its falsifier **UNEVALUATED**, and `B` is the binding quantity because §3.7a
+  rev. 19's `ε = S` would be a tripwire nothing can fire. **§3 reconciles §7 item 1 with the
+  completed precursor without reopening it:** the persistence requirement is already discharged
+  there (`hCvExecution{k}`/`hCvSupportMask` absent at `923e1323`, present at the precursor's
+  producer `e09513d8`), so the null denominator is already measured at `3.2124510692799616e-37` —
+  for the **precursor**, not G, whose check stays prospective. Also: the assembly costs ~2 min of
+  eigensolve against **89.11 GB** of input I/O, and the binding constraint is the **2026-09-30 stop
+  date**, not the ceiling. Read its `CITABLE FOR` / `NOT CITABLE FOR` header before quoting any
+  part of it.
 ### PET typed-descriptor semantic evidence
 
 - [`../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md`](../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md)
