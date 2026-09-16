@@ -72,7 +72,7 @@ staleness.**
 - the **F7 decision-margin measurement** of §C.2 and its normalizer-free factor `1.7957e11`;
 - the **thread-environment measurement** of §C.4 — what the three launchers *declare*, and that
   `make_estimators` pins nothing;
-- that the withdrawn `5.00e-41` reproduces from `values.tex:115`'s macro and **not** from G's
+- that the **SURVIVING** `5.00e-41` reproduces from `values.tex:115`'s macro and **not** from G's
   measured mean shift — in the probe's section 5, which is where that arithmetic lives; this document does not restate it;
 - the **projection-builder census** of D.1(a) — **four** production/consumer construction sites, not
   three, with `p4_lib.py:1484` identified as a control rather than a rival;

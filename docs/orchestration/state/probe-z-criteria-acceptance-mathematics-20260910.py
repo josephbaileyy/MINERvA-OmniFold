@@ -29,8 +29,12 @@ WHAT EACH SECTION ESTABLISHES, and what it does NOT
                       difference not established.
 4  normalizer spread  MEASURED. Why `sqrt(Tr C)` is not an admissible null normalizer: three
                       committed sqrt-traces exist for the same null.
-5  rev-7 arithmetic   MEASURED. Reproduces the withdrawn `5.00e-41` from its actual operand, which
-                      is `values.tex`'s never-printed macro and not G's measured mean shift.
+5  rev-7 arithmetic   MEASURED. Reproduces the SURVIVING `5.00e-41` from its actual operand,
+                      which is `values.tex`'s never-printed macro and not G's measured mean
+                      shift. ⚠ LABEL CORRECTED 2026-09-15: earlier text here said
+                      "withdrawn". It is NOT. SPEC:1706 withholds `eps = 1.1873e-11`;
+                      SPEC:1707 says the channels and this limit SURVIVE as the candidate
+                      inputs to `S`. Calling it withdrawn is why nobody re-examined it.
 
 6  pinv subspace     ⚠ THE LIMIT OF SECTION 1, and a defect in the criterion this probe supported.
                       Section 1 bounds the TRUE inverse; the consumer uses `pinv`. Two near-equal
@@ -347,9 +351,22 @@ def section_4_normalizer_spread() -> None:
 
 
 def section_5_rev7_operand() -> None:
-    """MEASURED. The withdrawn `5.00e-41` came from a macro that is defined and never printed."""
+    """MEASURED. The SURVIVING `5.00e-41` came from a macro that is defined and never printed.
+
+    ⚠ LABEL CORRECTED 2026-09-15. This limit is NOT withdrawn. SPEC:1706 withholds
+    `eps = 1.1873e-11`; SPEC:1707 keeps "the three channels and their `5.00e-41` tightest
+    evaluated limit" alive as **candidate inputs to `S`**. A number labelled withdrawn in one
+    document and SURVIVES in another is a number BOTH documents assume the other disposed of,
+    and that is exactly what happened to the only candidate input `S` had.
+
+    What this arithmetic establishes is stronger than withdrawal: the limit is HALF THE LAST
+    DISPLAYED DIGIT of `values.tex:115`. SPEC:2109/:3909 (restated :4088) already rejects that
+    move -- "applying the printed median's precision to it is a new tolerance choice, not a
+    consequence of that summary's formatting" -- but applied the rejection only to the per-bin
+    branch. Same defect class, same document, surviving where the number was never traced.
+    """
     delta = 0.005 / 1.65        # half the last printed unit of `\gbdtFiveMeanShift` = 1.65e-38
-    print("5. THE WITHDRAWN 5.00e-41, AND WHOSE NUMBER IT WAS  (MEASURED)")
+    print("5. THE SURVIVING 5.00e-41, AND WHOSE NUMBER IT WAS  (MEASURED)")
     print(f"   printed-precision delta of values.tex:115 (1.65e-38) = {delta:.10f}")
     print(f"   delta * 1.65e-38 = {delta * VALUES_TEX_MEAN_SHIFT:.6e}   <- reproduces SPEC 3.7a's 5.00e-41")
     print(f"   delta * G's MEASURED mean shift {G_MEAN_SHIFT_NORM:.6e} = "
