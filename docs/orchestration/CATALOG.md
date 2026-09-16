@@ -557,6 +557,26 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   eigensolve against **89.11 GB** of input I/O, and the binding constraint is the **2026-09-30 stop
   date**, not the ceiling. Read its `CITABLE FOR` / `NOT CITABLE FOR` header before quoting any
   part of it.
+- [`PROPOSAL-20260916-B-and-S-bounded-determinism-control.md`](PROPOSAL-20260916-B-and-S-bounded-determinism-control.md)
+  - **PROPOSAL ONLY — authorizes nothing, establishes no `B`, no `S`, no `ε`.** One bounded route to
+  `B` via route (i), plus what remains of `S`. **§1:** observed bitwise agreement supports only the
+  configurations actually tested; `B = 0` across a declared envelope is a separate claim needing an
+  enforcement argument, not more runs; and three runs are a **bounded falsification experiment**,
+  not a proof or coverage guarantee — agreement must be reported as *did not falsify*. **§2** derives
+  materiality from the implementation rather than from a name search, and corrects the claim that
+  every proposed control is a thread count (`deterministic` and `force_row_wise` are not): the
+  material channel is LightGBM's training histogram construction alone, since the CV path runs at
+  `train_frac=1.0` with no split RNG and contains **zero** BLAS-threaded reductions. It classifies
+  settings as must-fix, must-record, **not established as material** (`OMP_PROC_BIND`/`OMP_PLACES`)
+  and undeterminable (`OMP_SCHEDULE`), and names the enforcement gap: `deterministic` is documented
+  only for a fixed thread count and says nothing across **CPU models**, which makes the per-run
+  CPU-model receipt a necessity rather than good practice. **§3** states explicitly that a
+  pinned-chain result establishes **nothing** about the existing unpinned precursor. **§4** prices
+  the reservation by the **enforced** `--time` cap (9.0 CPU task-hours at the launcher's own 3:00:00,
+  reducible to 3.0 by submitting a tighter cap), with historical elapsed times used only as
+  corroboration. **§6** resolves the independent-assessor assignment from git — predeclaration is an
+  ancestor of the assessment, and the assessor lane has zero commits touching what it graded.
+  Read its `CITABLE FOR` / `NOT CITABLE FOR` header before quoting any part of it.
 ### PET typed-descriptor semantic evidence
 
 - [`../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md`](../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md)
