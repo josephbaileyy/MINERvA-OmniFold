@@ -266,167 +266,166 @@ independently; and §7 item 4, below.
 
 ---
 
-## 5. `S` — the completeness channel, BOUNDED, with the premise named
+## 5. `S`'s propagation — NOT CLOSED. What is bounded, and the one number still missing
 
-`S` is discharged for the F7 channel. §C.2 named **two** uncovered channels by which a CV
-perturbation reaches `C_unified`: the **throw deviations** and the **completeness division**. This
-section closes the second. **It does not close the first.**
+⚠ **`S` IS NOT CLOSED AND THIS SECTION DOES NOT CLOSE IT.** An earlier revision of this section
+claimed the completeness division contributes "gain exactly 1" to `r_null`. **That claim is
+withdrawn — it is false**, and the test that appeared to support it could not have detected the
+error. What follows is the bound that survives, the conversion to a threshold, and the single
+declared quantity that remains open. No `τ` is proposed here.
 
-Restating that no `n`-dependent bound exists does not finish the task, so here is the premise that
-does, and the measurement of it.
+### 5.1 ⚠ WITHDRAWN: "gain exactly 1", and why my test could not see it
 
-### The premise
-
-**(i) The perturbation enters through `unfold_nd` ALONE.** Of the three histograms in the kernel,
-only `unfold_nd` carries the OmniFold output: `weights=w_push * wt_sig[m]`
-(`unified_throw_cov_5d.py:66-68`). `of_in` uses `weights=wt_sig[m]` and `denom_nd` uses
-`weights=wt_td` — the **input** weights. So `completeness = of_in/denom_nd` is
-**independent of `w_push`**, and a null-comparison perturbation, which by construction differs
-only through the estimator while holding the input weights identical, **cannot move it**.
-
-**(ii) The cross-section is EXACTLY LINEAR in that histogram, with a perturbation-independent
-gain.** `xsec_nd.py:79-82`:
-
-```python
-denom = completeness * flux_b * n_nucleons * data_pot * vol
-np.divide(counts * 1.0e4, denom, out=xsec, where=good)
-```
-
-`denom` is a function of `completeness`, the flux, the POT, the nucleon count and the bin volume —
-**none of which depends on `counts`**. So `xsec = counts · 1e4 / denom` is linear with per-bin
-gain `1e4/denom_i`.
-
-### What follows, and it is the answer
-
-Under (i) and (ii), a perturbation `Δ` in `unfold_nd` produces `Δxsec_i = 1e4·Δ_i/denom_i`, so the
-**per-bin RELATIVE deviation is preserved exactly**: `Δxsec_i/xsec_i = Δ_i/unfold_nd_i`. **The gain
-cancels.** And `r_null = ‖x_cv2 − x_cv‖ / ‖x_cv‖` is an `x²`-weighted RMS of per-bin relatives, so
-it is a convex combination of preserved quantities.
-
-**Therefore the completeness division contributes gain exactly 1 to the statistic the null
-criterion grades, and needs no `n`-dependent bound for it.**
-
-### Measured, not just read
-
-Through the real `extract_cross_section_nd`, on synthetic arrays with `completeness` spanning four
-orders of magnitude including a `1e-12` bin:
+The per-bin *relative* deviations are preserved exactly — that part stands (`xsec_nd.py:79-82` is
+linear in `counts` with a `counts`-independent gain; measured to 2e-16). But
 
 ```
-per-bin relative deviation, xsec vs counts:  max|difference| = 2e-16  at eps = 1e-3 … 1e-12
-r_null-shaped statistic, completeness as-is:  8.037319650110e-10
-                         completeness x1e-3:  8.037317394100e-10
-                         completeness x1e3 :  8.037318622973e-10
+r_null² = Σ c_i² Δu_i² / Σ c_i² u_i²  =  Σ w_i ρ_i² / Σ w_i ,   w_i = x_i² ,  ρ_i = Δu_i/u_i
 ```
 
-**Rescaling the completeness by six orders of magnitude moves the statistic in the seventh
-significant figure** — round-off, not amplification.
+so `r_null` is an **`x²`-weighted** RMS of the `ρ`. **Unequal per-bin gains change the weights**,
+and therefore change the statistic, even though every `ρ_i` is preserved. My test rescaled
+completeness **uniformly**, which leaves the weights' proportions unchanged — it was structurally
+incapable of detecting reweighting.
 
-The `1e-12` bin was **not** excluded by `where=good` (its `denom` is still positive); it yields a
-*tiny* `xsec`, which the `x²` weighting then **down**-weights. So the pathological case is
-suppressed in this statistic rather than amplified — the opposite of the concern.
+**Re-measured with unequal gains**, one fixed `ρ` pattern spanning `1e-12 … 1e-9`:
 
-### So what is `SPEC:1662` right about?
+| completeness pattern | `r_null` | vs `max\|ρ\|` |
+|---|---|---|
+| uniform `1e-2` | 7.383940e-10 | 0.738 |
+| uniform `1e-5` | 7.383940e-10 | 0.738 |
+| unequal, weighting the SMALL-`ρ` bins | **3.318246e-10** | 0.332 |
+| unequal, weighting the LARGE-`ρ` bins | **7.627275e-10** | 0.763 |
+| unequal, 8 orders, random | 7.403422e-10 | 0.740 |
 
-It is right, and about a different quantity. *"An elementwise division by a quantity that can be
-small"* bounded by *"nothing, and it is an amplification channel with no `n`-dependent bound"*
-describes the **absolute** cross-section scale: a small `completeness_i` does make `xsec_i` large,
-without bound. **That characterisation simply does not reach a RELATIVE statistic**, because the
-same factor sits in numerator and denominator.
+The two uniform rows are **identical**; the unequal rows move the statistic by a **factor 2.3**.
 
-**The consequence for `S` is conditional and worth stating precisely.** If `S` is expressed as a
-cap on a **relative** CV movement — which is the form `r_null` takes, and the form §C.1 adopted —
-the completeness channel is bounded and the F7 argument extends through it. If `S` were expressed
-as an **absolute** cap, as the withdrawn `5.00e-41` was, the amplification is real and unbounded,
-and this section does not help. **The relative form is therefore not merely convenient; it is what
-makes this channel boundable at all.**
+**THE BOUND THAT SURVIVES**, and it is all that survives:
 
-### The THROW-DEVIATION channel — closed too, and exactly
+> `min_i |ρ_i|  ≤  r_null  ≤  max_i |ρ_i|`   over the reported support.
 
-§C.2 named this as the second uncovered channel and declined to assert a mechanism. The
-mechanism is an algebraic identity **the code itself asserts in one place and gates in another**.
+Every row above respects the upper bound. So the completeness division **cannot amplify `r_null`
+beyond the per-bin maximum relative deviation** — which is exactly `ε`'s step 1
+(`r_null ≤ max_i |Δ_i/x_i|`). **The channel therefore adds nothing beyond what step 1 already
+bounds, and it is subsumed rather than "closed with gain 1".**
 
-**The covariance never sees the CV.** `uq_math.py:107-116`:
+### 5.2 The throw-deviation channel, exactly
 
-```python
-def joint_throw_covariance(throws, cv):
-    """Mean-centered joint covariance plus the separately reported mean shift."""
-    mean = X.mean(axis=0)
-    return mat_covariance(X), mean - cv
-```
-
-and `mat_covariance` (`uq_math.py:96-104`) is `Z = X - X.mean(axis=0); (Z.T @ Z)/N` — **universe-mean
-centered, CV absent**. So the entire CV dependence of the output is the second return value,
-`mean - cv`, which is `hJointMeanShift`.
-
-**The two variants differ by exactly the square of that shift.** `z_assembly.py:182-215`, the
-single-source transformation (written because *"two callers disagreed about it"*):
-
-```
-v_uni^mean = clip(diag(C_unified), 0, inf)
-v_uni^cv   = v_uni^mean + mean_shift**2        (added AFTER the clip -- the order matters)
-```
-
-and `check_variant_coupling` (`:221`, `:320`) **gates** `v_uni^cv == v_uni^mean + ms²`.
-
-**Therefore, under a CV perturbation `δ` (so `ms → ms − δ`), per bin:**
+`uq_math.py:107-116`: `joint_throw_covariance` returns `mat_covariance(X), mean - cv`, and
+`mat_covariance` (`:96-104`) is universe-mean centered with the **CV absent**. The variants differ
+by exactly the square of the shift — `z_assembly.py:182-215`, single-source, and
+`check_variant_coupling` (`:221`, `:320`) **gates** `v_uni^cv == v_uni^mean + ms²`. So per bin,
+under `cv → cv + δ` (hence `ms → ms − δ`):
 
 | variant | movement |
 |---|---|
 | mean-centered | **Δv = 0, exactly** — the CV is not an input |
-| CV-centered | **Δv = −2·ms·δ + δ²**, exactly — first order with coefficient `2\|ms\|` |
+| CV-centered | **Δv = −2·ms·δ + δ²**, exactly |
 
-Verified against the real `derive_variant_diagonals`: the identity reproduces at
-`max relative error 0.000e+00`; `Δv_mean = 0.000e+00` exactly; and the closed form matches the
-function's output to 1.4e-11 at `eps = 1e-3`. (The apparent degradation to 1.3e-5 at `eps = 1e-9`
-is cancellation in the *check* — differencing two ~1e-78 values whose difference is 1e-78·eps
-leaves ~2.2e-16/eps of relative precision — not an error in the algebra. The same artefact the
-independent assessor reported and discarded in its own step-1 probe.)
+Verified against the real `derive_variant_diagonals`: identity at `0.000e+00`,
+`Δv_mean = 0.000e+00`, closed form to 1.4e-11 at `eps = 1e-3`. (Degradation at smaller `eps` is
+cancellation in the *check* — `~2.2e-16/eps` — not in the algebra.)
 
-**So F7 was never a special case — it is the whole channel.** Both uncovered channels are now
-closed: the completeness division contributes gain exactly 1 to the relative statistic, and the
-throw deviations contribute through `ms` alone, which is precisely the operand §C.2's triangle
-inequality already bounds.
+### 5.3 Through inflation and assembly, with two exact attenuations
 
-### The concrete dependency that remains, and the smallest action that resolves it
+`z_assembly.py:4-8`: `C_Z^c = D_Z^c (Σ_V C_b) D_Z^c + Σ_R + Σ_A + C_stat + C_ML`, with
+`g^c[i] = sqrt(max(v_uni^c[i], v_blk[i])) / sqrt(v_blk[i]) ≥ 1`, pinned to 1 where `v_blk[i] == 0`.
 
-Every quantity in the propagation chain is now **measured** (`ms` as `hJointMeanShift`,
-`v_uni^mean` as `diag(C_unified)`, both persisted in the throw product) or an **algebraic identity
-the repository gates**. Exactly one quantity is free:
+Measured against that construction:
 
-> **A declared tolerance `τ` on the relative movement of the reported per-bin variance
-> `v_uni^cv`.**
+| bin class | propagation |
+|---|---|
+| **active**, `v_uni^cv > v_blk > 0` | `diag(D_Z Σ_V C_b D_Z)[i] = g_i² v_blk[i] = v_uni^cv[i]` to **2.5e-16** — so `Δ diag(C_Z)[i] = Δv_i^cv`, **one-to-one** |
+| **deadband**, `v_uni^cv ≤ v_blk` | `Δ = 0.000e+00` — the `max` **absorbs** the perturbation exactly |
+| `v_blk[i] == 0` | `Δ = 0.000e+00` — `g` pinned to 1 |
 
-That is `S`, expressed where the propagation actually lands. It is a scientific judgement, it is
-one number, and it is not this lane's to choose.
+The non-CV terms `Σ_R`, `Σ_A`, `C_stat`, `C_ML` are additive and CV-independent, so they do not
+propagate the perturbation but **do** enter the denominator of any relative statement below.
 
-**It resolves the whole chain by inversion, with no new measurement.** Requiring
-`|Δv| ≤ τ·v^cv` and solving the exact quadratic gives a per-bin cap on the CV perturbation:
+### 5.4 The complete implication, null threshold → protected uncertainty claim
+
+The protected claim is the **reported per-bin uncertainty** `σ_i = sqrt(diag(C_Z^c)[i])`.
+
+**FORWARD** — what a measured `r_null` implies, for an active bin:
 
 ```
-|δ_i|  ≤  τ·v_i^cv / ( sqrt(ms_i² + τ·v_i^cv) + |ms_i| )
+‖δ‖₂ = r_null · ‖x_cv‖₂          (definition of r_null)
+|δ_i| ≤ ‖δ‖₂                      (crude, conservative, assumption-free)
+|Δv_i^cv| ≤ 2|ms_i|·|δ_i| + δ_i²  (§5.2, exact)
+Δ diag(C_Z)_i = Δv_i^cv           (§5.3, active bins; 0 elsewhere)
+Δσ_i/σ_i = sqrt(1 + Δv_i^cv/diag(C_Z)_i) − 1   ≈ Δv_i^cv / (2 diag(C_Z)_i)
 ```
 
-— which converts a declared covariance tolerance into a cap on CV movement **in the units
-`r_null` measures**. `ms` and `v^cv` are already in the product, so this needs `τ` and nothing else.
+**BACKWARD** — a **sufficient** threshold on `r_null` from a declared tolerance `θ` on the
+relative movement of the reported uncertainty:
 
-⚠ **It must be written in that form, not as `sqrt(ms² + τv) − |ms|`.** The two are algebraically
-identical and the subtraction **silently violates its own cap** once `τ·v ≪ ms²`. Measured: the
-naive form respects the bound at `τ = 1e-2` and `1e-6` and **fails at `1e-9`, `1e-12` and
-`1e-16`** — the regime a determinism tolerance actually lives in — while the stable form achieves
-exactly `τ` at every value from `1e-2` to `1e-20`. The naive form's apparent "pass" at `1e-20` is
-underflow to a zero cap, which is vacuous rather than correct. **A tolerance implemented the
-obvious way would be looser than declared, in the direction that weakens the gate.**
+```
+require  |Δσ_i/σ_i| ≤ θ  for every active bin
+  ⟹  |Δv_i^cv| ≤ ((1+θ)² − 1) · diag(C_Z)_i  =:  V_i
+  ⟹  |δ_i|  ≤  Δ_i  :=  V_i / ( sqrt(ms_i² + V_i) + |ms_i| )
+  ⟹  SUFFICIENT:   r_null  ≤  min_{i ∈ active} Δ_i  /  ‖x_cv‖₂
+```
 
-### What is still NOT covered
+⚠ **`Δ_i` must be written in that quotient form, not as `sqrt(ms_i² + V_i) − |ms_i|`.** The two are
+algebraically identical and the subtraction **silently violates its own cap** once `V_i ≪ ms_i²`.
+Measured: the naive form holds at `1e-2` and `1e-6` and **fails at `1e-9`, `1e-12`, `1e-16`** — the
+regime a determinism tolerance lives in — while the quotient form achieves exactly the target from
+`1e-2` to `1e-20`. The naive form's apparent pass at `1e-20` is underflow to a zero cap: vacuous,
+not correct. **Implemented the obvious way, the threshold would be looser than declared.**
 
-- **`ε` still does not follow.** This bounds *propagation*, which is `S`'s side. `SPEC:1410` forbids
-  reading `ε` off Z's own null, and §C.2 establishes `ε` must be argued from `B`'s side. A complete
-  `S` does not produce an `ε`.
-- **Stages 3-5 of the CV trace** remain *not established* deterministic (§2). This argument assumes
-  the histogramming is a fixed linear map of its weights; that is unmeasured.
-- **Premise (i) of §5's completeness bound is null-specific.** Two executions with different input
-  weights would move `completeness`; the bound covers the null, not the throw ensemble.
-- **`τ` itself is undeclared**, and declaring it is the action above.
+### 5.5 Assumptions, stated because the conversion is only valid under them
+
+1. **FIXED ENSEMBLE.** `ms_i`, `v_i^mean`, `v_blk_i` and the additive non-CV terms are held fixed.
+   The **null comparison satisfies this by construction** — identical input weights, differing only
+   through the estimator. A different throw ensemble violates it, and then `ms` and `v^mean` move
+   too and none of §5.2 applies.
+2. **SUPPORT.** The `min` runs over the **reported support** `x_cv > 0`, the same predicate
+   `null_ratio` uses. **A bin outside the support does not enter `r_null` and cannot be constrained
+   by any threshold on it** — such bins need a separate argument, not a tighter `r_null`.
+3. **DENOMINATOR.** `‖x_cv‖₂` is `cv_norm` as `null_ratio` computes it, over that same support. A
+   different normalizer rescales the conversion linearly.
+4. **ZERO-VARIANCE AND DEADBAND CASES**, each with its own handling rather than one rule:
+   - `v_blk_i = 0` → `g` pinned to 1 → `Δ = 0` **exactly**. Unconstrained, and needs no tolerance.
+   - `v_uni^cv ≤ v_blk` (deadband) → absorbed by the `max` → `Δ = 0` **exactly**. Same.
+   - `diag(C_Z)_i = 0` → `Δσ/σ` is `0/0`, **undefined**. These bins must be **excluded from the
+     `min` and their count reported**; a relative tolerance cannot constrain them, and silently
+     including them drives `min_i Δ_i` to 0 and makes the threshold unsatisfiable.
+   - `ms_i = 0` → the first-order term vanishes, `Δv = δ²`, and the cap loosens to
+     `|δ_i| ≤ sqrt(V_i)`. No special handling, but the bin is then far less sensitive.
+   - `derive_variant_diagonals` already returns `n_clipped_unified` / `n_clipped_blocksum`, so the
+     clipped population is tracked by the existing code rather than needing new instrumentation.
+5. **THE F7 BRANCH CONDITION, EXPLICIT.** This entire channel exists only when
+   `uq_math.f7_cv_centered_required` fires — `‖ms‖ > k · sqrt(Tr C)/sqrt(N)` with
+   `k = F7_FLOOR_MULTIPLE = 2.0` (`uq_math.py:138`, a codification with an owner and a date, not a
+   repo decision). **If F7 does not fire, only the mean-centered variant is required, `Δv^mean = 0`
+   exactly, and no threshold is needed for this channel at all.** For G it fires at 4.69x the floor
+   (4.83x after the flux correction), so for a G-like ensemble it is live.
+6. **FIRST ORDER WHERE MARKED.** `Δσ/σ ≈ Δv/(2 diag C_Z)` is an expansion; the exact form is given
+   above and should be used in any implementation.
+
+### 5.6 The remaining limitation, precisely
+
+**This traces the DIAGONAL only.** `C_Z`'s off-diagonal also moves — `D_Z` multiplies `Σ_V C_b` on
+**both** sides, so `ΔC_Z[i,j] = (g_i g_j − g_i⁰ g_j⁰)·(Σ_V C_b)[i,j]` for `i ≠ j`, which the
+per-bin variance tolerance `θ` does not bound. **The declared scientific use is not only per-bin
+uncertainties:** `SPEC` requires 3D/4D covariances to be exact projections of the adopted trunk,
+and a projection contracts the **full** matrix, correlations included. **So a `θ` on per-bin
+uncertainty is necessary and not sufficient for the projected claim**, and a correlation-side
+tolerance is a separate, unaddressed quantity.
+
+Also unresolved: stages 3-5 of the CV trace remain *not established* deterministic (§2); `ε` still
+does not follow, because this is `S`'s side and `SPEC:1410` stands; and **`θ` is undeclared**.
+
+### 5.7 What happens next with `θ`, and what must not
+
+`θ` is a scientific judgement about how much movement in a **published** uncertainty is tolerable.
+It is **not** this lane's to choose, and it must **not** be chosen so that the observed null
+passes — `SPEC` §6.4 and `:3584` forbid exactly that, and the observed `r_null = 4.452e-14` is Z's
+own null, which `SPEC:1410` bars from setting anything.
+
+Routed to the criteria owner (`owners.tsv:14`) for a **justified recommendation with alternatives
+and their consequences**, then to the independent assessor (`owners.tsv:15`), then to Joseph for
+decision. **No `τ`/`θ` value is recorded here, and `S` remains open.**
 
 ## 6. The independent assessor — resolved operationally
 
