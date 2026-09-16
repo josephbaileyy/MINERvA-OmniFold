@@ -8,9 +8,11 @@
     "58277208",
     "58301971",
     "58320923",
-    "58354898"
+    "58354898",
+    "58395631",
+    "58396676_0"
   ],
-  "prior_charged_seconds": 1021,
+  "prior_charged_seconds": 1453,
   "wall_seconds": 6000,
   "preflight_seconds": 1200,
   "calibration_seconds": 4800,
@@ -30,7 +32,7 @@
     "mixed_precision_policy": "float32",
     "floatx": "float32"
   },
-  "manifest_sha256": "c1ad9b64eb88006ece17d7df67124cb7e63150f543b89a7aa364cc76bb952453",
+  "manifest_sha256": "5c69f383e2a8b13e7037723aa992a79eaf0282ecb5ccf6c6f148effecdc72838",
   "authority_source": "nd-unfolding/pet/direct_token_comparison/BEN_COMPARISON_AUTHORIZATION-20260915.md",
   "authority_source_sha256": "5fce2195088cf1241b9706c7c6ddcee855bd7fd07922f567532fc1b00ca1af26",
   "approval_date": "2026-09-16 Asia/Seoul",
@@ -47,6 +49,6 @@
   "gate_scope_authority": "nd-unfolding/pet/direct_token_comparison/STRESS_SCOPE_AUTHORIZATION-20260916.md",
   "gate_scope_authority_sha256": "09cebb72374ef579572985a15842aaca498dee9e37ea46399e13a1199476d860",
   "full_matrix_launcher": "nd-unfolding/pet/direct_token_comparison/sbatch_full_matrix.sh",
-  "full_matrix_launcher_sha256": "c95cd5938cf69e0e8b78a5ab74de38816141958fa3fbdc4349b68cb54f7f772c",
+  "full_matrix_launcher_sha256": "bd628d28c02ea183664f4674f9cce16b9e291a7f93cb2080896c66be57708a9c",
   "full_matrix_released": false
 }

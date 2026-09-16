@@ -105,10 +105,13 @@ run() (
 run &
 worker=$!
 while kill -0 "$worker" 2>/dev/null; do
-  # A pipe rewrites the status, so default rather than trusting du's exit code.
-  own_kib=$(du -ck "$output/$stem".* 2>/dev/null | tail -1 | cut -f1)
+  # Defaulting the VALUE is not enough: under `set -e` with `pipefail` the
+  # assignment itself dies when the glob matches nothing, which it always does on
+  # the first iteration, so `|| true` must neutralise the STATUS as well. Job
+  # 58396676_0 failed exactly here, killing its payload before it could log.
+  own_kib=$(du -ck "$output/$stem".* 2>/dev/null | tail -1 | cut -f1 || true)
   own_kib=${own_kib:-0}
-  shared_kib=$(du -sk "$output" | cut -f1)
+  shared_kib=$(du -sk "$output" 2>/dev/null | cut -f1 || true)
   shared_kib=${shared_kib:-0}
   printf '%s own=%s shared=%s\n' "$(date -u +%FT%TZ)" "$own_kib" "$shared_kib" \
     >> "$output/logs/$stem.storage"

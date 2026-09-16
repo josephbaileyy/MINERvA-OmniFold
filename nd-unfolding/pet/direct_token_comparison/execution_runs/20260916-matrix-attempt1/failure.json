@@ -1,0 +1,54 @@
+{
+  "attempt": 1,
+  "array_job_id": "58396676",
+  "outcome": "FAILED at the first task; array cancelled; NO scientific work executed",
+  "task_0": {
+    "jobid": "58396676_0",
+    "mode": "ordinary",
+    "seed": 17,
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed_raw_seconds": 6,
+    "payload_log_bytes": 0,
+    "guard_json_written": false
+  },
+  "remaining_tasks": {
+    "count": 23,
+    "state": "CANCELLED",
+    "elapsed_raw_seconds": 0,
+    "action": "scancel 58396676 -- stopping dependent compute, not a retry"
+  },
+  "charge_for_this_attempt_seconds": 6,
+  "cause": {
+    "location": "sbatch_full_matrix.sh storage meter, in the launcher I wrote",
+    "defect": "own_kib=$(du -ck \"$output/$stem\".* 2>/dev/null | tail -1 | cut -f1) dies under `set -e` with `pipefail` when the glob matches nothing, which it always does on the first iteration of a correct run. The main shell exited before the payload could emit anything, so SLURM killed it: hence a 0-byte payload log and no guard record.",
+    "my_error": "I had already added ${own_kib:-0}, which defaults the VALUE while the failure is in the STATUS, so the guard was unreachable. This is a guard that fires on every correct run.",
+    "not_the_cause": [
+      "the invocation or plumbing (reproduced exit 0 on a login node with the real payload at small rows)",
+      "the authorization, manifest or gate-scope verification (all passed; the allocation record was written)",
+      "the scientific code (byte-identical to the calibrated commit)"
+    ],
+    "reproduction": "The pre-fix metering lines, extracted from the launcher text and run under the same shell options against an empty directory, exit 1 with empty stdout; the fixed lines report own=0."
+  },
+  "repair": {
+    "change": "Neutralise the pipeline STATUS with `|| true` on both measurements, keeping the value defaults.",
+    "regression_tests": 7,
+    "test_file": "nd-unfolding/pet/direct_token_comparison/test_full_matrix_launcher.py",
+    "mutant_control": "The same extraction run against the pre-fix launcher exits 1, so the tests bite rather than merely passing.",
+    "rebound": true
+  },
+  "evidence": {
+    "archive": "matrix-attempt1-evidence.tar.gz",
+    "sha256": "040bf524846da10e5b852c4958fe867e3d5239be95080a3bb6265ace4e53a25c",
+    "bytes": 1482,
+    "files": 5,
+    "digest_verified_at_both_endpoints": true
+  },
+  "charge_after_this_attempt": {
+    "conservative_total_seconds": 1453,
+    "gpu_rows": 9,
+    "gpu_hours": 0.4036111111111111
+  },
+  "retry_posture": "No scientific attempt is being re-run: the matrix never executed a single training step. This is a repair of a defect in my own launcher, then proceeding with the already-authorized comparison. It is not an automatic retry and no seed was replaced.",
+  "non_claim": "No learning, closure or compute-efficiency result. Nothing about either representation follows from a launcher defect."
+}

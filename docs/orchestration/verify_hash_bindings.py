@@ -241,10 +241,12 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 # nd-unfolding/pet/direct_token_comparison/local_validation/20260916-stress-scope/binding-inventory-delta.json.
 # 123 -> 124: the amended PET execution receipt binds the frozen full-matrix
 # launcher by digest, so an unbound launcher cannot run the 24-job campaign.
-# Exact added binding and unchanged prior inventory are recorded in
-# nd-unfolding/pet/direct_token_comparison/local_validation/20260916-full-matrix/binding-inventory-delta.json.
+# The count then stayed at 124 while the digest moved, because the launcher's
+# storage-meter defect that killed 58396676_0 was repaired and re-bound: a
+# CHANGED binding, not an added one. Both deltas are recorded in
+# nd-unfolding/pet/direct_token_comparison/local_validation/20260916-full-matrix/.
 RECEIPT_BINDING_COUNT = 124
-RECEIPT_BINDING_SHA256 = "68e976583d8c0feb4e4957d044c5ac96dcdcdf18cfa58757ae82b9a200606737"
+RECEIPT_BINDING_SHA256 = "6315ae31f4ffb079bd0cd5fa66fef8dabc670cf217e55ec5a8041d9482192bd8"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
