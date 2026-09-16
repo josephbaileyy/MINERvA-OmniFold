@@ -21,11 +21,18 @@ orders above** it, which is a defect of a different kind and is stated rather th
 
 ---
 
-## 1. THE DIRECT ANSWER: `θ` MUST BE DECLARED **JOINTLY** WITH A CORRELATION-SIDE TOLERANCE
+## 1. THE DIRECT ANSWER: `θ` CANNOT BE DECLARED ALONE — **ONE TOLERANCE PLUS ONE MEASUREMENT**
 
-**Asked whether a correlation-side tolerance must be declared jointly rather than after: YES, and the
-reason is stronger than "necessary and not sufficient". The per-bin route's grip on the off-diagonal
-degrades as `1/f_i`, and `f_i` is unmeasured.**
+**Asked whether a correlation-side tolerance must be declared jointly rather than after: YES, `θ`
+alone is insufficient, and the reason is stronger than "necessary and not sufficient" — the per-bin
+route's grip on the off-diagonal degrades as `1/f_i`, and `f_i` is unmeasured.**
+
+⚠ **BUT THE FORM IS NARROWER THAN "TWO TOLERANCES", AND §1.5 IS WHERE THIS SECTION'S CONCLUSION
+ACTUALLY LANDS.** A peer's §5.7 makes the correlation-side bound a **derived** consequence of `θ`
+rather than a second scientific judgement, so the requirement is **one tolerance plus one
+measurement** — conditional on the measured `min_i f_i`, and on a declared active set. **Read §1.5
+before quoting §1.1–§1.4**, which establish the insufficiency but state the remedy in its superseded
+form.
 
 ### 1.1 Why it first *looks* sufficient — and this is the trap
 
@@ -77,6 +84,51 @@ quantity the projected claim depends on.
 contracts the full matrix**, so it samples precisely the off-diagonal entries where `θ` has least
 grip. A `θ`-only declaration would therefore be weakest at the use it is being declared for.
 **Hence joint, and hence `1/f_i` is the coefficient the joint declaration must name.**
+
+### 1.5 ⚠ NARROWED 2026-09-16 — "JOINT" MEANS ONE TOLERANCE PLUS ONE MEASUREMENT, NOT TWO TOLERANCES
+
+**A peer's §5.7 improves this section and I am adopting the improvement.** Their result is that with
+`G := diag(Δg/g)`, `ΔC_infl = G C + C G + G C G` **exactly**, so
+
+    ||ΔC_infl|| <= ((1+γ)² − 1) ||C_infl||,      γ := max_i |Δg_i/g_i|
+
+and **the same factor bounds every projection.** Composed with §1.3's `|Δg_i/g_i| ≤ θ/f_i`, that gives
+`γ ≤ θ / min_i f_i`, and the correlation side becomes a **derived** consequence of `θ` rather than an
+independently declared judgement. **So no second scientific judgement is required: my "declare
+jointly" is better stated as ONE TOLERANCE PLUS ONE MEASUREMENT.** That is a real simplification and
+it is theirs.
+
+**Two qualifications, because "one tolerance plus one measurement" can be misread as "the correlation
+side is settled." It is not settled until `f_i` returns, and it may not be settled then.**
+
+**(a) The derived bound is only as good as `min_i f_i`, and it degrades fast.** At the recommended
+ceiling `θ = 7.11e-2`:
+
+| `min_i f_i` | `γ = θ/min f` | derived `||ΔC||/||C||` | |
+|---:|---:|---:|---|
+| `1.00` | `0.071` | `0.147` (15%) | usable |
+| `0.50` | `0.142` | `0.305` (30%) | usable |
+| `0.20` | `0.356` | `0.837` (84%) | weak |
+| `0.10` | `0.711` | `1.93` (193%) | weak |
+| `0.01` | `7.11` | `64.8` (6477%) | **vacuous** |
+
+**Below `min_i f_i ≈ 0.2` the derived bound exceeds 100% and settles nothing.** So whether one
+tolerance suffices is **conditional on the measured value**, and that conditionality has to be stated
+when the simplification is quoted.
+
+**(b) ⚠ `min_i f_i` is an EXTREME-ORDER STATISTIC over 10,694 bins, and a uniform-`γ` bound is
+therefore driven by the single worst bin** — which is, by construction, a bin where the unified throw
+contributes almost nothing to the variance, i.e. **a bin whose covariance nobody uses.** A vacuous
+derived bound would then be an artifact of maximising over a large population rather than evidence of
+a real defect. **The remedy is an active-set restriction — the same restriction the deadband analysis
+already motivates, since `max(v_uni, v_blk)` absorbs the movement exactly where `v_uni ≤ v_blk` — and
+NOT a tighter `θ`.** Tightening `θ` below its scientific ceiling to rescue a bound set by a dead bin
+would be choosing a tolerance to obtain a verdict.
+
+**Net: adopt the peer's "one tolerance plus one measurement", and declare with it (i) the conditional
+— that sufficiency depends on the measured `min_i f_i` — and (ii) the active set over which the
+maximum is taken. The second is a declaration, so the joint character of the exercise survives in a
+weaker form: not two tolerances, but a tolerance and a population.**
 
 ---
 
@@ -157,11 +209,17 @@ is non-binding for the same reason.**
 | **D** | whatever preserves a quoted significance | **BARRED** — founds a determinism gate on `DEFERRED NOT PASSED` endpoint B | couples Z's acceptance to an endpoint Joseph has not passed |
 | **E** | `θ = 0` | **BARRED** — mirror of the `1e-12` clamp | a gate nothing can pass; §C.2's argument in reverse |
 | **F** | any value fitted to `4.452e-14` | **BARRED** — `SPEC:1410`, `§6.4` | threshold placed to obtain a verdict; the `PREDECLARE-20260901-cause7` §1 failure |
-| **G** | **`θ` jointly with a correlation-side tolerance** | **THE RECOMMENDATION** (§1), coefficient `1/f_i` | the only form in which the per-bin number is sufficient for the *declared* projection use |
+| **G** | **`θ` plus the `f_i` measurement plus a declared active set** — ⚠ **NARROWED 2026-09-16 from "`θ` jointly with a correlation-side tolerance"** | **THE RECOMMENDATION** (§1.5). A peer's §5.7 makes the correlation bound **derived** via `γ ≤ θ/min_i f_i`, so **no second scientific judgement is required** | the only form in which the per-bin number is sufficient for the *declared* projection use — **and its sufficiency is CONDITIONAL on the measured `min_i f_i`**: usable at `≥ 0.5`, weak by `0.2`, vacuous by `0.01` |
 
-**Recommendation: G with A's value as the ceiling** — `θ ≈ 7.1e-2` declared jointly with a
-correlation-side tolerance, both as ceilings, with `ε` from `B`'s side remaining the operative gate,
-and the whole thing contingent on §5.
+**RECOMMENDATION — G with A's value as the ceiling, in the narrowed form of §1.5:** declare
+**`θ ≈ 7.1e-2` as a ceiling**, together with **the `f_i` measurement** (§5) and **the active
+set over which `min_i f_i` is taken** — *not* a second independently declared
+correlation-side tolerance, which a peer's §5.7 shows is derivable rather than judged.
+**`ε`, argued from `B`'s side, remains the operative gate**; `θ` is non-binding by `12.2`
+orders and must never be recorded as the gate. ⚠ **Sufficiency is CONDITIONAL on the measured
+`min_i f_i` and the whole recommendation is contingent on §5** — if `min_i f_i` comes back
+small, the derived correlation bound is vacuous, and the response is an **active-set
+restriction**, never a `θ` tightened below its scientific ceiling to rescue it.
 
 ---
 

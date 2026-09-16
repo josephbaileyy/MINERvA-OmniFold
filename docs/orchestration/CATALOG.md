@@ -265,8 +265,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   Routed by Joseph 2026-09-16 for `[cb0b6b]` assessment then his decision. ⚠ **`S` IS NOT CLOSED and
   this does not close it** — §6 explains why the author is structurally unable to: the arguments that
   would discharge `SPEC` §7 item 4 would be discharging the author's own recorded residue. ⚠
-  **Authored by the owning lane, which therefore cannot assess it.** **THE ANSWER IS JOINT, and the
-  ground is stronger than "necessary and not sufficient":** a diagonal rescaling preserves
+  **Authored by the owning lane, which therefore cannot assess it.** **THE ANSWER IS THAT `θ` CANNOT STAND ALONE — and after a peer's §5.7, the form is ONE
+  TOLERANCE PLUS ONE MEASUREMENT rather than two tolerances** (§1.5; the correlation bound is
+  **derived** via `γ ≤ θ/min_i f_i`, so no second scientific judgement is needed — but
+  **sufficiency is CONDITIONAL on the measured `min_i f_i`**: usable at `≥0.5`, weak by `0.2`,
+  vacuous by `0.01`, and the response to a small value is an **active-set restriction**, never a
+  tightened `θ`). **The ground for the insufficiency is stronger than "necessary and not
+  sufficient":** a diagonal rescaling preserves
   correlations **exactly** (MEASURED `3.3e-16` for the V-block alone), but `D_Z` multiplies `Σ_V`
   **only** (`z_assembly.py:4`), so `g` reweights V against four untouched terms and the **total**
   correlation moves (`5.9e-2` on the same fixture). The grip is exact — **`dσ_i/σ_i =
