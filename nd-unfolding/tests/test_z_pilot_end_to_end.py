@@ -29,6 +29,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -151,6 +152,23 @@ def isolated_tree(destination: Path, *, drop_no_ext_diff: bool) -> Path:
         dst = destination / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
+        # ⚠ `copy2` PRESERVES MODE, AND AN IMMUTABLE DEPLOYMENT'S FILES ARE `r--r-----`.
+        # Job 58398465 died here: run from /pscratch/sd/j/josephrb/zdeploy-12250ba2, whose tracked
+        # files are chmod'd read-only, both arms that EDIT a copied file raised
+        # `PermissionError: [Errno 13]` -- the negative control on `z_build.py` and the dirty-list
+        # control on `z_statistics.py`. Locally the source worktree is writable, so the suite was
+        # green and the defect was invisible. Restore owner-write on the COPY while keeping the
+        # exec bit `copy2` carried, because the shim wrappers in mnv_guard_shim/bin need it.
+        dst.chmod(dst.stat().st_mode | stat.S_IWUSR)
+    # NAME THE PRECONDITION HERE rather than letting it surface as an `OSError` from whichever
+    # arm happens to write first. A control tree that cannot be edited cannot be a control.
+    unwritable = [str(q.relative_to(destination)) for q in destination.rglob("*.py")
+                  if not os.access(q, os.W_OK)]
+    assert not unwritable, (
+        f"{len(unwritable)} copied file(s) are not writable, e.g. {unwritable[:3]}. The control "
+        f"tree is built by copying from a source tree that may be an immutable deployment, and "
+        f"`shutil.copy2` preserves its mode."
+    )
     target = destination / "nd-unfolding" / "z_build.py"
     if drop_no_ext_diff:
         text = target.read_text()
