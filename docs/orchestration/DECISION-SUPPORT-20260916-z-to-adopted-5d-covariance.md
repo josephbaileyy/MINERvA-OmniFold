@@ -154,9 +154,50 @@ the wrong number. `p4_lib.py:109-120` warns that the related 3.48× margin "is *
 already sits at 54.6% of the coherent ceiling", which cuts against treating `1.831e-11` as
 comfortable.
 
-**Route (i) — "pin the envelope in code" — cannot be claimed today.** Exactly **one launcher of
-eleven** pins a literal `OMP_NUM_THREADS`, and it is **not arm 7**, which is where the null
-operands are computed.
+**Route (i) — "pin the envelope in code" — cannot be claimed today, and route (i) is the ONLY
+admissible route** (see §2.4). Measured at `12250ba2`, over the **11 `.sh` files that reference
+`MNV_EST_SEED_OFFSET`** — the population is stated because the figure is meaningless without it:
+
+| | |
+|---|---|
+| **1 LITERAL** | `sbatch_uthrow_run_5d_fast.sh:182` — `OMP_NUM_THREADS=32 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 …`, 4 of 5 thread variables |
+| **2 DERIVED** | `sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh:27`, `sbatch_unfold_5d_detector_bkgaware_gpu.sh:20` — both `${SLURM_CPUS_PER_TASK:-32}` |
+| **8 UNSET** | including **`sbatch_uthrow_combine_5d_fast.sh` — arm 7**, whose `:9` reads "`--null` repeats CV at the identical seed", and which exports **0 of 5** thread variables |
+
+1 + 2 + 8 = 11, internally consistent.
+
+⚠ **AN EARLIER REVISION OF THIS SECTION SAID "one launcher of eleven" WITH NO POPULATION NAMED.**
+The number is right for this tree and that population, and wrong for others — over
+`nd-unfolding/sbatch_uthrow*.sh` (24 files) the count is 4 assignments, and the criteria lane's own
+tree has 10 files in the `MNV_EST_SEED_OFFSET` population rather than 11, because
+`sbatch_uthrow_dump_5d.sh` differs by 360 lines between the two trees. **A ratio quoted without its
+population is the defect §9 documents, one round later and in this record.** The load-bearing fact
+is unaffected in every tree and population measured: **arm 7 pins none.**
+
+**And §4.4a item 3 requires the SURROUNDING environment pinned too** — "AND TODAY IT IS NOT —
+MEASURED". Pinning LightGBM while `MKL`/`OPENBLAS`/`NUMEXPR`/`VECLIB` remain free in the arm that
+computes the null would be, in §4.4a's words, "a bound over a configuration that is not fixed".
+
+### 2.4 Route (i) is the only ADMISSIBLE route, and the fallback is barred by composition
+
+| route | status |
+|---|---|
+| **(i)** design property from pinning — never measures Z's null | **ADMISSIBLE** |
+| **(ii)** standalone control on Z's bank | **GATED** — `SPEC:3140`: "if the control runs on Z's own bank, §6.4 is engaged and needs a ruling" |
+| **(iii)** establish `S` first | **EXHAUSTED** — §C.2: `S` is vacuous, so it discharges `B ≤ S` and leaves `ε` unconstrained |
+| declaring `B` from the precursor's own two persisted executions | **BARRED** — see below |
+
+⚠ **The fallback is barred by a COMPOSITION, and neither clause bars it alone.** §C.2 and §2.1
+establish that `S` is non-binding, so **`ε` must be argued from `B`'s side**. `SPEC:1410` states
+that **"`ε` may not be read off Z's own null."** The precursor's two persisted executions **are**
+Z's own null. So declaring `B` from them makes `ε` trace to Z's own null with one indirection —
+the same forbidden act. §C.2 alone bars nothing; `:1410` alone bars only the direct reading. **It
+is the composition that bars it**, which is why an earlier draft of this lane's B proposal reached
+for that fallback as "the cheapest resolution that preserves the precursor". Withdrawn.
+
+**The consequence is that §4.4a's six items stop being a wish-list and become binding**, because
+there is nothing to fall back to if one fails. §4.4a's own closing: "If item 1 or 2 fails — the
+pinned chain is not bit-identical — route (i) does **not** deliver a design property at all."
 
 **A live defect in `B`'s precedent narrative, unrepaired and routed to `lane_b` /
 `standard_p4`:** `z_reproducibility.py:412-415` argues the precedent's margin as "(52× per-bin,
@@ -287,8 +328,24 @@ Resolving any of these produces a number graded against nothing.
 
 ## 7. Shortest scientifically sufficient route
 
-1. **`B`'s justification** — accountability assigned 2026-09-16 (§2.3). Gates A1, which gates
-   `(3,Z) M(i)`, a REQUIRED cell. Preparation costs no compute.
+1. **`B`'s two judgement prerequisites, §4.4a items 4 and 5** — a **predeclared estimator of `B`**
+   (Gap 3: "two arms do not prevent tuning") and a **coverage/confidence objective for the repeat
+   count** (Gap 2: "4 repeats had no justification"). **Both are zero compute, both are judgement,
+   and both gate the run** — so the actionable next step for `B` is not an allocation. Accountability
+   assigned 2026-09-16 (§2.3). Gates A1, which gates `(3,Z) M(i)`, a REQUIRED cell.
+
+   ⚠ **What the evidence design must be, corrected.** An earlier draft of this lane's proposal
+   offered "arm 7 twice on the same fresh slabs, pinned versus unpinned" — which measures
+   **pinning's effect** and **cannot evaluate the falsifier it was paired with** ("if two *pinned*
+   executions are not bitwise identical"), because that needs **two pinned runs compared to each
+   other**. Two different experiments. That is the same defect as `ε`'s UNEVALUATED falsifier in
+   §2.2, reproduced while claiming to avoid it. §4.4a **item 1** requires repeats of the **full CV
+   unfold chain**, not one estimator fit, and **item 2** requires them to **span DIFFERENT
+   ALLOCATIONS** — "Repeats on one node do not test it — they test in-process determinism, which is
+   the easy half." So the minimum is **≥2 pinned full-chain repeats in different allocations**, plus
+   one unpinned only if the effect is also wanted; per-invocation arm-7 cost is measured at
+   `0.3875` / `0.4239` / `0.5764` CPU task-h, so ~1.2 CPU task-h for the two, ~1.8 with the
+   unpinned arm. **Not authorized here.**
 2. **§7 item 4** — the throw-deviation and completeness-division channels, so `S` covers more than
    F7. "Arithmetic + one code read."
 3. **Answer `SPEC:2117`'s verbatim `M(ii)` question** — zero compute. Until it is answered the
