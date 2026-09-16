@@ -245,8 +245,12 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 # storage-meter defect that killed 58396676_0 was repaired and re-bound: a
 # CHANGED binding, not an added one. Both deltas are recorded in
 # nd-unfolding/pet/direct_token_comparison/local_validation/20260916-full-matrix/.
-RECEIPT_BINDING_COUNT = 124
-RECEIPT_BINDING_SHA256 = "6315ae31f4ffb079bd0cd5fa66fef8dabc670cf217e55ec5a8041d9482192bd8"
+# 124 -> 125: the receipt binds the durable matrix closeout launcher, so the
+# scheduler-dependency route that verifies and reduces the matrix after this
+# session ends cannot run from unbound bytes. Delta recorded in
+# nd-unfolding/pet/direct_token_comparison/local_validation/20260916-full-matrix/binding-inventory-delta-closeout.json.
+RECEIPT_BINDING_COUNT = 125
+RECEIPT_BINDING_SHA256 = "c11c08d57c21a0193a15f5a4f5f7206795ae20a58cccb9e7355de2c0629a520b"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

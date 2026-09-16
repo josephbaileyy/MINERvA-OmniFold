@@ -140,5 +140,50 @@ class LauncherContract(unittest.TestCase):
         self.assertEqual(len(set(out)), 24)
 
 
+class CloseoutContract(unittest.TestCase):
+    """The durable closeout must record and verify without deciding anything."""
+
+    CLOSEOUT = Path(__file__).resolve().with_name("sbatch_matrix_closeout.sh")
+
+    def test_it_cannot_submit_anything(self) -> None:
+        """A recorder that could resubmit would be a retry path."""
+        body = [
+            line
+            for line in self.CLOSEOUT.read_text().splitlines()
+            if not line.lstrip().startswith("#")
+        ]
+        self.assertFalse([line for line in body if "sbatch" in line])
+
+    def test_it_requests_no_gpu(self) -> None:
+        """Closeout is accounting; it must not hold an A100."""
+        text = self.CLOSEOUT.read_text()
+        self.assertNotIn("--gpus", text)
+        self.assertIn("#SBATCH --constraint=cpu", text)
+
+    def test_it_takes_the_array_as_an_argument(self) -> None:
+        """No hardcoded array id, so the route is reusable and auditable."""
+        text = self.CLOSEOUT.read_text()
+        self.assertIn("array=$4", text)
+        self.assertNotIn("58397664", text)
+
+    def test_it_writes_a_single_marker_that_demands_review(self) -> None:
+        """A future session must find one file that says 'not a decision'."""
+        text = self.CLOSEOUT.read_text()
+        self.assertIn("CLOSEOUT.json", text)
+        self.assertIn('"review_required": True', text)
+        self.assertIn("non_claim", text)
+
+    def test_it_verifies_the_covered_geometry_condition(self) -> None:
+        """The runtime half of the gate-scope decision must be checked here."""
+        text = self.CLOSEOUT.read_text()
+        self.assertIn("padded_positions", text)
+        self.assertIn("typed_tokens_per_row", text)
+
+    def test_it_never_reports_a_bare_pass(self) -> None:
+        """The reducer's own words must carry the qualification, not a summary."""
+        text = self.CLOSEOUT.read_text()
+        self.assertIn("never a statement of inferiority", text)
+
+
 if __name__ == "__main__":
     unittest.main()

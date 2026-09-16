@@ -1,0 +1,18 @@
+{
+  "before_count": 124,
+  "before_sha256": "6315ae31f4ffb079bd0cd5fa66fef8dabc670cf217e55ec5a8041d9482192bd8",
+  "after_count": 125,
+  "after_sha256": "c11c08d57c21a0193a15f5a4f5f7206795ae20a58cccb9e7355de2c0629a520b",
+  "added_bindings": [
+    [
+      "nd-unfolding/pet/direct_token_comparison/sbatch_matrix_closeout.sh",
+      "68103810ee50ddf2478fe739ec395a25b176587974242eab23ab68c18ed99a47"
+    ]
+  ],
+  "removed_bindings": [],
+  "changed_bindings": [],
+  "owning_receipts": [
+    "nd-unfolding/pet/direct_token_comparison/amended-execution-authorization.json"
+  ],
+  "note": "Purely additive: the durable closeout launcher is bound before use. It records and verifies; it decides nothing and cannot submit."
+}
