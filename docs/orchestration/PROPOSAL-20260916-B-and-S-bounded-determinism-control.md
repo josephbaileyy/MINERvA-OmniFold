@@ -356,8 +356,11 @@ The protected claim is the **reported per-bin uncertainty** `σ_i = sqrt(diag(C_
 Δσ_i/σ_i = sqrt(1 + Δv_i^cv/diag(C_Z)_i) − 1   ≈ Δv_i^cv / (2 diag(C_Z)_i)
 ```
 
-**BACKWARD** — a **sufficient** threshold on `r_null` from a declared tolerance `θ` on the
-relative movement of the reported uncertainty:
+**BACKWARD** — a candidate **sufficient** threshold on `r_null` from a declared tolerance `θ`.
+
+> ⚠ **NOT ESTABLISHED.** The formula below is arithmetically verified under a FIXED bin partition
+> and a FIXED F7 branch, and it bounds the DIAGONAL. It is **not** established as a sufficient
+> threshold until the three conditions in §5.8 are addressed. Do not cite it as a criterion.
 
 ```
 require  |Δσ_i/σ_i| ≤ θ  for every active bin
@@ -416,16 +419,127 @@ tolerance is a separate, unaddressed quantity.
 Also unresolved: stages 3-5 of the CV trace remain *not established* deterministic (§2); `ε` still
 does not follow, because this is `S`'s side and `SPEC:1410` stands; and **`θ` is undeclared**.
 
-### 5.7 What happens next with `θ`, and what must not
+### 5.7 Can the EXISTING inflation-factor bound protect the projected claim?
 
-`θ` is a scientific judgement about how much movement in a **published** uncertainty is tolerable.
-It is **not** this lane's to choose, and it must **not** be chosen so that the observed null
-passes — `SPEC` §6.4 and `:3584` forbid exactly that, and the observed `r_null = 4.452e-14` is Z's
-own null, which `SPEC:1410` bars from setting anything.
+Asked before proposing any second, correlation-side tolerance. **Yes — and it does so with ONE
+tolerance rather than two, provided it is declared on `g` rather than on the per-bin variance.**
 
-Routed to the criteria owner (`owners.tsv:14`) for a **justified recommendation with alternatives
-and their consequences**, then to the independent assessor (`owners.tsv:15`), then to Joseph for
-decision. **No `τ`/`θ` value is recorded here, and `S` remains open.**
+`C_Z^c = D_Z(Σ_V C_b)D_Z + (CV-independent terms)`, and the CV reaches the first term only through
+`D_Z = diag(g)`. Writing a relative movement of the inflation as `D' = D(I + Γ)`, `Γ = diag(γ_i)`:
+
+```
+ΔC_infl  =  Γ C_infl  +  C_infl Γ  +  Γ C_infl Γ         (exact, all i,j)
+```
+
+Verified against a PSD `Σ_V C_b` with `g ≥ 1` as G2 gates: max relative error **4.5e-15** at
+`γ ~ 1e-2`. So for any submultiplicative norm and `‖Γ‖ ≤ γ`:
+
+```
+‖ΔC_infl‖  ≤  ((1+γ)² − 1) · ‖C_infl‖
+```
+
+**and the same factor bounds every projection**, because a projection is a linear contraction of
+the same matrix. Measured over 300 adversarial `γ` draws per level, all at the bound:
+
+| `γ` | limit `((1+γ)²−1)` | worst full-matrix | worst projected |
+|---|---|---|---|
+| 1e-2 | 2.010000e-02 | 1.988233e-02 ✓ | 1.851135e-02 ✓ |
+| 1e-4 | 2.000100e-04 | 1.971528e-04 ✓ | 1.778063e-04 ✓ |
+| 1e-6 | 2.000001e-06 | 1.987461e-06 ✓ | 1.670323e-06 ✓ |
+
+**So an additional independent correlation tolerance is NOT required.** A tolerance on the relative
+movement of `g` bounds the diagonal, the off-diagonal and every projected contraction by one
+factor. That removes the §5.6 limitation as a *separate quantity* — it does not remove it as a
+*condition*, because of the caveat below and §5.8 item 3.
+
+⚠ **THE CONDITIONS ON THIS RESULT, and the second one narrows it substantially.**
+
+**(a)** The projected bound is relative to `‖P C_infl Pᵀ‖`, so it degrades if a declared projection
+nearly annihilates the inflated block. The draws above used non-negative contracting weights; a
+near-annihilating projection is not covered, and the declared projection set has not been checked.
+
+**(b) ⚠ IT HOLDS FOR A TOLERANCE DECLARED ON `g`, AND `g` IS AN INTERNAL QUANTITY.** The criteria
+owner's reply identifies what that costs, and I have verified both halves:
+
+- **A diagonal rescaling preserves correlations exactly — but only of the term it multiplies.**
+  `corr(D Σ_V D) = corr(Σ_V)`, measured invariant to **4.4e-16**. If `C_Z` *were* `D_Z Σ_V D_Z`, a
+  diagonal tolerance would control the whole matrix. It is not: `D_Z` multiplies `Σ_V` **alone**
+  (`z_assembly.py:4`), and the **total** `C_Z` correlation moves by **1.3e-1** on the same fixture.
+  The invariance is real and **confined to a term that is not the product**.
+- **The per-bin grip decays as `1/f_i`.** With `f_i := g_i²(Σ_V C_b)_ii / (C_Z)_ii`, the V-fraction
+  of bin `i`'s variance, `dσ_i/σ_i = f_i · (dg_i/g_i)` **exactly** — measured reproducing `f_i` to
+  six decimals at `dg/g = 1e-6`. So a `θ` declared on `σ` permits `|dg_i/g_i| ≤ θ/f_i`, and the
+  off-diagonal V-part then moves by `≈ 2θ/f_i`: **20× `θ` at `f = 0.1`, 200× at `f = 0.01`.**
+
+**So the two parametrisations fail in opposite directions, and `f_i` is required either way.** A
+tolerance on `g` is mathematically sufficient for the full matrix but has **no scientific
+justification** until it is mapped to the protected claim, and that map *is* `f_i`. A tolerance on
+`σ` is scientifically direct but **does not control the off-diagonal**, by the same `f_i`.
+
+**`f_i` is unmeasured.** Therefore §5.7 does **not** make the correlation side free, and an earlier
+reading of mine that implied it did is qualified here. What §5.7 establishes is narrower and still
+useful: **no SECOND, independent correlation tolerance is needed** — one tolerance suffices
+*provided* `f_i` is known — so the open item is a measurement, not another judgement.
+
+**The measurement, as the owner states it:** the per-bin variance decomposition of `C_Z` into its
+five terms. It settles `θ`'s correlation-side grip *and* `θ`'s own scientific scale together.
+⚠ Whether the five per-term diagonals are **persisted** is NOT established — the 13-key inventory
+carries `hCov_combined5d_total_uthrow`, but `Σ_V`, `Σ_R`, `Σ_A L`, `C_stat`, `C_ML` have not been
+verified separately recoverable, and it cannot be checked from here. **If they are not persisted,
+this is a writer requirement in the family of §7 item 1 — Tier-2, `lane_b` — and not a measurement
+at all.**
+
+### 5.8 ⚠ THREE UNRESOLVED CONDITIONS — recorded, and S analysis PAUSED here
+
+The sufficient-threshold formula in §5.4 is **NOT ESTABLISHED** until all three are addressed.
+
+**(1) DEADBAND BOUNDARY CROSSINGS.** The threshold takes `min over ACTIVE bins`, but a perturbation
+can move `v_uni^cv` across the `v_blk` boundary and **change which bins are active** — so the
+formula is evaluated over a partition the perturbation itself can alter.
+*What is established:* `max(·, v_blk)` is 1-Lipschitz in its first argument, so
+`|Δ diag(D_Z Σ_V C_b D_Z)_i| ≤ |Δv_i^cv|` holds **uniformly, including across a crossing**. The
+upper bound survives.
+*What is not:* the active/deadband dichotomy used to select the min's index set, and therefore the
+value of the min. A bin sitting just above `v_blk` can leave the active set under the very
+perturbation being bounded.
+
+**(2) POSSIBLE F7 BRANCH CHANGES.** §5.5 item 5 treated the F7 condition as a *static*
+precondition. It is not: `f7_cv_centered_required` compares `‖ms‖` against
+`k·sqrt(Tr C)/sqrt(N)`, and the perturbation moves `ms` by `−δ`, so **the branch itself is
+perturbation-dependent**. If it flips, the CV-centered variant stops being mandatory and the
+channel's existence changes under the quantity being bounded.
+*What is known:* §C.2 measured the `‖dx‖` that flips the branch at `1.7957e11`–`2.0433e11` × G's
+null, so at the observed scale the flip is remote. **"Remote at the observed scale" is not a bound
+at a declared tolerance**, and the observed scale may not be cited as one — `SPEC:1410`.
+
+**(3) PROPAGATION TO THE DECLARED PROJECTIONS.** §5.7 shows a `g`-side tolerance bounds every
+projection by one factor, which answers the *structural* question. It does **not** discharge this
+condition: the bound is relative to `‖P C_infl Pᵀ‖` and has not been evaluated against the
+**actual declared projection set**, and `SPEC` requires the 3D/4D covariances to be *exact
+projections of the adopted trunk*. Until those projections are named and checked, propagation to
+the declared claim is asserted structurally and unverified numerically.
+
+**(4) THE PER-BIN VARIANCE FRACTION `f_i` IS UNMEASURED**, and §5.7(b) shows both tolerance
+parametrisations depend on it — one for its scientific justification, the other for its
+off-diagonal grip. This is the operative dependency: the open item is a measurement (or, if the
+per-term diagonals are not persisted, a Tier-2 writer requirement), not a further judgement.
+
+**Analysis paused here** pending these four. Nothing in §5 is a criterion; nothing is adopted.
+
+**One consequence recorded and deliberately NOT acted on.** The criteria owner states that §5.1's
+withdrawal plus §5.2's exactness would together discharge `SPEC` §7 item 4 — its own recorded
+residue on `S` — and declines to say so itself, because §C.2, §C.3 and item 4 are all its work and
+judging that would be grading its own. Algebra accepted by it, **verdict withheld**, routed to
+`owners.tsv:15`. Item 4 therefore stays OPEN, and `S` is not recorded closed.
+
+### 5.9 `θ`/`γ` — routed, and what must not happen to it
+
+The criteria owner (`owners.tsv:14`) may finish the already-requested recommendation. Per §5.7 it
+should be expressed on `g`. No further review rounds and no tolerance decision are needed before
+the pilot, which is measurement-only and unaffected by any of this.
+
+It must **not** be chosen so the observed null passes: `SPEC` §6.4 and `:3584` forbid it, and
+`r_null = 4.452e-14` is Z's own null, which `SPEC:1410` bars from setting anything.
 
 ## 6. The independent assessor — resolved operationally
 
