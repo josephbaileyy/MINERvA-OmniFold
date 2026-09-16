@@ -166,13 +166,38 @@ admissible route** (see §2.4). Measured at `12250ba2`, over the **11 `.sh` file
 
 1 + 2 + 8 = 11, internally consistent.
 
-⚠ **AN EARLIER REVISION OF THIS SECTION SAID "one launcher of eleven" WITH NO POPULATION NAMED.**
-The number is right for this tree and that population, and wrong for others — over
-`nd-unfolding/sbatch_uthrow*.sh` (24 files) the count is 4 assignments, and the criteria lane's own
-tree has 10 files in the `MNV_EST_SEED_OFFSET` population rather than 11, because
-`sbatch_uthrow_dump_5d.sh` differs by 360 lines between the two trees. **A ratio quoted without its
-population is the defect §9 documents, one round later and in this record.** The load-bearing fact
-is unaffected in every tree and population measured: **arm 7 pins none.**
+⚠ **AN EARLIER REVISION OF THIS SECTION SAID "one launcher of eleven" WITH NO POPULATION NAMED**,
+and a later one explained a discrepancy with a mechanism that does not exist. Both are corrected
+here; the number `1 of 11` stands.
+
+The eleventh file is **`docs/orchestration/runs/clausec-rerun-20260821/harness/run_arms.sh`** — an
+**archived harness, not a launcher** — which exports and unsets the variable directly and carries
+no `OMP_NUM_THREADS`. So `1 + 2 + 8 = 11` closes over the stated criterion.
+
+**The retracted explanation.** This section previously said the criteria lane's tree has 10 files
+in this population "because `sbatch_uthrow_dump_5d.sh` differs by 360 lines between the two trees".
+That is wrong twice, and measurably: `sbatch_uthrow_dump_5d.sh` contains **0** references to
+`MNV_EST_SEED_OFFSET` in this tree **and** at `9dba1194`, so it is not in this population at all;
+and `git grep -l 'MNV_EST_SEED_OFFSET' <rev> -- 'nd-unfolding/*.sh'` returns the **same ten files,
+identically**, at both revisions. **The trees never differed here.** The 10-versus-11 gap was a
+**directory scope** — tree-wide against `nd-unfolding/` only — not a fork. `dump_5d` does carry
+`OMP_NUM_THREADS=8`, which is why it correctly appears in the *other* census (the 24-file
+`sbatch_uthrow*` population); it belongs to one population and not the other.
+
+I asserted that fork as the cause of a discrepancy **without running a command against it**. A
+mechanism offered to explain a disagreement is still a technical claim, and this one was false.
+
+**What genuinely remains open is a DEFINITION, not a count:** whether an archived harness under
+`docs/orchestration/runs/` belongs in a population meant to characterise *production launchers*.
+Under the stated criterion — `.sh` files referencing `MNV_EST_SEED_OFFSET` — it does, giving
+**1 of 11**. Under an intended production-launcher criterion it does not, giving 1 of 10, **and
+that criterion then has to say so.** Both lanes reached for "1 of 10" at some point by exactly that
+unstated reasoning, which is the argument for a ratio travelling with its population — better
+stated than either lane first stated it.
+
+**A ratio quoted without its population is the defect §9 documents, one round later and in this
+record.** The load-bearing fact is unaffected under every reading, tree and population measured:
+**arm 7 pins none.**
 
 **And §4.4a item 3 requires the SURROUNDING environment pinned too** — "AND TODAY IT IS NOT —
 MEASURED". Pinning LightGBM while `MKL`/`OPENBLAS`/`NUMEXPR`/`VECLIB` remain free in the arm that
