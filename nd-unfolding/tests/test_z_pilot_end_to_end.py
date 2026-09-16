@@ -41,6 +41,7 @@ REPO = ND.parent
 if str(ND) not in sys.path:
     sys.path.insert(0, str(ND))
 
+import mnv_guarded_run as guard
 import z_pilot as pilot
 import z_receipt as receipt
 
@@ -61,10 +62,14 @@ REFUSAL_GIT_EDITOR = "$GIT_EDITOR makes git run a program of the caller's choosi
 #: therefore run with them REMOVED -- that is reproducing the target environment, not relaxing a
 #: check -- and `test_a_git_program_environment_variable_is_refused_and_surfaced` keeps the
 #: opposite direction covered so the removal cannot hide a live hazard.
-GIT_PROGRAM_ENV = (
-    "GIT_SSH", "GIT_SSH_COMMAND", "GIT_PAGER", "GIT_EDITOR", "GIT_SEQUENCE_EDITOR",
-    "GIT_EXTERNAL_DIFF", "GIT_ASKPASS", "GIT_EXEC_PATH", "GIT_CONFIG_PARAMETERS",
-)
+#
+# TAKEN FROM THE GUARD, NOT RETYPED. The first draft of this file hand-copied the list and got 9
+# of the 11 names, omitting `GIT_CONFIG_GLOBAL` and `GIT_CONFIG_SYSTEM`, and cited a symbol
+# (`_GIT_PROGRAM_ENV`) that does not exist in `mnv_guarded_run.py` at all. The drift was
+# fail-closed -- an unremoved variable makes the positive arms refuse -- but a second copy of a
+# guard's table is a second implementation of it, and it had already diverged before this file was
+# reviewed once. Reading the tuple means the next name the guard gains is covered here for free.
+GIT_PROGRAM_ENV = guard._GIT_EXTERNAL_PROGRAM_ENV_VARS
 
 
 def batch_like_env(**overrides: str) -> dict:
@@ -209,17 +214,22 @@ class GuardedAssemblyEndToEnd(unittest.TestCase):
         # this assertion unsatisfiable rather than merely weak.
         verdicts = [r.get("verdict", "") for r in result["inventory"]]
         self.assertTrue(verdicts, "the guard wrote no inventory record at all")
-        for verdict in verdicts:
+        # ITERATE OVER RECORDS, NOT OVER VERDICT STRINGS. The first draft looped over `verdicts`
+        # and then re-selected `[r for r in inventory if r["verdict"] == verdict][0]` -- which is
+        # `inventory[0]` on every pass, because every verdict on the completing path is the same
+        # string. One record was checked twice and the other never, and which one that was
+        # depended on write order.
+        for record in result["inventory"]:
             self.assertEqual(
-                verdict, "REPOSITORY-ORIGINS-INSPECTED",
+                record.get("verdict"), "REPOSITORY-ORIGINS-INSPECTED",
                 f"a guarded process did not inspect: {verdicts}. The guard exits 2 for "
                 f"CANNOT-LOOK -- the same integer the pilot uses for completion -- so a 2 with a "
                 f"COULD NOT LOOK verdict means nothing was assembled.",
             )
             self.assertIsNone(
-                [r for r in result["inventory"] if r.get("verdict") == verdict][0]
-                .get("launch_refusal"),
-                "a guarded process recorded a launch refusal on the completing path",
+                record.get("launch_refusal"),
+                f"guarded process pid {record.get('pid')} (depth {record.get('depth')}, script "
+                f"{record.get('script')}) recorded a launch refusal on the completing path",
             )
         for record in result["inventory"]:
             self.assertEqual(record.get("repo_origins_outside_expect_root", 0), 0)
@@ -295,9 +305,11 @@ class GuardedAssemblyEndToEnd(unittest.TestCase):
         """The `git show` subprocesses ran, and their OUTPUT was used -- not just their exit.
 
         A launch that succeeds proves the guard admitted the argv. That the returned blob was
-        compared is a separate claim, and `worktree_files_differing_from_revision` is where it
-        shows: it is derived by digesting `git show`'s stdout against the file on disk, so a
-        non-empty list can only come from a comparison that happened.
+        COMPARED is a separate claim, and `[]` cannot carry it -- an empty dirty list is exactly
+        what "no comparison happened" produces, so pinning `[]` is one-sided. The claim needs a
+        tree where a named file IS expected to differ; see
+        `test_a_file_edited_after_the_commit_is_named_in_the_dirty_list`, which is the arm that
+        kills the mutation discarding `blob.stdout`.
         """
         for variant in ("cv", "mean"):
             record = json.loads((result["out"] / f"z-receipt-{variant}.json").read_text())
@@ -334,6 +346,38 @@ class GuardedAssemblyEndToEnd(unittest.TestCase):
         # Committed from the same bytes it runs, so NOTHING differs from the revision. This pins
         # the dirty list exactly, which the live tree cannot.
         self.assert_code_identity_ran(result, expect_dirty=[])
+
+    def test_a_file_edited_after_the_commit_is_named_in_the_dirty_list(self) -> None:
+        """`git show`'s OUTPUT is read, not merely its exit code.
+
+        REVIEW FINDING R1, AND IT WAS A REAL HOLE. Every other arm of this file pins
+        `worktree_files_differing_from_revision` to `[]` or not at all, and `[]` is what a build
+        that never looks at `blob.stdout` also produces. Mutating z_build.py's
+
+            if blob.returncode or hashlib.sha256(blob.stdout).hexdigest() != digest:
+
+        to `if False and (...)` left 8 of 8 arms green, and 110 more across three sibling suites.
+        A provenance field that always reports a clean worktree would have shipped.
+
+        So: build the control tree, THEN edit one module that is in the build's import closure,
+        and require the build to name exactly that path. The edit is an appended comment -- the
+        module still imports, the build still completes with exit 2, and the only thing that
+        changes is the digest `git show`'s stdout is compared against.
+        """
+        work = self.work("iso-dirty")
+        tree = isolated_tree(work / "tree", drop_no_ext_diff=False)
+        # z_statistics.py is imported by z_build (it computes the null ratio), so it is in the
+        # closure `_code_identity` walks. A trailing comment cannot change its behaviour.
+        edited = tree / "nd-unfolding" / "z_statistics.py"
+        edited.write_text(
+            edited.read_text()
+            + "\n# R1 two-sided control: one line differing from the committed revision.\n"
+        )
+        result = run_chain(tree, work)
+        self.assert_chain_completed(result)
+        self.assert_code_identity_ran(
+            result, expect_dirty=["nd-unfolding/z_statistics.py"]
+        )
 
     # ---------------------------------------------------------------- the negative controls ---
     def test_the_original_git_invocation_is_refused_and_the_reason_survives(self) -> None:
@@ -445,8 +489,16 @@ class GuardedAssemblyEndToEnd(unittest.TestCase):
                          len(text) - 2 * pilot.DIAGNOSTIC_KEEP_CHARS)
         self.assertNotIn("text", record)
         message = pilot.format_diagnostic(text)
-        # BOTH ENDS SURVIVE: a guard that refuses at startup prints first, one that refuses a
-        # launch mid-payload prints last. Keeping only one end drops one of the two real cases.
+        # BOTH ENDS SURVIVE, and the REASON IS NOT THE ONE THIS FILE FIRST GAVE. Review measured
+        # the executed negative control: the refusal envelope begins at offset 197 of a 2475-char
+        # child stderr -- 8% in, i.e. in the HEAD -- because `z_build` writes nothing to stderr
+        # before `_code_identity`, and the guard's inventory is flushed at child EXIT, after it.
+        # So a head-only abridgement would have kept job 58358282's refusal, and the comment that
+        # used to sit here claimed the opposite. Both ends are kept because a refusal can land at
+        # either: at startup (head, the measured case) or after a long-running payload's own
+        # progress output (tail). This fixture is synthetic and derived from the rule, so it can
+        # only show that both ends survive -- it cannot tell us which end a real refusal lands in.
+        # That came from measuring the real one.
         self.assertIn("HEAD-MARKER", message)
         self.assertIn("TAIL-MARKER", message)
         self.assertIn(str(record["omitted_chars"]), message)
