@@ -1,5 +1,5 @@
 {
-  "base_commit": "0b7a2e8db9944dbd1cf2d07eea15d4fbd033fe2f",
+  "base_commit": "3e62e5b35e5c915ef33388c8361ec62ba44f9084",
   "scope": "synthetic-amended-preflight-calibration",
   "files": {
     "nd-unfolding/mnv_guarded_run.py": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b",
@@ -35,12 +35,14 @@
     "nd-unfolding/pet/direct_token_comparison/run_amended_tests.py": "e26705b6540fc5b7aa89ef8e593263d60cc3a621debf191b710f9949b30cb3b2",
     "nd-unfolding/pet/direct_token_comparison/sbatch_amended_calibration.sh": "496817f754672acf5df6f996038ba4421edaf35fb092b1461148e80a6eae891a",
     "nd-unfolding/pet/direct_token_comparison/sbatch_fp32_calibration.sh": "66176de60f678509a8eee9965453b2427aa8da6271f627d4a5b3b31ac2bc21cc",
+    "nd-unfolding/pet/direct_token_comparison/sbatch_full_matrix.sh": "c95cd5938cf69e0e8b78a5ab74de38816141958fa3fbdc4349b68cb54f7f772c",
     "nd-unfolding/pet/direct_token_comparison/sbatch_optimizer_diagnostic.sh": "36d5d90d4263906c54146249f2cd6d670d2fbce3f2c5d5c68f574349db952f46",
-    "nd-unfolding/pet/direct_token_comparison/summarize_runs.py": "3f802f47c87cdf7b5be97a43836b8fb11e5d52d27b70353c4740358e9ea08aa2",
+    "nd-unfolding/pet/direct_token_comparison/summarize_runs.py": "b4009d756a4e5661cf66aaaec92e2517c6b854c441cfac625eaa4bde030db123",
     "nd-unfolding/pet/direct_token_comparison/test_numerical_diagnostic.py": "0ad142dbf7255b837211102f7419be75c3667ec8b0fa6974a20e4f79f26219d1",
     "nd-unfolding/pet/direct_token_comparison/test_optimizer_diagnostic.py": "8541d2462075c8f3ec1063f5f431321cf351319a8f422b6b9b842abdc5f4f5a5",
     "nd-unfolding/pet/direct_token_comparison/test_optimizer_equivalence.py": "df07d14b15fb5c4ed671307fcc3886d93af269b43a27f1cdccd7e2d69d00be96",
     "nd-unfolding/pet/direct_token_comparison/test_stress_scope_and_geometry.py": "ad1f750896a60321afc4cc4b97d2f59e81701f7cb25f4c102ee216f4d8fdd1ab",
+    "nd-unfolding/pet/direct_token_comparison/test_summarize_compute_cost.py": "af88bc566e5c973cda440f891fc934d6c9ae5ffb7b0e2cdf37fa09fb82b9af95",
     "nd-unfolding/pet/run_typed_token_comparison.py": "73a6253c9c8f3fce5c6b904eb6cf523a7a8351488b5739065781483b6b3ae70b",
     "nd-unfolding/pet/typed_descriptor_keras.py": "dccc8c616c03c24db2ce29bd0b6de56d08d37468fbdff2b6d1935c6ff2c9348f",
     "nd-unfolding/pet/typed_descriptors.py": "1a0469778cc86948c7da2ff7d5795f8d19625b2ebd755eb429c8e57f4fedf08b",

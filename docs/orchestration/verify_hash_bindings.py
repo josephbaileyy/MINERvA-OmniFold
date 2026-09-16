@@ -239,8 +239,12 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 # decision that makes the variable stress case recorded rather than gating. Exact
 # added binding and unchanged prior inventory are recorded in
 # nd-unfolding/pet/direct_token_comparison/local_validation/20260916-stress-scope/binding-inventory-delta.json.
-RECEIPT_BINDING_COUNT = 123
-RECEIPT_BINDING_SHA256 = "9c18673bdf772e1febcb1eee6c028daae47aefc35b7430dbcb3e38bd261d8138"
+# 123 -> 124: the amended PET execution receipt binds the frozen full-matrix
+# launcher by digest, so an unbound launcher cannot run the 24-job campaign.
+# Exact added binding and unchanged prior inventory are recorded in
+# nd-unfolding/pet/direct_token_comparison/local_validation/20260916-full-matrix/binding-inventory-delta.json.
+RECEIPT_BINDING_COUNT = 124
+RECEIPT_BINDING_SHA256 = "68e976583d8c0feb4e4957d044c5ac96dcdcdf18cfa58757ae82b9a200606737"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
