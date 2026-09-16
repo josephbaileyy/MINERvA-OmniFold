@@ -29,9 +29,9 @@ assert hashlib.sha256(payload).hexdigest() == sys.argv[2]
 authority = json.loads(payload)
 assert authority['status'] == 'AUTHORIZED'
 assert authority['decision'] == 'amended-preflight-calibration-and-conditional-matrix'
-assert authority['prior_jobs'] == ['58198332', '58201775', '58240587', '58277208', '58301971', '58320923']
+assert authority['prior_jobs'] == ['58198332', '58201775', '58240587', '58277208', '58301971', '58320923', '58354898']
 assert authority['precision_policy'] == {'tf32_enabled': False, 'determinism_enabled': True, 'mixed_precision_policy': 'float32', 'floatx': 'float32'}
-assert authority['prior_charged_seconds'] >= 742
+assert authority['prior_charged_seconds'] >= 1021
 assert authority['wall_seconds'] == 6000
 assert authority['preflight_seconds'] == 1200
 assert authority['calibration_seconds'] == 4800
@@ -40,6 +40,9 @@ assert authority['total_gpu_hours'] == 290
 assert authority['total_cpu_core_hours'] == 9296
 assert authority['storage_GiB'] == 200
 assert authority['scope'] == 'synthetic-only'
+assert authority['gate_scope']['stress_only_cases'] == ['variable']
+assert authority['gate_scope']['production_geometry_verified_each_run'] is True
+assert hashlib.sha256(pathlib.Path(authority['gate_scope_authority']).read_bytes()).hexdigest() == authority['gate_scope_authority_sha256']
 assert authority['automatic_retry'] is False
 manifest = pathlib.Path('nd-unfolding/pet/direct_token_comparison/amended-manifest.json')
 assert hashlib.sha256(manifest.read_bytes()).hexdigest() == authority['manifest_sha256']

@@ -7,9 +7,10 @@
     "58240587",
     "58277208",
     "58301971",
-    "58320923"
+    "58320923",
+    "58354898"
   ],
-  "prior_charged_seconds": 742,
+  "prior_charged_seconds": 1021,
   "wall_seconds": 6000,
   "preflight_seconds": 1200,
   "calibration_seconds": 4800,
@@ -29,8 +30,20 @@
     "mixed_precision_policy": "float32",
     "floatx": "float32"
   },
-  "manifest_sha256": "3f545110f11d6490f992196a06c53a603601e53ec421a499a4254b33901c6ed0",
+  "manifest_sha256": "5b0308fd5d25d394ec99baac70d3046b41951b49dff170ce95e8057d57c348cc",
   "authority_source": "nd-unfolding/pet/direct_token_comparison/BEN_COMPARISON_AUTHORIZATION-20260915.md",
   "authority_source_sha256": "5fce2195088cf1241b9706c7c6ddcee855bd7fd07922f567532fc1b00ca1af26",
-  "approval_date": "2026-09-15 Asia/Seoul"
+  "approval_date": "2026-09-16 Asia/Seoul",
+  "gate_scope": {
+    "stress_only_cases": [
+      "variable"
+    ],
+    "recorded_as": "FAILED-STRESS",
+    "all_other_gates": "retained unchanged",
+    "tolerances": "unchanged",
+    "production_geometry_verified_each_run": true,
+    "excludes": "variable-length or real-source training"
+  },
+  "gate_scope_authority": "nd-unfolding/pet/direct_token_comparison/STRESS_SCOPE_AUTHORIZATION-20260916.md",
+  "gate_scope_authority_sha256": "09cebb72374ef579572985a15842aaca498dee9e37ea46399e13a1199476d860"
 }

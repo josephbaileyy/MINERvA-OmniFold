@@ -30,7 +30,9 @@ def evaluate(
         raise ValueError("Calibration process failed")
     if "69 passed, 10 subtests passed" not in (directory / "tests.log").read_text():
         raise ValueError("Cluster test scope did not pass completely")
-    if "25 passed" not in (directory / "tests.log").read_text():
+    # 25 optimizer-gate controls plus the 15 stress-scope/geometry controls added
+    # under the 2026-09-16 decision; pytest reports them as one summary line.
+    if "40 passed" not in (directory / "tests.log").read_text():
         raise ValueError("Amended gate tests did not pass completely")
     for name in (
         "tests-guard.json",

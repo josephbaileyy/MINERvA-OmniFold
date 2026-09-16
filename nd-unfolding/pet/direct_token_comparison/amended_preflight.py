@@ -19,10 +19,20 @@ from calibration_measure import runtime_versions
 import typed_descriptor_keras as adapter
 import typed_token_comparison as candidate
 from optimizer_diagnostic import float64_adam, replay, save_arrays, trace
-from optimizer_equivalence import validate
+from optimizer_equivalence import key_bias_index, validate
 import run_typed_token_comparison as runner
 
 GATE = "key-bias-common-operands-v1"
+# Joseph's 2026-09-16 decision, recorded in
+# STRESS_SCOPE_AUTHORIZATION-20260916.md: for this frozen synthetic campaign the
+# variable-length stress geometry is exempt from the cross-device gate, its
+# discrepancy stays recorded as a FAILED stress check rather than being waved
+# through, and every other gate is retained unchanged. The frozen matrix never
+# constructs this geometry, and `run_typed_token_comparison.assert_covered_geometry`
+# verifies that for every production batch. The exemption does not extend to
+# variable-length or real-source training.
+STRESS_ONLY_CASES = ("variable",)
+PASS_WITH_STRESS = "PASS-WITH-RECORDED-STRESS-FAILURE"
 
 
 def hashes() -> dict[str, str]:
@@ -54,12 +64,63 @@ def inventory(directory: Path) -> dict[str, str]:
     }
 
 
+def check_stress_consistency(
+    receipt: dict[str, Any], rows: list[dict[str, Any]]
+) -> list[str]:
+    """Allow a failure only for an authorized stress-only case, and only if declared.
+
+    The verdict word has to carry the stress result, because a correct caveat beside
+    a green word does not survive being read alone. So this refuses in both
+    directions: a ``PASS`` hiding a failure, and a stress verdict with nothing
+    actually failing.
+
+    Parameters
+    ----------
+    receipt : dict
+        The preflight receipt.
+    rows : list of dict
+        One entry per case/routing pair, each carrying its gate record.
+
+    Returns
+    -------
+    list of str
+        The ``case/routing`` names that failed, all necessarily stress-only.
+
+    Raises
+    ------
+    ValueError
+        If a gated case failed, or the declared failures or verdict disagree.
+    """
+    failures = sorted(
+        f"{row['case']}/{row['routing']}"
+        for row in rows
+        if row["gate"]["terminal"] != "PASS"
+    )
+    gated = sorted(
+        f"{row['case']}/{row['routing']}"
+        for row in rows
+        if row["gate"]["terminal"] != "PASS" and row["case"] not in STRESS_ONLY_CASES
+    )
+    if gated:
+        raise ValueError(f"A gated case failed the amended gate: {', '.join(gated)}")
+    if sorted(receipt.get("stress_failures", [])) != failures:
+        raise ValueError("Recorded stress failures disagree with the model rows")
+    if (receipt.get("terminal") == PASS_WITH_STRESS) != bool(failures):
+        raise ValueError("Preflight verdict disagrees with the recorded stress result")
+    return failures
+
+
 def verify_receipt(directory: Path, *, require_gpu: bool = True) -> dict[str, Any]:
     """Reject incomplete, changed, unbound or non-GPU amended preflights."""
     receipt: dict[str, Any] = json.loads((directory / "preflight.json").read_text())
     expected = {(c, r) for c in original.CASES for r in ("pooled", "direct")}
-    if receipt.get("terminal") != "PASS" or receipt.get("gate") != GATE:
+    if (
+        receipt.get("terminal") not in ("PASS", PASS_WITH_STRESS)
+        or receipt.get("gate") != GATE
+    ):
         raise ValueError("Complete amended preflight required")
+    if list(receipt.get("stress_only_cases", [])) != list(STRESS_ONLY_CASES):
+        raise ValueError("Recorded stress-only scope differs from the authorized scope")
     if require_gpu and receipt.get("mode") != "gpu":
         raise ValueError("GPU preflight required")
     if receipt["code_sha256"] != hashes() or receipt["versions"] != runtime_versions():
@@ -71,14 +132,17 @@ def verify_receipt(directory: Path, *, require_gpu: bool = True) -> dict[str, An
     rows = receipt["models"]
     if len(rows) != 8 or {(r["case"], r["routing"]) for r in rows} != expected:
         raise ValueError("Incomplete amended coverage")
+    # Every pair must still be present, bound to the same key bias and run on the
+    # required device. Only the authorized stress-only cases may report a failure,
+    # and the verdict word must agree with the rows in both directions.
     if any(
-        r["gate"]["terminal"] != "PASS"
-        or r["gate"]["key_bias_index"] != 27
+        r["gate"]["key_bias_index"] != 27
         or r["gate"]["key_bias_shape"] != [4, 8]
         or (require_gpu and "GPU:0" not in r["device"])
         for r in rows
     ):
-        raise ValueError("Invalid model gate or device")
+        raise ValueError("Invalid model gate binding or device")
+    check_stress_consistency(receipt, rows)
     if receipt["artifacts"] != inventory(directory):
         raise ValueError("Amended artifact inventory mismatch")
     required = (
@@ -307,7 +371,24 @@ def main() -> None:
                 raise ValueError("Token inventory differs")
             for i, key in enumerate(a):
                 original.compare(a[key], b[key], exact=i > 0 or args.device == "cpu")
-            gate = validate(new, traces, replays, exact_cpu=args.device == "cpu")
+            if case in STRESS_ONLY_CASES:
+                # Recorded, not gating. The evidence below is still written, so a
+                # failed stress check remains fully re-derivable.
+                try:
+                    gate = validate(
+                        new, traces, replays, exact_cpu=args.device == "cpu"
+                    )
+                    gate["stress_only"] = True
+                except (AssertionError, ValueError) as failure:
+                    gate = {
+                        "terminal": "FAILED-STRESS",
+                        "stress_only": True,
+                        "error": f"{type(failure).__name__}: {failure}",
+                        "key_bias_index": key_bias_index(new),
+                        "key_bias_shape": list(new.attention.key_dense.bias.shape),
+                    }
+            else:
+                gate = validate(new, traces, replays, exact_cpu=args.device == "cpu")
             tf.keras.utils.get_custom_objects()[
                 "minerva_pet>TypedTokenComparison"
             ] = current_type
@@ -341,8 +422,13 @@ def main() -> None:
     )
     if hashes() != before:
         raise ValueError("Source changed during preflight")
+    stress_failures = sorted(
+        f"{r['case']}/{r['routing']}" for r in rows if r["gate"]["terminal"] != "PASS"
+    )
     receipt = {
-        "terminal": "PASS",
+        "terminal": PASS_WITH_STRESS if stress_failures else "PASS",
+        "stress_only_cases": list(STRESS_ONLY_CASES),
+        "stress_failures": stress_failures,
         "gate": GATE,
         "mode": args.device,
         "code_sha256": before,

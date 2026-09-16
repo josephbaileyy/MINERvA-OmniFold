@@ -181,7 +181,7 @@ def test_calibration_rejects_policy_drift(
     monkeypatch.setattr(evaluator, "verify_receipt", lambda path: {})
     (tmp_path / "terminal.txt").write_text("COMPLETE")
     (tmp_path / "exit-code.txt").write_text("0")
-    (tmp_path / "tests.log").write_text("69 passed, 10 subtests passed\n25 passed")
+    (tmp_path / "tests.log").write_text("69 passed, 10 subtests passed\n40 passed")
     for guard in (
         "tests-guard.json",
         "initialization-guard.json",

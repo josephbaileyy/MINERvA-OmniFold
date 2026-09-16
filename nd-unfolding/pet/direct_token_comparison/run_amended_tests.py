@@ -35,9 +35,17 @@ def main() -> None:
                 raise
     import pytest
 
+    here = Path(__file__).parent
     raise SystemExit(
         pytest.main(
-            ["-q", str(Path(__file__).parent / "test_optimizer_equivalence.py")]
+            [
+                "-q",
+                str(here / "test_optimizer_equivalence.py"),
+                # The stress-scope and production-geometry controls must run on the
+                # deployment target too, not only locally: they are what makes the
+                # authorized variable-case exemption safe.
+                str(here / "test_stress_scope_and_geometry.py"),
+            ]
         )
     )
 

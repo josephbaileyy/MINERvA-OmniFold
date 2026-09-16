@@ -235,8 +235,12 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 # 121 -> 122: the amended PET execution receipt binds its continuation grant.
 # Exact added binding and unchanged prior inventory are recorded in
 # nd-unfolding/pet/direct_token_comparison/local_validation/20260915-amended/binding-inventory-delta.json.
-RECEIPT_BINDING_COUNT = 122
-RECEIPT_BINDING_SHA256 = "3374bde8558b64d3ae891cfbd540444462ec2eca88c3a9a38ea320ba9f3942c1"
+# 122 -> 123: the amended PET execution receipt binds the 2026-09-16 gate-scope
+# decision that makes the variable stress case recorded rather than gating. Exact
+# added binding and unchanged prior inventory are recorded in
+# nd-unfolding/pet/direct_token_comparison/local_validation/20260916-stress-scope/binding-inventory-delta.json.
+RECEIPT_BINDING_COUNT = 123
+RECEIPT_BINDING_SHA256 = "9c18673bdf772e1febcb1eee6c028daae47aefc35b7430dbcb3e38bd261d8138"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

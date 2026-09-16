@@ -108,6 +108,75 @@ def make_fixture(
     return batch, event, generic, truth
 
 
+# The cross-device GPU gate was validated on one token geometry only: the uniform,
+# unpadded layout this fixture produces, which the preflight calls its "nominal" case.
+# Joseph's 2026-09-16 decision exempts the variable-length stress geometry from the
+# gate for this frozen synthetic campaign and requires, in exchange, that every
+# production batch be verified to use the covered geometry. It does not extend to
+# variable-length or real-source training.
+COVERED_GEOMETRY = {"photons": 1, "blobs": 1, "prongs": 2}
+
+
+def assert_covered_geometry(
+    inputs: dict[str, NDArray[Any]], rows: int, *, label: str
+) -> dict[str, Any]:
+    """Require the uniform unpadded geometry the GPU gate actually validated.
+
+    Checking the complete input set covers every minibatch: the properties below are
+    per-row, and a batch is a row subset, so uniform counts over all rows imply
+    uniform counts over any selection. ``select_inputs`` additionally re-checks the
+    slot total it carries through, so a selection cannot silently introduce padding.
+
+    Parameters
+    ----------
+    inputs : dict
+        Packed Keras inputs for one complete split.
+    rows : int
+        Expected row count for that split.
+    label : str
+        Split name, used only in failure messages.
+
+    Returns
+    -------
+    dict
+        The measured geometry, recorded in the run receipt as evidence.
+
+    Raises
+    ------
+    ValueError
+        If any family is padded, token-masked, disabled, or of unvalidated width.
+    """
+    measured: dict[str, Any] = {}
+    for contract in typed.FAMILY_CONTRACTS:
+        prefix = contract.name
+        expected = COVERED_GEOMETRY[prefix]
+        segment = np.asarray(inputs[f"{prefix}_segment_ids"])
+        counts = np.bincount(segment, minlength=rows)
+        token_mask = np.asarray(inputs[f"{prefix}_token_mask"])
+        enabled = np.asarray(inputs[f"{prefix}_enabled"])
+        declared = np.asarray(inputs[f"{prefix}_counts"])
+        if len(counts) != rows:
+            raise ValueError(f"{label}/{prefix}: segment ids exceed the row count")
+        if int(counts.min()) != expected or int(counts.max()) != expected:
+            raise ValueError(
+                f"{label}/{prefix}: slots per row {int(counts.min())}..."
+                f"{int(counts.max())} is not the covered width {expected}; the GPU "
+                "gate never validated a padded or variable-length batch"
+            )
+        if not token_mask.all():
+            raise ValueError(f"{label}/{prefix}: token-level masking is not covered")
+        if not enabled.all():
+            raise ValueError(f"{label}/{prefix}: a disabled family is not covered")
+        if not np.array_equal(declared, counts.astype(declared.dtype)):
+            raise ValueError(f"{label}/{prefix}: declared counts disagree with slots")
+        measured[prefix] = expected
+    # Direct routing concatenates one token per retained object, so a uniform
+    # per-family width means the attention sequence carries no padded position.
+    measured["typed_tokens_per_row"] = sum(COVERED_GEOMETRY.values())
+    measured["padded_positions"] = 0
+    return measured
+
+
 def select_inputs(
     inputs: dict[str, NDArray[Any]], rows: NDArray[Any]
 ) -> dict[str, NDArray[Any]]:
@@ -131,6 +200,10 @@ def select_inputs(
         )
         for suffix in ("counts", "enabled"):
             selected[f"{prefix}_{suffix}"] = inputs[f"{prefix}_{suffix}"][rows]
+        # A selection must carry exactly the slots its rows declare, or the ragged
+        # repacking downstream would pad and leave the covered geometry.
+        if len(indices) != int(np.sum(ends - starts)):
+            raise ValueError(f"{prefix}: selection dropped or duplicated slots")
     return selected
 
 
@@ -248,6 +321,13 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         inputs.update(
             generic_values=generic, generic_mask=np.ones(generic.shape[:2], dtype=bool)
         )
+    covered_geometry = {
+        label: assert_covered_geometry(inputs, count, label=label)
+        for label, inputs, count in (
+            ("train", train_inputs, args.rows),
+            ("test", test_inputs, args.test_rows),
+        )
+    }
 
     def target(truth: NDArray[Any]) -> NDArray[Any]:
         if args.mode == "ordinary":
@@ -390,6 +470,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         },
         "mode": args.mode,
         "seed": args.seed,
+        "covered_geometry": covered_geometry,
         "training_rows": args.rows,
         "test_rows": args.test_rows,
         "iterations": args.iterations,
