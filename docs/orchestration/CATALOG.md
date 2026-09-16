@@ -988,6 +988,21 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   (`P18`). **Donor question flagged:** `z_assembly.py` has no donor binding at all, so a donor appearing
   in code without a committed decision is a decision taken by implementation, and this lane will treat
   that as a finding while refusing to answer the question itself.
+- [`PREREGISTER-20260915-epsilon-and-B-acceptance-requirements.md`](PREREGISTER-20260915-epsilon-and-B-acceptance-requirements.md)
+  - **`E1`-`E12` for `ε` and `B1`-`B9` for §3.7a's `B`, written and committed BEFORE this lane opened
+  the proposal they assess.** Grades nothing, proposes no route, no threshold and no number; adopts
+  nothing. Derived from `SPEC` rev. 21 **only** — every requirement carries a `SPEC` citation and none
+  cites the proposal — and all **28** citations were content-verified after an initial set was found to
+  be off by up to `34` lines. **The governing blob does not fork:**
+  `296511ab601e44545d7ed3904811a74ee14b3094` is byte-identical at `main` `9dba1194`, at the criteria
+  lane's `8a42f8ea` and at `df0a8603`. **Load-bearing structure:** `ε ∈ [B, S]` with `B ≤ S` a
+  **precondition and not an arithmetic step** (`:1779-1782`); a reproducibility floor bounds `ε` from
+  **below** and cannot justify it (`:1406-1409`), the direction rev. 16 inverted; an imported constant
+  is not an imported error model (`:1646-1650`). **Two non-requirements recorded so they are not read
+  in:** `B > S` says nothing about the world (`:1744-1751`), and **no endpoint is prohibited** —
+  rev. 17's *"never taken as an endpoint"* is withdrawn (`:1764-1769`). **Naming hazard filed:** at
+  least three live objects are called `B` (§3.7a's bound, publication **Endpoint B**, and the `lane_b`
+  owner rows), two of them in one sentence of the routing record.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
