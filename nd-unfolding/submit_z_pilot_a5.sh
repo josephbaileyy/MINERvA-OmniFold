@@ -19,8 +19,8 @@ set -u -o pipefail
 #   * this file records its OWN digest into the submission record for audit. It does NOT
 #     verify it: a file cannot contain the digest of itself, and pretending otherwise would be
 #     a check that cannot fail. Compare the recorded digest against the reviewed commit.
-REVIEWED_COMMIT=__REVIEWED_COMMIT__
-REVIEWED_LIB_SHA256=__REVIEWED_LIB_SHA256__
+REVIEWED_COMMIT=ad0ab9e08d719fa3d59ae2716bae178ac843923e
+REVIEWED_LIB_SHA256=2e85555a804265369ee86125853fef34d824565840b1dc9530d12904e6dd8f9b
 SELF_REL=nd-unfolding/submit_z_pilot_a5.sh
 
 DEPLOY=/pscratch/sd/j/josephrb/zdeploy-fb9ec356
@@ -39,6 +39,13 @@ CAP_CPU_TASK_HOURS=1.5
 export MNV_CONDA_PREFIX=/global/u2/j/josephrb/.conda/envs/root_6_28
 export MNV_ENV_ROOT=/pscratch/sd/j/josephrb/k0env
 
+# `sha256sum` is GNU-only; the author's local shell has BSD `shasum`. Both are tried so the
+# binding gates are exercisable off-target, which is how the incomplete F7 fix was found.
+mnv_sha256() {
+  if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | cut -d" " -f1
+  elif command -v shasum    >/dev/null 2>&1; then shasum -a 256 "$1" | cut -d" " -f1
+  else echo ""; fi
+}
 say()  { echo "[submit] $*"; }
 die()  { echo "[submit] REFUSING: $*" >&2; exit "${2:-1}"; }
 
@@ -58,9 +65,24 @@ esac
 case "${REVIEWED_LIB_SHA256}" in
   __REVIEWED_*) die "the sanitizer library digest is not pinned yet" 11 ;;
 esac
-SELF_SHA="$(sha256sum "${BASH_SOURCE[0]}" 2>/dev/null | cut -d" " -f1)"
+SELF_SHA="$(mnv_sha256 "${BASH_SOURCE[0]}")"
 say "procedure self digest ${SELF_SHA:-<unavailable>} (recorded, NOT self-verified)"
 say "procedure reviewed at ${REVIEWED_COMMIT}"
+
+# --- 0a. VERIFY AND LOAD THE SANITIZER BEFORE ANYTHING EXTERNAL IS SOURCED ---------------
+# F7, completed. The placeholder refusals were moved up but the DIGEST COMPARISON was left
+# below `setup_salloc_env.sh`, so off-target a tampered library exited 20 ("setup_salloc_env.sh
+# failed") instead of 51 -- a refusal naming the wrong cause, which is the defect F7 was about.
+# Nothing here needs the environment: only the file and a digest tool.
+LIB_SANITIZE="$(dirname "${BASH_SOURCE[0]}")/lib_mnv_path_sanitize.sh"
+[ -f "${LIB_SANITIZE}" ] || die "lib_mnv_path_sanitize.sh not found beside this procedure" 50
+LIB_SHA="$(mnv_sha256 "${LIB_SANITIZE}")"
+[ -n "${LIB_SHA}" ] || die "no sha256 tool available to verify the sanitizer library" 57
+[ "${LIB_SHA}" = "${REVIEWED_LIB_SHA256}" ] \
+  || die "sanitizer library digest ${LIB_SHA} != reviewed ${REVIEWED_LIB_SHA256}" 51
+say "sanitizer library verified by digest: ${LIB_SHA}"
+source "${LIB_SANITIZE}" || die "cannot source ${LIB_SANITIZE}" 52
+
 
 # --- 0. the environment closure, exactly as the launcher will source it -------------------
 set +u
@@ -100,14 +122,6 @@ say "allowlist (library default, ambient value discarded): ${n_allow} -- ${MNV_E
 # predicate splits the allowlist on WHITESPACE, so the allowlist loop ran ONCE over the whole
 # string and dropped /usr/bin, /bin, /opt/cray/pe/bin and /global/common/software/nersc/bin.
 # The duplicate in the test never saw that IFS and passed 14/14.
-LIB_SANITIZE="$(dirname "${BASH_SOURCE[0]}")/lib_mnv_path_sanitize.sh"
-[ -f "${LIB_SANITIZE}" ] || die "lib_mnv_path_sanitize.sh not found beside this procedure" 50
-LIB_SHA="$(sha256sum "${LIB_SANITIZE}" | cut -d" " -f1)"
-[ "${LIB_SHA}" = "${REVIEWED_LIB_SHA256}" ] \
-  || die "sanitizer library digest ${LIB_SHA} != reviewed ${REVIEWED_LIB_SHA256}" 51
-say "sanitizer library verified by digest: ${LIB_SHA}"
-source "${LIB_SANITIZE}" || die "cannot source ${LIB_SANITIZE}" 52
-
 PATH_ORIG="$PATH"
 mnv_sanitize_path "$PATH_ORIG"
 CLEAN="$MNV_PATH_CLEAN"; DROPPED="$MNV_PATH_DROPPED"
