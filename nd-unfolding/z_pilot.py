@@ -38,6 +38,7 @@ array. The cost is priced in the execution request, not absorbed silently.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -306,18 +307,90 @@ def spectrum_diagnostics(covariance, *, label: str) -> dict:
     }
 
 
+# ------------------------------------------------------------------- the child's own diagnostic ---
+#: Head/tail kept from a long stderr. The REFUSAL ENVELOPE CAN BE AT EITHER END: a guard that
+#: refuses at startup prints first, and a guard that refuses a LAUNCH part-way through a payload
+#: (`_code_identity`'s `git show`, which is what job 58358282 hit) prints last, after the payload's
+#: own progress lines. Keeping only the tail would have dropped the first kind; keeping only the
+#: head would have dropped the one that actually happened.
+DIAGNOSTIC_KEEP_CHARS = 4000
+
+
+def child_diagnostic(stderr: str | None) -> dict:
+    """Preserve the child's stderr as a reportable, auditable record.
+
+    Returns a dict rather than a string so the receipt keeps the FULL length and digest even when
+    the retained text is abridged: an abridged quote with no measure of what was dropped is the
+    same defect as dropping it, one step smaller.
+    """
+    text = stderr if isinstance(stderr, str) else ""
+    record: dict[str, Any] = {
+        "chars": len(text),
+        "sha256": hashlib.sha256(text.encode("utf-8", "surrogatepass")).hexdigest(),
+        "abridged": False,
+    }
+    if len(text) <= 2 * DIAGNOSTIC_KEEP_CHARS:
+        record["text"] = text
+        return record
+    record["abridged"] = True
+    record["head"] = text[:DIAGNOSTIC_KEEP_CHARS]
+    record["tail"] = text[-DIAGNOSTIC_KEEP_CHARS:]
+    record["omitted_chars"] = len(text) - 2 * DIAGNOSTIC_KEEP_CHARS
+    return record
+
+
+def format_diagnostic(stderr: str | None) -> str:
+    """One operator-facing clause carrying the child's own words, for a refusal message.
+
+    A bare exit code names the LAYER that refused and nothing about WHY. Job 58358282 returned
+    `the build exited 3` -- true, and it cost a reading of the guard's inventory JSONL to learn
+    that the cause was one missing `--no-ext-diff` on a `git show`. The child had already written
+    that sentence to stderr and this process discarded it.
+    """
+    record = child_diagnostic(stderr)
+    if not record["chars"]:
+        return (
+            " The child wrote NOTHING to stderr (0 chars), so the exit code is the only evidence "
+            "available and this refusal is correspondingly uninformative."
+        )
+    if record["abridged"]:
+        body = (
+            f"{record['head']}\n[... {record['omitted_chars']} char(s) omitted ...]\n"
+            f"{record['tail']}"
+        )
+    else:
+        body = record["text"]
+    return (
+        f" The child's own stderr ({record['chars']} chars, sha256 {record['sha256'][:12]}) "
+        f"follows, and it -- not the exit code -- is the diagnostic:\n{body.rstrip()}"
+    )
+
+
 # -------------------------------------------------------------- the exit-aware build invocation ---
-def _validate_completion(rc: int, stdout: str, artifacts: dict) -> dict:
-    """Establish what exit 2 does not: that the artifacts exist and match their receipts."""
+def _validate_completion(rc: int, stdout: str, artifacts: dict, stderr: str = "") -> dict:
+    """Establish what exit 2 does not: that the artifacts exist and match their receipts.
+
+    `stderr` is the child's own, and it is CARRIED INTO EVERY REFUSAL MESSAGE. It is a positional
+    parameter with a default rather than keyword-only so that the many existing call sites in the
+    suite keep working, but no production path may omit it -- `run_pilot` passes it.
+    """
     if rc == BUILD_FAILURE_RC:
         raise contract.ZContractError(
             f"pilot: the build exited {rc} (construction failed or the invocation was "
-            f"malformed). stderr envelope, if any, is the build's own. Nothing is validated."
+            f"malformed). Nothing is validated." + format_diagnostic(stderr)
         )
+    # ⚠ THIS IS THE MESSAGE THAT COST A RUN. At attempt 3 it read exactly "the build exited 3,
+    # and the only completion code this CLI produces is 2" -- correct, and silent about the cause,
+    # which was one missing `--no-ext-diff`. An exit code OUTSIDE this CLI's contract is precisely
+    # the case where the code carries the least information and the child's stderr carries the
+    # most, because the code came from a layer BELOW the build (the guard, a signal, the
+    # interpreter) and means nothing in the build's own vocabulary.
     contract.require(
         rc == BUILD_COMPLETION_RC,
         f"pilot: the build exited {rc}, and the only completion code this CLI produces is "
-        f"{BUILD_COMPLETION_RC}. 0 is reachable only from --help, which writes nothing.",
+        f"{BUILD_COMPLETION_RC}. 0 is reachable only from --help, which writes nothing. An exit "
+        f"outside this CLI's contract was produced by some layer BELOW it, so its number is not "
+        f"interpretable here." + format_diagnostic(stderr),
     )
     try:
         result = json.loads(stdout)
@@ -325,6 +398,7 @@ def _validate_completion(rc: int, stdout: str, artifacts: dict) -> dict:
         raise contract.ZContractError(
             f"pilot: the build exited {BUILD_COMPLETION_RC} but its stdout is not JSON ({exc}). "
             f"The exit code alone is not evidence of a completed construction."
+            + format_diagnostic(stderr)
         ) from exc
     for field, want in (
         ("construction_status", "CHECKED"),
@@ -375,7 +449,11 @@ def _validate_completion(rc: int, stdout: str, artifacts: dict) -> dict:
         )
         checked[variant] = {"receipt": str(receipt_path), "product": str(product_path),
                             "sha256": actual}
-    return {"build_result": result, "verified_products": checked}
+    # PRESERVED ON THE COMPLETING PATH TOO. A build that completes with NON-PASSING science still
+    # writes warnings, and a receipt that keeps them only when the run failed cannot be used to
+    # ask what the successful run warned about.
+    return {"build_result": result, "verified_products": checked,
+            "build_stderr": child_diagnostic(stderr)}
 
 
 def _find_product_sha(record: dict, product_path: Path) -> str:
@@ -480,7 +558,8 @@ def run_pilot(
     build_seconds = time.monotonic() - started
 
     completion = _validate_completion(proc.returncode, proc.stdout,
-                                      {k: str(v) for k, v in artifacts.items()})
+                                      {k: str(v) for k, v in artifacts.items()},
+                                      proc.stderr)
 
     # ⚠ THE PRODUCER'S REVISION MUST DIFFER FROM THE ASSEMBLING ONE, AND NOTHING ASSERTED IT.
     # Three docstrings and Z_BUILD.md said the two must stay distinct; no code compared them, so
@@ -579,6 +658,14 @@ def main(argv: list[str] | None = None) -> int:
         )
     except contract.ZContractError as exc:
         print(json.dumps({"pilot_status": "FAILED", "reason": str(exc)}), file=sys.stderr)
+        # THE ENVELOPE ABOVE IS LOSSLESS BUT NOT LEGIBLE. `json.dumps` escapes the newlines of an
+        # embedded child stderr into literal `\n`, so a multi-line guard refusal arrives as one
+        # unreadable line -- which is how a preserved diagnostic becomes an unread one. The same
+        # text is re-emitted verbatim below so a human reading the job's .err sees the child's own
+        # message with its line structure intact. Two encodings of one string; neither is the only
+        # copy, and a consumer parsing the first line still gets valid JSON.
+        print("[z-pilot] FAILED -- verbatim reason follows", file=sys.stderr)
+        print(str(exc), file=sys.stderr)
         return BUILD_FAILURE_RC
     print(json.dumps({"pilot_status": "CHECKED", "receipt": result["receipt"],
                       "scientific_acceptance": "NON-PASSING", "adoptable": False,

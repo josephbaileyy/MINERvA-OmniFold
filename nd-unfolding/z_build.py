@@ -275,8 +275,18 @@ def _code_identity(revision: str) -> JSONDict:
     }
     dirty = []
     for path, digest in digests.items():
+        # `--no-ext-diff` IS MANDATORY, AND NOT FOR STYLE. `git show` honours `diff.external`, so
+        # the bare invocation can run a configured program; `mnv_guarded_run.py` therefore refuses
+        # `show`/`log`/`diff` unless the flag is EXPLICITLY present
+        # (_GIT_NO_EXT_DIFF_SUBCOMMANDS). Without it this line is unreachable under the guard --
+        # the guard refuses the launch, the build dies with the guard's code, and the pilot reports
+        # an unmodelled exit rather than a construction result. Job 58358282 is that failure.
+        # The flag changes nothing about the blob bytes read here: `<rev>:<path>` names a single
+        # object, so no diff is generated either way.
         blob = subprocess.run(
-            ["git", "show", f"{head}:{path}"], cwd=REPO, capture_output=True
+            ["git", "show", "--no-ext-diff", f"{head}:{path}"],
+            cwd=REPO,
+            capture_output=True,
         )
         if blob.returncode or hashlib.sha256(blob.stdout).hexdigest() != digest:
             dirty.append(path)
