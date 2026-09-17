@@ -109,9 +109,12 @@ Stated once, because a rung that omits any of these is not matched:
 ## What this document deliberately does not do
 
 It does not rank the rungs by expected outcome, because that would smuggle in a
-prediction as a plan. It does not treat our uncapped representation's greater
-information retention as evidence that we would win R6 — retention is an
-implementation property, not a performance claim. It does not treat the cross-device
+prediction as a plan. It does not treat the comparison code's uncapped representation
+as evidence that we would win R6 — retention is an implementation property, not a
+performance claim. (Scoped 2026-09-17: "uncapped" describes
+`typed_token_comparison.py`, **not** the production PET estimator, whose clouds are
+energy-ranked and truncated to 12 tokens per `docs/analysis-note/sec_pet.tex:56-57` at
+`66d35706`. See §1(b) of `COMPARISON_PROPOSAL-20260917.md`.) It does not treat the cross-device
 preflight discrepancy as evidence about either approach. And it does not request
 compute: each rung needs its own specification, criteria and authorization, and R2–R8
 are unauthorized today.

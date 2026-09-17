@@ -40,14 +40,31 @@ because **pooling did unusually well there**, not because individual tokens did 
 — but with n = 8 neither observation survives a significance test, so neither is a
 finding.
 
-**On aggregate-overflow tokens: don't adopt them as an upgrade — we don't have the
-problem they solve.** Gregor's code caps how many objects an event may carry; ours
-doesn't cap at all. His cap has two modes, and the one that runs by default simply
-throws away the lowest-energy objects past a limit of 150. The aggregate-overflow mode
-he also offers is better than that, because it keeps the discarded objects' total
-energy in one summary token — but both modes are ways of coping with a cap, and we
-currently keep everything. So adopting overflow tokens would mean introducing a cap
-first and then partly compensating for it.
+**On aggregate-overflow tokens: this is a live candidate, and my earlier framing of it
+was wrong.** I previously wrote that we "don't have the problem they solve" because our
+implementation applies no cap. That is true of the synthetic typed-descriptor code
+under test here, and **false of the production PET estimator.** The analysis note
+records that its clouds are "energy-ranked and truncated or zero-padded to 12 tokens"
+(`docs/analysis-note/sec_pet.tex:56-57` at `66d35706`), and the 12-token cardinality is
+carried in code (`nd-unfolding/pet/typed_descriptor_source_smoke.py:34`,
+`nd-unfolding/pet/validate_g2_npz_receipt.py:113`). We already cap, and we already do
+it by **energy-ordered truncation** — the same mechanism as Gregor's default.
+
+Where that bites is measured and already published. The truth leg is comfortable: mean
+cardinality **4.57**, only **2.31%** of events reach the cap, and the twelfth
+constituent carries **0.09%** of retained truth energy on average
+(`sec_pet.tex:104-116`). The **reco leg sits at the cap**: mean **11.09** clusters in
+data and **11.15** in MC against a cap of 12, with the distributions "pil[ing] up at
+the cap" (`sec_pet.tex:156-165`). The note's "essentially lossless" validation covers
+the truth cloud at $E_{\rm avail}$ scale, not the reco cloud.
+
+So the two questions invert in order of interest. Aggregate overflow is not a
+compression we would have to introduce a cap in order to use; it is a candidate repair
+for a truncation we already apply, on the leg where it binds. His cap has two modes and
+the default one simply discards the lowest-energy objects past a limit; the
+aggregate-overflow mode keeps their summed four-momentum in one token instead. Whether
+that actually improves closure is still unmeasured — `COMPARISON_PROPOSAL-20260917.md`
+is the bounded experiment that would measure it.
 
 That said, **keeping more information is not the same as performing better.** Fewer
 tokens is cheaper to train and might even generalise better, so if we ever do need a
@@ -293,12 +310,17 @@ Three findings reframe the question:
   **energy-ordered truncation** at 150 objects; per-family aggregation is opt-in and
   requires *both* `max_blobs` and `max_prongs` > 0, at which point `max_objects` is
   ignored. So "Gregor's setup" names two different behaviours and we should say which.
-- **Our implementation applies no cap at all.** Every object is retained individually,
-  padding is per-batch and nothing is truncated. Relative to *either* upstream path we
-  currently keep strictly more information.
-- Therefore aggregate overflow is, relative to our current state, a **compression
-  scheme rather than an addition**: adopting it means introducing a cap and then
-  partially compensating for it.
+- **The code under test applies no cap; the production estimator does.** In
+  `typed_token_comparison.py` every object is retained individually, padding is
+  per-batch and nothing is truncated. The production PET estimator truncates clouds to
+  12 energy-ranked tokens (`docs/analysis-note/sec_pet.tex:56-57`,
+  `nd-unfolding/pet/typed_descriptor_source_smoke.py:34`, both at `66d35706`). An
+  earlier draft of this report generalised the first fact to "our implementation" and
+  was wrong; the correction is in the recommendation above.
+- Therefore aggregate overflow is **not** merely a compression relative to our current
+  state. Against the code under test it is a compression; against the production
+  estimator's energy-ordered truncation at 12 tokens it is a candidate *repair*, and
+  the reco leg (mean 11.09 data / 11.15 MC) is where the cap binds.
 
 **A distinction this report must not blur.** Everything above is about *information
 retention*, which is an established implementation property. It is **not** a claim
