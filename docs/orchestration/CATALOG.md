@@ -1147,6 +1147,38 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **`I7`:** three citation corrections, one of which **withdraws a note of my own** — `z_contract.py`
   has **FORKED** (`G_FLOOR` at `:84` on main, `:126` on the pilot lane), so my "misaddressed" verdict
   was itself tree-less.
+- [`READBACK-20260918-rank3-lineage-footing-components-completeness.md`](READBACK-20260918-rank3-lineage-footing-components-completeness.md)
+  - **Rank 3 of the designated audit (`ebba67ab`), four parts, four verdicts. Every product number
+  MEASURED BY ME** via read-only login-node `uproot` — no `sbatch`/`srun`, `R5` untouched — so
+  **nothing here is relayed.** Adopts nothing, grades no cell, infers no requirement to regenerate.
+  **PART 2 CLOSED, ELEMENTWISE AND BITWISE:** production `hXSecND_flat` vs persisted, **65856 of
+  65856 identical**, `max|Δ| = 0`; support mask and row order likewise — **and that performs the
+  external CV cross-check that stood UNPERFORMED** (`SPEC` `11c`), while correctly leaving
+  `G3R.stored_cv_cross_checked` false, since that flag records that the producer was handed no
+  operand. **PART 1 TRACED:** the parent declares `centering_convention = mean-centered`,
+  `uthrow_source = unified_throw_cov_5d_fluxfix_20260806_full160.root` — **a DIFFERENT throw ensemble
+  from the pilot's 2026-09-14 precursor** — and its `upstream_fixed_seed_null_norm = 5.8223e-50` is
+  **G's**, against the precursor's `1.4302e-50`; the two mean-shift norms agree only to 10 s.f.
+  (`4.5e-11`). The `hInflation_g` mismatch (`max|Δ| = 2.329`) is **CORRECT, not a defect** —
+  `compute_g` recomputes it (`z_assembly.py:64`, `z_build.py:587`), which is the evidence the pilot
+  did not inherit the parent's covariance. And the registry's ADOPTED 5D covariance
+  (`ESTIMATOR_REGISTRY:29`) is the **`_uthrow`** file while the chain consumed the **non-`_uthrow`**
+  one — the audit's "a digest binds identity, not selection" in its sharpest form. **PART 3:** the
+  registry already states the criterion — nine fingerprint fields, *"reject on mismatch"* (`:17-22`).
+  **Reported-bin dimension is uniform at 10694 and PASSES; the other eight are NOT payload-checkable**
+  because `uq_cov_stat_5d.root` and `uq_cov_mlsplit_5d.root` carry **ONE histogram and no metadata at
+  all**, and the central product's only scalars are `dataPOT`/`globalCompleteness`/`ndim`. A writer
+  gap, not a verification gap. One measured disagreement routed: registry declares **est seed 42**,
+  the throw payload records **`estimator_seed = 1000`**. **PART 4 — TWO PHENOMENA WRONGLY POOLED:**
+  the central product's above-one readings are **1–49 ULP** (median excess `2.220e-16` = **1 ULP**,
+  max `1.088e-14`) — **rounding, not a defect** — while the endpoint readings (`1.001824`,
+  `1.000521`) are **eleven orders larger** and cannot be rounding. The endpoint disposition is
+  **UNRESOLVED with its reason**: the ingredients are unwritten (`mii_anchor_comparator.py:125-128`,
+  `NOT_RECOMPUTABLE, WRITER_GAP`), so no read settles it. ⚠ **And a larger finding falls out:**
+  `of_in` and `denom_nd` agree to the last bit across the support, so **`completeness ≡ 1` and no
+  completeness correction is applied in 5D** — disposition not issued. Nothing normalized into range,
+  and the eight exactly-`1.0` endpoint readings are **not** cited as health, since `:1074-1076`'s
+  closure branch writes that literal too.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
