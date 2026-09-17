@@ -1209,6 +1209,35 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   registry's reject-on-mismatch rule is violated by a documented intent. A **record collision**, not a
   payload defect; it confirms §5's baselines from source, and any repair must be on the registry side
   — **the seeds must not be unified.**
+- [`ASSESSMENT-20260918-L3-replacement-statistic.md`](ASSESSMENT-20260918-L3-replacement-statistic.md)
+  - **The replacement L3 statistic (`3ebfd407` §10), supplied after I refuted its predecessor and
+  declined to design a successor — so its author cannot assess it and I can. VERDICT: ENDORSE,
+  conditional on three statements.** Adopts nothing, sets no `τ_p`, all four boundaries withheld.
+  **`L1`:** invariance is exact **by construction** — `corr(DCD) = corr(C)` so `renorm` is invariant
+  identically — and I ran their probe rather than taking it: repaired statistic invariant at
+  `3.3e-16`–`4.4e-16` up to rescale sd **2.0**, still responsive at `0.0021/0.0108/0.0454`.
+  **`L2` — their claim 1 is TRUE and it is a THEOREM, which is more than they claimed.** They invited
+  me to break it. Instead I proved it: two source correlations differing by **0.562** driven to the
+  **same** actual projected correlation to **9.322e-11** by choosing the source diagonal alone, at a
+  modest rescale range `[0.187, 4.133]`, under a real marginalisation map. So any diagonal-invariant
+  function of the actual projected correlation is **provably uninformative** — disjointness and
+  actuality are **mutually exclusive** and the hybrid is **forced**, not chosen. **`L3`:** the
+  reference is **verdict-changing** — 300 of 300 trials reference-dependent, worst ratio **1.973**
+  (`0.0985` vs `0.1943` on one member set), asymmetric even in a pair. A statement requirement, not a
+  defect: name the reference in the criterion and treat `τ_p` as reference-specific. **`L4` — their
+  unchecked precondition, ANSWERED BY PAYLOAD: it HOLDS.** `diag(C_Z)` read from `z-cv.npz`: **0
+  non-positive, 0 negative, 0 zero, all finite** over 10694, so `corr(C_Z)` is well defined. ⚠ But the
+  same read gives a **`5.425e+25` dynamic range** (~12.5 orders in `σ`), so the statistic is dominated
+  by high-`σ` bins and a PASS means *"no correlation change among the dominant bins"*. **`L5`:** keep
+  **definedness** and **conditioning** apart — `λ_min < 0` does not threaten `corr`'s definedness,
+  which `L4` settles independently. **`L6`:** their bounded-leak **conclusion** is endorsed
+  (`≈4e-4` at `δ_bin ≈ 1e-3`) but the **`0.3× sd` constant is withdrawn** — their own per-sd column
+  runs `0.351…0.127` and mine `0.234/0.202/0.569`, spanning `0.13`–`0.57`; this is their own §10.1
+  lesson applied to their own new claim. **`L7`:** §10.2 strengthens my `C7` from *collision* to
+  **unsatisfiable by construction** (the rule rejects `k = 0`, Z's own archive) and I adopt it.
+  **One error of mine recorded rather than deleted:** my probe compared grid indices against row
+  indices and printed a spurious set mismatch — the same index-basis confusion I flagged elsewhere a
+  day earlier.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
