@@ -1032,6 +1032,35 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   divergence, not the bound** — failing `B1`/`B2`/`B5`/`B7` on the proposing lane's **own**
   `Z_CONSTRUCTION_PLAN:501-506` items 1-2. **⚠ `owners.tsv:15` names session `[cb0b6b]`; this
   session is `d93bf047` and no mapping exists in the repo** — proceeding on the owner_id role only.
+- [`ASSESSMENT-20260917-decision-support-section-12.md`](ASSESSMENT-20260917-decision-support-section-12.md)
+  - **Bounded closure check of `DECISION-SUPPORT-20260916` §12 at `a14ff88b` against the recorded
+  decisions. CONFIRMS 1, 2a, 3, 4b, 6; REFUTES one generalization in 4; PARTLY REFUTES 2b; CONFIRMS
+  7's numbers and CORRECTS its stated reason.** Closes nothing — full `S` stays **OPEN**, §7 item 4
+  **UNASSESSED**, `θ` **RECOMMENDED NOT ADOPTED**, `A1` OPEN, Gate 2 FAIL. No compute, and **no
+  cluster artifact read**, so every `z-null.npz` / `z-cv.npz` figure is RELAYED. **`G1`:** §12.5
+  item 3 calls it *"`[cb0b6b]`'s **withheld** verdict"* — this lane withheld none; `fb9fdec1`
+  (09-17 08:32) and `480bed76` (09-17 08:38) **postdate** `fdf5e510` (09-15) and were never routed.
+  **UNASSESSED, not WITHHELD.** **`G2`:** withdrawing *"`S` is non-binding"* vacates the fallback's
+  **BARRED** status — §2.4 `:235-237` says *"neither clause bars it alone… it is the composition
+  that bars it"* — leaving it **UNRULED**, and the one unruled §6.4 question now governs the
+  fallback, route (ii) **and** route (i)'s own control. The withdrawal has not reached `:226` /
+  `:232` / `:233` / `:551`; counts `non-binding` 7, `EXHAUSTED` 3, `barred` 7. **`G3`:** the
+  population substitution runs in **two** directions and only one was priced — route (i) pins
+  **estimator parameters** (`Z_REPRO_KNOBS:127-138`, *"the estimator parameter, NOT
+  `OMP_NUM_THREADS`"*), not allocation shape, so the non-identity **is** attributable to variables
+  route (i) would pin; *"route (i) is FALSIFIED"* applies the estimator's consequent outside its
+  antecedent. Narrow conclusion (route (i) cannot qualify these products) **stands** via 4b, and
+  the recommendation is undisturbed. **`G4`:** two decisions upstream of Alternative 1 are absent
+  from §12.5 — **`θ`**, whose own `:177-200` says it is a *"SCIENTIFIC CEILING and explicitly NOT
+  the operative determinism gate"* and warns that recording it as the gate *"repeats the vacuity
+  defect that `S` already demonstrated"*, and whose independent assessment **Joseph made a
+  precondition** (`:4`); and **§5.7 condition (a)** (`PROPOSAL:459`, *"the declared projection set
+  has not been checked"*), dropped at all three sites that say *"every projection"*. **So under
+  Alternative 1 the actually-blocking decision is `θ`, not the active set.** **Item 7 re-measured:**
+  line 4 byte-identical on `origin/main` (the **files** are not), `9/12/18/90`, `5.205`, headroom
+  `403.8038888888889`, `2.229%`, `r5_meter check` **exit 0** — but R5 charges *"sum of post-t0
+  **`ElapsedRaw`**"* (`r5_meter.py:73`), so `3.00` is a **reservation** bound (`SPEC:3140`), not a
+  metered charge; same numbers, correct authority.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
