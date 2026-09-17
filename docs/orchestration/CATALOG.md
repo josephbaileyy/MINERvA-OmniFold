@@ -260,6 +260,38 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   lead to the same next action. **And a third state: today it can produce neither outcome**, since
   `κ = None` refuses even healthy baselines. **Hence the sequencing recommendation — the cause-3
   decision is free and prices the most expensive item.**
+- [`PROPOSAL-20260917-integrated-acceptance-existing-products.md`](PROPOSAL-20260917-integrated-acceptance-existing-products.md)
+  - **ONE INTEGRATED ACCEPTANCE PROPOSAL for the EXISTING products and their supported reproduction
+  path.** Assigned by Joseph 2026-09-17; the owning lane **prepares**, `[cb0b6b]` **evaluates**. ⚠
+  **`θ = 7.11e-2` is CLOSED AS NOT ADOPTED and was NOT relabelled a feasibility floor** — the author's
+  own fallback reading and the assessor's "declared as a FLOOR it needs no new argument" are **both
+  declined**; only the narrow conclusion survives, that the derivation yields a **RESOLUTION, not a
+  scientific cap**. ⚠ **Full `S` is OPEN.** **RECOMMENDS numerical agreement, NOT bitwise identity**,
+  over a **within-run** envelope — because §6.4 already rules the bound scale-relative (so a bitwise
+  criterion would itself violate reject condition 11), because bitwise **fails on 10,683 of 10,694
+  bins** and is the gate-that-cannot-pass, and decisively because `r_null` is **already measured**, so
+  **no `ε` chosen today can legitimately grade these products.** **Hence `ε = 1e-9` by TRANSFER** from
+  `p4_lib.py:93` (Joseph, 2026-08-07, standard-P4) — the only value pre-dating the observation and
+  declared for another subject; **margin `569.7×` per-bin and `2.2e4×` on `r_null`.** ⚠ **THE ROUTE
+  NEEDS NO CONTRACT AMENDMENT** — it *satisfies* §6.4 clause by clause rather than replacing the null
+  criterion, so the two amendments a `θ` route would need are removed by `θ`'s closure, not created.
+  ⚠ **`B` is unestablished and NOT needed**, because `SPEC:1406-1409` separates **feasibility** from
+  **justification** — the observed `1.755e-12` does the former, the transfer the latter. ⚠ **THE TWO
+  QUESTIONS ARE DISJOINT:** `78a8c2ee`'s boolean `B = 0` **FAILS** on these products, so it is a
+  property of the **pinned design only**, and a pinned run would **replace** these products rather
+  than qualify them. **Minimum evidence is TWO READS, no compute:** independent reconstruction of
+  `r_null` from the persisted operands (condition **11b**) and the precursor's date against
+  `2026-08-07`. ⚠ **Corrects FIVE claims before building on them** — the assessment's four
+  (√-scaling not halving, `N=397`; per-bin estimation errors correlated at `+0.815`; deadband
+  crossings fix movement but not **membership**; downward `g` bounded **by construction** at
+  `G_FLOOR = 1.0`) **and one of the lane's own**: §5.7's *"the same factor bounds every projection"* is
+  **refuted** (`179.91` vs a `0.6900` limit, `260.7×`, all PSD) — and the diagnosis is that it holds
+  with **exact equality for UNIFORM `G`**, which is why an adversarial search that scales `γ` uniformly
+  passes on every counterexample. **`f_i` is explicitly NOT mandatory on every route**, and would not
+  close `θ`'s scale anyway (that is set by `w_stat,i`/`w_ML,i`). **Separates the projection DEFINITION
+  check (P1 — cheap, code-only, OWED) from the NUMERICAL one (P2 — matrix access, and its criterion
+  needs the unmeasured anti-correlation condition).** **All product numbers RELAYED; no cluster
+  access. Nothing adopted; no compute authorized, requested or run; products preserved.**
 - [`RECOMMENDATION-20260916-theta-per-bin-uncertainty-tolerance.md`](RECOMMENDATION-20260916-theta-per-bin-uncertainty-tolerance.md)
   - **RECOMMENDATION on `θ`, a tolerance on the reported per-bin uncertainty's relative movement.**
   Routed by Joseph 2026-09-16 for `[cb0b6b]` assessment then his decision. ⚠ **`S` IS NOT CLOSED and

@@ -92,11 +92,38 @@ grip. A `θ`-only declaration would therefore be weakest at the use it is being 
 
     ||ΔC_infl|| <= ((1+γ)² − 1) ||C_infl||,      γ := max_i |Δg_i/g_i|
 
-and **the same factor bounds every projection.** Composed with §1.3's `|Δg_i/g_i| ≤ θ/f_i`, that gives
-`γ ≤ θ / min_i f_i`, and the correlation side becomes a **derived** consequence of `θ` rather than an
-independently declared judgement. **So no second scientific judgement is required: my "declare
-jointly" is better stated as ONE TOLERANCE PLUS ONE MEASUREMENT.** That is a real simplification and
-it is theirs.
+⚠⚠ **AND THE CLAUSE "THE SAME FACTOR BOUNDS EVERY PROJECTION" IS REFUTED — RETRACTED BY ITS OWN
+AUTHOR 2026-09-17 AND VERIFIED HERE INDEPENDENTLY. THIS SUBSECTION'S ADOPTION OF IT IS CORRECTED IN
+PLACE RATHER THAN DELETED, BECAUSE I BUILT ON IT.** A projection is `w' C w` with **non-negative**
+weights, which does not prevent near-cancellation when `C` is anti-correlated. MEASURED at `γ = 0.30`
+(claimed limit `0.6900`), worst `|Δp/p|` over per-bin `Δg/g ∈ [−γ, γ]`, `w = (1,1)`:
+
+    [[1, 0.5],    [0.5, 1]]        w'Cw = 3.0e+00   worst 0.6900     1.0x the limit   PSD
+    [[1,-0.999],[-0.999, 1]]       w'Cw = 2.0e-03   worst 179.91   260.7x the limit   PSD
+    [[1,-1],      [-1,  1]]        w'Cw = 0.0       DIVERGES                          PSD
+
+**And the diagnosis is sharper than "the claim is false": the bound holds with EXACT EQUALITY for
+UNIFORM `G`**, because `ΔC = ((1+γ)²−1) C` identically there — verified at `0.690000` against the
+limit `0.690000` for *both* the benign and the anti-correlated matrix. **So an adversarial search that
+scales `γ` uniformly passes on every input, including the counterexamples.** The argmax above sits at
+maximally **non-uniform** `Δg/g = (−0.30, +0.30)`, and non-uniform is the real case, since `g` and its
+room to move both vary per bin. **A projection bound therefore requires an ANTI-CORRELATION CONDITION
+on `Σ_V C_b`, which is unmeasured** — it is not implied by PSD-ness, by non-negative weights, or by
+any tolerance on `θ`.
+
+**What survives of the simplification.** Composed with §1.3's `|Δg_i/g_i| ≤ θ/f_i`, `γ ≤ θ/min_i f_i`
+still bounds the **matrix-norm** movement, so the *diagonal-and-norm* side of the correlation question
+is a **derived** consequence of `θ` rather than a second scientific judgement: **"one tolerance plus
+one measurement" holds for `‖ΔC‖`, and NOT for an arbitrary projection.** That is still a real
+simplification and it is still theirs; it is simply narrower than either of us stated it.
+
+⚠ **AND THE TABLE BELOW USED THE FIRST-ORDER COMPOSITION, WHICH IS THE WRONG DIRECTION OF WRONG.**
+`dσ/σ = f(dg/g)` is first order only; the exact composition is `((1+θ)²−1)/min_f`, which is **TIGHTER**
+than `(1+θ/min_f)²−1`. So the degradation below is **overstated**, and the `100%` crossing is at
+`min_i f_i = 0.1473`, not at `0.1717`. MEASURED at `θ = 7.11e-2`: exact `0.2945` vs first-order
+`0.3046` at `min_f = 0.5`; exact `0.7363` vs `0.8374` at `0.2`; exact `1.4726` vs `1.9275` at `0.1`.
+**The qualifications in (a) and (b) stand; their numbers are the pessimistic form and the exact
+crossing is `0.1473`.**
 
 **Two qualifications, because "one tolerance plus one measurement" can be misread as "the correlation
 side is settled." It is not settled until `f_i` returns, and it may not be settled then.**
