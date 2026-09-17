@@ -1069,27 +1069,39 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   cannot justify `ε`"*. Assigned as the upper end of an interval it is rev. 16's direction inversion
   one level down. Adopts nothing, grades nothing, closes neither `S` nor §7 item 4; no compute and
   **no cluster artifact read** (all `z-*.npz` / band-ROOT / `G2_g_domain` / `G3R` figures RELAYED).
-  **`T1`:** `√(2/(N−1))`/2 reproduces exactly at `N=100 → 0.071067` and `N=24 → 0.147442`, both
-  measured from frozen launchers. **`T2` (the headline):** §2.2's *"cannot change any conclusion"*
-  holds per-bin and **fails for aggregates** — `p4_lib.py:110-160` already separates coherent from
-  incoherent and says *"the per-bin check is not a coherence discriminator"*; `σ`'s sampling error is
-  random across bins, a CV-induced shift is coherent, and the declared use (`SPEC:1356` exact
-  projections) is aggregate. Unsafe direction. **`T3`:** bootstrap replicas and seed-scan splits
-  violate the i.i.d.-Gaussian assumption, but **conservatively** — and the boundary is `N`-dependent,
-  so doubling the ensemble would halve `θ`, which is the reductio. **`T4`:** `θ`'s scale needs
+  ⚠ **CORRECTED 2026-09-18 — Joseph declined `θ` AND declined the floor relabeling, and four claims
+  here are corrected; I re-measured all four and all four hold against me** (probe
+  `probe-20260918-my-own-theta-claims-corrected.py`). **`T1` stands:** `√(2/(N−1))`/2 reproduces at
+  `N=100 → 0.071067`, `N=24 → 0.147442`, from frozen launchers. **`T2`'s MAGNITUDE LEG IS
+  RETRACTED:** per-bin variance-estimation errors correlate as `ρ_ij²` (measured `+0.8098` at
+  `ρ=0.9` against a predicted `0.8100`), so the aggregate suppression is `√(c̄+(1−c̄)/n)` — `0.90`,
+  i.e. **none**, at `c̄=0.815`. The coherent/incoherent **sign** survives as `p4_lib.py:141`'s own
+  statement; the conclusion that `θ_A` is too loose for aggregates is **NOT ESTABLISHED**, and what
+  decides it is `c̄`, the mean off-diagonal `ρ_ij²`, **a third unmeasured quantity** (at `c̄=0.01`
+  the suppression is `10×` and the argument returns). **`T3` corrected:** *"doubling would halve
+  `θ`"* is wrong by a factor — `√(99/199)=0.7053`, a `29.5%` reduction, halving needs `N=397`; the
+  reductio survives at the corrected magnitude, and a **sharper** objection sat inside `T3`
+  unused — for a bootstrap, raising `N` lowers the FORMULA while the quantity has an `N`-independent
+  floor, **severing** the two. `T3` otherwise stands: both populations violate the i.i.d.-Gaussian
+  assumption, conservatively. **`T4`:** `θ`'s scale needs
   `w_stat,i`/`w_ML,i`, **different terms from `f_i`**, and **closure (B) reaches neither** — so *"one
   quantity, two open questions"* is not true today. **`T5a`:** `ΔC = ΓC + CΓ + ΓCΓ` and the norm
   bound ARE valid finite; **`dσ/σ = f·(dg/g)` is NOT exact** — `2.7%` off at `u = θ`, `11.7%` at
   `θ/f`, and invisible at the `1e-6` verification point. **`T5b`:** the exact inversion gives
   `‖ΔC‖/‖C_infl‖ ≤ ((1+θ)²−1)/min f`, tighter than the published linear form, moving the 100%
   crossing from `min f ≈ 0.1717` to `0.1473` — **the error is conservative and fixing it HELPS
-  Alternative 1.** **`T5c`:** the inversion is one-sided — below `f ≈ 0.137` a `σ` tolerance bounds
-  downward `g` movement **not at all**. **`T5d`:** *"the same factor bounds every projection"* is
+  Alternative 1.** **`T5c`'s INFERENCE IS RETRACTED:** `g ≥ 1` by construction
+  (`z_assembly.py:6`, `G_FLOOR` enforced) and `g'` uses the same `max`, so `u ≥ 1/g−1 ≥ −0.9434` at
+  the relayed `g_max` and `≥ 0` on clamped bins — `γ` is finite from construction, no tolerance
+  needed. **The `f ≤ 0.1371` threshold arithmetic stands**; only *"`g` may fall to zero"* was wrong. **`T5d`:** *"the same factor bounds every projection"* is
   **FALSE** without a further condition; measured `179.9` against a limit of `0.69` with a PSD `C`
   and non-negative weights, and `∞` at exact annihilation — and `AGENTS.md:27`'s rank-247 precedent
   makes null directions live in this family. **`T5e`:** `6528 + 4166 = 10694`, so **38.96%** of the
-  support has `g` pinned at 1 and contributes `u = 0`; taking `min f` over the full support is a
-  **mis-specified minimisation**, not a population choice. **`T6`:** vacuity is a property of the
+  support has `g` pinned at 1 and contributes `u = 0` **while membership holds**; taking `min f` over
+  the full support is a mis-specified minimisation. ⚠ **CORRECTED:** *"not a population choice"* is
+  **withdrawn** — membership is perturbation-dependent, so `E1` needs a **declared margin** and IS a
+  population choice under this document's own Q5 rule. My headline outran my own caveat, the shape I
+  had just charged another document with at `ed18a231` `G2`. **`T6`:** vacuity is a property of the
   bound — the uniform-`γ` substitution deletes the anti-correlation between allowance and
   contribution, and the published percentages are relative to **`C_infl`** while the use consumes
   **`C_Z`**. **Q3:** Alternative 1 supports only `K1`; `K4`, a **supported reproduction path**
@@ -1098,7 +1110,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   grounds, decisively that **`θ` is structurally blind on 39% of the support**; replacing the null
   criterion needs an amendment to `SPEC` §6.4 **and** to reject condition 11 (`SPEC:1267`), which is
   Joseph's act. **Q5:** three exclusions with opposite compliance status — mechanism-derived (E1)
-  **yes**, bound-derived (E2) **barred**, use-derived (E3) only once the use is declared; and the
+  **yes but only with a declared margin**, bound-derived (E2) **barred**, use-derived (E3) only once the use is declared; and the
   **projection set is enumerable from publication scope, so what is owed is a CHECK, not a
   judgement** — the highest-value zero-compute item and absent from §12.5.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)

@@ -19,6 +19,32 @@ item 4 remains open and this lane has still not been routed it as an object. `ε
 **WITHHELD**; endpoint B **DEFERRED NOT PASSED**. **No compute was run and no cluster artifact was
 read.**
 
+## ⚠ CORRECTED 2026-09-18 — READ THIS BEFORE ANY SECTION BELOW
+
+**Joseph declined `θ`, and separately declined to relabel it an established feasibility floor. Four
+claims in this document are corrected; I re-measured all four independently and all four hold
+against me.** Each site below now carries its own correction — a banner alone is not a withdrawal,
+which is the finding this lane made against another document at `ed18a231` `G2`.
+
+| # | what was wrong | where | what survives |
+|---|---|---|---|
+| 1 | *"a floor … needs no new argument and carries no vacuity risk"* | **RECOMMENDED DECISION** | **WITHDRAWN.** And `T3` of this same document is the disqualifier I walked past: `T3` establishes the estimator's assumptions are **violated by both populations**, so the floor reading needs the *same* unestablished assumptions. **Third instance of this shape in my own work in this campaign** |
+| 2 | *"`σ`'s sampling error is random and independent across bins"* and the `√N_eff` suppression | **`T2`** | **`T2`'s MAGNITUDE LEG IS RETRACTED.** Per-bin variance-estimation errors correlate as `ρ_ij²`; the aggregate suppression is `√(c̄ + (1−c̄)/n)`, which at `c̄ = 0.815` is `0.90` — **no suppression**. The *sign* of the coherent/incoherent distinction survives as the repository's own statement; the *conclusion* that `θ_A` is too loose for aggregates is **NOT ESTABLISHED** |
+| 3 | *"doubling the bootstrap ensemble would **halve** `θ`"* | **`T3`** | **WRONG BY A FACTOR.** `√(99/199) = 0.7053`, a `29.5%` reduction; halving needs `N = 397`. The reductio survives with the corrected magnitude, and a **sharper** objection was already inside `T3` and I did not run it |
+| 4 | *"`g_i` may fall to **zero**"* / *"unbounded"* | **`T5c`** | **THE INFERENCE IS REFUTED BY CONSTRUCTION.** `g ≥ 1` by construction and `g'` uses the same `max`, so `u ≥ 1/g − 1 ≥ −0.9434` at the measured `g_max`. **The `f ≤ 0.1371` threshold arithmetic stands**; only the inference from it was wrong |
+| 5 | *"not a population restriction … arguably not an exclusion at all"* | **`T5e`**, **Q5 (E1)** | **WITHDRAWN.** Deadband membership is not fixed under the perturbation, so `E1` needs a **declared margin** and **is** a population choice under the prospective rule I set in Q5 |
+
+**Corrections 2 and 5 were relayed to me by the routing lane and 1 is Joseph's; I verified every one
+against source and by probe rather than deferring.** Probe:
+`docs/orchestration/probes/probe-20260918-my-own-theta-claims-corrected.py`. One citation in the
+routing record's own correction is misaddressed and is noted at `T5c` — the substance is unaffected.
+
+**WHAT STANDS, unchanged and load-bearing:** the resolution-versus-cap conclusion on
+`SPEC:1406-1409`; `T4`; `T5a`; `T5b`; **`T5d` in full**, independently reproduced by the routing
+lane; `T6`; `K1 ≠ K4`; Q4's four grounds including `θ`'s structural blindness on `4166 of 10694`
+bins; the §6.4-**plus**-condition-11 amendment; and Q5's `E2`-barred and enumerate-don't-declare
+findings.
+
 ## Evidence classes used below
 
 - **SOURCE** — established here by reading a committed blob at a named sha.
@@ -47,17 +73,31 @@ in the **opposite role** from the one it is assigned. What §2.2 derives is a **
 figure**: the smallest movement in `σ` that the existing ensembles could detect. `SPEC:1406-1409`
 rules on exactly this shape: such a figure *"may bound `ε` from **below** as a feasibility
 constraint; it cannot justify `ε`."* Assigned as the **upper end** of an admissible interval, it is
-the direction inversion that `SPEC` §3.7a rev. 16 was corrected for, recurring one level down. `T1`
-and `T2` are why, and `T2` is the part that is not a labelling quibble.
+the direction inversion that `SPEC` §3.7a rev. 16 was corrected for, recurring one level down.
+⚠ **CORRECTED:** this conclusion now rests on `SPEC:1406-1409` and `T1` **alone**. `T2` was offered
+as a second, independent leg and its magnitude claim is **retracted** — see the banner and `T2`. The
+decision does not depend on it.
 
 **Two things are nonetheless worth doing and neither requires adopting `θ`:** the `f_i` measurement
 is needed on any route (`T4`), and the projection check is zero-compute and is the condition on the
 only thing Alternative 1 would deliver (`T5`). **But closure (B) as scoped does not deliver `θ`'s own
 scale** (`T4`), so *"one measurement settles both questions"* is not currently true.
 
-**Adoption is Joseph's and I recommend, not grade.** `θ` declared as what its derivation supports —
-a floor below which no per-bin `σ` gate is worth setting — needs no new argument and carries no
-vacuity risk. `θ` as a ceiling needs an argument from **use**, and §2.2's is refuted at `T2`.
+**Adoption is Joseph's and I recommend, not grade.**
+
+⚠ **WITHDRAWN 2026-09-18, and the disqualifier was two sections away in this same document.** This
+paragraph read: *"`θ` declared as what its derivation supports — a floor below which no per-bin `σ`
+gate is worth setting — needs no new argument and carries no vacuity risk."* **Joseph declined that
+relabeling on the ground that the statistical assumptions and scope remain unestablished, and `T3`
+is where this document establishes exactly that** — bootstrap replicas are not i.i.d. draws, seed
+splits are anti-correlated by construction, and `√(2/(N−1))` is the Gaussian value. A floor reading
+inherits those same unestablished assumptions; *"needs no new argument"* was false when written.
+
+**This is the third instance of one shape in my own work in this campaign** — `A14` versus `A30`,
+then the two-day-old `F2`, and now `T3` versus this paragraph: **I stated the disqualifier myself and
+then used the figure anyway, one or two sections later.** Transcribing a caveat is not immunization,
+and no mechanical check connected the two moments. `θ` as a ceiling is refuted on the role argument;
+`θ` as a floor is **not established**, and this lane no longer offers it.
 
 ---
 
@@ -90,12 +130,47 @@ integral would move by about this much"* against *"the fully INCOHERENT floor: p
 random signs"*, a factor `√N` apart, and it names reasoning about the two legs the same way as *"the
 trap."*
 
-Apply that here. `σ`'s sampling error is **random and independent across bins** — that is what
-`√(2/(N−1))` measures. A CV-induced movement in `σ` is **coherent**: it is one systematic
-reweighting of the V-block. An aggregate conclusion — a projected covariance, a `χ²` over the
-reported support, a total — averages the random part down by roughly `√N_eff` and **does not average
-the coherent part down at all.** So a movement at the single-bin resolution scale sits far **above**
-the resolution of every aggregate conclusion built on those bins.
+Apply that here. A CV-induced movement in `σ` is **coherent**: it is one systematic reweighting of
+the V-block. An aggregate conclusion does not average a coherent movement down at all.
+
+⚠ **AND HERE IS WHERE THIS SECTION WAS WRONG. RETRACTED 2026-09-18.** The sentence that carried the
+argument read: *"`σ`'s sampling error is **random and independent across bins** … an aggregate
+averages the random part down by roughly `√N_eff`."* **Both halves fail.**
+
+**Measured, from first principles and by simulation (`40,000` independent ensembles of `N = 100`):**
+for Gaussian data, `Cov(s_i², s_j²) = 2σ_i²σ_j²ρ_ij²/(N−1)`, so the correlation of the per-bin
+**variance-estimation error** is `ρ_ij²` — recovered at `+0.8098` for `ρ = 0.9` against a predicted
+`0.8100`, `+0.2520` at `ρ = 0.5`, `+0.0129` at `ρ = 0.1`. Common-resample replicas **inherit the
+data's correlation**. Bins in an unfolded spectrum are correlated, so independence does not hold.
+
+**And the suppression factor, which is the load-bearing quantity neither document had computed.**
+For an aggregate `V_P = wᵀCw` under `σ_i → σ_i(1+e_i)`, with `a_i := w_i(Cw)_i`, a coherent `e`
+moves `V_P` by `2s` while a random `e` with correlation `R` moves it by
+`2s·√(aᵀRa)/(1ᵀa)`. For `R = (1−c̄)I + c̄J` and near-uniform `a` over `n` bins that is exactly
+**`√(c̄ + (1−c̄)/n)`** (confirmed numerically to six digits):
+
+| `c̄` | suppression | coherent / random |
+|---:|---:|---:|
+| `0` | `0.0097` | `103.4` |
+| `0.001` | `0.0331` | `30.2` |
+| `0.01` | `0.1005` | `10.0` |
+| `0.1` | `0.3164` | `3.2` |
+| `0.815` | `0.9028` | **`1.1`** |
+
+**So at `c̄ = 0.815` the aggregate suppresses the estimation error by `10%`, not by
+`√10694 ≈ 103`, and this section's conclusion collapses.** `T2`'s conclusion — that `θ_A` is too
+loose for aggregate use — is therefore **NOT ESTABLISHED.**
+
+**What decides it is one named, unmeasured quantity, and I neither claim nor concede it.** `c̄` is
+the **mean off-diagonal `ρ_ij²` over all pairs**, and `0.815` was measured for **one** pair at
+`ρ = 0.9`. Distant bins contribute small `ρ_ij²`, so `c̄` over `10,694²` pairs may be orders below
+`0.815` — at `c̄ = 0.01` the suppression is `10×` and this section's argument returns. **`c̄` is not
+`min_i f_i` and not `w_stat,i`; it is a third unmeasured quantity, and `T2` is open on it rather
+than refuted or upheld.**
+
+**What survives without qualification** is the *sign*: a coherent movement and a sampling error
+aggregate differently, which is `p4_lib.py:141`'s own statement and is the repository's, not mine.
+The *magnitude* was mine and it was unmeasured.
 
 **And the declared use is aggregate.** `SPEC:1356` requires the 3D/4D covariances to be *"exact
 projections"*; `AGENTS.md:14-15` makes publication completion rest on a ratified uncertainty
@@ -121,10 +196,23 @@ population satisfies the assumptions:
 a resolution figure while `T2` is about whether a resolution figure may play this role at all. A
 conservative estimate of the wrong quantity is still the wrong quantity.
 
-**One consequence worth recording on its own:** because the boundary is `N`-dependent, doubling the
-bootstrap ensemble would **halve** `θ`. A tolerance that moves when the ensemble size moves, with no
-change in the science, is not a scientific cap. That is the reductio, and it is `SPEC:1406-1409`'s
-distinction stated as a test.
+**One consequence worth recording on its own:** because the boundary is `N`-dependent, a tolerance
+that moves when the ensemble size moves, with no change in the science, is not a scientific cap.
+That is the reductio, and it is `SPEC:1406-1409`'s distinction stated as a test.
+
+⚠ **CORRECTED 2026-09-18 — the magnitude was wrong.** This read *"doubling the bootstrap ensemble
+would **halve** `θ`."* **It does not:** the boundary scales as `1/√(N−1)`, not `1/N`, so
+`N: 100 → 200` multiplies `θ` by `√(99/199) = 0.7053` — a `29.5%` reduction — and halving needs
+`N = 397`, about `4×`. Re-measured: `θ(100) = 0.071067`, `θ(200) = 0.050125`, `θ(397) = 0.035533`.
+**The reductio survives at the corrected magnitude**; a `29.5%` change in a *"scientifically
+acceptable"* movement, bought with nothing but more replicas, makes the point.
+
+⚠ **AND A SHARPER OBJECTION WAS ALREADY INSIDE THIS SECTION AND I DID NOT RUN IT.** The table above
+establishes that for a **bootstrap** ensemble `N` controls only the Monte-Carlo component while the
+estimator's own error has an `N`-independent floor. **So raising `N` lowers the FORMULA while the
+quantity it is supposed to measure stops falling — the formula is severed from the quantity, not
+merely sensitive to `N`.** That is stronger than the reductio I ran, it follows from my own `T3`
+table, and it is part of why the floor relabeling was declined.
 
 ## `T4` (SOURCE) — `θ_A` is NOT a total-`σ` resolution, and closure (B) cannot make it one
 
@@ -217,15 +305,35 @@ The error is in the safe direction and fixing it is in the recommendation's favo
 
 ## `T5c` (DERIVED) — the inversion is ONE-SIDED, and below `f ≈ 0.137` a `σ` tolerance constrains downward `g` movement not at all
 
-A two-sided `σ` tolerance `|σ'/σ − 1| ≤ θ` bounds **downward** `g` movement only while
-`f_i > 1 − (1−θ)² = 0.137145`. Below that, `g_i` may fall to **zero** while `σ_i` moves by less than
-`θ` — the V-block is too small a share of that bin's variance for its total disappearance to be
-visible. **DERIVED:** at `f = 0.20` the downward allowance is `|u| ≤ 0.439`; at `f = 0.1365` and
-below it is **unbounded**.
+A two-sided `σ` tolerance `|σ'/σ − 1| ≤ θ` constrains **downward** `g` movement only while
+`f_i > 1 − (1−θ)² = 0.137145`; below that threshold, `σ_i` cannot see a downward `g_i` movement of
+**any** size permitted by `g`'s own domain. **DERIVED and unchanged:** at `f = 0.20` the tolerance's
+downward allowance is `|u| ≤ 0.439`; at `f ≤ 0.1365` the tolerance imposes none.
 
-This matters for two reasons and neither is the observed scale. First, `γ = max_i|u_i|` then has no
-finite upper bound from `θ` alone, so the composed `ΔC` bound is not well defined on the
-`f < 0.137` population without a second constraint. Second, it is the *one-directional filter* shape:
+⚠ **THE INFERENCE I DREW FROM THAT IS REFUTED BY CONSTRUCTION. RETRACTED 2026-09-18.** This section
+read that *"`g_i` may fall to **zero**"* and that below the threshold the allowance is
+*"unbounded"*, hence that *"`γ = max_i|u_i|` has no finite upper bound from `θ` alone, so the
+composed `ΔC` bound is not well defined."* **`g` cannot fall at all below 1.**
+`g = √(max(v_uni, v_blk))/√(v_blk) ≥ 1` (`z_assembly.py:6`), the perturbed `g'` is built by the
+**same** `max`, and the contract enforces it: `G_FLOOR = 1.0` with
+`require(sum(g < G_FLOOR) == 0)`. So for every bin `u ≥ 1/g − 1`, i.e. **`u ≥ −0.9434`** at the
+relayed `g_max = 17.653141714565614`, `≥ −0.0452` at the median, and **`≥ 0`** on the clamped bins,
+which sit *at* the floor and can only move up. **`γ` is finite from the construction alone, with no
+tolerance required**, and the composed bound is well defined everywhere.
+
+*I reasoned from the `σ`-tolerance algebra without checking the operand's own domain constraint —
+the arithmetic was right and the object was not free to do what I said.* **What remains true is the
+narrow reading:** below `f ≈ 0.137` the `σ` tolerance is not what bounds downward `g` movement, so
+citing `θ` as the source of that bound is wrong even though a bound exists.
+
+⚠ **One misaddressed citation in the routing record's own correction, noted because this lane
+insists on it elsewhere.** It cites `z_contract.py:84` for `G_FLOOR = 1.0`. Measured at
+`67528132`: `G_FLOOR = 1.0` is at **`z_contract.py:126`**; `:39` carries the `§1.3a` docstring claim
+*"`g >= 1` exactly, by construction"*; `gate_g_domain` is **`z_assembly.py:126`** with the check at
+**`:136-137`**; and `:84` is an unrelated comment about `sys.modules`. **The substance of the
+correction is unaffected — I verified it against all four re-addressed sites.**
+
+The residual point stands on its own: it is the *one-directional filter* shape:
 a guard stated two-sidedly that acts on one side only.
 
 ## `T5d` (SOURCE + DERIVED) — "the same factor bounds every projection" is FALSE without a further condition, and the failure is unbounded rather than gradual
@@ -276,9 +384,17 @@ the support has `g` pinned at 1**.
 
 **Consequence.** `min_i f_i` **over the full support** is not a conservative version of the right
 statistic — it is a **different** statistic, because it lets a bin on which the perturbation provably
-acts not at all set the bound. Excluding those bins is a correction to a mis-specified minimisation,
-**not** a population restriction, and it is derivable from the mechanism without reference to any
-bound value. `DECISION-SUPPORT` §12.5 and §5.8(4a) both take the min over the 10,694-bin support;
+acts not at all set the bound. Excluding those bins is derivable from the mechanism without
+reference to any bound value.
+
+⚠ **BUT *"not a population restriction"* IS WITHDRAWN 2026-09-18.** This section called the
+exclusion *"a correction to a mis-specified minimisation, **not** a population restriction."* **The
+headline outran the caveat I put beside it** — the caveat two paragraphs down is correct, and under
+this lane's own rule at `ed18a231` a correct caveat beside a wrong headline does not repair it.
+Deadband **membership is not fixed** under the perturbation being bounded: `1`-Lipschitz bounds the
+movement uniformly across a crossing but says nothing about membership. So the exclusion **is** a
+population choice, it requires a **declared margin**, and it is subject to the prospective rule this
+document sets in Q5. `DECISION-SUPPORT` §12.5 and §5.8(4a) both take the min over the 10,694-bin support;
 §5.8(1) says §5.4's own threshold takes it over active bins. **The corpus is inconsistent on this and
 the mechanism settles it.**
 
@@ -388,7 +504,7 @@ together.
 
 | | basis | compliant? |
 |---|---|---|
-| **(E1)** omit bins whose `g_i` is clamped at 1 over the admissible CV range | **mechanism.** `z_assembly.py:6-7`'s `max(·, v_blk)`; `u_i ≡ 0` there; derivable with no reference to any bound value | **YES**, and `T5e` argues it is a correction to a mis-specified `min` rather than an exclusion at all |
+| **(E1)** omit bins whose `g_i` is clamped at 1 over the admissible CV range | **mechanism.** `z_assembly.py:6-7`'s `max(·, v_blk)`; `u_i ≡ 0` **while membership holds**; derivable with no reference to any bound value | **YES, BUT ONLY WITH A DECLARED MARGIN.** ⚠ **CORRECTED:** the original entry read *"arguably not an exclusion at all"* — withdrawn. Membership is perturbation-dependent, so `E1` **is** a population choice and requirement 2 below binds it |
 | **(E2)** omit bins because their `f_i` makes the bound exceed 100% | **the bound's value** | **NO** — this is the act the instruction bars |
 | **(E3)** omit bins *"whose covariance nobody uses"* | **use** — admissible in principle | **ONLY once the use is declared independently.** As stated it is a definite description, not a criterion, and it is not yet checkable |
 
