@@ -4,8 +4,14 @@
 
 **CITABLE FOR:** the state of each remaining requirement as measured on 2026-09-16, **as amended by
 §10's 2026-09-17 reconciliation** where the two disagree; the routing of each; the reconciliation
-in §3; the resource figures in §4 and §5 **as corrected in §10.5**; and §11's next-action packet as
+in §3; the resource figures in §4 and §5 **as corrected in §10.5**; and **§12's** recommendation as
 a *recommendation*.
+
+> ⚠ **§11 IS SUPERSEDED BY §12 (2026-09-17) AND IS NOT CITABLE.** It asked for two declarations that
+> already existed at `78a8c2ee42c71db1e300e4cfe3735554101bf8ce`, rested on the "`S` is non-binding"
+> and "route (iii) exhausted" premises that §12.2 **withdraws**, attached `ε` to the per-bin
+> diagnostic instead of to `r_null`, and priced off historical elapsed times. **Full `S` is OPEN.**
+> Where §2.1, §2.4 or §10 rely on unqualified non-bindingness, read §12.2 first.
 
 **NOT CITABLE FOR:** any scientific grade. Any acceptance boundary. Any adoption. The authorization
 that admitted this record states explicitly that it **does not ratify the proposed scientific
@@ -635,3 +641,210 @@ crossings, possible F7 branch changes, propagation to the declared projections, 
 inflation-factor question) stay **paused** and **unresolved** — the measured
 `sqrt_tr_after / sqrt_tr_before` = **`5.674200780785609e-38 / 4.3576468306957044e-38` = 1.302125**
 is now a real operand for that question and is **not** an answer to it.
+
+---
+
+## 12. §11 IS SUPERSEDED — the corrected recommendation (2026-09-17)
+
+> ⚠ **§11 IS WITHDRAWN AS A RECOMMENDATION AND LEFT IN PLACE AS THE ERROR IT WAS.** It asked the
+> criteria owner to predeclare two things that were **already declared 20 hours earlier**, rested on
+> two premises Joseph has since ruled must be withdrawn, attached `ε` to the wrong statistic, and
+> priced its request off historical elapsed times after Joseph had specifically forbidden that. Read
+> §12 instead. Do not cite §11's packet table.
+
+### 12.1 What already exists — B's estimator and repeat design are UNRESOLVED, not ABSENT
+
+`78a8c2ee42c71db1e300e4cfe3735554101bf8ce` (2026-09-16 11:08:59 +0900, `owners.tsv:14`
+`z-criteria-designer [91eaa2]`, on `origin/lane/z-criteria-recommendation-20260910`) delivers
+`docs/orchestration/PREDECLARATION-20260916-B-estimator-and-coverage.md` — **`Z_CONSTRUCTION_PLAN`
+§4.4a items 4 and 5, the exact two things §11 asked for.** §11 did not cite it because this lane
+never read that branch. The declarations, as they stand:
+
+| | declared |
+|---|---|
+| **item 4 — estimator** | **`B = 0`**, asserted as a property of the **pinned design**, verified by a **BOOLEAN** bitwise-identity test over the reported support. `IF NOT IDENTICAL: B is UNDEFINED and route (i) is FALSIFIED` — and *"`B` is explicitly NOT set to the observed difference."* Gap 3 closes **by construction**: the estimator's range is `{0, undefined}` and no observed magnitude enters it. |
+| **why boolean** | it is *"the whole difference between route (i) and the barred route"* — **a boolean reads no VALUE off Z's null; the withdrawn fallback read a MAGNITUDE.** Replacing `IDENTICAL` with a tolerance re-enters `SPEC:1410`, and the predeclaration names that substitution as the thing to refuse. |
+| **item 5 — objective** | over **ALLOCATION SHAPES, not repeat count**, because thread count and reduction order are properties of the allocation. **Model A declared** (deterministic given the allocation), minimum **n = 3** — A1/A2 same node for item 1, B1 different node for item 2 — and **n = 4** to *attribute*. Model B retained only as a falsification branch: 6 runs to exclude a coin flip, 30 to exclude `p ≥ 0.1`. |
+| **receipt requirement** | `--qos=shared` means different allocations are **requested, not controlled**: **≥2 distinct node names or item 2 is NOT TESTED and the run is INCONCLUSIVE, not a pass**; and if CPU models did not differ, the cross-microarchitecture arm is **UNEVALUATED**, never folded into a pass. |
+
+**And the predeclaration states the limit §11 should have carried: `B = 0` DOES NOT GIVE `ε`.** It
+gives `B ≤ S` trivially, but *"a gate at `ε = 0` fails on any nonzero deviation whatever, which is
+the mirror-image of the `1e-12`-clamp defect"*, and `ε` may not be read off Z's own null. **`ε = 1e-9`
+continues to stand or fall on §C.3's transfer argument alone, falsifier UNEVALUATED.** §11's claim
+that establishing `B` would "admit `ε` within `[B, S]`" was wrong.
+
+**Its own §3 names a measured obstacle no other document had:** every proposed pin set — §4.4a item
+3's five variables and the three LightGBM knobs — pins **thread COUNTS only**, and
+`OMP_DYNAMIC / OMP_SCHEDULE / OMP_PROC_BIND / OMP_PLACES` have **ZERO occurrences in
+`nd-unfolding/`**, including in the arm treated as the pinned reference. So *"route (i) is
+falsified"* would today be **ambiguous between "cannot be pinned" and "was never fully pinned."*
+
+**Status: the estimator and the repeat design are declared, unassessed, and carry three open
+residues** — the author cannot assess their own document (`owners.tsv:15`); whether the control may
+run on Z's own bank needs a **§6.4 ruling the owner explicitly declines to issue**; and the pin set
+is incomplete. **Unresolved, not absent.**
+
+### 12.2 Three premises withdrawn
+
+1. **"`S` is non-binding" — WITHDRAWN as an unqualified claim.** `S`'s bound is recorded as
+   **F7-channel only**. `fb9fdec11c653d34c5f2ee16f9f68f6be837e6d8` and
+   `480bed76f9cef73b66bc1bb0bd471847d5f61ce2` argue the other two channels are now covered — throw
+   deviations exactly (`Δv^mean = 0`, `Δv^cv = −2·ms·δ + δ²`, so F7 was the whole channel) and
+   completeness subsumed by C.3 step 1 — **but the owner withholds the verdict on their own
+   residue** and routes it to `[cb0b6b]`. An unbounded channel can produce a binding `S`. Asserting
+   non-bindingness from an **incomplete** bound is using an absence my own open item creates.
+   **Full `S` is OPEN.**
+2. **"Route (iii) is EXHAUSTED" — WITHDRAWN.** It was declared exhausted *because* `S` was called
+   vacuous. With full `S` open, route (iii) — establish `S` first — is **UNFINISHED, not
+   exhausted**, and it is the only route that needs no new products at all.
+3. **`ε` is a tolerance on `r_null` — NOT on the per-bin diagnostic.** §10.3 called
+   `max_i |Δ_i/x_i|` *"the statistic `ε` is defined on"*. **Wrong.** `ε` is declared against
+   `r_null`, the `x²`-weighted relative L2. The per-bin maximum is a **different statistic that
+   bounds `r_null` above** — and the owner's form is sharper: `min_i|ρ_i| ≤ r_null ≤ max_i|ρ_i|`.
+   The per-bin diagnostic is therefore a *sufficient* implication route, never the definition, and
+   the receipt flags it `grades_nothing: true`.
+
+### 12.3 Observed agreement is not an established bound over an execution envelope
+
+This distinction decides §12.4, so it is stated before the answer. `r_null = 4.452e-14` and
+`max_i|Δ_i/x_i| = 1.755e-12` are **observations from ONE execution pair, in ONE process, on ONE
+node, in ONE unpinned configuration.** They are digest-bound facts *about these artifacts*. They are
+**not** a bound over any envelope: nothing in them constrains what a different allocation, a
+different node, or a re-run would produce. `B` is exactly the missing object — a bound over an
+envelope — and no number of observations of this kind becomes one.
+
+### 12.4 THE CENTRAL QUESTION, ANSWERED BY MEASUREMENT
+
+**Are we proposing to qualify the existing unpinned products, or to establish a changed
+configuration requiring new products?**
+
+**Route (i) CANNOT qualify the existing products, and this is measured, not argued.** I applied
+`78a8c2ee` §1's predeclared estimator to the preserved operands in `z-null.npz`
+(`cb82fc3285c981b91625530d48c14ff5554db5154db298a3144a57520633d77e`), executed on the cluster
+against the artifacts rather than reasoned from the receipt:
+
+```
+n_grid 65856   n_support 10694
+bins differing BITWISE, ON SUPPORT   : 10683        <- 99.90% of the support
+bins differing BITWISE, OFF SUPPORT  : 0            (both vectors exactly 0 off support)
+IDENTICAL over reported support      : False
+max |a-b| on support                 : 2.5840205693274157e-51
+max |d/x| on support                 : 1.7552716191735518e-12  at support-index 5723
+relative L2 over support             : 4.452000213758293e-14
+```
+
+*(The relative L2 agrees with the build's `r_null` to **15 significant figures**, not bitwise — a
+different summation order. The per-bin argmax is **support-index 5723**, which is **grid-index
+31499** as the receipt records it; two bases for one bin, named because they look like a
+disagreement. Only **11** support bins agree bitwise.)*
+
+**Consequences, in order:**
+
+1. **Applied to the existing products, the predeclared estimator returns NOT IDENTICAL, so `B` is
+   UNDEFINED and route (i) is FALSIFIED for this configuration.** That is the estimator's own rule,
+   operating as designed.
+2. **And the failure is in the EASIEST arm, which is the part that matters.** These two executions
+   share one process, one allocation, one fixed seed — a **stricter** condition than §4.4a item 1's
+   same-node repeat, and far stricter than item 2's cross-shape repeat. **Model A predicts they
+   agree trivially. They do not.** So the observed non-identity is **not attributable to allocation
+   shape**, which is the only thing route (i) pins. ⚠ **I do not assert what does cause it.** The
+   four unrecorded `OMP_*` behaviour variables of `78a8c2ee` §3 are a *candidate* and naming them as
+   the cause would be the unmeasured-mechanism claim this campaign has published falsely before.
+3. **Therefore the two routes are genuinely disjoint, and a pinned success does not transfer.** A
+   pinned run would establish a property of a configuration that **differs from the one that made
+   these products in exactly the variables at issue**. Carrying its result across is a transfer
+   argument, and **no such argument exists** — the same defect as `ε`'s UNEVALUATED falsifier, which
+   is a cross-population comparison. A pinned experiment would also require **new products** from
+   the 89.11 GB input chain, i.e. a fresh production authorization, not a control.
+4. **But qualifying these products does not need `B` at all.** For *these artifacts* the deviation
+   is not a prediction to be bounded — it is a recorded fact. What is missing is not a bound on the
+   deviation but a bound on its **consequence for the declared use**, and that object already has a
+   closed form: with `G := diag(δg/g)`, `ΔC_infl = GC + CG + GCG` **exactly**, so
+   `‖ΔC‖ ≤ ((1+γ)² − 1)‖C‖` with `γ = max_i |δg_i/g_i|`, **and the same factor bounds every
+   projection** (`480bed76`, adopting this lane's 5.7). Composed with `|δg_i/g_i| ≤ θ/f_i`, this
+   gives `γ ≤ θ / min_i f_i` — **so the correlation side is DERIVED from `θ`, not judged separately.**
+
+**RECOMMENDATION: qualify the existing unpinned products. Do not run the pinned experiment now.**
+Because (a) route (i) is already falsified on these artifacts and cannot qualify them; (b) its
+falsification branch is currently *ambiguous* with four `OMP_*` variables unrecorded, so even a
+negative result would not be interpretable; (c) it needs new products and a production
+authorization; and (d) the qualification route needs **no envelope claim, no new products, and one
+measurement.**
+
+### 12.5 The evidence the recommended route needs — and it is one measurement plus one declaration
+
+| # | what | who | compute |
+|---|---|---|---|
+| 1 | **`f_i`, the V-fraction of each bin's variance.** Both `θ`'s scale *and* `θ`'s correlation grip reduce to this single quantity, and `min_i f_i` sets the derived bound: at `θ = 7.11e-2`, `min_f 1.0 → 15%`, `0.5 → 30%`, `0.2 → 84%`, `0.1 → 193%`, `0.01 → 6477%`. **Below `min_f ≈ 0.2` the derived bound exceeds 100% and settles nothing.** | `lane_b` measures, `[91eaa2]` interprets | **small, and it needs a writer change or a re-read** — see below |
+| 2 | **An ACTIVE-SET POPULATION declaration.** `min_i f_i` over all 10,694 bins is an extreme-order statistic set by the single worst bin — by construction a bin where the unified throw contributes almost nothing, *"a bin whose covariance nobody uses"*. `480bed76`: the remedy is **an active-set restriction, NOT a tighter `θ`** — tightening `θ` below its scientific ceiling to rescue a bound set by a dead bin *"would be choosing a tolerance to obtain a verdict."* **The population is a declaration, and it is scientific.** | **Joseph**, or `[91eaa2]` under his ratification | zero |
+| 3 | `[cb0b6b]`'s withheld verdict on whether §7 item 4 is discharged by the throw-deviation and completeness results — which is what closes **full `S`** and settles premise 1 of §12.2. | `owners.tsv:15` | zero |
+
+⚠ **`f_i` IS NOT COMPUTABLE FROM THE PRESERVED PRODUCTS — MEASURED, not assumed.** `z-cv.npz` holds
+exactly seven arrays: `hCov_combined5d_total_uthrow (10694,10694)`, `hInflation_g (10694,)`,
+`hPinnedMask`, `hXSecND_flat (65856,)`, `hSupportMask (65856,)`, `hRowIndex5D (10694,)`,
+`metadata_json`. So `(C_Z)_ii` ✓ and `g_i` ✓ are preserved, and the **vertical-band block-sum
+diagonal `(Σ_V C_b)_ii` is not** — the receipt digests `diag_c_blocksum` and `diag_c_unified_mean`
+but persists no values. Two ways to close it, and **neither produces a new covariance product**:
+
+- **(A) a writer requirement** — persist the five per-term diagonals in the build's output. Zero
+  compute *now*, but `f_i` then exists only for a **future** build, not for these products.
+- **(B) re-read the 13 vertical bands' diagonals** from the already-bound, unchanged support ROOT
+  (`9f7b2f55…`, 41.44 GB; bands stored essentially uncompressed at ~0.91 GB each, so ~11.8 GB of
+  reads). This yields `f_i` **for the products that exist**, which is what the recommended route
+  needs. It is a diagnostic read of bound inputs, **not** a production run.
+
+**(B) is the one to authorize if this route is chosen.** (A) is worth doing anyway so the question
+never recurs, and it is `lane_b`'s.
+
+### 12.6 Pricing — with ENFORCED caps, not historical elapsed
+
+Arm 7's enforced cap is on its own directive line, `sbatch_uthrow_combine_5d_fast.sh:4` (measured,
+identical on `origin/main` and on this lane): `--qos=shared --constraint=cpu --nodes=1 --ntasks=1
+--cpus-per-task=16 --mem=90G **--time=03:00:00**`. R5 meters **wall-hours per execution attempt**,
+so the declared maximum for one attempt is **3.00 CPU task-hours** regardless of how fast it
+actually runs. Every figure below was checked by running
+`r5_meter.py check --receipt docs/orchestration/state/r5-meter-receipt.json --max-age-hours 24`
+against the committed receipt:
+
+| design | attempts | declared max, **enforced cap** | predeclaration's historical-elapsed figure | `r5_meter check` |
+|---|---|---|---|---|
+| Model A minimum | 3 | **9.00** | 1.73 | exit 0 |
+| Model A + attribution | 4 | **12.00** | 2.31 | exit 0 |
+| Model B, exclude `p ≥ 0.5` | 6 | **18.00** | 3.46 | exit 0 |
+| Model B, exclude `p ≥ 0.1` | 30 | **90.00** | 17.29 | exit 0 |
+
+**The enforced-cap price is 5.20× the predeclaration's.** Its §2.1/§2.2 figures are derived from
+three historical elapsed measurements (`0.3875 / 0.4239 / 0.5764`), which Joseph ruled out as a
+pricing basis; its own §4 residue 5 already flags them as transferred. All four designs **admit**
+under R5 — headroom is **403.803889** of 500 and 9.00 is 2.23% of it — **so R5 is not what makes
+route (i) expensive; the falsified estimator and the missing transfer argument are.**
+
+⚠ **The receipt goes stale at 2026-09-18T07:41:55Z** (measured `2026-09-17T07:41:55.528431Z`, 24-hour
+rule). Any eventual request must re-measure first, or `check` exits **4, "receipt is stale"** — the
+gate that was closed for six days without being noticed (§5).
+
+### 12.7 The decision that is actually open
+
+**Not** a request to recreate any declaration. `78a8c2ee`'s items 4 and 5 stand as written, and
+nothing below asks for them again.
+
+| | **ALTERNATIVE 1 — qualify the existing products (RECOMMENDED)** | **ALTERNATIVE 2 — establish the changed configuration** | **ALTERNATIVE 3 — wait** |
+|---|---|---|---|
+| **what you authorize** | (B): a diagnostic re-read of the 13 vertical bands from the bound support ROOT to measure `f_i`; **plus** the active-set population declaration | route (i)'s `n = 3` or `n = 4` pinned arm-7 runs, **after** the four `OMP_*` variables are pinned or receipt-captured, **and** after the §6.4 ruling on using Z's own bank | nothing; `[cb0b6b]` clears the withheld verdict first |
+| **enforced-cap cost** | one short diagnostic attempt; **no new covariance product** | **9.00** (n=3) or **12.00** (n=4) CPU task-h, plus new products from the 89.11 GB chain | zero |
+| **what it would establish** | a bound on the **consequence** of the recorded deviation for the declared use, propagating through inflation and every projection by the same `((1+γ)²−1)` factor | `B = 0` as a design property of a **pinned** configuration — or `B` UNDEFINED and route (i) falsified | nothing new; it removes premise 1 of §12.2 |
+| **what it would NOT establish** | any bound over an execution **envelope**; `B`; `ε`; adoption | **anything about the existing products**, absent a transfer argument that does not exist; and **not `ε`** either, by the predeclaration's own §1.4 | — |
+| **main risk** | `min_i f_i` may come back below ≈0.2 and the bound settles nothing — in which case the **active set**, not `θ`, is the lever | its falsification branch is **ambiguous** today, so a negative result is uninterpretable; and it consumes a production authorization for a control | the 2026-09-30 stop date is **13 days** away and item 2 gates everything downstream |
+
+**The decision: which route, and — if Alternative 1 — the active-set population.** Those are the
+only two things that cannot be prepared without you. Everything else in §12.5 is owned and
+zero-compute.
+
+**Recommended: Alternative 1**, on the ground that route (i) is already falsified on the artifacts
+in hand, cannot be transferred to them, and would spend a production authorization to answer a
+question about a configuration that has never produced a product — while the qualification route
+needs no envelope claim, no new products, and one measurement whose two closure paths are both
+identified.
+
+**Nothing here is adopted, graded or projected. `B`, `S` and `ε` remain open, full `S` included. No
+compute is authorized or requested by this section.**
