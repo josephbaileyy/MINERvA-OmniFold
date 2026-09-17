@@ -372,3 +372,122 @@ No new cluster compute. No production projections. No criterion adoption. No cov
 No publication. No grading. The completed precursor and pilot stay closed and all products are
 preserved. `θ` stays not-adopted and is not relabeled. Neither the completed 2D central campaign
 nor Gate 6 nor OI-126 is reopened.
+
+---
+
+## 9. CORRECTIONS AND INCOMING RESULTS (appended 2026-09-18)
+
+### 9.1 ⚠ I had the aggregation factor's two directions REVERSED
+
+I told both lanes that a per-bin tolerance is *"non-conservative under movement coherent across a
+destination cell's 1,568 contributors, over-conservative under cancelling movement."* **Both halves
+are wrong.** `[91eaa2]` caught it; I re-measured independently and it is right.
+`probes/probe-20260918-aggregation-channel-directions.py` is the self-checking record, mutation-tested
+in both directions (killing the near-cancellation fires claim 3; making the coherent move
+N-dependent fires claim 1b).
+
+**Coherent movement is the BENIGN channel and it is exact:** `σ → (1+δ)σ` sends `C → (1+δ)²C`
+identically, so *every* quadratic form — every projected variance, on every map — moves by exactly
+`(1+δ)² − 1`. Measured invariant across `N ∈ {2, 10, 200, 1568}` **and** across uncorrelated,
+`ρ = +0.5` and near-cancelling structures. **Aggregation averages a coherent move; it does not
+amplify it, and 1,568 does not multiply it.** The factor 2 is variance being quadratic in `σ`.
+
+**The blow-up is cancelling movement over a near-cancelling source** — the same channel that refuted
+my §5.7 projection-bound claim, one level down.
+
+⚠ **But it is NOT "≈ N ×", and that framing should not propagate.** In my construction the factor
+*decreases* with `N`: `2.0e6 → 1.23e5 → 5.05e3 → 639`. Severity is set by how small `wᵀCw` is, not
+by how many cells aggregate. `[91eaa2]` reported ~200× at `N = 200` where I measure 5050×; the
+disagreement across constructions is itself the evidence that `N` is not the governing variable.
+
+**The corrected conclusion is stronger, and it reverses my recommendation.** `δ_bin` is **exact** on
+the coherent channel and **vacuous** on the cancelling one. That argues L3's primacy better than
+"weak proxy in both directions" did — and **L2 should be kept as a declared diagnostic, not
+demoted**, because it is the only free control on the coherent channel. `[91eaa2]` argued this and
+I was wrong to push against it.
+
+### 9.2 ⚠ And no a-priori bound exists for `C_Z`, because it is not positive definite
+
+For positive weights and a **positive-definite** `C` the excursion is bounded by
+`((1+δ)² − 1) × λ_max/λ_min`, and `z_assembly.py:44-46` records both ends — so this looked like a
+zero-compute lookup. It is not. Measured from the pilot's own table:
+
+    C_Z cv (inflated):  lambda_min = -1.2750516323643892e-90   (NEGATIVE)
+                        lambda_max =  2.229223998752954e-75
+                        neg_fraction_of_max = 5.719710684424999e-16
+                        5214 negative eigenvalues of 10,694
+
+`λ_min < 0`, so the bound does not exist and the cancelling channel is **unbounded in principle**
+for `C_Z`. **"Passes the PSD gate" supplies no bound**: the gate asserts `λ_min ≥ −rtol·λ_max`, a
+statement about arithmetic, not definiteness. The structural gate and this scientific criterion are
+decoupled exactly here. `[cb0b6b]` independently confirmed the extrema from `z-receipt-cv.json`.
+
+**What decides it is one object: the diagonal of `M1 C_Z M1ᵀ`** — the projected variance vector,
+i.e. the M1 product the one deferred claim already needs. `τ_p`'s evaluability and the claim's
+production requirement coincide, so no separate study is owed.
+
+⚠ **`n_negative` NAMES TWO DIFFERENT QUANTITIES.** `unified_throw_cov.py:372` computes
+`nonzero(x_cv < 0)` — negative **bin values**, recorded as **zero** in the census.
+`z_pilot.py:275,290` computes it on `eigvalsh` — negative **eigenvalues**, the 5214. Anyone grepping
+the name hits the wrong one first. And the eigenvalue count lives in the **separately persisted
+spectra**, not in `z-receipt-cv.json`, which carries only the extrema.
+
+### 9.3 The external CV cross-check that stood UNPERFORMED is now PERFORMED
+
+`[cb0b6b]`, measured on payload with read-only login-node reads: production `hXSecND_flat` versus
+the persisted vector, **65,856 of 65,856 identical, `max|Δ| = 0.000e+00`**; support mask recomputed
+as `production > 0`, identical, 10,694 each; `flatnonzero(mask)` versus `hRowIndex5D` identical and
+strictly increasing. It correctly declines to flip `G3R.stored_cv_cross_checked`, which records that
+the producer was handed no operand and remains accurate. **Check satisfied, flag unchanged — two
+different statements**, and §7's row for this item moves from PAYLOAD-open to closed.
+
+### 9.4 ⚠ A record collision that rank 3 surfaced and cause 3 must dispose of
+
+`[cb0b6b]` measured: the registry declares estimator seed 42; the throw payload records
+`estimator_seed = 1000`. Both sides verified here:
+
+- `docs/ESTIMATOR_REGISTRY.md:17-22` — *"every covariance component must carry the identical
+  estimator fingerprint as its central product (**reject on mismatch**)"*, with estimator seed among
+  the nine fields. Row `:29` gives `omnifold-5d-lgbm` **"5 iter, est seed 42"** for the central.
+- `sweep_bank_5d.py:354-356` — *"42 is this module's archive value — and it **deliberately DIFFERS**
+  from `unified_throw_cov.py`'s 1000. Each module's default-equivalent preserves ITS OWN prior
+  behaviour; **unifying them on one number is the instinct a later reader will have** and it
+  silently re-seeds one of the two."*
+
+**Both records are internally correct and they cannot both be satisfied.** Read literally, the
+fingerprint rule is violated by a difference the source calls deliberate and warns against
+"repairing". This is not a payload defect and not a lane's call: cause 3's subject *is* estimator
+seeds, so the disposition sits with the cause-3 owner. **Do not unify the seeds** — the source names
+that as the trap.
+
+⚠ **An unmeasured mechanism, flagged as such and not asserted.** Mean-centering subtracts the
+ensemble mean, so a *common* estimator offset shared by all throw universes cancels; **CV-centering
+does not**, because the CV sits at the other seed. If the throw universes are unfolded at 1000 and
+the CV at 42, the CV-centered variant could absorb that offset as though it were a throw
+fluctuation. The registry's two √tr figures are **mean-centered `5.8077e-38`** and **CV-centered
+`6.2367e-38`**, with the mean shift recorded separately as `1.654e-38`; note
+`sqrt(5.8077² + 1.654²) = 6.039`, near but not equal to `6.2367`. **I have not established this
+mechanism and it should not be repeated as though I had** — it is a question for cause 2's owner,
+with the arithmetic shown so it can be checked rather than believed.
+
+### 9.5 Endpoint completeness: two phenomena were pooled, and one dissolves
+
+`[cb0b6b]`, measured: `globalCompleteness` on the central product is **exactly 1.0**; per-bin
+readings above one number **2,768 of 10,694**, with **median excess `2.220e-16` — one ULP** and max
+`1.088e-14` — 49 ULP. **Those are rounding, not a defect.** The **endpoint** readings, `1.001824`
+and `1.000521`, are **eleven orders larger** and cannot be rounding; they stay UNRESOLVED with a
+reason — `mii_anchor_comparator.py:125-128` classifies the quantity NOT_RECOMPUTABLE / WRITER_GAP
+with both ingredients unwritten, so no read settles it. Its larger incidental finding — that `of_in`
+and `denom_nd` agree to the last bit across essentially the whole support, so the completeness
+division **applies no correction in 5D** — is recorded without disposition and is not mine to issue.
+
+### 9.6 What the rank question cost, and the honest answer
+
+I asked whether a rank figure for `C_Z` was cheaply reachable. **It is not.** `[cb0b6b]` established
+that the receipt carries no rank and no eigenvalue count, so a rank or retained-subspace figure needs
+an eigendecomposition of the `10,694²` matrix — **new computation, not a read**, and correctly
+refused on a shared login node under a no-compute leg. If it is wanted it must be scoped and
+authorized as its own item. The reason it would be worth scoping is unchanged: rank deficiency is the
+same property that makes `pinv`-without-`rcond` dangerous at rank 6, so one measurement would serve
+both. **Z's rank is not the old P4 263** — the audit is explicit that the old rank does not determine
+Z's, and it must not be transferred.
