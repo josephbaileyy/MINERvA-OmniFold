@@ -8,18 +8,18 @@
     "cpu_task_hours": 500.0
   },
   "unit": "task-hours: sum of post-t0 ElapsedRaw over every execution attempt, with the attempts of one job id summed; an attempt is (JobID, Start, End) and a repeated observation of one attempt is counted once; attempts straddling t0 are clipped at t0; .batch/.extern/step and array-bracket rows excluded",
-  "measured_at_utc": "2026-09-16T04:43:35.064686Z",
-  "measured_on_host": "login05",
+  "measured_at_utc": "2026-09-17T07:41:55.528431Z",
+  "measured_on_host": "login31",
   "source": {
     "kind": "sacct",
     "argv_or_path": "sacct --user josephrb -X -D --parsable2 --noheader --starttime 2026-09-02T13:44:27 --endtime now --format=JobID,JobName,State,ElapsedRaw,Partition,Start,End,AllocTRES",
-    "raw_sha256": "7f96d6735e4e810d75b860ddab1765873c6e562f5c8eab859ab1cf00ec218a80"
+    "raw_sha256": "f18a0d0bb5480f7eb259710d465f13e89136a121703912fcf4642cf45247abbb"
   },
   "spend": {
-    "gpu_task_hours": 1.4719444444444445,
-    "cpu_task_hours": 95.90805555555555,
-    "task_count": 93,
-    "attempt_count": 1976,
+    "gpu_task_hours": 10.210833333333333,
+    "cpu_task_hours": 96.19611111111111,
+    "task_count": 110,
+    "attempt_count": 1993,
     "metered_task_ids": [
       "57712764",
       "58106332",
@@ -110,10 +110,27 @@
       "58396676_0",
       "58397664_0",
       "58397664_1",
+      "58397664_10",
+      "58397664_11",
+      "58397664_12",
+      "58397664_13",
+      "58397664_14",
+      "58397664_15",
+      "58397664_16",
+      "58397664_17",
+      "58397664_2",
+      "58397664_3",
+      "58397664_4",
+      "58397664_5",
+      "58397664_6",
+      "58397664_7",
+      "58397664_8",
+      "58397664_9",
       "58398465",
       "58403382",
       "58403491",
-      "58403564"
+      "58403564",
+      "58454524"
     ],
     "attempts_by_task_id": {
       "57712764": 1884,
@@ -205,16 +222,34 @@
       "58396676_0": 1,
       "58397664_0": 1,
       "58397664_1": 1,
+      "58397664_10": 1,
+      "58397664_11": 1,
+      "58397664_12": 1,
+      "58397664_13": 1,
+      "58397664_14": 1,
+      "58397664_15": 1,
+      "58397664_16": 1,
+      "58397664_17": 1,
+      "58397664_2": 1,
+      "58397664_3": 1,
+      "58397664_4": 1,
+      "58397664_5": 1,
+      "58397664_6": 1,
+      "58397664_7": 1,
+      "58397664_8": 1,
+      "58397664_9": 1,
       "58398465": 1,
       "58403382": 1,
       "58403491": 1,
-      "58403564": 1
+      "58403564": 1,
+      "58454524": 1
     },
     "by_state": {
-      "COMPLETED": 74,
-      "FAILED": 18,
+      "COMPLETED": 88,
+      "FAILED": 19,
       "NODE_FAIL": 2,
-      "REQUEUED": 1882
+      "REQUEUED": 1882,
+      "RUNNING": 2
     }
   },
   "fired": {
@@ -224,7 +259,7 @@
     "any": false
   },
   "headroom": {
-    "gpu_task_hours": 498.52805555555557,
-    "cpu_task_hours": 404.09194444444444
+    "gpu_task_hours": 489.7891666666667,
+    "cpu_task_hours": 403.8038888888889
   }
 }

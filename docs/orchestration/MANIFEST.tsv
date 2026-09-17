@@ -705,7 +705,7 @@ docs/orchestration/state/producers-oi126-r5/sbatch_c_perm_ens.sh	tracked	MACHINE
 docs/orchestration/state/producers-oi126-r5/sbatch_c_perm_ens5.sh	tracked	MACHINE	state-artifact	producers-oi126-r5		generated		exact-path-only		yes	2	64	3032
 docs/orchestration/state/quoted-products-digests-56760314.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/uq_5d/sbatch_hpss_protect_quoted_products.sh	yes	4	525	20354
 docs/orchestration/state/r5-capture-20260910/sacct-r5-t0-to-20260910T065750Z.psv	tracked	MACHINE	state-artifact	r5-capture-20260910	20260910	generated		exact-path-only		yes	0	1827	334601
-docs/orchestration/state/r5-meter-receipt.json	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/campaignctl.py;docs/orchestration/r5_meter.py;docs/orchestration/test_campaignctl.py	yes	20	230	5494
+docs/orchestration/state/r5-meter-receipt.json	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/campaignctl.py;docs/orchestration/r5_meter.py;docs/orchestration/test_campaignctl.py	yes	20	265	6256
 docs/orchestration/state/regen_canonical_namespace_field_pins.py	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	yes	5	137	6597
 docs/orchestration/state/sessions.json	tracked	MACHINE	state-artifact			generated		exact-path-only	docs/orchestration/agentctl.py;docs/orchestration/test_agentctl.py;docs/orchestration/test_wakerctl.py	yes	19	1060	62001
 docs/orchestration/state/step1-dynamics-submit-56531057.json	tracked	MACHINE	state-artifact			generated		exact-path-only	nd-unfolding/pet/check_canonical_designation.py	yes	5	88	3227
