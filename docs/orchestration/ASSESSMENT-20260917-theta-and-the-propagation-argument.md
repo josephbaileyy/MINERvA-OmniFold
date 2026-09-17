@@ -78,10 +78,23 @@ the direction inversion that `SPEC` §3.7a rev. 16 was corrected for, recurring 
 as a second, independent leg and its magnitude claim is **retracted** — see the banner and `T2`. The
 decision does not depend on it.
 
-**Two things are nonetheless worth doing and neither requires adopting `θ`:** the `f_i` measurement
-is needed on any route (`T4`), and the projection check is zero-compute and is the condition on the
-only thing Alternative 1 would deliver (`T5`). **But closure (B) as scoped does not deliver `θ`'s own
+**Two things are nonetheless worth considering and neither requires adopting `θ`:** the `f_i`
+measurement (`T4`) and the projection check, which is zero-compute and is the condition on the only
+thing Alternative 1 would deliver (`T5d`). **But closure (B) as scoped does not deliver `θ`'s own
 scale** (`T4`), so *"one measurement settles both questions"* is not currently true.
+
+⚠ **CORRECTED 2026-09-18 — this paragraph read *"the `f_i` measurement is needed on ANY ROUTE"*, and
+that is withdrawn.** Joseph's fourth requirement on the integrated proposal forbids describing `f_i`
+or any diagnostic as mandatory on every route without connecting it to the claim being supported,
+and that requirement lands on **this sentence** as squarely as on anything it was aimed at. `f_i` is
+required by the routes that propagate a `g`-side tolerance — Alternative 1's, and `θ`'s own scale
+via the fuller decomposition at `T4`. **It is not established as necessary on a route that makes no
+`g`-side tolerance claim at all**, and I asserted universality rather than deriving it. The
+conditional statement is the defensible one and it is the one this document now makes.
+
+*Found by applying an instruction relayed as a correction of another lane to my own text. A
+requirement that names a failure shape does not exempt the lane reading it* — which is the same law
+`T3`-versus-the-recommendation illustrates above, on the same day.
 
 **Adoption is Joseph's and I recommend, not grade.**
 
