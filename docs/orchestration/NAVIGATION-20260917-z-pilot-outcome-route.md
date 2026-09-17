@@ -26,7 +26,7 @@ The single authorization is **consumed**; no replacement submission is authorize
 |---|---|
 | **branch** | `lane/z-assembly-pilot-20260914`, pushed to `origin` |
 | **outcome record** (RUN_LOG § 2026-09-17, STATUS, reconciliation §10) | **`1b2873a8e9b3c78568725494799a3df6234a39d5`** |
-| **corrected recommendation** (§12; §11 is withdrawn) | **`a14ff88b`** on the same branch — read §12, never §11 |
+| **corrected recommendation** (§12; §11 is withdrawn) | **`a14ff88b2a0445f403d2d73cbb5c4d16bbf49d33`** on the same branch — read §12, never §11 |
 | **accounting + the detailed result in its message** | **`0202591b15092486b6db167478cf72290fcc7ed9`** |
 | **assembling revision** (deployed, immutable) | **`fb9ec3560fd6d62295dffc81b5694c9e26667d5b`** |
 | **producer revision** (the precursor's) | **`e09513d842ad3acc1964c1af740696f02eaed7d9`** |
