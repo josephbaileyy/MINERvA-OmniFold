@@ -260,6 +260,38 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   lead to the same next action. **And a third state: today it can produce neither outcome**, since
   `κ = None` refuses even healthy baselines. **Hence the sequencing recommendation — the cause-3
   decision is free and prices the most expensive item.**
+- [`PACKET-20260917-cause3-joint-baseline-acceptance.md`](PACKET-20260917-cause3-joint-baseline-acceptance.md)
+  - **COMPLETES §3.7b's cause-3 joint-baseline acceptance design — a DESIGN deliverable with an
+  approval recommendation, authorized by Joseph 2026-09-17. No compute, no member production, no
+  grading.** Closes the audit's **rank 2** (`ebba67ab`), which said *"a member/design proposal exists,
+  so the gap is not 'no design'"* — hence completed, not restarted. ⚠ **`θ` is used NOWHERE**, as input
+  or fallback. ⚠ **`[B,S]` is PROPOSED not governing** (`SPEC:1552`, verified) so nothing is written as
+  if it governs. ⚠ **Accepts Joseph's decline of `ε = 1e-9`** and records why the objection is sharper
+  than the argument it refuted: **the transfer ACT was itself new**, so the number's age could not
+  establish that its application to Z was fixed beforehand. **(a) THE SCIENTIFIC LOSS IS THREE
+  DISJOINT LOSSES**, which is why there are three boundaries — and **L3 (correlations) cannot be
+  reached by tightening L1/L2**, since both adopted statistics are functions of the diagonal alone.
+  **Adds L4, the only DISCRETE loss:** the binary F7 centering decision, which no boundary covers.
+  **(b)** `f_agg` trace-ratio form with the population declared as the `x_cv > 0` predicate, never a
+  hardcoded 10,694. **(c) ⚠ THE COVERAGE FRACTION IS DERIVED, NOT CHOSEN** — `φ = 1` on the union of
+  declared map supports (each such bin enters a published number) and unconstrained off it, so `φ`
+  collapses into a **population declaration**. **(d) THE STRUCTURAL REQUIREMENT: a correlation
+  criterion must be INVARIANT under `C → D C D`**, which the projected correlation matrix satisfies
+  identically (measured `3.3e-16`) and which **disqualifies trace and per-bin `σ` statistics from ever
+  serving as one**; `τ_p` may not be derived from any diagonal tolerance, because a non-negative-weight
+  projection can near-cancel (`179.91` vs a `0.6900` limit, all PSD). **(d) L4 is APPROVABLE IN FULL —
+  form, population AND value — because the quantity is discrete and the criterion has no tolerance
+  parameter.** **(e) THE LEG SET BOUND AND VL141 SUPERSEDED IN TWO PLACES:** `sweep_bank_5d.py:358` now
+  exposes `--estimator-seed` (no default, required for `--run`) and `:309-311` stamps it, and
+  `analyze_universes_5d.py` now **refuses mixed-seed members** — so VL141's "no CLI flag" and "checked
+  by nothing" are both repaired. **8 `sbatch_*` files name `MNV_EST_SEED_OFFSET`: 7 apply, 1 REFUSES.**
+  The family is the **diagonal `(42+k, 1000+k)`, not a grid**, and ⚠ **the member set carries an
+  ALIASING constraint measured by calling `seed_offset_policy`: forbidden differences `{-958, +958}`**,
+  so the grid must pass `check_offset_grid` before any member is built. **`k = 0` is the archive** and
+  costs nothing. **Explicit falsifiers for all four criteria.** ⚠ **Values for `cause3_agg` and
+  `δ_bin` are NOT proposed** — blocked on the quantity Joseph closed, and the packet records that
+  those two withdrawn numbers and `θ`'s withdrawn candidate all came from **one** half-display-unit
+  rule. **Nothing adopted; three boundaries stay WITHHELD.**
 - [`PROPOSAL-20260917-integrated-acceptance-existing-products.md`](PROPOSAL-20260917-integrated-acceptance-existing-products.md)
   - **ONE INTEGRATED ACCEPTANCE PROPOSAL for the EXISTING products and their supported reproduction
   path.** Assigned by Joseph 2026-09-17; the owning lane **prepares**, `[cb0b6b]` **evaluates**. ⚠
