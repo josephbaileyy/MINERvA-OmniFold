@@ -39,6 +39,14 @@ there, so no arm's feature width changes.
 **P1 is Joseph's original question and is primary.** Each contrast changes exactly one
 factor, so none of them is a composite.
 
+**The three are read together, not in sequence** (added 2026-09-18). A null P3 does
+**not** retire P1: P3 asks whether *pooled* typed objects help, so if pooling is the
+wrong routing then P3 can be null precisely because of the effect P1 measures. P3 null
+with P1 positive is a coherent and informative outcome — typed objects help only when
+routed individually — and it is evidence *for* that reading rather than against it.
+Likewise a positive P3 with a null P1 says typed objects help and the routing does not
+matter. No contrast gates the reporting of another.
+
 **C − A is derived, not a fourth test.** Because all three share one denominator (§3),
 $(C-B) + (B-A) = (C-A)$ holds **exactly**, not approximately. C−A is reported as the
 composite candidate with an additivity check: it is also measured directly in the same
@@ -103,6 +111,11 @@ Per primary contrast, at $\alpha = 0.0167$ two-sided:
 Sample size solves $n = \lceil (t_{1-\alpha/2,\,n-1} + t_{0.8,\,n-1})^2 s^2/\delta^2 \rceil$
 iteratively on the pilot's between-training-seed sd, after test-sample uncertainty has
 been capped at $\delta/4$ with inference rather than with seeds.
+
+**No sd measured so far applies to this endpoint.** The finished matrix's 25.8 points
+came from a different fixture, two arms rather than four, and a ratio to the pooled arm
+rather than to arm A. It is a planning assumption for costing only. The sd that sizes
+Stage 2 is the one the pilot measures here, and it may be larger.
 
 ## 6. Three qualifications that travel with every number
 

@@ -106,19 +106,33 @@ code, so a cap there would have been an invention rather than a candidate. It al
 omitted the actual incumbent — generic-only, no typed objects — so every contrast would
 have been measured against a representation we do not run. Corrected above.
 
-### 2.5 Does this address the production choice? Yes, with one stated transfer limit
+### 2.5 Does this address the production choice? Yes, and nothing transfers for free
 
-Direction transfers; magnitude transfers only for the cap contrast. In the fixture the
-12 generic slots are `rng.normal` noise and all signal is typed
-(`run_typed_token_comparison.py:105-107`), so the typed channel's importance is set by
-us. That makes any B/C effect an **upper bound** on the production effect, where generic
-clusters carry most of the signal and typed objects add increments. The consequence is
-asymmetric and useful: **equivalence in this fixture settles the production question;
-superiority here does not settle its production magnitude.**
+**Corrected 2026-09-18.** Revision 2 claimed that direction transfers to production
+while magnitude does not, and that noise-only generic slots make any measured effect an
+**upper bound**. Both claims were wrong and are withdrawn.
 
-For the cap contrast the transfer is better, because §8.1 measures the energy share
-carried beyond rank 12 and the fixture's tail signal share is set to it (§4.2) rather
-than chosen.
+*Direction does not transfer either.* In the fixture the 12 generic slots are
+`rng.normal` noise and every bit of signal is typed
+(`run_typed_token_comparison.py:105-107`). In production the generic cluster cloud
+carries most of the information and typed objects add increments. A representation that
+wins when typed objects are the only signal can **lose** when they are a supplement: if
+typed tokens are largely redundant with the cluster cloud, per-object routing spends
+attention capacity discriminating among near-duplicates. Sign reversal is available, not
+merely a change of scale.
+
+*"Upper bound" was unjustified.* The argument was that free attention capacity maximises
+the typed effect. The opposite argument is equally available: in production the arms must
+compete for a fixed attention budget against 12 informative tokens, and per-object
+resolution may matter **more** there, not less, because the model has to tell similar
+objects apart under pressure. There is no monotone relation between the fixture's
+signal placement and production's, so neither bound holds.
+
+What remains true is narrower and worth stating on its own: this experiment answers the
+question **on this fixture**, at multiplicities matched to the measured ones, with each
+arm a single-factor change. Transfer to production is a separate claim that this design
+does not license, and a positive result here is a reason to run the matched comparison
+on real inputs, not a substitute for it.
 
 ## 3. Why the finished null was expected — the argument, not the label
 
@@ -256,9 +270,15 @@ half-width rule equivalence needs, so a design powered by it always lands in one
 two decisive branches. The equivalence branch is the CI-inclusion rule, which is TOST at
 $\alpha/2$ per side — deliberately conservative.
 
+**The 25.8 is a planning assumption, not this endpoint's power.** It was measured on
+the four-object fixture, with two arms, against a different statistic — a ratio to the
+pooled arm rather than to arm A — at a multiplicity the experiment no longer uses. None
+of those carry over. It is used here only to show what a plausible sd implies for cost;
+the sd that sizes Stage 2 is the one the pilot measures for **this** endpoint.
+
 | $s$ (points) | $n$ from $z$ | $n$ from $t$ (**used**) | interpretation |
 |---:|---:|---:|---|
-| 25.8 (as measured) | 70 | **73** | unaffordable; variance reduction is mandatory, not optional |
+| 25.8 (**planning assumption only** — see below) | 70 | **73** | unaffordable; variance reduction is mandatory, not optional |
 | 18.0 | 34 | 37 | affordable only by dropping a regime |
 | 12.9 | 18 | **21** | the design target |
 | 9.0 | 9 | 12 | comfortable |
