@@ -5,7 +5,11 @@
 **CITABLE FOR:** the state of each remaining requirement as measured on 2026-09-16, **as amended by
 §10's 2026-09-17 reconciliation** where the two disagree; the routing of each; the reconciliation
 in §3; the resource figures in §4 and §5 **as corrected in §10.5**; and **§12 AS CORRECTED BY §13**,
-as a *recommendation*. **Read §13 before acting on any part of §12** — it carries the independent
+as a *recommendation*, **and §15 before acting on §12.4-§12.7 or on `PROPOSAL` §5.7** — the θ
+assessment `5a6d32fb34b99da2f3974e46e22082be0a746d3d` recommends **NOT adopting θ**, refutes this
+lane's *"the same factor bounds every projection"* **without bound**, and shows the deliverable
+Alternative 1 supports (`K1`) is not the one the declared use requires (`K4`).
+**Read §13 before acting on any part of §12** — it carries the independent
 assessment (`ed18a231de4c3b6b016e268be54257579b6c7739`), withdraws §12.4 consequence 2, moves the
 `B` fallback from BARRED to **UNRULED**, corrects §12.6's stated authority, and **relocates the
 blocking decision from the active-set population to `θ`.** §12.7's decision table is superseded by
@@ -786,9 +790,13 @@ disagreement. Only **11** support bins agree bitwise.)*
    is not a prediction to be bounded — it is a recorded fact. What is missing is not a bound on the
    deviation but a bound on its **consequence for the declared use**, and that object already has a
    closed form: with `G := diag(δg/g)`, `ΔC_infl = GC + CG + GCG` **exactly**, so
-   `‖ΔC‖ ≤ ((1+γ)² − 1)‖C‖` with `γ = max_i |δg_i/g_i|`, and the same factor bounds every
-   projection (`480bed76`, adopting this lane's 5.7). Composed with `|δg_i/g_i| ≤ θ/f_i`, this
-   gives `γ ≤ θ / min_i f_i` — **so the correlation side is DERIVED from `θ`, not judged separately.**
+   `‖ΔC‖ ≤ ((1+γ)² − 1)‖C‖` with `γ = max_i |δg_i/g_i|`. ⚠ **THE CLAUSE THAT FOLLOWED — "and the
+   same factor bounds every projection" — IS FALSE AND IS WITHDRAWN (§15.2).** It holds for the
+   full matrix and for projections that keep `wᵀC_infl w` away from zero; it fails **without bound**
+   on anti-correlated directions, measured at **262×** the limit and divergent on an exactly
+   singular PSD block. Composed with the **exact** inversion (not the first-order `θ/f_i`), this
+   gives `‖ΔC‖/‖C_infl‖ ≤ ((1+θ)²−1)/min_i f_i` — tighter than what §12 published — **and the
+   correlation side is derived from `θ` only where that projection condition holds.**
 
    ⚠ **CONDITION (a) WAS DROPPED HERE AND IS RESTORED (§13.5).** I wrote *"the same factor bounds
    every projection"* without its condition. `PROPOSAL-20260916…:459-461` states it: *"The projected
@@ -812,8 +820,8 @@ measurement.**
 
 | # | what | who | compute |
 |---|---|---|---|
-| 1 | **`f_i`, the V-fraction of each bin's variance.** Both `θ`'s scale *and* `θ`'s correlation grip reduce to this single quantity, and `min_i f_i` sets the derived bound: at `θ = 7.11e-2`, `min_f 1.0 → 15%`, `0.5 → 30%`, `0.2 → 84%`, `0.1 → 193%`, `0.01 → 6477%`. **Below `min_f ≈ 0.2` the derived bound exceeds 100% and settles nothing.** | `lane_b` measures, `[91eaa2]` interprets | **small, and it needs a writer change or a re-read** — see below |
-| 2 | **An ACTIVE-SET POPULATION declaration.** `min_i f_i` over all 10,694 bins is an extreme-order statistic set by the single worst bin — by construction a bin where the unified throw contributes almost nothing, *"a bin whose covariance nobody uses"*. `480bed76`: the remedy is **an active-set restriction, NOT a tighter `θ`** — tightening `θ` below its scientific ceiling to rescue a bound set by a dead bin *"would be choosing a tolerance to obtain a verdict."* **The population is a declaration, and it is scientific.** | **Joseph**, or `[91eaa2]` under his ratification | zero |
+| 1 | **`f_i`, the V-fraction of each bin's variance**, which sets the derived bound. ⚠ **CORRECTED (§15.3): `f_i` does NOT also close `θ`'s scale.** `θ`'s total-σ resolution is set by the **sample-block** fractions `w_stat,i = (C_stat)_ii/(C_Z)_ii` and `w_ML,i = (C_ML)_ii/(C_Z)_ii`; `f_i` is the **V**-fraction. Different terms of the same five-way split, so *"one quantity, two open questions"* was wrong. Exact bound, re-measured: `min_f 1.0 → 14.7%`, `0.5 → 29.4%`, `0.2 → 73.6%`, `0.1 → 147.2%`, `0.01 → 1471.8%`; the 100% crossing is at **`min_f = 0.147`**, not 0.17. And the min must be taken over the **unclamped** bins — `6528` of `10694`, since `z_assembly.py:6-7` clamps `g` to exactly 1 on the other **4166** (38.96%). | `lane_b` measures, `[91eaa2]` interprets | **small, and it needs a writer change or a re-read** — see below |
+| 2 | **An ACTIVE-SET POPULATION declaration** — ⚠ and per §15.5 the **projection set is NOT a declaration at all**; it is enumerated by `SPEC:1356` plus the publication scope, so what is owed there is a **CHECK**. `min_i f_i` over all 10,694 bins is an extreme-order statistic set by the single worst bin — by construction a bin where the unified throw contributes almost nothing, *"a bin whose covariance nobody uses"*. `480bed76`: the remedy is **an active-set restriction, NOT a tighter `θ`** — tightening `θ` below its scientific ceiling to rescue a bound set by a dead bin *"would be choosing a tolerance to obtain a verdict."* **The population is a declaration, and it is scientific.** | **Joseph**, or `[91eaa2]` under his ratification | zero |
 | 3 | ⚠ **CORRECTED (§13.2): the status is UNASSESSED, not withheld, and the withholding is NOT `[cb0b6b]`'s.** Whether §7 item 4 is discharged by the throw-deviation and completeness results — which closes **full `S`** and settles premise 1 of §12.2 — has **never been routed to `[cb0b6b]` as an object**: `fb9fdec1`/`480bed76` (2026-09-17) postdate its last assessment `fdf5e510` (2026-09-15) by two days. `[91eaa2]` withholds a verdict on *its own* residue, which is a different act. Premise 1's conclusion is unchanged — **an unassessed residue supports non-bindingness no more than a withheld one does.** Routing it is Joseph's, and is not requested here. | Joseph routes; `owners.tsv:15` assesses | zero |
 
 ⚠ **`f_i` IS NOT COMPUTABLE FROM THE PRESERVED PRODUCTS — MEASURED, not assumed.** `z-cv.npz` holds
@@ -1096,3 +1104,164 @@ labelled as relayed.
 
 **No result is recorded in this section.** `θ` is **RECOMMENDED, NOT ADOPTED**; full `S` is OPEN;
 §7 item 4 is UNASSESSED; `B` and `ε` are open; Gate 2 is FAIL.
+
+---
+
+## 15. The `θ` assessment returned — DO NOT ADOPT on the present derivation (2026-09-17)
+
+**Record: `5a6d32fb34b99da2f3974e46e22082be0a746d3d`,
+`docs/orchestration/ASSESSMENT-20260917-theta-and-the-propagation-argument.md`, on
+`origin/lane/z-criteria-independent-assessment-20260910`, by `owners.tsv:15` `[cb0b6b]`.**
+Eight precise unresolved premises are listed there; a probe is preserved at
+`docs/orchestration/probes/probe-20260917-theta-finite-change-and-projection.py`.
+
+**RECOMMENDED DECISION: do not adopt `θ = 7.11e-2` as a scientific CEILING on its present
+derivation.** Nothing is adopted or graded here; `S` is not closed; §7 item 4 remains open **and
+still has not been routed to `[cb0b6b]` as an object.**
+
+⚠ **BOUNDARY ON MY OWN ROLE.** Subject 2 (§5.7/§5.8) is **this lane's work**, so **I cannot assess
+this assessment of it** — the assessor stated that and it is right. What follows is therefore a
+record of its findings plus my **independent reproduction of the arithmetic and the citations**,
+which is verification of reproducibility, **not** adjudication of adequacy. The assessor read no
+cluster artifact, so its `z-*.npz` / band-ROOT / `G2_g_domain` / `G3R` figures are **relayed from
+this lane**; the source inspections and the numerics below are mine. `PROPOSAL`'s blob is
+**byte-identical** at `affc9e03` and `a14ff88b` (`6623cf7e38116abadf2266f35e359a8086643b85`), so
+§5.7/§5.8 did not move under the §12 correction.
+
+### 15.1 Why not adopt — a resolution figure assigned as a ceiling
+
+The derivation is honest, well sourced, and correctly bars all three wrong routes. What §2.2 derives
+is a **RESOLUTION** figure — the smallest `σ` movement the existing ensembles could detect — and
+**`SPEC:1406-1409` rules on that shape**, verified verbatim: *"It may bound `ε` from below as a
+feasibility constraint; **it cannot justify `ε`**."* Assigned as the **upper** end of an admissible
+interval it inverts that direction. **Declared as what it does support — a FLOOR below which no
+per-bin `σ` gate is worth setting — it needs no new argument and carries no vacuity risk.**
+
+**The headline refutation is already in this repository one layer up.** §2.2's *"cannot change any
+conclusion"* holds **per-bin** and fails for **aggregates**. Verified at `nd-unfolding/p4_lib.py`:
+`INTEGRAL_LEG_COHERENT_CEILING = 1.831e-11` and `INTEGRAL_LEG_INCOHERENT_FLOOR = 1.770e-13`
+(`:158-159`, the latter being the former `/ √10694`), and `:141` states in the repository's own
+words that **"the per-bin check is not a coherence discriminator."** `σ`'s sampling error is
+**random** across bins; a CV-induced `σ` movement is **coherent** — one systematic reweighting of
+the V block. An aggregate averages the first down by `~√N_eff` and the second not at all, and the
+declared use **is** aggregate (`SPEC:1356`: *"3D/4D covariances must be exact projections from an
+adopted trunk"*). **Direction matters: this makes `θ_A` too LOOSE — the unsafe way.**
+
+**Populations (T3), and it cuts the other way without rescuing the claim.** Neither ensemble
+satisfies `√(2/(N−1))`: `C_stat`'s 100 are **bootstrap replicas** — resamples of one realized
+dataset, so `N` controls only the Monte-Carlo component — and `C_ML`'s 24 are **splits of one
+dataset**, anti-correlated by construction, so the effective independent count is below 24. Both
+violations run **conservatively**, so T3 opposes T2 — **and T2 governs, because a conservative
+estimate of the wrong quantity is still the wrong quantity.** Standalone reductio, and it is the
+cleanest argument in the assessment: **the boundary is `N`-dependent, so doubling the bootstrap
+ensemble would halve `θ` with no change in the science.**
+
+Arithmetic reproduced here to every digit: `N = 100 → 0.142134 / 0.071067`;
+`N = 24 → 0.294884 / 0.147442`.
+
+### 15.2 My §5.7's "the same factor bounds every projection" is FALSE — re-measured
+
+Corrected at both sites (`PROPOSAL` §5.7 and §12.4 consequence 4). I re-ran it rather than accept
+the refutation on relay; at `γ = 0.30`, limit `0.6900`:
+
+| inflated block | eigenvalues | PSD | worst projected ratio |
+|---|---|---|---|
+| entrywise non-negative | `+0.500, +1.500` | yes | **0.6900** — at the bound, holds |
+| `[[1, −0.999], [−0.999, 1]]` | `+0.001, +1.999` | yes | **180.9 — 262× the limit** |
+| `[[1, −1], [−1, 1]]` | `0.000, +2.000` | yes | **4.2e9, divergent** |
+
+All PSD, all `w` non-negative. **So "non-negative contracting weights" is not the sufficient
+condition**; the inflated block's entries must be non-negative **on the projected directions**, and
+the failure is **unbounded rather than gradual** because `wᵀCw` can be driven toward zero. **My own
+verification could not have seen it — the fixture was entrywise non-negative.** And it is live:
+`AGENTS.md:27` records the historical 3D block-sum object at **rank 247**, so exact null directions
+already exist in this family.
+
+### 15.3 What the finite-change correction actually does — it helps
+
+- `ΔC_infl = ΓC + CΓ + ΓCΓ` and `‖ΔC‖ ≤ ((1+γ)²−1)‖C_infl‖` **are** valid for finite `Γ`. Confirmed.
+- `dσ_i/σ_i = f_i(dg_i/g_i)` is **first order only**; exact is `√(1 + f((1+u)²−1)) − 1`. The two
+  agree to `2.5e-7` at the `u = 1e-6` verification point — **which is exactly why that point could
+  not see the error.**
+- Inverting exactly and composing: **`‖ΔC‖/‖C_infl‖ ≤ ((1+θ)²−1)/min_i f_i`**, re-measured as
+  `14.7 / 29.4 / 73.6 / 147.2 / 1471.8 %` against the published `14.7 / 30.4 / 83.7 / 192.6 / 6471.8`.
+  **Tighter everywhere, and the 100% crossing moves from `min_f = 0.1716` to `0.1472`** — so
+  **fixing my error WIDENS the region where Alternative 1 settles something.**
+- `θ/f` **permits more** than a `σ` tolerance allows: unsafe as a *gate*, conservative as a *bound
+  input*, which is Alternative 1's only use of it.
+- ⚠ **One-sided.** Below `f = 1 − (1−θ)² = 0.1371` a `σ` tolerance bounds **no downward** `g`
+  movement — `g` may fall toward zero while `σ_i` moves less than `θ` — so `γ = max_i|u_i|` is
+  **not finite from `θ` alone** there.
+- ⚠ **`f_i` does NOT close `θ`'s scale.** The total-`σ` resolution is set by `w_stat,i` and
+  `w_ML,i`; `f_i` is the V-fraction. **Closure (B) re-reads the VERTICAL bands only, so it yields
+  `f_i` and reaches neither the stat nor the ML diagonal** — it would leave `θ`'s scale exactly
+  where it is. The `θ` document was careful about this at its `:233`; the caveat did not travel into
+  §12.5's closure, and that was my error. **Constructive addition:** both sample blocks are already
+  bound inputs — `uq_cov_stat_5d.root` (891,732,011 B) and `uq_cov_mlsplit_5d.root`
+  (892,078,834 B) — so extending closure (B) by ~1.8 GB of reads would deliver `w_stat,i` and
+  `w_ML,i` too, and close both questions in one attempt.
+- ⚠ **The minimisation was MIS-SPECIFIED, and my two sections disagreed.** `z_assembly.py:6-7`
+  clamps `g` to exactly **1** wherever `v_uni ≤ v_blk`, so those bins contribute `u = 0` whatever
+  their `f`. The relayed counts **partition exactly** — `6528 + 4166 = 10694`, **38.96% clamped** —
+  and §5.8(1) already said *"min over ACTIVE bins"* while §5.8(4a) and §12.5 took it over all
+  10,694. **The min belongs over the 6528 unclamped bins.** Residual: *"active at the current CV"*
+  is not a prospectively safe index set.
+- **Vacuity may be an artifact of the bound, not the population** (T6): the uniform-`γ` substitution
+  asserts every bin moves by the worst bin's allowance, but the largest allowances sit where the
+  inflated block contributes least — **so the substitution deletes exactly the anti-correlation that
+  would make the bound tight**. And the percentages are relative to `C_infl` while the declared use
+  consumes `C_Z`. **The vacuity threshold is denominator-dependent and has never been stated.**
+
+### 15.4 Alternative 1 supports `K1`, and the declared use needs `K4`
+
+Confirmed: §12.3's principle is right. But naming the claims exposes a gap §12.7 did not carry.
+Alternative 1 can support **`K1` — these artifacts' sensitivity** — after §15.3 and once the operand
+changes from the **ceiling** to the **recorded movement**. It does **not** support adoptability,
+exact projections (§15.2), or the provenance tripwire — reject conditions **`4c` and `11` keep
+firing**.
+
+⚠ **The one that matters is `K4`, a SUPPORTED REPRODUCTION PATH, and it was missing from §12.7's
+"would NOT establish" row.** `AGENTS.md:14-15`, verified: *"Publication completion requires a
+ratified central value and uncertainty construction, **supported reproduction paths**, clean
+note/primer/paper builds, and no unresolved publication blocker."* **An exact projection of an
+unreproducible trunk is reproducible only if the trunk is.** That is what makes the envelope claim
+**non-optional**, and it answers the question I asked: **the qualification Alternative 1 supports is
+not the qualification the declared use requires.** Not an argument against running it — `f_i` is
+needed on every route — **but its deliverable must be stated as `K1`.**
+
+### 15.5 `θ` and `ε` are not interchangeable, and one number settles it
+
+All five clauses of the `null` remaining-requirement text remain; **`θ` discharges none.** Different
+operand (`σ` vs `x_cv`), different statistic (per-bin max vs `x²`-weighted L2), different role
+(consequence cap vs provenance tripwire) — and decisively, **`θ` is STRUCTURALLY BLIND on 4166 of
+10694 bins**, where the clamp means no CV movement of any size changes `σ_i`. **A tripwire with a
+measured 38.96% blind fraction cannot substitute for one without it.**
+
+**Replacing the null criterion requires an amendment to `SPEC` §6.4, which fixes the FORM, plus the
+consequential amendment to reject condition 11 (`SPEC:1267`)** — *"the fixed-seed null key is
+absent, or its bound is not the scale-relative one §6.4 rules"* — which **independently** makes a
+non-§6.4 bound a reject condition. **Both are Joseph's acts.** The mechanism that makes this
+binding: **without amending §6.4, condition 11 keeps firing whatever `θ` is set to.**
+
+**On population (Q5), three exclusions with opposite compliance status**, which `480bed76`(b)
+currently runs together:
+
+| | exclusion | status |
+|---|---|---|
+| **E1** | omit bins whose `g` is **clamped** | **compliant** — mechanism-derived, and per §15.3 arguably not an exclusion at all |
+| **E2** | omit bins because their `f` makes the bound exceed 100% | **BARRED** — the act Joseph's instruction names |
+| **E3** | omit bins *"whose covariance nobody uses"* | admissible **only once the use is declared independently**; as written it is a **definite description, not a criterion** |
+
+⚠ **AND THE PROJECTION SET IS NOT A DECLARATION AT ALL.** `SPEC:1356` plus the publication scope
+**enumerate** it, so what is owed is a **CHECK — each declared projection evaluated against §15.2's
+condition — not a judgement.** Given the rank-247 precedent the assessor expects at least one to sit
+near a null direction. **This is the highest-value zero-compute item in the set and it was absent
+from §12.5.** It becomes **§12.5 item 5**.
+
+The assessor declines to declare the population (§12.5 assigns it to Joseph, and a lane that
+declares it cannot assess it), and records four requirements a compliant declaration must meet —
+including that it be **closed under the perturbation it bounds** and **declared BEFORE `min f` is
+measured.**
+
+**Nothing adopted. `θ` NOT ADOPTED; full `S` OPEN; §7 item 4 UNASSESSED and unrouted; `B` and `ε`
+open; Gate 2 FAIL. No compute authorized or requested.**

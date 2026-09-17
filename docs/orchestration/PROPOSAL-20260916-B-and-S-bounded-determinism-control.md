@@ -438,8 +438,34 @@ Verified against a PSD `Σ_V C_b` with `g ≥ 1` as G2 gates: max relative error
 ‖ΔC_infl‖  ≤  ((1+γ)² − 1) · ‖C_infl‖
 ```
 
-**and the same factor bounds every projection**, because a projection is a linear contraction of
-the same matrix. Measured over 300 adversarial `γ` draws per level, all at the bound:
+⚠ **"AND THE SAME FACTOR BOUNDS EVERY PROJECTION" IS FALSE, AND IT WAS MY CLAIM.** Refuted by
+`owners.tsv:15` at `5a6d32fb34b99da2f3974e46e22082be0a746d3d` (T5d) and **re-measured independently
+here** before accepting it. At `γ = 0.30`, limit `((1+γ)²−1) = 0.6900`, maximising
+`|wᵀΔC w| / |wᵀC w|` over non-negative `w` and adversarial diagonal `Γ` at the cap:
+
+| inflated block `C` | eigenvalues | PSD | worst projected ratio | verdict |
+|---|---|---|---|---|
+| `[[1, 0.5], [0.5, 1]]` entrywise non-negative | `+0.500, +1.500` | yes | **0.6900** | at the bound — **holds** |
+| `[[1, −0.999], [−0.999, 1]]` | `+0.001, +1.999` | yes | **180.9** | **VIOLATES by 262×** |
+| `[[1, −1], [−1, 1]]` exactly singular | `0.000, +2.000` | yes | **4.2e9** and rising with the draw count | **UNBOUNDED** |
+
+**All three are PSD and all three `w` are non-negative**, so *"non-negative contracting weights"* is
+**not** the sufficient condition I implied. The denominator `wᵀCw` can be driven toward zero while
+the numerator is not, so the failure is **unbounded rather than gradual**. The missing condition:
+the inflated block's entries must also be **non-negative on the projected directions**.
+
+**And my own verification below could not have seen it** — the fixture was entrywise non-negative,
+so it sampled only the row that holds. That is the fixture-cannot-disagree-with-the-rule failure,
+and the honest reading of the table below is *"confirms the bound on non-negative fixtures"*, not
+*"confirms the bound"*.
+
+⚠ **This is LIVE, not hypothetical.** Unfolded covariances are strongly anti-correlated between
+neighbouring cells, and `AGENTS.md:27` records the historical 3D block-sum object at **rank 247** —
+exact null directions already exist in this family.
+
+**What survives:** the factor bounds the **full matrix** in any submultiplicative norm, and it
+bounds projections **whose directions keep `wᵀC_infl w` away from zero**. Measured over 300
+adversarial `γ` draws per level on an **entrywise-non-negative** fixture, all at the bound:
 
 | `γ` | limit `((1+γ)²−1)` | worst full-matrix | worst projected |
 |---|---|---|---|
@@ -467,9 +493,12 @@ owner's reply identifies what that costs, and I have verified both halves:
   (`z_assembly.py:4`), and the **total** `C_Z` correlation moves by **1.3e-1** on the same fixture.
   The invariance is real and **confined to a term that is not the product**.
 - **The per-bin grip decays as `1/f_i`.** With `f_i := g_i²(Σ_V C_b)_ii / (C_Z)_ii`, the V-fraction
-  of bin `i`'s variance, `dσ_i/σ_i = f_i · (dg_i/g_i)` **exactly** — measured reproducing `f_i` to
-  six decimals at `dg/g = 1e-6`. So a `θ` declared on `σ` permits `|dg_i/g_i| ≤ θ/f_i`, and the
-  off-diagonal V-part then moves by `≈ 2θ/f_i`: **20× `θ` at `f = 0.1`, 200× at `f = 0.01`.**
+  of bin `i`'s variance, `dσ_i/σ_i = f_i · (dg_i/g_i)` ⚠ **TO FIRST ORDER — the word "exactly" was
+  wrong and is withdrawn (§5.8, T5a).** The exact relation is `√(1 + f((1+u)²−1)) − 1`. Measuring
+  it *"to six decimals at `dg/g = 1e-6`"* verified nothing about finite changes: the two forms agree
+  to `2.5e-7` there, which is inside the six decimals quoted. So a `θ` declared on `σ` permits
+  `|dg_i/g_i| ≤ √(1 + ((1+θ)²−1)/f) − 1`, which the first-order `θ/f_i` **over**-states; the
+  off-diagonal V-part still moves by a multiple of `θ` that grows as `f` falls.
 
 **So the two parametrisations fail in opposite directions, and `f_i` is required either way.** A
 tolerance on `g` is mathematically sufficient for the full matrix but has **no scientific
@@ -528,12 +557,45 @@ per-term diagonals are not persisted, a Tier-2 writer requirement), not a furthe
 SETTLED ONCE `f_i` IS KNOWN".** The criteria owner adopted the §5.7 simplification into its own §1
 and returned two qualifications it does not carry. Both verified here:
 
-- **The derived bound degrades fast in `min_i f_i`.** Composing `γ ≤ θ/min_i f_i` with §5.7's
-  `((1+γ)²−1)`, at `θ = 7.11e-2`: `min_f = 1.0 → 14.7%`, `0.5 → 30.5%`, `0.2 → 83.7%`,
-  `0.1 → 192.8%`, `0.01 → 6477%`. **Below `min_f ≈ 0.2` the bound exceeds 100% and settles
+- ⚠ **CORRECTED: the table below used a FIRST-ORDER inversion and is too pessimistic.**
+  `dσ_i/σ_i = f_i·(dg_i/g_i)` is **first order only** — the exact relation is
+  `√(1 + f((1+u)²−1)) − 1`, which agrees with the linear form to `2.5e-7` at the `u = 1e-6`
+  verification point (**which is why that point could not see it**) and differs by ~1.7% at
+  `u = θ` and ~7% at `u = θ/f`. Inverting **exactly**:
+  `|u| ≤ √(1 + ((1+θ)²−1)/f) − 1`, and the composition collapses to
+  **`‖ΔC‖/‖C_infl‖ ≤ ((1+θ)²−1) / min_i f_i`**. Re-measured here:
+
+  | `min_i f_i` | first-order (published) | **exact** |
+  |---|---|---|
+  | 1.00 | 14.7% | **14.7%** |
+  | 0.50 | 30.4% | **29.4%** |
+  | 0.20 | 83.7% | **73.6%** |
+  | 0.10 | 192.6% | **147.2%** |
+  | 0.01 | 6471.8% | **1471.8%** |
+
+  **The exact bound is tighter everywhere, and the 100% crossing moves from `min_f = 0.1716` to
+  `0.1472`** — so fixing the error **widens** the region where the bound settles something.
+  ⚠ **And `θ/f` PERMITS MORE than a `σ` tolerance actually allows**: unsafe if used as a *gate*,
+  conservative if used as a *bound input*, which is the only use made of it here.
+  ⚠ **The inversion is also ONE-SIDED**: below `f = 1 − (1−θ)² = 0.1371` a `σ` tolerance bounds no
+  **downward** `g` movement at all — `g` may fall toward zero while `σ_i` moves by less than `θ` —
+  so `γ = max_i|u_i|` is **not finite from `θ` alone** on that population.
+  **Below `min_f ≈ 0.147` the bound exceeds 100% and settles
   nothing.** Sufficiency is conditional on the measured value, and the conditional must travel
   with the simplification.
-- **`min_i f_i` is an extreme-order statistic over a 10,694-bin support**, so a uniform-`γ` bound
+- ⚠ **THE MINIMISATION IS MIS-SPECIFIED BEFORE IT IS A POPULATION CHOICE (T5e), AND MY OWN TWO
+  SECTIONS DISAGREED.** §5.8(1) above says the threshold takes `min over ACTIVE bins`; this bullet
+  and the decision-support record took it over **all 10,694**. The active reading is the correct
+  one, and the reason is mechanical rather than a matter of taste: `z_assembly.py:6-7` defines
+  `g^c[i] = sqrt(max(v_uni^c[i], v_blk[i])) / sqrt(v_blk[i])`, so **wherever `v_uni ≤ v_blk` the
+  `max` returns `v_blk` and `g` is clamped to exactly 1** — those bins contribute `u = 0` whatever
+  their `f`. Relayed from the pilot receipt: `n_gt_one = 6528` and
+  `n_saturated_v_uni_below_v_blk = 4166`, which **partition the support exactly**
+  (`6528 + 4166 = 10694`), so **38.96% of the support is clamped**. Taking the min over the full
+  support lets a bin the perturbation **provably cannot touch** set the bound.
+  **The crossing caveat survives as the residual:** "active at the current CV" is not a
+  prospectively safe index set, and what margin makes it safe is a design act not taken here.
+- **`min_i f_i` is an extreme-order statistic over its population**, so a uniform-`γ` bound
   is set by the single worst bin — by construction a bin where the unified throw contributes
   almost nothing. Measured on a 4,000-bin fixture, `min f` falls monotonically with population
   size: `9.25e-2` over 100 active bins, `2.05e-2` over 1,000, `1.11e-2` over 1,975. A vacuous
