@@ -1,0 +1,119 @@
+Local software evaluation, 2026-09-18
+Main: ce72abbcf84793a5dc56b7c166aa9a9322266355
+Feature: 7a2d9897a42c39d0413eef938cb90b6cae7239c0
+Python 3.11.15; macOS; PyROOT unavailable; no production inputs.
+Successful full runs: GIT_SSH_COMMAND unset; OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 LOKY_MAX_CPU_COUNT=1.
+
+Installed check/runtime versions:
+numpy==2.4.6
+lightgbm==4.7.0
+scikit-learn==1.9.1
+scipy==1.17.1
+pytest==9.1.1
+joblib==1.6.0
+threadpoolctl==3.7.0
+ruff==0.16.8
+black==26.5.1
+mypy==2.3.1
+
+FEATURE: python -m pytest -q -rs production/tests
+..........s............................................................. [ 86%]
+...........                                                              [100%]
+=========================== short test summary info ============================
+SKIPPED [1] production/tests/test_commands.py:312: ROOT integration not run: ROOT is unavailable
+82 passed, 1 skipped in 13.75s
+
+MAIN + production/ export: same command
+..........s............................................................. [ 86%]
+...........                                                              [100%]
+=========================== short test summary info ============================
+SKIPPED [1] production/tests/test_commands.py:312: ROOT integration not run: ROOT is unavailable
+82 passed, 1 skipped in 14.93s
+
+FEATURE no-fit: python -m pytest -q -rs production/tests/test_compatibility.py production/tests/test_pet_stages.py production/tests/test_projection.py production/tests/test_nominal_backend.py production/tests/test_root_input.py production/tests/test_systematics.py production/tests/test_uncertainty_run.py
+This earlier no-fit run set OPENBLAS_NUM_THREADS=1 and OMP_NUM_THREADS=1 only.
+............................................................             [100%]
+60 passed in 2.96s
+
+FEATURE static checks:
+python -m ruff check production: All checks passed!
+python -m black --check --workers 1 production: 26 files would be left unchanged.
+python -m mypy --strict production/minerva_production: Success: no issues found in 11 source files
+
+FEATURE guide planning: all 16 python production/... commands with --plan appended where absent returned 0 and status plan-only; commands retained in plans.json.
+
+FEATURE ROOT fixture: python -m production.tests.root_adapter_check
+Exit 1: ModuleNotFoundError: No module named 'ROOT' (native driver import, before fixture execution).
+
+INITIAL FEATURE full test attempt (inherited SSH override; CPU cap not yet set):
+1 failed, 78 passed, 1 skipped, 1 warning, 3 errors in 42.33s
+[oi136 launch]   offending flag $GIT_SSH_COMMAND makes git run a program of the caller's choosing
+Failing guarded git operation: local rev-parse HEAD for provenance. No guard source change; clean-environment rerun above passed.
+
+MAIN baseline: python -m pytest -q -rs nd-unfolding/tests/test_z_contract.py nd-unfolding/tests/test_z_assembly.py nd-unfolding/tests/test_z_build_path.py nd-unfolding/tests/test_z_validator.py nd-unfolding/tests/test_z_build.py
+............................................................ [ 16%]
+.........................................F............... [ 32%]
+.................................................................... [ 50%]
+................................................................................................................ [ 81%]
+..............................................................ss....                                                       [100%]
+=================================== FAILURES ===================================
+_ EachGateFiresOnItsOwnDefect.test_a_SINGULAR_psd_matrix_is_accepted_though_cholesky_would_refuse_it _
+
+self = <test_z_assembly.EachGateFiresOnItsOwnDefect testMethod=test_a_SINGULAR_psd_matrix_is_accepted_though_cholesky_would_refuse_it>
+
+    def test_a_SINGULAR_psd_matrix_is_accepted_though_cholesky_would_refuse_it(self):
+        """Why Cholesky was removed: it tests positive DEFINITENESS, which is strictly stronger.
+
+        A covariance with a null direction is PSD and perfectly valid, and nothing in §1.3a
+        guarantees the assembled object has full rank. A Cholesky gate would refuse such a build --
+        a guard that fires on a correct run. (This asserts the property of the two METHODS, not a
+        claim about Z's rank, which this lane has not established.)
+        """
+        n = 6
+        rng = np.random.default_rng(1)
+        A = rng.standard_normal((n, n - 1))
+        C = A @ A.T                                   # PSD, rank n-1: exactly one null direction
+        w = np.linalg.eigvalsh(C)
+        self.assertLess(abs(w[0]) / w[-1], 1e-12, "fixture is not actually singular")
+        za.gate_symmetry_psd(C)                       # accepted, correctly
+>       with self.assertRaises(np.linalg.LinAlgError):
+E       AssertionError: LinAlgError not raised
+
+nd-unfolding/tests/test_z_assembly.py:618: AssertionError
+=========================== short test summary info ============================
+SKIPPED [1] nd-unfolding/tests/test_z_build.py:584: PyROOT unavailable
+SKIPPED [1] nd-unfolding/tests/test_z_build.py:546: PyROOT unavailable
+1 failed, 362 passed, 2 skipped, 85 subtests passed in 28.00s
+
+MAIN + production/ export control: python -m pytest -q nd-unfolding/tests/test_z_assembly.py -k SINGULAR
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ EachGateFiresOnItsOwnDefect.test_a_SINGULAR_psd_matrix_is_accepted_though_cholesky_would_refuse_it _
+
+self = <test_z_assembly.EachGateFiresOnItsOwnDefect testMethod=test_a_SINGULAR_psd_matrix_is_accepted_though_cholesky_would_refuse_it>
+
+    def test_a_SINGULAR_psd_matrix_is_accepted_though_cholesky_would_refuse_it(self):
+        """Why Cholesky was removed: it tests positive DEFINITENESS, which is strictly stronger.
+
+        A covariance with a null direction is PSD and perfectly valid, and nothing in §1.3a
+        guarantees the assembled object has full rank. A Cholesky gate would refuse such a build --
+        a guard that fires on a correct run. (This asserts the property of the two METHODS, not a
+        claim about Z's rank, which this lane has not established.)
+        """
+        n = 6
+        rng = np.random.default_rng(1)
+        A = rng.standard_normal((n, n - 1))
+        C = A @ A.T                                   # PSD, rank n-1: exactly one null direction
+        w = np.linalg.eigvalsh(C)
+        self.assertLess(abs(w[0]) / w[-1], 1e-12, "fixture is not actually singular")
+        za.gate_symmetry_psd(C)                       # accepted, correctly
+>       with self.assertRaises(np.linalg.LinAlgError):
+E       AssertionError: LinAlgError not raised
+
+nd-unfolding/tests/test_z_assembly.py:618: AssertionError
+=========================== short test summary info ============================
+FAILED nd-unfolding/tests/test_z_assembly.py::EachGateFiresOnItsOwnDefect::test_a_SINGULAR_psd_matrix_is_accepted_though_cholesky_would_refuse_it
+1 failed, 57 deselected in 0.13s
+
+WORKTREE POSTCHECK: feature clean; integration has only untracked production/; neither has tracked differences.
+This audit adds only its report and reproducibility evidence on a separate main-based branch.
