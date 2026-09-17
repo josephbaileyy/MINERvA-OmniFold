@@ -368,12 +368,35 @@ correlations held fixed and only `σ` moved:
 **So:** **coherent movement is the BENIGN case at exactly `2.0×`**, and the `2×` is not aggregation at
 all — it is variance being quadratic in `σ`. **Aggregation AVERAGES a coherent move; it does not
 amplify it, and `1,568` does not multiply it.** The blow-up is on **cancelling movement over a
-near-cancelling source**, at `≈ N ×`, which is the near-cancellation channel and is where the `1,568`
-actually attaches — `N` supplies the *room* for the cancellation, it is not a gain factor.
+near-cancelling source** — the near-cancellation channel. ⚠ **AN EARLIER VERSION OF THIS SENTENCE PUT
+THAT BLOW-UP AT `≈ N ×` AND SAID `1,568` "ACTUALLY ATTACHES" TO IT. BOTH CLAUSES ARE WITHDRAWN AS
+WRONG — see the correction immediately below, which supersedes them.** `1,568` does not attach to the
+severity in **either** direction; the governing quantity is the cancellation ratio.
+
+⚠ **AND MY OWN "`≈ N ×`" IS WRONG, CORRECTED 2026-09-18 — IT ATTACHES THE COUNT TO A QUANTITY IT
+DOES NOT GOVERN, WHICH IS THE SHAPE I HAD JUST CORRECTED IN SOMEONE ELSE.** A peer re-measured and
+got the factor **decreasing** with `N` in their construction (`2.0e6 → 1.23e5 → 5.05e3 → 639`) while
+mine rose with it, and **the disagreement across constructions is itself the proof that `N` is not
+the governing variable** — we differ by `25×` at the same `N = 200`. MEASURED here, and the trap is
+visible in the two halves:
+
+    (1) depth FIXED at 0.999, vary N:   N=2 -> 2.0x    N=10 -> 10.0x   N=200 -> 199.8x   N=1568 -> 1566.4x
+    (2) N FIXED at 200, vary depth:     0.9 -> 1.8x    0.99 -> 19.8x   0.999 -> 199.8x   0.999999 -> 199999.8x
+
+**Row (1) alone is a near-perfect linear fit to `N`, and it is spurious:** at fixed cancellation
+depth `w'Cw` happens to scale linearly with `N` in that parametrisation, so the factor tracks `N` by
+coincidence of the parametrisation. **Row (2) breaks it — `N` is fixed and the factor moves five
+orders.** Nor is the factor a function of `w'Cw` alone (`factor × w'Cw` = `0.0999`, `39.96`,
+`2456.2` across cases). **The governing quantity is the CANCELLATION RATIO — the aggregate absolute
+scale over the projected variance — and `N` enters only through whatever it does to `w'Cw` in a given
+construction.** ⚠ **So no `N`-dependent framing belongs in this packet, and `1,568` must not be
+quoted as a severity factor in either direction.** It took varying `depth` at fixed `N` to see it; the
+one-directional scan confirmed the wrong law cleanly.
 
 **The corrected statement, which is stronger than "weak in both directions":** `δ_bin` **tightly
-controls** the coherent channel — a factor of exactly `2`, derivable and needing no measurement — and
-is **blind** to the cancelling channel, where it is **non-conservative** by up to `≈ N`. **So L2 is
+controls** the coherent channel — a factor of exactly `(1+δ)²−1`, derivable, needing no measurement,
+and **invariant in `N` and in the source correlation structure** — and is **blind** to the cancelling
+channel, where it is **non-conservative by a cancellation-governed and unbounded factor**. **So L2 is
 not a weak diagnostic; it is an exact one on one channel and vacuous on the other.** That is a better
 argument for L3's primacy than "weak proxy", and it also means **L2 should not be discarded** — it is
 the only cheap control on the coherent channel.
@@ -392,3 +415,101 @@ the only cheap control on the coherent channel.
    `τ` harder to defend, not easier** — the peer's point, and I agree with it. ⚠ One qualification:
    the same comment says *"superseded by the W-resolved sweep mode below"*, so whether the
    approximation is still the live path is a question about that mode's use, and I do not assert it.
+
+
+---
+
+## 10. THE FINGERPRINT-FIELD DISPOSITION — issued here, because cause 3's subject IS estimator seeds
+
+`[cb0b6b]` measured a conflict on payload and it was routed to this lane as the only one holding both
+halves. **Both records verified here:**
+
+- **`docs/ESTIMATOR_REGISTRY.md:17-22`** — *"every covariance component must carry the identical
+  estimator fingerprint as its central product (**reject on mismatch**)"*, over nine fields of which
+  one is **estimator seed**. Row `:29` gives `omnifold-5d-lgbm` as **"5 iter, est seed 42"** and
+  **"adopted mean-centered"**, describing the **central** product.
+- **`sweep_bank_5d.py:354-356`** — *"42 is this module's archive value — and it **deliberately
+  DIFFERS** from `unified_throw_cov.py`'s 1000 … **unifying them on one number is the instinct a later
+  reader will have** and it silently re-seeds one of the two."*
+
+**Read literally on the estimator-seed field, the rule is violated by a difference the source calls
+deliberate and warns against repairing.** §5 already establishes the baseline is a 5-tuple in two
+groups — `42` for arms 1–4, `1000` for arms 5–7.
+
+### 10.1 ⚠ THE LITERAL READING IS REFUTED BY ITS OWN CONSEQUENCE, AND NO MECHANISM IS NEEDED TO SHOW IT
+
+**Applied literally, "reject on mismatch" rejects every throw component at every offset `k` — including
+`k = 0`.** And §5 establishes that **`k = 0` IS the archive and IS Z's own build.** So the literal
+reading **rejects the very product the registry exists to describe**, at no `k` can it be satisfied,
+and its only available repair — unifying the seeds — is the act the source names as the trap.
+
+**A criterion that cannot be passed by any member of its own family is unsatisfiable by construction**
+— the same defect class as the `1e-12` clamp (§3.1a) and as bitwise identity on the existing products.
+**This argument uses no claim about how seeds propagate, so it stands independently of the mechanism in
+§10.3.**
+
+### 10.2 DISPOSITION
+
+1. **The rule NEEDS AMENDING on the estimator-seed field.** It is not a payload defect and not a
+   reading error; the field as written is unsatisfiable for a throw component.
+2. **DO NOT UNIFY THE SEEDS.** `sweep_bank_5d.py:354-356` names that as the trap and it would silently
+   re-seed one of the two archives. This is a prohibition, not a preference.
+3. **The amendment I recommend:** the fingerprint's purpose is to prevent a covariance being assembled
+   from a **differently computed** estimator. A seed does not change the estimator; it selects a
+   **realization**. So the field should be checked as **within-family identity plus a declared
+   inter-family map** — every component of a family carries the identical seed, and the family
+   baselines and their relationship are *declared and recorded* rather than required equal. **Half of
+   this is already implemented:** `analyze_universes_5d.py:137-166` refuses a member assembled from
+   mixed estimator seeds, which is exactly the within-family leg.
+4. **Pending the amendment, the mismatch is a DECLARED AND RECORDED heterogeneity, not a reject.**
+5. ⚠ **AND WHETHER THE `42`/`1000` SPLIT IS SCIENTIFICALLY ACCEPTABLE IS NOT SETTLED BY THE AMENDMENT
+   — NOR CAN CAUSE 3 SETTLE IT.** The split is **invariant under `k`**: `42+k` and `1000+k` move
+   together, so it is a property of the architecture rather than of any member, and **the diagonal
+   family cannot resolve it.** Resolving it needs the two groups varied **independently**, which §5.2
+   already establishes is a 2-D grid — a second environment variable and a launcher change, **code, not
+   compute** — and §5.2 says that decision must be made **before** the offsets are declared.
+   **So this finding converts §5.2's grid-versus-diagonal question from a design option into an open
+   scientific question with a named consumer.** That is the part for Joseph.
+
+### 10.3 ⚠ A MECHANISM I DO NOT ASSERT, AND THE ARITHMETIC THAT FAILS TO CLOSE IT
+
+Relayed and explicitly **not established** by its author: mean-centering subtracts the ensemble mean so
+a common estimator offset cancels, while CV-centering does not, the CV sitting at the other seed.
+**I neither assert nor repeat it as established.** VERIFIED only that the offered arithmetic **does not
+close**: with mean-centered `5.8077e-38`, CV-centered `6.2367e-38` and mean shift `1.654e-38`,
+`√(5.8077² + 1.654²) = 6.0386`, which is **3.18% short** of `6.2367`. **A near-miss is not a
+derivation**, and the gap is far too large to attribute to rounding. So the quadrature identity
+neither establishes nor refutes the mechanism, and it is cause 2's question.
+
+**What it would change if it were established, stated so the dependency is visible:** **L4's
+discreteness argument is unaffected** — the F7 outcome is binary whatever moves it — but **L4's
+STAKES change**, because the two centerings would then differ partly for a seed reason rather than a
+centering-physics reason. ⚠ **Note that row `:29` records the adopted product as "adopted
+mean-centered"**, which is the centering for which the offered mechanism would predict cancellation —
+so if the mechanism were established it would bear on the **CV-centered variant**, i.e. on exactly
+the branch L4 decides. **That is a reason to keep L4 rather than a reason to discount it.**
+
+### 10.4 TWO ENSEMBLES — A MEMBER-SET REQUIREMENT
+
+Relayed: the chain carries **two distinct unified-throw ensembles** — the parent's `uthrow_source` is
+the 2026-08-06 `full160` file, while the pilot's throw input is the 2026-09-14 precursor — so the
+parent's upstream null `5.8223488501140625e-50` is **G's**, not the precursor's
+`1.4301832847122437e-50`. **DECLARED REQUIREMENT, added to §5: a cause-3 member set must not mix
+ensembles, and the declaration must name WHICH unified-throw ensemble every member is built on.** A
+family that silently mixed them would vary the ensemble and the seed together, and no statistic in §2–§4
+could separate the two.
+
+### 10.5 THE RECEIPT CANNOT BOUND THE CANCELLING CHANNEL — WHICH FIXES `τ`'s EVALUABILITY
+
+Relayed and it removes a route I had left open: for positive weights and a **positive-definite** `C`
+the excursion would be bounded by `((1+δ)²−1) × λ_max/λ_min`, both ends being recorded. **But the
+pilot records `λ_min = −1.2750516323643892e-90` with 5,214 negative eigenvalues, so `C_Z` is NOT
+positive definite and no such bound exists.** And *"passes the PSD gate"* asserts
+`λ_min ≥ −rtol·λ_max`, which is **arithmetic, not definiteness**, and supplies nothing here — the
+gate-proves-it-did-the-work shape.
+
+**Consequence for §4.2, and it is favourable:** what decides the cancelling channel is the **diagonal
+of `M1 C_Z M1ᵀ`** — the M1 product the deferred claim already needs. **So `τ`'s evaluability and the
+claim's production requirement coincide, and no separate study is owed for it.** Combined with §9.4's
+digest precondition, that gives M1 a single ordered prerequisite: **instrument the projector, then
+produce M1 once, and both `τ`'s criterion and the claim become evaluable from the same object.**
