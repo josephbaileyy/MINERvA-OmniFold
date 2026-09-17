@@ -11,6 +11,17 @@
 set -u -o pipefail
 
 # BOUND TO ITS REVIEWED COMMIT, with the limit of that binding stated rather than implied.
+#
+# ⚠ THE PIN WAS STALE AND THIS IS THE FIX. It read ad0ab9e0, but 9ad0439d subsequently MODIFIED
+# this file (the binding gate and the F7 completion), so the pin named a revision whose content
+# was not what runs -- exactly the defect the pin exists to prevent, produced by the commit that
+# added it. Re-pinned to 9ad0439d, where this file's EXECUTABLE content settled: the diff
+# `git diff 9ad0439d -- nd-unfolding/submit_z_pilot_a5.sh` must contain the REVIEWED_COMMIT line
+# and THIS COMMENT BLOCK and no other change -- zero executable lines. (An earlier wording here
+# claimed "the only difference is the pin line", which this very comment falsified. Checkable
+# form: strip comments from both sides and the diff must be exactly the pin assignment.)
+# A commit pin cannot name the commit that contains it, for the same reason a file cannot contain
+# its own digest.
 # This procedure is transferred standalone to a login node -- the reviewed deployment at
 # fb9ec356 predates it and MUST NOT CHANGE -- so there is no git checkout beside it to diff
 # against. Therefore:
@@ -19,7 +30,7 @@ set -u -o pipefail
 #   * this file records its OWN digest into the submission record for audit. It does NOT
 #     verify it: a file cannot contain the digest of itself, and pretending otherwise would be
 #     a check that cannot fail. Compare the recorded digest against the reviewed commit.
-REVIEWED_COMMIT=ad0ab9e08d719fa3d59ae2716bae178ac843923e
+REVIEWED_COMMIT=9ad0439d5bfa8e755f7106de124931b32eb7fb44
 REVIEWED_LIB_SHA256=2e85555a804265369ee86125853fef34d824565840b1dc9530d12904e6dd8f9b
 SELF_REL=nd-unfolding/submit_z_pilot_a5.sh
 
