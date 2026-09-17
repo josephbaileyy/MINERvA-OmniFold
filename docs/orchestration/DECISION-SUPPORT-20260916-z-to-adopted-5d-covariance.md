@@ -4,8 +4,12 @@
 
 **CITABLE FOR:** the state of each remaining requirement as measured on 2026-09-16, **as amended by
 §10's 2026-09-17 reconciliation** where the two disagree; the routing of each; the reconciliation
-in §3; the resource figures in §4 and §5 **as corrected in §10.5**; and **§12's** recommendation as
-a *recommendation*.
+in §3; the resource figures in §4 and §5 **as corrected in §10.5**; and **§12 AS CORRECTED BY §13**,
+as a *recommendation*. **Read §13 before acting on any part of §12** — it carries the independent
+assessment (`ed18a231de4c3b6b016e268be54257579b6c7739`), withdraws §12.4 consequence 2, moves the
+`B` fallback from BARRED to **UNRULED**, corrects §12.6's stated authority, and **relocates the
+blocking decision from the active-set population to `θ`.** §12.7's decision table is superseded by
+§13.7.
 
 > ⚠ **§11 IS SUPERSEDED BY §12 (2026-09-17) AND IS NOT CITABLE.** It asked for two declarations that
 > already existed at `78a8c2ee42c71db1e300e4cfe3735554101bf8ce`, rested on the "`S` is non-binding"
@@ -223,14 +227,21 @@ record.** The load-bearing fact is unaffected under every reading, tree and popu
 MEASURED". Pinning LightGBM while `MKL`/`OPENBLAS`/`NUMEXPR`/`VECLIB` remain free in the arm that
 computes the null would be, in §4.4a's words, "a bound over a configuration that is not fixed".
 
-### 2.4 Route (i) is the only ADMISSIBLE route, and the fallback is barred by composition
+### 2.4 ~~Route (i) is the only ADMISSIBLE route, and the fallback is barred by composition~~ — SUPERSEDED, see §13.1
+
+> ⚠ **THIS HEADING IS SUPERSEDED — see §13.1. The fallback is UNRULED, not barred**, and route
+> (i) is not established as admissible either: the §6.4 subject question governs it too.
 
 | route | status |
 |---|---|
 | **(i)** design property from pinning — never measures Z's null | **ADMISSIBLE** |
 | **(ii)** standalone control on Z's bank | **GATED** — `SPEC:3140`: "if the control runs on Z's own bank, §6.4 is engaged and needs a ruling" |
-| **(iii)** establish `S` first | **EXHAUSTED** — §C.2: `S` is vacuous, so it discharges `B ≤ S` and leaves `ε` unconstrained |
-| declaring `B` from the precursor's own two persisted executions | **BARRED** — see below |
+| **(iii)** establish `S` first | ~~**EXHAUSTED**~~ **→ UNFINISHED (§12.2 premise 2, §13.1).** The row's ground — *"`S` is vacuous"* — is WITHDRAWN; full `S` is OPEN |
+| declaring `B` from the precursor's own two persisted executions | ~~**BARRED**~~ **→ UNRULED (§13.1).** The composition that barred it needed the withdrawn premise; `SPEC:1410` alone bars only the DIRECT reading. **Unruled is not admissible** |
+
+⚠ **THE PARAGRAPH BELOW IS WITHDRAWN (§13.1) AND RETAINED TO SHOW WHAT THE BAR RESTED ON.** Its own
+sentence *"neither clause bars it alone"* is why withdrawing the premise leaves the fallback
+**UNRULED** rather than barred — and unruled is **not** admissible.
 
 ⚠ **The fallback is barred by a COMPOSITION, and neither clause bars it alone.** §C.2 and §2.1
 establish that `S` is non-binding, so **`ε` must be argued from `B`'s side**. `SPEC:1410` states
@@ -548,7 +559,9 @@ confirms §2.2 step 1's proven inequality in the right direction — `r_null / p
 
 **It cannot establish `B`, and reading it that way would reproduce a defect §2.4 already names.**
 `z-null.npz` holds exactly the precursor's two persisted executions, and §2.4 records that
-declaring `B` from those is **BARRED by composition**: `S` is non-binding, so `ε` must be argued
+declaring `B` from those is ~~**BARRED by composition**~~ **UNRULED — see §13.1**; the clause that
+follows states the withdrawn premise and is retained only to show what the bar rested on:
+`S` is non-binding, so `ε` must be argued
 from `B`'s side, and `SPEC:1410` forbids `ε` being read off Z's own null — declaring `B` from these
 vectors makes `ε` trace to Z's own null with one indirection. It is also **not** the pinned-envelope
 repeat §2.2's falsifier needs: one execution *pair* inside one `do_combine` on one node bounds an
@@ -663,7 +676,7 @@ never read that branch. The declarations, as they stand:
 | | declared |
 |---|---|
 | **item 4 — estimator** | **`B = 0`**, asserted as a property of the **pinned design**, verified by a **BOOLEAN** bitwise-identity test over the reported support. `IF NOT IDENTICAL: B is UNDEFINED and route (i) is FALSIFIED` — and *"`B` is explicitly NOT set to the observed difference."* Gap 3 closes **by construction**: the estimator's range is `{0, undefined}` and no observed magnitude enters it. |
-| **why boolean** | it is *"the whole difference between route (i) and the barred route"* — **a boolean reads no VALUE off Z's null; the withdrawn fallback read a MAGNITUDE.** Replacing `IDENTICAL` with a tolerance re-enters `SPEC:1410`, and the predeclaration names that substitution as the thing to refuse. |
+| **why boolean** | it is *"the whole difference between route (i) and the barred route"* — **a boolean reads no VALUE off Z's null; the fallback read a MAGNITUDE.** Replacing `IDENTICAL` with a tolerance re-enters `SPEC:1410`, and the predeclaration names that substitution as the thing to refuse. ⚠ **The DISTINCTION survives §12.2's withdrawal; the word "barred" in the quoted phrase does not** — the fallback is now **UNRULED** (§13.1). The predeclaration's §1.2 cites the withdrawn composition as its *reason*; the boolean/magnitude distinction stands independently of it. |
 | **item 5 — objective** | over **ALLOCATION SHAPES, not repeat count**, because thread count and reduction order are properties of the allocation. **Model A declared** (deterministic given the allocation), minimum **n = 3** — A1/A2 same node for item 1, B1 different node for item 2 — and **n = 4** to *attribute*. Model B retained only as a falsification branch: 6 runs to exclude a coin flip, 30 to exclude `p ≥ 0.1`. |
 | **receipt requirement** | `--qos=shared` means different allocations are **requested, not controlled**: **≥2 distinct node names or item 2 is NOT TESTED and the run is INCONCLUSIVE, not a pass**; and if CPU models did not differ, the cross-microarchitecture arm is **UNEVALUATED**, never folded into a pass. |
 
@@ -740,16 +753,29 @@ disagreement. Only **11** support bins agree bitwise.)*
 
 **Consequences, in order:**
 
-1. **Applied to the existing products, the predeclared estimator returns NOT IDENTICAL, so `B` is
-   UNDEFINED and route (i) is FALSIFIED for this configuration.** That is the estimator's own rule,
-   operating as designed.
-2. **And the failure is in the EASIEST arm, which is the part that matters.** These two executions
-   share one process, one allocation, one fixed seed — a **stricter** condition than §4.4a item 1's
-   same-node repeat, and far stricter than item 2's cross-shape repeat. **Model A predicts they
-   agree trivially. They do not.** So the observed non-identity is **not attributable to allocation
-   shape**, which is the only thing route (i) pins. ⚠ **I do not assert what does cause it.** The
-   four unrecorded `OMP_*` behaviour variables of `78a8c2ee` §3 are a *candidate* and naming them as
-   the cause would be the unmeasured-mechanism claim this campaign has published falsely before.
+1. **The predeclared estimator, applied to operands OUTSIDE its declared population, returns NOT
+   IDENTICAL — so it cannot yield `B` for these products.** ⚠ **CORRECTED (§13.3). An earlier
+   wording of this item said "route (i) is FALSIFIED for this configuration"; that applies the
+   estimator's consequent outside its antecedent** and is withdrawn. Route (i) claims that
+   **pinning** delivers `B = 0`; it never claimed an unpinned pair is bitwise identical. Finding
+   non-identity here **CONFIRMS route (i)'s motivating premise** rather than refuting route (i).
+2. ⚠ **ITEM 2 IS WITHDRAWN IN FULL (§13.3) — it was the one generalization in §12 that does not
+   hold.** It read: *"the failure is in the EASIEST arm … the observed non-identity is not
+   attributable to allocation shape, which is the only thing route (i) pins."* **Allocation shape is
+   not route (i)'s pin set.** `Z_REPRO_KNOBS` at `fb9ec356:nd-unfolding/z_reproducibility.py:127-138`
+   pins `deterministic`, `force_row_wise` and `num_threads` as **estimator parameters**, and
+   `num_threads`' own rationale reads *"the estimator parameter, **NOT** `OMP_NUM_THREADS`, which
+   this repository has measured LightGBM to **ignore**. Thread count sets reduction order, so an
+   unpinned count makes the CV a property of the allocation."* `SPEC:3140` says the same: the
+   cheapest route is *"code, not compute (pin `num_threads`/`deterministic`/`force_row_wise`)"*.
+   **All three were free in the executions that made these products, so the observed non-identity IS
+   attributable to variables route (i) would pin** — and the a-fortiori step needed the pair to have
+   been pinned, which it was not. The substitution runs in **two** directions and I priced only one:
+   stronger on the allocation axis (one process), **weaker on the pinning axis, because these
+   products pinned nothing.** Separately, *"same-process is strictly stronger than same-node"* is
+   **unestablished** even on the allocation axis: with `OMP_DYNAMIC` unset (§3's zero occurrences),
+   per-region thread counts can differ between calls inside one process. ⚠ **Offered as an
+   unmeasured gap and explicitly NOT as a cause.**
 3. **Therefore the two routes are genuinely disjoint, and a pinned success does not transfer.** A
    pinned run would establish a property of a configuration that **differs from the one that made
    these products in exactly the variables at issue**. Carrying its result across is a transfer
@@ -760,9 +786,20 @@ disagreement. Only **11** support bins agree bitwise.)*
    is not a prediction to be bounded — it is a recorded fact. What is missing is not a bound on the
    deviation but a bound on its **consequence for the declared use**, and that object already has a
    closed form: with `G := diag(δg/g)`, `ΔC_infl = GC + CG + GCG` **exactly**, so
-   `‖ΔC‖ ≤ ((1+γ)² − 1)‖C‖` with `γ = max_i |δg_i/g_i|`, **and the same factor bounds every
-   projection** (`480bed76`, adopting this lane's 5.7). Composed with `|δg_i/g_i| ≤ θ/f_i`, this
+   `‖ΔC‖ ≤ ((1+γ)² − 1)‖C‖` with `γ = max_i |δg_i/g_i|`, and the same factor bounds every
+   projection (`480bed76`, adopting this lane's 5.7). Composed with `|δg_i/g_i| ≤ θ/f_i`, this
    gives `γ ≤ θ / min_i f_i` — **so the correlation side is DERIVED from `θ`, not judged separately.**
+
+   ⚠ **CONDITION (a) WAS DROPPED HERE AND IS RESTORED (§13.5).** I wrote *"the same factor bounds
+   every projection"* without its condition. `PROPOSAL-20260916…:459-461` states it: *"The projected
+   bound is relative to `‖P C_infl Pᵀ‖`, so it degrades if a declared projection nearly annihilates
+   the inflated block. The draws above used non-negative contracting weights; a near-annihilating
+   projection is not covered, and **the declared projection set has not been checked.**"* This is
+   material, not decorative, and the `θ` recommendation's own §1.4 says why: `SPEC` requires the
+   3D/4D covariances to be **exact projections**, and a projection contracts the full matrix — so it
+   samples precisely the off-diagonal entries where `θ` has least grip. **The one use the bound
+   exists for is the one whose condition has never been checked.** Checking the declared projection
+   set against condition (a) is **zero compute** and is §12.5 item 4.
 
 **RECOMMENDATION: qualify the existing unpinned products. Do not run the pinned experiment now.**
 Because (a) route (i) is already falsified on these artifacts and cannot qualify them; (b) its
@@ -777,7 +814,7 @@ measurement.**
 |---|---|---|---|
 | 1 | **`f_i`, the V-fraction of each bin's variance.** Both `θ`'s scale *and* `θ`'s correlation grip reduce to this single quantity, and `min_i f_i` sets the derived bound: at `θ = 7.11e-2`, `min_f 1.0 → 15%`, `0.5 → 30%`, `0.2 → 84%`, `0.1 → 193%`, `0.01 → 6477%`. **Below `min_f ≈ 0.2` the derived bound exceeds 100% and settles nothing.** | `lane_b` measures, `[91eaa2]` interprets | **small, and it needs a writer change or a re-read** — see below |
 | 2 | **An ACTIVE-SET POPULATION declaration.** `min_i f_i` over all 10,694 bins is an extreme-order statistic set by the single worst bin — by construction a bin where the unified throw contributes almost nothing, *"a bin whose covariance nobody uses"*. `480bed76`: the remedy is **an active-set restriction, NOT a tighter `θ`** — tightening `θ` below its scientific ceiling to rescue a bound set by a dead bin *"would be choosing a tolerance to obtain a verdict."* **The population is a declaration, and it is scientific.** | **Joseph**, or `[91eaa2]` under his ratification | zero |
-| 3 | `[cb0b6b]`'s withheld verdict on whether §7 item 4 is discharged by the throw-deviation and completeness results — which is what closes **full `S`** and settles premise 1 of §12.2. | `owners.tsv:15` | zero |
+| 3 | ⚠ **CORRECTED (§13.2): the status is UNASSESSED, not withheld, and the withholding is NOT `[cb0b6b]`'s.** Whether §7 item 4 is discharged by the throw-deviation and completeness results — which closes **full `S`** and settles premise 1 of §12.2 — has **never been routed to `[cb0b6b]` as an object**: `fb9fdec1`/`480bed76` (2026-09-17) postdate its last assessment `fdf5e510` (2026-09-15) by two days. `[91eaa2]` withholds a verdict on *its own* residue, which is a different act. Premise 1's conclusion is unchanged — **an unassessed residue supports non-bindingness no more than a withheld one does.** Routing it is Joseph's, and is not requested here. | Joseph routes; `owners.tsv:15` assesses | zero |
 
 ⚠ **`f_i` IS NOT COMPUTABLE FROM THE PRESERVED PRODUCTS — MEASURED, not assumed.** `z-cv.npz` holds
 exactly seven arrays: `hCov_combined5d_total_uthrow (10694,10694)`, `hInflation_g (10694,)`,
@@ -798,11 +835,21 @@ never recurs, and it is `lane_b`'s.
 
 ### 12.6 Pricing — with ENFORCED caps, not historical elapsed
 
-Arm 7's enforced cap is on its own directive line, `sbatch_uthrow_combine_5d_fast.sh:4` (measured,
-identical on `origin/main` and on this lane): `--qos=shared --constraint=cpu --nodes=1 --ntasks=1
---cpus-per-task=16 --mem=90G **--time=03:00:00**`. R5 meters **wall-hours per execution attempt**,
-so the declared maximum for one attempt is **3.00 CPU task-hours** regardless of how fast it
-actually runs. Every figure below was checked by running
+Arm 7's enforced cap is on its own directive line, `sbatch_uthrow_combine_5d_fast.sh:4`:
+`--qos=shared --constraint=cpu --nodes=1 --ntasks=1 --cpus-per-task=16 --mem=90G
+**--time=03:00:00**`. ⚠ **Scope: that LINE is byte-identical on `origin/main` and on this lane; the
+FILES are not** — they differ by the Z-scoped requeue-refusal block, so the identity claim holds for
+`:4` and must not be generalized to the launcher.
+
+⚠ **CORRECTED (§13.4) — the numbers are right and my stated authority was wrong.** I wrote *"R5
+meters wall-hours per execution attempt, **so** the declared maximum for one attempt is 3.00"*. That
+does not follow: `r5_meter.py:73` charges *"sum of post-t0 **ElapsedRaw** over every execution
+attempt"* — **actual** elapsed, which is why `1395/3600 = 0.3875` exactly. R5 would charge ~0.39–0.58
+per attempt, not 3.00. The correct ground is the **reservation rule**, stated directly at
+`SPEC:3140` — **"Reservation bound `3n` CPU task-h"** — and at `SPEC:1881-1883`, *"reservation bound
+— 3 h per invocation at the launcher's own `--time=03:00:00` … bounds an attempt, not a completion
+(§5.2's standing rule)"*. **Same numbers, correct authority.** Every figure below was checked by
+running
 `r5_meter.py check --receipt docs/orchestration/state/r5-meter-receipt.json --max-age-hours 24`
 against the committed receipt:
 
@@ -813,7 +860,11 @@ against the committed receipt:
 | Model B, exclude `p ≥ 0.5` | 6 | **18.00** | 3.46 | exit 0 |
 | Model B, exclude `p ≥ 0.1` | 30 | **90.00** | 17.29 | exit 0 |
 
-**The enforced-cap price is 5.20× the predeclaration's.** Its §2.1/§2.2 figures are derived from
+**The enforced-cap price is 5.20× the predeclaration's** — ⚠ and that ratio compares a **reservation**
+against an **expected actual**, not two estimates of one quantity. Likewise `9.00` is a reservation
+while the `403.803889` headroom is computed from `ElapsedRaw`: different quantities, deliberately
+mismatched in the conservative direction, which is what makes the comparison safe for an **admission
+check** and wrong for a spend forecast. Its §2.1/§2.2 figures are derived from
 three historical elapsed measurements (`0.3875 / 0.4239 / 0.5764`), which Joseph ruled out as a
 pricing basis; its own §4 residue 5 already flags them as transferred. All four designs **admit**
 under R5 — headroom is **403.803889** of 500 and 9.00 is 2.23% of it — **so R5 is not what makes
@@ -848,3 +899,145 @@ identified.
 
 **Nothing here is adopted, graded or projected. `B`, `S` and `ε` remain open, full `S` included. No
 compute is authorized or requested by this section.**
+
+---
+
+## 13. Independent assessment of §12, and the revised decision (2026-09-17)
+
+**Assessment record: `ed18a231de4c3b6b016e268be54257579b6c7739`,
+`docs/orchestration/ASSESSMENT-20260917-decision-support-section-12.md`, on
+`origin/lane/z-criteria-independent-assessment-20260910`, by `owners.tsv:15`
+`z-independent-assessor [cb0b6b]`.** Requested by Joseph. **It closes nothing:** full `S` stays
+OPEN, §7 item 4 UNASSESSED, `θ` RECOMMENDED NOT ADOPTED, A1 OPEN, Gate 2 FAIL.
+
+**CONFIRMED: §12.1, §12.2 premise 1, §12.2 premise 3, §12.4's measurement, §12.4b, §12.5's `f_i`
+finding and decomposition, and every number in §12.6.** The assessor read no cluster artifact, so
+its restatements of my `z-null.npz` / `z-cv.npz` figures are **relayed**; the cluster measurements
+are mine, and I separately verified that all **13** vertical bands resolve from the single bound
+support ROOT `9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a`
+(41,436,632,945 B, 40 `hCov_universe5d_*` objects; the 5 lateral come from `active`, and
+40 + 5 = 45 = `band_inventory`). **I verified each of its five grounds against the sources rather
+than accepting them on relay**, including that its `Z_REPRO_KNOBS:127-138` citation is a *symbol*,
+not a file — the symbol is at `fb9ec356:nd-unfolding/z_reproducibility.py:127-138` and the line
+numbers and quotation are exact.
+
+### 13.1 The fallback is UNRULED, not barred — and ONE ruling governs THREE things
+
+Withdrawing "`S` is non-binding" withdraws the **composition**, and §2.4 says so in its own words at
+`:238`: *"neither clause bars it alone … §C.2 alone bars nothing; `:1410` alone bars only the direct
+reading."* So the fallback moves **BARRED → UNRULED**. ⚠ **Unruled is not admissible.** Its only
+remaining candidate ground is the **§6.4 subject question**, and `SPEC:3140`, `SPEC:1830`,
+`78a8c2ee` residue 2 and §12.1 all route it to Joseph and all decline to issue it.
+
+**§12 treated three things as independent. They are one question:**
+
+| governed by the single §6.4 ruling | §12's earlier status |
+|---|---|
+| the `B`-from-precursor-executions fallback | "BARRED by composition" — now **UNRULED** |
+| **route (ii)**, a standalone control on Z's bank | "GATED" |
+| **route (i)'s own control**, because arm-7 runs would execute on Z's bank too | treated as unaffected — **wrong** |
+
+**Every withdrawal site is repaired in this change, not just the ones §12.2 named** — the §2.4
+heading, its route-(iii) row, its fallback row, its body paragraph, §10's restatement, and §12.1's
+quotation of the phrase. A partial repair makes the disagreement count go *up*.
+
+### 13.2 UNASSESSED, not WITHHELD — and the withholding was not the assessor's
+
+§12.5 item 3 said *"`[cb0b6b]`'s withheld verdict"*. **It withheld none.** `fb9fdec1` and `480bed76`
+(2026-09-17) postdate its last assessment `fdf5e510` (2026-09-15) by two days and **have never been
+routed to it as an object**. `[91eaa2]` withholds a verdict on *its own* residue — a different act by
+a different owner. The correct label is **UNASSESSED**, which is `SPEC:1744-1751`'s distinction
+between a statement about evidence and a statement about the world. **Premise 1 is unchanged and
+safer under the correct label: an unassessed residue supports non-bindingness no more than a
+withheld one does.** Routing it is Joseph's and is not requested here.
+
+### 13.3 The one refuted generalization
+
+§12.4 consequence 2 is **withdrawn in full** (see the marker there). Two errors, both mine:
+
+- **"allocation shape … is the only thing route (i) pins" is false.** Route (i)'s pin set is
+  **estimator parameters** — `deterministic`, `force_row_wise`, `num_threads` — and `num_threads`'
+  own rationale states that `OMP_NUM_THREADS` is **ignored by LightGBM**. Allocation shape is what
+  item 5's coverage objective **varies**, not what route (i) pins. All three knobs were free in
+  these executions, so **the observed non-identity IS attributable to variables route (i) would
+  pin**, and my a-fortiori step required the pair to have been pinned.
+- **"route (i) is FALSIFIED" applies the consequent outside the antecedent.** Route (i) claims
+  *pinning* delivers `B = 0`. Finding non-identity in an **unpinned** pair **confirms its motivating
+  premise.** The defensible sentence is the one now in consequence 1.
+
+**The recommendation survives.** Grounds (b), (c) and (d) are independent of this, and ground (a)'s
+operative half — *the estimator cannot yield `B` for these products* — is confirmed via §12.4b.
+
+### 13.4 Pricing: authority corrected, and Alternative 1 now carries a cap
+
+The numbers stand; the authority was wrong. `r5_meter.py:73` charges **actual `ElapsedRaw`**, not a
+reservation, so "R5 meters wall per attempt" does not imply a 3.00 declaration. The authority is
+`SPEC:3140`'s **"Reservation bound `3n` CPU task-h"** and `SPEC:1881-1883`/§5.2's *"a request bounds
+an attempt, not a completion."* Both are now cited at §12.6, together with the point that a
+reservation and an `ElapsedRaw`-derived headroom are **different quantities** — mismatched in the
+conservative direction, which is why the comparison is sound for an admission check and unsound as a
+spend forecast.
+
+**And the rule had not reached the route I recommend.** §12.7 priced Alternative 1 as "one short
+diagnostic attempt" with no figure. Priced properly: the eventual request declares a `--time`, and
+**that** is the reservation. A `--time=01:00:00`, `n = 1` request is **1.00 CPU task-hour** —
+**0.248%** of the 403.803889 headroom. Basis for believing it ample, stated as an expectation and
+never as the bound: the pilot itself read all **45** bands *and* wrote two 0.91 GB products in
+`build_seconds 760.767` / 1037 s wall under a 5400 s cap, and 13 band **diagonals** are a strict
+subset of that I/O. `--mem` must be declared too; the pilot's measured `MaxRSS` of **49.73 GiB** was
+for holding full `10694²` accumulators, which a diagonal read does not.
+
+### 13.5 §12.5 gains a fourth item — zero compute
+
+4. **Check the declared projection set against §5.7 condition (a).** The condition — *"a
+   near-annihilating projection is not covered, and the declared projection set has not been
+   checked"* — was dropped at every site that used the result, including §12.4. It is the condition
+   on the one use the bound exists for. **Zero compute. Owner: `[91eaa2]` to state, `[cb0b6b]` to
+   assess.**
+
+### 13.6 ⚠ THE SCOPE REPAIR I APPLIED TO `S` AND FAILED TO CARRY DOWN TO `θ`
+
+`RECOMMENDATION-20260916-theta-per-bin-uncertainty-tolerance.md:177-200`, verified verbatim:
+`θ_A = 7.11e-2` is **`1.60e12` ×** the observed null; `θ` *"should be declared as a SCIENTIFIC
+CEILING and explicitly NOT as the operative determinism gate"*; it is *"`S`'s per-bin shadow, and it
+is non-binding for the same reason"*; and — decisively — *"if `θ` is recorded as the gate, the
+per-bin leg **repeats the vacuity defect that `S` already demonstrated**."*
+
+**§12 applied exactly that repair to `S` one level up and did not carry it down one level.**
+§12.5's `min_f → 15% / 30% / 84% / 193% / 6477%` table is the worst case **of a ceiling**, while
+§12.7 named Alternative 1's deliverable *"a bound on the consequence of the **recorded**
+deviation"* — **a different operand, twelve orders away.** So:
+
+- **Alternative 1's operand is the RECORDED deviation**, i.e. `γ` derived from the measured CV
+  movement (`max_i|Δ_i/x_i| = 1.7552716191735518e-12`, `r_null = 4.4520002137582904e-14`), **not
+  `θ/min_i f_i`.**
+- **The `min_i f_i` cliff is therefore a property of the CEILING computation, not of Alternative
+  1's deliverable**, and §12.7's stated risk was the ceiling's risk. ⚠ **No number is asserted for
+  the recorded-deviation bound here:** the map from the recorded CV deviation to `δg` is **not
+  established**, and that map is precisely the remaining work. Claiming it comes out small without
+  the chain would be the mechanism-without-a-command failure.
+- **`θ` is still needed — to GRADE the result, not to compute it.** Without an adopted `θ`, a
+  measured consequence is a number graded against nothing, which is §6's whole point.
+- **One further consequence of `θ`'s bracket:** `min_i|ρ_i| ≤ r_null ≤ max_i|ρ_i|` is correct, but
+  **on these products the lower leg is exactly vacuous** — 11 support bins agree bitwise, so
+  `min_i|ρ_i| = 0` identically and only the upper leg carries information.
+
+### 13.7 THE REVISED DECISION — `θ` is blocking, not the population
+
+| | **1 — qualify the existing products (still RECOMMENDED)** | **2 — establish the changed configuration** |
+|---|---|---|
+| **the blocking decision** | **`θ`.** It is **RECOMMENDED, NOT ADOPTED** (`480bed76:12`), and its own `:4` records it routed *"for independent assessment by `owners.tsv:15` `[cb0b6b]` and then his decision"* — **that assessment has not been performed.** Alternative 1's whole output is graded in `θ`. | **the §6.4 subject ruling** — and per §13.1 it governs **three** things, so **Alternative 2 cannot even be specified until it is issued.** |
+| **then, and only then** | the **active-set population** declaration — which matters once `min_i f_i` is in hand **and** a `θ` is adopted. **Downstream, not blocking.** | the four `OMP_*` variables pinned or receipt-captured, else the falsification branch stays ambiguous |
+| **reservation** | **1.00** CPU task-h at a declared `--time=01:00:00`, `n = 1`; **0.248%** of headroom; **no covariance product** | **9.00** (`n=3`) / **12.00** (`n=4`) CPU task-h, plus new products from the 89.11 GB chain |
+| **would establish** | a bound on the consequence of the **recorded** deviation, propagating through inflation and — **subject to §5.7 condition (a), unchecked** — every projection | `B = 0` for a **pinned** configuration; **or** `B` UNDEFINED |
+| **would NOT establish** | any envelope bound; `B`; `ε`; adoption | **anything about the existing products** — no transfer argument exists, measured at §12.4b | 
+
+**Reject condition 11, which §12 understated.** I quoted `4c` alone. `null.assessment` records
+`reject_conditions ["4c", "11"]`, and `SPEC:1267` condition 11 is the one that names the missing `ε`
+directly: *"The fixed-seed null key is **absent**, or its bound is not the scale-relative one **§6.4**
+rules."* So condition 11 points at the same §6.4 ruling as §13.1 — **one ruling sits under the
+fallback, route (i), route (ii) and reject condition 11.**
+
+**Nothing here is adopted, graded or projected. `θ` is RECOMMENDED NOT ADOPTED; full `S` is OPEN;
+§7 item 4 is UNASSESSED; `B` and `ε` are open; Gate 2 is FAIL. No compute is authorized or
+requested.**
