@@ -114,6 +114,15 @@ replacement is implied for 4D/FPS or dependent significances. See
 
 ## Remediation in flight
 
+- **Z assembly/spectrum pilot COMPLETED 2026-09-17 — construction only, science NON-PASSING,
+  adoption WITHHELD. NOT a validation.** Job `58454524`, `ExitCode 2:0` (2 is the CLI's *completion*
+  code, so `sacct`'s `FAILED` is not the verdict). Two 5D covariance objects and a null slab exist
+  with matching receipts; `adoptable` **false**, `outcome.assessable` **false** on reject condition
+  `4c`, all four `withheld_boundaries` still `WITHHELD`. **`B`, `S` in full, and `ε` remain open;
+  construction authorizes no grading, adoption or projection.** The outcome records live on
+  `lane/z-assembly-pilot-20260914`, **not** on `main` — route and full commit identities:
+  `docs/orchestration/NAVIGATION-20260917-z-pilot-outcome-route.md`.
+
 - Branch C annealed checkpoint trajectory: the four-GPU interactive twin `56693776` failed before
   producing any control or treatment receipt because a bare `srun` inherited four tasks; three ranks
   failed Horovod GPU selection and the remaining rank was terminated after entering ARM 1. This is

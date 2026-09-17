@@ -539,6 +539,25 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   movement limits"** rather than *"did not move"*; and `D1`/`D2` need **justified tolerances and scope**,
   not two numbers.
 
+### Z assembly/spectrum pilot — the outcome route (2026-09-17)
+
+- [`NAVIGATION-20260917-z-pilot-outcome-route.md`](NAVIGATION-20260917-z-pilot-outcome-route.md)
+  - **NAVIGATION ONLY — no measurement, no verdict, no authorization.** Where the Z
+  assembly/spectrum pilot's completed outcome lives, at full commit identity, because the records
+  are on `lane/z-assembly-pilot-20260914` and `main` had no pointer to them. Job **`58454524`**
+  completed at **`ExitCode 2:0`** — 2 is the CLI's *completion* code for "construction ran, science
+  NON-PASSING", so `sacct`'s `FAILED` is not the verdict. Two 5D covariance objects and a null slab
+  exist with matching receipts; **`scientific_acceptance` NON-PASSING, `adoptable` false,
+  `outcome.assessable` false on reject condition `4c`**, all four `withheld_boundaries` still
+  `WITHHELD`. **`B`, `S` in full, and `ε` are open; Gate 2 remains FAIL; construction authorizes
+  nothing.** Outcome record `1b2873a8e9b3c78568725494799a3df6234a39d5`, corrected recommendation
+  §12 at `a14ff88b` (**§11 is withdrawn**), accounting `0202591b15092486b6db167478cf72290fcc7ed9`,
+  assembling revision `fb9ec3560fd6d62295dffc81b5694c9e26667d5b`. Also **corrects a false claim
+  that `main` contains no Z content** — it carries **26** Z-named files including the `SPEC`,
+  Joseph's `DECISION-20260906`, `Z_CONSTRUCTION_PLAN.md` and ten modules; what it lacks is the
+  pilot-specific execution code, the two 2026-09-16 records, and the post-freeze RUN_LOG
+  chronology. Landing those is a **separate merge decision and is not authorized by this record.**
+
 ### PET typed-descriptor semantic evidence
 
 - [`../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md`](../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md)
