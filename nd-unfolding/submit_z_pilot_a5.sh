@@ -30,7 +30,7 @@ set -u -o pipefail
 #   * this file records its OWN digest into the submission record for audit. It does NOT
 #     verify it: a file cannot contain the digest of itself, and pretending otherwise would be
 #     a check that cannot fail. Compare the recorded digest against the reviewed commit.
-REVIEWED_COMMIT=9ad0439d5bfa8e755f7106de124931b32eb7fb44
+REVIEWED_COMMIT=02ea712982485a7ee248392dee8d251c9051e93c
 REVIEWED_LIB_SHA256=2e85555a804265369ee86125853fef34d824565840b1dc9530d12904e6dd8f9b
 SELF_REL=nd-unfolding/submit_z_pilot_a5.sh
 
