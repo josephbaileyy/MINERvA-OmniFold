@@ -83,11 +83,19 @@ discarded quantity.
 | **A** incumbent | none (families disabled) | **truncated** | 13 + 3 masked | top-12 clusters by energy, event features | every cluster past rank 12, entirely: its energy, its count, everything |
 | **B** typed pooled | one token per family = $\sum_i \phi_f(x_i)$, then Dense(32) | truncated | 16 | the **sum of per-object embeddings** per family, plus the exact per-family count | per-object identity *within* a family: attention assigns one weight to the whole family, so no content-based selection among its members |
 | **C** typed individual | one token per object | truncated | $13+K$ | every object separately; attention weights each one | nothing on the typed side |
-| **D** aggregate overflow | none (families disabled) | keep top 11, append **one** token: summed four-momentum, **mean** auxiliary block, distinct type code, and — unlike upstream — an explicit **merged count** | 14 + 3 masked | the tail's exact energy sum, its mean position/time, how many were merged | the tail's per-object resolution: dispersion, extremum, and any non-additive function of it; positions and timing survive only as an average |
+| **D** aggregate overflow | none (families disabled) | keep top **11**, and spend **slot 12** on one aggregate token: summed tail four-momentum, the tail **mean** of the remaining channels, a distinct type code, and -- unlike upstream -- an explicit **merged count** | 13 + 3 masked, **identical to A** | the tail's exact energy sum, its mean position/depth/view/time, how many were merged | the tail's per-object resolution: dispersion, extremum, and any non-additive function of it; positions and timing survive only as an average |
 
-Each arm is a **single-factor change from A**. B−A and C−A price the typed-object
-addition; D−A prices replacing truncation with aggregation; C−B isolates the routing
-question Joseph originally asked.
+Each arm is a **single-factor change from A**, and because D spends the twelfth slot
+rather than a thirteenth, **A and D have identical token counts** — so the cap contrast
+is information-only, with no cost difference to confound it.
+
+The contrast set, the denominator, the degenerate-case rule and the three qualifications
+that travel with every number are specified in **`ENDPOINT_SPECIFICATION-20260918.md`**,
+which is what A4 ratifies. In brief: the three primary contrasts are **P1 = C−B**
+(routing — Joseph's original question, and primary), **P2 = D−A** (the cap's treatment)
+and **P3 = B−A** (typed objects at all); all three divide by **arm A's** RMSE for the
+same seed and regime, which makes δ one physical quantity and makes P1 + P3 = C−A exact
+rather than approximate.
 
 ### 2.4 Why revision 1's arms were wrong
 
@@ -397,16 +405,36 @@ recorded as a failed stress check and explicitly excluded from
 (`STRESS_SCOPE_AUTHORIZATION-20260916.md`: the approval "does not extend / to future
 variable-length or real-source training"). Two routes:
 
-**Route 1, recommended: multiplicity bucketing.** Group events into batches of identical
-typed counts, so every batch is **uniform and unpadded** — precisely the geometry the
-GPU gate did validate. The gate is then satisfied as-is rather than re-scoped, and
-`assert_covered_geometry` generalises from "one global width" to "uniform within each
-batch", which is a smaller change than it sounds because its checks are already
-per-row. Cost: implementation plus tests, no compute, then one short GPU preflight at
-the bucketed geometries (§8.3, shared job). Risk to state: homogeneous-multiplicity
-batches change SGD's batch composition relative to production, so bucket order is
-shuffled, batch size is held fixed, and the `shuffle` null control is the detector — if
-bucketing biases training, the null control stops tying.
+**Route 1, approved and implemented: multiplicity bucketing.** Group events into
+batches of identical typed counts, so every batch is **uniform and unpadded** — the
+property whose absence produced the recorded stress failure.
+
+**One correction to how revision 2 put this.** Bucketing removes the *padding*; it does
+not thereby make a *width* validated. The frozen guard pins one geometry and says so in
+its own refusal — "the GPU gate never validated a padded or variable-length batch"
+(`run_typed_token_comparison.py:161-166`) — so a uniform batch at an unvalidated width
+is still ungated. Two consequences, both now implemented in
+`four_arm_representation.py`:
+
+* `WidthSetGuard` carries the set of widths a gate run **actually passed** and refuses
+  anything outside it, so the experiment cannot train at a width no gate has cleared.
+  Arms A and D take the one deliberate exemption, a **declared** all-families-disabled
+  configuration, which must be declared rather than inferred.
+* Every width the fixture can realize must therefore be gated, which is why the fixture
+  samples typed multiplicity from a **quantile-matched ladder** of the measured
+  distribution rather than its full support: with full support the realized width set is
+  larger than can be gated, and the alternative — training only inside gated buckets —
+  would silently drop events and break the partition invariant.
+
+The five invariants (partition, weights, equal steps, arm-independent partition, checks
+at the realized widths) are `ENDPOINT_SPECIFICATION-20260918.md` §6 Q3, enforced in code
+and tested in both directions. The one that would have been easy to get wrong is
+arm-independence: bucketing only the arms with variable typed geometry would have given
+B and C a different batch structure from A and D, and P3 would then measure batching as
+much as representation. Risk still to state: homogeneous-multiplicity batches change
+SGD's batch composition relative to production, so bucket order is shuffled, batch size
+is held fixed, and the `shuffle` null control is the detector — if bucketing biases
+training, the null control stops tying.
 
 **Route 2, fallback: re-scope the gate.** Re-measure the cross-device discrepancy
 against padding width with a tolerance tied to gradient magnitude rather than a

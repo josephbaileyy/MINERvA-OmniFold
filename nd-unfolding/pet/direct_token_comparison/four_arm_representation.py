@@ -301,3 +301,75 @@ def verify_weights_preserved(
     gathered = np.concatenate([weights[batch] for _, batch in plan])
     if not np.array_equal(np.sort(gathered), np.sort(weights)):
         raise ValueError("Bucketing changed the multiset of per-event weights")
+
+
+def build_variable_typed_batch(
+    typed: Any, counts_per_row: NDArray[Any], seed: int
+) -> Any:
+    """Build a typed descriptor batch with per-row, per-family object counts.
+
+    The producer for this experiment's variable-multiplicity geometry. The frozen
+    fixture emits one photon, one blob and two prongs for every event; here each row
+    carries its own counts, which is what makes bucketing necessary and what the
+    cross-device gate has never seen. Prong fields alternate the two real ``raw_pid``
+    values so additional objects are distinguishable rather than duplicates.
+    """
+    counts_per_row = np.asarray(counts_per_row, dtype=np.int64)
+    if counts_per_row.ndim != 2 or counts_per_row.shape[1] != len(
+        typed.FAMILY_CONTRACTS
+    ):
+        raise ValueError(
+            f"counts_per_row must be (rows, {len(typed.FAMILY_CONTRACTS)})"
+        )
+    if counts_per_row.min() < 0:
+        raise ValueError("counts_per_row must be non-negative")
+    rows = len(counts_per_row)
+    rng = np.random.default_rng(seed)
+    reco = rng.normal(size=(rows, 2)).astype(np.float32)
+    collections: dict[str, list[list[dict[str, Any]]]] = {}
+    for position, contract in enumerate(typed.FAMILY_CONTRACTS):
+        family: list[list[dict[str, Any]]] = []
+        for row in range(rows):
+            objects = []
+            for index in range(int(counts_per_row[row, position])):
+                fields = {
+                    field.name: ([1.0] * field.width if field.width > 1 else 1.0)
+                    for field in contract.fields
+                }
+                if contract.name == "prongs":
+                    leading = index % 2 == 0
+                    fields.update(
+                        raw_pid=3 if leading else 8,
+                        charge=2 if leading else 0,
+                        score=1.0,
+                        mass=105.658 if leading else 938.272,
+                        time=float(reco[row, index % 2]),
+                    )
+                objects.append(fields)
+            family.append(objects)
+        collections[contract.name] = family
+    provenance = typed.RowProvenance(
+        source_file_ordinal=np.ones(rows, dtype=np.uint32),
+        source_tree=np.full(rows, typed.SourceTree.MASTER_ANA_DEV, dtype=np.uint8),
+        source_entry=np.arange(rows, dtype=np.uint64),
+    )
+    return typed.build_descriptor_batch(
+        provenance=provenance,
+        photon_rows=collections["photons"],
+        blob_rows=collections["blobs"],
+        prong_rows=collections["prongs"],
+    )
+
+
+def disable_families(inputs: dict[str, Any], families: Iterable[str]) -> dict[str, Any]:
+    """Return inputs with the named families declared disabled.
+
+    Arms A and D show the model no typed objects. The objects are still *built*, so
+    the fixture -- and therefore the bucket partition -- is identical across arms;
+    only the ``enabled`` flags differ, which is what the model reads.
+    """
+    updated = dict(inputs)
+    for family in families:
+        flags = np.asarray(updated[f"{family}_enabled"])
+        updated[f"{family}_enabled"] = np.zeros_like(flags)
+    return updated
