@@ -141,11 +141,22 @@ for _d in ${DROPPED}; do say "  dropped: ${_d}"; done
 [ "${MNV_PATH_N_AFTER}" -gt 0 ] || die "sanitization emptied PATH" 53
 export PATH="$CLEAN"
 
+# ⚠ H1: NOTHING PREVIOUSLY STOPPED A SECOND ASSIGNMENT AFTER THIS LINE. A closure check
+# appended `export PATH="${PATH}:${HOME}/bin"` here and the suite passed 42/0 -- the executed
+# block's anchor ends AT the line above, so anything after it was never run, and the negative
+# grep matched only two specific spellings. The measured result re-added a $HOME entry after
+# sanitising it away: the exact defect class that refused job 58403564. The test now asserts
+# `export PATH=` occurs EXACTLY ONCE in the comment-stripped procedure, and this marker is the
+# end anchor for the executed block so the tools check is inside it.
+# --- end of the PATH block ---
+
 # The tools this procedure and the job both need must survive sanitization.
 for t in sbatch scontrol sacct python3 git; do
   command -v "$t" >/dev/null 2>&1 || die "sanitization removed ${t} from PATH" 54
 done
-say "tools after sanitization: $(for t in sbatch scontrol sacct python3 git; do printf '%s=%s ' "$t" "$(command -v $t)"; done)"
+say "tools after sanitization: $(for t in sbatch scontrol sacct python3 git; do printf '%s=%s ' "$t" "$(command -v "$t")"; done)"
+# --- PATH handling ends here; the executed-block anchor in the test stops at this marker ---
+# MNV_PATH_BLOCK_END
 
 # --- 2. the deployment conditions ----------------------------------------------------------
 cd "${DEPLOY}" || die "deployment not reachable" 25
@@ -309,7 +320,16 @@ say "submitting from $(pwd)"
 set +e
 SB_OUT="$(env "${MNV_ASSIGNMENTS[@]}" sbatch "${SBATCH_ARGS[@]}" "${SCRIPT}" 2> "${NS}/sbatch-a5.err")"
 SB_RC=$?
-set -e
+# ⚠ `set +e` HERE, NOT `set -e`. This pair was written as save/restore, but line 11 sets only
+# `-u -o pipefail` -- errexit was NEVER ON -- so `set -e` did not restore, it ENABLED errexit
+# for the whole remainder INCLUDING step 9. With `pipefail` also on, step 9's
+# `grep ... | head -1` returning nothing (a missing StdOut=/StdErr= key, exactly the Slurm
+# spelling difference the comment there anticipates) then KILLED THE SCRIPT at exit 1 with the
+# record file EMPTY and the "job WAS ACCEPTED / NO REPLACEMENT AUTHORIZED" banner never printed.
+# MEASURED both ways: errexit on -> exit 1, 0 record lines; errexit off -> exit 45, both
+# failures recorded, banner printed. For an accepted job that lost the record of a consumed
+# authorization -- the failure shape F3 and step 9 both exist to prevent.
+set +e
 SB_ERR="$(cat "${NS}/sbatch-a5.err" 2>/dev/null || true)"
 {
   echo "sbatch_exit_status    ${SB_RC}"
@@ -371,7 +391,9 @@ else
   # so the failure that cancelled 58403491 applies identically to stderr.
   for _pair in "StdOut=${OUT_LOG}" "StdErr=${ERR_LOG}"; do
     _key="${_pair%%=*}"
-    _got="$(grep -oE "${_key}=[^[:space:]]*" "${SC}" | head -1)"
+    # `|| true` as well as the errexit fix above: a grep that finds nothing is an EXPECTED
+    # outcome here (it is what a spelling difference looks like), not a script-ending error.
+    _got="$(grep -oE "${_key}=[^[:space:]]*" "${SC}" | head -1 || true)"
     if [ "${_got}" = "${_pair}" ]; then vverified "${_got}"
     else vfail "${_key} is '${_got}', expected ${_pair}"; fi
   done

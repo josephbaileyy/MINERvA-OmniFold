@@ -40,6 +40,12 @@ if pgrep_live 'CLEAN="\$MNV_PATH_CLEAN"'; then ok; else bad "procedure does not 
 if pgrep_live 'export[[:space:]]+PATH="\$CLEAN"'; then ok; else bad "procedure does not export exactly \$CLEAN"; fi
 if grep -qE 'export[[:space:]]+PATH="\$PATH_ORIG"|export[[:space:]]+PATH="\$CLEAN:' "$STRIPPED"; then
   bad "procedure exports an unsanitized or augmented PATH"; else ok; fi
+# ⚠ H1. A closure check appended `export PATH="${PATH}:${HOME}/bin"` AFTER the block and this
+# suite passed 42/0: the executed block stopped at the first export, and the negative grep above
+# matches only two spellings. Counting is what catches an arbitrary later re-assignment.
+_n_export=$(grep -cE 'export[[:space:]]+PATH=' "$STRIPPED")
+if [ "${_n_export}" -eq 1 ]; then ok
+else bad "procedure has ${_n_export} 'export PATH=' assignments; exactly 1 is allowed"; fi
 # F1: the ambient allowlist must be discarded, not trusted.
 if pgrep_live 'unset[[:space:]]+MNV_ENV_SYSTEM_PREFIXES'; then ok; else bad "procedure does not unset an ambient MNV_ENV_SYSTEM_PREFIXES"; fi
 if pgrep_live 'ALLOW_EXPECTED'; then ok; else bad "procedure does not compare the allowlist against the library default"; fi
@@ -61,6 +67,17 @@ if grep -qE 'for[[:space:]]+[A-Za-z_]+[[:space:]]+in[[:space:]]+\$\{?PATH' "$STR
 if pgrep_live 'sbatch_exit_status'; then ok; else bad "procedure does not record the sbatch exit status"; fi
 # F5: both log paths verified
 if pgrep_live 'StdErr='; then ok; else bad "procedure does not verify StdErr"; fi
+
+# ⚠ EVERY AUTHORIZED SBATCH FLAG, ASSERTED BEFORE SUBMISSION. Dropping `--output=` survived the
+# whole suite: it is caught only at RUNTIME by step 9's StdOut comparison, i.e. AFTER scheduler
+# acceptance has already consumed the single authorization. A flag typo must not cost the run.
+for flag in '--chdir=' '--output=' '--error=' '--time=' '--cpus-per-task=' '--mem=' '--no-requeue' '--parsable'; do
+  if grep -qF -- "$flag" "$STRIPPED"; then ok; else bad "SBATCH_ARGS is missing ${flag}"; fi
+done
+# and the authorized values, not just the flags
+for kv in 'WALL=01:30:00' 'CPUS=4' 'MEM=64G' 'CAP_CPU_TASK_HOURS=1.5'; do
+  if grep -qF -- "$kv" "$STRIPPED"; then ok; else bad "authorized value ${kv} is not set"; fi
+done
 
 # THE IMPLEMENTATION UNDER TEST. Sourced, never copied.
 MNV_ENV_ROOT=/pscratch/sd/j/josephrb/k0env
@@ -122,7 +139,9 @@ echo "=== 7. EXECUTE the procedure's REAL PATH block -- text assertions cannot s
 #        matches, so the assignment is invisible to BOTH forms of text check.
 # So the block is extracted from the real file and RUN. That is the only check here that
 # constrains behaviour rather than spelling.
-BLOCK="$(awk '/^PATH_ORIG="\$PATH"$/,/^export PATH="\$CLEAN"$/' "$PROC")"
+# Anchored to an explicit END MARKER rather than to the first export, so a later
+# re-assignment or a respelled tail is inside the executed region (H1).
+BLOCK="$(awk '/^PATH_ORIG="\$PATH"$/,/^# MNV_PATH_BLOCK_END$/' "$PROC")"
 case "$BLOCK" in
   *mnv_sanitize_path*export*) ok ;;
   *) bad "could not extract the procedure's PATH block (anchors moved?)" ;;
@@ -134,13 +153,20 @@ got="$(
   bash -c '
     say(){ :; }
     die(){ printf "DIE:%s\n" "$1"; exit 1; }
+    # The block now extends through the tools check (H1), which would refuse under the synthetic
+    # PATH. Stubbed so the PATH assertions below are what is being tested, not tool presence.
+    command(){ if [ "${1:-}" = "-v" ]; then printf "/usr/bin/%s\n" "${2:-x}"; return 0; fi; builtin command "$@"; }
     source "'"$LIB"'"
-    PATH="/usr/bin:/global/homes/j/josephrb/.local/bin:/bin:'"$MNV_ENV_ROOT"'/x:/global/homes/j/josephrb/bin"
+    # ⚠ H2. The old fixture had no entry containing a SPACE and none under the conda prefix, so
+    # a hand-rolled whitespace-splitting inline loop -- with the library call left in place but
+    # decorative -- diverged from the library and still passed. A space-bearing entry makes that
+    # divergence visible: the library keeps it whole, a ${PATH_ORIG//:/ } loop splits it.
+    PATH="/usr/bin:/opt/my tools/bin:/global/homes/j/josephrb/.local/bin:/bin:'"$MNV_ENV_ROOT"'/x:'"$MNV_CONDA_PREFIX"'/bin:/global/homes/j/josephrb/bin"
     '"$BLOCK"'
     printf "%s" "$PATH"
   ' 2>&1
 )"
-for need in /usr/bin /bin "${MNV_ENV_ROOT}/x"; do
+for need in /usr/bin /bin "${MNV_ENV_ROOT}/x" "/opt/my tools/bin" "${MNV_CONDA_PREFIX}/bin"; do
   case ":${got}:" in *":${need}:"*) ok ;; *) bad "executed block lost required entry ${need} (PATH=${got})" ;; esac
 done
 for forbid in /global/homes/j/josephrb/.local/bin /global/homes/j/josephrb/bin; do
