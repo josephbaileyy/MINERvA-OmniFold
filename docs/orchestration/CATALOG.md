@@ -1179,6 +1179,36 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   completeness correction is applied in 5D** — disposition not issued. Nothing normalized into range,
   and the eight exactly-`1.0` endpoint readings are **not** cited as health, since `:1074-1076`'s
   closure branch writes that literal too.
+- [`ASSESSMENT-20260918-cause3-joint-baseline-acceptance-packet.md`](ASSESSMENT-20260918-cause3-joint-baseline-acceptance-packet.md)
+  - **The cause-3 joint-baseline acceptance packet (`937c3847`), per-item against its §7. Approves no
+  boundary value, requests no member, grades nothing** — all four `Z_BOUNDARIES` keys stay WITHHELD
+  (measured: that is the complete key set at `z_contract.py:213`). **`C1` is the one refutation and
+  it fires the packet's OWN falsifier:** §4.1's requirement — an L3 statistic must be invariant under
+  `C → D C D` — is **sound and endorsed**, but its proof is about `corr(C)` while its proposed
+  statistic is `corr(M_p C M_p')`, and **source-basis rescaling does not pass through the
+  projection.** Measured over 400 PSD draws with non-negative maps: `corr(C)` invariant at
+  **`4.441e-16`**, `corr(M C M')` **NOT** invariant at **`5.390e-01`** — and a member differing from
+  `k=0` by a **pure diagonal rescale** moves the statistic by `0.0117 / 0.0405 / 0.3986`. So the L3
+  instrument is **breachable by diagonal movement alone**, the dual of the failure §4.1 exists to
+  prevent. §6's second falsifier says such a statistic *"must be replaced"*. **The disjointness
+  argument, the requirement itself, and the disqualification of trace and per-bin `σ` statistics are
+  all untouched** (both confirmed to fail the test). **`C2`: §5.2's offset grid reproduces EXACTLY by
+  CALLING `seed_offset_policy`** (blob `023ec710`) — `forbidden_differences([42,1000]) = [-958,958]`,
+  `k=1..8` and `k=0..4` VALID, and all three collision tuples returned verbatim; endorsed in full.
+  **`C3`: the `φ = 1` derivation is sound, map-set-agnostic, and under `P1`'s one-map finding its
+  exclusion branch is EMPTY** — so the margin caveat it correctly carries has nothing to bite on
+  today. **`C4`:** coherent movement is analytically exactly `(1+δ)²−1` at every `N` and weighting, so
+  `δ_bin` is exact on that channel and vacuous on the cancelling one — which strengthens L3's primacy;
+  **no contributor-count factor is attached to anything.** **`C5`: L4 endorsed on the merits** — no
+  F7 key exists, confirmed — with an **operand correction** (`uq_math.py:160` takes `mean_shift_norm`,
+  `sqrt_trace`, `n_throws`, so the criterion is stronger than its one-operand description) and one
+  addition owed: as written it cannot distinguish *tested and stable* from *never came near the branch
+  point*. **`C6`:** the three withheld reasons verified verbatim; abstaining from a fourth
+  format-derived number is right. **`C7`: the seed disagreement routed at `e393ad5e` `R8` RESOLVES** —
+  `sweep_bank_5d.py:354-357` documents 42-vs-1000 as **deliberate** and warns against unifying, so the
+  registry's reject-on-mismatch rule is violated by a documented intent. A **record collision**, not a
+  payload defect; it confirms §5's baselines from source, and any repair must be on the registry side
+  — **the seeds must not be unified.**
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
