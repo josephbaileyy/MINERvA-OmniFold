@@ -47,7 +47,7 @@ verbatim:** *"Both adopted statistics are functions of the diagonal alone, so a 
 licenses nothing about `C_Z`'s off-diagonal structure."* **L3 is therefore not a refinement of L1/L2 —
 it is disjoint from them, and no tightening of an aggregate or per-bin diagonal criterion can ever
 reach it.** That is why three boundaries exist rather than one with a stricter number, and why §4's
-criterion must be **constructed to be blind to the diagonal** rather than merely *also* cover it.
+criterion must be **constructed so that it RESPONDS to a correlation change at fixed diagonal** rather than merely *also* cover it. ⚠ **CORRECTED 2026-09-18 — an earlier version of this clause said "blind to the diagonal", i.e. INVARIANT under a diagonal change. That requirement was mine and wrong; §11 supersedes it with SENSITIVITY, which is what the boundary's withheld reason actually demands.**
 
 **And there is a fourth loss that no boundary currently names, which I add because it is the only one
 that is DISCRETE:**
@@ -139,10 +139,10 @@ and not as to VALUE** (§7).
 
 **Stated parametrically over a map set `{M_p}` to be bound by P1, as requested.**
 
-### 4.1 ⚠ THE STRUCTURAL REQUIREMENT FIRST: THE STATISTIC MUST BE BLIND TO THE DIAGONAL
+### 4.1 ⚠ THE STRUCTURAL REQUIREMENT — ⚠⚠ **MIS-SPECIFIED HERE AS INVARIANCE; THE CORRECT REQUIREMENT IS SENSITIVITY. SEE §11, WHICH SUPERSEDES THIS SUBSECTION'S REQUIREMENT AND KEEPS ITS STATISTIC.**
 
 **A correlation criterion that can be satisfied by diagonal stability is not a correlation criterion.**
-The test is exact: require the statistic to be **invariant under positive diagonal rescaling**
+⚠ **THE TEST STATED IN THIS PARAGRAPH IS SUPERSEDED BY §11 AND IS PRESERVED ONLY AS THE RECORD OF WHAT WAS PROPOSED.** It required the statistic to be **invariant under positive diagonal rescaling**
 `C → D C D`. **The projected correlation matrix satisfies this identically** — `R_ij = C_ij /
 √(C_ii C_jj)` is unchanged when `C_ij → d_i d_j C_ij`, and I measured that invariance at `3.3e-16`
 in the previous round. **A trace ratio and a per-bin `σ` ratio both FAIL it**, which is precisely why
@@ -160,7 +160,7 @@ contributes nothing and the statistic carries **off-diagonal information only.**
 weights can still **near-cancel** when `C` is anti-correlated, so a bounded change in `C` is an
 unbounded *relative* change in the projected value — `179.91` against a `0.6900` limit, `260.7×`, all
 PSD. **So no per-map tolerance follows from any diagonal criterion, and `τ_p` is a genuine
-per-projection declaration.** The packet supplies the form and the invariance requirement; the values
+per-projection declaration.** The packet supplies the form and — **per §11, the SENSITIVITY requirement rather than the withdrawn invariance one** — the values
 attach to maps that do not yet exist here.
 
 ⚠ **P1 HAS SINCE LANDED: there is ONE map on the intended path, so this is ONE `τ_p`, not four — §9.2.**
@@ -272,8 +272,9 @@ what it says.** That check is arithmetic, costs nothing, and must pass **before*
    all measured, no free parameters, and `k = 0` identified as the archive.
 2. **§2's and §3's FORM and POPULATION** — the statistics, the `x_cv > 0` predicate, the shared-support
    assertion, and **§3.1's derivation that `φ` is fixed by the declared map support** rather than chosen.
-3. **§4.1's structural requirement** — that any correlation criterion be invariant under positive
-   diagonal rescaling, which disqualifies trace and per-bin `σ` statistics from ever serving as one.
+3. **§11's structural requirement (NOT §4.1's, which is WITHDRAWN)** — that any correlation criterion **RESPOND to a pure correlation change at fixed source diagonal**, which is measured to be satisfied by `corr(M C_k Mᵀ)` (`0.0036`/`0.0180`/`0.0705`) and to be failed outright by trace ratio (`0.0`) and per-bin `σ` (`4.4e-16`) — the latter being exactly why they cannot serve. ⚠ **The earlier form of this item required INVARIANCE under positive diagonal rescaling; that is
+   WITHDRAWN.** The disqualification of trace and per-bin `σ` **survives unchanged** — it is simply
+   reached by sensitivity rather than by invariance, and measured rather than argued.
 4. **§4.3's L4 criterion in full — form, population and value** — because the protected quantity is
    discrete and the criterion has no tolerance parameter.
 
@@ -513,3 +514,91 @@ of `M1 C_Z M1ᵀ`** — the M1 product the deferred claim already needs. **So `�
 claim's production requirement coincide, and no separate study is owed for it.** Combined with §9.4's
 digest precondition, that gives M1 a single ordered prerequisite: **instrument the projector, then
 produce M1 once, and both `τ`'s criterion and the claim become evaluable from the same object.**
+
+
+---
+
+## 11. ⚠ §4.1's REQUIREMENT WAS MIS-SPECIFIED — SENSITIVITY, NOT INVARIANCE. THE STATISTIC SURVIVES
+
+`[cb0b6b]` found §4.1's statistic breachable and a peer supplied a replacement. **The refutation is
+correct and the error is mine. The replacement is not needed, because the requirement it satisfies is
+not the requirement `cause3_corr` asks for.**
+
+### 11.1 THE REFUTATION, CONFIRMED — and the error is the verified-a-different-proposition shape
+
+`M (D C D) Mᵀ = (M D) C (M D)ᵀ` — **a projection with a DIFFERENT map.** A source rescale reweights how
+source bins aggregate inside each destination cell, and no destination-basis normalisation undoes it.
+**MEASURED**, pure source rescale with source correlations identical to `4.441e-16`:
+
+    sd        0.001      0.010      0.050      0.200      0.700
+    my stat   0.000447   0.004092   0.023831   0.065322   0.192398      drift/sd: 0.45 .. 0.28
+
+⚠ **My error, named exactly: I proved `corr(D C D) = corr(C)` in the SOURCE basis, measured it at
+`3.3e-16`, and then asserted the requirement for the PROJECTED basis without re-measuring there.** I
+verified one proposition and claimed another — and the measurement I quoted was true, which is what
+made it pass my own review.
+
+### 11.2 ⚠ BUT `cause3_corr` DEMANDS NON-VACUITY, NOT INVARIANCE — MEASURED
+
+Its withheld reason: *"Both adopted statistics are **functions of the diagonal alone**, so a MET result
+on them **licenses nothing about** `C_Z`'s off-diagonal structure."* **That is a complaint that the
+statistics CANNOT SEE correlations — not that they can see the diagonal.** The correct requirement is
+therefore:
+
+> **The statistic must RESPOND to a pure correlation change with the source diagonal held fixed.**
+
+**MEASURED**, correlations mixed while the source diagonal is held *exactly* equal:
+
+    mix                 0.01       0.05       0.20
+    trace ratio         0.0        0.0        0.0          <- FAILS: cannot see it
+    per-bin sigma       4.4e-16    4.4e-16    4.4e-16      <- FAILS: cannot see it
+    my §4.1 statistic   0.003620   0.017998   0.070526     <- PASSES
+    the hybrid          0.003620   0.017998   0.070526     <- PASSES, IDENTICALLY
+
+⚠ **The two instruments are numerically IDENTICAL on the test the boundary actually demands** — and
+they must be, because holding the diagonal fixed makes `renorm(C) = C`. **So the hybrid buys exactly
+one thing over the actual object: invariance under a source-diagonal change, which the corrected
+requirement does not ask for.**
+
+### 11.3 DECISION — the actual object, with the leak BUDGETED rather than eliminated
+
+**I REJECT the hybrid as the primary L3 instrument and RETAIN §4.1's statistic on the ACTUAL projected
+correlation `corr(M C_k Mᵀ)`.** Three reasons:
+
+1. **L3's loss is a conclusion drawn from the ACTUAL published covariance's projection.** `renorm(C_k)`
+   is member `k`'s correlations on member `0`'s variances — **an object that exists in no product.** A
+   criterion on a hybrid cannot protect a conclusion drawn from something else.
+2. **The corrected requirement is satisfied by the actual object** (§11.2), so the hybrid's advantage
+   is not a requirement.
+3. ⚠ **The peer's own measurement makes the non-disjointness BOUNDED AND BUDGETABLE, which is the key
+   they did not turn.** The leak is **near-linear at ≈ 0.3 × sd across three orders** — so with `φ = 1`
+   on the support (§3.1), the L1/L2 leak into L3 is bounded by **≈ 0.3 · δ_bin**, i.e. `≈ 3e-4` at
+   `δ_bin = 1e-3`. **DECLARED FORM:**
+
+       tau  =  tau_corr  +  0.3 * delta_bin        the second term being the ACKNOWLEDGED diagonal leak
+
+   **That is how a non-orthogonal decomposition is handled — the overlap is quantified and declared,
+   not engineered away.** It also removes the need to choose between disjointness and actuality.
+
+**So the peer's impossibility result is TRUE and it DISSOLVES:** *"disjointness and actuality cannot
+both be had"* holds for disjointness-as-**invariance** — which is neither achievable nor required.
+Under non-vacuity, actuality costs a **declared `0.3·δ_bin` term**, not the object.
+
+**THE HYBRID IS RETAINED AS A DECLARED SECONDARY DIAGNOSTIC**, because it isolates the correlation
+channel exactly and is invariant by construction. It is genuinely informative about *which* channel
+moved; it is simply not the criterion. **And §4.1's statistic is not discarded — the peer's warning
+that the refutation is "fatal to disjointness, not to usability" is right, and stronger than they put
+it: it is fatal only to a requirement that was mine and wrong.**
+
+### 11.4 TWO PRECONDITIONS — ACCEPTED, AND THEY BIND WHICHEVER INSTRUMENT IS CHOSEN
+
+1. **Every destination cell must receive ≥ 1 source bin**, or its projected variance is zero and `corr`
+   divides by zero. `project_cov_nd.py` already censuses this as `n_empty`, so the M1 destination-mask
+   declaration already owed (§9.1) covers it — **provided the declaration states `n_empty = 0` as a
+   pass condition rather than merely recording the census.**
+2. ⚠ **The source diagonal must be strictly positive on the reported support, and `x_cv > 0` does NOT
+   establish it** — the predicate is on the **central value**, not the variance. **This is the peer's
+   catch and it is a new check.** It binds my statistic as much as the hybrid, since both divide by
+   `√diag`. **DECLARED: add a strict-positivity check on `diag(C_Z)` over the reported support, and
+   treat a zero-variance reported bin as a REFUSAL rather than a masked bin** — masking it after the
+   fact would be a post-hoc population change of exactly the kind §3.1's margin rule forbids.
