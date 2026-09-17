@@ -347,9 +347,12 @@ the 5D object never had, does not make an independently unfolded 4D/3D estimator
 | Full `S`, §7 item 4 | DECISION | no | F7 channel only; item 4 **unassessed and unrouted** | **YES** — `S` is a scientific cap | none |
 | `θ` | — | **CLOSED, not adopted, not a floor** | — | — | none |
 | cause-3 boundaries (`agg`, `med`, `corr`) | DECISION | no | A member/design proposal exists | **YES** — with `z-criteria-designer` now; assessment pre-authorized | member production, **after** approval |
+| **Grid vs diagonal member family** (§10.3) | DECISION | no | The split is measured invariant under `k`, so the diagonal family **cannot** resolve it | **YES — NEW.** Must be decided **before** offsets are declared | none; a launcher change and a second offset axis, **code not compute** |
+| L3 statistic | SOURCE | requirement endorsed; statistic **refuted**; replacement supplied (§10) | Whether to accept a **hybrid** statistic — disjointness and actuality cannot both be had | **YES** — that trade-off | none |
+| Registry reject-on-mismatch rule | DECISION | no | Shown **unsatisfiable at every `k`** (§10.2) | **YES** — amend the estimator-seed field; do not unify seeds | none |
 | Lineage / `parent.lineage_status` | PAYLOAD | no | Nothing — it is an unimplemented non-check (§1.4) | — | none; with `z-independent-assessor` |
 | Component footing, per-component compatibility | PAYLOAD | no | Partly — source fixes estimator/units/normalization | — | none; same lane |
-| External CV cross-check | PAYLOAD | no | Whether the operand **exists and is reachable** — cheap and useful | — | none if reachable |
+| External CV cross-check | PAYLOAD | **YES — performed** (§9.3), 65,856/65,856, `max abs diff` 0 | — | — | none |
 | `globalCompleteness > 1` | PAYLOAD | no | Numerator/denominator **semantics** | **YES** — a disposition. Do not normalize into range | none |
 | Causes 1, 2, 4, 5, 6, 7 | mixed | no | See the audit's seven-cause table; several are source-closable | per cause | cause-specific counterfactuals |
 | **P1 projection definitions** | SOURCE | **YES — §4** | — | Which central estimate pairs with M1 (§4.4) | none |
@@ -491,3 +494,102 @@ authorized as its own item. The reason it would be worth scoping is unchanged: r
 same property that makes `pinv`-without-`rcond` dangerous at rank 6, so one measurement would serve
 both. **Z's rank is not the old P4 263** — the audit is explicit that the old rank does not determine
 Z's, and it must not be transferred.
+
+---
+
+## 10. L3's statistic is refuted — and a replacement, with its cost
+
+`[cb0b6b]` refuted the cause-3 packet's §4.1 **statistic** while endorsing its **requirement**. I
+confirmed the refutation by independent measurement and then supplied the replacement it declined to
+offer: `probes/probe-20260918-l3-statistic-diagonal-breach-and-repair.py`.
+
+**The refutation.** §4.1 rightly requires an L3 statistic to be invariant under `C → D C D` in the
+**source** basis, so pure per-bin σ movement cannot be reported through L3's instrument. But the
+packet's proof is about `corr(C)` while its statistic is `corr(M C Mᵀ)`, and
+`M(DCD)Mᵀ = (MD)C(MD)ᵀ` — a projection with a **different map**. A source rescale reweights how
+source bins are aggregated, and no diagonal in the destination basis undoes that. Measured here:
+`corr(C)` invariant at `4.441e-16`; under a pure diagonal rescale with source correlations identical
+to `4.4e-16`, the proposed statistic drifts **`0.0004 / 0.0034 / 0.0179 / 0.0753 / 0.1854`** at
+sd `1e-3 / 1e-2 / 0.05 / 0.20 / 0.70`.
+
+⚠ **New, and it is the decision-relevant part: the breach is near-LINEAR in the rescale, at ≈ 0.3× sd
+across three orders of magnitude.** So it is real but **bounded and quantifiable** — at a realistic
+`δ_bin ≈ 1e-3` the leak into L3 is ≈ `3e-4`, not a swamping. The refutation is fatal to
+*disjointness*, not to the statistic's usability as a diagnostic.
+
+**The conflation, named:** `corr(M C Mᵀ)` **is** invariant under a rescale in the **projected** basis
+— trivially, it is already a correlation matrix. That is what the packet proves. It is not what §4.1
+requires.
+
+**The replacement.** Hold the source diagonal at the reference member before projecting:
+
+    D0      = diag(sqrt(diag(C_0)))                 from member k = 0
+    renorm  : C_k  ->  D0 @ corr(C_k) @ D0
+    L3 STAT :          corr(M @ renorm(C_k) @ M')
+
+Invariance is **exact by construction, not by measurement**: `corr(D C_k D) = corr(C_k)` identically,
+so `renorm(D C_k D) = renorm(C_k)` identically. Measured at `3.3e-16` for rescale sd up to **2.0**,
+while still responding to genuine correlation change (`0.0021 / 0.0108 / 0.0454` at correlation mix
+`0.01 / 0.05 / 0.20`), so it is not vacuous.
+
+⚠ **Its cost, stated rather than buried.** `renorm(C_k)` is a **hybrid** — member `k`'s correlations
+on member `0`'s variances — so the statistic does not test member `k`'s *actual* projected
+correlation. That is unavoidable and it is the point: the actual projected correlation **cannot** be
+disjoint from L1/L2, because source variances set how strongly each bin is weighted inside its
+destination cell. **Disjointness and actuality cannot both be had.** Anyone adopting this accepts the
+hybrid; anyone wanting the actual object must give up §4.1's invariance requirement and say so.
+Preconditions are in the probe: every destination cell must receive ≥1 source bin (the `n_empty`
+census already covers it), and the source diagonal must be strictly positive on the reported support
+— which the `x_cv > 0` predicate does **not** establish, since that predicate is on the central value,
+not the variance.
+
+**Supplies no tolerance, approves nothing, and is a diagnostic transform only** — `renorm(C_k)` is not
+a covariance to be used anywhere else.
+
+### 10.1 A methodological finding from `[91eaa2]` worth keeping
+
+Withdrawing its `≈ N ×` claim, it measured *why* the wrong law looked right: at **fixed** cancellation
+depth, varying `N` gives `2.0 / 10.0 / 199.8 / 1566.4` — a near-perfect linear fit to `N`, **and it is
+spurious**. At **fixed** `N = 200`, varying depth gives `1.8 / 19.8 / 199.8 / 199999.8`. **A
+one-directional scan confirmed the wrong law cleanly**, and only varying the other axis exposed that
+there was no law there. The governing quantity is the cancellation ratio; `N` enters only through what
+it does to `wᵀCw`.
+
+### 10.2 Why the registry rule is worse than a collision
+
+`[91eaa2]`'s disposition is sharper than my §9.4 and I adopt it: applied literally, reject-on-mismatch
+rejects **every** throw component at **every** offset `k` — including `k = 0`, which is the archive and
+is Z's own build. **So the rule rejects the very product the registry exists to describe, cannot be
+satisfied at any `k`, and its only available repair is the act the source names as the trap.** That is
+unsatisfiable by construction, the same class as the `1e-12`-clamp defect. The disposition: amend the
+rule on the estimator-seed field; **do not unify the seeds**; check within-family identity plus a
+declared inter-family map — half already implemented at `analyze_universes_5d.py:137-166`, which
+refuses a mixed-seed member; and pending amendment, record the mismatch as declared heterogeneity.
+
+### 10.3 ⚠ A NEW DECISION FOR JOSEPH, raised by `[91eaa2]` and not previously on any list
+
+**The `42`/`1000` split is invariant under `k`** — both groups move together under the offset — **so it
+is a property of the architecture, not of any member, and the diagonal member family cannot resolve
+whether it matters.** Resolving it needs the two groups varied **independently**: a second offset axis,
+i.e. a launcher change and a second environment variable. That is **code, not compute** — but it must
+be decided **before** the offsets are declared, because it changes the member set. So the
+grid-versus-diagonal question is no longer a design preference; it is an open scientific question with
+a named consumer. See §7's table, where it is added.
+
+### 10.4 On my own unestablished mechanism
+
+`[91eaa2]` checked the arithmetic I flagged and it **does not close**: `√(5.8077² + 1.654²) = 6.0386`
+against `6.2367` is **3.18% short**, far too large for rounding, so the near-miss is not a derivation.
+It stays cause 2's question and unestablished, as I labelled it. One point it drew that I had not:
+row `:29` records the adopted product as **"adopted mean-centered"** — the centering for which the
+mechanism would predict cancellation — so were it ever established it would bear on the **CV-centered**
+variant, which is exactly the branch **L4** decides. That is a reason to keep L4, not to discount it.
+
+### 10.5 A citation of mine that could not be resolved, and why neither side erred
+
+`[cb0b6b]` could not resolve my `unified_throw_cov.py:372` and could not find `z_pilot.py`. Measured:
+`unified_throw_cov.py` is forked **three ways** — main blob `65a8f1b8…` and lane blob `41a71ad1…` both
+have the `n_negative` line at `:372`, while `937c3847`'s blob `2f29b6ec…` has `nrep = int(rep.sum())`
+there. And `z_pilot.py` exists **only** on `lane/z-assembly-pilot-20260914`. So the substance holds on
+two trees of three and neither lane mismeasured; **I cited a line without naming a tree.** Third
+instance in this project.
