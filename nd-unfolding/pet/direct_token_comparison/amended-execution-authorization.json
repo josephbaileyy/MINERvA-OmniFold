@@ -32,7 +32,7 @@
     "mixed_precision_policy": "float32",
     "floatx": "float32"
   },
-  "manifest_sha256": "c9d5e6bca21a89ee0dfc181b0f9dffbf6195554c6929298e96f165cf1170db81",
+  "manifest_sha256": "0b81983dd5b514569724fd3dbb60a5e64ae20500e6d95ffc90e1a3b92c8f194d",
   "authority_source": "nd-unfolding/pet/direct_token_comparison/BEN_COMPARISON_AUTHORIZATION-20260915.md",
   "authority_source_sha256": "5fce2195088cf1241b9706c7c6ddcee855bd7fd07922f567532fc1b00ca1af26",
   "approval_date": "2026-09-16 Asia/Seoul",
@@ -65,5 +65,7 @@
     "gates_the_matrix_report": false,
     "specification": "nd-unfolding/pet/direct_token_comparison/INFERENCE_BENCHMARK_SPECIFICATION-20260917.md"
   },
-  "inference_benchmark_specification_sha256": "97e861e557c0366aa073dea04307efb60a35037632a13d52ad46ca111e4572cf"
+  "inference_benchmark_specification_sha256": "97e861e557c0366aa073dea04307efb60a35037632a13d52ad46ca111e4572cf",
+  "inference_benchmark_launcher": "nd-unfolding/pet/direct_token_comparison/sbatch_inference_benchmark.sh",
+  "inference_benchmark_launcher_sha256": "7cec619dea3c94cc0fac113593fd9992e9a70f666f56b9b0cf1e0f9384a1bc14"
 }

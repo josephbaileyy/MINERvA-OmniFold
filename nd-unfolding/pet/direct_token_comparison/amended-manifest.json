@@ -1,5 +1,5 @@
 {
-  "base_commit": "d5119fb02f2fdb0d00c31cf3746050503c6fe9e2",
+  "base_commit": "07b025e24c8e5d7172ec40d7ee346c958932df5b",
   "scope": "synthetic-amended-preflight-calibration",
   "files": {
     "nd-unfolding/mnv_guarded_run.py": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b",
@@ -31,7 +31,7 @@
     "nd-unfolding/pet/direct_token_comparison/optimizer-gate-authorization.json": "bedc48383b24257278e8bbf6f875570a6f43f1ad7d4d096ec451aebe277b83b2",
     "nd-unfolding/pet/direct_token_comparison/optimizer_diagnostic.py": "b4b5761a70d56b7ba0ac5b1be885f34d6b79d2f737ce1afd018897dc026f5184",
     "nd-unfolding/pet/direct_token_comparison/optimizer_equivalence.py": "97b021c8ee42bfd586698c2e5d82ef28c714adf83ee030cf4871b24ea71d7c83",
-    "nd-unfolding/pet/direct_token_comparison/present_matrix_results.py": "d48ce5c1595ba443c689c8760f4938f9b13fa60866134b7cc411865263b1c0f0",
+    "nd-unfolding/pet/direct_token_comparison/present_matrix_results.py": "250a7318717fe137f35639b39a49d543eacf50d5cbd9773f67e37ee7300434c5",
     "nd-unfolding/pet/direct_token_comparison/reference/typed_token_comparison_cpu.py": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95",
     "nd-unfolding/pet/direct_token_comparison/reproduce_evidence.py": "72d0b5e5b4484beb1fc498cc5ed4567d5bda6dfb31fcf0c6661e341d28c6bfc6",
     "nd-unfolding/pet/direct_token_comparison/run-card.json": "567e3eabe16b7c3fc79f597621880f882783d4caca00dff1beb54462b6f96284",
@@ -39,6 +39,7 @@
     "nd-unfolding/pet/direct_token_comparison/sbatch_amended_calibration.sh": "496817f754672acf5df6f996038ba4421edaf35fb092b1461148e80a6eae891a",
     "nd-unfolding/pet/direct_token_comparison/sbatch_fp32_calibration.sh": "66176de60f678509a8eee9965453b2427aa8da6271f627d4a5b3b31ac2bc21cc",
     "nd-unfolding/pet/direct_token_comparison/sbatch_full_matrix.sh": "bd628d28c02ea183664f4674f9cce16b9e291a7f93cb2080896c66be57708a9c",
+    "nd-unfolding/pet/direct_token_comparison/sbatch_inference_benchmark.sh": "7cec619dea3c94cc0fac113593fd9992e9a70f666f56b9b0cf1e0f9384a1bc14",
     "nd-unfolding/pet/direct_token_comparison/sbatch_matrix_closeout.sh": "68103810ee50ddf2478fe739ec395a25b176587974242eab23ab68c18ed99a47",
     "nd-unfolding/pet/direct_token_comparison/sbatch_optimizer_diagnostic.sh": "36d5d90d4263906c54146249f2cd6d670d2fbce3f2c5d5c68f574349db952f46",
     "nd-unfolding/pet/direct_token_comparison/summarize_runs.py": "b4009d756a4e5661cf66aaaec92e2517c6b854c441cfac625eaa4bde030db123",

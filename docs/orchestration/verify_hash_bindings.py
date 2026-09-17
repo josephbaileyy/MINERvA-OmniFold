@@ -249,8 +249,11 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 # scheduler-dependency route that verifies and reduces the matrix after this
 # session ends cannot run from unbound bytes. Delta recorded in
 # nd-unfolding/pet/direct_token_comparison/local_validation/20260916-full-matrix/binding-inventory-delta-closeout.json.
-RECEIPT_BINDING_COUNT = 125
-RECEIPT_BINDING_SHA256 = "c11c08d57c21a0193a15f5a4f5f7206795ae20a58cccb9e7355de2c0629a520b"
+# 125 -> 126: the receipt binds the bounded inference-benchmark launcher, so the
+# post-matrix cost measurement cannot run from unbound bytes. Delta recorded in
+# nd-unfolding/pet/direct_token_comparison/local_validation/20260917-matrix/binding-inventory-delta-inference.json.
+RECEIPT_BINDING_COUNT = 126
+RECEIPT_BINDING_SHA256 = "bff391a3333c93d3752333c8005e147d7c67c2139ef1e2eeab9fed8ab48077ed"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

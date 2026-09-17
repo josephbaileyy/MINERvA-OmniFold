@@ -1,0 +1,18 @@
+{
+  "before_count": 125,
+  "before_sha256": "c11c08d57c21a0193a15f5a4f5f7206795ae20a58cccb9e7355de2c0629a520b",
+  "after_count": 126,
+  "after_sha256": "bff391a3333c93d3752333c8005e147d7c67c2139ef1e2eeab9fed8ab48077ed",
+  "added_bindings": [
+    [
+      "nd-unfolding/pet/direct_token_comparison/sbatch_inference_benchmark.sh",
+      "7cec619dea3c94cc0fac113593fd9992e9a70f666f56b9b0cf1e0f9384a1bc14"
+    ]
+  ],
+  "removed_bindings": [],
+  "changed_bindings": [],
+  "owning_receipts": [
+    "nd-unfolding/pet/direct_token_comparison/amended-execution-authorization.json"
+  ],
+  "note": "Purely additive: the bounded inference-benchmark launcher is bound before use. Cost only; it gates nothing and cannot alter the frozen comparison."
+}
