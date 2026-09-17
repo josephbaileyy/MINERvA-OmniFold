@@ -139,6 +139,54 @@ def case_name(width: tuple[int, ...]) -> str:
     return "w" + "-".join(str(value) for value in width)
 
 
+def gate_group_in_subprocess(
+    checkout: Path, widths: list[tuple[int, ...]], rows: int, workspace: Path
+) -> dict[str, Any]:
+    """Run one gate group in a **fresh interpreter** and return its record.
+
+    Not an optimization -- a requirement. The bound preflight calls
+    ``tf.config.threading.set_intra_op_parallelism_threads(7)``, which TensorFlow
+    permits only before initialization, so any process that has already touched TF
+    cannot run it: the first attempt measured cost first, initialized TF doing so, and
+    every gate group then died with "Intra op parallelism cannot be modified after
+    initialization". That looked exactly like twelve widths failing the gate and was
+    nothing of the kind.
+
+    A subprocess also keeps the bound preflight's global TensorFlow configuration from
+    leaking between groups, so each group's verdict stands on its own.
+    """
+    import subprocess
+
+    payload = workspace / "group.json"
+    command = [
+        sys.executable,
+        str(Path(__file__).resolve()),
+        "--gate-group-only",
+        "--checkout",
+        str(checkout),
+        "--widths",
+        json.dumps([list(width) for width in widths]),
+        "--gate-rows",
+        str(rows),
+        "--workspace",
+        str(workspace),
+        "--output",
+        str(payload),
+    ]
+    finished = subprocess.run(command, capture_output=True, text=True)
+    if payload.exists():
+        record = json.loads(payload.read_text())
+    else:
+        record = {
+            "widths": [list(width) for width in widths],
+            "verdict": "FAIL",
+            "error": "the gate subprocess wrote no record",
+        }
+    record["subprocess_returncode"] = finished.returncode
+    record["subprocess_stderr_tail"] = finished.stderr[-2000:]
+    return record
+
+
 def gate_width_group(
     modules: dict[str, Any],
     widths: list[tuple[int, ...]],
@@ -289,6 +337,18 @@ def main() -> None:
     parser.add_argument("--blob-ladder-points", type=int, default=3)
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--tail-cost-rows", type=int, default=4000)
+    parser.add_argument(
+        "--cost-receipt",
+        type=Path,
+        help=(
+            "reuse an earlier run's measured cost instead of re-measuring it; the "
+            "cost half is valid on its own and there is no reason to spend the device "
+            "time twice"
+        ),
+    )
+    parser.add_argument("--gate-group-only", action="store_true")
+    parser.add_argument("--widths")
+    parser.add_argument("--workspace", type=Path)
     args = parser.parse_args()
 
     _install(args.checkout)
@@ -301,6 +361,30 @@ def main() -> None:
     import typed_token_comparison as comparison
 
     import run_typed_token_comparison as runner
+
+    if args.gate_group_only:
+        # Child mode. Nothing here may touch TensorFlow's configuration or query a
+        # device first: the bound preflight sets intra-op parallelism, which
+        # TensorFlow accepts only before initialization. The fixture builder uses the
+        # numpy paths alone, so `tf` is deliberately absent from this dict.
+        if not args.widths or args.workspace is None:
+            raise ValueError("--gate-group-only needs --widths and --workspace")
+        child = {
+            "fourarm": fourarm,
+            "typed": typed,
+            "adapter": adapter,
+            "runner": runner,
+            "comparison": comparison,
+            "original": original,
+            "freezer": freezer,
+            "preflight": preflight,
+        }
+        widths = [tuple(int(v) for v in width) for width in json.loads(args.widths)]
+        args.workspace.mkdir(parents=True, exist_ok=True)
+        record = gate_width_group(child, widths, args.gate_rows, args.workspace)
+        args.output.write_text(json.dumps(record, indent=2, default=str) + "\n")
+        print(f"group verdict: {record['verdict']}")
+        return
 
     tf = adapter.require_tensorflow()
     policy = runner.configure_precision()
@@ -340,97 +424,106 @@ def main() -> None:
         for prongs in ladders["prongs"]
     ]
 
-    # Cost runs FIRST and its numbers are written before the gate starts. The gate
-    # is the long half, and a timeout there must not also destroy the cheap
-    # measurement the sizing depends on.
-    #
-    # Two operating points, both from the measurement rather than from the ladder:
-    # the rounded MEAN multiplicity, which is where the experiment would sit, and one
-    # high blob rung, because the measured distribution is skewed enough that the mean
-    # does not describe the expensive tail.
-    def rounded_mean(family: str, minimum: int = 0) -> int:
-        return max(minimum, int(round(float(reference[family]["mean"]))))
+    if args.cost_receipt is not None:
+        earlier = json.loads(args.cost_receipt.read_text())
+        costs = earlier["cost_measurements"]
+        summary = earlier["cost_summary"]
+        cost_points = [
+            (label, tuple(block["width"]), None) for label, block in summary.items()
+        ]
+        print(f"reusing measured cost from {args.cost_receipt}", flush=True)
+    else:
+        # Cost runs FIRST and its numbers are written before the gate starts. The gate
+        # is the long half, and a timeout there must not also destroy the cheap
+        # measurement the sizing depends on.
+        #
+        # Two operating points, both from the measurement rather than from the ladder:
+        # the rounded MEAN multiplicity, which is where the experiment would sit, and one
+        # high blob rung, because the measured distribution is skewed enough that the mean
+        # does not describe the expensive tail.
+        def rounded_mean(family: str, minimum: int = 0) -> int:
+            return max(minimum, int(round(float(reference[family]["mean"]))))
 
-    mean_width = (
-        rounded_mean("photons"),
-        rounded_mean("blobs"),
-        rounded_mean("prongs", 1),
-    )
-    tail_width = (rounded_mean("photons"), max(ladders["blobs"]), rounded_mean("prongs", 1))
-    cost_points = [
-        ("mean_multiplicity", mean_width, args.cost_rows),
-        ("tail_multiplicity", tail_width, args.tail_cost_rows),
-    ]
-    costs: list[dict[str, Any]] = []
-    for label, width, rows in cost_points:
-        for _ in range(args.repeats):
-            for arm in fourarm.ARMS:
-                record = measure_arm_cost(
-                    modules,
-                    arm,
-                    width,
-                    rows=rows,
-                    batch_size=args.batch_size,
-                    steps=args.steps,
-                )
-                record["operating_point"] = label
-                costs.append(record)
-                print(
-                    f"cost {label} arm={arm.name} K={sum(width)} "
-                    f"train={record['train_ms_per_step']:.1f} ms "
-                    f"infer={record['inference_ms_per_pass']:.1f} ms",
-                    flush=True,
-                )
-
-    summary: dict[str, Any] = {}
-    for label, width, _ in cost_points:
-        block: dict[str, Any] = {"width": list(width), "typed_objects": int(sum(width))}
-        for arm in fourarm.ARMS:
-            mine = [
-                row
-                for row in costs
-                if row["arm"] == arm.name and row["operating_point"] == label
-            ]
-            block[arm.name] = {
-                "train_ms_median": statistics.median(
-                    row["train_ms_per_step"] for row in mine
-                ),
-                "inference_ms_median": statistics.median(
-                    row["inference_ms_per_pass"] for row in mine
-                ),
-            }
-        baseline = block["A"]["train_ms_median"]
-        infer_baseline = block["A"]["inference_ms_median"]
-        for arm in fourarm.ARMS:
-            block[arm.name]["train_ratio_to_A"] = (
-                block[arm.name]["train_ms_median"] / baseline if baseline else None
-            )
-            block[arm.name]["inference_ratio_to_A"] = (
-                block[arm.name]["inference_ms_median"] / infer_baseline
-                if infer_baseline
-                else None
-            )
-        # A and D carry identical token counts by construction, so a systematic
-        # difference between them is a defect in the measurement, not a property of
-        # the arms. Recorded rather than asserted: a timing probe should report a
-        # suspicious reading, not refuse to write one.
-        block["a_d_train_parity_ratio"] = block["D"]["train_ratio_to_A"]
-        block["a_d_parity_within_10_percent"] = (
-            block["D"]["train_ratio_to_A"] is not None
-            and abs(block["D"]["train_ratio_to_A"] - 1.0) <= 0.10
+        mean_width = (
+            rounded_mean("photons"),
+            rounded_mean("blobs"),
+            rounded_mean("prongs", 1),
         )
-        summary[label] = block
+        tail_width = (rounded_mean("photons"), max(ladders["blobs"]), rounded_mean("prongs", 1))
+        cost_points = [
+            ("mean_multiplicity", mean_width, args.cost_rows),
+            ("tail_multiplicity", tail_width, args.tail_cost_rows),
+        ]
+        costs: list[dict[str, Any]] = []
+        for label, width, rows in cost_points:
+            for _ in range(args.repeats):
+                for arm in fourarm.ARMS:
+                    record = measure_arm_cost(
+                        modules,
+                        arm,
+                        width,
+                        rows=rows,
+                        batch_size=args.batch_size,
+                        steps=args.steps,
+                    )
+                    record["operating_point"] = label
+                    costs.append(record)
+                    print(
+                        f"cost {label} arm={arm.name} K={sum(width)} "
+                        f"train={record['train_ms_per_step']:.1f} ms "
+                        f"infer={record['inference_ms_per_pass']:.1f} ms",
+                        flush=True,
+                    )
 
-    partial = {
-        "scope": "A3 cost half only; the gate had not run when this was written",
-        "precision_policy": policy,
-        "gpu_devices": devices,
-        "cost_measurements": costs,
-        "cost_summary": summary,
-        "gate_records": [],
-        "gate_complete": False,
-    }
-    args.output.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n")
+        summary: dict[str, Any] = {}
+        for label, width, _ in cost_points:
+            block: dict[str, Any] = {"width": list(width), "typed_objects": int(sum(width))}
+            for arm in fourarm.ARMS:
+                mine = [
+                    row
+                    for row in costs
+                    if row["arm"] == arm.name and row["operating_point"] == label
+                ]
+                block[arm.name] = {
+                    "train_ms_median": statistics.median(
+                        row["train_ms_per_step"] for row in mine
+                    ),
+                    "inference_ms_median": statistics.median(
+                        row["inference_ms_per_pass"] for row in mine
+                    ),
+                }
+            baseline = block["A"]["train_ms_median"]
+            infer_baseline = block["A"]["inference_ms_median"]
+            for arm in fourarm.ARMS:
+                block[arm.name]["train_ratio_to_A"] = (
+                    block[arm.name]["train_ms_median"] / baseline if baseline else None
+                )
+                block[arm.name]["inference_ratio_to_A"] = (
+                    block[arm.name]["inference_ms_median"] / infer_baseline
+                    if infer_baseline
+                    else None
+                )
+            # A and D carry identical token counts by construction, so a systematic
+            # difference between them is a defect in the measurement, not a property of
+            # the arms. Recorded rather than asserted: a timing probe should report a
+            # suspicious reading, not refuse to write one.
+            block["a_d_train_parity_ratio"] = block["D"]["train_ratio_to_A"]
+            block["a_d_parity_within_10_percent"] = (
+                block["D"]["train_ratio_to_A"] is not None
+                and abs(block["D"]["train_ratio_to_A"] - 1.0) <= 0.10
+            )
+            summary[label] = block
+
+        partial = {
+            "scope": "A3 cost half only; the gate had not run when this was written",
+            "precision_policy": policy,
+            "gpu_devices": devices,
+            "cost_measurements": costs,
+            "cost_summary": summary,
+            "gate_records": [],
+            "gate_complete": False,
+        }
+        args.output.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n")
     print("cost half written; starting the gate", flush=True)
 
     # The bound pipeline takes exactly four cases at a time, so widths are gated in
@@ -446,7 +539,11 @@ def main() -> None:
         for index, group in enumerate(groups):
             workspace = Path(scratch) / f"group{index}"
             workspace.mkdir()
-            gates.append(gate_width_group(modules, group, args.gate_rows, workspace))
+            gates.append(
+                gate_group_in_subprocess(
+                    args.checkout, group, args.gate_rows, workspace
+                )
+            )
             print(
                 f"gate group {index} widths={gates[-1]['widths']}: "
                 f"{gates[-1]['verdict']}",

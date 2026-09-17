@@ -23,6 +23,9 @@ runtime=$2
 source_receipt=$3
 output=$4
 expected_commit=$5
+# Optional: reuse a previous run's measured cost half rather than spending the
+# device time twice. The cost half is valid independently of the gate.
+cost_receipt=${6:-}
 
 cd "$checkout"
 [[ "$(git rev-parse HEAD)" == "$expected_commit" ]]
@@ -49,9 +52,15 @@ export OMP_NUM_THREADS=8 OPENBLAS_NUM_THREADS=8 MKL_NUM_THREADS=8
 export TF_NUM_INTRAOP_THREADS=7 TF_NUM_INTEROP_THREADS=1 TF_DETERMINISTIC_OPS=1
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
+reuse=()
+if [[ -n "$cost_receipt" ]]; then
+  [[ -f "$cost_receipt" ]]
+  reuse=(--cost-receipt "$cost_receipt")
+fi
 timeout --kill-after=30s 2700s "$runtime/bin/python" \
   nd-unfolding/pet/direct_token_comparison/probe_four_arm_geometry_and_cost.py \
   --checkout "$checkout" --source-receipt "$source_receipt" \
+  "${reuse[@]+"${reuse[@]}"}" \
   --output "$output/four-arm-probe.json" > "$output/probe.log" 2>&1
 
 [[ -z "$(git status --porcelain)" ]]

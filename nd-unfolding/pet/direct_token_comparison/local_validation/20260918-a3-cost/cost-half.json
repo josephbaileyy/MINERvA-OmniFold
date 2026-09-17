@@ -1,0 +1,609 @@
+{
+  "scope": "A3 preparation: cross-device gate coverage at realizable widths, and per-arm GPU cost. No training to convergence, no closure statistic.",
+  "authorization": "A3, Joseph, 2026-09-18, ceiling 1 GPU-hour",
+  "precision_policy": {
+    "tf32_enabled": false,
+    "determinism_enabled": true,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32"
+  },
+  "gpu_devices": [
+    "/device:GPU:0"
+  ],
+  "source_receipt": "/pscratch/sd/j/josephrb/pet-a1-output-20260918/source-multiplicity.json",
+  "reference_role": "mc",
+  "ladders": {
+    "photons": [
+      0,
+      2
+    ],
+    "blobs": [
+      0,
+      18,
+      85
+    ],
+    "prongs": [
+      1,
+      4
+    ]
+  },
+  "widths_enumerated": [
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      4
+    ],
+    [
+      0,
+      18,
+      1
+    ],
+    [
+      0,
+      18,
+      4
+    ],
+    [
+      0,
+      85,
+      1
+    ],
+    [
+      0,
+      85,
+      4
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      0,
+      4
+    ],
+    [
+      2,
+      18,
+      1
+    ],
+    [
+      2,
+      18,
+      4
+    ],
+    [
+      2,
+      85,
+      1
+    ],
+    [
+      2,
+      85,
+      4
+    ]
+  ],
+  "gate_records": [
+    {
+      "widths": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          18,
+          1
+        ],
+        [
+          0,
+          18,
+          4
+        ]
+      ],
+      "cases": [
+        "w0-0-1",
+        "w0-0-4",
+        "w0-18-1",
+        "w0-18-4"
+      ],
+      "verdict": "FAIL",
+      "error": "RuntimeError: Intra op parallelism cannot be modified after initialization."
+    },
+    {
+      "widths": [
+        [
+          0,
+          85,
+          1
+        ],
+        [
+          0,
+          85,
+          4
+        ],
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          2,
+          0,
+          4
+        ]
+      ],
+      "cases": [
+        "w0-85-1",
+        "w0-85-4",
+        "w2-0-1",
+        "w2-0-4"
+      ],
+      "verdict": "FAIL",
+      "error": "RuntimeError: Intra op parallelism cannot be modified after initialization."
+    },
+    {
+      "widths": [
+        [
+          2,
+          18,
+          1
+        ],
+        [
+          2,
+          18,
+          4
+        ],
+        [
+          2,
+          85,
+          1
+        ],
+        [
+          2,
+          85,
+          4
+        ]
+      ],
+      "cases": [
+        "w2-18-1",
+        "w2-18-4",
+        "w2-85-1",
+        "w2-85-4"
+      ],
+      "verdict": "FAIL",
+      "error": "RuntimeError: Intra op parallelism cannot be modified after initialization."
+    }
+  ],
+  "gate_verdict_by_width": {
+    "[0, 0, 1]": "FAIL",
+    "[0, 0, 4]": "FAIL",
+    "[0, 18, 1]": "FAIL",
+    "[0, 18, 4]": "FAIL",
+    "[0, 85, 1]": "FAIL",
+    "[0, 85, 4]": "FAIL",
+    "[2, 0, 1]": "FAIL",
+    "[2, 0, 4]": "FAIL",
+    "[2, 18, 1]": "FAIL",
+    "[2, 18, 4]": "FAIL",
+    "[2, 85, 1]": "FAIL",
+    "[2, 85, 4]": "FAIL"
+  },
+  "validated_widths": [],
+  "failed_widths": [
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      4
+    ],
+    [
+      0,
+      18,
+      1
+    ],
+    [
+      0,
+      18,
+      4
+    ],
+    [
+      0,
+      85,
+      1
+    ],
+    [
+      0,
+      85,
+      4
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      0,
+      4
+    ],
+    [
+      2,
+      18,
+      1
+    ],
+    [
+      2,
+      18,
+      4
+    ],
+    [
+      2,
+      85,
+      1
+    ],
+    [
+      2,
+      85,
+      4
+    ]
+  ],
+  "gate_complete": false,
+  "cost_measurements": [
+    {
+      "arm": "A",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 14,
+      "train_ms_per_step": 10.702701799891656,
+      "inference_ms_per_pass": 1453.6602760053938,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "B",
+      "typed_enabled": true,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 14,
+      "train_ms_per_step": 10.704581099707866,
+      "inference_ms_per_pass": 1419.6931249971385,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "C",
+      "typed_enabled": true,
+      "routing": "direct",
+      "cap_treatment": "truncate",
+      "typed_objects": 14,
+      "train_ms_per_step": 14.20812990036211,
+      "inference_ms_per_pass": 1880.1764980016742,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "D",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "aggregate",
+      "typed_objects": 14,
+      "train_ms_per_step": 10.812319300021045,
+      "inference_ms_per_pass": 1464.060063000943,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "A",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 14,
+      "train_ms_per_step": 10.99120490034693,
+      "inference_ms_per_pass": 1460.376342998643,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "B",
+      "typed_enabled": true,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 14,
+      "train_ms_per_step": 10.348719900503056,
+      "inference_ms_per_pass": 1425.7215760007966,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "C",
+      "typed_enabled": true,
+      "routing": "direct",
+      "cap_treatment": "truncate",
+      "typed_objects": 14,
+      "train_ms_per_step": 13.314222800545394,
+      "inference_ms_per_pass": 1827.0732490054797,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "D",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "aggregate",
+      "typed_objects": 14,
+      "train_ms_per_step": 10.330788799910806,
+      "inference_ms_per_pass": 1421.4915260017733,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "A",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 14,
+      "train_ms_per_step": 10.345558399421861,
+      "inference_ms_per_pass": 1437.611470995762,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "B",
+      "typed_enabled": true,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 14,
+      "train_ms_per_step": 10.264413999539101,
+      "inference_ms_per_pass": 1442.8247199975885,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "C",
+      "typed_enabled": true,
+      "routing": "direct",
+      "cap_treatment": "truncate",
+      "typed_objects": 14,
+      "train_ms_per_step": 13.1929750998097,
+      "inference_ms_per_pass": 1820.0751280019176,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "D",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "aggregate",
+      "typed_objects": 14,
+      "train_ms_per_step": 10.778890800429508,
+      "inference_ms_per_pass": 1418.670954000845,
+      "inference_rows": 20000,
+      "operating_point": "mean_multiplicity"
+    },
+    {
+      "arm": "A",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 87,
+      "train_ms_per_step": 11.715738000202691,
+      "inference_ms_per_pass": 300.5235320015345,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "B",
+      "typed_enabled": true,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 87,
+      "train_ms_per_step": 11.197540199646028,
+      "inference_ms_per_pass": 293.95109500183025,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "C",
+      "typed_enabled": true,
+      "routing": "direct",
+      "cap_treatment": "truncate",
+      "typed_objects": 87,
+      "train_ms_per_step": 21.861902700038627,
+      "inference_ms_per_pass": 388.56896400102414,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "D",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "aggregate",
+      "typed_objects": 87,
+      "train_ms_per_step": 11.681599499570439,
+      "inference_ms_per_pass": 294.469887005107,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "A",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 87,
+      "train_ms_per_step": 11.478801700286567,
+      "inference_ms_per_pass": 295.04401799931657,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "B",
+      "typed_enabled": true,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 87,
+      "train_ms_per_step": 11.408607100020163,
+      "inference_ms_per_pass": 294.2197840020526,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "C",
+      "typed_enabled": true,
+      "routing": "direct",
+      "cap_treatment": "truncate",
+      "typed_objects": 87,
+      "train_ms_per_step": 21.5635234999354,
+      "inference_ms_per_pass": 390.5622219972429,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "D",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "aggregate",
+      "typed_objects": 87,
+      "train_ms_per_step": 11.409751899918774,
+      "inference_ms_per_pass": 293.48677300004056,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "A",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 87,
+      "train_ms_per_step": 11.393898299866123,
+      "inference_ms_per_pass": 293.7721939961193,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "B",
+      "typed_enabled": true,
+      "routing": "pooled",
+      "cap_treatment": "truncate",
+      "typed_objects": 87,
+      "train_ms_per_step": 11.168329299835023,
+      "inference_ms_per_pass": 298.28027699841186,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "C",
+      "typed_enabled": true,
+      "routing": "direct",
+      "cap_treatment": "truncate",
+      "typed_objects": 87,
+      "train_ms_per_step": 21.51017989963293,
+      "inference_ms_per_pass": 388.7458479948691,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    },
+    {
+      "arm": "D",
+      "typed_enabled": false,
+      "routing": "pooled",
+      "cap_treatment": "aggregate",
+      "typed_objects": 87,
+      "train_ms_per_step": 11.098074699839344,
+      "inference_ms_per_pass": 296.1283279946656,
+      "inference_rows": 4000,
+      "operating_point": "tail_multiplicity"
+    }
+  ],
+  "cost_summary": {
+    "mean_multiplicity": {
+      "width": [
+        0,
+        12,
+        2
+      ],
+      "typed_objects": 14,
+      "A": {
+        "train_ms_median": 10.702701799891656,
+        "inference_ms_median": 1453.6602760053938,
+        "train_ratio_to_A": 1.0,
+        "inference_ratio_to_A": 1.0
+      },
+      "B": {
+        "train_ms_median": 10.348719900503056,
+        "inference_ms_median": 1425.7215760007966,
+        "train_ratio_to_A": 0.966925930853069,
+        "inference_ratio_to_A": 0.980780447491231
+      },
+      "C": {
+        "train_ms_median": 13.314222800545394,
+        "inference_ms_median": 1827.0732490054797,
+        "train_ratio_to_A": 1.2440057706438363,
+        "inference_ratio_to_A": 1.2568777445210317
+      },
+      "D": {
+        "train_ms_median": 10.778890800429508,
+        "inference_ms_median": 1421.4915260017733,
+        "train_ratio_to_A": 1.0071186698426582,
+        "inference_ratio_to_A": 0.9778705172490376
+      },
+      "a_d_train_parity_ratio": 1.0071186698426582,
+      "a_d_parity_within_10_percent": true
+    },
+    "tail_multiplicity": {
+      "width": [
+        0,
+        85,
+        2
+      ],
+      "typed_objects": 87,
+      "A": {
+        "train_ms_median": 11.478801700286567,
+        "inference_ms_median": 295.04401799931657,
+        "train_ratio_to_A": 1.0,
+        "inference_ratio_to_A": 1.0
+      },
+      "B": {
+        "train_ms_median": 11.197540199646028,
+        "inference_ms_median": 294.2197840020526,
+        "train_ratio_to_A": 0.9754973116546201,
+        "inference_ratio_to_A": 0.9972064032924542
+      },
+      "C": {
+        "train_ms_median": 21.5635234999354,
+        "inference_ms_median": 388.7458479948691,
+        "train_ratio_to_A": 1.8785517916384136,
+        "inference_ratio_to_A": 1.3175859338919713
+      },
+      "D": {
+        "train_ms_median": 11.409751899918774,
+        "inference_ms_median": 294.469887005107,
+        "train_ratio_to_A": 0.9939845811287018,
+        "inference_ratio_to_A": 0.9980540835970757
+      },
+      "a_d_train_parity_ratio": 0.9939845811287018,
+      "a_d_parity_within_10_percent": true
+    }
+  },
+  "limitations": [
+    "Families are sampled independently, so the realized width set is the product of the per-family ladders; the joint multiplicity correlation of real events is not reproduced.",
+    "The ladder is quantile-matched to the measured histograms, not their full support, because complete gate coverage without dropping events requires a finite width set.",
+    "Cost is cost. A cheaper arm is not a better one and nothing here bears on closure."
+  ]
+}
