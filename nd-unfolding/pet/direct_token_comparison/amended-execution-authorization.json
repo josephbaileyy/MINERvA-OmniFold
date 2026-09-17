@@ -32,7 +32,7 @@
     "mixed_precision_policy": "float32",
     "floatx": "float32"
   },
-  "manifest_sha256": "ad5b0b07c223e3526969dd01b05426e9c8bf742a72eb66c7173950608882f78a",
+  "manifest_sha256": "e40ab8da1d9d04087f6219cbae0529f09242ff12d2fee3581b12beb3c6bedfb9",
   "authority_source": "nd-unfolding/pet/direct_token_comparison/BEN_COMPARISON_AUTHORIZATION-20260915.md",
   "authority_source_sha256": "5fce2195088cf1241b9706c7c6ddcee855bd7fd07922f567532fc1b00ca1af26",
   "approval_date": "2026-09-16 Asia/Seoul",

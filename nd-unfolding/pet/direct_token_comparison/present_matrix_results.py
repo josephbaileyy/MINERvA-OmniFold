@@ -1,0 +1,188 @@
+"""Turn the frozen reducer's output into the report's tables, without adding claims.
+
+The reducer decides; this only formats. It reads `summarize_runs.py`'s JSON and
+emits markdown for the three things Joseph asked the report to carry — closure
+accuracy, stability across seeds, and per-arm compute cost — plus the scope
+sentences that must travel with them.
+
+Two rules are enforced rather than trusted to the writer:
+
+* It never converts `NO_PASS` into a claim of inferiority. `NO_PASS` may be an
+  inconclusive paired interval *or* a failed safeguard, and those read very
+  differently, so the summary names which safeguards failed.
+* It never reports a per-arm inference cost. The frozen producer instruments
+  per-arm *training* only; the non-fit remainder of wall time also contains one
+  shared fixture build, normalization and serialization, and does not separate by
+  arm. The gap is printed as a gap.
+
+Missing fields raise rather than silently formatting a blank, because a quietly
+empty cell in a mentor-facing report is worse than a crash here.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import statistics
+from typing import Any
+
+SEEDS = (17, 29, 43, 59, 71, 89, 101, 113)
+SCOPE = (
+    "Scope: this compares family-pooled against individual-object attention on the "
+    "specified synthetic fixture, with information content, model size, training "
+    "budget, initialization and seeds held identical between arms. It does not "
+    "compare our complete pipeline against Gregor's, does not settle "
+    "high-multiplicity overflow performance (the fixture gives every event four "
+    "objects, so a cap never binds), and says nothing about real data."
+)
+
+
+def _require(summary: dict[str, Any], *keys: str) -> None:
+    """Fail loudly on a reducer output that lacks a field we are about to print."""
+    missing = [k for k in keys if k not in summary]
+    if missing:
+        raise ValueError(f"Reducer output is missing {missing}; refusing to format")
+
+
+def closure_section(summary: dict[str, Any]) -> str:
+    """Report the paired injected improvement and the safeguard outcome."""
+    _require(
+        summary,
+        "paired_improvement_percent",
+        "paired_mean_95_percent_interval",
+        "checks",
+        "decision",
+    )
+    gains = list(summary["paired_improvement_percent"])
+    low, high = summary["paired_mean_95_percent_interval"]
+    failed = sorted(name for name, held in summary["checks"].items() if not held)
+    safeguards = [
+        n for n in failed if n not in ("material_paired_gain", "favorable_seeds")
+    ]
+
+    lines = ["### Closure accuracy", ""]
+    lines.append(
+        f"Decision under the unchanged frozen criteria: **{summary['decision']}**."
+    )
+    lines.append("")
+    lines.append(
+        f"Paired injected improvement, direct over pooled: mean 95% interval "
+        f"**[{low:.3f}%, {high:.3f}%]** across {len(gains)} seeds."
+    )
+    lines.append("")
+    if summary["decision"] == "NO_PASS":
+        if safeguards:
+            lines.append(
+                "This `NO_PASS` is a **safeguard failure**, not an inconclusive "
+                f"measurement: {', '.join(f'`{s}`' for s in safeguards)} did not hold. "
+                "A safeguard failure says the run is not interpretable as a clean "
+                "comparison, not that either representation is worse."
+            )
+        else:
+            lines.append(
+                "This `NO_PASS` is an **inconclusive result**: every safeguard held, "
+                "and the paired improvement simply did not clear the frozen "
+                "thresholds. It is not evidence that either representation is worse."
+            )
+    else:
+        lines.append(
+            "Every safeguard held and the paired improvement cleared the frozen "
+            "thresholds. This is a synthetic routing result only."
+        )
+    return "\n".join(lines)
+
+
+def stability_section(summary: dict[str, Any]) -> str:
+    """Report spread and sign consistency across seeds."""
+    gains = list(summary["paired_improvement_percent"])
+    positive = sum(1 for g in gains if g > 0)
+    spread = max(gains) - min(gains)
+    lines = ["### Stability across seeds", ""]
+    lines.append("| seed | paired improvement (%) |")
+    lines.append("|---|---:|")
+    for seed, gain in zip(SEEDS, gains):
+        lines.append(f"| {seed} | {gain:+.3f} |")
+    lines.append("")
+    lines.append(
+        f"Favourable in **{positive} of {len(gains)}** seeds; median "
+        f"**{statistics.median(gains):+.3f}%**, full spread **{spread:.3f}** "
+        f"percentage points (min {min(gains):+.3f}, max {max(gains):+.3f})."
+    )
+    if len(gains) > 1:
+        lines.append(
+            f"Seed-to-seed standard deviation is **{statistics.stdev(gains):.3f}** "
+            "percentage points; compare that against the mean before reading the "
+            "sign of any single seed as meaningful."
+        )
+    return "\n".join(lines)
+
+
+def cost_section(summary: dict[str, Any]) -> str:
+    """Report per-arm training cost, and name the inference gap as a gap."""
+    _require(summary, "compute")
+    c = summary["compute"]
+    ratio = c["paired_direct_over_pooled_ratio"]
+    lines = ["### Compute cost", ""]
+    lines.append("| quantity | pooled | direct |")
+    lines.append("|---|---:|---:|")
+    lines.append(
+        f"| total training seconds | {c['pooled_fit_seconds_total']:.0f} "
+        f"| {c['direct_fit_seconds_total']:.0f} |"
+    )
+    lines.append(
+        f"| median per job | {c['pooled_fit_seconds_median']:.0f} "
+        f"| {c['direct_fit_seconds_median']:.0f} |"
+    )
+    lines.append("")
+    if ratio["median"] is not None:
+        lines.append(
+            f"Paired direct/pooled training-cost ratio across {ratio['n']} jobs: "
+            f"median **{ratio['median']:.3f}** (min {ratio['min']:.3f}, "
+            f"max {ratio['max']:.3f}). Total job wall time "
+            f"{c['job_wall_seconds_total']:.0f} s."
+        )
+    lines.append("")
+    lines.append(
+        "**Per-arm inference cost is not reported, because it was not measured.** The "
+        "frozen producer instruments per-arm training only. The non-fit remainder of "
+        "each job's wall time also contains one shared fixture build, normalization "
+        "and serialization, and does not separate by arm, so no per-arm inference "
+        "number can be derived from this matrix. Obtaining one needs a separate "
+        "timing run."
+    )
+    lines.append("")
+    lines.append(
+        "Cost is reported, never gated: it does not enter the acceptance criteria, "
+        "and a cheaper arm does not thereby become the better one."
+    )
+    return "\n".join(lines)
+
+
+def render(summary: dict[str, Any]) -> str:
+    """Assemble the three sections with the scope sentence attached."""
+    return "\n\n".join(
+        [
+            "## Measured result of the paired routing matrix",
+            SCOPE,
+            closure_section(summary),
+            stability_section(summary),
+            cost_section(summary),
+        ]
+    )
+
+
+def main() -> None:
+    """Format a reducer summary into report-ready markdown."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--summary", type=Path, required=True)
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    text = render(json.loads(args.summary.read_text()))
+    if args.output:
+        args.output.write_text(text + "\n")
+    print(text)
+
+
+if __name__ == "__main__":
+    main()
