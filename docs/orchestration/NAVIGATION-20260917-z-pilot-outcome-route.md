@@ -26,7 +26,8 @@ The single authorization is **consumed**; no replacement submission is authorize
 |---|---|
 | **branch** | `lane/z-assembly-pilot-20260914`, pushed to `origin` |
 | **outcome record** (RUN_LOG § 2026-09-17, STATUS, reconciliation §10) | **`1b2873a8e9b3c78568725494799a3df6234a39d5`** |
-| **corrected recommendation** (§12; §11 is withdrawn) | **`a14ff88b2a0445f403d2d73cbb5c4d16bbf49d33`** on the same branch — read §12, never §11 |
+| **corrected recommendation** (§12 **as corrected by §13**; §11 is withdrawn) | **`affc9e03119230ece17f977325d8a1ba00d68827`** on the same branch — **read §13 first**; §12.7's decision table is superseded by §13.7, and §11 is not citable |
+| **independent assessment of §12** | **`ed18a231de4c3b6b016e268be54257579b6c7739`** on `lane/z-criteria-independent-assessment-20260910` — `ASSESSMENT-20260917-decision-support-section-12.md`. **It closes nothing:** full `S` OPEN, §7 item 4 UNASSESSED, `θ` RECOMMENDED NOT ADOPTED, A1 OPEN, Gate 2 FAIL |
 | **accounting + the detailed result in its message** | **`0202591b15092486b6db167478cf72290fcc7ed9`** |
 | **assembling revision** (deployed, immutable) | **`fb9ec3560fd6d62295dffc81b5694c9e26667d5b`** |
 | **producer revision** (the precursor's) | **`e09513d842ad3acc1964c1af740696f02eaed7d9`** |

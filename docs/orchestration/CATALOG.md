@@ -551,7 +551,8 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `outcome.assessable` false on reject condition `4c`**, all four `withheld_boundaries` still
   `WITHHELD`. **`B`, `S` in full, and `ε` are open; Gate 2 remains FAIL; construction authorizes
   nothing.** Outcome record `1b2873a8e9b3c78568725494799a3df6234a39d5`, corrected recommendation
-  §12 at `a14ff88b2a0445f403d2d73cbb5c4d16bbf49d33` (**§11 is withdrawn**), accounting `0202591b15092486b6db167478cf72290fcc7ed9`,
+  §12 **as corrected by §13** at `affc9e03119230ece17f977325d8a1ba00d68827` (**§11 is withdrawn**; §12.7's decision table is superseded by
+  §13.7, after independent assessment `ed18a231de4c3b6b016e268be54257579b6c7739`), accounting `0202591b15092486b6db167478cf72290fcc7ed9`,
   assembling revision `fb9ec3560fd6d62295dffc81b5694c9e26667d5b`. Also **corrects a false claim
   that `main` contains no Z content** — it carries **26** Z-named files including the `SPEC`,
   Joseph's `DECISION-20260906`, `Z_CONSTRUCTION_PLAN.md` and ten modules; what it lacks is the
