@@ -28,6 +28,7 @@ import statistics
 from typing import Any
 
 SEEDS = (17, 29, 43, 59, 71, 89, 101, 113)
+ROUTES = ("pooled", "direct")
 SCOPE = (
     "Scope: this compares family-pooled against individual-object attention on the "
     "specified synthetic fixture, with information content, model size, training "
@@ -133,8 +134,54 @@ def stability_section(summary: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def cost_section(summary: dict[str, Any]) -> str:
-    """Report per-arm training cost, and name the inference gap as a gap."""
+def inference_section(benchmark: dict[str, Any]) -> str:
+    """Report measured per-arm inference cost, or refuse if its criteria failed."""
+    failed = sorted(name for name, held in benchmark["checks"].items() if not held)
+    lines = ["#### Inference", ""]
+    if failed:
+        lines.append(
+            "The inference benchmark's own acceptance criteria did not hold "
+            f"({', '.join(f'`{f}`' for f in failed)}), so its timings are **not "
+            "quoted**. The measurement is untrustworthy; this says nothing about "
+            "either arm."
+        )
+        return "\n".join(lines)
+    seeds = benchmark["seeds"]
+    rows = seeds[0]["rows"]
+    lines.append("| seed | pooled events/s | direct events/s | direct/pooled time |")
+    lines.append("|---|---:|---:|---:|")
+    for s in seeds:
+        po, di = s["arms"]["pooled"], s["arms"]["direct"]
+        lines.append(
+            f"| {s['stem']} | {po['events_per_second_mean']:,.0f} "
+            f"| {di['events_per_second_mean']:,.0f} "
+            f"| {di['seconds_mean'] / po['seconds_mean']:.3f} |"
+        )
+    ratio = benchmark["paired_direct_over_pooled_ratio"]
+    worst_cv = max(
+        s["arms"][r]["coefficient_of_variation"] for s in seeds for r in ROUTES
+    )
+    lines.append("")
+    lines.append(
+        f"Measured on a real GPU over {rows:,} held-out events per pass, batch "
+        f"{benchmark['batch_size']}, {benchmark['warmup_passes']} warm-up passes "
+        f"discarded and {benchmark['timed_passes']} timed passes per arm. Individual "
+        f"tokens cost **{ratio['median']:.3f}x** pooled at inference — a larger "
+        "penalty than at training. Timing was stable: the worst coefficient of "
+        f"variation across all arms and seeds was {worst_cv:.4f}."
+    )
+    lines.append("")
+    lines.append(
+        f"Excluded from throughput and reported separately: the shared preprocessing "
+        f"build at {benchmark['preprocessing_seconds']:.1f} s once, and model loading "
+        "at roughly 0.17-0.25 s per model. One first-load reading of 1.6 s is "
+        "library initialization, not a property of that arm."
+    )
+    return "\n".join(lines)
+
+
+def cost_section(summary: dict[str, Any], benchmark: dict[str, Any] | None) -> str:
+    """Report per-arm training cost, then measured inference cost if available."""
     _require(summary, "compute")
     c = summary["compute"]
     ratio = c["paired_direct_over_pooled_ratio"]
@@ -159,14 +206,20 @@ def cost_section(summary: dict[str, Any]) -> str:
         )
     lines.append("")
     lines.append(
-        "**Per-arm inference cost is not reported, because it was not measured.** The "
-        "frozen producer instruments per-arm training only. The non-fit remainder of "
-        "each job's wall time also contains one shared fixture build, normalization "
-        "and serialization, and does not separate by arm, so no per-arm inference "
-        "number can be derived from this matrix. Obtaining one needs a separate "
-        "timing run."
+        "The frozen producer instruments per-arm **training** only; the non-fit "
+        "remainder of each job's wall time also contains one shared fixture build, "
+        "normalization and serialization and does not separate by arm. Inference was "
+        "therefore measured separately."
     )
     lines.append("")
+    if benchmark is not None:
+        lines.append(inference_section(benchmark))
+        lines.append("")
+    else:
+        lines.append(
+            "**Per-arm inference cost is not reported, because it was not measured.**"
+        )
+        lines.append("")
     lines.append(
         "Cost is reported, never gated: it does not enter the acceptance criteria, "
         "and a cheaper arm does not thereby become the better one."
@@ -174,15 +227,15 @@ def cost_section(summary: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def render(summary: dict[str, Any]) -> str:
-    """Assemble the three sections with the scope sentence attached."""
+def render(summary: dict[str, Any], benchmark: dict[str, Any] | None = None) -> str:
+    """Assemble the sections with the scope sentence attached."""
     return "\n\n".join(
         [
             "## Measured result of the paired routing matrix",
             SCOPE,
             closure_section(summary),
             stability_section(summary),
-            cost_section(summary),
+            cost_section(summary, benchmark),
         ]
     )
 
@@ -191,9 +244,15 @@ def main() -> None:
     """Format a reducer summary into report-ready markdown."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--summary", type=Path, required=True)
+    parser.add_argument("--inference-benchmark", type=Path)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    text = render(json.loads(args.summary.read_text()))
+    benchmark = (
+        json.loads(args.inference_benchmark.read_text())
+        if args.inference_benchmark
+        else None
+    )
+    text = render(json.loads(args.summary.read_text()), benchmark)
     if args.output:
         args.output.write_text(text + "\n")
     print(text)

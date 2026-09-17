@@ -1,5 +1,5 @@
 {
-  "base_commit": "0cc7557009e4de1b4a7370569ce3e433c7f8bdf9",
+  "base_commit": "5bbf327ce3ea6fff494f0d2a1089208972532d2d",
   "scope": "synthetic-amended-preflight-calibration",
   "files": {
     "nd-unfolding/mnv_guarded_run.py": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b",
@@ -31,7 +31,7 @@
     "nd-unfolding/pet/direct_token_comparison/optimizer-gate-authorization.json": "bedc48383b24257278e8bbf6f875570a6f43f1ad7d4d096ec451aebe277b83b2",
     "nd-unfolding/pet/direct_token_comparison/optimizer_diagnostic.py": "b4b5761a70d56b7ba0ac5b1be885f34d6b79d2f737ce1afd018897dc026f5184",
     "nd-unfolding/pet/direct_token_comparison/optimizer_equivalence.py": "97b021c8ee42bfd586698c2e5d82ef28c714adf83ee030cf4871b24ea71d7c83",
-    "nd-unfolding/pet/direct_token_comparison/present_matrix_results.py": "250a7318717fe137f35639b39a49d543eacf50d5cbd9773f67e37ee7300434c5",
+    "nd-unfolding/pet/direct_token_comparison/present_matrix_results.py": "ce30b5042266dfb1bbcf2f3afd517b04e41de87c230dc0c1055744e016fd0893",
     "nd-unfolding/pet/direct_token_comparison/reference/typed_token_comparison_cpu.py": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95",
     "nd-unfolding/pet/direct_token_comparison/reproduce_evidence.py": "72d0b5e5b4484beb1fc498cc5ed4567d5bda6dfb31fcf0c6661e341d28c6bfc6",
     "nd-unfolding/pet/direct_token_comparison/run-card.json": "567e3eabe16b7c3fc79f597621880f882783d4caca00dff1beb54462b6f96284",

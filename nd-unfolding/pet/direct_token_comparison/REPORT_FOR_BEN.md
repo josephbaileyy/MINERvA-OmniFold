@@ -24,10 +24,12 @@ effect the acceptance criteria demand would need roughly **209 paired seeds**; w
 eight. That is the single most useful number in this report: if we care about this
 question, the answer is a better-powered experiment, not a different representation.
 
-What *is* clean is the price. Individual-object tokens cost **≈11% more training time**
-— a per-job ratio of **1.118** median across all 24 jobs, tightly bounded (1.026–1.137)
-and unambiguous (**p = 1.2 × 10⁻⁷**). So on this fixture we would pay a reliable ~11%
-to buy an accuracy change we cannot detect.
+What *is* clean is the price, and it is now measured on both sides. Individual-object
+tokens cost **≈12% more training time** (per-job ratio **1.118** median across all 24
+jobs, 1.026–1.137, **p = 1.2 × 10⁻⁷**) and **≈28% more inference time** (**1.283×**,
+12,676 → 9,882 events/second, consistent to three decimals across three trained
+models). So on this fixture we would pay a reliable ~12% to train and ~28% to run, to
+buy an accuracy change we cannot detect.
 
 **Practical recommendation:** keep family pooling as the default for now. Revisit only
 with either a materially better-powered comparison or a fixture where the question
@@ -98,7 +100,19 @@ Seed-to-seed standard deviation is **25.774** percentage points; compare that ag
 
 Paired direct/pooled training-cost ratio across 24 jobs: median **1.118** (min 1.026, max 1.137). Total job wall time 47778 s.
 
-**Per-arm inference cost is not reported, because it was not measured.** The frozen producer instruments per-arm training only. The non-fit remainder of each job's wall time also contains one shared fixture build, normalization and serialization, and does not separate by arm, so no per-arm inference number can be derived from this matrix. Obtaining one needs a separate timing run.
+The frozen producer instruments per-arm **training** only; the non-fit remainder of each job's wall time also contains one shared fixture build, normalization and serialization and does not separate by arm. Inference was therefore measured separately.
+
+#### Inference
+
+| seed | pooled events/s | direct events/s | direct/pooled time |
+|---|---:|---:|---:|
+| ordinary-17 | 12,676 | 9,882 | 1.283 |
+| ordinary-29 | 12,692 | 9,905 | 1.281 |
+| ordinary-43 | 12,650 | 9,858 | 1.283 |
+
+Measured on a real GPU over 50,000 held-out events per pass, batch 1024, 3 warm-up passes discarded and 10 timed passes per arm. Individual tokens cost **1.283x** pooled at inference — a larger penalty than at training. Timing was stable: the worst coefficient of variation across all arms and seeds was 0.0203.
+
+Excluded from throughput and reported separately: the shared preprocessing build at 18.7 s once, and model loading at roughly 0.17-0.25 s per model. One first-load reading of 1.6 s is library initialization, not a property of that arm.
 
 Cost is reported, never gated: it does not enter the acceptance criteria, and a cheaper arm does not thereby become the better one.
 

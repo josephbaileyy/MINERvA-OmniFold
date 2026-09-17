@@ -1,5 +1,19 @@
 # N-D OmniFold run log
 
+## 2026-09-17 — per-arm inference cost measured
+
+First attempt `58461843` FAILED on `timeout` (exit 124, 35 min, no receipt) from a
+sizing error of mine: four 250k-row fixture builds at ~100 s each plus 78 full passes.
+Matrix receipts verified untouched and the `NO_PASS` result re-reduced identically.
+Resized on Joseph's decision to 50,000 rows with a single shared fixture build.
+
+Second attempt `58467879` **COMPLETED** (`0:0`, 408 s) with **all five acceptance
+criteria passing** on a real GPU at the bound precision. Individual tokens cost
+**1.283x** pooled at inference (12,676 vs 9,882 events/s), consistent to three decimals
+across three trained models, worst coefficient of variation 0.0203. Preprocessing
+(18.7 s, once) and model loading (~0.17-0.25 s) are reported separately and excluded
+from throughput. Cost only: it gates nothing and says nothing about accuracy.
+
 ## 2026-09-17 — frozen routing matrix complete: NO_PASS, and underpowered
 
 Array `58397664` completed all 24 tasks `COMPLETED 0:0`. 24 receipts, 144 artifacts with
