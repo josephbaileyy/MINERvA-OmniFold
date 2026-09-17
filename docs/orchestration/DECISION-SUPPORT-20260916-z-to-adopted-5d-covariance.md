@@ -1551,3 +1551,148 @@ alone and the date argument must not be asserted.
 
 **Nothing adopted. `θ` NOT ADOPTED and not a floor; `B` and `ε` open; full `S` OPEN, prepared but NOT
 graded; Gate 2 FAIL; `cause3_corr` WITHHELD. No compute authorized or requested.**
+
+---
+
+## 19. E1 and E2 discharged; my amendment finding refuted and RELOCATED to a worse place
+
+**Assessment: `0d7b366ad89598002745ddf7a6a5e9b4b346669e`, by `owners.tsv:15` `[cb0b6b]`.** Adopts
+nothing. `θ` still closed, `B` unestablished, full `S` OPEN, §7 item 4 still unrouted.
+
+### 19.1 E1 is PERFORMED and RECONSTRUCTS — by the right lane
+
+`[cb0b6b]` has **live cluster access**, which resolves the gap §18.3 recorded: I declined as not a
+non-owning lane, `[91eaa2]` has no access, and it is a non-owning lane *with* access. Read-only
+login-node work only — `find`, `stat`, `sha256sum`, `git hash-object`, one `python` loading an
+`npz`. **No `sbatch`, no `srun`, R5 untouched, writes only to `/tmp`.** **Every product figure in its
+record is now measured rather than relayed**, which closes a standing limitation on all three lanes.
+
+| | |
+|---|---|
+| digests | `cb82fc32…` matches `product-digests.txt`; `z-cv` and `z-mean` match theirs |
+| the predicate | **recomputed and CHECKED, not applied** — masks **elementwise identical**, which is what condition **11b** actually requires; 10694 support / 55162 genuine zero / 0 negative / sum 65856, all finite |
+| `r_null` | **`4.45200021375829101e-14`** in three of its own summation orders **and bitwise equal** to the blob-pinned `null_ratio` and `reconstruct_null_ratio`, which it **called rather than retyped** |
+| against the build's `4.45200021375829038e-14` | **1.00 ULP**, relative `2.220e-16` |
+
+⚠ **The npz carries NO recorded null norm**, so the producer's number could not have been read even
+by accident. **Three reconstructions now exist within 2 ULP and none is bitwise** — mine was
+`4.452000213758293e-14` — which is the case for a numerical criterion made *on the criterion's own
+operands*. And since its value matches the instrument **bitwise**, the residual lives in the
+**build's** summation path, not in any reconstruction.
+
+Its re-derivations of my figures all agree: 10683/11 bitwise split, 0 off support,
+`max|Δ/x| = 1.75527161917355179e-12` at support-index 5723 = grid-index 31499,
+`min|ρ| = 0.0` exactly, margins `569.7×` and `2.246e4×`.
+
+**Incidental and favourable:** `zdeploy-e09513d8` carries `z_statistics.py` and `z_contract.py`
+**byte-identical to the committed blobs**, while the shared cluster checkout contains **neither** —
+so the pilot ran from its deployment. **That is the opposite of the OI-136 shape.**
+
+### 19.2 E2 is DISCHARGED — and the date is 2026-08-08, not 08-07
+
+`5d617da8`, **2026-08-08**, **Joseph Bailey**, *"Withdraw the sign argument, declare the
+reproducibility tolerance…"*, introducing `REPRO_RTOL_PER_BIN = 1e-9` at `p4_lib.py:93` — verified
+by `git log -S` on the literal. It **pre-dates the precursor product by 37 days and the null
+observation by 40**, so §3.1's fourth clause holds on **dates as well as subject** and the weaker
+fallback is unnecessary. ⚠ **The proposal and this record's own §2.2 both say "2026-08-07"; it is
+`2026-08-08`.** Immaterial to the conclusion, and worth fixing because the entire argument is about
+dates.
+
+### 19.3 ⚠ MY §18.2 AMENDMENT FINDING IS REFUTED AS STATED — one does not amend a proposal
+
+All my `SPEC` citations verify. **But `SPEC:1552` titles the section that contains them:**
+
+> `## 3.7 THE TWO CRITERIA — ⚠ SPECIFIED BUT NOT COMPLETED, AND ENTIRELY PROPOSED`
+
+and `:1557-1560` draws the consequence itself: *"§3.6 therefore still lists both criteria as
+incomplete, and §3.3 condition `4c` still bites — a run against an underived boundary is itself a
+reject condition. **That is the mechanism that makes this state safe.**"*
+
+**So `B ≤ S` and `ε ∈ [B, S]` are §3.7a's own PROPOSAL, not an adopted requirement — and one does
+not amend a proposal.** §18.2's *"requires an amendment to §3.7a"* is **withdrawn**. ⚠ **And the
+correction reaches further than that one section: wherever this record has treated the `[B, S]`
+interval as governing contract, it was over-strong.** That cuts in the acceptance proposal's favour
+on this specific point, and `[cb0b6b]` reports the same error in its own E1 requirement at
+`923a321c`.
+
+### 19.4 But the instinct relocates to §3.6a — and 4c is a STATE, not an act
+
+`SPEC:1362-1365`, verified: *"§3.6 remains as written because it is the **schema** §3.7 answers
+against … **§3.6's requirements are not relaxed by §3.7 and none of them is dropped.**"* And
+`:1365-1366` says §3.7 answers **§3.6a's items 1, 2 and 4** — **not item 3.**
+
+Item 3 is the order of work: **(i)** which reported quantity a non-deterministic CV could move and
+through what mechanism; **(ii)** derive the boundary appropriate to *that* relationship; **(iii)**
+only then a number. **The transfer supplies (iii) with (ii) taken from a different subject.** So
+**reject condition `4c` is LIVE against this route** — and that is **worse than a needed amendment:
+an amendment is an act Joseph can take; `4c` is a state the route is in.**
+
+⚠ **AND IT IS A RULING RATHER THAN A CHOICE, WHICH IS THE SHARPEST POINT IN THE ASSESSMENT.** §6.4
+requires the bound **"fixed before production"**, and **production has happened.** A boundary derived
+now would be fixed *after* production and so could not satisfy §6.4 for these products. **Therefore
+step (ii) is unperformable for these products by anyone at any cost** — the only admissible boundary
+is a pre-existing one, and a pre-existing one was necessarily derived for a different subject,
+because Z's relationship did not yet exist. This **strengthens** the proposal's §1(iii) and
+**corrects its ground**: the decisive clause is **"fixed before production"**, not *"not chosen from
+a favourable result"* — because a boundary derived from the **use** would never consult the null at
+all.
+
+**All three lanes' positions are restated by this:** the proposal's *"no amendment required"* is not
+sustained while `4c` is live; my *"amend §3.7a"* is refuted; and `[cb0b6b]`'s *"§6.4 plus condition
+11"* holds only for a **`θ`-style replacement** — **the proposal is right that this route replaces
+nothing and that condition 11 does not fire.**
+
+### 19.5 My two supporting points: one half right, one refuted
+
+**Point (1) — half right, and my symmetry charge does not land.** The proposal's split — observed
+floor to **feasibility**, transfer to **justification** — *is* the division `SPEC:1406-1409` draws,
+so that part is legitimate and my objection there was wrong. What the sentence does **not** do is
+license omitting step (ii), since its lead clause exists to insist on it; the gap is at §3.6a, and
+citing `:1406-1409` for it overreaches **in the proposal's favour**. ⚠ **And my "same sentence read
+two ways" charge fails:** `θ_A` was used as a **CAP**, which the sentence forbids; the observed floor
+is used for **FEASIBILITY**, which it permits. **Same sentence, two roles** — not a symmetry.
+
+**Point (2) — REFUTED.** The rejection is on the record and **predates the proposal**: `SPEC:1579`
+is headed *"Item 1 — the normalizer, with both named alternatives rejected on the record"*, `:1602`
+*"REJECTED — normalization by `sqrt(Tr C_Z)`"*, and `:1627` *"REJECTED as the gate, RETAINED as a
+reported diagnostic — the per-bin maximum relative deviation"*. **Nothing is owed.** My error: I read
+§3.6a item 1's **requirement** and not the §3.7 subsection that **answers** it — while `:1365`
+states in terms that §3.7 answers items 1, 2 and 4. **Reading a requirement without reading its
+answer is the same non-covering shape as reading one tree and citing another.**
+
+### 19.6 The `z_contract.py` fork, and my citation was right on three revisions of five
+
+`[cb0b6b]` withdraws its own "misaddressed" verdict. Measured:
+
+| revision | blob | `G_FLOOR` |
+|---|---|---|
+| `origin/main`, `480bed76` (criteria lane), `d8f5ccd5` (the proposal) | `24379afb40d2` | **`:84`** |
+| `67528132` (this lane), **`fb9ec356` (the DEPLOYMENT)** | `80325ce5c788` | **`:126`** |
+
+**The file has forked 3-vs-2.** So `z_contract.py:84` is correct on three revisions including the
+one the proposal was written against — and wrong on the two that matter for §16.2(d), whose subject
+is the **deployed** revision. §17.1's framing stands; what was genuinely wrong was citing a line
+**without naming a tree**, which both of us did. What survives of the charge: `gate_g_domain` is at
+`z_assembly.py:126`, so a bare `(:126-132)` following a `z_contract.py` citation misroutes; and
+`worst_rel_bin` is `p4_lib.py:198`.
+
+### 19.7 Joseph's five requirements, as assessed
+
+**1, 2, 4, 5 MET** — and §2.3's composition is called the strongest section in the proposal, *"stating
+a limit against its author's own `B` declaration."* **3 NOT MET as written.** Requirement 4's two
+checks (E1, E2) are now **discharged**. **Requirement 5's P1 — the projection-definition check — is
+owed and is the cheapest outstanding item in the package.**
+
+### 19.8 THE DECISION, and it is one ruling
+
+> **Does a pre-dating tolerance transferred from a different subject, with its transfer argument
+> stated, satisfy §3.6a item 3 for products already produced?**
+
+| | consequence |
+|---|---|
+| **YES** | reject condition `4c` **clears** and the route is **complete as written** — E1 reconstructs, E2 is discharged, condition 11 does not fire, and no amendment is required |
+| **NO** | **these products cannot be accepted on ANY route**, which is the proposal's §2.3 disjunction reached from the contract side: regeneration **replaces** them rather than rescuing them |
+
+**It is a ruling and not a choice** because §6.4's *"fixed before production"* makes step (ii)
+unperformable for these products by anyone. **Nothing adopted; acceptance is Joseph's act.** `θ` NOT
+ADOPTED and not a floor; `B` unestablished; full `S` OPEN; Gate 2 FAIL.
