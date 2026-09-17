@@ -570,15 +570,20 @@ correlation `corr(M C_k Mᵀ)`.** Three reasons:
    criterion on a hybrid cannot protect a conclusion drawn from something else.
 2. **The corrected requirement is satisfied by the actual object** (§11.2), so the hybrid's advantage
    is not a requirement.
-3. ⚠ **The peer's own measurement makes the non-disjointness BOUNDED AND BUDGETABLE, which is the key
-   they did not turn.** The leak is **near-linear at ≈ 0.3 × sd across three orders** — so with `φ = 1`
-   on the support (§3.1), the L1/L2 leak into L3 is bounded by **≈ 0.3 · δ_bin**, i.e. `≈ 3e-4` at
-   `δ_bin = 1e-3`. **DECLARED FORM:**
+3. ⚠⚠ **THIS ITEM IS WITHDRAWN IN FULL AT §12 AND IS PRESERVED ONLY AS THE RECORD OF WHAT WAS
+   PROPOSED. DO NOT CITE THE `0.3` OR THE BUDGET FORM FROM HERE.** It argued that the peer's
+   measurement made the non-disjointness *bounded and budgetable* — that the leak is near-linear
+   at `≈ 0.3 × sd`, so with `φ = 1` the L1/L2 leak into L3 would be bounded by `≈ 0.3 · δ_bin`,
+   `≈ 3e-4` at `δ_bin = 1e-3`. **Both halves fail: `δ_bin` is WITHHELD and not a gate, so the
+   "bound" is not evaluable; and the coefficient moves ~18× across source families, so `0.3` is
+   an ensemble-specific measurement rather than a transferable constant.** The superseded form
+   read:
 
-       tau  =  tau_corr  +  0.3 * delta_bin        the second term being the ACKNOWLEDGED diagonal leak
+       tau  =  tau_corr  +  0.3 * delta_bin        [WITHDRAWN -- see section 12]
 
-   **That is how a non-orthogonal decomposition is handled — the overlap is quantified and declared,
-   not engineered away.** It also removes the need to choose between disjointness and actuality.
+   ⚠⚠ **THIS BUDGET FORM IS WITHDRAWN AT §12.** It silently coupled L3's evaluability to `δ_bin`,
+   which is WITHHELD and blocked, and it transferred a coefficient measured on one synthetic
+   ensemble. §12 replaces it with a MEASURED decomposition that needs neither.
 
 **So the peer's impossibility result is TRUE and it DISSOLVES:** *"disjointness and actuality cannot
 both be had"* holds for disjointness-as-**invariance** — which is neither achievable nor required.
@@ -602,3 +607,69 @@ it: it is fatal only to a requirement that was mine and wrong.**
    `√diag`. **DECLARED: add a strict-positivity check on `diag(C_Z)` over the reported support, and
    treat a zero-variance reported bin as a REFUSAL rather than a masked bin** — masking it after the
    fact would be a post-hoc population change of exactly the kind §3.1's margin rule forbids.
+
+
+---
+
+## 12. ⚠ THE BUDGET FORM IS WITHDRAWN — IT COUPLED L3 TO A BLOCKED NUMBER, AND THE DECOMPOSITION IS MEASURABLE INSTEAD
+
+**A peer priced a consequence of §11.3 that I had not, and the pricing is correct.**
+`τ = τ_corr + 0.3·δ_bin` is a bound **only if `δ_bin` is an enforced gate.** But `δ_bin` is **WITHHELD
+and blocked** on the quantity that closed `θ` (§3.2), and §11.3 retains L2 as a **diagnostic, not a
+gate**. **So the budget form quietly moved `τ` from "not blocked in principle" (§7 item 6) to
+blocked-with-`δ_bin` — the hybrid had been independent of `δ_bin` by construction, and my replacement
+gave that independence away without saying so.** That is a real defect in a criterion I had just
+re-specified, and it is recorded rather than repaired silently.
+
+### 12.1 THE RESOLUTION IS NEITHER THE BUDGET NOR THE HYBRID — THE TWO STATISTICS ALREADY DECOMPOSE THE DRIFT
+
+The peer offered three options: accept the coupling knowingly, make L2 a gate with a conservative
+`δ_bin`, or measure the leak rather than budget it. **The third is right, and it is cheaper than it
+sounds, because the instrument already exists: it is the hybrid I retained as a secondary diagnostic.**
+
+    tau  :  a SINGLE declared tolerance on  corr(M C_k M')     -- the ACTUAL published object
+    report, per member k:
+        A_k = drift of corr(M C_k M')                          -- actual
+        H_k = drift of corr(M renorm(C_k) M')                  -- correlation channel alone
+        A_k - H_k                                              -- attributable to the DIAGONAL channel
+
+**MEASURED**, and each leg behaves as the construction requires:
+
+| case | actual | hybrid | difference |
+|---|---:|---:|---:|
+| pure diagonal rescale, `sd = 0.001 … 0.20` | `0.000447 … 0.065322` | `2.2e-16` | **= the whole drift** |
+| pure correlation change, diagonal held exactly fixed | `0.003426 / 0.016995 / 0.066001` | identical | **`≤ 5.6e-17`** |
+| both moving, `sd=0.05, mix=0.20` | `0.071866` | `0.066001` | `0.005864` |
+
+**So the diagonal channel's contribution is measured ON THE MEMBERS THEMSELVES — no coefficient, no
+transfer, and no dependence on `δ_bin`.** `τ` returns to a single declaration on the published object,
+and **§7 item 6's "not blocked in principle" is restored.**
+
+⚠ **ONE HONEST LIMIT, because overclaiming it would be the same error again:** both statistics are
+**max-norm** drifts, so the attribution is a **decomposition REPORT, not an exact additive identity** —
+the max can be attained at different entries and the residual can even be **negative** (MEASURED:
+`−0.000149` at `sd=0.01, mix=0.05`). **Therefore report BOTH statistics per member and the residual as
+an attribution, and do NOT define a derived "leak" number as if it were a component.**
+
+### 12.2 AND `0.3` MUST NOT BE TRANSFERRED — the peer's counter-test went against the peer
+
+They expected the leak coefficient to blow up in `C_Z`'s actual regime (anti-correlated, near-null,
+`λ_min < 0`), which would have killed the budget. **Measured the opposite:** `0.415 / 0.297 / 0.345` on
+a generic PSD source but `0.023 / 0.027 / 0.023 / 0.025` at near-cancellation depths — **an order of
+magnitude SMALLER in the regime predicted to be worse.** Objection withdrawn by its author, and
+**reported as having gone against them**, which is the disposition that makes it usable.
+
+**What survives is the part that matters here:** the coefficient moves by **~18×** across source
+families, so **`0.3` is a measurement on one synthetic ensemble and not a bound.** It is not
+transferable, and §12.1 removes any need for it — the decomposition is measured on the actual
+`diag(M1 C_Z M1ᵀ)`, **the same object §10.5 and §9.4 already converge on.**
+
+### 12.3 NET EFFECT ON THE APPROVAL LIST
+
+- **§7 item 3** stands as corrected at §11 (sensitivity, not invariance).
+- **§7 item 6** — `τ` **remains "not blocked in principle"**, which §11.3's budget had silently
+  forfeited and §12.1 restores.
+- **L2 stays a declared DIAGNOSTIC and is not promoted to a gate.** §9.3 is why: it controls the
+  coherent channel exactly at `(1+δ)²−1` and is blind to the cancelling one, so gating on it would buy
+  coverage of one channel at the price of coupling every other criterion to a blocked number.
+- **Nothing here unblocks `δ_bin` or `cause3_agg`**; §3.2 stands unchanged.
