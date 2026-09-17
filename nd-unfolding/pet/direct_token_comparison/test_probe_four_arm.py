@@ -67,6 +67,46 @@ class CaseNameTests(unittest.TestCase):
         self.assertEqual(preflight.STRESS_ONLY_CASES, ("variable",))
 
 
+class FixtureCompatibilityTests(unittest.TestCase):
+    """The bound preflight refuses a fixture whose key inventory differs.
+
+    ``amended_preflight`` compares the bundle's arrays against the generated ones and
+    raises on any inventory difference, so a replacement fixture builder that drifts
+    from the bound one fails on the cluster rather than here. This pins the contract
+    at the nominal width, where the two must agree exactly.
+    """
+
+    def test_width_cases_match_the_bound_fixture_inventory(self) -> None:
+        import numpy as np
+
+        import compatibility_preflight as original
+        import four_arm_representation as fourarm
+        import run_typed_token_comparison as runner
+        import typed_descriptor_keras as adapter
+        import typed_descriptors as typed
+        import typed_token_comparison as comparison
+
+        tf = adapter.require_tensorflow()
+        modules = {
+            "tf": tf,
+            "fourarm": fourarm,
+            "typed": typed,
+            "adapter": adapter,
+            "runner": runner,
+            "comparison": comparison,
+        }
+        _, bound = original.fixtures()
+        nominal = bound["nominal"]
+        width = (1, 1, 2)
+        _, mine = probe.width_case_builder(modules, [width], 4)()
+        case = mine[probe.case_name(width)]
+        self.assertEqual(set(nominal), set(case))
+        for key in nominal:
+            left, right = np.asarray(nominal[key]), np.asarray(case[key])
+            self.assertEqual(left.dtype, right.dtype, key)
+            self.assertEqual(left.shape, right.shape, key)
+
+
 class GroupingTests(unittest.TestCase):
     def test_the_bound_pipeline_group_size_is_four(self) -> None:
         self.assertEqual(probe.GROUP, 4)

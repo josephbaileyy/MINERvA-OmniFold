@@ -285,8 +285,10 @@ def main() -> None:
     parser.add_argument("--cost-rows", type=int, default=20000)
     parser.add_argument("--batch-size", type=int, default=1024)
     parser.add_argument("--steps", type=int, default=10)
-    parser.add_argument("--ladder-points", type=int, default=3)
+    parser.add_argument("--ladder-points", type=int, default=2)
+    parser.add_argument("--blob-ladder-points", type=int, default=3)
     parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--tail-cost-rows", type=int, default=4000)
     args = parser.parse_args()
 
     _install(args.checkout)
@@ -325,7 +327,7 @@ def main() -> None:
             reference["photons"]["histogram"], args.ladder_points
         ),
         "blobs": ladder_from_histogram(
-            reference["blobs"]["histogram"], args.ladder_points
+            reference["blobs"]["histogram"], args.blob_ladder_points
         ),
         "prongs": ladder_from_histogram(
             reference["prongs"]["histogram"], args.ladder_points, minimum=1
@@ -337,6 +339,99 @@ def main() -> None:
         for blobs in ladders["blobs"]
         for prongs in ladders["prongs"]
     ]
+
+    # Cost runs FIRST and its numbers are written before the gate starts. The gate
+    # is the long half, and a timeout there must not also destroy the cheap
+    # measurement the sizing depends on.
+    #
+    # Two operating points, both from the measurement rather than from the ladder:
+    # the rounded MEAN multiplicity, which is where the experiment would sit, and one
+    # high blob rung, because the measured distribution is skewed enough that the mean
+    # does not describe the expensive tail.
+    def rounded_mean(family: str, minimum: int = 0) -> int:
+        return max(minimum, int(round(float(reference[family]["mean"]))))
+
+    mean_width = (
+        rounded_mean("photons"),
+        rounded_mean("blobs"),
+        rounded_mean("prongs", 1),
+    )
+    tail_width = (rounded_mean("photons"), max(ladders["blobs"]), rounded_mean("prongs", 1))
+    cost_points = [
+        ("mean_multiplicity", mean_width, args.cost_rows),
+        ("tail_multiplicity", tail_width, args.tail_cost_rows),
+    ]
+    costs: list[dict[str, Any]] = []
+    for label, width, rows in cost_points:
+        for _ in range(args.repeats):
+            for arm in fourarm.ARMS:
+                record = measure_arm_cost(
+                    modules,
+                    arm,
+                    width,
+                    rows=rows,
+                    batch_size=args.batch_size,
+                    steps=args.steps,
+                )
+                record["operating_point"] = label
+                costs.append(record)
+                print(
+                    f"cost {label} arm={arm.name} K={sum(width)} "
+                    f"train={record['train_ms_per_step']:.1f} ms "
+                    f"infer={record['inference_ms_per_pass']:.1f} ms",
+                    flush=True,
+                )
+
+    summary: dict[str, Any] = {}
+    for label, width, _ in cost_points:
+        block: dict[str, Any] = {"width": list(width), "typed_objects": int(sum(width))}
+        for arm in fourarm.ARMS:
+            mine = [
+                row
+                for row in costs
+                if row["arm"] == arm.name and row["operating_point"] == label
+            ]
+            block[arm.name] = {
+                "train_ms_median": statistics.median(
+                    row["train_ms_per_step"] for row in mine
+                ),
+                "inference_ms_median": statistics.median(
+                    row["inference_ms_per_pass"] for row in mine
+                ),
+            }
+        baseline = block["A"]["train_ms_median"]
+        infer_baseline = block["A"]["inference_ms_median"]
+        for arm in fourarm.ARMS:
+            block[arm.name]["train_ratio_to_A"] = (
+                block[arm.name]["train_ms_median"] / baseline if baseline else None
+            )
+            block[arm.name]["inference_ratio_to_A"] = (
+                block[arm.name]["inference_ms_median"] / infer_baseline
+                if infer_baseline
+                else None
+            )
+        # A and D carry identical token counts by construction, so a systematic
+        # difference between them is a defect in the measurement, not a property of
+        # the arms. Recorded rather than asserted: a timing probe should report a
+        # suspicious reading, not refuse to write one.
+        block["a_d_train_parity_ratio"] = block["D"]["train_ratio_to_A"]
+        block["a_d_parity_within_10_percent"] = (
+            block["D"]["train_ratio_to_A"] is not None
+            and abs(block["D"]["train_ratio_to_A"] - 1.0) <= 0.10
+        )
+        summary[label] = block
+
+    partial = {
+        "scope": "A3 cost half only; the gate had not run when this was written",
+        "precision_policy": policy,
+        "gpu_devices": devices,
+        "cost_measurements": costs,
+        "cost_summary": summary,
+        "gate_records": [],
+        "gate_complete": False,
+    }
+    args.output.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n")
+    print("cost half written; starting the gate", flush=True)
 
     # The bound pipeline takes exactly four cases at a time, so widths are gated in
     # groups of four. A short ladder is deliberate: every width the fixture can
@@ -372,48 +467,6 @@ def main() -> None:
     failed = sorted(w for w, verdict in per_width.items() if verdict != "PASS")
     validated = sorted(w for w, verdict in per_width.items() if verdict == "PASS")
 
-    cost_width = tuple(
-        int(round(statistics.median([w[i] for w in widths]))) for i in range(3)
-    )
-    costs: list[dict[str, Any]] = []
-    for _ in range(args.repeats):
-        for arm in fourarm.ARMS:
-            costs.append(
-                measure_arm_cost(
-                    modules,
-                    arm,
-                    cost_width,
-                    rows=args.cost_rows,
-                    batch_size=args.batch_size,
-                    steps=args.steps,
-                )
-            )
-            print(
-                f"cost arm={arm.name} train={costs[-1]['train_ms_per_step']:.1f} ms "
-                f"infer={costs[-1]['inference_ms_per_pass']:.1f} ms",
-                flush=True,
-            )
-
-    summary: dict[str, Any] = {}
-    for arm in fourarm.ARMS:
-        mine = [row for row in costs if row["arm"] == arm.name]
-        summary[arm.name] = {
-            "train_ms_median": statistics.median(
-                row["train_ms_per_step"] for row in mine
-            ),
-            "inference_ms_median": statistics.median(
-                row["inference_ms_per_pass"] for row in mine
-            ),
-        }
-    baseline = summary["A"]["train_ms_median"]
-    for name, entry in summary.items():
-        entry["train_ratio_to_A"] = entry["train_ms_median"] / baseline if baseline else None
-        entry["inference_ratio_to_A"] = (
-            entry["inference_ms_median"] / summary["A"]["inference_ms_median"]
-            if summary["A"]["inference_ms_median"]
-            else None
-        )
-
     receipt = {
         "scope": (
             "A3 preparation: cross-device gate coverage at realizable widths, and "
@@ -423,6 +476,7 @@ def main() -> None:
         "precision_policy": policy,
         "gpu_devices": devices,
         "source_receipt": str(args.source_receipt),
+        "reference_role": reference["role"],
         "ladders": {family: list(values) for family, values in ladders.items()},
         "widths_enumerated": [list(width) for width in sorted(set(widths))],
         "gate_records": gates,
@@ -431,9 +485,9 @@ def main() -> None:
         },
         "validated_widths": [list(width) for width in validated],
         "failed_widths": [list(width) for width in failed],
-        "gate_complete": bool(validated) and not failed
+        "gate_complete": bool(validated)
+        and not failed
         and set(validated) == set(widths),
-        "cost_width": list(cost_width),
         "cost_measurements": costs,
         "cost_summary": summary,
         "limitations": [
@@ -449,16 +503,17 @@ def main() -> None:
     }
     args.output.write_text(json.dumps(receipt, indent=2, allow_nan=False) + "\n")
     print(
-        f"validated {len(validated)} of {len(widths)} widths; "
+        f"validated {len(validated)} of {len(set(widths))} widths; "
         f"gate_complete={receipt['gate_complete']}"
     )
-    for name, entry in summary.items():
-        print(
-            f"arm {name}: train {entry['train_ms_median']:.1f} ms "
-            f"({entry['train_ratio_to_A']:.3f}x A), inference "
-            f"{entry['inference_ms_median']:.1f} ms "
-            f"({entry['inference_ratio_to_A']:.3f}x A)"
-        )
+    for label, block in summary.items():
+        for arm in ("A", "B", "C", "D"):
+            print(
+                f"{label} arm {arm}: train {block[arm]['train_ms_median']:.1f} ms "
+                f"({block[arm]['train_ratio_to_A']:.3f}x A), inference "
+                f"{block[arm]['inference_ms_median']:.1f} ms "
+                f"({block[arm]['inference_ratio_to_A']:.3f}x A)"
+            )
 
 
 if __name__ == "__main__":
