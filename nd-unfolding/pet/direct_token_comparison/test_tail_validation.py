@@ -224,6 +224,52 @@ class BatteryTests(unittest.TestCase):
         self.assertEqual(record["weights_compared"], 42)
         self.assertTrue(record["passed"], record["failures"])
 
+    def test_allclose_many_handles_differently_shaped_weights(self) -> None:
+        """Submission 58493028 died here: 42 tensors of different shapes handed
+        to np.asarray raise on the inhomogeneous shape instead of comparing."""
+        left = [np.zeros((3, 4)), np.zeros(7), np.zeros((2, 2, 2))]
+        right = [np.zeros((3, 4)), np.zeros(7), np.zeros((2, 2, 2))]
+        ok, error = validation._allclose_many(left, right, self.criteria)
+        self.assertTrue(ok)
+        self.assertEqual(error, 0.0)
+        right[1] = right[1] + 1.0
+        ok, error = validation._allclose_many(left, right, self.criteria)
+        self.assertFalse(ok)
+        self.assertEqual(error, 1.0)
+
+    def test_allclose_many_refuses_a_length_mismatch(self) -> None:
+        ok, error = validation._allclose_many(
+            [np.zeros(2)], [np.zeros(2), np.zeros(2)], self.criteria
+        )
+        self.assertFalse(ok)
+
+    def test_cross_device_classification_runs_on_one_device(self) -> None:
+        """The GPU-only path, exercised locally by pointing both sides at the CPU.
+
+        Same device twice must agree on everything, so this is tier 1 and every
+        sub-check passes. It cannot prove GPU behaviour, but it does prove the
+        function computes and classifies rather than raising -- which is what the
+        cluster discovered the hard way.
+        """
+        record = validation.classify_cross_device(
+            self.modules, self.build, self.criteria, devices=("/CPU:0", "/CPU:0")
+        )
+        self.assertEqual(record["tier"], 1, record)
+        self.assertEqual(record["failed"], [])
+        self.assertIn("initial_weight_identity", record["subchecks"])
+        self.assertFalse(record["subchecks"]["initial_weight_identity"]["exemptible"])
+
+    def test_the_exempt_list_is_what_the_criteria_freeze(self) -> None:
+        self.assertEqual(
+            set(self.criteria.exempt_subchecks),
+            {
+                "gradient_agreement",
+                "prediction_agreement",
+                "updated_weight_agreement",
+                "common_operand_replay",
+            },
+        )
+
     def test_float64_reference_notices_a_corrupted_trajectory(self) -> None:
         captured = validation._two_steps_recording(self.modules, self.build(), "/CPU:0")
         captured["states"][1][0] = captured["states"][1][0] + 1.0

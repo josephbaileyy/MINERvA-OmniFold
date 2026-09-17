@@ -208,6 +208,33 @@ def _allclose(a: Any, b: Any, criteria: Criteria) -> tuple[bool, float]:
     return bool(np.allclose(left, right, atol=criteria.atol, rtol=criteria.rtol)), error
 
 
+def _allclose_many(
+    left: Sequence[Any], right: Sequence[Any], criteria: Criteria
+) -> tuple[bool, float]:
+    """Compare two equal-length sequences of differently-shaped arrays.
+
+    Needed because the weight list is 42 tensors of different shapes: handing it
+    straight to ``np.asarray`` raises on the inhomogeneous shape rather than
+    comparing anything, which is exactly how submission 58493028 died.
+    """
+    if len(left) != len(right):
+        return False, float("inf")
+    worst = 0.0
+    ok = True
+    for a, b in zip(left, right):
+        fine, error = _allclose(a, b, criteria)
+        worst = max(worst, error)
+        ok = ok and fine
+    return ok, worst
+
+
+def _equal_many(left: Sequence[Any], right: Sequence[Any]) -> bool:
+    """Bitwise equality over a sequence of differently-shaped arrays."""
+    return len(left) == len(right) and all(
+        np.array_equal(np.asarray(a), np.asarray(b)) for a, b in zip(left, right)
+    )
+
+
 def check_input_mask_correctness(
     modules: dict[str, Any], prepared: PreparedRun
 ) -> dict[str, Any]:
@@ -556,6 +583,7 @@ def classify_cross_device(
     modules: dict[str, Any],
     build: Any,
     criteria: Criteria,
+    devices: tuple[str, str] = ("/CPU:0", "/GPU:0"),
 ) -> dict[str, Any]:
     """V6 and the tier decision: run the full cross-device comparison and classify.
 
@@ -564,16 +592,14 @@ def classify_cross_device(
     stop otherwise. The measured differences are recorded either way, which is what
     turns the exempted requirements into evidence rather than an absence.
     """
-    cpu = _two_steps_recording(modules, build(), "/CPU:0")
-    gpu = _two_steps_recording(modules, build(), "/GPU:0")
+    cpu = _two_steps_recording(modules, build(), devices[0])
+    gpu = _two_steps_recording(modules, build(), devices[1])
 
     subchecks: dict[str, dict[str, Any]] = {}
 
-    ok, error = _allclose(cpu["initial"], gpu["initial"], criteria)
+    _, error = _allclose_many(cpu["initial"], gpu["initial"], criteria)
     subchecks["initial_weight_identity"] = {
-        "passed": all(
-            np.array_equal(a, b) for a, b in zip(cpu["initial"], gpu["initial"])
-        ),
+        "passed": _equal_many(cpu["initial"], gpu["initial"]),
         "max_abs": error,
         "exemptible": False,
     }
@@ -581,10 +607,11 @@ def classify_cross_device(
     worst = 0.0
     passed = True
     for step in range(2):
-        for a, b in zip(cpu["gradients"][step], gpu["gradients"][step]):
-            fine, error = _allclose(a, b, criteria)
-            worst = max(worst, error)
-            passed = passed and fine
+        fine, error = _allclose_many(
+            cpu["gradients"][step], gpu["gradients"][step], criteria
+        )
+        worst = max(worst, error)
+        passed = passed and fine
     subchecks["gradient_agreement"] = {
         "passed": passed,
         "max_abs": worst,
@@ -601,10 +628,11 @@ def classify_cross_device(
     worst = 0.0
     passed = True
     for step in range(2):
-        for a, b in zip(cpu["states"][step], gpu["states"][step]):
-            fine, error = _allclose(a, b, criteria)
-            worst = max(worst, error)
-            passed = passed and fine
+        fine, error = _allclose_many(
+            cpu["states"][step], gpu["states"][step], criteria
+        )
+        worst = max(worst, error)
+        passed = passed and fine
     subchecks["updated_weight_agreement"] = {
         "passed": passed,
         "max_abs": worst,
