@@ -87,10 +87,22 @@ def summarize(durations: list[float], rows: int) -> dict[str, Any]:
 
 
 def measure_seed(
-    tf: Any, comparison: Any, runner: Any, output: Path, stem: str, rows: int
+    tf: Any,
+    comparison: Any,
+    runner: Any,
+    output: Path,
+    stem: str,
+    rows: int,
+    inputs: dict[str, Any],
+    digest: str,
 ) -> dict[str, Any]:
-    """Measure both arms for one trained seed, alternating between them."""
-    inputs, digest = build_inputs(rows)
+    """Measure both arms for one trained seed, alternating between them.
+
+    The split is built once by the caller and shared. Rebuilding it per seed cost
+    about 100 s each at the full test size and merely *assumed* the rebuild was
+    identical; sharing one build makes "identical inputs across arms and seeds"
+    true by construction rather than by trusting determinism.
+    """
     # Register the lazily-defined custom Keras type before loading, as the
     # repository README requires; otherwise the saved model cannot deserialize.
     comparison.comparison_model_type()
@@ -140,7 +152,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkout", type=Path, required=True)
     parser.add_argument("--matrix-output", type=Path, required=True)
-    parser.add_argument("--rows", type=int, default=250000)
+    parser.add_argument("--rows", type=int, default=50000)
     parser.add_argument("--stems", default="ordinary-17,ordinary-29,ordinary-43")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -156,12 +168,14 @@ def main() -> None:
 
     # Preprocessing is shared work; time it once and keep it out of throughput.
     start = time.perf_counter()
-    _, digest = build_inputs(args.rows)
+    inputs, digest = build_inputs(args.rows)
     preprocessing_seconds = time.perf_counter() - start
 
     seeds = [s for s in args.stems.split(",") if s]
     results = [
-        measure_seed(tf, comparison, runner, args.matrix_output, stem, args.rows)
+        measure_seed(
+            tf, comparison, runner, args.matrix_output, stem, args.rows, inputs, digest
+        )
         for stem in seeds
     ]
 

@@ -30,13 +30,35 @@ number is measured here or not at all.
 | element | choice |
 |---|---|
 | models | the **saved trained reco models** from completed matrix jobs, `<stem>.pooled.keras` and `<stem>.direct.keras`. Nothing is retrained. |
-| inputs | the **identical held-out test split**, rebuilt deterministically by the same `make_fixture(test_rows, 2402)` the matrix used, so both arms see the same events in the same order |
+| inputs | the **identical held-out split**, built **once** by `make_fixture(rows, 2402)` — the same call the matrix used — and shared across arms and seeds, so identical inputs are true by construction rather than by trusting a rebuild |
 | batch size | **1,024**, unchanged from the matrix, since throughput depends on it |
 | device & precision | one A100, and the bound `PRECISION_POLICY` — `tf32_enabled: false`, `determinism_enabled: true`, `float32` — asserted at runtime, not assumed |
 | warm-up | **3** full passes per arm, discarded, so kernel autotuning and graph tracing are excluded from the reported numbers |
 | repeats | **10** timed passes per arm, reported individually |
 | seeds | seed **17** as the primary, plus **29** and **43** as model-to-model checks, so a single trained model's quirk is visible |
 | ordering | arms measured **alternately** (pooled, direct, pooled, …) rather than in blocks, so any monotonic drift in machine state cannot load onto one arm |
+
+### Sizing, revised after a timeout — 2026-09-17
+
+The first attempt (job `58461843`) **FAILED on `timeout`, exit 124, after 35 minutes**,
+with no receipt written. This was a sizing error of mine, not a scientific failure, and
+the matrix receipts were verified untouched afterwards.
+
+Measured cause: building the split costs **~407 µs/row**, so ~100 s per call at 250,000
+rows, and the script called it **four times** (~6.6 min); the remaining ~28 min went to
+**78 full inference passes** (3 seeds × 13 passes × 2 arms) at ~20 s each. Total ≈33 min
+against a 2,100 s limit.
+
+Two changes, neither of which weakens the measurement:
+
+* The split is now built **once and shared**, which also upgrades "identical inputs" from
+  an assumption about determinism to a property of construction.
+* The measurement size is **50,000 rows** rather than 250,000. Throughput is a per-event
+  quantity and 49 batches of 1,024 measure it as stably as 245 do; the reported figure is
+  events/second with the measurement size stated. Warm-up, repeats and seeds are
+  unchanged, because those are what Joseph asked for and what variability needs.
+
+Revised estimate: one ~20 s build plus 78 passes at ~4 s ≈ **6 minutes**.
 
 ## What is reported, and separately
 

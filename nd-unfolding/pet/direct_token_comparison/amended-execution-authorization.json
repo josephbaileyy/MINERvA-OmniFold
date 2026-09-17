@@ -32,7 +32,7 @@
     "mixed_precision_policy": "float32",
     "floatx": "float32"
   },
-  "manifest_sha256": "0b81983dd5b514569724fd3dbb60a5e64ae20500e6d95ffc90e1a3b92c8f194d",
+  "manifest_sha256": "ff42de931bc9f36793d19ac8aa02c53aded74c051c3ce7f1ef49e9c0ae120331",
   "authority_source": "nd-unfolding/pet/direct_token_comparison/BEN_COMPARISON_AUTHORIZATION-20260915.md",
   "authority_source_sha256": "5fce2195088cf1241b9706c7c6ddcee855bd7fd07922f567532fc1b00ca1af26",
   "approval_date": "2026-09-16 Asia/Seoul",
@@ -63,9 +63,18 @@
     "scope": "cost only; saved models, identical held-out inputs, same GPU and precision, warm-up and repeated timings",
     "runs_after_matrix": true,
     "gates_the_matrix_report": false,
-    "specification": "nd-unfolding/pet/direct_token_comparison/INFERENCE_BENCHMARK_SPECIFICATION-20260917.md"
+    "specification": "nd-unfolding/pet/direct_token_comparison/INFERENCE_BENCHMARK_SPECIFICATION-20260917.md",
+    "first_attempt": {
+      "job": "58461843",
+      "state": "FAILED",
+      "exit_code": "124:0",
+      "elapsed_seconds": 2104,
+      "cause": "sizing error in my launcher: 4 fixture builds at ~100s plus 78 passes over 250k rows exceeded the 2100s limit",
+      "matrix_receipts_verified_untouched": true,
+      "resubmission_requires_new_decision": true
+    }
   },
-  "inference_benchmark_specification_sha256": "97e861e557c0366aa073dea04307efb60a35037632a13d52ad46ca111e4572cf",
+  "inference_benchmark_specification_sha256": "17b8dbacd091b4845ca96f0bb108c7d965740d5d7015944b30ac382afe7a4a73",
   "inference_benchmark_launcher": "nd-unfolding/pet/direct_token_comparison/sbatch_inference_benchmark.sh",
   "inference_benchmark_launcher_sha256": "7cec619dea3c94cc0fac113593fd9992e9a70f666f56b9b0cf1e0f9384a1bc14"
 }

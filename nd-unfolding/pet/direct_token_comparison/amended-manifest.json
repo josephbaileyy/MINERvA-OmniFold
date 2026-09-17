@@ -1,5 +1,5 @@
 {
-  "base_commit": "07b025e24c8e5d7172ec40d7ee346c958932df5b",
+  "base_commit": "0cc7557009e4de1b4a7370569ce3e433c7f8bdf9",
   "scope": "synthetic-amended-preflight-calibration",
   "files": {
     "nd-unfolding/mnv_guarded_run.py": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b",
@@ -8,7 +8,7 @@
     "nd-unfolding/pet/direct_token_comparison/CROSSDEVICE_DIAGNOSTIC_SPECIFICATION-20260915.md": "597153f06c5f8b13ac6cc3b98a5098200f47e8d5712f9bc3bee6b70b55d8d6ce",
     "nd-unfolding/pet/direct_token_comparison/FP32_PREPARATION-20260914.md": "2309bf3b8b5f61e2115236345a03cb6706c5b49cd48e71dc286a2904a7ec5206",
     "nd-unfolding/pet/direct_token_comparison/FP32_PROPOSAL-20260914.md": "cc67c355a56bc510071df438e753e0f9a46a6bc90f21728aa99062a09767f1bb",
-    "nd-unfolding/pet/direct_token_comparison/INFERENCE_BENCHMARK_SPECIFICATION-20260917.md": "97e861e557c0366aa073dea04307efb60a35037632a13d52ad46ca111e4572cf",
+    "nd-unfolding/pet/direct_token_comparison/INFERENCE_BENCHMARK_SPECIFICATION-20260917.md": "17b8dbacd091b4845ca96f0bb108c7d965740d5d7015944b30ac382afe7a4a73",
     "nd-unfolding/pet/direct_token_comparison/OPTIMIZER_AUTHORIZATION-20260915.md": "2a7086e977bbcdc57b1363fb609ce12d82d0090f1f4305c53236d291ac86ff4f",
     "nd-unfolding/pet/direct_token_comparison/OPTIMIZER_GATE_AUTHORIZATION-20260915.md": "55bd68d4435a7199e7d4905bd67289fa796e8b4fff5adc807be1edb993edc555",
     "nd-unfolding/pet/direct_token_comparison/OPTIMIZER_GATE_PROPOSAL-20260915.md": "ebac7705b933f449b0d60567918a22a63cf20c220e862e5e94b8ca67f288fe92",
@@ -16,7 +16,7 @@
     "nd-unfolding/pet/direct_token_comparison/STRESS_SCOPE_AUTHORIZATION-20260916.md": "09cebb72374ef579572985a15842aaca498dee9e37ea46399e13a1199476d860",
     "nd-unfolding/pet/direct_token_comparison/amended_preflight.py": "790aedae508b9698a38590f645486261e5c0c9e760fe50fab1536daecb91bda4",
     "nd-unfolding/pet/direct_token_comparison/analyze_numerical_diagnostic.py": "10181fd6656abcc2b3128715241643141d7102ee140fc3d760d0234a05cf5d41",
-    "nd-unfolding/pet/direct_token_comparison/benchmark_inference.py": "55f4bcc719e202729a850726111df1e5f13f336af9b99ff0a35381ec2fc9b6f1",
+    "nd-unfolding/pet/direct_token_comparison/benchmark_inference.py": "8e7f84b066c4e8b27e4f32da1d4de0ddb93f3ff5778fc916fdb1bb46398d68b9",
     "nd-unfolding/pet/direct_token_comparison/calibration_measure.py": "593d393b0c630a225e34cae28f08bdfb487f78ffc7e161b1d698a2de805e7bc3",
     "nd-unfolding/pet/direct_token_comparison/check_key_bias_invariance.py": "0f1c259dc7fc321b9b092bb708869f30d1087f010ab6aa65be73c628106164fb",
     "nd-unfolding/pet/direct_token_comparison/check_preflight_seed_sequence.py": "2b212765cb0c09b11cddd88a75931c91be8d622698e1bca0ca1782e56e8e6cac",
