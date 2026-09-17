@@ -1061,6 +1061,46 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `403.8038888888889`, `2.229%`, `r5_meter check` **exit 0** — but R5 charges *"sum of post-t0
   **`ElapsedRaw`**"* (`r5_meter.py:73`), so `3.00` is a **reservation** bound (`SPEC:3140`), not a
   metered charge; same numbers, correct authority.
+- [`ASSESSMENT-20260917-theta-and-the-propagation-argument.md`](ASSESSMENT-20260917-theta-and-the-propagation-argument.md)
+  - **Joseph's five bounded questions on `θ` (`480bed76`) and the propagation argument (`affc9e03`
+  §5.7/§5.8). RECOMMENDED DECISION: do not adopt `θ = 7.11e-2` as a scientific CEILING on its
+  present derivation** — the derivation is honest and bars all three wrong routes, but it establishes
+  a **resolution/feasibility figure**, which `SPEC:1406-1409` says *"may bound `ε` from BELOW … it
+  cannot justify `ε`"*. Assigned as the upper end of an interval it is rev. 16's direction inversion
+  one level down. Adopts nothing, grades nothing, closes neither `S` nor §7 item 4; no compute and
+  **no cluster artifact read** (all `z-*.npz` / band-ROOT / `G2_g_domain` / `G3R` figures RELAYED).
+  **`T1`:** `√(2/(N−1))`/2 reproduces exactly at `N=100 → 0.071067` and `N=24 → 0.147442`, both
+  measured from frozen launchers. **`T2` (the headline):** §2.2's *"cannot change any conclusion"*
+  holds per-bin and **fails for aggregates** — `p4_lib.py:110-160` already separates coherent from
+  incoherent and says *"the per-bin check is not a coherence discriminator"*; `σ`'s sampling error is
+  random across bins, a CV-induced shift is coherent, and the declared use (`SPEC:1356` exact
+  projections) is aggregate. Unsafe direction. **`T3`:** bootstrap replicas and seed-scan splits
+  violate the i.i.d.-Gaussian assumption, but **conservatively** — and the boundary is `N`-dependent,
+  so doubling the ensemble would halve `θ`, which is the reductio. **`T4`:** `θ`'s scale needs
+  `w_stat,i`/`w_ML,i`, **different terms from `f_i`**, and **closure (B) reaches neither** — so *"one
+  quantity, two open questions"* is not true today. **`T5a`:** `ΔC = ΓC + CΓ + ΓCΓ` and the norm
+  bound ARE valid finite; **`dσ/σ = f·(dg/g)` is NOT exact** — `2.7%` off at `u = θ`, `11.7%` at
+  `θ/f`, and invisible at the `1e-6` verification point. **`T5b`:** the exact inversion gives
+  `‖ΔC‖/‖C_infl‖ ≤ ((1+θ)²−1)/min f`, tighter than the published linear form, moving the 100%
+  crossing from `min f ≈ 0.1717` to `0.1473` — **the error is conservative and fixing it HELPS
+  Alternative 1.** **`T5c`:** the inversion is one-sided — below `f ≈ 0.137` a `σ` tolerance bounds
+  downward `g` movement **not at all**. **`T5d`:** *"the same factor bounds every projection"* is
+  **FALSE** without a further condition; measured `179.9` against a limit of `0.69` with a PSD `C`
+  and non-negative weights, and `∞` at exact annihilation — and `AGENTS.md:27`'s rank-247 precedent
+  makes null directions live in this family. **`T5e`:** `6528 + 4166 = 10694`, so **38.96%** of the
+  support has `g` pinned at 1 and contributes `u = 0`; taking `min f` over the full support is a
+  **mis-specified minimisation**, not a population choice. **`T6`:** vacuity is a property of the
+  bound — the uniform-`γ` substitution deletes the anti-correlation between allowance and
+  contribution, and the published percentages are relative to **`C_infl`** while the use consumes
+  **`C_Z`**. **Q3:** Alternative 1 supports only `K1`; `K4`, a **supported reproduction path**
+  (`AGENTS.md:14-15`), is absent from §12.7's exclusion list and is what makes the envelope claim
+  non-optional. **Q4:** all five `null` clauses REMAIN; `θ` and `ε` are not interchangeable on four
+  grounds, decisively that **`θ` is structurally blind on 39% of the support**; replacing the null
+  criterion needs an amendment to `SPEC` §6.4 **and** to reject condition 11 (`SPEC:1267`), which is
+  Joseph's act. **Q5:** three exclusions with opposite compliance status — mechanism-derived (E1)
+  **yes**, bound-derived (E2) **barred**, use-derived (E3) only once the use is declared; and the
+  **projection set is enumerable from publication scope, so what is owed is a CHECK, not a
+  judgement** — the highest-value zero-compute item and absent from §12.5.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
