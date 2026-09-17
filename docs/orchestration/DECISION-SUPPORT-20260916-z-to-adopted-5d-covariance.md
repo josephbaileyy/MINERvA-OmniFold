@@ -1134,8 +1134,14 @@ The derivation is honest, well sourced, and correctly bars all three wrong route
 is a **RESOLUTION** figure — the smallest `σ` movement the existing ensembles could detect — and
 **`SPEC:1406-1409` rules on that shape**, verified verbatim: *"It may bound `ε` from below as a
 feasibility constraint; **it cannot justify `ε`**."* Assigned as the **upper** end of an admissible
-interval it inverts that direction. **Declared as what it does support — a FLOOR below which no
-per-bin `σ` gate is worth setting — it needs no new argument and carries no vacuity risk.**
+interval it inverts that direction.
+
+⚠ **AND THE ASSESSMENT'S OWN FALLBACK IS DECLINED TOO (§16).** It wrote that *"declared as what it
+does support — a FLOOR below which no per-bin `σ` gate is worth setting — it needs no new argument
+and carries no vacuity risk."* **Joseph declined that relabeling.** `θ = 7.11e-2` is **CLOSED AS NOT
+ADOPTED** and is **not** hereby established as a feasibility floor: **its statistical assumptions
+and its scope remain unestablished** — see §16.2, where two of the four premises the floor reading
+would also rest on are corrected.
 
 **The headline refutation is already in this repository one layer up.** §2.2's *"cannot change any
 conclusion"* holds **per-bin** and fails for **aggregates**. Verified at `nd-unfolding/p4_lib.py`:
@@ -1265,3 +1271,84 @@ measured.**
 
 **Nothing adopted. `θ` NOT ADOPTED; full `S` OPEN; §7 item 4 UNASSESSED and unrouted; `B` and `ε`
 open; Gate 2 FAIL. No compute authorized or requested.**
+
+---
+
+## 16. Joseph declines `θ`, and four of the assessment's factual claims are corrected (2026-09-17)
+
+### 16.1 The decision
+
+**`θ = 7.11e-2` is CLOSED AS NOT ADOPTED on its proposed derivation.** Joseph's ruling, and two
+parts of it are easy to lose:
+
+1. **It is not automatically relabeled an established feasibility floor.** The assessment offered
+   that fallback — *"declared as … a FLOOR … it needs no new argument"* — and it is **declined**.
+   **Its statistical assumptions and its scope remain unestablished.** A resolution figure whose
+   `√(2/(N−1))` premise is violated by both of its own ensembles does not become sound by being
+   pointed the other way; §16.2(a) and (b) correct two of the premises a floor reading would rest on
+   as well.
+2. **No further `θ`-development cycle.** The narrow conclusion is retained — **`θ`'s derivation
+   yields a RESOLUTION, not a scientific cap** (`SPEC:1406-1409`) — and the candidate is closed
+   rather than iterated.
+
+### 16.2 Four factual corrections to `5a6d32fb34b99da2f3974e46e22082be0a746d3d`
+
+Each measured here and preserved as a self-checking probe at
+`docs/orchestration/probes/probe-20260917-theta-assessment-corrections.py` (exits 1 if any
+correction stops reproducing). **The assessment's narrow conclusion survives all four**; what fails
+is a quantitative claim or an inference in each case.
+
+**(a) N-SCALING — the reductio's arithmetic is wrong, and the real point is stronger.** The
+assessment wrote *"doubling the bootstrap ensemble would halve `θ` with no change in the science."*
+Measured: `√(2/(N−1))/2` gives `0.071067` at `N = 100` and `0.050125` at `N = 200` — a factor
+`√(99/199) = 0.7053`, a **29.5% reduction, not a halving.** Halving needs `N = 397`, about **4×**.
+⚠ **And the claim is wrong a second, more interesting way.** The assessment itself established that
+for a **bootstrap** ensemble `N` controls only the Monte-Carlo component, so the estimator's own
+error does **not** shrink with `N`. Then increasing `N` lowers the **formula's output** while the
+**actual resolution** has an `N`-independent floor. **That severs the formula from the quantity it
+is supposed to measure, which is a sharper objection than the one the assessment made** — and it is
+why the floor relabeling is also declined.
+
+**(b) INDEPENDENCE ACROSS BINS — "random across bins" is false, so the `√N_eff` suppression is
+unestablished.** The assessment argued that an aggregate *"averages the first down by `~√N_eff` and
+the second not at all."* That requires the per-bin `σ` **estimation** errors to be independent. They
+are not, when the `N` members resample **one** realized dataset. Measured over 400 independent
+universes of the whole procedure, two bins whose data are correlated at `0.90`: the correlation of
+the per-bin `σ` estimation error is **`+0.815`**. **So the coherent/incoherent GAP's sign survives —
+`p4_lib.py:141`'s *"the per-bin check is not a coherence discriminator"* is the repository's own
+statement and is untouched — but its MAGNITUDE is not `√10694`, and no replacement factor is
+asserted here.**
+
+**(c) DEADBAND CROSSINGS — `u = 0` holds at the current CV, not under the perturbation.** The
+assessment wrote that clamped bins *"contribute `u = 0` whatever their `f`"*, and therefore that
+excluding them (E1) is *"arguably not an exclusion at all."* **The clamp gives `g = 1` only while
+the bin stays in the deadband.** The perturbed `g'` is built by the **same**
+`max(v_uni, v_blk)`, so a bin sitting just below the boundary can be pushed across it by the very
+perturbation being bounded — which is exactly the condition this record's own §5.8(1) registered and
+which the assessment demoted to a residual. What survives: `max(·, v_blk)` is **1-Lipschitz**, so
+the movement is bounded uniformly *including across a crossing*; what does not: **membership.**
+**Consequence: E1 requires a declared MARGIN, not current-CV membership** — and it is therefore a
+population choice after all, subject to Q5's prospective-declaration rule.
+
+**(d) UNBOUNDED DOWNWARD `g` MOVEMENT — refuted by construction.** The assessment wrote that below
+`f = 1 − (1−θ)² = 0.1371`, *"`g` may fall to zero while `σ_i` moves by less than `θ`"*, so
+*"`γ = max|u_i|` is not finite from `θ` alone."* **`g` cannot fall to zero.**
+`z_assembly.py:6` defines `g = sqrt(max(v_uni, v_blk))/sqrt(v_blk) **≥ 1**`;
+`z_contract.py:84` sets `G_FLOOR = 1.0`; `gate_g_domain` **requires** `sum(g < G_FLOOR) == 0` and
+its docstring calls `g ≥ 1` a *"§1.3a property … by construction"*; the receipt measured
+`g_min = 1.0`, `n_pinned = 0`. The **perturbed** `g'` uses the same `max`, so `g' ≥ 1` too. Hence
+the worst downward movement is `u = 1/g − 1`, i.e. **`≥ −0.9434` for every bin** at the measured
+`g_max = 17.653141714565614`, and `≥ 0` on the clamped bins, which sit **at** the floor and can only
+move **up**. **The `f ≤ 0.1371` σ-insensitivity threshold is arithmetically correct; the inference
+drawn from it is not — `γ` is finite from the construction alone, with no tolerance required.**
+
+### 16.3 What still stands from the assessment
+
+Unaffected by the above, and load-bearing for §17: the **resolution-vs-cap** finding
+(`SPEC:1406-1409`); that **`θ` and `ε` are not interchangeable** and `θ` is **structurally blind on
+4166 of 10694 bins**; that replacing the null criterion needs an amendment to **`SPEC` §6.4** *plus*
+the consequential amendment to **reject condition 11**, without which condition 11 keeps firing
+whatever `θ` is set to; the **`K1` ≠ `K4`** finding, with `AGENTS.md:14-15` making a **supported
+reproduction path** a publication-completion requirement; that the **projection set is enumerated,
+not declared**, so what is owed there is a **check**; and **E2 is barred**. And this lane's own
+refuted §5.7 claim stays refuted — §15.2 is not disturbed by any of the four corrections.
