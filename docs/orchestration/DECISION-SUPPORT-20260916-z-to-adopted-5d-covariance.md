@@ -1233,7 +1233,8 @@ note/primer/paper builds, and no unresolved publication blocker."* **An exact pr
 unreproducible trunk is reproducible only if the trunk is.** That is what makes the envelope claim
 **non-optional**, and it answers the question I asked: **the qualification Alternative 1 supports is
 not the qualification the declared use requires.** Not an argument against running it — `f_i` is
-needed on every route — **but its deliverable must be stated as `K1`.**
+needed on every route — ⚠ **THAT CLAUSE IS WITHDRAWN (§17.3); `f_i` is NOT established as
+necessary on every route** — **but its deliverable must be stated as `K1`.**
 
 ### 15.5 `θ` and `ε` are not interchangeable, and one number settles it
 
@@ -1333,10 +1334,17 @@ population choice after all, subject to Q5's prospective-declaration rule.
 **(d) UNBOUNDED DOWNWARD `g` MOVEMENT — refuted by construction.** The assessment wrote that below
 `f = 1 − (1−θ)² = 0.1371`, *"`g` may fall to zero while `σ_i` moves by less than `θ`"*, so
 *"`γ = max|u_i|` is not finite from `θ` alone."* **`g` cannot fall to zero.**
+⚠ **ONE OF MY FOUR ADDRESSES WAS WRONG, AND IT WAS THE ONE THAT MOVED (§17.1).** Every address is
+now bound to a sha. At the **deployed** revision `fb9ec3560fd6d62295dffc81b5694c9e26667d5b`, which
+is the revision this argument is about:
 `z_assembly.py:6` defines `g = sqrt(max(v_uni, v_blk))/sqrt(v_blk) **≥ 1**`;
-`z_contract.py:84` sets `G_FLOOR = 1.0`; `gate_g_domain` **requires** `sum(g < G_FLOOR) == 0` and
-its docstring calls `g ≥ 1` a *"§1.3a property … by construction"*; the receipt measured
-`g_min = 1.0`, `n_pinned = 0`. The **perturbed** `g'` uses the same `max`, so `g' ≥ 1` too. Hence
+**`z_contract.py:126`** sets `G_FLOOR = 1.0` (`z_contract.py:39` carries the docstring claim
+*"§1.3a property: `g >= 1` exactly, by construction"*); `gate_g_domain` at `z_assembly.py:126`
+**requires** it at `z_assembly.py:136-137`; and the receipt measured `g_min = 1.0`, `n_pinned = 0`.
+**I had written `z_contract.py:84`** — which is that assignment's address on **`origin/main`**, a
+different state of the file, and is an unrelated `sys.modules` comment on the lane and on the
+deployment. The other three addresses are identical at all three revisions, which is why only the
+one that moved was wrong. The **perturbed** `g'` uses the same `max`, so `g' ≥ 1` too. Hence
 the worst downward movement is `u = 1/g − 1`, i.e. **`≥ −0.9434` for every bin** at the measured
 `g_max = 17.653141714565614`, and `≥ 0` on the clamped bins, which sit **at** the floor and can only
 move **up**. **The `f ≤ 0.1371` σ-insensitivity threshold is arithmetically correct; the inference
@@ -1352,3 +1360,85 @@ whatever `θ` is set to; the **`K1` ≠ `K4`** finding, with `AGENTS.md:14-15` m
 reproduction path** a publication-completion requirement; that the **projection set is enumerated,
 not declared**, so what is owed there is a **check**; and **E2 is barred**. And this lane's own
 refuted §5.7 claim stays refuted — §15.2 is not disturbed by any of the four corrections.
+
+---
+
+## 17. The assessor's own five corrections, and a THIRD unmeasured quantity (2026-09-17)
+
+`[cb0b6b]` re-measured all four of §16.2's corrections against itself rather than deferring, and
+landed them **site by site** — *"each retracted phrase now appears only inside a quotation of itself
+within a withdrawal, never as a live assertion"*, with the compressed `CATALOG` restatements
+corrected too. Live identities: **`52b559488cd16d782cd0e46e4cb10d1a92dd9dbd`** (the four) and
+**`9b8965927976bec99c75276b7e94ba2c2db7fdb1`** (a fifth, below). Its probe:
+`docs/orchestration/probes/probe-20260918-my-own-theta-claims-corrected.py`.
+**Its recommended decision is unchanged and now rests on `SPEC:1406-1409` and T1 alone** — which is
+exactly the narrow conclusion §16.1 retained.
+
+### 17.1 My citation defect, and it is the dated-address failure
+
+See the marker in §16.2(d). `G_FLOOR = 1.0` sits at **`z_contract.py:126`** on the lane and on the
+deployed `fb9ec356`, and at **`:84` on `origin/main`** — the file differs between them. I measured
+on `main` while arguing about the deployment, and wrote the address **without naming a revision**.
+The other three addresses (`z_assembly.py:6`, `:126`, `:136-137`) are identical at all three
+revisions. **One right, one wrong, in the same sentence, and the wrong one is the only one that
+moved** — the signature of an address taken from the wrong tree rather than mis-transcribed. Every
+code address in §16.2(d) is now sha-bound.
+
+### 17.2 ⚠ T2 IS NEITHER ESTABLISHED NOR REFUTED — and `c̄` is a THIRD unmeasured quantity
+
+§16.2(b) said the `√N_eff` suppression is *"unestablished"* and declined to assert a replacement.
+`[cb0b6b]` went further and computed the deciding factor, **which neither of us had**:
+
+> For an aggregate of `n` per-bin errors with mean pairwise correlation `c̄`, the suppression is
+> **exactly `√(c̄ + (1−c̄)/n)`.**
+
+Re-derived and re-measured here at `n = 10694`:
+
+| `c̄` | suppression factor | divides the error by |
+|---|---|---|
+| 0 | 0.0097 | **103.41×** (`= √n`) |
+| 0.001 | 0.0331 | 30.24× |
+| **0.01** | 0.1005 | **9.95×** |
+| 0.1 | 0.3164 | 3.16× |
+| 0.815 | 0.9028 | **1.11× — no suppression at all** |
+
+And its Gaussian ground checks out: `Cov(s_i², s_j²) = 2σ_i²σ_j²ρ_ij²/(N−1)`, so the correlation of
+per-bin **variance**-estimation errors is `ρ_ij²`. Measured over 40,000 independent `N = 100`
+ensembles: `+0.8102` against a predicted `0.8100` at `ρ = 0.9`; `+0.2382` vs `0.2500` at `0.5`;
+`+0.0142` vs `0.0100` at `0.1`. **So §16.2(b)'s `+0.815` was the Gaussian prediction at `ρ = 0.9`,
+not a coincidence.**
+
+**So T2's magnitude leg is RETRACTED and its conclusion is NOT ESTABLISHED — but it is not refuted
+either**, because the deciding quantity is named and unmeasured: **`c̄` is the MEAN off-diagonal
+`ρ_ij²` over all `10694²` pairs**, while `0.815` was one pair at `ρ = 0.9`. Distant bins contribute
+small `ρ_ij²`, so `c̄` over the full grid may be orders below it.
+
+⚠ **AND THE THRESHOLD IS LOW, WHICH IS WHY THIS MATTERS RATHER THAN BEING A TECHNICALITY.** Measured
+here: a **10× suppression needs only `c̄ = 0.0099`**; 50× needs `c̄ = 0.00031`; 103× needs
+`c̄ ≈ 1e-6`. **So T2's argument returns at a very small mean off-diagonal `ρ_ij²`** — the question is
+genuinely open in both directions and cannot be settled by inspection.
+
+**`c̄` is a THIRD unmeasured quantity, distinct from the other two**, and this is the operational
+consequence for the package:
+
+| quantity | what it gates | recoverable from |
+|---|---|---|
+| `min_i f_i` (V-fraction) | the propagation bound's tightness | 13 vertical-band diagonals |
+| `w_stat,i`, `w_ML,i` (sample-block fractions) | `θ`'s own total-`σ` scale | the two ~0.89 GB sample-block diagonals |
+| **`c̄` (mean off-diagonal `ρ_ij²`)** | **whether a per-bin argument survives aggregation at all** | the **off-diagonal** structure — *not* a diagonal read |
+
+⚠ **Note the third is not a diagonal quantity**, so **neither closure (A) nor closure (B) reaches
+it**. That is a genuine addition to the minimum-evidence question and it was not in §12.5.
+
+### 17.3 The fifth correction lands on a sentence of mine too
+
+`[cb0b6b]` withdrew its own *"the `f_i` measurement is needed on ANY ROUTE"* under Joseph's fourth
+requirement, and notes that *"a requirement that names a failure shape does not exempt the lane
+reading it."* **The same sentence was live in this record at §15.4, relayed from it, and is now
+withdrawn there.** The defensible version, which is theirs: `f_i` is required by routes that
+**propagate a `g`-side tolerance** — Alternative 1's, and `θ`'s scale via the fuller five-way
+decomposition — and is **not** established as necessary on a route that makes no `g`-side tolerance
+claim at all. **Universality was asserted, not derived, on both sides.**
+
+**Nothing adopted. `θ` NOT ADOPTED and not a floor; full `S` OPEN; `B` and `ε` open; Gate 2 FAIL.
+No compute authorized or requested.**
