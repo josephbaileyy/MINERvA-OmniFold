@@ -1997,6 +1997,25 @@ population it measures — so "cited nowhere" needs a timestamp and a tree, like
 with no error. Measured: `nd-unfolding/mii_anchor_comparator.py` is blob `a7cb2d9b…` at both
 `ecee9ff1` and `f7ab02ff`, and `cbeac61d…` at HEAD.
 
+### Scalar-5D completion inventory, the null route, and P1 (2026-09-18)
+
+- [`PACKET-20260918-scalar5d-completion-inventory-and-null-route.md`](PACKET-20260918-scalar5d-completion-inventory-and-null-route.md)
+  - **SOURCE REVIEW AND RECONCILIATION ONLY — nothing adopted, nothing graded, no compute.**
+  Reconciles the designated bounded inventory (`ebba67ab`, `docs/literature/2026-09-18-scalar5d-covariance-inference-audit.md`,
+  branch `audit/scalar-5d-publication-gaps`) against `c4baf0d2` §19 — the audit is **24 minutes
+  stale** and predates E1/E2's discharge; its rank-1 prescription routes through `[B,S]`, which
+  `SPEC:1552` titles *"ENTIRELY PROPOSED"*. **The `ε` finding: every route to it is closed, not
+  merely unfinished** — withdrawn (rev. 17), unavailable from a boolean `B` (`78a8c2ee` §1.4),
+  forbidden off Z's own null (`SPEC:1410`), declined on transfer, and `θ` closed. **So a repeat
+  experiment cannot produce `ε` either**; the objective is to make it unnecessary via bitwise
+  identity. **The products are not irrecoverable, on §6.4's own precedent** — *"This does not
+  retrospectively regrade G… the defect is in the guard, not in the product."* **Live finding:**
+  `sbatch_uthrow_combine_5d_fast.sh:9` asserts the null *"must be zero"*; the measured value is
+  `4.452e-14`. **P1 is COMPLETE** — four maps enumerated with widths, masks, ordering, orphan
+  policy and paired central estimate; `project_cov_nd.py` records **zero digests** (control: 13 in
+  `p4_project_4d.py`), which is the larger and unfiled half of the OI-129 family. **One published
+  claim is deferred**, on `(E_avail, W)`, 42 dense bins (`main_paper.tex:49-51`).
+
 ## Regenerate
 
 ```bash
