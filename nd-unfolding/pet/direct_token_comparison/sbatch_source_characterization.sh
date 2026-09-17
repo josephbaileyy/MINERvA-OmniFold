@@ -33,8 +33,13 @@ scontrol show job -o "$SLURM_JOB_ID" > "$output/allocation.txt"
 # the env resolving by name.
 ROOT628_PREFIX="${ROOT628_PREFIX:-$HOME/.conda/envs/root_6_28}"
 ROOT628_CONDA="${ROOT628_CONDA:-/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda}"
+# `set -u` and conda activation do not mix: root_6_28 ships
+# activate.d/activate-binutils_linux-64.sh, which reads $ADDR2LINE unbound and kills
+# the job in four seconds. Unset -u across activation only, then restore it.
+set +u
 eval "$("$ROOT628_CONDA" shell.bash hook)"
 conda activate "$ROOT628_PREFIX"
+set -u
 python -c "import ROOT, numpy; print('ROOT', ROOT.gROOT.GetVersion(), 'numpy', numpy.__version__)" \
   > "$output/environment.txt"
 
