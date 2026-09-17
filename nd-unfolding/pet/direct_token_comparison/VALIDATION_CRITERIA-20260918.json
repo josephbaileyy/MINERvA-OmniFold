@@ -1,0 +1,137 @@
+{
+  "schema": "pet-tail-validation-criteria-v1",
+  "frozen": "2026-09-18",
+  "authorization": "Joseph, 2026-09-18: implementation and bounded tail validation",
+  "non_relaxation": "These thresholds are frozen before execution. Any change alters this file's sha256, which every receipt records, so a threshold relaxed after seeing a failure is visible in the evidence rather than silent.",
+  "campaign_tolerances": {
+    "atol": 1e-05,
+    "rtol": 0.0001,
+    "source": "compatibility_preflight.py:32-33, reused rather than replaced"
+  },
+  "release_tiers": {
+    "tier_1_cross_device": "widths where the full cross-device gate passes are released under the UNCHANGED criteria; nothing is dropped for them",
+    "tier_2_gpu_only": "widths where a cross-device sub-check fails are released only if (a) every failing sub-check is in exempt_cross_device_subchecks, (b) the whole GPU-only battery passes, and (c) the receipt flags them tier 2 so any later result can be read with that scope",
+    "exempt_cross_device_subchecks": [
+      "gradient_agreement",
+      "prediction_agreement",
+      "updated_weight_agreement",
+      "common_operand_replay"
+    ],
+    "never_exempt": "Any cross-device sub-check outside that list failing is a hard stop, including the device-independent identity of initial weights. A sub-check that PASSES at a tier-2 width is required to keep passing; a regression there is a hard stop."
+  },
+  "checks": {
+    "V1_repeatability_in_process": {
+      "bound": "bitwise",
+      "on_failure": "hard_stop"
+    },
+    "V2_repeatability_across_processes": {
+      "bound": "bitwise",
+      "weights": 42,
+      "on_failure": "hard_stop"
+    },
+    "V3_eager_vs_graph": {
+      "bound": "atol_rtol",
+      "on_failure": "hard_stop"
+    },
+    "V4_float64_adam_reference": {
+      "bound": "atol_rtol",
+      "weights": "all 42, extended from the key bias alone",
+      "on_failure": "width_not_released"
+    },
+    "V5a_finite_difference_plateau": {
+      "steps": [
+        0.03,
+        0.01,
+        0.003
+      ],
+      "agreement": 0.2,
+      "rationale": "A per-width plateau check, so the tolerance is justified AT each width instead of extrapolated from the widths measured on 2026-09-18. No plateau means the finite-difference estimate is uninformative there, and the width is not released rather than being waved through.",
+      "on_failure": "width_not_released"
+    },
+    "V5b_finite_difference_accuracy": {
+      "step": 0.01,
+      "step_scale": "h = step * max(abs(theta), 1.0)",
+      "gradient_floor": 0.001,
+      "max_relative_error": 0.005,
+      "measured_basis": {
+        "producer": "measure_finite_difference_scale.py",
+        "receipt": "local_validation/20260918-fd/fd-scale.json",
+        "optimal_step_measured": 0.01,
+        "p90_relative_at_optimum": {
+          "pooled_4_objects": 8.397e-05,
+          "direct_4_objects": 8.653e-05,
+          "direct_34_objects": 0.0005877
+        },
+        "max_relative_at_optimum": {
+          "pooled_4_objects": 0.0005444,
+          "direct_4_objects": 0.0004527,
+          "direct_34_objects": 0.0006136
+        },
+        "margin": "5e-3 is about eight times the worst measured maximum, leaving room for degradation at widths beyond those measured while staying four times tighter than the 2e-2 asserted in the first draft, which no realistic error could have tripped"
+      },
+      "on_failure": "width_not_released"
+    },
+    "V6_cross_device_recorded": {
+      "bound": "none; recorded",
+      "note": "the dropped requirements become measured quantities reported per width"
+    },
+    "V7_permutation_invariance": {
+      "bound": "atol_rtol",
+      "rationale": "not bitwise: floating-point addition is not associative, so a permuted segment sum legitimately differs in the last places",
+      "on_failure": "width_not_released"
+    },
+    "V8_arm_symmetry_of_residual": {
+      "bound": "atol_rtol",
+      "on_failure": "hard_stop"
+    },
+    "V9_overlap_calibration": {
+      "bound": "one_directional",
+      "note": "where the cross-device gate passes, the GPU-only battery must also pass",
+      "on_failure": "hard_stop"
+    },
+    "V10_checkpoint_reload": {
+      "bound": "bitwise",
+      "on_failure": "hard_stop"
+    },
+    "V11_input_mask_correctness": {
+      "bound": "bitwise for masked-slot invariance",
+      "on_failure": "hard_stop"
+    },
+    "V12_finiteness": {
+      "bound": "all finite",
+      "on_failure": "hard_stop"
+    },
+    "V13_duplicate_arm_null": {
+      "stage_a_validation": {
+        "bound": "bitwise",
+        "what": "two arms with identical specs but different labels must produce bitwise-identical weights and training loss after N steps",
+        "why_bitwise": "identical configurations under determinism have no licence to differ at all; anything else is arm-label-dependent state leaking into the run",
+        "on_failure": "hard_stop"
+      },
+      "stage_b_pilot": {
+        "max_spurious_contrast_fraction_of_delta": 0.1,
+        "delta_points": 10.0,
+        "what": "one duplicate arm carried through the pilot, contributing a contrast that must be zero; its measured value bounds spurious contrast in the ENDPOINT's units",
+        "on_failure": "hard_stop"
+      },
+      "rationale": "No rigorous propagation from weight-space residuals to the closure statistic is available, so the end-to-end bound is measured instead. Split into two stages because the validation run has no closure statistic to measure and the pilot does.",
+      "amended": "2026-09-18, BEFORE any validation execution and with no results seen: the original single-stage wording asked for a closure number that the validation stage does not produce. Recorded here rather than silently reinterpreted at run time."
+    }
+  },
+  "withdrawn_claims": {
+    "errors_cancel_in_paired_contrasts": "WITHDRAWN 2026-09-18. The earlier plan said an error surviving every check would be arm-symmetric and therefore cancel in a paired contrast. That is not established: an undetected error can be arm-correlated below the resolution of V8, and no propagation from weight-space residuals to the closure statistic is offered. What is claimed instead is bounded and measured: residuals are bounded at the stated tolerances, their measurable arm-asymmetry is bounded by V8, and V13 bounds spurious contrast end to end in the endpoint's own units. Residual risk below those bounds is acknowledged, not argued away."
+  },
+  "allocation": {
+    "gpu_hours_ceiling": 1.5,
+    "submission_cap": 4,
+    "wall_minutes_per_submission": 45,
+    "storage_gib": 5,
+    "counting": "ElapsedRaw x gpus over every submission that reaches RUNNING, receipt or not. Repaired submissions count as retries and consume these limits.",
+    "stop_conditions": [
+      "two consecutive receipt-less submissions",
+      "submission cap or GPU-hour ceiling reached, even mid-ladder",
+      "any hard_stop check firing",
+      "a tier-2 width whose failing cross-device sub-checks are not a subset of the exempt list"
+    ]
+  }
+}

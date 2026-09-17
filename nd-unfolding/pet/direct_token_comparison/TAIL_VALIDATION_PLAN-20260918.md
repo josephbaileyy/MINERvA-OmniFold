@@ -1,6 +1,14 @@
 # GPU-only tail validation: plan, allocation, and stop conditions
 
-**For approval. Nothing has been launched and no code has been written for this.** The
+**Criteria frozen 2026-09-18 in `VALIDATION_CRITERIA-20260918.json`**, sha256
+`e8c7c432b80aa3b138d751bb80ab267f76ae2d6c3443714c18e32a21aeabc659`. Every threshold
+below is read from that file at run time and its digest is recorded in every receipt, so
+a threshold relaxed after seeing a failure changes the digest and is visible in the
+evidence rather than silent.
+
+**Authorized 2026-09-18** for implementation and execution within ≤1.5 GPU-hours, ≤4
+submissions, ≤45 minutes per submission, ≤5 GiB, with repaired submissions counting as
+retries. The
 design below is specified to the point where it can be implemented without further
 choices; the bounds and the allocation are what need ratifying first.
 
@@ -37,13 +45,29 @@ These came from Joseph and two of them withdraw claims I made in the go/no-go pa
 
 One clause, plus the three that share its nature. In `optimizer_equivalence.validate`:
 
+**Release is two-tier, corrected 2026-09-18.** Cross-device checking is not dropped
+wholesale. Every width is run through the **full** cross-device comparison first:
+
+* **Tier 1** — the cross-device gate passes → the width is released under the
+  **unchanged** criteria, with nothing dropped. Measured: this covers widths up to 18
+  objects in a family.
+* **Tier 2** — a cross-device sub-check fails → the width is released only if every
+  failing sub-check is in the predeclared exempt list, the whole GPU-only battery
+  passes, and the receipt flags the width tier 2 so later results carry that scope.
+
+Anything failing **outside** the exempt list is a hard stop, including the
+device-independent identity of initial weights. And a cross-device sub-check that
+**passes** at a tier-2 width is required to keep passing: a regression there is a hard
+stop, not a newly granted exemption. So the table below describes what may be exempted
+at tier 2, not what is discarded everywhere.
+
 | lines | clause | status under GPU-only |
 |---|---|---|
-| **83-97** | **the CPU-vs-GPU comparison of post-Adam-step weights**, `compare_named(a, b, exact=exact_cpu, excluded=weight_{key_bias})`, with the key-bias error recorded separately | **dropped as a requirement, retained as a recorded measurement** (V6) |
+| **83-97** | **the CPU-vs-GPU comparison of post-Adam-step weights**, `compare_named(a, b, exact=exact_cpu, excluded=weight_{key_bias})`, with the key-bias error recorded separately | **exemptible at tier 2 only**, and recorded as a measurement either way (V6) |
 | 78 | initial weights identical across devices, `exact=True` | **retained** — it is a seeding property, not a device property, and costs nothing |
-| 80 | gradients agree across devices | dropped as a requirement, **recorded** (V6) |
-| 81 | predictions agree across devices | dropped as a requirement, **recorded** (V6) |
-| 125 | common-operand Adam replay agreeing across devices | dropped as a requirement, **recorded** (V6) |
+| 80 | gradients agree across devices | exemptible at tier 2 only; **recorded** (V6) |
+| 81 | predictions agree across devices | exemptible at tier 2 only; **recorded** (V6) |
+| 125 | common-operand Adam replay agreeing across devices | exemptible at tier 2 only; **recorded** (V6) |
 | 76 | same-device repeatability, `initial` vs `repeated`, `exact=True` | **retained unchanged, and strengthened** (V2) |
 | 77 | eager vs `tf.function` agreement | **retained unchanged** (V3) |
 | 127 | float64 Adam reference, **key-bias weight only** | **retained and extended to all 42 weights** (V4) |
@@ -69,14 +93,27 @@ replacing rather than assuming away:
 | **(b) an independent second opinion on the Adam step** | replaced by something stronger and different in kind: the **float64 evaluation of the pinned Adam formula on identical operands** (V4), extended from one weight to all 42. Two float32 implementations agreeing does not show either is right — they can share a systematic error, which is exactly why the gate already exempts the key-bias weight. A float64 reference is a direct statement of distance from exact arithmetic |
 | **(c) device- or shape-specific artefacts** that could favour one arm | replaced by **arm-symmetry of the numerical residual** (V8), **permutation invariance at high multiplicity** (V7), and **overlap calibration** against the cross-device gate where it still passes (V9) |
 
-**What remains unprotected, stated plainly.** An error that is permutation-invariant,
-consistent with finite differences, matches float64 Adam on the captured gradients, and
-is arm-symmetric would survive every check here. Such an error shifts all arms by the
-same amount and therefore **cancels in a paired contrast** — which is the endpoint. It
-does **not** cancel in absolute closure values, so the absolute safeguards
-(`absolute_recovery <= 0.10`, the projection limits) keep a device-dependence caveat
-that the contrasts do not. That caveat is the price of this route and it is recorded on
-every absolute number the campaign later quotes.
+**What remains unprotected — corrected 2026-09-18.** The first draft said an error
+surviving every check would be arm-symmetric and would therefore **cancel** in a paired
+contrast. That was not established and is withdrawn. An undetected error can be
+arm-correlated *below the resolution of V8*, and nothing here propagates a weight-space
+residual into the closure statistic, so "cancels" was an assumption wearing the clothes
+of an argument.
+
+What is claimed instead is bounded and measured:
+
+* residuals are bounded at the stated tolerances;
+* their **measurable** arm-asymmetry is bounded by V8, at V8's own resolution and no
+  finer;
+* **V13 bounds spurious contrast end to end, in the endpoint's own units**: two arms
+  configured *identically* must produce the same closure to within repeatability, and
+  the measured difference is a direct bound on how much contrast the pipeline can
+  manufacture. This is the check that replaces the withdrawn cancellation claim, and it
+  exists precisely because no rigorous weight-space-to-closure propagation is available.
+
+Residual risk below those bounds is **acknowledged, not argued away**. Absolute closure
+values additionally keep a device-dependence caveat that the contrasts do not, and it is
+recorded on every absolute number the campaign later quotes.
 
 ## 3. The checks
 
@@ -90,7 +127,8 @@ and I return to Joseph.
 | **V2** | same-device repeatability **across fresh processes**: all 42 weights after N steps from the same seed | bitwise | hard stop — a paired-seed design whose runs are not reproducible is unsound |
 | **V3** | eager vs `tf.function` | ATOL/RTOL | hard stop |
 | **V4** | **float64 Adam reference, all 42 weights** (today: the key bias only) | ATOL/RTOL | width not released |
-| **V5** | finite-difference gradient check, central differences on R = 32 randomly chosen parameters, step `h = max(1e-3·abs(θ), 1e-3)`, evaluated where `abs(grad)` exceeds a recorded floor | **relative error ≤ 2e-2** | width not released |
+| **V5a** | finite-difference **plateau**: the estimate at h ∈ {3e-2, 1e-2, 3e-3} must agree within 20% | no plateau → the estimate is uninformative at that width | width not released |
+| **V5b** | finite-difference accuracy at the measured optimum `h = 1e-2·max(abs(θ), 1)`, over sampled coordinates with `abs(grad) ≥ 1e-3` | **max relative error ≤ 5e-3**, set from measurement (below) | width not released |
 | **V6** | cross-device gradient, prediction and updated-weight differences — **measured and recorded, not required** | none; reported per width | never fails; it is the evidence that quantifies what was dropped |
 | **V7** | permutation invariance: permute objects within each family, compare predictions | ATOL/RTOL | width not released |
 | **V8** | **arm symmetry** of the V4 residual: arm-to-arm difference in mean and max residual | within ATOL/RTOL | **hard stop for the whole route** — an arm-correlated numerical bias is the one failure this substitution cannot absorb |
@@ -98,12 +136,31 @@ and I return to Joseph.
 | **V10** | checkpoint save and reload: reloaded predictions vs original | bitwise, as the frozen preflight requires | hard stop |
 | **V11** | input/mask correctness: counts equal segment-id bincounts; token masks all true within a bucket; `enabled` flags match the arm's declaration; and **masked-slot invariance** — perturb values under inactive masks and require bitwise-identical predictions | bitwise for the invariance | hard stop |
 | **V12** | finiteness: all gradients, predictions and weights finite; gradient norms recorded per arm per width | non-finite fails | hard stop |
+| **V13** | **duplicate-arm null**: two arms configured identically must give the same closure | spurious contrast ≤ **δ/10 = 1.0 point** | hard stop — this is the end-to-end bound that replaces the withdrawn cancellation claim |
 
-**Why V5's bound is loose and V1's is bitwise.** A central difference in float32 carries
-truncation and cancellation error of order `sqrt(eps)` relative to the loss scale, so
-demanding 1e-5 there would be a guard that fires on every correct run. Repeatability, by
-contrast, should be exact under `determinism_enabled: true` and `TF_DETERMINISTIC_OPS=1`,
-so anything short of bitwise is a real finding.
+**V5's bound is measured, not asserted.** The first draft asserted 2e-2. A step-size
+sweep (`measure_finite_difference_scale.py`, receipt at
+`local_validation/20260918-fd/fd-scale.json`) shows the accuracy curve is V-shaped as
+expected — truncation falling as h², cancellation growing as eps/h — with the floor at
+**h = 1e-2**:
+
+| configuration | p90 relative at optimum | max relative at optimum |
+|---|---:|---:|
+| pooled, 4 typed objects | 8.40e-05 | 5.44e-04 |
+| direct, 4 typed objects | 8.65e-05 | 4.53e-04 |
+| direct, 34 typed objects | 5.88e-04 | 6.14e-04 |
+
+So **2e-2 was about thirty times looser than the achievable floor** — a guard no
+realistic error could have tripped. The frozen bound is **5e-3**: roughly eight times
+the worst measured maximum, which leaves room for degradation at widths beyond those
+measured while staying four times tighter than the asserted value. The gradient floor
+of 1e-3 exists because relative error on a near-zero gradient measures the denominator
+rather than correctness, and V5a re-establishes the plateau **at each width** so the
+tolerance is justified there rather than extrapolated from here.
+
+**Why V1's bound is bitwise.** Repeatability should be exact under
+`determinism_enabled: true` and `TF_DETERMINISTIC_OPS=1`, so anything short of bitwise
+is a real finding.
 
 **Why V7 is not bitwise.** Floating-point addition is not associative, so
 `unsorted_segment_sum` over a permuted order legitimately differs in the last places.
