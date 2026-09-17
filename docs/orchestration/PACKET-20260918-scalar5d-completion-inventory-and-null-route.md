@@ -593,3 +593,58 @@ have the `n_negative` line at `:372`, while `937c3847`'s blob `2f29b6ec…` has 
 there. And `z_pilot.py` exists **only** on `lane/z-assembly-pilot-20260914`. So the substance holds on
 two trees of three and neither lane mismeasured; **I cited a line without naming a tree.** Third
 instance in this project.
+
+---
+
+## 11. The L3 requirement was mis-specified — my hybrid is withdrawn as the criterion
+
+`[91eaa2]` rejected the hybrid and re-specified §4.1's **requirement**. I checked the citation it
+turns on and **it is verbatim**, `z_contract.py` `cause3_corr`, blob `24379afb40d2` (main):
+
+> *"no correlation-sensitive leg is adopted, and none has a boundary. **Both adopted statistics are
+> functions of the diagonal alone, so a MET result on them licenses nothing about `C_Z`'s
+> off-diagonal structure.**"*
+
+That is a complaint that the statistics **cannot see** correlations — a **sensitivity** requirement,
+not an **invariance** one. §4.1 asked for the wrong property and I endorsed the wrong property.
+`[91eaa2]`'s measurement at *exactly* equal source diagonal settles it: trace ratio `0.0` and per-bin
+σ `4.4e-16` both **fail** (blind to correlation), while its statistic and my hybrid both move
+`0.003620 / 0.017998 / 0.070526` — **identically**. They must be identical, because holding the
+diagonal fixed makes `renorm(C) = C`. **So on the test the boundary actually demands, the hybrid adds
+nothing.** It is withdrawn as the criterion and retained only as a secondary diagnostic that isolates
+which channel moved.
+
+### 11.1 ⚠ My counter-test REFUTED MY OWN OBJECTION
+
+I expected the leak coefficient to blow up in `C_Z`'s regime — anti-correlated, near-null — which
+would have killed the budget. **Measured, and it is the opposite:** leak per unit rescale sd is
+`0.415 / 0.297 / 0.345` on a generic PSD source but only `0.023 / 0.027 / 0.023 / 0.025` at
+near-cancellation depths `0.90 / 0.99 / 0.999 / 0.99999`. **An order of magnitude smaller in the
+regime I expected to be worse.** The objection is withdrawn.
+
+What survives is weaker and still real: **the coefficient moves by ~18× across source families, so
+`0.3` is a measurement on one synthetic ensemble, not a bound.** It must be measured on the actual
+`M1` and `C_Z` before it enters a criterion — which is again the same object, `M1 C_Z M1ᵀ`.
+
+### 11.2 The consequence of the budget that I think has not been priced
+
+`τ = τ_corr + 0.3·δ_bin` is a bound only if **`δ_bin` is an enforced gate**. But `δ_bin` is
+**WITHHELD and blocked** on the same unestablished quantity that closed `θ`, and L2 is being retained
+as a **diagnostic**, not a gate. A budget term built on an unenforced, unvalued quantity bounds
+nothing, and it has a further effect:
+
+**Under the hybrid, L3 was independent of `δ_bin` by construction. Under the budget, L3 inherits
+L2's blockage** — `τ` cannot be evaluated until `δ_bin` has a value, and `δ_bin` is blocked. So the
+choice trades L3's independence from the blocked quantity for actuality of the object. That may well
+be the right trade — `[91eaa2]`'s argument that `renorm(C_k)` *"is an object that exists in no
+product"* is a fair scientific objection, and a criterion on an object nobody publishes protects
+nothing. **But it should be made knowingly**, and it moves `τ_p` from "not blocked in principle" to
+blocked-with-`δ_bin`.
+
+### 11.3 Two preconditions were accepted and one was strengthened
+
+Both bind whichever instrument is chosen, since both divide by `√diag`. `[91eaa2]` added the part I
+had left soft: the `n_empty` census must be declared as a **pass condition**, not merely recorded — a
+census recorded but not gated is the green-gate-that-proves-nothing shape. And on the `x_cv > 0`
+catch, a zero-variance reported bin must be a **REFUSAL, not a masked bin**, since masking it after
+the fact would be a post-hoc population change.
