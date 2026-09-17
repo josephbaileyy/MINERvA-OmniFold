@@ -107,6 +107,51 @@ class FixtureCompatibilityTests(unittest.TestCase):
             self.assertEqual(left.shape, right.shape, key)
 
 
+class ChildCommandTests(unittest.TestCase):
+    """The child invocation must be parseable by the script's own parser.
+
+    The first subprocess split omitted an argument the parser required, so all three
+    gate groups died on argv before reaching TensorFlow. One cluster job to find, one
+    local test to prevent.
+    """
+
+    def test_the_child_command_parses(self) -> None:
+        command = probe.gate_child_command(
+            Path("/checkout"), [(1, 1, 2)], 4, Path("/work"), Path("/work/g.json")
+        )
+        args = probe.build_parser().parse_args(command[2:])
+        self.assertTrue(args.gate_group_only)
+        self.assertEqual(args.checkout, Path("/checkout"))
+        self.assertEqual(args.gate_rows, 4)
+        self.assertEqual(args.output, Path("/work/g.json"))
+        self.assertEqual(args.workspace, Path("/work"))
+
+    def test_the_child_command_carries_the_widths_as_json(self) -> None:
+        import json
+
+        widths = [(0, 18, 1), (2, 85, 4)]
+        command = probe.gate_child_command(
+            Path("/c"), widths, 4, Path("/w"), Path("/w/g.json")
+        )
+        args = probe.build_parser().parse_args(command[2:])
+        self.assertEqual(
+            [tuple(w) for w in json.loads(args.widths)], [tuple(w) for w in widths]
+        )
+
+    def test_the_child_runs_the_same_file(self) -> None:
+        command = probe.gate_child_command(
+            Path("/c"), [(1, 1, 2)], 4, Path("/w"), Path("/w/g.json")
+        )
+        self.assertEqual(Path(command[1]).name, "probe_four_arm_geometry_and_cost.py")
+
+    def test_the_parent_still_demands_a_source_receipt(self) -> None:
+        # Relaxing the requirement for children must not let the parent run
+        # without the measurement its ladder comes from.
+        args = probe.build_parser().parse_args(["--checkout", "/c", "--output", "/o"])
+        self.assertIsNone(args.source_receipt)
+        self.assertFalse(args.gate_group_only)
+
+
 class GroupingTests(unittest.TestCase):
     def test_the_bound_pipeline_group_size_is_four(self) -> None:
         self.assertEqual(probe.GROUP, 4)

@@ -139,6 +139,37 @@ def case_name(width: tuple[int, ...]) -> str:
     return "w" + "-".join(str(value) for value in width)
 
 
+def gate_child_command(
+    checkout: Path,
+    widths: list[tuple[int, ...]],
+    rows: int,
+    workspace: Path,
+    payload: Path,
+) -> list[str]:
+    """Build the child invocation, as a value a test can parse.
+
+    The first attempt at the subprocess split omitted an argument the parser
+    requires, so all three groups died on argv before reaching TensorFlow -- a defect
+    that cost a cluster job to discover and that ``build_parser`` plus one local test
+    now catch.
+    """
+    return [
+        sys.executable,
+        str(Path(__file__).resolve()),
+        "--gate-group-only",
+        "--checkout",
+        str(checkout),
+        "--widths",
+        json.dumps([list(width) for width in widths]),
+        "--gate-rows",
+        str(rows),
+        "--workspace",
+        str(workspace),
+        "--output",
+        str(payload),
+    ]
+
+
 def gate_group_in_subprocess(
     checkout: Path, widths: list[tuple[int, ...]], rows: int, workspace: Path
 ) -> dict[str, Any]:
@@ -158,21 +189,7 @@ def gate_group_in_subprocess(
     import subprocess
 
     payload = workspace / "group.json"
-    command = [
-        sys.executable,
-        str(Path(__file__).resolve()),
-        "--gate-group-only",
-        "--checkout",
-        str(checkout),
-        "--widths",
-        json.dumps([list(width) for width in widths]),
-        "--gate-rows",
-        str(rows),
-        "--workspace",
-        str(workspace),
-        "--output",
-        str(payload),
-    ]
+    command = gate_child_command(checkout, widths, rows, workspace, payload)
     finished = subprocess.run(command, capture_output=True, text=True)
     if payload.exists():
         record = json.loads(payload.read_text())
@@ -323,11 +340,13 @@ def measure_arm_cost(
     }
 
 
-def main() -> None:
-    """Gate every realizable width, then time the four arms."""
+def build_parser() -> argparse.ArgumentParser:
+    """Return the argument parser, shared by the parent and its gate children."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkout", type=Path, required=True)
-    parser.add_argument("--source-receipt", type=Path, required=True)
+    # Parent-only, and therefore NOT required at the parser level: a gate child has
+    # no use for it, and requiring it here is what made the children die on argv.
+    parser.add_argument("--source-receipt", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--gate-rows", type=int, default=4)
     parser.add_argument("--cost-rows", type=int, default=20000)
@@ -349,7 +368,15 @@ def main() -> None:
     parser.add_argument("--gate-group-only", action="store_true")
     parser.add_argument("--widths")
     parser.add_argument("--workspace", type=Path)
-    args = parser.parse_args()
+    return parser
+
+
+def main() -> None:
+    """Gate every realizable width, then time the four arms."""
+    args = build_parser().parse_args()
+
+    if not args.gate_group_only and args.source_receipt is None:
+        raise ValueError("--source-receipt is required unless --gate-group-only")
 
     _install(args.checkout)
     import amended_preflight as preflight
