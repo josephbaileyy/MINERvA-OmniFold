@@ -51,14 +51,18 @@ multiplicative correction, an ${\sim}\SI{3}{\percent}$ effect overall that is
 largest where the background concentrates (\S\ref{sec:selection}).
 
 This correction is, deliberately, the one place the analysis binning enters
-before the final histogramming. Published unbinned measurements have so far
-avoided the problem rather than solved it: H1 cut backgrounds to a negligible
+before the final histogramming. Early unbinned measurements used several
+background treatments: H1 cut backgrounds to a negligible
 level, LHCb corrected per track upstream of the unfold, and ATLAS left its
 less-than-\SI{0.25}{\percent} background in place and assigned it as an uncertainty,
-while identifying negatively-weighted simulated events as the natural
+in its twenty-four-observable measurement, while identifying negatively-weighted simulated events as the natural
 in-method subtraction~\cite{ATLAS:2024jets,Andreassen:2021zzk};
-Ref.~\cite{unbinnedguide} recommends that route for nontrivial backgrounds
-but records no analysis that has yet used it. The explicit per-reco-bin
+Ref.~\cite{unbinnedguide} recommends that route for nontrivial backgrounds.
+More recent methodological work explicitly treats backgrounds, fakes,
+acceptance, and inefficiency in OmniFold-HI~\cite{Falcao:2025backgrounds} and in
+generative unfolding~\cite{Butter:2025genfold}. These constructions address
+related problems but need not use the same subtraction prescription.
+The explicit per-reco-bin
 weight used here is a conservative middle ground at our sub-percent
 genuine-background scale. Its fully unbinned realization --- injecting the
 background simulation onto the measured side with negative weight, which
@@ -209,6 +213,24 @@ production, universe-sweep, and closure run:
         so closure exercises the same code path as the measurement rather
         than an idealized shortcut.
 \end{itemize}
+
+\subsection{Related developments and estimator scope}
+Profile OmniFold~\cite{Zhu:2025profile} extends the classifier-based EM procedure
+to nuisance parameters in the forward model. It complements the earlier
+unbinned profiled unfolding approach~\cite{Chan:2023tbf} by providing a distinct
+algorithmic construction. Profiling nuisances using observed data is different
+from propagating an external nuisance ensemble through a fixed procedure; it
+would change the inference model used here. Neither a profiled estimator nor
+its uncertainty is adopted in this analysis.
+
+Alternative estimators include SPINUP, which learns a forward mapping
+\cite{Butter:2025spinup}, and AUSSIE, which replaces OmniFold's second step with
+a different loss and avoids its outer iteration~\cite{Ore:2026aussie}.
+They provide possible future cross-checks with different algorithmic
+assumptions. Reduced dependence on the simulation prior does not establish
+independence from the detector model, adequate phase-space support, or coverage
+for the present measurement. Such comparisons would require matched signal,
+selection, normalization, and uncertainty definitions.
 
 \subsection{Cross-section extraction}
 \label{sec:method-xsec}

@@ -13,21 +13,27 @@ We exercise it by extending the measurement to
 $d^{3}\sigma/(d\pT\,d\pPar\,d\Eavail)$ with available energy as a third axis.
 
 Prior MINERvA measurements include binned triple-differential results
-(Fig.~\ref{fig:landscape}, Table~\ref{tab:landscape}). The distinction here is
+(Fig.~\ref{fig:landscape}, Table~\ref{tab:landscape}), including recent comparisons
+between low- and medium-energy beams~\cite{MINERvA:2026qeleme}. The latter measure
+$\pT$, $\pPar$, and available recoil energy for a quasielastic-like signal, for
+which the available energy is the sum of proton kinetic energies. This differs
+from the inclusive signal and species-dependent energy definition used here.
+The distinction here is
 the unbinned, simultaneous CC-inclusive scalar formulation and its extension to
 three, four and five recorded observables, not multidimensionality by itself.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.97\textwidth]{minerva_unfolding_landscape}
-  \caption{Dimensionality of the full set of MINERvA differential cross-section
+  \caption{Dimensionality of the surveyed MINERvA differential cross-section
   measurements over time (number of kinematic variables unfolded
   \emph{simultaneously}; a double-differential $d^{2}\sigma/dx\,dy$ counts as
   two), colored by channel. Prior MINERvA results use explicit binned unfolding
   and include a triple-differential quasielastic-like measurement; this work
   extends an unbinned CC-inclusive scalar unfold to five recorded observables.
-  Source: the MINERvA data-release page and the cited publications; full list in
-  Table~\ref{tab:landscape}. Dimensionality is classified from each analysis's
+  Source: the MINERvA data-release page and the cited publications. The plotted
+  inventory extends through the 2025 entries; more recent measurements are
+  listed separately in App.~\ref{app:landscape}. Dimensionality is classified from each analysis's
   headline differential result; flux, reconstruction, generator-tuning and
   total-only entries are excluded.}
   \label{fig:landscape}
@@ -117,7 +123,8 @@ of the rate at $\Eavail\lesssim\SI{0.8}{GeV}$.
 
 \subsection{Validation against the 2D measurement}
 \label{sec:3d-anchor}
-With no published 3D reference, the validation anchor is that marginalizing the
+Without a directly matched published CC-inclusive 3D reference for this signal
+and phase space, the validation anchor is that marginalizing the
 3D cross section over $\Eavail$ must reproduce the 2D result of
 \S\ref{sec:results}. The marginal recovers the 2D \emph{normalization} closely:
 total $\sigma$ agrees to $+\SI{0.95}{\percent}$ and the per-bin
@@ -268,8 +275,8 @@ comparisons are gated on that product.
 \subsection{The low-available-energy excess recovers the known low-recoil 2p2h deficit}
 \label{sec:3d-2p2h}
 The low-$\Eavail$ excess is the most physically interesting feature the third
-axis exposes, and the 3D framework lets us identify its origin directly by
-generating the relevant physics ourselves rather than only reweighting. It sits
+axis exposes, and the 3D framework lets us test candidate explanations by
+generating the relevant physics as well as reweighting. It sits
 in a well-established MINERvA low-recoil program: the enhancement of the event
 rate between the quasielastic and $\Delta$ peaks, with multi-nucleon final
 states, was first isolated in the low-three-momentum-transfer
@@ -277,7 +284,7 @@ subsample~\cite{MINERvA:2016lowrecoil} and is the effect the empirical MINERvA t
 built to absorb --- our measurement re-exposes it on the muon-kinematics
 $\times\,\Eavail$ axes.
 
-\emph{Final-state interactions do not explain it.} A \texttt{grwght1p} reweight
+\emph{The tested pion-FSI variations do not account for it.} A \texttt{grwght1p} reweight
 pass on the 2M central-value GENIE events varying the pion-FSI dials shows both
 are sub-percent on $d\sigma/d\Eavail$: \texttt{FrInel\_pi} shifts the spectrum by
 $\le\SI{0.74}{\percent}$ (peak in $0.10$--$\SI{0.20}{GeV}$) and \texttt{FrAbs\_pi}
@@ -289,7 +296,12 @@ practice, and that the reason is a degeneracy --- a set of pion-FSI dials
 overlap, so one of them has to be dropped --- rather than a defect specific to
 that knob.} A less-than-\SI{1}{\percent} knob cannot bridge a
 $7$--$\SI{15}{\percent}$ excess, so the
-excess points to the initial-state/nuclear model, not rescattering.
+tested variations do not account for this excess. This statement is specific
+to these dials and their variation range; it does not exclude other transport
+models or proton-FSI effects. Recent MINERvA quasielastic-like measurements
+point toward overestimated proton and charged-pion FSI in their model
+comparisons~\cite{MINERvA:2026qeleme}. Their different signal definition prevents
+a direct identification of that effect with the inclusive discrepancy here.
 
 \emph{The shape and size match 2p2h.} A subtlety drives the diagnosis: our base
 GENIE central value was generated with the default event-generator list, which
@@ -308,7 +320,7 @@ $\Eavail\le\SI{0.4}{GeV}$, exactly where 2p2h lives, and closing it requires a
 (\SI{62}{\percent} locally) --- the standard empirical/Valencia-MEC magnitude,
 in contrast to the sub-percent FSI dials (Fig.~\ref{fig:modedecomp}).
 
-\emph{Enabling Valencia 2p2h confirms it.} We regenerated the GENIE central
+\emph{Enabling Valencia 2p2h improves the description.} We regenerated the GENIE central
 value with the empirical 2p2h turned on (\texttt{--event-generator-list
 Default+CCMEC}, 2M events). Because the Nieves--Simo--Vacas MEC channel, though
 present in the splines, is absent from the \texttt{gspl2root} total-CC graph, the
@@ -328,6 +340,14 @@ consistent with NuWro and GiBUU (native, un-enhanced 2p2h) sitting low as well.
 The one feature 2p2h does not touch is a separate central-value excess in the
 high-$\Eavail$ $[1.50,3.00)$ bin, a DIS-tail modeling issue resolved on the
 $(\Eavail,W)$ plane in \S\ref{sec:eavailw}.
+
+The improvement supports the relevance of the tested multinucleon contribution
+without uniquely identifying a nuclear mechanism. For example, recent NEUT
+studies include two-body currents contributing to one-particle--one-hole final
+states and examine their interplay with axial form factors
+\cite{FrancoMunoz:2026currents}. Thus a two-body current is not synonymous with
+the generator's 2p2h event category. Visible-energy comparisons can depend on
+both the primary interaction and subsequent hadronic transport.
 
 This low-available-energy deficit is the same feature MINERvA's dedicated low-recoil
 inclusive measurement reports: Ascencio \emph{et al.}~\cite{MINERvA:2022incl}, which

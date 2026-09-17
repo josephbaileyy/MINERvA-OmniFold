@@ -11,13 +11,15 @@ test. On that foundation we
 performed \emph{unbinned} simultaneous three-, four- and five-observable
 unfolds of MINERvA data ($+\Eavail$, $+q_{3}$, $+W$), each validated against its
 lower-dimensional predecessor by projection anchors agreeing to $\approx$1--2\,\%. (Binned MINERvA multi-differential
-measurements, up to triple-differential~\cite{MINERvA:2022qe}, exist; the methodological distinction is the
+measurements, up to triple-differential~\cite{MINERvA:2022qe,MINERvA:2026qeleme}, exist; the methodological distinction is the
 unbinned, simultaneously-unfolded formulation.) The physics output:
 \begin{itemize}[itemsep=2pt]
   \item the low-$\Eavail$ excess over all four truth-level generators
         recovers the established MINERvA low-recoil/2p2h deficit through an
-        independent method, with the expected FSI insensitivity and Valencia
-        2p2h response (\S\ref{sec:3d-2p2h});
+        independent unfolding method, with small responses to the tested
+        pion-FSI variations and an improved description when Valencia 2p2h is
+        included. These tests do not exclude other transport effects or uniquely
+        identify a nuclear mechanism (\S\ref{sec:3d-2p2h});
   \item the $(\Eavail,q_{3})$ plane resolves the deficit's momentum-transfer
         structure (\S\ref{sec:4d}); (the 4D systematic-budget composition is not
         quoted --- no corrected 4D covariance is adopted, \S\ref{sec:3d});
@@ -67,3 +69,15 @@ posterior from MAT-MINERvA for a fully self-derived $\rho$. The
 truncated-spectral ``ours-only'' goodness-of-fit convention
 (App.~\ref{sec:rank}) is no longer among them: the collaboration confirmed it
 uses the same truncated-spectral pseudo-inverse.
+
+\paragraph{Reusing the unbinned result.}
+The public ATLAS charged-particle phase-space release
+\cite{ATLAS:2026fpsdata} provides a concrete example of distributing unbinned
+products. The emerging \texttt{omnifold\_publication} proposal
+\cite{Bajpai:2026publication} emphasizes weight-family metadata, normalization,
+row alignment, and checksums. A MINERvA release should likewise specify event
+identity, estimator and uncertainty-family definitions, units, support,
+normalization, and a reproducible projection example. New projections require
+their own applicability checks; nominal weights alone cannot certify arbitrary
+downstream inference (App.~\ref{sec:unbinned-inference}). Neither this release
+design nor a public example supplies the outstanding covariance adoption.

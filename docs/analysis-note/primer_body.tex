@@ -46,9 +46,10 @@ the morphed \emph{true} simulation is the unfolded answer.
 
 The decisive advantage is what happens when you want to measure more quantities
 at once. In the table method, adding a quantity multiplies the bins. In
-OmniFold, adding a quantity is just handing the computer one more column of
-numbers to learn from --- the cost barely grows. That single property is what
-makes everything in the next section possible.
+OmniFold, adding a quantity adds an input feature without requiring a new table
+of migration bins. Training, the amount of simulation needed, and uncertainty
+estimation still become more demanding. This makes the extensions in the next
+section practical without removing the need to validate them.
 
 \begin{figure}[H]
   \centering
@@ -101,12 +102,14 @@ simpler one --- a built-in consistency check.
 The first physics payoff appears in the available energy. When we compare the
 data to four independent state-of-the-art simulations, all four fall short of
 the data in the low-energy region (Fig.~\ref{fig:primergen}). This is not a
-surprise --- it is a known nuclear-physics effect, in which a neutrino
-occasionally kicks \emph{two} nucleons at once (``2p2h''), that simulations have
-historically struggled to model. The significance is that our completely
-independent method rediscovers it: we checked that minor nuclear-physics knobs
-cannot account for the gap (they move the result by under one percent), whereas
-adding the missing two-nucleon process fills it in, exactly as expected. And
+surprise --- it resembles an established low-recoil discrepancy that simulations
+have historically struggled to model. Adding a process in which the neutrino
+interacts with a pair of nucleons (``2p2h'') fills part of the gap. The two tested
+pion-rescattering variations have a much smaller effect, but that does not rule
+out other changes to how particles move through the nucleus. Related MINERvA
+measurements with a different event selection show why proton and pion
+rescattering also matter~\cite{MINERvA:2026qeleme}. These comparisons support the
+two-nucleon contribution without uniquely establishing the cause. And
 where MINERvA has a dedicated published measurement of this region, ours agrees
 with it at central-value level on the maximal common grid.
 
@@ -180,8 +183,8 @@ separately labeled, simulation-dependent extrapolation.
 
 Unbinned machine-learning unfolding reproduces a flagship MINERvA measurement
 \emph{and} does what the traditional method cannot: measure many quantities at
-once. Using that, this analysis independently confirmed a known nuclear-physics
-effect, exposed a localized central-value discrepancy that all four tested
+once. Using that, this analysis recovered a known low-recoil discrepancy with
+a different unfolding method, exposed a localized central-value difference that all four tested
 simulations underpredict, and
 mapped a possible extension of the signal definition while exposing where the
 detector provides too little information for a model-independent result.

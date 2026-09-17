@@ -379,7 +379,7 @@ MaRES & $0.548\%$ \\
 MvRES & $0.377\%$ \\
 MaCCQE & $0.357\%$ \\
 \midrule
-Systematic total (44 bands $+$ norm) & $\dead{4.783\%} \to \boxed{6.830\%}$ (median); $\sqrt{\Tr\mathbf{C}}=\dead{2.463\times10^{-39}} \to 3.214\times10^{-39}$ \\
+\shortstack[l]{Systematic total\\(44 bands $+$ norm)} & \shortstack[l]{$\dead{4.783\%} \to \boxed{6.830\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=\dead{2.463\times10^{-39}} \to 3.214\times10^{-39}$} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -861,6 +861,38 @@ ratio is $\sigma_{\tot}^{\ours}/\sigma_{\tot}^{\paper} = 1.0111$ ---
 $1\%$ scale difference. Shape disagreement at the $\sim 1\%$ level
 (median bin ratio $1.0064$, $94\%$ of bins within $10\%$ of the
 paper) accounts for the remaining shape residual.
+
+\subsection{Inference from unfolded events and selected projections}
+\label{sec:unbinned-inference}
+Unfolding induces correlations among weighted events. Consequently, treating
+an unfolded sample as independent observations in a downstream likelihood can
+underestimate parameter uncertainties~\cite{Desai:2025correlated}. Nominal
+event weights alone do not specify that uncertainty. One possible approach
+is to propagate coherent unfolding replicas through the downstream fit;
+independently resampling already-unfolded rows is not equivalent to resampling
+the original inputs and repeating the learned estimator. Classifier and
+permutation goodness-of-fit tests likewise need a null calibration appropriate
+to their fitting procedure and any reuse of data. This is a requirement on
+inference, not a new validation result for the tests reported here.
+
+The uncertainty target must also be specified. Coverage for each bin or
+projection separately does not imply simultaneous coverage for their joint
+collection. For a fixed linear projection $y=P x$, covariance propagation is
+$C_y=P C_x P^{\top}$; for densities, $P$ includes the integrated bin widths.
+This identity propagates a covariance but does not establish its calibration
+or account for choosing a region after inspecting the data.
+
+Recent work constructs calibrated intervals for selected functionals in
+constrained inverse problems~\cite{Stanley:2025functionals} and joint confidence
+regions for multiple functionals~\cite{Batlle:2025simultaneous}. Such methods
+could provide independent benchmarks for specified integrals or contrasts.
+Their guarantees depend on the forward model, noise law, and parameter
+constraints; they do not transfer automatically to a learned response with
+finite simulation and detector nuisances. A rank-deficient forward operator
+is also distinct from a rank-deficient sample covariance. Neither truncating
+the latter nor validating a few projections certifies the full distribution.
+Any such benchmark would supplement the required scalar-5D uncertainty
+construction, not replace its adoption or supply coverage for PET.
 
 \subsection{Ill-conditioning and rank deficiency}
 \label{sec:rank}

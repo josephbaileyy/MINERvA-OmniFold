@@ -1,5 +1,13 @@
 # Literature & open-data notes (OmniFold + MINERvA)
 
+**2026-09-17 literature update:** see
+[the source register and incorporation proposal](docs/literature/2026-09-17-review-and-incorporation.md)
+for additional unfolding/statistics papers, recent MINERvA measurements, release
+tools, proposed paper/note wording, and work that can proceed during the reported
+Perlmutter outage. That document distinguishes external results, project
+inferences, and proposed studies; it does not adopt an estimator or covariance.
+The dated audit recommendations below are historical, not current authorization.
+
 Reference notes captured during the 2026-06-03 analysis audit, so future work does
 not have to re-derive them. Two threads: (A) the OmniFold / unbinned-unfolding
 literature (the 2025 method papers + the broader ML-unfolding family and experimental

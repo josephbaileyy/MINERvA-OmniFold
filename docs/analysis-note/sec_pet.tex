@@ -409,6 +409,19 @@ supervised regression or classification on simulation.  Typed reconstructed
 objects and aggregate overflow tokens are therefore prospective representation
 improvements, not features of the present estimator.
 
+\subsection{Ensembling as an estimator-design choice}
+Neural likelihood-ratio studies find that averaging models at Step~1 before
+pushing weights to Step~2 can improve unfolding bias and variance
+\cite{ToralesAcosta:2025stabilizing}. Averaging inside the iteration and averaging
+final unfolded weights define different estimators. A future comparison must
+specify the quantity averaged, the point in the iteration, and the resulting
+nominal/replica pairing. The same study finds that pretraining can reduce
+variance while increasing bias, so seed dispersion alone is insufficient to
+rank designs. Closure bias and uncertainty calibration must also be assessed.
+These are method-development directions, not explanations of the existing
+full-event anomaly, evidence for its declined pairing, or an adopted PET
+uncertainty construction.
+
 \subsection{Full-event artifacts and present boundary}
 \label{sec:pet-full-event-status}
 Within its recoil-only contract, this study demonstrates paired reconstruction-
