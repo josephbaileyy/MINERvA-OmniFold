@@ -101,6 +101,9 @@ depends on that bin.** The published quantities are the declared projections (§
 prospective-declaration rule wants, and it is **derivable the moment the map set is bound** — the work
 the peer is completing as P1. **I state it parametrically and it needs no number from me.**
 
+⚠ **P1 HAS SINCE LANDED — §9 BINDS THIS, and `φ = 1` survives by a DIFFERENT route than the one
+argued here.** Read §9.1 before quoting this subsection.
+
 ⚠ **The margin caveat that the deadband correction taught, applied here:** the support union must be
 declared **prospectively and with its margin**, because a weight that is *nearly* zero is a membership
 question, and membership decided after seeing the members is a post-hoc population choice.
@@ -159,6 +162,8 @@ unbounded *relative* change in the projected value — `179.91` against a `0.690
 PSD. **So no per-map tolerance follows from any diagonal criterion, and `τ_p` is a genuine
 per-projection declaration.** The packet supplies the form and the invariance requirement; the values
 attach to maps that do not yet exist here.
+
+⚠ **P1 HAS SINCE LANDED: there is ONE map on the intended path, so this is ONE `τ_p`, not four — §9.2.**
 
 **What `τ_p` needs, named:** for each map, the smallest change in that projection's correlation
 structure that would change the consistency conclusion the map is published to support. **That is a
@@ -296,3 +301,94 @@ each missing value needs instead.
    on the null leg, `ε`, or `θ`.
 5. **I have no cluster access** and no member exists; every number here is from code, from
    `seed_offset_policy` called directly, or from the spec.
+
+
+---
+
+## 9. ⚠ P1 LANDED — THE MAPS ARE BOUND, AND THE AGGREGATION DIRECTION IS MEASURED
+
+Relayed from `minerva-omnifold-7f`, `PACKET-20260918-scalar5d-completion-inventory-and-null-route.md`
+§4 at `52e83713`; maps from `project_cov_nd.py` at `ce72abbc`. **Axis order C-order throughout;
+`pt` 14, `pz` 16, `eavail` 7, `q3` 7, `W` 6 → 65,856 dense, 10,694 reported.**
+
+### 9.1 ONE MAP CONSUMES THE COVARIANCE, AND `φ = 1` SURVIVES BY A DIFFERENT ROUTE
+
+**M1** keeps `(eavail, W)` → a **42**-bin destination, marginalizing `pt, pz, q3`. Measured from the
+manuscript source rather than a status table, `main_paper.tex:49-51`: the localization claim *"is a
+central-value result; its significance awaits adoption of a common five-dimensional covariance."*
+**Exactly one published claim consumes `C_Z`, and it lives on M1's 42-bin plane**; M2/M3/M4 are
+marginal anchors and diagnostics, and the reported central values consume the CV rather than `C_Z`.
+
+⚠ **§3.1's derivation of `φ = 1` HOLDS, but my stated reason was the wrong one.** I argued it from a
+*union over the declared maps' supports*. The correct route is simpler: **M1 drops the three axes that
+would have restricted the population**, so every reported 5D bin lands in some `(E_avail, W)` cell.
+**The population is the whole reported support, minus only those cells whose destination bin is
+unreported** — one declaration, not a union over four partial supports. **The conclusion is
+unchanged; the argument for it is replaced.**
+
+**And §3.1's margin caveat lands exactly where the peer says it does, which is a real requirement:**
+`project_cov_nd.py` offers **two** destination masks — `--dst-cv`'s own `CV > 0`, or the dense bins
+receiving ≥ 1 source cell — and **on 42 bins they can differ materially.** **DECLARED REQUIREMENT:
+M1's destination mask must be named prospectively, and the orphan set (`src_cells_dropped`, dropped at
+weight zero) recorded with it.** Entries are the product of the **dropped** axes' widths
+(`build_projection:87-90`); kept-axis widths are not applied, so the destination is a differential
+density in its kept axes — which the receipt must state, because it is the same width-weighting trap
+that makes unit weights wrong.
+
+### 9.2 `τ_p` IS ONE DECLARATION, AND ITS INPUT IS NOW NAMEABLE AND IS NOT THE CLOSED QUESTION
+
+With M1 alone on the intended path, §4.2's per-map `τ_p` is **a single `τ` on M1's 42 × 42 projected
+correlation matrix** rather than four. **MEASURED, the consumer's corner is defined in code** —
+`eavailW_covariance.py:547`: `corner = ((ea_e[:-1] >= 0.4)[:, None] & (w_e[:-1] >= 1.8)[None, :])` —
+and the claim there is a data-versus-generator significance. **So `τ`'s input is "how much may the
+reported significance move before the written claim changes."** That is a **publication-facing
+judgement about a written claim**, not a reproducibility quantity, and it is therefore **a different
+question from the one Joseph closed** — which is what §4.2 asserted and can now be shown rather than
+asserted.
+
+### 9.3 ⚠ THE AGGREGATION FACTOR — CORRECT CONCLUSION, AND I MEASURED BOTH DIRECTIONS THE OTHER WAY
+
+Each `(E_avail, W)` destination cell receives up to **14 × 16 × 7 = 1,568** dense source cells
+(verified arithmetic). The peer concludes that `δ_bin` is a weak proxy for the published quantity and
+that **L3 is primary and L2 cannot substitute for it** — ⚠ **that conclusion is right and the measured
+numbers strengthen it, but the mechanism attached to it has both directions reversed**, so it is
+corrected here before it is inherited.
+
+**MEASURED**, `N = 200` contributors, per-bin `δ = 1e-3` with **no** exceedance (`φ = 1`),
+correlations held fixed and only `σ` moved:
+
+| source correlation | movement pattern | `w'Cw` | dest `ΔV/V` | × `δ` |
+|---|---|---:|---:|---:|
+| positively correlated `ρ=+0.5` | **coherent** | `2.01e+04` | `2.00e-03` | **`2.0×`** |
+| positively correlated `ρ=+0.5` | cancelling | `2.01e+04` | `4.98e-09` | `0.0×` |
+| uncorrelated | **coherent** | `2.00e+02` | `2.00e-03` | **`2.0×`** |
+| uncorrelated | cancelling | `2.00e+02` | `1.00e-06` | `0.0×` |
+| **near-cancelling source** | **cancelling** | `2.00e-01` | `1.998e-01` | **`199.8×`** |
+
+**So:** **coherent movement is the BENIGN case at exactly `2.0×`**, and the `2×` is not aggregation at
+all — it is variance being quadratic in `σ`. **Aggregation AVERAGES a coherent move; it does not
+amplify it, and `1,568` does not multiply it.** The blow-up is on **cancelling movement over a
+near-cancelling source**, at `≈ N ×`, which is the near-cancellation channel and is where the `1,568`
+actually attaches — `N` supplies the *room* for the cancellation, it is not a gain factor.
+
+**The corrected statement, which is stronger than "weak in both directions":** `δ_bin` **tightly
+controls** the coherent channel — a factor of exactly `2`, derivable and needing no measurement — and
+is **blind** to the cancelling channel, where it is **non-conservative** by up to `≈ N`. **So L2 is
+not a weak diagnostic; it is an exact one on one channel and vacuous on the other.** That is a better
+argument for L3's primacy than "weak proxy", and it also means **L2 should not be discarded** — it is
+the only cheap control on the coherent channel.
+
+### 9.4 TWO PRECONDITIONS ON M1 THAT ARE NOT MINE, CARRIED
+
+1. ⚠ **`project_cov_nd.py` records ZERO digests. VERIFIED here: `grep -cE "sha256|hashlib|digest"`
+   returns `0`, against `13` in `p4_project_4d.py`.** M1 — the one map `τ` binds — would be produced by
+   the **uninstrumented** projector, while OI-129 is filed against the better-instrumented one. **The
+   repair must land before M1 is ever produced**, since a retrofitted digest records only that a file
+   has not changed since the retrofit. **Not mine; recorded as a precondition on `τ`'s object.**
+2. **The existing `(E_avail, W)` consumer reads no 5D covariance**: it marginalizes 4D lateral bands to
+   `E_avail` and spreads the variance over `W` by the CV shape — `eavailW_covariance.py:445-448`,
+   *"flat-in-W fractional — documented approximation"* (VERIFIED). So adoption buys the deferred claim a
+   **derived** correlation structure in place of an acknowledged approximation, **which makes a loose
+   `τ` harder to defend, not easier** — the peer's point, and I agree with it. ⚠ One qualification:
+   the same comment says *"superseded by the W-resolved sweep mode below"*, so whether the
+   approximation is still the live path is a question about that mode's use, and I do not assert it.
