@@ -1113,6 +1113,40 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **yes but only with a declared margin**, bound-derived (E2) **barred**, use-derived (E3) only once the use is declared; and the
   **projection set is enumerable from publication scope, so what is owed is a CHECK, not a
   judgement** — the highest-value zero-compute item and absent from §12.5.
+- [`ASSESSMENT-20260918-integrated-acceptance-and-E1.md`](ASSESSMENT-20260918-integrated-acceptance-and-E1.md)
+  - **The integrated acceptance proposal (`d8f5ccd5`), with `E1` and `E2` PERFORMED rather than
+  awaited. Adopts nothing; acceptance is Joseph's act.** ⚠ **Cluster access is live from this
+  session, so `E1` — which the proposing and routing lanes could not do as owners — was performable
+  by a non-owning lane and I did it. READ-ONLY login-node work: no `sbatch`, no `srun`, no job
+  attempt, `R5` untouched.** So **every product figure here is MEASURED BY ME, not relayed** — the
+  change from the two previous assessments. **`E1`: RECONSTRUCTS.** Digest `cb82fc32…` matches; the
+  predicate recomputed and **CHECKED elementwise identical** to the persisted mask (which is what
+  `11b` requires); `10694` support, `55162` genuine zero, **`0` negative**; `r_null =
+  4.45200021375829101e-14` in **three** of my own summation orders **and bitwise equal to the
+  blob-pinned `null_ratio`/`reconstruct_null_ratio`**; versus the build's `…829038e-14` that is
+  **1.00 ULP**. Three reconstructions now exist within `2 ULP` and none is bitwise — the argument for
+  a numerical criterion, made on the criterion's own operands. `10683/11` bitwise split, `0` off
+  support, `max|Δ/x| = 1.755e-12` at grid-index `31499`, `min|ρ| = 0.0` exactly, margins `569.7×`
+  and `2.246e4×` — all confirmed. **`I1`:** the deployment's `z_statistics.py`/`z_contract.py` are
+  **byte-identical to the committed blobs**, and the shared cluster checkout has neither, so the
+  pilot ran from the deployment — the opposite of the `OI-136` shape. **`E2`: DISCHARGED from
+  COMMITTED evidence, no cluster read needed** — tolerance at `5d617da8` (2026-08-08, Joseph Bailey)
+  pre-dates the product by **37 days** and the observation by **40**. **`I2` — the routed finding is
+  REFUTED AS STATED:** `[B, S]` lives in §3.7a, which `SPEC:1552` titles *"ENTIRELY PROPOSED"*, so
+  there is nothing to amend — **and this also corrects my own `E1` requirement at `923a321c`**, which
+  treated the interval as governing. But the instinct is right at a worse location: **§3.6a item 3's
+  step (ii) is unsatisfied and reject condition `4c` is LIVE**, which is worse than a needed
+  amendment. **`I3`:** step (ii) is now **unperformable** for these products, because §6.4 requires
+  the bound *fixed before production* — so the decision is a **ruling on §3.6a item 3**, not an
+  amendment and not *"no amendment required"*. All three prior positions, including mine at
+  `ed18a231`, are restated. **`I4`:** the transfer's falsifier stays **unevaluable**; the `10.8×`
+  direction argument is confirmed and is not a substitute. **`I5`:** the `:1406-1409` charge is half
+  right — the proposal's feasibility/justification split is correct, the sentence does not license
+  omitting step (ii), and the symmetry charge against my `θ` use does not land. **`I6`: REFUTED** —
+  the per-bin-maximum rejection **is** on the record at `SPEC:1627` under a heading that says so.
+  **`I7`:** three citation corrections, one of which **withdraws a note of my own** — `z_contract.py`
+  has **FORKED** (`G_FLOOR` at `:84` on main, `:126` on the pilot lane), so my "misaddressed" verdict
+  was itself tree-less.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing

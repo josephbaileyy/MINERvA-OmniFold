@@ -339,12 +339,16 @@ the arithmetic was right and the object was not free to do what I said.* **What 
 narrow reading:** below `f ≈ 0.137` the `σ` tolerance is not what bounds downward `g` movement, so
 citing `θ` as the source of that bound is wrong even though a bound exists.
 
-⚠ **One misaddressed citation in the routing record's own correction, noted because this lane
-insists on it elsewhere.** It cites `z_contract.py:84` for `G_FLOOR = 1.0`. Measured at
-`67528132`: `G_FLOOR = 1.0` is at **`z_contract.py:126`**; `:39` carries the `§1.3a` docstring claim
-*"`g >= 1` exactly, by construction"*; `gate_g_domain` is **`z_assembly.py:126`** with the check at
-**`:136-137`**; and `:84` is an unrelated comment about `sys.modules`. **The substance of the
-correction is unaffected — I verified it against all four re-addressed sites.**
+⚠ **WITHDRAWN 2026-09-18 — this note was itself under-specified, and the real finding is a FORK.**
+It read that the routing record's `z_contract.py:84` citation for `G_FLOOR = 1.0` was misaddressed
+because the line is at `:126`. Measured across trees: blob `24379afb…` (`origin/main`, `480bed76`,
+`d8f5ccd5`) has `G_FLOOR` at **`:84`**; blob `80325ce5…` (the assembly-pilot lane, `67528132`) has
+it at **`:126`**. **`z_contract.py` has forked between the lanes**, so the citation is *correct* on
+`main` and at the criteria lane and *wrong* only at the sha I happened to check — and **I named no
+tree either**, which is the same defect I was charging. *A line number without its tree is its own
+decay.* What survives unchanged: `gate_g_domain` is **`z_assembly.py:126`**, not in `z_contract.py`,
+so a bare `(:126-132)` following a `z_contract.py` citation misroutes. Full record at
+`ASSESSMENT-20260918-integrated-acceptance-and-E1.md` `I7`.
 
 The residual point stands on its own: it is the *one-directional filter* shape:
 a guard stated two-sidedly that acts on one side only.
