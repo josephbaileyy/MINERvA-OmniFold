@@ -454,10 +454,18 @@ here** before accepting it. At `γ = 0.30`, limit `((1+γ)²−1) = 0.6900`, max
 the numerator is not, so the failure is **unbounded rather than gradual**. The missing condition:
 the inflated block's entries must also be **non-negative on the projected directions**.
 
-**And my own verification below could not have seen it** — the fixture was entrywise non-negative,
-so it sampled only the row that holds. That is the fixture-cannot-disagree-with-the-rule failure,
-and the honest reading of the table below is *"confirms the bound on non-negative fixtures"*, not
-*"confirms the bound"*.
+**And my own verification below could not have seen it.**
+
+⚠ **AND THE REASON IT COULD NOT BE SEEN IS SHARPER THAN "THE FIXTURE WAS NON-NEGATIVE"**, and
+`[91eaa2]` supplied it: **for UNIFORM `Γ` the bound holds with EXACT EQUALITY on every `C`**, because
+`ΔC = γC + Cγ + γ²C = ((1+γ)²−1)C` identically. Re-measured: uniform `+γ` gives **`0.690000` on the
+benign AND on the anti-correlated matrix**; only `(−γ, +γ)` separates them — `0.689993` versus
+`180.905`. **So a search that varies only the MAGNITUDE of a uniform `γ` passes on every
+counterexample.** Both conditions are needed to see the failure: **non-uniform `Γ` AND an
+anti-correlated `C`.** My earlier diagnosis was half of it.
+
+The honest reading of the table below is therefore *"confirms the bound for uniform `Γ` on
+non-negative fixtures"* — not *"confirms the bound"*.
 
 ⚠ **This is LIVE, not hypothetical.** Unfolded covariances are strongly anti-correlated between
 neighbouring cells, and `AGENTS.md:27` records the historical 3D block-sum object at **rank 247** —

@@ -1179,7 +1179,17 @@ the refutation on relay; at `γ = 0.30`, limit `0.6900`:
 All PSD, all `w` non-negative. **So "non-negative contracting weights" is not the sufficient
 condition**; the inflated block's entries must be non-negative **on the projected directions**, and
 the failure is **unbounded rather than gradual** because `wᵀCw` can be driven toward zero. **My own
-verification could not have seen it — the fixture was entrywise non-negative.** And it is live:
+verification could not have seen it.**
+
+⚠ **AND THE REASON IT COULD NOT BE SEEN IS SHARPER THAN "THE FIXTURE WAS NON-NEGATIVE"**, and
+`[91eaa2]` supplied it: **for UNIFORM `Γ` the bound holds with EXACT EQUALITY on every `C`**, because
+`ΔC = γC + Cγ + γ²C = ((1+γ)²−1)C` identically. Re-measured: uniform `+γ` gives **`0.690000` on the
+benign AND on the anti-correlated matrix**; only `(−γ, +γ)` separates them — `0.689993` versus
+`180.905`. **So a search that varies only the MAGNITUDE of a uniform `γ` passes on every
+counterexample.** Both conditions are needed to see the failure: **non-uniform `Γ` AND an
+anti-correlated `C`.** My earlier diagnosis was half of it.
+
+And it is live:
 `AGENTS.md:27` records the historical 3D block-sum object at **rank 247**, so exact null directions
 already exist in this family.
 
@@ -1442,3 +1452,102 @@ claim at all. **Universality was asserted, not derived, on both sides.**
 
 **Nothing adopted. `θ` NOT ADOPTED and not a floor; full `S` OPEN; `B` and `ε` open; Gate 2 FAIL.
 No compute authorized or requested.**
+
+---
+
+## 18. The integrated acceptance proposal — and its headline claim fails against the contract
+
+⚠ **THIS SECTION WAS DESCRIBED BY COMMIT `96989dab` AND WAS NOT IN IT.** An edit script aborted on a
+failed anchor assertion after the earlier hunks had already been written, and I committed without
+re-reading the tree — so that commit's message asserts findings its diff does not contain. The
+message is accurate about the findings and wrong about where they were. Recorded rather than
+amended, because `96989dab` is pushed.
+
+**Delivered: `d8f5ccd5e062a93e435f5634775486c0fe6a8db4`,
+`docs/orchestration/PROPOSAL-20260917-integrated-acceptance-existing-products.md`, by
+`owners.tsv:14` `[91eaa2]`**, registered in `MANIFEST` and `CATALOG`. **Its evaluation belongs to
+`owners.tsv:15` `[cb0b6b]` under the existing review authorization — §18.2 is a finding I verified
+and routed, NOT a verdict.**
+
+**Recommendation as delivered:** numerical agreement, **not** bitwise identity, **within-run**, with
+`ε = 1e-9` on `r_null` transferred from `p4_lib.py:93`. Margin `569.7×` per-bin (`1.755e-12`),
+`2.246e4×` on `r_null` (`4.452e-14`).
+
+### 18.1 What I verified, and it is substantial
+
+- ⚠ **`SPEC:1415-1417` settles tolerance-vs-bitwise, and it was never open.** Verbatim: *"What is
+  already determined and needs no further decision: the bound is **scale-relative**, it is fixed
+  before production, it is not chosen from a favourable result."* **Bitwise identity is not a
+  scale-relative bound**, so a bitwise criterion would itself trip reject condition 11
+  (`SPEC:1267`). This converts Joseph's first requirement from an open judgement into a contract
+  reading.
+- **Bitwise is the gate that cannot pass**, measured: 10,683 of 10,694 support bins differ.
+- ⚠ **THE COMPOSITION — the proposal's most useful contribution, and it closes what §12.4 opened.**
+  `78a8c2ee`'s `B = 0` is verified by a **boolean bitwise** test, which **fails** on these products,
+  so it is a property of the **pinned design only**; and a pinned experiment would qualify the
+  **pinned** configuration. **Therefore either these products are accepted on a within-run numerical
+  criterion, or they are not accepted at all — regeneration REPLACES them, it does not rescue
+  them.** *"Run the pinned experiment, then decide"* is a category error.
+- **`min_i|ρ_i| = 0` identically**, so the completeness subsumption rests on the upper bound alone.
+- The five corrections, the `K1` finding and the `f_i` non-universality are accepted on all three
+  lanes, and `[91eaa2]` supplied the sharper diagnosis of my §5.7 failure (§15.2).
+
+### 18.2 ⚠ BUT "NO CONTRACT AMENDMENT IS REQUIRED ON THIS ROUTE" IS FALSE — MEASURED
+
+The proposal holds that `B` is *"unestablished and not needed"*, that `B ≤ S` *"does not need to
+be"* demonstrated because `ε` is not argued from inside `[B, S]`, and therefore that **`θ`'s closure
+removes the amendment requirement.** The contract says otherwise, **at rev. 19, after both of that
+revision's withdrawals**:
+
+```
+SPEC:1732-1733   REQUIRE   B <= S.      (equivalently: the admissible interval is non-empty)
+                 Then      epsilon is JUSTIFIED WITHIN [B, S].
+SPEC:1742        "The framework is unchanged."
+SPEC:1779        "B <= S is a PRECONDITION, not an arithmetic step."
+SPEC:1786        "epsilon is argued inside the interval, endpoints included."
+```
+
+`SPEC:1737`: *"`B` is therefore a **lower bound** on an admissible `ε` and `S` is an upper one."* And
+`:1779-1782` on failure to demonstrate it: *"a finding about the state of the evidence, whose
+responses are to tighten `B`, revisit `S`, or change the envelope. **It is not a tolerance to
+adopt.**"*
+
+**So a route that declares `B` unnecessary and argues `ε` outside `[B, S]` requires an amendment to
+§3.7a** — a **different** amendment from the §6.4 + condition-11 pair. **`θ`'s closure therefore does
+not remove the amendment requirement; it changes which amendment is needed.** The route may still be
+the right one. It needs Joseph to amend §3.7a rather than to be told no amendment is needed.
+
+**Two further §3.6a clauses not yet satisfied, both cheap:**
+
+1. ⚠ **`SPEC:1406-1409` is invoked as a LICENSE and is written as a PROHIBITION.** The proposal
+   reads it as separating roles — the observed `1.755e-12` doing feasibility, the transfer doing
+   justification. It reads: *"**And a reproducibility floor is not a substitute for step (ii).** … It
+   may bound `ε` from below as a feasibility constraint; **it cannot justify `ε`.**"* And
+   `:1403-1405` fixes the order: **(i)** which reported quantity a non-deterministic CV could move
+   **and through what mechanism**; **(ii)** derive the boundary appropriate to *that* relationship;
+   **(iii)** only then a number. **Transferring a number declared for a different subject is step
+   (iii) without step (ii).**
+2. **`SPEC:1390-1396`** requires the normalizer be *"written down and defended, not inferred"*, with
+   the alternatives — explicitly including *"a per-bin maximum relative deviation"* — *"considered
+   and **rejected on the record** if not chosen."* The proposal uses `r_null` as the criterion and
+   the per-bin maximum as its implication route, so that rejection is owed and is not yet recorded.
+
+**And `B` could not be supplied by the observed `1.755e-12` even if one wanted to.**
+`SPEC:1728-1729` defines `B` as *"an **UPPER** bound on the error … with its assumptions and its
+confidence stated"* over an **execution envelope**; a single within-run observation is a point
+measurement. That is §12.3's distinction, which every lane has accepted.
+
+### 18.3 Minimum evidence, as proposed
+
+**E1** — independent reconstruction of `r_null` from the persisted operands (condition **11b**);
+binding, and decides acceptance outright. ⚠ **Partially performed already, by the wrong lane:** I
+reconstructed it from `z-null.npz` this session and got `4.452000213758293e-14` against the build's
+`4.4520002137582904e-14` — **15 significant figures**, not bitwise, from a different summation
+order. **I am not a non-owning lane for the pilot**, so this is a measurement to be repeated by
+`[cb0b6b]` or `lane_d`, **not E1 discharged.**
+
+**E2** — the precursor's date against `2026-08-07`; if unavailable, the subject argument carries §3.1
+alone and the date argument must not be asserted.
+
+**Nothing adopted. `θ` NOT ADOPTED and not a floor; `B` and `ε` open; full `S` OPEN, prepared but NOT
+graded; Gate 2 FAIL; `cause3_corr` WITHHELD. No compute authorized or requested.**
