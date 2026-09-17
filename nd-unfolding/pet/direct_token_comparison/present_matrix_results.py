@@ -72,18 +72,33 @@ def closure_section(summary: dict[str, Any]) -> str:
     )
     lines.append("")
     if summary["decision"] == "NO_PASS":
-        if safeguards:
+        # The two causes co-occur, so they are reported independently. Treating
+        # them as alternatives would imply the comparison would have passed but
+        # for the safeguard, which is false whenever the interval straddles zero.
+        inconclusive = [
+            n for n in failed if n in ("material_paired_gain", "favorable_seeds")
+        ]
+        if inconclusive:
             lines.append(
-                "This `NO_PASS` is a **safeguard failure**, not an inconclusive "
-                f"measurement: {', '.join(f'`{s}`' for s in safeguards)} did not hold. "
-                "A safeguard failure says the run is not interpretable as a clean "
-                "comparison, not that either representation is worse."
+                "The paired improvement is **inconclusive**: "
+                f"{', '.join(f'`{n}`' for n in sorted(inconclusive))} did not hold, so "
+                "the measured effect does not clear the frozen thresholds. That is not "
+                "evidence that either representation is worse."
             )
-        else:
+        if safeguards:
+            if inconclusive:
+                lines.append("")
             lines.append(
-                "This `NO_PASS` is an **inconclusive result**: every safeguard held, "
-                "and the paired improvement simply did not clear the frozen "
-                "thresholds. It is not evidence that either representation is worse."
+                "**Separately**, a safeguard failed: "
+                f"{', '.join(f'`{s}`' for s in safeguards)}. A safeguard failure means "
+                "that part of the run is not interpretable as a clean comparison. It "
+                "is an additional problem, not an explanation for the inconclusive "
+                "result above."
+            )
+        if not inconclusive and not safeguards:
+            lines.append(
+                "`NO_PASS` with no failing check listed: inspect the reducer output "
+                "directly before quoting anything."
             )
     else:
         lines.append(

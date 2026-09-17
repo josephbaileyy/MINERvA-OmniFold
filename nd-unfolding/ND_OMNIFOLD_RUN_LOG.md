@@ -1,5 +1,26 @@
 # N-D OmniFold run log
 
+## 2026-09-17 — frozen routing matrix complete: NO_PASS, and underpowered
+
+Array `58397664` completed all 24 tasks `COMPLETED 0:0`. 24 receipts, 144 artifacts with
+matching digests, 24 guard records with no allowances, and `covered_geometry` confirming
+zero padded positions in every job. A Perlmutter maintenance outage paused the array
+mid-run without requeueing or cancelling anything.
+
+Frozen criteria: **NO_PASS**, 142 of 146 checks passing. The paired injected improvement
+favouring individual-object tokens is median **+9.7%**, mean **+0.8%**, six of eight
+seeds favourable, 95% interval **[-20.7%, +22.4%]**, paired t **p = 0.50**. Two criteria
+failed (`favorable_seeds`, `material_paired_gain`) and, separately, `shuffle-71` failed
+both projection-difference checks marginally (0.0119 against a 0.01 limit; absolute
+errors well inside 0.05).
+
+**The design is underpowered for its own criterion**: with the observed seed-to-seed sd
+of 25.8 percentage points, detecting the required +5% effect at 80% power needs about
+**209 paired seeds**, not eight. Training cost is the one clean result: direct costs
+**1.118x** pooled (median over 24 jobs, 1.026-1.137, Wilcoxon `p = 1.2e-07`). Per-arm
+inference is not instrumented by the frozen producer and is not reported.
+[Result, statistics and safeguard detail](pet/direct_token_comparison/REPORT_FOR_BEN.md).
+
 ## 2026-09-16 — calibration passed; frozen 24-job matrix released and submitted
 
 Job `58395631` COMPLETED (ExitCode `0:0`, 426 s). The amended GPU preflight ran all

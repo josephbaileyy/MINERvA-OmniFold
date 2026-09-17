@@ -1,11 +1,42 @@
 # PET representation comparison for Ben
 
-**Drafted 11 September 2026 · last measured 16 September 2026 · diagnostic method
+**Drafted 11 September 2026 · last measured 17 September 2026 · diagnostic method
 development, not a publication product**
 
 ## Recommendation
 
-*Plain language, up front. One part is settled; the other is being measured now.*
+*Plain language, up front. Both parts are now measured.*
+
+**On individual typed-object tokens versus family pooling: don't adopt them on this
+evidence — but don't rule them out either, because the experiment could not settle it.**
+
+Across eight paired seeds on the synthetic fixture, individual-object attention gave a
+median closure improvement of **+9.7%** and a mean of **+0.8%**, with six of eight seeds
+favouring it. But the seed-to-seed scatter is enormous — a standard deviation of **25.8
+percentage points**, from **+26.7%** at best to **−47.6%** at worst — so the 95%
+interval on the mean is **[−20.7%, +22.4%]**, straddling zero. A paired t-test gives
+**p = 0.50** and Wilcoxon **p = 0.55**. There is no measurable accuracy difference here,
+in either direction.
+
+The honest diagnosis is that **the experiment was underpowered, not that the
+representations are equivalent.** With the observed scatter, resolving even the +5%
+effect the acceptance criteria demand would need roughly **209 paired seeds**; we ran
+eight. That is the single most useful number in this report: if we care about this
+question, the answer is a better-powered experiment, not a different representation.
+
+What *is* clean is the price. Individual-object tokens cost **≈11% more training time**
+— a per-job ratio of **1.118** median across all 24 jobs, tightly bounded (1.026–1.137)
+and unambiguous (**p = 1.2 × 10⁻⁷**). So on this fixture we would pay a reliable ~11%
+to buy an accuracy change we cannot detect.
+
+**Practical recommendation:** keep family pooling as the default for now. Revisit only
+with either a materially better-powered comparison or a fixture where the question
+matters more — in particular high object multiplicity, which this fixture never
+exercises. Two things I want to be explicit about: six of eight seeds favouring the
+direct arm is *suggestive* and I am not dismissing it, and the two negative seeds arose
+because **pooling did unusually well there**, not because individual tokens did badly
+— but with n = 8 neither observation survives a significance test, so neither is a
+finding.
 
 **On aggregate-overflow tokens: don't adopt them as an upgrade — we don't have the
 problem they solve.** Gregor's code caps how many objects an event may carry; ours
@@ -23,16 +54,85 @@ add an explicit count of how many objects were merged (his version loses that), 
 expect the merged objects' positions and timing to survive only as an average. Whether
 compression helps or hurts in practice is a separate question we have **not** measured.
 
-**On individual typed-object tokens versus family pooling: being measured right now.**
-The 24-job paired comparison is running. Until it finishes there is **no
-learning-performance winner**, and nothing so far implies one. In particular, the
-numerical CPU/GPU disagreement we hit along the way is a floating-point reproducibility
-property of longer attention sequences — **not** evidence that individual tokens are
-scientifically worse.
+One caveat that applies to both halves: the numerical CPU/GPU disagreement we hit along
+the way is a floating-point reproducibility property of longer attention sequences —
+**not** evidence that individual tokens are scientifically worse. The frozen fixture
+never produces the geometry where it appears.
 
-This section will be replaced with the measured recommendation — closure accuracy,
-stability across seeds, and per-arm compute cost — as soon as the matrix closes. If the
-evidence is inconclusive, it will say so rather than name a winner.
+## Measured result of the paired routing matrix
+
+Scope: this compares family-pooled against individual-object attention on the specified synthetic fixture, with information content, model size, training budget, initialization and seeds held identical between arms. It does not compare our complete pipeline against Gregor's, does not settle high-multiplicity overflow performance (the fixture gives every event four objects, so a cap never binds), and says nothing about real data.
+
+### Closure accuracy
+
+Decision under the unchanged frozen criteria: **NO_PASS**.
+
+Paired injected improvement, direct over pooled: mean 95% interval **[-20.730%, 22.365%]** across 8 seeds.
+
+The paired improvement is **inconclusive**: `favorable_seeds`, `material_paired_gain` did not hold, so the measured effect does not clear the frozen thresholds. That is not evidence that either representation is worse.
+
+**Separately**, a safeguard failed: `shuffle-71/projection0`, `shuffle-71/projection1`. A safeguard failure means that part of the run is not interpretable as a clean comparison. It is an additional problem, not an explanation for the inconclusive result above.
+
+### Stability across seeds
+
+| seed | paired improvement (%) |
+|---|---:|
+| 17 | +17.115 |
+| 29 | +18.847 |
+| 43 | +8.724 |
+| 59 | +10.690 |
+| 71 | +0.931 |
+| 89 | +26.746 |
+| 101 | -47.572 |
+| 113 | -28.941 |
+
+Favourable in **6 of 8** seeds; median **+9.707%**, full spread **74.318** percentage points (min -47.572, max +26.746).
+Seed-to-seed standard deviation is **25.774** percentage points; compare that against the mean before reading the sign of any single seed as meaningful.
+
+### Compute cost
+
+| quantity | pooled | direct |
+|---|---:|---:|
+| total training seconds | 9203 | 10166 |
+| median per job | 373 | 414 |
+
+Paired direct/pooled training-cost ratio across 24 jobs: median **1.118** (min 1.026, max 1.137). Total job wall time 47778 s.
+
+**Per-arm inference cost is not reported, because it was not measured.** The frozen producer instruments per-arm training only. The non-fit remainder of each job's wall time also contains one shared fixture build, normalization and serialization, and does not separate by arm, so no per-arm inference number can be derived from this matrix. Obtaining one needs a separate timing run.
+
+Cost is reported, never gated: it does not enter the acceptance criteria, and a cheaper arm does not thereby become the better one.
+
+### The one safeguard that failed, and what it does and does not mean
+
+`shuffle-71` failed both truth-projection checks. The `shuffle` mode is the
+label-destroying control: the target is scrambled, so a healthy run should reweight to
+near-identity. In that job the direct arm's projection error exceeded the pooled arm's
+by **0.0119** and **0.0118** against a **0.01** limit on the difference — a marginal
+miss, roughly 19% over. The **absolute** errors (0.0131) sit well inside their own
+0.05 bound, and the other seven shuffle seeds pass.
+
+So: one of eight null-control jobs shows the two arms diverging slightly more than the
+criteria permit. It is localised and marginal, it does not explain the inconclusive
+accuracy result, and it is not evidence about either representation. It does mean this
+run is not a clean sweep, and under the frozen criteria that contributes to `NO_PASS`.
+
+I checked whether it pointed to something systematic — whether the direct arm fits
+noise more readily, which would have undercut any apparent advantage. It does not
+survive testing: across the eight shuffle seeds the direct arm's mean deviation is
+higher (0.0065 vs 0.0050) but with Wilcoxon **p = 0.46**, and direct is worse in only
+**4 of 8** seeds, a coin flip. I am reporting that as no finding rather than as a
+caveat with a number attached.
+
+### Reproducing these numbers
+
+Every figure above comes from the 24 committed receipts, reduced by the unchanged
+frozen criteria in [summarize_runs.py](summarize_runs.py) and formatted by
+[present_matrix_results.py](present_matrix_results.py). The reducer output and the
+statistical analysis, including the power calculation, are committed at
+`local_validation/20260917-matrix/`. All 24 jobs verified `COMPLETED 0:0` with matching
+terminal markers, 144 artifacts with matching digests, 24 import-guard records
+reporting inspected repository origins with no allowances, and `covered_geometry`
+confirming zero padded positions in every job.
 
 ## What this tests, and what it does not
 
@@ -141,33 +241,28 @@ Ben asked whether we should adopt individual typed-object tokens, Gregor's
 aggregate-overflow setup, or other separately tested changes. Taking them in turn,
 and separating what is measured from what is still open:
 
-### 1. Individual typed-object tokens — unmeasured, not disfavoured
+### 1. Individual typed-object tokens — measured, and inconclusive
 
-**There is no learning-performance evidence either way.** The 24-job paired matrix
-that would answer it has never run. Every GPU attempt so far has stopped in software
-equivalence checking, before any training comparison.
+The 24-job paired matrix ran to completion. Its result is above: a median closure
+improvement of **+9.7%** favouring individual tokens, six of eight seeds favourable,
+but a 95% interval of **[−20.7%, +22.4%]** and **p = 0.50**, against a reliable **~11%**
+training-cost premium. **No accuracy difference is measurable in either direction**,
+and the design would need roughly **209 paired seeds** to resolve the effect its own
+criteria require.
 
-A new and concrete obstacle emerged on 15 September: the direct (individual-token)
-route **does not currently reproduce across CPU and GPU in the variable-multiplicity
-case**. After two Adam steps the attention `query/kernel` diverges by `1.55e-04`
-against an unchanged `atol=1e-5, rtol=1e-4` tolerance, while the same model's
-`pooled` route in the same case stays within tolerance. Details and limits in
-[the terminal record](AMENDED_RESULT-20260915.md).
+The earlier cross-device obstacle turned out not to bear on this. The
+`variable/direct` CPU/GPU divergence (`query/kernel`, `1.55e-04`) was diagnosed as
+Adam amplifying ordinary float32 rounding in a small-gradient parameter, scaling with
+attention sequence length — not a defect, and **not evidence that individual tokens
+are worse**. Crucially, the frozen fixture never produces that geometry: every event
+carries exactly four objects with no padding, which the runtime guard confirmed in all
+24 jobs. The stress case was exempted on that basis and is recorded as a failed stress
+check rather than waved through.
+[Diagnosis](CROSSDEVICE_D1_RESULT-20260915.md); [gate scope](STRESS_SCOPE_AUTHORIZATION-20260916.md).
 
-**This is a reproducibility fact about one code path, and it is not evidence that
-individual tokens are scientifically worse.** It says nothing about learning, closure
-or compute efficiency; it says we cannot yet run a *trustworthy* paired comparison in
-the configuration the science needs, because variable multiplicity with individual
-tokens is exactly where the divergence appears. The reasonable next step is a diagnostic that
-establishes whether the divergence comes from padded-width-dependent reduction order
-in the ragged repacking — a hypothesis we have **not** yet tested — and whether a
-deterministic packing order is reachable without changing the model being compared.
-
-Two things argue for keeping the hypothesis alive rather than dropping it: the
-forward pass is unaffected (predictions agree to ~1e-6 in all four cases measured,
-including the failing one), and no optimizer slot diverged anywhere. So the issue
-looks localized to weight updates in one routing/multiplicity combination, not to the
-representation's viability.
+What the comparison genuinely leaves open is whether individual tokens help where they
+should matter most — **high, variable object multiplicity** — which this fixture does
+not exercise at all.
 
 ### 2. Aggregate overflow — its implementation properties are settled; whether it helps is not
 
