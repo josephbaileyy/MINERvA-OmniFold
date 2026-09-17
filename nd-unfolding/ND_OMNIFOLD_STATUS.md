@@ -129,6 +129,36 @@ replacement is implied for 4D/FPS or dependent significances. See
   science NON-PASSING) is preserved and independently validated against the artifacts. Awaiting
   independent review, a new immutable deployment, and a separately bounded execution
   authorization. See `Z_BUILD.md` § "The assembly/spectrum pilot".
+  **SUPERSEDED 2026-09-17 — "NOT RUN in production" is no longer true, and this bullet is
+  banner-corrected rather than rewritten so the stale claim stays visible as the one that changed.**
+  All three awaited conditions were met: independent review cleared the harness delta, the immutable
+  deployment `zdeploy-fb9ec356` was made, and Joseph authorized one bounded attempt. **IT RAN** —
+  see the next bullet.
+- **Z assembly/spectrum pilot EXECUTED and CLOSED 2026-09-17 — COMPLETED CONSTRUCTION, science
+  NON-PASSING, adoption WITHHELD. THIS IS NOT A VALIDATION AND NOT A GRADE.** Job `58454524`,
+  `nid004093`, `ExitCode 2:0`, `ElapsedRaw 1037 s`, `build_seconds 760.767`, producer `e09513d8` /
+  assembling `fb9ec356` (`revisions_distinct true`), `input_kind` **real**. **Two 5D covariance
+  objects now exist** — `z-cv.npz` 890,500,272 B `3d7465f6…` and `z-mean.npz` 890,383,062 B
+  `61b7a493…`, digests re-measured 2026-09-17 and matching their receipts, plus `z-null.npz`
+  190,817 B `cb82fc32…`. **Judge completion by the receipt contract, not `sacct`**, which labels
+  any nonzero exit `FAILED` while **2 is this CLI's completion code**: the pilot receipt names five
+  artifacts and **5 of 5 digests re-measure**, RECEIPT-LAST holds, and each build receipt describes
+  the file beside it matched by path. Every structural gate closed on its **arithmetic** tolerance
+  `IDENTITY_RTOL = 1e-9` — the PSD gate's worst negative excursion is `5.72e-16` of `lambda_max`,
+  `1.75e6`× inside tolerance, **with no clipping, flooring or regularization applied or proposed**.
+  `construction_status` CHECKED, `scientific_acceptance` **NON-PASSING**, `adoptable` **false**,
+  `outcome.assessable` **false** on reject condition `4c`, null `verdict` **NOT ASSESSABLE**. All
+  four `withheld_boundaries` remain `WITHHELD` with `value: null`; **`B`, `S`, `B <= S` and `ε` in
+  `[B, S]` remain UNAPPROVED and A1 remains OPEN.** Construction discharges no scientific
+  criterion, and `cause5` says so in the receipt: *"construction alone does not dispose of this
+  cause."* Memory sizing is corrected by measurement: `MaxRSS` **49.73 GiB of a 64 G request
+  (77.7%)**, against a prior "a few GB" estimate. The authorization is **consumed** (0.288 of 1.5
+  CPU task-hours) and **no replacement submission is authorized**. **No covariance is adopted, no
+  projection is authorized, no significance is licensed, no central value moved, and no
+  `VALIDATION_LEDGER.md` row is created.** Evidence: `ND_OMNIFOLD_RUN_LOG.md` § 2026-09-17;
+  `/pscratch/sd/j/josephrb/zpilot-20260916/outcome-58454524/`. Requirement-by-requirement
+  reconciliation and the recommended next action:
+  `docs/orchestration/DECISION-SUPPORT-20260916-z-to-adopted-5d-covariance.md` §10-§11.
 
 - Branch C annealed checkpoint trajectory: the four-GPU interactive twin `56693776` failed before
   producing any control or treatment receipt because a bare `srun` inherited four tasks; three ranks

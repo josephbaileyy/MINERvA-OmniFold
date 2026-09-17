@@ -2,15 +2,29 @@
 
 ## CITABLE FOR / NOT CITABLE FOR — read before quoting anything below
 
-**CITABLE FOR:** the state of each remaining requirement as measured on 2026-09-16; the routing of
-each; the reconciliation in §3; and the resource figures in §4 and §5.
+**CITABLE FOR:** the state of each remaining requirement as measured on 2026-09-16, **as amended by
+§10's 2026-09-17 reconciliation** where the two disagree; the routing of each; the reconciliation
+in §3; the resource figures in §4 and §5 **as corrected in §10.5**; and §11's next-action packet as
+a *recommendation*.
 
-**NOT CITABLE FOR:** any scientific grade. Any acceptance boundary. Any adoption. Any claim that a
-Z covariance exists — **none has ever been constructed.** The authorization that admitted this
-record states explicitly that it **does not ratify the proposed scientific criteria** recorded
-here. `ε = 1e-9` is **PROPOSED and UNGRADED**; `S`'s discharge is **F7-channel only**; **A1 is
-OPEN**. Gate 2 remains **FAIL**. `cause3_corr` remains **WITHHELD**. Endpoint B remains
-**DEFERRED NOT PASSED**.
+**NOT CITABLE FOR:** any scientific grade. Any acceptance boundary. Any adoption. The authorization
+that admitted this record states explicitly that it **does not ratify the proposed scientific
+criteria** recorded here. `ε = 1e-9` is **PROPOSED and UNGRADED**; `S`'s discharge is
+**F7-channel only**; **A1 is OPEN**. Gate 2 remains **FAIL**. `cause3_corr` remains **WITHHELD**.
+Endpoint B remains **DEFERRED NOT PASSED**.
+
+> ⚠ **CORRECTED 2026-09-17 — ONE SENTENCE OF THE BLOCK ABOVE WAS FALSIFIED BY EXECUTION, AND IT IS
+> STRUCK RATHER THAN REWRITTEN.** This block read *"Any claim that a Z covariance exists —* ***none
+> has ever been constructed.***" **Two now exist.** Job `58454524` (2026-09-17T00:21:56–00:39:13,
+> `nid004093`, `ExitCode 2:0`, `ElapsedRaw 1037 s`) built both centering variants from the real
+> bound inputs and closed every structural gate. Route: `ND_OMNIFOLD_RUN_LOG.md` § 2026-09-17.
+>
+> **Nothing else in the block changes, and the correction cuts the other way for most of it.**
+> Construction discharges no scientific criterion: `scientific_acceptance` is **NON-PASSING**,
+> `adoptable` is **false**, `outcome.assessable` is **false** on reject condition `4c`, and the
+> null's own verdict is **NOT ASSESSABLE**. `B`, `S` and `ε` are exactly as open as before the job
+> ran. **What changed is that existence is no longer the open question — and §10 records that this
+> removes an argument this record leaned on rather than supplying one.**
 
 **This is decision support, not a decision.** It proposes; the owner rules.
 
@@ -432,3 +446,192 @@ broken scheme and destroy a correct citation.
 Routing: `SPEC:1271` / `:1920-1921` are the scientific contract and not amendable by either lane;
 `z_receipt.py:10` routes to `lane_b` with the §3 substantive staleness; the preflight record and
 `Z_BUILD_PACKET.md` are other lanes', born archival.
+
+---
+
+## 10. The fourteen remaining requirements, reconciled against executed evidence (2026-09-17)
+
+**Read the classification, not the list.** `notes.remaining_requirements` in a build receipt is a
+**fixed fourteen-key list**: `z_build` emits it unconditionally and it does not shrink when a
+subrequirement is met. So "fourteen remain" after `58454524` is not a measurement — it is the
+same string it would have printed on any run. What follows is the measurement.
+
+Sources, all re-measured 2026-09-17 from the preserved copies, not recalled:
+`z-receipt-cv.json` (`9f8f91d9be69d767…`) and `z-receipt-mean.json` (`5bdc9a1830dc183a…`), digests
+re-computed from the preserved files and **2 of 2 MATCH** their entries in the pilot receipt;
+`z-pilot-receipt.json`; `bridge.json`; the job's own `.out`/`.err`; `sacct` step rows. Evidence
+route: `ND_OMNIFOLD_RUN_LOG.md` § 2026-09-17 and
+`/pscratch/sd/j/josephrb/zpilot-20260916/outcome-58454524/`.
+
+### 10.1 What the run actually closed — completed **subrequirements**
+
+Each row is a *part* of its requirement. **No row closes its requirement**, and none is a grade.
+
+| key | completed subrequirement, with the receipt field that carries it |
+|---|---|
+| `code_and_run` | **Pinning and measured imports are done.** `code_identity.revision fb9ec3560fd6d62295dffc81b5694c9e26667d5b` with `worktree_files_differing_from_revision: []`; **15** `import_closure_digests`; `z.run = {id: z-pilot-20260916-a5, step: assembly}`. Deployment `zdeploy-fb9ec356`, **895** tracked files, listing `f2333fb32876363d12c2c5aebfe50e2a986504845affd5721f4c04fedee23e61`, `dirty 0`, **15 of 15 CURRENT**. `notes.input_kind: **real**` — the construction ran on the bound production inputs, not a fixture. |
+| `runtime` | **Measured at production scale, and one half of it contradicts §4** — see §10.5. Real PyROOT verified in situ (14 environment closure members against `mnv_env_manifest.tsv`; ROOT's own `TInterpreter::ReadRootmapFile` warnings preserved in the child's stderr, `chars 2424`, `abridged false`, `sha256 9c780d41…`). `build_seconds 760.767…`; `eigvalsh` **33.503 s** (cv) and **16.516 s** (mean); job `ElapsedRaw` **1037 s** of a 5400 s wall. |
+| `null` | **The persistence half, discharged twice and independently.** At throw creation by the producer (RUN_LOG § 2026-09-14) and again into `z-null.npz` by `z_receipt.persist_null_operands`: `sha256_x_cv f5f26ce9…`, `sha256_x_cv2 ed1350f1…`, `sha256_support_mask eed021e9…`, `n_grid 65856`, `n_rep 10694`, `bytes_persisted 1,119,552`, `construction_digest 4eda956c…`. **Not reopened here** — recorded as satisfied. |
+| `cause2` | **The F7 operands are now bound in-receipt for both variants.** `causes.2.joint_mean_shift_sha256` = `inflation.raw_operands.joint_mean_shift` = `6abfa1bba209e666c3dbc8217dcc79e800fa45f231112caf6972dc0eaf8e9d3c`; `ms_norm 1.8786967332845478e-38`. `k` and its source were already established by argument in §2.1 (`F7_FLOOR_MULTIPLE = 2.0`, strict `>`, `N = 160`). |
+| `cause7` | **The five active bands are enumerated and digest-bound, and the partition is exhaustive.** `inflation.membership.bands_lateral` = `BeamAngleX`, `BeamAngleY`, `MuonResolution`, `Muon_Energy_MINERvA`, `Muon_Energy_MINOS`; `G5_band_partition` `exhaustive: true` with `5 + 13 + 27 = 45 = n_inventory`. Each of the five carries its own object digest under `notes.inputs.active.objects`. |
+| `cause5` | **The consumed-input inventory now exists and is enumerable** — the object the independent trace needs and did not have. All eight sources bound by file digest, size, device/inode and stamp, with per-object digests and shapes. |
+| `parent_lineage` | **Both files are bound.** `parent.combined_source 9f7b2f55…` (41,436,632,945 B) and `parent.parent_candidate 4f168e83…` (892,170,881 B). |
+| `component_footing` | **The footing is single and digest-bound**, and its basis is declared rather than assumed: one `mask_sha256 eed021e9…`, one `row_order_sha256 61a7c9fd…`, manifest `BOUND` on exactly those two, and `z.row_order_basis` states **"C-order flat indices reconstructed from declared production CV; NOT read_from_G"**. |
+
+**Structural gates, all closed on their own arithmetic tolerance** (`IDENTITY_RTOL = 1e-9`,
+`fb9ec356:nd-unfolding/z_contract.py:125`): `G1_closure_identity` `max_rel_residual` **0.0**;
+`G3_g_reconstruction` `max_rel_diff` **0.0**; `active_total_eq_sum5` **0.0**;
+`G2_g_domain` `g_min 1.0`, `g_median 1.0473565738188244`, `g_max 17.653141714565614`,
+`n_gt_one 6528`, `n_pinned 0`; `G3R_raw_operand_reconstruction` **`discriminating: true`**
+(`n_separated 6527`, `n_saturated_v_uni_below_v_blk 4166`, `n_shift_below_tolerance 1`,
+`max_separation 0.6270761129833259`), `n_clipped_blocksum 0`, `n_clipped_unified 0`.
+
+⚠ **`G3R.stored_cv_cross_checked: false`** (`stored_cv_deviation` and `stored_cv_discriminating`
+both `null`), and `null.declared_cv_crosscheck.external_crosscheck_status: **UNPERFORMED**` with
+`verdict: UNRESOLVED` — its own stated reason is that the compared object is *this build's own
+declared `central` source*, not an external production ROOT. **Two named non-checks inside an
+otherwise-closed gate set.** They are recorded, not repaired, and they are not the precursor
+persistence question.
+
+### 10.2 The PSD gate: results and thresholds, as the build recorded them
+
+`fb9ec356:nd-unfolding/z_assembly.py:512-561`. The gate is **fail-closed and returns no boolean**:
+`require(...)` raises `ZContractError`, so the presence of a populated `G4_symmetry_psd` block in a
+receipt *is* the pass. Criterion, scale-free by deliberate design: `asym <= rtol` **and**
+`lam_min >= -rtol * lam_max`, on `0.5 * (C + Cᵀ)` via `numpy.linalg.eigvalsh`.
+
+| object | `lambda_min` | `lambda_max` | `neg_fraction_of_max` | `rel_asymmetry` | `rtol` |
+|---|---|---|---|---|---|
+| `C_Z` cv (inflated) | `-1.2750516323643892e-90` | `2.229223998752954e-75` | `5.719710684424999e-16` | `2.1641333629718972e-16` | `1e-09` |
+| `C_Z` mean (inflated) | `-5.146659106575015e-91` | `1.9272637183054823e-75` | `2.670448811800462e-16` | `1.0927533323421377e-16` | `1e-09` |
+| block-sum reference | `-4.6860865778129674e-91` | `1.205970554862754e-75` | `3.885738800933054e-16` | `0.0` | `1e-09` |
+
+`psd_method: eigvalsh`, `eigenvalues_computed: true` on all three. The cv object's negative
+excursion is **`5.72e-16` of `lambda_max`, i.e. `1.75e6`× inside the tolerance**.
+
+**What this is and is not.** `z_assembly.py:49-51` states it in the module's own words: *"NO
+ACCEPTANCE BOUNDARY APPEARS IN THIS MODULE. Everything gated here is a structural identity whose
+tolerance is arithmetic (`IDENTITY_RTOL`, §3.3 condition 2). The scientific boundaries live in
+`z_contract.Z_BOUNDARIES` and are withheld."* So `1e-9` here is **not** a scientific threshold and
+this row is **not** a scientific grade. **No clipping, flooring, regularization or replacement
+threshold is introduced, proposed or implied by this section.** The spectra the pilot persisted are
+a deliberate *second independent* `eigvalsh` on the closed artifact (`verdict: None` in each),
+because `z_assembly.gate_symmetry_psd` keeps sole ownership of the PSD decision; the pilot records
+and does not restate it. The separately reported `n_negative` **5214** (cv) and **5215** (mean) of
+10694 are that second decomposition's counts, and the gate's criterion is on the **extremal
+eigenvalue relative to `lambda_max`**, not on a count — a count is graded against nothing here.
+
+### 10.3 Unresolved **scientific criteria** — zero compute, and upstream of every number
+
+| key | what is missing | state |
+|---|---|---|
+| `null` → **A1** | `B` (operating-error bound), `S` (independent scientific cap), the precondition `B ≤ S`, and `ε` argued within `[B, S]` | **OPEN.** `withheld_boundaries.null_epsilon` `status: WITHHELD`, `value: null`. `ε = 1e-9` remains **PROPOSED, UNGRADED**; `S` is discharged **for the F7 channel only** (§2.1); `B` has accountability assigned (§2.3) and **no established value**. |
+| `cause3` | `cause3_agg`, `cause3_med`, `cause3_corr` | all three **WITHHELD**, `value: null`, for the reasons §6 records. `cause3_corr` additionally has **no correlation-sensitive leg adopted**. |
+| `cause3` | `SPEC:2117`'s verbatim question — *"What per-bin movement is acceptable, in what fraction of bins, and why?"* | **unanswered.** A tolerance **and** a coverage fraction: two numbers, both scientific. |
+| `endpoint_completeness` | the committed ROOT inspection's endpoint `globalCompleteness` readings above one, resolved without normalization and without an invented criterion | **unresolved**, and judgement, not measurement. |
+| `cause6` | the statistical projection **operator** | a design choice before it is a census. |
+| — | a grading lane that `BEN-381` does not disqualify | **unnamed.** Every cell's grade is void without it (§7 item 4). |
+
+⚠ **THE ONE NEW NUMBER IN THIS CLASS, AND WHY IT DOES NOT HELP.** `58454524` measured the per-bin
+statistic that `ε` is *defined on*: `null.per_bin_diagnostic.maximum_relative_difference` =
+**`1.7552716191735518e-12`** at `argmax_grid_index 31499`, flagged `grades_nothing: true` by the
+writer itself. It is the first production-scale value of `max_i |Δ_i/x_i|` on Z's own bank, and it
+confirms §2.2 step 1's proven inequality in the right direction — `r_null / per-bin max` =
+**`0.02536 ≤ 1`**. It also sits **569.7×** below the proposed `ε = 1e-9` and **10.43×** below
+`B_loose = 1.831e-11`.
+
+**It cannot establish `B`, and reading it that way would reproduce a defect §2.4 already names.**
+`z-null.npz` holds exactly the precursor's two persisted executions, and §2.4 records that
+declaring `B` from those is **BARRED by composition**: `S` is non-binding, so `ε` must be argued
+from `B`'s side, and `SPEC:1410` forbids `ε` being read off Z's own null — declaring `B` from these
+vectors makes `ε` trace to Z's own null with one indirection. It is also **not** the pinned-envelope
+repeat §2.2's falsifier needs: one execution *pair* inside one `do_combine` on one node bounds an
+observed deviation and estimates no floor, and §4.4a item 2 requires repeats **spanning different
+allocations**. Recorded as an observation; **it moves nothing**.
+
+### 10.4 **Independent verification** — zero compute, and not performable by this lane
+
+Every row here uses the word *independently* or *verify* in the requirement itself, so the lane
+that built the artifact is disqualified from closing it by construction.
+
+| key | what a non-owning lane must do |
+|---|---|
+| `code_and_run` | independently verify the real-input construction and environment. The operands now exist: revision `fb9ec356`, 15 import digests, deployment listing `f2333fb3…`, env-provenance digest `f8d65913b5bf3880`, and the four guard inventory records. |
+| `cause5` | the static construction-path trace over every module Z invokes, **including `adopt_unified_5d.py`** (§7 item 5) — *"zero compute, one cell closed"*, and the receipt's own text insists *"construction alone does not dispose of this cause."* |
+| `parent_lineage` | `lineage_status` is **`UNVERIFIED`** in the receipt. Establishing that the two bound files *are* G's actual inputs is blocked upstream on `PM-4`, which `SPEC:304` records as having **"no referent"** — G's committed 13-key inventory contains neither `hRowIndex5D` nor `hXSecND_flat`. |
+| `component_footing` | per-component estimator, normalization, background treatment and provenance on the one fixed central value. The footing and mask are bound; the *component-by-component* check is not done. |
+| `cause7` | the ten endpoint identities, the migration censuses, the declared policies and the support-scope check. Band membership and exhaustiveness are done (§10.1); these are not. |
+| `cause2` | whether the now-bound operands and the §2.1 `k` argument actually *discharge* the cause is the assessor's read (`owners.tsv:15`), **not this lane's**. |
+
+### 10.5 Work requiring **new compute** — and two corrections to §4/§5
+
+| key | compute, and whether its cost is established |
+|---|---|
+| `cause3` | build all `M(ii)` members: **348.5 CPU task-hours** (`Z_DECISION_PACKET.md:94`) — and it **cannot be specified** until `SPEC:2117` is answered, so the criteria block it, not the ceiling. |
+| `null` → `B` route (i) | **≥2 pinned full-chain repeats in different allocations**, ~**1.2 CPU task-hours** (~1.8 with an unpinned arm), from the measured per-invocation arm-7 cost `0.3875` / `0.4239` / `0.5764`. **Gated behind two zero-compute judgements** (§7 item 1) and **not authorized**. |
+| `cause1`, `cause4`, `cause6`, `cause7` counterfactuals | the endpoint-interpolation counterfactual, the jitter add-back print value/seed/digests, the coverage censuses, the measured cause-7 counterfactual. **Cost NOT established for any of these** — stated as unestablished rather than estimated. |
+| assembly itself | **DONE.** §7 item 6's second clause is discharged; its first clause (the `B` route) is not. |
+
+⚠ **§4 IS WRONG ABOUT MEMORY, AND IT IS THE ONE FIGURE THAT MATTERED.** §4 reads *"Peak memory a
+few GB. The authorized 1:30 wall and 64G have large margin."* Measured on the `.batch` step of
+`58454524` — `MaxRSS` is step-level, so a `sacct -X` or JobName-filtered query returns it **empty**
+and reads as "not recorded":
+
+```
+58454524.batch   MaxRSS 52146232K = 49.73 GiB   ReqMem 64G   →  77.7% of the request
+```
+
+The **wall** had large margin (1037 s of 5400 s, **19.2%**). The **memory did not**: 22.3% headroom,
+against a prediction that was low by more than an order of magnitude. Runtime, conversely, came in
+*under* §4's estimate — `eigvalsh` at n=10694 was predicted at ~59 s per variant and measured
+**33.503 s** and **16.516 s**. §4's own caveat ("this fixes the **order**, not the number") holds
+for time and fails for memory. Any future sizing must start from **49.73 GiB measured**, not from
+"a few GB".
+
+⚠ **§5's pscratch figure was the filesystem's, not mine — a denominator error.** I reported
+"pscratch at 67%", which is `df` on the shared Lustre mount. The quota that constrains this work is
+per-user: **`16.02 TiB / 20.00 TiB = 80.1%`** (`showquota`, 2026-09-17), 30 TiB hard limit, inodes
+380.67 K / 10.00 M. The 1.7 GB of preserved products are inside that 80.1%. **R5 accounting**,
+re-measured 2026-09-17T07:41:55Z: `cpu_task_hours` **96.196111 / 500**, headroom **403.803889**;
+`gpu_task_hours` **10.210833**; **fired: none**; `58454524` present in `metered_task_ids`. The
+pilot drew **1037 s = 0.288** of its authorized 1.5 CPU task-hours. `stop_date_utc`
+**2026-09-30T00:00:00Z — 13 days.** §5's conclusion is unchanged and now stronger: **the ceiling is
+not what will stop this; the date is.**
+
+### 10.6 `authorization` — the fourteenth key belongs to none of the four classes
+
+`notes.remaining_requirements.authorization` reads: *"Obtain the named production/resource
+authorization and independent scientific decisions before production, adoption, projection or
+publication use."* The **pilot** authorization was obtained, used once, and is **consumed** — one
+submission, no replacement authorized or sought. **No production, adoption, projection or
+publication authorization exists**, and none is requested by this record. It is Joseph's, and it is
+downstream of §10.3, not a parallel track.
+
+---
+
+## 11. Next-action packet — the recommendation
+
+**One decision blocks everything: `B`'s two judgement prerequisites (§4.4a items 4 and 5).**
+
+| | |
+|---|---|
+| **The blocking decision** | Predeclare (a) **the estimator of `B`** and (b) **the coverage/confidence objective that fixes the repeat count**. Nothing else. |
+| **Why it and not another** | `B` gates `ε`; `ε` gates A1; A1 gates `(3,Z) M(i)`, a **REQUIRED** cell; and `SPEC:1257` reject condition **`4c`** makes running against an un-derived boundary a **REJECT** — which is the exact condition the build returned (`outcome.reject_conditions: ["4c"]`, `null.assessment.reject_conditions: ["4c", "11"]`, `verdict: NOT ASSESSABLE`). Every other class in §10 is either already done, someone else's to verify, or barred behind a criterion. |
+| **Evidence it is binding** | `ε` must be argued from `B`'s side, not `S`'s: `S` is **non-binding** because it is normalizer-free and the flip-`‖dx‖` is `1.7957e11`/`2.0433e11`× G's null, so an `ε` chosen from `S` is *"a gate essentially nothing can violate"* (§2.1) — the `1e-12`-clamp defect §3.1a measures. Route (ii) is **GATED** on a §6.4 ruling, route (iii) **EXHAUSTED**, and the precursor-executions fallback **BARRED by composition** (§2.4) — a bar that §10.3 confirms now covers the new `1.755e-12` per-bin measurement too. Route (i) is the only admissible one and **cannot be claimed today**: of the 11 `.sh` files referencing `MNV_EST_SEED_OFFSET`, **arm 7 — `sbatch_uthrow_combine_5d_fast.sh`, the arm whose `:9` says "`--null` repeats CV at the identical seed" — exports 0 of 5 thread variables.** |
+| **Smallest necessary work** | Two predeclared statements, in one document, by the assigned owner (`owners.tsv:14`, `z-criteria-designer [91eaa2]`), reviewed by `owners.tsv:15` (`z-independent-assessor [cb0b6b]`) — **not** by the lane that authored the `ε` proposal (`BEN-381` disqualifies it). The design must be **≥2 pinned full-chain repeats compared to each other, spanning different allocations** (§7 item 1's correction: "pinned versus unpinned" measures pinning's effect and cannot evaluate the falsifier). |
+| **Cost** | **Zero compute. Zero allocation. No estimator change.** Judgement only. |
+| **What its outcome would permit** | With (a) and (b) fixed, the ~**1.2 CPU task-hour** route-(i) run becomes *specifiable and reviewable* — and only then submittable under a separate authorization. That run, if it succeeds, establishes `B`; `B` admits `ε` within `[B, S]`; `ε` lifts reject condition `4c`; and the two covariances that now exist become **assessable** — which is still not adoption, which is still Joseph's (`SPEC` §3.5). |
+
+**Second and third, both zero compute, both unblocked, both parallel to the above:** §7 item 2
+(the throw-deviation and completeness-division channels, *"arithmetic + one code read"*, so `S`
+covers more than F7) and §7 item 5 (`cause 5`'s static trace by a non-owning lane, one cell
+closed). §7 item 4 — naming an undisqualified grading lane — is a prerequisite for *reading* any
+of it.
+
+**What this packet does not propose.** No new assurance campaign. No re-run of `58454524`. No
+projection. No additional independent tolerance: §10.3 records that the existing bound cannot be
+stretched to cover the projected claim, and the four paused `S` conditions (deadband boundary
+crossings, possible F7 branch changes, propagation to the declared projections, and the
+inflation-factor question) stay **paused** and **unresolved** — the measured
+`sqrt_tr_after / sqrt_tr_before` = **`5.674200780785609e-38 / 4.3576468306957044e-38` = 1.302125**
+is now a real operand for that question and is **not** an answer to it.

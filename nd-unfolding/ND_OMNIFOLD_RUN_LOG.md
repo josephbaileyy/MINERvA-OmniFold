@@ -156,3 +156,209 @@ unexplained + 1 this pilot = 218.
 Suites after the fixes: `test_z_pilot.py` 50 passed / 4 skipped (default `python3`); 29 of 29 OK
 under ROOT 6.28/12 / Python 3.11.14 on Perlmutter; all Z suites 276 passed / 7 skipped;
 `test_uq_remediation` 3 failed / 232 passed — the same three test IDs as at `e09513d8`.
+
+### 2026-09-17 — the Z assembly/spectrum pilot RAN. Job `58454524`: construction COMPLETE, science NON-PASSING, adoption WITHHELD
+
+**CLOSED as completed construction. Not a validation, not a grade, not an adoption.** Authorized by
+Joseph as one fourth pilot attempt at ≤1.5 CPU task-hours on the reviewed `fb9ec356` deployment; the
+authorization is **consumed** and **no replacement submission is authorized or sought.**
+
+**Judge this by the artifact and receipt contract, not by `sacct`.** `sacct` labels any nonzero exit
+`FAILED`, and **2 is this CLI's completion code** — `z_build.py` returns 1 for failed, 2 for
+"completed, non-passing", and 0 only for `--help`. The guard's CANNOT-LOOK exit is also 2, which is
+why the pilot's own validator additionally **requires the receipt** before reading 2 as completion.
+
+```
+58454524 | z_pilot5d | ExitCode 2:0 | ElapsedRaw 1037 s | AllocCPUS 36 | nid004093
+         | 2026-09-17T00:21:56 -> 00:39:13 | build_seconds 760.767
+```
+
+**Evidence route (all preserved):** `/pscratch/sd/j/josephrb/zpilot-20260916/outcome-58454524/` —
+both logs, `submission-a5.txt` with the exact command and exported settings, `scontrol-a5.txt`,
+`source-manifest-a5.json`, `env-provenance-a5.json`, all four guard inventory records under
+`inv-a5/`, every receipt, `product-digests.txt`, `r5-receipt-20260917.json`, and
+`sacct-all-nine.txt`. Products remain in place at
+`/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/`.
+
+#### The contract, re-checked 2026-09-17 against the files
+
+- **Products, digests re-measured on the cluster today and identical to the receipts:** `z-cv.npz`
+  **890,500,272 B** `3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5`; `z-mean.npz`
+  **890,383,062 B** `61b7a4939bd40459452e232d4a5cec3c0b19ad7a21715452f7bb3bc9e0c72dd2`; `z-null.npz`
+  **190,817 B** `cb82fc3285c981b91625530d48c14ff5554db5154db298a3144a57520633d77e`.
+- **The pilot receipt names 5 artifacts and every recorded digest re-measures — 5 of 5 MATCH.** It
+  names five and not six because **a receipt cannot digest itself**. The two build-receipt digests
+  (`9f8f91d9be69d767…`, `5bdc9a1830dc183a…`) were re-computed again from the preserved copies during
+  this close-out: **2 of 2 MATCH**.
+- **The output directory holds ten files, not six** — the six the contract covers plus
+  `bridge.json`, `z-manifest.json`, `z-provenance.json` and `z-null-source.npz` (189,794 B,
+  `2ac9d087…`, written by the **bridge**, distinct from the build's `z-null.npz`). Stated because
+  "six artifacts" is the contract's population, not the directory's.
+- **Each build receipt describes the file beside it**: two matching path entries per product,
+  digests agree, matched **by path** and not by position.
+- **RECEIPT-LAST holds**, visible in the mtimes: `z-cv` 463 → `z-mean` 492 → `z-null` 585 → both
+  build receipts 681 → pilot receipt 749 (seconds into the job).
+- `construction_status` **CHECKED**; `scientific_acceptance` **NON-PASSING**; `adoptable` **false**;
+  `build_returncode` **2**; `notes.input_kind` **real**; `revisions_distinct` **true** with producer
+  `e09513d842ad3acc1964c1af740696f02eaed7d9` and assembling
+  `fb9ec3560fd6d62295dffc81b5694c9e26667d5b` — the two roles did not collapse.
+- **Deployment parity** at `zdeploy-fb9ec356`: 895 tracked files, listing sha256
+  `f2333fb32876363d12c2c5aebfe50e2a986504845affd5721f4c04fedee23e61`, `dirty 0`, **15 of 15
+  CURRENT**; `code_identity.worktree_files_differing_from_revision` empty; 15 import-closure digests.
+
+#### Both harness repairs are confirmed on real inputs at production scale
+
+**The `git show --no-ext-diff` repair.** Attempt 3 (`58358282`) died with the depth-1 `z_build`
+guard record reading `refused:launch-unmodelled-launch-grammar`, `offending_flag: git show without
+--no-ext-diff`. That same record is now clean. All four guarded processes:
+
+```
+depth=0  z_pilot_manifest_cli.py   REPOSITORY-ORIGINS-INSPECTED  launch_refusal None  checked=219
+depth=0  z_null_bridge.py          REPOSITORY-ORIGINS-INSPECTED  launch_refusal None  checked=219
+depth=1  z_build.py                REPOSITORY-ORIGINS-INSPECTED  launch_refusal None  checked=234
+depth=0  z_pilot.py                REPOSITORY-ORIGINS-INSPECTED  launch_refusal None  checked=138
+```
+
+Every record: `expect_root /pscratch/sd/j/josephrb/zdeploy-fb9ec356`,
+**`repo_origins_outside_expect_root` empty (0)**, `violation None`, `guard_installed true`,
+`shell restricted`. **OI-136 containment held on all four**, and `z_pilot.py`'s `outcome` is
+`child-systemexit:2` — the guard observed and propagated the completion code rather than masking it.
+(Read the containment from these records, **not** from the `15 of 15 CURRENT` parity line: parity
+can be true and blind when an earlier import owns `sys.path[0]`. The guard's `expect_root` check is
+the evidence.)
+
+**The stderr-preservation repair, and it earned its place.** The child's stderr is preserved intact:
+`chars 2424`, `abridged false`, `sha256 9c780d4101c4c3cea5f12cbe589b4ddfcd1873b2575788242c49841bb879519c`
+(the 4000-char cap did not engage). It carries nine ROOT `TInterpreter::ReadRootmapFile` warnings —
+the in-situ evidence that the **real** PyROOT environment was the one used — **and the depth-1
+`z_build` guard's own `[oi136] inventory: checked=234 repo_origin_count=12 outside_expect_root=0`
+line, which appears nowhere else.** Without this repair that line would have been discarded with the
+child's stderr, and the depth-1 containment evidence would have had to be taken from the JSONL
+alone.
+
+#### Measurements — RECORDED, NOT GRADED
+
+**PSD gate, `fb9ec356:nd-unfolding/z_assembly.py:512-561`.** Fail-closed and it returns no boolean:
+`require()` raises `ZContractError`, so a populated `G4_symmetry_psd` block **is** the pass. The
+criterion is scale-free by deliberate design (the clamp was deleted): `asym <= rtol` and
+`lam_min >= -rtol * lam_max`, via `eigvalsh` on `0.5*(C+Cᵀ)`. `rtol = IDENTITY_RTOL = 1e-9`
+(`fb9ec356:nd-unfolding/z_contract.py:125`) and it is **arithmetic, not scientific** —
+`z_assembly.py:49-51`: *"NO ACCEPTANCE BOUNDARY APPEARS IN THIS MODULE."*
+
+| object | `lambda_min` | `lambda_max` | `neg_fraction_of_max` | `rel_asymmetry` | `rtol` |
+|---|---|---|---|---|---|
+| cv (inflated) | `-1.2750516323643892e-90` | `2.229223998752954e-75` | `5.719710684424999e-16` | `2.1641333629718972e-16` | `1e-09` |
+| mean (inflated) | `-5.146659106575015e-91` | `1.9272637183054823e-75` | `2.670448811800462e-16` | `1.0927533323421377e-16` | `1e-09` |
+| block-sum reference | `-4.6860865778129674e-91` | `1.205970554862754e-75` | `3.885738800933054e-16` | `0.0` | `1e-09` |
+
+The cv object's negative excursion is **`5.72e-16` of `lambda_max` — `1.75e6`× inside the
+tolerance.** **No clipping, flooring, regularization or replacement threshold was applied, and none
+is proposed here.**
+
+**Spectra, persisted separately by the pilot** as a deliberate *second independent* `eigvalsh` on
+the closed artifact, each bound to its product's digest, `verdict: None` in both because
+`gate_symmetry_psd` keeps sole ownership of the PSD decision: cv `n_negative` **5214**, 33.503 s;
+mean `n_negative` **5215**, 16.516 s. **A count is not the gate's criterion** — the gate is on the
+extremal eigenvalue relative to `lambda_max` — and nothing grades these counts.
+
+**Other gates:** `G1_closure_identity` `max_rel_residual` **0.0**; `G3_g_reconstruction`
+`max_rel_diff` **0.0**; `active_total_eq_sum5` **0.0**; `G2_g_domain` `g_min 1.0`, `g_median
+1.0473565738188244`, `g_max 17.653141714565614`, `n_gt_one 6528`, `n_pinned 0`;
+`G3R_raw_operand_reconstruction` **`discriminating: true`** (`n_separated 6527`,
+`n_saturated_v_uni_below_v_blk 4166`, `n_shift_below_tolerance 1`, `max_separation
+0.6270761129833259`), `n_clipped_blocksum 0`, `n_clipped_unified 0`; `G5_band_partition` exhaustive,
+`5 + 13 + 27 = 45`. Inflation: `sqrt_tr_before 4.3576468306957044e-38` →
+`sqrt_tr_after 5.674200780785609e-38`, ratio **1.302125**.
+
+**Null, as the build reconstructed it:** `r_null 4.4520002137582904e-14`,
+`num_norm 1.4301832847122437e-50`, `cv_norm 3.2124510692799616e-37`, `n_rep 10694` — **identical to
+the precursor's own record at § 2026-09-14 to every digit**, which is the expected result, not an
+independent confirmation: `z-null.npz` transcribes that campaign's two persisted CV vectors. New
+here is the **per-bin** statistic `max_i |Δ_i/x_i|` = **`1.7552716191735518e-12`** at
+`argmax_grid_index 31499`, flagged `grades_nothing: true` by its own writer. `null.assessment`
+records `verdict` **NOT ASSESSABLE**, `reject_conditions ["4c", "11"]`; the receipt's `outcome` is
+`assessable: false`, `reject_conditions ["4c"]`, reason *"Scientific criteria and real-input
+evidence remain unresolved."*
+
+**Two named non-checks inside an otherwise-closed gate set, recorded and not repaired:**
+`G3R.stored_cv_cross_checked` **false** (`stored_cv_deviation`, `stored_cv_discriminating` both
+`null`), and `null.declared_cv_crosscheck.external_crosscheck_status` **UNPERFORMED**, `verdict
+UNRESOLVED` — its own stated reason being that the compared object is this build's declared
+`central` source, not an external production ROOT. Neither is the precursor persistence question.
+
+**A digest that differs for a good reason, stated so it is not read as a disagreement:** the ROOT
+object `hCvSupportMask` digests `ea0059ed…` while the persisted `sha256_support_mask` is
+`eed021e9…`. The bridge **recomputes** the predicate and stores its own array; agreement is
+established by the four counts matching exactly (`n_cv_bins_total 65856`, `n_cv_support 10694`,
+`n_cv_genuine_zero 55162`, `n_cv_negative 0`, `recorded == measured`), not by digest equality of two
+different representations.
+
+#### Why NON-PASSING, and what the fourteen-key list does and does not mean
+
+`notes.remaining_requirements` is a **fixed fourteen-key list** emitted unconditionally, so
+"fourteen remain" is not a measurement. The reconciliation — completed subrequirements, unresolved
+scientific criteria, independent verification, and work needing new compute, plus `authorization`
+which belongs to none of them — is at
+**`docs/orchestration/DECISION-SUPPORT-20260916-z-to-adopted-5d-covariance.md` §10**, with the
+recommended next action at **§11**. In one line: `withheld_boundaries` carries four entries, all
+`status: WITHHELD`, `value: null` — `null_epsilon`, `cause3_agg`, `cause3_med`, `cause3_corr` — and
+the `null` requirement's own text is *"Persist both internal same-run fixed-seed CVs and predicate
+at throw creation; approve B, S, B <= S and epsilon in [B, S] before production."* **The
+persistence half was already discharged; the approval half is untouched by construction**, and
+`cause5` says it outright: *"construction alone does not dispose of this cause."*
+
+#### Resource sizing — one figure was wrong and it is the one that mattered
+
+```
+58454524.batch   MaxRSS 52146232K = 49.73 GiB   ReqMem 64G   ->  77.7% of the request
+                 ElapsedRaw 1037 s of a 5400 s wall          ->  19.2% of the wall
+                 TotalCPU 02:17:02 across AllocCPUS 36
+```
+
+The decision-support record's §4 predicted *"peak memory a few GB … 64G have large margin"*. The
+**wall** had large margin; the **memory had 22.3% headroom**, against a prediction low by more than
+an order of magnitude. Runtime went the other way: `eigvalsh` at n=10694 was predicted ~59 s per
+variant and measured **33.503 s** and **16.516 s**. Any future sizing starts from **49.73 GiB
+measured**. `MaxRSS` is a **step-level** field: `sacct -X`, or any JobName filter that drops the
+`.batch` row, returns it empty and reads as "not recorded".
+
+#### The nine-job census for this campaign, preserved (`sacct-all-nine.txt`)
+
+| JobID | name | State | Exit | Elapsed | stage reached |
+|---|---|---|---|---|---|
+| 58347943 | z_pilot5d | FAILED | 1:0 | 4 s | operand guards voided by an apostrophe inside a `${VAR:?…}` message |
+| 58354056 | z_pilot5d | FAILED | 3:0 | 13 s | input declaration |
+| 58356573 | z_pilot5d | FAILED | 12:0 | 160 s | input declaration |
+| 58358282 | z_pilot5d | FAILED | 1:0 | 162 s | **`z_build` refused at launch** — `git show` without `--no-ext-diff` |
+| 58398465 | z_e2e_validate | FAILED | 28:0 | 79 s | small-fixture validation; `copy2` preserved `r--r-----`, 7 of 9 controls passed |
+| 58403382 | z_e2e_validate | COMPLETED | 0:0 | 95 s | **small-fixture validation PASSED**, all controls |
+| 58403491 | z_pilot5d | FAILED | 0:53 | 6 s | **before the script started** — relative `--output` against a read-only CWD, `.batch` CANCELLED |
+| 58403564 | z_pilot5d | FAILED | 3:0 | 8 s | `mnv_env_pathcheck` refused five `$HOME` PATH entries |
+| **58454524** | z_pilot5d | FAILED | **2:0** | **1037 s** | **completed construction, NON-PASSING science** |
+
+`58403491` is recorded as a **consumed attempt**: Joseph ruled that *"the script never started"* is
+not an automatic exception to the no-retry condition. Five submission-side and harness defects were
+found and fixed between `58403564` and `58454524` — an IFS-contaminated allowlist loop, an allowlist
+that deferred to the environment, an `errexit` enabled after the `sbatch` call that would have lost
+the record of a consumed authorization, and two assemble-versus-record ordering faults.
+
+#### Accounting, measured 2026-09-17T07:41:55Z
+
+```
+cpu_task_hours  96.196111 / 500    headroom 403.803889
+gpu_task_hours  10.210833 / 500    fired: none      58454524 in metered_task_ids
+```
+
+The pilot drew **1037 s = 0.288** of its authorized **1.5** CPU task-hours. `stop_date_utc`
+**2026-09-30T00:00:00Z — 13 days.** Storage, per-user and not the filesystem's:
+**pscratch 16.02 / 20.00 TiB = 80.1%** (`showquota`), inodes 380.67 K / 10.00 M; the 1.7 GB of
+products sit inside that. **An earlier report of "pscratch 67%" was `df` on the shared Lustre mount
+— the wrong denominator, and it understated the constraint.**
+
+#### No `VALIDATION_LEDGER.md` row is created, deliberately
+
+Nothing here is a verified-for-quotation number: `scientific_acceptance` is NON-PASSING,
+`outcome.assessable` is false, and every boundary that would grade any of it is WITHHELD. This
+entry and the receipts are the route; a ledger row would read as validation. **Nothing here is
+quotable, promoted, adopted or projected. `B`, `S` and `ε` remain open. Successful construction
+authorizes no grading, adoption or publication use.**
