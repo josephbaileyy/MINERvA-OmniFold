@@ -1026,7 +1026,7 @@ deviation"* — **a different operand, twelve orders away.** So:
 
 | | **1 — qualify the existing products (still RECOMMENDED)** | **2 — establish the changed configuration** |
 |---|---|---|
-| **the blocking decision** | **`θ`.** It is **RECOMMENDED, NOT ADOPTED** (`480bed76:12`), and its own `:4` records it routed *"for independent assessment by `owners.tsv:15` `[cb0b6b]` and then his decision"* — **that assessment has not been performed.** Alternative 1's whole output is graded in `θ`. | **the §6.4 subject ruling** — and per §13.1 it governs **three** things, so **Alternative 2 cannot even be specified until it is issued.** |
+| **the blocking decision** | **`θ`.** It is **RECOMMENDED, NOT ADOPTED** (`480bed76:12`), and its own `:4` records it routed *"for independent assessment by `owners.tsv:15` `[cb0b6b]` and then his decision"*. Alternative 1's whole output is graded in `θ`. ⚠ **UPDATE 2026-09-17: Joseph has ISSUED that routing** under the existing review authorization — see §14. The assessment is **in progress**; `θ` remains **RECOMMENDED, NOT ADOPTED** and no result is recorded here. | **the §6.4 subject ruling** — and per §13.1 it governs **three** things, so **Alternative 2 cannot even be specified until it is issued.** |
 | **then, and only then** | the **active-set population** declaration — which matters once `min_i f_i` is in hand **and** a `θ` is adopted. **Downstream, not blocking.** | the four `OMP_*` variables pinned or receipt-captured, else the falsification branch stays ambiguous |
 | **reservation** | **1.00** CPU task-h at a declared `--time=01:00:00`, `n = 1`; **0.248%** of headroom; **no covariance product** | **9.00** (`n=3`) / **12.00** (`n=4`) CPU task-h, plus new products from the 89.11 GB chain |
 | **would establish** | a bound on the consequence of the **recorded** deviation, propagating through inflation and — **subject to §5.7 condition (a), unchecked** — every projection | `B = 0` for a **pinned** configuration; **or** `B` UNDEFINED |
@@ -1041,3 +1041,58 @@ fallback, route (i), route (ii) and reject condition 11.**
 **Nothing here is adopted, graded or projected. `θ` is RECOMMENDED NOT ADOPTED; full `S` is OPEN;
 §7 item 4 is UNASSESSED; `B` and `ε` are open; Gate 2 is FAIL. No compute is authorized or
 requested.**
+
+---
+
+## 14. The `θ` assessment, routed 2026-09-17
+
+Joseph issued the routing §13.7 identified as the missing precondition, stating that **no further
+permission turn is needed merely to route those documents.** Subjects, by full identity:
+
+| subject | identity | author |
+|---|---|---|
+| the `θ` recommendation, **narrowed** form (294 lines) | `480bed76f9cef73b66bc1bb0bd471847d5f61ce2` on `lane/z-criteria-recommendation-20260910` | `owners.tsv:14` `[91eaa2]` |
+| its predecessor, for the narrowing delta | `fb9fdec11c653d34c5f2ee16f9f68f6be837e6d8` | same |
+| the supporting propagation argument, §5.7 and §5.8 | `affc9e03119230ece17f977325d8a1ba00d68827` on `lane/z-assembly-pilot-20260914` | this lane |
+
+Assessor: `owners.tsv:15` `z-independent-assessor [cb0b6b]`. **Independence checked, not assumed** —
+its standing partial recusal at `068436e5eca3f0b85e506eb8203d97b90b751695` is scoped to the
+campaign-completion ordering choice in `require_campaign_complete` and does not reach `θ`,
+propagation, or `B`/`S`/`ε`.
+
+**The five bounded questions**, as Joseph set them:
+
+1. **Is the proposed `θ` scientifically justified?** Specifically the §2.2 claim that *"a CV movement
+   that changes `σ` by less than `σ`'s own sampling error cannot change any conclusion"*; the
+   statistical assumptions behind `√(2/(N−1))` and the "half that on `σ`" step, given that
+   `C_stat`'s `N = 100` are **bootstrap replicas** and `C_ML`'s `N = 24` are **seed-scan splits**;
+   and the transfer from individual blocks to the **total**, which §2.3 already concedes lies in
+   `(0, 14.74%]` and depends on `f_i`.
+2. **Are the propagation bounds valid for FINITE changes?** `ΔC_infl = ΓC + CΓ + ΓCΓ` is asserted
+   exact, and the norm bound follows for finite `Γ` — but `dσ_i/σ_i = f_i·(dg_i/g_i)` is called
+   *"exactly"* on a measurement at `dg/g = 1e-6`, where first order and exact are
+   indistinguishable, and is then **inverted** to `|dg_i/g_i| ≤ θ/f_i` at `θ = 7.11e-2`.
+   **The differential identity must not silently become a finite-change bound.** In scope with it:
+   **deadband crossings** — and note **4166 of 10694** bins sit in the deadband (`G3R`'s
+   `n_saturated_v_uni_below_v_blk`), which is the population `min_i f_i` is taken over — and the
+   **declared projections**, where §5.7(a) and §5.8(3) both record that the bound has never been
+   evaluated against the actual declared set.
+3. **Does Alternative 1 establish only sensitivity to the recorded CV difference, or something
+   sufficient for the intended scientific qualification?** Limits stated explicitly, and the claim
+   being qualified named.
+4. **Which existing `B`/`S`/`ε` requirements would remain, and what exact amendment or ruling would
+   replace any of them?** ⚠ **Adoption of `θ` is not that amendment** — Joseph's words. `θ` is a
+   per-bin `σ` tolerance; `ε` is a tolerance on `r_null`.
+5. **Define the scientific population and projection set from intended use.** ⚠ **Bins may not be
+   excluded after an unfavourable bound is seen, merely to obtain a passing result.** This rules on
+   `480bed76`'s own proposed active-set restriction: the population must be declared
+   **prospectively**, not selected once the bound is known.
+
+**Constraints carried to the assessor:** no compute; no `θ` adoption; no scientific grading; no
+replacement of the null criterion; `B`'s declarations not to be recreated; the completed pilot not
+to be repeated; no general review. The assessor was also asked to **distinguish source-inspection
+findings from relayed cluster measurements**, and was given this lane's cluster figures explicitly
+labelled as relayed.
+
+**No result is recorded in this section.** `θ` is **RECOMMENDED, NOT ADOPTED**; full `S` is OPEN;
+§7 item 4 is UNASSESSED; `B` and `ε` are open; Gate 2 is FAIL.
