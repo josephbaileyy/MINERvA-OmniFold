@@ -71,9 +71,22 @@ class Declarations:
     region_w_min: float
     region_prespecified: str
     selection_aware: str | None
+    # The input covariance's own recorded class, and whether the caller acknowledged it. `None`
+    # means the product carries no class marker -- treated as unacknowledged, because absence of a
+    # claim is not a claim of adoptability.
+    input_run_class: str | None = None
+    input_class_acknowledged: str | None = None
     generators: dict = field(default_factory=dict)
 
     def check(self):
+        if self.input_run_class != "publication" and not self.input_class_acknowledged:
+            raise Refusal(8,
+                          f"the input covariance records runClass {self.input_run_class!r}, which "
+                          f"is not 'publication'. A significance computed from it is not an "
+                          f"unqualified result and this module will not omit that from its "
+                          f"receipt. Declare --acknowledge-input-class to record it explicitly. "
+                          f"(None means the product carries no class marker at all, which is not "
+                          f"evidence that it is adoptable.)")
         if self.rcond is None:
             raise Refusal(3, "no --rcond. An undeclared rcond on a rank-deficient matrix chooses "
                              "the retained subspace, and therefore the hypothesis, silently.")
@@ -182,8 +195,42 @@ def evaluate(C, central, generator, decl: Declarations, eavail_lo, w_lo,
             "arbitrary event-level fits",
             "adoption -- computing a significance is not adopting one",
         ],
-        "status": "CANDIDATE -- nothing here is approved; the consumer contract is a DRAFT",
+        "input_run_class": decl.input_run_class,
+        "input_class_acknowledged": bool(decl.input_class_acknowledged),
+        "status": (
+            "CANDIDATE -- nothing here is approved; the consumer contract is a DRAFT"
+            if decl.input_run_class == "publication" else
+            f"CANDIDATE, AND QUALIFIED BY ITS INPUT -- the covariance records runClass "
+            f"{decl.input_run_class!r}. This result inherits that standing and is not an "
+            f"unqualified significance; nothing here is approved and the contract is a DRAFT"),
     }
+
+
+# --------------------------------------------------- the INPUT's recorded class ---------------
+# ⚠ WHY THIS EXISTS. Joseph asked whether `publication-under-exception` reaches a downstream
+# consumer, and the answer here was NO: this module's `status` was the hardcoded string
+# "CANDIDATE -- nothing here is approved" and it referred to ITSELF, never to its input. A
+# covariance produced under a digest-bound adoption exception could therefore be consumed and the
+# result's receipt would say nothing about the exception -- **a downstream consumer seeing a clean
+# covariance**, which is the exact defect he predicted.
+#
+# `project_cov_nd.py` writes `runClass` into every product it makes, so the class is readable. It
+# is read here and it is RECORDED; and a class that is not `publication` refuses to produce an
+# unqualified result unless the caller acknowledges it explicitly (rc 8) -- a criterion, liftable
+# by declaration, not a prohibition.
+INPUT_CLASS_KEY = "runClass"
+
+
+def read_input_class(path):
+    """The `runClass` recorded in a ROOT covariance product, or None if it carries none."""
+    import ROOT
+    f = ROOT.TFile.Open(str(path))
+    if not f or f.IsZombie():
+        return None
+    obj = f.Get(INPUT_CLASS_KEY)
+    out = str(obj.GetTitle()) if obj and hasattr(obj, "GetTitle") else None
+    f.Close()
+    return out
 
 
 def _cli(argv=None):
@@ -191,6 +238,9 @@ def _cli(argv=None):
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--rcond", type=float, default=None)
     ap.add_argument("--claim-threshold-sigma", type=float, default=None)
+    ap.add_argument("--acknowledge-input-class", default=None,
+                    help="record that the input covariance's runClass is not 'publication'. "
+                         "Required (rc 8) whenever it is not, including when it is absent.")
     ap.add_argument("--region-eavail-min", type=float, required=True)
     ap.add_argument("--region-w-min", type=float, required=True)
     ap.add_argument("--region-prespecified", default=None)

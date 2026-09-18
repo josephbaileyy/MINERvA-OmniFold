@@ -61,7 +61,13 @@ class _H2:
 
 
 class _Scalar:
+    # `GetTitle` and `GetVal` exist on the real `TNamed`/`TParameter` and were missing here, so
+    # the stub could not exercise the marker READ-BACK path at all -- a fixture that omits part of
+    # the interface it stands in for cannot fail where the real thing would. Same class of gap as
+    # the absent `IsZombie` above.
     def __init__(self, name, val): self.name, self.val = name, val; self._dir = _CURRENT[0]
+    def GetTitle(self): return str(self.val)
+    def GetVal(self): return self.val
     def Write(self):
         if self._dir is not None:
             _STORE[self._dir][self.name] = self
@@ -628,3 +634,111 @@ class TheDigestBoundAdoptionException(unittest.TestCase):
         text = pathlib.Path(self.P.__file__).read_text()
         for bad in ("--force", "--no-verify", "--skip-adoption", "MNV_FORCE"):
             self.assertNotIn(bad, text, f"a general bypass appeared: {bad}")
+
+
+class TheExceptionTokenMustPROPAGATE(unittest.TestCase):
+    """THE TEST JOSEPH ASKED FOR, and the defect he predicted was real.
+
+    *"Does `publication-under-exception` propagate into the output metadata of the M1 projection,
+    or only the source's? If the projected 3D/2D product does not carry the token, a downstream
+    consumer sees a clean covariance."*
+
+    Measured before the fix: `_source_metadata` returned `{}` for every non-npz source. So a
+    projection OF a projection lost everything — the `adoptable: false` guard did not fire, the
+    receipt's `src_metadata` was empty, and a `publication-under-exception` ROOT product could be
+    re-projected as plain `publication` with **no exception record required at all.**
+
+    Two properties now hold and both are asserted below:
+      1. the token is written into the M1 output itself (`runClass` in the product);
+      2. a FURTHER projection reads it back and **may not out-rank it**.
+    """
+
+    setUp = ProjectCovNDReceipt.setUp
+    tearDown = ProjectCovNDReceipt.tearDown
+    _grid = NpzInputPath._grid
+    _write_source = NpzInputPath._write_source
+
+    def _project(self, src, hist, out, run_class, exception=None, question=None, keep="eavail,W"):
+        P = self.P
+        argv = ["project_cov_nd.py", "--src-cov", src, "--src-hist", hist, "--src-cv", src,
+                "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", keep, "--out", out,
+                "--run-class", run_class]
+        if exception:
+            argv += ["--adoption-exception", exception]
+        if question:
+            argv += ["--acceptance-question", question]
+        old, sys.argv = sys.argv[:], argv
+        try:
+            P.main()
+        finally:
+            sys.argv = old
+        with open(out + ".receipt.json") as fh:
+            return json.load(fh)
+
+    def _first_leg_under_exception(self):
+        """C_Z (adoptable:false) -> M1 output, under a digest-bound exception."""
+        src = os.path.join(self.tmp, "z-cv.npz")
+        self._write_source(src, row_index=None)
+        digest = self.P._sha256_file(src)
+        exc = os.path.join(self.tmp, "exc.md")
+        with open(exc, "w") as fh:
+            fh.write("authorized src_cov sha256: %s\n" % digest)
+        out = os.path.join(self.tmp, "m1.root")
+        rec = self._project(src, "hCov_combined5d_total_uthrow", out, "publication", exception=exc)
+        return out, rec
+
+    def test_the_token_is_in_the_M1_OUTPUT_product_not_only_the_source(self):
+        out, rec = self._first_leg_under_exception()
+        self.assertEqual(rec["run_class"], "publication-under-exception")
+        self.assertIn("runClass", _STORE[out], "the output product carries no runClass object")
+        self.assertEqual(_STORE[out]["runClass"].val, "publication-under-exception")
+        self.assertIn("EXCEPTION", _STORE[out]["runClassStatus"].val)
+
+    def test_a_further_projection_READS_the_token_back(self):
+        """The half that was broken: a ROOT source's markers must be read, not ignored."""
+        out, _ = self._first_leg_under_exception()
+        meta = self.P._source_metadata(out)
+        self.assertEqual(meta.get("runClass"), "publication-under-exception")
+        self.assertIs(meta.get("adoptable"), False, "anything but `publication` is not adoptable")
+        self.assertTrue(meta.get("inherited_from_root_markers"))
+
+    def test_this_projector_CANNOT_reproject_the_42_cell_product(self):
+        """⚠ THE CHAIN JOSEPH ASKED ABOUT DOES NOT GO THROUGH THIS PROJECTOR, and that is the
+        honest answer to half his question. `project_cov_nd.py` requires a source on the 5D
+        `AXIS_EDGES` grid with an `hXSecND_flat` CV; M1's output is a 42-cell `(E_avail,W)` object
+        with `hCV_marginal`. So M1 -> 2D/3D is not a path here, and the enforcement point for M1's
+        own consumers is those consumers."""
+        out, _ = self._first_leg_under_exception()
+        out2 = os.path.join(self.tmp, "m2.root")
+        with self.assertRaises(SystemExit) as cm:
+            self._project(out, "hCov_proj_eavail_W", out2, "publication", keep="eavail")
+        self.assertIn("hXSecND_flat", str(cm.exception))
+
+    def test_the_standing_RULE_fires_on_a_marker_carrying_5D_source(self):
+        """Where the rule does apply: a 5D-grid source whose metadata records a class."""
+        src = os.path.join(self.tmp, "z-diag.npz")
+        self._write_source(src, row_index=None,
+                           metadata={"runClass": "diagnostic", "adoptable": False})
+        out = os.path.join(self.tmp, "up.root")
+        with self.assertRaises(SystemExit) as cm:
+            self._project(src, "hCov_combined5d_total_uthrow", out, "candidate")
+        msg = str(cm.exception)
+        self.assertIn("claims more standing than the source", msg)
+        self.assertIn("clean covariance", msg)
+
+    def test_equal_standing_is_permitted_and_recorded(self):
+        src = os.path.join(self.tmp, "z-diag.npz")
+        self._write_source(src, row_index=None,
+                           metadata={"runClass": "diagnostic", "adoptable": False})
+        out = os.path.join(self.tmp, "ok.root")
+        rec = self._project(src, "hCov_combined5d_total_uthrow", out, "diagnostic",
+                            question="tau, equal standing")
+        self.assertEqual(rec["src_run_class"], "diagnostic")
+        self.assertEqual(rec["class_standing_inherited"]["source_standing"], 0)
+        self.assertEqual(rec["class_standing_inherited"]["output_standing"], 0)
+
+    def test_a_marker_free_root_source_stays_unconstrained(self):
+        """Backward compatibility: a ROOT file with no class markers makes no claim to inherit,
+        so pre-existing callers are not broken."""
+        meta = self.P._source_metadata(os.path.join(self.tmp, "no_such_file.root"))
+        self.assertEqual(meta, {})

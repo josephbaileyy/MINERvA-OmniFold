@@ -22,8 +22,15 @@ N = EAVAIL_LO.size * W_LO.size            # 42, the real (E_avail, W) plane
 
 
 def full_decl(**over):
+    # ⚠ `input_run_class` / `input_class_acknowledged` are DECLARED here because these fixtures are
+    # not adopted trunks. Adding rc 8 broke all 15 of these tests at once, which is the
+    # guard-fires-on-every-correct-run signature -- but here the guard is right and the fixtures
+    # were making an unqualified claim by omission. Defaulting the field to "publication" would
+    # have asserted adoptability by omission, which is the defect rc 8 exists to stop.
     kw = dict(rcond=1e-10, claim_threshold_sigma=3.0, region_eavail_min=0.8, region_w_min=0.0,
-              region_prespecified="both", selection_aware=None)
+              region_prespecified="both", selection_aware=None,
+              input_run_class="candidate",
+              input_class_acknowledged="fixture: a synthetic covariance, not an adopted trunk")
     kw.update(over)
     return R.Declarations(**kw)
 
@@ -167,6 +174,55 @@ class Evaluate(unittest.TestCase):
         for must in ("coverage", "adoption", "event-level"):
             self.assertIn(must, joined)
         self.assertIn("CANDIDATE", out["status"])
+
+
+class TheInputClassMustREACHThisConsumer(unittest.TestCase):
+    """THE DOWNSTREAM HALF of Joseph's propagation question, and the gap was here.
+
+    `project_cov_nd.py` writes `runClass` into every product it makes, so a covariance built under
+    a digest-bound adoption exception carries `publication-under-exception`. **This module never
+    read it.** Its `status` was the hardcoded string "CANDIDATE -- nothing here is approved", which
+    refers to ITSELF and says nothing about its input — so a significance computed from an
+    excepted covariance would have produced a receipt with no trace of the exception. That is
+    "a downstream consumer sees a clean covariance", located.
+    """
+
+    def test_an_unacknowledged_non_publication_input_refuses_rc8(self):
+        with self.assertRaises(R.Refusal) as cm:
+            full_decl(input_run_class="publication-under-exception",
+                      input_class_acknowledged=None).check()
+        self.assertEqual(cm.exception.code, 8)
+        # ⚠ `Refusal.__init__` passes the CODE to SystemExit, so `str(exc)` is "8" -- the message
+        # lives on `.msg`. Asserting on str() tested the wrong attribute.
+        self.assertIn("publication-under-exception", cm.exception.msg)
+
+    def test_an_ABSENT_class_is_treated_as_unacknowledged(self):
+        """Absence of a claim is not a claim of adoptability, and this module must not supply one
+        by omission."""
+        with self.assertRaises(R.Refusal) as cm:
+            full_decl(input_run_class=None, input_class_acknowledged=None).check()
+        self.assertEqual(cm.exception.code, 8)
+        self.assertIn("not evidence that it is adoptable", cm.exception.msg)
+
+    def test_a_publication_input_needs_no_acknowledgement(self):
+        """The positive control: the guard must not fire on an adopted trunk."""
+        full_decl(input_run_class="publication", input_class_acknowledged=None).check()
+
+    def test_acknowledging_it_lifts_the_refusal(self):
+        """A criterion, liftable by declaration -- not a prohibition."""
+        full_decl(input_run_class="publication-under-exception",
+                  input_class_acknowledged="adopted under the digest-bound exception").check()
+
+    def test_the_status_is_no_longer_a_constant_about_itself(self):
+        """It must vary with the INPUT's class, or it discriminates nothing."""
+        import inspect
+        src = inspect.getsource(R)
+        self.assertIn("QUALIFIED BY ITS INPUT", src)
+        self.assertIn('"input_run_class"', src)
+
+    def test_the_reader_exists_and_names_the_marker_this_writer_writes(self):
+        self.assertEqual(R.INPUT_CLASS_KEY, "runClass")
+        self.assertTrue(callable(R.read_input_class))
 
 
 if __name__ == "__main__":

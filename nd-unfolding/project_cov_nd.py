@@ -188,14 +188,56 @@ def _read_matrix(path, key):
     return out
 
 
+# STANDING ORDER. A derived product must never claim MORE standing than what it was projected
+# from. Higher number = more standing.
+#
+# ⚠ WHY THIS EXISTS. `_source_metadata` used to return `{}` for every non-npz source, so a
+# projection OF a projection lost everything: the `adoptable: false` guard did not fire, the
+# receipt's `src_metadata` was empty, and a `publication-under-exception` product could be
+# re-projected as plain `publication` with no exception record required. **A downstream consumer
+# saw a clean covariance.** Joseph predicted exactly this defect before it was measured.
+_CLASS_STANDING = {
+    "diagnostic": 0,
+    "UNDECLARED": 1,
+    "candidate": 2,
+    "publication-under-exception": 3,
+    "publication": 4,
+}
+
+_ROOT_CLASS_KEYS = ("runClass", "runClassStatus", "acceptanceQuestion")
+
+
 def _source_metadata(path):
     """The source's OWN metadata, or `{}`. This is the source binding: it carries
     `manifest_sha256`, `code_identity`, `variant`, `adoptable` and `scientific_acceptance`
     forward into the projected product's receipt, so the projection cannot be read without
-    the standing of what it was projected from."""
-    if not _is_npz(path):
+    the standing of what it was projected from.
+
+    For a ROOT source this reads the class markers THIS WRITER puts in its own products, so a
+    projection of a projection inherits them. A ROOT file carrying no markers returns `{}` and is
+    unconstrained -- that keeps every pre-existing caller working, and it is the honest answer:
+    a file with no class information makes no claim to inherit.
+    """
+    if _is_npz(path):
+        _z, meta = _load_npz(path)
+        return meta
+    import ROOT
+    f = ROOT.TFile.Open(str(path))
+    if not f or f.IsZombie():
         return {}
-    _z, meta = _load_npz(path)
+    meta = {}
+    for key in _ROOT_CLASS_KEYS:
+        obj = f.Get(key)
+        if obj:
+            meta[key] = str(obj.GetTitle()) if hasattr(obj, "GetTitle") else str(obj)
+    f.Close()
+    if not meta:
+        return {}
+    # A source whose recorded class is anything but `publication` is not an adopted trunk, and
+    # that fact must travel: otherwise the adoptable guard cannot fire downstream.
+    cls = meta.get("runClass", "UNDECLARED")
+    meta["adoptable"] = (cls == "publication")
+    meta["inherited_from_root_markers"] = True
     return meta
 
 
@@ -302,6 +344,19 @@ def main():
     _src_meta = _source_metadata(args.src_cov)
     # A non-adoptable source must not yield a publication-class product. This is enforced on the
     # DATA rather than on the output path, so it holds however the run was invoked.
+    # ---- STANDING INHERITANCE: a derived product may not out-rank its source ------------------
+    _src_class = _src_meta.get("runClass")
+    if _src_class is not None and args.run_class is not None:
+        _src_rank = _CLASS_STANDING.get(_src_class, 0)
+        _out_rank = _CLASS_STANDING.get(args.run_class, 0)
+        if _out_rank > _src_rank:
+            raise SystemExit(
+                f"[FAIL] --run-class {args.run_class!r} claims more standing than the source, "
+                f"which records runClass {_src_class!r}. A projection cannot acquire standing its "
+                f"input does not have: re-projecting a {_src_class!r} product as "
+                f"{args.run_class!r} would present a downstream consumer with a clean covariance. "
+                f"Declare {_src_class!r} or lower.")
+
     _exception = None
     if str(_src_meta.get("adoptable", "")).lower() == "false" and args.run_class == "publication":
         if not args.adoption_exception:
@@ -492,6 +547,12 @@ def main():
         "paired_central_estimate": ("hCV_marginal = M x_src, the marginalised 5D central value. "
                                     "NOT the independently unfolded lower-D estimator."),
         "src_container": "npz" if _is_npz(args.src_cov) else "root",
+        "src_run_class": _src_class,
+        "class_standing_inherited": (
+            None if _src_class is None else
+            {"source": _src_class, "source_standing": _CLASS_STANDING.get(_src_class, 0),
+             "output": _run_class, "output_standing": _CLASS_STANDING.get(_run_class, 0),
+             "rule": "a derived product may not out-rank its source"}),
         "src_row_index_basis": _src_row_index_basis,
         "src_metadata": _src_meta,
         "run_class": _run_class,
