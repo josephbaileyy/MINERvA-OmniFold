@@ -5,7 +5,18 @@
 Tier-A result cannot complete that objective**, and nothing in this package claims
 otherwise.
 
-**Nothing was launched, exported, sent or adopted.** 54 tests pass; bindings intact.
+**Updated 2026-09-18 after the calibration milestone.** 81 tests pass; bindings intact.
+Two jobs ran and completed: cost calibration (**58527080**) and `E_avail` endpoint
+characterization (**58527254**). Results in `CALIBRATION_RESULTS-20260918.md`; receipts
+in `receipts/20260918-calibration/`. **Nothing exported, sent or adopted; no threshold
+ratified; the optional full Tier-A campaign was not launched.**
+
+**The headline:** `r` is measured at **2.82** (12 tokens) and **4.30** (33 tokens), so the
+complete pretrained comparison costs **≈207 GPU-hours against a 600-hour ceiling with
+≈16 consumed** — affordable, where before it was unknown within two orders of magnitude.
+And the candidate endpoint's reference model is **0.713**, not the pT endpoint's 0.618:
+the inherited value would have been wrong by about five times the margin under
+discussion.
 
 ---
 
@@ -38,7 +49,7 @@ pinned driver). Both are ordinary implementation work; neither waits on anyone.
 | **R1** which commit and model the paper reports | **Gregor** | whether any result speaks about his *published* method. Draft ready |
 | **R3** his `E_avail` definition | **Gregor** | any numeric comparison against his reported values. Draft ready |
 | **R4** authorization to read the 21 typed-object branches at scale | **Joseph** | building the typed representation |
-| **E-1/E-2** one CPU read of the existing npz for the `E_avail` acceptance map and displacement | **Joseph** | **the endpoint's reference value is undefined without it** |
+| ~~**E-1/E-2**~~ | ~~Joseph~~ | **DONE** — job 58527254; the acceptance map, displacement field and reference model are measured |
 | **U1–U8** ratification of the endpoint variable, binning, reference value, `f`, δ, δ_switch | **Joseph** | the freeze |
 | **OI-71** disposition | **Joseph / PET lane** | whether `VL100` may be quoted at all |
 
@@ -46,22 +57,23 @@ pinned driver). Both are ordinary implementation work; neither waits on anyone.
 
 ## 3. The smallest next authorization
 
-**One CPU job, order one core-hour, reading only `G2_FPS_MEFHC_P12.npz` — a file the
-campaign already owns and has already read.** It produces the `E_avail` acceptance map
-and the induced displacement of a candidate tilt on both scoring domains.
+**Both of the previous two are done.** The `E_avail` characterization ran (58527254) and
+the GPU calibration ran (58527080), so the endpoint has a calibrated reference model and
+the objective has a price.
 
-That is the smallest thing that unblocks real progress, because **until it runs the
-endpoint has no calibrated reference value**, and without one neither an adequacy
-criterion nor δ has a value — which is why the endpoint specification states δ as a
-*fraction* of the reference rather than an absolute. The reference is itself a **model,
-not a proven bound**: a smooth learner can transport a tilt across cells, and BEN-038
-measured a band above the modelled reachable value.
+**The smallest next authorization is now a scientific ratification, not compute:
+U1–U8**, and in particular U3 — whether the scoring domain stays 1-D `E_avail` or becomes
+2-D. The measurement surfaced a specific reason to consider 2-D: a 1-D projection
+**averages over** (pT, p‖) cells whose acceptance spans 0.004 to 0.89, so poorly accepted
+regions stay in the truth mass but stop being resolved. That is a scientific choice and
+it is outside this milestone's scope.
 
-Second smallest, and independent of it: **stage 2, the GPU calibration**, 0.33 GPU-h,
-executable today. It measures `r`, and `r` decides whether the objective is affordable at
-all. Everything downstream is priced in it.
+**Not blocked on ratification, and the obvious next implementation:** the Keras port of
+PET2-small with checks P-1…P-6, and the `OI-125` fold-forward recorder. Neither needs an
+authorization, GPU time, or a resolved threshold.
 
-Neither is authorized by anything currently in force.
+**Still blocking the objective itself:** the pretrained checkpoints (R2). Without them
+only his scratch arm runs, which does not test the transfer claim his paper makes.
 
 ---
 

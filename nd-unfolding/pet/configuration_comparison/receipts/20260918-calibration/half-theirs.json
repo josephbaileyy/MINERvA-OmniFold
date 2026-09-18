@@ -1,0 +1,91 @@
+{
+  "gpu_identity": {
+    "cuda_visible_devices": "0",
+    "devices": [
+      {
+        "uuid": "GPU-b858ab0b-bf0b-7748-dfdb-cd4aa68a8e15",
+        "pci_bus_id": "00000000:03:00.0",
+        "name": "NVIDIA A100-SXM4-80GB"
+      }
+    ],
+    "primary_uuid": "GPU-b858ab0b-bf0b-7748-dfdb-cd4aa68a8e15",
+    "primary_pci_bus_id": "00000000:03:00.0"
+  },
+  "by_tokens": {
+    "12": {
+      "native_batch": {
+        "framework": "pytorch",
+        "tokens": 12,
+        "preset": {
+          "num_transformers": 8,
+          "num_transformers_head": 2,
+          "num_tokens": 4,
+          "num_heads": 8,
+          "base_dim": 128,
+          "mlp_ratio": 2
+        },
+        "size": "small",
+        "trainable_parameters": 2762550,
+        "repeats": 20,
+        "step_seconds_median": 0.18494123801065143,
+        "step_seconds_min": 0.18470850799349137,
+        "step_seconds_max": 0.18606695299968123,
+        "coefficient_of_variation": 0.0014710265118985336,
+        "batch": 2048,
+        "seconds_per_example": 9.03033388723884e-05,
+        "examples_per_second": 11073.78766374457
+      },
+      "matched_batch": {
+        "framework": "pytorch",
+        "tokens": 12,
+        "preset": {
+          "num_transformers": 8,
+          "num_transformers_head": 2,
+          "num_tokens": 4,
+          "num_heads": 8,
+          "base_dim": 128,
+          "mlp_ratio": 2
+        },
+        "size": "small",
+        "trainable_parameters": 2762550,
+        "repeats": 20,
+        "step_seconds_median": 0.05274773349810857,
+        "step_seconds_min": 0.05259039101656526,
+        "step_seconds_max": 0.054127859009895474,
+        "coefficient_of_variation": 0.007215959061728026,
+        "batch": 512,
+        "seconds_per_example": 0.00010302291698849331,
+        "examples_per_second": 9706.57819863216
+      }
+    },
+    "33": {
+      "native_batch": {
+        "error": "RuntimeError: CUDA error: invalid configuration argument\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nCompile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.\n",
+        "tokens": 33,
+        "batch": 2048
+      },
+      "matched_batch": {
+        "framework": "pytorch",
+        "tokens": 33,
+        "preset": {
+          "num_transformers": 8,
+          "num_transformers_head": 2,
+          "num_tokens": 4,
+          "num_heads": 8,
+          "base_dim": 128,
+          "mlp_ratio": 2
+        },
+        "size": "small",
+        "trainable_parameters": 2762550,
+        "repeats": 20,
+        "step_seconds_median": 0.12207329200464301,
+        "step_seconds_min": 0.12189817999023944,
+        "step_seconds_max": 0.12317403400084004,
+        "coefficient_of_variation": 0.0021669909623192748,
+        "batch": 512,
+        "seconds_per_example": 0.00023842439844656838,
+        "examples_per_second": 4194.201627498718
+      }
+    }
+  }
+}

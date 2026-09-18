@@ -1,0 +1,184 @@
+{
+  "scope": "characterization of the CANDIDATE E_avail endpoint from the existing input npz. No tuple read, no new branch, no training, no estimator, no threshold ratified.",
+  "candidate_choices": "CANDIDATE_ENDPOINT_CHOICES-20260918.json, committed before this ran",
+  "inputs": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "sha256_verified": true,
+    "expected_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "rows": 49152885,
+    "pass_truth_rows": 49150928,
+    "pass_reco_rows": 20573521,
+    "non_finite_eavail_rows": 0
+  },
+  "injection": {
+    "variable": "truth E_avail (truth_scalars col 2, MC_eavail)",
+    "tilt_function": "closure_powered_truth_reweight.clipped_exponential_tilt (IMPORTED, not reimplemented)",
+    "spec": {
+      "form": "exp(A*clip((pT-p50)/IQR, -Z, +Z)) / mean(...)",
+      "amplitude": 0.35,
+      "clip_z": 3.0,
+      "pt_p25": 0.5308068245649338,
+      "pt_p50": 1.4587417840957642,
+      "pt_p75": 3.1600151658058167,
+      "pt_iqr": 2.629208341240883,
+      "pre_normalization_mean": 1.1565941440982164,
+      "rate_preserving": true,
+      "applied_on": "pass_truth rows only",
+      "n_injected_rows": 49150928,
+      "tilt_min": 0.712007245718591,
+      "tilt_max": 2.470746659616924
+    },
+    "spec_key_naming_note": "The imported function names its quantile keys pt_p25/pt_p50/pt_p75/pt_iqr because it was written for the pT injection. Here they are E_avail quantiles in GeV. The names are an artifact of sharing the frozen function rather than copying it; the relabelled values are in `quantiles_gev` below so nothing is read as a pT quantile.",
+    "quantiles_gev": {
+      "p25": 0.5308068245649338,
+      "p50": 1.4587417840957642,
+      "p75": 3.1600151658058167,
+      "iqr": 2.629208341240883
+    },
+    "weight_range": [
+      0.712007245718591,
+      2.470746659616924
+    ]
+  },
+  "primary_domain_eavail": {
+    "edges": [
+      0.0,
+      0.1,
+      0.2,
+      0.4,
+      0.8,
+      1.5,
+      3.0,
+      100.0
+    ],
+    "acceptance": [
+      0.6707865501786756,
+      0.716558742610458,
+      0.67306051941463,
+      0.5919982609206662,
+      0.4744130535630271,
+      0.3305016476618453,
+      0.21888263326621166
+    ],
+    "truth_mass": [
+      2030299.795989544,
+      1879391.5704213914,
+      3760796.6400421197,
+      5644278.045601088,
+      6323461.457645083,
+      8757138.590817228,
+      11970282.645184025
+    ],
+    "reco_matched_mass": [
+      1361897.795980295,
+      1346694.4605738462,
+      2531243.739959544,
+      3341402.787148541,
+      2999932.659209514,
+      2894248.733068224,
+      2620086.986318713
+    ],
+    "populated_bins": 7,
+    "displacement": {
+      "prior": [
+        0.05029771251244414,
+        0.04655918160169725,
+        0.0931682447056595,
+        0.1398287460003299,
+        0.15665452319327886,
+        0.21694532016532966,
+        0.2965462718212607
+      ],
+      "target": [
+        0.03497496811181628,
+        0.03285791818068348,
+        0.06704544919799958,
+        0.10458262437541156,
+        0.12583170502894264,
+        0.2015146866697701,
+        0.43319264843537636
+      ],
+      "displacement": [
+        0.015322744400627857,
+        0.01370126342101377,
+        0.02612279550765992,
+        0.035246121624918345,
+        0.030822818164336213,
+        0.015430633495559565,
+        0.13664637661411566
+      ],
+      "total_displacement": 0.2732927532282313,
+      "max_bin_displacement": 0.13664637661411566
+    },
+    "reference_model_by_k": {
+      "1": 0.3958247355821925,
+      "2": 0.5966744141608565,
+      "3": 0.7131426233805084,
+      "4": 0.7882637668193859
+    },
+    "reference_model_truth_mass_weighted_by_k": {
+      "1": 0.4235162246483056,
+      "2": 0.63612128421245,
+      "3": 0.7552128606116639,
+      "4": 0.8282319828352285
+    },
+    "acceptance_strata": [
+      {
+        "acceptance_range": [
+          0.0,
+          0.01
+        ],
+        "bins": 0,
+        "truth_mass_fraction": 0.0,
+        "mean_acceptance": null
+      },
+      {
+        "acceptance_range": [
+          0.01,
+          0.05
+        ],
+        "bins": 0,
+        "truth_mass_fraction": 0.0,
+        "mean_acceptance": null
+      },
+      {
+        "acceptance_range": [
+          0.05,
+          0.5
+        ],
+        "bins": 3,
+        "truth_mass_fraction": 0.6701461151798692,
+        "mean_acceptance": 0.3412657781636947
+      },
+      {
+        "acceptance_range": [
+          0.5,
+          1.0
+        ],
+        "bins": 4,
+        "truth_mass_fraction": 0.3298538848201308,
+        "mean_acceptance": 0.6631010182811075
+      }
+    ]
+  },
+  "secondary_domain_pt_pparallel": {
+    "role": "CO-REPORTED DIAGNOSTIC ONLY, no decision weight",
+    "n_cells": 285,
+    "total_displacement": 0.15741771760113266,
+    "max_cell_displacement": 0.005106460309457164,
+    "reference_model_by_k": {
+      "1": 0.5104038956376603,
+      "2": 0.6482928243903353,
+      "3": 0.6949731568655357,
+      "4": 0.7146286369974333
+    },
+    "dilution_note": "Total displacement here against the primary domain's measures how much of an E_avail tilt survives projection onto muon kinematics. A small value is the quantitative form of 'scoring off-variable dilutes the endpoint'."
+  },
+  "reference_model_not_a_proven_bound": "Every reference value above assumes displacement reaches a cell only through that cell's acceptance. omnifold.py:218-220 lets a smooth learner transport a tilt across cells, and BEN-038 measured a band at E_w[r] = 1.0333, above the modelled reachable value. Graded ASSUMED in FINDING-20260806-niter4-decision.md. Recovery is quoted relative to a reference; exceeding it is possible.",
+  "does_not_ratify": [
+    "No acceptance threshold, non-inferiority margin or switching threshold.",
+    "No binning or amplitude is adopted by having been characterized.",
+    "Low-acceptance bins are RETAINED and reported, not removed to raise the reference."
+  ]
+}

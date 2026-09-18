@@ -252,8 +252,8 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 # 125 -> 126: the receipt binds the bounded inference-benchmark launcher, so the
 # post-matrix cost measurement cannot run from unbound bytes. Delta recorded in
 # nd-unfolding/pet/direct_token_comparison/local_validation/20260917-matrix/binding-inventory-delta-inference.json.
-RECEIPT_BINDING_COUNT = 127
-RECEIPT_BINDING_SHA256 = "18936e2f7b9b19d38a8a510f7069a3da0d6702105be44d630c998925a220a0b3"
+RECEIPT_BINDING_COUNT = 128
+RECEIPT_BINDING_SHA256 = "c3a6aa60ce84c7d26fcac653d9ab9a2cdd141115f53744536af0e9dc3f19a68e"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

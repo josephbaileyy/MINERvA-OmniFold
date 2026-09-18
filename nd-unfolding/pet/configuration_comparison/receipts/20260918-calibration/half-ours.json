@@ -1,0 +1,52 @@
+{
+  "gpu_identity": {
+    "cuda_visible_devices": "0",
+    "devices": [
+      {
+        "uuid": "GPU-b858ab0b-bf0b-7748-dfdb-cd4aa68a8e15",
+        "pci_bus_id": "00000000:03:00.0",
+        "name": "NVIDIA A100-SXM4-80GB"
+      }
+    ],
+    "primary_uuid": "GPU-b858ab0b-bf0b-7748-dfdb-cd4aa68a8e15",
+    "primary_pci_bus_id": "00000000:03:00.0"
+  },
+  "by_tokens": {
+    "12": {
+      "framework": "tensorflow 2.15.0 / keras 2.15.0",
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "tokens": 12,
+      "trainable_parameters": 47041,
+      "repeats": 20,
+      "step_seconds_median": 0.018711627504671924,
+      "step_seconds_min": 0.01821244801976718,
+      "step_seconds_max": 0.02033973700599745,
+      "coefficient_of_variation": 0.027794495100265573,
+      "batch": 512,
+      "seconds_per_example": 3.654614747006235e-05,
+      "examples_per_second": 27362.66526640527
+    },
+    "33": {
+      "framework": "tensorflow 2.15.0 / keras 2.15.0",
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "tokens": 33,
+      "trainable_parameters": 47041,
+      "repeats": 20,
+      "step_seconds_median": 0.02836859499802813,
+      "step_seconds_min": 0.027927973016630858,
+      "step_seconds_max": 0.03063738701166585,
+      "coefficient_of_variation": 0.024604567466459934,
+      "batch": 512,
+      "seconds_per_example": 5.540741210552369e-05,
+      "examples_per_second": 18048.12681190551
+    }
+  }
+}
