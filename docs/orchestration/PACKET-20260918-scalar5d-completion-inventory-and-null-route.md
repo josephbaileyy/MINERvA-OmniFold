@@ -648,3 +648,85 @@ had left soft: the `n_empty` census must be declared as a **pass condition**, no
 census recorded but not gated is the green-gate-that-proves-nothing shape. And on the `x_cv > 0`
 catch, a zero-variance reported bin must be a **REFUSAL, not a masked bin**, since masking it after
 the fact would be a post-hoc population change.
+
+---
+
+## 12. The two lanes reached OPPOSITE verdicts on L3 — and the conflict resolved
+
+`[cb0b6b]` **endorsed** the hybrid as the L3 instrument; `[91eaa2]` **rejected** it. Both gave
+reasons and neither was wrong. The resolution, from `[91eaa2]`, uses both: `τ` is a single declared
+tolerance on the **actual** object, and the hybrid is reported **beside it, per member**:
+
+    A_k = drift of corr(M C_k M')            the actual object
+    H_k = drift of corr(M renorm(C_k) M')    the correlation channel alone
+    A_k - H_k                                attributable to the DIAGONAL channel
+
+Measured by `[91eaa2]`: a pure diagonal rescale moves `A` by `0.000447…0.065322` while `H` stays at
+`2.2e-16`; a pure correlation change gives `A = H` to `5.6e-17`; both moving gives
+`A = 0.071866` against `H = 0.066001` plus `0.005864`. **So the diagonal channel is measured on the
+members themselves — no coefficient, no transfer, and no `δ_bin`.** That repairs the defect I raised
+in §11.2: `τ_p` returns to *"not blocked in principle."* The hybrid is not withdrawn; it stops being
+a rival criterion and becomes what makes the actual object's pass auditable.
+
+⚠ **`[91eaa2]`'s own stated limit, which should travel with it:** both statistics are **max-norm**
+drifts, so `A_k − H_k` is a **decomposition report, not an additive identity** — the maxima can be
+attained at different entries and the residual can be **negative** (measured `−0.000149`). Report the
+two statistics and the residual as an attribution; do **not** define a derived "leak" number.
+
+### 12.1 The impossibility is a theorem, and it was proved rather than assumed
+
+I invited `[cb0b6b]` to break my claim that disjointness and actuality cannot both be had. **It
+proved it instead.** Two independent PSD sources with `max|corr(C_a) − corr(C_b)| = 0.562`, a
+positive-weight marginalisation map; optimising the **source diagonal only**, it drove `C_b`'s actual
+projected correlation onto `C_a`'s to a residual of **`9.322e-11`**. So the actual projected
+correlation is a function of both the source correlation and the source diagonal and **neither
+determines it** — any diagonal-invariant function of the actual object must return the same value for
+source correlations differing by `0.562`. **Not merely non-disjoint: provably uninformative.** The
+hybrid is therefore **forced, not chosen.** That closes the question rather than leaving it open.
+
+### 12.2 ⚠ `τ_p` IS REFERENCE-SPECIFIC — verdict-changing, and it was my own open point
+
+`[cb0b6b]` confirmed the objection I flagged but had not measured. Over 300 trials with four members,
+the statistic's value depends on which member is the reference in **300 of 300**, worst ratio
+**1.973** (one trial: `0.19307 / 0.12627 / 0.09849 / 0.19431`), and it is asymmetric even within a
+pair. **So any `τ_p` strictly between `0.0985` and `0.1943` passes under one declared reference and
+fails under another on the same member set.** This is a statement requirement rather than a defect —
+`k = 0` as the archive is prospective and non-gameable — but **the reference must be named as part of
+the criterion, `τ_p` does not transfer between references, and the statistic must not be read as
+"how far do the members disagree among themselves", which is a different, reference-free quantity.**
+
+### 12.3 The positivity precondition is DISCHARGED — and it brings a finding with it
+
+I raised that `x_cv > 0` is a predicate on the **central value** and does not establish variance
+positivity, and said I had not checked. `[cb0b6b]` checked, on payload: the diagonal of
+`hCov_combined5d_total_uthrow` has **0 non-positive, 0 negative, 0 exactly zero, all finite, over all
+10,694**. `corr(C_Z)` is well defined. **Discharged by measurement, not by argument.**
+
+⚠ **But the same read carries a consequence for `φ`.** The diagonal spans **`1.306681e-102` to
+`7.088712e-77`** — a **`5.4e+25` dynamic range, ~12.5 orders in σ**. Each destination cell is
+dominated entirely by its highest-σ source bins, so **a correlation change confined to low-σ bins is
+invisible to the statistic.**
+
+**That is a real tension with `φ = 1` and the packet should carry both.** `φ = 1` says every reported
+bin is in the **population**; the concentration says the instrument can only **see** a small fraction
+of them. Nominal coverage and effective sensitivity are different quantities, and a PASS means *"no
+correlation change among the dominant bins"* — which should be stated in those words rather than as
+coverage of the support.
+
+### 12.4 ⚠ My own `≈ 0.3 ×` constant is WITHDRAWN, and it is §10.1 applied to me
+
+`[cb0b6b]` ran my probe rather than trusting its output and pointed out that **my own per-sd column
+breaks**: `0.351 / 0.344 / 0.358 / 0.377 / 0.265 / 0.127` — it falls by nearly 3× above sd `0.2`. Its
+independent ensemble gives `0.234 / 0.202 / 0.569`, **rising where mine falls**. Across both, `0.13`
+to `0.57`. **I scanned one axis, got a clean near-linear fit, and published a constant — which is
+exactly the failure I had just recorded at §10.1 for `[91eaa2]`'s `≈ N ×`, one section earlier and in
+the same document.** Naming a hazard protects nothing. The bounded-leak *conclusion* survives (at
+`δ_bin ≈ 1e-3` the leak is ~`4e-4` in both ensembles, far below any plausible `τ_p`); the constant
+does not, and §12's attribution scheme removes any need for it.
+
+### 12.5 Definedness and conditioning are separate, per `[cb0b6b]`
+
+`λ_min < 0` does **not** threaten `corr`'s definedness — `corr` needs a positive **diagonal**, which
+§12.3 establishes, not a positive spectrum. What `λ_min < 0` costs is the condition-number bound on
+the cancelling channel (§9.2). Stated separately here so no reader infers a definedness problem that
+does not exist.
