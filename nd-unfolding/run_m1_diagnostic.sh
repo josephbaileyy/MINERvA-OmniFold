@@ -33,6 +33,12 @@
 #SBATCH --output=uq_5d/m1_diag_%j.out --error=uq_5d/m1_diag_%j.err
 set -eo pipefail
 
+# ONE implementation of the R5 accounting and admission block, shared with the determinism
+# launcher. A copy would not change when the original was corrected.
+# shellcheck source=lib_r5_admission.sh
+. "$(dirname "${BASH_SOURCE[0]:-$0}")/lib_r5_admission.sh" 2>/dev/null \
+  || . "${MNV_CODE_ROOT:?set it to the reviewed deployment tree for this run}/nd-unfolding/lib_r5_admission.sh"
+
 # THE ENFORCED CAP, in the governing unit. `DECISION-20260901-joseph-delegated-ceiling-unit-is-
 # task-hours.md`: task-hours are "the sum of ElapsedRaw over the arm tasks", NOT AllocCPUS-weighted.
 # So the reservation is ntasks x wall = 1 x 0.25 h. Pricing this as `cpus-per-task x wall` = 2.0 is
@@ -128,39 +134,20 @@ fi
 # actual from a past run, and never the cap multiplied by cpus-per-task. Both mistakes are on
 # record in this campaign. Declaring a number smaller than the cap is the one that matters: it
 # admits an item against headroom it may exceed.
-if [ "$DECLARED_TASK_HOURS" != "$ENFORCED_TASK_HOURS" ]; then
-  echo "REFUSED -- declared $DECLARED_TASK_HOURS CPU task-h, enforced cap is $ENFORCED_TASK_HOURS" >&2
-  echo "          (ntasks $ENFORCED_NTASKS x wall $ENFORCED_WALL_HOURS h). A reservation is the" >&2
-  echo "          cap, not a measured actual and not the cap times cpus-per-task." >&2
-  exit 8
-fi
+r5_require_declared_cap "$DECLARED_TASK_HOURS" "$ENFORCED_TASK_HOURS" \
+  "$ENFORCED_NTASKS" "$ENFORCED_WALL_HOURS" || exit 8
 
 # ---- REFUSAL 9: R5 ADMISSION, MEASURED AND FRESH ----------------------------------------------
 # Joseph, 2026-09-18: "Before every submission, account for all lanes charged usage and outstanding
 # reservations ... and verify admission." The meter is the instrument for that and it is CALLED
 # here rather than restated -- a rule retyped is a second implementation. It fails closed on a
 # stale, missing or malformed receipt, and `check` refuses when spend + proposed >= the ceiling.
-if [ ! -f "$R5_RECEIPT" ]; then
-  echo "REFUSED -- no R5 receipt at $R5_RECEIPT. Measure one before submitting, not after." >&2
-  exit 9
-fi
-if ! python3 "$CODE_ROOT/docs/orchestration/r5_meter.py" check \
-       --receipt "$R5_RECEIPT" --cpu-task-hours "$ENFORCED_TASK_HOURS" --gpu-task-hours 0; then
-  echo "REFUSED -- R5 admission failed for $ENFORCED_TASK_HOURS CPU task-h. R5 authorizes a stop," >&2
-  echo "          not spending, so this returns for a decision rather than being retried." >&2
-  exit 9
-fi
+r5_admission_check "$CODE_ROOT" "$R5_RECEIPT" "$ENFORCED_TASK_HOURS" 0 || exit 9
 
 # ---- THE PRE-SUBMISSION RECORD, which is the other half of the accounting clause ---------------
-echo "=== diagnostic M1: the five things the authorization requires be recorded ==="
-echo "  scientific question : $QUESTION"
-echo "  expected decision   : $DECISION_VALUE"
-echo "  inputs              : cov=$SRC_COV hist=$SRC_HIST cv=$SRC_CV mask=$DST_MASK"
-echo "  enforced limits     : ntasks=$ENFORCED_NTASKS wall=$ENFORCED_WALL_HOURS h"
-echo "                        reservation=$ENFORCED_TASK_HOURS CPU task-h, mem=16G"
-echo "  R5 admission        : verified against $R5_RECEIPT"
-date -u +"%Y-%m-%dT%H:%M:%SZ"
-showquota 2>/dev/null || echo "showquota unavailable -- record this and do not substitute df"
+r5_record_preamble "$QUESTION" "$DECISION_VALUE" \
+  "cov=$SRC_COV hist=$SRC_HIST cv=$SRC_CV mask=$DST_MASK" \
+  "$ENFORCED_NTASKS" "$ENFORCED_WALL_HOURS" "$ENFORCED_TASK_HOURS" "$R5_RECEIPT"
 
 # ---- THE RUN. One invocation. NO AUTOMATIC REQUEUE. -------------------------------------------
 # Joseph, 2026-09-18, replacing the per-attempt approval requirement: "one corrective resubmission
@@ -177,10 +164,8 @@ python3 project_cov_nd.py \
 _rc="${_rc:-0}"
 
 if [ $_rc -ne 0 ]; then
-  echo "M1 DIAGNOSTIC FAILED rc=$_rc. NO AUTOMATIC REQUEUE." >&2
-  echo "  One corrective resubmission is available for this stage AFTER: the defect is diagnosed," >&2
-  echo "  the repair is verified, and a FRESH R5 receipt admits it. A scientific failure is not an" >&2
-  echo "  execution defect and does not consume that resubmission -- it is evidence to assess." >&2
+  echo "M1 DIAGNOSTIC FAILED rc=$_rc." >&2
+  r5_retry_notice
   exit $_rc
 fi
 
