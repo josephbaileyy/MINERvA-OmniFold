@@ -59,7 +59,7 @@ the most favourable open item in the package.
 | M-M | Trunk adoption | **NOT REACHED** | — | M-F…M-L |
 | M-N | M1 **publication** product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
 | M-R | M1 **diagnostic** projection — the cycle-breaker | **RUNNABLE NOW**, authorized 2026-09-18 | `run_m1_diagnostic.sh`: nine refusals incl. R5 admission; `runClass` written **into** the product; 36 tests; publication-path rc 3 re-measured by a ratchet | D5 (the region), and the destination-mask declaration — **not** adoption |
-| M-S | Determinism configuration, established **and tested** | **EXECUTED** — job `58507305`, `0.25` CPU task-h | `z_determinism_probe.py`: 3 arms × `1,2,4,8` threads, own process per cell, row floor, `UNAVAILABLE` never "no differences"; 15 tests. **Measured precursor: the production factory pins NOTHING and `n_jobs=None`** | — |
+| M-S | Determinism configuration, established **and tested** | **PARTIALLY MEASURED** — job `58507305` COMPLETED, `54` s. ⚠ Its thread axis was **degenerate**; see §13 | **Established at one thread:** all three arms give the **identical** model (digest `b151b10b…`, 200,000 rows, floor SATISFIED) and each is bitwise reproducible across repeats in one process — so the knobs do nothing at `num_threads=1` and their whole effect is on the multi-thread path. **Not established:** thread-count invariance, which was the question. 23 tests | one more `0.25` task-h submission — my corrective resubmission is spent |
 | M-O | Rank-6 consumer contract **and the consumer itself** | **CONTRACT DRAFTED + CODE WRITTEN** | `rank6_significance.py`: five declaration refusals with distinct codes, ndf from the **retained rank**, truncation scan, region as an explicit declaration; **19 tests, both key guards mutation-verified** | **D3 + D5** supply the two values; the CLI payload path is deliberately unwired |
 | M-P | Note/primer/paper synchronization, build, **and retracted-value containment** | **BASELINE MEASURED AND GREEN, containment gate verified covering all three** | 2026-09-18 forced rebuild: `RESULT :: PASS`, note 94pp / primer 5pp / paper 3pp, containment `0 of 10 struck literals`; standalone at `3c3e9f2`, clean, level with origin, **all 26 `.tex`/`.bib` byte-identical** | re-verification after M-N's content edits |
 
@@ -901,3 +901,72 @@ this session's HEAD:
 `AGENTS.md:29` rules that *"mean-centering alone is disqualified"*, and `z_build.py` writes both, so
 both are kept and only one is used. That is not a scientific ruling — it follows from a front-door
 rule already in force.
+
+
+---
+
+## 13. The determinism probe: what it measured, and the green run that measured nothing
+
+**Job `58506753` — FAILED, 4 s, `0.0011` CPU task-h.** It printed *"R5 admission failed for 0.25 CPU
+task-h"* and **had not failed admission.** The admission check ran before `source
+setup_salloc_env.sh`, so `python3` was the node default `3.6.15`, which cannot parse `r5_meter.py`
+(`from __future__ import annotations`), and the `SyntaxError`'s nonzero exit was read as a refusal.
+An *environment* fault reported as an *accounting* fault, in the words of an accounting fault.
+
+Four defects came out of that one failure, and the ordering was only the first: the gate could not
+distinguish **"I could not look"** from **"I looked and refused"** (both mapped to `rc 9`); a
+missing environment script died at `rc 1`, indistinguishable from a payload failure; and the callers
+**flattened the codes** with `|| exit 9`, destroying in one token a distinction that was correct in
+the function. Fixed, and the launchers' population is now discovered rather than listed, so the next
+launcher is covered the moment it exists.
+
+**Job `58507305` — COMPLETED, 54 s, exit 0, verdict `MEASURED`… and it measured nothing about its
+own subject.**
+
+`sbatch --export=ALL,A=1,B=2` parses its argument as a **comma-separated list of `NAME=VALUE`**, so
+the commas inside `MNV_THREAD_GRID=1,2,4,8` split the **list** — backslash escaping does not survive
+— and the variable exported as `1`. Every cell ran at one thread. `invariant_across_thread_grid` came
+back `true` for all three arms: **arithmetically correct over a population of one.** The grid was gone
+before the script started, and the green exit could not tell.
+
+It was diagnosable only because the record carries the quantity that *defines* the hazard rather than
+just the verdict — `thread_grid: [1]`, and each cell reporting `threads=1 omp_env=1
+num_threads_param=1`.
+
+### 13.1 What the run DID establish, and it is not nothing
+
+| | |
+|---|---|
+| rows | `200,000`, `row_floor: SATISFIED` |
+| arms reporting | 3 of 3 — `historical`, `det_only`, `pinned` |
+| digest, **every arm, both repeats** | `b151b10b4b6343b5` — *one* value across all six fits |
+| `within_process_identical` | `True` in every cell |
+| LightGBM | `4.6.0`, Python `3.11.14` |
+
+**At `num_threads = 1` the three configurations are indistinguishable**, and each is bitwise
+reproducible across repeated fits in one process. So `deterministic=True` and `force_row_wise=True`
+change **nothing** at one thread — which is what the mechanism predicts, since with one thread there
+is no reduction-order ambiguity to fix. **The knobs' entire effect lies on the multi-thread path.**
+That is now measured rather than argued, and it sharpens the open question to exactly one axis.
+
+⚠ **It does not touch the `4.452e-14` finding.** That deviation arose in the *production*
+configuration, which uses `n_jobs=None` — every available thread — not one. A single-thread result
+cannot speak to it.
+
+### 13.2 Both defects are now unlandable, and one more submission would answer the question
+
+- A one-valued axis reports the **string** `VACUOUS — … one point cannot show invariance ACROSS
+  thread counts`, never a boolean; the overall verdict becomes **`DEGENERATE`**; a repeated value
+  (`4:4`) does not count as variation. ⚠ The `pinned` arm is single-valued **by design**, so
+  `VACUOUS` is the honest answer there and the tests keep the two cases apart.
+- The grid separator is `:` by default and the launcher **refuses** a grid of fewer than two values
+  (`rc 14`) rather than caveating it.
+- An older test of mine **encoded the defect** — it built a one-thread grid and asserted `MEASURED`.
+  Corrected, with the reason on its face.
+
+**The remaining submission is `0.25` CPU task-h** — `--ntasks=1 --time=00:15:00`, against the
+measured `403.6775` headroom. ⚠ **I have spent my one corrective resubmission for this stage** (on
+the environment-ordering defect), and the second run completed rather than failed, so this is a
+*third* submission and Joseph's call rather than mine. It is the cheapest decision-relevant item in
+the package: if output tracks the thread count, **no number of cross-allocation repeats fixes it** and
+P2's `9.00`–`12.00` task-h should not be bought at all.
