@@ -129,7 +129,33 @@ def main():
                     help="frozen lower-D CV product; its CV>0 mask defines the destination "
                          "reported bins. If omitted, report every bin that receives a source cell.")
     ap.add_argument("--out", required=True)
+    # RUN CLASS. Added 2026-09-18 under Joseph's grant of provisional/diagnostic projections from
+    # the PRESERVED CANDIDATE covariance. The grant is conditional -- "labeled diagnostic and
+    # non-adopted, with separate outputs and receipts" -- so the label is an OPERAND here, not a
+    # convention maintained by whoever runs the script.
+    #
+    # WHY NOT `required=True`: `sbatch_project_5d_to_4d_candidate_gpu.sh:15` already calls this
+    # projector and would refuse itself on every correct run. An unsupplied class is therefore
+    # recorded as the explicit sentinel `UNDECLARED`, never omitted -- the same distinction
+    # `combine_cov_nd.py` draws, where a missing key reads as "not checked" and an explicit
+    # UNDECLARED reads as "the writer was never told".
+    ap.add_argument("--run-class", choices=("diagnostic", "candidate", "publication"),
+                    default=None,
+                    help="diagnostic = provisional, non-adopted, authorized only to resolve a "
+                         "named acceptance question (Joseph 2026-09-18). candidate = constructed "
+                         "before adoption on the publication path; not quotable -- this is what "
+                         "the field's former CONSTANT `CANDIDATE` meant. publication = built from "
+                         "an explicitly adopted trunk. Unset records UNDECLARED.")
+    ap.add_argument("--acceptance-question", default=None,
+                    help="REQUIRED when --run-class diagnostic: the acceptance question this run "
+                         "exists to resolve. A diagnostic run with no question is not diagnostic.")
     args = ap.parse_args()
+    # The grant authorizes diagnostics "when needed to resolve acceptance questions". A run that
+    # cannot name its question is outside the grant, so this refuses rather than defaulting.
+    if args.run_class == "diagnostic" and not (args.acceptance_question or "").strip():
+        raise SystemExit("[FAIL] --run-class diagnostic requires --acceptance-question. The "
+                         "authorization for a provisional projection is scoped to resolving a "
+                         "named acceptance question; an unnamed one is not covered by it.")
     _verify_canonical_edges()
 
     src_axes = args.src_axes.split(",")
@@ -220,6 +246,22 @@ def main():
               f"their projected variance is ZERO, so any correlation-based criterion is UNDEFINED "
               f"on them. Recorded as `n_empty`; this writer does not gate on it.")
 
+    _run_class = args.run_class or "UNDECLARED"
+    _accept_q = (args.acceptance_question or "").strip() or "UNDECLARED"
+    # `status` was a CONSTANT STRING until 2026-09-18 -- every product said "CANDIDATE" whatever it
+    # was, so the field discriminated nothing and could not tell a diagnostic product from a
+    # publication-path one. It now varies with the class, which is the only reason to record it.
+    _status = {
+        "diagnostic": ("DIAGNOSTIC -- NON-ADOPTED and PROVISIONAL. Authorized only to resolve the "
+                       "acceptance question named in this record. NOT a publication product, not "
+                       "quotable, and it does not become one by being renamed or copied."),
+        "candidate": ("CANDIDATE -- not adoptable; construction is not adoption"),
+        "publication": ("PUBLICATION -- built from an adopted trunk. Quotable only after its "
+                        "independent verification lands; adoption is necessary, not sufficient."),
+        "UNDECLARED": ("UNDECLARED -- the writer was never told this run class. Not a pass: read "
+                       "it as an unclassified product and classify it before any use."),
+    }[_run_class]
+
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     fo = ROOT.TFile.Open(args.out, "RECREATE")
     hn = "_".join(keep_axes)
@@ -247,6 +289,14 @@ def main():
     ROOT.TParameter("int")("n_dst", n_dst).Write()
     ROOT.TParameter("int")("src_cells_dropped", dropped).Write()
     ROOT.TParameter("int")("n_empty", n_empty_recorded).Write()
+    # RUN CLASS TRAVELS IN THE PRODUCT, not only in the sidecar. A diagnostic product that is
+    # renamed or moved out of its diagnostic directory would otherwise be indistinguishable from a
+    # publication-path product, and the separation Joseph's grant requires would rest on a file
+    # path -- which is the weakest possible binding, and the one OI-129 already found insufficient
+    # for row labels in this same writer.
+    ROOT.TNamed("runClass", _run_class).Write()
+    ROOT.TNamed("runClassStatus", _status).Write()
+    ROOT.TNamed("acceptanceQuestion", _accept_q).Write()
     fo.Close()
 
     # DIGESTS, all computed AFTER the close, and the row index is READ BACK OUT of the stored object
@@ -282,11 +332,14 @@ def main():
                          "destination is a DIFFERENTIAL DENSITY in the kept axes"),
         "paired_central_estimate": ("hCV_marginal = M x_src, the marginalised 5D central value. "
                                     "NOT the independently unfolded lower-D estimator."),
-        "status": "CANDIDATE -- not adoptable; construction is not adoption",
+        "run_class": _run_class,
+        "acceptance_question": _accept_q,
+        "run_class_keys_in_product": ["runClass", "runClassStatus", "acceptanceQuestion"],
+        "status": _status,
     }
     with open(args.out + ".receipt.json", "w") as fh:
         json.dump(receipt, fh, indent=2, sort_keys=True)
-    print(f"[proj] wrote {args.out}  (CANDIDATE -- do not quote until governing 5D cov is final)")
+    print(f"[proj] wrote {args.out}  ({_run_class} -- {_status.split(chr(46))[0]})")
     print(f"[proj] receipt {args.out}.receipt.json  proj_sha256={receipt['proj_sha256'][:16]}...")
     print(f"[proj] hRowIndex readback OK: {_stored.size} labels, digest "
           f"{receipt['row_index_sha256_readback'][:16]}...")

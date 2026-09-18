@@ -130,7 +130,7 @@ class ProjectCovNDReceipt(unittest.TestCase):
         self.P._verify_canonical_edges = self._real_verify
         sys.modules.pop("ROOT", None)
 
-    def _run(self, keep="eavail,W", mutate_stored=None):
+    def _run(self, keep="eavail,W", mutate_stored=None, run_class=None, question=None):
         P = self.P
         src_shape = tuple(len(P.AXIS_EDGES[a]) - 1 for a in ("pt", "pz", "eavail", "q3", "W"))
         n_dense = int(np.prod(src_shape))
@@ -148,6 +148,10 @@ class ProjectCovNDReceipt(unittest.TestCase):
 
         argv = ["project_cov_nd.py", "--src-cov", cov, "--src-hist", "hCov", "--src-cv", cv,
                 "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", keep, "--out", out]
+        if run_class is not None:
+            argv += ["--run-class", run_class]
+        if question is not None:
+            argv += ["--acceptance-question", question]
         old = sys.argv[:]
         sys.argv = argv
         try:
@@ -178,7 +182,12 @@ class ProjectCovNDReceipt(unittest.TestCase):
             self.assertIn(k, rec, f"receipt is missing {k}")
         self.assertEqual(rec["row_index_key"], "hRowIndex")
         self.assertIn("hRowIndex", _STORE[out], "the row-index array was never written")
-        self.assertEqual(rec["status"][:9], "CANDIDATE")
+        # WAS `assertEqual(rec["status"][:9], "CANDIDATE")`, which asserted a CONSTANT: every
+        # product carried that string whatever it was, so the field discriminated nothing. An
+        # unsupplied class now records the explicit sentinel -- present, never omitted.
+        self.assertEqual(rec["run_class"], "UNDECLARED")
+        self.assertEqual(rec["acceptance_question"], "UNDECLARED")
+        self.assertTrue(rec["status"].startswith("UNDECLARED"), rec["status"])
 
     def test_proj_digest_is_of_the_bytes_on_disk(self):
         """A digest of the in-memory object would pass this too, so it is checked against the file."""
@@ -245,3 +254,95 @@ class ProjectCovNDReceipt(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class RunClassLabel(unittest.TestCase):
+    """The run-class label, added 2026-09-18 under Joseph's diagnostic-projection grant.
+
+    The grant is CONDITIONAL: provisional projections from the preserved candidate covariance are
+    authorized "labeled diagnostic and non-adopted, with separate outputs and receipts". Before
+    this, `status` was a CONSTANT STRING -- every product said `CANDIDATE` whatever it was -- so
+    there was no field in the product or the receipt that could tell a diagnostic product from a
+    publication-path one, and the separation the grant requires would have rested on the output
+    path alone.
+
+    `test_statuses_are_pairwise_distinct` is the one that matters: it is the guard against the
+    field silently becoming a constant again, which is the exact state this change repaired. A
+    test that only checked "diagnostic says DIAGNOSTIC" would pass a writer that also said
+    DIAGNOSTIC for a publication product.
+    """
+
+    setUp = ProjectCovNDReceipt.setUp
+    tearDown = ProjectCovNDReceipt.tearDown
+    _run = ProjectCovNDReceipt._run
+
+    def _receipt(self, **kw):
+        out = self._run(**kw)
+        with open(out + ".receipt.json") as fh:
+            return out, json.load(fh)
+
+    def test_candidate_class_reproduces_the_former_constant(self):
+        """No regression for `sbatch_project_5d_to_4d_candidate_gpu.sh`, which is a candidate run.
+
+        That launcher self-describes as a "DRY-RUN (validation only, NOT a quotable result) ->
+        candidate path", so `candidate` is not a new meaning invented for it -- it is what the old
+        constant meant, and declaring it keeps its product's recorded class unchanged.
+        """
+        _out, rec = self._receipt(run_class="candidate")
+        self.assertEqual(rec["run_class"], "candidate")
+        self.assertEqual(rec["status"][:9], "CANDIDATE")
+
+    def test_diagnostic_class_is_labelled_non_adopted(self):
+        _out, rec = self._receipt(run_class="diagnostic", question="tau: corner chi2 movement")
+        self.assertEqual(rec["run_class"], "diagnostic")
+        self.assertEqual(rec["acceptance_question"], "tau: corner chi2 movement")
+        self.assertIn("NON-ADOPTED", rec["status"])
+        self.assertIn("PROVISIONAL", rec["status"])
+        self.assertNotIn("CANDIDATE", rec["status"])
+
+    def test_diagnostic_without_a_question_refuses(self):
+        """The grant is scoped to resolving a NAMED acceptance question, so an unnamed one is
+        outside it. A default would have put the run inside the grant by omission."""
+        with self.assertRaises(SystemExit) as cm:
+            self._run(run_class="diagnostic")
+        self.assertIn("--acceptance-question", str(cm.exception))
+
+    def test_whitespace_only_question_refuses(self):
+        """`--acceptance-question '  '` is an unnamed question wearing a name."""
+        with self.assertRaises(SystemExit) as cm:
+            self._run(run_class="diagnostic", question="   ")
+        self.assertIn("--acceptance-question", str(cm.exception))
+
+    def test_statuses_are_pairwise_distinct(self):
+        """MUTATION GUARD. Collapse `status` back to a constant and this is the test that fails."""
+        seen = {}
+        for cls, q in (("diagnostic", "q"), ("candidate", None),
+                       ("publication", None), (None, None)):
+            _out, rec = self._receipt(run_class=cls, question=q)
+            seen[cls or "UNDECLARED"] = rec["status"]
+        self.assertEqual(len(set(seen.values())), 4,
+                         f"status must discriminate the classes, got {seen}")
+
+    def test_label_travels_inside_the_product_not_only_the_sidecar(self):
+        """A diagnostic product moved out of its diagnostic directory, or stripped of its
+        sidecar, must still say what it is. A path is the weakest possible binding, and this same
+        writer already learned that for row labels under OI-129."""
+        out, rec = self._receipt(run_class="diagnostic", question="tau")
+        for key in ("runClass", "runClassStatus", "acceptanceQuestion"):
+            self.assertIn(key, _STORE[out], f"{key} was not written into the product")
+            self.assertIn(key, rec["run_class_keys_in_product"])
+        self.assertEqual(_STORE[out]["runClass"].val, "diagnostic")
+        self.assertIn("NON-ADOPTED", _STORE[out]["runClassStatus"].val)
+        self.assertEqual(_STORE[out]["acceptanceQuestion"].val, "tau")
+
+    def test_undeclared_keys_are_present_rather_than_omitted(self):
+        """`combine_cov_nd.py`'s design choice, applied here: a missing key reads as "not
+        checked", an explicit UNDECLARED reads as "the writer was never told"."""
+        out, rec = self._receipt()
+        self.assertIn("runClass", _STORE[out])
+        self.assertEqual(_STORE[out]["runClass"].val, "UNDECLARED")
+        self.assertEqual(rec["run_class"], "UNDECLARED")
+
+
+if __name__ == "__main__":
+    unittest.main()

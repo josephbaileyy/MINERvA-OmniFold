@@ -17,5 +17,6 @@ python3 project_cov_nd.py \
   --src-hist hCov_combined5d_total_uthrow \
   --src-cv products/5d/xsec_5d_MEFHC_5iter_lgbm.root \
   --src-axes pt,pz,eavail,q3,W --keep-axes pt,pz,eavail,q3 \
+  --run-class candidate \
   --dst-cv products/4d/xsec_4d_MEFHC_5iter_lgbm.root \
   --out uq_4d/corrected/projections_candidate/cov_5d_to_4d_marginal_DRYRUN.root

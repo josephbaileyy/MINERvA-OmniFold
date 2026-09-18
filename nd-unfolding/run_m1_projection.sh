@@ -95,8 +95,10 @@ cd "$CODE_ROOT/nd-unfolding"
 python3 project_cov_nd.py \
   --src-cov "$SRC_COV" --src-hist "$SRC_HIST" --src-cv "$SRC_CV" \
   --src-axes pt,pz,eavail,q3,W --keep-axes eavail,W \
-  "${DST_ARG[@]}" --out "$OUT"
-_rc=$?
+  "${DST_ARG[@]}" --out "$OUT" || _rc=$?
+# `set -e` made the assignment below unreachable on failure, so the NO AUTOMATIC RETRY message it
+# guards never printed. The exit status propagated regardless; what was lost was the disclosure.
+_rc="${_rc:-0}"
 
 if [ $_rc -ne 0 ]; then
   echo "M1 FAILED rc=$_rc. NO AUTOMATIC RETRY -- this returns for a decision." >&2
