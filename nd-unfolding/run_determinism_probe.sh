@@ -78,7 +78,22 @@ echo "=== environment, recorded because the answer is a property of it ==="
 echo "  hostname       : $(hostname)"
 echo "  SLURM_JOB_ID   : ${SLURM_JOB_ID:-unset}"
 echo "  SLURM_CPUS     : ${SLURM_CPUS_PER_TASK:-unset}"
-python3 -c "import platform,sys; print('  python        :', sys.version.split()[0], platform.machine())"
+
+# ---- THE ENVIRONMENT, and a REFUSAL if it cannot load the subject ----------------------------
+# The login default `python3` is 3.6.15 and has no LightGBM; the campaign interpreter is
+# `root_6_28` (Python 3.11.14, LightGBM 4.6.0), reached the way every other launcher reaches it.
+# `omnifold_nn_core` does NOT import ROOT at module level -- checked, its note about `import ROOT`
+# is about a different module -- so this probe needs only numpy and LightGBM out of that env.
+# shellcheck source=../setup_salloc_env.sh
+source "$CODE_ROOT/setup_salloc_env.sh"
+if ! python3 -c "import lightgbm, numpy" 2>/dev/null; then
+  echo "REFUSED -- the interpreter cannot import lightgbm and numpy, so the subject of this" >&2
+  echo "          probe cannot be loaded. Discovering that ON the node spends the reservation" >&2
+  echo "          to learn it; run this import on a login node before submitting." >&2
+  python3 -V >&2
+  exit 11
+fi
+python3 -c "import lightgbm,sys,platform; print('  lightgbm      :', lightgbm.__version__); print('  python        :', sys.version.split()[0], platform.machine())"
 
 cd "$CODE_ROOT/nd-unfolding"
 _rc=0
