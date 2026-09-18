@@ -31,8 +31,12 @@ PRODUCTION-FAITHFUL, ITEM BY ITEM:
   weights            `w_truth`, `w_reco`, `td_w` straight out of that bank
   estimator settings whatever `make_estimators` constructs -- UNPINNED, as production is. No
                      overlay is applied; that would test a different estimator
-  CV execution path  `_xsec_for_weights`, the same function `unified_throw_cov.py` calls at both
-                     `:840` and `:1011`
+  CV execution path  the kernel `unified_throw_cov.py:840` and `:1011` resolve AT RUNTIME, which
+                     for a 5D bank is `unified_throw_cov_5d._xsec_for_weights_5d` -- installed by
+                     importing the wrapper, then resolved through `base`'s globals. The call SITE
+                     lines are in the base module; the FUNCTION they resolve to is not the one
+                     bound to that name in the base module, and an assertion checks the patch
+                     landed before anything is computed
   iterations         `--iters`, defaulting to 5, the production value
 
 WHAT EITHER OUTCOME CHANGES, stated before the allocation is spent:
@@ -171,9 +175,28 @@ def main():
             f"{EXPECTED_BANK_CV_SHA256}. A comparison on an unverified input is a statement about "
             f"an unknown object, so this refuses rather than proceeding.")
 
+    # THE 5D CV KERNEL IS INSTALLED BY A MONKEYPATCH, AND A `from`-IMPORT MISSES IT.
+    # `unified_throw_cov_5d.py:88` does `base._xsec_for_weights = _xsec_for_weights_5d`, with the
+    # comment that "do_throws/blockunits/combine all resolve _xsec_for_weights from base's
+    # globals". The base kernel in `compare_unified_throw` stops at `td_q3` and has no `td_W`, so
+    # on a 5-edge bank it feeds 4 denominator coordinates to a 5-edge `histogramdd`.
+    #
+    # ⚠ THAT IS EXACTLY HOW JOB 58510551 FAILED, and the wrapper module's own docstring predicts
+    # it verbatim: "for len(edges)==5 it would feed 4 denom coords to a 5-edge histogramdd". I had
+    # taken `from compare_unified_throw import _xsec_for_weights`, which binds the UNPATCHED name
+    # -- a separate binding the patch never reaches. The inverse of the usual defect, where a
+    # `from`-import makes a patch decorative; here the `from`-import made the patch invisible.
+    #
+    # So: import the 5D wrapper FIRST, so the patch is installed, then resolve the kernel through
+    # `base`'s globals at call time, which is what production does.
+    import unified_throw_cov_5d as u5           # installs base._xsec_for_weights
     import unified_throw_cov as U
     import omnifold_nn_core as core
-    from compare_unified_throw import _xsec_for_weights
+    if U._xsec_for_weights is not u5._xsec_for_weights_5d:
+        raise SystemExit(
+            "[FAIL] the 5D kernel is not installed: unified_throw_cov._xsec_for_weights is not "
+            "unified_throw_cov_5d._xsec_for_weights_5d. Importing the wrapper is what installs "
+            "it, and without it a 5-edge bank feeds 4 denominator coordinates to histogramdd.")
 
     d, _bands, _n_flux = U._load_bank(a.bank)
     edges = d["edges"]
@@ -182,8 +205,10 @@ def main():
     runs = []
     for _ in range(2):
         with Tap(core) as tap:
-            x = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv,
-                                  a.iters, a.estimator_seed).ravel(order="C")
+            # Resolved through base's globals at CALL time, exactly as the production combine
+            # does at `unified_throw_cov.py:840` and `:1011`.
+            x = U._xsec_for_weights(d, edges, w_truth, w_reco, td_cv,
+                                    a.iters, a.estimator_seed).ravel(order="C")
         runs.append({"x": x, "records": tap.records})
 
     xa, xb = runs[0]["x"], runs[1]["x"]

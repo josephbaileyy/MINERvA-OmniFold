@@ -163,8 +163,12 @@ class TheProbeDoesNotModifyProduction(unittest.TestCase):
         self.assertIn("UNPINNED", src)
 
     def test_it_uses_the_same_function_unified_throw_cov_calls(self):
+        """⚠ THIS TEST ORIGINALLY ASSERTED THE DEFECT. It required
+        `from compare_unified_throw import _xsec_for_weights` -- the binding the 5D monkeypatch
+        never reaches -- so it was green while job 58510551 was doomed. What matters is that the
+        kernel is resolved through the base module's globals at call time."""
         src = PROBE.read_text()
-        self.assertIn("from compare_unified_throw import _xsec_for_weights", src)
+        self.assertIn("U._xsec_for_weights(d, edges", src)
         self.assertIn("U._load_bank", src)
 
     def test_both_executions_are_given_the_same_seed(self):
@@ -178,3 +182,57 @@ class TheProbeDoesNotModifyProduction(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TheFiveDimensionalKernelMustBeTheOneCalled(unittest.TestCase):
+    """HOW JOB 58510551 FAILED, as a regression test.
+
+    `unified_throw_cov_5d.py:88` installs the 5D kernel with
+    `base._xsec_for_weights = _xsec_for_weights_5d`, and its own docstring says why: the base
+    kernel in `compare_unified_throw` stops at `td_q3` with no `td_W`, so "for len(edges)==5 it
+    would feed 4 denom coords to a 5-edge histogramdd".
+
+    I had written `from compare_unified_throw import _xsec_for_weights`, which binds the UNPATCHED
+    name -- a separate binding the monkeypatch never reaches -- and the run died in exactly the way
+    that docstring predicts, after 1011 s and a full bank load of 32,849,103 events.
+
+    This is the inverse of the usual `from`-import defect. Usually a `from`-import makes a PATCH
+    decorative; here it made the patch INVISIBLE to the caller.
+    """
+
+    def test_the_probe_does_not_from_import_the_base_kernel(self):
+        """Anchored on a real import STATEMENT -- a bare substring search also matches the comment
+        that explains the defect, which is how this test first failed on its own repair."""
+        import re
+        src = PROBE.read_text()
+        offenders = [ln for ln in src.splitlines()
+                     if re.match(r"\s*from\s+compare_unified_throw\s+import\s+_xsec_for_weights",
+                                 ln)]
+        self.assertEqual(offenders, [], f"live from-import present: {offenders}")
+
+    def test_the_probe_imports_the_5d_wrapper_which_installs_the_patch(self):
+        src = PROBE.read_text()
+        self.assertIn("import unified_throw_cov_5d", src)
+
+    def test_the_probe_resolves_the_kernel_through_base_globals_at_call_time(self):
+        """`U._xsec_for_weights(...)`, not a name captured at import time."""
+        src = PROBE.read_text()
+        self.assertIn("U._xsec_for_weights(d, edges", src)
+
+    def test_the_probe_asserts_the_patch_landed_before_computing(self):
+        """A run that silently used the 4D kernel would burn the allocation to rediscover this."""
+        src = PROBE.read_text()
+        self.assertIn("is not u5._xsec_for_weights_5d", src)
+        self.assertIn("the 5D kernel is not installed", src)
+
+    def test_the_wrapper_really_does_install_it(self):
+        """Read from the wrapper, so this cannot pass against a stale belief about it."""
+        w = (REPO / "nd-unfolding" / "unified_throw_cov_5d.py").read_text()
+        self.assertIn("base._xsec_for_weights = _xsec_for_weights_5d", w)
+        self.assertIn('if len(edges) >= 5 and "td_W" in d:', w)
+
+    def test_the_base_kernel_genuinely_lacks_td_W(self):
+        """The premise of the whole repair, checked against the base module rather than assumed."""
+        b = (REPO / "nd-unfolding" / "compare_unified_throw.py").read_text()
+        self.assertIn("td_cols[:len(edges)]", b)
+        self.assertNotIn("td_W", b)
