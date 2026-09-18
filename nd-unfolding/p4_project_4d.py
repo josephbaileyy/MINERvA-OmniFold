@@ -207,7 +207,34 @@ def main():
         _hm = ROOT.TNamed(P.NON_ADOPTABLE_KEY, str(_pb4["reason"])[:2000])
         _hm.Write()
     fo.Close()
-    json.dump({"edge_hash": ebv["edge_hash"], "bin_volume_hash": ebv["bin_volume_hash"],
+
+    # OI-129 RESIDUAL, closed at the WRITER 2026-09-18. Two things were missing and both are
+    # additive; no existing field changes, so anything reading this manifest keeps working.
+    #   (1) nothing digested `a.out`, the covariance this script had just written;
+    #   (2) `row_index_sha256` below hashes `np.nonzero(m4_eff)[0]` -- the SAME in-memory array the
+    #       histogram was written from, so it hashes the INTENT, not the artifact, and cannot detect
+    #       a write that did not land, a truncated TH1D or a wrong bin offset. Two digests of one
+    #       array are not two digests. That wording is from
+    #       docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json, which performed the
+    #       readback ONCE, by hand, predeclared, for one product (lane B, PASS, 4825 labels exact).
+    #       This makes it automatic for every product the writer emits.
+    # The old field is RETAINED so no consumer breaks; the readback is added beside it and the two
+    # are REQUIRED to agree, which is the check the single field could never perform.
+    _rows_written = np.nonzero(m4_eff)[0].astype(np.int64)
+    _rows_readback = _flat(a.out, "hRowIndex4D").astype(np.int64)
+    P.require(_rows_readback.size == _rows_written.size,
+              f"hRowIndex4D readback length {_rows_readback.size} != {_rows_written.size} written")
+    P.require(bool(np.array_equal(_rows_readback, _rows_written)),
+              "hRowIndex4D read back out of the closed product does not equal the array it was "
+              "written from; the write did not land as intended")
+    _readback_sha = P.hashlib.sha256(np.ascontiguousarray(_rows_readback).tobytes()).hexdigest()
+
+    json.dump({"proj4d_sha256": P.sha256_file(a.out),
+               "row_index_sha256_readback": _readback_sha,
+               "row_index_readback_basis":
+                   "digest of hRowIndex4D READ BACK OUT of the closed file and required equal to "
+                   "the in-memory array; closes OI-129's 'hashes the intent, not the artifact'",
+               "edge_hash": ebv["edge_hash"], "bin_volume_hash": ebv["bin_volume_hash"],
                "mask5d_hash": man["mask5d_hash"], "mask4d_hash": man["mask4d_hash"],
                "central5d_sha256": pre5, "central4d_sha256": pre4,
                "projection_identity_relerr": stats["projection_identity_relerr"],

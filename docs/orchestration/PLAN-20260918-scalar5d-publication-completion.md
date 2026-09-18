@@ -49,7 +49,7 @@ the most favourable open item in the package.
 | M-D | Variance positivity on the reported support | **DONE** | 0 non-positive of 10,694, all finite | — |
 | M-E | P1 projection definitions | **DONE** | packet §4; four maps, widths, masks, C-order, orphan policy, paired central | — |
 | M-F | Cause-3 acceptance design | **DESIGNED, NOT APPROVED** | `9836a64f` + assessment `6caa1f48` | **D1, D2, D3** |
-| M-G | Projector instrumentation (OI-129 family) | **SCOPED; code next** | packet §5; `project_cov_nd.py` records **0** digests vs 13 | nothing — mine |
+| M-G | Projector instrumentation (OI-129 family) | **DONE (code + first tests)** | `project_cov_nd.py` 0 → 16 digest sites, **row-index array added** (it wrote none), readback required; `p4_project_4d.py` gains `proj4d_sha256` + readback, old field retained; 7 tests, mutation-verified | owning re-verification |
 | M-H | Component fingerprint writers | **GAP IDENTIFIED** | 5 of 7 components unfingerprintable: stat/ML files carry one TH2D and nothing else | nothing — mine |
 | M-I | Registry fingerprint rule | **UNSATISFIABLE AS WRITTEN** | rejects every throw component at every `k`, including `k=0` | **D4** |
 | M-J | Lineage / two-ensemble question | **OPEN** | parent is mean-centered, `uthrow_source` 2026-08-06; pilot throw input is the 2026-09-14 precursor | `[cb0b6b]` |
@@ -194,9 +194,22 @@ mixed seeds.
 
 ## 3. Independent work proceeding now, needing no decision
 
-1. **M-G, projector instrumentation.** Add output-file and read-back row-index digests to
-   `p4_project_4d.py`; bring `project_cov_nd.py` from **zero** digests to parity. Tests for both.
-   Ordered before M-N.
+1. ~~**M-G, projector instrumentation.**~~ **DONE.** Two things were wrong and only one was filed.
+   `p4_project_4d.py` now digests the output file and reads `hRowIndex4D` back out of the closed
+   product, requiring it to equal the array it was written from — closing OI-129's *"hashes the
+   intent, not the artifact"*; the existing in-memory field is **retained** so no consumer breaks.
+   **Unfiled and worse: `project_cov_nd.py` wrote no row-index array at all**, so its rows could not
+   be bound to physical bins — disqualifying for M1. It now writes `hRowIndex`, records seven
+   digests including the output file and a read-back row index, and emits a receipt naming the
+   weight basis, the destination-mask basis and the paired central estimate. **First tests for
+   either projector: 7, passing, and mutation-verified** — deleting the readback check fails two of
+   them. `n_empty` is recorded and warned but deliberately **not gated**, because declaring it a
+   pass condition is a criterion change and belongs to the criteria owner and Joseph.
+   ⚠ **Scope narrowed by evidence:** `docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json`
+   (lane B, PASS, predeclared, 4825 labels exact, independent derivation using neither `p4_lib` nor
+   any bin width) already performed this readback **once, by hand, for the existing products**. So
+   the property holds for what exists; the code makes it automatic for what comes next. Owning
+   re-verification still belongs to the standard-P4 lane.
 2. **M-H, fingerprint writers.** `uq_cov_stat_5d.root` and `uq_cov_mlsplit_5d.root` each carry one
    `TH2D` and nothing else, so five of seven components cannot be fingerprint-checked at all — a
    **writer** gap, not a verification gap. Add the nine fields at write time.

@@ -25,6 +25,8 @@ the destination reports every bin that receives a reported source cell.
       --out uq_4d/corrected/projections_candidate/cov_5d_to_4d_marginal.root
 """
 import argparse
+import hashlib
+import json
 import os
 import sys
 
@@ -74,6 +76,20 @@ def _th2(h):
     b = np.frombuffer(h.GetArray(), dtype=np.float64,
                       count=(nx + 2) * (ny + 2)).reshape(ny + 2, nx + 2)
     return b[1:ny + 1, 1:nx + 1].T.copy()
+
+
+def _sha256_file(path):
+    """Digest of the bytes actually on disk. Must be called AFTER the writer closes the file."""
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _sha256_int64(a):
+    """Digest of an integer index vector, in a byte layout that does not depend on the caller."""
+    return hashlib.sha256(np.ascontiguousarray(np.asarray(a, np.int64)).tobytes()).hexdigest()
 
 
 def build_projection(src_axes, keep_axes, src_report, src_shape, dst_shape, dst_index_of):
@@ -151,6 +167,8 @@ def main():
         dst_report = np.where(xdst > 0)[0]
         dst_index_of[dst_report] = np.arange(dst_report.size)
         x_dst_cv = xdst[dst_report]
+        dst_rows_dense = dst_report          # row r of C_low is destination dense index [r]
+        dst_mask_basis = "destination CV > 0 (--dst-cv supplied)"
     else:
         # provisional: fill after we know which dense bins receive a source cell
         idx = np.unravel_index(src_report, src_shape)
@@ -158,6 +176,8 @@ def main():
         dst_dense_hit = np.unique(np.ravel_multi_index(tuple(idx[p] for p in keep_pos), dst_shape))
         dst_index_of[dst_dense_hit] = np.arange(dst_dense_hit.size)
         x_dst_cv = None
+        dst_rows_dense = dst_dense_hit
+        dst_mask_basis = "dense destination bins receiving >= 1 source cell (no --dst-cv)"
 
     M, dropped = build_projection(src_axes, keep_axes, src_report, src_shape,
                                   dst_shape, dst_index_of)
@@ -191,6 +211,15 @@ def main():
     psd_ok = ev[0] >= -1e-10 * ev[-1]
     print(f"[proj] PSD (to machine tol): {'OK' if psd_ok else 'FAIL'}")
 
+    # `n_empty` is RECORDED and WARNED, not raised. Declaring it a pass condition is a criterion
+    # change and belongs to the criteria owner plus Joseph, not to this writer -- see
+    # PLAN-20260918 D-series. A writer that invented the gate would be setting a boundary.
+    n_empty_recorded = (int((~np.asarray(M != 0).any(axis=1)).sum()))
+    if n_empty_recorded:
+        print(f"[proj] WARNING: {n_empty_recorded} destination row(s) receive NO source cell; "
+              f"their projected variance is ZERO, so any correlation-based criterion is UNDEFINED "
+              f"on them. Recorded as `n_empty`; this writer does not gate on it.")
+
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     fo = ROOT.TFile.Open(args.out, "RECREATE")
     hn = "_".join(keep_axes)
@@ -204,11 +233,63 @@ def main():
     for i in range(n_dst):
         hy.SetBinContent(i + 1, float(y[i]))
     hy.Write()
+    # ROW LABELS. Added 2026-09-18 (OI-129 family). Without this the rows of a projected covariance
+    # cannot be bound to physical bins at all, and `p4_project_4d.py` already carries the same array
+    # for the stated reason that both product-audit legs could otherwise test row alignment only
+    # INDIRECTLY. It travels IN the product, not only in the sidecar, so a lost sidecar does not
+    # lose the binding -- the same argument `p4_project_4d.py` makes for its non-adoptable marker.
+    hidx = ROOT.TH1D("hRowIndex", "row r of the covariance is destination dense grid index [r]",
+                     n_dst, 0, n_dst)
+    for _i, _g in enumerate(dst_rows_dense):
+        hidx.SetBinContent(_i + 1, float(_g))
+    hidx.Write()
     ROOT.TParameter("double")("sqrt_tr", float(np.sqrt(max(np.trace(C_low), 0)))).Write()
     ROOT.TParameter("int")("n_dst", n_dst).Write()
     ROOT.TParameter("int")("src_cells_dropped", dropped).Write()
+    ROOT.TParameter("int")("n_empty", n_empty_recorded).Write()
     fo.Close()
+
+    # DIGESTS, all computed AFTER the close, and the row index is READ BACK OUT of the stored object
+    # rather than re-hashed from the in-memory array. Two digests of one array are not two digests --
+    # that is precisely OI-129's residual, recorded at
+    # docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json.
+    fchk = ROOT.TFile.Open(args.out)
+    _stored = _th1(fchk.Get("hRowIndex")).astype(np.int64)
+    fchk.Close()
+    if not np.array_equal(_stored, np.asarray(dst_rows_dense, np.int64)):
+        raise SystemExit(f"[FAIL] hRowIndex read back out of {args.out} does not equal the row "
+                         f"labels written ({_stored.size} vs {len(dst_rows_dense)} entries); the "
+                         f"write did not land as intended and the product must not be used")
+    receipt = {
+        "product": os.path.abspath(args.out),
+        "proj_sha256": _sha256_file(args.out),
+        "src_cov_sha256": _sha256_file(args.src_cov),
+        "src_cv_sha256": _sha256_file(args.src_cv),
+        "dst_cv_sha256": _sha256_file(args.dst_cv) if args.dst_cv else None,
+        "M_content_sha256": hashlib.sha256(np.ascontiguousarray(M, float).tobytes()).hexdigest(),
+        "M_shape": list(M.shape),
+        "row_index_key": "hRowIndex",
+        "row_index_sha256_readback": _sha256_int64(_stored),
+        "row_index_basis": (
+            "row r of the covariance is destination dense grid index hRowIndex[r], on the "
+            f"({','.join(keep_axes)}) grid in C order. Digest is of the array READ BACK OUT of the "
+            "closed file, not of the in-memory source."),
+        "dst_mask_basis": dst_mask_basis,
+        "src_axes": list(src_axes), "keep_axes": list(keep_axes),
+        "src_reported": int(src_report.size), "n_dst": int(n_dst),
+        "src_cells_dropped": int(dropped), "n_empty": n_empty_recorded,
+        "weight_basis": ("entries are the product of the DROPPED axes' bin widths, so the "
+                         "destination is a DIFFERENTIAL DENSITY in the kept axes"),
+        "paired_central_estimate": ("hCV_marginal = M x_src, the marginalised 5D central value. "
+                                    "NOT the independently unfolded lower-D estimator."),
+        "status": "CANDIDATE -- not adoptable; construction is not adoption",
+    }
+    with open(args.out + ".receipt.json", "w") as fh:
+        json.dump(receipt, fh, indent=2, sort_keys=True)
     print(f"[proj] wrote {args.out}  (CANDIDATE -- do not quote until governing 5D cov is final)")
+    print(f"[proj] receipt {args.out}.receipt.json  proj_sha256={receipt['proj_sha256'][:16]}...")
+    print(f"[proj] hRowIndex readback OK: {_stored.size} labels, digest "
+          f"{receipt['row_index_sha256_readback'][:16]}...")
 
 
 if __name__ == "__main__":
