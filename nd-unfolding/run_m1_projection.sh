@@ -127,7 +127,7 @@ echo "=== resource state at dispatch ==="
 date -u +"%Y-%m-%dT%H:%M:%SZ"
 showquota 2>/dev/null || echo "showquota unavailable -- record this and do not substitute df"
 echo "=== operands ==="
-for _v in CODE_ROOT DATA_ROOT ADOPTION SRC_COV SRC_HIST SRC_CV DST_MASK OUT; do
+for _v in CODE_ROOT DATA_ROOT ADOPTION SRC_COV SRC_HIST SRC_CV DST_MASK OUT EXPECT_VARIANT; do
   eval "echo \"  $_v = \$$_v\""
 done
 

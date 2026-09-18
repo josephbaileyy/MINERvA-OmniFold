@@ -348,3 +348,39 @@ And the correction he made to my framing, recorded because it was mine to get wr
 *"had you ruled on the five decisions first, we'd have burned a cycle discovering this."* **That
 made his not-yet-ruling a benefit of my own audit, and it is not.** The gate was equally repairable
 after the rulings; the rulings are what move the required path.
+
+## 10. THE 18 SUITE FAILURES — do any touch projection, adoption or covariance?
+
+**Asked and answered plainly: three of the eighteen touch that path — by INVENTORY, not by logic.
+None is a defect in projection, adoption or covariance behaviour.** Not being fixed; this is the
+gated post-publication cleanup and Joseph did not ask for a repair.
+
+The eighteen are **identical** to a full baseline run at `bd77ad5f^` (set difference empty in both
+directions; totals reconcile at `+11`, exactly the tests added). They fall into four groups:
+
+| group | n | what they actually are |
+|---|---|---|
+| macOS `/var` vs `/private/var` | 3 | the symlink defeats a `resolve()` comparison; would pass on Linux |
+| cluster-path absence | 1 | needs `/pscratch/.../omnifold/dataloader.py`; local-only |
+| harness environment | 1 | `NameError: __file__ is not defined` in a mutation harness |
+| **drifted inventory counters / snapshots** | **13** | counts needing `--update`, e.g. `347 != 374` shell files, `132 != 129` fields, `204 != 198` launchers |
+
+**The three that touch this path, and how:**
+
+1. **`test_p4_token_gate_scope_and_rev`** — `19 != 18`; the measured surface now includes
+   `nd-unfolding/project_cov_nd.py`. **A count, not a behaviour.** It fails identically at baseline,
+   so the drift predates today.
+2. **`test_uq_remediation::SubstitutionFenceS1`** — `204 != 198` launchers, and the delta includes
+   **`nd-unfolding/lib_r5_admission.sh`, which this campaign added.** So this one **is** downstream
+   of our own work, though it predates today's commits. It needs a launcher classified as hooked,
+   fenced, or out of scope — inventory, not logic.
+3. **`test_hash_bindings::test_every_longform_finding_is_indexed`** — **21 `FINDING-*.md` documents
+   are absent from the `FINDINGS.md` index and therefore invisible to a new session**, and three of
+   them are squarely ours: `FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md`,
+   `FINDING-20260901-cause4-jitter-floor-recovered.md`,
+   `FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md`.
+
+⚠ **Item 3 is the same failure mode Joseph named about `MEMORY.md`, one layer out:** the finding
+exists, the index does not carry it, so a cold session re-derives it by auditing. **That is a live
+cause of the circularity, not a stale counter** — recorded here so the cleanup knows which of the
+thirteen is not merely cosmetic.
