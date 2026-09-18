@@ -1287,3 +1287,64 @@ edits**, which is the ruled order. The two disclosed coverage limits are unchang
 checker's own: `GATED_NW_MACROS` is empty and says it is inert rather than passing, and two
 `\dead{}` bodies are source-checked only because a literal under three significant figures is
 indistinguishable from an axis tick in a rendered PDF.
+
+---
+
+## 17. C2 — THE MARGIN, brought as you asked. Recommended, not declared
+
+Ruling 6: *"create `cause2_f7_margin` withheld and **bring me the margin**."* The key is created
+withheld (`a8b96f64`). **This is the margin.**
+
+### 17.1 What the margin is for
+
+`[cb0b6b]`'s correction: L4's criterion as written **cannot distinguish "tested and stable" from
+"no member came near the branch point"** — the boolean is identical either way. So the test counts
+as *performed* only if the member sits a declared distance from the branch point.
+
+**The branch point, measured rather than assumed:**
+
+    mean_shift_sampling_floor(sqrt_trace, n_throws) = sqrt_trace / sqrt(N)    [uq_math.py:141-147]
+
+    sqrt_tr (sqrt_tr_unified, read from the precursor product)  4.443674e-38
+    N       (n_throws, read from the same product)              160
+    sampling floor                                             3.513032e-39
+    F7_FLOOR_MULTIPLE k                                        2.0
+    BRANCH POINT  k * floor                                    7.026065e-39
+    joint_mean_shift_norm (pilot receipt + throw product)      1.878697e-38
+
+    shift / floor            =  5.3478
+    shift / (k * floor)      =  2.6739     <- the distance from the branch point
+
+### 17.2 RECOMMENDED MARGIN: `0.168` on the ratio `shift / (k·floor)`
+
+> The F7 test counts as **performed** only if `|shift/(k·floor) − 1| ≥ 0.168` — equivalently, the
+> ratio lies **outside `[0.832, 1.168]`**. Inside that band the boolean is not evidence either way
+> and the result is `INCONCLUSIVE`, not `MET`.
+
+**The ground, and it is the same *kind* of argument δ rests on.** The branch point is proportional
+to `√Tr`, which the 160-throw ensemble determines to `1/√(2(N−1)) = 5.61%`. **A ratio within the
+floor's own precision cannot be told from the other side of the branch**, so the margin is `3 ×
+5.61% = 16.8%`. It reads **no observed shift** — `5.61%` comes from `N` alone — so it cannot be
+tuned to make today's answer come out right, which is the failure `uq_math.py:128-137` records
+against its own threshold.
+
+**Measured against it: `2.6739`, outside the band by a factor of `2.29` above its upper edge. The
+current member passes the margin comfortably**, and the F7 branch outcome is *shift ≫ floor* — so
+the CV-centered variant must also be produced, which the pilot did, and `AGENTS.md:29`'s
+*"mean-centering alone is disqualified"* is consistent.
+
+⚠ **Residuals, both named.** `1/√(2(N−1))` assumes iid normal draws and these are
+systematic-parameter throws, so `5.61%` is an **order-of-magnitude anchor** for resolving power, not
+an exact precision — the same residual δ carries. And the factor `3` is a judgement; `2×` would give
+`0.112` and `1×` `0.056`, and the current member clears all three. **`cause2_f7_margin` stays
+withheld until you declare a value.**
+
+### 17.3 ⚠ One measured discrepancy, surfaced rather than folded in
+
+`uq_math.py:125` records *"Measured on the adopted ensemble: **4.69x** the floor, **4.83x** after the
+flux correction."* **On Z's precursor ensemble the same statistic is `5.3478×`.** Same formula, same
+`k`, different ensemble — so this is not a disagreement about the rule but a different subject
+measured by it. **It is recorded because a reader meeting `5.35` next to a comment saying `4.69`
+would reasonably suspect one of them is wrong, and neither is.** The relevant consequence is only
+that Z sits *further* from the branch point than the adopted product did, so the margin is easier to
+satisfy, not harder.
