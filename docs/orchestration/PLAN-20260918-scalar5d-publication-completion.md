@@ -57,7 +57,7 @@ the most favourable open item in the package.
 | M-L | `ε` / null acceptance | **BLOCKED BY CONTRACT** | every route closed (packet §2.1) | Joseph's §6.4 route ruling |
 | M-M | Trunk adoption | **NOT REACHED** | — | M-F…M-L |
 | M-N | M1 product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
-| M-O | Rank-6 consumer contract | **DRAFTED** — `CONTRACT-20260918-rank6-significance-consumer.md` | 8 declarations fixed; 6 consumer defects measured; **region dated half-prespecified, half data-selected** | **D3 + new D5** |
+| M-O | Rank-6 consumer contract **and the consumer itself** | **CONTRACT DRAFTED + CODE WRITTEN** | `rank6_significance.py`: five declaration refusals with distinct codes, ndf from the **retained rank**, truncation scan, region as an explicit declaration; **19 tests, both key guards mutation-verified** | **D3 + D5** supply the two values; the CLI payload path is deliberately unwired |
 | M-P | Note/primer/paper synchronization and build | **BASELINE MEASURED AND GREEN** | 2026-09-18 forced rebuild: `RESULT :: PASS`, note 94pp / primer 5pp / paper 3pp, containment `0 of 10 struck literals`; standalone at `3c3e9f2`, clean, level with origin, **all 26 `.tex`/`.bib` byte-identical** | re-verification after M-N's content edits |
 
 **Ordering that matters:** M-G must land **before** M-N, because a digest retrofitted after a file
@@ -390,3 +390,46 @@ must not gate).
 
 **What is NOT waiting on anything:** M-A…M-E, M-G, M-H, M-P's baseline, cause 5 and cause 7 evidence,
 cause 6's operator and censuses, M-O's draft, and M1's priced request. Those are done.
+
+
+---
+
+## 7. The replacement consumer is written — `nd-unfolding/rank6_significance.py`
+
+The contract says the consumer is **new code, not a patch**, because `AGENTS.md:30` quarantines the
+existing `(E_avail,W)` covariance outright and `:27` requires projection from the adopted trunk, so
+re-pointing an input would leave every inference assumption unresolved. Its structure is fixed by the
+contract regardless of which values **D3** and **D5** supply, which is why those two are **required
+inputs rather than values baked in.**
+
+**Five declarations enforced as refusals, each with its own exit code:**
+
+    rc 3   --rcond absent or out of range. Both existing consumers call pinv with NO explicit
+           rcond, and one already comments the matrix "can be near-singular -> pinv amplifies
+           shape directions". There is no default here.
+    rc 4   ndf would be the bin count. The existing header reads literally chi2/ndf(all7). The
+           retained RANK is reported as the ndf input, with the distinction stated: a rank is a
+           property of the matrix, a calibrated ndf a property of the null distribution. No
+           generic Hartlap factor, and rank alone is not called calibrated.
+    rc 5   the region is not fully prespecified and no selection-aware calibration is declared --
+           D5 ENFORCED IN CODE, and liftable by declaring one, so it is a criterion and not a
+           prohibition.
+    rc 6   no claim threshold, since deriving it afterwards from the computed number would be a
+           threshold placed to obtain a verdict.
+    rc 7   the central estimate and the covariance come from different products. The pairing is
+           M1 x_5D, not an independently unfolded 2D estimator.
+
+**The CLI payload path is deliberately not wired** and refuses with `rc 2` saying so: the trunk is not
+adopted, M1 does not exist, and the contract is a draft. The declaration checks are live and the core
+is importable and tested.
+
+**19 tests**, with a positive control proving no refusal fires on a fully declared call. **Both
+load-bearing guards are mutation-verified:** making ndf the bin count fails the ndf test, and letting
+`rcond` silently default fails the refusal test. ⚠ Two fixture lessons are recorded on the tests
+themselves, because both were mistakes: a `+ eps*I` ridge would make the covariance full rank and
+**destroy the rank deficiency the tests exist to exercise** — `C_Z` has 5,214 negative eigenvalues of
+10,694, so full rank is the wrong regime to fixture; and the truncation scan needs a **graded**
+spectrum, because an exactly rank-deficient matrix yields a *constant* retained rank across every
+plausible `rcond` and the scan would demonstrate nothing. My first attempt at the second mutation was
+also invalid — it broke class definition, so it errored at collection rather than failing a test,
+which is the mutation-refused-before-reaching-the-guard shape a third time in this session.
