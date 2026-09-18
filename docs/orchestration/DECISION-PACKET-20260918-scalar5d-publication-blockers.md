@@ -588,3 +588,180 @@ should travel with the grade:
 ⚠ **This matters more now than when I wrote `N = 3`:** at the affordable `N = 1`–`2`, the cause-3
 correlation leg **cannot** support a spread statement. **That is a scientific consequence of the
 ceiling, and it belongs in the §6.4-style sufficiency judgement, not buried in a cost table.**
+
+---
+
+## 9. BOUNDED RESULTS — 2026-09-18, read-only planning
+
+### 9.1 PER-TASK MAXIMA, and one additional member IS admissible
+
+⚠ **§8.6's "not admissible at N = 1" was itself wrong.** It applied a uniform `1.5×`/`2.0×` margin to
+each arm's per-task **maximum**, which over-caps a long-tailed arm. With the distributions read, the
+conclusion reverses.
+
+Read-only `sacct -X -D`, `TZ=UTC`, `2026-08-25`→`09-05` — **both complete rounds pooled**, so each
+maximum is over more tasks than one round declares:
+
+| arm | unit | tasks | cap now | **per-task max** | ratio cap/max |
+|---|---|---:|---:|---:|---:|
+| `boot5dG` | GPU | 100 | 3.00 h | **0.179 h** | 16.8× |
+| `sweep5dBKGrun` | GPU | 169 | 1.50 h | **0.177 h** | 8.5× |
+| `det5dBKG` | GPU | 19 | 4.00 h | **0.758 h** | 5.3× |
+| `uthrow5d_runF` | CPU | 40 | 6.00 h | **2.671 h** | 2.2× |
+| `ssplit5d` | CPU | 24 | 3.00 h | **0.481 h** | 6.2× |
+| `uthrow5d_combF` | CPU | 1 | 3.00 h | **0.576 h** | 5.2× |
+| **`uthrow5d_block`** | CPU | 21 | 12.00 h | **8.639 h** | **1.4×** |
+
+**`uthrow5d_block` is the binding arm, and its maximum is ONE OUTLIER IN 38:**
+`min 0 s`, **`p50 1.22 h`**, **`p90 1.97 h`**, `max 8.64 h`; **4 of 38 above 2 h, 1 of 38 above 6 h.**
+So its enforced reservation is set entirely by a single task, and the cap is a **trade between
+reserved headroom and an expected timeout**:
+
+| `block` cap | block reservation | **CPU total** | % of `402.70` headroom | observed tasks exceeding |
+|---:|---:|---:|---:|---|
+| 2.25 h | 47.2 | **236.2** | 59% | ~1 of 38 |
+| **3.00 h (recommended)** | **63.0** | **252.0** | **63%** | **1 of 38** |
+| 6.00 h | 126.0 | 315.0 | 78% | 1 of 38 |
+| 8.75 h | 183.8 | 372.8 | 93% | **0 of 38** |
+
+CPU total = block + `runF` @1.5× (`4.25 h × 40 = 170.0`) + `ssplit` @1.5× (`18.0`) + `combF` @1.5×
+(`1.0`). **GPU at 1.5× margin is `158.2` of `483.96` = 33%, not binding in any variant.**
+
+**PROPOSED CAPS (one additional member):** `boot5dG 0.50`, `sweep5dBKGrun 0.50`, `det5dBKG 1.25`,
+`uthrow5d_runF 4.25`, `ssplit5d 0.75`, `uthrow5d_combF 1.00`, **`uthrow5d_block 3.00`** →
+**`158.2` GPU / `252.0` CPU enforced reservation.**
+
+**FRESH ADMISSION, measured `2026-09-18T14:12:16Z`:** CPU `97.2953` of `500`, headroom **`402.7047`**;
+GPU `16.0386` of `500`, headroom **`483.9614`**; 139 tasks; stop date `2026-09-30`, not fired;
+**outstanding reservations 1** (`58526214 pet-eavail-charact`, another lane's). Meter run, not
+argued:
+
+    check --cpu 252.0 --gpu 158.2  -> rc 0   ADMITTED   (recommended)
+    check --cpu 236.2 --gpu 158.2  -> rc 0   ADMITTED   (2.25 h block cap)
+    check --cpu 372.8 --gpu 167.8  -> rc 0   ADMITTED   (8.75 h, zero expected timeout)
+
+**All three admit.** The `3.00 h` variant is recommended: it covers 37 of 38 observed block tasks,
+leaves 37% of CPU headroom, and its one expected exceedance returns for a decision under the
+no-automatic-requeue rule rather than retrying silently. **Not launched.**
+
+⚠ The caps are proposals from **observed** maxima over two rounds; they are not guarantees. `SPEC`
+§5.8e's measured **±60% single-arm swing** applies to arm totals and is not bounded by a per-task cap.
+
+### 9.2 MEMBER COUNTING — CORRECTED. The archive IS a member
+
+⚠ **I mis-counted.** `k = 0` is the **archive and Z's own build** — it is already a member of the
+family. So **one additional offset gives a two-member set and a real comparison.**
+
+And the criterion is **maximum movement over a finite predeclared set**, not a population variance:
+§3.7d defines `s_proj` as *"the **maximum** relative change in `√(uᵀ C_Z u)` over a PREDECLARED set"*.
+**A maximum over a two-element set is well defined and is what the criterion asks for.** My §8.7
+claim that *"two offsets give one difference"* and *"at `N ≤ 2` not a variance estimate at all"*
+imported a statistical frame the criterion does not use. **Withdrawn.**
+
+**THE SMALLEST CAMPAIGN: one additional member at one declared offset `k`.** Family diagonal, group
+assignment `{arms 1–4: 42, arms 5–7: 1000}` fixed at archive values, seeds **not** unified. Cost as
+§9.1. **Its conclusion, stated exactly and as narrowly as it deserves:**
+
+> A `(cause 3, Z)` result over `{k = 0, k = k₁}` states that the **maximum** relative change in
+> `√(uᵀ C u)` over the predeclared functional set `U`, and in `s_agg` and `s_med`, **between those
+> two members**, did not exceed `δ`. It is a statement about **one offset pair**. It is **not** a
+> spread, a variance, a bound over untested offsets, or evidence about the 2-D grid (`D1`: the
+> inter-module split is invariant under `k` and unresolvable within this family). A second member
+> tests whether the statistics move **at all** between two points of the family — which is the
+> question cause 3 asks — and nothing about how far they could move over the family as a whole.
+
+### 9.3 C6 — compatibility from PRODUCER CONFIGURATION and physical provenance, not closure
+
+⚠ **Withdrawn: my §8.2 cited the pilot's exactly-`0.0` `G1`/`G3` closure residuals as evidence of
+mask and row-order compatibility. They are not independent proof.** Those are identities **among the
+assembled object's own parts** — they would hold under a *consistent* mis-ordering, and they are not
+a test of `C_stat`'s row order against the trunk's. Removed from the argument.
+
+**The argument, from the producer's committed invocation** —
+`sbatch_finalize_5d_bkgaware_gpu.sh:422-423`:
+
+    combine_cov_nd.py --glob .../res_boot_*.npz  --expected-ids 1-100 --cv "${CV}" --tag stat5d
+    combine_cov_nd.py --glob .../res_split_*.npz --expected-ids 1-24  --cv "${CV}" --tag mlsplit5d
+
+| property | how the producer establishes it | citation |
+|---|---|---|
+| **row order** | `rep = cv > 0`; `rows = flatnonzero(rep)` in **C order**, taken from the `--cv` product. **Not re-derived and not inherited from a sibling** | `combine_cov_nd.py:48,58` |
+| **support mask** | the same `cv > 0`, from the same `${CV}`, so identical **by construction** — and the trunk's predicate is the same: `CV_SUPPORT_PREDICATE = "x_cv > 0"` | `combine_cov_nd.py:48`; `unified_throw_cov.py:330` |
+| **one CV for both** | **both invocations pass the same `${CV}` shell variable**, so `C_stat` and `C_ML` share a row basis with each other and with the launcher's declared central | `:422-423` |
+| **normalization** | `C = (Zᵀ Z)/(N−1)`, **mean-centered over members**, unbiased — and explicitly **not** the MAT `1/N` joint-throw convention, which belongs to a different ensemble | `combine_cov_nd.py:48` |
+| **member counts** | **`N = 100`** (bootstrap) and **`N = 24`** (seed-split), declared on the command line and passed as an **expected set** to `load_replica_manifest(paths, set(range(lo, hi+1)))`, so a missing replica is caught at load | `:422-423`, `combine_cov_nd.py:44-46` |
+| **reuse rationale** | *"C_stat/C_ML are #13-invariant → reuse existing…"* — the producer's own declaration | `sbatch_finalize_5d_bkgaware_gpu.sh:8-10` |
+
+⚠ **`N` IS RECOVERABLE AFTER ALL — from the producer's configuration, not from the artifact.** My
+§8.2 called it "unrecoverable"; that was true of the *file* and false of the *record*. Corrected.
+
+**THE REMAINING GAP, PRECISELY: it is TRACEABILITY, not COMPATIBILITY.** A consumer opening
+`uq_cov_stat_5d.root` sees one `TH2D` and can verify none of the six rows above from the file —
+the provenance lives in the launcher and the run records. **Compatibility is established;
+self-attestation is absent.** That gap is not a reason to regenerate: regeneration would add the
+fields, but the properties they would record are already established by a committed invocation, and
+`SPEC` §2.6b holds that *"fresh scalar replica generation needs a stated scientific rationale, and
+this lane does not have one."* **Disposition unchanged: REUSE.** The traceability gap is closed for
+**future** products by the writer's new fields, and is recorded as a permanent property of these two.
+
+### 9.4 §6.4 — THE EXACT PUBLICATION-SUFFICIENCY AMENDMENT
+
+**Using the existing vocabulary.** `CRITERIA` §0's grade set is **`MET` / `OPEN` / `UNRESOLVED`**,
+and `z_validator.py:14-20` records that an unassessable run is *"a REJECT, NOT A FOURTH GRADE
+TOKEN"*, producing `assessable=False` with `4c` in `reject_conditions` and `branch is None`.
+⚠ **So my §8.1's "`M(i)` is `NOT GRADED`" invented a token. Withdrawn — the correct token is
+`UNRESOLVED`.**
+
+**PROPOSED AMENDMENT, in three separable clauses. Joseph may grant 1 and 2 without 3.**
+
+> **Clause 1 — the historical failure, preserved.** `(cause 3, Z)`'s `M(i)` leg remains
+> **`UNRESOLVED`** for the existing candidate, with `reject_conditions` retaining **`4c`** and
+> `branch = None`. The recorded reason is a **predeclaration failure**: no scale-relative bound
+> existed before this object's production, as §6.4 requires. This clause is permanent and is not
+> altered by clauses 2 or 3.
+>
+> **Clause 2 — PERMISSION TO ASSESS RETROSPECTIVELY.** A retrospective, scale-relative
+> **assessment** of the existing candidate's fixed-seed null may be computed and recorded, using
+> §6.4's own statistic `null_norm / √tr`. It is recorded as an **assessment**, carries **no grade
+> token**, and does not change clause 1. Measured: **`1.4301832847122437e-50 / 4.4436736505643117e-38
+> = 3.218e-13`**.
+>
+> **Clause 3 — PERMISSION TO RELY ON IT FOR PUBLICATION.** Separately, and only if Joseph so rules:
+> the assessment in clause 2 may be cited as the publication's account of fixed-seed
+> reproducibility, provided the receipt carries clause 1's `UNRESOLVED` status and the
+> predeclaration failure in the same place the assessment appears.
+
+**G's value is CONTEXT, not a transferred threshold.** §6.4 characterizes G's `1.31e-12` as
+*"genuinely small relative to the scale"*. That is **the only magnitude §6.4 has characterized**, and
+it is offered here **solely as context for what order of magnitude has previously been judged small**.
+⚠ **No threshold is transferred, `1.31e-12` is not a bound, and Z's `3.218e-13` being smaller is NOT
+a pass.** §8.1's *"4.07× smaller than the figure §6.4 calls genuinely small"* read as a pass-like
+comparison and is **withdrawn as framing**; the ratio is reported as context only.
+
+**And non-identity is not inadequacy.** D-CVDIV-1 established that two executions differ; it
+established nothing about scientific adequacy. The first divergence is `3.27e-16` — the
+double-precision last bit — and the endpoint `4.43e-14` is `200.5×` machine epsilon over a
+10,694-element norm and five iterations.
+
+**New production is not required by clause 1**, which new production would not cure for this object.
+
+### 9.5 THE 5% LIMIT — retained as a proposal only
+
+**`δ = 5%`, a proposed direct relative movement limit on `s_proj`, `s_agg`, and `s_med`'s per-bin
+leg. Joseph's to set.**
+
+⚠ **Removed:** the significant-figure justification, and the assertion that `5%` *"would not change
+any use of the number"*. **I cannot support either.** I do not know every use a quoted uncertainty
+will be put to, and a digit-position argument is the display-derived reasoning `SPEC` rev. 16
+withdrew in another form.
+
+**What remains asserted is only the consequence, which is arithmetic:**
+
+| `δ` | a quoted corner uncertainty of `5.81%` could instead read |
+|---|---|
+| `3%` | `5.64%` – `5.98%` |
+| **`5%` (proposed)** | **`5.52%` – `6.10%`** |
+| `10%` | `5.23%` – `6.39%` |
+
+`5%` is offered as the value this lane would propose. **No derivation is claimed and no use is
+excluded.**
