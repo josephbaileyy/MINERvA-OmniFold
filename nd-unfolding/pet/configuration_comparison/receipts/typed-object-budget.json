@@ -1,0 +1,65 @@
+{
+  "scope": "how often each project's token cap binds, on the same tuple entries. Derived from the frozen A1 source receipt; no new source read.",
+  "source_receipt_sha256": "9b29d89439e03740ab898ab700b5e23bc659bc2cafde31707d2428eedf7d00fb",
+  "our_cap": 12,
+  "typed_cap": 33,
+  "rows": [
+    {
+      "role": "data",
+      "playlist": "1B",
+      "entries_read": 17930,
+      "cluster_cloud": {
+        "cap": 12,
+        "median_objects": 25.0,
+        "mean_objects": 74.57044060234244,
+        "max_objects": 1651,
+        "binds": 0.6413273842721695,
+        "discarded_energy_share_median": 0.20779424061090618
+      },
+      "typed_objects": {
+        "median_by_family": {
+          "blobs": 4.0,
+          "prongs": 1.0,
+          "photons": 0.0
+        },
+        "mean_objects": 13.977189068600111,
+        "max_blobs": 158,
+        "cap": 33,
+        "binds_at_least": 0.0920803123257111,
+        "binds_at_most": 0.16876742889012827,
+        "derivation": "lower = P(blobs >= 33); upper = P(blobs >= 23) using this file's observed maxima (photons 2, prongs 7) plus one muon. The joint multiplicity is not in the receipt, so only a bracket is derivable."
+      }
+    },
+    {
+      "role": "mc",
+      "playlist": "1A",
+      "entries_read": 186439,
+      "cluster_cloud": {
+        "cap": 12,
+        "median_objects": 60.0,
+        "mean_objects": 102.64492407704397,
+        "max_objects": 2349,
+        "binds": 0.8444263271096712,
+        "discarded_energy_share_median": 0.4490460139439763
+      },
+      "typed_objects": {
+        "median_by_family": {
+          "blobs": 6.0,
+          "prongs": 2.0,
+          "photons": 0.0
+        },
+        "mean_objects": 15.552250333889369,
+        "max_blobs": 153,
+        "cap": 33,
+        "binds_at_least": 0.11443957541072415,
+        "binds_at_most": 0.27206217583230974,
+        "derivation": "lower = P(blobs >= 33); upper = P(blobs >= 18) using this file's observed maxima (photons 2, prongs 12) plus one muon. The joint multiplicity is not in the receipt, so only a bracket is derivable."
+      }
+    }
+  ],
+  "qualifications": [
+    "These are UNSELECTED tuple entries, one file per role, unweighted. The production selection and POT weighting are not applied, so these fractions do not determine the selected-population behaviour.",
+    "A lower token count is not equivalent information. Whether reconstructed objects preserve what the raw cluster cloud carries is NOT measured here and is the prerequisite for any adoption.",
+    "The typed binding fraction is a bracket, not a point, because the receipt holds marginal and not joint family multiplicities."
+  ]
+}

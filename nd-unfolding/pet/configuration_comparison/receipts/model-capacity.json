@@ -1,0 +1,52 @@
+{
+  "scope": "trainable-parameter counts at each project's own training configuration",
+  "ours": {
+    "source": "nd-unfolding/pet/train_fullevent_nominal.py (MultiFold model construction)",
+    "architecture": {
+      "num_heads": 2,
+      "num_transformer": 2,
+      "projection_dim": 32,
+      "local": true,
+      "K": 3
+    },
+    "step1_reco_model": {
+      "inputs": {
+        "num_feat": 5,
+        "num_evt": 13,
+        "num_part": 12
+      },
+      "trainable_parameters": 47041
+    },
+    "step2_gen_model": {
+      "inputs": {
+        "num_feat": 8,
+        "num_evt": 2,
+        "num_part": 12
+      },
+      "trainable_parameters": 46913
+    },
+    "parameters_per_omnifold_iteration": 93954
+  },
+  "gregors": {
+    "source": "src/models/vit.py + src/jobs/submit_train_jobs.py (Transformer1)",
+    "commit": "fc9a099d3c9c060f03cef293c294f9de4eb019cd",
+    "configuration": {
+      "point_cont_dim": 9,
+      "point_cat_num_classes": [
+        8
+      ],
+      "global_cont_dim": 16,
+      "global_cat_num_classes": [],
+      "coord_dim": 2,
+      "d_model": 128,
+      "depth": 4,
+      "n_heads": 8,
+      "use_cls_token": true,
+      "use_event_token": true
+    },
+    "trainable_parameters_backbone": 890130,
+    "note": "backbone only; the task head is one linear layer and is excluded"
+  },
+  "ratio_gregor_over_our_step1": 18.922429370123936,
+  "non_claim": "Capacity is not accuracy. These two models solve different problems -- ours is a binary reweighting classifier inside OmniFold, his is a supervised regressor/classifier -- so the ratio measures size, not efficiency, suitability, or quality."
+}
