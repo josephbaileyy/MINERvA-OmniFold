@@ -844,13 +844,32 @@ standing instruction forbids. The criterion is exact equality, and its falsifier
 to fire under a deliberate **mutation**, since the specification itself says a guard proven only by a
 one-time comparison is untested.
 
-**14.3 An incidental observation, recorded and NOT reopened.** `app_statmethods.tex:1730-1731` reads:
-*"Every estimated standard deviation carries a `10.1%` fractional uncertainty of its own from the
-family size alone, `1/sqrt(2(N-1)) = 1/sqrt(98)`, against the `7.11%` that `N=100` would give."* So
-**`7.11%` is the sampling error of a family of 100 that does not exist** — the actual family is 50,
-whose error is `10.1%` — and the same passage records that the design document specifying `N=100`
-labels a family of this size `INSUFFICIENT`. This is consistent with `θ = 7.11e-2` having been
-declined, and it is noted only as corroboration. **No θ cycle is reopened and none is proposed.**
+**14.3 ⚠ CORRECTED — I OVER-SCOPED THIS, and the correction is the useful part.** I wrote that
+`7.11%` is *"the sampling error of a family of 100 that does not exist — the actual family is 50"*,
+citing `app_statmethods.tex:1730`. **That passage is not about the 5D object.** Its own closing
+citation is `VL132`, `CSTAT-R7`, and `AGENTS.md:31` identifies that object independently as *"a
+**50-member** partial covariance artifact"* — the PET `C_stat`, whose pairing `OI-126` declined.
+**So `1/√98` is the PET family's 50, and whether the 5D `C_stat` family is 100 or 50 is
+UNMEASURED.** My sentence implied the 5D one. It does not follow.
+
+**What survives, and is stronger than what I claimed.** `[91eaa2]` traced its own `7.11%` to
+`sbatch_bootstrap_5d_gpu.sh:5` — verified: `#SBATCH --array=1-100%32`. **That is a declared array
+bracket with a throttle, not a realized family count**, which is this campaign's catalogued
+`sacct`-bracket failure: a declared `1-100` is not an observed 100, and throttling truncates. So the
+corroboration of Joseph's `θ` decline is not *"the family was 50"* — it is **"the operand was a
+launcher specification that nobody measured."** Verified independently: the two formulas are the same
+algebra, `√(2/(N−1))/2 ≡ 1/√(2(N−1))`, equal to `1e-15` at both `N`, so the formula was right and only
+the `N` was never established. **No `θ` cycle is reopened; the decline is better founded, not
+reversible.**
+
+⚠ **AND THIS IS EXACTLY WHAT M-H NOW PREVENTS, which is worth stating because the audit called it in
+advance.** The audit's finite-ensemble table records that *"the writer still stores no ensemble-count
+scalar… the launcher range is not independent readback of a particular product."* That is precisely
+the defect that let a bracket stand in for a family. `combine_cov_nd.py` now writes **`n_members`, the
+realized count**, plus the `N−1` divisor and the member id list, **into the artifact** — so for every
+component produced from now on the question *"was this 100 or 50?"* is a read rather than an
+inference. The audit named the gap, `[91eaa2]` hit it, and the writer fix closes it prospectively.
+It does **not** retroactively measure the existing 5D family, which remains unmeasured.
 
 ---
 
