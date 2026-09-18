@@ -58,7 +58,7 @@ the most favourable open item in the package.
 | M-Q | **The supported reproduction path** | **DONE** — `REPRODUCTION-20260918-scalar5d-trunk-path.md` | Five ingredients assembled; measured reproduce/does-not split; concludes **bitwise identity is required as a consequence, not a preference** | — |
 | M-M | Trunk adoption | **NOT REACHED** | — | M-F…M-L |
 | M-N | M1 **publication** product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
-| M-R | M1 **diagnostic** projection — the cycle-breaker | **RUNNABLE NOW**, authorized 2026-09-18 | `run_m1_diagnostic.sh`: nine refusals incl. R5 admission; `runClass` written **into** the product; 36 tests; publication-path rc 3 re-measured by a ratchet | D5 (the region), and the destination-mask declaration — **not** adoption |
+| M-R | M1 **diagnostic** projection — the cycle-breaker | **INPUT VERIFIED, RUNNABLE** | `run_m1_diagnostic.sh`: nine refusals incl. R5 admission; `runClass` written **into** the product; publication-path rc 3 re-measured by a ratchet. **Input exists and verifies: `z-cv.npz` from job `58454524`, 3 of 3 digests re-measured (§12.1); NPZ input path implemented, row order cross-checked, source binding carried, non-adoptable source refuses publication class.** 22 + 36 tests | **D5 only** — the mask is declared (`receiving-cells`) and the input is no longer in question |
 | M-S | Determinism configuration, established **and tested** | **PARTIALLY MEASURED** — job `58507305` COMPLETED, `54` s. ⚠ Its thread axis was **degenerate**; see §13 | **Established at one thread:** all three arms give the **identical** model (digest `b151b10b…`, 200,000 rows, floor SATISFIED) and each is bitwise reproducible across repeats in one process — so the knobs do nothing at `num_threads=1` and their whole effect is on the multi-thread path. **Not established:** thread-count invariance, which was the question. 23 tests | one more `0.25` task-h submission — my corrective resubmission is spent |
 | M-O | Rank-6 consumer contract **and the consumer itself** | **CONTRACT DRAFTED + CODE WRITTEN** | `rank6_significance.py`: five declaration refusals with distinct codes, ndf from the **retained rank**, truncation scan, region as an explicit declaration; **19 tests, both key guards mutation-verified** | **D3 + D5** supply the two values; the CLI payload path is deliberately unwired |
 | M-P | Note/primer/paper synchronization, build, **and retracted-value containment** | **BASELINE MEASURED AND GREEN, containment gate verified covering all three** | 2026-09-18 forced rebuild: `RESULT :: PASS`, note 94pp / primer 5pp / paper 3pp, containment `0 of 10 struck literals`; standalone at `3c3e9f2`, clean, level with origin, **all 26 `.tex`/`.bib` byte-identical** | re-verification after M-N's content edits |
@@ -821,89 +821,90 @@ is recorded here so that the diagnostic value is not later quoted as the adopted
 
 ---
 
-## 12. ⚠ THE PRESERVED CANDIDATE COVARIANCE DOES NOT EXIST AS AN OBJECT — measured 2026-09-18
+## 12. ⚠ RETRACTED AND CORRECTED — the candidate covariance EXISTS, and my absence claim was defective
 
-Joseph's grant authorizes *"provisional projections and counterfactuals **from the preserved
-candidate covariance**"*. I went to run the diagnostic M1 and found **there is no `C_Z` product to
-project from.** This is not an obstacle to the grant so much as a false premise inside it, and it is
-mine to have not checked earlier: I have been citing `C_Z`'s spectrum for weeks — `λ_min =
-−1.2750516323643892e-90`, 5,214 negative eigenvalues of 10,694 — as though the matrix were on disk.
-**Those are recorded measurements of an object that was computed in memory and never written.**
+**This section previously asserted, under the heading "THE PRESERVED CANDIDATE COVARIANCE DOES NOT
+EXIST AS AN OBJECT", that `C_Z` had never been written to disk, and proposed a `1.00` CPU task-h
+rebuild. THE ASSERTION WAS FALSE AND THE REBUILD IS WITHDRAWN.** Joseph identified the products by
+path. Retained below is what was actually established, what the error was, and the lesson, because
+the lesson is the only durable part.
 
-**Established three independent ways, because it is a negative claim.**
+### 12.1 The products, verified directly
 
-1. **The pilot's own receipt.** `z_pilot_20260915_a3/bridge.json`: `out_path` is
-   `z-null-source.npz` and `persisted.bytes_persisted` is **`1,119,552`** — the `1.05` MB of null
-   operands plus support mask that `SPEC` §5.8d already names as the pilot's product. Its
-   `z-provenance.json` records `adoptable: **False**` and
-   `scientific_acceptance: **NON-PASSING**`, by the pilot itself.
-2. **Directory contents.** The `a3` directory holds four files: `bridge.json`, `z-manifest.json`,
-   `z-null-source.npz`, `z-provenance.json`. No `.root`.
-3. **A covering search, with a positive control.** All `*.root` at `≥ 800` MB under the
-   `nd-unfolding` data root: **469 files**, so the search is not vacuous. The newest
-   assembled-covariance-shaped products (`892` MB = `10,694²` doubles) are dated **2026-08-11**, in
-   `readopt_20260811_footing/` — those are **G's** adopted mean-centered and cv-centered products,
-   the *parent*. The newest large Z-lineage object is
-   `z_precursor_20260914/unified_throw_cov_5d.root`, `2,668,265,910` bytes, 2026-09-14 15:53 — the
-   **throw precursor** (three `10,694²` matrices, `SPEC`'s `2.67` GB figure), **not** `C_Z`.
+Job **`58454524`**, `2026-09-17T00:21:56 → 00:39:13`, `ElapsedRaw 1037 s`, `AllocCPUS 36`,
+`nid004093`, `build_seconds 760.767`. Products in place at
+`nd-unfolding/uq_5d/z_pilot_20260916_a5/`:
 
-**What IS preserved, and it is enough to rebuild from:** the eight digest-bound input sources named
-in the pilot's `z-manifest.json` (support, active, central, stat, ml, throw, parent, null), the
-`2.67` GB precursor, the support mask and row order (`mask_sha256 eed021e9…`,
-`row_order_sha256 61a7c9fd…`), and the manifest itself at `sha256 df440c3b…`. **Nothing is lost.**
-The pilot's own band inventory in `z-provenance.json` also independently reproduces §10.1's 45-band
-measurement, from a different file than the one I read.
+| product | bytes | sha256 re-measured from the file in place |
+|---|---:|---|
+| `z-cv.npz` | `890,500,272` | `3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5` |
+| `z-mean.npz` | `890,383,062` | `61b7a4939bd40459452e232d4a5cec3c0b19ad7a21715452f7bb3bc9e0c72dd2` |
+| `z-null.npz` | `190,817` | `cb82fc3285c981b91625530d48c14ff5554db5154db298a3144a57520633d77e` |
 
-### 12.1 The consequence: one bounded request stands between the grant and the diagnostic
+**3 of 3 identical** to `zpilot-20260916/outcome-58454524/product-digests.txt`, measured off the
+products rather than read out of a receipt. Plus `z-receipt-cv.json`, `z-receipt-mean.json`,
+`z-pilot-receipt.json`, `bridge.json`, `z-manifest.json`, `z-provenance.json` — ten files.
+`ND_OMNIFOLD_RUN_LOG.md` at `1b2873a8:160-188` records all of it, including the digests.
 
-`nd-unfolding/z_build.py` **on `main`** is the assembler, and it is complete: `main()` requires
-`--manifest --out-cv --out-mean --receipt-cv --receipt-mean --out-null` and `_write_product` writes
-real `TH2D`s with a `metadata_json` object. It does not need writing. It needs **running**, on the
-manifest the pilot already produced.
+**Contents of `z-cv.npz`, measured:** `hCov_combined5d_total_uthrow` `(10694, 10694)` float64,
+`hXSecND_flat` `(65856,)`, `hSupportMask` `(65856,)`, `hRowIndex5D` `(10694,)` int64,
+`hInflation_g` `(10694,)` (min `1.0`, max `17.653`), `hPinnedMask`, and `metadata_json` carrying
+`adoptable: false`, `scientific_acceptance: NON-PASSING`, `variant: cv`, `manifest_sha256` and
+`code_identity.revision fb9ec356`.
 
-| | |
+**Self-consistent three ways:** `hRowIndex5D` == `nonzero(hXSecND_flat > 0)` ==
+`nonzero(hSupportMask > 0)`, all `10,694`, strictly increasing. Relative asymmetry
+`max|C−Cᵀ| / max|C| = 2.164e-16` — one ULP, the signature of summation order, not a defect.
+The `mean` variant has identical keys and row index and a different trace (`2.7768e-75` against cv's
+`3.2197e-75`), so the two are genuinely distinct objects.
+
+### 12.2 What was wrong with my claim — three checks, one operand error, repeated
+
+I called it "established three independent ways". The three shared a single defect and were
+therefore one check, not three:
+
+| my "confirmation" | the actual defect |
 |---|---|
-| **What it measures** | Assembles `C_Z = D(ΣV)D + ΣR + ΣA + C_stat + C_ML` from the eight digest-bound sources and **persists** both centering variants plus the null operands |
-| **Why it is needed now** | `τ` needs M1, M1 needs `C_Z`, and `C_Z` is not on disk. It is the single missing link between Joseph's grant and the acceptance question the grant exists to resolve |
-| **Wall anchor — MEASURED** | The pilot's `ElapsedRaw 1037 s` for the 45-band assembly **plus two eigendecompositions**. Persisting adds a `1.78` GB write (two `892` MB products) |
-| **Memory anchor — MEASURED** | The pilot's **`49.73` GiB** peak, and its own recorded lesson that *"any future sizing starts from 49.73 GiB"* because its prediction was low by more than an order of magnitude. Request **`96G`** |
-| **Shape** | `1 node, --qos=shared --constraint=cpu --ntasks=1 --cpus-per-task=32 --mem=96G --time=01:00:00` |
-| **Reservation** | **`1.00` CPU task-h** = `1 task × 1.00 h`, in the governing unit. `0.25%` of the measured `403.6775` headroom |
-| **Disk** | `≈ 1.78` GB into a `DIAGNOSTIC`-marked directory. ⚠ `pscratch` is at **`16.02` / `20.00` TiB = 80.1%**, so this is `0.009%` of the filesystem but the quota deserves naming |
-| **Grade it would carry** | **None.** The pilot already recorded this construction `NON-PASSING` and `adoptable: False`, and re-running it produces the same candidate. Construction is not adoption, and this is not a repeat-until-it-passes: the purpose is to obtain the **object**, not a different verdict |
+| the pilot's own receipt | I read attempt **`a3`**'s `bridge.json`. `a3` is the **failed** attempt. The successful run is **`a5`**, which I never opened |
+| directory contents | I listed `a3`, `a2` and `rehearsal`. Never `a5` |
+| a covering search "with a positive control" | scoped to **`*.root`**. The products are **`.npz`**. The 469-file positive control proved the search *ran*, not that it covered the right set |
 
-**What a terminal result would NOT authorize:** it would not adopt the trunk, would not regrade the
-pilot's `NON-PASSING`, would not supply support `C_Z` never had, and would not make the resulting
-`C_low` quotable — `AGENTS.md:27` requires the quotable `(E_avail,W)` covariance to be projected
-from the **adopted** trunk and `:30` quarantines the existing one outright.
+**And the worst of the three:** `sacct` reports job `58454524` as `State FAILED`, which I treated as
+proof of absence. Its `ExitCode` is **`2:0`**, and **2 is this CLI's completion code** — `z_build.py`
+returns 1 for failed, 2 for completed-non-passing, 0 only for `--help`. I had **quoted the warning
+against this earlier in the same session**, from `z_pilot.py`: *"A CALLER MUST NOT TREAT 2 AS PROOF
+THE ARTIFACTS EXIST WITHOUT ALSO CHECKING THEM."* I read that line and committed its inverse —
+treating a nonzero exit as proof they do not exist. `_write_product`'s `.npz` branch, which I also
+read while tracing the writer, is what should have rescoped the search.
 
-**Why I have prepared this rather than launched it**, given that the grant plausibly covers it as
-*"necessary implementation … for the scalar-5D uncertainties and required projections"*: it writes
-`1.78` GB into the shared data tree, and it constructs **the central artifact of the whole
-campaign** — the object the adoption decision is about. Doing that on the reading that a grant
-"seems to cover it" is not a routine step. **The two smaller items in this session's grant I did
-execute** (`0.0011` + `0.25` task-h), because those were diagnostics that wrote nothing into a
-product tree.
+**ABSENT, INACCESSIBLE and UNSEARCHED are three states.** This was **unsearched**. A positive control
+that proves the instrument works does nothing about the instrument pointing at the wrong set.
 
-**One word authorizes it.** The command, ready to run against the worktree already checked out at
-this session's HEAD:
+### 12.3 The resolution: an input path, no rebuild, no transcription
 
-    MNV_CODE_ROOT=/pscratch/sd/j/josephrb/MINERvA-OmniFold-zdet-20260918
-    python3 nd-unfolding/z_build.py \
-      --manifest  <pilot a3>/z-manifest.json \
-      --out-cv    <DIAGNOSTIC>/z_candidate_cvcentered_DIAGNOSTIC.root \
-      --out-mean  <DIAGNOSTIC>/z_candidate_meancentered_DIAGNOSTIC.root \
-      --receipt-cv <DIAGNOSTIC>/z_candidate_cv.receipt.json \
-      --receipt-mean <DIAGNOSTIC>/z_candidate_mean.receipt.json \
-      --out-null  <DIAGNOSTIC>/z_candidate_null.npz
+Per the instruction not to rebuild the scientific object merely to change its container, and to
+prefer a verified input path: `project_cov_nd.py` now reads either container by the same key names
+(`_read_vector` / `_read_matrix` / `_source_metadata`). **A transcription was rejected** — it would
+write a second `890` MB copy whose only new property is a risk of differing from the first.
 
-⚠ **The cv-centered variant is the one M1 should project**, as an engineering choice recorded here:
-`AGENTS.md:29` rules that *"mean-centering alone is disqualified"*, and `z_build.py` writes both, so
-both are kept and only one is used. That is not a scientific ruling — it follows from a front-door
-rule already in force.
+Three properties are preserved and checked rather than assumed:
 
+- **Matrix contents** — read directly, no re-derivation.
+- **Row order** — the producer's `hRowIndex5D` is **required equal** to the order derived from the CV
+  mask, and a mismatch refuses. Two disagreeing statements of the row order cannot both bind the
+  rows, and choosing one would be a guess. The receipt records which basis applied.
+- **Metadata and source binding** — `src_metadata` carries the source's `adoptable`,
+  `scientific_acceptance`, `variant`, `manifest_sha256` and `code_identity` into the projection's
+  receipt, so the projection cannot be read without the standing of what it was projected from.
 
----
+**And a new guard that the data enforces rather than the path:** a source recording
+`adoptable: false` **refuses** `--run-class publication`. The candidate records exactly that, so
+today only a diagnostic projection can be built from it — which is the separation the grant
+requires, now independent of how the run is invoked. Mutation-verified, with both positive controls.
+
+**M-R is therefore unblocked on its input.** The remaining operands are the destination-mask
+declaration (mine, and recorded: `receiving-cells`, since the only frozen `(E_avail,W)` CV product is
+the one `AGENTS.md:30` quarantines) and D5's region, which is yours.
 
 ## 13. The determinism probe: what it measured, and the green run that measured nothing
 
