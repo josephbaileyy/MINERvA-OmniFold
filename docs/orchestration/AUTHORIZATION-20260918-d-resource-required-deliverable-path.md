@@ -206,7 +206,13 @@ unevaluated**. That is not an omission I can repair by working harder:
 nothing required needs `N`, which remains true. But it means **C3's criterion is structurally
 unevaluable on the required path as scoped.** The disposition is therefore a real choice, not a
 measurement: *adopt with C3 declared-and-unevaluated, and say so in the note*, or *reopen exactly one
-member*. **Recommendation: the former** — the criterion's value is that it is predeclared and binds
+member*. ⚠ **CORRECTION TO MY OWN WORDING ABOVE, measured 2026-09-18 and stated inline rather than in a new section.** I wrote that C3 is unevaluable *because ruling 2 left one member*. That is true and it is **not the whole reason. The cause-3 assessor is not called from anything.** `assess()` is defined at `z_validator.py:263` and has **no caller outside `tests/`**; the three tolerance boundaries appear on the production path only as `boundary_key` **strings** inside `Z_LEG_SET`; and **`cause3_med_coverage`, `cause3_corr_coverage` and `cause2_f7_margin` are read by nothing at all** — 0 non-test, non-declaration references each. `s_proj` itself **is** implemented (`z_statistics.py:203`), so ruling 3's requirement is real code, not a label.
+
+**What that means for the note:** C3 must be described as a **predeclared criterion whose machinery has never run in production**, not merely as one that lacked a second member. The weaker phrasing would let a reader infer the legs had been computed and found uninformative.
+
+**NOT being wired, deliberately, under Joseph's own rule.** *Failure prevented:* a future assessment reporting `MET` on a per-bin leg while violating its coverage fraction. *Required deliverable unblocked:* **none** — nothing on the publication path computes a cause-3 grade, so no quoted number moves. Both must be nameable and only one is, so this belongs to the gated cleanup, not to now.
+
+**Recommendation: the former** — the criterion's value is that it is predeclared and binds
 future members; a declared-unevaluated stability criterion disclosed as such is honest, whereas
 buying one member to produce a single difference would license a stability claim one comparison
 cannot support, which is the limitation I stated when the campaign was proposed.
