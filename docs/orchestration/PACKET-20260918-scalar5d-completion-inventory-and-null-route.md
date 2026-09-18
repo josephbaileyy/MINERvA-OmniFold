@@ -414,22 +414,27 @@ the 5D object never had, does not make an independently unfolded 4D/3D estimator
 | Causes 1, 2, 4, 5, 6, 7 | mixed | no | See the audit's seven-cause table; several are source-closable | per cause | cause-specific counterfactuals |
 | **P1 projection definitions** | SOURCE | **YES — §4** | — | Which central estimate pairs with M1 (§4.4) | none |
 | OI-129 repair, both projectors | SOURCE→code | scope **prepared**, §5 | — | — | none to scope; owning re-verification to land |
-| M1 `(E_avail, W)` product | COMPUTE | no | — | Adoption of the trunk first | projection production |
+| M1 `(E_avail, W)` product | COMPUTE | no | — | ⚠ **SUPERSEDED 2026-09-18.** The **publication** product still needs adoption first. A **diagnostic** projection from the verified candidate is authorized and needs no adoption — `run_m1_diagnostic.sh`, and the candidate's `adoptable: false` **refuses** `--run-class publication` in code | diagnostic projection AUTHORIZED and executed; publication projection still gated |
 | Rank 6 consumer contract | DECISION | no | The defects are source-established (§6) | **YES** — retained rank, `rcond`, null law, ndf | none to specify |
 | Corner prespecification (§6) | SOURCE | no | **YES** — from the open-question record | only if it was not prespecified | none |
 | Ranks 7, 8 | — | no | Already dispositioned descriptive/diagnostic | **Not required by any written claim** | separate authorization |
 | Rank 9 disclosure / OI-172 | SOURCE | no | Reconcilable against actual note text | — | none |
 
-**The smallest decisive next action in the whole package is P0** (§2.4): it costs nothing, it is
-source-and-preserved-data only, and it determines whether P2's cost (repriced to `9.00`–`12.00` CPU task-h, §2.4) is worth
-requesting at all. Nothing else in the table gates it.
+~~**The smallest decisive next action in the whole package is P0** (§2.4)~~ — **P0 IS DONE**
+(`1405caad`), and its successor **P1d** is done too: the `0.25` CPU task-h determinism probe, which
+replaces the withdrawn P1n and comes before P2's repriced `9.00`–`12.00`. **The smallest decisive
+open action is now the `τ` computation on the diagnostic M1**, which is executing — it is the only
+one of cause 3's three inputs with no value today, and it needed no adoption once the candidate's
+container was readable.
 
 ---
 
 ## 8. Standing constraints carried forward
 
-No new cluster compute. No production projections. No criterion adoption. No covariance adoption.
-No publication. No grading. The completed precursor and pilot stay closed and all products are
+⚠ **AMENDED 2026-09-18 by Joseph's standing grant.** Bounded **diagnostic and validation** compute
+is authorized inside the remaining R5 allowance, with per-submission accounting and admission, and
+one corrective resubmission per stage. **Still prohibited and unchanged:** production projections,
+criterion adoption, covariance adoption, publication, and grading. No **production** cluster compute. The completed precursor and pilot stay closed and all products are
 preserved. `θ` stays not-adopted and is not relabeled. Neither the completed 2D central campaign
 nor Gate 6 nor OI-126 is reopened.
 
