@@ -1018,6 +1018,36 @@ def do_combine(args):
         null_norm = float(np.linalg.norm(x_cv2 - base))
         tol = 1e-12 * max(float(np.linalg.norm(base)), 1.0)
         print(f"\n[null] fixed-seed ||CV2-CV|| = {null_norm:.3e} (tol={tol:.3e})")
+        # ⚠ THE COMPARISON BELOW CAN BE INCAPABLE OF FAILING, AND IT MUST SAY SO WHEN IT IS.
+        # The tolerance is NOT TOUCHED here: SPEC §6.4 rules that the replacement bound must be
+        # "justified by precision and sensitivity controls established before implementation and
+        # not chosen from a favourable production result", and §3.7a's routes to such a bound are
+        # all closed, so choosing one here would be precisely the prohibited act. What IS fixed is
+        # that a pass with astronomical slack was reported indistinguishably from a real pass.
+        #
+        # THE MECHANISM, and it is §3.1a: `max(..., 1.0)` clamps the tolerance to an ABSOLUTE 1e-12
+        # whenever ||base|| < 1, while `null_norm` is an ABSOLUTE difference norm. This CV vector's
+        # norm is order 1e-37 (SPEC §6.4), so the clamp makes the bound roughly 1e25 times the
+        # scale it is meant to bound -- and on this null comparison the measured slack is about
+        # 1e38. Added 2026-09-18 after a source trace established that the two CV executions are
+        # LIKE-FOR-LIKE (identical `_xsec_for_weights` arguments, same seed, same process), so the
+        # observed 4.452e-14 relative deviation is genuine within-process nondeterminism that this
+        # guard passed without comment.
+        #
+        # Same pattern as `check_dead_containment.py`'s "inert by declaration, not passing on
+        # evidence": an empty or unfalsifiable check reports itself as such rather than green.
+        _base_norm = float(np.linalg.norm(base))
+        _clamped = _base_norm < 1.0
+        _slack = (tol / null_norm) if null_norm > 0 else float("inf")
+        if _clamped:
+            print(f"[null] ⚠ THIS COMPARISON IS NOT SCALE-RELATIVE AND ITS PASS IS INERT. "
+                  f"`max(||base||, 1.0)` clamped the tolerance to an absolute {tol:.1e} because "
+                  f"||base|| = {_base_norm:.3e} < 1, so the bound is ~{1.0/_base_norm:.1e} times "
+                  f"the scale it should bound. Slack against the observed deviation is "
+                  f"{_slack:.2e}x, i.e. this check could not have failed. A non-zero relative "
+                  f"deviation here is UNDETECTED, not absent -- the relative ratio is "
+                  f"{null_norm/_base_norm:.6e}. SPEC §3.1a names the defect and §6.4 rules the "
+                  f"replacement bound, which is NOT chosen here because every route to it is open.")
         if null_norm > tol:
             raise SystemExit("[FAIL] CV re-unfold is non-deterministic at the fixed estimator "
                              "seed; the throws cannot be cleanly separated from C_ML "

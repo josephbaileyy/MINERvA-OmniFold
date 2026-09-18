@@ -177,3 +177,38 @@ compute. **That ordering is now evidence-backed rather than precautionary.**
 ⚠ **What this does NOT establish:** that the deviation is *caused* by the unpinned OpenMP variables. I
 have not run anything. It establishes that the pair is like-for-like, that the deviation is therefore
 real, and that the guard cannot see it.
+
+
+---
+
+## 6. The guard now discloses that it cannot fail — the threshold is UNTOUCHED
+
+§5.2 found that `unified_throw_cov.py`'s null check passes with ~`10^38` of slack and so could not
+have refused the deviation it exists to refuse. **Recording that was not enough: the guard was still
+reporting an inert pass indistinguishably from a real one.**
+
+**What changed, and what deliberately did not.** The tolerance and the raise condition are **byte-for-
+byte unchanged** — verified, the diff contains no `-` line for either. `SPEC` §6.4 rules that the
+replacement bound must be *"justified by precision and sensitivity controls established before
+implementation and not chosen from a favourable production result"*, and `SPEC:1390-1395` says the
+normalizer *"must be written down and defended, not inferred from the broken expression"*. Every
+route to such a bound is closed. **So choosing one here would be the prohibited act, not the repair.**
+
+What was added is a conditional disclosure: when `max(‖base‖, 1.0)` clamps the tolerance — i.e.
+whenever `‖base‖ < 1`, which is always true for this vector — the guard now prints that its pass is
+**INERT**, with the over-scale factor, the measured slack, and **the relative ratio the bound should
+have used**. It also states that the replacement is not chosen there. This is
+`check_dead_containment.py`'s *"inert by declaration, not passing on evidence"* applied to a
+scientific guard rather than a build check.
+
+**The disclosure is conditional on purpose.** An unconditional warning would fire on a well-scaled
+vector and be tuned out, so a test asserts the conditionality and two arithmetic tests confirm the
+clamp does **not** engage for an order-one vector, where the same guard **would** catch a real
+deviation. **The guard is broken by the scale, not by its form**, and the tests say which.
+
+**10 tests**, part ratchet and part arithmetic, with the split stated on their face: the disclosure is
+inline in `main()`, which needs ROOT and a full payload, so **its execution is not covered** —
+restructuring a production module for testability was the worse trade. The ratchet proves the code is
+present and correctly shaped; the arithmetic proves the predicate is right at the real scale,
+including that **even a 100% relative deviation would not have fired** — the guard is not insensitive
+by degree, it is blind. Mutation-verified: making the disclosure unconditional fails the ratchet.
