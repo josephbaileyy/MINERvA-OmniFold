@@ -38,22 +38,57 @@ def _probe_lightgbm() -> bool:
 LIGHTGBM_AVAILABLE = _probe_lightgbm()
 
 
-class AllScientificBoundariesAreWithheld(unittest.TestCase):
-    """The state Joseph's authorization fixed. Any change here is a scientific change."""
+APPROVING_RECORD = "AUTHORIZATION-20260918-d-resource-required-deliverable-path.md"
 
-    def test_no_boundary_is_declared_at_this_baseline(self):
-        declared = zc.declared_boundaries()
+# The declared set and its approved values, updated DELIBERATELY per the clause the previous
+# version of this test carried: "name the record that approved it and update this test
+# deliberately." The record is named above. Joseph, 2026-09-18, ruling 5 (delta = 5%, a direct
+# movement bound) and ruling 3 (SPEC 3.7d answer (b), add s_proj).
+APPROVED = {
+    "cause3_agg": 0.05,
+    "cause3_med": 0.05,
+    "cause3_med_coverage": 0.99,
+    "cause3_corr": 0.05,
+}
+STILL_WITHHELD = ("null_epsilon", "cause2_f7_margin")
+
+
+class TheDeclaredAndWithheldSetsAreExactlyAsRuled(unittest.TestCase):
+    """Was `AllScientificBoundariesAreWithheld`. Four boundaries are now DECLARED by ruling, and
+    two remain withheld. Any further change is still a scientific change."""
+
+    def test_the_declared_set_is_exactly_the_approved_set(self):
+        declared = {k: b.value for k, b in zc.declared_boundaries().items()}
         self.assertEqual(
-            declared, {},
-            "A Z acceptance boundary has been DECLARED. That is a scientific change, not a code "
-            "change: name the record that approved it and update this test deliberately.")
+            declared, APPROVED,
+            "The DECLARED boundary set no longer matches the approved set. That is a scientific "
+            f"change, not a code change: name the record that approved it (current: "
+            f"{APPROVING_RECORD}) and update this test deliberately.")
 
-    def test_the_four_named_boundaries_all_exist_and_are_withheld(self):
-        for key in ("null_epsilon", "cause3_agg", "cause3_med", "cause3_corr"):
+    def test_every_declared_boundary_carries_provenance_naming_the_record(self):
+        """A number without the record that approved it is what §3.6d forbids."""
+        for key in APPROVED:
+            with self.subTest(boundary=key):
+                b = zc.boundary(key)
+                self.assertTrue(b.provenance and b.provenance.strip())
+                self.assertIn(APPROVING_RECORD, b.provenance)
+
+    def test_the_two_remaining_boundaries_are_withheld_with_reasons(self):
+        for key in STILL_WITHHELD:
             with self.subTest(boundary=key):
                 b = zc.boundary(key)
                 self.assertFalse(b.is_declared)
                 self.assertTrue(b.reason and b.reason.strip())
+
+    def test_the_median_leg_carries_BOTH_of_its_required_numbers(self):
+        """SPEC §3.7b item 3 requires a per-bin tolerance AND a coverage fraction. One `Boundary`
+        holds one value, so conflating them would make the pair uncheckable."""
+        self.assertEqual(zc.boundary("cause3_med").value, 0.05)
+        self.assertEqual(zc.boundary("cause3_med_coverage").value, 0.99)
+
+    def test_the_null_bound_is_still_withheld_because_its_route_is_undecided(self):
+        """The §6.4 route ruling is Joseph's and has not been made. This must not drift."""
+        self.assertFalse(zc.boundary("null_epsilon").is_declared)
 
     def test_using_a_withheld_boundary_raises_rather_than_defaulting(self):
         b = zc.boundary("null_epsilon")
@@ -62,9 +97,17 @@ class AllScientificBoundariesAreWithheld(unittest.TestCase):
 
     def test_describe_is_safe_on_a_withheld_boundary(self):
         # A receipt must be able to record a withheld boundary without tripping over it.
-        d = zc.boundary("cause3_agg").describe()
+        # ⚠ Was `cause3_agg`, which is now DECLARED by ruling; `cause2_f7_margin` is the
+        # still-withheld example. A test whose fixture silently became the opposite case would
+        # have kept passing while testing nothing.
+        d = zc.boundary("cause2_f7_margin").describe()
         self.assertEqual(d["status"], "WITHHELD")
         self.assertIsNone(d["value"])
+
+    def test_describe_on_a_DECLARED_boundary_reports_its_value_and_provenance(self):
+        d = zc.boundary("cause3_agg").describe()
+        self.assertEqual(d["value"], 0.05)
+        self.assertNotEqual(d["status"], "WITHHELD")
 
     def test_an_unknown_boundary_name_fails_rather_than_returning_a_default(self):
         with self.assertRaises(zc.ZContractError):

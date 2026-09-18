@@ -217,22 +217,37 @@ Z_BOUNDARIES = {
         "computation that is not a summation. Needs an operating-error bound B with stated "
         "assumptions and confidence, an independently justified scientific cap S, the precondition "
         "B <= S, and an epsilon argued within [B, S]. Neither B nor S is established."),
-    "cause3_agg": Boundary.withheld(
-        "cause3_agg",
-        "SPEC §3.7b item 4: the format-derived 0.0861% was withdrawn in rev. 16. Macro formatting "
-        "does not establish how much estimator-baseline sensitivity is scientifically acceptable, "
-        "and the half-display-unit rule behind it is wrong in both directions. Needs a use-based "
-        "justification."),
-    "cause3_med": Boundary.withheld(
-        "cause3_med",
-        "SPEC §3.7b item 3 / D2: the printed median's precision is a new tolerance choice, not a "
-        "consequence of that summary's formatting. Needs a justified per-bin tolerance AND a "
-        "justified coverage fraction -- two numbers, and both are scientific."),
-    "cause3_corr": Boundary.withheld(
-        "cause3_corr",
-        "SPEC §3.7d: no correlation-sensitive leg is adopted, and none has a boundary. Both "
-        "adopted statistics are functions of the diagonal alone, so a MET result on them licenses "
-        "nothing about C_Z's off-diagonal structure."),
+    # DECLARED 2026-09-18. The format-derived 0.0861% stays withdrawn; this value replaces it on
+    # a use-based ground, not a display one.
+    "cause3_agg": Boundary.declared(
+        "cause3_agg", 0.05,
+        '"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md" §2 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty.'),
+    # DECLARED 2026-09-18. SPEC §3.7b item 3 requires TWO numbers for this leg -- a per-bin
+    # tolerance AND a coverage fraction -- so they are two boundaries, not one field. A single
+    # `Boundary` holds one value and conflating them would make the pair uncheckable.
+    "cause3_med": Boundary.declared(
+        "cause3_med", 0.05,
+        '"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md" §2 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty. Per-bin leg.'),
+    "cause3_med_coverage": Boundary.declared(
+        "cause3_med_coverage", 0.99,
+        '"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md" §2 ruling 5 -- coverage approved: 100% on bins entering a quoted projection, >= 99% on the full reported support, and EVERY failing bin enumerated in the receipt, never absorbed. This boundary is the >= 99% full-support fraction; the 100% clause on quoted bins is absolute and is enforced separately, not as a fraction.'),
+    # DECLARED 2026-09-18 under SPEC §3.7d RULING (b): ADD s_proj. Answer (a) withholds the
+    # licence for marginalization and projection, and projections are a required deliverable, so
+    # (a) was never available. The statistic is s_proj -- the maximum relative change in
+    # sqrt(u^T C u) over the approved functional set -- and this is its bound.
+    "cause3_corr": Boundary.declared(
+        "cause3_corr", 0.05,
+        '"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md" §2 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty. s_proj leg, under §3.7d ruling (b).'),
+    # CREATED WITHHELD 2026-09-18 per ruling 6 (C2). The boolean leg of L4 is structural; the
+    # MARGIN is an unset scientific number and it comes back to Joseph.
+    "cause2_f7_margin": Boundary.withheld(
+        "cause2_f7_margin",
+        "C2 / L4: the F7 centering criterion as written cannot distinguish `tested and stable` "
+        "from `no member came near the branch point` -- identical booleans either way. It "
+        "therefore needs a declared MINIMUM MARGIN to the branch point for the test to count as "
+        "performed. That margin is a scientific number and is unset. Wording per ruling 6: cause 2 "
+        "`inherits a tolerance with a stated derivation and an owner`, NOT `not chosen` -- "
+        "F7_FLOOR_MULTIPLE = 2.0 at uq_math.py:138 is chosen and that module says so in capitals."),
 }
 
 
