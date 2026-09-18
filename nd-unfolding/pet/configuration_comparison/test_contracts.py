@@ -250,14 +250,22 @@ def _throughput(step_seconds: float, batch: int, tokens: int) -> dict:
             "examples_per_second": batch / step_seconds}
 
 
-def _ours_half(uuid: str = UUID_A, tokens=cc.TOKEN_COUNTS) -> dict:
-    return {"gpu_identity": _identity(uuid),
+def _ours_half(uuid: str = UUID_A, tokens=cc.TOKEN_COUNTS, inference: bool = True) -> dict:
+    half = {"gpu_identity": _identity(uuid),
             "by_tokens": {str(t): _throughput(0.010 * (t / 12.0), cc.OUR_BATCH, t)
                           for t in tokens}}
+    if inference:
+        # A forward pass at a third of the training step, which is the right order
+        # for forward-only work and keeps the arithmetic checkable by hand.
+        half["inference"] = {
+            str(t): _throughput(0.010 * (t / 12.0) / 3.0, cc.OUR_BATCH, t)
+            for t in tokens}
+    return half
 
 
-def _theirs_half(uuid: str = UUID_A, tokens=cc.TOKEN_COUNTS, factor: float = 6.0) -> dict:
-    return {"gpu_identity": _identity(uuid),
+def _theirs_half(uuid: str = UUID_A, tokens=cc.TOKEN_COUNTS, factor: float = 6.0,
+                 inference: bool = True) -> dict:
+    half = {"gpu_identity": _identity(uuid),
             "by_tokens": {
                 str(t): {
                     # Same seconds-per-example ratio at both batches, so the expected
@@ -269,6 +277,11 @@ def _theirs_half(uuid: str = UUID_A, tokens=cc.TOKEN_COUNTS, factor: float = 6.0
                         0.010 * (t / 12.0) * factor, cc.OUR_BATCH, t),
                 }
                 for t in tokens}}
+    if inference:
+        half["inference"] = {
+            str(t): _throughput(0.010 * (t / 12.0) * factor / 3.0, cc.OUR_BATCH, t)
+            for t in tokens}
+    return half
 
 
 class CostReduction(unittest.TestCase):
@@ -318,7 +331,7 @@ class CostReduction(unittest.TestCase):
         self.assertNotIn("gpu_hours", measured)
         projected = receipt["projected_evaluation_cost"]
         self.assertIn("budget_model", projected)
-        self.assertIn("fit_only_caveat", projected)
+        self.assertIn("residual_overhead_caveat", projected)
         self.assertIn("derived_not_measured", projected)
         for row in projected["by_tokens"].values():
             self.assertIn("arm_pair_evaluation_gpu_hours", row)
@@ -335,6 +348,38 @@ class CostReduction(unittest.TestCase):
         by_tokens = receipt["projected_evaluation_cost"]["by_tokens"]
         self.assertGreater(by_tokens["33"]["arm_pair_evaluation_gpu_hours"],
                            by_tokens["12"]["arm_pair_evaluation_gpu_hours"])
+
+    def test_evaluation_cost_exceeds_fit_cost_once_inference_is_counted(self):
+        """Reweighting and validation are 36M presentations against 96M trained."""
+        op, tp = self._write(_ours_half(), _theirs_half())
+        receipt = cc.reduce_halves(op, tp)
+        for row in receipt["projected_evaluation_cost"]["by_tokens"].values():
+            self.assertTrue(row["inference_measured"])
+            self.assertGreater(row["arm_pair_evaluation_gpu_hours"],
+                               row["arm_pair_fit_gpu_hours"])
+
+    def test_unmeasured_inference_is_reported_as_absent_not_as_zero(self):
+        """A fit-only number must not be handed back under an evaluation label.
+
+        This is the failure mode the rename guards against: silently reporting fits
+        as the evaluation cost understates it by the whole inference leg, and a
+        reader cannot tell from the number alone.
+        """
+        op, tp = self._write(_ours_half(inference=False), _theirs_half(inference=False))
+        receipt = cc.reduce_halves(op, tp)
+        for row in receipt["projected_evaluation_cost"]["by_tokens"].values():
+            self.assertFalse(row["inference_measured"])
+            self.assertIsNone(row["arm_pair_evaluation_gpu_hours"])
+            self.assertIsNone(row["final_comparison_gpu_hours_by_seeds"])
+            self.assertGreater(row["arm_pair_fit_gpu_hours"], 0.0)
+
+    def test_paper_interaction_flags_survive_reduction(self):
+        """His arm is the V1-paper model, not PET2's class defaults."""
+        op, tp = self._write(_ours_half(), _theirs_half())
+        receipt = cc.reduce_halves(op, tp)
+        self.assertEqual(receipt["interaction_flags"],
+                         {"use_int": False, "local_int": False})
+        self.assertIn("OLS_int", receipt["interaction_flag_correction"])
 
     def test_different_physical_gpus_are_rejected(self):
         op, tp = self._write(_ours_half(UUID_A), _theirs_half(UUID_B))

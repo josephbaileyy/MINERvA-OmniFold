@@ -1,0 +1,151 @@
+{
+  "scope": "exercises the vendored MultiFold loop with the ported PET2 on both step schemas, on SYNTHETIC arrays. No result, no adoption.",
+  "rows": 512,
+  "niter": 2,
+  "epochs": 1,
+  "num_part": 12,
+  "size": "small",
+  "schemas": {
+    "step1_reco": {
+      "num_feat": 5,
+      "num_evt": 13,
+      "coord_idx": [
+        1,
+        2
+      ],
+      "columns": [
+        "E",
+        "pos",
+        "z",
+        "view",
+        "time"
+      ]
+    },
+    "step2_gen": {
+      "num_feat": 8,
+      "num_evt": 2,
+      "coord_idx": [
+        5,
+        6,
+        7
+      ],
+      "columns": [
+        "E",
+        "px",
+        "py",
+        "pz",
+        "pdg",
+        "theta",
+        "cos_phi",
+        "sin_phi"
+      ]
+    }
+  },
+  "pad_column": 0,
+  "backend": {
+    "tf_keras_shim_available": true,
+    "tf_use_legacy_keras": "1",
+    "reason": "Keras-3 TensorFlow with the tf_keras shim: the shim is selected."
+  },
+  "versions": {
+    "tensorflow": "2.16.2",
+    "tf_keras_module": "tensorflow.keras",
+    "tf_keras_root": "tensorflow",
+    "tf_keras_version": "2.16.2",
+    "standalone_keras": "3.15.0"
+  },
+  "checks": {
+    "E1_both_steps_built_at_own_width": {
+      "held": true,
+      "step1": {
+        "num_feat": 5,
+        "num_evt": 13,
+        "coord_idx": [
+          1,
+          2
+        ]
+      },
+      "step2": {
+        "num_feat": 8,
+        "num_evt": 2,
+        "coord_idx": [
+          5,
+          6,
+          7
+        ]
+      }
+    },
+    "E2_engine_used_his_optimizer": {
+      "held": true,
+      "optimizer": "TorchAdamW",
+      "note": "MultiFold.get_optimizer hardcodes tf.keras.optimizers.Adam; without the subclass his architecture would train under our optimizer and the arm would not be his configuration"
+    },
+    "E3_push_weights_sane": {
+      "held": true,
+      "finite": true,
+      "all_positive": true,
+      "min": 0.9706651568412781,
+      "max": 1.0781158208847046,
+      "mean": 1.0479600974358618,
+      "rows_not_pass_gen": 0
+    },
+    "E4_empty_event_finite": {
+      "held": true,
+      "row": 0,
+      "tokens_in_row": 0,
+      "logit": -0.0017207718919962645,
+      "note": "a real production state: an event with no recoil tokens. The upstream's -1e9 additive mask keeps this finite where -inf would give NaN"
+    },
+    "E5_fold_forward_end_of_run_recorded": {
+      "held": true,
+      "label": "ported-exercise",
+      "definition": "sum(w_reco[pass_reco] * push[pass_reco]) / sum(w_reco[pass_reco]), transcribed from train_fullevent_nominal.py:576-577",
+      "rows": [
+        {
+          "iteration": 0,
+          "occasion": "consumed_by_step1",
+          "ratio": 1.0
+        },
+        {
+          "iteration": 0,
+          "occasion": "produced_by_step2",
+          "ratio": 1.0412954802920178
+        },
+        {
+          "iteration": 1,
+          "occasion": "consumed_by_step1",
+          "ratio": 1.0412954802920178
+        },
+        {
+          "iteration": 1,
+          "occasion": "produced_by_step2",
+          "ratio": 1.0484612960640978
+        }
+      ],
+      "pushes_produced": 2,
+      "pushes_consumed_by_a_later_step1": 2,
+      "end_of_run_ratio": 1.0484612960640978,
+      "end_of_run_is_recorded_not_reconstructed": true,
+      "pushes_produced_but_never_consumed": 1,
+      "reading": "quote end_of_run_ratio. The last 'consumed_by_step1' row is a DIFFERENT quantity -- the push entering the final step 1 -- and substituting it was measured flipping the sign of (ratio - 1).",
+      "n_pass_reco": 410,
+      "scope": "diagnostic; not a recovery or adoption claim"
+    },
+    "E6_logits_finite_both_steps": {
+      "held": true,
+      "reco_logit_range": [
+        -0.0023567713797092438,
+        0.002873658435419202
+      ],
+      "gen_logit_range": [
+        -0.0020668094512075186,
+        0.001129667623899877
+      ]
+    }
+  },
+  "all_held": true,
+  "not_implemented": [
+    "his cosine schedule over max_steps: max_steps must be derived from the agreed fair budget (proposal \u00a77.3), which is not ratified",
+    "gradient clipping, if his recipe uses it, is not yet transcribed"
+  ]
+}

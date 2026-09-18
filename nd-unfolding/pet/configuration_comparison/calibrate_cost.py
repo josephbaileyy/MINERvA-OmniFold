@@ -86,6 +86,21 @@ def _select_keras_backend() -> dict[str, Any]:
         ),
     }
 
+# CORRECTION, 2026-09-19. The first calibration built his backbone from PET2's CLASS
+# defaults, which are use_int=True and local_int=True. That is not the paper
+# configuration. `plot_configs/V1Paper.json` names OmniLearned-small, -small-rw and
+# -medium as the V1 lineup, and the matching `OLS`, `OLS_RW` and `OLM_FB` branches of
+# `src/jobs/submit_train_jobs.py:155-169` pass NEITHER `--ol-interaction` NOR
+# `--ol-local-interaction`; both are `store_true` with `default=False`. A fourth
+# branch, `OLS_int`, turns them on and is not in the paper lineup.
+#
+# Capacity barely moves (2,762,550 -> 2,758,702, 0.14 %), so the capacity comparison
+# is unaffected. COST is a different matter: the interaction block builds an
+# (B, N, N, 3) pairwise tensor and pushes it through a 3 -> 256 -> num_heads MLP,
+# which is quadratic in tokens, so the measured ratio r was taken on a model doing
+# work the paper configuration does not do. That is why r is re-measured here.
+PAPER_INTERACTION_FLAGS = {"use_int": False, "local_int": False}
+
 TOKEN_COUNTS = (12, 33)   # ours today; Gregor's max_particles
 OUR_BATCH = 512           # NOMINAL_SEED_POLICY["batch_size"]
 THEIR_BATCH = 2048        # submit_train_jobs.generate_cmd(bs=2048)
@@ -100,17 +115,39 @@ TRAIN_EVENTS = 2_000_000
 FITS_PER_EVALUATION = 2 * NITER          # MultiFold runs step 1 and step 2 per iteration
 EXAMPLES_PER_EVALUATION = FITS_PER_EVALUATION * EPOCHS * TRAIN_EVENTS
 
+# Evaluation is not only fits. Two forward-only populations were previously outside
+# the model entirely, and together they are a third as large again as the training
+# budget, so a fit-only projection is not a small underestimate:
+#
+#  * REWEIGHTING. `RunStep1` and `RunStep2` each call `reweight` over the whole MC
+#    array once per iteration (`omnifold.py:199` and `:219`), so an evaluation makes
+#    2 * NITER full inference passes over the subsample.
+#  * VALIDATION. `MultiFold` splits `train_frac = 0.8`, and the held-out fifth is a
+#    forward pass on every epoch of every fit -- 0.25 times the training examples.
+#
+# Both are timed against the measured INFERENCE throughput, not the training step
+# time, because a backward pass is roughly twice the work of a forward one and
+# charging inference at the training rate would overstate it.
+TRAIN_FRAC = 0.8
+VALIDATION_MULTIPLIER = (1.0 - TRAIN_FRAC) / TRAIN_FRAC
+REWEIGHT_PASSES_PER_EVALUATION = 2 * NITER
+INFERENCE_EXAMPLES_PER_EVALUATION = int(
+    REWEIGHT_PASSES_PER_EVALUATION * TRAIN_EVENTS
+    + VALIDATION_MULTIPLIER * EXAMPLES_PER_EVALUATION
+)
+
 CROSS_FRAMEWORK_QUALIFICATION = (
     "DEVICE-MATCHED, FRAMEWORK-UNMATCHED. Ours is TensorFlow and his is PyTorch because "
     "the Keras port does not exist yet, so every ratio here folds in a framework "
     "difference. It distinguishes 'comparable' from 'orders of magnitude apart'; it is "
     "not the same-framework ratio the final costing needs."
 )
-FIT_ONLY_CAVEAT = (
-    "Projections are FIT-time only. The feature contract's ~1.1-1.3 GPU-h for a nominal "
-    "train also covers the fixture build, normalization, reweight-all inference and "
-    "serialization, none of which scale with the backbone. Absolute projections therefore "
-    "UNDERSTATE cost; the ratio is the reliable part."
+RESIDUAL_OVERHEAD_CAVEAT = (
+    "Projections now cover fits, reweighting and validation, all from measured "
+    "throughput. They still exclude the fixture build, normalization and serialization, "
+    "which the feature contract folds into its ~1.1-1.3 GPU-h for a nominal train and "
+    "which do not scale with the backbone. Absolute projections therefore still "
+    "UNDERSTATE cost slightly; the ratio is the reliable part."
 )
 
 
@@ -209,7 +246,8 @@ def time_ours(repo: Path, tokens: int) -> dict[str, Any]:
     }
 
 
-def time_theirs(checkout: Path, tokens: int, batch: int, size: str = "small") -> dict[str, Any]:
+def time_theirs(checkout: Path, tokens: int, batch: int, size: str = "small",
+                warmup: int | None = None, repeats: int | None = None) -> dict[str, Any]:
     """Time one forward+backward of OmniLearned PET2 at the paper preset."""
     if str(checkout) not in sys.path:
         sys.path.insert(0, str(checkout))
@@ -224,7 +262,8 @@ def time_theirs(checkout: Path, tokens: int, batch: int, size: str = "small") ->
     preset = get_model_parameters(size)
     model = PET2(input_dim=4, add_dim=5, pid=True, pid_dim=8, cond_dim=16,
                  num_coord=2, K=10, add_info=True, conditional=True,
-                 mode="classifier", num_classes=1, **preset).to(device)
+                 mode="classifier", num_classes=1, **PAPER_INTERACTION_FLAGS,
+                 **preset).to(device)
     model.train()
     feats = torch.randn(batch, tokens, 4, device=device)
     pid = torch.randint(0, 8, (batch, tokens), device=device)
@@ -242,11 +281,11 @@ def time_theirs(checkout: Path, tokens: int, batch: int, size: str = "small") ->
         loss.backward()
         opt.step()
 
-    for _ in range(WARMUP):
+    for _ in range(WARMUP if warmup is None else warmup):
         step()
     torch.cuda.synchronize()
     times = []
-    for _ in range(REPEATS):
+    for _ in range(REPEATS if repeats is None else repeats):
         start = time.perf_counter()
         step()
         torch.cuda.synchronize()   # otherwise the clock measures queueing, not work
@@ -255,8 +294,181 @@ def time_theirs(checkout: Path, tokens: int, batch: int, size: str = "small") ->
         "framework": "pytorch",
         "tokens": tokens,
         "preset": preset, "size": size,
+        "interaction_flags": dict(PAPER_INTERACTION_FLAGS),
         "trainable_parameters": int(sum(p.numel() for p in model.parameters())),
         **_throughput(times, batch),
+    }
+
+
+def time_theirs_inference(checkout: Path, tokens: int, batch: int,
+                          size: str = "small") -> dict[str, Any]:
+    """Forward-only cost for his arm, which is what evaluation actually pays.
+
+    The training projection prices fits. An OmniFold evaluation also reweights
+    every event at every iteration, and that is inference, not training, so
+    quoting a fit-time total as the evaluation cost understates it. Measured
+    separately rather than assumed to be a fixed fraction of the step time.
+    """
+    if str(checkout) not in sys.path:
+        sys.path.insert(0, str(checkout))
+    import torch
+    from src.models.omnilearned.network import PET2
+    from src.models.omnilearned.utils import get_model_parameters
+
+    device = torch.device("cuda")
+    torch.manual_seed(0)
+    preset = get_model_parameters(size)
+    model = PET2(input_dim=4, add_dim=5, pid=True, pid_dim=8, cond_dim=16,
+                 num_coord=2, K=10, add_info=True, conditional=True,
+                 mode="classifier", num_classes=1, **PAPER_INTERACTION_FLAGS,
+                 **preset).to(device)
+    model.eval()
+    feats = torch.randn(batch, tokens, 4, device=device)
+    pid = torch.randint(0, 8, (batch, tokens), device=device)
+    add = torch.randn(batch, tokens, 5, device=device)
+    cond = torch.randn(batch, 16, device=device)
+    target = torch.randint(0, 2, (batch, 1), device=device).float()
+
+    def step() -> None:
+        with torch.no_grad():
+            model(feats, target, cond=cond, pid=pid, add_info=add)
+
+    for _ in range(WARMUP):
+        step()
+    torch.cuda.synchronize()
+    times = []
+    for _ in range(REPEATS):
+        start = time.perf_counter()
+        step()
+        torch.cuda.synchronize()
+        times.append(time.perf_counter() - start)
+    return {"framework": "pytorch", "mode": "inference", "tokens": tokens,
+            "interaction_flags": dict(PAPER_INTERACTION_FLAGS), **_throughput(times, batch)}
+
+
+def time_ours_inference(repo: Path, tokens: int) -> dict[str, Any]:
+    """Forward-only cost for our arm, at the production PET."""
+    backend = _select_keras_backend()
+    import numpy as np
+    import tensorflow as tf
+
+    root = repo / "omnifold_nn"
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    from omnifold.net import PET
+
+    model = PET(num_feat=5, num_evt=13, num_part=tokens, num_heads=2,
+                num_transformer=2, projection_dim=32, local=True, K=3)
+    rng = np.random.RandomState(0)
+    part = tf.constant(rng.randn(OUR_BATCH, tokens, 5), tf.float32)
+    evt = tf.constant(rng.randn(OUR_BATCH, 13), tf.float32)
+
+    @tf.function
+    def step():
+        return model.model([part, evt], training=False)
+
+    for _ in range(WARMUP):
+        step()
+    times = []
+    for _ in range(REPEATS):
+        start = time.perf_counter()
+        float(tf.reduce_sum(step()))
+        times.append(time.perf_counter() - start)
+    return {"framework": f"tensorflow {tf.__version__}", "mode": "inference",
+            "tokens": tokens, "keras_backend_selection": backend,
+            **_throughput(times, OUR_BATCH)}
+
+
+def diagnose_native_batch(checkout: Path, tokens: int, size: str = "small") -> dict[str, Any]:
+    """Find out WHY batch 2048 fails at 33 tokens, and what would fix it.
+
+    The distinction the answer has to support is between two different actions:
+
+    * a BACKEND REPAIR, which leaves the recipe alone -- his batch stays 2048 and
+      only the attention kernel selection changes;
+    * a BATCH-SIZE CHANGE, which alters his configuration and therefore has to be
+      declared as an adaptation and reflected in the fairness budget.
+
+    So this records the exact exception and the innermost frame that raised it,
+    tries each SDPA backend in turn, and bisects the largest batch that runs under
+    the default backend. Every cell is attempted independently.
+    """
+    if str(checkout) not in sys.path:
+        sys.path.insert(0, str(checkout))
+    import traceback
+
+    import torch
+
+    def attempt(batch: int, backend: Any = None) -> dict[str, Any]:
+        # ONE step, not a timing run: the question here is whether the cell runs at
+        # all, and twenty-five repetitions of an answer already known costs GPU time
+        # against a budget that is being reported.
+        probe = {"warmup": 0, "repeats": 1}
+        try:
+            if backend is None:
+                time_theirs(checkout, tokens, batch, size, **probe)
+            else:
+                from torch.nn.attention import sdpa_kernel
+
+                with sdpa_kernel(backend):
+                    time_theirs(checkout, tokens, batch, size, **probe)
+            return {"ran": True}
+        except Exception as exc:                      # noqa: BLE001 - recorded
+            frames = traceback.extract_tb(exc.__traceback__)
+            innermost = frames[-1] if frames else None
+            return {
+                "ran": False,
+                "error": f"{type(exc).__name__}: {exc}".split("\n")[0][:400],
+                "raised_at": (f"{Path(innermost.filename).name}:{innermost.lineno} "
+                              f"in {innermost.name}") if innermost else None,
+            }
+        finally:
+            torch.cuda.empty_cache()
+
+    backends: dict[str, Any] = {"default": attempt(THEIR_BATCH)}
+    try:
+        from torch.nn.attention import SDPBackend
+
+        candidates = [("math", SDPBackend.MATH),
+                      ("efficient_attention", SDPBackend.EFFICIENT_ATTENTION),
+                      ("flash_attention", SDPBackend.FLASH_ATTENTION)]
+    except Exception:                                  # noqa: BLE001
+        candidates = []
+        backends["sdpa_kernel_unavailable"] = {"ran": False,
+                                               "error": "torch.nn.attention absent"}
+    for name, backend in candidates:
+        backends[name] = attempt(THEIR_BATCH, backend)
+
+    # Largest working batch under the default backend, by bisection on powers of two
+    # down from his native size. Bisection rather than a sweep so the probe stays
+    # bounded; the point is to identify the action, not to profile the device.
+    ladder = [b for b in (2048, 1024, 512, 256) if b <= THEIR_BATCH]
+    largest_working = None
+    ladder_results = {}
+    for batch in ladder:
+        outcome = backends["default"] if batch == THEIR_BATCH else attempt(batch)
+        ladder_results[str(batch)] = outcome
+        if outcome["ran"] and largest_working is None:
+            largest_working = batch
+    repair_backends = [n for n, r in backends.items() if n != "default" and r.get("ran")]
+    return {
+        "tokens": tokens,
+        "native_batch": THEIR_BATCH,
+        "native_batch_runs": backends["default"]["ran"],
+        "by_sdpa_backend": backends,
+        "batch_ladder": ladder_results,
+        "largest_working_batch_default_backend": largest_working,
+        "backend_repair_available": bool(repair_backends),
+        "backend_repair_backends": repair_backends,
+        "required_action": (
+            "none: the native batch already runs" if backends["default"]["ran"]
+            else ("backend repair, recipe preserved: "
+                  f"{repair_backends} run at batch {THEIR_BATCH}")
+            if repair_backends
+            else ("batch-size change, recipe altered: no attention backend runs at "
+                  f"batch {THEIR_BATCH}; the largest that does is "
+                  f"{largest_working}")
+        ),
     }
 
 
@@ -324,17 +536,49 @@ def reduce_halves(ours_path: Path, theirs_path: Path) -> dict[str, Any]:
             "ratio_used_for_projection": "matched_batch",
             "native_batch_available": native_ok,
         }
-        our_hours = our_row["seconds_per_example"] * EXAMPLES_PER_EVALUATION / 3600.0
+        our_fit_hours = our_row["seconds_per_example"] * EXAMPLES_PER_EVALUATION / 3600.0
+        their_fit_hours = our_fit_hours * r_matched
+
+        our_infer = (ours.get("inference") or {}).get(key)
+        their_infer = (theirs.get("inference") or {}).get(key)
+        inference_measured = bool(
+            our_infer and their_infer and "error" not in their_infer
+        )
+        if inference_measured:
+            our_inference_hours = (our_infer["seconds_per_example"]
+                                   * INFERENCE_EXAMPLES_PER_EVALUATION / 3600.0)
+            their_inference_hours = (their_infer["seconds_per_example"]
+                                     * INFERENCE_EXAMPLES_PER_EVALUATION / 3600.0)
+        else:
+            our_inference_hours = their_inference_hours = None
+
+        our_total = (our_fit_hours + our_inference_hours
+                     if inference_measured else None)
+        their_total = (their_fit_hours + their_inference_hours
+                       if inference_measured else None)
+        pair_total = (our_total + their_total) if inference_measured else None
+
         # Projections use the MATCHED-batch ratio, so a missing native cell degrades the
         # reporting and not the costing.
         projected[key] = {
-            "our_evaluation_gpu_hours": our_hours,
-            "their_evaluation_gpu_hours": our_hours * r_matched,
-            "arm_pair_evaluation_gpu_hours": our_hours * (1.0 + r_matched),
+            "our_fit_gpu_hours": our_fit_hours,
+            "their_fit_gpu_hours": their_fit_hours,
+            "arm_pair_fit_gpu_hours": our_fit_hours + their_fit_hours,
+            "inference_measured": inference_measured,
+            "our_inference_gpu_hours": our_inference_hours,
+            "their_inference_gpu_hours": their_inference_hours,
+            "our_evaluation_gpu_hours": our_total,
+            "their_evaluation_gpu_hours": their_total,
+            "arm_pair_evaluation_gpu_hours": pair_total,
+            "inference_ratio_per_example": (
+                their_infer["seconds_per_example"] / our_infer["seconds_per_example"]
+                if inference_measured else None
+            ),
             "ratio_source": "matched_batch (same batch and tokens for both arms)",
-            "final_comparison_gpu_hours_by_seeds": {
-                str(n): n * our_hours * (1.0 + r_matched) for n in (4, 8, 12, 16)
-            },
+            "final_comparison_gpu_hours_by_seeds": (
+                {str(n): n * pair_total for n in (4, 8, 12, 16)}
+                if inference_measured else None
+            ),
         }
 
     return {
@@ -348,14 +592,25 @@ def reduce_halves(ours_path: Path, theirs_path: Path) -> dict[str, Any]:
                          "matched_on": "primary_uuid from nvidia-smi"},
         "halves": {"ours": str(ours_path), "theirs": str(theirs_path)},
         "measured_throughput": measured,
+        "native_batch_diagnosis": theirs.get("native_batch_diagnosis"),
+        "interaction_flags": dict(PAPER_INTERACTION_FLAGS),
+        "interaction_flag_correction": (
+            "his arm is built with use_int=False and local_int=False, the V1-paper "
+            "setting. The 2026-09-18 calibration used PET2's class defaults of "
+            "True/True, which is the non-paper OLS_int variant, and therefore timed a "
+            "model doing quadratic pairwise work the paper configuration does not do."
+        ),
         "projected_evaluation_cost": {
             "budget_model": {
                 "niter": NITER, "epochs": EPOCHS, "train_events": TRAIN_EVENTS,
                 "fits_per_evaluation": FITS_PER_EVALUATION,
                 "examples_per_evaluation": EXAMPLES_PER_EVALUATION,
+                "train_frac": TRAIN_FRAC,
+                "reweight_passes_per_evaluation": REWEIGHT_PASSES_PER_EVALUATION,
+                "inference_examples_per_evaluation": INFERENCE_EXAMPLES_PER_EVALUATION,
                 "fairness_axis": "example presentations, not optimizer steps",
             },
-            "fit_only_caveat": FIT_ONLY_CAVEAT,
+            "residual_overhead_caveat": RESIDUAL_OVERHEAD_CAVEAT,
             "derived_not_measured": (
                 "Everything in this block is a model applied to the measured throughput "
                 "above. Quote the measured block for throughput and this block only with "
@@ -387,6 +642,7 @@ def main() -> None:
         half = {
             "gpu_identity": physical_gpu_identity(),
             "by_tokens": {str(t): time_ours(args.repo, t) for t in TOKEN_COUNTS},
+            "inference": {str(t): time_ours_inference(args.repo, t) for t in TOKEN_COUNTS},
         }
         args.output.write_text(json.dumps(half, indent=2) + "\n")
         for tokens, row in half["by_tokens"].items():
@@ -416,7 +672,22 @@ def main() -> None:
                     print(f"theirs tokens={tokens:>2} batch={batch}: FAILED "
                           f"{type(exc).__name__}", file=sys.stderr)
             by_tokens[str(tokens)] = cells
-        half = {"gpu_identity": physical_gpu_identity(), "by_tokens": by_tokens}
+        inference: dict[str, Any] = {}
+        for tokens in TOKEN_COUNTS:
+            try:
+                inference[str(tokens)] = time_theirs_inference(
+                    args.gregor_checkout, tokens, OUR_BATCH)
+            except Exception as exc:                  # noqa: BLE001 - recorded
+                inference[str(tokens)] = {"error": f"{type(exc).__name__}: {exc}"[:400],
+                                          "tokens": tokens}
+        diagnosis = {}
+        for tokens in TOKEN_COUNTS:
+            try:
+                diagnosis[str(tokens)] = diagnose_native_batch(args.gregor_checkout, tokens)
+            except Exception as exc:                  # noqa: BLE001 - recorded
+                diagnosis[str(tokens)] = {"error": f"{type(exc).__name__}: {exc}"[:400]}
+        half = {"gpu_identity": physical_gpu_identity(), "by_tokens": by_tokens,
+                "inference": inference, "native_batch_diagnosis": diagnosis}
         args.output.write_text(json.dumps(half, indent=2) + "\n")
         for tokens, row in by_tokens.items():
             for label in ("native_batch", "matched_batch"):
@@ -440,8 +711,18 @@ def main() -> None:
               + (f", native-batch = {native:.2f}" if native is not None
                  else ", native-batch = UNAVAILABLE"))
     for tokens, row in receipt["projected_evaluation_cost"]["by_tokens"].items():
-        print(f"tokens={tokens:>2}  projected arm-pair evaluation = "
-              f"{row['arm_pair_evaluation_gpu_hours']:.2f} GPU-h (model-derived)")
+        if row["inference_measured"]:
+            print(f"tokens={tokens:>2}  projected arm-pair evaluation = "
+                  f"{row['arm_pair_evaluation_gpu_hours']:.2f} GPU-h "
+                  f"(fit {row['arm_pair_fit_gpu_hours']:.2f} + inference "
+                  f"{row['our_inference_gpu_hours'] + row['their_inference_gpu_hours']:.2f}, "
+                  "model-derived)")
+        else:
+            print(f"tokens={tokens:>2}  arm-pair FIT ONLY = "
+                  f"{row['arm_pair_fit_gpu_hours']:.2f} GPU-h; inference NOT measured")
+    diagnosis = receipt.get("native_batch_diagnosis") or {}
+    for tokens, row in diagnosis.items():
+        print(f"tokens={tokens:>2}  native batch: {row.get('required_action', row)}")
 
 
 if __name__ == "__main__":

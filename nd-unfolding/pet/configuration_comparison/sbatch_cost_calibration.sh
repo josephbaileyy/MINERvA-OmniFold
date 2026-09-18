@@ -1,6 +1,13 @@
 #!/bin/bash
 # Bounded GPU cost calibration for the matched comparison. Measures per-example training
-# throughput for both arms at their real configurations, at 12 and 33 tokens, on one GPU.
+# AND inference throughput for both arms at their real configurations, at 12 and 33
+# tokens, on one GPU, and diagnoses the 33-token native-batch failure.
+#
+# REVISED 2026-09-19. His arm is now built with use_int=False / local_int=False, the
+# V1-paper setting; the previous run used PET2's class defaults of True/True and so
+# timed the non-paper OLS_int variant. Inference is measured because an evaluation
+# reweights every event at every iteration and validates a fifth of every epoch, which
+# the fit-only model left out entirely.
 # Trains nothing to convergence, produces no closure statistic, touches no matrix or
 # validation receipt, and writes only into its own output directory.
 #
@@ -20,7 +27,7 @@
 #SBATCH --cpus-per-task=32
 #SBATCH --gpus=1
 #SBATCH --mem=56G
-#SBATCH --time=00:25:00
+#SBATCH --time=00:40:00
 #SBATCH --job-name=pet-cost-calibration
 set -euo pipefail
 
@@ -66,7 +73,7 @@ driver=nd-unfolding/pet/configuration_comparison/calibrate_cost.py
 # --- his arm, PyTorch 2.6 + einops + pinned upstream ------------------------------------
 ( module load pytorch/2.6.0
   export PYTHONPATH="$einops_site:$gregor_src${PYTHONPATH:+:$PYTHONPATH}"
-  timeout --kill-after=30s 600s python "$driver" \
+  timeout --kill-after=30s 1500s python "$driver" \
     --arm theirs --gregor-checkout "$gregor_src" --output "$output/half-theirs.json" \
   ) > "$output/calibration-theirs.log" 2>&1
 
