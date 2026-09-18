@@ -376,11 +376,26 @@ unmeasured, and I cannot measure it: no cluster access.**
    ensemble-count scalar… the launcher range is not independent readback of a particular product"* —
    and `combine_cov_nd.py` is reported rewritten to store **`n_members`** (the realized count), the
    `N−1` divisor and the member id list, so *"was this 100 or 50?"* becomes a **read** rather than an
-   inference. **WHAT I CAN AND CANNOT VERIFY FROM HERE, stated rather than assumed:** the *before*
-   state is CONFIRMED in this tree — `nd-unfolding/combine_cov_nd.py` is **27 lines** and writes one
-   `TH2D` and nothing else (`:23` constructs it, `:26` writes and closes) — and `n_members` has
-   **zero** occurrences at `9dba1194`, so the rewrite **postdates that sha and is not visible from
-   this lane.** The *after* state is therefore **RELAYED, unverified here.** ⚠ **And it is
+   inference. ⚠ **UPGRADED FROM RELAYED TO VERIFIED, 2026-09-18, once a committed reference was supplied.**
+   The *before* state was already confirmed here — `combine_cov_nd.py` **27 lines**, `:23`
+   constructing `hCov_{tag}_reported` and `:26` writing and closing, nothing else. **The *after*
+   state is now checked in this lane against the named commit, every field matching:**
+
+       commit    ecdb150ff5f3d823bcaff374281581f67e0f9a63   VERIFIED: is a commit, and
+                 `merge-base --is-ancestor ... origin/main` returns rc=0 -- REACHABLE
+       blob      ab1191a697dc1fe4e67ac78b3a39edb675b90178   VERIFIED: exact match via rev-parse
+       lines     102 (was 27)                               VERIFIED
+       n_members 5 occurrences at ecdb150f; 0 at 9dba1194   VERIFIED both ends
+       tests     6 in tests/test_combine_cov_nd_fingerprint.py at the same sha   VERIFIED (count)
+
+   ⚠ **AND THE FIX ADDRESSES THE DEFECT RATHER THAN ITS SYMPTOM, which is the part worth
+   checking and not merely counting:** `:66` is `n_members = int(Xr.shape[0])` — **the realized
+   first dimension of the loaded array, not a declared bracket** — written as a `TParameter` at
+   `:67`, with the divisor at `:70` (*"N-1 = … (unbiased; NOT the MAT 1/N joint-throw …)"*), the
+   `member_ids` list at `:81`, and the centering and divisor in the receipt at `:86`. Its own
+   comment at `:65` names the requirement it meets: *"independent readback of a particular one.
+   N and the divisor now travel IN the artifact."* **So a future `"was this 100 or 50?"` is a
+   read of the product, which is exactly the property whose absence produced the defect above.** ⚠ **And it is
    PROSPECTIVE ONLY: it does not retroactively measure the existing 5D family, which stays
    UNMEASURED and must be stated that way wherever the number is used.**
 4. **§3's non-bindingness conclusion is unaffected in direction:** at `N = 50` the figure would be
