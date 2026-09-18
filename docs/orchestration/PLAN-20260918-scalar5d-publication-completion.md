@@ -817,3 +817,87 @@ publication product still waits on M-M, and only the *acceptance question* has b
 lands on a materially different object — say after R5's step 2 quarantines a component — `τ` must be
 recomputed on the adopted one. That is a cheap re-run of a 0.324 s matmul, not a new campaign, and it
 is recorded here so that the diagnostic value is not later quoted as the adopted one.
+
+
+---
+
+## 12. ⚠ THE PRESERVED CANDIDATE COVARIANCE DOES NOT EXIST AS AN OBJECT — measured 2026-09-18
+
+Joseph's grant authorizes *"provisional projections and counterfactuals **from the preserved
+candidate covariance**"*. I went to run the diagnostic M1 and found **there is no `C_Z` product to
+project from.** This is not an obstacle to the grant so much as a false premise inside it, and it is
+mine to have not checked earlier: I have been citing `C_Z`'s spectrum for weeks — `λ_min =
+−1.2750516323643892e-90`, 5,214 negative eigenvalues of 10,694 — as though the matrix were on disk.
+**Those are recorded measurements of an object that was computed in memory and never written.**
+
+**Established three independent ways, because it is a negative claim.**
+
+1. **The pilot's own receipt.** `z_pilot_20260915_a3/bridge.json`: `out_path` is
+   `z-null-source.npz` and `persisted.bytes_persisted` is **`1,119,552`** — the `1.05` MB of null
+   operands plus support mask that `SPEC` §5.8d already names as the pilot's product. Its
+   `z-provenance.json` records `adoptable: **False**` and
+   `scientific_acceptance: **NON-PASSING**`, by the pilot itself.
+2. **Directory contents.** The `a3` directory holds four files: `bridge.json`, `z-manifest.json`,
+   `z-null-source.npz`, `z-provenance.json`. No `.root`.
+3. **A covering search, with a positive control.** All `*.root` at `≥ 800` MB under the
+   `nd-unfolding` data root: **469 files**, so the search is not vacuous. The newest
+   assembled-covariance-shaped products (`892` MB = `10,694²` doubles) are dated **2026-08-11**, in
+   `readopt_20260811_footing/` — those are **G's** adopted mean-centered and cv-centered products,
+   the *parent*. The newest large Z-lineage object is
+   `z_precursor_20260914/unified_throw_cov_5d.root`, `2,668,265,910` bytes, 2026-09-14 15:53 — the
+   **throw precursor** (three `10,694²` matrices, `SPEC`'s `2.67` GB figure), **not** `C_Z`.
+
+**What IS preserved, and it is enough to rebuild from:** the eight digest-bound input sources named
+in the pilot's `z-manifest.json` (support, active, central, stat, ml, throw, parent, null), the
+`2.67` GB precursor, the support mask and row order (`mask_sha256 eed021e9…`,
+`row_order_sha256 61a7c9fd…`), and the manifest itself at `sha256 df440c3b…`. **Nothing is lost.**
+The pilot's own band inventory in `z-provenance.json` also independently reproduces §10.1's 45-band
+measurement, from a different file than the one I read.
+
+### 12.1 The consequence: one bounded request stands between the grant and the diagnostic
+
+`nd-unfolding/z_build.py` **on `main`** is the assembler, and it is complete: `main()` requires
+`--manifest --out-cv --out-mean --receipt-cv --receipt-mean --out-null` and `_write_product` writes
+real `TH2D`s with a `metadata_json` object. It does not need writing. It needs **running**, on the
+manifest the pilot already produced.
+
+| | |
+|---|---|
+| **What it measures** | Assembles `C_Z = D(ΣV)D + ΣR + ΣA + C_stat + C_ML` from the eight digest-bound sources and **persists** both centering variants plus the null operands |
+| **Why it is needed now** | `τ` needs M1, M1 needs `C_Z`, and `C_Z` is not on disk. It is the single missing link between Joseph's grant and the acceptance question the grant exists to resolve |
+| **Wall anchor — MEASURED** | The pilot's `ElapsedRaw 1037 s` for the 45-band assembly **plus two eigendecompositions**. Persisting adds a `1.78` GB write (two `892` MB products) |
+| **Memory anchor — MEASURED** | The pilot's **`49.73` GiB** peak, and its own recorded lesson that *"any future sizing starts from 49.73 GiB"* because its prediction was low by more than an order of magnitude. Request **`96G`** |
+| **Shape** | `1 node, --qos=shared --constraint=cpu --ntasks=1 --cpus-per-task=32 --mem=96G --time=01:00:00` |
+| **Reservation** | **`1.00` CPU task-h** = `1 task × 1.00 h`, in the governing unit. `0.25%` of the measured `403.6775` headroom |
+| **Disk** | `≈ 1.78` GB into a `DIAGNOSTIC`-marked directory. ⚠ `pscratch` is at **`16.02` / `20.00` TiB = 80.1%**, so this is `0.009%` of the filesystem but the quota deserves naming |
+| **Grade it would carry** | **None.** The pilot already recorded this construction `NON-PASSING` and `adoptable: False`, and re-running it produces the same candidate. Construction is not adoption, and this is not a repeat-until-it-passes: the purpose is to obtain the **object**, not a different verdict |
+
+**What a terminal result would NOT authorize:** it would not adopt the trunk, would not regrade the
+pilot's `NON-PASSING`, would not supply support `C_Z` never had, and would not make the resulting
+`C_low` quotable — `AGENTS.md:27` requires the quotable `(E_avail,W)` covariance to be projected
+from the **adopted** trunk and `:30` quarantines the existing one outright.
+
+**Why I have prepared this rather than launched it**, given that the grant plausibly covers it as
+*"necessary implementation … for the scalar-5D uncertainties and required projections"*: it writes
+`1.78` GB into the shared data tree, and it constructs **the central artifact of the whole
+campaign** — the object the adoption decision is about. Doing that on the reading that a grant
+"seems to cover it" is not a routine step. **The two smaller items in this session's grant I did
+execute** (`0.0011` + `0.25` task-h), because those were diagnostics that wrote nothing into a
+product tree.
+
+**One word authorizes it.** The command, ready to run against the worktree already checked out at
+this session's HEAD:
+
+    MNV_CODE_ROOT=/pscratch/sd/j/josephrb/MINERvA-OmniFold-zdet-20260918
+    python3 nd-unfolding/z_build.py \
+      --manifest  <pilot a3>/z-manifest.json \
+      --out-cv    <DIAGNOSTIC>/z_candidate_cvcentered_DIAGNOSTIC.root \
+      --out-mean  <DIAGNOSTIC>/z_candidate_meancentered_DIAGNOSTIC.root \
+      --receipt-cv <DIAGNOSTIC>/z_candidate_cv.receipt.json \
+      --receipt-mean <DIAGNOSTIC>/z_candidate_mean.receipt.json \
+      --out-null  <DIAGNOSTIC>/z_candidate_null.npz
+
+⚠ **The cv-centered variant is the one M1 should project**, as an engineering choice recorded here:
+`AGENTS.md:29` rules that *"mean-centering alone is disqualified"*, and `z_build.py` writes both, so
+both are kept and only one is used. That is not a scientific ruling — it follows from a front-door
+rule already in force.
