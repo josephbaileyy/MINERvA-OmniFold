@@ -765,3 +765,175 @@ withdrew in another form.
 
 `5%` is offered as the value this lane would propose. **No derivation is claimed and no use is
 excluded.**
+
+---
+
+## 10. PREREQUISITES COMPLETED — 2026-09-18
+
+### 10.1 C6 — my `:422-423` citation is WITHDRAWN; the historical route traced instead
+
+⚠ **Withdrawn, and the dates alone settle it.** `sbatch_finalize_5d_bkgaware_gpu.sh:422-423` builds
+**declared-member products** on the bkgaware branch, and its header is *"KNOWN_ISSUES #13 finalize
+(**2026-07-14**)"*. The archived files are **`2026-07-13 18:04:01` and `18:05:11`** — **a day
+earlier.** That launcher cannot be their producer, and its own line 8-10 says so: *"C_stat/C_ML are
+#13-invariant → **reuse existing**"*. I cited the branch that **reuses** them as evidence of how they
+were **made**. Their realized counts and configuration are not established by it.
+
+⚠ **And a hazard that citation exposed:** `:405/:407` sets `CV` to
+`…universe_sweep_bkgaware/5d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root` or `${CV_ARCHIVE}` — **a
+DIFFERENT CV product** from the archived artifacts' basis. So the three invocations do **not** agree
+on `--cv`. If that branch ever rebuilt them, the row basis would change. **Recommend that branch be
+pinned to refuse rather than rebuild.**
+
+**THE HISTORICAL ROUTE, traced from preserved artifacts and era launchers:**
+
+| established | how |
+|---|---|
+| **realized counts `N = 100` and `N = 24`** | `boot_nd_5d/res_boot_*.npz` → **100 files**; `seedscan_split_5d/res_split_*.npz` → **24 files**, counted directly |
+| **index coverage exact** | indices are **1..100** and **1..24** with **zero gaps** — no missing or duplicate replica |
+| **no input postdates its product** | `find -newer` against each product: **0 boot, 0 split** |
+| **tight producer window** | last boot replica `18:02`, product `18:04` — **two minutes** |
+| **the replica-producing job IS identified** | `55871150` `boot5dG`, 07-13 `16:34`→`19:40`; `sacct` **does** reach 07-13, tested rather than assumed |
+| **the era launchers' `--cv`** | `run_budget_5d.sh:13` and `sbatch_combine_5d_budget.sh:12` **both** set `CV="products/5d/xsec_5d_MEFHC_5iter_lgbm.root"` |
+| **that CV is the pilot's own declared central, by DIGEST** | re-measured `630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8` = the pilot `z-manifest`'s `sources.central.sha256`, exactly |
+| **row basis / normalization construction** | `combine_cov_nd.py:48,58`: `rep = cv > 0`, `rows = flatnonzero(rep)` C-order, `C = (ZᵀZ)/(N−1)` mean-centered, explicitly not MAT `1/N` |
+
+**⚠ WHERE THE ROUTE ENDS, exactly.** I searched `sacct` for a combine job on 07-13/14 by name and by
+the `18:00`–`18:10` window: **there is none.** The only job in that window is `55871150_11`
+(`boot5dG`, ended `18:00:18`). **The combine ran interactively** — consistent with `run_budget_5d.sh`
+being a plain `python3` script rather than an `sbatch_*`. Therefore:
+
+1. **No scheduler record of the producing act.** No job id, no recorded argv, no recorded code
+   revision for the combine itself.
+2. **The `--cv` value at that moment is INFERRED** from the two concordant era launchers. That the
+   interactive run used that path is an inference, not a record — though the digest match makes the
+   inferred object unambiguous *if* the path was used.
+3. **No cryptographic input binding.** The old writer recorded no input digests, so the link to
+   *these* 100/24 replicas is **count, coverage and temporal consistency — not proof**.
+
+**RECOMMENDED DISPOSITION — REUSE, no regeneration, with a scoped provenance declaration.**
+Record, travelling with the artifacts: the seven established rows above; the three unknowns above,
+named as unknowns; and that **regeneration would not recover the historical provenance either** — it
+would create a *new* object with good provenance, which is a different thing from documenting this
+one. `SPEC` §2.6b's rule stands: fresh generation needs a scientific rationale, and none exists.
+**The residual risk is that the archived artifacts' inputs are consistent-but-unproven**; that is a
+traceability statement and it is now written down rather than implied.
+
+### 10.2 THE PUBLICATION EXCEPTION — the requirement, the alternative evidence, and the recognition path
+
+⚠ **My clause 3 — *"may be cited"* — does not close the blocker, and Joseph is right that it does
+not.** Citing an assessment does not lift a quarantine. **The blocker is `AGENTS.md:29`.**
+
+**WHICH REQUIREMENT WOULD BE AMENDED — one row, named:**
+
+> `AGENTS.md:29`, *"Corrected scalar 5D covariance candidates | `QUARANTINED` | … Their ledger values
+> remain measurements, not adoption; mean-centering alone is disqualified and **the unified candidate
+> has unresolved seed/provenance qualifications.**"*
+
+The amendment adds a **candidate-specific release path** to that row. **NOT amended, and explicitly
+preserved:** §6.4's bound requirement; `AGENTS.md:27`'s *"projected from the final adopted,
+selection-complete 5D trunk"*; `CRITERIA` §0's `MET`/`OPEN`/`UNRESOLVED` vocabulary; and
+`z_validator`'s behaviour — **no code change, no threshold change, no global relaxation.**
+
+**TWO DECISIONS, AND THEY ARE DIFFERENT OBJECTS:**
+
+| | the immutable historical rejection | the candidate-specific adoption decision |
+|---|---|---|
+| what it is | `M(i)` is `UNRESOLVED`, `reject_conditions` `4c`, `branch = None`, reason **predeclaration failure** | a decision to adopt **one named digest** notwithstanding that status |
+| scope | permanent, and applies to the *criterion* | **one `sha256`**, and applies to the *product* |
+| changed by the other? | **No.** Adoption does not regrade it | — |
+| who | already determined by the validator | **Joseph, by record** |
+
+**WHAT ALTERNATIVE EVIDENCE WOULD SATISFY THE AMENDED REQUIREMENT** — the set, stated so it can be
+checked rather than asserted:
+
+1. the retrospective scale-relative **assessment** (`null_norm/√tr = 3.218e-13`), recorded as an
+   assessment with no grade token;
+2. **cause dispositions 1–7 each at `MET` or explicitly dispositioned**, which is the rest of §2;
+3. the **C6 provenance declaration** of §10.1, including its three named unknowns;
+4. the **traceability statement** that these two component artifacts cannot self-attest.
+
+**HOW THE ADOPTION PATH RECOGNIZES IT WITHOUT WEAKENING THE VALIDATOR.** Use the idiom this campaign
+already has — `run_m1_projection.sh` requires *"a record that says it adopts"*, not a flag:
+
+- `z_validator` continues to return `assessable=False`, `4c`, `branch=None`. **Unchanged.**
+- Adoption is a **separate act** recorded in a `DECISION-*` file that **names the product's `sha256`
+  explicitly** (`3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5` for `z-cv.npz`).
+- **Digest scoping is what prevents generalization:** the exception attaches to bytes, not to a
+  criterion, so any other candidate — including a future rebuild — gets `assessable=False` with no
+  exception available. There is nothing for a later lane to inherit.
+- The record must carry the `UNRESOLVED` status and the predeclaration failure **in the same place as
+  the adoption**, so the defect cannot be read separately from the decision.
+
+**So the blocker closes on Joseph's digest-scoped adoption decision, not on permission to cite.**
+
+### 10.3 CAMPAIGN — ONE EXECUTABLE CAP-AND-TIMEOUT POLICY
+
+**CAPS (one additional member, offsets `{k = 0 archive, k = k₁}`):**
+
+    boot5dG        0.50 h x 100  =  50.00 GPU        uthrow5d_runF   4.25 h x 40 = 170.00 CPU
+    sweep5dBKGrun  0.50 h x 169  =  84.50 GPU        uthrow5d_block  3.00 h x 21 =  63.00 CPU
+    det5dBKG       1.25 h x  19  =  23.75 GPU        ssplit5d        0.75 h x 24 =  18.00 CPU
+                                                     uthrow5d_combF  1.00 h x  1 =   1.00 CPU
+    ENFORCED RESERVATION:  158.25 GPU  /  252.00 CPU
+
+**TIMEOUT POLICY — a timeout does NOT end the campaign, and a timed-out task is NEVER omitted.**
+
+1. **The member is incomplete until all 21 block tasks have outputs.** A member assembled from 20 of
+   21 **is not the member** and must not be graded, aggregated, or reported. This is the
+   non-negotiable clause.
+2. **Completed work is preserved.** `lib_member_resume.sh`'s `rg_mark_complete` already marks each
+   finished output, so the other 20 tasks are not re-run.
+3. **On a block-arm timeout: the campaign PAUSES and the single task is re-reserved SEPARATELY.**
+   `sbatch --array=<idx>` for that index alone at `--time=10:00:00` → **reservation `1 × 10.0 = 10.0`
+   CPU task-h**, separately admitted against a fresh receipt. This is the stage's one corrective
+   resubmission.
+4. **If the recovery also times out, the campaign ENDS** and returns a diagnosis. No second recovery,
+   and no member is assembled.
+5. `--no-requeue` stays; nothing self-resubmits.
+
+**THE LONGER-CAP OPTION, stated honestly:** `uthrow5d_block` at `8.75 h` → `183.75` CPU, total
+**`372.8` CPU / `158.2` GPU**. It **covers all 38 observed runtimes. It does not guarantee
+completion** — an unobserved slower task can still exceed it, and clauses 1–5 apply unchanged.
+
+### 10.4 GPU RECONCILED, and fresh accounting
+
+⚠ **`167.8` was wrong.** It is the **2.0×**-margin GPU total (`det5dBKG` at `1.75 h`); `158.25` is the
+**1.5×** figure (`det` at `1.25 h`). **My longer-cap admission call paired a 2.0× GPU total with a
+CPU-only variant.** The longer-cap option changes **only `uthrow5d_block`, a CPU arm**, so its GPU
+reservation is **`158.2`, identical to the recommended option.**
+
+**FRESH ACCOUNTING, `2026-09-18T14:26:28Z`:** CPU `97.3108` of `500`, headroom **`402.6892`**; GPU
+`16.0603` of `500`, headroom **`483.9397`**; 141 tasks; stop `2026-09-30`, not fired; **outstanding
+reservations 0.**
+
+| option | CPU | GPU | admission |
+|---|---:|---:|---|
+| **recommended** (block `3.00 h`) | `252.0` | `158.2` | **rc 0 — ADMITTED** |
+| recommended **+ one recovery** | `262.0` | `158.2` | **rc 0 — ADMITTED** |
+| longer cap (block `8.75 h`) | `372.8` | `158.2` | **rc 0 — ADMITTED** |
+
+**Nothing launched.** Accounting is re-measured immediately before any submission, not reused.
+
+---
+
+## 11. THE SCIENTIFIC RULINGS, REQUESTED TOGETHER
+
+1. **§3.7d disposition** — recommend **(b)**, add `s_proj`. Answer (a) withholds the projection
+   licence and projections are required.
+2. **`δ` for `s_proj`, `s_agg`, `s_med` per-bin** — `5%` proposed, **no derivation claimed**; plus
+   `s_med`'s coverage (100% on quoted bins, ≥99% overall with failures enumerated).
+3. **`s_proj`'s functional set** — `U = {Mᵀe_i}` over M1's 42 **and M2's 10,976**, `Mᵀ1`, and `Mᵀw_R`
+   per declared integral.
+4. **Cause dispositions** — 5 and 7 have passing evidence now; 1, 2, 4 need their evidence produced;
+   **6: REUSE** per §10.1.
+5. **§6.4** — clause 1 (preserve, automatic), clause 2 (permission to **assess**), and **§10.2's
+   amendment to `AGENTS.md:29` plus a digest-scoped adoption decision**, which is what actually
+   closes the blocker.
+6. **The scope amendment** — generator significance is optional and not a prerequisite.
+7. **Campaign** — `N = 1` additional member, the §10.3 policy, cap variant, and `k₁`'s value.
+8. **D2's key and margin; `SPEC:1237`'s digit; `ESTIMATOR_REGISTRY:29`'s file name.**
+9. **Whether the 07-14 finalize branch should be pinned to refuse rebuilding `C_stat`/`C_ML`** (§10.1).
+
+**Deferred, not requested:** `y_gen`, `N`σ, the 12-cell χ², `rcond`/rank, the first-order statistic,
+P2, pinning, and any further determinism probe.
