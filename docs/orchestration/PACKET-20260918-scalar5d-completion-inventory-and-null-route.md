@@ -937,3 +937,65 @@ separate act after the trace.
 citation. **An over-broad pattern manufactures a finding as readily as a narrow one misses it** — the
 same two-directional failure as my `"tension of"` matching inside *"extension of"* one section above.
 Two instances in one session, opposite directions, both in negative claims.
+
+---
+
+## 16. Causes 1/2/4 assessed — and `SPEC` contradicts itself once, and validates an M-G choice once
+
+`[cb0b6b]` at `fe7dd3d6116f1b9dcb95a4621f887d011088ed28`. **Causes 1 and 4 hold as tolerance-free;
+cause 2's *wording* is refuted and its *conclusion* survives on better ground.** Both pivotal claims
+verified here against source.
+
+**16.1 `k = 2.0` IS chosen — verified, and the packet's "no free parameter" is refuted by its own
+governing artifact.** `uq_math.py:129-137`, verbatim: *"THE THRESHOLD BELOW IS A CODIFICATION, NOT A
+REPO DECISION, AND IS FLAGGED AS SUCH. The predeclared rule is qualitative … and **no number was ever
+recorded for it**. `2.0` is **chosen** … still recorded as **SET by this lane** rather than inherited
+… a codification with an owner and a date, **not a fact recovered from the record**."* So *"fixed in
+code"* describes **where the number lives, not whether it is justified** — the conflation `θ` was
+closed for.
+
+**But the conclusion survives on ground the packet had and did not use**, and the same comment
+supplies it: `2.0` is set *"so that a shift AT the sampling floor (`1.0x`, i.e. **consistent with
+being a finite-N fluctuation**) is unambiguously below it"*, and *"it is deliberately **not tuned** to
+sit just under `4.69x` — a threshold placed to make today's answer come out right is not a
+criterion."* **That is a noise-versus-signal separation with a stated statistical derivation and an
+explicit anti-tuning disclaimer** — categorically unlike `θ`, which took a resolution figure and used
+it as an acceptance cap. The correct claim is therefore **"cause 2 introduces no NEW tolerance; it
+inherits one with a stated derivation and an owner"**, not *"not chosen"*.
+
+**16.2 ⚠ `SPEC` CONTRADICTS ITSELF on which condition the cause-4 guard enforces — verified, and it
+is a defect in the governing document, not in any packet.**
+
+- `SPEC:1010-1011`: *"**Condition 3** must be enforced by a **guard that fails** if the computed value
+  ever reaches the stored covariance, not by a one-time comparison."*
+- `SPEC:1237`, the `(4, Z)` receipt row: *"§2.4's four conditions met, **condition 4** enforced by a
+  **guard**"*.
+
+Both are `SPEC`'s own text. **"Near-identical in content" is true of the content and not of the
+attribution** — an implementer cannot resolve a specification self-contradiction by choosing, and a
+receipt row cannot be checked against a clause it miscites. On the merits `:1010` defines the guard
+while `:1237` summarises a receipt row, so `:1010` is the more defensible, **but the disposition
+belongs to the specification's owner.** This should be routed as *"`SPEC` contradicts itself"*, not
+as an ambiguity.
+
+**16.3 ⚠ `SPEC:1239` VALIDATES M-G's `n_empty` choice — which I made on other grounds, and which one
+lane's stated requirement would have violated.** The `(6, Z)` row requires *"the P4 projector
+**fail-closed** and the `(E_avail,W)` projector **count-and-report**, both censuses recorded"*, and
+names among its **falsifiers**: *"the `(E_avail,W)` projector is **'fixed' into fail-closed, breaking
+a legitimate geometry**."*
+
+I implemented `n_empty` in `project_cov_nd.py` as **recorded and warned, never raised**, reasoning
+only that a writer inventing a gate would be setting a boundary. **`SPEC` requires exactly that**, and
+had I gated it I would have tripped a named falsifier. The criteria lane's declared requirement — that
+`n_empty = 0` be *"a PASS CONDITION rather than merely recorded"* — **reconciles, but only under one
+reading**: the *projector* must count-and-report, while an *acceptance criterion* may require the
+reported count to be zero. Those are different objects and the packet should say which it means,
+because the other reading is a falsifier.
+
+**16.4 Two further requirements from the assessment, both reporting rather than tolerance.** The
+composition gap: at a ratio of `2.01` against `k = 2.0`, cause 2 returns True **and** L4 returns
+"identical across the member set" — **both pass, one perturbation from flipping, and neither is
+sensitive to how close it came.** Found independently from both sides, so it is a property of the
+composition. And the cause-4 mutation needs a **discriminator**: a mutation routing the value into the
+stored covariance also changes the digest, so a refusal would not establish *which* mechanism refused
+— assert on the guard's own message or invoke the guard directly.
