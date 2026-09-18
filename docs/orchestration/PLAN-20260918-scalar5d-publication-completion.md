@@ -58,7 +58,7 @@ the most favourable open item in the package.
 | M-M | Trunk adoption | **NOT REACHED** | — | M-F…M-L |
 | M-N | M1 product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
 | M-O | Rank-6 consumer contract | **DESIGN OPEN** | `pinv` with no `rcond`; ndf = bin count, header reads `chi2/ndf(all7)` | D3 |
-| M-P | Note/primer/paper synchronization and build | **NOT STARTED** | — | M-N |
+| M-P | Note/primer/paper synchronization and build | **BASELINE MEASURED AND GREEN** | 2026-09-18 forced rebuild: `RESULT :: PASS`, note 94pp / primer 5pp / paper 3pp, containment `0 of 10 struck literals`; standalone at `3c3e9f2`, clean, level with origin, **all 26 `.tex`/`.bib` byte-identical** | re-verification after M-N's content edits |
 
 **Ordering that matters:** M-G must land **before** M-N, because a digest retrofitted after a file
 exists records only that the file has not changed since the retrofit. M-G and M-H are mine and need
@@ -231,6 +231,19 @@ mixed seeds.
    `python3 <file>` executed **zero** tests and exited **0**. A green exit from the wrong runner is
    not a pass. Both new suites are pytest-discoverable.
 4. **Rank-6 consumer contract draft**, which D3 completes rather than starts.
+5. ~~**M-P baseline.**~~ **MEASURED, and it is green — this requirement is not a hidden blocker.**
+   A forced rebuild of all three deliverables returns `RESULT :: PASS` (note 94pp, primer 5pp,
+   paper 3pp) with the retracted-value containment check clean at *"0 of 10 struck literals"* on
+   both paper and primer. The standalone `MINERvA-OmniFold-Analysis-Note` checkout is on `main` at
+   `3c3e9f2`, clean, level with origin, and **all 26 `.tex`/`.bib` sources are byte-identical** to
+   this repository's. The PDFs are gitignored, so rebuilding does not dirty the tree.
+   ⚠ **The build script proves it did the work, and that matters here:** it forces `latexmk -g` and
+   requires every PDF to be strictly newer than a marker stamped before the run, because this script
+   once exited 0 and passed its containment check while `latexmk` said *"Nothing to do"* for all
+   three targets and validated month-old PDFs. Independently confirmed: all three files are dated
+   within a minute of the run. **What this baseline does NOT establish** is that the built content
+   is scientifically current — only that the sources compile and are synchronized. Re-verification
+   is owed after any M-N content edit.
 
 **No compute is requested by this plan.** Standing boundaries hold: any single job under 12 h is
 pre-authorized, but nothing here launches one; the no-automatic-retry rule and R5 accounting are
