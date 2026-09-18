@@ -1,0 +1,15 @@
+{
+  "record": "receipt binding inventory delta, 2026-09-18",
+  "before": {"count": 126, "sha256": "bff391a3333c93d3752333c8005e147d7c67c2139ef1e2eeab9fed8ab48077ed"},
+  "after": {"count": 127, "sha256": "18936e2f7b9b19d38a8a510f7069a3da0d6702105be44d630c998925a220a0b3"},
+  "rows_added": [
+    {
+      "path": "nd-unfolding/pet/direct_token_comparison/VALIDATION_CRITERIA-20260918.json",
+      "sha256": "abccd88b4665f2093bd671691298c1a00e31511afdee4a239312f856012fae27"
+    }
+  ],
+  "rows_removed": [],
+  "how_measured": "collected the receipt inventory with and without the tail-validation receipts present; the diff is exactly one row",
+  "why_it_is_correct": "The tail-validation receipts record criteria_path beside criteria_sha256, so the collector now resolves the frozen criteria file as a live binding. That is the intended mechanism: it is what makes a threshold relaxed after execution visible in the evidence. The constants were updated only after the delta was inspected and found to be this single expected row.",
+  "not_a_drift": "No existing binding was repointed or removed."
+}

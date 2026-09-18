@@ -248,3 +248,60 @@ does not depend on the property being dropped, and it quantifies what was droppe
 instead of assuming it away. It says nothing about closure, nothing about whether the
 pilot is worth running, and nothing about transfer to production. Absolute closure
 values from any later run carry a device-dependence caveat that the contrasts do not.
+
+---
+
+## 8. Outcome, 2026-09-18
+
+**Executed and stopped at the authorized limits.** Four submissions, 2,782 s = **0.773
+of the 1.5 GPU-hour ceiling**, submission cap reached.
+
+| submission | result | elapsed |
+|---|---|---:|
+| 58493028 | FAILED before measuring — `classify_cross_device` handed 42 differently-shaped tensors to `np.asarray`; counted as a retry | 41 s |
+| 58493578 | widths 0–48 blobs: **7 of 7 released** | 477 s |
+| 58494208 | widths 96–160 and the corners: 3 of 5 released | 882 s |
+| 58495932 | full 13-width ladder under the final code: **10 of 13 released** | 1,382 s |
+
+**No hard stop fired at any width.** Repeatability, checkpoint reload, mask invariance,
+finiteness, the float64 reference over all 42 weights, the duplicate-arm null and the
+cross-device tier classification all held across the whole ladder, from 0 to 160 objects
+in a family.
+
+**Tiering.** Widths at 0 and 6 objects are **tier 1** — full cross-device agreement,
+nothing exempted. From 12 objects upward they are **tier 2**: gradient agreement and
+Adam-updated-weight agreement fail while **prediction agreement and initial-weight
+identity still pass everywhere**. At 48 blobs the exempted differences are 4.96e-5
+(gradients) and 1.78e-3 (updated weights) for arm B, against 4.38e-5 and 1.68e-3 for
+arm C — the two arms failing equally, which is the same result the width gate showed.
+
+**Three widths were not released**, all on V5 alone: (0,64,2) and (2,160,12) for arm C,
+and (2,12,4) for both B and C.
+
+**The V5 failures are a step-size artifact of the check, not a wrong gradient**, and
+that is measured rather than asserted. At the worst failing coordinate (|grad| = 0.0215,
+so not a small-denominator case) the finite-difference estimate converges on the
+analytic gradient as the step shrinks:
+
+| h | numeric | relative error |
+|---:|---:|---:|
+| 3e-2 | −0.01787 | 1.69e-01 |
+| **1e-2 (frozen)** | −0.02111 | **1.84e-02** |
+| 3e-3 | −0.02147 | 1.67e-03 |
+| **1e-3** | −0.021497 | **3.14e-04** |
+| 3e-4 | −0.021531 | 1.30e-03 |
+
+The error falls as h² down to 1e-3 and then rises — textbook truncation giving way to
+cancellation. The analytic gradient is right; the frozen step of 1e-2, measured on other
+configurations, is too large where the third derivative is larger. The plateau check
+nearly caught it: the observed spread across {3e-2, 1e-2, 3e-3} was 16.8% against a 20%
+tolerance.
+
+**The criterion was not relaxed.** Releasing those three widths requires an amended
+criterion — a per-coordinate step selection rather than one global step — and that is
+Joseph's decision, not a repair I may make after seeing which widths failed.
+
+**Consequence for the pilot.** The pilot was authorized *conditional on complete
+validation of the intended range*. Validation is complete for 10 of 13 widths, so the
+condition is not met and **the pilot was not launched**. Combined with the submission
+cap being reached, this is the "exhausted limits" stop.
