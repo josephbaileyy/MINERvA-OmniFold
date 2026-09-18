@@ -50,7 +50,7 @@ the most favourable open item in the package.
 | M-E | P1 projection definitions | **DONE** | packet §4; four maps, widths, masks, C-order, orphan policy, paired central | — |
 | M-F | Cause-3 acceptance design | **DESIGNED, NOT APPROVED** | `9836a64f` + assessment `6caa1f48` | **D1, D2, D3** |
 | M-G | Projector instrumentation (OI-129 family) | **DONE (code + first tests)** | `project_cov_nd.py` 0 → 16 digest sites, **row-index array added** (it wrote none), readback required; `p4_project_4d.py` gains `proj4d_sha256` + readback, old field retained; 7 tests, mutation-verified | owning re-verification |
-| M-H | Component fingerprint writers | **GAP IDENTIFIED** | 5 of 7 components unfingerprintable: stat/ML files carry one TH2D and nothing else | nothing — mine |
+| M-H | Component fingerprint writers | **DONE (code + first tests)** | `combine_cov_nd.py` 27 → 102 lines: all nine fingerprint fields recorded (unsupplied ones as explicit `UNDECLARED`), ensemble-count scalar added, row index added, per-replica digests; 6 tests | — |
 | M-I | Registry fingerprint rule | **UNSATISFIABLE AS WRITTEN** | rejects every throw component at every `k`, including `k=0` | **D4** |
 | M-J | Lineage / two-ensemble question | **OPEN** | parent is mean-centered, `uthrow_source` 2026-08-06; pilot throw input is the 2026-09-14 precursor | `[cb0b6b]` |
 | M-K | Cause 1, 2, 4, 5, 6, 7 dispositions | **OPEN** | audit seven-cause table | per cause |
@@ -210,10 +210,26 @@ mixed seeds.
    any bin width) already performed this readback **once, by hand, for the existing products**. So
    the property holds for what exists; the code makes it automatic for what comes next. Owning
    re-verification still belongs to the standard-P4 lane.
-2. **M-H, fingerprint writers.** `uq_cov_stat_5d.root` and `uq_cov_mlsplit_5d.root` each carry one
-   `TH2D` and nothing else, so five of seven components cannot be fingerprint-checked at all — a
-   **writer** gap, not a verification gap. Add the nine fields at write time.
-3. **Narrowing the packet's universal claims** — see packet §13.
+2. ~~**M-H, fingerprint writers.**~~ **DONE.** `combine_cov_nd.py` wrote one `TH2D` and closed —
+   measured at `:23-26` — so `ESTIMATOR_REGISTRY.md:17-22`'s reject-on-mismatch rule was
+   **unexecutable** against the scalar stat and ML components: five of nine fields were *absent*,
+   not mismatched, and a rule cannot run without operands. It now records all nine, writes them
+   **into the product** as well as a sidecar, and adds the **ensemble-count scalar** the audit
+   records as missing (*"the writer still stores no ensemble-count scalar"*), the `N−1` divisor
+   convention, a row index, per-replica digests and the member id list.
+   ⚠ **The load-bearing design choice:** an unsupplied field is recorded as the literal
+   `UNDECLARED`, **not omitted**. A missing key reads as *"not checked"*; an explicit `UNDECLARED`
+   reads as *"the writer was never told"* — the same distinction the campaign draws between a
+   non-check and a failed check, and a test asserts the key is present *and* carries the sentinel.
+   Five of eight are `UNDECLARED` by default with a loud warning naming them.
+   **6 tests, passing.**
+3. ~~**Narrowing the packet's universal claims**~~ **DONE** — packet §13.
+4. **Regression state, measured 2026-09-18:** 207 existing unittest tests across the four suites
+   touching the changed files pass (`test_p4_guard_mutations` 61, `test_p4_repair` 129, and both
+   OI-136 ratchets), plus 5 pytest tests and the 13 new ones. ⚠ Recorded because it nearly went the
+   other way: `test_cml_family_completeness_fails_closed.py` is a **pytest** file, so running it as
+   `python3 <file>` executed **zero** tests and exited **0**. A green exit from the wrong runner is
+   not a pass. Both new suites are pytest-discoverable.
 4. **Rank-6 consumer contract draft**, which D3 completes rather than starts.
 
 **No compute is requested by this plan.** Standing boundaries hold: any single job under 12 h is
