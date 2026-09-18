@@ -159,7 +159,7 @@ docs/orchestration/PACKET-20260918-scalar5d-completion-inventory-and-null-route.
 docs/orchestration/PLAN-20260813-gate6-cml-retry-design.md	tracked	ARCHIVAL	plan		20260813	terminal		exact-path-only	nd-unfolding/tests/test_step1_trajectory_checkpoint_tier.py	yes	7	290	19853
 docs/orchestration/PLAN-20260822-oneMember-mii-staged.md	tracked	LIVE	plan		20260822	open		route-only		no	16	566	36555
 docs/orchestration/PLAN-20260905-prompts-11-30-reconciled-to-the-0902-decision.md	tracked	LIVE	plan		20260905	open		route-only		no	3	240	20986
-docs/orchestration/PLAN-20260918-scalar5d-publication-completion.md	tracked	LIVE	plan		20260918	open		route-only		no	3	372	29795
+docs/orchestration/PLAN-20260918-scalar5d-publication-completion.md	tracked	LIVE	plan		20260918	open		route-only		no	3	392	31295
 docs/orchestration/PLAYBOOK.md	tracked	LIVE	document			open		route-only	docs/orchestration/control_plane_lint.py	no	11	40	9074
 docs/orchestration/PORTING.md	tracked	ARCHIVAL	document			terminal		exact-path-only	docs/orchestration/test_wakerctl.py	yes	6	164	9418
 docs/orchestration/PREDECLARATION-20260808-gate4-and-d2-fraction.md	tracked	ARCHIVAL	predeclaration		20260808	terminal		exact-path-only	nd-unfolding/pet/pet_diagnostic_quarantine.py;nd-unfolding/pet/sbatch_fullevent_diagnostic_extract.sh;nd-unfolding/pet/validate_pet_nominal_gate4.py	yes	6	248	16826

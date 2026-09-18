@@ -308,6 +308,26 @@ for a new decision rather than resubmitting.
    they can differ materially.
 4. **D5** — the region is named, since the product is only useful for a claim whose region is fixed.
 
+**THE RUNNER IS WRITTEN AND CANNOT EXECUTE — `nd-unfolding/run_m1_projection.sh`.** Every
+precondition is a **refusal with its own exit code**, not a warning, because a runner that warned
+would be one careless invocation away from producing a product nobody authorized:
+
+    rc 3   no adoption record, OR a record that does not state an adoption
+    rc 4   the projector lacks proj_sha256 / hRowIndex / the readback digest
+    rc 5   the destination mask is not declared as one of the two admissible choices
+    rc 6   the product exists but its receipt does not
+
+Adoption is checked as a **record that says it adopts**, not an environment flag — a boolean would
+let anyone assert it. **9 tests** at `tests/test_run_m1_projection_refusals.py`: every mandatory
+operand refuses **by name** when unset, each refusal has a control that trips it, and a **positive
+control** proves none fires on valid input. ⚠ Two method notes are on the test's face because both
+came from mistakes made writing it: `bash -n` is necessary and not sufficient, since a *balanced*
+apostrophe pair parses cleanly while merging the assignments between it; and **my first harness was
+invalid while looking correct** — all four refusal controls returned nonzero but died at an unset
+operand *before reaching the guard under test*, which is the mutation-refused-before-reaching-the-
+guard shape, and is why each refusal now carries a distinct code and the tests assert on the code and
+the message rather than on nonzero.
+
 **Verification the run must produce, and it is already implemented rather than promised:** output
 file digest, input covariance and CV digests, `M` content digest, row index **read back out of the
 closed file** and required equal, both support censuses (`src_cells_dropped` and `n_empty`), and the
