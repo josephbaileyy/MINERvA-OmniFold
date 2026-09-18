@@ -1148,3 +1148,83 @@ row can say in the receipt:
 **What this means for ADOPT is Joseph's to weigh:** whether a trunk may be adopted with cause 3's
 criterion declared but unevaluated. It is the same shape of judgement as the §6.4 sufficiency
 question, and it is **not** a question about the covariance's numbers.
+
+---
+
+## 14. C1 — EXECUTED. Job `58530433`, and the effect's SIGN depends on band size
+
+`COMPLETED`, `ExitCode 0:0`, **`35 s`** (`0.0097` CPU task-h actual against a `0.25` reservation),
+`nid004115`. Receipt `zdet-DIAGNOSTIC-20260918/receipt_cause1_endpoint_census_5d.json`,
+schema `cause1-endpoint-census-and-magnitude/1`, `adopts_nothing: true`,
+`values_tex_untouched: true`.
+
+### 14.1 P leg — **MET**
+
+    n_bands 44    n_pm_pair_bands 42    pair_bands_missing_an_endpoint  []
+    flux_exactly_100_contiguous  TRUE
+    non_pair_bands  { 2p2h: 3, Flux: 100 }
+
+**Both census discrepancies are explained by the receipt itself, not glossed:**
+- **188 glob matches vs 187 grouped** — the one skipped file is
+  `5d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root`, and the receipt records why: production's `UNI_RE`
+  requires a trailing `_<digits>`, so **`analyze_universes_5d` skips it too** and it contributes to
+  no band. It is the CV file, correctly excluded.
+- **44 bands vs the 45-band partition** — `__Normalization_flat` is the 45th and is carried
+  unchanged in both totals (`method.counterfactual_scope`).
+
+**Positive control: `all_targets_reproduced: true`.** Reported bins `[10694, 65856]` exact; total
+syst `√tr` reconstructed `4.3514831463037644e-38` against the committed `4.3515e-38`
+(`rel_diff 3.87e-06`); median rel `13.235%` matched. **The reconstruction reproduces the committed
+production summary**, which is what makes the module's fidelity claim — it imports `load_flat`,
+`UNI_RE` and `category_for_band` from `analyze_universes_5d` rather than reimplementing them —
+load-bearing rather than decorative.
+
+### 14.2 M leg — **MEASURED.** The number `CRITERIA` says *"does not exist anywhere"* now exists
+
+**Totals:**
+
+| construction | `√tr` | vs as-built | median rel σ | vs as-built |
+|---|---|---:|---|---:|
+| **as-built** (mean-centered, `1/N`) | `4.3514831463037644e-38` | — | `13.2346%` | — |
+| one-sided, endpoint 0 | `4.610136062505377e-38` | **+5.95%** | `14.8405%` | **+1.61 pp** |
+| one-sided, endpoint 1 | `4.4878284910287366e-38` | **+3.13%** | `15.7383%` | **+2.50 pp** |
+
+**Per-band ratio distribution over the 42 pair bands** — reported as a distribution, per
+`BEN-064`, and this is where the substance is:
+
+    ep0:  min 0.6377   median 2.1016   max 2.53e22     37 of 42 above 1,  5 below
+    ep1:  min 0.6111   median 1.7843   max 2.53e22     36 of 42 above 1,  6 below
+
+⚠ **THE MAX IS A DEGENERACY, NOT AN EFFECT — and quoting it would be nonsense.** `NormDISCC` has
+`√tr_as_built = 8.043e-51`, which is **`1.85e-13` of the total**: its two endpoints essentially
+coincide, so the as-built variance is ~0 and any one-sided value divides by nothing. `EtaNCEL` is
+the same shape at `9.33e10` and `4.187e-45`. **The largest physically meaningful ratio is
+`FrPiProd_N` at `5.80`.**
+
+⭐ **AND THE FINDING THE DISTRIBUTION EXISTS TO SURFACE: the effect's SIGN depends on band size.**
+The bands that one-sided *understates* are the **largest** ones —
+
+    MaCCQE         ratio 0.6377   sqrt_tr_as_built 9.918e-39   <- among the largest bands
+    LowQ2          ratio 0.8012   sqrt_tr_as_built 4.100e-39
+    GEANT_Neutron  ratio 0.9449   sqrt_tr_as_built 1.495e-39
+
+— while the ones it overstates by large factors are negligible in trace. **That is why the total
+moves only `+5.95%` while the per-band median ratio is `~2.1×`: the understating bands carry most
+of the trace.** Quoting the total alone would have hidden that the sign is band-size-dependent;
+quoting the max would have been meaningless. Both failure modes are exactly what *"a distribution,
+not a max"* was written to prevent.
+
+### 14.3 Disposition and limits
+
+**C1's P leg is MET and its M leg is MEASURED**, which is what Joseph's ruling asked for — a
+tolerance-free disclosure. **The receipt draws its own limit and it is the right one:**
+
+> *"M MEASURED is not M ACCEPTABLE. Whether this magnitude leaves X's published numbers standing is
+> a physics-presentation judgement and is NOT taken here."*
+
+⚠ **One provenance ambiguity in the receipt, recorded rather than left for a reader to trip on.**
+Its `git` block says `head 32e403b8…, dirty true` — that is the **data repository's** state
+(`--repo`), **not the tree the code ran from**, which was the isolated worktree at `9d637cc1`. The
+binding that actually holds is `production_module_sha256 02826db1…` and
+`reader_sha256 0bb03405…`, both recorded. A reader taking `git.head` for the code revision would
+have the wrong tree — the same forked-checkout hazard this campaign has hit before.
