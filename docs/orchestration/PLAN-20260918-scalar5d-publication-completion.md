@@ -57,7 +57,7 @@ the most favourable open item in the package.
 | M-L | `ε` / null acceptance | **BLOCKED BY CONTRACT** | every route closed (packet §2.1) | Joseph's §6.4 route ruling |
 | M-M | Trunk adoption | **NOT REACHED** | — | M-F…M-L |
 | M-N | M1 product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
-| M-O | Rank-6 consumer contract | **DESIGN OPEN** | `pinv` with no `rcond`; ndf = bin count, header reads `chi2/ndf(all7)` | D3 |
+| M-O | Rank-6 consumer contract | **DRAFTED** — `CONTRACT-20260918-rank6-significance-consumer.md` | 8 declarations fixed; 6 consumer defects measured; **region dated half-prespecified, half data-selected** | **D3 + new D5** |
 | M-P | Note/primer/paper synchronization and build | **BASELINE MEASURED AND GREEN** | 2026-09-18 forced rebuild: `RESULT :: PASS`, note 94pp / primer 5pp / paper 3pp, containment `0 of 10 struck literals`; standalone at `3c3e9f2`, clean, level with origin, **all 26 `.tex`/`.bib` byte-identical** | re-verification after M-N's content edits |
 
 **Ordering that matters:** M-G must land **before** M-N, because a digest retrofitted after a file
@@ -230,7 +230,16 @@ mixed seeds.
    other way: `test_cml_family_completeness_fails_closed.py` is a **pytest** file, so running it as
    `python3 <file>` executed **zero** tests and exited **0**. A green exit from the wrong runner is
    not a pass. Both new suites are pytest-discoverable.
-4. **Rank-6 consumer contract draft**, which D3 completes rather than starts.
+4. ~~**Rank-6 consumer contract draft.**~~ **DRAFTED.** Eight declarations, six measured consumer
+   defects, and one finding that changes what the contract must contain: **the claim's region is
+   half prespecified and half data-selected.** "Open question 6" is recorded 2026-06-03, before the
+   W axis existed; `W >= 1.8` first appears in code 2026-06-09, two days after the first
+   `(E_avail,W)` excess test, and the design document says the W axis *"localizes"* the question to
+   that corner. So a *localization* claim is honest at central-value level, but a **significance on
+   the boundary the data chose** needs selection-aware treatment. **This raises D5** — a claim-scope
+   judgment, recommending option (b): quote on the prespecified `E_avail` region and keep the W
+   localization at central-value level, which requires no new methodology and is close to what the
+   paper already says.
 5. ~~**M-P baseline.**~~ **MEASURED, and it is green — this requirement is not a hidden blocker.**
    A forced rebuild of all three deliverables returns `RESULT :: PASS` (note 94pp, primer 5pp,
    paper 3pp) with the retracted-value containment check clean at *"0 of 10 struck literals"* on

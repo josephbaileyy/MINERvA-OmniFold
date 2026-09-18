@@ -2033,6 +2033,24 @@ with no error. Measured: `nd-unfolding/mii_anchor_comparator.py` is blob `a7cb2d
   the evidence and the corrections. **Nothing adopted; no compute requested.**
 
 
+### Rank-6 significance consumer — draft contract (2026-09-18)
+
+- [`CONTRACT-20260918-rank6-significance-consumer.md`](CONTRACT-20260918-rank6-significance-consumer.md)
+  - **DRAFT FOR APPROVAL — no significance computed, nothing adopted, neither existing consumer
+  run.** The eight declarations that must be fixed before the deferred `(E_avail, W)` significance
+  can be produced. ⚠ **Its central finding is dated from the repository: the claim's region is HALF
+  prespecified and HALF data-selected.** "Open question 6" — the high-`E_avail` excess as a
+  *question* — is recorded 2026-06-03 (`de84c61e`), before the W axis existed; the first
+  `(E_avail,W)` excess test ran 2026-06-07 (`95ce2950`); and **`W >= 1.8` first appears in code
+  2026-06-09** (`b64cf582`), two days later, with `HIGHER_DIM_OMNIFOLD_DESIGN.md:169` stating that
+  the W axis *"localizes open question 6 to the high-W DIS corner."* Also measures that the two
+  existing consumers use **different** `E_avail` cuts (`>= 0.8`, 3 of 7 bins, versus `>= 0.4`,
+  4 of 7) and that `eavailW_covariance.py:545`'s comment misstates its own W selection as four bins
+  where the code takes three. Raises **D5**, a claim-scope judgment for Joseph, recommending the
+  significance be quoted on the prespecified `E_avail` region with the W localization kept at
+  central-value level. Companion to [`PLAN-20260918-…`](PLAN-20260918-scalar5d-publication-completion.md).
+
+
 ## Regenerate
 
 ```bash
