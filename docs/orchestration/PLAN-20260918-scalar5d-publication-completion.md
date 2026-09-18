@@ -1278,3 +1278,145 @@ projected from the **adopted** trunk and `:30` quarantines the existing one. The
 Total actual **`0.070` CPU task-h**, against headroom `403.66` and a stop date of `2026-09-30`. Both
 runs were admitted against a fresh receipt before submission, with outstanding reservations counted.
 **Joseph's `0.25` cap on the determinism submission was respected and the run came in at 22% of it.**
+
+
+---
+
+## 17. `τ`'s DEFINITION, completed on the diagnostic product — and `N` is NOT the only missing input
+
+Joseph, 2026-09-18: *"Do not treat D3's `N` as the sole missing input to `τ`. Complete the proposed
+calculation's definition using the existing diagnostic product: name the tested claim and region,
+generator residual, correlation reference and drift norm, admissible covariance changes,
+retained-subspace rule, and null-distribution justification."*
+
+He is right that `N` was not the only gap. **Seven inputs are required and `N` is one of them.**
+Three are now measured, one is a declaration I can make, and **three are genuinely absent** — one of
+which I had never named at all.
+
+### 17.0 ⚠ FIRST, A CORRECTION THAT CHANGES THE WHOLE ANALYSIS: the claim uses a 12×12, not the 42×42
+
+`eavailW_covariance.py:556-559` — `cidx` selects the corner and the χ² is
+`pinv(C_total[np.ix_(cidx, cidx)])`. **The corner is 4 `E_avail` bins × 3 `W` bins = 12 of 42
+cells**, dense indices `[21,22,23,27,28,29,33,34,35,39,40,41]`. My §16.1a rank discussion was about
+the 42×42, which the claim never inverts. Measured on the **corner sub-block** of the diagnostic
+product — all 12 rows present, none missing:
+
+| | 42×42 (not used by the claim) | **12×12 corner (used)** |
+|---|---|---|
+| `λ_max` | `1.488215e-77` | `1.352623e-79` |
+| `λ_min` | `4.359104e-92` | `3.403095e-89` |
+| `λ_min/λ_max` | `2.93e-15` | **`2.52e-10`** |
+| condition number | `≈ 3.4e14` — edge of double precision | **`≈ 3.98e9` — comfortably inside it** |
+| `n_negative` | 0 | 0 |
+| rank at `rc ≤ 1e-10` | 32 → 42, no plateau | **12 (full) and STABLE** |
+| `numpy.matrix_rank` default | 41 | **12** |
+
+**On the object the claim actually uses, the matrix is full rank and five orders of magnitude
+better conditioned.** Rank is `12` for every cutoff from `1e-10` down to `0`, and numpy's default
+agrees — so unlike the 42×42, here the numerical rank **is** stable over the plausible range. The
+spectrum is `1.00, 2.08e-1, 6.04e-2, 3.00e-2, 1.09e-2, 4.69e-4, 1.91e-6, 1.31e-7, 1.67e-8, 7.87e-10,
+4.37e-10, 2.52e-10` — soft structure after the fifth, but no rank deficiency.
+
+Relative standard deviations on the corner: **min 2.88%, median 5.81%, max 12.41%** — physically
+sane, and the scale `√tr = 4.208e-40` with `Σ CV = 1.428e-38`.
+
+### 17.1 The seven inputs, with their status
+
+| # | input | status |
+|---|---|---|
+| 1 | **Tested claim and region** | **DECLARATION — D5, Joseph's.** The claim is `main_paper.tex:49-51`. The region as coded is the 12-cell corner, and `W ≥ 1.8` is **data-selected** (enters code 2026-06-09, two days after the 06-07 excess test; the design doc says the W axis *"localizes"*). The `E_avail` half is prespecified (2026-06-03). |
+| 2 | **Generator residual** `r = y_data − y_gen` on the region | ⚠ **ABSENT, and I had never named it.** `y_data = hCV_marginal` is in the diagnostic product (`Σ = 1.428e-38` on the corner). **`y_gen` is not.** `eavailW_covariance.py:563-572` builds `gen_hists` keyed by tag — in the module `AGENTS.md:30` quarantines. So the residual needs generator predictions projected onto the same 12 cells by the same `M`, which is a **new input**, not a decision. |
+| 3 | **Correlation reference** `R₀` | **COMPUTABLE NOW.** `R₀ = D^{-1/2} C_corner D^{-1/2}` from the diagnostic product. Reference member = `k = 0`, the archive. |
+| 4 | **Drift norm** ‖·‖ | **DECLARATION, and the choice is not cosmetic** — see §17.2. |
+| 5 | **Admissible covariance changes** | The cause-3 member family: `{C_k}` over the estimator-seed sweep, **diagonal** family, group assignment `{arms 1–4: 42, arms 5–7: 1000}` (D1). So `τ` bounds drift over *that architecture only* — D1's declared scope limit carries into `τ`'s meaning. **Members are not built** (cause 3 `status: UNRESOLVED`). |
+| 6 | **Retained-subspace rule** | **DECLARATION, but §17.0 makes it easy:** full rank 12, stable for every cutoff `≤ 1e-8`. **Recommend: no truncation, `rcond` declared at `1e-10`,** which is four orders below the smallest retained eigenvalue and four above machine noise. |
+| 7 | **`N`, the claim threshold** | **DECLARATION — D3, Joseph's.** Recommended `3` (§2, D3). |
+
+**Plus the null-distribution justification**, which is not an input so much as an argument, and is the
+weakest link — §17.4.
+
+### 17.2 The drift norm, and why a generic matrix norm is the wrong instrument
+
+The claim depends on the correlation matrix **only through** `χ² = rᵀ C⁺ r` on the 12 cells. So the
+perturbation that matters is not ‖`R_k − R₀`‖ in any norm, but the induced change in that scalar.
+A generic Frobenius or spectral norm is a **proxy** whose relationship to `Δχ²` depends on where `r`
+points relative to `C`'s eigenvectors.
+
+**Recommendation: define the drift in the quantity the claim uses, not in a proxy.**
+
+    delta_k  =  | chi2(r, C_k)  -  chi2(r, C_0) |  /  chi2(r, C_0)
+
+with `r` and the retained subspace **fixed from the reference**. Then `τ` is a bound on `delta_k`
+directly, and no norm-to-significance transfer argument is needed. If a matrix norm is wanted for
+reporting, quote the spectral norm of `R_k − R₀` **alongside** and label it descriptive.
+
+⚠ This is a **change to what I proposed in §2, D3**, and it is the better construction: my earlier
+wording bounded *"projected-correlation movement"* in an unnamed norm and then transferred to
+significance. Naming the norm as the significance itself removes the transfer.
+
+### 17.3 How the inputs yield a bound — and the two cases I had not handled
+
+Given region, `r`, subspace rule, family and `N`:
+
+1. Compute `S₀ = Z(χ²(r, C₀), ndf)` on the reference member.
+2. For each member `k`, compute `S_k` with `r` and the subspace **held fixed**.
+3. `τ` is the largest `delta` such that every member with `delta_k ≤ delta` keeps `S_k ≥ N`.
+
+**CASE A — the reference is already below `N` (`S₀ < N`).** Then **`τ` is vacuous and must not be
+computed.** There is no "movement that would flip the conclusion" because the conclusion is already
+the null one, and any `τ` derived from a sub-threshold reference would be a bound on nothing. The
+correct action is to **narrow the claim** — which is what `main_paper.tex` already does by calling
+the localization *"a central-value result"* whose significance awaits the covariance. My §2 framing
+silently assumed `S₀ ≥ N` and had no branch for this; **it is the more likely case on a 12-cell χ²
+with median 5.8% uncertainties**, and it must be checked before `τ` is defined rather than after.
+
+**CASE B — the retained rank changes across members.** Then `S_k` and `S₀` have different `ndf`,
+their thresholds differ, and the comparison is not well posed — a member could "fail" `τ` purely by
+changing dimension. **Recommend eliminating the case by construction: fix the retained subspace on
+the reference member and project every member onto it.** Rank is then constant, drift is measured in
+one basis, and a member whose own spectrum would truncate differently is still compared on equal
+terms. §17.0's measurement makes this cheap: the reference is full rank 12, so the fixed subspace is
+the whole space and no truncation happens at all.
+
+### 17.4 Retrospective sensitivity ≠ prospectively justified acceptance criterion
+
+**These are two different deliverables and cause 3 has been conflating them. So have I.**
+
+| | retrospective sensitivity measurement | prospective acceptance criterion |
+|---|---|---|
+| what it is | report `max_k delta_k` and the observed spread of `S_k` | declare `τ` in advance, then test |
+| needs a threshold? | **No** | Yes, and it must be justified |
+| contaminable by the result? | No — it *is* the result | **Yes, if `τ` is set after seeing `S₀`** |
+| what it licenses | *"the estimator-seed choice moves the significance by X"* — a stated limitation | *"cause 3 is MET"* |
+| status | **available as soon as the members exist**; needs no decision from Joseph | needs inputs 1, 4, 7 declared first |
+
+⚠ **AND THE PROBLEM WITH MY OWN PROPOSAL, stated plainly.** Deriving `τ` from *"what would keep
+`S₀` above `N`"* reads the reference significance. If `S₀ = 4.5σ` and `N = 3`, `τ` comes out large;
+if `S₀ = 3.2σ`, `τ` comes out tiny. **So `τ` scales with how favourable the observed result is** —
+which is deriving an acceptance tolerance from a favourable observed result, exactly what the
+standing instruction forbids. My §2 D3 entry called this *"non-circular"*; **that was wrong** and it
+is withdrawn as written.
+
+**A prospectively clean alternative, recommended:** declare `τ` from a **precision** requirement
+that does not reference the generator comparison at all — e.g. *the estimator-seed choice must not
+change the quoted relative uncertainty on the corner's integral by more than `X`%*. That is a
+statement about the measurement's own stability, is declarable before any member exists, and cannot
+scale with whether the generator happens to disagree. `X` is still a scientific number and still
+Joseph's, but it is the **right kind** of number: a precision tolerance, not a conclusion-preservation
+tolerance.
+
+**The conclusion-flip calculation remains worth doing — as the retrospective leg**, reported as a
+sensitivity, labelled as such, and not used as the acceptance test.
+
+### 17.5 What is therefore needed, in order
+
+1. **`y_gen` on the 12 corner cells**, projected by the same `M`. A new input, not a decision. Until
+   it exists **no residual, no `χ²`, no `S₀`, and no `τ` of either kind** can be computed — which is
+   why `N` was never the only gap.
+2. **D5** — the region. Recommendation unchanged: the prespecified `E_avail` region, keeping the `W`
+   localization at central-value level.
+3. **D3 restated** — not *"name `N`"* alone, but: declare `N` **and** choose between the
+   precision-based `τ` (recommended) and the conclusion-flip `τ` (retrospective only).
+4. **The cause-3 members**, which do not exist; cause 3's own requirement line says *"build all
+   members"*.
+5. `rcond = 1e-10` and the fixed-subspace rule — **mine to declare, and declared here.**
