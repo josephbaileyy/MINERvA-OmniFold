@@ -58,7 +58,7 @@ the most favourable open item in the package.
 | M-M | Trunk adoption | **NOT REACHED** | — | M-F…M-L |
 | M-N | M1 product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
 | M-O | Rank-6 consumer contract **and the consumer itself** | **CONTRACT DRAFTED + CODE WRITTEN** | `rank6_significance.py`: five declaration refusals with distinct codes, ndf from the **retained rank**, truncation scan, region as an explicit declaration; **19 tests, both key guards mutation-verified** | **D3 + D5** supply the two values; the CLI payload path is deliberately unwired |
-| M-P | Note/primer/paper synchronization and build | **BASELINE MEASURED AND GREEN** | 2026-09-18 forced rebuild: `RESULT :: PASS`, note 94pp / primer 5pp / paper 3pp, containment `0 of 10 struck literals`; standalone at `3c3e9f2`, clean, level with origin, **all 26 `.tex`/`.bib` byte-identical** | re-verification after M-N's content edits |
+| M-P | Note/primer/paper synchronization, build, **and retracted-value containment** | **BASELINE MEASURED AND GREEN, containment gate verified covering all three** | 2026-09-18 forced rebuild: `RESULT :: PASS`, note 94pp / primer 5pp / paper 3pp, containment `0 of 10 struck literals`; standalone at `3c3e9f2`, clean, level with origin, **all 26 `.tex`/`.bib` byte-identical** | re-verification after M-N's content edits |
 
 **Ordering that matters:** M-G must land **before** M-N, because a digest retrofitted after a file
 exists records only that the file has not changed since the retrofit. M-G and M-H are mine and need
@@ -433,3 +433,43 @@ spectrum, because an exactly rank-deficient matrix yields a *constant* retained 
 plausible `rcond` and the scan would demonstrate nothing. My first attempt at the second mutation was
 also invalid — it broke class definition, so it errored at collection rather than failing a test,
 which is the mutation-refused-before-reaching-the-guard shape a third time in this session.
+
+
+---
+
+## 8. M-P's containment gate — I went looking for a gap and there is none
+
+I suspected the retracted-value containment check covered only the paper and primer, because those
+are the two lines the build printed. **It covers all three, and the note's coverage is the part that
+makes it sound.** Measured by running `check_dead_containment.py` directly:
+
+    ok  note:   18 \dead{} uses across app_statmethods.tex
+    ok  paper:  clean, 0 \dead{} in a 3-file closure
+    ok  primer: clean, 0 \dead{} in a 4-file closure
+    ok  note.pdf carries 10/10 struck literals   (POSITIVE CONTROL OK)
+    ok  paper.pdf:  0 of 10 struck literals
+    ok  primer.pdf: 0 of 10 struck literals
+    SELF-TEST :: PASS      11 positive cases, 4 negative controls
+    RESULT :: PASS
+
+**The design is the right one and states why in its own source** (`:23-26`): retracted values must
+reach the **note** build only — it is the archival document that records them *as retracted* — while
+the paper and primer must carry none. So the note is not exempt; it is the **positive control**,
+because *"a test that only asserted absence would pass if `\dead{}` vanished from the repo entirely,
+or if the note quietly stopped marking its retractions."* And the regex is power-tested **before** its
+verdict is trusted, including against a demonstrated evasion.
+
+**Two coverage limits the checker discloses about itself**, both of which I would otherwise have had
+to find:
+- *"`GATED_NW_MACROS` is EMPTY — the gated-macro check is **inert by declaration, not passing on
+  evidence**."* An empty-population check that refuses to report itself green.
+- *"the PDF stage does **NOT** cover 2 `\dead{}` bodies — no decimal literal, or none with ≥3
+  significant digits, so **only the source check guards these**: `0.069`, `≈70%`."* Named, with the
+  reason: under three significant figures a literal is indistinguishable from an axis tick in a
+  rendered PDF.
+
+**So M-P is in better shape than I characterised it.** I had written that the note's content *"cannot
+be re-verified"*; the accurate statement is narrower: **content cannot be checked against dispositions
+not yet made, but the retracted-value containment is verified, green, power-tested and covers all
+three documents.** After adoption, M-P is re-running a working gate over changed content — not a
+verification built from nothing.
