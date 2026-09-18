@@ -236,3 +236,76 @@ class TheFiveDimensionalKernelMustBeTheOneCalled(unittest.TestCase):
         b = (REPO / "nd-unfolding" / "compare_unified_throw.py").read_text()
         self.assertIn("td_cols[:len(edges)]", b)
         self.assertNotIn("td_W", b)
+
+
+class CheckpointAndEndpointAreReportedSEPARATELY(unittest.TestCase):
+    """Two observables, two questions, and no mechanism offered for either.
+
+    ⚠ An earlier version of the probe's docstring attached a CAUSE to each outcome branch: a
+    first-evaluation mismatch "means threading", a later one "means the estimator is reproducible
+    and pinning would not fix it", agreement "means r_null arises outside this path". All three
+    were unsupported:
+
+      * a mismatch at any checkpoint establishes disagreement in THAT execution, not its cause --
+        thread scheduling, memory layout and library dispatch are all consistent with it and this
+        probe separates none of them;
+      * later fits DO NOT share inputs with earlier ones (iteration `it`s step-1 weights carry
+        `w_push` from `it-1`, omnifold_nn_core.py:253), so a late first-divergence localises where
+        a difference became VISIBLE, not where it arose -- and the regressor branch is unobserved;
+      * agreement in one pair means NOT REPRODUCED, which is consistent with an intermittent
+        nondeterminism and does not justify a documentation-only repair.
+    """
+
+    def test_the_record_separates_the_two_observables(self):
+        src = PROBE.read_text()
+        self.assertIn('"reported_separately"', src)
+        self.assertIn("checkpoint_divergence", src)
+        self.assertIn("endpoint_agreement", src)
+
+    def test_no_causal_attribution_is_offered(self):
+        src = PROBE.read_text()
+        self.assertIn("causal_attribution", src)
+        self.assertIn("NONE IS OFFERED", src)
+        self.assertIn("provisional", src)
+
+    def test_the_withdrawn_causal_branches_are_replaced_by_their_denials(self):
+        """⚠ THIS TEST WAS WRONG TWICE AND THE SECOND WAY IS THE INSTRUCTIVE ONE.
+
+        It banned the substrings of the three withdrawn claims. But "the estimator is reproducible
+        and" occurs INSIDE ITS OWN DENIAL -- "does NOT prove the estimator is reproducible and does
+        NOT exclude pinning" -- so the ban fired on the corrected text. A substring ban cannot
+        distinguish an assertion from its negation, and tightening the pattern would only move the
+        problem.
+
+        The real property is that the DENIALS are present, which is strictly stronger than the
+        affirmatives being absent: a document that says neither would pass a ban and fails this.
+        """
+        import re
+        src = re.sub(r"\s+", " ", PROBE.read_text())
+        self.assertIn("does NOT establish threading as the cause", src)
+        self.assertIn("does NOT prove the estimator is reproducible and does NOT exclude pinning",
+                      src)
+        self.assertIn("means THE DISCREPANCY WAS NOT REPRODUCED", src)
+        # And the one affirmative that has no legitimate negated form here.
+        self.assertNotIn("points at data-dependent threading", src)
+
+    def test_agreement_is_described_as_not_reproduced(self):
+        """⚠ Whitespace-normalised before matching. This test first failed on correct source,
+        because the sentence wraps across a line break and a grep's unit is the LINE while a
+        sentence's is not. Join continuation lines before matching, always."""
+        import re
+        src = re.sub(r"\s+", " ", PROBE.read_text())
+        self.assertIn("NOT REPRODUCED", src)
+        self.assertIn("does NOT justify a documentation-only repair", src)
+
+    def test_the_input_carryover_is_stated_with_its_line(self):
+        """The reason a late divergence does not localise the origin. Whitespace-normalised."""
+        import re
+        src = re.sub(r"\s+", " ", PROBE.read_text())
+        self.assertIn("omnifold_nn_core.py:253", src)
+        self.assertIn("DO NOT HAVE THE SAME", src)
+
+    def test_the_carryover_citation_is_true_of_the_loop(self):
+        """Checked against the loop, not asserted."""
+        loop = (REPO / "nd-unfolding" / "omnifold_nn_core.py").read_text().splitlines()
+        self.assertIn("w_push[pass_reco]", loop[252])   # 1-indexed :253

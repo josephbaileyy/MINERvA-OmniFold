@@ -1329,7 +1329,7 @@ sane, and the scale `√tr = 4.208e-40` with `Σ CV = 1.428e-38`.
 | 3 | **Correlation reference** `R₀` | **COMPUTABLE NOW.** `R₀ = D^{-1/2} C_corner D^{-1/2}` from the diagnostic product. Reference member = `k = 0`, the archive. |
 | 4 | **Drift norm** ‖·‖ | **DECLARATION, and the choice is not cosmetic** — see §17.2. |
 | 5 | **Admissible covariance changes** | The cause-3 member family: `{C_k}` over the estimator-seed sweep, **diagonal** family, group assignment `{arms 1–4: 42, arms 5–7: 1000}` (D1). So `τ` bounds drift over *that architecture only* — D1's declared scope limit carries into `τ`'s meaning. **Members are not built** (cause 3 `status: UNRESOLVED`). |
-| 6 | **Retained-subspace rule** | **DECLARATION, but §17.0 makes it easy:** full rank 12, stable for every cutoff `≤ 1e-8`. **Recommend: no truncation, `rcond` declared at `1e-10`,** which is four orders below the smallest retained eigenvalue and four above machine noise. |
+| 6 | **Retained-subspace rule** | **DECLARATION. ⚠ MY FIRST ANSWER HERE WAS NUMERICALLY WRONG TWICE — corrected in §19.1. Recommend `rcond = 1e-5`, retained rank 6**, chosen at the spectrum's widest gap. |
 | 7 | **`N`, the claim threshold** | **DECLARATION — D3, Joseph's.** Recommended `3` (§2, D3). |
 
 **Plus the null-distribution justification**, which is not an input so much as an argument, and is the
@@ -1548,3 +1548,177 @@ exit 0**, and the exit code was the *local* `ssh` wrapper's, not the remote loop
 must be read as **BLIND**, never as completion — so I re-measured the state directly, which is how
 the `FAILED` was found. The replacement waiter prints `BLIND_NO_ROWS` explicitly when `sacct`
 returns nothing.
+
+
+---
+
+## 19. CORRECTIONS AND THE COMPLETED D3/D5 RECOMMENDATION — 2026-09-18
+
+Prepared independently of job `58524334`, whose outcome informs **reproducibility remedies** and
+neither the scientific region nor the acceptable precision loss.
+
+### 19.1 ⚠ §17.1's retained-subspace recommendation was numerically wrong in two ways
+
+I wrote: *"full rank 12, stable for every cutoff `≤ 1e-8`. Recommend `rcond = 1e-10`, four orders
+below the smallest retained eigenvalue and four above machine noise."* **Both numerical claims are
+false against the spectrum I had already measured and printed.**
+
+| `rcond` | rank | smallest retained `λ/λ_max` | margin above cutoff | largest excluded | margin below |
+|---|---:|---|---:|---|---:|
+| `1e-2` | 5 | `1.09e-2` | **1.09×** | `4.69e-4` | 21.3× |
+| `1e-3` | 5 | `1.09e-2` | 10.9× | `4.69e-4` | 2.1× |
+| **`1e-5`** | **6** | **`4.69e-4`** | **46.9×** | **`1.91e-6`** | **5.2×** |
+| `1e-6` | 7 | `1.91e-6` | 1.91× | `1.31e-7` | 7.6× |
+| `1e-8` | **9** | `1.67e-8` | 1.67× | `7.87e-10` | 12.7× |
+| `1e-10` | 12 | `2.52e-10` | **2.52×** | — | — |
+
+**Error 1:** rank is **9** at `1e-8`, not 12. Full rank needs `rcond ≤ 1e-10`, so "stable for every
+cutoff `≤ 1e-8`" is simply untrue.
+**Error 2:** at `rcond = 1e-10` the smallest retained eigenvalue ratio is `2.52e-10` — a margin of
+**2.52×**, not "four orders". I was out by about nine orders of magnitude, against a table I had
+printed myself one section earlier.
+
+**The spectrum has a principled cut and it is not at full rank.** Consecutive gap ratios:
+
+    mode 1->2  4.8x   2->3  3.4x   3->4  2.0x   4->5  2.8x   5->6  23.2x
+    mode 6->7  245.5x  7->8 14.6x  8->9  7.8x   9->10 21.2x  10->11 1.8x  11->12 1.7x
+
+**The widest gap by an order of magnitude is `245.5×`, between modes 6 and 7.**
+
+**RECOMMEND: `rcond = 1e-5`, retained rank 6.** It is the only choice with comfortable separation on
+both sides — `46.9×` above the cutoff and `5.2×` below — and it sits in the one place the spectrum
+itself distinguishes. Full rank 12 is the *worst* available choice on this criterion: modes 10–12 are
+separated from each other by only `1.8×` and `1.7×`, so they are not numerically distinguishable
+directions at all, and retaining them puts the statistic's most `C⁻¹`-sensitive content in the
+degenerate tail.
+
+⚠ **"Rank 6" here is a NUMERICAL RANK and has nothing to do with `rank6_significance.py`**, whose
+name refers to the audit's rank-6 *finding label*. The coincidence is noted so the two cannot be
+read as confirming each other.
+
+### 19.2 ⚠ A fixed reference basis does NOT prevent member-wise mode loss
+
+I claimed fixing the subspace on the reference member makes rank constant by construction. **It does
+not.** Restricting to a fixed basis `U₆` still requires inverting `U₆ᵀ C_k U₆` for each member, and
+if that restricted matrix has an eigenvalue below the cutoff, a pseudoinverse drops it. Rank can
+still vary member-wise, and with a `46.9×` margin on the reference it is not guaranteed to survive a
+perturbation.
+
+**Recommend a two-part rule that removes the per-member inversion entirely:**
+
+1. **STATISTIC — first-order perturbation about the reference, no member-wise pseudoinverse.**
+
+       delta_k  =  | r^T C_0^+ (C_k - C_0) C_0^+ r |  /  ( r^T C_0^+ r )
+
+   with `C₀⁺` the **single** rank-6 pseudoinverse of the reference and `r` fixed. Every member is
+   evaluated with the same inverse, so no member can drop a mode and no rank can change. **Stated
+   as first-order:** it is the leading term of `Δχ²`, valid while `‖C₀⁺(C_k − C₀)‖ ≪ 1`, and that
+   condition is itself reported per member rather than assumed.
+
+2. **GATE — a member whose restricted spectrum falls below the cutoff is `UNASSESSABLE`, not
+   truncated and not silently dropped.** If `λ_min(U₆ᵀ C_k U₆) / λ_max(U₆ᵀ C₀ U₆) < rcond`, the
+   first-order expansion is not trustworthy for that member; record it as unassessable **with a
+   count**, exactly as `z_validator.py:15` treats an unassessable run: *"An unassessable run is a
+   REJECT, NOT A FOURTH GRADE TOKEN."* A nonzero count is itself a finding about the member family
+   and must not be absorbed into a pass.
+
+### 19.3 The two calculations are SEPARATE, and only one needs `y_gen`
+
+⚠ **I had said `y_gen`'s absence blocked everything. It does not.** It blocks exactly one of the two.
+
+| | retrospective significance | **precision criterion** |
+|---|---|---|
+| question | does the generator disagree, and how significantly? | does the estimator-seed choice degrade the measurement's own precision? |
+| needs `y_gen` | **YES** — it is `r = y_data − y_gen` | **NO** |
+| needs `N` (D3) | yes | no |
+| needs the region (D5) | yes | yes, to define the integral's support |
+| needs the members | yes | yes |
+| computable on the existing product today | **no** | **yes, apart from the members** |
+| contaminable by a favourable result | yes, if `τ` is derived from it | no |
+
+### 19.4 The precision criterion, fully specified
+
+**The quantity.** The corner's integrated cross section and its uncertainty.
+
+    I_0   =  sum_{i in R}  w_i * y_i^(0)           <- FIXED denominator, reference member only
+    sigma_k =  sqrt( w^T C_k w )                    <- numerator varies with the member
+    rho_k =  sigma_k / I_0
+
+**The weights `w_i` are bin volumes in the kept axes**, `w_i = Δ(E_avail)_i · Δ(W)_i`, and this is
+not a convention — the projected object **is a differential density**. The M1 receipt states it:
+*"entries are the product of the DROPPED axes' bin widths, so the destination is a DIFFERENTIAL
+DENSITY in the kept axes."* So integrating requires multiplying the kept-axis widths back. Omitting
+them would silently weight the corner's four `E_avail` bins by their *shape* rather than their
+content; their widths are `0.4, 0.7, 1.5, 97.0` GeV from `AXIS_EDGES`, i.e. they differ by more than
+two orders of magnitude, so this is a large effect and not a refinement.
+
+**The denominator is FIXED at the reference member's `I₀`** and never recomputed per member.
+Otherwise a member that moves the central value changes numerator and denominator together and
+`ρ_k` moves for two reasons at once — which would make the criterion insensitive to exactly the
+correlated case it exists to catch.
+
+**"X%" — DECLARED as a relative change in the uncertainty, not a percentage-point change:**
+
+    RECOMMENDED FORM:   | sigma_k - sigma_0 | / sigma_0   <=  X        (X is a fraction of sigma)
+    REJECTED FORM:      | rho_k - rho_0 |                 <=  X  pp
+
+**Why the relative form.** A percentage-point tolerance has a *different stringency* depending on
+how large `ρ₀` happens to be: `0.5` pp is loose at `ρ₀ = 20%` and tight at `ρ₀ = 2%`. So a pp
+criterion embeds the observed `ρ₀` into its own strictness — the same contamination shape that made
+the conclusion-flip `τ` unacceptable. The relative form is scale-free in the central value and
+therefore unaffected by whatever `I₀` D5's region choice produces.
+⚠ **Residual, stated rather than hidden:** the relative form still normalises by `σ₀`, a reference
+quantity. It is clean on the axis that matters — `σ₀` knows nothing about the generator — but `X`'s
+absolute stringency is relative to the reference uncertainty, and that is inherent to any relative
+tolerance rather than a defect of this one.
+
+**Measured context for choosing `X`:** on the diagnostic product the corner's per-bin relative
+standard deviations are **min 2.88%, median 5.81%, max 12.41%**. These are the measurement's own
+precision, reported so `X` can be set against it; **`X` itself remains Joseph's.**
+
+**SCOPE — and this is a hard limit, not a caveat.** `wᵀ C w` is **one scalar functional** of a
+matrix with `12·13/2 = 78` independent entries. A criterion on it constrains **one direction** in a
+78-dimensional space; `C` can change arbitrarily in the other 77 with `wᵀ C w` exactly fixed. In
+particular:
+
+- **it cannot establish stability of the full covariance.** The correlation structure is free to
+  move while the integral's variance does not.
+- **it cannot establish stability of the 12-cell significance.** That depends on `C⁻¹` contracted
+  with `r`, which is dominated by the **smallest** retained eigenvalues, while `wᵀ C w` is dominated
+  by the **largest**. The two functionals weight the spectrum in opposite directions.
+- So the precision criterion is **necessary, not sufficient**, and it belongs to the same family
+  `SPEC` §3.7d already flags: *"Both adopted statistics are functions of the diagonal alone, so a
+  MET result on them licenses nothing about `C_Z`'s off-diagonal structure."* This one is better —
+  `wᵀ C w` does carry off-diagonal terms — but it is still **one number**, and a MET result on it
+  licenses nothing about the significance.
+
+### 19.5 The consolidated D3 / D5 recommendation
+
+**D5 — the region. RECOMMEND: quote on the prespecified `E_avail` region; keep the `W` localization
+at central-value level.** Unchanged, and the supporting facts are now measured: the corner as coded
+is 12 of 42 cells, `W ≥ 1.8` selects three `W` bins, and that boundary **enters code 2026-06-09, two
+days after the first `(E_avail,W)` excess test**, while the `E_avail` question is prespecified
+`2026-06-03`. A significance on a boundary the data chose needs selection-aware calibration; a
+*localization* statement at central-value level does not. This is what `main_paper.tex:49-51` already
+says, so the recommendation costs no claim.
+
+**D3 — restated, because "name `N`" was the wrong request.** Three declarations, not one:
+
+1. **`N = 3`** for the retrospective significance, if and when `y_gen` exists. Justification
+   unchanged (§2 D3): 5σ is the discovery convention and is the wrong instrument for a
+   generator-comparison claim; 2σ is below print threshold. ⚠ **Conditional on D5 as recommended** —
+   3σ on a data-selected boundary is not predeclared.
+2. **The acceptance criterion is the PRECISION criterion of §19.4, not the conclusion-flip `τ`.**
+   The conclusion-flip calculation is retained as a **labelled retrospective sensitivity**. This is
+   the substantive change from my §2 entry, and the reason is that deriving `τ` from what keeps `S₀`
+   above `N` reads the reference significance and therefore scales with how favourable the result is.
+3. **`X`** — the relative-uncertainty tolerance, against a measured median of `5.81%`.
+
+**Engineering choices I am making and recording, not asking about:** `rcond = 1e-5` with retained
+rank 6 (§19.1); the first-order statistic with a single reference pseudoinverse and an
+`UNASSESSABLE` gate (§19.2); bin-volume weights and a fixed `I₀` (§19.4); and the destination mask
+`receiving-cells`.
+
+**Still blocked, and by what:** the retrospective leg on `y_gen`; both legs on the cause-3 members,
+which do not exist (`status: UNRESOLVED`, requirement *"build all members"*); and `X` and `N` on
+Joseph. **Pinning and P2 remain unresolved pending `58524334` and are not decided here.**

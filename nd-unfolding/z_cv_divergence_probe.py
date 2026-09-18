@@ -39,20 +39,35 @@ PRODUCTION-FAITHFUL, ITEM BY ITEM:
                      landed before anything is computed
   iterations         `--iters`, defaulting to 5, the production value
 
-WHAT EITHER OUTCOME CHANGES, stated before the allocation is spent:
-  * FIRST DIVERGENCE AT THE FIRST CLASSIFIER EVALUATION -> the estimator itself is
-    non-reproducible on production inputs at a fixed seed. That contradicts the synthetic fixture
-    result (58509947), which makes the DIFFERENCE between the two regimes the finding, and points
-    at data-dependent threading. Pinning becomes the candidate remedy and P2's design narrows to
-    one axis.
-  * FIRST DIVERGENCE LATER, after N identical evaluations -> the estimator is reproducible and
-    something downstream accumulates: the regressor branch (`use_reg`), the weight product
-    `w_pull = w_push * new_w`, or the histogram fill. Pinning the estimator would NOT fix it, and
-    the repair is local to the identified stage.
-  * NO DIVERGENCE AT ALL -> the two executions agree here and `r_null` arises outside this path
-    (the combine arithmetic, or a different invocation). The launcher's `must be zero` would then
-    be mis-scoped rather than violated.
-  All three are decision-relevant and none of them licenses adoption.
+WHAT THIS PROBE OBSERVES, AND WHAT IT DOES NOT ESTABLISH.
+⚠ REWRITTEN 2026-09-18. An earlier version of this section attached a CAUSE to each branch. All
+three attributions were unsupported and are withdrawn; what follows is what the checkpoints can
+actually carry. The probe reports TWO INDEPENDENT OBSERVABLES and no mechanism:
+
+  (A) the first checkpoint index at which the two executions differ, if any;
+  (B) whether the endpoints agree, reported SEPARATELY from (A).
+
+  * FIRST DIVERGENCE AT THE FIRST CLASSIFIER EVALUATION establishes that these two executions
+    disagreed, at that checkpoint, in this run. It does NOT establish threading as the cause.
+    Thread scheduling, memory layout, library dispatch, an uninitialised read, or any other
+    nondeterminism inside the fit are all consistent with it, and this probe separates none of
+    them. Nor does a contrast with the synthetic fixture (58509947) isolate a cause: the two
+    settings differ in data, size, feature count AND shape at once.
+  * FIRST DIVERGENCE LATER, after N identical checkpoints, does NOT prove the estimator is
+    reproducible and does NOT exclude pinning as a remedy. The later fits DO NOT HAVE THE SAME
+    INPUTS: iteration `it`s step-1 training weights carry `w_push` from iteration `it-1`
+    (`omnifold_nn_core.py:253-256`), so the first differing classifier output may reflect that
+    fit, or an earlier operation this probe does not observe -- the regressor branch, which does
+    not pass through `_reweight`, or the weight product `w_pull = w_push * new_w`. "First OBSERVED
+    divergence" is a statement about the checkpoint set, not about the first arithmetic difference.
+  * NO DIVERGENCE AT ALL means THE DISCREPANCY WAS NOT REPRODUCED in this pair. It does NOT prove
+    the historical `r_null` arose outside this path, and it does NOT justify a documentation-only
+    repair. A nondeterminism that appears in some executions and not others is fully consistent
+    with both, and one pair cannot distinguish "does not happen here" from "did not happen this
+    time".
+
+  All three are decision-relevant for NARROWING candidate mechanisms. None of them licenses
+  adoption, and none of them selects a remedy on its own. Causal explanations stay provisional.
 
 ⚠ WHAT THIS DOES NOT DO. It does not adopt anything, does not grade the pilot, does not compute a
 significance, and does not establish cross-node behaviour. It reports where two executions on one
@@ -241,6 +256,20 @@ def main():
         "call_order_basis": (
             "within iteration `it`, call 2*it is step 1 (clf1 on MCreco[pass_reco]) and call "
             "2*it+1 is step 2 (clf2 on MCgen) -- omnifold_nn_core.py:248-269"),
+        "reported_separately": {
+            "checkpoint_divergence": (
+                "`first_divergence_call_index` / `first_divergence` -- the first checkpoint at "
+                "which the two executions differ. This is a statement about the CHECKPOINT SET, "
+                "not about the first arithmetic difference."),
+            "endpoint_agreement": (
+                "`endpoint.bitwise_identical` and `endpoint.r_null` -- whether the final "
+                "cross-sections agree. Reported independently: checkpoints may differ while "
+                "endpoints agree, and the two answer different questions."),
+            "causal_attribution": (
+                "NONE IS OFFERED. This probe does not separate thread scheduling from memory "
+                "layout, library dispatch, or any other source of nondeterminism inside a fit. "
+                "Any mechanism named on the basis of this record is provisional."),
+        },
         "tested_scope": {
             "production_faithful": (
                 "real bank cv.npz (digest-verified against the precursor receipt), real weights, "
@@ -253,7 +282,13 @@ def main():
             "not_covered": (
                 "the regressor branch does not pass through `_reweight`, so a divergence "
                 "originating there is seen only at the NEXT evaluation; the histogram fill is "
-                "covered only by the endpoint; and cross-NODE behaviour is not measured at all."),
+                "covered only by the endpoint; and cross-NODE behaviour is not measured at all. "
+                "ALSO: later fits do not share inputs with earlier ones -- iteration `it`s step-1 "
+                "weights carry `w_push` from `it-1` -- so a late first-divergence does not "
+                "localise the ORIGIN of the difference, only the first place it became visible."),
+            "one_pair_only": (
+                "two executions. A nondeterminism that manifests intermittently is consistent "
+                "with agreement here, so agreement means NOT REPRODUCED rather than absent."),
             "adopts_nothing": (
                 "this grades nothing, adopts nothing, and computes no significance."),
         },
