@@ -451,7 +451,31 @@ def diagnose_native_batch(checkout: Path, tokens: int, size: str = "small") -> d
         if outcome["ran"] and largest_working is None:
             largest_working = batch
     repair_backends = [n for n, r in backends.items() if n != "default" and r.get("ran")]
+
+    # If a repair exists, TIME it. His intended configuration is batch 2048, so a
+    # repair whose throughput is unknown leaves the completion cost unknown too --
+    # the math backend materialises the full attention matrix and is not free.
+    repaired: dict[str, Any] = {}
+    if not backends["default"]["ran"] and repair_backends:
+        from torch.nn.attention import SDPBackend, sdpa_kernel
+
+        lookup = {"math": SDPBackend.MATH,
+                  "efficient_attention": SDPBackend.EFFICIENT_ATTENTION,
+                  "flash_attention": SDPBackend.FLASH_ATTENTION}
+        name = repair_backends[0]
+        try:
+            with sdpa_kernel(lookup[name]):
+                repaired = {"backend": name,
+                            **time_theirs(checkout, tokens, THEIR_BATCH, size)}
+        except Exception as exc:                      # noqa: BLE001 - recorded
+            repaired = {"backend": name, "error": f"{type(exc).__name__}: {exc}"[:400]}
+        finally:
+            torch.cuda.empty_cache()
+    elif backends["default"]["ran"]:
+        repaired = {"backend": "default", "note": "no repair needed"}
+
     return {
+        "repaired_native_throughput": repaired,
         "tokens": tokens,
         "native_batch": THEIR_BATCH,
         "native_batch_runs": backends["default"]["ran"],

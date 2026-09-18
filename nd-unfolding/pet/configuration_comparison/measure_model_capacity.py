@@ -83,6 +83,16 @@ GREGOR_OMNILEARNED = {
     "conditional": True,
     "mode": "classifier",
     "num_classes": 1,        # regression head
+    # CORRECTION 2026-09-19. These were omitted, so PET2's CLASS defaults of
+    # True/True applied -- and those are not the paper configuration. Both
+    # `--ol-interaction` and `--ol-local-interaction` are `store_true` with
+    # `default=False`, and none of the three V1-paper branches (`OLS`, `OLS_RW`,
+    # `OLM_FB`) passes either; a separate `OLS_int` branch turns them on and is not
+    # in the lineup. Capacity moves by 0.14 % (2,762,550 -> 2,758,702), so the
+    # capacity comparison is essentially unaffected -- but the interaction block is
+    # quadratic in token count, so the COST comparison was not.
+    "use_int": False,
+    "local_int": False,
 }
 
 

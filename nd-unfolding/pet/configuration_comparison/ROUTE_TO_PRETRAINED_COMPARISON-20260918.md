@@ -67,17 +67,38 @@ one item decides whether the objective is reachable.
 | 1 | preparation package: endpoint calibration, selection rule, identity contract, scope enforcement | **done, 0 GPU-h** | — |
 | 2 | **E_avail endpoint characterization** (this milestone) | **CPU only** | — |
 | 3 | **cost calibration at 12 and 33 tokens** (this milestone) | **≤0.42 GPU-h** | — |
-| 4 | Keras port of PET2-small + checks P-1…P-6 (forward, gradient, weight-update, float64, CPU) | 0 GPU-h, implementation only | — |
-| 5 | fold-forward recorder (`OI-125`), ~8 lines, new file | 0 GPU-h | — |
-| 6 | ratify U1–U8 and freeze | 0 | **Joseph** |
+| 4 | Keras port of PET2-small + checks P-1…P-6 | **DONE 2026-09-19**, 0 GPU-h | — |
+| 5 | fold-forward recorder (`OI-125`) | **DONE 2026-09-19**, 0 GPU-h | — |
+| 5b | OmniFold adapter; both steps exercised on the real engine | **DONE 2026-09-19**, 0 GPU-h | — |
+| 6 | ratify U1–U11 and freeze | 0 | **Joseph** |
 | 7 | typed-object extraction and join, verified by the identity contract | CPU | **R-1 + R4** |
 | 8 | dump re-run at the raised cap | CPU | ours |
-| 9 | tuning, 4 trials per arm, at the completion configuration | see §3 | 6, 7, 8 |
-| 10 | variance pilot, 4 paired seeds | see §3 | 9 |
-| 11 | **final pretrained comparison**, `n` seeds from the pilot | see §3 | 10 **+ the checkpoints** |
+| 9a | tuning, 4 trials, **scratch arm** | see §3 | 6, 7, 8 |
+| 9b | tuning, 4 trials, **pretrained arm** | see §3 | 6, 7, 8 **+ R2** |
+| 10a | variance pilot, 4 paired seeds, **scratch arm** | see §3 | 9a |
+| 10b | variance pilot, 4 paired seeds, **pretrained arm** | see §3 | 9b **+ R2** |
+| 11 | **final pretrained comparison**, `n` seeds from the pilot | see §3 | 10b |
 
-Steps 4 and 5 are implementation with no external dependency and no unresolved scientific
-choice. They are the obvious next work and are **not** authorized-and-waiting on anyone.
+## 2.1 Dependency correction, 2026-09-19
+
+The table above previously carried tuning and the variance pilot as depending only
+on the frozen design, with the checkpoints attached to step 11 alone. **That was
+wrong, and it mattered: it implied the pretrained arm could be tuned and sized on
+scratch runs while we waited for R2.** It cannot, for two specific reasons.
+
+* **Selected settings do not transfer.** A learning rate and schedule chosen on a
+  randomly initialised backbone are not the selection for a pretrained one.
+  Fine-tuning a transferred representation is precisely the regime where the
+  optimum differs — and it is the regime his paper is about.
+* **Variance does not transfer.** A scratch arm's seed spread is variation over
+  random initialisations; a pretrained arm's is variation over data order and
+  fine-tuning noise from one fixed start. A σ measured on the first does not
+  estimate the second, and would size the final comparison wrongly in a direction
+  we could not sign.
+
+So **9b and 10b are blocked on R2**, not merely 11. Scratch work supports the
+implementation checks and the cost calibration, and those are the uses it is put
+to. Steps 4, 5 and 5b are complete and needed nobody.
 
 ---
 
@@ -131,10 +152,21 @@ At the completion configuration (**33 tokens**, matched-batch `r = 4.30`):
 | **fit-time total** | | **166.6** |
 | **with the ≈1.24× non-fit overhead** | | **≈207** |
 
-**Against the 600 GPU device-hour ceiling with ≈16.5 consumed, the complete pretrained
-comparison is affordable with roughly 375 hours of headroom to spare.** That is the
-central result of this milestone: before it, the ratio was unknown within two orders of
-magnitude and the objective could not be costed at all.
+**SUPERSEDED 2026-09-19 — see `COST_UPDATE-20260919.md`.** Two corrections invalidate
+the ≈207 figure as a final number, in opposite directions:
+
+* his arm was timed with `use_int=True, local_int=True`, PET2's **class** defaults.
+  The V1-paper branches pass neither flag, so the paper configuration does **not**
+  run the interaction blocks, which are quadratic in token count. The measured `r`
+  was therefore taken on a more expensive model than the one we intend to run, and
+  is an **over**estimate.
+* the projection was **fit-time only**. An evaluation also reweights every event at
+  every iteration and validates a fifth of every epoch — 36 M forward presentations
+  against 96 M trained — and none of that was in the model. That is an
+  **under**estimate.
+
+The ≈207 figure stands only as a conditional projection under the old model. The
+re-measurement pins both.
 
 Seed count is the lever if the pilot's measured σ demands more than 8: each additional
 paired seed costs **7.8 fit-time GPU-h**, so 16 seeds would add ≈63 and still fit.

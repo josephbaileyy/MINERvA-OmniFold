@@ -37,6 +37,19 @@ roughly twenty-one typed-object vector branches — a much larger change to your
 production, and it would fix the vocabulary in C++ before anyone has measured whether it
 helps.
 
+## Exact deliverables, and what each unblocks
+
+| deliverable | form | unblocks |
+|---|---|---|
+| `ev_run`, `ev_subrun`, `ev_gate` on `mc_signal_reco` | three scalar branches under `MNV101_DUMP_POINTCLOUD` | joining typed objects to MC estimator rows |
+| the same three on `data` | same | the measured leg of the join |
+| the same three on `mc_background` | same | the negweight-refined background leg |
+| the production tag they first appear in | one line | knowing which dumps carry them |
+
+**Dependency:** this gates the representation half of the comparison and nothing
+else. The architecture-and-recipe half runs without it, on the token schema we
+already dump, so a delay here narrows the comparison rather than stopping it.
+
 ## Scope and cost
 
 * three scalar branches per tree, under the gate that already exists;

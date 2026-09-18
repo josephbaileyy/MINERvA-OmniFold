@@ -66,7 +66,9 @@
       "add_info": true,
       "conditional": true,
       "mode": "classifier",
-      "num_classes": 1
+      "num_classes": 1,
+      "use_int": false,
+      "local_int": false
     },
     "counts": {
       "small": {
@@ -78,8 +80,8 @@
           "base_dim": 128,
           "mlp_ratio": 2
         },
-        "trainable_parameters": 2762550,
-        "backbone_parameters": 1447216,
+        "trainable_parameters": 2758702,
+        "backbone_parameters": 1443368,
         "trainable_if_backbone_frozen": 1315334
       },
       "medium": {
@@ -91,14 +93,14 @@
           "base_dim": 512,
           "mlp_ratio": 2
         },
-        "trainable_parameters": 52294730,
-        "backbone_parameters": 31304772,
+        "trainable_parameters": 52271162,
+        "backbone_parameters": 31281204,
         "trainable_if_backbone_frozen": 20989958
       }
     },
     "note": "Transformer1 is under _disabled_models in V1Paper.json and is NOT a paper model. Its count is retained for continuity with the interim inventory, not as the comparison target."
   },
   "ratio_gregor_over_our_step1": 18.922429370123936,
-  "ratio_paper_small_over_our_step1": 58.726430135413786,
+  "ratio_paper_small_over_our_step1": 58.64462915329181,
   "non_claim": "Capacity is not accuracy. These two models solve different problems -- ours is a binary reweighting classifier inside OmniFold, his is a supervised regressor/classifier -- so the ratio measures size, not efficiency, suitability, or quality."
 }
