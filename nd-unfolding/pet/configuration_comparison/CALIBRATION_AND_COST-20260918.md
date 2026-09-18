@@ -36,6 +36,28 @@ the reason to measure on GPU, not as an estimate of `r`.
 
 ---
 
+## 1a. Campaign ceiling and spend reconciliation
+
+**The cumulative campaign ceiling is 600 GPU device-hours**, raised from 290 by Joseph on
+2026-09-18, **inclusive of existing spending and retries**.
+
+| item | GPU device-hours | source |
+|---|---:|---|
+| representation matrix, 24 paired jobs | 13.27 | `matrix-summary.json` |
+| A3 geometry probe + width gate, 5 submissions | 0.43 | `GO_NO_GO-20260918.md` §7 |
+| tail validation, 4 submissions | 0.77 | `validation-final.json` |
+| inference benchmark + matrix closeout | not itemized | — |
+| *subtotal carried as the campaign figure* | **16.0** | `RECOMMENDATION-20260918.md` |
+| this milestone: retries that measured nothing | 0.01 | jobs 58526592 (18 s), 58526558 (5 s), 58526214 (cancelled before start) |
+| this milestone: calibration, ceiling | ≤0.42 | one 25-minute GPU job |
+| **cumulative against the 600-hour ceiling** | **≤16.5** | |
+| **headroom** | **≥583** | |
+
+**This milestone's own limits: ≤2 GPU-hours and ≤8 CPU core-hours, inclusive of repairs
+and retries.** Consumed so far: **0.01 GPU-h** across three failed or cancelled
+submissions, and under 0.01 CPU core-hours. The optional full Tier-A campaign is **not
+launched** at this milestone.
+
 ## 2. The cost model
 
 Two parameters, both currently unmeasured:

@@ -365,6 +365,51 @@ class CostReduction(unittest.TestCase):
     def test_both_promised_token_counts_are_configured(self):
         self.assertEqual(tuple(cc.TOKEN_COUNTS), (12, 33))
 
+    def test_a_failed_native_cell_still_reduces_from_the_matched_cell(self):
+        """Measured 2026-09-18: batch 2048 raised a CUDA config error on an A100.
+
+        The like-for-like matched-batch comparison survived, so the costing must too --
+        losing the whole arm to his native batch failing would be a reporting choice
+        dressed as a measurement limit.
+        """
+        theirs = _theirs_half()
+        for key in theirs["by_tokens"]:
+            theirs["by_tokens"][key]["native_batch"] = {
+                "error": "RuntimeError: CUDA error: invalid configuration argument",
+                "tokens": int(key), "batch": cc.THEIR_BATCH}
+        op, tp = self._write(_ours_half(), theirs)
+        receipt = cc.reduce_halves(op, tp)
+        for row in receipt["measured_throughput"].values():
+            self.assertFalse(row["native_batch_available"])
+            self.assertIsNone(row["ratio_per_example_native_batch"])
+            self.assertAlmostEqual(row["ratio_per_example_matched_batch"], 6.0, places=9)
+            self.assertEqual(row["ratio_used_for_projection"], "matched_batch")
+        for row in receipt["projected_evaluation_cost"]["by_tokens"].values():
+            self.assertIn("matched_batch", row["ratio_source"])
+
+    def test_a_failed_matched_cell_is_rejected(self):
+        """Without the like-for-like cell there is no ratio to report."""
+        theirs = _theirs_half()
+        theirs["by_tokens"]["12"]["matched_batch"] = {
+            "error": "RuntimeError: boom", "tokens": 12, "batch": cc.OUR_BATCH}
+        op, tp = self._write(_ours_half(), theirs)
+        with self.assertRaises(SystemExit) as caught:
+            cc.reduce_halves(op, tp)
+        self.assertIn("like-for-like", str(caught.exception))
+
+    def test_projection_uses_the_matched_ratio_not_the_native_one(self):
+        """A native ratio inflated by batch must not leak into the cost model."""
+        theirs = _theirs_half(factor=6.0)
+        for key in theirs["by_tokens"]:
+            native = theirs["by_tokens"][key]["native_batch"]
+            native["seconds_per_example"] *= 10.0   # a wildly different native figure
+        op, tp = self._write(_ours_half(), theirs)
+        receipt = cc.reduce_halves(op, tp)
+        for key, row in receipt["projected_evaluation_cost"]["by_tokens"].items():
+            ours_hours = row["our_evaluation_gpu_hours"]
+            self.assertAlmostEqual(row["arm_pair_evaluation_gpu_hours"],
+                                   ours_hours * 7.0, places=6)
+
 
 if __name__ == "__main__":
     unittest.main()

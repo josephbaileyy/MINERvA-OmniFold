@@ -300,22 +300,40 @@ def reduce_halves(ours_path: Path, theirs_path: Path) -> dict[str, Any]:
         our_row = ours["by_tokens"][key]
         their_native = theirs["by_tokens"][key]["native_batch"]
         their_matched = theirs["by_tokens"][key]["matched_batch"]
-        r_native = their_native["seconds_per_example"] / our_row["seconds_per_example"]
+
+        # The MATCHED-batch cell is the like-for-like comparison and is required: same
+        # batch, same tokens, so the ratio is not a batch artifact. The native-batch cell
+        # is his real setting and is reported when it ran, but it cannot be required --
+        # some (batch, device, stack) combinations do not run at all.
+        if "error" in their_matched:
+            raise SystemExit(
+                f"[calibrate] the matched-batch cell at {tokens} tokens failed "
+                f"({their_matched['error']}). That is the like-for-like comparison; "
+                "without it there is no ratio to report at this token count."
+            )
         r_matched = their_matched["seconds_per_example"] / our_row["seconds_per_example"]
+        native_ok = "error" not in their_native
+        r_native = (their_native["seconds_per_example"] / our_row["seconds_per_example"]
+                    if native_ok else None)
         measured[key] = {
             "ours": our_row,
             "theirs_native_batch": their_native,
             "theirs_matched_batch": their_matched,
             "ratio_per_example_native_batch": r_native,
             "ratio_per_example_matched_batch": r_matched,
+            "ratio_used_for_projection": "matched_batch",
+            "native_batch_available": native_ok,
         }
         our_hours = our_row["seconds_per_example"] * EXAMPLES_PER_EVALUATION / 3600.0
+        # Projections use the MATCHED-batch ratio, so a missing native cell degrades the
+        # reporting and not the costing.
         projected[key] = {
             "our_evaluation_gpu_hours": our_hours,
-            "their_evaluation_gpu_hours": our_hours * r_native,
-            "arm_pair_evaluation_gpu_hours": our_hours * (1.0 + r_native),
+            "their_evaluation_gpu_hours": our_hours * r_matched,
+            "arm_pair_evaluation_gpu_hours": our_hours * (1.0 + r_matched),
+            "ratio_source": "matched_batch (same batch and tokens for both arms)",
             "final_comparison_gpu_hours_by_seeds": {
-                str(n): n * our_hours * (1.0 + r_native) for n in (4, 8, 12, 16)
+                str(n): n * our_hours * (1.0 + r_matched) for n in (4, 8, 12, 16)
             },
         }
 
@@ -379,21 +397,36 @@ def main() -> None:
     if args.arm == "theirs":
         if args.gregor_checkout is None:
             raise SystemExit("[calibrate] --gregor-checkout is required for --arm theirs")
-        half = {
-            "gpu_identity": physical_gpu_identity(),
-            "by_tokens": {
-                str(t): {
-                    "native_batch": time_theirs(args.gregor_checkout, t, THEIR_BATCH),
-                    "matched_batch": time_theirs(args.gregor_checkout, t, OUR_BATCH),
-                }
-                for t in TOKEN_COUNTS
-            },
-        }
+        # Each (tokens, batch) cell is attempted independently. A cell that the device or
+        # the stack cannot run records its error and the rest proceed: measured 2026-09-18,
+        # batch 2048 raised `CUDA error: invalid configuration argument` inside PyTorch's
+        # scaled_dot_product_attention on an A100 under pytorch/2.6.0, which previously
+        # destroyed the whole arm including the cells that DO run. A partial, honestly
+        # labelled matrix is worth more than nothing, and the reducer decides separately
+        # whether what survived is enough.
+        by_tokens: dict[str, Any] = {}
+        for tokens in TOKEN_COUNTS:
+            cells: dict[str, Any] = {}
+            for label, batch in (("native_batch", THEIR_BATCH), ("matched_batch", OUR_BATCH)):
+                try:
+                    cells[label] = time_theirs(args.gregor_checkout, tokens, batch)
+                except Exception as exc:                      # noqa: BLE001 - recorded, not swallowed
+                    cells[label] = {"error": f"{type(exc).__name__}: {exc}",
+                                    "tokens": tokens, "batch": batch}
+                    print(f"theirs tokens={tokens:>2} batch={batch}: FAILED "
+                          f"{type(exc).__name__}", file=sys.stderr)
+            by_tokens[str(tokens)] = cells
+        half = {"gpu_identity": physical_gpu_identity(), "by_tokens": by_tokens}
         args.output.write_text(json.dumps(half, indent=2) + "\n")
-        for tokens, row in half["by_tokens"].items():
-            native = row["native_batch"]
-            print(f"theirs tokens={tokens:>2} {native['step_seconds_median']*1e3:8.2f} ms/step "
-                  f"@ {THEIR_BATCH} = {native['seconds_per_example']*1e6:.3f} us/example")
+        for tokens, row in by_tokens.items():
+            for label in ("native_batch", "matched_batch"):
+                cell = row[label]
+                if "error" in cell:
+                    print(f"theirs tokens={tokens:>2} {label}: FAILED")
+                else:
+                    print(f"theirs tokens={tokens:>2} {label}: "
+                          f"{cell['step_seconds_median']*1e3:8.2f} ms/step @ {cell['batch']} "
+                          f"= {cell['seconds_per_example']*1e6:.3f} us/example")
         return
 
     if args.ours_half is None or args.theirs_half is None:
@@ -401,8 +434,11 @@ def main() -> None:
     receipt = reduce_halves(args.ours_half, args.theirs_half)
     args.output.write_text(json.dumps(receipt, indent=2, allow_nan=False) + "\n")
     for tokens, row in receipt["measured_throughput"].items():
-        print(f"tokens={tokens:>2}  r (per example, native batches) = "
-              f"{row['ratio_per_example_native_batch']:.2f}")
+        native = row["ratio_per_example_native_batch"]
+        print(f"tokens={tokens:>2}  r matched-batch = "
+              f"{row['ratio_per_example_matched_batch']:.2f}"
+              + (f", native-batch = {native:.2f}" if native is not None
+                 else ", native-batch = UNAVAILABLE"))
     for tokens, row in receipt["projected_evaluation_cost"]["by_tokens"].items():
         print(f"tokens={tokens:>2}  projected arm-pair evaluation = "
               f"{row['arm_pair_evaluation_gpu_hours']:.2f} GPU-h (model-derived)")
