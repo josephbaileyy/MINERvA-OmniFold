@@ -29,7 +29,7 @@
 
 \title{Recommended PET Configuration}
 \subtitle{Comparison with Gregor's Implementation\\[0.3em]
-\normalsize INTERIM INVENTORY --- the selection is not yet made}
+\normalsize INTERIM INVENTORY, rev.\ 2 --- the selection is not yet made}
 \author{Publication Agent B (PET)}
 \date{18 September 2026}
 
@@ -41,8 +41,9 @@
   \begin{center}
     \small
     \warn{This deck inventories differences. It does not select a configuration.}\\
-    \small The matched comparison that would select one is specified on slides 14--16 and in\\
-    \texttt{MATCHED\_COMPARISON\_PROPOSAL-20260918.md}. Nothing is launched.\\[0.4em]
+    \small The matched comparison that would select one is specified on slides 16--19 and in\\
+    \texttt{MATCHED\_COMPARISON\_PROPOSAL-20260918.md} (rev.\ 2). Nothing is launched.\\[0.4em]
+    \small \warn{Slide 3 lists nine claims revision 1 got wrong.}\\[0.4em]
     \warn{PET is diagnostic method development, not a publication product.}
   \end{center}
 \end{frame}
@@ -65,9 +66,11 @@
     component measurements on a synthetic fixture and on GPU cost &
       cost, and one inconclusive routing result &
       \warn{transfer to the real task --- direction and magnitude do not carry} \\
-    a production baseline measured on the real endpoint (recovery \textbf{0.5126}) &
-      a scale, a margin, and a frozen protocol to reuse &
-      \warn{a value for \emph{his} configuration --- it has never been run on our task} \\
+    a \emph{closure diagnostic} recovery of 0.5126 and a frozen injection protocol &
+      a protocol to reuse, and an order of magnitude &
+      \warn{a production baseline. Its artifacts are \texttt{quotable: False} and
+      \texttt{recovery\_evaluated} is \texttt{False} at the promoted configuration
+      (\texttt{OI-71})} \\
     \bottomrule
   \end{tabular}
   \end{center}
@@ -79,7 +82,50 @@
   validated, cheaper, and its closure receipts exist. \warn{Retention on continuity and
   cost is not a demonstrated result, and this deck does not upgrade it into one.}
   \\[0.3em]
-  \textbf{What would settle it:} slides 14--16.}
+  \textbf{What would settle it:} slides 16--19.}
+\end{frame}
+
+% ---------------------------------------------------------------- 2b
+\begin{frame}[t]{What revision 1 got wrong}
+  \vspace{0.3em}
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}R{0.40\textwidth}R{0.55\textwidth}@{}}
+    \toprule
+    \textbf{revision 1 said} & \textbf{corrected} \\
+    \midrule
+    ``the exact upstream configuration is the \texttt{Transformer1} preset'' &
+      \warn{\texttt{Transformer1} is not a model his paper reports.}
+      \texttt{V1Paper.json} lists OmniLearned-small / -small-rw / -medium and puts
+      Transformer-xsmall/small under \texttt{\_disabled\_models} \\
+    his model is $18.9\times$ ours &
+      that is Transformer1. His \emph{paper} backbone is \textbf{58.7$\times$}
+      (2{,}762{,}550 params); medium is $1{,}112\times$ \\
+    the representation is ``blocked on a C++ deliverable'' &
+      \warn{partly false.} Cap, overflow, merged counts and discarded energy need
+      \textbf{no C++} --- the full-length vectors are already in the ROOT and the
+      truncation is a Python choice \\
+    cited the interface request ``\S D'' for typed objects &
+      \S D is \emph{residual-energy summary tokens}. \warn{No filed request for the typed
+      vocabulary exists.} \S\S A--C landed. Owner: \textbf{Agent A} \\
+    ``our production baseline is 0.5126033'' &
+      that is \texttt{VL100} from a closure whose every artifact is
+      \texttt{NONQUOTABLE-DIAGNOSTIC.}; \warn{\texttt{recovery\_evaluated} is
+      \texttt{False} at the promoted configuration.} \textbf{$\delta$ rested on it} \\
+    V-PORT checked \textbf{forward} agreement &
+      forward agreement does not show \emph{training} is equivalent. Now forward,
+      \textbf{gradient} and \textbf{weight-update} \\
+    sizing used normal quantiles &
+      at $n\approx8$ that understates the interval. Now \textbf{t}-based, iterative,
+      sized on the \textbf{upper} bound of the pilot's $\sigma$ \\
+    ``one endpoint'' &
+      the injection is a tilt in \textbf{truth muon} $p_T$ --- \warn{a muon kinematic},
+      and the closure is separately \warn{silent about the 34\,\% fold-forward deficit} \\
+    70 GPU-h as the campaign cost &
+      \warn{70 GPU-h is a Tier-A ceiling only.} Completing the goal depends on a ratio
+      stage 2 must measure \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
 \end{frame}
 
 % ---------------------------------------------------------------- 3
@@ -161,7 +207,12 @@
 \end{frame}
 
 % ---------------------------------------------------------------- 5
-\begin{frame}{Gregor's implementation}
+\begin{frame}{Gregor's implementation --- the repo baseline, \warn{not his paper model}}
+  \vspace{-0.2em}
+  {\scriptsize \warn{\texttt{Transformer1} is under \texttt{\_disabled\_models} in
+  \texttt{V1Paper.json}. The paper's lineup is OmniLearned --- next slide.} This page is
+  retained because the interim inventory was built against it.}
+  \vspace{0.2em}
   \begin{columns}[T]
     \begin{column}{0.52\textwidth}
       {\small\textbf{Data path}}
@@ -184,7 +235,7 @@
         \item \texttt{PointGlobalMixedViT}: mixed encoder $\to$ \textbf{Fourier
           positional MLP over $(\eta,\phi)$} $\to$ 4 pre-norm blocks, 8 heads,
           $d_{\rm model}=128$ $\to$ CLS fused with EVT token
-        \item \textbf{890{,}130 parameters --- $18.9\times$ ours}
+        \item \textbf{890{,}130 parameters --- $18.9\times$ ours}, but \warn{not a paper model}
         \item Huber on $\log 1p$; \textbf{AdamW}, wd 0.01, \textbf{1000-step warmup then
           cosine}, \textbf{grad clip 1.0}; batch 2048; 100k--500k steps
         \item optional: OmniLearned PET2, HyperScale, BERT, pretrained init
@@ -196,6 +247,53 @@
   \vspace{0.3em}
   \src{vit.py:226-373; train.py:465-756, 2328-2358; preprocessing.py:257-583;
        jobs/submit\_train\_jobs.py:150-151; gregor-audit/jobs/A\_dataset.out.md}
+\end{frame}
+
+% ---------------------------------------------------------------- 5b
+\begin{frame}[t]{Which configuration is ``Gregor's''? Three, and only one is runnable}
+  \vspace{0.2em}
+  {\footnotesize Paper: \emph{Cross-Domain Transfer with Particle Physics Foundation
+  Models: From Jets to Neutrino Interactions} (arXiv:2604.12364). The title states the
+  subject --- \textbf{transfer from a pretrained foundation model} --- so the pretrained
+  arm is the contribution and a from-scratch transformer is a baseline.}
+  \vspace{0.4em}
+
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}clR{0.24\textwidth}crc@{}}
+    \toprule
+    & \textbf{id} & \textbf{model} & \textbf{init} & \textbf{params} & \textbf{runnable?} \\
+    \midrule
+    \textbf{P1} & \texttt{OLS} & OmniLearned-small & pretrained \texttt{pretrain\_s} &
+      2{,}762{,}550 & \warn{no --- R2} \\
+    \textbf{P2} & \texttt{OLS\_RW} & OmniLearned-small & scratch &
+      2{,}762{,}550 & \ours{\textbf{yes}} \\
+    \textbf{P3} & \texttt{OLM\_FB} & OmniLearned-medium, backbone frozen &
+      pretrained \texttt{pretrain\_m} & 52{,}294{,}730 & \warn{no --- R2} \\
+    \midrule
+    B1 & \texttt{Transformer1} & \texttt{PointGlobalMixedViT} & scratch & 890{,}130 &
+      \warn{not a paper model} \\
+    \midrule
+    & ours & PET, 2 blocks, width 32 & scratch, seed 42 & \textbf{47{,}041} & --- \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.3em}
+  {\footnotesize
+  \textbf{Checkpoints:} \texttt{best\_model\_pretrain\_\{s,m\}.pt} from
+  \texttt{portal.nersc.gov/cfs/m4567/checkpoints} --- CFS project \textbf{m4567}, not
+  ours; \warn{verified to time out}, and the code \warn{silently attempts a download when
+  the file is absent}.
+  \\[0.2em]
+  \textbf{Backbone as his code builds it} (\texttt{train.py:1085-1105}, not class
+  defaults): \texttt{input\_dim} 4, \texttt{add\_dim} 5, \texttt{pid\_dim} 8,
+  \texttt{cond\_dim} \textbf{16}, \texttt{num\_coord} 2, \textbf{\texttt{K}=10}
+  (hardcoded, not the \texttt{PET2} default 15); small $=$ 8$+$2 transformers, 8 heads,
+  \texttt{base\_dim} 128, \texttt{mlp\_ratio} 2.
+  \\[0.2em]
+  \warn{All three paper arms carry \texttt{--zero-cond-feature 2}}, zeroing the
+  log-hadron-recoil global --- his configuration \emph{deliberately removes a hadronic
+  summary}. \textbf{P2 alone answers ``is his architecture better''; it does not answer
+  ``is his \emph{paper method} better'', because the paper's claim is about transfer.}}
 \end{frame}
 
 % ---------------------------------------------------------------- 6
@@ -257,7 +355,7 @@
     architecture &
       2 blocks, 2 heads, width 32, KNN in $(\mathrm{pos},z)$; \textbf{47k params} &
       4 blocks, 8 heads, width 128, Fourier PE in $(\eta,\phi)$; \textbf{890k params} &
-      $18.9\times$ gap; ours is retrained $\sim$130 times per campaign, his once &
+      $18.9\times$ to Transformer1; \warn{$58.7\times$ to his PAPER backbone}. Ours is retrained $\sim$130 times per campaign, his once &
       \ours{keep} architecture; treat capacity as \textbf{open} \\
     init &
       random, seed 42 frozen (this makes $C_{\rm stat}$ statistical) &
@@ -287,44 +385,52 @@
 \end{frame}
 
 % ---------------------------------------------------------------- 7b
-\begin{frame}[t]{The constraint that decides what can be compared}
-  \vspace{0.3em}
-  {\small\textbf{Every distinctive element of his representation is absent from our
-  production input --- for every inventory.}}
-  \vspace{0.3em}
-
-  {\footnotesize The G2 dump writes \texttt{part\_reco}, \texttt{part\_gen},
-  \texttt{reco\_scalars}, \texttt{truth\_scalars}, \texttt{reco\_muon},
-  \texttt{reco\_vertex}, \texttt{reco\_view}, \texttt{reco\_time},
-  \texttt{pass\_reco}/\texttt{pass\_truth}, weights and provenance. There is \warn{no}
-  blob, prong, photon, PID, $dE/dx$, Michel, per-type-energy-sum or overflow-telemetry
-  key anywhere in it. Re-measured at \texttt{44142e8c}; first established by the audited
-  Gregor-PET2 campaign in July (\texttt{absent/absent/absent/absent}).}
-  \vspace{0.5em}
-
-  \begin{center}\footnotesize
-  \begin{tabular}{@{}cR{0.30\textwidth}R{0.34\textwidth}c@{}}
+\begin{frame}[t]{The extraction contract --- and the blocker is alignment, not physics}
+  \vspace{0.2em}
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}R{0.26\textwidth}R{0.28\textwidth}cccR{0.20\textwidth}@{}}
     \toprule
-    \textbf{tier} & \textbf{what it compares} & \textbf{prerequisite} & \textbf{status} \\
+    \textbf{Gregor field} & \textbf{our branch} & \textbf{tuple} & \textbf{ROOT} &
+      \textbf{npz} & \textbf{needed} \\
     \midrule
-    \textbf{A} & architecture $+$ training recipe, both arms on the frozen G2 input &
-      none & \ours{\textbf{runnable}} \\
-    \textbf{B} & representation: typed objects, PID embedding, 16 globals, cap 33,
-      aggregate overflow &
-      a symmetric data/signal/background typed-object dump with overflow telemetry &
-      \warn{\textbf{blocked}} \\
+    muon 4-vec, $\phi$, $q/p$, MINOS; vertex; view/time &
+      \texttt{mu\_reco\_*}, \texttt{vtx\_reco\_*}, \texttt{part\_reco\_view/time} &
+      \checkmark & \checkmark & \checkmark & \ours{\textbf{nothing}} \\
+    \textbf{cap, overflow aggregate, merged count, discarded energy} &
+      full-length \texttt{part\_reco\_*} vectors &
+      \checkmark & \checkmark \emph{full} & \warn{trunc.\ 12} &
+      \ours{\textbf{dump change. NO C++}} \\
+    \textbf{typed objects} --- photon, blob, prong: 4-mom, position, time, PID, $dE/dx$ &
+      \texttt{gamma\{1,2\}\_*}, \texttt{MasterAnaDev\_Blob*},
+      \texttt{prong\_part\_*}, \texttt{prong\_dEdXMean} &
+      \checkmark \emph{all authorized} & --- & --- & export \\
+    16 event globals &
+      fuzz, iso-blob, hadron recoil, passive, Michel, \ldots &
+      \checkmark \warn{not authorized} & --- & --- & authorize $+$ export \\
     \bottomrule
   \end{tabular}
   \end{center}
-  \vspace{0.4em}
-  {\footnotesize Tier B's prerequisite is a C++ event-loop deliverable, requested in
-  \texttt{FULL\_EVENT\_INTERFACE\_REQUEST.md} \S D, not delivered, owned by the
-  active-universe C++ owner --- \warn{not schedulable by me and not costed}. His public
-  rows are MC-only, so they cannot supply a data leg; a truth-derived type vocabulary is
-  excluded permanently as leakage.
+  \vspace{0.3em}
+  {\scriptsize
+  \textbf{Every typed field already exists in the AnaTuple and is already inside the
+  A1-authorized branch set} --- A1 read all of them on the real tuples. And the
+  \textbf{cap is ours}: the dump binds full-length vectors and \texttt{\_pad\_tokens}
+  truncates them, exactly as the interface request says.
+  \\[0.3em]
+  \warn{\textbf{The blocker is the join key.}} The AnaTuple carries
+  \texttt{ev\_run}/\texttt{ev\_subrun}/\texttt{ev\_gate}; \warn{the npz carries none} ---
+  rows are positional. So a Python-side join is impossible \emph{not because data is
+  missing but because the key is discarded}. Two routes, both requests to
+  \textbf{Agent A} (who owns the C++; the request says do not edit it):
+  \textbf{R-1 emit three scalar key branches} and join in Python, keeping the
+  representation ours --- or R-2 emit $\sim$20 typed vector branches. \textbf{R-1 is an
+  order of magnitude smaller ask}, at the price of having to \emph{prove} the join.
   \\[0.2em]
-  \textbf{Tier A is the matched comparison we can have}, and it is worth having.
-  \warn{A Tier-A result may never be written as ``ours beats Gregor's''.}}
+  \textbf{Any route must preserve} the FPS gate, \texttt{pass\_reco}/\texttt{pass\_truth}
+  with native truth-only misses \emph{kept}, $-9999$ sentinels, RAW weights, the
+  negweight background inventory, CLM-007's fail-closed data leg, the identity hashes,
+  and a \textbf{per-event order proof} --- row-count alignment alone is already flagged
+  as insufficient.}
 \end{frame}
 
 % ---------------------------------------------------------------- 8
@@ -437,7 +543,7 @@
       \emph{est.} $\approx$ 0 &
       Gate-4 fingerprint; closure re-run \\
     one capacity step &
-      $18.9\times$ gap is a live hypothesis &
+      $58.7\times$ gap to his paper backbone is a live hypothesis &
       multiplies through the UQ campaign &
       price against the campaign, not one train \\
     \bottomrule
@@ -447,7 +553,7 @@
   {\footnotesize
   \warn{These rows are component judgements, not a selection, and the single-factor
   experiments they imply are RETIRED} --- the four live items interact, so they are
-  compared as complete configurations instead (slides 14--16). The rows survive as the record
+  compared as complete configurations instead (slides 16--19). The rows survive as the record
   of what differs and as the source of the tuning grids.
   \\[0.2em]
   \textbf{Back to Gregor:} encode $\phi$ periodically; reserve embedding index 0 for
@@ -476,121 +582,180 @@
       scatter, not test-sample uncertainty; a synthetic fixture, not production; a
       planning assumption, not measured power.
     \item \warn{The pin is the repo, not the paper.} \texttt{fc9a099} may not be what
-      produced arXiv:2604.12364.
+      produced arXiv:2604.12364, and \warn{the paper's pretrained checkpoints are
+      unreachable}, so its central transfer claim is untestable here.
+    \item \warn{Our own recovery number is a closure diagnostic, not a baseline.}
+      \texttt{OI-71}: the artifacts are \texttt{quotable: False},
+      \texttt{recovery\_evaluated} is \texttt{False} at the promoted configuration, and
+      the closure \warn{does not exercise the 34\,\% fold-forward deficit} --- it is
+      silent about it. Nothing here discharges \texttt{OI-71}.
   \end{enumerate}
 \end{frame}
 
 % ---------------------------------------------------------------- 13
-\begin{frame}[t]{One engine, and an endpoint that a null estimator fails}
-  \vspace{0.4em}
-  {\small\textbf{One engine.} Both arms run inside our TensorFlow MultiFold.}
-  {\footnotesize The prior campaign declined a cross-framework comparison because it
-  would ``confound framework, representation, and training engine''. One engine removes
-  two of those confounds; Tier A removes the third by holding the representation fixed.}
-  \vspace{0.4em}
-
-  {\small\warn{\textbf{Gate V-PORT.}}}
-  {\footnotesize His architecture is ported to Keras-2, \textbf{his PyTorch weights are
-  transferred in}, and outputs must agree to $\le$1e-5 max absolute difference in float64
-  over 1{,}024 fixed inputs including fully-masked and single-token rows, with
-  \textbf{equal} parameter counts. \textbf{A port that cannot be shown to compute his
-  function is not his configuration}, and nothing downstream repairs that. Two mappings
-  are forced and travel with every result: his Fourier positional encoding is fed
-  $(\mathrm{pos},z)$ because our tokens carry no per-token $(\eta,\phi)$; and his
-  $\log 1p$ Huber is an $E_{\rm avail}$ regression loss with no counterpart in a
-  reweighting classifier, so \textbf{the objective stays ours}. His arm keeps his
-  optimizer, schedule, clipping and batch.}
-  \vspace{0.5em}
-
-  {\small\textbf{One endpoint --- and deliberately not the cheap one.}}
-  {\footnotesize The ordinary self-consistency closure is \warn{unusable}: it is an
-  identity check that a \emph{constant} estimator optimizes --- structural zero power.
-  Choosing it would let measurability pick the specification. The primary endpoint is the
-  \textbf{powered injected truth-reweight recovery} $1-E_w[|1-r_b|]$ over 285 cells, on
-  the protocol predeclared 2026-08-05 and reused \emph{unchanged}: tilt amplitude 0.35,
-  clipped $|z|\le3$, rate-preserving, truth-passing rows only, two \textbf{disjoint}
-  2\,M halves at split seed 7 --- frozen six weeks ago by someone who could not have
-  known this comparison would use it. Our baseline: \textbf{0.5126033};
-  \warn{his has never been run on it}.}
-\end{frame}
-
-% ---------------------------------------------------------------- 14
-\begin{frame}[t]{The margin, and the rule that cannot be softened}
-  \vspace{0.4em}
-  {\small\textbf{Non-inferiority margin} $\boldsymbol{\delta = 0.018}$ recovery points,
-  fixed before any number exists.}
-  \vspace{0.2em}
-
-  {\footnotesize 0.0180209 is \emph{exactly} the margin by which our estimator clears its
-  adopted criterion (recovery \textbf{0.5126033} vs \textbf{0.494582} $=0.80\times$
-  ceiling 0.618228), so a larger deficit costs the entire margin by which production
-  passes its own gate --- decision-relevant, not a round number. It is
-  $\mathbf{14.7\times}$ the closure's measured repeat spread (1.226e-3) yet only
-  \textbf{2.9\,\%} of the ceiling: strict, not lenient.}
-  \vspace{0.5em}
-
-  \begin{center}\footnotesize
-  \begin{tabular}{@{}R{0.40\textwidth}R{0.52\textwidth}@{}}
-    \toprule
-    \textbf{95\,\% CI for mean$(d)$, $d = $ ours $-$ his} & \textbf{conclusion} \\
-    \midrule
-    lower bound $> -\delta$, all safeguards pass &
-      \ours{\textbf{Recommend OURS}} --- non-inferior by a margin that matters, at equal
-      tuning, on our task \\
-    upper bound $< -\delta$, his safeguards pass &
-      \theirs{\textbf{Recommend HIS}} --- materially better; adopt it for method
-      development \\
-    CI contains $-\delta$ &
-      \warn{\textbf{Inconclusive --- no selection.}} Incumbent retained as a
-      \emph{provisional engineering choice}, in those words \\
-    any safeguard fails for an arm &
-      that arm is \textbf{not recommendable} at any endpoint value \\
-    \bottomrule
-  \end{tabular}
-  \end{center}
-  \vspace{0.3em}
-  {\footnotesize \warn{A CI that merely contains zero decides nothing} --- only a lower
-  bound strictly above $-\delta$ licenses ``ours''. \warn{Ours does not win by default.}
-  The result is reported whether or not it favours us.
-  \\[0.2em]
-  \textbf{Per BEN-038}, both arms also report signed response and scatter penalty:
-  \warn{an arm can win this aggregate purely by being less noisy per cell}, and that will
-  be named as such.}
-\end{frame}
-
-% ---------------------------------------------------------------- 14
-\begin{frame}[t]{Stages, costs, and what stops it}
-  \vspace{0.2em}
-  \begin{center}\footnotesize
-  \begin{tabular}{@{}cR{0.34\textwidth}rR{0.32\textwidth}@{}}
-    \toprule
-    & \textbf{stage} & \textbf{GPU-h} & \textbf{gate to proceed} \\
-    \midrule
-    1 & port to Keras-2; V-PORT gate; tests & 0.5 & $\le$1e-5, equal parameter counts \\
-    2 & cost calibration, one evaluation per arm & 3 & measured cost replaces the estimate \\
-    3 & tuning: \textbf{4 trials each}, own default as trial 1 & 12 & both arms frozen; halves untouched \\
-    4 & variance pilot, 4 paired seeds $\times$ 2 arms & 12 & \warn{measured $\sigma_d$ admits $\delta$} \\
-    5 & final comparison, 8 paired seeds $\times$ 2 arms & 24 & --- \\
-    & contingency (one stage repeated) & 18 & \\
-    \midrule
-    & \textbf{ceiling requested} & \textbf{$\le$70} & of 290; \textbf{16.0} consumed \\
-    \bottomrule
-  \end{tabular}
-  \end{center}
+\begin{frame}[t]{One engine; a port checked three ways; a \emph{hadronic} endpoint}
   \vspace{0.3em}
   {\scriptsize
-  \textbf{Sizing.} Paired on seed. Prior $\sigma\approx0.008$ (48-seed closure-adjacent
-  spread) $\Rightarrow \sigma_d\approx0.011$, $n\approx3$; 8 seeds tolerates $\sigma_d$ to
-  $\approx$0.019. \warn{An assumption from an adjacent statistic, not measured power ---
-  stage 4 replaces it.}
-  \\[0.2em]
-  \textbf{Stops:} V-PORT fails; the pilot cannot resolve $\delta$ inside the ceiling
-  (\warn{say so --- do not raise the ceiling or widen $\delta$}); a safeguard fails; limits
-  exhausted; or the endpoint, margin, rule or samples would have to change. Repaired
-  submissions count as retries; no automatic relaunch.
-  \\[0.2em]
-  \textbf{Frozen before stage 5}, digest-verified: both configurations, the injection
-  protocol, the sample, $\delta$, $\alpha$, the rule verbatim, every threshold.
+  \textbf{One engine.} Both arms inside our TensorFlow MultiFold. The prior campaign
+  declined a cross-framework comparison because it would ``confound framework,
+  representation, and training engine''; one engine removes two confounds.
+  \\[0.3em]
+  \warn{\textbf{Port checks --- forward is not enough.}} Forward agreement does not show
+  \emph{training} is equivalent: an optimizer or initializer difference reproduces
+  outputs and diverges after one step. So P-1 parameter counts and shapes \textbf{exactly
+  equal}; P-2 \textbf{forward} $\le$1e-5 in float64 over 1{,}024 fixed inputs including
+  fully-masked and single-token rows, after transferring his weights in; P-3
+  \textbf{gradient} agreement w.r.t.\ every parameter, tolerance set by a \emph{measured}
+  step-size sweep rather than asserted; P-4 \textbf{weight-update} after one optimizer
+  step, reported per tensor; P-5 masked slots unable to reach the output; P-6
+  repeatability and reload bitwise. \textbf{Any failure stops the campaign.}
+  \\[0.3em]
+  \warn{\textbf{The endpoint had the wrong variable.}} The predeclared powered closure
+  injects a tilt in \textbf{truth muon} $p_T$. Our muon block is 13 features conditioning
+  the transformer by FiLM, so that tilt can be transported almost entirely by the muon
+  block --- \textbf{both arms can score well while differing arbitrarily in the hadronic
+  cloud, which is the only thing Tier B varies.} Using it alone would be choosing an
+  endpoint insensitive to the treatment.
+  \\[0.3em]
+  \textbf{V1, the primary endpoint: a clipped exponential tilt in truth $E_{\rm avail}$.}
+  Already in the npz --- \texttt{truth\_scalars} col 2 from \texttt{MC\_eavail} --- so
+  \textbf{no new export}, and available hadronic energy is exactly what a hadronic
+  representation must encode. Protocol mirrors the $p_T$ injection exactly (clipped,
+  rate-preserving, truth-passing rows, disjoint 2\,M halves at split seed 7) so the two
+  differ in \textbf{one} variable. \textbf{V3} keeps the $p_T$ injection unchanged as a
+  muon-side control. \warn{Joseph ratifies the variable} --- it decides what the
+  comparison is sensitive to.
+  \\[0.3em]
+  \textbf{V2 is a prerequisite, not an extra.} \texttt{OI-71}: the closure's fold-forward
+  is $\approx$1.011 against the nominal's \textbf{0.736746}, so \warn{it does not exercise
+  the $\sim$34\,\% deficit --- it is \emph{silent} about a live failure mode.}
+  \texttt{OI-125}: the driver has \warn{no fold-forward computation} at all.}
+\end{frame}
+
+% ---------------------------------------------------------------- 14
+\begin{frame}[t]{Three separate questions, and a switching threshold}
+  \vspace{0.2em}
+  {\scriptsize
+  \textbf{1. Absolute adequacy}, asked of each arm alone: does it clear
+  \texttt{recovery} $\ge f\times$ceiling on V1 and V3 with V2--V9 passing?
+  \warn{An arm failing this is not recommendable regardless of the comparison} --- and
+  two inadequate arms make ``ours is non-inferior'' a statement about two unusable
+  configurations.
+  \\[0.3em]
+  \textbf{2. Non-inferiority:} $\boldsymbol{\delta = 0.017}$ recovery points.
+  \warn{Revision 1 justified $\delta$ from the margin over the adopted criterion. That
+  rested on \texttt{VL100}, a \texttt{quotable: False} number at a configuration where
+  recovery was never evaluated --- withdrawn.} The replacement is a \emph{decision
+  anchor}: adopting the LR anneal knowingly paid \textbf{$-0.0342$} of recovery to buy a
+  33-point normalization repair, and Joseph adopted it. So $\sim$0.034 of shape loss was
+  acceptable \emph{when something was bought with it}. Non-inferiority buys nothing, so
+  \textbf{$\delta$ is half that}: at most half the loss the campaign accepted for a real
+  benefit. It is $\sim$2.8\,\% of the reference ceiling, far above the closure's repeat
+  spread (1.2e-3) and far below the $\sim$19\,\% by which the estimator already sits under
+  the dilution ideal. \textbf{Provisional until Joseph ratifies it.}
+  \\[0.3em]
+  \textbf{3. Superiority, and when we keep ours anyway:}
+  $\boldsymbol{\delta_{\rm switch} = 0.02}$. Adoption costs a new estimator fingerprint
+  (invalidating every \texttt{v1}-keyed artifact including the Gate-2 target), full
+  re-validation of every covariance component, a \textbf{58.7$\times$} model through
+  $\sim$130 campaign trains, and for P1/P3 a permanent dependency on a checkpoint we
+  cannot obtain. \textbf{$\delta_{\rm switch} > \delta$ is deliberate:} retaining a
+  validated incumbent is cheap, replacing it is not.}
+  \vspace{0.2em}
+
+  \begin{center}\scriptsize
+  \renewcommand{\arraystretch}{1.0}
+  \begin{tabular}{@{}R{0.44\textwidth}R{0.50\textwidth}@{}}
+    \toprule
+    \textbf{outcome} & \textbf{conclusion} \\
+    \midrule
+    both adequate, CI lower bound $>-\delta$ & \ours{\textbf{Recommend OURS}} \\
+    both adequate, his advantage CI $>\delta_{\rm switch}$ & \theirs{\textbf{Recommend HIS}} \\
+    both adequate, his advantage demonstrated but $<\delta_{\rm switch}$ &
+      \warn{\textbf{Retain OURS --- and say he scored better}}, naming the switching
+      costs. \warn{Never ``no difference''} \\
+    CI contains $-\delta$ & \warn{Inconclusive --- no selection}; incumbent is a
+      \emph{provisional engineering choice} \\
+    either arm inadequate & that arm not recommendable; if both, report the
+      configurations as inadequate \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{frame}
+
+% ---------------------------------------------------------------- 14
+\begin{frame}[t]{Tier-A ceiling $\ne$ the cost of completing the goal}
+  \vspace{0.2em}
+  {\scriptsize \textbf{What decides completion cost is one ratio $r$:} his backbone's
+  per-evaluation cost relative to ours, in our engine, on GPU. Revision 1 implied
+  $r\approx1$; the 58.7$\times$ parameter ratio suggests $\sim$80$\times$.
+  \warn{Both are wrong}, and an indicative measurement says why:}
+  \vspace{0.1em}
+
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}rrrrrr@{}}
+    \toprule
+    \textbf{batch} & \textbf{ours} & \textbf{PET2-small} & \textbf{ratio} &
+      \textbf{PET2-medium} & \textbf{ratio} \\
+    \midrule
+    64 & 175.2\,ms & 278.2\,ms & 1.6$\times$ & 1338.4\,ms & 7.6$\times$ \\
+    \textbf{512} (production) & 386.1\,ms & 2255.3\,ms & \textbf{5.8$\times$} &
+      15792.6\,ms & 40.9$\times$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.1em}
+  {\scriptsize The ratio \textbf{moves 3.6$\times$ across an 8$\times$ batch change}, so the
+  small-batch figure measured framework overhead --- the script says so in its own verdict
+  field rather than letting a reader take 1.6$\times$ as the answer. CPU and
+  \warn{cross-framework}, so \warn{not the GPU ratio}. What it establishes: the
+  \textbf{parameter ratio is a bad proxy}; at production batch his small backbone is
+  \textbf{single-digit multiples}, so $r\approx6$ is the working expectation and
+  completion is \emph{plausibly} affordable; \textbf{medium is a different cost class}.}
+  \vspace{0.3em}
+  {\scriptsize At $r=6$ a complete 8-seed comparison is $\approx$\textbf{84 GPU-h}; at
+  $r=20$, \textbf{252} --- the whole remaining ceiling; at $r=41$ (medium), \textbf{504},
+  \warn{out of reach}. \textbf{Stage 2 is therefore a go/no-go on the goal, not a
+  formality.} Until $r$ is measured on GPU in one framework, no total is quotable and
+  this deck quotes none --- but plan against $r\approx6$, never against the parameter
+  ratio.}
+\end{frame}
+
+% ---------------------------------------------------------------- 18b
+\begin{frame}[t]{Stages, and what stops it}
+  \vspace{0.4em}
+  \begin{center}\footnotesize\renewcommand{\arraystretch}{1.05}
+  \begin{tabular}{@{}cR{0.40\textwidth}rR{0.34\textwidth}@{}}
+    \toprule
+    & \textbf{stage} & \textbf{GPU-h} & \textbf{gate} \\
+    \midrule
+    0 & specify V1; draft freeze; file R-1 with Agent A; send R1--R3 & 0 &
+      \warn{Joseph ratifies V1 and $\delta$} \\
+    1 & port; P-1\ldots P-6 & 0.5 & all P-* pass \\
+    2 & \textbf{cost calibration --- measure $r$} & 3 &
+      \warn{\textbf{go/no-go on the goal}} \\
+    3 & tuning, 4 trials per arm & 12 & both arms frozen \\
+    4 & variance pilot, 4 paired seeds & 12 & upper-bound $\sigma$ admits $\delta$ \\
+    5 & Tier-A comparison, 8 paired seeds & 24 & --- \\
+    & contingency & 18 & \\
+    \midrule
+    & \textbf{Tier-A ceiling} & \textbf{$\le$70} & of 290; 16.0 consumed \\
+    \textbf{6+} & \textbf{Tier B --- the complete comparison} &
+      \warn{$8c(1{+}r)$} & R-1 landed, R2 obtained, $r$ known, new authorization \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.4em}
+  {\footnotesize \textbf{Stops:} a port check fails; $r$ puts completion outside the
+  allocation (\warn{say so --- do not raise the ceiling, narrow the endpoint or widen
+  $\delta$}); either arm fails absolute adequacy; the pilot's upper-bound $\sigma$ cannot
+  resolve $\delta$; limits exhausted, with repairs counting as retries and no automatic
+  relaunch; or the endpoint, $\delta$, $\delta_{\rm switch}$, the decision rule or the
+  samples would have to change --- which is a new approval, not an amendment.
+  \\[0.4em]
+  \textbf{Frozen before any comparative number exists}, digest-verified: both
+  configurations, the forced adaptations, the V1 protocol, the sample, $\delta$,
+  $\delta_{\rm switch}$, the fairness definition and the rule verbatim.
   \warn{Not relaxed after failures.}}
 \end{frame}
 
@@ -676,10 +841,41 @@
     \toprule
     \textbf{claim} & \textbf{evidence} \\
     \midrule
-    baseline recovery \textbf{0.5126033} against the adopted criterion
-      \textbf{0.494582} $=0.80\times$ ceiling 0.618228, margin $+0.0180209$ &
-      job \texttt{56552326}, independently finalized by \texttt{56562169};
-      \texttt{docs/orchestration/CLAIM-CLM-012.md} (viii) \\
+    \warn{closure-diagnostic} recovery \textbf{0.5126033} (\texttt{VL100}) against the
+      adopted criterion \textbf{0.494582}. \warn{NOT a production baseline: every
+      artifact is \texttt{NONQUOTABLE-DIAGNOSTIC.} with \texttt{quotable: False}, and
+      \texttt{recovery\_evaluated} is \texttt{False} at the promoted configuration} &
+      job \texttt{56552326}, finalized \texttt{56562169}; \texttt{CLAIM-CLM-012.md}
+      (viii); \warn{\texttt{docs/OPEN\_ITEMS.md} \texttt{OI-71}, \texttt{WAITING-USER},
+      G4 alone surviving} \\
+    \warn{the closure's fold-forward is $\approx$1.011 vs the nominal's 0.736746 --- it
+      does NOT exercise the $\sim$34\,\% deficit and is SILENT about it} &
+      \texttt{OI-71}(4)(e); \texttt{OI-125} (the closure driver has no fold-forward
+      computation at all) \\
+    paper lineup: OmniLearned-small / -small-rw / -medium; Transformer1 disabled &
+      \texttt{plot\_configs/V1Paper.json}; \texttt{submit\_train\_jobs.py:155-169} \\
+    paper backbone capacity 2{,}762{,}550 ($58.7\times$ ours); medium 52{,}294{,}730 &
+      \texttt{receipts/model-capacity.json} \\
+    step-cost ratio 5.8$\times$ at batch 512, 1.6$\times$ at batch 64 ---
+      \warn{overhead-dominated, not a scaling estimate} &
+      \texttt{receipts/step-cost-scale.json} (CPU, cross-framework) \\
+    truth $E_{\rm avail}$ is already in the npz, \texttt{truth\_scalars} col 2 &
+      \texttt{dump\_pointcloud\_inputs.py:79} (\texttt{MC\_eavail}) \\
+    the npz carries \warn{no event key}; the AnaTuple carries
+      \texttt{ev\_run/ev\_subrun/ev\_gate} &
+      \texttt{dump\_pointcloud\_inputs.py:190-235};
+      \texttt{typed\_descriptor\_source\_smoke.py:86} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Appendix A3 --- anchors, continued}
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}R{0.42\textwidth}R{0.53\textwidth}@{}}
+    \toprule
+    \textbf{claim} & \textbf{evidence} \\
+    \midrule
     closure repeat spread \textbf{1.226e-3} --- same-configuration, \warn{\emph{not} seed
       scatter, so it sizes nothing} &
       job \texttt{56611837}; \texttt{CLAIM-CLM-012.md} (ix) \\
@@ -774,7 +970,7 @@
   ($\le$30 GPU-h, precondition unmet) and its Stage 2 ($\le$130 GPU-h). \warn{Do not
   confuse that pilot with stage 4 of the matched comparison} --- different sample,
   different endpoint, different purpose. \textbf{Requested instead:} $\le$70 GPU-h for
-  stages 1-5 of slides 14-16.
+  stages 1-5 of slides 16-19.
   \\[0.3em]
   \textbf{Not authorized by anything in this deck:} publication adoption, any covariance
   or systematic, a central-value change, a Gate-6 action, or the construction of

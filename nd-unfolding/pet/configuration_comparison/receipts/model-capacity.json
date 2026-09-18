@@ -47,6 +47,58 @@
     "trainable_parameters_backbone": 890130,
     "note": "backbone only; the task head is one linear layer and is excluded"
   },
+  "gregors_paper_lineup": {
+    "source": "plot_configs/V1Paper.json; submit_train_jobs.py:155-169",
+    "models": [
+      "OmniLearned-small (pretrain_s)",
+      "OmniLearned-small-rw (scratch)",
+      "OmniLearned-medium / OL-medium-frozen (pretrain_m, backbone frozen)"
+    ],
+    "shared_flag": "--zero-cond-feature 2 (zeroes the log-hadron-recoil global)",
+    "constructor_kwargs": {
+      "input_dim": 4,
+      "add_dim": 5,
+      "pid": true,
+      "pid_dim": 8,
+      "cond_dim": 16,
+      "num_coord": 2,
+      "K": 10,
+      "add_info": true,
+      "conditional": true,
+      "mode": "classifier",
+      "num_classes": 1
+    },
+    "counts": {
+      "small": {
+        "preset": {
+          "num_transformers": 8,
+          "num_transformers_head": 2,
+          "num_tokens": 4,
+          "num_heads": 8,
+          "base_dim": 128,
+          "mlp_ratio": 2
+        },
+        "trainable_parameters": 2762550,
+        "backbone_parameters": 1447216,
+        "trainable_if_backbone_frozen": 1315334
+      },
+      "medium": {
+        "preset": {
+          "num_transformers": 12,
+          "num_transformers_head": 2,
+          "num_tokens": 4,
+          "num_heads": 16,
+          "base_dim": 512,
+          "mlp_ratio": 2
+        },
+        "trainable_parameters": 52294730,
+        "backbone_parameters": 31304772,
+        "trainable_if_backbone_frozen": 20989958
+      }
+    },
+    "note": "Transformer1 is under _disabled_models in V1Paper.json and is NOT a paper model. Its count is retained for continuity with the interim inventory, not as the comparison target."
+  },
   "ratio_gregor_over_our_step1": 18.922429370123936,
+  "ratio_paper_small_over_our_step1": 58.726430135413786,
   "non_claim": "Capacity is not accuracy. These two models solve different problems -- ours is a binary reweighting classifier inside OmniFold, his is a supervised regressor/classifier -- so the ratio measures size, not efficiency, suitability, or quality."
 }

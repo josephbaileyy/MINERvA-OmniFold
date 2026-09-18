@@ -1,0 +1,111 @@
+{
+  "scope": "CPU, cross-framework, indicative ONLY: distinguishes 'about the same' from 'orders of magnitude'. NOT the GPU ratio and not a substitute for a same-framework measurement.",
+  "tokens": 12,
+  "batches": [
+    64,
+    512
+  ],
+  "warmup": 3,
+  "repeats": 10,
+  "by_batch": {
+    "64": {
+      "ours": {
+        "framework": "tensorflow (legacy keras)",
+        "trainable_parameters": 47041,
+        "median_ms": 175.24566710926592,
+        "min_ms": 171.7340420000255,
+        "max_ms": 235.14658305794,
+        "repeats": 10
+      },
+      "gregors_paper_backbone": {
+        "small": {
+          "framework": "pytorch",
+          "preset": {
+            "num_transformers": 8,
+            "num_transformers_head": 2,
+            "num_tokens": 4,
+            "num_heads": 8,
+            "base_dim": 128,
+            "mlp_ratio": 2
+          },
+          "trainable_parameters": 2762550,
+          "median_ms": 278.22720794938505,
+          "min_ms": 249.9114579986781,
+          "max_ms": 312.3715838883072,
+          "repeats": 10
+        },
+        "medium": {
+          "framework": "pytorch",
+          "preset": {
+            "num_transformers": 12,
+            "num_transformers_head": 2,
+            "num_tokens": 4,
+            "num_heads": 16,
+            "base_dim": 512,
+            "mlp_ratio": 2
+          },
+          "trainable_parameters": 52294730,
+          "median_ms": 1338.3634579367936,
+          "min_ms": 1170.632499968633,
+          "max_ms": 1767.9430828429759,
+          "repeats": 10
+        }
+      },
+      "step_cost_ratio_to_ours": {
+        "small": 1.5876410101250034,
+        "medium": 7.637070177046501
+      }
+    },
+    "512": {
+      "ours": {
+        "framework": "tensorflow (legacy keras)",
+        "trainable_parameters": 47041,
+        "median_ms": 386.1374584957957,
+        "min_ms": 375.0684999395162,
+        "max_ms": 405.6987091898918,
+        "repeats": 10
+      },
+      "gregors_paper_backbone": {
+        "small": {
+          "framework": "pytorch",
+          "preset": {
+            "num_transformers": 8,
+            "num_transformers_head": 2,
+            "num_tokens": 4,
+            "num_heads": 8,
+            "base_dim": 128,
+            "mlp_ratio": 2
+          },
+          "trainable_parameters": 2762550,
+          "median_ms": 2255.336541449651,
+          "min_ms": 1768.6471249908209,
+          "max_ms": 2610.4244999587536,
+          "repeats": 10
+        },
+        "medium": {
+          "framework": "pytorch",
+          "preset": {
+            "num_transformers": 12,
+            "num_transformers_head": 2,
+            "num_tokens": 4,
+            "num_heads": 16,
+            "base_dim": 512,
+            "mlp_ratio": 2
+          },
+          "trainable_parameters": 52294730,
+          "median_ms": 15792.553958599456,
+          "min_ms": 14571.821124991402,
+          "max_ms": 20122.20554216765,
+          "repeats": 10
+        }
+      },
+      "step_cost_ratio_to_ours": {
+        "small": 5.8407608270778715,
+        "medium": 40.89878775325136
+      }
+    }
+  },
+  "ratio_moves_with_batch": true,
+  "verdict": "OVERHEAD-DOMINATED: the ratio moves with batch size, so neither number is a scaling estimate and the cost question is UNRESOLVED until stage 2 measures it on GPU in one framework.",
+  "non_claim": "A framework difference is folded into every ratio here. Use it to decide whether the complete comparison is plausibly affordable, never to quote a cost. Stage 2 of the proposal replaces it with one measured GPU evaluation per arm in a single framework."
+}

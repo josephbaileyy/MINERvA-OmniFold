@@ -6,6 +6,7 @@ kind of evidence backs them, because that distinction is the point: a measured n
 a code reading and a judgement are three different things and the deck must not blur
 them.
 
+**Revision 2, 2026-09-18.** §N lists what revision 1 of the proposal got wrong.
 **Revised 2026-09-18 for the matched-comparison goal.** The deck is now an **interim
 inventory**; the selection is specified in `MATCHED_COMPARISON_PROPOSAL-20260918.md` and
 has not been executed. §L records what was corrected in this revision.
@@ -154,7 +155,9 @@ These appear in the deck as recommendations or arguments. None is a measurement.
 
 | # | claim | source | scope limit |
 |---|---|---|---|
-| M1 | production baseline on the powered closure: recovery **0.5126033**, adopted criterion **0.494582** (`= 0.80 × ceiling 0.618228`), margin **+0.0180209** | job `56552326`, independently finalized by `56562169`; `docs/orchestration/CLAIM-CLM-012.md` (viii) | the 0.80 *absolute* bar was retired 2026-08-09; the live criterion is `f × ceiling` |
+| M1 | **closure-diagnostic** recovery **0.5126033** (`VL100`) against the adopted criterion **0.494582** (`= 0.80 × ceiling 0.618228`) | job `56552326`, finalized `56562169`; `CLAIM-CLM-012.md` (viii) | **NOT a production baseline. Corrected per `OI-71`:** every artifact of that closure is prefixed `NONQUOTABLE-DIAGNOSTIC.` with `quotable: False`; **`recovery_evaluated` remains `False` at the promoted configuration**; `OI-71` is `WAITING-USER` with **G4 alone surviving** and is not determinable read-only. Whether the number may be quoted is a question the receipt **raises and does not answer** |
+| M1b | **the closure's fold-forward is ≈1.011 against the promoted nominal's 0.736746, so it does not exercise the ~34 % normalization deficit — it is *silent* about that failure mode** | `OI-71`(4)(e) | this is why the powered pT closure alone is not representative validation |
+| M1c | the closure driver has **no fold-forward computation at all** (`git grep fold_forward` = 0 hits over both closure drivers) | `OI-125` | adding it is ~8 lines and **must not** be done by editing the pinned driver |
 | M2 | the closure's run-to-run spread is **1.226e-3** | job `56611837`; `CLAIM-CLM-012.md` (ix) | **same-configuration repeat, NOT seed-to-seed scatter.** It bounds δ from below and **sizes nothing.** The same record notes this margin had once been stated at ~10× its actual confidence |
 | M3 | **97.8 %** of the baseline's gap to the ceiling is per-cell scatter; signed bias **−0.0019** | `docs/orchestration/FINDINGS-ARCHIVE-2026-08.md` BEN-038 | implies an arm can win the aggregate by being less noisy per cell; hence the mandatory decomposition |
 | M4 | the ceiling **0.618228** is a **reference curve, not a proven bound** — a band was measured at `E_w[r] = 1.0333` | `CLAIM-CLM-012.md` caveat (i); BEN-038 | recovery fractions are relative to a reference |
@@ -164,7 +167,17 @@ These appear in the deck as recommendations or arguments. None is a measurement.
 | M8 | **his representation is absent from our production input for every inventory** — no blob, prong, photon, PID, dE/dx, Michel, per-type-energy-sum or overflow key | re-measured at `44142e8c`: `dump_pointcloud_inputs.py:190-235`; first established at `GREGOR_PET2_OMNIFOLD_ASSESSMENT.md:249-255` (`b65f9ff2`) | this is what blocks Tier B |
 | M9 | seed-scatter planning prior **σ ≈ 0.008** | `docs/orchestration/CLAIM-CLM-010.md`: 48 seeds, mean deviation 0.014256, **sd 0.008023** | an **adjacent** statistic, not this endpoint. A planning assumption; stage 4 measures the real thing |
 | M10 | a PyTorch OmniFold backend exists — ≈10,900 lines, ≈2,900 of them tests, with `run_iterations` for multiple iterations | `nd-unfolding/pet2_torch/` at `b65f9ff2`, preserved by tag `evidence/prepublication-excluded-gregor-b65f9ff2` | its `model.py` is by its own docstring an **independent** reimplementation, **not Gregor's architecture**; its `g2_adapter.py` never saw the real payload |
-| M11 | the exact upstream configuration is the `Transformer1` regression preset: d_model 128, depth 4, heads 8, dropout 0, batch 2048, max_steps 250000, lr 1e-4, wd 0.01, warmup 1000, clip 1.0 | `submit_train_jobs.py:119-153`; `train.py:660-686` | **not established to be the configuration behind arXiv:2604.12364** |
+| M11 | the `Transformer1` preset: d_model 128, depth 4, heads 8, dropout 0, batch 2048, max_steps 250000, lr 1e-4, wd 0.01, warmup 1000, clip 1.0 | `submit_train_jobs.py:119-153`; `train.py:660-686` | **CORRECTED: `Transformer1` is NOT a model his paper reports** — see M13 |
+| M13 | the **paper lineup** is OmniLearned-small (`pretrain_s`), OmniLearned-small-rw (scratch) and OmniLearned-medium / "OL-medium-frozen" (`pretrain_m`, backbone frozen); **Transformer-xsmall/small are under `_disabled_models`** | `plot_configs/V1Paper.json`; `submit_train_jobs.py:155-169` | the paper is *Cross-Domain Transfer with Particle Physics Foundation Models* (`CITATION.bib`), so the **pretrained** arm is its contribution |
+| M14 | paper backbone capacity: OmniLearned-small **2,762,550** (**58.7×** our 47,041); medium **52,294,730** (1,112×), **20,989,958** trainable with the backbone frozen | `receipts/model-capacity.json`, both instantiated | capacity is not accuracy |
+| M15 | his constructor values as his code builds them: `input_dim` 4, `add_dim` 5, `pid_dim` 8, `cond_dim` 16, `num_coord` 2, **`K = 10` hardcoded** (not the `PET2` default 15); small = 8+2 transformers, 8 heads, `base_dim` 128, `mlp_ratio` 2 | `train.py:1085-1105`; `omnilearned/utils.py:11-32` | read from the factory, not from class defaults |
+| M16 | checkpoints are `best_model_pretrain_{s,m}.pt` from `https://portal.nersc.gov/cfs/m4567/checkpoints` — CFS project **m4567**, not ours; **the code silently attempts a download when the file is absent** | `omnilearned/utils.py:58-79`; `B_provenance.out.md` items 2–3 | **P1 and P3 are not runnable** without them |
+| M17 | **all three paper arms carry `--zero-cond-feature 2`**, which zeroes global index 2 = `log(hadron_recoil)` | `submit_train_jobs.py:156,165,169`; `preprocessing.py:618-624` | his paper configuration **deliberately removes a hadronic recoil summary** |
+| M18 | the cap is a **Python** choice: the dump binds full-length `ROOT.std.vector("double")` cloud buffers and `_pad_tokens` truncates them | `dump_pointcloud_inputs.py:90-112, 252-268`; `FULL_EVENT_INTERFACE_REQUEST.md` "Available NOW" | **so cap, overflow aggregation, merged counts and discarded energy need NO C++** |
+| M19 | **the npz carries no event key**; the AnaTuple carries `ev_run`/`ev_subrun`/`ev_gate` | `dump_pointcloud_inputs.py:190-235`; `typed_descriptor_source_smoke.py:86` | so a Python-side join is impossible **because the key is discarded**, not because data is missing. R-1 asks for three scalar branches |
+| M20 | `FULL_EVENT_INTERFACE_REQUEST.md` §D is **"Residual-energy summary tokens (optional)"**; §§A–C (muon object, view/time, vertex) **landed**; **no filed request for the typed vocabulary exists**. Owner is **Agent A** | that file, in full | revision 1 cited §D as the typed-object request |
+| M21 | truth `E_avail` is already in the npz as `truth_scalars` col 2 (`MC_eavail`) | `dump_pointcloud_inputs.py:79` | so the hadronic injection needs **no new export** |
+| M22 | step-cost ratio to ours: **1.6×** (batch 64) and **5.8×** (batch 512) for PET2-small; 7.6× / 40.9× for medium | `receipts/step-cost-scale.json` | **the ratio moves 3.6× with batch, so it is overhead-dominated and is NOT a scaling estimate.** CPU and cross-framework. Its value is refuting both `r≈1` and the 58.7× parameter extrapolation |
 | M12 | the prior campaign declined a cross-framework comparison because it would "confound framework, representation, and training engine" | `GREGOR_PET2_OMNIFOLD_ASSESSMENT.md:414-417` | the reason the matched design runs both arms in one engine |
 
 ## J. Campaign spend, and where it does not reconcile
@@ -194,6 +207,21 @@ itemized in a receipt I can cite. Reported as a gap rather than closed by arithm
 | "B−A failing makes C−B irrelevant" | the three primary contrasts are read together, not in sequence (`ENDPOINT_SPECIFICATION-20260918.md`) |
 | "25.8 points is measured power for this endpoint" | D4: a planning assumption from a different fixture |
 | "the execution path is validated across the intended range" | C5: 10 of 13 widths; validation is **incomplete** |
+
+## N. Corrected in revision 2 of the proposal
+
+| revision 1 claim | correction |
+|---|---|
+| "the exact upstream configuration is the `Transformer1` preset" | **not a paper model** — M13 |
+| "his model is 18.9× ours" | that is Transformer1; the paper backbone is **58.7×** — M14 |
+| "the representation is blocked on a C++ event-loop deliverable" | **partly false** — cap, overflow, merged counts and discarded energy need no C++ — M18 |
+| cited interface-request "§D" for typed objects | §D is residual-energy tokens; **no typed request exists** — M20 |
+| "our production baseline on the endpoint is 0.5126033" | a `quotable: False` closure diagnostic, `recovery_evaluated: False` at the promoted configuration — M1 |
+| δ = 0.018 justified as the margin over the adopted criterion | **withdrawn** — it rested on M1. Replaced by δ = 0.017 as a *decision anchor*: half the −0.0342 recovery loss the campaign accepted for the LR anneal |
+| V-PORT checked forward agreement only | extended to **forward, gradient and weight-update** — forward agreement does not show training is equivalent |
+| sizing used normal quantiles | **t-based, iterative**, sized on the upper confidence bound of the pilot's σ |
+| "one endpoint" | the injection is a **muon** kinematic; the primary endpoint is now a truth-`E_avail` tilt (M21), with the pT tilt kept as a muon-side control |
+| 70 GPU-h as the campaign cost | **a Tier-A ceiling only**; completion is `8c(1+r)` with `r` unmeasured — M22 |
 
 ## L. Corrected in the 2026-09-18 matched-comparison revision
 

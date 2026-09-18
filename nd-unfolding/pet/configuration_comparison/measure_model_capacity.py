@@ -48,6 +48,12 @@ GEN_MODEL = {"num_feat": 8, "num_evt": 2, "num_part": 12}
 # Gregor's Transformer1 settings, from src/jobs/submit_train_jobs.py, with the
 # point/global widths his dataset actually produces (10 saved columns = 9
 # continuous + 1 PID; 16 global features).
+#
+# CAUTION, and this is why the OmniLearned entries below exist: Transformer1 is
+# NOT a model his paper reports. `plot_configs/V1Paper.json` lists
+# OmniLearned-small, OmniLearned-small-rw and OmniLearned-medium ("OL-medium-frozen")
+# as the V1 paper lineup, with Transformer-xsmall/small under `_disabled_models`.
+# Counting Transformer1 alone would size the wrong object.
 GREGOR_VIT = {
     "point_cont_dim": 9,
     "point_cat_num_classes": [8],
@@ -60,6 +66,52 @@ GREGOR_VIT = {
     "use_cls_token": True,
     "use_event_token": True,
 }
+
+
+# The paper lineup, from `plot_configs/V1Paper.json` and the `OLS`/`OLS_RW`/`OLM_FB`
+# branches of `submit_train_jobs.py:155-169`. All three carry
+# `--zero-cond-feature 2`, which zeroes the log-hadron-recoil global.
+GREGOR_OMNILEARNED = {
+    "input_dim": 4,          # --ol_num_feat default
+    "add_dim": 5,            # --ol_num_add default
+    "pid": True,             # --use_pid default True
+    "pid_dim": 8,            # --ol_pid_dim (eval.py fallback)
+    "cond_dim": 16,          # GLOBAL_COND_BASE_DIM 10 + 6 energy sums
+    "num_coord": 2,          # --coord_dim default
+    "K": 10,                 # hardcoded at train.py:1103, not the PET2 default of 15
+    "add_info": True,
+    "conditional": True,
+    "mode": "classifier",
+    "num_classes": 1,        # regression head
+}
+
+
+def count_gregor_omnilearned(checkout: Path, size: str) -> dict[str, Any]:
+    """Build the paper's PET2 backbone at a named preset and total its parameters.
+
+    ``frozen_trainable`` applies the medium arm's backbone freeze, which is what
+    ``OL-medium-frozen`` in the paper's figure config actually trains.
+    """
+    import sys
+
+    if str(checkout) not in sys.path:
+        sys.path.insert(0, str(checkout))
+    from src.models.omnilearned.network import PET2
+    from src.models.omnilearned.utils import get_model_parameters
+
+    preset = get_model_parameters(size)
+    model = PET2(**GREGOR_OMNILEARNED, **preset)
+    total = int(sum(p.numel() for p in model.parameters()))
+    body = getattr(model, "body", None)
+    body_params = int(sum(p.numel() for p in body.parameters())) if body is not None else None
+    return {
+        "preset": preset,
+        "trainable_parameters": total,
+        "backbone_parameters": body_params,
+        "trainable_if_backbone_frozen": (
+            total - body_params if body_params is not None else None
+        ),
+    }
 
 
 def count_our_pet(repo: Path, spec: dict[str, int]) -> int:
@@ -105,6 +157,11 @@ def main() -> None:
     gen = count_our_pet(args.repo, GEN_MODEL)
     gregor = count_gregor_vit(args.gregor_checkout)
 
+    paper = {
+        size: count_gregor_omnilearned(args.gregor_checkout, size)
+        for size in ("small", "medium")
+    }
+
     receipt: dict[str, Any] = {
         "scope": "trainable-parameter counts at each project's own training configuration",
         "ours": {
@@ -121,7 +178,24 @@ def main() -> None:
             "trainable_parameters_backbone": gregor,
             "note": "backbone only; the task head is one linear layer and is excluded",
         },
+        "gregors_paper_lineup": {
+            "source": "plot_configs/V1Paper.json; submit_train_jobs.py:155-169",
+            "models": [
+                "OmniLearned-small (pretrain_s)",
+                "OmniLearned-small-rw (scratch)",
+                "OmniLearned-medium / OL-medium-frozen (pretrain_m, backbone frozen)",
+            ],
+            "shared_flag": "--zero-cond-feature 2 (zeroes the log-hadron-recoil global)",
+            "constructor_kwargs": GREGOR_OMNILEARNED,
+            "counts": paper,
+            "note": (
+                "Transformer1 is under _disabled_models in V1Paper.json and is NOT a "
+                "paper model. Its count is retained for continuity with the interim "
+                "inventory, not as the comparison target."
+            ),
+        },
         "ratio_gregor_over_our_step1": gregor / reco,
+        "ratio_paper_small_over_our_step1": paper["small"]["trainable_parameters"] / reco,
         "non_claim": (
             "Capacity is not accuracy. These two models solve different problems -- "
             "ours is a binary reweighting classifier inside OmniFold, his is a "
@@ -130,8 +204,15 @@ def main() -> None:
         ),
     }
     args.output.write_text(json.dumps(receipt, indent=2) + "\n")
-    print(f"ours step1 {reco:,}  step2 {gen:,}  gregor {gregor:,}")
-    print(f"ratio gregor/ours(step1): {gregor / reco:.1f}x")
+    print(f"ours step1 {reco:,}  step2 {gen:,}  Transformer1 {gregor:,}")
+    for size, row in paper.items():
+        print(
+            f"OmniLearned-{size}: {row['trainable_parameters']:,} total, "
+            f"backbone {row['backbone_parameters']:,}, "
+            f"frozen-trainable {row['trainable_if_backbone_frozen']:,}"
+        )
+    print(f"ratio Transformer1/ours: {gregor / reco:.1f}x; "
+          f"paper-small/ours: {paper['small']['trainable_parameters'] / reco:.1f}x")
 
 
 if __name__ == "__main__":
