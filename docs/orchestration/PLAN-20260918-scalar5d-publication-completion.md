@@ -1420,3 +1420,73 @@ sensitivity, labelled as such, and not used as the acceptance test.
 4. **The cause-3 members**, which do not exist; cause 3's own requirement line says *"build all
    members"*.
 5. `rcond = 1e-10` and the fixed-subspace rule — **mine to declare, and declared here.**
+
+
+---
+
+## 18. STAGE D-CVDIV-1 — the production-faithful diagnostic, recorded before submission
+
+Joseph, 2026-09-18: *"Make the next diagnostic production-faithful rather than merely larger… with
+checkpoints sufficient to identify the first divergence between repeated executions. Choose the
+smallest bounded test that can answer that question."* Submitted as job **`58510551`** after the
+record below, a fresh receipt and verified admission.
+
+**Question.** `unified_throw_cov.py:840` and `:1011` call `_xsec_for_weights` with **the same**
+`args.estimator_seed` and the same `d, edges, w_truth, w_reco, td_cv, args.iters` — re-verified at
+the lines, which also settles a doubt I had: the `seed + 1` I found is in
+`compare_unified_throw.py:193`, a **different** driver. So P0's like-for-like finding stands. The two
+results differ by `r_null = 4.4520002137582904e-14`. **An endpoint norm over the final cross-section,
+after five iterations and ten classifier fits, cannot say where.** This asks where.
+
+**Why it is the smallest test that can answer it.** The loop's only outputs are `w_pull, w_push` at
+`omnifold_nn_core.py:275` — there is no per-iteration hook, so an endpoint comparison is all the
+production path offers. The cheapest way to get stage resolution is to digest **every classifier
+evaluation** in both executions and report the first index where the sequences differ. `_reweight`
+is module-level, so a driver can wrap it; the wrapper calls through and returns the original value,
+so it is **capture-only and cannot alter what it measures**.
+
+**Production-faithful, item by item — this is the part "merely larger" would have failed:**
+
+| | |
+|---|---|
+| inputs | the **real** bank `cv.npz`, `2,939,596,884` B, `sha256 3c9bbd6283fcb157…` — which **is** the precursor receipt's `extra.bank_cv_sha256`. Verified in-probe as a **refusal** |
+| weights | `w_truth`, `w_reco`, `td_w` straight out of that bank |
+| estimator settings | whatever `make_estimators` constructs — **UNPINNED**, as production leaves it. Applying the overlay would test a different estimator |
+| CV execution path | `_xsec_for_weights` itself, not a re-implementation |
+| iterations | 5, the production value |
+| **allocation shape** | `--cpus-per-task=16 --mem=90G`, **matching `sbatch_uthrow_combine_5d_fast.sh:4`**, because the estimator runs with `n_jobs=None` — every available thread — so **the CPU count is part of the configuration under study** and a different shape is a different experiment |
+
+**What either outcome changes, stated before the allocation was spent.** The three are mutually
+exclusive and point at **different repairs**:
+
+1. **The first classifier evaluation already differs** → the estimator is non-reproducible on
+   production inputs at a fixed seed. That **contradicts** the synthetic-fixture result
+   (`58509947`), which makes the *difference between the two regimes* the finding and points at
+   data-dependent threading. Pinning becomes the candidate remedy and P2's design narrows.
+2. **Evaluation `N` differs after `N−1` identical ones** → the estimator is reproducible and
+   something downstream accumulates: the regressor branch (`use_reg`), the weight product
+   `w_pull = w_push · new_w`, or the histogram fill. **Pinning would NOT fix it** and the repair is
+   local to the identified stage.
+3. **None differ** → `r_null` arises outside this path, and the launcher's `must be zero` is
+   **mis-scoped rather than violated** — a documentation repair.
+
+**Call-index → stage mapping**, deterministic in the loop's structure (`omnifold_nn_core.py:248-269`):
+within iteration `it`, call `2·it` is step 1 (`clf1` on `MCreco[pass_reco]`) and `2·it+1` is step 2
+(`clf2` on `MCgen`). A difference in call **count** is reported as its own finding rather than as a
+digest mismatch.
+
+**Declared limits and accounting.** `1 task × 2.00 h = 2.00 CPU task-h`, the wall anchored on the
+measured combine actuals `0.3875 / 0.4239 / 0.5764` h for a job that includes **one** CV unfold —
+this runs two and skips the assemblies. Admitted against a receipt measured at
+`2026-09-18T07:07:01Z`: spend `96.4064` of `500`, **headroom `403.5936`**, GPU `16.0117`,
+outstanding reservations **0**. Retry limit unchanged: one corrective resubmission after a diagnosed
+defect, verified repair and fresh admission; automatic requeue stays disabled.
+
+⚠ **Not covered, recorded on the probe itself:** the regressor branch does not pass through
+`_reweight`, so a divergence originating there is seen only at the *next* evaluation; the histogram
+fill is covered only by the endpoint; and cross-**node** behaviour is not measured at all.
+
+⚠ **Finding the bank took three searches and the first two were wrong**, in the way that has now
+cost me twice today. `*bank*cv*.npz` and `*bank*` + `*.npz` both returned nothing. Then I read the
+launcher: `--bank` names a **directory**, whose CV input is `cv.npz`. The name-correct search found
+it at once and the digest confirmed it. **Read the consumer's argument; do not guess the filename.**
