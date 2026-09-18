@@ -971,3 +971,85 @@ the environment-ordering defect), and the second run completed rather than faile
 *third* submission and Joseph's call rather than mine. It is the cheapest decision-relevant item in
 the package: if output tracks the thread count, **no number of cross-allocation repeats fixes it** and
 P2's `9.00`–`12.00` task-h should not be bought at all.
+
+
+---
+
+## 14. The a5 build receipt, read — R5 step 2 performed, and D2/cause-3 premises verified
+
+Zero compute: `z_pilot_20260916_a5/z-receipt-cv.json`, `37,568` bytes, read directly. This is R5's
+recommended **step 2** ("read the stamps before recomputing anything") actually carried out, plus
+independent confirmation of several claims I had sourced elsewhere.
+
+### 14.1 Independent confirmation of §10.1 and of my own NPZ measurements
+
+| receipt field | value | agrees with |
+|---|---|---|
+| `G5_band_partition` | `exhaustive: true`, `n_inventory 45`, `n_vert 13`, `n_residual 27`, `n_lateral 5` | §10.1, measured from the 41.44 GB support file — **a different file, same answer** |
+| `G4_symmetry_psd.rel_asymmetry` | `2.1641333629718972e-16` | my independent NPZ measurement, to every digit |
+| `G4_symmetry_psd.lambda_min` | `-1.2750516323643892e-90` | the figure this plan has been quoting |
+| `G2_g_domain` | `g_min 1.0`, `g_max 17.653141714565614`, `n_gt_one 6528`, `n_pinned 0` | `hInflation_g`'s measured min/max in the npz |
+| `G1_closure_identity.max_rel_residual` | `0.0` at `rtol 1e-9` | — |
+| `G3_g_reconstruction.max_rel_diff` | `0.0` | the inflation factors reconstruct exactly |
+| `active_total_eq_sum5` | `0.0` | cause 7's lateral-sum trace |
+
+**R1's recommendation now rests on two independent measurements of the band partition**, one from the
+support family's own keys and one from the build's receipt. That is the strongest state any item in
+this package is in.
+
+### 14.2 R5 STEP 2, PERFORMED: the lineage is recorded UNVERIFIED, by the producer
+
+    parent.lineage_status          = "UNVERIFIED"
+    parent.parent_candidate.path   = .../readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root
+                                     892,170,881 B   sha256 4f168e83...
+    parent.combined_source.path    = .../uq_universe_5d_covariance_combined_bkgaware.root
+                                     41,436,632,945 B   sha256 9f7b2f55...
+
+**The two-ensemble finding is confirmed and its disposition is narrowed.** The build consumed the
+**2026-09-14 precursor** as its `throw` source (`z-manifest.json`) and names the **2026-08-11/12**
+mean-centered object as `parent_candidate` — and it labels that relationship `UNVERIFIED` rather than
+asserting it. So the parent is a *declared comparison subject*, not a component of `C_Z`.
+
+**This moves R5 from "possible component quarantine" toward "documentation and a verification step",
+which is the cheap branch, and it was measured rather than assumed.** What remains is to verify the
+claimed lineage or record it as unverified in the registry — and to amend
+`ESTIMATOR_REGISTRY:29`, which names `..._UTHROW.root` while the chain consumed the unsuffixed file.
+**No recomputation is indicated by this evidence.**
+
+### 14.3 D2's premise verified: there are exactly FOUR withheld boundaries
+
+    cause3_agg      WITHHELD   the format-derived 0.0861% was withdrawn in rev. 16
+    cause3_med      WITHHELD   needs a justified per-bin tolerance AND a coverage fraction
+    cause3_corr     WITHHELD   no correlation-sensitive leg is adopted, and none has a boundary
+    null_epsilon    WITHHELD   neither B nor S is established
+
+**`cause2_f7_margin` is not among them**, which is exactly what D2 proposes to create — so D2's
+"extend the withheld set to five" is verified against the artifact rather than against my reading of
+the contract. And cause 3's own requirement line confirms it needs **three** criteria (aggregate,
+per-bin/coverage, correlation-use), matching the three withheld `cause3_*` keys one for one.
+
+### 14.4 Two disclosures in the receipt that belong in the decision package
+
+- **`outcome.assessable: false`, `reject_conditions: ["4c"]`**, reason *"Scientific criteria and
+  real-input evidence remain unresolved."* The build **classifies itself** as not assessable. That is
+  not a failure of construction — every closure identity above is exact — it is the absence of the
+  criteria. `z_validator.py:15`: *"An unassessable run is a REJECT, NOT A FOURTH GRADE TOKEN."*
+- **`null.assessment.verdict: "NOT ASSESSABLE"`**, `r_null 4.4520002137582904e-14`,
+  `reject_conditions ["4c", "11"]`, with `null_epsilon` WITHHELD because *"Neither B nor S is
+  established."* This is the same closed-route finding as packet §2.1, stated by the producer.
+- **`causes` 1, 2, 3, 4 are all `status: UNRESOLVED`** with explicit requirement lines. This is the
+  authoritative list and it matches the packet's.
+- ⚠ **`reproducibility: null`** in this receipt, and `G3R.stored_cv_cross_checked: false`.
+
+⚠ **The second flag is NOT a missing check, and the distinction matters.** Packet §9.3 records that
+`[cb0b6b]` performed the external cross-check on payload — production `hXSecND_flat` against the
+persisted vector, **65,856 of 65,856 identical, `max|Δ| = 0.000e+00`**, mask identical at 10,694 each,
+and `flatnonzero(mask)` against `hRowIndex5D` identical and strictly increasing — and **correctly
+declined to flip the producer's flag**, because the producer was handed no external operand and its
+flag records that accurately. *"Check satisfied, flag unchanged — two different statements."* So M-C
+stands, and that third-party result **independently reproduces the row-order agreement** I measured
+from the npz.
+
+**Recorded because the shape has cost me once today:** a `false` flag can mean *the producer was not
+given the operand*, not *the property fails*. Not-performed-by-the-producer and
+performed-externally are two states, exactly as absent, inaccessible and unsearched are three.
