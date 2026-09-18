@@ -19,6 +19,7 @@ a control that trips it and the positive control proves none of them trips on go
    these tests assert on the code and the message, never merely on nonzero.
 """
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -45,10 +46,20 @@ class M1RunnerRefusals(unittest.TestCase):
         _cov_sha = hashlib.sha256((self.t / "cov.root").read_bytes()).hexdigest()
         self.cov_sha = _cov_sha
         (self.t / "adopt.md").write_text(
-            "This record ADOPTS the scalar-5D trunk.\n"
-            f"src_cov sha256: {_cov_sha}\n")
+            "This record adopts the scalar-5D trunk.\n"
+            f"ADOPTS-SHA256: {_cov_sha}\n")
         (self.t / "adopt_nodigest.md").write_text(
-            "This record ADOPTS the scalar-5D trunk.\n")          # keyword only, no digest
+            "This record ADOPTS the scalar-5D trunk.\n")          # keyword only, no sentinel
+        # A receipt or routing document naturally carries the digest AND the word, in prose.
+        # That is the measured defect: it must be refused.
+        (self.t / "prose_receipt.md").write_text(
+            "Adoption route notes for the pilot outcome.\n"
+            f"{_cov_sha}  z-cv.npz    890,500,272 B\n")
+        # A sentinel that negates or defers itself is not a decision.
+        (self.t / "adopt_negated.md").write_text(
+            f"ADOPTS-SHA256: {_cov_sha} -- PROPOSED, held as drafted and not executed.\n")
+        (self.t / "adopt_nothing.md").write_text(
+            f"ADOPTS-SHA256: nothing. The digest {_cov_sha} is recorded for reference only.\n")
         (self.t / "notadopt.md").write_text("no decision here\n")
         self.env = {
             "MNV_CODE_ROOT": str(self.t / "code"), "MNV_DATA_ROOT": str(self.t),
@@ -139,7 +150,7 @@ class TheAdoptionRecordMustNameTheProduct(unittest.TestCase):
     def test_keyword_only_record_is_refused(self):
         r = self._run(MNV_ADOPTION_RECORD=str(self.t / "adopt_nodigest.md"))
         self.assertEqual(r.returncode, 3, r.stderr)
-        self.assertIn("does not name the measured digest", r.stderr)
+        self.assertIn("carries no ADOPTS-SHA256", r.stderr)
         self.assertIn("A keyword match is not identity", r.stderr)
 
     def test_the_refusal_reports_the_measured_digest(self):
@@ -148,9 +159,27 @@ class TheAdoptionRecordMustNameTheProduct(unittest.TestCase):
 
     def test_a_record_naming_a_DIFFERENT_digest_is_refused(self):
         p = self.t / "adopt_wrong.md"
-        p.write_text("This record ADOPTS the trunk.\nsrc_cov sha256: " + ("a" * 64) + "\n")
+        p.write_text("This record adopts the trunk.\nADOPTS-SHA256: " + ("a" * 64) + "\n")
         r = self._run(MNV_ADOPTION_RECORD=str(p))
         self.assertEqual(r.returncode, 3, r.stderr)
+        self.assertIn("does not name the measured digest", r.stderr)
+        self.assertIn("declared:", r.stderr)
+
+    def test_a_PROSE_document_carrying_the_word_and_the_digest_is_refused(self):
+        """THE MEASURED DEFECT, end to end. A receipt or routing document naturally contains both
+        the digest and the word, in prose. Three real repo documents did. It must be refused."""
+        r = self._run(MNV_ADOPTION_RECORD=str(self.t / "prose_receipt.md"))
+        self.assertEqual(r.returncode, 3, r.stderr)
+        self.assertIn("carries no ADOPTS-SHA256", r.stderr)
+
+    def test_a_NEGATED_or_HELD_sentinel_is_refused(self):
+        """The repo idiom for refusing is literally *adopts nothing*, and the 6.4 exception is held
+        *as drafted, not executed*. Neither shape may read as a decision."""
+        for name in ("adopt_negated.md", "adopt_nothing.md"):
+            with self.subTest(name):
+                r = self._run(MNV_ADOPTION_RECORD=str(self.t / name))
+                self.assertEqual(r.returncode, 3, r.stderr)
+                self.assertIn("negated, provisional or held", r.stderr)
 
     def test_the_matching_record_passes_this_guard(self):
         """Positive control: the digest guard must not fire on the record that does name it."""
@@ -161,3 +190,90 @@ class TheAdoptionRecordMustNameTheProduct(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class AdoptionSentinelIsNotAKeywordSearch(unittest.TestCase):
+    """MEASURED DEFECT, 2026-09-18: the old guard passed three non-authorizing repo documents.
+
+    Joseph named this failure directly -- *"the launcher's keyword search does not enforce digest
+    identity"* -- and the first repair only added the digest half. The conjunction of
+    `grep -i adopt` and a loose `grep -F <sha>` is still not a decision, for a structural reason:
+    a RECEIPT naturally contains the digest and any document DISCUSSING adoption naturally
+    contains the word. Measured against the repo, `PLAN-20260918`, `NAVIGATION-20260917` (a pure
+    routing document) and `DECISION-PACKET-20260918` all passed BOTH checks for the `z-cv` digest.
+
+    These tests are the both-directions pair: the OLD predicate admitted those documents, the NEW
+    one refuses them, and the new one still ACCEPTS a properly formed record. A repair that only
+    tightened would be indistinguishable from one that broke the launcher outright.
+    """
+    Z_CV_SHA = "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5"
+    SUSPECTS = ("docs/orchestration/PLAN-20260918-scalar5d-publication-completion.md",
+                "docs/orchestration/NAVIGATION-20260917-z-pilot-outcome-route.md",
+                "docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md")
+
+    @staticmethod
+    def _old_predicate(text, sha):
+        return bool(re.search(r"adopt(ed|s|ion)", text, re.I)) and sha in text
+
+    @staticmethod
+    def _new_predicate(text, sha):
+        lines = [ln for ln in text.splitlines()
+                 if re.match(r"^[\s*`>_ -]*ADOPTS-SHA256[*`_]*\s*:", ln)]
+        if not lines:
+            return False
+        if any(re.search(r"nothing|never|withheld|\snot\s|pending|proposed|draft|held", ln, re.I)
+               for ln in lines):
+            return False
+        return any(sha in re.findall(r"[0-9a-f]{64}", ln) for ln in lines)
+
+    def test_the_old_predicate_DID_admit_non_authorizing_documents(self):
+        """Proves the repair is real and not decorative. If this ever fails, the defect is gone
+        for some other reason and the regression below is no longer measuring anything."""
+        admitted = [s for s in self.SUSPECTS
+                    if self._old_predicate((REPO / s).read_text(encoding="utf-8"), self.Z_CV_SHA)]
+        self.assertEqual(len(admitted), 3, f"expected all three admitted, got {admitted}")
+
+    def test_the_new_predicate_refuses_every_one_of_them(self):
+        for rel in self.SUSPECTS:
+            with self.subTest(rel):
+                self.assertFalse(
+                    self._new_predicate((REPO / rel).read_text(encoding="utf-8"), self.Z_CV_SHA),
+                    f"{rel} adopts nothing and must not satisfy the adoption gate")
+
+    SENTINEL_RE = r"^[\s*`>_ -]*ADOPTS-SHA256[*`_]*\s*:[^\n]*?\b[0-9a-f]{64}\b"
+
+    def test_no_document_in_the_repo_declares_an_adoption_today(self):
+        """Nothing is adopted yet, so the gate must be unsatisfiable by anything now committed.
+        A guard that something already passes is not guarding the act it names.
+
+        ⚠ THE PATTERN REQUIRES A REAL 64-HEX ON THE SENTINEL LINE, deliberately. Writing this
+        scan against the bare prefix is the mistake I have made three times in this campaign: a
+        substring ban that trips on the documentation explaining it. `D-RESOURCE` must tell
+        Joseph the exact line to write, and a template carrying a `<placeholder>` DECLARES
+        NOTHING -- so it must not count, while a real declaration must. The companion test below
+        is the other direction."""
+        hits = [str(p.relative_to(REPO)) for p in (REPO / "docs").rglob("*.md")
+                if re.search(self.SENTINEL_RE, p.read_text(encoding="utf-8", errors="ignore"),
+                             re.M | re.I)]
+        self.assertEqual(hits, [], f"unexpected adoption declarations: {hits}")
+
+    def test_that_scan_WOULD_catch_a_real_declaration_and_skips_a_template(self):
+        """Without this, the scan above could pass by matching nothing at all."""
+        real = f"ADOPTS-SHA256: {'b' * 64}\n"
+        self.assertRegex(real, self.SENTINEL_RE)
+        for template in ("ADOPTS-SHA256: <64 hex of the covariance being projected>\n",
+                         "ADOPTS-SHA256: <measured sha256 of the trunk>\n"):
+            with self.subTest(template.strip()):
+                self.assertNotRegex(template, self.SENTINEL_RE)
+
+    def test_the_new_predicate_ACCEPTS_a_properly_formed_record(self):
+        sha = "a" * 64
+        for body in (f"ADOPTS-SHA256: {sha}\n",
+                     f"**ADOPTS-SHA256**: {sha}\n",
+                     f"- ADOPTS-SHA256: `{sha}`\n"):
+            with self.subTest(body.strip()):
+                self.assertTrue(self._new_predicate(body, sha))
+
+
+if __name__ == "__main__":
+    unittest.main()

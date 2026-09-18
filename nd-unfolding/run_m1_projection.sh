@@ -48,18 +48,44 @@ if [ ! -f "$ADOPTION" ]; then
   echo "          Joseph adopts it explicitly. M1 must not be produced from a candidate." >&2
   exit 3
 fi
-if ! grep -qiE "adopt(ed|s|ion)" "$ADOPTION"; then
+# ---- REFUSAL 1a: ADOPTION IS A DECLARATION BOUND TO BYTES, NOT A WORD NEAR A DIGEST ----------
+# MEASURED DEFECT, 2026-09-18. The previous pair of checks was `grep -qiE "adopt(ed|s|ion)"` AND a
+# loose `grep -qF "$sha"`. Measured against this repo, THREE documents that adopt nothing passed
+# BOTH for the z-cv digest: PLAN-20260918, NAVIGATION-20260917 -- a pure ROUTING document -- and
+# DECISION-PACKET-20260918, whose own line reads "A record that authorizes nothing in particular
+# authorizes everything". The conjunction is weak for a structural reason: a RECEIPT naturally
+# contains the digest, and any document DISCUSSING adoption naturally contains the word, so two
+# loose searches over one file are not a decision about it.
+#
+# Requiring both on ONE line is still not sufficient -- VERDICT-20260821 already co-locates
+# "adopt segment" with a 64-hex digest in running prose. So the record must carry a DECLARATIVE
+# SENTINEL that prose does not emit by accident, and the digest must be ON that line:
+#
+#     ADOPTS-SHA256: <64 hex of the covariance being projected>
+#
+# Zero documents in the repo match it today, which is correct: nothing is adopted yet.
+_SRC_SHA="$(sha256sum "$SRC_COV" | awk '{print $1}')"
+_SENT="$(grep -nE '^[[:space:]]*[*`>_ -]*ADOPTS-SHA256[*`_]*[[:space:]]*:' "$ADOPTION" || true)"
+if [ -z "$_SENT" ]; then
   echo "REFUSED -- $ADOPTION does not state an adoption. A record that does not adopt is not one." >&2
+  echo "          It carries no ADOPTS-SHA256: line. A keyword match is not identity: a record" >&2
+  echo "          that does not name the bytes it adopts would adopt every candidate equally." >&2
+  echo "          measured: $_SRC_SHA" >&2
+  echo "          declare:  ADOPTS-SHA256: $_SRC_SHA" >&2
   exit 3
 fi
-# ---- REFUSAL 1b: THE RECORD MUST NAME THIS PRODUCT, BY DIGEST --------------------------------
-# A keyword search is not identity. `grep -i adopt` is satisfied by ANY file containing the word,
-# for ANY source -- so on its own it authorizes every product at once, which is the opposite of an
-# adoption decision. The record must contain the MEASURED digest of the covariance being projected.
-_SRC_SHA="$(sha256sum "$SRC_COV" | awk '{print $1}')"
-if ! grep -qF "$_SRC_SHA" "$ADOPTION"; then
+# A sentinel that negates or defers itself is not an adoption. The repo idiom for refusing is
+# literally "adopts nothing", and the exception is held "as drafted, not executed" -- so a line
+# carrying either shape must not be read as a decision.
+if printf '%s\n' "$_SENT" | grep -qiE 'nothing|never|withheld|[[:space:]]not[[:space:]]|pending|proposed|draft|held'; then
+  echo "REFUSED -- the ADOPTS-SHA256 line in $ADOPTION is negated, provisional or held:" >&2
+  printf '%s\n' "$_SENT" | sed 's/^/            /' >&2
+  exit 3
+fi
+if ! printf '%s\n' "$_SENT" | grep -oE '[0-9a-f]{64}' | grep -qxF "$_SRC_SHA"; then
   echo "REFUSED -- $ADOPTION does not name the measured digest of $SRC_COV" >&2
   echo "          measured: $_SRC_SHA" >&2
+  echo "          declared: $(printf '%s\n' "$_SENT" | grep -oE '[0-9a-f]{64}' | tr '\n' ' ')" >&2
   echo "          A keyword match is not identity: a record that does not name the bytes it" >&2
   echo "          adopts would adopt every candidate equally." >&2
   exit 3

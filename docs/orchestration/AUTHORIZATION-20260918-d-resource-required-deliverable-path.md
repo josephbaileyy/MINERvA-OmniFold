@@ -239,10 +239,67 @@ campaign is **DECLINED and RELEASED**; ruling 8's pinning is **RESERVED**.
 ### 7.5 WHAT FIRES THE MOMENT THOSE LAND — no further ask, no further diagnostic
 
 1. **NULL** — record the §6.4 disposition per decision 1. No compute.
-2. **ADOPT** — **Joseph's act.** The consumer route exists and is **digest-bound, not a flag**: the
-   candidate keeps `adoptable:false` and its historical rejection stands.
+2. **ADOPT** — **Joseph's act, and it is now exactly one line.** See §8: the record must carry a
+   declarative `ADOPTS-SHA256` line naming the measured digest of the covariance being projected.
+   **The launcher emits that line for you:** run it once, it refuses, and its refusal prints
+   `declare:  ADOPTS-SHA256: <measured>`. Copy that into the adoption record. The consumer route
+   stays **digest-bound, not a flag** — the candidate keeps `adoptable:false` and its historical
+   rejection stands.
 3. **PROJ** — **one** `project_cov_nd.py --run-class publication` M1 run (`5D→(E_avail,W)`, 42 cells).
    `≈0.03` CPU task-h, pre-approved under §1, fresh admission first.
 4. **DOCS** — re-verify note/primer/paper against the adopted trunk, with the marker guard.
 
 **Then the objective is met except for submission, which is Joseph's act.**
+
+
+## 8. THE ADOPTION GATE WAS SATISFIABLE BY DOCUMENTS THAT ADOPT NOTHING — measured and repaired
+
+**Joseph named this failure and my first repair only fixed half of it.** His words were *"the
+launcher's keyword search does not enforce digest identity"*; I added `rc 1b`, a `grep -F` for the
+measured digest, and left `rc 1`'s `grep -qiE "adopt(ed|s|ion)"` in place. **The conjunction of two
+loose searches over one file is still not a decision about that file**, for a structural reason: a
+**receipt naturally contains the digest**, and any document **discussing** adoption naturally
+contains the word.
+
+**Measured against this repo, three documents passed BOTH checks** for the `z-cv` digest
+`3d7465f6…`:
+
+| document | what it is |
+|---|---|
+| `NAVIGATION-20260917-z-pilot-outcome-route.md` | a **pure routing document** |
+| `PLAN-20260918-scalar5d-publication-completion.md` | a plan |
+| `DECISION-PACKET-20260918-scalar5d-publication-blockers.md` | the packet, which **says of itself** *"A record that authorizes nothing in particular authorizes everything"* |
+
+So `MNV_ADOPTION_RECORD=<the routing document>` would have been **accepted**, and the packet would
+have satisfied the gate it describes.
+
+**Requiring the word and the digest on ONE line is not sufficient either** —
+`VERDICT-20260821-expiry-c-real-path-present-seed.md:57` already co-locates *"adopt segment"* with a
+64-hex digest in running prose. **The record must therefore carry a declarative sentinel that prose
+does not emit by accident**, with the digest on that line:
+
+```
+ADOPTS-SHA256: <64 hex of the covariance being projected>
+```
+
+**Zero documents in the repo match it today**, which is correct — nothing is adopted yet. A negated
+or deferred sentinel (`nothing`, `not`, `pending`, `proposed`, `draft`, `held`, `withheld`, `never`)
+is **refused**, because the repo's idiom for declining is literally *"adopts nothing"* and §6.4's
+exception is held *"as drafted, not executed"*.
+
+**Both directions are tested** (`tests/test_run_m1_projection_refusals.py`, 20 passing). The pair
+that matters: one test asserts the **old** predicate *did* admit all three documents — so the repair
+is demonstrably not decorative — and another asserts the **new** one refuses each. A third scans
+`docs/**.md` for live declarations and **requires a real 64-hex on the sentinel line**, because
+scanning for the bare prefix is the mistake I have made three times in this campaign: a substring
+ban that trips on the documentation explaining it. Its companion proves the scan would still catch a
+real declaration and correctly skips a `<placeholder>` template.
+
+**This changes no scientific content and adopts nothing.** It is the engineering repair of the guard
+Joseph pointed at, and it makes `ADOPT` a well-defined single act instead of an underdetermined one.
+
+⚠ **One detail I did not resolve and am not guessing at:** which artifact is `SRC_COV`. The
+navigation record digests `z-cv.npz`, `z-mean.npz` and `z-null.npz`; I have not established which
+the projector consumes as the covariance. **It does not block the act** — the launcher measures
+`sha256sum "$SRC_COV"` itself and prints the line to declare — but a lane must not transcribe a
+digest from the navigation record on the assumption that it is the covariance.
