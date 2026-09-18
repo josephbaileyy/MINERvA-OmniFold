@@ -2051,6 +2051,24 @@ with no error. Measured: `nd-unfolding/mii_anchor_comparator.py` is blob `a7cb2d
   central-value level. Companion to [`PLAN-20260918-…`](PLAN-20260918-scalar5d-publication-completion.md).
 
 
+### The scalar-5D trunk's reproduction path (2026-09-18)
+
+- [`REPRODUCTION-20260918-scalar5d-trunk-path.md`](REPRODUCTION-20260918-scalar5d-trunk-path.md)
+  - **The "supported reproduction path" Joseph's completion clause names, which had NO document** —
+  a covering search found the repository's seven `reproduc*` files all PET-scoped or generic. Five
+  ingredients (code identity, digest-bound inputs, environment, invocation with its exit-code
+  contract, measured resource envelope) and a **measured** reproduce/does-not-reproduce split: four
+  internal identities at exactly `0.0`, the central vector bitwise on payload at 65,856/65,856, and
+  `r_null` to 1.00 ULP in three summation orders — against the fact that **the null pair is not
+  bitwise** at `4.452e-14` while its launcher asserts *"must be zero"*, and that any envelope wider
+  than one process has **never been tested**, so `B` is UNEVALUATED rather than refuted.
+  ⚠ Two load-bearing qualifications: the **pin set is incomplete** (four OpenMP variables, zero
+  occurrences repo-wide against a 43-hit positive control), and the chain carries **two distinct
+  unified-throw ensembles**. Concludes that the required property is **bitwise identity as a
+  consequence, not a preference** — the tolerance route is closed. **Nothing adopted; no compute
+  requested.**
+
+
 ## Regenerate
 
 ```bash
