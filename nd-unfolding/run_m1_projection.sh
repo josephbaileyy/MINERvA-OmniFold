@@ -52,6 +52,19 @@ if ! grep -qiE "adopt(ed|s|ion)" "$ADOPTION"; then
   echo "REFUSED -- $ADOPTION does not state an adoption. A record that does not adopt is not one." >&2
   exit 3
 fi
+# ---- REFUSAL 1b: THE RECORD MUST NAME THIS PRODUCT, BY DIGEST --------------------------------
+# A keyword search is not identity. `grep -i adopt` is satisfied by ANY file containing the word,
+# for ANY source -- so on its own it authorizes every product at once, which is the opposite of an
+# adoption decision. The record must contain the MEASURED digest of the covariance being projected.
+_SRC_SHA="$(sha256sum "$SRC_COV" | awk '{print $1}')"
+if ! grep -qF "$_SRC_SHA" "$ADOPTION"; then
+  echo "REFUSED -- $ADOPTION does not name the measured digest of $SRC_COV" >&2
+  echo "          measured: $_SRC_SHA" >&2
+  echo "          A keyword match is not identity: a record that does not name the bytes it" >&2
+  echo "          adopts would adopt every candidate equally." >&2
+  exit 3
+fi
+echo "[adoption] record names the measured source digest ${_SRC_SHA:0:16}..."
 
 # ---- REFUSAL 2: THE PROJECTOR MUST BE INSTRUMENTED BEFORE IT PRODUCES ANYTHING -----------------
 # A digest retrofitted onto an existing file records only that the file has not changed SINCE the

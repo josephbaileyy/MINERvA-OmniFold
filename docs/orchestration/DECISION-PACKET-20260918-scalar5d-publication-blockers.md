@@ -937,3 +937,171 @@ reservations 0.**
 
 **Deferred, not requested:** `y_gen`, `N`σ, the 12-cell χ², `rcond`/rank, the first-order statistic,
 P2, pinning, and any further determinism probe.
+
+---
+
+## 12. THE EXECUTABLE ADOPTION ROUTE — 2026-09-18
+
+### 12.1 ⚠ AMENDING `AGENTS.md` WAS THE WRONG INSTRUMENT
+
+`CLAUDE.md`: *"Treat the front door and generated state as **views, never evidence or
+authorization**."* **`AGENTS.md:29` is a view. I proposed amending a view in order to authorize
+something.** Withdrawn.
+
+**The amendment belongs in the governing acceptance decision — `SPEC` §6.4, the RULED item — as a
+candidate-specific clause.** `AGENTS.md:29` is then updated **as the resulting summary**, after the
+fact, and carries no authorizing force.
+
+**PROPOSED: `AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md`**, amending §6.4 and
+nothing else:
+
+> **§6.4 is unchanged in form and in requirement.** Z's fixed-seed null bound remains scale-relative
+> and required to be fixed before production, its value justified by precision and sensitivity
+> controls established before implementation and not selected from a favourable production result.
+> **The G precedent is unchanged.**
+>
+> **ADDED — a candidate-specific clause, exhausted by one use.** For the single product
+> `sha256 3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5`
+> (`z_pilot_20260916_a5/z-cv.npz`) only:
+>
+> (a) `M(i)` remains **`UNRESOLVED`** with `reject_conditions` retaining **`4c`** and
+>     `branch = None`. The recorded reason remains the **predeclaration failure**. *This clause is
+>     not altered by (b) or (c) and no later act erases it.*
+> (b) A retrospective scale-relative **assessment** may be recorded — §6.4's own statistic
+>     `null_norm/√tr`, measured `3.218e-13`. It carries **no grade token**. G's `1.31e-12` is
+>     **context for scale only and is not a threshold**; Z's value being smaller is **not a pass**.
+> (c) **Adoption of this digest may proceed notwithstanding (a)** if and only if the remaining
+>     required evidence in §2 is complete and independently verified. **(c) is a permission to
+>     decide, not a decision, and not evidence.**
+>
+> **Scope:** the clause names one digest. Any other product — including a future rebuild — is
+> governed by §6.4 unamended. Nothing here generalizes, and the clause cannot be cited for a second
+> product.
+
+**`AGENTS.md:29` then reads, as summary only:** the corrected scalar 5D candidates remain
+`QUARANTINED`; one named digest additionally carries a candidate-specific §6.4 clause recorded in
+that amendment, which does not release the row and does not alter the quarantine for anything else.
+
+### 12.2 THE MINIMAL CONSUMER CHANGE — digest-bound, no force flag
+
+**Two defects, both named by Joseph and both real:**
+
+1. **`project_cov_nd.py` refuses that source outright** for `--run-class publication` — correct,
+   and it had no route to recognise an authorized exception.
+2. **`run_m1_projection.sh`'s rc-3 was a KEYWORD SEARCH.** `grep -qiE "adopt(ed|s|ion)"` is
+   satisfied by **any** file containing the word, for **any** source — so on its own **it authorized
+   every candidate at once**, which is the opposite of an adoption decision.
+
+**THE CHANGE — an operand that is a PATH TO EVIDENCE, never a boolean:**
+
+    project_cov_nd.py  --adoption-exception <record>
+        required to use --run-class publication when the source records adoptable:false;
+        the record must contain the MEASURED sha256 of --src-cov, or it is refused.
+
+    run_m1_projection.sh  rc 1b
+        _SRC_SHA=$(sha256sum "$SRC_COV" | awk '{print $1}')
+        grep -qF "$_SRC_SHA" "$ADOPTION"   -- or refuse, printing what it measured.
+
+**What makes it an exception rather than a waiver:** the record must name **the bytes actually being
+projected**. A record that authorizes nothing in particular authorizes everything.
+
+**THE HISTORICAL EVIDENCE IS PRESERVED, NOT REWRITTEN** — the property that matters most:
+
+- `src_metadata` continues to carry **`adoptable: false`** and
+  **`scientific_acceptance: NON-PASSING`** **verbatim** into the product's receipt. Nothing edits
+  the candidate's metadata.
+- The effective class becomes the **distinct token `publication-under-exception`**, so no reader can
+  mistake the product for one projected from an adoptable trunk. Its status string says the source
+  *"still records adoptable:false and that metadata is preserved unedited"* and that **"the exception
+  unblocks the route, it does not supply the evidence."**
+- `adoption_exception` records the record's path, **its own sha256**, and the authorized source
+  digest.
+
+**NO GENERAL FORCE FLAG**, asserted by test: `--force`, `--no-verify`, `--skip-adoption` and
+`MNV_FORCE` are absent from the module.
+
+**43 tests across the two suites. Mutation-verified both halves:** replacing the projector's digest
+check with a keyword match fails 2 tests; dropping the launcher's digest requirement fails 3.
+⚠ **Adding rc 1b broke four existing tests in the launcher suite** — the old fixture's record
+carried no digest, so the new refusal fired before the guard each of them targeted. That is the
+refused-before-reaching-the-guard shape appearing in a **fixture**; the fix was to make the fixture
+compute the digest, **not** to weaken the guard.
+
+**ADOPTION REMAINS CONDITIONAL.** The consumer change makes an authorized exception *recognizable*.
+It supplies **no** evidence, and §2's remaining required evidence and independent verification are
+unchanged preconditions. **The candidate must not be adopted merely to unblock the campaign** —
+clause (c) above is explicit that it is a permission to decide, not a decision.
+
+### 12.3 C6 — RESTATED as a provenance-risk disposition, with two distinctions I had blurred
+
+⚠ **Distinction 1 — observed replica inventory is NOT proven producing inputs.** What I measured is
+that **100** `res_boot_*.npz` and **24** `res_split_*.npz` exist *today* in those directories, with
+exact index coverage and no file newer than its product. **That is consistency, not proof.** The old
+writer recorded no input digests, so nothing binds *these bytes* to the combine that ran on 07-13. A
+file could have been rewritten in place with an older timestamp preserved, or the directory
+repopulated; I have no evidence of either, and equally none against.
+
+⚠ **Distinction 2 — absence of a scheduler record is NOT proof of interactive execution.** I wrote
+*"the combine ran interactively."* **That is an inference from absence and I withdraw it.** What I
+established: **no job matching the searched names or the `18:00`–`18:10` window appears in `sacct`
+for 07-13/14.** That is consistent with interactive execution; it is **also** consistent with a job
+outside my searched window, a differently-named job, or a retention boundary I did not probe. **The
+honest statement is that the producing act has no scheduler record I could find.**
+
+**DISPOSITION — REUSE, as an explicit PROVENANCE-RISK acceptance:**
+
+> The archived `C_stat`/`C_ML` are reused. **Their producing invocation is unrecorded**, their
+> `--cv` is **inferred** from two concordant era launchers whose named product's current bytes match
+> the pilot's declared central digest exactly, and their input binding rests on **count, index
+> coverage and timestamp ordering — none of which is cryptographic.** The accepted risk is that the
+> components' realized inputs are **consistent but unproven**. Regeneration is **not** recommended:
+> it would not recover this object's provenance, it would create a different object, and `SPEC`
+> §2.6b holds that fresh generation needs a scientific rationale that does not exist.
+
+### 12.4 ⚠ MY "DIFFERENT CV" HAZARD IS REFUTED, and member-local construction stays enabled
+
+**I claimed the 07-14 finalize's `CV` would change the row basis and recommended pinning that branch
+to refuse. Measured — and it does not.**
+
+    budget-era CV : products/5d/xsec_5d_MEFHC_5iter_lgbm.root       n=65856  n_pos=10694
+    finalize   CV : uq_5d/universe_sweep_bkgaware/..._uni_full_CV.root  n=65856  n_pos=10694
+      mask identical      : TRUE
+      row order identical : TRUE
+      values bitwise equal: False   max|delta| 4.470e-40   relative 9.055e-03
+
+**The support mask and row order are identical.** Only the central *values* differ, by ~`0.9%`
+relative — a background-treatment difference that changes the `rel` diagnostic and the relative-σ
+normalization, **not the indexing** that `C_stat`/`C_ML` rows are bound to. **My hazard claim and the
+pin recommendation are withdrawn.**
+
+**AND THAT BRANCH IS REQUIRED BY THE PROPOSED MEMBER.** `boot5dG` (`--array=1-100`) and `ssplit5d`
+(`--array=1-24`) are exactly the arms that produce `res_boot_*.npz` and `res_split_*.npz` — the
+**stat and ML replicas** — and the counts match the directories one for one. **So a new member
+BUILDS ITS OWN `C_stat`/`C_ML`; reuse is a `k = 0`-only question.** Disabling member-local
+construction would leave the new member without them. **Nothing is disabled.**
+
+### 12.5 THE ONE-ADDITIONAL-MEMBER PROPOSAL — total reservation and fresh admission
+
+| item | GPU | CPU |
+|---|---:|---:|
+| `boot5dG` `0.50 h × 100` | 50.00 | — |
+| `sweep5dBKGrun` `0.50 h × 169` | 84.50 | — |
+| `det5dBKG` `1.25 h × 19` | 23.75 | — |
+| `uthrow5d_runF` `4.25 h × 40` | — | 170.00 |
+| `uthrow5d_block` `3.00 h × 21` | — | 63.00 |
+| `ssplit5d` `0.75 h × 24` | — | 18.00 |
+| `uthrow5d_combF` `1.00 h × 1` | — | 1.00 |
+| **one recovery task** `10.00 h × 1` | — | **10.00** |
+| **TOTAL RESERVATION** | **158.25** | **262.00** |
+
+**FRESH ADMISSION, `2026-09-18T14:39:45Z`:** CPU `97.3108` of `500`, headroom **`402.6892`**; GPU
+`16.0603` of `500`, headroom **`483.9397`**; **outstanding reservations 0**.
+**`check --cpu 262.0 --gpu 158.25` → `rc 0`, ADMITTED.**
+
+**NO ASSEMBLY OF INCOMPLETE MEMBERS.** The member is incomplete until **all** of its tasks have
+outputs — 20 of 21 block tasks **is not the member** and must not be assembled, graded, aggregated or
+reported. A timeout pauses and re-reserves that one task at the 10 h cap included above; a second
+timeout **ends** the campaign with a diagnosis and **no member is assembled**. Accounting is
+re-measured immediately before submission, not reused.
+
+**Nothing launched.**

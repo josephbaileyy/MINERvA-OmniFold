@@ -37,10 +37,19 @@ class M1RunnerRefusals(unittest.TestCase):
         (self.t / "code" / "nd-unfolding").mkdir(parents=True)
         shutil.copy(REPO / "nd-unfolding" / "project_cov_nd.py",
                     self.t / "code" / "nd-unfolding" / "project_cov_nd.py")
-        (self.t / "adopt.md").write_text("This record ADOPTS the scalar-5D trunk.\n")
-        (self.t / "notadopt.md").write_text("no decision here\n")
         (self.t / "cov.root").touch()
         (self.t / "cv.root").touch()
+        # THE ADOPTION RECORD MUST NAME THE COVARIANCE BY DIGEST (rc 1b), so the fixture computes
+        # it rather than hardcoding a string. A keyword-only record is kept as a control.
+        import hashlib
+        _cov_sha = hashlib.sha256((self.t / "cov.root").read_bytes()).hexdigest()
+        self.cov_sha = _cov_sha
+        (self.t / "adopt.md").write_text(
+            "This record ADOPTS the scalar-5D trunk.\n"
+            f"src_cov sha256: {_cov_sha}\n")
+        (self.t / "adopt_nodigest.md").write_text(
+            "This record ADOPTS the scalar-5D trunk.\n")          # keyword only, no digest
+        (self.t / "notadopt.md").write_text("no decision here\n")
         self.env = {
             "MNV_CODE_ROOT": str(self.t / "code"), "MNV_DATA_ROOT": str(self.t),
             "MNV_ADOPTION_RECORD": str(self.t / "adopt.md"),
@@ -108,6 +117,46 @@ class M1RunnerRefusals(unittest.TestCase):
         r = self._run()
         self.assertNotIn("REFUSED", r.stderr,
                          "a guard fired on valid input -- it would refuse a correct run")
+
+
+class TheAdoptionRecordMustNameTheProduct(unittest.TestCase):
+    """rc 1b: a keyword search is not identity.
+
+    `grep -i adopt` is satisfied by ANY file containing the word, for ANY source -- so on its own it
+    authorizes every candidate at once, which is the opposite of an adoption decision. The record
+    must contain the MEASURED digest of the covariance being projected.
+
+    ⚠ Adding this guard broke four existing tests in this file, because the old fixture's record
+    carried no digest and the new refusal fired before the guard each of them targets. That is the
+    refused-before-reaching-the-guard shape appearing in a fixture rather than a mutation, and the
+    fix was to make the fixture compute the digest -- not to weaken the guard.
+    """
+
+    setUp = M1RunnerRefusals.setUp
+    tearDown = M1RunnerRefusals.tearDown
+    _run = M1RunnerRefusals._run
+
+    def test_keyword_only_record_is_refused(self):
+        r = self._run(MNV_ADOPTION_RECORD=str(self.t / "adopt_nodigest.md"))
+        self.assertEqual(r.returncode, 3, r.stderr)
+        self.assertIn("does not name the measured digest", r.stderr)
+        self.assertIn("A keyword match is not identity", r.stderr)
+
+    def test_the_refusal_reports_the_measured_digest(self):
+        r = self._run(MNV_ADOPTION_RECORD=str(self.t / "adopt_nodigest.md"))
+        self.assertIn(self.cov_sha, r.stderr, "it must print what it measured")
+
+    def test_a_record_naming_a_DIFFERENT_digest_is_refused(self):
+        p = self.t / "adopt_wrong.md"
+        p.write_text("This record ADOPTS the trunk.\nsrc_cov sha256: " + ("a" * 64) + "\n")
+        r = self._run(MNV_ADOPTION_RECORD=str(p))
+        self.assertEqual(r.returncode, 3, r.stderr)
+
+    def test_the_matching_record_passes_this_guard(self):
+        """Positive control: the digest guard must not fire on the record that does name it."""
+        r = self._run()
+        self.assertNotIn("does not name the measured digest", r.stderr)
+        self.assertIn("record names the measured source digest", r.stdout)
 
 
 if __name__ == "__main__":

@@ -515,3 +515,116 @@ class NpzInputPath(unittest.TestCase):
             sys.argv = old
         self.assertIn("hNoSuchKey", str(cm.exception))
         self.assertIn("hCov_combined5d_total_uthrow", str(cm.exception), "it must list what IS there")
+
+
+class TheDigestBoundAdoptionException(unittest.TestCase):
+    """Recognising an explicitly authorized exception WITHOUT a force flag and WITHOUT editing
+    the candidate's historical metadata.
+
+    The source records `adoptable: false`, so `--run-class publication` refuses. The refusal is
+    liftable only by a record that NAMES THIS SOURCE'S MEASURED sha256 — so the operand is a path
+    to evidence, never a boolean, and the same record cannot authorize a different product.
+
+    ⚠ Two properties are as important as the lift itself:
+      * `src_metadata` keeps `adoptable: false` and `scientific_acceptance: NON-PASSING` VERBATIM.
+        The historical rejection is preserved, not rewritten.
+      * the effective class becomes `publication-under-exception`, a distinct token, so a reader
+        cannot mistake the product for one projected from an adoptable trunk.
+    """
+
+    setUp = ProjectCovNDReceipt.setUp
+    tearDown = ProjectCovNDReceipt.tearDown
+    _grid = NpzInputPath._grid
+    _write_source = NpzInputPath._write_source
+
+    def _run_pub(self, src, exception=None):
+        P = self.P
+        out = os.path.join(self.tmp, "pub.root")
+        argv = ["project_cov_nd.py", "--src-cov", src,
+                "--src-hist", "hCov_combined5d_total_uthrow", "--src-cv", src,
+                "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", "eavail,W",
+                "--out", out, "--run-class", "publication"]
+        if exception:
+            argv += ["--adoption-exception", exception]
+        old, sys.argv = sys.argv[:], argv
+        try:
+            P.main()
+        finally:
+            sys.argv = old
+        with open(out + ".receipt.json") as fh:
+            return out, json.load(fh)
+
+    def _src_and_digest(self):
+        src = os.path.join(self.tmp, "z-cv.npz")
+        self._write_source(src, row_index=None)
+        return src, self.P._sha256_file(src)
+
+    def test_without_an_exception_the_refusal_stands(self):
+        src, _ = self._src_and_digest()
+        with self.assertRaises(SystemExit) as cm:
+            self._run_pub(src)
+        self.assertIn("--adoption-exception", str(cm.exception))
+
+    def test_a_missing_record_refuses(self):
+        src, _ = self._src_and_digest()
+        with self.assertRaises(SystemExit) as cm:
+            self._run_pub(src, os.path.join(self.tmp, "nope.md"))
+        self.assertIn("no adoption-exception record", str(cm.exception))
+
+    def test_a_record_not_naming_the_digest_refuses(self):
+        """The anti-force-flag property: a record that authorizes nothing in particular
+        authorizes everything, so it must be refused."""
+        src, _ = self._src_and_digest()
+        rec = os.path.join(self.tmp, "exc_generic.md")
+        with open(rec, "w") as fh:
+            fh.write("I authorize a publication exception for the scalar-5D candidate.\n")
+        with self.assertRaises(SystemExit) as cm:
+            self._run_pub(src, rec)
+        self.assertIn("does not contain the measured sha256", str(cm.exception))
+        self.assertIn("general waiver", str(cm.exception))
+
+    def test_a_record_naming_a_DIFFERENT_digest_refuses(self):
+        src, _ = self._src_and_digest()
+        rec = os.path.join(self.tmp, "exc_wrong.md")
+        with open(rec, "w") as fh:
+            fh.write("authorized for sha256 " + "b" * 64 + "\n")
+        with self.assertRaises(SystemExit) as cm:
+            self._run_pub(src, rec)
+        self.assertIn("does not contain the measured sha256", str(cm.exception))
+
+    def test_a_matching_record_permits_the_projection(self):
+        src, digest = self._src_and_digest()
+        rec = os.path.join(self.tmp, "exc_ok.md")
+        with open(rec, "w") as fh:
+            fh.write("Candidate-specific exception.\nauthorized src_cov sha256: %s\n" % digest)
+        _out, r = self._run_pub(src, rec)
+        self.assertEqual(r["run_class"], "publication-under-exception")
+        self.assertEqual(r["adoption_exception"]["authorized_src_cov_sha256"], digest)
+        self.assertIn("record_sha256", r["adoption_exception"])
+
+    def test_the_historical_rejection_is_PRESERVED_verbatim(self):
+        """The load-bearing property. The exception must not edit the evidence it excepts."""
+        src, digest = self._src_and_digest()
+        rec = os.path.join(self.tmp, "exc_ok.md")
+        with open(rec, "w") as fh:
+            fh.write("authorized src_cov sha256: %s\n" % digest)
+        _out, r = self._run_pub(src, rec)
+        self.assertIs(r["src_metadata"]["adoptable"], False)
+        self.assertEqual(r["src_metadata"]["scientific_acceptance"], "NON-PASSING")
+
+    def test_the_status_discloses_the_exception_and_that_evidence_is_still_owed(self):
+        src, digest = self._src_and_digest()
+        rec = os.path.join(self.tmp, "exc_ok.md")
+        with open(rec, "w") as fh:
+            fh.write("authorized src_cov sha256: %s\n" % digest)
+        _out, r = self._run_pub(src, rec)
+        self.assertIn("DIGEST-BOUND EXCEPTION", r["status"])
+        self.assertIn("still records", r["status"])
+        self.assertIn("the exception unblocks the route, it does not supply the evidence",
+                      r["status"])
+
+    def test_there_is_no_general_force_flag(self):
+        import pathlib
+        text = pathlib.Path(self.P.__file__).read_text()
+        for bad in ("--force", "--no-verify", "--skip-adoption", "MNV_FORCE"):
+            self.assertNotIn(bad, text, f"a general bypass appeared: {bad}")

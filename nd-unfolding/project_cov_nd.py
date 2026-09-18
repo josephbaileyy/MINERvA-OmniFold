@@ -232,6 +232,23 @@ def main():
     ap.add_argument("--acceptance-question", default=None,
                     help="REQUIRED when --run-class diagnostic: the acceptance question this run "
                          "exists to resolve. A diagnostic run with no question is not diagnostic.")
+    # THE DIGEST-BOUND ADOPTION EXCEPTION. NOT a force flag.
+    #
+    # A source recording `adoptable: false` refuses `--run-class publication`. That refusal stands
+    # unless an explicitly authorized exception record is supplied AND that record names THIS
+    # source's actual sha256. So the operand is a PATH TO EVIDENCE, never a boolean: a boolean
+    # would let any caller assert the exception, and a keyword search would let any file containing
+    # the word "adopt" satisfy it for any product.
+    #
+    # WHAT IT DOES NOT DO: it does not rewrite the source's metadata. `src_metadata` continues to
+    # carry `adoptable: false` and `scientific_acceptance: NON-PASSING` VERBATIM into the receipt,
+    # and the product records that it was built under an exception rather than from an adoptable
+    # trunk. The historical rejection is preserved, not edited.
+    ap.add_argument("--adoption-exception", default=None,
+                    help="path to an explicitly authorized exception record that NAMES this "
+                         "source covariance sha256. Required to use --run-class publication with a "
+                         "source recording adoptable:false. Not a force flag: the record must "
+                         "contain the measured digest of --src-cov.")
     args = ap.parse_args()
     # The grant authorizes diagnostics "when needed to resolve acceptance questions". A run that
     # cannot name its question is outside the grant, so this refuses rather than defaulting.
@@ -285,11 +302,33 @@ def main():
     _src_meta = _source_metadata(args.src_cov)
     # A non-adoptable source must not yield a publication-class product. This is enforced on the
     # DATA rather than on the output path, so it holds however the run was invoked.
+    _exception = None
     if str(_src_meta.get("adoptable", "")).lower() == "false" and args.run_class == "publication":
-        raise SystemExit(
-            "[FAIL] --run-class publication, but the source product records `adoptable: false` "
-            f"(scientific_acceptance: {_src_meta.get('scientific_acceptance')!r}). A publication "
-            "product cannot be projected from a non-adopted trunk; use --run-class diagnostic.")
+        if not args.adoption_exception:
+            raise SystemExit(
+                "[FAIL] --run-class publication, but the source product records `adoptable: false` "
+                f"(scientific_acceptance: {_src_meta.get('scientific_acceptance')!r}). A "
+                "publication product cannot be projected from a non-adopted trunk. Either use "
+                "--run-class diagnostic, or supply --adoption-exception naming an explicitly "
+                "authorized record that contains this source covariance sha256.")
+        if not os.path.exists(args.adoption_exception):
+            raise SystemExit(f"[FAIL] no adoption-exception record at {args.adoption_exception}")
+        _exc_text = open(args.adoption_exception, "r", errors="replace").read()
+        _src_digest = _sha256_file(args.src_cov)
+        # DIGEST IDENTITY, not a keyword. The record must name the bytes actually being projected.
+        if _src_digest not in _exc_text:
+            raise SystemExit(
+                f"[FAIL] {args.adoption_exception} does not contain the measured sha256 of "
+                f"{args.src_cov}:\n  measured {_src_digest}\nAn exception that does not name the "
+                f"digest it authorizes would apply to any product, which is what makes it an "
+                f"exception rather than a general waiver.")
+        _exception = {
+            "record": os.path.abspath(args.adoption_exception),
+            "record_sha256": _sha256_file(args.adoption_exception),
+            "authorized_src_cov_sha256": _src_digest,
+            "basis": ("digest identity: the record names this source covariance sha256. The "
+                      "source metadata below is UNCHANGED and still records adoptable:false."),
+        }
 
     # destination reported mask / index map
     n_dense = int(np.prod(dst_shape))
@@ -355,6 +394,11 @@ def main():
               f"on them. Recorded as `n_empty`; this writer does not gate on it.")
 
     _run_class = args.run_class or "UNDECLARED"
+    # The EFFECTIVE class when a digest-bound exception was validated. Recorded as its own class so
+    # a reader cannot mistake it for a projection from an adoptable trunk. The source's own
+    # metadata is untouched either way.
+    if _exception is not None:
+        _run_class = "publication-under-exception"
     _accept_q = (args.acceptance_question or "").strip() or "UNDECLARED"
     # `status` was a CONSTANT STRING until 2026-09-18 -- every product said "CANDIDATE" whatever it
     # was, so the field discriminated nothing and could not tell a diagnostic product from a
@@ -366,6 +410,12 @@ def main():
         "candidate": ("CANDIDATE -- not adoptable; construction is not adoption"),
         "publication": ("PUBLICATION -- built from an adopted trunk. Quotable only after its "
                         "independent verification lands; adoption is necessary, not sufficient."),
+        "publication-under-exception": (
+            "PUBLICATION UNDER A DIGEST-BOUND EXCEPTION -- the source still records "
+            "adoptable:false and that metadata is preserved unedited. Built because an explicitly "
+            "authorized record names this source digest. Quotable only after the remaining "
+            "required evidence and independent verification land; the exception unblocks the "
+            "route, it does not supply the evidence."),
         "UNDECLARED": ("UNDECLARED -- the writer was never told this run class. Not a pass: read "
                        "it as an unclassified product and classify it before any use."),
     }[_run_class]
@@ -419,6 +469,7 @@ def main():
                          f"labels written ({_stored.size} vs {len(dst_rows_dense)} entries); the "
                          f"write did not land as intended and the product must not be used")
     receipt = {
+        "adoption_exception": _exception,
         "product": os.path.abspath(args.out),
         "proj_sha256": _sha256_file(args.out),
         "src_cov_sha256": _sha256_file(args.src_cov),
