@@ -73,6 +73,22 @@ _DATA_ROOT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
 import flux_universe
 import seed_offset_policy
 from compare_unified_throw import _xsec_for_weights
+
+
+def _sha256_array(a) -> str:
+    """Digest an array by its bytes AND its shape/dtype.
+
+    ⚠ CONVENTION MATCHED DELIBERATELY to `z_receipt.sha256_array`, not reinvented: shape and dtype
+    are folded in because two different arrays can share a byte buffer, so a reshaped view would
+    digest identically otherwise. `z_receipt` is NOT imported here -- it is Z-specific and this is
+    a shared production module -- so the convention is duplicated rather than the dependency.
+    A digest written under one convention and compared under another is a silent mismatch.
+    """
+    a = np.ascontiguousarray(a)
+    h = hashlib.sha256()
+    h.update(f"{a.dtype.str}|{a.shape}|".encode())
+    h.update(a.tobytes())
+    return h.hexdigest()
 from uq_math import (interpolate_asymmetric_ratio, joint_throw_covariance,
                      mat_covariance)
 
@@ -1054,6 +1070,69 @@ def do_combine(args):
                              "(this checks CV determinism only; per-slab seed provenance is "
                              "enforced separately below)")
 
+    # ---------------------------------------------------- CAUSE 4: the re-added jitter print ----
+    # SPEC §2.4, and `AUTHORIZATION-20260918-d-resource-required-deliverable-path.md` ruling 6/C4.
+    # Recovered LINE FOR LINE from `a0cdc019:232-252`, which §2.4 names as the retired source.
+    #
+    # ⚠ WHAT THE RETIRED CODE ALSO DID, AND WHAT IS DELIBERATELY *NOT* RE-ADDED. It did not stop at
+    # a print. It computed
+    #     tr_uni_corr = max(tr_uni - jit_trace, 0.0)
+    #     st_uni_corr = float(np.sqrt(tr_uni_corr))
+    # and printed a "jitter-corrected unified sqrt-trace" and a "corrected ratio". **That
+    # subtraction IS cause 4's defect.** §2.4 condition 4 is "the print is print-only, never
+    # subtracted", so the QUANTITY and its PRINT come back and the CORRECTION does not. Anyone
+    # diffing this against `a0cdc019` will find those three lines missing; they are missing on
+    # purpose and this comment is why.
+    #
+    # ⚠ AND IT IS BEHIND ITS OWN FLAG, NOT `--null`. The jitter quantity needs a SECOND CV unfold at
+    # `estimator_seed + 7` -- a different seed from the null's, which re-runs at the SAME seed. If
+    # this rode on `--null` every existing caller's `--null` run would silently acquire another full
+    # unfold. `SPEC` §5.8b prices that at `<= 0.5764` CPU task-h, so it is a real cost and it is
+    # opt-in.
+    jit_trace = None
+    jit_operands = None
+    if args.jitter_print:
+        # CONDITION 3, ENFORCED BY A GUARD RATHER THAN BY A ONE-TIME COMPARISON. The stored
+        # covariance content is digested BEFORE the jitter block and required identical after, so
+        # the value cannot reach the stored covariance by any path -- including an edit made later
+        # that reintroduces the subtraction. §2.4 item 4's own prose assigns the guard to
+        # condition 3; `SPEC:1237` was amended to agree on 2026-09-18.
+        _pre = {"C_uni": _sha256_array(C_uni), "C_block": _sha256_array(C_block)}
+        x_cv_jit = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters,
+                                     args.estimator_seed + 7).ravel(order="C")
+        jit_trace = float(np.sum((x_cv_jit[rep] - base) ** 2))
+        print(f"\n[cause4] jitter floor ||x_cv(s+7)-x_cv||^2 = {jit_trace:.6e}  "
+              f"(= 2*sum sigma_jit^2); sqrt = {np.sqrt(jit_trace):.6e}")
+        print(f"[cause4] PRINT-ONLY. No trace correction is computed or applied; the retired "
+              f"`tr_uni - jit_trace` is NOT re-added.")
+        # CONDITION 2: the operands are THIS build's own, recorded by content digest.
+        jit_operands = {
+            "estimator_seed": int(args.estimator_seed),
+            "jitter_seed": int(args.estimator_seed) + 7,
+            "seed_offset": 7,
+            "x_cv_sha256": _sha256_array(x_cv),
+            "x_cv_jitter_sha256": _sha256_array(x_cv_jit),
+            "jit_trace": jit_trace,
+            "sqrt_jit_trace": float(np.sqrt(jit_trace)),
+            "single_draw": ("ONE draw. `jit_trace` is a one-sample estimate of a variance -- "
+                            "E||x_cv2-x_cv1||^2 = 2*sum_bin sigma_jit^2 -- and a single evaluation "
+                            "is one realization, not the expectation. SPEC §6.5 retains the "
+                            "single-draw referent deliberately: the defect cause 4 names IS a "
+                            "single-draw subtraction, so a multi-draw M would measure something "
+                            "the defective construction never did."),
+            "print_only": True,
+            "condition_3_guard": "covariance content digested before and after; equality required",
+        }
+        _post = {"C_uni": _sha256_array(C_uni), "C_block": _sha256_array(C_block)}
+        if _pre != _post:
+            raise SystemExit(
+                "[FAIL] cause-4 guard: the stored covariance content CHANGED across the jitter "
+                f"block.\n  before {_pre}\n  after  {_post}\n§2.4 condition 3 requires that "
+                "adding this print does not change the covariance content, and condition 4 that "
+                "the value is never subtracted. One of those has been violated.")
+        print("[cause4] condition-3 guard PASSED: covariance content digests identical "
+              "across the jitter block.")
+
     # cross term = unified - block (the nonlinear piece block-sum drops)
     C_cross = C_uni - C_block
     st_cross = float(np.sqrt(abs(np.trace(C_cross))))
@@ -1271,6 +1350,13 @@ def main():
                     help="seed for the SYSTEMATIC THROW DRAW (knob gaussians + flux universe "
                          "choice); the realization for global throw j is --draw-seed + j. "
                          "Pass 1000 to reproduce archived products.")
+    ap.add_argument("--jitter-print", action="store_true",
+                    help="CAUSE 4 (SPEC §2.4): re-add the retired jitter print. Computes a SECOND "
+                         "CV unfold at estimator_seed + 7 and prints "
+                         "||x_cv(s+7) - x_cv||^2. PRINT-ONLY -- no trace correction is computed "
+                         "or applied, and a guard requires the stored covariance content to be "
+                         "unchanged across the block. Opt-in because the extra unfold is a real "
+                         "cost (SPEC §5.8b: <= 0.5764 CPU task-h).")
     ap.add_argument("--estimator-seed", type=int, required=True,
                     help="seed for the UNFOLDING ESTIMATOR, held fixed across all throws, "
                          "block units and the CV so that ML variation stays in C_ML and does "
