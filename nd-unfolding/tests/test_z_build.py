@@ -196,9 +196,15 @@ class ZBuildIntegration(unittest.TestCase):
             self.assertFalse(rec["outcome"]["assessable"])
             self.assertIsNone(rec["outcome"]["branch"])
             self.assertFalse(rec["notes"]["adoptable"])
+            # ⚠ WAS `== set(contract.Z_BOUNDARIES)`, i.e. "every boundary is withheld" -- a
+            # proxy that broke when four were DECLARED by ruling on 2026-09-18. The property that
+            # matters is that the receipt's withheld list equals the ACTUALLY withheld set, and
+            # that it is non-empty while any boundary is outstanding.
             self.assertEqual(
-                set(rec["withheld_boundaries"]), set(contract.Z_BOUNDARIES)
+                set(rec["withheld_boundaries"]), set(contract.withheld_boundaries())
             )
+            self.assertIn("null_epsilon", rec["withheld_boundaries"],
+                          "the null bound is withheld until the 6.4 route is ruled")
             self.assertEqual(
                 rec["z"]["sha256"], receipt.sha256_file(self.outputs[f"out_{variant}"])
             )

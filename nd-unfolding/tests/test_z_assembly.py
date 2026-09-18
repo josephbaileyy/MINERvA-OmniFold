@@ -384,10 +384,31 @@ class TheRawOperandReconstructionCatchesWhatG3CANNOT(unittest.TestCase):
             za.gate_raw_operand_reconstruction(**raw_operands(s, g_recorded=["not", "a", "dict"]))
 
     def test_the_gate_consults_NO_acceptance_boundary(self):
-        """Structural, not scientific. It must work with every boundary withheld, as they are."""
+        """Structural, not scientific: the gate must work whatever the boundary state is.
+
+        ⚠ THE OLD INSTRUMENT WAS A PROXY AND IT BROKE. It asserted
+        `all(not b.is_declared for b in Z_BOUNDARIES.values())` -- "every boundary is withheld" --
+        standing in for "the gate consults none". When four boundaries were DECLARED by ruling on
+        2026-09-18 the proxy went false while the property it stood for was untouched. A test whose
+        subject is the gate should not fail because of a change elsewhere.
+
+        It now exercises the gate under BOTH boundary states, which is strictly stronger: the old
+        version only ever ran it in the all-withheld world.
+        """
         s = build_scenario()
-        self.assertTrue(all(not b.is_declared for b in zc.Z_BOUNDARIES.values()))
         za.gate_raw_operand_reconstruction(**raw_operands(s))     # would raise if it reached one
+        # and again with every boundary forced declared -- the gate must be indifferent
+        import dataclasses
+        forced = {k: (b if b.is_declared else
+                      dataclasses.replace(b, _value=0.5, provenance="test: forced", reason=None))
+                  for k, b in zc.Z_BOUNDARIES.items()}
+        original = dict(zc.Z_BOUNDARIES)
+        try:
+            zc.Z_BOUNDARIES.clear(); zc.Z_BOUNDARIES.update(forced)
+            self.assertTrue(all(b.is_declared for b in zc.Z_BOUNDARIES.values()))
+            za.gate_raw_operand_reconstruction(**raw_operands(s))
+        finally:
+            zc.Z_BOUNDARIES.clear(); zc.Z_BOUNDARIES.update(original)
 
 
 def gate_kwargs(s, **over):
