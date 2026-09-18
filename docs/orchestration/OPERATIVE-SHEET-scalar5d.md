@@ -16,15 +16,31 @@ the authority.
 
 ## 1. Boundaries — all in `nd-unfolding/z_contract.py`, each with provenance
 
-| boundary | value | note |
-|---|---|---|
-| `cause3_agg` | `0.05` | **direct movement bound, never quadrature** |
-| `cause3_med` | `0.05` | per-bin leg |
-| `cause3_corr` | `0.05` | `s_proj` leg |
-| `cause3_med_coverage` | `0.99` | full reported support |
-| `cause3_corr_coverage` | `1.0` | the functional set — every member **is** a quoted projection |
-| `cause2_f7_margin` | `0.168` | ratio must fall **outside `[0.832, 1.168]`** or the result is `INCONCLUSIVE` |
-| `null_epsilon` | **WITHHELD** | the only one. §6.4 makes it moot for the required path, not resolved |
+**`read by production` is MEASURED, never asserted.** Re-measure with
+`python3 nd-unfolding/boundary_readership.py`; `tests/test_boundary_readership.py` fails if this
+table disagrees with it, so the column cannot go stale the way an index does. A boundary named as a
+`boundary_key` string is **not** read — that records an intent to read.
+
+| boundary | value | read by production | note |
+|---|---|---|---|
+| `cause3_agg` | `0.05` | **no** — named only in `z_validator.py` | **direct movement bound, never quadrature** |
+| `cause3_med` | `0.05` | **no** — named only in `z_validator.py` | per-bin leg |
+| `cause3_corr` | `0.05` | **no** — named only in `z_validator.py` | `s_proj` leg |
+| `cause3_med_coverage` | `0.99` | **no** — not referenced outside its declaration | full reported support |
+| `cause3_corr_coverage` | `1.0` | **no** — not referenced outside its declaration | the functional set |
+| `cause2_f7_margin` | `0.168` | **no** — not referenced outside its declaration | outside `[0.832, 1.168]` or `INCONCLUSIVE` |
+| `null_epsilon` | **WITHHELD** | **no** — named only in `z_validator.py` | §6.4 makes it moot for the required path |
+
+⚠ **Every declared boundary reads `no`, and that is the honest state, not an oversight.** The only
+code that reads a boundary's value is `z_validator.assess`, which has **no caller outside `tests/`**;
+`z_validator.py` has no `__main__` and no launcher names it. So the cause-3 legs are **predeclared
+and never computed in production.**
+
+> **STANDING RULE FOR THE NOTE: no criterion may be described as having gated anything unless
+> production code computed it.** A criterion whose `read by production` is `no` may be described as
+> *declared*, *predeclared*, or *binding on future members* — never as *applied*, *satisfied*,
+> *passed*, or *met*. This is why C3's disclosure says the assessor has never run, rather than the
+> weaker and untrue "no second member was available".
 
 **Coverage, in full:** **100%** on bins entering a quoted projection, **≥99%** on the full reported
 support, and **every failing bin enumerated in the receipt, never absorbed.**
@@ -33,7 +49,9 @@ support, and **every failing bin enumerated in the receipt, never absorbed.**
 
 The **rows of `project_cov_nd.py`'s `M`, plus the all-ones vector.** `s_proj` is the **maximum
 relative change in `√(uᵀCu)` over that set**; reporting class **`per-bin`**. Declared in
-`z_validator.py`'s `Z_LEG_SET`. The set **dissolves** the region question rather than answering it;
+`z_validator.py`'s `Z_LEG_SET`, and **implemented as real code at `z_statistics.py:203`** — that
+distinction keeps §1's disclosure accurate rather than sweeping: the statistic EXISTS and is
+computable; what has never run is the ASSESSOR that would compare it to `cause3_corr`. The set **dissolves** the region question rather than answering it;
 the earlier corner-integral criterion is a strictly weaker special case.
 
 ## 3. Cause dispositions
