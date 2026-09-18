@@ -260,7 +260,7 @@ three.
 
 ### 6.1 Absolute adequacy — asked of each arm alone
 
-Does the arm clear the adopted criterion `recovery ≥ f × ceiling` (`f = 0.80`;
+Does the arm clear the adopted criterion `recovery ≥ f × reference` (`f = 0.80`;
 CLM-012's k-dependent ceiling) on **V1 and V3**, with **V2, V4–V9 passing**?
 
 **An arm that fails adequacy is not recommendable regardless of the comparison.** Two

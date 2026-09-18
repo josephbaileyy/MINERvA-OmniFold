@@ -23,6 +23,21 @@ not a property of the estimators.
 
 The sign convention is fixed once, here: ``d = recovery(ours) - recovery(theirs)``, so
 **negative d favours Gregor**.
+
+**A defect this module had, and the reason ``THEIRS_BETTER_MAGNITUDE_UNRESOLVED``
+exists.** An earlier version concluded "his advantage is below the switching threshold"
+from ``ci_high < 0`` alone. That is unsound: ``CI = [-0.10, -0.01]`` with
+``delta_switch = 0.02`` establishes only that his advantage is *positive*, and is equally
+compatible with an advantage of 0.10 -- five times the threshold. Concluding "below the
+threshold" there would license retaining the incumbent on a comparison that does not
+support it. Establishing a magnitude is **below** a threshold requires the whole interval
+to be inside it, which is a statement about ``ci_low``, not ``ci_high``.
+
+The asymmetry with our own arm is deliberate and not the same error. Retaining the
+incumbent needs only non-inferiority -- that the deficit is *bounded* -- so
+``OURS_NON_INFERIOR`` is a sound conclusion from ``ci_low > -delta`` even when the
+interval extends far above zero. Adopting his arm needs a demonstrated magnitude, which
+is a strictly stronger requirement.
 """
 
 from __future__ import annotations
@@ -42,6 +57,7 @@ class Verdict(str, Enum):
     OURS_NON_INFERIOR = "OURS_NON_INFERIOR"
     THEIRS_SUPERIOR = "THEIRS_SUPERIOR"
     THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD = "THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD"
+    THEIRS_BETTER_MAGNITUDE_UNRESOLVED = "THEIRS_BETTER_MAGNITUDE_UNRESOLVED"
     INCONCLUSIVE = "INCONCLUSIVE"
 
 
@@ -180,6 +196,26 @@ def decide(
             measured,
             notes=("His is better by more than the switching threshold. Adopt his.",),
         )
+    if ci_high < 0.0 and ci_low <= -delta_switch:
+        # His advantage is demonstrated but its SIZE is not resolved against the
+        # threshold: the interval spans -delta_switch, so the data is compatible both
+        # with an advantage worth switching for and with one that is not.
+        return Outcome(
+            Verdict.THEIRS_BETTER_MAGNITUDE_UNRESOLVED,
+            Recommendation.NO_SELECTION,
+            measured,
+            preference=None,
+            notes=(
+                "HIS ARM MEASURABLY WON -- the interval lies entirely below zero. But it "
+                "also spans the switching threshold, so whether the advantage is worth "
+                "the adoption cost is UNRESOLVED. This licenses neither adopting his arm "
+                "(superiority beyond the threshold is not established) nor retaining ours "
+                "on the threshold argument (the advantage being below it is not "
+                "established either). More seeds would resolve it; asserting either "
+                "conclusion here would be claiming a magnitude the interval does not "
+                "support.",
+            ),
+        )
     if ci_high < 0.0:
         return Outcome(
             Verdict.THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD,
@@ -188,12 +224,12 @@ def decide(
             preference="RETAIN_INCUMBENT_BELOW_SWITCHING_THRESHOLD",
             preference_is_ratified=False,
             notes=(
-                "HIS ARM MEASURABLY WON. The interval lies entirely below zero, so the "
-                "advantage is demonstrated, but it is smaller than the switching "
-                "threshold. The recommendation to keep ours is therefore a POLICY about "
-                "adoption cost and not a performance finding. Report it as 'his scored "
-                "better by X; we retain ours for the stated costs'. Never as 'no "
-                "difference was found'.",
+                "HIS ARM MEASURABLY WON. The interval lies entirely below zero AND "
+                "entirely inside the switching threshold, so the advantage is both "
+                "demonstrated and demonstrably smaller than the threshold. The "
+                "recommendation to keep ours is therefore a POLICY about adoption cost "
+                "and not a performance finding. Report it as 'his scored better by X; we "
+                "retain ours for the stated costs'. Never as 'no difference was found'.",
             ),
         )
     return Outcome(

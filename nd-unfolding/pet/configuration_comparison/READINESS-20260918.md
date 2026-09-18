@@ -13,8 +13,8 @@ otherwise.
 
 | item | artifact | evidence it works |
 |---|---|---|
-| reference-ceiling calibration | `reference_calibration.py` | reproduces the committed `ideal_recovery_percell_truthmass_weighted_by_k` at k=1…4 to **1.1e-16** |
-| the demonstration that the pT ceiling does not transfer | `receipts/reference-calibration.json` | ceiling spans **0.017 → 0.973** at k=3 purely by re-weighting |
+| reference-model calibration (**a model, not a proven bound**) | `reference_calibration.py` | reproduces the committed `ideal_recovery_percell_truthmass_weighted_by_k` at k=1…4 to **1.1e-16** |
+| the demonstration that the pT reference does not transfer | `receipts/reference-calibration.json` | the reference spans **0.017 → 0.973** at k=3 purely by re-weighting |
 | the selection rule, total and unambiguous | `selection_rule.py` | 420-point partition sweep; every verdict in the enum reachable; policy-driven recommendations flagged unratified |
 | join identity checks I1–I10 | `identity_contract.py` | 14 tests, each against the direction the check must fail in |
 | authorization-scope enforcement | `authorization_scope.py` | 6 tests; the existing guard measured at **75 branches against A1's 19** |
@@ -38,8 +38,8 @@ pinned driver). Both are ordinary implementation work; neither waits on anyone.
 | **R1** which commit and model the paper reports | **Gregor** | whether any result speaks about his *published* method. Draft ready |
 | **R3** his `E_avail` definition | **Gregor** | any numeric comparison against his reported values. Draft ready |
 | **R4** authorization to read the 21 typed-object branches at scale | **Joseph** | building the typed representation |
-| **E-1/E-2** one CPU read of the existing npz for the `E_avail` acceptance map and displacement | **Joseph** | **the endpoint's ceiling is undefined without it** |
-| **U1–U8** ratification of the endpoint variable, binning, ceiling, `f`, δ, δ_switch | **Joseph** | the freeze |
+| **E-1/E-2** one CPU read of the existing npz for the `E_avail` acceptance map and displacement | **Joseph** | **the endpoint's reference value is undefined without it** |
+| **U1–U8** ratification of the endpoint variable, binning, reference value, `f`, δ, δ_switch | **Joseph** | the freeze |
 | **OI-71** disposition | **Joseph / PET lane** | whether `VL100` may be quoted at all |
 
 ---
@@ -51,9 +51,11 @@ campaign already owns and has already read.** It produces the `E_avail` acceptan
 and the induced displacement of a candidate tilt on both scoring domains.
 
 That is the smallest thing that unblocks real progress, because **until it runs the
-endpoint has no calibrated ceiling**, and without a ceiling neither an adequacy criterion
-nor δ has a value — which is why the endpoint specification states δ as a *fraction* of
-the ceiling rather than an absolute.
+endpoint has no calibrated reference value**, and without one neither an adequacy
+criterion nor δ has a value — which is why the endpoint specification states δ as a
+*fraction* of the reference rather than an absolute. The reference is itself a **model,
+not a proven bound**: a smooth learner can transport a tilt across cells, and BEN-038
+measured a band above the modelled reachable value.
 
 Second smallest, and independent of it: **stage 2, the GPU calibration**, 0.33 GPU-h,
 executable today. It measures `r`, and `r` decides whether the objective is affordable at
@@ -70,9 +72,14 @@ Neither is authorized by anything currently in force.
    blob and prong **counts**, not values. 21 branches need new authorization.
 2. **The existing branch guard cannot catch an authorization overrun** — it checks a
    75-branch superset. The read that ran was inside A1; the guard is what is defective.
-3. **The pT ceiling, scatter and tolerance cannot be inherited**, and the reason is now
-   quantitative rather than cautionary: the ceiling moves over 0.017–0.973 with the
-   weighting alone.
+3. **The pT reference value, scatter and tolerance cannot be inherited**, and the reason
+   is now quantitative rather than cautionary: the reference moves over 0.017–0.973 with
+   the weighting alone. It is a reference **model, not a proven bound**.
+4. **Binning must not be chosen to hide poorly accepted regions.** An earlier draft of
+   mine said the binning should avoid prior-dominated bins; that would raise the reference,
+   flatter both arms, and remove the region where a better hadronic representation is most
+   likely to matter. Low-acceptance bins stay in, and results are stratified by
+   acceptance against each stratum's own reference.
 
 ---
 

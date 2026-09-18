@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import tempfile
 import sys
 import unittest
 
@@ -19,6 +20,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent))
 
 import authorization_scope as az
+import calibrate_cost as cc
 import identity_contract as ic
 import reference_calibration as rc
 
@@ -228,6 +230,140 @@ class ReferenceCalibration(unittest.TestCase):
             rc.ceiling([0.5], [0.0], 3)
         with self.assertRaises(ValueError):
             rc.ceiling([0.5, 0.5], [1.0], 3)
+
+
+UUID_A = "GPU-11111111-2222-3333-4444-555555555555"
+UUID_B = "GPU-99999999-8888-7777-6666-555555555555"
+
+
+def _identity(uuid: str) -> dict:
+    return {"cuda_visible_devices": "0", "primary_uuid": uuid,
+            "primary_pci_bus_id": "00000000:03:00.0",
+            "devices": [{"uuid": uuid, "pci_bus_id": "00000000:03:00.0", "name": "A100"}]}
+
+
+def _throughput(step_seconds: float, batch: int, tokens: int) -> dict:
+    return {"repeats": 20, "step_seconds_median": step_seconds,
+            "step_seconds_min": step_seconds, "step_seconds_max": step_seconds,
+            "coefficient_of_variation": 0.0, "batch": batch, "tokens": tokens,
+            "seconds_per_example": step_seconds / batch,
+            "examples_per_second": batch / step_seconds}
+
+
+def _ours_half(uuid: str = UUID_A, tokens=cc.TOKEN_COUNTS) -> dict:
+    return {"gpu_identity": _identity(uuid),
+            "by_tokens": {str(t): _throughput(0.010 * (t / 12.0), cc.OUR_BATCH, t)
+                          for t in tokens}}
+
+
+def _theirs_half(uuid: str = UUID_A, tokens=cc.TOKEN_COUNTS, factor: float = 6.0) -> dict:
+    return {"gpu_identity": _identity(uuid),
+            "by_tokens": {
+                str(t): {
+                    # Same seconds-per-example ratio at both batches, so the expected
+                    # ratio is exactly `factor` and the test checks arithmetic, not noise.
+                    "native_batch": _throughput(
+                        0.010 * (t / 12.0) * factor * (cc.THEIR_BATCH / cc.OUR_BATCH),
+                        cc.THEIR_BATCH, t),
+                    "matched_batch": _throughput(
+                        0.010 * (t / 12.0) * factor, cc.OUR_BATCH, t),
+                }
+                for t in tokens}}
+
+
+class CostReduction(unittest.TestCase):
+    """The reducer must accept a genuine pair and reject every degenerate one.
+
+    An earlier version compared TensorFlow's `/device:GPU:0` against PyTorch's
+    `NVIDIA A100-SXM4-40GB`, which never compare equal -- so it would have rejected
+    every real pair. Both directions are therefore tested.
+    """
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def _write(self, ours: dict | None = None, theirs: dict | None = None):
+        op, tp = self.root / "ours.json", self.root / "theirs.json"
+        if ours is not None:
+            op.write_text(json.dumps(ours))
+        if theirs is not None:
+            tp.write_text(json.dumps(theirs))
+        return op, tp
+
+    def test_a_matching_pair_reduces(self):
+        op, tp = self._write(_ours_half(), _theirs_half())
+        receipt = cc.reduce_halves(op, tp)
+        self.assertEqual(receipt["gpu_identity"]["matched_on"],
+                         "primary_uuid from nvidia-smi")
+        self.assertEqual(sorted(receipt["measured_throughput"]),
+                         sorted(str(t) for t in cc.TOKEN_COUNTS))
+
+    def test_the_reduced_ratio_is_the_injected_one(self):
+        """Arithmetic, not plumbing: a factor of 6 must come back as 6."""
+        op, tp = self._write(_ours_half(), _theirs_half(factor=6.0))
+        receipt = cc.reduce_halves(op, tp)
+        for row in receipt["measured_throughput"].values():
+            self.assertAlmostEqual(row["ratio_per_example_native_batch"], 6.0, places=9)
+            self.assertAlmostEqual(row["ratio_per_example_matched_batch"], 6.0, places=9)
+
+    def test_measured_and_projected_are_separate_blocks(self):
+        """A GPU-hour is model-derived and must not sit inside the measured block."""
+        op, tp = self._write(_ours_half(), _theirs_half())
+        receipt = cc.reduce_halves(op, tp)
+        measured = json.dumps(receipt["measured_throughput"])
+        self.assertNotIn("gpu_hours", measured)
+        projected = receipt["projected_evaluation_cost"]
+        self.assertIn("budget_model", projected)
+        self.assertIn("fit_only_caveat", projected)
+        self.assertIn("derived_not_measured", projected)
+        for row in projected["by_tokens"].values():
+            self.assertIn("arm_pair_evaluation_gpu_hours", row)
+
+    def test_the_cross_framework_qualification_survives_reduction(self):
+        op, tp = self._write(_ours_half(), _theirs_half())
+        receipt = cc.reduce_halves(op, tp)
+        self.assertIn("FRAMEWORK-UNMATCHED", receipt["cross_framework_qualification"])
+
+    def test_the_thirty_three_token_projection_exceeds_the_twelve_token_one(self):
+        """More tokens must cost more; a flat projection would mean the loop did nothing."""
+        op, tp = self._write(_ours_half(), _theirs_half())
+        receipt = cc.reduce_halves(op, tp)
+        by_tokens = receipt["projected_evaluation_cost"]["by_tokens"]
+        self.assertGreater(by_tokens["33"]["arm_pair_evaluation_gpu_hours"],
+                           by_tokens["12"]["arm_pair_evaluation_gpu_hours"])
+
+    def test_different_physical_gpus_are_rejected(self):
+        op, tp = self._write(_ours_half(UUID_A), _theirs_half(UUID_B))
+        with self.assertRaises(SystemExit) as caught:
+            cc.reduce_halves(op, tp)
+        self.assertIn("different physical GPUs", str(caught.exception))
+
+    def test_a_missing_identity_is_rejected(self):
+        broken = _ours_half()
+        broken["gpu_identity"] = {}
+        op, tp = self._write(broken, _theirs_half())
+        with self.assertRaises(SystemExit) as caught:
+            cc.reduce_halves(op, tp)
+        self.assertIn("missing its GPU identity", str(caught.exception))
+
+    def test_a_missing_half_is_rejected_rather_than_reported_one_sided(self):
+        op, tp = self._write(_ours_half(), None)
+        with self.assertRaises(SystemExit) as caught:
+            cc.reduce_halves(op, tp)
+        self.assertIn("refusing to report one", str(caught.exception))
+
+    def test_a_missing_token_count_is_rejected(self):
+        op, tp = self._write(_ours_half(), _theirs_half(tokens=(12,)))
+        with self.assertRaises(SystemExit) as caught:
+            cc.reduce_halves(op, tp)
+        self.assertIn("token count 33 is missing", str(caught.exception))
+
+    def test_both_promised_token_counts_are_configured(self):
+        self.assertEqual(tuple(cc.TOKEN_COUNTS), (12, 33))
 
 
 if __name__ == "__main__":

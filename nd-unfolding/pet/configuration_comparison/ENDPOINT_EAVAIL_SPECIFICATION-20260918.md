@@ -78,18 +78,37 @@ on the cells of that domain (`acceptance_map_fullevent_fps.json` `definition`;
 `extract_fullevent_fps.completeness_2d:390-404`). Computing it on an `E_avail` binning is
 a CPU read of the existing npz and introduces no new quantity.
 
-**Binning is UNRATIFIED** (§7). It must be fixed before any comparative number exists,
-and it should be chosen so that no bin is prior-dominated to the point of carrying
-displacement it cannot recover — the (pT, p‖) grid has 37 cells with acceptance below
-0.01 holding 25.9 % of truth mass, and repeating that structure would build a floor into
-the endpoint.
+**Binning is UNRATIFIED** (§7) and must be fixed before any comparative number exists.
+
+**It must not be chosen to hide poorly accepted regions.** An earlier draft of mine said
+the binning "should be chosen so that no bin is prior-dominated" — that is exactly the
+error: dropping or merging away low-acceptance bins would raise the reference value and
+flatter both arms while removing from the endpoint the region where a better hadronic
+representation is most likely to matter. The (pT, p‖) grid has 37 cells below 0.01
+acceptance holding 25.9 % of truth mass; the `E_avail` binning will have an analogous
+low-acceptance region and it stays in.
+
+The rules instead are: choose bin edges on **physics and resolution** grounds; **retain**
+low-acceptance bins; let the reference model account for them, since it already does —
+a bin with acceptance 0 contributes 0 reachable displacement at any `k`; and **report
+stratified by acceptance, each stratum against its own reference value**, per BEN-038's
+rule that a stratification must be by the quantity the mechanism depends on. A binning
+change after seeing any comparative number is a criterion change, not a refinement.
 
 ---
 
-## 4. Reference calibration, and why the pT ceiling cannot be inherited
+## 4. Reference calibration — a model, not a bound — and why the pT value cannot be inherited
 
-The reference ceiling is the fraction of the injected displacement that is attainable at
-all after `k` iterations:
+**The reference is a MODEL, NOT A PROVEN BOUND, and that qualification travels with every
+number derived from it.** The construction assumes displacement reaches a cell only
+through that cell's own acceptance. A smooth learner can transport a tilt across cells
+(`omnifold.py:218-220`), and BEN-038 measured a band at `E_w[r] = 1.0333` — above the
+modelled reachable value. `FINDING-20260806-niter4-decision.md` grades it **ASSUMED**.
+So recovery is reported *relative to a reference*; a value above it is possible and is
+not evidence of an error.
+
+The reference value models the fraction of the injected displacement reachable after `k`
+iterations:
 
 ```
 ceiling(k, w) = Σ_b w_b · (1 − (1 − a_b)^k) / Σ_b w_b
@@ -115,8 +134,8 @@ committed acceptance map at k = 3, varying only the weighting
 | mass × (1 − acceptance) | 0.371 |
 | mass in cells with acceptance < 0.05 | 0.017 |
 
-**Range 0.017 to 0.973 — essentially the whole interval.** The adopted pT ceiling
-(0.618228) sits near the truth-mass value, but that is a fact about the pT tilt's
+**Range 0.017 to 0.973 — essentially the whole interval.** The pT endpoint's adopted
+reference (0.618228) sits near the truth-mass value, but that is a fact about the pT tilt's
 displacement field, not a property of the estimator or the grid. Carrying it to an
 `E_avail` injection would not be conservative; it would be arbitrary. The same argument
 disposes of inheriting the pT **scatter** and **tolerance**: both are properties of where
@@ -146,8 +165,10 @@ needs (§8).
   its ceiling was scatter and only −0.0019 was bias, so an arm can win the aggregate by
   being less noisy per cell. That is a real advantage and will be named as one.
 * **Co-reported:** the same statistic on the (pT, p‖) grid, as a diagnostic.
-* **Adequacy** is asked against the calibrated ceiling for the domain the arm is scored
-  on, never against the pT criterion 0.494582.
+* **Adequacy** is asked against the calibrated reference for the domain the arm is scored
+  on, never against the pT criterion 0.494582 — and because the reference is a model
+  rather than a bound, an adequacy criterion built on it is a convention, not a proof of
+  sufficiency.
 
 ---
 
@@ -169,11 +190,11 @@ None of these is adopted. Each needs Joseph's ratification before it can enter a
 | U1 | injected variable | truth `E_avail` | it determines what the comparison is sensitive to — a scientific choice, not an implementation detail |
 | U2 | tilt amplitude and clip | to be set so the induced displacement is measurable on the scoring domain | the pT values (0.35, ±3) do not transfer: a different variable has a different IQR and a different displacement |
 | U3 | scoring domain and binning | 1-D truth `E_avail`, binning TBD | must avoid building a prior-dominated floor into the endpoint |
-| U4 | reference ceiling | computed by §4 once U1–U3 are fixed | **the pT ceiling 0.618228 does not transfer** — demonstrated in §4 |
+| U4 | reference value | computed by §4 once U1–U3 are fixed, and reported as a **model, not a bound** | **the pT value 0.618228 does not transfer** — demonstrated in §4 |
 | U5 | adequacy criterion `f` | `f = 0.80` by analogy with CLM-012 | the analogy is to a *different* endpoint and is an assumption, not an inheritance |
-| U6 | non-inferiority margin δ | **as a fraction of the calibrated ceiling**, not an absolute. `δ = 0.0275 × ceiling` reproduces 0.017 at the pT ceiling | an absolute δ in recovery units means different things against different ceilings; the fractional form is at least dimensionally transferable, and it is still a judgement |
-| U7 | switching threshold δ_switch | `> δ`, proposed `0.0324 × ceiling` (0.02 at the pT ceiling) | it encodes adoption cost, which is a policy about what we will pay, **not a property of either estimator** |
-| U8 | seed scatter σ | **must be measured on this endpoint** | the pT scatter does not transfer for the same reason the ceiling does not |
+| U6 | non-inferiority margin δ | **as a fraction of the calibrated reference**, not an absolute. `δ = 0.0275 × reference` reproduces 0.017 at the pT reference | an absolute δ in recovery units means different things against different ceilings; the fractional form is at least dimensionally transferable, and it is still a judgement |
+| U7 | switching threshold δ_switch | `> δ`, proposed `0.0324 × reference` (0.02 at the pT reference) | it encodes adoption cost, which is a policy about what we will pay, **not a property of either estimator** |
+| U8 | seed scatter σ | **must be measured on this endpoint** | the pT scatter does not transfer for the same reason the reference does not |
 
 ---
 
@@ -186,6 +207,6 @@ None of these is adopted. Each needs Joseph's ratification before it can enter a
 | **E-3** | ratification of U1–U8 | none | **Joseph** |
 | E-4 | the fold-forward recorder (`OI-125`), ~8 lines, new file, not an edit to the pinned driver | none to write; one run to exercise | folded into the calibration stage |
 
-E-1 and E-2 are the same job and should be one request. Until they run, the ceiling for
+E-1 and E-2 are the same job and should be one request. Until they run, the reference for
 this endpoint is **undefined**, and any δ stated in absolute recovery units is
 uninterpretable — which is why §7 states δ as a fraction of it.

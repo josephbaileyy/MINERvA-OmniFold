@@ -1,8 +1,17 @@
 """Compute a powered-closure reference ceiling, and show why one cannot be inherited.
 
-The powered closure's recovery is scored against a *reference ceiling*: the fraction of
-an injected truth-level displacement that is attainable at all after ``k`` OmniFold
-iterations, given each cell's reco acceptance. For a cell with acceptance ``a`` the
+The powered closure's recovery is scored against a *reference ceiling*: a model of the
+fraction of an injected truth-level displacement that is reachable after ``k`` OmniFold
+iterations, given each cell's reco acceptance.
+
+**IT IS A REFERENCE MODEL, NOT A PROVEN BOUND.** The construction assumes the only route
+to a cell's displacement is data entering through that cell's acceptance. It is not an
+upper limit on attainable recovery: `omnifold.py:218-220` lets a smooth learner transport
+a tilt *across* cells, and BEN-038 measured a band whose signed response was
+``E_w[r] = 1.0333`` -- above the value this model calls reachable. So a recovery figure
+is quoted *relative to a reference*, exceeding it is possible, and the model is graded
+ASSUMED in `FINDING-20260806-niter4-decision.md`. Nothing here may be cited as a ceiling
+in the sense of a bound. For a cell with acceptance ``a`` the
 uncorrected prior weight after ``k`` iterations is ``(1-a)**k``, so the attainable
 fraction is ``1 - (1-a)**k``, and the ceiling is the weighted mean of that over cells:
 
@@ -158,10 +167,18 @@ def main() -> None:
 
     receipt = {
         "scope": (
-            "reference-ceiling calibration procedure and its sensitivity to the "
-            "scoring weight. NOT a ceiling for any particular injection -- the "
-            "displacement field of a real injection is computable only from the input "
-            "npz, which this module never reads."
+            "reference-model calibration procedure and its sensitivity to the scoring "
+            "weight. NOT a reference for any particular injection -- the displacement "
+            "field of a real injection is computable only from the input npz, which this "
+            "module never reads."
+        ),
+        "reference_model_not_a_proven_bound": (
+            "This construction assumes displacement reaches a cell only through that "
+            "cell's acceptance. It is NOT an upper limit: omnifold.py:218-220 lets a "
+            "smooth learner transport a tilt across cells, and BEN-038 measured a band at "
+            "E_w[r] = 1.0333, above the modelled reachable value. Recovery is quoted "
+            "relative to a reference; exceeding it is possible. Graded ASSUMED in "
+            "FINDING-20260806-niter4-decision.md."
         ),
         "acceptance_map": {
             "path": str(args.acceptance_map),
@@ -180,7 +197,7 @@ def main() -> None:
             "variable requires a newly calibrated ceiling."
         ),
         "not_ratified": [
-            "No ceiling here is adopted for any endpoint.",
+            "No reference value here is adopted for any endpoint.",
             "The scoring domain for an E_avail injection is an open scientific choice.",
             "Neither the tolerance nor the seed scatter of the pT endpoint transfers.",
         ],

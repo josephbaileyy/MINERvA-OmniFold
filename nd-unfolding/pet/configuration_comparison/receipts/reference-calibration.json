@@ -1,5 +1,6 @@
 {
-  "scope": "reference-ceiling calibration procedure and its sensitivity to the scoring weight. NOT a ceiling for any particular injection -- the displacement field of a real injection is computable only from the input npz, which this module never reads.",
+  "scope": "reference-model calibration procedure and its sensitivity to the scoring weight. NOT a reference for any particular injection -- the displacement field of a real injection is computable only from the input npz, which this module never reads.",
+  "reference_model_not_a_proven_bound": "This construction assumes displacement reaches a cell only through that cell's acceptance. It is NOT an upper limit: omnifold.py:218-220 lets a smooth learner transport a tilt across cells, and BEN-038 measured a band at E_w[r] = 1.0333, above the modelled reachable value. Recovery is quoted relative to a reference; exceeding it is possible. Graded ASSUMED in FINDING-20260806-niter4-decision.md.",
   "acceptance_map": {
     "path": "../../products/pet/fullevent_fps/acceptance_map_fullevent_fps.json",
     "n_cells": 285,
@@ -48,7 +49,7 @@
   },
   "conclusion": "At these iterations the ceiling spans nearly the whole unit interval purely as a function of where the injected displacement sits. An inherited ceiling is therefore arbitrary rather than conservative, and a new injection variable requires a newly calibrated ceiling.",
   "not_ratified": [
-    "No ceiling here is adopted for any endpoint.",
+    "No reference value here is adopted for any endpoint.",
     "The scoring domain for an E_avail injection is an open scientific choice.",
     "Neither the tolerance nor the seed scatter of the pT endpoint transfers."
   ]

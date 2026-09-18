@@ -162,5 +162,127 @@ class Separation(unittest.TestCase):
             self.assertIn("licensed by the measurement", describe(outcome))
 
 
+class Soundness(unittest.TestCase):
+    """Properties every verdict must satisfy, checked over a grid rather than asserted.
+
+    These are the tests that catch the class of defect this module actually had: a
+    verdict claiming a magnitude the interval does not support.
+    """
+
+    GRID = [-0.30, -0.10, -0.05, -SWITCH - 1e-9, -SWITCH, -SWITCH + 1e-9, -0.018,
+            -DELTA, -DELTA + 1e-9, -0.010, -1e-9, 0.0, 1e-9, 0.010, DELTA, SWITCH,
+            SWITCH + 1e-9, 0.10]
+
+    def intervals(self):
+        for low in self.GRID:
+            for high in self.GRID:
+                if low <= high:
+                    yield low, high
+
+    def test_below_threshold_is_claimed_only_when_the_interval_is_inside_it(self):
+        """THE COUNTEREXAMPLE'S CLASS: ci_high < 0 alone must never license this verdict."""
+        for low, high in self.intervals():
+            outcome = call(True, True, low, high)
+            if outcome.verdict is Verdict.THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD:
+                self.assertGreater(low, -SWITCH, f"[{low}, {high}] does not bound the advantage")
+                self.assertLess(high, 0.0, f"[{low}, {high}] does not establish an advantage")
+
+    def test_theirs_superior_is_claimed_only_when_the_advantage_exceeds_the_threshold(self):
+        for low, high in self.intervals():
+            outcome = call(True, True, low, high)
+            if outcome.verdict is Verdict.THEIRS_SUPERIOR:
+                self.assertLess(high, -SWITCH, f"[{low}, {high}] does not exceed the threshold")
+
+    def test_non_inferiority_is_claimed_only_when_the_deficit_is_bounded_by_delta(self):
+        for low, high in self.intervals():
+            outcome = call(True, True, low, high)
+            if outcome.verdict is Verdict.OURS_NON_INFERIOR:
+                self.assertGreater(low, -DELTA, f"[{low}, {high}] admits a deficit >= delta")
+
+    def test_ours_is_never_adopted_when_his_advantage_provably_exceeds_the_threshold(self):
+        """The scientific implication: a policy must not override a demonstrated margin."""
+        for low, high in self.intervals():
+            outcome = call(True, True, low, high)
+            if high < -SWITCH:
+                self.assertNotEqual(outcome.recommendation, Recommendation.ADOPT_OURS,
+                                    f"[{low}, {high}] provably exceeds the threshold")
+
+    def test_more_uncertainty_never_yields_a_stronger_claim(self):
+        """Widening an interval about its midpoint must not strengthen the verdict.
+
+        A rule that got stronger with more uncertainty would reward noisy measurements.
+        """
+        strong = {Verdict.OURS_SUPERIOR, Verdict.THEIRS_SUPERIOR,
+                  Verdict.THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD}
+        for centre in (-0.06, -0.03, -0.01, 0.0, 0.01, 0.03):
+            for half in (0.001, 0.005, 0.02, 0.05, 0.12):
+                narrow = call(True, True, centre - 0.001, centre + 0.001)
+                wide = call(True, True, centre - half, centre + half)
+                if wide.verdict in strong:
+                    self.assertIn(narrow.verdict, strong,
+                                  f"widening at centre {centre} strengthened the verdict")
+
+    def test_shifting_the_interval_toward_his_arm_never_favours_ours_more(self):
+        """Monotonicity in the physical direction of the difference."""
+        rank = {Recommendation.ADOPT_THEIRS: 0, Recommendation.NO_SELECTION: 1,
+                Recommendation.ADOPT_OURS: 2}
+        for low, high in [(-0.01, 0.05), (0.0, 0.04), (-0.005, 0.01)]:
+            previous = 2
+            for shift in (0.0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.10, 0.15):
+                got = rank[call(True, True, low - shift, high - shift).recommendation]
+                self.assertLessEqual(got, previous,
+                                     f"shifting [{low}, {high}] by {shift} favoured ours more")
+                previous = got
+
+
+class Boundaries(unittest.TestCase):
+    """Which side of each breakpoint the rule falls on, fixed by test rather than by luck."""
+
+    def test_the_reported_counterexample(self):
+        """CI = [-0.10, -0.01] must NOT establish the advantage is below the threshold."""
+        outcome = call(True, True, -0.10, -0.01)
+        self.assertEqual(outcome.verdict, Verdict.THEIRS_BETTER_MAGNITUDE_UNRESOLVED)
+        self.assertEqual(outcome.recommendation, Recommendation.NO_SELECTION)
+        self.assertEqual(outcome.measured["favours"], "theirs")
+        self.assertTrue(outcome.measured["difference_resolved"])
+        self.assertIn("UNRESOLVED", " ".join(outcome.notes))
+        # It is not a policy decision either: nothing was retained on a threshold
+        # argument the data does not support.
+        self.assertIsNone(outcome.preference)
+
+    def test_ci_low_exactly_at_minus_delta_is_not_non_inferior(self):
+        """Touching the margin does not clear it: the rule is strict, deliberately."""
+        outcome = call(True, True, -DELTA, 0.05)
+        self.assertNotEqual(outcome.verdict, Verdict.OURS_NON_INFERIOR)
+        self.assertEqual(outcome.verdict, Verdict.INCONCLUSIVE)
+
+    def test_ci_low_just_inside_minus_delta_is_non_inferior(self):
+        outcome = call(True, True, -DELTA + 1e-9, 0.05)
+        self.assertEqual(outcome.verdict, Verdict.OURS_NON_INFERIOR)
+
+    def test_ci_high_exactly_zero_does_not_establish_his_advantage(self):
+        outcome = call(True, True, -0.05, 0.0)
+        self.assertEqual(outcome.verdict, Verdict.INCONCLUSIVE)
+        self.assertFalse(outcome.measured["difference_resolved"])
+
+    def test_ci_low_exactly_at_minus_switch_leaves_the_magnitude_unresolved(self):
+        outcome = call(True, True, -SWITCH, -0.001)
+        self.assertEqual(outcome.verdict, Verdict.THEIRS_BETTER_MAGNITUDE_UNRESOLVED)
+
+    def test_ci_low_just_inside_minus_switch_bounds_the_advantage(self):
+        outcome = call(True, True, -SWITCH + 1e-9, -0.001)
+        self.assertEqual(outcome.verdict, Verdict.THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD)
+
+    def test_ci_high_exactly_at_minus_switch_is_not_superiority(self):
+        outcome = call(True, True, -0.10, -SWITCH)
+        self.assertEqual(outcome.verdict, Verdict.THEIRS_BETTER_MAGNITUDE_UNRESOLVED)
+
+    def test_a_degenerate_interval_is_handled(self):
+        """Zero width: the rule must still return one verdict."""
+        for point in (-0.10, -SWITCH, -DELTA, 0.0, DELTA, SWITCH, 0.10):
+            outcome = call(True, True, point, point)
+            self.assertIsInstance(outcome.verdict, Verdict)
+
+
 if __name__ == "__main__":
     unittest.main()
