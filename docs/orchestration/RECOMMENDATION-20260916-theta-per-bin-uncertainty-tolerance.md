@@ -351,7 +351,15 @@ formula I used was correct; the `N` was not established.**
 
 ⚠ **SCOPE, stated because the passage is not about the same object:** `:1690-1706` concerns the
 **262-cell** measurement (`VL132`, `CSTAT-R7`, `257`-cell invertible sub-block), **not** the 5D
-`10,694`-bin object. **So it does not refute the 5D figure — it refutes my method of obtaining it**, by
+`10,694`-bin object. ⚠ **AND THE OBJECT IS BETTER IDENTIFIED THAN I FIRST PUT IT — it is the PET
+`C_stat`, and that is materially stronger than "a different binning".** VERIFIED at
+`AGENTS.md:31`: *"PET central/statistical pairing (`C_stat`) — `EXISTS — UNVERIFIED, PAIRING
+DECLINED`. **A 50-member partial covariance artifact** exists; it is not independently verified,
+and `OI-126` was RULED on 2026-08-20 to **decline the pairing and demote the result**."* So
+`1/√98`'s `N = 50` is **PET's** family — **a different apparatus whose pairing was declined** —
+and the two descriptions are consistent rather than rival: `50` is the ensemble, `262` the
+reporting domain. **The correction is a peer's and it fences the passage better than my own
+scoping sentence did.** **So it does not refute the 5D figure — it refutes my method of obtaining it**, by
 exhibiting a documented case where the realized family was half the declared array and the design
 document called that size `INSUFFICIENT`. **Whether the 5D `C_stat` family is `100` or `50` is
 unmeasured, and I cannot measure it: no cluster access.**
@@ -363,6 +371,18 @@ unmeasured, and I cannot measure it: no cluster access.**
    was the derivation's *scientific* status unestablished, its *operand* was a launcher bracket.
 3. **Any future ensemble-precision argument in this project must use the family that EXISTS**, measured,
    and must state whether the `INSUFFICIENT` label applies. **That is a named check, not a proposal.**
+   ⚠ **AND A PROSPECTIVE FIX IS RELAYED AS HAVING LANDED, which would close this defect's mechanism
+   going forward.** The audit reportedly named the gap in advance — *"the writer still stores no
+   ensemble-count scalar… the launcher range is not independent readback of a particular product"* —
+   and `combine_cov_nd.py` is reported rewritten to store **`n_members`** (the realized count), the
+   `N−1` divisor and the member id list, so *"was this 100 or 50?"* becomes a **read** rather than an
+   inference. **WHAT I CAN AND CANNOT VERIFY FROM HERE, stated rather than assumed:** the *before*
+   state is CONFIRMED in this tree — `nd-unfolding/combine_cov_nd.py` is **27 lines** and writes one
+   `TH2D` and nothing else (`:23` constructs it, `:26` writes and closes) — and `n_members` has
+   **zero** occurrences at `9dba1194`, so the rewrite **postdates that sha and is not visible from
+   this lane.** The *after* state is therefore **RELAYED, unverified here.** ⚠ **And it is
+   PROSPECTIVE ONLY: it does not retroactively measure the existing 5D family, which stays
+   UNMEASURED and must be stated that way wherever the number is used.**
 4. **§3's non-bindingness conclusion is unaffected in direction:** at `N = 50` the figure would be
    *larger* (`10.1%` vs `7.11%`), so the ceiling would sit **further** above the observed null, not
    nearer it. The vacuity finding does not depend on which `N` is right.
