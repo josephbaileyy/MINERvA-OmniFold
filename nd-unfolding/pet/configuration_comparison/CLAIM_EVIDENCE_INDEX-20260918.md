@@ -6,6 +6,10 @@ kind of evidence backs them, because that distinction is the point: a measured n
 a code reading and a judgement are three different things and the deck must not blur
 them.
 
+**Revised 2026-09-18 for the matched-comparison goal.** The deck is now an **interim
+inventory**; the selection is specified in `MATCHED_COMPARISON_PROPOSAL-20260918.md` and
+has not been executed. §L records what was corrected in this revision.
+
 Pins: ours `44142e8c` (branch `pet-direct-token-comparison`); Gregor's
 `fc9a099d3c9c060f03cef293c294f9de4eb019cd`. Gregor line numbers are relative to his
 checkout root; ours are relative to the repository root.
@@ -146,7 +150,24 @@ These appear in the deck as recommendations or arguments. None is a measurement.
 | H9 | warmup + cosine decay + gradient clipping is a better-conditioned schedule than constant-Adam-with-a-step-anneal | the standard argument for warmup and cosine in transformer training. **Not measured on our estimator**, which is exactly why it is listed as a candidate to test rather than a change to make |
 | H10 | typed objects are worth borrowing *as a candidate* | B2's 5.3×/6.6× token reduction plus B1's much weaker cap binding. The judgement is that this is worth the coverage measurement; it is **not** a claim that the information is preserved |
 
-## I. Campaign spend, and where it does not reconcile
+## I. Anchors for the matched comparison (added this revision)
+
+| # | claim | source | scope limit |
+|---|---|---|---|
+| M1 | production baseline on the powered closure: recovery **0.5126033**, adopted criterion **0.494582** (`= 0.80 × ceiling 0.618228`), margin **+0.0180209** | job `56552326`, independently finalized by `56562169`; `docs/orchestration/CLAIM-CLM-012.md` (viii) | the 0.80 *absolute* bar was retired 2026-08-09; the live criterion is `f × ceiling` |
+| M2 | the closure's run-to-run spread is **1.226e-3** | job `56611837`; `CLAIM-CLM-012.md` (ix) | **same-configuration repeat, NOT seed-to-seed scatter.** It bounds δ from below and **sizes nothing.** The same record notes this margin had once been stated at ~10× its actual confidence |
+| M3 | **97.8 %** of the baseline's gap to the ceiling is per-cell scatter; signed bias **−0.0019** | `docs/orchestration/FINDINGS-ARCHIVE-2026-08.md` BEN-038 | implies an arm can win the aggregate by being less noisy per cell; hence the mandatory decomposition |
+| M4 | the ceiling **0.618228** is a **reference curve, not a proven bound** — a band was measured at `E_w[r] = 1.0333` | `CLAIM-CLM-012.md` caveat (i); BEN-038 | recovery fractions are relative to a reference |
+| M5 | the ordinary self-consistency closure has **structural zero power** — a constant estimator optimizes it | `AUDIT-FINDINGS-20260728.md`; restated at `closure_fullevent_fps.py:4-9` | this is why it is not the endpoint |
+| M6 | the injection protocol was predeclared **2026-08-05** and is reused unchanged | `closure_powered_truth_reweight.py:10-33` | amplitude 0.35, clip `|z| ≤ 3`, rate-preserving, truth-passing rows, two disjoint 2 M halves, split seed 7 |
+| M7 | evaluation sample: **49,152,885** signal / **4,116,128** data / **564,591** background rows, `num_part` 12, sha256 `fa6b3463…`, 9,897,374,636 bytes | `nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12_RECEIPT.json`, status PASS, job `56120687`, produced 2026-07-19 | the npz itself lives on pscratch, not in the repo |
+| M8 | **his representation is absent from our production input for every inventory** — no blob, prong, photon, PID, dE/dx, Michel, per-type-energy-sum or overflow key | re-measured at `44142e8c`: `dump_pointcloud_inputs.py:190-235`; first established at `GREGOR_PET2_OMNIFOLD_ASSESSMENT.md:249-255` (`b65f9ff2`) | this is what blocks Tier B |
+| M9 | seed-scatter planning prior **σ ≈ 0.008** | `docs/orchestration/CLAIM-CLM-010.md`: 48 seeds, mean deviation 0.014256, **sd 0.008023** | an **adjacent** statistic, not this endpoint. A planning assumption; stage 4 measures the real thing |
+| M10 | a PyTorch OmniFold backend exists — ≈10,900 lines, ≈2,900 of them tests, with `run_iterations` for multiple iterations | `nd-unfolding/pet2_torch/` at `b65f9ff2`, preserved by tag `evidence/prepublication-excluded-gregor-b65f9ff2` | its `model.py` is by its own docstring an **independent** reimplementation, **not Gregor's architecture**; its `g2_adapter.py` never saw the real payload |
+| M11 | the exact upstream configuration is the `Transformer1` regression preset: d_model 128, depth 4, heads 8, dropout 0, batch 2048, max_steps 250000, lr 1e-4, wd 0.01, warmup 1000, clip 1.0 | `submit_train_jobs.py:119-153`; `train.py:660-686` | **not established to be the configuration behind arXiv:2604.12364** |
+| M12 | the prior campaign declined a cross-framework comparison because it would "confound framework, representation, and training engine" | `GREGOR_PET2_OMNIFOLD_ASSESSMENT.md:414-417` | the reason the matched design runs both arms in one engine |
+
+## J. Campaign spend, and where it does not reconcile
 
 | item | GPU device-hours | source |
 |---|---:|---|
@@ -162,7 +183,7 @@ difference is the inference benchmark — including one 35-minute timeout (job 5
 that measured nothing — and the matrix closeout, neither of which is separately
 itemized in a receipt I can cite. Reported as a gap rather than closed by arithmetic.
 
-## J. Explicitly withdrawn
+## K. Explicitly withdrawn
 
 | withdrawn claim | replaced by |
 |---|---|
@@ -174,8 +195,24 @@ itemized in a receipt I can cite. Reported as a gap rather than closed by arithm
 | "25.8 points is measured power for this endpoint" | D4: a planning assumption from a different fixture |
 | "the execution path is validated across the intended range" | C5: 10 of 13 widths; validation is **incomplete** |
 
-## K. Things this deck does not establish
+## L. Corrected in the 2026-09-18 matched-comparison revision
 
+| what was wrong | correction |
+|---|---|
+| the deck read as a **recommendation** | relabelled an **interim inventory**; slide 2 states that no configuration is selected and that retaining ours is a **provisional engineering choice**, not a result |
+| "5.3×/6.6× fewer tokens **for a description of the same hadronic system**" | the equivalence is **unmeasured** and is withdrawn; the slide now says so in the same cell |
+| slide 11's column header read "**measured** cost" over two `≈ 0` cells | header is now "cost", and each cell is marked *est.* or *measured* |
+| "typed-object energy coverage" listed as the prerequisite for three borrowings | corrected to **"absent from the dump"** — coverage was a proxy; absence is the actual blocker |
+| coverage presented as **the gate** on the three largest borrowings | **retired as a gate.** Tier B measures the representation directly; coverage survives only as a diagnostic if R4 lands |
+| "his schedule is better conditioned and free" stated as a consequence | labelled *judgement, unmeasured on our estimator* |
+| the component priority ("test aggregation before routing") | **retired.** Complete configurations are compared instead, because the components interact |
+| I read `pet2_torch/engine.py` as **limited to one iteration** | wrong: `run_iterations` loops complete Step-1/Step-2 iterations, so niter 3 is reachable. The module is still not used, for the three reasons at proposal §4 |
+| Appendix C's "variance pilot" could be read as the matched comparison's pilot | disambiguated: that pilot is the **retired synthetic** one; stage 4 is a different sample, endpoint and purpose |
+
+## M. Things this deck does not establish
+
+- **That either configuration unfolds better.** No head-to-head on our unfolding task has
+  been run; his configuration has never been evaluated on the powered-closure endpoint.
 - That our configuration is better than Gregor's, in any category.
 - That typed objects preserve the information our cluster cloud carries. **Unmeasured,
   and it is the prerequisite for the three largest borrowings.**

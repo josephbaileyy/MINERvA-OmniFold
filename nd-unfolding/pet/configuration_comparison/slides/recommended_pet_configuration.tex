@@ -28,7 +28,8 @@
 \renewcommand{\arraystretch}{1.12}
 
 \title{Recommended PET Configuration}
-\subtitle{Comparison with Gregor's Implementation}
+\subtitle{Comparison with Gregor's Implementation\\[0.3em]
+\normalsize INTERIM INVENTORY --- the selection is not yet made}
 \author{Publication Agent B (PET)}
 \date{18 September 2026}
 
@@ -39,49 +40,46 @@
   \titlepage
   \begin{center}
     \small
-    \warn{PET is diagnostic method development, not a publication product.}\\
-    \small Nothing here is a publication adoption, an uncertainty, or a Gate-6 action.
+    \warn{This deck inventories differences. It does not select a configuration.}\\
+    \small The matched comparison that would select one is specified on slides 14--16 and in\\
+    \texttt{MATCHED\_COMPARISON\_PROPOSAL-20260918.md}. Nothing is launched.\\[0.4em]
+    \warn{PET is diagnostic method development, not a publication product.}
   \end{center}
 \end{frame}
 
 % ---------------------------------------------------------------- 2
-\begin{frame}{Executive recommendation}
-  \textbf{Keep our estimator's structure. Borrow five things from Gregor. Test two of
-  them before anything else.}
-  \vspace{0.6em}
+\begin{frame}{Where the selection stands}
+  \textbf{No configuration is selected, and this deck cannot select one.} It compares
+  components; the decision needs one matched comparison of the two \emph{complete}
+  configurations on our unfolding task.
+  \vspace{0.5em}
 
-  \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
-      \ours{\textbf{Keep} (evidence supports, or load-bearing for OmniFold)}
-      \begin{itemize}\small
-        \item muon as a distinguished FiLM event input
-        \item frozen MC normalization; periodic azimuth
-        \item family pooling as the practical default
-        \item energy-ranked retention
-        \item KNN locality in detector coordinates
-        \item the whole OmniFold construction
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.49\textwidth}
-      \theirs{\textbf{Borrow} (candidates --- none deployed)}
-      \begin{itemize}\small
-        \item \textbf{per-family log energy sums}, computed over the whole event
-        \item \textbf{aggregate overflow}, energy-weighted merge
-        \item richer per-token features + type embedding
-        \item warmup + cosine decay, gradient clipping
-        \item one capacity step
-      \end{itemize}
-    \end{column}
-  \end{columns}
+  \begin{center}\footnotesize
+  \begin{tabular}{@{}R{0.26\textwidth}R{0.34\textwidth}R{0.33\textwidth}@{}}
+    \toprule
+    \textbf{what we have} & \textbf{what it supports} & \textbf{what it does not} \\
+    \midrule
+    a pinned, code-traced inventory of every consequential difference &
+      knowing \emph{what} differs and which differences are cheap to change &
+      \warn{any claim that either configuration unfolds better} \\
+    component measurements on a synthetic fixture and on GPU cost &
+      cost, and one inconclusive routing result &
+      \warn{transfer to the real task --- direction and magnitude do not carry} \\
+    a production baseline measured on the real endpoint (recovery \textbf{0.5126}) &
+      a scale, a margin, and a frozen protocol to reuse &
+      \warn{a value for \emph{his} configuration --- it has never been run on our task} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
   \vspace{0.5em}
   \hrule
   \vspace{0.4em}
   {\small
-  \textbf{Do first, zero new compute:} measure whether typed objects cover the
-  cluster energy. That one number gates the three largest borrowings.\\
-  \textbf{Do not borrow:} muon-as-token; zero-fill for absent fields; embedding index
-  0 shared with padding; input LayerNorm; raw $\phi$; concatenation-order truncation;
-  weight decay.}
+  \textbf{Provisional engineering choice, stated as such:} retain ours --- it is frozen,
+  validated, cheaper, and its closure receipts exist. \warn{Retention on continuity and
+  cost is not a demonstrated result, and this deck does not upgrade it into one.}
+  \\[0.3em]
+  \textbf{What would settle it:} slides 14--16.}
 \end{frame}
 
 % ---------------------------------------------------------------- 3
@@ -202,7 +200,7 @@
 
 % ---------------------------------------------------------------- 6
 \begin{frame}{Comparison I --- representation}
-  \begin{center}\scriptsize
+  \begin{center}\scriptsize\renewcommand{\arraystretch}{0.98}
   \begin{tabular}{@{}R{0.135\textwidth}R{0.215\textwidth}R{0.215\textwidth}R{0.175\textwidth}R{0.175\textwidth}@{}}
     \toprule
     & \ours{\textbf{ours}} & \theirs{\textbf{Gregor's}} & \textbf{consequence} &
@@ -211,7 +209,8 @@
     objects &
       raw non-muon calorimeter clusters; muon distinguished &
       reconstructed objects; muon is a token &
-      mean 74.6/102.6 clusters vs 14.0/15.6 objects: $5.3\times$/$6.6\times$ fewer tokens &
+      mean 74.6/102.6 clusters vs 14.0/15.6 objects: $5.3\times$/$6.6\times$ fewer
+      tokens. \warn{Whether they carry the same information is unmeasured} &
       \theirs{borrow} the vocabulary; \ours{keep} the distinguished muon \\
     token features &
       5 cols, no type code; mask $=(E{=}0)$ &
@@ -222,7 +221,7 @@
     transforms &
       physical divisors; frozen MC z-norm; $(\cos\phi,\sin\phi)$ &
       logs $+/10^4$; LayerNorm inside encoder; \warn{raw $\phi$} &
-      raw $\phi$ is discontinuous at the wrap --- we fixed this ourselves in July &
+      raw $\phi$ is discontinuous at the wrap; we fixed this in July &
       \ours{keep} ours; recommend the $\phi$ fix to him \\
     event globals &
       13, all muon/vertex &
@@ -268,7 +267,8 @@
     training &
       Adam $10^{-4}\!\to\!10^{-5}$ step anneal; no wd, no clip &
       AdamW, wd 0.01, warmup + cosine, clip 1.0 &
-      his schedule is better conditioned and free; \warn{wd biases a likelihood-ratio
+      \emph{judgement, unmeasured on our estimator:} his schedule is better
+      conditioned, and free. \warn{wd biases a likelihood-ratio
       classifier} ($w=e^{\rm logit}$) &
       \theirs{borrow} warmup/cosine/clip; \warn{not} weight decay \\
     OmniFold &
@@ -284,6 +284,47 @@
   {\scriptsize \warn{Before any numeric comparison with his results:} his $E_{\rm avail}$
   uses full charged-pion energy $+$ $K^{\pm}$ against our pion-KE definition ---
   an offset of order 140\,MeV per $\pi^{\pm}$.}
+\end{frame}
+
+% ---------------------------------------------------------------- 7b
+\begin{frame}[t]{The constraint that decides what can be compared}
+  \vspace{0.3em}
+  {\small\textbf{Every distinctive element of his representation is absent from our
+  production input --- for every inventory.}}
+  \vspace{0.3em}
+
+  {\footnotesize The G2 dump writes \texttt{part\_reco}, \texttt{part\_gen},
+  \texttt{reco\_scalars}, \texttt{truth\_scalars}, \texttt{reco\_muon},
+  \texttt{reco\_vertex}, \texttt{reco\_view}, \texttt{reco\_time},
+  \texttt{pass\_reco}/\texttt{pass\_truth}, weights and provenance. There is \warn{no}
+  blob, prong, photon, PID, $dE/dx$, Michel, per-type-energy-sum or overflow-telemetry
+  key anywhere in it. Re-measured at \texttt{44142e8c}; first established by the audited
+  Gregor-PET2 campaign in July (\texttt{absent/absent/absent/absent}).}
+  \vspace{0.5em}
+
+  \begin{center}\footnotesize
+  \begin{tabular}{@{}cR{0.30\textwidth}R{0.34\textwidth}c@{}}
+    \toprule
+    \textbf{tier} & \textbf{what it compares} & \textbf{prerequisite} & \textbf{status} \\
+    \midrule
+    \textbf{A} & architecture $+$ training recipe, both arms on the frozen G2 input &
+      none & \ours{\textbf{runnable}} \\
+    \textbf{B} & representation: typed objects, PID embedding, 16 globals, cap 33,
+      aggregate overflow &
+      a symmetric data/signal/background typed-object dump with overflow telemetry &
+      \warn{\textbf{blocked}} \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.4em}
+  {\footnotesize Tier B's prerequisite is a C++ event-loop deliverable, requested in
+  \texttt{FULL\_EVENT\_INTERFACE\_REQUEST.md} \S D, not delivered, owned by the
+  active-universe C++ owner --- \warn{not schedulable by me and not costed}. His public
+  rows are MC-only, so they cannot supply a data leg; a truth-derived type vocabulary is
+  excluded permanently as leakage.
+  \\[0.2em]
+  \textbf{Tier A is the matched comparison we can have}, and it is worth having.
+  \warn{A Tier-A result may never be written as ``ours beats Gregor's''.}}
 \end{frame}
 
 % ---------------------------------------------------------------- 8
@@ -372,28 +413,28 @@
 \end{frame}
 
 % ---------------------------------------------------------------- 11
-\begin{frame}{Retained, borrowed, deferred}
+\begin{frame}{Component inventory --- all provisional, none selected}
   \begin{center}\scriptsize
   \begin{tabular}{@{}R{0.30\textwidth}R{0.20\textwidth}R{0.20\textwidth}R{0.24\textwidth}@{}}
     \toprule
-    \textbf{borrow (candidate)} & \textbf{why} & \textbf{measured cost} &
+    \textbf{borrow (candidate)} & \textbf{why} & \textbf{cost} &
       \textbf{prerequisite} \\
     \midrule
     per-family log energy sums, over the \emph{whole} event &
       cap-proof fixed-width channel &
-      $\approx$ 0 &
-      fingerprint change; rank alongside \texttt{eavail}/\texttt{q3} \\
+      \emph{est.} $\approx$ 0 &
+      fingerprint change; \warn{absent from the dump} \\
     aggregate overflow, energy-weighted merge &
       addresses a measured 21--45\,\% energy loss in most events &
-      parity to $\pm3.3\,\%$ &
+      \emph{measured} parity to $\pm3.3\,\%$ &
       dump regeneration; \warn{no closure evidence yet} \\
     richer per-token features + type embedding, index 0 reserved &
       more physics per token, fewer tokens &
       unmeasured &
-      \warn{typed-object energy coverage} \\
+      \warn{absent from the dump} \\
     warmup + cosine, gradient clipping &
       better-conditioned schedule &
-      $\approx$ 0 &
+      \emph{est.} $\approx$ 0 &
       Gate-4 fingerprint; closure re-run \\
     one capacity step &
       $18.9\times$ gap is a live hypothesis &
@@ -404,9 +445,10 @@
   \end{center}
   \vspace{0.4em}
   {\footnotesize
-  \textbf{Deferred, deliberately:} individual-object routing --- unresolved on accuracy
-  and measurably more expensive. \textbf{Decided without new work:} normalization,
-  pretraining availability, OmniFold integration, numerical behaviour.
+  \warn{These rows are component judgements, not a selection, and the single-factor
+  experiments they imply are RETIRED} --- the four live items interact, so they are
+  compared as complete configurations instead (slides 14--16). The rows survive as the record
+  of what differs and as the source of the tuning grids.
   \\[0.2em]
   \textbf{Back to Gregor:} encode $\phi$ periodically; reserve embedding index 0 for
   padding; map raw prong PID 9 (it currently raises); compute the per-PID energy sums
@@ -439,37 +481,154 @@
 \end{frame}
 
 % ---------------------------------------------------------------- 13
-\begin{frame}{The next decision}
-  \textbf{One question, no compute, gates the three largest borrowings:}
-  \begin{center}\small
-    Do blobs $+$ prongs $+$ photons cover the non-muon cluster energy on our tuples?
-  \end{center}
-  {\footnotesize A counts-and-energies read of branches the A1 authorization already
-  covers; order one CPU core-hour. If coverage is poor, the typed vocabulary is dead and
-  the list collapses to aggregate overflow alone.}
-  \vspace{0.6em}
-  \hrule
-  \vspace{0.5em}
-  {\small\textbf{Then one bounded proposal, not five experiments.} Aggregation, energy
-  sums, routing and capacity \emph{interact}: energy sums partly substitute for
-  aggregation; routing matters more when more objects survive the cap; and a
-  47k-parameter model may have no room for a richer representation, which would make
-  every single-factor test read ``no effect'' for the wrong reason. The right instrument
-  is a \textbf{matched complete-configuration comparison} --- production against one
-  assembled candidate on the same endpoint and seeds --- with single-factor arms added
-  only where it shows an effect.}
-  \vspace{0.5em}
-  \hrule
-  \vspace{0.5em}
-  {\small\textbf{Already authorized and currently blocked.} The variance pilot
-  ($\le$30 GPU-h) would measure whether any of this is resolvable inside the 130
-  authorized. Its precondition is complete validation, which is unmet. \textbf{One
-  decision unblocks it:} amend the frozen V5 criterion to a per-coordinate step rule.
-  That is Joseph's call, and I did not make it.}
+\begin{frame}[t]{One engine, and an endpoint that a null estimator fails}
+  \vspace{0.4em}
+  {\small\textbf{One engine.} Both arms run inside our TensorFlow MultiFold.}
+  {\footnotesize The prior campaign declined a cross-framework comparison because it
+  would ``confound framework, representation, and training engine''. One engine removes
+  two of those confounds; Tier A removes the third by holding the representation fixed.}
   \vspace{0.4em}
 
-  {\footnotesize Campaign spend to date: \textbf{16.0 of 290 GPU device-hours}, 2.0 CPU
-  core-hours.}
+  {\small\warn{\textbf{Gate V-PORT.}}}
+  {\footnotesize His architecture is ported to Keras-2, \textbf{his PyTorch weights are
+  transferred in}, and outputs must agree to $\le$1e-5 max absolute difference in float64
+  over 1{,}024 fixed inputs including fully-masked and single-token rows, with
+  \textbf{equal} parameter counts. \textbf{A port that cannot be shown to compute his
+  function is not his configuration}, and nothing downstream repairs that. Two mappings
+  are forced and travel with every result: his Fourier positional encoding is fed
+  $(\mathrm{pos},z)$ because our tokens carry no per-token $(\eta,\phi)$; and his
+  $\log 1p$ Huber is an $E_{\rm avail}$ regression loss with no counterpart in a
+  reweighting classifier, so \textbf{the objective stays ours}. His arm keeps his
+  optimizer, schedule, clipping and batch.}
+  \vspace{0.5em}
+
+  {\small\textbf{One endpoint --- and deliberately not the cheap one.}}
+  {\footnotesize The ordinary self-consistency closure is \warn{unusable}: it is an
+  identity check that a \emph{constant} estimator optimizes --- structural zero power.
+  Choosing it would let measurability pick the specification. The primary endpoint is the
+  \textbf{powered injected truth-reweight recovery} $1-E_w[|1-r_b|]$ over 285 cells, on
+  the protocol predeclared 2026-08-05 and reused \emph{unchanged}: tilt amplitude 0.35,
+  clipped $|z|\le3$, rate-preserving, truth-passing rows only, two \textbf{disjoint}
+  2\,M halves at split seed 7 --- frozen six weeks ago by someone who could not have
+  known this comparison would use it. Our baseline: \textbf{0.5126033};
+  \warn{his has never been run on it}.}
+\end{frame}
+
+% ---------------------------------------------------------------- 14
+\begin{frame}[t]{The margin, and the rule that cannot be softened}
+  \vspace{0.4em}
+  {\small\textbf{Non-inferiority margin} $\boldsymbol{\delta = 0.018}$ recovery points,
+  fixed before any number exists.}
+  \vspace{0.2em}
+
+  {\footnotesize 0.0180209 is \emph{exactly} the margin by which our estimator clears its
+  adopted criterion (recovery \textbf{0.5126033} vs \textbf{0.494582} $=0.80\times$
+  ceiling 0.618228), so a larger deficit costs the entire margin by which production
+  passes its own gate --- decision-relevant, not a round number. It is
+  $\mathbf{14.7\times}$ the closure's measured repeat spread (1.226e-3) yet only
+  \textbf{2.9\,\%} of the ceiling: strict, not lenient.}
+  \vspace{0.5em}
+
+  \begin{center}\footnotesize
+  \begin{tabular}{@{}R{0.40\textwidth}R{0.52\textwidth}@{}}
+    \toprule
+    \textbf{95\,\% CI for mean$(d)$, $d = $ ours $-$ his} & \textbf{conclusion} \\
+    \midrule
+    lower bound $> -\delta$, all safeguards pass &
+      \ours{\textbf{Recommend OURS}} --- non-inferior by a margin that matters, at equal
+      tuning, on our task \\
+    upper bound $< -\delta$, his safeguards pass &
+      \theirs{\textbf{Recommend HIS}} --- materially better; adopt it for method
+      development \\
+    CI contains $-\delta$ &
+      \warn{\textbf{Inconclusive --- no selection.}} Incumbent retained as a
+      \emph{provisional engineering choice}, in those words \\
+    any safeguard fails for an arm &
+      that arm is \textbf{not recommendable} at any endpoint value \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.3em}
+  {\footnotesize \warn{A CI that merely contains zero decides nothing} --- only a lower
+  bound strictly above $-\delta$ licenses ``ours''. \warn{Ours does not win by default.}
+  The result is reported whether or not it favours us.
+  \\[0.2em]
+  \textbf{Per BEN-038}, both arms also report signed response and scatter penalty:
+  \warn{an arm can win this aggregate purely by being less noisy per cell}, and that will
+  be named as such.}
+\end{frame}
+
+% ---------------------------------------------------------------- 14
+\begin{frame}[t]{Stages, costs, and what stops it}
+  \vspace{0.2em}
+  \begin{center}\footnotesize
+  \begin{tabular}{@{}cR{0.34\textwidth}rR{0.32\textwidth}@{}}
+    \toprule
+    & \textbf{stage} & \textbf{GPU-h} & \textbf{gate to proceed} \\
+    \midrule
+    1 & port to Keras-2; V-PORT gate; tests & 0.5 & $\le$1e-5, equal parameter counts \\
+    2 & cost calibration, one evaluation per arm & 3 & measured cost replaces the estimate \\
+    3 & tuning: \textbf{4 trials each}, own default as trial 1 & 12 & both arms frozen; halves untouched \\
+    4 & variance pilot, 4 paired seeds $\times$ 2 arms & 12 & \warn{measured $\sigma_d$ admits $\delta$} \\
+    5 & final comparison, 8 paired seeds $\times$ 2 arms & 24 & --- \\
+    & contingency (one stage repeated) & 18 & \\
+    \midrule
+    & \textbf{ceiling requested} & \textbf{$\le$70} & of 290; \textbf{16.0} consumed \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vspace{0.3em}
+  {\scriptsize
+  \textbf{Sizing.} Paired on seed. Prior $\sigma\approx0.008$ (48-seed closure-adjacent
+  spread) $\Rightarrow \sigma_d\approx0.011$, $n\approx3$; 8 seeds tolerates $\sigma_d$ to
+  $\approx$0.019. \warn{An assumption from an adjacent statistic, not measured power ---
+  stage 4 replaces it.}
+  \\[0.2em]
+  \textbf{Stops:} V-PORT fails; the pilot cannot resolve $\delta$ inside the ceiling
+  (\warn{say so --- do not raise the ceiling or widen $\delta$}); a safeguard fails; limits
+  exhausted; or the endpoint, margin, rule or samples would have to change. Repaired
+  submissions count as retries; no automatic relaunch.
+  \\[0.2em]
+  \textbf{Frozen before stage 5}, digest-verified: both configurations, the injection
+  protocol, the sample, $\delta$, $\alpha$, the rule verbatim, every threshold.
+  \warn{Not relaxed after failures.}}
+\end{frame}
+
+% ---------------------------------------------------------------- 16
+\begin{frame}[t]{What the final deck will lead with}
+  \vspace{0.4em}
+  {\small Once stage 5 returns, the deck is restructured so its first three slides are:}
+  \begin{enumerate}\small
+    \item \textbf{the selected configuration}, named in one line, with the word
+      ``selected'' reserved for a case the decision rule actually licenses --- and the
+      words ``provisional engineering choice'' used instead when it does not;
+    \item \textbf{the matched evidence}: the paired recovery difference and its 95\,\%
+      interval against $\delta$, the signed-response / scatter split that attributes the
+      difference, and the safeguard table;
+    \item \textbf{the conditions under which the conclusion holds} --- Tier A only, so
+      architecture and training recipe and \emph{not} representation; one endpoint;
+      $\delta = 0.018$; \texttt{fc9a099d} not established as the paper commit; pretrained
+      initialization untested because unreachable; recovery measured against a reference
+      ceiling that is not a proven bound.
+  \end{enumerate}
+  \vspace{0.3em}
+  {\small The present inventory becomes the appendix. Two sentences are pre-committed
+  now, so neither can be softened later:}
+  \vspace{0.2em}
+
+  {\footnotesize
+  \warn{If his configuration wins by more than $\delta$, the deck recommends his} and
+  says so in the title.
+  \\[0.2em]
+  \warn{If the interval is wide, the deck says the comparison failed to decide} and
+  names the incumbent as retained on cost and continuity --- not as validated.}
+  \vspace{0.4em}
+  \hrule
+  \vspace{0.3em}
+  {\footnotesize \textbf{Open regardless of the outcome:} the representation (Tier B,
+  blocked on the dump), his published configuration (R1), and pretrained initialization
+  (R2). \textbf{Questions for Gregor, not compute:} R1 paper commit, R2 checkpoints and
+  hashes, R3 his $E_{\rm avail}$ definition. \warn{Nothing has been sent to anyone.}}
 \end{frame}
 
 % ================================================================ appendix
@@ -509,6 +668,48 @@
   \end{center}
   {\scriptsize Full index: \texttt{../CLAIM\_EVIDENCE\_INDEX-20260918.md}. Full
   inventory: \texttt{../CONFIGURATION\_COMPARISON-20260918.md}.}
+\end{frame}
+
+\begin{frame}{Appendix A2 --- anchors for the matched comparison}
+  \begin{center}\scriptsize
+  \begin{tabular}{@{}R{0.42\textwidth}R{0.53\textwidth}@{}}
+    \toprule
+    \textbf{claim} & \textbf{evidence} \\
+    \midrule
+    baseline recovery \textbf{0.5126033} against the adopted criterion
+      \textbf{0.494582} $=0.80\times$ ceiling 0.618228, margin $+0.0180209$ &
+      job \texttt{56552326}, independently finalized by \texttt{56562169};
+      \texttt{docs/orchestration/CLAIM-CLM-012.md} (viii) \\
+    closure repeat spread \textbf{1.226e-3} --- same-configuration, \warn{\emph{not} seed
+      scatter, so it sizes nothing} &
+      job \texttt{56611837}; \texttt{CLAIM-CLM-012.md} (ix) \\
+    \textbf{97.8\,\%} of the baseline's gap to the ceiling is scatter; signed bias
+      $-0.0019$ &
+      \texttt{FINDINGS-ARCHIVE-2026-08.md} BEN-038 \\
+    the ceiling 0.618228 is a \warn{reference curve, not a proven bound} (a band was
+      measured at $E_w[r]=1.0333$) &
+      \texttt{CLAIM-CLM-012.md} caveat (i); BEN-038 \\
+    the ordinary closure has \warn{structural zero power} &
+      \texttt{AUDIT-FINDINGS-20260728.md}; \texttt{closure\_fullevent\_fps.py:4-9} \\
+    injection protocol predeclared 2026-08-05, reused unchanged &
+      \texttt{closure\_powered\_truth\_reweight.py:10-33} \\
+    evaluation sample: 49.15\,M signal / 4.12\,M data / 0.56\,M background rows,
+      sha256 \texttt{fa6b3463\ldots}, 9.90\,GB &
+      \texttt{g2\_fullevent/input/G2\_FPS\_MEFHC\_P12\_RECEIPT.json}, status PASS,
+      job \texttt{56120687} \\
+    \warn{his representation is absent from every inventory} &
+      \texttt{dump\_pointcloud\_inputs.py:190-235} at \texttt{44142e8c} (re-measured);
+      \texttt{GREGOR\_PET2\_OMNIFOLD\_ASSESSMENT.md:249-255} at \texttt{b65f9ff2} \\
+    seed-scatter prior $\sigma\approx0.008$ &
+      \texttt{CLAIM-CLM-010.md}: 48 seeds, mean 0.014256, sd 0.008023 ---
+      \warn{an adjacent statistic, a planning assumption only} \\
+    a PyTorch OmniFold backend exists (10.9\,k lines) but its model is an
+      \emph{independent} reimplementation, not his &
+      \texttt{nd-unfolding/pet2\_torch/} at \texttt{b65f9ff2};
+      \texttt{model.py} docstring \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
 \end{frame}
 
 \begin{frame}[t]{Appendix B --- the V5 diagnosis, in full}
@@ -569,8 +770,11 @@
   matrix closeout are inside the total but are not separately itemized in any receipt I
   can cite. Stated as a gap rather than closed by arithmetic.}
   \\[0.5em]
-  \textbf{Not launched:} the variance pilot ($\le$30 GPU-h, precondition unmet) and
-  Stage 2 ($\le$130 GPU-h, downstream of the pilot).
+  \textbf{Not launched, and now retired:} the \emph{synthetic} four-arm pilot
+  ($\le$30 GPU-h, precondition unmet) and its Stage 2 ($\le$130 GPU-h). \warn{Do not
+  confuse that pilot with stage 4 of the matched comparison} --- different sample,
+  different endpoint, different purpose. \textbf{Requested instead:} $\le$70 GPU-h for
+  stages 1-5 of slides 14-16.
   \\[0.3em]
   \textbf{Not authorized by anything in this deck:} publication adoption, any covariance
   or systematic, a central-value change, a Gate-6 action, or the construction of
