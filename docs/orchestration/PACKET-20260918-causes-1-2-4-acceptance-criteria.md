@@ -44,7 +44,17 @@ restraint.** The three carried principles are used below and not re-derived:
    §1.4 and §3.4.
 
 **And the narrowing that makes "what does this protect" answerable at all** is relayed and I rely on
-it: across twenty note/primer/paper sources **no covariance-dependent claim is asserted**, `AGENTS.md:30`
+it. ⚠ **CORRECTED 2026-09-18 on its author's re-run: the corpus is TWENTY-FOUR sources, not twenty**
+— their original count came from a listing truncated by `head -20`, though the `*.tex` glob did cover
+all 24, so the **sweep** was complete and only its **description** was wrong. The re-run also
+**widened the vocabulary** (`p-value`, `confidence level`, `% CL`, `standard deviation`,
+`statistically significant/compatible/consistent`, `excluded at`, `tension at/of`) and inspected all
+four hits: a closure residual, two ensemble-precision statements, and `primer_body.tex:190`'s
+explicitly **central-value** *"localized central-value difference"*. ⚠ **One hit was a SUBSTRING
+FALSE POSITIVE** — `"tension of"` matched inside *"ex**tension of** the signal definition"* — and
+that cuts both ways: **a pattern that finds a phantom will as happily miss a real one.** So the
+ground now rests on better evidence than when §0 first relied on it:
+across those 24 sources **no covariance-dependent claim is asserted**, `AGENTS.md:30`
 quarantines the `(E_avail,W)` covariance itself, and `AGENTS.md:27` requires projection from the adopted
 **selection-complete** trunk — VERIFIED, the row reads *"The quotable covariance must be projected from
 the final adopted, selection-complete 5D trunk."* So **the claim set is one and the map set is one**,
@@ -249,7 +259,10 @@ digest comparison on the stored object, not an inspection of the print.
 
 ⚠ **A falsifier common to all three:** if the relayed narrowing is wrong — if any covariance-dependent
 claim *is* asserted somewhere in the corpus — then §0's "one claim, one map" ground fails and all three
-criteria need their populations restated. **That sweep is relayed and I did not run it.**
+criteria need their populations restated. **That sweep is relayed and I did not run it.** ⚠ **UPDATE
+2026-09-18: its author re-ran it on a widened vocabulary and it SURVIVED, with the corpus corrected
+from 20 to 24 sources (§0). The falsifier therefore stands UNTRIPPED rather than unevaluated** — a
+distinction this lane has been corrected on before, and the two are not the same status.
 
 ---
 

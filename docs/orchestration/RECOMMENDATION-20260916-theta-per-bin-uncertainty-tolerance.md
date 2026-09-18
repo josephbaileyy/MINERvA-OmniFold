@@ -183,6 +183,8 @@ blocks whose own sampling error sets the resolution.
 half that. **MEASURED from the launchers, which are frozen and pre-date Z:**
 
     C_stat   N = 100  (sbatch_bootstrap_5d_gpu.sh:5, --array=1-100%32)  : 14.21% on variance, 7.11% on sigma
+    ^^^ WARNING 2026-09-18: `N = 100` here is a DECLARED ARRAY SPECIFICATION, not a
+        verified realized family size. See the note appended below.
     C_ML     N =  24  (sbatch_seedscan_split_5d.sh:5, --array=1-24%24)  : 29.49% on variance, 14.74% on sigma
 
 **A CV movement that changes `σ` by less than `σ`'s own sampling error cannot change any conclusion,
@@ -319,3 +321,48 @@ confirmed; the specific `θ` values should not be quoted as if bin-independent.
    `OMP_PROC_BIND`/`OMP_PLACES` are unrecorded.
 5. **`ε` is untouched.** `1e-9` stands on §C.3's transfer argument, whose falsifier is **UNEVALUATED**
    pending a pinned-envelope repeat on Z's bank.
+
+
+---
+
+## 13. ⚠ `7.11%` RESTED ON A **DECLARED ARRAY SIZE**, NOT A VERIFIED FAMILY — AND THIS STRENGTHENS THE DECLINE
+
+**`θ` is CLOSED AS NOT ADOPTED and nothing here reopens it.** This records a defect in the *basis* of a
+figure this document still cites, because the document is routed to `[cb0b6b]`.
+
+**The arithmetic was right and the operand was not verified.** All three citations of `N = 100`
+(§2.2, §4 row A, §8 residue 2) trace to `sbatch_bootstrap_5d_gpu.sh:5`, `--array=1-100%32` — **a
+declared array specification.** I read a launcher's array bracket as a realized family size and never
+measured the realization. **That is this lane's catalogued `sacct`-bracket failure: a declared
+`1-100` is not an observed 100, and throttling truncates.**
+
+**And the note documents the analogous case running at HALF the declared size.**
+`docs/analysis-note/app_statmethods.tex:1698-1701`, VERIFIED verbatim:
+
+> *"Every estimated standard deviation carries a `10.1%` fractional uncertainty of its own from the
+> family size alone, `1/√(2(N−1)) = 1/√98`, against the `7.11%` that `N = 100` would give. The design
+> document specifying `N = 100` **labels a family of this size `INSUFFICIENT`**, and because that
+> document's supersession is unratified, the label stands in the record as written (`VL132`,
+> `CSTAT-R7`)."*
+
+**MEASURED, and the two formulas are the same algebra** — `√(2/(N−1))/2 ≡ 1/√(2(N−1))`, equal to
+`1e-15` at both `N`. So `1/√98` is `N = 50` at `0.101015`, against `N = 100`'s `0.071067`. **The
+formula I used was correct; the `N` was not established.**
+
+⚠ **SCOPE, stated because the passage is not about the same object:** `:1690-1706` concerns the
+**262-cell** measurement (`VL132`, `CSTAT-R7`, `257`-cell invertible sub-block), **not** the 5D
+`10,694`-bin object. **So it does not refute the 5D figure — it refutes my method of obtaining it**, by
+exhibiting a documented case where the realized family was half the declared array and the design
+document called that size `INSUFFICIENT`. **Whether the 5D `C_stat` family is `100` or `50` is
+unmeasured, and I cannot measure it: no cluster access.**
+
+**Consequences, none of which reopen `θ`:**
+
+1. **The three `N = 100` citations in this document are DECLARED, not realized**, and are now marked so.
+2. **Joseph's decline of `θ = 7.11e-2` is corroborated from a direction neither lane used** — not only
+   was the derivation's *scientific* status unestablished, its *operand* was a launcher bracket.
+3. **Any future ensemble-precision argument in this project must use the family that EXISTS**, measured,
+   and must state whether the `INSUFFICIENT` label applies. **That is a named check, not a proposal.**
+4. **§3's non-bindingness conclusion is unaffected in direction:** at `N = 50` the figure would be
+   *larger* (`10.1%` vs `7.11%`), so the ceiling would sit **further** above the observed null, not
+   nearer it. The vacuity finding does not depend on which `N` is right.
