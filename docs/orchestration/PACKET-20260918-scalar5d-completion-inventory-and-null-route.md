@@ -851,3 +851,70 @@ family size alone, `1/sqrt(2(N-1)) = 1/sqrt(98)`, against the `7.11%` that `N=10
 whose error is `10.1%` — and the same passage records that the design document specifying `N=100`
 labels a family of this size `INSUFFICIENT`. This is consistent with `θ = 7.11e-2` having been
 declined, and it is noted only as corroboration. **No θ cycle is reopened and none is proposed.**
+
+---
+
+## 15. Causes 7 and 5 — and the one item still owed on cause 7, now traced
+
+`[cb0b6b]` returned both at `80b464ca82918ea6d9a2cb5930baaf30a1524567`, issuing **no ruling** on
+either, correctly: `SPEC` assigns both to a decision.
+
+**15.1 Cause 7 — my lead was confirmed, and by a better instrument than the one I offered.** I argued
+from what the band names *denote* and asked for it to be broken. It was tested instead, on the thing
+that actually decides laterality: `unfold_nd_omnifold_unbinned.py:388` is
+`if t.GetBranch(l_sim) and t.GetBranch(l_mc):  # lateral` — **a runtime branch-presence test, not a
+name list.** Measured on the 470-branch production universe tuple: the five carry kinematics **4/4**
+and shifted `q3`+`W` **4/4**; the four excluded carry kinematics **0/4**; and
+`measured lateral set == p4_lib.BANDS` is **True**. The producer states the physics directly —
+`runEventLoopOmniFold.cpp:238-244`: *"the lateral bands are all muon/beam systematics … The GEANT
+hadronic-response bands (which DO move E_avail physically) are **vertical/weight-only**"* — and
+`MinosEfficiency` is a `MINOSEfficiencyReweighter` by class. **Ten endpoint identities verified:** ten
+directories, uniform at 12 ROOT files and 53.8 GB, matching `--array=0-119%12` and `N_ENDPOINTS = 10`.
+
+It also tried to break its own result where the 5D case is genuinely different — the C++ note covers
+`E_avail` and `q3` and **predates the W axis**, so a W left lateral-invariant by omission would
+understate every lateral band. Four independent legs say it was not.
+
+⚠ **A CORRECTION TO MY PHRASING, and it matters.** I wrote that the four are "excluded", which can be
+read as *absent from the covariance*. **They are excluded from the active lateral SWAP, not from
+`C_Z`** — all nine contribute systematic covariance blocks, measured present in both the active
+candidate and the support combined; only the five move the selection. Anyone carrying my wording
+forward would understate the budget.
+
+**15.2 ⚠ The second item `[cb0b6b]` left owed, now closed by source trace — and it is affirmative.**
+It asked whether `Σ_A L_b` is drawn from the **active** blocks or the support ones, noting that
+`45 − 13 − 27 = 5` is consistency rather than verification and that it had not traced the read. I
+traced it, at `lane/z-assembly-pilot-20260914:nd-unfolding/z_build.py:554-567`:
+
+    active = {band: sources["active"].read(p4.candidate_band_key(band), (n, n))
+              for band in contract.LATERAL_BANDS}
+    active_total   = sources["active"].read(p4.CANDIDATE_ACTIVE_TOTAL_KEY, (n, n))
+    active_residual = p4.check_component_sum(active_total, active)
+    ...
+    "cov_vert_sum":     _sum_bands(sources["support"], contract.VERT_BANDS, SUPPORT_PREFIX, n),
+    "cov_residual_sum": _sum_bands(sources["support"], residual,            SUPPORT_PREFIX, n),
+    "cov_lateral_sum":  sum(active.values()),
+
+**`cov_lateral_sum` is the sum of blocks read exclusively from `sources["active"]`, keyed by the five
+`LATERAL_BANDS`; the vertical and residual sums read `sources["support"]`.** The two are distinct
+declared sources (`:470`), so the read is unambiguous. And `p4.check_component_sum` compares the five
+against the recorded active total, surfacing as the gate `active_total_eq_sum5`, whose **measured
+pilot value is `0.0`** — exact. So the five active blocks sum precisely to the declared active total.
+
+**What remains on cause 7 is now one item, and it is a judgement rather than a measurement:** whether
+active coverage of the five is *sufficient* given the four vertical bands' CV-selected support. That
+is `SPEC`'s to assign and Joseph's to rule; no lane should issue it.
+
+**15.3 Cause 5 — VL66's named falsifier is NEGATIVE, as a bounded negative.** Zero `pet` imports, path
+literals or PET-word code lines across Z's full fifteen-module closure read from the pilot's own
+`metadata_json`; the eight consumed input paths contain no `/pet/`; the adoption/inflation path is
+inside the closure. The only genuine mentions are two documentation cross-references. **Correctly
+scoped:** it covers Z's closure and the consumed input *paths*, not the full upstream producer chain
+of every byte — which is what `SPEC` §6.1's falsifier asked for, and §6.1 makes the disposition a
+separate act after the trace.
+
+⚠ Worth carrying, from its own account: its first pattern included `frozen`, which matched
+**`frozenset` 76 times** and reported "77 PET hits" for a file whose genuine count is one docstring
+citation. **An over-broad pattern manufactures a finding as readily as a narrow one misses it** — the
+same two-directional failure as my `"tension of"` matching inside *"extension of"* one section above.
+Two instances in one session, opposite directions, both in negative claims.

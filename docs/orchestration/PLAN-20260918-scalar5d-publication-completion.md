@@ -53,7 +53,7 @@ the most favourable open item in the package.
 | M-H | Component fingerprint writers | **DONE (code + first tests)** | `combine_cov_nd.py` 27 → 102 lines: all nine fingerprint fields recorded (unsupplied ones as explicit `UNDECLARED`), ensemble-count scalar added, row index added, per-replica digests; 6 tests | — |
 | M-I | Registry fingerprint rule | **UNSATISFIABLE AS WRITTEN** | rejects every throw component at every `k`, including `k=0` | **D4** |
 | M-J | Lineage / two-ensemble question | **OPEN** | parent is mean-centered, `uthrow_source` 2026-08-06; pilot throw input is the 2026-09-14 precursor | `[cb0b6b]` |
-| M-K | Cause 1, 2, 4, 5, 6, 7 dispositions | **OPEN** | audit seven-cause table | per cause |
+| M-K | Cause 1, 2, 4, 5, 6, 7 dispositions | **1/2/4 criteria DRAFTED** (`230aecf7`, claimed tolerance-free, under assessment); **5 and 7 evidence COMPLETE** (`80b464ca` + my `Σ_A L_b` trace) | cause 7: laterality measured on payload, `measured lateral set == p4_lib.BANDS` True, 10 endpoints verified, lateral sum traced to the **active** blocks with `active_total_eq_sum5 = 0.0`; cause 5: VL66 falsifier NEGATIVE across Z's 15-module closure | **two rulings** (cause 7 sufficiency, cause 5 §6.1 disposition); cause 6 |
 | M-L | `ε` / null acceptance | **BLOCKED BY CONTRACT** | every route closed (packet §2.1) | Joseph's §6.4 route ruling |
 | M-M | Trunk adoption | **NOT REACHED** | — | M-F…M-L |
 | M-N | M1 product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
