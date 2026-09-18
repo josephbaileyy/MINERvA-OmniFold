@@ -349,3 +349,242 @@ different estimator than the one that made the existing products.
 
 **No other successor is proposed.** Localising further inside call 0 would explain a mechanism and
 resolve no named requirement.
+
+---
+
+## 8. TARGETED CORRECTIONS AND THE RECOMMENDED §6.4 RULING — 2026-09-18
+
+### 8.1 ⭐ THE §6.4 RULING — RECOMMENDED: retrospective assessment, predeclaration failure preserved. **New production is NOT necessary on this ground.**
+
+**The requirement, verbatim (`SPEC` §6.4):** Z's fixed-seed null uses a **scale-relative** bound,
+**fixed before production**, its value *"justified by precision and sensitivity controls established
+before implementation and **not** chosen from a favourable production result."*
+
+**The predeclaration failure is real, and it is preserved, not cured.** No scale-relative bound was
+fixed before Z's production. `M(i)` therefore **cannot be graded for this object, and never will be.**
+That entry stays on the record permanently, and **new production would not cure it either** — it
+would produce a *different* object that could be bounded prospectively.
+
+**WHY A RETROSPECTIVE ASSESSMENT IS AVAILABLE: §6.4 performs one ITSELF, for G, and names the
+principle.** Verbatim: *"**This does not retrospectively regrade G**, and it is not a finding that G's
+null is bad: G's measured value is `5.8223e-50`, `1.31e-12` of the sqrt-trace — genuinely small
+*relative* to the scale. **The defect is in the guard, not in the product.**"*
+
+So §6.4 already (i) separates the guard's defect from the product's standing, and (ii) demonstrates
+the admissible retrospective statistic: **`null_norm / √tr`**.
+
+**Z on §6.4's own normalizer, with §6.4's own comparison figure:**
+
+| | `null_norm` | `√tr` | `null_norm / √tr` |
+|---|---|---|---|
+| **G** (§6.4's assessed value) | `5.8223e-50` | `4.4445e-38` *(implied)* | **`1.31e-12`** — *"genuinely small relative to the scale"* |
+| **Z** (`fixed_seed_null_norm` / `sqrt_tr_unified`, read from the product) | `1.4301832847122437e-50` | `4.4436736505643117e-38` | **`3.218e-13`** |
+
+**Z is `4.07×` SMALLER than the value §6.4 itself calls genuinely small, on the same statistic, at
+essentially the same scale** (`√tr` agrees to 4 significant figures, so the comparison is
+like-for-like and not a rescaling).
+
+⚠ **THIS IS NOT A TOLERANCE DERIVED FROM Z'S OBSERVED NULL.** No threshold is proposed and none is
+needed: the comparison figure `1.31e-12` was fixed in §6.4 **independently of Z**, for a different
+product, before Z's null was known. The assessment is *"Z's null is smaller than the one already
+assessed as small"* — an ordering against an external, pre-existing datum, not a bound placed to
+obtain a verdict.
+
+⚠ **AND FAILED BITWISE IDENTITY IS NOT EVIDENCE OF SCIENTIFIC INADEQUACY.** D-CVDIV-1 established
+non-identity; it did not establish inadequacy, and I must not conflate them. The divergence begins at
+`3.27e-16` relative — the double-precision last bit — and the endpoint `r_null = 4.43e-14` is
+**`200.5 ×` machine epsilon** accumulated across a 10,694-element norm and five OmniFold iterations.
+**Bit-exactness and scientific adequacy are different properties**, and the relative magnitude is the
+one that bears on adequacy.
+
+**RECOMMENDED RULING — amend the requirement as follows:**
+
+1. **`M(i)` is `NOT GRADED` for this candidate**, with the reason recorded as a **predeclaration
+   failure**: no scale-relative bound existed before production. Permanent; not erasable by any later
+   act.
+2. **A RETROSPECTIVE SCIENTIFIC ASSESSMENT is admitted and reported as such**, using §6.4's own
+   statistic `null_norm/√tr`, with the value `3.218e-13` and the `4.07×` ordering against G's
+   already-assessed `1.31e-12`. Labelled **retrospective assessment, not a grade**, travelling with
+   the product per §3.7d Answer (a)'s style.
+3. **No tolerance is declared, now or later, for this object.** Any future prospective bound applies
+   only to a future object.
+4. **New production is NOT required on this ground.** It would not cure (1), and (2) already places
+   the existing candidate below the only figure §6.4 has assessed.
+
+**What this does NOT resolve, and is Joseph's separate call:** whether a publication may rest on a
+covariance whose `M(i)` leg is permanently ungraded. That is a *sufficiency* judgement about the
+acceptance chain, not a question about the null's size.
+
+### 8.2 C6 COMPLETE — ⚠ my own condition was UNSATISFIABLE
+
+**The check ran. Both artifacts carry exactly ONE key and no sidecar:**
+
+    uq_cov_stat_5d.root     891,732,011 B   keys: ['hCov_stat5d_reported']    receipt: absent
+    uq_cov_mlsplit_5d.root  892,078,834 B   keys: ['hCov_mlsplit5d_reported'] receipt: absent
+    all nine fingerprint fields: ABSENT from both
+
+⚠ **So §6.4's conditional I wrote — *"REUSE iff every one of the nine fields equals…"* — is
+UNSATISFIABLE for these artifacts.** It cannot be met by any act short of regeneration. **That is the
+same defect class as D4's registry rule, which I identified in someone else's work and then
+reproduced in my own.** Withdrawn.
+
+**PROVENANCE RECOVERED before proposing regeneration — and it is substantial:**
+
+| what | established | source |
+|---|---|---|
+| **identity** | `sha256 6580016f…` / `27b2e456…`, `891,732,011` / `892,078,834` B | `SPEC:504`, `PUBLICATION-READINESS-20260822:490`, and **matching the pilot manifest's declared `sources.stat`/`sources.ml`** |
+| **producer** | `sbatch_finalize_5d_bkgaware_gpu.sh:167`/`:168`; mtime `2026-07-13 18:04/18:05` | `RUNBOOK-20260822-b1-lift-preflight:290` |
+| **concordance** | **three concordant invocations, no disagreement found** | `PROVENANCE-20260822:150-151` (`run_budget_5d.sh:15,17`, `sbatch_combine_5d_budget.sh:14,16`) |
+| **invariance, declared by the producer** | *"C_stat/C_ML are #13-invariant → reuse existing…"* | `sbatch_finalize_5d_bkgaware_gpu.sh:8-10` |
+| **`N` (ensemble size)** | **UNRECOVERABLE, and established as such by a prior covering search** — *"no key that could carry `N`, and no receipt in this tree reads [them] for one"* | `PROVENANCE-20260822:153-157` |
+
+**AND `SPEC` §2.6b HAS ALREADY RULED**, titled *"WITHDRAWN — reuse of `C_stat`/`C_ML` is not evidence
+of incompleteness"*: *"the launcher proves **reuse**, and reuse of an invariant input is not
+incompleteness. **Fresh scalar replica generation needs a stated scientific rationale, and this lane
+does not have one.**"*
+
+**REVISED DISPOSITION: REUSE, with the `N` gap declared as permanently unrecoverable for these two
+artifacts.** The compatibility that actually matters for `C_Z = D(ΣV)D + ΣR + ΣA + C_stat + C_ML` is
+shape, support mask and row order — and the pilot **already evidenced it**: `z_build.py` requires
+`np.array_equal(mask, null_mask)`, reads both at the trunk's shape, and its `G1_closure_identity`
+and `G3_g_reconstruction` residuals are **exactly `0.0`** at `rtol 1e-9`. **Regeneration has no
+stated scientific rationale and is not recommended.**
+
+### 8.3 FUNCTIONAL DIMENSIONS — CORRECTED
+
+⚠ **§6.3 wrote *"the all-ones vector over the 42"* and `w_R` over the 42 destination cells. Both are
+dimensionally wrong as functionals on `C_Z`.** `C_Z` is `10,694 × 10,694`, so every `u` in `s_proj`'s
+set is a **`10,694`-vector**.
+
+The correct construction, from `vᵀ (M C_Z Mᵀ) v = (Mᵀ v)ᵀ C_Z (Mᵀ v)`:
+
+    a destination-space weight v (dimension 42)  ->  the C_Z functional  u = M^T v   (dimension 10,694)
+
+    U  =  { M^T e_i        for i = 1..42 }      <- per-cell;  e_i is the 42-dim unit vector
+       U  { M^T 1_42 }                          <- the total over the 42 quoted cells
+       U  { M^T w_R        per declared integral R }   <- w_R is 42-dim bin-volume weights
+
+`M` has shape `[42, 10694]` (recorded in the M1 receipt), so `Mᵀ v` is `10,694`-dimensional. **`|U| =
+44 + (number of declared integrals)`**, each a `10,694`-vector. The rows of `M` *are* `Mᵀ e_i`, so
+that part of §6.3 was right; the all-ones and integral entries were not.
+
+### 8.4 PROJECTIONS RECONCILED WITH THE DELIVERABLE LIST
+
+Joseph's deliverable is *"the **required** verified projections with correctly paired central
+values"* — plural. Reconciled:
+
+| map | in the deliverable list? | why | paired central | status |
+|---|---|---|---|---|
+| **M1** `(E_avail,W)` | **YES — quoted** | the only map any quoted uncertainty comes from | `hCV_marginal = M x_5D` | diagnostic produced & verified; **publication run pending adoption** |
+| **M2** `(pt,pz,E_avail,q3)` | **YES — required, and I had mis-scoped it** | it *"supports reported central values"*, and those central values are **reported**, so its covariance is a required verified projection | frozen 4D CV, via `--dst-cv` | `p4_project_4d.py` instrumented; readback receipt `RECEIPT-20260816-hrowindex4d-readback.json` PASS, 4825 labels exact |
+| M3 `E_avail` | no | marginal anchor, nothing quoted from it | — | diagnostic only |
+| M4 5D→3D | no | marginal anchor | — | diagnostic only |
+
+⚠ **Correction: my §6.3 called M1 *"the only quoted map"* and left M2 off the required list. M2's
+central values ARE reported, so its projected covariance is required.** `s_proj`'s functional set must
+therefore include **M2's rows as well** — `|U|` grows by 10,976 per-cell functionals, which is
+arithmetic on already-resident matrices (`SPEC` §3.7d prices `s_proj` at *"seconds"* with **zero
+incremental I/O**), so the cost does not change materially.
+
+### 8.5 TOLERANCE — the ensemble-resolution justification is WITHDRAWN; here is an honest proposal
+
+⚠ **Withdrawn.** `√(2/(N−1))` assumes iid normal draws; the 160 throws are systematic-parameter
+throws, not iid samples of one quantity. I had attached that caveat and then used the number anyway
+as the *ground*. **A justification I have already undermined is not a justification** — and it was my
+second attempt to derive `δ` from a construction rather than propose it.
+
+**HONEST PROPOSAL, offered as a scientific judgement about acceptable movement in a published
+uncertainty — not derived:**
+
+> **`δ = 5%` direct relative movement**, for `s_proj`, `s_agg`, and `s_med`'s per-bin leg.
+
+**The ground is what it means, stated plainly, not a derivation.** At `δ = 5%` a quoted corner
+uncertainty of `5.81%` could have read `5.52%`–`6.10%` depending on an arbitrary estimator seed.
+**My judgement is that a ±5% ambiguity in the third significant figure of a quoted uncertainty is
+acceptable and would not change any use of the number**; that `10%` (`5.23%`–`6.39%`) begins to move
+the second significant figure and is not; and that anything above `10%` would make an arbitrary seed
+choice a visible feature of a published uncertainty.
+
+**This is a judgement, it is mine, and `δ` remains Joseph's to set.** What I can assert without
+judgement is only the consequence table:
+
+| `δ` | a quoted `5.81%` could instead read |
+|---|---|
+| `3%` | `5.64%` – `5.98%` |
+| **`5%` (proposed)** | **`5.52%` – `6.10%`** |
+| `10%` | `5.23%` – `6.39%` |
+
+**`s_med`'s coverage fraction:** 100% on bins entering a quoted projection; ≥99% on the full reported
+support with every failing bin enumerated. Same status — a proposal, not a derivation.
+
+### 8.6 CAMPAIGN — ⚠ THE ENFORCED RESERVATION EXCEEDS THE CEILING AT **N = 1**
+
+⚠ **My §6.2 priced the campaign at `164.7` GPU / `259.6` CPU per three members. Those are MEASURED
+ACTUALS. The enforced reservation is the wall cap × tasks, and it is far larger. This is the third
+time I have made this exact substitution in one session, and this is the largest item.**
+
+Read from the seven launchers' own `#SBATCH` directives:
+
+| arm | unit | wall cap | tasks | **RESERVATION** | measured actual | ratio |
+|---|---|---:|---:|---:|---:|---:|
+| `boot5dG` | GPU | 3.0 h | 100 | **300.0** | 14.86 | 20.2× |
+| `sweep5dBKGrun` | GPU | 1.5 h | 169 | **253.5** | 26.28 | 9.6× |
+| `det5dBKG` | GPU | 4.0 h | 19 | **76.0** | 13.76 | 5.5× |
+| `uthrow5d_block` | CPU | 12.0 h | 21 | **252.0** | 31.01 | 8.1× |
+| `uthrow5d_runF` | CPU | 6.0 h | 40 | **240.0** | 49.11 | 4.9× |
+| `ssplit5d` | CPU | 3.0 h | 24 | **72.0** | 5.83 | 12.3× |
+| `uthrow5d_combF` | CPU | 3.0 h | 1 | **3.0** | 0.58 | 5.2× |
+| **per member** | | | | **`629.5` GPU / `567.0` CPU** | `54.90` / `86.53` | |
+
+**FRESH ADMISSION, measured `2026-09-18T13:57:22Z`:** CPU `97.2939` of `500`, headroom **`402.7061`**;
+GPU `16.0117` of `500`, headroom **`483.9883`**; 136 tasks, 2,019 attempts; stop date `2026-09-30`,
+not fired. **Outstanding reservations: 1** — `58526214 pet-eavail-charact`, PENDING, `--time=30:00`,
+another lane's.
+
+**The meter's verdict for ONE member at enforced caps, run rather than argued:**
+
+    r5_meter.py check --cpu-task-hours 567.0 --gpu-task-hours 629.5
+    -> rc 5   "R5 proposal would reach or exceed a ceiling"
+
+**So the campaign is NOT ADMISSIBLE at N = 1, let alone N = 3.** `629.5` GPU exceeds the `500`
+ceiling outright.
+
+**THE REMEDY IS INSIDE THIS LANE'S REACH AND IS A DESIGN FIX, NOT A CEILING REQUEST.** `SPEC` §5.8e
+item 4 already names it: *"A hold-style dispatch charges to its timeout… That is a hazard to design
+out, not a price to plan on — and it is a **design** hazard, so it is inside this lane's reach."*
+Re-capping `--time` per arm from measured per-task actuals, indicatively at ≈2× the per-task mean:
+
+    boot5dG        0.149 h/task -> cap 0.5 h  ->  50.0 GPU      uthrow5d_runF  1.228 -> 2.5 h -> 100.0 CPU
+    sweep5dBKGrun  0.156        -> cap 0.5    ->  84.5 GPU      uthrow5d_block 1.477 -> 3.0   ->  63.0 CPU
+    det5dBKG       0.724        -> cap 1.5    ->  28.5 GPU      ssplit5d       0.243 -> 0.75  ->  18.0 CPU
+                                                                uthrow5d_combF 0.580 -> 1.5   ->   1.5 CPU
+    per member re-capped:  163.0 GPU / 182.5 CPU
+      N=1 ->  163.0 / 182.5   fits            N=2 -> 326.0 / 365.0   fits CPU at 90% of headroom
+      N=3 ->  489.0 / 547.5   CPU EXCEEDS headroom 402.71
+
+⚠ **These re-cap figures are a PROPOSAL and are not yet defensible as caps.** They use the per-task
+**mean** (total ÷ tasks); a cap must survive the per-task **maximum**, which I have not read, and
+`SPEC` §5.8e records a measured **±60% single-arm swing**. **Reading the per-task maxima from `sacct`
+is the prerequisite for any re-cap, and it is a zero-compute read** — but it is a *new* action and I
+am not taking it without direction.
+
+**REVISED RECOMMENDATION: the affordable member count under enforced-cap pricing is `1`, or at most
+`2` after a verified re-cap. `N = 3` does not fit the CPU headroom even re-capped.** My earlier
+`N = 3` recommendation is withdrawn as unaffordable.
+
+### 8.7 THE OFFSET CONCLUSION — LIMITED TO THE TESTED FAMILY
+
+Whatever member count is approved, the cause-3 conclusion is bounded as follows, and this wording
+should travel with the grade:
+
+> A `(cause 3, Z)` result over `N` offsets states that **`s_proj`, `s_agg` and `s_med` did not exceed
+> `δ` across the `N` tested offsets of the DIAGONAL family with group assignment
+> `{arms 1–4: 42, arms 5–7: 1000}` held fixed at its archive values.** It is **not** a statement about
+> the 2-D grid (`D1`; the inter-module split is invariant under `k` and unresolvable within this
+> family), **not** about untested offsets, **not** about other estimator families, and — at `N ≤ 2` —
+> **not a variance estimate at all**, since two offsets give one difference. With `N = 1` there is no
+> comparison and the leg is descriptive only.
+
+⚠ **This matters more now than when I wrote `N = 3`:** at the affordable `N = 1`–`2`, the cause-3
+correlation leg **cannot** support a spread statement. **That is a scientific consequence of the
+ceiling, and it belongs in the §6.4-style sufficiency judgement, not buried in a cost table.**

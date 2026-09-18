@@ -73,7 +73,7 @@ docs/orchestration/DECISION-20260902-two-lane-consensus-cause4-M-and-its-superse
 docs/orchestration/DECISION-20260906-joseph-authorizes-z-specification-only.md	tracked	LIVE	document		20260906	open		route-only		no	6	145	10267
 docs/orchestration/DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md	tracked	LIVE	document		20260907	terminal		route-only		no	5	199	14104
 docs/orchestration/DECISION-BRIEF-20260819-oi71-recovery-evidence.md	tracked	ARCHIVAL	document		20260819	terminal		exact-path-only		yes	1	184	14025
-docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	ARCHIVAL	document		20260918	terminal		exact-path-only		yes	0	351	26098
+docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	ARCHIVAL	document		20260918	terminal		exact-path-only		yes	0	590	41736
 docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	tracked	LIVE	document		20260822	open		route-only		no	8	129	8016
 docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	tracked	LIVE	document		20260823	open		route-only		no	16	382	24802
 docs/orchestration/DECLARATION-20260823-k0-candidate-sha.md	tracked	LIVE	document		20260823	open		route-only		no	6	120	7498
@@ -311,7 +311,7 @@ docs/orchestration/preserve_f17b_record.py	tracked	MACHINE	script			generated		e
 docs/orchestration/probes/probe-20260918-aggregation-channel-directions.py	tracked	MACHINE	script		20260918	open		exact-path-only	docs/orchestration/probes/probe-20260918-l3-statistic-diagonal-breach-and-repair.py	no	3	155	8742
 docs/orchestration/probes/probe-20260918-l3-statistic-diagonal-breach-and-repair.py	tracked	MACHINE	script		20260918	open		exact-path-only		no	2	146	7425
 docs/orchestration/profiles.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/agentctl.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/test_agentctl.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py;docs/orchestration/wakerctl.py	no	14	90	2163
-docs/orchestration/r5_meter.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/campaignctl.py;docs/orchestration/test_campaignctl.py;nd-unfolding/lib_r5_admission.sh;nd-unfolding/pm_inspection/pm_root_inspect.py;nd-unfolding/run_determinism_probe.sh;nd-unfolding/tests/test_compute_launcher_pricing.py;nd-unfolding/tests/test_run_m1_diagnostic_refusals.py;nd-unfolding/z_precursor_admission.py	no	25	1079	39528
+docs/orchestration/r5_meter.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/campaignctl.py;docs/orchestration/test_campaignctl.py;nd-unfolding/lib_r5_admission.sh;nd-unfolding/pm_inspection/pm_root_inspect.py;nd-unfolding/run_determinism_probe.sh;nd-unfolding/tests/test_compute_launcher_pricing.py;nd-unfolding/tests/test_run_m1_diagnostic_refusals.py;nd-unfolding/z_precursor_admission.py	no	26	1079	39528
 docs/orchestration/receipts/RECEIPT-20260825-actionable-digest-deployment.json	tracked	MACHINE	machine-data		20260825	generated		exact-path-only		no	1	51	2442
 docs/orchestration/receipts/RECEIPT-20260825-approval-queue-deployment.json	tracked	MACHINE	machine-data		20260825	generated		exact-path-only		no	1	55	2441
 docs/orchestration/receipts/RECEIPT-20260825-terminal-watch-f17b-durability.json	tracked	MACHINE	machine-data		20260825	generated		exact-path-only		no	8	39	3438
@@ -462,7 +462,7 @@ docs/orchestration/state/RECEIPT-20260815-oi126-boundary-feasibility.json	tracke
 docs/orchestration/state/RECEIPT-20260815-oi126-mechanism-narrowing.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only	docs/orchestration/state/probe-oi126-mechanism-narrowing-20260815.py	yes	5	243	12687
 docs/orchestration/state/RECEIPT-20260815-oi126-push-vs-extraction-RESULT.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	2	75	6062
 docs/orchestration/state/RECEIPT-20260815-oi126-tiebreak-retirement.json	tracked	MACHINE	state-artifact		20260815	generated		exact-path-only		yes	2	317	12304
-docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only	nd-unfolding/p4_project_4d.py;nd-unfolding/project_cov_nd.py	yes	7	137	9743
+docs/orchestration/state/RECEIPT-20260816-hrowindex4d-readback.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only	nd-unfolding/p4_project_4d.py;nd-unfolding/project_cov_nd.py	yes	8	137	9743
 docs/orchestration/state/RECEIPT-20260816-p4-standard-stages456.json	tracked	MACHINE	state-artifact		20260816	generated		exact-path-only		yes	5	166	10327
 docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json	tracked	MACHINE	state-artifact		20260822	open		exact-path-only		no	6	459	29867
 docs/orchestration/state/RECEIPT-20260823-g2-fullevent-truthcloud-coverage.json	tracked	MACHINE	state-artifact		20260823	generated		exact-path-only		yes	1	74	3862
