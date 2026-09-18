@@ -1,6 +1,7 @@
 path	class	event_status	canonical_successor
 docs/orchestration/AMENDMENT-20260831-oi177-per-arm-ceilings.md	LIVE	open	
 docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md	LIVE	open	
+docs/orchestration/AUTHORIZATION-20260918-d-resource-required-deliverable-path.md	LIVE	open	
 docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	LIVE	open	
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	LIVE	open	
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	LIVE	open	
@@ -22,6 +23,7 @@ docs/orchestration/CLAIMS.md	LIVE	open
 docs/orchestration/CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md	LIVE	open	
 docs/orchestration/CLOSE-20260830-canonical-requiesce-k0r2-window.md	LIVE	open	
 docs/orchestration/CONFIRMATION-20260823-builder-response-to-gate1-round4.md	LIVE	open	
+docs/orchestration/CONTRACT-20260918-rank6-significance-consumer.md	LIVE	open	
 docs/orchestration/CONVENTION-document-retention.md	LIVE	open
 docs/orchestration/CONVENTION-receipt-ingredients.md	LIVE	open
 docs/orchestration/CONVENTION-verifying-a-check-is-deployed.md	LIVE	open
@@ -48,6 +50,7 @@ docs/orchestration/DECISION-20260902-joseph-rules-oi173-referent-is-the-candidat
 docs/orchestration/DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md	LIVE	open	
 docs/orchestration/DECISION-20260906-joseph-authorizes-z-specification-only.md	LIVE	open	
 docs/orchestration/DECISION-20260907-joseph-ratifies-r5-attempt-accounting-and-declines-untracking.md	LIVE	terminal	
+docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	LIVE	open	
 docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	LIVE	open	
 docs/orchestration/DECLARATION-20260823-k0-candidate-sha.md	LIVE	open	
@@ -70,6 +73,7 @@ docs/orchestration/FINDING-20260901-k0r2-redeploy-precondition-delta.md	LIVE	ope
 docs/orchestration/FINDING-20260901-p-leg-status-measured-against-the-candidate.md	LIVE	open
 docs/orchestration/FINDING-20260901-pscratch-read-stalls-block-a2b.md	LIVE	open	
 docs/orchestration/FINDING-20260906-r5-meter-undercounted-requeue-attempts.md	LIVE	open	
+docs/orchestration/FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md	LIVE	open	
 docs/orchestration/FINDINGS.md	LIVE	open	
 docs/orchestration/FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md	LIVE	open	
 docs/orchestration/FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md	LIVE	open	
@@ -94,6 +98,7 @@ docs/orchestration/LIVE-USAGE.md	LIVE	open
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	LIVE	open	
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	LIVE	open	
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	LIVE	open	
+docs/orchestration/NAVIGATION-20260917-z-pilot-outcome-route.md	LIVE	open	
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	LIVE	open	
@@ -101,8 +106,10 @@ docs/orchestration/PACKET-20260823-round7-f2a-parity-and-f17a-filing.md	LIVE	ope
 docs/orchestration/PACKET-20260901-pet-typed-descriptor-semantic-evidence.md	LIVE	open	""
 docs/orchestration/PACKET-20260902-joseph-six-rulings-cause7-cause3-stop.md	LIVE	open	""
 docs/orchestration/PACKET-20260905-full-scalar5d-successor-scope-question.md	LIVE	open	
+docs/orchestration/PACKET-20260918-scalar5d-completion-inventory-and-null-route.md	LIVE	open	
 docs/orchestration/PLAN-20260822-oneMember-mii-staged.md	LIVE	open	
 docs/orchestration/PLAN-20260905-prompts-11-30-reconciled-to-the-0902-decision.md	LIVE	open	
+docs/orchestration/PLAN-20260918-scalar5d-publication-completion.md	LIVE	open	
 docs/orchestration/PLAYBOOK.md	LIVE	open	""
 docs/orchestration/PREDECLARATION-20260812-fullevent-cstat-100-replicas.md	ARCHIVAL	superseded	docs/orchestration/PREDECLARATION-20260813-gate5-coherent-replicas-n50.md
 docs/orchestration/PREDECLARE-20260901-cause3-mii-estimator-seed-magnitude.md	LIVE	open
@@ -130,10 +137,11 @@ docs/orchestration/RECORD-20260830-k0r2-round2-submission.md	LIVE	open
 docs/orchestration/RECORD-20260830-oi179-remediation-confirmed.md	LIVE	open	
 docs/orchestration/RECORD-20260901-k0r2-round2-outcome.md	LIVE	open	
 docs/orchestration/RECORD-20260901-oi179-defect3-enforced.md	LIVE	terminal	
+docs/orchestration/REPRODUCTION-20260918-scalar5d-trunk-path.md	LIVE	open	
 docs/orchestration/REVIEW-20260902-pet-typed-semantic-evidence.md	LIVE	open	""
 docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md	LIVE	open	
-docs/orchestration/RULING-20260908-joseph-a-merge-guard-refusal-is-terminal.md	LIVE	open	
 docs/orchestration/RULING-20260902-quoted-column-permanence-is-p-scoped.md	LIVE	open	
+docs/orchestration/RULING-20260908-joseph-a-merge-guard-refusal-is-terminal.md	LIVE	open	
 docs/orchestration/RUNBOOK-20260822-b1-lift-preflight.md	LIVE	open	
 docs/orchestration/RUNBOOK-status-dashboard.md	LIVE	open	
 docs/orchestration/SCHEDULING-STRATEGY.md	LIVE	open	
@@ -160,6 +168,8 @@ docs/orchestration/control-plane/source-record-inventory.tsv	MACHINE	generated	"
 docs/orchestration/control-plane/work-items.tsv	LIVE	open	""
 docs/orchestration/control_plane_lint.py	LIVE	open	""
 docs/orchestration/dashboard.html	MACHINE	generated	
+docs/orchestration/probes/probe-20260918-aggregation-channel-directions.py	MACHINE	open	
+docs/orchestration/probes/probe-20260918-l3-statistic-diagonal-breach-and-repair.py	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260826-b1-adoption-gate-preconditions-remeasured.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260826-k0-freeze-bundle-detectability.json	MACHINE	open	
@@ -172,12 +182,4 @@ docs/orchestration/state/live-state-last-known.json	LIVE	open
 docs/orchestration/state/live-state.json	LIVE	open	
 docs/orchestration/state/live-state.schema.json	LIVE	open	""
 docs/orchestration/state/oi137-covering-search-20260822.sh	MACHINE	open	
-docs/orchestration/FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md	LIVE	open	
 docs/orchestration/state/probe-z-projected-stability-20260910.py	MACHINE	open	
-docs/orchestration/NAVIGATION-20260917-z-pilot-outcome-route.md	LIVE	open	
-docs/orchestration/PACKET-20260918-scalar5d-completion-inventory-and-null-route.md	LIVE	open	
-docs/orchestration/probes/probe-20260918-aggregation-channel-directions.py	MACHINE	open	
-docs/orchestration/probes/probe-20260918-l3-statistic-diagonal-breach-and-repair.py	MACHINE	open	
-docs/orchestration/PLAN-20260918-scalar5d-publication-completion.md	LIVE	open	
-docs/orchestration/CONTRACT-20260918-rank6-significance-consumer.md	LIVE	open	
-docs/orchestration/REPRODUCTION-20260918-scalar5d-trunk-path.md	LIVE	open	

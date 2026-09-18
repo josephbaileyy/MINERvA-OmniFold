@@ -16,6 +16,40 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+### THE SCALAR-5D REQUIRED DELIVERABLE PATH — standing authorization; **BLOCKED on five Joseph decisions** (2026-09-18)
+
+- [`AUTHORIZATION-20260918-d-resource-required-deliverable-path.md`](AUTHORIZATION-20260918-d-resource-required-deliverable-path.md)
+  - **✅ `D-RESOURCE`, IN FORCE. Read this before touching the scalar-5D path — the objective lives
+  here, not in a packet.** §0 states it: an **adopted scalar-5D covariance**, the **required verified
+  projections with correctly paired central values**, **synchronized note/primer/paper**, and
+  **submission is Joseph's act**. §1 is the compute posture: pre-approved on the required path,
+  **optional work still needs a separate ask**, `R5`'s ceilings and per-submission admission
+  unchanged. §2 is the **nine rulings** — the scope amendment excluding the generator significance,
+  `k₁` **DECLINED** and its reservation **RELEASED**, `s_proj` **added** as a requirement, the
+  functional set, `δ = 5%` **APPROVED** with coverage, the cause dispositions, §6.4's order with the
+  exception **APPROVED AS DRAFTED AND HELD, not executed**, pinning **RESERVED**, and the fixed order
+  C1–C7 → NULL → **ADOPT** → PROJ → DOCS. §4 records that **P0 is self-contained and already done at
+  `1405caad`**. §5 is the propagation test that found a real defect at `rank6_significance.py`.
+  - **§7 is the state: BLOCKED, and only Joseph's decisions block it.** Not evidence, not compute, not
+  implementation — `R5` has `~403` CPU task-hours against a required path needing `~2`, and every
+  consumer change is landed and tested. §7.4 lists the **five open decisions with what each gates and
+  a recommendation**. §7.2 records that **rulings 2 and 6 compose into a gap**: C3's legs all measure
+  movement **across members**, `k=0` is the only member, and ruling 2 declined the only additional one
+  — so **C3 is structurally unevaluable as scoped**, and adopting on a declared-but-unevaluated
+  criterion is a *choice*, not a measurement. §7.3 records that **ruling 5's coverage clause is
+  written over *bins* while `s_proj`'s population is *functionals***, so it does not literally reach
+  the leg ruling 3 added; `1.0` is recommended and **no key is declared**. **`δ = 5%`, the declined
+  campaign, and the pinning reservation are CLOSED — no lane re-litigates them.**
+- [`DECISION-PACKET-20260918-scalar5d-publication-blockers.md`](DECISION-PACKET-20260918-scalar5d-publication-blockers.md)
+  - **The evidence behind those rulings; authorizes nothing.** Every remaining publication blocker
+  mapped to its governing requirement, existing evidence, recommended disposition and smallest
+  remaining action. §13 is the state after the rulings, §14 C1's measured result, §15 the **M2
+  withdrawal** (the note disclaims a 4D uncertainty in four places, so M1 is the only required
+  projection), §16 the DOCS verification, **§17 C2's margin** — branch point `7.026066e-39`, measured
+  ratio `2.6739`, recommended margin `0.168`, and the measured `5.3478×` vs `uq_math.py:125`'s
+  `4.69×` surfaced rather than folded in, because the two are different ensembles.
+
+
 ### OI-136 fail-open repair — AUTHORIZED 2026-09-03 (36 of 45; 9 excluded with measured reasons)
 
 - [`AUTHORIZATION-20260903-oi136-failopen-repair.md`](AUTHORIZATION-20260903-oi136-failopen-repair.md)
