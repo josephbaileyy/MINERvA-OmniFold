@@ -338,3 +338,35 @@ reuse) plus one authorized product (the counterfactual) plus one scope statement
 request in §4, because it runs a *different* operator over the same inputs and therefore doubles the
 read, and because the audit asks for it on *identical footing*, which is a constraint on how it is
 launched rather than on what it computes.
+
+
+---
+
+## 6. EVERY open decision, consolidated — the single list
+
+Independent work is at its boundary. Nothing below can be resolved by a lane; each is reserved to
+Joseph by the goal, by `AGENTS.md`'s "Decisions reserved for Joseph", or by `SPEC`.
+
+| # | Decision | Kind | Recommendation | Unblocks |
+|---|---|---|---|---|
+| **D1** | Grid versus diagonal member family | scientific (scope) | **Diagonal**, `(42,1000)` fixed, architecture axis declared as a scope limit | cause 3 member design |
+| **D2** | The L4 boundary key | engineering to create, scientific to value | **Create** the fifth `Z_BOUNDARIES` key, withheld; criterion = boolean **+ margin** | cause 2/L4 composition |
+| **D3** | `τ`'s scientific input | scientific (convention) | Declare **the significance threshold at which the claim is asserted** | `τ`, computable from M1 |
+| **D4** | Registry reject-on-mismatch rule | criterion amendment | **Amend** the estimator-seed field to within-family identity + declared map | M-I |
+| **D5** | The claim's region is half data-selected | scientific (claim scope) | **(b)** quote on the prespecified `E_avail` region; keep the W localization at central-value level | M-O, and what M1 is for |
+| **R1** | Cause 7 sufficiency — is active coverage of the five sufficient given the four vertical bands' CV-selected support? | ruling (`SPEC`) | none offered; evidence complete | cause 7 |
+| **R2** | Cause 5 §6.1 disposition, after the completed trace | ruling (`SPEC`) | none offered; falsifier NEGATIVE | cause 5 |
+| **R3** | ⚠ **`SPEC` contradicts itself** — `:1010-1011` says the cause-4 guard enforces condition **3**, `:1237` says condition **4** | spec owner | `:1010` is the more defensible (it defines the guard; `:1237` summarises a receipt row) | cause 4 implementation |
+| **R4** | Cause 6's stat/ML reuse | scientific | none offered; note the audit's *"rather than assume reruns"* — the default assumption is the expensive one | cause 6 |
+| **M-M** | **Trunk adoption** | scientific | — | M1, and everything downstream |
+| **M-L** | The §6.4 null route | ruling | every route to `ε` named in the contract is closed; a repeat cannot produce it | the null leg |
+
+**Two further items are decisions in substance though they read as criteria work:** the cause-2
+wording (*"inherits a tolerance with a stated derivation and an owner"*, **not** *"not chosen"* —
+`k = 2.0` is chosen and `uq_math.py:129-137` says so in capitals), and the `n_empty` reading
+(`SPEC:1239` requires the `(E_avail,W)` projector to **count-and-report** and names fail-closed as a
+**falsifier**, so an acceptance criterion may require the reported count to be zero but the projector
+must not gate).
+
+**What is NOT waiting on anything:** M-A…M-E, M-G, M-H, M-P's baseline, cause 5 and cause 7 evidence,
+cause 6's operator and censuses, M-O's draft, and M1's priced request. Those are done.
