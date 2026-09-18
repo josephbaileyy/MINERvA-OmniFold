@@ -1490,3 +1490,61 @@ fill is covered only by the endpoint; and cross-**node** behaviour is not measur
 cost me twice today. `*bank*cv*.npz` and `*bank*` + `*.npz` both returned nothing. Then I read the
 launcher: `--bank` names a **directory**, whose CV input is `cv.npz`. The name-correct search found
 it at once and the digest confirmed it. **Read the consumer's argument; do not guess the filename.**
+
+### 18.1 Job `58510551` FAILED, diagnosed, repaired, resubmitted as `58524334`
+
+`FAILED`, `ExitCode 1:0`, `1011 s` (**`0.2808` CPU task-h charged in full**), `nid004121`. It got
+far — bank loaded (12 knob bands, 100 flux universes, **32,849,103 events**, `edges [14,16,7,7,6]`),
+the OmniFold loop fitted both classifiers and the regressor — then died at
+`compare_unified_throw.py:155`: *"The dimension of bins must be equal to the dimension of the
+sample x."*
+
+**The cause, and the wrapper module's own docstring predicts it verbatim.**
+`unified_throw_cov_5d.py:7-8` — the base kernel *"stops at `td_q3` (`td_cols[:len(edges)]` with no
+`td_W`), so for `len(edges)==5` it would feed 4 denom coords to a 5-edge `histogramdd`. **We
+monkeypatch a `td_W`-aware `_xsec_for_weights` into the base module**"* — and `:88` is
+`base._xsec_for_weights = _xsec_for_weights_5d`, because *"do_throws/blockunits/combine all resolve
+`_xsec_for_weights` from base's globals"*.
+
+I had written `from compare_unified_throw import _xsec_for_weights`, which binds the **unpatched**
+name. **This is the inverse of the usual defect:** normally a `from`-import makes a *patch*
+decorative; here it made the patch **invisible to the caller**. Measured rather than inferred: the
+5D bank does carry `td_W` (`td_W, td_ea, td_pt, td_pz, td_q3, td_w`) and five `edges_*`, and the
+base module contains no `td_W` at all.
+
+**Two citation corrections this forces.** The call-site lines I have quoted throughout —
+`unified_throw_cov.py:840` and `:1011` — are correct, but **the function they resolve to at runtime
+for a 5D bank is not the one bound to that name in the base module.** And the 5D chain has its own
+entrypoint, `unified_throw_cov_5d.py` — a wrapper over the base file, not a fork of it.
+
+**Repair, verified:** import the wrapper first so the patch installs, resolve through `base`'s
+globals at call time, and **assert the patch landed before anything is computed** — a run that
+silently used the 4D kernel would burn the allocation to rediscover this. 22 tests;
+mutation-verified by restoring the original import, which fails 5 of them.
+
+⚠ **One of my own tests asserted the defect.** `test_it_uses_the_same_function_unified_throw_cov_calls`
+*required* the `from`-import that doomed the run, so it was green while the job was unrunnable.
+Replaced. And the new "no `from`-import" test first failed on its own repair, because a bare
+substring search also matches the comment explaining the defect; it now anchors on a real import
+statement.
+
+⚠ **A method failure in my investigation, not the run:** I grepped `_xsec_for_weights` with
+`| head -5` over a **26-line** population and then reasoned about that population. The conclusion
+was right by luck. **Never `head` a population.**
+
+**Production-faithfulness of the CPU count, now on the realized figure.** The run requested
+`--cpus-per-task=16` and got `SLURM_CPUS 49 / AllocCPUS 50`. The production combine requests the
+**same** 16 and `AMENDMENT-20260831:239` records it at **`AllocCPUS 50`**. Since the estimator runs
+with `n_jobs=None`, the realized count is the one that matters, and it matches identically.
+
+**Resubmitted as `58524334`** — the one corrective resubmission this stage is allowed, after a
+diagnosed execution defect, a verified repair, and fresh admission (spend `96.6872` of `500`,
+headroom **`403.3128`**, outstanding reservations 0, measured `2026-09-18T12:50:13Z`). The ledger
+reconciles exactly: `96.4064 → 96.6872` is `+0.2808`, the failed attempt's `1011 s`. **The stage's
+corrective resubmission is now spent.**
+
+⚠ **A monitoring note against myself.** My first waiter for `58510551` returned **empty output with
+exit 0**, and the exit code was the *local* `ssh` wrapper's, not the remote loop's. An empty result
+must be read as **BLIND**, never as completion — so I re-measured the state directly, which is how
+the `FAILED` was found. The replacement waiter prints `BLIND_NO_ROWS` explicitly when `sacct`
+returns nothing.
