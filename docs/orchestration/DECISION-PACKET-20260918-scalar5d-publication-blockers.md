@@ -116,3 +116,171 @@ blocker NULL's ruling may rest on — and **no acceptance requirement in §2 dep
 **No further diagnostics are proposed.** A successor experiment would need a specific unresolved
 failure it must detect and a named unmet requirement it would resolve; an unexplained mechanism is
 not by itself such a requirement.
+
+---
+
+## 6. CORRECTED ENTRIES — 2026-09-18, after Joseph's scope support
+
+Joseph supports excluding optional generator-significance work from the required deliverables and
+proceeding toward a correlation-sensitive leg based on the **required projection uses**. **No
+numerical threshold and no adoption is approved.**
+
+### 6.1 ⚠ THE TOLERANCE ARGUMENT WAS WRONG — quadrature withdrawn
+
+**I wrote that `δ = 10%` "inflates any quoted uncertainty by 0.50%". That is false.** `s_proj` bounds
+the **relative change in `√(uᵀ C u)`** — the estimated standard deviation itself. `δ = 10%` permits
+the quoted standard deviation to **move by 10%**, full stop. My `√(1+δ²) − 1` step modelled the
+seed-to-seed spread as an **independent additional error component added in quadrature**, and
+**I gave no justification for that construction.** There is none available: the spread is an
+**ambiguity in `σ`**, not a second error beside it. **Withdrawn.**
+
+**THE CORRECT GROUND — how well is `σ` determined already?** Read from the product:
+`n_throws = 160`. For an ensemble of that size the estimated variance carries a relative precision
+of `√(2/(N−1)) = 11.22%`, so the estimated **standard deviation** carries about half that:
+
+    the quoted sigma is itself determined only to about +/- 5.6% by the finite throw ensemble
+
+**RECOMMEND `δ_proj = 5%`, as a DIRECT movement bound.** Ground: a seed-to-seed drift below `5%` is
+**not resolvable against the `5.6%` precision the ensemble already imposes on `σ`**. It reads no
+observed drift, uses no display format, and needs no quadrature construction.
+
+**SCIENTIFIC CONSEQUENCE, stated directly.** On the measured corner median `σ/x = 5.81%`:
+
+| `δ` | a quoted `5.81%` could instead read | `δ` ÷ ensemble precision |
+|---|---|---|
+| `3%` | `5.64%` – `5.98%` | 0.53 |
+| **`5%` (recommended)** | **`5.52%` – `6.10%`** | **0.89** |
+| `10%` (my earlier figure) | `5.23%` – `6.39%` | **1.78** |
+
+At `δ = 5%` the seed choice stays **below** the ensemble's own smearing, so it is not a
+distinguishable contributor to the quoted number. **At `δ = 10%` it is 1.78× the ensemble precision
+— the arbitrary seed would become the DOMINANT ambiguity in a published uncertainty**, and a reader
+comparing this uncertainty against another measurement's could be misled by an artifact of seed
+choice. That is the consequence, and it is why `10%` is too loose.
+
+⚠ **Residual, named:** `√(2/(N−1))` assumes iid normal draws. The 160 throws are
+systematic-parameter throws, not iid samples of one quantity, so `5.6%` is an **order-of-magnitude
+anchor for the ensemble's resolving power**, not an exact precision. The recommendation is that
+`δ` sit below that anchor, not that `δ` equal any particular derived digit.
+
+**`s_med`'s two numbers, on the same ground:** per-bin `δ = 5%`; coverage **100%** on bins entering
+a quoted projection and **≥ 99%** on the full reported support, with every failing bin **enumerated**
+in the receipt. **`s_agg` (`√Tr`): `δ = 5%`**, and noted as the weakest of the three — an aggregate
+over 10,694 bins can hold large per-bin motion at fixed total, which is why it does not stand alone.
+
+### 6.2 CAUSE-3 MEMBER PRODUCTION — RESTORED to the dependency chain
+
+⚠ **My packet §2 omitted this and thereby understated the chain.** Cause 3 cannot be *evaluated*
+without members, and `causes.3` requires *"build all members"*. **This is the largest remaining
+compute item in the whole programme.**
+
+| | |
+|---|---|
+| **Family** | **diagonal** (D1), group assignment `{arms 1–4: 42, arms 5–7: 1000}` **fixed at archive values**; offsets `k`. **Do NOT unify the seeds** — `sweep_bank_5d.py:354-356` names that as the trap and says it *"silently re-seeds one of the two"* |
+| **Member count** | **RECOMMEND `N = 3` additional members**, not 4 |
+| **Cost** | `SPEC` §5.8d, **TRANSFERRED** per-member actuals `54.90` GPU / `86.53` CPU task-h → **`164.7` GPU / `259.6` CPU** at `N = 3`; `219.6` / `346.1` at `N = 4` |
+| **Why 3 and not 4** | headroom is `483.99` GPU / `403.31` CPU. `N = 4`'s `346.1` CPU is **86% of remaining CPU headroom before any contingency**, and `SPEC` §5.8e item 1 records a **measured ±60% single-arm CPU swing** (arm 5 went `30.94 → 49.11`). At `N = 4` that swing can break the ceiling; at `N = 3` it cannot |
+| **Enforced reservation** | per member, the seven-arm envelope as ratified: arm 2 `8`, arm 5 `60`, arm 6 `40` CPU task-h etc. Reservation is the **enforced cap × tasks**, never a past actual |
+| **Stopping conditions** | (i) R5 ceilings `500` GPU / `500` CPU — **hard**; (ii) **stop date `2026-09-30`**; (iii) per-arm ceilings; (iv) one corrective resubmission per stage; (v) **abort the campaign if any member's realized CPU exceeds its arm ceiling**, rather than continuing and re-pricing |
+| ⚠ **Schedule risk, and it may bind before the ceiling** | the stop date is **12 days out**, and `SPEC` §5.8e item 6 records that the usable scheduling window was **`16 d 15 h` in two blocks, not the calendar span**. A 3-member campaign at `54.90` GPU task-h per member is feasible on ceiling and **not obviously feasible on the window** |
+
+**Smallest remaining action:** Joseph approves `N = 3`, the family, and the per-arm envelope — then
+one bounded campaign request with the accounting and admission already demonstrated.
+
+### 6.3 REQUIRED PROJECTION MAPS AND QUOTED INTEGRALS — the functional set BOUND to them
+
+From P1 (packet §4), with `weight_basis` as the M1 receipt states it: *"entries are the product of
+the DROPPED axes' bin widths, so the destination is a DIFFERENTIAL DENSITY in the kept axes."*
+
+| map | destination | cells | writer | quoted? | units of the projected object |
+|---|---|---:|---|---|---|
+| **M1** | `(E_avail, W)` | **42** | `project_cov_nd.py --keep-axes eavail,W` | **YES — the only quoted map** | `d²σ/dE_avail dW`, cm²/nucleon/GeV² |
+| M2 | `(pt, pz, E_avail, q3)` | 10,976 | `p4_project_4d.py` | no — supports reported central values | 4-differential |
+| M3 | `E_avail` | 7 | `project_cov_nd.py --keep-axes eavail` | no — marginal anchor | `dσ/dE_avail` |
+| M4 | 5D → 3D | per keep-axes | `project_cov_nd.py` | no — marginal anchor | 3-differential |
+
+**Quoted integrals.** Any integral over a set `R` of M1 cells uses **bin-volume weights**
+`w_i = Δ(E_avail)_i · Δ(W)_i`, because the projected object is a density. The corner's `E_avail`
+widths are `0.4, 0.7, 1.5, 97.0` GeV — differing by more than two orders — so omitting the volumes
+is a **large** error, not a refinement.
+
+**THE FUNCTIONAL SET, BOUND:**
+
+    U  =  { the 42 rows of M1 }                        <- one per quoted cell; covers every cell
+       U  { the all-ones vector over the 42 }           <- the total
+       U  { w_R for each declared quoted integral R }   <- bin-volume weights, one per integral
+
+This is `SPEC` §3.7d's own `s_proj` set (*"the rows of `project_cov_nd.py`'s `M`, plus the all-ones
+vector"*) **plus** the integral functionals, which are the additional quoted objects. **It is bound
+to the quoted maps, not chosen for convenience**, and it needs **no matrix inversion**.
+
+**THE LIMITED CLAIM THESE CHECKS SUPPORT — and it is narrow:**
+
+> A MET result on `s_proj` over `U` states that **the projected standard deviations of the quoted
+> M1 cells, their total, and the declared quoted integrals** did not move by more than `δ` across
+> the member family. **It is not evidence about `C_Z`'s full correlation structure** — `|U|` linear
+> functionals constrain `|U|` directions of a `10,694²` matrix — **and it is not evidence about any
+> significance**, which depends on `C⁻¹` contracted with a residual and weights the spectrum in the
+> opposite direction. It licenses the quoted uncertainties and nothing further.
+
+### 6.4 STAT/ML REUSE — CONDITIONAL on artifact compatibility evidence, with both branches
+
+⚠ **"REUSE on a check" was too weak. The disposition is the conditional, with the branch stated.**
+
+**Evidence required, per artifact** — the nine fingerprint fields `ESTIMATOR_REGISTRY:17-22`
+mandates, which `combine_cov_nd.py` now records, **plus** the realized `n_members` and the `N−1`
+divisor note:
+
+    REUSE      iff  every one of the nine fields on C_stat and on C_ML equals the corresponding
+                    field on the adopted central product, AND the realized n_members is present
+                    and non-sentinel, AND the support mask and row order match the trunk's
+    REGENERATE otherwise, and the regeneration is priced as a separate request
+
+⚠ **An `UNDECLARED` sentinel is NOT a match.** Five of the eight default to `UNDECLARED`, and the
+writer's design records that explicitly so a missing field reads as *"the writer was never told"*
+rather than as *"not checked"*. **A field that cannot be compared has not passed.**
+⚠ **And the PET `C_stat` 7.11% figure is a different object** (`VL132`/`CSTAT-R7`, 50 members); it
+does not bear on the scalar-5D components. The live scalar-5D concern is separate: `--array=1-100%32`
+is a **declared bracket**, so the realized count must be read, never inferred from the array spec.
+
+**Smallest remaining action:** read the nine fields off both artifacts — zero compute — and the
+branch resolves itself.
+
+### 6.5 THREE DISTINCT STATES, which my packet §2 conflated
+
+**Approval of a criterion, evidence that it passes, and adoption are three separate things**, and a
+single "recommended disposition" column ran them together.
+
+| cause | (i) criterion approved? | (ii) evidence it PASSES? | (iii) contributes to adoption? |
+|---|---|---|---|
+| **1** | criterion is tolerance-free — approve the *requirement* | **NOT YET** — the counterfactual has not run (`≈0.03` task-h) | after (ii) |
+| **2** | needs D2's key **and margin** — **NOT APPROVED** | operands exist; the margin has no value | after (i) and (ii) |
+| **3** | needs `δ_proj`, `δ_agg`, `δ_med` + coverage, and §3.7d (b) — **NOT APPROVED** | **NOT POSSIBLE — members do not exist** (§6.2) | after (i) and (ii) |
+| **4** | approve, with `SPEC:1237`'s digit amended | print not yet produced | after (ii) |
+| **5** | §6.1 disposition is the approval | **falsifier NEGATIVE across 15 traced modules — PASSES at that scope** | ready once (i) is ruled |
+| **6** | the conditional in §6.4 **is** the criterion — approve it | **readable now, zero compute** | after (ii) |
+| **7** | sufficiency ruling is the approval | **measured twice, two files — PASSES** | ready once (i) is ruled |
+
+**Only causes 5 and 7 currently have passing evidence.** Causes 1, 2, 3, 4 have **no** pass evidence,
+and cause 3 **cannot** have any until members are built. **Adoption requires (i) and (ii) for all
+seven**, so adoption is behind cause-3 member production — the item §6.2 restores.
+
+### 6.6 REMAINING EXECUTION SEQUENCE
+
+**Zero-compute, needs only rulings — can proceed immediately in any order:**
+1. §3.7d **(b)**; `δ = 5%` ×3 and the coverage fractions; the `U` set of §6.3.
+2. Cause 5 §6.1 disposition; cause 7 sufficiency. **Both already have passing evidence.**
+3. Cause 6: read the nine fields → §6.4's branch resolves (**mine to execute, no ruling needed**).
+4. `SPEC:1237` digit; `ESTIMATOR_REGISTRY:29` file name + both `√tr`; D2's key created withheld.
+5. The §1 **scope amendment**; the §6.4 null-route ruling.
+
+**Then, small compute:** cause 1's counterfactual (`≈0.03`); cause 4's print (`≤ 0.5764`).
+
+**Then the large one:** cause-3 member production, `N = 3`, `164.7` GPU / `259.6` CPU — **gated on
+§6.2's approval and on the `2026-09-30` window, which may bind before the ceiling.**
+
+**Then:** cause-3 evaluation on the members → adoption → M1 re-run with `--run-class publication`
+(`0.25`) → note/primer/paper re-verification.
+
+**Deferred and not on this path:** `y_gen`, `N`, the 12-cell χ², `rcond`/rank, any pseudoinverse, the
+first-order statistic, P2, and the pinning decision.
