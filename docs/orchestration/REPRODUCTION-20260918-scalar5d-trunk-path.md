@@ -91,12 +91,9 @@ numerical agreement or bitwise identity is required, and *why*.
 1. **Complete the pin set** — set or capture `OMP_DYNAMIC`, `OMP_SCHEDULE`, `OMP_PROC_BIND`,
    `OMP_PLACES`. **Code, not compute**, and `lane_b`'s to make. Without it, a negative repeat result
    is **ambiguous** between *"the design cannot be pinned"* and *"the design was never fully pinned."*
-2. **P0 — diagnose the `4.452e-14`, at zero compute.** Determine from the arm-7 producer whether the
-   two internal re-unfolds are a like-for-like pair. If not, the launcher's *"must be zero"* is
-   mis-stated and the finding is a documentation repair; if so, the pinned design does not deliver
-   determinism within one process and the repeat would fail. **Either outcome is decision-relevant
-   and neither costs an allocation.**
-3. **P2 — the repeat, only if 1 and 2 clear it.** `78a8c2ee` §2.2's Model-A minimum: `n = 3`,
+2. ~~**P0 — diagnose the `4.452e-14`.**~~ ⚠ **DONE, 2026-09-18, at zero compute — and it returned the
+   UNFAVOURABLE branch. See §5.**
+3. **P2 — the repeat. §5 says DO NOT BUY IT YET.** `78a8c2ee` §2.2's Model-A minimum: `n = 3`,
    **reservation bound 1.73 CPU task-h**; `n = 4` at **2.31** to make a single-run anomaly separable.
    `§2.3`'s receipt requirement is binding: **≥ 2 distinct node names, or item 2 is INCONCLUSIVE —
    not a pass.**
@@ -105,3 +102,66 @@ numerical agreement or bitwise identity is required, and *why*.
 
 **Nothing in §4 is requested here.** Step 2 is the cheapest decision-relevant item in the whole
 package and it needs no allocation.
+
+
+---
+
+## 5. ⚠ P0 EXECUTED — the pair IS like-for-like, so the nondeterminism is real, and the guard that should have caught it CANNOT FIRE
+
+Source only, zero compute, no payload read. Two findings, and the second explains why the first
+survived into production.
+
+**5.1 The two CV executions are LIKE-FOR-LIKE. Verified.** In `unified_throw_cov.py` — whose null
+path `unified_throw_cov_5d.py:10` inherits *"unchanged"*:
+
+    :846    base = x_cv[rep]
+    :1011   x_cv2_full = _xsec_for_weights(d, edges, w_truth, w_reco, td_cv, args.iters,
+                                           args.estimator_seed).ravel(order="C")
+    :1017   x_cv2 = x_cv2_full[rep]
+    :1018   null_norm = float(np.linalg.norm(x_cv2 - base))
+
+**The second call passes the identical arguments** — same data, edges, truth and reco weights, `td_cv`,
+`iters` and `estimator_seed` — to the same function, in the same process. There is no argument
+difference for the deviation to come from.
+
+**So the `4.452e-14` is genuine within-process nondeterminism of `_xsec_for_weights`, not an artifact
+of comparing two different things.** The launcher's *"`--null` repeats CV at the identical seed and
+must be zero"* is **not mis-stated — it is violated.** That is the unfavourable branch of the two P0
+outcomes.
+
+**5.2 ⚠ And the guard is the §3.1a defect, so it passes with ~10^38 of slack.** `:1019-1021`:
+
+    tol = 1e-12 * max(float(np.linalg.norm(base)), 1.0)
+    if null_norm > tol:  raise SystemExit("[FAIL] CV re-unfold is non-deterministic ...")
+
+`max(…, 1.0)` clamps the tolerance to an **absolute `1e-12`**, while `null_norm` is the **absolute**
+norm of the difference. `SPEC` §6.4 records this same vector's norm as order `1e-37`, so the absolute
+deviation is about `4.45e-51` against a tolerance of `1e-12`:
+
+    norm(base)=1e-37   tol=1.000e-12   |CV2-CV|=4.452e-51   fires? NO   slack 2.25e+38 x
+
+**The check that exists precisely to refuse a non-deterministic re-unfold cannot fail on this
+object.** This is the defect `SPEC` §3.1a names and §6.4 was written to replace — §6.4 measures it as
+*"roughly `10^25` times the scale it is meant to bound"* for the general case; on the **null**
+comparison it is about `10^38`. **That is why a violated assertion reached production unremarked: the
+guard reported a pass.**
+
+*(Incidentally, `SPEC:1193` cites this tolerance at `:517` and it now lives at `:1019`. Only one
+occurrence exists, so it is the same construct moved, not two sites — `uq_math.py` warns in terms that
+this file is prepend-ordered and *"every line-number citation into it decays (BEN-103)"*.)*
+
+**5.3 THE DECISION THIS CHANGES: do not buy P2 yet.** The arm-7 repeat was priced at **1.73–2.31 CPU
+task-h** to test determinism **across allocations**. But determinism **within a single process** is now
+known to fail, and the design's own guard cannot detect it. Spending an allocation to test the wider
+envelope while the narrower one is broken measures the wrong thing, and a *"not identical"* result
+would be uninterpretable.
+
+**The next step is smaller than P2 and is not a measurement of Z:** identify what inside
+`_xsec_for_weights` is not deterministic at a fixed seed. `Z_REPRO_KNOBS` pins `deterministic`,
+`force_row_wise` and `num_threads=1` for the estimator, and §1's finding stands — the **four OpenMP
+variables are unpinned repo-wide**, which is the leading candidate and is a code change rather than
+compute. **That ordering is now evidence-backed rather than precautionary.**
+
+⚠ **What this does NOT establish:** that the deviation is *caused* by the unpinned OpenMP variables. I
+have not run anything. It establishes that the pair is like-for-like, that the deviation is therefore
+real, and that the guard cannot see it.
