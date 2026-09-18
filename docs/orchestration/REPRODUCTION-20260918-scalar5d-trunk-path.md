@@ -106,7 +106,7 @@ numerical agreement or bitwise identity is required, and *why*.
 2. ~~**P0 — diagnose the `4.452e-14`.**~~ ⚠ **DONE, 2026-09-18, at zero compute — and it returned the
    UNFAVOURABLE branch. See §5.**
 3. **P2 — the repeat. §5 says DO NOT BUY IT YET.** `78a8c2ee` §2.2's Model-A minimum: `n = 3`,
-   **reservation bound 1.73 CPU task-h**; `n = 4` at **2.31** to make a single-run anomaly separable.
+   **⚠ REPRICED 2026-09-18: `9.00` (n=3) / `12.00` (n=4) CPU task-h.** The `1.73`/`2.31` figures were `3×`/`4×` a measured per-invocation *actual*; a reservation is the enforced wall cap, and `sbatch_uthrow_combine_5d_fast.sh:4` declares `--ntasks=1 --time=03:00:00`, i.e. `3.00` per invocation — which is `SPEC:3140`'s own `3n`.**
    `§2.3`'s receipt requirement is binding: **≥ 2 distinct node names, or item 2 is INCONCLUSIVE —
    not a pass.**
 4. **Joseph's §6.4 route ruling**, and the `SPEC:3140` question of whether the control may run on Z's
@@ -163,16 +163,32 @@ occurrence exists, so it is the same construct moved, not two sites — `uq_math
 this file is prepend-ordered and *"every line-number citation into it decays (BEN-103)"*.)*
 
 **5.3 THE DECISION THIS CHANGES: do not buy P2 yet.** The arm-7 repeat was priced at **1.73–2.31 CPU
-task-h** to test determinism **across allocations**. But determinism **within a single process** is now
+task-h** — ⚠ **itself wrong, repriced to `9.00`–`12.00`: those were measured actuals, not enforced
+caps** — to test determinism **across allocations**. But determinism **within a single process** is now
 known to fail, and the design's own guard cannot detect it. Spending an allocation to test the wider
 envelope while the narrower one is broken measures the wrong thing, and a *"not identical"* result
 would be uninterpretable.
 
 **The next step is smaller than P2 and is not a measurement of Z:** identify what inside
-`_xsec_for_weights` is not deterministic at a fixed seed. `Z_REPRO_KNOBS` pins `deterministic`,
-`force_row_wise` and `num_threads=1` for the estimator, and §1's finding stands — the **four OpenMP
-variables are unpinned repo-wide**, which is the leading candidate and is a code change rather than
-compute. **That ordering is now evidence-backed rather than precautionary.**
+`_xsec_for_weights` is not deterministic at a fixed seed.
+
+⚠ **THE CANDIDATE NAMED HERE WAS THE WRONG ONE, corrected 2026-09-18 on Joseph's instruction
+(*"do not assume that setting four OpenMP variables establishes determinism"*).** This paragraph
+called the four unpinned OpenMP variables *"the leading candidate"*. They are not a candidate at
+all: `Z_REPRO_KNOBS` itself records `num_threads` as *"the estimator parameter, **NOT**
+`OMP_NUM_THREADS`, which this repository has measured LightGBM to ignore."*
+
+**The real finding is one level in, and it is measured on the campaign backend.**
+`omnifold_nn_core.make_estimators:144-147` — the production estimator — passes `n_estimators`,
+`num_leaves`, `learning_rate`, `verbose` and `random_state`, and **none** of `deterministic`,
+`force_row_wise`, `force_col_wise` or `num_threads`, with `n_jobs=None`. So LightGBM uses **every
+available OpenMP thread**, and the thread count is a property of the allocation. `Z_REPRO_KNOBS`
+*proposes* the three knobs; its own comment says *"nothing here is applied"*, and it is **not on the
+production path**. Applying them is a **material change to the estimator** and is Joseph's decision.
+
+**And the next step is now a measurement rather than a guess:** `z_determinism_probe.py` at `0.25`
+CPU task-h tests whether output tracks the thread count, across `historical` / `det_only` /
+`pinned` arms. If it does, no number of cross-allocation repeats fixes it.
 
 ⚠ **What this does NOT establish:** that the deviation is *caused* by the unpinned OpenMP variables. I
 have not run anything. It establishes that the pair is like-for-like, that the deviation is therefore

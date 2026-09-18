@@ -169,26 +169,83 @@ not that bitwise is more virtuous.**
   is confined to shared-process state. **Outcomes:** if the pair is not like-for-like, the launcher's
   `must be zero` is mis-stated rather than violated and the finding is a documentation repair; if it
   is like-for-like, the pinned design does **not** deliver determinism within a single process and
-  the arm-7 experiment would fail — **so the 1.73–2.31 CPU task-h should not be spent until P0
+  the arm-7 experiment would fail — **so P2's cost (repriced to `9.00`–`12.00`, §2.4) should not be spent until P0
   returns.** Either outcome is decision-relevant and neither costs an allocation.
-- **Step P1n — complete the pin set, a code change, not a measurement.** Set or capture the four
-  OpenMP variables (§1.5: zero occurrences repo-wide). `78a8c2ee` §3 is explicit that without this
-  a negative result cannot distinguish *"the design cannot be pinned"* from *"the design was never
-  fully pinned."* This is `lane_b`'s to make.
-- **Step P2 — the repeat, only if P0 and P1n clear it.** `78a8c2ee` §2.2's Model-A minimum: two runs
-  on the same node (tests same-shape determinism) plus one on a different node (tests cross-shape),
-  `n = 3`, **reservation bound 1.73 CPU task-h**; `n = 4` at **2.31** to make a single-run anomaly
-  separable. Priced from the measured per-invocation maximum `0.5764` CPU task-h
-  (`uthrow5d_combF`, `SPEC` §5.9 row 13; the three recorded runs `0.3875 / 0.4239 / 0.5764`), as
-  enforced-cap reservation bounds and not completions. **`78a8c2ee` §2.3's receipt requirement is
-  binding: ≥ 2 distinct node names, or item 2 is INCONCLUSIVE — not a pass.** Model B, if Model A
-  is refuted, costs 3.46 CPU task-h to exclude a coin flip and 17.29 to exclude `p ≥ 0.10`; that is
-  a cost finding, not a licence to keep sampling.
-- **What P2 would and would not buy.** It operates on the **preserved** operands and the **pinned**
-  code, so a bitwise result is a property of *the configuration that made the existing products* —
-  that is a justified transfer, and it is a different argument from "the tolerance is old." It does
-  **not** make a bound have been fixed before production. **It does not require regenerating the
-  campaign**; it re-executes one combine step, not the unfolding campaign.
+- ~~**Step P1n — complete the pin set** by setting or capturing the four OpenMP variables.~~
+  ⚠ **WITHDRAWN 2026-09-18, ON JOSEPH'S INSTRUCTION AND ON EVIDENCE ALREADY IN THIS REPOSITORY.**
+  He wrote: *"Do not assume that setting four OpenMP variables establishes determinism."* The
+  evidence is stronger than an assumption being unwarranted — **the four act on a channel the
+  estimator was measured not to read.** `z_reproducibility.Z_REPRO_KNOBS` records `num_threads` as
+  *"the estimator parameter, **NOT** `OMP_NUM_THREADS`, which this repository has measured LightGBM
+  to ignore."* So P1n as written could not have pinned anything.
+
+  **The actual configuration, measured on the campaign backend** (login node,
+  `~/.conda/envs/root_6_28`, LightGBM `4.6.0`, Python `3.11.14`; nothing installed, nothing
+  trained). `omnifold_nn_core.make_estimators(kind="lgbm", seed=42)` returns:
+
+      n_estimators 100   num_leaves 8   learning_rate 0.1   verbose -1   random_state 42
+      deterministic    <ABSENT>       force_row_wise  <ABSENT>
+      force_col_wise   <ABSENT>       num_threads     <ABSENT>       n_jobs None
+
+  **`n_jobs=None` means the wrapper passes no thread count, so LightGBM uses every available
+  OpenMP thread.** The thread count is therefore a property of the allocation — measured, not
+  inferred from source. That is the channel a cross-allocation difference reaches the numbers
+  through, and it is unpinned in production today. `z_reproducibility` is a **proposal**; its own
+  comment says *"nothing here is applied"*, and it is not on the production path.
+
+  **Applying the three real knobs is a MATERIAL CHANGE TO THE ESTIMATOR and is Joseph's decision**,
+  not a lane's code change.
+- **Step P2 — the repeat. ITS PRICING WAS WRONG AND A CHEAPER TEST COMES FIRST.**
+  ⚠ **The `1.73` / `2.31` figures are withdrawn as reservation bounds.** They are `3 ×` and `4 ×`
+  the measured per-invocation *actual* `0.5764` CPU task-h — and a reservation bounds what the
+  scheduler **may** charge, which is the **wall cap**, never a past actual. The launcher they price,
+  `sbatch_uthrow_combine_5d_fast.sh:4`, declares `--ntasks=1 --time=03:00:00`, so its enforced cap
+  is `3.00` CPU task-h per invocation and the honest reservation is **`9.00` (n=3) / `12.00`
+  (n=4)** — which is exactly `SPEC:3140`'s *"reservation bound `3n` CPU task-h"*, a figure this
+  packet contradicted while citing it. A shorter declared `--time` would lower it legitimately;
+  quoting an actual would not.
+
+  ⚠ **AND P2's STATED JUSTIFICATION IS SELF-CONTRADICTORY** — see the corrected bullet below.
+
+  `78a8c2ee` §2.3's receipt requirement stands: **≥ 2 distinct node names, or item 2 is
+  INCONCLUSIVE — not a pass.** Model B, if Model A is refuted, would cost `3.46` to exclude a coin
+  flip and `17.29` to exclude `p ≥ 0.10` **on the withdrawn per-invocation pricing**, so those two
+  figures rise by the same factor; either way it is a cost finding, not a licence to keep sampling.
+- **What P2 would and would not buy — CORRECTED, and the correction removes the argument.**
+  The superseded text said P2 *"operates on the preserved operands and the **pinned** code, so a
+  bitwise result is a property of the configuration that made the existing products."* **That
+  asserts both halves of a contradiction.** `z_lgbm_overlay()` already declares, in code,
+  `declares_divergence_from_historical_chain: True`, with the reason: *"Pinning reduction order
+  changes Z's numbers relative to the unpinned historical chain. This is a deliberate, declared
+  divergence, not a bug fix."*
+
+  **So a repeat is one thing or the other, never both:**
+
+  | configuration | what a bitwise-identical result would mean |
+  |---|---|
+  | **historical** (what production does today: no knobs, `n_jobs=None`) | a property of **the configuration that made the existing products** — the informative one for the existing products, and pinning is irrelevant to it |
+  | **pinned** (the three knobs applied) | a property of **a different estimator**; it says nothing about the existing products, and it is a *forward* reproduction path for a regenerated object |
+
+  Both remain true: P2 does **not** make a bound have been fixed before production, and it does
+  **not** require regenerating the campaign — it re-executes one combine step.
+
+- **Step P1d — THE CHEAP TEST THAT NOW COMES FIRST, and it is what Joseph directed.**
+  *"Before buying cross-allocation repeats, establish and test the intended deterministic
+  configuration."* `nd-unfolding/z_determinism_probe.py` + `run_determinism_probe.sh` test the
+  **mechanism** instead of sampling the outcome: thread count sets reduction order, and reduction
+  order is how a cross-allocation difference reaches the numbers, so varying the thread count
+  inside **one** job tests the channel cross-node variation acts *through*. Three arms —
+  `historical` (byte-for-byte what production constructs), `det_only`, `pinned` (equal to
+  `Z_REPRO_KNOBS`, bound by a test rather than retyped) — over a `1,2,4,8` thread grid, two fits
+  per cell, each cell in its **own process** because `OMP_NUM_THREADS` is read at OpenMP
+  initialisation and a single-process probe cannot distinguish a variable that is ignored from one
+  set too late.
+
+  **Reservation `0.25` CPU task-h** (`--ntasks=1 --time=00:15:00`), against P2's corrected `9.00`.
+  **If the output tracks the thread count, no number of cross-node repeats fixes it** and P2 should
+  not be bought at all. If it does not, P2's design can be narrowed to the one axis a single node
+  cannot answer. The probe **adopts nothing**, and it reports `UNAVAILABLE` rather than "no
+  differences found" when its subject fails to load.
 - **Two open items that are Joseph's and not a lane's**, both recorded at `78a8c2ee` §4:
   whether the arm-7 control may run on Z's own bank (`SPEC:3140`: *"if the control runs on Z's own
   bank, §6.4 is engaged and needs a ruling"*), and the residue that `ε`'s own falsifier is
@@ -340,7 +397,7 @@ the 5D object never had, does not make an independently unfolded 4D/3D estimator
 | Pilot construction, PSD/identity gates, precursor persistence | — | **YES**, closed and preserved | — | — | none |
 | E1 null reconstruction | SOURCE+PAYLOAD | **YES** — 1.00 ULP, predicate recomputed | — | — | none |
 | E2 tolerance provenance | SOURCE | **YES** — `5d617da8`, 2026-08-08 | — | — | none |
-| `ε` / `null_epsilon` | DECISION | no | Nothing. **Every route is closed** (§2.1) | **The §6.4 route question**, and whether the arm-7 control may use Z's own bank (`SPEC:3140`) | P2 only after P0/P1n: **1.73 CPU task-h** (n=3) or **2.31** (n=4), reservation bounds |
+| `ε` / `null_epsilon` | DECISION | no | Nothing. **Every route is closed** (§2.1) | **The §6.4 route question**, and whether the arm-7 control may use Z's own bank (`SPEC:3140`) | P2 only after **P1d** (the `0.25` task-h determinism probe; P1n is WITHDRAWN, §2.4): **9.00 CPU task-h** (n=3) or **12.00** (n=4) as enforced-cap reservations — the former `1.73`/`2.31` were measured actuals |
 | Why `r_null ≠ 0` at all (§2.3) | SOURCE | no | **YES — fully, at zero compute.** This is P0 and it is the cheapest decision-relevant item in the package | — | none |
 | Pin-set completion (4 OpenMP vars) | SOURCE→code | no | The gap is measured: **zero occurrences repo-wide** | — | none; it is a `lane_b` code change |
 | `B` | COMPUTE | no | Estimator and coverage objective **exist** (`78a8c2ee`) and are predeclared | — | same P2 runs |
@@ -364,7 +421,7 @@ the 5D object never had, does not make an independently unfolded 4D/3D estimator
 | Rank 9 disclosure / OI-172 | SOURCE | no | Reconcilable against actual note text | — | none |
 
 **The smallest decisive next action in the whole package is P0** (§2.4): it costs nothing, it is
-source-and-preserved-data only, and it determines whether the 1.73–2.31 CPU task-h of P2 is worth
+source-and-preserved-data only, and it determines whether P2's cost (repriced to `9.00`–`12.00` CPU task-h, §2.4) is worth
 requesting at all. Nothing else in the table gates it.
 
 ---
