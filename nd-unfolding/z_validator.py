@@ -214,6 +214,52 @@ def _invalid_statistics(leg_set, statistics):
     return bad
 
 
+# ------------------------------------------------------------------ THE DECLARED LEG SET `L` ---
+# ⚠ NO *PRODUCTION* LEG SET HAD EVER BEEN DECLARED. The branch machinery above was written over a
+# declared set so that a third leg would bind "without a further edit here", and the production set
+# was the piece that did not exist -- `assess` had no shipped population to evaluate. It is
+# declared now, by ruling.
+#
+# ⚠ CORRECTION TO AN EARLIER VERSION OF THIS COMMENT, which said "nothing had ever constructed a
+# `Leg`". That was FALSE: `nd-unfolding/tests/` contains 25 `Leg(` and 11 `LegSet(` constructions
+# and has exercised this machinery with its own fixtures throughout. The claim came from a grep
+# scoped to `nd-unfolding/*.py`, which excludes `tests/`. An under-scoped search reported an
+# absence that was not there.
+#
+# `s_proj` is ADOPTED under `SPEC` §3.7d ruling (b) -- Joseph, 2026-09-18. Answer (a) withholds the
+# licence for marginalization and projection, and projections are a required deliverable, so (a)
+# was never available.
+#
+# `sees_correlations` is a FACTUAL property of the statistic, not a choice: `sqrt(u^T C u)` reads
+# off-diagonal terms, which is exactly what §3.7d's I2-versus-[[1,.9],[.9,1]] measurement shows the
+# two diagonal legs cannot see.
+#
+# ⚠ THE REPORTING CLASS IS A DECLARATION THIS MODULE SAYS BELONGS TO THE ADOPTER, and Joseph's
+# ruling did not state it. Recorded here as `per-bin` with the reasoning, and flagged to him:
+#   * `s_proj`'s statistic is a MAXIMUM over a population of per-destination-cell functionals (the
+#     rows of `M`), which is the per-bin reporting shape -- `s_agg` reads one number for the whole
+#     matrix, `s_med` reads a population and summarises it, and `s_proj` does the latter.
+#   * an `s_proj` failure LOCALISES: it reports `argmax_functional`, which is what the per-bin
+#     vocabulary exists to convey.
+#   * the consequence is bounded: with `|L| > 2` this module already derives the label from the
+#     exact failing subset `F`, which the receipt carries BY NAME. So the class affects the label
+#     and not the information.
+# The all-ones functional in the approved set is genuinely aggregate, which is why this is a
+# judgement rather than a deduction, and why it is surfaced rather than buried.
+Z_LEG_SET = LegSet(
+    legs=(
+        Leg(name="s_agg", klass="aggregate",
+            boundary_key="cause3_agg", statistic_key="s_agg"),
+        Leg(name="s_med", klass="per-bin",
+            boundary_key="cause3_med", statistic_key="s_med"),
+        Leg(name="s_proj", klass="per-bin",
+            boundary_key="cause3_corr", statistic_key="s_proj",
+            sees_correlations=True),
+    ),
+    predeclared_at="AUTHORIZATION-20260918-d-resource-required-deliverable-path.md",
+)
+
+
 def assess(leg_set: LegSet, statistics: dict, validity: Validity) -> Outcome:
     """Evaluate `L` against the measured statistics. Validity dominates every numerical branch.
 

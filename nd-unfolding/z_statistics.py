@@ -194,7 +194,12 @@ def per_bin_movement(cov_by_offset, mask, baseline_key=0):
             "n_support": int(m.sum())}
 
 
-# ------------------------------------------------- correlation candidates (§3.7d) -- NONE ADOPTED
+# ----------------------------------------- correlation legs (§3.7d) -- `s_proj` IS ADOPTED ---
+# ⚠ WAS "NONE ADOPTED". `SPEC` §3.7d ruling (b), Joseph 2026-09-18: ADD `s_proj`. Its bound is
+# `cause3_corr = 0.05` and its functional set is the rows of `project_cov_nd.py`'s `M` plus the
+# all-ones vector, both approved in
+# `AUTHORIZATION-20260918-d-resource-required-deliverable-path.md`. `s_corr` and `s_eig` remain
+# unadopted candidates.
 def s_proj(cov_by_offset, functionals, baseline_key=0):
     """Maximum relative change in `sqrt(u^T C u)` over a PREDECLARED set of linear functionals.
 

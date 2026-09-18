@@ -189,10 +189,25 @@ MED = zv.Leg("med", "per-bin", "cause3_med", "s_med")
 
 
 class AWithheldBoundaryCanNeverProduceAPass(unittest.TestCase):
-    """The constraint the whole module exists for."""
+    """The constraint the whole module exists for.
+
+    ⚠ THIS CLASS USED TO DEPEND ON PRODUCTION STATE. It pointed `AGG`/`MED` at the live
+    `cause3_agg`/`cause3_med` and relied on their being withheld. When both were DECLARED by ruling
+    on 2026-09-18 every test here failed — while the property under test, that a withheld boundary
+    cannot produce a pass, was untouched. The withheld boundaries are now INJECTED, exactly as the
+    neighbouring class already injects declared ones, so this tests its own subject.
+    """
+
+    WITHHELD = {
+        "cause3_agg": zc.Boundary.withheld("cause3_agg", "TEST: withheld for this class"),
+        "cause3_med": zc.Boundary.withheld("cause3_med", "TEST: withheld for this class"),
+    }
 
     def setUp(self):
         self.L = zv.LegSet([AGG, MED], predeclared_at="TEST")
+        self._patch = mock.patch.dict(zc.Z_BOUNDARIES, self.WITHHELD)
+        self._patch.start()
+        self.addCleanup(self._patch.stop)
 
     def test_a_tiny_statistic_is_still_not_assessable(self):
         out = zv.assess(self.L, {"s_agg": 1e-30, "s_med": 1e-30}, all_valid())
@@ -267,7 +282,9 @@ class WithADeclaredBoundaryTheGradingPathWorksBothWays(unittest.TestCase):
 
     def test_one_withheld_leg_among_declared_ones_still_blocks_the_pass(self):
         """A partially declared set must not grade. This is the realistic near-miss."""
-        partial = {"cause3_agg": self.declared["cause3_agg"]}    # med stays withheld
+        # ⚠ `med` is now DECLARED in production, so "stays withheld" had to become an injection.
+        partial = {"cause3_agg": self.declared["cause3_agg"],
+                   "cause3_med": zc.Boundary.withheld("cause3_med", "TEST: withheld here")}
         with mock.patch.dict(zc.Z_BOUNDARIES, partial):
             out = zv.assess(self.L, {"s_agg": 0.001, "s_med": 0.001}, all_valid())
         self.assertFalse(out.is_met)
@@ -951,7 +968,10 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
     def test_a_well_formed_receipt_carries_the_withheld_boundaries_and_the_negative_statement(self):
         r = zrec.build_receipt(**self._blocks())
         self.assertEqual(r["schema_version"], zrec.Z_RECEIPT_SCHEMA_VERSION)
-        self.assertEqual(set(r["withheld_boundaries"]), set(zc.Z_BOUNDARIES))
+        # ⚠ WAS `== set(zc.Z_BOUNDARIES)`, the all-withheld proxy. Four boundaries are DECLARED by
+        # ruling now, so the property is that the receipt records the ACTUALLY withheld set.
+        self.assertEqual(set(r["withheld_boundaries"]), set(zc.withheld_boundaries()))
+        self.assertIn("null_epsilon", r["withheld_boundaries"])
         self.assertIn("are not evidence that Z was produced", r["negative_statement"])
 
     def test_an_unnamed_centering_variant_is_refused(self):
@@ -1013,8 +1033,14 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
         """The stale-outcome case: the dict says DECLARED, the live registry disagrees."""
         blocks = self._blocks()
         blocks["outcome"] = self._met(name="cause3_agg", value=0.01, prov="stale", limit=0.01)
-        with self.assertRaises(zc.ZContractError) as cm:
-            zrec.build_receipt(**blocks)
+        # ⚠ The live registry now DECLARES cause3_agg at 0.05, so without this injection the guard
+        # reports its other branch -- "recorded 0.01 != the live declaration 0.05" -- which is also
+        # correct but is not the case this test is named for. Inject the withdrawal it describes.
+        with mock.patch.dict(
+                zc.Z_BOUNDARIES,
+                {"cause3_agg": zc.Boundary.withheld("cause3_agg", "TEST: withdrawn since")}):
+            with self.assertRaises(zc.ZContractError) as cm:
+                zrec.build_receipt(**blocks)
         self.assertIn("withheld in the registry now", str(cm.exception))
 
     # ---- ⚠ ROUND-3 FINDING 1: the chain from the cited name to the applied limit --------------
@@ -1462,7 +1488,12 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
 
     def test_the_real_unassessable_outcome_records_cleanly(self):
         L = zv.LegSet([AGG, MED], predeclared_at="TEST")
-        out = zv.assess(L, {"s_agg": 0.0, "s_med": 0.0}, all_valid())
+        # ⚠ Both leg boundaries are DECLARED in production now, so this produced an ASSESSABLE
+        # outcome and the test's subject vanished. One withheld boundary is injected to restore it.
+        with mock.patch.dict(
+                zc.Z_BOUNDARIES,
+                {"cause3_med": zc.Boundary.withheld("cause3_med", "TEST: withheld here")}):
+            out = zv.assess(L, {"s_agg": 0.0, "s_med": 0.0}, all_valid())
         blocks = self._blocks()
         blocks["outcome"] = out.describe()
         r = zrec.build_receipt(**blocks)
@@ -1481,3 +1512,66 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TheDeclaredLegSet(unittest.TestCase):
+    """`L` had NEVER been constructed.
+
+    The branch machinery was written over a declared set so a third leg would bind "without a
+    further edit here" — and the set itself did not exist, so `assess` had no population to
+    evaluate. Declared 2026-09-18 by `SPEC` §3.7d ruling (b): ADD `s_proj`.
+    """
+
+    def test_the_set_has_the_three_ruled_legs_with_their_ruled_boundaries(self):
+        legs = {lg.name: lg for lg in zv.Z_LEG_SET.legs}
+        self.assertEqual(set(legs), {"s_agg", "s_med", "s_proj"})
+        self.assertEqual(legs["s_agg"].boundary_key, "cause3_agg")
+        self.assertEqual(legs["s_med"].boundary_key, "cause3_med")
+        self.assertEqual(legs["s_proj"].boundary_key, "cause3_corr")
+
+    def test_it_names_the_record_that_predeclared_it(self):
+        self.assertIn("AUTHORIZATION-20260918-d-resource",
+                      zv.Z_LEG_SET.predeclared_at)
+
+    def test_sees_correlations_is_DERIVED_and_true(self):
+        """A factual property of `s_proj`: sqrt(u^T C u) reads off-diagonal terms. The scope
+        disclaimer must therefore be dropped, and `assess` derives that rather than being told."""
+        self.assertTrue(zv.Z_LEG_SET.sees_correlations)
+
+    def test_every_leg_boundary_is_now_DECLARED_so_assess_can_reach_a_numerical_branch(self):
+        """The material change: with all three bounds declared, a withheld boundary no longer
+        stops everything, and `(cause 3, Z)` becomes gradeable once the members exist."""
+        import z_contract as zc
+        for lg in zv.Z_LEG_SET.legs:
+            with self.subTest(leg=lg.name):
+                self.assertTrue(zc.boundary(lg.boundary_key).is_declared)
+                self.assertEqual(zc.boundary(lg.boundary_key).value, 0.05)
+
+    def test_all_legs_below_delta_reaches_MET_and_carries_no_diagonal_only_scope(self):
+        # ⚠ `all_valid()`, not a bare `Validity()`. The module's documented safe default is that
+        # an unpopulated Validity yields branch 1 and never MET -- my first version of these three
+        # tests passed the bare default and read the safe behaviour as a failure.
+        stats = {"s_agg": 0.01, "s_med": 0.02, "s_proj": 0.03}
+        out = zv.assess(zv.Z_LEG_SET, stats, all_valid())
+        self.assertTrue(out.assessable)
+        self.assertEqual(out.branch_label, "MET")
+        self.assertIsNone(out.scope_statement,
+                          "a correlation-sensitive leg is adopted, so the diagonal-only scope "
+                          "statement must not be attached")
+
+    def test_a_leg_over_delta_fails_and_the_receipt_NAMES_the_failing_subset(self):
+        stats = {"s_agg": 0.01, "s_med": 0.02, "s_proj": 0.07}
+        out = zv.assess(zv.Z_LEG_SET, stats, all_valid())
+        self.assertTrue(out.assessable)
+        self.assertIn("NOT MET", out.branch_label)
+        self.assertEqual(out.failing_legs, ("s_proj",),
+                         "with |L| > 2 the label loses information, so F must be named")
+
+    def test_s_proj_alone_can_fail_while_both_diagonal_legs_pass(self):
+        """THE WHOLE POINT OF §3.7d, as an executable assertion. The two diagonal legs return
+        exactly 0.0 on the I2-versus-[[1,.9],[.9,1]] pair while the sum/difference move 37.8% and
+        68.4% — so a criterion without `s_proj` would have passed that at any boundary."""
+        stats = {"s_agg": 0.0, "s_med": 0.0, "s_proj": 0.378}
+        out = zv.assess(zv.Z_LEG_SET, stats, all_valid())
+        self.assertIn("NOT MET", out.branch_label)
+        self.assertEqual(out.failing_legs, ("s_proj",))
