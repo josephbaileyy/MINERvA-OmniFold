@@ -284,3 +284,68 @@ seven**, so adoption is behind cause-3 member production — the item §6.2 rest
 
 **Deferred and not on this path:** `y_gen`, `N`, the 12-cell χ², `rcond`/rank, any pseudoinverse, the
 first-order statistic, P2, and the pinning decision.
+
+---
+
+## 7. STAGE D-CVDIV-1 RESULT — job `58524334`, at its measured scope
+
+`COMPLETED`, `ExitCode 0:0`, `2184 s` (**`0.607` CPU task-h actual against a `2.00` reservation**),
+`nid004087`. Bank digest **verified**; same seed both executions; `iters = 5`; 10 evaluations each.
+
+### 7.1 The two observables, reported separately
+
+**A — FIRST CHECKPOINT DIVERGENCE: call `0` — iteration 0, step 1, the very first classifier
+evaluation.** `n = 20,404,292` elements, relative sum difference **`3.27e-16`**. Every subsequent
+checkpoint also differs:
+
+    call 0 (i0 s1)  3.268e-16      call 5 (i2 s2)  1.407e-15
+    call 1 (i0 s2)  4.018e-16      call 6 (i3 s1)  2.836e-14
+    call 2 (i1 s1)  1.815e-14      call 7 (i3 s2)  7.037e-15
+    call 3 (i1 s2)  2.773e-14      call 8 (i4 s1)  1.536e-14
+    call 4 (i2 s1)  2.930e-14      call 9 (i4 s2)  2.936e-14
+
+**B — ENDPOINT: NOT bitwise identical.** `r_null = 4.4311e-14`, against the historical
+`4.4520e-14` — **ratio `0.9953`. The discrepancy is REPRODUCED.**
+
+**C — a third observation, unplanned and relevant.** This run's `cv_norm` is
+`3.21245106927994448e-37` against the pilot's `3.21245106927996161e-37` — agreeing to 12 significant
+figures and differing at **`5.33e-15` relative. So `x_cv` is not bitwise reproducible ACROSS
+invocations either**, not only between the two executions inside one.
+
+### 7.2 What this establishes, and what it does not
+
+**ESTABLISHES, at measured scope:** under the **historical (unpinned)** configuration, on the real
+bank, with identical operands and the same estimator seed, two CV executions in one process differ
+**from the first classifier evaluation onward**, and the endpoint discrepancy reproduces the
+historical `r_null` to `0.5%`. The first observed difference is at the **double-precision last-bit
+level** (`3.3e-16` on a 20.4M-element reduction).
+
+**DOES NOT ESTABLISH — and no mechanism is claimed:**
+- **not** threading. Thread scheduling, memory layout, library dispatch, and reduction order are all
+  consistent with `3.3e-16`, and this probe separates none of them.
+- **not** that the first divergence is the first *arithmetic* difference. Call 0 is the **first
+  observed** checkpoint; anything inside that fit is unobserved.
+- **not** that pinning would fix it, and **not** that it would not.
+- **not** anything about cross-node behaviour, which was not varied.
+
+### 7.3 Which requirement this bears on — and the one justified successor
+
+**It bears on the reproduction path** (Joseph's *"supported reproduction path"*, and blocker
+**NULL**): **the historical configuration does not deliver bitwise identity.** Since §2.1 established
+that every route to a *tolerance* `ε` is closed, and bitwise identity was the remaining route, **that
+route is now measured shut for the historical configuration.** This is evidence for the §6.4 route
+ruling, which is Joseph's.
+
+**It bears on NO acceptance requirement in §2.** `s_proj`, `s_agg`, `s_med`, and all seven cause
+dispositions are unaffected.
+
+**The only successor with a named unmet requirement it would resolve:** test whether the **pinned**
+configuration achieves bitwise identity on the real bank — which would establish whether a *forward*
+reproduction path exists for a regenerated object. **Not proposed for launch here**, because it is
+downstream of two of Joseph's open rulings (the §6.4 route, and whether pinning — a material
+estimator change — is acceptable at all), and because `z_lgbm_overlay()` already records that pinning
+is a **declared divergence from the historical chain**, so a positive result would describe a
+different estimator than the one that made the existing products.
+
+**No other successor is proposed.** Localising further inside call 0 would explain a mechanism and
+resolve no named requirement.
