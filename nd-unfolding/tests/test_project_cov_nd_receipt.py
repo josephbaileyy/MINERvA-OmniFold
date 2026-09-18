@@ -68,7 +68,14 @@ class _Scalar:
 
 
 class _File:
+    # `IsZombie` exists on the real `TFile` and was missing here, so the stub could not exercise
+    # the projector's open-failure guard at all. A fixture that omits part of the interface it
+    # stands in for cannot fail where the real thing would. `_zombie_paths` lets a test make one
+    # open fail, which is the negative control for that guard.
+    _zombie_paths = set()
+
     def __init__(self, path, mode): self.path, self.mode = path, mode
+    def IsZombie(self): return self.path in _File._zombie_paths
     def Get(self, key): return _STORE.get(self.path, {}).get(key)
     def Close(self):
         if self.mode == "RECREATE":
@@ -129,6 +136,7 @@ class ProjectCovNDReceipt(unittest.TestCase):
     def tearDown(self):
         self.P._verify_canonical_edges = self._real_verify
         sys.modules.pop("ROOT", None)
+        _File._zombie_paths.clear()   # shared class state; one test must not poison the next
 
     def _run(self, keep="eavail,W", mutate_stored=None, run_class=None, question=None):
         P = self.P
@@ -346,3 +354,164 @@ class RunClassLabel(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NpzInputPath(unittest.TestCase):
+    """The projector can read the container its own subject was written in.
+
+    `z_build.py::_write_product` writes `.npz` when the output path ends in `.npz` and ROOT `TH2D`s
+    otherwise. The pilot that produced the candidate scalar-5D covariance -- job 58454524, products
+    at `uq_5d/z_pilot_20260916_a5/` -- wrote NPZ, so this projector could not read its subject. The
+    gap was in the READER, not in the product.
+
+    ⚠ I ASSERTED THOSE PRODUCTS DID NOT EXIST, three ways, and all three were the same operand
+    error: a covering search scoped to `*.root`, a directory inspection of the FAILED attempt `a3`
+    instead of the successful `a5`, and `sacct` reporting this CLI's completion code 2 as `FAILED`.
+    Verified since: 3 of 3 digests re-measured from the products in place equal
+    `zpilot-20260916/outcome-58454524/product-digests.txt`. **UNSEARCHED is not ABSENT.**
+
+    THE FIXTURES ARE WRITTEN BY THE PRODUCER. `z_build._write_product` builds every `.npz` here, so
+    these tests cannot pass against a container shape only this test believes in. That function
+    imports cleanly without ROOT, which is why it is usable as the fixture writer.
+    """
+
+    setUp = ProjectCovNDReceipt.setUp
+    tearDown = ProjectCovNDReceipt.tearDown
+
+    def _grid(self):
+        P = self.P
+        shape = tuple(len(P.AXIS_EDGES[a]) - 1 for a in ("pt", "pz", "eavail", "q3", "W"))
+        n = int(np.prod(shape))
+        rng = np.random.default_rng(11)
+        xcv = np.zeros(n)
+        rep = np.sort(rng.choice(n, size=300, replace=False))
+        xcv[rep] = rng.uniform(1e-40, 1e-38, size=300)
+        rows = np.nonzero(xcv > 0)[0].astype(np.int64)
+        A = rng.normal(size=(rows.size, rows.size))
+        C = A @ A.T
+        return xcv, rows, C
+
+    def _write_source(self, path, *, row_index=None, metadata=None):
+        """Built with `z_build._write_product`, the real writer, not by hand."""
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        import z_build
+        xcv, rows, C = self._grid()
+        arrays = {
+            "hCov_combined5d_total_uthrow": C,
+            "hXSecND_flat": xcv,
+            "hSupportMask": (xcv > 0).astype(float),
+        }
+        if row_index is not None:
+            arrays["hRowIndex5D"] = np.asarray(row_index, np.int64)
+        meta = {"variant": "cv", "adoptable": False,
+                "scientific_acceptance": "NON-PASSING",
+                "manifest_sha256": "f" * 64,
+                "code_identity": {"revision": "fb9ec3560fd6d62295dffc81b5694c9e26667d5b"}}
+        if metadata is not None:
+            meta.update(metadata)
+        z_build._write_product(Path(path), arrays, meta)
+        return rows
+
+    def _run_npz(self, src, extra=()):
+        P = self.P
+        out = os.path.join(self.tmp, "out.root")
+        argv = ["project_cov_nd.py", "--src-cov", src,
+                "--src-hist", "hCov_combined5d_total_uthrow", "--src-cv", src,
+                "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", "eavail,W",
+                "--out", out] + list(extra)
+        old, sys.argv = sys.argv[:], argv
+        try:
+            P.main()
+        finally:
+            sys.argv = old
+        with open(out + ".receipt.json") as fh:
+            return out, json.load(fh)
+
+    def test_projects_from_an_npz_source(self):
+        src = os.path.join(self.tmp, "z-cv.npz")
+        rows = self._write_source(src, row_index=None)
+        _out, rec = self._run_npz(src)
+        self.assertEqual(rec["src_container"], "npz")
+        self.assertEqual(rec["src_reported"], rows.size)
+        self.assertEqual(rec["n_dst"], 42)
+
+    def test_producer_row_index_is_used_and_cross_checked(self):
+        src = os.path.join(self.tmp, "z-cv.npz")
+        rows = self._write_source(src, row_index=None)
+        _o, rec_derived = self._run_npz(src)
+        self.assertIn("producer index not present", rec_derived["src_row_index_basis"])
+        src2 = os.path.join(self.tmp, "z-cv2.npz")
+        self._write_source(src2, row_index=rows)
+        _o2, rec_both = self._run_npz(src2)
+        self.assertIn("REQUIRED equal", rec_both["src_row_index_basis"])
+        self.assertIn("both present and identical", rec_both["src_row_index_basis"])
+
+    def test_disagreeing_row_index_refuses(self):
+        """Two statements of the row order that disagree cannot both bind the rows, and choosing
+        one would be a guess. This is the check the cross-check exists to be."""
+        src = os.path.join(self.tmp, "z-bad.npz")
+        rows = self._write_source(src, row_index=None)
+        bad = rows.copy()
+        bad[0] = bad[0] + 1                       # one row label moved
+        self._write_source(src, row_index=bad)
+        with self.assertRaises(SystemExit) as cm:
+            self._run_npz(src)
+        self.assertIn("hRowIndex5D", str(cm.exception))
+        self.assertIn("does NOT equal", str(cm.exception))
+
+    def test_source_metadata_is_carried_into_the_receipt(self):
+        """SOURCE BINDING: the projection must not be readable without the standing of what it
+        was projected from."""
+        src = os.path.join(self.tmp, "z-cv.npz")
+        self._write_source(src, row_index=None)
+        _out, rec = self._run_npz(src)
+        md = rec["src_metadata"]
+        self.assertIs(md["adoptable"], False)
+        self.assertEqual(md["scientific_acceptance"], "NON-PASSING")
+        self.assertEqual(md["variant"], "cv")
+        self.assertEqual(md["manifest_sha256"], "f" * 64)
+        self.assertEqual(md["code_identity"]["revision"],
+                         "fb9ec3560fd6d62295dffc81b5694c9e26667d5b")
+
+    def test_non_adoptable_source_refuses_a_publication_class_product(self):
+        """Enforced on the DATA, not the output path, so it holds however the run is invoked."""
+        src = os.path.join(self.tmp, "z-cv.npz")
+        self._write_source(src, row_index=None)
+        with self.assertRaises(SystemExit) as cm:
+            self._run_npz(src, extra=["--run-class", "publication"])
+        self.assertIn("adoptable: false", str(cm.exception))
+        self.assertIn("non-adopted trunk", str(cm.exception))
+
+    def test_non_adoptable_source_permits_a_diagnostic_product(self):
+        """The guard must not fire on the run it is meant to allow."""
+        src = os.path.join(self.tmp, "z-cv.npz")
+        self._write_source(src, row_index=None)
+        _out, rec = self._run_npz(src, extra=["--run-class", "diagnostic",
+                                              "--acceptance-question", "tau, on the candidate"])
+        self.assertEqual(rec["run_class"], "diagnostic")
+        self.assertIn("NON-ADOPTED", rec["status"])
+
+    def test_adoptable_source_permits_publication_class(self):
+        """The opposite direction: the guard keys on the SOURCE, not on the word publication."""
+        src = os.path.join(self.tmp, "z-ok.npz")
+        self._write_source(src, row_index=None,
+                           metadata={"adoptable": True, "scientific_acceptance": "PASSING"})
+        _out, rec = self._run_npz(src, extra=["--run-class", "publication"])
+        self.assertEqual(rec["run_class"], "publication")
+
+    def test_missing_key_in_npz_names_what_is_there(self):
+        src = os.path.join(self.tmp, "z-cv.npz")
+        self._write_source(src, row_index=None)
+        P = self.P
+        out = os.path.join(self.tmp, "o2.root")
+        argv = ["project_cov_nd.py", "--src-cov", src, "--src-hist", "hNoSuchKey",
+                "--src-cv", src, "--src-axes", "pt,pz,eavail,q3,W",
+                "--keep-axes", "eavail,W", "--out", out]
+        old, sys.argv = sys.argv[:], argv
+        try:
+            with self.assertRaises(SystemExit) as cm:
+                P.main()
+        finally:
+            sys.argv = old
+        self.assertIn("hNoSuchKey", str(cm.exception))
+        self.assertIn("hCov_combined5d_total_uthrow", str(cm.exception), "it must list what IS there")

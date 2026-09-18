@@ -116,6 +116,89 @@ def build_projection(src_axes, keep_axes, src_report, src_shape, dst_shape, dst_
     return M, dropped
 
 
+# ------------------------------------------------------------------ container-agnostic input ---
+# THE SCIENTIFIC OBJECT IS NOT ITS CONTAINER. `z_build.py::_write_product` writes `.npz` when its
+# output path ends in `.npz` and ROOT `TH2D`s otherwise, and the pilot that produced the candidate
+# scalar-5D covariance -- job 58454524, products at `uq_5d/z_pilot_20260916_a5/` -- wrote NPZ. So
+# this projector could not read its own subject, and the gap was in the READER, not in the product.
+#
+# Joseph, 2026-09-18: *"implement and verify a lossless transcription or an NPZ input path ... Do
+# not rebuild the scientific object merely to change its container."* An input path is the right
+# half of that choice: a transcription would write a second 890 MB copy whose only new property is
+# a risk of differing from the first.
+#
+# ⚠ I ASSERTED THESE PRODUCTS DID NOT EXIST. They did. My covering search was scoped to `*.root`
+# and my directory inspection went to attempt `a3` rather than the successful `a5` -- and `sacct`
+# reports this CLI's completion code 2 as `FAILED`, which I read as absence. Three checks, one
+# operand error, repeated. UNSEARCHED is not ABSENT.
+
+
+def _is_npz(path):
+    return str(path).endswith(".npz")
+
+
+def _load_npz(path):
+    """`(arrays, metadata)` from a `z_build.py` product. `metadata_json` is a 0-d string array."""
+    z = np.load(path, allow_pickle=False)
+    meta = {}
+    if "metadata_json" in z.files:
+        meta = json.loads(str(z["metadata_json"]))
+    return z, meta
+
+
+def _read_vector(path, key):
+    """A 1-D array from either container, by the SAME key name in both."""
+    if _is_npz(path):
+        z, _ = _load_npz(path)
+        if key not in z.files:
+            raise SystemExit(f"[FAIL] {path} has no key {key}; it holds {sorted(z.files)}")
+        return np.asarray(z[key], float).ravel()
+    import ROOT
+    f = ROOT.TFile.Open(str(path))
+    if not f or f.IsZombie():
+        raise SystemExit(f"[FAIL] cannot open {path}")
+    obj = f.Get(key)
+    if not obj:
+        f.Close()
+        raise SystemExit(f"[FAIL] {path} has no object {key}")
+    out = _th1(obj)
+    f.Close()
+    return out
+
+
+def _read_matrix(path, key):
+    if _is_npz(path):
+        z, _ = _load_npz(path)
+        if key not in z.files:
+            raise SystemExit(f"[FAIL] {path} has no key {key}; it holds {sorted(z.files)}")
+        a = np.asarray(z[key], float)
+        if a.ndim != 2:
+            raise SystemExit(f"[FAIL] {path}:{key} is {a.ndim}-D, expected a matrix")
+        return a
+    import ROOT
+    f = ROOT.TFile.Open(str(path))
+    if not f or f.IsZombie():
+        raise SystemExit(f"[FAIL] cannot open {path}")
+    obj = f.Get(key)
+    if not obj:
+        f.Close()
+        raise SystemExit(f"[FAIL] {path} has no object {key}")
+    out = _th2(obj)
+    f.Close()
+    return out
+
+
+def _source_metadata(path):
+    """The source's OWN metadata, or `{}`. This is the source binding: it carries
+    `manifest_sha256`, `code_identity`, `variant`, `adoptable` and `scientific_acceptance`
+    forward into the projected product's receipt, so the projection cannot be read without
+    the standing of what it was projected from."""
+    if not _is_npz(path):
+        return {}
+    _z, meta = _load_npz(path)
+    return meta
+
+
 def main():
     import ROOT
     ap = argparse.ArgumentParser(description=__doc__,
@@ -171,23 +254,48 @@ def main():
     src_shape = tuple(len(AXIS_EDGES[a]) - 1 for a in src_axes)
     dst_shape = tuple(len(AXIS_EDGES[a]) - 1 for a in keep_axes)
 
-    fcv = ROOT.TFile.Open(args.src_cv)
-    xsrc = _th1(fcv.Get("hXSecND_flat")); fcv.Close()
+    xsrc = _read_vector(args.src_cv, "hXSecND_flat")
     if xsrc.size != int(np.prod(src_shape)):
         raise SystemExit(f"[FAIL] src CV size {xsrc.size} != prod(src_shape) {np.prod(src_shape)}")
     src_report = np.where(xsrc > 0)[0]
 
-    fc = ROOT.TFile.Open(args.src_cov)
-    C = _th2(fc.Get(args.src_hist)); fc.Close()
+    C = _read_matrix(args.src_cov, args.src_hist)
     if C.shape != (src_report.size, src_report.size):
         raise SystemExit(f"[FAIL] src cov {C.shape} != reported mask {(src_report.size,)*2}")
+
+    # THE PRODUCER'S OWN ROW ORDER, cross-checked rather than substituted. `z_build.py` persists
+    # `hRowIndex5D`; the order derived from `xsrc > 0` must equal it. Two independent statements of
+    # the same fact that are REQUIRED to agree is a check; taking one and discarding the other
+    # would be a substitution, and taking only the derived one would throw away the producer's.
+    _src_row_index_basis = "derived from src CV (xsrc > 0); producer index not present in source"
+    if _is_npz(args.src_cov):
+        _zsrc, _ = _load_npz(args.src_cov)
+        if "hRowIndex5D" in _zsrc.files:
+            _producer_rows = np.asarray(_zsrc["hRowIndex5D"], np.int64).ravel()
+            if not np.array_equal(_producer_rows, src_report.astype(np.int64)):
+                raise SystemExit(
+                    f"[FAIL] the source product records hRowIndex5D ({_producer_rows.size} rows) "
+                    f"and it does NOT equal the order derived from its CV mask "
+                    f"({src_report.size} rows). The covariance rows cannot be bound to physical "
+                    f"bins under two disagreeing orders, and picking one would be a guess.")
+            _src_row_index_basis = ("producer hRowIndex5D, REQUIRED equal to the order derived "
+                                    "from src CV (xsrc > 0); both present and identical")
+
+    # SOURCE BINDING. Carried into the receipt so the projection inherits its source's standing.
+    _src_meta = _source_metadata(args.src_cov)
+    # A non-adoptable source must not yield a publication-class product. This is enforced on the
+    # DATA rather than on the output path, so it holds however the run was invoked.
+    if str(_src_meta.get("adoptable", "")).lower() == "false" and args.run_class == "publication":
+        raise SystemExit(
+            "[FAIL] --run-class publication, but the source product records `adoptable: false` "
+            f"(scientific_acceptance: {_src_meta.get('scientific_acceptance')!r}). A publication "
+            "product cannot be projected from a non-adopted trunk; use --run-class diagnostic.")
 
     # destination reported mask / index map
     n_dense = int(np.prod(dst_shape))
     dst_index_of = -np.ones(n_dense, dtype=int)
     if args.dst_cv:
-        fd = ROOT.TFile.Open(args.dst_cv)
-        xdst = _th1(fd.Get("hXSecND_flat")); fd.Close()
+        xdst = _read_vector(args.dst_cv, "hXSecND_flat")
         if xdst.size != n_dense:
             raise SystemExit(f"[FAIL] dst CV size {xdst.size} != prod(dst_shape) {n_dense}")
         dst_report = np.where(xdst > 0)[0]
@@ -332,6 +440,9 @@ def main():
                          "destination is a DIFFERENTIAL DENSITY in the kept axes"),
         "paired_central_estimate": ("hCV_marginal = M x_src, the marginalised 5D central value. "
                                     "NOT the independently unfolded lower-D estimator."),
+        "src_container": "npz" if _is_npz(args.src_cov) else "root",
+        "src_row_index_basis": _src_row_index_basis,
+        "src_metadata": _src_meta,
         "run_class": _run_class,
         "acceptance_question": _accept_q,
         "run_class_keys_in_product": ["runClass", "runClassStatus", "acceptanceQuestion"],
