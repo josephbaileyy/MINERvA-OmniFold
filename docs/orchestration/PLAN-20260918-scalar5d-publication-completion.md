@@ -280,12 +280,20 @@ prediction was low by more than an order of magnitude.
 
 | Quantity | Value | Basis |
 |---|---|---|
-| Peak memory | **~3 GiB**, request **16 G** | `C_Z` as doubles is `10694² × 8 = 914.8 MB`; ROOT's `TH2D` with over/underflow is `10696² × 8 = 915.1 MB`; allow one copy during read. Against the pilot's measured **49.73 GiB**, this is a far smaller object than the assembly. |
-| Compute | **≈ 0.3 s** for the matmul | `O(n²m) = 10694² × 42 × 2 ≈ 9.6 GFLOP`. Calibrated against the pilot's **measured** `eigvalsh` at the same `n`: `O(n³) ≈ 1.2 TFLOP` in **33.503 s** → ≈ 36 GFLOP/s effective. |
+| Peak memory (predicted, superseded by the measured row below) | **~3 GiB**, request **16 G** | `C_Z` as doubles is `10694² × 8 = 914.8 MB`; ROOT's `TH2D` with over/underflow is `10696² × 8 = 915.1 MB`; allow one copy during read. Against the pilot's measured **49.73 GiB**, this is a far smaller object than the assembly. |
+| Compute | **MEASURED 0.324 s** | Run at the real shape, `10694 → 42`, 2026-09-18: `build_projection` **0.001 s**, `M C Mᵀ` **0.324 s**. The prior derivation from the pilot's measured `eigvalsh` predicted ~0.3 s and was right. |
+| Peak RSS | **MEASURED 1.020 GiB** | Same run, whole process, with `C` at **0.852 GiB** of it. Synthetic `C` of the production shape; no payload. |
 | Dominant cost | **ROOT I/O** of a ~900 MB histogram, not arithmetic | — |
 | Wall request | **15 min** | The pilot used `ElapsedRaw 1037 s` for 45-band assembly **plus two** eigendecompositions; M1 is one read, one small matmul, one 42×42 write. |
 | Shape | 1 node, `--qos=shared --constraint=cpu --ntasks=1 --cpus-per-task=8 --mem=16G --time=00:15:00` | Matches arm 7's partition; no exclusive node needed |
 | Reservation bound | **≈ 2.0 CPU task-h** (8 CPUs × 0.25 h) | Enforced-cap pricing, `SPEC:3140` — a request bounds an attempt, not a completion |
+
+⚠ **What is measured and what is not.** The **arithmetic** is now measured, not derived: `0.324 s`
+and `1.020 GiB`. **The ROOT I/O of a ~900 MB `TH2D` is NOT measured** — no interpreter available here
+has ROOT — and it is the dominant unknown. The `16 G` and `15 min` margins exist for that unmeasured
+leg, not for the arithmetic, which uses 6% of the memory request and 0.04% of the wall. Stated this
+way because the pilot's recorded lesson is that a *derived* sizing was low by more than an order of
+magnitude; this one is derived only where it could not be measured.
 
 **Against accounting:** the campaign drew ~77.0 of 393.5 authorized CPU task-hours, so ~2 task-h is
 0.5% of the remaining headroom. **The no-automatic-retry rule applies unchanged**: a failure returns
@@ -304,3 +312,29 @@ for a new decision rather than resubmitting.
 file digest, input covariance and CV digests, `M` content digest, row index **read back out of the
 closed file** and required equal, both support censuses (`src_cells_dropped` and `n_empty`), and the
 `CANDIDATE` status marker. Independent re-verification remains `[cb0b6b]`'s.
+
+
+---
+
+## 5. Cause 6 — its specification is largely discharged by P1 and M-G
+
+Recorded here rather than as a new document, because the audit's own framing for cause 6 is *"the
+unresolved object is the corrected projection product plus the component-footing decision"*, and two
+of its three parts have since been done under other milestones.
+
+| Audit's requirement for cause 6 | State |
+|---|---|
+| *"Specify the operator"* | **DONE** — P1, packet §4: the four maps with bin-width basis, masks, C-order enforcement and orphan policy, plus the paired central estimate |
+| *"and both coverage populations"* | **DONE and now instrumented** — `src_cells_dropped` (source cells whose destination is unreported) and `n_empty` (destination rows receiving no source cell). Both were already computed; M-G makes them **recorded in the receipt**, and `n_empty` additionally warns |
+| *"decide stat/ML reuse from compatibility evidence rather than assume reruns"* | **OPEN** — this is a decision, and its evidence is `[cb0b6b]`'s component-footing work. Note the audit's wording: *rather than assume reruns*. The default assumption is the expensive one |
+| *"produce the exact projection and the same-input legacy-versus-correct counterfactual"* | **BLOCKED on authorization**, and it is a *second* product beyond M1 — the counterfactual needs the legacy operator run on identical inputs |
+| *"The scope of operator versus ensemble grading must be explicit"* | **OPEN** — a statement, not a measurement |
+
+`SPEC` §2.6 withdrew the claim that the bidirectional coverage guards were missing, and P1 confirmed
+they exist and are genuinely bidirectional. **So cause 6 is not a code gap; it is one decision (stat/ML
+reuse) plus one authorized product (the counterfactual) plus one scope statement.**
+
+⚠ **The counterfactual is worth pricing separately when it is requested** — it is not covered by M1's
+request in §4, because it runs a *different* operator over the same inputs and therefore doubles the
+read, and because the audit asks for it on *identical footing*, which is a constraint on how it is
+launched rather than on what it computes.
