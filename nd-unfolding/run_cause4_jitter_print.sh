@@ -75,8 +75,13 @@ echo "  hostname : $(hostname)   SLURM_JOB ${SLURM_JOB_ID:-unset}   CPUS ${SLURM
 
 cd "$CODE_ROOT/nd-unfolding"
 _rc=0
+# `--expected-throws` is REQUIRED for combine (`unified_throw_cov.py:902`). 58531919 omitted it and
+# the check fires only AFTER the fits and after all 40 slabs load, so the omission cost 593 s to
+# report. The value is the production one, `sbatch_uthrow_combine_5d.sh:15`, not a fresh choice --
+# and `0-159` is 160 throws, the same `N` that sets C2's sampling floor.
 python3 unified_throw_cov_5d.py --combine "$THROW_GLOB" --block-slabs "$BLOCK_GLOB" \
   --bank "$BANK" --iters 5 --draw-seed "$DRAW" --estimator-seed "$SEED" \
+  --expected-throws 0-159 \
   --jitter-print --out-root "$OUT_ROOT" || _rc=$?
 
 if [ "$_rc" -ne 0 ]; then
