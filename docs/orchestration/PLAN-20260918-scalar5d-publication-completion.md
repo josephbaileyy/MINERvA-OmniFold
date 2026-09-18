@@ -151,12 +151,43 @@ connection to any claim, and it is how the three withdrawn format-derived number
 (b) Derive `τ` from observed movement once M1 exists — **forbidden**: a threshold placed to obtain a
 verdict. (c) Declare the significance threshold — recommended.
 
-**Exact change.** Declare: the deferred claim is asserted at `≥ Nσ` (you name `N`); `τ` is then whatever
-projected-correlation movement leaves the corner significance above `N` — a calculation performed once
-on M1, not a judgement. Record it as the conclusion-flip input in the cause-3 packet.
+**RECOMMENDED VALUE: `N = 3`.** ⚠ Revised 2026-09-18. This section previously said *"you name
+`N`"*, which is asking you to invent a criterion without a recommendation. Withdrawn; here is the
+recommendation and its justification.
+
+**Why 3σ and not 5σ or 2σ.** The threshold has to match what the claim asserts, and the claim —
+`main_paper.tex:49-51` — is that a generator *under-predicts in a localized region*. That is a
+statement about disagreement between data and a model, **not the discovery of a new phenomenon**. So:
+
+- **5σ is the discovery convention** and is the wrong instrument for a generator-comparison claim.
+  It is also very likely unreachable here: the consumer takes `ndf` from the **retained rank**, and
+  `C_Z` has 5,214 negative eigenvalues of 10,694, so the retained rank on a 42-cell projection is
+  small. Setting a threshold that the design cannot reach is not conservatism, it is declining to
+  make the claim while appearing to keep it.
+- **2σ is below the level at which a localized deficit would be asserted in print**, and it is
+  inside the band where an unmodelled correlation could produce the effect.
+- **3σ is the standard evidence-level convention** and is what this claim's language ("localize a
+  generator deficit") corresponds to. It is declarable now, before any product exists, and cannot be
+  contaminated by a favourable result — which is the property `SPEC` §6.4 and your standing
+  instruction require of it.
+
+⚠ **D3 AND D5 COMPOSE, AND THE COMPOSITION IS THE PART THAT MATTERS.** `N = 3` is recommended
+**conditional on D5 resolving as recommended** — quote on the *prespecified* `E_avail` region. If
+instead the claim is quoted on the data-selected `W ≥ 1.8` corner, then 3σ is **not** adequate as
+written and must either be raised or paired with a declared selection-aware calibration, because the
+boundary was chosen after seeing the data (`W ≥ 1.8` enters code 2026-06-09, two days after the first
+`(E_avail,W)` excess test). Ruling D3 at 3σ while ruling D5 the other way would produce a threshold
+that looks predeclared and is not. Two rulings that each hold only under a precondition the other
+removes compose into a defect, so they should be ruled together or D3 made explicitly conditional.
+
+**Exact change.** Declare in the cause-3 packet: *the deferred claim is asserted at ≥ 3σ on the
+prespecified region*. `τ` is then whatever projected-correlation movement leaves the corner
+significance above 3σ — **a calculation performed once on M1, not a judgement.** `rank6_significance.py`
+already refuses without this declaration (rc 6), so the value has a place to land.
 
 **Your approval authorizes:** the threshold declaration, which converts `τ` from blocked-on-judgement
-to computable-from-M1. It authorizes no production.
+to computable-from-M1 — and the diagnostic M1 run that computes it is now authorized separately by
+your 2026-09-18 grant, so this no longer waits on adoption. It authorizes no publication product.
 
 ### D4 — The registry mismatch rule · ENGINEERING repair of a SCIENTIFIC criterion
 
@@ -287,7 +318,7 @@ prediction was low by more than an order of magnitude.
 | Dominant cost | **ROOT I/O** of a ~900 MB histogram, not arithmetic | — |
 | Wall request | **15 min** | The pilot used `ElapsedRaw 1037 s` for 45-band assembly **plus two** eigendecompositions; M1 is one read, one small matmul, one 42×42 write. |
 | Shape | 1 node, `--qos=shared --constraint=cpu --ntasks=1 --cpus-per-task=8 --mem=16G --time=00:15:00` | Matches arm 7's partition; no exclusive node needed |
-| Reservation bound | **≈ 2.0 CPU task-h** (8 CPUs × 0.25 h) | Enforced-cap pricing, `SPEC:3140` — a request bounds an attempt, not a completion |
+| Reservation bound | **0.25 CPU task-h** (1 task × 0.25 h) | **CORRECTED 2026-09-18.** The governing unit is task-hours = `ElapsedRaw` summed over the arm's tasks, and the ruling excludes `AllocCPUS` weighting **by name** — `DECISION-20260901-joseph-delegated-ceiling-unit-is-task-hours.md`. The former `2.0` was `cpus-per-task × wall`, i.e. **core-hours wearing the task-hour label: an 8× overstatement, committed after that ruling landed.** A reservation is still the enforced cap and not a completion |
 
 ⚠ **What is measured and what is not.** The **arithmetic** is now measured, not derived: `0.324 s`
 and `1.020 GiB`. **The ROOT I/O of a ~900 MB `TH2D` is NOT measured** — no interpreter available here
@@ -296,9 +327,39 @@ leg, not for the arithmetic, which uses 6% of the memory request and 0.04% of th
 way because the pilot's recorded lesson is that a *derived* sizing was low by more than an order of
 magnitude; this one is derived only where it could not be measured.
 
-**Against accounting:** the campaign drew ~77.0 of 393.5 authorized CPU task-hours, so ~2 task-h is
-0.5% of the remaining headroom. **The no-automatic-retry rule applies unchanged**: a failure returns
-for a new decision rather than resubmitting.
+**Against accounting — BOTH FIGURES IN THE SUPERSEDED SENTENCE WERE WRONG, and they were wrong
+on different sides.** It read *"the campaign drew ~77.0 of 393.5 authorized CPU task-hours"*. The
+numerator came from the seven-arm production round, which is **pre-`t0`** and therefore outside the
+R5 ledger entirely; the denominator, `393.5`, appears in no governing record. This is the
+asymmetric-comparison failure: two numbers, neither the same population, neither carrying its unit.
+
+**Measured 2026-09-18 by the instrument, on the cluster** (`r5_meter.py measure`, `login16`):
+
+| | measured | ceiling | headroom |
+|---|---:|---:|---:|
+| CPU task-hours | **96.3214** | 500 | **403.6786** |
+| GPU task-hours | **16.0117** | 500 | **483.9883** |
+
+130 tasks, 2,013 attempts, `by_state {COMPLETED 104, FAILED 25, NODE_FAIL 2, REQUEUED 1882}`; stop
+date `2026-09-30`, not fired. `t0 = 2026-09-02T13:44:27Z`. Independently reproduced: an ad-hoc
+`sacct` dump fed through `--from-file` gave `96.32138888888889` against the meter's own on-cluster
+query, agreeing to every digit.
+
+⚠ **Outstanding reservations: ZERO, and that is a measurement rather than an assumption.** `squeue
+-u josephrb` returned no rows — with the positive control that the same user string returns 2,015
+`sacct` rows, because an empty `squeue` and an unresolvable user look identical at rc 0.
+
+⚠ **A method note on my own replication, NOT on the ledger.** My first ad-hoc query passed a naive
+`--starttime` and lost 62 attempts (`0.486` task-h) to `TZ=PDT` parsing a UTC `t0`. **The meter is
+not affected**: it sets `TZ=UTC` in the sacct environment and has since `a0bde16a`, 2026-09-03,
+before the receipt I was comparing against. The instrument was already right and my hand query was
+the defective one.
+
+**Retry rule, REPLACED 2026-09-18 by Joseph's grant:** one corrective resubmission per stage after a
+diagnosed execution defect, a verified repair, and **fresh admission**. Automatic requeue stays
+disabled; an ambiguous submission must be reconciled before another is made; **a scientific failure
+is evidence to assess, not permission to repeat until it passes**, and does not consume the
+resubmission. Implemented in `lib_r5_admission.sh::r5_retry_notice`, printed on every failure path.
 
 **Preconditions, all of which must hold before this is submitted:**
 1. **M-M** — the trunk is explicitly adopted. Yours.
@@ -375,11 +436,11 @@ Joseph by the goal, by `AGENTS.md`'s "Decisions reserved for Joseph", or by `SPE
 | **D3** | `τ`'s scientific input | scientific (convention) | Declare **the significance threshold at which the claim is asserted** | `τ`, computable from M1 |
 | **D4** | Registry reject-on-mismatch rule | criterion amendment | **Amend** the estimator-seed field to within-family identity + declared map | M-I |
 | **D5** | The claim's region is half data-selected | scientific (claim scope) | **(b)** quote on the prespecified `E_avail` region; keep the W localization at central-value level | M-O, and what M1 is for |
-| **R1** | Cause 7 sufficiency — is active coverage of the five sufficient given the four vertical bands' CV-selected support? | ruling (`SPEC`) | none offered; evidence complete | cause 7 |
-| **R2** | Cause 5 §6.1 disposition, after the completed trace | ruling (`SPEC`) | none offered; falsifier NEGATIVE | cause 5 |
-| **R3** | ⚠ **`SPEC` contradicts itself** — `:1010-1011` says the cause-4 guard enforces condition **3**, `:1237` says condition **4** | spec owner | `:1010` is the more defensible (it defines the guard; `:1237` summarises a receipt row) | cause 4 implementation |
-| **R4** | Cause 6's stat/ML reuse | scientific | none offered; note the audit's *"rather than assume reruns"* — the default assumption is the expensive one | cause 6 |
-| **R5** | Lineage: the chain carries **two distinct unified-throw ensembles**, and the registry names a different file than was consumed | ruling | none offered; evidence complete at `e393ad5e` and deliberately undisposed | M-J |
+| **R1** | Cause 7 sufficiency | ruling (`SPEC`) | **CLOSE AS SUFFICIENT.** The four weight-only bands are **measured present in `R`** on the 41.44 GB support family; the premise that they are uncovered is refuted (§10.1) | cause 7 |
+| **R2** | Cause 5 §6.1 disposition | ruling (`SPEC`) | **CLOSE AS NOT-FALSIFIED, scoped to the 15 modules actually traced** — not universally (§10.2) | cause 5 |
+| **R3** | The cause-4 guard's condition number | spec owner | **AMEND `:1237` to "condition 3".** ⚠ I over-called this a self-contradiction; on re-reading §2.4 in full it is a **mislabelled digit in a receipt-row summary**, and the same guard discharges condition 4's concern (§10.3) | cause 4 implementation |
+| **R4** | Cause 6's stat/ML reuse | scientific | **REUSE**, conditional on one named zero-compute footing check that `combine_cov_nd.py` now makes executable (§10.4) | cause 6 |
+| **R5** | Lineage: two distinct unified-throw ensembles; the registry names a file the chain did not consume | ruling | **DECLARE the 2026-09-14 precursor as Z's governing ensemble; read the stamps before recomputing anything; amend the registry row** (§10.5) | M-J |
 | **M-M** | **Trunk adoption** | scientific | — | M1, and everything downstream |
 | **M-L** | The §6.4 null route | ruling | every route to `ε` named in the contract is closed; a repeat cannot produce it | the null leg |
 
@@ -495,3 +556,249 @@ adoption; three cannot be reached without it.**
 **So the honest statement of where this stands:** every component that does not require an adoption
 decision is complete, and the three that do are blocked at the same single gate. Nothing further can
 move without a ruling.
+
+
+---
+
+## 10. The five rulings, each with a recommendation — added 2026-09-18
+
+Joseph, 2026-09-18: *"For scientific decisions, finish the evidence review and give me a recommended
+ruling, alternatives, and consequences. **Do not stop at 'evidence complete, disposition owed'**, or
+ask me to invent a technical criterion without a justified recommendation."* Every row of §6 that
+read *"none offered"* is replaced below. Two of the five turned out to be answerable by measurement
+rather than by judgement, and one of those refutes a premise I had carried.
+
+### 10.1 R1 — cause 7 sufficiency · **RECOMMEND: CLOSE AS SUFFICIENT**
+
+**The question assumed something false, and measuring it settles the ruling.** R1 asked whether
+covering five lateral bands is enough *"given the four vertical bands' CV-selected support"* — the
+four being `MinosEfficiency`, `GEANT_Neutron`, `GEANT_Pion`, `GEANT_Proton`, which
+`eavailW_covariance.py:40` carries in its nine-band historical set and `z_contract.py:67`'s
+five-band lateral set does not. The implied worry is that Z's detector systematic is **smaller** than
+the historical one, which is the direction that matters for publication.
+
+**Measured on the actual support family** — `uq_universe_5d_covariance_combined_bkgaware.root`,
+41,436,632,945 bytes, the `41.44` GB object `SPEC` §5.8c names, keys read directly:
+
+| | count |
+|---|---:|
+| `hCov_universe5d_*` bands | **45** |
+| `V` present, of `adopt_unified_5d.VERT_BANDS` | **13 of 13** |
+| `A` present, of `p4_lib.BANDS` | **5 of 5** |
+| `R`, the derived remainder | **27** |
+
+    MinosEfficiency    PRESENT          GEANT_Pion         PRESENT
+    GEANT_Neutron      PRESENT          GEANT_Proton       PRESENT
+
+**All four are present, in `R`.** They are not excluded from `C_Z`; they are in a **different part of
+the partition**, entering through `Σ_R` uninflated. The question conflated two mechanisms: a
+weight-only band **cannot** enter a lateral *swap* by construction — `pet_lateral_band_5d.py:41`
+names exactly these four as `WEIGHT_BANDS` and `pet_lateral_band.py:18` records that they are
+*"weight-only bands: CV coordinates/gates"* — but coverage is what `R` supplies. Requiring them in
+the lateral set would be requiring a test to cover something outside its own mechanism.
+
+For completeness, `V` is 13 **interaction-model and flux** bands (`2p2h … Rvp2pi, Flux`), not
+detector bands at all, so "the four vertical bands" in R1's phrasing does not correspond to `V`
+either. `R`'s 27 are the GENIE/FSI/normalization remainder plus these four and `__Normalization_flat`.
+
+**Alternatives.** (a) Close as sufficient — recommended. (b) Require the four in the lateral
+inventory — **refuse**: it asks for a lateral swap of a weight-only band, which has no meaning.
+(c) Hold cause 7 open pending a separate weight-band leg — unnecessary, since `Σ_R` *is* that leg and
+it is measured populated.
+
+**Consequence for the publication claim.** Closing R1 removes the last evidence gap on cause 7, and
+cause 7 is the item that plausibly discharges `ESTIMATOR_REGISTRY.md:29`'s `#16` five-band coverage
+**publication gate**. This is the most favourable open item in the package and it resolves upward.
+
+⚠ **ONE HARDENING, FILED SEPARATELY AND NOT PART OF THIS RULING.** `R` is derived, never listed:
+`z_contract.py:72`, `N_RESIDUAL = 45 − 13 − 5`. At the call site, `z_build.py:523-527` defines
+`residual` as `set(inventory) − V − A`, so `check_band_partition`'s exhaustiveness leg —
+`V ∪ R ∪ A == inventory`, checked in both directions — **is satisfied by construction at this call
+site** and cannot disagree. The live constraints are `V`/`A` membership by name and `|R| == 27`. A
+count is not an inventory, and the function's own docstring says so about a previous version of
+itself. **So a substitution passes: one weight band absent and one unrelated band present keeps
+`|R| = 27`.** The measurement above shows no substitution has occurred, so this is a hardening and
+not a live defect. Recommended change: import an explicit `Z_R_BANDS` from the module that owns the
+support family and check `R` by name, as `V` and `A` already are. It is a criterion strengthening,
+so it is yours, and it could make the gate fail on a future product that today passes.
+
+### 10.2 R2 — cause 5 §6.1 disposition · **RECOMMEND: CLOSE AS NOT-FALSIFIED, AT THE TRACED SCOPE**
+
+**Recommendation.** Record cause 5 as `INAPPLICABLE — disposed by decision` under §6.1, with the
+disposition's scope stated as **the 15 modules Z invokes that were actually traced**, including
+`adopt_unified_5d.py` — the module `SPEC:1238` singles out because `VL66` did not audit it and `D_Z`
+runs through it. The falsifier came back **NEGATIVE** across that closure.
+
+**Why the scope clause is not a hedge but the substance of the ruling.** A negative falsifier closes
+a cause **at the population it was evaluated over**, and nothing further. `SPEC:1238`'s own falsifier
+list names *"the trace is inherited from `VL66`"* and *"a module Z introduces is unaudited"* as the
+two ways this closes wrongly, so a disposition that did not state which modules were traced would be
+unfalsifiable in exactly the way the spec anticipates. Recording "15 modules, named" makes a future
+16th module a visible gap rather than a silent one.
+
+**Alternatives.** (a) Close at the traced scope — recommended. (b) Close unconditionally — asserts a
+universal from a finite closure and is the over-claim §6.1's falsifier list exists to catch.
+(c) Keep open — there is no evidence left to gather; only the disposition is missing, which is what
+Joseph's instruction identifies as the wrong place to stop.
+
+**Consequence.** No publication claim moves. Cause 5 stops being a blocker on adoption.
+
+### 10.3 R3 — the cause-4 guard's condition number · **RECOMMEND: AMEND `:1237`, AND NARROW MY OWN CLAIM**
+
+⚠ **I over-called this. Correcting it, because it would otherwise reach you as a live contradiction
+in the governing document.** I filed it as *"`SPEC` contradicts itself"*. On reading §2.4's four
+conditions in full rather than the two citing lines, it is **a mislabelled digit in a receipt-row
+summary**, and the two sites describe one guard.
+
+§2.4's conditions are: (1) the re-added print computes the same quantity; (2) its operands are the
+new build's own; (3) **adding it does not change the covariance content**; (4) **the print is
+print-only, never subtracted** — and item 4's own text then says *"**Condition 3** must be enforced
+by a guard that fails if the computed value ever reaches the stored covariance, not by a one-time
+comparison."* So §2.4 assigns the guard to condition **3**, in the prose of item 4. `:1237`'s
+receipt row says *"condition 4 enforced by a guard"*.
+
+**Recommendation.** Amend `:1237` to read **condition 3**, and add one clause recording that the same
+guard discharges condition 4's concern — because a value proved never to reach the stored covariance
+**cannot have been subtracted from it**, and subtraction from the stored covariance is what cause 4
+is about. `:1010-1011` governs: it is the definitional site, and `:1237` is a summary of it.
+
+**Alternatives.** (a) Amend the row — recommended. (b) Amend the definitional site to say condition 4
+— wrong direction; the guard's described behaviour *is* condition 3. (c) Leave both — leaves a
+reader unable to tell which condition an implementation must satisfy, and implementations get
+reviewed against the number they were given.
+
+**Consequence.** None for any published number. This is a specification-hygiene amendment, and the
+reason to make it is that the cause-4 implementation will be reviewed against whichever number the
+reviewer reads.
+
+### 10.4 R4 — cause 6's stat/ML reuse · **RECOMMEND: REUSE, on one named zero-compute check**
+
+**Recommendation.** Reuse the existing `C_stat` and `C_ML` components, conditional on a **footing
+check that costs no allocation**: every component of `C_Z` must carry the same central-product and
+support footing as the trunk, read from the fingerprint fields rather than assumed.
+
+**Why reuse is the right default here, and why it is not the lazy answer.** The audit's wording is
+*"decide stat/ML reuse from compatibility evidence **rather than assume reruns**"* — the default it
+warns against is the **expensive** one. Regenerating replicas with no rationale is named as a
+falsifier at `SPEC:1239` (*"replicas regenerated with no rationale"*). So a rerun needs a positive
+reason, and none has been produced.
+
+**The check is now executable, which it was not when the audit was written.** `combine_cov_nd.py`
+wrote one `TH2D` and closed — 27 lines, measured — so five of the nine fingerprint fields
+`ESTIMATOR_REGISTRY.md:17-22` requires were **absent rather than mismatched**, and a reject-on-mismatch
+rule cannot run without operands. It now records all nine plus the realized ensemble count, the
+`N−1` divisor convention, a row index and per-replica digests. **So the compatibility evidence the
+audit asks for can be read off the products instead of being argued.**
+
+**Alternatives.** (a) Reuse on the footing check — recommended. (b) Rerun both components — costs a
+production campaign leg and is the assumption the audit names. (c) Reuse without the check — leaves
+the registry rule unexecuted, which is what the audit found in the first place.
+
+**Consequence for the publication claim.** `C_stat` and `C_ML` are additive terms in
+`C_Z = D(ΣV)D + ΣR + ΣA + C_stat + C_ML`. If they are footed on a different central product, the sum
+is not a covariance of one estimator and the quoted uncertainty is not attributable. The check is
+what establishes attributability; reuse without it is the risk, not reuse itself.
+
+⚠ **NOT COVERED BY THIS RECOMMENDATION:** the 7.11% figure is the **PET** `C_stat`
+(`VL132`/`CSTAT-R7`, 50 members), a different object from the scalar-5D one, and I once over-scoped
+it to this subject. The scalar-5D surviving defect is the separate one that `--array=1-100%32` is a
+**declared bracket**, so the realized member count must be read rather than inferred from the array
+specification — which is why the writer now records the **realized** `n_members`.
+
+### 10.5 R5 — the two unified-throw ensembles · **RECOMMEND: DECLARE, READ THE STAMPS, AMEND THE REGISTRY**
+
+**The finding, restated:** the chain carries two distinct unified-throw ensembles — the parent,
+mean-centered, `uthrow_source` **2026-08-06**, and the pilot's throw input, the **2026-09-14**
+precursor — corroborated by the parent's upstream null being G's `5.8223e-50` against the
+precursor's `1.4302e-50`. Separately, `ESTIMATOR_REGISTRY:29` names `..._UTHROW.root` while the chain
+consumed the **unsuffixed** file, with registry `√tr = 5.8077e-38` against the parent's
+`sqrt_tr_new = 5.2696e-38`.
+
+**Recommendation, in three parts, and deliberately ordered cheapest-first.**
+
+1. **Declare the 2026-09-14 precursor ensemble as Z's governing throw ensemble.** Z is a successor
+   subject, not a continuation of G; two ensembles in one *repository* is expected, two in one
+   *product* is the defect. Declaring which one governs is what makes the second readable as G's
+   rather than as Z's contamination.
+2. **Read the stamps before recomputing anything.** Require every component of `C_Z` to carry the
+   governing ensemble's `uthrow_source`. If they agree, **the chain is single-footed and the whole
+   finding reduces to a registry documentation defect** — no recomputation, no compute request. If a
+   component disagrees, quarantine **that component**, not the product. This ordering matters
+   because the expensive branch has been assumed twice in this campaign and measured neither time.
+3. **Amend `ESTIMATOR_REGISTRY:29` to name the file actually consumed**, recording **both** `√tr`
+   values with the reason they differ. A registry row that names a file the chain did not consume
+   makes every downstream fingerprint check compare against the wrong object, and it errs silently.
+
+**Alternatives.** (a) The three steps above — recommended. (b) Regenerate the throw ensemble so one
+lineage exists — a production leg, unpriced, and step 2 may show it buys nothing. (c) Treat the two
+as interchangeable — refuse: the nulls differ by a factor of 4, so they are not one ensemble
+described twice.
+
+**Consequence.** Step 2's outcome decides whether R5 is a documentation repair or a component
+quarantine. **It is not a recomputation requirement until step 2 says so**, and the audit's
+*"rather than assume reruns"* applies here as much as to cause 6.
+
+
+---
+
+## 11. The adoption/projection dependency, reconciled — added 2026-09-18
+
+Joseph directed: *"Correct the task-hour pricing and **reconcile the adoption/projection dependency**
+before execution."* The pricing is §4. This is the dependency.
+
+**IT WAS A CYCLE, and I had recorded both halves without noticing they closed.**
+
+| the half I recorded | where |
+|---|---|
+| M1 must not be produced before the trunk is adopted | §4 precondition 1; `run_m1_projection.sh` rc 3 |
+| `τ` is *"whatever projected-correlation movement leaves the corner significance above N — a calculation performed once **on M1**"* | §2, D3 |
+| `τ` is one of the three decisions blocking cause 3, and cause 3 blocks adoption | §1, M-F |
+
+So adoption required `τ`, `τ` required M1, and M1 required adoption. **A plan containing that cycle
+cannot be executed by anyone**, and it would have read as "blocked on Joseph" indefinitely while the
+block was structural and mine.
+
+**What cuts it, and in which direction.** Your grant of *"provisional projections and
+counterfactuals from the preserved candidate covariance when needed to resolve acceptance
+questions"*. The projection is produced **as evidence for** the adoption decision, and is barred by
+construction from being the product that decision licenses. That is the only direction that cuts the
+cycle without weakening anything: the alternative — relaxing the adoption precondition on the
+publication path — would have waived the guard that the whole quarantine rests on.
+
+**Implemented as a distinct path, not a flag.** `nd-unfolding/run_m1_diagnostic.sh`.
+`run_m1_projection.sh`'s rc-3 adoption refusal is **untouched**, and a ratchet test in the new suite
+re-measures it rather than assuming it survived — adding a diagnostic path is precisely how a
+publication guard gets waived in practice.
+
+**Every clause of the grant is a refusal, because a documented condition is not a condition:**
+
+    rc 3   no named acceptance question, or no stated decision value
+    rc 4   the projector lacks proj_sha256 / hRowIndex / the readback digest / runClass
+    rc 5   the destination mask is not one of the two declared choices
+    rc 6   the output path lacks DIAGNOSTIC, or points into a product tree
+    rc 7   the output already exists -- no silent overwrite of the run it replaces
+    rc 8   the declared reservation is not the enforced cap
+    rc 9   the R5 receipt is missing or stale, or admission is refused
+    rc 11  the interpreter cannot import the subject
+    rc 10  the product exists but its receipt does not
+
+**The label travels inside the product.** `project_cov_nd.py`'s `status` field was a **constant** —
+every product it ever wrote said `CANDIDATE`, whatever it was — so nothing in the product or the
+receipt could distinguish a diagnostic from a publication-path product, and the separation your grant
+requires would have rested on the output path alone. It now writes `runClass`, `runClassStatus` and
+`acceptanceQuestion` as objects **in the ROOT file**, so a rename or a lost sidecar does not launder
+a diagnostic product. There are three real classes, not two: `candidate` is what the old constant
+*meant*, and `sbatch_project_5d_to_4d_candidate_gpu.sh` — *"DRY-RUN … → candidate path"*, its own
+words — now declares it, so its recorded class is unchanged.
+
+**What the diagnostic M1 will and will not establish.** It computes `C_low = M1 C_Z M1ᵀ` on the
+**preserved candidate** trunk, which makes `τ` computable and therefore unblocks cause 3's third
+input. It does **not** adopt the trunk, does not calibrate a significance, does not supply support
+`C_Z` never had, and **is not the quotable `(E_avail,W)` covariance** — `AGENTS.md:27` requires that
+to be projected from the *adopted* trunk, and `:30` quarantines the existing one outright. So the
+publication product still waits on M-M, and only the *acceptance question* has been unblocked.
+
+⚠ **ONE HONEST RESIDUE.** `τ` computed on the candidate trunk is `τ` for **that** trunk. If adoption
+lands on a materially different object — say after R5's step 2 quarantines a component — `τ` must be
+recomputed on the adopted one. That is a cheap re-run of a 0.324 s matmul, not a new campaign, and it
+is recorded here so that the diagnostic value is not later quoted as the adopted one.
