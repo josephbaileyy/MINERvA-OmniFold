@@ -1053,3 +1053,83 @@ from the npz.
 **Recorded because the shape has cost me once today:** a `false` flag can mean *the producer was not
 given the operand*, not *the property fails*. Not-performed-by-the-producer and
 performed-externally are two states, exactly as absent, inaccessible and unsearched are three.
+
+
+---
+
+## 15. THE DETERMINISM RESULT — job `58509947`, and it reverses my own reasoning
+
+`COMPLETED`, `ExitCode 0:0`, `ElapsedRaw 198 s` (**`0.055` CPU task-h actual against a `0.25`
+reservation**), `nid004083`, `AllocCPUS 10`. Record:
+`zdet-DIAGNOSTIC-20260918/z_determinism_probe_record_r2.json`.
+
+**The experiment was valid this time, and that is checked rather than assumed:**
+
+    thread_grid                          [1, 2, 4, 8]
+    backend_thread_values_reached        ['1', '2', '4', '8']      <- off the FITTED Booster
+    backend_confirmed_distinct_threads   True
+    row_floor                            SATISFIED   (200,000 rows)
+    cells                                9      unavailable 0
+    cpu_count_visible                    10 in every cell          <- no cpuset clamp at 8
+
+### 15.1 The result: EVERY ONE OF THE 18 FITS PRODUCED THE IDENTICAL DIGEST
+
+| arm | thread values | `within_process_identical` | `invariant_across_thread_grid` | distinct digests |
+|---|---:|---|---|---:|
+| `historical` | 4 (`1,2,4,8`) | **True** | **True** | **1** — `b151b10b4b6343b5` |
+| `det_only` | 4 (`1,2,4,8`) | **True** | **True** | **1** — `b151b10b4b6343b5` |
+| `pinned` | 1 (by design) | **True** | `VACUOUS` — correctly | 1 — same digest |
+
+### 15.2 Reported at its tested scope — three propositions, not one
+
+- **Within-configuration repeatability: HOLDS.** 9 of 9 cells, both repeats bitwise identical at a
+  fixed configuration and a fixed thread count. This is the narrowest claim and the strongest one.
+- **Cross-thread agreement: HOLDS**, for `historical` and `det_only` across `{1,2,4,8}`, with the
+  **backend confirming** each setting took effect. Same digest at every thread count.
+- **Full-chain reproducibility: NOT MEASURED.** `r_null = 4.4520002137582904e-14` is a property of
+  the full chain — OmniFold loop, unified-throw combine, assembly — **on production data**. This
+  probe fits one LightGBM model on **synthetic** data. Nothing here measures it.
+
+⚠ **AND THE SCOPE LIMIT THAT MATTERS MOST:** `200,000 × 6` with `n_estimators=100, num_leaves=8` is
+**not production's size or shape.** LightGBM's parallel histogram construction partitions by rows
+and features, so thread-invariance at this scale does **not** establish it at production scale. The
+result is evidence about the estimator's arithmetic in the tested regime and is not transferable to
+the production fit by assumption.
+
+### 15.3 THIS REVERSES MY OWN REASONING, and the reversal is the decision-relevant part
+
+I wrote, twice, that thread count is *"the channel a cross-allocation difference would act
+through"* and that *"if the output tracks the thread count, no number of cross-node repeats fixes
+it."* **The output does not track the thread count.** So:
+
+1. **The thread-count channel is measured NOT to vary** in the tested regime. My framing had the
+   conditional right and I should not now read the favourable branch as more than it is.
+2. **`deterministic=True` and `force_row_wise=True` changed NOTHING** — `det_only` returns the
+   identical digest to `historical` at every thread count. So at this scope the overlay buys **no
+   measured benefit**, while `z_lgbm_overlay()` records that applying it is a *declared divergence
+   from the historical chain*. **Paying a divergence for an unmeasurable gain is the wrong trade**,
+   and that is now an evidence-backed input to the pinning decision rather than a preference.
+3. **The `4.452e-14` needs a different explanation.** Threading was the leading candidate and is now
+   the *least* likely of those examined. What remains unexamined: the OmniFold loop's iteration and
+   reweighting, the throw-combine arithmetic, and data-dependent effects at production scale.
+4. **A thread-count difference does not rule out fixed-thread reproducibility — and here there is no
+   thread-count difference to reason from in either direction.** The two propositions are recorded
+   separately in the artifact (`tested_scope`) so neither can be read as the other.
+
+### 15.4 What I recommend, and what I do NOT
+
+**RECOMMEND: do not buy P2, and do not pin the estimator.** P2's repriced `9.00`–`12.00` CPU task-h
+tests determinism across allocations, and the mechanism it would act through has just been measured
+invariant in the tested regime. Pinning costs a declared divergence from the chain that made the
+existing products and has no measured benefit at this scope.
+
+**RECOMMEND NEXT, and it is cheap:** re-run this probe at **production size and feature count**
+before concluding anything about the production fit — same `0.25` CPU task-h shape, one operand
+changed. That is the only step that converts §15.2's scope limit into a scope.
+
+**I do NOT recommend** reading this as reproducibility of the chain, as a licence to quote
+`r_null`, or as grounds to revisit `ε` — every route to `ε` remains closed (packet §2.1) and the
+producer's own receipt says `null_epsilon` is `WITHHELD` because *"Neither B nor S is established."*
+
+⚠ The record from `58509947` predates the `tested_scope` block (added at `4007645a`+1), so its
+scope is stated here rather than in the file. Every future run carries it inline.
