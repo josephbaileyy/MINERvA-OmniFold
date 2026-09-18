@@ -391,6 +391,70 @@ MEASURED_BACKEND = {
 }
 
 
+# ------------------------------------------------- the threading environment, AS THE PROCESS SEES IT
+# WHY THIS EXISTS, and why it CAPTURES rather than SETS. `PREDECLARATION-20260916-B-estimator-and-
+# coverage.md` §3 measures that every pin set proposed so far -- including §4.4a item 3's own five
+# variables and this module's three LightGBM knobs -- pins THREAD COUNTS ONLY, and that
+# `OMP_DYNAMIC`, `OMP_SCHEDULE`, `OMP_PROC_BIND` and `OMP_PLACES` have ZERO occurrences. Re-measured
+# 2026-09-18: still zero REPO-WIDE, against a positive control of 43 `OMP_NUM_THREADS` hits in
+# `nd-unfolding/` alone. Thread count is necessary and NOT sufficient for reduction-order
+# determinism, so a bound whose premise is "the configuration is fixed" cannot rest on runtime
+# defaults that appear nowhere in the tree and are captured in no receipt.
+#
+# THAT PREDECLARATION OFFERS TWO REMEDIES AND THIS IS THE SECOND: "either they are set before the
+# runs, or their process-visible values are captured in the receipt of every run." Setting them is a
+# behaviour change to a production launcher and is not this module's call. CAPTURING them is purely
+# additive, cannot change any result, and is what makes a negative repeat result INTERPRETABLE --
+# without it, "route (i) is falsified" is ambiguous between "the design cannot be pinned" and "the
+# design was never fully pinned", which is the distinction the predeclaration exists to protect.
+#
+# ⚠ THIS DELIBERATELY DOES NOT ASSERT WHAT THE DEFAULTS ARE. The predeclaration refuses to, on the
+# ground that it would be an unmeasured mechanism claim, and this campaign has published one of
+# those. The point is weaker and sufficient: UNSET is recorded as `None` and is distinguishable from
+# any value, so a reader can tell "the runtime chose" from "we chose".
+#
+# ⚠ AND IT IS NOT A DIAGNOSIS. P0 established (REPRODUCTION-20260918 §5) that the null pair is
+# like-for-like, so the 4.452e-14 is genuine within-process nondeterminism -- but nothing here shows
+# these variables CAUSE it. They are the leading candidate because they are the unpinned reduction-
+# order controls; that is a reason to record them, not a finding.
+_THREAD_ENV = (
+    # the five COUNTS that are already set somewhere in the tree
+    "OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMEXPR_NUM_THREADS",
+    "VECLIB_MAXIMUM_THREADS",
+    # the four REDUCTION-ORDER controls that are set NOWHERE, which is the finding
+    "OMP_DYNAMIC", "OMP_SCHEDULE", "OMP_PROC_BIND", "OMP_PLACES",
+)
+_UNPINNED_ORDER_CONTROLS = ("OMP_DYNAMIC", "OMP_SCHEDULE", "OMP_PROC_BIND", "OMP_PLACES")
+
+
+def thread_environment_snapshot() -> dict:
+    """The threading environment as THIS process sees it. Capture only; sets nothing.
+
+    `unset` is `None`, never a substituted default, so a consumer can distinguish a value we chose
+    from a value the runtime chose. `order_controls_unset` names the reduction-order variables that
+    are absent, because their absence is the whole reason this function exists.
+    """
+    import os
+    seen = {k: os.environ.get(k) for k in _THREAD_ENV}
+    unset = sorted(k for k in _UNPINNED_ORDER_CONTROLS if seen[k] is None)
+    return {
+        "captured": seen,
+        "order_controls_unset": unset,
+        "order_controls_fully_pinned": not unset,
+        "capture_basis": (
+            "values AS SEEN BY THE PROCESS, not as written in a launcher -- a launcher line that "
+            "did not execute, or an export lost across an ssh or sbatch boundary, is invisible to "
+            "a source read but visible here"),
+        "why_it_matters": (
+            "thread COUNT is necessary and not sufficient for reduction-order determinism; with "
+            "these unset their values are runtime defaults that appear nowhere in the tree, so a "
+            "NOT-IDENTICAL repeat result cannot distinguish 'cannot be pinned' from 'was never "
+            "fully pinned'"),
+        "asserts_nothing_about_defaults": True,
+        "is_not_a_diagnosis_of": "the 4.452e-14 within-process null deviation",
+    }
+
+
 def transferred_repro_evidence() -> dict:
     """Candidate inputs to `B`, all TRANSFERRED from a different subject. Never a boundary.
 

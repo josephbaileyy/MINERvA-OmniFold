@@ -23,7 +23,19 @@ not adopted.** No compute was run to produce this.
 | 4 | **Invocation** | `z_build.py` with its declared operands. Exit-code contract: **1** = construction failed, **2** = completed-non-passing, **0** only for `--help`. So `sacct`'s `FAILED` is not the verdict |
 | 5 | **Resource envelope** | Job `58454524` on `nid004093`, `AllocCPUS 36`, `ElapsedRaw 1037 s` of a 5400 s wall (19.2%), `MaxRSS 49.73 GiB` of a 64 G request (77.7%) |
 
-⚠ **Ingredient 3 is INCOMPLETE, and that is the load-bearing defect.** Measured **repo-wide**:
+⚠ **Ingredient 3 is INCOMPLETE as a PIN and now COMPLETE as a RECORD.** `z_reproducibility.py`
+gained `thread_environment_snapshot()` on 2026-09-18: it captures all nine threading variables **as
+the process sees them**, reports `unset` as `None` rather than substituting a default, and names
+`order_controls_unset`. **This is the predeclaration's second remedy, taken deliberately in
+preference to the first** — `78a8c2ee` §3 offers *"either they are set before the runs, or their
+process-visible values are captured in the receipt of every run"*, and **setting them changes the
+behaviour of a production launcher while capturing them cannot change any result.** Setting is not
+this module's call; capturing is what makes a negative repeat interpretable. 8 tests, run in **both**
+directions — a capture that only ever reported `unset` would pass every absence test while being
+unable to notice a value — plus a ratchet that counts **assignments** repo-wide with a positive
+control. The pin itself remains a decision.
+
+⚠ **The gap the capture does not close, and it is the load-bearing defect.** Measured **repo-wide**:
 `OMP_DYNAMIC`, `OMP_SCHEDULE`, `OMP_PROC_BIND` and `OMP_PLACES` have **zero occurrences**, against a
 positive control of 43 `OMP_NUM_THREADS` hits in `nd-unfolding/` alone. Every pin set proposed so far
 pins **thread counts only**, and thread count is necessary but not sufficient for reduction-order
