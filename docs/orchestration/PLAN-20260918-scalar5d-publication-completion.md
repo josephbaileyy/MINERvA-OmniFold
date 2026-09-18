@@ -54,10 +54,12 @@ the most favourable open item in the package.
 | M-I | Registry fingerprint rule | **UNSATISFIABLE AS WRITTEN** | rejects every throw component at every `k`, including `k=0` | **D4** |
 | M-J | Lineage / two-ensemble question | **EVIDENCE COMPLETE; DISPOSITION OWED** — `e393ad5e` traced it and offered **no disposition**, correctly | **Two distinct unified-throw ensembles in one chain**: parent mean-centered with `uthrow_source` 2026-08-06, pilot throw input the 2026-09-14 precursor, corroborated by the parent's upstream null being G's `5.8223e-50` against the precursor's `1.4302e-50`. Plus `ESTIMATOR_REGISTRY:29` names `..._UTHROW.root` while the chain consumed the unsuffixed file (registry √tr `5.8077e-38` vs the parent's `sqrt_tr_new` `5.2696e-38`) | **R5, a ruling** — not lane work |
 | M-K | Cause 1, 2, 4, 5, 6, 7 dispositions | **1/2/4 criteria DRAFTED** (`230aecf7`, claimed tolerance-free, under assessment); **5 and 7 evidence COMPLETE** (`80b464ca` + my `Σ_A L_b` trace) | cause 7: laterality measured on payload, `measured lateral set == p4_lib.BANDS` True, 10 endpoints verified, lateral sum traced to the **active** blocks with `active_total_eq_sum5 = 0.0`; cause 5: VL66 falsifier NEGATIVE across Z's 15-module closure | **two rulings** (cause 7 sufficiency, cause 5 §6.1 disposition); cause 6 |
-| M-L | `ε` / null acceptance | **BLOCKED BY CONTRACT** | every route closed (packet §2.1) | Joseph's §6.4 route ruling |
+| M-L | `ε` / null acceptance | **BLOCKED BY CONTRACT**, but its *next step* changed | every route to `ε` closed (packet §2.1). **P1n WITHDRAWN** — the four OpenMP variables act on a channel LightGBM was measured to ignore; **P2 repriced `1.73` → `9.00`** (n=3), those figures having been measured actuals not enforced caps; **new P1d** tests the configuration at `0.25` | Joseph's §6.4 route ruling; P1d is running and needs no decision |
 | M-Q | **The supported reproduction path** | **DONE** — `REPRODUCTION-20260918-scalar5d-trunk-path.md` | Five ingredients assembled; measured reproduce/does-not split; concludes **bitwise identity is required as a consequence, not a preference** | — |
 | M-M | Trunk adoption | **NOT REACHED** | — | M-F…M-L |
-| M-N | M1 product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
+| M-N | M1 **publication** product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
+| M-R | M1 **diagnostic** projection — the cycle-breaker | **RUNNABLE NOW**, authorized 2026-09-18 | `run_m1_diagnostic.sh`: nine refusals incl. R5 admission; `runClass` written **into** the product; 36 tests; publication-path rc 3 re-measured by a ratchet | D5 (the region), and the destination-mask declaration — **not** adoption |
+| M-S | Determinism configuration, established **and tested** | **EXECUTED** — job `58507305`, `0.25` CPU task-h | `z_determinism_probe.py`: 3 arms × `1,2,4,8` threads, own process per cell, row floor, `UNAVAILABLE` never "no differences"; 15 tests. **Measured precursor: the production factory pins NOTHING and `n_jobs=None`** | — |
 | M-O | Rank-6 consumer contract **and the consumer itself** | **CONTRACT DRAFTED + CODE WRITTEN** | `rank6_significance.py`: five declaration refusals with distinct codes, ndf from the **retained rank**, truncation scan, region as an explicit declaration; **19 tests, both key guards mutation-verified** | **D3 + D5** supply the two values; the CLI payload path is deliberately unwired |
 | M-P | Note/primer/paper synchronization, build, **and retracted-value containment** | **BASELINE MEASURED AND GREEN, containment gate verified covering all three** | 2026-09-18 forced rebuild: `RESULT :: PASS`, note 94pp / primer 5pp / paper 3pp, containment `0 of 10 struck literals`; standalone at `3c3e9f2`, clean, level with origin, **all 26 `.tex`/`.bib` byte-identical** | re-verification after M-N's content edits |
 
@@ -286,7 +288,20 @@ mixed seeds.
    is scientifically current — only that the sources compile and are synchronized. Re-verification
    is owed after any M-N content edit.
 
-**No compute is requested by this plan.** Standing boundaries hold: any single job under 12 h is
+6. **The diagnostic path and the determinism probe.** Both authorized by Joseph 2026-09-18 and
+   both complete as code: `run_m1_diagnostic.sh` (nine refusals, R5 admission *called* not
+   restated), `z_determinism_probe.py` + `run_determinism_probe.sh`, and `lib_r5_admission.sh` as
+   the single implementation of the accounting block. **69 tests across four suites, five mutations
+   verified.** ⚠ The first probe submission FAILED in 4 s reporting *"R5 admission failed"* when it
+   had not failed admission at all — the admission check ran before the environment, so `python3`
+   was the node default 3.6.15 which cannot parse the meter. Four defects were found and fixed from
+   that one failure, the worst being that **the gate could not distinguish "I could not look" from
+   "I looked and refused"**. Resubmitted once under the corrective-resubmission grant, after a
+   verified repair and fresh admission.
+
+**Compute spent by this plan: `0.0011` + `0.25` CPU task-h reservation**, both inside the standing
+12-hour pre-authorization and Joseph's 2026-09-18 bounded-diagnostic grant, both accounted before
+submission. Standing boundaries hold: any single job under 12 h is
 pre-authorized, but nothing here launches one; the no-automatic-retry rule and R5 accounting are
 untouched; new compute will arrive as a bounded, priced request naming what a terminal result cannot
 authorize, per `AGENTS.md`'s next-action discipline.
@@ -549,7 +564,7 @@ adoption; three cannot be reached without it.**
 |---|---|
 | an explicitly adopted scalar-5D covariance | **RESERVED TO JOSEPH.** Reserved three times over — by this goal's text, by `AGENTS.md`'s "Decisions reserved for Joseph", and by `SPEC` |
 | **…with a supported reproduction path** | ✅ **DONE, M-Q.** It had **no document at all** until `88b11b7c`; a covering search found the repository's seven `reproduc*` files all PET-scoped or generic |
-| the required exact projections, correctly paired centrals, verified output records | **CODE COMPLETE, PRODUCTION BLOCKED.** Projector instrumented and tested; runner written with preconditions as refusals so it *cannot* run unadopted; request priced with its arithmetic leg measured. The verification is **implemented rather than promised** — output digest, `M` digest, row index read back out of the closed file and required equal, both support censuses |
+| the required exact projections, correctly paired centrals, verified output records | **CODE COMPLETE; the PUBLICATION product still blocked at adoption, the DIAGNOSTIC one now authorized and runnable (§11).** Projector instrumented and tested; runner written with preconditions as refusals so it *cannot* run unadopted; request priced with its arithmetic leg measured. The verification is **implemented rather than promised** — output digest, `M` digest, row index read back out of the closed file and required equal, both support censuses |
 | scientific claims supported at their stated level | **CONSUMER WRITTEN, TWO INPUTS OPEN.** `rank6_significance.py` enforces five declarations as refusals, takes ndf from the **retained rank**, and has **D5 enforced in code**. D3 and D5 supply the two values |
 | synchronized, successfully built note, primer and paper | ✅ **GREEN.** `RESULT :: PASS`; all 26 `.tex`/`.bib` byte-identical to the standalone, level with origin; retracted-value containment verified across **all three** documents with the note as positive control, self-test PASS on 11 positive and 4 negative cases |
 
