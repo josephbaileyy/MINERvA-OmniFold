@@ -164,3 +164,85 @@ defect `rc 8` exists to stop. The fixtures now declare their class.
 The `158.25` GPU / `262.00` CPU one-additional-member reservation is **released**. It was never
 submitted, so nothing is cancelled; it is struck from the required path and will not be re-proposed
 there.
+
+## 7. STATE: **BLOCKED ON JOSEPH'S DECISIONS** — recorded here so the open set is not re-derived
+
+Per the standing grant: *"If only my decisions remain, mark the goal blocked and stop the repeated
+status loop."* **This is that marking.** §0's objective is **not met**: the trunk is **not adopted**,
+so the required projections are not yet quoted from an adopted object and the documents are not yet
+synchronized against one.
+
+**What blocks it is not evidence, compute, or implementation.** No required measurement is missing
+that I am authorized to take, `R5` headroom is `~403` CPU task-hours against a required path that
+needs `~2`, and every consumer change is landed and tested. **The gate is ruling 9's `ADOPT`, which
+is Joseph's act by reservation** — and the goal says so in its own words: *"Submission is my act."*
+
+### 7.1 CLOSED, with receipts
+
+| | outcome |
+|---|---|
+| `D-RESOURCE` | **this record**, `75ee2c45` — the objective no longer lives only in a packet |
+| C1 | `58530433` — P leg **MET** (42 pair bands, no missing endpoint, flux exactly 100 contiguous); M leg **MEASURED**, incl. the sign-depends-on-band-size finding |
+| C2 | margin **brought**: `shift/(k·floor) = 2.6739`, recommended margin `0.168`; boundary **withheld** |
+| C5 · C6 · C7 · R5 | ruled in §3 and executed |
+| §6.4 **P0** | **done at `1405caad`**, self-contained; and `58524334` measured its outcome |
+| propagation test | defect found and fixed at `rank6_significance.py` |
+| DOCS | green **with proof it did the work**; 26/26 sources byte-identical at `3c3e9f2` |
+
+**RUNNING:** `58531919` (C4's jitter print) — `PENDING|Priority`, elapsed `0`. It is a **disclosure
+print**, so it gates no ruling below.
+
+### 7.2 ⚠ TWO RULINGS COMPOSE INTO A GAP — C3 cannot be evaluated, and ruling 2 is why
+
+**Ruling 6 dispositions C1, C2, C4, C5, C6, C7. C3 is not in that list**, and its boundaries
+(`cause3_agg`, `cause3_med`, `cause3_med_coverage`, `cause3_corr`) are **declared with provenance but
+unevaluated**. That is not an omission I can repair by working harder:
+
+> All three legs measure **movement across members**. `k=0` archived is the only member. **Ruling 2
+> declined `k₁`, which was the only additional member on offer** — so there is no second point, and
+> **the maximum over a one-element set of differences is not defined.**
+
+**This is a consequence of Joseph's own ruling 2, not a defect in it** — ruling 2's ground was that
+nothing required needs `N`, which remains true. But it means **C3's criterion is structurally
+unevaluable on the required path as scoped.** The disposition is therefore a real choice, not a
+measurement: *adopt with C3 declared-and-unevaluated, and say so in the note*, or *reopen exactly one
+member*. **Recommendation: the former** — the criterion's value is that it is predeclared and binds
+future members; a declared-unevaluated stability criterion disclosed as such is honest, whereas
+buying one member to produce a single difference would license a stability claim one comparison
+cannot support, which is the limitation I stated when the campaign was proposed.
+
+### 7.3 ⚠ RULING 5'S COVERAGE CLAUSE DOES NOT LITERALLY REACH `s_proj`
+
+Ruling 5 sets coverage *"100% on **bins** entering a quoted projection, ≥99% on the full reported
+support"*. **`s_proj`'s population is not bins — it is the functionals of ruling 4** (the rows of
+`M`, plus all-ones). So the clause is expressed over a different population than the leg ruling 3
+added, and there is **no `cause3_corr_coverage` key** to carry it.
+
+**Recommended reading: coverage `1.0` over the functional set** — every member of ruling 4's set
+*is* a quoted projection, so ruling 5's **first** clause, not its `≥99%` fallback, is the applicable
+one. **This is a reading of two approved rulings, not a quotation of either**, so it is recorded as a
+recommendation and **no key is declared.**
+
+### 7.4 OPEN — **all five are Joseph's**, each with exactly what it gates
+
+| # | decision | gates | my recommendation |
+|---|---|---|---|
+| **1** | **§6.4 route.** P0 is done and **returned non-identity**: first divergence at **call 0** (`3.27e-16`), endpoint not identical, `r_null 4.4311e-14` vs historical `4.4520e-14` (ratio `0.9953`). Ruling 7's order asks for P2 next *if needed*, and the exception *only if bitwise identity is unreachable*. | **NULL → ADOPT** | **Bitwise identity is unreachable**: divergence at call 0 with threading excluded at its tested scope means no thread or ordering control reaches it. P2 would re-measure a reproduction I have already reproduced to `0.995`. **Release the held exception.** |
+| **2** | **C3 declared-but-unevaluated** — may a trunk be adopted on it? | **ADOPT** | **Yes**, per §7.2, disclosed in the note. |
+| **3** | **`s_proj`'s reporting class.** I recorded **`per-bin`**. | the receipt's shape | **`per-bin`** — it is a max over a finite enumerated set, and its failures must be enumerable, which the aggregate class cannot express. |
+| **4** | **`cause2_f7_margin`** | C2's boolean counting as *performed* | **`0.168`**; measured `2.6739` clears it by `2.29×`. |
+| **5** | **`s_proj` coverage** | the receipt's shape | **`1.0`** per §7.3. |
+
+**Not open, and not to be re-litigated by any lane:** ruling 5's `δ = 5%` is **APPROVED**; ruling 2's
+campaign is **DECLINED and RELEASED**; ruling 8's pinning is **RESERVED**.
+
+### 7.5 WHAT FIRES THE MOMENT THOSE LAND — no further ask, no further diagnostic
+
+1. **NULL** — record the §6.4 disposition per decision 1. No compute.
+2. **ADOPT** — **Joseph's act.** The consumer route exists and is **digest-bound, not a flag**: the
+   candidate keeps `adoptable:false` and its historical rejection stands.
+3. **PROJ** — **one** `project_cov_nd.py --run-class publication` M1 run (`5D→(E_avail,W)`, 42 cells).
+   `≈0.03` CPU task-h, pre-approved under §1, fresh admission first.
+4. **DOCS** — re-verify note/primer/paper against the adopted trunk, with the marker guard.
+
+**Then the objective is met except for submission, which is Joseph's act.**
