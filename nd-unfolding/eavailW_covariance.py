@@ -542,7 +542,18 @@ def main():
         z = stats.norm.isf(p / 2.0) if p > 0 else float("inf")
         return chi2, p, z
     Cinv = np.linalg.pinv(C_total)
-    # high-W DIS corner: W >= 1.8 GeV (bins 2..5) AND E_avail >= 0.4 (the open-question-6 corner)
+    # high-W DIS corner: W >= 1.8 GeV AND E_avail >= 0.4 (the open-question-6 corner).
+    # CORRECTED 2026-09-18: this comment said "(bins 2..5)". W lower edges are
+    # [0, 1.1, 1.4, 1.8, 2.2, 3.0], so `>= 1.8` selects indices 3,4,5 -- THREE bins, not the four
+    # the old text described, which would have reached down to W = 1.4. The code was right and the
+    # comment was wrong; a reader checking the region against the comment would have had it wider
+    # than the selection. Corner is 4 E_avail bins x 3 W bins = 12 of 42 cells.
+    # NOTE, recorded here because it governs how this region may be used: `W >= 1.8` first appears
+    # in code on 2026-06-09 (b64cf582), two days AFTER the first (E_avail,W) excess test
+    # (2026-06-07, 95ce2950), and HIGHER_DIM_OMNIFOLD_DESIGN.md:169 says the W axis "localizes open
+    # question 6 to the high-W DIS corner". The E_avail question is prespecified (2026-06-03,
+    # de84c61e); this W boundary is DATA-SELECTED. See
+    # docs/orchestration/CONTRACT-20260918-rank6-significance-consumer.md §1.
     ew_idx = np.arange(n).reshape(n_ea, n_w)
     corner = ((ea_e[:-1] >= 0.4)[:, None] & (w_e[:-1] >= 1.8)[None, :])
     cidx = ew_idx[corner]

@@ -258,3 +258,49 @@ mixed seeds.
 pre-authorized, but nothing here launches one; the no-automatic-retry rule and R5 accounting are
 untouched; new compute will arrive as a bounded, priced request naming what a terminal result cannot
 authorize, per `AGENTS.md`'s next-action discipline.
+
+---
+
+## 4. The M1 compute request, prepared and priced — NOT requested here
+
+Per the instruction to prepare concrete bounded requests **before** seeking approval. **This is not a
+request.** It cannot be made until M-M (adoption) is reached, and nothing below is submitted.
+
+**What it measures.** `C_low = M1 C_Z M1ᵀ` on the adopted trunk: one `5D → (E_avail, W)` projection,
+42 dense destination cells, with `M1 x_5D` as the paired central estimate.
+
+**What a terminal result would NOT authorize** — stated in advance per `AGENTS.md`'s next-action
+discipline: it would not calibrate a significance, would not supply support `C_Z` never had, would
+not make an independently unfolded 2D estimator the marginal of the 5D one, and would not license any
+other projection or an event-level fit.
+
+**Sizing, derived from measured anchors rather than estimated.** The pilot's own numbers are the
+anchor, and its recorded lesson is that *"any future sizing starts from 49.73 GiB"* because its
+prediction was low by more than an order of magnitude.
+
+| Quantity | Value | Basis |
+|---|---|---|
+| Peak memory | **~3 GiB**, request **16 G** | `C_Z` as doubles is `10694² × 8 = 914.8 MB`; ROOT's `TH2D` with over/underflow is `10696² × 8 = 915.1 MB`; allow one copy during read. Against the pilot's measured **49.73 GiB**, this is a far smaller object than the assembly. |
+| Compute | **≈ 0.3 s** for the matmul | `O(n²m) = 10694² × 42 × 2 ≈ 9.6 GFLOP`. Calibrated against the pilot's **measured** `eigvalsh` at the same `n`: `O(n³) ≈ 1.2 TFLOP` in **33.503 s** → ≈ 36 GFLOP/s effective. |
+| Dominant cost | **ROOT I/O** of a ~900 MB histogram, not arithmetic | — |
+| Wall request | **15 min** | The pilot used `ElapsedRaw 1037 s` for 45-band assembly **plus two** eigendecompositions; M1 is one read, one small matmul, one 42×42 write. |
+| Shape | 1 node, `--qos=shared --constraint=cpu --ntasks=1 --cpus-per-task=8 --mem=16G --time=00:15:00` | Matches arm 7's partition; no exclusive node needed |
+| Reservation bound | **≈ 2.0 CPU task-h** (8 CPUs × 0.25 h) | Enforced-cap pricing, `SPEC:3140` — a request bounds an attempt, not a completion |
+
+**Against accounting:** the campaign drew ~77.0 of 393.5 authorized CPU task-hours, so ~2 task-h is
+0.5% of the remaining headroom. **The no-automatic-retry rule applies unchanged**: a failure returns
+for a new decision rather than resubmitting.
+
+**Preconditions, all of which must hold before this is submitted:**
+1. **M-M** — the trunk is explicitly adopted. Yours.
+2. **M-G** — done; the projector now writes a row index, digests its output, and reads the row index
+   back. It must land *before* production, not after, since a retrofitted digest records only that a
+   file has not changed since the retrofit.
+3. The **destination mask** is declared prospectively — `project_cov_nd.py` offers two and on 42 bins
+   they can differ materially.
+4. **D5** — the region is named, since the product is only useful for a claim whose region is fixed.
+
+**Verification the run must produce, and it is already implemented rather than promised:** output
+file digest, input covariance and CV digests, `M` content digest, row index **read back out of the
+closed file** and required equal, both support censuses (`src_cells_dropped` and `n_empty`), and the
+`CANDIDATE` status marker. Independent re-verification remains `[cb0b6b]`'s.
