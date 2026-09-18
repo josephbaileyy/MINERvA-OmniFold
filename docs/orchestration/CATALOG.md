@@ -1268,6 +1268,36 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   every consumed byte, so it is a **bounded negative**, which is what the falsifier asked for.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
+- [`ASSESSMENT-20260918-causes-1-2-4-acceptance-criteria.md`](ASSESSMENT-20260918-causes-1-2-4-acceptance-criteria.md)
+  - **The causes 1/2/4 packet (`230aecf7`). SOURCE ONLY — no payload, no compute. Approves nothing;
+  approval is Joseph's.** **The organizing "all three are tolerance-free" claim HOLDS for causes 1 and
+  4 and its WORDING FAILS for cause 2 — whose conclusion survives on better ground than the packet
+  gives it.** **`Z1`:** `SPEC` §6.2's own title is *"closure, irrespective of magnitude"*, so the
+  ruling excludes magnitude and a tolerance would ADD a criterion — holds. **`Z2`:** `SPEC:1005-1019`'s
+  four conditions are all binary — holds. **`Z3` — THE REFUTATION:** the packet says `k` is *"already
+  fixed in code, **not chosen**"*; `uq_math.py:129-137` says the opposite in its own capitals —
+  *"THE THRESHOLD BELOW IS A CODIFICATION, NOT A REPO DECISION"*, *"`2.0` is **chosen**"*, *"a
+  codification with an owner and a date, not a fact recovered from the record."* **Fixed in code
+  describes where it lives, not whether it is justified.** ⚠ But the conclusion survives on the ground
+  the packet had available and did not use: `k`'s derivation is **statistical** — `1.0×` is at the
+  sampling floor, *"consistent with being a finite-N fluctuation"* — which is categorically unlike
+  `θ`'s defect of using a **resolution** as an **acceptance cap**, and the comment carries its own
+  anti-tuning disclaimer. **`Z4` — the L4 composition has no overlap but the MARGIN falls between
+  them:** at a ratio of `2.01` against `k = 2.0`, cause 2 returns True and L4 returns "identical" —
+  **both PASS one perturbation from flipping**, and §2.2(c) makes the margin recoverable but nothing
+  gates on it. **The same gap I recorded from the L4 side at `8df3b173` `C5`, found independently from
+  cause 2's side.** **`Z5`:** cause 4's mutation is concrete in its TARGET and not in its
+  DISCRIMINATOR — §3.3's refusal 3 is a **digest comparison on the stored object**, and a mutation
+  routing `jit_trace` into that object trips it too, **possibly first**, so *"the guard fired"* would
+  be unverified. The catalogued mutation-refused-before-reaching-the-guard shape, in a packet
+  unusually exposed to it because it specifies both mechanisms. **`Z6`:** the guard-condition
+  ambiguity is **not a packet defect but a `SPEC` SELF-CONTRADICTION** — `:1010-1011` says condition
+  3, `:1237` says condition 4, both `SPEC`'s own text; *"near-identical in content"* is true of the
+  content and not of the attribution, and an implementer cannot resolve a spec contradiction by
+  picking. **`Z7`:** the packet still says *"twenty"* sources in two places against the corrected 24 —
+  and the distinction matters, since the glob covered all 24, making it a **description** defect
+  rather than a **coverage** one. The sweep is relayed in my record as in the packet's and is not
+  laundered by repetition.
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
   launched, cluster read-only. **CERTIFIED (1):** all four launchers exist with exactly the pinned
   specs — **70 CPU tasks, 0 GPU**, arrays read from the scripts never from a `sacct` bracket — with two
