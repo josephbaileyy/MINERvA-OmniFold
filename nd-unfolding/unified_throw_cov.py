@@ -1091,7 +1091,12 @@ def do_combine(args):
     # opt-in.
     jit_trace = None
     jit_operands = None
-    if args.jitter_print:
+    # ⚠ `getattr`, NOT `args.jitter_print`. This module is driven programmatically as well as
+    # from the CLI: `tests/test_z_precursor.py` builds `args` as a `SimpleNamespace`, and 21 of
+    # its cases broke the moment a new attribute was read directly. argparse always supplies the
+    # flag for a real run; a constructed namespace need not, and a new opt-in flag must not make
+    # existing correct callers fail.
+    if getattr(args, "jitter_print", False):
         # CONDITION 3, ENFORCED BY A GUARD RATHER THAN BY A ONE-TIME COMPARISON. The stored
         # covariance content is digested BEFORE the jitter block and required identical after, so
         # the value cannot reach the stored covariance by any path -- including an edit made later

@@ -178,7 +178,11 @@ class TheCostIsOptIn(unittest.TestCase):
         another full CV unfold. SPEC §5.8b prices that at <= 0.5764 CPU task-h."""
         t = SRC.read_text()
         self.assertIn('"--jitter-print", action="store_true"', t)
-        self.assertIn("if args.jitter_print:", t)
+        # ⚠ `getattr`, not direct attribute access. Reading `args.jitter_print` directly broke 21
+        # cases in test_z_precursor.py, which drives this module with a constructed
+        # SimpleNamespace -- a new opt-in flag must not make existing correct callers fail.
+        self.assertIn('if getattr(args, "jitter_print", False):', t)
+        self.assertNotIn("if args.jitter_print:", t)
 
     def test_the_flag_help_states_the_cost(self):
         t = SRC.read_text()
