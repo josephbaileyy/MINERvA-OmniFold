@@ -18,6 +18,16 @@ described here is deployed.
 
 | file | what it is |
 |---|---|
+| `READINESS-20260918.md` | **start here**: what is executable, what is externally blocked, and the smallest next authorization |
+| `ENDPOINT_EAVAIL_SPECIFICATION-20260918.md` | the hadronic endpoint, scoring domain and reference-calibration procedure, with every scientific threshold marked UNRATIFIED |
+| `EXTRACTION_IDENTITY_CONTRACT-20260918.md` | field-by-field extraction, the ten identity checks, and the authorization-scope correction |
+| `CALIBRATION_AND_COST-20260918.md` | the bounded GPU calibration job and the rebuilt cost accounting, with Tier-A separated from work necessary for completion |
+| `requests/DRAFT-*.md` | requests to Agent A and to Gregor. **Drafted, not sent** |
+| `reference_calibration.py` | the ceiling formula; self-validates against the committed acceptance-map product |
+| `selection_rule.py` | the decision rule as code: total, unambiguous, and separating measured performance from unratified policy |
+| `identity_contract.py` | fail-closed join verification: collisions, unmatched rows, native misses, ordering, inventory symmetry, provenance |
+| `authorization_scope.py` | enforces the A1 authorization rather than a superset of it |
+| `calibrate_cost.py`, `sbatch_cost_calibration.sh` | the stage-2 GPU calibration. **Not submitted** |
 | `MATCHED_COMPARISON_PROPOSAL-20260918.md` | **the execution proposal, rev. 2**: the paper's three configurations kept separate; a field-by-field extraction contract; the `OI-71` correction; the minimum representative validation including a hadronic endpoint; adequacy / non-inferiority / superiority separated with δ = 0.017 and δ_switch = 0.02; frozen port, fairness and inference specifications; stages, costs and stop conditions |
 | `measure_step_cost_scale.py` | bounds his backbone's step cost against ours at two batch sizes, with the second batch as a control on overhead dominance |
 | `slides/recommended_pet_configuration.pdf` | the deck: 20 main slides + 5 appendix slides. Slide 3 lists the revision-1 errors; slide 7 identifies which configuration is "Gregor's"; slides 16--19 carry the matched design; slide 20 states what the *final* deck will lead with |
@@ -48,7 +58,10 @@ python3 make_figures.py --budget receipts/typed-object-budget.json \
   --outdir slides/figures
 python3 measure_step_cost_scale.py --repo "$REPO" --gregor-checkout "$GREGOR" \
   --output receipts/step-cost-scale.json
-python3 -m unittest test_typed_object_budget
+python3 reference_calibration.py \
+  --acceptance-map ../../products/pet/fullevent_fps/acceptance_map_fullevent_fps.json \
+  --output receipts/reference-calibration.json
+python3 -m unittest discover -s . -p 'test_*.py'
 ( cd slides && pdflatex -interaction=nonstopmode recommended_pet_configuration.tex )
 ```
 
@@ -65,4 +78,9 @@ largest borrowings**); that aggregation improves closure (**no closure measureme
 aggregation exists**); or that the token cap binds as often in the selected,
 POT-weighted population. See `CLAIM_EVIDENCE_INDEX-20260918.md` §M.
 
-Nothing here has been sent to Ben or to anyone else.
+**The deck is deliberately not rebuilt for this package.** It still reflects revision 2
+of the proposal; the design moved again here, and rebuilding slides against a moving
+design wastes effort and produces a document that disagrees with its own sources. The
+deck is regenerated once the endpoint thresholds are ratified and `r` is measured.
+
+Nothing here has been sent to Ben, to Agent A, or to anyone else.

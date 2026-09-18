@@ -1,0 +1,55 @@
+{
+  "scope": "reference-ceiling calibration procedure and its sensitivity to the scoring weight. NOT a ceiling for any particular injection -- the displacement field of a real injection is computable only from the input npz, which this module never reads.",
+  "acceptance_map": {
+    "path": "../../products/pet/fullevent_fps/acceptance_map_fullevent_fps.json",
+    "n_cells": 285,
+    "git_head": "c39693e",
+    "inputs_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
+  },
+  "iterations": 3,
+  "self_validation_against_product": {
+    "1": {
+      "recomputed": 0.4235162246483056,
+      "product": 0.4235162246483055,
+      "deviation": 5.551115123125783e-17,
+      "agrees": true
+    },
+    "2": {
+      "recomputed": 0.5553729146031491,
+      "product": 0.555372914603149,
+      "deviation": 1.1102230246251565e-16,
+      "agrees": true
+    },
+    "3": {
+      "recomputed": 0.6094746703987659,
+      "product": 0.6094746703987659,
+      "deviation": 0.0,
+      "agrees": true
+    },
+    "4": {
+      "recomputed": 0.637451754320718,
+      "product": 0.6374517543207181,
+      "deviation": 1.1102230246251565e-16,
+      "agrees": true
+    }
+  },
+  "ceiling_by_weighting": {
+    "truth_mass": 0.6094746703987659,
+    "uniform_over_populated_cells": 0.7679370714693877,
+    "mass_times_one_minus_acceptance": 0.37110416427920656,
+    "mass_times_acceptance": 0.9339409394641616,
+    "mass_in_cells_with_acceptance_at_least_half": 0.9732231359629432,
+    "mass_in_cells_with_acceptance_below_five_percent": 0.017276233079495315
+  },
+  "range": {
+    "min": 0.017276233079495315,
+    "max": 0.9732231359629432,
+    "spread": 0.9559469028834479
+  },
+  "conclusion": "At these iterations the ceiling spans nearly the whole unit interval purely as a function of where the injected displacement sits. An inherited ceiling is therefore arbitrary rather than conservative, and a new injection variable requires a newly calibrated ceiling.",
+  "not_ratified": [
+    "No ceiling here is adopted for any endpoint.",
+    "The scoring domain for an E_avail injection is an open scientific choice.",
+    "Neither the tolerance nor the seed scatter of the pT endpoint transfers."
+  ]
+}
