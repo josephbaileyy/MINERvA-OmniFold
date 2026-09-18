@@ -49,8 +49,42 @@ import time
 from pathlib import Path
 from typing import Any
 
-os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
 os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
+
+
+def _select_keras_backend() -> dict[str, Any]:
+    """Set TF_USE_LEGACY_KERAS only where it is the right answer.
+
+    The vendored PET is Keras-2 code. Two environments satisfy it and they need OPPOSITE
+    settings, which an unconditional `setdefault` gets wrong in one of them:
+
+    * TF 2.16 with Keras 3 plus the `tf_keras` shim (this Mac) -- the variable is
+      REQUIRED, or `tf.keras` resolves to Keras 3 and the model cannot build;
+    * TF 2.15 with Keras 2 bundled and no `tf_keras` (Perlmutter's tensorflow/2.15.0) --
+      the variable is HARMFUL: TF then looks for a `tf_keras` package that is not there
+      and `tensorflow.keras` disappears entirely.
+
+    Measured 2026-09-18: hardcoding it failed job 58526592 in 18 s with
+    `ModuleNotFoundError: No module named 'tensorflow.keras'`, having passed on the Mac.
+    So the choice is made from what is installed, and recorded in the receipt so the
+    environment is attributable rather than assumed.
+    """
+    import importlib.util
+
+    shim = importlib.util.find_spec("tf_keras") is not None
+    if shim:
+        os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
+    return {
+        "tf_keras_shim_available": shim,
+        "tf_use_legacy_keras": os.environ.get("TF_USE_LEGACY_KERAS"),
+        "reason": (
+            "Keras-3 TensorFlow with the tf_keras shim: the shim is selected."
+            if shim else
+            "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored "
+            "PET needs. If tf.keras turns out to be Keras 3 the model will fail to build "
+            "and that is the documented, loud failure."
+        ),
+    }
 
 TOKEN_COUNTS = (12, 33)   # ours today; Gregor's max_particles
 OUR_BATCH = 512           # NOMINAL_SEED_POLICY["batch_size"]
@@ -133,8 +167,10 @@ def time_ours(repo: Path, tokens: int) -> dict[str, Any]:
     root = repo / "omnifold_nn"
     if str(root) not in sys.path:
         sys.path.insert(0, str(root))
+    backend = _select_keras_backend()
     import numpy as np
     import tensorflow as tf
+    import keras
     from omnifold.net import PET
 
     if not tf.config.list_logical_devices("GPU"):
@@ -165,7 +201,8 @@ def time_ours(repo: Path, tokens: int) -> dict[str, Any]:
         float(step())      # force completion before stopping the clock
         times.append(time.perf_counter() - start)
     return {
-        "framework": "tensorflow (legacy keras)",
+        "framework": f"tensorflow {tf.__version__} / keras {keras.__version__}",
+        "keras_backend_selection": backend,
         "tokens": tokens,
         "trainable_parameters": int(sum(int(np.prod(w.shape)) for w in model.trainable_weights)),
         **_throughput(times, OUR_BATCH),
