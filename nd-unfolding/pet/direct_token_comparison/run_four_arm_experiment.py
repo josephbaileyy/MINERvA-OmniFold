@@ -46,6 +46,30 @@ def head_commit(checkout: Path) -> str:
     ).stdout.strip()
 
 
+EXECUTION_PATH_FILES = (
+    "nd-unfolding/pet/direct_token_comparison/tail_validation.py",
+    "nd-unfolding/pet/direct_token_comparison/four_arm_representation.py",
+    "nd-unfolding/pet/direct_token_comparison/run_four_arm_experiment.py",
+    "nd-unfolding/pet/typed_token_comparison.py",
+    "nd-unfolding/pet/typed_descriptors.py",
+    "nd-unfolding/pet/typed_descriptor_keras.py",
+)
+
+
+def execution_path_digests(checkout: Path) -> dict[str, str]:
+    """Digest the files that define the execution path being validated.
+
+    Keyed on these rather than on the whole commit: a validation receipt should be
+    invalidated by a change to the code it validated, not by an unrelated commit
+    elsewhere in the repository. Keying on HEAD made every later commit -- including
+    adding a document -- silently void the validation.
+    """
+    return {
+        name: hashlib.sha256((checkout / name).read_bytes()).hexdigest()
+        for name in EXECUTION_PATH_FILES
+    }
+
+
 def released_widths(receipt: dict[str, Any]) -> set[tuple[int, ...]]:
     """Return the widths a validation receipt actually released."""
     return {tuple(int(v) for v in w) for w in receipt.get("released_widths", [])}
@@ -59,10 +83,16 @@ def require_validation(
     receipt = json.loads(payload)
     digest = hashlib.sha256(payload).hexdigest()
     commit = head_commit(checkout)
-    if receipt.get("commit") != commit:
+    current = execution_path_digests(checkout)
+    recorded = receipt.get("execution_path_digests")
+    if recorded != current:
+        moved = sorted(
+            name
+            for name in current
+            if not recorded or recorded.get(name) != current[name]
+        )
         raise ValueError(
-            f"Validation receipt was written at {receipt.get('commit')}, "
-            f"HEAD is {commit}: it does not describe this code"
+            f"The validated execution path has changed since the receipt: {moved}"
         )
     if not receipt.get("complete"):
         raise ValueError("Validation receipt is incomplete; training is not released")
@@ -240,6 +270,7 @@ def main() -> None:
         "scope": "tail validation of the four-arm execution path; no closure statistic",
         "authorization": "Joseph, 2026-09-18; <=1.5 GPU-h, <=4 submissions",
         "commit": head_commit(args.checkout),
+        "execution_path_digests": execution_path_digests(args.checkout),
         "criteria_path": criteria.path,
         "criteria_sha256": criteria.sha256,
         "precision_policy": policy,

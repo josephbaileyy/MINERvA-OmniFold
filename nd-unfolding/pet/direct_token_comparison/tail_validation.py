@@ -549,15 +549,35 @@ def check_finite_differences(
 
     plateau_failures = 0
     relatives: list[float] = []
+    details: list[dict[str, Any]] = []
     for index, flat in coordinates:
         values = [estimate(index, flat, step) for step in steps]
         spread = max(values) - min(values)
         reference = max(abs(value) for value in values)
-        if reference > 0 and spread / reference > agreement:
+        plateau_ok = not (reference > 0 and spread / reference > agreement)
+        if not plateau_ok:
             plateau_failures += 1
         truth = float(analytic[index].reshape(-1)[flat])
         best = estimate(index, flat, optimum)
-        relatives.append(abs(best - truth) / max(abs(truth), 1e-12))
+        absolute = abs(best - truth)
+        relative = absolute / max(abs(truth), 1e-12)
+        relatives.append(relative)
+        # Per-coordinate, because a single outlier is the whole story when the
+        # median is four orders of magnitude inside the bound: without the gradient
+        # magnitude and the absolute error there is no way to tell a wrong gradient
+        # from a small denominator inflating a correct one.
+        details.append(
+            {
+                "weight_index": index,
+                "flat_index": flat,
+                "analytic": truth,
+                "abs_gradient": abs(truth),
+                "numeric": best,
+                "absolute_error": absolute,
+                "relative_error": relative,
+                "plateau_ok": plateau_ok,
+            }
+        )
 
     if not coordinates:
         return {
@@ -565,10 +585,17 @@ def check_finite_differences(
             "passed": False,
             "reason": f"no sampled parameter had a gradient above the floor {floor}",
         }
+    worst = max(details, key=lambda d: d["relative_error"]) if details else None
     return {
         "check": "V5",
         "coordinates": len(coordinates),
         "gradient_floor": floor,
+        "coordinate_details": details,
+        "worst_coordinate": worst,
+        "median_abs_gradient": statistics.median(d["abs_gradient"] for d in details),
+        "median_absolute_error": statistics.median(
+            d["absolute_error"] for d in details
+        ),
         "plateau_failures": plateau_failures,
         "plateau_passed": plateau_failures == 0,
         "median_relative": statistics.median(relatives),

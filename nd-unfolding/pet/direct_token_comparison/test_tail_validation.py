@@ -75,6 +75,9 @@ class TrainingRefusalTests(unittest.TestCase):
     def receipt(self, **overrides) -> dict:
         body = {
             "commit": entry.head_commit(HERE.parent.parent.parent),
+            "execution_path_digests": entry.execution_path_digests(
+                HERE.parent.parent.parent
+            ),
             "complete": True,
             "released_widths": [[0, 4, 2], [0, 18, 2]],
         }
@@ -94,12 +97,28 @@ class TrainingRefusalTests(unittest.TestCase):
             )
             self.assertEqual(len(result["validation_receipt_sha256"]), 64)
 
-    def test_a_receipt_from_another_commit_is_refused(self) -> None:
+    def test_a_receipt_for_changed_execution_path_code_is_refused(self) -> None:
+        digests = entry.execution_path_digests(HERE.parent.parent.parent)
+        digests["nd-unfolding/pet/direct_token_comparison/tail_validation.py"] = "0" * 64
         with tempfile.TemporaryDirectory() as scratch:
-            path = self.write(self.receipt(commit="0" * 40), Path(scratch))
+            path = self.write(
+                self.receipt(execution_path_digests=digests), Path(scratch)
+            )
             with self.assertRaises(ValueError) as caught:
                 entry.require_validation(HERE.parent.parent.parent, path, {(0, 4, 2)})
-            self.assertIn("does not describe this code", str(caught.exception))
+            self.assertIn("execution path has changed", str(caught.exception))
+
+    def test_an_unrelated_commit_does_not_void_the_receipt(self) -> None:
+        # Keying on HEAD meant adding a document silently voided validation. The
+        # receipt must survive a commit that does not touch the validated path.
+        with tempfile.TemporaryDirectory() as scratch:
+            path = self.write(self.receipt(commit="0" * 40), Path(scratch))
+            entry.require_validation(HERE.parent.parent.parent, path, {(0, 4, 2)})
+
+    def test_every_execution_path_file_is_digested(self) -> None:
+        digests = entry.execution_path_digests(HERE.parent.parent.parent)
+        self.assertEqual(set(digests), set(entry.EXECUTION_PATH_FILES))
+        self.assertTrue(all(len(v) == 64 for v in digests.values()))
 
     def test_an_incomplete_receipt_is_refused(self) -> None:
         with tempfile.TemporaryDirectory() as scratch:
@@ -215,6 +234,21 @@ class BatteryTests(unittest.TestCase):
         )
         self.assertTrue(record["plateau_passed"], record)
         self.assertLessEqual(record["max_relative"], record["limit"], record)
+
+    def test_finite_differences_record_each_coordinate(self) -> None:
+        record = validation.check_finite_differences(
+            self.modules, self.build(), self.criteria, 6
+        )
+        self.assertEqual(len(record["coordinate_details"]), record["coordinates"])
+        for detail in record["coordinate_details"]:
+            self.assertGreaterEqual(
+                detail["abs_gradient"], record["gradient_floor"]
+            )
+            for key in ("absolute_error", "relative_error", "plateau_ok"):
+                self.assertIn(key, detail)
+        self.assertEqual(
+            record["worst_coordinate"]["relative_error"], record["max_relative"]
+        )
 
     def test_float64_reference_tracks_the_float32_trajectory(self) -> None:
         captured = validation._two_steps_recording(self.modules, self.build(), "/CPU:0")
