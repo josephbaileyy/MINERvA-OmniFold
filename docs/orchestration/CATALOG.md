@@ -260,6 +260,33 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   lead to the same next action. **And a third state: today it can produce neither outcome**, since
   `κ = None` refuses even healthy baselines. **Hence the sequencing recommendation — the cause-3
   decision is free and prices the most expensive item.**
+- [`PACKET-20260918-causes-1-2-4-acceptance-criteria.md`](PACKET-20260918-causes-1-2-4-acceptance-criteria.md)
+  - **ACCEPTANCE CRITERIA for `(cause 1, Z)`, `(cause 2, Z)` and `(cause 4, Z)` — design only, no
+  compute, authorized by Joseph 2026-09-18.** The owning lane prepares; `[cb0b6b]` evaluates. ⚠ **THE
+  ORGANIZING RESULT: ALL THREE ARE TOLERANCE-FREE, so none can be blocked by the unestablished quantity
+  that closed `θ` and blocks `cause3_agg`/`δ_bin` — all three are approvable in full TODAY**, form,
+  population and value. Cause 1 closes *"irrespective of magnitude"* (§6.2, so a tolerance would ADD a
+  criterion the ruling removed); cause 2's F7 branch is binary with `F7_FLOOR_MULTIPLE = 2.0` already
+  fixed in code; cause 4's condition 3 requires the covariance content **not to change at all**.
+  **Fourth instance of one structural pattern** after `B`'s boolean estimator and cause 3's L4: a
+  discrete protected quantity leaves no knob, so Gap-3 tuning is impossible by construction. ⚠⚠ **THE
+  CAUSE-2 CONTRADICTION IS NOT REAL, AND THE WORD DOING THE WORK IS "ALONE."** `AGENTS.md:29`'s
+  *"mean-centering alone is disqualified"* is **the F7 branch OUTCOME**, not an independent ruling
+  against a centering convention — `FINDING-20260901:16` reads *"at the floor, mean-centering alone is
+  acceptable; well above it…"*, `:52` *"pairing disqualifies mean-centering alone"*. And
+  `ESTIMATOR_REGISTRY.md:29` **satisfies it**, recording the CV-centered variant `6.2367e-38` beside the
+  mean-centered `5.8077e-38`. **Both records hold simultaneously; resolving a non-existent contradiction
+  would have produced a criterion protecting nothing.** So cause 2 is **not "which variant"** but
+  **re-evaluate the branch on Z's own operands**, since Z inherits nothing from G — and it **composes
+  with cause 3's L4**: cause 2 is the branch's VALUE, L4 its STABILITY across the member set. ⚠ **A
+  "bound" is the WRONG INSTRUMENT for cause 4** — condition 3 requires no content change at all, so a
+  bound would presuppose a permitted change and WEAKEN the spec; the criterion is four binary
+  conditions plus **a guard that must be MUTATION-TESTED**, since the spec itself says a one-time
+  comparison is insufficient and *"a quantity in scope is one edit from being subtracted."* Carries
+  cause 3's three generalised principles without re-deriving them. **Two items ROUTED not decided:** a
+  citation ambiguity over whether the guard enforces condition 3 (`SPEC:1010`) or condition 4
+  (`:1237`), and `OI-186/188`'s population-identity requirement, relayed and unverified. **Nothing
+  adopted; cause 3's three boundaries still WITHHELD.**
 - [`PACKET-20260917-cause3-joint-baseline-acceptance.md`](PACKET-20260917-cause3-joint-baseline-acceptance.md)
   - **COMPLETES §3.7b's cause-3 joint-baseline acceptance design — a DESIGN deliverable with an
   approval recommendation, authorized by Joseph 2026-09-17. No compute, no member production, no
