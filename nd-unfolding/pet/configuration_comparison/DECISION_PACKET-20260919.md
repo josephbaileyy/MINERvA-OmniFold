@@ -195,7 +195,7 @@ flagged unratified.
 | U6 | δ, with a physics argument | "no difference detected" is read as "at least as good" |
 | U7 | δ_switch | encodes what we will pay to switch; not measurable |
 | **U9** | **his training schedule** | his cosine schedule needs `max_steps` **derived from the agreed fair budget**, never copied from his job script |
-| **U10** | **token cap: 12 or 33** | 33 is his `max_particles` and needs a dump re-run; it roughly doubles the cost, and `r` grows with tokens |
+| **U10** | **token cap: 12 or 33** | 33 is his `max_particles` and needs a dump re-run; it costs ≈1.9x per evaluation, and `r` grows 2.7 -> 4.2 with tokens |
 | **U11** | **run his arm without `pid` and `add_info`** | until R-1/R-2 lands his arm loses two input channels it was designed around; that is a handicap, not a matched comparison |
 
 **To be measured — no decision needed.**
@@ -206,9 +206,9 @@ flagged unratified.
 | M2 | injected displacement on the endpoint | **measured 0.2733** |
 | M3 | loss from scoring off-variable | **measured 42.4 %** |
 | M4 | acceptance and truth mass per bin and per stratum | **measured** |
-| M5 | `r`, the per-example cost ratio, at 12 and 33 tokens | **being re-measured at the paper flags**, job 58551348 |
-| M6 | inference cost per arm | **being measured**, first time |
-| M7 | whether his native batch 2048 runs at 33 tokens, and what fixes it | **being diagnosed**, job 58551348 |
+| M5 | `r`, the per-example cost ratio, at 12 and 33 tokens | **measured 2.7 (12 tokens) and 4.2 (33) at matched batch; 3.55 at his native batch under the repair** |
+| M6 | inference cost per arm | **measured**: 36 M presentations per evaluation, ratio 1.9 and 2.4 |
+| M7 | whether his native batch 2048 runs at 33 tokens, and what fixes it | **measured: a backend repair (math SDPA) keeps his recipe; no batch change needed** |
 | M8 | σ, seed scatter, per arm | **pilot; pretrained arm blocked on R2** |
 | M9 | exact-coordinate ties among real tokens in the production clouds | **not yet run on real data**; zero in the synthetic fixture. Ties make k-NN ordering engine-defined, so this is a cheap CPU check to run before the comparison, not a risk to carry (`verify_knn_tie_freedom`) |
 

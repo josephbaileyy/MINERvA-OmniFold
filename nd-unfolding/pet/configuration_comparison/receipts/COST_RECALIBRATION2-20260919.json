@@ -1,0 +1,351 @@
+{
+  "scope": "training throughput for both arms on ONE GPU at their real configurations, and evaluation costs PROJECTED from it. No convergence, no closure statistic, no learning claim.",
+  "cross_framework_qualification": "DEVICE-MATCHED, FRAMEWORK-UNMATCHED. Ours is TensorFlow and his is PyTorch because the Keras port does not exist yet, so every ratio here folds in a framework difference. It distinguishes 'comparable' from 'orders of magnitude apart'; it is not the same-framework ratio the final costing needs.",
+  "gpu_identity": {
+    "ours": {
+      "cuda_visible_devices": "0",
+      "devices": [
+        {
+          "uuid": "GPU-bb2ce7ce-da0a-534c-4f59-14b3820d2971",
+          "pci_bus_id": "00000000:03:00.0",
+          "name": "NVIDIA A100-SXM4-40GB"
+        }
+      ],
+      "primary_uuid": "GPU-bb2ce7ce-da0a-534c-4f59-14b3820d2971",
+      "primary_pci_bus_id": "00000000:03:00.0"
+    },
+    "theirs": {
+      "cuda_visible_devices": "0",
+      "devices": [
+        {
+          "uuid": "GPU-bb2ce7ce-da0a-534c-4f59-14b3820d2971",
+          "pci_bus_id": "00000000:03:00.0",
+          "name": "NVIDIA A100-SXM4-40GB"
+        }
+      ],
+      "primary_uuid": "GPU-bb2ce7ce-da0a-534c-4f59-14b3820d2971",
+      "primary_pci_bus_id": "00000000:03:00.0"
+    },
+    "matched_on": "primary_uuid from nvidia-smi"
+  },
+  "halves": {
+    "ours": "/pscratch/sd/j/josephrb/pet-cost-recal2-20260919/half-ours.json",
+    "theirs": "/pscratch/sd/j/josephrb/pet-cost-recal2-20260919/half-theirs.json"
+  },
+  "measured_throughput": {
+    "12": {
+      "ours": {
+        "framework": "tensorflow 2.15.0 / keras 2.15.0",
+        "keras_backend_selection": {
+          "tf_keras_shim_available": false,
+          "tf_use_legacy_keras": null,
+          "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+        },
+        "tokens": 12,
+        "trainable_parameters": 47041,
+        "repeats": 20,
+        "step_seconds_median": 0.01900495150766801,
+        "step_seconds_min": 0.018027309997705743,
+        "step_seconds_max": 0.021946054010186344,
+        "coefficient_of_variation": 0.050988856315863196,
+        "batch": 512,
+        "seconds_per_example": 3.7119045913414084e-05,
+        "examples_per_second": 26940.3476138006
+      },
+      "theirs_native_batch": {
+        "framework": "pytorch",
+        "tokens": 12,
+        "preset": {
+          "num_transformers": 8,
+          "num_transformers_head": 2,
+          "num_tokens": 4,
+          "num_heads": 8,
+          "base_dim": 128,
+          "mlp_ratio": 2
+        },
+        "size": "small",
+        "interaction_flags": {
+          "use_int": false,
+          "local_int": false
+        },
+        "trainable_parameters": 2758702,
+        "repeats": 20,
+        "step_seconds_median": 0.1915611995063955,
+        "step_seconds_min": 0.19135930298944004,
+        "step_seconds_max": 0.19234299700474367,
+        "coefficient_of_variation": 0.00124298685342145,
+        "batch": 2048,
+        "seconds_per_example": 9.353574194648218e-05,
+        "examples_per_second": 10691.100312992272
+      },
+      "theirs_matched_batch": {
+        "framework": "pytorch",
+        "tokens": 12,
+        "preset": {
+          "num_transformers": 8,
+          "num_transformers_head": 2,
+          "num_tokens": 4,
+          "num_heads": 8,
+          "base_dim": 128,
+          "mlp_ratio": 2
+        },
+        "size": "small",
+        "interaction_flags": {
+          "use_int": false,
+          "local_int": false
+        },
+        "trainable_parameters": 2758702,
+        "repeats": 20,
+        "step_seconds_median": 0.05297202149813529,
+        "step_seconds_min": 0.052911423990735784,
+        "step_seconds_max": 0.05309342700638808,
+        "coefficient_of_variation": 0.0007789249487727419,
+        "batch": 512,
+        "seconds_per_example": 0.00010346097948854549,
+        "examples_per_second": 9665.479729106115
+      },
+      "ratio_per_example_native_batch": 2.5198854023529798,
+      "ratio_per_example_matched_batch": 2.7872747518857093,
+      "ratio_used_for_projection": "matched_batch",
+      "native_batch_available": true
+    },
+    "33": {
+      "ours": {
+        "framework": "tensorflow 2.15.0 / keras 2.15.0",
+        "keras_backend_selection": {
+          "tf_keras_shim_available": false,
+          "tf_use_legacy_keras": null,
+          "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+        },
+        "tokens": 33,
+        "trainable_parameters": 47041,
+        "repeats": 20,
+        "step_seconds_median": 0.02896701749705244,
+        "step_seconds_min": 0.028124061005655676,
+        "step_seconds_max": 0.03358369698980823,
+        "coefficient_of_variation": 0.06237063964205572,
+        "batch": 512,
+        "seconds_per_example": 5.6576206048930544e-05,
+        "examples_per_second": 17675.274993433442
+      },
+      "theirs_native_batch": {
+        "error": "RuntimeError: CUDA error: invalid configuration argument\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nCompile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.\n",
+        "tokens": 33,
+        "batch": 2048
+      },
+      "theirs_matched_batch": {
+        "framework": "pytorch",
+        "tokens": 33,
+        "preset": {
+          "num_transformers": 8,
+          "num_transformers_head": 2,
+          "num_tokens": 4,
+          "num_heads": 8,
+          "base_dim": 128,
+          "mlp_ratio": 2
+        },
+        "size": "small",
+        "interaction_flags": {
+          "use_int": false,
+          "local_int": false
+        },
+        "trainable_parameters": 2758702,
+        "repeats": 20,
+        "step_seconds_median": 0.12016787051106803,
+        "step_seconds_min": 0.11992287600878626,
+        "step_seconds_max": 0.1203666850051377,
+        "coefficient_of_variation": 0.000987594323614338,
+        "batch": 512,
+        "seconds_per_example": 0.00023470287209192975,
+        "examples_per_second": 4260.706275500175
+      },
+      "ratio_per_example_native_batch": null,
+      "ratio_per_example_matched_batch": 4.148437805973494,
+      "ratio_used_for_projection": "matched_batch",
+      "native_batch_available": false
+    }
+  },
+  "native_batch_diagnosis": {
+    "12": {
+      "repaired_native_throughput": {
+        "backend": "default",
+        "note": "no repair needed"
+      },
+      "tokens": 12,
+      "native_batch": 2048,
+      "native_batch_runs": true,
+      "by_sdpa_backend": {
+        "default": {
+          "ran": true
+        },
+        "math": {
+          "ran": true
+        },
+        "efficient_attention": {
+          "ran": true
+        },
+        "flash_attention": {
+          "ran": false,
+          "error": "RuntimeError: No available kernel. Aborting execution.",
+          "raised_at": "functional.py:6410 in multi_head_attention_forward"
+        }
+      },
+      "batch_ladder": {
+        "2048": {
+          "ran": true
+        },
+        "1024": {
+          "ran": true
+        },
+        "512": {
+          "ran": true
+        },
+        "256": {
+          "ran": true
+        }
+      },
+      "largest_working_batch_default_backend": 2048,
+      "backend_repair_available": true,
+      "backend_repair_backends": [
+        "math",
+        "efficient_attention"
+      ],
+      "required_action": "none: the native batch already runs"
+    },
+    "33": {
+      "repaired_native_throughput": {
+        "backend": "math",
+        "framework": "pytorch",
+        "tokens": 33,
+        "preset": {
+          "num_transformers": 8,
+          "num_transformers_head": 2,
+          "num_tokens": 4,
+          "num_heads": 8,
+          "base_dim": 128,
+          "mlp_ratio": 2
+        },
+        "size": "small",
+        "interaction_flags": {
+          "use_int": false,
+          "local_int": false
+        },
+        "trainable_parameters": 2758702,
+        "repeats": 20,
+        "step_seconds_median": 0.41134097798203584,
+        "step_seconds_min": 0.4108291919983458,
+        "step_seconds_max": 0.4347635339945555,
+        "coefficient_of_variation": 0.016880535006681876,
+        "batch": 2048,
+        "seconds_per_example": 0.00020085008690529094,
+        "examples_per_second": 4978.837776015208
+      },
+      "tokens": 33,
+      "native_batch": 2048,
+      "native_batch_runs": false,
+      "by_sdpa_backend": {
+        "default": {
+          "ran": false,
+          "error": "RuntimeError: CUDA error: invalid configuration argument",
+          "raised_at": "functional.py:6410 in multi_head_attention_forward"
+        },
+        "math": {
+          "ran": true
+        },
+        "efficient_attention": {
+          "ran": false,
+          "error": "RuntimeError: CUDA error: invalid configuration argument",
+          "raised_at": "functional.py:6410 in multi_head_attention_forward"
+        },
+        "flash_attention": {
+          "ran": false,
+          "error": "RuntimeError: No available kernel. Aborting execution.",
+          "raised_at": "functional.py:6410 in multi_head_attention_forward"
+        }
+      },
+      "batch_ladder": {
+        "2048": {
+          "ran": false,
+          "error": "RuntimeError: CUDA error: invalid configuration argument",
+          "raised_at": "functional.py:6410 in multi_head_attention_forward"
+        },
+        "1024": {
+          "ran": true
+        },
+        "512": {
+          "ran": true
+        },
+        "256": {
+          "ran": true
+        }
+      },
+      "largest_working_batch_default_backend": 1024,
+      "backend_repair_available": true,
+      "backend_repair_backends": [
+        "math"
+      ],
+      "required_action": "backend repair, recipe preserved: ['math'] run at batch 2048"
+    }
+  },
+  "interaction_flags": {
+    "use_int": false,
+    "local_int": false
+  },
+  "interaction_flag_correction": "his arm is built with use_int=False and local_int=False, the V1-paper setting. The 2026-09-18 calibration used PET2's class defaults of True/True, which is the non-paper OLS_int variant, and therefore timed a model doing quadratic pairwise work the paper configuration does not do.",
+  "projected_evaluation_cost": {
+    "budget_model": {
+      "niter": 3,
+      "epochs": 8,
+      "train_events": 2000000,
+      "fits_per_evaluation": 6,
+      "examples_per_evaluation": 96000000,
+      "train_frac": 0.8,
+      "reweight_passes_per_evaluation": 6,
+      "inference_examples_per_evaluation": 36000000,
+      "fairness_axis": "example presentations, not optimizer steps"
+    },
+    "residual_overhead_caveat": "Projections now cover fits, reweighting and validation, all from measured throughput. They still exclude the fixture build, normalization and serialization, which the feature contract folds into its ~1.1-1.3 GPU-h for a nominal train and which do not scale with the backbone. Absolute projections therefore still UNDERSTATE cost slightly; the ratio is the reliable part.",
+    "derived_not_measured": "Everything in this block is a model applied to the measured throughput above. Quote the measured block for throughput and this block only with its budget model attached.",
+    "by_tokens": {
+      "12": {
+        "our_fit_gpu_hours": 0.9898412243577089,
+        "their_fit_gpu_hours": 2.75895945302788,
+        "arm_pair_fit_gpu_hours": 3.748800677385589,
+        "inference_measured": true,
+        "our_inference_gpu_hours": 0.18440845707345943,
+        "their_inference_gpu_hours": 0.3445481834774,
+        "our_evaluation_gpu_hours": 1.1742496814311685,
+        "their_evaluation_gpu_hours": 3.10350763650528,
+        "arm_pair_evaluation_gpu_hours": 4.277757317936448,
+        "inference_ratio_per_example": 1.8683968671791915,
+        "ratio_source": "matched_batch (same batch and tokens for both arms)",
+        "final_comparison_gpu_hours_by_seeds": {
+          "4": 17.111029271745792,
+          "8": 34.222058543491585,
+          "12": 51.33308781523738,
+          "16": 68.44411708698317
+        }
+      },
+      "33": {
+        "our_fit_gpu_hours": 1.5086988279714812,
+        "their_fit_gpu_hours": 6.258743255784793,
+        "arm_pair_fit_gpu_hours": 7.767442083756275,
+        "inference_measured": true,
+        "our_inference_gpu_hours": 0.3430999706210969,
+        "their_inference_gpu_hours": 0.7851242969536543,
+        "our_evaluation_gpu_hours": 1.8517987985925781,
+        "their_evaluation_gpu_hours": 7.043867552738448,
+        "arm_pair_evaluation_gpu_hours": 8.895666351331025,
+        "inference_ratio_per_example": 2.2883251652058805,
+        "ratio_source": "matched_batch (same batch and tokens for both arms)",
+        "final_comparison_gpu_hours_by_seeds": {
+          "4": 35.5826654053241,
+          "8": 71.1653308106482,
+          "12": 106.74799621597231,
+          "16": 142.3306616212964
+        }
+      }
+    }
+  },
+  "non_claim": "Cost is cost. A cheaper arm is not a better one, and nothing here bears on recovery, closure or representation quality."
+}

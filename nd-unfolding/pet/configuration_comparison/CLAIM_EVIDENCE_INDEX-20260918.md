@@ -17,6 +17,25 @@ checkout root; ours are relative to the repository root.
 
 ---
 
+## Z. Corrections and additions, 2026-09-19 (the port milestone)
+
+These supersede rows elsewhere in this index where they conflict.
+
+| id | claim | evidence | kind |
+|---|---|---|---|
+| Z1 | **Gregor's paper models run with `use_int=False, local_int=False`** — NOT `PET2`'s class defaults of `True`/`True` | `plot_configs/V1Paper.json`; `src/jobs/submit_train_jobs.py:155-169`; `src/scripts/train.py:883-894` (`store_true`, `default=False`) | code reading |
+| Z2 | his paper backbone is **2,758,702** parameters, **58.6×** our step-1 PET | `receipts/model-capacity.json`, rebuilt at the paper flags. **Supersedes 2,762,550 / 58.7×**, which measured the non-paper `OLS_int` variant | measured |
+| Z3 | the Keras port reproduces `PET2` to **6.7e-16** in float64 and within the measured float32 budget against unmodified upstream | `receipts/PORT_CHECKS-20260919.json`, P-2 | measured |
+| Z4 | `r`, the per-example training cost ratio, is **2.7** at 12 tokens and **4.2** at 33 at matched batch, and **3.55** at his native batch under the repair | two independent runs, 58551348 and 58551477, agreeing to 3 % and 1 %. **Supersedes 2.82 / 4.30**, and two significant figures is all the runs support | measured |
+| Z5 | inference adds **36 M** forward presentations per evaluation against 96 M trained, at a ratio of 1.88 (12 tokens) and 2.44 (33) | same receipt; budget model in `calibrate_cost.py` | measured + model |
+| Z6 | the complete pretrained comparison costs **≈170 GPU-h** at 33 tokens and his native batch under the repair (≈189 at the matched batch) | `COST_UPDATE-20260919.md`. **Supersedes ≈207**, which was fit-only, priced the wrong model, and assumed his batch had to shrink | projection from measurement |
+| Z7 | his batch 2048 at 33 tokens needs a **backend repair (math SDPA), not a batch-size change**; largest batch under the default backend is 1024, and the repair runs at **200.85 µs/example**, 14 % cheaper than the matched-batch fallback | `receipts/COST_RECALIBRATION2-20260919.json`, `native_batch_diagnosis` | measured |
+| Z8 | `tf.nn.gelu(approximate=False)` differs from torch by **4.1e-9** in float64 | `test_port.py::Activation`; the written-out erf form agrees to 1.1e-16 | measured |
+| Z9 | `tf.keras.optimizers.AdamW` differs from `torch.optim.AdamW` by **68 % of the first update** on zero-initialised biases | `receipts/PORT_CHECKS-20260919.json`, P-4 `rejected_alternative`; derivation in `torch_adamw.py` | measured |
+| Z10 | PyTorch's `scaled_dot_product_attention` returns an **O(1) wrong answer** for a float32 mask with float64 q/k/v; float32, bf16 and fp16 are unaffected | `receipts/PORT_CHECKS-20260919.json`, `torch_sdpa_mask_dtype_probe` | measured |
+| Z11 | the pretrained checkpoint gates the pretrained arm's **tuning and variance pilot**, not only its final runs | `DECISION_PACKET-20260919.md` §1; argument, not measurement | judgement |
+| Z12 | `PET2.no_weight_decay()` exists and `train.py` never calls it, so his norms and class tokens **are** weight-decayed | `src/scripts/train.py:2345`, one param group | code reading |
+
 ## A. Measured on real MINERvA tuples
 
 | # | claim | source | scope limit |
@@ -249,3 +268,8 @@ itemized in a receipt I can cite. Reported as a gap rather than closed by arithm
 - Anything about real-data performance, any covariance, any systematic, any
   central-value change, or any Gate-6 action.
 - That `fc9a099` is the commit behind arXiv:2604.12364.
+- That the port performs comparably to, better than, or worse than anything. **It has
+  been shown to BE his network and to train under our engine. No comparative result
+  exists.**
+- That the ≈188 GPU-h projection covers his arm at his native batch under the math
+  repair, a pretrained rather than scratch backbone, or a same-framework ratio.
