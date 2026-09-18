@@ -1133,3 +1133,98 @@ producer's own receipt says `null_epsilon` is `WITHHELD` because *"Neither B nor
 
 ⚠ The record from `58509947` predates the `tested_scope` block (added at `4007645a`+1), so its
 scope is stated here rather than in the file. Every future run carries it inline.
+
+
+---
+
+## 16. THE M1 DIAGNOSTIC PROJECTION — produced, verified, and it answers its acceptance question
+
+Job `58510024`, `COMPLETED`, `ExitCode 0:0`, `ElapsedRaw 50 s` (**`0.014` CPU task-h actual against
+a `0.25` reservation**), `nid004110`. Product
+`zdet-DIAGNOSTIC-20260918/m1_eavailW_DIAGNOSTIC.root`, `17,120` B, receipt `4,275` B.
+
+**Projected from the verified candidate** — `src_cov_sha256 = src_cv_sha256 =`
+`3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5`, which is `z-cv.npz`'s digest in
+`outcome-58454524/product-digests.txt`. The input's identity is bound into the product's receipt.
+
+### 16.1 The measured projection
+
+    src reported 10694  ->  dst reported 42        src_cells_dropped  0
+    sqrt-tr              4.4552e-39                n_empty            0
+    symmetry max|C-C^T|  0.00e+00   EXACTLY symmetric
+    min-eig              +4.359e-92   POSITIVE
+    most-neg/max         2.93e-15
+    rank                 ~36 / 42
+    M_shape              [42, 10694]    M_content_sha256 64fec490...
+
+**Three of these are materially favourable, and one is the number the consumer has been missing.**
+
+1. **The projection is PSD to machine tolerance, with a POSITIVE minimum eigenvalue** — against the
+   source's `λ_min = −1.2750516323643892e-90` and **5,214 negative eigenvalues of 10,694**. The
+   negative directions do **not** propagate: `M C Mᵀ` with positive width weights averages them
+   out. A χ² on this object is well-posed on its retained subspace, which the 5D object could not
+   promise. **This is a numerical demonstration on one product, not a theorem** — it is a property
+   of this `M` and this `C`, and a different destination mask could differ.
+2. **`rank ≈ 36 of 42` is the `ndf` input.** `rank6_significance.py` refuses `ndf = bin count`
+   (rc 4) and takes the **retained rank**; that value is now measured. ⚠ **A rank is a property of
+   the matrix, not a calibrated `ndf`** — the contract says so and this does not change it.
+3. **`n_empty = 0` and `src_cells_dropped = 0`.** Both coverage censuses are clean: every one of the
+   10,694 source cells reaches a reported destination cell, and no destination row receives nothing.
+   `SPEC:1239` requires the `(E_avail,W)` projector to **count-and-report** — it reports **zero**, so
+   an acceptance criterion requiring zero is satisfiable on this product without the projector ever
+   gating.
+4. **`symmetry max|C−Cᵀ| = 0.00e+00` exactly**, tighter than the source's `2.164e-16`, because the
+   `M C Mᵀ` form symmetrises by construction.
+
+### 16.2 The acceptance question is ANSWERED: YES, `τ` is computable
+
+The run's declared question was *"whether `τ` is computable at all on the verified candidate
+trunk"*. **It is.** The projected correlation matrix exists, is PSD, has no undefined rows
+(`n_empty = 0`), and has a measured retained rank. **`τ` is therefore no longer blocked on
+judgement — it is blocked on one declaration**, D3's `N`, after which `τ` is a calculation on this
+object rather than a number anyone has to choose.
+
+**So cause 3's third input has moved from "no value and no route" to "one declaration away".** That
+was the cycle §11 identified, and it is now cut in fact and not only in design.
+
+⚠ **`τ`'s VALUE is not computed and must not be inferred from the above.** It needs `N` (D3, yours)
+and the corner region (D5, yours). And per §11's residue: `τ` computed on the candidate is `τ` for
+*the candidate*. If adoption lands on a different object, it is a `0.324 s` recomputation, not a new
+campaign.
+
+### 16.3 Every guard fired or passed as designed, and the receipt shows it
+
+    run_class                 diagnostic
+    status                    DIAGNOSTIC -- NON-ADOPTED and PROVISIONAL ... does not become
+                              a publication product by being renamed or copied
+    src_container             npz
+    src_row_index_basis       producer hRowIndex5D, REQUIRED equal to the order derived from
+                              src CV (xsrc > 0); both present and identical
+    src_metadata              adoptable False | scientific_acceptance NON-PASSING |
+                              variant cv | input_kind real | manifest_sha256 44ab73ba... |
+                              code_identity.revision fb9ec356...
+    dst_mask_basis            dense destination bins receiving >= 1 source cell (no --dst-cv)
+    row_index_sha256_readback 9eb9d216...  (read back out of the CLOSED file)
+    run_class_keys_in_product ['runClass', 'runClassStatus', 'acceptanceQuestion']
+
+The row-order cross-check **fired and passed** — *"both present and identical"* — so the
+covariance's rows are bound to physical bins by two independent statements that were required to
+agree. The source binding carries `adoptable: False` and `NON-PASSING` **into the projection's
+receipt**, so the product cannot be read without the standing of what it came from. And the class
+labels are inside the ROOT file, not only the sidecar.
+
+**This product is NOT the quotable `(E_avail,W)` covariance.** `AGENTS.md:27` requires that to be
+projected from the **adopted** trunk and `:30` quarantines the existing one. The candidate records
+`adoptable: false`, which **refuses** `--run-class publication` in code.
+
+### 16.4 Accounting for both runs
+
+| | reservation | actual | node |
+|---|---:|---:|---|
+| determinism `58509947` | `0.25` | **`0.055`** | nid004083 |
+| M1 diagnostic `58510024` | `0.25` | **`0.014`** | nid004110 |
+| earlier failed attempt `58506753` | — | `0.0011` | nid004090 |
+
+Total actual **`0.070` CPU task-h**, against headroom `403.66` and a stop date of `2026-09-30`. Both
+runs were admitted against a fresh receipt before submission, with outstanding reservations counted.
+**Joseph's `0.25` cap on the determinism submission was respected and the run came in at 22% of it.**

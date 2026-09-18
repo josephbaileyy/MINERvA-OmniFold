@@ -34,13 +34,16 @@ sys.path.insert(0, str(REPO / "nd-unfolding"))
 import z_determinism_probe as Z  # noqa: E402
 
 
-def _cell(arm, threads, digests, backend=None):
+def _cell(arm, threads, digests, backend=None, spread=None):
     """`backend` is what the fitted Booster reported. Defaults to the requested value, because a
     cell that did not record one is the pre-readback shape and must not silently look confirmed."""
     return {"arm": arm, "threads": threads, "digests": list(digests),
             "within_process_identical": len(set(digests)) == 1,
             "backend_num_threads_readback": (list(backend) if backend is not None
-                                             else [threads] * len(digests))}
+                                             else [threads] * len(digests)),
+            "prediction_spread": (spread if spread is not None
+                                  else {"n_distinct_values": 4096, "degenerate": False,
+                                        "min": 0.01, "max": 0.99, "std": 0.2, "mean": 0.5})}
 
 
 class BlindAndFloor(unittest.TestCase):
@@ -290,6 +293,73 @@ class TheSettingMustREACHTheBackend(unittest.TestCase):
         self.assertIn("clf.booster_.params", src)
         self.assertIn("requested_num_threads_param", src)
         self.assertIn("backend_num_threads_readback", src)
+
+
+class ADegeneratePredictionMakesEveryDigestMatchForFREE(unittest.TestCase):
+    """The check I owed on my own favourable result, and did not have when I first reported it.
+
+    Job 58509947 returned ONE digest across all 18 fits -- every arm, every thread count. That is
+    only evidence of reproducible arithmetic if the digested vector is non-trivial. **A model that
+    learned nothing predicts a constant, and then every digest matches for free.** The digest alone
+    cannot tell the two apart, so the favourable branch of this probe was unfalsifiable.
+
+    `prediction_spread` records the quantity that separates them, and `DEGENERATE-PREDICTION` is a
+    THIRD distinct failure from a collapsed grid or an unreached setting: there the experiment was
+    malformed; here it ran correctly and its subject was inert.
+    """
+
+    def test_a_constant_prediction_vector_is_not_a_measurement(self):
+        flat = {"n_distinct_values": 1, "degenerate": True,
+                "min": 0.5, "max": 0.5, "std": 0.0, "mean": 0.5}
+        cells = [_cell(a, t, ["x", "x"], backend=[t, t], spread=flat)
+                 for a in Z.ARMS for t in (1, 4)]
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        self.assertEqual(rec["verdict"], "DEGENERATE-PREDICTION")
+        self.assertFalse(rec["prediction_non_degenerate"])
+        self.assertIn("agreement across arms and thread counts is trivial", rec["verdict_note"])
+
+    def test_a_spread_prediction_vector_permits_MEASURED(self):
+        cells = [_cell(a, t, ["x", "x"], backend=[t, t]) for a in Z.ARMS for t in (1, 4)]
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        self.assertEqual(rec["verdict"], "MEASURED")
+        self.assertTrue(rec["prediction_non_degenerate"])
+        self.assertEqual(rec["prediction_distinct_values_min"], 4096)
+
+    def test_cells_with_no_spread_reported_cannot_look_non_degenerate(self):
+        """The shape of job 58509947's own record: the field did not exist yet. Absence of the
+        statistic must not read as the statistic being favourable."""
+        cells = []
+        for a in Z.ARMS:
+            for t in (1, 4):
+                c = _cell(a, t, ["x", "x"], backend=[t, t])
+                c.pop("prediction_spread")
+                cells.append(c)
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        self.assertEqual(rec["verdict"], "DEGENERATE-PREDICTION")
+        self.assertEqual(rec["prediction_spread_reported_cells"], 0)
+
+    def test_one_degenerate_cell_among_good_ones_still_fails(self):
+        """Any inert cell taints the comparison it takes part in."""
+        flat = {"n_distinct_values": 1, "degenerate": True,
+                "min": 0.5, "max": 0.5, "std": 0.0, "mean": 0.5}
+        cells = [_cell(a, t, ["x", "x"], backend=[t, t]) for a in Z.ARMS for t in (1, 4)]
+        cells[0]["prediction_spread"] = flat
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        self.assertEqual(rec["verdict"], "DEGENERATE-PREDICTION")
+
+    def test_degeneracy_outranks_unconfirmed_but_not_degenerate_grid(self):
+        """Ordering: a malformed REQUEST is reported before an inert subject."""
+        flat = {"n_distinct_values": 1, "degenerate": True,
+                "min": 0.5, "max": 0.5, "std": 0.0, "mean": 0.5}
+        cells = [_cell(a, 1, ["x", "x"], backend=[1, 1], spread=flat) for a in Z.ARMS]
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1,))
+        self.assertEqual(rec["verdict"], "DEGENERATE")
+
+    def test_the_worker_records_the_spread(self):
+        src = PROBE.read_text()
+        self.assertIn("prediction_spread", src)
+        self.assertIn("n_distinct_values", src)
+        self.assertIn("np.unique(_pred)", src)
 
 
 if __name__ == "__main__":

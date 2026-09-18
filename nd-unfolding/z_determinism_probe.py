@@ -129,10 +129,24 @@ def worker(arm, threads, rows, seed, repeats):
     x, y, w = _dataset(rows, seed)
     digests = []
     booster_threads = []
+    prediction_spread = {}
     for _ in range(int(repeats)):
         clf = LGBMClassifier(**params)
         clf.fit(x, y, sample_weight=w)
-        digests.append(_digest(clf.predict_proba(x)[:, 1]))
+        _pred = clf.predict_proba(x)[:, 1]
+        digests.append(_digest(_pred))
+        if not prediction_spread:
+            # NON-DEGENERACY. An identical-digest result across arms and thread counts means
+            # nothing if the digested vector is constant: a model that learned nothing predicts one
+            # value and every digest matches trivially. This is the statistic that separates
+            # "reproducible arithmetic" from "no arithmetic to speak of", and without it the
+            # favourable branch of this probe is unfalsifiable.
+            prediction_spread.update({
+                "n_distinct_values": int(np.unique(_pred).size),
+                "min": float(_pred.min()), "max": float(_pred.max()),
+                "std": float(_pred.std()), "mean": float(_pred.mean()),
+                "degenerate": bool(np.unique(_pred).size < 2),
+            })
         # WHAT THE BACKEND ACTUALLY USED, read back off the fitted Booster rather than from the
         # value we passed in. A setting that was requested and a setting that took effect are
         # different facts, and only the second one explains a digest.
@@ -146,6 +160,7 @@ def worker(arm, threads, rows, seed, repeats):
         "within_process_identical": len(set(digests)) == 1,
         "lightgbm_version": lightgbm.__version__,
         "omp_num_threads_env": os.environ.get("OMP_NUM_THREADS"),
+        "prediction_spread": prediction_spread,
         "requested_num_threads_param": params.get("num_threads"),
         "backend_num_threads_readback": booster_threads,
         "cpu_count_visible": len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None,
@@ -238,10 +253,24 @@ def summarise(cells, unavailable, rows, seed, repeats, thread_grid, out=None):
                           for v in c.get("backend_num_threads_readback", [])})
         record["backend_thread_values_reached"] = reached
         record["backend_confirmed_distinct_threads"] = len(reached) >= 2
+        # NON-DEGENERACY of the digested vector. Without this, agreement across every arm and
+        # thread count is equally consistent with a model that predicts a constant.
+        spreads = [c.get("prediction_spread") or {} for c in cells]
+        known = [sp for sp in spreads if "degenerate" in sp]
+        record["prediction_non_degenerate"] = (
+            bool(known) and not any(sp["degenerate"] for sp in known))
+        record["prediction_spread_reported_cells"] = len(known)
+        record["prediction_distinct_values_min"] = (
+            min((sp["n_distinct_values"] for sp in known), default=None))
         if not complete:
             record["verdict"] = "PARTIAL"
         elif grid_values < 2:
             record["verdict"] = "DEGENERATE"
+        elif not record["prediction_non_degenerate"]:
+            # A constant prediction vector makes every digest match for free. That is not a
+            # measurement of reproducibility, and it is a THIRD distinct failure from a collapsed
+            # grid or an unreached setting: the experiment ran correctly and its subject was inert.
+            record["verdict"] = "DEGENERATE-PREDICTION"
         elif not record["backend_confirmed_distinct_threads"]:
             # The grid varied and the BACKEND did not. That is not a measurement of the thread
             # axis either, and it is a different finding from a collapsed grid: the request was
@@ -254,6 +283,9 @@ def summarise(cells, unavailable, rows, seed, repeats, thread_grid, out=None):
              "thread-count invariance -- which is the channel a cross-allocation difference acts "
              "through and the reason this probe exists. Read the arms as a single-thread "
              "comparison only. " % grid_values if grid_values < 2 else "") +
+            ("DEGENERATE-PREDICTION: the digested prediction vector is constant (or no cell "
+             "reported its spread), so agreement across arms and thread counts is trivial and "
+             "measures nothing. " if not record["prediction_non_degenerate"] else "") +
             ("UNCONFIRMED: the grid varied but the fitted Booster reported thread values %s, so "
              "the distinct settings did not reach the backend and the cross-thread comparison is "
              "not a measurement. " % reached
