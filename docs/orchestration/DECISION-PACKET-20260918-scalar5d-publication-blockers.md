@@ -1105,3 +1105,46 @@ timeout **ends** the campaign with a diagnosis and **no member is assembled**. A
 re-measured immediately before submission, not reused.
 
 **Nothing launched.**
+
+---
+
+## 13. STATE AFTER THE RULINGS — 2026-09-18, superseding §2's status column
+
+Rulings in `AUTHORIZATION-20260918-d-resource-required-deliverable-path.md`. §2's table retains the
+derivations; this is the current state.
+
+| # | ruled disposition | what remains |
+|---|---|---|
+| **C3 / §3.7d** | **(b) — `s_proj` ADOPTED.** `Z_LEG_SET` declared: `s_agg` (aggregate), `s_med` (per-bin), `s_proj` (per-bin, `sees_correlations=True`). Bounds declared `0.05 / 0.05 / 0.05` + `cause3_med_coverage 0.99`, each with provenance naming the record | **the members.** `k₁` declined, so cause 3 cannot be *evaluated* — see below |
+| **C1** | **APPROVED as a tolerance-free disclosure.** Both legs already implemented in `receipt_cause1_endpoint_census_5d.py`; a read pass, nothing re-unfolded | **RUNNING — job `58530433`**, cap `0.25` CPU task-h against a `~0.03` price |
+| **C2** | **APPROVED.** `cause2_f7_margin` **created withheld**, its reason carrying the ruled wording — *"inherits a tolerance with a stated derivation and an owner"*, **not** *"not chosen"* | **the margin — Joseph's** |
+| **C4** | **APPROVED.** `SPEC:1237` amended *"condition 4"* → *"condition 3"*; §2.4 item 4's own prose is the definitional site | the re-added print |
+| **C5** | **CLOSED as not-falsified, scoped to the 15 traced modules** incl. `adopt_unified_5d.py` | nothing |
+| **C6** | **REUSE**, accepted risk named: **"inputs consistent but unproven."** Both withdrawals stand | nothing. **Not regenerating** |
+| **C7** | **CLOSED as sufficient** on the twice-measured 45-band partition (support family **and** receipt) | nothing |
+| **R5** | **Documentation + verification, no recomputation.** `ESTIMATOR_REGISTRY:29` amended; **both `√tr` re-measured** — `5.807716e-38` and `5.269625e-38`, sharing `sqrt_tr_old 4.357790e-38`, so two rescalings of one predecessor | nothing |
+| **NULL** | **P0 reported** (self-contained, done at `1405caad`); **`58524334` completed** and is the dependency route 2 rests on; **P2 not needed**; the §6.4 exception **approved as drafted and HELD** | **Joseph's §6.4 route ruling.** Bitwise identity is unreachable without the estimator change he reserves |
+| **ADOPT** | — | **Joseph's act**, after C1–C7 and NULL |
+| **PROJ** | diagnostic M1 produced and verified; publication path gated | re-run with `--run-class publication` after ADOPT |
+| **DOCS** | baseline green, containment verified across all three | re-verify after PROJ |
+
+### 13.1 ⚠ THE ONE STRUCTURAL CONSEQUENCE OF RULING 2
+
+**Cause 3's criteria are now fully declared and cause 3 cannot be evaluated.** `s_proj`, `s_agg` and
+`s_med` all have bounds; `Z_LEG_SET` is declared; `assess` can reach a numerical branch. **What it
+cannot reach is a statistic**, because every leg is a *movement between members* and `k₁` is
+declined — there is one member, the archive, and no second point to move to.
+
+**This is not a defect and not a re-proposal of the campaign.** It follows from ruling 1 + ruling 2
+exactly as Joseph reasoned: nothing required needs `N`. The consequence to record is what cause 3's
+row can say in the receipt:
+
+> `(cause 3, Z)` has a **fully declared criterion** — three legs, three bounds, a coverage
+> fraction, and a predeclared functional set — and **no measured statistic**, because the member
+> family contains one member. The correct token is **`UNRESOLVED`**, and the reason is the absence
+> of a second member rather than the absence of a criterion. **That is a different and much better
+> position than the one this package started in**, where the criterion itself did not exist.
+
+**What this means for ADOPT is Joseph's to weigh:** whether a trunk may be adopted with cause 3's
+criterion declared but unevaluated. It is the same shape of judgement as the §6.4 sufficiency
+question, and it is **not** a question about the covariance's numbers.
