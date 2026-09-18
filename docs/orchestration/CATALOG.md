@@ -1238,6 +1238,34 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **One error of mine recorded rather than deleted:** my probe compared grid indices against row
   indices and printed a spurious set mismatch — the same index-basis confusion I flagged elsewhere a
   day earlier.
+- [`READBACK-20260918-causes-5-and-7.md`](READBACK-20260918-causes-5-and-7.md)
+  - **Causes 7 and 5 of the audit's seven-cause table. Issues NEITHER ruling** — not the `#16`
+  publication-gate discharge (`X6`) nor cause 5's *"INAPPLICABLE, DISPOSED BY DECISION"* (`Y3`), both
+  of which `SPEC` assigns to a decision. No compute; `C_Z − C_G` deliberately not computed.
+  **`X1`: the decision rule is NOT a name list** — `unfold_nd:388` decides laterality by **branch
+  presence** (`if t.GetBranch(l_sim) and t.GetBranch(l_mc): # lateral`), so the routed lead is
+  testable against data, and the code runs that test itself. **`X2`:** the C++ producer states it —
+  *"The GEANT hadronic-response bands … are **vertical/weight-only** and are captured by
+  `w_reco_GEANT_*`"* (`:238-244`) — and `MinosEfficiency` is a `MINOSEfficiencyReweighter` (`:1749`).
+  **`X3` PAYLOAD, MEASURED BY ME — the hypothesis SURVIVES:** on the 470-branch production universe
+  tuple, all five carry weights `2/2`, kinematics `4/4` **and shifted q3+W `4/4`**; all four excluded
+  carry `2/2` weights and **`0/4` kinematics**. `lateral set == p4_lib.BANDS` → **True**. **`X4`: I
+  tried to break it on the 5D-specific `W` axis and it HELD** on four legs — the C++ note predates
+  `W`, but `EXTRA_AXES["W"]` is `lateral_invariant=False`, the C++ writes `W_truth_/MC_W_/sim_W_`, the
+  Python **raises** rather than falling back to CV (the `J33` repair), and the payload carries them.
+  **`X5`: the ten endpoint identities VERIFIED** — ten directories, **12 ROOT files and 53.8 GB
+  each**, uniform, matching `--array=0-119%12` and `N_ENDPOINTS = 10`; active and support blocks on
+  identical `10694` footing. ⚠ **SCOPE CLARIFICATION:** the four are excluded from the **active lateral
+  swap**, **not** from the covariance — measured present as `hCov_*` in **both** files. Migrations are
+  source-declared: `p4_lib:64-65`, `2 + 3 = 5`. **`Y1`: `VL66`'s named falsifier is NEGATIVE on both
+  modules it named** — `analyze_universes_5d.py` and `adopt_unified_5d.py`, zero pet imports, zero pet
+  path literals, zero PET-word code lines. **`Y2`:** Z's whole 15-module closure and its 8 consumed
+  input paths are clean; the only PET mentions are two **documentation cross-references**. ⚠ **A
+  methodological note on my own search:** my first pattern included `frozen`, which matched
+  **`frozenset` 76 times** and would have reported "77 PET hits" for a file whose true count is one
+  docstring citation — an over-broad pattern manufactures a finding as readily as a narrow one misses
+  it. **And the trace's boundary is stated:** it does not audit the full upstream producer chain of
+  every consumed byte, so it is a **bounded negative**, which is what the falsifier asked for.
 - [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
