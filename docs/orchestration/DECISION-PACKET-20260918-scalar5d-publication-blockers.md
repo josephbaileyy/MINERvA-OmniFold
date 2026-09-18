@@ -1228,3 +1228,62 @@ Its `git` block says `head 32e403b8…, dirty true` — that is the **data repos
 binding that actually holds is `production_module_sha256 02826db1…` and
 `reader_sha256 0bb03405…`, both recorded. A reader taking `git.head` for the code revision would
 have the wrong tree — the same forked-checkout hazard this campaign has hit before.
+
+---
+
+## 15. ⚠ §8.4's M2 CLAIM IS WITHDRAWN — the documents disclaim a 4D uncertainty
+
+**I was about to spend ~`0.5` CPU task-h producing M2's covariance as a "required verified
+projection". I checked the requirement first and it is not there.** §8.4 reasoned that because M2's
+*central values* are reported, its projected covariance must be required. **That inference is
+wrong, and the note says so in four places:**
+
+    sec_3d.tex:477      "Accordingly, no 4D uncertainty magnitude or unified/block ratio is
+                         [quoted]"
+    sec_summary.tex:25  "quoted --- no corrected 4D covariance is adopted, §3d"
+    sec_3d.tex:426      "reported without a corrected 4D covariance"
+    sec_3d.tex:454      "uncertainty-derived annotations in the panel do not use the corrected 4D
+                         [covariance]"
+
+**Reported central values do not require a projected covariance — they require one only if an
+uncertainty on them is quoted, and the documents deliberately quote none.** The 4D central values
+are reported *without* a 4D covariance, on the record, in the deliverable itself.
+
+⚠ **This is the same class of error as the one ruling 1 corrected, in the opposite direction.**
+There I had made optional work a prerequisite; here I nearly added a required-path item — and its
+compute — that the deliverable disclaims. **§8.4's "M2 is required, and I had mis-scoped it" is
+withdrawn; the original P1 table was right.**
+
+**CONSEQUENCE, and it shortens the path:** **M1 is the only required projection.** After adoption,
+`PROJ` is **one** `project_cov_nd.py` run with `--run-class publication` — not two. M2, M3 and M4
+stay marginal anchors and diagnostics.
+
+**`s_proj`'s functional set is unaffected.** Ruling 4 approved *the rows of `project_cov_nd.py`'s
+`M`, plus the all-ones vector*, and `M` there is M1's. §8.4's suggestion to add M2's 10,976 rows is
+withdrawn with the claim that motivated it.
+
+## 16. DOCS — deliverable (3) re-verified in its ready state, 2026-09-18
+
+Run now, not recalled:
+
+    RESULT :: PASS        SELF-TEST :: PASS   (11 positive cases, 4 negative controls)
+    note 94 pp   primer 5 pp   paper 3 pp
+    note:   18 \dead{} uses across app_statmethods.tex      <- the POSITIVE control
+    paper:  clean, 0 \dead{} in a 3-file closure
+    primer: clean, 0 \dead{} in a 4-file closure
+    note.pdf carries 10/10 struck literals;  paper.pdf 0/10;  primer.pdf 0/10
+
+**It proved it did the work, which is the part that matters here.** `build_all.sh:20-25` forces
+`latexmk -g` so *"Nothing to do"* cannot stand in for a build, and stamps a marker before the builds
+that every PDF must be strictly newer than. Measured: all three PDFs are timestamped **within a
+minute** of the run.
+
+**Synchronized:** the standalone `MINERvA-OmniFold-Analysis-Note` checkout is at `3c3e9f2` on
+`main`, **clean**, **0 behind / 0 ahead** of origin, and **26 of 26 `.tex`/`.bib` sources are
+byte-identical** to this repository's — compared file by file, `0` differing.
+
+**So deliverable (3) is in its ready state and needs exactly one re-run after `PROJ`'s content
+edits**, which is the ruled order. The two disclosed coverage limits are unchanged and are the
+checker's own: `GATED_NW_MACROS` is empty and says it is inert rather than passing, and two
+`\dead{}` bodies are source-checked only because a literal under three significant figures is
+indistinguishable from an axis tick in a rendered PDF.
