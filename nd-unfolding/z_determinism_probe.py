@@ -263,6 +263,40 @@ def summarise(cells, unavailable, rows, seed, repeats, thread_grid, out=None):
             "kernels, which one node cannot show -- and does not license a repeat. Applying an "
             "overlay to the production estimator is a material change to the estimator and is "
             "Joseph's decision.")
+    # ------------------------------------------------------------------ THE TESTED SCOPE ------
+    # Joseph, 2026-09-18: *"Report the resulting evidence at its tested scope. Separate
+    # within-configuration repeatability from cross-thread agreement, and both from full-chain
+    # reproducibility. A thread-count difference does not by itself rule out reproducibility at a
+    # fixed thread count."*
+    #
+    # Three DIFFERENT propositions, and this record can speak to two of them. Stated in the
+    # artifact rather than only in a report, because a record travels and a report does not.
+    record["tested_scope"] = {
+        "within_configuration_repeatability": (
+            "MEASURED per cell as `within_process_identical`: repeated fits at ONE fixed "
+            "configuration and ONE fixed thread count, inside one process. This is the narrowest "
+            "of the three and a failure here would be the most serious."),
+        "cross_thread_agreement": (
+            "MEASURED per arm as `invariant_across_thread_grid`, and only when the arm holds at "
+            "least two distinct thread values AND the fitted Booster confirms them. A DIFFERENCE "
+            "here does NOT rule out reproducibility at a fixed thread count -- those are "
+            "different propositions, and the per-cell field above is the one that answers the "
+            "second."),
+        "full_chain_reproducibility": (
+            "NOT MEASURED, AT ALL, BY THIS PROBE. The subject here is one LightGBM fit on a "
+            "synthetic dataset. The `r_null = 4.4520002137582904e-14` finding is a property of "
+            "the FULL chain -- the OmniFold loop, the unified-throw combine and the assembly -- "
+            "on production data. Nothing in this record bears on it except by narrowing which "
+            "mechanisms remain candidates."),
+        "data_provenance": (
+            "SYNTHETIC, generated from a seed independent of the estimator seed. The PARAMETERS "
+            "are the production factory's; the DATA is not production data. So a result here is "
+            "evidence about the estimator's arithmetic at production scale, not about any "
+            "production fit."),
+        "single_node": (
+            "One node, one CPU model. Cross-NODE behaviour is not measured and cannot be: a "
+            "different CPU model may select different vector kernels."),
+    }
     if out:
         Path(out).write_text(json.dumps(record, indent=2, sort_keys=True))
     return record

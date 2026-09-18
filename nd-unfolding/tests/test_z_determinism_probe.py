@@ -294,3 +294,47 @@ class TheSettingMustREACHTheBackend(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TheRecordStatesItsOwnScope(unittest.TestCase):
+    """Three propositions, and the record must not let two of them be read as the third.
+
+    Joseph, 2026-09-18: *"Separate within-configuration repeatability from cross-thread agreement,
+    and both from full-chain reproducibility. A thread-count difference does not by itself rule out
+    reproducibility at a fixed thread count."*
+
+    The scope lives in the ARTIFACT, not only in a report, because the artifact travels.
+    """
+
+    def test_all_three_propositions_are_named(self):
+        rec = Z.summarise([_cell(a, t, ["x", "x"], backend=[t, t]) for a in Z.ARMS for t in (1, 4)],
+                          [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        scope = rec["tested_scope"]
+        for key in ("within_configuration_repeatability", "cross_thread_agreement",
+                    "full_chain_reproducibility", "data_provenance", "single_node"):
+            self.assertIn(key, scope)
+
+    def test_full_chain_is_declared_not_measured(self):
+        rec = Z.summarise([_cell(a, 1, ["x", "x"]) for a in Z.ARMS], [],
+                          rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1,))
+        self.assertIn("NOT MEASURED", rec["tested_scope"]["full_chain_reproducibility"])
+        self.assertIn("4.4520002137582904e-14", rec["tested_scope"]["full_chain_reproducibility"])
+
+    def test_cross_thread_difference_is_not_stated_as_ruling_out_fixed_thread_repeatability(self):
+        rec = Z.summarise([_cell(a, t, ["x", "x"], backend=[t, t]) for a in Z.ARMS for t in (1, 4)],
+                          [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        text = rec["tested_scope"]["cross_thread_agreement"]
+        self.assertIn("does NOT rule out reproducibility at a fixed thread count", text)
+
+    def test_data_is_declared_synthetic(self):
+        rec = Z.summarise([_cell(a, 1, ["x", "x"]) for a in Z.ARMS], [],
+                          rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1,))
+        self.assertIn("SYNTHETIC", rec["tested_scope"]["data_provenance"])
+        self.assertIn("not production data", rec["tested_scope"]["data_provenance"])
+
+    def test_scope_is_present_even_on_a_degenerate_run(self):
+        """A run that measured little must still say what little it measured."""
+        rec = Z.summarise([_cell(a, 1, ["x", "x"]) for a in Z.ARMS], [],
+                          rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1,))
+        self.assertEqual(rec["verdict"], "DEGENERATE")
+        self.assertIn("tested_scope", rec)
