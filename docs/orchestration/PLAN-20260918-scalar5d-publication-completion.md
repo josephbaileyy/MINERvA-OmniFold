@@ -1,0 +1,209 @@
+# COMPLETION PLAN — scalar-5D uncertainties and the required projections
+
+**One plan, maintained in place.** Supersedes no record; indexes them. Base: `AGENTS.md`, the audit
+`ebba67ab6af17a159ae395cb06312b0dcbdca841`, and the completion packet through `40e52d48`.
+
+**Goal state (Joseph's):** an explicitly adopted scalar-5D covariance with a supported reproduction
+path; the required exact projections with correctly paired central values and verified output
+records; scientific claims supported at their stated level; synchronized and successfully built
+note, primer and paper. **Submission is Joseph's act.**
+
+**Preserved and not reopened:** the completed precursor, the assembly/spectrum pilot, the 2D result
+(central *and* uncertainty, both `VALIDATED`), and the 3D/4D/5D central values and closures.
+
+---
+
+## 0. Two facts from `AGENTS.md` that reshape the target
+
+**0.1 The publication claim's existing consumer is already quarantined by the front door.**
+`AGENTS.md:30` lists *"old unified 4D/FPS covariances, old PET precision comparisons, **`(E_avail,W)`
+covariance**, and dependent significances"* as `QUARANTINED` and **unquotable**. `AGENTS.md:27` states
+the rule positively: *"The quotable covariance must be projected from the final adopted,
+**selection-complete** 5D trunk."* So M1 is not an optimisation — it is the only admissible route to
+the one deferred claim, and the existing `eavailW_covariance.py` product cannot be quoted whatever
+its inputs. **PROOF-EQUIVALENT (a governing record, read directly).**
+
+**0.2 Selection-completeness is a named publication gate, and Z plausibly discharges it.**
+`ESTIMATOR_REGISTRY.md:29` carries *"Caveat: lateral still support-limited until #16 five-band
+coverage (**publication gate**)"* against the historical 5D product. Measured: `z_contract.py:67`
+sets `LATERAL_BANDS = tuple(p4_lib.BANDS)`, and `p4_lib.BANDS` is exactly
+`['BeamAngleX', 'BeamAngleY', 'MuonResolution', 'Muon_Energy_MINERvA', 'Muon_Energy_MINOS']` — **five
+bands**. The nine-band historical set in `eavailW_covariance.py:40` adds `MinosEfficiency`,
+`GEANT_Neutron`, `GEANT_Pion`, `GEANT_Proton`. **The five are the bands that laterally shift
+reconstructed kinematics; the four excluded are weight-only** (an efficiency weight and three hadron
+re-interaction weights), which is why they cannot enter an active lateral *swap*.
+**NUMERICAL/SOURCE DEMONSTRATION, not proof:** the argument is from what each band is and what its
+name denotes, and it needs confirmation of how each is actually *applied*. Routed to `[cb0b6b]` as
+part of cause 7. **If it confirms, Z's construction is what discharges the `#16` publication gate** —
+the most favourable open item in the package.
+
+---
+
+## 1. Milestones, each with its evidence and its gate
+
+| # | Milestone | State | Evidence | Blocked on |
+|---|---|---|---|---|
+| M-A | Pilot construction, PSD/identity gates, precursor persistence | **DONE** | pilot receipts; closed by contract | — |
+| M-B | Null reconstruction (E1) and tolerance provenance (E2) | **DONE** | 1.00 ULP, three summation orders, predicate recomputed; `5d617da8` 2026-08-08 | — |
+| M-C | External CV cross-check | **DONE** | 65,856/65,856 identical, `max abs diff` 0; mask and row index elementwise | — |
+| M-D | Variance positivity on the reported support | **DONE** | 0 non-positive of 10,694, all finite | — |
+| M-E | P1 projection definitions | **DONE** | packet §4; four maps, widths, masks, C-order, orphan policy, paired central | — |
+| M-F | Cause-3 acceptance design | **DESIGNED, NOT APPROVED** | `9836a64f` + assessment `6caa1f48` | **D1, D2, D3** |
+| M-G | Projector instrumentation (OI-129 family) | **SCOPED; code next** | packet §5; `project_cov_nd.py` records **0** digests vs 13 | nothing — mine |
+| M-H | Component fingerprint writers | **GAP IDENTIFIED** | 5 of 7 components unfingerprintable: stat/ML files carry one TH2D and nothing else | nothing — mine |
+| M-I | Registry fingerprint rule | **UNSATISFIABLE AS WRITTEN** | rejects every throw component at every `k`, including `k=0` | **D4** |
+| M-J | Lineage / two-ensemble question | **OPEN** | parent is mean-centered, `uthrow_source` 2026-08-06; pilot throw input is the 2026-09-14 precursor | `[cb0b6b]` |
+| M-K | Cause 1, 2, 4, 5, 6, 7 dispositions | **OPEN** | audit seven-cause table | per cause |
+| M-L | `ε` / null acceptance | **BLOCKED BY CONTRACT** | every route closed (packet §2.1) | Joseph's §6.4 route ruling |
+| M-M | Trunk adoption | **NOT REACHED** | — | M-F…M-L |
+| M-N | M1 product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
+| M-O | Rank-6 consumer contract | **DESIGN OPEN** | `pinv` with no `rcond`; ndf = bin count, header reads `chi2/ndf(all7)` | D3 |
+| M-P | Note/primer/paper synchronization and build | **NOT STARTED** | — | M-N |
+
+**Ordering that matters:** M-G must land **before** M-N, because a digest retrofitted after a file
+exists records only that the file has not changed since the retrofit. M-G and M-H are mine and need
+no decision; I am proceeding with them.
+
+---
+
+## 2. The four decisions — recommendation, alternatives, consequence, exact change
+
+Each states whether it is an **engineering choice** (mine, recorded) or a **scientific judgment**
+(Joseph's), and for the latter, which publication claim it affects. The affected claim is in every
+case the single deferred one, `main_paper.tex:49-51`: *"localize a generator deficit in the joint
+high-available-energy, high-mass region. The latter is a central-value result; its significance
+awaits adoption of a common five-dimensional covariance."*
+
+### D1 — Grid versus diagonal member family · SCIENTIFIC, and smaller than it looks
+
+**RECOMMENDED: keep the diagonal family, hold the `(42, 1000)` group assignment fixed at its archive
+values, and declare the architecture axis as a named scope limit of cause 3's conclusion. Do not buy
+the grid.**
+
+**Why the stakes are lower than the framing suggests.** The audit states the governing fact: *"A
+seed-sensitivity diagnostic is **not an additional budget block**."* Cause 3 is an **acceptance**
+criterion, not a contribution to the quoted uncertainty. So an architecture axis that was never
+varied **does not understate the published uncertainty** — it narrows the scope of the acceptance
+argument. That is a real limitation and a recordable one; it is not a defect in the number the paper
+would quote.
+
+**Alternatives.** (a) **2-D grid** — resolves whether the inter-module split matters; costs a
+launcher change, a second offset axis, and at least a doubling of members, and every member is a
+full round because arms 1–2 take `42 + OFFSET` as their *estimator* seed. (b) **Unify the seeds** —
+**refuse**: `sweep_bank_5d.py:354-356` names this as the trap and says it *"silently re-seeds one of
+the two."* (c) Diagonal with the limit declared — recommended.
+
+**Exact change.** In the cause-3 packet: declare the member family diagonal; declare the group
+assignment `{arms 1–4: 42, arms 5–7: 1000}` fixed; add a residual stating that cause 3's conclusion
+is conditional on that architecture and that the split is invariant under `k` and therefore
+unresolvable within this family.
+
+**Your approval authorizes:** declaring the offsets and moving to a member-production *request*
+(separately priced, not requested here). It does **not** adopt any boundary value.
+
+### D2 — The L4 boundary entry · ENGINEERING to create, SCIENTIFIC to value
+
+**RECOMMENDED: create the fourth `Z_BOUNDARIES` key, withheld, and adopt L4's criterion in two parts
+— the boolean plus a required margin.**
+
+⚠ **One correction to the proposal as it reached me:** `[91eaa2]` offered L4 as approvable *in full,
+including its value*, because the F7 outcome is discrete. `[cb0b6b]` then showed the criterion as
+written **cannot distinguish "tested and stable" from "no member came near the branch point"** —
+identical booleans either way. **So L4 is not value-free after that correction:** it needs a declared
+minimum margin to the branch point for the test to count as performed. That margin is a number and it
+is scientific. I am flagging this because "approvable in full" would otherwise carry into your
+decision, and it no longer holds.
+
+**Scientific consequence.** L4 protects the F7 centering choice. `AGENTS.md:29` already rules that
+*"mean-centering alone is disqualified"*, and `ESTIMATOR_REGISTRY.md:29` records the historical
+adopted product as *"adopted mean-centered"*. So the centering decision is constrained from the front
+door and **L4's job is to stop a member family silently flipping it.** Nothing else covers that.
+
+**Alternatives.** (a) Create the key, withhold the value, adopt the boolean + margin form —
+recommended. (b) Create the key and adopt a bare boolean — rejected on `[cb0b6b]`'s argument; it
+admits a vacuous pass. (c) Leave L4 uncovered — leaves a published binary choice with no criterion.
+
+**Exact change.** Add to `nd-unfolding/z_contract.py` `Z_BOUNDARIES` a key `cause2_f7_margin`,
+`Boundary.withheld(...)` with the reason stating that the boolean leg is structural and the margin leg
+is an unset scientific number; extend `tests/test_z_contract.py`'s import-time assertion so the
+withheld set becomes five, so the day a value is declared a test changes and a reviewer sees it.
+**I can write this code on your approval of the key's existence** — the value stays yours.
+
+**Your approval authorizes:** creating the key and the test (code). Not its value.
+
+### D3 — The scientific input needed to justify `τ` · SCIENTIFIC, and it is a convention, not a measurement
+
+**RECOMMENDED: declare the significance threshold at which the deferred claim will be asserted at
+all. That is `τ`'s missing input, and it is declarable now, before any product exists.**
+
+**Why this is the right input and is non-circular.** `τ` bounds movement of M1's projected correlation
+matrix. That matrix enters the publication claim only through the corner χ² — measured,
+`eavailW_covariance.py:546-548` defines the corner in code as `E_avail >= 0.4 & W >= 1.8`. So the
+question *"how much may the projected correlation move before the claim changes"* reduces to *"how
+much may the significance move before the claim changes"*, which reduces to **"at what significance is
+the claim made"** — a collaboration convention (evidence versus observation), **not an observation of
+these data.** Declaring it now cannot be contaminated by a favourable result, which is exactly what
+`SPEC` §6.4 and your standing instruction forbid.
+
+**Alternatives.** (a) Declare a relative tolerance on the correlation matrix directly — arbitrary, no
+connection to any claim, and it is how the three withdrawn format-derived numbers were produced.
+(b) Derive `τ` from observed movement once M1 exists — **forbidden**: a threshold placed to obtain a
+verdict. (c) Declare the significance threshold — recommended.
+
+**Exact change.** Declare: the deferred claim is asserted at `≥ Nσ` (you name `N`); `τ` is then whatever
+projected-correlation movement leaves the corner significance above `N` — a calculation performed once
+on M1, not a judgement. Record it as the conclusion-flip input in the cause-3 packet.
+
+**Your approval authorizes:** the threshold declaration, which converts `τ` from blocked-on-judgement
+to computable-from-M1. It authorizes no production.
+
+### D4 — The registry mismatch rule · ENGINEERING repair of a SCIENTIFIC criterion
+
+**RECOMMENDED: amend the estimator-seed field of the fingerprint convention to within-family identity
+plus a declared inter-family map; retain all eight other fields unchanged.**
+
+**Why an amendment is required rather than optional.** `ESTIMATOR_REGISTRY.md:17-22` requires *"every
+covariance component must carry the identical estimator fingerprint as its central product (reject on
+mismatch)"* and `:29` declares the central at `est seed 42`, while the throw payload records
+`estimator_seed = 1000` — a difference `sweep_bank_5d.py:354-356` documents as **deliberate**. Applied
+literally the rule rejects **every** throw component at **every** offset `k`, including `k = 0`, which
+is the archive and is Z's own build. **It therefore rejects the product the registry exists to
+describe and cannot be satisfied at any `k`.** That is unsatisfiable by construction — the same class
+as the `1e-12`-clamp defect the campaign already repaired once.
+
+**Alternatives.** (a) Amend the seed field only — recommended; keeps the protection that matters.
+(b) Exempt the seed field entirely — discards a real check, and cause 3's whole subject is estimator
+seeds. (c) Unify the seeds — **refuse**, as in D1. (d) Leave it — leaves a live rule that rejects the
+adopted product, which is worse than no rule because it will be read as a failed check.
+
+**Scientific consequence.** The convention exists to stop a covariance component being paired with a
+central product built by a *different estimator*. That protection is intact for the eight other
+fields and must stay; only the seed field needs the family-relative reading, because only that field
+is deliberately heterogeneous by module.
+
+**Exact change.** Amend `docs/ESTIMATOR_REGISTRY.md:17-22` to read, for the estimator-seed field:
+identity **within** an estimator family, plus a declared map between families, with the
+`{sweep_bank_5d: 42, unified_throw_cov: 1000}` assignment recorded as the map. Add a note on row `:29`.
+Half the machinery already exists: `analyze_universes_5d.py:137-166` refuses a member assembled from
+mixed seeds.
+
+**Your approval authorizes:** the text amendment (a criterion change, hence yours), after which
+`M-I` closes.
+
+---
+
+## 3. Independent work proceeding now, needing no decision
+
+1. **M-G, projector instrumentation.** Add output-file and read-back row-index digests to
+   `p4_project_4d.py`; bring `project_cov_nd.py` from **zero** digests to parity. Tests for both.
+   Ordered before M-N.
+2. **M-H, fingerprint writers.** `uq_cov_stat_5d.root` and `uq_cov_mlsplit_5d.root` each carry one
+   `TH2D` and nothing else, so five of seven components cannot be fingerprint-checked at all — a
+   **writer** gap, not a verification gap. Add the nine fields at write time.
+3. **Narrowing the packet's universal claims** — see packet §13.
+4. **Rank-6 consumer contract draft**, which D3 completes rather than starts.
+
+**No compute is requested by this plan.** Standing boundaries hold: any single job under 12 h is
+pre-authorized, but nothing here launches one; the no-automatic-retry rule and R5 accounting are
+untouched; new compute will arrive as a bounded, priced request naming what a terminal result cannot
+authorize, per `AGENTS.md`'s next-action discipline.

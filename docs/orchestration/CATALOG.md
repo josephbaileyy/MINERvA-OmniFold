@@ -2016,6 +2016,23 @@ with no error. Measured: `nd-unfolding/mii_anchor_comparator.py` is blob `a7cb2d
   `p4_project_4d.py`), which is the larger and unfiled half of the OI-129 family. **One published
   claim is deferred**, on `(E_avail, W)`, 42 dense bins (`main_paper.tex:49-51`).
 
+### Scalar-5D publication completion — the plan (2026-09-18)
+
+- [`PLAN-20260918-scalar5d-publication-completion.md`](PLAN-20260918-scalar5d-publication-completion.md)
+  - **THE ONE COMPLETION PLAN for the scalar-5D uncertainties and required projections**, under
+  Joseph's 2026-09-18 goal. Sixteen milestones `M-A`…`M-P` with evidence and gate for each, plus
+  **decision-ready recommendations for the four open decisions** — grid-versus-diagonal, the L4
+  boundary key, `τ`'s scientific input, and the registry mismatch rule — each separating engineering
+  choice from scientific judgment. **Two facts from `AGENTS.md` reshape the target:** `:30` lists the
+  `(E_avail,W)` covariance itself as QUARANTINED and unquotable and `:27` requires the quotable
+  covariance to be projected from the adopted **selection-complete** trunk, so **M1 is the only
+  admissible route** to the one deferred claim; and `ESTIMATOR_REGISTRY:29`'s *"#16 five-band coverage
+  (publication gate)"* is plausibly discharged by Z, since `z_contract.py:67` takes exactly the five
+  bands that laterally shift kinematics while the four excluded are weight-only. Companion to
+  [`PACKET-20260918-…`](PACKET-20260918-scalar5d-completion-inventory-and-null-route.md), which holds
+  the evidence and the corrections. **Nothing adopted; no compute requested.**
+
+
 ## Regenerate
 
 ```bash

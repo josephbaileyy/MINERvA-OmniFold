@@ -512,10 +512,16 @@ source bins are aggregated, and no diagonal in the destination basis undoes that
 to `4.4e-16`, the proposed statistic drifts **`0.0004 / 0.0034 / 0.0179 / 0.0753 / 0.1854`** at
 sd `1e-3 / 1e-2 / 0.05 / 0.20 / 0.70`.
 
-⚠ **New, and it is the decision-relevant part: the breach is near-LINEAR in the rescale, at ≈ 0.3× sd
-across three orders of magnitude.** So it is real but **bounded and quantifiable** — at a realistic
-`δ_bin ≈ 1e-3` the leak into L3 is ≈ `3e-4`, not a swamping. The refutation is fatal to
-*disjointness*, not to the statistic's usability as a diagnostic.
+⚠ **WITHDRAWN IN ITS FIRST CLAUSE: the "≈ 0.3 ×, near-linear" characterisation below is wrong and
+is superseded by §12.4.** It came from a one-axis scan; my own column falls 3× above sd `0.2` and an
+independent ensemble *rises* where mine falls, giving `0.13`–`0.57` across both. There is no constant
+here and none is needed — §12's paired-statistic scheme measures the diagonal channel on the members
+themselves. **What survives:** at a realistic `δ_bin ≈ 1e-3` the leak into L3 is ~`4e-4` in both
+ensembles, far below any plausible `τ_p`, so the refutation is fatal to *disjointness* and not to the
+statistic's usability as a diagnostic. Superseded form retained below as the record.
+
+> ~~New, and it is the decision-relevant part: the breach is near-LINEAR in the rescale, at ≈ 0.3× sd
+> across three orders of magnitude. So it is real but bounded and quantifiable.~~
 
 **The conflation, named:** `corr(M C Mᵀ)` **is** invariant under a rescale in the **projected** basis
 — trivially, it is already a correlation matrix. That is what the packet proves. It is not what §4.1
@@ -730,3 +736,66 @@ does not, and §12's attribution scheme removes any need for it.
 §12.3 establishes, not a positive spectrum. What `λ_min < 0` costs is the condition-number bound on
 the cancelling channel (§9.2). Stated separately here so no reader infers a definedness problem that
 does not exist.
+
+---
+
+## 13. Narrowing this packet's universal claims
+
+Per Joseph's instruction to separate **proofs**, **numerical demonstrations** and **assumptions**, and
+to narrow unsupported universal claims. Five, in descending order of how overstated they were.
+
+**13.1 "The impossibility is a theorem, and it was proved" (§12.1) — NARROWED to a numerical
+demonstration plus a dimension argument.** What exists: `[cb0b6b]` drove one source's projected
+correlation onto another's to a residual of `9.322e-11` at **`n = 60` source bins and `m = 3`
+destination cells**. That is a **numerical demonstration of non-identifiability in one instance**, not
+a proof of a general theorem. Its extension to M1 rests on a **dimension count**: a positive diagonal
+has `n − 1` effective free parameters (global scale is a no-op) against `m(m−1)/2` correlation targets,
+so for M1's `n = 10,694` and `m = 42` that is `10,693` free against `861` targets — underdetermined by
+more than an order of magnitude, hence generically solvable. **That is an argument, not a
+demonstration.** I attempted the demonstration at larger `m` and the optimisation did not converge
+within a bounded budget; I stopped it rather than let it run, and I am not reporting a result I do not
+have. **What survives at full strength is the weaker, sufficient statement:** the actual projected
+correlation is a function of both the source correlation and the source diagonal, so a
+diagonal-invariant function of it cannot be relied on to separate them. That is enough to force the
+paired-statistic scheme of §12.
+
+**13.2 "The cancelling channel is unbounded in principle for `C_Z`" (§9.2) — NARROWED.** What is
+established: **no condition-number bound exists**, because `((1+δ)²−1)·λ_max/λ_min` requires
+`λ_min > 0` and the pilot records `λ_min = −1.2750516323643892e-90`. **Absence of that particular
+bound is not a demonstration that the channel is unbounded.** No exhibited `C_Z` excursion supports the
+stronger phrasing. ⚠ **And two distinct channels must not be conflated:** §9.1's cancelling-movement
+channel blows up on near-cancelling sources, whereas §11.1's **diagonal-leak** coefficient measured
+*smaller* on near-cancelling sources (`0.023` versus `0.415`). Same word, different quantities.
+
+**13.3 "Every route to `ε` is closed" (§2.1) — SCOPED.** Correct as written only for the routes
+**named in the contract and the current records**: the withdrawn rev.-17 derivation, a boolean `B`,
+reading off Z's own null, the `p4_lib` transfer, `θ`, and full `S`. It is **not** a claim that no route
+could be conceived. The load-bearing consequence is narrower and survives: **no route presently
+available produces `ε`, and more observations of Z's null cannot, because `SPEC:1410` forbids that
+source regardless of sample size.**
+
+**13.4 "Exactly one claim is intended" (§6) — evidence WIDENED, conclusion unchanged.** I originally
+read only `main_paper.tex`. Swept all twenty `docs/analysis-note/*.tex` sources: the **only** `\sigma`
+occurrences are `1\sigma`, which is ±1σ systematic-band notation and not an asserted significance, and
+`sec_eavailw.tex` defers explicitly at five separate lines — *"made at central-value level because no
+corrected covariance has been adopted"* (`:7`), *"a central-value statement"* (`:47`), *"has not yet
+produced a result"* (`:51`), *"statistical compatibility is not evaluated"* (`:150`), *"central-value
+map is descriptive; a future significance must account for..."* (`:176`). **So the note defers
+consistently with the paper and no covariance-dependent claim is asserted anywhere in the corpus.**
+Scope of the negative: a claim phrased without significance, χ² or σ vocabulary would not have been
+caught, though the search positively controls — it found both the band notation and the deferrals.
+**M1 remains the only required map.** This check could have expanded the projection set and did not.
+
+**13.5 ⚠ The `≈ 0.3 ×` leak constant — I asserted this section was clean and my own covering grep
+refuted it in the same tool call.** §10 carried the claim **live**, stated 200 lines *before* the
+§12.4 withdrawal — the caveat-below-the-claim shape that `[91eaa2]` had flagged in its own packet one
+exchange earlier, and that I reproduced while writing the sentence claiming it was absent. §10 now
+leads with the withdrawal in its **opening clause**, with the superseded form struck beneath as the
+record. **The lesson is the grep, not the correction:** a withdrawal is not done when the new section
+is written, only when a covering search over the *whole* artifact returns no live instance — and the
+search must be run before the claim that it is clean, not after.
+
+**One claim I am NOT narrowing, because it is a proof.** §9.1's coherent-channel result:
+`σ → (1+δ)σ` sends `C → (1+δ)²C` identically, so every quadratic form moves by exactly `(1+δ)² − 1`
+regardless of `N`, weights or correlation structure. That is algebra, verified elementwise, and the
+measurement merely exhibits it.
