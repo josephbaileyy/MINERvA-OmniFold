@@ -128,17 +128,27 @@ def worker(arm, threads, rows, seed, repeats):
         params["num_threads"] = int(threads)
     x, y, w = _dataset(rows, seed)
     digests = []
+    booster_threads = []
     for _ in range(int(repeats)):
         clf = LGBMClassifier(**params)
         clf.fit(x, y, sample_weight=w)
         digests.append(_digest(clf.predict_proba(x)[:, 1]))
+        # WHAT THE BACKEND ACTUALLY USED, read back off the fitted Booster rather than from the
+        # value we passed in. A setting that was requested and a setting that took effect are
+        # different facts, and only the second one explains a digest.
+        try:
+            booster_threads.append(clf.booster_.params.get("num_threads"))
+        except Exception as exc:                                   # pragma: no cover
+            booster_threads.append(f"UNREADABLE: {exc}")
     return {
         "arm": arm, "threads": int(threads), "rows": int(rows), "seed": int(seed),
         "digests": digests,
         "within_process_identical": len(set(digests)) == 1,
         "lightgbm_version": lightgbm.__version__,
         "omp_num_threads_env": os.environ.get("OMP_NUM_THREADS"),
-        "effective_num_threads_param": params.get("num_threads"),
+        "requested_num_threads_param": params.get("num_threads"),
+        "backend_num_threads_readback": booster_threads,
+        "cpu_count_visible": len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None,
         "production_params_source": "omnifold_nn_core.make_estimators",
         "overlay_applied": ARMS[arm],
     }
@@ -221,10 +231,22 @@ def summarise(cells, unavailable, rows, seed, repeats, thread_grid, out=None):
         # thread count -- informative, but not the question the probe was built to ask.
         grid_values = len({int(t) for t in thread_grid})
         record["thread_axis_varied"] = grid_values >= 2
+        # DID THE DISTINCT SETTINGS REACH THE BACKEND? A collapsed grid is an invalid experiment
+        # regardless of scheduler success, and "the driver asked for four values" is not evidence
+        # that four values were used. This reads the fitted Booster's own report.
+        reached = sorted({str(v) for c in cells
+                          for v in c.get("backend_num_threads_readback", [])})
+        record["backend_thread_values_reached"] = reached
+        record["backend_confirmed_distinct_threads"] = len(reached) >= 2
         if not complete:
             record["verdict"] = "PARTIAL"
         elif grid_values < 2:
             record["verdict"] = "DEGENERATE"
+        elif not record["backend_confirmed_distinct_threads"]:
+            # The grid varied and the BACKEND did not. That is not a measurement of the thread
+            # axis either, and it is a different finding from a collapsed grid: the request was
+            # right and something downstream flattened it.
+            record["verdict"] = "UNCONFIRMED"
         else:
             record["verdict"] = "MEASURED"
         record["verdict_note"] = (
@@ -232,6 +254,10 @@ def summarise(cells, unavailable, rows, seed, repeats, thread_grid, out=None):
              "thread-count invariance -- which is the channel a cross-allocation difference acts "
              "through and the reason this probe exists. Read the arms as a single-thread "
              "comparison only. " % grid_values if grid_values < 2 else "") +
+            ("UNCONFIRMED: the grid varied but the fitted Booster reported thread values %s, so "
+             "the distinct settings did not reach the backend and the cross-thread comparison is "
+             "not a measurement. " % reached
+             if grid_values >= 2 and not record["backend_confirmed_distinct_threads"] else "") +
             "Per-arm results only. This probe does NOT adopt a configuration, does not establish "
             "determinism across NODES -- a different CPU model may select different vector "
             "kernels, which one node cannot show -- and does not license a repeat. Applying an "

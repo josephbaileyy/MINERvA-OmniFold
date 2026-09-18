@@ -34,9 +34,13 @@ sys.path.insert(0, str(REPO / "nd-unfolding"))
 import z_determinism_probe as Z  # noqa: E402
 
 
-def _cell(arm, threads, digests):
+def _cell(arm, threads, digests, backend=None):
+    """`backend` is what the fitted Booster reported. Defaults to the requested value, because a
+    cell that did not record one is the pre-readback shape and must not silently look confirmed."""
     return {"arm": arm, "threads": threads, "digests": list(digests),
-            "within_process_identical": len(set(digests)) == 1}
+            "within_process_identical": len(set(digests)) == 1,
+            "backend_num_threads_readback": (list(backend) if backend is not None
+                                             else [threads] * len(digests))}
 
 
 class BlindAndFloor(unittest.TestCase):
@@ -229,6 +233,63 @@ class GridSeparatorSurvivesSbatchExport(unittest.TestCase):
         self.assertIn("exit 14", sh)
         self.assertIn("MNV_THREAD_GRID:-1:2:4:8", sh)
         self.assertIn("comma-separated NAME=VALUE list", sh)
+
+
+class TheSettingMustREACHTheBackend(unittest.TestCase):
+    """Joseph, 2026-09-18: *"in the job, require the intended distinct thread settings to reach the
+    backend. A collapsed grid is an invalid experiment regardless of scheduler success."*
+
+    A grid that reaches the SCRIPT is not a grid that reached LightGBM. `num_threads` could be
+    overridden, clamped to the cpuset, or ignored -- and this repository has already measured that
+    LightGBM ignores `OMP_NUM_THREADS`, so "the setting was passed" is exactly the kind of evidence
+    that has failed here before. The worker now reads `clf.booster_.params["num_threads"]` off the
+    FITTED model and the driver refuses to call the result a measurement unless at least two
+    distinct values came back.
+
+    `UNCONFIRMED` is deliberately a DIFFERENT verdict from `DEGENERATE`: a collapsed grid means the
+    request was wrong, an unconfirmed one means the request was right and something downstream
+    flattened it. Those route to different fixes.
+    """
+
+    def test_backend_reporting_one_value_across_a_varied_grid_is_unconfirmed(self):
+        cells = [_cell(a, t, ["x", "x"], backend=[1, 1]) for a in Z.ARMS for t in (1, 4)]
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        self.assertEqual(rec["verdict"], "UNCONFIRMED")
+        self.assertFalse(rec["backend_confirmed_distinct_threads"])
+        self.assertTrue(rec["thread_axis_varied"], "the GRID did vary; the backend did not")
+        self.assertIn("did not reach the backend", rec["verdict_note"])
+
+    def test_backend_reporting_distinct_values_is_measured(self):
+        cells = [_cell(a, t, ["x", "x"], backend=[t, t]) for a in Z.ARMS for t in (1, 4)]
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        self.assertEqual(rec["verdict"], "MEASURED")
+        self.assertTrue(rec["backend_confirmed_distinct_threads"])
+        self.assertEqual(rec["backend_thread_values_reached"], ["1", "4"])
+
+    def test_degenerate_outranks_unconfirmed(self):
+        """A one-valued grid is reported as DEGENERATE, not UNCONFIRMED -- the request was wrong,
+        which is the more basic fault and the one to fix first."""
+        cells = [_cell(a, 1, ["x", "x"], backend=[1, 1]) for a in Z.ARMS]
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1,))
+        self.assertEqual(rec["verdict"], "DEGENERATE")
+
+    def test_a_cell_with_no_readback_cannot_look_confirmed(self):
+        """An older-format cell carrying no read-back must not be counted as confirmation."""
+        cells = []
+        for a in Z.ARMS:
+            for t in (1, 4):
+                c = _cell(a, t, ["x", "x"])
+                c.pop("backend_num_threads_readback")
+                cells.append(c)
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        self.assertEqual(rec["verdict"], "UNCONFIRMED")
+        self.assertEqual(rec["backend_thread_values_reached"], [])
+
+    def test_the_worker_reads_the_fitted_booster_not_the_request(self):
+        src = PROBE.read_text()
+        self.assertIn("clf.booster_.params", src)
+        self.assertIn("requested_num_threads_param", src)
+        self.assertIn("backend_num_threads_readback", src)
 
 
 if __name__ == "__main__":
