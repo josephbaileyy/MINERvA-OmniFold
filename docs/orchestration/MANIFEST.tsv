@@ -3,7 +3,7 @@ docs/orchestration/.gitignore	tracked	ARCHIVAL	artifact			terminal		exact-path-o
 docs/orchestration/ACCEPTANCE-20260905-wave1-review-pass-and-closeout.md	tracked	ARCHIVAL	document		20260905	terminal		exact-path-only		yes	3	77	5159
 docs/orchestration/AGENT-NOTIFICATIONS.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	2	36	1478
 docs/orchestration/AMENDMENT-20260831-oi177-per-arm-ceilings.md	tracked	LIVE	document		20260831	open		route-only		no	8	368	24487
-docs/orchestration/AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md	tracked	LIVE	document		20260918	open		route-only		no	3	98	5939
+docs/orchestration/AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md	tracked	LIVE	document		20260918	open		route-only		no	4	98	5939
 docs/orchestration/AUDIT-FINDINGS-20260728.md	tracked	ARCHIVAL	audit		20260728	terminal		exact-path-only	nd-unfolding/pet/closure_fullevent_fps.py;nd-unfolding/pet/closure_powered_truth_reweight.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/validate_pet_nominal_gate4.py;nd-unfolding/tests/test_fullevent_schema.py	yes	11	1540	105511
 docs/orchestration/AUDIT-FINDINGS-20260729-B.md	tracked	ARCHIVAL	audit		20260729	terminal		exact-path-only	nd-unfolding/pet/closure_b1_rate_injection.py;nd-unfolding/pet/demo_b5_refiner_feature_space.py;nd-unfolding/pet/gate2_target_runtime.py;nd-unfolding/pet/stress_closure_muon.py;nd-unfolding/pet/validate_pet_nominal_gate4.py;nd-unfolding/tests/test_b1_normalization_fix.py;nd-unfolding/tests/test_b4_gating.py;nd-unfolding/tests/test_fullevent_extract.py;nd-unfolding/tests/test_g2_guards_collected.py	yes	29	610	36174
 docs/orchestration/AUDIT-FINDINGS-20260731.md	tracked	ARCHIVAL	audit		20260731	terminal		exact-path-only		yes	11	846	64509
@@ -21,7 +21,7 @@ docs/orchestration/B1-NORMALIZATION-FIX-DESIGN.md	tracked	ARCHIVAL	document			te
 docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/state/oi137-covering-search-20260822.sh	no	8	397	26997
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	tracked	LIVE	document		20260901	open		route-only		no	7	226	14356
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	tracked	LIVE	document		20260901	open		route-only		no	6	296	19292
-docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	33	2121	195780
+docs/orchestration/CATALOG.md	tracked	LIVE	router			open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py	no	33	2138	197420
 docs/orchestration/CENSUS-20260902-permanence-language-in-leg-grade-cells.md	tracked	LIVE	document		20260902	open		route-only		no	3	170	10966
 docs/orchestration/CLAIM-CLM-001.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	3	33	686
 docs/orchestration/CLAIM-CLM-002.md	tracked	ARCHIVAL	document			terminal		exact-path-only		yes	3	33	515
