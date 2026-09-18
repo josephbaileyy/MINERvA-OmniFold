@@ -774,6 +774,24 @@ could be conceived. The load-bearing consequence is narrower and survives: **no 
 available produces `ε`, and more observations of Z's null cannot, because `SPEC:1410` forbids that
 source regardless of sample size.**
 
+**13.4a ⚠ THE SWEEP RE-RUN HARDER, because three cause criteria now rest on it and `[91eaa2]`
+correctly flagged it as relayed and unverified by them.** Three corrections to how I described it,
+none of which changes the conclusion:
+(i) **It is 24 sources, not "twenty".** My count came from a listing I had truncated with `head -20`;
+the grep itself used `*.tex` and did cover all 24, so the *sweep* was complete and only my
+*description* of it was wrong. The 24 reconcile exactly against what the three drivers `\input`.
+(ii) **The vocabulary was too narrow**, as I had flagged. Re-run over `p-value`, `confidence level`,
+`% CL`, `standard deviation`, `statistically significant/compatible/consistent`, `excluded at`,
+`tension at/of`. Four hits, all inspected, none an asserted claim: `sec_3d.tex:159-160` and
+`app_statmethods.tex:1730,1759` are a closure residual and an ensemble-precision statement, and
+`primer_body.tex:190` says *"exposed a **localized central-value difference** that all four tested
+simulations underpredict"* — explicitly central-value.
+(iii) ⚠ **One hit was a substring false positive:** `"tension of"` matched inside
+*"ex**tension of** the signal definition"*. Recorded because it is the failure that cuts both ways —
+a substring pattern that finds a phantom will as happily miss a real one.
+**Conclusion stands and is now better supported: no covariance-dependent claim is asserted in any of
+the 24 sources.** `[91eaa2]`'s named falsifier for causes 1, 2 and 4 therefore survives.
+
 **13.4 "Exactly one claim is intended" (§6) — evidence WIDENED, conclusion unchanged.** I originally
 read only `main_paper.tex`. Swept all twenty `docs/analysis-note/*.tex` sources: the **only** `\sigma`
 occurrences are `1\sigma`, which is ±1σ systematic-band notation and not an asserted significance, and
@@ -799,3 +817,37 @@ search must be run before the claim that it is clean, not after.
 `σ → (1+δ)σ` sends `C → (1+δ)²C` identically, so every quadratic form moves by exactly `(1+δ)² − 1`
 regardless of `N`, weights or correlation structure. That is algebra, verified elementwise, and the
 measurement merely exhibits it.
+
+
+---
+
+## 14. Two framings of mine that `[91eaa2]` corrected, one materially
+
+**14.1 ⚠ THE CAUSE-2 "CONTRADICTION" DOES NOT EXIST, AND I RAISED IT.** I told the criteria lane that
+`AGENTS.md:29` disqualifies the centering `ESTIMATOR_REGISTRY.md:29` records as adopted. **The word
+doing the work is "alone", and it is not an independent ruling — it IS the F7 branch outcome.**
+Verified verbatim at `FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md`: `:16` *"floor
+`sqrt(Tr C)/sqrt(N)`; **at the floor, mean-centering alone is acceptable; well above it**…"*; `:52`
+*"pairing disqualifies mean-centering alone"*; `:55` *"So mean-centering alone is disqualified for the
+CANDIDATE"*. With `F7_FLOOR_MULTIPLE = 2.0` at `uq_math.py:138` and the ratio well above the floor,
+the CV-centered variant is **additionally mandatory**, and what is disqualified is mean-centering
+**without its CV-centered companion**. The registry records **both** variants, side by side. **Both
+records hold simultaneously.** Had the lane accepted my framing it would have built a criterion to
+resolve a contradiction that was not there — its words: *"resolving a non-existent contradiction
+would have produced a criterion protecting nothing."*
+
+**14.2 I asked for a "bound" where the specification forbids one.** I framed cause 4 as needing a
+*"print-only add-back comparison bound"*. `SPEC:1007` condition 3 requires that adding the print
+**"does not change the covariance content"** — not that it change it by little. **A bound would
+presuppose a permitted change and weaken the specification**, which is precisely what Joseph's
+standing instruction forbids. The criterion is exact equality, and its falsifier is the guard failing
+to fire under a deliberate **mutation**, since the specification itself says a guard proven only by a
+one-time comparison is untested.
+
+**14.3 An incidental observation, recorded and NOT reopened.** `app_statmethods.tex:1730-1731` reads:
+*"Every estimated standard deviation carries a `10.1%` fractional uncertainty of its own from the
+family size alone, `1/sqrt(2(N-1)) = 1/sqrt(98)`, against the `7.11%` that `N=100` would give."* So
+**`7.11%` is the sampling error of a family of 100 that does not exist** — the actual family is 50,
+whose error is `10.1%` — and the same passage records that the design document specifying `N=100`
+labels a family of this size `INSUFFICIENT`. This is consistent with `θ = 7.11e-2` having been
+declined, and it is noted only as corroboration. **No θ cycle is reopened and none is proposed.**
