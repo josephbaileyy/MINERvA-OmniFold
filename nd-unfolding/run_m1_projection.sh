@@ -37,6 +37,10 @@ SRC_COV="${MNV_SRC_COV:?set it to the adopted 5D covariance ROOT file}"
 SRC_HIST="${MNV_SRC_HIST:?set it to the TH2D key inside the adopted covariance}"
 SRC_CV="${MNV_SRC_CV:?set it to the 5D central product supplying the reported mask}"
 DST_MASK="${MNV_DST_MASK:?set it to declared-dst-cv or receiving-cells, the destination mask choice}"
+# The source covariance is selected by PATH, and on the pilot products a path does not identify the
+# object: z-cv.npz and z-mean.npz are structurally identical and differ only in this field. Declared
+# here, verified by the projector against the file. No default.
+EXPECT_VARIANT="${MNV_EXPECT_VARIANT:?set it to the variant the source must declare, or none}"
 OUT="${MNV_OUT:?set it to the output path for the projected covariance}"
 
 # ---- REFUSAL 1: THE TRUNK MUST BE ADOPTED, AND ADOPTION IS A RECORD, NOT A FLAG ----------------
@@ -131,9 +135,14 @@ done
 # A failure returns for a new decision. It does not resubmit itself, and nothing downstream may
 # treat a retry as authorized by this script.
 cd "$CODE_ROOT/nd-unfolding"
+# `--run-class publication` was ABSENT here. The projector defaults to None, which records
+# UNDECLARED -- so this launcher could not produce the publication-class M1 the order requires,
+# and the `adoptable: false` refusal never fired, because that refusal is conditioned on exactly
+# this value. The launcher that exists to build the publication product has to say so.
 python3 project_cov_nd.py \
   --src-cov "$SRC_COV" --src-hist "$SRC_HIST" --src-cv "$SRC_CV" \
   --src-axes pt,pz,eavail,q3,W --keep-axes eavail,W \
+  --run-class publication --expect-variant "$EXPECT_VARIANT" \
   "${DST_ARG[@]}" --out "$OUT" || _rc=$?
 # `set -e` made the assignment below unreachable on failure, so the NO AUTOMATIC RETRY message it
 # guards never printed. The exit status propagated regardless; what was lost was the disclosure.

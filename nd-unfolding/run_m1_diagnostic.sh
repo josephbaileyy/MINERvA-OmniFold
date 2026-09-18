@@ -60,6 +60,9 @@ SRC_COV="${MNV_SRC_COV:?set it to the PRESERVED CANDIDATE 5D covariance ROOT fil
 SRC_HIST="${MNV_SRC_HIST:?set it to the TH2D key inside that covariance}"
 SRC_CV="${MNV_SRC_CV:?set it to the 5D central product supplying the reported mask}"
 DST_MASK="${MNV_DST_MASK:?set it to declared-dst-cv or receiving-cells, the destination mask choice}"
+# Declared, not defaulted: a diagnostic may legitimately examine either variant, so which one it
+# examined must be stated and then corroborated by the file rather than inferred from the path.
+EXPECT_VARIANT="${MNV_EXPECT_VARIANT:?set it to the variant the source must declare, or none}"
 OUT="${MNV_OUT:?set it to the output path, which must be under a DIAGNOSTIC directory}"
 R5_RECEIPT="${MNV_R5_RECEIPT:?set it to a fresh committed R5 meter receipt}"
 DECLARED_TASK_HOURS="${MNV_DECLARED_TASK_HOURS:?set it to the reservation you are declaring}"
@@ -168,6 +171,7 @@ python3 project_cov_nd.py \
   --src-cov "$SRC_COV" --src-hist "$SRC_HIST" --src-cv "$SRC_CV" \
   --src-axes pt,pz,eavail,q3,W --keep-axes eavail,W \
   --run-class diagnostic --acceptance-question "$QUESTION" \
+  --expect-variant "$EXPECT_VARIANT" \
   "${DST_ARG[@]}" --out "$OUT" || _rc=$?
 _rc="${_rc:-0}"
 

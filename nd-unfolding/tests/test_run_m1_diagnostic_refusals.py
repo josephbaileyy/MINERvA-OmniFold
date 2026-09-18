@@ -47,6 +47,7 @@ METER = REPO / "docs" / "orchestration" / "r5_meter.py"
 
 MANDATORY = ["MNV_CODE_ROOT", "MNV_ACCEPTANCE_QUESTION", "MNV_DECISION_VALUE", "MNV_SRC_COV",
              "MNV_SRC_HIST", "MNV_SRC_CV", "MNV_DST_MASK", "MNV_OUT", "MNV_R5_RECEIPT",
+             "MNV_EXPECT_VARIANT",
              "MNV_DECLARED_TASK_HOURS"]
 
 GOOD_Q = "tau: how far may the projected (E_avail,W) correlation move before the corner claim flips"
@@ -93,6 +94,7 @@ class M1DiagnosticRefusals(unittest.TestCase):
             "MNV_DECISION_VALUE": GOOD_V,
             "MNV_SRC_COV": str(self.t / "cov.root"), "MNV_SRC_HIST": "hCov",
             "MNV_SRC_CV": str(self.t / "cv.root"), "MNV_DST_MASK": "receiving-cells",
+            "MNV_EXPECT_VARIANT": "none",
             "MNV_OUT": str(self.t / "DIAGNOSTIC" / "m1_diag.root"),
             "MNV_R5_RECEIPT": str(self.receipt),
             "MNV_DECLARED_TASK_HOURS": "0.25",
@@ -325,6 +327,8 @@ class M1DiagnosticRefusals(unittest.TestCase):
                "MNV_ADOPTION_RECORD": str(self.t / "no_such_adoption.md"),
                "MNV_SRC_COV": str(self.t / "cov.root"), "MNV_SRC_HIST": "hCov",
                "MNV_SRC_CV": str(self.t / "cv.root"), "MNV_DST_MASK": "receiving-cells",
+               "MNV_EXPECT_VARIANT": "none",
+            "MNV_EXPECT_VARIANT": "none",
                "MNV_OUT": str(self.t / "out.root")}
         r = subprocess.run(["bash", str(PUB_SH)], env=env, capture_output=True, text=True)
         self.assertEqual(r.returncode, 3, r.stderr)

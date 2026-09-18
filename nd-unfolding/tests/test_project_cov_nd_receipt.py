@@ -161,7 +161,8 @@ class ProjectCovNDReceipt(unittest.TestCase):
         _write_src(cv, "hXSecND_flat", xcv, False)
 
         argv = ["project_cov_nd.py", "--src-cov", cov, "--src-hist", "hCov", "--src-cv", cv,
-                "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", keep, "--out", out]
+                "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", keep, "--out", out,
+                "--expect-variant", "none"]   # ROOT fixture carries no variant marker
         if run_class is not None:
             argv += ["--run-class", run_class]
         if question is not None:
@@ -424,7 +425,7 @@ class NpzInputPath(unittest.TestCase):
         argv = ["project_cov_nd.py", "--src-cov", src,
                 "--src-hist", "hCov_combined5d_total_uthrow", "--src-cv", src,
                 "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", "eavail,W",
-                "--out", out] + list(extra)
+                "--out", out, "--expect-variant", "cv"] + list(extra)
         old, sys.argv = sys.argv[:], argv
         try:
             P.main()
@@ -512,7 +513,7 @@ class NpzInputPath(unittest.TestCase):
         out = os.path.join(self.tmp, "o2.root")
         argv = ["project_cov_nd.py", "--src-cov", src, "--src-hist", "hNoSuchKey",
                 "--src-cv", src, "--src-axes", "pt,pz,eavail,q3,W",
-                "--keep-axes", "eavail,W", "--out", out]
+                "--keep-axes", "eavail,W", "--out", out, "--expect-variant", "cv"]
         old, sys.argv = sys.argv[:], argv
         try:
             with self.assertRaises(SystemExit) as cm:
@@ -549,7 +550,7 @@ class TheDigestBoundAdoptionException(unittest.TestCase):
         argv = ["project_cov_nd.py", "--src-cov", src,
                 "--src-hist", "hCov_combined5d_total_uthrow", "--src-cv", src,
                 "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", "eavail,W",
-                "--out", out, "--run-class", "publication"]
+                "--out", out, "--run-class", "publication", "--expect-variant", "cv"]
         if exception:
             argv += ["--adoption-exception", exception]
         old, sys.argv = sys.argv[:], argv
@@ -662,7 +663,7 @@ class TheExceptionTokenMustPROPAGATE(unittest.TestCase):
         P = self.P
         argv = ["project_cov_nd.py", "--src-cov", src, "--src-hist", hist, "--src-cv", src,
                 "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", keep, "--out", out,
-                "--run-class", run_class]
+                "--run-class", run_class, "--expect-variant", "cv"]
         if exception:
             argv += ["--adoption-exception", exception]
         if question:
@@ -742,3 +743,96 @@ class TheExceptionTokenMustPROPAGATE(unittest.TestCase):
         so pre-existing callers are not broken."""
         meta = self.P._source_metadata(os.path.join(self.tmp, "no_such_file.root"))
         self.assertEqual(meta, {})
+
+
+class VariantIsTheOnlyThingThatDistinguishesTheTwoCandidates(unittest.TestCase):
+    """MEASURED 2026-09-18, and this is why `--expect-variant` is required with no default.
+
+    `z-cv.npz` and `z-mean.npz` in the pilot output are structurally identical: the same seven
+    keys, the same shapes, the same dtypes, and BYTE-IDENTICAL `hXSecND_flat`, `hSupportMask`,
+    `hPinnedMask` and `hRowIndex5D`. They differ in exactly two places -- the covariance, whose
+    sqrt(trace) differs by a factor 1.0768, and one metadata field. Before this guard, `variant`
+    appeared in `project_cov_nd.py` exactly once, in a docstring: nothing read it.
+
+    So `--src-cov` selected between them BY FILENAME, and projecting the wrong one understates
+    the uncertainty scale by 7.13% while passing every other check in the file -- right shape at
+    :322, right mask, right row order, right central values, digest faithfully recorded.
+
+    A digest cannot close this. It authenticates the file that arrived, not that it was the file
+    that should have arrived.
+    """
+    setUp = ProjectCovNDReceipt.setUp
+    tearDown = ProjectCovNDReceipt.tearDown
+    _grid = NpzInputPath._grid
+    _write_source = NpzInputPath._write_source
+
+    def _run(self, expect, metadata=None, run_class="diagnostic"):
+        src = os.path.join(self.tmp, "src.npz")
+        self._write_source(src, metadata=metadata)
+        out = os.path.join(self.tmp, "o.root")
+        argv = ["project_cov_nd.py", "--src-cov", src,
+                "--src-hist", "hCov_combined5d_total_uthrow", "--src-cv", src,
+                "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", "eavail,W",
+                "--out", out, "--run-class", run_class, "--expect-variant", expect]
+        if run_class == "diagnostic":
+            argv += ["--acceptance-question", "does the variant guard discriminate the pair?"]
+        old, sys.argv = sys.argv[:], argv
+        try:
+            return self.P.main()
+        finally:
+            sys.argv = old
+
+    def test_it_is_REQUIRED_so_no_caller_can_omit_the_claim(self):
+        src = os.path.join(self.tmp, "src.npz")
+        self._write_source(src)
+        argv = ["project_cov_nd.py", "--src-cov", src,
+                "--src-hist", "hCov_combined5d_total_uthrow", "--src-cv", src,
+                "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", "eavail,W",
+                "--out", os.path.join(self.tmp, "o.root")]
+        old, sys.argv = sys.argv[:], argv
+        try:
+            with self.assertRaises(SystemExit) as cm:
+                self.P.main()
+        finally:
+            sys.argv = old
+        self.assertNotEqual(cm.exception.code, 0)
+
+    def test_declaring_cv_against_a_mean_source_REFUSES(self):
+        """THE FAILURE THIS EXISTS FOR."""
+        with self.assertRaises(SystemExit) as cm:
+            self._run("cv", metadata={"variant": "mean"})
+        self.assertIn("declares variant 'mean'", str(cm.exception))
+
+    def test_declaring_mean_against_a_cv_source_REFUSES_the_other_direction(self):
+        """A one-directional check waves the opposite-direction error through."""
+        with self.assertRaises(SystemExit) as cm:
+            self._run("mean")
+        self.assertIn("declares variant 'cv'", str(cm.exception))
+
+    def test_an_unmarked_source_cannot_satisfy_a_positive_claim(self):
+        """Fails CLOSED: an unverifiable identity is the condition being closed, not an exemption."""
+        with self.assertRaises(SystemExit) as cm:
+            self._run("cv", metadata={"variant": None})
+        self.assertIn("carries no", str(cm.exception))
+
+    def test_declaring_none_against_a_marked_source_REFUSES(self):
+        """`none` is a claim too, so it is checked in its own direction."""
+        with self.assertRaises(SystemExit) as cm:
+            self._run("none")
+        self.assertIn("--expect-variant none", str(cm.exception))
+
+    def test_publication_from_the_mean_variant_REFUSES_on_the_standing_disqualification(self):
+        """AGENTS.md:29 records that mean-centering alone is disqualified. That holds however the
+        run was invoked, so it is enforced on the declared variant rather than on the path."""
+        with self.assertRaises(SystemExit) as cm:
+            self._run("mean", metadata={"variant": "mean"}, run_class="publication")
+        self.assertIn("mean-centering alone is disqualified", str(cm.exception))
+
+    def test_POSITIVE_CONTROL_a_matching_claim_passes_and_is_RECORDED(self):
+        """A guard that fires on every correct run is not a guard. And the receipt has to carry
+        both sides: a check whose result is not written down cannot be audited later."""
+        self._run("cv")
+        rec = json.loads(Path(os.path.join(self.tmp, "o.root") + ".receipt.json").read_text())
+        self.assertEqual(rec["src_variant_declared"], "cv")
+        self.assertEqual(rec["src_variant_measured"], "cv")
+

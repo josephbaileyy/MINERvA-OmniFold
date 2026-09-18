@@ -49,13 +49,21 @@ APPROVED = {
     "cause3_med": 0.05,
     "cause3_med_coverage": 0.99,
     "cause3_corr": 0.05,
+    # Added 2026-09-18 under Joseph's delegation of the required rows. `cause3_corr_coverage`
+    # exists because ruling 5's coverage clause is written over BINS and `s_proj`'s population is
+    # FUNCTIONALS, so the clause never reached that leg and it had no coverage number at all.
+    "cause3_corr_coverage": 1.0,
+    "cause2_f7_margin": 0.168,
 }
-STILL_WITHHELD = ("null_epsilon", "cause2_f7_margin")
+# ONE, not two. `cause2_f7_margin` left this tuple the day its margin was set.
+STILL_WITHHELD = ("null_epsilon",)
 
 
 class TheDeclaredAndWithheldSetsAreExactlyAsRuled(unittest.TestCase):
-    """Was `AllScientificBoundariesAreWithheld`. Four boundaries are now DECLARED by ruling, and
-    two remain withheld. Any further change is still a scientific change."""
+    """Was `AllScientificBoundariesAreWithheld`. SIX boundaries are now DECLARED -- four by
+    Joseph's ruling 5, then `cause3_corr_coverage` and `cause2_f7_margin` under his delegation of
+    the required rows -- and ONE remains withheld. Any further change is still a scientific
+    change, and it still has to show up here before it can ship."""
 
     def test_the_declared_set_is_exactly_the_approved_set(self):
         declared = {k: b.value for k, b in zc.declared_boundaries().items()}
@@ -73,7 +81,7 @@ class TheDeclaredAndWithheldSetsAreExactlyAsRuled(unittest.TestCase):
                 self.assertTrue(b.provenance and b.provenance.strip())
                 self.assertIn(APPROVING_RECORD, b.provenance)
 
-    def test_the_two_remaining_boundaries_are_withheld_with_reasons(self):
+    def test_the_one_remaining_boundary_is_withheld_with_a_reason(self):
         for key in STILL_WITHHELD:
             with self.subTest(boundary=key):
                 b = zc.boundary(key)
@@ -97,10 +105,12 @@ class TheDeclaredAndWithheldSetsAreExactlyAsRuled(unittest.TestCase):
 
     def test_describe_is_safe_on_a_withheld_boundary(self):
         # A receipt must be able to record a withheld boundary without tripping over it.
-        # ⚠ Was `cause3_agg`, which is now DECLARED by ruling; `cause2_f7_margin` is the
-        # still-withheld example. A test whose fixture silently became the opposite case would
-        # have kept passing while testing nothing.
-        d = zc.boundary("cause2_f7_margin").describe()
+        # ⚠ FIXTURE MOVED TWICE. It was `cause3_agg`, which ruling 5 declared; then
+        # `cause2_f7_margin`, which the delegation declared. `null_epsilon` is the only withheld
+        # boundary left. A test whose fixture silently became the opposite case would have kept
+        # passing while testing nothing -- that is why the withheld set is asserted above rather
+        # than assumed here.
+        d = zc.boundary("null_epsilon").describe()
         self.assertEqual(d["status"], "WITHHELD")
         self.assertIsNone(d["value"])
 

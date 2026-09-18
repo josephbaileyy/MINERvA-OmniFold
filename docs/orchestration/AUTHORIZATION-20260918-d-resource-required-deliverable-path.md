@@ -303,3 +303,48 @@ navigation record digests `z-cv.npz`, `z-mean.npz` and `z-null.npz`; I have not 
 the projector consumes as the covariance. **It does not block the act** — the launcher measures
 `sha256sum "$SRC_COV"` itself and prints the line to declare — but a lane must not transcribe a
 digest from the navigation record on the assumption that it is the covariance.
+
+## 9. DELEGATION OF THE REQUIRED ROWS, and the SPEC freeze — Joseph, 2026-09-18
+
+**The reason he gave, in his own words:** *"You have been blocked on me for every criterion while
+barred from grading your own legs, so waiting has been turning into audit rounds. That is my design
+fault, not your discipline."*
+
+> **DEFAULT-PROCEED on the twelve required rows.** *"Execute any row in the §2 table and report
+> after; do not await my word on them."*
+>
+> **THREE ACTS STAY RESERVED, unchanged:** **ADOPT**, **any material change to the estimator**, and
+> **anything outward-facing**. *"Everything else on that table is yours."*
+
+**Set under this delegation, 2026-09-18** — each is a row of the §2 table and none is a reserved act:
+
+| boundary / choice | value | why it was mine to set |
+|---|---|---|
+| `cause2_f7_margin` | **`0.168`** | a boundary, not an adoption |
+| `cause3_corr_coverage` | **`1.0`** | ruling 5's coverage clause is written over **bins**; `s_proj`'s population is **functionals**, so the clause never reached the leg and it had no coverage number at all |
+| `s_proj` reporting class | **`per-bin`** | a max over a finite enumerated set whose failures must be enumerable |
+| C3's disposition | **declared-and-unevaluated, disclosed** | ruling 2 declined the only additional member, so the max over a one-element set of differences is undefined — a choice, not a measurement |
+
+`null_epsilon` **remains the one withheld boundary.** The §6.4 route makes it moot for the required
+path rather than resolving it, so it stays withheld rather than being quietly satisfied.
+
+### 9.1 THE SPEC IS FROZEN AT REV. 22
+
+> *"No rev. 23. Extract a one-page operative sheet … and treat the SPEC as historical. No new
+> 'what changed in rev. N' sections, no packet superseding a packet. Results go to the ledger;
+> corrections go inline where the error is. The revision narration has become a drift source and it
+> is costing more than it protects."*
+
+The operative sheet is [`OPERATIVE-SHEET-scalar5d.md`](OPERATIVE-SHEET-scalar5d.md). **It is an
+extract, not a new authority** — every number in it is already declared in code or ruled above, and
+where it and a canonical artifact disagree, the canonical artifact wins.
+
+### 9.2 THE STOPPING RULE STANDS
+
+> *"Name the blocked deliverable before any repair round."* Joseph's assessment of the round that
+> produced it: *"this round's audit was correctly scoped and caught a wrong published uncertainty."*
+
+And the correction he made to my framing, recorded because it was mine to get wrong: I wrote that
+*"had you ruled on the five decisions first, we'd have burned a cycle discovering this."* **That
+made his not-yet-ruling a benefit of my own audit, and it is not.** The gate was equally repairable
+after the rulings; the rulings are what move the required path.

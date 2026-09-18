@@ -29,7 +29,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 SH = REPO / "nd-unfolding" / "run_m1_projection.sh"
 MANDATORY = ["MNV_CODE_ROOT", "MNV_DATA_ROOT", "MNV_ADOPTION_RECORD", "MNV_SRC_COV",
-             "MNV_SRC_HIST", "MNV_SRC_CV", "MNV_DST_MASK", "MNV_OUT"]
+             "MNV_SRC_HIST", "MNV_SRC_CV", "MNV_DST_MASK", "MNV_OUT",
+             "MNV_EXPECT_VARIANT"]
 
 
 class M1RunnerRefusals(unittest.TestCase):
@@ -66,6 +67,7 @@ class M1RunnerRefusals(unittest.TestCase):
             "MNV_ADOPTION_RECORD": str(self.t / "adopt.md"),
             "MNV_SRC_COV": str(self.t / "cov.root"), "MNV_SRC_HIST": "hCov",
             "MNV_SRC_CV": str(self.t / "cv.root"), "MNV_DST_MASK": "receiving-cells",
+            "MNV_EXPECT_VARIANT": "none",
             "MNV_OUT": str(self.t / "out.root"),
         }
 

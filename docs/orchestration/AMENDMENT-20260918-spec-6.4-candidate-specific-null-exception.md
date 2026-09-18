@@ -1,0 +1,98 @@
+# AMENDMENT — `SPEC` §6.4, a candidate-specific null clause, exhausted by one use
+
+**EXECUTED 2026-09-18** on Joseph's ruling: *"the NULL row resolves to the §6.4 exception, and you
+may now execute it — after SRC_COV, not before."* Approved as drafted in
+`DECISION-PACKET-20260918-scalar5d-publication-blockers.md` §12.1 and held unexecuted until now.
+
+**This amends `SPEC` §6.4 and nothing else. It does not revise `SPEC`, which is FROZEN at rev. 22.**
+It adopts nothing, grades nothing, and moves no count.
+
+---
+
+## 1. HOW THE ROUTE RESOLVED — the prior rule firing, not a later convenience
+
+`SPEC` §6.4's order was **P0 → if needed P2 → only if bitwise identity is unreachable, the
+exception.**
+
+**P0 is self-contained and was completed at `1405caad`**; `58524334` measured its subject.
+`PACKET-20260918-scalar5d-completion-inventory-and-null-route.md` **§2.4 predeclared both
+branches before the measurement existed**:
+
+> *"if it is like-for-like, the pinned design does **not** deliver determinism within a single
+> process and the arm-7 experiment would fail — **so P2's cost (repriced to `9.00`–`12.00`) should
+> not be spent until P0 returns.**"*
+
+**P0 returned the like-for-like branch.** First checkpoint divergence at **call 0** (`3.27e-16`);
+endpoint not identical; `x_cv` differing **across invocations** at `5.33e-15`. The pair is
+like-for-like, so the predeclared consequence applies as written: **the pinned design does not
+deliver determinism within a single process, the arm-7 experiment would fail, and P2 is not run.**
+
+> **P2 IS NOT AUTHORIZED and its `9.00`–`12.00` CPU task-hours are NOT spent.** This is the
+> predeclared branch resolving, recorded so it is visibly the prior rule firing.
+
+Bitwise identity is therefore **unreachable** without the estimator change that remains reserved —
+which is precisely §6.4's stated precondition for this clause.
+
+## 2. THE AMENDMENT
+
+**§6.4 is unchanged in form and in requirement.** Z's fixed-seed null bound remains scale-relative
+and required to be fixed before production, its value justified by precision and sensitivity
+controls established before implementation and not selected from a favourable production result.
+**The G precedent is unchanged.**
+
+**ADDED — a candidate-specific clause, exhausted by one use.** For the single product
+`sha256 3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5`
+(`uq_5d/z_pilot_20260916_a5/z-cv.npz`, `variant: "cv"`) only:
+
+**(a)** `M(i)` remains **`UNRESOLVED`**, with `reject_conditions` retaining **`4c`** and
+`branch = None`. The recorded reason remains the **predeclaration failure**. *This clause is not
+altered by (b) or (c), and no later act erases it.*
+
+**(b)** A retrospective scale-relative **assessment** may be recorded. **It carries no grade
+token.** G's `1.31e-12` is **context for scale only and is not a threshold**; Z's value being
+smaller is **not a pass**.
+
+> **THE MEASUREMENT FIRST.** Measured reproducibility is **`4.4311e-14` relative**, against an
+> acceptance tolerance of **`5%`**. That is **twelve orders of magnitude below anything that can
+> affect a quoted number** (`0.05 / 4.43e-14 ≈ 1.1e12`). §6.4's own statistic `null_norm/√tr`
+> measures `3.218e-13`, likewise far below any quoted precision. And the measurement is itself
+> **stable**: `4.4311e-14` against the historical `4.4520e-14` is a ratio of **`0.9953`** — **the
+> measurement of non-determinism reproduces to 0.5%.**
+>
+> **THEN THE REASON IT IS UNRESOLVABLE.** The criterion cannot be resolved because **its
+> predeclared-tolerance form cannot be constructed for an object that is already built** — a bound
+> fixed *before* production cannot be fixed *after* it — **not because reproducibility is in
+> doubt.** The two facts are independent, and they are stated in this order deliberately: the
+> unresolvability is a defect in the criterion's applicability to this object, and it must not be
+> read as a reservation about the object's reproducibility.
+
+**(c)** **Adoption of this digest may proceed notwithstanding (a)** if and only if the remaining
+required evidence is complete and independently verified. **(c) is a permission to decide, not a
+decision, and not evidence.**
+
+## 3. SCOPE — one digest, and nothing generalizes
+
+The clause names **one digest**. Any other product — **including a future rebuild of the same
+object** — is governed by §6.4 unamended. **The clause cannot be cited for a second product**, and
+there is nothing here for a later lane to inherit. Digest scoping is what prevents generalization:
+the exception attaches to bytes, not to a decision type.
+
+`null_epsilon` **remains WITHHELD** in `z_contract.py`. This clause makes it **moot for the required
+path; it does not supply it.** A later product needing §6.4 satisfied still needs `ε`.
+
+## 4. WHAT THIS DOES NOT DO
+
+- It **does not adopt**. Adoption is Joseph's act and remains conditional on the remaining required
+  evidence and its independent verification.
+- It **does not edit the candidate's metadata.** `adoptable: false` and
+  `scientific_acceptance: NON-PASSING` continue verbatim into every product's receipt.
+- It **is not a force flag.** `project_cov_nd.py --adoption-exception` requires a record containing
+  the **measured** sha256 of the source; `--force`, `--no-verify`, `--skip-adoption` and
+  `MNV_FORCE` are absent from the module, asserted by test.
+- The resulting class is the distinct token **`publication-under-exception`**, so no reader can
+  mistake such a product for one projected from an adoptable trunk. **The exception unblocks the
+  route; it does not supply the evidence.**
+
+**`AGENTS.md:29` summary, carrying no authorizing force:** the corrected scalar 5D candidates remain
+`QUARANTINED`; one named digest additionally carries a candidate-specific §6.4 clause recorded here,
+which does not release the row and does not alter the quarantine for anything else.

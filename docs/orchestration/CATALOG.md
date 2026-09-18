@@ -18,6 +18,32 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ### THE SCALAR-5D REQUIRED DELIVERABLE PATH — standing authorization; **BLOCKED on five Joseph decisions** (2026-09-18)
 
+- [`AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md`](AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md)
+  - **✅ EXECUTED 2026-09-18. The NULL row resolves here.** Amends `SPEC` §6.4 and nothing else —
+  **it does not revise `SPEC`, which is FROZEN at rev. 22** — and it **adopts nothing, grades
+  nothing, moves no count.** §1 records how the route resolved: **P0 returned the like-for-like
+  branch** (divergence at **call 0**, `3.27e-16`; `x_cv` differing across invocations at
+  `5.33e-15`), which is the branch `PACKET-20260918-scalar5d-completion-inventory-and-null-route.md`
+  §2.4 **predeclared before the measurement existed** — so **P2 IS NOT AUTHORIZED and its
+  `9.00`–`12.00` CPU task-hours are not spent.** The clause is **candidate-specific, one digest
+  (`3d7465f6…`), exhausted by one use**: **(a)** `M(i)` stays **`UNRESOLVED`** with `4c` and no
+  later act erases it; **(b)** a retrospective assessment carrying **no grade token** — measured
+  reproducibility `4.4311e-14` against a `5%` tolerance, **twelve orders of magnitude** below
+  anything that can affect a quoted number, itself stable to **0.5%** (`0.9953` against the
+  historical `4.4520e-14`), and unresolvable only because **a predeclared-tolerance form cannot be
+  constructed for an object already built**, not because reproducibility is in doubt; **(c)** a
+  **permission to decide, not a decision and not evidence.** `null_epsilon` stays **WITHHELD** —
+  the clause makes it **moot for the required path, it does not supply it.** Nothing generalizes,
+  including to a future rebuild of the same object.
+- [`OPERATIVE-SHEET-scalar5d.md`](OPERATIVE-SHEET-scalar5d.md)
+  - **✅ START HERE for what is IN FORCE. `SPEC` is FROZEN at rev. 22 and is now HISTORICAL** —
+  no rev. 23, no "what changed in rev. N" section, no packet superseding a packet; results go to
+  the ledger and corrections go inline where the error is. One page: the seven boundaries (`δ = 5%`
+  on all three legs, the two coverage fractions, `cause2_f7_margin 0.168`, and `null_epsilon` as
+  the single remaining withheld one), `s_proj`'s functional set, the seven cause dispositions,
+  **`SRC_COV` identified by measurement as `z-cv.npz`**, the fixed execution order, and the three
+  reserved acts. **An EXTRACT, not a new authority**: where it and a canonical artifact disagree,
+  the canonical artifact wins.
 - [`AUTHORIZATION-20260918-d-resource-required-deliverable-path.md`](AUTHORIZATION-20260918-d-resource-required-deliverable-path.md)
   - **✅ `D-RESOURCE`, IN FORCE. Read this before touching the scalar-5D path — the objective lives
   here, not in a packet.** §0 states it: an **adopted scalar-5D covariance**, the **required verified

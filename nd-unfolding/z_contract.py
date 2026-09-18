@@ -24,14 +24,22 @@ boundary, so the failure is at the point of use and cannot be reached by acciden
 
 WHAT IS AND IS NOT WITHHELD
 ---------------------------
-Withheld (the spec's §3.7a/§3.7b/§3.7d, all still with Joseph):
+Withheld -- ONE, and this list read as if it were four until the values landed. A stale inventory
+of what is unset is worse than none, because it is read as current:
   * `null_epsilon`   -- §3.7a. `n_iters * n_rep * eps` was WITHDRAWN in rev. 17: a summation bound
                         over a computation that is not a summation. Needs `B <= S` and an `epsilon`
-                        argued within `[B, S]`.
-  * `cause3_agg`     -- §3.7b. The format-derived `0.0861%` was withdrawn in rev. 16.
-  * `cause3_med`     -- §3.7b. Likewise `0.0374%`; and the per-bin leg also needs a coverage
-                        fraction, not just a tolerance (`D2`).
-  * `cause3_corr`    -- §3.7d. No correlation leg is adopted and none has a boundary.
+                        argued within `[B, S]`. The §6.4 route makes it moot for the required path
+                        rather than resolving it, so it stays withheld.
+
+Declared 2026-09-18, under Joseph's ruling 5 and then his delegation of the required rows:
+  * `cause3_agg` `0.05`, `cause3_med` `0.05`, `cause3_corr` `0.05` -- a DIRECT movement bound,
+    never quadrature. The format-derived `0.0861%` and `0.0374%` stay withdrawn.
+  * `cause3_med_coverage` `0.99` -- the full-support fraction. The 100% clause on bins entering a
+    quoted projection is absolute and enforced separately, not as a fraction.
+  * `cause3_corr_coverage` `1.0` -- `s_proj`'s population is FUNCTIONALS, not bins, so ruling 5's
+    bin-scoped coverage clause did not reach this leg and it had no coverage boundary at all.
+  * `cause2_f7_margin` `0.168` -- the minimum distance from F7's branch point below which the
+    boolean is INCONCLUSIVE rather than MET.
 
 NOT withheld, because they are not scientific acceptance criteria -- they are structural identities
 whose tolerance is arithmetic, and the spec fixes them:
@@ -238,16 +246,20 @@ Z_BOUNDARIES = {
     "cause3_corr": Boundary.declared(
         "cause3_corr", 0.05,
         '"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md" §2 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty. s_proj leg, under §3.7d ruling (b).'),
-    # CREATED WITHHELD 2026-09-18 per ruling 6 (C2). The boolean leg of L4 is structural; the
-    # MARGIN is an unset scientific number and it comes back to Joseph.
-    "cause2_f7_margin": Boundary.withheld(
-        "cause2_f7_margin",
-        "C2 / L4: the F7 centering criterion as written cannot distinguish `tested and stable` "
-        "from `no member came near the branch point` -- identical booleans either way. It "
-        "therefore needs a declared MINIMUM MARGIN to the branch point for the test to count as "
-        "performed. That margin is a scientific number and is unset. Wording per ruling 6: cause 2 "
-        "`inherits a tolerance with a stated derivation and an owner`, NOT `not chosen` -- "
-        "F7_FLOOR_MULTIPLE = 2.0 at uq_math.py:138 is chosen and that module says so in capitals."),
+    # DECLARED 2026-09-18. Ruling 5 sets coverage over BINS -- "100% on bins entering a quoted
+    # projection, >= 99% on the full reported support". s_proj's population is not bins, it is the
+    # FUNCTIONALS of ruling 4, so that clause does not literally reach this leg and the leg had no
+    # coverage boundary at all. 1.0 rather than 0.99 because every member of the approved
+    # functional set IS a quoted projection, which makes ruling 5's FIRST clause the applicable one.
+    "cause3_corr_coverage": Boundary.declared(
+        "cause3_corr_coverage", 1.0,
+        '"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md" §9 -- Joseph, 2026-09-18, delegating the required rows: "Execute any row in the §2 table and report after; do not await my word on them." Ruling 5 coverage clause is expressed over BINS; s_proj population is the FUNCTIONALS of ruling 4 (the rows of project_cov_nd.py M, plus the all-ones vector), so the clause does not literally reach it and no cause3_corr_coverage existed. Every member of that set is itself a quoted projection, so ruling 5 FIRST clause -- 100% on bins entering a quoted projection -- is the applicable one rather than the >= 99% full-support fallback. Any functional exceeding cause3_corr is enumerated in the receipt and never absorbed.'),
+    # DECLARED 2026-09-18. Created withheld under ruling 6 and the margin was brought to Joseph;
+    # he then delegated every row of the §2 table except ADOPT, a material estimator change, and
+    # anything outward-facing. A boundary is none of those three, so it is set here.
+    "cause2_f7_margin": Boundary.declared(
+        "cause2_f7_margin", 0.168,
+        '"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md" §9 -- Joseph, 2026-09-18, delegating the required rows: "default-proceed on the twelve required rows ... Three acts stay reserved and unchanged: ADOPT, any material change to the estimator, and anything outward-facing." A boundary is none of the three. VALUE: the F7 test counts as PERFORMED only if |shift/(k*floor) - 1| >= 0.168, i.e. the ratio lies outside [0.832, 1.168]; inside that band the result is INCONCLUSIVE, not MET. GROUND: the branch point is proportional to sqrt(Tr), which the 160-throw ensemble determines to 1/sqrt(2(N-1)) = 5.61%, so a ratio inside the floor own precision cannot be told from the other side of the branch; 3 x 5.61% = 16.8%. It reads NO observed shift -- 5.61% comes from N alone -- so it cannot be tuned to make today answer come out right, which is the failure uq_math.py:128-137 records against its own F7_FLOOR_MULTIPLE. MEASURED: shift/(k*floor) = 2.6739, outside the band by 2.29x above its upper edge, so the current member passes. RESIDUALS: the iid-normal assumption makes 5.61% an order-of-magnitude anchor rather than an exact precision, the same residual delta carries; and the factor 3 is a judgement, with 2x giving 0.112 and 1x giving 0.056, all three of which the current member clears.'),
 }
 
 

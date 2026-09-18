@@ -264,6 +264,15 @@ def main():
     # recorded as the explicit sentinel `UNDECLARED`, never omitted -- the same distinction
     # `combine_cov_nd.py` draws, where a missing key reads as "not checked" and an explicit
     # UNDECLARED reads as "the writer was never told".
+    ap.add_argument("--expect-variant", required=True, help=(
+        "REQUIRED. The `variant` the source covariance must declare in its own metadata, or the "
+        "literal `none` to declare that it carries no variant marker. THERE IS NO DEFAULT AND NO "
+        "INFERENCE: the caller states which object it believes it is projecting and the file has "
+        "to agree. Measured 2026-09-18: `z-cv.npz` and `z-mean.npz` are structurally identical -- "
+        "same seven keys, same shapes, same dtypes, byte-identical hXSecND_flat, hSupportMask, "
+        "hPinnedMask and hRowIndex5D -- and differ only in this field and in the covariance "
+        "itself, whose sqrt(trace) differs by a factor 1.0768. Nothing in this file read "
+        "`variant` before; it appeared once, in a docstring."))
     ap.add_argument("--run-class", choices=("diagnostic", "candidate", "publication"),
                     default=None,
                     help="diagnostic = provisional, non-adopted, authorized only to resolve a "
@@ -342,6 +351,40 @@ def main():
 
     # SOURCE BINDING. Carried into the receipt so the projection inherits its source's standing.
     _src_meta = _source_metadata(args.src_cov)
+    # ---- VARIANT IDENTITY: WHICH OBJECT IS THIS, NOT WHICH BYTES WERE HANDED OVER -------------
+    # A digest authenticates the file that arrived; it cannot say it was the right file. Measured
+    # on the pilot products: `z-cv.npz` and `z-mean.npz` agree on shape (10694x10694 float64), on
+    # the reported mask, on the row order and on the central values, so `--src-cov` alone selects
+    # between them by FILENAME. Projecting the wrong one understates sqrt(trace) by 7.13%
+    # (5.269506e-38 against 5.674201e-38) while passing every other gate in this file.
+    _declared_variant = args.expect_variant
+    _actual_variant = _src_meta.get("variant")
+    if _declared_variant == "none":
+        if _actual_variant is not None:
+            raise SystemExit(
+                f"[FAIL] --expect-variant none, but {args.src_cov} declares variant "
+                f"{_actual_variant!r}. Declaring the absence of a marker that is present is a "
+                f"claim about a different object.")
+    elif _actual_variant is None:
+        raise SystemExit(
+            f"[FAIL] --expect-variant {_declared_variant!r}, but {args.src_cov} carries no "
+            f"`variant` in its metadata, so the claim cannot be corroborated by the file. This "
+            f"fails closed deliberately: an unverifiable identity is the condition being closed, "
+            f"not an exemption from it. Pass --expect-variant none to declare an unmarked source.")
+    elif _actual_variant != _declared_variant:
+        raise SystemExit(
+            f"[FAIL] --expect-variant {_declared_variant!r}, but {args.src_cov} declares variant "
+            f"{_actual_variant!r}. These products are structurally identical -- same keys, shapes, "
+            f"dtypes, mask, row order and central values -- so no other check in this file "
+            f"distinguishes them.")
+    # `mean-centering alone is disqualified` (AGENTS.md:29, the corrected-scalar-5D quarantine
+    # row). That is a standing disqualification, so a publication product may not be built from
+    # the mean-centered variant however the run was invoked.
+    if args.run_class == "publication" and _declared_variant == "mean":
+        raise SystemExit(
+            "[FAIL] --run-class publication from the mean-centered variant. AGENTS.md:29 records "
+            "that mean-centering alone is disqualified, and the measured sqrt(trace) is 7.13% "
+            "below the CV-centered variant. Use --run-class diagnostic to examine it.")
     # A non-adoptable source must not yield a publication-class product. This is enforced on the
     # DATA rather than on the output path, so it holds however the run was invoked.
     # ---- STANDING INHERITANCE: a derived product may not out-rank its source ------------------
@@ -555,6 +598,8 @@ def main():
              "rule": "a derived product may not out-rank its source"}),
         "src_row_index_basis": _src_row_index_basis,
         "src_metadata": _src_meta,
+        "src_variant_declared": _declared_variant,
+        "src_variant_measured": _actual_variant,
         "run_class": _run_class,
         "acceptance_question": _accept_q,
         "run_class_keys_in_product": ["runClass", "runClassStatus", "acceptanceQuestion"],
