@@ -129,20 +129,28 @@ if [ -e "$OUT" ]; then
   exit 7
 fi
 
+# ---- THE ENVIRONMENT COMES FIRST. Same defect as job 58506753 found in the sibling launcher ---
+# This script did not source the campaign environment AT ALL, so both its admission check and its
+# payload would have run under the node default python3 -- 3.6.15, no ROOT -- and the admission
+# check would have reported an interpreter SyntaxError as an accounting refusal, in the words of
+# an accounting refusal. The environment is a PRECONDITION of evaluating the boundary.
+r5_source_environment "$CODE_ROOT" || exit $?
+r5_require_interpreter "$CODE_ROOT" || exit $?
+
 # ---- REFUSAL 8: THE DECLARED RESERVATION MUST BE THE ENFORCED CAP -----------------------------
 # A reservation bounds what the scheduler MAY charge, which is the wall cap -- never a measured
 # actual from a past run, and never the cap multiplied by cpus-per-task. Both mistakes are on
 # record in this campaign. Declaring a number smaller than the cap is the one that matters: it
 # admits an item against headroom it may exceed.
 r5_require_declared_cap "$DECLARED_TASK_HOURS" "$ENFORCED_TASK_HOURS" \
-  "$ENFORCED_NTASKS" "$ENFORCED_WALL_HOURS" || exit 8
+  "$ENFORCED_NTASKS" "$ENFORCED_WALL_HOURS" || exit $?
 
 # ---- REFUSAL 9: R5 ADMISSION, MEASURED AND FRESH ----------------------------------------------
 # Joseph, 2026-09-18: "Before every submission, account for all lanes charged usage and outstanding
 # reservations ... and verify admission." The meter is the instrument for that and it is CALLED
 # here rather than restated -- a rule retyped is a second implementation. It fails closed on a
 # stale, missing or malformed receipt, and `check` refuses when spend + proposed >= the ceiling.
-r5_admission_check "$CODE_ROOT" "$R5_RECEIPT" "$ENFORCED_TASK_HOURS" 0 || exit 9
+r5_admission_check "$CODE_ROOT" "$R5_RECEIPT" "$ENFORCED_TASK_HOURS" 0 || exit $?
 
 # ---- THE PRE-SUBMISSION RECORD, which is the other half of the accounting clause ---------------
 r5_record_preamble "$QUESTION" "$DECISION_VALUE" \

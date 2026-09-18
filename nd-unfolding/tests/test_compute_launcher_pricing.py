@@ -135,3 +135,54 @@ class AdmissionIsCalledNotRetyped(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CallersMustNotFlattenTheLibraryCodes(unittest.TestCase):
+    """The library returns DISTINCT codes on purpose; a caller can throw that away in one token.
+
+    THE DEFECT THIS EXISTS FOR, found by the sibling suite after the codes were separated:
+    `r5_admission_check` was given a `12` branch meaning "the meter did not evaluate the boundary"
+    as distinct from `9` "the meter evaluated it and refused" -- and the call site read
+    `r5_admission_check ... || exit 9`, which reported a blind gate as a boundary refusal. The
+    distinction was correct in the function and destroyed in the caller, which is the same defect
+    one layer up.
+
+    8 cap mismatch, 9 admission refused, 12 boundary not evaluated, 13 no campaign environment.
+    """
+
+    def test_no_launcher_replaces_a_library_code_with_a_literal(self):
+        bad = []
+        for p in DECLARING:
+            for line_number, line in enumerate(p.read_text().splitlines(), 1):
+                if "r5_" in line or line.strip().startswith('"$ENFORCED_NTASKS"'):
+                    m = re.search(r"\|\|\s*exit\s+(\d+)", line)
+                    if m:
+                        bad.append(f"{p.name}:{line_number} exits literal {m.group(1)}")
+        self.assertEqual(bad, [], "these callers flatten the library's exit codes: " + str(bad))
+
+    def test_every_library_call_propagates(self):
+        """The positive half: the calls exist and they propagate. Asserting only the absence of a
+        literal would pass a launcher that had stopped calling the library at all."""
+        for p in DECLARING:
+            with self.subTest(launcher=p.name):
+                text = p.read_text()
+                for fn in ("r5_source_environment", "r5_require_interpreter",
+                           "r5_require_declared_cap", "r5_admission_check"):
+                    self.assertIn(fn, text, f"{p.name} does not call {fn}")
+                self.assertGreaterEqual(
+                    len(re.findall(r"\|\|\s*exit\s+\$\?", text)), 4,
+                    f"{p.name} has fewer than four propagating guard calls")
+
+    def test_the_environment_precedes_the_admission_check(self):
+        """ORDERING, and it is the bug job 58506753 found. The admission check ran first, so
+        `python3` was the node default 3.6.15, which cannot parse the meter -- and the SyntaxError
+        came back as "R5 admission failed". An environment fault reported as an accounting fault."""
+        for p in DECLARING:
+            with self.subTest(launcher=p.name):
+                lines = p.read_text().splitlines()
+                env = next(i for i, l in enumerate(lines) if "r5_source_environment" in l
+                           and not l.strip().startswith("#"))
+                adm = next(i for i, l in enumerate(lines) if "r5_admission_check" in l
+                           and not l.strip().startswith("#"))
+                self.assertLess(env, adm,
+                                f"{p.name} verifies admission before establishing the environment")

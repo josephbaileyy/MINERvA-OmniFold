@@ -83,6 +83,10 @@ class M1DiagnosticRefusals(unittest.TestCase):
         self.receipt = self.t / "r5.json"
         _write_receipt(self.receipt, 600)          # 0.1667 CPU task-h spent, far inside
         (self.t / "DIAGNOSTIC").mkdir()
+        # A no-op environment script. The refusals are this suite's subject, and the campaign
+        # environment cannot be reproduced on a laptop -- so the substrate is a stub, and a
+        # SEPARATE test covers its absence rather than letting the absence break every other case.
+        (self.t / "code" / "setup_salloc_env.sh").write_text("# no-op stub for tests\n")
         self.env = {
             "MNV_CODE_ROOT": str(self.t / "code"),
             "MNV_ACCEPTANCE_QUESTION": GOOD_Q,
@@ -245,6 +249,62 @@ class M1DiagnosticRefusals(unittest.TestCase):
         p.write_text(json.dumps(stale))
         r = self._run(MNV_R5_RECEIPT=str(p))
         self.assertEqual(r.returncode, 9, r.stderr)
+
+    # ---- rc 13 and rc 12: the environment is a PRECONDITION of evaluating the boundary -----
+    def test_missing_environment_script_refuses_rc13(self):
+        """Under `set -e` a bare `source missing_file` dies with rc 1, indistinguishable from a
+        payload failure -- so the absence of the environment would read as "the job failed" with
+        no sign that nothing ran. Found by these tests when the source line was added."""
+        (self.t / "code" / "setup_salloc_env.sh").unlink()
+        r = self._run()
+        self.assertEqual(r.returncode, 13, r.stderr)
+        self.assertIn("campaign environment script", r.stderr)
+
+    def test_unusable_interpreter_refuses_rc12_not_rc9(self):
+        """THE DEFECT JOB 58506753 FOUND, as a regression test.
+
+        That job failed in 4 s printing "R5 admission failed for 0.25 CPU task-h". It had not
+        failed admission: the admission check ran before the environment was established, so
+        `python3` was the node default 3.6.15, which cannot parse `r5_meter.py`. The SyntaxError
+        exited nonzero and the old one-line `if !` test read it as a refusal. An ENVIRONMENT fault
+        reported as an ACCOUNTING fault, in the words of an accounting fault.
+
+        Reproduced here by making the meter unparseable, which is the same condition an old
+        interpreter produces. rc 12 says the boundary was not evaluated; rc 9 would claim it was.
+        """
+        meter = self.t / "code" / "docs" / "orchestration" / "r5_meter.py"
+        meter.write_text("this is not valid python(\n")
+        r = self._run()
+        self.assertEqual(r.returncode, 12, r.stderr)
+        # It is caught by `r5_require_interpreter`, which runs FIRST -- the better place, since it
+        # costs nothing and precedes the receipt read. Whichever guard speaks, the invariant is
+        # that it must not claim the boundary was evaluated.
+        self.assertIn("cannot run the R5 meter", r.stderr)
+        self.assertIn("NOT an accounting stop", r.stderr)
+        self.assertNotIn("admission REFUSED", r.stderr)
+
+    def test_meter_that_selftests_but_returns_a_nonverdict_code_is_rc12(self):
+        """The `r5_admission_check` branch specifically: a meter that RUNS but answers with a code
+        that is none of its verdicts (0/3/4/5). The previous version mapped every nonzero to a
+        refusal, so this case was indistinguishable from a real boundary stop."""
+        meter = self.t / "code" / "docs" / "orchestration" / "r5_meter.py"
+        meter.write_text(
+            "import sys\n"
+            "sys.exit(0 if '--self-test' in sys.argv else 99)\n")
+        r = self._run()
+        self.assertEqual(r.returncode, 12, r.stderr)
+        self.assertIn("NOT EVALUATED", r.stderr)
+        self.assertIn("exited 99", r.stderr)
+        self.assertNotIn("admission REFUSED", r.stderr)
+
+    def test_a_real_refusal_still_says_refused_not_blind(self):
+        """The other direction: the gate must not call a genuine boundary refusal a blind gate."""
+        near = self.t / "r5_near.json"
+        _write_receipt(near, int(499.9 * 3600))
+        r = self._run(MNV_R5_RECEIPT=str(near))
+        self.assertEqual(r.returncode, 9, r.stderr)
+        self.assertIn("admission REFUSED", r.stderr)
+        self.assertIn("evaluated the boundary", r.stderr)
 
     # ---- the positive control, and the neighbouring ratchet -------------------------------
     def test_positive_control_reaches_past_every_refusal(self):

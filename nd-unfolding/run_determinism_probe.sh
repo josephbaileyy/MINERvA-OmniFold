@@ -64,10 +64,27 @@ if [ -e "$OUT" ]; then
   exit 7
 fi
 
+# ---- THE ENVIRONMENT COMES FIRST, AND THE ORDER IS THE BUG THAT JOB 58506753 FOUND -----------
+# That job failed in 4 s printing "R5 admission failed for 0.25 CPU task-h". It had not failed
+# admission: this block ran AFTER the admission check, so `python3` was still the node default
+# 3.6.15, which cannot parse `r5_meter.py` (`from __future__ import annotations`). The SyntaxError
+# exited nonzero and the gate read it as a refusal. An environment fault reported as an accounting
+# fault. The environment is a PRECONDITION of evaluating the boundary, so it is established first.
+r5_source_environment "$CODE_ROOT" || exit $?
+r5_require_interpreter "$CODE_ROOT" || exit $?
+if ! python3 -c "import lightgbm, numpy" 2>/dev/null; then
+  echo "REFUSED -- the interpreter cannot import lightgbm and numpy, so the subject of this" >&2
+  echo "          probe cannot be loaded. Discovering that ON the node spends the reservation" >&2
+  echo "          to learn it; run this import on a login node before submitting." >&2
+  python3 -V >&2
+  exit 11
+fi
+python3 -c "import lightgbm,sys,platform; print('  lightgbm      :', lightgbm.__version__); print('  python        :', sys.version.split()[0], platform.machine())"
+
 # ---- REFUSAL 8 and 9: the reservation is the cap, and admission is verified -------------------
 r5_require_declared_cap "$DECLARED_TASK_HOURS" "$ENFORCED_TASK_HOURS" \
-  "$ENFORCED_NTASKS" "$ENFORCED_WALL_HOURS" || exit 8
-r5_admission_check "$CODE_ROOT" "$R5_RECEIPT" "$ENFORCED_TASK_HOURS" 0 || exit 9
+  "$ENFORCED_NTASKS" "$ENFORCED_WALL_HOURS" || exit $?
+r5_admission_check "$CODE_ROOT" "$R5_RECEIPT" "$ENFORCED_TASK_HOURS" 0 || exit $?
 
 r5_record_preamble "$QUESTION" "$DECISION_VALUE" \
   "rows=$ROWS thread_grid=$THREAD_GRID arms=historical,det_only,pinned (synthetic data; the \
@@ -78,22 +95,6 @@ echo "=== environment, recorded because the answer is a property of it ==="
 echo "  hostname       : $(hostname)"
 echo "  SLURM_JOB_ID   : ${SLURM_JOB_ID:-unset}"
 echo "  SLURM_CPUS     : ${SLURM_CPUS_PER_TASK:-unset}"
-
-# ---- THE ENVIRONMENT, and a REFUSAL if it cannot load the subject ----------------------------
-# The login default `python3` is 3.6.15 and has no LightGBM; the campaign interpreter is
-# `root_6_28` (Python 3.11.14, LightGBM 4.6.0), reached the way every other launcher reaches it.
-# `omnifold_nn_core` does NOT import ROOT at module level -- checked, its note about `import ROOT`
-# is about a different module -- so this probe needs only numpy and LightGBM out of that env.
-# shellcheck source=../setup_salloc_env.sh
-source "$CODE_ROOT/setup_salloc_env.sh"
-if ! python3 -c "import lightgbm, numpy" 2>/dev/null; then
-  echo "REFUSED -- the interpreter cannot import lightgbm and numpy, so the subject of this" >&2
-  echo "          probe cannot be loaded. Discovering that ON the node spends the reservation" >&2
-  echo "          to learn it; run this import on a login node before submitting." >&2
-  python3 -V >&2
-  exit 11
-fi
-python3 -c "import lightgbm,sys,platform; print('  lightgbm      :', lightgbm.__version__); print('  python        :', sys.version.split()[0], platform.machine())"
 
 cd "$CODE_ROOT/nd-unfolding"
 _rc=0
