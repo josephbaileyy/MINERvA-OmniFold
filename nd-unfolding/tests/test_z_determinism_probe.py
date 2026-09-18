@@ -98,8 +98,12 @@ class Aggregation(unittest.TestCase):
         self.assertFalse(rec["arms_complete"])
 
     def test_complete_matrix_is_measured_not_adopted(self):
-        cells = [_cell(a, 1, ["x", "x"]) for a in Z.ARMS]
-        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1,))
+        # ⚠ This originally used a ONE-VALUE grid and asserted `MEASURED`, i.e. it encoded the
+        # defect job 58507305 exposed -- a complete set of arms over a degenerate axis is not a
+        # measurement of the axis. The grid is varied now; `DegenerateAxisIsNotAMeasurement`
+        # covers the one-value case explicitly.
+        cells = [_cell(a, t, ["x", "x"]) for a in Z.ARMS for t in (1, 4)]
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
         self.assertEqual(rec["verdict"], "MEASURED")
         self.assertTrue(rec["arms_complete"])
         # The verdict must not overstate itself in any of three directions.
@@ -143,6 +147,88 @@ class ConfigurationUnderTest(unittest.TestCase):
                     "MKL_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
             self.assertIn(var, src)
         self.assertIn("env=env", src)
+
+
+class DegenerateAxisIsNotAMeasurement(unittest.TestCase):
+    """THE DEFECT JOB 58507305 FOUND, and it is the worst kind: a GREEN run that measured nothing.
+
+    That job COMPLETED in 54 s, exit 0, verdict `MEASURED`, with
+    `invariant_across_thread_grid: true` for all three arms. It had run every cell at ONE thread.
+    `sbatch --export=ALL,A=1,B=2` parses its argument as a comma-separated list of NAME=VALUE, so
+    the commas inside `MNV_THREAD_GRID=1,2,4,8` (backslash-escaped) split the LIST -- backslash escaping does not
+    survive it -- and `MNV_THREAD_GRID` exported as `1`.
+
+    The invariance claim was arithmetically correct over a population of one. This is the
+    empty-population failure with the population equal to a single point, and the probe reported it
+    as a pass. Now: per-arm `VACUOUS`, overall verdict `DEGENERATE`, and a launcher refusal.
+
+    ⚠ The `pinned` arm is single-valued BY DESIGN -- it sets `num_threads=1` -- so `VACUOUS` is the
+    honest answer for that arm and not a defect. The distinction is tested below.
+    """
+
+    def _cells(self, arm, pairs):
+        return [_cell(arm, t, ds) for t, ds in pairs]
+
+    def test_one_thread_value_is_vacuous_not_true(self):
+        rec = Z.summarise(self._cells("historical", [(1, ["aa", "aa"])]), [],
+                          rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1,))
+        across = rec["per_arm"]["historical"]["invariant_across_thread_grid"]
+        self.assertIsInstance(across, str, "a one-point axis must not report a boolean")
+        self.assertTrue(across.startswith("VACUOUS"), across)
+        self.assertEqual(rec["per_arm"]["historical"]["n_thread_values"], 1)
+
+    def test_two_thread_values_report_a_real_boolean(self):
+        rec = Z.summarise(self._cells("historical", [(1, ["aa", "aa"]), (4, ["aa", "aa"])]), [],
+                          rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        self.assertIs(rec["per_arm"]["historical"]["invariant_across_thread_grid"], True)
+        rec2 = Z.summarise(self._cells("historical", [(1, ["aa", "aa"]), (4, ["bb", "bb"])]), [],
+                           rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        self.assertIs(rec2["per_arm"]["historical"]["invariant_across_thread_grid"], False)
+
+    def test_degenerate_grid_downgrades_the_whole_verdict(self):
+        """Even with every arm present, a one-valued grid is not `MEASURED`."""
+        cells = [_cell(a, 1, ["x", "x"]) for a in Z.ARMS]
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1,))
+        self.assertEqual(rec["verdict"], "DEGENERATE")
+        self.assertFalse(rec["thread_axis_varied"])
+        self.assertIn("NOTHING was measured about thread-count invariance", rec["verdict_note"])
+
+    def test_varied_grid_is_measured_and_says_so(self):
+        cells = [_cell(a, t, ["x", "x"]) for a in Z.ARMS for t in (1, 4)]
+        rec = Z.summarise(cells, [], rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1, 4))
+        self.assertEqual(rec["verdict"], "MEASURED")
+        self.assertTrue(rec["thread_axis_varied"])
+        self.assertNotIn("DEGENERATE", rec["verdict_note"])
+
+    def test_a_repeated_thread_value_does_not_count_as_variation(self):
+        """`--thread-grid 4:4` is one point written twice."""
+        rec = Z.summarise([_cell(a, 4, ["x", "x"]) for a in Z.ARMS], [],
+                          rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(4, 4))
+        self.assertEqual(rec["verdict"], "DEGENERATE")
+
+
+class GridSeparatorSurvivesSbatchExport(unittest.TestCase):
+    def test_colon_is_the_default_and_parses(self):
+        src = PROBE.read_text()
+        self.assertIn('default="1:2:4:8"', src)
+        self.assertIn("[:,\\s]+", src.replace("\\\\", "\\"))
+
+    def test_all_three_separators_parse_to_the_same_grid(self):
+        import subprocess as sp
+        for spec in ("1:2:4:8", "1,2,4,8", "1 2 4 8"):
+            with self.subTest(spec=spec):
+                r = sp.run([sys.executable, str(PROBE), "--mode", "driver", "--rows", "1000",
+                            "--allow-small-rows", "--repeats", "1", "--thread-grid", spec],
+                           capture_output=True, text=True)
+                rec = json.loads(r.stdout)
+                self.assertEqual(rec["thread_grid"], [1, 2, 4, 8], spec)
+
+    def test_launcher_refuses_a_one_valued_grid_with_rc14(self):
+        """The refusal, so a degenerate axis cannot produce a green run at all."""
+        sh = (REPO / "nd-unfolding" / "run_determinism_probe.sh").read_text()
+        self.assertIn("exit 14", sh)
+        self.assertIn("MNV_THREAD_GRID:-1:2:4:8", sh)
+        self.assertIn("comma-separated NAME=VALUE list", sh)
 
 
 if __name__ == "__main__":

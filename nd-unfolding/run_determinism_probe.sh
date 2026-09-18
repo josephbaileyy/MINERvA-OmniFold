@@ -42,7 +42,11 @@ OUT="${MNV_OUT:?set it to the output path for the probe record, under a DIAGNOST
 R5_RECEIPT="${MNV_R5_RECEIPT:?set it to a fresh committed R5 meter receipt}"
 DECLARED_TASK_HOURS="${MNV_DECLARED_TASK_HOURS:?set it to the reservation you are declaring}"
 ROWS="${MNV_ROWS:-200000}"
-THREAD_GRID="${MNV_THREAD_GRID:-1,2,4,8}"
+# ⚠ COLON-SEPARATED, NOT COMMA. `sbatch --export=ALL,A=1,B=2` parses its argument as a
+# comma-separated list of NAME=VALUE, so a comma inside a value splits the LIST -- backslash
+# escaping does not survive it. Job 58507305 COMPLETED with `MNV_THREAD_GRID=1` because of exactly
+# that, and every cell ran at one thread: the run was green and the thread axis was gone.
+THREAD_GRID="${MNV_THREAD_GRID:-1:2:4:8}"
 
 QUESTION="Does the intended deterministic configuration actually deliver identical estimator \
 output, and does it do so INVARIANTLY in the thread count -- the channel a cross-allocation \
@@ -62,6 +66,19 @@ esac
 if [ -e "$OUT" ]; then
   echo "REFUSED -- $OUT already exists. Overwriting would destroy the record it replaces." >&2
   exit 7
+fi
+
+# ---- REFUSAL 14: THE THREAD AXIS IS THE SUBJECT, so a one-valued grid is refused -------------
+# Job 58507305 COMPLETED, exit 0, verdict MEASURED, and measured nothing about thread-count
+# invariance -- the channel this probe exists to test. A degenerate axis must not be able to
+# produce a green run, so it is a refusal here rather than a caveat in the record.
+_grid_n=$(printf %s "$THREAD_GRID" | tr ":, " "\n\n\n" | grep -c .)
+if [ "${_grid_n:-0}" -lt 2 ]; then
+  echo "REFUSED -- MNV_THREAD_GRID resolved to $_grid_n value(s): $THREAD_GRID" >&2
+  echo "          The thread axis IS the subject. Use colons, not commas: sbatch --export parses" >&2
+  echo "          its argument as a comma-separated NAME=VALUE list, so a comma inside a value" >&2
+  echo "          splits the list and the grid silently becomes its first element." >&2
+  exit 14
 fi
 
 # ---- THE ENVIRONMENT COMES FIRST, AND THE ORDER IS THE BUG THAT JOB 58506753 FOUND -----------

@@ -59,6 +59,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -194,9 +195,21 @@ def summarise(cells, unavailable, rows, seed, repeats, thread_grid, out=None):
         summary = {}
         for arm, cs in by_arm.items():
             within = all(c["within_process_identical"] for c in cs)
-            across = len({d for c in cs for d in c["digests"]}) == 1
+            n_thread_values = len({int(c["threads"]) for c in cs})
+            # ⚠ AN INVARIANCE CLAIM OVER ONE POINT IS VACUOUSLY TRUE, and the first real run of
+            # this probe reported exactly that: Slurm `--export` swallowed the commas in the thread
+            # grid, every cell ran at `threads=1`, and `invariant_across_thread_grid` came back
+            # True for all three arms. It was arithmetically correct over a population of one.
+            # The `pinned` arm is single-valued BY DESIGN (it sets num_threads=1), so for that arm
+            # the label is the honest answer rather than a defect.
+            if n_thread_values < 2:
+                across = ("VACUOUS -- %d thread value(s) in this arm; one point cannot show "
+                          "invariance ACROSS thread counts" % n_thread_values)
+            else:
+                across = len({d for c in cs for d in c["digests"]}) == 1
             summary[arm] = {
                 "cells": len(cs),
+                "n_thread_values": n_thread_values,
                 "within_process_identical": within,
                 "invariant_across_thread_grid": across,
                 "distinct_digests": sorted({d[:16] for c in cs for d in c["digests"]}),
@@ -204,8 +217,21 @@ def summarise(cells, unavailable, rows, seed, repeats, thread_grid, out=None):
         record["per_arm"] = summary
         complete = set(by_arm) == set(ARMS)
         record["arms_complete"] = complete
-        record["verdict"] = "MEASURED" if complete else "PARTIAL"
+        # The thread axis is the subject. A grid with one value measures the arms at a single
+        # thread count -- informative, but not the question the probe was built to ask.
+        grid_values = len({int(t) for t in thread_grid})
+        record["thread_axis_varied"] = grid_values >= 2
+        if not complete:
+            record["verdict"] = "PARTIAL"
+        elif grid_values < 2:
+            record["verdict"] = "DEGENERATE"
+        else:
+            record["verdict"] = "MEASURED"
         record["verdict_note"] = (
+            ("DEGENERATE: the thread grid held %d value(s), so NOTHING was measured about "
+             "thread-count invariance -- which is the channel a cross-allocation difference acts "
+             "through and the reason this probe exists. Read the arms as a single-thread "
+             "comparison only. " % grid_values if grid_values < 2 else "") +
             "Per-arm results only. This probe does NOT adopt a configuration, does not establish "
             "determinism across NODES -- a different CPU model may select different vector "
             "kernels, which one node cannot show -- and does not license a repeat. Applying an "
@@ -225,7 +251,14 @@ def main():
     ap.add_argument("--rows", type=int, required=True)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--repeats", type=int, default=2)
-    ap.add_argument("--thread-grid", default="1,2,4,8")
+    # ⚠ NOT COMMA-ONLY, and this is not cosmetic. `sbatch --export=ALL,A=1,B=2` parses its
+    # argument as a comma-separated list of NAME=VALUE, so a comma INSIDE a value splits the list
+    # whatever the shell quoting -- backslash-escaping it does not survive. The first real run of
+    # this probe lost its grid that way: `MNV_THREAD_GRID=1\,2\,4\,8` exported as `1`.
+    # `:` is the documented separator; `,` and whitespace are accepted for direct invocation.
+    ap.add_argument("--thread-grid", default="1:2:4:8",
+                    help="thread counts separated by : or , or space. Prefer : -- a comma cannot "
+                         "survive sbatch --export.")
     ap.add_argument("--out", default=None)
     ap.add_argument("--allow-small-rows", action="store_true",
                     help="run below MIN_ROWS anyway. For unit tests only: the result cannot "
@@ -242,7 +275,9 @@ def main():
             raise SystemExit("[FAIL] --mode worker requires --arm")
         print(json.dumps(worker(a.arm, a.threads, a.rows, a.seed, a.repeats)))
         return
-    grid = tuple(int(t) for t in a.thread_grid.split(","))
+    grid = tuple(int(t) for t in re.split(r"[:,\s]+", a.thread_grid.strip()) if t)
+    if not grid:
+        raise SystemExit("[FAIL] --thread-grid parsed to nothing: " + repr(a.thread_grid))
     rec = driver(a.rows, a.seed, a.repeats, grid, a.out,
                  allow_small_rows=a.allow_small_rows)
     print(json.dumps({k: v for k, v in rec.items() if k != "cells"}, indent=2, sort_keys=True))
