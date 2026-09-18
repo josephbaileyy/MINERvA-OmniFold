@@ -55,6 +55,7 @@ the most favourable open item in the package.
 | M-J | Lineage / two-ensemble question | **OPEN** | parent is mean-centered, `uthrow_source` 2026-08-06; pilot throw input is the 2026-09-14 precursor | `[cb0b6b]` |
 | M-K | Cause 1, 2, 4, 5, 6, 7 dispositions | **1/2/4 criteria DRAFTED** (`230aecf7`, claimed tolerance-free, under assessment); **5 and 7 evidence COMPLETE** (`80b464ca` + my `Σ_A L_b` trace) | cause 7: laterality measured on payload, `measured lateral set == p4_lib.BANDS` True, 10 endpoints verified, lateral sum traced to the **active** blocks with `active_total_eq_sum5 = 0.0`; cause 5: VL66 falsifier NEGATIVE across Z's 15-module closure | **two rulings** (cause 7 sufficiency, cause 5 §6.1 disposition); cause 6 |
 | M-L | `ε` / null acceptance | **BLOCKED BY CONTRACT** | every route closed (packet §2.1) | Joseph's §6.4 route ruling |
+| M-Q | **The supported reproduction path** | **DONE** — `REPRODUCTION-20260918-scalar5d-trunk-path.md` | Five ingredients assembled; measured reproduce/does-not split; concludes **bitwise identity is required as a consequence, not a preference** | — |
 | M-M | Trunk adoption | **NOT REACHED** | — | M-F…M-L |
 | M-N | M1 product `(E_avail, W)` | **NOT REACHED** | — | M-M + M-G, then compute authorization |
 | M-O | Rank-6 consumer contract **and the consumer itself** | **CONTRACT DRAFTED + CODE WRITTEN** | `rank6_significance.py`: five declaration refusals with distinct codes, ndf from the **retained rank**, truncation scan, region as an explicit declaration; **19 tests, both key guards mutation-verified** | **D3 + D5** supply the two values; the CLI payload path is deliberately unwired |
@@ -473,3 +474,23 @@ be re-verified"*; the accurate statement is narrower: **content cannot be checke
 not yet made, but the retracted-value containment is verified, green, power-tested and covers all
 three documents.** After adoption, M-P is re-running a working gate over changed content — not a
 verification built from nothing.
+
+
+---
+
+## 9. The completion clause, component by component
+
+Joseph's clause has five components. **Two are now satisfied as far as they can be without
+adoption; three cannot be reached without it.**
+
+| Component | State |
+|---|---|
+| an explicitly adopted scalar-5D covariance | **RESERVED TO JOSEPH.** Reserved three times over — by this goal's text, by `AGENTS.md`'s "Decisions reserved for Joseph", and by `SPEC` |
+| **…with a supported reproduction path** | ✅ **DONE, M-Q.** It had **no document at all** until `88b11b7c`; a covering search found the repository's seven `reproduc*` files all PET-scoped or generic |
+| the required exact projections, correctly paired centrals, verified output records | **CODE COMPLETE, PRODUCTION BLOCKED.** Projector instrumented and tested; runner written with preconditions as refusals so it *cannot* run unadopted; request priced with its arithmetic leg measured. The verification is **implemented rather than promised** — output digest, `M` digest, row index read back out of the closed file and required equal, both support censuses |
+| scientific claims supported at their stated level | **CONSUMER WRITTEN, TWO INPUTS OPEN.** `rank6_significance.py` enforces five declarations as refusals, takes ndf from the **retained rank**, and has **D5 enforced in code**. D3 and D5 supply the two values |
+| synchronized, successfully built note, primer and paper | ✅ **GREEN.** `RESULT :: PASS`; all 26 `.tex`/`.bib` byte-identical to the standalone, level with origin; retracted-value containment verified across **all three** documents with the note as positive control, self-test PASS on 11 positive and 4 negative cases |
+
+**So the honest statement of where this stands:** every component that does not require an adoption
+decision is complete, and the three that do are blocked at the same single gate. Nothing further can
+move without a ruling.
