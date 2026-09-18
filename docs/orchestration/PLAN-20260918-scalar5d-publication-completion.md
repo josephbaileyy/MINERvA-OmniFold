@@ -1102,30 +1102,44 @@ I wrote, twice, that thread count is *"the channel a cross-allocation difference
 through"* and that *"if the output tracks the thread count, no number of cross-node repeats fixes
 it."* **The output does not track the thread count.** So:
 
-1. **The thread-count channel is measured NOT to vary** in the tested regime. My framing had the
-   conditional right and I should not now read the favourable branch as more than it is.
-2. **`deterministic=True` and `force_row_wise=True` changed NOTHING** — `det_only` returns the
-   identical digest to `historical` at every thread count. So at this scope the overlay buys **no
-   measured benefit**, while `z_lgbm_overlay()` records that applying it is a *declared divergence
-   from the historical chain*. **Paying a divergence for an unmeasurable gain is the wrong trade**,
-   and that is now an evidence-backed input to the pinning decision rather than a preference.
-3. **The `4.452e-14` needs a different explanation.** Threading was the leading candidate and is now
-   the *least* likely of those examined. What remains unexamined: the OmniFold loop's iteration and
-   reweighting, the throw-combine arithmetic, and data-dependent effects at production scale.
-4. **A thread-count difference does not rule out fixed-thread reproducibility — and here there is no
-   thread-count difference to reason from in either direction.** The two propositions are recorded
-   separately in the artifact (`tested_scope`) so neither can be read as the other.
+1. **In the tested fixture, the thread-count channel does not vary.** That is the whole of it.
+2. **`deterministic=True` and `force_row_wise=True` changed nothing IN THE TESTED FIXTURE** —
+   `det_only` returns the identical digest to `historical` at every thread count there.
+
+⚠ **THREE INFERENCES I DREW FROM THIS ARE WITHDRAWN. They do not follow, and I should not have
+written them.**
+
+| I wrote | why it does not follow |
+|---|---|
+| *"threading … is now the least likely of those examined"* as an explanation for `4.452e-14` | The fixture is `200,000 × 6` synthetic rows, `n_estimators=100`, `num_leaves=8`. LightGBM partitions histogram construction **by rows and by features**, and switches strategy with data size, feature count, sparsity and bin counts. A regime where threading does not perturb the result says **nothing** about a regime with different row count, feature count, or value distribution. **Threading in production remains fully open.** |
+| *"do not pin the estimator"*, on the ground that the overlay showed no benefit | No benefit **was measurable in a fixture where nothing varied at all**. A knob that prevents a perturbation cannot be shown to have value in a setting with no perturbation to prevent. **The value of pinning in production is untested, not absent.** |
+| *"do not buy P2"*, on the ground that its mechanism was measured invariant | The mechanism was measured invariant **in the fixture**, not in production, and cross-allocation variation can also act through CPU model, vector kernel selection, and library dispatch — none of which one node can vary. **Cross-allocation testing is not shown unnecessary.** P2 stays **deferred**, which is a scheduling statement about gathering more relevant evidence first, **not** a judgement that it would be uninformative. |
+
+3. **What the result does support**, and only this: repeated fits of *that* configuration on *that*
+   fixture are bitwise identical, and the two knobs are inert *there*. It narrows nothing about
+   production and it licenses no conclusion about `4.452e-14`.
+4. **A thread-count difference does not rule out fixed-thread reproducibility.** Here there is no
+   thread-count difference *in the fixture*, and that is not evidence about either proposition in
+   production. The three propositions are recorded separately in the artifact (`tested_scope`) so
+   none can be read as another.
+5. ⚠ **And the fixture's own validity is only argued, not measured**, for this run: a constant
+   prediction vector would make all 18 digests agree for free, and `58509947`'s record predates the
+   `prediction_spread` statistic. Non-degeneracy is inferred from the generator
+   (`logit = 0.7x₀ − 0.4x₁ + 0.3x₂x₃`, genuinely learnable), which is an argument and not a
+   measurement. The next run measures it.
 
 ### 15.4 What I recommend, and what I do NOT
 
-**RECOMMEND: do not buy P2, and do not pin the estimator.** P2's repriced `9.00`–`12.00` CPU task-h
-tests determinism across allocations, and the mechanism it would act through has just been measured
-invariant in the tested regime. Pinning costs a declared divergence from the chain that made the
-existing products and has no measured benefit at this scope.
+**RECOMMEND: keep P2 DEFERRED — not cancelled — and hold the pinning decision open.** Deferred
+because more relevant evidence is cheaply available first, and that ordering is a scheduling
+judgement. **Neither "P2 is unnecessary" nor "pinning has no value" is supported by this run**, and
+§15.3 withdraws both claims where I made them.
 
-**RECOMMEND NEXT, and it is cheap:** re-run this probe at **production size and feature count**
-before concluding anything about the production fit — same `0.25` CPU task-h shape, one operand
-changed. That is the only step that converts §15.2's scope limit into a scope.
+**RECOMMEND NEXT: a production-FAITHFUL diagnostic, not a larger synthetic one** — §18. Scaling the
+fixture up would still be a fixture, and the question is about the production chain. The design
+requirement is the actual inputs, weights, estimator settings and CV execution path, instrumented to
+locate the **first divergence** between two repeated executions rather than only to report whether
+the endpoints differ.
 
 **I do NOT recommend** reading this as reproducibility of the chain, as a licence to quote
 `r_null`, or as grounds to revisit `ε` — every route to `ε` remains closed (packet §2.1) and the
@@ -1157,24 +1171,60 @@ a `0.25` reservation**), `nid004110`. Product
     rank                 ~36 / 42
     M_shape              [42, 10694]    M_content_sha256 64fec490...
 
-**Three of these are materially favourable, and one is the number the consumer has been missing.**
+### 16.1a ⚠ TWO CLAIMS I MADE HERE ARE WITHDRAWN, and the measurement that replaces them
 
-1. **The projection is PSD to machine tolerance, with a POSITIVE minimum eigenvalue** — against the
-   source's `λ_min = −1.2750516323643892e-90` and **5,214 negative eigenvalues of 10,694**. The
-   negative directions do **not** propagate: `M C Mᵀ` with positive width weights averages them
-   out. A χ² on this object is well-posed on its retained subspace, which the 5D object could not
-   promise. **This is a numerical demonstration on one product, not a theorem** — it is a property
-   of this `M` and this `C`, and a different destination mask could differ.
-2. **`rank ≈ 36 of 42` is the `ndf` input.** `rank6_significance.py` refuses `ndf = bin count`
-   (rc 4) and takes the **retained rank**; that value is now measured. ⚠ **A rank is a property of
-   the matrix, not a calibrated `ndf`** — the contract says so and this does not change it.
-3. **`n_empty = 0` and `src_cells_dropped = 0`.** Both coverage censuses are clean: every one of the
+**"rank ≈ 36 of 42" was reported without its cutoff, and the cutoff is doing all the work.**
+`project_cov_nd.py:340` uses a **hardcoded `rc = 1e-12`** and counts `λ > λ_max · rc`. Scanned on
+the actual product:
+
+| relative cutoff `rc` | rank | largest excluded `λ/λ_max` |
+|---|---:|---|
+| `1e-1` | **2** | `6.27e-02` |
+| `1e-2` | 7 | `6.69e-03` |
+| `1e-3` | 11 | `7.36e-04` |
+| `1e-4` | 17 | `8.86e-05` |
+| `1e-6` | 26 | `7.22e-07` |
+| `1e-8` | 28 | `9.50e-09` |
+| `1e-10` | 32 | `6.28e-11` |
+| **`1e-12`** | **36** | `7.83e-13` |
+| `1e-14` | 41 | `2.93e-15` |
+| `1e-16`, `0` | **42** | — |
+
+`numpy.linalg.matrix_rank`'s own default (`rc = n·eps = 9.33e-15`) gives **41**.
+
+**THERE IS NO SPECTRAL GAP.** The 42 eigenvalues decay smoothly over ~15 orders of magnitude —
+`1.00, 1.66e-1, 6.27e-2, 3.82e-2, … 1.16e-13, 4.71e-14, 2.93e-15` — with no plateau anywhere. So
+**the numerical rank is not a property of this matrix in any stable sense**; it is a property of a
+chosen cutoff, and defensible cutoffs give anything from 26 to 42. **`36` should never be quoted
+bare, and it is not the `ndf`.**
+
+⚠ **And the projector's cutoff is undeclared while the consumer refuses to default one.**
+`rank6_significance.py` exits `rc 3` when `--rcond` is absent, on the stated ground that both
+existing consumers called `pinv` with no explicit `rcond`. `project_cov_nd.py` reports a rank off a
+literal `1e-12` in the same campaign. That inconsistency is now on the record; the retained-subspace
+rule belongs in the declaration set (§17), not in a projector's print statement.
+
+**"The negative directions do not propagate — `M C Mᵀ` averages them out" is WITHDRAWN.** It was a
+mechanism claim I did not test, and the measurement says something weaker and more precise:
+`λ_min = 4.359104e-92` with `λ_max = 1.488215e-77`, so `λ_min/λ_max = 2.93e-15` and the condition
+number is `≈ 3.4e14` — **at the edge of double precision.** The smallest eigenvalues sit at the
+floating-point noise floor of a 10,694-term weighted sum, so **their sign is not meaningful** and
+"positive" is not evidence that anything was cured. `n_negative = 0` is a true statement about this
+computation; it is **not** a demonstration that the source's 5,214 negative directions were handled.
+
+### 16.1b What stands
+
+1. **`n_empty = 0` and `src_cells_dropped = 0`.** Both coverage censuses are clean: every one of the
    10,694 source cells reaches a reported destination cell, and no destination row receives nothing.
    `SPEC:1239` requires the `(E_avail,W)` projector to **count-and-report** — it reports **zero**, so
    an acceptance criterion requiring zero is satisfiable on this product without the projector ever
-   gating.
-4. **`symmetry max|C−Cᵀ| = 0.00e+00` exactly**, tighter than the source's `2.164e-16`, because the
-   `M C Mᵀ` form symmetrises by construction.
+   gating. **This is the most robust of the four findings and it does not depend on any tolerance.**
+2. **`symmetry max|C−Cᵀ| = 0.00e+00` exactly**, tighter than the source's `2.164e-16`, because the
+   `M C Mᵀ` form symmetrises by construction. A structural fact, not a tolerance.
+3. **`trace = 1.984864e-77`, `sqrt(trace) = 4.455181e-39`** — scale, reported for pairing.
+4. **The projection is numerically PSD at this precision** (`n_negative = 0`), stated as an
+   observation about this computation with the condition number attached, and **not** as a property
+   the object will retain under a different mask, a different summation order, or higher precision.
 
 ### 16.2 The acceptance question is ANSWERED: YES, `τ` is computable
 
