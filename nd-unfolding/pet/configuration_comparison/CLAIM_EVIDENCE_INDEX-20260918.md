@@ -36,6 +36,22 @@ These supersede rows elsewhere in this index where they conflict.
 | Z11 | the pretrained checkpoint gates the pretrained arm's **tuning and variance pilot**, not only its final runs | `DECISION_PACKET-20260919.md` §1; argument, not measurement | judgement |
 | Z12 | `PET2.no_weight_decay()` exists and `train.py` never calls it, so his norms and class tokens **are** weight-decayed | `src/scripts/train.py:2345`, one param group | code reading |
 
+## Z2. The optimisation pass, 2026-09-19 (later than §Z, and superseding it where they conflict)
+
+| id | claim | evidence | kind |
+|---|---|---|---|
+| Z2-1 | the ported step at 12 tokens / batch 512 is **forward 134.2, backward 795.3, optimizer apply 5.4 µs/example**; the backward is **85 %** of the step and **6.9× the forward** | `receipts/PORT_PROFILE-20260919.json`, job 58564110, decomposed with a folding control | measured |
+| Z2-2 | the cause is `tf.einsum("...i,oi->...o")`'s **gradient**, which materialises the per-example outer product: **58 of 60 OOM tracebacks** are in `einsum_op_impl.h`, at shapes up to `[256,128,16896,10]` = 22.2 GB for a 32,768-number weight | job 58564110's log; shape census by `grep` | measured |
+| Z2-3 | **the optimizer is not the bottleneck**: applying all 176 variables costs **6.06 ms** against **4.71 ms** for stock Keras Adam, 1.29× | direct probe, CPU | measured |
+| Z2-4 | **WITHDRAWN: "96 % of the step is `apply_gradients`."** It was an artifact of returning `loss + 0.0 * gradient`, which Grappler folds, pruning the whole backward subgraph; the missing time landed in the apply by subtraction | the same probe, plus `folded_backward_control` measuring 1.00 on GPU | withdrawn |
+| Z2-5 | the two **bitwise** local-block rewrites (broadcast centre, broadcast key mask) change **neither time nor memory**: 935.5 vs 934.6 µs/example, 16.9 GiB both | job 58564110 | measured, negative |
+| Z2-6 | those two rewrites are **bitwise identical** in forward and gradients, in float32 and float64, including on an event whose whole neighbourhood is padding | `test_port.OptimisationEquivalence`, `assert_array_equal` | measured |
+| Z2-7 | the **projection rewrite is not bitwise** — 1e-15 relative in float64, 6.5e-7 in float32 — and P-1…P-6 still hold: 216 fields identical, 181 moved, **no verdict changed**, cross-engine agreement improved, P-3's margin over the mutant port 508,145× → **571,199×** | `receipts/PORT_CHECKS_FLAT_PROJECTION-20260919.json`, diffed by `compare_port_checks.py` | measured |
+| Z2-8 | **gradient accumulation costs 1.3 %** and makes the virtual batch 2048 fit where the native batch OOMs: 947.8 vs 935.5 µs/example, 17.0 vs 16.9 GiB | job 58564110, `accum4` cell | measured |
+| Z2-9 | accumulation reproduces the single-batch update to **1e-14** in float64, takes **exactly one** optimizer step per virtual batch, and clips on the **same global norm** | `test_recipe.Accumulation` | measured |
+| Z2-10 | the measured leg is **4,091,707** rows on the 5-D point-cloud product — **2.05× n_mc**, a factor **1.2615** on the example budget and on every absolute GPU-hour, and on **no** ratio | `of_inputs_pc_fullcloud_bkgsub_5d.provenance.json`, three independent fields; corroborated within 0.7 % by the event-identity export | measured, **on a neighbouring product and not on this schema** |
+| Z2-11 | in `PORT_PROFILE-20260919.json` the variant named `optimised` means **broadcast-only**; the projection rewrite did not exist at that commit | the receipt's `commits` field is empty because it predates that field; the variant table is in `profile_ported_step.VARIANT_PATHS` | provenance |
+
 ## A. Measured on real MINERvA tuples
 
 | # | claim | source | scope limit |
