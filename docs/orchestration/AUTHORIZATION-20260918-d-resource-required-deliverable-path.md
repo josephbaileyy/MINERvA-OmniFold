@@ -53,7 +53,7 @@ diagnosed defect, verified repair and fresh admission; automatic requeue disable
 - **C2** — wording is *"inherits a tolerance with a stated derivation and an owner"*, **not**
   *"not chosen"*. Create `cause2_f7_margin` **withheld**; the margin comes back to Joseph.
 - **C4** — amend `SPEC:1237` from *"condition 4"* to *"condition 3"*, then the print.
-- **C5** — **closed as not-falsified, scoped to the 15 traced modules.**
+- **C5** — **NOT FALSIFIED on Z's 15-module import closure at `fb9ec356` and on the eight consumed input PATHS; the inputs' producer chains were NOT traced (the withdrawn wording implied a 16th module; the residual is an untraced producer chain).**
 - **C6** — **REUSE**, with the accepted risk named: **"inputs consistent but unproven."** Both
   withdrawals stand: observed inventory is not proven producing inputs, and **absence of a scheduler
   record is not proof of interactive execution** — the honest statement is that the producing act has
