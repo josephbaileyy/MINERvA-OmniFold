@@ -83,12 +83,57 @@ def _flatten_definitions() -> dict[str, str]:
     return definitions
 
 
+class EmptyOrUnusable(Exception):
+    """A file with nothing to extract. Skipped BEFORE RDataFrame is touched.
+
+    Demonstrated 2026-09-20 and the reason 1,198 of 1,686 data files "failed":
+    `run00006047` has ZERO entries and does not carry the prong branches at all.
+    Handing it to RDataFrame raises during just-in-time compilation and leaves the
+    interpreter in the state ROOT itself warns about -- "All RDF objects that have
+    not run an event loop yet should be considered in an invalid state" -- and
+    every LATER file in the same process then fails too.
+
+    Measured directly: `run00006048` slims fine alone, 20,625 rows in 10.1 s, and
+    fails when the empty file precedes it. So the per-file try/except was not
+    enough; catching the exception does not un-poison the interpreter. The file
+    has to be rejected before it reaches the JIT.
+
+    Skipping is correct rather than a workaround: a file with no entries has no
+    rows to contribute, and it is recorded as skipped with its reason so the
+    absence stays visible.
+    """
+
+
+def precheck(source: Path) -> tuple[int, list[str]]:
+    """Entries and required-branch presence, via plain TFile -- no RDataFrame."""
+    import ROOT
+
+    handle = ROOT.TFile.Open(str(source))
+    if not handle or handle.IsZombie():
+        raise EmptyOrUnusable(f"cannot open {source}")
+    tree = handle.Get("MasterAnaDev")
+    if not tree:
+        handle.Close()
+        raise EmptyOrUnusable(f"no MasterAnaDev tree in {source}")
+    entries = int(tree.GetEntries())
+    available = {b.GetName() for b in tree.GetListOfBranches()}
+    absent = [n for n in NESTED_BRANCHES if n not in available]
+    handle.Close()
+    if entries == 0:
+        raise EmptyOrUnusable(f"zero entries in {source}")
+    if absent:
+        raise EmptyOrUnusable(f"missing nested branches {absent} in {source}")
+    return entries, absent
+
+
 def slim(source: Path, destination: Path, threads: int) -> dict[str, Any]:
     import ROOT
 
     ROOT.gROOT.SetBatch(True)
     if threads > 1:
         ROOT.EnableImplicitMT(threads)
+
+    precheck(source)          # raises EmptyOrUnusable before any RDF object exists
 
     handle = ROOT.TFile.Open(str(source))
     if not handle or handle.IsZombie():
@@ -185,6 +230,7 @@ def main() -> None:
     # leaving it as an absence.
     rows: list[dict[str, Any]] = []
     failures: list[dict[str, Any]] = []
+    skipped: list[dict[str, Any]] = []
     for index, source in enumerate(sources, 1):
         destination = args.outdir / (source.stem + ".slim.root")
         if destination.exists():
@@ -192,6 +238,11 @@ def main() -> None:
             continue
         try:
             record = slim(source, destination, args.threads)
+        except EmptyOrUnusable as reason:
+            skipped.append({"source": str(source), "reason": str(reason)})
+            print(f"[{index}/{len(sources)}] SKIPPED (nothing to extract): "
+                  f"{source.name}")
+            continue
         except Exception as error:                        # noqa: BLE001 - recorded
             import traceback
             failures.append({"source": str(source), "error": repr(error)[:400],
@@ -209,11 +260,13 @@ def main() -> None:
               f"preserved={record['rows_preserved']}")
         args.report.write_text(json.dumps(
             {"manifest": str(args.manifest), "files": rows,
-             "failures": failures}, indent=2) + "\n")
+             "failures": failures, "skipped": skipped}, indent=2) + "\n")
 
     args.report.write_text(json.dumps(
         {"manifest": str(args.manifest), "files": rows, "failures": failures,
+         "skipped": skipped,
          "files_ok": len(rows), "files_failed": len(failures),
+         "files_skipped": len(skipped),
          "all_rows_preserved": all(r["rows_preserved"] for r in rows),
          "total_source_entries": sum(r["source_entries"] for r in rows),
          "total_bytes_out": sum(r["bytes_out"] for r in rows)}, indent=2) + "\n")
