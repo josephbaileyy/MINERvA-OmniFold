@@ -104,11 +104,30 @@ would reasonably conclude the legs were computed and came out uninformative. The
 `--dst-cv` exists to compare `M x_src` against an **independently produced** lower-D central value.
 For this destination there is no second party: `sec_eavailw.tex:37-39` states the note *projects the
 unfolded five-axis result onto `(E_avail,W)` and subtracts the GENIE central value*, so the quantity
-quoted in that plane **is** the projection. Measured accordingly: **no product on disk carries
-`hXSecND_flat` at 42 bins** — `xsec_2d_CTRL_*` is 224, `xsec_2d_FPS_*` is 285, `excess_eavail_W.root`
-is the right 7×6 grid but is an *excess* under key `hData2D`. That absence is the nature of the
-measurement, not a missing file. Forcing `--dst-cv` would require producing a frozen `(E_avail,W)`
-central value first — new scientific work outside the §2 table.
+quoted in that plane **is** the projection. **TWO GROUNDS, BOTH MEASURED. A third was asserted and is STRUCK — see below.**
+
+1. **No product on disk carries `hXSecND_flat` at 42 bins.** `xsec_2d_CTRL_*` is 224,
+   `xsec_2d_FPS_*` is 285. `excess_eavail_W.root` is the right 7×6 grid but under key `hData2D`,
+   a `TH2`, not the flat vector `--dst-cv` reads at `:435`.
+2. **The quantity in that plane IS the projection — PROVEN, not argued.** `hData2D` equals
+   `M x_src` to `1.3e-15` relative (below). So there is no independent **measurement** for
+   `--dst-cv` to check against. There is an independent **implementation**, and it is used correctly
+   as a cross-check rather than manufactured into a `dst-cv` operand: routing the same projection
+   through `--dst-cv` would add a converted file and **no information**.
+
+⚠ **STRUCK, AND IT WAS MINE.** I wrote that `excess_eavail_W.root` *"is an EXCESS not a cross
+section"* and used it as a third ground. **It is false.** Measured: `hData2D` is **nonnegative
+everywhere** (min `1.408e-44`) — the projected data cross section; `hExcess2D` is a **separate**
+histogram that **changes sign** (`-1.930e-40` … `8.500e-40`) — that is the excess. The file is named
+for its purpose, not its contents. **I inferred the content of a histogram from the file's name
+without reading a bin**, and it survived into a ruling until the numbers contradicted it. Recorded
+here rather than deleted, because the ruling would otherwise rest on three grounds of which one is
+wrong — the same shape as a record claiming more verification than was performed.
+*(Not established and not claimed: `hExcess2D ≠ hData2D − hGenCV2D` — max diff `2.297e-39`, sums
+`3.642261e-39` vs `1.272585e-38` — so a further normalization is involved that I have not measured.)*
+
+Forcing `--dst-cv` would require producing a frozen `(E_avail,W)` central value first — new
+scientific work outside the §2 table.
 
 ### PREDECLARED before the run, per §6.4's discipline that bounds are fixed before production
 
@@ -137,8 +156,11 @@ covariance quoted beside it. Both were measured, and both pass:
 
 `excess_eavail_W.py` reaches `(E_avail,W)` by its own summation, a **different code path** from
 `project_cov_nd.build_projection`. They agree at round-off anyway, which is what makes this a
-falsifiable check rather than a restatement. **Repeat it against the publication product when PROJ
-runs**; if it ever disagrees, the figure must be regenerated from the adopted product before DOCS.
+falsifiable check rather than a restatement.
+
+> **BINDING, not a courtesy:** repeat (a) and (b) against the **publication** product when PROJ
+> runs. **Any disagreement is a FINDING, not a tolerance question**, and the figure is regenerated
+> from the adopted product before DOCS is re-verified.
 
 ## 5. Execution order — fixed
 
