@@ -98,3 +98,24 @@ class Consistency(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StepScope(unittest.TestCase):
+    """Which step the arms differ at, and what that costs the conclusion."""
+
+    def test_the_arms_differ_only_at_step_one(self):
+        self.assertIn("DIFFER", fd.STEP_SCOPE["step1_reco"])
+        self.assertIn("IDENTICAL", fd.STEP_SCOPE["step2_gen"])
+
+    def test_the_limit_is_stated_not_implied(self):
+        limit = fd.STEP_SCOPE["what_it_cannot_speak_to"]
+        self.assertIn("does not exist", limit)
+        self.assertIn("not a footnote", limit)
+
+    def test_the_rejected_readings_are_named_with_reasons(self):
+        why = fd.STEP_SCOPE["why_not_the_alternatives"]
+        self.assertIn("PDG-to-code", why)
+        self.assertIn("input width", why)
+
+    def test_the_scope_travels_in_the_frozen_record(self):
+        self.assertIn("step_scope", fd.frozen())

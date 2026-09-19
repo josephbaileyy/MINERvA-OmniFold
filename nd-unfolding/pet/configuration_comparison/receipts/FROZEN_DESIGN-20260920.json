@@ -36,6 +36,13 @@
       "initialization": "best_model_pretrain_s.pt via load_pretrained_omnilearned"
     }
   },
+  "step_scope": {
+    "step1_reco": "the arms DIFFER: ours is the production cluster cloud, theirs is the complete PET2-small arm over typed objects",
+    "step2_gen": "the arms are IDENTICAL: the production PET on the production truth cloud, same weights initialisation policy, same recipe",
+    "what_the_comparison_therefore_means": "a comparison of the RECO-SIDE representation and architecture, with the truth-side estimator held fixed",
+    "what_it_cannot_speak_to": "his configuration's behaviour on the truth side, because that configuration does not exist -- his vocabulary has no truth analogue. Any recommendation states this limit in the conclusion, not a footnote",
+    "why_not_the_alternatives": "reading B invents a PDG-to-code mapping he never defined; reading C changes his input width and so is not his configuration either"
+  },
   "pinned_hashes": {
     "checkpoint_best_model_pretrain_s.pt": "7e8331b0953303502fcc64461e8e2332a7582184c8e3592db2e27d752612b1bc",
     "pretrained_state_npz": "2480f269064b4d69f323d8681acc776526cec20a89e7cea8c2338004551231b5",

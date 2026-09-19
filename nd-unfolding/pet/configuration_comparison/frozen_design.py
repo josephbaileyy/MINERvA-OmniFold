@@ -77,6 +77,38 @@ EXECUTION = {
 }
 
 # --------------------------------------------------------------------------- #
+# Which step each arm differs at. Decided 2026-09-20; see
+# THEIRS_TRUTH_SIDE-20260920.md for the three readings and why this one.
+# --------------------------------------------------------------------------- #
+#
+# His complete arm is defined by a RECO-OBJECT vocabulary -- blobs, prongs,
+# photons, a muon, with dE/dx, positions and times. Truth particles have none of
+# those, so "his configuration at step 2" is not something his paper determines;
+# his paper does not run OmniFold. The alternatives both invent something of his:
+# putting truth particles through his schema needs a PDG-to-code map that exists
+# nowhere in his repository, and running his backbone on our truth features
+# changes his input width.
+#
+# So THE STEP-2 NETWORK IS IDENTICAL FOR BOTH ARMS -- the production PET on the
+# production truth cloud -- and the arms differ only at step 1.
+STEP_SCOPE = {
+    "step1_reco": "the arms DIFFER: ours is the production cluster cloud, theirs "
+                  "is the complete PET2-small arm over typed objects",
+    "step2_gen": "the arms are IDENTICAL: the production PET on the production "
+                 "truth cloud, same weights initialisation policy, same recipe",
+    "what_the_comparison_therefore_means": (
+        "a comparison of the RECO-SIDE representation and architecture, with the "
+        "truth-side estimator held fixed"),
+    "what_it_cannot_speak_to": (
+        "his configuration's behaviour on the truth side, because that "
+        "configuration does not exist -- his vocabulary has no truth analogue. "
+        "Any recommendation states this limit in the conclusion, not a footnote"),
+    "why_not_the_alternatives": (
+        "reading B invents a PDG-to-code mapping he never defined; reading C "
+        "changes his input width and so is not his configuration either"),
+}
+
+# --------------------------------------------------------------------------- #
 # Endpoint and scoring
 # --------------------------------------------------------------------------- #
 ENDPOINT = {
@@ -202,6 +234,7 @@ def frozen() -> dict[str, Any]:
     return {
         "frozen_on": "2026-09-20",
         "arms": {"ours": OURS_INCUMBENT, "theirs": THEIRS_COMPLETE},
+        "step_scope": STEP_SCOPE,
         "pinned_hashes": PINNED_HASHES,
         "execution": EXECUTION,
         "endpoint": ENDPOINT,
