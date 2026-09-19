@@ -535,6 +535,16 @@ def build_z(
             partition = contract.check_band_partition(
                 contract.VERT_BANDS, residual, contract.LATERAL_BANDS, inventory
             )
+            # IDENTITY, not structure. The partition check above cannot fail here: `residual` is
+            # derived as `inventory - VERT - LATERAL` just above, so its exhaustiveness leg is
+            # empty by construction and a one-for-one band substitution is invisible to it.
+            #
+            # Gated on `input_kind == "real"` because the declared band set is a property of the
+            # REAL product. Synthetic fixtures legitimately carry different band names, and
+            # forcing the real 27 on them would be making a fixture agree with my code instead of
+            # with the world. The gate is asserted by test so it cannot be widened or dropped.
+            if manifest["input_kind"] == "real":
+                contract.check_declared_residual(residual)
             bands = {
                 "bands_vert": contract.VERT_BANDS,
                 "bands_residual": residual,

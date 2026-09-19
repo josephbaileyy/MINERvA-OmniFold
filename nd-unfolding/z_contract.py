@@ -73,6 +73,27 @@ import uq_math                     # noqa: E402
 # remainder rather than listed, so it cannot drift from the two that are imported.
 VERT_BANDS = tuple(_adopt.VERT_BANDS)       # V, 13 -- inflated through D_Z
 LATERAL_BANDS = tuple(p4_lib.BANDS)         # A, 5  -- enter as L_b, uninflated
+# ⚠ ADDED 2026-09-19 BECAUSE THE EXHAUSTIVENESS LEG COULD NOT FAIL AT THE PRODUCTION CALL SITE.
+# `check_band_partition` raises on `missing` -- but `z_build` derives R as
+# `inventory - VERT - LATERAL`, so `V | R | A` contains `inv` BY CONSTRUCTION and `missing` is
+# identically empty. An independent lane broke it: drop `GEANT_Proton`, add an invented band, and
+# the partition still reported `exhaustive: True`. A one-for-one substitution was undetectable.
+#
+# These are the 27 residual names as RECORDED in `z_pilot_20260916_a5/z-receipt-cv.json`'s
+# `bands_residual`. Declaring them turns R from a derived quantity into a CHECKED one.
+#
+# ⚠ WHAT THIS DOES AND DOES NOT ESTABLISH. It PINS the inventory: a future build whose residual set
+# differs now FAILS instead of silently adapting. It does NOT independently establish that this
+# inventory is correct -- the names come from the same product the check runs against. That is a
+# real improvement over a check that cannot fail, and it is not a proof of the partition.
+RESIDUAL_BANDS = (
+    "AGKYxF1pi", "AhtBY", "BhtBY", "CV1uBY", "CV2uBY", "EtaNCEL", "FrAbs_N", "FrCEx_N",
+    "FrCEx_pi", "FrElas_pi", "FrInel_N", "FrPiProd_N", "FrPiProd_pi", "GEANT_Neutron",
+    "GEANT_Pion", "GEANT_Proton", "MFP_pi", "MaNCEL", "MinosEfficiency", "NormDISCC",
+    "NormNCRES", "RDecBR1gamma", "Rvn1pi", "Rvp1pi", "Theta_Delta2Npi", "VecFFCCQEshape",
+    "__Normalization_flat",
+)
+
 N_VERT = len(VERT_BANDS)
 N_LATERAL = len(LATERAL_BANDS)
 N_BANDS_TOTAL = 45                          # §1.3a: |V| + |R| + |A|
@@ -280,6 +301,33 @@ def withheld_boundaries() -> dict:
 
 
 # ------------------------------------------------------------------------- the band partition --
+def check_declared_residual(residual):
+    """Is R the DECLARED residual set, by name? Separate from `check_band_partition` on purpose.
+
+    `check_band_partition` answers a STRUCTURAL question -- disjoint, exhaustive, counts -- and
+    synthetic fixtures legitimately exercise it with invented band names. This answers an IDENTITY
+    question and belongs only on the production path. Conflating them broke 19 structural tests
+    that were doing nothing wrong, which is how I found out they were different questions.
+
+    WHY IT IS NEEDED. `z_build` derives R as `inventory - VERT - LATERAL`, so `V | R | A` contains
+    the inventory BY CONSTRUCTION and `check_band_partition`'s `missing` leg is identically empty.
+    `len(R) == N_RESIDUAL` survives a one-for-one swap too, because the count does not change. An
+    independent lane broke exactly that: drop `GEANT_Proton`, add an invented band, still
+    `exhaustive: True`.
+
+    ⚠ BOUNDED: this PINS the inventory, so a future build whose residual set differs FAILS instead
+    of silently adapting. It does NOT independently establish that this inventory is correct -- the
+    names were read from the same product the check runs against.
+    """
+    R = set(residual)
+    require(R == set(RESIDUAL_BANDS),
+            f"R is not the declared residual band set: missing {sorted(set(RESIDUAL_BANDS) - R)}, "
+            f"extra {sorted(R - set(RESIDUAL_BANDS))}. R is DERIVED from the inventory at the "
+            f"production call site, so without this check a one-for-one substitution is "
+            f"undetectable and the partition still reports exhaustive")
+    return {"residual_declared_match": True, "n_residual_declared": len(RESIDUAL_BANDS)}
+
+
 def check_band_partition(vert, residual, lateral, band_inventory):
     """§1.3b gate 5 / §3.3 condition 3: V, R, A pairwise disjoint and EXHAUSTIVE.
 
@@ -323,5 +371,11 @@ def check_band_partition(vert, residual, lateral, band_inventory):
     require(total == N_BANDS_TOTAL,
             f"V+R+A = {total}, expected {N_BANDS_TOTAL} ({N_VERT}+{N_RESIDUAL}+{N_LATERAL})")
     require(len(R) == N_RESIDUAL, f"|R| = {len(R)}, expected {N_RESIDUAL}")
+
     return {"n_vert": len(V), "n_residual": len(R), "n_lateral": len(A), "n_total": total,
-            "n_inventory": len(inv), "exhaustive": True}
+            "n_inventory": len(inv),
+            # `True` because every `require` above returned. It is a FAIL-CLOSED record, not a
+            # computed verdict -- the populated field IS the pass. Named so it is not misread.
+            "exhaustive": True,
+            "exhaustive_basis": ("all requires passed, including R == declared RESIDUAL_BANDS; "
+                                 "this is a fail-closed record, not a computed boolean")}

@@ -15,6 +15,7 @@ import os
 import pathlib
 import sys
 import unittest
+from pathlib import Path
 from unittest import mock
 
 import numpy as np
@@ -702,3 +703,71 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
 # `unittest.main()` placed mid-file leaves later classes undefined and still exits zero.
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TheExhaustivenessLegCanActuallyFail(unittest.TestCase):
+    """It could not, at the production call site, and an independent lane broke it.
+
+    `check_band_partition` raises on `missing` -- but `z_build` derives R as
+    `inventory - VERT - LATERAL`, so `V | R | A` contains the inventory BY CONSTRUCTION and
+    `missing` is identically empty. Drop `GEANT_Proton`, add an invented band, and the partition
+    still reported `exhaustive: True`: a one-for-one substitution was undetectable, and the count
+    check `len(R) == N_RESIDUAL` survives it too because the count is unchanged.
+
+    `RESIDUAL_BANDS` turns R from a derived quantity into a checked one. What that establishes is
+    bounded and is stated in the contract: it PINS the inventory so a future build that differs
+    fails instead of adapting; it does NOT independently establish that this inventory is right,
+    since the names come from the same product.
+    """
+    def _inv(self):
+        return sorted(set(zc.VERT_BANDS) | set(zc.RESIDUAL_BANDS) | set(zc.LATERAL_BANDS))
+
+    def test_POSITIVE_CONTROL_the_real_residual_passes(self):
+        r = zc.check_declared_residual(zc.RESIDUAL_BANDS)
+        self.assertTrue(r["residual_declared_match"])
+        self.assertEqual(r["n_residual_declared"], 27)
+
+    def test_a_ONE_FOR_ONE_SUBSTITUTION_is_caught(self):
+        """The exact break the lane demonstrated. Counts are unchanged, so only the name set sees it."""
+        R = set(zc.RESIDUAL_BANDS) - {"GEANT_Proton"} | {"INVENTED_BAND"}
+        with self.assertRaises(Exception) as cm:
+            zc.check_declared_residual(tuple(sorted(R)))
+        msg = str(cm.exception)
+        self.assertIn("GEANT_Proton", msg)
+        self.assertIn("INVENTED_BAND", msg)
+
+    def test_the_STRUCTURAL_check_still_waves_that_substitution_through(self):
+        """Why the identity check has to be separate rather than folded in: the structural one
+        CANNOT see this, and that is not a defect in it -- it answers a different question."""
+        R = set(zc.RESIDUAL_BANDS) - {"GEANT_Proton"} | {"INVENTED_BAND"}
+        inv = sorted(set(zc.VERT_BANDS) | R | set(zc.LATERAL_BANDS))
+        r = zc.check_band_partition(zc.VERT_BANDS, tuple(sorted(R)), zc.LATERAL_BANDS, inv)
+        self.assertTrue(r["exhaustive"], "structural check is expected to pass here")
+
+    def test_THE_PRODUCTION_CALL_SITE_EXISTS(self):
+        """Coverage must not rest on someone remembering to call it. z_build derives `residual`
+        and must check it in the same place."""
+        src = (Path(zc.__file__).parent / "z_build.py").read_text(encoding="utf-8")
+        self.assertIn("check_declared_residual(residual)", src,
+                      "z_build no longer checks the declared residual set at the production site")
+        # and the GATE is asserted too, so it cannot be silently widened to synthetic fixtures
+        # (which would make them agree with the code) or narrowed to nothing.
+        i = src.index("check_declared_residual(residual)")
+        self.assertIn('input_kind"] == "real"', src[max(0, i - 300):i],
+                      "the declared-residual check is no longer gated on input_kind == real")
+
+    def test_the_count_check_alone_would_NOT_have_caught_it(self):
+        """Shows the new leg is doing work the existing ones could not -- otherwise it is decoration."""
+        R = set(zc.RESIDUAL_BANDS) - {"GEANT_Proton"} | {"INVENTED_BAND"}
+        self.assertEqual(len(R), zc.N_RESIDUAL)
+        inv = sorted(set(zc.VERT_BANDS) | R | set(zc.LATERAL_BANDS))
+        union = set(zc.VERT_BANDS) | R | set(zc.LATERAL_BANDS)
+        self.assertEqual(set(inv) - union, set(), "missing is empty by construction, as at the call site")
+        self.assertEqual(len(zc.VERT_BANDS) + len(R) + len(zc.LATERAL_BANDS), 45)
+
+    def test_the_declared_set_matches_the_recorded_product(self):
+        self.assertEqual(len(zc.RESIDUAL_BANDS), 27)
+        self.assertEqual(len(set(zc.RESIDUAL_BANDS)), 27, "duplicates in the declared set")
+        self.assertFalse(set(zc.RESIDUAL_BANDS) & set(zc.VERT_BANDS))
+        self.assertFalse(set(zc.RESIDUAL_BANDS) & set(zc.LATERAL_BANDS))
+
