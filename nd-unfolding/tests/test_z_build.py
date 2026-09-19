@@ -62,6 +62,12 @@ def synthetic_fixture(directory: Path, scale: float = 1.0) -> tuple[Path, dict]:
         C_unified=np.diag([4, 1, 0]) * scale,
         C_blocksum=np.diag([1, 2, 0]) * scale,
         hJointMeanShift=np.array([1, 2, 0]) * np.sqrt(scale),
+        # A REAL throw product always carries these -- `unified_throw_cov.py:712-713` writes them
+        # into every slab and `:1190-1191` into the combine. The fixture carried neither, so it
+        # disagreed with the world on a field the builder now REQUIRES. Declared-at-anchor is the
+        # honest synthetic value: `declared = 1, value = 0`.
+        est_seed_offset_declared=np.int64(1),
+        est_seed_offset=np.int64(0),
     )
     central = np.array([2, 0, 4, 5, -1], dtype=float) * np.sqrt(scale)
     np.savez(directory / "central.npz", hXSecND_flat=central)

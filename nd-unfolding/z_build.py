@@ -221,6 +221,39 @@ class Source:
         }
         return cast(np.ndarray, values)
 
+    def scalar_int(self, key: str) -> int:
+        """Read an integer scalar and bind it, in either container. Absence is a REFUSAL.
+
+        WHY THE BUILDER READS THIS AT ALL. The cause-3 grade is a statement about a set of members
+        at DECLARED estimator-seed offsets, and `SPEC` §3.7b's branch-2 conditions are stated over
+        the READ-BACK offset set. Until now the offset lived only in the member's upstream inputs,
+        so a grader would have had to go looking for it in a file the product does not name --
+        and `seed_offset_policy.declared_offset` is explicit that a leg which ran UNHOOKED stamps
+        its baseline and is *"indistinguishable from a member at k = 0"*. Reading it HERE, from the
+        same digest-verified throw source the covariance is built from, binds the offset to the
+        bytes rather than to a directory name.
+
+        There is no default and no fallback. A source that cannot say which member it is does not
+        get to be one.
+        """
+        contract.require(key in self.keys(), f"source {self.path}: missing {key}")
+        if self.format == "npz":
+            raw = np.asarray(self.store[key])
+            contract.require(
+                raw.dtype.kind in "iu" and raw.size == 1,
+                f"{key}: expected a single integer, got dtype {raw.dtype} size {raw.size}")
+            value = int(raw.reshape(()).item() if raw.ndim else raw.item())
+        else:
+            contract.require(self.format == "root", "opaque sources have no scalars")
+            obj = self.store.Get(key)
+            contract.require(
+                obj is not None and obj.ClassName() == "TParameter<int>",
+                f"{key}: expected a TParameter<int>, got "
+                f"{None if obj is None else obj.ClassName()}")
+            value = int(obj.GetVal())
+        self.reads[key] = {"value": value, "kind": "scalar_int"}
+        return value
+
     def diagonal(self, key: str, n: int) -> np.ndarray:
         """Read only a throw covariance's diagonal from ROOT; never use it as a budget block."""
         if self.format == "npz":
@@ -659,6 +692,18 @@ def build_z(
             }
             operands = assembly.derive_variant_diagonals(**raw)
             operands["raw"] = raw
+            # ---- WHICH MEMBER IS THIS? Read from the throw source, never from a path ----------
+            # `seed_offset_policy.declared_offset`: `declared = 0` means the leg did not go
+            # through a hooked launcher, and "NOTHING can be concluded about which scan member it
+            # is". `declared = 1, value = k` is the only readable member identity. It is recorded
+            # into the product so a grader reads it from the same bytes as the covariance.
+            member_identity = {
+                "est_seed_offset_declared": sources["throw"].scalar_int(
+                    "est_seed_offset_declared"),
+                "est_seed_offset": sources["throw"].scalar_int("est_seed_offset"),
+                "read_from": {"role": "throw", "path": str(sources["throw"].path),
+                              "sha256": sources["throw"].stamp["sha256"]},
+            }
             expected, metadata = {}, {}
             for variant in assembly.CENTERING_VARIANTS:
                 g, pinned = assembly.compute_g(
@@ -724,6 +769,7 @@ def build_z(
                     "adoptable": False,
                     "manifest_sha256": manifest_stamp["sha256"],
                     "code_identity": code,
+                    "member_identity": member_identity,
                 }
             assembly.run_pair_gates(
                 g_recorded={v: expected[v]["hInflation_g"] for v in paths}, **raw
@@ -877,6 +923,9 @@ def build_z(
                     notes={
                         "input_kind": manifest["input_kind"],
                         "adoptable": False,
+                        # Addressable by name, not only recoverable from `inputs.throw.objects`.
+                        # A grader must not have to know which source role carried the stamp.
+                        "member_identity": member_identity,
                         "construction_status": "CHECKED",
                         "inputs": bindings,
                         "manifest": manifest_stamp,
@@ -895,6 +944,7 @@ def build_z(
                 "construction_status": "CHECKED",
                 "scientific_acceptance": _token,
                 "adoptable": _token == "PASSING",
+                "member_identity": member_identity,
                 "products": product_stamps,
                 "receipts": receipts_written,
                 "remaining_requirements": REQUIREMENTS,

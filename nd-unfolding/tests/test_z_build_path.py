@@ -41,7 +41,10 @@ DETECTORS = {
     "kappa_invalid",               # :217 the one refusal with no power arm
     # the wiring, and the arm-1-vs-U separation found by smoke-testing
     "a7_population_mismatch", "a7_extras_width",
-    "residue_demonstrated",        # the residue, CONSTRUCTED not sampled
+    "residue_closed",              # ⚠ WAS `residue_demonstrated`. The residue is CLOSED -- the
+                                   # guard moved into z_statistics.s_proj when z_grade became its
+                                   # first production caller, which is what the trigger below
+                                   # existed to force. The cohort is still CONSTRUCTED, not sampled.
     # the residue's TRIGGER -- the sentence that justified tolerating it, made executable
     "sufficiency_trigger_armed", "sufficiency_trigger_power",
     # rev. 3: the assessor's BLOCK, the union blindness, and the extras declaration
@@ -451,7 +454,23 @@ class TestTheResidueIsReal(unittest.TestCase):
         u = Q[:, 0]
         return {0: C0, 1: 1.1 * C0}, np.vstack([u, u]), 1.0
 
-    def test_raw_s_proj_still_grades_what_the_entry_point_refuses(self):
+    def test_raw_s_proj_now_REFUSES_what_the_entry_point_refuses(self):
+        """⚠ INVERTED, AND THE INVERSION IS THE POINT.
+
+        This test used to assert that raw `s_proj` GRADES the round-off cohort -- the disclosed
+        residue, demonstrated rather than asserted. `evaluate_a7`'s docstring said the residue was
+        tolerable *"because `s_proj` has NO production callers"* and that *"if `s_proj` ever
+        acquires a production caller this residue becomes live and the guard must move into it."*
+
+        `z_grade` is that caller and the trigger below fired. The guard moved into
+        `z_statistics._require_baseline_is_resolvable`, so the residue no longer exists and a test
+        asserting it does would now be **testing for a defect that has been fixed** -- the exact
+        stale-sentence failure this suite was written against, in its own fixtures.
+
+        The guard is threshold-free and needs no `kappa`: it asks whether the computed
+        `q = u' C u` exceeds the float64 round-off bound of computing it, whose only inputs are
+        machine epsilon and the dimension.
+        """
         import z_statistics as zs
         covs, U, scale = self._roundoff_positive_cohort()
         q0 = np.einsum("ij,jk,ik->i", U, covs[0], U)
@@ -462,9 +481,42 @@ class TestTheResidueIsReal(unittest.TestCase):
         self.assertEqual(refused["state"], "KAPPA_UNDECLARED")
         self.assertIsNone(refused["s_proj"])
 
-        raw = zs.s_proj(covs, U, baseline_key=0)        # NO skip: this must run and must grade
-        self.assertIsInstance(float(raw["s_proj"]), float)
-        FIRED.add("residue_demonstrated")
+        with self.assertRaises(ZContractError) as cm:
+            zs.s_proj(covs, U, baseline_key=0)
+        self.assertIn("round-off", str(cm.exception))
+        FIRED.add("residue_closed")
+
+    def test_the_kappa_HALF_of_the_residue_is_still_open_and_says_so(self):
+        """⚠ THE LIMIT OF THE FIX, MEASURED. A baseline that CLEARS round-off but fails a declared
+        `kappa` is refused by the entry point and GRADED by raw `s_proj`. That half of the residue
+        is not closed and cannot be while `kappa` is undeclared, so it is demonstrated rather than
+        described -- a limitation nobody can execute is a limitation nobody re-checks."""
+        import z_statistics as zs
+        n = 12
+        rng = np.random.default_rng(20260919)
+        Q, _ = np.linalg.qr(rng.normal(size=(n, n)))
+        lam = np.ones(n)
+        lam[0] = 1e-8                      # far above round-off, far below the scale
+        C0 = Q @ np.diag(lam) @ Q.T
+        U = np.vstack([Q[:, 0], Q[:, 0]])
+        scale = float(np.linalg.eigvalsh(C0).max())
+        refused = zbp.evaluate_a7({0: C0, 1: 1.1 * C0}, U, build_path=_BP, declared_K=[0, 1],
+                                  c_scale=scale, kappa=1e-6, scale_kind=_SK)
+        self.assertEqual(refused["state"], "DEGENERATE_FUNCTIONAL")
+        graded = zs.s_proj({0: C0, 1: 1.1 * C0}, U, baseline_key=0)
+        self.assertTrue(np.isfinite(graded["s_proj"]),
+                        "raw s_proj still grades it -- the kappa half is open")
+
+    def test_the_new_guard_is_SILENT_on_a_resolvable_baseline(self):
+        """The other direction. A guard that refuses everything is not a guard."""
+        import z_statistics as zs
+        n = 12
+        rng = np.random.default_rng(20260919)
+        Q, _ = np.linalg.qr(rng.normal(size=(n, n)))
+        C0 = Q @ np.diag(np.linspace(1.0, 2.0, n)) @ Q.T
+        U = np.vstack([Q[:, 0], np.ones(n)])
+        out = zs.s_proj({0: C0, 1: 1.21 * C0}, U, baseline_key=0)
+        self.assertAlmostEqual(out["s_proj"], 0.1, places=12)
 
     def test_and_the_guard_admits_it_once_kappa_is_declared(self):
         """The other direction: with `kappa` declared, the same operand is REFUSED by name."""
@@ -583,7 +635,35 @@ class TestTheSufficiencyConditionIsExecutable(unittest.TestCase):
         "test_z_validator.py": "a test, not production",
         "probe-z-projected-stability-20260910.py": "a campaign PROBE that measures the unguarded "
                                                    "behaviour on purpose; its §8 IS that measurement",
+        "z_grade.py": "THE PRODUCTION CALLER THIS TRIGGER WAS ARMED FOR. Sanctioned because the "
+                      "ROUND-OFF half of the residue was closed in response -- the guard moved "
+                      "into z_statistics.s_proj, the remedy this trigger's own message names "
+                      "first. `test_the_guard_ACTUALLY_moved_into_s_proj` is what makes this a "
+                      "record of a fix rather than a way of silencing the alarm. ⚠ THE `kappa` "
+                      "HALF IS NOT CLOSED and cannot be while kappa is undeclared; z_grade records "
+                      "every Rayleigh quotient so a later kappa applies retrospectively. That is a "
+                      "DISCLOSED LIMITATION carried to the decision owner, not a discharged one.",
     }
+
+    def test_the_guard_ACTUALLY_moved_into_s_proj(self):
+        """Adding a name to SANCTIONED is silencing unless the reason is independently true.
+
+        So this asserts the remedy, not the exemption: `z_statistics.s_proj` must itself refuse a
+        round-off-positive baseline. If someone removes the guard and leaves the exemption, the
+        census goes quiet and THIS fails instead.
+        """
+        import z_statistics as zs
+        n = 8
+        rng = np.random.default_rng(4)
+        Q, _ = np.linalg.qr(rng.normal(size=(n, n)))
+        lam = np.ones(n)
+        lam[0] = 1e-16
+        C0 = Q @ np.diag(lam) @ Q.T
+        U = np.vstack([Q[:, 0], Q[:, 0]])
+        with self.assertRaises(ZContractError):
+            zs.s_proj({0: C0, 1: 1.1 * C0}, U, baseline_key=0)
+        self.assertIn("_require_baseline_is_resolvable",
+                      (pathlib.Path(zs.__file__).read_text(encoding="utf-8")))
 
     @staticmethod
     def _repo_root():

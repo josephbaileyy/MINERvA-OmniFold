@@ -133,10 +133,40 @@ def printed_median(C, x_cv, mask):
 
     `x_cv` is held fixed at the `k = 0` member by the caller: the central value is not a
     covariance-construction quantity, so varying it here would measure a different thing.
+
+    THE OPERAND CONTRACT, WHICH WAS WRONG AND IS NOW CHECKED.
+    `C` is `n x n` over the **reported rows**; `x_cv` and `mask` are on the **full grid**. That is
+    what a Z product carries -- `hXSecND_flat` and `hSupportMask` are `65,856` long while `C_Z` is
+    `10,694 x 10,694`.
+
+    ⚠ This line used to read `sig = per_bin_sigma(C)[mask]`, masking a vector that is ALREADY one
+    entry per reported row. On the real shapes that raises `IndexError`, so **`s_med` could not be
+    computed on any real product** -- and nothing noticed, because `z_statistics` had no production
+    caller and every fixture passed `mask = np.ones(n, bool)`, the one case where masking an
+    already-restricted vector is the identity. A fixture that agrees with the code instead of with
+    the world hides exactly this. The shapes are now REQUIRED rather than assumed, so a
+    disagreement refuses instead of picking an interpretation.
     """
     m = np.asarray(mask, bool)
-    sig = per_bin_sigma(C)[m]
-    x = np.asarray(x_cv, float)[m]
+    sig = per_bin_sigma(C)
+    x = np.asarray(x_cv, float)
+    require(x.shape == m.shape,
+            f"printed median: x_cv has shape {x.shape} and mask has {m.shape}; both are "
+            f"full-grid quantities and must agree")
+    require(sig.size == int(m.sum()),
+            f"printed median: C is {sig.size} x {sig.size} but the mask reports {int(m.sum())} "
+            f"rows. C is indexed by REPORTED ROW, the mask by GRID CELL.")
+    # ⚠ POPCOUNT IS NOT IDENTITY. An independent review pointed out that the size check above is
+    # satisfied by a mask with the right NUMBER of cells and the WRONG ones -- `x_cv[m]` would then
+    # pair each reported row's sigma with some other bin's central value and return a number with
+    # no error. The reported support is DEFINED by the predicate `x_cv > 0`
+    # (`z_statistics.support_mask`, and `unified_throw_cov`'s own `cv_support_predicate`), so the
+    # mask is not a free parameter and this checks the identity rather than the count.
+    require(np.array_equal(m, x > 0),
+            "printed median: the mask is not the declared support predicate `x_cv > 0`. A mask "
+            "with the right popcount and the wrong cells pairs each row with another bin's "
+            "central value and returns a number rather than an error.")
+    x = x[m]
     require(np.all(x > 0), "printed median: support contains non-positive CV entries")
     return float(np.median(sig / x))
 
@@ -167,7 +197,7 @@ def s_med(cov_by_offset, x_cv, mask, baseline_key=0):
             "sd_of_members": float(np.std(list(per.values()), ddof=1)) if len(per) > 1 else 0.0}
 
 
-def per_bin_movement(cov_by_offset, mask, baseline_key=0):
+def per_bin_movement(cov_by_offset, mask, baseline_key=0, x_cv=None):
     """`m_i = max_k |sigma_i^(k) - sigma_i^(0)| / sigma_i^(0)`, with its distribution.
 
     REPORTED, GRADING NOTHING (§3.7b item 3 / D2). Rev. 16 withdrew the recommendation to make this
@@ -178,13 +208,35 @@ def per_bin_movement(cov_by_offset, mask, baseline_key=0):
     """
     m = np.asarray(mask, bool)
     require(baseline_key in cov_by_offset, f"per-bin movement: baseline {baseline_key!r} absent")
-    s0 = per_bin_sigma(cov_by_offset[baseline_key])[m]
+    # ⚠ THE SAME MASK IDENTITY AS `printed_median`, for the same reason and at the reviewer's
+    # prompt. This function has no `x_cv` of its own, so the check is optional in the signature and
+    # MANDATORY for the production caller (`z_grade` always supplies it). Without it a mask with
+    # the right popcount and the wrong cells reports the movement in the WRONG GRID BIN --
+    # `argmax_grid_index` is read straight off this mask -- and a localisation that names the wrong
+    # bin is worse than none.
+    if x_cv is not None:
+        xv = np.asarray(x_cv, float)
+        require(xv.shape == m.shape,
+                f"per-bin movement: x_cv shape {xv.shape} != mask shape {m.shape}")
+        require(np.array_equal(m, xv > 0),
+                "per-bin movement: the mask is not the declared support predicate `x_cv > 0`, so "
+                "`argmax_grid_index` would name the wrong bin.")
+    # ⚠ SAME OPERAND ERROR AS `printed_median`, same repair. `per_bin_sigma` is already one entry
+    # per reported row; the mask is a GRID-CELL selector and is used only to name the argmax bin
+    # in grid coordinates, which is what `argmax_grid_index` below is for.
+    s0 = per_bin_sigma(cov_by_offset[baseline_key])
+    require(s0.size == int(m.sum()),
+            f"per-bin movement: C is {s0.size} x {s0.size} but the mask reports {int(m.sum())} "
+            f"rows. C is indexed by REPORTED ROW, the mask by GRID CELL.")
     require(np.all(s0 > 0), "per-bin movement: baseline sigma has zero entries on the support")
     worst = np.zeros_like(s0)
     for k, C in cov_by_offset.items():
         if k == baseline_key:
             continue
-        worst = np.maximum(worst, np.abs(per_bin_sigma(C)[m] - s0) / s0)
+        sk = per_bin_sigma(C)
+        require(sk.size == s0.size,
+                f"per-bin movement: member {k!r} has {sk.size} rows, baseline has {s0.size}")
+        worst = np.maximum(worst, np.abs(sk - s0) / s0)
     support_idx = np.flatnonzero(m)
     amax = int(np.argmax(worst)) if worst.size else -1
     return {"median": float(np.median(worst)), "p90": float(np.percentile(worst, 90)),
@@ -200,6 +252,70 @@ def per_bin_movement(cov_by_offset, mask, baseline_key=0):
 # all-ones vector, both approved in
 # `AUTHORIZATION-20260918-d-resource-required-deliverable-path.md`. `s_corr` and `s_eig` remain
 # unadopted candidates.
+def _require_baseline_is_resolvable(U, C0):
+    """Refuse a functional whose baseline `u' C u` is positive only by ROUND-OFF.
+
+    ⚠ WHY THIS IS HERE AND NOT ONLY IN `z_build_path.evaluate_a7`. That function guards `s_proj`
+    behind a degeneracy classifier, and its own docstring disclosed the residue:
+    *"A direct `s_proj` call remains unguarded and grades a round-off-positive baseline exactly as
+    before ... It is sufficient for A-7 because `s_proj` has NO production callers ... If `s_proj`
+    ever acquires a production caller this residue becomes live and the guard must move into it."*
+    `tests/test_z_build_path.py::test_s_proj_has_no_UNSANCTIONED_caller` is the tripwire that was
+    armed for that event, and `z_grade` fired it. **This is the move that clause requires**, and it
+    is made here rather than at the call site so it covers every caller, present and future.
+
+    ⚠ **IT CLOSES THE ROUND-OFF HALF AND NOT THE `kappa` HALF, and a second reviewer was right to
+    say so.** `classify_baseline_degeneracy` asks two questions: is `q` positive at all beyond
+    arithmetic noise (below), and does its Rayleigh quotient clear a DECLARED cutoff `kappa`
+    (not below, and not closable here). A functional that clears round-off but is physically
+    ill-conditioned is still graded by this function. `z_grade` records every Rayleigh quotient in
+    its receipt so a later-declared `kappa` applies retrospectively; declaring it is not this
+    lane's act.
+
+    WHY IT NEEDS NO `kappa`, WHICH IS UNDECLARED AND WHICH NOBODY MAY INVENT.
+    Joseph, 2026-09-11: *"do not invent an unapproved numerical kappa."* `classify_baseline_
+    degeneracy`'s threshold arm compares a Rayleigh quotient against `kappa` and returns
+    `KAPPA_UNDECLARED` without it, so routing through it would make the cause-3 `s_proj` leg
+    permanently unevaluable rather than guarded. The condition below is a DIFFERENT and
+    threshold-free question, and its only inputs are facts about IEEE-754 arithmetic and the
+    dimension:
+
+        is the computed `q = u' C u` larger than the worst-case round-off error of computing it?
+
+    The standard backward-error bound for a quadratic form evaluated in floating point is
+    `|dq| <= gamma_{n+2} * (|u|' |C| |u|)` with `gamma_k = k*eps / (1 - k*eps)` (Higham, *Accuracy
+    and Stability of Numerical Algorithms*, the inner-product bound applied twice). A `q` that does
+    not exceed its own error bound is **not a measurement**, and dividing a relative change by it
+    manufactures a large `s_proj` out of arithmetic noise -- which would report a SPURIOUS
+    SENSITIVITY, i.e. it fails in the direction of a false alarm rather than a false pass. It is
+    refused either way: a statistic that cannot be resolved is not an unfavourable result about the
+    covariance.
+
+    This is strictly stronger than the `base > 0` test above and weaker than nothing else: on any
+    operand where `q` is genuinely resolvable, it is silent.
+    """
+    U = np.atleast_2d(np.asarray(U, float))
+    C0 = np.asarray(C0, float)
+    n = C0.shape[0]
+    eps = float(np.finfo(np.float64).eps)
+    k = n + 2
+    denom = 1.0 - k * eps
+    require(denom > 0,
+            f"s_proj: dimension {n} is too large for the float64 error bound to be meaningful")
+    gamma = k * eps / denom
+    q = np.einsum("ij,jk,ik->i", U, C0, U)
+    bound = gamma * np.einsum("ij,jk,ik->i", np.abs(U), np.abs(C0), np.abs(U))
+    bad = np.nonzero(~(q > bound))[0]
+    require(
+        bad.size == 0,
+        f"s_proj: functional(s) {bad.tolist()[:8]} have a baseline q = u' C u that does not "
+        f"exceed its own float64 round-off bound "
+        f"(q = {q[bad][:4].tolist() if bad.size else []}, bound = "
+        f"{bound[bad][:4].tolist() if bad.size else []}). A baseline positive only by round-off is "
+        f"not a measurement, and dividing by it manufactures a relative change out of arithmetic "
+        f"noise. Declare a functional the covariance actually supports.")
+
+
 def s_proj(cov_by_offset, functionals, baseline_key=0):
     """Maximum relative change in `sqrt(u^T C u)` over a PREDECLARED set of linear functionals.
 
@@ -224,6 +340,7 @@ def s_proj(cov_by_offset, functionals, baseline_key=0):
 
     base = _vals(C0)
     require(np.all(base > 0), "s_proj: a predeclared functional has zero baseline uncertainty")
+    _require_baseline_is_resolvable(U, C0)
     worst, arg_k, arg_u = 0.0, baseline_key, -1
     per = {}
     for k, C in cov_by_offset.items():

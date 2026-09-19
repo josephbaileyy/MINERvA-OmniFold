@@ -87,6 +87,52 @@ class TheStatisticsMeasureWhatTheySay(unittest.TestCase):
         # sigma scales by sqrt(1.01k'), and x is fixed, so the median ratio scales the same way.
         self.assertAlmostEqual(out["s_med"], np.sqrt(1.02) - 1.0, places=12)
 
+    def test_s_med_accepts_the_REAL_operand_shapes_a_Z_product_carries(self):
+        """⚠ THE SHAPE THESE TESTS NEVER USED, AND IT IS THE ONLY ONE PRODUCTION HAS.
+
+        Every existing fixture passed `mask = np.ones(n, bool)`, where `n` is `C`'s dimension. In
+        that degenerate case masking an already-restricted sigma is the identity, so the operand
+        error below was invisible. A real Z product carries `hXSecND_flat` and `hSupportMask` on
+        the FULL 65,856-cell grid while `C_Z` is `n x n` with `n = 10,694` reported rows, so
+        `per_bin_sigma(C)[mask]` indexes a 10,694-vector with a 65,856-element boolean and raises.
+        `s_med` could not be computed on any real product, and nothing noticed because nothing
+        ever called it on one.
+        """
+        n_grid, n_rep = 200, 12
+        covs = toy_covs(n=n_rep)
+        mask = np.zeros(n_grid, bool)
+        mask[np.linspace(0, n_grid - 1, n_rep).astype(int)] = True
+        x = np.zeros(n_grid)
+        x[mask] = np.abs(np.random.default_rng(5).normal(10.0, 1.0, size=n_rep))
+        out = zs.s_med(covs, x, mask, baseline_key=0)
+        self.assertAlmostEqual(out["s_med"], np.sqrt(1.02) - 1.0, places=12)
+
+    def test_per_bin_movement_accepts_the_REAL_operand_shapes_too(self):
+        n_grid, n_rep = 200, 12
+        covs = toy_covs(n=n_rep)
+        mask = np.zeros(n_grid, bool)
+        mask[np.linspace(0, n_grid - 1, n_rep).astype(int)] = True
+        out = zs.per_bin_movement(covs, mask)
+        self.assertEqual(out["n_support"], n_rep)
+        self.assertIn(out["argmax_grid_index"], np.flatnonzero(mask).tolist())
+
+    def test_a_mask_that_does_not_match_the_covariance_is_REFUSED(self):
+        """Fail closed rather than pick an interpretation: the two operands must agree."""
+        covs = toy_covs(n=12)
+        mask = np.zeros(200, bool)
+        mask[:5] = True                       # 5 reported, but C is 12 x 12
+        with self.assertRaises(zc.ZContractError):
+            zs.s_med(covs, np.ones(200), mask, baseline_key=0)
+        with self.assertRaises(zc.ZContractError):
+            zs.per_bin_movement(covs, mask)
+
+    def test_a_cv_whose_length_is_not_the_masks_is_REFUSED(self):
+        covs = toy_covs(n=12)
+        mask = np.zeros(200, bool)
+        mask[np.linspace(0, 199, 12).astype(int)] = True
+        with self.assertRaises(zc.ZContractError):
+            zs.s_med(covs, np.ones(199), mask, baseline_key=0)
+
     def test_per_bin_movement_reports_a_distribution_and_an_argmax(self):
         covs = toy_covs()
         n = covs[0].shape[0]

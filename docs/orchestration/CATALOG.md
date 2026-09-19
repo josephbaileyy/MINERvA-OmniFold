@@ -73,6 +73,16 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   - **Joseph reverses `AUTHORIZATION-20260918` §2 ruling 2, for the computed-acceptance goal only.**
   One additional member at `262.00` CPU / `158.25` GPU, through the normal campaign check. The
   premise *"nothing required needs `N`"* died when acceptance became computed. **Never submitted.**
+- [`REVIEW-20260919-multi-member-grader-two-rounds.md`](REVIEW-20260919-multi-member-grader-two-rounds.md)
+  - **`z_grade.py` — the first production caller of `assess()` that can reach a leg**, and two
+  adversarial review rounds over it. Round one: **2 BLOCK, 4 MAJOR**. Round two reviewed the FIXES
+  and found two **COSMETIC**: distinctness compared strings the forger controls (now the throw
+  source is **re-hashed from disk**), and `--preregistration` could be dropped from the command
+  line (now **required**). One round-two BLOCK was **overstated and is recorded as such** — an
+  all-ones `g` is a legitimate `compute_g` output — but **my test for it was rigged** and is
+  corrected. Firing the repo's own `s_proj` tripwire moved the round-off guard **into
+  `z_statistics.s_proj`**; the `kappa` half stays open and is now **measured and recorded** so a
+  later `kappa` applies retrospectively.
 - [`REVIEW-20260919-R7-non-finite-member-footing.md`](REVIEW-20260919-R7-non-finite-member-footing.md)
   - **R7 implemented and cross-model reviewed: NO BLOCK, NO MAJOR.** `all_members_finite` moves to
   `branch1_failures()` — branch 2 is a **zero-spread** diagnosis and a `NaN`/`inf` product is the

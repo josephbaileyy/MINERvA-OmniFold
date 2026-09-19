@@ -791,13 +791,27 @@ def evaluate_a7(cov_by_offset, projection_M, *, declared_K, c_scale, kappa, buil
     the OPERAND (*"C is not PSD on these u"*) when the defect is the FUNCTIONAL DECLARATION --
     F3's mislabelling finding. Reaching `s_proj` at all means every declaration was accepted.
 
-    ⚠ DISCLOSED RESIDUE, measured rather than assumed: this does NOT retrofit
+    ⚠ THE DISCLOSED RESIDUE IS HALF CLOSED, AND WHICH HALF MATTERS. This paragraph used to read: *"this does NOT retrofit
     `z_statistics.s_proj`. A direct `s_proj` call remains unguarded and grades a round-off-positive
-    baseline exactly as before -- `TestTheResidueIsReal` DEMONSTRATES that rather than asserting it.
-    It is sufficient for A-7 because `s_proj` has NO production callers (measured: 17 in this
-    campaign's probe, 1 in `test_z_validator`), so the criterion's entry point is the only route
-    needing the guard. If `s_proj` ever acquires a production caller this residue becomes live and
-    the guard must move into it.
+    baseline exactly as before ... It is sufficient for A-7 because `s_proj` has NO production
+    callers ... If `s_proj` ever acquires a production caller this residue becomes live and the
+    guard must move into it."*
+
+    **`z_grade` became that caller on 2026-09-19, `test_s_proj_has_no_UNSANCTIONED_caller` fired,
+    and the guard moved** -- into `z_statistics._require_baseline_is_resolvable`, called from
+    `s_proj` itself, so it now covers every caller including this one. It is threshold-free and
+    therefore needs no `kappa`: it asks whether the computed `q = u' C u` exceeds the float64
+    round-off bound of computing it, whose only inputs are machine epsilon and the dimension. The
+    `kappa` arm below is a DIFFERENT and stronger question (a declared Rayleigh cutoff) and remains
+    undeclared and unevaluable, exactly as it was.
+
+    **SO THE HONEST STATEMENT IS: the round-off half is closed for every caller; the `kappa` half
+    is not, and nobody can close it while `kappa` is undeclared.** A second reviewer read the first
+    version of this paragraph as claiming the whole residue was gone and objected; the objection
+    was right about the claim. `z_grade` records each functional's Rayleigh quotient
+    `q_i / (||u_i||^2 * lambda_max(C_0))` in its grade receipt, so a `kappa` declared later can be
+    applied to a completed campaign without re-running it. **Declaring `kappa` is not this lane's
+    act** and is carried as a disclosed limitation.
 
     ⚠ AND ONE BEHAVIOUR TO DOCUMENT AS INTENDED RATHER THAN DISCOVER LATER: while `kappa` is
     undeclared, a HEALTHY baseline also returns `KAPPA_UNDECLARED`. Fail-closed in the strong

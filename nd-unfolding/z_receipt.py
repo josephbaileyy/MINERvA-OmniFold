@@ -606,6 +606,16 @@ def _validate_passing_outcome(outcome, inflation=None) -> None:
 RECONSTRUCTION_KEY = "G3R_raw_operand_reconstruction"
 
 
+def validate_reconstruction_ran(inflation) -> None:
+    """Public entry point. `z_grade` re-uses this gate rather than retyping it.
+
+    A rule retyped is a second implementation that does not change when the first is corrected,
+    and this campaign has that shape on record. The receipt writer and the campaign grader must
+    ask the SAME question of §1.3b's reconstruction block.
+    """
+    _validate_reconstruction_ran(inflation)
+
+
 def _validate_reconstruction_ran(inflation) -> None:
     """A MET receipt must PROVE §1.3b's reconstruction ran, on BOTH variants.
 
