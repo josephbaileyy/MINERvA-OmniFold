@@ -43,6 +43,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **permission to decide, not a decision and not evidence.** `null_epsilon` stays **WITHHELD** —
   the clause makes it **moot for the required path, it does not supply it.** Nothing generalizes,
   including to a future rebuild of the same object.
+- [`EVIDENCE-20260919-cause7-migration-census-and-declared-policy.md`](EVIDENCE-20260919-cause7-migration-census-and-declared-policy.md)
+  - **The §3 bounded-work extraction.** Source `standard/evidence/p4_merged_audit.json`, sha256
+  `2e3fac26…`. **Ten of ten endpoints agree with the declared policy** (`p4_lib.py:64-65`), so
+  `SPEC:802`'s abort condition does not trigger; `selection_migration_abs = RecoEntrants + RecoExits`
+  exactly on all ten. Carries the **per-endpoint sha256 identities**, the extractor's positive AND
+  negative controls, and two corrections: **§15.1 is a directory-uniformity census, not a digest
+  identity**, and **the 12-playlist hadd coverage is NOT confirmed** by this artifact.
 - [`DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md`](DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md)
   - **✅ IN FORCE. Joseph's ruling on PM-1, cause 7, and completion, recorded VERBATIM as his text.**
   `SPEC` stays **FROZEN** — §1 directs recording through the existing ruling mechanism and updating
