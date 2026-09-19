@@ -79,3 +79,25 @@ class Requirements(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HisKeyLists(unittest.TestCase):
+    """What he builds from, and where our tuples cannot supply it."""
+
+    def test_his_prong_key_is_absent_from_our_tuples(self):
+        """Measured: `prong_part_dEdXMean` is not a branch; `prong_dEdXMean` is."""
+        self.assertIn(r4.HIS_KEY_NOT_IN_OUR_TUPLES, r4.HIS_PRONG_KEYS)
+        self.assertNotIn(r4.HIS_KEY_NOT_IN_OUR_TUPLES, r4.TYPED_OBJECT_BRANCHES)
+        self.assertIn(r4.OUR_SUBSTITUTE, r4.TYPED_OBJECT_BRANCHES)
+
+    def test_the_substitution_is_declared_as_unverified(self):
+        self.assertIn("NOT VERIFIED", r4.SUBSTITUTION_STATUS)
+
+    def test_branches_he_does_not_use_are_named(self):
+        for name in r4.IN_OUR_MANIFEST_BUT_NOT_HIS:
+            self.assertIn(name, r4.TYPED_OBJECT_BRANCHES)
+            self.assertNotIn(name, r4.HIS_BLOB_KEYS)
+
+    def test_his_blob_keys_are_all_in_our_manifest(self):
+        for key in r4.HIS_BLOB_KEYS:
+            self.assertIn(key, r4.TYPED_OBJECT_BRANCHES)

@@ -131,6 +131,43 @@ GLOBAL_COLUMNS: tuple[str, ...] = (
 
 ENERGY_SUM_PIDS: tuple[int, ...] = (2, 3, 4, 5, 6, 7)
 
+# HIS OWN KEY LISTS, read from `src/dataset/preprocessing.py:836-859`, so that
+# what we build can be compared against what he builds rather than against our
+# reading of his paper.
+HIS_PRONG_KEYS: tuple[str, ...] = (
+    "prong_part_pos", "prong_part_E", "prong_part_score", "prong_part_mass",
+    "prong_part_charge", "prong_part_pid", "prong_part_dEdXMean",
+)
+HIS_BLOB_KEYS: tuple[str, ...] = (
+    "MasterAnaDev_BlobX", "MasterAnaDev_BlobY", "MasterAnaDev_BlobZ",
+    "MasterAnaDev_BlobT", "MasterAnaDev_BlobTPos", "MasterAnaDev_BlobTotalE",
+)
+
+# ONE OF HIS KEYS DOES NOT EXIST IN OUR TUPLES, measured 2026-09-20 against
+# MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root:
+#
+#     prong_part_dEdXMean   ABSENT
+#     prong_dEdXMean        PRESENT
+#
+# The extraction contract's 21-branch enumeration had the right name; his key
+# list does not match this tuple vintage. So his preprocessing cannot be
+# reproduced verbatim on our data for that one column, and the substitution is a
+# CONFIGURATION DIFFERENCE to declare rather than a detail to paper over: either
+# `prong_dEdXMean` is the same quantity renamed, which we have not established,
+# or the column differs.
+HIS_KEY_NOT_IN_OUR_TUPLES = "prong_part_dEdXMean"
+OUR_SUBSTITUTE = "prong_dEdXMean"
+SUBSTITUTION_STATUS = (
+    "DECLARED, NOT VERIFIED. The two names have not been shown to carry the same "
+    "quantity. Until they are, his arm built on our tuples differs from his arm "
+    "built on his in exactly this column, and any recommendation must say so"
+)
+
+# Two branches the contract enumerates are NOT in his key lists at all:
+# `MasterAnaDev_BlobIs3D` and `MasterAnaDev_BlobNClusters`. They are available
+# and he does not use them, so his arm does not get them either.
+IN_OUR_MANIFEST_BUT_NOT_HIS = ("MasterAnaDev_BlobIs3D", "MasterAnaDev_BlobNClusters")
+
 INVENTORIES: tuple[str, ...] = ("mc_signal_reco", "mc_background", "data")
 
 SYMMETRY_REQUIREMENT = (
