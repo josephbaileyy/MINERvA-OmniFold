@@ -88,6 +88,11 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   written, accepted after the one documented edit. Carries the `UNRESOLVED` status and the
   predeclaration failure **in the same place as the adoption**, and states that the exception
   attaches to bytes and covers `3d7465f6…` and nothing else.
+- [`RUN-20260919-cause3-two-member-campaign-launch.md`](RUN-20260919-cause3-two-member-campaign-launch.md)
+  - **What was submitted**: 8 jobs, `337.00` CPU / `158.25` GPU reserved, admission `rc 0`
+  re-measured before each submission. **Three clean deploys** — arms at `44e09fd8`, builder at the
+  preregistered `d64257c3`, bridge at `a51f7917` — with the reason three rather than one, and the
+  k0r2 combine **preserved by digest before being re-run**. No result.
 - [`PREREGISTRATION-20260919-cause3-two-member-campaign.md`](PREREGISTRATION-20260919-cause3-two-member-campaign.md)
   - **Committed before any job was submitted.** `K = {0, 1200}` with all three offset predicates run,
   builder `d64257c3`, `S = 1e-3`, `ε = 1e-9`, pass rule = branch 3 **and** `r_null ≤ ε`, graded
