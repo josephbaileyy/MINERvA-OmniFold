@@ -3,7 +3,12 @@
 **Owner:** `z-independent-assessor` (`owners.tsv:15`). **Requested by** a session identifying as
 *GBDT advisor* at `uds:/tmp/cc-socks/31248.sock` — **a different socket from the `29312` session of
 the earlier exchanges, same claimed name**; recorded, not treated as significant, since the request
-is self-contained and verifiable on its own terms. **Subject:** `z-null.npz`, sha256
+is self-contained and verifiable on its own terms. ⚠ **CLOSED 2026-09-18: the requester states the
+two sockets are one advisor across a process restart — its scratchpad and session identifiers
+changed mid-exchange. I cannot verify that independently** (a session's account of its own identity
+is not checkable from the artifacts), **and nothing here rests on it:** every number below was
+re-measured from the persisted product, so the result stands on the artifact whoever asked. Recorded
+as a closed item with its status rather than left dangling. **Subject:** `z-null.npz`, sha256
 `cb82fc32…33d77e`. **Read-only; no compute; nothing adopted.**
 
 **Why I took it:** it is arithmetic on a persisted artifact, which is the side of my own
