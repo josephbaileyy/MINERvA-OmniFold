@@ -674,6 +674,40 @@ causes no migration.
 > > replacement; it does not independently validate the completeness of the hadronic-response model
 > > for the `E_avail` and `W` measurement.
 
+## 4i. C7 CLOSURE — §3's five citations: THREE are citable now, TWO are named as outstanding
+
+Joseph's ruling §3 makes closure conditional on citing existing committed evidence for five things.
+Extracted **by field name**, not by substring — a substring scan returned `True` for all nine probes
+and **four of those were false positives**, the failure mode that fails both ways.
+
+| # | required citation | status |
+|---|---|---|
+| 1 | **exact five-band inventory** | ✅ `z-receipt-cv.json` → `inflation.membership.bands_lateral` **n=5**; with `bands_vert` 13, `bands_residual` 27, `band_inventory` 45 |
+| 2 | **ten endpoints** | ✅ `PACKET-20260918-…null-route.md:952-953` — *"Ten endpoint identities verified: ten directories, uniform at 12 ROOT files and 53.8 GB, matching `--array=0-119%12` and `N_ENDPOINTS = 10`"*; and `p4_lib.py:20-21` per `PREDECLARE-20260905:70` |
+| 3 | **migration censuses** | ⚠ **OUTSTANDING — see below** |
+| 4 | **declared policies** | ⚠ **OUTSTANDING — see below** |
+| 5 | **required assembly identities** | ✅ `z-receipt-cv.json` → `closure.{G1_closure_identity, G2_g_domain, G3_g_reconstruction, G3R_raw_operand_reconstruction, G4_symmetry_psd, G5_band_partition, active_total_eq_sum5, blocksum_symmetry_psd}` |
+
+### ⚠ The two outstanding ones, named specifically as §3 requires
+
+**They are not in anything Z consumes.** Not in `z-receipt-cv.json` (absent by name), not in the
+cause-1 endpoint census receipt (absent by name — it is a *different* census), and **not in Z's
+active source**: `std_final5_candidate.root` has **49 keys, zero** matching `activeUniverse*` or any
+policy key. It holds covariance histograms only.
+
+**Where they do live, from the producer side:** `audit_merged_fps.py:101-106` reads the migration
+census as **hadd-summed `TParameter<long>`** `activeUniverse{Truth,Reco}{Entrants,Exits}` over the 12
+playlists, and `p4_validate_active_lateral.py:110` **requires** it —
+`require(sm is not None, "merged-audit {t} has no migration census")`. So the evidence is expected in
+the **merged-audit artifacts of the active/lateral production**, one level upstream of Z's inputs.
+`SPEC:802` calls these *"the two fields whose absence has cost this campaign before"* and requires
+that a declared-zero band measuring nonzero migration, **or the reverse**, must **abort**.
+
+> **THE SPECIFIC BOUNDED WORK, named before doing it as §3 directs:** locate the merged-audit
+> artifact for the five active lateral bands and read its per-endpoint `activeUniverse*` census
+> params and declared policy. **This is a read, not a production run** — no reconstruction campaign,
+> which §2 forbids anyway. **Cause 7 is NOT closed until these two are cited or resolved.**
+
 ## 5. Execution order — fixed
 
 **C1–C7 complete → NULL resolved (P0 first, zero-compute; P2 NOT authorized) → SRC_COV identified
