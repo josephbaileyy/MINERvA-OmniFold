@@ -19,10 +19,16 @@ central values or Gate 6, and nothing discharges `OI-71`.
 | **OmniFold adapter**, both steps on the real engine | `receipts/OMNIFOLD_STEP_EXERCISE-20260919.json` |
 | **cost re-measured** at the paper flags, with inference | `receipts/COST_RECALIBRATION-20260919.json`, job 58551348 |
 | **33-token native-batch failure diagnosed** | same receipt; the action is a backend repair, not a batch change |
-| **decision packet** | `DECISION_PACKET-20260919.md` |
+| **decision packet** | `DECISION_PACKET-20260919.md` (its eleven decisions are now one) |
+| **training recipe**: equal-example budget, derived warmup/cosine, torch's clipping, realized-policy recording | `training_recipe.py`, `RECIPE_AND_TRANSFER-20260919.md` |
+| **checkpoint transfer map**, tensor by tensor | `receipts/CHECKPOINT_TRANSFER-20260919.json` |
+| **regional safeguard** on the `(pT, p‖)` cells, with `NO_SELECTION` on failure | `characterize_regions.py`, `selection_rule.regional_safeguard` |
+| **configuration identity** enforced, not just documented | `configuration_identity.py` |
+| **threshold policy** with every margin translated into misplaced truth mass | `threshold_translation.py`, `FREEZE_PROPOSAL-20260919.md` |
+| **float32 limit** independent of the port | `port_checks.float32_verdict`, `KERAS_PATH_VALIDATION-20260919.md` |
 | **requests ready, not sent** | `requests/DRAFT-agent-a-event-keys.md`, `requests/DRAFT-gregor-paper-configuration.md` |
 
-119 tests pass. `ALL BINDINGS INTACT`.
+190 tests pass. `ALL BINDINGS INTACT`.
 
 ## 2. The port checks, and what they caught
 
@@ -78,9 +84,10 @@ to be 14 % *cheaper* per example than the matched-batch fallback, not a penalty.
 
 ## 5. What is implemented but deliberately not done
 
-* **his cosine schedule.** `max_steps` must be **derived from the agreed fair
-  budget**, not copied from his job script, and that budget is U9.
-* **gradient clipping**, if his recipe uses it, is not transcribed.
+* **his cosine schedule and clipping are now implemented**, with `max_steps`
+  derived from the equal-example budget rather than copied. What is *not* fixed is
+  the budget's absolute size, because `n_data` is a production quantity nobody has
+  read yet.
 * **the interaction blocks.** The port **refuses** `use_int`/`local_int` rather
   than guessing: their features are defined in LHC jet coordinates (eta, phi,
   log pT) and have no established mapping onto our token schema. The paper

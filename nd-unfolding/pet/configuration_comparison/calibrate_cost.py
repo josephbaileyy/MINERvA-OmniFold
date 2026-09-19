@@ -906,14 +906,95 @@ def reduce_halves(ours_path: Path, theirs_path: Path) -> dict[str, Any]:
 def main() -> None:
     """Time one arm across both token counts, or reduce two halves."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--arm", choices=("ours", "theirs", "reduce", "matched"),
-                        required=True)
+    parser.add_argument("--arm", choices=("ours", "theirs", "reduce", "matched",
+                                         "cell", "merge-cells"), required=True)
+    parser.add_argument("--cell", help="one matched cell: arm|step|tokens|batch|mode")
+    parser.add_argument("--cell-dir", type=Path, help="directory of per-cell JSON")
     parser.add_argument("--repo", type=Path)
     parser.add_argument("--gregor-checkout", type=Path)
     parser.add_argument("--ours-half", type=Path)
     parser.add_argument("--theirs-half", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+
+    if args.arm == "cell":
+        # ONE cell per process. A TensorFlow GPU OOM is not catchable: measured
+        # 2026-09-19, two ResourceExhaustedError cells were caught by the per-cell
+        # try/except and the process then died on
+        # `Unexpected Event status: 1` and took the whole run with it, losing every
+        # cell that had already succeeded. Process isolation is the only guard that
+        # holds against a fatal abort, and it makes "cells are independent" true
+        # rather than merely intended.
+        if args.repo is None or not args.cell:
+            raise SystemExit("[calibrate] --arm cell needs --repo and --cell")
+        arm, step, tokens, batch, mode = args.cell.split("|")
+        tokens, batch = int(tokens), int(batch)
+        builders = {"ours_incumbent": time_ours_step, "ported_pet2": time_ported}
+        if arm == "theirs_complete":
+            result = time_ported_complete(args.repo, tokens, batch, mode)
+        else:
+            result = builders[arm](args.repo, step, tokens, batch, mode)
+        result["cell"] = args.cell
+        args.output.write_text(json.dumps(result, indent=2) + "\n")
+        print(f"{args.cell}: {result['step_seconds_median']*1e3:.2f} ms/step "
+              f"= {result['seconds_per_example']*1e6:.3f} us/example "
+              f"finite={result['values_finite']}")
+        return
+
+    if args.arm == "merge-cells":
+        if args.cell_dir is None:
+            raise SystemExit("[calibrate] --arm merge-cells needs --cell-dir")
+        cells: dict[str, Any] = {}
+        for path in sorted(args.cell_dir.glob("*.json")):
+            try:
+                row = json.loads(path.read_text())
+            except json.JSONDecodeError as exc:
+                cells[path.stem] = {"error": f"unreadable: {exc}"}
+                continue
+            cells[row.get("cell", path.stem)] = row
+        expected = [f"{arm}|{step}|{t}|{b}|{m}"
+                    for arm in ("ours_incumbent", "ported_pet2")
+                    for step in ("step1_reco", "step2_gen")
+                    for t in TOKEN_COUNTS for b in (OUR_BATCH, THEIR_BATCH)
+                    for m in ("train", "inference")]
+        expected += [f"theirs_complete|his_own_schema|{t}|{b}|{m}"
+                     for t in TOKEN_COUNTS for b in (OUR_BATCH, THEIR_BATCH)
+                     for m in ("train", "inference")]
+        ran = {k: v for k, v in cells.items() if "error" not in v}
+        missing = [k for k in expected if k not in ran]
+        non_finite = sorted(k for k, v in ran.items() if not v.get("values_finite", False))
+        static = sorted(k for k, v in ran.items()
+                        if v.get("mode") == "train" and not v.get("value_changed_over_the_run"))
+        receipt = {
+            "scope": ("framework-MATCHED timing: both arms in TensorFlow on one GPU, "
+                      "production precision. Cost only; no learning claim."),
+            "framework_matched": True,
+            "cross_framework_qualification": "DOES NOT APPLY: both arms are TensorFlow here.",
+            "gpu_identity": physical_gpu_identity(),
+            "cells": cells,
+            "validation": {
+                "cells_expected": len(expected), "cells_ran": len(ran),
+                "cells_missing_or_failed": missing,
+                "non_finite_cells": non_finite,
+                "training_cells_whose_loss_never_moved": static,
+                "held": bool(ran and not non_finite and not static),
+                "criterion": ("every cell that ran must produce finite values and every "
+                              "TRAINING cell's loss must move; a loss frozen across the "
+                              "timed steps means the optimizer is not connected, which a "
+                              "throughput number hides perfectly"),
+            },
+            "isolation": ("one process per cell, because a TensorFlow GPU OOM is "
+                          "process-fatal and cannot be caught"),
+        }
+        args.output.write_text(json.dumps(receipt, indent=2, allow_nan=False) + "\n")
+        for key in expected:
+            cell = ran.get(key)
+            print(f"{key:52s} " + (f"{cell['seconds_per_example']*1e6:9.3f} us/example"
+                                   if cell else "      MISSING/FAILED"))
+        v = receipt["validation"]
+        print(f"validation: {'PASS' if v['held'] else 'FAIL'} "
+              f"({v['cells_ran']}/{v['cells_expected']} ran)")
+        return
 
     if args.arm == "matched":
         # Both arms in ONE framework, at both step schemas, at both intended

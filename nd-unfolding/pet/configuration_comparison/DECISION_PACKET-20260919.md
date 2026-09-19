@@ -1,5 +1,20 @@
 # Scientific decision packet: our PET configuration against Gregor's
 
+> **SUPERSEDED IN PART, 2026-09-19 (later the same day).** The eleven open
+> decisions below have been reduced to **one** — the threshold policy — in
+> `FREEZE_PROPOSAL-20260919.md`. This document is retained for the reasoning
+> behind each; the freeze proposal is what to act on. What closed and how:
+>
+> | was | now |
+> |---|---|
+> | U1, U2 injection | **settled**: you support `E_avail`, amplitude 0.35, clip 3.0 |
+> | U3 scoring domain | **settled**: 1-D primary retained, with a region-stratified safeguard defined on the `(pT, p‖)` reporting cells |
+> | U4 reference, U8 σ | **not decisions**: calculated and measured respectively |
+> | U5 `f`, U6 δ, U7 δ_switch | **one policy** with trade-offs, in the freeze proposal |
+> | U9 schedule | **settled**: derived from the equal-example budget, implemented in `training_recipe` |
+> | U10 token cap | **settled**: 33, his `max_particles`; a cap-33 version of ours would be a declared candidate |
+> | U11 pid / auxiliary | **settled**: his complete arm retains them; the degraded arm may not be called his configuration |
+
 **CITABLE FOR:** the proposed design of the matched comparison, and the separation
 between what is chosen and what is measured.
 **NOT CITABLE FOR:** any result, any ratified threshold, any adoption. Every
