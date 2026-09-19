@@ -22,39 +22,51 @@
 no recovery has been measured, and \textbf{nothing here favours either
 configuration.}
 \end{block}
-This deck reports what has been \emph{measured}, what has been \emph{frozen}, and
-the one artifact that blocks the rest.
+This deck reports what has been \emph{measured}, what has been \emph{frozen}, what
+remains to run --- and one blocker I claimed and retracted the same day, because a
+wrong ``we are blocked'' is more expensive than the work it postpones.
 \vfill
 PET remains diagnostic method development. Nothing here is a publication adoption,
 a covariance, a systematic, a central-value change, or a Gate-6 action; nothing
 discharges \texttt{OI-71}; nothing has been sent to anyone.
 \end{frame}
 
-\begin{frame}{The blocker, in one slide}
-Gregor's \emph{complete} arm needs PID (8 classes), 5 auxiliary columns, 16 event
-globals and a 33-token cap. Measured with ROOT against the 113\,GB source of every
-downstream product:
+\begin{frame}{A blocker I claimed, and retracted the same day}
+I concluded that Gregor's complete arm could not be built: the 113\,GB produced
+ROOT carries \textbf{zero} of the 46 R4 branches in any of its four trees, and the
+cap is 12. Both true. I then concluded the \textbf{MasterAnaDev AnaTuples} that
+could supply them were unreachable. \textbf{That was wrong.}
 \begin{center}\small
-\begin{tabular}{lrrr}
+\begin{tabular}{ll}
 \toprule
-tree & entries & branches & R4 branches present \\
-\midrule
-\texttt{mc\_truth\_denom} & 49{,}906{,}108 & 20 & \textbf{0} \\
-\texttt{mc\_signal\_reco} & 49{,}906{,}108 & 47 & \textbf{0} \\
-\texttt{mc\_background}   &    566{,}036  & 31 & \textbf{0} \\
-\texttt{data}             &  4{,}119{,}797 & 24 & \textbf{0} \\
+\texttt{/pscratch/sd/j/josephrb/minerva/minerva\_large\_files/} & \textbf{11\,TB}, MC + Data, 12 playlists \\
+\texttt{MasterAnaDev\_mc\_AnaTuple\_run00110000} & 186{,}439 entries, \textbf{4{,}102} branches \\
+typed-object branches & \textbf{21 / 21} present \\
+global source branches & \textbf{14 / 14} present \\
+identity branches & \texttt{ev\_run}, \texttt{ev\_subrun}, \texttt{ev\_gate}, \ldots\ all present \\
 \bottomrule
 \end{tabular}
 \end{center}
-And the cap is \textbf{12} (\texttt{num\_part=12}), applied at dump time.
-\begin{block}{The missing artifact}
-A re-run of \texttt{runEventLoopOmniFold} over the ME-FHC \textbf{MasterAnaDev
-AnaTuples}, emitting the 21 typed-object and 25 global source branches, at cap 33.
-\textbf{Its input is not reachable from this account} --- no tuples on CFS,
-pscratch or our HPSS namespace.
+\begin{block}{Why it was wrong, which matters more than that it was}
+I searched \texttt{/global/cfs/cdirs/m3246}, a \textbf{top-level} glob
+\texttt{/pscratch/sd/j/josephrb/*MasterAnaDev*}, and HPSS. The tuples are two
+directories deeper. \textbf{This is the same error I had corrected that morning}
+on the pretrained checkpoint, where \texttt{ls} on an unlistable directory read as
+absence.
 \end{block}
-R4 was \emph{authorized} and cannot be \emph{executed}: the authorization is to
-read branches from a file that does not contain them.
+\end{frame}
+
+\begin{frame}{So what actually blocks completion}
+\begin{block}{Not an artifact --- wall-clock}
+R4 is \textbf{executable}. The remaining path is an extraction over 11\,TB (46
+branches of 4{,}102, ${\sim}54$\,M events, twelve playlists), then a 17-arm-pair
+campaign at \textbf{540\,GPU-h}. Days of elapsed time, and the budget covers it:
+558 cumulative against the 1{,}000 ceiling, 442 of headroom.
+\end{block}
+\vfill
+\textbf{Still true, and still the reason no comparison is reported here:} neither
+arm has been trained on the endpoint and no recovery has been measured. What
+changed is that this is now unfinished work rather than a wall.
 \end{frame}
 
 \begin{frame}{Prerequisites that did close}
@@ -199,8 +211,9 @@ final inference.
 
 \begin{frame}{What would unblock this}
 \begin{enumerate}
-\item A cap-33 dump carrying the 46 branches \texttt{r4\_manifest.py} enumerates,
-      from the MasterAnaDev tuples. \textbf{Everything else waits on this.}
+\item Extract the 46 branches \texttt{r4\_manifest.py} enumerates from the
+      MasterAnaDev tuples and join them onto the inventory by event identity.
+      \textbf{Executable now}; it was wrongly reported as blocked.
 \item Regenerate and verify the identity sidecar for that dump.
 \item Isolate the XLA batch dependence to an operation before trusting the
       executed path --- the transcendental approximations in \texttt{erf} and
