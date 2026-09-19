@@ -345,8 +345,31 @@ weight-only claim **on G's own `combined_source`** — because the supporting le
 (`VALIDATION_LEDGER:788-791`) **sits in the FPS row**, job `56431823`, the 266-bin chain, making it a
 **2D/FPS-side claim**. §15.1's measurement is on *the 470-branch production universe tuple*; the
 packet **does not name that file** and **does not establish it as G's `combined_source`.** So the
-evidence is strong and it is **not yet shown to be PM-1's object.** Naming that file, or measuring on
-`combined_source`, is what closes PM-1.
+evidence is strong and it is **not yet shown to be PM-1's object.**
+### PM-1 — THE PROVENANCE LINK CANNOT BE MADE FROM THE RECORD. That is the finding.
+
+**The route is a provenance link, not a measurement.** `combined_source` is a *covariance* file and
+weight-only is a property of the universe **tuple's branches**, so "measure on `combined_source`" is
+unavailable by construction — which is why §15.1's branch-presence test is the right kind of
+evidence. What would close PM-1 is showing **the tuple §15.1 measured IS the tuple `combined_source`
+was built from**, matched by **path AND digest**. Measured, both endpoints fail:
+
+| endpoint | state |
+|---|---|
+| the tuple §15.1 measured | **described, never named** — *"the 470-branch production universe tuple"*, no path, no digest, no receipt or script recording it |
+| the tuple `combined_source` was built from | **not recorded.** `combined_source` is `uq_universe_5d_covariance_combined_bkgaware.root`; three launchers reference that *output* and **none references an omnifile / `OmniFold_5D` input** |
+
+⚠ **A ledger row I nearly misread, recorded because the misreading was available and would have
+inverted the result.** `VL11` lists `combined_source` → that filename → **`ABSENT`**, which reads as
+*the field is missing*. It is not: `ABSENT` is the **before** value in a before/after control, so the
+row records the field being **added**. The field exists; what it does not carry is the tuple the file
+was built **from**. Consistent with the C5 lane's finding that `component_provenance` holds only
+`{path, sha256, format}` — **no producers**.
+
+> **PM-1 is a NAMED GAP, not something to infer across.** Neither endpoint is identified by path and
+> digest, so the link cannot be made from the record as it stands. Closing it needs the tuple path
+> and digest for §15.1's measurement, and a producing-input record for `combined_source` — which the
+> repository does not currently keep for any component.
 
 ### Is `#16`'s "promoted-universe migration bound" §2.7's lateral counterfactual?
 
