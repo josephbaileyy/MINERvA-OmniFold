@@ -30,40 +30,59 @@ sha256sum "$P/z-cv.npz" "$P/z-mean.npz"
 echo "=== the exception record exists and names the source ==="
 ls -l "$AMEND"; grep -c '3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5' "$AMEND"
 
-run() {  # run <label> <expect: REFUSE|PRODUCE> <cmd...>
-  local label="$1" expect="$2"; shift 2
-  echo; echo "################ $label  (expect $expect)"
+run() {  # run <label> <expect-rc> <must-contain> <cmd...>
+  # ⚠ THIS CHECKER WAS BROKEN ON ITS FIRST RUN AND THAT IS WHY IT IS SHAPED THIS WAY.
+  # It used to test `expect=REFUSE and rc==0 -> FAIL`. In 58549890 legs B1-B3 SEGFAULTED at
+  # rc=139 and every one of them was reported satisfied, because 139 is not 0. Three guards that
+  # never executed read as three guards that fired. That is the assessor's finding reproduced
+  # inside the instrument built to check for it: uniform failure indistinguishable from success.
+  # A refusal is now an EXACT exit code AND its own message. A crash is named as a crash.
+  local label="$1" want_rc="$2" must="$3"; shift 3
+  echo; echo "################ $label  (expect rc=$want_rc, containing: ${must:0:44})"
   local rc=0; "$@" > "$OUTD/$label.out" 2> "$OUTD/$label.err" || rc=$?
   echo "rc=$rc"
-  echo "--- stderr tail ---"; tail -6 "$OUTD/$label.err"
-  if [ "$expect" = "REFUSE" ] && [ "$rc" -eq 0 ]; then echo "*** CONTROL FAILED: $label was expected to REFUSE and exited 0"; fi
-  if [ "$expect" = "PRODUCE" ] && [ "$rc" -ne 0 ]; then echo "*** CONTROL FAILED: $label was expected to PRODUCE and exited $rc"; fi
+  if [ "$rc" -ge 128 ]; then
+    echo "*** CONTROL FAILED: $label CRASHED with signal $((rc-128)); it did not reach any guard"
+    tail -4 "$OUTD/$label.err" | sed 's/^/      /'
+    return 0
+  fi
+  if [ "$rc" -ne "$want_rc" ]; then
+    echo "*** CONTROL FAILED: $label exited $rc, expected $want_rc"
+  fi
+  if [ -n "$must" ] && ! grep -qF -- "$must" "$OUTD/$label.out" "$OUTD/$label.err"; then
+    echo "*** CONTROL FAILED: $label did not emit the expected text: $must"
+  fi
+  echo "--- stderr tail ---"; tail -5 "$OUTD/$label.err"
 }
 
 # ---- LEG A: the ACTUAL LAUNCHER, its own gate, both directions --------------------------------
 export MNV_CODE_ROOT="$W" MNV_DATA_ROOT="$P" MNV_SRC_HIST=hCov_combined5d_total_uthrow \
        MNV_DST_MASK=receiving-cells MNV_EXPECT_VARIANT=cv
-run A1_launcher_no_adoption_record REFUSE env \
+run A1_launcher_no_adoption_record 3 "no adoption record" env \
   MNV_ADOPTION_RECORD="$OUTD/does-not-exist.md" MNV_SRC_COV="$P/z-cv.npz" \
   MNV_SRC_CV="$P/z-cv.npz" MNV_OUT="$OUTD/A1.root" bash run_m1_projection.sh
 # A2 is the real-path form of the three-document regression: a record that NAMES the right bytes
 # and discusses the exception at length still does not ADOPT them.
-run A2_launcher_exception_record_is_not_an_adoption REFUSE env \
+run A2_launcher_exception_record_is_not_an_adoption 3 "does not state an adoption" env \
   MNV_ADOPTION_RECORD="$AMEND" MNV_SRC_COV="$P/z-cv.npz" \
   MNV_SRC_CV="$P/z-cv.npz" MNV_OUT="$OUTD/A2.root" bash run_m1_projection.sh
 
 # ---- LEG B: the variant guard, the actual files, both directions and both crossings ----------
 AX=(--src-hist hCov_combined5d_total_uthrow --src-axes pt,pz,eavail,q3,W --keep-axes eavail,W)
-run B1_publication_from_MEAN_variant REFUSE $PY project_cov_nd.py \
+run B1_publication_from_MEAN_variant 1 "mean-centering alone is disqualified" $PY project_cov_nd.py \
   --src-cov "$P/z-mean.npz" --src-cv "$P/z-mean.npz" "${AX[@]}" \
   --run-class publication --expect-variant mean --out "$OUTD/B1.root"
-run B2_cv_file_declared_mean REFUSE $PY project_cov_nd.py \
+run B2_cv_file_declared_mean 1 "declares variant 'cv'" $PY project_cov_nd.py \
   --src-cov "$P/z-cv.npz" --src-cv "$P/z-cv.npz" "${AX[@]}" \
   --run-class publication --expect-variant mean --out "$OUTD/B2.root"
-run B3_mean_file_declared_cv REFUSE $PY project_cov_nd.py \
+run B3_mean_file_declared_cv 1 "declares variant 'mean'" $PY project_cov_nd.py \
   --src-cov "$P/z-mean.npz" --src-cv "$P/z-mean.npz" "${AX[@]}" \
   --run-class publication --expect-variant cv --out "$OUTD/B3.root"
-run B4_CONTROL_publication_from_CV_variant PRODUCE $PY project_cov_nd.py \
+# B4 is the only leg that WRITES, so it is the only one that needs ROOT. Sourcing the
+# environment here and nowhere else is deliberate: B1-B3 above prove the refusals are reachable
+# on a bare interpreter, which is the condition a reviewer exercises them in.
+source "$W/setup_salloc_env.sh" >/dev/null 2>&1 || true
+run B4_CONTROL_publication_from_CV_variant 0 "" $PY project_cov_nd.py \
   --src-cov "$P/z-cv.npz" --src-cv "$P/z-cv.npz" "${AX[@]}" \
   --run-class publication --expect-variant cv --adoption-exception "$AMEND" \
   --out "$OUTD/B4_CONTROL_NOT_THE_DELIVERABLE.root"
