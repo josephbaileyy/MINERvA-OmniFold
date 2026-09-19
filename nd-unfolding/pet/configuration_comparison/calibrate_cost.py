@@ -459,13 +459,17 @@ def time_ported(repo: Path, step: str, tokens: int, batch: int,
         def step_fn():
             return tf.reduce_sum(model([part_t, evt_t], training=False))
 
+    # A timing loop that only reads the clock cannot tell a number from a NaN, and
+    # a cell that trained to NaN would be reported as a throughput. The value is
+    # captured and checked, so this VALIDATES the path as well as timing it.
     for _ in range(WARMUP):
         step_fn()
-    times = []
+    times, values = [], []
     for _ in range(REPEATS):
         start = time.perf_counter()
-        float(step_fn())
+        values.append(float(step_fn()))
         times.append(time.perf_counter() - start)
+    finite = bool(np.isfinite(values).all())
     return {
         "framework": f"tensorflow {tf.__version__}",
         "arm": "ported_pet2", "step": step, "mode": mode, "tokens": tokens,
@@ -473,6 +477,9 @@ def time_ported(repo: Path, step: str, tokens: int, batch: int,
         "keras_backend_selection": backend,
         "trainable_parameters": int(sum(int(np.prod(w.shape))
                                         for w in model.trainable_variables)),
+        "values_finite": finite,
+        "first_value": values[0], "last_value": values[-1],
+        "value_changed_over_the_run": bool(values[0] != values[-1]),
         **_throughput(times, batch),
     }
 
@@ -526,10 +533,10 @@ def time_ours_step(repo: Path, step: str, tokens: int, batch: int,
 
     for _ in range(WARMUP):
         step_fn()
-    times = []
+    times, values = [], []
     for _ in range(REPEATS):
         start = time.perf_counter()
-        float(step_fn())
+        values.append(float(step_fn()))
         times.append(time.perf_counter() - start)
     return {
         "framework": f"tensorflow {tf.__version__}",
@@ -538,6 +545,9 @@ def time_ours_step(repo: Path, step: str, tokens: int, batch: int,
         "keras_backend_selection": backend,
         "trainable_parameters": int(sum(int(np.prod(w.shape))
                                         for w in model.model.trainable_weights)),
+        "values_finite": bool(np.isfinite(values).all()),
+        "first_value": values[0], "last_value": values[-1],
+        "value_changed_over_the_run": bool(values[0] != values[-1]),
         **_throughput(times, batch),
     }
 
@@ -845,8 +855,23 @@ def main() -> None:
                                               "arm": arm, "step": step, "tokens": tokens,
                                               "batch": batch, "mode": mode}
                                 print(f"{key}: FAILED {type(exc).__name__}", file=sys.stderr)
+        ran = {k: v for k, v in cells.items() if "error" not in v}
+        non_finite = sorted(k for k, v in ran.items() if not v["values_finite"])
+        static = sorted(k for k, v in ran.items()
+                        if v["mode"] == "train" and not v["value_changed_over_the_run"])
         half = {"gpu_identity": physical_gpu_identity(), "framework_matched": True,
                 "cells": cells,
+                "validation": {
+                    "cells_attempted": len(cells), "cells_ran": len(ran),
+                    "cells_failed": sorted(k for k in cells if k not in ran),
+                    "non_finite_cells": non_finite,
+                    "training_cells_whose_loss_never_moved": static,
+                    "held": bool(not non_finite and not static and ran),
+                    "criterion": ("every cell that ran must produce finite values, and "
+                                  "every TRAINING cell's loss must move -- a loss frozen "
+                                  "across 20 steps means the optimizer is not connected, "
+                                  "which a throughput number would hide"),
+                },
                 "note": ("both arms in TensorFlow on one GPU: the cross-framework "
                          "qualification does not apply to these ratios")}
         args.output.write_text(json.dumps(half, indent=2) + "\n")
@@ -855,7 +880,13 @@ def main() -> None:
                 print(f"{key:56s} FAILED")
             else:
                 print(f"{key:56s} {cell['step_seconds_median']*1e3:8.2f} ms/step "
-                      f"= {cell['seconds_per_example']*1e6:8.3f} us/example")
+                      f"= {cell['seconds_per_example']*1e6:8.3f} us/example"
+                      + ("" if cell["values_finite"] else "  NON-FINITE"))
+        validation = half["validation"]
+        print(f"validation: {'PASS' if validation['held'] else 'FAIL'} "
+              f"({validation['cells_ran']}/{validation['cells_attempted']} ran, "
+              f"{len(validation['non_finite_cells'])} non-finite, "
+              f"{len(validation['training_cells_whose_loss_never_moved'])} frozen)")
         return
 
     if args.arm == "ours":

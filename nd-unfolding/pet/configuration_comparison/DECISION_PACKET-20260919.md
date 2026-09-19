@@ -18,16 +18,19 @@ His backbone now runs in our engine. `PET2Port` reproduces `network.PET2` in
 read off `plot_configs/V1Paper.json` and the `OLS`/`OLS_RW`/`OLM_FB` branches of
 `submit_train_jobs.py`, **not** PET2's class defaults of `True`/`True`.
 
-All six port checks hold at 1,024 rows (`receipts/PORT_CHECKS-20260919.json`):
+All six port checks hold (`receipts/PORT_CHECKS-20260919.json`). **The receipt
+records 1,024 forward rows and 64 gradient rows** — P-2 and P-5 run on the 1,024,
+P-3 and P-4 on the 64, and "at 1,024 rows" as I wrote it before was a single figure
+covering two different populations:
 
 | check | result |
 |---|---|
 | P-1 inventory | 176 tensors, 2,758,702 parameters, identical by name, shape and traversal order |
-| P-2a float32, unmodified upstream | cross-engine 3.7e-7 against a measured budget of 4.4e-7 |
-| P-2b float64 | 6.7e-16 against a 1e-5 tolerance |
-| P-3 gradients | 5.1e5 times closer than a mutant port with one structural change |
-| P-4 one AdamW step | 4.0e8 times closer than the nearest off-the-shelf optimizer |
-| P-5 masking | padded slots change the output by exactly 0; pad crowding begins only at coordinate magnitude ~1000, and our clouds are O(1) |
+| P-2a float32, unmodified upstream, 1,024 rows | cross-engine 3.7e-7 against a limit of 5.3e-7 taken from the REFERENCE's own float32 deviation, so a defect in the port cannot widen its own band |
+| P-2b float64, 1,024 rows | 6.7e-16 against a 1e-5 tolerance |
+| P-3 gradients, 64 rows | 5.1e5 times closer than a mutant port with one structural change |
+| P-4 one AdamW step, 64 rows | 4.0e8 times closer than the nearest off-the-shelf optimizer |
+| P-5 masking, 1,024 rows | padded slots change the output by exactly 0; pad crowding begins only at coordinate magnitude ~1000, and our clouds are O(1) |
 | P-6 | repeatable and reload-identical, bitwise |
 
 The vendored `MultiFold` loop itself has been driven with it on both step schemas

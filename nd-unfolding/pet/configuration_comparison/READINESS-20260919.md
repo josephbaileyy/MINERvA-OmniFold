@@ -13,7 +13,7 @@ central values or Gate 6, and nothing discharges `OI-71`.
 | item | evidence |
 |---|---|
 | **PET2-small Keras port** at the V1-paper setting | `pet2_keras_port.py`; 176 tensors, 2,758,702 parameters |
-| **P-1…P-6** all hold at 1,024 rows | `receipts/PORT_CHECKS-20260919.json` |
+| **P-1…P-6** all hold; the receipt records **1,024 forward rows and 64 gradient rows** | `receipts/PORT_CHECKS-20260919.json` |
 | **torch-faithful AdamW** | `torch_adamw.py`; matches `torch.optim.AdamW` to 4e-14 over 5 steps |
 | **OI-125 fold-forward recorder** | `fold_forward_recorder.py`; end-of-run ratio recorded, not reconstructed |
 | **OmniFold adapter**, both steps on the real engine | `receipts/OMNIFOLD_STEP_EXERCISE-20260919.json` |
@@ -31,11 +31,11 @@ Three of the four defects found were mine, and the checks existed to find them.
 | check | result | what it caught |
 |---|---|---|
 | P-1 | identical by name, shape, traversal order | — |
-| P-2a float32, **unmodified** upstream | 3.7e-7 vs a measured budget of 4.4e-7 | — |
-| P-2b float64 | 6.7e-16 vs a 1e-5 tolerance | `tf.nn.gelu(approximate=False)` is **not exact** — 4.1e-9 against torch, and the neighbourhood block divides by `sum(1e-9 + mask)`, carrying it to 1e-1 |
-| P-3 gradients | 5.1e5× closer than a mutant port | upstream's hardcoded float32 in the neighbourhood denominator, which the port now reproduces deliberately |
-| P-4 one AdamW step | 4.0e8× closer than stock Keras AdamW | **Keras' AdamW is not torch's**: epsilon inside the bias correction makes it 31.6× larger at step 1, moving every zero-initialised bias by 68 % of the update |
-| P-5 masking | exactly 0; crowding begins only at coordinate magnitude ~1000 | the first two versions of the sweep measured nothing — one pushed pads further away, one probed a leak that masking makes impossible |
+| P-2a float32, **unmodified** upstream (1,024 rows) | 3.7e-7 vs a 5.3e-7 limit taken from the REFERENCE's deviation alone | the old budget was `reference + ours`, which a float32 defect in the port would have WIDENED |
+| P-2b float64 (1,024 rows) | 6.7e-16 vs a 1e-5 tolerance | `tf.nn.gelu(approximate=False)` is **not exact** — 4.1e-9 against torch, and the neighbourhood block divides by `sum(1e-9 + mask)`, carrying it to 1e-1 |
+| P-3 gradients (64 rows) | 5.1e5× closer than a mutant port | upstream's hardcoded float32 in the neighbourhood denominator, which the port now reproduces deliberately |
+| P-4 one AdamW step (64 rows) | 4.0e8× closer than stock Keras AdamW | **Keras' AdamW is not torch's**: epsilon inside the bias correction makes it 31.6× larger at step 1, moving every zero-initialised bias by 68 % of the update |
+| P-5 masking (1,024 rows) | exactly 0; crowding begins only at coordinate magnitude ~1000 | the first two versions of the sweep measured nothing — one pushed pads further away, one probed a leak that masking makes impossible |
 | P-6 | bitwise repeatable and reload-identical | — |
 
 **Two findings are about upstream, not about the port.**
