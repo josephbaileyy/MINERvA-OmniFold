@@ -414,7 +414,7 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
     return record
 
 
-def merge(cell_dir: Path, expected: list[str]) -> dict[str, Any]:
+def merge(cell_dir: Path, expected: list[str], note: str | None = None) -> dict[str, Any]:
     """Collect the per-cell files and report what is MISSING rather than eliding it."""
     cells, missing = {}, []
     for key in expected:
@@ -434,8 +434,12 @@ def merge(cell_dir: Path, expected: list[str]) -> dict[str, Any]:
                           "that were actually set"),
         "cells": cells,
         "missing_cells": missing,
-        "missing_means": ("the cell's process did not write a receipt -- an OOM kills "
-                          "the interpreter, so absence is a measurement, not a gap"),
+        "missing_means": ("the cell's process did not write a receipt. Under a normal "
+                          "run that is itself a measurement, because a TensorFlow OOM "
+                          "can kill the interpreter before it writes -- but read "
+                          "`run_note` first, because a run that was stopped early has "
+                          "missing cells that were never attempted"),
+        "run_note": note,
         "expected_cells": expected,
     }
 
@@ -462,6 +466,7 @@ def main() -> None:
     parser.add_argument("--micro-batch", type=int, default=512)
     parser.add_argument("--warmup", type=int, default=WARMUP)
     parser.add_argument("--repeats", type=int, default=REPEATS)
+    parser.add_argument("--note", help="what to say about missing cells")
     parser.add_argument("--allow-cpu", action="store_true",
                         help="smoke-test the code path off-cluster; NOT a timing")
     parser.add_argument("--output", type=Path)
@@ -487,7 +492,8 @@ def main() -> None:
         return
     if args.cell_dir:
         args.output.write_text(
-            json.dumps(merge(args.cell_dir, expected_cells()), indent=2) + "\n")
+            json.dumps(merge(args.cell_dir, expected_cells(), args.note),
+                       indent=2) + "\n")
         return
     parser.error("one of --cell, --cell-dir or --list-cells is required")
 
