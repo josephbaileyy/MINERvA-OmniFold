@@ -1297,6 +1297,28 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   picking. **`Z7`:** the packet still says *"twenty"* sources in two places against the corrected 24 —
   and the distinction matters, since the glob covered all 24, making it a **description** defect
   rather than a **coverage** one. The sweep is relayed in my record as in the packet's and is not
+- [`RECHECK-20260918-null-per-bin-distribution.md`](RECHECK-20260918-null-per-bin-distribution.md)
+  - **A bounded re-check of the NULL per-bin distribution, the load-bearing number behind the §6.4
+  exception, requested after the cross-model lane that BLOCKED it ran out of credits mid-command.
+  ALL EIGHT NUMBERS REPRODUCE** — digest, `10694` bins, mask equality, max `1.755272e-12`, 99.9th
+  `1.318750e-12`, median `6.341524e-14`, zero above `1e-10`, smallest bin `1.009379e-50` moving
+  `4.880054e-14`, and `r_null = 4.45200021375829101e-14`. Nothing unreachable. **Disclosure:** four
+  were ones I measured at `0d7b366a`, so my re-measurement of those is independent of the
+  implementing lane **but not of me**. **`N1` — one CHARACTERIZATION fails:** the smallest bin is at
+  the **41.3rd percentile**, with 4419 bins strictly more stable — **not "among the most stable"**.
+  **`N2` — the check nobody ran, and it answers the block properly:** instability **does** concentrate
+  in small bins, `Spearman ρ = −0.3103`, `p = 2.5e-237`, monotone across all ten deciles, and the
+  worst bin sits at the **5.4th percentile of bin size** — so the blocking lane's instinct was right.
+  Which makes `N1` more than a wording nit: citing the single smallest bin draws a point from the
+  **least-stable decile**. **The strong form the same data supports: the concern is closed by
+  MAGNITUDE, not absence** — zero bins above `1e-11` against a feared `rel ≈ 4.4e+02`, fourteen
+  orders. **`N3` — the comparator question: five significant figures is the BARRED route.**
+  `SPEC:3909` — *"applying the printed median's precision to it is a new tolerance choice, not a
+  consequence of that summary's formatting"* — with `:2131` recording the half-display-unit rule as
+  factually wrong and `:2124` withdrawing what it produced; three withdrawn numbers trace to it.
+  `δ = 5%` is un-derived, five-sig-figs is barred, and `SPEC:2187` gives an **exact test needing no
+  tolerance** if display invariance is what is wanted. **Recommend reporting the distribution with NO
+  comparator**, which the exception's own framing already supports.
 - [`VERIFICATION-20260918-scalar5d-adopt-clause-c.md`](VERIFICATION-20260918-scalar5d-adopt-clause-c.md)
   - **A §6.4 clause-(c) independent verification requested ahead of a scalar-5D ADOPT, by a peer
   session advising the implementing lane. (1) COMPLETENESS: BLOCK. (2) LOAD-BEARING CLAIMS: PASS on
