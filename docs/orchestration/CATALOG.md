@@ -1297,6 +1297,36 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   picking. **`Z7`:** the packet still says *"twenty"* sources in two places against the corrected 24 —
   and the distinction matters, since the glob covered all 24, making it a **description** defect
   rather than a **coverage** one. The sweep is relayed in my record as in the packet's and is not
+- [`VERIFICATION-20260918-scalar5d-adopt-clause-c.md`](VERIFICATION-20260918-scalar5d-adopt-clause-c.md)
+  - **A §6.4 clause-(c) independent verification requested ahead of a scalar-5D ADOPT, by a peer
+  session advising the implementing lane. (1) COMPLETENESS: BLOCK. (2) LOAD-BEARING CLAIMS: PASS on
+  everything reachable, with two wording defects and six claims not attempted.** Adopts nothing,
+  grades nothing, authorizes no ADOPT. ⚠ **I was asked to "write no repository file" and declined** —
+  `CLAUDE.md` makes a result live only once committed, and a gate-discharging verdict relayed
+  unwritten by the advising lane is the same shape as the three *"record stating a stronger
+  verification than was performed"* instances that lane itself reported today. **`V1`:** the required
+  set as relayed names a **`SRC_COV` row that §2's table does not contain** — measured, exactly **one**
+  `SRC_COV` occurrence in the whole packet, a shell variable at `:1002`. **`V2`:** §2's evidence for
+  **C5 and C7 is MY OWN WORK** (`80b464ca`, ~14 h earlier), so clause (c) would be inert for those two
+  rows if I signed them — the identical disqualification the requester correctly applied to itself;
+  re-measuring a digest is fine, certifying my own verdicts is not. **`V3`:** three defect instances
+  surfaced on this set within hours, two after the request reached me — a set still converging cannot
+  be certified complete. **`V4` — THE GUARDS FIRE, EXERCISED NOT READ:** six refusals on the real path
+  under the production env (`--expect-variant` required, variant mismatch, **AGENTS.md:29
+  publication-from-mean**, `none`-on-marked, missing acceptance-question, **`adoptable: false`**) **and
+  a POSITIVE CONTROL that PROCEEDED** (rc 0, wrote the product, `42 labels`). A hypothesised `none`
+  bypass was **broken and held**. **`V5`:** sha256, seven keys, shapes, four byte-identical arrays,
+  sqrt-traces `5.6742008e-38`/`5.2695064e-38`, ratio `1.076799`, `7.1322%` — all reproduce; but *"same
+  dtypes"* is **false** (`metadata_json` `<U1934` vs `<U1936`) and *"differ only in hCov and
+  hInflation_g"* is **false** (`metadata_json` differs, which is what makes the guard possible). Both
+  immaterial, both corrected. **`V6`:** six claims named individually as not attempted. **`V7` — the
+  finding nobody asked for:** `import ROOT` at `:245` runs **before** argparse at `:248`, so my first
+  run returned `rc=1` on all eight cases **including the positive control**, and my second returned
+  **segfaults** on all eight — twice, uniform failure looked exactly like uniform success, and only
+  the control told them apart. **`V8`:** my own grep matched `RooUnfold**Error**s` — third over-broad
+  pattern today. **`V9`:** on the pairing instrument, the **digest** is the load-bearing half and the
+  `1.3e-15` agreement the corroborator, not the reverse; and a quantity zero **by construction**
+  should be **absent** from a receipt's check list, not annotated.
   laundered by repetition.
   precursor on Joseph's six dimensions. **Authorizes no launch**; `R4` suspended, Gate 2 FAIL, nothing
   launched, cluster read-only. **CERTIFIED (1):** all four launchers exist with exactly the pinned
