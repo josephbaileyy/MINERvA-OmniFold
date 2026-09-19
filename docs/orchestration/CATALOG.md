@@ -1304,7 +1304,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   grades nothing, authorizes no ADOPT. ⚠ **I was asked to "write no repository file" and declined** —
   `CLAUDE.md` makes a result live only once committed, and a gate-discharging verdict relayed
   unwritten by the advising lane is the same shape as the three *"record stating a stronger
-  verification than was performed"* instances that lane itself reported today. **`V1`:** the required
+  verification than was performed"* instances that lane itself reported today. **`V1` — CLOSED 2026-09-18, verified in an artifact:** `OPERATIVE-SHEET-scalar5d.md` on `origin/main` now defines `SRC_COV` at `:72` and enumerates the required chain at `:218`, so the set is establishable from an artifact and this ground is discharged; **BLOCK now stands on `V2` ALONE.** Originally: the required
   set as relayed names a **`SRC_COV` row that §2's table does not contain** — measured, exactly **one**
   `SRC_COV` occurrence in the whole packet, a shell variable at `:1002`. **`V2`:** §2's evidence for
   **C5 and C7 is MY OWN WORK** (`80b464ca`, ~14 h earlier), so clause (c) would be inert for those two

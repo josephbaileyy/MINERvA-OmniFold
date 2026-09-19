@@ -35,7 +35,7 @@ it.** So the record exists. Nothing in it is adopted, and it commits nobody.
 
 | question | verdict |
 |---|---|
-| **(1) Is the required evidence complete?** | **BLOCK** — on three structural grounds (`V1`–`V3`), none of which is a finding against the science |
+| **(1) Is the required evidence complete?** | **BLOCK** — originally on three grounds (`V1`–`V3`), none a finding against the science. ⚠ **UPDATED 2026-09-18: `V1` is CLOSED** (verified in an artifact) and **`V3` is reclassified to a disclosure** (I conceded it had no exit). **BLOCK now stands on `V2` alone** — who may sign C5 and C7 |
 | **(2) Are the load-bearing claims true as measured?** | **PASS on everything I could reach**, with two wording defects (`V5`) and six claims I could not reproduce, named individually (`V6`) |
 
 ---
@@ -48,6 +48,27 @@ The request names the rows as *"C1 through C7, R5, NULL, and the SRC_COV identif
 **Measured at `5be86f55`: §2's table has no `SRC_COV` row.** Its rows are C3, C1, C2, C4, C5, C6, C7,
 R5, NULL, ADOPT, PROJ, DOCS. **The only occurrence of the string `SRC_COV` anywhere in the packet is
 at `:1002`, inside a shell snippet** (`_SRC_SHA=$(sha256sum "$SRC_COV" …)`).
+
+### ⚠ `V1` CLOSED 2026-09-18 — verified in an artifact, not accepted on report
+
+The requester stated the corrected set in a message. **A set stated in a message is the thing `V1`
+objected to**, so I checked whether it had landed. **It has, and properly:**
+`docs/orchestration/OPERATIVE-SHEET-scalar5d.md` on **`origin/main`** — titled *"scalar-5D required
+deliverables"* — defines **`SRC_COV = uq_5d/z_pilot_20260916_a5/z-cv.npz`** with its sha256 at
+**`:72`**, and enumerates the required chain at **`:218`**: *"C1–C7 complete → NULL resolved (P0
+first, zero-compute; P2 NOT authorized) → SRC_COV identified…"*.
+
+**So the required set is now establishable from an artifact, including the item that was missing, and
+`V1` is discharged.** Recorded here rather than left standing, because a live BLOCK on a ground that
+has been met is itself a record overstating its case.
+
+⚠ **One small cross-artifact residue, not a defect:**
+`AUTHORIZATION-20260918-d-resource-required-deliverable-path.md:307` still reads *"One detail I did
+not resolve and am not guessing at: which artifact is `SRC_COV`."* The operative sheet resolves it;
+the authorization says it is open. **A reader arriving at the authorization first would conclude
+`SRC_COV` is unidentified.** Worth one line of reconciliation.
+
+**The original finding, retained as the reason `V1` existed:**
 
 **So one of the items I am asked to certify is not in the set I am told defines the requirement.**
 Either the table is not the required set, or the required set has an element the table does not carry.
@@ -129,9 +150,9 @@ exercise-tested by anyone.** The strength of *"we verified what we think we veri
 almost entirely on guards firing, and that has been demonstrated for one tool out of the set.
 **`V3`'s replacement is therefore not a waiting period but a list**, and the list is not yet done.
 
-**BLOCK on question (1) stands — on `V1` and `V2`, which are about what the required set IS and who
-may sign it. `V3` is reclassified from a ground to a disclosure, with the exit criterion above
-attached.**
+**BLOCK on question (1) now stands on `V2` ALONE — who may sign C5 and C7.** `V1` is closed (verified
+in an artifact, above) and `V3` is reclassified from a ground to a disclosure, with the exit criterion
+above attached.
 
 ---
 
