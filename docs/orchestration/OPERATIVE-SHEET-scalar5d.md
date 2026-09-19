@@ -241,12 +241,37 @@ must be named as a crash.
 | 5 | `--adoption-exception` | **passed-and-valid: B4.** **set-but-missing → rc 3: NONE** | — | **GAP on one arm** |
 | 6 | import ordering | **B1–B3 run WITHOUT the production environment** — with the fix they must refuse on a bare interpreter | **B4 sources it and writes** | **covered by design, pending `58552664`** |
 
+### THE OPERATIVE CRITERION — stated so it HAS an exit
+
+An earlier form of this — *"every protection exercised"* — **has no exit condition** if it counts
+accept arms that cannot be exercised without the act itself. A criterion that cannot be satisfied is
+not a criterion; that is the same defect the assessor withdrew from its own verdict. So:
+
+> **Every protection's REFUSE arm exercised on the real path with a positive control; and every
+> ACCEPT arm either exercised, or explicitly DEFERRED TO THE ACT with its failure mode named.**
+
+**Items 1 and 2 are PARTIAL-AND-ACCEPTABLE under that form, and the reason is a category
+difference, not a concession.** Their accept arm is deferred to ADOPT, and its failure mode is
+**loud and immediate**: Joseph runs the launcher with the real record and it either produces or
+refuses **on the spot**, with nothing downstream having happened. That is a **recoverable wasted
+step**. Gaps **4** and **5** are categorically worse: a refusal that never fires leaves a **wrong
+product indistinguishable from a right one**, and nothing later separates them.
+
+⚠ **No synthetic accept-arm test will be built for items 1–2.** It would require a document carrying
+a live `ADOPTS-SHA256` line, and **such a document is an adoption record wherever it sits.** A decoy
+would be the thing itself.
+
 **The two gaps, priced rather than built.** Both sit inside the control's existing scope and neither
 needs new machinery: **A3** — `MNV_ADOPTION_EXCEPTION` set to a missing path, expect `rc 3`; refuses
 before any file is read, so **≈0 cost**. **B5** — `publication` + `cv` + **no** exception, expect the
-`adoptable: false` refusal; one more 890 MB read, **≈0.1 CPU task-h**. They are **named, not added**,
-because `58552664` was already queued when the gaps were identified and cancelling a running control
-to widen it is churn. They belong in one follow-on run if the advisor wants them closed.
+`adoptable: false` refusal; one more 890 MB read, **≈0.1 CPU task-h**. **Both APPROVED as one follow-on run.**
+
+**Gap 4 is the priority, and its ground is on the record:** `--run-class` is the protection that was
+once passed **zero** times, which left the `adoptable: false` refusal unreachable — and that refusal
+is **the single most load-bearing guard for this adoption**, because it is what stops a
+`NON-PASSING` source being published **without** the exception. Every leg so far passes
+`publication` **with** the exception, so **the guard that makes this source special has never
+fired.** `B5` is exactly that case and is worth the 890 MB read.
 
 ## 5. Execution order — fixed
 

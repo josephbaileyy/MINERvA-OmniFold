@@ -63,6 +63,14 @@ run A1_launcher_no_adoption_record 3 "no adoption record" env \
   MNV_SRC_CV="$P/z-cv.npz" MNV_OUT="$OUTD/A1.root" bash run_m1_projection.sh
 # A2 is the real-path form of the three-document regression: a record that NAMES the right bytes
 # and discusses the exception at length still does not ADOPT them.
+# A3 closes gap 5's other arm: the exception operand SET but pointing at nothing. It refuses
+# before any file is read, so it costs nothing. Its check precedes REFUSAL 1, so it fires even
+# without a valid adoption record -- which is the only reason this arm is reachable today.
+run A3_exception_set_but_missing 3 "MNV_ADOPTION_EXCEPTION set but no record" env \
+  MNV_ADOPTION_EXCEPTION="$OUTD/no-such-exception.md" \
+  MNV_ADOPTION_RECORD="$OUTD/does-not-exist.md" MNV_SRC_COV="$P/z-cv.npz" \
+  MNV_SRC_CV="$P/z-cv.npz" MNV_OUT="$OUTD/A3.root" bash run_m1_projection.sh
+
 run A2_launcher_exception_record_is_not_an_adoption 3 "does not state an adoption" env \
   MNV_ADOPTION_RECORD="$AMEND" MNV_SRC_COV="$P/z-cv.npz" \
   MNV_SRC_CV="$P/z-cv.npz" MNV_OUT="$OUTD/A2.root" bash run_m1_projection.sh
@@ -82,6 +90,15 @@ run B3_mean_file_declared_cv 1 "declares variant 'mean'" $PY project_cov_nd.py \
 # environment here and nowhere else is deliberate: B1-B3 above prove the refusals are reachable
 # on a bare interpreter, which is the condition a reviewer exercises them in.
 source "$W/setup_salloc_env.sh" >/dev/null 2>&1 || true
+# B5 closes gap 4, THE PRIORITY. --run-class was once passed zero times, which left the
+# `adoptable: false` refusal unreachable -- and that refusal is the most load-bearing guard for
+# THIS adoption, because it is what stops a NON-PASSING source being published WITHOUT the
+# exception. Every other leg passes publication WITH the exception, so the guard that makes this
+# source special has never fired. This is that case: publication + cv + NO exception.
+run B5_publication_cv_but_NO_exception 1 "records \`adoptable: false\`" $PY project_cov_nd.py \
+  --src-cov "$P/z-cv.npz" --src-cv "$P/z-cv.npz" "${AX[@]}" \
+  --run-class publication --expect-variant cv --out "$OUTD/B5.root"
+
 run B4_CONTROL_publication_from_CV_variant 0 "" $PY project_cov_nd.py \
   --src-cov "$P/z-cv.npz" --src-cv "$P/z-cv.npz" "${AX[@]}" \
   --run-class publication --expect-variant cv --adoption-exception "$AMEND" \
