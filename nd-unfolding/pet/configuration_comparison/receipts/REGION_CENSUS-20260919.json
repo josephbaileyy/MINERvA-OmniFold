@@ -1,0 +1,112 @@
+{
+  "scope": "regions for the safeguard, defined on the (pT, p-parallel) reporting CELLS. Measures only; ratifies no threshold.",
+  "why_not_the_marginal": "the seven E_avail bins report no bin below 0.05 acceptance while the cells they average over span 0.004 to 0.89. A region defined on the marginal cannot detect a failure the marginal hides.",
+  "inputs": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+    "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+    "sha256_verified": true,
+    "cells": 285,
+    "pass_truth_rows": 49150928
+  },
+  "injection": {
+    "variable": "truth E_avail",
+    "amplitude": 0.35,
+    "clip": 3.0,
+    "spec": {
+      "form": "exp(A*clip((pT-p50)/IQR, -Z, +Z)) / mean(...)",
+      "amplitude": 0.35,
+      "clip_z": 3.0,
+      "pt_p25": 0.5308068245649338,
+      "pt_p50": 1.4587417840957642,
+      "pt_p75": 3.1600151658058167,
+      "pt_iqr": 2.629208341240883,
+      "pre_normalization_mean": 1.1565941440982164,
+      "rate_preserving": true,
+      "applied_on": "pass_truth rows only",
+      "n_injected_rows": 49150928,
+      "tilt_min": 0.712007245718591,
+      "tilt_max": 2.470746659616924
+    }
+  },
+  "census": {
+    "regions": [
+      {
+        "region": "unresolvable",
+        "acceptance_range": [
+          0.0,
+          0.05
+        ],
+        "cells": 67,
+        "truth_mass_fraction": 0.3103084462065607,
+        "injected_displacement_share": 0.2657104692691185,
+        "mean_acceptance": 0.005597832091658793,
+        "min_acceptance": 0.0,
+        "max_acceptance": 0.04658946081022478,
+        "scoreable": true,
+        "exempt_reason": null
+      },
+      {
+        "region": "poor",
+        "acceptance_range": [
+          0.05,
+          0.25
+        ],
+        "cells": 10,
+        "truth_mass_fraction": 0.06769276780717835,
+        "injected_displacement_share": 0.012168605180231388,
+        "mean_acceptance": 0.14788164548167443,
+        "min_acceptance": 0.052391309038533444,
+        "max_acceptance": 0.2200926311399103,
+        "scoreable": false,
+        "exempt_reason": "injected displacement share 0.0122 < 0.02"
+      },
+      {
+        "region": "moderate",
+        "acceptance_range": [
+          0.25,
+          0.5
+        ],
+        "cells": 23,
+        "truth_mass_fraction": 0.1391517992143351,
+        "injected_displacement_share": 0.08851738113827377,
+        "mean_acceptance": 0.386210029963644,
+        "min_acceptance": 0.2589505240452794,
+        "max_acceptance": 0.4902660396980522,
+        "scoreable": true,
+        "exempt_reason": null
+      },
+      {
+        "region": "good",
+        "acceptance_range": [
+          0.5,
+          1.0
+        ],
+        "cells": 185,
+        "truth_mass_fraction": 0.4828469867719259,
+        "injected_displacement_share": 0.6336035444123762,
+        "mean_acceptance": 0.7952377589286357,
+        "min_acceptance": 0.5064329693090177,
+        "max_acceptance": 0.9189313228817271,
+        "scoreable": true,
+        "exempt_reason": null
+      }
+    ],
+    "min_displacement_share_to_be_scoreable": 0.02,
+    "exempt_truth_mass_fraction": 0.06769276780717835,
+    "exempt_displacement_share": 0.012168605180231388,
+    "scoreable_regions": [
+      "unresolvable",
+      "moderate",
+      "good"
+    ],
+    "reading": "Every scoreable region must clear the regional floor for a recommendation to be possible. Exempt regions are reported with the mass they hold so the exemption is auditable; a large exempt mass means the endpoint is not adequate, and the safeguard says so rather than passing quietly."
+  },
+  "regional_reference_k3": {
+    "unresolvable": 0.013961265748028074,
+    "poor": 0.366537511747902,
+    "moderate": 0.7765277317694897,
+    "good": 0.9754791562972827
+  },
+  "total_l1_displacement_on_cells": 0.15741771760113266,
+  "non_claim": "No acceptance threshold, margin or regional floor is ratified here."
+}

@@ -23,6 +23,44 @@ scatter are calculated or measured and are not on this list.
 | F8 | **decision rule** | the eight verdicts plus the regional gate, measured performance separated from preference | `selection_rule.py`, 39 tests |
 | F9 | **inference** | paired differences, t with n−1 df, `n` solved iteratively, sized on the **upper one-sided 80 % bound** on σ | proposal §7.4 |
 
+## 1.1 What the regional census found, and why it changes the ask
+
+Measured on the 285 `(pT, p‖)` reporting cells (`receipts/REGION_CENSUS-20260919.json`):
+
+| region | cells | truth mass | injected displacement | acceptance (mean, range) | reference at k=3 |
+|---|---:|---:|---:|---|---:|
+| unresolvable | 67 | **31.0 %** | **26.6 %** | 0.006 (0.000–0.047) | **0.014** |
+| poor | 10 | 6.8 % | 1.2 % | 0.148 (0.052–0.220) | 0.367 |
+| moderate | 23 | 13.9 % | 8.9 % | 0.386 (0.259–0.490) | 0.777 |
+| good | 185 | 48.3 % | 63.4 % | 0.795 (0.506–0.919) | 0.976 |
+
+**Nearly a third of the truth mass, and a quarter of the injected signal, sits in
+cells the detector barely accepts.** The seven-bin `E_avail` marginal reported *no
+bin* below 0.05 acceptance. This is precisely the failure marginalisation hides,
+and it is why you asked for regions defined on the cells.
+
+**It also limits what the safeguard can do, and I would rather say so than let a
+green gate imply otherwise.** The `unresolvable` region's own reference at k=3 is
+**0.014** — the model says 1.4 % of the displacement there is reachable in three
+iterations. A floor set as a fraction of that is nearly vacuous: an arm can clear
+it while recovering essentially nothing in a region holding 31 % of the
+measurement.
+
+So I am adding a **fourth gate**, and it is a property of the endpoint rather than
+of either arm:
+
+> **G-unresolvable.** If the truth mass in cells whose k=3 reference is below 0.05
+> exceeds a stated fraction, the endpoint cannot support a configuration
+> recommendation, whatever the arms score. **Measured today: 31.0 %.**
+
+I have not set that fraction, because it is the same kind of scientific judgement
+as δ and it is yours. The three honest responses to 31 % are: accept that the
+comparison speaks for the ~73 % of displacement in regions where recovery is
+possible **and say so in the conclusion**; raise `k` so more of the mass becomes
+reachable; or choose a different injection. **My recommendation is the first**,
+with the figure reported in every quotation of the result — it costs nothing, it
+is truthful, and the alternatives change the endpoint you have just supported.
+
 ## 2. The one thing to ratify: the threshold policy
 
 Every number is translated into the quantity that can be judged — **truth mass left
@@ -36,6 +74,7 @@ itself leaves **3.92 %** misplaced.
 | non-inferiority `δ` | **0.02** of recovery | **0.27 %** additional misplaced mass |
 | switching `δ_switch` | **0.04** of recovery | **0.55 %** additional misplaced mass |
 | regional floor | **0.60** of each region's own reference | looser than the global floor, deliberately |
+| unresolvable-mass gate | **report, do not block** | 31.0 % of truth mass is in cells with reference < 0.05; see §1.1 |
 
 **Why these, and what you are trading.**
 
@@ -55,7 +94,8 @@ itself leaves **3.92 %** misplaced.
   and ~64 GPU-h becomes ~256. δ = 0.02 is affordable inside the ceiling; δ = 0.01
   is not, at 33 tokens.
 * **`δ_switch = 2δ`.** Adoption has a cost — a second framework's recipe, a
-  checkpoint dependency, a 3.6× per-example price. Requiring twice the margin
+  checkpoint dependency, and a per-example price that is 3.6× in his own engine
+  and 23.9× in ours as the port stands. Requiring twice the margin
   before switching prices that. It is a policy about what we will pay, not a
   property of either estimator. *Trade-off:* set it too high and a genuinely
   better method is kept out; too low and we adopt on noise.
@@ -68,6 +108,23 @@ itself leaves **3.92 %** misplaced.
 "recommend the other arm". One arm failing a region does not establish that the
 other passed it, and the report names which regions failed for whom.
 
+## 2.1 One thing does NOT freeze yet, and it is the execution path
+
+The framework-matched timing (`COST_UPDATE2-20260919.md`) found the Keras port
+costs **23.9×** our incumbent per example in the same engine, against **2.70×**
+for his own PyTorch implementation — about **8.8×** his code for the same network.
+Every training cell except 12 tokens / batch 512 ran out of memory on the 40 GB
+A100 Slurm gave the job.
+
+The port is *his network*: P-1…P-6 hold, gated on mutant controls. It is not yet a
+viable way to *run* his network. **At these numbers the campaign costs ≈933 GPU-h
+against a 600 ceiling, at the cheaper token count.** So the execution path needs an
+optimisation pass before anything is frozen around its cost, and P-1…P-6 are what
+make that pass safe to do.
+
+This does not touch F1–F9 or the threshold policy. It means the **cost** line of
+the freeze is provisional and the campaign cannot be launched on today's numbers.
+
 ## 3. What does not freeze yet, and why
 
 | open | blocked on |
@@ -75,6 +132,7 @@ other passed it, and the report names which regions failed for whom.
 | the pretrained arm's **selected settings** | R2. Scratch tuning cannot supply them. |
 | the pretrained arm's **σ** and hence `n` | R2. Scratch variance is a different quantity. |
 | the **absolute** GPU-hour total | `n_data`, which must be read off a production run's loader meta; the ratio is unaffected |
+| the **execution path's cost** | an optimisation pass on the port, re-checked against P-1…P-6; and the three OOM cells re-run on an 80 GB card |
 | `pid`, auxiliary, globals, cap 33 for his arm | R-1/R-2 and a dump re-run |
 
 ## 4. Stop conditions

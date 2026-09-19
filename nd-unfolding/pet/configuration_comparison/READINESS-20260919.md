@@ -63,15 +63,18 @@ floor until the check passes is how a port check becomes decorative. Round-off
 floors are still measured three ways — row permutation, half-batch split, one-ulp
 jitter — and reported; they corroborate, they do not decide.
 
-## 3. Cost, updated
+## 3. Cost, updated twice — and the second time it changed the plan
 
-See `COST_UPDATE-20260919.md`. In brief: the previous ≈207 GPU-h rested on a model
-wrong in two directions — his arm was built from `PET2`'s class defaults rather than
-the paper's flags, and the projection was fit-time only. Re-measured,
-**≈170 GPU-h** for the complete pretrained comparison at 33 tokens and his intended
-batch, against a 600 ceiling with ≈16.2 consumed. The 33-token native-batch failure
-resolves to a **backend repair that preserves his recipe** — and the repair turns out
-to be 14 % *cheaper* per example than the matched-batch fallback, not a penalty.
+See `COST_UPDATE2-20260919.md`. Two revisions today. The first fixed a model that
+was wrong in two directions and gave **≈170 GPU-h**. The second measured both arms
+**in one framework**, which is the question our campaign actually asks, and found
+the Keras port costs **23.9×** our incumbent per example — about **8.8×** his own
+PyTorch for the same network — with every training cell but one out of memory on
+the 40 GB card allocated. That puts the campaign at **≈933 GPU-h against a 600
+ceiling**.
+
+The port is his network and is not yet a viable way to run it. The execution path
+needs an optimisation pass, and P-1…P-6 are what make that pass safe.
 
 ## 4. What is blocked, and on whom
 
