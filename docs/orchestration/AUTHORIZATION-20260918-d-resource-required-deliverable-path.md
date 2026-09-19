@@ -304,11 +304,23 @@ real declaration and correctly skips a `<placeholder>` template.
 **This changes no scientific content and adopts nothing.** It is the engineering repair of the guard
 Joseph pointed at, and it makes `ADOPT` a well-defined single act instead of an underdetermined one.
 
-⚠ **One detail I did not resolve and am not guessing at:** which artifact is `SRC_COV`. The
-navigation record digests `z-cv.npz`, `z-mean.npz` and `z-null.npz`; I have not established which
-the projector consumes as the covariance. **It does not block the act** — the launcher measures
-`sha256sum "$SRC_COV"` itself and prints the line to declare — but a lane must not transcribe a
-digest from the navigation record on the assumption that it is the covariance.
+⚠ **RESOLVED 2026-09-18, LATER THE SAME DAY — the paragraph below is superseded and is kept only
+so the resolution is dated rather than silently overwritten.** `SRC_COV` **is
+`uq_5d/z_pilot_20260916_a5/z-cv.npz`**, `variant: "cv"`, sha256
+`3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5`, identified **by measurement**,
+not by filename. See [`OPERATIVE-SHEET-scalar5d.md`](OPERATIVE-SHEET-scalar5d.md) §4 for the
+identification and §4c for the pairing. **And the sentence below that said it "does not block the
+act" was wrong in the other direction too:** Joseph ruled it a blocker, on the ground that a digest
+authenticates *which file was handed over, not that it was the right file* — `z-cv.npz` and
+`z-mean.npz` being structurally identical, a path selected between them by filename and the wrong
+one understates the uncertainty scale by **7.13%** while passing every other gate.
+
+> *Superseded text, 2026-09-18:* **One detail I did not resolve and am not guessing at:** which
+> artifact is `SRC_COV`. The navigation record digests `z-cv.npz`, `z-mean.npz` and `z-null.npz`; I
+> have not established which the projector consumes as the covariance. **It does not block the
+> act** — the launcher measures `sha256sum "$SRC_COV"` itself and prints the line to declare — but a
+> lane must not transcribe a digest from the navigation record on the assumption that it is the
+> covariance.
 
 ## 9. DELEGATION OF THE REQUIRED ROWS, and the SPEC freeze — Joseph, 2026-09-18
 
