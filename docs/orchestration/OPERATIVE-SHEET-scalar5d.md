@@ -674,39 +674,42 @@ causes no migration.
 > > replacement; it does not independently validate the completeness of the hadronic-response model
 > > for the `E_avail` and `W` measurement.
 
-## 4i. C7 CLOSURE — §3's five citations: THREE are citable now, TWO are named as outstanding
+## 4i. ✅ C7 CLOSURE — §3's five citations are COMPLETE, and the closure is recorded
 
-Joseph's ruling §3 makes closure conditional on citing existing committed evidence for five things.
-Extracted **by field name**, not by substring — a substring scan returned `True` for all nine probes
-and **four of those were false positives**, the failure mode that fails both ways.
+Extracted **by field name**, not substring — a substring scan returned `True` for all nine probes and
+**four were false positives.**
 
-| # | required citation | status |
+| # | required citation | evidence |
 |---|---|---|
-| 1 | **exact five-band inventory** | ✅ `z-receipt-cv.json` → `inflation.membership.bands_lateral` **n=5**; with `bands_vert` 13, `bands_residual` 27, `band_inventory` 45 |
-| 2 | **ten endpoints** | ✅ `PACKET-20260918-…null-route.md:952-953` — *"Ten endpoint identities verified: ten directories, uniform at 12 ROOT files and 53.8 GB, matching `--array=0-119%12` and `N_ENDPOINTS = 10`"*; and `p4_lib.py:20-21` per `PREDECLARE-20260905:70` |
-| 3 | **migration censuses** | ⚠ **OUTSTANDING — see below** |
-| 4 | **declared policies** | ⚠ **OUTSTANDING — see below** |
-| 5 | **required assembly identities** | ✅ `z-receipt-cv.json` → `closure.{G1_closure_identity, G2_g_domain, G3_g_reconstruction, G3R_raw_operand_reconstruction, G4_symmetry_psd, G5_band_partition, active_total_eq_sum5, blocksum_symmetry_psd}` |
+| 1 | exact five-band inventory | `z-receipt-cv.json` → `inflation.membership.bands_lateral` **n=5**; `bands_vert` 13, `bands_residual` 27, `band_inventory` 45 |
+| 2 | **ten endpoints** | **per-endpoint `sha256` in `p4_merged_audit.json`** — 10/10 present, **all distinct**, `exists true`, `zombie false` |
+| 3 | **migration censuses** | `EVIDENCE-20260919-…md` — **10/10 agree with policy**; `selection_migration_abs = RecoEntrants + RecoExits` exactly on all ten |
+| 4 | **declared policies** | `p4_lib.py:64-65`, consumed at `p4_validate_active_lateral.py:92-93` |
+| 5 | required assembly identities | `closure.{G1_closure_identity, G2_g_domain, G3_g_reconstruction, G3R_raw_operand_reconstruction, G4_symmetry_psd, G5_band_partition}` **plus `active_total_eq_sum5` = `0.0`** and **`blocksum_symmetry_psd`** (`rel_asymmetry 0.0`, `neg_fraction_of_max 3.89e-16`) |
 
-### ⚠ The two outstanding ones, named specifically as §3 requires
+**`SPEC:802`'s abort condition does not trigger:** no declared-zero band measures nonzero, and no
+declared-nonzero band measures zero.
 
-**They are not in anything Z consumes.** Not in `z-receipt-cv.json` (absent by name), not in the
-cause-1 endpoint census receipt (absent by name — it is a *different* census), and **not in Z's
-active source**: `std_final5_candidate.root` has **49 keys, zero** matching `activeUniverse*` or any
-policy key. It holds covariance histograms only.
+⚠ **A CORRECTION TO MY OWN EARLIER CITATION.** I cited `PACKET §15.1:952-953` for item 2. Re-read, it
+checks **ten directories uniform at 12 ROOT files and 53.8 GB** — a **directory-uniformity census**,
+real but **not a digest identity binding**. The reviewer's *"never checked"* was closer to right than
+my citation. The digests above are the identity evidence; §15.1 is corroborating structure.
 
-**Where they do live, from the producer side:** `audit_merged_fps.py:101-106` reads the migration
-census as **hadd-summed `TParameter<long>`** `activeUniverse{Truth,Reco}{Entrants,Exits}` over the 12
-playlists, and `p4_validate_active_lateral.py:110` **requires** it —
-`require(sm is not None, "merged-audit {t} has no migration census")`. So the evidence is expected in
-the **merged-audit artifacts of the active/lateral production**, one level upstream of Z's inputs.
-`SPEC:802` calls these *"the two fields whose absence has cost this campaign before"* and requires
-that a declared-zero band measuring nonzero migration, **or the reverse**, must **abort**.
+⚠ **ONE CAVEAT CARRIED, NOT CLEARED:** the **12-playlist hadd coverage is NOT confirmed** by this
+artifact. Its only `12` is `native_miss_playlists_with_misses` — *playlists with misses*, a different
+quantity from *playlists summed*. Consistent with 12; not a confirmation.
 
-> **THE SPECIFIC BOUNDED WORK, named before doing it as §3 directs:** locate the merged-audit
-> artifact for the five active lateral bands and read its per-endpoint `activeUniverse*` census
-> params and declared policy. **This is a read, not a production run** — no reconstruction campaign,
-> which §2 forbids anyway. **Cause 7 is NOT closed until these two are cited or resolved.**
+### Recorded per §3, in the ruling's own words
+
+> **PM-1: accepted by decision, with historical-input provenance limitation.**
+> **Cause 7 for the named Z candidate: closed as sufficient under §2.7, as amended by this ruling.**
+
+**Cause 7's magnitude is Z's measured lateral counterfactual** (§4g): `√tr` ratio **`0.9997122662`**,
+**`−0.0288%`**. ⚠ **That is a change in the lateral block's SQUARE-ROOT TRACE — not a bound on every
+bin, and not a bound on the complete covariance.** The per-bin ratios run **`0.687`–`1.153`**
+(`0.687` is a **31% decrease**), and **small aggregate variance share does not make a bin irrelevant
+to a quoted result.** `C_Z − C_G` is **not** substituted. Historical **G** and **Y** dispositions are
+**unchanged**.
 
 ## 5. Execution order — fixed
 
