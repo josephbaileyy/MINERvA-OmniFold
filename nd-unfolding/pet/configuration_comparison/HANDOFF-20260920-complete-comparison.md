@@ -1,4 +1,38 @@
-# Handoff: the complete pretrained comparison, and the one artifact that does not exist
+# Handoff: the complete pretrained comparison
+
+> # RETRACTED, 2026-09-20, within hours of being written
+>
+> **§1 of this document was WRONG.** It concluded that the MasterAnaDev AnaTuples
+> were "not reachable from this account" and that R4 therefore could not be
+> executed. They are reachable. **11 TB of them sit at
+> `/pscratch/sd/j/josephrb/minerva/minerva_large_files/`**, MC and Data, all
+> twelve playlists, listed by
+> `2d-unfolding/playlist_manifests/{PL}_{MC,Data}.txt`, and
+> `MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root` carries **4,102 branches**
+> including **21/21 typed-object branches and 14/14 global source branches** plus
+> `ev_run`, `ev_subrun`, `ev_gate`, `mc_run`, `mc_subrun`, `mc_nthEvtInFile`.
+>
+> **The search was not covering.** I looked under `/global/cfs/cdirs/m3246`, under
+> `/pscratch/sd/j/josephrb/*MasterAnaDev*` — a TOP-LEVEL glob — and in HPSS. The
+> tuples are two directories deeper than that glob reaches. This is the same
+> error I had corrected that same morning on the pretrained checkpoint, where
+> `ls` on an unlistable directory read as absence, and I made it again within
+> hours while writing the correction up.
+>
+> **R4 is executable.** What remains is the work, not a prerequisite. The
+> corrected state is below §1.
+
+---
+
+## 0. What actually blocks completion
+
+Not an artifact. **Compute wall-clock.** With R4 executable the remaining path is
+an extraction over 11 TB (46 branches of 4,102, ~54 M events, twelve playlists),
+then a 17-arm-pair campaign measured at **540 GPU-h**. That is days of elapsed
+time, not a missing input, and the budget covers it: 558 cumulative against the
+1,000 ceiling.
+
+---
 
 **CITABLE FOR:** what is done and verified, and precisely which artifact blocks the
 rest.
@@ -8,7 +42,7 @@ here favours either configuration.
 
 ---
 
-## 1. The blocker, named exactly
+## 1. [RETRACTED — see the banner] The blocker, named exactly
 
 **Gregor's complete arm cannot be built from any artifact that exists.** Two pieces
 are missing, and both live upstream of everything this lane can reach.
