@@ -127,16 +127,34 @@ class Validity:
     offsets_match_K: bool = False
     offset_declared_nonzero: bool = False
     product_digests_distinct: bool = False
+    # ⚠ DECLARED AMONG THE BRANCH-2 FIELDS, GRADED AS BRANCH 1 (R7). The field order is left
+    # alone deliberately -- reordering a dataclass silently repoints every positional
+    # construction, and `branch1_failures()` is the only thing that decides a branch.
     all_members_finite: bool = False
     notes: dict = field(default_factory=dict)
 
     def branch1_failures(self):
+        # ⚠ `all_members_finite` MOVED HERE FROM `branch2_failures` -- R7, Joseph, 2026-09-19:
+        # *"a non-finite member is a footing failure (reject), not branch 2."* Branch 2 means
+        # VACUOUS BASELINE VARIATION, a ZERO-spread diagnosis whose stated conclusion is that the
+        # knob never reached the estimator. A NaN or inf in a member product is the opposite
+        # failure -- the arithmetic moved and then exploded -- and reporting it as branch 2 would
+        # send a reader to the seed-offset plumbing to explain a numerical blow-up.
+        #
+        # IT WAS INVISIBLE UNTIL NOW BECAUSE EVERY BUILD HAD ONE MEMBER: the other three branch-2
+        # fields are False for a single member, so the branch was 2 whichever list held this one.
+        # It first bites on the >= 2-member campaign, which is exactly when it would be read.
+        #
+        # `SPEC` §3.7b's branch-2 clause listed "any member is missing or non-finite"; corrected
+        # inline there. Its summary sentence already read "branch 1 or 2", so this settles a
+        # disjunction the specification left open rather than overturning a decided one.
         return [k for k in ("footing_ok", "digests_agree", "partition_agrees",
-                            "identities_pass", "cv_held_fixed") if not getattr(self, k)]
+                            "identities_pass", "cv_held_fixed",
+                            "all_members_finite") if not getattr(self, k)]
 
     def branch2_failures(self):
         return [k for k in ("offsets_match_K", "offset_declared_nonzero",
-                            "product_digests_distinct", "all_members_finite")
+                            "product_digests_distinct")
                 if not getattr(self, k)]
 
 

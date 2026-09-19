@@ -282,7 +282,7 @@ def acceptance_token(outcome, null_within):
 
 
 def build_validity(partition_block, psd_block, cv_matches_declared, digest_stamp,
-                   extra_notes=None):
+                   *, members_finite, extra_notes=None):
     """Derive branch-1/2 validity from THIS build's recorded gates. Absent evidence stays False.
 
     `Validity`'s defaults are the safe direction and that is preserved: every field a single build
@@ -293,12 +293,18 @@ def build_validity(partition_block, psd_block, cv_matches_declared, digest_stamp
     Branch-2 fields are properties of a MULTI-MEMBER campaign (distinct estimator-seed offsets,
     distinct product digests). One member cannot make them true, and asserting them would
     manufacture the very spread branch 2 exists to detect.
+
+    `members_finite` IS REQUIRED AND HAS NO DEFAULT -- R7, Joseph, 2026-09-19. It used to be a
+    hardcoded `False` carrying the note "requires >= 2 members". That note was wrong on its own
+    terms (finiteness of a product is a per-member property, evaluable with one member), and once
+    R7 moved the field into `branch1_failures` a constant `False` would have reported WRONG
+    FOOTING on every build forever, putting branch 3 out of reach by construction. The caller
+    measures it over the arrays it is about to write and states it here.
     """
     notes = {
         "offsets_match_K": "member-campaign property: requires the declared offset set",
         "offset_declared_nonzero": "member-campaign property: requires a nonzero declared offset",
         "product_digests_distinct": "member-campaign property: requires >= 2 member products",
-        "all_members_finite": "member-campaign property: requires >= 2 members",
     }
     if extra_notes:
         notes.update(extra_notes)
@@ -323,10 +329,12 @@ def build_validity(partition_block, psd_block, cv_matches_declared, digest_stamp
         # `declared_cv_crosscheck` and gated nothing. It now gates this field, so the claim the
         # comment makes is the claim the code tests.
         cv_held_fixed=bool(cv_matches_declared),
+        # BRANCH 1 under R7, and MEASURED -- see the docstring. The three below it are the
+        # genuine member-campaign properties and stay False with their notes.
+        all_members_finite=bool(members_finite),
         offsets_match_K=False,
         offset_declared_nonzero=False,
         product_digests_distinct=False,
-        all_members_finite=False,
         notes=notes,
     )
 
@@ -652,21 +660,6 @@ def build_z(
             operands = assembly.derive_variant_diagonals(**raw)
             operands["raw"] = raw
             expected, metadata = {}, {}
-            # ---- R1: THE VERDICT IS COMPUTED BEFORE ANY PRODUCT IS WRITTEN ----------------
-            # It must precede the write, or the token stamped into each product could differ
-            # from the one in the return envelope. Both come from this single evaluation.
-            # A single-member build supplies no member statistics; `assess()` returns on the
-            # branch-2 validity check BEFORE consulting any statistic, so `{}` is honest here
-            # rather than a way of skipping a leg.
-            _assessed = validator.assess(validator.Z_LEG_SET, {},
-                                         build_validity(partition, blocksum_psd,
-                                                        np.array_equal(x1, central),
-                                                        manifest_stamp))
-            science = _assessed.describe()
-            _token = acceptance_token(science, null_within=bool(
-                null_outcome.get("assessable")
-                and null_outcome.get("verdict") == "within bound"))
-
             for variant in assembly.CENTERING_VARIANTS:
                 g, pinned = assembly.compute_g(
                     operands[f"v_uni_{variant}"], operands["v_blk"]
@@ -689,6 +682,39 @@ def build_z(
                     "hSupportMask": mask.astype(float),
                     "hRowIndex5D": rows,
                 }
+            # ---- R1: THE VERDICT IS COMPUTED BEFORE ANY PRODUCT IS WRITTEN ----------------
+            # It must precede the write, or the token stamped into each product could differ
+            # from the one in the return envelope. Both come from this single evaluation.
+            # A single-member build supplies no member statistics; `assess()` returns on the
+            # branch-2 validity check BEFORE consulting any statistic, so `{}` is honest here
+            # rather than a way of skipping a leg.
+            #
+            # ⚠ R7 MOVED THIS BELOW THE ASSEMBLY LOOP. `all_members_finite` is now a branch-1
+            # field and is MEASURED, so the verdict needs the arrays to measure -- and it must
+            # still precede the write. Those two put it exactly here: after `expected` is
+            # complete, before the first `path.open("xb")`. The gates above (`compute_g`,
+            # `run_inflation_gates`) write nothing; they raise.
+            # `size > 0` is part of the predicate, not decoration. An independent review asked
+            # whether an empty array clears the check: `np.all` over an empty array is True, so it
+            # would. Emptiness is blocked upstream by `n > 0`, which is why this is a NIT and not a
+            # defect -- but a finiteness claim over zero elements is not a finiteness claim, and
+            # the cheap fix is to say so here rather than to rely on a distant guard.
+            members_finite = bool(all(
+                np.asarray(array).size > 0 and np.all(np.isfinite(array))
+                for block in expected.values()
+                for array in block.values()
+            ))
+            _assessed = validator.assess(validator.Z_LEG_SET, {},
+                                         build_validity(partition, blocksum_psd,
+                                                        np.array_equal(x1, central),
+                                                        manifest_stamp,
+                                                        members_finite=members_finite))
+            science = _assessed.describe()
+            _token = acceptance_token(science, null_within=bool(
+                null_outcome.get("assessable")
+                and null_outcome.get("verdict") == "within bound"))
+
+            for variant in assembly.CENTERING_VARIANTS:
                 metadata[variant] = {
                     "schema_version": SCHEMA_VERSION,
                     "variant": variant,

@@ -390,6 +390,88 @@ class ValidityDominatesEveryNumericalBranch(unittest.TestCase):
         self.assertFalse(self.L.sees_correlations)
 
 
+class ANonFiniteMemberIsAFootingFailureNotAVacuousBaseline(unittest.TestCase):
+    """R7 -- Joseph, 2026-09-19: *"a non-finite member is a footing failure (reject), not branch 2."*
+
+    WHAT WAS WRONG. `all_members_finite` sat in `branch2_failures()`. Branch 2 is INCONCLUSIVE /
+    VACUOUS BASELINE VARIATION, and its whole meaning is *the knob never reached the estimator* --
+    a ZERO-spread diagnosis. A `NaN` or `inf` in a member product is the opposite failure: the
+    numbers moved and then exploded. Reporting it as "vacuous baseline variation" tells a reader
+    the campaign did nothing when in fact it produced garbage, and it points the diagnosis at the
+    seed-offset plumbing instead of at the arithmetic.
+
+    WHY IT WAS INVISIBLE UNTIL NOW. Every build so far had ONE member, and the other three
+    branch-2 fields are `False` for a single member, so the branch was 2 whichever list this field
+    sat in. It first bites on the >= 2-member campaign this goal authorizes -- which is exactly
+    when it would be read.
+
+    `SPEC` 3.7b's branch-2 clause listed *"any member is missing or non-finite"*; that clause is
+    corrected inline where the error is, per the rev.-22 freeze rule. The SPEC's own summary
+    sentence -- *"Non-finite values are branch 1 or 2, never a comparison that happens to return
+    false"* -- already admitted branch 1, so this narrows a disjunction rather than contradicting
+    it.
+    """
+
+    def setUp(self):
+        self.L = zv.LegSet([AGG, MED], predeclared_at="TEST")
+        self.declared = {"cause3_agg": zc.Boundary.declared("cause3_agg", 0.01, "T"),
+                         "cause3_med": zc.Boundary.declared("cause3_med", 0.02, "T")}
+
+    # ---- the field's placement, stated directly so a later move is caught by name --------------
+    def test_all_members_finite_is_a_branch_1_field(self):
+        self.assertIn("all_members_finite", zv.Validity().branch1_failures())
+
+    def test_all_members_finite_is_NOT_a_branch_2_field(self):
+        self.assertNotIn("all_members_finite", zv.Validity().branch2_failures())
+
+    def test_the_other_three_member_campaign_fields_stay_in_branch_2(self):
+        """The fix must move ONE field, not empty branch 2. Zero spread is still branch 2."""
+        self.assertEqual(sorted(zv.Validity().branch2_failures()),
+                         ["offset_declared_nonzero", "offsets_match_K",
+                          "product_digests_distinct"])
+
+    # ---- the outcome a reader acts on ----------------------------------------------------------
+    def test_a_non_finite_member_reports_WRONG_FOOTING_with_real_spread_present(self):
+        """The case that distinguishes the two branches: the offsets DID reach the estimator."""
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": 0.0, "s_med": 0.0},
+                            all_valid(all_members_finite=False))
+        self.assertEqual(out.branch, 1, out.branch_label)
+        self.assertIn("WRONG FOOTING", out.branch_label)
+        self.assertNotIn("VACUOUS", out.branch_label)
+        self.assertFalse(out.is_met)
+
+    def test_the_receipt_names_the_field_in_the_branch_1_list(self):
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": 0.0, "s_med": 0.0},
+                            all_valid(all_members_finite=False))
+        self.assertIn("all_members_finite", out.validity["branch1_failures"])
+        self.assertNotIn("all_members_finite", out.validity["branch2_failures"])
+
+    def test_a_vacuous_baseline_is_still_branch_2_when_every_member_IS_finite(self):
+        """The control in the other direction: the fix must not turn branch 2 into branch 1."""
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": 0.0, "s_med": 0.0},
+                            all_valid(offsets_match_K=False))
+        self.assertEqual(out.branch, 2, out.branch_label)
+
+    def test_footing_dominates_when_a_run_fails_both_ways(self):
+        """A campaign that is both vacuous and non-finite is diagnosed as WRONG FOOTING."""
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": 0.0, "s_med": 0.0},
+                            all_valid(all_members_finite=False, offset_declared_nonzero=False))
+        self.assertEqual(out.branch, 1)
+        self.assertIn("all_members_finite", out.validity["branch1_failures"])
+        self.assertIn("offset_declared_nonzero", out.validity["branch2_failures"])
+
+    def test_it_still_cannot_reach_MET(self):
+        """The one property that must hold whichever branch it lands on."""
+        with mock.patch.dict(zc.Z_BOUNDARIES, self.declared):
+            out = zv.assess(self.L, {"s_agg": 0.0, "s_med": 0.0},
+                            all_valid(all_members_finite=False))
+        self.assertFalse(out.is_met)
+
+
 class TheStatisticDomainIsValidatedBeforeAnyComparison(unittest.TestCase):
     """Review finding 7. Every statistic here is |a-b|/b with b>0: finite and non-negative."""
 

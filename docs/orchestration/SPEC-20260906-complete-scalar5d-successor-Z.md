@@ -2259,13 +2259,40 @@ Evaluated in order; a validity failure dominates every numerical branch.
 
 1. **INCONCLUSIVE / WRONG FOOTING.** Any member fails §2-style footing agreement; the mask or row-order
    digest differs between members; a member's `V`/`R`/`A` partition differs; any `C_Z^(k)` fails a
-   §1.3b identity; `x_i` is not held fixed at `k = 0`. **Report no magnitude.**
+   §1.3b identity; `x_i` is not held fixed at `k = 0`; **any member is missing or non-finite**.
+   **Report no magnitude.**
 2. **INCONCLUSIVE / VACUOUS BASELINE VARIATION.** The read-back `est_seed_offset` set is not exactly `K`;
    `est_seed_offset_declared` is `0` on any member (the two-key rule at `unified_throw_cov.py:571-574`
    exists precisely so a baseline that never reached the estimator is readable rather than inferable);
-   any two members' product digests collide; any member is missing or non-finite. **A zero spread here is
+   any two members' product digests collide. **A zero spread here is
    evidence the knob never reached the estimator, NOT a favourable result.** This is the execution
    falsifier.
+
+   ⚠ **CORRECTED INLINE, NOT IN A NEW REVISION — R7, Joseph, 2026-09-19:** *"a non-finite member is a
+   footing failure (reject), not branch 2."* This clause used to end *"any member is missing or
+   non-finite"*; **that whole conjunct moves to branch 1 above.** Branch 2's entire content is a
+   **zero-spread** diagnosis — *the knob never reached the estimator* — and a `NaN`/`inf` product is
+   the opposite failure: the arithmetic moved and then exploded. Reporting it here sent a reader to
+   the seed-offset plumbing to explain a numerical blow-up. It was **invisible while every build had
+   one member**, because the other three branch-2 conditions fail for a single member regardless; it
+   first bites on the ≥ 2-member campaign, which is when it would be read. The summary sentence four
+   paragraphs below already said *"branch 1 or 2"*, so this settles a disjunction rather than
+   overturning a decision.
+
+   ⚠ **AND THE *MISSING* HALF MOVED WITH IT — ONE STEP BEYOND THE RULING'S LETTER, STATED RATHER
+   THAN BURIED.** R7 names the non-finite case only, and the first version of this correction split
+   the conjunct accordingly, leaving *missing* in branch 2. **That version was wrong about the
+   code:** both halves are implemented by a SINGLE boolean, `Validity.all_members_finite` — an
+   absent member cannot be finite — so moving the field moved both, and a SPEC that kept *missing*
+   in branch 2 would have described behaviour no code has. Splitting them for real needs a second
+   `Validity` field, which is a criterion change and **Joseph's to make, not this lane's.** The
+   independent reviewer reached the same destination from the other direction: a missing member is
+   *"a structural or pipeline crash"*, so branch 2 would tell a reader the arithmetic succeeded and
+   produced identical data when in fact a job never ran. **Routed to Joseph as the one place this
+   correction exceeds its ruling.**
+
+   Implemented at `z_validator.py`'s `branch1_failures()`/`branch2_failures()` and measured at
+   `z_build.py`'s `build_validity(..., members_finite=)`.
 3. **MET.** All validity checks pass and **every leg in `L` passes its declared boundary** — written
    `∀ ℓ ∈ L : s_ℓ ≤ δ_ℓ`, never as an enumeration. Grades only `(cause 3, Z)`'s `M(ii)` and authorizes
    nothing.
@@ -2283,7 +2310,8 @@ mechanical; §3.7d's correlation leg, if adopted, would need its class declared 
 
 **A valid large result is NOT a reject condition** (§3.3) — it is branches 4–6, an informative
 unfavourable outcome. Non-finite values are branch 1 or 2, never a comparison that happens to return
-false. **`F7_FLOOR_MULTIPLE = 2.0` has no role here** and §3.6b's reason transfers unchanged.
+false — **and R7 settles which: a non-finite MEMBER is branch 1, as is a non-finite STATISTIC
+(`_invalid_statistics`). Nothing non-finite reaches branch 2 any more.** **`F7_FLOOR_MULTIPLE = 2.0` has no role here** and §3.6b's reason transfers unchanged.
 
 **Two limits that must survive into the receipt, in `PREDECLARE` §5's style — and rev. 16 adds a third:**
 

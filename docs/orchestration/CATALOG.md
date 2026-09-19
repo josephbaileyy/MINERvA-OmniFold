@@ -57,12 +57,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   task-hours against a 100 CPU cap, 2.6× over.** No production run was submitted: a single-member
   build is foreseeably branch 2, neither PASS nor an assessable FAIL, and would freeze the logic for
   a known answer.
+- [`REVIEW-20260919-R7-non-finite-member-footing.md`](REVIEW-20260919-R7-non-finite-member-footing.md)
+  - **R7 implemented and cross-model reviewed: NO BLOCK, NO MAJOR.** `all_members_finite` moves to
+  `branch1_failures()` — branch 2 is a **zero-spread** diagnosis and a `NaN`/`inf` product is the
+  opposite failure. **Half the fix is the builder:** a hardcoded `False` in a branch-1 field would
+  have put branch 3 out of reach on every build forever, so it is now **measured**. Three review
+  findings fixed, including **my own SPEC edit** — splitting *"missing or non-finite"* described
+  behaviour no code has, because one boolean implements both.
 - [`REVIEW-20260919-computed-acceptance-disposition.md`](REVIEW-20260919-computed-acceptance-disposition.md)
   - **Cross-model review of the computed-acceptance change: NO BLOCKs**, one MINOR, three NITs, with
   **my** dispositions. Two NITs fixed by **making the claim true** rather than softening it —
   `cv_held_fixed` now gates on the CV cross-check it always cited, `digests_agree` on an actual
-  digest. The MINOR (`all_members_finite` classed branch 2 when it is a footing failure) is
-  **correct and deliberately not acted on**: it is outside R1's scope and changes no current outcome.
+  digest. The MINOR (`all_members_finite` classed branch 2 when it is a footing failure) was
+  **correct and deliberately not acted on** under R1's scope — and is **now FIXED under R7**
+  (Joseph, 2026-09-19): the field moved to `branch1_failures()` and the builder MEASURES it.
 - [`DERIVATION-20260919-null-epsilon-B-and-S.md`](DERIVATION-20260919-null-epsilon-B-and-S.md)
   - **`B = 1e-12`, `S = 1e-3` (Joseph's), `ε = 1e-9` inside `[B, S]`.** R2's gate checked FIRST and
   it passes: `r_null = ‖x_cv2 − x_cv‖ / ‖x_cv‖` is dimensionless by construction. `B` rests on two

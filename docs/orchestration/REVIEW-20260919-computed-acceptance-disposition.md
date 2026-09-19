@@ -19,6 +19,13 @@ footing failure, which is branch 1. Placing it in branch 2 mischaracterises a nu
 a lack of spread.
 
 > **DISPOSITION: CORRECT, AND DELIBERATELY NOT ACTED ON. Routed to Joseph.**
+> ⚠ **RESOLVED 2026-09-19 — Joseph ruled R7:** *"a non-finite member is a footing failure (reject),
+> not branch 2."* The reviewer was right and the field has moved to `branch1_failures()`. Two things
+> came with it that the review did not name: the builder's `all_members_finite` was a **hardcoded
+> `False`**, which in a branch-1 field would have put branch 3 out of reach on every build forever,
+> so it is now **measured** over the arrays about to be written; and the clause is corrected
+> **inline in `SPEC` §3.7b**, where the error is, under the rev.-22 freeze.
+
 > Two reasons, neither of them disagreement. It lives in `z_validator.py`, and **R1 scopes me to
 > `z_build.py` and says "change no declared boundary or criterion value"** — moving a validity field
 > between branches reclassifies a criterion. And it **changes no current outcome**: the other three
