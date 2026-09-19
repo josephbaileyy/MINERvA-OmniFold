@@ -88,6 +88,12 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--dry-run", action="store_true",
                         help="print the plan and exit; no training")
+    parser.add_argument("--repo", type=Path, default=Path("."))
+    parser.add_argument("--inputs-npz", type=Path)
+    parser.add_argument("--theirs-packed", type=Path)
+    parser.add_argument("--theirs-index", type=Path)
+    parser.add_argument("--weights-folder", type=Path, default=Path("weights"))
+    parser.add_argument("--max-events", type=int, default=2_000_000)
     args = parser.parse_args()
 
     if args.seed not in fd.SEEDS[args.stage]:
@@ -111,11 +117,116 @@ def main() -> None:
     if args.dry_run:
         print(json.dumps(plan, indent=2))
         return
-    raise SystemExit(
-        "[arm] the training path needs the joined inputs, which the build array "
-        "is still producing. Re-run without --dry-run once "
-        "join_theirs_to_inventory.py has written its row index."
-    )
+    result = evaluate(args)
+    args.output.write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({k: v for k, v in result.items()
+                      if k in ("arm", "seed", "stage", "recovery",
+                               "fold_forward_ratio", "seconds")}, indent=2))
+
+
+def evaluate(args: Any) -> dict[str, Any]:
+    """Build the loaders, run MultiFold, record what happened.
+
+    THE ENDPOINT IS A POWERED CLOSURE, not real data. The measured leg is MC
+    reco reweighted by the injection, so the truth answer is known exactly and
+    recovery is measurable. Real data is never unfolded here: this comparison is
+    method development and an unfolded real spectrum would be a physics result
+    nobody has authorized.
+    """
+    import sys
+    import numpy as np
+
+    repo = Path(args.repo).resolve()
+    for extra in (repo / "nd-unfolding" / "pet", repo / "omnifold_nn"):
+        if str(extra) not in sys.path:
+            sys.path.insert(0, str(extra))
+
+    from keras_backend import configure_production_precision
+    configure_production_precision(strict=True)
+
+    import fullevent_fps_dataloader as ffd
+    from omnifold.omnifold import MultiFold
+    from omnifold.net import PET
+    import training_recipe as recipe
+    import fold_forward_recorder as ffr
+
+    started = time.perf_counter()
+    data, mc, imc, coord_reco, coord_gen, meta = ffd.build_fullevent_loaders(
+        str(args.inputs_npz), max_events=args.max_events, seed=args.seed)
+
+    substitution = None
+    if args.arm == "theirs":
+        import theirs_loader_substitution as tls
+        import theirs_omnifold_arm as toa
+        blocks = _load_joined(args, np)
+        substitution = tls.substitute_step1(
+            data, mc,
+            tls.gather(blocks["data"], blocks["data_index"],
+                       np.arange(data.reco.shape[0])),
+            tls.gather(blocks["mc"], blocks["mc_index"], imc))
+        model_reco = toa.TheirsCompleteArm(num_part=fd.THEIRS_COMPLETE["token_cap"])
+    else:
+        model_reco = PET(num_feat=meta["n_feat_reco"], num_evt=meta["n_evt_reco"],
+                         num_part=fd.OURS_INCUMBENT["token_cap"],
+                         num_heads=2, num_transformer=2, projection_dim=32,
+                         local=True, K=3, coord_idx=coord_reco)
+
+    # STEP 2 IS IDENTICAL FOR BOTH ARMS -- STEP_SCOPE, frozen 2026-09-20.
+    model_gen = PET(num_feat=meta["n_feat_truth"], num_evt=meta["n_evt_truth"],
+                    num_part=fd.OURS_INCUMBENT["token_cap"],
+                    num_heads=2, num_transformer=2, projection_dim=32,
+                    local=True, K=3, coord_idx=coord_gen)
+
+    batch = (fd.THEIRS_COMPLETE["batch_size"] if args.arm == "theirs"
+             else fd.OURS_INCUMBENT["batch_size"])
+    schedule = recipe.derive_schedule(batch, step="step1_reco",
+                                      n_data=data.reco.shape[0])
+    ported = recipe  # the recipe module carries the optimizer factory
+
+    folder = Path(args.weights_folder)
+    folder.mkdir(parents=True, exist_ok=True)
+    unfolder = MultiFold(
+        name=f"{args.arm}-{args.stage}-seed{args.seed}",
+        model_reco=model_reco, model_gen=model_gen, data=data, mc=mc,
+        weights_folder=str(folder), niter=args.niter, batch_size=batch,
+        lr=args.learning_rate, verbose=True)
+    recorder = ffr.FoldForwardRecorder() if hasattr(ffr, "FoldForwardRecorder") \
+        else None
+    unfolder.Unfold()
+
+    weights = np.asarray(unfolder.weights_push if hasattr(unfolder, "weights_push")
+                         else unfolder.weights_pull)
+    np.savez_compressed(folder / f"weights_{args.arm}_{args.stage}_{args.seed}.npz",
+                        weights=weights)
+    return {
+        **plan_of(args),
+        "seconds": time.perf_counter() - started,
+        "rows": {"data": int(data.reco.shape[0]), "mc": int(mc.reco.shape[0])},
+        "substitution": substitution,
+        "schedule": {k: schedule[k] for k in ("max_steps", "warmup_steps",
+                                              "examples_per_update")},
+        "weights_finite": bool(np.isfinite(weights).all()),
+        "weights_path": str(folder / f"weights_{args.arm}_{args.stage}_{args.seed}.npz"),
+        "scored_here": False,
+        "note": "scoring is a separate step over the frozen endpoint",
+    }
+
+
+def plan_of(args: Any) -> dict[str, Any]:
+    return {"arm": args.arm, "seed": args.seed, "stage": args.stage,
+            "learning_rate": args.learning_rate, "niter": args.niter}
+
+
+def _load_joined(args: Any, np: Any) -> dict[str, Any]:
+    """His packed inputs plus the row index the join produced."""
+    blob = np.load(args.theirs_index, allow_pickle=False)
+    packed = np.load(args.theirs_packed, mmap_mode="r")
+    return {"data": {"packed": packed["data_packed"],
+                     "globals": packed["data_globals"]},
+            "mc": {"packed": packed["mc_packed"],
+                   "globals": packed["mc_globals"]},
+            "data_index": blob["data_row_index"],
+            "mc_index": blob["mc_row_index"]}
 
 
 if __name__ == "__main__":
