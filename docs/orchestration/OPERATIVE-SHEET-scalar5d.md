@@ -593,9 +593,18 @@ recorded for any input.
 > and are captured by `w_reco_GEANT_*`.**"*
 
 ⚠ **It is a COMMENT — `//`-prefixed prose stating intent, not executable code.**
-⚠ **And its scope is per-axis and predates `W`.** The heading is `NOTE (3D E_avail)`, and the note
-*immediately following* says **"NOTE (4D q3): UNLIKE E_avail, q3 IS shifted by the lateral muon
-bands."** So the invariance claim is asserted axis by axis, and no note covers `W`.
+
+⚠ **AND A CONFLATION OF MINE, CORRECTED.** I first flagged the notes' per-axis structure as
+qualifying *weight-only*. **It does not, and the correction matters.** `NOTE (3D E_avail)` and
+`NOTE (4D q3)` reason about which getters the **LATERAL** (muon/beam) bands override and which
+quantities those getters feed — E_avail invariant, q3 shifted, W never addressed. That is per-axis
+and it does stop before W, **but it is about the five lateral bands.**
+**Weight-only is NOT per-axis.** The four PM-1 bands are implemented as **weights** — `w_reco_GEANT_*`
+and `MINOSEfficiencyReweighter`. **A reweight overrides no kinematic getter, so it shifts no axis, W
+included, by construction**; there is nothing for a W note to reason about. And the executable half
+covers W directly: §15.1 measured the five lateral bands carrying shifted **q3 and W** 4/4 and the
+four carrying **0/4**. **So weight-only is uniform across axes and doubly evidenced** — by the
+declared implementation and by the tuple's contents.
 
 `MinosEfficiency` is a reweighter **by class**: `#include "PlotUtils/MINOSEfficiencyReweighter.h"`
 at `:70`, instantiated into `MnvTunev1` at `:1749`.
@@ -620,10 +629,25 @@ reference that output and none references an omnifile input. **The file-level li
 causes no migration. **It follows that the covariance does not model migration from hadronic
 response.**
 
-*Whether that is the standard treatment of MINERvA's hadron-reweight systematics is **not something
-this repository establishes**, and I am citing nothing I cannot open. It is recorded as an
-**inherited treatment** whose justification lives upstream of this analysis — which is itself a
-disclosure Joseph may want in the note.*
+> ### AND THE CAVEAT NAMES **W**, NOT ONLY `E_avail` — grounded by opening the getter
+>
+> `CVUniverse::RecoW()` (`event/CVUniverse.h:227-235`) computes
+> `q0 = GetDouble(<tree>_recoil_E)` and `W = sqrt(M² + 2·M·q0 − Q²)`, and its own comment at
+> `:220-226` says it *"uses the SAME calorimetric energy transfer `q0 = <tree>_recoil_E` and
+> muon-kinematic `Q²` as RecoQ3."*
+>
+> **Reco `W` is therefore built from calorimetric recoil energy — a hadronic quantity.** So if the
+> GEANT hadronic-response bands *"DO move `E_avail` physically"* and are modelled as a reweight
+> anyway, **the same argument reaches `W`**, and the reweight models migration on **neither** axis.
+> For a 5D product whose fifth axis **is** `W`, that is the disclosure that matters.
+>
+> *(Related but not identical hadronic quantities: `W` uses `<tree>_recoil_E`, while `E_avail` uses
+> `blob_recoil_E_tracker/ecal + muon_fuzz`. Both hadronic; I have not established how closely they
+> track, and do not claim it.)*
+
+*Whether treating hadron-response systematics as pure reweights is standard practice is **not
+something this repository establishes**, and I cite nothing I cannot open. It is recorded as an
+**inherited treatment** whose justification lives upstream of this analysis.*
 
 ## 5. Execution order — fixed
 
