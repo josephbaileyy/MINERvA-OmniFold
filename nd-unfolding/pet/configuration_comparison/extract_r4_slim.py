@@ -176,13 +176,30 @@ def main() -> None:
     if args.limit:
         sources = sources[: args.limit]
 
-    rows = []
+    # ONE FILE IS THE UNIT OF FAILURE, not one playlist. The first version raised
+    # out of the loop, so a single unreadable file killed a whole task and took
+    # every file after it: ten of twenty-four array tasks died that way, all of
+    # them Data, while the same code succeeded on the first Data file when run
+    # alone. A failure is recorded and the loop continues, exactly as the GPU
+    # per-cell isolation does, and the report names what failed rather than
+    # leaving it as an absence.
+    rows: list[dict[str, Any]] = []
+    failures: list[dict[str, Any]] = []
     for index, source in enumerate(sources, 1):
         destination = args.outdir / (source.stem + ".slim.root")
         if destination.exists():
             print(f"[{index}/{len(sources)}] exists, skipping {destination.name}")
             continue
-        record = slim(source, destination, args.threads)
+        try:
+            record = slim(source, destination, args.threads)
+        except Exception as error:                        # noqa: BLE001 - recorded
+            import traceback
+            failures.append({"source": str(source), "error": repr(error)[:400],
+                             "traceback": traceback.format_exc()[-1200:]})
+            print(f"[{index}/{len(sources)}] FAILED {source.name}: {error!r:.160}")
+            if destination.exists():
+                destination.unlink()          # never leave a partial slim behind
+            continue
         rows.append(record)
         print(f"[{index}/{len(sources)}] {source.name}: "
               f"{record['source_entries']:,} rows, "
@@ -191,13 +208,18 @@ def main() -> None:
               f"{record['bytes_out'] / 2**20:.0f} MiB, "
               f"preserved={record['rows_preserved']}")
         args.report.write_text(json.dumps(
-            {"manifest": str(args.manifest), "files": rows}, indent=2) + "\n")
+            {"manifest": str(args.manifest), "files": rows,
+             "failures": failures}, indent=2) + "\n")
 
     args.report.write_text(json.dumps(
-        {"manifest": str(args.manifest), "files": rows,
+        {"manifest": str(args.manifest), "files": rows, "failures": failures,
+         "files_ok": len(rows), "files_failed": len(failures),
          "all_rows_preserved": all(r["rows_preserved"] for r in rows),
          "total_source_entries": sum(r["source_entries"] for r in rows),
          "total_bytes_out": sum(r["bytes_out"] for r in rows)}, indent=2) + "\n")
+    if failures:
+        print(f"{len(failures)} file(s) failed; see the report. The task does NOT "
+              "fail on them, so the rest of the playlist is extracted.")
 
 
 if __name__ == "__main__":
