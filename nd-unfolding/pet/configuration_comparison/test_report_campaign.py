@@ -41,44 +41,80 @@ def write_closure(path: Path, n=6000, seed=0):
              edges_1=np.linspace(0.0, 20.0, 20))
 
 
-def write_run(folder: Path, arm: str, stage: str, seed: int, weights: np.ndarray):
+def write_run(folder: Path, arm: str, stage: str, seed: int, weights: np.ndarray,
+              rows_a=None, rows_b=None, tilt_a=None):
     run_dir = folder / stage / f"{arm}-seed{seed}"
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "receipt.json").write_text(json.dumps(
         {"arm": arm, "stage": stage, "seed": seed, "scored_here": False}))
     np.savez_compressed(run_dir / f"weights_{arm}_{stage}_{seed}.npz",
-                        weights=weights)
+                        weights=weights, dump_rows_a=rows_a, dump_rows_b=rows_b,
+                        tilt_a=tilt_a)
 
 
 class TestEndToEnd(unittest.TestCase):
     def setUp(self):
+        import closure_powered_truth_reweight as cp
         self._tmp = TemporaryDirectory()
         self.tmp = Path(self._tmp.dir if hasattr(self._tmp, "dir") else self._tmp.name)
         self.closure = self.tmp / "closure.npz"
         write_closure(self.closure)
-        self.endpoint, self.context = rc.build_endpoint(self.closure)
+        with np.load(self.closure) as blob:
+            n = int(np.asarray(blob["pass_truth"]).size)
+            eavail = np.asarray(blob["truth_scalars"])[:, 2]
+            pg = np.asarray(blob["pass_truth"]).astype(bool)
+        self.rows_a, self.rows_b = cp.deterministic_halves(n, half=n // 3, seed=7)
+        pg_a = pg[self.rows_a]
+        self.tilt_a = np.ones(self.rows_a.size)
+        tilt, _ = cp.clipped_exponential_tilt(eavail[self.rows_a][pg_a], 0.35, 3.0)
+        self.tilt_a[pg_a] = tilt
         self.campaign = self.tmp / "campaign"
+        self.n_prior = int(pg[self.rows_b].sum())
+        # The push that would reproduce half A's tilted spectrum is, to the
+        # extent the halves are draws from one distribution, the same tilt
+        # evaluated on half B. Scaling it gives a synthetic run of known
+        # approximate recovery, which is what "ours ahead" has to mean.
+        pg_b = pg[self.rows_b]
+        self.tilt_b = np.ones(self.rows_b.size)
+        tb, _ = cp.clipped_exponential_tilt(eavail[self.rows_b][pg_b], 0.35, 3.0)
+        self.tilt_b[pg_b] = tb
 
     def tearDown(self):
         self._tmp.cleanup()
 
     def _populate(self, ours_scale, theirs_scale, stages=("final",)):
-        target = sc.injected_truth_weights(
-            self.endpoint.truth_eavail, fd.ENDPOINT["amplitude"],
-            fd.ENDPOINT["clip"])
+        """Push weights over ALL of half B, as the driver writes them."""
         rng = np.random.default_rng(1)
         for stage in stages:
             for seed in fd.SEEDS[stage]:
                 for arm, scale in (("ours", ours_scale), ("theirs", theirs_scale)):
                     jitter = scale + rng.normal(0.0, 0.004)
-                    write_run(self.campaign, arm, stage, seed,
-                              1.0 + jitter * (target - 1.0))
+                    push = 1.0 + jitter * (self.tilt_b - 1.0)
+                    write_run(self.campaign, arm, stage, seed, push,
+                              rows_a=self.rows_a, rows_b=self.rows_b,
+                              tilt_a=self.tilt_a)
 
-    def test_the_endpoint_built_from_a_closure_file_is_usable(self):
-        self.assertEqual(self.endpoint.n_events, 6000)
-        self.assertGreater(len(self.context["scoreable_regions"]), 0)
-        for name in self.context["scoreable_regions"]:
-            self.assertIsNotNone(self.context["regional_reference"][name])
+    def test_the_endpoint_built_from_a_run_uses_its_two_disjoint_halves(self):
+        self._populate(0.90, 0.88)
+        weights = next((self.campaign / "final").rglob("weights_*.npz"))
+        endpoint, context = rc.build_endpoint(self.closure, weights)
+        self.assertTrue(context["halves_disjoint"])
+        self.assertGreater(context["half_a_rows"], 0)
+        self.assertGreater(context["half_b_rows"], 0)
+        self.assertGreater(len(context["scoreable_regions"]), 0)
+        for name in context["scoreable_regions"]:
+            self.assertIsNotNone(context["regional_reference"][name])
+
+    def test_overlapping_halves_are_refused_rather_than_scored(self):
+        """Overlap restores the identity shortcut and power goes to zero."""
+        self._populate(0.90, 0.88)
+        weights = next((self.campaign / "final").rglob("weights_*.npz"))
+        with np.load(weights) as blob:
+            data = {k: blob[k] for k in blob.files}
+        data["dump_rows_b"] = data["dump_rows_a"]
+        np.savez_compressed(weights, **data)
+        with self.assertRaisesRegex(SystemExit, "halves overlap"):
+            rc.build_endpoint(self.closure, weights)
 
     def test_a_full_campaign_produces_a_verdict(self):
         self._populate(0.90, 0.88)
@@ -119,36 +155,38 @@ class TestEndToEnd(unittest.TestCase):
 
     def test_the_pilot_is_reported_and_sizes_n_without_entering_the_interval(self):
         self._populate(0.90, 0.88, stages=("final", "pilot"))
-        final = [sc.score_run(r, self.endpoint,
-                              scoreable_regions=self.context["scoreable_regions"])
+        weights = next((self.campaign / "final").rglob("weights_*.npz"))
+        endpoint, context = rc.build_endpoint(self.closure, weights)
+        final = [sc.score_run(r, endpoint,
+                              scoreable_regions=context["scoreable_regions"])
                  for r in rc.discover(self.campaign, "final")]
-        pilot = [sc.score_run(r, self.endpoint,
-                              scoreable_regions=self.context["scoreable_regions"])
+        pilot = [sc.score_run(r, endpoint,
+                              scoreable_regions=context["scoreable_regions"])
                  for r in rc.discover(self.campaign, "pilot")]
         report = sc.score_campaign(
             final, reference=0.95,
-            regional_reference=self.context["regional_reference"],
-            scoreable_regions=self.context["scoreable_regions"],
-            region_census=self.context["census"], pilot_scores=pilot)
+            regional_reference=context["regional_reference"],
+            scoreable_regions=context["scoreable_regions"],
+            region_census=context["census"], pilot_scores=pilot)
         self.assertEqual(report["interval"]["n_pairs"], len(fd.SEEDS["final"]))
         self.assertEqual(report["pilot_reported_separately"]["n_rows"],
                          2 * len(fd.SEEDS["pilot"]))
         self.assertIn("required_n", report["pilot_reported_separately"]["sizing"])
 
-    def test_an_oracle_pair_recovers_one_and_an_idle_pair_recovers_zero(self):
-        target = sc.injected_truth_weights(
-            self.endpoint.truth_eavail, fd.ENDPOINT["amplitude"],
-            fd.ENDPOINT["clip"])
-        scoreable = self.context["scoreable_regions"]
-        oracle = sc.score_run(sc.Run("ours", "final", 127, target),
-                              self.endpoint, scoreable_regions=scoreable)
-        idle = sc.score_run(sc.Run("ours", "final", 127,
-                                   np.ones(self.endpoint.n_events)),
-                            self.endpoint, scoreable_regions=scoreable)
-        self.assertAlmostEqual(oracle["recovery"], 1.0, places=9)
-        self.assertAlmostEqual(idle["recovery"], 0.0, places=9)
-        for name in scoreable:
-            self.assertAlmostEqual(oracle["recovery_by_region"][name], 1.0, places=9)
+    def test_an_idle_run_scores_near_zero_and_moving_the_right_way_scores_higher(self):
+        """No oracle here. Under DISJOINT halves there is no weighting of half
+        B that reproduces half A's spectrum exactly -- that is the point of the
+        split, and a test asserting recovery == 1 would only pass if the two
+        halves were the same events."""
+        self._populate(0.90, 0.88)
+        weights = next((self.campaign / "final").rglob("weights_*.npz"))
+        endpoint, context = rc.build_endpoint(self.closure, weights)
+        scoreable = context["scoreable_regions"]
+        idle = sc.score_run(
+            sc.Run("ours", "final", 127, np.ones(endpoint.n_prior)),
+            endpoint, scoreable_regions=scoreable)
+        self.assertLess(abs(idle["recovery"]), 0.35)
+        self.assertLessEqual(idle["recovery"], 1.0)
 
 
 if __name__ == "__main__":

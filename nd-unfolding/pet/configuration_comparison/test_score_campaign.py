@@ -53,20 +53,28 @@ class TestSpecialFunctions(unittest.TestCase):
 
 # --------------------------------------------------------------------------- #
 def _endpoint(n=4000, seed=0):
+    """Two halves carrying the SAME E_avail values.
+
+    A unit test of the arithmetic, not of the split: with identical
+    populations an exact oracle exists, so "reaching the target scores 1" is
+    still a statement this can check. The disjointness itself is tested in
+    `test_report_campaign`, against real halves from the established splitter.
+    """
     rng = np.random.default_rng(seed)
     eavail = rng.gamma(2.0, 0.5, size=n)
     labels = np.array([name for name, _lo, _hi in sc._safeguard_regions()])
     region = labels[rng.integers(0, labels.size, size=n)]
-    return sc.Endpoint(truth_eavail=eavail, region_of_event=region)
+    tilt = sc.injected_truth_weights(eavail)
+    return sc.Endpoint(eavail_a=eavail, w_truth_a=np.ones(n), tilt_a=tilt,
+                       region_a=region, eavail_b=eavail.copy(),
+                       w_truth_b=np.ones(n), region_b=region.copy())
 
 
 class TestEndpoint(unittest.TestCase):
     def test_an_oracle_run_scores_one_and_a_do_nothing_run_scores_zero(self):
         ep = _endpoint()
-        oracle = sc.Run("ours", "final", 127,
-                        sc.injected_truth_weights(ep.truth_eavail, ep.amplitude,
-                                                  ep.clip))
-        idle = sc.Run("theirs", "final", 127, np.ones(ep.n_events))
+        oracle = sc.Run("ours", "final", 127, ep.tilt_a)
+        idle = sc.Run("theirs", "final", 127, np.ones(ep.n_prior))
         scored_oracle = sc.score_run(oracle, ep, scoreable_regions=["good"])
         scored_idle = sc.score_run(idle, ep, scoreable_regions=["good"])
         self.assertAlmostEqual(scored_oracle["recovery"], 1.0, places=10)
@@ -77,8 +85,7 @@ class TestEndpoint(unittest.TestCase):
         # is the target's own displacement scaled past 1 -- not a differently
         # shaped injection, which moves somewhere else entirely and scores low.
         ep = _endpoint()
-        target = sc.injected_truth_weights(ep.truth_eavail, ep.amplitude, ep.clip)
-        over = sc.Run("ours", "final", 127, 1.0 + 1.5 * (target - 1.0))
+        over = sc.Run("ours", "final", 127, 1.0 + 1.5 * (ep.tilt_a - 1.0))
         scored = sc.score_run(over, ep, scoreable_regions=["good"])
         # The L1 score CANNOT exceed 1 -- residual is a sum of absolute values --
         # so overshoot shows up as a score below 1 with a projection above it.
@@ -91,17 +98,16 @@ class TestEndpoint(unittest.TestCase):
         ep = _endpoint(n=800, seed=3)
         rng = np.random.default_rng(11)
         for trial in range(25):
-            run = sc.Run("ours", "final", 127, rng.gamma(1.0, 1.0, ep.n_events))
+            run = sc.Run("ours", "final", 127, rng.gamma(1.0, 1.0, ep.n_prior))
             self.assertLessEqual(
                 sc.score_run(run, ep, scoreable_regions=["good"])["recovery"],
                 1.0 + 1e-12, msg=f"trial {trial}")
 
     def test_moving_away_from_the_target_scores_below_zero(self):
         ep = _endpoint()
-        target = sc.injected_truth_weights(ep.truth_eavail, ep.amplitude, ep.clip)
         # -0.4 along the injected direction. A full -1.0 step would drive some
         # weights negative, which is a broken run rather than a bad one.
-        backwards = sc.Run("ours", "final", 127, 1.0 - 0.4 * (target - 1.0))
+        backwards = sc.Run("ours", "final", 127, 1.0 - 0.4 * (ep.tilt_a - 1.0))
         scored = sc.score_run(backwards, ep, scoreable_regions=["good"])
         self.assertAlmostEqual(scored["recovery"], -0.4, places=6)
         self.assertAlmostEqual(scored["overshoot_projection"], -0.4, places=6)
@@ -110,13 +116,16 @@ class TestEndpoint(unittest.TestCase):
 
     def test_region_labels_must_be_frozen_regions(self):
         with self.assertRaisesRegex(ValueError, "not frozen regions"):
-            sc.Endpoint(truth_eavail=np.ones(3),
-                        region_of_event=np.array(["good", "excellent", "good"]))
+            sc.Endpoint(eavail_a=np.ones(3), w_truth_a=np.ones(3),
+                        tilt_a=np.ones(3),
+                        region_a=np.array(["good", "excellent", "good"]),
+                        eavail_b=np.ones(3), w_truth_b=np.ones(3),
+                        region_b=np.array(["good", "good", "good"]))
 
-    def test_a_length_mismatch_between_weights_and_events_is_refused(self):
+    def test_a_length_mismatch_between_weights_and_the_prior_is_refused(self):
         ep = _endpoint(n=100)
         run = sc.Run("ours", "final", 127, np.ones(99))
-        with self.assertRaisesRegex(ValueError, "different event sets"):
+        with self.assertRaisesRegex(ValueError, "aligned to half B"):
             sc.score_run(run, ep, scoreable_regions=["good"])
 
 
@@ -326,9 +335,13 @@ class TestOffGridEvents(unittest.TestCase):
     def _endpoint_with_off_grid(self, off=200, on=1800):
         import characterize_regions as cr
         rng = np.random.default_rng(4)
-        eavail = rng.gamma(2.0, 0.5, size=off + on)
+        n = off + on
+        eavail = rng.gamma(2.0, 0.5, size=n)
         labels = np.array(["good"] * on + [cr.UNASSIGNED] * off)
-        return sc.Endpoint(truth_eavail=eavail, region_of_event=labels)
+        tilt = sc.injected_truth_weights(eavail)
+        return sc.Endpoint(eavail_a=eavail, w_truth_a=np.ones(n), tilt_a=tilt,
+                           region_a=labels, eavail_b=eavail.copy(),
+                           w_truth_b=np.ones(n), region_b=labels.copy())
 
     def test_the_off_grid_label_is_accepted_and_its_share_reported(self):
         ep = self._endpoint_with_off_grid()
@@ -336,9 +349,7 @@ class TestOffGridEvents(unittest.TestCase):
 
     def test_an_off_grid_event_still_counts_in_the_aggregate(self):
         ep = self._endpoint_with_off_grid()
-        oracle = sc.Run("ours", "final", 127,
-                        sc.injected_truth_weights(ep.truth_eavail, ep.amplitude,
-                                                  ep.clip))
+        oracle = sc.Run("ours", "final", 127, ep.tilt_a)
         scored = sc.score_run(oracle, ep, scoreable_regions=["good"])
         self.assertAlmostEqual(scored["recovery"], 1.0, places=10)
         self.assertAlmostEqual(scored["unassigned_fraction"], 0.10, places=9)

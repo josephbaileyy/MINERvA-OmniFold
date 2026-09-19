@@ -56,9 +56,22 @@ def discover(campaign: Path, stage: str) -> list[sc.Run]:
     return runs
 
 
-def build_endpoint(closure_npz: Path) -> tuple[sc.Endpoint, dict[str, Any]]:
-    """The frozen endpoint over the truth leg, with per-event regions from the cells."""
+def build_endpoint(closure_npz: Path, weights_npz: Path
+                   ) -> tuple[sc.Endpoint, dict[str, Any]]:
+    """The frozen endpoint over the TWO HALVES a run actually used.
+
+    The halves come from the run's own weights file -- `dump_rows_a`,
+    `dump_rows_b`, `tilt_a` -- not from replaying the subsample and split
+    logic here. A second implementation of the split is a second thing that
+    can disagree with the first, and it would disagree silently: the spectra
+    would still compute.
+    """
     import characterize_regions as cr
+
+    with np.load(weights_npz) as run:
+        rows_a = np.asarray(run["dump_rows_a"]).astype(np.int64)
+        rows_b = np.asarray(run["dump_rows_b"]).astype(np.int64)
+        tilt_a = np.asarray(run["tilt_a"]).astype(np.float64)
 
     with np.load(closure_npz, allow_pickle=False) as handle:
         truth_scalars = np.asarray(handle["truth_scalars"], dtype=np.float64)
@@ -68,7 +81,12 @@ def build_endpoint(closure_npz: Path) -> tuple[sc.Endpoint, dict[str, Any]]:
         edges_pt = np.asarray(handle["edges_0"], dtype=np.float64)
         edges_pz = np.asarray(handle["edges_1"], dtype=np.float64)
 
-    pt, pz, eavail = truth_scalars[:, 0], truth_scalars[:, 1], truth_scalars[:, 2]
+    pt, pz = truth_scalars[:, 0], truth_scalars[:, 1]
+    eavail = truth_scalars[:, 2]
+
+    # The acceptance map and the regional references come from the WHOLE
+    # truth-passing population, not from either half: a reference built from
+    # half B would move with the split.
     keep = pass_truth & np.isfinite(eavail)
     both = keep & pass_reco
     denom, _, _ = np.histogram2d(pt[keep], pz[keep], bins=[edges_pt, edges_pz],
@@ -77,29 +95,60 @@ def build_endpoint(closure_npz: Path) -> tuple[sc.Endpoint, dict[str, Any]]:
                                  weights=w_truth[both])
     with np.errstate(divide="ignore", invalid="ignore"):
         acceptance = np.where(denom > 0, numer / denom, 0.0)
-
     prior_f = (denom / denom.sum()).ravel()
-    tilt = sc.injected_truth_weights(eavail[keep], fd.ENDPOINT["amplitude"],
-                                     fd.ENDPOINT["clip"])
+    tilt_all, _spec = _tilt(eavail[keep])
     target, _, _ = np.histogram2d(pt[keep], pz[keep], bins=[edges_pt, edges_pz],
-                                  weights=w_truth[keep] * tilt)
+                                  weights=w_truth[keep] * tilt_all)
     displacement = np.abs((target / target.sum()).ravel() - prior_f)
 
     census = cr.region_census(acceptance.ravel(), prior_f, displacement)
     regional_ref = cr.regional_reference(acceptance.ravel(), displacement)
-    labels, _flat = cr.region_labels_for_events(pt[keep], pz[keep], edges_pt,
-                                                edges_pz, acceptance.ravel())
-    endpoint = sc.Endpoint(truth_eavail=eavail[keep], region_of_event=labels,
-                           base_weights=w_truth[keep])
+
+    # Score on each half's TRUTH-PASSING rows: the injection is a truth-level
+    # reweighting and is undefined elsewhere.
+    keep_a = pass_truth[rows_a] & np.isfinite(eavail[rows_a])
+    keep_b = pass_truth[rows_b] & np.isfinite(eavail[rows_b])
+    sel_a, sel_b = rows_a[keep_a], rows_b[keep_b]
+
+    labels_a, _ = cr.region_labels_for_events(pt[sel_a], pz[sel_a], edges_pt,
+                                              edges_pz, acceptance.ravel())
+    labels_b, _ = cr.region_labels_for_events(pt[sel_b], pz[sel_b], edges_pt,
+                                              edges_pz, acceptance.ravel())
+
+    endpoint = sc.Endpoint(
+        eavail_a=eavail[sel_a], w_truth_a=w_truth[sel_a],
+        tilt_a=tilt_a[keep_a], region_a=labels_a,
+        eavail_b=eavail[sel_b], w_truth_b=w_truth[sel_b], region_b=labels_b)
     context = {
         "closure_npz": {"path": str(closure_npz), "sha256": _digest(closure_npz)},
-        "truth_rows_scored": int(keep.sum()),
+        "half_a_rows": int(sel_a.size), "half_b_rows": int(sel_b.size),
+        "halves_disjoint": bool(np.intersect1d(rows_a, rows_b).size == 0),
         "census": census,
         "regional_reference": regional_ref,
         "scoreable_regions": census["scoreable_regions"],
         "off_grid_truth_fraction": endpoint.unassigned_fraction,
     }
+    if not context["halves_disjoint"]:
+        raise SystemExit(
+            "[report] the run's two halves overlap. The estimator saw events it "
+            "had to reweight, so the closure has no power and the number it "
+            "produced is not a recovery")
     return endpoint, context
+
+
+def _tilt(eavail: np.ndarray):
+    import closure_powered_truth_reweight as cp
+    return cp.clipped_exponential_tilt(
+        np.asarray(eavail, dtype=np.float64),
+        amplitude=float(fd.ENDPOINT["amplitude"]),
+        clip_z=float(fd.ENDPOINT["clip"]))
+
+
+def _halves_of(weights_npz: Path) -> tuple[str, str]:
+    """A cheap fingerprint of a run's two halves, to prove they are the same."""
+    with np.load(weights_npz) as run:
+        return (hashlib.sha256(np.asarray(run["dump_rows_a"]).tobytes()).hexdigest(),
+                hashlib.sha256(np.asarray(run["dump_rows_b"]).tobytes()).hexdigest())
 
 
 def main() -> int:
@@ -112,12 +161,25 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
-    endpoint, context = build_endpoint(args.closure_npz)
+    first = sorted((args.campaign / "final").rglob("weights_*.npz"))
+    if not first:
+        raise FileNotFoundError(
+            f"no final-stage weights under {args.campaign}; the comparison is "
+            "not complete and scoring it would report a sample nobody planned")
+    endpoint, context = build_endpoint(args.closure_npz, first[0])
     scoreable = context["scoreable_regions"]
+    reference_halves = _halves_of(first[0])
 
     def score_all(stage: str) -> list[dict[str, Any]]:
-        return [sc.score_run(run, endpoint, scoreable_regions=scoreable)
-                for run in discover(args.campaign, stage)]
+        scored = []
+        for run in discover(args.campaign, stage):
+            if _halves_of(Path(run.source)) != reference_halves:
+                raise SystemExit(
+                    f"[report] {run.source} used different halves from "
+                    f"{first[0]}. Every run must be scored against the same "
+                    "split or the paired difference is not paired")
+            scored.append(sc.score_run(run, endpoint, scoreable_regions=scoreable))
+        return scored
 
     final = score_all("final")
     pilot = score_all("pilot") if (args.campaign / "pilot").is_dir() else None

@@ -116,63 +116,62 @@ def _histogram(eavail: np.ndarray, weights: np.ndarray,
 
 @dataclass(frozen=True)
 class Endpoint:
-    """The frozen seven-bin `E_avail` closure, and the regions it is cut into.
+    """The frozen seven-bin `E_avail` closure, over TWO DISJOINT HALVES.
 
-    ``region_of_event`` labels each truth event with the region of its
-    ``(pT, p_parallel)`` reporting cell. It is REQUIRED: deriving regions here by
-    stratifying the marginal bins would be exactly the mistake the frozen design
-    names -- a region is a set of cells, not a slice of the reported histogram.
+    The prior and the unfolded spectrum are half B's; the target is half A's.
+    That asymmetry is the whole point of the design -- the estimator never sees
+    the events it must reweight, and an overlapping split restores the identity
+    shortcut and drops the closure's power to zero. An earlier version of this
+    class put all three spectra on the same events, which is the shape of an
+    ordinary closure and would have scored a constant estimator near 1.
+
+    Region labels come from each half's own `(pT, p_parallel)` cells. They are
+    REQUIRED: deriving a region by stratifying the marginal bins is the mistake
+    the frozen design names, and it is not available here because this class
+    never sees the marginal.
     """
-    truth_eavail: np.ndarray
-    region_of_event: np.ndarray
+    eavail_a: np.ndarray
+    w_truth_a: np.ndarray
+    tilt_a: np.ndarray
+    region_a: np.ndarray
+    eavail_b: np.ndarray
+    w_truth_b: np.ndarray
+    region_b: np.ndarray
     edges: tuple[float, ...] = tuple(fd.ENDPOINT["bin_edges_gev"])
-    amplitude: float = fd.ENDPOINT["amplitude"]
-    clip: float = fd.ENDPOINT["clip"]
-    base_weights: np.ndarray | None = None
 
     def __post_init__(self) -> None:
-        e = np.asarray(self.truth_eavail, dtype=np.float64)
-        r = np.asarray(self.region_of_event)
-        if e.shape != r.shape:
-            raise ValueError(
-                f"truth_eavail {e.shape} and region_of_event {r.shape} disagree; "
-                "every truth event must carry a region or the regional safeguard "
-                "would be computed over a different population than the aggregate"
-            )
-        if not np.isfinite(e).all():
-            raise ValueError("truth E_avail contains non-finite entries")
         import characterize_regions as cr
         known = {name for name, _lo, _hi in _safeguard_regions()} | {cr.UNASSIGNED}
-        unknown = sorted(set(np.unique(r).tolist()) - known)
-        if unknown:
-            raise ValueError(
-                f"region labels {unknown} are not frozen regions {sorted(known)}"
-            )
+        for side, (e, w, r) in (("A", (self.eavail_a, self.w_truth_a, self.region_a)),
+                                ("B", (self.eavail_b, self.w_truth_b, self.region_b))):
+            e, w, r = np.asarray(e), np.asarray(w), np.asarray(r)
+            if not (e.shape == w.shape == r.shape):
+                raise ValueError(
+                    f"half {side}: eavail {e.shape}, weights {w.shape} and "
+                    f"regions {r.shape} must describe the same events")
+            if not np.isfinite(e).all():
+                raise ValueError(f"half {side}: truth E_avail has non-finite entries")
+            unknown = sorted(set(np.unique(r).tolist()) - known)
+            if unknown:
+                raise ValueError(
+                    f"half {side}: region labels {unknown} are not frozen "
+                    f"regions {sorted(known)}")
+        if np.asarray(self.tilt_a).shape != np.asarray(self.eavail_a).shape:
+            raise ValueError("the tilt and half A must describe the same events")
+
+    @property
+    def n_prior(self) -> int:
+        return int(np.asarray(self.eavail_b).size)
 
     @property
     def unassigned_fraction(self) -> float:
-        """Share of truth events whose `(pT, p_parallel)` falls off the reporting grid.
+        """Share of PRIOR events whose cell falls off the reporting grid.
 
-        These events are in the AGGREGATE score -- they carry `E_avail` like any
-        other -- but they belong to no cell and so to no region. The regional
-        safeguard therefore covers less than the whole measurement, and by how
-        much is reported rather than left implicit. Assigning them to the nearest
-        edge cell would move mass into a region that never held it.
+        They carry E_avail like any other and stay in the aggregate score, but
+        belong to no region, so the regional safeguard covers strictly less
+        than the whole measurement. Reported rather than left implicit.
         """
-        return float(np.mean(np.asarray(self.region_of_event) == _unassigned()))
-
-    @property
-    def n_events(self) -> int:
-        return int(np.asarray(self.truth_eavail).size)
-
-    def prior(self) -> np.ndarray:
-        base = (np.ones(self.n_events) if self.base_weights is None
-                else np.asarray(self.base_weights, dtype=np.float64))
-        return base
-
-    def target(self) -> np.ndarray:
-        return self.prior() * injected_truth_weights(
-            self.truth_eavail, self.amplitude, self.clip)
+        return float(np.mean(np.asarray(self.region_b) == _unassigned()))
 
 
 def _unassigned() -> str:
@@ -192,8 +191,8 @@ def overshoot_projection(prior: np.ndarray, unfolded: np.ndarray,
     The L1 recovery cannot distinguish stopping short from going too far: both
     leave the estimate away from the target and both score below 1. This is the
     signed projection of the achieved displacement onto the injected one, so
-    ``< 1`` is undershoot, ``> 1`` is overshoot and ``< 0`` is the wrong
-    direction. It is reported beside the score rather than folded into it.
+    `< 1` is undershoot, `> 1` is overshoot and `< 0` is the wrong direction.
+    Reported beside the score rather than folded into it.
     """
     prior, unfolded, target = (np.asarray(a, float) / np.asarray(a, float).sum()
                                for a in (prior, unfolded, target))
@@ -206,35 +205,44 @@ def overshoot_projection(prior: np.ndarray, unfolded: np.ndarray,
 
 def score_run(run: Run, endpoint: Endpoint, *,
               scoreable_regions: Sequence[str]) -> dict[str, Any]:
-    """Aggregate and per-region recovery for one run, over the frozen bins."""
-    if run.weights.size != endpoint.n_events:
+    """Aggregate and per-region recovery for one run, over the frozen bins.
+
+    `run.weights` is the push, aligned to half B row for row. The target is
+    half A's tilted spectrum. Both are normalised before comparison, so the
+    two halves' different sizes do not enter.
+    """
+    if run.weights.size != endpoint.n_prior:
         raise ValueError(
             f"{run.arm}/{run.stage}/seed{run.seed}: {run.weights.size} weights "
-            f"against {endpoint.n_events} truth events. A length mismatch means "
-            "the weights and the endpoint are over different event sets, and "
-            "scoring them together would compare unlike populations"
-        )
-    prior, target = endpoint.prior(), endpoint.target()
+            f"against {endpoint.n_prior} prior events. The push is aligned to "
+            "half B row for row; a length mismatch means they are different "
+            "populations and scoring them together compares unlike things")
     edges = endpoint.edges
-    h_prior = _histogram(endpoint.truth_eavail, prior, edges)
-    h_unfolded = _histogram(endpoint.truth_eavail, prior * run.weights, edges)
-    h_target = _histogram(endpoint.truth_eavail, target, edges)
-    aggregate = recovery(h_prior, h_unfolded, h_target)
-    projection = overshoot_projection(h_prior, h_unfolded, h_target)
+
+    def spectra(mask_a: Any, mask_b: Any) -> tuple[Any, Any, Any]:
+        prior = _histogram(endpoint.eavail_b[mask_b],
+                           endpoint.w_truth_b[mask_b], edges)
+        unfolded = _histogram(endpoint.eavail_b[mask_b],
+                              (endpoint.w_truth_b * run.weights)[mask_b], edges)
+        target = _histogram(endpoint.eavail_a[mask_a],
+                            (endpoint.w_truth_a * endpoint.tilt_a)[mask_a], edges)
+        return prior, unfolded, target
+
+    all_a = np.ones(endpoint.eavail_a.shape, dtype=bool)
+    all_b = np.ones(endpoint.eavail_b.shape, dtype=bool)
+    aggregate = recovery(*spectra(all_a, all_b))
+    projection = overshoot_projection(*spectra(all_a, all_b))
+
     by_region: dict[str, float] = {}
     region_detail: dict[str, Any] = {}
-    labels = np.asarray(endpoint.region_of_event)
     for name in scoreable_regions:
-        inside = labels == name
-        if not inside.any():
+        in_a = np.asarray(endpoint.region_a) == name
+        in_b = np.asarray(endpoint.region_b) == name
+        if not in_a.any() or not in_b.any():
             raise ValueError(
-                f"region {name!r} was declared scoreable but holds no event"
-            )
-        scored = recovery(
-            _histogram(endpoint.truth_eavail[inside], prior[inside], edges),
-            _histogram(endpoint.truth_eavail[inside],
-                       (prior * run.weights)[inside], edges),
-            _histogram(endpoint.truth_eavail[inside], target[inside], edges))
+                f"region {name!r} was declared scoreable but holds no event in "
+                f"half {'A' if not in_a.any() else 'B'}")
+        scored = recovery(*spectra(in_a, in_b))
         by_region[name] = scored["recovery"]
         region_detail[name] = scored
     return {
