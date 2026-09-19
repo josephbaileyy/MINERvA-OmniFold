@@ -19,20 +19,48 @@ import numpy as np
 
 
 def materialize(files: list[str], row_index: np.ndarray, origin: np.ndarray,
-                rows: np.ndarray, cap: int = 33, packed_width: int = 10,
-                global_width: int = 16) -> dict[str, np.ndarray]:
-    """Packed tokens and globals for `rows` of the inventory, in that order."""
-    selected = np.asarray(row_index)[rows]
-    if (selected < 0).any():
-        raise ValueError(
-            f"{int((selected < 0).sum())} of {len(rows)} requested inventory rows "
-            "have no built input; resolve the join before materialising")
+                rows: np.ndarray, pass_reco: np.ndarray, cap: int = 33,
+                packed_width: int = 10, global_width: int = 16,
+                ) -> dict[str, np.ndarray]:
+    """Packed tokens and globals for `rows` of the inventory, in that order.
 
-    where = origin[selected]                  # (n, 2) = shard index, row in shard
+    `pass_reco` is REQUIRED, because the two kinds of unmatched row are not the
+    same thing. An unmatched **pass_reco** row is an event his arm cannot see
+    and ours can, and that is an error. An unmatched **!pass_reco** row is
+    expected: the event failed reconstruction, so no reconstructed object exists
+    to build a token from, and it enters the comparison through the truth leg.
+
+    An earlier version raised on ANY -1. The join legitimately produces 19.9M of
+    them on the signal leg, so the first tuning task would have died minutes
+    after the join passed its gate.
+
+    Every `!pass_reco` row comes back ZERO, matched or not, via `zero_non_reco`
+    -- the same rule the production loader applies to ours.
+    """
+    import theirs_loader_substitution as tls
+
+    row_index = np.asarray(row_index)
+    reco = np.asarray(pass_reco, dtype=bool)
+    if reco.shape[0] != row_index.shape[0]:
+        raise ValueError(
+            f"pass_reco has {reco.shape[0]} rows and row_index "
+            f"{row_index.shape[0]}; both index the same inventory")
+    rows = np.asarray(rows)
+    selected = row_index[rows]
+    reco_ok = reco[rows]
+    missing_with_reco = int(((selected < 0) & reco_ok).sum())
+    if missing_with_reco:
+        raise ValueError(
+            f"{missing_with_reco} of {int(reco_ok.sum())} requested pass_reco "
+            "rows have no built input; resolve the join before materialising")
+
+    present = selected >= 0
+    where = origin[np.where(present, selected, 0)]  # (n, 2) shard, row in shard
     packed = np.zeros((len(rows), cap, packed_width), dtype=np.float32)
     globals_ = np.zeros((len(rows), global_width), dtype=np.float32)
 
-    order = np.argsort(where[:, 0], kind="stable")
+    order = np.argsort(np.where(present, where[:, 0], -1), kind="stable")
+    order = order[present[order]]
     shard_ids = where[order, 0]
     boundaries = np.searchsorted(shard_ids, np.arange(len(files) + 1))
     opened = 0
@@ -48,5 +76,8 @@ def materialize(files: list[str], row_index: np.ndarray, origin: np.ndarray,
             glob = blob["globals"][where[take, 1]]
         packed[take] = np.concatenate([tokens, add], axis=2)
         globals_[take] = glob
+    packed, globals_ = tls.zero_non_reco(packed, globals_, reco_ok)
     return {"packed": packed, "globals": globals_, "shards_opened": opened,
-            "rows": len(rows)}
+            "rows": len(rows),
+            "rows_without_reco": int((~reco_ok).sum()),
+            "unmatched_without_reco": int(((selected < 0) & ~reco_ok).sum())}

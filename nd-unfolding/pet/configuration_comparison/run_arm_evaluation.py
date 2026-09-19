@@ -167,17 +167,17 @@ def evaluate(args: Any) -> dict[str, Any]:
     if args.arm == "theirs":
         import theirs_loader_substitution as tls
         import theirs_omnifold_arm as toa
-        blocks = _load_joined(args, np, np.arange(data.reco.shape[0]), imc)
-        # !pass_reco rows are zeroed for his arm exactly as the production
-        # loader zeroes them for ours. Data is all pass_reco by construction.
         data_pass = getattr(data, "pass_reco", None)
         if data_pass is None:
             data_pass = np.ones(data.reco.shape[0], dtype=bool)
-        theirs_data = tls.zero_non_reco(
-            blocks["data"]["packed"], blocks["data"]["globals"], data_pass)
-        theirs_mc = tls.zero_non_reco(
-            blocks["mc"]["packed"], blocks["mc"]["globals"], mc.pass_reco)
-        substitution = tls.substitute_step1(data, mc, theirs_data, theirs_mc)
+        blocks = _load_joined(args, np, np.arange(data.reco.shape[0]), imc,
+                              data_pass, mc.pass_reco)
+        # `materialize` has already zeroed every !pass_reco row, exactly as the
+        # production loader zeroes ours. One rule, one implementation.
+        substitution = tls.substitute_step1(
+            data, mc,
+            (blocks["data"]["packed"], blocks["data"]["globals"]),
+            (blocks["mc"]["packed"], blocks["mc"]["globals"]))
         model_reco = toa.TheirsCompleteArm(num_part=fd.THEIRS_COMPLETE["token_cap"])
     else:
         model_reco = PET(num_feat=meta["n_feat_reco"], num_evt=meta["n_evt_reco"],
@@ -231,8 +231,8 @@ def plan_of(args: Any) -> dict[str, Any]:
             "learning_rate": args.learning_rate, "niter": args.niter}
 
 
-def _load_joined(args: Any, np: Any, data_rows: Any, mc_rows: Any
-                 ) -> dict[str, Any]:
+def _load_joined(args: Any, np: Any, data_rows: Any, mc_rows: Any,
+                 data_pass_reco: Any, mc_pass_reco: Any) -> dict[str, Any]:
     """Gather his inputs for exactly the rows this fit will see.
 
     The earlier version expected a single pre-packed array. That would have been
@@ -245,12 +245,13 @@ def _load_joined(args: Any, np: Any, data_rows: Any, mc_rows: Any
     import materialize_theirs as mtz
 
     out: dict[str, Any] = {}
-    for stream, rows in (("data", data_rows), ("sig", mc_rows)):
+    for stream, rows, reco in (("data", data_rows, data_pass_reco),
+                               ("sig", mc_rows, mc_pass_reco)):
         index = np.load(Path(args.theirs_index) / f"join_{stream}.npz")
         report = json.loads(
             (Path(args.theirs_index) / f"join_{stream}.json").read_text())
         gathered = mtz.materialize(report["files"], index["row_index"],
-                                   index["origin"], np.asarray(rows))
+                                   index["origin"], np.asarray(rows), reco)
         out[stream] = gathered
     return {"data": out["data"], "mc": out["sig"]}
 

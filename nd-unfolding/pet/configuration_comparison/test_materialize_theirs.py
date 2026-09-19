@@ -36,32 +36,84 @@ class Gather(unittest.TestCase):
     def test_it_returns_rows_in_inventory_order_not_shard_order(self):
         row_index = np.array([5, 0, 3])          # shard 2 row 1, shard 0 row 0, ...
         out = mt.materialize(self.files, row_index, self.origin,
-                             np.array([0, 1, 2]), cap=CAP, packed_width=W)
+                             np.array([0, 1, 2]), np.ones(3, bool),
+                             cap=CAP, packed_width=W)
         self.assertAlmostEqual(float(out["packed"][0, 0, 0]), 3.0)   # shard2 row1
         self.assertAlmostEqual(float(out["packed"][1, 0, 0]), 0.0)   # shard0 row0
         self.assertAlmostEqual(float(out["packed"][2, 0, 0]), 2.0)   # shard1 row1
 
     def test_tokens_and_add_info_are_concatenated_in_that_order(self):
         out = mt.materialize(self.files, np.array([0]), self.origin,
-                             np.array([0]), cap=CAP, packed_width=W)
+                             np.array([0]), np.ones(1, bool),
+                             cap=CAP, packed_width=W)
         np.testing.assert_allclose(out["packed"][0, 0, :5], 0.0)
         np.testing.assert_allclose(out["packed"][0, 0, 5:], 10.0)
 
     def test_each_shard_is_opened_at_most_once(self):
         row_index = np.arange(6)
         out = mt.materialize(self.files, row_index, self.origin, np.arange(6),
-                             cap=CAP, packed_width=W)
+                             np.ones(6, bool), cap=CAP, packed_width=W)
         self.assertEqual(out["shards_opened"], 3)
 
     def test_a_shard_with_no_requested_rows_is_not_opened(self):
         out = mt.materialize(self.files, np.array([0, 1]), self.origin,
-                             np.array([0, 1]), cap=CAP, packed_width=W)
+                             np.array([0, 1]), np.ones(2, bool),
+                             cap=CAP, packed_width=W)
         self.assertEqual(out["shards_opened"], 1)
 
-    def test_an_unmatched_row_refuses(self):
-        with self.assertRaises(ValueError):
+    def test_an_unmatched_PASS_RECO_row_refuses(self):
+        """That event his arm cannot see, and ours can."""
+        with self.assertRaisesRegex(ValueError, "pass_reco"):
             mt.materialize(self.files, np.array([-1]), self.origin,
-                           np.array([0]), cap=CAP, packed_width=W)
+                           np.array([0]), np.ones(1, bool),
+                           cap=CAP, packed_width=W)
+
+    def test_an_unmatched_row_WITHOUT_reco_is_expected_and_comes_back_zero(self):
+        """19.9M of the signal leg. Raising here killed the first tuning task.
+
+        A reconstruction failure means no reconstructed object exists, so there
+        is nothing to build a token from; the event enters through the truth
+        leg. The earlier version raised on any -1.
+        """
+        out = mt.materialize(self.files, np.array([-1, 0]), self.origin,
+                             np.array([0, 1]), np.array([False, True]),
+                             cap=CAP, packed_width=W)
+        np.testing.assert_array_equal(out["packed"][0],
+                                      np.zeros((CAP, W), np.float32))
+        self.assertTrue((out["packed"][1] != 0).any())
+        self.assertEqual(out["unmatched_without_reco"], 1)
+
+    def test_a_MATCHED_row_without_reco_also_comes_back_zero(self):
+        """The production loader zeroes ours there; his arm must match."""
+        out = mt.materialize(self.files, np.array([0, 2]), self.origin,
+                             np.array([0, 1]), np.array([False, True]),
+                             cap=CAP, packed_width=W)
+        np.testing.assert_array_equal(out["packed"][0],
+                                      np.zeros((CAP, W), np.float32))
+        np.testing.assert_array_equal(out["globals"][0],
+                                      np.zeros(G, np.float32))
+        self.assertTrue((out["packed"][1] != 0).any())
+        self.assertEqual(out["rows_without_reco"], 1)
+
+    def test_pass_reco_must_cover_the_same_inventory(self):
+        with self.assertRaisesRegex(ValueError, "same inventory"):
+            mt.materialize(self.files, np.arange(4), self.origin,
+                           np.array([0]), np.ones(3, bool),
+                           cap=CAP, packed_width=W)
+
+    def test_ordering_survives_unmatched_rows_interleaved(self):
+        """The sort that skips -1 must not reorder the rows it does fill."""
+        row_index = np.array([5, -1, 3, -1, 0])
+        reco = np.array([True, False, True, False, True])
+        out = mt.materialize(self.files, row_index, self.origin,
+                             np.arange(5), reco, cap=CAP, packed_width=W)
+        self.assertAlmostEqual(float(out["packed"][0, 0, 0]), 3.0)  # shard2 row1
+        self.assertAlmostEqual(float(out["packed"][2, 0, 0]), 2.0)  # shard1 row1
+        self.assertAlmostEqual(float(out["packed"][4, 0, 0]), 0.0)  # shard0 row0
+        np.testing.assert_array_equal(out["packed"][1],
+                                      np.zeros((CAP, W), np.float32))
+        np.testing.assert_array_equal(out["packed"][3],
+                                      np.zeros((CAP, W), np.float32))
 
 
 if __name__ == "__main__":
