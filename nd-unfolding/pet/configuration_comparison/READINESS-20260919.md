@@ -1,5 +1,12 @@
 # Readiness: implementation for the matched pretrained comparison
 
+> **SUPERSEDED IN PART, 2026-09-20.** R2 is closed (the checkpoint was
+> reachable all along), R-1 is verified, the data leg is measured, and the
+> comparison is now blocked on a different artifact entirely. Read
+> `HANDOFF-20260920-complete-comparison.md` first; it names the blocker and
+> the continuation. This file remains accurate about the port and the
+> execution path.
+
 **CITABLE FOR:** what is implemented and tested, what each measurement is, and what
 remains blocked.
 **NOT CITABLE FOR:** any performance, recovery or adoption claim. PET remains method
@@ -99,7 +106,8 @@ tensor exceeding its own round-off floor.
 
 | id | blocker | owner | blocks |
 |---|---|---|---|
-| **R2** | `best_model_pretrain_{s,m}.pt`, sha256, licence, from CFS **m4567** | **Gregor** | the objective — and now explicitly the pretrained arm's **tuning and variance pilot**, not only its final runs |
+| ~~R2~~ | ~~`best_model_pretrain_{s,m}.pt`~~ | ~~Gregor~~ | **CLOSED 2026-09-19.** Both checkpoints obtained and hashed; the "verified unavailable" verdict was a probe from the wrong network. Only the **licence** remains open |
+| **R5** | a cap-33 dump carrying the 46 R4 branches, from the MasterAnaDev tuples | **external — MINERvA production** | **the objective.** Zero of the 46 branches exist in any produced file, and the tuples are not reachable from this account |
 | ~~R-1~~ | ~~three event-key branches~~ | ~~Agent A~~ | **DELIVERED 2026-09-19**, verified 12/12, with the correction that the triple is a GATE key on `data` and the join needs `occurrence` |
 | **R4** | authorization to read 21 typed branches at scale (A1 covers blob/prong **counts**, not values) | **Joseph** | the representation half |
 | **T1** | ratification of the **single threshold policy** — `f = 0.80`, `δ = 0.02`, `δ_switch = 0.04`, regional floor 0.60 | **Joseph** | freezing the design |

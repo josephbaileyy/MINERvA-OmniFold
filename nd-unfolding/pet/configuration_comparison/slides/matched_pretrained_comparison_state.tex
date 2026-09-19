@@ -1,0 +1,218 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usetheme{default}
+\usecolortheme{dove}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\newcommand{\NO}{\textcolor{red!70!black}{\textbf{no}}}
+\newcommand{\YES}{\textcolor{green!45!black}{\textbf{yes}}}
+
+\title{Matched pretrained comparison: state of the evidence}
+\subtitle{Our incumbent PET vs.\ Gregor's complete pretrained PET2-small}
+\author{PET configuration-comparison lane}
+\date{2026-09-20}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}{What this is, and what it is not}
+\begin{block}{Read this first}
+\textbf{No comparison has been run.} Neither arm has been trained on the endpoint,
+no recovery has been measured, and \textbf{nothing here favours either
+configuration.}
+\end{block}
+This deck reports what has been \emph{measured}, what has been \emph{frozen}, and
+the one artifact that blocks the rest.
+\vfill
+PET remains diagnostic method development. Nothing here is a publication adoption,
+a covariance, a systematic, a central-value change, or a Gate-6 action; nothing
+discharges \texttt{OI-71}; nothing has been sent to anyone.
+\end{frame}
+
+\begin{frame}{The blocker, in one slide}
+Gregor's \emph{complete} arm needs PID (8 classes), 5 auxiliary columns, 16 event
+globals and a 33-token cap. Measured with ROOT against the 113\,GB source of every
+downstream product:
+\begin{center}\small
+\begin{tabular}{lrrr}
+\toprule
+tree & entries & branches & R4 branches present \\
+\midrule
+\texttt{mc\_truth\_denom} & 49{,}906{,}108 & 20 & \textbf{0} \\
+\texttt{mc\_signal\_reco} & 49{,}906{,}108 & 47 & \textbf{0} \\
+\texttt{mc\_background}   &    566{,}036  & 31 & \textbf{0} \\
+\texttt{data}             &  4{,}119{,}797 & 24 & \textbf{0} \\
+\bottomrule
+\end{tabular}
+\end{center}
+And the cap is \textbf{12} (\texttt{num\_part=12}), applied at dump time.
+\begin{block}{The missing artifact}
+A re-run of \texttt{runEventLoopOmniFold} over the ME-FHC \textbf{MasterAnaDev
+AnaTuples}, emitting the 21 typed-object and 25 global source branches, at cap 33.
+\textbf{Its input is not reachable from this account} --- no tuples on CFS,
+pscratch or our HPSS namespace.
+\end{block}
+R4 was \emph{authorized} and cannot be \emph{executed}: the authorization is to
+read branches from a file that does not contain them.
+\end{frame}
+
+\begin{frame}{Prerequisites that did close}
+\begin{itemize}
+\item \textbf{The pretrained checkpoint was never unavailable.} It was recorded
+  ``verified unavailable'' for two months. \texttt{/global/cfs/cdirs/m4567} is
+  \texttt{drwxr-s--x}: traversable, not listable, so \texttt{ls} reports absence.
+  From Perlmutter the portal returns HTTP/2 200.
+  \\[2pt]
+  \texttt{best\_model\_pretrain\_s.pt}, 34{,}605{,}223\,B, sha256
+  \texttt{7e8331b0\ldots12b1bc}.
+\item \textbf{R-1 verified by this lane}, not accepted on report: 12/12 checks,
+  and the sidecar's \texttt{order\_hash\_module} sha256 equals \emph{our own}
+  loader's, so order provenance binds to the code we run.
+\item \textbf{The fullevent data leg, measured}: 4{,}116{,}128 rows --- replacing
+  the neighbouring 5-D product's 4{,}091{,}707. Budget factor \textbf{1.2645}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The checkpoint transfers as his own pipeline transfers it}
+\begin{center}\small
+\begin{tabular}{lrr}
+\toprule
+ & tensors & parameters \\
+\midrule
+body       & 139 / 148 & 1{,}421{,}223 / 1{,}443{,}368 = \textbf{98.47\,\%} \\
+classifier &  26 / 28  & 1{,}314{,}821 / 1{,}315{,}334 = \textbf{99.96\,\%} \\
+\bottomrule
+\end{tabular}
+\end{center}
+Ten body tensors drop because our model has no such module (\texttt{interaction.*},
+\texttt{time\_embed.*}, \texttt{MPFourier.*}): pretraining used interactions and a
+diffusion time embedding the paper configuration does not.
+\begin{block}{The question that mattered}
+\textbf{Every reinitialized tensor is reinitialized by \emph{his} pipeline at
+\emph{his} defaults} --- \texttt{add\_embed} because \texttt{-{}-ol-num-add}
+defaults to 5 against a 4-wide pretraining, \texttt{pid\_embed} because
+\texttt{-{}-ol-pid-dim} is 8 against 9, \texttt{local\_physics.mlp.fc1} because the
+V1-paper flags turn \texttt{local\_int} off, \texttt{cond\_embed} because
+pretraining had no conditioning. Our arm inherits exactly what his inherits.
+\end{block}
+It loads into the Keras port \textbf{176/176 tensors, worst difference 0.0}.
+\end{frame}
+
+\begin{frame}{The execution path: affordable, and measured under the frozen policy}
+\begin{center}\small
+\begin{tabular}{lrrr}
+\toprule
+ & \textmu s/example & peak & campaign \\
+\midrule
+baseline \texttt{einsum}, eager, 12/512 & 935.5 & 16.9\,GiB & 924 \\
+$+$ projection rewrite                  & 396.7 & 12.6\,GiB & 418 \\
+$+$ XLA                                 & 156.6 &  2.1\,GiB & 183 \\
+\textbf{intended 33 tokens / batch 2048} & \textbf{410.6} & \textbf{21.7\,GiB} & \textbf{$\approx$548} \\
+\bottomrule
+\end{tabular}
+\end{center}
+Runs on a \textbf{40\,GB} A100 --- no 80\,GB constraint, no gradient accumulation
+needed. Against a 1{,}000\,GPU-h ceiling with $\approx$19 spent.
+\begin{block}{Two corrections behind those numbers}
+The 23.9$\times$ had one cause and it was ours: \texttt{einsum}'s \emph{gradient}
+materialises the per-example outer product --- 58 of 60 OOM tracebacks in
+\texttt{einsum\_op\_impl.h}, at shapes up to 22.2\,GB for a 32{,}768-number
+weight. And \textbf{TF32 was on for every earlier GPU measurement}; the frozen
+policy forbids it and no driver enforced it. Re-measured: $+5.8\,\%$.
+\end{block}
+\end{frame}
+
+\begin{frame}{Production validation: 8 of 11, and one finding I cannot explain}
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+\YES\ pretrained load & 176/176, exact \\
+\YES\ masking & padded content, PID and auxiliary: \emph{exactly} 0 \\
+\YES\ optimizer & 10 updates, finite, clipping fires, schedule advances \\
+\YES\ reload & exact, with weights zeroed between save and restore \\
+\YES\ memory \& timing & 21.7\,GiB, synchronized \\
+\NO\ forward XLA vs eager & 2.26e-3 against a 3.7e-7 limit \\
+\NO\ gradients XLA vs eager & 2.66e-4 \\
+\NO\ batch invariance & \textbf{median 2.37e-3 per row, same program, same rows} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{block}{Two hypotheses tested and rejected}
+\textbf{k-NN ties}: rejected --- the row profile shows \emph{100\,\% of rows}
+moving, where a tie moves a few a long way. \textbf{TF32}: rejected ---
+\texttt{NVIDIA\_TF32\_OVERRIDE=0} changed the deviation by nothing, 2.257e-3 both
+times, identical to the digit.
+\end{block}
+On CPU the same batch comparison gives a median of \textbf{exactly 0.0}. It is a
+GPU-kernel property. Limits were \emph{not} widened.
+\end{frame}
+
+\begin{frame}{k-NN ties on the real cloud (item 12)}
+\begin{center}\small
+\begin{tabular}{lrrr}
+\toprule
+inventory & real tokens & coordinate tie pairs & events with a tie \\
+\midrule
+\texttt{mc\_signal\_reco} & 227{,}903{,}218 & 18{,}070 & 0.035\,\% \\
+\texttt{mc\_background}   &   6{,}654{,}155 &      194 & 0.032\,\% \\
+\texttt{data}             &  45{,}671{,}856 &  2{,}431 & 0.055\,\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+A tie only changes a neighbour \emph{set} when it straddles the $k$-th boundary;
+inside the set the block \emph{sums}, which is order-independent.
+\begin{center}
+\textbf{28{,}793} ambiguous boundaries at $K=3$, \textbf{20{,}778} at $K=10$,
+over 280\,M centres --- about 1 in 9{,}700.
+\end{center}
+Deterministic within one engine, so it cannot bias a comparison run in ours; it is
+an exposure for cross-engine reproduction of \emph{his} results.
+\end{frame}
+
+\begin{frame}{Frozen before any comparative result (item 13)}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\small
+\textbf{Thresholds} (ratified methodological tolerances, \emph{not} physics facts)
+\begin{itemize}\small
+\item adequacy $\ge 0.80\times$ reference
+\item $\delta = 0.02$, $\delta_{\text{switch}} = 0.04$
+\item regional $0.60\times$ \emph{that region's own} reference
+\end{itemize}
+\textbf{Endpoint}: truth $E_{\text{avail}}$, amplitude 0.35, clip 3.0, seven-bin
+recovery.
+\column{0.5\textwidth}
+\small
+\textbf{Eligibility is per arm.} Both eligible $\Rightarrow$ the comparison
+decides. Exactly one $\Rightarrow$ that arm, licensed by eligibility and
+\emph{not} by the contest. Neither $\Rightarrow$ \texttt{NO\_SELECTION}.
+\\[4pt]
+\textbf{Low acceptance is retained}, never excluded: 31.0\,\% of truth mass and
+26.6\,\% of displacement, reported separately with each arm's recovery.
+\\[4pt]
+\textbf{Tuning}: one axis, four points, identical for both arms, his published
+$10^{-4}$ among them; selected on the tuning split alone; pilot excluded from the
+final inference.
+\end{columns}
+\end{frame}
+
+\begin{frame}{What would unblock this}
+\begin{enumerate}
+\item A cap-33 dump carrying the 46 branches \texttt{r4\_manifest.py} enumerates,
+      from the MasterAnaDev tuples. \textbf{Everything else waits on this.}
+\item Regenerate and verify the identity sidecar for that dump.
+\item Isolate the XLA batch dependence to an operation before trusting the
+      executed path --- the transcendental approximations in \texttt{erf} and
+      \texttt{tanh} are the candidates.
+\item Then tuning $\rightarrow$ pilot $\rightarrow$ final, under the frozen design.
+\end{enumerate}
+\vfill
+\begin{block}{Not taken}
+The degraded arm --- our clusters, no PID, no auxiliary channel, no globals,
+cap 12 --- runs today. It is not his complete arm, and reporting its score as his
+configuration's would be the asymmetric comparison this lane exists to avoid.
+\end{block}
+\end{frame}
+
+\end{document}
