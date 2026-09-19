@@ -50,6 +50,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   exactly on all ten. Carries the **per-endpoint sha256 identities**, the extractor's positive AND
   negative controls, and two corrections: **§15.1 is a directory-uniformity census, not a digest
   identity**, and **the 12-playlist hadd coverage is NOT confirmed** by this artifact.
+- [`OUTCOME-20260919-computed-acceptance-goal-C-blocked.md`](OUTCOME-20260919-computed-acceptance-goal-C-blocked.md)
+  - **(C) BLOCKED, zero task-hours spent.** Acceptance is now COMPUTED and `ε = 1e-9` is declared, but
+  **PASS needs branch 3**, which needs `branch2_failures()` empty AND all three cause-3 leg
+  statistics — **both require ≥ 2 members**. One further member costs **262 CPU + 158.25 GPU
+  task-hours against a 100 CPU cap, 2.6× over.** No production run was submitted: a single-member
+  build is foreseeably branch 2, neither PASS nor an assessable FAIL, and would freeze the logic for
+  a known answer.
 - [`REVIEW-20260919-computed-acceptance-disposition.md`](REVIEW-20260919-computed-acceptance-disposition.md)
   - **Cross-model review of the computed-acceptance change: NO BLOCKs**, one MINOR, three NITs, with
   **my** dispositions. Two NITs fixed by **making the claim true** rather than softening it —
