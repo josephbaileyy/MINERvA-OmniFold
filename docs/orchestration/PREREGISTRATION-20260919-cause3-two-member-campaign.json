@@ -1,0 +1,106 @@
+{
+  "S": 0.001,
+  "boundaries": {
+    "cause3_agg": 0.05,
+    "cause3_corr": 0.05,
+    "cause3_corr_coverage": 1.0,
+    "cause3_med": 0.05,
+    "cause3_med_coverage": 0.99,
+    "null_epsilon": 1e-09
+  },
+  "builder_revision": "d64257c3947a239f33ad7b33869286f6aab07194",
+  "declared_K": [
+    0,
+    1200
+  ],
+  "declared_before": "any job of this campaign is submitted",
+  "epsilon": 1e-09,
+  "functional_set": "the rows of project_cov_nd.build_projection for M1 (5D -> (E_avail, W); src_axes pt,pz,eavail,q3,W; keep_axes eavail,W), restricted to destination cells that receive a reported source cell, plus the all-ones vector. AUTHORIZATION-20260918 ruling 4. Built by CALLING the projector, never by restating it.",
+  "graded_offset": 0,
+  "leg_set": [
+    "s_agg",
+    "s_med",
+    "s_proj"
+  ],
+  "members": {
+    "0": {
+      "arms": "mii/member_k000000 -- jobids 57753239/43/44/45/46/47/48, 374/374 COMPLETED 0:0 re-verified from sacct; all 185 slabs stamped (est_seed_offset_declared=1, est_seed_offset=0), seeds 1000 (g2) and 42 (g1)",
+      "combine": "RE-RUN at this builder revision, because its original deploy 7ac0edec never wrote hCvExecution{0,1} / hCvSupportMask -- measured: 0 hits against a 2-hit C_unified positive control",
+      "role": "anchor, and the GRADED product",
+      "slab_code_identity": "MEASURED identical to this revision: do_throws and do_blockunits differ from 7ac0edec by one added guard call each (z_namespace_contract, which raises or returns and touches no arithmetic) and by nothing else; bootstrap_nd, seedscan_split, sweep_bank_5d, xsec_nd, unfold_nd_omnifold_unbinned and 2d-unfolding/unfold_2d_omnifold_unbinned are byte-identical; uq_math and unified_throw differ only in comments and one inert flag"
+    },
+    "1200": {
+      "arms": "all seven, fresh, MNV_EST_SEED_OFFSET=1200",
+      "role": "comparison member"
+    }
+  },
+  "offset_grid_predicates": {
+    "alias_free": "check_offset_grid({g1:42,g2:1000},[0,1200]) == [] over 4 checked pairs",
+    "clean": "assert_offsets_are_clean([0,1200]) passes",
+    "sort_safe": "assert_offsets_are_sort_safe([0,1200]) passes"
+  },
+  "pass_rule": "PASSING iff z_validator.assess(Z_LEG_SET, statistics, validity) returns assessable=True and branch==3 (MET) -- every leg of L = {s_agg, s_med, s_proj} within its declared boundary, cause3_agg = cause3_med = cause3_corr = 0.05 -- AND the graded product's r_null, recomputed from its own persisted null operands, is <= null_epsilon = 1e-9. Any other outcome is NON-PASSING. A validity failure dominates every numerical branch and reports no magnitude.",
+  "reservations_enforced_cap_times_tasks": {
+    "admission_dry_run": "check --cpu 336.00 --gpu 158.25 -> rc 0 ADMITTED; check --cpu 672.00 --gpu 316.50 -> rc 5 REFUSED",
+    "k0_combine_rerun": [
+      1,
+      1.0,
+      "CPU",
+      1.0
+    ],
+    "k1200": {
+      "boot5dG": [
+        100,
+        0.5,
+        "GPU",
+        50.0
+      ],
+      "det5dBKG": [
+        19,
+        1.25,
+        "GPU",
+        23.75
+      ],
+      "ssplit5d": [
+        24,
+        0.75,
+        "CPU",
+        18.0
+      ],
+      "sweep5dBKGrun": [
+        169,
+        0.5,
+        "GPU",
+        84.5
+      ],
+      "total_cpu": 336.0,
+      "total_gpu": 158.25,
+      "uthrow5d_block": [
+        21,
+        7.0,
+        "CPU",
+        147.0
+      ],
+      "uthrow5d_combF": [
+        1,
+        1.0,
+        "CPU",
+        1.0
+      ],
+      "uthrow5d_runF": [
+        40,
+        4.25,
+        "CPU",
+        170.0
+      ]
+    },
+    "r5_headroom_at_declaration": {
+      "cpu": 379.31194444444446,
+      "gpu": 481.4825
+    }
+  },
+  "schema_version": 1,
+  "subject": "(cause 3, Z) M(ii) two-member estimator-seed campaign",
+  "which_digest_will_be_graded": "the sha256 of the k=0 member's z-cv.npz, produced by z_build at this builder revision AFTER this preregistration is committed. It is deliberately not named here: naming a digest that already exists would preregister a result.",
+  "written_at_utc": "2026-09-19"
+}

@@ -73,6 +73,12 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   - **Joseph reverses `AUTHORIZATION-20260918` §2 ruling 2, for the computed-acceptance goal only.**
   One additional member at `262.00` CPU / `158.25` GPU, through the normal campaign check. The
   premise *"nothing required needs `N`"* died when acceptance became computed. **Never submitted.**
+- [`PREREGISTRATION-20260919-cause3-two-member-campaign.md`](PREREGISTRATION-20260919-cause3-two-member-campaign.md)
+  - **Committed before any job was submitted.** `K = {0, 1200}` with all three offset predicates run,
+  builder `d64257c3`, `S = 1e-3`, `ε = 1e-9`, pass rule = branch 3 **and** `r_null ≤ ε`, graded
+  offset `0`, and the digest **deliberately unnamed**. Records why the `k = 0` arms are not re-run:
+  `r5_meter check` **ADMITS** `337.00`/`158.25` and **REFUSES** two fresh members at `672`/`316.5`
+  — R5, not preference, decides it. Block-arm cap raised to `7.00` h against an observed `4.82` h.
 - [`REVIEW-20260919-multi-member-grader-two-rounds.md`](REVIEW-20260919-multi-member-grader-two-rounds.md)
   - **`z_grade.py` — the first production caller of `assess()` that can reach a leg**, and two
   adversarial review rounds over it. Round one: **2 BLOCK, 4 MAJOR**. Round two reviewed the FIXES
