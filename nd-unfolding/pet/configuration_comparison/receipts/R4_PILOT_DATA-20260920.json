@@ -1,0 +1,55 @@
+{
+  "file": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1A/MasterAnaDev_data_AnaTuple_run00006038_Playlist.root",
+  "tree_entries": 15259,
+  "entries_scanned": 15259,
+  "branches_requested": 52,
+  "branches_present": 48,
+  "branches_missing": [
+    "mc_nthEvtInFile",
+    "mc_run",
+    "mc_subrun",
+    "truth_reco_has_muon"
+  ],
+  "identity_branches_present": {
+    "ev_run": true,
+    "ev_subrun": true,
+    "ev_gate": true,
+    "mc_run": false,
+    "mc_subrun": false,
+    "mc_nthEvtInFile": false
+  },
+  "rows_with_positive_ev_run": 15259,
+  "multiplicity": {
+    "blobs": {
+      "n": 15259,
+      "mean": 8.398781047250802,
+      "median": 1,
+      "p90": 28,
+      "p99": 68,
+      "max": 149,
+      "zero_fraction": 0.4758503178452061
+    },
+    "prongs": {
+      "n": 15259,
+      "mean": 1.4698866242873059,
+      "median": 1,
+      "p90": 2,
+      "p99": 4,
+      "max": 8,
+      "zero_fraction": 0.0
+    }
+  },
+  "combined_blob_plus_prong": {
+    "n": 15259,
+    "mean": 9.868667671538109,
+    "median": 2,
+    "p90": 30,
+    "p99": 70,
+    "max": 150,
+    "zero_fraction": 0.0
+  },
+  "cap": 33,
+  "fraction_over_cap": 0.08113244642506062,
+  "cap_reading": "fraction of scanned events whose blob+prong count exceeds 33. This is what decides whether his 33-token cap binds, and it has been assumed rather than measured until now",
+  "scope": "BOUNDED pilot over one file. It measures what an extraction would find; it writes no training input and makes no performance claim"
+}

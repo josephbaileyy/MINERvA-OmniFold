@@ -1,0 +1,50 @@
+{
+  "file": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root",
+  "tree_entries": 186439,
+  "entries_scanned": 20000,
+  "branches_requested": 52,
+  "branches_present": 52,
+  "branches_missing": [],
+  "identity_branches_present": {
+    "ev_run": true,
+    "ev_subrun": true,
+    "ev_gate": true,
+    "mc_run": true,
+    "mc_subrun": true,
+    "mc_nthEvtInFile": true
+  },
+  "rows_with_positive_ev_run": 20000,
+  "multiplicity": {
+    "blobs": {
+      "n": 20000,
+      "mean": 12.31545,
+      "median": 6,
+      "p90": 34,
+      "p99": 71,
+      "max": 132,
+      "zero_fraction": 0.3136
+    },
+    "prongs": {
+      "n": 20000,
+      "mean": 1.7449,
+      "median": 2,
+      "p90": 3,
+      "p99": 4,
+      "max": 12,
+      "zero_fraction": 0.0
+    }
+  },
+  "combined_blob_plus_prong": {
+    "n": 20000,
+    "mean": 14.06035,
+    "median": 8,
+    "p90": 36,
+    "p99": 72,
+    "max": 134,
+    "zero_fraction": 0.0
+  },
+  "cap": 33,
+  "fraction_over_cap": 0.1187,
+  "cap_reading": "fraction of scanned events whose blob+prong count exceeds 33. This is what decides whether his 33-token cap binds, and it has been assumed rather than measured until now",
+  "scope": "BOUNDED pilot over one file. It measures what an extraction would find; it writes no training input and makes no performance claim"
+}
