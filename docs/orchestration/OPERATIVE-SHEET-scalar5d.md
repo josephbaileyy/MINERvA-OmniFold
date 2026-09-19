@@ -363,6 +363,36 @@ canonical artifact) and **C7 re-evidenced against it** — the 45-band census an
 question and says nothing about a migration bound. **Joseph re-rules C7 on whatever survives; his
 earlier ruling was made on (b) as evidence and does not carry over.**
 
+## 4e2. ⚠ THE ASSESSOR'S PROJECTOR-LEVEL EVIDENCE CANNOT BE CREDITED TO `318b8c06`
+
+**Asked to credit it and state by diff whether the guard paths had changed. They had not changed —
+they did not EXIST there.** Measured, not inferred:
+
+| | |
+|---|---|
+| `318b8c06` | the assessor's verdict commit, **2026-09-18 17:22:54** |
+| merge-base with `HEAD` | **`d147880f`, 2026-09-10** — the branch diverged eight days earlier |
+| `expect-variant` in its `project_cov_nd.py` | **0** |
+| `_declared_variant` / `mean-centering alone is disqualified` / `adoption-exception` | **0 / 0 / 0** |
+| `git log -S'expect-variant'` over **all** of `318b8c06`'s history | **no commits** |
+| where the guard actually enters | **`5be86f55`, 2026-09-18 15:35:34**, on `HEAD`'s line and **not** on the assessor's branch |
+
+**So the four guards are absent from that commit's tree and from everything behind it.** The verdict
+is timestamped 1h47m *after* the guard landed on `main`, which is why it looks creditable and is not:
+**later in wall-clock, on a branch that never received the code.**
+
+⚠ **WHAT I AM NOT CONCLUDING.** This does **not** establish that the assessor exercised nothing. It
+very plausibly ran a worktree checked out at another ref while committing its verdict to its own
+branch — that is normal here. What it establishes is narrower and sufficient: **the anchor is
+wrong.** Evidence pinned to a commit whose tree lacks the code is not pinned. Crediting it in §4d
+would put a real-path claim behind a sha that cannot support it — the same defect class as a record
+claiming more than its evidence establishes, which is what this campaign has been counting.
+
+**NOT CREDITED, pending a correct anchor.** What would close it: the ref the assessor's run actually
+used, and confirmation that `--expect-variant` and the `adoptable:false` refusal were present in
+*that* tree. Until then §4d's items 3 and 5 stay **unexercised on the real path**, and I am not
+recording real exercise as unexercised either — I am recording that the pointer does not resolve.
+
 ## 4f. THE GUARD-SET CONTROL HAS FAILED THREE TIMES AND LEG B HAS NEVER RUN
 
 **Stopped, not retried.** The advisor's condition on the third submission was: *if this run fails it
