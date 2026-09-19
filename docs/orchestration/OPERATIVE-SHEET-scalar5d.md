@@ -98,6 +98,48 @@ production code computed it.* All seven declared boundaries measure `read_by_pro
 has never run"* are different disclosures and **only the second is true.** A reader given the first
 would reasonably conclude the legs were computed and came out uninformative. They were not computed.
 
+## 4c. PROJ — the mode, the PREDECLARED bounds, and the pairing established by measurement
+
+**MODE: `receiving-cells`.** Not the weaker option — the only one whose premise holds here.
+`--dst-cv` exists to compare `M x_src` against an **independently produced** lower-D central value.
+For this destination there is no second party: `sec_eavailw.tex:37-39` states the note *projects the
+unfolded five-axis result onto `(E_avail,W)` and subtracts the GENIE central value*, so the quantity
+quoted in that plane **is** the projection. Measured accordingly: **no product on disk carries
+`hXSecND_flat` at 42 bins** — `xsec_2d_CTRL_*` is 224, `xsec_2d_FPS_*` is 285, `excess_eavail_W.root`
+is the right 7×6 grid but is an *excess* under key `hData2D`. That absence is the nature of the
+measurement, not a missing file. Forcing `--dst-cv` would require producing a frozen `(E_avail,W)`
+central value first — new scientific work outside the §2 table.
+
+### PREDECLARED before the run, per §6.4's discipline that bounds are fixed before production
+
+| quantity | status | why |
+|---|---|---|
+| `src_cells_dropped` | **must be `0` — structural requirement** | a source cell mapping outside the destination is **discarded uncertainty**. Computed OUTSIDE the `--dst-cv` branch, so it is a genuine measurement in both modes |
+| `n_empty` | **recorded, and NOT EVIDENCE in this mode** | the mask *is* the bins that received a source cell, so every row of `M` has a nonzero **by construction** and `n_empty` is necessarily `0`. `project_cov_nd.py:485-492` says the writer does not gate on it and that making it a pass condition is a criterion change |
+| `rel` (CV reproduction) | **does not exist here; nothing reported** | gated behind `--dst-cv`; it was **never computed for the diagnostic either** |
+| PSD, exact symmetry, `hRowIndex` readback digest | reported, as the diagnostic did | |
+
+⚠ **A withdrawal that corrects the record:** the diagnostic M1 was reported as *"verified: `n_empty 0`"*.
+Its receipt records `dst_cv_sha256: None`, so it ran in this same mode and **that zero was
+structurally guaranteed and was never evidence.** `src_cells_dropped 0` stands as real.
+
+### The pairing is ESTABLISHED BY MEASUREMENT, not asserted from the algebra
+
+*"By construction"* is exactly how a pairing fails silently: the risk is not that `M C Mᵀ` is wrong,
+it is that the note's figure was produced by a **different `M`, or a different source**, than the
+covariance quoted beside it. Both were measured, and both pass:
+
+| check | result |
+|---|---|
+| **same source** | the figure's `xsec_5d_MEFHC_5iter_lgbm.root:hXSecND_flat` and PROJ's `z-cv.npz:hXSecND_flat` are **byte-identical**, digest `d94daca9251d0951`, `65856` entries, `10694` reported |
+| **same `M`** | M1's `hCV_marginal` against the figure's `hData2D`, **C-order**: sums agree to seven digits (`1.676366e-37`), **max abs diff `5.220244e-54`** on elements of order `4e-39` — relative `~1.3e-15`, round-off |
+| **row order** | F-order gives `3.07e-38`, three orders larger, so **C-order is measured, not assumed** |
+
+`excess_eavail_W.py` reaches `(E_avail,W)` by its own summation, a **different code path** from
+`project_cov_nd.build_projection`. They agree at round-off anyway, which is what makes this a
+falsifiable check rather than a restatement. **Repeat it against the publication product when PROJ
+runs**; if it ever disagrees, the figure must be regenerated from the adopted product before DOCS.
+
 ## 5. Execution order — fixed
 
 **C1–C7 complete → NULL resolved (P0 first, zero-compute; P2 NOT authorized) → SRC_COV identified
