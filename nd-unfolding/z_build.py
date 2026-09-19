@@ -257,6 +257,71 @@ class Source:
         )
 
 
+# ---------------------------------------------------------------- R1: COMPUTED ACCEPTANCE ----
+# `scientific_acceptance` and `outcome` used to be LITERALS: "NON-PASSING" at two sites, a constant
+# `science` dict with `assessable: False` and `reject_conditions: ["4c"]`, and a docstring calling
+# NON-PASSING "the only outcome this command can produce". `z_validator.assess()` -- the one
+# function that ever returns `assessable=True` -- was never called. A field that cannot vary is not
+# a verdict, and nothing downstream could tell a graded failure from an ungraded build.
+#
+# THE TOKEN MAPPING IS NOT INVENTED. `scientific_acceptance` already had exactly two values in this
+# tree: NON-PASSING here and PASSING on the adoptable path. No third token is introduced.
+
+def acceptance_token(outcome, null_within):
+    """`PASSING` iff the computed outcome is MET **and** the null is within its bound.
+
+    The null gates it because `SPEC` §3.7a item 4 states that any null failure ABORTS the run and
+    trips §3.3 condition 11 -- MET legs cannot rescue an out-of-bound null. Read from the
+    specification, not chosen here.
+    """
+    if isinstance(outcome, dict):
+        met = bool(outcome.get("assessable")) and outcome.get("branch") == 3
+    else:
+        met = bool(getattr(outcome, "is_met", False))
+    return "PASSING" if (met and bool(null_within)) else "NON-PASSING"
+
+
+def build_validity(partition_block, psd_block, null_block, extra_notes=None):
+    """Derive branch-1/2 validity from THIS build's recorded gates. Absent evidence stays False.
+
+    `Validity`'s defaults are the safe direction and that is preserved: every field a single build
+    cannot establish is left False WITH A NOTE saying why, never asserted.
+
+    Branch-1 fields are readable here because the gates that set them are FAIL-CLOSED -- the
+    assembly gates raise on violation, so reaching this point with a populated block IS the pass.
+    Branch-2 fields are properties of a MULTI-MEMBER campaign (distinct estimator-seed offsets,
+    distinct product digests). One member cannot make them true, and asserting them would
+    manufacture the very spread branch 2 exists to detect.
+    """
+    notes = {
+        "offsets_match_K": "member-campaign property: requires the declared offset set",
+        "offset_declared_nonzero": "member-campaign property: requires a nonzero declared offset",
+        "product_digests_distinct": "member-campaign property: requires >= 2 member products",
+        "all_members_finite": "member-campaign property: requires >= 2 members",
+    }
+    if extra_notes:
+        notes.update(extra_notes)
+    # Both arguments are results of FAIL-CLOSED gates in `build_z`: `check_band_partition` and
+    # `gate_symmetry_psd` raise on violation, so a populated result IS the pass.
+    gates_ran = bool(partition_block) and bool(psd_block)
+    return validator.Validity(
+        footing_ok=gates_ran,
+        digests_agree=gates_ran,
+        partition_agrees=bool(partition_block),
+        identities_pass=bool(psd_block),
+        # BRANCH 1, not a member property -- misclassifying it forced "WRONG FOOTING" on every
+        # build. It is established here: `reconstruct_null_ratio` derives x_cv and x_cv2 from the
+        # SAME persisted CV and refuses unless the recomputed support predicate matches the
+        # persisted one, which is exactly "the CV was held fixed across the two unfolds".
+        cv_held_fixed=bool(null_block),
+        offsets_match_K=False,
+        offset_declared_nonzero=False,
+        product_digests_distinct=False,
+        all_members_finite=False,
+        notes=notes,
+    )
+
+
 def _code_identity(revision: str) -> JSONDict:
     head = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=REPO, text=True
@@ -578,6 +643,20 @@ def build_z(
             operands = assembly.derive_variant_diagonals(**raw)
             operands["raw"] = raw
             expected, metadata = {}, {}
+            # ---- R1: THE VERDICT IS COMPUTED BEFORE ANY PRODUCT IS WRITTEN ----------------
+            # It must precede the write, or the token stamped into each product could differ
+            # from the one in the return envelope. Both come from this single evaluation.
+            # A single-member build supplies no member statistics; `assess()` returns on the
+            # branch-2 validity check BEFORE consulting any statistic, so `{}` is honest here
+            # rather than a way of skipping a leg.
+            _assessed = validator.assess(validator.Z_LEG_SET, {},
+                                         build_validity(partition, blocksum_psd,
+                                                        null_measurement))
+            science = _assessed.describe()
+            _token = acceptance_token(science, null_within=bool(
+                null_outcome.get("assessable")
+                and null_outcome.get("verdict") == "within bound"))
+
             for variant in assembly.CENTERING_VARIANTS:
                 g, pinned = assembly.compute_g(
                     operands[f"v_uni_{variant}"], operands["v_blk"]
@@ -605,7 +684,7 @@ def build_z(
                     "variant": variant,
                     "input_kind": manifest["input_kind"],
                     "run": run,
-                    "scientific_acceptance": "NON-PASSING",
+                    "scientific_acceptance": _token,
                     "adoptable": False,
                     "manifest_sha256": manifest_stamp["sha256"],
                     "code_identity": code,
@@ -648,13 +727,6 @@ def build_z(
             bindings = {
                 role: {"stamp": source.stamp, "objects": source.reads}
                 for role, source in sources.items()
-            }
-            science = {
-                "assessable": False,
-                "branch": None,
-                "branch_label": None,
-                "reject_conditions": ["4c"],
-                "reason": "Scientific criteria and real-input evidence remain unresolved.",
             }
             null_block = {
                 **rebuilt_null,
@@ -785,8 +857,8 @@ def build_z(
                 )
             return {
                 "construction_status": "CHECKED",
-                "scientific_acceptance": "NON-PASSING",
-                "adoptable": False,
+                "scientific_acceptance": _token,
+                "adoptable": _token == "PASSING",
                 "products": product_stamps,
                 "receipts": receipts_written,
                 "remaining_requirements": REQUIREMENTS,
@@ -838,7 +910,7 @@ def main(argv: list[str] | None = None) -> int:
     """Run a local build.
 
     EXIT CODES, and 2 does not mean success. 2 = the build RAN TO COMPLETION and its
-    science is NON-PASSING, which is the only outcome this command can produce; two
+    science is whatever assess() COMPUTED -- no longer a fixed token; two
     products, two receipts and one null slab exist. 1 = construction failed or the
     invocation was malformed, with a `{"construction_status": "FAILED"}` envelope on
     stderr. 0 is reachable only from `--help`, which writes nothing.

@@ -193,8 +193,19 @@ class ZBuildIntegration(unittest.TestCase):
                 self.assertFalse(product_meta["adoptable"])
                 self.assertEqual(product_meta["scientific_acceptance"], "NON-PASSING")
             rec = json.loads(self.outputs[f"receipt_{variant}"].read_text())
-            self.assertFalse(rec["outcome"]["assessable"])
-            self.assertIsNone(rec["outcome"]["branch"])
+            # ⚠ UPDATED FOR R1. These two lines used to read `assertFalse(assessable)` and
+            # `assertIsNone(branch)` -- they were pinning the HARDCODED `science` dict, so they
+            # passed no matter what the build did. The outcome is now COMPUTED by
+            # `z_validator.assess()`, and the test's actual intent -- this build does not
+            # scientifically pass -- is carried by the two product-metadata assertions above plus
+            # the branch check below. A single-member build lands on branch 2,
+            # "INCONCLUSIVE / VACUOUS BASELINE VARIATION", because `Validity`'s branch-2 fields are
+            # member-campaign properties one member cannot satisfy. That is a real verdict, and it
+            # is still not MET.
+            self.assertTrue(rec["outcome"]["assessable"],
+                            "the outcome must now be COMPUTED, not an asserted non-verdict")
+            self.assertEqual(rec["outcome"]["branch"], 2, rec["outcome"].get("branch_label"))
+            self.assertNotEqual(rec["outcome"]["branch"], 3, "branch 3 would be MET")
             self.assertFalse(rec["notes"]["adoptable"])
             # ⚠ WAS `== set(contract.Z_BOUNDARIES)`, i.e. "every boundary is withheld" -- a
             # proxy that broke when four were DECLARED by ruling on 2026-09-18. The property that
@@ -215,8 +226,18 @@ class ZBuildIntegration(unittest.TestCase):
             self.assertEqual(rec["null"]["r_null"], 0)
             self.assertFalse(rec["null"]["assessment"]["assessable"])
             self.assertEqual(rec["parent"]["lineage_status"], "UNVERIFIED")
+            # ⚠ WAS `== "UNRESOLVED"`. That is a LIVE GRADE TOKEN in the MET / OPEN / UNRESOLVED
+            # vocabulary, and z_build wrote it unconditionally for all seven causes -- so a blank
+            # was indistinguishable from a verdict BY CONSTRUCTION and read as seven
+            # assessed-and-failed causes. It is now NOT_COMPUTED, which cannot be mistaken for a
+            # grade, and each block carries a status_note saying no assessor ran.
             self.assertTrue(
-                all(c["status"] == "UNRESOLVED" for c in rec["causes"].values())
+                all(c["status"] == "NOT_COMPUTED" for c in rec["causes"].values())
+            )
+            self.assertTrue(
+                all("no assessor ran" in c.get("status_note", "")
+                    for c in rec["causes"].values()),
+                "each cause must say WHY its status is not a verdict",
             )
             self.assertEqual(rec["negative_statement"], receipt.NEGATIVE_STATEMENT)
 
