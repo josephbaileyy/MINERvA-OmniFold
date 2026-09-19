@@ -363,6 +363,40 @@ canonical artifact) and **C7 re-evidenced against it** — the 45-band census an
 question and says nothing about a migration bound. **Joseph re-rules C7 on whatever survives; his
 earlier ruling was made on (b) as evidence and does not carry over.**
 
+## 4f. THE GUARD-SET CONTROL HAS FAILED THREE TIMES AND LEG B HAS NEVER RUN
+
+**Stopped, not retried.** The advisor's condition on the third submission was: *if this run fails it
+is a diagnosis, not a fourth try.*
+
+| run | outcome |
+|---|---|
+| `58549890` | legs B **segfaulted**; my checker tested `rc == 0` so three crashes were reported as **three refusals** |
+| `58552664` | same segfault, now **correctly named** as a crash; script then aborted before B4 |
+| `58562627` | aborted after **13 s**, before the shadow check and before **every** B leg |
+
+**THE CAUSE, MEASURED, AND IT IS THE SAME ONE IN RUNS 2 AND 3.**
+`source setup_salloc_env.sh` **aborts the shell under `set -u`**. Reproduced directly:
+`bash -c "set -u; source …"` prints `BEFORE` and never prints `AFTER`; without `set -u` both print.
+The unbound variable is **`ADDR2LINE`**, in conda's
+`activate-binutils_linux-64.sh:68`. **`|| true` cannot catch it** — the abort happens *inside the
+sourced file, in the same shell*, so there is no command whose status could be tested.
+
+⚠ **AND RUN 3 IS WORSE THAN RUN 2 BECAUSE OF MY FIX.** In run 2 that `source` sat just before B4, so
+B1–B3 at least executed (and crashed). Repairing the segfault required sourcing the environment
+*early*, so I moved the line to the top — **where the same latent abort kills everything instead of
+one leg.** The segfault repair was correct; moving a line that was already fatal made its blast
+radius larger, and nothing in the instrument could see it because the abort is silent.
+
+**The one-line fix is known** — `set +u` around the source, `set -u` after — **and is not being
+applied, because the budget for this stage is spent and the instruction was to stop at a
+diagnosis.** It needs an explicit fourth authorization.
+
+**WHAT IS AND IS NOT ESTABLISHED.** Leg A has passed on the real launcher in **two independent
+runs**: A1 refuses with no adoption record, A2 refuses the §6.4 amendment offered *as* one, printing
+the `declare: ADOPTS-SHA256:` line. **Leg B — the variant guard, the `adoptable:false` refusal, and
+the exception passthrough — has never executed on the real path.** Their unit coverage is green and
+that is not the same thing, which is the whole reason this control exists.
+
 ## 5. Execution order — fixed
 
 **C1–C7 complete → NULL resolved (P0 first, zero-compute; P2 NOT authorized) → SRC_COV identified
