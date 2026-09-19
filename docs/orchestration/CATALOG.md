@@ -50,6 +50,12 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   exactly on all ten. Carries the **per-endpoint sha256 identities**, the extractor's positive AND
   negative controls, and two corrections: **§15.1 is a directory-uniformity census, not a digest
   identity**, and **the 12-playlist hadd coverage is NOT confirmed** by this artifact.
+- [`DERIVATION-20260919-null-epsilon-B-and-S.md`](DERIVATION-20260919-null-epsilon-B-and-S.md)
+  - **`B = 1e-12`, `S = 1e-3` (Joseph's), `ε = 1e-9` inside `[B, S]`.** R2's gate checked FIRST and
+  it passes: `r_null = ‖x_cv2 − x_cv‖ / ‖x_cv‖` is dimensionless by construction. `B` rests on two
+  independent observations agreeing to **0.47%**, and its `n = 2` weakness is **stated, not dressed
+  as a confidence interval** — what carries the argument is **4.4 orders of margin**, so `B ≤ 1e-9`
+  survives a 22,000-fold increase. `ε = 1e-9` is the **pre-existing** proposal, not fitted now.
 - [`INVENTORY-20260919-scientific-acceptance-criteria-from-code.md`](INVENTORY-20260919-scientific-acceptance-criteria-from-code.md)
   - **⚠ `scientific_acceptance` IS NOT COMPUTED — it is the literal `"NON-PASSING"` at
   `z_build.py:608` and `:788`, with no branch producing `"PASS"` anywhere.** `outcome.assessable` is
