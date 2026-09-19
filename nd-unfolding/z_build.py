@@ -710,9 +710,20 @@ def build_z(
                     "sqrt_tr_before": float(np.sqrt(np.trace(blocksum))),
                     "sqrt_tr_after": float(np.sqrt(np.trace(cov))),
                 }
+                # ⚠ WAS `"status": "UNRESOLVED"` FOR ALL SEVEN, UNCONDITIONALLY.
+                # `UNRESOLVED` is a LIVE GRADE TOKEN in the MET / OPEN / UNRESOLVED vocabulary, so
+                # using it as the uninitialised default made a blank indistinguishable from a
+                # verdict BY CONSTRUCTION -- and it read to a reviewer as seven assessed-and-failed
+                # causes. The tell was the uniformity: all seven identical, including causes Joseph
+                # had closed and causes still open; a real assessment would differentiate.
+                # `z_validator.assess` is what would decide these and it has no production caller,
+                # so nothing is computed. The written value now says exactly that.
                 causes = {
                     str(i): {
-                        "status": "UNRESOLVED",
+                        "status": "NOT_COMPUTED",
+                        "status_note": ("no assessor ran: z_validator.assess has no production "
+                                        "caller, so this field is an initial value and NOT a "
+                                        "verdict. It is deliberately not a grade token."),
                         "requirement": REQUIREMENTS[f"cause{i}"],
                     }
                     for i in range(1, 8)

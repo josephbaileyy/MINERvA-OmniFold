@@ -8,7 +8,9 @@ from the 5D _universes_full omnifile (the SAME methodology as pet_systematics.py
 push weights step2_w are held FIXED and only the per-event TRUTH reweight ratios change, re-binning
 each systematic universe -- no per-universe re-inference / no 187-universe sweep).
 
-  C_syst = sum_b outer(y_b - y_cv) [13 +-1sig knob bands] + (1/Nflux) sum_u outer(y_u - y_cv)
+  C_syst = sum_b outer(y_b - y_cv) [12 +-1sig knob bands] + (1/Nflux) sum_u outer(y_u - y_cv)
+  (^ said 13 until 2026-09-18; the list below has TWELVE. Flux is the separate Nflux term,
+   not a thirteenth knob, so the count and the formula now agree.)
   y_*    = project_(eavail,W)[ extract_xsec( bin5D(truth-pass, step2_w * w_truth * rho), comp_* ) ]
   C_stat = diag(marginalized CV unfold Poisson variance)
   C_lat  = transferred 4D detector (lateral) bands, marginalized to E_avail, spread over W by the
@@ -34,7 +36,13 @@ for _p in (f"{_CODE_ROOT}/2d-unfolding", f"{_CODE_ROOT}/nd-unfolding", f"{_CODE_
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-VERT_BANDS = ["2p2h", "CCQEPauliSupViaKF", "FrAbs_pi", "FrElas_N", "HighQ2", "LowQ2",
+# ⚠ RENAMED 2026-09-18. This was `VERT_BANDS`, the SAME NAME `adopt_unified_5d.py:42` uses
+# for a THIRTEEN-entry list that includes `Flux`. One name, two values, in one repository.
+# Both are correct for their own product and neither is a typo: this module handles flux
+# through the SEPARATE `(1/Nflux) sum_u outer(y_u - y_cv)` term over `--nflux 100`
+# universes, so flux must NOT also appear as a knob band here. Renamed rather than
+# reconciled, because reconciling would have meant changing one of two correct lists.
+VERT_KNOB_BANDS = ["2p2h", "CCQEPauliSupViaKF", "FrAbs_pi", "FrElas_N", "HighQ2", "LowQ2",
               "MaCCQE", "MaRES", "MFP_N", "MvRES", "Rvn2pi", "Rvp2pi"]
 # detector (lateral) bands carried in the 4D combined cov -> transferred to (E_avail,W)
 LATERAL_BANDS = ["BeamAngleX", "BeamAngleY", "MuonResolution", "Muon_Energy_MINERvA",
@@ -197,9 +205,9 @@ def main():
 
     flux_t = [f"w_truth_Flux_{u}" for u in range(args.nflux)]
     flux_r = [f"w_reco_Flux_{u}" for u in range(args.nflux)]
-    vt = [f"w_truth_{b}_1" for b in VERT_BANDS]
-    vt0 = [f"w_truth_{b}_0" for b in VERT_BANDS]
-    vr = [f"w_reco_{b}_1" for b in VERT_BANDS]
+    vt = [f"w_truth_{b}_1" for b in VERT_KNOB_BANDS]
+    vt0 = [f"w_truth_{b}_0" for b in VERT_KNOB_BANDS]
+    vr = [f"w_reco_{b}_1" for b in VERT_KNOB_BANDS]
 
     # ---------- bulk-read signal (gate replicates collect_signal_nd) ----------
     sb = ["MC", "MC_pz", "MC_eavail", "MC_q3", "MC_W", "sim", "sim_pz",
@@ -239,8 +247,8 @@ def main():
     pass_truth = tru_ok[k]
     pass_reco = passrec[k]
     # per-band absolute universe weights (truth side, POT-scaled), aligned to kept signal events
-    sig_vt = {b: g(f"w_truth_{b}_1")[k] * pot_scale for b in VERT_BANDS}
-    sig_vt0 = {b: g(f"w_truth_{b}_0")[k] * pot_scale for b in VERT_BANDS}
+    sig_vt = {b: g(f"w_truth_{b}_1")[k] * pot_scale for b in VERT_KNOB_BANDS}
+    sig_vt0 = {b: g(f"w_truth_{b}_0")[k] * pot_scale for b in VERT_KNOB_BANDS}
     sig_ft = [g(c)[k] * pot_scale for c in flux_t]
     print(f"[ew] signal kept={k.sum()} pass_truth={pass_truth.sum()} pass_reco={pass_reco.sum()} "
           f"excluded_nonfinite_truth_support={(~truth_support).sum()}", flush=True)
@@ -260,8 +268,8 @@ def main():
     dk = dkeep
     td_cols = [dpt_[dk], dpz_[dk], dea_[dk], dq3_[dk], dw_[dk]]
     td_w = dwt[dk] * pot_scale
-    td_vt = {b: gd(f"w_truth_{b}_1")[dk] * pot_scale for b in VERT_BANDS}
-    td_vt0 = {b: gd(f"w_truth_{b}_0")[dk] * pot_scale for b in VERT_BANDS}
+    td_vt = {b: gd(f"w_truth_{b}_1")[dk] * pot_scale for b in VERT_KNOB_BANDS}
+    td_vt0 = {b: gd(f"w_truth_{b}_0")[dk] * pot_scale for b in VERT_KNOB_BANDS}
     td_ft = [gd(c)[dk] * pot_scale for c in flux_t]
     print(f"[ew] truth_denom kept={dk.sum()}", flush=True)
 
@@ -357,7 +365,7 @@ def main():
         return xsec_ew(rho_s, rho_d, flux=flux)[0].ravel()
 
     C_syst = np.zeros((n, n))
-    for b in VERT_BANDS:
+    for b in VERT_KNOB_BANDS:
         y_plus = _y_band(sig_vt[b], td_vt[b])      # +1 sigma
         y_minus = _y_band(sig_vt0[b], td_vt0[b])   # -1 sigma
         cb = mat_covariance(np.stack([y_minus, y_plus]))
