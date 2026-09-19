@@ -40,7 +40,13 @@ ADD_INFO_COLUMNS: tuple[str, ...] = ("dEdx", "x", "y", "z", "t")
 # "2=blob, 3=prong(3), 4=prong(8), 5=prong(13), 6=agg_blob, 7=agg_prong".
 # Muon and photon occupy the remaining low codes; the aggregate codes exist
 # because overflow beyond the cap is MERGED into one token rather than dropped.
+# RESOLVED 2026-09-20 from `preprocessing.py:423` verbatim: "muon = 0,
+# photon = 1, blob = 2 (no PID), prong PIDs: 3=3, 8=4, 13=5, aggregated_blob = 6,
+# aggregated_prong = 7". The first two were missing from the earlier reading,
+# which had only the codes the energy-sum comment happened to list.
 PID_CODES: dict[str, int] = {
+    "muon": 0,
+    "photon": 1,
     "blob": 2,
     "prong_3": 3,
     "prong_8": 4,
@@ -90,10 +96,46 @@ OVERFLOW_POLICY = (
     "different model, and the aggregate PIDs are the tell that his does not."
 )
 
+# RESOLVED: `preprocessing.py:546` concatenates in a fixed order.
+CATEGORY_ORDER: tuple[str, ...] = ("muon", "photon", "blob", "prong")
+
+# And the cap has TWO paths, which is the part that would have been easy to get
+# wrong. With `max_objects` alone he sorts by ENERGY DESCENDING --
+# `event_features[:, 3].argsort()[::-1]` -- and keeps the top N, so the cap drops
+# the softest objects rather than the last-listed ones. With `max_blobs` and
+# `max_prongs` set he takes the aggregate path instead, and asserts
+# `n <= max_prongs + max_blobs + 2 + 1`: two photons and one muon always have
+# reserved slots.
+CAP_PATHS = {
+    "max_objects_only": ("sort by log-energy DESCENDING and keep the top N; the "
+                         "softest objects are dropped, not the last-listed"),
+    "max_blobs_and_max_prongs": ("aggregate the surplus into PID 6 and 7; the "
+                                 "budget is max_blobs + max_prongs + 2 photons "
+                                 "+ 1 muon"),
+}
+
+# BLOBS HAVE NO MOMENTUM, so he builds one: the blob position is normalised to a
+# unit vector from the origin and scaled by the blob energy -- `preprocessing.py`
+# comments it as "assume a massless particle originating from the origin", with a
+# guard against a zero-length position. An extraction that put the blob's
+# coordinates straight into the momentum slots would be a different model, and
+# the difference would be invisible in any shape check.
+BLOB_FOUR_MOMENTUM = (
+    "unit(blob_xyz) * blob_total_E in slots 0..2, blob_total_E in slot 3; "
+    "positions with |xyz| <= 1e-6 are guarded against division by zero"
+)
+
+# Prong dense-matrix layout implied by `prong_keys`: pos 0:4, E 4:8, score 8,
+# mass 9, charge 10, pid 11, dEdX 12 -- and his code reads the four-momentum as
+# `prongs.data[:, 4:8]` and the PID as `prongs.data[:, -2]`, which agrees.
+PRONG_DENSE_LAYOUT = {"pos": (0, 4), "four_momentum": (4, 8), "score": 8,
+                      "mass": 9, "charge": 10, "pid": 11, "dEdX": 12}
+
 UNRESOLVED = (
-    "the exact ordering of categories within an event, and whether the muon token "
-    "is always present, are not yet read out of his code. They matter because the "
-    "cap acts on the ORDER, so what is aggregated depends on it.",
+    "the max_blobs / max_prongs split that sums to the 33-token cap. His assertion "
+    "fixes the budget as max_blobs + max_prongs + 3, so 33 admits several splits "
+    "and they are not equivalent: the split decides WHICH surplus gets aggregated. "
+    "It has to be read from the paper's own run configuration, not chosen by us.",
 )
 
 

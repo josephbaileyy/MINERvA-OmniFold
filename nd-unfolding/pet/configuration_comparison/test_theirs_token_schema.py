@@ -44,4 +44,24 @@ class Widths(unittest.TestCase):
 
     def test_what_is_not_yet_known_is_recorded(self):
         self.assertTrue(ts.UNRESOLVED)
-        self.assertIn("ORDER", " ".join(ts.UNRESOLVED))
+        self.assertIn("max_blobs", " ".join(ts.UNRESOLVED))
+
+    def test_the_category_order_is_his(self):
+        self.assertEqual(ts.CATEGORY_ORDER, ("muon", "photon", "blob", "prong"))
+
+    def test_muon_and_photon_codes_are_present(self):
+        """The earlier reading had only the codes the energy-sum comment listed."""
+        self.assertEqual(ts.PID_CODES["muon"], 0)
+        self.assertEqual(ts.PID_CODES["photon"], 1)
+
+    def test_the_energy_sort_drops_the_softest_not_the_last(self):
+        self.assertIn("DESCENDING", ts.CAP_PATHS["max_objects_only"])
+        self.assertIn("softest", ts.CAP_PATHS["max_objects_only"])
+
+    def test_the_blob_momentum_is_constructed_not_copied(self):
+        self.assertIn("unit(blob_xyz)", ts.BLOB_FOUR_MOMENTUM)
+        self.assertIn("1e-6", ts.BLOB_FOUR_MOMENTUM)
+
+    def test_the_prong_layout_matches_his_indexing(self):
+        self.assertEqual(ts.PRONG_DENSE_LAYOUT["four_momentum"], (4, 8))
+        self.assertEqual(ts.PRONG_DENSE_LAYOUT["pid"], 11)
