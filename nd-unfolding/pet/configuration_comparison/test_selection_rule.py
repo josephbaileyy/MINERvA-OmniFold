@@ -88,27 +88,35 @@ class Totality(unittest.TestCase):
                    delta=0.0, delta_switch=0.02)
 
 
-class Adequacy(unittest.TestCase):
-    def test_neither_adequate_is_no_selection_however_good_the_interval(self):
+class Eligibility(unittest.TestCase):
+    """Adequacy and the regional floors are asked of EACH arm, and combined."""
+
+    def test_neither_eligible_is_no_selection_however_good_the_interval(self):
         outcome = call(False, False, 0.5, 0.6)
-        self.assertEqual(outcome.verdict, Verdict.NEITHER_ADEQUATE)
+        self.assertEqual(outcome.verdict, Verdict.NEITHER_ELIGIBLE)
         self.assertEqual(outcome.recommendation, Recommendation.NO_SELECTION)
 
-    def test_only_ours_adequate_adopts_ours_but_not_on_the_comparison(self):
+    def test_only_ours_eligible_adopts_ours_but_not_on_the_comparison(self):
         """Even when the interval favours his arm strongly."""
         outcome = call(True, False, -0.5, -0.4)
-        self.assertEqual(outcome.verdict, Verdict.ONLY_OURS_ADEQUATE)
+        self.assertEqual(outcome.verdict, Verdict.ONLY_OURS_ELIGIBLE)
         self.assertEqual(outcome.recommendation, Recommendation.ADOPT_OURS)
         self.assertEqual(outcome.measured["favours"], "theirs")
-        self.assertIn("NOT by the comparison", " ".join(outcome.notes))
+        self.assertIn("not by the comparison", " ".join(outcome.notes))
 
-    def test_only_theirs_adequate_adopts_theirs_even_if_ours_scored_higher(self):
-        """Switching costs protect an adequate incumbent, not an inadequate one."""
+    def test_only_theirs_eligible_adopts_theirs_even_if_ours_scored_higher(self):
+        """Switching costs protect an eligible incumbent, not an ineligible one."""
         outcome = call(False, True, 0.4, 0.5)
-        self.assertEqual(outcome.verdict, Verdict.ONLY_THEIRS_ADEQUATE)
+        self.assertEqual(outcome.verdict, Verdict.ONLY_THEIRS_ELIGIBLE)
         self.assertEqual(outcome.recommendation, Recommendation.ADOPT_THEIRS)
         self.assertEqual(outcome.measured["favours"], "ours")
         self.assertIsNone(outcome.preference)
+
+    def test_the_reason_for_ineligibility_is_recorded_not_just_the_fact(self):
+        """"Failed adequacy" and "failed a region" are different findings."""
+        outcome = call(True, False, 0.0, 0.01)
+        self.assertEqual(outcome.eligibility["theirs"]["failed"], ["absolute adequacy"])
+        self.assertTrue(outcome.eligibility["ours"]["eligible"])
 
 
 class BothAdequate(unittest.TestCase):
@@ -316,30 +324,72 @@ class RegionalSafeguard(unittest.TestCase):
              "theirs": dict(self.PASSING if theirs is None else theirs)},
             floor=floor, scoreable_regions=self.SCOREABLE)
 
-    def test_both_passing_does_not_block(self):
+    def test_both_passing_leaves_the_comparison_to_decide(self):
         gate = self._gate()
         self.assertTrue(gate["arms"]["ours"]["eligible"])
         self.assertTrue(gate["arms"]["theirs"]["eligible"])
         outcome = sr.decide(ours_adequate=True, theirs_adequate=True, ci_low=0.01,
                             ci_high=0.05, delta=0.017, delta_switch=0.02, regional=gate)
-        self.assertNotEqual(outcome.verdict, sr.Verdict.REGIONAL_SAFEGUARD_FAILED)
+        self.assertNotIn(outcome.verdict, (sr.Verdict.NEITHER_ELIGIBLE,
+                                           sr.Verdict.ONLY_OURS_ELIGIBLE,
+                                           sr.Verdict.ONLY_THEIRS_ELIGIBLE))
 
-    def test_a_regional_failure_blocks_even_a_superior_arm(self):
-        """The point of the safeguard: winning the aggregate does not license it."""
+    def test_a_regional_failure_makes_THAT_ARM_ineligible_even_if_superior(self):
+        """Winning the aggregate does not license an arm that fails a region."""
         failing = {**self.PASSING, "poor": 0.10}
         outcome = sr.decide(ours_adequate=True, theirs_adequate=True, ci_low=0.20,
                             ci_high=0.30, delta=0.017, delta_switch=0.02,
                             regional=self._gate(ours=failing))
-        self.assertEqual(outcome.verdict, sr.Verdict.REGIONAL_SAFEGUARD_FAILED)
-        self.assertEqual(outcome.recommendation, sr.Recommendation.NO_SELECTION)
+        self.assertEqual(outcome.verdict, sr.Verdict.ONLY_THEIRS_ELIGIBLE)
+        self.assertEqual(outcome.recommendation, sr.Recommendation.ADOPT_THEIRS)
+        self.assertEqual(outcome.measured["favours"], "ours")
+        self.assertEqual(outcome.eligibility["ours"]["regions_below_floor"], ["poor"])
 
-    def test_one_arm_failing_does_not_select_the_other(self):
-        """Their failure is not our evidence; the consequence is NO_SELECTION."""
+    def test_one_arm_failing_does_not_disqualify_the_other(self):
+        """Joseph, 2026-09-20, overturning this test's previous assertion.
+
+        It used to require NO_SELECTION whenever either arm failed a region. That
+        let one arm's regional failure veto the other, which is not a property of
+        the other arm. The other arm still has to pass the same floors on its own
+        -- which is what asking each arm separately gives -- but once it has,
+        their failure is not a reason to withhold it.
+        """
         outcome = sr.decide(ours_adequate=True, theirs_adequate=True, ci_low=-0.30,
                             ci_high=-0.20, delta=0.017, delta_switch=0.02,
                             regional=self._gate(theirs={**self.PASSING, "poor": 0.05}))
+        self.assertEqual(outcome.verdict, sr.Verdict.ONLY_OURS_ELIGIBLE)
+        self.assertEqual(outcome.recommendation, sr.Recommendation.ADOPT_OURS)
+        self.assertIn("theirs is INELIGIBLE", " ".join(outcome.notes))
+        # And the measured difference still favours THEIRS; it is reported, not hidden.
+        self.assertEqual(outcome.measured["favours"], "theirs")
+
+    def test_both_failing_a_region_recommends_neither(self):
+        outcome = sr.decide(ours_adequate=True, theirs_adequate=True, ci_low=0.0,
+                            ci_high=0.01, delta=0.017, delta_switch=0.02,
+                            regional=self._gate(ours={**self.PASSING, "poor": 0.05},
+                                                theirs={**self.PASSING, "good": 0.05}))
+        self.assertEqual(outcome.verdict, sr.Verdict.NEITHER_ELIGIBLE)
         self.assertEqual(outcome.recommendation, sr.Recommendation.NO_SELECTION)
-        self.assertIn("theirs FAILED", outcome.notes)
+
+    def test_the_floor_may_be_per_region_because_references_differ(self):
+        """0.60 x the APPLICABLE regional reference, not 0.60 x one global number."""
+        gate = sr.regional_safeguard(
+            {"ours": {"poor": 0.30, "moderate": 0.70, "good": 0.81},
+             "theirs": dict(self.PASSING)},
+            floor={"poor": 0.20, "moderate": 0.60, "good": 0.75},
+            scoreable_regions=self.SCOREABLE)
+        self.assertTrue(gate["arms"]["ours"]["eligible"])
+        self.assertTrue(gate["floor_is_per_region"])
+        self.assertEqual(gate["floor_by_region"]["poor"], 0.20)
+        # Under the global floor that same arm would have failed `poor`.
+        self.assertFalse(self._gate(ours={"poor": 0.30, "moderate": 0.70,
+                                          "good": 0.81})["arms"]["ours"]["eligible"])
+
+    def test_a_scoreable_region_with_no_floor_is_an_error_not_a_pass(self):
+        with self.assertRaises(ValueError):
+            sr.regional_safeguard({"ours": dict(self.PASSING),
+                                   "theirs": dict(self.PASSING)},
+                                  floor={"poor": 0.5}, scoreable_regions=self.SCOREABLE)
 
     def test_an_unreported_region_counts_as_failed(self):
         gate = self._gate(ours={"poor": 0.62, "good": 0.81})
@@ -360,8 +410,8 @@ class RegionalSafeguard(unittest.TestCase):
     def test_a_region_outside_the_scoreable_set_cannot_block(self):
         """Exempt regions are reported, not enforced; the exemption is auditable."""
         gate = sr.regional_safeguard(
-            {"ours": {**self.PASSING, "unresolvable": 0.0},
-             "theirs": {**self.PASSING, "unresolvable": 0.0}},
+            {"ours": {**self.PASSING, "low_acceptance": 0.0},
+             "theirs": {**self.PASSING, "low_acceptance": 0.0}},
             floor=0.5, scoreable_regions=self.SCOREABLE)
         self.assertTrue(gate["arms"]["ours"]["eligible"])
 

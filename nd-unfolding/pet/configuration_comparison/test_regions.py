@@ -28,7 +28,7 @@ class Census(unittest.TestCase):
     def test_a_region_without_signal_is_exempt_and_its_mass_is_reported(self):
         acceptance, mass, displacement = self._cells()
         census = cr.region_census(acceptance, mass, displacement)
-        unresolvable = next(r for r in census["regions"] if r["region"] == "unresolvable")
+        unresolvable = next(r for r in census["regions"] if r["region"] == "low_acceptance")
         self.assertFalse(unresolvable["scoreable"])
         self.assertIsNotNone(unresolvable["exempt_reason"])
         # 40 % of the truth mass is exempt, and the census says so out loud.
@@ -46,9 +46,9 @@ class Census(unittest.TestCase):
         displacement = np.array([0.5, 0.5])
         census = cr.region_census(acceptance, mass, displacement)
         occupied = [r["region"] for r in census["regions"] if r["cells"]]
-        self.assertEqual(occupied, ["unresolvable", "good"])
+        self.assertEqual(occupied, ["low_acceptance", "good"])
         # The mean acceptance is 0.447, which would sit in "moderate" and report
-        # nothing wrong; the cells put half the mass in "unresolvable".
+        # nothing wrong; the cells put half the mass in "low_acceptance".
         self.assertAlmostEqual(float(acceptance.mean()), 0.447)
 
     def test_mismatched_cell_arrays_are_refused(self):

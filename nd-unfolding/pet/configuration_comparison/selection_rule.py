@@ -50,16 +50,20 @@ from typing import Any, Mapping, Sequence
 class Verdict(str, Enum):
     """The closed set of verdicts. Nothing outside this set can be returned."""
 
-    NEITHER_ADEQUATE = "NEITHER_ADEQUATE"
-    ONLY_OURS_ADEQUATE = "ONLY_OURS_ADEQUATE"
-    ONLY_THEIRS_ADEQUATE = "ONLY_THEIRS_ADEQUATE"
+    # Eligibility, not adequacy. An arm is ELIGIBLE when it passes absolute
+    # adequacy AND every scoreable region's floor. Both are asked of each arm
+    # ALONE, so one arm's failure never removes the other's eligibility --
+    # Joseph, 2026-09-20: "If exactly one passes, the other arm's failure does
+    # not disqualify it."
+    NEITHER_ELIGIBLE = "NEITHER_ELIGIBLE"
+    ONLY_OURS_ELIGIBLE = "ONLY_OURS_ELIGIBLE"
+    ONLY_THEIRS_ELIGIBLE = "ONLY_THEIRS_ELIGIBLE"
     OURS_SUPERIOR = "OURS_SUPERIOR"
     OURS_NON_INFERIOR = "OURS_NON_INFERIOR"
     THEIRS_SUPERIOR = "THEIRS_SUPERIOR"
     THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD = "THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD"
     THEIRS_BETTER_MAGNITUDE_UNRESOLVED = "THEIRS_BETTER_MAGNITUDE_UNRESOLVED"
     INCONCLUSIVE = "INCONCLUSIVE"
-    REGIONAL_SAFEGUARD_FAILED = "REGIONAL_SAFEGUARD_FAILED"
 
 
 class Recommendation(str, Enum):
@@ -80,6 +84,11 @@ class Outcome:
     preference: str | None = None
     preference_is_ratified: bool = False
     notes: tuple[str, ...] = field(default_factory=tuple)
+    # Per arm: which safeguards it passed and why it is or is not eligible. Kept
+    # structured rather than only in prose, because "ineligible on adequacy" and
+    # "ineligible on a region" are different findings and a report must not blur
+    # them into "failed".
+    eligibility: dict[str, Any] = field(default_factory=dict)
 
     @property
     def decided_by_measurement(self) -> bool:
@@ -109,7 +118,7 @@ def _measured(ci_low: float, ci_high: float) -> dict[str, Any]:
 
 def regional_safeguard(
     regional_recovery: Mapping[str, Mapping[str, float]],
-    floor: float,
+    floor: float | Mapping[str, float],
     scoreable_regions: Sequence[str],
 ) -> dict[str, Any]:
     """Can either arm be recommended at all, given per-REGION recovery?
@@ -124,6 +133,13 @@ def regional_safeguard(
     `regional_recovery` maps arm -> region -> recovery. Missing a scoreable region
     is a failure, not an exemption: an arm that did not report a region cannot be
     shown to have passed it.
+
+    ``floor`` is either one number or a per-region mapping. The ratified policy is
+    **0.60 x the APPLICABLE REGIONAL reference**, and a region's reference is its
+    own -- a low-acceptance cell's k=3 reference is not the global one, so a single
+    scalar would hold different regions to incomparable standards. A mapping must
+    cover every scoreable region; a region with no floor cannot be judged and that
+    is an error rather than a pass.
     """
     scoreable = list(scoreable_regions)
     if not scoreable:
@@ -131,11 +147,23 @@ def regional_safeguard(
             "no scoreable region: the injection puts no measurable displacement "
             "anywhere, so the endpoint cannot support a recommendation"
         )
+    if isinstance(floor, Mapping):
+        absent = sorted(set(scoreable) - set(floor))
+        if absent:
+            raise ValueError(
+                f"no floor supplied for scoreable regions {absent}; a region "
+                "without a floor cannot be judged, and defaulting one would "
+                "invent the standard it is judged against"
+            )
+        floors = {region: float(floor[region]) for region in scoreable}
+    else:
+        floors = {region: float(floor) for region in scoreable}
     eligibility: dict[str, Any] = {}
     for arm in ("ours", "theirs"):
         reported = dict(regional_recovery.get(arm, {}))
         missing = [r for r in scoreable if r not in reported]
-        failed = [r for r in scoreable if r in reported and reported[r] < floor]
+        failed = [r for r in scoreable
+                  if r in reported and reported[r] < floors[r]]
         eligibility[arm] = {
             "eligible": not missing and not failed,
             "regions_below_floor": failed,
@@ -143,7 +171,9 @@ def regional_safeguard(
             "recovery_by_region": reported,
         }
     return {
-        "floor": floor,
+        "floor": floor if not isinstance(floor, Mapping) else dict(floor),
+        "floor_by_region": floors,
+        "floor_is_per_region": isinstance(floor, Mapping),
         "scoreable_regions": scoreable,
         "arms": eligibility,
         "both_ineligible": not (eligibility["ours"]["eligible"]
@@ -190,74 +220,94 @@ def decide(
 
     measured = _measured(ci_low, ci_high)
 
-    # The regional safeguard runs FIRST and can only ever remove eligibility. Its
-    # consequence on failure is NO_SELECTION, never "recommend the other arm": one
-    # arm failing a region does not establish that the other passed it, and both
-    # are checked against the same floor.
-    if regional is not None:
-        ours_eligible = regional["arms"]["ours"]["eligible"]
-        theirs_eligible = regional["arms"]["theirs"]["eligible"]
-        if not (ours_eligible and theirs_eligible):
-            return Outcome(
-                Verdict.REGIONAL_SAFEGUARD_FAILED,
-                Recommendation.NO_SELECTION,
-                measured,
-                preference=None,
-                notes=(
-                    "the regional safeguard blocks a recommendation: "
-                    f"ours {'passed' if ours_eligible else 'FAILED'} "
-                    f"{regional['arms']['ours']['regions_below_floor'] or ''}, "
-                    f"theirs {'passed' if theirs_eligible else 'FAILED'} "
-                    f"{regional['arms']['theirs']['regions_below_floor'] or ''}. "
-                    "Regions are defined on the (pT, p-parallel) reporting cells, so "
-                    "a failure here is one the aggregate E_avail score cannot see. "
-                    "Failing one arm does not license the other: the consequence is "
-                    "NO_SELECTION and a report of which regions failed for whom."
-                ),
-            )
+    # ELIGIBILITY, per arm. Adequacy and the regional floors are both asked of
+    # each arm ALONE and combined into one eligibility flag, because they answer
+    # the same prior question: is this configuration recommendable at all?
+    #
+    # This replaces an earlier rule that returned NO_SELECTION whenever EITHER arm
+    # failed a region. That was wrong, and wrong in a specific way: it let one
+    # arm's regional failure veto the other arm, which is not a property of the
+    # other arm. One arm failing a region still does not LICENSE the other -- the
+    # other has to pass the same floors on its own -- and that is what asking each
+    # arm separately gives.
+    def _reasons(arm: str, adequate: bool) -> dict[str, Any]:
+        regions_below = (list(regional["arms"][arm]["regions_below_floor"])
+                         if regional is not None else [])
+        regional_ok = (bool(regional["arms"][arm]["eligible"])
+                       if regional is not None else True)
+        failed = []
+        if not adequate:
+            failed.append("absolute adequacy")
+        if not regional_ok:
+            failed.append("regional adequacy")
+        return {
+            "adequate": bool(adequate),
+            "regional_ok": regional_ok,
+            "regions_below_floor": regions_below,
+            "eligible": bool(adequate and regional_ok),
+            "failed": failed,
+        }
 
-    # Adequacy is asked of each arm alone and dominates the comparison. An inadequate
-    # configuration is not made recommendable by scoring well against another one.
-    if not ours_adequate and not theirs_adequate:
+    eligibility = {"ours": _reasons("ours", ours_adequate),
+                   "theirs": _reasons("theirs", theirs_adequate)}
+    ours_eligible = eligibility["ours"]["eligible"]
+    theirs_eligible = eligibility["theirs"]["eligible"]
+
+    def _why(arm: str) -> str:
+        entry = eligibility[arm]
+        if entry["eligible"]:
+            return f"{arm} passed adequacy and every scoreable region"
+        detail = " and ".join(entry["failed"])
+        regions = entry["regions_below_floor"]
+        return (f"{arm} is INELIGIBLE on {detail}"
+                + (f" (regions below floor: {sorted(regions)})" if regions else ""))
+
+    if not ours_eligible and not theirs_eligible:
         return Outcome(
-            Verdict.NEITHER_ADEQUATE,
+            Verdict.NEITHER_ELIGIBLE,
             Recommendation.NO_SELECTION,
             measured,
+            eligibility=eligibility,
             notes=(
-                "Both arms failed absolute adequacy. The comparison is not reported as a "
-                "selection: a difference between two unusable configurations is not a "
-                "reason to adopt either.",
+                "Neither arm is recommendable. " + _why("ours") + "; " + _why("theirs")
+                + ". A difference between two configurations that both fail their "
+                "own safeguards is not a reason to adopt either.",
             ),
         )
-    if ours_adequate and not theirs_adequate:
+    if ours_eligible and not theirs_eligible:
         return Outcome(
-            Verdict.ONLY_OURS_ADEQUATE,
+            Verdict.ONLY_OURS_ELIGIBLE,
             Recommendation.ADOPT_OURS,
             measured,
+            eligibility=eligibility,
             notes=(
-                "Licensed by adequacy, NOT by the comparison. Report the measured "
-                "difference alongside, and state that his arm was excluded on adequacy "
-                "rather than outscored.",
+                "Licensed by ELIGIBILITY, not by the comparison. " + _why("theirs")
+                + ". Report the measured difference alongside and state plainly that "
+                "his arm was excluded on its own safeguards rather than outscored; "
+                "the paired contest did not decide this.",
             ),
         )
-    if theirs_adequate and not ours_adequate:
+    if theirs_eligible and not ours_eligible:
         return Outcome(
-            Verdict.ONLY_THEIRS_ADEQUATE,
+            Verdict.ONLY_THEIRS_ELIGIBLE,
             Recommendation.ADOPT_THEIRS,
             measured,
+            eligibility=eligibility,
             notes=(
-                "Our arm failed absolute adequacy, so his is the only recommendable "
-                "configuration EVEN IF ours scored higher. Switching costs do not apply: "
-                "they are a reason to keep an adequate incumbent, not an inadequate one.",
+                "His is the only recommendable configuration EVEN IF ours scored "
+                "higher. " + _why("ours") + ". Switching costs do not apply: they "
+                "are a reason to keep an adequate incumbent, not an ineligible one.",
             ),
         )
 
-    # Both adequate. Partition the interval against -delta_switch < -delta < 0 < delta_switch.
+    # Both ELIGIBLE. Partition the interval against
+    # -delta_switch < -delta < 0 < delta_switch.
     if ci_low > delta_switch:
         return Outcome(
             Verdict.OURS_SUPERIOR,
             Recommendation.ADOPT_OURS,
             measured,
+            eligibility=eligibility,
             notes=("Ours is better by more than the switching threshold.",),
         )
     if ci_low > -delta:
@@ -265,6 +315,7 @@ def decide(
             Verdict.OURS_NON_INFERIOR,
             Recommendation.ADOPT_OURS,
             measured,
+            eligibility=eligibility,
             notes=(
                 "Ours is not materially worse: the interval excludes a deficit of delta "
                 "or more. If the measured difference favours his arm by less than delta, "
@@ -276,6 +327,7 @@ def decide(
             Verdict.THEIRS_SUPERIOR,
             Recommendation.ADOPT_THEIRS,
             measured,
+            eligibility=eligibility,
             notes=("His is better by more than the switching threshold. Adopt his.",),
         )
     if ci_high < 0.0 and ci_low <= -delta_switch:
@@ -286,6 +338,7 @@ def decide(
             Verdict.THEIRS_BETTER_MAGNITUDE_UNRESOLVED,
             Recommendation.NO_SELECTION,
             measured,
+            eligibility=eligibility,
             preference=None,
             notes=(
                 "HIS ARM MEASURABLY WON -- the interval lies entirely below zero. But it "
@@ -303,6 +356,7 @@ def decide(
             Verdict.THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD,
             Recommendation.ADOPT_OURS,
             measured,
+            eligibility=eligibility,
             preference="RETAIN_INCUMBENT_BELOW_SWITCHING_THRESHOLD",
             preference_is_ratified=False,
             notes=(

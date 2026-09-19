@@ -43,8 +43,19 @@ TILT_AMPLITUDE = 0.35
 TILT_CLIP_Z = 3.0
 EXPECTED_NPZ_SHA256 = "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
 
+# Region names are DESCRIPTIONS OF ACCEPTANCE, not predictions about what can be
+# recovered there. The lowest band was called "unresolvable", which asserted an
+# impossibility the census cannot establish: acceptance is a property of the
+# detector and the k=3 reference is a property of one iteration count, and neither
+# is a bound on what an estimator can achieve. Joseph, 2026-09-20: "The acceptance
+# reference is not an impossibility bound; do not call low-acceptance regions
+# fundamentally unresolvable."
+#
+# These events are RETAINED in the analysis. The band exists so their mass,
+# displacement and per-arm results can be reported separately, not so they can be
+# set aside.
 SAFEGUARD_REGIONS = (
-    ("unresolvable", 0.0, 0.05),
+    ("low_acceptance", 0.0, 0.05),
     ("poor", 0.05, 0.25),
     ("moderate", 0.25, 0.50),
     ("good", 0.50, 1.0000001),

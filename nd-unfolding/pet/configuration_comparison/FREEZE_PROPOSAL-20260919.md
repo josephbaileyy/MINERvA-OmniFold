@@ -18,7 +18,7 @@ scatter are calculated or measured and are not on this list.
 | F3 | **candidates** | any change to F2 is a declared candidate with a parent and a rationale; it never silently becomes "ours" | `configuration_identity.declare_candidate` |
 | F4 | **injection** | truth `E_avail`, clipped exponential tilt, amplitude **0.35**, clip **3.0** | `CANDIDATE_ENDPOINT_CHOICES-20260918.json`, committed before measurement. **You have supported this.** |
 | F5 | **primary score** | 1-D `E_avail`, edges `[0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100]` GeV | same file; the axis predates the endpoint |
-| F6 | **regional safeguard** | regions on the **(pT, p‖) reporting cells** by cell acceptance; every scoreable region must clear its floor; failure ⇒ `NO_SELECTION` | `selection_rule.regional_safeguard`, `characterize_eavail_endpoint._region_census` |
+| F6 | **regional safeguard** | regions on the **(pT, p‖) reporting cells** by cell acceptance; every scoreable region must clear **0.60 × its own reference**; an arm failing one is **ineligible**, and eligibility is asked of each arm alone | `selection_rule.regional_safeguard`, `characterize_regions.py` |
 | F7 | **fairness axis** | equal **example presentations** per fit; `max_steps` and warmup derived from it per arm | `training_recipe.derive_schedule` |
 | F8 | **decision rule** | the eight verdicts plus the regional gate, measured performance separated from preference | `selection_rule.py`, 39 tests |
 | F9 | **inference** | paired differences, t with n−1 df, `n` solved iteratively, sized on the **upper one-sided 80 % bound** on σ | proposal §7.4 |
@@ -29,7 +29,7 @@ Measured on the 285 `(pT, p‖)` reporting cells (`receipts/REGION_CENSUS-202609
 
 | region | cells | truth mass | injected displacement | acceptance (mean, range) | reference at k=3 |
 |---|---:|---:|---:|---|---:|
-| unresolvable | 67 | **31.0 %** | **26.6 %** | 0.006 (0.000–0.047) | **0.014** |
+| low acceptance | 67 | **31.0 %** | **26.6 %** | 0.006 (0.000–0.047) | **0.014** |
 | poor | 10 | 6.8 % | 1.2 % | 0.148 (0.052–0.220) | 0.367 |
 | moderate | 23 | 13.9 % | 8.9 % | 0.386 (0.259–0.490) | 0.777 |
 | good | 185 | 48.3 % | 63.4 % | 0.795 (0.506–0.919) | 0.976 |
@@ -39,27 +39,29 @@ cells the detector barely accepts.** The seven-bin `E_avail` marginal reported *
 bin* below 0.05 acceptance. This is precisely the failure marginalisation hides,
 and it is why you asked for regions defined on the cells.
 
-**It also limits what the safeguard can do, and I would rather say so than let a
-green gate imply otherwise.** The `unresolvable` region's own reference at k=3 is
-**0.014** — the model says 1.4 % of the displacement there is reachable in three
-iterations. A floor set as a fraction of that is nearly vacuous: an arm can clear
-it while recovering essentially nothing in a region holding 31 % of the
-measurement.
+**Corrected 2026-09-20 on your instruction.** The band was named `unresolvable` and
+described as a limit on what any arm could achieve there. That asserted an
+impossibility this census cannot establish: acceptance is a property of the
+detector, the 0.014 figure is a property of the k=3 **reference model**, and
+neither is a bound on what an estimator can recover. The band is now
+`low_acceptance`, which is what was actually measured, and the earlier
+`G-unresolvable` gate is withdrawn.
 
-So I am adding a **fourth gate**, and it is a property of the endpoint rather than
-of either arm:
+**These events stay in the analysis.** They are not down-weighted, excluded, or
+exempted from the comparison. What changes is that their mass, their injected
+displacement and **each arm's result within them** are reported separately, so a
+reader can see what the aggregate is averaging over:
 
-> **G-unresolvable.** If the truth mass in cells whose k=3 reference is below 0.05
-> exceeds a stated fraction, the endpoint cannot support a configuration
-> recommendation, whatever the arms score. **Measured today: 31.0 %.**
+> **R-low.** Every quotation of the result states the truth mass (31.0 %) and
+> injected displacement (26.6 %) carried by cells with acceptance below 0.05, and
+> reports each arm's recovery there beside its aggregate. A recommendation that
+> cannot be supported in that band says so explicitly; it does not pass silently
+> on the strength of the other 73 %.
 
-I have not set that fraction, because it is the same kind of scientific judgement
-as δ and it is yours. The three honest responses to 31 % are: accept that the
-comparison speaks for the ~73 % of displacement in regions where recovery is
-possible **and say so in the conclusion**; raise `k` so more of the mass becomes
-reachable; or choose a different injection. **My recommendation is the first**,
-with the figure reported in every quotation of the result — it costs nothing, it
-is truthful, and the alternatives change the endpoint you have just supported.
+The regional floor still applies there, at **0.60 × that region's own reference**
+rather than 0.60 × a global one — which is what "the applicable regional
+reference" means and what makes the floor comparable across bands with very
+different references.
 
 ## 2. The one thing to ratify: the threshold policy
 
@@ -73,8 +75,8 @@ itself leaves **3.92 %** misplaced.
 | adequacy `f` | **0.80** of the reference ⇒ recovery ≥ **0.5705** | **5.87 %** of truth mass misplaced — 1.95 points worse than the reference |
 | non-inferiority `δ` | **0.02** of recovery | **0.27 %** additional misplaced mass |
 | switching `δ_switch` | **0.04** of recovery | **0.55 %** additional misplaced mass |
-| regional floor | **0.60** of each region's own reference | looser than the global floor, deliberately |
-| unresolvable-mass gate | **report, do not block** | 31.0 % of truth mass is in cells with reference < 0.05; see §1.1 |
+| regional floor | **0.60 × each region's OWN reference** | looser than the global floor, deliberately, and per-region rather than global because a low-acceptance cell's reference is not the global one |
+| low-acceptance reporting (**R-low**) | **report separately, never exclude** | 31.0 % of truth mass and 26.6 % of displacement sit in cells with acceptance < 0.05; each arm's recovery there is quoted beside its aggregate. See §1.1 |
 
 **Why these, and what you are trading.**
 
@@ -107,9 +109,21 @@ itself leaves **3.92 %** misplaced.
   looser regional floor is a weaker safeguard; the exempt-mass figure in the
   census is the audit that it has not been loosened into uselessness.
 
-**Consequence of a regional failure, stated explicitly:** `NO_SELECTION`. Not
-"recommend the other arm". One arm failing a region does not establish that the
-other passed it, and the report names which regions failed for whom.
+**Consequence of a regional failure, stated explicitly and CORRECTED 2026-09-20.**
+A failing arm is **ineligible**; the safeguard is applied to each arm on its own.
+
+* both eligible ⇒ the paired comparison decides;
+* exactly one eligible ⇒ **that arm is recommended**, and the report states that it
+  was licensed by eligibility rather than by the contest, naming which safeguard
+  the other arm failed;
+* neither eligible ⇒ `NO_SELECTION`.
+
+The previous rule returned `NO_SELECTION` whenever *either* arm failed. That let
+one arm's regional failure veto the other, which is not a property of the other
+arm. One arm failing still does not *license* the other — the other must clear the
+same floors itself — but once it has, their failure is not a reason to withhold it.
+`test_selection_rule.py` carries the overturned assertion's replacement and says
+what it used to require.
 
 ## 2.1 The execution path: now costed, and one more thing to ratify
 
