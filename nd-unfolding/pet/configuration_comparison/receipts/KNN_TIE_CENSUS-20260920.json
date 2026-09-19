@@ -1,0 +1,88 @@
+{
+  "inventory": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+  "coordinate_columns": [
+    1,
+    2
+  ],
+  "mask_column": 0,
+  "mask_rule": "token is REAL when column 0 != 0",
+  "cleaned": true,
+  "clean_rule": "coordinates pass through the loader's `_scale_clean` (/1000, non-finite -> 0) before comparison, because that is what the k-NN sees and because nan_to_num can CREATE a tie",
+  "chunk": 200000,
+  "blocks": {
+    "mc_signal_reco": {
+      "present": true,
+      "array": "part_reco",
+      "rows_scanned": 49152885,
+      "rows_total": 49152885,
+      "real_tokens": 227903218,
+      "real_token_tie_pairs": 18070,
+      "events_with_at_least_one_tie": 17053,
+      "fraction_of_events_with_a_tie": 0.00034693792643097145,
+      "boundary_straddling_by_k": {
+        "3": {
+          "centres": 24764,
+          "events": 16180
+        },
+        "10": {
+          "centres": 17902,
+          "events": 6200
+        }
+      },
+      "boundary_note": "a tie changes the neighbour SET only when it straddles the k-th boundary; within the selected set the block sums, which is order-independent up to round-off"
+    },
+    "mc_background": {
+      "present": true,
+      "array": "bkg_part_reco",
+      "rows_scanned": 564591,
+      "rows_total": 564591,
+      "real_tokens": 6654155,
+      "real_token_tie_pairs": 194,
+      "events_with_at_least_one_tie": 180,
+      "fraction_of_events_with_a_tie": 0.000318814858897857,
+      "boundary_straddling_by_k": {
+        "3": {
+          "centres": 337,
+          "events": 238
+        },
+        "10": {
+          "centres": 242,
+          "events": 96
+        }
+      },
+      "boundary_note": "a tie changes the neighbour SET only when it straddles the k-th boundary; within the selected set the block sums, which is order-independent up to round-off"
+    },
+    "data": {
+      "present": true,
+      "array": "measured_pc",
+      "rows_scanned": 4116128,
+      "rows_total": 4116128,
+      "real_tokens": 45671856,
+      "real_token_tie_pairs": 2431,
+      "events_with_at_least_one_tie": 2265,
+      "fraction_of_events_with_a_tie": 0.0005502744326707041,
+      "boundary_straddling_by_k": {
+        "3": {
+          "centres": 3692,
+          "events": 2524
+        },
+        "10": {
+          "centres": 2634,
+          "events": 1056
+        }
+      },
+      "boundary_note": "a tie changes the neighbour SET only when it straddles the k-th boundary; within the selected set the block sums, which is order-independent up to round-off"
+    }
+  },
+  "total_real_token_tie_pairs": 20695,
+  "consequential_by_k": {
+    "3": 28793,
+    "10": 20778
+  },
+  "k_values": [
+    3,
+    10
+  ],
+  "consequential_verdict": "ties straddle the k-th boundary: {'3': 28793, '10': 20778}. Those events' neighbour SETS are engine-defined and must be resolved, not bounded",
+  "verdict": "TIES PRESENT: top-k ordering is engine-defined for the affected events, and the comparison must either break ties deterministically or bound the effect before training"
+}
