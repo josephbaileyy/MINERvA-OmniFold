@@ -1,5 +1,40 @@
 # Extraction and identity contract for Gregor's representation
 
+> **R-1 IS DELIVERED, AND IT CORRECTED THIS DOCUMENT — 2026-09-19.** Agent A built,
+> measured and verified the event-identity export. Two things below were wrong:
+>
+> 1. **`(ev_run, ev_subrun, ev_gate)` is a GATE key on the `data` tree, not an event
+>    key.** 212,677 keys over 433,304 of 4,119,797 rows repeat, up to multiplicity 5,
+>    and **all 212,677 duplicate blocks differ in kinematics** — muon, vertex,
+>    vertex z by metres. They are distinct interactions sharing one DAQ readout.
+>    **Do not dedupe them.** Anything in this lane that keys, groups or joins data
+>    rows on the bare triple silently merges distinct events on ~10.5 % of rows.
+>    The join key is `(source, run, subrun, event, occurrence)`.
+>    The three MC trees are clean: zero duplicates over 49,906,108 + 49,906,108 +
+>    566,036 rows.
+> 2. **The premise that the FPS ROOTs carry no stable event keys is false.** All four
+>    trees carry identity under `MNV101_DUMP_POINTCLOUD`.
+>    `inventory_order_hash` remains a valid ORDER witness — it just never was an
+>    identity, and its docstring says otherwise.
+>
+> Positives that change what is possible here: `mc_signal_reco` and `mc_truth_denom`
+> have **equal identity sets in 12/12 playlists** (49,906,108 shared, 0 either side),
+> so a signal row joins to its truth-denominator row as a bijection;
+> `mc_background` is disjoint from both, so an identity says which inventory a row
+> came from; and the 28,579,364 native no-reco rows are preserved and joinable with
+> no all-zero identities.
+>
+> Also do not join on the C++ `makeEventKey`: it **overflows uint64** for real run
+> numbers (1.11e21 against a 1.84e19 ceiling), so the event loop's dedupe and
+> miss-append membership test key on a wrapped value. Measured collisions are zero on
+> every tree of every playlist — latent, not live.
+>
+> Artifact: `$SCRATCH/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz`, sha256
+> `01e07412…`, a row-aligned sidecar; production NPZ and every receipt bound to it
+> untouched. **Run `nd-unfolding/pet/verify_event_identity_sidecar.py` before any
+> join.** The join is theirs; `identity_contract.py` verifies, it does not
+> reimplement.
+
 **CITABLE FOR:** what must be extracted, how it must be joined, and what authorization
 that needs.
 **NOT CITABLE FOR:** permission to read anything. §3 exists because an earlier draft of

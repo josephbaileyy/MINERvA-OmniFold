@@ -1,7 +1,14 @@
 # DRAFT — not sent. Request to Agent A: three event-key branches
 
-**Status: DRAFT.** Nothing has been sent to Agent A or to anyone else. Sending this is
-Joseph's call.
+> **FULFILLED 2026-09-19 — DO NOT SEND.** Agent A built and verified the export
+> independently. It is retained as the record of what was asked and of one thing the
+> ask got wrong: this draft assumed the three branches would give an **event** key.
+> On the `data` tree they give a **gate** key — 212,677 keys over 433,304 rows repeat
+> with differing kinematics — so the join needs the `occurrence` ordinal as well, and
+> the bare triple must never be used to group or dedupe data rows. Their contract is
+> `nd-unfolding/pet/EVENT_IDENTITY_JOIN_CONTRACT.md`.
+
+**Status: DRAFT, SUPERSEDED.** Nothing was ever sent from this lane.
 
 **Addressed to:** Agent A, owner of `runEventLoopOmniFold.cpp` and its active-universe
 production.

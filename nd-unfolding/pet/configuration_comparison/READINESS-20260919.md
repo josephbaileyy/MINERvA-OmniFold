@@ -81,7 +81,7 @@ needs an optimisation pass, and P-1…P-6 are what make that pass safe.
 | id | blocker | owner | blocks |
 |---|---|---|---|
 | **R2** | `best_model_pretrain_{s,m}.pt`, sha256, licence, from CFS **m4567** | **Gregor** | the objective — and now explicitly the pretrained arm's **tuning and variance pilot**, not only its final runs |
-| **R-1** | `ev_run`, `ev_subrun`, `ev_gate` on three trees | **Agent A** | the typed-object join |
+| ~~R-1~~ | ~~three event-key branches~~ | ~~Agent A~~ | **DELIVERED 2026-09-19**, verified 12/12, with the correction that the triple is a GATE key on `data` and the join needs `occurrence` |
 | **R4** | authorization to read 21 typed branches at scale (A1 covers blob/prong **counts**, not values) | **Joseph** | the representation half |
 | **U1–U11** | the scientific decisions in the packet | **Joseph** | freezing the design |
 

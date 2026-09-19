@@ -133,7 +133,7 @@ the freeze is provisional and the campaign cannot be launched on today's numbers
 | the pretrained arm's **σ** and hence `n` | R2. Scratch variance is a different quantity. |
 | the **absolute** GPU-hour total | `n_data`, which must be read off a production run's loader meta; the ratio is unaffected |
 | the **execution path's cost** | an optimisation pass on the port, re-checked against P-1…P-6; and the three OOM cells re-run on an 80 GB card |
-| `pid`, auxiliary, globals, cap 33 for his arm | R-1/R-2 and a dump re-run |
+| `pid`, auxiliary, globals, cap 33 for his arm | **R-1 is DELIVERED** (Agent A, 2026-09-19); what remains is R4 authorization to read the typed branches at scale, the globals enumeration, and the dump re-run at cap 33 |
 
 ## 4. Stop conditions
 

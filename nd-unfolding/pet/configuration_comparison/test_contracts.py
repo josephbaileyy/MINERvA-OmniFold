@@ -53,14 +53,21 @@ class Keys(unittest.TestCase):
 
 
 class Join(unittest.TestCase):
+    """Joins on the COMPOSITE key. `fields=ic.KEY_FIELDS` is the opt-in for an
+    inventory whose bare triple has been SHOWN unique -- the three MC trees -- and
+    the collision guard still has to hold there."""
+
+    MC = ic.KEY_FIELDS
+
     def test_source_collision_stops_the_join(self):
         with self.assertRaises(ic.ContractViolation) as caught:
-            ic.join_indices([[1, 1, 5]], [[1, 1, 5], [1, 1, 5]])
+            ic.join_indices([[1, 1, 5]], [[1, 1, 5], [1, 1, 5]], fields=self.MC)
         self.assertIn("not a function", str(caught.exception))
 
     def test_unmatched_rows_are_minus_one_not_zero(self):
         """Index 0 would silently attach the first source row to every miss."""
-        index, matched = ic.join_indices([[9, 9, 9], [1, 1, 5]], [[1, 1, 5]])
+        index, matched = ic.join_indices([[9, 9, 9], [1, 1, 5]], [[1, 1, 5]],
+                                         fields=self.MC)
         self.assertFalse(bool(matched[0]))
         self.assertEqual(int(index[0]), -1)
         self.assertTrue(bool(matched[1]))
@@ -70,22 +77,23 @@ class Join(unittest.TestCase):
         target = [[1, 1, 1], [1, 1, 2], [1, 1, 3]]
         forward = [[1, 1, 1], [1, 1, 2], [1, 1, 3]]
         shuffled = [[1, 1, 3], [1, 1, 1], [1, 1, 2]]
-        ia, _ = ic.join_indices(target, forward)
-        ib, _ = ic.join_indices(target, shuffled)
+        ia, _ = ic.join_indices(target, forward, fields=self.MC)
+        ib, _ = ic.join_indices(target, shuffled, fields=self.MC)
         self.assertEqual([forward[i] for i in ia], [shuffled[i] for i in ib])
 
     def test_keys_differing_only_in_the_last_component_do_not_alias(self):
-        index, matched = ic.join_indices([[1, 2, 3]], [[1, 2, 4], [1, 3, 3], [2, 2, 3]])
+        index, matched = ic.join_indices([[1, 2, 3]], [[1, 2, 4], [1, 3, 3], [2, 2, 3]],
+                                         fields=self.MC)
         self.assertFalse(bool(matched[0]))
 
     def test_unmatched_pass_reco_row_is_a_hard_failure(self):
         with self.assertRaises(ic.ContractViolation) as caught:
-            ic.verify_join(target_keys=[[1, 1, 1]], source_keys=[[2, 2, 2]],
-                           pass_reco=[True], inventory="signal")
+            ic.verify_join(fields=self.MC, target_keys=[[1, 1, 1]],
+                           source_keys=[[2, 2, 2]], pass_reco=[True], inventory="signal")
         self.assertIn("cannot be zero-filled", str(caught.exception))
 
     def test_unmatched_native_miss_is_accepted_and_reported(self):
-        report = ic.verify_join(target_keys=[[1, 1, 1], [2, 2, 2]],
+        report = ic.verify_join(fields=self.MC, target_keys=[[1, 1, 1], [2, 2, 2]],
                                 source_keys=[[1, 1, 1]],
                                 pass_reco=[True, False], inventory="signal")
         self.assertEqual(report["unmatched_rows"], 1)
@@ -94,15 +102,16 @@ class Join(unittest.TestCase):
 
     def test_target_collision_is_a_hard_failure(self):
         with self.assertRaises(ic.ContractViolation) as caught:
-            ic.verify_join(target_keys=[[1, 1, 1], [1, 1, 1]],
+            ic.verify_join(fields=self.MC, target_keys=[[1, 1, 1], [1, 1, 1]],
                            source_keys=[[1, 1, 1]],
                            pass_reco=[True, True], inventory="signal")
         self.assertIn("row identity is not the event identity", str(caught.exception))
 
     def test_pass_reco_length_mismatch_is_refused(self):
         with self.assertRaises(ic.ContractViolation):
-            ic.verify_join(target_keys=[[1, 1, 1]], source_keys=[[1, 1, 1]],
-                           pass_reco=[True, True], inventory="signal")
+            ic.verify_join(fields=self.MC, target_keys=[[1, 1, 1]],
+                           source_keys=[[1, 1, 1]], pass_reco=[True, True],
+                           inventory="signal")
 
 
 class InventorySymmetry(unittest.TestCase):
@@ -458,3 +467,77 @@ class CostReduction(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GateKeyCorrection(unittest.TestCase):
+    """`(ev_run, ev_subrun, ev_gate)` is a GATE key on the data tree, not an event key.
+
+    Agent A measured 212,677 repeating keys over 433,304 of 4,119,797 data rows, up to
+    multiplicity 5, with ALL duplicate blocks differing in kinematics. These are
+    distinct interactions sharing a DAQ gate. The fixtures below are that shape.
+    """
+
+    # one gate with three interactions, one with one, one with two
+    GATE = np.array([[1, 2, 7], [1, 2, 7], [1, 2, 7], [1, 2, 8], [1, 2, 9], [1, 2, 9]])
+
+    def test_the_bare_triple_collides_on_data_shaped_keys(self):
+        report = ic.describe_keys(self.GATE, "data")
+        self.assertEqual(report.duplicate_keys, 2)
+        self.assertEqual(report.duplicated_row_count, 5)
+        self.assertFalse(report.unique)
+
+    def test_occurrence_is_the_ordinal_within_the_gate_in_row_order(self):
+        np.testing.assert_array_equal(ic.assign_occurrence(self.GATE), [0, 1, 2, 0, 0, 1])
+
+    def test_the_composite_key_is_unique_where_the_triple_is_not(self):
+        composite = ic.with_occurrence(self.GATE)
+        self.assertTrue(ic.describe_keys(composite, "join", ic.JOIN_FIELDS).unique)
+
+    def test_joining_on_the_bare_triple_is_refused_not_silently_merged(self):
+        """The failure this correction exists to prevent."""
+        with self.assertRaises(ic.ContractViolation) as caught:
+            ic.join_indices(self.GATE, self.GATE, fields=ic.KEY_FIELDS)
+        self.assertIn("collide", str(caught.exception))
+
+    def test_the_composite_join_is_a_bijection_on_gate_shaped_keys(self):
+        composite = ic.with_occurrence(self.GATE)
+        index, matched = ic.join_indices(composite, composite)
+        self.assertTrue(matched.all())
+        np.testing.assert_array_equal(index, np.arange(len(self.GATE)))
+
+    def test_mc_shaped_keys_get_occurrence_zero_throughout(self):
+        """All three MC trees have zero duplicates, so every ordinal is 0."""
+        mc = np.array([[1, 2, i] for i in range(5)])
+        np.testing.assert_array_equal(ic.assign_occurrence(mc), np.zeros(5, dtype=int))
+
+    def test_the_join_key_defaults_to_the_composite(self):
+        self.assertEqual(ic.JOIN_FIELDS, ic.KEY_FIELDS + ("occurrence",))
+
+    def test_occurrence_carries_its_own_instability_warning(self):
+        warning = ic.occurrence_stability_warning(ic.assign_occurrence(self.GATE))
+        self.assertEqual(warning["rows_with_non_zero_occurrence"], 3)
+        self.assertIn("re-reconstruction", warning["not_guaranteed"])
+
+    def test_row_order_changes_the_ordinal_which_is_the_point_of_the_warning(self):
+        """Reverse the production order and a given row gets a different ordinal.
+
+        Permuting WITHIN a gate cannot show this -- those rows are identical in the
+        key -- so the fixture reverses the whole inventory and maps the ordinals
+        back to their original rows.
+        """
+        reversed_rows = self.GATE[::-1]
+        mapped_back = ic.assign_occurrence(reversed_rows)[::-1]
+        self.assertFalse(np.array_equal(ic.assign_occurrence(self.GATE), mapped_back))
+
+    def test_the_measured_evidence_is_carried_in_the_module(self):
+        evidence = ic.DATA_GATE_KEY_EVIDENCE
+        self.assertEqual(evidence["duplicate_blocks_with_identical_kinematics"], 0)
+        self.assertEqual(evidence["repeating_keys"], 212_677)
+        self.assertIn("Do NOT", evidence["reading"])
+
+    def test_the_canonical_key_carries_source_and_we_do_not_reimplement_the_join(self):
+        """`source` is measured redundant on this inventory, not redundant in general."""
+        self.assertEqual(ic.CANONICAL_JOIN_FIELDS,
+                         ("source", "ev_run", "ev_subrun", "ev_gate", "occurrence"))
+        self.assertIn("event_identity", ic.JOIN_INSTRUMENT["module"])
+        self.assertIn("verify_event_identity_sidecar", ic.JOIN_INSTRUMENT["verifier"])
