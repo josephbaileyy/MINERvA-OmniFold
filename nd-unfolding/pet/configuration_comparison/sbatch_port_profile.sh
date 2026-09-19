@@ -6,10 +6,15 @@
 # WHY THIS EXISTS. `MATCHED_TIMING-20260919.json` established that the Keras port
 # costs 23.9x our incumbent per example in the same engine. It did not establish
 # where that goes, and the three candidate causes (the tape, the optimizer, his
-# local neighbourhood block) have different remedies and different prices. A CPU
-# smoke test of the decomposition put 96 % of the step in `apply_gradients` at
-# batch 8, which is a hypothesis about kernel-launch overhead and NOT a GPU
-# measurement -- this job is what would confirm or kill it.
+# local neighbourhood block) have different remedies and different prices.
+#
+# A first CPU smoke test appeared to put 96 % of the step in `apply_gradients`.
+# That was an artifact of my own measurement: the backward section returned
+# `loss + 0.0 * gradient`, Grappler folded the multiply and pruned the gradient
+# subgraph, and the backward pass's cost therefore landed in the apply by
+# subtraction. Measured directly, applying all 176 variables costs 6.06 ms against
+# 4.71 ms for stock Keras Adam -- 1.29x, not a bottleneck. The folding control now
+# travels with the measurement instead of being a habit I have to remember.
 #
 # Also measured here: the algebraic optimisations already landed in the port
 # (proved bitwise-identical by `test_port.OptimisationEquivalence`), XLA, and

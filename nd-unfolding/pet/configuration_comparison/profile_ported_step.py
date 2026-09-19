@@ -18,6 +18,16 @@ Guessing which one it is, and then optimising for the guess, is the failure this
 file exists to avoid. So it decomposes the step into forward / forward+backward /
 apply, and reports peak device memory for each, per cell.
 
+**And the first version of that decomposition was itself wrong**, which is why the
+folding control below is not optional. Returning ``loss + 0.0 * add_n(gradients)``
+from the backward section let Grappler fold the multiplication and prune the whole
+gradient subgraph: the section timed at 14.95 ms against a forward pass of
+14.49 ms, while the honest version cost 272 ms. That made the backward pass look
+free and pushed its entire cost into the apply, which a separate probe then put at
+6.06 ms for all 176 variables -- only 1.29x stock Keras Adam. So "the optimizer
+dominates" was an artifact of a pruned graph, and the control that would have
+caught it is now a measured section rather than a habit.
+
 It also measures three things the decomposition cannot settle on its own:
 
 * the **algebraic optimisations** already landed in `pet2_keras_port` (broadcast
@@ -289,8 +299,30 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
         with tf.GradientTape() as tape:
             loss = loss_of(call(True))
         gradients = tape.gradient(loss, variables)
+        return tf.add_n([tf.reduce_sum(g) for g in gradients if g is not None])
+
+    @function
+    def folded_control():
+        """The trap, kept as a control: `loss + 0.0 * g` prunes the WHOLE backward.
+
+        This was the first version of the section above, and on CPU it timed at
+        14.95 ms against a forward pass of 14.49 ms and a real backward of 272 ms
+        -- Grappler folds `0.0 * x` to a constant and the gradient subgraph becomes
+        dead code. It is measured here rather than deleted, because a decomposition
+        whose backward section silently equals its forward section is a number I
+        would have quoted. If this control does NOT come out near `forward`, the
+        folding assumption has changed and the section above needs re-checking.
+        """
+        with tf.GradientTape() as tape:
+            loss = loss_of(call(True))
+        gradients = tape.gradient(loss, variables)
         return loss + 0.0 * tf.add_n([tf.reduce_sum(g) for g in gradients
                                       if g is not None])
+
+    @function
+    def reduction_probe():
+        """What `add_n(reduce_sum(...))` costs on its own: the contamination bound."""
+        return tf.add_n([tf.reduce_sum(tf.zeros_like(v)) for v in variables])
 
     @function
     def full_step():
@@ -301,14 +333,30 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
 
     sections["forward"] = _time(forward_only, batch, tf, warmup, repeats)
     sections["forward_and_backward"] = _time(forward_and_backward, batch, tf, warmup, repeats)
+    sections["folded_backward_control"] = _time(folded_control, batch, tf, warmup, repeats)
+    sections["reduction_probe"] = _time(reduction_probe, batch, tf, warmup, repeats)
     sections["full_step"] = _time(full_step, batch, tf, warmup, repeats)
+    forward_median = sections["forward"]["step_seconds_median"]
+    folded = sections["folded_backward_control"]["step_seconds_median"]
+    real = sections["forward_and_backward"]["step_seconds_median"]
+    sections["folding_control"] = {
+        "folded_over_forward": folded / forward_median if forward_median else None,
+        "real_over_folded": real / folded if folded else None,
+        "reads": ("folded_over_forward near 1 means `0.0 * gradient` still prunes the "
+                  "backward pass, which is what makes the real section trustworthy; "
+                  "if it rises toward real_over_folded, this decomposition is wrong"),
+    }
     # Apply is the remainder: timing it alone would need a second set of resident
     # gradients, which is itself a memory change. Reported as a difference and
     # labelled as one.
     sections["apply_by_difference"] = {
         "step_seconds_median": (sections["full_step"]["step_seconds_median"]
-                                - sections["forward_and_backward"]["step_seconds_median"]),
-        "note": "difference of two medians, not an independent measurement",
+                                - sections["forward_and_backward"]["step_seconds_median"]
+                                + sections["reduction_probe"]["step_seconds_median"]),
+        "note": ("full step minus forward+backward, with the gradient-reduction probe "
+                 "added back because that reduction is in the backward section and not "
+                 "in the full step; a difference of medians, not an independent "
+                 "measurement"),
     }
     record["sections"] = sections
     record["trainable_parameters"] = int(
