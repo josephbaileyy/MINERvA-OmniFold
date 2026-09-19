@@ -465,6 +465,66 @@ the `declare: ADOPTS-SHA256:` line. **Leg B — the variant guard, the `adoptabl
 the exception passthrough — has never executed on the real path.** Their unit coverage is green and
 that is not the same thing, which is the whole reason this control exists.
 
+## 4g. RUN 4 AND CAUSE 7's M — both COMPLETED, and the per-bin result is the finding
+
+### Control `58564446` — the shadow worked as an INSTRUMENT even though leg B failed
+
+| leg | expect | got | |
+|---|---|---|---|
+| A1 no adoption record | `rc 3` + message | `rc 3` | **PASS** |
+| **A3** exception set but missing | `rc 3` + message | `rc 3` | **PASS — gap 5's second arm now closed** |
+| A2 §6.4 amendment offered AS an adoption record | `rc 3` + message | `rc 3`, printing `declare: ADOPTS-SHA256: 3d7465f6…` | **PASS** |
+| B1 / B2 / B3 / B5 | guard messages | `rc 1`, the **shadow's ImportError** | **did not reach the guard** |
+| **B4** positive control, cv + exception | `rc 0` | `rc 0`, product written | **PASS** |
+
+**THE SHADOW NAMED THE IMPORTER, which is what it was for.** The traceback:
+`project_cov_nd.py:321` → `_verify_canonical_edges()` → **`:59 import unfold_2d_omnifold_unbinned`**
+→ `2d-unfolding/unfold_2d_omnifold_unbinned.py:21 import ROOT`. A **function-level** import, called
+at `:321`, **before the guards at `:364`**.
+
+⚠ **And my earlier ruling-out was incomplete in a way worth naming.** I reported "module-level
+imports are clean, `uq_math` is clean, the readers guard on `_is_npz`" — all true, and I never
+checked *function-level* imports reached before the guards. `grep 'import ROOT'` could not find it:
+line 59 reads `import unfold_2d_omnifold_unbinned as u2d`, and the words *import ROOT* appear only in
+its **trailing comment**. Three runs of segfaults had this one cause, and the instrument found in one
+run what inspection had missed in three.
+
+### Cause 7's `M`, `58564281` — measured on Z's own inputs
+
+**Binding is the strongest available:** active source sha256 **measured** = Z's manifest value
+`950f8cb1…`, **file digest present in Z's receipt**, and **5/5 per-band active keys named there** →
+**per-band plus file digest**, not the SPEC-table claim.
+
+| | |
+|---|---|
+| `sqrt_tr( Σ_A L_support )` | `1.4747098387e-38` |
+| `sqrt_tr( Σ_A L_active )` | `1.4742855149e-38` |
+| ratio active/support | **`0.9997122662`** |
+| relative movement | **`−0.0288%`** |
+
+**This REPRODUCES S's committed `support_comparison` to ten digits** — §2.7 records
+`1.4742855148740122e-38` / `1.474709838719496e-38`, ratio `0.9997122662137712`, `−0.0288%`.
+**That is a reproduction, not a citation**: §2.7 prohibits *citing S's ratio as Z's M*, and Z's M was
+measured independently from Z's own bound inputs and agrees.
+
+> ### ⚠ AND THE PER-BIN RESULT IS WHY THE REFINEMENT MATTERED
+> `sqrt(diag_active / diag_support)` over all **10694** bins: **min `0.177248`, median `1.005070`,
+> max `3.061947`** (argmax at index 3357).
+>
+> **The trace moves `−0.0288%` while individual bins move by a factor of 3 up and 5.6× down.** That
+> is precisely the hazard §2.7 names when it contrasts S's trace move with F's per-bin spread — and
+> a trace-only `M`, which is what was asked for originally, would have reported `−0.03%` and shown
+> none of it.
+
+**NOT ESTABLISHED, and the diagonals are persisted so it needs no rerun:** whether the extreme
+per-bin ratios sit in small-magnitude bins. I measured that correlation for the null and have **not**
+measured it here, so I am not repeating the inference.
+
+⚠ **MY PROHIBITION CHECK IS VACUOUS AND ITS MESSAGE IS FALSE.** It prints *"none of S's ratio or F's
++10.96% appears in this measurement"* — but it inspects only the **per-band trace dict**, which is
+computed **before** the ratio. The ratio `0.9997122662` **does** appear, as Z's own measured result.
+The check looked at the wrong object, which is the operand failure again, in my own guard.
+
 ## 5. Execution order — fixed
 
 **C1–C7 complete → NULL resolved (P0 first, zero-compute; P2 NOT authorized) → SRC_COV identified
