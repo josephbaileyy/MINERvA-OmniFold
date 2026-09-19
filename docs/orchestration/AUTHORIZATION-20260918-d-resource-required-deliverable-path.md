@@ -116,7 +116,7 @@ wrong thing, and a *"not identical"* result would be uninterpretable — **which
 reasoning P0 produced, and it still holds.** **Recommendation: P2 is not needed.** Not requested.
 
 **WHAT THAT LEAVES.** Under the configuration space permitted here — pinning reserved — **bitwise
-identity is unreachable without a material estimator change that is Joseph's.** That is the precise
+identity is ~~unreachable without a material estimator change that is Joseph's~~ — ⚠ **AMENDED 2026-09-19:** bitwise identity **was not achieved in the only configuration measured**, the historical **unpinned** one; whether any configuration achieves it is **not demonstrated**, and the pinned alternative would require the estimator change Joseph reserves.** That is the precise
 statement, and it is the condition the order names for the exception becoming live. **Pinning is not
 proposed as the remedy and §8 is not routed around.**
 
@@ -233,7 +233,7 @@ recommendation and **no key is declared.**
 
 | # | decision | gates | my recommendation |
 |---|---|---|---|
-| **1** | **§6.4 route.** P0 is done and **returned non-identity**: first divergence at **call 0** (`3.27e-16`), endpoint not identical, `r_null 4.4311e-14` vs historical `4.4520e-14` (ratio `0.9953`). Ruling 7's order asks for P2 next *if needed*, and the exception *only if bitwise identity is unreachable*. | **NULL → ADOPT** | **Bitwise identity is unreachable**: divergence at call 0 with threading excluded at its tested scope means no thread or ordering control reaches it. P2 would re-measure a reproduction I have already reproduced to `0.995`. **Release the held exception.** |
+| **1** | **§6.4 route.** P0 is done and **returned non-identity**: first divergence at **call 0** (`3.27e-16`), endpoint not identical, `r_null 4.4311e-14` vs historical `4.4520e-14` (ratio `0.9953`). Ruling 7's order asks for P2 next *if needed*, and the exception *only if bitwise identity is unreachable*. | **NULL → ADOPT** | ⚠ **WITHDRAWN 2026-09-19 as overclaimed; struck text kept visible:** ~~Bitwise identity is unreachable~~ → bitwise identity **was not achieved in the only configuration measured**, the historical **unpinned** one; whether any configuration achieves it is **not demonstrated**: divergence at call 0 with threading excluded at its tested scope means no thread or ordering control reaches it. P2 would re-measure a reproduction I have already reproduced to `0.995`. **Release the held exception.** |
 | **2** | **C3 declared-but-unevaluated** — may a trunk be adopted on it? | **ADOPT** | **Yes**, per §7.2, disclosed in the note. |
 | **3** | **`s_proj`'s reporting class.** I recorded **`per-bin`**. | the receipt's shape | **`per-bin`** — it is a max over a finite enumerated set, and its failures must be enumerable, which the aggregate class cannot express. |
 | **4** | **`cause2_f7_margin`** | C2's boolean counting as *performed* | **`0.168`**; measured `2.6739` clears it by `2.29×`. |

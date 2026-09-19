@@ -1123,7 +1123,7 @@ derivations; this is the current state.
 | **C6** | **REUSE**, accepted risk named: **"inputs consistent but unproven."** Both withdrawals stand | nothing. **Not regenerating** |
 | **C7** | **CLOSED as sufficient** on the twice-measured 45-band partition (support family **and** receipt) | nothing |
 | **R5** | **Documentation + verification, no recomputation.** `ESTIMATOR_REGISTRY:29` amended; **both `√tr` re-measured** — `5.807716e-38` and `5.269625e-38`, sharing `sqrt_tr_old 4.357790e-38`, so two rescalings of one predecessor | nothing |
-| **NULL** | **P0 reported** (self-contained, done at `1405caad`); **`58524334` completed** and is the dependency route 2 rests on; **P2 not needed**; the §6.4 exception **approved as drafted and HELD** | **Joseph's §6.4 route ruling.** Bitwise identity is unreachable without the estimator change he reserves |
+| **NULL** | **P0 reported** (self-contained, done at `1405caad`); **`58524334` completed** and is the dependency route 2 rests on; **P2 not needed**; the §6.4 exception **approved as drafted and HELD** | **Joseph's §6.4 route ruling.** ⚠ **AMENDED 2026-09-19:** ~~Bitwise identity is unreachable without the estimator change he~~ → bitwise identity **was not achieved in the only configuration measured**, the historical **unpinned** one; whether any configuration achieves it is **not demonstrated**; the pinned alternative would need the estimator change he reserves |
 | **ADOPT** | — | **Joseph's act**, after C1–C7 and NULL |
 | **PROJ** | diagnostic M1 produced and verified; publication path gated | re-run with `--run-class publication` after ADOPT |
 | **DOCS** | baseline green, containment verified across all three | re-verify after PROJ |
