@@ -30,7 +30,10 @@ mkdir -p "$JOINDIR"
 module load python
 
 # Data joins on ev_*, signal on mc_* -- each stream's own fields, never crossed.
-for STREAM in data sig; do
+# `bkg` too: the measured leg is the SIGNED inventory, data rows followed by
+# the aligned negative background rows, and his arm needs tokens for both. It
+# is MC, so it joins on the mc_* fields from the MC directories.
+for STREAM in data bkg sig; do
   if [[ "$STREAM" == "data" ]]; then DIRS=("$INPUTS"/*_Data); else DIRS=("$INPUTS"/*_MC); fi
   python3 nd-unfolding/pet/configuration_comparison/join_theirs_to_inventory.py \
     --sidecar "$SIDECAR" --stream "$STREAM" --input-dirs "${DIRS[@]}" \
@@ -51,7 +54,7 @@ python3 - "$JOINDIR" <<'PY'
 import json, sys
 from pathlib import Path
 bad = []
-for stream in ("data", "sig"):
+for stream in ("data", "bkg", "sig"):
     r = json.loads((Path(sys.argv[1]) / f"join_{stream}.json").read_text())
     c = r.get("reco_coverage")
     if c is None:

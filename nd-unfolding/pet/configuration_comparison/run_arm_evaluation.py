@@ -171,6 +171,8 @@ def evaluate(args: Any) -> dict[str, Any]:
     from omnifold.net import PET
     import training_recipe as recipe
     import fold_forward_recorder as ffr
+    import tensorflow as tf
+    from annealed_estimator import make_annealed_multifold
 
     _shadowed = [m.__name__ for m in (ffd, recipe)
                  if not str(Path(m.__file__).resolve()).startswith(str(repo))]
@@ -209,39 +211,72 @@ def evaluate(args: Any) -> dict[str, Any]:
     if args.arm == "theirs":
         import theirs_loader_substitution as tls
         import theirs_omnifold_arm as toa
-        data_pass = getattr(data, "pass_reco", None)
-        if data_pass is None:
-            data_pass = np.ones(data.reco.shape[0], dtype=bool)
-        blocks = _load_joined(args, np, np.arange(data.reco.shape[0]), imc,
-                              data_pass, mc.pass_reco)
-        # `materialize` has already zeroed every !pass_reco row, exactly as the
-        # production loader zeroes ours. One rule, one implementation.
+        # The measured leg is the SIGNED inventory: positive data rows followed
+        # by the aligned negative background rows. His arm needs tokens for
+        # both, so the data side is the `data` join concatenated with the `bkg`
+        # join, in that order. Joining only `data` left the two 564,591 rows
+        # apart and the mismatch surfaced as a length error rather than as a
+        # silent misalignment, which is the one piece of luck in it.
+        blocks = _load_joined(args, np, imc, data.reco.shape[0])
         substitution = tls.substitute_step1(
             data, mc,
             (blocks["data"]["packed"], blocks["data"]["globals"]),
             (blocks["mc"]["packed"], blocks["mc"]["globals"]))
-        model_reco = toa.TheirsCompleteArm(num_part=fd.THEIRS_COMPLETE["token_cap"])
+        model_reco_factory = lambda: toa.TheirsCompleteArm(
+            num_part=fd.THEIRS_COMPLETE["token_cap"])
     else:
-        model_reco = PET(num_feat=meta["n_feat_reco"], num_evt=meta["n_evt_reco"],
-                         num_part=fd.OURS_INCUMBENT["token_cap"],
-                         num_heads=2, num_transformer=2, projection_dim=32,
-                         local=True, K=3, coord_idx=coord_reco)
+        model_reco_factory = None
+
+    # WIDTHS COME FROM THE DATA, exactly as the production driver takes them.
+    # This read `meta["n_feat_reco"]`, which the loader does not emit -- the
+    # incumbent arm died on a KeyError before building anything. Production
+    # takes the cloud width from `mc.reco.shape[-1]`, the token count from
+    # `mc.reco.shape[1]`, and the two DIFFERENT event widths from the meta keys
+    # that do exist. Read AFTER the substitution, so his arm's 33x10 tokens
+    # size his network and ours sizes ours.
+    ev_reco, ev_truth = meta["n_evt_reco"], meta["n_evt_truth"]
+    if (ev_reco != np.asarray(mc.reco_evt).shape[1]
+            or ev_truth != np.asarray(mc.gen_evt).shape[1]):
+        raise SystemExit(
+            f"[arm] loader meta widths ({ev_reco}, {ev_truth}) disagree with the "
+            f"built blocks ({np.asarray(mc.reco_evt).shape[1]}, "
+            f"{np.asarray(mc.gen_evt).shape[1]}) -- fail closed")
+    if list(meta["feature_names"]) == list(ffd.REDUCED_EVT_FEATURES):
+        raise SystemExit(
+            "[arm] the loader built the REDUCED {pT,p||} schema, which the "
+            "feature contract marks cross-check only. The comparison would be "
+            "measuring a schema nobody authorized for it -- fail closed")
+
+    P = int(np.asarray(mc.reco).shape[1])
+    model_reco = (model_reco_factory() if model_reco_factory is not None
+                  else PET(int(np.asarray(mc.reco).shape[-1]), num_evt=ev_reco,
+                           num_part=P, num_transformer=2, num_heads=2,
+                           projection_dim=32, local=True, K=3,
+                           coord_idx=coord_reco))
 
     # STEP 2 IS IDENTICAL FOR BOTH ARMS -- STEP_SCOPE, frozen 2026-09-20.
-    model_gen = PET(num_feat=meta["n_feat_truth"], num_evt=meta["n_evt_truth"],
-                    num_part=fd.OURS_INCUMBENT["token_cap"],
-                    num_heads=2, num_transformer=2, projection_dim=32,
+    model_gen = PET(int(np.asarray(mc.gen).shape[-1]), num_evt=ev_truth,
+                    num_part=int(np.asarray(mc.gen).shape[1]),
+                    num_transformer=2, num_heads=2, projection_dim=32,
                     local=True, K=3, coord_idx=coord_gen)
 
     batch = (fd.THEIRS_COMPLETE["batch_size"] if args.arm == "theirs"
              else fd.OURS_INCUMBENT["batch_size"])
     schedule = recipe.derive_schedule(batch, step="step1_reco",
                                       n_data=data.reco.shape[0])
-    ported = recipe  # the recipe module carries the optimizer factory
 
     folder = Path(args.weights_folder)
     folder.mkdir(parents=True, exist_ok=True)
-    unfolder = MultiFold(
+
+    # THE ANNEALED ESTIMATOR, because that is the incumbent. A bare `MultiFold`
+    # is not what production runs: the engine's own anneal is dead code, and
+    # `make_annealed_multifold` is what makes the adopted policy bite. Running
+    # ours on a bare MultiFold would have compared his configuration against
+    # something we do not use, under the name of the one we do. Both arms get
+    # it, because the estimator is not what the arms differ in.
+    fit_lr_records: list[dict[str, Any]] = []
+    Annealed = make_annealed_multifold(MultiFold, tf, fit_lr_records)
+    unfolder = Annealed(
         name=f"{args.arm}-{args.stage}-seed{args.seed}",
         model_reco=model_reco, model_gen=model_gen, data=data, mc=mc,
         weights_folder=str(folder), niter=args.niter, batch_size=batch,
@@ -263,6 +298,12 @@ def evaluate(args: Any) -> dict[str, Any]:
                    "bkg_mode": prod.BKG_MODE,
                    "rebuilt_in_process": False},
         "substitution": substitution,
+        "estimator": {"annealed": True,
+                      "fits_recorded": len(fit_lr_records),
+                      "realized_learning_rates": fit_lr_records},
+        "widths": {"cloud_reco": int(np.asarray(mc.reco).shape[-1]),
+                   "tokens": P, "evt_reco": int(ev_reco),
+                   "evt_truth": int(ev_truth)},
         "schedule": {k: schedule[k] for k in ("max_steps", "warmup_steps",
                                               "examples_per_update")},
         "weights_finite": bool(np.isfinite(weights).all()),
@@ -277,29 +318,62 @@ def plan_of(args: Any) -> dict[str, Any]:
             "learning_rate": args.learning_rate, "niter": args.niter}
 
 
-def _load_joined(args: Any, np: Any, data_rows: Any, mc_rows: Any,
-                 data_pass_reco: Any, mc_pass_reco: Any) -> dict[str, Any]:
+def _load_joined(args: Any, np: Any, mc_rows: Any, expected_data_rows: int
+                 ) -> dict[str, Any]:
     """Gather his inputs for exactly the rows this fit will see.
 
-    The earlier version expected a single pre-packed array. That would have been
-    65 GB for the signal inventory and would have failed at runtime on a file
-    that is never built; `materialize_theirs` gathers from the shards instead,
-    for the rows requested and in inventory order.
+    THE MEASURED LEG IS SIGNED. `build_signed_measured_inventory` concatenates
+    the positive data rows with the aligned negative background rows, so the
+    data loader holds 4,680,719 rows: 4,116,128 data gates followed by 564,591
+    background MC events. His arm needs tokens for both, so the data side here
+    is the `data` join followed by the `bkg` join, in that order -- the same
+    order the loader built.
+
+    Joining only `data` and `sig` left the background 564,591 rows short. That
+    surfaced as a length error rather than as a silent misalignment, which is
+    the one piece of luck in it: a same-length-but-differently-ordered gather
+    would have attached one event's tokens to another's weight.
+
+    `pass_reco` comes from the INVENTORY, not from the loaders, because
+    `row_index` is indexed by inventory row. The loader's own `pass_reco` is
+    over its subsample and using it silently mis-assigns the flag.
     """
     import json
 
     import materialize_theirs as mtz
 
-    out: dict[str, Any] = {}
-    for stream, rows, reco in (("data", data_rows, data_pass_reco),
-                               ("sig", mc_rows, mc_pass_reco)):
-        index = np.load(Path(args.theirs_index) / f"join_{stream}.npz")
-        report = json.loads(
-            (Path(args.theirs_index) / f"join_{stream}.json").read_text())
-        gathered = mtz.materialize(report["files"], index["row_index"],
-                                   index["origin"], np.asarray(rows), reco)
-        out[stream] = gathered
-    return {"data": out["data"], "mc": out["sig"]}
+    index_dir = Path(args.theirs_index)
+    with np.load(args.inputs_npz, mmap_mode="r") as target:
+        sig_pass_reco = np.asarray(target["pass_reco"]).astype(bool)
+
+    def gather(stream: str, rows: Any, pass_reco: Any) -> dict[str, Any]:
+        index = np.load(index_dir / f"join_{stream}.npz")
+        report = json.loads((index_dir / f"join_{stream}.json").read_text())
+        return mtz.materialize(report["files"], index["row_index"],
+                               index["origin"], np.asarray(rows), pass_reco)
+
+    pieces = []
+    for stream in ("data", "bkg"):
+        index = np.load(index_dir / f"join_{stream}.npz")
+        n = int(np.asarray(index["row_index"]).shape[0])
+        # Data gates and refined background rows are reconstructed by
+        # construction -- they are what the measured leg IS.
+        pieces.append(gather(stream, np.arange(n), np.ones(n, dtype=bool)))
+    measured = {
+        "packed": np.concatenate([p["packed"] for p in pieces], axis=0),
+        "globals": np.concatenate([p["globals"] for p in pieces], axis=0),
+        "rows": sum(p["rows"] for p in pieces),
+        "streams": ["data", "bkg"],
+    }
+    if measured["packed"].shape[0] != expected_data_rows:
+        raise SystemExit(
+            f"[arm] the measured leg has {expected_data_rows} rows and "
+            f"data+bkg supplies {measured['packed'].shape[0]}. The signed "
+            "inventory is data followed by background; a mismatch here means "
+            "the joins and the loader disagree about the population")
+
+    signal = gather("sig", mc_rows, sig_pass_reco)
+    return {"data": measured, "mc": signal}
 
 
 if __name__ == "__main__":

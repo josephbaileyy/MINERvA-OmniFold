@@ -135,3 +135,23 @@ class RecoCoverage(unittest.TestCase):
     def test_a_length_disagreement_is_refused(self):
         with self.assertRaisesRegex(ValueError, "same inventory"):
             jt.reco_coverage(np.ones(4, bool), np.ones(3, bool))
+
+
+class StreamPassRecoLengths(unittest.TestCase):
+    """Each stream's pass_reco must be its OWN length, not the signal leg's."""
+
+    def test_the_measured_halves_sum_to_the_signed_inventory(self):
+        # The arithmetic that identified the missing bkg join.
+        self.assertEqual(4_116_128 + 564_591, 4_680_719)
+
+    def test_bkg_is_a_declared_stream_with_mc_identity_fields(self):
+        self.assertIn("bkg", jt.STREAM_FIELDS)
+        self.assertEqual(jt.STREAM_FIELDS["bkg"],
+                         ("mc_run", "mc_subrun", "mc_nthEvtInFile"))
+
+    def test_coverage_over_an_all_reco_stream_is_the_plain_match_fraction(self):
+        matched = np.array([True, True, False, True])
+        out = jt.reco_coverage(matched, np.ones(4, bool))
+        self.assertEqual(out["pass_reco_rows"], 4)
+        self.assertEqual(out["pass_reco_unmatched"], 1)
+        self.assertEqual(out["matched_without_reco"], 0)

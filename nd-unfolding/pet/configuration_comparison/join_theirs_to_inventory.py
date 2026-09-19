@@ -165,10 +165,23 @@ def main() -> None:
     args = parser.parse_args()
     pass_reco = None
     if args.target_npz is not None:
-        with np.load(args.target_npz, mmap_mode="r") as target:
-            pass_reco = (np.ones(len(np.asarray(target["measured_pc"])), bool)
-                         if args.stream == "data"
-                         else np.asarray(target["pass_reco"]).astype(bool))
+        # Only the SIGNAL leg has a pass_reco flag. `data` and `bkg` are the two
+        # halves of the measured leg and are reconstructed by construction --
+        # they are what "measured" means. Handing the signal leg's 49,152,885
+        # flags to the 564,591-row background would be a length error at best
+        # and a mis-assigned flag at worst, so each stream's length comes from
+        # its OWN identity array.
+        sidecar = np.load(args.sidecar, mmap_mode="r")
+        rows = int(np.asarray(sidecar[f"{args.stream}_event_id"]).shape[0])
+        if args.stream == "sig":
+            with np.load(args.target_npz, mmap_mode="r") as target:
+                pass_reco = np.asarray(target["pass_reco"]).astype(bool)
+            if pass_reco.shape[0] != rows:
+                raise SystemExit(
+                    f"[join] pass_reco has {pass_reco.shape[0]} rows and the "
+                    f"sig inventory {rows}; they must be the same population")
+        else:
+            pass_reco = np.ones(rows, dtype=bool)
     result = join(args.sidecar, args.stream, args.input_dirs, pass_reco)
     np.savez_compressed(args.output, row_index=result.pop("row_index"),
                         origin=result.pop("origin"))
