@@ -83,7 +83,10 @@ class TheMappingProducesAllThreeOutcomes(unittest.TestCase):
         legs = zv.LegSet(legs=(zv.Leg(name="null-ish", klass="aggregate",
                                       boundary_key="null_epsilon", statistic_key="s_agg"),),
                          predeclared_at="test fixture")
-        out = zv.assess(legs, {"s_agg": 0.01}, _all_true_validity())
+        import z_contract as zc
+        from unittest import mock
+        with mock.patch.dict(zc.Z_BOUNDARIES, {"null_epsilon": zc.Boundary.withheld("null_epsilon", "INJECTED BY TEST: the registry no longer withholds any boundary, so the invariant under test must supply its own rather than borrow the last one standing.")}):
+            out = zv.assess(legs, {"s_agg": 0.01}, _all_true_validity())
         self.assertFalse(out.assessable)
         self.assertIn("4c", out.reject_conditions)
         self.assertEqual(zb.acceptance_token(out, null_within=True), "NON-PASSING")

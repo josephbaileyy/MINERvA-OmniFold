@@ -55,9 +55,12 @@ APPROVED = {
     # FUNCTIONALS, so the clause never reached that leg and it had no coverage number at all.
     "cause3_corr_coverage": 1.0,
     "cause2_f7_margin": 0.168,
+    "null_epsilon": 1e-9,
 }
-# ONE, not two. `cause2_f7_margin` left this tuple the day its margin was set.
-STILL_WITHHELD = ("null_epsilon",)
+# EMPTY. `null_epsilon` left this tuple on 2026-09-19 when Joseph's R2/R3 supplied S, B and an
+# epsilon within [B, S] -- the three things rev. 17's withdrawal said were missing. Every declared
+# scientific boundary now has a value and a provenance string naming the record behind it.
+STILL_WITHHELD = ()
 
 
 class TheDeclaredAndWithheldSetsAreExactlyAsRuled(unittest.TestCase):
@@ -76,13 +79,23 @@ class TheDeclaredAndWithheldSetsAreExactlyAsRuled(unittest.TestCase):
 
     def test_every_declared_boundary_carries_provenance_naming_the_record(self):
         """A number without the record that approved it is what §3.6d forbids."""
+        # null_epsilon was approved by a DIFFERENT record -- Joseph's 2026-09-19 R2/R3 and the
+        # derivation -- so requiring the 09-18 authorization in every provenance would be wrong.
+        expected = {k: APPROVING_RECORD for k in APPROVED}
+        expected["null_epsilon"] = "DERIVATION-20260919"
         for key in APPROVED:
             with self.subTest(boundary=key):
                 b = zc.boundary(key)
                 self.assertTrue(b.provenance and b.provenance.strip())
-                self.assertIn(APPROVING_RECORD, b.provenance)
+                self.assertIn(expected[key], b.provenance)
 
-    def test_the_one_remaining_boundary_is_withheld_with_a_reason(self):
+    def test_no_boundary_remains_withheld(self):
+        """Was `test_the_one_remaining_boundary_is_withheld_with_a_reason`. The set is now EMPTY,
+        so the property worth asserting flipped: nothing may be withheld, and any future addition
+        has to change this test deliberately -- which is the tripwire's whole purpose."""
+        self.assertEqual(sorted(zc.withheld_boundaries()), [])
+
+    def test_superseded_withheld_loop_is_vacuous_but_kept_honest(self):
         for key in STILL_WITHHELD:
             with self.subTest(boundary=key):
                 b = zc.boundary(key)
@@ -95,14 +108,19 @@ class TheDeclaredAndWithheldSetsAreExactlyAsRuled(unittest.TestCase):
         self.assertEqual(zc.boundary("cause3_med").value, 0.05)
         self.assertEqual(zc.boundary("cause3_med_coverage").value, 0.99)
 
-    def test_the_null_bound_is_still_withheld_because_its_route_is_undecided(self):
-        """The §6.4 route ruling is Joseph's and has not been made. This must not drift."""
-        self.assertFalse(zc.boundary("null_epsilon").is_declared)
+    def test_the_null_bound_is_NOW_DECLARED_and_its_provenance_names_the_derivation(self):
+        """Was `..._is_still_withheld_because_its_route_is_undecided`. Joseph ruled S and epsilon
+        in his own turn on 2026-09-19, so the property flipped and the test flips with it."""
+        b = zc.boundary("null_epsilon")
+        self.assertTrue(b.is_declared)
+        self.assertEqual(b.value, 1e-9)
+        self.assertIn("DERIVATION-20260919", b.provenance)
 
     def test_using_a_withheld_boundary_raises_rather_than_defaulting(self):
-        b = zc.boundary("null_epsilon")
-        with self.assertRaises(zc.BoundaryWithheld):
-            _ = b.value
+        with mock.patch.dict(zc.Z_BOUNDARIES, {"null_epsilon": zc.Boundary.withheld("null_epsilon", "INJECTED BY TEST: the registry no longer withholds any boundary, so the invariant under test must supply its own rather than borrow the last one standing.")}):
+            b = zc.boundary("null_epsilon")
+            with self.assertRaises(zc.BoundaryWithheld):
+                _ = b.value
 
     def test_describe_is_safe_on_a_withheld_boundary(self):
         # A receipt must be able to record a withheld boundary without tripping over it.
@@ -111,7 +129,8 @@ class TheDeclaredAndWithheldSetsAreExactlyAsRuled(unittest.TestCase):
         # boundary left. A test whose fixture silently became the opposite case would have kept
         # passing while testing nothing -- that is why the withheld set is asserted above rather
         # than assumed here.
-        d = zc.boundary("null_epsilon").describe()
+        with mock.patch.dict(zc.Z_BOUNDARIES, {"null_epsilon": zc.Boundary.withheld("null_epsilon", "INJECTED BY TEST: the registry no longer withholds any boundary, so the invariant under test must supply its own rather than borrow the last one standing.")}):
+            d = zc.boundary("null_epsilon").describe()
         self.assertEqual(d["status"], "WITHHELD")
         self.assertIsNone(d["value"])
 
@@ -197,7 +216,7 @@ class TheInvariantHoldsOnEveryConstructionPath(unittest.TestCase):
 
     def test_a_withheld_boundary_survives_a_pickle_round_trip_and_stays_withheld(self):
         import pickle
-        w = pickle.loads(pickle.dumps(zc.Z_BOUNDARIES["null_epsilon"]))
+        w = pickle.loads(pickle.dumps(zc.Boundary.withheld("null_epsilon", "INJECTED BY TEST: the registry no longer withholds any boundary, so the invariant under test supplies its own.")))
         self.assertFalse(w.is_declared)
         with self.assertRaises(zc.BoundaryWithheld):
             w.value

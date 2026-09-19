@@ -240,12 +240,12 @@ class Boundary:
 # Joseph accepted the baseline "with unresolved scientific acceptance criteria expressly withheld",
 # so this dict IS that withholding, expressed where the code would otherwise reach for a number.
 Z_BOUNDARIES = {
-    "null_epsilon": Boundary.withheld(
-        "null_epsilon",
-        "SPEC §3.7a: `n_iters * n_rep * eps` was withdrawn in rev. 17 -- a summation bound over a "
-        "computation that is not a summation. Needs an operating-error bound B with stated "
-        "assumptions and confidence, an independently justified scientific cap S, the precondition "
-        "B <= S, and an epsilon argued within [B, S]. Neither B nor S is established."),
+    # DECLARED 2026-09-19 under Joseph's R2/R3, given in his own turn this session. The rev-17
+    # withdrawal of `n_iters * n_rep * eps` stands; this value replaces nothing that was withdrawn,
+    # it supplies what the withdrawal said was missing: B, S, B <= S, and an epsilon within [B, S].
+    "null_epsilon": Boundary.declared(
+        "null_epsilon", 1e-9,
+        'Joseph, 2026-09-19, R2 and R3 in his own turn. S = 1e-3 in r_null scale-relative units, his ground independent of B: a fixed-seed null violation must be negligible against the smallest movement he has ruled resolvable, cause3 = 5% (AUTHORIZATION-20260918 section 2 ruling 5), and 1e-3 is 50x below it. B = 1e-12, an operating-error bound at 22.5x the largest observed r_null, from two independent executions on the same pinned inputs giving 4.4311e-14 and 4.4520e-14 and agreeing to 0.47%; first-checkpoint divergence 3.27e-16 is about 1.47 ulp at double precision and grows about 136x across the unfold, the mechanism being floating-point non-associativity in threaded reductions. CONFIDENCE STATED HONESTLY: n = 2 is NOT a confidence interval and is not presented as one; the argument rests on MARGIN, since epsilon sits 4.4 orders above the observed r_null and B <= 1e-9 would survive a 22,000-fold increase, which is why no further runs were purchased. epsilon = 1e-9 lies within [B, S] = [1e-12, 1e-3], 1000x above B and 1e6 below S, and it is the PRE-EXISTING proposal recorded at NAVIGATION-20260917:84 as "PROPOSED and UNGRADED" rather than a value fitted afterwards. R2 gate checked first and passed: z_statistics.null_ratio is ||x_cv2 - x_cv|| / ||x_cv||, dimensionless by construction. Derivation: DERIVATION-20260919-null-epsilon-B-and-S.md.'),
     # DECLARED 2026-09-18. The format-derived 0.0861% stays withdrawn; this value replaces it on
     # a use-based ground, not a display one.
     "cause3_agg": Boundary.declared(

@@ -235,7 +235,8 @@ class AWithheldBoundaryCanNeverProduceAPass(unittest.TestCase):
             zv.assess(self.L, {"s_agg": 0.0}, all_valid())
 
     def test_the_null_is_refused_the_same_way(self):
-        out = zv.assess_null(1e-30)
+        with mock.patch.dict(zc.Z_BOUNDARIES, {"null_epsilon": zc.Boundary.withheld("null_epsilon", "INJECTED BY TEST: the registry no longer withholds any boundary, so the invariant under test must supply its own rather than borrow the last one standing.")}):
+            out = zv.assess_null(1e-30)
         self.assertFalse(out["assessable"])
         self.assertEqual(out["verdict"], "NOT ASSESSABLE")
         self.assertIn("4c", out["reject_conditions"])
@@ -970,8 +971,10 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
         self.assertEqual(r["schema_version"], zrec.Z_RECEIPT_SCHEMA_VERSION)
         # ⚠ WAS `== set(zc.Z_BOUNDARIES)`, the all-withheld proxy. Four boundaries are DECLARED by
         # ruling now, so the property is that the receipt records the ACTUALLY withheld set.
+        # ⚠ WAS also `assertIn("null_epsilon", ...)`. That pinned the last withheld boundary, and
+        # on 2026-09-19 Joseph declared it, emptying the set. The property worth asserting is the
+        # one that does not decay: the receipt records the ACTUALLY withheld set, whatever it is.
         self.assertEqual(set(r["withheld_boundaries"]), set(zc.withheld_boundaries()))
-        self.assertIn("null_epsilon", r["withheld_boundaries"])
         self.assertIn("are not evidence that Z was produced", r["negative_statement"])
 
     def test_an_unnamed_centering_variant_is_refused(self):

@@ -214,8 +214,9 @@ class ZBuildIntegration(unittest.TestCase):
             self.assertEqual(
                 set(rec["withheld_boundaries"]), set(contract.withheld_boundaries())
             )
-            self.assertIn("null_epsilon", rec["withheld_boundaries"],
-                          "the null bound is withheld until the 6.4 route is ruled")
+            # ⚠ REMOVED. This pinned `null_epsilon` as the withheld boundary, and Joseph declared it
+            # on 2026-09-19, emptying the set. The line above already asserts the receipt
+            # records the ACTUALLY withheld set, which is the property that does not decay.
             self.assertEqual(
                 rec["z"]["sha256"], receipt.sha256_file(self.outputs[f"out_{variant}"])
             )
@@ -224,7 +225,14 @@ class ZBuildIntegration(unittest.TestCase):
                 rec["inflation"][receipt.RECONSTRUCTION_KEY]["discriminating"]
             )
             self.assertEqual(rec["null"]["r_null"], 0)
-            self.assertFalse(rec["null"]["assessment"]["assessable"])
+            # ⚠ WAS `assertFalse(assessable)`. That pinned the PRE-DECLARATION state: while
+            # `null_epsilon` was withheld, `assess_null` refused to grade and returned 4c. Joseph
+            # declared epsilon = 1e-9 on 2026-09-19, so the null is now GRADEABLE -- which is the
+            # point of declaring it. With this fixture's r_null = 0 the verdict is within bound.
+            self.assertTrue(rec["null"]["assessment"]["assessable"])
+            self.assertEqual(rec["null"]["assessment"]["verdict"], "within bound")
+            self.assertEqual(rec["null"]["assessment"]["limit"], 1e-9)
+            self.assertNotIn("4c", rec["null"]["assessment"].get("reject_conditions", []))
             self.assertEqual(rec["parent"]["lineage_status"], "UNVERIFIED")
             # ⚠ WAS `== "UNRESOLVED"`. That is a LIVE GRADE TOKEN in the MET / OPEN / UNRESOLVED
             # vocabulary, and z_build wrote it unconditionally for all seven causes -- so a blank
