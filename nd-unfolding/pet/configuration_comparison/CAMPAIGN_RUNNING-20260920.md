@@ -119,18 +119,35 @@ When all of `final` has landed:
 **Non-inferiority is not superiority.** If his arm scores better and ours is
 retained under the switching policy, the report says exactly that.
 
-## 5. One open question that does not block the campaign
+## 5. The batch-invariance question, answered: it was TF32
 
-The XLA-GPU path is **not batch-invariant at the 1e-3 level** with TF32
-demonstrably disabled: the same compiled program differs from itself between
-batch 2048 and 256, on the same rows, by a median 2.37e-3, while the same
-comparison on CPU gives exactly 0.0. Two hypotheses were tested and rejected —
-k-NN ties (the row profile shows 100 % of rows moving, not a few) and TF32
-(`NVIDIA_TF32_OVERRIDE=0` changed the deviation by nothing, to the digit).
+**Resolved 2026-09-20, job 58596282** (`isolate_batch_variance.py`, one
+primitive at a time, both batch sizes, same rows).
 
-It bears on trusting the executed path. The next experiment is isolating it to
-an operation; the transcendental approximations in `_gelu`'s `erf` and
-`DynamicTanh`'s `tanh` are the candidates.
+| `NVIDIA_TF32_OVERRIDE` | what moves | matmul error / RMS |
+|---|---|---:|
+| `0` | **nothing** — every primitive exactly `0.0` | 1.0e-4 |
+| `1` | `matmul`, `matmul_deep_8`, `sdpa` — median 6.4e-3, 100 % of rows | 1.7e-1 |
+
+With TF32 off, matmul, SDPA, layernorm, softmax, the reductions, `erf`, `gelu`
+and `tanh` are all **bit-identical** across batch 2048 and 256. With TF32 on,
+exactly the three tensor-core operations move, at the scale of the unexplained
+2.37e-3. Controls held in both directions: an elementwise add and multiply came
+back exactly zero, and the batch-axis reduction moved.
+
+**So the earlier rejection of TF32 was wrong, and wrong for a reason worth
+keeping.** It rested on `NVIDIA_TF32_OVERRIDE=0` changing the deviation "by
+nothing, to the digit" — but that test compared the path to *itself*, which
+cannot distinguish "the override worked and TF32 was never the cause" from "the
+override never reached the compiled path". Comparing against a float64 **answer**
+separates them in one measurement: the override moves the matmul's error from
+1.7e-1 to 1.0e-4 of the result's RMS, against 2.7e-6 predicted for true float32
+and 1.1e-2 for TF32.
+
+The campaign is unaffected — `sbatch_campaign.sh:52` already exports
+`NVIDIA_TF32_OVERRIDE=0`, so the arms train on the batch-invariant arithmetic.
+The frozen precision policy is now enforced by something that binds, and
+verified by something that does not depend on the flag being honest.
 
 ## 6. Scope
 

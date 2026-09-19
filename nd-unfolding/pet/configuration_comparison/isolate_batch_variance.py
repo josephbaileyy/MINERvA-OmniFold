@@ -163,17 +163,32 @@ def precision_witness(tf: Any, np: Any) -> dict[str, Any]:
 
     got = compiled(tf.constant(a, tf.float32),
                    tf.constant(b, tf.float32)).numpy().astype(np.float64)
-    rel = np.abs(got - exact) / np.maximum(np.abs(exact), 1e-30)
-    worst = float(np.percentile(rel, 99.9))
+
+    # Normalised by the RMS of the exact product, NOT elementwise. An entrywise
+    # relative error is meaningless wherever cancellation makes the true value
+    # near zero -- the first version of this reported a max relative error of
+    # 1.6 for a correct float32 matmul and labelled it TF32. The RMS-normalised
+    # error is the quantity the error model actually predicts.
+    k = a.shape[1]
+    rms = float(np.sqrt(np.mean(exact ** 2)))
+    normalised = float(np.max(np.abs(got - exact)) / rms)
+    predicted_fp32 = np.sqrt(k) * np.finfo(np.float32).eps
+    predicted_tf32 = np.sqrt(k) * 2.0 ** -11      # TF32 keeps 10 mantissa bits
+    threshold = float(np.sqrt(predicted_fp32 * predicted_tf32))   # geometric mean
     return {
-        "relative_error_p99.9": worst,
-        "relative_error_max": float(rel.max()),
-        "verdict": ("looks like TF32 (~1e-3)" if worst > 1e-5
-                    else "looks like true float32 (~1e-7)"),
+        "k": int(k),
+        "error_over_rms": normalised,
+        "predicted_if_float32": float(predicted_fp32),
+        "predicted_if_tf32": float(predicted_tf32),
+        "threshold": threshold,
+        "verdict": ("looks like TF32" if normalised > threshold
+                    else "looks like true float32"),
         "reference": "float64 host matmul",
         "reading": ("this compares the compiled path to the ANSWER, not to "
                     "itself, so it does not depend on any precision flag being "
-                    "honest about what it set"),
+                    "honest about what it set. The threshold is the geometric "
+                    "mean of the two predicted error scales, fixed by the error "
+                    "model rather than by the measurement"),
     }
 
 
@@ -249,7 +264,9 @@ def main() -> int:
               f"med_row={r['median_row_max_abs']:.3e} "
               f"rows={100*r['rows_moved_fraction']:.1f}%")
     print(f"[isolate] precision witness: {witness['verdict']} "
-          f"(p99.9 rel {witness['relative_error_p99.9']:.2e})")
+          f"(err/rms {witness['error_over_rms']:.2e}, fp32 would be "
+          f"{witness['predicted_if_float32']:.1e}, tf32 "
+          f"{witness['predicted_if_tf32']:.1e})")
     print(f"[isolate] not batch-invariant: {culprits}")
     return 0 if harness_ok else 2
 
