@@ -50,6 +50,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   exactly on all ten. Carries the **per-endpoint sha256 identities**, the extractor's positive AND
   negative controls, and two corrections: **§15.1 is a directory-uniformity census, not a digest
   identity**, and **the 12-playlist hadd coverage is NOT confirmed** by this artifact.
+- [`INVENTORY-20260919-scientific-acceptance-criteria-from-code.md`](INVENTORY-20260919-scientific-acceptance-criteria-from-code.md)
+  - **⚠ `scientific_acceptance` IS NOT COMPUTED — it is the literal `"NON-PASSING"` at
+  `z_build.py:608` and `:788`, with no branch producing `"PASS"` anywhere.** `outcome.assessable` is
+  likewise the constant `False` at `:652`, and `z_validator.assess()` — the only source of
+  `assessable=True` — is never called. `z_build.py:841` says it outright: NON-PASSING is *"the only
+  outcome this command can produce"*. **So no new build can reach PASS or an assessable FAIL.**
+  Second, independent blocker: `ε` needs `B ≤ S` with `ε ∈ [B, S]`, and **`S` is an undefined
+  scientific cap**. Read-only inventory; zero compute spent.
 - [`DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md`](DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md)
   - **✅ IN FORCE. Joseph's ruling on PM-1, cause 7, and completion, recorded VERBATIM as his text.**
   `SPEC` stays **FROZEN** — §1 directs recording through the existing ruling mechanism and updating
