@@ -34,9 +34,18 @@ class Stages(unittest.TestCase):
         self.assertEqual(result["total_gpu_hours"], 212.5)
         self.assertTrue(result["fits_under_ceiling"])
 
+    def test_the_ceiling_counts_what_was_already_spent(self):
+        """Joseph raised it to 1,000 INCLUDING previous spending and failures."""
+        result = pc.campaign(10.0)
+        self.assertEqual(pc.CEILING_GPU_HOURS, 1000.0)
+        self.assertAlmostEqual(result["cumulative_gpu_hours"],
+                               212.5 + pc.SPENT_BEFORE_THIS_CAMPAIGN)
+        self.assertGreater(result["headroom_gpu_hours"], 0)
+
     def test_the_ceiling_is_a_refusal_not_a_warning(self):
-        self.assertFalse(pc.campaign(30.0)["fits_under_ceiling"])
-        self.assertEqual(pc.campaign(30.0)["total_gpu_hours"], 637.5)
+        over = pc.campaign(50.0)
+        self.assertFalse(over["fits_under_ceiling"])
+        self.assertLess(over["headroom_gpu_hours"], 0)
 
 
 class Hours(unittest.TestCase):

@@ -403,11 +403,18 @@ class Accumulation(unittest.TestCase):
 class DataLeg(unittest.TestCase):
     """The measured leg is narrowed by evidence, and the evidence keeps its scope."""
 
-    def test_the_estimate_is_inseparable_from_its_scope(self):
+    def test_the_measurement_is_inseparable_from_its_scope(self):
         rows, scope = tr.data_leg_estimate()
-        self.assertEqual(rows, 4_091_707)
+        self.assertEqual(rows, 4_116_128)
         self.assertIn("FULLEVENT", scope)
-        self.assertIn("neighbouring", scope)
+        self.assertIn("pass_reco", scope)
+
+    def test_the_superseded_neighbouring_reading_is_retained_as_corroboration(self):
+        """It was 0.6 % low, and saying so is how a replaced number stays useful."""
+        from data_leg import NEIGHBOURING_PRODUCT_ROWS
+        self.assertEqual(NEIGHBOURING_PRODUCT_ROWS, 4_091_707)
+        self.assertLess(abs(NEIGHBOURING_PRODUCT_ROWS / 4_116_128 - 1), 0.01)
+        self.assertIn("supersedes", tr.DATA_LEG_EVIDENCE)
 
     def test_the_narrowing_did_not_discharge_the_refusal(self):
         """Knowing a neighbouring product's count must not let step 1 default."""
@@ -422,8 +429,8 @@ class DataLeg(unittest.TestCase):
                                            n_data=tr.DATA_LEG_EVIDENCE["rows"]) \
             + 3 * tr.examples_per_fit("step2_gen", n_mc=2_000_000)
         self.assertEqual(assumed, 153_600_000)
-        self.assertEqual(measured, 193_760_775)
-        self.assertAlmostEqual(measured / assumed, 1.261, places=3)
+        self.assertEqual(measured, 194_229_657)
+        self.assertAlmostEqual(measured / assumed, 1.2645, places=4)
 
 
 class AccumulationSchedule(unittest.TestCase):

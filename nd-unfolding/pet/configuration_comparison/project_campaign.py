@@ -35,7 +35,11 @@ CAMPAIGN_STAGES = {
 }
 PAIRS = sum(CAMPAIGN_STAGES.values())
 RETRY_ALLOWANCE = 0.25
-CEILING_GPU_HOURS = 600.0
+# Raised from 600 by Joseph on 2026-09-19, INCLUDING previous spending, failures
+# and retries -- so the comparison is against cumulative spend, not against this
+# campaign's marginal cost. It is a ceiling and not a target.
+CEILING_GPU_HOURS = 1000.0
+SPENT_BEFORE_THIS_CAMPAIGN = 18.2
 
 
 def _seconds_per_example(cell: dict[str, Any], section: str) -> float | None:
@@ -65,7 +69,13 @@ def campaign(pair_hours: float) -> dict[str, float]:
         "retries_gpu_hours": RETRY_ALLOWANCE * subtotal,
         "total_gpu_hours": (1.0 + RETRY_ALLOWANCE) * subtotal,
         "ceiling_gpu_hours": CEILING_GPU_HOURS,
-        "fits_under_ceiling": (1.0 + RETRY_ALLOWANCE) * subtotal <= CEILING_GPU_HOURS,
+        "already_spent_gpu_hours": SPENT_BEFORE_THIS_CAMPAIGN,
+        "cumulative_gpu_hours": (1.0 + RETRY_ALLOWANCE) * subtotal
+        + SPENT_BEFORE_THIS_CAMPAIGN,
+        "fits_under_ceiling": ((1.0 + RETRY_ALLOWANCE) * subtotal
+                               + SPENT_BEFORE_THIS_CAMPAIGN) <= CEILING_GPU_HOURS,
+        "headroom_gpu_hours": CEILING_GPU_HOURS - ((1.0 + RETRY_ALLOWANCE) * subtotal
+                                                   + SPENT_BEFORE_THIS_CAMPAIGN),
     }
 
 
