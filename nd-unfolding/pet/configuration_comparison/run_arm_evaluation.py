@@ -199,10 +199,25 @@ def evaluate(args: Any) -> dict[str, Any]:
     #
     # The provenance assertions are PRODUCTION's own functions, called rather
     # than retyped, so the two cannot drift.
+    # THE SEED SEEDS THE ESTIMATOR, not the subsample.
+    #
+    # Production fixes `subsample_seed=0` and varies `estimator_seed`, applying
+    # it with `tf.keras.utils.set_random_seed` before any model exists. This
+    # driver did neither: it passed the frozen seed to the LOADER, so the seed
+    # changed which events were drawn, and it never seeded Keras at all -- the
+    # network initialisation was unseeded, so "scratch, per-seed" was not
+    # reproducible and the frozen seed list bound nothing about the estimator.
+    #
+    # Within a stage both arms must see the SAME events, so the subsample is
+    # held at production's value and the seed varies initialisation and
+    # training stochasticity. That is what the paired difference is supposed to
+    # average over.
+    tf.keras.utils.set_random_seed(int(args.seed))
     target_receipt = prod.assert_target_provenance(
         str(args.target_npy), str(args.target_receipt), str(args.inputs_npz))
     data, mc, imc, coord_reco, coord_gen, meta = ffd.build_fullevent_loaders(
-        str(args.inputs_npz), max_events=args.max_events, seed=args.seed,
+        str(args.inputs_npz), max_events=args.max_events,
+        seed=int(prod.NOMINAL_SEED_POLICY["subsample_seed"]),
         bkg_mode=prod.BKG_MODE, precomputed_target=str(args.target_npy))
     # Row order, which no hash can bind on its own.
     prod.assert_consumed_inventory_matches_receipt(meta, target_receipt)
@@ -280,6 +295,13 @@ def evaluate(args: Any) -> dict[str, Any]:
         name=f"{args.arm}-{args.stage}-seed{args.seed}",
         model_reco=model_reco, model_gen=model_gen, data=data, mc=mc,
         weights_folder=str(folder), niter=args.niter, batch_size=batch,
+        # EPOCHS MUST BE PASSED. `MultiFold` defaults to 50; the incumbent's
+        # frozen policy is 8, and both the training recipe and the cost model
+        # are built on 8. Leaving the default would have trained every arm six
+        # times longer than the incumbent -- so "ours" would not have been ours
+        # -- and turned a 366 GPU-hour campaign into roughly 2,200 against a
+        # 1,000-hour ceiling.
+        epochs=int(recipe.EPOCHS),
         lr=args.learning_rate, verbose=True)
     recorder = ffr.FoldForwardRecorder() if hasattr(ffr, "FoldForwardRecorder") \
         else None
@@ -299,6 +321,10 @@ def evaluate(args: Any) -> dict[str, Any]:
                    "rebuilt_in_process": False},
         "substitution": substitution,
         "estimator": {"annealed": True,
+                      "epochs": int(recipe.EPOCHS),
+                      "estimator_seed": int(args.seed),
+                      "subsample_seed": int(
+                          prod.NOMINAL_SEED_POLICY["subsample_seed"]),
                       "fits_recorded": len(fit_lr_records),
                       "realized_learning_rates": fit_lr_records},
         "widths": {"cloud_reco": int(np.asarray(mc.reco).shape[-1]),

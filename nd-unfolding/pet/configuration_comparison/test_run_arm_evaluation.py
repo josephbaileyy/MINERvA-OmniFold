@@ -126,3 +126,34 @@ class MeasuredLegIsConsumedNotRebuilt(unittest.TestCase):
         source = Path(rae.__file__).read_text()
         self.assertIn("resolved OUTSIDE the pinned checkout", source)
         self.assertIn("Path(m.__file__).resolve()", source)
+
+
+class TheIncumbentsTrainingPolicy(unittest.TestCase):
+    """`MultiFold` defaults to 50 epochs; the incumbent's frozen policy is 8."""
+
+    def test_epochs_is_passed_explicitly(self):
+        source = Path(rae.__file__).read_text()
+        self.assertIn("epochs=int(recipe.EPOCHS)", source)
+
+    def test_the_recipe_and_the_cost_model_agree_on_epochs(self):
+        import training_recipe as recipe
+        self.assertEqual(recipe.EPOCHS, 8)
+
+    def test_the_default_would_have_been_six_times_the_policy(self):
+        """Read off the vendored engine's source: importing it needs TF."""
+        import re
+        import training_recipe as recipe
+        engine = (Path(rae.__file__).parents[3] / "omnifold_nn" / "omnifold"
+                  / "omnifold.py")
+        if not engine.exists():
+            self.skipTest("vendored engine not in this checkout")
+        block = engine.read_text().split("def __init__", 1)[1][:1200]
+        default = int(re.search(r"epochs\s*=\s*(\d+)", block).group(1))
+        self.assertEqual(default, 50)
+        self.assertGreater(default / recipe.EPOCHS, 6.0)
+
+    def test_the_seed_seeds_the_estimator_and_the_subsample_is_held(self):
+        source = Path(rae.__file__).read_text()
+        self.assertIn("tf.keras.utils.set_random_seed(int(args.seed))", source)
+        self.assertIn('seed=int(prod.NOMINAL_SEED_POLICY["subsample_seed"])',
+                      source)
