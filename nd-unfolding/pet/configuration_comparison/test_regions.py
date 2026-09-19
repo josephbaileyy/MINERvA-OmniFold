@@ -78,3 +78,61 @@ class Census(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=1)
+
+
+class TestPerEventRegionLabels(unittest.TestCase):
+    """The per-event assignment must reproduce `histogram2d`, not merely resemble it."""
+
+    def setUp(self):
+        rng = np.random.default_rng(7)
+        self.edges_pt = np.linspace(0.0, 2.0, 16)
+        self.edges_pz = np.linspace(0.0, 20.0, 20)
+        n = 20000
+        # Deliberately includes values below, above and exactly ON both grid edges.
+        self.pt = np.concatenate([rng.uniform(-0.3, 2.3, n - 4),
+                                  [0.0, 2.0, -1.0, 5.0]])
+        self.pz = np.concatenate([rng.uniform(-2.0, 22.0, n - 4),
+                                  [0.0, 20.0, -5.0, 50.0]])
+        self.w = rng.gamma(2.0, 1.0, n)
+
+    def test_per_event_cells_reproduce_histogram2d(self):
+        counts, _, _ = np.histogram2d(self.pt, self.pz,
+                                      bins=[self.edges_pt, self.edges_pz],
+                                      weights=self.w)
+        flat = cr.cell_index_of_events(self.pt, self.pz,
+                                       self.edges_pt, self.edges_pz)
+        mine = np.zeros(counts.size)
+        inside = flat >= 0
+        np.add.at(mine, flat[inside], self.w[inside])
+        np.testing.assert_allclose(mine, counts.ravel(), rtol=0, atol=1e-9)
+
+    def test_events_off_the_grid_are_unassigned_not_pushed_to_an_edge_cell(self):
+        flat = cr.cell_index_of_events(self.pt, self.pz,
+                                       self.edges_pt, self.edges_pz)
+        off = (self.pt < 0) | (self.pt > 2.0) | (self.pz < 0) | (self.pz > 20.0)
+        self.assertTrue((flat[off] == -1).all())
+        self.assertGreater(off.sum(), 0)
+
+    def test_a_value_exactly_on_the_upper_edge_lands_in_the_last_bin(self):
+        flat = cr.cell_index_of_events([2.0], [20.0],
+                                       self.edges_pt, self.edges_pz)
+        nx, ny = self.edges_pt.size - 1, self.edges_pz.size - 1
+        self.assertEqual(int(flat[0]), (nx - 1) * ny + (ny - 1))
+
+    def test_labels_follow_the_cell_acceptance_band(self):
+        rng = np.random.default_rng(3)
+        acceptance = rng.uniform(0.0, 1.0,
+                                 (self.edges_pt.size - 1) * (self.edges_pz.size - 1))
+        labels, flat = cr.region_labels_for_events(
+            self.pt, self.pz, self.edges_pt, self.edges_pz, acceptance)
+        self.assertTrue((labels[flat < 0] == cr.UNASSIGNED).all())
+        for name, lo, hi in cr.SAFEGUARD_REGIONS:
+            chosen = labels == name
+            if chosen.any():
+                a = acceptance[flat[chosen]]
+                self.assertTrue(((a >= lo) & (a < hi)).all(), msg=name)
+
+    def test_a_mismatched_acceptance_map_is_refused(self):
+        with self.assertRaisesRegex(ValueError, "different grids"):
+            cr.region_labels_for_events(self.pt, self.pz, self.edges_pt,
+                                        self.edges_pz, np.zeros(4))

@@ -108,6 +108,60 @@ def region_census(acceptance_cells, truth_mass_cells, displacement_cells) -> dic
     }
 
 
+UNASSIGNED = "outside_the_reporting_grid"
+
+
+def cell_index_of_events(pt, pz, edges_pt, edges_pz):
+    """Flat cell index per event, matching `np.histogram2d`'s binning exactly.
+
+    `histogram2d` closes the LAST bin on the right and silently DROPS anything
+    outside the grid. A per-event assignment has to reproduce both, or the
+    regional safeguard would be computed over a different population than the
+    cells its references were built from. Events off the grid get -1 rather than
+    being folded into an edge bin: pretending they sit in the nearest cell would
+    move mass into a region that never held it.
+
+    Checked against `histogram2d` itself in `test_regions.py`, not against a
+    second hand-rolled binning.
+    """
+    pt = np.asarray(pt, dtype=np.float64)
+    pz = np.asarray(pz, dtype=np.float64)
+    ex = np.asarray(edges_pt, dtype=np.float64)
+    ey = np.asarray(edges_pz, dtype=np.float64)
+    nx, ny = ex.size - 1, ey.size - 1
+    ix = np.digitize(pt, ex) - 1
+    iy = np.digitize(pz, ey) - 1
+    ix = np.where(pt == ex[-1], nx - 1, ix)   # histogram2d closes the last bin
+    iy = np.where(pz == ey[-1], ny - 1, iy)
+    inside = (ix >= 0) & (ix < nx) & (iy >= 0) & (iy < ny) \
+        & np.isfinite(pt) & np.isfinite(pz)
+    return np.where(inside, ix * ny + iy, -1)
+
+
+def region_labels_for_events(pt, pz, edges_pt, edges_pz, acceptance_cells):
+    """Label each event with the region of ITS reporting cell.
+
+    A region is a set of cells, so an event's region is its cell's. Deriving one
+    by stratifying the seven marginal `E_avail` bins by average acceptance is the
+    mistake the frozen design names explicitly, and it is not available here
+    because this function never sees the marginal.
+    """
+    a = np.asarray(acceptance_cells, dtype=np.float64).ravel()
+    flat = cell_index_of_events(pt, pz, edges_pt, edges_pz)
+    if flat.size and flat.max() >= a.size:
+        raise ValueError(
+            f"cell index {int(flat.max())} exceeds the {a.size} acceptance cells; "
+            "the edges and the acceptance map are from different grids"
+        )
+    labels = np.full(flat.shape, UNASSIGNED, dtype=object)
+    for name, lo, hi in SAFEGUARD_REGIONS:
+        chosen = (flat >= 0)
+        band = np.zeros_like(chosen)
+        band[chosen] = (a[flat[chosen]] >= lo) & (a[flat[chosen]] < hi)
+        labels[band] = name
+    return np.asarray(labels, dtype="<U32"), flat
+
+
 def regional_reference(acceptance_cells, displacement_cells, iterations: int = 3):
     """The reference model restricted to each region, weighted as the L1 statistic is.
 

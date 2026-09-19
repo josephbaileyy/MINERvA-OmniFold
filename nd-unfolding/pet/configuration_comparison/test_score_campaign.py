@@ -318,3 +318,37 @@ class TestTheirsBetweenTheTwoThresholds(unittest.TestCase):
         self.assertTrue(report["retained_ours_though_theirs_scored_better"])
         self.assertIn("Non-inferiority is not superiority",
                       report["non_inferiority_is_not_superiority"])
+
+
+class TestOffGridEvents(unittest.TestCase):
+    """Events off the reporting grid are scored but belong to no region."""
+
+    def _endpoint_with_off_grid(self, off=200, on=1800):
+        import characterize_regions as cr
+        rng = np.random.default_rng(4)
+        eavail = rng.gamma(2.0, 0.5, size=off + on)
+        labels = np.array(["good"] * on + [cr.UNASSIGNED] * off)
+        return sc.Endpoint(truth_eavail=eavail, region_of_event=labels)
+
+    def test_the_off_grid_label_is_accepted_and_its_share_reported(self):
+        ep = self._endpoint_with_off_grid()
+        self.assertAlmostEqual(ep.unassigned_fraction, 0.10, places=9)
+
+    def test_an_off_grid_event_still_counts_in_the_aggregate(self):
+        ep = self._endpoint_with_off_grid()
+        oracle = sc.Run("ours", "final", 127,
+                        sc.injected_truth_weights(ep.truth_eavail, ep.amplitude,
+                                                  ep.clip))
+        scored = sc.score_run(oracle, ep, scoreable_regions=["good"])
+        self.assertAlmostEqual(scored["recovery"], 1.0, places=10)
+        self.assertAlmostEqual(scored["unassigned_fraction"], 0.10, places=9)
+
+    def test_the_campaign_report_states_the_safeguards_coverage(self):
+        rows = _scores("final", [0.7] * 8, [0.7] * 8)
+        for row in rows:
+            row["unassigned_fraction"] = 0.10
+        report = sc.score_campaign(rows, reference=0.85,
+                                   regional_reference=REGIONAL_REF,
+                                   scoreable_regions=["good", "moderate"])
+        self.assertAlmostEqual(
+            report["regional_coverage"]["off_grid_truth_fraction"], 0.10)

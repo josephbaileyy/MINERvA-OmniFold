@@ -141,12 +141,25 @@ class Endpoint:
             )
         if not np.isfinite(e).all():
             raise ValueError("truth E_avail contains non-finite entries")
-        known = {name for name, _lo, _hi in _safeguard_regions()}
+        import characterize_regions as cr
+        known = {name for name, _lo, _hi in _safeguard_regions()} | {cr.UNASSIGNED}
         unknown = sorted(set(np.unique(r).tolist()) - known)
         if unknown:
             raise ValueError(
                 f"region labels {unknown} are not frozen regions {sorted(known)}"
             )
+
+    @property
+    def unassigned_fraction(self) -> float:
+        """Share of truth events whose `(pT, p_parallel)` falls off the reporting grid.
+
+        These events are in the AGGREGATE score -- they carry `E_avail` like any
+        other -- but they belong to no cell and so to no region. The regional
+        safeguard therefore covers less than the whole measurement, and by how
+        much is reported rather than left implicit. Assigning them to the nearest
+        edge cell would move mass into a region that never held it.
+        """
+        return float(np.mean(np.asarray(self.region_of_event) == _unassigned()))
 
     @property
     def n_events(self) -> int:
@@ -160,6 +173,11 @@ class Endpoint:
     def target(self) -> np.ndarray:
         return self.prior() * injected_truth_weights(
             self.truth_eavail, self.amplitude, self.clip)
+
+
+def _unassigned() -> str:
+    import characterize_regions as cr
+    return cr.UNASSIGNED
 
 
 def _safeguard_regions() -> tuple[tuple[str, float, float], ...]:
@@ -226,6 +244,7 @@ def score_run(run: Run, endpoint: Endpoint, *,
         "aggregate": aggregate,
         "recovery_by_region": by_region,
         "region_detail": region_detail,
+        "unassigned_fraction": endpoint.unassigned_fraction,
         "overshoot_projection": projection,
         "overshoot": projection > 1.0,
         "wrong_direction": projection < 0.0,
@@ -570,10 +589,26 @@ def score_campaign(scores: Sequence[Mapping[str, Any]], *,
                   "sizing": size_from_pilot(
                       list(paired_differences(list(pilot_scores), "pilot").values()))}),
         "region_census": dict(region_census) if region_census is not None else None,
+        "regional_coverage": _coverage(final),
         "low_acceptance": _low_acceptance_report(final, region_census),
         "scope": dict(fd.STEP_SCOPE),
     }
     return report
+
+
+def _coverage(final: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """What fraction of the measurement the regional safeguard actually covered."""
+    shares = [r["unassigned_fraction"] for r in final
+              if r.get("unassigned_fraction") is not None]
+    return {
+        "off_grid_truth_fraction": (float(np.mean(shares)) if shares else None),
+        "reading": (
+            "events whose (pT, p_parallel) falls outside the reporting grid are in "
+            "the aggregate score but in no region, so the safeguard covers the "
+            "complement of this fraction. Reported because a safeguard's coverage "
+            "is part of what it certifies"
+        ),
+    }
 
 
 def _low_acceptance_report(final: Sequence[Mapping[str, Any]],
