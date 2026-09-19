@@ -61,7 +61,7 @@ the earlier corner-integral criterion is a strictly weaker special case.
 | **C1** | tolerance-free **disclosure**. Done, `58530433`: P leg **MET**, M leg **MEASURED** |
 | **C2** | margin `0.168`; measured `2.6739` clears it by `2.29×` |
 | **C3** | criterion **declared and UNEVALUATED**, disclosed. Ruling 2 declined the only additional member, so a max over one difference is undefined |
-| **C4** | `SPEC:1237` "condition 4"→"condition 3", then the jitter print |
+| **C4** | **DONE, `58547629`.** `SPEC:1237` "condition 4"→"condition 3" — **the correction is recorded HERE because `SPEC` is frozen at rev. 22 and a factual fix living only in a frozen document is the `variant`-in-a-docstring shape.** Measured jitter floor `‖x_cv(s+7) − x_cv‖² = 3.730946e-78`, `sqrt = 1.931566e-39`; **PRINT-ONLY**, the retired `tr_uni − jit_trace` **not** re-added; **condition-3 guard PASSED** (covariance digests identical across the jitter block); 10694 of 65856 reported bins |
 | **C5** | closed as **not-falsified**, scoped to the 15 traced modules |
 | **C6** | **REUSE**, risk named: *inputs consistent but unproven* |
 | **C7** | closed as **sufficient**, on the twice-measured 45-band partition |
@@ -79,6 +79,24 @@ field. **Choosing the wrong one understates the uncertainty scale by 7.13%, abov
 passing every other gate.** Enforced by **`project_cov_nd.py --expect-variant`, required, no
 default**; designated in `z_pilot_20260916_a5/z-primary.json`. `AGENTS.md:29` disqualifies
 mean-centering alone, so `--run-class publication` from `variant: "mean"` is refused outright.
+
+## 4b. WHAT THE NOTE MUST SAY about criteria that were never computed
+
+**Landed before DOCS, not after.** DOCS re-verification checks the note against this section.
+
+Governed by §1's standing rule — *no criterion may be described as having gated anything unless
+production code computed it.* All seven declared boundaries measure `read_by_production: no`, so:
+
+| subject | REQUIRED wording | FORBIDDEN wording |
+|---|---|---|
+| **C3** | a **predeclared** criterion whose **assessor has no production caller**, so its legs were **never computed** | "no second member was available" (true but weaker, and it invites the inference that the legs ran and were uninformative); "applied", "satisfied", "passed", "met" |
+| **`s_proj`** | **implemented code at `z_statistics.py:203`** — the statistic exists and is computable | omitting this, which would make the C3 disclosure sweeping rather than accurate |
+| **`δ = 5%`** | **declared and disclosed; not evaluated in production** | "the 5% tolerance was met" |
+| **coverage `0.99` / `1.0`** | **declared and disclosed; not evaluated in production** | "coverage was achieved" |
+
+**Why the distinction is load-bearing:** *"the criterion lacked a second member"* and *"the assessor
+has never run"* are different disclosures and **only the second is true.** A reader given the first
+would reasonably conclude the legs were computed and came out uninformative. They were not computed.
 
 ## 5. Execution order — fixed
 

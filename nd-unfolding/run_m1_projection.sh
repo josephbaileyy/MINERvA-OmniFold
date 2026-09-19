@@ -41,6 +41,20 @@ DST_MASK="${MNV_DST_MASK:?set it to declared-dst-cv or receiving-cells, the dest
 # object: z-cv.npz and z-mean.npz are structurally identical and differ only in this field. Declared
 # here, verified by the projector against the file. No default.
 EXPECT_VARIANT="${MNV_EXPECT_VARIANT:?set it to the variant the source must declare, or none}"
+# ADOPTION DOES NOT EDIT THE SOURCE. The candidate keeps `adoptable: false` and its historical
+# rejection by design, so after ADOPT the projector STILL refuses `--run-class publication` unless
+# it is handed the digest-bound exception record (project_cov_nd.py:361). This launcher passed it
+# ZERO times, so PROJ would have refused the moment Joseph adopted. Optional, because a genuinely
+# adoptable source needs no exception -- but it must be PASSABLE, which it was not.
+ADOPTION_EXCEPTION="${MNV_ADOPTION_EXCEPTION:-}"
+EXC_ARG=()
+if [ -n "$ADOPTION_EXCEPTION" ]; then
+  if [ ! -f "$ADOPTION_EXCEPTION" ]; then
+    echo "REFUSED -- MNV_ADOPTION_EXCEPTION set but no record at $ADOPTION_EXCEPTION" >&2
+    exit 3
+  fi
+  EXC_ARG=(--adoption-exception "$ADOPTION_EXCEPTION")
+fi
 OUT="${MNV_OUT:?set it to the output path for the projected covariance}"
 
 # ---- REFUSAL 1: THE TRUNK MUST BE ADOPTED, AND ADOPTION IS A RECORD, NOT A FLAG ----------------
@@ -127,7 +141,7 @@ echo "=== resource state at dispatch ==="
 date -u +"%Y-%m-%dT%H:%M:%SZ"
 showquota 2>/dev/null || echo "showquota unavailable -- record this and do not substitute df"
 echo "=== operands ==="
-for _v in CODE_ROOT DATA_ROOT ADOPTION SRC_COV SRC_HIST SRC_CV DST_MASK OUT EXPECT_VARIANT; do
+for _v in CODE_ROOT DATA_ROOT ADOPTION SRC_COV SRC_HIST SRC_CV DST_MASK OUT EXPECT_VARIANT ADOPTION_EXCEPTION; do
   eval "echo \"  $_v = \$$_v\""
 done
 
@@ -143,7 +157,7 @@ python3 project_cov_nd.py \
   --src-cov "$SRC_COV" --src-hist "$SRC_HIST" --src-cv "$SRC_CV" \
   --src-axes pt,pz,eavail,q3,W --keep-axes eavail,W \
   --run-class publication --expect-variant "$EXPECT_VARIANT" \
-  "${DST_ARG[@]}" --out "$OUT" || _rc=$?
+  "${EXC_ARG[@]}" "${DST_ARG[@]}" --out "$OUT" || _rc=$?
 # `set -e` made the assignment below unreachable on failure, so the NO AUTOMATIC RETRY message it
 # guards never printed. The exit status propagated regardless; what was lost was the disclosure.
 _rc="${_rc:-0}"

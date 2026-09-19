@@ -277,5 +277,74 @@ class AdoptionSentinelIsNotAKeywordSearch(unittest.TestCase):
                 self.assertTrue(self._new_predicate(body, sha))
 
 
+class TheLauncherCanActuallyHandOverTheExceptionRecord(unittest.TestCase):
+    """PROJ would have refused the moment Joseph adopted, and nothing would have caught it.
+
+    ADOPTION DOES NOT EDIT THE SOURCE -- by design, the candidate keeps `adoptable: false` and its
+    historical rejection. So after ADOPT the projector STILL refuses `--run-class publication`
+    unless handed the digest-bound exception record (`project_cov_nd.py:361`). This launcher passed
+    `--adoption-exception` ZERO times.
+
+    That is the fifth instance of one shape in this campaign: `grep -i adopt` authorising every
+    candidate, rc 1 admitting a routing document, `variant` in a docstring nothing read,
+    `--run-class` never passed so its refusal could not fire, and now an exception route the
+    publication launcher could not reach. Every one was a protection or a path that existed and did
+    nothing, and every one was found by exercising the real thing rather than the predicate.
+    """
+    def setUp(self):
+        self.src = SH.read_text(encoding="utf-8")
+
+    def test_the_array_is_BUILT(self):
+        self.assertIn("EXC_ARG=(", self.src)
+
+    def test_the_array_is_actually_PASSED_to_the_projector(self):
+        """Building an array and forgetting to pass it is exactly the --run-class defect. The
+        assertion is on the invocation line, not on the array's existence."""
+        inv = re.sub(r"\\\n\s*", " ", self.src)
+        line = [l for l in inv.splitlines()
+                if "project_cov_nd.py" in l and l.lstrip().startswith("python3")]
+        self.assertEqual(len(line), 1, "expected exactly one projector invocation")
+        self.assertIn('"${EXC_ARG[@]}"', line[0])
+        self.assertIn("--run-class publication", line[0])
+
+    def test_it_is_OPTIONAL_so_an_adoptable_source_needs_no_exception(self):
+        """A guard that fires on every correct run is not a guard: an adoptable trunk must not be
+        forced to carry an exception record it does not need.
+
+        ⚠ THIS TEST WAS VACUOUS WHEN FIRST WRITTEN -- its helper ran `bash -n`, a syntax check,
+        while the name claimed it exercised the unset path. It now RUNS the launcher with the
+        variable unset and requires that the exception branch stays silent."""
+        self.assertIn('ADOPTION_EXCEPTION="${MNV_ADOPTION_EXCEPTION:-}"', self.src)
+        env = {k: v for k, v in self._good_env().items()}
+        env.pop("MNV_ADOPTION_EXCEPTION", None)
+        r = subprocess.run(["bash", str(SH)], env=env, capture_output=True, text=True)
+        self.assertNotIn("MNV_ADOPTION_EXCEPTION set but no record", r.stderr)
+        self.assertNotEqual(r.returncode, 3,
+                            f"unset exception must not trip a refusal: {r.stderr}")
+
+    def _good_env(self):
+        t = Path(tempfile.mkdtemp()); self.addCleanup(shutil.rmtree, t, True)
+        (t / "code" / "nd-unfolding").mkdir(parents=True)
+        shutil.copy(REPO / "nd-unfolding" / "project_cov_nd.py",
+                    t / "code" / "nd-unfolding" / "project_cov_nd.py")
+        (t / "cov.root").touch(); (t / "cv.root").touch()
+        import hashlib
+        sha = hashlib.sha256((t / "cov.root").read_bytes()).hexdigest()
+        (t / "adopt.md").write_text(f"adopts it\nADOPTS-SHA256: {sha}\n")
+        return {**os.environ,
+                "MNV_CODE_ROOT": str(t / "code"), "MNV_DATA_ROOT": str(t),
+                "MNV_ADOPTION_RECORD": str(t / "adopt.md"),
+                "MNV_SRC_COV": str(t / "cov.root"), "MNV_SRC_HIST": "hCov",
+                "MNV_SRC_CV": str(t / "cv.root"), "MNV_DST_MASK": "receiving-cells",
+                "MNV_OUT": str(t / "out.root"), "MNV_EXPECT_VARIANT": "none"}
+
+    def test_a_MISSING_exception_file_refuses_rather_than_passing_a_bad_path(self):
+        env = self._good_env()
+        env["MNV_ADOPTION_EXCEPTION"] = str(Path(env["MNV_DATA_ROOT"]) / "nope.md")
+        r = subprocess.run(["bash", str(SH)], env=env, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 3, r.stderr)
+        self.assertIn("MNV_ADOPTION_EXCEPTION set but no record", r.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
