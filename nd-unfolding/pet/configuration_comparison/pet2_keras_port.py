@@ -463,7 +463,40 @@ def additive_pair_mask(m: tf.Tensor) -> tf.Tensor:
     values that the caller then multiplies by zero. Reproducing the constant is
     what keeps fully-padded events finite in both engines.
     """
-    return (tf.ones_like(mask_outer(m)) - mask_outer(m)) * NEG_INF_SURROGATE
+    # `mask_outer` was called twice here, so the (B, N, N) product was built and
+    # thrown away once per call. Binding it changes no arithmetic.
+    outer = mask_outer(m)
+    return (tf.ones_like(outer) - outer) * NEG_INF_SURROGATE
+
+
+def additive_key_mask(m: tf.Tensor) -> tf.Tensor:
+    """``(B, 1, S)``: the same additive mask, broadcast over queries instead of stored.
+
+    **This is an identity, not an approximation, and the identity is narrow.**
+    ``additive_pair_mask(m)[b, i, j] = (1 - m_i m_j) * -1e9``. For a query row with
+    ``m_i == 1`` that is exactly ``(1 - m_j) * -1e9`` -- bitwise, since ``1.0 * m_j``
+    is exact -- which is what this returns for every row. The two therefore differ
+    only in the rows where ``m_i == 0``, and those rows are multiplied by ``m_i``
+    before they reach anything: in `AttBlock` the attention output enters as
+    ``x + attended * mask`` and the MLP output as ``x + mlp(...) * mask``, and a
+    padded row enters the block as exactly zero, so it leaves as exactly zero under
+    either mask. A padded row is also masked as a KEY, so it never reaches a valid
+    row either.
+
+    The saving is a factor of ``S`` in the mask tensor -- at batch 2048, 33 tokens
+    and ``K = 10`` the local block's mask goes from ``(67584, 10, 10)`` to
+    ``(67584, 1, 10)``. `test_port.py` asserts the two paths agree EXACTLY rather
+    than to a tolerance, because anything but exact equality here would mean the
+    argument above is wrong somewhere.
+
+    It is used only in the local neighbourhood block, which is where the tensor
+    is large. `PETBody` keeps the pair mask: its padded rows are zero at entry
+    too, so the identity would hold there as well, but its mask is ``(B, 37, 37)``
+    and saves nothing worth re-verifying his body over.
+    """
+    mf = tf.cast(m, m.dtype if m.dtype.is_floating else tf.float32)
+    keys = tf.transpose(mf, [0, 2, 1])
+    return (tf.ones_like(keys) - keys) * NEG_INF_SURROGATE
 
 
 class LocalEmbeddingBlock(_Port):
@@ -480,12 +513,21 @@ class LocalEmbeddingBlock(_Port):
         num_heads: int = 4,
         num_transformers: int = 2,
         emulate_upstream_float32_reduction: bool = True,
+        materialise_pair_mask: bool = False,
+        tile_centre: bool = False,
         **kw: Any,
     ):
         super().__init__(**kw)
         self.K = K
         self.num_heads = num_heads
         self.emulate_upstream_float32_reduction = emulate_upstream_float32_reduction
+        # The two pre-optimisation paths, kept switchable so the equivalence claim
+        # has a reference to be checked against rather than an argument in a
+        # comment. Both defaults are the optimised path; `test_port.py` runs both
+        # and asserts EXACT equality, which is the only outcome consistent with
+        # the identities in `additive_key_mask` and with broadcasting a subtraction.
+        self.materialise_pair_mask = materialise_pair_mask
+        self.tile_centre = tile_centre
         self.mlp = self._child(
             "mlp",
             MLP(in_features, hidden_features, out_features, drop=mlp_drop, norm_layer=True, dtype=self.dtype),
@@ -511,13 +553,25 @@ class LocalEmbeddingBlock(_Port):
         indices = indices[:, :, 1:]
         neighbors = tf.gather(features, indices, batch_dims=1)
         mask_neighbors = tf.gather(mask, indices, batch_dims=1)
-        centre = tf.tile(features[:, :, None, :], [1, 1, self.K, 1])
+        # `tf.tile` here materialised a second (B, N, K, dim) copy of the centre
+        # -- 346 MB at batch 2048, 33 tokens and dim 128 -- purely to give the
+        # subtraction a matching shape it does not need. Broadcasting subtracts
+        # the same numbers.
+        centre = (
+            tf.tile(features[:, :, None, :], [1, 1, self.K, 1])
+            if self.tile_centre
+            else features[:, :, None, :]
+        )
         local_features = centre - neighbors
 
         flat = [-1, self.K, 1]
         mask_flat = tf.reshape(mask_neighbors, flat)
         local_flat = tf.reshape(local_features, [-1, self.K, num_dims])
-        attn_mask = additive_pair_mask(mask_flat)
+        attn_mask = (
+            additive_pair_mask(mask_flat)
+            if self.materialise_pair_mask
+            else additive_key_mask(mask_flat)
+        )
 
         x = self.mlp(local_flat, training=training) * mask_flat
         for block in self.in_blocks:

@@ -271,3 +271,130 @@ class Transfer(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=1)
+
+
+class Accumulation(unittest.TestCase):
+    """Accumulation must be a repair, not a recipe change, and that is measurable.
+
+    The claim being tested is narrow and mechanical: four micro-batches of 8 must
+    move the weights to where one batch of 32 would have moved them, must take
+    exactly ONE optimizer step, and must clip against the FULL batch's global norm
+    rather than a micro-batch's. If any of those three fails, `-bs 512
+    --grad_accum_steps 4` is a different training run from `-bs 2048`, and the
+    equal-example budget stops being the only difference between the arms.
+
+    Run in float64 so that a real disagreement is not hidden under float32 noise;
+    the residual is then summation order alone.
+    """
+
+    ROWS, MICRO = 32, 8
+
+    def _model(self, seed):
+        # Seeded per-layer rather than through `tf.keras.utils.set_random_seed`:
+        # with a global seed set, tf_keras 2.16 draws its own layer seeds through
+        # `random.randrange(1, 1e9)`, which Python 3.12 refuses. Explicit seeds
+        # also make the two arms of the comparison identical by construction
+        # instead of by trusting a global.
+        init = tf.keras.initializers.GlorotUniform(seed=seed)
+        model = tf.keras.Sequential([
+            tf.keras.layers.Dense(6, activation="tanh", dtype="float64",
+                                  kernel_initializer=init),
+            tf.keras.layers.Dense(1, dtype="float64", kernel_initializer=init),
+        ])
+        # Built by calling it on real data: `build` on a float64 Sequential goes
+        # through a dummy-input path that does not survive the non-default dtype.
+        model(tf.zeros((1, 4), dtype=tf.float64))
+        return model
+
+    @staticmethod
+    def _loss(labels, predictions):
+        return tf.reduce_mean(tf.square(tf.cast(labels, predictions.dtype) - predictions))
+
+    def _data(self, scale=1.0):
+        rng = np.random.RandomState(5)
+        x = rng.randn(self.ROWS, 4) * scale
+        y = rng.randn(self.ROWS, 1) * scale
+        return tf.constant(x), tf.constant(y)
+
+    def _single(self, x, y, seed):
+        model = self._model(seed)
+        optimizer = tr.build_optimizer("theirs")
+        with tf.GradientTape() as tape:
+            loss = self._loss(y, model(x, training=True))
+        optimizer.apply_gradients(
+            zip(tape.gradient(loss, model.trainable_variables),
+                model.trainable_variables))
+        return model, optimizer
+
+    def _accumulated(self, x, y, seed, steps=4):
+        model = self._model(seed)
+        optimizer = tr.build_optimizer("theirs")
+        accumulator = tr.AccumulatingStep(model, optimizer, self._loss, steps,
+                                          compile_step=False)
+        for group in range(steps):
+            rows = slice(group * self.MICRO, (group + 1) * self.MICRO)
+            accumulator.micro_step(x[rows], y[rows])
+        accumulator.flush()
+        return model, optimizer, accumulator
+
+    def test_four_micro_batches_land_where_one_batch_lands(self):
+        x, y = self._data()
+        single, single_opt = self._single(x, y, seed=3)
+        split, split_opt, accumulator = self._accumulated(x, y, seed=3)
+        self.assertEqual(accumulator.applies, 1)
+        self.assertEqual(int(single_opt.steps_seen.numpy()), 1)
+        self.assertEqual(int(split_opt.steps_seen.numpy()), 1)
+        moved = 0.0
+        for a, b in zip(single.trainable_variables, split.trainable_variables):
+            np.testing.assert_allclose(a.numpy(), b.numpy(), rtol=0, atol=1e-14)
+            moved = max(moved, float(np.max(np.abs(a.numpy()))))
+        self.assertGreater(moved, 0.0)
+
+    def test_the_clip_sees_the_whole_batch_not_a_micro_batch(self):
+        """Gradients large enough that clipping fires; both must fire identically."""
+        x, y = self._data(scale=60.0)
+        _, single_opt = self._single(x, y, seed=9)
+        _, split_opt, _ = self._accumulated(x, y, seed=9)
+        self.assertEqual(int(single_opt.clip_events.numpy()), 1)
+        self.assertEqual(int(split_opt.clip_events.numpy()), 1)
+        self.assertAlmostEqual(float(single_opt.last_global_norm.numpy()),
+                               float(split_opt.last_global_norm.numpy()), places=4)
+
+    def test_a_partial_group_is_refused_rather_than_dropped(self):
+        x, y = self._data()
+        model = self._model(3)
+        accumulator = tr.AccumulatingStep(model, tr.build_optimizer("theirs"),
+                                          self._loss, 4, compile_step=False)
+        for group in range(3):
+            rows = slice(group * self.MICRO, (group + 1) * self.MICRO)
+            accumulator.micro_step(x[rows], y[rows])
+        self.assertEqual(accumulator.pending, 3)
+        self.assertEqual(accumulator.applies, 0)
+        with self.assertRaises(ValueError):
+            accumulator.flush()
+
+    def test_an_uneven_split_is_refused(self):
+        self.assertEqual(tr.accumulation_steps(2048, 512), 4)
+        with self.assertRaises(ValueError):
+            tr.accumulation_steps(2048, 768)
+        with self.assertRaises(ValueError):
+            tr.accumulation_steps(2048, 0)
+
+    def test_an_unbuilt_model_is_refused(self):
+        with self.assertRaises(ValueError):
+            tr.AccumulatingStep(tf.keras.Sequential([tf.keras.layers.Dense(2)]),
+                                tr.build_optimizer("theirs"), self._loss, 2)
+
+    def test_the_schedule_advances_once_per_group_not_per_micro_batch(self):
+        """`scheduler.step()` is inside his `if accum_counter % k == 0` branch."""
+        x, y = self._data()
+        model = self._model(3)
+        schedule = tr.derive_schedule(512, examples=512 * 100)
+        optimizer = tr.build_optimizer("theirs", schedule=schedule)
+        accumulator = tr.AccumulatingStep(model, optimizer, self._loss, 4,
+                                          compile_step=False)
+        for group in range(8):
+            rows = slice((group % 4) * self.MICRO, ((group % 4) + 1) * self.MICRO)
+            accumulator.micro_step(x[rows], y[rows])
+        self.assertEqual(accumulator.applies, 2)
+        self.assertEqual(int(optimizer.iterations.numpy()), 2)

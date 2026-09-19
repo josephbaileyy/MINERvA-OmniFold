@@ -28,7 +28,7 @@ central values or Gate 6, and nothing discharges `OI-71`.
 | **float32 limit** independent of the port | `port_checks.float32_verdict`, `KERAS_PATH_VALIDATION-20260919.md` |
 | **requests ready, not sent** | `requests/DRAFT-agent-a-event-keys.md`, `requests/DRAFT-gregor-paper-configuration.md` |
 
-190 tests pass. `ALL BINDINGS INTACT`.
+201 tests pass (re-measured 2026-09-19 at `5dd716be`). `ALL BINDINGS INTACT`.
 
 ## 2. The port checks, and what they caught
 
@@ -83,7 +83,7 @@ needs an optimisation pass, and P-1…P-6 are what make that pass safe.
 | **R2** | `best_model_pretrain_{s,m}.pt`, sha256, licence, from CFS **m4567** | **Gregor** | the objective — and now explicitly the pretrained arm's **tuning and variance pilot**, not only its final runs |
 | ~~R-1~~ | ~~three event-key branches~~ | ~~Agent A~~ | **DELIVERED 2026-09-19**, verified 12/12, with the correction that the triple is a GATE key on `data` and the join needs `occurrence` |
 | **R4** | authorization to read 21 typed branches at scale (A1 covers blob/prong **counts**, not values) | **Joseph** | the representation half |
-| **U1–U11** | the scientific decisions in the packet | **Joseph** | freezing the design |
+| **T1** | ratification of the **single threshold policy** — `f = 0.80`, `δ = 0.02`, `δ_switch = 0.04`, regional floor 0.60 | **Joseph** | freezing the design |
 
 ## 5. What is implemented but deliberately not done
 
@@ -103,7 +103,14 @@ needs an optimisation pass, and P-1…P-6 are what make that pass safe.
 
 ## 6. Smallest next authorization
 
-Still **not compute**. It is ratification of U1–U11, and within that the one that
-changes the most downstream work is **U3** — whether the scoring domain stays 1-D
-`E_avail` or becomes 2-D. Everything else on the implementation side runs without
-anyone's permission; everything else on the science side waits on R2.
+Still **not compute**. The eleven open decisions of `DECISION_PACKET-20260919.md`
+were collapsed into **one** in `FREEZE_PROPOSAL-20260919.md` §2, and that single
+threshold policy is the ask: `f = 0.80`, `δ = 0.02`, `δ_switch = 0.04`, regional
+floor 0.60. Within it only **δ** is a genuine scientific judgement — it accepts
+**0.27 % more truth mass in the wrong bin** to keep the incumbent, and it enters
+the sample size as `1/δ²`. The scoring domain is no longer open: the 1-D `E_avail`
+primary score stands, with the regional safeguard on the `(pT, p‖)` cells carrying
+the protection that a 2-D score was being considered for.
+
+Everything else on the implementation side runs without anyone's permission;
+everything else on the science side waits on **R2**.

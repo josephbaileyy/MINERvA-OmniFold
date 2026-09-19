@@ -330,3 +330,147 @@ class RealizedPolicy:
                 "one arm is an unequal comparison"
             ),
         }
+
+
+# --------------------------------------------------------------------------- #
+# Gradient accumulation: HIS knob, not our workaround.
+# --------------------------------------------------------------------------- #
+#
+# `src/scripts/train.py:2593-2615` is the whole semantics, and it is transcribed
+# rather than reinvented:
+#
+#     loss = loss / args.grad_accum_steps
+#     loss.backward()
+#     accum_counter += 1
+#     if accum_counter % args.grad_accum_steps == 0:
+#         torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip)
+#         optimizer.step(); optimizer.zero_grad(); scheduler.step(); step += 1
+#
+# Three consequences decide whether this is a repair or a recipe change:
+#
+# * the clip is applied to the ACCUMULATED gradient, once per optimizer step, so
+#   it sees the same global norm a single large batch would have produced;
+# * the schedule advances once per optimizer step, not per micro-batch, so the
+#   learning-rate trajectory is unchanged;
+# * `max_steps` is counted in optimizer steps, so the derived budget is unchanged.
+#
+# With equal micro-batches and a mean-reduced loss, `sum_k (mean_k)/k` IS the mean
+# over the virtual batch, so the update is the single-batch update up to float
+# summation order. `test_recipe.py` measures that rather than asserting it.
+#
+# His reference run is `-bs 2048 --grad_accum_steps 1`. Running `-bs 512
+# --grad_accum_steps 4` keeps the virtual batch at 2048, which is why this is the
+# memory unblock that does NOT cost a recipe change. What it cannot do is make the
+# port cheaper: it changes where the activations live, not how many there are.
+HIS_ACCUMULATION_REFERENCE = "src/scripts/train.py:2593-2615"
+
+
+def accumulation_steps(virtual_batch: int, micro_batch: int) -> int:
+    """`grad_accum_steps` for a virtual batch, refusing a non-divisible split.
+
+    An uneven split would make the last micro-batch a different size, and
+    `loss / k` then stops being the mean over the virtual batch -- it silently
+    reweights the tail rows. Refusing is the only honest option, because the
+    alternative is a fairness axis that is off by a fraction nobody records.
+    """
+    if virtual_batch <= 0 or micro_batch <= 0:
+        raise ValueError("batch sizes must be positive")
+    if virtual_batch % micro_batch:
+        raise ValueError(
+            f"virtual batch {virtual_batch} is not a multiple of micro-batch "
+            f"{micro_batch}; an uneven split reweights the tail rows"
+        )
+    return virtual_batch // micro_batch
+
+
+class AccumulatingStep:
+    """His accumulation loop over a Keras model, with the partial tail refused.
+
+    The tail matters more than it looks. If a fit's micro-batch count is not a
+    multiple of `steps`, the leftover gradient is never applied and those examples
+    are presented to the network without ever reaching the weights -- a silent
+    shortfall in exactly the quantity the fairness axis is defined on. `flush`
+    refuses rather than applying a short group, and `pending` exposes the state so
+    a caller cannot end a fit mid-group without noticing.
+    """
+
+    def __init__(self, model: Any, optimizer: ClippedTorchAdamW, loss_fn: Any,
+                 steps: int, compile_step: bool = True,
+                 jit_compile: bool = False, forward: Any = None) -> None:
+        if steps < 1:
+            raise ValueError(f"steps must be >= 1; got {steps}")
+        if not model.trainable_variables:
+            raise ValueError(
+                "the model must be built before accumulation: the accumulators are "
+                "shaped from its variables"
+            )
+        self.model = model
+        self.optimizer = optimizer
+        self.loss_fn = loss_fn
+        self.steps = int(steps)
+        # `PET2Port.call` takes four positional tensors, not one input. Rather
+        # than wrap the model in an adapter layer -- which would put a second
+        # object between the variables and the tape -- the caller may supply the
+        # forward itself. The variables still come from `model`.
+        self.forward = forward or (
+            lambda inputs, training: model(inputs, training=training))
+        self._accumulators = [
+            tf.Variable(tf.zeros_like(v), trainable=False, name=f"accum/{i}")
+            for i, v in enumerate(model.trainable_variables)
+        ]
+        self._in_group = 0
+        self.applies = 0
+        # The graph boundary is per micro-batch, which is where it has to be: the
+        # group counter is Python state and a traced loop over it would bake one
+        # group's length into the graph. Eager accumulation would also price the
+        # measurement wrong -- per-op dispatch on ~2,000 ops is not what the
+        # campaign would pay.
+        self.compile_step = bool(compile_step)
+        self.jit_compile = bool(jit_compile)
+        self._micro = (
+            tf.function(self._micro_body, jit_compile=jit_compile or None)
+            if compile_step else self._micro_body
+        )
+
+    @property
+    def pending(self) -> int:
+        """Micro-batches accumulated but not yet applied."""
+        return self._in_group
+
+    def _micro_body(self, inputs: Any, labels: Any) -> Any:
+        with tf.GradientTape() as tape:
+            loss = self.loss_fn(labels, self.forward(inputs, True))
+            scaled = loss / tf.cast(self.steps, loss.dtype)
+        gradients = tape.gradient(scaled, self.model.trainable_variables)
+        for accumulator, gradient in zip(self._accumulators, gradients):
+            if gradient is not None:
+                accumulator.assign_add(tf.cast(gradient, accumulator.dtype))
+        return loss
+
+    def micro_step(self, inputs: Any, labels: Any) -> Any:
+        """One backward pass at `loss / steps`, accumulated; updates on the k-th."""
+        loss = self._micro(inputs, labels)
+        self._in_group += 1
+        if self._in_group == self.steps:
+            self._apply()
+        return loss
+
+    def _apply(self) -> None:
+        self.optimizer.apply_gradients(
+            zip([tf.convert_to_tensor(a) for a in self._accumulators],
+                self.model.trainable_variables))
+        for accumulator in self._accumulators:
+            accumulator.assign(tf.zeros_like(accumulator))
+        self._in_group = 0
+        self.applies += 1
+
+    def flush(self) -> None:
+        """End of fit: refuse a partial group instead of dropping or applying it."""
+        if self._in_group:
+            raise ValueError(
+                f"{self._in_group} of {self.steps} micro-batches are accumulated and "
+                "unapplied at the end of the fit. Applying a short group would "
+                "weight those rows by 1/steps; dropping it would present examples "
+                "that never reach the weights. Size the fit to a whole number of "
+                "groups."
+            )

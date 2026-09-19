@@ -404,3 +404,105 @@ class Float32Limit(unittest.TestCase):
             with self.subTest(ours=ours):
                 self.assertFalse(
                     pc.float32_verdict(5.0e-6, 2.0e-7, ours)["held"])
+
+
+class OptimisationEquivalence(unittest.TestCase):
+    """The performance pass must not change the network, and "must not" means bitwise.
+
+    Two rewrites in `LocalEmbeddingBlock` exist only to stop building tensors that
+    the arithmetic never needed: the centre is broadcast rather than tiled, and the
+    ``(B, N, N)`` additive pair mask is replaced by a ``(B, 1, N)`` key mask. Both
+    are claimed to be identities rather than approximations, so the test is
+    `assert_array_equal`, not a tolerance. A tolerance here would let a real change
+    in his network hide under a number I chose.
+
+    The fixture is built to contain the cases the identity argument turns on: padded
+    tokens, and an event with a single real token so that every neighbour in its
+    neighbourhood is padded and the softmax runs over nothing but the ``-1e9``
+    surrogate.
+    """
+
+    SETTINGS = dict(input_dim=4, conditional=True, cond_dim=16, pid=True, pid_dim=8,
+                    add_info=True, add_dim=5, num_classes=1, num_coord=2, K=5,
+                    num_transformers=2, num_transformers_head=2, num_heads=4,
+                    num_tokens=2, base_dim=16, mlp_ratio=2)
+
+    @staticmethod
+    def _set_paths(model, *, materialise_pair_mask, tile_centre):
+        """Flip every local block to the pre-optimisation path, and count them."""
+        found, stack = 0, [model]
+        while stack:
+            layer = stack.pop()
+            if isinstance(layer, port.LocalEmbeddingBlock):
+                layer.materialise_pair_mask = materialise_pair_mask
+                layer.tile_centre = tile_centre
+                found += 1
+            stack.extend(getattr(layer, "_port_children", {}).values())
+        return found
+
+    def _fixture(self, dtype):
+        rng = np.random.RandomState(7)
+        x = rng.randn(3, 9, 4).astype(dtype)
+        x[:, 6:, :] = 0.0            # padded tokens; the mask column is 2
+        x[2, 1:, :] = 0.0            # one real token: its whole neighbourhood is pad
+        pid = rng.randint(0, 8, (3, 9)); pid[:, 6:] = 0
+        add = rng.randn(3, 9, 5).astype(dtype); add[:, 6:, :] = 0.0
+        return [tf.constant(x), tf.constant(rng.randn(3, 16).astype(dtype)),
+                tf.constant(pid), tf.constant(add)]
+
+    def _run(self, model, args, *, materialise_pair_mask, tile_centre):
+        touched = self._set_paths(model, materialise_pair_mask=materialise_pair_mask,
+                                  tile_centre=tile_centre)
+        self.assertEqual(touched, 1, "the fixture must contain exactly one local block")
+        with tf.GradientTape() as tape:
+            out = model(*args, training=False)
+            loss = tf.reduce_sum(out * out)
+        grads = tape.gradient(loss, model.trainable_variables)
+        return out.numpy(), [g.numpy() for g in grads]
+
+    def _compare(self, dtype):
+        model = port.PET2Port(**self.SETTINGS, dtype=dtype)
+        args = self._fixture(dtype)
+        before = self._run(model, args, materialise_pair_mask=True, tile_centre=True)
+        after = self._run(model, args, materialise_pair_mask=False, tile_centre=False)
+        np.testing.assert_array_equal(before[0], after[0])
+        for old, new in zip(before[1], after[1]):
+            np.testing.assert_array_equal(old, new)
+        return before
+
+    def test_forward_and_gradients_are_bitwise_identical_in_float64(self):
+        forward, grads = self._compare("float64")
+        # A test comparing two zeros would pass for the wrong reason.
+        self.assertGreater(float(np.max(np.abs(forward))), 0.0)
+        self.assertGreater(max(float(np.max(np.abs(g))) for g in grads), 0.0)
+
+    def test_forward_and_gradients_are_bitwise_identical_in_float32(self):
+        """Production precision, where a reassociation would be easiest to hide."""
+        self._compare("float32")
+
+    def test_the_optimised_paths_are_the_defaults(self):
+        block = port.LocalEmbeddingBlock(4, 8, 8, K=3)
+        self.assertFalse(block.materialise_pair_mask)
+        self.assertFalse(block.tile_centre)
+
+    def test_the_key_mask_equals_the_pair_mask_on_unpadded_rows(self):
+        """The identity itself, isolated from the network that relies on it."""
+        m = tf.constant(np.array([[[1.0], [0.0], [1.0], [0.0]]]))
+        pair = port.additive_pair_mask(m).numpy()
+        key = port.additive_key_mask(m).numpy()
+        self.assertEqual(key.shape, (1, 1, 4))
+        for row in (0, 2):                        # the rows that survive masking
+            np.testing.assert_array_equal(pair[0, row], key[0, 0])
+        # And it is NOT a claim about the padded rows: those genuinely differ.
+        self.assertFalse(np.array_equal(pair[0, 1], key[0, 0]))
+
+    def test_padded_rows_leave_the_local_block_as_exact_zero(self):
+        """The premise the identity rests on, measured rather than argued."""
+        block = port.LocalEmbeddingBlock(3, 8, 8, K=2, num_heads=2, num_transformers=1,
+                                         dtype="float64")
+        rng = np.random.RandomState(11)
+        features = tf.constant(rng.randn(1, 5, 3))
+        mask = tf.constant(np.array([[[1.0], [1.0], [1.0], [0.0], [0.0]]]))
+        points = tf.constant(rng.randn(1, 5, 2))
+        out, _ = block(points, features, mask)
+        np.testing.assert_array_equal(out.numpy()[0, 3:], np.zeros((2, 8)))
