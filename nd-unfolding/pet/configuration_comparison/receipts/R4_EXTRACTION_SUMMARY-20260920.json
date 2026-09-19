@@ -47,5 +47,21 @@
     }
   },
   "reading": "the extraction is a SUPERSET of the inventory because the tuples are pre-selection; the join takes selection from the inventory. Signal keys are unique 1:1, matching the sidecar verdict unique-without-source",
-  "slim_files_on_disk": 2260
+  "slim_files_on_disk": 2260,
+  "authoritative_on_disk": {
+    "Data": {
+      "files": 1771,
+      "entries": 32296435
+    },
+    "MC": {
+      "files": 489,
+      "entries": 91390364
+    }
+  },
+  "counting_note": "the per-run reports count files PROCESSED IN THAT RUN. A rerun skips destinations that already exist and does not record them, so the report undercounts whenever a run is resumed. These on-disk numbers are counted by opening every slim file and are the ones to quote.",
+  "inventory_for_comparison": {
+    "signal": 49152885,
+    "data": 4116128,
+    "background": 564591
+  }
 }
