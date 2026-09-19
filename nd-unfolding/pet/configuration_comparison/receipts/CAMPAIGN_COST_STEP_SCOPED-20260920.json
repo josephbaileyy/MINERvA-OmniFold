@@ -1,0 +1,17 @@
+{
+  "per_pair_gpu_hours": 17.21286098410108,
+  "campaign_gpu_hours": 365.773295912148,
+  "basis": "step-2 identical for both arms, so his network runs only at step 1",
+  "measured_microseconds_per_example": {
+    "theirs_step1_train": 410.6,
+    "ours_train": 35.0,
+    "theirs_inference": 49.0,
+    "ours_inference": 17.9
+  },
+  "examples_per_fit": {
+    "step1": 39143219,
+    "step2": 25600000
+  },
+  "niter": 3,
+  "supersedes": "540 GPU-h, which charged his network at both steps"
+}
