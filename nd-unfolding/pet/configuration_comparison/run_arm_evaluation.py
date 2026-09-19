@@ -90,8 +90,8 @@ def main() -> None:
                         help="print the plan and exit; no training")
     parser.add_argument("--repo", type=Path, default=Path("."))
     parser.add_argument("--inputs-npz", type=Path)
-    parser.add_argument("--theirs-packed", type=Path)
-    parser.add_argument("--theirs-index", type=Path)
+    parser.add_argument("--theirs-index", type=Path,
+                        help="directory holding join_<stream>.npz and .json")
     parser.add_argument("--weights-folder", type=Path, default=Path("weights"))
     parser.add_argument("--max-events", type=int, default=2_000_000)
     args = parser.parse_args()
@@ -158,12 +158,11 @@ def evaluate(args: Any) -> dict[str, Any]:
     if args.arm == "theirs":
         import theirs_loader_substitution as tls
         import theirs_omnifold_arm as toa
-        blocks = _load_joined(args, np)
+        blocks = _load_joined(args, np, np.arange(data.reco.shape[0]), imc)
         substitution = tls.substitute_step1(
             data, mc,
-            tls.gather(blocks["data"], blocks["data_index"],
-                       np.arange(data.reco.shape[0])),
-            tls.gather(blocks["mc"], blocks["mc_index"], imc))
+            (blocks["data"]["packed"], blocks["data"]["globals"]),
+            (blocks["mc"]["packed"], blocks["mc"]["globals"]))
         model_reco = toa.TheirsCompleteArm(num_part=fd.THEIRS_COMPLETE["token_cap"])
     else:
         model_reco = PET(num_feat=meta["n_feat_reco"], num_evt=meta["n_evt_reco"],
@@ -217,16 +216,28 @@ def plan_of(args: Any) -> dict[str, Any]:
             "learning_rate": args.learning_rate, "niter": args.niter}
 
 
-def _load_joined(args: Any, np: Any) -> dict[str, Any]:
-    """His packed inputs plus the row index the join produced."""
-    blob = np.load(args.theirs_index, allow_pickle=False)
-    packed = np.load(args.theirs_packed, mmap_mode="r")
-    return {"data": {"packed": packed["data_packed"],
-                     "globals": packed["data_globals"]},
-            "mc": {"packed": packed["mc_packed"],
-                   "globals": packed["mc_globals"]},
-            "data_index": blob["data_row_index"],
-            "mc_index": blob["mc_row_index"]}
+def _load_joined(args: Any, np: Any, data_rows: Any, mc_rows: Any
+                 ) -> dict[str, Any]:
+    """Gather his inputs for exactly the rows this fit will see.
+
+    The earlier version expected a single pre-packed array. That would have been
+    65 GB for the signal inventory and would have failed at runtime on a file
+    that is never built; `materialize_theirs` gathers from the shards instead,
+    for the rows requested and in inventory order.
+    """
+    import json
+
+    import materialize_theirs as mtz
+
+    out: dict[str, Any] = {}
+    for stream, rows in (("data", data_rows), ("sig", mc_rows)):
+        index = np.load(Path(args.theirs_index) / f"join_{stream}.npz")
+        report = json.loads(
+            (Path(args.theirs_index) / f"join_{stream}.json").read_text())
+        gathered = mtz.materialize(report["files"], index["row_index"],
+                                   index["origin"], np.asarray(rows))
+        out[stream] = gathered
+    return {"data": out["data"], "mc": out["sig"]}
 
 
 if __name__ == "__main__":

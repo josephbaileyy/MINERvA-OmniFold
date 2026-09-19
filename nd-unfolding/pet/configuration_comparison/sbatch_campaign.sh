@@ -23,7 +23,7 @@ set -eo pipefail
 
 : "${STAGE:?STAGE must be set: tuning|pilot|final}"
 : "${CHECKOUT:?}" ; : "${OUTPUT:?}" ; : "${COMMIT:?}"
-: "${INPUTS_NPZ:?}" ; : "${THEIRS_PACKED:?}" ; : "${THEIRS_INDEX:?}"
+: "${INPUTS_NPZ:?}" ; : "${THEIRS_INDEX:?}"
 
 cd "$CHECKOUT"
 [[ "$(git rev-parse HEAD)" == "$COMMIT" ]]
@@ -55,7 +55,7 @@ export NVIDIA_TF32_OVERRIDE=0
   python nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py \
     --arm "$ARM" --seed "$SEED" --stage "$STAGE" --learning-rate "$LR" \
     --repo "$CHECKOUT" --inputs-npz "$INPUTS_NPZ" \
-    --theirs-packed "$THEIRS_PACKED" --theirs-index "$THEIRS_INDEX" \
+    --theirs-index "$THEIRS_INDEX" \
     --weights-folder "$RUN/weights" --output "$RUN/receipt.json"
 ) > "$RUN/run.log" 2>&1
 
