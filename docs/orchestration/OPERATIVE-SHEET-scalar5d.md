@@ -324,6 +324,38 @@ artifact and its text is the only live statement — but *that reasoning would r
 requirement*, which is a scientific call and not mine. Choosing the convenient one is exactly what
 the instruction forbade.
 
+### PM-1's evidence — located, cited, and its object named
+
+**The strongest weight-only evidence in the repository is
+`PACKET-20260918-scalar5d-completion-inventory-and-null-route.md` §15.1, and C7's row does not cite
+it.** It is stronger than a name argument because it tests the thing that actually decides
+laterality: `unfold_nd_omnifold_unbinned.py:388` is
+`if t.GetBranch(l_sim) and t.GetBranch(l_mc):  # lateral` — **a runtime branch-presence test, not a
+name list.**
+
+> Measured on the **470-branch production universe tuple**: the five lateral bands carry kinematics
+> **4/4** and shifted `q3`+`W` **4/4**; the four excluded — `MinosEfficiency`, `GEANT_Neutron`,
+> `GEANT_Pion`, `GEANT_Proton` — carry kinematics **0/4**; and `measured lateral set ==
+> p4_lib.BANDS` is **True**. The producer states it directly, `runEventLoopOmniFold.cpp:238-244`:
+> *"the GEANT hadronic-response bands (which DO move E_avail physically) are vertical/weight-only"*,
+> and `MinosEfficiency` is a `MINOSEfficiencyReweighter` by class.
+
+⚠ **AND HERE IS THE GAP, WHICH IS THE POINT, NOT A DETAIL.** §2.7 defines `PM-1` as re-measuring the
+weight-only claim **on G's own `combined_source`** — because the supporting ledger sentence
+(`VALIDATION_LEDGER:788-791`) **sits in the FPS row**, job `56431823`, the 266-bin chain, making it a
+**2D/FPS-side claim**. §15.1's measurement is on *the 470-branch production universe tuple*; the
+packet **does not name that file** and **does not establish it as G's `combined_source`.** So the
+evidence is strong and it is **not yet shown to be PM-1's object.** Naming that file, or measuring on
+`combined_source`, is what closes PM-1.
+
+### Is `#16`'s "promoted-universe migration bound" §2.7's lateral counterfactual?
+
+**THE RECORD DOES NOT SAY.** Measured, not inferred: the string `promoted-universe` occurs in the
+entire repository **exactly once outside this sheet — in `KNOWN_ISSUES.md:16` itself.** It is used
+in the row and **defined nowhere**. So no record connects it to §2.7's `Σ_A L_active` vs
+`Σ_A L_support`, and no record separates them either. Recorded as unanswered rather than resolved by
+plausibility.
+
 **WHAT CLOSES IT, and it is a ruling and then one edit:** state the publication gate's actual
 requirement **once, in one live canonical artifact**, and route the registry to it. If *five-band
 coverage* is the intended gate, it has to be written into `KNOWN_ISSUES:16` (or another live
