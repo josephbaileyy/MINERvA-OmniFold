@@ -36,7 +36,10 @@ nvidia-smi --query-gpu=uuid,pci.bus_id,name,memory.total --format=csv > "$output
 export PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 export TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=:4096:8
 export TF_FORCE_GPU_ALLOW_GROWTH=true
-module load python >/dev/null 2>&1 || true
+# `module load python` has no TensorFlow. The GPU work in this directory runs
+# under tensorflow/2.15.0, which is what the production validation measured on
+# and therefore the only environment whose answer is comparable to it.
+module load tensorflow/2.15.0
 
 # Run it BOTH ways. If the override reaches the compiled path the two reports
 # differ; if they are identical to the digit, the override is not binding there
