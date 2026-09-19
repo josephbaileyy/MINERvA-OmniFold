@@ -18,6 +18,11 @@
 # NOTHING HERE ADOPTS. Leg B4's product is a CONTROL and is named so. It is NOT the PROJ
 # deliverable: PROJ re-runs through the launcher after ADOPT, with the adoption record in place.
 set -uo pipefail
+# ⚠ THE SIGNAL MUST BE ON THE FAILURE'S PATH. A marker AFTER the source never executes when the
+# shell dies INSIDE the source -- which is precisely what hid this twice; the only evidence was
+# silence. An EXIT trap installed BEFORE anything is sourced fires on the `set -u` abort, where no
+# later line can.
+trap 'echo "[exit-trap] rc=$? line=$LINENO" >&2' EXIT
 W="${MNV_W:?}"; D="${MNV_D:?}"; P="${MNV_P:?}"
 AMEND="$W/docs/orchestration/AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md"
 OUTD="$D/guardset-control"; mkdir -p "$OUTD"
@@ -39,7 +44,13 @@ ls -l "$AMEND"; grep -c '3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90
 # that reaches for ROOT yields a legible ImportError naming the importing line instead of a
 # segfault. B4 gets the REAL ROOT, because B4 writes a file and a design that shadows every leg
 # kills its own positive control.
+# `set +u` REQUIRED: setup_salloc_env.sh sources conda activate-binutils, which references
+# ADDR2LINE unbound at :68 and ABORTS THE SHELL FROM INSIDE under `set -u`. `|| true`
+# cannot catch that -- there is no command whose status to test. This killed runs 2 and 3.
+set +u
 source "$W/setup_salloc_env.sh" >/dev/null 2>&1 || true
+set -u
+echo "[env] shell survived sourcing setup_salloc_env.sh"
 SHIM="$OUTD/_rootshim"; mkdir -p "$SHIM"
 cat > "$SHIM/ROOT.py" <<'SHIMEOF'
 raise ImportError("ROOT SHADOWED BY THE GUARD-SET CONTROL: a guard reached under this shadow "

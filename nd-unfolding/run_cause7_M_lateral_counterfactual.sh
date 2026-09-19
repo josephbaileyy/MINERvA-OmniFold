@@ -13,6 +13,11 @@
 #
 # ⚠ NOT `C_Z - C_G`. §2.7 says that difference contains six other causes' movement.
 set -uo pipefail
+# ⚠ THE SIGNAL MUST BE ON THE FAILURE'S PATH. A marker AFTER the source never executes when the
+# shell dies INSIDE the source -- which is precisely what hid this twice; the only evidence was
+# silence. An EXIT trap installed BEFORE anything is sourced fires on the `set -u` abort, where no
+# later line can.
+trap 'echo "[exit-trap] rc=$? line=$LINENO" >&2' EXIT
 W="${MNV_W:?}"; D="${MNV_D:?}"
 OUT="$D/cause7_M"; mkdir -p "$OUT"
 # ⚠ `set +u` IS REQUIRED HERE AND `|| true` DOES NOT SUBSTITUTE FOR IT.
