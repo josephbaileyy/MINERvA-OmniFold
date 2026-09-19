@@ -398,3 +398,29 @@ class Accumulation(unittest.TestCase):
             accumulator.micro_step(x[rows], y[rows])
         self.assertEqual(accumulator.applies, 2)
         self.assertEqual(int(optimizer.iterations.numpy()), 2)
+
+
+class DataLeg(unittest.TestCase):
+    """The measured leg is narrowed by evidence, and the evidence keeps its scope."""
+
+    def test_the_estimate_is_inseparable_from_its_scope(self):
+        rows, scope = tr.data_leg_estimate()
+        self.assertEqual(rows, 4_091_707)
+        self.assertIn("FULLEVENT", scope)
+        self.assertIn("neighbouring", scope)
+
+    def test_the_narrowing_did_not_discharge_the_refusal(self):
+        """Knowing a neighbouring product's count must not let step 1 default."""
+        with self.assertRaises(ValueError):
+            tr.rows_per_fit("step1_reco", n_mc=2_000_000)
+
+    def test_the_budget_factor_is_what_the_evidence_says(self):
+        assumed = 3 * tr.examples_per_fit("step1_reco", n_mc=2_000_000,
+                                          n_data=2_000_000) \
+            + 3 * tr.examples_per_fit("step2_gen", n_mc=2_000_000)
+        measured = 3 * tr.examples_per_fit("step1_reco", n_mc=2_000_000,
+                                           n_data=tr.DATA_LEG_EVIDENCE["rows"]) \
+            + 3 * tr.examples_per_fit("step2_gen", n_mc=2_000_000)
+        self.assertEqual(assumed, 153_600_000)
+        self.assertEqual(measured, 193_760_775)
+        self.assertAlmostEqual(measured / assumed, 1.261, places=3)

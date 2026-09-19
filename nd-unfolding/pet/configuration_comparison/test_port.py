@@ -8,6 +8,7 @@ it, and an optimizer that is nearly but not quite torch's.
 
 from __future__ import annotations
 
+import json
 import os
 import unittest
 
@@ -16,6 +17,7 @@ os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
 
 import numpy as np
 
+import compare_port_checks as cpc
 import fold_forward_recorder as ffr
 import pet2_keras_port as port
 import pet2_omnifold_adapter as adapter
@@ -506,3 +508,49 @@ class OptimisationEquivalence(unittest.TestCase):
         points = tf.constant(rng.randn(1, 5, 2))
         out, _ = block(points, features, mask)
         np.testing.assert_array_equal(out.numpy()[0, 3:], np.zeros((2, 8)))
+
+
+class ReceiptComparison(unittest.TestCase):
+    """The "unchanged" claim needs a comparator that can say "changed"."""
+
+    BEFORE = {"checks": {"P2": {"deviation": 3.7e-7, "rows": [1.0, 2.0]},
+                         "P3": {"ratio": 5.1e5, "held": True}}}
+
+    def test_identical_receipts_report_unchanged(self):
+        result = cpc.compare(self.BEFORE, json.loads(json.dumps(self.BEFORE)))
+        self.assertTrue(result["unchanged"])
+        self.assertEqual(result["identical"], 4)
+        self.assertEqual(result["changed"], {})
+
+    def test_a_moved_field_is_reported_with_both_values(self):
+        after = json.loads(json.dumps(self.BEFORE))
+        after["checks"]["P2"]["deviation"] = 3.8e-7
+        result = cpc.compare(self.BEFORE, after)
+        self.assertFalse(result["unchanged"])
+        self.assertEqual(list(result["changed"]), ["P2.deviation"])
+        self.assertEqual(result["changed"]["P2.deviation"],
+                         {"before": 3.7e-7, "after": 3.8e-7})
+
+    def test_a_moved_value_inside_a_list_is_not_missed(self):
+        after = json.loads(json.dumps(self.BEFORE))
+        after["checks"]["P2"]["rows"][1] = 2.5
+        self.assertFalse(cpc.compare(self.BEFORE, after)["unchanged"])
+
+    def test_a_flipped_verdict_is_caught_but_not_as_a_number(self):
+        """`held: True -> False` must fail the gate, and not via the numeric walk.
+
+        Folding booleans into the numeric comparison would make `True` equal `1`,
+        so a verdict turning into an integer would pass. Keeping them separate and
+        reporting both is what makes this a complete gate.
+        """
+        after = json.loads(json.dumps(self.BEFORE))
+        after["checks"]["P3"]["held"] = False
+        result = cpc.compare(self.BEFORE, after)
+        self.assertFalse(result["unchanged"])
+        self.assertEqual(result["changed"], {})
+        self.assertEqual(list(result["changed_booleans"]), ["P3.held"])
+
+    def test_a_verdict_replaced_by_an_integer_does_not_pass(self):
+        after = json.loads(json.dumps(self.BEFORE))
+        after["checks"]["P3"]["held"] = 1
+        self.assertFalse(cpc.compare(self.BEFORE, after)["unchanged"])
