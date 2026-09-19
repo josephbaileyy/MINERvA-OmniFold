@@ -15,7 +15,18 @@
 set -uo pipefail
 W="${MNV_W:?}"; D="${MNV_D:?}"
 OUT="$D/cause7_M"; mkdir -p "$OUT"
+# ⚠ `set +u` IS REQUIRED HERE AND `|| true` DOES NOT SUBSTITUTE FOR IT.
+# setup_salloc_env.sh sources conda's activate-binutils_linux-64.sh, which references ADDR2LINE
+# unbound at its :68. Under `set -u` that ABORTS THE SHELL FROM INSIDE THE SOURCED FILE, so there
+# is no command whose status `|| true` could test -- the script simply stops, silently. Measured:
+# `bash -c "set -u; source ..."` prints BEFORE and never prints AFTER. This killed the guard-set
+# control twice, and it would have killed this job before the Python ever ran.
+set +u
 source "$W/setup_salloc_env.sh" >/dev/null 2>&1 || true
+set -u
+# PROVE THE SHELL SURVIVED, so this class cannot recur silently. If the guard above is ever
+# removed, this line is never reached and the log says which.
+echo "[env] shell survived sourcing setup_salloc_env.sh"
 cd "$W/nd-unfolding"
 ~/.conda/envs/root_6_28/bin/python3 - <<'PYEOF' 2>&1 | tee "$OUT/cause7_M.txt"
 import sys, json, math
