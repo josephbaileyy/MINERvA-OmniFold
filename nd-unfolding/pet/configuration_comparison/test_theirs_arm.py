@@ -1,0 +1,90 @@
+"""Tests for the complete arm as an OmniFold estimator.
+
+The load-bearing one is the mask. Inheriting the port's default mask column
+would mask on `pz`, which a real object can legitimately have at zero.
+"""
+
+from __future__ import annotations
+
+import os
+import unittest
+
+os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
+os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
+
+import numpy as np
+import tensorflow as tf
+
+import pet2_keras_port as port
+import theirs_omnifold_arm as arm
+
+SMALL = dict(base_dim=16, num_transformers=2, num_transformers_head=2,
+             num_tokens=2, num_heads=4, mlp_ratio=2)
+
+
+def _model():
+    m = arm.TheirsCompleteArm(num_part=12, K=5)
+    m.backbone = port.PET2Port(**m.settings, **SMALL)
+    return m
+
+
+def _batch(rows=3, tokens=12):
+    rng = np.random.RandomState(0)
+    tok = rng.randn(rows, tokens, 5).astype("float32")
+    tok[:, :, 4] = rng.randint(0, 8, (rows, tokens))     # PID column
+    tok[:, 8:, :] = 0.0                                   # padded tail
+    add = rng.randn(rows, tokens, 5).astype("float32"); add[:, 8:, :] = 0.0
+    glob = rng.randn(rows, 16).astype("float32")
+    return [tf.constant(tok), tf.constant(add), tf.constant(glob)]
+
+
+class Masking(unittest.TestCase):
+    def test_the_mask_is_on_log_energy_not_the_port_default(self):
+        self.assertEqual(arm.LOG_E_COLUMN, 3)
+        self.assertNotEqual(arm.LOG_E_COLUMN, port.HIS_MASK_COLUMN)
+
+    def test_a_real_token_with_zero_pz_is_not_masked(self):
+        """The failure inheriting column 2 would cause, made explicit."""
+        m = _model()
+        x = _batch()
+        tok = np.array(x[0]); tok[:, 0, 2] = 0.0          # pz = 0, real object
+        mask = m.pad_mask(tf.constant(tok)).numpy()
+        self.assertEqual(mask[0, 0, 0], 1.0)
+
+    def test_padded_rows_are_masked(self):
+        m = _model()
+        mask = m.pad_mask(_batch()[0]).numpy()
+        self.assertTrue(np.all(mask[:, 8:, 0] == 0.0))
+
+    def test_padded_tokens_cannot_change_the_output(self):
+        m = _model()
+        x = _batch()
+        before = m(x, training=False).numpy()
+        tok = np.array(x[0]); tok[:, 8:, :3] = np.random.randn(3, 4, 3)
+        after = m([tf.constant(tok), x[1], x[2]], training=False).numpy()
+        np.testing.assert_array_equal(before, after)
+
+
+class Shapes(unittest.TestCase):
+    def test_the_output_is_one_logit_per_event(self):
+        m = _model()
+        self.assertEqual(m(_batch(), training=False).shape, (3, 1))
+
+    def test_pid_is_read_from_the_token_block(self):
+        self.assertEqual(arm.PID_COLUMN, 4)
+
+    def test_a_training_step_moves_the_weights(self):
+        m = _model()
+        x = _batch()
+        y = tf.constant(np.stack([np.array([0, 1, 0]), np.ones(3)], axis=1),
+                        dtype=tf.float32)
+        m.compile(optimizer=tf.keras.optimizers.Adam(1e-3))
+        before = [v.numpy().copy() for v in m.trainable_variables]
+        m.train_step((x, y))
+        moved = max(float(np.max(np.abs(a - v.numpy())))
+                    for a, v in zip(before, m.trainable_variables))
+        self.assertGreater(moved, 0.0)
+
+
+if __name__ == "__main__":
+    unittest.main()
