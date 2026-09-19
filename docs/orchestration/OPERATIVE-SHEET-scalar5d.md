@@ -363,7 +363,7 @@ canonical artifact) and **C7 re-evidenced against it** — the 45-band census an
 question and says nothing about a migration bound. **Joseph re-rules C7 on whatever survives; his
 earlier ruling was made on (b) as evidence and does not carry over.**
 
-## 4e2. ⚠ THE ASSESSOR'S PROJECTOR-LEVEL EVIDENCE CANNOT BE CREDITED TO `318b8c06`
+## 4e2. THE ASSESSOR'S PROJECTOR-LEVEL EVIDENCE — anchored at `5be86f55`, and CREDITED
 
 **Asked to credit it and state by diff whether the guard paths had changed. They had not changed —
 they did not EXIST there.** Measured, not inferred:
@@ -388,10 +388,48 @@ wrong.** Evidence pinned to a commit whose tree lacks the code is not pinned. Cr
 would put a real-path claim behind a sha that cannot support it — the same defect class as a record
 claiming more than its evidence establishes, which is what this campaign has been counting.
 
-**NOT CREDITED, pending a correct anchor.** What would close it: the ref the assessor's run actually
-used, and confirmation that `--expect-variant` and the `adoptable:false` refusal were present in
-*that* tree. Until then §4d's items 3 and 5 stay **unexercised on the real path**, and I am not
-recording real exercise as unexercised either — I am recording that the pointer does not resolve.
+### RESOLVED — the anchor is `5be86f55`, and the evidence IS credited
+
+**The record declares its own base and I verified it rather than take it.**
+`VERIFICATION-20260918-scalar5d-adopt-clause-c.md` states **"Base: `5be86f55`"** in its header and
+**"Measured at `5be86f55`"** in its body. At that commit `project_cov_nd.py` contains
+`expect-variant` **5×**, `adoption-exception` **3×**, and the `mean-centering alone is disqualified`
+refusal **2×**, and `5be86f55` **is an ancestor of `HEAD`**. `318b8c06` is where the verdict was
+**committed**, not the tree that was **exercised** — those are different questions, and pinning to
+the first is the error.
+
+**GUARD PATHS DIFFED `5be86f55 → HEAD`, and all four are unchanged:**
+
+| guard path | `5be86f55` | `HEAD` | |
+|---|---|---|---|
+| `_declared_variant == "none"` | 1 | 1 | same |
+| `_actual_variant != _declared_variant` | 1 | 1 | same |
+| `mean-centering alone is disqualified` | 2 | 2 | same |
+| `adoptable …lower() == "false"` | 1 | 1 | same |
+| `_src_digest not in _exc_text` (exception validation) | 1 | 1 | same |
+
+**The ONLY non-comment code change to the whole file since `5be86f55` is the `import ROOT`
+relocation** — and its direction matters: it makes the guards **more** reachable, never less, so it
+cannot weaken evidence gathered when ROOT was present. The other diffs are a help **string** (the
+dtype correction) and comments. ⚠ **`n_empty` was NOT removed from the code** — `n_empty_recorded`
+appears **5×** in both trees; what was removed was its entry in this sheet's *declared check list*,
+which is a document change.
+
+> **CREDITED: §4d items 3 and 5's PROJECTOR-level refusals are exercised on the real products in the
+> production environment, at `5be86f55`.** Variant mismatch, publication-from-mean on
+> `AGENTS.md:29`, `none` against a marked file, publication from `adoptable:false`, and a positive
+> control that produced the product with the `hRowIndex` readback.
+
+⚠ **LIMITATION, KEPT:** the base is **declared by the record and corroborated**, not independently
+observed by us. Corroboration is behavioural — e.g. argparse returning **rc 2** for a missing
+required `--expect-variant` cannot come from a tree lacking the flag — which is strong but is not
+the same as having watched the checkout.
+
+**What remains unexercised is the LAUNCHER passing flags through**, which no projector-level run can
+cover: `--run-class` (the defect once passed zero times), `--adoption-exception` in both arms
+including A3's set-but-missing `rc 3`, B5's `adoptable:false` refusal reached *through* the
+launcher, and item 6's reachability without the production environment. That is exactly run 4's
+scope.
 
 ## 4f. THE GUARD-SET CONTROL HAS FAILED THREE TIMES AND LEG B HAS NEVER RUN
 
