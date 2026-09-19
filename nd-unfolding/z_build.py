@@ -281,7 +281,8 @@ def acceptance_token(outcome, null_within):
     return "PASSING" if (met and bool(null_within)) else "NON-PASSING"
 
 
-def build_validity(partition_block, psd_block, null_block, extra_notes=None):
+def build_validity(partition_block, psd_block, cv_matches_declared, digest_stamp,
+                   extra_notes=None):
     """Derive branch-1/2 validity from THIS build's recorded gates. Absent evidence stays False.
 
     `Validity`'s defaults are the safe direction and that is preserved: every field a single build
@@ -306,14 +307,22 @@ def build_validity(partition_block, psd_block, null_block, extra_notes=None):
     gates_ran = bool(partition_block) and bool(psd_block)
     return validator.Validity(
         footing_ok=gates_ran,
-        digests_agree=gates_ran,
+        # ⚠ WAS `digests_agree=gates_ran`, binding a DIGEST boolean to the result of matrix-symmetry
+        # and band-partition gates. An independent review called that logically tangled and it was
+        # right: reaching this line does imply the file hashes verified, but the field should rest
+        # on a digest artifact, not on matrix maths. It now rests on the manifest stamp itself.
+        digests_agree=bool(digest_stamp),
         partition_agrees=bool(partition_block),
         identities_pass=bool(psd_block),
         # BRANCH 1, not a member property -- misclassifying it forced "WRONG FOOTING" on every
-        # build. It is established here: `reconstruct_null_ratio` derives x_cv and x_cv2 from the
-        # SAME persisted CV and refuses unless the recomputed support predicate matches the
-        # persisted one, which is exactly "the CV was held fixed across the two unfolds".
-        cv_held_fixed=bool(null_block),
+        # build.
+        # ⚠ AND IT WAS OVERSTATED. It used to read `bool(null_block)`, justified by the claim that
+        # `reconstruct_null_ratio` derives x_cv and x_cv2 from the same persisted CV. A review
+        # pointed out that function verifies no such provenance -- it compares whatever arrays were
+        # loaded. The real cross-check, `x1 == central`, existed but was recorded PASSIVELY in
+        # `declared_cv_crosscheck` and gated nothing. It now gates this field, so the claim the
+        # comment makes is the claim the code tests.
+        cv_held_fixed=bool(cv_matches_declared),
         offsets_match_K=False,
         offset_declared_nonzero=False,
         product_digests_distinct=False,
@@ -651,7 +660,8 @@ def build_z(
             # rather than a way of skipping a leg.
             _assessed = validator.assess(validator.Z_LEG_SET, {},
                                          build_validity(partition, blocksum_psd,
-                                                        null_measurement))
+                                                        np.array_equal(x1, central),
+                                                        manifest_stamp))
             science = _assessed.describe()
             _token = acceptance_token(science, null_within=bool(
                 null_outcome.get("assessable")

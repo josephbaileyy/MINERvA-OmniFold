@@ -126,5 +126,30 @@ class ASingleMemberBuildCannotReachMET(unittest.TestCase):
         self.assertEqual(out.branch, 2)
 
 
+class ValidityFieldsRestOnTheEvidenceTheyNAME(unittest.TestCase):
+    """From the independent review: a field must be gated by the thing its comment cites.
+
+    `cv_held_fixed` was `bool(null_block)`, justified by a provenance claim
+    `reconstruct_null_ratio` does not make -- it compares whatever arrays it was handed. The real
+    check, `x1 == central`, was recorded passively and gated nothing. `digests_agree` was bound to
+    matrix-symmetry gates rather than to any digest.
+    """
+    def test_cv_held_fixed_follows_the_cv_crosscheck_not_the_null_block(self):
+        self.assertTrue(zb.build_validity({"p": 1}, {"g": 1}, True, {"sha256": "x"}).cv_held_fixed)
+        self.assertFalse(zb.build_validity({"p": 1}, {"g": 1}, False, {"sha256": "x"}).cv_held_fixed,
+                         "a failed CV cross-check must not report the CV as held fixed")
+
+    def test_digests_agree_follows_a_DIGEST_not_the_matrix_gates(self):
+        self.assertTrue(zb.build_validity({"p": 1}, {"g": 1}, True, {"sha256": "x"}).digests_agree)
+        self.assertFalse(zb.build_validity({"p": 1}, {"g": 1}, True, None).digests_agree,
+                         "no digest stamp must not read as digests agreeing")
+
+    def test_a_failed_cv_crosscheck_lands_on_branch_1_not_branch_2(self):
+        """It is a FOOTING failure, and the branch must say so rather than blaming spread."""
+        v = zb.build_validity({"p": 1}, {"g": 1}, False, {"sha256": "x"})
+        out = zv.assess(zv.Z_LEG_SET, {}, v)
+        self.assertEqual(out.branch, 1, out.branch_label)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -50,6 +50,12 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   exactly on all ten. Carries the **per-endpoint sha256 identities**, the extractor's positive AND
   negative controls, and two corrections: **§15.1 is a directory-uniformity census, not a digest
   identity**, and **the 12-playlist hadd coverage is NOT confirmed** by this artifact.
+- [`REVIEW-20260919-computed-acceptance-disposition.md`](REVIEW-20260919-computed-acceptance-disposition.md)
+  - **Cross-model review of the computed-acceptance change: NO BLOCKs**, one MINOR, three NITs, with
+  **my** dispositions. Two NITs fixed by **making the claim true** rather than softening it —
+  `cv_held_fixed` now gates on the CV cross-check it always cited, `digests_agree` on an actual
+  digest. The MINOR (`all_members_finite` classed branch 2 when it is a footing failure) is
+  **correct and deliberately not acted on**: it is outside R1's scope and changes no current outcome.
 - [`DERIVATION-20260919-null-epsilon-B-and-S.md`](DERIVATION-20260919-null-epsilon-B-and-S.md)
   - **`B = 1e-12`, `S = 1e-3` (Joseph's), `ε = 1e-9` inside `[B, S]`.** R2's gate checked FIRST and
   it passes: `r_null = ‖x_cv2 − x_cv‖ / ‖x_cv‖` is dimensionless by construction. `B` rests on two
