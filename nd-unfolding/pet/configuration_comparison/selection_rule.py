@@ -44,7 +44,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, Mapping, Sequence
 
 
 class Verdict(str, Enum):
@@ -59,6 +59,7 @@ class Verdict(str, Enum):
     THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD = "THEIRS_BETTER_BELOW_SWITCHING_THRESHOLD"
     THEIRS_BETTER_MAGNITUDE_UNRESOLVED = "THEIRS_BETTER_MAGNITUDE_UNRESOLVED"
     INCONCLUSIVE = "INCONCLUSIVE"
+    REGIONAL_SAFEGUARD_FAILED = "REGIONAL_SAFEGUARD_FAILED"
 
 
 class Recommendation(str, Enum):
@@ -106,6 +107,55 @@ def _measured(ci_low: float, ci_high: float) -> dict[str, Any]:
     }
 
 
+def regional_safeguard(
+    regional_recovery: Mapping[str, Mapping[str, float]],
+    floor: float,
+    scoreable_regions: Sequence[str],
+) -> dict[str, Any]:
+    """Can either arm be recommended at all, given per-REGION recovery?
+
+    The aggregate score is a marginal, and a marginal can pass while a region fails:
+    the seven-bin `E_avail` census showed no bin under 0.05 acceptance while the
+    underlying `(pT, p-parallel)` cells it averages over span 0.004 to 0.89. So
+    regions are defined on those cells, and every SCOREABLE region -- one carrying
+    enough injected displacement to measure a recovery at all -- must clear
+    ``floor`` for an arm to remain recommendable.
+
+    `regional_recovery` maps arm -> region -> recovery. Missing a scoreable region
+    is a failure, not an exemption: an arm that did not report a region cannot be
+    shown to have passed it.
+    """
+    scoreable = list(scoreable_regions)
+    if not scoreable:
+        raise ValueError(
+            "no scoreable region: the injection puts no measurable displacement "
+            "anywhere, so the endpoint cannot support a recommendation"
+        )
+    eligibility: dict[str, Any] = {}
+    for arm in ("ours", "theirs"):
+        reported = dict(regional_recovery.get(arm, {}))
+        missing = [r for r in scoreable if r not in reported]
+        failed = [r for r in scoreable if r in reported and reported[r] < floor]
+        eligibility[arm] = {
+            "eligible": not missing and not failed,
+            "regions_below_floor": failed,
+            "regions_not_reported": missing,
+            "recovery_by_region": reported,
+        }
+    return {
+        "floor": floor,
+        "scoreable_regions": scoreable,
+        "arms": eligibility,
+        "both_ineligible": not (eligibility["ours"]["eligible"]
+                                or eligibility["theirs"]["eligible"]),
+        "criterion": (
+            "every scoreable region must clear the floor. A region defined on the "
+            "reporting cells, not on the marginal, and a region not reported counts "
+            "as failed."
+        ),
+    }
+
+
 def decide(
     *,
     ours_adequate: bool,
@@ -114,6 +164,7 @@ def decide(
     ci_high: float,
     delta: float,
     delta_switch: float,
+    regional: Mapping[str, Any] | None = None,
 ) -> Outcome:
     """Apply the rule. Exactly one verdict, for every input.
 
@@ -121,6 +172,11 @@ def decide(
     ``delta_switch > delta > 0`` is required: a switching threshold at or below the
     non-inferiority margin would make "ours is acceptable" and "his is worth adopting"
     overlap, and the rule would be ambiguous exactly where it matters.
+
+    ``regional`` is `regional_safeguard`'s output. It is applied BEFORE anything
+    else, because it answers a prior question: whether an arm is recommendable at
+    all. An arm that fails a region is not made recommendable by winning the
+    aggregate comparison -- that is precisely the failure the marginal hides.
     """
     if not (delta > 0.0):
         raise ValueError(f"delta must be positive, got {delta}")
@@ -133,6 +189,32 @@ def decide(
         raise ValueError(f"interval is inverted: [{ci_low}, {ci_high}]")
 
     measured = _measured(ci_low, ci_high)
+
+    # The regional safeguard runs FIRST and can only ever remove eligibility. Its
+    # consequence on failure is NO_SELECTION, never "recommend the other arm": one
+    # arm failing a region does not establish that the other passed it, and both
+    # are checked against the same floor.
+    if regional is not None:
+        ours_eligible = regional["arms"]["ours"]["eligible"]
+        theirs_eligible = regional["arms"]["theirs"]["eligible"]
+        if not (ours_eligible and theirs_eligible):
+            return Outcome(
+                Verdict.REGIONAL_SAFEGUARD_FAILED,
+                Recommendation.NO_SELECTION,
+                measured,
+                preference=None,
+                notes=(
+                    "the regional safeguard blocks a recommendation: "
+                    f"ours {'passed' if ours_eligible else 'FAILED'} "
+                    f"{regional['arms']['ours']['regions_below_floor'] or ''}, "
+                    f"theirs {'passed' if theirs_eligible else 'FAILED'} "
+                    f"{regional['arms']['theirs']['regions_below_floor'] or ''}. "
+                    "Regions are defined on the (pT, p-parallel) reporting cells, so "
+                    "a failure here is one the aggregate E_avail score cannot see. "
+                    "Failing one arm does not license the other: the consequence is "
+                    "NO_SELECTION and a report of which regions failed for whom."
+                ),
+            )
 
     # Adequacy is asked of each arm alone and dominates the comparison. An inadequate
     # configuration is not made recommendable by scoring well against another one.

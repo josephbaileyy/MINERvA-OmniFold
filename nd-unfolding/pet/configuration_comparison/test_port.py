@@ -19,6 +19,7 @@ import numpy as np
 import fold_forward_recorder as ffr
 import pet2_keras_port as port
 import pet2_omnifold_adapter as adapter
+import port_checks as pc
 import tensorflow as tf
 from torch_adamw import TORCH_DEFAULTS, TorchAdamW
 
@@ -375,3 +376,31 @@ class Schemas(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=1)
+
+
+class Float32Limit(unittest.TestCase):
+    """P-2a's limit must not widen when the thing it tests gets worse."""
+
+    def test_a_correct_port_passes(self):
+        verdict = pc.float32_verdict(cross_engine=2.6e-7, reference_deviation=2.0e-7,
+                                     our_deviation=1.6e-7)
+        self.assertTrue(verdict["held"])
+
+    def test_inflating_our_own_error_makes_the_verdict_worse(self):
+        """The regression. Under the old `reference + ours` budget this PASSED."""
+        reference, cross = 2.0e-7, 2.6e-7
+        good = pc.float32_verdict(cross, reference, our_deviation=1.6e-7)
+        bad = pc.float32_verdict(cross, reference, our_deviation=9.0e-6)
+        self.assertTrue(good["held"])
+        self.assertFalse(bad["held"])
+        # The limit is identical in both: it depends on the reference alone.
+        self.assertEqual(good["limit_from_reference_only"],
+                         bad["limit_from_reference_only"])
+        # And the superseded rule would have admitted the bad one.
+        self.assertLess(cross, reference + 9.0e-6)
+
+    def test_a_large_cross_engine_difference_fails_whatever_our_deviation(self):
+        for ours in (1e-12, 1.0e-7, 1.0e-3):
+            with self.subTest(ours=ours):
+                self.assertFalse(
+                    pc.float32_verdict(5.0e-6, 2.0e-7, ours)["held"])

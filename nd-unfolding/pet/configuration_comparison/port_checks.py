@@ -88,6 +88,8 @@ HIS_OPTIMIZER = {"learning_rate": 1e-4, "weight_decay": 0.01, "beta_1": 0.9,
                  "beta_2": 0.999, "epsilon": 1e-8}
 
 FORWARD_TOLERANCE = 1e-5          # P-2, from the proposal
+FLOAT32_EPSILON = 2.0 ** -24      # unit round-off of binary32, 5.96e-8
+FLOAT32_JITTER_DRAWS = 5
 FD_STEPS = (1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8)
 ULP_JITTER_DRAWS = 5      # one sign pattern can cancel; several cannot all cancel
 
@@ -331,6 +333,65 @@ def check_p1(report: dict[str, Any]) -> dict[str, Any]:
     return {"held": bool(held), **report}
 
 
+FLOAT32_SLACK = 2.0    # two independent roundings differ by at most 2x one deviation
+
+
+def float32_verdict(cross_engine: float, reference_deviation: float,
+                    our_deviation: float) -> dict[str, Any]:
+    """Decide P-2a from the REFERENCE's float32 deviation only.
+
+    Pulled out as a pure function so the property that matters can be tested
+    directly: inflating `our_deviation` must make the verdict WORSE. The previous
+    rule -- `cross <= reference_deviation + our_deviation` -- did the opposite,
+    widening its own acceptance band in proportion to the port's own error, so a
+    float32 defect could buy the room it needed to pass.
+    """
+    limit = FLOAT32_SLACK * reference_deviation
+    ours_no_worse = our_deviation <= FLOAT32_SLACK * reference_deviation
+    return {
+        "held": bool(cross_engine <= limit and ours_no_worse),
+        "limit_from_reference_only": limit,
+        "ours_no_worse_than_reference": bool(ours_no_worse),
+        "slack": FLOAT32_SLACK,
+    }
+
+
+def _float32_perturbation_bound(model: Any, batch: dict[str, np.ndarray],
+                                seed: int) -> dict[str, Any]:
+    """How far the float64 output moves under one float32 ulp of input/weight noise.
+
+    Computed entirely in float64 and touching no float32 run, so it is independent
+    of both implementations. It models the rounding of inputs and weights but NOT
+    of every intermediate product, so it is a lower bound on what two float32
+    implementations can differ by -- reported as corroboration, never as the gate.
+    """
+    inventory = port.parameter_inventory(model)
+    saved = [v.numpy().copy() for _, v in inventory]
+    baseline = _our_forward(model, batch, "float64")
+    rng = np.random.RandomState(seed + 7)
+    movements = []
+    for _ in range(FLOAT32_JITTER_DRAWS):
+        for (_, variable), original in zip(inventory, saved):
+            signs = rng.choice([-1.0, 1.0], size=original.shape)
+            variable.assign(original * (1.0 + FLOAT32_EPSILON * signs))
+        jittered = {k: v.copy() for k, v in batch.items()}
+        for key in ("x", "cond", "add_info"):
+            signs = rng.choice([-1.0, 1.0], size=batch[key].shape)
+            jittered[key] = batch[key] * (1.0 + FLOAT32_EPSILON * signs)
+        movements.append(float(np.abs(
+            _our_forward(model, jittered, "float64") - baseline).max()))
+    for (_, variable), original in zip(inventory, saved):
+        variable.assign(original)
+    return {
+        "float32_epsilon": FLOAT32_EPSILON,
+        "draws": FLOAT32_JITTER_DRAWS,
+        "max_output_movement": max(movements),
+        "movements": movements,
+        "role": ("corroboration only: a floor on achievable float32 disagreement, "
+                 "since it omits intermediate rounding. Does not gate."),
+    }
+
+
 def check_p2(torch_cls: Any, size: str, seed: int,
              batch: dict[str, np.ndarray]) -> dict[str, Any]:
     """P-2: forward agreement, twice, because one run alone would be misleading.
@@ -358,7 +419,34 @@ def check_p2(torch_cls: Any, size: str, seed: int,
     their_float32_error = float(np.abs(their32 - reference_theirs).max())
     our_float32_error = float(np.abs(our32 - reference_ours).max())
     cross32 = float(np.abs(our32 - their32).max())
-    budget32 = their_float32_error + our_float32_error
+
+    # THE BUDGET MUST NOT BE ABLE TO GROW WITH A DEFECT IN THE THING IT TESTS.
+    #
+    # The first version used `their_error + our_error`, which is the triangle
+    # inequality but with OUR deviation in it -- so a port with a float32 bug
+    # widened its own acceptance band and could pass by being wrong. Replaced with
+    # two limits, neither of which reads our float32 output as an input:
+    #
+    #  (a) the cross-engine difference must be within TWICE THE REFERENCE'S OWN
+    #      float32 deviation. Two independent roundings of one computation, each
+    #      deviating by at most e from the exact float64 answer, differ by at most
+    #      2e. Using the reference's e on both sides makes the bound a property of
+    #      the upstream implementation, which is not under test.
+    #  (b) our float32 deviation must itself be no worse than twice the
+    #      reference's. This is the clause the old budget was accidentally
+    #      rewarding the violation of, and it is the one a float32 bug trips.
+    #
+    # An a-priori perturbation bound is reported alongside as corroboration: the
+    # float64 output's movement when every parameter and input is jittered by one
+    # float32 ulp. It is computed entirely in float64 and touches no float32 run at
+    # all, so it is independent of both implementations -- but it models only
+    # input and weight rounding, not the rounding of every intermediate, so it is a
+    # floor on the achievable disagreement rather than a ceiling, and it does not
+    # gate.
+    verdict32 = float32_verdict(cross32, their_float32_error, our_float32_error)
+    budget32 = verdict32["limit_from_reference_only"]
+    ours_no_worse = verdict32["ours_no_worse_than_reference"]
+    apriori = _float32_perturbation_bound(ours64, batch, seed)
 
     boundary = {
         "fully_masked_rows": [0, 1],
@@ -368,7 +456,7 @@ def check_p2(torch_cls: Any, size: str, seed: int,
         "fully_masked_outputs_finite": bool(np.isfinite(reference_ours[[0, 1]]).all()),
     }
     finite = bool(np.isfinite(reference_ours).all() and np.isfinite(reference_theirs).all())
-    held_a = cross32 <= budget32
+    held_a = verdict32["held"]
     held_b = bool(finite and difference64.max() <= FORWARD_TOLERANCE)
     return {
         "held": bool(held_a and held_b),
@@ -376,13 +464,18 @@ def check_p2(torch_cls: Any, size: str, seed: int,
         "P2a_float32_unmodified_upstream": {
             "held": bool(held_a),
             "criterion": (
-                "the two float32 engines must not differ by more than the sum of "
-                "their individual float32 deviations from the float64 reference"
+                "(a) the cross-engine float32 difference must be within TWICE the "
+                "reference implementation's own float32 deviation, and (b) our "
+                "float32 deviation must be no worse than twice the reference's. "
+                "Neither limit reads our float32 output, so a defect in the port "
+                "cannot widen its own acceptance band."
             ),
             "cross_engine_max_abs_difference": cross32,
-            "measured_budget": budget32,
+            "limit_from_reference_only": budget32,
             "their_float32_deviation": their_float32_error,
             "our_float32_deviation": our_float32_error,
+            "ours_no_worse_than_reference": bool(ours_no_worse),
+            "apriori_float32_perturbation_bound": apriori,
         },
         "P2b_float64_with_declared_sdpa_repair": {
             "held": held_b,

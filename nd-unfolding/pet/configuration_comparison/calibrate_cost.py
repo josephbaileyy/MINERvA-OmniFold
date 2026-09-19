@@ -113,7 +113,20 @@ NITER = 3
 EPOCHS = 8
 TRAIN_EVENTS = 2_000_000
 FITS_PER_EVALUATION = 2 * NITER          # MultiFold runs step 1 and step 2 per iteration
-EXAMPLES_PER_EVALUATION = FITS_PER_EVALUATION * EPOCHS * TRAIN_EVENTS
+
+# CORRECTED 2026-09-19, by the realized-policy check rather than by reading.
+# `MultiFold` concatenates BOTH classes before training, so one fit presents
+# `epochs * train_frac * NTRAIN` examples with `NTRAIN = mc.nmax + data.nmax` at
+# step 1 and `2 * mc.nmax` at step 2 (`omnifold.py:131-132`, `:297`). The previous
+# model used `epochs * train_events`, which is the MC leg alone -- a 1.6x
+# understatement. `--max-events` subsamples `imc`, which indexes the MC arrays
+# only; the measured leg keeps its full inventory.
+N_DATA_ASSUMED = TRAIN_EVENTS            # CONDITIONAL: see BUDGET_TENSION
+ROWS_PER_FIT_STEP1 = TRAIN_EVENTS + N_DATA_ASSUMED
+ROWS_PER_FIT_STEP2 = 2 * TRAIN_EVENTS
+EXAMPLES_PER_EVALUATION = int(
+    NITER * EPOCHS * TRAIN_FRAC_PLACEHOLDER * (ROWS_PER_FIT_STEP1 + ROWS_PER_FIT_STEP2)
+) if False else None                     # replaced below, once TRAIN_FRAC is defined
 
 # Evaluation is not only fits. Two forward-only populations were previously outside
 # the model entirely, and together they are a third as large again as the training
@@ -131,9 +144,23 @@ EXAMPLES_PER_EVALUATION = FITS_PER_EVALUATION * EPOCHS * TRAIN_EVENTS
 TRAIN_FRAC = 0.8
 VALIDATION_MULTIPLIER = (1.0 - TRAIN_FRAC) / TRAIN_FRAC
 REWEIGHT_PASSES_PER_EVALUATION = 2 * NITER
+EXAMPLES_PER_EVALUATION = int(
+    NITER * EPOCHS * TRAIN_FRAC * (ROWS_PER_FIT_STEP1 + ROWS_PER_FIT_STEP2)
+)
 INFERENCE_EXAMPLES_PER_EVALUATION = int(
     REWEIGHT_PASSES_PER_EVALUATION * TRAIN_EVENTS
     + VALIDATION_MULTIPLIER * EXAMPLES_PER_EVALUATION
+)
+
+BUDGET_TENSION = (
+    "n_data is ASSUMED equal to train_events and that assumption is not safe. The "
+    "measured leg is not subsampled by --max-events, so its size is whatever the "
+    "production input holds. At n_data = train_events the model puts our arm's "
+    "evaluation at roughly 1.9 GPU-h, ABOVE the feature contract's independently "
+    "measured 1.1-1.3 GPU-h for a nominal train. Both cannot be right. Resolving it "
+    "needs mc.nmax and data.nmax read off a production run's loader meta; until "
+    "then every absolute GPU-hour here is conditional and the RATIO is the reliable "
+    "part."
 )
 
 CROSS_FRAMEWORK_QUALIFICATION = (
@@ -377,6 +404,142 @@ def time_ours_inference(repo: Path, tokens: int) -> dict[str, Any]:
     return {"framework": f"tensorflow {tf.__version__}", "mode": "inference",
             "tokens": tokens, "keras_backend_selection": backend,
             **_throughput(times, OUR_BATCH)}
+
+
+def time_ported(repo: Path, step: str, tokens: int, batch: int,
+                mode: str = "train") -> dict[str, Any]:
+    """Time the KERAS PORT of his backbone, at one OmniFold step schema.
+
+    This is the measurement that removes the cross-framework qualification. Every
+    earlier ratio compared our TensorFlow PET against his PyTorch PET2, so it
+    folded in a framework difference that no amount of care could separate from an
+    architecture difference. Both arms now run in the same engine on the same
+    device, so the ratio is the architecture and the recipe and nothing else.
+
+    Production precision: float32, which is what both arms train in. The float64
+    paths exist only for the port checks.
+    """
+    backend = _select_keras_backend()
+    import numpy as np
+    import tensorflow as tf
+
+    root = repo / "nd-unfolding" / "pet" / "configuration_comparison"
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    import pet2_omnifold_adapter as adapter
+    import training_recipe as recipe
+
+    if not tf.config.list_logical_devices("GPU"):
+        raise SystemExit("[calibrate] no GPU visible to TensorFlow (fail closed)")
+    schema = adapter.STEP_SCHEMAS[step]
+    model = adapter.build_step_model(step, num_part=tokens)
+    rng = np.random.RandomState(0)
+    part = np.abs(rng.rand(batch, tokens, schema["num_feat"])).astype(np.float32)
+    evt = rng.randn(batch, schema["num_evt"]).astype(np.float32)
+    labels = np.concatenate(
+        [rng.randint(0, 2, (batch, 1)), np.ones((batch, 1))], axis=1).astype(np.float32)
+    part_t, evt_t, y_t = tf.constant(part), tf.constant(evt), tf.constant(labels)
+
+    if mode == "train":
+        optimizer = recipe.build_optimizer(
+            "theirs", schedule=recipe.derive_schedule(batch, examples=batch * 1000))
+        variables = model.trainable_variables or None
+
+        @tf.function
+        def step_fn():
+            with tf.GradientTape() as tape:
+                loss = adapter.weighted_binary_crossentropy(
+                    y_t, model([part_t, evt_t], training=True))
+            optimizer.apply_gradients(
+                zip(tape.gradient(loss, model.trainable_variables),
+                    model.trainable_variables))
+            return loss
+    else:
+        @tf.function
+        def step_fn():
+            return tf.reduce_sum(model([part_t, evt_t], training=False))
+
+    for _ in range(WARMUP):
+        step_fn()
+    times = []
+    for _ in range(REPEATS):
+        start = time.perf_counter()
+        float(step_fn())
+        times.append(time.perf_counter() - start)
+    return {
+        "framework": f"tensorflow {tf.__version__}",
+        "arm": "ported_pet2", "step": step, "mode": mode, "tokens": tokens,
+        "precision": "float32",
+        "keras_backend_selection": backend,
+        "trainable_parameters": int(sum(int(np.prod(w.shape))
+                                        for w in model.trainable_variables)),
+        **_throughput(times, batch),
+    }
+
+
+def time_ours_step(repo: Path, step: str, tokens: int, batch: int,
+                   mode: str = "train") -> dict[str, Any]:
+    """Our incumbent PET at the SAME step schema, batch and precision.
+
+    Named `ours_incumbent` in the receipt: this is the promoted production
+    configuration, not a candidate improvement on it.
+    """
+    backend = _select_keras_backend()
+    import numpy as np
+    import tensorflow as tf
+
+    root = repo / "nd-unfolding" / "pet" / "configuration_comparison"
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    import pet2_omnifold_adapter as adapter
+
+    omnifold_root = repo / "omnifold_nn"
+    if str(omnifold_root) not in sys.path:
+        sys.path.insert(0, str(omnifold_root))
+    from omnifold.net import PET, weighted_binary_crossentropy
+
+    schema = adapter.STEP_SCHEMAS[step]
+    model = PET(num_feat=schema["num_feat"], num_evt=schema["num_evt"],
+                num_part=tokens, num_heads=2, num_transformer=2,
+                projection_dim=32, local=True, K=3,
+                coord_idx=schema["coord_idx"])
+    rng = np.random.RandomState(0)
+    part = tf.constant(np.abs(rng.rand(batch, tokens, schema["num_feat"])), tf.float32)
+    evt = tf.constant(rng.randn(batch, schema["num_evt"]), tf.float32)
+    y = tf.constant(np.concatenate(
+        [rng.randint(0, 2, (batch, 1)), np.ones((batch, 1))], axis=1), tf.float32)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)
+
+    if mode == "train":
+        @tf.function
+        def step_fn():
+            with tf.GradientTape() as tape:
+                loss = weighted_binary_crossentropy(y, model.model([part, evt]))
+            optimizer.apply_gradients(
+                zip(tape.gradient(loss, model.model.trainable_variables),
+                    model.model.trainable_variables))
+            return loss
+    else:
+        @tf.function
+        def step_fn():
+            return tf.reduce_sum(model.model([part, evt], training=False))
+
+    for _ in range(WARMUP):
+        step_fn()
+    times = []
+    for _ in range(REPEATS):
+        start = time.perf_counter()
+        float(step_fn())
+        times.append(time.perf_counter() - start)
+    return {
+        "framework": f"tensorflow {tf.__version__}",
+        "arm": "ours_incumbent", "step": step, "mode": mode, "tokens": tokens,
+        "precision": "float32",
+        "keras_backend_selection": backend,
+        "trainable_parameters": int(sum(int(np.prod(w.shape))
+                                        for w in model.model.trainable_weights)),
+        **_throughput(times, batch),
+    }
 
 
 def diagnose_native_batch(checkout: Path, tokens: int, size: str = "small") -> dict[str, Any]:
@@ -652,13 +815,48 @@ def reduce_halves(ours_path: Path, theirs_path: Path) -> dict[str, Any]:
 def main() -> None:
     """Time one arm across both token counts, or reduce two halves."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--arm", choices=("ours", "theirs", "reduce"), required=True)
+    parser.add_argument("--arm", choices=("ours", "theirs", "reduce", "matched"),
+                        required=True)
     parser.add_argument("--repo", type=Path)
     parser.add_argument("--gregor-checkout", type=Path)
     parser.add_argument("--ours-half", type=Path)
     parser.add_argument("--theirs-half", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+
+    if args.arm == "matched":
+        # Both arms in ONE framework, at both step schemas, at both intended
+        # batches, in production precision. Cells are independent; a cell that the
+        # stack cannot run records its error and the rest proceed.
+        if args.repo is None:
+            raise SystemExit("[calibrate] --repo is required for --arm matched")
+        cells: dict[str, Any] = {}
+        for step in ("step1_reco", "step2_gen"):
+            for tokens in TOKEN_COUNTS:
+                for batch in (OUR_BATCH, THEIR_BATCH):
+                    for mode in ("train", "inference"):
+                        for arm, fn in (("ours_incumbent", time_ours_step),
+                                        ("ported_pet2", time_ported)):
+                            key = f"{arm}|{step}|{tokens}|{batch}|{mode}"
+                            try:
+                                cells[key] = fn(args.repo, step, tokens, batch, mode)
+                            except Exception as exc:      # noqa: BLE001 - recorded
+                                cells[key] = {"error": f"{type(exc).__name__}: {exc}"[:300],
+                                              "arm": arm, "step": step, "tokens": tokens,
+                                              "batch": batch, "mode": mode}
+                                print(f"{key}: FAILED {type(exc).__name__}", file=sys.stderr)
+        half = {"gpu_identity": physical_gpu_identity(), "framework_matched": True,
+                "cells": cells,
+                "note": ("both arms in TensorFlow on one GPU: the cross-framework "
+                         "qualification does not apply to these ratios")}
+        args.output.write_text(json.dumps(half, indent=2) + "\n")
+        for key, cell in sorted(cells.items()):
+            if "error" in cell:
+                print(f"{key:56s} FAILED")
+            else:
+                print(f"{key:56s} {cell['step_seconds_median']*1e3:8.2f} ms/step "
+                      f"= {cell['seconds_per_example']*1e6:8.3f} us/example")
+        return
 
     if args.arm == "ours":
         if args.repo is None:

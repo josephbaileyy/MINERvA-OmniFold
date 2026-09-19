@@ -40,6 +40,7 @@ import numpy as np
 import keras_backend
 import pet2_omnifold_adapter as adapter
 from fold_forward_recorder import FoldForwardRecorder
+import training_recipe as recipe
 from torch_adamw import TorchAdamW
 
 keras_backend.select_keras_backend()
@@ -61,7 +62,16 @@ def load_multifold(repo: Path) -> Any:
 def run(repo: Path, rows: int, niter: int, epochs: int, num_part: int,
         size: str) -> dict[str, Any]:
     multifold_class = load_multifold(repo)
-    ported_class = adapter.make_ported_multifold(multifold_class)
+    # A synthetic exercise cannot afford the production example budget, so the
+    # schedule is derived from THIS run's budget by the same rule. Deriving it is
+    # the property under test; the size of the budget is not.
+    # Step 1 concatenates MC with data and step 2 concatenates MC with itself, so
+    # NTRAIN is 2 * rows here either way; the synthetic loaders are equal-sized.
+    exercise_budget = recipe.derive_schedule(
+        32, examples=recipe.examples_per_fit(
+            "step1_reco", epochs=epochs, n_mc=rows, n_data=rows))
+    ported_class = adapter.make_ported_multifold(
+        multifold_class, schedule=exercise_budget, batch_size=32)
     mc, data = adapter.synthetic_loaders(rows, num_part=num_part)
 
     model_reco = adapter.build_step_model("step1_reco", num_part=num_part, size=size)
@@ -77,13 +87,15 @@ def run(repo: Path, rows: int, niter: int, epochs: int, num_part: int,
         # Confirm the override is live BEFORE running, so a silent fallback to the
         # engine's Adam cannot be discovered only by reading loss curves later.
         probe = unfolder.get_optimizer(10, fixed=False)
-        optimizer_is_his = isinstance(probe, TorchAdamW)
+        optimizer_is_his = isinstance(probe, recipe.ClippedTorchAdamW)
+        schedule_is_derived = not isinstance(probe.learning_rate, float)
 
         recorder = FoldForwardRecorder(unfolder, mc.weight_reco, mc.pass_reco,
                                        label="ported-exercise")
         with recorder:
             unfolder.Unfold()
         push = np.asarray(unfolder.weights_push, dtype=np.float64)
+        realized = unfolder.record_realized_policy()
 
     # Step-wise evidence that each model really saw its own schema.
     reco_logits = model_reco([tf.constant(mc.reco), tf.constant(mc.reco_evt)],
@@ -102,11 +114,17 @@ def run(repo: Path, rows: int, niter: int, epochs: int, num_part: int,
                       "coord_idx": list(model_gen.coord_idx)},
         },
         "E2_engine_used_his_optimizer": {
-            "held": optimizer_is_his,
+            "held": bool(optimizer_is_his and schedule_is_derived),
             "optimizer": type(probe).__name__,
+            "grad_clip": probe.grad_clip,
+            "schedule_is_a_derived_cosine": schedule_is_derived,
             "note": ("MultiFold.get_optimizer hardcodes tf.keras.optimizers.Adam; "
                      "without the subclass his architecture would train under our "
                      "optimizer and the arm would not be his configuration"),
+        },
+        "E7_realized_policy_matches_the_plan": {
+            "held": realized["held"],
+            **realized,
         },
         "E3_push_weights_sane": {
             "held": bool(np.isfinite(push).all() and (push > 0).all()
@@ -147,10 +165,12 @@ def run(repo: Path, rows: int, niter: int, epochs: int, num_part: int,
         "versions": keras_backend.record_versions(),
         "checks": checks,
         "all_held": all(v["held"] for v in checks.values()),
+        "recipe": exercise_budget,
         "not_implemented": [
-            "his cosine schedule over max_steps: max_steps must be derived from the "
-            "agreed fair budget (proposal §7.3), which is not ratified",
-            "gradient clipping, if his recipe uses it, is not yet transcribed",
+            "nothing in the recipe: budget, warmup, cosine and global-norm clipping "
+            "are all derived and exercised here",
+            "the production example budget itself, which needs the ratified "
+            "epochs/subsample; the DERIVATION is what this exercises",
         ],
     }
 

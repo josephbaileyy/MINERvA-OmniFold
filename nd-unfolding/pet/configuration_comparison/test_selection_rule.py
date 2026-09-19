@@ -19,6 +19,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import selection_rule as sr
 from selection_rule import Recommendation, Verdict, decide, describe
 
 DELTA = 0.017
@@ -38,20 +39,35 @@ class Totality(unittest.TestCase):
         edges = [-0.10, -SWITCH - 1e-6, -SWITCH, -SWITCH + 1e-6, -0.018,
                  -DELTA, -DELTA + 1e-6, -0.001, 0.0, 0.001, DELTA, SWITCH,
                  SWITCH + 1e-6, 0.10]
+        # The regional gate is a third dimension of the partition, so the sweep
+        # covers it: absent, passing, and failing. Leaving it out would let the
+        # totality claim be true only of a slice of the input space.
+        passing = sr.regional_safeguard(
+            {"ours": {"poor": 0.9}, "theirs": {"poor": 0.9}},
+            floor=0.5, scoreable_regions=["poor"])
+        failing = sr.regional_safeguard(
+            {"ours": {"poor": 0.1}, "theirs": {"poor": 0.9}},
+            floor=0.5, scoreable_regions=["poor"])
+        gates = [None, passing, failing]
+
         seen = set()
         count = 0
-        for ours, theirs in product([True, False], repeat=2):
-            for low, high in product(edges, repeat=2):
-                if low > high:
-                    continue
-                outcome = call(ours, theirs, low, high)
-                self.assertIsInstance(outcome.verdict, Verdict)
-                self.assertIsInstance(outcome.recommendation, Recommendation)
-                seen.add(outcome.verdict)
-                count += 1
-        # 14 edges give 14*15/2 = 105 ordered pairs, times 4 adequacy combinations.
-        # Asserting the exact count makes a silently-skipped branch visible.
-        self.assertEqual(count, 4 * len(edges) * (len(edges) + 1) // 2)
+        for gate in gates:
+            for ours, theirs in product([True, False], repeat=2):
+                for low, high in product(edges, repeat=2):
+                    if low > high:
+                        continue
+                    outcome = decide(ours_adequate=ours, theirs_adequate=theirs,
+                                     ci_low=low, ci_high=high, delta=DELTA,
+                                     delta_switch=SWITCH, regional=gate)
+                    self.assertIsInstance(outcome.verdict, Verdict)
+                    self.assertIsInstance(outcome.recommendation, Recommendation)
+                    seen.add(outcome.verdict)
+                    count += 1
+        # 14 edges give 14*15/2 = 105 ordered pairs, times 4 adequacy combinations,
+        # times 3 gate states. Asserting the exact count makes a silently-skipped
+        # branch visible.
+        self.assertEqual(count, 3 * 4 * len(edges) * (len(edges) + 1) // 2)
         # Every verdict in the enum is reachable; an unreachable branch is dead code
         # masquerading as coverage.
         self.assertEqual(seen, set(Verdict))
@@ -286,3 +302,80 @@ class Boundaries(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RegionalSafeguard(unittest.TestCase):
+    """The gate that a marginal cannot see, and what failing it costs."""
+
+    SCOREABLE = ["poor", "moderate", "good"]
+    PASSING = {"poor": 0.62, "moderate": 0.70, "good": 0.81}
+
+    def _gate(self, ours=None, theirs=None, floor=0.5):
+        return sr.regional_safeguard(
+            {"ours": dict(self.PASSING if ours is None else ours),
+             "theirs": dict(self.PASSING if theirs is None else theirs)},
+            floor=floor, scoreable_regions=self.SCOREABLE)
+
+    def test_both_passing_does_not_block(self):
+        gate = self._gate()
+        self.assertTrue(gate["arms"]["ours"]["eligible"])
+        self.assertTrue(gate["arms"]["theirs"]["eligible"])
+        outcome = sr.decide(ours_adequate=True, theirs_adequate=True, ci_low=0.01,
+                            ci_high=0.05, delta=0.017, delta_switch=0.02, regional=gate)
+        self.assertNotEqual(outcome.verdict, sr.Verdict.REGIONAL_SAFEGUARD_FAILED)
+
+    def test_a_regional_failure_blocks_even_a_superior_arm(self):
+        """The point of the safeguard: winning the aggregate does not license it."""
+        failing = {**self.PASSING, "poor": 0.10}
+        outcome = sr.decide(ours_adequate=True, theirs_adequate=True, ci_low=0.20,
+                            ci_high=0.30, delta=0.017, delta_switch=0.02,
+                            regional=self._gate(ours=failing))
+        self.assertEqual(outcome.verdict, sr.Verdict.REGIONAL_SAFEGUARD_FAILED)
+        self.assertEqual(outcome.recommendation, sr.Recommendation.NO_SELECTION)
+
+    def test_one_arm_failing_does_not_select_the_other(self):
+        """Their failure is not our evidence; the consequence is NO_SELECTION."""
+        outcome = sr.decide(ours_adequate=True, theirs_adequate=True, ci_low=-0.30,
+                            ci_high=-0.20, delta=0.017, delta_switch=0.02,
+                            regional=self._gate(theirs={**self.PASSING, "poor": 0.05}))
+        self.assertEqual(outcome.recommendation, sr.Recommendation.NO_SELECTION)
+        self.assertIn("theirs FAILED", outcome.notes)
+
+    def test_an_unreported_region_counts_as_failed(self):
+        gate = self._gate(ours={"poor": 0.62, "good": 0.81})
+        self.assertFalse(gate["arms"]["ours"]["eligible"])
+        self.assertEqual(gate["arms"]["ours"]["regions_not_reported"], ["moderate"])
+
+    def test_the_floor_is_applied_to_every_scoreable_region(self):
+        for region in self.SCOREABLE:
+            with self.subTest(region=region):
+                gate = self._gate(ours={**self.PASSING, region: 0.01})
+                self.assertFalse(gate["arms"]["ours"]["eligible"])
+                self.assertEqual(gate["arms"]["ours"]["regions_below_floor"], [region])
+
+    def test_exactly_at_the_floor_passes(self):
+        gate = self._gate(ours={**self.PASSING, "poor": 0.5}, floor=0.5)
+        self.assertTrue(gate["arms"]["ours"]["eligible"])
+
+    def test_a_region_outside_the_scoreable_set_cannot_block(self):
+        """Exempt regions are reported, not enforced; the exemption is auditable."""
+        gate = sr.regional_safeguard(
+            {"ours": {**self.PASSING, "unresolvable": 0.0},
+             "theirs": {**self.PASSING, "unresolvable": 0.0}},
+            floor=0.5, scoreable_regions=self.SCOREABLE)
+        self.assertTrue(gate["arms"]["ours"]["eligible"])
+
+    def test_no_scoreable_region_at_all_is_refused(self):
+        with self.assertRaises(ValueError):
+            sr.regional_safeguard({"ours": {}, "theirs": {}}, floor=0.5,
+                                  scoreable_regions=[])
+
+    def test_omitting_the_gate_leaves_the_rule_unchanged(self):
+        """Backward compatibility: `regional=None` must not alter any verdict."""
+        without = sr.decide(ours_adequate=True, theirs_adequate=True, ci_low=0.01,
+                            ci_high=0.05, delta=0.017, delta_switch=0.02)
+        with_passing = sr.decide(ours_adequate=True, theirs_adequate=True, ci_low=0.01,
+                                 ci_high=0.05, delta=0.017, delta_switch=0.02,
+                                 regional=self._gate())
+        self.assertEqual(without.verdict, with_passing.verdict)
+        self.assertEqual(without.recommendation, with_passing.recommendation)

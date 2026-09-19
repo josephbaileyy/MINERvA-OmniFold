@@ -84,11 +84,25 @@
       "rows": 1024,
       "P2a_float32_unmodified_upstream": {
         "held": true,
-        "criterion": "the two float32 engines must not differ by more than the sum of their individual float32 deviations from the float64 reference",
+        "criterion": "(a) the cross-engine float32 difference must be within TWICE the reference implementation's own float32 deviation, and (b) our float32 deviation must be no worse than twice the reference's. Neither limit reads our float32 output, so a defect in the port cannot widen its own acceptance band.",
         "cross_engine_max_abs_difference": 3.650784492492676e-07,
-        "measured_budget": 4.4004802216696115e-07,
+        "limit_from_reference_only": 5.259523137707278e-07,
         "their_float32_deviation": 2.629761568853639e-07,
-        "our_float32_deviation": 1.7707186528159724e-07
+        "our_float32_deviation": 1.7707186528159724e-07,
+        "ours_no_worse_than_reference": true,
+        "apriori_float32_perturbation_bound": {
+          "float32_epsilon": 5.960464477539063e-08,
+          "draws": 5,
+          "max_output_movement": 5.8287896120834404e-08,
+          "movements": [
+            4.169029896999854e-08,
+            4.3077248320505523e-08,
+            3.150770187809737e-08,
+            5.4371531575669874e-08,
+            5.8287896120834404e-08
+          ],
+          "role": "corroboration only: a floor on achievable float32 disagreement, since it omits intermediate rounding. Does not gate."
+        }
       },
       "P2b_float64_with_declared_sdpa_repair": {
         "held": true,

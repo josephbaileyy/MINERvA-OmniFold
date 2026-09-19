@@ -65,6 +65,28 @@ point. So the checkpoints gate tuning and the variance pilot as well.
 Without them the pretrained arms are not runnable and we can only compare against
 your from-scratch arm — which does not test the transfer claim your paper is about.
 
+## R2b — what configuration was the checkpoint PRETRAINED at?
+
+We have mapped the transfer tensor by tensor from the architecture, and every body
+tensor lines up **provided the checkpoint was produced at the same widths you
+fine-tune at**. Four of them are not properties of your MINERvA setup but of the
+pretraining dataset:
+
+| tensor | shape depends on | your fine-tuning value |
+|---|---|---|
+| `embed.mlp.fc1.weight`, `embed.norm.weight` | `input_dim` | 4 |
+| `local_physics.mlp.fc1.weight` | `input_dim` | 4 |
+| `cond_embed.0.fc1.weight` | `cond_dim` | 16 |
+| `add_embed.0.fc1.weight` | `add_dim` | 5 |
+| `pid_embed.0.weight` | `pid_dim` | 8 |
+
+If OmniLearned pretrained at different values, `_filter_partial_state` drops those
+keys and they train from scratch — **in your runs as well as ours**, silently,
+because the loader prints and continues. Could you tell us the pretraining
+`input_dim`, `cond_dim`, `add_dim` and `pid_dim`, or point us at the config that
+produced the checkpoint? If they differ we would rather know than discover it in a
+comparison.
+
 ## R3 — the `E_avail` definition
 
 We believe yours uses full charged-pion energy plus `K^±`, against our pion-kinetic-energy

@@ -1,0 +1,5334 @@
+{
+  "scope": "tensor-by-tensor checkpoint compatibility, derived from ARCHITECTURE shapes. No checkpoint file has been read; none is reachable.",
+  "loader": "omnilearned/utils.py:_filter_partial_state + load_state_dict(strict=False)",
+  "loader_rules": [
+    "key contains 'out.'",
+    "key absent in target",
+    "shape mismatch"
+  ],
+  "silent_failure_mode": "the loader prints and continues, so a mismatched configuration trains the affected tensors from scratch without failing",
+  "unverifiable_without_the_file": "cond_dim, add_dim, pid_dim and input_dim are properties of the PRETRAINING dataset. If OmniLearned pretrained at different widths, those tensors do not load in HIS runs either. Asked in the Gregor draft.",
+  "size": "small",
+  "results": {
+    "his_complete_step1_and_step2": {
+      "settings": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "sections": {
+        "body": {
+          "rows": [
+            {
+              "key": "token",
+              "source_shape": [
+                1,
+                4,
+                128
+              ],
+              "parameters": 512,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                4
+              ],
+              "parameters": 1024,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.norm.weight",
+              "source_shape": [
+                4
+              ],
+              "parameters": 4,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                4
+              ],
+              "parameters": 1024,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.fc1.weight",
+              "source_shape": [
+                128,
+                16
+              ],
+              "parameters": 2048,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.fc1.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.fc2.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "MPFourier.freqs",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "MPFourier.phases",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "add_embed.0.fc1.weight",
+              "source_shape": [
+                256,
+                5
+              ],
+              "parameters": 1280,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "add_embed.0.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "add_embed.0.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "add_embed.0.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "pid_embed.0.weight",
+              "source_shape": [
+                8,
+                128
+              ],
+              "parameters": 1024,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            }
+          ],
+          "totals": {
+            "transferred": {
+              "tensors": 148,
+              "parameters": 1443368
+            },
+            "absent_in_target": {
+              "tensors": 6,
+              "parameters": 66049
+            }
+          },
+          "target_keys_not_in_checkpoint": [],
+          "input_interface_intact": true,
+          "input_interface_broken_keys": [],
+          "input_interface_reading": "intact: every layer that touches the data transferred, so the pretrained stack downstream receives the representation it was trained on"
+        },
+        "classifier_head": {
+          "rows": [
+            {
+              "key": "in_blocks.0.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc1.weight",
+              "source_shape": [
+                1024,
+                512
+              ],
+              "parameters": 524288,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc1.bias",
+              "source_shape": [
+                1024
+              ],
+              "parameters": 1024,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc2.weight",
+              "source_shape": [
+                512,
+                1024
+              ],
+              "parameters": 524288,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc2.bias",
+              "source_shape": [
+                512
+              ],
+              "parameters": 512,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.norm.weight",
+              "source_shape": [
+                1024
+              ],
+              "parameters": 1024,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "out.weight",
+              "source_shape": [
+                1,
+                512
+              ],
+              "parameters": 512,
+              "verdict": "replaced",
+              "reason": "excluded by the loader's 'out.' rule"
+            },
+            {
+              "key": "out.bias",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "replaced",
+              "reason": "excluded by the loader's 'out.' rule"
+            }
+          ],
+          "totals": {
+            "transferred": {
+              "tensors": 26,
+              "parameters": 1314821
+            },
+            "replaced": {
+              "tensors": 2,
+              "parameters": 513
+            }
+          },
+          "target_keys_not_in_checkpoint": [],
+          "input_interface_intact": true,
+          "input_interface_broken_keys": [],
+          "input_interface_reading": "intact: every layer that touches the data transferred, so the pretrained stack downstream receives the representation it was trained on"
+        }
+      },
+      "backbone_parameters_in_checkpoint": 1509417,
+      "backbone_parameters_transferred": 1443368,
+      "backbone_fraction_transferred": 0.9562420457699894,
+      "backbone_parameters_usable_by_a_classifier": 1443368,
+      "backbone_fraction_of_usable_transferred": 1.0,
+      "diffusion_time_embedding_parameters": 66049,
+      "input_interface_intact": true,
+      "verdict": "usable"
+    },
+    "ours_degraded_step1_reco": {
+      "settings": {
+        "input_dim": 5,
+        "pid": false,
+        "pid_dim": 8,
+        "add_info": false,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 13,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "sections": {
+        "body": {
+          "rows": [
+            {
+              "key": "token",
+              "source_shape": [
+                1,
+                4,
+                128
+              ],
+              "parameters": 512,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                4
+              ],
+              "parameters": 1024,
+              "verdict": "reinitialized",
+              "reason": "shape (256, 4) against our (256, 5)"
+            },
+            {
+              "key": "embed.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.norm.weight",
+              "source_shape": [
+                4
+              ],
+              "parameters": 4,
+              "verdict": "reinitialized",
+              "reason": "shape (4,) against our (5,)"
+            },
+            {
+              "key": "local_physics.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                4
+              ],
+              "parameters": 1024,
+              "verdict": "reinitialized",
+              "reason": "shape (256, 4) against our (256, 5)"
+            },
+            {
+              "key": "local_physics.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.fc1.weight",
+              "source_shape": [
+                128,
+                16
+              ],
+              "parameters": 2048,
+              "verdict": "reinitialized",
+              "reason": "shape (128, 16) against our (128, 13)"
+            },
+            {
+              "key": "cond_embed.0.fc1.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.fc2.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "MPFourier.freqs",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "MPFourier.phases",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "add_embed.0.fc1.weight",
+              "source_shape": [
+                256,
+                5
+              ],
+              "parameters": 1280,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "add_embed.0.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "add_embed.0.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "add_embed.0.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "pid_embed.0.weight",
+              "source_shape": [
+                8,
+                128
+              ],
+              "parameters": 1024,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "in_blocks.0.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            }
+          ],
+          "totals": {
+            "transferred": {
+              "tensors": 139,
+              "parameters": 1403939
+            },
+            "reinitialized": {
+              "tensors": 4,
+              "parameters": 4100
+            },
+            "absent_in_target": {
+              "tensors": 11,
+              "parameters": 101378
+            }
+          },
+          "target_keys_not_in_checkpoint": [],
+          "input_interface_intact": false,
+          "input_interface_broken_keys": [
+            "embed.mlp.fc1.weight",
+            "embed.norm.weight",
+            "local_physics.mlp.fc1.weight",
+            "cond_embed.0.fc1.weight",
+            "add_embed.0.fc1.weight",
+            "add_embed.0.fc2.weight",
+            "add_embed.0.norm.alpha",
+            "add_embed.0.norm.weight",
+            "pid_embed.0.weight"
+          ],
+          "input_interface_reading": "BROKEN: the layers that produce the token, conditioning and side-channel representations did not transfer, so every pretrained block downstream reads inputs in a coordinate system it has never seen. The parameter fraction is near 1 and is not the relevant quantity."
+        },
+        "classifier_head": {
+          "rows": [
+            {
+              "key": "in_blocks.0.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc1.weight",
+              "source_shape": [
+                1024,
+                512
+              ],
+              "parameters": 524288,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc1.bias",
+              "source_shape": [
+                1024
+              ],
+              "parameters": 1024,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc2.weight",
+              "source_shape": [
+                512,
+                1024
+              ],
+              "parameters": 524288,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc2.bias",
+              "source_shape": [
+                512
+              ],
+              "parameters": 512,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.norm.weight",
+              "source_shape": [
+                1024
+              ],
+              "parameters": 1024,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "out.weight",
+              "source_shape": [
+                1,
+                512
+              ],
+              "parameters": 512,
+              "verdict": "replaced",
+              "reason": "excluded by the loader's 'out.' rule"
+            },
+            {
+              "key": "out.bias",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "replaced",
+              "reason": "excluded by the loader's 'out.' rule"
+            }
+          ],
+          "totals": {
+            "transferred": {
+              "tensors": 26,
+              "parameters": 1314821
+            },
+            "replaced": {
+              "tensors": 2,
+              "parameters": 513
+            }
+          },
+          "target_keys_not_in_checkpoint": [],
+          "input_interface_intact": true,
+          "input_interface_broken_keys": [],
+          "input_interface_reading": "intact: every layer that touches the data transferred, so the pretrained stack downstream receives the representation it was trained on"
+        }
+      },
+      "backbone_parameters_in_checkpoint": 1509417,
+      "backbone_parameters_transferred": 1403939,
+      "backbone_fraction_transferred": 0.9301200397239464,
+      "backbone_parameters_usable_by_a_classifier": 1443368,
+      "backbone_fraction_of_usable_transferred": 0.9726826422644814,
+      "diffusion_time_embedding_parameters": 66049,
+      "input_interface_intact": false,
+      "verdict": "NOT a transfer: the input interface is reinitialised"
+    },
+    "ours_degraded_step2_gen": {
+      "settings": {
+        "input_dim": 8,
+        "pid": false,
+        "pid_dim": 8,
+        "add_info": false,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 2,
+        "num_coord": 3,
+        "K": 10,
+        "num_classes": 1
+      },
+      "sections": {
+        "body": {
+          "rows": [
+            {
+              "key": "token",
+              "source_shape": [
+                1,
+                4,
+                128
+              ],
+              "parameters": 512,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                4
+              ],
+              "parameters": 1024,
+              "verdict": "reinitialized",
+              "reason": "shape (256, 4) against our (256, 8)"
+            },
+            {
+              "key": "embed.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "embed.norm.weight",
+              "source_shape": [
+                4
+              ],
+              "parameters": 4,
+              "verdict": "reinitialized",
+              "reason": "shape (4,) against our (8,)"
+            },
+            {
+              "key": "local_physics.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                4
+              ],
+              "parameters": 1024,
+              "verdict": "reinitialized",
+              "reason": "shape (256, 4) against our (256, 8)"
+            },
+            {
+              "key": "local_physics.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.0.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "local_physics.in_blocks.1.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.fc1.weight",
+              "source_shape": [
+                128,
+                16
+              ],
+              "parameters": 2048,
+              "verdict": "reinitialized",
+              "reason": "shape (128, 16) against our (128, 2)"
+            },
+            {
+              "key": "cond_embed.0.fc1.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.fc2.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "cond_embed.0.norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "MPFourier.freqs",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "MPFourier.phases",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "time_embed.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "add_embed.0.fc1.weight",
+              "source_shape": [
+                256,
+                5
+              ],
+              "parameters": 1280,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "add_embed.0.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "add_embed.0.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "add_embed.0.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "pid_embed.0.weight",
+              "source_shape": [
+                8,
+                128
+              ],
+              "parameters": 1024,
+              "verdict": "absent_in_target",
+              "reason": "our arm does not build this module"
+            },
+            {
+              "key": "in_blocks.0.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.2.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.3.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.4.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.5.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.6.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm1.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm1.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm2.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.norm2.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.7.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            }
+          ],
+          "totals": {
+            "transferred": {
+              "tensors": 139,
+              "parameters": 1403939
+            },
+            "reinitialized": {
+              "tensors": 4,
+              "parameters": 4100
+            },
+            "absent_in_target": {
+              "tensors": 11,
+              "parameters": 101378
+            }
+          },
+          "target_keys_not_in_checkpoint": [],
+          "input_interface_intact": false,
+          "input_interface_broken_keys": [
+            "embed.mlp.fc1.weight",
+            "embed.norm.weight",
+            "local_physics.mlp.fc1.weight",
+            "cond_embed.0.fc1.weight",
+            "add_embed.0.fc1.weight",
+            "add_embed.0.fc2.weight",
+            "add_embed.0.norm.alpha",
+            "add_embed.0.norm.weight",
+            "pid_embed.0.weight"
+          ],
+          "input_interface_reading": "BROKEN: the layers that produce the token, conditioning and side-channel representations did not transfer, so every pretrained block downstream reads inputs in a coordinate system it has never seen. The parameter fraction is near 1 and is not the relevant quantity."
+        },
+        "classifier_head": {
+          "rows": [
+            {
+              "key": "in_blocks.0.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.0.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.norm.weight",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.in_proj_weight",
+              "source_shape": [
+                384,
+                128
+              ],
+              "parameters": 49152,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.attn.out_proj.weight",
+              "source_shape": [
+                128,
+                128
+              ],
+              "parameters": 16384,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.weight",
+              "source_shape": [
+                256,
+                128
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc1.bias",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.weight",
+              "source_shape": [
+                128,
+                256
+              ],
+              "parameters": 32768,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.fc2.bias",
+              "source_shape": [
+                128
+              ],
+              "parameters": 128,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "in_blocks.1.mlp.norm.weight",
+              "source_shape": [
+                256
+              ],
+              "parameters": 256,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc1.weight",
+              "source_shape": [
+                1024,
+                512
+              ],
+              "parameters": 524288,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc1.bias",
+              "source_shape": [
+                1024
+              ],
+              "parameters": 1024,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc2.weight",
+              "source_shape": [
+                512,
+                1024
+              ],
+              "parameters": 524288,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.fc2.bias",
+              "source_shape": [
+                512
+              ],
+              "parameters": 512,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.norm.alpha",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "fc.norm.weight",
+              "source_shape": [
+                1024
+              ],
+              "parameters": 1024,
+              "verdict": "transferred",
+              "reason": "shapes agree"
+            },
+            {
+              "key": "out.weight",
+              "source_shape": [
+                1,
+                512
+              ],
+              "parameters": 512,
+              "verdict": "replaced",
+              "reason": "excluded by the loader's 'out.' rule"
+            },
+            {
+              "key": "out.bias",
+              "source_shape": [
+                1
+              ],
+              "parameters": 1,
+              "verdict": "replaced",
+              "reason": "excluded by the loader's 'out.' rule"
+            }
+          ],
+          "totals": {
+            "transferred": {
+              "tensors": 26,
+              "parameters": 1314821
+            },
+            "replaced": {
+              "tensors": 2,
+              "parameters": 513
+            }
+          },
+          "target_keys_not_in_checkpoint": [],
+          "input_interface_intact": true,
+          "input_interface_broken_keys": [],
+          "input_interface_reading": "intact: every layer that touches the data transferred, so the pretrained stack downstream receives the representation it was trained on"
+        }
+      },
+      "backbone_parameters_in_checkpoint": 1509417,
+      "backbone_parameters_transferred": 1403939,
+      "backbone_fraction_transferred": 0.9301200397239464,
+      "backbone_parameters_usable_by_a_classifier": 1443368,
+      "backbone_fraction_of_usable_transferred": 0.9726826422644814,
+      "diffusion_time_embedding_parameters": 66049,
+      "input_interface_intact": false,
+      "verdict": "NOT a transfer: the input interface is reinitialised"
+    },
+    "generator_head": {
+      "in_checkpoint": true,
+      "loaded": false,
+      "reason": "`mode='classifier'` builds no generator, so `model.generator` is None and the loader skips the section entirely. It is diffusion machinery for the pretraining objective and has no counterpart in a reweighting step.",
+      "parameters": 330378
+    }
+  }
+}

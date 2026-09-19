@@ -28,9 +28,18 @@ give his architecture OUR optimizer, which is not his configuration -- §7.3 of 
 proposal requires his arm keep his optimizer, schedule, clipping and batch.
 `make_ported_multifold` therefore overrides `get_optimizer` on a SUBCLASS, leaving
 the vendored engine untouched, in the same spirit as
-`annealed_estimator.make_annealed_multifold`. His cosine schedule over `max_steps`
-is NOT implemented here: `max_steps` has to be derived from the agreed fair budget
-rather than copied from his job script, and that budget is not ratified.
+`annealed_estimator.make_annealed_multifold`.
+
+His schedule and clipping now come from `training_recipe`, with `max_steps` DERIVED
+from the shared example budget rather than copied from his job script. One
+consequence has to be declared rather than absorbed: the vendored engine drops the
+learning rate to `min_learning_rate` between iterations via `CompileModels(fixed=True)`,
+and his cosine already decays within each fit. Running both would apply two
+unrelated schedules to one arm. **His arm uses his schedule and ignores the engine's
+`fixed` drop; ours keeps the engine's behaviour.** That is what "each arm keeps its
+own recipe" means, and the fairness axis -- example presentations -- is held equal
+across it. The alternative, forcing his arm onto our annealing, would be comparing
+his architecture under our recipe.
 
 NOT CITABLE FOR any performance claim.
 """
@@ -47,6 +56,7 @@ import numpy as np  # noqa: E402
 import tensorflow as tf  # noqa: E402
 
 import pet2_keras_port as port  # noqa: E402
+import training_recipe as recipe  # noqa: E402
 from torch_adamw import TORCH_DEFAULTS, TorchAdamW  # noqa: E402
 
 keras = tf.keras
@@ -160,24 +170,45 @@ def build_step_model(step: str, num_part: int = 12, size: str = "small",
     )
 
 
-def make_ported_multifold(multifold_class: Any, optimizer_settings: dict[str, Any] | None = None):
-    """Subclass `MultiFold` so his arm trains under HIS optimizer, not Adam.
+def make_ported_multifold(multifold_class: Any,
+                          optimizer_settings: dict[str, Any] | None = None,
+                          schedule: dict[str, Any] | None = None,
+                          batch_size: int = recipe.HIS_REFERENCE_RUN["batch_size"]):
+    """Subclass `MultiFold` so his arm trains under HIS recipe, not the engine's.
 
-    The vendored engine is not edited. `get_optimizer`'s `fixed` branch is
-    preserved exactly -- the engine drops to `min_learning_rate` between iterations
-    and `RunModel` recompiles at full LR before each fit -- because that is our
-    driver's behaviour and changing it would be a second, unrelated variable.
+    The vendored engine is not edited. `schedule` defaults to the one derived from
+    the shared example budget at his batch; pass one explicitly to exercise a
+    different budget. Every optimizer handed out is retained on
+    `issued_optimizers` so the REALIZED policy can be read afterwards rather than
+    assumed from the plan.
     """
     settings = dict(TORCH_DEFAULTS if optimizer_settings is None else optimizer_settings)
+    derived = recipe.derive_schedule(batch_size) if schedule is None else dict(schedule)
 
     class PortedMultiFold(multifold_class):  # type: ignore[misc, valid-type]
         his_optimizer_settings = settings
+        his_schedule = derived
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            self.issued_optimizers: list[Any] = []
+            self.realized_policy = recipe.RealizedPolicy(self.his_schedule)
 
         def get_optimizer(self, num_steps: int, fixed: bool = False,
                           min_learning_rate: float = 1e-5) -> Any:
-            chosen = dict(self.his_optimizer_settings)
-            chosen["learning_rate"] = min_learning_rate if fixed else self.LR
-            return TorchAdamW(**chosen)
+            # `fixed` is deliberately ignored: his cosine already decays inside the
+            # fit, and stacking the engine's inter-iteration drop on top would be a
+            # second schedule nobody chose. Declared in the module docstring.
+            optimizer = recipe.build_optimizer(
+                "theirs", schedule=self.his_schedule, settings=self.his_optimizer_settings)
+            self.issued_optimizers.append(optimizer)
+            return optimizer
+
+        def record_realized_policy(self) -> dict[str, Any]:
+            for index, optimizer in enumerate(self.issued_optimizers):
+                if int(optimizer.steps_seen.numpy()):
+                    self.realized_policy.record_fit(optimizer, f"fit{index}")
+            return self.realized_policy.verify()
 
     PortedMultiFold.__name__ = f"Ported{multifold_class.__name__}"
     return PortedMultiFold

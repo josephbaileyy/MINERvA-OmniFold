@@ -77,23 +77,85 @@
     },
     "E2_engine_used_his_optimizer": {
       "held": true,
-      "optimizer": "TorchAdamW",
+      "optimizer": "ClippedTorchAdamW",
+      "grad_clip": 1.0,
+      "schedule_is_a_derived_cosine": true,
       "note": "MultiFold.get_optimizer hardcodes tf.keras.optimizers.Adam; without the subclass his architecture would train under our optimizer and the arm would not be his configuration"
+    },
+    "E7_realized_policy_matches_the_plan": {
+      "held": true,
+      "intended": {
+        "examples_per_fit": 819,
+        "batch_size": 32,
+        "grad_accum_steps": 1,
+        "examples_per_update": 32,
+        "max_steps": 26,
+        "warmup_steps": 1,
+        "warmup_fraction": 0.004,
+        "warmup_fraction_source": "1000/250000 from his reference run; the FRACTION is preserved, not the absolute count",
+        "his_absolute_warmup_would_have_been": 1000,
+        "budget_caveat": "n_data is the measured leg's full inventory and is not set by --max-events. Taking n_data = n_mc gives 1.6x the presentations the previous fit-only model assumed, which would put our arm's projected evaluation cost ABOVE the feature contract's independently measured 1.1-1.3 GPU-h for a nominal train. The two cannot both be right, so n_data must be read off a production run's loader meta before the campaign is costed. Reported conditionally until then.",
+        "derived_not_copied": "max_steps comes from the shared example budget divided by this arm's own batch, not from his --max_steps 250000"
+      },
+      "fits": [
+        {
+          "label": "fit3",
+          "optimizer_steps_taken": 25,
+          "clip_events": 0,
+          "clip_fraction": 0.0,
+          "last_global_norm": 0.1417580246925354,
+          "grad_clip": 1.0,
+          "examples_presented": 800,
+          "learning_rate_at_step_0": 1.570841959619429e-06
+        },
+        {
+          "label": "fit4",
+          "optimizer_steps_taken": 25,
+          "clip_events": 0,
+          "clip_fraction": 0.0,
+          "last_global_norm": 0.18777382373809814,
+          "grad_clip": 1.0,
+          "examples_presented": 800,
+          "learning_rate_at_step_0": 1.570841959619429e-06
+        },
+        {
+          "label": "fit7",
+          "optimizer_steps_taken": 25,
+          "clip_events": 0,
+          "clip_fraction": 0.0,
+          "last_global_norm": 0.10508788377046585,
+          "grad_clip": 1.0,
+          "examples_presented": 800,
+          "learning_rate_at_step_0": 1.570841959619429e-06
+        },
+        {
+          "label": "fit8",
+          "optimizer_steps_taken": 25,
+          "clip_events": 0,
+          "clip_fraction": 0.0,
+          "last_global_norm": 0.1919941008090973,
+          "grad_clip": 1.0,
+          "examples_presented": 800,
+          "learning_rate_at_step_0": 1.570841959619429e-06
+        }
+      ],
+      "problems": [],
+      "criterion": "every fit must present the intended example budget to within one update; the budget is the fairness axis and a silent shortfall in one arm is an unequal comparison"
     },
     "E3_push_weights_sane": {
       "held": true,
       "finite": true,
       "all_positive": true,
-      "min": 0.9765560626983643,
-      "max": 1.082283616065979,
-      "mean": 1.0591739030787721,
+      "min": 0.9781837463378906,
+      "max": 1.2960152626037598,
+      "mean": 1.178666568477638,
       "rows_not_pass_gen": 0
     },
     "E4_empty_event_finite": {
       "held": true,
       "row": 0,
       "tokens_in_row": 0,
-      "logit": 0.0024277542252093554,
+      "logit": -0.0016779345460236073,
       "note": "a real production state: an event with no recoil tokens. The upstream's -1e9 additive mask keeps this finite where -inf would give NaN"
     },
     "E5_fold_forward_end_of_run_recorded": {
@@ -109,22 +171,22 @@
         {
           "iteration": 0,
           "occasion": "produced_by_step2",
-          "ratio": 1.013755913333195
+          "ratio": 1.03331715566356
         },
         {
           "iteration": 1,
           "occasion": "consumed_by_step1",
-          "ratio": 1.013755913333195
+          "ratio": 1.03331715566356
         },
         {
           "iteration": 1,
           "occasion": "produced_by_step2",
-          "ratio": 1.0598414280065676
+          "ratio": 1.180585221401075
         }
       ],
       "pushes_produced": 2,
       "pushes_consumed_by_a_later_step1": 2,
-      "end_of_run_ratio": 1.0598414280065676,
+      "end_of_run_ratio": 1.180585221401075,
       "end_of_run_is_recorded_not_reconstructed": true,
       "pushes_produced_but_never_consumed": 1,
       "reading": "quote end_of_run_ratio. The last 'consumed_by_step1' row is a DIFFERENT quantity -- the push entering the final step 1 -- and substituting it was measured flipping the sign of (ratio - 1).",
@@ -134,18 +196,31 @@
     "E6_logits_finite_both_steps": {
       "held": true,
       "reco_logit_range": [
-        -0.003616693429648876,
-        0.0024277542252093554
+        -0.003841954981908202,
+        0.0011112686479464173
       ],
       "gen_logit_range": [
-        -0.0007759752334095538,
-        0.0028459366876631975
+        -0.0026388505939394236,
+        0.003128587268292904
       ]
     }
   },
   "all_held": true,
+  "recipe": {
+    "examples_per_fit": 819,
+    "batch_size": 32,
+    "grad_accum_steps": 1,
+    "examples_per_update": 32,
+    "max_steps": 26,
+    "warmup_steps": 1,
+    "warmup_fraction": 0.004,
+    "warmup_fraction_source": "1000/250000 from his reference run; the FRACTION is preserved, not the absolute count",
+    "his_absolute_warmup_would_have_been": 1000,
+    "budget_caveat": "n_data is the measured leg's full inventory and is not set by --max-events. Taking n_data = n_mc gives 1.6x the presentations the previous fit-only model assumed, which would put our arm's projected evaluation cost ABOVE the feature contract's independently measured 1.1-1.3 GPU-h for a nominal train. The two cannot both be right, so n_data must be read off a production run's loader meta before the campaign is costed. Reported conditionally until then.",
+    "derived_not_copied": "max_steps comes from the shared example budget divided by this arm's own batch, not from his --max_steps 250000"
+  },
   "not_implemented": [
-    "his cosine schedule over max_steps: max_steps must be derived from the agreed fair budget (proposal \u00a77.3), which is not ratified",
-    "gradient clipping, if his recipe uses it, is not yet transcribed"
+    "nothing in the recipe: budget, warmup, cosine and global-norm clipping are all derived and exercised here",
+    "the production example budget itself, which needs the ratified epochs/subsample; the DERIVATION is what this exercises"
   ]
 }
