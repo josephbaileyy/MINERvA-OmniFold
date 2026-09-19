@@ -1,0 +1,2635 @@
+{
+  "scope": "decomposed cost and peak device memory for the PORTED arm and our incumbent; synthetic inputs at his widths; no learning claim",
+  "commits": [
+    "0c4370d9ead4382af0022dbab38ac81f29e164be"
+  ],
+  "variant_paths": {
+    "baseline": {
+      "materialise_pair_mask": true,
+      "tile_centre": true,
+      "flat_projection": false
+    },
+    "broadcast": {
+      "materialise_pair_mask": false,
+      "tile_centre": false,
+      "flat_projection": false
+    },
+    "optimised": {
+      "materialise_pair_mask": false,
+      "tile_centre": false,
+      "flat_projection": true
+    },
+    "optimised_xla": {
+      "materialise_pair_mask": false,
+      "tile_centre": false,
+      "flat_projection": true
+    },
+    "broadcast_xla": {
+      "materialise_pair_mask": false,
+      "tile_centre": false,
+      "flat_projection": false
+    },
+    "accum4": {
+      "materialise_pair_mask": false,
+      "tile_centre": false,
+      "flat_projection": true
+    }
+  },
+  "label_warning": "a variant NAME is only meaningful with the commit beside it; `variant_means` on each cell records the switches that were actually set",
+  "cells": {
+    "baseline|12|512|forward": {
+      "variant": "baseline",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": true,
+        "tile_centre": true,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": true,
+        "tile_centre": true,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.06867384750512429,
+          "step_seconds_min": 0.06817751898779534,
+          "step_seconds_max": 0.06928240499109961,
+          "coefficient_of_variation": 0.00428808244220607,
+          "batch": 512,
+          "seconds_per_example": 0.00013412860840844587,
+          "microseconds_per_example": 134.12860840844587,
+          "device_memory": {
+            "peak_bytes": 235056384,
+            "current_bytes": 16580096
+          },
+          "value": 1.5270425081253052,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "baseline|12|512|train": {
+      "variant": "baseline",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": true,
+        "tile_centre": true,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": true,
+        "tile_centre": true,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.06887043250026181,
+          "step_seconds_min": 0.06853235501330346,
+          "step_seconds_max": 0.06917558697750792,
+          "coefficient_of_variation": 0.003031949359728201,
+          "batch": 512,
+          "seconds_per_example": 0.00013451256347707385,
+          "microseconds_per_example": 134.51256347707385,
+          "device_memory": {
+            "peak_bytes": 234364160,
+            "current_bytes": 16604160
+          },
+          "value": -0.20865434408187866,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.4762426904926542,
+          "step_seconds_min": 0.47569499199744314,
+          "step_seconds_max": 0.4769935109943617,
+          "coefficient_of_variation": 0.0007344587923109854,
+          "batch": 512,
+          "seconds_per_example": 0.0009301615048684653,
+          "microseconds_per_example": 930.1615048684653,
+          "device_memory": {
+            "peak_bytes": 18103695872,
+            "current_bytes": 20573952
+          },
+          "value": 0.02822435460984707,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.06889254049747251,
+          "step_seconds_min": 0.06806253700051457,
+          "step_seconds_max": 0.07168931301566772,
+          "coefficient_of_variation": 0.010297198924651326,
+          "batch": 512,
+          "seconds_per_example": 0.000134555743159126,
+          "microseconds_per_example": 134.555743159126,
+          "device_memory": {
+            "peak_bytes": 242038272,
+            "current_bytes": 24531200
+          },
+          "value": 0.6931653618812561,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.00014827150152996182,
+          "step_seconds_min": 0.00014605300384573638,
+          "step_seconds_max": 0.0001863109937403351,
+          "coefficient_of_variation": 0.09041945230688501,
+          "batch": 512,
+          "seconds_per_example": 2.895927764257067e-07,
+          "microseconds_per_example": 0.2895927764257067,
+          "device_memory": {
+            "peak_bytes": 24531200,
+            "current_bytes": 24531200
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.4789565144892549,
+          "step_seconds_min": 0.4786673909984529,
+          "step_seconds_max": 0.47956959099974483,
+          "coefficient_of_variation": 0.00041989570626148256,
+          "batch": 512,
+          "seconds_per_example": 0.000935461942361826,
+          "microseconds_per_example": 935.461942361826,
+          "device_memory": {
+            "peak_bytes": 18157428736,
+            "current_bytes": 50611456
+          },
+          "value": 0.6811584830284119,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 1.0003210085432614,
+          "real_over_folded": 6.912833915743408,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.0028620954981306568,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 2758702,
+      "optimizer_variables": 176
+    },
+    "baseline|12|2048|forward": {
+      "variant": "baseline",
+      "tokens": 12,
+      "batch": 2048,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": true,
+        "tile_centre": true,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": true,
+        "tile_centre": true,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.27329377899877727,
+          "step_seconds_min": 0.2503969090175815,
+          "step_seconds_max": 0.2981729299935978,
+          "coefficient_of_variation": 0.05711382930732833,
+          "batch": 2048,
+          "seconds_per_example": 0.00013344422802674671,
+          "microseconds_per_example": 133.4442280267467,
+          "device_memory": {
+            "peak_bytes": 762012416,
+            "current_bytes": 31282688
+          },
+          "value": -3.979555130004883,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "baseline|12|2048|train": {
+      "variant": "baseline",
+      "tokens": 12,
+      "batch": 2048,
+      "mode": "train",
+      "failed": true,
+      "error": "ResourceExhaustedError()",
+      "traceback": "Traceback (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n    record = measure_cell(args.repo, variant, int(tokens), int(batch), mode,\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n    sections[\"forward_and_backward\"] = _time(forward_and_backward, batch, tf, warmup, repeats)\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n    value = step_fn()\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/util/traceback_utils.py\", line 153, in error_handler\n    raise e.with_traceback(filtered_tb) from None\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/execute.py\", line 53, in quick_execute\n    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,\ntensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:\n\nDetected at node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/mlp_3/linear_9/einsum/Einsum_1 defined at (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 496, in <module>\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 350, in forward_and_backward\n\nOOM when allocating tensor with shape[24576,10,128,256] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc\n\t [[{{node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/mlp_3/linear_9/einsum/Einsum_1}}]]\nHint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.\n [Op:__inference_forward_and_backward_11621]\n"
+    },
+    "baseline|33|512|forward": {
+      "variant": "baseline",
+      "tokens": 33,
+      "batch": 512,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": true,
+        "tile_centre": true,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": true,
+        "tile_centre": true,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.17388023850799073,
+          "step_seconds_min": 0.15796015100204386,
+          "step_seconds_max": 0.1901552229828667,
+          "coefficient_of_variation": 0.06896440131384837,
+          "batch": 512,
+          "seconds_per_example": 0.0003396098408359194,
+          "microseconds_per_example": 339.6098408359194,
+          "device_memory": {
+            "peak_bytes": 636279552,
+            "current_bytes": 31194624
+          },
+          "value": 0.48108020424842834,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "baseline|33|512|train": {
+      "variant": "baseline",
+      "tokens": 33,
+      "batch": 512,
+      "mode": "train",
+      "failed": true,
+      "error": "ResourceExhaustedError()",
+      "traceback": "Traceback (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n    record = measure_cell(args.repo, variant, int(tokens), int(batch), mode,\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n    sections[\"forward_and_backward\"] = _time(forward_and_backward, batch, tf, warmup, repeats)\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n    value = step_fn()\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/util/traceback_utils.py\", line 153, in error_handler\n    raise e.with_traceback(filtered_tb) from None\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/execute.py\", line 53, in quick_execute\n    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,\ntensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:\n\nDetected at node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/mlp_3/linear_9/einsum/Einsum_1 defined at (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 496, in <module>\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 350, in forward_and_backward\n\nOOM when allocating tensor with shape[128,256,16896,10] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc\n\t [[{{node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/mlp_3/linear_9/einsum/Einsum_1}}]]\nHint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.\n [Op:__inference_forward_and_backward_11615]\n"
+    },
+    "baseline|33|2048|forward": {
+      "variant": "baseline",
+      "tokens": 33,
+      "batch": 2048,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": true,
+        "tile_centre": true,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": true,
+        "tile_centre": true,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.697277210012544,
+          "step_seconds_min": 0.6957104160101153,
+          "step_seconds_max": 0.7008835960004944,
+          "coefficient_of_variation": 0.0022708052542475604,
+          "batch": 2048,
+          "seconds_per_example": 0.0003404673877014375,
+          "microseconds_per_example": 340.4673877014375,
+          "device_memory": {
+            "peak_bytes": 2000560896,
+            "current_bytes": 68670976
+          },
+          "value": 6.859230041503906,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "broadcast|12|512|forward": {
+      "variant": "broadcast",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.06872645550174639,
+          "step_seconds_min": 0.06796677698730491,
+          "step_seconds_max": 0.06939802801935002,
+          "coefficient_of_variation": 0.004593398064615704,
+          "batch": 512,
+          "seconds_per_example": 0.0001342313584018484,
+          "microseconds_per_example": 134.2313584018484,
+          "device_memory": {
+            "peak_bytes": 227153920,
+            "current_bytes": 14075392
+          },
+          "value": 1.7221965789794922,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "broadcast|12|512|train": {
+      "variant": "broadcast",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.06880581901350524,
+          "step_seconds_min": 0.06826044400804676,
+          "step_seconds_max": 0.06907340598991141,
+          "coefficient_of_variation": 0.0035746062313195717,
+          "batch": 512,
+          "seconds_per_example": 0.00013438636526075243,
+          "microseconds_per_example": 134.38636526075243,
+          "device_memory": {
+            "peak_bytes": 229250048,
+            "current_bytes": 14099456
+          },
+          "value": -1.6058332920074463,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.47617728701152373,
+          "step_seconds_min": 0.4758542880008463,
+          "step_seconds_max": 0.47637300100177526,
+          "coefficient_of_variation": 0.0002700878397127238,
+          "batch": 512,
+          "seconds_per_example": 0.0009300337636943823,
+          "microseconds_per_example": 930.0337636943823,
+          "device_memory": {
+            "peak_bytes": 18114384384,
+            "current_bytes": 15857408
+          },
+          "value": 0.011228738352656364,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.06866785800957587,
+          "step_seconds_min": 0.06855177800753154,
+          "step_seconds_max": 0.06892916798824444,
+          "coefficient_of_variation": 0.0014277256484449385,
+          "batch": 512,
+          "seconds_per_example": 0.00013411691017495286,
+          "microseconds_per_example": 134.11691017495286,
+          "device_memory": {
+            "peak_bytes": 233142528,
+            "current_bytes": 17826048
+          },
+          "value": 0.6931021213531494,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.000142250006319955,
+          "step_seconds_min": 0.00013310697977431118,
+          "step_seconds_max": 0.00020289301755838096,
+          "coefficient_of_variation": 0.14671175799603267,
+          "batch": 512,
+          "seconds_per_example": 2.778320435936621e-07,
+          "microseconds_per_example": 0.2778320435936621,
+          "device_memory": {
+            "peak_bytes": 17826048,
+            "current_bytes": 17826048
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.47893724200548604,
+          "step_seconds_min": 0.4784075439965818,
+          "step_seconds_max": 0.4791410109901335,
+          "coefficient_of_variation": 0.00040630341489140704,
+          "batch": 512,
+          "seconds_per_example": 0.0009354243007919649,
+          "microseconds_per_example": 935.4243007919649,
+          "device_memory": {
+            "peak_bytes": 18165808128,
+            "current_bytes": 41750784
+          },
+          "value": 0.6814166307449341,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 0.9979949224366866,
+          "real_over_folded": 6.934500373451577,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.0029022050002822652,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 2758702,
+      "optimizer_variables": 176
+    },
+    "broadcast|12|2048|forward": {
+      "variant": "broadcast",
+      "tokens": 12,
+      "batch": 2048,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.2732661670015659,
+          "step_seconds_min": 0.2720500770083163,
+          "step_seconds_max": 0.2746047739929054,
+          "coefficient_of_variation": 0.0023465704715098265,
+          "batch": 2048,
+          "seconds_per_example": 0.00013343074560623336,
+          "microseconds_per_example": 133.43074560623336,
+          "device_memory": {
+            "peak_bytes": 713974528,
+            "current_bytes": 20993536
+          },
+          "value": 8.176239967346191,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "broadcast|12|2048|train": {
+      "variant": "broadcast",
+      "tokens": 12,
+      "batch": 2048,
+      "mode": "train",
+      "failed": true,
+      "error": "ResourceExhaustedError()",
+      "traceback": "Traceback (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n    record = measure_cell(args.repo, variant, int(tokens), int(batch), mode,\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n    sections[\"forward_and_backward\"] = _time(forward_and_backward, batch, tf, warmup, repeats)\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n    value = step_fn()\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/util/traceback_utils.py\", line 153, in error_handler\n    raise e.with_traceback(filtered_tb) from None\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/execute.py\", line 53, in quick_execute\n    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,\ntensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:\n\nDetected at node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/mlp_3/linear_9/einsum/Einsum_1 defined at (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 496, in <module>\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 350, in forward_and_backward\n\nOOM when allocating tensor with shape[24576,10,128,256] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc\n\t [[{{node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/mlp_3/linear_9/einsum/Einsum_1}}]]\nHint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.\n [Op:__inference_forward_and_backward_11612]\n"
+    },
+    "broadcast|33|512|forward": {
+      "variant": "broadcast",
+      "tokens": 33,
+      "batch": 512,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.17360570700839162,
+          "step_seconds_min": 0.17243938299361616,
+          "step_seconds_max": 0.1740879290155135,
+          "coefficient_of_variation": 0.002602070879774724,
+          "batch": 512,
+          "seconds_per_example": 0.0003390736465007649,
+          "microseconds_per_example": 339.0736465007649,
+          "device_memory": {
+            "peak_bytes": 587604992,
+            "current_bytes": 20147712
+          },
+          "value": 1.6622345447540283,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "broadcast|33|512|train": {
+      "variant": "broadcast",
+      "tokens": 33,
+      "batch": 512,
+      "mode": "train",
+      "failed": true,
+      "error": "ResourceExhaustedError()",
+      "traceback": "Traceback (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n    record = measure_cell(args.repo, variant, int(tokens), int(batch), mode,\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n    sections[\"forward_and_backward\"] = _time(forward_and_backward, batch, tf, warmup, repeats)\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n    value = step_fn()\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/util/traceback_utils.py\", line 153, in error_handler\n    raise e.with_traceback(filtered_tb) from None\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/execute.py\", line 53, in quick_execute\n    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,\ntensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:\n\nDetected at node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/mlp_3/linear_9/einsum/Einsum_1 defined at (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 496, in <module>\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 350, in forward_and_backward\n\nOOM when allocating tensor with shape[128,256,16896,10] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc\n\t [[{{node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/mlp_3/linear_9/einsum/Einsum_1}}]]\nHint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.\n [Op:__inference_forward_and_backward_11606]\n"
+    },
+    "broadcast|33|2048|forward": {
+      "variant": "broadcast",
+      "tokens": 33,
+      "batch": 2048,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.6974818629969377,
+          "step_seconds_min": 0.6876164170098491,
+          "step_seconds_max": 0.7093654190248344,
+          "coefficient_of_variation": 0.008090921009934467,
+          "batch": 2048,
+          "seconds_per_example": 0.0003405673159164735,
+          "microseconds_per_example": 340.5673159164735,
+          "device_memory": {
+            "peak_bytes": 1928110848,
+            "current_bytes": 44340736
+          },
+          "value": 4.065232276916504,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "optimised|12|512|forward": {
+      "variant": "optimised",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.03865270198730286,
+          "step_seconds_min": 0.03820367401931435,
+          "step_seconds_max": 0.04899131500860676,
+          "coefficient_of_variation": 0.08521212440262871,
+          "batch": 512,
+          "seconds_per_example": 7.54935585689509e-05,
+          "microseconds_per_example": 75.4935585689509,
+          "device_memory": {
+            "peak_bytes": 229262080,
+            "current_bytes": 14075392
+          },
+          "value": 4.152146816253662,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "optimised|12|512|train": {
+      "variant": "optimised",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.0386864205065649,
+          "step_seconds_min": 0.037850490014534444,
+          "step_seconds_max": 0.04490737000014633,
+          "coefficient_of_variation": 0.03694405057341765,
+          "batch": 512,
+          "seconds_per_example": 7.555941505188457e-05,
+          "microseconds_per_example": 75.55941505188457,
+          "device_memory": {
+            "peak_bytes": 229243648,
+            "current_bytes": 14099456
+          },
+          "value": 0.6238563656806946,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.20038649899652228,
+          "step_seconds_min": 0.20008383298409171,
+          "step_seconds_max": 0.20058333899942227,
+          "coefficient_of_variation": 0.0007041812603568295,
+          "batch": 512,
+          "seconds_per_example": 0.0003913798808525826,
+          "microseconds_per_example": 391.3798808525826,
+          "device_memory": {
+            "peak_bytes": 13479563776,
+            "current_bytes": 15857408
+          },
+          "value": 0.04233192279934883,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.03879446400969755,
+          "step_seconds_min": 0.03807088601752184,
+          "step_seconds_max": 0.039371560007566586,
+          "coefficient_of_variation": 0.008638282310316986,
+          "batch": 512,
+          "seconds_per_example": 7.577043751894053e-05,
+          "microseconds_per_example": 75.77043751894053,
+          "device_memory": {
+            "peak_bytes": 230853888,
+            "current_bytes": 17826048
+          },
+          "value": 0.6931662559509277,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.00013547651178669184,
+          "step_seconds_min": 0.0001307529746554792,
+          "step_seconds_max": 0.00018879500566981733,
+          "coefficient_of_variation": 0.13421152825743943,
+          "batch": 512,
+          "seconds_per_example": 2.646025620833825e-07,
+          "microseconds_per_example": 0.2646025620833825,
+          "device_memory": {
+            "peak_bytes": 17826048,
+            "current_bytes": 17826048
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.20309313500183634,
+          "step_seconds_min": 0.20276033802656457,
+          "step_seconds_max": 0.20370708699920215,
+          "coefficient_of_variation": 0.0009603255298833575,
+          "batch": 512,
+          "seconds_per_example": 0.0003966662793004616,
+          "microseconds_per_example": 396.6662793004616,
+          "device_memory": {
+            "peak_bytes": 13495086848,
+            "current_bytes": 41750784
+          },
+          "value": 0.6813453435897827,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 1.0027928017562213,
+          "real_over_folded": 5.165337480791877,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.002842112517100759,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 2758702,
+      "optimizer_variables": 176
+    },
+    "optimised|12|2048|forward": {
+      "variant": "optimised",
+      "tokens": 12,
+      "batch": 2048,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.15084303349431138,
+          "step_seconds_min": 0.1503797930199653,
+          "step_seconds_max": 0.1512985189910978,
+          "coefficient_of_variation": 0.001618939103353826,
+          "batch": 2048,
+          "seconds_per_example": 7.365382494839423e-05,
+          "microseconds_per_example": 73.65382494839423,
+          "device_memory": {
+            "peak_bytes": 730751744,
+            "current_bytes": 20993536
+          },
+          "value": 7.343042373657227,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "optimised|12|2048|train": {
+      "variant": "optimised",
+      "tokens": 12,
+      "batch": 2048,
+      "mode": "train",
+      "failed": true,
+      "error": "ResourceExhaustedError()",
+      "traceback": "Traceback (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n    record = measure_cell(args.repo, variant, int(tokens), int(batch), mode,\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n    sections[\"forward_and_backward\"] = _time(forward_and_backward, batch, tf, warmup, repeats)\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n    value = step_fn()\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/util/traceback_utils.py\", line 153, in error_handler\n    raise e.with_traceback(filtered_tb) from None\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/execute.py\", line 53, in quick_execute\n    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,\ntensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:\n\nDetected at node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/multihead_attention_1/einsum_2/Einsum_1 defined at (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 496, in <module>\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 350, in forward_and_backward\n\nOOM when allocating tensor with shape[128,128,24576,10] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc\n\t [[{{node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/multihead_attention_1/einsum_2/Einsum_1}}]]\nHint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.\n [Op:__inference_forward_and_backward_12402]\n"
+    },
+    "optimised|33|512|forward": {
+      "variant": "optimised",
+      "tokens": 33,
+      "batch": 512,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.09655744399060495,
+          "step_seconds_min": 0.09513685799902305,
+          "step_seconds_max": 0.09768768801586702,
+          "coefficient_of_variation": 0.00592549021973443,
+          "batch": 512,
+          "seconds_per_example": 0.0001885887577941503,
+          "microseconds_per_example": 188.5887577941503,
+          "device_memory": {
+            "peak_bytes": 588280832,
+            "current_bytes": 20147712
+          },
+          "value": -2.476207971572876,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "optimised|33|512|train": {
+      "variant": "optimised",
+      "tokens": 33,
+      "batch": 512,
+      "mode": "train",
+      "failed": true,
+      "error": "ResourceExhaustedError()",
+      "traceback": "Traceback (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n    record = measure_cell(args.repo, variant, int(tokens), int(batch), mode,\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n    sections[\"forward_and_backward\"] = _time(forward_and_backward, batch, tf, warmup, repeats)\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n    value = step_fn()\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/util/traceback_utils.py\", line 153, in error_handler\n    raise e.with_traceback(filtered_tb) from None\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/execute.py\", line 53, in quick_execute\n    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,\ntensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:\n\nDetected at node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/multihead_attention_1/einsum_1/Einsum_1 defined at (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 496, in <module>\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 350, in forward_and_backward\n\nOOM when allocating tensor with shape[128,128,16896,10] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc\n\t [[{{node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/multihead_attention_1/einsum_1/Einsum_1}}]]\nHint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.\n [Op:__inference_forward_and_backward_12396]\n"
+    },
+    "optimised|33|2048|forward": {
+      "variant": "optimised",
+      "tokens": 33,
+      "batch": 2048,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.38587689750420395,
+          "step_seconds_min": 0.38297827998758294,
+          "step_seconds_max": 0.38976294299936853,
+          "coefficient_of_variation": 0.004897313466994805,
+          "batch": 2048,
+          "seconds_per_example": 0.00018841645385947459,
+          "microseconds_per_example": 188.4164538594746,
+          "device_memory": {
+            "peak_bytes": 1927848704,
+            "current_bytes": 44340736
+          },
+          "value": 5.204102993011475,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "optimised|33|2048|train": {
+      "variant": "optimised",
+      "tokens": 33,
+      "batch": 2048,
+      "mode": "train",
+      "failed": true,
+      "error": "ResourceExhaustedError()",
+      "traceback": "Traceback (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n    record = measure_cell(args.repo, variant, int(tokens), int(batch), mode,\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n    sections[\"forward_and_backward\"] = _time(forward_and_backward, batch, tf, warmup, repeats)\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n    value = step_fn()\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/util/traceback_utils.py\", line 153, in error_handler\n    raise e.with_traceback(filtered_tb) from None\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/execute.py\", line 53, in quick_execute\n    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,\ntensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:\n\nDetected at node gradient_tape/pet2_port/pet_classifier/token_att_block_1/multihead_attention_11/einsum_1/Einsum_1 defined at (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 496, in <module>\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 384, in measure_cell\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 350, in forward_and_backward\n\nOOM when allocating tensor with shape[128,128,2048,34] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc\n\t [[{{node gradient_tape/pet2_port/pet_classifier/token_att_block_1/multihead_attention_11/einsum_1/Einsum_1}}]]\nHint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.\n [Op:__inference_forward_and_backward_12402]\n"
+    },
+    "optimised_xla|12|512|forward": {
+      "variant": "optimised_xla",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": true,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.0012484824837883934,
+          "step_seconds_min": 0.0012412889918778092,
+          "step_seconds_max": 0.001334089000010863,
+          "coefficient_of_variation": 0.018707601427246,
+          "batch": 512,
+          "seconds_per_example": 2.438442351149206e-06,
+          "microseconds_per_example": 2.438442351149206,
+          "device_memory": {
+            "peak_bytes": 280777984,
+            "current_bytes": 12342272
+          },
+          "value": -0.05542637035250664,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "optimised_xla|12|512|train": {
+      "variant": "optimised_xla",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": true,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.0012373814970487729,
+          "step_seconds_min": 0.0012276519846636802,
+          "step_seconds_max": 0.0012600749905686826,
+          "coefficient_of_variation": 0.007600822813983275,
+          "batch": 512,
+          "seconds_per_example": 2.4167607364233845e-06,
+          "microseconds_per_example": 2.4167607364233845,
+          "device_memory": {
+            "peak_bytes": 280781568,
+            "current_bytes": 12345856
+          },
+          "value": 2.3359084129333496,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.07656066700292286,
+          "step_seconds_min": 0.07636153700877912,
+          "step_seconds_max": 0.07678799098357558,
+          "coefficient_of_variation": 0.0009594169968105032,
+          "batch": 512,
+          "seconds_per_example": 0.0001495325527400837,
+          "microseconds_per_example": 149.5325527400837,
+          "device_memory": {
+            "peak_bytes": 2236196096,
+            "current_bytes": 12345856
+          },
+          "value": -0.012354573234915733,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.07701743450888898,
+          "step_seconds_min": 0.07698078401153907,
+          "step_seconds_max": 0.07710861100349575,
+          "coefficient_of_variation": 0.000451779881589833,
+          "batch": 512,
+          "seconds_per_example": 0.0001504246767751738,
+          "microseconds_per_example": 150.4246767751738,
+          "device_memory": {
+            "peak_bytes": 2236353280,
+            "current_bytes": 12345856
+          },
+          "value": 0.6933128833770752,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.00017310449038632214,
+          "step_seconds_min": 0.0001712209777906537,
+          "step_seconds_max": 0.00017867499263957143,
+          "coefficient_of_variation": 0.011675321735785815,
+          "batch": 512,
+          "seconds_per_example": 3.3809470778578543e-07,
+          "microseconds_per_example": 0.33809470778578543,
+          "device_memory": {
+            "peak_bytes": 12346112,
+            "current_bytes": 12345856
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.07904719999351073,
+          "step_seconds_min": 0.07901894100359641,
+          "step_seconds_max": 0.07908949599368498,
+          "coefficient_of_variation": 0.0002609802294983837,
+          "batch": 512,
+          "seconds_per_example": 0.00015438906248732565,
+          "microseconds_per_example": 154.38906248732565,
+          "device_memory": {
+            "peak_bytes": 2275043840,
+            "current_bytes": 35695104
+          },
+          "value": 0.6811361312866211,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 62.2422710316746,
+          "real_over_folded": 0.9940692973106835,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.0026596374809741974,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 2758702,
+      "optimizer_variables": 176
+    },
+    "optimised_xla|12|2048|forward": {
+      "variant": "optimised_xla",
+      "tokens": 12,
+      "batch": 2048,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": true,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.0012606360105564818,
+          "step_seconds_min": 0.00125251998542808,
+          "step_seconds_max": 0.0012754949857480824,
+          "coefficient_of_variation": 0.004731143794384908,
+          "batch": 2048,
+          "seconds_per_example": 6.155449270295321e-07,
+          "microseconds_per_example": 0.6155449270295321,
+          "device_memory": {
+            "peak_bytes": 769118208,
+            "current_bytes": 13159424
+          },
+          "value": -14.99685287475586,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "ours_incumbent|12|512|forward": {
+      "variant": "ours_incumbent",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "ours_incumbent",
+      "configuration": {
+        "architecture": "vendored omnifold.net.PET",
+        "step": "step2_gen",
+        "K": 3,
+        "heads": 2,
+        "transformers": 2,
+        "projection_dim": 32
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "tensorflow.keras",
+        "tf_keras_root": "tensorflow",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": "the vendored production PET",
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.009019592005643062,
+          "step_seconds_min": 0.008919068000977859,
+          "step_seconds_max": 0.00975844098138623,
+          "coefficient_of_variation": 0.024108819055123274,
+          "batch": 512,
+          "seconds_per_example": 1.7616390636021606e-05,
+          "microseconds_per_example": 17.616390636021606,
+          "device_memory": {
+            "peak_bytes": 17836800,
+            "current_bytes": 418560
+          },
+          "value": 4.357288837432861,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 46913
+    },
+    "ours_incumbent|12|512|train": {
+      "variant": "ours_incumbent",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "ours_incumbent",
+      "configuration": {
+        "architecture": "vendored omnifold.net.PET",
+        "step": "step2_gen",
+        "K": 3,
+        "heads": 2,
+        "transformers": 2,
+        "projection_dim": 32
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "tensorflow.keras",
+        "tf_keras_root": "tensorflow",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": "the vendored production PET",
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.009124454998527654,
+          "step_seconds_min": 0.008991137990960851,
+          "step_seconds_max": 0.010044122987892479,
+          "coefficient_of_variation": 0.025955321704741637,
+          "batch": 512,
+          "seconds_per_example": 1.7821201168999323e-05,
+          "microseconds_per_example": 17.821201168999323,
+          "device_memory": {
+            "peak_bytes": 18064896,
+            "current_bytes": 422912
+          },
+          "value": -28.353822708129883,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.014130660507362336,
+          "step_seconds_min": 0.012422900006640702,
+          "step_seconds_max": 0.015300611994462088,
+          "coefficient_of_variation": 0.053091084973580595,
+          "batch": 512,
+          "seconds_per_example": 2.7598946303442062e-05,
+          "microseconds_per_example": 27.598946303442062,
+          "device_memory": {
+            "peak_bytes": 116773376,
+            "current_bytes": 440832
+          },
+          "value": 1.097598671913147,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.009249116497812793,
+          "step_seconds_min": 0.007869660010328516,
+          "step_seconds_max": 0.009687454003142193,
+          "coefficient_of_variation": 0.06653386242152505,
+          "batch": 512,
+          "seconds_per_example": 1.806468065979061e-05,
+          "microseconds_per_example": 18.06468065979061,
+          "device_memory": {
+            "peak_bytes": 17882368,
+            "current_bytes": 453120
+          },
+          "value": 0.6936856508255005,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.00012773698836099356,
+          "step_seconds_min": 0.00012439998681657016,
+          "step_seconds_max": 0.0002022010157816112,
+          "coefficient_of_variation": 0.16645865580215718,
+          "batch": 512,
+          "seconds_per_example": 2.4948630539256555e-07,
+          "microseconds_per_example": 0.24948630539256555,
+          "device_memory": {
+            "peak_bytes": 453120,
+            "current_bytes": 453120
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.017579550491063856,
+          "step_seconds_min": 0.01694109701202251,
+          "step_seconds_max": 0.02082521197735332,
+          "coefficient_of_variation": 0.07020395482550236,
+          "batch": 512,
+          "seconds_per_example": 3.433505955285909e-05,
+          "microseconds_per_example": 34.33505955285909,
+          "device_memory": {
+            "peak_bytes": 120100864,
+            "current_bytes": 864768
+          },
+          "value": 0.6908313632011414,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 1.0136623501683393,
+          "real_over_folded": 1.5277848982336766,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.0035766269720625132,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 46913,
+      "optimizer_variables": 94
+    },
+    "ours_incumbent|12|2048|forward": {
+      "variant": "ours_incumbent",
+      "tokens": 12,
+      "batch": 2048,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "ours_incumbent",
+      "configuration": {
+        "architecture": "vendored omnifold.net.PET",
+        "step": "step2_gen",
+        "K": 3,
+        "heads": 2,
+        "transformers": 2,
+        "projection_dim": 32
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "tensorflow.keras",
+        "tf_keras_root": "tensorflow",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": "the vendored production PET",
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.022380783499102108,
+          "step_seconds_min": 0.02171696600271389,
+          "step_seconds_max": 0.0275936110119801,
+          "coefficient_of_variation": 0.10099688174661149,
+          "batch": 2048,
+          "seconds_per_example": 1.0928116942920951e-05,
+          "microseconds_per_example": 10.928116942920951,
+          "device_memory": {
+            "peak_bytes": 66855680,
+            "current_bytes": 1057536
+          },
+          "value": -86.39759063720703,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 46913
+    },
+    "ours_incumbent|12|2048|train": {
+      "variant": "ours_incumbent",
+      "tokens": 12,
+      "batch": 2048,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "ours_incumbent",
+      "configuration": {
+        "architecture": "vendored omnifold.net.PET",
+        "step": "step2_gen",
+        "K": 3,
+        "heads": 2,
+        "transformers": 2,
+        "projection_dim": 32
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "tensorflow.keras",
+        "tf_keras_root": "tensorflow",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": "the vendored production PET",
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.021873368008527905,
+          "step_seconds_min": 0.021298106003087014,
+          "step_seconds_max": 0.02242625699727796,
+          "coefficient_of_variation": 0.01352499069836138,
+          "batch": 2048,
+          "seconds_per_example": 1.0680355472914016e-05,
+          "microseconds_per_example": 10.680355472914016,
+          "device_memory": {
+            "peak_bytes": 66932736,
+            "current_bytes": 1060864
+          },
+          "value": 63.61736297607422,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.03128606200334616,
+          "step_seconds_min": 0.030525366979418322,
+          "step_seconds_max": 0.03191234701080248,
+          "coefficient_of_variation": 0.012237805046663672,
+          "batch": 2048,
+          "seconds_per_example": 1.5276397462571367e-05,
+          "microseconds_per_example": 15.276397462571367,
+          "device_memory": {
+            "peak_bytes": 472979200,
+            "current_bytes": 1115648
+          },
+          "value": 0.6184322237968445,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.02212298048834782,
+          "step_seconds_min": 0.021504445001482964,
+          "step_seconds_max": 0.026566467015072703,
+          "coefficient_of_variation": 0.046885957222323145,
+          "batch": 2048,
+          "seconds_per_example": 1.0802236566576084e-05,
+          "microseconds_per_example": 10.802236566576084,
+          "device_memory": {
+            "peak_bytes": 69144064,
+            "current_bytes": 1158656
+          },
+          "value": 0.6935560703277588,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.0001319399889325723,
+          "step_seconds_min": 0.00012796701048500836,
+          "step_seconds_max": 0.00019958600751124322,
+          "coefficient_of_variation": 0.12439917070022788,
+          "batch": 2048,
+          "seconds_per_example": 6.442382272098257e-08,
+          "microseconds_per_example": 0.06442382272098257,
+          "device_memory": {
+            "peak_bytes": 1158656,
+            "current_bytes": 1158656
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.03582944150548428,
+          "step_seconds_min": 0.035192865994758904,
+          "step_seconds_max": 0.03957460299716331,
+          "coefficient_of_variation": 0.037019879020804315,
+          "batch": 2048,
+          "seconds_per_example": 1.7494844485099748e-05,
+          "microseconds_per_example": 17.494844485099748,
+          "device_memory": {
+            "peak_bytes": 476095744,
+            "current_bytes": 1607168
+          },
+          "value": 0.6917120814323425,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 1.0114117075944866,
+          "real_over_folded": 1.4141883829723818,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.004675319491070695,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 46913,
+      "optimizer_variables": 94
+    },
+    "ours_incumbent|33|512|forward": {
+      "variant": "ours_incumbent",
+      "tokens": 33,
+      "batch": 512,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "ours_incumbent",
+      "configuration": {
+        "architecture": "vendored omnifold.net.PET",
+        "step": "step2_gen",
+        "K": 3,
+        "heads": 2,
+        "transformers": 2,
+        "projection_dim": 32
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "tensorflow.keras",
+        "tf_keras_root": "tensorflow",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": "the vendored production PET",
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.016505284496815875,
+          "step_seconds_min": 0.015881959989201277,
+          "step_seconds_max": 0.019924682012060657,
+          "coefficient_of_variation": 0.08219284463775704,
+          "batch": 512,
+          "seconds_per_example": 3.2236883782843506e-05,
+          "microseconds_per_example": 32.236883782843506,
+          "device_memory": {
+            "peak_bytes": 51702528,
+            "current_bytes": 762624
+          },
+          "value": 2.6516788005828857,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 46913
+    },
+    "ours_incumbent|33|512|train": {
+      "variant": "ours_incumbent",
+      "tokens": 33,
+      "batch": 512,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "ours_incumbent",
+      "configuration": {
+        "architecture": "vendored omnifold.net.PET",
+        "step": "step2_gen",
+        "K": 3,
+        "heads": 2,
+        "transformers": 2,
+        "projection_dim": 32
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "tensorflow.keras",
+        "tf_keras_root": "tensorflow",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": "the vendored production PET",
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.016606770499492995,
+          "step_seconds_min": 0.01609052298590541,
+          "step_seconds_max": 0.02021951202186756,
+          "coefficient_of_variation": 0.10345230905768883,
+          "batch": 512,
+          "seconds_per_example": 3.243509863182226e-05,
+          "microseconds_per_example": 32.43509863182226,
+          "device_memory": {
+            "peak_bytes": 51776512,
+            "current_bytes": 766976
+          },
+          "value": 48.30726623535156,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.02373183249437716,
+          "step_seconds_min": 0.023147107975091785,
+          "step_seconds_max": 0.029611868027132004,
+          "coefficient_of_variation": 0.09128168200869964,
+          "batch": 512,
+          "seconds_per_example": 4.635123534058039e-05,
+          "microseconds_per_example": 46.35123534058039,
+          "device_memory": {
+            "peak_bytes": 318699008,
+            "current_bytes": 784896
+          },
+          "value": 5.402319431304932,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.016625549003947526,
+          "step_seconds_min": 0.015786047995788977,
+          "step_seconds_max": 0.020404117996804416,
+          "coefficient_of_variation": 0.10078021306533184,
+          "batch": 512,
+          "seconds_per_example": 3.247177539833501e-05,
+          "microseconds_per_example": 32.47177539833501,
+          "device_memory": {
+            "peak_bytes": 57921024,
+            "current_bytes": 797184
+          },
+          "value": 0.697170615196228,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.0001315094850724563,
+          "step_seconds_min": 0.00012702500680461526,
+          "step_seconds_max": 0.00017109100008383393,
+          "coefficient_of_variation": 0.10285810468929231,
+          "batch": 512,
+          "seconds_per_example": 2.568544630321412e-07,
+          "microseconds_per_example": 0.2568544630321412,
+          "device_memory": {
+            "peak_bytes": 797184,
+            "current_bytes": 797184
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.02845830399019178,
+          "step_seconds_min": 0.027787554019596428,
+          "step_seconds_max": 0.031873967993305996,
+          "coefficient_of_variation": 0.050080134279367236,
+          "batch": 512,
+          "seconds_per_example": 5.558262498084332e-05,
+          "microseconds_per_example": 55.58262498084332,
+          "device_memory": {
+            "peak_bytes": 320632064,
+            "current_bytes": 1208832
+          },
+          "value": 0.6907210350036621,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 1.0011307740090167,
+          "real_over_folded": 1.427431508501905,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.004857980980887078,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 46913,
+      "optimizer_variables": 94
+    },
+    "ours_incumbent|33|2048|forward": {
+      "variant": "ours_incumbent",
+      "tokens": 33,
+      "batch": 2048,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "ours_incumbent",
+      "configuration": {
+        "architecture": "vendored omnifold.net.PET",
+        "step": "step2_gen",
+        "K": 3,
+        "heads": 2,
+        "transformers": 2,
+        "projection_dim": 32
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "tensorflow.keras",
+        "tf_keras_root": "tensorflow",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": "the vendored production PET",
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.057377608012757264,
+          "step_seconds_min": 0.056844728998839855,
+          "step_seconds_max": 0.05798467100248672,
+          "coefficient_of_variation": 0.006125374176182035,
+          "batch": 2048,
+          "seconds_per_example": 2.8016410162479133e-05,
+          "microseconds_per_example": 28.016410162479133,
+          "device_memory": {
+            "peak_bytes": 201366272,
+            "current_bytes": 4465408
+          },
+          "value": -182.86073303222656,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 46913
+    },
+    "ours_incumbent|33|2048|train": {
+      "variant": "ours_incumbent",
+      "tokens": 33,
+      "batch": 2048,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "ours_incumbent",
+      "configuration": {
+        "architecture": "vendored omnifold.net.PET",
+        "step": "step2_gen",
+        "K": 3,
+        "heads": 2,
+        "transformers": 2,
+        "projection_dim": 32
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "tensorflow.keras",
+        "tf_keras_root": "tensorflow",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": "the vendored production PET",
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.05712369749380741,
+          "step_seconds_min": 0.05653786601033062,
+          "step_seconds_max": 0.05783279801835306,
+          "coefficient_of_variation": 0.006050548866859316,
+          "batch": 2048,
+          "seconds_per_example": 2.789243041689815e-05,
+          "microseconds_per_example": 27.89243041689815,
+          "device_memory": {
+            "peak_bytes": 214454272,
+            "current_bytes": 4468736
+          },
+          "value": 200.44166564941406,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.07823716149141546,
+          "step_seconds_min": 0.07707542198477313,
+          "step_seconds_max": 0.07932472802349366,
+          "coefficient_of_variation": 0.007693084123811969,
+          "batch": 2048,
+          "seconds_per_example": 3.820173900948021e-05,
+          "microseconds_per_example": 38.20173900948021,
+          "device_memory": {
+            "peak_bytes": 1278195456,
+            "current_bytes": 4523520
+          },
+          "value": 0.6506190896034241,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.05720018601277843,
+          "step_seconds_min": 0.05689331199391745,
+          "step_seconds_max": 0.05761383500066586,
+          "coefficient_of_variation": 0.003485426372838334,
+          "batch": 2048,
+          "seconds_per_example": 2.792977832655197e-05,
+          "microseconds_per_example": 27.92977832655197,
+          "device_memory": {
+            "peak_bytes": 208496128,
+            "current_bytes": 4566528
+          },
+          "value": 0.6923680901527405,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.00014324148651212454,
+          "step_seconds_min": 0.00012468098429962993,
+          "step_seconds_max": 0.00019330298528075218,
+          "coefficient_of_variation": 0.1383828581052401,
+          "batch": 2048,
+          "seconds_per_example": 6.994213208599831e-08,
+          "microseconds_per_example": 0.06994213208599831,
+          "device_memory": {
+            "peak_bytes": 4566528,
+            "current_bytes": 4566528
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.08253462401626166,
+          "step_seconds_min": 0.08143064600881189,
+          "step_seconds_max": 0.08409281898639165,
+          "coefficient_of_variation": 0.010116326831277807,
+          "batch": 2048,
+          "seconds_per_example": 4.0300109382940263e-05,
+          "microseconds_per_example": 40.30010938294026,
+          "device_memory": {
+            "peak_bytes": 1277946112,
+            "current_bytes": 5015040
+          },
+          "value": 0.6918161511421204,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 1.001338998039812,
+          "real_over_folded": 1.367778095580623,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.004440704011358321,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 46913,
+      "optimizer_variables": 94
+    },
+    "accum4|12|2048|train": {
+      "variant": "accum4",
+      "tokens": 12,
+      "batch": 2048,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "0c4370d9ead4382af0022dbab38ac81f29e164be",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": false,
+      "sections": {
+        "virtual_batch_train": {
+          "repeats": 20,
+          "step_seconds_median": 0.8392062400089344,
+          "step_seconds_min": 0.8383470659900922,
+          "step_seconds_max": 0.8450800480204634,
+          "coefficient_of_variation": 0.0020351962332608243,
+          "batch": 2048,
+          "seconds_per_example": 0.0004097686718793625,
+          "microseconds_per_example": 409.7686718793625,
+          "device_memory": {
+            "peak_bytes": 13546492416,
+            "current_bytes": 50322688
+          },
+          "value": 0.6865174174308777,
+          "value_finite": true,
+          "accumulation_steps": 4,
+          "micro_batch": 512,
+          "optimizer_applies": 25,
+          "pending_micro_batches": 0,
+          "charged_against": "the virtual batch, one optimizer step"
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "accum4|33|2048|train": {
+      "variant": "accum4",
+      "tokens": 33,
+      "batch": 2048,
+      "mode": "train",
+      "failed": true,
+      "error": "ResourceExhaustedError()",
+      "traceback": "Traceback (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n    record = measure_cell(args.repo, variant, int(tokens), int(batch), mode,\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 326, in measure_cell\n    sections[\"virtual_batch_train\"] = _time(one_virtual_batch, batch, tf, warmup, repeats)\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n    value = step_fn()\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 322, in one_virtual_batch\n    last = accumulator.micro_step(\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/training_recipe.py\", line 463, in micro_step\n    loss = self._micro(inputs, labels)\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/util/traceback_utils.py\", line 153, in error_handler\n    raise e.with_traceback(filtered_tb) from None\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/execute.py\", line 53, in quick_execute\n    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,\ntensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:\n\nDetected at node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/multihead_attention_1/einsum_1/Einsum_1 defined at (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 496, in <module>\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 476, in main\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 326, in measure_cell\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 125, in _time\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/profile_ported_step.py\", line 322, in one_virtual_batch\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/training_recipe.py\", line 463, in micro_step\n\n  File \"/pscratch/sd/j/josephrb/pet-profile5-exec-20260919/nd-unfolding/pet/configuration_comparison/training_recipe.py\", line 455, in _micro_body\n\nOOM when allocating tensor with shape[128,128,16896,10] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc\n\t [[{{node gradient_tape/pet2_port/pet_body/local_embedding_block/att_block_1/multihead_attention_1/einsum_1/Einsum_1}}]]\nHint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.\n [Op:__inference__micro_body_10400]\n"
+    }
+  },
+  "missing_cells": [
+    "baseline|33|2048|train",
+    "broadcast|33|2048|train",
+    "optimised_xla|12|2048|train",
+    "optimised_xla|33|512|forward",
+    "optimised_xla|33|512|train",
+    "optimised_xla|33|2048|forward",
+    "optimised_xla|33|2048|train",
+    "broadcast_xla|12|512|forward",
+    "broadcast_xla|12|512|train",
+    "broadcast_xla|12|2048|forward",
+    "broadcast_xla|12|2048|train",
+    "broadcast_xla|33|512|forward",
+    "broadcast_xla|33|512|train",
+    "broadcast_xla|33|2048|forward",
+    "broadcast_xla|33|2048|train"
+  ],
+  "missing_means": "the cell's process did not write a receipt. Under a normal run that is itself a measurement, because a TensorFlow OOM can kill the interpreter before it writes -- but read `run_note` first, because a run that was stopped early has missing cells that were never attempted",
+  "run_note": "Job 58565265 was CANCELLED BY ME at 33:35, during the XLA block. Every XLA cell it produced is DISCARDED: _time did not force a device sync inside the timed region, so a single fused XLA kernel was timed by its launch and the forward cell reported 2.4 us/example, i.e. 41.1 TFLOPS on a card whose float32 peak without TF32 is 19.5. The NON-XLA cells stand: hundreds of unfused ops back-pressure the queue, and this job baseline of 935.5 us/example agrees with independently synced job 58552755 to 0.6 percent. Cells absent after optimised_xla|12|512|forward were never attempted. Non-XLA OOM cells are genuine ResourceExhaustedError on an A100-SXM4-40GB.",
+  "expected_cells": [
+    "baseline|12|512|forward",
+    "baseline|12|512|train",
+    "baseline|12|2048|forward",
+    "baseline|12|2048|train",
+    "baseline|33|512|forward",
+    "baseline|33|512|train",
+    "baseline|33|2048|forward",
+    "baseline|33|2048|train",
+    "broadcast|12|512|forward",
+    "broadcast|12|512|train",
+    "broadcast|12|2048|forward",
+    "broadcast|12|2048|train",
+    "broadcast|33|512|forward",
+    "broadcast|33|512|train",
+    "broadcast|33|2048|forward",
+    "broadcast|33|2048|train",
+    "optimised|12|512|forward",
+    "optimised|12|512|train",
+    "optimised|12|2048|forward",
+    "optimised|12|2048|train",
+    "optimised|33|512|forward",
+    "optimised|33|512|train",
+    "optimised|33|2048|forward",
+    "optimised|33|2048|train",
+    "optimised_xla|12|512|forward",
+    "optimised_xla|12|512|train",
+    "optimised_xla|12|2048|forward",
+    "optimised_xla|12|2048|train",
+    "optimised_xla|33|512|forward",
+    "optimised_xla|33|512|train",
+    "optimised_xla|33|2048|forward",
+    "optimised_xla|33|2048|train",
+    "broadcast_xla|12|512|forward",
+    "broadcast_xla|12|512|train",
+    "broadcast_xla|12|2048|forward",
+    "broadcast_xla|12|2048|train",
+    "broadcast_xla|33|512|forward",
+    "broadcast_xla|33|512|train",
+    "broadcast_xla|33|2048|forward",
+    "broadcast_xla|33|2048|train",
+    "ours_incumbent|12|512|forward",
+    "ours_incumbent|12|512|train",
+    "ours_incumbent|12|2048|forward",
+    "ours_incumbent|12|2048|train",
+    "ours_incumbent|33|512|forward",
+    "ours_incumbent|33|512|train",
+    "ours_incumbent|33|2048|forward",
+    "ours_incumbent|33|2048|train",
+    "accum4|12|2048|train",
+    "accum4|33|2048|train"
+  ]
+}

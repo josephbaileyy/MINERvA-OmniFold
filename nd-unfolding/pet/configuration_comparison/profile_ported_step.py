@@ -120,6 +120,17 @@ def _time(step_fn: Any, batch: int, tf: Any, warmup: int = WARMUP,
     The peak counter is reset after warm-up so that graph construction and
     autotuning scratch do not land in the number, and read after the timed passes
     so it covers the steady state a real fit would sit in.
+
+    **The `float(value)` inside the timed region is load-bearing, and its absence
+    made an earlier version of this function report an impossibility.** GPU
+    execution is asynchronous: without forcing a host read, the clock measures the
+    launch and not the work. With hundreds of unfused ops the queue back-pressures
+    and the timing self-syncs -- job 58565265's unfused baseline of 935.5
+    µs/example agrees with independently synced job 58552755's 929.84 to 0.6 % --
+    but a single fused XLA kernel has no back-pressure, and the XLA forward cell
+    came out at 2.4 µs/example, i.e. **41.1 TFLOPS on a card whose float32 peak
+    without TF32 is 19.5**. A number faster than the hardware is not a small error
+    to correct later; it is the tell that the instrument was not measuring.
     """
     for _ in range(warmup):
         value = step_fn()
@@ -131,6 +142,8 @@ def _time(step_fn: Any, batch: int, tf: Any, warmup: int = WARMUP,
     for _ in range(repeats):
         start = time.perf_counter()
         value = step_fn()
+        if value is not None:
+            float(value)                      # forces the device to finish
         times.append(time.perf_counter() - start)
     memory = {}
     try:
@@ -373,6 +386,15 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
         """What `add_n(reduce_sum(...))` costs on its own: the contamination bound."""
         return tf.add_n([tf.reduce_sum(tf.zeros_like(v)) for v in variables])
 
+    def sync_probe():
+        """What the forced host read costs on its own, so it can be subtracted.
+
+        Every timed section above pays one device-to-host scalar copy. It is small
+        and it is not free, and a reader should be able to see how small rather
+        than take my word for it.
+        """
+        return tf.reduce_sum(tf.zeros([1], dtype=tf.float32))
+
     @function
     def full_step():
         with tf.GradientTape() as tape:
@@ -384,6 +406,7 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
     sections["forward_and_backward"] = _time(forward_and_backward, batch, tf, warmup, repeats)
     sections["folded_backward_control"] = _time(folded_control, batch, tf, warmup, repeats)
     sections["reduction_probe"] = _time(reduction_probe, batch, tf, warmup, repeats)
+    sections["sync_probe"] = _time(sync_probe, batch, tf, warmup, repeats)
     sections["full_step"] = _time(full_step, batch, tf, warmup, repeats)
     forward_median = sections["forward"]["step_seconds_median"]
     folded = sections["folded_backward_control"]["step_seconds_median"]
