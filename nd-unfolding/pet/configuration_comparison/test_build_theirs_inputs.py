@@ -119,3 +119,17 @@ class Globals(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DeclaredDifferences(unittest.TestCase):
+    """Where our construction is known to differ from his, it says so."""
+
+    def test_all_three_known_differences_are_recorded(self):
+        self.assertEqual(set(bti.DECLARED_DIFFERENCES),
+                         {"muon_presence", "prong_dEdX_branch", "cap_split"})
+
+    def test_the_cap_split_is_owned_rather_than_attributed_to_him(self):
+        self.assertIn("OURS", bti.DECLARED_DIFFERENCES["cap_split"])
+
+    def test_the_dedx_substitution_is_not_claimed_verified(self):
+        self.assertIn("NOT been shown", bti.DECLARED_DIFFERENCES["prong_dEdX_branch"])

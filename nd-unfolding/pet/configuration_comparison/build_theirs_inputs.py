@@ -33,6 +33,23 @@ import numpy as np
 
 from theirs_token_schema import PID_CODES
 
+# Where this construction is known to differ from his, so that a result carries
+# its own caveats rather than relying on someone remembering them.
+DECLARED_DIFFERENCES = {
+    "muon_presence": (
+        "his get_muons selects on the MINOS match; this uses "
+        "MasterAnaDev_muon_E > 0, because the slim carries no MINOS-match flag"),
+    "prong_dEdX_branch": (
+        "his key list names prong_part_dEdXMean, which is absent from our "
+        "tuples; prong_dEdXMean is substituted and the two have NOT been shown "
+        "to be the same quantity"),
+    "cap_split": (
+        "his cap is governed by max_blobs/max_prongs, whose values are not in "
+        "the repository. The remaining budget is split in proportion to the "
+        "event's own multiplicities, with one aggregate slot reserved per "
+        "category. This split is OURS"),
+}
+
 CAP = 33
 RESERVED_MUON = 1
 RESERVED_PHOTONS = 2
@@ -173,3 +190,119 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+# --------------------------------------------------------------------------- #
+# Driving it over a slim file
+# --------------------------------------------------------------------------- #
+
+def _photon_list(tree: Any) -> list[dict[str, Any]]:
+    out = []
+    for tag in ("gamma1", "gamma2"):
+        energy = float(getattr(tree, f"{tag}_E"))
+        if energy <= 0.0:
+            continue                      # his `remove_overflows` drops empty slots
+        out.append({
+            "four_momentum": [float(getattr(tree, f"{tag}_px")),
+                              float(getattr(tree, f"{tag}_py")),
+                              float(getattr(tree, f"{tag}_pz")), energy],
+            "dedx": float(getattr(tree, f"{tag}_dEdx")),
+            "t": float(getattr(tree, f"{tag}_time")),
+        })
+    return out
+
+
+def _as_array(value: Any) -> np.ndarray:
+    try:
+        return np.asarray([v for v in value], dtype=np.float64)
+    except TypeError:
+        return np.asarray([float(value)], dtype=np.float64)
+
+
+def build_file(slim: Path, identity_fields: tuple[str, ...],
+               limit: int | None = None) -> dict[str, np.ndarray]:
+    """Build his inputs for every row of one slim file, keyed by identity."""
+    import ROOT
+
+    ROOT.gROOT.SetBatch(True)
+    handle = ROOT.TFile.Open(str(slim))
+    tree = handle.Get("MasterAnaDev")
+    total = int(tree.GetEntries())
+    rows = total if limit is None else min(limit, total)
+
+    tokens = np.zeros((rows, CAP, TOKEN_WIDTH), dtype=np.float32)
+    extras = np.zeros((rows, CAP, ADD_WIDTH), dtype=np.float32)
+    glob = np.zeros((rows, GLOBAL_WIDTH), dtype=np.float32)
+    identity = np.zeros((rows, len(identity_fields)), dtype=np.int64)
+
+    for index in range(rows):
+        tree.GetEntry(index)
+        blob = {
+            "E": _as_array(tree.MasterAnaDev_BlobTotalE),
+            "x": _as_array(tree.MasterAnaDev_BlobX),
+            "y": _as_array(tree.MasterAnaDev_BlobY),
+            "z": _as_array(tree.MasterAnaDev_BlobZ),
+            "t": _as_array(tree.MasterAnaDev_BlobT),
+        }
+        n_prong = int(tree.prong_part_E_n)
+        flat_e = _as_array(tree.prong_part_E_flat)
+        flat_pos = _as_array(tree.prong_part_pos_flat)
+        prong = {
+            "E": flat_e.reshape(n_prong, 4) if n_prong else np.zeros((0, 4)),
+            "pos": flat_pos.reshape(n_prong, 4) if n_prong else np.zeros((0, 4)),
+            "pid": _as_array(tree.prong_part_pid)[:n_prong] if n_prong
+            else np.zeros(0),
+            "dedx": _as_array(tree.prong_dEdXMean)[:n_prong] if n_prong
+            else np.zeros(0),
+        }
+        # DECLARED DIFFERENCE. His `get_muons(only_keep_minos_matched=True)`
+        # selects on the MINOS match; this uses E > 0 as the presence test,
+        # because the slim does not carry a MINOS-match flag. The two agree
+        # wherever a reconstructed muon has positive energy iff it is
+        # MINOS-matched, which is NOT established. Recorded in
+        # `DECLARED_DIFFERENCES` so it travels with any result.
+        muon = None
+        muon_e = float(tree.MasterAnaDev_muon_E)
+        if muon_e > 0.0:
+            muon = {"four_momentum": [float(tree.MasterAnaDev_muon_Px),
+                                      float(tree.MasterAnaDev_muon_Py),
+                                      float(tree.MasterAnaDev_muon_Pz), muon_e],
+                    "t": float(tree.muon_trackVertexTime)}
+        photons = _photon_list(tree)
+
+        token_block, extra_block = build_event(muon, photons, blob, prong)
+        tokens[index] = token_block
+        extras[index] = extra_block
+
+        pids = token_block[:, 4]
+        energies = np.exp(token_block[:, 3]) * (token_block[:, 3] != 0)
+        sums = np.array([energies[pids == code].sum()
+                         for code in (2, 3, 4, 5, 6, 7)], dtype=np.float64)
+        glob[index] = globals_row({
+            "muon_fuzz_energy": float(tree.muon_fuzz_energy),
+            "muon_iso_blobs_energy": float(tree.muon_iso_blobs_energy),
+            "hadron_recoil": float(tree.MasterAnaDev_hadron_recoil),
+            "passive_id": float(
+                tree.part_response_total_recoil_passive_allNonMuonClusters_id),
+            "passive_od": float(
+                tree.part_response_total_recoil_passive_allNonMuonClusters_od),
+            "n_michel": float(tree.improved_nmichel),
+            "muon_present": 1.0 if muon is not None else 0.0,
+            "diphoton_mass": _diphoton_mass(photons),
+            "charged_pion_prongs": float(np.isin(prong["pid"], (8, 9)).sum()),
+        }, sums)
+        identity[index] = [int(getattr(tree, f)) for f in identity_fields]
+
+    handle.Close()
+    return {"tokens": tokens, "add_info": extras, "globals": glob,
+            "identity": identity}
+
+
+def _diphoton_mass(photons: list[dict[str, Any]]) -> float:
+    """His rule: only when there are EXACTLY two reconstructed photons."""
+    if len(photons) != 2:
+        return 0.0
+    a, b = photons[0]["four_momentum"], photons[1]["four_momentum"]
+    px, py, pz, e = (a[0] + b[0], a[1] + b[1], a[2] + b[2], a[3] + b[3])
+    m2 = e * e - px * px - py * py - pz * pz
+    return float(np.sqrt(m2)) if m2 > 0 else 0.0
