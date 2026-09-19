@@ -301,6 +301,36 @@ is **the single most load-bearing guard for this adoption**, because it is what 
 `publication` **with** the exception, so **the guard that makes this source special has never
 fired.** `B5` is exactly that case and is worth the 890 MB read.
 
+## 4e. C7(a) — THE PUBLICATION GATE'S REQUIREMENT IS IN NO LIVE CANONICAL ARTIFACT
+
+**Both texts, verbatim, because the whole point is that they differ:**
+
+| source | text |
+|---|---|
+| **`KNOWN_ISSUES.md:16`** — the only LIVE canonical text for `#16` | *"Bank-derived lateral covariances remain support-limited **until the promoted-universe migration bound is adopted**."* Routed detail: `[open remediation gate](docs/OPEN_ITEMS.md)` |
+| **`ESTIMATOR_REGISTRY:29`** — what C7's evidence actually cites | *"`#16` **five-band coverage** (publication gate)"* |
+
+**These are not two wordings of one condition.** One is *adopt the promoted-universe migration
+bound*; the other is *five-band coverage*. They may be related — coverage could be what the bound
+buys — but they are different tests, and **C7's evidence chain cites the registry's phrasing, which
+appears in no other live artifact.** The registry is a **paraphrase with no source**.
+
+**And the route is dangling.** `KNOWN_ISSUES:16` points at `docs/OPEN_ITEMS.md` as a *file*, with no
+row anchor, and **`#16` returns zero matches in that file** — in a file whose own header says to
+update the pointer target.
+
+⚠ **I AM NOT PICKING ONE.** On the face of it `KNOWN_ISSUES` governs, because it is the canonical
+artifact and its text is the only live statement — but *that reasoning would retire C7's cited
+requirement*, which is a scientific call and not mine. Choosing the convenient one is exactly what
+the instruction forbade.
+
+**WHAT CLOSES IT, and it is a ruling and then one edit:** state the publication gate's actual
+requirement **once, in one live canonical artifact**, and route the registry to it. If *five-band
+coverage* is the intended gate, it has to be written into `KNOWN_ISSUES:16` (or another live
+canonical artifact) and **C7 re-evidenced against it** — the 45-band census answers the coverage
+question and says nothing about a migration bound. **Joseph re-rules C7 on whatever survives; his
+earlier ruling was made on (b) as evidence and does not carry over.**
+
 ## 5. Execution order — fixed
 
 **C1–C7 complete → NULL resolved (P0 first, zero-compute; P2 NOT authorized) → SRC_COV identified
