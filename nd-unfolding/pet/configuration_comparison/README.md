@@ -18,7 +18,7 @@ described here is deployed.
 
 | file | what it is |
 |---|---|
-| `READINESS-20260918.md` | **start here**: what is executable, what is externally blocked, and the smallest next authorization |
+| `READINESS-20260919.md` | **start here**: what is executable, what is externally blocked, and the smallest next authorization. `READINESS-20260918.md` is its superseded predecessor |
 | `ENDPOINT_EAVAIL_SPECIFICATION-20260918.md` | the hadronic endpoint, scoring domain and reference-calibration procedure, with every scientific threshold marked UNRATIFIED |
 | `EXTRACTION_IDENTITY_CONTRACT-20260918.md` | field-by-field extraction, the ten identity checks, and the authorization-scope correction |
 | `CALIBRATION_AND_COST-20260918.md` | the bounded GPU calibration job and the rebuilt cost accounting, with Tier-A separated from work necessary for completion |
@@ -40,6 +40,28 @@ described here is deployed.
 | `make_figures.py` | renders both deck figures from the receipts at run time |
 | `test_typed_object_budget.py` | 8 tests on the bracket derivation |
 | `receipts/` | `model-capacity.json` (now including the paper's OmniLearned presets), `typed-object-budget.json`, `step-cost-scale.json` |
+
+## The port and the execution path (added 2026-09-19)
+
+Everything below post-dates the deck, which is **not** rebuilt for it.
+
+| file | what it is |
+|---|---|
+| `pet2_keras_port.py` | Gregor's OmniLearned PET2 rebuilt in our Keras engine at the V1-paper flags, weights kept in torch's layout. Three performance rewrites each keep their pre-optimisation path switchable, so every one has a reference to be checked against |
+| `port_checks.py` | P-1…P-6: inventory, forward, gradient, one optimizer step, masking, reload. P-3 and P-4 are gated on **mutant controls** rather than on tolerances |
+| `compare_port_checks.py` | diffs two port-check receipts field by field and exits non-zero if anything moved; how "the optimisation changed nothing" is checked rather than asserted |
+| `torch_adamw.py` | `torch.optim.AdamW`'s update rule, because Keras' AdamW is a different optimizer — epsilon inside the bias correction, 31.6× larger at step 1 |
+| `training_recipe.py` | the equal-example budget, the derived warmup/cosine schedule, torch's clipping, **gradient accumulation** transcribed from his own `--grad_accum_steps`, and the realized-policy check |
+| `data_leg.py` | the measured leg's size, in one place, with the scope it may not be quoted without |
+| `checkpoint_transfer.py` | which of his tensors reach each OmniFold step, and the structural verdict (input-interface intactness, not parameter fraction) |
+| `pet2_omnifold_adapter.py` | the port wired into both OmniFold steps at their real input schemas |
+| `fold_forward_recorder.py` | `OI-125`: the end-of-run fold-forward ratio recorded rather than reconstructed |
+| `configuration_identity.py` | his complete arm, our incumbent and declared candidates, enforced in code |
+| `characterize_regions.py`, `selection_rule.py` | the regional safeguard on the (pT, p‖) reporting cells, and `NO_SELECTION` on failure |
+| `threshold_translation.py` | every candidate margin expressed as the truth mass it permits in the wrong bin |
+| `profile_ported_step.py`, `sbatch_port_profile.sh` | the decomposition: forward / forward+backward / apply with peak device memory, per variant, one process per cell, with a **folding control** that shows the pruned-graph trap firing beside the measurement that avoids it |
+| `COST_UPDATE3-20260919.md` | what the step is made of, why it cost 23.9×, and what the fixes are worth |
+| `FREEZE_PROPOSAL-20260919.md` | the one ratification ask |
 
 ## Reproducing
 

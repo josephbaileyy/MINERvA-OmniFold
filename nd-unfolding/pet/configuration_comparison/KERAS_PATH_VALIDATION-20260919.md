@@ -88,3 +88,34 @@ Beyond the port checks, the path is exercised where it will actually run:
   finite values everywhere and a loss that **moves** in every training cell. A
   frozen loss means the optimizer is not connected to the graph, which a ms/step
   figure hides perfectly.
+
+---
+
+## Re-validation after the optimisation pass, 2026-09-19
+
+The execution path changed three times after this document was written, and each
+change was re-validated against the same gate rather than against an argument.
+
+| state | receipt | against the pre-optimisation run |
+|---|---|---|
+| two **bitwise** local-block rewrites | `receipts/PORT_CHECKS_AFTER_OPTIMISATION-20260919.json` | **397 numeric fields and 16 verdicts identical, zero changed** |
+| plus the **projection** rewrite | `receipts/PORT_CHECKS_FLAT_PROJECTION-20260919.json` | P-1…P-6 all hold; 216 fields identical, 181 moved, **no verdict changed** |
+
+`compare_port_checks.py` produces both diffs and exits non-zero on any movement, so
+"unchanged" is a re-runnable check and not a sentence in a document.
+
+**The 181 moved fields are the point, not a caveat.** The projection rewrite
+reassociates a contraction, so it must move the last bits, and the movement is in the
+15th–16th decimal place in float64 and the 7th in float32. Three readings say it is
+round-off and not a change to his network:
+
+* the cross-engine agreement **improved** — float32 3.65e-7 → **2.94e-7**, float64
+  6.73e-16 → **5.69e-16**;
+* P-3's worst cross-engine relative difference, 5.94e-14, is now **below the port's
+  own measured round-off floor** of 8.02e-14, which did not move;
+* the mutant control is preserved and strengthened: P-3's margin over the mutant port
+  goes 508,145× → **571,199×**, and P-4's is unchanged at 4.0e8 because the optimizer
+  step given fixed gradients is untouched.
+
+A tolerance I chose would prove none of that. The mutant ratio and the reference's own
+floor are the limits doing the work, exactly as when they were set.
