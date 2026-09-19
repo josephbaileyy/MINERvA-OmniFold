@@ -407,9 +407,30 @@ class AccumulatingStep:
 
     def __init__(self, model: Any, optimizer: ClippedTorchAdamW, loss_fn: Any,
                  steps: int, compile_step: bool = True,
-                 jit_compile: bool = False, forward: Any = None) -> None:
+                 jit_compile: bool = False, forward: Any = None,
+                 schedule: dict[str, Any] | None = None) -> None:
         if steps < 1:
             raise ValueError(f"steps must be >= 1; got {steps}")
+        # The schedule and the accumulator must agree about how many examples one
+        # optimizer step presents, or `max_steps`, the warmup and the realized-
+        # policy check are all computed for a different run than the one taking
+        # place -- silently, and by exactly the accumulation factor. This is the
+        # same shape of error the realized-policy check caught at 1.6x, so it is
+        # refused here rather than left to be noticed afterwards.
+        if schedule is not None:
+            if schedule.get("grad_accum_steps") != steps:
+                raise ValueError(
+                    f"schedule was derived for grad_accum_steps="
+                    f"{schedule.get('grad_accum_steps')} and this accumulator takes "
+                    f"{steps}; max_steps, warmup and the example budget would all be "
+                    "wrong by that factor"
+                )
+            if schedule.get("examples_per_update") != schedule.get(
+                    "batch_size", 0) * steps:
+                raise ValueError(
+                    "schedule's examples_per_update does not equal batch_size x "
+                    "steps; it was not derived for this accumulator"
+                )
         if not model.trainable_variables:
             raise ValueError(
                 "the model must be built before accumulation: the accumulators are "

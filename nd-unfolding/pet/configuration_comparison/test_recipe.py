@@ -424,3 +424,41 @@ class DataLeg(unittest.TestCase):
         self.assertEqual(assumed, 153_600_000)
         self.assertEqual(measured, 193_760_775)
         self.assertAlmostEqual(measured / assumed, 1.261, places=3)
+
+
+class AccumulationSchedule(unittest.TestCase):
+    """The schedule and the accumulator must agree, or the budget is off by k."""
+
+    @staticmethod
+    def _model():
+        init = tf.keras.initializers.GlorotUniform(seed=1)
+        model = tf.keras.Sequential(
+            [tf.keras.layers.Dense(3, dtype="float64", kernel_initializer=init)])
+        model(tf.zeros((1, 4), dtype=tf.float64))
+        return model
+
+    @staticmethod
+    def _loss(y, p):
+        return tf.reduce_mean(tf.square(tf.cast(y, p.dtype) - p))
+
+    def test_a_schedule_derived_for_a_different_factor_is_refused(self):
+        schedule = tr.derive_schedule(512, grad_accum_steps=1, examples=512 * 100)
+        with self.assertRaises(ValueError):
+            tr.AccumulatingStep(self._model(), tr.build_optimizer("theirs"),
+                                self._loss, 4, compile_step=False,
+                                schedule=schedule)
+
+    def test_the_matching_schedule_is_accepted_and_carries_the_virtual_batch(self):
+        schedule = tr.derive_schedule(512, grad_accum_steps=4, examples=2048 * 100)
+        step = tr.AccumulatingStep(self._model(), tr.build_optimizer("theirs"),
+                                   self._loss, 4, compile_step=False,
+                                   schedule=schedule)
+        self.assertEqual(step.steps, 4)
+        self.assertEqual(schedule["examples_per_update"], 2048)
+        self.assertEqual(schedule["max_steps"], 100)
+
+    def test_his_reference_virtual_batch_is_reproduced_by_512_times_4(self):
+        self.assertEqual(
+            tr.derive_schedule(512, grad_accum_steps=4,
+                               examples=2048 * 100)["examples_per_update"],
+            tr.HIS_REFERENCE_RUN["batch_size"])
