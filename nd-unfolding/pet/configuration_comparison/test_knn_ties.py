@@ -76,3 +76,48 @@ class Census(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BoundaryStraddling(unittest.TestCase):
+    """A tie matters only when it decides WHO is in the neighbour set."""
+
+    @staticmethod
+    def _cloud(positions):
+        x = np.zeros((1, 12, 3), dtype=np.float32)
+        x[0, :len(positions), 0] = 1.0
+        x[0, :len(positions), 1] = positions
+        return x[:, :, [1, 2]], x[:, :, 0] != 0
+
+    def test_a_tie_at_the_kth_boundary_is_counted(self):
+        """Distances 1, 2, 4, 4 from the centre: ranks 3 and 4 are equal."""
+        coords, real = self._cloud([0.0, 1.0, 2.0, 4.0, -4.0])
+        centres, events = ties._boundary_ties(coords, real, 3)
+        self.assertEqual((centres, events), (1, 1))
+
+    def test_the_same_tie_is_harmless_at_a_larger_k(self):
+        """With k=10 every real token is selected, so ordering cannot matter."""
+        coords, real = self._cloud([0.0, 1.0, 2.0, 4.0, -4.0])
+        self.assertEqual(ties._boundary_ties(coords, real, 10), (0, 0))
+
+    def test_no_boundary_exists_when_the_event_has_too_few_tokens(self):
+        coords, real = self._cloud([0.0, 1.0, -1.0])
+        self.assertEqual(ties._boundary_ties(coords, real, 3), (0, 0))
+
+    def test_a_tie_wholly_inside_the_selected_set_is_not_counted(self):
+        """Both tied tokens are selected; the block sums, so order cannot matter."""
+        coords, real = self._cloud([0.0, 1.0, -1.0, 5.0, 6.0, 7.0])
+        self.assertEqual(ties._boundary_ties(coords, real, 3)[0], 0)
+
+
+class EquidistantWithoutCoordinateTie(unittest.TestCase):
+    """The case the first census missed entirely."""
+
+    def test_two_tokens_at_different_places_can_be_equidistant(self):
+        x = np.zeros((1, 12, 3), dtype=np.float32)
+        x[0, :5, 0] = 1.0
+        x[0, :5, 1] = [0.0, 1.0, 2.0, 4.0, -4.0]
+        coords, real = x[:, :, [1, 2]], x[:, :, 0] != 0
+        # No two tokens share coordinates...
+        self.assertEqual(int(_pairs(x)[0]), 0)
+        # ...yet the k-th boundary is ambiguous, because +4 and -4 tie in DISTANCE.
+        self.assertEqual(ties._boundary_ties(coords, real, 3), (1, 1))
