@@ -2,16 +2,18 @@
   "scope": "R4 extraction totals and identity-join coverage; no training input written",
   "streams": {
     "MC": {
-      "files_ok": 0,
+      "files_extracted": 488,
       "files_failed": 0,
       "files_skipped_empty": 0,
-      "entries": 91203925
+      "entries": 91203925,
+      "counted_from": "len(files) -- the MC reports predate the files_ok field, which read 0"
     },
     "Data": {
-      "files_ok": 1148,
+      "files_extracted": 1148,
       "files_failed": 0,
       "files_skipped_empty": 50,
-      "entries": 20896803
+      "entries": 20896803,
+      "counted_from": "len(files) -- the MC reports predate the files_ok field, which read 0"
     }
   },
   "join_coverage_playlist_1A": {
@@ -44,5 +46,6 @@
       "percent_of_slim_keys_in_inventory": 32.2
     }
   },
-  "reading": "the extraction is a SUPERSET of the inventory because the tuples are pre-selection; the join takes selection from the inventory. Signal keys are unique 1:1, matching the sidecar verdict unique-without-source"
+  "reading": "the extraction is a SUPERSET of the inventory because the tuples are pre-selection; the join takes selection from the inventory. Signal keys are unique 1:1, matching the sidecar verdict unique-without-source",
+  "slim_files_on_disk": 2260
 }
