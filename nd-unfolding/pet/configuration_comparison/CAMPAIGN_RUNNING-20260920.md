@@ -13,13 +13,14 @@ it declared an external blocker that did not exist.
 
 ## 1. What is running
 
-| job | stage | tasks | depends on |
-|---|---|---:|---|
-| 58591372 | input build | 24 | — |
-| 58592752 | join + launch | 1 | `afterany:58591372` |
-| *(submitted by 58592752)* | tuning | 8 | join |
-| | pilot | 8 | `afterok:` tuning |
-| | final | 16 | `afterok:` pilot |
+| job | stage | tasks | depends on | state |
+|---|---|---:|---|---|
+| 58591372 | input build | 24 | — | COMPLETED, 24/24, 2,260 npz |
+| 58592752 | join + launch | 1 | `afterany:58591372` | FAILED — gate on the wrong population, §2a |
+| 58594462 | join + launch | 1 | — | resubmitted at `9a4c052f` |
+| *(submitted by the join)* | tuning | 8 | join | not yet submitted |
+| | pilot | 8 | `afterok:` tuning | not yet submitted |
+| | final | 16 | `afterok:` pilot | not yet submitted |
 
 One task is one (arm, seed). A **pair** is two adjacent tasks sharing a seed.
 Stage dependencies are enforced by Slurm, not convention: tuning selects the
@@ -29,6 +30,42 @@ them would leak the selection into the comparison.
 **Cost**: 17.21 GPU-h per pair, ≈366 GPU-h for 17 pairs with 25 % retries,
 against a 1,000-hour ceiling with ≈384 cumulative. Elapsed time is ~15 h for
 tuning and days for the whole chain.
+
+## 2a. What the join established, and one asymmetry it exposed
+
+The first chained join **refused to launch**: data 100.00%, signal 59.51%. The
+guard was right to stop and the number was measuring the wrong thing.
+
+The MasterAnaDev AnaTuple has two trees. `MasterAnaDev` holds reconstructed
+events — 402 rows for (run 110001, subrun 1), exactly what we built — and
+`Truth` holds all 1132 generated ones. The signal inventory spans both. An event
+that failed reconstruction has **no reconstructed object**, so no token can be
+built from it; it enters the comparison through the truth leg. Requiring a built
+input for it was a gate on a population that cannot satisfy it.
+
+Measured on the real join:
+
+| | |
+|---|---:|
+| unmatched **and** `pass_reco` | **0** |
+| coverage of `pass_reco` rows | **20,573,521 / 20,573,521 = 100.0000 %** |
+| unmatched rows, all `!pass_reco` | 19,899,656 |
+| **matched** rows that are `!pass_reco` | **8,679,708** |
+
+`mc_nthEvtInFile` is not a global index — it repeats about 156 times within a
+run — so none of this was readable off the field names. It took opening the
+original tuple and finding the second tree.
+
+**The last row is the one that mattered.** Those 8.68 M events are in the reco
+tree and fail the reco selection. The production loader zeroes its reco block
+there, so our arm sees zeros — and his arm was keeping real reco content on
+18 % of the signal leg. That is information ours does not have, and it would
+have read as a method effect in his favour. Both arms are now zeroed on
+`!pass_reco` by one implementation, `theirs_loader_substitution.zero_non_reco`,
+called from both the gather and the driver.
+
+The gate still fails closed, now on the right population: a missing `pass_reco`
+row is an event his arm cannot see and ours can.
 
 ## 2. What the comparison is, exactly
 
