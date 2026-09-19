@@ -124,6 +124,19 @@ FITS_PER_EVALUATION = 2 * NITER          # MultiFold runs step 1 and step 2 per 
 N_DATA_ASSUMED = TRAIN_EVENTS            # CONDITIONAL: see BUDGET_TENSION
 ROWS_PER_FIT_STEP1 = TRAIN_EVENTS + N_DATA_ASSUMED
 ROWS_PER_FIT_STEP2 = 2 * TRAIN_EVENTS
+
+# The neighbouring product's reading of the same leg, imported rather than
+# retyped. It is NOT substituted for the assumption -- the assumption is what the
+# headline numbers are built on and changing it silently would make two revisions
+# of this file incomparable. It is carried alongside, so every projection can
+# state what it would become.
+from data_leg import DATA_LEG_EVIDENCE     # noqa: E402
+
+N_DATA_NEIGHBOURING_PRODUCT = DATA_LEG_EVIDENCE["rows"]
+DATA_LEG_FACTOR = (
+    (TRAIN_EVENTS + N_DATA_NEIGHBOURING_PRODUCT + 2 * TRAIN_EVENTS)
+    / (ROWS_PER_FIT_STEP1 + ROWS_PER_FIT_STEP2)
+)
 EXAMPLES_PER_EVALUATION = int(
     NITER * EPOCHS * TRAIN_FRAC_PLACEHOLDER * (ROWS_PER_FIT_STEP1 + ROWS_PER_FIT_STEP2)
 ) if False else None                     # replaced below, once TRAIN_FRAC is defined
@@ -160,7 +173,12 @@ BUDGET_TENSION = (
     "measured 1.1-1.3 GPU-h for a nominal train. Both cannot be right. Resolving it "
     "needs mc.nmax and data.nmax read off a production run's loader meta; until "
     "then every absolute GPU-hour here is conditional and the RATIO is the reliable "
-    "part."
+    "part. NARROWED 2026-09-19: the 5-D point-cloud input product records a data "
+    f"leg of {N_DATA_NEIGHBOURING_PRODUCT:,} rows, {DATA_LEG_FACTOR:.3f}x the "
+    "budget assumed here. That is a neighbouring product and not this schema, so "
+    "it sharpens the tension rather than resolving it -- and it moves the number "
+    "the WRONG way for affordability, which is why it is carried here rather than "
+    "left in a document."
 )
 
 CROSS_FRAMEWORK_QUALIFICATION = (

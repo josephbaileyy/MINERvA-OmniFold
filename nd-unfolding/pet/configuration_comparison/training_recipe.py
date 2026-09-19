@@ -77,34 +77,10 @@ TRAIN_FRAC = 0.8
 # (`fullevent_fps_dataloader.py:1159-1161` against `:1395`/`:1550`). Its size is a
 # property of the production input and has to be READ from a run, not assumed --
 # see `EXAMPLES_BUDGET_CAVEAT`.
-# The measured leg's size, narrowed from "unknown" to "known on a NEIGHBOURING
-# product", 2026-09-19. It is not the reading this campaign needs, and saying so
-# is the point of the `scope` field: nothing may substitute it for a fullevent
-# dump without changing that field first.
-DATA_LEG_EVIDENCE = {
-    "rows": 4_091_707,
-    "source": ("nd-unfolding/products/pet/bkgsub/"
-               "of_inputs_pc_fullcloud_bkgsub_5d.provenance.json"),
-    "fields": ("n_data_expected, corroborated independently by "
-               "data_alignment_gate.n_rows_extracted (exact, 0 mismatches) and "
-               "weight_gate.n"),
-    "source_root": "runEventLoopOmniFold_PC_MEFHC_fullcloud.root",
-    "scope": ("the FIVE-DIMENSIONAL point-cloud OmniFold input. This campaign runs "
-              "the FULLEVENT schema, whose data leg has never been dumped at scale, "
-              "so this is a neighbouring product's reading and not this one's"),
-    "corroboration": ("the event-identity export counts 4,119,797 rows in the data "
-                      "tree, 0.7 % above this product's post-gate count, which is "
-                      "the direction and roughly the size a selection should move it"),
-    "what_it_changes": ("n_data = n_mc = 2e6 gives 153.6 M presentations per "
-                        "evaluation; n_data = 4.09e6 gives 193.8 M, a factor 1.26. "
-                        "Every absolute GPU-hour figure inherits that factor; no "
-                        "RATIO does"),
-}
-
-
-def data_leg_estimate() -> tuple[int, str]:
-    """The measured leg's size and the scope it may never be quoted without."""
-    return DATA_LEG_EVIDENCE["rows"], DATA_LEG_EVIDENCE["scope"]
+# The measured leg's size lives in `data_leg.py`, which is TensorFlow-free so the
+# cost driver can import it before choosing its Keras backend. Re-exported here
+# because this is the module that turns it into a budget.
+from data_leg import DATA_LEG_EVIDENCE, data_leg_estimate  # noqa: E402,F401
 
 
 EXAMPLES_BUDGET_CAVEAT = (
