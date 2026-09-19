@@ -94,12 +94,37 @@ def _worst(np: Any, a: Any, b: Any) -> float:
     return float(np.max(np.abs(np.asarray(a) - np.asarray(b))))
 
 
-def _verdict(measured: float, floor: float) -> dict[str, Any]:
+def _verdict(measured: float, floor: float, per_row: Any = None) -> dict[str, Any]:
+    """The verdict, plus the shape of the disagreement when rows are available.
+
+    A MAXIMUM alone cannot distinguish "every row is slightly off", which is
+    precision, from "three rows are badly off and the rest are exact", which is a
+    discrete choice going a different way -- a k-NN tie resolving differently, for
+    instance. Those have different causes and different remedies, so the row
+    profile travels with the number.
+    """
     limit = FLOOR_SLACK * floor
-    return {"measured": measured, "reference_round_off_floor": floor,
-            "limit": limit, "held": bool(measured <= limit),
-            "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent "
-                            "of the quantity being judged"}
+    verdict = {"measured": measured, "reference_round_off_floor": floor,
+               "limit": limit, "held": bool(measured <= limit),
+               "limit_source": "FLOOR_SLACK x the EAGER path's own floor; "
+                               "independent of the quantity being judged"}
+    if per_row is not None:
+        import numpy as np
+
+        rows = np.asarray(per_row).reshape(len(per_row), -1).max(axis=1)
+        over = rows > limit
+        verdict["row_profile"] = {
+            "rows": int(rows.size),
+            "rows_over_limit": int(over.sum()),
+            "fraction_over_limit": float(over.mean()),
+            "median_row_deviation": float(np.median(rows)),
+            "p99_row_deviation": float(np.percentile(rows, 99)),
+            "max_row_deviation": float(rows.max()),
+            "reads": ("a few rows far over the limit with a median at round-off "
+                      "is a DISCRETE difference -- a k-NN tie resolving the other "
+                      "way -- not a precision difference"),
+        }
+    return verdict
 
 
 def validate(repo: Path, state_npz: Path, manifest: Path,
@@ -208,7 +233,8 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
 
     xla = forward_xla().numpy()
     report["checks"]["V1_forward_xla_vs_eager"] = {
-        **_verdict(_worst(np, base, xla), forward_floor),
+        **_verdict(_worst(np, base, xla), forward_floor,
+                   per_row=np.abs(np.asarray(base) - np.asarray(xla))),
         "rows": reference_batch, "outputs_finite": bool(np.isfinite(xla).all()),
     }
 
@@ -364,7 +390,9 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
     production_forward = forward_xla_of(px, pcond, ppid, padd).numpy()
     batch_invariance = _worst(np, xla, production_forward[:reference_batch])
     report["checks"]["V7_batch_invariance"] = {
-        **_verdict(batch_invariance, forward_floor),
+        **_verdict(batch_invariance, forward_floor,
+                   per_row=np.abs(np.asarray(xla)
+                                  - np.asarray(production_forward[:reference_batch]))),
         "reference_batch": reference_batch, "production_batch": batch,
         "compares": ("XLA at the production batch against XLA at the reference "
                      "batch, on the SAME rows, against the same floor"),

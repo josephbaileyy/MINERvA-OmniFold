@@ -5,7 +5,13 @@
   "batch": 2048,
   "reference_batch": 256,
   "why_two_batches": "the eager reference does not fit at the production batch -- `optimised|33|2048|train` without XLA OOMs on an 80 GB A100 -- so the graph comparison runs at the reference batch and V7 proves the scale-up changes nothing per row",
-  "precision": "float32",
+  "precision_policy_observed": {
+    "tf32_enabled": false,
+    "determinism_enabled": true,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32"
+  },
+  "precision_policy_enforced": true,
   "gpu": [
     "/device:GPU:0"
   ],
@@ -38,9 +44,9 @@
       "checkpoint_sha256": "7e8331b0953303502fcc64461e8e2332a7582184c8e3592db2e27d752612b1bc"
     },
     "V1_forward_xla_vs_eager": {
-      "measured": 0.003115147352218628,
-      "reference_round_off_floor": 1.843475132545791e-07,
-      "limit": 3.686950265091582e-07,
+      "measured": 0.0022569894790649414,
+      "reference_round_off_floor": 1.843528423250973e-07,
+      "limit": 3.687056846501946e-07,
       "held": false,
       "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
       "rows": 256,
@@ -48,9 +54,9 @@
     },
     "V1_mutant_control": {
       "mutant": "body.in_blocks.0.attn.in_proj_weight scaled by 1 + 0.0001",
-      "deviation": 0.0023297369480133057,
-      "limit": 3.686950265091582e-07,
-      "ratio_to_limit": 6318.8727281501215,
+      "deviation": 0.0022953152656555176,
+      "limit": 3.687056846501946e-07,
+      "ratio_to_limit": 6225.331914351069,
       "held": true,
       "criterion": "a real alteration must exceed the limit by 10.0x; if it does not, the limit is not discriminating and the check above proves nothing"
     },
@@ -67,13 +73,13 @@
       "held": true,
       "is_a_gate": false,
       "max_absolute_difference": 0.0,
-      "forward_round_off_floor": 1.843475132545791e-07,
+      "forward_round_off_floor": 1.843528423250973e-07,
       "reads": "moving a PADDED slot's coordinates reorders the k-NN among padded neighbours and changes the reduction order. Production zeroes padded slots, so this state does not occur; it is recorded so the round-off scale is visible rather than implied"
     },
     "V3_gradients_xla_vs_eager": {
-      "measured": 0.001246906816959381,
-      "reference_round_off_floor": 1.0058283805847168e-07,
-      "limit": 2.0116567611694336e-07,
+      "measured": 0.0002949964255094528,
+      "reference_round_off_floor": 7.82310962677002e-08,
+      "limit": 1.564621925354004e-07,
       "held": false,
       "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
       "tensors": 176,
@@ -82,17 +88,17 @@
     },
     "V3_mutant_control": {
       "mutant": "body.in_blocks.0.attn.in_proj_weight scaled by 1 + 0.0001",
-      "deviation": 0.00015018880367279053,
-      "limit": 2.0116567611694336e-07,
-      "ratio_to_limit": 746.5925925925926,
-      "ratio_to_xla_deviation": 0.1204490998285103,
+      "deviation": 9.106472134590149e-05,
+      "limit": 1.564621925354004e-07,
+      "ratio_to_limit": 582.0238095238095,
+      "ratio_to_xla_deviation": 0.30869771112865035,
       "held": true,
       "criterion": "a 1e-4 relative weight error must exceed the limit by 10.0x. Its ratio to the XLA deviation is the number that says whether XLA's disagreement is near a real defect or far below one"
     },
     "V7_batch_invariance": {
-      "measured": 0.003483295440673828,
-      "reference_round_off_floor": 1.843475132545791e-07,
-      "limit": 3.686950265091582e-07,
+      "measured": 0.0028972625732421875,
+      "reference_round_off_floor": 1.843528423250973e-07,
+      "limit": 3.687056846501946e-07,
       "held": false,
       "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
       "reference_batch": 256,
@@ -105,21 +111,21 @@
       "steps": 10,
       "steps_seen": 10,
       "losses": [
-        0.7299401164054871,
-        0.7299401164054871,
-        0.713748574256897,
-        0.7158559560775757,
-        0.6944819092750549,
-        0.6898688673973083,
-        0.6883212327957153,
-        0.6850448846817017,
-        0.6817721128463745,
-        0.6785590052604675
+        0.7299299240112305,
+        0.7299299240112305,
+        0.7137577533721924,
+        0.7157214879989624,
+        0.694453239440918,
+        0.6898705959320068,
+        0.6883077621459961,
+        0.6850131154060364,
+        0.6817297339439392,
+        0.6785028576850891
       ],
       "loss_changed": true,
-      "max_weight_movement": 0.000760834664106369,
+      "max_weight_movement": 0.0007609501481056213,
       "clip_events": 5,
-      "last_global_norm": 0.21493187546730042,
+      "last_global_norm": 0.20458421111106873,
       "learning_rate_by_step": null,
       "schedule": {
         "max_steps": 1000,
@@ -138,8 +144,8 @@
     "V6_memory_and_timing": {
       "held": true,
       "batch": 2048,
-      "step_seconds_median": 0.7946876719943248,
-      "microseconds_per_example": 388.0310898409789,
+      "step_seconds_median": 0.8392296139936661,
+      "microseconds_per_example": 409.7800849578448,
       "device_memory": {
         "peak_bytes": 23291435008,
         "peak_gib": 21.69183921813965
