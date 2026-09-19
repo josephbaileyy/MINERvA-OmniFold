@@ -43,6 +43,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **permission to decide, not a decision and not evidence.** `null_epsilon` stays **WITHHELD** —
   the clause makes it **moot for the required path, it does not supply it.** Nothing generalizes,
   including to a future rebuild of the same object.
+- [`DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md`](DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md)
+  - **✅ IN FORCE. Joseph's ruling on PM-1, cause 7, and completion, recorded VERBATIM as his text.**
+  `SPEC` stays **FROZEN** — §1 directs recording through the existing ruling mechanism and updating
+  the operative routes, **not** a new revision. **PM-1 accepted by decision with a historical-input
+  provenance limitation**; the file-level link to G's `combined_source` tuple is **explicitly
+  accepted as unestablished**, and the evidence is graded: a comment is intent, an implementation
+  trace covers only the inspected implementation, the tuple observation has no path or digest, and
+  **repeated accounts count as one observation**. §4 **withdraws** the inference that weight-only
+  implies hadronic-response migration is absent. §5 fixes the note/primer/paper disclosure wording.
+  **§6 returns ADOPT to Joseph** — PM-1/C7 closure is **not** adoption. §7's stopping rule bars
+  another cycle on the accepted gap or on repeated summaries.
 - [`OPERATIVE-SHEET-scalar5d.md`](OPERATIVE-SHEET-scalar5d.md)
   - **✅ START HERE for what is IN FORCE. `SPEC` is FROZEN at rev. 22 and is now HISTORICAL** —
   no rev. 23, no "what changed in rev. N" section, no packet superseding a packet; results go to

@@ -368,8 +368,7 @@ was built **from**. Consistent with the C5 lane's finding that `component_proven
 
 > **PM-1 is a NAMED GAP, not something to infer across.** Neither endpoint is identified by path and
 > digest, so the link cannot be made from the record as it stands. Closing it needs the tuple path
-> and digest for §15.1's measurement, and a producing-input record for `combined_source` — which the
-> repository does not currently keep for any component.
+> and digest for §15.1's measurement, and a producing-input record for `combined_source`. ⚠ *Joseph's ruling §2 forbids justifying the acceptance by asserting the project never recorded input files; that argument is withdrawn and the limitation stands on its own.*
 
 ### Is `#16`'s "promoted-universe migration bound" §2.7's lateral counterfactual?
 
@@ -454,7 +453,27 @@ including A3's set-but-missing `rc 3`, B5's `adoptable:false` refusal reached *t
 launcher, and item 6's reachability without the production environment. That is exactly run 4's
 scope.
 
-## 4f. THE GUARD-SET CONTROL HAS FAILED THREE TIMES AND LEG B HAS NEVER RUN
+## 4f2. ✅ RUN 5 — EVERY LEG PASSES. The guard-set control is COMPLETE.
+
+`58565755`, 77 s, **zero `CONTROL FAILED` lines.** Legs in B4's configuration: sourced environment,
+real ROOT, no shadow, so `_verify_canonical_edges()` passes and the guards at `:364` are reached.
+
+| leg | result |
+|---|---|
+| A1 no adoption record | `rc 3` ✅ |
+| A3 exception set but missing | `rc 3` ✅ |
+| A2 §6.4 amendment offered AS an adoption record | `rc 3`, printing `declare: ADOPTS-SHA256: 3d7465f6…` ✅ |
+| B1 publication from the **mean** variant | `rc 1`, **`AGENTS.md:29` refusal fires** ✅ |
+| B2 cv file declared mean | `rc 1`, *"declares variant 'cv'"* ✅ |
+| B3 mean file declared cv | `rc 1`, *"declares variant 'mean'"* ✅ |
+| **B5 publication + cv + NO exception** | `rc 1`, *"records `adoptable: false`"* ✅ **— gap 4 closed, the most load-bearing guard, reached through the real path** |
+| B4 positive control | `rc 0`, product written ✅ |
+| **Q2 assertion on B4's product** | `rc 0`, **PASS** ✅ |
+
+**Every protection in §4d's enumeration now has real-path refusal evidence with a positive control**
+— except item 6, recorded as **by-design unreachable** without the production environment.
+
+## 4f. THE GUARD-SET CONTROL FAILED THREE TIMES BEFORE THAT — kept, because the failures are the record
 
 **Stopped, not retried.** The advisor's condition on the third submission was: *if this run fails it
 is a diagnosis, not a fourth try.*
@@ -559,12 +578,14 @@ measured independently from Z's own bound inputs and agrees.
 | **top 1% of bins by variance — carrying `74.11%` of the total** | ratios **`0.687` … `1.153`, median `0.999`** |
 
 **So the `0.177`–`3.06` span is real and it lives where the variance is not.** Where the variance
-actually is, the lateral block moves by **at most ±15%** and typically not at all. The trace's
-`−0.0288%` is therefore **not** concealing large movement in the bins that carry the uncertainty —
-which is the opposite of what the raw span suggested, and is why the question was worth asking
-rather than assuming either way.
+actually is, the ratios run **`0.687` to `1.153`**. ⚠ **CORRECTED per Joseph's ruling §3: I wrote
+"at most ±15%", which is wrong on the downside — `0.687` is a decrease of about `31%`.** The trace's
+`−0.0288%` is a change in the lateral block's **square-root trace**; it is **not a bound on every
+bin, nor on the complete covariance.**
 
-⚠ **TWO LIMITS, because variance share is not publication relevance.** A quoted number drawn from a
+⚠ **TWO LIMITS. Joseph's ruling §3: SMALL AGGREGATE VARIANCE SHARE DOES NOT MAKE A BIN IRRELEVANT
+TO A QUOTED RESULT** — so any framing that these movements "sit where they barely matter" is
+withdrawn. A quoted number drawn from a
 **low-variance** bin still carries that bin's own ratio — a 3× σ change in a negligible-variance bin
 is still 3× *for that bin*. And `830` bins (7.76%) sit below `0.8`, carrying `1.16%` of variance:
 small in aggregate, not nothing. **No threshold is applied here and none is proposed**; the
@@ -603,8 +624,12 @@ and it does stop before W, **but it is about the five lateral bands.**
 and `MINOSEfficiencyReweighter`. **A reweight overrides no kinematic getter, so it shifts no axis, W
 included, by construction**; there is nothing for a W note to reason about. And the executable half
 covers W directly: §15.1 measured the five lateral bands carrying shifted **q3 and W** 4/4 and the
-four carrying **0/4**. **So weight-only is uniform across axes and doubly evidenced** — by the
-declared implementation and by the tuple's contents.
+four carrying **0/4**. **So weight-only is uniform across axes.** ⚠ *Graded per the ruling's §2, because
+"doubly evidenced" overstated it:* the source comment **documents intent and is not executable
+verification**; the implementation trace establishes behaviour **only for the inspected
+implementation**; and the tuple observation **has no recorded path or digest**, so it is **limited
+corroboration** and must not be called independently reproducible or bound to G. **Repeated accounts
+of that observation count as ONE observation.**
 
 `MinosEfficiency` is a reweighter **by class**: `#include "PlotUtils/MINOSEfficiencyReweighter.h"`
 at `:70`, instantiated into `MnvTunev1` at `:1749`.
@@ -626,28 +651,28 @@ reference that output and none references an omnifile input. **The file-level li
 
 **The same comment says the GEANT bands "DO move E_avail physically."** So *weight-only* describes
 **how they are IMPLEMENTED — as a reweight** — and is **not** a statement that hadronic response
-causes no migration. **It follows that the covariance does not model migration from hadronic
-response.**
-
-> ### AND THE CAVEAT NAMES **W**, NOT ONLY `E_avail` — grounded by opening the getter
+causes no migration.
 >
-> `CVUniverse::RecoW()` (`event/CVUniverse.h:227-235`) computes
-> `q0 = GetDouble(<tree>_recoil_E)` and `W = sqrt(M² + 2·M·q0 − Q²)`, and its own comment at
-> `:220-226` says it *"uses the SAME calorimetric energy transfer `q0 = <tree>_recoil_E` and
-> muon-kinematic `Q²` as RecoQ3."*
+> ⚠ **WITHDRAWN 2026-09-19 BY JOSEPH'S RULING §4, and it was my inference:** *"the bands are
+> weight-only; therefore hadronic-response migration is absent from the covariance."* **That does
+> not follow.** Weights can alter the population of simulated detector-interaction histories and so
+> alter **reconstructed distributions, efficiencies and response matrices** without changing any
+> individual event's stored coordinates. Conversely, weight-only implementation does **not** prove
+> that all relevant response variations are represented.
 >
-> **Reco `W` is therefore built from calorimetric recoil energy — a hadronic quantity.** So if the
-> GEANT hadronic-response bands *"DO move `E_avail` physically"* and are modelled as a reweight
-> anyway, **the same argument reaches `W`**, and the reweight models migration on **neither** axis.
-> For a 5D product whose fifth axis **is** `W`, that is the disclosure that matters.
+> **The `RecoW()` finding survives only as a statement of HOW `W` IS BUILT** — `q0 = <tree>_recoil_E`,
+> `W = sqrt(M² + 2·M·q0 − Q²)`, `CVUniverse.h:227-235`. ⚠ **It is NOT evidence about where any
+> limitation is largest**, and §4 forbids claiming a limitation is greatest at high `E_avail` or high
+> `W` merely because those observables involve hadronic energy. **Nor may the treatment be called
+> negligible, conservative, complete or deficient without evidence for that description.**
 >
-> *(Related but not identical hadronic quantities: `W` uses `<tree>_recoil_E`, while `E_avail` uses
-> `blob_recoil_E_tracker/ecal + muon_fuzz`. Both hadronic; I have not established how closely they
-> track, and do not claim it.)*
-
-*Whether treating hadron-response systematics as pure reweights is standard practice is **not
-something this repository establishes**, and I cite nothing I cannot open. It is recorded as an
-**inherited treatment** whose justification lives upstream of this analysis.*
+> ### THE DISCLOSURE THAT REPLACES IT — §5's substance, for note, primer and paper alike
+>
+> > The selection-complete replacement covers the five detector bands implemented through shifted
+> > reconstructed kinematics. MINOS efficiency and the three GEANT hadron-interaction bands retain
+> > their weight-based treatment. This classification establishes their exclusion from the kinematic
+> > replacement; it does not independently validate the completeness of the hadronic-response model
+> > for the `E_avail` and `W` measurement.
 
 ## 5. Execution order — fixed
 
