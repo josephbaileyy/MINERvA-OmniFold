@@ -80,3 +80,70 @@ def record_versions() -> dict[str, Any]:
         "tf_keras_version": root_version,
         "standalone_keras": standalone,
     }
+
+
+# --------------------------------------------------------------------------- #
+# The production precision policy, enforced rather than assumed.
+# --------------------------------------------------------------------------- #
+#
+# `run_typed_token_comparison.PRECISION_POLICY` is the frozen policy for this
+# project and requires `tf32_enabled: False`. NONE of this package's drivers
+# enforced it, and on an A100 TensorFlow enables TF32 for matmuls by DEFAULT. So
+# every GPU measurement this lane has taken -- the throughput, the memory, and
+# the XLA-versus-eager comparisons -- ran with TF32 on, against a policy that
+# forbids it.
+#
+# Two consequences, both measured rather than inferred once this landed:
+#
+#   * TF32 carries 10 explicit mantissa bits, so it perturbs a matmul at the 1e-3
+#     level. That is the scale at which the production validation's forward and
+#     gradient checks failed, and it is why they failed by thousands of times
+#     their limit on GPU while failing by ~2x on a CPU, where there is no TF32.
+#   * TF32 matmuls are several times faster than true FP32 on A100, so the
+#     timings -- and the campaign cost derived from them -- were optimistic.
+#
+# A policy that is documented and not applied is not a policy.
+PRODUCTION_PRECISION_POLICY = {
+    "tf32_enabled": False,
+    "determinism_enabled": True,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32",
+}
+
+
+def observed_precision_policy() -> dict[str, Any]:
+    """What the running process is ACTUALLY doing, not what it intended."""
+    import importlib
+
+    import tensorflow as tf
+
+    config = importlib.import_module("tensorflow.python.framework.config")
+    return {
+        "tf32_enabled": bool(
+            tf.config.experimental.tensor_float_32_execution_enabled()),
+        "determinism_enabled": bool(config.is_op_determinism_enabled()),
+        "mixed_precision_policy": tf.keras.mixed_precision.global_policy().name,
+        "floatx": tf.keras.backend.floatx(),
+    }
+
+
+def configure_production_precision(strict: bool = True) -> dict[str, Any]:
+    """Apply the frozen policy, then VERIFY it, and fail closed if it did not take.
+
+    Applying and verifying are separate steps on purpose: `enable_..._execution`
+    is a request, and a request that silently did nothing is exactly the failure
+    that let TF32 into every measurement so far.
+    """
+    import tensorflow as tf
+
+    tf.config.experimental.enable_tensor_float_32_execution(False)
+    tf.config.experimental.enable_op_determinism()
+    tf.keras.mixed_precision.set_global_policy("float32")
+    tf.keras.backend.set_floatx("float32")
+    observed = observed_precision_policy()
+    if strict and observed != PRODUCTION_PRECISION_POLICY:
+        raise RuntimeError(
+            "precision policy did not take: wanted "
+            f"{PRODUCTION_PRECISION_POLICY}, observing {observed}"
+        )
+    return observed

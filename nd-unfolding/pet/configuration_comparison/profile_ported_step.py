@@ -196,11 +196,18 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
         raise ValueError(f"unknown mode {mode!r}")
 
     _install(repo)
-    from keras_backend import record_versions, select_keras_backend
+    from keras_backend import (configure_production_precision, record_versions,
+                               select_keras_backend)
 
     backend = select_keras_backend()
     import numpy as np
     import tensorflow as tf
+
+    # The frozen policy forbids TF32, and A100 TensorFlow enables it by default.
+    # Every earlier timing in this package ran without this line, so those numbers
+    # are TF32 numbers and are superseded by any receipt that carries
+    # `precision_policy_observed`.
+    precision = configure_production_precision(strict=not allow_cpu)
 
     if variant == "ours_incumbent":
         # `omnifold/omnifold.py` calls `set_memory_growth` and
@@ -226,6 +233,8 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
     record: dict[str, Any] = {
         "variant": variant, "tokens": tokens, "batch": batch, "mode": mode,
         "precision": "float32", "arm": "theirs_complete",
+        "precision_policy_observed": precision,
+        "precision_policy_enforced": True,
         "configuration": dict(HIS_COMPLETE_SETTINGS),
         "keras_backend_selection": backend,
         "versions": record_versions(),

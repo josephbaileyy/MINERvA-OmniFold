@@ -1,8 +1,151 @@
 {
-  "failed": true,
-  "error": "ResourceExhaustedError()",
-  "traceback": "Traceback (most recent call last):\n  File \"/pscratch/sd/j/josephrb/pet-validate-exec-20260920/nd-unfolding/pet/configuration_comparison/validate_production_path.py\", line 414, in main\n    report = validate(args.repo, args.state_npz, args.manifest, args.step,\n  File \"/pscratch/sd/j/josephrb/pet-validate-exec-20260920/nd-unfolding/pet/configuration_comparison/validate_production_path.py\", line 266, in validate\n    _, eager_grads = grads_eager((x, cond, pid, add))\n  File \"/pscratch/sd/j/josephrb/pet-validate-exec-20260920/nd-unfolding/pet/configuration_comparison/validate_production_path.py\", line 261, in grads_eager\n    return loss, tape.gradient(loss, variables)\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/backprop.py\", line 1066, in gradient\n    flat_grad = imperative_grad.imperative_grad(\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/imperative_grad.py\", line 67, in imperative_grad\n    return pywrap_tfe.TFE_Py_TapeGradient(\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/eager/backprop.py\", line 148, in _gradient_function\n    return grad_fn(mock_op, *out_grads)\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/ops/linalg_grad.py\", line 344, in _EinsumGrad\n    grad_y = _GetGradWrt(grad, x, y_shape, y_subs, x_subs, output_subs)\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/ops/linalg_grad.py\", line 284, in _GetGradWrt\n    grad_reduced = gen_linalg_ops.einsum([output_grad, other_operand],\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/ops/gen_linalg_ops.py\", line 1119, in einsum\n    _ops.raise_from_not_ok_status(e, name)\n  File \"/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/framework/ops.py\", line 5883, in raise_from_not_ok_status\n    raise core._status_to_exception(e) from None  # pylint: disable=protected-access\ntensorflow.python.framework.errors_impl.ResourceExhaustedError: {{function_node __wrapped__Einsum_N_2_device_/job:localhost/replica:0/task:0/device:GPU:0}} OOM when allocating tensor with shape[67584,10,128,128] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc [Op:Einsum] name: \n",
+  "scope": "execution validation of the path we would run: XLA, GPU, float32, 33 tokens, effective batch 2048, initialized from the real pretrained checkpoint",
   "step_schema": "step2_gen",
+  "tokens": 33,
   "batch": 2048,
-  "tokens": 33
+  "reference_batch": 256,
+  "why_two_batches": "the eager reference does not fit at the production batch -- `optimised|33|2048|train` without XLA OOMs on an 80 GB A100 -- so the graph comparison runs at the reference batch and V7 proves the scale-up changes nothing per row",
+  "precision": "float32",
+  "gpu": [
+    "/device:GPU:0"
+  ],
+  "keras_backend_selection": {
+    "tf_keras_shim_available": false,
+    "tf_use_legacy_keras": null,
+    "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+  },
+  "versions": {
+    "tensorflow": "2.15.0",
+    "tf_keras_module": "keras.api._v2.keras",
+    "tf_keras_root": "keras",
+    "tf_keras_version": "2.15.0",
+    "standalone_keras": "2.15.0"
+  },
+  "limit_policy": {
+    "floor_slack": 2.0,
+    "mutant_must_exceed": 10.0,
+    "how": "each limit is FLOOR_SLACK x the eager path's own round-off floor, measured by permuting batch rows; no limit reads the quantity it judges, and every check has a mutant control"
+  },
+  "checks": {
+    "V0_pretrained_load": {
+      "held": true,
+      "criterion": "every variable covered and assigned EXACTLY; 0.0, not a tolerance",
+      "tensors_loaded": 176,
+      "parameters_loaded": 2758702,
+      "worst_absolute_difference_after_assign": 0.0,
+      "exact": true,
+      "state_npz_sha256": "2480f269064b4d69f323d8681acc776526cec20a89e7cea8c2338004551231b5",
+      "checkpoint_sha256": "7e8331b0953303502fcc64461e8e2332a7582184c8e3592db2e27d752612b1bc"
+    },
+    "V1_forward_xla_vs_eager": {
+      "measured": 0.003115147352218628,
+      "reference_round_off_floor": 1.843475132545791e-07,
+      "limit": 3.686950265091582e-07,
+      "held": false,
+      "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
+      "rows": 256,
+      "outputs_finite": true
+    },
+    "V1_mutant_control": {
+      "mutant": "body.in_blocks.0.attn.in_proj_weight scaled by 1 + 0.0001",
+      "deviation": 0.0023297369480133057,
+      "limit": 3.686950265091582e-07,
+      "ratio_to_limit": 6318.8727281501215,
+      "held": true,
+      "criterion": "a real alteration must exceed the limit by 10.0x; if it does not, the limit is not discriminating and the check above proves nothing"
+    },
+    "V2_masking": {
+      "held": true,
+      "perturbed_columns": [
+        3
+      ],
+      "max_absolute_difference_content": 0.0,
+      "max_absolute_difference_pid_and_auxiliary": 0.0,
+      "criterion": "EXACT equality for padded-slot CONTENT, PID and auxiliary channels. These are multiplied by a zero mask, so any difference at all is a leak rather than round-off"
+    },
+    "V2_coordinate_diagnostic": {
+      "held": true,
+      "is_a_gate": false,
+      "max_absolute_difference": 0.0,
+      "forward_round_off_floor": 1.843475132545791e-07,
+      "reads": "moving a PADDED slot's coordinates reorders the k-NN among padded neighbours and changes the reduction order. Production zeroes padded slots, so this state does not occur; it is recorded so the round-off scale is visible rather than implied"
+    },
+    "V3_gradients_xla_vs_eager": {
+      "measured": 0.001246906816959381,
+      "reference_round_off_floor": 1.0058283805847168e-07,
+      "limit": 2.0116567611694336e-07,
+      "held": false,
+      "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
+      "tensors": 176,
+      "all_finite": true,
+      "note": "the floor is the EAGER path's sensitivity to a row permutation. XLA fuses reductions differently from eager, so exceeding it is not by itself evidence of a wrong gradient -- read the mutant control beside this before concluding either way. The limit is NOT widened to accommodate the measurement"
+    },
+    "V3_mutant_control": {
+      "mutant": "body.in_blocks.0.attn.in_proj_weight scaled by 1 + 0.0001",
+      "deviation": 0.00015018880367279053,
+      "limit": 2.0116567611694336e-07,
+      "ratio_to_limit": 746.5925925925926,
+      "ratio_to_xla_deviation": 0.1204490998285103,
+      "held": true,
+      "criterion": "a 1e-4 relative weight error must exceed the limit by 10.0x. Its ratio to the XLA deviation is the number that says whether XLA's disagreement is near a real defect or far below one"
+    },
+    "V7_batch_invariance": {
+      "measured": 0.003483295440673828,
+      "reference_round_off_floor": 1.843475132545791e-07,
+      "limit": 3.686950265091582e-07,
+      "held": false,
+      "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
+      "reference_batch": 256,
+      "production_batch": 2048,
+      "compares": "XLA at the production batch against XLA at the reference batch, on the SAME rows, against the same floor"
+    },
+    "V4_optimizer_updates": {
+      "held": true,
+      "batch": 2048,
+      "steps": 10,
+      "steps_seen": 10,
+      "losses": [
+        0.7299401164054871,
+        0.7299401164054871,
+        0.713748574256897,
+        0.7158559560775757,
+        0.6944819092750549,
+        0.6898688673973083,
+        0.6883212327957153,
+        0.6850448846817017,
+        0.6817721128463745,
+        0.6785590052604675
+      ],
+      "loss_changed": true,
+      "max_weight_movement": 0.000760834664106369,
+      "clip_events": 5,
+      "last_global_norm": 0.21493187546730042,
+      "learning_rate_by_step": null,
+      "schedule": {
+        "max_steps": 1000,
+        "warmup_steps": 4,
+        "examples_per_update": 2048
+      },
+      "criterion": "every loss finite, the weights actually move, and the optimizer takes exactly the steps it was asked for"
+    },
+    "V5_reload": {
+      "held": true,
+      "weight_transfer_worst": 0.0,
+      "clobbered_before_restore": true,
+      "forward_finite_after_reload": true,
+      "criterion": "EXACT. The weights are zeroed between save and restore, so a restore that quietly did nothing would fail this"
+    },
+    "V6_memory_and_timing": {
+      "held": true,
+      "batch": 2048,
+      "step_seconds_median": 0.7946876719943248,
+      "microseconds_per_example": 388.0310898409789,
+      "device_memory": {
+        "peak_bytes": 23291435008,
+        "peak_gib": 21.69183921813965
+      },
+      "synchronized": "float(train_step()) inside the timed region"
+    }
+  },
+  "all_held": false
 }

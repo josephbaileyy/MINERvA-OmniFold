@@ -107,11 +107,17 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
              allow_cpu: bool = False,
              reference_batch: int = REFERENCE_BATCH) -> dict[str, Any]:
     _install(repo)
-    from keras_backend import record_versions, select_keras_backend
+    from keras_backend import (configure_production_precision, record_versions,
+                               select_keras_backend)
 
     backend = select_keras_backend()
     import numpy as np
     import tensorflow as tf
+
+    # BEFORE any model or tensor exists. TF32 is on by default on an A100 and the
+    # frozen policy forbids it; applying it late would leave already-traced
+    # programs on the old setting.
+    precision = configure_production_precision(strict=not allow_cpu)
 
     gpus = tf.config.list_logical_devices("GPU")
     if not gpus and not allow_cpu:
@@ -132,7 +138,9 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
             "`optimised|33|2048|train` without XLA OOMs on an 80 GB A100 -- so the "
             "graph comparison runs at the reference batch and V7 proves the "
             "scale-up changes nothing per row"),
-        "precision": "float32", "gpu": [d.name for d in gpus],
+        "precision_policy_observed": precision,
+        "precision_policy_enforced": True,
+        "gpu": [d.name for d in gpus],
         "keras_backend_selection": backend, "versions": record_versions(),
         "limit_policy": {
             "floor_slack": FLOOR_SLACK, "mutant_must_exceed": MUTANT_MUST_EXCEED,
