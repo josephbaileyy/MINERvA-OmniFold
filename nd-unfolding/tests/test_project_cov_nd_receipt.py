@@ -749,7 +749,7 @@ class VariantIsTheOnlyThingThatDistinguishesTheTwoCandidates(unittest.TestCase):
     """MEASURED 2026-09-18, and this is why `--expect-variant` is required with no default.
 
     `z-cv.npz` and `z-mean.npz` in the pilot output are structurally identical: the same seven
-    keys, the same shapes, the same dtypes, and BYTE-IDENTICAL `hXSecND_flat`, `hSupportMask`,
+    keys and the same array shapes, and BYTE-IDENTICAL `hXSecND_flat`, `hSupportMask`,
     `hPinnedMask` and `hRowIndex5D`. They differ in exactly two places -- the covariance, whose
     sqrt(trace) differs by a factor 1.0768, and one metadata field. Before this guard, `variant`
     appeared in `project_cov_nd.py` exactly once, in a docstring: nothing read it.

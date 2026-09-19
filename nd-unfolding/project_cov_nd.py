@@ -242,7 +242,15 @@ def _source_metadata(path):
 
 
 def main():
-    import ROOT
+    # ⚠ `import ROOT` IS DELIBERATELY NOT HERE. It sat at the top of main(), before argparse, so
+    # EVERY invocation required the production environment -- including `--help`, and including
+    # every refusal. An independent assessor ran the eight guard cases and got rc=1 on all eight
+    # INCLUDING THE POSITIVE CONTROL; a second attempt segfaulted on all eight. Uniform failure was
+    # indistinguishable from uniform success, twice, and only the positive control separated them.
+    # A refusal a reviewer cannot reach without the full stack is a refusal nobody will exercise.
+    # The import now sits immediately before the first ROOT call, at the write step, so every guard
+    # between here and there is reachable with numpy alone. The readers at :156/:178/:224 already
+    # import it lazily, so an NPZ source needs ROOT only to WRITE.
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--src-cov", required=True)
@@ -269,8 +277,11 @@ def main():
         "literal `none` to declare that it carries no variant marker. THERE IS NO DEFAULT AND NO "
         "INFERENCE: the caller states which object it believes it is projecting and the file has "
         "to agree. Measured 2026-09-18: `z-cv.npz` and `z-mean.npz` are structurally identical -- "
-        "same seven keys, same shapes, same dtypes, byte-identical hXSecND_flat, hSupportMask, "
-        "hPinnedMask and hRowIndex5D -- and differ only in this field and in the covariance "
+        "same seven keys and the same array shapes, byte-identical hXSecND_flat, hSupportMask, "
+        "hPinnedMask and hRowIndex5D. NOT identical dtypes: metadata_json is <U1934 against "
+        "<U1936, necessarily, since numpy <U encodes the string length -- and that metadata "
+        "difference IS the mechanism this flag reads. They differ in metadata_json, in "
+        "hInflation_g, and in the covariance "
         "itself, whose sqrt(trace) differs by a factor 1.0768. Nothing in this file read "
         "`variant` before; it appeared once, in a docstring."))
     ap.add_argument("--run-class", choices=("diagnostic", "candidate", "publication"),
@@ -519,6 +530,7 @@ def main():
     }[_run_class]
 
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
+    import ROOT                      # first ROOT use: the write step
     fo = ROOT.TFile.Open(args.out, "RECREATE")
     hn = "_".join(keep_axes)
     h = ROOT.TH2D(f"hCov_proj_{hn}", f"projected cov ({'->'.join([''.join(src_axes), hn])})",

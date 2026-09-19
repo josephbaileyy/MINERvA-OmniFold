@@ -72,13 +72,37 @@ the earlier corner-integral criterion is a strictly weaker special case.
 **`SRC_COV` = `uq_5d/z_pilot_20260916_a5/z-cv.npz`**, sha256
 `3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5`, **`variant: "cv"`**.
 
-`z-cv.npz` and `z-mean.npz` are **structurally identical** — same seven keys, same shapes, same
-dtypes, byte-identical `hXSecND_flat`, `hSupportMask`, `hPinnedMask`, `hRowIndex5D`. They differ in
-the covariance (`√tr` `5.674201e-38` vs `5.269506e-38`, ratio **`1.0768`**) and in one metadata
-field. **Choosing the wrong one understates the uncertainty scale by 7.13%, above `δ = 5%`, while
+`z-cv.npz` and `z-mean.npz` share **all seven keys and every array shape**, and are
+**byte-identical** in `hXSecND_flat`, `hSupportMask`, `hPinnedMask` and `hRowIndex5D`.
+
+⚠ **Two earlier statements of mine were wrong and are corrected here.** They do **not** have
+identical **dtypes** — `metadata_json` is `<U1934` against `<U1936`, *necessarily*, because numpy's
+`<U` encodes the string length. And they do **not** differ *only* in the covariance and
+`hInflation_g`: **`metadata_json` differs too — and that difference is the entire mechanism
+`--expect-variant` reads.** Omitting it described the guard as resting on nothing. The real
+differences are `metadata_json`, `hInflation_g`, and the covariance (`√tr` `5.674201e-38` vs
+`5.269506e-38`, ratio **`1.0768`**). **Choosing the wrong one understates the uncertainty scale by 7.13%, above `δ = 5%`, while
 passing every other gate.** Enforced by **`project_cov_nd.py --expect-variant`, required, no
 default**; designated in `z_pilot_20260916_a5/z-primary.json`. `AGENTS.md:29` disqualifies
 mean-centering alone, so `--run-class publication` from `variant: "mean"` is refused outright.
+
+### ⚠ RESIDUAL, RECORDED AND DELIBERATELY NOT FIXED
+
+**The `AGENTS.md:29` refusal keys on the DECLARED variant, so it protects a MARKER, not a
+property.** `--run-class publication` is refused when the caller declares `mean`. An **unmarked**
+mean-centered object declared as `none` would clear it, because there is no `variant` field to
+contradict and nothing in the file asserts its centering.
+
+**Narrowed, not open.** The independent assessor formed that bypass hypothesis and **tested it**:
+the `none` declaration is itself checked in its own direction — declaring `none` against a **marked**
+source is refused outright — so the case it expected to slip is closed. Both pilot products are
+marked, so the residual is **hypothetical for every artifact now on the required path** and would
+require a future unmarked mean-centered object to become live.
+
+**No guard is being built for it**, on the standing rule: the failure is nameable, the required
+deliverable it would unblock is not. Recorded so a later lane meets the limit rather than
+rediscovering it — and so nobody reads the variant guard as proving a *property* of the covariance
+when what it verifies is an *agreement between a declaration and a marker*.
 
 ## 4b. WHAT THE NOTE MUST SAY about criteria that were never computed
 
@@ -150,11 +174,18 @@ scientific work outside the §2 table.
 | quantity | status | why |
 |---|---|---|
 | `src_cells_dropped` | **must be `0` — structural requirement** | a source cell mapping outside the destination is **discarded uncertainty**. Computed OUTSIDE the `--dst-cv` branch, so it is a genuine measurement in both modes |
-| `n_empty` | **recorded, and NOT EVIDENCE in this mode** | the mask *is* the bins that received a source cell, so every row of `M` has a nonzero **by construction** and `n_empty` is necessarily `0`. `project_cov_nd.py:485-492` says the writer does not gate on it and that making it a pass condition is a criterion change |
 | `rel` (CV reproduction) | **does not exist here; nothing reported** | gated behind `--dst-cv`; it was **never computed for the diagnostic either** |
 | PSD, exact symmetry, `hRowIndex` readback digest | reported, as the diagnostic did | |
 
-⚠ **A withdrawal that corrects the record:** the diagnostic M1 was reported as *"verified: `n_empty 0`"*.
+⚠ **`n_empty` IS NOT ON THAT LIST, and its absence is the point.** It was going to appear
+annotated *"recorded, not evidence"*. That is not enough: **a quantity that is zero by construction,
+left in a check list with a caveat, gets re-read as verification** — which is exactly how it reached
+Joseph as evidence the first time. It is therefore **removed from the declared checks entirely**.
+The projector still *writes* the field (`:488`), because a recorded quantity is not the same thing
+as a checked one; nothing may cite it as a check.
+
+⚠ **The withdrawal, kept so the correction travels with the number:** the diagnostic M1 was reported
+as *"verified: `n_empty 0`"*.
 Its receipt records `dst_cv_sha256: None`, so it ran in this same mode and **that zero was
 structurally guaranteed and was never evidence.** `src_cells_dropped 0` stands as real.
 
@@ -164,18 +195,22 @@ structurally guaranteed and was never evidence.** `src_cells_dropped 0` stands a
 it is that the note's figure was produced by a **different `M`, or a different source**, than the
 covariance quoted beside it. Both were measured, and both pass:
 
-| check | result |
-|---|---|
-| **same source** | the figure's `xsec_5d_MEFHC_5iter_lgbm.root:hXSecND_flat` and PROJ's `z-cv.npz:hXSecND_flat` are **byte-identical**, digest `d94daca9251d0951`, `65856` entries, `10694` reported |
-| **same `M`** | M1's `hCV_marginal` against the figure's `hData2D`, **C-order**: sums agree to seven digits (`1.676366e-37`), **max abs diff `5.220244e-54`** on elements of order `4e-39` — relative `~1.3e-15`, round-off |
-| **row order** | F-order gives `3.07e-38`, three orders larger, so **C-order is measured, not assumed** |
+| | check | result |
+|---|---|---|
+| **PRIMARY — the claim** | **same source, by DIGEST** | the figure's `xsec_5d_MEFHC_5iter_lgbm.root:hXSecND_flat` and PROJ's `z-cv.npz:hXSecND_flat` are **byte-identical**, digest `d94daca9251d0951`, `65856` entries, `10694` reported |
+| corroboration | same `M`, by agreement | M1's `hCV_marginal` against the figure's `hData2D`, **C-order**: sums agree to seven digits (`1.676366e-37`), **max abs diff `5.220244e-54`** on elements of order `4e-39` — relative `~1.3e-15` |
+| corroboration | row order | F-order gives `3.07e-38`, three orders larger, so **C-order is measured, not assumed** |
+
+**The ordering is deliberate.** Numerical agreement shows two arrays hold the same numbers; it does
+**not** show they came from the same **run**, which is what *paired* must mean once a rebuild can
+change the source. **Digest identity is the claim; two-implementation agreement corroborates it.**
 
 `excess_eavail_W.py` reaches `(E_avail,W)` by its own summation, a **different code path** from
 `project_cov_nd.build_projection`. They agree at round-off anyway, which is what makes this a
 falsifiable check rather than a restatement.
 
 > **BINDING, not a courtesy:** repeat (a) and (b) against the **publication** product when PROJ
-> runs. **Any disagreement is a FINDING, not a tolerance question**, and the figure is regenerated
+> runs — **(a), the digest, is the binding one**; (b) corroborates. **Any disagreement is a FINDING, not a tolerance question**, and the figure is regenerated
 > from the adopted product before DOCS is re-verified.
 
 ## 5. Execution order — fixed
