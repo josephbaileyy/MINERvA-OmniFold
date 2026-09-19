@@ -63,34 +63,48 @@ altered by (b) or (c), and no later act erases it.*
 token.** G's `1.31e-12` is **context for scale only and is not a threshold**; Z's value being
 smaller is **not a pass**.
 
-> **THE MEASUREMENT, PER BIN.** Measured on the persisted `x_cv` / `x_cv2` and the support
-> predicate — zero new compute:
+> **THE MEASUREMENT, PER BIN — REPORTED WITH NO COMPARATOR.** On the persisted `x_cv` / `x_cv2`
+> and the support predicate, 10694 reported bins, zero new compute:
 >
 > | | |
 > |---|---|
-> | global `r_null = ‖x₂−x₁‖/‖x₁‖` | **`4.452000e-14`**, reproducing the historical value exactly |
-> | **max per-bin `\|Δx\|/x` over all 10694 reported bins** | **`1.755272e-12`** |
+> | global `r_null = ‖x₂−x₁‖/‖x₁‖` | `4.452000e-14`, reproducing the historical value exactly |
+> | **max per-bin `\|Δx\|/x`** | **`1.755272e-12`** |
 > | 99.9th percentile / median | `1.318750e-12` / `6.341524e-14` |
-> | reported bins exceeding `1e-10` | **zero** |
-> | smallest reported `x_cv` (`1.009379e-50`) — its relative change | `4.880054e-14` |
+> | bins above `1e-10` / above `1e-11` | **0** / **0** |
 >
-> **The per-bin statement replaces a global one that could not support it.** A global L2 ratio is
-> insensitive to a large relative change in a small-magnitude bin — the same `4.4311e-14` could
-> coexist with a 443-fold change in one bin. **That counterexample is excluded here by direct
-> measurement, not by argument:** the largest per-bin change anywhere is `1.755e-12`, and the
-> smallest reported bin is among the most stable.
+> **SMALL BINS ARE SYSTEMATICALLY LESS STABLE, and that is stated rather than worked around.**
+> Spearman `ρ(x_cv, rel) = −0.3103`, `p = 2.5e-237`. Median `rel` by size decile runs
+> `1.325e-13 → 3.378e-14` from smallest to largest and max `rel` runs `1.755e-12 → 2.848e-13`; the
+> **worst bin in the product sits at the 5.4th percentile of bin size.** ⚠ *The trend is clear but
+> **not monotone**: decile 3 exceeds decile 2 and decile 7 exceeds decile 6. Described as a trend,
+> which is what the data supports.*
 >
-> **What this is comparable to, and what it is NOT.** It is comparable to **the precision at which
-> central values are quoted** — the note prints five significant figures, e.g. `8.7918e-39`, and a
-> `1.8e-12` relative change cannot reach the fifth. **It is NOT comparable to `δ = 5%`**, and an
-> earlier version of this clause divided the two and called the quotient "twelve orders of
-> magnitude". ⚠ **That framing is WITHDRAWN as invalid:** `r_null` is a relative change in the CV
-> **vector** between two re-unfolds; `δ` bounds how far an estimated **σ** may move across
-> estimator-seed baselines. They are different quantities and their quotient is a number, not a
-> ratio of like things.
+> ⚠ **STRUCK — a claim of mine that was false.** An earlier version said *"the smallest reported bin
+> is among the most stable."* It is at the **41.3rd percentile**, with **4419 of 10694 bins strictly
+> more stable**. The number quoted beside it was right and the adjective was not, and citing the
+> single smallest bin as reassurance drew a point from the **least-stable end** of a trend I had not
+> yet measured. Nobody intended it; it is the shape of selecting the favourable point.
 >
-> **The measurement is itself stable:** `4.4311e-14` against the historical `4.4520e-14` is a ratio
-> of **`0.9953`** — the measurement of non-determinism reproduces to 0.5%.
+> **THE CONCERN IS CLOSED BY MAGNITUDE, NOT BY ABSENCE.** The feared shape was `rel ≈ 4.4e2` in one
+> small bin — the case a global L2 ratio cannot exclude. The worst bin observed anywhere is
+> `1.755e-12`: **14.4 orders of magnitude below it**, with **zero bins above `1e-11`.** That rebuts
+> the block without denying the trend and without resting on any single bin.
+>
+> ⚠ **NO COMPARATOR IS ATTACHED, DELIBERATELY, AND TWO WERE TRIED AND WITHDRAWN.** First `δ = 5%` —
+> invalid, since `r_null` is a relative change in the CV **vector** and `δ` bounds movement of an
+> estimated **σ**. Then *"five significant figures at which central values are quoted"* — **also
+> withdrawn, and worse: it is the BARRED route.** `SPEC` §6.8's `D2` row states it verbatim,
+> *"applying the printed median's precision to it is a new tolerance choice, not a consequence of
+> that summary's formatting"*, and `D1` records the half-display-unit rule as **factually wrong**
+> and withdrew the thresholds it produced (`SPEC:3909`, `:2131`, `:2124`). **Three withdrawn numbers
+> in this campaign already trace to that rule.** So the distribution is reported and nothing is
+> compared to it. **This exception is bound to one digest and generalizes to nothing; it does not
+> need an acceptance boundary, and attaching one would re-open "how much movement is scientifically
+> acceptable" — the question `θ` was closed on and which remains open.**
+>
+> **The measurement is itself stable:** `4.4311e-14` against the historical `4.4520e-14`, ratio
+> **`0.9953`**.
 >
 > **THEN THE REASON THE CRITERION IS UNRESOLVABLE.** Its **predeclared-tolerance form cannot be
 > constructed for an object already built** — a bound fixed *before* production cannot be fixed

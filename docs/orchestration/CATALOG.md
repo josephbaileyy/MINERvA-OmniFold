@@ -32,8 +32,11 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   measured on the persisted `x_cv`/`x_cv2`; global `r_null` `4.452000e-14`, itself stable to
   **0.5%**. ⚠ **The earlier "twelve orders below the 5% tolerance" framing is WITHDRAWN as
   invalid** — `r_null` is a relative change in the CV *vector* and `δ` bounds movement of an
-  estimated *σ*; the comparable quantity is the **five significant figures** at which central
-  values are quoted. Unresolvable only because **a predeclared-tolerance form cannot be constructed
+  estimated *σ*; ⚠ **and the replacement comparator is ALSO withdrawn** — *five significant figures* borrows a
+  threshold from formatting, which `SPEC` §6.8's `D2` row bars verbatim and whose parent rule
+  `D1` records as factually wrong. **The distribution is reported with NO comparator:** max
+  per-bin `1.755272e-12`, **zero bins above `1e-11`**, against a feared shape of `4.4e2` —
+  **14.4 orders** — with the small-bin trend stated (`ρ = −0.3103`) rather than worked around. Unresolvable only because **a predeclared-tolerance form cannot be constructed
   for an object already built**, not because reproducibility is in doubt; and **"bitwise identity
   is unreachable" is withdrawn as overclaimed** — the probe tested the historical **unpinned**
   configuration, so the true statement is *not demonstrated on the evidence in hand*; **(c)** a
