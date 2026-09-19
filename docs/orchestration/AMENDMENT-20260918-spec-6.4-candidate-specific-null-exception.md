@@ -30,8 +30,19 @@ deliver determinism within a single process, the arm-7 experiment would fail, an
 > **P2 IS NOT AUTHORIZED and its `9.00`–`12.00` CPU task-hours are NOT spent.** This is the
 > predeclared branch resolving, recorded so it is visibly the prior rule firing.
 
-Bitwise identity is therefore **unreachable** without the estimator change that remains reserved —
-which is precisely §6.4's stated precondition for this clause.
+⚠ **WHAT WAS SHOWN, AND WHAT WAS NOT.** An earlier version of this record said bitwise identity is
+**unreachable**. That is **overclaimed and is withdrawn.** The probe tested the **historical
+unpinned configuration**; it does not establish that the **pinned** configuration fails. P0's
+outcome licensed **deferring P2** — which is what §2.4 predeclared and what was done — not proving
+impossibility.
+
+**The premise this clause rests on, restated as what the evidence supports:** every route to a
+**predeclared** `ε` is closed *for an object already built*, because the tolerance form requires a
+bound fixed before production; and the route that would sidestep `ε` by demonstrating bitwise
+identity is **not available on the evidence in hand**, because the only configuration measured is
+the historical unpinned one and the pinned alternative requires the estimator change Joseph
+reserves. **"Not demonstrated on the evidence in hand" is weaker than "impossible", and the weaker
+statement is the true one.**
 
 ## 2. THE AMENDMENT
 
@@ -52,19 +63,40 @@ altered by (b) or (c), and no later act erases it.*
 token.** G's `1.31e-12` is **context for scale only and is not a threshold**; Z's value being
 smaller is **not a pass**.
 
-> **THE MEASUREMENT FIRST.** Measured reproducibility is **`4.4311e-14` relative**, against an
-> acceptance tolerance of **`5%`**. That is **twelve orders of magnitude below anything that can
-> affect a quoted number** (`0.05 / 4.43e-14 ≈ 1.1e12`). §6.4's own statistic `null_norm/√tr`
-> measures `3.218e-13`, likewise far below any quoted precision. And the measurement is itself
-> **stable**: `4.4311e-14` against the historical `4.4520e-14` is a ratio of **`0.9953`** — **the
-> measurement of non-determinism reproduces to 0.5%.**
+> **THE MEASUREMENT, PER BIN.** Measured on the persisted `x_cv` / `x_cv2` and the support
+> predicate — zero new compute:
 >
-> **THEN THE REASON IT IS UNRESOLVABLE.** The criterion cannot be resolved because **its
-> predeclared-tolerance form cannot be constructed for an object that is already built** — a bound
-> fixed *before* production cannot be fixed *after* it — **not because reproducibility is in
-> doubt.** The two facts are independent, and they are stated in this order deliberately: the
-> unresolvability is a defect in the criterion's applicability to this object, and it must not be
-> read as a reservation about the object's reproducibility.
+> | | |
+> |---|---|
+> | global `r_null = ‖x₂−x₁‖/‖x₁‖` | **`4.452000e-14`**, reproducing the historical value exactly |
+> | **max per-bin `\|Δx\|/x` over all 10694 reported bins** | **`1.755272e-12`** |
+> | 99.9th percentile / median | `1.318750e-12` / `6.341524e-14` |
+> | reported bins exceeding `1e-10` | **zero** |
+> | smallest reported `x_cv` (`1.009379e-50`) — its relative change | `4.880054e-14` |
+>
+> **The per-bin statement replaces a global one that could not support it.** A global L2 ratio is
+> insensitive to a large relative change in a small-magnitude bin — the same `4.4311e-14` could
+> coexist with a 443-fold change in one bin. **That counterexample is excluded here by direct
+> measurement, not by argument:** the largest per-bin change anywhere is `1.755e-12`, and the
+> smallest reported bin is among the most stable.
+>
+> **What this is comparable to, and what it is NOT.** It is comparable to **the precision at which
+> central values are quoted** — the note prints five significant figures, e.g. `8.7918e-39`, and a
+> `1.8e-12` relative change cannot reach the fifth. **It is NOT comparable to `δ = 5%`**, and an
+> earlier version of this clause divided the two and called the quotient "twelve orders of
+> magnitude". ⚠ **That framing is WITHDRAWN as invalid:** `r_null` is a relative change in the CV
+> **vector** between two re-unfolds; `δ` bounds how far an estimated **σ** may move across
+> estimator-seed baselines. They are different quantities and their quotient is a number, not a
+> ratio of like things.
+>
+> **The measurement is itself stable:** `4.4311e-14` against the historical `4.4520e-14` is a ratio
+> of **`0.9953`** — the measurement of non-determinism reproduces to 0.5%.
+>
+> **THEN THE REASON THE CRITERION IS UNRESOLVABLE.** Its **predeclared-tolerance form cannot be
+> constructed for an object already built** — a bound fixed *before* production cannot be fixed
+> *after* it — **not because reproducibility is in doubt.** Stated in this order deliberately: the
+> unresolvability is a defect in the criterion's applicability to this object and must not be read
+> as a reservation about the object's reproducibility.
 
 **(c)** **Adoption of this digest may proceed notwithstanding (a)** if and only if the remaining
 required evidence is complete and independently verified. **(c) is a permission to decide, not a

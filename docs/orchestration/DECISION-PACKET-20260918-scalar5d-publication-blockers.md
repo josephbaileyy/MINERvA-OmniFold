@@ -1339,12 +1339,31 @@ an exact precision — the same residual δ carries. And the factor `3` is a jud
 `0.112` and `1×` `0.056`, and the current member clears all three. **`cause2_f7_margin` stays
 withheld until you declare a value.**
 
-### 17.3 ⚠ One measured discrepancy, surfaced rather than folded in
+### 17.3 ⚠ WITHDRAWN — I reconciled a conflict the ledger had already resolved, and backwards
 
-`uq_math.py:125` records *"Measured on the adopted ensemble: **4.69x** the floor, **4.83x** after the
-flux correction."* **On Z's precursor ensemble the same statistic is `5.3478×`.** Same formula, same
-`k`, different ensemble — so this is not a disagreement about the rule but a different subject
-measured by it. **It is recorded because a reader meeting `5.35` next to a comment saying `4.69`
-would reasonably suspect one of them is wrong, and neither is.** The relevant consequence is only
-that Z sits *further* from the branch point than the adopted product did, so the margin is easier to
-satisfy, not harder.
+**What this section said:** that `uq_math.py:125`'s *"4.69x the floor, 4.83x after the flux
+correction"* describes **the adopted ensemble**, while Z's precursor gives `5.3478×`, and that the
+two are *"not a disagreement about the rule but a different subject measured by it."*
+
+**That is wrong in both halves.** `VALIDATION_LEDGER.md`:
+
+| row | ensemble | shift | `√tr` | N | ratio |
+|---|---|---|---|---|---|
+| **VL33** | **full-160, post-J28 — THE ADOPTED ENSEMBLE** | `1.878696733368378e-38` | `4.443673650575504e-38` | **160** | **`5.3478×`** |
+| **VL34** | 122-throw morning re-roll | `1.885299e-38` | `4.312442e-38` | **122** | `4.8288×` |
+
+So **`5.3478×` IS the adopted ensemble**, and VL33's operands are **exactly** the numbers measured
+for C2 (`1.878697e-38`, `4.443674e-38`). **`4.83×` belongs to the 122-throw re-roll**, not to the
+adopted ensemble. There are not two subjects; there is one, and I assigned it the wrong ratio.
+
+**And the conflict was already closed.** `VALIDATION_LEDGER.md:381` is headed
+*"2026-08-11 F7 mean-shift ratio on the ADOPTED ensemble — VERIFIED-NUMERIC, corrects `4.83×` to
+5.35×"* — **five weeks before I "surfaced" it.** The live defect is that **`uq_math.py:125`'s
+comment is stale** and mis-attributes the 122-throw figure to the adopted ensemble.
+
+**Why this is recorded rather than deleted.** I met a comment and a measurement that disagreed and
+**constructed an explanation instead of looking for the record that adjudicates them** — then
+presented the construction as a finding. It is the same shape as reading a histogram's content off
+its filename, and the same shape as the records overstating what they establish that this packet
+counts: *a reconciliation asserted where a citation was available.* **The ledger is the authority;
+`uq_math.py:125` is a stale comment and is not one.**

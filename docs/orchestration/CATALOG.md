@@ -27,11 +27,16 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   §2.4 **predeclared before the measurement existed** — so **P2 IS NOT AUTHORIZED and its
   `9.00`–`12.00` CPU task-hours are not spent.** The clause is **candidate-specific, one digest
   (`3d7465f6…`), exhausted by one use**: **(a)** `M(i)` stays **`UNRESOLVED`** with `4c` and no
-  later act erases it; **(b)** a retrospective assessment carrying **no grade token** — measured
-  reproducibility `4.4311e-14` against a `5%` tolerance, **twelve orders of magnitude** below
-  anything that can affect a quoted number, itself stable to **0.5%** (`0.9953` against the
-  historical `4.4520e-14`), and unresolvable only because **a predeclared-tolerance form cannot be
-  constructed for an object already built**, not because reproducibility is in doubt; **(c)** a
+  later act erases it; **(b)** a retrospective assessment carrying **no grade token** — **PER-BIN**
+  reproducibility, max `1.755272e-12` over all 10694 reported bins with **zero** above `1e-10`,
+  measured on the persisted `x_cv`/`x_cv2`; global `r_null` `4.452000e-14`, itself stable to
+  **0.5%**. ⚠ **The earlier "twelve orders below the 5% tolerance" framing is WITHDRAWN as
+  invalid** — `r_null` is a relative change in the CV *vector* and `δ` bounds movement of an
+  estimated *σ*; the comparable quantity is the **five significant figures** at which central
+  values are quoted. Unresolvable only because **a predeclared-tolerance form cannot be constructed
+  for an object already built**, not because reproducibility is in doubt; and **"bitwise identity
+  is unreachable" is withdrawn as overclaimed** — the probe tested the historical **unpinned**
+  configuration, so the true statement is *not demonstrated on the evidence in hand*; **(c)** a
   **permission to decide, not a decision and not evidence.** `null_epsilon` stays **WITHHELD** —
   the clause makes it **moot for the required path, it does not supply it.** Nothing generalizes,
   including to a future rebuild of the same object.

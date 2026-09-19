@@ -45,6 +45,34 @@ and never computed in production.**
 **Coverage, in full:** **100%** on bins entering a quoted projection, **≥99%** on the full reported
 support, and **every failing bin enumerated in the receipt, never absorbed.**
 
+## 1b. `cause2_f7_margin = 0.168` — PROVENANCE, and it is partly retrospective
+
+Asked to justify `3/√318` **without reference to the observed ratio**. Taking the two factors
+separately, because they do not have the same standing:
+
+**`√318` — INDEPENDENTLY MOTIVATED.** `318 = 2(N−1)` at `N = 160`, and `1/√(2(N−1))` is the
+asymptotic relative standard error of an estimated standard deviation from `N` draws. The branch
+point `k·floor` is proportional to `√Tr`, estimated from those same `N` throws, so it **inherits
+exactly that relative uncertainty**. This factor depends on `N` alone — fixed by the ensemble long
+before any ratio was computed — and someone who had never seen `2.6739` and asked *"what is the
+resolving power of this ensemble on the quantity that sets the branch point?"* arrives at it.
+
+**The factor `3` — A CONVENTION, CHOSEN AFTER THE RATIO WAS KNOWN.** Nothing in this problem derives
+`3` rather than `2` or `5`; it is the customary 3σ separation. **And the record shows I had the
+answer in hand: I reported at the time that `1×`, `2×` and `3×` all clear.** That demonstrates
+robustness and it equally demonstrates that candidate multipliers were checked against a known
+outcome.
+
+> **DISPOSITION: `0.168` is a DISCLOSED RETROSPECTIVE CHOICE in its multiplier, on an independently
+> motivated scale.** Not presented as predeclared, and it is **not** claimed to satisfy §6.4's
+> before-production discipline — which is in any case scoped to the null.
+
+**One consequence, marked as consequence and not provenance:** the measured ratio clears the
+strictest of the three candidates by `2.29×`, and the multiplier would have had to exceed **`29.85`** to
+fail — `(2.673896 − 1)·√318`. *(An earlier draft of this paragraph said `≈16`, computed by eye and wrong; the figure above is evaluated.)* So the retrospection **did not determine the outcome**. That bears on how much the choice
+mattered; it does **not** make the choice prospective, and it is recorded here so nobody later reads
+robustness as predeclaration.
+
 ## 2. `s_proj` — the functional set
 
 The **rows of `project_cov_nd.py`'s `M`, plus the all-ones vector.** `s_proj` is the **maximum

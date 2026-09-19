@@ -122,7 +122,12 @@ def joint_throw_covariance(throws, cv):
 # decisions / gates" (the paragraph beginning "mean_shift convention (Fable F7)"): measure
 # ||mean_shift|| against the sampling floor sqrt(Tr C)/sqrt(N); `~floor` -> mean-centered alone is
 # acceptable; `>> floor` -> the CV-centered variant must ALSO be produced and the shift reported either
-# way, never silently dropped. Measured on the adopted ensemble: 4.69x the floor, 4.83x after the flux
+# way, never silently dropped. ⚠ CORRECTED 2026-09-18: this comment said 4.69x/4.83x were
+# "measured on the adopted ensemble". They are NOT. VALIDATION_LEDGER VL34 attributes 4.8288x to
+# the 122-THROW morning re-roll; VL33, the ADOPTED ensemble at N=160, measures 5.3478x, and the
+# ledger recorded that correction on 2026-08-11 at :381. Re-measured 2026-09-18 on the adopted
+# operands: shift 1.878697e-38 / sqrt_tr 4.443674e-38 -> 5.3478x, reproducing VL33 exactly.
+# Superseded text: Measured on the adopted ensemble: 4.69x the floor, 4.83x after the flux
 # correction. Cited by content, not by line number -- that file is prepend-ordered and every
 # line-number citation into it decays (BEN-103).
 #
