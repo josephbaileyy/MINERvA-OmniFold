@@ -53,8 +53,16 @@ def recovery(prior: np.ndarray, unfolded: np.ndarray, target: np.ndarray,
     """Fraction of the injected L1 displacement recovered. L1 = 2 x total variation.
 
     Defined against the PRIOR, so an estimator that does nothing scores 0 and one
-    that reaches the target scores 1. Values above 1 mean overshoot and are
-    reported, not clipped: clipping would hide a real failure mode.
+    that reaches the target scores 1.
+
+    The score is BOUNDED ABOVE BY 1 and unbounded below. ``residual_l1`` is a sum
+    of absolute values, so it cannot be negative and the score cannot exceed 1;
+    an earlier version of this docstring said "values above 1 mean overshoot",
+    which described a state this metric cannot reach. Overshooting ALONG the
+    injected direction moves away from the target again and scores BELOW 1, the
+    same as undershooting -- the two are distinguished by
+    `score_campaign.overshoot_projection`, not by the sign of the score. Going
+    the wrong way scores below 0, and that is the unbounded tail worth watching.
     """
     prior = np.asarray(prior, float); unfolded = np.asarray(unfolded, float)
     target = np.asarray(target, float)
@@ -72,7 +80,8 @@ def recovery(prior: np.ndarray, unfolded: np.ndarray, target: np.ndarray,
         "residual_l1": float(residual),
         "recovery": float(1.0 - residual / injected),
         "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
-        "overshoot_not_clipped": True,
+        "bounded_above_by_one": True,
+        "below_zero_means_worse_than_doing_nothing": True,
     }
 
 

@@ -44,11 +44,31 @@ class Recovery(unittest.TestCase):
         r = rae.recovery(self.PRIOR, self.TARGET, self.TARGET)
         self.assertAlmostEqual(r["recovery"], 1.0, places=9)
 
-    def test_overshoot_is_reported_not_clipped(self):
+    def test_overshoot_scores_below_one_like_undershoot(self):
+        # This assertion was already here and already correct; the field beside
+        # it was called `overshoot_not_clipped` and the docstring said values
+        # above 1 mean overshoot. The two were never read together. The score is
+        # 1 - residual/injected with residual a sum of absolute values, so it is
+        # bounded above by 1 and travelling too far scores below it, exactly as
+        # stopping short does. The direction is recovered by
+        # `score_campaign.overshoot_projection`, not by this number.
         over = self.TARGET + (self.TARGET - self.PRIOR)
         r = rae.recovery(self.PRIOR, over, self.TARGET)
         self.assertLess(r["recovery"], 1.0)
-        self.assertTrue(r["overshoot_not_clipped"])
+        self.assertTrue(r["bounded_above_by_one"])
+
+    def test_no_weighting_can_score_above_one(self):
+        rng = np.random.default_rng(5)
+        for _ in range(200):
+            arbitrary = rng.gamma(1.0, 1.0, size=self.PRIOR.size) + 1e-6
+            r = rae.recovery(self.PRIOR, arbitrary, self.TARGET)
+            self.assertLessEqual(r["recovery"], 1.0 + 1e-12)
+
+    def test_moving_away_from_the_target_scores_below_zero(self):
+        away = self.PRIOR - 0.5 * (self.TARGET - self.PRIOR)
+        r = rae.recovery(self.PRIOR, np.abs(away), self.TARGET)
+        self.assertLess(r["recovery"], 0.0)
+        self.assertTrue(r["below_zero_means_worse_than_doing_nothing"])
 
     def test_it_is_scale_invariant(self):
         a = rae.recovery(self.PRIOR, self.TARGET * 0.5, self.TARGET)
