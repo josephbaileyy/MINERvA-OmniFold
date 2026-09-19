@@ -30,6 +30,40 @@ sha256sum "$P/z-cv.npz" "$P/z-mean.npz"
 echo "=== the exception record exists and names the source ==="
 ls -l "$AMEND"; grep -c '3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5' "$AMEND"
 
+# ---- THE ROOT SHADOW, AND ITS OWN INTERCEPTION PROOF -------------------------------------------
+# 58552664's leg B died in cling::CIFactory::createCI with SIGSEGV. The previous design ran the
+# refusal legs WITHOUT the production environment, which conflated two different things: whether a
+# GUARD needs ROOT, and whether this conda interpreter works without its env. It does not. So the
+# environment is now sourced for every leg, and ROOT is SHADOWED for the refusal legs by a module
+# that raises -- a guard that fires under the shadow demonstrably did not need ROOT, and anything
+# that reaches for ROOT yields a legible ImportError naming the importing line instead of a
+# segfault. B4 gets the REAL ROOT, because B4 writes a file and a design that shadows every leg
+# kills its own positive control.
+source "$W/setup_salloc_env.sh" >/dev/null 2>&1 || true
+SHIM="$OUTD/_rootshim"; mkdir -p "$SHIM"
+cat > "$SHIM/ROOT.py" <<'SHIMEOF'
+raise ImportError("ROOT SHADOWED BY THE GUARD-SET CONTROL: a guard reached under this shadow "
+                  "did not need ROOT. If you are seeing this traceback, the frames below name "
+                  "the line that imported ROOT.")
+SHIMEOF
+# ⚠ PROVE THE SHADOW INTERCEPTS BEFORE TRUSTING ANY LEG THAT RELIES ON IT. Sourcing the
+# environment can prepend ROOT's own directory to PYTHONPATH, which would OUTRANK a shadow placed
+# after it -- and then "a guard fired without ROOT" would prove nothing, with no path from the
+# defect to the signal. The shadow is prepended, and then checked.
+SHADOW_PYTHONPATH="$SHIM:${PYTHONPATH:-}"
+echo "=== SHADOW INTERCEPTION CHECK (must fail, with the shadow's own message) ==="
+if PYTHONPATH="$SHADOW_PYTHONPATH" $PY -c "import ROOT" 2>&1 | grep -q "ROOT SHADOWED BY THE GUARD-SET CONTROL"; then
+  echo "  SHADOW OK -- the shim intercepts; refusal legs below are meaningful"
+  SHADOW_OK=1
+else
+  echo "  *** CONTROL FAILED: the ROOT shadow does NOT intercept. Every refusal leg below that"
+  echo "      relies on it proves NOTHING about reachability. Raw result of the probe:"
+  PYTHONPATH="$SHADOW_PYTHONPATH" $PY -c "import ROOT" 2>&1 | head -5 | sed 's/^/      /'
+  SHADOW_OK=0
+fi
+echo "  resolved ROOT under the shadow:"
+PYTHONPATH="$SHADOW_PYTHONPATH" $PY -c "import importlib.util as u; s=u.find_spec('ROOT'); print('      origin =', s.origin if s else None)" 2>&1 | tail -2
+
 run() {  # run <label> <expect-rc> <must-contain> <cmd...>
   # ⚠ THIS CHECKER WAS BROKEN ON ITS FIRST RUN AND THAT IS WHY IT IS SHAPED THIS WAY.
   # It used to test `expect=REFUSE and rc==0 -> FAIL`. In 58549890 legs B1-B3 SEGFAULTED at
@@ -52,7 +86,7 @@ run() {  # run <label> <expect-rc> <must-contain> <cmd...>
   if [ -n "$must" ] && ! grep -qF -- "$must" "$OUTD/$label.out" "$OUTD/$label.err"; then
     echo "*** CONTROL FAILED: $label did not emit the expected text: $must"
   fi
-  echo "--- stderr tail ---"; tail -5 "$OUTD/$label.err"
+  echo "--- stderr tail ---"; tail -14 "$OUTD/$label.err"
 }
 
 # ---- LEG A: the ACTUAL LAUNCHER, its own gate, both directions --------------------------------
@@ -77,25 +111,23 @@ run A2_launcher_exception_record_is_not_an_adoption 3 "does not state an adoptio
 
 # ---- LEG B: the variant guard, the actual files, both directions and both crossings ----------
 AX=(--src-hist hCov_combined5d_total_uthrow --src-axes pt,pz,eavail,q3,W --keep-axes eavail,W)
-run B1_publication_from_MEAN_variant 1 "mean-centering alone is disqualified" $PY project_cov_nd.py \
+run B1_publication_from_MEAN_variant 1 "mean-centering alone is disqualified" env PYTHONPATH="$SHADOW_PYTHONPATH" $PY project_cov_nd.py \
   --src-cov "$P/z-mean.npz" --src-cv "$P/z-mean.npz" "${AX[@]}" \
   --run-class publication --expect-variant mean --out "$OUTD/B1.root"
-run B2_cv_file_declared_mean 1 "declares variant 'cv'" $PY project_cov_nd.py \
+run B2_cv_file_declared_mean 1 "declares variant 'cv'" env PYTHONPATH="$SHADOW_PYTHONPATH" $PY project_cov_nd.py \
   --src-cov "$P/z-cv.npz" --src-cv "$P/z-cv.npz" "${AX[@]}" \
   --run-class publication --expect-variant mean --out "$OUTD/B2.root"
-run B3_mean_file_declared_cv 1 "declares variant 'mean'" $PY project_cov_nd.py \
+run B3_mean_file_declared_cv 1 "declares variant 'mean'" env PYTHONPATH="$SHADOW_PYTHONPATH" $PY project_cov_nd.py \
   --src-cov "$P/z-mean.npz" --src-cv "$P/z-mean.npz" "${AX[@]}" \
   --run-class publication --expect-variant cv --out "$OUTD/B3.root"
-# B4 is the only leg that WRITES, so it is the only one that needs ROOT. Sourcing the
-# environment here and nowhere else is deliberate: B1-B3 above prove the refusals are reachable
-# on a bare interpreter, which is the condition a reviewer exercises them in.
-source "$W/setup_salloc_env.sh" >/dev/null 2>&1 || true
+# B4 runs with the REAL ROOT and NO shadow -- it writes a file, and shadowing every leg would
+# kill the positive control.
 # B5 closes gap 4, THE PRIORITY. --run-class was once passed zero times, which left the
 # `adoptable: false` refusal unreachable -- and that refusal is the most load-bearing guard for
 # THIS adoption, because it is what stops a NON-PASSING source being published WITHOUT the
 # exception. Every other leg passes publication WITH the exception, so the guard that makes this
 # source special has never fired. This is that case: publication + cv + NO exception.
-run B5_publication_cv_but_NO_exception 1 "records \`adoptable: false\`" $PY project_cov_nd.py \
+run B5_publication_cv_but_NO_exception 1 "records \`adoptable: false\`" env PYTHONPATH="$SHADOW_PYTHONPATH" $PY project_cov_nd.py \
   --src-cov "$P/z-cv.npz" --src-cv "$P/z-cv.npz" "${AX[@]}" \
   --run-class publication --expect-variant cv --out "$OUTD/B5.root"
 
