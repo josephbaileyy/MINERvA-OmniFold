@@ -73,6 +73,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   - **Joseph reverses `AUTHORIZATION-20260918` §2 ruling 2, for the computed-acceptance goal only.**
   One additional member at `262.00` CPU / `158.25` GPU, through the normal campaign check. The
   premise *"nothing required needs `N`"* died when acceptance became computed. **Never submitted.**
+- [`EVIDENCE-20260919-lateral-bands-are-seed-pinned.md`](EVIDENCE-20260919-lateral-bands-are-seed-pinned.md)
+  - **Five of `C_Z`'s 45 bands cannot move with the estimator-seed offset, and the hook is
+  structurally incapable of reaching them** — `MNV_EST_SEED_OFFSET` appears **0** times in all six
+  files of the active-lateral chain, and `run_p4_unfold_std.sh:111` pins a literal `--seed 42` with
+  its own reason (*"MAT ± cancels CV"*). Measured share: **26.0% of `√Tr C_Z`, 6.75% of the
+  trace**, dominated by the two muon-energy bands. **So a cause-3 MET covers 93.2% of the trace.**
+  Unpinning it is a material change to the estimator and is routed to Joseph, not attempted.
 - [`DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md`](DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md)
   - **The exception route, taken to the point where only Joseph's act is missing.** It **adopts
   nothing as it stands and is built so that it cannot**: its sentinel line is deliberately negated,
