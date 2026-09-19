@@ -88,8 +88,50 @@ artifact rather than the summary.
 **That is not a reason to distrust the lane — it is the opposite, and the self-reporting is to its
 credit.** It is a reason about the **state of the set**: a required set whose defect-discovery rate is
 measured in hours has not converged, and *"complete"* asserted mid-discovery is a claim about the
-present minute. **BLOCK on question (1) is the accurate verdict, and it is a verdict about timing and
-routing, not about the work.**
+present minute.
+
+### ⚠ `V3` AMENDED 2026-09-18 — the signal stands, MY INSTRUMENT WAS WRONG, and the replacement is satisfiable
+
+The requester answered `V3` and **one of its three legs defeats mine. I concede it.**
+
+**Conceded: as a BLOCKING criterion, `V3` has no exit.** *"Defects are still surfacing"* has no
+satisfaction condition — there is no point at which anyone can demonstrate that they have stopped.
+**A criterion with no exit condition is not a criterion**, which is a standard this lane has applied
+to others twice this week. `V3` as written was a disclosure wearing a gate's clothing.
+
+**Also conceded: the remedy is right.** A third lane on the unreached rows, plus guards that
+demonstrably fire, addresses the residual directly.
+
+**NOT conceded — the middle leg's inference does not hold as stated.** The claim is that every
+instance *"is a record overstating what was verified, or a guard that was unreachable. None is a
+finding that the covariance is wrong."* The first half is a sound classification. **The second half
+is inference from an absence that the defects themselves created**: the reason no instance says the
+covariance is wrong may be that **the apparatus capable of showing it was the thing that was
+broken.** That is not hypothetical here — instance 3 (`variant` read by nothing) is precisely *"the
+wrong covariance could have been selected and nothing would have caught it"*, and instance 6
+(`n_empty` zero by construction) is a projection check that could not fail. **You cannot read "the
+object is sound" off "all defects so far were in the instruments", when the instruments are what
+would have found defects in the object.**
+
+**The wording that is supportable:** *"no defect found so far is in the object — and until today the
+apparatus that would have found one was itself defective, so that absence is not yet strong
+evidence."* One sentence, and it stops the absence from being read as a positive.
+
+**AND THE EXIT CRITERION `V3` SHOULD HAVE NAMED, which is satisfiable and is not quiescence:**
+**every protection in the required path exercised, with a positive control.** Not *"no new defects
+for a while"* — coverage, not silence.
+
+⚠ **Which exposes a concrete gap, and it is the actionable residue of this whole exchange.** `V4`
+exercised the guard set of **one tool**, `project_cov_nd.py`. The other five catalogued protections —
+the keyword grep, the rc-1 predicate, `variant`-in-a-docstring, `--run-class` unpassed,
+`--adoption-exception` unpassed — live in **other code paths, and none of those has been
+exercise-tested by anyone.** The strength of *"we verified what we think we verified"* now rests
+almost entirely on guards firing, and that has been demonstrated for one tool out of the set.
+**`V3`'s replacement is therefore not a waiting period but a list**, and the list is not yet done.
+
+**BLOCK on question (1) stands — on `V1` and `V2`, which are about what the required set IS and who
+may sign it. `V3` is reclassified from a ground to a disclosure, with the exit criterion above
+attached.**
 
 ---
 
