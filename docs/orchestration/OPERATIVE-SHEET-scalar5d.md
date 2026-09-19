@@ -213,6 +213,41 @@ falsifiable check rather than a restatement.
 > runs — **(a), the digest, is the binding one**; (b) corroborates. **Any disagreement is a FINDING, not a tolerance question**, and the figure is regenerated
 > from the adopted product before DOCS is re-verified.
 
+## 4d. THE GENERAL RULE, and the exercise state of all six catalogued protections
+
+> ### A STEP WHOSE VERIFICATION IS NOT ON THE PATH THE FAILURE TAKES CANNOT CATCH THAT FAILURE.
+
+**Seven instances, same structure every time.** `import ROOT` above argparse, so every guard died
+before it could fire. A destination mask defined as *whatever received a source cell*, so `n_empty`
+could only be zero. A flag built into an array and never passed to the command. `variant` read by
+nothing. An adoption gate satisfied by a routing document. An edit whose match failed silently while
+its commit returned zero — in a document about records overstating what they establish. And **the
+seventh is mine, in the instrument built to catch the others:** the guard-set control's checker
+tested `expect REFUSE and rc == 0`, so three **segfaults** at `rc=139` were reported as three
+refusals. Three guards that never executed read as three that fired.
+
+**Corollary, and it is the operative half:** *a unit test is not an exercise, and "exits nonzero" is
+not a control.* A refusal must be pinned to its **exact exit code AND its own message**, and a crash
+must be named as a crash.
+
+### Exercise state — real path, with a control that could have failed
+
+| # | protection | refuse arm | accept arm / control | state |
+|---|---|---|---|---|
+| 1 | adoption record — `ADOPTS-SHA256` sentinel | **A2**, real launcher: the §6.4 amendment, which **names the right digest**, refused `rc 3` *"does not state an adoption"* | **not exercised — needs Joseph's record** | **partial, and it cannot be closed before ADOPT** |
+| 2 | rc-1 once admitted a routing document | **A2** is that case on the real path; **A1** distinguishes *file absent* from *present but not adopting* | same as 1 | **partial**, same reason |
+| 3 | `--expect-variant` | **B2** cv declared mean, **B3** mean declared cv — both directions | **B4** must PRODUCE on cv/cv | **covered, pending `58552664`** |
+| 4 | `--run-class`, once passed zero times | **NONE.** every leg passes `publication` **with** the exception, so the `adoptable:false` refusal it gates never fires | — | **GAP** |
+| 5 | `--adoption-exception` | **passed-and-valid: B4.** **set-but-missing → rc 3: NONE** | — | **GAP on one arm** |
+| 6 | import ordering | **B1–B3 run WITHOUT the production environment** — with the fix they must refuse on a bare interpreter | **B4 sources it and writes** | **covered by design, pending `58552664`** |
+
+**The two gaps, priced rather than built.** Both sit inside the control's existing scope and neither
+needs new machinery: **A3** — `MNV_ADOPTION_EXCEPTION` set to a missing path, expect `rc 3`; refuses
+before any file is read, so **≈0 cost**. **B5** — `publication` + `cv` + **no** exception, expect the
+`adoptable: false` refusal; one more 890 MB read, **≈0.1 CPU task-h**. They are **named, not added**,
+because `58552664` was already queued when the gaps were identified and cancelling a running control
+to widen it is churn. They belong in one follow-on run if the advisor wants them closed.
+
 ## 5. Execution order — fixed
 
 **C1–C7 complete → NULL resolved (P0 first, zero-compute; P2 NOT authorized) → SRC_COV identified
