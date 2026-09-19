@@ -74,6 +74,15 @@ PY
 
 echo "JOIN COMPLETE" > "$JOINDIR/terminal.txt"
 
+# A join that passes its gate does not oblige us to launch 32 tasks on the
+# spot. `LAUNCH=0` stops here so the joined index can be smoke-tested first --
+# every defect found today was in the path between a passing join and a
+# training step, and each cost a queue wait to discover.
+if [[ "${LAUNCH:-1}" == "0" ]]; then
+  echo "[join] LAUNCH=0: stopping after the join, nothing submitted"
+  exit 0
+fi
+
 export STAGE CHECKOUT OUTPUT COMMIT INPUTS_NPZ THEIRS_INDEX
 INPUTS_NPZ="$INVENTORY"
 THEIRS_INDEX="$JOINDIR"
