@@ -27,7 +27,10 @@ output=${OUTPUT:?}
 expected_commit=${COMMIT:?}
 inputs=${INPUTS_NPZ:?}
 index=${THEIRS_INDEX:?}
-events=${MAX_EVENTS:-20000}
+events=${MAX_EVENTS:-40000}
+# Two disjoint halves must fit inside the subsample, so the smoke half is a
+# quarter of it. The campaign's half size comes from the closure module.
+half=${HALF_SIZE:-$((events / 4))}
 
 cd "$checkout"
 [[ "$(git rev-parse HEAD)" == "$expected_commit" ]]
@@ -51,7 +54,7 @@ driver=nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py
     timeout --kill-after=30s 900s python "$driver" \
       --arm "$arm" --seed 17 --stage tuning --learning-rate 1e-4 --niter 1 \
       --repo "$checkout" --inputs-npz "$inputs" --theirs-index "$index" \
-      --max-events "$events" \
+      --max-events "$events" --half-size "$half" \
         --weights-folder "$output/$arm" \
       --output "$output/smoke-$arm.json" || echo "ARM $arm FAILED ($?)"
   done
