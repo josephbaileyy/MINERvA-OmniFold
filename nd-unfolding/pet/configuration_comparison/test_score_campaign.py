@@ -352,3 +352,50 @@ class TestOffGridEvents(unittest.TestCase):
                                    scoreable_regions=["good", "moderate"])
         self.assertAlmostEqual(
             report["regional_coverage"]["off_grid_truth_fraction"], 0.10)
+
+
+class TheInjectionIsTheEstablishedOne(unittest.TestCase):
+    """One injection, imported. It was two, and they disagreed by 0.51 in weight."""
+
+    def setUp(self):
+        import sys
+        sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+    def test_it_is_the_closure_modules_own_function(self):
+        import closure_powered_truth_reweight as cp
+        rng = np.random.default_rng(0)
+        x = rng.gamma(2.0, 0.5, 20000)
+        mine = sc.injected_truth_weights(x, 0.35, 3.0)
+        theirs, _ = cp.clipped_exponential_tilt(x, 0.35, 3.0)
+        np.testing.assert_array_equal(mine, theirs)
+
+    def test_it_clips_the_coordinate_not_the_weight(self):
+        """Weight-clipping flattens whole tails; that is what it replaced."""
+        import closure_powered_truth_reweight as cp
+        rng = np.random.default_rng(1)
+        x = rng.gamma(2.0, 0.5, 20000)
+        good = sc.injected_truth_weights(x, 0.35, 3.0)
+        bad = np.minimum(np.exp(0.35 * x), 3.0)
+        bad = bad / bad.mean()
+        # The old form saturates: many DISTINCT E_avail values share one weight.
+        saturated = x > np.log(3.0) / 0.35
+        self.assertGreater(saturated.sum(), 0)
+        self.assertEqual(len(np.unique(np.round(bad[saturated], 12))), 1)
+        self.assertGreater(len(np.unique(np.round(good[saturated], 12))), 1)
+
+    def test_it_is_rate_preserving(self):
+        rng = np.random.default_rng(2)
+        w = sc.injected_truth_weights(rng.gamma(2.0, 0.5, 50000), 0.35, 3.0)
+        self.assertAlmostEqual(float(w.mean()), 1.0, places=12)
+
+    def test_the_regional_references_and_the_score_use_the_same_injection(self):
+        """`characterize_regions` used the correct tilt; scoring used the other."""
+        import characterize_regions as cr
+        import closure_powered_truth_reweight as cp
+        self.assertEqual(cr.TILT_AMPLITUDE, 0.35)
+        self.assertEqual(cr.TILT_CLIP_Z, 3.0)
+        rng = np.random.default_rng(3)
+        x = rng.gamma(2.0, 0.5, 10000)
+        census_tilt, _ = cp.clipped_exponential_tilt(
+            x, cr.TILT_AMPLITUDE, cr.TILT_CLIP_Z)
+        np.testing.assert_array_equal(sc.injected_truth_weights(x), census_tilt)

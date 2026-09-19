@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import sys
 import time
 from typing import Any
 
@@ -34,18 +35,54 @@ import numpy as np
 
 import frozen_design as fd
 
+# `closure_powered_truth_reweight` lives one directory up and owns THE injection.
+# Appended rather than inserted: this must not shadow anything the driver already
+# resolves, and the pinned-checkout guard in `evaluate` checks where the modules
+# it cares about actually came from.
+_PET_DIR = str(Path(__file__).resolve().parent.parent)
+if _PET_DIR not in sys.path:
+    sys.path.append(_PET_DIR)
 
-def injected_truth_weights(eavail: np.ndarray, amplitude: float, clip: float,
-                           ) -> np.ndarray:
-    """The ratified injection: a clipped exponential tilt in truth E_avail.
 
-    `w = min(exp(amplitude * eavail), clip)`, normalised to preserve the total
-    so the injection changes the SHAPE and not the rate -- a rate change would
-    be recovered by normalization alone and would not test the estimator.
+def injected_truth_weights(eavail: np.ndarray,
+                           amplitude: float = fd.ENDPOINT["amplitude"],
+                           clip: float = fd.ENDPOINT["clip"]) -> np.ndarray:
+    """The ratified injection, which is THE established one, imported not rewritten.
+
+    This was a second implementation, `min(exp(A*eavail), clip)`, and it was
+    wrong in the specific way `clipped_exponential_tilt`'s own docstring warns
+    about: "clipping the weight instead would flatten the tilt over whole tails
+    and make the recoverable signal depend on the tail population." It also
+    exponentiated RAW E_avail rather than a standardised coordinate, so with
+    clip 3.0 every event above ln(3)/0.35 = 3.14 GeV got the same weight --
+    flat across the endpoint's top two bins, which run to 100 GeV.
+
+    It mattered beyond the shape. `characterize_regions` computed the reference
+    ceilings and the region census with the CORRECT tilt, so the adequacy floor
+    and every regional floor were derived under one injection and would have
+    been scored under another.
+
+    The established function clips the COORDINATE: z = clip((x - p50)/IQR, -Z,
+    +Z), tilt = exp(A*z)/mean(...), rate-preserving over exactly the rows given
+    it. Pass truth-passing rows only, or the quantiles describe the wrong
+    population.
     """
-    tilt = np.exp(amplitude * np.asarray(eavail, dtype=np.float64))
-    tilt = np.minimum(tilt, clip)
-    return tilt / tilt.mean()
+    import closure_powered_truth_reweight as cp
+
+    tilt, _spec = cp.clipped_exponential_tilt(
+        np.asarray(eavail, dtype=np.float64), amplitude=amplitude, clip_z=clip)
+    return tilt
+
+
+def injection_spec(eavail: np.ndarray,
+                   amplitude: float = fd.ENDPOINT["amplitude"],
+                   clip: float = fd.ENDPOINT["clip"]) -> dict[str, Any]:
+    """The injection's own record of what it did, for the receipt."""
+    import closure_powered_truth_reweight as cp
+
+    _tilt, spec = cp.clipped_exponential_tilt(
+        np.asarray(eavail, dtype=np.float64), amplitude=amplitude, clip_z=clip)
+    return spec
 
 
 def recovery(prior: np.ndarray, unfolded: np.ndarray, target: np.ndarray,
@@ -146,7 +183,6 @@ def evaluate(args: Any) -> dict[str, Any]:
     method development and an unfolded real spectrum would be a physics result
     nobody has authorized.
     """
-    import sys
     import numpy as np
 
     repo = Path(args.repo).resolve()
