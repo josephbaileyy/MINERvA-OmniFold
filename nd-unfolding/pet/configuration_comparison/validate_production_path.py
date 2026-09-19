@@ -247,11 +247,20 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
     inventory[victim].assign(original * (1.0 + MUTANT_RELATIVE_PERTURBATION))
     mutant = forward_xla_of(x, cond, pid, add).numpy()
     inventory[victim].assign(original)
-    mutant_deviation = _worst(np, base, mutant)
+    # WITHIN the XLA path. Measuring the mutant against the EAGER baseline mixes
+    # the perturbation with whatever XLA-versus-eager already is, and when the two
+    # are the same size -- which on this GPU they are, 2.295e-3 against 2.257e-3 --
+    # the control passes on the gap rather than on the defect it is supposed to
+    # detect. Comparing XLA against XLA isolates the perturbation.
+    mutant_deviation = _worst(np, xla, mutant)
+    mutant_vs_eager = _worst(np, base, mutant)
     limit = FLOOR_SLACK * forward_floor
     report["checks"]["V1_mutant_control"] = {
         "mutant": f"{victim} scaled by 1 + {MUTANT_RELATIVE_PERTURBATION}",
-        "deviation": mutant_deviation, "limit": limit,
+        "deviation": mutant_deviation,
+        "measured_within": "XLA against XLA, so the perturbation is isolated",
+        "deviation_against_eager_baseline_contaminated": mutant_vs_eager,
+        "limit": limit,
         "ratio_to_limit": (mutant_deviation / limit) if limit else None,
         "held": bool(mutant_deviation > MUTANT_MUST_EXCEED * limit),
         "criterion": (f"a real alteration must exceed the limit by "
@@ -362,10 +371,10 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
     }
 
     inventory[victim].assign(original * (1.0 + MUTANT_RELATIVE_PERTURBATION))
-    _, mutant_grads = grads_eager((x, cond, pid, add))
+    _, mutant_grads = grads_xla()                  # WITHIN the XLA path, as above
     inventory[victim].assign(original)
-    mutant_grad_deviation = max(_worst(np, a, b.numpy())
-                                for a, b in zip(eager_grads, mutant_grads))
+    mutant_grad_deviation = max(_worst(np, a.numpy(), b.numpy())
+                                for a, b in zip(xla_grads, mutant_grads))
     grad_limit = FLOOR_SLACK * grad_floor
     report["checks"]["V3_mutant_control"] = {
         "mutant": f"{victim} scaled by 1 + {MUTANT_RELATIVE_PERTURBATION}",

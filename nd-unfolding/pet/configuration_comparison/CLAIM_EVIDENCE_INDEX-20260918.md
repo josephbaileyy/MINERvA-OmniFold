@@ -36,6 +36,24 @@ These supersede rows elsewhere in this index where they conflict.
 | Z11 | the pretrained checkpoint gates the pretrained arm's **tuning and variance pilot**, not only its final runs | `DECISION_PACKET-20260919.md` §1; argument, not measurement | judgement |
 | Z12 | `PET2.no_weight_decay()` exists and `train.py` never calls it, so his norms and class tokens **are** weight-decayed | `src/scripts/train.py:2345`, one param group | code reading |
 
+## Z3. The complete-comparison attempt, 2026-09-20 (supersedes §Z and §Z2 where they conflict)
+
+| id | claim | evidence | kind |
+|---|---|---|---|
+| Z3-1 | **the pretrained checkpoints are reachable**, and "verified unavailable" was a probe from the wrong network: `/global/cfs/cdirs/m4567` is `drwxr-s--x`, traversable but not listable, and the portal returns HTTP/2 200 from Perlmutter | `CHECKPOINT_OBTAINED-20260919.md`; `best_model_pretrain_s.pt` sha256 `7e8331b0…12b1bc`, 34,605,223 B | measured |
+| Z3-2 | the checkpoint holds **9 top-level keys**, including an `ema_body` the reference loader does not use | `receipts/CHECKPOINT_INVENTORY_S-20260919.json` | measured |
+| Z3-3 | the reference loading policy transfers **139/148 body tensors (98.47 %)** and **26/28 classifier tensors (99.96 %)**, and **every reinitialized tensor is reinitialized by his own pipeline at his own defaults** | `receipts/CHECKPOINT_TRANSFER_REAL-20260919.json`, run with his `_filter_partial_state` against the real file | measured |
+| Z3-4 | the pretrained state loads into the Keras port **176/176 tensors, worst difference 0.0** | `receipts/PRETRAINED_STATE_MANIFEST-20260919.json`; `pretrained_init.py` refuses partial coverage in both directions | measured |
+| Z3-5 | the **fullevent** data leg is **4,116,128** rows, superseding the 5-D product's 4,091,707; budget factor **1.2645** | `receipts/FULLEVENT_INVENTORY-20260919.json`, sha256 `d466a0c1…29d25e`; loader consumes it in full (`:486,494`) | measured |
+| Z3-6 | **R-1 verified independently by this lane**: 12/12, data bare key NOT unique with 220,439 rows needing `occurrence`, 28,579,364 native misses all carrying identity | my own run of `verify_event_identity_sidecar.py`; sidecar sha256 `01e07412…ddd5f95c` | measured |
+| Z3-7 | the sidecar's `order_hash_module` sha256 **equals this HEAD's `fullevent_fps_dataloader.py`**, so order provenance binds to the code we run | `e1402370cdb8bd63` both sides | measured |
+| Z3-8 | **TF32 was enabled for every GPU measurement this lane took before 2026-09-20**; the frozen policy forbids it and no driver enforced it | `keras_backend.observed_precision_policy()` reports `tf32_enabled: True` by default | measured |
+| Z3-9 | at **enforced** FP32 the intended cell costs **410.6 µs/example** against 388.0 with TF32 (+5.8 %), peak **21.7 GiB**, on a **40 GB** A100 | `receipts/PORT_PROFILE_FP32-20260920.json`, job 58586142 | measured |
+| Z3-10 | the XLA path differs from eager on **100 % of rows** with TF's TF32 flag off, and the same XLA program differs from ITSELF between batch 2048 and 256 by a median 2.27e-3 per row | `receipts/PRODUCTION_VALIDATION_step1_reco-20260920.json`, row profile | measured, **cause under test** |
+| Z3-11 | k-NN ties on the real cloud: **20,695 coordinate tie pairs**, and **28,793 ambiguous k-th boundaries at K=3** / 20,778 at K=10 over 280 M centres | `receipts/KNN_TIE_CENSUS-20260920.json`, full population | measured |
+| Z3-12 | **the complete arm cannot be built**: zero of the 46 R4 branches exist in any tree of the 113 GB source, and the cap is 12 | ROOT read of `runEventLoopOmniFold_G2_FPS_MEFHC.root`; `HANDOFF-20260920-complete-comparison.md` §1 | measured |
+| Z3-13 | **no comparative result exists.** Neither arm has been trained on the endpoint and no recovery has been measured | — | scope statement |
+
 ## Z2. The optimisation pass, 2026-09-19 (later than §Z, and superseding it where they conflict)
 
 | id | claim | evidence | kind |
