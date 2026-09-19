@@ -73,6 +73,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   - **Joseph reverses `AUTHORIZATION-20260918` §2 ruling 2, for the computed-acceptance goal only.**
   One additional member at `262.00` CPU / `158.25` GPU, through the normal campaign check. The
   premise *"nothing required needs `N`"* died when acceptance became computed. **Never submitted.**
+- [`DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md`](DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md)
+  - **The exception route, taken to the point where only Joseph's act is missing.** It **adopts
+  nothing as it stands and is built so that it cannot**: its sentinel line is deliberately negated,
+  so `run_m1_projection.sh` refuses it `rc 3`. `tests/test_draft_adoption_record.py` asserts **both
+  directions** using the launcher's own regexes, **extracted rather than retyped** — refused as
+  written, accepted after the one documented edit. Carries the `UNRESOLVED` status and the
+  predeclaration failure **in the same place as the adoption**, and states that the exception
+  attaches to bytes and covers `3d7465f6…` and nothing else.
 - [`PREREGISTRATION-20260919-cause3-two-member-campaign.md`](PREREGISTRATION-20260919-cause3-two-member-campaign.md)
   - **Committed before any job was submitted.** `K = {0, 1200}` with all three offset predicates run,
   builder `d64257c3`, `S = 1e-3`, `ε = 1e-9`, pass rule = branch 3 **and** `r_null ≤ ε`, graded
