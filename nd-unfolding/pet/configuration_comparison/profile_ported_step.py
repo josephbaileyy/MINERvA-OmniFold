@@ -50,6 +50,7 @@ import argparse
 import json
 from pathlib import Path
 import statistics
+import subprocess
 import sys
 import time
 import traceback
@@ -65,7 +66,28 @@ HIS_COMPLETE_SETTINGS = {
     "input_dim": 4, "pid": True, "pid_dim": 8, "add_info": True, "add_dim": 5,
     "conditional": True, "cond_dim": 16, "num_coord": 2, "K": 10, "num_classes": 1,
 }
-VARIANTS = ("baseline", "optimised", "optimised_xla", "accum4", "ours_incumbent")
+# Which rewrites each variant has. Named rather than derived from the variant
+# string, so that adding a rewrite forces a decision about every variant instead
+# of silently folding into whichever branch matched first.
+#
+# `baseline` is the port as it stood at 9f800ea3, i.e. the state the 23.9x was
+# measured on. `broadcast` adds the two BITWISE-exact local-block rewrites.
+# `optimised` adds the projection rewrite, which is round-off-level and not
+# bitwise -- it is separated for exactly that reason, so its cost and its
+# numerical price can be read off independently.
+VARIANT_PATHS = {
+    "baseline": {"materialise_pair_mask": True, "tile_centre": True,
+                 "flat_projection": False},
+    "broadcast": {"materialise_pair_mask": False, "tile_centre": False,
+                  "flat_projection": False},
+    "optimised": {"materialise_pair_mask": False, "tile_centre": False,
+                  "flat_projection": True},
+    "optimised_xla": {"materialise_pair_mask": False, "tile_centre": False,
+                      "flat_projection": True},
+    "accum4": {"materialise_pair_mask": False, "tile_centre": False,
+               "flat_projection": True},
+}
+VARIANTS = tuple(VARIANT_PATHS) + ("ours_incumbent",)
 MODES = ("forward", "train")
 
 
@@ -117,17 +139,20 @@ def _time(step_fn: Any, batch: int, tf: Any, warmup: int = WARMUP,
     return out
 
 
-def _set_local_block_paths(port: Any, model: Any, *, materialise: bool, tile: bool) -> int:
-    """Put every `LocalEmbeddingBlock` on the named path; return how many."""
-    found, stack = 0, [model]
-    while stack:
-        layer = stack.pop()
-        if isinstance(layer, port.LocalEmbeddingBlock):
-            layer.materialise_pair_mask = materialise
-            layer.tile_centre = tile
-            found += 1
-        stack.extend(getattr(layer, "_port_children", {}).values())
-    return found
+def _commit(repo: Path) -> str | None:
+    """The commit a cell was measured at.
+
+    A variant NAME is not stable across commits -- `optimised` meant
+    broadcast-only before the projection rewrite existed and means
+    broadcast-plus-projection after it. Without the commit in the receipt, two
+    files can disagree about what a label means and neither can be repaired.
+    """
+    try:
+        return subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
+                              capture_output=True, text=True, check=True,
+                              ).stdout.strip()
+    except Exception:                                    # pragma: no cover - driver
+        return None
 
 
 def _install(repo: Path) -> None:
@@ -158,6 +183,19 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
     import numpy as np
     import tensorflow as tf
 
+    if variant == "ours_incumbent":
+        # `omnifold/omnifold.py` calls `set_memory_growth` and
+        # `set_visible_devices` AT IMPORT TIME, and TensorFlow refuses both once
+        # the device context exists. Any `tf.config.list_*` call initialises it,
+        # so this import must precede the fail-closed GPU check rather than
+        # follow it -- all eight `ours_incumbent` cells of job 58564110 died
+        # there with "Physical devices cannot be modified after being
+        # initialized", and the ordering is the whole bug.
+        omnifold_root = repo / "omnifold_nn"
+        if str(omnifold_root) not in sys.path:
+            sys.path.insert(0, str(omnifold_root))
+        import omnifold.net                                          # noqa: F401
+
     gpus = tf.config.list_logical_devices("GPU")
     if not gpus and not allow_cpu:
         raise SystemExit("[profile] no GPU visible to TensorFlow (fail closed)")
@@ -175,6 +213,8 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
         "framework": f"tensorflow {tf.__version__}",
         "gpu": [d.name for d in gpus],
         "warmup": warmup, "repeats": repeats,
+        "commit": _commit(repo),
+        "variant_means": VARIANT_PATHS.get(variant, "the vendored production PET"),
     }
     if not gpus:
         record["NOT_A_TIMING"] = (
@@ -216,12 +256,15 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
                                    "transformers": 2, "projection_dim": 32}
     else:
         model = port.PET2Port(**HIS_COMPLETE_SETTINGS, **port.preset("small"))
-        blocks = _set_local_block_paths(
-            port, model, materialise=variant == "baseline", tile=variant == "baseline")
-        record["local_blocks_switched"] = blocks
-        record["local_block_path"] = ("pre-optimisation (tiled centre, materialised "
-                                      "pair mask)" if variant == "baseline"
-                                      else "broadcast centre, broadcast key mask")
+        paths = VARIANT_PATHS[variant]
+        touched = port.set_reference_paths(model, **paths)
+        record["paths"] = dict(paths)
+        record["layers_switched"] = touched
+        if touched["tile_centre"] != 1 or touched["flat_projection"] < 20:
+            raise ValueError(
+                f"variant {variant!r} reached {touched} layers; a switch that "
+                "reaches nothing would make this variant a copy of another one"
+            )
         x = tf.constant(rng.randn(batch, tokens, 4).astype(np.float32))
         pid = tf.constant(rng.randint(0, 8, (batch, tokens)).astype(np.int32))
         add = tf.constant(rng.randn(batch, tokens, 5).astype(np.float32))
@@ -374,9 +417,15 @@ def merge(cell_dir: Path, expected: list[str]) -> dict[str, Any]:
             cells[key] = json.loads(path.read_text())
         else:
             missing.append(key)
+    commits = sorted({c.get("commit") for c in cells.values() if c.get("commit")})
     return {
         "scope": ("decomposed cost and peak device memory for the PORTED arm and our "
                   "incumbent; synthetic inputs at his widths; no learning claim"),
+        "commits": commits,
+        "variant_paths": VARIANT_PATHS,
+        "label_warning": ("a variant NAME is only meaningful with the commit beside "
+                          "it; `variant_means` on each cell records the switches "
+                          "that were actually set"),
         "cells": cells,
         "missing_cells": missing,
         "missing_means": ("the cell's process did not write a receipt -- an OOM kills "
@@ -387,7 +436,8 @@ def merge(cell_dir: Path, expected: list[str]) -> dict[str, Any]:
 
 def expected_cells() -> list[str]:
     keys = []
-    for variant in ("baseline", "optimised", "optimised_xla", "ours_incumbent"):
+    for variant in ("baseline", "broadcast", "optimised", "optimised_xla",
+                    "ours_incumbent"):
         for tokens in (12, 33):
             for batch in (512, 2048):
                 for mode in MODES:

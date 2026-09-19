@@ -432,15 +432,10 @@ class OptimisationEquivalence(unittest.TestCase):
     @staticmethod
     def _set_paths(model, *, materialise_pair_mask, tile_centre):
         """Flip every local block to the pre-optimisation path, and count them."""
-        found, stack = 0, [model]
-        while stack:
-            layer = stack.pop()
-            if isinstance(layer, port.LocalEmbeddingBlock):
-                layer.materialise_pair_mask = materialise_pair_mask
-                layer.tile_centre = tile_centre
-                found += 1
-            stack.extend(getattr(layer, "_port_children", {}).values())
-        return found
+        touched = port.set_reference_paths(
+            model, materialise_pair_mask=materialise_pair_mask,
+            tile_centre=tile_centre)
+        return touched["tile_centre"]
 
     def _fixture(self, dtype):
         rng = np.random.RandomState(7)
@@ -554,3 +549,68 @@ class ReceiptComparison(unittest.TestCase):
         after = json.loads(json.dumps(self.BEFORE))
         after["checks"]["P3"]["held"] = 1
         self.assertFalse(cpc.compare(self.BEFORE, after)["unchanged"])
+
+
+class ProjectionEquivalence(unittest.TestCase):
+    """The projection rewrite is NOT bitwise, and is held to P-2's own tolerance.
+
+    `einsum('...i,oi->...o')` and flatten-matmul-reshape compute the same
+    contraction in a different order, so they agree to round-off and not to the
+    bit -- unlike the two local-block rewrites, which are exact and are tested as
+    such. Saying that plainly matters: the strong claim belongs only where it is
+    true.
+
+    The limit here is `port_checks.FORWARD_TOLERANCE`, the tolerance the port
+    check has used against upstream torch since before this rewrite existed. It
+    was not chosen by looking at these numbers. The load-bearing gate is the port
+    check itself, re-run against torch; this test is the cheap standing one.
+    """
+
+    SETTINGS = OptimisationEquivalence.SETTINGS
+
+    def _deviation(self, dtype):
+        model = port.PET2Port(**self.SETTINGS, dtype=dtype)
+        args = OptimisationEquivalence()._fixture(dtype)
+
+        def run(flat):
+            touched = port.set_reference_paths(model, flat_projection=flat)
+            self.assertGreater(touched["flat_projection"], 20)
+            with tf.GradientTape() as tape:
+                out = model(*args, training=False)
+                loss = tf.reduce_sum(out * out)
+            grads = tape.gradient(loss, model.trainable_variables)
+            return out.numpy(), [g.numpy() for g in grads]
+
+        reference = run(False)
+        optimised = run(True)
+        forward = np.max(np.abs(reference[0] - optimised[0])) / np.max(
+            np.abs(reference[0]))
+        gradient = max(
+            np.max(np.abs(a - b)) for a, b in zip(reference[1], optimised[1])
+        ) / max(np.max(np.abs(a)) for a in reference[1])
+        return float(forward), float(gradient)
+
+    def test_float64_agreement_is_at_round_off(self):
+        forward, gradient = self._deviation("float64")
+        self.assertLess(forward, pc.FORWARD_TOLERANCE)
+        self.assertLess(gradient, pc.FORWARD_TOLERANCE)
+        # And it is genuinely round-off rather than luck: float64 has ~2.2e-16 of
+        # relative resolution, so this is single-digit ulps.
+        self.assertLess(forward, 1e-13)
+
+    def test_float32_agreement_is_at_round_off(self):
+        forward, gradient = self._deviation("float32")
+        self.assertLess(forward, pc.FORWARD_TOLERANCE)
+
+    def test_it_is_not_claimed_to_be_bitwise(self):
+        """A regression guard on the CLAIM, not on the code.
+
+        If a future change made these paths bitwise identical, this test failing
+        is the signal to strengthen the wording above -- and if it silently
+        stopped being round-off-level, the tolerance tests above catch that.
+        """
+        forward, _ = self._deviation("float64")
+        self.assertGreater(forward, 0.0)
+
+    def test_the_flat_path_is_the_default(self):
+        self.assertTrue(port.Linear(4, 4).flat_projection)

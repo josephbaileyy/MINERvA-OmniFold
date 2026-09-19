@@ -38,6 +38,9 @@ set -euo pipefail
 checkout=$1
 output=$2
 expected_commit=$3
+# Optional comma-separated cell list, so a subset can be re-run without
+# re-measuring what already landed. Empty means every cell.
+only=${4:-}
 
 cd "$checkout"
 [[ "$(git rev-parse HEAD)" == "$expected_commit" ]]
@@ -69,11 +72,12 @@ mkdir -p "$cells"
   run() {
     local key=$1 limit=$2
     local safe
+    if [[ -n "$only" && ",$only," != *",$key,"* ]]; then return 0; fi
     safe=$(printf "%s" "$key" | tr "|" "_")
     timeout --kill-after=20s "$limit" python "$driver" --repo "$checkout" \
       --cell "$key" --output "$cells/$safe.json" || true
   }
-  for variant in ours_incumbent baseline optimised; do
+  for variant in ours_incumbent baseline broadcast optimised; do
     for tokens in 12 33; do
       for batch in 512 2048; do
         for mode in forward train; do

@@ -153,6 +153,30 @@ class _Port(keras.layers.Layer):
         return variable
 
 
+def set_reference_paths(layer: _Port, **paths: bool) -> dict[str, int]:
+    """Put every layer that has one of these switches onto the named path.
+
+    The switches exist so that each performance rewrite has a reference to be
+    compared against -- `test_port.OptimisationEquivalence` runs the model both
+    ways and asserts they agree, and `profile_ported_step.py` times both. They
+    are not configuration: the optimised value is the default everywhere, and a
+    run that sets them is a check, not a variant of his network.
+
+    Returns how many layers each switch reached, because a switch that reached
+    nothing would make an equivalence test pass by doing nothing.
+    """
+    touched = {name: 0 for name in paths}
+    stack: list[Any] = [layer]
+    while stack:
+        current = stack.pop()
+        for name, value in paths.items():
+            if hasattr(current, name):
+                setattr(current, name, value)
+                touched[name] += 1
+        stack.extend(getattr(current, "_port_children", {}).values())
+    return touched
+
+
 def parameter_inventory(layer: _Port, prefix: str = "") -> list[tuple[str, tf.Variable]]:
     """Dotted (name, variable) pairs in torch's own traversal order.
 
@@ -171,18 +195,35 @@ def parameter_inventory(layer: _Port, prefix: str = "") -> list[tuple[str, tf.Va
 class Linear(_Port):
     """``nn.Linear`` with the weight kept in torch's ``(out, in)`` layout."""
 
-    def __init__(self, in_features: int, out_features: int, bias: bool = True, **kw: Any):
+    def __init__(self, in_features: int, out_features: int, bias: bool = True,
+                 flat_projection: bool = True, **kw: Any):
         super().__init__(**kw)
         self.in_features = in_features
         self.out_features = out_features
         self.use_bias = bias
+        # Which way the same contraction is spelled. `einsum('...i,oi->...o')` is
+        # the readable form and it is what the port was written with; measured on
+        # CPU it is also the expensive one, because its GRADIENT lowers to a pair
+        # of einsums with transposes rather than to two GEMMs. Flattening to rank
+        # 2, contracting once and reshaping back cost 1,046 ms against 3,024 ms
+        # for a forward-and-backward pass of the whole model -- 2.9x -- while the
+        # forward alone was also slightly cheaper. The einsum path is kept as the
+        # reference the equivalence test compares against.
+        self.flat_projection = flat_projection
         limit = 1.0 / math.sqrt(in_features)
         init = keras.initializers.RandomUniform(-limit, limit)
         self.weight = self._param("weight", (out_features, in_features), init)
         self.bias = self._param("bias", (out_features,), "zeros") if bias else None
 
     def call(self, x: tf.Tensor) -> tf.Tensor:
-        y = tf.einsum("...i,oi->...o", x, self.weight)
+        if self.flat_projection:
+            shape = tf.shape(x)
+            flat = tf.reshape(x, [-1, self.in_features])
+            y = tf.matmul(flat, self.weight, transpose_b=True)
+            y = tf.reshape(
+                y, tf.concat([shape[:-1], [self.out_features]], axis=0))
+        else:
+            y = tf.einsum("...i,oi->...o", x, self.weight)
         return y + self.bias if self.use_bias else y
 
 
