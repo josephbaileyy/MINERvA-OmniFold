@@ -24,6 +24,43 @@
 
 ---
 
+## 0b. The pilot, run after the retraction
+
+`receipts/R4_PILOT-20260920.json`, `…_DATA…`, `…_CAP12…`. One MC file and one data
+file, 20,000 entries each:
+
+| | MC | data |
+|---|---:|---:|
+| branches present | **52/52** | 48/52 (the four absent are MC-only) |
+| blobs per event, mean / p99 / max | 12.32 / 71 / 132 | 8.40 / 68 / 149 |
+| prongs per event, mean / max | 1.74 / 12 | 1.47 / 8 |
+| blob+prong, mean | **14.06** | **9.87** |
+| **over his cap of 33** | **11.87 %** | **8.11 %** |
+| over our cap of 12 | **38.93 %** | — |
+
+The direct-token work said of its synthetic fixture that "every event has four
+objects, so a cap never binds". On real tuples his cap binds on about one event in
+eight and ours on two in five. **The cap is a property of the comparison, not a
+detail of it.**
+
+A data/MC multiplicity asymmetry is visible and is **not** quoted as physics:
+these are raw tuples before our selection and the files are different runs.
+
+## 1b. What remains, and the real constraint
+
+1. **Full extraction.** 46 branches of 4,102 over ~11 TB, twelve playlists, MC and
+   data. Columnar, so the effective read is far smaller than 11 TB. Hours on a CPU
+   array, inside the authorized 200 core-hours.
+2. **Build his complete arm's inputs**: his 4-wide token schema over typed
+   objects, PID, 5 auxiliary columns, 16 globals, cap 33, joined to the inventory
+   by `(source, run, subrun, gate, occurrence)` and preserving selection, weights
+   and data/signal/background symmetry.
+3. **Tuning → pilot → final**, 17 arm pairs at **540 GPU-h**.
+
+**The constraint is elapsed time, not budget and not an artifact.** 540 GPU-h is
+days of wall-clock even parallelised, against 442 GPU-h of headroom — the budget
+covers it and a single session does not.
+
 ## 0. What actually blocks completion
 
 Not an artifact. **Compute wall-clock.** With R4 executable the remaining path is
