@@ -88,6 +88,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   written, accepted after the one documented edit. Carries the `UNRESOLVED` status and the
   predeclaration failure **in the same place as the adoption**, and states that the exception
   attaches to bytes and covers `3d7465f6…` and nothing else.
+- [`CHECKLIST-20260919-reverification-against-a-new-digest.md`](CHECKLIST-20260919-reverification-against-a-new-digest.md)
+  - **Every check `z-cv.npz` passed, enumerated with where it is implemented** — written BEFORE the
+  campaign returned, so the list cannot be selected after seeing which checks a product happens to
+  pass. **A1–A12 are automatic** (a product that exists has passed them, and the receipt carries
+  each gate's measured output, not a boolean); **B1–B6 are re-run against the new digest**; C is
+  documentary at the criterion level. Names what is deliberately NOT on it: the §6.4 exception
+  covers one digest and is unavailable to any new candidate.
 - [`RUN-20260919-cause3-two-member-campaign-launch.md`](RUN-20260919-cause3-two-member-campaign-launch.md)
   - **What was submitted**: 8 jobs, `337.00` CPU / `158.25` GPU reserved, admission `rc 0`
   re-measured before each submission. **Three clean deploys** — arms at `44e09fd8`, builder at the
