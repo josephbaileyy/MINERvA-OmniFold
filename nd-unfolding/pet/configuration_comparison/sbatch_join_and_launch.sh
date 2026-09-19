@@ -34,22 +34,35 @@ for STREAM in data sig; do
   if [[ "$STREAM" == "data" ]]; then DIRS=("$INPUTS"/*_Data); else DIRS=("$INPUTS"/*_MC); fi
   python3 nd-unfolding/pet/configuration_comparison/join_theirs_to_inventory.py \
     --sidecar "$SIDECAR" --stream "$STREAM" --input-dirs "${DIRS[@]}" \
+    --target-npz "$INVENTORY" \
     --output "$JOINDIR/join_${STREAM}.npz" \
     --report "$JOINDIR/join_${STREAM}.json"
 done
 
-# Refuse to launch on an incomplete join: an unmatched row cannot be trained on
-# and must not be silently dropped for one arm only.
+# Refuse to launch on an incomplete join: a pass_reco row his arm cannot see is
+# an event ours can, and that asymmetry would read as a method effect.
+#
+# The gate is on PASS_RECO rows, not on all inventory rows. An event that failed
+# reconstruction has no reconstructed object, so no token can be built from it;
+# it lives only in the AnaTuple's Truth tree and enters through the truth leg.
+# The first version demanded reco inputs for those events too and reported
+# 59.5% for a join that in fact covered 100.0000% of what it can cover.
 python3 - "$JOINDIR" <<'PY'
 import json, sys
 from pathlib import Path
 bad = []
 for stream in ("data", "sig"):
     r = json.loads((Path(sys.argv[1]) / f"join_{stream}.json").read_text())
-    print(f"{stream}: {r['matched']:,}/{r['inventory_rows']:,} matched "
-          f"({100*r['match_fraction']:.3f}%), {r['unmatched']:,} unmatched")
-    if r["match_fraction"] < 0.999:
-        bad.append(f"{stream} at {100*r['match_fraction']:.3f}%")
+    c = r.get("reco_coverage")
+    if c is None:
+        bad.append(f"{stream} reported no pass_reco coverage")
+        continue
+    print(f"{stream}: pass_reco {c['pass_reco_matched']:,}/{c['pass_reco_rows']:,} "
+          f"({100*c['pass_reco_fraction']:.4f}%); "
+          f"{c['unmatched_without_reco']:,} unmatched rows have no reco; "
+          f"{c['matched_without_reco']:,} matched rows have no reco and are zeroed")
+    if c["pass_reco_unmatched"]:
+        bad.append(f"{stream} missing {c['pass_reco_unmatched']:,} pass_reco rows")
 if bad:
     raise SystemExit(
         "[join] incomplete: " + "; ".join(bad) +

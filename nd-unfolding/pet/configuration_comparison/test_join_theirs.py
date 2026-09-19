@@ -92,3 +92,46 @@ class Join(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RecoCoverage(unittest.TestCase):
+    """The gate must ask about the population that CAN be matched."""
+
+    def test_a_row_without_reco_is_not_counted_against_coverage(self):
+        matched = np.array([True, False, True, False])
+        reco = np.array([True, False, True, False])
+        out = jt.reco_coverage(matched, reco)
+        self.assertEqual(out["pass_reco_rows"], 2)
+        self.assertEqual(out["pass_reco_unmatched"], 0)
+        self.assertEqual(out["pass_reco_fraction"], 1.0)
+        self.assertEqual(out["unmatched_without_reco"], 2)
+
+    def test_a_missing_pass_reco_row_is_still_a_failure(self):
+        matched = np.array([True, False, True, True])
+        reco = np.array([True, True, True, False])
+        out = jt.reco_coverage(matched, reco)
+        self.assertEqual(out["pass_reco_unmatched"], 1)
+        self.assertLess(out["pass_reco_fraction"], 1.0)
+
+    def test_matched_rows_without_reco_are_counted_and_reported(self):
+        matched = np.array([True, True, True])
+        reco = np.array([True, False, False])
+        out = jt.reco_coverage(matched, reco)
+        self.assertEqual(out["matched_without_reco"], 2)
+
+    def test_the_observed_campaign_numbers_reproduce(self):
+        """The real join: 59.5% of all rows, 100.0000% of pass_reco rows."""
+        total, reco_true, matched_reco, matched_no_reco = (
+            49_152_885, 20_573_521, 20_573_521, 8_679_708)
+        reco = np.zeros(total, bool); reco[:reco_true] = True
+        matched = np.zeros(total, bool)
+        matched[:matched_reco] = True
+        matched[reco_true:reco_true + matched_no_reco] = True
+        out = jt.reco_coverage(matched, reco)
+        self.assertEqual(out["pass_reco_fraction"], 1.0)
+        self.assertEqual(out["unmatched_without_reco"], 19_899_656)
+        self.assertAlmostEqual(matched.mean(), 0.59515, places=5)
+
+    def test_a_length_disagreement_is_refused(self):
+        with self.assertRaisesRegex(ValueError, "same inventory"):
+            jt.reco_coverage(np.ones(4, bool), np.ones(3, bool))

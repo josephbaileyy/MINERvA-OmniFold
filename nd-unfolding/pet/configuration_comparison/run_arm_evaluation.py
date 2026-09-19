@@ -168,10 +168,16 @@ def evaluate(args: Any) -> dict[str, Any]:
         import theirs_loader_substitution as tls
         import theirs_omnifold_arm as toa
         blocks = _load_joined(args, np, np.arange(data.reco.shape[0]), imc)
-        substitution = tls.substitute_step1(
-            data, mc,
-            (blocks["data"]["packed"], blocks["data"]["globals"]),
-            (blocks["mc"]["packed"], blocks["mc"]["globals"]))
+        # !pass_reco rows are zeroed for his arm exactly as the production
+        # loader zeroes them for ours. Data is all pass_reco by construction.
+        data_pass = getattr(data, "pass_reco", None)
+        if data_pass is None:
+            data_pass = np.ones(data.reco.shape[0], dtype=bool)
+        theirs_data = tls.zero_non_reco(
+            blocks["data"]["packed"], blocks["data"]["globals"], data_pass)
+        theirs_mc = tls.zero_non_reco(
+            blocks["mc"]["packed"], blocks["mc"]["globals"], mc.pass_reco)
+        substitution = tls.substitute_step1(data, mc, theirs_data, theirs_mc)
         model_reco = toa.TheirsCompleteArm(num_part=fd.THEIRS_COMPLETE["token_cap"])
     else:
         model_reco = PET(num_feat=meta["n_feat_reco"], num_evt=meta["n_evt_reco"],

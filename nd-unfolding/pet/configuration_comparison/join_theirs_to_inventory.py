@@ -65,7 +65,43 @@ def build_index(input_dir: Path) -> tuple[np.ndarray, list[Path], np.ndarray]:
     return np.concatenate(keys), files, np.concatenate(origin)
 
 
-def join(sidecar: Path, stream: str, input_dirs: list[Path]) -> dict[str, Any]:
+def reco_coverage(matched: np.ndarray, pass_reco: np.ndarray) -> dict[str, Any]:
+    """Coverage over the rows that CAN be matched: the pass_reco rows.
+
+    An event that failed reconstruction has no reconstructed object, so no token
+    can be built from it -- it exists only in the AnaTuple's `Truth` tree and
+    enters the comparison through the truth leg. Requiring his inputs to cover
+    it was a gate on the wrong population: it demanded a reco input for events
+    with no reco, and reported 59.5% for a join that covers everything it can.
+
+    The requirement that matters is that no `pass_reco` row is missing, because
+    a missing one WOULD be an event his arm cannot see and ours can.
+    """
+    matched = np.asarray(matched, dtype=bool)
+    reco = np.asarray(pass_reco, dtype=bool)
+    if matched.shape != reco.shape:
+        raise ValueError(
+            f"pass_reco has {reco.shape} rows and the join {matched.shape}; "
+            "they must describe the same inventory")
+    total = int(reco.sum())
+    covered = int((matched & reco).sum())
+    return {
+        "pass_reco_rows": total,
+        "pass_reco_matched": covered,
+        "pass_reco_unmatched": total - covered,
+        "pass_reco_fraction": (covered / total) if total else 0.0,
+        "matched_without_reco": int((matched & ~reco).sum()),
+        "unmatched_without_reco": int((~matched & ~reco).sum()),
+        "criterion": (
+            "every pass_reco row must have a built input. Rows without reco "
+            "have no reconstructed object to build a token from and are zeroed "
+            "for BOTH arms, exactly as the production loader zeroes ours"
+        ),
+    }
+
+
+def join(sidecar: Path, stream: str, input_dirs: list[Path],
+         pass_reco: np.ndarray | None = None) -> dict[str, Any]:
     blob = np.load(sidecar, mmap_mode="r")
     fields = [str(x) for x in blob[f"{stream}_identity_fields"]]
     expected = list(STREAM_FIELDS[stream])
@@ -97,7 +133,10 @@ def join(sidecar: Path, stream: str, input_dirs: list[Path]) -> dict[str, Any]:
     resolved = np.where(matched, order[position], -1)
 
     duplicates = int(len(built_keys) - len(np.unique(built_keys)))
+    coverage = (reco_coverage(matched, pass_reco) if pass_reco is not None
+                else None)
     return {
+        "reco_coverage": coverage,
         "stream": stream,
         "identity_fields": fields,
         "inventory_rows": int(len(inventory_keys)),
@@ -121,8 +160,16 @@ def main() -> None:
     parser.add_argument("--input-dirs", nargs="+", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--target-npz", type=Path, default=None,
+                        help="the production inputs, for their pass_reco flags")
     args = parser.parse_args()
-    result = join(args.sidecar, args.stream, args.input_dirs)
+    pass_reco = None
+    if args.target_npz is not None:
+        with np.load(args.target_npz, mmap_mode="r") as target:
+            pass_reco = (np.ones(len(np.asarray(target["measured_pc"])), bool)
+                         if args.stream == "data"
+                         else np.asarray(target["pass_reco"]).astype(bool))
+    result = join(args.sidecar, args.stream, args.input_dirs, pass_reco)
     np.savez_compressed(args.output, row_index=result.pop("row_index"),
                         origin=result.pop("origin"))
     args.report.write_text(json.dumps(result, indent=2) + "\n")
@@ -130,6 +177,11 @@ def main() -> None:
           f"matched ({100*result['match_fraction']:.2f}%), "
           f"{result['unmatched']:,} unmatched, "
           f"{result['duplicate_built_keys']:,} duplicate built keys")
+    if result.get("reco_coverage") is not None:
+        c = result["reco_coverage"]
+        print(f"{result['stream']}: pass_reco {c['pass_reco_matched']:,}/"
+              f"{c['pass_reco_rows']:,} ({100*c['pass_reco_fraction']:.4f}%), "
+              f"{c['unmatched_without_reco']:,} unmatched rows have no reco")
 
 
 if __name__ == "__main__":
