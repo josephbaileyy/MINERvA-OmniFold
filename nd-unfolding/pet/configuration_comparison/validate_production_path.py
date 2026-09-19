@@ -44,8 +44,23 @@ MUTANT_MUST_EXCEED = 10.0  # and a real defect must miss the limit by 10x, not 1
 MUTANT_RELATIVE_PERTURBATION = 1e-4
 TOKENS = 33
 EFFECTIVE_BATCH = 2048
-MICRO_BATCH = 2048         # native; falls back to accumulation if it will not fit
 OPTIMIZER_STEPS = 10
+
+# The eager reference cannot exist at the production batch, and that is a MEASURED
+# fact rather than a convenience: `optimised|33|2048|train` without XLA runs out of
+# memory on an 80 GB A100 (job 58565265). So the two questions are separated.
+#
+#   * "does XLA compute the same mathematics as eager" is a question about the
+#     GRAPH, and is asked at REFERENCE_BATCH, where an eager reference exists;
+#   * "does the graph behave the same at the production batch" is asked of XLA
+#     against ITSELF, row by row, by V7 -- which needs no eager path;
+#   * everything that only needs the executed path -- optimizer updates, schedule,
+#     clipping, reload, memory, timing -- runs at the production batch.
+#
+# Validating the graph at a batch the reference can hold, and then proving the
+# scale-up changes nothing per row, covers what a single impossible comparison
+# would have.
+REFERENCE_BATCH = 256
 
 
 def _install(repo: Path) -> None:
@@ -89,7 +104,8 @@ def _verdict(measured: float, floor: float) -> dict[str, Any]:
 
 def validate(repo: Path, state_npz: Path, manifest: Path,
              step: str, batch: int, tokens: int,
-             allow_cpu: bool = False) -> dict[str, Any]:
+             allow_cpu: bool = False,
+             reference_batch: int = REFERENCE_BATCH) -> dict[str, Any]:
     _install(repo)
     from keras_backend import record_versions, select_keras_backend
 
@@ -110,6 +126,12 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
                   f"{tokens} tokens, effective batch {batch}, initialized from the "
                   "real pretrained checkpoint"),
         "step_schema": step, "tokens": tokens, "batch": batch,
+        "reference_batch": reference_batch,
+        "why_two_batches": (
+            "the eager reference does not fit at the production batch -- "
+            "`optimised|33|2048|train` without XLA OOMs on an 80 GB A100 -- so the "
+            "graph comparison runs at the reference batch and V7 proves the "
+            "scale-up changes nothing per row"),
         "precision": "float32", "gpu": [d.name for d in gpus],
         "keras_backend_selection": backend, "versions": record_versions(),
         "limit_policy": {
@@ -138,7 +160,13 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
                                        "checkpoint_sha256")},
     }
 
-    x, cond, pid, add, labels = _fixture(np, tf, batch, tokens)
+    # ONE fixture at the production batch; the reference is its FIRST rows, so the
+    # two share rows by construction and V7's per-row comparison is meaningful
+    # rather than a comparison of two different draws.
+    px, pcond, ppid, padd, plabels = _fixture(np, tf, batch, tokens)
+    x, cond, pid, add, labels = (px[:reference_batch], pcond[:reference_batch],
+                                 ppid[:reference_batch], padd[:reference_batch],
+                                 plabels[:reference_batch])
     variables = None
 
     def forward_eager():
@@ -162,7 +190,7 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
     variables = model.trainable_variables
 
     # The eager path's own floor: permute the rows, undo the permutation, compare.
-    order = np.random.RandomState(7).permutation(batch)
+    order = np.random.RandomState(7).permutation(reference_batch)
     inverse = np.argsort(order)
     permuted = model(tf.gather(x, order), tf.gather(cond, order),
                      tf.gather(pid, order), tf.gather(add, order),
@@ -173,7 +201,7 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
     xla = forward_xla().numpy()
     report["checks"]["V1_forward_xla_vs_eager"] = {
         **_verdict(_worst(np, base, xla), forward_floor),
-        "rows": batch, "outputs_finite": bool(np.isfinite(xla).all()),
+        "rows": reference_batch, "outputs_finite": bool(np.isfinite(xla).all()),
     }
 
     # Negative control: a genuinely altered network must MISS this limit.
@@ -215,12 +243,15 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
                        if c != port.HIS_MASK_COLUMN and c not in (0, 1)]
     noisy = np.array(x)
     for column in content_columns:
-        noisy[:, tokens - 6:, column] = np.random.RandomState(11).randn(batch, 6)
+        noisy[:, tokens - 6:, column] = np.random.RandomState(11).randn(
+            reference_batch, 6)
     disturbed = forward_xla_of(tf.constant(noisy), cond, pid, add).numpy()
     moved_pid = np.array(pid)
-    moved_pid[:, tokens - 6:] = np.random.RandomState(12).randint(1, 8, (batch, 6))
+    moved_pid[:, tokens - 6:] = np.random.RandomState(12).randint(
+        1, 8, (reference_batch, 6))
     moved_add = np.array(add)
-    moved_add[:, tokens - 6:, :] = np.random.RandomState(13).randn(batch, 6, 5)
+    moved_add[:, tokens - 6:, :] = np.random.RandomState(13).randn(
+        reference_batch, 6, 5)
     disturbed_aux = forward_xla_of(x, cond, tf.constant(moved_pid),
                                    tf.constant(moved_add)).numpy()
     report["checks"]["V2_masking"] = {
@@ -236,7 +267,7 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
 
     coordinate_noisy = np.array(x)
     coordinate_noisy[:, tokens - 6:, 0:2] = np.random.RandomState(14).randn(
-        batch, 6, 2)
+        reference_batch, 6, 2)
     coordinate_disturbed = forward_xla_of(tf.constant(coordinate_noisy), cond,
                                           pid, add).numpy()
     report["checks"]["V2_coordinate_diagnostic"] = {
@@ -316,23 +347,47 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
                       "real defect or far below one"),
     }
 
-    # ---- V-4: ten real optimizer updates under the real schedule and clip -----
+    # ---- V-7: the production batch computes the same rows as the reference ----
+    #
+    # This is the bridge. The graph was compared against eager at the reference
+    # batch because no eager path exists at the production one; this shows the
+    # SAME graph at the production batch produces the same per-row answers, so
+    # what was validated is what will run. It needs no eager path.
+    production_forward = forward_xla_of(px, pcond, ppid, padd).numpy()
+    batch_invariance = _worst(np, xla, production_forward[:reference_batch])
+    report["checks"]["V7_batch_invariance"] = {
+        **_verdict(batch_invariance, forward_floor),
+        "reference_batch": reference_batch, "production_batch": batch,
+        "compares": ("XLA at the production batch against XLA at the reference "
+                     "batch, on the SAME rows, against the same floor"),
+    }
+
+    # ---- V-4: ten real optimizer updates at the PRODUCTION batch --------------
     schedule = recipe.derive_schedule(batch, examples=batch * 1000)
     optimizer = recipe.build_optimizer("theirs", schedule=schedule)
     before = [v.numpy().copy() for v in variables]
 
+    def production_loss(logits):
+        return tf.reduce_mean(
+            tf.nn.sigmoid_cross_entropy_with_logits(labels=plabels, logits=logits))
+
     @tf.function(jit_compile=True)
     def train_step():
         with tf.GradientTape() as tape:
-            loss = loss_of(model(x, cond, pid, add, training=True))
+            loss = production_loss(model(px, pcond, ppid, padd, training=True))
         optimizer.apply_gradients(zip(tape.gradient(loss, variables), variables))
         return loss
 
     losses = [float(train_step()) for _ in range(OPTIMIZER_STEPS)]
     moved = max(_worst(np, a, v.numpy()) for a, v in zip(before, variables))
+    learning_rates = [float(tf.keras.backend.get_value(
+        optimizer.learning_rate(tf.constant(s, tf.int64))))
+        for s in range(OPTIMIZER_STEPS)] if callable(
+        getattr(optimizer, "learning_rate", None)) else None
     report["checks"]["V4_optimizer_updates"] = {
         "held": bool(np.isfinite(losses).all() and moved > 0.0
                      and int(optimizer.steps_seen.numpy()) == OPTIMIZER_STEPS),
+        "batch": batch,
         "steps": OPTIMIZER_STEPS,
         "steps_seen": int(optimizer.steps_seen.numpy()),
         "losses": losses,
@@ -340,6 +395,7 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
         "max_weight_movement": moved,
         "clip_events": int(optimizer.clip_events.numpy()),
         "last_global_norm": float(optimizer.last_global_norm.numpy()),
+        "learning_rate_by_step": learning_rates,
         "schedule": {k: schedule[k] for k in ("max_steps", "warmup_steps",
                                               "examples_per_update")},
         "criterion": ("every loss finite, the weights actually move, and the "
@@ -347,27 +403,44 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
     }
 
     # ---- V-5: save, reload, and continue identically --------------------------
-    weights_before = [v.numpy().copy() for v in variables]
-    reloaded, _ = pinit.build_pretrained_port(state_npz, manifest, dtype="float32")
-    for target, value in zip(reloaded.trainable_variables, weights_before):
-        target.assign(value)
-    reload_worst = max(_worst(np, a, v.numpy())
-                       for a, v in zip(weights_before, reloaded.trainable_variables))
-    a = forward_xla_of(x, cond, pid, add).numpy()
-
-    @tf.function(jit_compile=True)
-    def reloaded_forward(xx, cc, pp, aa):
-        return reloaded(xx, cc, pp, aa, training=False)
-
-    b = reloaded_forward(x, cond, pid, add).numpy()
+    #
+    # Into the SAME model, via a file. The first version built a second full model
+    # to reload into, which doubled the live graph and was part of why this ran out
+    # of memory on an 80 GB card. Saving and restoring is also closer to what a
+    # resumed fit actually does.
+    # Save and restore BY NAME, from one source of truth. The first version built
+    # the save dict by zipping `parameter_inventory` against
+    # `model.trainable_variables` -- two orderings that are NOT the same, since the
+    # inventory follows torch's traversal. Names were paired with other tensors'
+    # values. It surfaced only because one pair happened to disagree in shape;
+    # where shapes matched it would have written a corrupt checkpoint silently.
+    inventory_pairs = port.parameter_inventory(model)
+    trained = {name: variable.numpy().copy() for name, variable in inventory_pairs}
+    checkpoint_dir = Path(state_npz).parent / "validation_reload"
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    saved = checkpoint_dir / f"reload_{step}.npz"
+    np.savez(saved, **trained)
+    for _, variable in inventory_pairs:             # clobber, so a no-op restore fails
+        variable.assign(tf.zeros_like(variable))
+    with np.load(saved) as blob:
+        missing = sorted({n for n, _ in inventory_pairs} - set(blob.files))
+        if missing:
+            raise ValueError(f"reload is missing {len(missing)}: {missing[:4]}")
+        for name, variable in inventory_pairs:
+            variable.assign(blob[name])
+    reload_worst = max(_worst(np, trained[name], variable.numpy())
+                       for name, variable in inventory_pairs)
+    after_reload = forward_xla_of(px, pcond, ppid, padd).numpy()
     report["checks"]["V5_reload"] = {
-        "held": bool(reload_worst == 0.0 and np.array_equal(a, b)),
+        "held": bool(reload_worst == 0.0),
         "weight_transfer_worst": reload_worst,
-        "output_identical": bool(np.array_equal(a, b)),
-        "criterion": "EXACT; a reload that differs at all has lost training state",
+        "clobbered_before_restore": True,
+        "forward_finite_after_reload": bool(np.isfinite(after_reload).all()),
+        "criterion": ("EXACT. The weights are zeroed between save and restore, so "
+                      "a restore that quietly did nothing would fail this"),
     }
 
-    # ---- V-6: memory and synchronized timing at this configuration ------------
+    # ---- V-6: memory and synchronized timing at the production batch ----------
     try:
         tf.config.experimental.reset_memory_stats("GPU:0")
     except Exception:                                        # pragma: no cover
@@ -388,6 +461,7 @@ def validate(repo: Path, state_npz: Path, manifest: Path,
     median = statistics.median(times)
     report["checks"]["V6_memory_and_timing"] = {
         "held": bool(times and (not gpus or memory.get("peak_bytes") is not None)),
+        "batch": batch,
         "step_seconds_median": median,
         "microseconds_per_example": 1e6 * median / batch,
         "device_memory": memory,
@@ -407,12 +481,14 @@ def main() -> None:
     parser.add_argument("--batch", type=int, default=EFFECTIVE_BATCH)
     parser.add_argument("--tokens", type=int, default=TOKENS)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--reference-batch", type=int, default=REFERENCE_BATCH)
     parser.add_argument("--allow-cpu", action="store_true",
                         help="smoke-test the code path; NOT a validation")
     args = parser.parse_args()
     try:
         report = validate(args.repo, args.state_npz, args.manifest, args.step,
-                          args.batch, args.tokens, allow_cpu=args.allow_cpu)
+                          args.batch, args.tokens, allow_cpu=args.allow_cpu,
+                          reference_batch=args.reference_batch)
     except Exception as error:                               # noqa: BLE001
         import traceback
         report = {"failed": True, "error": repr(error),
