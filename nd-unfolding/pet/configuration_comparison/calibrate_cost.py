@@ -406,6 +406,87 @@ def time_ours_inference(repo: Path, tokens: int) -> dict[str, Any]:
             **_throughput(times, OUR_BATCH)}
 
 
+def time_ported_complete(repo: Path, tokens: int, batch: int,
+                         mode: str = "train") -> dict[str, Any]:
+    """Time his arm at the configuration we INTEND to run, not the degraded one.
+
+    `time_ported` builds what is runnable today: our clouds, our event blocks, no
+    PID, no auxiliary channel. That arm is legitimate for plumbing and for a
+    framework-matched ratio, but costing the campaign from it prices the wrong
+    model -- his complete arm carries a PID embedding, five auxiliary columns and
+    sixteen globals, which is 35,200 more parameters and two more embedding paths
+    over every token.
+
+    The DATA does not exist yet (R-1/R-2), so the inputs here are synthetic at his
+    widths. That is exactly the right scope for a cost measurement and exactly the
+    wrong scope for anything else, which is why this function times and returns.
+    """
+    backend = _select_keras_backend()
+    import numpy as np
+    import tensorflow as tf
+
+    root = repo / "nd-unfolding" / "pet" / "configuration_comparison"
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    import pet2_keras_port as port
+    import training_recipe as recipe
+
+    if not tf.config.list_logical_devices("GPU"):
+        raise SystemExit("[calibrate] no GPU visible to TensorFlow (fail closed)")
+    settings = {"input_dim": 4, "pid": True, "pid_dim": 8, "add_info": True,
+                "add_dim": 5, "conditional": True, "cond_dim": 16, "num_coord": 2,
+                "K": 10, "num_classes": 1}
+    model = port.PET2Port(**settings, **port.preset("small"))
+    rng = np.random.RandomState(0)
+    x = tf.constant(rng.randn(batch, tokens, 4), tf.float32)
+    pid = tf.constant(rng.randint(0, 8, (batch, tokens)), tf.int32)
+    add = tf.constant(rng.randn(batch, tokens, 5), tf.float32)
+    cond = tf.constant(rng.randn(batch, 16), tf.float32)
+    labels = tf.constant(rng.randint(0, 2, (batch, 1)).astype("float32"))
+    variables = None
+
+    if mode == "train":
+        optimizer = recipe.build_optimizer(
+            "theirs", schedule=recipe.derive_schedule(batch, examples=batch * 1000))
+
+        @tf.function
+        def step_fn():
+            with tf.GradientTape() as tape:
+                logits = model(x, cond, pid, add, training=True)
+                loss = tf.reduce_mean(
+                    tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits))
+            optimizer.apply_gradients(
+                zip(tape.gradient(loss, model.trainable_variables),
+                    model.trainable_variables))
+            return loss
+    else:
+        @tf.function
+        def step_fn():
+            return tf.reduce_sum(model(x, cond, pid, add, training=False))
+
+    for _ in range(WARMUP):
+        step_fn()
+    times, values = [], []
+    for _ in range(REPEATS):
+        start = time.perf_counter()
+        values.append(float(step_fn()))
+        times.append(time.perf_counter() - start)
+    return {
+        "framework": f"tensorflow {tf.__version__}",
+        "arm": "theirs_complete", "step": "his_own_schema", "mode": mode,
+        "tokens": tokens, "precision": "float32",
+        "configuration": settings,
+        "keras_backend_selection": backend,
+        "trainable_parameters": int(sum(int(np.prod(w.shape))
+                                        for w in model.trainable_variables)),
+        "values_finite": bool(np.isfinite(values).all()),
+        "first_value": values[0], "last_value": values[-1],
+        "value_changed_over_the_run": bool(values[0] != values[-1]),
+        "inputs_are_synthetic_at_his_widths": True,
+        **_throughput(times, batch),
+    }
+
+
 def time_ported(repo: Path, step: str, tokens: int, batch: int,
                 mode: str = "train") -> dict[str, Any]:
     """Time the KERAS PORT of his backbone, at one OmniFold step schema.
@@ -859,6 +940,20 @@ def main() -> None:
         non_finite = sorted(k for k, v in ran.items() if not v["values_finite"])
         static = sorted(k for k, v in ran.items()
                         if v["mode"] == "train" and not v["value_changed_over_the_run"])
+        # His COMPLETE arm: his own schema, which does not vary by OmniFold step
+        # because the data is mapped into it rather than the model into the data.
+        for tokens in TOKEN_COUNTS:
+            for batch in (OUR_BATCH, THEIR_BATCH):
+                for mode in ("train", "inference"):
+                    key = f"theirs_complete|his_own_schema|{tokens}|{batch}|{mode}"
+                    try:
+                        cells[key] = time_ported_complete(args.repo, tokens, batch, mode)
+                    except Exception as exc:          # noqa: BLE001 - recorded
+                        cells[key] = {"error": f"{type(exc).__name__}: {exc}"[:300],
+                                      "arm": "theirs_complete", "tokens": tokens,
+                                      "batch": batch, "mode": mode}
+                        print(f"{key}: FAILED {type(exc).__name__}", file=sys.stderr)
+
         half = {"gpu_identity": physical_gpu_identity(), "framework_matched": True,
                 "cells": cells,
                 "validation": {
