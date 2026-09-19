@@ -89,10 +89,12 @@ mkdir -p "$cells"
   for tokens in 12 33; do
     run "accum4|$tokens|2048|train" 420s
   done
-  for tokens in 12 33; do
-    for batch in 512 2048; do
-      for mode in forward train; do
-        run "optimised_xla|$tokens|$batch|$mode" 600s
+  for variant in optimised_xla broadcast_xla; do
+    for tokens in 12 33; do
+      for batch in 512 2048; do
+        for mode in forward train; do
+          run "$variant|$tokens|$batch|$mode" 600s
+        done
       done
     done
   done

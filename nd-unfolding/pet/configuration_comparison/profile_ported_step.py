@@ -84,6 +84,12 @@ VARIANT_PATHS = {
                   "flat_projection": True},
     "optimised_xla": {"materialise_pair_mask": False, "tile_centre": False,
                       "flat_projection": True},
+    # einsum + XLA, and it decides something the others cannot: whether XLA
+    # alone lowers the einsum gradient to a GEMM. If it does, the projection
+    # rewrite -- the only change to his network that is NOT bitwise -- can be
+    # withdrawn and the port stays exact.
+    "broadcast_xla": {"materialise_pair_mask": False, "tile_centre": False,
+                      "flat_projection": False},
     "accum4": {"materialise_pair_mask": False, "tile_centre": False,
                "flat_projection": True},
 }
@@ -278,7 +284,7 @@ def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
             return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
                 labels=labels, logits=predictions))
 
-    jit = variant == "optimised_xla"
+    jit = variant.endswith("_xla")
     record["jit_compile"] = jit
     function = (lambda fn: tf.function(fn, jit_compile=True)) if jit else tf.function
 
@@ -437,7 +443,7 @@ def merge(cell_dir: Path, expected: list[str]) -> dict[str, Any]:
 def expected_cells() -> list[str]:
     keys = []
     for variant in ("baseline", "broadcast", "optimised", "optimised_xla",
-                    "ours_incumbent"):
+                    "broadcast_xla", "ours_incumbent"):
         for tokens in (12, 33):
             for batch in (512, 2048):
                 for mode in MODES:
