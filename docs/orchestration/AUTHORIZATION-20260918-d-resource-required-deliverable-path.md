@@ -36,7 +36,7 @@ diagnosed defect, verified repair and fresh admission; automatic requeue disable
 | # | ruling |
 |---|---|
 | **1** | **SCOPE AMENDMENT — APPROVED.** The required deliverable set **excludes the generator significance**; the significance is a separate, later, **optional** claim. `main_paper.tex:49-51` already defers it. Deferred with it and **not** on the required path: `y_gen`, `N`σ, the 12-cell χ², the retained-subspace rule, `rcond`, any pseudoinverse, the first-order statistic, and the conclusion-flip `τ`. |
-| **2** | **CAMPAIGN — `k₁` DECLINED. The `158.25` GPU / `262.00` CPU reservation is NOT approved and is RELEASED.** Nothing required needs `N`, and `N` is what that campaign buys. **Not to be re-proposed as part of the required path.** |
+| **2** | ⚠ **SUPERSEDED 2026-09-19 BY R6 — see [`DECISION-20260919-joseph-R6-reverses-the-k1-decline.md`](DECISION-20260919-joseph-R6-reverses-the-k1-decline.md). The premise stated below no longer holds.** Original text, left intact: *"**CAMPAIGN — `k₁` DECLINED. The `158.25` GPU / `262.00` CPU reservation is NOT approved and is RELEASED.** Nothing required needs `N`, and `N` is what that campaign buys. **Not to be re-proposed as part of the required path.**"* — **R6:** *"I reverse AUTHORIZATION-20260918 §2 ruling 2 for this goal only. The premise 'nothing required needs N' no longer holds: computed acceptance requires >= 2 members for branch 3."* One additional member at that reservation is **authorized**, for the computed-acceptance goal only. |
 | **3** | **`SPEC` §3.7d — RULING (b). ADD `s_proj`.** Answer (a) withholds the licence for marginalization and projection, and projections are a required deliverable, so (a) was never available. **It stays a requirement, not a caveat.** |
 | **4** | **FUNCTIONAL SET — APPROVED:** the rows of `project_cov_nd.py`'s `M`, plus the all-ones vector. It **dissolves** the region question rather than answering it. The earlier corner-integral criterion is a strictly weaker special case. |
 | **5** | **δ = 5% — APPROVED.** `δ_proj = δ_med = δ_agg = 5%`, a **direct movement bound, never quadrature**. Ground: a drift below the `~5.6%` precision the 160-throw ensemble already imposes on `σ` is not resolvable against the number it would modify; at `10%` the arbitrary seed would be `1.78×` the ensemble's own smearing. **Coverage:** 100% on bins entering a quoted projection, **≥99%** on the full reported support, **every failing bin enumerated in the receipt and never absorbed.** |
@@ -161,9 +161,15 @@ defect `rc 8` exists to stop. The fixtures now declare their class.
 
 ## 6. RELEASED
 
-The `158.25` GPU / `262.00` CPU one-additional-member reservation is **released**. It was never
-submitted, so nothing is cancelled; it is struck from the required path and will not be re-proposed
-there.
+⚠ **SUPERSEDED 2026-09-19 BY R6.** The reservation is **re-authorized for the computed-acceptance
+goal**, at the same figures, through the normal campaign check — see
+[`DECISION-20260919-joseph-R6-reverses-the-k1-decline.md`](DECISION-20260919-joseph-R6-reverses-the-k1-decline.md).
+It remains **unsubmitted**: the goal that re-authorized it stopped at **(C)** before admission,
+because one additional member turns out not to be enough. Original text, left intact:
+
+> The `158.25` GPU / `262.00` CPU one-additional-member reservation is **released**. It was never
+> submitted, so nothing is cancelled; it is struck from the required path and will not be re-proposed
+> there.
 
 ## 7. STATE: **BLOCKED ON JOSEPH'S DECISIONS** — recorded here so the open set is not re-derived
 

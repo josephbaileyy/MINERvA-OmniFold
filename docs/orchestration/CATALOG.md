@@ -57,6 +57,22 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   task-hours against a 100 CPU cap, 2.6× over.** No production run was submitted: a single-member
   build is foreseeably branch 2, neither PASS nor an assessable FAIL, and would freeze the logic for
   a known answer.
+- [`OUTCOME-20260919-cause3-anchor-has-no-eligible-member.md`](OUTCOME-20260919-cause3-anchor-has-no-eligible-member.md)
+  - **(C) BLOCKED, zero task-hours, nothing submitted.** Cause 3 needs two members and R6 authorizes
+  one; **the second was assumed to exist and does not.** `z-cv.npz`'s precursor is **UNDECLARED**
+  (`est_seed_offset_declared = 0` on 61/61 slabs) so it can never leave branch 2; the `k0r2` anchor
+  `mii/member_k000000` **is** declared (185/185) but its deploy predates the null-operand writer, so
+  it has no `r_null` of its own. **Two properties, two artifacts, neither member has both.**
+- [`EVIDENCE-20260919-cause3-member-eligibility-census.md`](EVIDENCE-20260919-cause3-member-eligibility-census.md)
+  - The census behind that outcome: **every** slab read by key name, the null-operand search run
+  **with a positive control**, the `374/374 COMPLETED 0:0` re-verified from `sacct` rather than from
+  a launch plan, and the anchor's `sha256`. Also **one member's measured cost — `86.53` CPU /
+  `54.90` GPU against a `262.00` / `158.25` reservation** — and the live risk that the recommended
+  `uthrow5d_block` `3.00 h` cap sits **below an observed `4.82 h` task**.
+- [`DECISION-20260919-joseph-R6-reverses-the-k1-decline.md`](DECISION-20260919-joseph-R6-reverses-the-k1-decline.md)
+  - **Joseph reverses `AUTHORIZATION-20260918` §2 ruling 2, for the computed-acceptance goal only.**
+  One additional member at `262.00` CPU / `158.25` GPU, through the normal campaign check. The
+  premise *"nothing required needs `N`"* died when acceptance became computed. **Never submitted.**
 - [`REVIEW-20260919-R7-non-finite-member-footing.md`](REVIEW-20260919-R7-non-finite-member-footing.md)
   - **R7 implemented and cross-model reviewed: NO BLOCK, NO MAJOR.** `all_members_finite` moves to
   `branch1_failures()` — branch 2 is a **zero-spread** diagnosis and a `NaN`/`inf` product is the
