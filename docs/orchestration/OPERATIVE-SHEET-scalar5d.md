@@ -575,6 +575,56 @@ distribution is the report.
 computed **before** the ratio. The ratio `0.9997122662` **does** appear, as Z's own measured result.
 The check looked at the wrong object, which is the operand failure again, in my own guard.
 
+## 4h. DRAFT — C7's PM-1 disclosure, for Joseph's ruling. **NOT A CLOSURE.**
+
+**Recommendation put to Joseph: DISCLOSE WITH EVIDENCE, not require-provenance.** Ground: weight-only
+is established at the **implementation** level, so it holds for any tuple the event loop produced;
+what cannot be linked is only **file-level provenance of G's input**, which this project never
+recorded for any input.
+
+### 1. Implementation evidence — verified by opening the file, not via the packet
+
+`MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp`, the `NOTE (3D E_avail)` block:
+
+> *"the lateral bands are all muon/beam systematics (BeamAngleX/Y, MuonResolution,
+> Muon_Energy_MINERvA/MINOS). They override only muon momentum/angle getters, none of which feed
+> `NewEavail()` … So E_avail is invariant under every lateral universe and needs no shifted branch.
+> **The GEANT hadronic-response bands (which DO move E_avail physically) are vertical/weight-only
+> and are captured by `w_reco_GEANT_*`.**"*
+
+⚠ **It is a COMMENT — `//`-prefixed prose stating intent, not executable code.**
+⚠ **And its scope is per-axis and predates `W`.** The heading is `NOTE (3D E_avail)`, and the note
+*immediately following* says **"NOTE (4D q3): UNLIKE E_avail, q3 IS shifted by the lateral muon
+bands."** So the invariance claim is asserted axis by axis, and no note covers `W`.
+
+`MinosEfficiency` is a reweighter **by class**: `#include "PlotUtils/MINOSEfficiencyReweighter.h"`
+at `:70`, instantiated into `MnvTunev1` at `:1749`.
+
+### 2. Runtime corroboration — an executable test, which the comment is not
+
+`unfold_nd_omnifold_unbinned.py:388` is `if t.GetBranch(l_sim) and t.GetBranch(l_mc):   # lateral` —
+**laterality is decided at runtime by branch presence, not by a name list.** Packet §15.1 measured
+it on the production universe tuple: the five lateral bands carry shifted kinematics **4/4**, the
+four bands left in `R` carry **0/4**, and `measured lateral set == p4_lib.BANDS` is **True**.
+
+### 3. The gap, stated plainly
+
+**Neither tuple is named anywhere in the record.** Not the 470-branch tuple §15.1 measured — no path,
+no digest, no receipt — and not the input tuple `combined_source` was built from; three launchers
+reference that output and none references an omnifile input. **The file-level link cannot be made.**
+
+### 4. ⚠ THE PHYSICS CAVEAT, disclosed rather than passed over
+
+**The same comment says the GEANT bands "DO move E_avail physically."** So *weight-only* describes
+**how they are IMPLEMENTED — as a reweight** — and is **not** a statement that hadronic response
+causes no migration. **It follows that the covariance does not model migration from hadronic
+response.**
+
+*Whether that is the standard treatment of MINERvA's hadron-reweight systematics is **not something
+this repository establishes**, and I am citing nothing I cannot open. It is recorded as an
+**inherited treatment** whose justification lives upstream of this analysis — which is itself a
+disclosure Joseph may want in the note.*
+
 ## 5. Execution order — fixed
 
 **C1–C7 complete → NULL resolved (P0 first, zero-compute; P2 NOT authorized) → SRC_COV identified
