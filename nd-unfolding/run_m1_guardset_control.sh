@@ -63,13 +63,18 @@ SHIMEOF
 # defect to the signal. The shadow is prepended, and then checked.
 SHADOW_PYTHONPATH="$SHIM:${PYTHONPATH:-}"
 echo "=== SHADOW INTERCEPTION CHECK (must fail, with the shadow's own message) ==="
-if PYTHONPATH="$SHADOW_PYTHONPATH" $PY -c "import ROOT" 2>&1 | grep -q "ROOT SHADOWED BY THE GUARD-SET CONTROL"; then
+# ⚠ CAPTURE FIRST, THEN MATCH. This was `$PY -c "import ROOT" | grep -q ...` and it reported a
+# WORKING shadow as broken: under `set -o pipefail` the pipeline returns PYTHON's status, and
+# python exits 1 on the ImportError the shadow is supposed to raise. So the check inverted on
+# exactly the outcome it was testing for. Caught by the login-node smoke test before any compute.
+_probe="$(PYTHONPATH="$SHADOW_PYTHONPATH" $PY -c "import ROOT" 2>&1 || true)"
+if printf '%s' "$_probe" | grep -q "ROOT SHADOWED BY THE GUARD-SET CONTROL"; then
   echo "  SHADOW OK -- the shim intercepts; refusal legs below are meaningful"
   SHADOW_OK=1
 else
   echo "  *** CONTROL FAILED: the ROOT shadow does NOT intercept. Every refusal leg below that"
   echo "      relies on it proves NOTHING about reachability. Raw result of the probe:"
-  PYTHONPATH="$SHADOW_PYTHONPATH" $PY -c "import ROOT" 2>&1 | head -5 | sed 's/^/      /'
+  printf '%s' "$_probe" | head -5 | sed 's/^/      /'
   SHADOW_OK=0
 fi
 echo "  resolved ROOT under the shadow:"
