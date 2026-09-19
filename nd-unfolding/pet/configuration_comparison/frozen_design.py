@@ -64,6 +64,23 @@ PINNED_HASHES = {
 # --------------------------------------------------------------------------- #
 # Execution path (F10, ratified as T2 on 2026-09-20)
 # --------------------------------------------------------------------------- #
+# The measured leg is the CERTIFIED Gate-2 negweight-refined target, consumed and
+# never rebuilt. Rebuilding it in process is the J04/D2 defect: the comparison
+# would then run on a measured leg that is not production's, and would not be
+# about our incumbent at all.
+MEASURED_LEG = {
+    "bkg_mode": "negweight-refined",
+    "target_npy": ("nd-unfolding/g2_fullevent/gate2/final/"
+                   "G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy"),
+    "target_receipt": ("nd-unfolding/g2_fullevent/gate2/final/"
+                       "G2_GATE2_TARGET_RUNTIME_RECEIPT.json"),
+    "rebuilt_in_process": False,
+    "bound_by": ("train_fullevent_nominal.assert_target_provenance for WHICH "
+                 "array, and assert_consumed_inventory_matches_receipt for row "
+                 "ORDER, which no hash binds on its own"),
+}
+
+
 EXECUTION = {
     "flat_projection": True,
     "jit_compile": True,

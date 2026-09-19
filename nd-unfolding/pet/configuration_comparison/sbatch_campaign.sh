@@ -51,11 +51,21 @@ export PYTHONUNBUFFERED=1 TF_FORCE_GPU_ALLOW_GROWTH=true
 export TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=:4096:8
 export NVIDIA_TF32_OVERRIDE=0
 
+# The certified Gate-2 target, consumed rather than rebuilt (J04/D2). These live
+# in the PRODUCTION tree: the certified artifact is the one Gate 2 signed, not a
+# copy this checkout happens to carry.
+PRODUCTION_REPO=${PRODUCTION_REPO:-/pscratch/sd/j/josephrb/MINERvA-OmniFold}
+TARGET_NPY=${TARGET_NPY:-$PRODUCTION_REPO/nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy}
+TARGET_RECEIPT=${TARGET_RECEIPT:-$PRODUCTION_REPO/nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json}
+[[ -f "$TARGET_NPY" ]] || { echo "certified target missing: $TARGET_NPY" >&2; exit 2; }
+[[ -f "$TARGET_RECEIPT" ]] || { echo "target receipt missing: $TARGET_RECEIPT" >&2; exit 2; }
+
 ( module load tensorflow/2.15.0
   python nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py \
     --arm "$ARM" --seed "$SEED" --stage "$STAGE" --learning-rate "$LR" \
     --repo "$CHECKOUT" --inputs-npz "$INPUTS_NPZ" \
     --theirs-index "$THEIRS_INDEX" \
+    --target-npy "$TARGET_NPY" --target-receipt "$TARGET_RECEIPT" \
     --weights-folder "$RUN/weights" --output "$RUN/receipt.json"
 ) > "$RUN/run.log" 2>&1
 

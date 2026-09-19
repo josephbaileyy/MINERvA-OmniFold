@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import unittest
+from pathlib import Path
 
 os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
 os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
@@ -85,3 +86,43 @@ class Recovery(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class MeasuredLegIsConsumedNotRebuilt(unittest.TestCase):
+    """The J04/D2 defect, in this driver's clothing.
+
+    Calling `build_fullevent_loaders` without a precomputed target re-runs the
+    negweight refinement in process. Production was repaired for exactly that
+    in August. Here it would be worse than wasteful: the measured leg both arms
+    are compared on would not be production's, so the comparison would not be
+    about our incumbent.
+    """
+
+    def test_the_driver_requires_the_certified_target_and_its_receipt(self):
+        source = Path(rae.__file__).read_text()
+        self.assertIn('"--target-npy"', source)
+        self.assertIn('"--target-receipt"', source)
+        self.assertIn("required=True", source)
+
+    def test_the_loader_is_called_with_the_target_and_the_production_bkg_mode(self):
+        source = Path(rae.__file__).read_text()
+        self.assertIn("precomputed_target=str(args.target_npy)", source)
+        self.assertIn("bkg_mode=prod.BKG_MODE", source)
+
+    def test_both_provenance_assertions_are_called_not_retyped(self):
+        source = Path(rae.__file__).read_text()
+        self.assertIn("prod.assert_target_provenance(", source)
+        self.assertIn("prod.assert_consumed_inventory_matches_receipt(", source)
+
+    def test_the_frozen_design_pins_the_measured_leg(self):
+        import frozen_design as fd
+        self.assertEqual(fd.MEASURED_LEG["bkg_mode"], "negweight-refined")
+        self.assertFalse(fd.MEASURED_LEG["rebuilt_in_process"])
+        self.assertIn("G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy",
+                      fd.MEASURED_LEG["target_npy"])
+
+    def test_the_driver_checks_where_its_modules_came_from(self):
+        """Restoring sys.path is a hope; `__file__` is a measurement."""
+        source = Path(rae.__file__).read_text()
+        self.assertIn("resolved OUTSIDE the pinned checkout", source)
+        self.assertIn("Path(m.__file__).resolve()", source)

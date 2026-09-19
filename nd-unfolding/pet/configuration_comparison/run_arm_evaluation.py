@@ -103,6 +103,10 @@ def main() -> None:
                         help="directory holding join_<stream>.npz and .json")
     parser.add_argument("--weights-folder", type=Path, default=Path("weights"))
     parser.add_argument("--max-events", type=int, default=2_000_000)
+    parser.add_argument("--target-npy", type=Path, required=True,
+                        help="the certified Gate-2 negweight-refined target")
+    parser.add_argument("--target-receipt", type=Path, required=True,
+                        help="the Gate-2 runtime receipt that owns the target")
     args = parser.parse_args()
 
     if args.seed not in fd.SEEDS[args.stage]:
@@ -154,14 +158,52 @@ def evaluate(args: Any) -> dict[str, Any]:
     configure_production_precision(strict=True)
 
     import fullevent_fps_dataloader as ffd
+    # `train_fullevent_nominal` hard-codes the PRODUCTION repo and inserts it at
+    # sys.path[0] on import, which would shadow this pinned checkout for every
+    # module imported afterwards. `ffd` is bound above, before that happens; the
+    # rest is protected by restoring our paths and then CHECKING where the
+    # modules actually came from, because restoring a path is a hope and
+    # `__file__` is a measurement.
+    _our_path = list(sys.path)
+    import train_fullevent_nominal as prod
+    sys.path[:] = _our_path
     from omnifold.omnifold import MultiFold
     from omnifold.net import PET
     import training_recipe as recipe
     import fold_forward_recorder as ffr
 
+    _shadowed = [m.__name__ for m in (ffd, recipe)
+                 if not str(Path(m.__file__).resolve()).startswith(str(repo))]
+    if _shadowed:
+        raise SystemExit(
+            f"[arm] {_shadowed} resolved OUTSIDE the pinned checkout {repo}. "
+            "The production driver puts its own repo on sys.path[0], and a run "
+            "that silently used production's loader would not be measuring this "
+            "commit at all"
+        )
+
     started = time.perf_counter()
+
+    # CONSUME the certified Gate-2 target; do not rebuild it.
+    #
+    # This driver used to call `build_fullevent_loaders` with neither
+    # `bkg_mode` nor `precomputed_target`, which re-runs the whole negweight
+    # refinement in process. That is the J04/D2 defect the production driver
+    # was repaired for in August: "the target Gate-2 certified was certified
+    # and then discarded". Here it would have been worse than wasteful -- the
+    # measured leg both arms are compared on would not have been the
+    # production measured leg, so the comparison would not have been about
+    # our incumbent.
+    #
+    # The provenance assertions are PRODUCTION's own functions, called rather
+    # than retyped, so the two cannot drift.
+    target_receipt = prod.assert_target_provenance(
+        str(args.target_npy), str(args.target_receipt), str(args.inputs_npz))
     data, mc, imc, coord_reco, coord_gen, meta = ffd.build_fullevent_loaders(
-        str(args.inputs_npz), max_events=args.max_events, seed=args.seed)
+        str(args.inputs_npz), max_events=args.max_events, seed=args.seed,
+        bkg_mode=prod.BKG_MODE, precomputed_target=str(args.target_npy))
+    # Row order, which no hash can bind on its own.
+    prod.assert_consumed_inventory_matches_receipt(meta, target_receipt)
 
     substitution = None
     if args.arm == "theirs":
@@ -216,6 +258,10 @@ def evaluate(args: Any) -> dict[str, Any]:
         **plan_of(args),
         "seconds": time.perf_counter() - started,
         "rows": {"data": int(data.reco.shape[0]), "mc": int(mc.reco.shape[0])},
+        "target": {"path": str(args.target_npy),
+                   "receipt": str(args.target_receipt),
+                   "bkg_mode": prod.BKG_MODE,
+                   "rebuilt_in_process": False},
         "substitution": substitution,
         "schedule": {k: schedule[k] for k in ("max_steps", "warmup_steps",
                                               "examples_per_update")},
