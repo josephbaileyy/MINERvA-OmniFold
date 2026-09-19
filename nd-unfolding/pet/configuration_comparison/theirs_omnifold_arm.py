@@ -33,8 +33,19 @@ from tensorflow import keras  # noqa: E402
 
 import pet2_keras_port as port  # noqa: E402
 
+# HIS STORAGE, not a convenience of ours: `preprocessing.py:583` stores
+# `event_combined = concatenate([event_features, event_additional_info], axis=1)`
+# as ONE (n_particles, 10) array, and the loader splits it at train time. So a
+# 10-wide token block is his format, and it also happens to fit the vendored
+# `DataLoader`, which carries two tensors per leg and not three.
+#
+#     columns 0..4   [px, py, pz, log E, PID]     -> features, PID split out
+#     columns 5..9   [dE/dx, x, y, z, t]          -> add_info
+#     event block    16 globals                    -> cond
+PACKED_WIDTH = 10
 LOG_E_COLUMN = 3          # [px, py, pz, log E, PID]
 PID_COLUMN = 4
+ADD_INFO_SLICE = slice(5, 10)
 
 
 def weighted_binary_crossentropy(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
@@ -73,7 +84,17 @@ class TheirsCompleteArm(keras.Model):
                        tokens.dtype)
 
     def call(self, inputs: Any, training: bool = True) -> tf.Tensor:
-        tokens, add_info, globals_ = inputs[0], inputs[1], inputs[2]
+        """Accepts his packed form `[part, evt]`, or the unpacked triple.
+
+        The packed form is what the vendored `DataLoader` carries and what his
+        own dataset stores, so the comparison runs through the engine unmodified.
+        """
+        if len(inputs) == 2:
+            part, globals_ = inputs[0], inputs[1]
+            tokens = part[:, :, :5]
+            add_info = part[:, :, ADD_INFO_SLICE]
+        else:
+            tokens, add_info, globals_ = inputs[0], inputs[1], inputs[2]
         pid = tf.cast(tokens[:, :, PID_COLUMN], tf.int32)
         features = tokens[:, :, :4]
         return self.backbone(features, cond=globals_, pid=pid, add_info=add_info,

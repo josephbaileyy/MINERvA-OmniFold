@@ -88,3 +88,27 @@ class Shapes(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PackedForm(unittest.TestCase):
+    """His own storage is one 10-wide array; the engine carries two tensors."""
+
+    def test_packed_and_unpacked_agree_exactly(self):
+        m = _model()
+        tok, add, glob = _batch()
+        packed = tf.concat([tok, add], axis=2)
+        self.assertEqual(packed.shape[-1], arm.PACKED_WIDTH)
+        a = m([tok, add, glob], training=False).numpy()
+        b = m([packed, glob], training=False).numpy()
+        np.testing.assert_array_equal(a, b)
+
+    def test_the_add_info_slice_is_the_second_five(self):
+        self.assertEqual(arm.ADD_INFO_SLICE, slice(5, 10))
+
+    def test_the_packed_form_still_masks_on_log_energy(self):
+        m = _model()
+        tok, add, glob = _batch()
+        packed = np.concatenate([np.array(tok), np.array(add)], axis=2)
+        packed[:, 8:, :] = 0.0
+        mask = m.pad_mask(tf.constant(packed)).numpy()
+        self.assertTrue(np.all(mask[:, 8:, 0] == 0.0))
