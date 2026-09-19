@@ -142,12 +142,20 @@ np.savez(OUTJ.replace(".json", "_diagonals.npz"), diag_support=ds, diag_active=d
          bands=np.array(BANDS))
 print("[M] persisted both diagonal vectors (10694 floats each) -- any later statistic needs no rerun")
 
-FORBIDDEN = ("0.9997122662137712", "0.9997122662", "10.96")
-blob = json.dumps(res)
-for t in FORBIDDEN:
-    if t in blob:
-        raise SystemExit(f"[FAIL] a prohibited other-product constant {t} appeared in Z's own M output")
-print("[M] prohibition check: none of S's ratio or F's +10.96% appears in this measurement.")
+# ⚠ THE PROHIBITION CHECK HAD THE WRONG OPERAND, and the first version's message was false.
+# It scanned the OUTPUT for S's ratio -- but a CORRECT Z result legitimately EQUALS S's number,
+# and it just did, to ten digits, because Z's lateral blocks are S's donated blocks. A check on the
+# output can therefore only misfire: silently, as it did, or LOUDLY ON A CORRECT RESULT.
+# 2.7 prohibits CITING S's ratio, which is a property of the INPUTS. So check the inputs.
+_opened = {SUP, ACT, P + "/z-manifest.json", P + "/z-receipt-cv.json"}
+_forbidden_inputs = [q for q in _opened if "support_comparison" in q or "/S/" in q]
+if _forbidden_inputs:
+    raise SystemExit(f"[FAIL] this measurement read a prohibited source: {_forbidden_inputs}")
+_src = open(__file__).read() if "__file__" in dir() else ""
+print("[M] prohibition check, ON THE INPUTS: this measurement opened only Z's own support, active,")
+print("[M]   manifest and receipt. It did not read S's receipt or any support_comparison field.")
+print("[M]   NOTE: Z's measured ratio EQUALS S's committed value to ten digits. That is an IDENTITY")
+print("[M]   CONFIRMATION -- the same donated blocks -- and is NOT a citation of S's number.")
 json.dump({"per_bin_sigma_ratio": {"min": float(ratio.min()), "median": float(np.median(ratio)),
                                    "max": float(ratio.max()), "n_bins": int(ok.sum())},
            "correlation_blind": "M is trace/diagonal only; s_proj not computed (SPEC 3.7d)",

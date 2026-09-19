@@ -71,6 +71,13 @@ _probe="$(PYTHONPATH="$SHADOW_PYTHONPATH" $PY -c "import ROOT" 2>&1 || true)"
 if printf '%s' "$_probe" | grep -q "ROOT SHADOWED BY THE GUARD-SET CONTROL"; then
   echo "  SHADOW OK -- the shim intercepts; refusal legs below are meaningful"
   SHADOW_OK=1
+  # ⚠ RUN 5 DOES NOT USE THE SHADOW ON ANY LEG, and that is a decision, not an omission.
+  # Run 4 proved the shim intercepts AND named why the refusals cannot be reached without ROOT:
+  # project_cov_nd.py:321 -> _verify_canonical_edges() -> :59 -> unfold_2d_omnifold_unbinned:21.
+  # That is a FAIL-CLOSED canonical-edges check preceding the guards. Moving it or making it
+  # skippable would change fail-closed code on the publication path to serve reviewer convenience,
+  # so item 6 is RECORDED as by-design and routed to the gated cleanup. Every leg below runs in
+  # B4's configuration -- sourced environment, real ROOT -- so the guards at :364 are reached.
 else
   echo "  *** CONTROL FAILED: the ROOT shadow does NOT intercept. Every refusal leg below that"
   echo "      relies on it proves NOTHING about reachability. Raw result of the probe:"
@@ -127,13 +134,13 @@ run A2_launcher_exception_record_is_not_an_adoption 3 "does not state an adoptio
 
 # ---- LEG B: the variant guard, the actual files, both directions and both crossings ----------
 AX=(--src-hist hCov_combined5d_total_uthrow --src-axes pt,pz,eavail,q3,W --keep-axes eavail,W)
-run B1_publication_from_MEAN_variant 1 "mean-centering alone is disqualified" env PYTHONPATH="$SHADOW_PYTHONPATH" $PY project_cov_nd.py \
+run B1_publication_from_MEAN_variant 1 "mean-centering alone is disqualified" $PY project_cov_nd.py \
   --src-cov "$P/z-mean.npz" --src-cv "$P/z-mean.npz" "${AX[@]}" \
   --run-class publication --expect-variant mean --out "$OUTD/B1.root"
-run B2_cv_file_declared_mean 1 "declares variant 'cv'" env PYTHONPATH="$SHADOW_PYTHONPATH" $PY project_cov_nd.py \
+run B2_cv_file_declared_mean 1 "declares variant 'cv'" $PY project_cov_nd.py \
   --src-cov "$P/z-cv.npz" --src-cv "$P/z-cv.npz" "${AX[@]}" \
   --run-class publication --expect-variant mean --out "$OUTD/B2.root"
-run B3_mean_file_declared_cv 1 "declares variant 'mean'" env PYTHONPATH="$SHADOW_PYTHONPATH" $PY project_cov_nd.py \
+run B3_mean_file_declared_cv 1 "declares variant 'mean'" $PY project_cov_nd.py \
   --src-cov "$P/z-mean.npz" --src-cv "$P/z-mean.npz" "${AX[@]}" \
   --run-class publication --expect-variant cv --out "$OUTD/B3.root"
 # B4 runs with the REAL ROOT and NO shadow -- it writes a file, and shadowing every leg would
@@ -143,7 +150,7 @@ run B3_mean_file_declared_cv 1 "declares variant 'mean'" env PYTHONPATH="$SHADOW
 # THIS adoption, because it is what stops a NON-PASSING source being published WITHOUT the
 # exception. Every other leg passes publication WITH the exception, so the guard that makes this
 # source special has never fired. This is that case: publication + cv + NO exception.
-run B5_publication_cv_but_NO_exception 1 "records \`adoptable: false\`" env PYTHONPATH="$SHADOW_PYTHONPATH" $PY project_cov_nd.py \
+run B5_publication_cv_but_NO_exception 1 "records \`adoptable: false\`" $PY project_cov_nd.py \
   --src-cov "$P/z-cv.npz" --src-cv "$P/z-cv.npz" "${AX[@]}" \
   --run-class publication --expect-variant cv --out "$OUTD/B5.root"
 
@@ -151,6 +158,9 @@ run B4_CONTROL_publication_from_CV_variant 0 "" $PY project_cov_nd.py \
   --src-cov "$P/z-cv.npz" --src-cv "$P/z-cv.npz" "${AX[@]}" \
   --run-class publication --expect-variant cv --adoption-exception "$AMEND" \
   --out "$OUTD/B4_CONTROL_NOT_THE_DELIVERABLE.root"
+
+echo; echo "=== Q2 ASSERTION on B4's product -- written after run 1 and NEVER INVOKED until now ==="
+$PY assert_control_b4_product.py; echo "  assertion rc=$?"
 
 echo; echo "=== B4's receipt: the fields that must record the identity check ==="
 $PY - <<'PYEOF'

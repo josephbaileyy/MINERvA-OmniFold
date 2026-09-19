@@ -502,7 +502,11 @@ run what inspection had missed in three.
 | ratio active/support | **`0.9997122662`** |
 | relative movement | **`−0.0288%`** |
 
-**This REPRODUCES S's committed `support_comparison` to ten digits** — §2.7 records
+**This REPRODUCES S's committed `support_comparison` to ten digits — as an IDENTITY CONFIRMATION,
+not as independent physics.** ⚠ *Tempering my own phrasing:* if Z's lateral blocks **are** S's
+donated blocks, and the digests say they are, then ten-digit agreement is **expected**. It confirms
+the binding — these really are the same blocks — and it **cannot** corroborate anything beyond that.
+Recorded so the agreement is not read as evidence it is not.* The underlying point stands: — §2.7 records
 `1.4742855148740122e-38` / `1.474709838719496e-38`, ratio `0.9997122662137712`, `−0.0288%`.
 **That is a reproduction, not a citation**: §2.7 prohibits *citing S's ratio as Z's M*, and Z's M was
 measured independently from Z's own bound inputs and agrees.
@@ -516,9 +520,32 @@ measured independently from Z's own bound inputs and agrees.
 > a trace-only `M`, which is what was asked for originally, would have reported `−0.03%` and shown
 > none of it.
 
-**NOT ESTABLISHED, and the diagonals are persisted so it needs no rerun:** whether the extreme
-per-bin ratios sit in small-magnitude bins. I measured that correlation for the null and have **not**
-measured it here, so I am not repeating the inference.
+### NOW MEASURED from the persisted diagonals, at no compute — and it changes the reading
+
+**The extreme movers carry essentially none of the variance.**
+
+| | |
+|---|---|
+| Spearman `ρ(support variance, ratio)` | **`−0.0048`, `p = 0.621`** — **no correlation**, unlike the null's `−0.3103` at `p = 2.5e-237` |
+| median ratio by variance decile | **flat at ≈1.00** across all ten; not monotone |
+| `ratio > 2.0` | 48 bins (0.45%) carrying **`0.0002%`** of total support variance |
+| `ratio < 0.5` | 67 bins (0.63%) carrying **`0.0555%`** |
+| `ratio < 0.8` | 830 bins (7.76%) carrying **`1.16%`** |
+| the argmax bin, ratio `3.062` | support variance `7.36e-96` = **`0.000000%`** of total |
+| the argmin bin, ratio `0.177` | **`0.000006%`** of total |
+| **top 1% of bins by variance — carrying `74.11%` of the total** | ratios **`0.687` … `1.153`, median `0.999`** |
+
+**So the `0.177`–`3.06` span is real and it lives where the variance is not.** Where the variance
+actually is, the lateral block moves by **at most ±15%** and typically not at all. The trace's
+`−0.0288%` is therefore **not** concealing large movement in the bins that carry the uncertainty —
+which is the opposite of what the raw span suggested, and is why the question was worth asking
+rather than assuming either way.
+
+⚠ **TWO LIMITS, because variance share is not publication relevance.** A quoted number drawn from a
+**low-variance** bin still carries that bin's own ratio — a 3× σ change in a negligible-variance bin
+is still 3× *for that bin*. And `830` bins (7.76%) sit below `0.8`, carrying `1.16%` of variance:
+small in aggregate, not nothing. **No threshold is applied here and none is proposed**; the
+distribution is the report.
 
 ⚠ **MY PROHIBITION CHECK IS VACUOUS AND ITS MESSAGE IS FALSE.** It prints *"none of S's ratio or F's
 +10.96% appears in this measurement"* — but it inspects only the **per-band trace dict**, which is
