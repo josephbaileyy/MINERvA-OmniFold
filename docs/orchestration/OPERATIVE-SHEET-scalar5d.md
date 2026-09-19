@@ -123,8 +123,24 @@ for its purpose, not its contents. **I inferred the content of a histogram from 
 without reading a bin**, and it survived into a ruling until the numbers contradicted it. Recorded
 here rather than deleted, because the ruling would otherwise rest on three grounds of which one is
 wrong — the same shape as a record claiming more verification than was performed.
-*(Not established and not claimed: `hExcess2D ≠ hData2D − hGenCV2D` — max diff `2.297e-39`, sums
-`3.642261e-39` vs `1.272585e-38` — so a further normalization is involved that I have not measured.)*
+**AND THE NORMALIZATION IS NOW ESTABLISHED, from the producer rather than from the outputs.**
+`excess_eavail_W.py` states it: `hData2D` is `md`, the **density** `dσ/(dE_avail dW)` (`:212`);
+`hGenCV2D` is `mg`, the GENIE density (`:213`); and `hExcess2D` is `exc = sig_d - sig_g` where
+`sig_d = md * dvol` and `dvol = outer(diff(eav_e), diff(W_e))` (`:134-136`, `:165`). So
+
+> **`hExcess2D` = (`hData2D` − `hGenCV2D`) × per-cell bin volume `ΔE_avail·ΔW`.**
+
+"sigma" in its title means **cross section, not standard deviation.** That is why both earlier
+guesses missed: `1.272585e-38` is the unweighted density difference, `3.642261e-39` the
+volume-weighted one. **No DOCS finding** — the note's percentages (`:166`, `:169`, `:177`) are
+fractions of `exc[exc>0].sum()`, i.e. of the **positive integrated** excess, which is the correct
+weighting for apportioning a total; a density-weighted percentage would have been the error.
+
+⚠ **This also strengthens the pairing check above, unintentionally.** `hCV_marginal` was compared
+against `hData2D`, which is a **density** — and they agree to `1.3e-15`. Had the projector emitted
+an integrated `M x_src` instead, the two would have differed by `dvol` and the check would have
+**failed**. So the comparison silently verified **unit consistency** between the covariance's
+central values and the figure's, not only provenance.
 
 Forcing `--dst-cv` would require producing a frozen `(E_avail,W)` central value first — new
 scientific work outside the §2 table.
