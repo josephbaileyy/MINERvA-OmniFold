@@ -1,0 +1,726 @@
+{
+  "scope": "P-1..P-6 port checks for the OmniLearned PET2 backbone rebuilt in Keras. Implementation evidence only; no performance claim, no adoption.",
+  "configuration": {
+    "input_dim": 4,
+    "add_dim": 5,
+    "pid": true,
+    "pid_dim": 8,
+    "cond_dim": 16,
+    "num_coord": 2,
+    "K": 10,
+    "add_info": true,
+    "conditional": true,
+    "num_classes": 1
+  },
+  "interaction_flags": {
+    "use_int": false,
+    "local_int": false
+  },
+  "interaction_flag_provenance": "plot_configs/V1Paper.json lists OLS / OLS_RW / OLM_FB as the V1 lineup and src/jobs/submit_train_jobs.py:155-169 passes neither --ol-interaction nor --ol-local-interaction; both are store_true with default False. The PET2 CLASS defaults are True/True, which is not the paper configuration.",
+  "preset": {
+    "num_transformers": 8,
+    "num_transformers_head": 2,
+    "num_tokens": 4,
+    "num_heads": 8,
+    "base_dim": 128,
+    "mlp_ratio": 2
+  },
+  "size": "small",
+  "device": "cpu",
+  "jit_compile": true,
+  "jit_scope": "XLA's algebraic transformations on the CPU backend. It does NOT validate XLA-GPU's kernels, which is where the campaign would run; no float64 check on this machine can reach those.",
+  "rows_forward": 1024,
+  "rows_gradient": 64,
+  "tokens": 12,
+  "seed": 20260919,
+  "backend": {
+    "tf_keras_shim_available": true,
+    "tf_use_legacy_keras": "1",
+    "reason": "Keras-3 TensorFlow with the tf_keras shim: the shim is selected."
+  },
+  "versions": {
+    "tensorflow": "2.16.2",
+    "tf_keras_module": "tf_keras.api._v2.keras",
+    "tf_keras_root": "tf_keras",
+    "tf_keras_version": "2.16.0",
+    "standalone_keras": "3.15.0",
+    "torch": "2.6.0"
+  },
+  "torch_sdpa_mask_dtype_probe": {
+    "rows": [
+      {
+        "tensor_dtype": "torch.float64",
+        "error_with_matched_mask": 2.220446049250313e-16,
+        "error_with_float32_mask": 1.738723390214214
+      },
+      {
+        "tensor_dtype": "torch.float32",
+        "error_with_matched_mask": 1.0572163289257475e-07,
+        "error_with_float32_mask": 1.0572163289257475e-07
+      },
+      {
+        "tensor_dtype": "torch.bfloat16",
+        "error_with_matched_mask": 0.0038057364046404363,
+        "error_with_float32_mask": 0.0038057364046404363
+      },
+      {
+        "tensor_dtype": "torch.float16",
+        "error_with_matched_mask": 0.0003340544496372999,
+        "error_with_float32_mask": 0.0003340544496372999
+      }
+    ],
+    "reading": "a float32 mask is only harmful when q/k/v are float64, i.e. when the mask is at LOWER precision than the tensors. His runs are float32 and his AMP path is fp16/bf16, both of which this probe shows are unaffected."
+  },
+  "checks": {
+    "P1_inventory": {
+      "held": true,
+      "tensors": 176,
+      "transferred": 176,
+      "parameters_theirs": 2758702,
+      "parameters_ours": 2758702,
+      "traversal_order_identical": true,
+      "dtype": "float64"
+    },
+    "P2_forward": {
+      "held": true,
+      "rows": 1024,
+      "P2a_float32_unmodified_upstream": {
+        "held": true,
+        "criterion": "(a) the cross-engine float32 difference must be within TWICE the reference implementation's own float32 deviation, and (b) our float32 deviation must be no worse than twice the reference's. Neither limit reads our float32 output, so a defect in the port cannot widen its own acceptance band.",
+        "cross_engine_max_abs_difference": 3.594905138015747e-07,
+        "limit_from_reference_only": 5.259523137707278e-07,
+        "their_float32_deviation": 2.629761568853639e-07,
+        "our_float32_deviation": 2.1506981057184404e-07,
+        "ours_no_worse_than_reference": true,
+        "apriori_float32_perturbation_bound": {
+          "float32_epsilon": 5.960464477539063e-08,
+          "draws": 5,
+          "max_output_movement": 5.828789595430095e-08,
+          "movements": [
+            4.169029899081522e-08,
+            4.30772482892805e-08,
+            3.150770148951931e-08,
+            5.437153192261457e-08,
+            5.828789595430095e-08
+          ],
+          "role": "corroboration only: a floor on achievable float32 disagreement, since it omits intermediate rounding. Does not gate."
+        }
+      },
+      "P2b_float64_with_declared_sdpa_repair": {
+        "held": true,
+        "tolerance": 1e-05,
+        "max_abs_difference": 7.494005416219807e-16,
+        "mean_abs_difference": 1.1021666825055841e-16,
+        "outputs_finite": true,
+        "upstream_modification": "torch's scaled_dot_product_attention upcasts an attention mask that is below the tensor precision; his code is untouched",
+        "mask_upcasts_applied": 10,
+        "fully_masked_rows": [
+          0,
+          1
+        ],
+        "single_token_rows": [
+          2,
+          3
+        ],
+        "fully_masked_max_abs_difference_float64": 3.122502256758253e-17,
+        "single_token_max_abs_difference_float64": 9.454242944073599e-17,
+        "fully_masked_outputs_finite": true
+      }
+    },
+    "P3_gradient": {
+      "held": true,
+      "criterion": "the cross-engine gradient disagreement must be at least 1000x smaller than that of a mutant port carrying one deliberate structural difference. Round-off floors are measured and reported as corroboration, by re-differentiating a row-permuted batch, a half-batch split, and a one-ulp parameter jitter, whichever moves it most. The finite-difference sweep is reported as a correctness control, not as the tolerance: its error is truncation-dominated on a single scalar and cannot bound agreement between two exact autodiff implementations.",
+      "worst_cross_engine_tensor": "body.local_physics.mlp.norm.alpha",
+      "worst_cross_engine_relative_difference": 8.11365810561149e-14,
+      "worst_round_off_floor_tensor": "body.local_physics.in_blocks.0.mlp.norm.alpha",
+      "worst_round_off_floor": 8.016339006209801e-14,
+      "round_off_floor_routes": {
+        "worst_by_permutation": 6.074396442703789e-15,
+        "worst_by_half_batch_split": 8.677709203862556e-15,
+        "worst_by_one_ulp_jitter": 8.016339006209801e-14
+      },
+      "tensors_over_their_own_floor": [
+        "body.add_embed.0.fc1.weight",
+        "body.cond_embed.0.fc2.bias",
+        "body.cond_embed.0.norm.alpha",
+        "body.embed.mlp.fc1.bias",
+        "body.embed.mlp.fc1.weight",
+        "body.in_blocks.0.attn.in_proj_weight",
+        "body.in_blocks.0.mlp.fc2.bias",
+        "body.in_blocks.1.norm1.alpha",
+        "body.in_blocks.2.mlp.fc2.bias",
+        "body.in_blocks.2.mlp.fc2.weight",
+        "body.in_blocks.3.attn.out_proj.weight",
+        "body.in_blocks.3.mlp.fc1.bias",
+        "body.in_blocks.3.mlp.fc1.weight",
+        "body.in_blocks.3.mlp.fc2.bias",
+        "body.in_blocks.3.mlp.norm.weight",
+        "body.in_blocks.3.norm1.alpha",
+        "body.in_blocks.3.norm2.alpha",
+        "body.in_blocks.4.attn.in_proj_weight",
+        "body.in_blocks.4.mlp.fc1.bias",
+        "body.in_blocks.4.mlp.fc2.bias",
+        "body.in_blocks.5.mlp.fc1.bias",
+        "body.in_blocks.5.mlp.fc2.bias",
+        "body.in_blocks.5.norm1.alpha",
+        "body.in_blocks.6.attn.out_proj.weight",
+        "body.in_blocks.6.mlp.fc2.weight",
+        "body.in_blocks.6.norm2.weight",
+        "body.in_blocks.7.attn.out_proj.weight",
+        "body.in_blocks.7.mlp.fc1.bias",
+        "body.in_blocks.7.mlp.fc1.weight",
+        "body.in_blocks.7.norm1.alpha",
+        "body.local_physics.in_blocks.0.attn.in_proj_weight",
+        "body.local_physics.in_blocks.0.mlp.fc1.weight",
+        "body.local_physics.in_blocks.0.mlp.fc2.bias",
+        "body.local_physics.in_blocks.0.norm2.weight",
+        "body.local_physics.in_blocks.1.attn.in_proj_weight",
+        "body.local_physics.in_blocks.1.attn.out_proj.weight",
+        "body.local_physics.in_blocks.1.mlp.fc1.weight",
+        "body.local_physics.in_blocks.1.mlp.fc2.bias",
+        "body.local_physics.in_blocks.1.mlp.norm.alpha",
+        "body.local_physics.in_blocks.1.norm1.weight",
+        "body.local_physics.in_blocks.1.norm2.alpha",
+        "body.local_physics.in_blocks.1.norm2.weight",
+        "body.local_physics.mlp.fc1.bias",
+        "body.local_physics.mlp.fc2.bias",
+        "body.local_physics.mlp.fc2.weight",
+        "body.local_physics.mlp.norm.alpha",
+        "body.local_physics.mlp.norm.weight",
+        "classifier.in_blocks.0.mlp.fc1.bias",
+        "classifier.in_blocks.0.mlp.fc2.bias",
+        "classifier.in_blocks.1.mlp.fc2.bias"
+      ],
+      "cross_engine_by_tensor": {
+        "body.token": 2.0620036030376222e-15,
+        "body.embed.mlp.fc1.weight": 3.582616245906338e-15,
+        "body.embed.mlp.fc1.bias": 2.9743392798848838e-15,
+        "body.embed.mlp.fc2.weight": 2.2263165417263153e-15,
+        "body.embed.mlp.fc2.bias": 2.26554502160088e-15,
+        "body.embed.mlp.norm.alpha": 2.4269683160124576e-15,
+        "body.embed.mlp.norm.weight": 1.4678804272552303e-15,
+        "body.embed.norm.alpha": 3.572588847966305e-15,
+        "body.embed.norm.weight": 1.0898046663513127e-14,
+        "body.local_physics.mlp.fc1.weight": 2.5361448756291254e-15,
+        "body.local_physics.mlp.fc1.bias": 2.0761379252206517e-15,
+        "body.local_physics.mlp.fc2.weight": 4.761657436772612e-15,
+        "body.local_physics.mlp.fc2.bias": 2.3904276757969847e-15,
+        "body.local_physics.mlp.norm.alpha": 8.11365810561149e-14,
+        "body.local_physics.mlp.norm.weight": 2.761414256284068e-15,
+        "body.local_physics.in_blocks.0.norm1.alpha": 4.256899525331375e-16,
+        "body.local_physics.in_blocks.0.norm1.weight": 2.071826263597859e-15,
+        "body.local_physics.in_blocks.0.norm2.alpha": 1.962880051520022e-14,
+        "body.local_physics.in_blocks.0.norm2.weight": 2.2278483877400046e-15,
+        "body.local_physics.in_blocks.0.attn.in_proj_weight": 4.977882494600175e-15,
+        "body.local_physics.in_blocks.0.attn.out_proj.weight": 3.5135495556113358e-15,
+        "body.local_physics.in_blocks.0.mlp.fc1.weight": 4.390779545313195e-15,
+        "body.local_physics.in_blocks.0.mlp.fc1.bias": 2.048483221038624e-15,
+        "body.local_physics.in_blocks.0.mlp.fc2.weight": 3.3159643695226358e-15,
+        "body.local_physics.in_blocks.0.mlp.fc2.bias": 2.2051309249985527e-15,
+        "body.local_physics.in_blocks.0.mlp.norm.alpha": 1.1176626499042512e-14,
+        "body.local_physics.in_blocks.0.mlp.norm.weight": 2.1186472468925486e-15,
+        "body.local_physics.in_blocks.1.norm1.alpha": 1.0819749038616897e-15,
+        "body.local_physics.in_blocks.1.norm1.weight": 3.5061893341114496e-15,
+        "body.local_physics.in_blocks.1.norm2.alpha": 6.848722009089144e-15,
+        "body.local_physics.in_blocks.1.norm2.weight": 4.065126282971825e-15,
+        "body.local_physics.in_blocks.1.attn.in_proj_weight": 3.476164749873205e-15,
+        "body.local_physics.in_blocks.1.attn.out_proj.weight": 3.4339087255994874e-15,
+        "body.local_physics.in_blocks.1.mlp.fc1.weight": 5.110198628786721e-15,
+        "body.local_physics.in_blocks.1.mlp.fc1.bias": 2.178997988487455e-15,
+        "body.local_physics.in_blocks.1.mlp.fc2.weight": 5.0865050163785605e-15,
+        "body.local_physics.in_blocks.1.mlp.fc2.bias": 3.1630534429196635e-15,
+        "body.local_physics.in_blocks.1.mlp.norm.alpha": 5.8432414200535475e-15,
+        "body.local_physics.in_blocks.1.mlp.norm.weight": 2.3138503548692422e-15,
+        "body.cond_embed.0.fc1.weight": 1.4437335686032717e-15,
+        "body.cond_embed.0.fc1.bias": 2.466009996525354e-15,
+        "body.cond_embed.0.fc2.weight": 1.5721104989499705e-15,
+        "body.cond_embed.0.fc2.bias": 4.684260929153576e-15,
+        "body.cond_embed.0.norm.alpha": 2.263396892068435e-14,
+        "body.cond_embed.0.norm.weight": 1.1052838518465277e-15,
+        "body.add_embed.0.fc1.weight": 2.03764784530182e-15,
+        "body.add_embed.0.fc2.weight": 1.5271544610171197e-15,
+        "body.add_embed.0.norm.alpha": 5.459951832004379e-15,
+        "body.add_embed.0.norm.weight": 1.1758775544236627e-15,
+        "body.pid_embed.0.weight": 7.024123850830708e-16,
+        "body.in_blocks.0.norm1.alpha": 3.075641943450802e-15,
+        "body.in_blocks.0.norm1.weight": 1.3956881347467663e-15,
+        "body.in_blocks.0.norm2.alpha": 4.0075675141762443e-16,
+        "body.in_blocks.0.norm2.weight": 9.24967244503784e-16,
+        "body.in_blocks.0.attn.in_proj_weight": 2.2010258047582585e-15,
+        "body.in_blocks.0.attn.out_proj.weight": 1.8321482516123007e-15,
+        "body.in_blocks.0.mlp.fc1.weight": 1.833100699442953e-15,
+        "body.in_blocks.0.mlp.fc1.bias": 2.454676029117925e-15,
+        "body.in_blocks.0.mlp.fc2.weight": 2.0099675801289912e-15,
+        "body.in_blocks.0.mlp.fc2.bias": 2.7347418997613495e-15,
+        "body.in_blocks.0.mlp.norm.alpha": 3.444831313660213e-16,
+        "body.in_blocks.0.mlp.norm.weight": 1.1066335288938e-15,
+        "body.in_blocks.1.norm1.alpha": 1.084790793054012e-14,
+        "body.in_blocks.1.norm1.weight": 1.0944405216502597e-15,
+        "body.in_blocks.1.norm2.alpha": 1.0693645859909107e-15,
+        "body.in_blocks.1.norm2.weight": 1.4892087568851918e-15,
+        "body.in_blocks.1.attn.in_proj_weight": 1.990226619349499e-15,
+        "body.in_blocks.1.attn.out_proj.weight": 2.079740277452457e-15,
+        "body.in_blocks.1.mlp.fc1.weight": 1.902931604199925e-15,
+        "body.in_blocks.1.mlp.fc1.bias": 2.20965169640412e-15,
+        "body.in_blocks.1.mlp.fc2.weight": 1.6756403536431814e-15,
+        "body.in_blocks.1.mlp.fc2.bias": 2.1970590262997233e-15,
+        "body.in_blocks.1.mlp.norm.alpha": 1.69630296181242e-15,
+        "body.in_blocks.1.mlp.norm.weight": 1.275720755851029e-15,
+        "body.in_blocks.2.norm1.alpha": 0.0,
+        "body.in_blocks.2.norm1.weight": 1.833192482794142e-15,
+        "body.in_blocks.2.norm2.alpha": 4.0559595947062193e-16,
+        "body.in_blocks.2.norm2.weight": 1.526894795230057e-15,
+        "body.in_blocks.2.attn.in_proj_weight": 2.069004037427617e-15,
+        "body.in_blocks.2.attn.out_proj.weight": 1.809792672081079e-15,
+        "body.in_blocks.2.mlp.fc1.weight": 1.5835070025148936e-15,
+        "body.in_blocks.2.mlp.fc1.bias": 2.154200503859912e-15,
+        "body.in_blocks.2.mlp.fc2.weight": 2.234717719588358e-15,
+        "body.in_blocks.2.mlp.fc2.bias": 2.5244952138733828e-15,
+        "body.in_blocks.2.mlp.norm.alpha": 4.4111585988470474e-16,
+        "body.in_blocks.2.mlp.norm.weight": 7.828344321124783e-16,
+        "body.in_blocks.3.norm1.alpha": 2.957968458429018e-15,
+        "body.in_blocks.3.norm1.weight": 1.6882980165814133e-15,
+        "body.in_blocks.3.norm2.alpha": 8.48259790587774e-16,
+        "body.in_blocks.3.norm2.weight": 1.3245174306467588e-15,
+        "body.in_blocks.3.attn.in_proj_weight": 2.2314135821631393e-15,
+        "body.in_blocks.3.attn.out_proj.weight": 2.3135574785634087e-15,
+        "body.in_blocks.3.mlp.fc1.weight": 1.889304765730947e-15,
+        "body.in_blocks.3.mlp.fc1.bias": 2.3798323384747112e-15,
+        "body.in_blocks.3.mlp.fc2.weight": 1.7113390418665683e-15,
+        "body.in_blocks.3.mlp.fc2.bias": 2.398654015107777e-15,
+        "body.in_blocks.3.mlp.norm.alpha": 5.029076907648669e-16,
+        "body.in_blocks.3.mlp.norm.weight": 2.1814256742827957e-15,
+        "body.in_blocks.4.norm1.alpha": 2.6382957793292997e-15,
+        "body.in_blocks.4.norm1.weight": 1.704627302481508e-15,
+        "body.in_blocks.4.norm2.alpha": 3.1542313719386025e-15,
+        "body.in_blocks.4.norm2.weight": 1.478304327787248e-15,
+        "body.in_blocks.4.attn.in_proj_weight": 2.5795827760948876e-15,
+        "body.in_blocks.4.attn.out_proj.weight": 1.9267192698640138e-15,
+        "body.in_blocks.4.mlp.fc1.weight": 1.391309021369364e-15,
+        "body.in_blocks.4.mlp.fc1.bias": 2.2912113293488933e-15,
+        "body.in_blocks.4.mlp.fc2.weight": 1.83310316027807e-15,
+        "body.in_blocks.4.mlp.fc2.bias": 2.3452987170527745e-15,
+        "body.in_blocks.4.mlp.norm.alpha": 2.100924663503001e-16,
+        "body.in_blocks.4.mlp.norm.weight": 1.3609877233018857e-15,
+        "body.in_blocks.5.norm1.alpha": 2.858563994262744e-15,
+        "body.in_blocks.5.norm1.weight": 1.6549276027110314e-15,
+        "body.in_blocks.5.norm2.alpha": 9.599678764193616e-16,
+        "body.in_blocks.5.norm2.weight": 1.894062469990506e-15,
+        "body.in_blocks.5.attn.in_proj_weight": 1.720279688311155e-15,
+        "body.in_blocks.5.attn.out_proj.weight": 1.5815061653177175e-15,
+        "body.in_blocks.5.mlp.fc1.weight": 1.985641231453341e-15,
+        "body.in_blocks.5.mlp.fc1.bias": 2.5319871285872547e-15,
+        "body.in_blocks.5.mlp.fc2.weight": 1.5313235442671158e-15,
+        "body.in_blocks.5.mlp.fc2.bias": 2.0678248350639727e-15,
+        "body.in_blocks.5.mlp.norm.alpha": 1.1756429412894854e-14,
+        "body.in_blocks.5.mlp.norm.weight": 8.59153041015725e-16,
+        "body.in_blocks.6.norm1.alpha": 7.792321612822767e-16,
+        "body.in_blocks.6.norm1.weight": 1.7514711765399283e-15,
+        "body.in_blocks.6.norm2.alpha": 3.0332314647000076e-15,
+        "body.in_blocks.6.norm2.weight": 1.6403619015054633e-15,
+        "body.in_blocks.6.attn.in_proj_weight": 1.7915469818106786e-15,
+        "body.in_blocks.6.attn.out_proj.weight": 2.0393334387158095e-15,
+        "body.in_blocks.6.mlp.fc1.weight": 1.5652562685685129e-15,
+        "body.in_blocks.6.mlp.fc1.bias": 1.465438308596375e-15,
+        "body.in_blocks.6.mlp.fc2.weight": 2.336127899019953e-15,
+        "body.in_blocks.6.mlp.fc2.bias": 2.2141875398887886e-15,
+        "body.in_blocks.6.mlp.norm.alpha": 1.0568216947188754e-15,
+        "body.in_blocks.6.mlp.norm.weight": 1.4923376598898223e-15,
+        "body.in_blocks.7.norm1.alpha": 5.4299765520100095e-15,
+        "body.in_blocks.7.norm1.weight": 1.4048560845751692e-15,
+        "body.in_blocks.7.norm2.alpha": 1.2404741054277088e-15,
+        "body.in_blocks.7.norm2.weight": 1.6820574472281341e-15,
+        "body.in_blocks.7.attn.in_proj_weight": 1.9372993723876282e-15,
+        "body.in_blocks.7.attn.out_proj.weight": 2.0391902546362746e-15,
+        "body.in_blocks.7.mlp.fc1.weight": 2.277426551368545e-15,
+        "body.in_blocks.7.mlp.fc1.bias": 2.328764800525413e-15,
+        "body.in_blocks.7.mlp.fc2.weight": 1.806110302562535e-15,
+        "body.in_blocks.7.mlp.fc2.bias": 1.931394537961702e-15,
+        "body.in_blocks.7.mlp.norm.alpha": 4.254612146661102e-16,
+        "body.in_blocks.7.mlp.norm.weight": 1.405607823413543e-15,
+        "body.norm.alpha": 4.4479718661458205e-15,
+        "body.norm.weight": 1.4150732832238398e-15,
+        "classifier.in_blocks.0.norm.alpha": 2.2942724436096902e-14,
+        "classifier.in_blocks.0.norm.weight": 1.09369986764065e-15,
+        "classifier.in_blocks.0.attn.in_proj_weight": 1.4795909446228127e-15,
+        "classifier.in_blocks.0.attn.out_proj.weight": 1.6626811538026454e-15,
+        "classifier.in_blocks.0.mlp.fc1.weight": 1.2154412435099006e-15,
+        "classifier.in_blocks.0.mlp.fc1.bias": 1.938605302249982e-15,
+        "classifier.in_blocks.0.mlp.fc2.weight": 1.5080846980580747e-15,
+        "classifier.in_blocks.0.mlp.fc2.bias": 2.2121156653637577e-15,
+        "classifier.in_blocks.0.mlp.norm.alpha": 8.03814617987527e-15,
+        "classifier.in_blocks.0.mlp.norm.weight": 7.53695630364157e-16,
+        "classifier.in_blocks.1.norm.alpha": 8.238623395087479e-15,
+        "classifier.in_blocks.1.norm.weight": 9.824248492085134e-16,
+        "classifier.in_blocks.1.attn.in_proj_weight": 1.5310589230531014e-15,
+        "classifier.in_blocks.1.attn.out_proj.weight": 1.31146088659103e-15,
+        "classifier.in_blocks.1.mlp.fc1.weight": 1.5672410400283047e-15,
+        "classifier.in_blocks.1.mlp.fc1.bias": 1.9506647969481618e-15,
+        "classifier.in_blocks.1.mlp.fc2.weight": 1.5333990301612954e-15,
+        "classifier.in_blocks.1.mlp.fc2.bias": 1.996635184208482e-15,
+        "classifier.in_blocks.1.mlp.norm.alpha": 3.3973310705740976e-15,
+        "classifier.in_blocks.1.mlp.norm.weight": 9.379322739162314e-16,
+        "classifier.fc.fc1.weight": 1.4100571818035816e-15,
+        "classifier.fc.fc1.bias": 1.6909889360695142e-15,
+        "classifier.fc.fc2.weight": 1.506450860092048e-15,
+        "classifier.fc.fc2.bias": 6.932259400926832e-16,
+        "classifier.fc.norm.alpha": 3.1438165578339005e-15,
+        "classifier.fc.norm.weight": 1.4678054136552477e-15,
+        "classifier.out.weight": 1.6548255275402324e-15,
+        "classifier.out.bias": 1.1990216511279892e-16
+      },
+      "mutant_worst_relative_difference": 3.395335762656049e-08,
+      "mutant_description": "the same port with emulate_upstream_float32_reduction disabled, i.e. the neighbourhood denominator computed in float64 instead of reproducing the upstream's hardcoded float32",
+      "margin_over_mutant": 418471.6336898396,
+      "required_margin": 1000.0,
+      "tensors_compared": 176,
+      "unconnected_gradients": [],
+      "loss_theirs": 0.7493480628713198,
+      "loss_ours": 0.7493480628713198,
+      "finite_difference_control_passed": true,
+      "finite_difference_sweeps": [
+        {
+          "trials": [
+            {
+              "step": 0.01,
+              "estimate": 8.188613537241096e-05,
+              "relative_error": 7.439500228313501e-10
+            },
+            {
+              "step": 0.001,
+              "estimate": 8.188613542792211e-05,
+              "relative_error": 6.604342805189859e-11
+            },
+            {
+              "step": 0.0001,
+              "estimate": 8.188613564996672e-05,
+              "relative_error": 2.6455829510659074e-09
+            },
+            {
+              "step": 1e-05,
+              "estimate": 8.188613120907462e-05,
+              "relative_error": 5.158694463129021e-08
+            },
+            {
+              "step": 1e-06,
+              "estimate": 8.188610900461413e-05,
+              "relative_error": 3.227495825430708e-07
+            },
+            {
+              "step": 1e-07,
+              "estimate": 8.188616451576536e-05,
+              "relative_error": 3.5515701223638066e-07
+            },
+            {
+              "step": 1e-08,
+              "estimate": 8.188449918122842e-05,
+              "relative_error": 1.998204083114716e-05
+            }
+          ],
+          "best_step": 0.001,
+          "best_relative_error": 6.604342805189859e-11,
+          "parameter": "body.in_blocks.1.mlp.norm.weight",
+          "analytic": 8.188613543333015e-05
+        },
+        {
+          "trials": [
+            {
+              "step": 0.01,
+              "estimate": 1.2559199097372797e-05,
+              "relative_error": 2.1797867602478183e-10
+            },
+            {
+              "step": 0.001,
+              "estimate": 1.2559199125128373e-05,
+              "relative_error": 2.4279584212686568e-09
+            },
+            {
+              "step": 0.0001,
+              "estimate": 1.2559199791262188e-05,
+              "relative_error": 5.5467472307121654e-08
+            },
+            {
+              "step": 1e-05,
+              "estimate": 1.2559198125927649e-05,
+              "relative_error": 7.71313125423973e-08
+            },
+            {
+              "step": 1e-06,
+              "estimate": 1.255923143261839e-05,
+              "relative_error": 2.574844381885139e-06
+            },
+            {
+              "step": 1e-07,
+              "estimate": 1.255884285455977e-05,
+              "relative_error": 2.8364872051529107e-05
+            },
+            {
+              "step": 1e-08,
+              "estimate": 1.2562173523633646e-05,
+              "relative_error": 0.00023683269737773588
+            }
+          ],
+          "best_step": 0.01,
+          "best_relative_error": 2.1797867602478183e-10,
+          "parameter": "classifier.fc.norm.weight",
+          "analytic": 1.255919909463516e-05
+        },
+        {
+          "trials": [
+            {
+              "step": 0.01,
+              "estimate": -0.0011507725502624133,
+              "relative_error": 0.0001028667418348736
+            },
+            {
+              "step": 0.001,
+              "estimate": -0.0011506553700968425,
+              "relative_error": 1.0288769275592457e-06
+            },
+            {
+              "step": 0.0001,
+              "estimate": -0.0011506541980343954,
+              "relative_error": 1.0271632295084212e-08
+            },
+            {
+              "step": 1e-05,
+              "estimate": -0.0011506541885974997,
+              "relative_error": 2.0703014153405606e-09
+            },
+            {
+              "step": 1e-06,
+              "estimate": -0.0011506542385575358,
+              "relative_error": 4.548911195515989e-08
+            },
+            {
+              "step": 1e-07,
+              "estimate": -0.0011506540165129309,
+              "relative_error": 1.4748337933292603e-07
+            },
+            {
+              "step": 1e-08,
+              "estimate": -0.0011506573471820047,
+              "relative_error": 2.747103989988363e-06
+            }
+          ],
+          "best_step": 1e-05,
+          "best_relative_error": 2.0703014153405606e-09,
+          "parameter": "body.in_blocks.4.norm1.alpha",
+          "analytic": -0.0011506541862152987
+        },
+        {
+          "trials": [
+            {
+              "step": 0.01,
+              "estimate": -2.6078729398193445e-06,
+              "relative_error": 2.660920770868346e-09
+            },
+            {
+              "step": 0.001,
+              "estimate": -2.6078729731260353e-06,
+              "relative_error": 1.543251340439919e-08
+            },
+            {
+              "step": 0.0001,
+              "estimate": -2.6078728065925816e-06,
+              "relative_error": 4.842544976325502e-08
+            },
+            {
+              "step": 1e-05,
+              "estimate": -2.6078694759235073e-06,
+              "relative_error": 1.3255847132787384e-06
+            },
+            {
+              "step": 1e-06,
+              "estimate": -2.6079138848444927e-06,
+              "relative_error": 1.5703205464924783e-05
+            },
+            {
+              "step": 1e-07,
+              "estimate": -2.609024107869118e-06,
+              "relative_error": 0.00044142295991595284
+            },
+            {
+              "step": 1e-08,
+              "estimate": -2.609024107869118e-06,
+              "relative_error": 0.00044142295991595284
+            }
+          ],
+          "best_step": 0.01,
+          "best_relative_error": 2.660920770868346e-09,
+          "parameter": "body.local_physics.in_blocks.1.mlp.norm.weight",
+          "analytic": -2.6078729328800013e-06
+        },
+        {
+          "trials": [
+            {
+              "step": 0.01,
+              "estimate": 5.724896390280065e-06,
+              "relative_error": 8.41120603826975e-09
+            },
+            {
+              "step": 0.001,
+              "estimate": 5.724896390280065e-06,
+              "relative_error": 8.41120603826975e-09
+            },
+            {
+              "step": 0.0001,
+              "estimate": 5.724896112724309e-06,
+              "relative_error": 5.6893437837775257e-08
+            },
+            {
+              "step": 1e-05,
+              "estimate": 5.724898333170358e-06,
+              "relative_error": 3.309644164103128e-07
+            },
+            {
+              "step": 1e-06,
+              "estimate": 5.724920537630851e-06,
+              "relative_error": 4.2095429605187095e-06
+            },
+            {
+              "step": 1e-07,
+              "estimate": 5.72486502647962e-06,
+              "relative_error": 5.486903399382392e-06
+            },
+            {
+              "step": 1e-08,
+              "estimate": 5.728750807065808e-06,
+              "relative_error": 0.0006732643417936947
+            }
+          ],
+          "best_step": 0.01,
+          "best_relative_error": 8.41120603826975e-09,
+          "parameter": "body.in_blocks.7.mlp.norm.weight",
+          "analytic": 5.724896438433349e-06
+        },
+        {
+          "trials": [
+            {
+              "step": 0.01,
+              "estimate": 2.1559386109704093e-05,
+              "relative_error": 3.766378723750366e-08
+            },
+            {
+              "step": 0.001,
+              "estimate": 2.155938683134906e-05,
+              "relative_error": 4.1913620416095254e-09
+            },
+            {
+              "step": 0.0001,
+              "estimate": 2.1559387053393664e-05,
+              "relative_error": 6.107845710973285e-09
+            },
+            {
+              "step": 1e-05,
+              "estimate": 2.1559387608505173e-05,
+              "relative_error": 3.185586493527687e-08
+            },
+            {
+              "step": 1e-06,
+              "estimate": 2.1559309892893452e-05,
+              "relative_error": 3.5728668483115533e-06
+            },
+            {
+              "step": 1e-07,
+              "estimate": 2.1558865803683602e-05,
+              "relative_error": 2.4171282353477173e-05
+            },
+            {
+              "step": 1e-08,
+              "estimate": 2.1554980023097414e-05,
+              "relative_error": 0.00020440741802367637
+            }
+          ],
+          "best_step": 0.001,
+          "best_relative_error": 4.1913620416095254e-09,
+          "parameter": "body.cond_embed.0.norm.weight",
+          "analytic": 2.1559386921712255e-05
+        }
+      ]
+    },
+    "P4_update": {
+      "held": true,
+      "margin_over_mutant": 400982299.4969507,
+      "required_margin": 1000.0,
+      "criterion": "the ported optimizer's first step must be at least 1000x closer to torch's than the nearest off-the-shelf alternative, tf.keras.optimizers.AdamW, is. The floor obtained by propagating P-3's measured gradient disagreement through torch's own optimizer is reported alongside. All quoted in learning rates.",
+      "unit": "learning rates (max absolute weight difference / lr)",
+      "measured_same_engine_floor": 5.401235014801387e-10,
+      "gradient_tolerance_from_p3": 8.016339006209801e-14,
+      "optimizer_used": "torch_adamw.TorchAdamW",
+      "worst_tensor": "body.embed.mlp.norm.weight",
+      "worst_difference_in_learning_rates": 1.7408297026122455e-09,
+      "rejected_alternative": {
+        "optimizer": "tf.keras.optimizers.AdamW",
+        "worst_tensor": "body.local_physics.in_blocks.1.mlp.fc1.weight",
+        "worst_difference_in_learning_rates": 0.698041897186051,
+        "reason": "Keras divides epsilon by sqrt(1 - beta_2^t), torch does not, so at step 1 its effective epsilon is 31.6x larger and every zero-initialised bias takes a different first step"
+      },
+      "tensors_compared": 176,
+      "optimizer_settings": {
+        "learning_rate": 0.0001,
+        "weight_decay": 0.01,
+        "beta_1": 0.9,
+        "beta_2": 0.999,
+        "epsilon": 1e-08
+      },
+      "note": "one param group, as src/scripts/train.py:2345 builds it. PET2.no_weight_decay() exists and train.py never calls it, so norms and class tokens are decayed."
+    },
+    "P5_masking": {
+      "held": true,
+      "criterion": "exact: padded slots must not change the output at all",
+      "max_abs_output_change": 0.0,
+      "padded_slots": 5812,
+      "pad_coordinate_shift": 999.0,
+      "coordinate_magnitude_sweep": [
+        {
+          "real_coordinate_magnitude": 1.0,
+          "padded_fraction_of_neighbours": 0.29437924644842495,
+          "padded_fraction_with_unreachable_pad": 0.29437924644842495,
+          "crowding": 0.0
+        },
+        {
+          "real_coordinate_magnitude": 10.0,
+          "padded_fraction_of_neighbours": 0.29437924644842495,
+          "padded_fraction_with_unreachable_pad": 0.29437924644842495,
+          "crowding": 0.0
+        },
+        {
+          "real_coordinate_magnitude": 100.0,
+          "padded_fraction_of_neighbours": 0.29437924644842495,
+          "padded_fraction_with_unreachable_pad": 0.29437924644842495,
+          "crowding": 0.0
+        },
+        {
+          "real_coordinate_magnitude": 1000.0,
+          "padded_fraction_of_neighbours": 0.3657967881408277,
+          "padded_fraction_with_unreachable_pad": 0.29437924644842495,
+          "crowding": 0.07141754169240278
+        },
+        {
+          "real_coordinate_magnitude": 10000.0,
+          "padded_fraction_of_neighbours": 0.37676034589252627,
+          "padded_fraction_with_unreachable_pad": 0.29437924644842495,
+          "crowding": 0.08238109944410132
+        }
+      ],
+      "magnitudes_where_pads_crowd": [
+        1000.0,
+        10000.0
+      ],
+      "sweep_reading": "the upstream pushes padded points away by adding a literal 999.0, so pad separation is not a property of the mask but of that constant being large compared with REAL coordinates. Any magnitude listed in magnitudes_where_pads_crowd is a real-coordinate scale at which padded tokens displaced genuine neighbours. Our reco cloud divides positions by _SCALE = 1000.0 and our truth cloud uses angles and unit direction cosines, so both sit near O(1); this records the headroom rather than assuming it. Padded VALUES cannot reach the output at any magnitude -- that is what max_abs_output_change measures and it is exactly zero."
+    },
+    "P6_reload": {
+      "held": true,
+      "repeatable_bitwise": true,
+      "reload_bitwise": true,
+      "fresh_model_differs_before_reload": true,
+      "tensors_saved": 176
+    },
+    "knn_ties": {
+      "real_token_coordinate_ties": 0,
+      "reading": "nonzero means top-k ordering is engine-defined for those rows"
+    }
+  },
+  "all_held": true
+}

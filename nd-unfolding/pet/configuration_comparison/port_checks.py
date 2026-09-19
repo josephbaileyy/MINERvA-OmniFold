@@ -312,14 +312,48 @@ def _their_forward(theirs: Any, batch: dict[str, np.ndarray], dtype: str) -> np.
         return theirs.classifier(body).numpy()
 
 
+# XLA is not a detail of how the port is run; it is a different compiler with its
+# own algebraic rewrites, and the campaign's measured cost depends on it -- it is
+# worth 4.3x on the unmodified port and 2.5x on top of the projection rewrite. A
+# check that validates the eager graph therefore does not validate the graph the
+# campaign would execute. Setting this to True runs every P-check through
+# `tf.function(jit_compile=True)`, so the two can be compared.
+#
+# SCOPE, because this is easy to overclaim: the float64 checks run on CPU, so this
+# exercises XLA's TRANSFORMATIONS but not the GPU backend's kernels. It is the
+# difference between "XLA's rewrites preserve his network" -- checkable here -- and
+# "XLA-GPU's kernels do", which no float64 check on this machine can reach.
+JIT_COMPILE = False
+
+
+# One traced function per (model, dtype, mask-present), reused across calls. The
+# first version closed over the batch and built a new `tf.function` every call,
+# which retraced -- and under `jit_compile` a retrace is a full XLA compile of a
+# 2.76 M-parameter float64 graph. The finite-difference sweep alone makes hundreds
+# of calls, so that turned a three-minute check into an overnight one. Taking the
+# tensors as ARGUMENTS means one trace covers every call with the same shapes,
+# which is what the sweep needs: it varies values, not shapes.
+_TRACED: dict[Any, Any] = {}
+
+
+def _traced_forward(ours: Any, dtype: str, with_mask: bool) -> Any:
+    key = ("forward", id(ours), dtype, with_mask)
+    if key not in _TRACED:
+        def forward(x, cond, pid, add_info, mask=None):
+            return ours(x, cond, pid, add_info, mask=mask, training=False)
+        _TRACED[key] = tf.function(forward, jit_compile=True) if JIT_COMPILE else forward
+    return _TRACED[key]
+
+
 def _our_forward(ours: Any, batch: dict[str, np.ndarray], dtype: str = "float64",
                  mask: np.ndarray | None = None) -> np.ndarray:
     batch = _cast(batch, dtype)
-    return ours(
+    mask_tensor = None if mask is None else tf.constant(mask.astype(dtype))
+    call = _traced_forward(ours, dtype, mask is not None)
+    return call(
         tf.constant(batch["x"]), tf.constant(batch["cond"]),
         tf.constant(batch["pid"]), tf.constant(batch["add_info"]),
-        mask=None if mask is None else tf.constant(mask.astype(dtype)),
-        training=False,
+        mask=mask_tensor,
     ).numpy()
 
 
@@ -535,13 +569,21 @@ def weighted_bce_tf(logits: tf.Tensor, batch: dict[str, np.ndarray]) -> tf.Tenso
 
 def _our_loss_and_grads(ours: Any, batch: dict[str, np.ndarray]):
     variables = [v for _, v in port.parameter_inventory(ours)]
-    with tf.GradientTape() as tape:
-        logits = ours(
-            tf.constant(batch["x"]), tf.constant(batch["cond"]),
-            tf.constant(batch["pid"]), tf.constant(batch["add_info"]), training=False,
-        )
-        loss = weighted_bce_tf(logits, batch)
-    grads = tape.gradient(loss, variables)
+    key = ("grads", id(ours), str(batch["x"].dtype), batch["x"].shape)
+    if key not in _TRACED:
+        def compute(x, cond, pid, add_info, labels, weights):
+            with tf.GradientTape() as tape:
+                logits = ours(x, cond, pid, add_info, training=False)
+                per_row = tf.nn.sigmoid_cross_entropy_with_logits(
+                    labels=labels, logits=logits)
+                loss = tf.reduce_mean(weights * per_row)
+            return loss, tape.gradient(loss, variables)
+        _TRACED[key] = (tf.function(compute, jit_compile=True) if JIT_COMPILE
+                        else compute)
+    loss, grads = _TRACED[key](
+        tf.constant(batch["x"]), tf.constant(batch["cond"]),
+        tf.constant(batch["pid"]), tf.constant(batch["add_info"]),
+        tf.constant(batch["labels"]), tf.constant(batch["weights"]))
     names = [n for n, _ in port.parameter_inventory(ours)]
     return float(loss.numpy()), {n: (None if g is None else g.numpy())
                                  for n, g in zip(names, grads)}
@@ -1062,7 +1104,13 @@ def main() -> None:
     parser.add_argument("--probes", type=int, default=6, help="finite-difference probes")
     parser.add_argument("--seed", type=int, default=20260919)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--jit", action="store_true",
+                        help="run every check through tf.function(jit_compile=True); "
+                             "XLA transformations on CPU, NOT the GPU backend")
     args = parser.parse_args()
+
+    global JIT_COMPILE
+    JIT_COMPILE = bool(args.jit)
 
     global SIZE_IN_USE
     SIZE_IN_USE = args.size
@@ -1104,6 +1152,12 @@ def main() -> None:
         "preset": port.preset(args.size),
         "size": args.size,
         "device": "cpu",
+        "jit_compile": JIT_COMPILE,
+        "jit_scope": (
+            "XLA's algebraic transformations on the CPU backend. It does NOT "
+            "validate XLA-GPU's kernels, which is where the campaign would run; no "
+            "float64 check on this machine can reach those."
+        ) if JIT_COMPILE else None,
         "rows_forward": args.rows,
         "rows_gradient": args.grad_rows,
         "tokens": args.tokens,

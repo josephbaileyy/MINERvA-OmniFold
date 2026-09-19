@@ -100,6 +100,8 @@ change was re-validated against the same gate rather than against an argument.
 |---|---|---|
 | two **bitwise** local-block rewrites | `receipts/PORT_CHECKS_AFTER_OPTIMISATION-20260919.json` | **397 numeric fields and 16 verdicts identical, zero changed** |
 | plus the **projection** rewrite | `receipts/PORT_CHECKS_FLAT_PROJECTION-20260919.json` | P-1…P-6 all hold; 216 fields identical, 181 moved, **no verdict changed** |
+| the traced-function refactor that `--jit` needed | `receipts/PORT_CHECKS_TRACED_CONTROL-20260919.json` | **397 fields identical, zero changed** — the plumbing does not perturb the eager path |
+| **under XLA** (`--jit`) | `receipts/PORT_CHECKS_XLA-20260919.json` | P-1…P-6 all hold; 213 identical, 184 moved, **no verdict changed**, and **zero tensors exceed their own round-off floor** |
 
 `compare_port_checks.py` produces both diffs and exits non-zero on any movement, so
 "unchanged" is a re-runnable check and not a sentence in a document.
@@ -119,3 +121,30 @@ round-off and not a change to his network:
 
 A tolerance I chose would prove none of that. The mutant ratio and the reference's own
 floor are the limits doing the work, exactly as when they were set.
+
+### Why XLA had to be checked at all
+
+The campaign's cost figure is XLA's, not the eager graph's: `jit_compile=True` is
+worth **4.3×** on the untouched port and **2.53×** on top of the projection rewrite,
+and it is what makes 33 tokens at his native batch 2048 run at all. A port check
+that validates the eager graph therefore does not validate the graph that would
+be executed, and "it is only a compile flag" is not an argument — XLA is a
+different compiler with its own algebraic rewrites.
+
+| gate | eager | XLA |
+|---|---:|---:|
+| P-2b float64 max abs difference (tolerance 1e-5) | 5.69e-16 | **7.49e-16** |
+| P-2a float32 cross-engine | 2.94e-7 | **3.59e-7** |
+| P-3 worst cross-engine relative | 5.94e-14 | **8.11e-14** |
+| P-3 tensors over **their own** round-off floor | 0 | **0** |
+| P-3 margin over the mutant port | 5.71e5 | **4.18e5** |
+| P-4 margin over stock Keras AdamW | 4.01e8 | **4.01e8** |
+
+XLA moves the gradients to the edge of the port's own round-off floor and no
+further, and the mutant margin stays at 10⁵.
+
+**Scope, stated because it is easy to overclaim.** The float64 checks run on this
+Mac's CPU, so this exercises **XLA's transformations** and not the **GPU backend's
+kernels**, which is where the campaign would run. No float64 check available here
+can reach those. What has been shown is that XLA's rewrites preserve his network;
+what has not is that XLA-GPU's kernels do.

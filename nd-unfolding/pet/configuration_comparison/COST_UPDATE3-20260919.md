@@ -96,7 +96,83 @@ at these numbers.
 
 ## 5. What the fix is worth, measured
 
-*(job 58565265 — filled below)*
+His complete arm, 12 tokens, batch 512, one A100-40GB (job 58565265):
+
+| | baseline | optimised | |
+|---|---:|---:|---:|
+| forward | 134.5 | **75.6** | 1.78× |
+| backward | 795.7 | **315.8** | 2.52× |
+| optimizer apply | 5.6 | 5.6 | — |
+| **full step** | **935.5** | **396.7** | **2.36×** |
+| peak device memory | 16.9 GiB | **12.6 GiB** | −25 % |
+| inference | 134.1 | **75.5** | 1.78× |
+
+Against our incumbent measured in the **same job on the same card**, the training
+ratio falls from **27.3× to 11.6×** and inference from 7.6× to 4.3×.
+
+The `broadcast` variant reproduces the negative result independently — 935.4
+against baseline's 935.5, 16.9 GiB both, the same three OOM cells — so "the two
+bitwise rewrites do nothing" is measured twice, not once.
+
+### 5.1 Two cells are still out of memory, and one variant is discarded
+
+**33 tokens still OOMs at batch 512** even with the fix: 12.6 GiB at 12 tokens does
+not fit at 33 on a 40 GB card, and every 40 GB allocation this lane has been given
+is the same physical A100-SXM4-40GB. `hbm80g` is an available Slurm constraint
+(256 + 64 nodes) and the 33-token cells are measured there separately.
+
+**Every XLA cell is discarded**, and the reason is worth stating plainly rather than
+in a footnote. `_time` did not force a device read inside the timed region. GPU
+execution is asynchronous; with hundreds of unfused ops the queue back-pressures and
+the timing self-syncs — which is why the unfused numbers above stand, and this job's
+baseline agrees with independently synced job 58552755 to **0.6 %**. A single fused
+XLA kernel has no back-pressure, and the XLA forward cell reported **2.4
+µs/example**, which is **41.1 TFLOPS on a card whose float32 peak without TF32 is
+19.5**. That needed no second measurement to reject, only the hardware's limit.
+`_time` now reads the value inside the timed region and a `sync_probe` bounds what
+that read costs.
+
+This is the second instrument defect this decomposition has produced, and the second
+caught by a control rather than by care: the first made a backward pass look free,
+this one made a forward pass look faster than the silicon.
+
+## 5.2 On an 80 GB card, and with the timer repaired: XLA changes the answer
+
+Job 58566629, an **A100-SXM4-80GB** (`--constraint=gpu&hbm80g`), with the device
+sync inside the timed region. Our incumbent is measured in the same job and comes
+out at 35.3 µs/example against the 40 GB card's 34.3 — 3 %, so the two cards are
+comparable and the ratios below are in-job anyway.
+
+| variant | tokens / batch | µs/example | peak | vs our incumbent |
+|---|---|---:|---:|---:|
+| baseline `einsum`, eager | 12 / 512 | 935.5 | 16.9 GiB | 27.3× |
+| optimised, eager | 12 / 512 | 396.7 | 12.6 GiB | 11.6× |
+| **`einsum` + XLA** | 12 / 512 | **218.9** | **2.1 GiB** | 6.2× |
+| **optimised + XLA** | 12 / 512 | **156.6** | **2.1 GiB** | **4.4×** |
+| optimised, eager | 33 / 512 | *killed* | — | — |
+| optimised, eager | 33 / 2048 | **OOM on 80 GB** | — | — |
+| **optimised + XLA** | 33 / 512 | **387.9** | **5.4 GiB** | 11.0× |
+| **optimised + XLA** | **33 / 2048** | **377.7** | **21.7 GiB** | **10.7×** |
+
+Three things follow, and the third is a decision rather than a measurement.
+
+**XLA is the larger lever, and it is a compile flag.** On the unmodified port it is
+worth **4.3×** (935.5 → 218.9); on top of the projection rewrite, **2.53×**
+(396.7 → 156.6). It also collapses memory by **6×**, which is what makes the rest
+possible.
+
+**The intended configuration runs.** 33 tokens at his native batch 2048 trains at
+377.7 µs/example in **21.7 GiB** — under XLA, eager cannot do it on 80 GB at all.
+21.7 GiB is comfortably inside a 40 GB card, so the campaign does **not** need the
+80 GB constraint and does **not** need gradient accumulation at this configuration.
+That should be confirmed on a 40 GB card before anything is launched; it is an
+inference from a peak counter, not a run.
+
+**The projection rewrite is worth 1.40× on top of XLA, and it is the only change to
+his network that is not bitwise.** `broadcast_xla` — the untouched `einsum` port
+plus XLA — is 218.9 against the rewritten 156.6. So the bitwise-exact port is
+available at a **40 % cost premium**, and that is a choice to be made rather than
+one for me to make silently. §8 prices both.
 
 ## 6. Gradient accumulation: measured, and free
 
@@ -130,7 +206,57 @@ not discharge it**, and `rows_per_fit` still refuses to default `n_data`.
 
 ## 8. Campaign cost
 
-*(filled below)*
+Computed by `project_campaign.py` from the receipt, not by arithmetic in prose: 17
+arm pairs from `COST_UPDATE-20260919.md` §4, plus 25 % retries, against the 600
+GPU-hour ceiling. **At 12 tokens, batch 512:**
+
+| arm state | per pair | campaign | with the 5-D product's data leg |
+|---|---:|---:|---:|
+| baseline (pre-optimisation) | 43.50 | **924** ✗ | **1,166** ✗ |
+| optimised, native batch 512 | 19.69 | **418** ✓ | **528** ✓ |
+| optimised, accumulated to his virtual 2048 | 20.23 | **430** ✓ | **542** ✓ |
+
+**The optimisation moves the campaign from 2.2× over the ceiling to inside it**, and
+it stays inside even under the larger data leg — with 58 hours of headroom in the
+worst case, against ~17 already consumed.
+
+### 8.1 At the intended configuration, with XLA
+
+Our incumbent at its own cap and batch (12 tokens, 512) against his complete arm at
+his (33 tokens, 2048), both measured in job 58566629:
+
+| configuration | per pair | campaign | with the larger data leg |
+|---|---:|---:|---:|
+| **optimised + XLA, 33 / 2048 — the intended pair** | 20.41 | **434** ✓ | **547** ✓ |
+| optimised + XLA, 33 / 512 | 20.87 | 444 ✓ | 560 ✓ |
+| bitwise `einsum` port + XLA, 12 / 512 | 11.28 | 240 ✓ | 302 ✓ |
+| optimised + XLA, 12 / 512 | 8.62 | 183 ✓ | 231 ✓ |
+
+**The complete pretrained comparison at the configuration we actually intend to run
+costs ≈434 GPU-h, or ≈547 under the larger data leg, against a 600-hour ceiling with
+≈18 consumed.** It fits, and under the larger data leg it fits with about 35 hours
+to spare — which is thin enough that the fullevent data leg should be read before
+the final runs rather than after.
+
+**The 12-token rows are not an alternative campaign**, they are the same measurement
+at the cheaper token count, and they show what the cap costs: going from 12 to 33
+tokens for his arm roughly doubles the campaign.
+
+### 8.2 What is NOT in these numbers
+
+* **XLA now HAS passed a port check**, which it had not when §8.1 was first
+  written. `port_checks.py --jit` runs every check through
+  `tf.function(jit_compile=True)`: P-1…P-6 all hold, no verdict moved, and **zero
+  tensors exceed their own round-off floor**. The scope is narrow and stated in
+  `KERAS_PATH_VALIDATION-20260919.md` — it validates XLA's *transformations* on the
+  CPU backend, not XLA-GPU's *kernels*, and no float64 check available here can
+  reach those.
+* 21.7 GiB at 33 / 2048 is **inferred** to fit a 40 GB card from a peak counter on
+  an 80 GB card. It has not been run there.
+* The fullevent data leg is still unread; the 1.2615 factor comes from a
+  neighbouring product.
+* Fixture build, normalization and serialization are still outside the model, as
+  `RESIDUAL_OVERHEAD_CAVEAT` has said since the first costing.
 
 ## 9. Spend
 
@@ -139,8 +265,26 @@ not discharge it**, and `rows_per_fit` still refuses to default `n_data`.
 | 58563735 | port profile, **cancelled at 2:53** — its backward section measured the forward | 0.048 |
 | 58564110 | port profile, **cancelled at 24:49** once the decomposition and the accumulation cell had landed | 0.414 |
 | 58565179 | superseded before it started; bundled before the variant it existed to add | 0.000 |
-| 58565265 | port profile, all variants | *pending* |
+| 58565265 | port profile, all variants, **cancelled at 33:35** once the XLA cells were known to be untimed | 0.559 |
+| 58566629 | the 33-token cells and XLA, on an **A100-SXM4-80GB**, with the timer repaired | 0.252 |
+| **cumulative campaign** | | **≈18.2 of 600** |
 
-Two cancellations, both mine, and both cheap relative to what they bought: the first
+Three cancellations, all mine, and all cheap relative to what they bought: the first
 stopped a bad decomposition from becoming a receipt, the second stopped 80 minutes of
-XLA cells at a commit whose successor measures the same thing better.
+XLA cells at a commit whose successor measures the same thing better, the third
+stopped a block of XLA cells that a broken timer had already made unusable. One
+submission (58565179) was withdrawn before it started because I had bundled the
+branch before making the edit it existed to test.
+
+## 10. What I would do next, in order
+
+1. **Run P-1…P-6 under `--jit`.** The 434 GPU-h figure is XLA's graph and the port
+   checks have only ever seen the eager one. This is local, costs no allocation, and
+   it is the difference between recommending XLA and assuming it.
+2. **Confirm 33 / 2048 on a 40 GB card.** One cell, a few GPU-minutes. If it holds,
+   the campaign needs neither the `hbm80g` constraint nor gradient accumulation.
+3. **Decide the projection rewrite.** The bitwise-exact port costs 40 % more. That is
+   a scientific preference about how much exactness is worth, not an engineering
+   call, and §5.2 prices it.
+4. **Read the fullevent data leg.** 547 against 600 is thin enough that the factor
+   should be measured rather than inherited from a neighbouring product.
