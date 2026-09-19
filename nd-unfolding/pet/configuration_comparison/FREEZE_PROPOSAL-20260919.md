@@ -90,12 +90,15 @@ itself leaves **3.92 %** misplaced.
   incumbent. I am not able to justify that against the measurement's systematic
   budget, which I must not assume — that is what I am asking you to weigh.
   *Trade-off:* δ enters the sample size roughly as `1/δ²`. Halving it to 0.01
-  costs about **four times the seeds**, so the 8-seed comparison becomes ~32 seeds
-  and ~64 GPU-h becomes ~256. δ = 0.02 is affordable inside the ceiling; δ = 0.01
-  is not, at 33 tokens.
+  costs about **four times the seeds**, so the 8-seed comparison becomes ~32.
+  **Re-priced on the repaired execution path**, a paired seed at the intended
+  configuration costs **20.41 GPU-h**, so 8 seeds are 163 and 32 are **653 —
+  over the ceiling on the final comparison alone.** δ = 0.02 is affordable;
+  δ = 0.01 still is not, and the repair did not change that conclusion.
 * **`δ_switch = 2δ`.** Adoption has a cost — a second framework's recipe, a
   checkpoint dependency, and a per-example price that is 3.6× in his own engine
-  and 23.9× in ours as the port stands. Requiring twice the margin
+  and, on the repaired path, **10.7×** in ours at the intended configuration
+  (23.9× was the unrepaired port and is withdrawn). Requiring twice the margin
   before switching prices that. It is a policy about what we will pay, not a
   property of either estimator. *Trade-off:* set it too high and a genuinely
   better method is kept out; too low and we adopt on noise.
@@ -108,22 +111,59 @@ itself leaves **3.92 %** misplaced.
 "recommend the other arm". One arm failing a region does not establish that the
 other passed it, and the report names which regions failed for whom.
 
-## 2.1 One thing does NOT freeze yet, and it is the execution path
+## 2.1 The execution path: now costed, and one more thing to ratify
 
-The framework-matched timing (`COST_UPDATE2-20260919.md`) found the Keras port
-costs **23.9×** our incumbent per example in the same engine, against **2.70×**
-for his own PyTorch implementation — about **8.8×** his code for the same network.
-Every training cell except 12 tokens / batch 512 ran out of memory on the 40 GB
-A100 Slurm gave the job.
+`COST_UPDATE2`'s **≈933 GPU-h against a 600 ceiling** is superseded.
+`COST_UPDATE3-20260919.md` found the cause, and it was ours rather than his.
 
-The port is *his network*: P-1…P-6 hold, gated on mutant controls. It is not yet a
-viable way to *run* his network. **At these numbers the campaign costs ≈933 GPU-h
-against a 600 ceiling, at the cheaper token count.** So the execution path needs an
-optimisation pass before anything is frozen around its cost, and P-1…P-6 are what
-make that pass safe to do.
+**The 23.9× was one defect in our transcription.** Every dense projection was
+written `tf.einsum("...i,oi->...o")`, whose gradient materialises the per-example
+outer product instead of lowering to two GEMMs — 58 of 60 OOM tracebacks land in
+`einsum_op_impl.h`, at shapes up to 22.2 GB for a 32,768-number weight.
 
-This does not touch F1–F9 or the threshold policy. It means the **cost** line of
-the freeze is provisional and the campaign cannot be launched on today's numbers.
+**Repaired, the intended configuration runs and the campaign fits.**
+
+| | µs/example | peak | campaign |
+|---|---:|---:|---:|
+| baseline, 12 / 512 | 935.5 | 16.9 GiB | 924 ✗ |
+| + projection rewrite | 396.7 | 12.6 GiB | 418 ✓ |
+| + XLA | 156.6 | 2.1 GiB | 183 ✓ |
+| **his intended 33 / 2048, optimised + XLA** | **377.7** | **21.7 GiB** | **434 ✓** |
+
+Under the larger data leg the intended configuration is **≈547 against 600**, with
+≈18 already consumed. It fits, and it fits thinly enough that the fullevent data
+leg should be read before the final runs rather than after.
+
+**The port survived every repair.** P-1…P-6 re-run against upstream torch after the
+rewrites and again **under XLA**: all six hold each time, no verdict has ever moved,
+and under XLA no tensor exceeds its own round-off floor. The mutant controls are
+what carried that, exactly as they were built to.
+
+### F10, the one addition to the freeze
+
+> **F10. The execution path is `flat_projection` + `jit_compile=True` at 33 tokens,
+> batch 2048, on a 40 GB A100, with gradient accumulation available at micro-batch
+> 512 and not required.** Pinned by `receipts/PORT_PROFILE_80G-20260919.json` and
+> validated by `receipts/PORT_CHECKS_XLA-20260919.json`.
+
+Two caveats travel with F10 and are not decoration. 21.7 GiB on a 40 GB card is
+**inferred from a peak counter measured on an 80 GB card**, not run there — one cell
+and a few GPU-minutes would settle it. And the XLA validation covers XLA's
+**transformations on the CPU backend**, not **XLA-GPU's kernels**; no float64 check
+available to this lane can reach those.
+
+### The one thing in F10 that is yours rather than mine
+
+The projection rewrite is **the only change to his network that is not bitwise**. It
+reassociates a contraction: 1e-15 relative in float64, 6.5e-7 in float32, inside the
+port's own round-off floor, and P-1…P-6 hold with the cross-engine agreement
+slightly *improved*. But it is not the identity the other two rewrites are.
+
+**The bitwise-exact port is available, plus XLA, at 218.9 against 156.6 µs/example —
+a 40 % premium, and both fit the ceiling.** My recommendation is the rewritten
+version, because the deviation is below the floor the port already establishes
+against torch and the mutant margin is 10⁵; but a preference for exactness over 40 %
+of a campaign that fits either way is a legitimate one and it is yours.
 
 ## 3. What does not freeze yet, and why
 
@@ -131,8 +171,8 @@ the freeze is provisional and the campaign cannot be launched on today's numbers
 |---|---|
 | the pretrained arm's **selected settings** | R2. Scratch tuning cannot supply them. |
 | the pretrained arm's **σ** and hence `n` | R2. Scratch variance is a different quantity. |
-| the **absolute** GPU-hour total | `n_data`, which must be read off a production run's loader meta; the ratio is unaffected |
-| the **execution path's cost** | an optimisation pass on the port, re-checked against P-1…P-6; and the three OOM cells re-run on an 80 GB card |
+| the **absolute** GPU-hour total | `n_data` for the **fullevent** schema. Narrowed to 4,091,707 rows on the 5-D point-cloud product (factor 1.2615), which is a neighbouring product; the ratio is unaffected |
+| ~~the **execution path's cost**~~ | **RESOLVED.** Diagnosed, repaired, re-checked against P-1…P-6 eager and under XLA, and re-measured on both a 40 GB and an 80 GB card. What remains is confirming 33 / 2048 on a 40 GB card — one cell — and your choice on F10's projection rewrite |
 | `pid`, auxiliary, globals, cap 33 for his arm | **R-1 is DELIVERED** (Agent A, 2026-09-19); what remains is R4 authorization to read the typed branches at scale, the globals enumeration, and the dump re-run at cap 33 |
 
 ## 4. Stop conditions

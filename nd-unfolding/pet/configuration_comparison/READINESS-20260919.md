@@ -28,7 +28,7 @@ central values or Gate 6, and nothing discharges `OI-71`.
 | **float32 limit** independent of the port | `port_checks.float32_verdict`, `KERAS_PATH_VALIDATION-20260919.md` |
 | **requests ready, not sent** | `requests/DRAFT-agent-a-event-keys.md`, `requests/DRAFT-gregor-paper-configuration.md` |
 
-201 tests pass (re-measured 2026-09-19 at `5dd716be`). `ALL BINDINGS INTACT`.
+237 tests pass (re-measured 2026-09-19). `ALL BINDINGS INTACT`.
 
 ## 2. The port checks, and what they caught
 
@@ -63,18 +63,37 @@ floor until the check passes is how a port check becomes decorative. Round-off
 floors are still measured three ways — row permutation, half-batch split, one-ulp
 jitter — and reported; they corroborate, they do not decide.
 
-## 3. Cost, updated twice — and the second time it changed the plan
+## 3. Cost: diagnosed, repaired, and now inside the ceiling
 
-See `COST_UPDATE2-20260919.md`. Two revisions today. The first fixed a model that
-was wrong in two directions and gave **≈170 GPU-h**. The second measured both arms
-**in one framework**, which is the question our campaign actually asks, and found
-the Keras port costs **23.9×** our incumbent per example — about **8.8×** his own
-PyTorch for the same network — with every training cell but one out of memory on
-the 40 GB card allocated. That puts the campaign at **≈933 GPU-h against a 600
-ceiling**.
+Three revisions. The first fixed a model that was wrong in two directions and gave
+≈170 GPU-h. The second measured both arms **in one framework** — the question the
+campaign actually asks — and found the port costing **23.9×** our incumbent, a
+**≈933 GPU-h** campaign against a 600 ceiling, with every training cell but one out
+of memory. The third, `COST_UPDATE3-20260919.md`, found out **why**, and the cause
+was ours.
 
-The port is his network and is not yet a viable way to run it. The execution path
-needs an optimisation pass, and P-1…P-6 are what make that pass safe.
+**One defect.** Every dense projection was written `tf.einsum("...i,oi->...o")`,
+whose gradient materialises the per-example outer product instead of lowering to two
+GEMMs. **58 of 60 OOM tracebacks** land in `einsum_op_impl.h`, at shapes up to
+22.2 GB for a 32,768-number weight. The backward pass was 85 % of the step and 6.9×
+the forward; the optimizer was 0.6 %.
+
+| | µs/example | peak | campaign |
+|---|---:|---:|---:|
+| baseline, 12 tokens / 512 | 935.5 | 16.9 GiB | 924 ✗ |
+| + projection rewrite | 396.7 | 12.6 GiB | 418 ✓ |
+| + XLA | 156.6 | 2.1 GiB | 183 ✓ |
+| **his intended 33 / 2048, optimised + XLA** | **377.7** | **21.7 GiB** | **434 ✓** |
+
+**The complete pretrained comparison now costs ≈434 GPU-h at the configuration we
+intend to run — ≈547 under the larger data leg — against 600 with ≈18 consumed.**
+The two bitwise rewrites that looked obvious bought nothing, measured twice. XLA is
+the larger lever and is a compile flag. Both the repaired and the bitwise-exact
+paths fit; the latter costs 40 % more.
+
+**The port survived every repair**: P-1…P-6 re-run after each rewrite and again
+under XLA, all six holding every time, no verdict ever moving, and under XLA no
+tensor exceeding its own round-off floor.
 
 ## 4. What is blocked, and on whom
 
@@ -84,6 +103,7 @@ needs an optimisation pass, and P-1…P-6 are what make that pass safe.
 | ~~R-1~~ | ~~three event-key branches~~ | ~~Agent A~~ | **DELIVERED 2026-09-19**, verified 12/12, with the correction that the triple is a GATE key on `data` and the join needs `occurrence` |
 | **R4** | authorization to read 21 typed branches at scale (A1 covers blob/prong **counts**, not values) | **Joseph** | the representation half |
 | **T1** | ratification of the **single threshold policy** — `f = 0.80`, `δ = 0.02`, `δ_switch = 0.04`, regional floor 0.60 | **Joseph** | freezing the design |
+| **T2** | **F10**: whether the execution path keeps the projection rewrite (round-off, not bitwise) or the bitwise-exact port at a **40 % premium**. Both fit the ceiling | **Joseph** | freezing the execution path |
 
 ## 5. What is implemented but deliberately not done
 
@@ -103,7 +123,7 @@ needs an optimisation pass, and P-1…P-6 are what make that pass safe.
 
 ## 6. Smallest next authorization
 
-Still **not compute**. The eleven open decisions of `DECISION_PACKET-20260919.md`
+Still **not compute**, and there is now a second small one beside the first. The eleven open decisions of `DECISION_PACKET-20260919.md`
 were collapsed into **one** in `FREEZE_PROPOSAL-20260919.md` §2, and that single
 threshold policy is the ask: `f = 0.80`, `δ = 0.02`, `δ_switch = 0.04`, regional
 floor 0.60. Within it only **δ** is a genuine scientific judgement — it accepts
@@ -114,3 +134,9 @@ the protection that a 2-D score was being considered for.
 
 Everything else on the implementation side runs without anyone's permission;
 everything else on the science side waits on **R2**.
+
+Two cheap things would also close real gaps and need nobody's permission: running
+33 / 2048 once on a 40 GB card (the 21.7 GiB figure is inferred from a peak counter
+on an 80 GB card), and reading the fullevent data leg, since 547 against 600 is thin
+enough that the 1.2615 factor should be measured rather than inherited from a
+neighbouring product.
