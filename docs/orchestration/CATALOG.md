@@ -1309,9 +1309,15 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `SRC_COV` occurrence in the whole packet, a shell variable at `:1002`. **`V2`:** §2's evidence for
   **C5 and C7 is MY OWN WORK** (`80b464ca`, ~14 h earlier), so clause (c) would be inert for those two
   rows if I signed them — the identical disqualification the requester correctly applied to itself;
-  re-measuring a digest is fine, certifying my own verdicts is not. **`V3`:** three defect instances
-  surfaced on this set within hours, two after the request reached me — a set still converging cannot
-  be certified complete. **`V4` — THE GUARDS FIRE, EXERCISED NOT READ:** six refusals on the real path
+  re-measuring a digest is fine, certifying my own verdicts is not. **`V3` — AMENDED after the requester answered it:** I **concede** it had **no exit** as a
+  blocking criterion — a standard this lane applies to others — so it is reclassified from a ground
+  to a **disclosure**, and BLOCK now stands on `V1`/`V2` alone. **Not conceded:** *"none is a finding
+  that the covariance is wrong"* is inference from an absence the defects created, since the
+  apparatus that would have shown one is what was broken. **The exit criterion it should have named,
+  and it is satisfiable: every protection in the required path exercised with a positive control —
+  coverage, not quiescence.** ⚠ Which exposes the residue: `V4` exercised **one tool**; the other
+  five catalogued protections live in other code paths and **none has been exercise-tested by
+  anyone.** **`V4` — THE GUARDS FIRE, EXERCISED NOT READ:** six refusals on the real path
   under the production env (`--expect-variant` required, variant mismatch, **AGENTS.md:29
   publication-from-mean**, `none`-on-marked, missing acceptance-question, **`adoptable: false`**) **and
   a POSITIVE CONTROL that PROCEEDED** (rc 0, wrote the product, `42 labels`). A hypothesised `none`
