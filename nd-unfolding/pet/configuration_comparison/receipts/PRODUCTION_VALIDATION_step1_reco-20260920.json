@@ -49,6 +49,15 @@
       "limit": 3.687056846501946e-07,
       "held": false,
       "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
+      "row_profile": {
+        "rows": 256,
+        "rows_over_limit": 256,
+        "fraction_over_limit": 1.0,
+        "median_row_deviation": 0.0006907880306243896,
+        "p99_row_deviation": 0.0018862247467041015,
+        "max_row_deviation": 0.0022569894790649414,
+        "reads": "a few rows far over the limit with a median at round-off is a DISCRETE difference -- a k-NN tie resolving the other way -- not a precision difference"
+      },
       "rows": 256,
       "outputs_finite": true
     },
@@ -77,7 +86,7 @@
       "reads": "moving a PADDED slot's coordinates reorders the k-NN among padded neighbours and changes the reduction order. Production zeroes padded slots, so this state does not occur; it is recorded so the round-off scale is visible rather than implied"
     },
     "V3_gradients_xla_vs_eager": {
-      "measured": 0.00026640482246875763,
+      "measured": 0.00019616074860095978,
       "reference_round_off_floor": 7.82310962677002e-08,
       "limit": 1.564621925354004e-07,
       "held": false,
@@ -91,16 +100,25 @@
       "deviation": 9.106472134590149e-05,
       "limit": 1.564621925354004e-07,
       "ratio_to_limit": 582.0238095238095,
-      "ratio_to_xla_deviation": 0.34182835168676806,
+      "ratio_to_xla_deviation": 0.4642351846400729,
       "held": true,
       "criterion": "a 1e-4 relative weight error must exceed the limit by 10.0x. Its ratio to the XLA deviation is the number that says whether XLA's disagreement is near a real defect or far below one"
     },
     "V7_batch_invariance": {
-      "measured": 0.0054318904876708984,
+      "measured": 0.007036328315734863,
       "reference_round_off_floor": 1.843528423250973e-07,
       "limit": 3.687056846501946e-07,
       "held": false,
       "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
+      "row_profile": {
+        "rows": 256,
+        "rows_over_limit": 256,
+        "fraction_over_limit": 1.0,
+        "median_row_deviation": 0.0022651106119155884,
+        "p99_row_deviation": 0.006943374872207641,
+        "max_row_deviation": 0.007036328315734863,
+        "reads": "a few rows far over the limit with a median at round-off is a DISCRETE difference -- a k-NN tie resolving the other way -- not a precision difference"
+      },
       "reference_batch": 256,
       "production_batch": 2048,
       "compares": "XLA at the production batch against XLA at the reference batch, on the SAME rows, against the same floor"
@@ -144,8 +162,8 @@
     "V6_memory_and_timing": {
       "held": true,
       "batch": 2048,
-      "step_seconds_median": 0.8419786340091377,
-      "microseconds_per_example": 411.1223798872743,
+      "step_seconds_median": 0.8518588284932775,
+      "microseconds_per_example": 415.9466936002332,
       "device_memory": {
         "peak_bytes": 23291435008,
         "peak_gib": 21.69183921813965

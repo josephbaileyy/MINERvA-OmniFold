@@ -48,6 +48,15 @@ export PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 export TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=:4096:8
 export OMP_NUM_THREADS=8 MKL_NUM_THREADS=8
 export TF_FORCE_GPU_ALLOW_GROWTH=true
+# TF's `enable_tensor_float_32_execution(False)` sets a TENSORFLOW-level flag, and
+# the XLA-compiled path does not appear to honour it: with that flag reporting
+# False, the XLA forward differed from eager on 100 % of rows with a median of
+# 6.9e-4, and the SAME XLA program at two batch sizes differed by 2.3e-3 per row.
+# A network with no cross-row operation cannot be batch-dependent at 1e-3 unless
+# the arithmetic itself is changing, and 1e-3 is exactly TF32's precision.
+# `NVIDIA_TF32_OVERRIDE=0` disables TF32 in cuBLAS/cuDNN themselves, below both TF
+# and XLA, which is the only control that can bind the compiled path.
+export NVIDIA_TF32_OVERRIDE=${NVIDIA_TF32_OVERRIDE:-0}
 
 driver=nd-unfolding/pet/configuration_comparison/validate_production_path.py
 
