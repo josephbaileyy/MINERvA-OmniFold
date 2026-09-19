@@ -64,20 +64,23 @@ PINNED_HASHES = {
 # --------------------------------------------------------------------------- #
 # Execution path (F10, ratified as T2 on 2026-09-20)
 # --------------------------------------------------------------------------- #
-# The measured leg is the CERTIFIED Gate-2 negweight-refined target, consumed and
-# never rebuilt. Rebuilding it in process is the J04/D2 defect: the comparison
-# would then run on a measured leg that is not production's, and would not be
-# about our incumbent at all.
+# THE MEASURED LEG IS PSEUDO-DATA, never the real spectrum.
+#
+# An earlier version of this block pinned the certified Gate-2 negweight-refined
+# target. That is the REAL-data nominal's measured leg, and pinning it here was
+# a symptom of the same defect as the driver's: this comparison was built as
+# though it unfolded data. It does not, and must not -- an unfolded real
+# spectrum is a physics result nobody has authorized.
 MEASURED_LEG = {
-    "bkg_mode": "negweight-refined",
-    "target_npy": ("nd-unfolding/g2_fullevent/gate2/final/"
-                   "G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy"),
-    "target_receipt": ("nd-unfolding/g2_fullevent/gate2/final/"
-                       "G2_GATE2_TARGET_RUNTIME_RECEIPT.json"),
-    "rebuilt_in_process": False,
-    "bound_by": ("train_fullevent_nominal.assert_target_provenance for WHICH "
-                 "array, and assert_consumed_inventory_matches_receipt for row "
-                 "ORDER, which no hash binds on its own"),
+    "bkg_mode": "mc-only",
+    "is_real_data": False,
+    "construction": ("half A's reco rows, weighted by the reco leg times the "
+                     "injected truth tilt, on pass_reco & pass_gen rows"),
+    "prior": "half B, disjoint from half A by one seeded permutation",
+    "why_disjoint": ("the estimator must never see the events it has to "
+                     "reweight; an overlapping split restores the identity "
+                     "shortcut and the closure's power returns to zero"),
+    "protocol": "closure_powered_truth_reweight, imported rather than retyped",
 }
 
 

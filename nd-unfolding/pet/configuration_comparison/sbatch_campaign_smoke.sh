@@ -42,9 +42,7 @@ nvidia-smi --query-gpu=uuid,name,memory.total --format=csv > "$output/gpu.csv"
 export PYTHONUNBUFFERED=1 TF_FORCE_GPU_ALLOW_GROWTH=true
 export TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=:4096:8
 export NVIDIA_TF32_OVERRIDE=0
-PRODUCTION_REPO=${PRODUCTION_REPO:-/pscratch/sd/j/josephrb/MINERvA-OmniFold}
-TARGET_NPY=${TARGET_NPY:-$PRODUCTION_REPO/nd-unfolding/g2_fullevent/gate2/final/G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy}
-TARGET_RECEIPT=${TARGET_RECEIPT:-$PRODUCTION_REPO/nd-unfolding/g2_fullevent/gate2/final/G2_GATE2_TARGET_RUNTIME_RECEIPT.json}
+
 
 driver=nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py
 ( module load tensorflow/2.15.0
@@ -54,8 +52,7 @@ driver=nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py
       --arm "$arm" --seed 17 --stage tuning --learning-rate 1e-4 --niter 1 \
       --repo "$checkout" --inputs-npz "$inputs" --theirs-index "$index" \
       --max-events "$events" \
-      --target-npy "$TARGET_NPY" --target-receipt "$TARGET_RECEIPT" \
-      --weights-folder "$output/$arm" \
+        --weights-folder "$output/$arm" \
       --output "$output/smoke-$arm.json" || echo "ARM $arm FAILED ($?)"
   done
 ) > "$output/smoke.log" 2>&1

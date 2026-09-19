@@ -88,38 +88,54 @@ if __name__ == "__main__":
     unittest.main()
 
 
-class MeasuredLegIsConsumedNotRebuilt(unittest.TestCase):
-    """The J04/D2 defect, in this driver's clothing.
+class TheClosureNeverUnfoldsRealData(unittest.TestCase):
+    """The driver unfolded the real measured inventory and never injected.
 
-    Calling `build_fullevent_loaders` without a precomputed target re-runs the
-    negweight refinement in process. Production was repaired for exactly that
-    in August. Here it would be worse than wasteful: the measured leg both arms
-    are compared on would not be production's, so the comparison would not be
-    about our incumbent.
+    Its docstring said the opposite. The score would still have computed --
+    weights from unfolding real data, against a target defined by an injection
+    that never happened.
     """
 
-    def test_the_driver_requires_the_certified_target_and_its_receipt(self):
+    def test_the_loader_is_built_mc_only(self):
         source = Path(rae.__file__).read_text()
-        self.assertIn('"--target-npy"', source)
-        self.assertIn('"--target-receipt"', source)
-        self.assertIn("required=True", source)
+        self.assertIn('bkg_mode="mc-only"', source)
 
-    def test_the_loader_is_called_with_the_target_and_the_production_bkg_mode(self):
+    def test_a_returned_measured_loader_is_refused(self):
         source = Path(rae.__file__).read_text()
-        self.assertIn("precomputed_target=str(args.target_npy)", source)
-        self.assertIn("bkg_mode=prod.BKG_MODE", source)
+        self.assertIn("mc-only returned a measured loader", source)
 
-    def test_both_provenance_assertions_are_called_not_retyped(self):
+    def test_the_certified_real_data_target_is_NOT_required_here(self):
         source = Path(rae.__file__).read_text()
-        self.assertIn("prod.assert_target_provenance(", source)
-        self.assertIn("prod.assert_consumed_inventory_matches_receipt(", source)
+        self.assertNotIn('"--target-npy"', source)
+        self.assertNotIn("precomputed_target", source)
 
-    def test_the_frozen_design_pins_the_measured_leg(self):
+    def test_the_frozen_design_pins_pseudo_data(self):
         import frozen_design as fd
-        self.assertEqual(fd.MEASURED_LEG["bkg_mode"], "negweight-refined")
-        self.assertFalse(fd.MEASURED_LEG["rebuilt_in_process"])
-        self.assertIn("G2_NEGWEIGHT_REFINED_EXACT_NORMALIZED.npy",
-                      fd.MEASURED_LEG["target_npy"])
+        self.assertEqual(fd.MEASURED_LEG["bkg_mode"], "mc-only")
+        self.assertFalse(fd.MEASURED_LEG["is_real_data"])
+
+    def test_the_halves_are_disjoint_and_come_from_the_established_split(self):
+        import closure_powered_truth_reweight as cp
+        import frozen_design as fd
+        a, b = cp.deterministic_halves(50_000, half=10_000,
+                                       seed=int(fd.SPLITS["split_seed"]))
+        self.assertEqual(np.intersect1d(a, b).size, 0)
+        self.assertEqual(a.size, 10_000)
+        self.assertEqual(b.size, 10_000)
+
+    def test_the_injection_is_applied_to_truth_passing_rows_only(self):
+        source = Path(rae.__file__).read_text()
+        self.assertIn("tilt_a[pg_a] = tilt_on_truth", source)
+        self.assertIn("eavail[ia][pg_a]", source)
+
+    def test_step_one_uses_pass_reco_and_pass_gen_on_both_sides(self):
+        source = Path(rae.__file__).read_text()
+        self.assertIn("s1_a = pr[ia] & pg_a", source)
+        self.assertIn("s1_b = pr[ib] & pg[ib]", source)
+
+    def test_the_push_must_align_to_half_B(self):
+        source = Path(rae.__file__).read_text()
+        self.assertIn("not aligned to half B", source)
 
     def test_the_driver_checks_where_its_modules_came_from(self):
         """Restoring sys.path is a hope; `__file__` is a measurement."""

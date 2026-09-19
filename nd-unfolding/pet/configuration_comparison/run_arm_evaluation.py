@@ -140,10 +140,12 @@ def main() -> None:
                         help="directory holding join_<stream>.npz and .json")
     parser.add_argument("--weights-folder", type=Path, default=Path("weights"))
     parser.add_argument("--max-events", type=int, default=2_000_000)
-    parser.add_argument("--target-npy", type=Path, required=True,
-                        help="the certified Gate-2 negweight-refined target")
-    parser.add_argument("--target-receipt", type=Path, required=True,
-                        help="the Gate-2 runtime receipt that owns the target")
+    # NO --target-npy here. The certified Gate-2 negweight-refined target is
+    # the REAL-data nominal's measured leg. This is a closure: `mc-only`, no
+    # measured loader, nothing to consume. Requiring it would have been a
+    # fail-closed check on an artifact this path must not use.
+    parser.add_argument("--half-size", type=int, default=cp_half_size(),
+                        help="rows per disjoint half; both halves are this size")
     args = parser.parse_args()
 
     if args.seed not in fd.SEEDS[args.stage]:
@@ -175,13 +177,32 @@ def main() -> None:
 
 
 def evaluate(args: Any) -> dict[str, Any]:
-    """Build the loaders, run MultiFold, record what happened.
+    """Run one arm on the POWERED CLOSURE, following the established protocol.
 
-    THE ENDPOINT IS A POWERED CLOSURE, not real data. The measured leg is MC
-    reco reweighted by the injection, so the truth answer is known exactly and
-    recovery is measurable. Real data is never unfolded here: this comparison is
-    method development and an unfolded real spectrum would be a physics result
-    nobody has authorized.
+    This used to build the production loaders and unfold the REAL measured
+    inventory while its docstring claimed the opposite. It never applied the
+    injection. The protocol below is `closure_powered_truth_reweight`'s, whose
+    every clause exists because the ordinary closure has structurally zero
+    power -- the pseudo-data IS the MC, so a constant estimator optimises it:
+
+    * `bkg_mode='mc-only'`, so there is NO measured loader and no real spectrum
+      is ever unfolded. Also no ROOT, hence no ROOT/TF environment conflict.
+    * TWO DISJOINT HALVES from one seeded permutation: pseudo-data from half A,
+      prior from half B, so the estimator never sees the events it must
+      reweight. An overlapping split restores the identity shortcut and power
+      returns to zero.
+    * The injection on half A's TRUTH-PASSING rows only -- it is a truth-level
+      reweighting and is undefined where no truth record exists.
+    * Step-1 rows `pass_reco & pass_gen` on BOTH sides, or one side carries
+      reco-only rows whose tilt is undefined and step 1 sees a second
+      difference on top of the injection.
+    * float32 weights, because the engine multiplies them against float32
+      logits and a float64 array dies inside a tf.function naming Keras
+      internals rather than the caller.
+
+    The arms differ at step 1 only: his tokens replace the step-1 reco inputs
+    on both legs. Step 2 is the production PET on the production truth cloud
+    for both.
     """
     import numpy as np
 
@@ -194,19 +215,12 @@ def evaluate(args: Any) -> dict[str, Any]:
     configure_production_precision(strict=True)
 
     import fullevent_fps_dataloader as ffd
-    # `train_fullevent_nominal` hard-codes the PRODUCTION repo and inserts it at
-    # sys.path[0] on import, which would shadow this pinned checkout for every
-    # module imported afterwards. `ffd` is bound above, before that happens; the
-    # rest is protected by restoring our paths and then CHECKING where the
-    # modules actually came from, because restoring a path is a hope and
-    # `__file__` is a measurement.
-    _our_path = list(sys.path)
+    import closure_powered_truth_reweight as cp
     import train_fullevent_nominal as prod
-    sys.path[:] = _our_path
     from omnifold.omnifold import MultiFold
+    from omnifold.dataloader import DataLoader
     from omnifold.net import PET
     import training_recipe as recipe
-    import fold_forward_recorder as ffr
     import tensorflow as tf
     from annealed_estimator import make_annealed_multifold
 
@@ -216,163 +230,183 @@ def evaluate(args: Any) -> dict[str, Any]:
         raise SystemExit(
             f"[arm] {_shadowed} resolved OUTSIDE the pinned checkout {repo}. "
             "The production driver puts its own repo on sys.path[0], and a run "
-            "that silently used production's loader would not be measuring this "
-            "commit at all"
-        )
+            "that silently used production's loader would not be measuring "
+            "this commit at all")
 
     started = time.perf_counter()
 
-    # CONSUME the certified Gate-2 target; do not rebuild it.
-    #
-    # This driver used to call `build_fullevent_loaders` with neither
-    # `bkg_mode` nor `precomputed_target`, which re-runs the whole negweight
-    # refinement in process. That is the J04/D2 defect the production driver
-    # was repaired for in August: "the target Gate-2 certified was certified
-    # and then discarded". Here it would have been worse than wasteful -- the
-    # measured leg both arms are compared on would not have been the
-    # production measured leg, so the comparison would not have been about
-    # our incumbent.
-    #
-    # The provenance assertions are PRODUCTION's own functions, called rather
-    # than retyped, so the two cannot drift.
-    # THE SEED SEEDS THE ESTIMATOR, not the subsample.
-    #
-    # Production fixes `subsample_seed=0` and varies `estimator_seed`, applying
-    # it with `tf.keras.utils.set_random_seed` before any model exists. This
-    # driver did neither: it passed the frozen seed to the LOADER, so the seed
-    # changed which events were drawn, and it never seeded Keras at all -- the
-    # network initialisation was unseeded, so "scratch, per-seed" was not
-    # reproducible and the frozen seed list bound nothing about the estimator.
-    #
-    # Within a stage both arms must see the SAME events, so the subsample is
-    # held at production's value and the seed varies initialisation and
-    # training stochasticity. That is what the paired difference is supposed to
-    # average over.
+    # The seed seeds the ESTIMATOR. Production fixes the subsample and varies
+    # this; within a stage both arms must see the same events, so the paired
+    # difference averages over initialisation rather than over the draw.
     tf.keras.utils.set_random_seed(int(args.seed))
-    target_receipt = prod.assert_target_provenance(
-        str(args.target_npy), str(args.target_receipt), str(args.inputs_npz))
-    data, mc, imc, coord_reco, coord_gen, meta = ffd.build_fullevent_loaders(
-        str(args.inputs_npz), max_events=args.max_events,
-        seed=int(prod.NOMINAL_SEED_POLICY["subsample_seed"]),
-        bkg_mode=prod.BKG_MODE, precomputed_target=str(args.target_npy))
-    # Row order, which no hash can bind on its own.
-    prod.assert_consumed_inventory_matches_receipt(meta, target_receipt)
+
+    need = int(args.max_events)
+    data_leg, mc, imc, coord_reco, coord_gen, meta = ffd.build_fullevent_loaders(
+        str(args.inputs_npz), max_events=need,
+        seed=int(prod.NOMINAL_SEED_POLICY["subsample_seed"]), bkg_mode="mc-only")
+    if data_leg is not None:
+        raise SystemExit(
+            "[arm] mc-only returned a measured loader; wrong build path. The "
+            "closure must not have a real measured leg -- that is the check "
+            "that keeps this from unfolding data")
+    imc = np.asarray(imc)
+
+    eavail = _truth_eavail(np, ffd, args.inputs_npz, imc)
+
+    reco = np.asarray(mc.reco); reco_evt = np.asarray(mc.reco_evt)
+    gen = np.asarray(mc.gen); gen_evt = np.asarray(mc.gen_evt)
+    pr = np.asarray(mc.pass_reco).astype(bool)
+    pg = np.asarray(mc.pass_gen).astype(bool)
+    w_truth = np.asarray(mc.weight, dtype=np.float64)
+    leg = getattr(mc, "weight_reco", None)
+    if leg is None:
+        raise SystemExit("[arm] loader supplied no reco leg; dual-leg weights are required")
+    w_reco = np.asarray(leg, dtype=np.float64)
+
+    half = int(args.half_size)
+    ia, ib = cp.deterministic_halves(reco.shape[0], half=half,
+                                     seed=int(fd.SPLITS["split_seed"]))
+
+    pg_a = pg[ia]
+    tilt_a = np.ones(ia.size, dtype=np.float64)
+    tilt_on_truth, tilt_spec = cp.clipped_exponential_tilt(
+        eavail[ia][pg_a], amplitude=float(fd.ENDPOINT["amplitude"]),
+        clip_z=float(fd.ENDPOINT["clip"]))
+    tilt_a[pg_a] = tilt_on_truth
+
+    s1_a = pr[ia] & pg_a
+    s1_b = pr[ib] & pg[ib]
+    if not (s1_a.any() and s1_b.any()):
+        raise SystemExit("[arm] a step-1 side has no pass_reco & pass_gen rows (fail closed)")
 
     substitution = None
     if args.arm == "theirs":
         import theirs_loader_substitution as tls
         import theirs_omnifold_arm as toa
-        # The measured leg is the SIGNED inventory: positive data rows followed
-        # by the aligned negative background rows. His arm needs tokens for
-        # both, so the data side is the `data` join concatenated with the `bkg`
-        # join, in that order. Joining only `data` left the two 564,591 rows
-        # apart and the mismatch surfaced as a length error rather than as a
-        # silent misalignment, which is the one piece of luck in it.
-        blocks = _load_joined(args, np, imc, data.reco.shape[0])
-        substitution = tls.substitute_step1(
-            data, mc,
-            (blocks["data"]["packed"], blocks["data"]["globals"]),
-            (blocks["mc"]["packed"], blocks["mc"]["globals"]))
+        # His tokens for exactly the inventory rows each leg uses. Absolute
+        # dump rows, so the gather cannot be confused by the subsample.
+        blocks = _load_joined(args, np, imc[ia][s1_a], imc[ib])
+        reco_a = blocks["pdata"]["packed"]
+        reco_evt_a = blocks["pdata"]["globals"]
+        reco_b = blocks["mc"]["packed"]
+        reco_evt_b = blocks["mc"]["globals"]
+        substitution = {
+            "substituted": ["reco", "reco_evt"],
+            "pdata_rows": int(reco_a.shape[0]),
+            "mcB_rows": int(reco_b.shape[0]),
+            "step2_untouched": True,
+        }
         model_reco_factory = lambda: toa.TheirsCompleteArm(
             num_part=fd.THEIRS_COMPLETE["token_cap"])
     else:
+        reco_a = reco[ia][s1_a]
+        reco_evt_a = reco_evt[ia][s1_a]
+        reco_b = reco[ib]
+        reco_evt_b = reco_evt[ib]
         model_reco_factory = None
 
-    # WIDTHS COME FROM THE DATA, exactly as the production driver takes them.
-    # This read `meta["n_feat_reco"]`, which the loader does not emit -- the
-    # incumbent arm died on a KeyError before building anything. Production
-    # takes the cloud width from `mc.reco.shape[-1]`, the token count from
-    # `mc.reco.shape[1]`, and the two DIFFERENT event widths from the meta keys
-    # that do exist. Read AFTER the substitution, so his arm's 33x10 tokens
-    # size his network and ours sizes ours.
-    ev_reco, ev_truth = meta["n_evt_reco"], meta["n_evt_truth"]
-    if (ev_reco != np.asarray(mc.reco_evt).shape[1]
-            or ev_truth != np.asarray(mc.gen_evt).shape[1]):
-        raise SystemExit(
-            f"[arm] loader meta widths ({ev_reco}, {ev_truth}) disagree with the "
-            f"built blocks ({np.asarray(mc.reco_evt).shape[1]}, "
-            f"{np.asarray(mc.gen_evt).shape[1]}) -- fail closed")
-    if list(meta["feature_names"]) == list(ffd.REDUCED_EVT_FEATURES):
-        raise SystemExit(
-            "[arm] the loader built the REDUCED {pT,p||} schema, which the "
-            "feature contract marks cross-check only. The comparison would be "
-            "measuring a schema nobody authorized for it -- fail closed")
+    pdata = DataLoader(reco=reco_a,
+                       weight=((w_reco[ia] * tilt_a)[s1_a]).astype(np.float32),
+                       normalize=True, reco_evt=reco_evt_a)
+    mcB = DataLoader(reco=reco_b, gen=gen[ib], pass_reco=s1_b, pass_gen=pg[ib],
+                     weight=w_truth[ib].astype(np.float32),
+                     weight_reco=w_reco[ib].astype(np.float32),
+                     normalize=True,
+                     normalization_factor=ffd.STEP1_MC_NORMALIZATION,
+                     reco_evt=reco_evt_b, gen_evt=gen_evt[ib])
+    for name, loader in (("pdata", pdata), ("mcB", mcB)):
+        for field in ("weight", "weight_reco"):
+            arr = getattr(loader, field, None)
+            if arr is not None and np.asarray(arr).dtype != np.float32:
+                raise SystemExit(
+                    f"[arm] {name}.{field} is {np.asarray(arr).dtype}, not "
+                    "float32; the engine multiplies it against float32 logits")
 
-    P = int(np.asarray(mc.reco).shape[1])
+    P = int(np.asarray(reco_b).shape[1])
     model_reco = (model_reco_factory() if model_reco_factory is not None
-                  else PET(int(np.asarray(mc.reco).shape[-1]), num_evt=ev_reco,
-                           num_part=P, num_transformer=2, num_heads=2,
-                           projection_dim=32, local=True, K=3,
-                           coord_idx=coord_reco))
-
+                  else PET(int(np.asarray(reco_b).shape[-1]),
+                           num_evt=int(meta["n_evt_reco"]), num_part=P,
+                           num_transformer=2, num_heads=2, projection_dim=32,
+                           local=True, K=3, coord_idx=coord_reco))
     # STEP 2 IS IDENTICAL FOR BOTH ARMS -- STEP_SCOPE, frozen 2026-09-20.
-    model_gen = PET(int(np.asarray(mc.gen).shape[-1]), num_evt=ev_truth,
-                    num_part=int(np.asarray(mc.gen).shape[1]),
-                    num_transformer=2, num_heads=2, projection_dim=32,
-                    local=True, K=3, coord_idx=coord_gen)
+    model_gen = PET(int(gen.shape[-1]), num_evt=int(meta["n_evt_truth"]),
+                    num_part=int(gen.shape[1]), num_transformer=2, num_heads=2,
+                    projection_dim=32, local=True, K=3, coord_idx=coord_gen)
 
     batch = (fd.THEIRS_COMPLETE["batch_size"] if args.arm == "theirs"
              else fd.OURS_INCUMBENT["batch_size"])
-    schedule = recipe.derive_schedule(batch, step="step1_reco",
-                                      n_data=data.reco.shape[0])
 
     folder = Path(args.weights_folder)
     folder.mkdir(parents=True, exist_ok=True)
 
-    # THE ANNEALED ESTIMATOR, because that is the incumbent. A bare `MultiFold`
-    # is not what production runs: the engine's own anneal is dead code, and
-    # `make_annealed_multifold` is what makes the adopted policy bite. Running
-    # ours on a bare MultiFold would have compared his configuration against
-    # something we do not use, under the name of the one we do. Both arms get
-    # it, because the estimator is not what the arms differ in.
+    # The annealed estimator, because that is the incumbent: the engine's own
+    # anneal is dead code. Both arms get it -- the estimator is not what the
+    # arms differ in.
     fit_lr_records: list[dict[str, Any]] = []
     Annealed = make_annealed_multifold(MultiFold, tf, fit_lr_records)
-    unfolder = Annealed(
-        name=f"{args.arm}-{args.stage}-seed{args.seed}",
-        model_reco=model_reco, model_gen=model_gen, data=data, mc=mc,
-        weights_folder=str(folder), niter=args.niter, batch_size=batch,
-        # EPOCHS MUST BE PASSED. `MultiFold` defaults to 50; the incumbent's
-        # frozen policy is 8, and both the training recipe and the cost model
-        # are built on 8. Leaving the default would have trained every arm six
-        # times longer than the incumbent -- so "ours" would not have been ours
-        # -- and turned a 366 GPU-hour campaign into roughly 2,200 against a
-        # 1,000-hour ceiling.
-        epochs=int(recipe.EPOCHS),
-        lr=args.learning_rate, verbose=True)
-    recorder = ffr.FoldForwardRecorder() if hasattr(ffr, "FoldForwardRecorder") \
-        else None
+    unfolder = Annealed(f"{args.arm}-{args.stage}-seed{args.seed}",
+                        model_reco, model_gen, pdata, mcB,
+                        niter=int(args.niter), epochs=int(recipe.EPOCHS),
+                        batch_size=batch, lr=args.learning_rate,
+                        weights_folder=str(folder), verbose=False)
     unfolder.Unfold()
 
-    weights = np.asarray(unfolder.weights_push if hasattr(unfolder, "weights_push")
-                         else unfolder.weights_pull)
-    np.savez_compressed(folder / f"weights_{args.arm}_{args.stage}_{args.seed}.npz",
-                        weights=weights)
+    push = np.asarray(unfolder.weights_push, dtype=np.float64)
+    if push.shape[0] != ib.size:
+        raise SystemExit(
+            f"[arm] push {push.shape} is not aligned to half B ({ib.size}); "
+            "scoring would attach each weight to the wrong event")
+
+    # ABSOLUTE dump rows for both halves, so the scorer rebuilds the spectra
+    # from the dump rather than replaying the subsample and split logic.
+    out = folder / f"weights_{args.arm}_{args.stage}_{args.seed}.npz"
+    np.savez_compressed(out, weights=push,
+                        dump_rows_a=imc[ia].astype(np.int64),
+                        dump_rows_b=imc[ib].astype(np.int64),
+                        tilt_a=tilt_a, pass_gen_a=pg_a,
+                        pass_gen_b=pg[ib], mc_indices=imc.astype(np.int64))
     return {
         **plan_of(args),
         "seconds": time.perf_counter() - started,
-        "rows": {"data": int(data.reco.shape[0]), "mc": int(mc.reco.shape[0])},
-        "target": {"path": str(args.target_npy),
-                   "receipt": str(args.target_receipt),
-                   "bkg_mode": prod.BKG_MODE,
-                   "rebuilt_in_process": False},
+        "closure": {
+            "powered": True, "bkg_mode": "mc-only",
+            "measured_leg_is_real_data": False,
+            "half_size": half, "split_seed": int(fd.SPLITS["split_seed"]),
+            "halves_disjoint": True,
+            "pdata_rows": int(s1_a.sum()), "prior_rows": int(ib.size),
+            "injection": tilt_spec,
+        },
         "substitution": substitution,
-        "estimator": {"annealed": True,
-                      "epochs": int(recipe.EPOCHS),
+        "estimator": {"annealed": True, "epochs": int(recipe.EPOCHS),
                       "estimator_seed": int(args.seed),
                       "subsample_seed": int(
                           prod.NOMINAL_SEED_POLICY["subsample_seed"]),
+                      "batch_size": int(batch),
                       "fits_recorded": len(fit_lr_records),
                       "realized_learning_rates": fit_lr_records},
-        "widths": {"cloud_reco": int(np.asarray(mc.reco).shape[-1]),
-                   "tokens": P, "evt_reco": int(ev_reco),
-                   "evt_truth": int(ev_truth)},
-        "schedule": {k: schedule[k] for k in ("max_steps", "warmup_steps",
-                                              "examples_per_update")},
-        "weights_finite": bool(np.isfinite(weights).all()),
-        "weights_path": str(folder / f"weights_{args.arm}_{args.stage}_{args.seed}.npz"),
+        "weights_finite": bool(np.isfinite(push).all()),
+        "weights_path": str(out),
         "scored_here": False,
         "note": "scoring is a separate step over the frozen endpoint",
     }
+
+
+def _truth_eavail(np: Any, ffd: Any, inputs_npz: Any, imc: Any):
+    """Truth E_avail for the subsampled rows, read straight from the dump."""
+    import zipfile
+
+    import numpy.lib.format as npf
+
+    with zipfile.ZipFile(str(inputs_npz)) as archive:
+        with archive.open("truth_scalars.npy") as handle:
+            scalars = npf.read_array(handle, allow_pickle=False)[np.asarray(imc)]
+    return scalars[:, ffd.SCALAR_COLS["eavail"]].astype(np.float64)
+
+
+def cp_half_size() -> int:
+    """The established half size, read from the closure module, not copied."""
+    import closure_powered_truth_reweight as cp
+    return int(cp.HALF_SIZE)
 
 
 def plan_of(args: Any) -> dict[str, Any]:
@@ -380,25 +414,18 @@ def plan_of(args: Any) -> dict[str, Any]:
             "learning_rate": args.learning_rate, "niter": args.niter}
 
 
-def _load_joined(args: Any, np: Any, mc_rows: Any, expected_data_rows: int
+def _load_joined(args: Any, np: Any, pdata_rows: Any, mcb_rows: Any
                  ) -> dict[str, Any]:
-    """Gather his inputs for exactly the rows this fit will see.
+    """His tokens for the two closure legs, by ABSOLUTE inventory row.
 
-    THE MEASURED LEG IS SIGNED. `build_signed_measured_inventory` concatenates
-    the positive data rows with the aligned negative background rows, so the
-    data loader holds 4,680,719 rows: 4,116,128 data gates followed by 564,591
-    background MC events. His arm needs tokens for both, so the data side here
-    is the `data` join followed by the `bkg` join, in that order -- the same
-    order the loader built.
+    Only the `sig` stream is needed: the closure runs `bkg_mode='mc-only'`, so
+    there is no measured leg and no data or background join to gather. Both
+    legs are MC rows of the signal inventory, named by their absolute dump
+    index, so the gather cannot be confused by the subsample or the split.
 
-    Joining only `data` and `sig` left the background 564,591 rows short. That
-    surfaced as a length error rather than as a silent misalignment, which is
-    the one piece of luck in it: a same-length-but-differently-ordered gather
-    would have attached one event's tokens to another's weight.
-
-    `pass_reco` comes from the INVENTORY, not from the loaders, because
-    `row_index` is indexed by inventory row. The loader's own `pass_reco` is
-    over its subsample and using it silently mis-assigns the flag.
+    The pdata leg is `pass_reco & pass_gen` by construction, so every row must
+    match. The prior leg is all of half B, so it contains !pass_reco rows;
+    those come back zero, exactly as the production loader zeroes ours.
     """
     import json
 
@@ -408,34 +435,14 @@ def _load_joined(args: Any, np: Any, mc_rows: Any, expected_data_rows: int
     with np.load(args.inputs_npz, mmap_mode="r") as target:
         sig_pass_reco = np.asarray(target["pass_reco"]).astype(bool)
 
-    def gather(stream: str, rows: Any, pass_reco: Any) -> dict[str, Any]:
-        index = np.load(index_dir / f"join_{stream}.npz")
-        report = json.loads((index_dir / f"join_{stream}.json").read_text())
+    index = np.load(index_dir / "join_sig.npz")
+    report = json.loads((index_dir / "join_sig.json").read_text())
+
+    def gather(rows: Any) -> dict[str, Any]:
         return mtz.materialize(report["files"], index["row_index"],
-                               index["origin"], np.asarray(rows), pass_reco)
+                               index["origin"], np.asarray(rows), sig_pass_reco)
 
-    pieces = []
-    for stream in ("data", "bkg"):
-        index = np.load(index_dir / f"join_{stream}.npz")
-        n = int(np.asarray(index["row_index"]).shape[0])
-        # Data gates and refined background rows are reconstructed by
-        # construction -- they are what the measured leg IS.
-        pieces.append(gather(stream, np.arange(n), np.ones(n, dtype=bool)))
-    measured = {
-        "packed": np.concatenate([p["packed"] for p in pieces], axis=0),
-        "globals": np.concatenate([p["globals"] for p in pieces], axis=0),
-        "rows": sum(p["rows"] for p in pieces),
-        "streams": ["data", "bkg"],
-    }
-    if measured["packed"].shape[0] != expected_data_rows:
-        raise SystemExit(
-            f"[arm] the measured leg has {expected_data_rows} rows and "
-            f"data+bkg supplies {measured['packed'].shape[0]}. The signed "
-            "inventory is data followed by background; a mismatch here means "
-            "the joins and the loader disagree about the population")
-
-    signal = gather("sig", mc_rows, sig_pass_reco)
-    return {"data": measured, "mc": signal}
+    return {"pdata": gather(pdata_rows), "mc": gather(mcb_rows)}
 
 
 if __name__ == "__main__":
