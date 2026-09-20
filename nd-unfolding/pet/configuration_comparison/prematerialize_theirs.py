@@ -47,7 +47,8 @@ def cache_key(*, inputs_npz: Path, subsample_seed: int, max_events: int,
 
 def build(*, inputs_npz: Path, theirs_index: Path, out: Path,
           subsample_seed: int, max_events: int, split_seed: int,
-          half_size: int, stage: str, identity_sidecar: Path) -> dict[str, Any]:
+          half_size: int | None, stage: str,
+          identity_sidecar: Path) -> dict[str, Any]:
     import sys
 
     sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -69,6 +70,12 @@ def build(*, inputs_npz: Path, theirs_index: Path, out: Path,
     sidecar = np.load(str(identity_sidecar), mmap_mode="r")
     identity = np.asarray(sidecar["sig_event_id"]).astype(np.int64)[imc]
     stage_pos = ss.rows_for_stage(identity, stage)
+    # ONE rule for the half size, shared with the driver: the largest that
+    # fits twice inside this stage. A cache built at a different half is a
+    # cache of different rows, and the key would catch it -- but only after
+    # the gather had been paid for.
+    if half_size is None:
+        half_size = ss.usable_half_size(identity, stage)
     if stage_pos.size < 2 * half_size:
         raise SystemExit(
             f"[prematerialize] stage {stage!r} owns {stage_pos.size} events, "
@@ -132,18 +139,19 @@ def main() -> int:
     parser.add_argument("--max-events", type=int, required=True)
     parser.add_argument("--split-seed", type=int,
                         default=int(fd.SPLITS["split_seed"]))
-    parser.add_argument("--half-size", type=int, required=True)
+    parser.add_argument("--half-size", type=int, default=None,
+                        help="defaults to the largest that fits twice in the stage")
     parser.add_argument("--stage", choices=("tuning", "pilot", "final"),
                         required=True)
     parser.add_argument("--identity-sidecar", type=Path, required=True)
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
 
-    want = cache_key(inputs_npz=args.inputs_npz,
-                     subsample_seed=args.subsample_seed,
-                     max_events=args.max_events, split_seed=args.split_seed,
-                     half_size=args.half_size, stage=args.stage)
-    if args.out.exists():
+    want = (None if args.half_size is None else cache_key(
+        inputs_npz=args.inputs_npz, subsample_seed=args.subsample_seed,
+        max_events=args.max_events, split_seed=args.split_seed,
+        half_size=args.half_size, stage=args.stage))
+    if want is not None and args.out.exists():
         # A gather that already matches is 13 minutes of shard reads nobody
         # needs. The KEY decides, not the path: a cache built for another
         # stage or split sits at the same filename and must be rebuilt.

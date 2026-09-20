@@ -83,19 +83,27 @@ if [[ "${LAUNCH:-1}" == "0" ]]; then
   exit 0
 fi
 
+# Gather his tokens ONCE PER STAGE before any training task starts. Each
+# stage's tasks then memory-map it; the key refuses a cache from another
+# stage or split.
+PRE=$(sbatch --parsable \
+  --export=ALL,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR" \
+  nd-unfolding/pet/configuration_comparison/sbatch_prematerialize.sh)
+echo "prematerialize=$PRE"
+
 export STAGE CHECKOUT OUTPUT COMMIT INPUTS_NPZ THEIRS_INDEX
 INPUTS_NPZ="$INVENTORY"
 THEIRS_INDEX="$JOINDIR"
 LAUNCHER=nd-unfolding/pet/configuration_comparison/sbatch_campaign.sh
 
-TUNING=$(sbatch --parsable --array=1-8 \
-  --export=ALL,STAGE=tuning,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR" \
+TUNING=$(sbatch --parsable --array=1-8 --dependency=afterok:$PRE \
+  --export=ALL,STAGE=tuning,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR",THEIRS_CACHE="$OUTPUT/cache/theirs-tuning.npz" \
   "$LAUNCHER")
 PILOT=$(sbatch --parsable --array=1-8 --dependency=afterok:$TUNING \
-  --export=ALL,STAGE=pilot,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR" \
+  --export=ALL,STAGE=pilot,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR",THEIRS_CACHE="$OUTPUT/cache/theirs-pilot.npz" \
   "$LAUNCHER")
 FINAL=$(sbatch --parsable --array=1-16 --dependency=afterok:$PILOT \
-  --export=ALL,STAGE=final,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR" \
+  --export=ALL,STAGE=final,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR",THEIRS_CACHE="$OUTPUT/cache/theirs-final.npz" \
   "$LAUNCHER")
 printf 'tuning=%s\npilot=%s\nfinal=%s\n' "$TUNING" "$PILOT" "$FINAL" \
   > "$OUTPUT/campaign_jobs.txt"
