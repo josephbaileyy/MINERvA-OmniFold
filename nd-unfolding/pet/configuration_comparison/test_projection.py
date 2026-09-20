@@ -144,14 +144,14 @@ class TheAttentionUsesTheSameProjectionAsLinear(unittest.TestCase):
         self.assertGreaterEqual(touched["flat_projection"], 2)  # attn + out_proj
         self.assertFalse(attn.flat_projection)
 
-    def test_the_arm_forces_jit_compile(self):
-        from pathlib import Path
+    def test_xla_is_off_because_the_engine_makes_it_unavailable(self):
+        """Forcing it compiles Horovod's allreduce cond, which tf2xla refuses."""
+        import frozen_design as fd
         import theirs_omnifold_arm as toa
-        source = Path(toa.__file__).read_text()
-        self.assertIn('kw["jit_compile"] = True', source)
-        self.assertIn("def compile(", source)
+        self.assertFalse(toa.TheirsCompleteArm.force_jit_compile)
+        self.assertFalse(fd.EXECUTION["jit_compile"])
+        self.assertIn("Horovod", fd.EXECUTION["jit_compile_note"])
 
-    def test_the_frozen_execution_claims_both(self):
+    def test_what_makes_the_arm_fit_is_the_model_not_the_compiler(self):
         import frozen_design as fd
         self.assertTrue(fd.EXECUTION["flat_projection"])
-        self.assertTrue(fd.EXECUTION["jit_compile"])

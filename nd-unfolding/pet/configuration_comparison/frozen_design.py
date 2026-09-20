@@ -86,7 +86,16 @@ MEASURED_LEG = {
 
 EXECUTION = {
     "flat_projection": True,
-    "jit_compile": True,
+    # MEASURED FALSE for the arm as the engine runs it, job 58601848. Forcing
+    # jit_compile compiles the optimizer too, and the engine wraps it in
+    # Horovod's DistributedAdam, whose allreduce `cond` tf2xla cannot convert.
+    # The 410.6 us/example and 21.7 GiB figures were taken under XLA on the
+    # BARE model and do not describe this path; what makes the arm fit is the
+    # flat projection, which is a property of the model.
+    "jit_compile": False,
+    "jit_compile_note": ("XLA is unavailable through the engine's Horovod "
+                         "optimizer; the throughput figures taken under it "
+                         "describe the bare model, not the arm"),
     "precision_policy": {"tf32_enabled": False, "determinism_enabled": True,
                          "mixed_precision_policy": "float32", "floatx": "float32"},
     "device": "one A100-SXM4-40GB",

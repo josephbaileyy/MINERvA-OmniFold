@@ -100,22 +100,25 @@ class TheirsCompleteArm(keras.Model):
         return self.backbone(features, cond=globals_, pid=pid, add_info=add_info,
                              mask=self.pad_mask(tokens), training=training)
 
+    #: XLA is NOT AVAILABLE through this engine, measured rather than assumed.
+    #: Forcing `jit_compile=True` compiles the whole `train_step`, including the
+    #: optimizer, and the engine wraps the optimizer in Horovod's
+    #: `DistributedAdam`. Its allreduce emits a `cond` that tf2xla cannot
+    #: convert: "tf2xla conversion failed while converting
+    #: __inference_run_step" inside `DistributedAdam_Allreduce/cond_152`
+    #: (job 58601848). Single GPU or not, the conditional is in the graph.
+    #:
+    #: So the 410.6 microseconds per example and 21.7 GiB in
+    #: `EXECUTION` -- both taken under `tf.function(jit_compile=True)` on the
+    #: bare model -- describe a path this arm cannot take while the engine owns
+    #: the optimizer. What makes the arm fit in memory is the FLAT PROJECTION,
+    #: which is a property of the model and needs no compiler.
+    force_jit_compile = False
+
     def compile(self, *args: Any, **kw: Any) -> None:
-        """Force XLA, because the frozen EXECUTION says so and the numbers do.
-
-        The engine compiles this model itself and does not pass `jit_compile`,
-        so the arm ran through Keras's ordinary graph while every measurement
-        the campaign is costed and sized on -- 21.7 GiB peak, 410.6 us per
-        example at 33 tokens and batch 2048 -- was taken under
-        `tf.function(jit_compile=True)`.
-
-        It is not only a speed difference. Without XLA the q/k/v projection
-        gradients are materialised rather than fused, and the first real
-        training step OOMed on a 40 GB A100 allocating a single
-        [128, 128, 2048, 34] tensor. `EXECUTION["jit_compile"]` was True the
-        whole time; nothing made the model honour it.
-        """
-        kw["jit_compile"] = True
+        """Honour `force_jit_compile`, which is off for the reason above."""
+        if self.force_jit_compile:
+            kw["jit_compile"] = True
         super().compile(*args, **kw)
 
     def train_step(self, data: Any) -> dict[str, Any]:
