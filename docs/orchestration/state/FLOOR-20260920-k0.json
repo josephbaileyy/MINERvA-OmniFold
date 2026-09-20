@@ -1,0 +1,234 @@
+{
+  "control_reproduces_z_build": {
+    "bitwise_identical": true,
+    "max_abs_difference": 0.0,
+    "product": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz",
+    "product_cov_sha256": "a78be8a072e9d89b5e0b48866284a4bd3e5c8ca901357c631d036a4145fd50ba",
+    "reassembled_cov_sha256": "a78be8a072e9d89b5e0b48866284a4bd3e5c8ca901357c631d036a4145fd50ba"
+  },
+  "draw_seed": 1000,
+  "estimator_seed": 1000,
+  "functionals": {
+    "all_ones_appended": true,
+    "authorization": "AUTHORIZATION-20260918-d-resource-required-deliverable-path.md ruling 4: the rows of project_cov_nd.py M, plus the all-ones vector",
+    "builder": "project_cov_nd.build_projection",
+    "dst_shape": [
+      7,
+      6
+    ],
+    "keep_axes": [
+      "eavail",
+      "W"
+    ],
+    "n_dst_dense": 42,
+    "n_dst_receiving": 42,
+    "n_functionals": 43,
+    "sha256": "ef802a097ad00f8b31adbe0c4293bc512cceafd7d9781c552e962a2807a8cfba",
+    "src_axes": [
+      "pt",
+      "pz",
+      "eavail",
+      "q3",
+      "W"
+    ],
+    "src_shape": [
+      14,
+      16,
+      7,
+      7,
+      6
+    ]
+  },
+  "grades_nothing": true,
+  "member": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000",
+  "n_reported": 10694,
+  "pairs_N40": [
+    {
+      "n_throws": 40,
+      "pair": "Q1|Q2",
+      "s_agg": 0.17312873473122317,
+      "s_med": 0.014486851053518999,
+      "s_proj": 0.265810260309618,
+      "s_proj_argmax_functional": 1
+    },
+    {
+      "n_throws": 40,
+      "pair": "Q1|Q3",
+      "s_agg": 0.12883057008570223,
+      "s_med": 0.025961236815613485,
+      "s_proj": 0.1972448389397871,
+      "s_proj_argmax_functional": 1
+    },
+    {
+      "n_throws": 40,
+      "pair": "Q1|Q4",
+      "s_agg": 0.03284197071275416,
+      "s_med": 0.018905332969669227,
+      "s_proj": 0.10999629436287701,
+      "s_proj_argmax_functional": 28
+    },
+    {
+      "n_throws": 40,
+      "pair": "Q2|Q3",
+      "s_agg": 0.053573230206665455,
+      "s_med": 0.01164305699458264,
+      "s_proj": 0.15442663673126963,
+      "s_proj_argmax_functional": 6
+    },
+    {
+      "n_throws": 40,
+      "pair": "Q2|Q4",
+      "s_agg": 0.16965974016870497,
+      "s_med": 0.004483432738440486,
+      "s_proj": 0.3163218403735443,
+      "s_proj_argmax_functional": 1
+    },
+    {
+      "n_throws": 40,
+      "pair": "Q3|Q4",
+      "s_agg": 0.11018361764874034,
+      "s_med": 0.00724396616709244,
+      "s_proj": 0.2038913434779241,
+      "s_proj_argmax_functional": 1
+    }
+  ],
+  "pairs_N80": [
+    {
+      "n_throws": 80,
+      "pair": "HA|HB",
+      "s_agg": 0.0050469641662763,
+      "s_med": 0.012889225725086224,
+      "s_proj": 0.07660891340414856,
+      "s_proj_argmax_functional": 28
+    }
+  ],
+  "per_subset": {
+    "HA": {
+      "n_throws": 80,
+      "sqrt_tr": 6.000106077793843e-38,
+      "symmetry_psd": {
+        "eigenvalues_computed": true,
+        "lambda_max": 2.2516322342616046e-75,
+        "lambda_min": -5.868858678052872e-91,
+        "neg_fraction_of_max": 2.6064907886600286e-16,
+        "psd_method": "eigvalsh",
+        "rel_asymmetry": 1.0515049318748444e-16,
+        "rtol": 1e-09
+      }
+    },
+    "HB": {
+      "n_throws": 80,
+      "sqrt_tr": 6.030388398162325e-38,
+      "symmetry_psd": {
+        "eigenvalues_computed": true,
+        "lambda_max": 2.305872977988031e-75,
+        "lambda_min": -9.786539149034954e-91,
+        "neg_fraction_of_max": 4.2441796414883666e-16,
+        "psd_method": "eigvalsh",
+        "rel_asymmetry": 2.0504480192838917e-16,
+        "rtol": 1e-09
+      }
+    },
+    "Q1": {
+      "n_throws": 40,
+      "sqrt_tr": 6.554702122868504e-38,
+      "symmetry_psd": {
+        "eigenvalues_computed": true,
+        "lambda_max": 2.8149707662821216e-75,
+        "lambda_min": -1.4844343758740944e-90,
+        "neg_fraction_of_max": 5.273356276572152e-16,
+        "psd_method": "eigvalsh",
+        "rel_asymmetry": 1.7638746483455906e-16,
+        "rtol": 1e-09
+      }
+    },
+    "Q2": {
+      "n_throws": 40,
+      "sqrt_tr": 5.419894837796218e-38,
+      "symmetry_psd": {
+        "eigenvalues_computed": true,
+        "lambda_max": 1.7206540630649359e-75,
+        "lambda_min": -1.1607846060799105e-90,
+        "neg_fraction_of_max": 6.746182344243263e-16,
+        "psd_method": "eigvalsh",
+        "rel_asymmetry": 1.3017979632353317e-16,
+        "rtol": 1e-09
+      }
+    },
+    "Q3": {
+      "n_throws": 40,
+      "sqrt_tr": 5.710256111637392e-38,
+      "symmetry_psd": {
+        "eigenvalues_computed": true,
+        "lambda_max": 1.981567959262906e-75,
+        "lambda_min": -1.11692576893178e-90,
+        "neg_fraction_of_max": 5.6365756405712605e-16,
+        "psd_method": "eigvalsh",
+        "rel_asymmetry": 2.5104542413201456e-16,
+        "rtol": 1e-09
+      }
+    },
+    "Q4": {
+      "n_throws": 40,
+      "sqrt_tr": 6.339432787718429e-38,
+      "symmetry_psd": {
+        "eigenvalues_computed": true,
+        "lambda_max": 2.635239122244572e-75,
+        "lambda_min": -1.0002218231981142e-90,
+        "neg_fraction_of_max": 3.7955638057853837e-16,
+        "psd_method": "eigvalsh",
+        "rel_asymmetry": 1.7329151456882978e-16,
+        "rtol": 1e-09
+      }
+    }
+  },
+  "subject": "s_proj resolution floor at a FIXED estimator seed",
+  "summary": {
+    "N40": {
+      "s_agg": {
+        "max": 0.17312873473122317,
+        "mean": 0.1113696439256317,
+        "min": 0.03284197071275416,
+        "n_pairs": 6,
+        "sd": 0.05835277562697312
+      },
+      "s_med": {
+        "max": 0.025961236815613485,
+        "mean": 0.013787312789819546,
+        "min": 0.004483432738440486,
+        "n_pairs": 6,
+        "sd": 0.007859558670568489
+      },
+      "s_proj": {
+        "max": 0.3163218403735443,
+        "mean": 0.20794853569917005,
+        "min": 0.10999629436287701,
+        "n_pairs": 6,
+        "sd": 0.07440835642037871
+      }
+    },
+    "N80": {
+      "s_agg": {
+        "max": 0.0050469641662763,
+        "mean": 0.0050469641662763,
+        "min": 0.0050469641662763,
+        "n_pairs": 1,
+        "sd": null
+      },
+      "s_med": {
+        "max": 0.012889225725086224,
+        "mean": 0.012889225725086224,
+        "min": 0.012889225725086224,
+        "n_pairs": 1,
+        "sd": null
+      },
+      "s_proj": {
+        "max": 0.07660891340414856,
+        "mean": 0.07660891340414856,
+        "min": 0.07660891340414856,
+        "n_pairs": 1,
+        "sd": null
+      }
+    }
+  }
+}

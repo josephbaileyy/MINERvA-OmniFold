@@ -68,6 +68,7 @@ docs/orchestration/DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md	LIVE	
 docs/orchestration/EVIDENCE-20260919-cause3-member-eligibility-census.md	LIVE	open	
 docs/orchestration/EVIDENCE-20260919-cause7-migration-census-and-declared-policy.md	LIVE	open	
 docs/orchestration/EVIDENCE-20260919-lateral-bands-are-seed-pinned.md	LIVE	open	
+docs/orchestration/EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md	LIVE	open	
 docs/orchestration/FINDING-20260822-a-hold-that-instructed-its-own-deletion.md	LIVE	open	
 docs/orchestration/FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md	LIVE	open	
 docs/orchestration/FINDING-20260824-gate2-preparation-and-four-open-rulings.md	LIVE	open	
@@ -191,6 +192,10 @@ docs/orchestration/control_plane_lint.py	LIVE	open	""
 docs/orchestration/dashboard.html	MACHINE	generated	
 docs/orchestration/probes/probe-20260918-aggregation-channel-directions.py	MACHINE	open	
 docs/orchestration/probes/probe-20260918-l3-statistic-diagonal-breach-and-repair.py	MACHINE	open	
+docs/orchestration/probes/probe-20260920-seed-effect-at-matched-N.py	MACHINE	open	
+docs/orchestration/probes/probe-20260920-sproj-resolution-floor.py	MACHINE	open	
+docs/orchestration/state/FLOOR-20260920-k0.json	MACHINE	open	
+docs/orchestration/state/FLOOR-20260920-k1200.json	MACHINE	open	
 docs/orchestration/state/GRADE-20260920-cause3-two-member.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260826-b1-adoption-gate-preconditions-remeasured.json	MACHINE	open	
@@ -199,6 +204,7 @@ docs/orchestration/state/RECEIPT-20260830-aa67c426-preservation-remeasurement.js
 docs/orchestration/state/RECEIPT-20260830-k0-7ac0edec-legs-1-5-submission.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260830-k0-deployment-and-freeze-bundle-7ac0edec.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260830-quarantine-k0-aa67c426-member-namespace.json	MACHINE	open	
+docs/orchestration/state/SEED-EFFECT-20260920.json	MACHINE	open	
 docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	MACHINE	open	
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	

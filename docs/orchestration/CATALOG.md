@@ -103,6 +103,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **The grade is unaffected and that is verified, not argued**: the product's `hXSecND_flat` is
   byte-identical to the archive central, so the grader's cross-member field is True. **Not fixed** —
   production output exists and criteria are frozen; the recommended repair is recorded.
+- [`EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md`](EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md)
+  - **`s_proj = 6.145%` is a REAL estimator-seed sensitivity, measured not argued.** With the throws
+  held fixed and only the seed changed, `s_proj = 6.04% ± 0.39%` at **N = 40, 80 and 160** —
+  **flat, `p = 0.000`** — while the same-seed resampling floor falls steeply, `20.91% → 7.57%`,
+  **`p = 1.467`**. Statistical noise must fall with N; this does not. Controls: the diagnostic path
+  reproduces `z_build` **bitwise** for both members and reproduces the graded `s_proj` **exactly**,
+  and the method returns the already-known answers for `s_agg` and `s_med`. **Corollary: a larger
+  ensemble would not change it, and no rebuild passes** — so no price is owed. 6.997 CPU / 0 GPU.
 - [`OUTCOME-20260920-cause3-two-member-assessable-FAIL.md`](OUTCOME-20260920-cause3-two-member-assessable-FAIL.md)
   - **(B) ASSESSABLE FAIL, branch 5 NOT MET — PER-BIN.** The campaign is **fully valid** — all nine
   `Validity` fields passed, no reject conditions — so this is a measurement, not a footing failure.

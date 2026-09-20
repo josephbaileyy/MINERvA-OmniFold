@@ -1,0 +1,93 @@
+{
+  "control_reproduces_the_grade": {
+    "abs_difference": 0.0,
+    "exact": true,
+    "graded": 0.06145388143592225,
+    "recomputed": 0.06145388143592225
+  },
+  "functionals": {
+    "all_ones_appended": true,
+    "authorization": "AUTHORIZATION-20260918-d-resource-required-deliverable-path.md ruling 4: the rows of project_cov_nd.py M, plus the all-ones vector",
+    "builder": "project_cov_nd.build_projection",
+    "dst_shape": [
+      7,
+      6
+    ],
+    "keep_axes": [
+      "eavail",
+      "W"
+    ],
+    "n_dst_dense": 42,
+    "n_dst_receiving": 42,
+    "n_functionals": 43,
+    "sha256": "ef802a097ad00f8b31adbe0c4293bc512cceafd7d9781c552e962a2807a8cfba",
+    "src_axes": [
+      "pt",
+      "pz",
+      "eavail",
+      "q3",
+      "W"
+    ],
+    "src_shape": [
+      14,
+      16,
+      7,
+      7,
+      6
+    ]
+  },
+  "graded_s_proj_N160": 0.06145388143592225,
+  "grades_nothing": true,
+  "n_reported": 10694,
+  "seed_effect_same_throws": [
+    {
+      "argmax_functional": 2,
+      "n_throws": 40,
+      "s_agg": 0.005301371696959318,
+      "s_med": 0.005379619638005509,
+      "s_proj": 0.0664024569054582,
+      "subset": "Q1"
+    },
+    {
+      "argmax_functional": 2,
+      "n_throws": 40,
+      "s_agg": 0.0038282900901924623,
+      "s_med": 0.004338893289627306,
+      "s_proj": 0.05864034715485753,
+      "subset": "Q2"
+    },
+    {
+      "argmax_functional": 2,
+      "n_throws": 40,
+      "s_agg": 0.0051716467646481315,
+      "s_med": 0.003401627760955587,
+      "s_proj": 0.05448577719766316,
+      "subset": "Q3"
+    },
+    {
+      "argmax_functional": 2,
+      "n_throws": 40,
+      "s_agg": 0.004253258721488901,
+      "s_med": 0.004596536068145793,
+      "s_proj": 0.06144245599365769,
+      "subset": "Q4"
+    },
+    {
+      "argmax_functional": 2,
+      "n_throws": 80,
+      "s_agg": 0.0049413555184856595,
+      "s_med": 0.0034180347622090905,
+      "s_proj": 0.06288719388130073,
+      "subset": "HA"
+    },
+    {
+      "argmax_functional": 2,
+      "n_throws": 80,
+      "s_agg": 0.004546951752974875,
+      "s_med": 0.006195753394509709,
+      "s_proj": 0.05757738206494993,
+      "subset": "HB"
+    }
+  ],
+  "subject": "seed effect vs resampling floor, at matched N"
+}
