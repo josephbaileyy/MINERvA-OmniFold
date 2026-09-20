@@ -5,6 +5,8 @@ from __future__ import annotations
 import os
 import unittest
 
+import numpy as np
+
 os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
 os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
 
@@ -65,3 +67,68 @@ class Widths(unittest.TestCase):
     def test_the_prong_layout_matches_his_indexing(self):
         self.assertEqual(ts.PRONG_DENSE_LAYOUT["four_momentum"], (4, 8))
         self.assertEqual(ts.PRONG_DENSE_LAYOUT["pid"], 11)
+
+
+class HisFeaturesNotTheIntermediate(unittest.TestCase):
+    """The model sees eta/phi/log pT, not the stored four-momentum.
+
+    `preprocessing.py:239-288` converts and line 287 stacks exactly those four;
+    `preprocessing.py:343-344` divides positions by 10000. The build stores the
+    pre-conversion form, and feeding THAT to the model is not his
+    configuration. Measured, job 58602446: raw momenta reach 8.2e4, the first
+    step-1 fit returned `Last val loss nan`, and the engine's reweight gate
+    refused 10,000 non-finite logits.
+    """
+
+    def test_the_conversion_matches_his_function_on_the_same_momenta(self):
+        rng = np.random.default_rng(0)
+        fm = rng.normal(0.0, 5.0, (40, 3))
+        energy = rng.gamma(2.0, 3.0, 40) + 0.01
+        packed = np.zeros((1, 40, 10))
+        packed[0, :, :3] = fm
+        packed[0, :, 3] = np.log(energy + 1e-6)
+        packed[0, :, 4] = 2
+        packed[0, :, 5:] = 1.0                      # keep rows non-zero
+        got = ts.convert_packed(packed)[0, :, :4]
+        want = ts.convert_to_eta_phi_pt(
+            np.column_stack([fm, energy]))
+        np.testing.assert_allclose(got[:, :3], want[:, :3], rtol=0, atol=1e-12)
+        np.testing.assert_allclose(got[:, 3], want[:, 3], rtol=0, atol=1e-12)
+
+    def test_positions_and_time_are_divided_by_ten_thousand(self):
+        packed = np.zeros((1, 1, 10))
+        packed[0, 0] = [1, 1, 1, 0.0, 2, 0.7, 10000.0, 5000.0, -2500.0, 400.0]
+        out = ts.convert_packed(packed)
+        np.testing.assert_allclose(out[0, 0, 6:10], [1.0, 0.5, -0.25, 0.04])
+        self.assertAlmostEqual(out[0, 0, 5], 0.7)   # dE/dx is NOT scaled
+
+    def test_zero_padding_stays_exactly_zero(self):
+        """Converting a pad gives [0,0,-13.8,-13.8,0] and the mask reads
+        `log E != 0`, so every pad would become a token."""
+        packed = np.zeros((2, 3, 10))
+        packed[0, 0] = [1, 1, 1, 2.0, 2, 0, 0, 0, 0, 0]
+        out = ts.convert_packed(packed)
+        self.assertTrue((out[0, 1:] == 0).all())
+        self.assertTrue((out[1] == 0).all())
+        self.assertFalse((out[0, 0] == 0).all())
+
+    def test_eta_is_clipped_and_degenerate_momenta_give_zero(self):
+        packed = np.zeros((1, 2, 10))
+        packed[0, 0] = [0, 0, 5.0, 1.0, 2, 1, 0, 0, 0, 0]   # p == pz
+        packed[0, 1] = [0, 0, 0, 1.0, 2, 1, 0, 0, 0, 0]     # p == 0
+        out = ts.convert_packed(packed)
+        self.assertEqual(out[0, 0, 0], 0.0)
+        self.assertEqual(out[0, 1, 0], 0.0)
+        self.assertTrue(np.isfinite(out).all())
+
+    def test_the_schema_records_the_corrected_columns(self):
+        self.assertEqual(ts.TOKEN_COLUMNS,
+                         ("delta_eta", "delta_phi", "log_pt", "log_E", "pid"))
+        self.assertEqual(ts.COORD_DIVISOR, 10000.0)
+        self.assertIn("x_over_1e4", ts.ADD_INFO_COLUMNS)
+
+    def test_the_gather_applies_it(self):
+        from pathlib import Path
+        import materialize_theirs as mt
+        source = Path(mt.__file__).read_text()
+        self.assertIn("tts.convert_packed(packed)", source)

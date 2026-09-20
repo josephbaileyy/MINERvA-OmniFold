@@ -76,6 +76,16 @@ def materialize(files: list[str], row_index: np.ndarray, origin: np.ndarray,
             glob = blob["globals"][where[take, 1]]
         packed[take] = np.concatenate([tokens, add], axis=2)
         globals_[take] = glob
+    # HIS FEATURES, not the intermediate the shards store. The build writes
+    # `[px, py, pz, log E, pid]` and raw millimetre positions, which is what
+    # his `preprocessing` holds BEFORE `convert_to_eta_phi_pt` and
+    # `preprocess_coords`. Feeding that to the model is not his configuration,
+    # and measured (job 58602446) it diverges: raw momenta reach 8.2e4, the
+    # first fit returned `Last val loss nan`, and the engine refused 10,000
+    # non-finite logits.
+    import theirs_token_schema as tts
+
+    packed = tts.convert_packed(packed).astype(np.float32)
     packed, globals_ = tls.zero_non_reco(packed, globals_, reco_ok)
     return {"packed": packed, "globals": globals_, "shards_opened": opened,
             "rows": len(rows),

@@ -25,7 +25,11 @@ class Gather(unittest.TestCase):
             tokens = np.full((2, CAP, 5), shard, dtype=np.float32)
             add = np.full((2, CAP, 5), 10 + shard, dtype=np.float32)
             glob = np.full((2, G), 100 + shard, dtype=np.float32)
-            tokens[:, :, 0] += np.arange(2)[:, None]      # row marker
+            # The marker lives in add_info's dE/dx slot -- packed column 5 --
+            # because the gather now applies his feature transform and columns
+            # 0..2 become eta/phi/log pT. dE/dx is the one column the
+            # transform leaves alone, so it still identifies the source row.
+            add[:, :, 0] = shard * 10 + np.arange(2)[:, None]
             path = self.dir / f"s{shard}.npz"
             np.savez(path, tokens=tokens, add_info=add, globals=glob)
             self.files.append(str(path))
@@ -38,16 +42,21 @@ class Gather(unittest.TestCase):
         out = mt.materialize(self.files, row_index, self.origin,
                              np.array([0, 1, 2]), np.ones(3, bool),
                              cap=CAP, packed_width=W)
-        self.assertAlmostEqual(float(out["packed"][0, 0, 0]), 3.0)   # shard2 row1
-        self.assertAlmostEqual(float(out["packed"][1, 0, 0]), 0.0)   # shard0 row0
-        self.assertAlmostEqual(float(out["packed"][2, 0, 0]), 2.0)   # shard1 row1
+        self.assertAlmostEqual(float(out["packed"][0, 0, 5]), 21.0)  # shard2 row1
+        self.assertAlmostEqual(float(out["packed"][1, 0, 5]), 0.0)   # shard0 row0
+        self.assertAlmostEqual(float(out["packed"][2, 0, 5]), 11.0)  # shard1 row1
 
     def test_tokens_and_add_info_are_concatenated_in_that_order(self):
         out = mt.materialize(self.files, np.array([0]), self.origin,
                              np.array([0]), np.ones(1, bool),
                              cap=CAP, packed_width=W)
-        np.testing.assert_allclose(out["packed"][0, 0, :5], 0.0)
-        np.testing.assert_allclose(out["packed"][0, 0, 5:], 10.0)
+        # token columns 0..4 then add_info 5..9, in that order. The token
+        # slots are shard 0's converted features; the add_info slots carry the
+        # marker in dE/dx and shard 0's 10.0 in the scaled position columns.
+        self.assertEqual(out["packed"].shape[-1], 10)
+        self.assertAlmostEqual(float(out["packed"][0, 0, 5]), 0.0)
+        np.testing.assert_allclose(out["packed"][0, 0, 6:], 10.0 / 10000.0,
+                                   rtol=0, atol=1e-9)
 
     def test_each_shard_is_opened_at_most_once(self):
         row_index = np.arange(6)
@@ -107,9 +116,9 @@ class Gather(unittest.TestCase):
         reco = np.array([True, False, True, False, True])
         out = mt.materialize(self.files, row_index, self.origin,
                              np.arange(5), reco, cap=CAP, packed_width=W)
-        self.assertAlmostEqual(float(out["packed"][0, 0, 0]), 3.0)  # shard2 row1
-        self.assertAlmostEqual(float(out["packed"][2, 0, 0]), 2.0)  # shard1 row1
-        self.assertAlmostEqual(float(out["packed"][4, 0, 0]), 0.0)  # shard0 row0
+        self.assertAlmostEqual(float(out["packed"][0, 0, 5]), 21.0)  # shard2 row1
+        self.assertAlmostEqual(float(out["packed"][2, 0, 5]), 11.0)  # shard1 row1
+        self.assertAlmostEqual(float(out["packed"][4, 0, 5]), 0.0)   # shard0 row0
         np.testing.assert_array_equal(out["packed"][1],
                                       np.zeros((CAP, W), np.float32))
         np.testing.assert_array_equal(out["packed"][3],

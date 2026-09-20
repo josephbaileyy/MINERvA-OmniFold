@@ -139,6 +139,25 @@ def main() -> int:
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
 
+    want = cache_key(inputs_npz=args.inputs_npz,
+                     subsample_seed=args.subsample_seed,
+                     max_events=args.max_events, split_seed=args.split_seed,
+                     half_size=args.half_size, stage=args.stage)
+    if args.out.exists():
+        # A gather that already matches is 13 minutes of shard reads nobody
+        # needs. The KEY decides, not the path: a cache built for another
+        # stage or split sits at the same filename and must be rebuilt.
+        try:
+            load(args.out, expected_key=want)
+        except SystemExit:
+            print(f"[prematerialize] {args.out} has a different key; rebuilding")
+        else:
+            print(json.dumps({"key": want, "path": str(args.out),
+                              "reused": True,
+                              "reading": "existing cache matches the key"},
+                             indent=2))
+            return 0
+
     info = build(inputs_npz=args.inputs_npz, theirs_index=args.theirs_index,
                  out=args.out, subsample_seed=args.subsample_seed,
                  max_events=args.max_events, split_seed=args.split_seed,

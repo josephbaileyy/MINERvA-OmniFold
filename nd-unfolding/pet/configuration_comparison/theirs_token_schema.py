@@ -18,10 +18,26 @@ Derivation, file and line:
 * `preprocessing.py:390-400` --- the additional-info comment is explicit:
   "[dE/dx, x, y, z, t]", with zeros where a category has no such quantity.
 
+CORRECTED 2026-09-20. The derivation above describes the INTERMEDIATE stored
+form and stops one function too early. `preprocessing.py:239-288`
+(`convert_to_eta_phi_pt`) converts `[px, py, pz, E]` to
+`[delta_eta, delta_phi, log(pT+1e-6), log(E+1e-6)]` and line 287 stacks exactly
+those four as what the encoder sees; `eta` is clipped to [-10, 10] and `phi` is
+raw `arctan2`. `preprocessing.py:343-344` (`preprocess_coords`) divides the
+positions by 10000.
+
+Building the intermediate form and feeding it to the model is not his
+configuration, and it is not a subtle difference: raw momenta and raw
+millimetre positions reach 8.2e4, and his network has no input normalisation
+that would absorb them. Measured, job 58602446: the first step-1 fit returned
+`Last val loss nan` and the engine's reweight gate refused 10,000 non-finite
+logits.
+
 So:
 
-    token  (5 stored, 4 seen)  [px, py, pz, log E, PID]
-    add_info (5)               [dE/dx, x, y, z, t]
+    stored intermediate         [px, py, pz, E]        <- NOT what the model sees
+    token  (5 stored, 4 seen)   [eta, phi, log pT, log E, PID]
+    add_info (5)                [dE/dx, x/1e4, y/1e4, z/1e4, t/1e4]
 
 NOT CITABLE FOR any performance claim. This is a schema, not a measurement.
 """
@@ -34,7 +50,13 @@ TOKEN_COLUMNS: tuple[str, ...] = ("px", "py", "pz", "log_E", "pid")
 TOKEN_PID_INDEX = 4
 TOKEN_LOG_E_INDEX = 3
 ENCODER_INPUT_DIM = 4          # after PID is pulled out
-ADD_INFO_COLUMNS: tuple[str, ...] = ("dEdx", "x", "y", "z", "t")
+ADD_INFO_COLUMNS: tuple[str, ...] = ("dEdx", "x_over_1e4", "y_over_1e4",
+                                     "z_over_1e4", "t_over_1e4")
+TOKEN_COLUMNS: tuple[str, ...] = ("delta_eta", "delta_phi", "log_pt", "log_E",
+                                  "pid")
+COORD_DIVISOR = 10000.0
+ETA_CLIP = 10.0
+LOG_EPSILON = 1e-6
 
 # PID codes, from the energy-sum comment at `preprocessing.py:589`:
 # "2=blob, 3=prong(3), 4=prong(8), 5=prong(13), 6=agg_blob, 7=agg_prong".
@@ -151,3 +173,88 @@ def schema() -> dict[str, Any]:
         "overflow_policy": OVERFLOW_POLICY,
         "unresolved": list(UNRESOLVED),
     }
+
+
+def convert_to_eta_phi_pt(four_momentum):
+    """`[px, py, pz, E]` -> `[delta_eta, delta_phi, log pT, log E]`.
+
+    Transcribed from `preprocessing.py:239-288`, including the guards, because
+    they are part of the definition: `eta` is zero where `p`, `p+pz` or `p-pz`
+    is below 1e-6 and clipped to +/-10 elsewhere, `phi` is raw `arctan2` with
+    NO periodic encoding, and both logs carry his 1e-6.
+
+    The clip and the zero-fill are not defensive padding around his formula --
+    they ARE his formula at the edges, and a version without them would differ
+    from his exactly on the forward-going tracks the detector sees most of.
+    """
+    import numpy as np
+
+    fm = np.asarray(four_momentum, dtype=np.float64)
+    if fm.ndim != 2 or fm.shape[1] != 4:
+        raise ValueError(f"expected (n, 4) four-momenta, got {fm.shape}")
+    px, py, pz, energy = fm[:, 0], fm[:, 1], fm[:, 2], fm[:, 3]
+    pt = np.sqrt(px ** 2 + py ** 2)
+    p = np.sqrt(px ** 2 + py ** 2 + pz ** 2)
+    eta = np.zeros_like(pz)
+    valid = (p > 1e-6) & (np.abs(p + pz) > 1e-6) & (np.abs(p - pz) > 1e-6)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        eta[valid] = np.clip(
+            0.5 * np.log((p[valid] + pz[valid]) / (p[valid] - pz[valid])),
+            -ETA_CLIP, ETA_CLIP)
+    phi = np.arctan2(py, px)
+    log_pt = np.log(np.maximum(pt, 0.0) + LOG_EPSILON)
+    log_e = np.log(np.maximum(energy, 0.0) + LOG_EPSILON)
+    return np.stack([eta, phi, log_pt, log_e], axis=1)
+
+
+def preprocess_coords(coord):
+    """`preprocessing.py:343-344`. Positions and time divided by 10000."""
+    import numpy as np
+
+    return np.asarray(coord, dtype=np.float64) / COORD_DIVISOR
+
+
+def convert_packed(packed):
+    """Stored `[px,py,pz,logE,pid | dEdx,x,y,z,t]` -> what his model sees.
+
+    Applied at GATHER time rather than in the build, because his own pipeline
+    converts AFTER capping and aggregation -- which operate on four-momenta in
+    both his code and ours -- so the stage is equivalent and 65 GB of built
+    shards do not have to be rebuilt to be correct.
+
+    NO ROUND TRIP. `eta`, `phi` and `log pT` need only `px, py, pz`, which are
+    stored exactly, and `log E` is already column 3. Nothing is recovered by
+    exponentiating and re-logging.
+
+    PADDING STAYS ZERO. His `_pad_or_truncate` pads with literal zeros after
+    conversion, and the arm's mask reads `log E != 0`, so a row that is
+    identically zero must come back identically zero -- converting it would
+    give `[0, 0, -13.8, -13.8, 0]` and turn every pad into a token.
+    """
+    import numpy as np
+
+    packed = np.asarray(packed, dtype=np.float64)
+    if packed.ndim != 3 or packed.shape[-1] != 10:
+        raise ValueError(f"expected (n, tokens, 10), got {packed.shape}")
+    out = np.array(packed, copy=True)
+    padding = np.all(packed == 0.0, axis=-1)
+
+    flat = packed.reshape(-1, 10)
+    px, py, pz = flat[:, 0], flat[:, 1], flat[:, 2]
+    pt = np.sqrt(px ** 2 + py ** 2)
+    p = np.sqrt(px ** 2 + py ** 2 + pz ** 2)
+    eta = np.zeros_like(pz)
+    valid = (p > 1e-6) & (np.abs(p + pz) > 1e-6) & (np.abs(p - pz) > 1e-6)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        eta[valid] = np.clip(
+            0.5 * np.log((p[valid] + pz[valid]) / (p[valid] - pz[valid])),
+            -ETA_CLIP, ETA_CLIP)
+    converted = out.reshape(-1, 10)
+    converted[:, 0] = eta
+    converted[:, 1] = np.arctan2(py, px)
+    converted[:, 2] = np.log(np.maximum(pt, 0.0) + LOG_EPSILON)
+    # column 3 is already log E; column 4 is the PID code
+    converted[:, 5 + 1:5 + 5] /= COORD_DIVISOR        # x, y, z, t
+    out = converted.reshape(packed.shape)
+    out[padding] = 0.0
+    return out

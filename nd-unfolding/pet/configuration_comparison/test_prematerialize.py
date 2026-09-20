@@ -77,3 +77,17 @@ class WhyItExists(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Reuse(unittest.TestCase):
+    """A matching cache is 13 minutes of shard reads nobody needs."""
+
+    def test_main_reuses_a_matching_cache_and_rebuilds_a_mismatched_one(self):
+        source = Path(pre.__file__).read_text()
+        self.assertIn('"reused": True', source)
+        self.assertIn("has a different key; rebuilding", source)
+
+    def test_the_key_decides_not_the_filename(self):
+        """A cache for another stage sits at the same path."""
+        source = Path(pre.__file__).read_text()
+        self.assertIn("load(args.out, expected_key=want)", source)
