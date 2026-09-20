@@ -191,3 +191,40 @@ class TestEndToEnd(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TheDeliverableIsProducedAutomatically(unittest.TestCase):
+    """The chain ended at `final`; the deck waited on a person running two
+    commands. Every input is pinned, so it does not need one."""
+
+    def _script(self):
+        return (HERE / "sbatch_report_and_deck.sh").read_text()
+
+    def test_it_runs_both_steps(self):
+        text = self._script()
+        self.assertIn("report_campaign.py", text)
+        self.assertIn("make_final_deck.py", text)
+
+    def test_the_reference_comes_from_the_freeze_not_a_literal(self):
+        text = self._script()
+        self.assertIn('fd.REFERENCE[', text)
+        self.assertNotIn("--reference 0.6", text)
+
+    def test_it_does_not_send_anything(self):
+        """The goal says the deck is FOR Ben and must not be sent to him.
+
+        Matched on TOKENS, not substrings: the first version of this test
+        flagged `user.email` for containing "mail", which is the kind of
+        false positive that gets a guard deleted rather than fixed.
+        """
+        import re
+        text = self._script()
+        for verb in ("mail", "sendmail", "mutt", "curl", "wget", "smtp", "scp"):
+            self.assertIsNone(re.search(rf"(?<![\w.]){verb}(?![\w.])", text,
+                                        re.IGNORECASE), msg=verb)
+        self.assertIn("does NOT send anything", text)
+
+    def test_the_chain_ends_with_it(self):
+        text = (HERE / "sbatch_join_and_launch.sh").read_text()
+        self.assertIn("sbatch_report_and_deck.sh", text)
+        self.assertIn("--dependency=afterok:$FINAL", text)

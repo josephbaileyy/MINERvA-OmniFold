@@ -111,6 +111,12 @@ PILOT=$(sbatch --parsable --array=1-8 --dependency=afterok:$SELECT \
 FINAL=$(sbatch --parsable --array=1-16 --dependency=afterok:$PILOT \
   --export=ALL,STAGE=final,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR",THEIRS_CACHE="$OUTPUT/cache/theirs-final.npz" \
   "$LAUNCHER")
-printf 'tuning=%s\npilot=%s\nfinal=%s\n' "$TUNING" "$PILOT" "$FINAL" \
+# The deliverable, automatically, when the final stage lands.
+DELIVER=$(sbatch --parsable --dependency=afterok:$FINAL \
+  --export=ALL,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY" \
+  nd-unfolding/pet/configuration_comparison/sbatch_report_and_deck.sh)
+echo "deliver=$DELIVER"
+
+printf 'tuning=%s\npilot=%s\nfinal=%s\ndeliver=%s\n' "$TUNING" "$PILOT" "$FINAL" "$DELIVER" \
   > "$OUTPUT/campaign_jobs.txt"
 cat "$OUTPUT/campaign_jobs.txt"
