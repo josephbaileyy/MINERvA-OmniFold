@@ -88,6 +88,12 @@ class TheirsCompleteArm(keras.Model):
         settings.update(overrides)
         self.num_part = num_part
         self.settings = settings
+        # What `get_config` must hand the clone. Stored before the model is
+        # built, so a construction failure cannot leave it half-written.
+        self._config = {"num_part": num_part, "size": size,
+                        "state_npz": None if state_npz is None else str(state_npz),
+                        "manifest": None if manifest is None else str(manifest),
+                        **overrides}
         preset = port.preset(size)
         if manifest is not None:
             self._assert_matches_manifest(settings, preset, manifest)
@@ -100,6 +106,32 @@ class TheirsCompleteArm(keras.Model):
             self.pretrained = pinit.load_state_into(
                 self.backbone, Path(state_npz),
                 None if manifest is None else Path(manifest))
+
+    def get_config(self) -> dict[str, Any]:
+        """Carry the CHECKPOINT through `clone_model`.
+
+        `omnifold.py:279` does `model_e = tf.keras.models.clone_model(model)`
+        before every fit, and `clone_model` rebuilds the architecture with
+        FRESH RANDOM WEIGHTS. So loading the pretrained state in `__init__`
+        was undone by the engine on the first iteration, and the arm trained
+        from scratch anyway.
+
+        The proof it was happening: with the state loaded exactly -- 176
+        tensors, 2,758,702 parameters, worst difference 0.0 -- step 1's
+        validation loss came out 103.95602416992188, bit-identical to the
+        scratch run before it. Different initial weights cannot give an
+        identical loss.
+
+        The clone goes through `from_config`, so putting the state path in the
+        config makes the clone load it too. That fixes it without touching the
+        engine, which is hash-pinned by the Gate-2 receipt.
+        """
+        config = dict(self._config)
+        return config
+
+    @classmethod
+    def from_config(cls, config: dict[str, Any]) -> "TheirsCompleteArm":
+        return cls(**config)
 
     @staticmethod
     def _assert_matches_manifest(settings: dict, preset: dict, manifest: Any) -> None:

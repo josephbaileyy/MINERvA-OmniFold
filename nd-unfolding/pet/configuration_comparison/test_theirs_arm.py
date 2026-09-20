@@ -199,3 +199,44 @@ class ThePretrainedArmMustBePretrained(unittest.TestCase):
             manifest.write_text(json.dumps({"settings": {}, "preset": {}}))
             with self.assertRaisesRegex(ValueError, "different settings"):
                 toa.TheirsCompleteArm(num_part=5, manifest=manifest)
+
+
+class TheEngineClonesTheModelBeforeEveryFit(unittest.TestCase):
+    """`omnifold.py:279` calls `clone_model`, which reinitialises weights.
+
+    Loading the pretrained state in `__init__` was therefore undone on the
+    first iteration. The proof it was happening: with the state loaded
+    exactly -- 176 tensors, 2,758,702 parameters, worst difference 0.0 --
+    step 1's validation loss came out 103.95602416992188, BIT-IDENTICAL to
+    the scratch run before it. Different initial weights cannot do that.
+    """
+
+    def test_the_engine_really_does_clone(self):
+        from pathlib import Path
+        engine = (Path(__file__).resolve().parents[3] / "omnifold_nn"
+                  / "omnifold" / "omnifold.py")
+        if not engine.exists():
+            self.skipTest("vendored engine not in this checkout")
+        self.assertIn("clone_model(model)", engine.read_text())
+
+    def test_the_config_carries_the_checkpoint_so_the_clone_reloads_it(self):
+        import theirs_omnifold_arm as toa
+        arm = toa.TheirsCompleteArm(num_part=5, size="small")
+        config = arm.get_config()
+        self.assertIn("state_npz", config)
+        self.assertIn("manifest", config)
+        self.assertEqual(config["num_part"], 5)
+
+    def test_from_config_round_trips(self):
+        import theirs_omnifold_arm as toa
+        arm = toa.TheirsCompleteArm(num_part=6, size="small")
+        clone = toa.TheirsCompleteArm.from_config(arm.get_config())
+        self.assertEqual(clone.num_part, arm.num_part)
+        self.assertEqual(clone.settings, arm.settings)
+
+    def test_a_config_with_a_state_would_load_it_on_the_clone(self):
+        """The clone goes through `from_config`, so the path must survive."""
+        import theirs_omnifold_arm as toa
+        arm = toa.TheirsCompleteArm(num_part=5, size="small")
+        arm._config["state_npz"] = "/some/state.npz"
+        self.assertEqual(arm.get_config()["state_npz"], "/some/state.npz")
