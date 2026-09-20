@@ -10,10 +10,15 @@
 #SBATCH --constraint=cpu
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
-#SBATCH --mem=120G
-#SBATCH --time=03:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=48G
+#SBATCH --time=04:00:00
 #SBATCH --job-name=pet-prematerialize
+# Sized from the arrays it actually holds, not from caution: the join index is
+# 0.4 GiB, its origin 0.4, pass_reco 0.05, the loaders about 0.9 for a
+# 2,000,000-row draw, and the gathered legs about 1.0 doubled by the float64
+# convert -- roughly 4 GiB peak. The first version asked for 120 GB on a queue
+# 933 jobs deep, which buys nothing and waits longer for it.
 set -eo pipefail
 checkout=${CHECKOUT:?}; output=${OUTPUT:?}; commit=${COMMIT:?}
 inputs=${INPUTS_NPZ:?}; index=${THEIRS_INDEX:?}
