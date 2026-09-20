@@ -17,7 +17,12 @@
 #SBATCH --cpus-per-task=32
 #SBATCH --gpus=1
 #SBATCH --mem=56G
-#SBATCH --time=20:00:00
+# 8 h, not 20. The longest task -- his arm at the final stage -- is costed at
+# 4.99 h by `closure_cost`, so this is 60 % headroom. Two reasons it matters:
+# the standing compute approval covers a single job UNDER 12 hours, and a
+# 20-hour request backfills badly on a queue this deep, which is exactly the
+# constraint this campaign is waiting out.
+#SBATCH --time=08:00:00
 #SBATCH --job-name=pet-campaign
 set -eo pipefail
 

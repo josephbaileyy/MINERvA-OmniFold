@@ -62,3 +62,25 @@ class Sizing(unittest.TestCase):
         """So the pilot OVERSTATES variance and sizes the final conservatively."""
         self.assertLess(cc.half_size_for(2_000_000, "pilot"),
                         cc.half_size_for(2_000_000, "final"))
+
+
+class WalltimeMustCoverTheWorkAndFitTheApproval(unittest.TestCase):
+    """20 h was requested for a 4.99 h task: outside the standing approval,
+    and a poor backfill candidate on a deep queue."""
+
+    def _walltime_hours(self):
+        import re
+        from pathlib import Path
+        text = (Path(__file__).resolve().parent / "sbatch_campaign.sh").read_text()
+        m = re.search(r"^#SBATCH --time=(\d+):(\d+):(\d+)", text, re.M)
+        h, mnt, sec = (int(x) for x in m.groups())
+        return h + mnt / 60 + sec / 3600
+
+    def test_it_covers_the_longest_task_with_headroom(self):
+        longest = max(cc.evaluation_hours(arm, 2_000_000, stage)["hours"]
+                      for stage in ("tuning", "pilot", "final")
+                      for arm in ("ours", "theirs"))
+        self.assertGreater(self._walltime_hours(), 1.5 * longest)
+
+    def test_it_stays_inside_the_standing_twelve_hour_approval(self):
+        self.assertLess(self._walltime_hours(), 12.0)
