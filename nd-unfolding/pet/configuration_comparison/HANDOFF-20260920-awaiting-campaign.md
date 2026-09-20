@@ -41,19 +41,28 @@ any comparative result existed:
 Quoted with its iteration count on purpose: the same ceiling is 0.5104 at k=1
 and 0.7146 at k=4, so a reference without its `k` is ambiguous by a third.
 
-## What is queued, at commit `a5b7d440`
+## What is queued, at commit `5507ed8f`
 
 | job | stage | state |
 |---|---|---|
-| 58606602 | gather, one per stage | PENDING (Priority) |
-| 58606603 | tuning, 8 | PENDING, `afterok` gather |
-| 58606604 | pilot, 8 | PENDING, `afterok` tuning |
-| 58606605 | final, 16 | PENDING, `afterok` pilot |
+| 58607250 | gather, one per stage | PENDING (Priority) |
+| 58607251 | tuning, **32** — 4 rates x 4 seeds x 2 arms | `afterok` gather |
+| 58607253 | select the learning rate, per arm | `afterok` tuning |
+| 58607254 | pilot, 8 | `afterok` select |
+| 58607255 | final, 16 | `afterok` pilot |
+| 58607256 | **report, deck, PDF, claim index** | `afterok` final |
 
-The shared CPU queue is 933 jobs deep and this account's other lane holds the
-fairshare. The gather's request was cut from 120 GB to 48 GB after sizing it
-from the arrays it actually holds (~4 GiB peak); that is the only lever this
-lane has, and it is pulled.
+**The chain ends by producing the deliverable.** Nobody has to run anything:
+every input is pinned, and `sbatch_report_and_deck.sh` writes the report, the
+deck and the PDF, commits them in the cluster checkout and leaves a git
+bundle. It sends nothing, by design and by test.
+
+**Priority decision, Joseph, 2026-09-20: wait.** The chain sits behind roughly
+200 pending tasks from this account's 5D unfolding lane, which holds the
+fairshare. Holding those was offered and declined; the 5D lane keeps its
+priority and this one waits its turn. The gather's request was cut from 120 GB
+to 48 GB after sizing it from the arrays it actually holds (~4 GiB peak) --
+the only lever this lane had, and it is pulled.
 
 Cost, re-derived for the closure: **58.5 GPU-hours, 73.1 with retries**,
 against a 1,000-hour ceiling. The 366-hour figure was built on the real-data
