@@ -18,7 +18,7 @@
 #SBATCH --cpus-per-task=32
 #SBATCH --gpus=1
 #SBATCH --mem=56G
-#SBATCH --time=00:40:00
+#SBATCH --time=01:20:00
 #SBATCH --job-name=pet-campaign-smoke
 set -eo pipefail
 
@@ -52,8 +52,20 @@ IDENTITY_SIDECAR=${IDENTITY_SIDECAR:-/pscratch/sd/j/josephrb/event-identity-audi
 [[ -f "$IDENTITY_SIDECAR" ]] || { echo "identity sidecar missing: $IDENTITY_SIDECAR" >&2; exit 2; }
 
 
+pre=nd-unfolding/pet/configuration_comparison/prematerialize_theirs.py
 driver=nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py
+cache="$output/theirs-tuning.npz"
 ( module load tensorflow/2.15.0
+  # Build his gather ONCE, exactly as the campaign will, so the smoke test
+  # exercises the path the campaign takes rather than the fallback. Measured:
+  # the in-process gather cost 15.5 minutes before his first training step.
+  echo "===== prematerialize ====="
+  timeout --kill-after=30s 1800s python "$pre" \
+    --inputs-npz "$inputs" --theirs-index "$index" --out "$cache" \
+    --identity-sidecar "$IDENTITY_SIDECAR" --stage tuning \
+    --subsample-seed 0 --max-events "$events" --half-size "$half" \
+    --report "$output/prematerialize.json" || echo "PREMATERIALIZE FAILED ($?)"
+
   for arm in ours theirs; do
     echo "===== $arm ====="
     timeout --kill-after=30s 900s python "$driver" \
@@ -61,6 +73,7 @@ driver=nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py
       --repo "$checkout" --inputs-npz "$inputs" --theirs-index "$index" \
       --max-events "$events" --half-size "$half" \
       --identity-sidecar "$IDENTITY_SIDECAR" \
+      --theirs-cache "$cache" \
         --weights-folder "$output/$arm" \
       --output "$output/smoke-$arm.json" || echo "ARM $arm FAILED ($?)"
   done
