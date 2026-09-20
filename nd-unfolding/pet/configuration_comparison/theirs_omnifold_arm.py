@@ -100,6 +100,24 @@ class TheirsCompleteArm(keras.Model):
         return self.backbone(features, cond=globals_, pid=pid, add_info=add_info,
                              mask=self.pad_mask(tokens), training=training)
 
+    def compile(self, *args: Any, **kw: Any) -> None:
+        """Force XLA, because the frozen EXECUTION says so and the numbers do.
+
+        The engine compiles this model itself and does not pass `jit_compile`,
+        so the arm ran through Keras's ordinary graph while every measurement
+        the campaign is costed and sized on -- 21.7 GiB peak, 410.6 us per
+        example at 33 tokens and batch 2048 -- was taken under
+        `tf.function(jit_compile=True)`.
+
+        It is not only a speed difference. Without XLA the q/k/v projection
+        gradients are materialised rather than fused, and the first real
+        training step OOMed on a 40 GB A100 allocating a single
+        [128, 128, 2048, 34] tensor. `EXECUTION["jit_compile"]` was True the
+        whole time; nothing made the model honour it.
+        """
+        kw["jit_compile"] = True
+        super().compile(*args, **kw)
+
     def train_step(self, data: Any) -> dict[str, Any]:
         x, y = data
         with tf.GradientTape() as tape:

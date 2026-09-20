@@ -107,3 +107,51 @@ class Refusals(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TheAttentionUsesTheSameProjectionAsLinear(unittest.TestCase):
+    """The attention spelled its own q/k/v projections as raw einsum.
+
+    `flat_projection=True` was therefore true of `Linear` and false of the
+    model, while the frozen EXECUTION recorded the layer's answer. At his
+    projection_dim of 128, batch 2048 and 34 tokens, the gradient of one of
+    those three projections is [128, 128, 2048, 34] float32 = 4.6 GB, and
+    there are three: measured OOM on a 40 GB A100.
+    """
+
+    def test_the_two_spellings_agree(self):
+        import numpy as np
+        import tensorflow as tf
+        import pet2_keras_port as port
+        rng = np.random.default_rng(0)
+        x = tf.constant(rng.standard_normal((3, 7, 16)), tf.float32)
+        w = tf.constant(rng.standard_normal((11, 16)), tf.float32)
+        flat = port.project(x, w, flat=True).numpy()
+        einsum = port.project(x, w, flat=False).numpy()
+        np.testing.assert_allclose(flat, einsum, rtol=0, atol=2e-5)
+
+    def test_the_attention_carries_a_real_switch(self):
+        """A getattr default is invisible to `set_reference_paths`."""
+        import pet2_keras_port as port
+        attn = port.MultiheadAttention(dim=16, num_heads=2)
+        self.assertTrue(hasattr(attn, "flat_projection"))
+        self.assertTrue(attn.flat_projection)
+
+    def test_set_reference_paths_now_reaches_the_attention(self):
+        import pet2_keras_port as port
+        attn = port.MultiheadAttention(dim=16, num_heads=2)
+        touched = port.set_reference_paths(attn, flat_projection=False)
+        self.assertGreaterEqual(touched["flat_projection"], 2)  # attn + out_proj
+        self.assertFalse(attn.flat_projection)
+
+    def test_the_arm_forces_jit_compile(self):
+        from pathlib import Path
+        import theirs_omnifold_arm as toa
+        source = Path(toa.__file__).read_text()
+        self.assertIn('kw["jit_compile"] = True', source)
+        self.assertIn("def compile(", source)
+
+    def test_the_frozen_execution_claims_both(self):
+        import frozen_design as fd
+        self.assertTrue(fd.EXECUTION["flat_projection"])
+        self.assertTrue(fd.EXECUTION["jit_compile"])

@@ -216,15 +216,32 @@ class Linear(_Port):
         self.bias = self._param("bias", (out_features,), "zeros") if bias else None
 
     def call(self, x: tf.Tensor) -> tf.Tensor:
-        if self.flat_projection:
-            shape = tf.shape(x)
-            flat = tf.reshape(x, [-1, self.in_features])
-            y = tf.matmul(flat, self.weight, transpose_b=True)
-            y = tf.reshape(
-                y, tf.concat([shape[:-1], [self.out_features]], axis=0))
-        else:
-            y = tf.einsum("...i,oi->...o", x, self.weight)
+        y = project(x, self.weight, flat=self.flat_projection)
         return y + self.bias if self.use_bias else y
+
+
+def project(x: tf.Tensor, weight: tf.Tensor, *, flat: bool = True) -> tf.Tensor:
+    """`x @ weight.T` for a torch-layout `(out, in)` weight. ONE spelling.
+
+    The attention block spelled its own q/k/v projections as raw
+    `einsum('...i,oi->...o')`, which is the form whose GRADIENT materialises a
+    per-example outer product. `Linear` had been repaired and the attention had
+    not, so `flat_projection=True` was true of the layer and false of the model
+    -- and the frozen EXECUTION recorded the layer's answer.
+
+    It was not academic. At his `projection_dim` of 128, batch 2048 and 34
+    tokens, the gradient of ONE of those three projections is
+    [128, 128, 2048, 34] float32 = 4.6 GB, and there are three. Measured: OOM
+    on a 40 GB A100 in `gradient_tape/.../multihead_attention/einsum_1`.
+    """
+    if not flat:
+        return tf.einsum("...i,oi->...o", x, weight)
+    in_features = weight.shape[-1]
+    out_features = weight.shape[-2]
+    shape = tf.shape(x)
+    flat_x = tf.reshape(x, [-1, in_features])
+    y = tf.matmul(flat_x, weight, transpose_b=True)
+    return tf.reshape(y, tf.concat([shape[:-1], [out_features]], axis=0))
 
 
 class DynamicTanh(_Port):
@@ -315,8 +332,13 @@ class MultiheadAttention(_Port):
     out keeps checkpoint transfer a copy and keeps the additive mask exact.
     """
 
-    def __init__(self, dim: int, num_heads: int, bias: bool = False, dropout: float = 0.0, **kw: Any):
+    def __init__(self, dim: int, num_heads: int, bias: bool = False,
+                 dropout: float = 0.0, flat_projection: bool = True, **kw: Any):
         super().__init__(**kw)
+        # A REAL attribute, not a getattr default, so `set_reference_paths`
+        # reaches it. A switch the reference sweep cannot flip is a path the
+        # equivalence test never compares.
+        self.flat_projection = flat_projection
         if dim % num_heads:
             raise ValueError(f"embed_dim {dim} is not divisible by num_heads {num_heads}")
         self.dim = dim
@@ -347,9 +369,9 @@ class MultiheadAttention(_Port):
         w_q = self.in_proj_weight[:dim]
         w_k = self.in_proj_weight[dim : 2 * dim]
         w_v = self.in_proj_weight[2 * dim :]
-        q = tf.einsum("...i,oi->...o", query, w_q)
-        k = tf.einsum("...i,oi->...o", key, w_k)
-        v = tf.einsum("...i,oi->...o", value, w_v)
+        q = project(query, w_q, flat=self.flat_projection)
+        k = project(key, w_k, flat=self.flat_projection)
+        v = project(value, w_v, flat=self.flat_projection)
         if self.in_proj_bias is not None:
             q = q + self.in_proj_bias[:dim]
             k = k + self.in_proj_bias[dim : 2 * dim]
