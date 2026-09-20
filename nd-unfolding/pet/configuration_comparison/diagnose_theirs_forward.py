@@ -50,6 +50,11 @@ def main() -> int:
     import frozen_design as fd
     import theirs_omnifold_arm as toa
 
+    # Determinism is on, so every random op needs a seed or Keras refuses at
+    # the first `fit`. The first run of this probe lost its forward result to
+    # exactly that: the measurement had been made and was never written.
+    tf.keras.utils.set_random_seed(17)
+
     blob = np.load(args.cache, mmap_mode="r")
     packed = np.asarray(blob["prior_packed"][: args.batch], dtype=np.float32)
     globals_ = np.asarray(blob["prior_globals"][: args.batch], dtype=np.float32)
@@ -76,6 +81,12 @@ def main() -> int:
         "reading": ("non-finite HERE means the inputs or the architecture; "
                     "finite here and nan later means the optimization"),
     }
+
+    # WRITE THE FORWARD RESULT NOW. It is the half of the measurement that is
+    # already made, and a crash in the training half must not take it.
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(report, indent=2))
+    print(json.dumps(report["forward_at_init"], indent=2), flush=True)
 
     # A real training loop at the campaign's learning rate, loss per step.
     labels = np.zeros((packed.shape[0], 1), np.float32)
