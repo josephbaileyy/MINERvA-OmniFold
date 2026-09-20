@@ -137,9 +137,10 @@ DATA_LEG_FACTOR = (
     (TRAIN_EVENTS + N_DATA_NEIGHBOURING_PRODUCT + 2 * TRAIN_EVENTS)
     / (ROWS_PER_FIT_STEP1 + ROWS_PER_FIT_STEP2)
 )
-EXAMPLES_PER_EVALUATION = int(
-    NITER * EPOCHS * TRAIN_FRAC_PLACEHOLDER * (ROWS_PER_FIT_STEP1 + ROWS_PER_FIT_STEP2)
-) if False else None                     # replaced below, once TRAIN_FRAC is defined
+# EXAMPLES_PER_EVALUATION is defined below, once TRAIN_FRAC exists. A dead
+# `... if False else None` placeholder stood here; it was never read before the
+# real assignment, and a module constant assigned twice is exactly the shape
+# test_no_shadowed_definitions looks for.
 
 # Evaluation is not only fits. Two forward-only populations were previously outside
 # the model entirely, and together they are a third as large again as the training

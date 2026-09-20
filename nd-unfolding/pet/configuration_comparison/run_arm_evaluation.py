@@ -545,47 +545,5 @@ def _load_joined(args: Any, np: Any, pdata_rows: Any, mcb_rows: Any, *,
                        "note": "gathered in process; slow but not wrong"}}
 
 
-def cp_half_size() -> int:
-    """The established half size, read from the closure module, not copied."""
-    import closure_powered_truth_reweight as cp
-    return int(cp.HALF_SIZE)
-
-
-def plan_of(args: Any) -> dict[str, Any]:
-    return {"arm": args.arm, "seed": args.seed, "stage": args.stage,
-            "learning_rate": args.learning_rate, "niter": args.niter}
-
-
-def _load_joined(args: Any, np: Any, pdata_rows: Any, mcb_rows: Any
-                 ) -> dict[str, Any]:
-    """His tokens for the two closure legs, by ABSOLUTE inventory row.
-
-    Only the `sig` stream is needed: the closure runs `bkg_mode='mc-only'`, so
-    there is no measured leg and no data or background join to gather. Both
-    legs are MC rows of the signal inventory, named by their absolute dump
-    index, so the gather cannot be confused by the subsample or the split.
-
-    The pdata leg is `pass_reco & pass_gen` by construction, so every row must
-    match. The prior leg is all of half B, so it contains !pass_reco rows;
-    those come back zero, exactly as the production loader zeroes ours.
-    """
-    import json
-
-    import materialize_theirs as mtz
-
-    index_dir = Path(args.theirs_index)
-    with np.load(args.inputs_npz, mmap_mode="r") as target:
-        sig_pass_reco = np.asarray(target["pass_reco"]).astype(bool)
-
-    index = np.load(index_dir / "join_sig.npz")
-    report = json.loads((index_dir / "join_sig.json").read_text())
-
-    def gather(rows: Any) -> dict[str, Any]:
-        return mtz.materialize(report["files"], index["row_index"],
-                               index["origin"], np.asarray(rows), sig_pass_reco)
-
-    return {"pdata": gather(pdata_rows), "mc": gather(mcb_rows)}
-
-
 if __name__ == "__main__":
     main()
