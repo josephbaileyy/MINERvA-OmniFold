@@ -3,9 +3,12 @@
 
 Enabling Valencia 2p2h resolves the low-recoil excess (\S\ref{sec:3d-2p2h})
 but leaves a separate high-$\Eavail$ data excess where 2p2h does not
-contribute and the sub-percent pion-FSI dials cannot reach. The comparison is
-made at central-value level because no corrected covariance has been adopted
-for the $(\Eavail,W)$ projection. GiBUU spreads its deficit across the entire
+contribute and the sub-percent pion-FSI dials cannot reach. A corrected
+$(\Eavail,W)$ covariance is now adopted --- under a digest-bound exception and
+carrying four measurements that qualify what it supports
+(\S\ref{sec:eavailw-adopted}) --- so the comparison below, which was made at
+central-value level while none existed, is stated together with that
+covariance and the conditions on it. GiBUU spreads its deficit across the entire
 tail (data/generator $1.59$ at $\Eavail\in[0.8,1.5)$, $1.36$ at $[1.5,3.0)$)
 rather than piling it in the deep catch bin like the GENIE variants --- an
 independent, qualitatively distinct confirmation. To test the deep-inelastic
@@ -147,8 +150,12 @@ $1.56$, and $1.61$ respectively (span $1.54$--$1.61$). Crucially,
 enabling Valencia 2p2h does \emph{not} close the corner --- it slightly
 worsens it ($1.54\to1.58$), since 2p2h populates low $W$ --- and the
 independent NuWro and GiBUU generators miss it by the same margin or more.
-These are central-value ratios; statistical compatibility is not evaluated
-without the corrected projected covariance.
+These are central-value ratios. A projected covariance now exists
+(\S\ref{sec:eavailw-adopted}); the compatibility metric it would support is
+\emph{not} quoted here, because the estimator-seed sensitivity measured on that
+covariance exceeds the movement limit declared for it before production, and a
+$\chi^{2}$ computed against a matrix carrying an unclosed sensitivity of that
+size would state a precision the input does not have.
 GiBUU is the most deficient generator both overall (integrated
 $\sigma=\SI{2.22e-38}{cm^2/nucleon}$ against the data's \SI{3.07e-38}{}) and
 in the corner, where it sets the upper end of the band; no generator
@@ -196,6 +203,60 @@ detector block uses five shifted-kinematic bands
 \texttt{BeamAngleX/Y}) plus weight-only \texttt{MinosEfficiency} and GEANT
 bands. Selection-complete active-universe event loops are also required to
 bound migrations omitted by the CV-support-limited dump-all sample.
+
+\subsection{The adopted five-axis covariance, and the four measurements that qualify it}
+\label{sec:eavailw-adopted}
+The five-axis covariance \texttt{z-cv.npz} (\texttt{sha256}~\zcvDigest\ldots,
+variant \texttt{cv}) is adopted as \emph{publication-under-exception}: the
+specification requires the null bound to be fixed before production and
+production had already happened, so the derivation step is unperformable for
+this object by anyone. The exception attaches to those bytes and to no other
+candidate. The $(\Eavail,W)$ projection built from it
+(\texttt{sha256}~\zprojDigest\ldots, \zprojCells\ cells) drops no source cell,
+is exactly symmetric and positive semi-definite, and its central values are
+bound by digest to the figure's --- the same bytes, not merely the same numbers.
+
+Four measurements travel with it. They are measurements, not caveats: each is a
+number from a committed receipt, and each bounds what may be claimed.
+
+\begin{enumerate}
+\item \textbf{The estimator-seed sensitivity exceeds its declared limit.} A
+  two-member campaign at estimator-seed offsets $\{0,1200\}$ graded the
+  correlation-sensitive leg at $s_{\mathrm{proj}}=\sprojMeasured\,\%$ against a
+  \sprojBound\,\% movement limit fixed before production. The two
+  diagonal-only legs passed ($s_{\mathrm{agg}}=\saggMeasured\,\%$,
+  $s_{\mathrm{med}}=\smedMeasured\,\%$): what the failing leg sees and they do
+  not is off-diagonal structure, which is precisely what a projection uses.
+\item \textbf{That sensitivity is a property of the estimator, not of the
+  ensemble's resolution.} Measured with the throw ensemble held \emph{fixed}
+  and only the seed changed, it is $\seedEffect\,\%$ at $N=40$, $80$ and $160$
+  --- flat, fitted exponent $\seedEffectExponent$ --- while the same-seed
+  resampling floor over the same range falls steeply, $\floorNforty\,\%$ to
+  $\floorNeighty\,\%$, exponent $\floorExponent$. Statistical noise must fall
+  with $N$; this does not. Enlarging the ensemble would therefore not reduce it.
+  The $\pm\seedEffectScatter\,\%$ quoted with it is scatter across throw subsets
+  at a \emph{single} seed pair; the width of the seed-pair distribution is
+  unmeasured, and the statistic is a maximum over the declared offset set, so
+  further pairs can only raise it.
+\item \textbf{It is a lower bound.} Five of the covariance's 45 bands --- the
+  muon-energy, muon-resolution and beam-angle blocks --- are produced at a fixed
+  estimator seed that the offset does not reach, by construction of the
+  endpoint convention. They carry $\pinnedBandsSqrtTr\,\%$ of
+  $\sqrt{\mathrm{Tr}\,C}$ and contribute exactly zero movement.
+\item \textbf{The seed also moves the central values, by a small fraction of
+  their own uncertainty.} On these \zprojCells\ destinations the central value
+  moves by at most $\cvMoveProjMax\,\%$, against relative uncertainties of order
+  ten percent: \textbf{at most $\cvMoveOverSigmaMax\,\%$ of the quoted
+  uncertainty, median $\cvMoveOverSigmaMed\,\%$}. The largest movement falls on
+  the same destination cell that drives the covariance result. Per individual
+  five-axis bin it reaches $\cvMoveBinOverSigmaMax\,\%$ of that bin's
+  uncertainty; the projections do not inherit that, because summing over bins
+  suppresses it.
+\end{enumerate}
+
+\noindent Cause~3's magnitude criterion remains \emph{predeclared and not
+computed} for this object: the campaign graded two other products, built for
+that purpose, and grading them does not regrade this one.
 
 The complementary cross-check against MINERvA's published
 low-recoil measurement is presented in the $(\Eavail,q_{3})$ plane

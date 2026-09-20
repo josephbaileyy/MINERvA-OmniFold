@@ -62,12 +62,32 @@ section practical without removing the need to validate them.
 
 \section{What we found}
 
-The multi-quantity central values below pass the stated validation tests, but
-their joint uncertainty is still being finalized. Until a single combined
-uncertainty covering all five quantities is adopted, the multi-quantity plots
-show central values only and we do not assign statistical significance to their
-differences from the simulations. The two-dimensional trust check retains its
-independently constructed uncertainty.
+The multi-quantity central values below pass the stated validation tests. A
+five-quantity uncertainty has now been adopted, and the two-quantity
+$(\Eavail,W)$ version of it has been built --- but the multi-quantity plots
+still show central values only, and we still do not assign statistical
+significance to their differences from the simulations. The reason is worth
+stating plainly, because it is something we measured rather than a precaution.
+
+Our method has a random component: the learner is started from a random seed.
+Change that seed, leaving everything else alone, and the \emph{uncertainty} we
+report on the projected result shifts by about \SI{\sprojMeasured}{\percent}
+--- more than the \SI{\sprojBound}{\percent} we had decided in advance we
+would tolerate. The natural hope is that this is just statistical noise from
+having a finite number of simulated variations, which would shrink if we ran
+more of them. We checked, and it does not: the shift is the same size whether
+we use a quarter, a half, or all of our variations, while genuine statistical
+noise over that same range falls by a factor of nearly three. So it is a real
+property of the learner, and running more variations would not remove it. Two
+further facts bound it: five of the forty-five uncertainty components are built
+in a way the seed cannot reach at all, so the figure above is a floor rather
+than a ceiling; and the same seed change moves the \emph{central values} too,
+though only by at most \SI{\cvMoveOverSigmaMax}{\percent} of their own
+uncertainty. Reporting a significance on top of that would claim a precision
+the input does not have.
+
+The two-dimensional trust check is unaffected and retains its independently
+constructed uncertainty.
 
 \subsection*{First, a trust check: reproduce a known result}
 

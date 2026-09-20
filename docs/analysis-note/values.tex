@@ -313,3 +313,40 @@
 \newcommand{\nwSpMedian}{0.999}       % refined/purity median per-bin ratio, exact estimator
 \newcommand{\nwSpWithin}{141/148}     % refined/purity bins within 5%, exact estimator
 \newcommand{\nwSpRawMax}{5\times10^{4}} % raw-negweight/purity worst-bin blow-up, exact estimator
+
+% =====================================================================================
+% SCALAR-5D COVARIANCE: ADOPTED UNDER THE SPEC 6.4 EXCEPTION, 2026-09-20 (Joseph).
+% Record: docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md
+% These are MEASUREMENTS, not caveats, and Joseph required them to travel with every
+% deliverable built from the adopted digest. Each is quoted from a committed receipt,
+% named beside it, so a reader can re-derive rather than take it on trust.
+\newcommand{\zcvDigest}{3d7465f6}        % first 8 of sha256 3d7465f66fbe66b0fc...918c5
+\newcommand{\zprojDigest}{835828bf}      % M1 (Eavail,W) publication product, 42 cells
+\newcommand{\zprojCells}{42}
+% (1) The cause-3 grade. GRADE-20260920-cause3-two-member.json, branch 5 NOT MET - PER-BIN,
+%     on a FULLY VALID two-member campaign (all nine validity fields passed).
+\newcommand{\sprojMeasured}{6.145}       % percent; the correlation-sensitive leg
+\newcommand{\sprojBound}{5}              % percent; cause3_corr, fixed BEFORE production
+\newcommand{\saggMeasured}{0.471}        % percent; within bound
+\newcommand{\smedMeasured}{0.485}        % percent; within bound
+% (2) The floor diagnostic. EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md.
+%     Seed effect measured with THROWS HELD FIXED -- flat in N, so not sampling noise.
+%     CAUTION the +/- is scatter across throw subsets at ONE seed pair (1000 vs 2200);
+%     the width of the seed-pair distribution is UNMEASURED. Do not read it as the
+%     uncertainty on the seed effect, and note s_proj is a MAXIMUM over the offset set.
+\newcommand{\seedEffect}{6.04}           % percent, mean over N = 40, 80, 160
+\newcommand{\seedEffectScatter}{0.39}    % percent, subset scatter at ONE seed pair
+\newcommand{\seedEffectExponent}{0.000}  % s ~ N^-p, measured: FLAT
+\newcommand{\floorExponent}{1.467}       % the resampling floor, same range: falls steeply
+\newcommand{\floorNforty}{20.91}         % percent, 12 disjoint pairs
+\newcommand{\floorNeighty}{7.57}         % percent, 2 pairs
+% (3) Five of 45 bands are seed-pinned, so the effect above is a LOWER bound.
+%     EVIDENCE-20260919-lateral-bands-are-seed-pinned.md.
+\newcommand{\pinnedBandsSqrtTr}{26.0}    % percent of sqrt(Tr C_Z)
+\newcommand{\pinnedBandsTrace}{6.75}     % percent of the trace
+% (4) The seed also moves the CENTRAL values -- as a fraction of the QUOTED uncertainty.
+%     state/CENTRAL-VALUE-VS-SIGMA-20260920.json.
+\newcommand{\cvMoveProjMax}{0.761}       % percent, max over the 43 functionals
+\newcommand{\cvMoveOverSigmaMax}{6.02}   % percent of its own sigma -- the deciding ratio
+\newcommand{\cvMoveOverSigmaMed}{1.06}   % percent of sigma, median
+\newcommand{\cvMoveBinOverSigmaMax}{49.8}% percent of sigma, worst SINGLE 5D bin
