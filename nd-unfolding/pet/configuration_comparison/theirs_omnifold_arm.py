@@ -22,6 +22,7 @@ NOT CITABLE FOR any performance claim.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from keras_backend import select_keras_backend
@@ -59,7 +60,22 @@ def weighted_binary_crossentropy(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Ten
 class TheirsCompleteArm(keras.Model):
     """PET2-small at the V1-paper flags, over his four inputs."""
 
-    def __init__(self, num_part: int = 33, size: str = "small", **overrides: Any):
+    def __init__(self, num_part: int = 33, size: str = "small",
+                 state_npz: Any = None, manifest: Any = None, **overrides: Any):
+        """His configuration. `state_npz` is his PRETRAINED weights.
+
+        The goal names his *pretrained* PET2-small, and the freeze records
+        `initialization = best_model_pretrain_s.pt via
+        load_pretrained_omnilearned`. This class built the port and never
+        loaded it, so the arm was his ARCHITECTURE trained from scratch --
+        which the goal rules out in as many words: "Scratch tuning and scratch
+        variance cannot substitute for the pretrained arm." Nothing in the
+        code contradicted the freeze; the freeze simply described an intent.
+
+        `state_npz` stays optional because the port's own equivalence tests
+        construct this class without a checkpoint. The DRIVER requires it, so
+        a campaign arm cannot be scratch by omission.
+        """
         super().__init__()
         settings = dict(input_dim=4, pid=True, pid_dim=8, add_info=True, add_dim=5,
                         conditional=True, cond_dim=16, num_coord=2, K=10,
@@ -67,8 +83,40 @@ class TheirsCompleteArm(keras.Model):
         settings.update(overrides)
         self.num_part = num_part
         self.settings = settings
-        self.backbone = port.PET2Port(**settings, **port.preset(size))
+        preset = port.preset(size)
+        if manifest is not None:
+            self._assert_matches_manifest(settings, preset, manifest)
+        self.backbone = port.PET2Port(**settings, **preset)
         self.loss_tracker = keras.metrics.Mean(name="loss")
+        self.pretrained = None
+        if state_npz is not None:
+            import pretrained_init as pinit
+
+            self.pretrained = pinit.load_state_into(
+                self.backbone, Path(state_npz),
+                None if manifest is None else Path(manifest))
+
+    @staticmethod
+    def _assert_matches_manifest(settings: dict, preset: dict, manifest: Any) -> None:
+        """The state was exported for one model; refuse to load it into another.
+
+        `load_state_into` would already fail on coverage, but it fails with a
+        list of tensor names. Comparing the settings first says WHICH setting
+        disagrees, which is the difference between a five-minute fix and an
+        afternoon.
+        """
+        import json
+
+        record = json.loads(Path(manifest).read_text())
+        for field, ours in (("settings", settings), ("preset", preset)):
+            theirs = record.get(field, {})
+            differing = {k: (ours.get(k), theirs.get(k)) for k in set(ours) | set(theirs)
+                         if ours.get(k) != theirs.get(k)}
+            if differing:
+                raise ValueError(
+                    f"the pretrained state was exported for different {field}: "
+                    f"{differing} (ours, manifest). Loading it would either fail "
+                    "on coverage or, worse, succeed into a different network")
 
     @property
     def metrics(self) -> list[Any]:

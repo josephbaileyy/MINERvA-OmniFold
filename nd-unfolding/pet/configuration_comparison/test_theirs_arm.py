@@ -112,3 +112,68 @@ class PackedForm(unittest.TestCase):
         packed[:, 8:, :] = 0.0
         mask = m.pad_mask(tf.constant(packed)).numpy()
         self.assertTrue(np.all(mask[:, 8:, 0] == 0.0))
+
+
+class ThePretrainedArmMustBePretrained(unittest.TestCase):
+    """The goal names his PRETRAINED PET2-small and rules out the substitute.
+
+    `frozen_design.THEIRS_COMPLETE["initialization"]` records
+    `best_model_pretrain_s.pt via load_pretrained_omnilearned`. The arm built
+    the port and never loaded it, so the campaign would have trained his
+    ARCHITECTURE from random initialisation and reported it as his
+    configuration. Nothing contradicted the freeze; the freeze described an
+    intent.
+    """
+
+    def test_the_driver_requires_the_checkpoint_for_the_theirs_arm(self):
+        from pathlib import Path
+        import run_arm_evaluation as rae
+        source = Path(rae.__file__).read_text()
+        self.assertIn('"--theirs-state-npz"', source)
+        self.assertIn("scratch cannot substitute for the pretrained arm", source)
+
+    def test_the_driver_refuses_to_record_a_scratch_run_as_pretrained(self):
+        from pathlib import Path
+        import run_arm_evaluation as rae
+        source = Path(rae.__file__).read_text()
+        self.assertIn("refusing to", source)
+        self.assertIn("reports no pretrained load", source)
+
+    def test_the_arm_accepts_a_state_and_records_it(self):
+        import inspect
+        import theirs_omnifold_arm as toa
+        params = inspect.signature(toa.TheirsCompleteArm.__init__).parameters
+        self.assertIn("state_npz", params)
+        self.assertIn("manifest", params)
+
+    def test_a_manifest_for_a_different_model_is_refused_by_setting_name(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        import theirs_omnifold_arm as toa
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest = Path(tmp) / "m.json"
+            manifest.write_text(json.dumps({
+                "settings": {"input_dim": 4, "pid": True, "pid_dim": 8,
+                             "add_info": True, "add_dim": 5, "conditional": True,
+                             "cond_dim": 16, "num_coord": 2, "K": 10,
+                             "num_classes": 1},
+                "preset": {"num_transformers": 99, "num_transformers_head": 2,
+                           "num_tokens": 4, "num_heads": 8, "base_dim": 128,
+                           "mlp_ratio": 2}}))
+            with self.assertRaisesRegex(ValueError, "different preset"):
+                toa.TheirsCompleteArm(num_part=5, manifest=manifest)
+
+    def test_both_launchers_pass_the_checkpoint_and_check_it_exists(self):
+        from pathlib import Path
+        here = Path(__file__).resolve().parent
+        for name in ("sbatch_campaign.sh", "sbatch_campaign_smoke.sh"):
+            text = (here / name).read_text()
+            self.assertIn("THEIRS_STATE=${THEIRS_STATE:-", text, msg=name)
+            self.assertIn('[[ -f "$THEIRS_STATE" ]]', text, msg=name)
+            self.assertIn('--theirs-state-npz "$THEIRS_STATE"', text, msg=name)
+
+    def test_the_freeze_and_the_code_now_agree(self):
+        import frozen_design as fd
+        self.assertIn("best_model_pretrain_s.pt",
+                      fd.THEIRS_COMPLETE["initialization"])

@@ -48,6 +48,12 @@ export PYTHONUNBUFFERED=1 TF_FORCE_GPU_ALLOW_GROWTH=true
 export TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=:4096:8
 export NVIDIA_TF32_OVERRIDE=0
 
+CKPT_DIR=${CKPT_DIR:-/pscratch/sd/j/josephrb/pet-checkpoints-20260919}
+THEIRS_STATE=${THEIRS_STATE:-$CKPT_DIR/pretrained_state_s.npz}
+THEIRS_MANIFEST=${THEIRS_MANIFEST:-$CKPT_DIR/PRETRAINED_STATE_MANIFEST.json}
+[[ -f "$THEIRS_STATE" ]] || { echo "pretrained state missing: $THEIRS_STATE" >&2; exit 2; }
+[[ -f "$THEIRS_MANIFEST" ]] || { echo "pretrained manifest missing: $THEIRS_MANIFEST" >&2; exit 2; }
+
 IDENTITY_SIDECAR=${IDENTITY_SIDECAR:-/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz}
 [[ -f "$IDENTITY_SIDECAR" ]] || { echo "identity sidecar missing: $IDENTITY_SIDECAR" >&2; exit 2; }
 
@@ -73,6 +79,8 @@ cache="$output/theirs-tuning.npz"
       --repo "$checkout" --inputs-npz "$inputs" --theirs-index "$index" \
       --max-events "$events" --half-size "$half" \
       --identity-sidecar "$IDENTITY_SIDECAR" \
+      --theirs-state-npz "$THEIRS_STATE" --theirs-manifest "$THEIRS_MANIFEST" \
+    --theirs-state-npz "$THEIRS_STATE" --theirs-manifest "$THEIRS_MANIFEST" \
       --theirs-cache "$cache" \
         --weights-folder "$output/$arm" \
       --output "$output/smoke-$arm.json" || echo "ARM $arm FAILED ($?)"

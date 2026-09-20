@@ -144,6 +144,11 @@ def main() -> None:
     # the REAL-data nominal's measured leg. This is a closure: `mc-only`, no
     # measured loader, nothing to consume. Requiring it would have been a
     # fail-closed check on an artifact this path must not use.
+    parser.add_argument("--theirs-state-npz", type=Path, default=None,
+                        help="his exported pretrained weights; REQUIRED for "
+                             "the theirs arm")
+    parser.add_argument("--theirs-manifest", type=Path, default=None,
+                        help="the manifest the state was exported under")
     parser.add_argument("--identity-sidecar", type=Path, default=None,
                         help="the event-identity sidecar; the stage split "
                              "is assigned from it")
@@ -334,12 +339,25 @@ def evaluate(args: Any) -> dict[str, Any]:
         substitution = {
             "substituted": ["reco", "reco_evt"],
             "source": blocks["source"],
+            "initialisation": "pretrained",
             "pdata_rows": int(reco_a.shape[0]),
             "mcB_rows": int(reco_b.shape[0]),
             "step2_untouched": True,
         }
+        # HIS PRETRAINED WEIGHTS, not his architecture from scratch. The goal
+        # names his pretrained PET2-small and rules the substitute out in as
+        # many words; the freeze records the checkpoint; the arm never loaded
+        # it. Required here, so omission cannot quietly produce a scratch arm.
+        if args.theirs_state_npz is None or args.theirs_manifest is None:
+            raise SystemExit(
+                "[arm] --theirs-state-npz and --theirs-manifest are required "
+                "for the theirs arm. Training his architecture from random "
+                "initialisation is not his pretrained configuration, and "
+                "scratch cannot substitute for the pretrained arm")
         model_reco_factory = lambda: toa.TheirsCompleteArm(
-            num_part=fd.THEIRS_COMPLETE["token_cap"])
+            num_part=fd.THEIRS_COMPLETE["token_cap"],
+            state_npz=args.theirs_state_npz,
+            manifest=args.theirs_manifest)
     else:
         reco_a = reco[ia][s1_a]
         reco_evt_a = reco_evt[ia][s1_a]
@@ -415,8 +433,14 @@ def evaluate(args: Any) -> dict[str, Any]:
                         dump_rows_b=imc[ib].astype(np.int64),
                         tilt_a=tilt_a, pass_gen_a=pg_a,
                         pass_gen_b=pg[ib], mc_indices=imc.astype(np.int64))
+    pretrained = getattr(model_reco, "pretrained", None)
+    if args.arm == "theirs" and not pretrained:
+        raise SystemExit(
+            "[arm] the theirs arm reports no pretrained load; refusing to "
+            "record a scratch run as the pretrained configuration")
     return {
         **plan_of(args),
+        "pretrained": pretrained,
         "seconds": time.perf_counter() - started,
         "closure": {
             "powered": True, "bkg_mode": "mc-only",
