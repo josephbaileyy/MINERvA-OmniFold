@@ -77,9 +77,14 @@ class TheirsCompleteArm(keras.Model):
         a campaign arm cannot be scratch by omission.
         """
         super().__init__()
+        # `use_int` and `local_int` are stated, not left to the port's
+        # defaults. `frozen_design.THEIRS_COMPLETE` declares both False -- the
+        # V1-paper flags -- and the pretrained manifest records both. Leaving
+        # them implicit made the arm's settings INCOMPLETE, so the manifest
+        # check reported a difference between False and "not mentioned".
         settings = dict(input_dim=4, pid=True, pid_dim=8, add_info=True, add_dim=5,
                         conditional=True, cond_dim=16, num_coord=2, K=10,
-                        num_classes=1)
+                        num_classes=1, use_int=False, local_int=False)
         settings.update(overrides)
         self.num_part = num_part
         self.settings = settings

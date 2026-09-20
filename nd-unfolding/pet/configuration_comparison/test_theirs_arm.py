@@ -157,7 +157,8 @@ class ThePretrainedArmMustBePretrained(unittest.TestCase):
                 "settings": {"input_dim": 4, "pid": True, "pid_dim": 8,
                              "add_info": True, "add_dim": 5, "conditional": True,
                              "cond_dim": 16, "num_coord": 2, "K": 10,
-                             "num_classes": 1},
+                             "num_classes": 1, "use_int": False,
+                             "local_int": False},
                 "preset": {"num_transformers": 99, "num_transformers_head": 2,
                            "num_tokens": 4, "num_heads": 8, "base_dim": 128,
                            "mlp_ratio": 2}}))
@@ -177,3 +178,24 @@ class ThePretrainedArmMustBePretrained(unittest.TestCase):
         import frozen_design as fd
         self.assertIn("best_model_pretrain_s.pt",
                       fd.THEIRS_COMPLETE["initialization"])
+
+    def test_the_paper_interaction_flags_are_stated_not_defaulted(self):
+        """They are the V1-paper flags and the freeze names them."""
+        import frozen_design as fd
+        import theirs_omnifold_arm as toa
+        arm = toa.TheirsCompleteArm(num_part=5)
+        for flag in ("use_int", "local_int"):
+            self.assertIn(flag, arm.settings)
+            self.assertEqual(arm.settings[flag], fd.THEIRS_COMPLETE[flag])
+
+    def test_a_missing_setting_is_reported_as_a_difference(self):
+        """"False" and "not mentioned" are different, and the check says so."""
+        import json
+        import tempfile
+        from pathlib import Path
+        import theirs_omnifold_arm as toa
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest = Path(tmp) / "m.json"
+            manifest.write_text(json.dumps({"settings": {}, "preset": {}}))
+            with self.assertRaisesRegex(ValueError, "different settings"):
+                toa.TheirsCompleteArm(num_part=5, manifest=manifest)
