@@ -454,12 +454,20 @@ def _identity_of(np: Any, sidecar: Any, imc: Any):
     field order, and a second reconstruction of an identity is a second thing
     that can disagree about which event is which.
     """
-    if sidecar is None:
+    # An UNSET shell variable arrives here as the empty string, which `Path`
+    # turns into "." and numpy reports as `IsADirectoryError: '.'` -- a message
+    # that names neither the flag nor the launcher that failed to set it. That
+    # is how this failed the first time.
+    path = None if sidecar is None else Path(str(sidecar))
+    if path is None or str(path) in ("", "."):
         raise SystemExit(
-            "[arm] --identity-sidecar is required: the stage split is assigned "
-            "by event identity, and without it the split would fall back to "
-            "row order, which is a property of the file and not of the event")
-    blob = np.load(str(sidecar), mmap_mode="r")
+            "[arm] --identity-sidecar is required and was empty or unset: the "
+            "stage split is assigned by event identity, and without it the "
+            "split would fall back to row order, which is a property of the "
+            "file and not of the event")
+    if not path.is_file():
+        raise SystemExit(f"[arm] identity sidecar is not a file: {path}")
+    blob = np.load(str(path), mmap_mode="r")
     return np.asarray(blob["sig_event_id"]).astype(np.int64)[np.asarray(imc)]
 
 

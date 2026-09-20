@@ -190,3 +190,23 @@ class TheEngineMustNotWriteIntoTheCheckout(unittest.TestCase):
             self.skipTest("vendored engine not in this checkout")
         block = engine.read_text().split("def __init__", 1)[1][:1200]
         self.assertRegex(block, r"log_folder\s*=\s*'\./'")
+
+
+class AnUnsetPathMustNameItself(unittest.TestCase):
+    """An unset shell variable arrives as "", which Path turns into "."."""
+
+    def test_an_empty_sidecar_path_names_the_flag(self):
+        with self.assertRaisesRegex(SystemExit, "empty or unset"):
+            rae._identity_of(np, "", [0, 1, 2])
+
+    def test_a_missing_sidecar_names_the_file(self):
+        with self.assertRaisesRegex(SystemExit, "not a file"):
+            rae._identity_of(np, "/nonexistent/sidecar.npz", [0, 1, 2])
+
+    def test_both_launchers_set_and_check_the_sidecar(self):
+        here = Path(rae.__file__).parent
+        for name in ("sbatch_campaign.sh", "sbatch_campaign_smoke.sh"):
+            text = (here / name).read_text()
+            self.assertIn("IDENTITY_SIDECAR=${IDENTITY_SIDECAR:-", text, msg=name)
+            self.assertIn('[[ -f "$IDENTITY_SIDECAR" ]]', text, msg=name)
+            self.assertIn('--identity-sidecar "$IDENTITY_SIDECAR"', text, msg=name)
