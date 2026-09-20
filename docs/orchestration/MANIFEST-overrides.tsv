@@ -113,6 +113,7 @@ docs/orchestration/NAVIGATION-20260917-z-pilot-outcome-route.md	LIVE	open
 docs/orchestration/OPERATIVE-SHEET-scalar5d.md	LIVE	open	
 docs/orchestration/OUTCOME-20260919-cause3-anchor-has-no-eligible-member.md	LIVE	open	
 docs/orchestration/OUTCOME-20260919-computed-acceptance-goal-C-blocked.md	LIVE	open	
+docs/orchestration/OUTCOME-20260920-cause3-two-member-assessable-FAIL.md	LIVE	open	
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	LIVE	open	
@@ -190,6 +191,7 @@ docs/orchestration/control_plane_lint.py	LIVE	open	""
 docs/orchestration/dashboard.html	MACHINE	generated	
 docs/orchestration/probes/probe-20260918-aggregation-channel-directions.py	MACHINE	open	
 docs/orchestration/probes/probe-20260918-l3-statistic-diagonal-breach-and-repair.py	MACHINE	open	
+docs/orchestration/state/GRADE-20260920-cause3-two-member.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260826-b1-adoption-gate-preconditions-remeasured.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260826-k0-freeze-bundle-detectability.json	MACHINE	open	

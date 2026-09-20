@@ -1,0 +1,628 @@
+{
+  "authorizes": "NOTHING. A branch-3 result grades (cause 3, Z)'s M(ii) only. Adoption is a separate act naming this digest. The graded product's own build-time scientific_acceptance is a per-BUILD verdict and stays NON-PASSING: at build time a member is alone, and branch 2 is the correct answer for it.",
+  "boundaries": {
+    "cause2_f7_margin": {
+      "name": "cause2_f7_margin",
+      "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a79 -- Joseph, 2026-09-18, delegating the required rows: \"default-proceed on the twelve required rows ... Three acts stay reserved and unchanged: ADOPT, any material change to the estimator, and anything outward-facing.\" A boundary is none of the three. VALUE: the F7 test counts as PERFORMED only if |shift/(k*floor) - 1| >= 0.168, i.e. the ratio lies outside [0.832, 1.168]; inside that band the result is INCONCLUSIVE, not MET. GROUND: the branch point is proportional to sqrt(Tr), which the 160-throw ensemble determines to 1/sqrt(2(N-1)) = 5.61%, so a ratio inside the floor own precision cannot be told from the other side of the branch; 3 x 5.61% = 16.8%. It reads NO observed shift -- 5.61% comes from N alone -- so it cannot be tuned to make today answer come out right, which is the failure uq_math.py:128-137 records against its own F7_FLOOR_MULTIPLE. MEASURED: shift/(k*floor) = 2.6739, outside the band by 2.29x above its upper edge, so the current member passes. RESIDUALS: the iid-normal assumption makes 5.61% an order-of-magnitude anchor rather than an exact precision, the same residual delta carries; and the factor 3 is a judgement, with 2x giving 0.112 and 1x giving 0.056, all three of which the current member clears.",
+      "reason": null,
+      "status": "DECLARED",
+      "value": 0.168
+    },
+    "cause3_agg": {
+      "name": "cause3_agg",
+      "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a72 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty.",
+      "reason": null,
+      "status": "DECLARED",
+      "value": 0.05
+    },
+    "cause3_corr": {
+      "name": "cause3_corr",
+      "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a72 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty. s_proj leg, under \u00a73.7d ruling (b).",
+      "reason": null,
+      "status": "DECLARED",
+      "value": 0.05
+    },
+    "cause3_corr_coverage": {
+      "name": "cause3_corr_coverage",
+      "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a79 -- Joseph, 2026-09-18, delegating the required rows: \"Execute any row in the \u00a72 table and report after; do not await my word on them.\" Ruling 5 coverage clause is expressed over BINS; s_proj population is the FUNCTIONALS of ruling 4 (the rows of project_cov_nd.py M, plus the all-ones vector), so the clause does not literally reach it and no cause3_corr_coverage existed. Every member of that set is itself a quoted projection, so ruling 5 FIRST clause -- 100% on bins entering a quoted projection -- is the applicable one rather than the >= 99% full-support fallback. Any functional exceeding cause3_corr is enumerated in the receipt and never absorbed.",
+      "reason": null,
+      "status": "DECLARED",
+      "value": 1.0
+    },
+    "cause3_med": {
+      "name": "cause3_med",
+      "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a72 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty. Per-bin leg.",
+      "reason": null,
+      "status": "DECLARED",
+      "value": 0.05
+    },
+    "cause3_med_coverage": {
+      "name": "cause3_med_coverage",
+      "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a72 ruling 5 -- coverage approved: 100% on bins entering a quoted projection, >= 99% on the full reported support, and EVERY failing bin enumerated in the receipt, never absorbed. This boundary is the >= 99% full-support fraction; the 100% clause on quoted bins is absolute and is enforced separately, not as a fraction.",
+      "reason": null,
+      "status": "DECLARED",
+      "value": 0.99
+    },
+    "null_epsilon": {
+      "name": "null_epsilon",
+      "provenance": "Joseph, 2026-09-19, R2 and R3 in his own turn. S = 1e-3 in r_null scale-relative units, his ground independent of B: a fixed-seed null violation must be negligible against the smallest movement he has ruled resolvable, cause3 = 5% (AUTHORIZATION-20260918 section 2 ruling 5), and 1e-3 is 50x below it. B = 1e-12, an operating-error bound at 22.5x the largest observed r_null, from two independent executions on the same pinned inputs giving 4.4311e-14 and 4.4520e-14 and agreeing to 0.47%; first-checkpoint divergence 3.27e-16 is about 1.47 ulp at double precision and grows about 136x across the unfold, the mechanism being floating-point non-associativity in threaded reductions. CONFIDENCE STATED HONESTLY: n = 2 is NOT a confidence interval and is not presented as one; the argument rests on MARGIN, since epsilon sits 4.4 orders above the observed r_null and B <= 1e-9 would survive a 22,000-fold increase, which is why no further runs were purchased. epsilon = 1e-9 lies within [B, S] = [1e-12, 1e-3], 1000x above B and 1e6 below S, and it is the PRE-EXISTING proposal recorded at NAVIGATION-20260917:84 as \"PROPOSED and UNGRADED\" rather than a value fitted afterwards. R2 gate checked first and passed: z_statistics.null_ratio is ||x_cv2 - x_cv|| / ||x_cv||, dimensionless by construction. Derivation: DERIVATION-20260919-null-epsilon-B-and-S.md.",
+      "reason": null,
+      "status": "DECLARED",
+      "value": 1e-09
+    }
+  },
+  "comparison_members": [
+    {
+      "cov_sha256": "2718b2155f73bdfa012b0baf458791fbeebe4732b88aecf6bde6c6d61b9c27b2",
+      "est_seed_offset": 1200,
+      "est_seed_offset_declared": 1,
+      "file_sha256": "7e4636a33e490f482842d32775900da2a59587db5644cd9d661a58561a0e0190",
+      "footing": {
+        "mask_sha256": "eed021e93fd7ccc17330b3fcddbb326e3c0f2186309aed3a70c2ba31cae750e2",
+        "n_reported": 10694,
+        "row_order_sha256": "61a7c9fd70d7c7718d396afa5c92b6b1bb0b94e7280245d35c9f8c4117f8b461"
+      },
+      "member_identity": {
+        "est_seed_offset": 1200,
+        "est_seed_offset_declared": 1,
+        "read_from": {
+          "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k001200/uq_5d/unified_throw_cov_5d.root",
+          "role": "throw",
+          "sha256": "f7d753c3cdc9034569304383e79c8058734f7c5d2b4b0dc175ef3afb256649cb"
+        }
+      },
+      "product": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-cv.npz",
+      "receipt": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-receipt-cv.json",
+      "variant": "cv"
+    }
+  ],
+  "declared_K": [
+    0,
+    1200
+  ],
+  "functionals": {
+    "all_ones_appended": true,
+    "authorization": "AUTHORIZATION-20260918-d-resource-required-deliverable-path.md ruling 4: the rows of project_cov_nd.py M, plus the all-ones vector",
+    "builder": "project_cov_nd.build_projection",
+    "dst_shape": [
+      7,
+      6
+    ],
+    "keep_axes": [
+      "eavail",
+      "W"
+    ],
+    "n_dst_dense": 42,
+    "n_dst_receiving": 42,
+    "n_functionals": 43,
+    "sha256": "ef802a097ad00f8b31adbe0c4293bc512cceafd7d9781c552e962a2807a8cfba",
+    "src_axes": [
+      "pt",
+      "pz",
+      "eavail",
+      "q3",
+      "W"
+    ],
+    "src_shape": [
+      14,
+      16,
+      7,
+      7,
+      6
+    ]
+  },
+  "graded_product": {
+    "cov_sha256": "a78be8a072e9d89b5e0b48866284a4bd3e5c8ca901357c631d036a4145fd50ba",
+    "est_seed_offset": 0,
+    "est_seed_offset_declared": 1,
+    "file_sha256": "361090f94446260f8fd78ad46214118ad2c9d43a3fbcef295b499c2bdbf7e214",
+    "footing": {
+      "mask_sha256": "eed021e93fd7ccc17330b3fcddbb326e3c0f2186309aed3a70c2ba31cae750e2",
+      "n_reported": 10694,
+      "row_order_sha256": "61a7c9fd70d7c7718d396afa5c92b6b1bb0b94e7280245d35c9f8c4117f8b461"
+    },
+    "member_identity": {
+      "est_seed_offset": 0,
+      "est_seed_offset_declared": 1,
+      "read_from": {
+        "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000/uq_5d/unified_throw_cov_5d.root",
+        "role": "throw",
+        "sha256": "5ee23bed136c9c4c3dbc5936a29ecfa45316fdccdf3b0773da6bfdd086bcf689"
+      }
+    },
+    "product": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz",
+    "receipt": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-receipt-cv.json",
+    "variant": "cv"
+  },
+  "leg_set": {
+    "legs": [
+      {
+        "boundary": "cause3_agg",
+        "boundary_status": {
+          "name": "cause3_agg",
+          "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a72 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty.",
+          "reason": null,
+          "status": "DECLARED",
+          "value": 0.05
+        },
+        "class": "aggregate",
+        "name": "s_agg",
+        "sees_correlations": false,
+        "statistic": "s_agg"
+      },
+      {
+        "boundary": "cause3_med",
+        "boundary_status": {
+          "name": "cause3_med",
+          "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a72 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty. Per-bin leg.",
+          "reason": null,
+          "status": "DECLARED",
+          "value": 0.05
+        },
+        "class": "per-bin",
+        "name": "s_med",
+        "sees_correlations": false,
+        "statistic": "s_med"
+      },
+      {
+        "boundary": "cause3_corr",
+        "boundary_status": {
+          "name": "cause3_corr",
+          "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a72 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty. s_proj leg, under \u00a73.7d ruling (b).",
+          "reason": null,
+          "status": "DECLARED",
+          "value": 0.05
+        },
+        "class": "per-bin",
+        "name": "s_proj",
+        "sees_correlations": true,
+        "statistic": "s_proj"
+      }
+    ],
+    "predeclared_at": "AUTHORIZATION-20260918-d-resource-required-deliverable-path.md",
+    "sees_correlations": true
+  },
+  "null": {
+    "aborts": false,
+    "assessable": true,
+    "bound_to_graded_member": {
+      "mask_elementwise_equal": true,
+      "product": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz",
+      "receipt_r_null": 2.442032658261136e-13,
+      "receipt_sha256": "ff0d8ec06850abb94cb840eb29aa3be096624eaf0a4e99de73446ec5028bc9e3"
+    },
+    "boundary": {
+      "name": "null_epsilon",
+      "provenance": "Joseph, 2026-09-19, R2 and R3 in his own turn. S = 1e-3 in r_null scale-relative units, his ground independent of B: a fixed-seed null violation must be negligible against the smallest movement he has ruled resolvable, cause3 = 5% (AUTHORIZATION-20260918 section 2 ruling 5), and 1e-3 is 50x below it. B = 1e-12, an operating-error bound at 22.5x the largest observed r_null, from two independent executions on the same pinned inputs giving 4.4311e-14 and 4.4520e-14 and agreeing to 0.47%; first-checkpoint divergence 3.27e-16 is about 1.47 ulp at double precision and grows about 136x across the unfold, the mechanism being floating-point non-associativity in threaded reductions. CONFIDENCE STATED HONESTLY: n = 2 is NOT a confidence interval and is not presented as one; the argument rests on MARGIN, since epsilon sits 4.4 orders above the observed r_null and B <= 1e-9 would survive a 22,000-fold increase, which is why no further runs were purchased. epsilon = 1e-9 lies within [B, S] = [1e-12, 1e-3], 1000x above B and 1e6 below S, and it is the PRE-EXISTING proposal recorded at NAVIGATION-20260917:84 as \"PROPOSED and UNGRADED\" rather than a value fitted afterwards. R2 gate checked first and passed: z_statistics.null_ratio is ||x_cv2 - x_cv|| / ||x_cv||, dimensionless by construction. Derivation: DERIVATION-20260919-null-epsilon-B-and-S.md.",
+      "reason": null,
+      "status": "DECLARED",
+      "value": 1e-09
+    },
+    "limit": 1e-09,
+    "measured": true,
+    "r_null": 2.442032658261136e-13,
+    "reconstruction": {
+      "cv_norm": 3.2124510692802143e-37,
+      "n_rep": 10694,
+      "num_norm": 7.844910424248191e-50,
+      "r_null": 2.442032658261136e-13
+    },
+    "reject_conditions": [],
+    "source": {
+      "device": 3592384858,
+      "inode": 882726656425360064,
+      "mtime_ns": 1789886522000000000,
+      "path": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-null.npz",
+      "sha256": "ff0d8ec06850abb94cb840eb29aa3be096624eaf0a4e99de73446ec5028bc9e3",
+      "size": 190333,
+      "stamped_at_utc": "2026-09-20T12:20:00Z"
+    },
+    "verdict": "within bound"
+  },
+  "null_within_bound": true,
+  "outcome": {
+    "assessable": true,
+    "branch": 5,
+    "branch_label": "NOT MET - PER-BIN",
+    "failing_legs": [
+      "s_proj"
+    ],
+    "leg_results": {
+      "s_agg": {
+        "boundary": {
+          "name": "cause3_agg",
+          "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a72 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty.",
+          "reason": null,
+          "status": "DECLARED",
+          "value": 0.05
+        },
+        "class": "aggregate",
+        "limit": 0.05,
+        "statistic": 0.004714467660274529,
+        "verdict": "within limit"
+      },
+      "s_med": {
+        "boundary": {
+          "name": "cause3_med",
+          "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a72 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty. Per-bin leg.",
+          "reason": null,
+          "status": "DECLARED",
+          "value": 0.05
+        },
+        "class": "per-bin",
+        "limit": 0.05,
+        "statistic": 0.004852285932834348,
+        "verdict": "within limit"
+      },
+      "s_proj": {
+        "boundary": {
+          "name": "cause3_corr",
+          "provenance": "\"AUTHORIZATION-20260918-d-resource-required-deliverable-path.md\" \u00a72 ruling 5 -- Joseph, 2026-09-18, in his own turn: delta_proj = delta_med = delta_agg = 5%, a DIRECT movement bound, never quadrature. Ground: a seed-to-seed drift below the ~5.6% precision the 160-throw ensemble already imposes on sigma is not resolvable against the number it would modify; at 10% the arbitrary seed would be 1.78x the ensemble smearing and would become the dominant ambiguity in a published uncertainty. s_proj leg, under \u00a73.7d ruling (b).",
+          "reason": null,
+          "status": "DECLARED",
+          "value": 0.05
+        },
+        "class": "per-bin",
+        "limit": 0.05,
+        "statistic": 0.06145388143592225,
+        "verdict": "exceeds limit"
+      }
+    },
+    "reject_conditions": [],
+    "scope_statement": null,
+    "validity": {
+      "branch1_failures": [],
+      "branch2_failures": [],
+      "invalid_statistics": {},
+      "notes": {
+        "measured_by": "z_grade.cross_member_validity",
+        "provenance": "every field re-measured from the members' own bytes"
+      }
+    }
+  },
+  "preregistration": {
+    "S": 0.001,
+    "_stamp": {
+      "device": 3592384858,
+      "inode": 882726673185823238,
+      "mtime_ns": 1789860387000000000,
+      "path": "/pscratch/sd/j/josephrb/z2m-20260919/clean/docs/orchestration/PREREGISTRATION-20260919-cause3-two-member-campaign.json",
+      "sha256": "b033e73a49e29f961c0387d0a141629d4ea61468432be1a939cd215eb49b3732",
+      "size": 4006,
+      "stamped_at_utc": "2026-09-20T12:17:35Z"
+    },
+    "builder_revision": "d64257c3947a239f33ad7b33869286f6aab07194",
+    "declared_K": [
+      0,
+      1200
+    ],
+    "epsilon": 1e-09,
+    "graded_offset": 0,
+    "pass_rule": "PASSING iff z_validator.assess(Z_LEG_SET, statistics, validity) returns assessable=True and branch==3 (MET) -- every leg of L = {s_agg, s_med, s_proj} within its declared boundary, cause3_agg = cause3_med = cause3_corr = 0.05 -- AND the graded product's r_null, recomputed from its own persisted null operands, is <= null_epsilon = 1e-9. Any other outcome is NON-PASSING. A validity failure dominates every numerical branch and reports no magnitude."
+  },
+  "schema_version": 1,
+  "scientific_acceptance": "NON-PASSING",
+  "statistics": {
+    "s_agg": 0.004714467660274529,
+    "s_med": 0.004852285932834348,
+    "s_proj": 0.06145388143592225
+  },
+  "statistics_detail": {
+    "kappa_arm_NOT_EVALUATED": {
+      "lambda_max_baseline": 2.2780218403289483e-75,
+      "min_rayleigh": 1.5348775009312602e-22,
+      "operand_recorded_so_a_later_kappa_can_be_applied": true,
+      "predicate": "q_i / (||u_i||^2 * lambda_max(C_0)) >= kappa",
+      "rayleigh_quotients": [
+        1.5678743894950033e-11,
+        8.21005108177995e-11,
+        1.520859881655625e-12,
+        2.646793649196897e-12,
+        1.0091155976800558e-13,
+        4.218393360375071e-20,
+        3.7744590252507225e-11,
+        1.557999298954191e-10,
+        1.020714663103032e-12,
+        2.543242504713719e-13,
+        1.1837039127663802e-14,
+        2.050130882719312e-20,
+        7.384658924110304e-12,
+        7.053547786299514e-11,
+        2.8260466663997177e-12,
+        4.081287929648136e-13,
+        2.6079185076025718e-14,
+        3.8646218490304296e-20,
+        6.588096797234367e-13,
+        2.3746663226138657e-11,
+        4.834842958730863e-12,
+        5.926314742564696e-13,
+        4.911276184493676e-14,
+        9.520396136580279e-20,
+        1.6520883867350912e-14,
+        2.515442312329118e-12,
+        4.813909914720008e-12,
+        1.5166938844297745e-12,
+        5.1506009300277346e-14,
+        1.2702789285419045e-19,
+        9.554302264395345e-17,
+        2.0387893585422872e-14,
+        1.2338833524342329e-13,
+        9.595852350026638e-13,
+        2.3179263090799355e-13,
+        1.3265155096395387e-19,
+        1.5348775009312602e-22,
+        7.727746406014698e-21,
+        3.203773086967365e-20,
+        1.4723848876130705e-18,
+        5.10809575907936e-17,
+        9.41446244387739e-21,
+        0.01794126214598613
+      ],
+      "why": "kappa is UNDECLARED and may not be invented (Joseph, 2026-09-11). z_build_path.evaluate_a7 returns KAPPA_UNDECLARED, so routing through it would make this leg unevaluable rather than guarded. The ROUND-OFF half of the degeneracy question is closed inside s_proj itself."
+    },
+    "per_bin_movement_REPORTED_GRADING_NOTHING": {
+      "argmax_grid_index": 7307,
+      "argmax_support_index": 1273,
+      "max": 0.37004524170950454,
+      "median": 0.026643067247034732,
+      "n_support": 10694,
+      "p90": 0.09463027359445797
+    },
+    "s_agg": {
+      "argmax_offset": 1200,
+      "baseline": 6.013932019640054e-38,
+      "per_member": {
+        "0": 6.013932019640054e-38,
+        "1200": 6.042284507657736e-38
+      },
+      "per_member_rel": {
+        "0": 0.0,
+        "1200": 0.004714467660274529
+      },
+      "s_agg": 0.004714467660274529,
+      "sd_of_members": 2.004823654081364e-40
+    },
+    "s_med": {
+      "argmax_offset": 1200,
+      "baseline": 0.15004567632231547,
+      "per_member": {
+        "0": 0.15004567632231547,
+        "1200": 0.14931761179781408
+      },
+      "per_member_rel": {
+        "0": 0.0,
+        "1200": 0.004852285932834348
+      },
+      "s_med": 0.004852285932834348,
+      "sd_of_members": 0.0005148193624162902
+    },
+    "s_proj": {
+      "argmax_functional": 2,
+      "argmax_offset": 1200,
+      "n_functionals": 43,
+      "per_member": {
+        "0": 0.0,
+        "1200": 0.06145388143592225
+      },
+      "s_proj": 0.06145388143592225
+    }
+  },
+  "subject": "(cause 3, Z) M(ii) -- multi-member estimator-seed campaign verdict",
+  "validity_evidence": {
+    "code_identity": {
+      "agree": true,
+      "import_closure_identical": true,
+      "revisions": [
+        "d64257c3947a239f33ad7b33869286f6aab07194",
+        "d64257c3947a239f33ad7b33869286f6aab07194"
+      ]
+    },
+    "cv_held_fixed": {
+      "cv_sha256": "0f04abceccb5330b1a5ee84a1f943c2b7d1eaa3d32ae854aaecb91bc5c0d9baa",
+      "elementwise_equal": true,
+      "reference": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz"
+    },
+    "digests": [
+      {
+        "manifest_sha256_metadata": "a5b87a28ade8e841db8a67db41e956a708702219fb76166f86c0b4501b2fb0ba",
+        "manifest_sha256_receipt": "a5b87a28ade8e841db8a67db41e956a708702219fb76166f86c0b4501b2fb0ba",
+        "match": true,
+        "product": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz",
+        "receipt_records": "361090f94446260f8fd78ad46214118ad2c9d43a3fbcef295b499c2bdbf7e214",
+        "recomputed": "361090f94446260f8fd78ad46214118ad2c9d43a3fbcef295b499c2bdbf7e214"
+      },
+      {
+        "manifest_sha256_metadata": "05ae4e5fb8050b7b228930702b788d7dc3d3243b2f6a75e309031f2f56630db3",
+        "manifest_sha256_receipt": "05ae4e5fb8050b7b228930702b788d7dc3d3243b2f6a75e309031f2f56630db3",
+        "match": true,
+        "product": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-cv.npz",
+        "receipt_records": "7e4636a33e490f482842d32775900da2a59587db5644cd9d661a58561a0e0190",
+        "recomputed": "7e4636a33e490f482842d32775900da2a59587db5644cd9d661a58561a0e0190"
+      }
+    ],
+    "finiteness": [
+      {
+        "non_finite_or_empty": [],
+        "product": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz"
+      },
+      {
+        "non_finite_or_empty": [],
+        "product": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-cv.npz"
+      }
+    ],
+    "footing": {
+      "agree": true,
+      "code_identity_agrees": true,
+      "note": "code identity is folded in here deliberately: members built by different code are not comparable, and branch 1 is the only branch that reports an inconclusive campaign without a magnitude.",
+      "per_member": [
+        {
+          "mask_sha256": "eed021e93fd7ccc17330b3fcddbb326e3c0f2186309aed3a70c2ba31cae750e2",
+          "n_reported": 10694,
+          "row_order_sha256": "61a7c9fd70d7c7718d396afa5c92b6b1bb0b94e7280245d35c9f8c4117f8b461"
+        },
+        {
+          "mask_sha256": "eed021e93fd7ccc17330b3fcddbb326e3c0f2186309aed3a70c2ba31cae750e2",
+          "n_reported": 10694,
+          "row_order_sha256": "61a7c9fd70d7c7718d396afa5c92b6b1bb0b94e7280245d35c9f8c4117f8b461"
+        }
+      ]
+    },
+    "identities": [
+      {
+        "closure_blocks": {
+          "missing": [],
+          "present": [
+            "G1_closure_identity",
+            "G2_g_domain",
+            "G3R_raw_operand_reconstruction",
+            "G3_g_reconstruction",
+            "G4_symmetry_psd",
+            "G5_band_partition",
+            "active_total_eq_sum5",
+            "blocksum_symmetry_psd"
+          ]
+        },
+        "g_domain": {
+          "exactly_one_where_pinned": true,
+          "finite": true,
+          "g_max": 17.65314171187787,
+          "ge_one": true,
+          "n_pinned": 0
+        },
+        "passed": true,
+        "product": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz",
+        "reconstruction": {
+          "by": "z_receipt.validate_reconstruction_ran",
+          "proved": true
+        },
+        "reran": [
+          "gate_symmetry_psd",
+          "g_domain"
+        ],
+        "symmetry_psd": {
+          "eigenvalues_computed": true,
+          "lambda_max": 2.2780218403289483e-75,
+          "lambda_min": -6.054413144157703e-91,
+          "neg_fraction_of_max": 2.657750262518748e-16,
+          "psd_method": "eigvalsh",
+          "rel_asymmetry": 2.076396357490386e-16,
+          "rtol": 1e-09
+        },
+        "verified_recorded": [
+          "G3R_raw_operand_reconstruction",
+          "closure block completeness"
+        ]
+      },
+      {
+        "closure_blocks": {
+          "missing": [],
+          "present": [
+            "G1_closure_identity",
+            "G2_g_domain",
+            "G3R_raw_operand_reconstruction",
+            "G3_g_reconstruction",
+            "G4_symmetry_psd",
+            "G5_band_partition",
+            "active_total_eq_sum5",
+            "blocksum_symmetry_psd"
+          ]
+        },
+        "g_domain": {
+          "exactly_one_where_pinned": true,
+          "finite": true,
+          "g_max": 16.79476791796771,
+          "ge_one": true,
+          "n_pinned": 0
+        },
+        "passed": true,
+        "product": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-cv.npz",
+        "reconstruction": {
+          "by": "z_receipt.validate_reconstruction_ran",
+          "proved": true
+        },
+        "reran": [
+          "gate_symmetry_psd",
+          "g_domain"
+        ],
+        "symmetry_psd": {
+          "eigenvalues_computed": true,
+          "lambda_max": 2.296603238485479e-75,
+          "lambda_min": -9.486339153024078e-91,
+          "neg_fraction_of_max": 4.130595565684194e-16,
+          "psd_method": "eigvalsh",
+          "rel_asymmetry": 2.0431168822540213e-16,
+          "rtol": 1e-09
+        },
+        "verified_recorded": [
+          "G3R_raw_operand_reconstruction",
+          "closure block completeness"
+        ]
+      }
+    ],
+    "offset_declaration": {
+      "per_member": [
+        {
+          "declared": 1,
+          "offset": 0,
+          "product": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz"
+        },
+        {
+          "declared": 1,
+          "offset": 1200,
+          "product": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-cv.npz"
+        }
+      ],
+      "undeclared": [],
+      "why": "seed_offset_policy.declared_offset: declared = 0 means the leg did not go through a hooked launcher, so NOTHING can be concluded about which scan member it is. A baseline-valued seed is not evidence of being the anchor."
+    },
+    "offsets": {
+      "declared_K": [
+        0,
+        1200
+      ],
+      "match": true,
+      "read_back": [
+        0,
+        1200
+      ]
+    },
+    "partition": {
+      "agree": true,
+      "present": [
+        true,
+        true
+      ]
+    },
+    "product_digests": {
+      "covariance": [
+        "a78be8a072e9d89b5e0b48866284a4bd3e5c8ca901357c631d036a4145fd50ba",
+        "2718b2155f73bdfa012b0baf458791fbeebe4732b88aecf6bde6c6d61b9c27b2"
+      ],
+      "covariance_distinct": true,
+      "distinct": true,
+      "manifest": [
+        "a5b87a28ade8e841db8a67db41e956a708702219fb76166f86c0b4501b2fb0ba",
+        "05ae4e5fb8050b7b228930702b788d7dc3d3243b2f6a75e309031f2f56630db3"
+      ],
+      "manifest_distinct": true,
+      "throw_source": [
+        {
+          "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k000000/uq_5d/unified_throw_cov_5d.root",
+          "recomputed": "5ee23bed136c9c4c3dbc5936a29ecfa45316fdccdf3b0773da6bfdd086bcf689",
+          "recorded": "5ee23bed136c9c4c3dbc5936a29ecfa45316fdccdf3b0773da6bfdd086bcf689",
+          "verified": true
+        },
+        {
+          "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/mii/member_k001200/uq_5d/unified_throw_cov_5d.root",
+          "recomputed": "f7d753c3cdc9034569304383e79c8058734f7c5d2b4b0dc175ef3afb256649cb",
+          "recorded": "f7d753c3cdc9034569304383e79c8058734f7c5d2b4b0dc175ef3afb256649cb",
+          "verified": true
+        }
+      ],
+      "throw_source_distinct": true,
+      "why": "distinctness is a claim about two PRODUCTIONS, not about two byte strings. Perturbing one covariance makes the covariance digests differ and changes nothing about whether a second campaign ran."
+    }
+  },
+  "withheld_boundaries": {},
+  "written_at_utc": "2026-09-20T12:20:00Z"
+}

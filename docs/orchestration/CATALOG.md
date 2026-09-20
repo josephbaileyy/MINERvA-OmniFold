@@ -103,6 +103,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **The grade is unaffected and that is verified, not argued**: the product's `hXSecND_flat` is
   byte-identical to the archive central, so the grader's cross-member field is True. **Not fixed** —
   production output exists and criteria are frozen; the recommended repair is recorded.
+- [`OUTCOME-20260920-cause3-two-member-assessable-FAIL.md`](OUTCOME-20260920-cause3-two-member-assessable-FAIL.md)
+  - **(B) ASSESSABLE FAIL, branch 5 NOT MET — PER-BIN.** The campaign is **fully valid** — all nine
+  `Validity` fields passed, no reject conditions — so this is a measurement, not a footing failure.
+  `s_agg` **0.471%** and `s_med` **0.485%** are well inside the 5% bound; **`s_proj` is 6.145%** and
+  exceeds it. **On the two diagonal legs alone the result would have been MET**: §3.7d's
+  correlation-blindness finding, and Joseph's ruling (b) adding `s_proj`, is what caught it — and
+  the required deliverable *is* a projection. The seed-pinned-band limitation **cannot explain it
+  away, only understate it**. `r_null = 2.442e-13`, within `ε`. 68.17 CPU / 53.75 GPU actual.
 - [`RUN-20260919-cause3-two-member-campaign-launch.md`](RUN-20260919-cause3-two-member-campaign-launch.md)
   - **What was submitted**: 8 jobs, `337.00` CPU / `158.25` GPU reserved, admission `rc 0`
   re-measured before each submission. **Three clean deploys** — arms at `44e09fd8`, builder at the
