@@ -34,6 +34,32 @@ tracking the recovery almost exactly says the estimators moved along the
 injected direction rather than sideways, which is the sign the scorer is
 measuring what it claims — and that is the whole of what this table supports.
 
+## The report and the deck, on a real report
+
+Run again after the pretrained repairs, with the real weights arranged as a
+campaign -- the same two runs under all eight final seeds, so every pair is
+identical and the spread is zero by construction. Not a result; a check that
+the last two stages execute on real arrays, real receipts and a real closure
+file.
+
+```
+[report] NEITHER_ELIGIBLE / NO_SELECTION
+[report] mean d = -0.1287 [-0.1287, -0.1287] over 8 pairs
+[deck]   rendered report_path_check.pdf (395,081 bytes)
+```
+
+The verdict is the right one for the inputs: both arms sit far below the
+0.76 adequacy floor after one OmniFold iteration, so neither is eligible and
+the deck's first frame reads "No adequate arm... That is a result, not a
+failure to produce one." The low-acceptance band comes through at 0.3103 of
+truth mass, matching the endpoint characterisation.
+
+With his arm now genuinely pretrained it recovers 0.1484 against our 0.0197 at
+this scale. **That is not a comparison result** -- one iteration on 10,000
+prior rows, and our arm starts from scratch by design while his starts from
+his checkpoint, which is the whole point of the pretrained arm and also the
+reason a one-iteration number flatters it.
+
 ## Why it is worth recording anyway
 
 Every other stage of this comparison was verified on synthetic data first and
