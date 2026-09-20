@@ -100,7 +100,8 @@ class HisFeaturesNotTheIntermediate(unittest.TestCase):
         packed[0, 0] = [1, 1, 1, 0.0, 2, 0.7, 10000.0, 5000.0, -2500.0, 400.0]
         out = ts.convert_packed(packed)
         np.testing.assert_allclose(out[0, 0, 6:10], [1.0, 0.5, -0.25, 0.04])
-        self.assertAlmostEqual(out[0, 0, 5], 0.7)   # dE/dx is NOT scaled
+        # dE/dx is not DIVIDED, but it does get his own transform.
+        self.assertAlmostEqual(out[0, 0, 5], float(np.log(0.8)))
 
     def test_zero_padding_stays_exactly_zero(self):
         """Converting a pad gives [0,0,-13.8,-13.8,0] and the mask reads
@@ -132,3 +133,34 @@ class HisFeaturesNotTheIntermediate(unittest.TestCase):
         import materialize_theirs as mt
         source = Path(mt.__file__).read_text()
         self.assertIn("tts.convert_packed(packed)", source)
+
+
+class DedxSentinel(unittest.TestCase):
+    """`preprocessing.py:827-832`. MINERvA writes -999 for "no dE/dx"."""
+
+    def test_the_sentinel_becomes_zero_before_the_log(self):
+        self.assertAlmostEqual(float(ts.preprocess_dedx(np.array([-999.0]))[0]),
+                               float(np.log(0.1)))
+
+    def test_infinities_and_large_values_clip_to_one_hundred(self):
+        got = ts.preprocess_dedx(np.array([np.inf, -np.inf, 150.0, 100.0]))
+        np.testing.assert_allclose(got, np.log(100.1), rtol=0, atol=1e-12)
+
+    def test_it_takes_the_absolute_value(self):
+        self.assertAlmostEqual(float(ts.preprocess_dedx(np.array([-3.0]))[0]),
+                               float(np.log(3.1)))
+
+    def test_convert_packed_applies_it_to_the_dedx_column(self):
+        packed = np.zeros((1, 2, 10))
+        packed[0, 0] = [1, 1, 1, 2.0, 3, -999.0, 0, 0, 0, 0]
+        packed[0, 1] = [1, 1, 1, 2.0, 3, 2.5, 0, 0, 0, 0]
+        out = ts.convert_packed(packed)
+        self.assertAlmostEqual(float(out[0, 0, 5]), float(np.log(0.1)))
+        self.assertAlmostEqual(float(out[0, 1, 5]), float(np.log(2.6)))
+
+    def test_the_raw_sentinel_would_dominate_the_feature(self):
+        """Why it matters: measured mean -134, std 341 on the prior leg."""
+        raw = np.array([-999.0] * 60 + [2.0] * 40)
+        self.assertLess(raw.mean(), -100.0)
+        self.assertGreater(ts.preprocess_dedx(raw).std(), 0.0)
+        self.assertLess(abs(ts.preprocess_dedx(raw).mean()), 5.0)

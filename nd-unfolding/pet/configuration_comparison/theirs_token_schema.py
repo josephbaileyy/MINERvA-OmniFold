@@ -214,6 +214,27 @@ def preprocess_coords(coord):
     return np.asarray(coord, dtype=np.float64) / COORD_DIVISOR
 
 
+def preprocess_dedx(dedx):
+    """`preprocessing.py:827-832`, transcribed.
+
+        -999 -> 0;  +/-inf -> 100;  anything above 100 -> 100;
+        then log(|x| + 0.1)
+
+    The sentinel matters more than the clip. MINERvA writes -999 for "no
+    dE/dx", and passing it through gives a feature with mean -134 and standard
+    deviation 341 going into a network with no input normalisation. Measured on
+    the prior leg before this was applied: column 5 ran from -999 to 185.
+    """
+    import numpy as np
+
+    x = np.asarray(dedx, dtype=np.float64)
+    x = np.where(x == -999, 0.0, x)
+    x = np.where(np.isposinf(x), 100.0, x)
+    x = np.where(np.isneginf(x), 100.0, x)
+    x = np.where(x > 100.0, 100.0, x)
+    return np.log(np.abs(x) + 1e-1)
+
+
 def convert_packed(packed):
     """Stored `[px,py,pz,logE,pid | dEdx,x,y,z,t]` -> what his model sees.
 
@@ -254,6 +275,7 @@ def convert_packed(packed):
     converted[:, 1] = np.arctan2(py, px)
     converted[:, 2] = np.log(np.maximum(pt, 0.0) + LOG_EPSILON)
     # column 3 is already log E; column 4 is the PID code
+    converted[:, 5] = preprocess_dedx(converted[:, 5])
     converted[:, 5 + 1:5 + 5] /= COORD_DIVISOR        # x, y, z, t
     out = converted.reshape(packed.shape)
     out[padding] = 0.0
