@@ -144,6 +144,8 @@ def main() -> None:
     # the REAL-data nominal's measured leg. This is a closure: `mc-only`, no
     # measured loader, nothing to consume. Requiring it would have been a
     # fail-closed check on an artifact this path must not use.
+    parser.add_argument("--theirs-cache", type=Path, default=None,
+                        help="one-time gather from prematerialize_theirs")
     parser.add_argument("--half-size", type=int, default=cp_half_size(),
                         help="rows per disjoint half; both halves are this size")
     args = parser.parse_args()
@@ -285,13 +287,17 @@ def evaluate(args: Any) -> dict[str, Any]:
         import theirs_omnifold_arm as toa
         # His tokens for exactly the inventory rows each leg uses. Absolute
         # dump rows, so the gather cannot be confused by the subsample.
-        blocks = _load_joined(args, np, imc[ia][s1_a], imc[ib])
+        blocks = _load_joined(args, np, imc[ia][s1_a], imc[ib],
+                              subsample_seed=int(
+                                  prod.NOMINAL_SEED_POLICY["subsample_seed"]),
+                              max_events=need, half_size=half)
         reco_a = blocks["pdata"]["packed"]
         reco_evt_a = blocks["pdata"]["globals"]
         reco_b = blocks["mc"]["packed"]
         reco_evt_b = blocks["mc"]["globals"]
         substitution = {
             "substituted": ["reco", "reco_evt"],
+            "source": blocks["source"],
             "pdata_rows": int(reco_a.shape[0]),
             "mcB_rows": int(reco_b.shape[0]),
             "step2_untouched": True,
@@ -401,6 +407,68 @@ def _truth_eavail(np: Any, ffd: Any, inputs_npz: Any, imc: Any):
         with archive.open("truth_scalars.npy") as handle:
             scalars = npf.read_array(handle, allow_pickle=False)[np.asarray(imc)]
     return scalars[:, ffd.SCALAR_COLS["eavail"]].astype(np.float64)
+
+
+def cp_half_size() -> int:
+    """The established half size, read from the closure module, not copied."""
+    import closure_powered_truth_reweight as cp
+    return int(cp.HALF_SIZE)
+
+
+def plan_of(args: Any) -> dict[str, Any]:
+    return {"arm": args.arm, "seed": args.seed, "stage": args.stage,
+            "learning_rate": args.learning_rate, "niter": args.niter}
+
+
+def _load_joined(args: Any, np: Any, pdata_rows: Any, mcb_rows: Any, *,
+                 subsample_seed: int, max_events: int, half_size: int
+                 ) -> dict[str, Any]:
+    """His tokens for the two closure legs, from the one-time cache if it exists.
+
+    MEASURED, job 58599158: gathering in-process cost 15.5 minutes before his
+    arm's first training step, against 75 seconds for ours to the same point.
+    Every task gathers the SAME rows -- subsample seed, subsample size, split
+    seed and half size are all frozen and only the estimator seed varies -- so
+    `prematerialize_theirs` does it once and each task memory-maps the result.
+    The cache carries a key over everything the rows depend on, and a key
+    mismatch is refused rather than gathered around.
+
+    Falling back to an in-process gather keeps the driver runnable without the
+    cache; it is slow, not wrong, and the receipt records which path was used.
+    """
+    import json
+
+    import materialize_theirs as mtz
+    import prematerialize_theirs as pre
+
+    key = pre.cache_key(inputs_npz=Path(args.inputs_npz),
+                        subsample_seed=subsample_seed, max_events=max_events,
+                        split_seed=int(fd.SPLITS["split_seed"]),
+                        half_size=half_size)
+    cache = getattr(args, "theirs_cache", None)
+    if cache is not None and Path(cache).exists():
+        blob = pre.load(Path(cache), expected_key=key)
+        return {
+            "pdata": {"packed": np.asarray(blob["pdata_packed"]),
+                      "globals": np.asarray(blob["pdata_globals"])},
+            "mc": {"packed": np.asarray(blob["prior_packed"]),
+                   "globals": np.asarray(blob["prior_globals"])},
+            "source": {"cache": str(cache), "key": key},
+        }
+
+    index_dir = Path(args.theirs_index)
+    with np.load(args.inputs_npz, mmap_mode="r") as target:
+        sig_pass_reco = np.asarray(target["pass_reco"]).astype(bool)
+    index = np.load(index_dir / "join_sig.npz")
+    report = json.loads((index_dir / "join_sig.json").read_text())
+
+    def gather(rows: Any) -> dict[str, Any]:
+        return mtz.materialize(report["files"], index["row_index"],
+                               index["origin"], np.asarray(rows), sig_pass_reco)
+
+    return {"pdata": gather(pdata_rows), "mc": gather(mcb_rows),
+            "source": {"cache": None, "key": key,
+                       "note": "gathered in process; slow but not wrong"}}
 
 
 def cp_half_size() -> int:
