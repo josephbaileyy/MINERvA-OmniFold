@@ -40,10 +40,34 @@ esac
 ARMS=(ours theirs)
 INDEX=$((SLURM_ARRAY_TASK_ID - 1))
 ARM="${ARMS[$((INDEX % 2))]}"
-SEED="${SEEDS[$((INDEX / 2))]}"
-LR="${LEARNING_RATE:-0.0001}"
 
-RUN="${OUTPUT}/${STAGE}/${ARM}-seed${SEED}"
+# TUNING SWEEPS THE GRID; the other stages do not.
+#
+# The frozen TUNING_GRID declares four learning-rate points and
+# `trials_per_arm: 4`, and the stage was launched as 4 seeds x 2 arms at ONE
+# rate -- so the grid was never evaluated, nothing selected a rate, and the
+# pilot and final would have run at the default. Neither arm got the bounded
+# tuning opportunity the design gives them both.
+#
+# Tuning is therefore 4 points x 4 seeds x 2 arms = 32 tasks, and the run
+# directory carries the rate: two tasks that differ only in learning rate are
+# different runs and must not overwrite each other.
+GRID=(0.00005 0.0001 0.0002 0.0004)
+if [[ "$STAGE" == "tuning" ]]; then
+  REST=$((INDEX / 2))
+  SEED="${SEEDS[$((REST % 4))]}"
+  LR="${GRID[$((REST / 4))]}"
+  RUN="${OUTPUT}/${STAGE}/${ARM}-seed${SEED}-lr${LR}"
+else
+  SEED="${SEEDS[$((INDEX / 2))]}"
+  # Pilot and final run at the rate TUNING SELECTED, per arm. No default: a
+  # stage that silently fell back to 1e-4 would report a tuned comparison
+  # that was never tuned.
+  SELECTION="${OUTPUT}/tuning/selected_learning_rate.json"
+  [[ -f "$SELECTION" ]] || { echo "no tuning selection at $SELECTION" >&2; exit 2; }
+  LR=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['selected'][sys.argv[2]]['learning_rate'])" "$SELECTION" "$ARM")
+  RUN="${OUTPUT}/${STAGE}/${ARM}-seed${SEED}"
+fi
 mkdir -p "$RUN"
 scontrol show job -o "$SLURM_JOB_ID" > "$RUN/allocation.txt"
 nvidia-smi --query-gpu=uuid,name,memory.total --format=csv > "$RUN/gpu.csv"

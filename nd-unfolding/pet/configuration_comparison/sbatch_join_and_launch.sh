@@ -99,7 +99,13 @@ LAUNCHER=nd-unfolding/pet/configuration_comparison/sbatch_campaign.sh
 TUNING=$(sbatch --parsable --array=1-8 --dependency=afterok:$PRE \
   --export=ALL,STAGE=tuning,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR",THEIRS_CACHE="$OUTPUT/cache/theirs-tuning.npz" \
   "$LAUNCHER")
-PILOT=$(sbatch --parsable --array=1-8 --dependency=afterok:$TUNING \
+# Select each arm's rate on the tuning split, before the pilot exists.
+SELECT=$(sbatch --parsable --dependency=afterok:$TUNING \
+  --export=ALL,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY" \
+  nd-unfolding/pet/configuration_comparison/sbatch_select_lr.sh)
+echo "select=$SELECT"
+
+PILOT=$(sbatch --parsable --array=1-8 --dependency=afterok:$SELECT \
   --export=ALL,STAGE=pilot,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR",THEIRS_CACHE="$OUTPUT/cache/theirs-pilot.npz" \
   "$LAUNCHER")
 FINAL=$(sbatch --parsable --array=1-16 --dependency=afterok:$PILOT \

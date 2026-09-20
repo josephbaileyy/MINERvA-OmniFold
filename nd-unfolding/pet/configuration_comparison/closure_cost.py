@@ -43,7 +43,9 @@ INFERENCE_IS_MEASURED_AT_THE_RUN_CONFIGURATION = {"ours": True, "theirs": False}
 # row count the cost depends on and not a detail.
 STEP1_PASS_FRACTION = 4141 / 10000
 
-TASKS_PER_STAGE = {"tuning": 8, "pilot": 8, "final": 16}
+# Tuning sweeps the frozen grid: 4 rates x 4 seeds x 2 arms. It was 8, which
+# evaluated one point and selected nothing.
+TASKS_PER_STAGE = {"tuning": 32, "pilot": 8, "final": 16}
 RETRY_ALLOWANCE = 1.25
 
 
