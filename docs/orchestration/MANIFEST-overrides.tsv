@@ -83,6 +83,7 @@ docs/orchestration/FINDING-20260901-p-leg-status-measured-against-the-candidate.
 docs/orchestration/FINDING-20260901-pscratch-read-stalls-block-a2b.md	LIVE	open	
 docs/orchestration/FINDING-20260906-r5-meter-undercounted-requeue-attempts.md	LIVE	open	
 docs/orchestration/FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md	LIVE	open	
+docs/orchestration/FINDING-20260919-build-time-cv-held-fixed-is-not-the-spec-condition.md	LIVE	open	
 docs/orchestration/FINDINGS.md	LIVE	open	
 docs/orchestration/FOLLOWUP-20260906-r5-sacct-window-and-post-stop-accounting.md	LIVE	open	
 docs/orchestration/FREEZE-20260830-canonical-requiesce-k0r2-resubmission.md	LIVE	open	

@@ -95,6 +95,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   each gate's measured output, not a boolean); **B1–B6 are re-run against the new digest**; C is
   documentary at the criterion level. Names what is deliberately NOT on it: the §6.4 exception
   covers one digest and is unavailable to any new candidate.
+- [`FINDING-20260919-build-time-cv-held-fixed-is-not-the-spec-condition.md`](FINDING-20260919-build-time-cv-held-fixed-is-not-the-spec-condition.md)
+  - **My own R1 change, caught by the first real member.** `cv_held_fixed` is bound to
+  *"the null's `x_cv` is the declared central"*, which is **false by construction** — measured
+  **0.52% relative** on all 10,694 bins, the background-treatment difference §12.4 already
+  documented. So every real build reports branch 1 for a reason that is not a footing failure.
+  **The grade is unaffected and that is verified, not argued**: the product's `hXSecND_flat` is
+  byte-identical to the archive central, so the grader's cross-member field is True. **Not fixed** —
+  production output exists and criteria are frozen; the recommended repair is recorded.
 - [`RUN-20260919-cause3-two-member-campaign-launch.md`](RUN-20260919-cause3-two-member-campaign-launch.md)
   - **What was submitted**: 8 jobs, `337.00` CPU / `158.25` GPU reserved, admission `rc 0`
   re-measured before each submission. **Three clean deploys** — arms at `44e09fd8`, builder at the
