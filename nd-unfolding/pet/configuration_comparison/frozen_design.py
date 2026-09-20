@@ -166,6 +166,32 @@ THRESHOLDS = {
     ),
 }
 
+# The APPLICABLE REFERENCE, computed 2026-09-20 from the frozen endpoint and
+# the frozen iteration count, BEFORE any comparative result existed. Pinning it
+# now is the point: a reference chosen after seeing the arms is not a reference.
+#
+# `reference_calibration.ceiling` over the injected displacement per cell --
+# the weighting the L1 statistic itself uses, so the reference and the score
+# describe the same population. The campaign runs niter=3; the k-dependence is
+# recorded because a reference quoted without its iteration count is ambiguous.
+REFERENCE = {
+    "aggregate": 0.6949731568655361,
+    "iterations": 3,
+    "by_iterations": {1: 0.5104038956376603, 2: 0.6482928243903355,
+                      3: 0.6949731568655361, 4: 0.7146286369974335},
+    "regional": {"low_acceptance": 0.013961, "poor": 0.366538,
+                 "moderate": 0.776528, "good": 0.975479},
+    "weighting": "injected displacement per cell",
+    "source": ("reference_calibration.ceiling on the acceptance and "
+               "displacement maps built from G2_FPS_MEFHC_P12.npz"),
+    "adequacy_floor": 0.80 * 0.6949731568655361,
+    "computed_over": (
+        "the whole truth-passing population, not one half. The halves are a "
+        "seeded random split of it, so their acceptance and displacement "
+        "structure is the same; a reference built from half B would move with "
+        "the split"),
+}
+
 # --------------------------------------------------------------------------- #
 # Regions. Defined on the underlying reporting cells, never on the marginal.
 # --------------------------------------------------------------------------- #

@@ -17,7 +17,7 @@ When `final` (job 58606605) completes:
 python3 nd-unfolding/pet/configuration_comparison/report_campaign.py \
   --campaign /pscratch/sd/j/josephrb/campaign-20260920 \
   --closure-npz /global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz \
-  --reference <the applicable aggregate reference ceiling> \
+  --reference 0.6949731568655361 \
   --output /pscratch/sd/j/josephrb/campaign-20260920/campaign_report.json
 
 python3 nd-unfolding/pet/configuration_comparison/make_final_deck.py \
@@ -27,9 +27,19 @@ python3 nd-unfolding/pet/configuration_comparison/make_final_deck.py \
 ```
 
 Both have been run end to end on real weights, real receipts and the real
-closure file; the second produced a rendered 395 kB PDF. `--reference` is the
-one input still to be supplied: `reference_calibration.ceiling` over the
-applicable weighting.
+closure file; the second produced a rendered 395 kB PDF. **There is no open
+input.** `--reference` is `frozen_design.REFERENCE["aggregate"]`, computed
+2026-09-20 from the frozen endpoint at the frozen `niter=3` and pinned BEFORE
+any comparative result existed:
+
+| | |
+|---|---:|
+| aggregate reference, k=3 | 0.694973 |
+| adequacy floor, 0.80 x | **0.555979** |
+| regional floors, 0.60 x each region's own | low_acceptance 0.0084, poor 0.2199, moderate 0.4659, good 0.5853 |
+
+Quoted with its iteration count on purpose: the same ceiling is 0.5104 at k=1
+and 0.7146 at k=4, so a reference without its `k` is ambiguous by a third.
 
 ## What is queued, at commit `a5b7d440`
 

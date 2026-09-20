@@ -77,3 +77,40 @@ class Policy(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=1)
+
+
+class TheApplicableReference(unittest.TestCase):
+    """Pinned before any comparative result. One chosen after is not a reference."""
+
+    def test_the_reference_is_quoted_with_its_iteration_count(self):
+        import frozen_design as fd
+        self.assertEqual(fd.REFERENCE["iterations"], 3)
+        self.assertIn(3, fd.REFERENCE["by_iterations"])
+        self.assertEqual(fd.REFERENCE["aggregate"],
+                         fd.REFERENCE["by_iterations"][3])
+
+    def test_it_rises_with_iterations_and_is_below_one(self):
+        import frozen_design as fd
+        values = [fd.REFERENCE["by_iterations"][k] for k in (1, 2, 3, 4)]
+        self.assertEqual(values, sorted(values))
+        self.assertLess(values[-1], 1.0)
+
+    def test_the_adequacy_floor_is_the_fraction_times_the_reference(self):
+        import frozen_design as fd
+        self.assertAlmostEqual(
+            fd.REFERENCE["adequacy_floor"],
+            fd.THRESHOLDS["adequacy_fraction_of_reference"] * fd.REFERENCE["aggregate"])
+
+    def test_the_low_acceptance_reference_is_small_but_not_a_write_off(self):
+        """0.014 at k=3. The band is retained and scored against its OWN
+        reference, which is what keeps a small number from reading as a
+        failure."""
+        import frozen_design as fd
+        self.assertLess(fd.REFERENCE["regional"]["low_acceptance"], 0.05)
+        self.assertGreater(fd.REFERENCE["regional"]["low_acceptance"], 0.0)
+
+    def test_every_region_has_a_reference(self):
+        import characterize_regions as cr
+        import frozen_design as fd
+        for name, _lo, _hi in cr.SAFEGUARD_REGIONS:
+            self.assertIn(name, fd.REFERENCE["regional"], msg=name)
