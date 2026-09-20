@@ -41,10 +41,36 @@ class Selection(unittest.TestCase):
         got = sl.select(rows())           # every point identical
         self.assertEqual(got["selected"]["ours"]["learning_rate"], min(POINTS))
 
-    def test_a_point_missing_a_seed_is_refused(self):
-        """A mean over different seed counts is not a comparison of points."""
-        with self.assertRaisesRegex(ValueError, "missing seeds"):
-            sl.select(rows(drop=("ours", 2e-4, SEEDS[1])))
+    def test_a_point_missing_a_seed_is_excluded_not_fatal(self):
+        """A diverged rate is the grid doing its job, not a campaign failure.
+
+        Within a point the rule is unchanged -- all its seeds or none -- but a
+        point that did not complete is recorded unusable and selection
+        proceeds among the rest.
+        """
+        got = sl.select(rows(drop=("ours", 2e-4, SEEDS[1])))
+        self.assertIn(2e-4, got["selected"]["ours"]["unusable_points"])
+        self.assertNotIn(2e-4, got["selected"]["ours"]["eligible_points"])
+        self.assertNotEqual(got["selected"]["ours"]["learning_rate"], 2e-4)
+
+    def test_an_excluded_point_is_reported_with_the_seeds_it_lost(self):
+        got = sl.select(rows(drop=("ours", 2e-4, SEEDS[1])))
+        entry = got["selected"]["ours"]["unusable_points"][2e-4]
+        self.assertEqual(entry["missing_seeds"], [SEEDS[1]])
+
+    def test_the_arms_can_end_with_different_eligible_sets(self):
+        """His arm may diverge at a rate ours tolerates."""
+        bad = [r for r in rows()
+               if not (r["arm"] == "theirs" and r["learning_rate"] == 4e-4)]
+        got = sl.select(bad)
+        self.assertIn(4e-4, got["selected"]["ours"]["eligible_points"])
+        self.assertNotIn(4e-4, got["selected"]["theirs"]["eligible_points"])
+
+    def test_it_still_refuses_when_no_point_completed(self):
+        """Excluding every point is not a selection."""
+        only_one_seed = [r for r in rows() if r["seed"] == SEEDS[0]]
+        with self.assertRaisesRegex(ValueError, "nothing to select between"):
+            sl.select(only_one_seed)
 
     def test_an_off_grid_rate_is_refused(self):
         bad = rows()
@@ -76,6 +102,13 @@ class TheLauncherSweepsTheGrid(unittest.TestCase):
             for lr in POINTS:
                 self.assertEqual(
                     sum(1 for x in seen if x[0] == arm and x[2] == lr), len(SEEDS))
+
+    def test_selection_runs_afterany_so_a_diverged_rate_cannot_kill_it(self):
+        from pathlib import Path
+        text = (Path(__file__).resolve().parent
+                / "sbatch_join_and_launch.sh").read_text()
+        self.assertIn("--dependency=afterany:$TUNING", text)
+        self.assertNotIn("--dependency=afterok:$TUNING", text)
 
     def test_the_launcher_sweeps_and_the_other_stages_do_not(self):
         from pathlib import Path

@@ -53,19 +53,37 @@ def select(scored: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     selected: dict[str, Any] = {}
     for arm in ("ours", "theirs"):
         per_point = table.get(arm, {})
-        missing = {p: sorted(set(seeds) - set(per_point.get(p, {}))) for p in points}
-        incomplete = {p: m for p, m in missing.items() if m}
-        if incomplete:
+        # A POINT THAT DID NOT COMPLETE IS UNUSABLE, NOT A CRASH.
+        #
+        # A learning rate that diverges is a legitimate tuning outcome -- the
+        # grid exists to find which rates work -- and the engine fails closed
+        # on non-finite logits, so a diverged rate leaves its tasks failed and
+        # its seeds absent. Refusing to select at all would let the grid doing
+        # its job kill the campaign.
+        #
+        # Within a point the rule is unchanged: ALL its seeds or none, because
+        # a mean over a different number of seeds for different points is not
+        # a comparison between points.
+        eligible, unusable = [], {}
+        for point in points:
+            absent = sorted(set(seeds) - set(per_point.get(point, {})))
+            if absent:
+                unusable[point] = {"missing_seeds": absent,
+                                   "reading": "did not complete; excluded"}
+            else:
+                eligible.append(point)
+        if not eligible:
             raise ValueError(
-                f"{arm}: learning rates {sorted(incomplete)} are missing seeds "
-                f"{incomplete}. A mean over a different number of seeds for "
-                "different points is not a comparison between points")
-        means = {p: float(np.mean([per_point[p][s] for s in seeds])) for p in points}
-        best = max(points, key=lambda p: (means[p], -p))
+                f"{arm}: no learning rate completed all of {seeds}. Every point "
+                f"is unusable: {unusable}. There is nothing to select between")
+        means = {p: float(np.mean([per_point[p][s] for s in seeds])) for p in eligible}
+        best = max(eligible, key=lambda p: (means[p], -p))
         selected[arm] = {
             "learning_rate": best,
             "mean_recovery": means[best],
             "mean_recovery_by_point": means,
+            "eligible_points": eligible,
+            "unusable_points": unusable,
             "seeds": seeds,
             "ties_broken_towards": "the smaller rate",
         }

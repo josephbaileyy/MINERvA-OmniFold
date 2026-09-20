@@ -100,7 +100,10 @@ TUNING=$(sbatch --parsable --array=1-8 --dependency=afterok:$PRE \
   --export=ALL,STAGE=tuning,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY",THEIRS_INDEX="$JOINDIR",THEIRS_CACHE="$OUTPUT/cache/theirs-tuning.npz" \
   "$LAUNCHER")
 # Select each arm's rate on the tuning split, before the pilot exists.
-SELECT=$(sbatch --parsable --dependency=afterok:$TUNING \
+# afterANY, not afterok. A diverged learning rate leaves a FAILED task, and
+# `afterok` would let the grid doing its job kill the campaign. The selection
+# step decides what a missing point means; Slurm should not.
+SELECT=$(sbatch --parsable --dependency=afterany:$TUNING \
   --export=ALL,CHECKOUT="$CHECKOUT",OUTPUT="$OUTPUT",COMMIT="$COMMIT",INPUTS_NPZ="$INVENTORY" \
   nd-unfolding/pet/configuration_comparison/sbatch_select_lr.sh)
 echo "select=$SELECT"
