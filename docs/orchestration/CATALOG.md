@@ -80,6 +80,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   its own reason (*"MAT ± cancels CV"*). Measured share: **26.0% of `√Tr C_Z`, 6.75% of the
   trace**, dominated by the two muon-energy bands. **So a cause-3 MET covers 93.2% of the trace.**
   Unpinning it is a material change to the estimator and is routed to Joseph, not attempted.
+- [`DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md`](DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md)
+  - **JOSEPH ADOPTS `3d7465f6…` as publication-under-exception**, re-hashed on the cluster first.
+  Carries the `UNRESOLVED`/`4c` status and **C3 stays "predeclared, not computed"** in the same
+  place as the decision, and **four measurements that travel with the digest**: `s_proj = 6.145%`
+  vs a 5% bound; that effect is **flat in N** (`p = 0.000`) so it is the estimator, not resolution;
+  five seed-pinned bands make it a **lower bound**; and the seed moves the **central values** by
+  ≤6.0% of their uncertainty (≤49.8% for a single 5D bin). The exception covers this digest **and
+  nothing else** — `361090f9…` and `7e4636a3…` are named as excluded.
 - [`DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md`](DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md)
   - **The exception route, taken to the point where only Joseph's act is missing.** It **adopts
   nothing as it stands and is built so that it cannot**: its sentinel line is deliberately negated,

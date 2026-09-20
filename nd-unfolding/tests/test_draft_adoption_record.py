@@ -22,6 +22,8 @@ REPO = ND.parent
 LAUNCHER = ND / "run_m1_projection.sh"
 DRAFT = REPO / "docs" / "orchestration" / \
     "DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md"
+EXECUTED = REPO / "docs" / "orchestration" / \
+    "DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md"
 DIGEST = "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5"
 
 
@@ -121,6 +123,56 @@ class TheDraftIsRegisteredAndSaysWhatItIs(unittest.TestCase):
     def test_it_does_not_claim_the_exception_generalises(self):
         text = DRAFT.read_text(encoding="utf-8")
         self.assertIn("and nothing else", text)
+
+
+class TheEXECUTEDRecordIsAcceptedAndCarriesWhatItMust(unittest.TestCase):
+    """Joseph adopted on 2026-09-20. The draft's refusal was the safety property; THIS file's
+    ACCEPTANCE is the other half, and it is asserted with the launcher's own patterns rather than
+    by reading the file and believing it."""
+
+    def setUp(self):
+        self.assertTrue(EXECUTED.is_file(), f"{EXECUTED} is missing")
+        self.text = EXECUTED.read_text(encoding="utf-8")
+
+    def test_the_launcher_would_ACCEPT_it(self):
+        self.assertEqual(verdict(self.text), "ACCEPTED")
+
+    def test_the_draft_STILL_refuses_so_both_directions_are_live(self):
+        self.assertEqual(verdict(DRAFT.read_text(encoding="utf-8")),
+                         "REFUSED: negated, provisional or held")
+
+    def test_it_carries_exactly_one_sentinel_line(self):
+        sentinel_re, _ = launcher_patterns()
+        hits = [ln for ln in self.text.splitlines() if sentinel_re.search(ln)]
+        self.assertEqual(len(hits), 1, f"expected one sentinel, got {hits}")
+
+    def test_it_names_ONLY_the_adopted_digest_in_that_line(self):
+        sentinel_re, _ = launcher_patterns()
+        line = next(ln for ln in self.text.splitlines() if sentinel_re.search(ln))
+        self.assertEqual(re.findall(r"[0-9a-f]{64}", line), [DIGEST])
+
+    def test_the_defect_travels_with_the_decision(self):
+        """DECISION-PACKET 10.2: the UNRESOLVED status in the same place as the adoption."""
+        for token in ("UNRESOLVED", "4c", "NON-PASSING", "predeclared, not computed"):
+            self.assertIn(token, self.text, f"{token!r} missing from the adoption record")
+
+    def test_all_four_measurements_are_present_with_their_numbers(self):
+        """Joseph: measurements, not caveats -- so each must carry its figure."""
+        for token in ("6.145%", "6.04% ± 0.39%", "p = 0.000", "p = 1.467",
+                      "26.0%", "6.75%", "0.761%", "6.02%", "49.8%"):
+            self.assertIn(token, self.text, f"measurement {token!r} missing")
+
+    def test_it_states_the_seed_pair_width_is_unmeasured(self):
+        self.assertIn("UNMEASURED", self.text)
+        self.assertIn("one seed pair", self.text.lower())
+
+    def test_it_does_not_extend_the_exception_to_the_campaign_digests(self):
+        for other in ("361090f9", "7e4636a3"):
+            self.assertIn(other, self.text, "the excluded digests must be named to be excluded")
+        self.assertIn("and nothing else", self.text)
+
+    def test_it_withholds_the_analysis_note_push(self):
+        self.assertIn("analysis-note push", self.text)
 
 
 if __name__ == "__main__":

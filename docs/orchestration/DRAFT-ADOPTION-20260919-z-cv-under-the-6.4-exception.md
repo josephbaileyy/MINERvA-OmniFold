@@ -1,5 +1,13 @@
 # DRAFT ADOPTION RECORD — `z-cv.npz` under the `SPEC` §6.4 exception
 
+> ## ✅ EXECUTED 2026-09-20 — this draft did its job and is now superseded
+>
+> Joseph adopted on 2026-09-20. The executed record is
+> [`DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md`](DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md),
+> written on these terms with four measurements attached. **This file is left exactly as it was and
+> still refuses**, because its refusal is the evidence that the safety property held until his act:
+> `tests/test_draft_adoption_record.py` asserts both directions and still passes.
+>
 > ## ⚠ THIS RECORD ADOPTS NOTHING AS IT STANDS, AND IT IS BUILT SO THAT IT CANNOT
 >
 > The sentinel line in §1 is **deliberately negated**, so `run_m1_projection.sh`'s guard
