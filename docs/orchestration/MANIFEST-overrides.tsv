@@ -156,6 +156,7 @@ docs/orchestration/RECORD-20260830-k0r2-round2-submission.md	LIVE	open
 docs/orchestration/RECORD-20260830-oi179-remediation-confirmed.md	LIVE	open	
 docs/orchestration/RECORD-20260901-k0r2-round2-outcome.md	LIVE	open	
 docs/orchestration/RECORD-20260901-oi179-defect3-enforced.md	LIVE	terminal	
+docs/orchestration/RECORD-20260920-PROJ-m1-publication-under-exception.md	LIVE	open	
 docs/orchestration/REPRODUCTION-20260918-scalar5d-trunk-path.md	LIVE	open	
 docs/orchestration/REVIEW-20260902-pet-typed-semantic-evidence.md	LIVE	open	""
 docs/orchestration/REVIEW-20260919-R7-non-finite-member-footing.md	LIVE	open	
@@ -201,6 +202,8 @@ docs/orchestration/state/CENTRAL-VALUE-VS-SIGMA-20260920.json	MACHINE	open
 docs/orchestration/state/FLOOR-20260920-k0.json	MACHINE	open	
 docs/orchestration/state/FLOOR-20260920-k1200.json	MACHINE	open	
 docs/orchestration/state/GRADE-20260920-cause3-two-member.json	MACHINE	open	
+docs/orchestration/state/PROJ-20260920-binding-check.json	MACHINE	open	
+docs/orchestration/state/PROJ-20260920-m1-publication-receipt.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260822-quarantine-member-k000000-stale-replicas.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260826-b1-adoption-gate-preconditions-remeasured.json	MACHINE	open	
 docs/orchestration/state/RECEIPT-20260826-k0-freeze-bundle-detectability.json	MACHINE	open	

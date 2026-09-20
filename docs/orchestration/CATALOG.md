@@ -80,6 +80,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   its own reason (*"MAT ± cancels CV"*). Measured share: **26.0% of `√Tr C_Z`, 6.75% of the
   trace**, dominated by the two muon-energy bands. **So a cause-3 MET covers 93.2% of the trace.**
   Unpinning it is a material change to the estimator and is routed to Joseph, not attempted.
+- [`RECORD-20260920-PROJ-m1-publication-under-exception.md`](RECORD-20260920-PROJ-m1-publication-under-exception.md)
+  - **The M1 publication projection is BUILT and its pairing verified.** `835828bf…`, 42 cells,
+  `run_class publication-under-exception`, variant declared **and measured** `cv`. Every
+  predeclared check passes — **`src_cells_dropped = 0`**, exact symmetry, PSD, `hRowIndex` readback
+  — and `n_empty` is correctly **not** cited. The **binding** pairing leg passes: the projected
+  source and the figure's source are **byte-identical** (`0f04abce…`), with C-order agreement at
+  `5.22e-54` against an F-order control three orders larger. Carries the adoption's four
+  measurements.
 - [`DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md`](DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md)
   - **JOSEPH ADOPTS `3d7465f6…` as publication-under-exception**, re-hashed on the cluster first.
   Carries the `UNRESOLVED`/`4c` status and **C3 stays "predeclared, not computed"** in the same

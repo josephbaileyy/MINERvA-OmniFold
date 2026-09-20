@@ -1,0 +1,32 @@
+{
+  "a_digest": {
+    "byte_identical": true,
+    "figure_source_cv_sha256": "0f04abceccb5330b1a5ee84a1f943c2b7d1eaa3d32ae854aaecb91bc5c0d9baa",
+    "n": 65856,
+    "n_reported": 10694,
+    "projected_source_cv_sha256": "0f04abceccb5330b1a5ee84a1f943c2b7d1eaa3d32ae854aaecb91bc5c0d9baa"
+  },
+  "b_agreement": {
+    "n_marginal": 42,
+    "orders": {
+      "C": {
+        "max_abs_diff": 5.22024357439882e-54,
+        "relative": 1.6993238612715757e-16,
+        "sum_figure": 1.676365834027909e-37,
+        "sum_marginal": 1.676365834027909e-37
+      },
+      "F": {
+        "max_abs_diff": 3.071940524469602e-38,
+        "relative": 0.9999958352976835,
+        "sum_figure": 1.676365834027909e-37,
+        "sum_marginal": 1.676365834027909e-37
+      }
+    },
+    "shape": [
+      7,
+      6
+    ]
+  },
+  "grades_nothing": true,
+  "subject": "binding pairing check, publication product"
+}
