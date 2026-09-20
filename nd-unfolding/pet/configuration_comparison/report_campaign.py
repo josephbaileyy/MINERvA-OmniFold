@@ -26,7 +26,8 @@ import frozen_design as fd
 import score_campaign as sc
 
 
-def _digest(path: Path, chunk: int = 1 << 24) -> str:
+def _digest(path: Path | str, chunk: int = 1 << 24) -> str:
+    path = Path(path)
     h = hashlib.sha256()
     with path.open("rb") as handle:
         while block := handle.read(chunk):
@@ -56,7 +57,7 @@ def discover(campaign: Path, stage: str) -> list[sc.Run]:
     return runs
 
 
-def build_endpoint(closure_npz: Path, weights_npz: Path
+def build_endpoint(closure_npz: Path | str, weights_npz: Path | str
                    ) -> tuple[sc.Endpoint, dict[str, Any]]:
     """The frozen endpoint over the TWO HALVES a run actually used.
 
@@ -68,6 +69,7 @@ def build_endpoint(closure_npz: Path, weights_npz: Path
     """
     import characterize_regions as cr
 
+    closure_npz, weights_npz = Path(closure_npz), Path(weights_npz)
     with np.load(weights_npz) as run:
         rows_a = np.asarray(run["dump_rows_a"]).astype(np.int64)
         rows_b = np.asarray(run["dump_rows_b"]).astype(np.int64)
