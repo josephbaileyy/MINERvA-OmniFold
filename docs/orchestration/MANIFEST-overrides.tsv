@@ -192,8 +192,11 @@ docs/orchestration/control_plane_lint.py	LIVE	open	""
 docs/orchestration/dashboard.html	MACHINE	generated	
 docs/orchestration/probes/probe-20260918-aggregation-channel-directions.py	MACHINE	open	
 docs/orchestration/probes/probe-20260918-l3-statistic-diagonal-breach-and-repair.py	MACHINE	open	
+docs/orchestration/probes/probe-20260920-central-value-seed-movement.py	MACHINE	open	
 docs/orchestration/probes/probe-20260920-seed-effect-at-matched-N.py	MACHINE	open	
 docs/orchestration/probes/probe-20260920-sproj-resolution-floor.py	MACHINE	open	
+docs/orchestration/state/CENTRAL-VALUE-20260920.json	MACHINE	open	
+docs/orchestration/state/CENTRAL-VALUE-VS-SIGMA-20260920.json	MACHINE	open	
 docs/orchestration/state/FLOOR-20260920-k0.json	MACHINE	open	
 docs/orchestration/state/FLOOR-20260920-k1200.json	MACHINE	open	
 docs/orchestration/state/GRADE-20260920-cause3-two-member.json	MACHINE	open	

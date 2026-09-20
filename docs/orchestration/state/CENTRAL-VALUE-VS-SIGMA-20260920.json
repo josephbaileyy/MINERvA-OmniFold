@@ -1,0 +1,41 @@
+{
+  "grades_nothing": true,
+  "n_functionals": 43,
+  "per_bin": {
+    "movement_median": 0.006471256160397362,
+    "movement_over_uncertainty": {
+      "max": 0.49769962448482274,
+      "median": 0.037749830600528646,
+      "p90": 0.1357222866144087
+    },
+    "relative_uncertainty_median": 0.1497510545315276
+  },
+  "per_functional": {
+    "all_ones": {
+      "movement": 0.0009568602752922167,
+      "ratio": 0.011302015635440933,
+      "relative_uncertainty": 0.08466279875703658
+    },
+    "functional_2": {
+      "movement": 0.007613920689836079,
+      "ratio": 0.05906538100013926,
+      "relative_uncertainty": 0.12890665497981174
+    },
+    "movement": {
+      "argmax": 2,
+      "max": 0.007613920689836079,
+      "median": 0.0010405282080446047
+    },
+    "movement_over_uncertainty": {
+      "argmax": 4,
+      "max": 0.06021989576891877,
+      "median": 0.01059099462443716
+    },
+    "relative_uncertainty": {
+      "max": 0.2712067869998827,
+      "median": 0.10124307522583718,
+      "min": 0.06685992569667375
+    }
+  },
+  "subject": "central-value seed movement AS A FRACTION OF the quoted uncertainty"
+}

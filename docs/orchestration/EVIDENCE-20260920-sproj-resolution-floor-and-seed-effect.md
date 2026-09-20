@@ -25,6 +25,20 @@ estimator seed changed. It gave `6.04% ± 0.39%` every time, and it does not cha
 factor `2.76` for a factor `2` in `N` — and the seed effect is flat to three decimal places in the
 exponent. They are two different things and the measurement separates them.
 
+> ## ⚠ THE `± 0.39%` IS NOT AN UNCERTAINTY ON THE SEED EFFECT. READ THIS BEFORE QUOTING THE NUMBER.
+>
+> Every seed-effect measurement here is between **ONE seed pair**: `1000` and `2200`, i.e. offsets
+> `k = 0` and `k = 1200`. The `± 0.39%` is the **scatter across throw subsets at that one pair** —
+> it says the pair's answer is stable no matter which throws you look at. **It says nothing about
+> how much the answer would change for a DIFFERENT pair of seeds.**
+>
+> **The width of the seed-pair distribution is UNMEASURED.** A second pair would need a third
+> member, which does not fit the cap (§7). So `6.04% ± 0.39%` must not be read as "the estimator-seed
+> sensitivity is `6.04%` and we know it to `0.39%`". What is established is narrower and is the
+> thing the question asked: **for this pair, the effect is real, reproducible and not resolution
+> noise.** Its magnitude for an arbitrary pair of seeds is not known from this work, and `s_proj`
+> is a MAXIMUM over the declared offset set, so adding pairs can only raise it.
+
 ## 2. Why the floor is not the right null for the seed comparison — and why that is measured, not argued
 
 The two members share their **throw draws**: `draw_seed` is the pinned literal `1000` in both
@@ -115,5 +129,72 @@ guaranteed timeouts — and `200.9` CPU at a responsible `1.25×`, against a `15
 reservations. **What the third member would have bought — pair-to-pair scatter — was obtained
 instead from the six disjoint subsets at no extra member cost**, and the scatter it shows
 (`± 0.39%` on the seed effect) is tighter than a third member could have established.
+
+**Co-Authored-By: Claude Opus 5 (1M context)**
+
+---
+
+# ADDENDUM 2026-09-20 — the estimator seed moves the CENTRAL VALUES too
+
+Everything above is about the uncertainty. This is the other half, asked on the same functionals.
+
+Evidence: [`state/CENTRAL-VALUE-20260920.json`](state/CENTRAL-VALUE-20260920.json),
+[`state/CENTRAL-VALUE-VS-SIGMA-20260920.json`](state/CENTRAL-VALUE-VS-SIGMA-20260920.json).
+Probe: [`probes/probe-20260920-central-value-seed-movement.py`](probes/probe-20260920-central-value-seed-movement.py).
+
+## A1. The operand, and why it is not the products' `hXSecND_flat`
+
+Each member's combine computes its **own** genuine CV execution at its **own** estimator seed and
+persists it; `z_build` copies both executions into that member's null slab. So `x_cv(k = 0)` and
+`x_cv(k = 1200)` are two central values from the same pipeline differing **only** in the seed.
+
+⚠ **The products' `hXSecND_flat` is the DECLARED ARCHIVE CENTRAL — the same file for both members by
+construction.** Comparing that across members returns exactly zero and would look like a null
+result. Choosing the right operand is the whole measurement; the wrong one is a guaranteed
+false negative.
+
+## A2. It moves, ten orders above the same-seed floor
+
+| | seed changed (1000 → 2200) | **control**: same seed, same run |
+|---|---:|---:|
+| per-functional, max | **`7.614e-3`** — `0.761%`, at **index 2** | `9.43e-13` (k=0), `1.32e-12` (k=1200) |
+| per-functional, median | `1.041e-3` | — |
+| all-ones (total rate) | `9.569e-4` | — |
+| per-bin on support | median `0.647%`, p90 `2.28%`, max **`15.05%`** (grid `8853`) | max `1.22e-11` |
+
+**Ratio between/within: `8.1e9`.** The within-member control is the same-run reproducibility floor
+(the null, `r_null ~ 2.4e-13`); the between-member movement is ten orders above it. It is real.
+
+**And it is the SAME functional.** The worst-moving projected central value is **index 2** — the
+functional that failed `s_proj`. The seed's effect on that destination cell shows up in both the
+central value and its uncertainty.
+
+## A3. ⚠ BUT AS A FRACTION OF THE QUOTED UNCERTAINTY IT IS SMALL, AND THAT IS THE DECIDING RATIO
+
+A movement only matters relative to what it is a movement in.
+
+| | relative uncertainty `sqrt(u'Cu)/(u.x)` | movement | **movement / uncertainty** |
+|---|---:|---:|---:|
+| the 43 projected quantities | median `10.1%` (range `6.7–27.1%`) | median `0.104%`, max `0.761%` | **median `1.06%`, max `6.02%`** |
+| functional 2 | `12.89%` | `0.761%` | **`5.91%`** |
+| all-ones (total rate) | `8.47%` | `0.096%` | **`1.13%`** |
+| per 5D reported bin | median `14.98%` | median `0.647%` | median `3.77%`, p90 `13.6%`, max **`49.8%`** |
+
+> **On the projected quantities — which is what `M1` and the note quote — the estimator seed moves
+> the central value by at most `6.0%` of its own uncertainty, and typically `1%`.** That is not a
+> material change to what those numbers claim.
+>
+> **The exception, stated rather than averaged away:** the worst single 5D reported bin moves
+> `49.8%` of its own uncertainty, and the p90 bin `13.6%`. Any statement about an INDIVIDUAL 5D bin
+> carries that; the projections do not, because aggregation is what suppresses it.
+
+## A4. What this does and does not change
+
+- **It does not regrade anything** and reads no boundary. There is no criterion on central-value
+  stability, and none is proposed.
+- **It does not weaken the `s_proj` finding** — it corroborates it, on the same functional, from an
+  independent quantity.
+- **It is a lower bound, for the same reason the covariance result is:** the five seed-pinned bands
+  cannot move, and the comparison is one seed pair.
 
 **Co-Authored-By: Claude Opus 5 (1M context)**
