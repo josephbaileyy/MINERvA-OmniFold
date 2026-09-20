@@ -29,7 +29,13 @@ cd "$checkout"
 [[ "$(git rev-parse HEAD)" == "$commit" ]]
 [[ -f "$sidecar" ]]
 mkdir -p "$output/cache"
-module load python
+# TENSORFLOW, not plain python. This job calls `build_fullevent_loaders`,
+# which imports the vendored engine, which imports TF at module load. With
+# `module load python` it died in 101 seconds on ModuleNotFoundError and took
+# the whole chain with it: every downstream stage went
+# DependencyNeverSatisfied. The same defect was fixed in the smoke launcher
+# hours earlier and not carried here, because this file was written after it.
+module load tensorflow/2.15.0
 for stage in tuning pilot final; do
   python3 nd-unfolding/pet/configuration_comparison/prematerialize_theirs.py \
     --inputs-npz "$inputs" --theirs-index "$index" \
