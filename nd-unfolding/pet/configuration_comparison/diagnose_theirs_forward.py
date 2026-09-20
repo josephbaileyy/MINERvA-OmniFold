@@ -89,15 +89,19 @@ def main() -> int:
     print(json.dumps(report["forward_at_init"], indent=2), flush=True)
 
     # A real training loop at the campaign's learning rate, loss per step.
-    labels = np.zeros((packed.shape[0], 1), np.float32)
-    labels[::2] = 1.0
-    weights = np.ones((packed.shape[0],), np.float32)
-    model.compile(optimizer=tf.keras.optimizers.Adam(args.learning_rate),
-                  loss=tf.keras.losses.BinaryCrossentropy(from_logits=True))
+    # `y` PACKS THE LABEL AND THE WEIGHT. `net.weighted_binary_crossentropy`
+    # reads column 0 as the label and column 1 as the event weight, and the
+    # arm's `train_step` unpacks `x, y` only -- passing `sample_weight`
+    # separately gives Keras a 3-tuple and raises "too many values to unpack",
+    # which is how the first run of this probe failed.
+    y = np.zeros((packed.shape[0], 2), np.float32)
+    y[::2, 0] = 1.0
+    y[:, 1] = 1.0
+    model.compile(optimizer=tf.keras.optimizers.Adam(args.learning_rate))
     losses = []
     first_bad = None
     for step in range(args.steps):
-        history = model.fit(x, labels, sample_weight=weights, epochs=1,
+        history = model.fit(x, y, epochs=1,
                             batch_size=min(256, packed.shape[0]), verbose=0)
         loss = float(history.history["loss"][0])
         losses.append(loss)
