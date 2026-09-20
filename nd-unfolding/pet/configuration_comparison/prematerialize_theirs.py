@@ -29,7 +29,7 @@ import frozen_design as fd
 
 
 def cache_key(*, inputs_npz: Path, subsample_seed: int, max_events: int,
-              split_seed: int, half_size: int) -> str:
+              split_seed: int, half_size: int, stage: str) -> str:
     """Everything the gathered rows depend on. Not the estimator seed, which
     is the only thing that varies across the campaign."""
     payload = json.dumps({
@@ -38,6 +38,8 @@ def cache_key(*, inputs_npz: Path, subsample_seed: int, max_events: int,
         "max_events": int(max_events),
         "split_seed": int(split_seed),
         "half_size": int(half_size),
+        # The stage owns different events, so its gather is a different gather.
+        "stage": str(stage),
         "token_cap": int(fd.THEIRS_COMPLETE["token_cap"]),
     }, sort_keys=True)
     return hashlib.sha256(payload.encode()).hexdigest()
@@ -45,7 +47,7 @@ def cache_key(*, inputs_npz: Path, subsample_seed: int, max_events: int,
 
 def build(*, inputs_npz: Path, theirs_index: Path, out: Path,
           subsample_seed: int, max_events: int, split_seed: int,
-          half_size: int) -> dict[str, Any]:
+          half_size: int, stage: str, identity_sidecar: Path) -> dict[str, Any]:
     import sys
 
     sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -62,8 +64,18 @@ def build(*, inputs_npz: Path, theirs_index: Path, out: Path,
     pr = np.asarray(mc.pass_reco).astype(bool)
     pg = np.asarray(mc.pass_gen).astype(bool)
 
-    ia, ib = cp.deterministic_halves(np.asarray(mc.reco).shape[0],
-                                     half=half_size, seed=split_seed)
+    import stage_splits as ss
+
+    sidecar = np.load(str(identity_sidecar), mmap_mode="r")
+    identity = np.asarray(sidecar["sig_event_id"]).astype(np.int64)[imc]
+    stage_pos = ss.rows_for_stage(identity, stage)
+    if stage_pos.size < 2 * half_size:
+        raise SystemExit(
+            f"[prematerialize] stage {stage!r} owns {stage_pos.size} events, "
+            f"which cannot supply two disjoint halves of {half_size}")
+    ja, jb = cp.deterministic_halves(stage_pos.size, half=half_size,
+                                     seed=split_seed)
+    ia, ib = stage_pos[ja], stage_pos[jb]
     s1_a = pr[ia] & pg[ia]
 
     with np.load(inputs_npz, mmap_mode="r") as target:
@@ -81,7 +93,7 @@ def build(*, inputs_npz: Path, theirs_index: Path, out: Path,
 
     key = cache_key(inputs_npz=inputs_npz, subsample_seed=subsample_seed,
                     max_events=max_events, split_seed=split_seed,
-                    half_size=half_size)
+                    half_size=half_size, stage=stage)
     out.parent.mkdir(parents=True, exist_ok=True)
     np.savez(out,
              pdata_packed=pdata["packed"], pdata_globals=pdata["globals"],
@@ -121,13 +133,17 @@ def main() -> int:
     parser.add_argument("--split-seed", type=int,
                         default=int(fd.SPLITS["split_seed"]))
     parser.add_argument("--half-size", type=int, required=True)
+    parser.add_argument("--stage", choices=("tuning", "pilot", "final"),
+                        required=True)
+    parser.add_argument("--identity-sidecar", type=Path, required=True)
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
 
     info = build(inputs_npz=args.inputs_npz, theirs_index=args.theirs_index,
                  out=args.out, subsample_seed=args.subsample_seed,
                  max_events=args.max_events, split_seed=args.split_seed,
-                 half_size=args.half_size)
+                 half_size=args.half_size, stage=args.stage,
+                 identity_sidecar=args.identity_sidecar)
     print(json.dumps(info, indent=2))
     if args.report:
         args.report.write_text(json.dumps(info, indent=2))

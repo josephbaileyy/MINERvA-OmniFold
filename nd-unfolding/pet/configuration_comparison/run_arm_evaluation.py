@@ -144,10 +144,14 @@ def main() -> None:
     # the REAL-data nominal's measured leg. This is a closure: `mc-only`, no
     # measured loader, nothing to consume. Requiring it would have been a
     # fail-closed check on an artifact this path must not use.
+    parser.add_argument("--identity-sidecar", type=Path, default=None,
+                        help="the event-identity sidecar; the stage split "
+                             "is assigned from it")
     parser.add_argument("--theirs-cache", type=Path, default=None,
                         help="one-time gather from prematerialize_theirs")
-    parser.add_argument("--half-size", type=int, default=cp_half_size(),
-                        help="rows per disjoint half; both halves are this size")
+    parser.add_argument("--half-size", type=int, default=None,
+                        help="rows per disjoint half; defaults to the largest "
+                             "that fits twice inside this stage's share")
     args = parser.parse_args()
 
     if args.seed not in fd.SEEDS[args.stage]:
@@ -265,9 +269,40 @@ def evaluate(args: Any) -> dict[str, Any]:
         raise SystemExit("[arm] loader supplied no reco leg; dual-leg weights are required")
     w_reco = np.asarray(leg, dtype=np.float64)
 
-    half = int(args.half_size)
-    ia, ib = cp.deterministic_halves(reco.shape[0], half=half,
+    # THE STAGE SPLIT. Frozen since 2026-09-20 and, until now, unimplemented:
+    # every stage trained on the same events, so the learning rate would have
+    # been chosen on the data the effect is measured on and the pilot's
+    # variance -- which sizes the final -- would have been in-sample.
+    #
+    # The two disjoint halves are taken INSIDE this stage's events, so the
+    # closure's own split and the stage split compose rather than fight.
+    import stage_splits as ss
+
+    identity = _identity_of(np, args.identity_sidecar, imc)
+    stage_pos = ss.rows_for_stage(identity, args.stage)
+    split_census = ss.census(identity)
+    # The half size comes from the STAGE unless pinned. A stage owns its own
+    # share of the subsample -- 0.20/0.20/0.60 -- so one constant across all
+    # three either wastes the final's events or cannot be met by tuning. The
+    # pilot's halves are therefore smaller than the final's, which OVERSTATES
+    # the variance the pilot measures and so sizes the final conservatively
+    # rather than optimistically. That direction is the safe one, and it is
+    # recorded in the receipt rather than left to be noticed.
+    half = (int(args.half_size) if args.half_size is not None
+            else ss.usable_half_size(identity, args.stage))
+    if half <= 0:
+        raise SystemExit(
+            f"[arm] stage {args.stage!r} owns {stage_pos.size} events; there is "
+            "nothing to split into halves")
+    if stage_pos.size < 2 * half:
+        raise SystemExit(
+            f"[arm] stage {args.stage!r} owns {stage_pos.size} of the "
+            f"{identity.shape[0]} subsampled events, which cannot supply two "
+            f"disjoint halves of {half}. Raise --max-events or lower "
+            f"--half-size; do not borrow another stage's events")
+    ja, jb = cp.deterministic_halves(stage_pos.size, half=half,
                                      seed=int(fd.SPLITS["split_seed"]))
+    ia, ib = stage_pos[ja], stage_pos[jb]
 
     pg_a = pg[ia]
     tilt_a = np.ones(ia.size, dtype=np.float64)
@@ -290,7 +325,8 @@ def evaluate(args: Any) -> dict[str, Any]:
         blocks = _load_joined(args, np, imc[ia][s1_a], imc[ib],
                               subsample_seed=int(
                                   prod.NOMINAL_SEED_POLICY["subsample_seed"]),
-                              max_events=need, half_size=half)
+                              max_events=need, half_size=half,
+                              stage=args.stage)
         reco_a = blocks["pdata"]["packed"]
         reco_evt_a = blocks["pdata"]["globals"]
         reco_b = blocks["mc"]["packed"]
@@ -377,8 +413,13 @@ def evaluate(args: Any) -> dict[str, Any]:
         "closure": {
             "powered": True, "bkg_mode": "mc-only",
             "measured_leg_is_real_data": False,
-            "half_size": half, "split_seed": int(fd.SPLITS["split_seed"]),
+            "half_size": half,
+            "half_size_source": ("pinned" if args.half_size is not None
+                                 else "derived from the stage's share"),
+            "split_seed": int(fd.SPLITS["split_seed"]),
             "halves_disjoint": True,
+            "stage_split": split_census,
+            "stage_rows_available": int(stage_pos.size),
             "pdata_rows": int(s1_a.sum()), "prior_rows": int(ib.size),
             "injection": tilt_spec,
         },
@@ -395,6 +436,23 @@ def evaluate(args: Any) -> dict[str, Any]:
         "scored_here": False,
         "note": "scoring is a separate step over the frozen endpoint",
     }
+
+
+def _identity_of(np: Any, sidecar: Any, imc: Any):
+    """The frozen identity fields for the subsampled rows.
+
+    Read from the identity sidecar rather than reconstructed, because the
+    sidecar is what records the `occurrence` discriminator and the per-stream
+    field order, and a second reconstruction of an identity is a second thing
+    that can disagree about which event is which.
+    """
+    if sidecar is None:
+        raise SystemExit(
+            "[arm] --identity-sidecar is required: the stage split is assigned "
+            "by event identity, and without it the split would fall back to "
+            "row order, which is a property of the file and not of the event")
+    blob = np.load(str(sidecar), mmap_mode="r")
+    return np.asarray(blob["sig_event_id"]).astype(np.int64)[np.asarray(imc)]
 
 
 def _truth_eavail(np: Any, ffd: Any, inputs_npz: Any, imc: Any):
@@ -421,8 +479,8 @@ def plan_of(args: Any) -> dict[str, Any]:
 
 
 def _load_joined(args: Any, np: Any, pdata_rows: Any, mcb_rows: Any, *,
-                 subsample_seed: int, max_events: int, half_size: int
-                 ) -> dict[str, Any]:
+                 subsample_seed: int, max_events: int, half_size: int,
+                 stage: str) -> dict[str, Any]:
     """His tokens for the two closure legs, from the one-time cache if it exists.
 
     MEASURED, job 58599158: gathering in-process cost 15.5 minutes before his
@@ -444,7 +502,7 @@ def _load_joined(args: Any, np: Any, pdata_rows: Any, mcb_rows: Any, *,
     key = pre.cache_key(inputs_npz=Path(args.inputs_npz),
                         subsample_seed=subsample_seed, max_events=max_events,
                         split_seed=int(fd.SPLITS["split_seed"]),
-                        half_size=half_size)
+                        half_size=half_size, stage=stage)
     cache = getattr(args, "theirs_cache", None)
     if cache is not None and Path(cache).exists():
         blob = pre.load(Path(cache), expected_key=key)

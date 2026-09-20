@@ -13,7 +13,8 @@ import prematerialize_theirs as pre
 
 class CacheKey(unittest.TestCase):
     BASE = dict(inputs_npz=Path("/x/G2.npz"), subsample_seed=0,
-                max_events=4_000_000, split_seed=20260920, half_size=2_000_000)
+                max_events=4_000_000, split_seed=20260920,
+                half_size=2_000_000, stage="final")
 
     def test_it_is_stable_across_calls(self):
         self.assertEqual(pre.cache_key(**self.BASE), pre.cache_key(**self.BASE))
@@ -21,7 +22,8 @@ class CacheKey(unittest.TestCase):
     def test_every_row_determining_input_changes_it(self):
         base = pre.cache_key(**self.BASE)
         for field, other in (("subsample_seed", 1), ("max_events", 4_000_001),
-                             ("split_seed", 7), ("half_size", 1_000_000)):
+                             ("split_seed", 7), ("half_size", 1_000_000),
+                             ("stage", "pilot")):
             changed = dict(self.BASE)
             changed[field] = other
             self.assertNotEqual(pre.cache_key(**changed), base, msg=field)

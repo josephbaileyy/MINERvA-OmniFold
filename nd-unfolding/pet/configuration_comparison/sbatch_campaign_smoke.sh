@@ -30,7 +30,9 @@ index=${THEIRS_INDEX:?}
 events=${MAX_EVENTS:-40000}
 # Two disjoint halves must fit inside the subsample, so the smoke half is a
 # quarter of it. The campaign's half size comes from the closure module.
-half=${HALF_SIZE:-$((events / 4))}
+# A stage owns as little as 0.20 of the draw, and needs TWO halves inside it,
+# so the smoke half is a twelfth rather than a quarter.
+half=${HALF_SIZE:-$((events / 12))}
 
 cd "$checkout"
 [[ "$(git rev-parse HEAD)" == "$expected_commit" ]]
@@ -55,6 +57,7 @@ driver=nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py
       --arm "$arm" --seed 17 --stage tuning --learning-rate 1e-4 --niter 1 \
       --repo "$checkout" --inputs-npz "$inputs" --theirs-index "$index" \
       --max-events "$events" --half-size "$half" \
+      --identity-sidecar "$IDENTITY_SIDECAR" \
         --weights-folder "$output/$arm" \
       --output "$output/smoke-$arm.json" || echo "ARM $arm FAILED ($?)"
   done

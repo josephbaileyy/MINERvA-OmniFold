@@ -51,6 +51,9 @@ export PYTHONUNBUFFERED=1 TF_FORCE_GPU_ALLOW_GROWTH=true
 export TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=:4096:8
 export NVIDIA_TF32_OVERRIDE=0
 
+IDENTITY_SIDECAR=${IDENTITY_SIDECAR:-/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz}
+[[ -f "$IDENTITY_SIDECAR" ]] || { echo "identity sidecar missing: $IDENTITY_SIDECAR" >&2; exit 2; }
+
 # NO certified target here. That is the REAL-data nominal's measured leg; this
 # is a powered closure and runs mc-only, with no measured loader at all.
 
@@ -59,6 +62,8 @@ export NVIDIA_TF32_OVERRIDE=0
     --arm "$ARM" --seed "$SEED" --stage "$STAGE" --learning-rate "$LR" \
     --repo "$CHECKOUT" --inputs-npz "$INPUTS_NPZ" \
     --theirs-index "$THEIRS_INDEX" \
+    --identity-sidecar "$IDENTITY_SIDECAR" \
+    ${THEIRS_CACHE:+--theirs-cache "$THEIRS_CACHE"} \
     --weights-folder "$RUN/weights" --output "$RUN/receipt.json"
 ) > "$RUN/run.log" 2>&1
 
