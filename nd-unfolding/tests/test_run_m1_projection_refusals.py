@@ -244,20 +244,54 @@ class AdoptionSentinelIsNotAKeywordSearch(unittest.TestCase):
 
     SENTINEL_RE = r"^[\s*`>_ -]*ADOPTS-SHA256[*`_]*\s*:[^\n]*?\b[0-9a-f]{64}\b"
 
-    def test_no_document_in_the_repo_declares_an_adoption_today(self):
-        """Nothing is adopted yet, so the gate must be unsatisfiable by anything now committed.
-        A guard that something already passes is not guarding the act it names.
+    ADOPTION_RECORD = ("docs/orchestration/"
+                       "DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md")
 
-        ⚠ THE PATTERN REQUIRES A REAL 64-HEX ON THE SENTINEL LINE, deliberately. Writing this
-        scan against the bare prefix is the mistake I have made three times in this campaign: a
-        substring ban that trips on the documentation explaining it. `D-RESOURCE` must tell
-        Joseph the exact line to write, and a template carrying a `<placeholder>` DECLARES
-        NOTHING -- so it must not count, while a real declaration must. The companion test below
+    def test_EXACTLY_ONE_document_adopts_and_it_is_the_expected_one(self):
+        """⚠ THIS TEST USED TO ASSERT **ZERO**, AND THAT WAS RIGHT UNTIL 2026-09-20.
+
+        It read: *"Nothing is adopted yet, so the gate must be unsatisfiable by anything now
+        committed."* Joseph adopted `3d7465f6...` on 2026-09-20, so that assertion is obsolete and
+        keeping it would have meant deleting a live guard to make a commit pass.
+
+        **The replacement is STRICTER than the original in the world that now exists.** "Zero" only
+        says nothing adopts; this says exactly WHICH document adopts and exactly WHAT it adopts, so
+        a second adoption record anywhere under `docs/` -- or the same one silently repointed at
+        other bytes -- fails here. The predicate is the launcher's own, not a restatement: a
+        negated sentinel does not count, which is why the still-refusing draft is absent from the
+        expected list.
+
+        ⚠ THE PATTERN REQUIRES A REAL 64-HEX ON THE SENTINEL LINE, deliberately -- a template
+        carrying a `<placeholder>` DECLARES NOTHING and must not count. The companion test below
         is the other direction."""
-        hits = [str(p.relative_to(REPO)) for p in (REPO / "docs").rglob("*.md")
-                if re.search(self.SENTINEL_RE, p.read_text(encoding="utf-8", errors="ignore"),
-                             re.M | re.I)]
-        self.assertEqual(hits, [], f"unexpected adoption declarations: {hits}")
+        adopting = sorted(
+            str(q.relative_to(REPO)) for q in (REPO / "docs").rglob("*.md")
+            if self._new_predicate(q.read_text(encoding="utf-8", errors="ignore"), self.Z_CV_SHA))
+        self.assertEqual(adopting, [self.ADOPTION_RECORD],
+                         f"expected exactly one adopting document; got {adopting}")
+
+    def test_the_still_refusing_draft_does_NOT_count_as_an_adoption(self):
+        """Its sentinel is negated, so the launcher refuses it -- and so must this scan."""
+        draft = REPO / "docs/orchestration/DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md"
+        self.assertTrue(draft.is_file())
+        self.assertFalse(self._new_predicate(draft.read_text(encoding="utf-8"), self.Z_CV_SHA))
+
+    def test_no_document_adopts_any_OTHER_digest(self):
+        """The exception attaches to bytes. A sentinel naming different bytes is a second adoption
+        nobody authorized -- including either product of the 2026-09-20 campaign."""
+        offenders = []
+        for q in (REPO / "docs").rglob("*.md"):
+            text = q.read_text(encoding="utf-8", errors="ignore")
+            for ln in text.splitlines():
+                if not re.search(self.SENTINEL_RE, ln, re.I):
+                    continue
+                if re.search(r"nothing|never|withheld|\snot\s|pending|proposed|draft|held",
+                             ln, re.I):
+                    continue
+                for sha in re.findall(r"[0-9a-f]{64}", ln):
+                    if sha != self.Z_CV_SHA:
+                        offenders.append((str(q.relative_to(REPO)), sha))
+        self.assertEqual(offenders, [], f"documents adopting other bytes: {offenders}")
 
     def test_that_scan_WOULD_catch_a_real_declaration_and_skips_a_template(self):
         """Without this, the scan above could pass by matching nothing at all."""

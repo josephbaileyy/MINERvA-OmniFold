@@ -148,6 +148,44 @@ done
 # ---- THE RUN. One invocation. NO AUTOMATIC RETRY. ----------------------------------------------
 # A failure returns for a new decision. It does not resubmit itself, and nothing downstream may
 # treat a retry as authorized by this script.
+
+# ---- THE ENVIRONMENT, AND WHY IT IS ACTIVATED *HERE* AND NOT AT THE TOP -------------------------
+# ⚠ THIS LAUNCHER DID NOT ACTIVATE THE ENVIRONMENT AT ALL, and the omission was invisible until the
+# authorization it was written for actually arrived. Measured 2026-09-20, job 58653845: every
+# refusal above passed -- the adoption record was matched by digest -- and then the projector died
+# in 8 s on `ModuleNotFoundError: No module named ROOT`, imported by
+# `2d-unfolding/unfold_2d_omnifold_unbinned.py:21` through `_verify_canonical_edges`. The header
+# above names ROOT I/O as "the UNMEASURED leg"; it was the leg that failed.
+#
+# Every production arm carries this chain (`sbatch_uthrow_combine_5d_fast.sh:93-97`); this one did
+# not, so the defect is closed by USING that chain rather than by writing a second one.
+#
+# AFTER the refusals, deliberately. `run_m1_guardset_control.sh` established that every refusal on
+# this path fires WITHOUT ROOT -- it shadows ROOT for exactly that reason. Activating at the top
+# would make the guards depend on an environment they do not need, and a guard that cannot run in
+# a degraded environment goes quiet exactly when it is most needed.
+ENV_ROOT="${MNV_ENV_ROOT:?set MNV_ENV_ROOT to the verified environment tree -- a real directory OUTSIDE every repository checkout, holding the activation closure named by nd-unfolding/mnv_env_manifest.tsv. It has NO default: a default is the hardcode wearing a flag.}"
+ENV_MANIFEST="${MNV_ENV_MANIFEST:-${CODE_ROOT}/nd-unfolding/mnv_env_manifest.tsv}"
+source "${CODE_ROOT}/nd-unfolding/lib_mnv_env_preflight.sh"
+mnv_env_preflight "$ENV_MANIFEST" "$ENV_ROOT" "$CODE_ROOT" "$DATA_ROOT" || exit $?
+source "${CODE_ROOT}/nd-unfolding/lib_mnv_env_pathcheck.sh"
+# No `set -u` is in force here, which is why a bare source is safe: the closure reaches conda
+# activate-binutils, which references ADDR2LINE unset, and under `set -u` that aborts the shell
+# with 0-byte logs. Stated so a later edit does not add `-u` and rediscover it.
+source "${ENV_ROOT}/setup_salloc_env.sh"
+mnv_env_pathcheck "$ENV_ROOT" "$CODE_ROOT" "$DATA_ROOT" || exit $?
+if ! python3 -c 'import sys; sys.exit(0 if sys.version_info[:2] >= (3, 7) else 9)' 2>/dev/null; then
+  echo "[env] FAIL: the active interpreter cannot run this projector." >&2
+  exit 3
+fi
+if ! python3 -c 'import ROOT' 2>/dev/null; then
+  echo "[env] FAIL: ROOT is not importable after activation, so the projector cannot write its" >&2
+  echo "      product. This is an ENVIRONMENT fault, not a science refusal, and it is reported" >&2
+  echo "      as itself rather than as a failure of the run." >&2
+  exit 3
+fi
+echo "[env] activated from ${ENV_ROOT}; ROOT importable"
+
 cd "$CODE_ROOT/nd-unfolding"
 # `--run-class publication` was ABSENT here. The projector defaults to None, which records
 # UNDECLARED -- so this launcher could not produce the publication-class M1 the order requires,
