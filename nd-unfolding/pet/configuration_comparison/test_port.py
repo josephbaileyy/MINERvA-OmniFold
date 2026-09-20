@@ -614,3 +614,99 @@ class ProjectionEquivalence(unittest.TestCase):
 
     def test_the_flat_path_is_the_default(self):
         self.assertTrue(port.Linear(4, 4).flat_projection)
+
+
+class FullyMaskedRowsMustNotPoisonTheGradient(unittest.TestCase):
+    """A NaN patched by `tf.where` is fixed in the forward and not the backward.
+
+    `tf.where` differentiates through BOTH branches, so a NaN in the discarded
+    one poisons the gradient while the output looks clean. Measured, job
+    58605052: the forward at initialisation was finite with outputs of 0.01,
+    and the first training step gave a NaN loss at 1e-4 AND at 1e-5 -- a
+    rate-independent NaN is a broken gradient, not a divergence.
+
+    The prior leg of the closure carries 5,799 fully-masked rows in 10,000,
+    because every `!pass_reco` event is zeroed. This is the common path.
+    """
+
+    @staticmethod
+    def _arm_runs_here():
+        """Can this machine execute the arm at all?
+
+        The k-NN `LocalEmbeddingBlock` raises `InvalidArgumentError` under the
+        local TF, which is the same limitation that keeps PET closures off
+        this machine generally. The fix this class exists to test is verified
+        on the cluster by the smoke run; what runs everywhere is the
+        source-level assertion below, which is the one that would have caught
+        the defect in review.
+        """
+        import numpy as np
+        import tensorflow as tf
+        import theirs_omnifold_arm as toa
+        try:
+            model = toa.TheirsCompleteArm(num_part=5)
+            model([tf.zeros((2, 5, 10)), tf.zeros((2, 16))], training=False)
+        except Exception:
+            return False
+        return True
+
+    def _batch(self, tf, np, fully_masked_rows=3, rows=6, tokens=5, width=10):
+        rng = np.random.default_rng(0)
+        packed = rng.normal(0.0, 1.0, (rows, tokens, width)).astype("float32")
+        packed[:fully_masked_rows] = 0.0          # every token padded
+        globals_ = rng.normal(0.0, 1.0, (rows, 16)).astype("float32")
+        return tf.constant(packed), tf.constant(globals_)
+
+    def test_gradients_are_finite_with_fully_masked_rows(self):
+        if not self._arm_runs_here():
+            self.skipTest("the arm does not execute under this TF; see cluster smoke")
+        import numpy as np
+        import tensorflow as tf
+        import theirs_omnifold_arm as toa
+
+        def weighted_binary_crossentropy(y_true, y_pred):
+            """`omnifold.net`'s, inlined: the engine is not importable here."""
+            weights = tf.gather(y_true, [1], axis=1)
+            labels = tf.gather(y_true, [0], axis=1)
+            return tf.reduce_mean(weights * tf.nn.sigmoid_cross_entropy_with_logits(
+                labels=labels, logits=y_pred))
+
+        # NO `set_random_seed` here. Under the local tf_keras it makes the
+        # port's own `add_weight` raise "'float' object cannot be interpreted
+        # as an integer", so a seed set for reproducibility would break the
+        # construction it is meant to make reproducible. The cluster's TF 2.15
+        # does not do this, which is why the driver can seed and this cannot.
+        model = toa.TheirsCompleteArm(num_part=5)
+        packed, globals_ = self._batch(tf, np)
+        y = np.zeros((packed.shape[0], 2), "float32")
+        y[::2, 0] = 1.0
+        y[:, 1] = 1.0
+        with tf.GradientTape() as tape:
+            logits = model([packed, globals_], training=True)
+            loss = weighted_binary_crossentropy(tf.constant(y), logits)
+        self.assertTrue(np.isfinite(float(loss)), msg="loss is not finite")
+        grads = tape.gradient(loss, model.trainable_variables)
+        bad = [v.name for g, v in zip(grads, model.trainable_variables)
+               if g is not None and not np.isfinite(np.asarray(g)).all()]
+        self.assertEqual(bad, [], msg="non-finite gradients")
+
+    def test_the_forward_alone_would_not_have_caught_it(self):
+        """The output is clean either way; only the gradient tells them apart."""
+        if not self._arm_runs_here():
+            self.skipTest("the arm does not execute under this TF; see cluster smoke")
+        import numpy as np
+        import tensorflow as tf
+        import theirs_omnifold_arm as toa
+
+        model = toa.TheirsCompleteArm(num_part=5)
+        packed, globals_ = self._batch(tf, np)
+        out = np.asarray(model([packed, globals_], training=False))
+        self.assertTrue(np.isfinite(out).all())
+
+    def test_the_attention_uses_the_finite_surrogate_not_minus_inf(self):
+        from pathlib import Path
+        import pet2_keras_port as port
+        source = Path(port.__file__).read_text()
+        block = source.split("if key_padding_mask is not None:")[1][:2000]
+        self.assertIn("NEG_INF_SURROGATE", block)
+        self.assertNotIn('float("-inf")', block)

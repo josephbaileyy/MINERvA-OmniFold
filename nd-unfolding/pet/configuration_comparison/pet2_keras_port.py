@@ -391,11 +391,22 @@ class MultiheadAttention(_Port):
             scores = scores + tf.cast(attn_mask, scores.dtype)[:, None, :, :]
         fully_blocked = None
         if key_padding_mask is not None:
-            # True means "ignore". Upstream lets torch merge this as -inf.
+            # True means "ignore". The FINITE surrogate, for the reason
+            # `additive_pair_mask` already gives: with -inf a row whose keys
+            # are all padded softmaxes to NaN.
+            #
+            # Patching that NaN afterwards with `tf.where` fixes the FORWARD
+            # and not the BACKWARD. `tf.where` differentiates through both
+            # branches, so a NaN in the discarded one poisons the gradient
+            # while the output looks clean. Measured, job 58605052: the
+            # forward at initialisation was finite on every row with outputs
+            # of 0.01, and the first training step produced a NaN loss at
+            # learning rates 1e-4 AND 1e-5 -- a rate-independent NaN, which is
+            # a broken gradient and not a divergence. The prior leg carries
+            # 5,799 fully-masked rows out of 10,000, so it is not a rare path.
             blocked = tf.cast(key_padding_mask, scores.dtype) * tf.constant(
-                float("-inf"), scores.dtype
+                NEG_INF_SURROGATE, scores.dtype
             )
-            blocked = tf.where(tf.math.is_nan(blocked), tf.zeros_like(blocked), blocked)
             scores = scores + blocked[:, None, None, :]
             # A query whose every key is masked softmaxes over nothing. Plain softmax
             # gives NaN there; torch's SDPA returns exactly zero, measured. That case
