@@ -390,7 +390,15 @@ def evaluate(args: Any) -> dict[str, Any]:
                         model_reco, model_gen, pdata, mcB,
                         niter=int(args.niter), epochs=int(recipe.EPOCHS),
                         batch_size=batch, lr=args.learning_rate,
-                        weights_folder=str(folder), verbose=False)
+                        weights_folder=str(folder),
+                        # `MultiFold` defaults log_folder to './', so the
+                        # engine writes log_<name>.txt into the CURRENT
+                        # directory -- which is the pinned checkout. The first
+                        # smoke run left two such files behind and the next
+                        # run's clean-tree guard refused to start. In an
+                        # eight-task array that is a race: whichever tasks
+                        # check after the first one writes, fail.
+                        log_folder=str(folder), verbose=False)
     unfolder.Unfold()
 
     push = np.asarray(unfolder.weights_push, dtype=np.float64)

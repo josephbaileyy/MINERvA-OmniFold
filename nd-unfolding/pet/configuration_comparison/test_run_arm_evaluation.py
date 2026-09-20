@@ -173,3 +173,20 @@ class TheIncumbentsTrainingPolicy(unittest.TestCase):
         self.assertIn("tf.keras.utils.set_random_seed(int(args.seed))", source)
         self.assertIn('seed=int(prod.NOMINAL_SEED_POLICY["subsample_seed"])',
                       source)
+
+
+class TheEngineMustNotWriteIntoTheCheckout(unittest.TestCase):
+    """`MultiFold` defaults log_folder to './'; the checkout is pinned clean."""
+
+    def test_the_log_folder_is_set_to_the_run_folder(self):
+        source = Path(rae.__file__).read_text()
+        self.assertIn("log_folder=str(folder)", source)
+
+    def test_the_engine_default_is_the_current_directory(self):
+        import re
+        engine = (Path(rae.__file__).parents[3] / "omnifold_nn" / "omnifold"
+                  / "omnifold.py")
+        if not engine.exists():
+            self.skipTest("vendored engine not in this checkout")
+        block = engine.read_text().split("def __init__", 1)[1][:1200]
+        self.assertRegex(block, r"log_folder\s*=\s*'\./'")
