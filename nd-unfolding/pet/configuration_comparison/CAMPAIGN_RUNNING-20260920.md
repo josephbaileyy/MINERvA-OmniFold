@@ -13,14 +13,20 @@ it declared an external blocker that did not exist.
 
 ## 1. What is running
 
-| job | stage | tasks | depends on | state |
-|---|---|---:|---|---|
-| 58591372 | input build | 24 | — | COMPLETED, 24/24, 2,260 npz |
-| 58592752 | join + launch | 1 | `afterany:58591372` | FAILED — gate on the wrong population, §2a |
-| 58594462 | join + launch | 1 | — | resubmitted at `9a4c052f` |
-| *(submitted by the join)* | tuning | 8 | join | not yet submitted |
-| | pilot | 8 | `afterok:` tuning | not yet submitted |
-| | final | 16 | `afterok:` pilot | not yet submitted |
+Launched 2026-09-20 at commit `994e4da2`, after both arms completed a closure
+end to end (job 58605416: ours 147.8 s, his 160.5 s).
+
+| job | stage | tasks | depends on |
+|---|---|---:|---|
+| 58605669 | gather his tokens, one per stage | 1 | — |
+| 58605670 | tuning | 8 | `afterok` gather |
+| 58605671 | pilot | 8 | `afterok` tuning |
+| 58605672 | final | 16 | `afterok` pilot |
+
+**Cost, re-derived**: 58.5 GPU-hours, 73.1 with the retry allowance, against a
+1,000-hour ceiling. The earlier 366-hour figure was built on the real-data
+nominal's row counts and does not describe this campaign; see
+`closure_cost.py`.
 
 One task is one (arm, seed). A **pair** is two adjacent tasks sharing a seed.
 Stage dependencies are enforced by Slurm, not convention: tuning selects the
