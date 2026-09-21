@@ -53,6 +53,35 @@ override row.
   superseded, not merely finished; `MANIFEST.tsv` carries `inbound_count` so this is checkable.
 - **Do not hand-edit `MANIFEST.tsv`.** It is generated. Edit the overrides file and regenerate.
 
+## ⚠ BEFORE A RETENTION PASS: A BASENAME INVENTORY CANNOT SEE AN ELLIPSISED CITATION
+
+Added 2026-09-21, after the first backfill of obligation 1 nearly reclassified a cited document.
+
+The obvious way to find reclassification candidates is "which `LIVE` documents does nothing cite",
+by searching the corpus for each basename. **That search is blind to how this repository actually
+cites.** Long names are routinely shortened in tables with an ellipsis:
+
+    `EVIDENCE-20260919-…md`        OPERATIVE-SHEET-scalar5d.md, C7 citation table, item 3
+    `DECISION-SUPPORT-20260916-…`  and at least eight more families
+
+Measured on 2026-09-21: of 245 `LIVE` `.md` documents, a strict basename search called **52**
+uncited. Re-run with a `TYPE-YYYYMMDD` prefix key — and discounting same-prefix siblings, which
+would otherwise cite each other by their shared stem — **29 of those 52 turned out to be reachable
+by an ellipsised or truncated reference**, leaving 23. Acting on the first number would have
+archived cited records, and the failure is silent: the document stays on disk, the citation still
+renders, and only the read path degrades.
+
+**The rule, therefore:**
+
+1. Score each candidate twice — by full basename **and** by its `TYPE-YYYYMMDD` stem. Exclude
+   same-stem siblings from the second, or a document family reports itself as cited.
+2. Reclassify only what fails **both**.
+3. Then apply this convention's substantive test — *has the event concluded?* — which the citation
+   count does not answer. In the same pass, three of 23 zero-citation documents were kept `LIVE`
+   because their events had **not** concluded: a completion report carrying live limitations, a
+   checklist that governs a **future** re-verification, and a finding that is a standing caution
+   about how to read a field. **Uncited is a safety filter, never the criterion.**
+
 ## Enforcement
 
 ```bash
