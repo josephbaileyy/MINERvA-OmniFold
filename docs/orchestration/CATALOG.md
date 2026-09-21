@@ -1867,13 +1867,365 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   existed as a committed record across 131 refs** — this pair of files is that gap closed, not new
   scientific content.
 - [`PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md`](PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md)
-  - **PROPOSAL ONLY — adopts nothing, grades nothing, declares no threshold.** Maps the
-  publication's intended covariance consumers to three candidate `(cause 3, Z)` criteria under `RZ`:
-  **C-1** direct sensitivity of the quoted significance, **C-2** a conditioning diagnostic, **C-3**
-  projected-bin sensitivity via the existing `s_proj`. **Projection and inversion policy are
-  unresolved** — the projection map has three implementations with none designated, and the
-  `pinv` cutoff, tail and `ndf` conventions are undeclared. Read its `CITABLE FOR` / `NOT CITABLE
-  FOR` header before quoting any part of it.
+  - **⚠ SUPERSEDED 2026-09-10 IN ITS CANDIDATE-CRITERIA ROLE, RETAINED AS EVIDENCE.** Successor:
+  `RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md` §0.0, which states the delta item by
+  item. **Its bytes are unchanged and an independent assessment against them stands.**
+  **STILL CITABLE FOR** its §1/§1a/§1b consumer analysis and the intended-versus-validated-path
+  distinction; §2a/§2c, that `s_agg`/`s_med`/`s_eig` cannot bound an inverse-quadratic consumer and
+  that a spectral summary cannot determine the quadratic form; §4a, that printed precision
+  establishes nothing scientific in either direction; §4c, the `pinv`-cutoff and retained-rank
+  reporting requirement, which the successor carries forward; **and — ⚠ CORRECTED 2026-09-10 — its
+  §6 *"which `M`?"* PREMISE, which STANDS.** An earlier revision of this entry listed that premise
+  under `NO LONGER CITABLE FOR`; **that was wrong and it mismarked a live premise in the file agents
+  route from.** The premise is that at least three projection-matrix implementations exist with none
+  designated; the successor's `D.1(a)` measures **four** sites, so the premise is **wider** than when
+  written, and the designation question is open (successor §7 item 7).
+  **NO LONGER CITABLE FOR** its §3 candidate criteria **C-1**/**C-2**/**C-3** as the criteria; its
+  closing *"No criteria owner exists"*, which `owners.tsv` refutes as of 2026-09-10; and **§6 item
+  1's METHOD only** — an elementwise `M₁ − M₂` comparison, which is **undefined when one side
+  refuses**, so a literal runner skips the refusing cases and reports agreement from a domain
+  **selected for** agreement (`FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md`,
+  amendment 2). The comparison's unit must be the builders' **outcome**. **Its "three
+  implementations" is an UNDERCOUNT** — four production/consumer construction sites exist, the fourth
+  on the PET diagnostic path, which any designation must exclude **by name**. It declares no
+  threshold and adopts nothing; read its own `CITABLE FOR` header too.
+- [`PACKET-20260910-z-consumer-set-and-endpoint-requirements.md`](PACKET-20260910-z-consumer-set-and-endpoint-requirements.md)
+  - **DESIGN AND REVIEW ONLY — adopts nothing; Joseph retains approval.** Supersedes the universal-bound
+  approach's ROLE, which he discontinued 2026-09-10. **§1 is the deliverable: Z's declared consumer
+  set, enumerated for the first time**, with five additions to the starting list — including the **2D
+  headline consumer**, which is LIVE and **already inverts by SVD pseudo-inverse (ratified,
+  `app_statmethods.tex:53-58`)**, so endpoint B's inversion requirement is **conformance, not
+  proposal**; a diagonal-only coverage consumer; and **three more deferred-declared sites, spanning
+  note, paper AND primer** — the three builds intersect in `{values}` alone, so **one criterion cannot
+  discharge them.** Splits into **endpoint A** (covariance/projected-uncertainty release; every
+  consumer reads a diagonal, trace or band) and **endpoint B** (significances; every consumer inverts
+  a full matrix), and keeps their requirements apart on that structural basis. **⚠ Its sharpest
+  measurement: `np.linalg.solve` does NOT fail loudly on Z's covariance class** — two N-D comparators
+  use it, and on a *near*-singular matrix it returns a silently absurd `chi2` (`1.0e18` where `pinv`
+  gives `2.0`); a Z-shaped sum has **zero exact zeros and a mixed-sign round-off tail**, so a PSD test
+  at exactly `0` fails on a correct object. **`T` is a proper subset of endpoint B and none of A**, and
+  most claims need no threshold at all. ⚠ **NO LONGER CITABLE FOR: its `cause3_corr` answer.**
+  Rev. 1 reported *"on the declared consumer set `cause3_corr`'s hazard is UNREALIZED — no released
+  consumer reads off-diagonal structure — and it belongs to B, triggered by B-1."* **REFUTED BY
+  MEASUREMENT the same day and withdrawn at the claim site:** `diag(M C Mᵀ)_i = m_iᵀ C m_i` reads the
+  source's off-diagonals, so the hazard **IS realized inside endpoint A** via the projection —
+  **C5, D1 and D2 realized, C6 conditional, C7 not** (one cell of five survives). Route to
+  [`PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md`](PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md)
+  for the current answer. Everything else in this packet stands. Stopping-rule outcome **(3)**: two named inputs required.
+  Arithmetic re-runnable at
+  [`state/probe-z-consumer-inversion-20260910.py`](state/probe-z-consumer-inversion-20260910.py) —
+  deliberately a **separate** file, so the retired `rho` machinery stays frozen as history.
+  **Its scope is enforced, not asserted:**
+  [`state/check-consumer-set-20260910.py`](state/check-consumer-set-20260910.py) states the
+  scope as a **population verified against an independent `git ls-files` count** (566 files) and
+  fails closed on any covariance-touching file a deliverable cites without a pinned
+  classification. **The packet's first version declared three globs covering 25% of the tracked
+  population**; the instrument exists because that scope statement was not checkable.
+- [`COSTMODEL-20260911-z-pilot-and-scan.md`](COSTMODEL-20260911-z-pilot-and-scan.md)
+  - **INPUT to the adoption plan — prices nothing authorized and requests no compute.** ⚠ **Every
+  figure is a `--time` REQUEST, not a measurement** — an upper bound from the launcher walls; the
+  measured `ElapsedRaw` was deliberately not queried and is named as a separate cheap ask.
+  **Two cost groups:** estimator-downstream **304 task-h per member in BOTH branches** (the
+  universe sweep dominates it at 301.5), and the two dominant block terms **372 task-h**, paid
+  **once under (b)** and **per member under (a)**. ⚠ **This CORRECTS the expectation that the
+  (a)/(b) delta is the plan's largest number:** it is `372 × (|K|−1)` — 37% at `|K|=3` — and
+  **never exceeds 2×**, because the sweep is paid either way. `|K|` is named as a SCIENTIFIC choice
+  (precedent 3) and priced at 3/5/10. **The clause-(iii) scan is one decomposition of `C_0`, ≪1
+  task-hour, and ⚠ the grid-resolution requirement costs NOTHING** — retained rank at any `rcond`
+  is a count over the already-computed spectrum, so it is a reporting obligation, not compute.
+  **Gap list CORRECTED rather than confirmed** (A-1 is fixed-by-spec and A-2 conformance, so "all
+  proposed" overstates; P1–P4 are approved and what is open is the builder revision plus the
+  arity/refusal code) with **five additions**, including A-5's undeclared `k` and the missing ND
+  rank-truncation scan. **Pilot classified CONTINGENTLY: ESSENTIAL under (b), OPTIONAL under (a)**
+  — since under (a) it holds fixed the very blocks the declared subject includes, so pass and fail
+  lead to the same next action. **And a third state: today it can produce neither outcome**, since
+  `κ = None` refuses even healthy baselines. **Hence the sequencing recommendation — the cause-3
+  decision is free and prices the most expensive item.**
+- [`PACKET-20260918-causes-1-2-4-acceptance-criteria.md`](PACKET-20260918-causes-1-2-4-acceptance-criteria.md)
+  - **ACCEPTANCE CRITERIA for `(cause 1, Z)`, `(cause 2, Z)` and `(cause 4, Z)` — design only, no
+  compute, authorized by Joseph 2026-09-18.** The owning lane prepares; `[cb0b6b]` evaluates. ⚠ **THE
+  ORGANIZING RESULT: ALL THREE ARE TOLERANCE-FREE, so none can be blocked by the unestablished quantity
+  that closed `θ` and blocks `cause3_agg`/`δ_bin` — all three are approvable in full TODAY**, form,
+  population and value. Cause 1 closes *"irrespective of magnitude"* (§6.2, so a tolerance would ADD a
+  criterion the ruling removed); cause 2's F7 branch is binary with `F7_FLOOR_MULTIPLE = 2.0` already
+  fixed in code; cause 4's condition 3 requires the covariance content **not to change at all**.
+  **Fourth instance of one structural pattern** after `B`'s boolean estimator and cause 3's L4: a
+  discrete protected quantity leaves no knob, so Gap-3 tuning is impossible by construction. ⚠⚠ **THE
+  CAUSE-2 CONTRADICTION IS NOT REAL, AND THE WORD DOING THE WORK IS "ALONE."** `AGENTS.md:29`'s
+  *"mean-centering alone is disqualified"* is **the F7 branch OUTCOME**, not an independent ruling
+  against a centering convention — `FINDING-20260901:16` reads *"at the floor, mean-centering alone is
+  acceptable; well above it…"*, `:52` *"pairing disqualifies mean-centering alone"*. And
+  `ESTIMATOR_REGISTRY.md:29` **satisfies it**, recording the CV-centered variant `6.2367e-38` beside the
+  mean-centered `5.8077e-38`. **Both records hold simultaneously; resolving a non-existent contradiction
+  would have produced a criterion protecting nothing.** So cause 2 is **not "which variant"** but
+  **re-evaluate the branch on Z's own operands**, since Z inherits nothing from G — and it **composes
+  with cause 3's L4**: cause 2 is the branch's VALUE, L4 its STABILITY across the member set. ⚠ **A
+  "bound" is the WRONG INSTRUMENT for cause 4** — condition 3 requires no content change at all, so a
+  bound would presuppose a permitted change and WEAKEN the spec; the criterion is four binary
+  conditions plus **a guard that must be MUTATION-TESTED**, since the spec itself says a one-time
+  comparison is insufficient and *"a quantity in scope is one edit from being subtracted."* Carries
+  cause 3's three generalised principles without re-deriving them. **Two items ROUTED not decided:** a
+  citation ambiguity over whether the guard enforces condition 3 (`SPEC:1010`) or condition 4
+  (`:1237`), and `OI-186/188`'s population-identity requirement, relayed and unverified. **Nothing
+  adopted; cause 3's three boundaries still WITHHELD.**
+- [`PACKET-20260917-cause3-joint-baseline-acceptance.md`](PACKET-20260917-cause3-joint-baseline-acceptance.md)
+  - **COMPLETES §3.7b's cause-3 joint-baseline acceptance design — a DESIGN deliverable with an
+  approval recommendation, authorized by Joseph 2026-09-17. No compute, no member production, no
+  grading.** Closes the audit's **rank 2** (`ebba67ab`), which said *"a member/design proposal exists,
+  so the gap is not 'no design'"* — hence completed, not restarted. ⚠ **`θ` is used NOWHERE**, as input
+  or fallback. ⚠ **`[B,S]` is PROPOSED not governing** (`SPEC:1552`, verified) so nothing is written as
+  if it governs. ⚠ **Accepts Joseph's decline of `ε = 1e-9`** and records why the objection is sharper
+  than the argument it refuted: **the transfer ACT was itself new**, so the number's age could not
+  establish that its application to Z was fixed beforehand. **(a) THE SCIENTIFIC LOSS IS THREE
+  DISJOINT LOSSES**, which is why there are three boundaries — and **L3 (correlations) cannot be
+  reached by tightening L1/L2**, since both adopted statistics are functions of the diagonal alone.
+  **Adds L4, the only DISCRETE loss:** the binary F7 centering decision, which no boundary covers.
+  **(b)** `f_agg` trace-ratio form with the population declared as the `x_cv > 0` predicate, never a
+  hardcoded 10,694. **(c) ⚠ THE COVERAGE FRACTION IS DERIVED, NOT CHOSEN** — `φ = 1` on the union of
+  declared map supports (each such bin enters a published number) and unconstrained off it, so `φ`
+  collapses into a **population declaration**. **(d) THE STRUCTURAL REQUIREMENT: a correlation
+  criterion must be INVARIANT under `C → D C D`**, which the projected correlation matrix satisfies
+  identically (measured `3.3e-16`) and which **disqualifies trace and per-bin `σ` statistics from ever
+  serving as one**; `τ_p` may not be derived from any diagonal tolerance, because a non-negative-weight
+  projection can near-cancel (`179.91` vs a `0.6900` limit, all PSD). **(d) L4 is APPROVABLE IN FULL —
+  form, population AND value — because the quantity is discrete and the criterion has no tolerance
+  parameter.** **(e) THE LEG SET BOUND AND VL141 SUPERSEDED IN TWO PLACES:** `sweep_bank_5d.py:358` now
+  exposes `--estimator-seed` (no default, required for `--run`) and `:309-311` stamps it, and
+  `analyze_universes_5d.py` now **refuses mixed-seed members** — so VL141's "no CLI flag" and "checked
+  by nothing" are both repaired. **8 `sbatch_*` files name `MNV_EST_SEED_OFFSET`: 7 apply, 1 REFUSES.**
+  The family is the **diagonal `(42+k, 1000+k)`, not a grid**, and ⚠ **the member set carries an
+  ALIASING constraint measured by calling `seed_offset_policy`: forbidden differences `{-958, +958}`**,
+  so the grid must pass `check_offset_grid` before any member is built. **`k = 0` is the archive** and
+  costs nothing. **Explicit falsifiers for all four criteria.** ⚠ **Values for `cause3_agg` and
+  `δ_bin` are NOT proposed** — blocked on the quantity Joseph closed, and the packet records that
+  those two withdrawn numbers and `θ`'s withdrawn candidate all came from **one** half-display-unit
+  rule. **Nothing adopted; three boundaries stay WITHHELD.**
+- [`PROPOSAL-20260917-integrated-acceptance-existing-products.md`](PROPOSAL-20260917-integrated-acceptance-existing-products.md)
+  - **ONE INTEGRATED ACCEPTANCE PROPOSAL for the EXISTING products and their supported reproduction
+  path.** Assigned by Joseph 2026-09-17; the owning lane **prepares**, `[cb0b6b]` **evaluates**. ⚠
+  **`θ = 7.11e-2` is CLOSED AS NOT ADOPTED and was NOT relabelled a feasibility floor** — the author's
+  own fallback reading and the assessor's "declared as a FLOOR it needs no new argument" are **both
+  declined**; only the narrow conclusion survives, that the derivation yields a **RESOLUTION, not a
+  scientific cap**. ⚠ **Full `S` is OPEN.** **RECOMMENDS numerical agreement, NOT bitwise identity**,
+  over a **within-run** envelope — because §6.4 already rules the bound scale-relative (so a bitwise
+  criterion would itself violate reject condition 11), because bitwise **fails on 10,683 of 10,694
+  bins** and is the gate-that-cannot-pass, and decisively because `r_null` is **already measured**, so
+  **no `ε` chosen today can legitimately grade these products.** **Hence `ε = 1e-9` by TRANSFER** from
+  `p4_lib.py:93` (Joseph, 2026-08-07, standard-P4) — the only value pre-dating the observation and
+  declared for another subject; **margin `569.7×` per-bin and `2.2e4×` on `r_null`.** ⚠ **THE ROUTE
+  NEEDS NO CONTRACT AMENDMENT** — it *satisfies* §6.4 clause by clause rather than replacing the null
+  criterion, so the two amendments a `θ` route would need are removed by `θ`'s closure, not created.
+  ⚠ **`B` is unestablished and NOT needed**, because `SPEC:1406-1409` separates **feasibility** from
+  **justification** — the observed `1.755e-12` does the former, the transfer the latter. ⚠ **THE TWO
+  QUESTIONS ARE DISJOINT:** `78a8c2ee`'s boolean `B = 0` **FAILS** on these products, so it is a
+  property of the **pinned design only**, and a pinned run would **replace** these products rather
+  than qualify them. **Minimum evidence is TWO READS, no compute:** independent reconstruction of
+  `r_null` from the persisted operands (condition **11b**) and the precursor's date against
+  `2026-08-07`. ⚠ **Corrects FIVE claims before building on them** — the assessment's four
+  (√-scaling not halving, `N=397`; per-bin estimation errors correlated at `+0.815`; deadband
+  crossings fix movement but not **membership**; downward `g` bounded **by construction** at
+  `G_FLOOR = 1.0`) **and one of the lane's own**: §5.7's *"the same factor bounds every projection"* is
+  **refuted** (`179.91` vs a `0.6900` limit, `260.7×`, all PSD) — and the diagnosis is that it holds
+  with **exact equality for UNIFORM `G`**, which is why an adversarial search that scales `γ` uniformly
+  passes on every counterexample. **`f_i` is explicitly NOT mandatory on every route**, and would not
+  close `θ`'s scale anyway (that is set by `w_stat,i`/`w_ML,i`). **Separates the projection DEFINITION
+  check (P1 — cheap, code-only, OWED) from the NUMERICAL one (P2 — matrix access, and its criterion
+  needs the unmeasured anti-correlation condition).** **All product numbers RELAYED; no cluster
+  access. Nothing adopted; no compute authorized, requested or run; products preserved.**
+- [`RECOMMENDATION-20260916-theta-per-bin-uncertainty-tolerance.md`](RECOMMENDATION-20260916-theta-per-bin-uncertainty-tolerance.md)
+  - **RECOMMENDATION on `θ`, a tolerance on the reported per-bin uncertainty's relative movement.**
+  Routed by Joseph 2026-09-16 for `[cb0b6b]` assessment then his decision. ⚠ **`S` IS NOT CLOSED and
+  this does not close it** — §6 explains why the author is structurally unable to: the arguments that
+  would discharge `SPEC` §7 item 4 would be discharging the author's own recorded residue. ⚠
+  **Authored by the owning lane, which therefore cannot assess it.** **THE ANSWER IS THAT `θ` CANNOT STAND ALONE — and after a peer's §5.7, the form is ONE
+  TOLERANCE PLUS ONE MEASUREMENT rather than two tolerances** (§1.5; the correlation bound is
+  **derived** via `γ ≤ θ/min_i f_i`, so no second scientific judgement is needed — but
+  **sufficiency is CONDITIONAL on the measured `min_i f_i`**: usable at `≥0.5`, weak by `0.2`,
+  vacuous by `0.01`, and the response to a small value is an **active-set restriction**, never a
+  tightened `θ`). **The ground for the insufficiency is stronger than "necessary and not
+  sufficient":** a diagonal rescaling preserves
+  correlations **exactly** (MEASURED `3.3e-16` for the V-block alone), but `D_Z` multiplies `Σ_V`
+  **only** (`z_assembly.py:4`), so `g` reweights V against four untouched terms and the **total**
+  correlation moves (`5.9e-2` on the same fixture). The grip is exact — **`dσ_i/σ_i =
+  f_i·(dg_i/g_i)`**, MEASURED to six figures — so `θ` permits `|dg/g| ≤ θ/f_i` and the off-diagonal
+  V-part moves by `2θ/f_i`: **20× `θ` at `f=0.1`, 200× at `f=0.01`, and `f_i` is UNMEASURED.**
+  Decisive for the *declared* use, because SPEC requires the 3D/4D covariances to be **exact
+  projections** and a projection contracts the full matrix — sampling exactly where `θ` has least
+  grip. **THREE ROUTES BARRED and named:** display precision (the `:2109`/`:3909` formatting borrow
+  that produced `5.00e-41`), significance preservation (founds a determinism gate on **DEFERRED**
+  endpoint B), and fitting to `4.452e-14` (`SPEC:1410`). **ADMISSIBLE ROUTE:** `σ` is not *known* to
+  better than its own ensemble sampling error — `7.11%` at `C_stat`'s `N=100`, `14.74%` at `C_ML`'s
+  `N=24`, both frozen and pre-dating Z. ⚠ **But `θ` IS NON-BINDING BY 12.2 ORDERS** (`1.60e12 ×` the
+  observed null), so it is **`S`'s per-bin shadow** and inherits `S`'s vacuity: **declare it as a
+  CEILING, never as the operative gate**, which stays `ε` argued from `B`'s side. Seven alternatives
+  tabulated with consequences. **ONE MEASUREMENT settles both open ends** — the per-bin variance
+  decomposition `f_i` — and whether the five per-term diagonals are even persisted is explicitly
+  **NOT** established here. **Nothing adopted; no compute authorized, requested or run.**
+- [`PREDECLARATION-20260916-B-estimator-and-coverage.md`](PREDECLARATION-20260916-B-estimator-and-coverage.md)
+  - **PREDECLARATION of `Z_CONSTRUCTION_PLAN` §4.4a items 4 and 5 — zero compute, judgement, and
+  they GATE the arm-7 evidence.** Owner `owners.tsv:14`; accountability for `B`'s justification
+  assigned at `df0a8603` §2.3, verified in the record rather than accepted on relay. ⚠ **Authored by
+  the owning lane, which therefore CANNOT assess it** — `owners.tsv:15` `[cb0b6b]`. ⚠ **The
+  independence residual is on the document's face:** route (i) makes `B` a design property, which
+  weakens the objection that `S` must be independent of `B`, but **item 4 is a judgement made while
+  owning `S`** — reduced, not removed. **ITEM 4:** `B = 0` asserted as a property of the pinned
+  design and verified by a **BOOLEAN** bitwise-identity test; `B` is **UNDEFINED** (never "the
+  observed difference") if the test fails. Discharges Gap 3 **by construction** — the estimator's
+  range is `{0, undefined}`, so there is no knob to tune. ⚠ **And a boolean is why route (i) is
+  admissible where the withdrawn fallback was BARRED: it reads no VALUE off Z's null**, where the
+  fallback read a magnitude; replacing the boolean with a tolerance re-enters `SPEC:1410`. Note
+  `sbatch_uthrow_combine_5d_fast.sh:9` **already asserts** the null "must be zero". ⚠ `B = 0` gives
+  `B ≤ S` trivially **and does not give `ε`** — `ε = 1e-9` still stands on §C.3's transfer argument
+  alone, its own falsifier **UNEVALUATED**. **ITEM 5:** the objective is over **allocation shapes, not
+  repeat count**, because the mechanism is deterministic-given-allocation; **Model A declared**,
+  minimum **n = 3** (A1/A2 same node for item 1, B1 different node for item 2) at a **1.73 CPU
+  task-h** reservation bound, 4 to attribute. Model B retained only as a falsification branch, priced:
+  **6 runs to exclude a coin flip, 30 to exclude p ≥ 0.1** — which is Gap 2's "4 repeats had no
+  justification" made quantitative. **Receipt requirement:** ≥2 distinct node names or item 2 is
+  **NOT TESTED and the run INCONCLUSIVE**, and an unprovided microarchitecture arm is **UNEVALUATED**,
+  never folded into a pass. ⚠ **A MEASURED OBSTACLE NO DOCUMENT NAMED: the pin set is incomplete** —
+  `OMP_DYNAMIC`/`OMP_SCHEDULE`/`OMP_PROC_BIND`/`OMP_PLACES` have **zero occurrences** in
+  `nd-unfolding/`, including in the arm treated as the pinned reference, so "route (i) is falsified"
+  would be ambiguous between *cannot be pinned* and *was never fully pinned*. **Nothing adopted, no
+  compute authorized or requested, nothing run.**
+- [`DESIGN-20260911-endpoint-B-generator-comparison-test.md`](DESIGN-20260911-endpoint-B-generator-comparison-test.md)
+  - **PROPOSED DESIGN for endpoint B's generator-significance test — nothing adopted, run or
+  authorized; endpoint B remains DEFERRED NOT PASSED and Gate 2 remains FAIL.** ⚠ **Authored by the
+  `z-criteria-owner` lane, which therefore CANNOT assess it** — route to the independent assessor
+  BEFORE any part is implemented. ⚠ **CORRECTS the brief's premise: no fresh generator production
+  is needed** — all four candidates' truth event samples survive on pscratch (plus GENIE+MEC); what
+  is missing is an ND histogrammer. ⚠ **The existing instrument tests the OPPOSITE end of the axis**
+  — `eavail_generator_significance.py` is by its own docstring the *high*-`E_avail` DIS-tail corner,
+  while the manuscript's claim is *low*-`E_avail`. ⚠ **The catch bin is NOT inert: including or
+  excluding it SWAPS which of the two best models is closest** (Tune v1 full-range, GENIE CV
+  catch-dropped), derived from the note's own published numbers and checked against its own stated
+  12–28%. **Three independent constraints all cap the test's dimension** — rank (a proven bound: 42
+  two-point bands give rank 1 each, so 141 is explained by construction), generator MC statistics
+  (8.5% per bin at full grid, comparable to the smallest deficit), and **the uthrow inflation, which
+  is the strongest: a nominal 3σ survives as 1.75σ at `ndf=6` but only 0.73σ at `ndf=36`.** Hence a
+  **1-dof primary test**: the nested 2p2h-strength fit on the GENIE CV / GENIE+MEC pair, the only
+  nested and target-matched pair. **Normalization treated as three options with standalone
+  verdicts** (absolute REJECTED as primary for lack of discrimination; area-normalized ACCEPTED;
+  profiled ACCEPTED only with a derived penalty width — `__Normalization_flat`'s σ=0.014 cannot
+  serve). ⚠ **Tune v1 IS the unfolding prior and no assembly term covers the pull toward it**; the
+  prior-dependence measurement costs **0.9–1.4% of the endpoint-A pilot**. **Multiplicity priced:**
+  the design's own axes span 120 candidate significances, so the pre-declared primary set must be
+  ≤4. ⚠ **One of its own arguments was WITHDRAWN during review and the withdrawal recorded in
+  place** — an absence claim over 22 of 45 band names, void rather than weak because `R = 27` is
+  derived and never listed.
+- [`AMENDMENT-20260911-cause3-conditional-scope-and-kappa.md`](AMENDMENT-20260911-cause3-conditional-scope-and-kappa.md)
+  - **PROPOSED amendment — adopts nothing; cause 3 remains NON-PASSING and all three cause-3
+  boundaries remain WITHHELD.** Part A answers the standing `z_contract.py:231-235` objection, and
+  the answer is that **cause 3 as written does not distinguish two readings**: *(a)* how much `C_Z`
+  moves when the estimator baseline changes **as production changes it** (which regenerates the
+  blocks), versus *(b)* how much is **attributable to the estimator-baseline choice**.
+  `:222-225`'s *"estimator-baseline sensitivity"* is **unqualified** and omits what is held fixed.
+  ⚠ **The ambiguity was invisible until the decoupling**, because with one switch the two were not
+  distinguishable configurations. Recommends amending the reasons to state what is held fixed,
+  adding a **licensing clause in `cause3_corr`'s own existing template**, and recording (b) as
+  discharged / **(a) as explicitly UNDISCHARGED** — and names the remaining scientific choice for
+  Joseph with both branches priced, (a) requiring **per-member regeneration of 100 + 24 replicas**.
+  Part B is `κ`'s package: the **Rayleigh** formula, `κ = 1e-12`, and a numerical justification that
+  is **not** scale invariance — the measured accumulation floor is `~2e-15` (pairwise), **three
+  orders tighter than the `n·eps` worst case**, and `rank(C_Z) ≤ 265 of 10,694` means there is no
+  continuum between round-off and support, so the verdict is identical across **`1e-14`–`1e-3`**.
+  ⚠ **The acceptance population never shrinks:** a degenerate functional **refuses the whole
+  evaluation** rather than being dropped from the max over `U`, so `s_proj` is never reported over a
+  reduced set. Assessment scope is stated, not inferred.
+- [`DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md`](DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md)
+  - **DECISION INPUT ONLY — adopts nothing; Joseph's items 1 and 3.** ⚠ **`δ_proj`'s DERIVATION IS
+  WITHDRAWN IN FULL** on his objection: measured, the threshold moves **`102.6×`** on ONE covariance
+  with the total preserved and only the component **grouping** varying, and the dependence is
+  entirely on the granularity of the **tail**. **The "grouping is physically meaningful" defence
+  fails on this repo's own evidence** — the same `C_syst` is declared at **13** (`VERT_BANDS`) and
+  **45** (`analyze_universes` census) components, `0.985%` vs `0.280%`. **His sentence licenses
+  ATTRIBUTION to the declared set; it does not make the declaration's GRANULARITY an accuracy
+  requirement** — that step was the lane's, not his. **The remaining requirement is presented as an
+  explicit CHOICE**, with the one hard constraint the invariance test yields: **a yardstick must be
+  a NAMED object, not a SELECTOR over the grouping.** Recommends **(A) the statistical block
+  `C_stat`'s contribution**, with its weaknesses priced (it is provisional and reused under item 2,
+  and it is a judgement rather than a consequence). **Item 1 proposes FOUR named projections** —
+  `(E_avail,W)`, `E_avail`, `p_T`, `p_∥` — derived from **what the deliverables display**, not from
+  what would pass, with **five exclusions by name**. ⚠ **Its revision column is empty ON PURPOSE:
+  no released projection names its builder and commit** (the assessor's pre-registered F2), and
+  **P4's builder could not be determined at all** — which is live, not formal, because
+  `FINDING-20260910-projection-builders-…` on main records four non-equivalent builders that
+  **diverge on refusal**.
+- [`PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md`](PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md)
+  - **DESIGN AND REVIEW ONLY — adopts nothing, declares no boundary, grades nothing; Joseph retains
+  approval. Gate 2 remains FAIL, `cause3_corr` remains WITHHELD, cause 3 remains non-passing.**
+  Answers three tasks set after Joseph's rulings of 2026-09-10 (publication scope: **endpoint B
+  DEFERRED, NOT PASSED**; finite-ensemble **disclosure only**). **⚠ It opens by WITHDRAWING its
+  predecessor's `cause3_corr` answer** — `diag(M C Mᵀ)_i = m_iᵀ C m_i`, so the off-diagonal hazard
+  **is realized inside endpoint A** through the projection, and the "A reads only the diagonal"
+  premise was true of the *projected* object, not of the *operand*. Corrected **per consumer**: C5,
+  D1, D2 realized; C6 conditional; **C7 not** — one cell of five survives.
+  **Its two sharpest mechanical findings:**
+  **(1) `nd-unfolding/z_contract.py:231-236` is INERT to cause 3's verdict** — deleting the
+  `cause3_corr` entry outright leaves `assess()`'s outcome **byte-identical**, because `assess`
+  reaches a boundary only through `leg.boundary_key` and **no production leg names it** (every
+  `LegSet(...)` in the tree is in `tests/`). Cause 3 reaches **MET with `cause3_corr` still
+  withheld**, so scoping it out is *not* what would make cause 3 passable. **The binding site is
+  `z_validator.py:168-172`, `_DIAGONAL_ONLY_SCOPE`**, whose emitted text excludes
+  *"marginalization, projection, coverage validation"* **by name** — so a MET under the current leg
+  set disclaims exactly what endpoint A releases. **The requested deferral is therefore UNSOUND**:
+  it would need that sentence narrowed, which changes what a MET *licenses*. The one sound form —
+  narrowing endpoint A to release no projected uncertainty — is stated and **not** recommended.
+  **(2) A-4 IS SILENT ON THE RELEASED ERROR BARS, NOT MERELY WEAK.** With `C_k = (1+a)C_0` the
+  retained subspace and rank are invariant, so `‖P_0 − P_k‖_2` sits at **round-off (`~3e-15`, exactly
+  `0` at `a=1`) — seven orders inside its `1e-8`** — while the released bars move **41.4%**. So no
+  criterion in A-1…A-5 bounds them. **The instrument that does already exists and is CALLED, not
+  retyped:** `z_statistics.s_proj` (SPEC §3.7d's first candidate), whose internal
+  `einsum("ij,jk,ik->i", U, C, U)` **equals** `diag(U C Uᵀ)` — so with `U` = the rows of `M` it does
+  not approximate the release, **it evaluates it**. Rank-deficiency is irrelevant to it (no inverse,
+  no PD baseline), which is why it survives where the retired `rho` bound did not. **`s_corr` and
+  `s_eig` are rejected with reasons.** **⚠ The BOUNDARY is NOT proposed** — §4.4 measures why: δ needs
+  a declared publication uncertainty and `sec_3d.tex:251-252` says the 3D descriptors *"are audit
+  descriptors, not publication uncertainties"*, while `paper_body.tex:145-146` says every non-2D
+  result is a central value. **A format-derived number is refused on precedent in both directions**
+  (`REPRO_RTOL = 5e-4` legitimate for *reproduction*; `cause3_agg`'s withdrawn `0.0861%` illegitimate
+  for *acceptance*). Recommends adopting `s_proj` as a **reported statistic** now, boundary withheld
+  with a named trigger. **Ruling 2 is placed on A, not B**, on a closed two-block population derived
+  from `z_assembly.py:4` — and **⚠ neither block records its own `N`**: both `--array=` headers are
+  *declared* arrays, the verified count comes from `load_replica_manifest:44-48` failing closed, and
+  both producers `print` it and persist only a `TH2D`. **`C11`'s 2D `ndf` non-conformance is
+  explicitly OUT OF SCOPE under Ruling 1, in its own row** — and out of scope is not conformance.
+  Arithmetic re-runnable at
+  [`state/probe-z-projected-stability-20260910.py`](state/probe-z-projected-stability-20260910.py)
+  — a **new** file; the frozen `rho` probe is untouched and the universal bound is not reopened.
+- [`RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md`](RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md)
+  - **RECOMMENDATION ONLY — adopts nothing, grades nothing, authorizes no compute; Joseph retains
+  scientific approval.** The `z-criteria-designer` owner's answer to `Z_DECISION_PACKET` §5 items 1,
+  5, 7 and 8, in four parts: **covariance construction** (two proposed tolerances — the `g^c`
+  reconstruction gate at exact-or-`1e-12`, arguing that the standard-P4 `1e-9` closure tolerance is
+  six orders too loose for a six-operation expression; and a second per-element leg on the inflation
+  closure identity, because a Frobenius residual is an aggregate); **estimator-baseline sensitivity**
+  (a recommendation **on `SPEC` §3.7d's reserved disposition** — "add a leg": two binding
+  correlation-sensitive legs, `s_agg`/`s_med` demoted to diagnostics with an exact
+  rounding-equality display test replacing the two withdrawn format-derived boundaries);
+  **numerical reproducibility** (`epsilon = 1e-9` **proposed** for `r_null`, derived by a proven
+  inequality from `p4_lib.REPRO_RTOL_PER_BIN`, with `S` discharged by bounding via the F7 decision
+  margin and `epsilon` argued from `B`'s side because an `epsilon` near `S` would be a gate nothing
+  can violate); and **generator significances** (a **sharp, proven** two-sided bound on the consumed
+  quadratic form, **non-increasing under projection**, making the criterion closed-form in the
+  decision threshold rather than blocked on it). ⚠ **ROUND 2 (2026-09-10) REJECTED THE UNIVERSAL 5D BOUND AS THE ACCEPTANCE INSTRUMENT** — stopping-rule outcome **(2)**, *narrower claim recommended*, which Joseph named as a legitimate result. `rho` needs a positive-definite baseline and **Z's own operands give `rank(C_Z) <= 265` of `10,694`** (Part 6 F1, derived — **rank `263` is S's, not Z's**). §2.1/§2.1b/§2.2 **remain theorems and stay adoptable as stated**; what is withdrawn is their ROLE, plus rev. 1's **`M`-independence** claim (F2: monotonicity needs `range(C_k−C_0) ⊆ range(C_0)`, unmeasured and probably false). **The recommended rule is now DIRECT CHECKS ON THE DECLARED PUBLICATION CONSUMERS** — `s_sig` over declared `(generator, projection)` pairs plus the four inversion declarations `app_statmethods.tex:645-658` already mandates — which also **reinstates `PROPOSAL-20260908`'s C-1 statistic**, superseded in rev. 1 on an asymmetric ground. **All four withheld boundaries carry an explicit recommendation.** `cause3_corr` is answered in **Part 6** as **BRANCH A**: a second binding leg that is the
+  **inversion-declaration stability** of each declared projected object across members — retained
+  rank, applied `rcond`, condition number, retained-subspace gap. **It carries EXACTLY ONE
+  tolerance** — `‖P_0−P_k‖_2 <= 1e-8`, adversarially attacked over ~46,000 trials and survived —
+  while rank equality needs none and the applied `rcond` and condition number are **reported,
+  not gated** (an equality gate on the cutoff *cannot fail*, since it is a function of shape and
+  `eps`; the condition number is continuous and no tolerance for it is justifiable). ⚠ **An
+  earlier revision of this entry said "it needs no tolerance"; that was FALSE and is corrected.**
+  The leg is justified by `app_statmethods.tex:645-658` clauses (i)/(ii)/(iv) rather than by this
+  lane's judgement. ⚠ **Rev.
+  1 recommended Branch B on the ground that domination implies non-bindingness; that hinge is VOID
+  (F9 — the implication needs `rho_crit <= τ`, a relation between THRESHOLDS) and Branch B is
+  WITHDRAWN.** §2.1b's domination theorem itself stands. **`cause3_corr` remains WITHHELD and `(cause 3, Z)`
+  remains non-passing** — Joseph decides any amendment after independent review. Its arithmetic is
+  re-runnable at
+  [`state/probe-z-criteria-acceptance-mathematics-20260910.py`](state/probe-z-criteria-acceptance-mathematics-20260910.py).
+  Read its `CITABLE FOR` / `NOT CITABLE FOR` header first: no adopted boundary, and every `chi2`/`ndf`
+  in it is a synthetic placeholder because **no MINERvA significance exists in this tree**.
 - [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md)
   - **rev. 21. SPECIFICATION ONLY; constructs, runs, grades and adopts nothing.** The five deliverables
   `RZ(v)` authorizes, for one named Z: the **scientific contract** (§1 — artifact identities bound by

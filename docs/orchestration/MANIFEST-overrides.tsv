@@ -147,7 +147,7 @@ docs/orchestration/PROMPTS-20260906-z-specification-session.md	LIVE	open
 docs/orchestration/PROPOSAL-20260830-k0r2-resubmission.md	LIVE	open	
 docs/orchestration/PROPOSAL-20260902-oi173-reissue-cause4-M-referent.md	LIVE	open	
 docs/orchestration/PROPOSAL-20260903-pet-gate6-branch-preservation-and-removal.md	LIVE	open	
-docs/orchestration/PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md	LIVE	open	
+docs/orchestration/PROPOSAL-20260908-z-sensitivity-criteria-over-publication-projections.md	ARCHIVAL	superseded	docs/orchestration/RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md
 docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md	LIVE	open	
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	LIVE	open	
 docs/orchestration/PUBLICATION-READINESS-20260822.md	LIVE	open	
@@ -158,6 +158,7 @@ docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	LIVE	open
 docs/orchestration/README.md	DEAD	superseded	docs/orchestration/CATALOG.md
 docs/orchestration/RECEIPT-20260822-k0-n1-and-guarded-arms.md	LIVE	open	
 docs/orchestration/RECEIPT-20260824-k0-f8a-f9-f12-f17a-filings.md	LIVE	open	
+docs/orchestration/RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md	LIVE	open	
 docs/orchestration/RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md	LIVE	open	
 docs/orchestration/RECORD-20260830-k0-quarantine-and-seven-arm-submission.md	LIVE	open	
 docs/orchestration/RECORD-20260830-k0r2-round2-submission.md	LIVE	open	
@@ -292,3 +293,18 @@ docs/orchestration/RECHECK-20260918-null-per-bin-distribution.md	LIVE	open
 docs/orchestration/probes/probe-20260918-null-per-bin-distribution-recheck.py	LIVE	open	
 docs/orchestration/DECISION-20260910-joseph-accepts-outcome-2-and-opens-replacement-packet.md	LIVE	open	
 docs/orchestration/DECISION-20260910-joseph-b-deferred-and-finite-ensemble-disclosure.md	LIVE	open	
+docs/orchestration/state/probe-z-criteria-acceptance-mathematics-20260910.py	MACHINE	open	
+docs/orchestration/state/check-withdrawal-completeness-20260910.py	MACHINE	open	
+docs/orchestration/PACKET-20260910-z-consumer-set-and-endpoint-requirements.md	LIVE	open	
+docs/orchestration/state/probe-z-consumer-inversion-20260910.py	MACHINE	open	
+docs/orchestration/state/check-consumer-set-20260910.py	MACHINE	open	
+docs/orchestration/PACKET-20260910-z-endpoint-A-acceptance-and-cause3-corr-amendment.md	LIVE	open	
+docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
+docs/orchestration/AMENDMENT-20260911-cause3-conditional-scope-and-kappa.md	LIVE	open	
+docs/orchestration/COSTMODEL-20260911-z-pilot-and-scan.md	LIVE	open	
+docs/orchestration/DESIGN-20260911-endpoint-B-generator-comparison-test.md	LIVE	open	
+docs/orchestration/PREDECLARATION-20260916-B-estimator-and-coverage.md	LIVE	open	
+docs/orchestration/RECOMMENDATION-20260916-theta-per-bin-uncertainty-tolerance.md	LIVE	open	
+docs/orchestration/PROPOSAL-20260917-integrated-acceptance-existing-products.md	LIVE	open	
+docs/orchestration/PACKET-20260917-cause3-joint-baseline-acceptance.md	LIVE	open	
+docs/orchestration/PACKET-20260918-causes-1-2-4-acceptance-criteria.md	LIVE	open	
