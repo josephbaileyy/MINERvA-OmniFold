@@ -75,6 +75,37 @@ class Run:
             raise ValueError(f"{self.arm}/{self.stage}/seed{self.seed}: negative weights")
 
 
+def receipt_path_for(weights_path: Path | str) -> Path:
+    """Where a run's receipt lives. ONE implementation of the rule.
+
+    The receipt sits BESIDE the weights or ONE DIRECTORY UP: the campaign
+    launcher passes `--weights-folder $RUN/weights` and
+    `--output $RUN/receipt.json`, so the real layout is nested, while the
+    end-to-end fixture wrote both into one directory and therefore passed on a
+    layout the launcher never produces. Measured: `select` failed in 41
+    seconds on the first real tuning run.
+
+    Both places are searched and NOTHING ELSE. A wider search -- walking up to
+    the stage directory, say -- could pick up a sibling run's receipt and
+    label these weights with another run's arm and seed, which is worse than
+    failing.
+
+    This is a function because the rule had been written twice, here and
+    inline in `select_learning_rate`. Fixing only the first left the second to
+    fail the same way on the very next submission.
+    """
+    path = Path(weights_path)
+    candidates = [path.parent / "receipt.json", path.parent.parent / "receipt.json"]
+    found = next((c for c in candidates if c.exists()), None)
+    if found is None:
+        raise FileNotFoundError(
+            f"no receipt beside or above {path} (looked in "
+            f"{[str(c) for c in candidates]}): the arm, stage and seed of a "
+            "run are taken from what the run recorded, and a filename cannot "
+            "stand in")
+    return found
+
+
 def load_run(weights_path: str | Path) -> Run:
     """Read one weights file, taking arm/stage/seed from the RECEIPT, not the name.
 
@@ -85,39 +116,18 @@ def load_run(weights_path: str | Path) -> Run:
     path = Path(weights_path)
     with np.load(path) as handle:
         weights = np.asarray(handle["weights"], dtype=np.float64)
-    # The receipt sits BESIDE the weights or ONE DIRECTORY UP. The campaign
-    # launcher passes `--weights-folder $RUN/weights --output $RUN/receipt.json`,
-    # so the real layout is nested; the end-to-end test wrote both into one
-    # directory and therefore passed on a layout the launcher never produces.
-    # Measured: `select` failed in 41 seconds on the first real tuning run.
-    #
-    # Both places are searched and NOTHING ELSE. A wider search -- walking up
-    # to the stage directory, say -- could pick up a sibling run's receipt and
-    # label these weights with another run's arm and seed.
-    candidates = [path.parent / "receipt.json", path.parent.parent / "receipt.json"]
-    receipt_path = next((c for c in candidates if c.exists()), None)
-    if receipt_path is None:
-        raise FileNotFoundError(
-            f"no receipt beside or above {path} (looked in "
-            f"{[str(c) for c in candidates]}): the arm, stage and seed of a "
-            "run are taken from what the run recorded, and a filename cannot "
-            "stand in"
-        )
-    receipt = json.loads(receipt_path.read_text())
+    receipt = json.loads(receipt_path_for(path).read_text())
     arm, stage, seed = receipt["arm"], receipt["stage"], int(receipt["seed"])
     stem = path.stem  # weights_<arm>_<stage>_<seed>
     expected = f"weights_{arm}_{stage}_{seed}"
     if stem != expected:
         raise ValueError(
-            f"receipt says {arm}/{stage}/seed{seed} but the file is named {stem!r}; "
-            f"expected {expected!r}. One of the two is from a different run"
-        )
+            f"receipt says {arm}/{stage}/seed{seed} but the file is named "
+            f"{stem!r}; expected {expected!r}. One of the two is from a "
+            "different run")
     return Run(arm=arm, stage=stage, seed=seed, weights=weights, source=str(path))
 
 
-# --------------------------------------------------------------------------- #
-# The endpoint
-# --------------------------------------------------------------------------- #
 def _histogram(eavail: np.ndarray, weights: np.ndarray,
                edges: Sequence[float]) -> np.ndarray:
     counts, _ = np.histogram(np.asarray(eavail, dtype=np.float64),

@@ -128,3 +128,28 @@ class TheLauncherSweepsTheGrid(unittest.TestCase):
         from pathlib import Path
         text = (Path(__file__).resolve().parent / "sbatch_campaign.sh").read_text()
         self.assertIn("seed${SEED}-lr${LR}", text)
+
+
+class TheReceiptRuleHasOneImplementation(unittest.TestCase):
+    """It had two, and fixing one left the other to fail identically."""
+
+    def test_selection_calls_the_shared_helper(self):
+        from pathlib import Path
+        import select_learning_rate as sl
+        source = Path(sl.__file__).read_text()
+        self.assertIn("sc.receipt_path_for(path)", source)
+        self.assertNotIn('(path.parent / "receipt.json")', source)
+
+    def test_the_helper_exists_and_handles_the_nested_layout(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        import numpy as np
+        import score_campaign as sc
+        with tempfile.TemporaryDirectory() as tmp:
+            run = Path(tmp) / "ours-seed17-lr0.0001"
+            (run / "weights").mkdir(parents=True)
+            (run / "receipt.json").write_text(json.dumps({"arm": "ours"}))
+            w = run / "weights" / "weights_ours_tuning_17.npz"
+            np.savez(w, weights=np.ones(2))
+            self.assertEqual(sc.receipt_path_for(w), run / "receipt.json")

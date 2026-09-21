@@ -117,7 +117,10 @@ def main() -> int:
     scored = []
     for path in weights:
         run = sc.load_run(path)
-        receipt = json.loads((path.parent / "receipt.json").read_text())
+        # `score_campaign` owns where a receipt lives; this had its own copy
+        # of the rule and failed identically one submission after the copy in
+        # `load_run` was fixed.
+        receipt = json.loads(sc.receipt_path_for(path).read_text())
         row = sc.score_run(run, endpoint,
                            scoreable_regions=context["scoreable_regions"])
         row["learning_rate"] = float(receipt["learning_rate"])
