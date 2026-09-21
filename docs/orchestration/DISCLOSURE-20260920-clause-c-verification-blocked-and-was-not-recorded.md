@@ -91,6 +91,20 @@ inference, stated here as one.** If that link is wrong, §4's omission claim nar
 independent verification of the required set returned BLOCK and was not recorded"*, which is still
 true and still worth disclosing.
 
+## 5b. ⚠ DISPOSED 2026-09-20 — read this before acting on anything above
+
+**Clause (c) has since been disposed of:**
+[`DECISION-20260920-joseph-rules-clause-c-disposition.md`](DECISION-20260920-joseph-rules-clause-c-disposition.md).
+`V2` — the sole surviving ground of the `BLOCK` — is **discharged** by a third lane
+([`VERDICT-20260920-third-lane-c5-c7-verification.md`](VERDICT-20260920-third-lane-c5-c7-verification.md)),
+`V6` is **ruled outside** clause (c)'s scope, and the ordering defect this record discloses is
+**ratified retrospectively and NOT cured**.
+
+**Everything this record states remains true as of the moment it was written, and §4's omission
+happened.** What has changed is that it is now answered. The two limitations that survive are
+carried at that decision's §5, and the sentence in §6 below — *"Only a lane that authored none of
+C5's or C7's evidence can"* — is exactly what was done.
+
 ## 6. What this record does NOT do
 
 - It does not withdraw or qualify the adoption. That is Joseph's and he has not made it.

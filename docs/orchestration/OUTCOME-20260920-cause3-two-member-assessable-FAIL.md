@@ -75,9 +75,20 @@ uniform normalisation drift.
 five of `C_Z`'s 45 bands are produced at a literal `--seed 42` that the offset hook cannot reach —
 **26.0% of `√Tr`, 6.75% of the trace**. Those bands contribute **zero** movement by construction.
 
-**So the measured `6.145%` is what 93.2% of the trace produces on its own.** Letting the remaining
-bands vary could only add movement, not remove it. **The FAIL is robust to the limitation; a PASS
-would not have been.**
+**So the measured `6.145%` is what 93.2% of the trace produces on its own.** What a total in which
+those bands also varied would measure is **unmeasured, in either direction**.
+
+> ⚠ **CORRECTED 2026-09-20. This paragraph read *"Letting the remaining bands vary could only add
+> movement, not remove it. The FAIL is robust to the limitation; a PASS would not have been."***
+> Withdrawn on the third-lane verification's finding `P1`
+([`VERDICT-20260920-third-lane-c5-c7-verification.md`](VERDICT-20260920-third-lane-c5-c7-verification.md); withdrawal recorded at
+[`CORRECTION-20260920-lower-bound-inference-withdrawn.md`](CORRECTION-20260920-lower-bound-inference-withdrawn.md)). `s_proj` is a **maximum of `|Δ√(uᵀCu)| / √(uᵀCu)`** over the functional
+> set, not a sum of nonnegative component magnitudes, so releasing a held-fixed PSD component
+> changes the statistic's operands and can move the total the **other** way.
+> **THE FAIL ITSELF IS UNAFFECTED, and its ground is stated here rather than left to inference:**
+> `6.145%` was measured directly against the `5%` bound on the object that was graded. It never
+> needed the counterfactual. What is withdrawn is the claim that the FAIL would survive *any*
+> release of the five bands — that is now an open question, not a settled robustness argument.
 
 ## 5. What was spent
 

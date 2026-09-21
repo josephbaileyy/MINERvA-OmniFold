@@ -706,10 +706,25 @@ quantity from *playlists summed*. Consistent with 12; not a confirmation.
 
 **Cause 7's magnitude is Z's measured lateral counterfactual** (§4g): `√tr` ratio **`0.9997122662`**,
 **`−0.0288%`**. ⚠ **That is a change in the lateral block's SQUARE-ROOT TRACE — not a bound on every
-bin, and not a bound on the complete covariance.** The per-bin ratios run **`0.687`–`1.153`**
-(`0.687` is a **31% decrease**), and **small aggregate variance share does not make a bin irrelevant
-to a quoted result.** `C_Z − C_G` is **not** substituted. Historical **G** and **Y** dispositions are
-**unchanged**.
+bin, and not a bound on the complete covariance.**
+
+**The per-bin ratios run `0.177`–`3.062` over all 10,694 bins** (§4g: min `0.177248`, median
+`1.005070`, max `3.061947`). **Within the top 1% of bins by support variance — which carry `74.11%`
+of the total — they run `0.687`–`1.153`**, median `0.999`, and `0.687` is a **31% decrease**. **Small
+aggregate variance share does not make a bin irrelevant to a quoted result**, so the full range is
+the report and the top-1% range is a subset of it, never a substitute. `C_Z − C_G` is **not**
+substituted. Historical **G** and **Y** dispositions are **unchanged**.
+
+> ⚠ **CORRECTED 2026-09-20. This paragraph said *"The per-bin ratios run `0.687`–`1.153`"* with no
+> qualifier**, while §4g:578 — nine lines of the same document — declares that range to be the
+> **top 1% of bins by support variance**. A summary contradicting its own evidence section is the
+> dropped-qualifier failure this campaign has been counting; and it is the **summary** a reader
+> quotes. Found by the third-lane verification, finding `P2`
+> ([`VERDICT-20260920-third-lane-c5-c7-verification.md`](VERDICT-20260920-third-lane-c5-c7-verification.md)),
+> which re-derived the extrema **from the five support and five active matrices themselves** —
+> `0.17724803760759691` and `3.0619466845725776` on positive-support-variance bins, with the
+> aggregate `√tr` change reproducing independently at `−0.02877337862288165%`. So §4g's full range is
+> confirmed by a second lane from the bytes, and only this summary was wrong.
 
 ## 5. Execution order — fixed
 

@@ -70,11 +70,29 @@ with `N`; this does not.
 the seed-pair distribution is UNMEASURED**, and `s_proj` is a **maximum** over the declared offset
 set, so more pairs can only raise it.
 
-**M3. It is a LOWER bound.** Five of `C_Z`'s 45 bands — `BeamAngleX`, `BeamAngleY`,
-`MuonResolution`, `Muon_Energy_MINERvA`, `Muon_Energy_MINOS` — are produced at a literal `--seed 42`
-the offset hook **cannot reach** (`MNV_EST_SEED_OFFSET` appears **0** times in all six files of that
-chain). They carry **26.0% of `√Tr C_Z`, 6.75% of the trace** and contribute **zero** movement by
-construction. Letting them vary could only add.
+**M3. Five bands are outside what the seed variation probes.** Five of `C_Z`'s 45 bands —
+`BeamAngleX`, `BeamAngleY`, `MuonResolution`, `Muon_Energy_MINERvA`, `Muon_Energy_MINOS` — are
+produced at a literal `--seed 42` the offset hook **cannot reach** (`MNV_EST_SEED_OFFSET` appears
+**0** times in all six files of that chain). They carry **26.0% of `√Tr C_Z`, 6.75% of the trace**
+and contribute **zero** movement by construction. **The seed variation therefore does not probe the
+seed sensitivity of those five bands; its effect on the total covariance when they also vary has not
+been measured.**
+
+> ⚠ **CORRECTED 2026-09-20. This cell read *"It is a LOWER bound … Letting them vary could only
+> add"*, and that inference does not follow.** Withdrawn on the third-lane verification's finding
+> `P1` ([`VERDICT-20260920-third-lane-c5-c7-verification.md`](VERDICT-20260920-third-lane-c5-c7-verification.md)),
+> and the withdrawal is recorded at [`CORRECTION-20260920-lower-bound-inference-withdrawn.md`](CORRECTION-20260920-lower-bound-inference-withdrawn.md).
+> **`s_proj` is a MAXIMUM of `|Δ√(uᵀCu)| / √(uᵀCu)` over the functional set** (`z_statistics.py:203`),
+> **not a sum of nonnegative component magnitudes.** Releasing a held-fixed PSD component changes the
+> statistic's operands rather than appending samples to the same maximum, so it can move the total in
+> the **opposite** direction and **lower** the measured movement. The verifier's one-dimensional
+> counterexample, on strictly positive components: `V₀ = L₀ = 1`, `C₀ = 2`; with the lateral block held
+> fixed `V₁ = 1.2`, `L₁ = 1` gives `C₁ = 2.2` and `s_proj = 4.880885%`; letting it vary to `L₁ = 0.8`
+> gives `C₁ = 2` and `s_proj = 0`.
+> **THE MEASUREMENT IS UNCHANGED AND STILL TRAVELS:** five bands, `26.0%` of `√Tr C_Z`, `6.75%` of
+> the trace, zero movement by construction. What is withdrawn is the direction of the unmeasured
+> remainder. **M1's `6.145%` FAIL is untouched** — it is measured directly against a `5%` bound and
+> never rested on this inference.
 
 **M4. The estimator seed also moves the CENTRAL VALUES — by at most `6.0%` of their own
 uncertainty.** On the 43 `M1` projection functionals the central value moves by median `0.104%`,

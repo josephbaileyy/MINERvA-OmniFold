@@ -62,7 +62,15 @@ The four measurements of the adoption record apply to everything quoted from it:
 2. **That effect is flat in `N` at `6.04% ± 0.39%` over `N = 40–160`**, while the resampling floor
    falls (`p = 1.467` vs `p = 0.000`) — **a reproducible property of the estimator, not resolution
    noise.** The `± 0.39%` is scatter at **one** seed pair; the seed-pair width is **unmeasured**.
-3. **It is a LOWER bound** — five seed-pinned bands carrying `26.0%` of `√Tr` contribute zero.
+3. **Five bands are outside what the variation probes** — five seed-pinned bands carrying `26.0%`
+   of `√Tr` contribute zero movement by construction, so their seed sensitivity is unprobed and
+   the effect on the total when they also vary is **unmeasured**.
+   ⚠ **CORRECTED 2026-09-20: this read *"It is a LOWER bound"*.** Withdrawn on the third-lane verification's finding `P1`
+([`VERDICT-20260920-third-lane-c5-c7-verification.md`](VERDICT-20260920-third-lane-c5-c7-verification.md); withdrawal recorded at
+[`CORRECTION-20260920-lower-bound-inference-withdrawn.md`](CORRECTION-20260920-lower-bound-inference-withdrawn.md)) —
+   `s_proj` is a **maximum over a functional set**, not a sum of nonnegative component magnitudes,
+   so releasing a held-fixed component can move the total the other way. The measurement stands;
+   the direction of the unmeasured remainder does not.
 4. **The seed also moves the central values**, by `≤ 6.02%` of their own quoted uncertainty on
    these 42 destinations (median `1.06%`), worst at **functional index 2 — the same one that failed
    `s_proj`**. Per individual 5D bin it reaches `49.8%` of `σ`; the projections do not, because

@@ -115,6 +115,42 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   no annotated objects were lost, and the four `z-deploy` commits remain reachable from
   `lane/z-assembly-pilot-20260914`. **Do not run `--prune-tags` against `origin` in this repo:**
   local-only tags are load-bearing here and the flag treats them as stale.
+- [`VERDICT-20260920-third-lane-c5-c7-verification.md`](VERDICT-20260920-third-lane-c5-c7-verification.md)
+  - **The THIRD-LANE independent verification of `(5, Z)` and `(7, Z)`**, committed **verbatim** as
+  the verifier wrote it. It is the lane `DISCLOSURE-20260920`'s `V2` said was required: it authored
+  none of the C5/C7 evidence and does not own cause 5. **C5 NOT FALSIFIED** on the 15-module
+  assembly closure at `fb9ec356` — every module matched against its Git blob, `adopt_unified_5d.py`
+  genuinely in the closure (`e1260e8d…`) — and on all eight manifest sources, opened and fully
+  hashed; the **producer-chain residual is preserved, not converted into a missing 16th module**.
+  **C7 reproduces**: 45 bands, V 13 / R 27 / A 5, ten distinct endpoint digests, ten migration
+  censuses agreeing with `p4_lib.py:64-65`, identities at `1e-16`, independent eigensolve.
+  ⚠ It **declines** to treat *"measured twice, two files"* as two origins — both trace to the
+  support file's keys — and reads the original support file instead. ⚠ Two publication findings:
+  **`P1`** the lower-bound inference (withdrawn, see below) and **`P2`** the dropped top-1%
+  qualifier. ⚠ **Procedural deviation stated by the verifier itself:** the requested fresh clone was
+  absent and `RUN.sh` was not executed, so fresh-clone isolation was **not** achieved; it worked
+  read-only against pinned revisions in the existing object database.
+- [`CORRECTION-20260920-lower-bound-inference-withdrawn.md`](CORRECTION-20260920-lower-bound-inference-withdrawn.md)
+  - **WITHDRAWN: *"it is a LOWER bound"* / *"letting them vary could only add."*** `s_proj` is a
+  **maximum** of `|Δ√(uᵀCu)|/√(uᵀCu)` over a functional set, not a sum of nonnegative component
+  magnitudes, so releasing a held-fixed PSD component changes the operands and can move the total
+  the **other** way — with a 1-D counterexample on strictly positive components taking `4.880885%`
+  to `0`. **The MEASUREMENT stands** (5 bands, `26.0%` of `√Tr`, zero movement by construction);
+  the direction of the unmeasured remainder does not. ⚠ **The *more-seed-pairs-can-only-raise-it*
+  half is VALID and retained** — same statistic, same operands. **`M1`'s `6.145%` FAIL is
+  untouched.** Newly open: whether the FAIL survives *any* release of the five bands. Enumerates
+  all **8** sites, including `values.tex`'s **comment**, which a search for rendered text misses.
+  Also repairs `P2`: §4i now gives the full per-bin range `0.177`–`3.062` with `0.687`–`1.153`
+  labelled as the top-1%-by-variance subset.
+- [`DECISION-20260920-joseph-rules-clause-c-disposition.md`](DECISION-20260920-joseph-rules-clause-c-disposition.md)
+  - **§6.4 clause (c) is DISPOSED.** `V2` **discharged** by the third lane above; `V6`'s six
+  unreproduced items **ruled outside** clause (c)'s scope, on the assessor's own distinction that
+  independence is about **judgement, not arithmetic**; and the ordering defect — verification
+  followed adoption — **ratified retrospectively and expressly NOT cured**. ⚠ Joseph ruled by
+  **selecting** one of three dispositions put to him in session; §0 says so and forbids attributing
+  any other sentence to him. ⚠ **Two limitations travel with it:** `L1` the `V6` six have no
+  second-lane reproduction, and `L2` the sequence was violated. It does **not** claim every clause-(c)
+  row was measured — the third lane verified **two**.
 - [`RECORD-20260920-PROJ-m1-publication-under-exception.md`](RECORD-20260920-PROJ-m1-publication-under-exception.md)
   - **The M1 publication projection is BUILT and its pairing verified.** `835828bf…`, 42 cells,
   `run_class publication-under-exception`, variant declared **and measured** `cv`. Every

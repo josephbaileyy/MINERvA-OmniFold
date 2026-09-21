@@ -30,6 +30,7 @@ docs/orchestration/CONVENTION-document-retention.md	LIVE	open
 docs/orchestration/CONVENTION-receipt-ingredients.md	LIVE	open
 docs/orchestration/CONVENTION-verifying-a-check-is-deployed.md	LIVE	open
 docs/orchestration/CORPUS-20260811-gates-that-cannot-fail-sweep.md	LIVE	open	
+docs/orchestration/CORRECTION-20260920-lower-bound-inference-withdrawn.md	LIVE	open	
 docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md	LIVE	open	
 docs/orchestration/DECISION-20260822-joseph-b1-lift-and-clause-c.md	LIVE	open	
 docs/orchestration/DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md	LIVE	open	
@@ -56,6 +57,7 @@ docs/orchestration/DECISION-20260919-joseph-R6-reverses-the-k1-decline.md	LIVE	o
 docs/orchestration/DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md	LIVE	open	
 docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md	LIVE	open	
 docs/orchestration/DECISION-20260920-joseph-authorizes-typed-descriptor-audit-on-main.md	LIVE	open	
+docs/orchestration/DECISION-20260920-joseph-rules-clause-c-disposition.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECLARATION-20260822-k0-submission-sha.md	LIVE	open	
 docs/orchestration/DECLARATION-20260823-k0-candidate-aa67c426.md	LIVE	open	
@@ -185,6 +187,7 @@ docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md	ARCHIV
 docs/orchestration/VERDICT-20260821-expiry-c-real-path-present-seed.md	ARCHIVAL	superseded	docs/orchestration/VERDICT-20260821-clausec-rerun-production-dimension.md
 docs/orchestration/VERDICT-20260825-gate2-k0-rehearsal-nine-clauses.md	LIVE	open	
 docs/orchestration/VERDICT-20260830-readiness-10-1-k0-7ac0edec.md	LIVE	open
+docs/orchestration/VERDICT-20260920-third-lane-c5-c7-verification.md	LIVE	open	
 docs/orchestration/VERIFICATION-20260822-k0-execution-integrity.md	LIVE	open	
 docs/orchestration/WAKER.md	LIVE	open	
 docs/orchestration/WALKDOWN-20260822-one-pass.md	LIVE	open	

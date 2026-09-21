@@ -194,7 +194,14 @@ A movement only matters relative to what it is a movement in.
   stability, and none is proposed.
 - **It does not weaken the `s_proj` finding** — it corroborates it, on the same functional, from an
   independent quantity.
-- **It is a lower bound, for the same reason the covariance result is:** the five seed-pinned bands
-  cannot move, and the comparison is one seed pair.
+- **Two things it does not probe, and the asymmetry between them is deliberate:** the comparison is
+  **one seed pair**, and `s_proj` is a maximum over the declared offset set, so **further pairs can
+  only raise it** — that half is a genuine one-sided statement. The five seed-pinned bands are
+  **not** the same case: they cannot move here, and what a total containing their movement would
+  measure is **unmeasured in either direction**.
+  ⚠ **CORRECTED 2026-09-20: this read *"It is a lower bound, for the same reason the covariance
+  result is"*, collapsing the two.** Withdrawn on the third-lane verification's finding `P1`
+([`VERDICT-20260920-third-lane-c5-c7-verification.md`](VERDICT-20260920-third-lane-c5-c7-verification.md); withdrawal recorded at
+[`CORRECTION-20260920-lower-bound-inference-withdrawn.md`](CORRECTION-20260920-lower-bound-inference-withdrawn.md)).
 
 **Co-Authored-By: Claude Opus 5 (1M context)**
