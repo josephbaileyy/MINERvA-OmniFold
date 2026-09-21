@@ -453,3 +453,46 @@ class TheReceiptMayBeOneDirectoryUp(unittest.TestCase):
             np.savez(path, weights=np.ones(4))
             with self.assertRaises(FileNotFoundError):
                 sc.load_run(path)
+
+
+class ThePushSpansAllOfHalfBButTheEndpointScoresLess(unittest.TestCase):
+    """199,739 weights against 199,731 prior events, on the first real stage.
+
+    The push is written over EVERY row of half B; the endpoint keeps only the
+    rows where the injection is defined -- truth-passing with finite E_avail.
+    At 10,000 rows in the smoke every row passed, so the gap never appeared.
+    """
+
+    def _endpoint(self, n=500, drop=8):
+        rng = np.random.default_rng(0)
+        eavail = rng.gamma(2.0, 0.5, size=n)
+        keep = np.ones(n, bool)
+        keep[:drop] = False
+        labels = np.array(["good"] * int(keep.sum()))
+        tilt = sc.injected_truth_weights(eavail[keep])
+        return sc.Endpoint(
+            eavail_a=eavail[keep], w_truth_a=np.ones(int(keep.sum())),
+            tilt_a=tilt, region_a=labels,
+            eavail_b=eavail[keep], w_truth_b=np.ones(int(keep.sum())),
+            region_b=labels.copy(), prior_selector=keep), keep
+
+    def test_a_full_length_push_is_selected_not_refused(self):
+        ep, keep = self._endpoint()
+        run = sc.Run("ours", "final", 127, np.ones(keep.size))
+        scored = sc.score_run(run, ep, scoreable_regions=["good"])
+        self.assertAlmostEqual(scored["recovery"], 0.0, places=9)
+
+    def test_the_selection_keeps_the_right_rows(self):
+        """An oracle over the SELECTED rows must still score 1."""
+        ep, keep = self._endpoint()
+        push = np.zeros(keep.size)
+        push[keep] = ep.tilt_a
+        scored = sc.score_run(sc.Run("ours", "final", 127, push), ep,
+                              scoreable_regions=["good"])
+        self.assertAlmostEqual(scored["recovery"], 1.0, places=9)
+
+    def test_a_genuinely_wrong_length_still_fails(self):
+        ep, keep = self._endpoint()
+        with self.assertRaisesRegex(ValueError, "prior events"):
+            sc.score_run(sc.Run("ours", "final", 127, np.ones(keep.size + 5)),
+                         ep, scoreable_regions=["good"])

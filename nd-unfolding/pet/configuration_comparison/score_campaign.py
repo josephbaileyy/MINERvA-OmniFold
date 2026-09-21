@@ -160,6 +160,12 @@ class Endpoint:
     w_truth_b: np.ndarray
     region_b: np.ndarray
     edges: tuple[float, ...] = tuple(fd.ENDPOINT["bin_edges_gev"])
+    #: Which rows of the run's half B survived the truth-passing cut. The push
+    #: is written over ALL of half B; the endpoint scores only the rows where
+    #: the injection is defined. Measured on the first real tuning stage:
+    #: 199,739 weights against 199,731 prior events, 8 rows apart. The smoke
+    #: never showed it because at 10,000 rows every row passed.
+    prior_selector: np.ndarray | None = None
 
     def __post_init__(self) -> None:
         import characterize_regions as cr
@@ -233,9 +239,15 @@ def score_run(run: Run, endpoint: Endpoint, *,
     half A's tilted spectrum. Both are normalised before comparison, so the
     two halves' different sizes do not enter.
     """
-    if run.weights.size != endpoint.n_prior:
+    weights = np.asarray(run.weights)
+    selector = endpoint.prior_selector
+    if selector is not None and weights.size == np.asarray(selector).size:
+        # The push spans ALL of half B; the endpoint keeps only the rows where
+        # the injection is defined. Select, do not pad or truncate.
+        weights = weights[np.asarray(selector, dtype=bool)]
+    if weights.size != endpoint.n_prior:
         raise ValueError(
-            f"{run.arm}/{run.stage}/seed{run.seed}: {run.weights.size} weights "
+            f"{run.arm}/{run.stage}/seed{run.seed}: {weights.size} weights "
             f"against {endpoint.n_prior} prior events. The push is aligned to "
             "half B row for row; a length mismatch means they are different "
             "populations and scoring them together compares unlike things")
@@ -245,7 +257,7 @@ def score_run(run: Run, endpoint: Endpoint, *,
         prior = _histogram(endpoint.eavail_b[mask_b],
                            endpoint.w_truth_b[mask_b], edges)
         unfolded = _histogram(endpoint.eavail_b[mask_b],
-                              (endpoint.w_truth_b * run.weights)[mask_b], edges)
+                              (endpoint.w_truth_b * weights)[mask_b], edges)
         target = _histogram(endpoint.eavail_a[mask_a],
                             (endpoint.w_truth_a * endpoint.tilt_a)[mask_a], edges)
         return prior, unfolded, target

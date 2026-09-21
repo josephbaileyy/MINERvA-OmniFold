@@ -120,10 +120,14 @@ def build_endpoint(closure_npz: Path | str, weights_npz: Path | str
     endpoint = sc.Endpoint(
         eavail_a=eavail[sel_a], w_truth_a=w_truth[sel_a],
         tilt_a=tilt_a[keep_a], region_a=labels_a,
-        eavail_b=eavail[sel_b], w_truth_b=w_truth[sel_b], region_b=labels_b)
+        eavail_b=eavail[sel_b], w_truth_b=w_truth[sel_b], region_b=labels_b,
+        # The push spans all of half B; this says which of those rows the
+        # endpoint scores.
+        prior_selector=keep_b)
     context = {
         "closure_npz": {"path": str(closure_npz), "sha256": _digest(closure_npz)},
         "half_a_rows": int(sel_a.size), "half_b_rows": int(sel_b.size),
+        "half_b_rows_dropped_not_truth_passing": int(rows_b.size - sel_b.size),
         "halves_disjoint": bool(np.intersect1d(rows_a, rows_b).size == 0),
         "census": census,
         "regional_reference": regional_ref,
