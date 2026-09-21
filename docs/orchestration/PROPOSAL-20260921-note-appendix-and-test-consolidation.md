@@ -107,9 +107,28 @@ Three from this session, each of which a plausible consolidation would have remo
 
 ### Sequencing
 
-Preconditions 3 and 4 are **now satisfied** (`c29bee8e`…`05860b7a` and the test-defect commit of
-2026-09-21: 3,798 tests collect, both previously-red files pass). Consolidation itself remains
-unstarted and is **not** recommended before the note's publication deliverables are settled — it
-is cost reduction, and it competes with the critical path for the same attention.
+⚠ **CORRECTED 2026-09-21, SAME DAY. The first version of this paragraph said preconditions 3 and 4
+were "now satisfied", and that was premature — I wrote it before the first whole-suite run had
+finished.** That run then returned **22 failures**, so precondition 3 was false at the moment I
+asserted it. The failures were real and led to the deeper repair described at `root_probe.py`.
+
+**Where they actually stand, measured after that repair:**
+
+| precondition | state |
+|---|---|
+| **4** — whole-directory runs are possible | **satisfied.** 3,798 tests collect; the run used to abort at collection. |
+| **3** — the suite is not red | **substantially, with 8 named exceptions.** Four chunks give 719 + 886 + 888 + 1278 passed and **8 failed**, and all 8 reproduce **by name** at `c34553e5` — two multiprocessing guard tests, six P4 ones. They are standing findings this work did not create and did not close. |
+
+⚠ **And one limitation of that verification, because it is the kind this document is about.** A
+single-process full run was killed twice for memory, so the suite was run in **four chunks** —
+which does **not** exercise cross-chunk pollution, the very class of defect the `root_probe` repair
+addresses. That class was therefore tested directly instead: all five stub installers followed by
+every previously-failing module, in one process, worst-case ordering → **745 passed, 8 skipped, 0
+failed**. Chunked coverage plus a targeted worst-case ordering is not the same thing as one clean
+whole-suite run, and it should not be quoted as one.
+
+Consolidation itself remains unstarted and is **not** recommended before the note's publication
+deliverables are settled — it is cost reduction, and it competes with the critical path for the
+same attention.
 
 **Co-Authored-By: Claude Opus 5 (1M context)**
