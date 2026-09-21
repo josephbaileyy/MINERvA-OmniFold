@@ -2,7 +2,9 @@
 
 This is a pointer-only active-tree router. It contains no scientific evidence or authorization.
 
-> ## ⚠ READ THIS FIRST — the router is 4208 lines and you almost certainly want about 500 of them
+> ## ⚠ READ THIS FIRST — the router is ~4273 lines and you almost certainly want about 500 of them
+>
+> *(The figure is approximate ON PURPOSE. It was written as an exact `4208` and was stale within the hour, because adding a pointer row to this file changes it. An exact count of a file that grows by being used is a number that decays every time it is right.)*
 >
 > It grew append-only through three campaigns and **it is now longer than most documents it points
 > at**. Measured 2026-09-21, so a reader can skip rather than scroll:
