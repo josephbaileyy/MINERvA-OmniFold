@@ -80,6 +80,32 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   its own reason (*"MAT ± cancels CV"*). Measured share: **26.0% of `√Tr C_Z`, 6.75% of the
   trace**, dominated by the two muon-energy bands. **So a cause-3 MET covers 93.2% of the trace.**
   Unpinning it is a material change to the estimator and is routed to Joseph, not attempted.
+- [`DISCLOSURE-20260920-clause-c-verification-blocked-and-was-not-recorded.md`](DISCLOSURE-20260920-clause-c-verification-blocked-and-was-not-recorded.md)
+  - **§6.4 clause (c) is an `iff` — and the independent verification it requires returned `BLOCK`,
+  which the adoption record did not say.** The verification exists on
+  `lane/z-criteria-independent-assessment-20260910` at `935b7558…`, not on `main`. Its `BLOCK` is
+  **`V2` alone and is a WHO-MAY-SIGN block**: C5's and C7's evidence is the assessor's own work
+  (`80b464ca`), so signing them would make clause (c) inert — *"Nothing about them is suspect; the
+  routing is."* Question (2) returned **PASS on everything reachable**, and `V4` exercised the
+  guards with a working positive control. **Recorded as Joseph's omission**: `independent`,
+  `clause (c)` and `BLOCK` each occurred **0** times in the adoption record. ⚠ Carries its own
+  scoping caveat — `clause (c)` is overloaded (expiry / B1-lift / §6.4) and the assessment quotes
+  no clause text, so the identification is **by content, stated as an inference**.
+- [`INDEX-20260920-retained-branches-not-on-main.md`](INDEX-20260920-retained-branches-not-on-main.md)
+  - The 15 branches retained on `origin` whose content is **not** on `main`, with head SHAs. Its
+  first row is the clause-(c) verification above.
+- [`LEDGER-20260920-deleted-branch-names-to-sha.md`](LEDGER-20260920-deleted-branch-names-to-sha.md)
+  - Name→SHA for the 28 branches deleted on 2026-09-20, so a stale citation still resolves.
+- [`DECISION-20260920-joseph-authorizes-typed-descriptor-audit-on-main.md`](DECISION-20260920-joseph-authorizes-typed-descriptor-audit-on-main.md)
+  - Joseph authorizes publishing the typed-descriptor audit on `main`, on a **measured and
+  corrected** scope (50 `[M60]` payload lines, 10 data-derived) after an earlier asserted count of
+  five was withdrawn. It reached a commit by an over-broad `git add`, not by a decision.
+- ⚠ **Tag hygiene, 2026-09-20:** a `git fetch --prune-tags` deleted the five local-only tags
+  (`freeze/k0-aa67c426`, `z-deploy-{15315e75,20b97fa9,4c9b5066,69cd4eb1}`), which exist on **no**
+  remote. **All five were restored to their original commits the same day** — they were lightweight,
+  no annotated objects were lost, and the four `z-deploy` commits remain reachable from
+  `lane/z-assembly-pilot-20260914`. **Do not run `--prune-tags` against `origin` in this repo:**
+  local-only tags are load-bearing here and the flag treats them as stale.
 - [`RECORD-20260920-PROJ-m1-publication-under-exception.md`](RECORD-20260920-PROJ-m1-publication-under-exception.md)
   - **The M1 publication projection is BUILT and its pairing verified.** `835828bf…`, 42 cells,
   `run_class publication-under-exception`, variant declared **and measured** `cv`. Every
