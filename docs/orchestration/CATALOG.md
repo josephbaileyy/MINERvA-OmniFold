@@ -80,6 +80,15 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   its own reason (*"MAT ± cancels CV"*). Measured share: **26.0% of `√Tr C_Z`, 6.75% of the
   trace**, dominated by the two muon-energy bands. **So a cause-3 MET covers 93.2% of the trace.**
   Unpinning it is a material change to the estimator and is routed to Joseph, not attempted.
+- [`DETERMINATION-20260920-merge-guard-scope-vs-registry-conflicts.md`](DETERMINATION-20260920-merge-guard-scope-vs-registry-conflicts.md)
+  - **`merge_guard.sh` REFUSED the 69-commit merge of the clause-(c) verification lane, and the
+  refusal STANDS — no override was sought and none exists.** The two conflicts were `CATALOG.md`
+  (prose) and `MANIFEST-overrides.tsv` (a path registry), neither of which carries a per-row id, so
+  both print `NO ATTRIBUTABLE ROWS` — **declared behaviour**, per the convention's own *"It sees
+  rows, not prose"*. Per `RULING-20260908` the only legal exits are remove-the-cause or fix-the-gate;
+  the cause is unremovable by this lane, so it is filed as **`OI-189`**. ⚠ States the tension both
+  ways and **declines to rule on it**, being the party the guard refused. Resolutions are scripted
+  and preserved (union, order-preserving); **do not re-sort `MANIFEST-overrides.tsv`.**
 - [`DISCLOSURE-20260920-clause-c-verification-blocked-and-was-not-recorded.md`](DISCLOSURE-20260920-clause-c-verification-blocked-and-was-not-recorded.md)
   - **§6.4 clause (c) is an `iff` — and the independent verification it requires returned `BLOCK`,
   which the adoption record did not say.** The verification exists on
