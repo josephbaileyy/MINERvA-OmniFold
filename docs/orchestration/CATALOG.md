@@ -3969,9 +3969,15 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   plausible consolidation would have removed as redundant and that each caught something.
 ### The remaining twelve — conventions, criteria, procedures and templates (indexed 2026-09-21)
 
-Measured citation counts: `grep -rl` over `*.md`/`*.py`/`*.tex`/`*.sh`, excluding each file itself.
-Ordered by that count, because it is the best available proxy for how badly a reader needs the
-pointer.
+Measured citation counts, 2026-09-21: `grep -rl` over `*.md`/`*.py`/`*.tex`/`*.sh`, excluding each
+file itself **and this router**. Ordered by that count, because it is the best available proxy for
+how badly a reader needs the pointer.
+
+⚠ **Excluding the router is not tidiness — without it the numbers are not reproducible.** Before
+this section existed, `CATALOG.md` cited none of the twelve; it now cites all of them, so re-running
+the command as first written returns every figure **+1** (25, 24, 11, …) and the printed counts look
+wrong. The first version of this line said only *"excluding each file itself"*, which was true when
+written and false one commit later — **an index that counts citations becomes one of them.**
 
 - [`CONVENTION-receipt-ingredients.md`](CONVENTION-receipt-ingredients.md) — **cited 24×.** Adopted
   2026-08-10 on Joseph's instruction: every derived quantity ships with its ingredients, and a
