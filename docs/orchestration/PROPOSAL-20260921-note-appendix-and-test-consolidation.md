@@ -40,10 +40,35 @@ adopted. So a reader who opens *Statistical methods* to check how the published 
 built currently finds, in its last eighth, the construction of an object that is explicitly not a
 publication uncertainty.
 
-**PROPOSED:** move those seven subsections to sit with the PET material — either into
+> ### ⚠ RECOMMENDATION CHANGED 2026-09-21 BY JOSEPH: **SIGNPOST IT, DO NOT MOVE IT**
+>
+> The original proposal was to move all seven subsections beside the PET material. **Joseph: the
+> goal is to eventually add PET back once its bugs are understood.** That is information this
+> proposal did not have, and it inverts the recommendation.
+>
+> **Why the move becomes wrong.** Filing `C_stat` under PET-as-diagnostic encodes a *temporary*
+> status as a *structural* one. If the full-event estimator returns to the publication story, the
+> move has to be undone — and the second move is the expensive one, because by then the material
+> will have been cited from its PET location. It is **methods for an estimator expected to return**,
+> which is what "Statistical methods" is for.
+>
+> **And the defect I actually measured was narrower than the remedy I proposed.** What is wrong
+> today is not the filing; it is that a reader checking the **published** uncertainty reaches 216
+> lines describing an object that is not one, with no signpost. That is fixed by a signpost.
+>
+> **RECOMMENDED INSTEAD:** a short scoping paragraph at the head of the block — what the object is,
+> that it is **not** a publication uncertainty today, `OI-126`'s declined pairing, and that it is
+> retained as methods because the full-event estimator is expected to return. ~6 lines, reversible,
+> and it prejudges PET's status in **neither** direction. The 216 lines stay exactly where they are.
+>
+> ⚠ **One thing the signpost must not do:** claim the return. "Expected to return" is a plan, and
+> `AGENTS.md` requires PET to read as diagnostic *today* in note, primer and paper. The wording has
+> to describe the current status as the operative fact and the intention as an intention.
+
+~~**PROPOSED:** move those seven subsections to sit with the PET material — either into
 `sec_pet.tex`'s own methods discussion or into a `app_pet_cstat.tex` beside it — leaving
 `app_statmethods.tex` at roughly **1,550 lines of statistical methods**, and leaving a one-line
-pointer where they were.
+pointer where they were.~~ **Superseded by the box above.**
 
 ⚠ **What this is NOT.** It is not a deletion, not a downgrade of the `C_stat` material, and not a
 re-litigation of `OI-126`. Every word moves. The claim is only that the material is filed under the
@@ -89,6 +114,58 @@ Three from this session, each of which a plausible consolidation would have remo
   future event, and it fired correctly on two probes that had gone undeclared for a day.
 - `test_a_DECOY_library_in_the_spool_would_be_used_and_that_is_CORRECT` looks like a test of
   behaviour nobody wants. Its docstring says *"recorded so nobody 'fixes' it"*.
+
+### ⚠ THE FRAMING WAS WRONG, AND JOSEPH'S IS BETTER (2026-09-21)
+
+I framed consolidation as **cost reduction**, and concluded it should wait because it competes with
+the publication path. Joseph:
+
+> *"Test consolidation is a form of compression and compression usually reveals strong insights and
+> ease of understanding, which is important with the note and paper."*
+
+**That is a different argument and it is the stronger one.** Cost reduction is a reason to do
+something later. Compression-as-insight is a reason to do it *because of* the note: the shortest
+correct statement of what the suite guarantees **is** the understanding, and this analysis needs
+that statement in a document a reader reads.
+
+**AND IT DISSOLVES MY OBJECTION RATHER THAN OVERRIDING IT.** My hazard was that each point
+constraint is the only surviving record of a defect, so deleting one un-encodes it. But the
+compression **product** is a spec-level statement, and writing one is **additive** — rule 1 below
+already says so. So the insight is available without deleting anything: you get it from *deriving*
+the spec, not from removing the constraints it summarises.
+
+**The deliverable is therefore a SPEC, not a smaller suite.** Deletion becomes a separate, optional,
+much later question — and one that may never be worth asking, because once the spec exists the point
+constraints cost only disk.
+
+#### The first target, measured rather than chosen by feel
+
+The refusal family, which is the largest compressible structure in the suite and the place this
+repository's hard-won insight actually lives. Measured 2026-09-21:
+
+| | |
+|---|---|
+| tests whose **name** asserts a refusal | **538** |
+| `assertRaises`-family calls | **847** |
+| explicit exit-code assertions | **399** |
+| `MUTATION`-named tests | **21** |
+| files invoking a *positive control* | **25** |
+
+Those 538 are not 538 independent facts. They are a handful of rules applied to many operands —
+something like: *every production writer refuses an unverifiable identity; every refusal is pinned
+to its exact exit code **and** its own message; every guard has a positive control that could have
+failed; a crash is named as a crash, never counted as a refusal.* That last one is `BEN-482`'s
+lesson and it cost three segfaults read as three refusals.
+
+**Write that down as a spec with the operand table beside it, and two things fall out.** A reader of
+the note gets a compact statement of what the pipeline refuses to do — which the note does not
+currently contain anywhere. And the suite gets, for the first time, a test of the *rule* rather than
+of 538 instances of it.
+
+⚠ **One honest limit on the payoff.** A spec derived from the existing tests can only be as complete
+as they are; it will not discover a rule nobody encoded. It compresses what is there, and the gaps
+it reveals are gaps in the tests, which is useful — but "the spec is green" must never be read as
+"the behaviour is specified".
 
 ### The rule
 
