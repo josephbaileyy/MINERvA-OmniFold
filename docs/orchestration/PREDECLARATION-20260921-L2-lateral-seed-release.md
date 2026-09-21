@@ -223,3 +223,83 @@ product's inputs — which is the thing §6 says must be *"verified by digest, n
 - The cost in §5 stands; sites 4–7 are code, not compute.
 - Nothing above has been run, so no result is being reinterpreted. This is a correction to the
   *plan*, made before the plan was executed.
+
+---
+
+# ⚠ AMENDMENT 2, 2026-09-21 — A1.6's CONTROL IS WITHDRAWN: IT WOULD HAVE DESTROYED WHAT IT WAS WRITTEN TO PROTECT
+
+**Still before any job, still before any product.** A1.6 proposed, as the *safety precondition* for
+the probe, running `run_p4_unfold_std.sh` with the offset unset and checking it skipped all ten.
+
+**Running that command would have overwritten the ten endpoint unfolds of the adopted covariance.**
+The control was the most dangerous thing in the plan.
+
+## A2.1 The measurement, made read-only on the cluster before anything was run
+
+At the deployed HEAD `32e403b8`, `p4_check_receipt.py` against the adopted `BeamAngleX_0` receipt:
+
+```
+RECEIPT-REJECT :: receipt BeamAngleX_0 unfold_blob dc74c38f8ec7b5f6723fa231630e9fc43e7a93f0
+                  != committed 662951e019f9c96c2876decc7913c7e9b3dbf2ae:
+                  the unfold driver changed since this endpoint was produced
+rc=1
+```
+
+`nd-unfolding/unfold_nd_omnifold_unbinned.py` changed after 2026-08-08 — commits `5afb7947`,
+`ae42ae8d`, `0a4ab263`, `1aa055d9` — and `validate_endpoint_receipt` compares that blob **strictly**,
+which is correct: it is the producing-code binding. **So all ten receipts read STALE**, the launcher
+falls through to the re-unfold, and `mv -f` replaces the ROOTs. Exit 0, no warning.
+
+## A2.2 ⚠ THIS HAZARD IS PRE-EXISTING AND LIVE, AND THE L2 CHANGE DID NOT CAUSE IT
+
+The deployed checkout **already** carries blob `662951e0`. Anyone running the documented baseline
+command on the cluster today — with or without this change, before or after the probe — silently
+regenerates the adopted covariance's inputs under different code. It was found only because the
+probe forced the question *"what does the resume gate actually decide for these ten?"* to be asked
+as a measurement rather than assumed.
+
+⚠ **Three predictions I made about this were wrong, and they failed in the safe direction only by
+luck.** I expected the ten to be expired by `check_resume_surface`, because `seed_offset_policy.py`
+is in the producing closure and the L2 change edits it. They are not: the ten receipts predate PB2,
+carry neither `receipt_schema` nor `surface_blobs`, and are therefore **GRANDFATHERED**. So the
+closure comparison never runs — and the rejection arrives from an entirely different gate. Had those
+receipts been one schema newer, the L2 commit itself would have expired all ten.
+
+⚠ **And the config hash is unaffected, which was checked rather than assumed.** The adopted receipt
+records `config_hash 4b41fab90a83df08…`; the offset-0 config after the seven-site change hashes to
+`4b41fab90a83…` — identical. The derived-gate design is neutral at offset 0 **by measurement**.
+
+## A2.3 The repair: a fail-closed guard, and it is not part of the probe
+
+`run_p4_unfold_std.sh` gains a **baseline overwrite guard**. Once the function has committed to
+producing an endpoint, it refuses when all of: the ROOT exists, the namespace is **not** member-
+scoped, and `P4_ALLOW_BASELINE_REUNFOLD=1` is absent. Exit `9`, naming the adopted digest and
+quoting the rejection reason.
+
+⚠ **An ordering defect in my own guard, found by testing it rather than by reading it.** The first
+version sat *after* `rm -f "${REC}"`, so a refused baseline run would still have **deleted all ten
+receipts** before being stopped — preventing the overwrite and not the damage. The removal now
+happens only once the guard has allowed production, and
+`tests/test_baseline_overwrite_guard.py` asserts that ordering **on the extracted text of the
+launcher itself**, so it cannot silently revert.
+
+The guard is tested in four directions (fires on baseline-with-ROOT; silent for a member, for a
+first production, and under the exact escape value; and near-miss values `0`/`yes`/`true`/``/`2` do
+**not** release it), and the refusal is asserted to leave the receipt on disk.
+
+## A2.4 What replaces A1.6
+
+**A1.6 is withdrawn in full.** The probe's precondition is now:
+
+1. **Read-only adjudication** — run `p4_check_receipt.py` against all ten baseline receipts and
+   record the verdicts. It writes nothing. *(Done for one tag; the ten are recorded with the run.)*
+2. **Digest capture and re-comparison** — hash the ten baseline ROOTs before and after the member
+   run and require byte-identity, which is what §6 asked for and never needed a driver invocation
+   to obtain.
+3. **The member run cannot reach the baseline directory at all**, because `OUTDIR` is member-scoped
+   and `mr_prefix` fails closed.
+
+**The lesson, recorded because it is the reusable part:** *a control is an action, and an action
+needs its blast radius priced before it is called a safety measure.* A1.6 read as obviously safe —
+"just run it and check it skips" — and its safety rested entirely on an unexamined assumption about
+what the resume gate would decide. The assumption was false, on the cluster, today.
