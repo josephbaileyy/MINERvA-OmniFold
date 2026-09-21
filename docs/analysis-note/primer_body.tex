@@ -151,7 +151,10 @@ Adding the hadronic-mass axis $W$ lets us look where the simulations still miss
 in a specific corner: high available energy \emph{and} high $W$ --- the
 ``deep-inelastic'' region where the neutrino shatters the nucleon. There, all
 four simulations undershoot the central result. Its statistical significance
-is not assigned. This is the kind of localized discrepancy that
+is not assigned. The random seed described at the start of this section moves
+these central values as well, by at most \SI{\cvMoveOverSigmaMax}{\percent} of
+their own uncertainty; how far the corner's share of the excess could shift
+with it was not separately measured. This is the kind of localized discrepancy that
 points theorists toward what their models are missing --- and it was only
 visible because the unbinned method let us slice the data this finely.
 
@@ -161,7 +164,9 @@ visible because the unbinned method let us slice the data this finely.
   \caption{The data versus the simulation band in the available-energy /
   hadronic-mass plane. Every simulation underpredicts the high-energy, high-$W$
   ``deep-inelastic'' corner in the central values; adding the two-nucleon
-  process does not help there. No significance is assigned.}
+  process does not help there. No significance is assigned. The estimator seed
+  moves these central values by at most \SI{\cvMoveOverSigmaMax}{\percent} of
+  their own uncertainty.}
 \end{figure}
 
 \subsection*{Alternative representations and signal definitions}
