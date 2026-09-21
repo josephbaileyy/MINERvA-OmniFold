@@ -195,6 +195,64 @@ def write_block_slabs(directory, skip=(), n_flux_tasks=20, seed=1000, draw=1000)
     return str(directory / "block5d_*.npz")
 
 
+#: Built once for the whole module: `mnv_source_manifest.build` hashes every tracked `*.py`/`*.sh`
+#: in the repository (883 files, 0.36 s measured) and `initialize_campaign` rebuilds it to prove the
+#: record describes the live tree, so a per-test record would pay that twice per campaign.
+_SOURCE_MANIFEST = None
+
+
+def source_manifest_record():
+    """The A-2(f) record for THIS tree, from the PRODUCTION builder, written to a real file.
+
+    The campaign's code binding compares a recorded manifest against a freshly built one with
+    `mnv_source_manifest.compare`; a hand-written record would agree with my code rather than with
+    the world. Shared with `test_z_campaign_ownership`, which imports it from here.
+    """
+    global _SOURCE_MANIFEST
+    if _SOURCE_MANIFEST is None:
+        import mnv_source_manifest as srcman
+
+        holder = tempfile.mkdtemp(prefix="zcampaign-srcman.")
+        path = Path(holder) / "source-manifest.json"
+        path.write_text(json.dumps(srcman.build(str(REPO)), indent=2), encoding="utf-8")
+        _SOURCE_MANIFEST = str(path)
+    return _SOURCE_MANIFEST
+
+
+def stage_owned_campaign(*, data_root, namespace, bank, staging):
+    """A campaign whose two consumed arms are COMPLETE, staged in the legitimate order.
+
+    ⚠ STAGED, THEN CLAIMED, THEN MOVED IN, AND THE ORDER IS A FINDING. Writing the whole population
+    into an arm directory first and claiming it task by task leaves every other member present and
+    UNCLAIMED -- which is exactly the foreign-artifact state ownership refuses, so the fixture
+    would be testing the refusal instead of setting up the finished state. A staggered array never
+    produces it: a product appears only after its own task holds the claim. The slabs are therefore
+    produced by `write_throw_slabs` / `write_block_slabs` into `staging`, keeping the PRODUCER's own
+    content -- re-writing them here would make the fixture agree with my code about content -- and
+    each file is moved in only after its task's claim exists.
+    """
+    started = ZP.initialize_campaign(
+        data_root=str(data_root), namespace=namespace, code_root=str(REPO),
+        source_manifest=source_manifest_record(), bank=str(bank),
+        arms=["block", "run", "combine"], environ={})
+    campaign, plan = started["campaign"], started["plan"]
+    staging = Path(staging)
+    write_throw_slabs(staging / "run", n_slabs=40, per=4)
+    write_block_slabs(staging / "block")
+    base = {ZP.SOURCE_MANIFEST_ENV: source_manifest_record()}
+    for arm, source in (("run", staging / "run"), ("block", staging / "block")):
+        for task in campaign["body"]["arms"][arm]["task_ids"]:
+            name = campaign["body"]["arms"][arm]["outputs"][str(task)]
+            product = Path(plan["arms"][arm]["dir"]) / name
+            contract = ZP.verify_task_ownership(
+                arm=arm, plan=plan, product=str(product), bank=str(bank),
+                estimator_seed=1000, draw_seed=1000,
+                environ={**base, ZP.ARRAY_TASK_ENV: str(task)})
+            product.write_bytes((source / name).read_bytes())
+            ZP.record_task_completion(contract, product=str(product))
+    return campaign, plan
+
+
 class ProducerFixture(unittest.TestCase):
     """One synthetic bank plus a healthy throw/block population, per test."""
 
@@ -1463,10 +1521,17 @@ class TheNamespaceIsOneExplicitValueAndFreshnessRefuses(unittest.TestCase):
         env = {ZP.NAMESPACE_ENV: "ns"}
         saved = dict(os.environ)
         os.environ.update(env)
+        os.environ.pop("MNV_EST_SEED_OFFSET", None)
         self.addCleanup(lambda: (os.environ.clear(), os.environ.update(saved)))
         good = ZP.arm_directory(str(self.work), "ns", "block")
-        contract = ZP.enforce_namespace_contract("block", str(self.work), good)
-        self.assertEqual(contract["dir"], good)
+        # THE POSITIVE DIRECTION IS ASSERTED BY WHICH CLAUSE REFUSES NEXT, not by a pass: the
+        # layout check runs BEFORE campaign membership (2026-09-13), so a correctly spelled
+        # directory reaches the membership clause while a wrong one never does. Building a whole
+        # campaign here would test the campaign, which `test_z_campaign_ownership` does.
+        with self.assertRaises(ZP.PrecursorError) as caught:
+            ZP.enforce_namespace_contract("block", str(self.work), good)
+        self.assertIn("must be a MEMBER of a declared campaign", str(caught.exception))
+        self.assertNotIn("diverged", str(caught.exception))
         for wrong in (str(self.work / "nd-unfolding" / "uq_5d" / "ns" / "block_slabs_5d_sb"),
                       str(self.work / "nd-unfolding" / "uq_5d" / "block_slabs_5d"),
                       str(self.work / "nd-unfolding" / "uq_5d" / "other" / "block_slabs_5d")):
@@ -2513,14 +2578,27 @@ class EndToEndTheProducerWritesWhatTheZReaderAccepts(ProducerFixture):
         os.environ["MNV_DATA_ROOT"] = str(data_root)
         os.environ.pop("MNV_EST_SEED_OFFSET", None)
         self.addCleanup(lambda: (os.environ.clear(), os.environ.update(saved)))
-        plan = ZP.namespace_plan(str(data_root), namespace="nsX")
-        run_dir, block_dir = Path(plan["arms"]["run"]["dir"]), Path(plan["arms"]["block"]["dir"])
-        # THE REAL DECLARED POPULATIONS, because the producer now DERIVES them from the arms' own
+        os.environ[ZP.SOURCE_MANIFEST_ENV] = source_manifest_record()
+        # THE REAL DECLARED POPULATIONS, because the producer DERIVES them from the arms' own
         # `#SBATCH --array` lines: 40 slabs x 4 throws = 160, and 21 block slabs. A smaller
         # fixture was this test disagreeing with the world rather than with the code.
-        throw_glob = write_throw_slabs(run_dir, n_slabs=40, per=4)
-        block_glob = write_block_slabs(block_dir)
+        _campaign, plan = stage_owned_campaign(
+            data_root=data_root, namespace="nsX", bank=self.bank.path,
+            staging=self.work / "staged-nsX")
+        run_dir, block_dir = Path(plan["arms"]["run"]["dir"]), Path(plan["arms"]["block"]["dir"])
+        throw_glob = str(run_dir / "uthrow5d_slab_*.npz")
+        block_glob = str(block_dir / "block5d_*.npz")
         out = Path(plan["arms"]["combine"]["dir"]) / "unified_throw_cov_5d.root"
+        # THE COMBINE'S OWN COMPLETION RECORD IS STUBBED OUT FOR THIS TEST ONLY, AND THE CALL IS
+        # STILL ASSERTED. `_StubbedRoot` stands in for `TFile`, so nothing lands at `out` and the
+        # real `record_task_completion` correctly refuses an absent product -- which is the subject
+        # of `test_the_RECEIPT_is_written_by_the_producer_AFTER_Close`, not of this test. Here the
+        # subject is that the CONTRACT fires from inside `do_combine`, so the recorder proves the
+        # call site exists and runs while leaving the four arms below readable.
+        recorded = []
+        saved_recorder = U.z_record_completion
+        U.z_record_completion = lambda contract, product: recorded.append((contract, product))
+        self.addCleanup(setattr, U, "z_record_completion", saved_recorder)
 
         def run(**kw):
             fields = dict(bank=str(self.bank.path), combine=throw_glob,
@@ -2530,33 +2608,67 @@ class EndToEndTheProducerWritesWhatTheZReaderAccepts(ProducerFixture):
             with _StubbedRoot():
                 return U.do_combine(combine_args(**fields))
 
-        # (1) HEALTHY: the combine arm's own namespace is empty, so it proceeds -- and the expected
-        #     populations were DERIVED inside the producer with nothing passed in.
-        result = run()
-        self.assertTrue(result["throw_population_declared"])
-        self.assertTrue(result["block_population_declared"])
+        # ⚠ THE REFUSING ARMS RUN FIRST AND THE HEALTHY ONE LAST, AND THE ORDER IS FORCED RATHER
+        # THAN TIDY. A campaign's combine task has ONE exclusive claim, so any arm that gets past
+        # the ownership check consumes it and every later arm then refuses as a duplicate -- which
+        # is the correct behaviour and makes this sequence order-dependent. Arms (1) and (2) refuse
+        # BEFORE the claim (the member axis is the contract's first clause, and an unclaimed
+        # product at the arm's declared name is caught by the foreign scan, which precedes the
+        # claim), so they leave the claim intact for arm (4). Arm (3) gets past ownership and
+        # therefore needs its own campaign.
 
-        # (2) THE MEMBER AXIS refuses from in here, including at offset 0.
+        # (1) THE MEMBER AXIS refuses from in here, including at offset 0.
         os.environ["MNV_EST_SEED_OFFSET"] = "0"
         with self.assertRaises(ZP.PrecursorError) as caught:
             run()
         self.assertIn("mii/member_kNNNNNN", str(caught.exception))
         os.environ.pop("MNV_EST_SEED_OFFSET")
 
-        # (3) A READER POINTED AT A DIFFERENT NAMESPACE refuses -- (c)'s defect, caught by the
-        #     producer rather than matched by a glob.
-        foreign = write_block_slabs(self.work / "foreign")
-        with self.assertRaises(SystemExit) as refused:
-            run(block_slabs=foreign)
-        self.assertIn("--block-slabs reads", str(refused.exception))
-        self.assertIn("is the (c) defect itself", str(refused.exception))
-
-        # (4) A NON-FRESH combine namespace refuses.
+        # (2) AN ALREADY-PRESENT COMBINE PRODUCT refuses. The message is no longer "NOT FRESH":
+        #     freshness moved to `campaign-init`, and at task level a product at a DECLARED name
+        #     that no task of this campaign has claimed is a FOREIGN artifact -- a stronger
+        #     statement about the same file, because it separates another campaign's output from
+        #     this campaign's own instead of refusing both for being present.
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_bytes(b"root" + b"\x00" * 300)
         with self.assertRaises(ZP.PrecursorError) as stale:
             run()
-        self.assertIn("NOT FRESH", str(stale.exception))
+        self.assertIn("NO task of this campaign has CLAIMED", str(stale.exception))
+        self.assertIn("unified_throw_cov_5d.root", str(stale.exception))
+        os.unlink(out)
+        self.assertEqual(
+            ZP.claimed_task_ids(ZP.campaign_paths(str(data_root), "nsX")["claims"], "combine"),
+            set(),
+            "both refusals above must precede the claim, or the healthy arm cannot run at all")
+
+        # (3) A READER POINTED AT A DIFFERENT NAMESPACE refuses -- (c)'s defect, caught by the
+        #     producer rather than matched by a glob. Its own campaign, for the reason above.
+        _c2, plan2 = stage_owned_campaign(
+            data_root=data_root, namespace="nsY", bank=self.bank.path,
+            staging=self.work / "staged-nsY")
+        os.environ[ZP.NAMESPACE_ENV] = "nsY"
+        foreign = write_block_slabs(self.work / "foreign")
+        with self.assertRaises(SystemExit) as refused:
+            with _StubbedRoot():
+                U.do_combine(combine_args(
+                    bank=str(self.bank.path),
+                    combine=str(Path(plan2["arms"]["run"]["dir"]) / "uthrow5d_slab_*.npz"),
+                    block_slabs=foreign, expected_throws="0-159",
+                    out_root=str(Path(plan2["arms"]["combine"]["dir"])
+                                 / "unified_throw_cov_5d.root"),
+                    z_namespace_arm="combine"))
+        self.assertIn("--block-slabs reads", str(refused.exception))
+        self.assertIn("is the (c) defect itself", str(refused.exception))
+        os.environ[ZP.NAMESPACE_ENV] = "nsX"
+
+        # (4) HEALTHY: the combine is a member, its inputs are the exact COMPLETED population, and
+        #     the expected file declarations were DERIVED inside the producer with nothing passed in.
+        result = run()
+        self.assertTrue(result["throw_population_declared"])
+        self.assertTrue(result["block_population_declared"])
+        self.assertEqual(len(recorded), 1,
+                         "the combine's claim must be closed by a completion record at the end")
+        self.assertEqual(recorded[0][0]["arm"], "combine")
 
     def test_the_RECEIPT_is_written_by_the_producer_AFTER_Close(self):
         """(f) moved into the producer with the rest. `fo.Close()` is the only thing that
@@ -2567,9 +2679,12 @@ class EndToEndTheProducerWritesWhatTheZReaderAccepts(ProducerFixture):
         os.environ["MNV_DATA_ROOT"] = str(data_root)
         os.environ.pop("MNV_EST_SEED_OFFSET", None)
         self.addCleanup(lambda: (os.environ.clear(), os.environ.update(saved)))
-        plan = ZP.namespace_plan(str(data_root), namespace="nsR")
-        throw_glob = write_throw_slabs(Path(plan["arms"]["run"]["dir"]), n_slabs=40, per=4)
-        block_glob = write_block_slabs(Path(plan["arms"]["block"]["dir"]))
+        os.environ[ZP.SOURCE_MANIFEST_ENV] = source_manifest_record()
+        _campaign, plan = stage_owned_campaign(
+            data_root=data_root, namespace="nsR", bank=self.bank.path,
+            staging=self.work / "staged-nsR")
+        throw_glob = str(Path(plan["arms"]["run"]["dir"]) / "uthrow5d_slab_*.npz")
+        block_glob = str(Path(plan["arms"]["block"]["dir"]) / "block5d_*.npz")
         out = Path(plan["arms"]["combine"]["dir"]) / "unified_throw_cov_5d.root"
         receipt = out.with_suffix(".receipt.json")
         args = combine_args(bank=str(self.bank.path), combine=throw_glob,

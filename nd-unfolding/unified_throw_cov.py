@@ -390,7 +390,7 @@ def cv_support_report(x_cv):
             "predicate": CV_SUPPORT_PREDICATE}
 
 
-def z_namespace_contract(args, arm, declared_dir):
+def z_namespace_contract(args, arm, declared_dir, product=None):
     """Z-precursor namespace contract, enforced HERE rather than by a launcher-side CLI call.
 
     ⚠ THE IMPORT IS LAZY AND THAT IS DELIBERATE. `z_precursor` imports this module back (for
@@ -401,6 +401,13 @@ def z_namespace_contract(args, arm, declared_dir):
     RETURNS `None` WHEN THE NAMESPACE IS UNSET, which is the pre-existing behaviour preserved
     exactly. Every archive reproduction path keeps working and this contract is inert for it -- a
     guard that fired on those runs would make them refuse themselves.
+
+    `product` IS THE PATH THIS INVOCATION WILL WRITE, and it is the operand the campaign ownership
+    predicate binds to a task identity (`z_precursor` section (h)). Passing the DIRECTORY alone was
+    enough while the predicate was "is this directory empty"; it is not enough for "does this task
+    own this file", which is the whole point of the 2026-09-13 repair. Read with `getattr` at the
+    call sites for the same reason `do_combine`'s other flags are: the tests build namespaces by
+    hand, and the campaign refuses an absent product rather than assuming one.
     """
     if arm is None:
         return None
@@ -408,7 +415,28 @@ def z_namespace_contract(args, arm, declared_dir):
 
     return z_precursor.enforce_namespace_contract(
         arm, os.environ.get("MNV_DATA_ROOT", "."), declared_dir,
-        code_root=os.environ.get("MNV_CODE_ROOT"))
+        code_root=os.environ.get("MNV_CODE_ROOT"),
+        product=product,
+        bank=getattr(args, "bank", None),
+        estimator_seed=getattr(args, "estimator_seed", None),
+        draw_seed=getattr(args, "draw_seed", None))
+
+
+def z_record_completion(contract, product):
+    """Close a campaign task's claim, AFTER the product is published. Inert without a campaign.
+
+    One spelling, called from all three producers. `None` for an unset namespace and for the
+    content-addressed `dump` arm, whose contract carries no campaign -- see
+    `z_precursor.enforce_namespace_contract`.
+    """
+    if not contract or contract.get("campaign") is None:
+        return None
+    import z_precursor
+
+    receipt = z_precursor.record_task_completion(contract, product=product)
+    print(f"[z-campaign] task {contract['task_id']} of arm {contract['arm']!r} COMPLETE: "
+          f"{contract['receipt']} (product sha256 {receipt['product']['sha256']})", flush=True)
+    return receipt
 
 
 def check_slab_population(pattern, expected_names, label):
@@ -645,11 +673,14 @@ _OFF_DECLARED, _OFF_VALUE = seed_offset_policy.declared_offset()
 
 
 def do_throws(args):
-    # THE Z NAMESPACE CONTRACT, BEFORE THE BANK LOADS. Freshness, the member-axis refusal and
-    # the shell/Python layout agreement, enforced in this already-guarded process rather than
-    # by a launcher-side CLI call -- see `z_namespace_contract` and ruling 21.
-    z_namespace_contract(args, getattr(args, "z_namespace_arm", None),
-                         os.path.dirname(args.out) if args.out else ".")
+    # THE Z NAMESPACE CONTRACT, BEFORE THE BANK LOADS. Campaign membership, exclusive ownership of
+    # THIS task's output, the member-axis refusal and the shell/Python layout agreement, enforced
+    # in this already-guarded process rather than by a launcher-side CLI call -- see
+    # `z_namespace_contract` and ruling 21. The claim is taken here, before 3 h of compute, and the
+    # completion record is written at the end, after the last `_atomic_savez` has published.
+    z_contract = z_namespace_contract(args, getattr(args, "z_namespace_arm", None),
+                                      os.path.dirname(args.out) if args.out else ".",
+                                      product=args.out)
     d, bands, n_flux = _load_bank(args.bank)
     edges = d["edges"]
     w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
@@ -714,6 +745,12 @@ def do_throws(args):
                       flux_normalized=np.int64(1),
                       bands=np.array(bands, dtype=object))
     print(f"[throws] wrote {args.out}: xs{np.array(xs).shape}")
+    # THE COMPLETION RECORD IS LAST, AND THE ORDERING IS THE CONTENT. `_atomic_savez` above has
+    # already published the final slab by `os.replace`; this observes the file on disk, digests it
+    # and binds it to the campaign. Not in a `finally`: a completion record on the failure path
+    # would assert a completion that did not happen, and phase 3 reads these to decide whether the
+    # population is COMPLETE rather than merely PRESENT.
+    z_record_completion(z_contract, args.out)
 
 
 def do_blockunits(args):
@@ -721,11 +758,18 @@ def do_blockunits(args):
     block universe (both knob endpoints and/or flux index) and save them. Parallelises
     the otherwise-serial 112-unfold block-sum exactly like the throws. Combine
     aggregates these. --block-knobs all|csv ; --block-flux LO-HI (inclusive)."""
-    # THE Z NAMESPACE CONTRACT, BEFORE THE BANK LOADS. Freshness, the member-axis refusal and
-    # the shell/Python layout agreement, enforced in this already-guarded process rather than
-    # by a launcher-side CLI call -- see `z_namespace_contract` and ruling 21.
-    z_namespace_contract(args, getattr(args, "z_namespace_arm", None),
-                         os.path.dirname(args.out) if args.out else ".")
+    # THE Z NAMESPACE CONTRACT, BEFORE THE BANK LOADS. Campaign membership, exclusive ownership of
+    # THIS task's output, the member-axis refusal and the shell/Python layout agreement, enforced
+    # in this already-guarded process rather than by a launcher-side CLI call -- see
+    # `z_namespace_contract` and ruling 21.
+    # ⚠ THIS IS THE ARM WHERE THE COMPOSITION DEFECT WAS MEASURED. Task 0 writes
+    # `block5d_knobs.npz` and tasks 1-20 write `block5d_flux_<T>.npz` into the SAME directory, so
+    # the old per-invocation freshness predicate refused every task that started after task 0
+    # published. Ownership permits the siblings and refuses the things emptiness was standing in
+    # for: foreign products, duplicate execution and overwrites.
+    z_contract = z_namespace_contract(args, getattr(args, "z_namespace_arm", None),
+                                      os.path.dirname(args.out) if args.out else ".",
+                                      product=args.out)
     d, bands, n_flux = _load_bank(args.bank)
     edges = d["edges"]
     w_truth, w_reco, td_cv = d["w_truth"], d["w_reco"], d["td_w"]
@@ -773,6 +817,11 @@ def do_blockunits(args):
                           flux_normalized=np.int64(1),
                           kinds=np.array(kinds, dtype=object))
     print(f"[blockunit] wrote {args.out}: {len(xs)} units")
+    # THE COMPLETION RECORD IS LAST. It matters more on this arm than on any other: `_atomic_savez`
+    # runs after EVERY unit, so a task killed at the 12 h wall leaves a SHORT slab at the declared
+    # name that `np.load` reads without complaint. The presence of the file says nothing about
+    # whether the task finished; this record is the only thing that does, and phase 3 requires it.
+    z_record_completion(z_contract, args.out)
 
 
 def do_combine(args):
@@ -804,7 +853,8 @@ def do_combine(args):
     # read here, so there is nothing to pass in and nothing to get wrong on the way.
     arm = getattr(args, "z_namespace_arm", None)
     contract = z_namespace_contract(
-        args, arm, os.path.dirname(args.out_root) if args.out_root else ".")
+        args, arm, os.path.dirname(args.out_root) if args.out_root else ".",
+        product=args.out_root)
     expected_throw_files = getattr(args, "expected_throw_files", None)
     expected_block_files = getattr(args, "expected_block_files", None)
     if contract is not None:
@@ -831,6 +881,23 @@ def do_combine(args):
         if not expected_block_files:
             expected_block_files = ",".join(z_precursor.declare_arm_files(
                 "block", code_root / z_precursor.ARM_LAUNCHERS["block"]))
+        # ---- PHASE 3 HAS ALREADY RUN, INSIDE THE CONTRACT AND BEFORE THE COMBINE'S CLAIM --------
+        # `z_precursor.verify_task_ownership` requires the exact COMPLETED population of every arm
+        # this one consumes (`z_precursor.CONSUMED_ARMS`) before it takes the combine task's
+        # `O_EXCL` claim. It is reported here rather than re-run: a second call would re-do the
+        # same globs, and calling it from here would also put it AFTER the claim, which is the one
+        # ordering that breaks -- refusing a combine submitted while the arrays are still draining
+        # is the ordinary case, and a claim burned on that refusal makes every later attempt refuse
+        # itself as a duplicate.
+        # ⚠ IT IS NOT THE SAME CHECK AS `check_slab_population` BELOW. That one asks whether the
+        # glob resolved to the declared FILE IDENTITIES; phase 3 asks whether every declared TASK
+        # claimed its output and recorded a completion bound to THIS campaign. A population can be
+        # exactly identity-complete while a task is still running or died mid-write: `do_blockunits`
+        # publishes after every unit, so a killed task leaves a SHORT slab at the declared name
+        # that loads cleanly and passes every content check.
+        for role, complete in sorted((contract.get("consumed") or {}).items()):
+            print(f"[z-campaign] arm {role!r}: {complete['n_tasks']} task(s) COMPLETE with "
+                  f"bindings re-read from disk", flush=True)
     if expected_block_files and not args.block_slabs:
         raise SystemExit("[FAIL] --expected-block-files declares a block population but "
                          "--block-slabs names no glob to compare it against")
@@ -1278,6 +1345,12 @@ def do_combine(args):
                         r for r, ok in (("throw", bool(throw_pop)), ("block", bool(block_pop)))
                         if ok)))
             print(f"[combine] receipt written AFTER the product: {args.z_receipt}")
+        # AND THE CAMPAIGN'S OWN COMPLETION RECORD, which is a different object from `--z-receipt`
+        # even though both describe this file. `--z-receipt` is the path the LAUNCHER names, and it
+        # carries the combine's population declarations; this one is keyed by (arm, task id) inside
+        # the campaign and is what closes the combine task's claim. Keeping both leaves the
+        # launcher's pre-existing contract untouched.
+        z_record_completion(contract, args.out_root)
     return {
         "C_unified": C_uni,
         "C_blocksum": C_block,
@@ -1396,11 +1469,17 @@ def main():
     # CLI step in the launcher: ruling 21 pins the launchers' python3 invocations, an unclassified
     # one is a violation, and this module is not eligible to be a declared preflight tool.
     ap.add_argument("--z-namespace-arm", default=None, choices=("run", "block", "combine"),
-                    help="enforce the Z-precursor namespace contract for this arm: refuse a "
-                         "non-fresh namespace, refuse a declared member-axis offset, require the "
-                         "launcher's path expression to agree with z_precursor.ARM_LAYOUT, and "
-                         "derive the expected slab populations from the arms' own #SBATCH lines. "
-                         "Inert unless MNV_Z_PRECURSOR_NS is set.")
+                    help="enforce the Z-precursor namespace contract for this arm: require "
+                         "membership of the namespace's campaign and EXCLUSIVE OWNERSHIP of this "
+                         "task's output (permitting correctly bound siblings, refusing foreign "
+                         "artifacts, duplicate execution and overwrites), refuse a declared "
+                         "member-axis offset, require the launcher's path expression to agree "
+                         "with z_precursor.ARM_LAYOUT, derive the expected slab populations from "
+                         "the arms' own #SBATCH lines, and -- for the combine -- require the "
+                         "exact COMPLETED population with its bindings. Freshness itself now "
+                         "belongs to `z_precursor.py campaign-init`, which establishes the "
+                         "namespace atomically; a per-invocation emptiness check refused every "
+                         "array task after the first. Inert unless MNV_Z_PRECURSOR_NS is set.")
     ap.add_argument("--z-receipt", default=None,
                     help="(combine) write a z_precursor run receipt to this path AFTER the ROOT "
                          "file is closed and reopened. Refuses if the product did not land.")

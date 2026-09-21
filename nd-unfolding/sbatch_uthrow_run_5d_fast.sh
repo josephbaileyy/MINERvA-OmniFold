@@ -28,6 +28,51 @@
 #         the repair also made it invisible to a plain `ls`. Use the directed scan
 #         `unified_throw_cov.find_incomplete_writes` to see it; do not expect a glob to.
 set -eo pipefail
+
+# --- REQUEUE REFUSAL, Z-SCOPED (2026-09-13, Joseph's bounded recovery extension) ------------------
+# ⚠ THIS IS DELIBERATELY *NOT* AN `#SBATCH --no-requeue` HEADER, AND THE CHOICE IS RECORDED HERE
+# RATHER THAN LEFT INVISIBLE. Joseph authorized *"--no-requeue on the named prospective precursor
+# launchers"* AND *"Preserve existing non-Z behavior"*. Those pull against each other: an `#SBATCH`
+# header applies to EVERY submission of this shared script -- archive reproduction, the member-axis
+# path, every non-Z caller -- so it would change behaviour for callers this extension does not
+# cover. Pricing that change needs the cluster's `JobRequeue` default.
+# ⚠ THAT FACT IS NOW MEASURED, AND IT CONFIRMS THE READING RATHER THAN CHANGING IT (2026-09-14,
+# after cluster access was restored; it was UNMEASURABLE when this was written, because the NERSC
+# sshproxy certificate had expired and `ssh` returned 255 -- that is why the note below was
+# originally phrased as an unmeasured risk). MEASURED HERE, NOT RELAYED: `scontrol show config`
+# on login02, 2026-09-14, gives `JobRequeue = 0` -- so Slurm does not requeue these jobs of
+# its own accord at all. Re-measure it rather than quoting this line: it is site
+# configuration and it can change under us.
+# WHAT THAT CHANGES: an `#SBATCH --no-requeue` header would have been a no-op for every caller,
+# so the tension was narrower than it looked. WHAT IT DOES NOT CHANGE: the header is still absent.
+# Adding it now would be an unauthorized behaviour change to four SHARED launchers in exchange for
+# nothing, since the default already does what the header would ask for; and the guard below is
+# still worth its six lines, because `JobRequeue` is a site configuration this repository does not
+# own and an explicit `scontrol requeue` bypasses it regardless.
+#
+# WHAT IS HERE INSTEAD IS THE SAME OUTCOME, CONDITIONAL ON THE Z NAMESPACE, so it is invisible to
+# every non-Z caller by construction: a requeued attempt of a Z task refuses in seconds instead of
+# re-running. `SLURM_RESTART_COUNT` is set by Slurm on a restarted or requeued job and is absent
+# otherwise, and the comparison is a STRING comparison so a non-numeric value refuses rather than
+# making the test itself an error.
+#
+# TWO MECHANISMS, NEITHER SUBSUMING THE OTHER. This one refuses EARLY -- before the preamble, the
+# A-2(f) comparison and the science invocation -- and says why. The campaign's per-attempt `O_EXCL`
+# claim refuses a requeue even if this variable is absent, if this block is deleted, or if the job
+# was never a Z job at submission time. The CORRECTNESS property was already held by the claim;
+# what this adds is that a requeue does not burn a fresh allocation to discover it.
+#
+# THE SUBMISSION-TIME FLAG IS THE OPERATOR'S HALF AND IS STILL RECOMMENDED: submit the Z arms with
+# `sbatch --no-requeue ...`, which PREVENTS the requeue rather than refusing it after the fact, and
+# which touches no other caller of this script at all.
+if [[ -n "${MNV_Z_PRECURSOR_NS:-}" && "${SLURM_RESTART_COUNT:-0}" != "0" ]]; then
+  echo "[z-campaign] FAIL: this is restart/requeue ${SLURM_RESTART_COUNT} of job ${SLURM_JOB_ID:-<none>}" >&2
+  echo "[z-campaign]   under Z namespace '${MNV_Z_PRECURSOR_NS}'. A requeued attempt is a SECOND" >&2
+  echo "[z-campaign]   attempt of a task whose claim already exists, and it would refuse anyway." >&2
+  echo "[z-campaign]   Recovery is EXPLICIT and PER TASK: z_precursor.py campaign-recover, against" >&2
+  echo "[z-campaign]   Joseph's own approval line. Nothing here retries by default." >&2
+  exit 3
+fi
 # --- OI-136 / Joseph's ruling 17, 2026-08-22: TWO ROOTS, BOTH MANDATORY, NEITHER DEFAULTED -------
 # This line used to read `REPO="<the canonical checkout>"` unconditionally, and every `source`, every
 # `cd` and every `python3` below hung off it. That decides the EXECUTING TREE before any interpreter
