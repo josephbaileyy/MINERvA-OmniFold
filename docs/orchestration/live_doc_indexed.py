@@ -54,6 +54,7 @@ by --self-test.
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 OVERRIDES = "docs/orchestration/MANIFEST-overrides.tsv"
 CATALOG = "docs/orchestration/CATALOG.md"
@@ -61,6 +62,23 @@ DOCDIR = "docs/orchestration/"
 # CATALOG.md is the router itself. A router that must list itself to be reachable is a tautology, and
 # the alternative (adding a self-referential row) makes the index worse to read.
 EXEMPT = {"CATALOG.md"}
+# THE ROUTER MAY BE SPLIT, AND THE CONTINUATION FILES ARE DECLARED IN IT (2026-09-21).
+# CATALOG.md reached ~4,270 lines, half of it two closed campaigns, and the fix is to move era
+# history into separate files. This check read CATALOG.md ALONE and enforces whole-tree, so the
+# split would have reddened the commit performing it -- the blocker named in CATALOG's own
+# "THE SPLIT" section.
+#
+# DECLARED, NOT GLOBBED, and that is the whole safety property. A `CATALOG-*.md` glob would let any
+# new file silently become an index, so a document could be "indexed" by a file nobody routes
+# through -- which is the defect this check exists to prevent, arriving through its own fix.
+# The declaration is a line in CATALOG.md:
+#
+#     <!-- CATALOG-CONTINUES: CATALOG-ARCHIVE-gate1-k0.md -->
+#
+# One per continuation file. A declared file that cannot be read is CANNOT CHECK, never a pass:
+# an unreadable index is an inability to look, and this file's whole design distinguishes that
+# from a clean result.
+CONTINUATION_MARKER = "<!-- CATALOG-CONTINUES:"
 
 
 def live_paths(overrides_text):
@@ -80,6 +98,36 @@ def in_scope(added_md, staged_live, head_live):
     return sorted((newly_added | reclassified) - {DOCDIR + e for e in EXEMPT})
 
 
+def declared_continuations(catalog_text):
+    """Continuation filenames CATALOG.md declares, in declaration order. Bare names, no paths."""
+    out = []
+    for line in catalog_text.splitlines():
+        line = line.strip()
+        if not line.startswith(CONTINUATION_MARKER):
+            continue
+        name = line[len(CONTINUATION_MARKER):].split("-->")[0].strip()
+        if name and name not in out:
+            out.append(name)
+    return out
+
+
+def router_text(catalog_text, read=None):
+    """(combined index text, error_or_None) for CATALOG.md plus every file it DECLARES.
+
+    A declared-but-unreadable continuation returns an error rather than a short text, because the
+    difference between "this document is not indexed" and "I could not read the index" is the
+    distinction this whole file is built on.
+    """
+    read = read or (lambda name: Path(DOCDIR + name).read_text())
+    parts = [catalog_text]
+    for name in declared_continuations(catalog_text):
+        try:
+            parts.append(read(name))
+        except OSError as exc:
+            return None, f"CATALOG.md declares continuation {name!r} and it cannot be read: {exc}"
+    return "\n".join(parts), None
+
+
 def unindexed(paths, catalog_text):
     return [p for p in paths if os.path.basename(p) not in catalog_text]
 
@@ -89,7 +137,7 @@ def _git(*args):
     return r.stdout if r.returncode == 0 else ""
 
 
-def backlog(staged_ov=None, staged_cat=None):
+def backlog(staged_ov=None, staged_cat=None, read_continuation=None):
     """Every LIVE .md absent from CATALOG.md. ENFORCED as of 2026-09-21; see the header.
 
     ⚠ READS THE INDEX, NOT THE WORKING TREE, when the caller supplies it. The working-tree read
@@ -105,8 +153,14 @@ def backlog(staged_ov=None, staged_cat=None):
         cat = staged_cat if staged_cat is not None else open(CATALOG).read()
     except OSError as e:
         return None, f"cannot read the index files: {e}"
+    # The router is CATALOG.md plus whatever it declares. A continuation that cannot be read is an
+    # error, not a smaller index -- see router_text.
+    cat, err = router_text(cat, read=read_continuation)
+    if err:
+        return None, err
     live = {p for p in live_paths(ov) if p.endswith(".md")}
     live -= {DOCDIR + e for e in EXEMPT}
+    live -= {DOCDIR + n for n in declared_continuations(cat)}
     return sorted(os.path.basename(p) for p in live if os.path.basename(p) not in cat), None
 
 
@@ -127,7 +181,15 @@ def check():
 
     scope = in_scope(added_md, live_paths(staged_ov), live_paths(head_ov))
     staged_cat = _git("show", ":" + CATALOG) or None
-    bl, err = backlog(staged_ov, staged_cat)
+
+    def _staged_continuation(name):
+        """A continuation file read from the INDEX, for the same reason the catalog is."""
+        text = _git("show", ":" + DOCDIR + name)
+        if text:
+            return text
+        return Path(DOCDIR + name).read_text()
+
+    bl, err = backlog(staged_ov, staged_cat, read_continuation=_staged_continuation)
     bl_note = ("  (%d LIVE doc(s) absent from CATALOG -- %s)" % (len(bl), ", ".join(bl))
                if bl else "  (whole tree: every LIVE doc is indexed)") if not err else \
               "  (backlog unreadable: %s)" % err
@@ -151,7 +213,11 @@ def check():
     if not scope:
         print("LIVE-INDEX :: nothing newly LIVE in this commit." + bl_note)
         return 0
-    bad = unindexed(scope, open(CATALOG).read())
+    _cat, _cerr = router_text(staged_cat or open(CATALOG).read(), read=_staged_continuation)
+    if _cerr:
+        print("LIVE-INDEX :: CANNOT CHECK -- " + _cerr)
+        return 2
+    bad = unindexed(scope, _cat)
     if bad:
         print("LIVE-INDEX :: FAIL -- %d document(s) declared LIVE by this commit are not reachable "
               "from CATALOG.md:" % len(bad))
@@ -214,6 +280,41 @@ def self_test():
     ck("a malformed overrides row is ignored, not treated as LIVE",
        live_paths(HDR + "garbage-with-no-tabs\n") == set())
 
+    # ---- DECLARED CONTINUATION FILES (2026-09-21). The widening is the dangerous kind -- it makes
+    # MORE things count as indexed -- so the cases that matter are the ones where it must still
+    # refuse. Cases 3 and 4 are the whole safety argument: declared-not-globbed, and unreadable-is-
+    # not-clean.
+    CONT = "CATALOG-ARCHIVE-x.md"
+    cat_decl = "# router\n<!-- CATALOG-CONTINUES: %s -->\n" % CONT
+    ck("CONT: the declaration is parsed", declared_continuations(cat_decl) == [CONT])
+    ck("CONT: an undeclared CATALOG-like name is NOT picked up",
+       declared_continuations("# router\nsee CATALOG-ARCHIVE-y.md\n") == [])
+    # 1. THE NEW CAPABILITY: indexed only in the continuation -> clean
+    bl, e = backlog(staged_ov=staged, staged_cat=cat_decl,
+                    read_continuation=lambda n: "- [`NEWDOC-20260817-x.md`](NEWDOC-20260817-x.md)")
+    ck("CONT: a doc indexed ONLY in a declared continuation is clean", e is None and bl == [], str(bl))
+    # 2. and the property it must not cost: indexed nowhere is still caught
+    bl, e = backlog(staged_ov=staged, staged_cat=cat_decl, read_continuation=lambda n: "| nothing |")
+    ck("CONT: a doc indexed in NEITHER file is still CAUGHT",
+       e is None and bl == ["NEWDOC-20260817-x.md"], str(bl))
+    # 3. DECLARED, NOT GLOBBED. A file that exists and is not declared must not count, or any new
+    #    file could silently become an index.
+    bl, e = backlog(staged_ov=staged, staged_cat="# router, no declaration\n",
+                    read_continuation=lambda n: "- [`NEWDOC-20260817-x.md`](NEWDOC-20260817-x.md)")
+    ck("CONT: an UNDECLARED file does not count as an index even if it names the doc",
+       e is None and bl == ["NEWDOC-20260817-x.md"], str(bl))
+    # 4. UNREADABLE IS NOT CLEAN. The failure this whole file exists to distinguish.
+    def _boom(name):
+        raise OSError("no such file")
+    bl, e = backlog(staged_ov=staged, staged_cat=cat_decl, read_continuation=_boom)
+    ck("CONT: a declared-but-unreadable continuation is an ERROR, not an empty backlog",
+       bl is None and e is not None and CONT in e, repr(e))
+    # 5. the continuation file is the index; it need not be indexed by itself
+    ov_cont = HDR + DOCDIR + CONT + "\tLIVE\topen\t\n"
+    bl, e = backlog(staged_ov=ov_cont, staged_cat=cat_decl, read_continuation=lambda n: "| nothing |")
+    ck("CONT: a declared continuation is exempt from needing its own pointer",
+       e is None and bl == [], str(bl))
+
     # ---- THE WHOLE-TREE ARM, enforcing since 2026-09-21. Both directions, same bar as above:
     # a backlog function that returned everything would satisfy 10 and fail 11, and one that
     # returned nothing would satisfy 11 and fail 10. Neither alone is a test.
@@ -242,7 +343,7 @@ def self_test():
     if fails:
         print("SELF-TEST :: FAILED -> %s" % fails)
         return 1
-    print("SELF-TEST :: 14/14 PASS in %.3f s (synthetic; no repo state touched)" % dt)
+    print("SELF-TEST :: 21/21 PASS in %.3f s (synthetic; no repo state touched)" % dt)
     return 0
 
 
