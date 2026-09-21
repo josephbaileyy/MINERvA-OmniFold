@@ -3749,7 +3749,13 @@ class SubstitutionFenceS1(unittest.TestCase):
         # and none is in `FROZEN_SUBSTITUTION_HAZARDS`. `submit_z_pilot_a5.sh` is a submitter and
         # `tests/test_submit_path_sanitizer.sh` is a test, neither of which writes a canonical
         # product. If the pilot is ever re-authorized, they must be reclassified BEFORE it runs.
-        self.assertEqual(len(neither), 209,
+        # ⚠ 208 AS OF 2026-09-21, AND THE MOVE IS THE POINT RATHER THAN THE COUNT.
+        # `run_p4_unfold_std.sh` left NEITHER and entered HOOKED when the L2 estimator change put
+        # the five lateral bands on the offset hook (Joseph's authorization, same day;
+        # PREDECLARATION-20260921). That is a launcher becoming CLASSIFIED, which is exactly the
+        # direction this ratchet exists to force -- so the decrement is recorded with its cause,
+        # not absorbed. 209 - 1 = 208.
+        self.assertEqual(len(neither), 208,
                          "if this moved, a launcher was added or removed and needs classifying as "
                          "hooked, fenced, or explicitly out of scope. The reviewed compaction moved "
                          "47 unreferenced launchers to the evidence tag; exact inventory sha256 "

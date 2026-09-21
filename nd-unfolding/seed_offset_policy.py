@@ -668,4 +668,12 @@ MEMBER_LOCAL_CONSUMERS = (
     "sbatch_finalize_5d_bkgaware_gpu.sh",
     "sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh",
     "sbatch_uthrow_dump_5d.sh",
+    # ⚠ ADDED 2026-09-21 WITH THE L2 ESTIMATOR CHANGE, authorized by Joseph that day.
+    # `run_p4_unfold_std.sh` is the FIRST non-`sbatch_*` member-local consumer: it is a driver run
+    # under an allocation, not a batch script. It became one when the five lateral bands were put
+    # on the offset hook -- until then it carried a literal `--seed 42` and wrote to the shared
+    # `active_universe_5d/standard/unfolds`. Declared here rather than the hooked-set assertion
+    # widened, on the same ground as the two above: "whatever happens to be hooked" is not a
+    # closed set.
+    "run_p4_unfold_std.sh",
 )

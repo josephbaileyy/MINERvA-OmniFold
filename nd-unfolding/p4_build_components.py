@@ -62,8 +62,22 @@ def _chash(C):
     return P.hashlib.sha256(np.ascontiguousarray(C, dtype=np.float64).tobytes()).hexdigest()
 
 
-def build_active_bands(manifest, idx):
-    UDIR = "active_universe_5d/standard/unfolds"
+def build_active_bands(manifest, idx, udir):
+    """`udir` is DERIVED FROM THE MANIFEST'S OWN LOCATION, not hardcoded and not read from the
+    environment. Until 2026-09-21 it was the literal `active_universe_5d/standard/unfolds`, which
+    meant a member-local run could not exist at all -- the reason `EVIDENCE-20260919` said the seed
+    and this path "would both have to change together".
+
+    ⚠ DERIVING IT FROM THE MANIFEST IS STRICTLY BETTER THAN READING `MNV_EST_SEED_OFFSET` HERE, and
+    the difference is a real failure mode rather than a preference. The manifest is what validates
+    each endpoint's sha256 two lines below. Binding the directory to the manifest's own tree makes
+    the pairing structural: a member manifest can only ever be checked against member unfolds, and
+    the baseline's against the baseline's. Reading the env var instead would let a run hold a
+    baseline manifest while pointing at member unfolds -- the digests would then mismatch and it
+    would fail closed, which is safe, but the reverse pairing is the one that matters and the env
+    var cannot see it at all.
+    """
+    UDIR = udir
     bands = {}
     for b in P.BANDS:
         pair = []
@@ -124,7 +138,12 @@ def main():
     P.prove_identity(Ccomb_total, Csyst_total + C_stat + C_ml, 1e-6, "C_combined == C_syst + C_stat + C_ML")
 
     # --- pure-addition candidate ---
-    active = build_active_bands(man, idx)
+    # The unfolds live beside the manifest that binds them: <tree>/evidence/<manifest> ->
+    # <tree>/unfolds. Resolved from the manifest PATH so the member axis needs no special case.
+    _udir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(a.manifest))), "unfolds")
+    P.require(os.path.isdir(_udir),
+              f"derived unfolds directory does not exist: {_udir} (from --manifest {a.manifest})")
+    active = build_active_bands(man, idx, _udir)
     active_only = np.zeros_like(Csyst_total)
     for b in P.BANDS:
         active_only = active_only + active[b]

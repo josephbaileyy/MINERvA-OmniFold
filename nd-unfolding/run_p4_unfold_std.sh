@@ -3,7 +3,11 @@
 # Bare-background (no nested srun) under one outer `srun --overlap --jobid=<holder>`.
 # Per endpoint: unique temp path -> content/config validation -> ATOMIC rename of the
 # ROOT -> write the receipt LAST (so a receipt implies a fully-published ROOT). Nominal
-# unfold (NO --universe), FIXED --seed 42 (MAT +/- cancels CV). Resume rules:
+# unfold (NO --universe). SEED: 42 + ${MNV_EST_SEED_OFFSET:-0}. With the offset UNSET this is
+# the historical fixed --seed 42; the MAT +/- pair still cancels the CV because the offset is
+# applied UNIFORMLY to all ten endpoints of a member, so the seed varies BETWEEN members and
+# never within a pair. Unpinning was RESERVED and is authorized by Joseph 2026-09-21; see
+# docs/orchestration/PREDECLARATION-20260921-L2-lateral-seed-release.md. Resume rules:
 #   * .done receipt present + ROOT valid + receipt CONTENT-validated (identities AND the whole
 #     producing closure, via p4_check_receipt.py)                    -> skip
 #   * otherwise                                                      -> (re)run transactionally
@@ -29,7 +33,38 @@ ND="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "${ND}/.." && pwd
 [[ -f "${ND}/p4_lib.py" ]] || { echo "[p4-unfold] ABORT: derived ND=${ND} contains no p4_lib.py; refusing to run against an unresolved root"; exit 3; }
 BANDS=(BeamAngleX BeamAngleY MuonResolution Muon_Energy_MINERvA Muon_Energy_MINOS)
 MERGEDIR="${ND}/active_universe_5d/standard/merged"
-OUTDIR="${ND}/active_universe_5d/standard/unfolds"; mkdir -p "${OUTDIR}"
+# --- M(ii) member axis -------------------------------------------------------------------------
+# ⚠ OUTDIR IS MEMBER-SCOPED, AND THAT IS THE LOAD-BEARING HALF OF THIS CHANGE, NOT THE SEED.
+# The baseline's ten endpoint unfolds live in this directory and the adopted covariance 3d7465f6 is
+# built from them. The resume rule below SKIPS a tag whose ROOT and receipt are valid and
+# content-checked -- so unpinning the seed WITHOUT moving the output would have found ten valid
+# receipts and skipped all ten while reporting success, or, with receipts cleared, overwritten the
+# published result's own inputs. Neither is recoverable from the outside.
+#
+# The full sbatch resolver used by the `sbatch_*` launchers is deliberately NOT copied here: this
+# driver carries no `#SBATCH` header and is invoked as `bash run_p4_unfold_std.sh`, so BASH_SOURCE
+# is its real path -- the same property line 27 above already relies on. Copying the sbatch marker
+# would also pull this file into `LibraryResolverSurvivesSbatch`'s byte-identity population, which
+# is scoped to launchers whose BASH_SOURCE is NOT safe.
+if [[ ! -r "${ND}/lib_member_resume.sh" ]]; then
+  echo "[p4-unfold] ABORT: lib_member_resume.sh not readable beside this driver (ND=${ND})." >&2
+  echo "[p4-unfold]   The member axis cannot be resolved, and guessing a path is how a member" >&2
+  echo "[p4-unfold]   writes outside its own tree. Failing closed." >&2
+  exit 2
+fi
+# shellcheck source=lib_member_resume.sh
+source "${ND}/lib_member_resume.sh"
+mr_require_valid_offset
+P4_EST_SEED=$(( 42 + ${MNV_EST_SEED_OFFSET:-0} ))
+OUTDIR="$(mr_prefix "${ND}/active_universe_5d/standard/unfolds")" || {
+  echo "[p4-unfold] ABORT: mr_prefix refused to member-scope the output directory." >&2; exit 2; }
+mkdir -p "${OUTDIR}"
+if mr_declared; then
+  echo "[p4-unfold] MEMBER AXIS: offset=${MNV_EST_SEED_OFFSET} seed=${P4_EST_SEED} out=${OUTDIR}"
+else
+  echo "[p4-unfold] baseline: no offset declared, seed=${P4_EST_SEED}, out=${OUTDIR}"
+fi
+# --- M(ii) member axis: END ----------------------------------------------------------------------
 # (no MANIFEST variable: its only consumer was the deleted legacy-attest path)
 CONC="${CONC:-4}"
 cd "${ND}"
@@ -108,7 +143,7 @@ unfold_one(){
   # shows ZERO progress for the whole run and liveness has to be inferred from sstat
   # instead (BEN-028). Cost me an hour of blind watching on the 2026-08-07 probe run.
   if python3 -u unfold_nd_omnifold_unbinned.py --omnifile "${MERGED}" --axes eavail,q3,W \
-       --iters 5 --use-weights --estimator lgbm --seed 42 --bkg-mode "${BKG_MODE}" \
+       --iters 5 --use-weights --estimator lgbm --seed "${P4_EST_SEED}" --bkg-mode "${BKG_MODE}" \
        --out "${TMP}" --verbose \
        > "${OUTDIR}/unfold_${tag}.log" 2>&1 && valid_root "${TMP}"; then
     local MH CH RH; MH=$(sha "${MERGED}"); CH=$(sha "products/5d/xsec_5d_MEFHC_5iter_lgbm.root")

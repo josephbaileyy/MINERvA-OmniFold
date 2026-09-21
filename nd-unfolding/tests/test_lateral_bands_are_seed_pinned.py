@@ -50,34 +50,57 @@ class TheOffsetHookCannotReachTheLateralBands(unittest.TestCase):
                          ["BeamAngleX", "BeamAngleY", "MuonResolution",
                           "Muon_Energy_MINERvA", "Muon_Energy_MINOS"])
 
-    def test_no_file_in_the_chain_reads_the_offset(self):
-        offenders = {}
+    # ⚠ THREE TESTS INVERTED 2026-09-21. They asserted the LIMITATION; the limitation was removed
+    # by the L2 estimator change Joseph authorized that day, and this file's own failure message
+    # said that outcome is "NOT A TEST FAILURE TO SILENCE ... the scope limitation is obsolete and
+    # must be withdrawn". So they now assert the REMOVAL and ratchet in the other direction: if
+    # anyone re-pins the seed or un-scopes the directory, these go red again.
+    # Record: docs/orchestration/PREDECLARATION-20260921-L2-lateral-seed-release.md
+
+    def test_the_chain_NOW_READS_the_offset_and_that_is_the_point(self):
+        """Inverted. At least one file in the chain must read the offset, or the five bands are
+        back off the hook and every `L2` statement derived from this change is void."""
+        readers = {name: LATERAL_CHAIN[name] for name in LATERAL_CHAIN
+                   if (ND / name).is_file()
+                   and OFFSET_ENV in (ND / name).read_text(encoding="utf-8")}
         for name in LATERAL_CHAIN:
-            p = ND / name
-            self.assertTrue(p.is_file(), f"{name} is gone; this test is now blind")
-            if OFFSET_ENV in p.read_text(encoding="utf-8"):
-                offenders[name] = LATERAL_CHAIN[name]
-        self.assertEqual(
-            offenders, {},
-            "⚠ THE SITUATION HAS CHANGED, AND THAT IS NOT A TEST FAILURE TO SILENCE. A file in "
-            f"the active-lateral chain now reads {OFFSET_ENV}: {offenders}. Either the lateral "
-            "bands have been put on the offset hook -- in which case the scope limitation "
-            "recorded for the cause-3 grade is obsolete and must be withdrawn -- or something "
-            "reads the variable for another purpose. Decide which, then update this test.")
+            self.assertTrue((ND / name).is_file(), f"{name} is gone; this test is now blind")
+        self.assertIn("run_p4_unfold_std.sh", readers,
+                      "⚠ THE UNFOLD STAGE NO LONGER READS THE OFFSET. The five lateral bands are "
+                      "back off the hook, so the L2 probe's premise is gone and any result quoted "
+                      "from it is void. This is not a test to silence.")
 
-    def test_the_live_unfold_stage_pins_the_seed_as_a_LITERAL(self):
+    def test_the_live_unfold_stage_DERIVES_the_seed_from_the_offset(self):
+        """Inverted. The literal is gone and the seed is `42 + offset`, applied uniformly."""
         text = (ND / "run_p4_unfold_std.sh").read_text(encoding="utf-8")
-        self.assertRegex(text, r"--seed\s+42\b",
-                         "the live P4 unfold stage no longer pins seed 42 as a literal")
-        self.assertNotRegex(text, r"--seed\s+[\"']?\$",
-                            "the seed is now a variable; the pinning claim needs re-measuring")
+        self.assertRegex(text, r"--seed\s+\"\$\{P4_EST_SEED\}\"",
+                         "the unfold no longer passes the derived seed variable")
+        self.assertRegex(text, r"P4_EST_SEED=\$\(\(\s*42\s*\+\s*\$\{MNV_EST_SEED_OFFSET:-0\}\s*\)\)",
+                         "the seed must be 42 + offset; a different baseline would silently "
+                         "re-base every member")
+        # ⚠ STRIP COMMENTS BEFORE MATCHING -- BEN-482, and it caught me writing this test.
+        # The header now explains the change and necessarily contains the words "--seed 42", so a
+        # naive scan of the whole file matches the PROSE that documents the removal. The comment is
+        # the most useful line in the block, so the matcher is what changes.
+        code = "\n".join(l for l in text.split("\n") if not l.lstrip().startswith("#"))
+        self.assertNotRegex(code, r"--seed\s+42\b",
+                            "a literal --seed 42 has returned to the unfold invocation")
 
-    def test_the_active_bands_come_from_a_directory_that_is_not_member_scoped(self):
-        """`build_active_bands` hardcodes its directory, so there is no member-local variant."""
+    def test_the_active_bands_come_from_a_MANIFEST_DERIVED_directory(self):
+        """Inverted, and it asserts the STRONGER property that replaced the hardcoding.
+
+        `UDIR` is now derived from the manifest's own path, not from the environment. That makes
+        the pairing structural: a member manifest can only be checked against member unfolds.
+        """
         text = (ND / "p4_build_components.py").read_text(encoding="utf-8")
-        self.assertIn('UDIR = "active_universe_5d/standard/unfolds"', text,
-                      "if UDIR became a parameter, a member-local active candidate may now be "
-                      "producible and the limitation should be re-examined")
+        self.assertNotIn('UDIR = "active_universe_5d/standard/unfolds"', text,
+                         "the hardcoded unfolds directory is back; no member-local active "
+                         "candidate can be produced and the L2 probe cannot run")
+        self.assertIn("def build_active_bands(manifest, idx, udir)", text,
+                      "the directory must be a parameter")
+        self.assertIn("os.path.dirname(os.path.dirname(os.path.abspath(a.manifest)))", text,
+                      "it must be derived from the MANIFEST path -- deriving it from the "
+                      "environment instead would let a baseline manifest point at member unfolds")
 
     def test_z_build_really_does_take_the_lateral_bands_from_ACTIVE(self):
         """The premise of the whole limitation: if it read them from `support`, they WOULD vary."""
