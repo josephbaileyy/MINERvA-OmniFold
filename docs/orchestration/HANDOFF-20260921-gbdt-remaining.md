@@ -63,6 +63,43 @@ the change; both files changed together (the evidence says so — `UDIR` is hard
 member-local `active` even if the seed were unpinned); and it changes what the MAT ± endpoint
 difference measures, which is a scientific consequence, not a plumbing one.
 
+**WHAT IT WOULD COST — ~15 GPU task-hours, and the compute is the cheap part.**
+
+⚠ **The event loops do NOT re-run, and that is the whole cost story.** `run_p4_unfold_std.sh:110`
+takes `--omnifile "${MERGED}"` — an already-produced merged endpoint ROOT — and only the *unfold*
+carries `--seed 42`. The shifted-kinematics event loops, which are the expensive stage (ten
+directories at ~53.8 GB each), are **estimator-seed-independent and are reused**. A reading that
+re-ran them would cost orders more and would be wrong.
+
+| stage | cost | provenance |
+|---|---|---|
+| 10 endpoint unfolds (5 bands × 2) | **15 GPU task-h** | `COSTMODEL-20260911`'s comparable 5D re-unfold, 1.5 h on 1 GPU + 32 CPU, × 10 |
+| `p4_build_components` + merge audit | < 0.5 CPU task-h | CPU-minutes |
+| one Z assembly | **0.29 task-h** | *measured* — job `58454524`, `ElapsedRaw 1037 s`, MaxRSS 49.73 GiB |
+| one grade / projection | < 0.25 task-h | *measured* — job `58655509`, 39 s |
+| **total** | **~15 GPU + ~1 CPU task-h** | **≈ 3% of one arm's 500 task-h ceiling** |
+
+*The 15 is the **reserved** figure and a reservation is the enforced cap, so it is the number to
+declare.* The original ten completed inside a **4,651 s** window with concurrency, and the largest
+consecutive gap was **2,290 s**, so the actual spend is likely **well under** the reservation.
+
+> ### ⚠ AND THE PROBE IS ASYMMETRIC — IT CAN CONFIRM THE FAIL BUT CANNOT CLEAR IT
+>
+> This is the part that should decide whether it is worth doing, and it is not a cost argument.
+>
+> `s_proj` is a **maximum over the declared offset set**. Releasing the five bands and re-running
+> gives a maximum over **one seed pair**, exactly as the current grade does. So:
+>
+> - **if it still exceeds 5%** — the `L1` FAIL is confirmed with the five released, the `L2`
+>   direction becomes known, and the result is **strong**, because more pairs can only raise a
+>   maximum;
+> - **if it falls below 5%** — nothing is cleared. One pair cannot establish that the maximum over
+>   the set is below the bound, and the grade's own discipline is over the declared set.
+>
+> **So the probe buys a confirmation or an ambiguity, never a pass.** That is still worth 15 GPU
+> task-hours — an unknown direction on 26% of `√Tr C_Z` is a weak thing to publish beside a FAIL —
+> but it should be commissioned knowing which of the two answers it can give.
+
 > ### ⚠ AND A PRECONDITION THAT IS NOT ABOUT THE ESTIMATOR: NOTHING WOULD SUPERVISE THE RUN
 >
 > Measured on the cluster **2026-09-21**, immediately before writing this:
