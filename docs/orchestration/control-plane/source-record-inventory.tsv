@@ -38,7 +38,7 @@ OI-71	active	WAITING-JOSEPH	migration-carried-forward	6bf07285524a7460c8b3cf2e1d
 OI-72	retired	-	migration-carried-forward	08453ed7dad41224c113f311a9defc28e773c9cdaa2bff715178f9fc3d76c751	WITHDRAWN THE SAME HOUR IT WAS FILED — already found by lane B, already fixed, and the id is kept rather than reused. Fi
 OI-73	active	BLOCKED-EXTERNAL	migration-carried-forward	e932be5a5dc8b47d5c460a6b29e7e2ac807ef35931dfd5b5b0622f35e6f5cbb9	ITEMS (1) AND (3) DISCHARGED 2026-08-15; ITEM (2) IS BLOCKED BY A CODE DEFECT AND THIS ROW STAYS OPEN ON IT. Raised 2026
 OI-74	active	NOW	migration-carried-forward	530d7ab97903cfe7527771d8104be29bb7c6470c6eaaf051f2c708336ff7b8f9	CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI
-OI-75	active	WAITING-JOSEPH	migration-carried-forward	455e03c9508d19a17167f86d14e29fbb887a233ab00adff8a53aa056871ffe14	OPEN — WAITING-USER on item (1), which this lane is DELIBERATELY NOT ADJUDICATING. Filed 2026-08-15 by lane A while corr
+OI-75	active	WAITING-JOSEPH	migration-carried-forward	6a045565dc460cd9eee9a71364bd4ea2550bb7126d034a7164be686b52dc88e5	OPEN — STILL WAITING-USER on item (1). A LIMITED CONSUMPTION PERMISSION WAS GRANTED 2026-09-15 AND IT DOES NOT CLOSE THI
 OI-1	active	BLOCKED-EXTERNAL	migration-carried-forward	e96dba9d3913a6dc5ff47820b046c3de891c112effd037458c4ad67e766d12c7	BLOCKED
 OI-2	active	NOW	migration-carried-forward	b67224d83254be9e57038c6f2853865ce3ac3c655584903989847753d4b1846a	4D SUPERSEDED / scalar-FPS STILL OPEN — SPLIT VERDICT, codex audit 2026-08-13
 OI-3	active	BLOCKED-EXTERNAL	migration-carried-forward	9beffe579cee1bdcf03e096cb727ed65e060c9b35d7b99a3aa363d695c788fe2	BLOCKED — now SCOPED, and the blocker is a decision not compute

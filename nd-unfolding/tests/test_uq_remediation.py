@@ -3686,11 +3686,37 @@ class SubstitutionFenceS1(unittest.TestCase):
         # force. Reclassified rather than left at 199: at 199 this assertion fails FIRST and hides
         # the pre-existing `217 != 216` total below it, and masking a standing finding with a new
         # one is worse than either.
-        self.assertEqual(len(neither), 198,
+        # 199 AS OF 2026-09-14: `sbatch_z_pilot_5d.sh` was added and is CLASSIFIED, not merely
+        # counted. The ratchet fired exactly as designed and this is the classification it forces.
+        #
+        # WHY IT BELONGS IN NEITHER, and why the other two buckets are wrong for it:
+        #   * NOT HOOKED. `hooked` is asserted to be EXACTLY the seven driver legs plus the
+        #     DECLARED member-local consumers. The pilot takes no seed offset, is not a leg and is
+        #     not a declared consumer, so adding it there would break that closed set -- which is
+        #     the property that stops the set absorbing a mistake silently.
+        #   * NOT FENCED. `fenced` is `FROZEN_SUBSTITUTION_HAZARDS`, nine enumerated files, and the
+        #     count is asserted at nine. The pilot is not a substitution hazard: it writes ONLY
+        #     into a fresh output directory that REFUSES a non-empty (or unlistable) target, every
+        #     product path goes through `z_build_path.preservation_guard`, and it never writes a
+        #     canonical product. The remainder's stated exposure -- "any of them that writes a
+        #     canonical product would be an unfenced substitution" -- does not apply to it.
+        # So NEITHER is the correct bucket and 199 is the honest count.
+        #
+        # THE TOTAL PIN BELOW IS DELIBERATELY LEFT AT 216. It is a STANDING finding (it read
+        # `217 != 216` before this launcher existed and reads `218 != 216` now), it is not this
+        # change's to close, and incrementing it would be exactly the "merely increment the
+        # expected count" move that hides it. The arithmetic is stated instead so the pre-existing
+        # discrepancy stays visible and attributable:
+        #     216 pinned  +  1 pre-existing and UNEXPLAINED  +  1 this pilot  =  218.
+        self.assertEqual(len(neither), 199,
                          "if this moved, a launcher was added or removed and needs classifying as "
                          "hooked, fenced, or explicitly out of scope. The reviewed compaction moved "
                          "47 unreferenced launchers to the evidence tag; exact inventory sha256 "
                          "5ec9f1184d4bd6cfdcc2ef33e3bfb854ccb4a8c928713e532b6ab023ae6bded8.")
+        self.assertIn("nd-unfolding/sbatch_z_pilot_5d.sh", neither,
+                      "the Z pilot launcher must be in NEITHER *by classification*: a count that "
+                      "moved for the wrong reason reads exactly like one that moved for the right "
+                      "one, which is why the dump-arm assertion below exists too.")
         self.assertIn("nd-unfolding/sbatch_uthrow_dump_5d.sh", hooked,
                       "the dump arm must be in HOOKED, not merely absent from NEITHER: a count "
                       "that moved for the wrong reason reads exactly like one that moved for the "

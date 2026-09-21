@@ -2592,6 +2592,44 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   pilot-specific execution code, the two 2026-09-16 records, and the post-freeze RUN_LOG
   chronology. Landing those is a **separate merge decision and is not authorized by this record.**
 
+- [`DECISION-SUPPORT-20260916-z-to-adopted-5d-covariance.md`](DECISION-SUPPORT-20260916-z-to-adopted-5d-covariance.md)
+  - **DECISION SUPPORT ONLY — ratifies no criterion, adopts nothing, grades nothing, and no Z
+  covariance has ever been constructed.** The route from Z's outputs to an adopted 5D covariance,
+  measured 2026-09-16. Leads with §3.5's ruling that a complete favourable Z *"would establish
+  exactly one thing... Nothing else"* and does not move **Gate 2** — so the cause cells are
+  necessary and not sufficient. Corrects the cell population to **26, not 28** (cause 5 is one
+  disposition, cause 3's `M` splits into `M(i)`/`M(ii)`), with **zero RESOLVED and none droppable**.
+  **A1 is OPEN:** `S` is discharged by bounding **for the F7 channel only** — the throw-deviation
+  and completeness-division channels are unbounded, §7 item 4 — `ε = 1e-9` is **PROPOSED and
+  UNGRADED** with its falsifier **UNEVALUATED**, and `B` is the binding quantity because §3.7a
+  rev. 19's `ε = S` would be a tripwire nothing can fire. **§3 reconciles §7 item 1 with the
+  completed precursor without reopening it:** the persistence requirement is already discharged
+  there (`hCvExecution{k}`/`hCvSupportMask` absent at `923e1323`, present at the precursor's
+  producer `e09513d8`), so the null denominator is already measured at `3.2124510692799616e-37` —
+  for the **precursor**, not G, whose check stays prospective. Also: the assembly costs ~2 min of
+  eigensolve against **89.11 GB** of input I/O, and the binding constraint is the **2026-09-30 stop
+  date**, not the ceiling. Read its `CITABLE FOR` / `NOT CITABLE FOR` header before quoting any
+  part of it.
+- [`PROPOSAL-20260916-B-and-S-bounded-determinism-control.md`](PROPOSAL-20260916-B-and-S-bounded-determinism-control.md)
+  - **PROPOSAL ONLY — authorizes nothing, establishes no `B`, no `S`, no `ε`.** One bounded route to
+  `B` via route (i), plus what remains of `S`. **§1:** observed bitwise agreement supports only the
+  configurations actually tested; `B = 0` across a declared envelope is a separate claim needing an
+  enforcement argument, not more runs; and three runs are a **bounded falsification experiment**,
+  not a proof or coverage guarantee — agreement must be reported as *did not falsify*. **§2** derives
+  materiality from the implementation rather than from a name search, and corrects the claim that
+  every proposed control is a thread count (`deterministic` and `force_row_wise` are not): the
+  material channel is LightGBM's training histogram construction alone, since the CV path runs at
+  `train_frac=1.0` with no split RNG and contains **zero** BLAS-threaded reductions. It classifies
+  settings as must-fix, must-record, **not established as material** (`OMP_PROC_BIND`/`OMP_PLACES`)
+  and undeterminable (`OMP_SCHEDULE`), and names the enforcement gap: `deterministic` is documented
+  only for a fixed thread count and says nothing across **CPU models**, which makes the per-run
+  CPU-model receipt a necessity rather than good practice. **§3** states explicitly that a
+  pinned-chain result establishes **nothing** about the existing unpinned precursor. **§4** prices
+  the reservation by the **enforced** `--time` cap (9.0 CPU task-hours at the launcher's own 3:00:00,
+  reducible to 3.0 by submitting a tighter cap), with historical elapsed times used only as
+  corroboration. **§6** resolves the independent-assessor assignment from git — predeclaration is an
+  ancestor of the assessment, and the assessor lane has zero commits touching what it graded.
+  Read its `CITABLE FOR` / `NOT CITABLE FOR` header before quoting any part of it.
 ### PET typed-descriptor semantic evidence
 
 - [`../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md`](../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md)

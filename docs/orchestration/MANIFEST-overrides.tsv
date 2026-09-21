@@ -308,3 +308,7 @@ docs/orchestration/RECOMMENDATION-20260916-theta-per-bin-uncertainty-tolerance.m
 docs/orchestration/PROPOSAL-20260917-integrated-acceptance-existing-products.md	LIVE	open	
 docs/orchestration/PACKET-20260917-cause3-joint-baseline-acceptance.md	LIVE	open	
 docs/orchestration/PACKET-20260918-causes-1-2-4-acceptance-criteria.md	LIVE	open	
+docs/orchestration/DECISION-SUPPORT-20260916-z-to-adopted-5d-covariance.md	LIVE	open	
+docs/orchestration/PROPOSAL-20260916-B-and-S-bounded-determinism-control.md	LIVE	open	
+docs/orchestration/probes/probe-20260917-projection-bound-counterexample.py	MACHINE	open	
+docs/orchestration/probes/probe-20260917-theta-assessment-corrections.py	MACHINE	open	
