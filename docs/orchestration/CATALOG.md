@@ -3488,6 +3488,18 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   submission is authorized.** Read §5 for the shortest list that would close the gate, and §2 for
   three builder claims that reproduce differently.
 
+- [`DRAFT-SPEC-20260921-what-the-pipeline-refuses.md`](DRAFT-SPEC-20260921-what-the-pipeline-refuses.md)
+  - **1,061 refusal tests compressed into FIVE rules**, derived from the suite and not proposed at
+  it: absence refuses and is never a default; the guard runs before the thing it guards; a refusal is
+  pinned to its exact exit code **and** its own message; every guard has an accept arm that could
+  have failed; an inability is not a verdict. Each carries its instance count and the incident it
+  encodes -- the `import ROOT` above `argparse` that killed seven guards, the three segfaults at
+  `rc=139` read as three refusals, the tallies of zero from probes that could not look.
+  ⚠ **AND THE DERIVATION FOUND A GAP:** of the 211 refusal tests that read an exit code, **53 pin no
+  message** -- refused *by number alone*, which is exactly the segfault condition. Scoped honestly:
+  389 others pin a message and no code, correctly, because they assert an in-process exception, so
+  the denominator is **211 and not 958**. ⚠ **Nothing is enforced, nothing was deleted, no test was
+  touched**, and a spec derived from existing tests cannot discover a rule nobody encoded.
 - [`PROPOSAL-20260921-note-appendix-and-test-consolidation.md`](PROPOSAL-20260921-note-appendix-and-test-consolidation.md)
   - **Two proposals, neither executed.** (1) `app_statmethods.tex` is 1,765 lines and **216 of them
   are the full-event `C_stat` construction** -- PET material, which Joseph's 2026-08-20 ruling puts

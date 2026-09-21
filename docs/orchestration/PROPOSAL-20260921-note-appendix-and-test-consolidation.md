@@ -145,7 +145,7 @@ repository's hard-won insight actually lives. Measured 2026-09-21:
 
 | | |
 |---|---|
-| tests whose **name** asserts a refusal | **538** |
+| tests whose **name** asserts a refusal | **1,061** ⚠ *corrected 2026-09-21 from* **538** — that regex required lowercase before the keyword, so every name with an uppercase word first (`test_a_WRONG_declared_digest_refuses…`) was invisible. The undercount made the target look smaller than it is. |
 | `assertRaises`-family calls | **847** |
 | explicit exit-code assertions | **399** |
 | `MUTATION`-named tests | **21** |
