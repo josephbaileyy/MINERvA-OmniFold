@@ -92,7 +92,7 @@ the earlier corner-integral criterion is a strictly weaker special case.
 | **C4** | **DONE, `58547629`.** `SPEC:1237` "condition 4"→"condition 3" — **the correction is recorded HERE because `SPEC` is frozen at rev. 22 and a factual fix living only in a frozen document is the `variant`-in-a-docstring shape.** Measured jitter floor `‖x_cv(s+7) − x_cv‖² = 3.730946e-78`, `sqrt = 1.931566e-39`; **PRINT-ONLY**, the retired `tr_uni − jit_trace` **not** re-added; **condition-3 guard PASSED** (covariance digests identical across the jitter block); 10694 of 65856 reported bins |
 | **C5** | **NOT FALSIFIED on Z's 15-module import closure at `fb9ec356` and on the eight consumed input PATHS; the inputs' PRODUCER CHAINS were not traced.** ⚠ The earlier wording *"scoped to the 15 traced modules"* is **withdrawn**: it tells a ratifier the residual is a 16th module when it is an **untraced producer chain**, which is the dropped-qualifier failure `AGENTS.md:44-55` already records once. §6.1's conditions, which this cell was silent on: **(3)** performed by a lane that does not own cause 5 — reproduced by an independent cross-account lane with a positive control on real PET modules; **ATTESTED by the advisor from its own dispatch record**: a cold `claude -p` on claude-school, read-only tools, dispatched for this check alone with no prior involvement in cause 5 or any of Z's work — so the falsifier check was performed by a **non-owning** lane. ⚠ **Limitation named: that lane shares a model with this one and with the assessor, so it is non-owning but NOT cross-model**. **(4)** this is a **per-cell decision, NOT a mechanical four-MET discharge**, and that distinction is stated here in the cell rather than left inferable from it. **(5)** G's and Y's historical cells are **untouched** |
 | **C6** | **REUSE**, risk named: *inputs consistent but unproven* |
-| **C7** | ⚠ **REOPENED by Joseph.** The FACT holds — an independent cross-account TKey census **reproduced** 45 bands, V 13 / A 5 / R 27, all four weight-only bands in R. What failed is the evidence chain. **(c) "measured twice, two files" is ONE measurement recorded twice** — both reads trace to `sources["support"].keys()`, and the lane's third read traces to the same TKey list; restated as **one measurement with three records**. **(b) REPAIRED**: `exhaustive: true` could not fail at the production call site, because `z_build` derives `R = inventory − V − A` so `missing` is empty by construction and a one-for-one substitution survives even the count check. `z_contract.check_declared_residual` now compares R against a **declared 27-name set**, is called from the production site gated on `input_kind == "real"`, and both the call site and the gate are asserted by test. **(a) OPEN — needs a ruling, see below** |
+| **C7** | ⚠ **REOPENED by Joseph.** The FACT holds — an independent cross-account TKey census **reproduced** 45 bands, V 13 / A 5 / R 27, all four weight-only bands in R. What failed is the evidence chain. **(c) "measured twice, two files" is ONE measurement recorded twice** — both reads trace to `sources["support"].keys()`, and the lane's third read traces to the same TKey list; restated as **one measurement with three records**. **(b) REPAIRED**: `exhaustive: true` could not fail at the production call site, because `z_build` derives `R = inventory − V − A` so `missing` is empty by construction and a one-for-one substitution survives even the count check. `z_contract.check_declared_residual` now compares R against a **declared 27-name set**, is called from the production site gated on `input_kind == "real"`, and both the call site and the gate are asserted by test. **(a) RULED AND CLOSED 2026-09-20.** Joseph's 2026-09-19 §1: the phrases *"five-band coverage"* and *"until the promoted-universe migration bound is adopted"* **introduce no requirement beyond §2.7's contract**, and no numerical migration bound is to be invented. The one edit that ruling implied has landed: `KNOWN_ISSUES:16` now states the governing requirement and its dangling route is repaired, and `ESTIMATOR_REGISTRY:29`'s unsourced paraphrase is retired and routed there. **Independently reproduced** by a third lane 2026-09-20 |
 | **R5** | registry row amended to `z-cv.npz`; **not bookkeeping** — it had been naming the disqualified variant |
 
 ## 4. The source covariance — identified by measurement, not by filename
@@ -324,6 +324,20 @@ artifact and its text is the only live statement — but *that reasoning would r
 requirement*, which is a scientific call and not mine. Choosing the convenient one is exactly what
 the instruction forbade.
 
+> ### ✅ RULED 2026-09-19, AND NEITHER ONE WON
+>
+> Joseph did not pick between the two texts. **He ruled that neither phrase is a requirement:**
+> *"The phrases 'five-band coverage' and 'until the promoted-universe migration bound is adopted'
+> introduce no additional requirement beyond that contract. Do not invent a numerical migration
+> bound or require a new analysis to satisfy an undefined phrase."* The governing requirement is
+> **`SPEC` §2.7 plus the §3.2 endpoint, inventory, migration-census and assembly checks**.
+> **LANDED 2026-09-20:** `KNOWN_ISSUES:16` now carries that, its withdrawn phrase, and a route that
+> resolves; `ESTIMATOR_REGISTRY:29`'s paraphrase is retired and points there. The dangling
+> `docs/OPEN_ITEMS.md` target with no `#16` anchor is gone.
+> ⚠ **What this does NOT do:** it does not make the two texts have meant the same thing, and it does
+> not retire §2.7. A later reader finding the old phrase in a pre-09-19 record is reading a retired
+> wording, not a second requirement.
+
 ### PM-1's evidence — located, cited, and its object named
 
 **The strongest weight-only evidence in the repository is
@@ -384,6 +398,18 @@ coverage* is the intended gate, it has to be written into `KNOWN_ISSUES:16` (or 
 canonical artifact) and **C7 re-evidenced against it** — the 45-band census answers the coverage
 question and says nothing about a migration bound. **Joseph re-rules C7 on whatever survives; his
 earlier ruling was made on (b) as evidence and does not carry over.**
+
+> ### ✅ BOTH HALVES DONE — the ruling 2026-09-19, the edit 2026-09-20
+>
+> **The ruling took a fourth option this paragraph did not anticipate**: rather than choosing which
+> phrase is the gate, Joseph ruled that **neither adds a requirement to §2.7**, so nothing had to be
+> *re-evidenced against a new phrasing* — the 45-band census, the ten endpoints, the ten migration
+> censuses, the declared policies and the assembly identities are evidence for §2.7's own contract
+> and always were. **The edit:** `KNOWN_ISSUES:16` rewritten with the governing requirement, the
+> withdrawn phrase, and a route that resolves; `ESTIMATOR_REGISTRY:29` retired and routed there.
+> **And it was re-evidenced anyway, by a party with no stake:** a third lane re-measured the
+> inventory, the ten endpoint digests and the ten migration censuses **from the products** on
+> 2026-09-20 and reproduced every one — `VERDICT-20260920-third-lane-c5-c7-verification.md`.
 
 ## 4e2. THE ASSESSOR'S PROJECTOR-LEVEL EVIDENCE — anchored at `5be86f55`, and CREDITED
 

@@ -1,5 +1,28 @@
 # Corrected UQ Production — live status (claude-school, 2026-07-11)
 
+**2026-09-20 STATUS ONE-LINER — ONE DIGEST IS ADOPTED, UNDER EXCEPTION, AND THE QUARANTINE STANDS FOR
+EVERYTHING ELSE.** Joseph adopted `uq_5d/z_pilot_20260916_a5/z-cv.npz`, sha256 `3d7465f6…`,
+**890,500,272** B, `variant: "cv"`, as **publication-under-exception** under the executed §6.4
+candidate-specific amendment. **The exception attaches to BYTES** — explicitly not to `361090f9…` or
+`7e4636a3…`, which are graded and **not** adopted, and nothing here is inheritable. The
+`(E_avail,W)` projection `835828bf…` is built (`src_cells_dropped 0`, exact symmetry, PSD) and its
+pairing to the note figure is established **by digest identity** (`0f04abce…`), not by numerical
+agreement. `VALIDATION_LEDGER.md` `VL142`–`VL144`.
+**⚠ FOUR MEASUREMENTS TRAVEL WITH IT AND THEY ARE NOT CAVEATS:** `s_proj = 6.145%` against a `5%`
+bound fixed before production (`M(ii)` **branch 5, NOT MET — PER-BIN**, on a fully valid campaign);
+that effect is **flat in `N`** at `6.04% ± 0.39%` over `N = 40–160` while the resampling floor falls
+(`p = 0.000` vs `1.467`), so it is a property of the estimator and a larger ensemble would not
+reduce it; five bands are **seed-pinned and unprobed**; and the seed moves the **central values** by
+up to `6.02%` of their own `σ` on the 42 destinations, up to `49.8%` per individual 5D bin.
+**⚠ `M3` CORRECTED 2026-09-20 — *"it is a LOWER bound"* is WITHDRAWN.** `s_proj` is a maximum over a
+functional set, not a sum of nonnegative component magnitudes, so releasing the five pinned bands
+could move the total **either way**. The measurement (`26.0%` of `√Tr`, zero movement by
+construction) stands; the direction does not. `CORRECTION-20260920-lower-bound-inference-withdrawn.md`.
+**⚠ The product's own fields are UNCHANGED and stay so:** `scientific_acceptance: NON-PASSING`,
+`adoptable: false`. **Cause 3 is not discharged** — `M(i)` `UNRESOLVED` on `4c`, `C3` **predeclared
+and not computed** for this digest, and **no declared boundary was evaluated in production**. §6.4
+clause (c) is **disposed**, with the ordering defect **ratified, not cured**.
+
 **2026-08-12 STATUS ONE-LINER — CAUSE 2 IS DISCHARGED FOR THE CANDIDATE AND THE QUARANTINE STANDS.**
 Joseph's decision (→ Session A → Session B, item 1 of five, BEN-082(v)): cause 2 discharged **only** for
 the footing-matched, stamp-verified candidate `stamped_bkgaware_meancentered_20260812.root`

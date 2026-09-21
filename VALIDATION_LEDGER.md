@@ -1,5 +1,45 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-09-20 the ADOPTED scalar-5D covariance, its publication projection, and cause 7's magnitude
+
+**This is the trunk every non-2D publication uncertainty projects from.** `z-cv.npz` was adopted by
+Joseph on 2026-09-20 as **publication-under-exception**
+(`docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md`) under the
+**executed, byte-scoped** §6.4 amendment. The exception attaches to **these bytes and nothing
+else** — explicitly not to `361090f9…` or `7e4636a3…`.
+
+**⚠ THE PRODUCT'S OWN FIELDS ARE UNCHANGED AND STAY THAT WAY:** `scientific_acceptance:
+NON-PASSING`, `adoptable: false`. **They do not become measured PASS labels because an external
+adoption decision exists**, and `project_cov_nd.py` refuses `--run-class publication` from this
+source **unless** the exception is passed — a refusal exercised on the real path at `58565755`
+(leg `B5`) with a positive control.
+
+**⚠ FOUR MEASUREMENTS TRAVEL WITH VL142 AND VL143, and M3 has been corrected.** They are at the
+adoption record §4; `M3`'s *"it is a LOWER bound"* was **withdrawn 2026-09-20**
+(`CORRECTION-20260920-lower-bound-inference-withdrawn.md`) — the five seed-pinned bands are
+**unprobed**, and the direction of their unmeasured contribution is **not known**. `M1`'s
+`s_proj = 6.145%` against a `5%` bound is measured and unaffected.
+
+**Cause 3 is NOT discharged by any row here.** `M(i)` stays `UNRESOLVED` on `4c`; `C3` stays
+**predeclared and not computed** for this digest. No boundary below was evaluated in production —
+all seven declare `read_by_production: no`.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL142 | the **adopted** scalar-5D covariance `uq_5d/z_pilot_20260916_a5/z-cv.npz`, identified by digest and by its own declared variant, not by path | sha256 **`3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5`**, **890,500,272** bytes, `variant: "cv"` read from the product's own metadata; `√tr` **`5.674200780785609e-38`**; symmetry residual `2.1641333629718972e-16`; eigenvalues `min −1.6306079908811896e-90` / `max 2.2292239987529526e-75`, most-negative/max **`7.3147e-16`**, far below the `1e-9` relative PSD allowance; assembling revision `fb9ec3560fd6d62295dffc81b5694c9e26667d5b`; producing job `58454524`, `ExitCode 2:0` (**2 is this CLI's completion code for "construction ran, science NON-PASSING"**, not a failure) | **ADOPTED as publication-under-exception**, Joseph 2026-09-20. **Re-hashed on the cluster before the adoption record was written**, and **independently re-hashed and re-diagonalized by a third lane** on 2026-09-20 (`VERDICT-20260920-third-lane-c5-c7-verification.md`), which repeated the dense eigensolve with `scipy.linalg.eigh(driver="evr")` on one BLAS thread — the tiny negatives are **arithmetic-implementation dependent** and every measured negative fraction is orders below tolerance. ⚠ **`z-mean.npz` is NOT interchangeable:** the two share all seven keys and every shape and are byte-identical in `hXSecND_flat`/`hSupportMask`/`hPinnedMask`/`hRowIndex5D`, differing only in `metadata_json`, `hInflation_g` and the covariance — and the mean variant measures `√tr` **7.13%** lower (`5.269506434664456e-38`). `--expect-variant` is **required with no default** precisely because the wrong choice passes every other gate. |
+| VL143 | the **publication** `(E_avail,W)` projection built from VL142, `M C Mᵀ` at `M_shape [42, 10694]` | sha256 **`835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e`**, `17,101` bytes, 42 cells; **`src_cells_dropped = 0`**; `max|C − Cᵀ| = 0.00e+00`; PSD `min-eig 4.359e-92`, most-negative/max `2.93e-15`; `hRowIndex` readback digest `9eb9d216…`, 42 labels; `√tr` `4.4552e-39`; **rank ≈ 36 of 42**; `M_content_sha256 64fec490…`; job `58655509`, `COMPLETED 0:0`, 39 s | **VERIFIED, run class `publication-under-exception`.** The **binding** pairing leg is **digest identity, not numerical agreement**: the projected source's `hXSecND_flat` and the note figure's are **byte-identical**, `0f04abce…`. Corroboration only: `hCV_marginal` against the figure's `hData2D` in **C-order** agrees to `max abs diff 5.220244e-54` on elements of order `4e-39`, against an **F-order control three orders larger** (`3.071941e-38`) — so C-order is **measured, not assumed**. ⚠ **Rank deficiency is a property of the object**, inherited from a rank-deficient source, not a defect. ⚠ **`n_empty` is NOT a check here and may not be cited as one** — it is zero by construction in `receiving-cells` mode; the projector records it, nothing verifies by it. Receipts: `state/PROJ-20260920-m1-publication-receipt.json`, `state/PROJ-20260920-binding-check.json`. |
+| VL144 | **cause 7's magnitude** — Z's own lateral counterfactual, `Σ_A L_active` against `Σ_A L_support`, measured on Z's bound inputs rather than cited from S | `√tr` active **`1.4742855148740122e-38`**, support **`1.474709838719496e-38`**, ratio **`0.9997122662137712`**, **`−0.0288%`**. Per-bin `sqrt(diag_active/diag_support)` over all **10,694** bins: **min `0.177248`, median `1.005070`, max `3.061947`**. Within the **top 1% of bins by support variance** — which carry **`74.11%`** of the total — the ratios run **`0.687`–`1.153`**, median `0.999` | **CLOSED as sufficient under §2.7 as amended by Joseph's 2026-09-19 ruling.** ⚠ **The `−0.0288%` is a change in the lateral block's SQUARE-ROOT TRACE. It is not a bound on every bin and not a bound on the complete covariance** — individual bins move by a factor of 3 up and 5.6× down. ⚠ **Small aggregate variance share does not make a bin irrelevant to a quoted result** (Joseph, §3), so the **full** range is the report and the top-1% range is a subset of it, never a substitute; `0.687` is a **31% decrease**. **REPRODUCED INDEPENDENTLY** by a third lane from the five support and five active matrices themselves: extrema `0.17724803760759691` / `3.0619466845725776` and aggregate `−0.02877337862288165%`. ⚠ **Ten-digit agreement with S is EXPECTED and is not independent physics** — Z uses those donor blocks; it confirms the binding and nothing beyond it. `C_Z − C_G` is **not** substituted. |
+
+**Method note, and it is the reason these three rows are one section.** VL143 is derived from VL142
+and VL144 is measured on VL142's own donated blocks, so **they are not three independent
+confirmations of anything.** VL142's identity is the only thing all three rest on, and it is
+established by digest three times over: at construction, on re-hash before adoption, and by a lane
+that authored none of the evidence.
+
+**§6.4 clause (c) is DISPOSED** (`DECISION-20260920-joseph-rules-clause-c-disposition.md`) with two
+limitations: `V6`'s six items have **no second-lane reproduction**, and **the independent
+verification followed the adoption rather than preceding it** — ratified, not cured.
+
 ## 2026-08-13 Gate 6 Leg F — across-process floor at the fixed `(42,0)` policy, FIRST WAVE (3 of 5)
 
 Array `56863958` tasks 2–5, `%2` self-capped; tasks 2 and 3 `COMPLETED 0:0`, tasks 4 and 5 still

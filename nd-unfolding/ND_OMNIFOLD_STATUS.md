@@ -4,6 +4,20 @@
 verified numbers in `../VALIDATION_LEDGER.md`, bugs in `../KNOWN_ISSUES.md`,
 and work remaining in `../docs/OPEN_ITEMS.md`.
 
+**Scalar-5D uncertainty trunk — ADOPTED UNDER EXCEPTION, 2026-09-20.** The 4D/5D central values and
+closures were already validated; what was missing was the covariance every non-2D publication
+uncertainty projects from. Joseph adopted **one digest**: `uq_5d/z_pilot_20260916_a5/z-cv.npz`,
+sha256 `3d7465f6…`, `variant: "cv"`, as **publication-under-exception**, and the `(E_avail,W)`
+projection `835828bf…` is built and its pairing verified by digest identity. Canonical numbers:
+`../VALIDATION_LEDGER.md` `VL142`–`VL144`. Operative state, boundaries and cause dispositions:
+`../docs/orchestration/OPERATIVE-SHEET-scalar5d.md`.
+**⚠ Read the adoption's four measurements before quoting anything built from it** — they are
+measurements, not caveats, and `s_proj = 6.145%` against a `5%` bound is one of them. **⚠ The
+exception attaches to BYTES and is not inheritable.** **⚠ The product's own fields stay
+`NON-PASSING` / `adoptable: false`.** **⚠ Cause 3 is NOT discharged**: predeclared and not computed
+for this digest, and no declared boundary was evaluated in production. **⚠ This changes nothing for
+PET** — Gate 6 remains blocked and PET stays off the publication path per the `OI-126` ruling.
+
 **Gate 5 coherent-replica training family is PROMOTED PASS at 50/50.** Job `56933831` independently
 confirmed the bare full-strength `FAMILY_COMPLETE_PASS` and returned
 `GATE5_TRAINING_ARTIFACTS_PASS`: 50/50 NPZ members, exact fixed subsample, 2+4 realized LR fits,
