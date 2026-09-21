@@ -26,7 +26,7 @@ def _report(**over):
                        "adequacy_fraction_of_reference": 0.80,
                        "regional_fraction_of_regional_reference": 0.60},
         "interval": {"mean": 0.019, "ci_low": 0.016, "ci_high": 0.022,
-                     "n_pairs": 8, "sd": 0.004},
+                     "n_pairs": 8, "sd": 0.004, "half_width": 0.003},
         "paired_differences": {"127": 0.019, "139": 0.020},
         "absolute_adequacy": {"reference": 0.95, "floor": 0.76, "arms": {
             "ours": {"mean_recovery": 0.90, "adequate": True},
@@ -165,3 +165,34 @@ class TestBuild(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ThePrecisionAgainstDeltaIsStated(unittest.TestCase):
+    """The pilot said 74 pairs for a half-width within delta; the design runs 8.
+
+    A reader should not have to divide two numbers on the slide to learn that
+    the comparison resolves direction but not non-inferiority at the margin.
+    """
+
+    def test_a_wide_interval_says_so_in_bold(self):
+        report = _report(interval={"mean": -0.19, "ci_low": -0.232,
+                                   "ci_high": -0.148, "n_pairs": 8,
+                                   "sd": 0.05, "half_width": 0.042})
+        tex = mfd.build_tex(report, mfd.component_comparison())
+        self.assertIn("wider than", tex)
+        self.assertIn("resolves the", tex)
+        self.assertIn("not non-inferiority", tex)
+
+    def test_a_narrow_interval_says_the_margin_is_resolvable(self):
+        report = _report(interval={"mean": -0.005, "ci_low": -0.015,
+                                   "ci_high": 0.005, "n_pairs": 8,
+                                   "sd": 0.01, "half_width": 0.010})
+        tex = mfd.build_tex(report, mfd.component_comparison())
+        self.assertIn("narrower than", tex)
+
+    def test_it_never_claims_the_margin_was_widened(self):
+        report = _report(interval={"mean": -0.19, "ci_low": -0.232,
+                                   "ci_high": -0.148, "n_pairs": 8,
+                                   "sd": 0.05, "half_width": 0.042})
+        tex = mfd.build_tex(report, mfd.component_comparison())
+        self.assertIn("not widened", tex)

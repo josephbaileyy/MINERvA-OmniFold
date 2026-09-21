@@ -159,6 +159,22 @@ def build_tex(report: dict[str, Any], categories: list[dict[str, str]]) -> str:
     # Computed HERE, not inside the f-string: `{{}}` in an f-string EXPRESSION is
     # a set containing an empty dict, not an empty dict, and it raises at render
     # time rather than at import.
+    # Does the interval actually resolve the margin it is judged against?
+    # The pilot said 74 pairs were needed for a half-width within delta and
+    # the design runs 8, so the honest statement is that the comparison
+    # resolves DIRECTION but not non-inferiority to delta. A reader should not
+    # have to divide two numbers on the slide to find that out.
+    half_width = float(interval["half_width"])
+    delta = float(report["thresholds"]["non_inferiority_delta"])
+    resolves_delta = half_width <= delta
+    precision_note = (
+        "The interval is narrower than $\\delta$, so non-inferiority is "
+        "resolvable at the frozen margin."
+        if resolves_delta else
+        f"\\textbf{{The interval is wider than $\\delta$}} "
+        f"({half_width:.4f} against {delta}). This comparison resolves the "
+        "DIRECTION of the difference, not non-inferiority at the frozen "
+        "margin; the margin was not widened to change that.")
     off_grid_pct = 100.0 * (
         report.get("regional_coverage", {}).get("off_grid_truth_fraction") or 0.0)
     closure_sha = str(prov.get("closure_npz", {}).get("sha256", "---"))
@@ -217,6 +233,8 @@ Non-inferiority margin $\delta = {report['thresholds']['non_inferiority_delta']}
 switching threshold $\delta_{{\mathrm{{switch}}}} =
 {report['thresholds']['switching_delta']}$, both frozen before any comparative
 result existed.
+\vfill
+{precision_note}
 \vfill
 \footnotesize The pilot observations are \textbf{{excluded}}:
 {tex_escape(report['pilot_exclusion_reason'])}.
