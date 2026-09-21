@@ -204,12 +204,16 @@ class M1DiagnosticRefusals(unittest.TestCase):
         (self.t / "products" / "5d").mkdir(parents=True)
         r = self._run(MNV_OUT=str(self.t / "products" / "5d" / "DIAGNOSTIC_m1.root"))
         self.assertEqual(r.returncode, 6, r.stderr)
+        # rc 6 covers TWO conditions -- a missing DIAGNOSTIC marker and a product tree -- so
+        # the code alone cannot say which one fired. run_m1_diagnostic.sh:123.
+        self.assertIn("points into a publication or candidate product tree", r.stderr)
 
     def test_output_into_the_candidate_projection_tree_refuses_rc6(self):
         d = self.t / "projections_candidate"
         d.mkdir()
         r = self._run(MNV_OUT=str(d / "DIAGNOSTIC_m1.root"))
         self.assertEqual(r.returncode, 6, r.stderr)
+        self.assertIn("points into a publication or candidate product tree", r.stderr)
 
     # ---- rc 7: no silent overwrite ---------------------------------------------------------
     def test_existing_output_refuses_rc7(self):
@@ -234,6 +238,9 @@ class M1DiagnosticRefusals(unittest.TestCase):
     def test_missing_r5_receipt_refuses_rc9(self):
         r = self._run(MNV_R5_RECEIPT=str(self.t / "nope.json"))
         self.assertEqual(r.returncode, 9, r.stderr)
+        # rc 9 covers THREE conditions. An absent receipt has its own message
+        # (lib_r5_admission.sh:92); the other two come from the meter, separated below.
+        self.assertIn("no R5 receipt at", r.stderr)
 
     def test_exhausted_headroom_refuses_rc9(self):
         """Producer-built receipt at 499.9 CPU task-h: spend + 0.25 crosses 500, so admission
@@ -242,6 +249,10 @@ class M1DiagnosticRefusals(unittest.TestCase):
         _write_receipt(near, int(499.9 * 3600))
         r = self._run(MNV_R5_RECEIPT=str(near))
         self.assertEqual(r.returncode, 9, r.stderr)
+        # The message carries the METER's own rc, which is the only thing separating a
+        # ceiling refusal from a staleness refusal -- both exit 9. lib_r5_admission.sh:101.
+        self.assertIn("R5 admission REFUSED", r.stderr)
+        self.assertIn("meter rc 5", r.stderr)
 
     def test_stale_receipt_refuses_rc9(self):
         """The meter fails closed on staleness, and the runner must not survive that."""
@@ -251,6 +262,8 @@ class M1DiagnosticRefusals(unittest.TestCase):
         p.write_text(json.dumps(stale))
         r = self._run(MNV_R5_RECEIPT=str(p))
         self.assertEqual(r.returncode, 9, r.stderr)
+        self.assertIn("R5 admission REFUSED", r.stderr)
+        self.assertIn("meter rc 4", r.stderr)
 
     # ---- rc 13 and rc 12: the environment is a PRECONDITION of evaluating the boundary -----
     def test_missing_environment_script_refuses_rc13(self):

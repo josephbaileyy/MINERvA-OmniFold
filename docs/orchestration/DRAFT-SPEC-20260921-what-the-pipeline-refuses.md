@@ -1,7 +1,7 @@
 # DRAFT SPEC 2026-09-21 — what the pipeline refuses, compressed from 1,061 tests into five rules
 
 **CITABLE FOR:** the five rules below as a *derived description* of the existing suite, the
-measurements behind them, and the one gap the derivation exposed.
+measurements behind them, and the **five-test** gap the derivation exposed and repaired.
 **NOT CITABLE FOR:** any guarantee about behaviour, any authorization, and any claim that a rule is
 *enforced*. **Nothing is deleted, nothing is modified, and no test was touched to produce this.**
 
@@ -81,7 +81,11 @@ and a refusal identified by number alone does not distinguish *refused for the r
 `rc=139` were reported as three refusals**. Three guards that never executed read as three that
 fired.
 
-⚠ **THIS IS THE RULE THE SUITE FOLLOWS LEAST, AND THE DERIVATION IS HOW I FOUND OUT — see §3.**
+⚠ **I FIRST WROTE THAT THIS IS THE RULE THE SUITE FOLLOWS LEAST. THE MEASUREMENT REFUTES IT.**
+Of the 209 refusal tests that read an exit code, **181 discriminate the reason** — by message,
+by a structured receipt field, or by a code unique to their condition. The genuine residue was
+**5**, and it is repaired. §3 keeps the whole chain because the two wrong numbers on the way
+are the instructive part.
 
 ### R4 — EVERY GUARD HAS AN ACCEPT ARM THAT COULD HAVE FAILED.
 
@@ -102,7 +106,60 @@ explicitly deferred to the act with its failure mode named.*
 `sacct` query that printed a header and no rows, a `find` whose error its own `2>/dev/null`
 swallowed, a `grep` whose pattern could not match the line that would refute it.
 
-## 3. ⚠ WHAT THE COMPRESSION REVEALED — R3 is met in 158 of 211 places
+## 3. ⚠ WHAT THE COMPRESSION REVEALED — and my measurement of it was WRONG TWICE, both times in my favour
+
+**The gap is 5 tests, not 53.** The chain below is kept in full because the two corrections are more
+instructive than the finding, and both errors made the defect look bigger and my work look more
+necessary.
+
+| pass | instrument | "deficient" | why it was wrong |
+|---|---|---|---|
+| 1 | *no `assertIn` in the body* | **53** | treats a **message substring** as the only way to identify a refusal |
+| 2 | *no assertion whose operand is anything but the exit code* | **28** | many tests pin **structured receipt fields** — `record["violation"]["module"]`, `by_depth[1]["verdict"]`, `refusal_site` — which is **stronger** than a substring, not weaker |
+| 3 | *the asserted exit code is SHARED by another condition of the same entry point* | **5** | where each condition has its **own** code, the code **is** the discriminator |
+
+**Pass 3 is the right question**, and the reason is R3's own incident: a segfault at `rc=139` was
+read as a refusal because the check asked `rc == 0` instead of `rc == <the specific code>`. A test
+asserting `rc == 4` is immune to that. A test asserting `rc == 9` is **not**, when three different
+conditions all exit 9.
+
+One test in the family says this in its own name:
+`test_the_refusal_SITE_is_a_field_because_exit_3_cannot_carry_it` — the suite had already reached
+this conclusion and solved it with a field. My first two instruments could not see that solution.
+
+### The genuine five, and they are REPAIRED
+
+All in `run_m1_diagnostic.sh`'s refusal ladder, where two codes are overloaded:
+
+| test | shared code | now also pins |
+|---|---|---|
+| `test_output_into_a_product_tree_refuses_rc6` | `6`, with the missing-marker case | *"points into a publication or candidate product tree"* |
+| `test_output_into_the_candidate_projection_tree_refuses_rc6` | `6` | the same message |
+| `test_missing_r5_receipt_refuses_rc9` | `9`, with two meter refusals | *"no R5 receipt at"* |
+| `test_exhausted_headroom_refuses_rc9` | `9` | *"R5 admission REFUSED"* + **`meter rc 5`** |
+| `test_stale_receipt_refuses_rc9` | `9` | *"R5 admission REFUSED"* + **`meter rc 4`** |
+
+**The meter's own rc is embedded in the message** (`lib_r5_admission.sh:101`), and it is the only
+thing separating a ceiling refusal from a staleness refusal — both exit 9. That the codes are 5 and
+4 was **verified by running**, not read off the comment beside them.
+
+**AND THE ASSERTIONS WERE POWER-TESTED.** Swapping `meter rc 5` for `meter rc 4` in the ceiling test
+makes it **fail**, so the two assertions genuinely discriminate rather than both matching whatever
+the meter prints. `27 passed` before the mutation and after restoring it; `1 failed` during.
+
+⚠ **What is NOT claimed:** that the other 23 of pass 2's 28 are correct. They pin an exit code that
+is unique among *the conditions this suite tests*; an untested condition sharing that code would be
+invisible. That is a limit of the corpus, not a defect in those tests, and it is the same limit §4
+states about the whole document.
+
+## 3b. ⚠ THE SUPERSEDED FINDING, KEPT VERBATIM
+
+**Everything in this section is the pass-1 reasoning and its conclusion is WRONG.** It is retained
+because deleting a superseded count leaves the next reader no way to tell a corrected number from a
+number nobody checked — and because the error is the recurring one: an instrument that could only
+see the remedy *I* had in mind, reporting every other remedy as an absence.
+
+*Original text follows.*
 
 This is the payoff Joseph predicted, and it is a gap rather than an insight, which is the more
 useful kind.

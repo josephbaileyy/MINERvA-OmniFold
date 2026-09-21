@@ -214,6 +214,25 @@ production, universe-sweep, and closure run:
         than an idealized shortcut.
 \end{itemize}
 
+\paragraph{What the pipeline refuses to do.}
+The production scripts are written so that an unverifiable condition stops the run rather than
+being worked around, and the test suite encodes that discipline as five rules rather than as a
+list of cases. \textbf{(i)} A missing, absent or undeclared operand produces a refusal --- never a
+skip, a default, a derived substitute or a warning. \textbf{(ii)} A guard executes before the side
+effect it prevents, and the ordering is itself asserted; the failure it exists for is a module
+import placed above the argument parser, which killed every subsequent check in that file.
+\textbf{(iii)} A refusal is identified by its exact exit code \emph{together with} its own message
+or a structured receipt field, never by ``non-zero'': otherwise a crash and a refusal are
+indistinguishable, and three segmentation faults were once recorded as three refusals.
+\textbf{(iv)} Every guard has an accept arm that could have failed, so a check that can only refuse
+is distinguishable from one that always refuses. \textbf{(v)} An inability to evaluate a condition
+is its own outcome with its own exit code, never folded into pass or fail. Over a thousand tests
+name a refusal, and these five rules are what they have in common.
+
+\noindent These are properties of the implementation \emph{as tested}, not theorems about the
+method. A rule nobody encoded would not appear among them, and a green suite certifies the cases it
+contains rather than the absence of others.
+
 \subsection{Related developments and estimator scope}
 Profile OmniFold~\cite{Zhu:2025profile} extends the classifier-based EM procedure
 to nuisance parameters in the forward model. It complements the earlier
