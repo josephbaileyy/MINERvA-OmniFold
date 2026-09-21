@@ -109,7 +109,12 @@ had refused it. `origin` carries `main` plus the **14** branches that hold commi
 name→SHA recorded **before** deletion at
 [`LEDGER-20260920-deleted-branch-names-to-sha.md`](LEDGER-20260920-deleted-branch-names-to-sha.md).
 
-## 6. ⚠ THE LIMITATIONS THAT REMAIN LIVE — all seven, none resolved
+## 6. ⚠ THE LIMITATIONS THAT REMAIN LIVE — seven at the time of writing; **SIX as of 2026-09-21**
+
+⚠ **This heading read *"all seven, none resolved"* and that is no longer true.** `L7` closed on
+2026-09-21 (see below). The other six stand, and two of them — `L4` and `L6` — **cannot** be
+closed by any amount of work: one is an accepted provenance gap the ruling forbids
+manufacturing, the other is an ordering that cannot be un-violated.
 
 **L1. `s_proj = 6.145%` against a `5%` bound.** `(cause 3, Z)`'s `M(ii)` graded **branch 5, NOT MET —
 PER-BIN** on a fully valid campaign. It is **flat in `N`** — `6.04% ± 0.39%` at `N = 40/80/160`,
