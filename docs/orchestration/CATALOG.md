@@ -1,18 +1,28 @@
-- **The canonical quiesce window is CLOSED, 2026-08-30:**
-  [`CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md`](CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md)
-  — the freeze expired **on its own terms** (*"when submission is authorized or the rehearsal is
-  abandoned"*), so **no new authorization is claimed**. Records this lane's *independent* remeasure of
-  the sbatch-time property `F-17(a)` actually tests: HEAD `32e403b8`, porcelain **726**, status digest
-  `d429f0f3…` — matching the operand without relying on the producer's report. Reconciles the two byte
-  figures (a 4,096 difference = one wrapper directory inode) and the three quarantine generations
-  (517 + 415 + 6 = 938). Reads the seven arms' array specs **untruncated** and confirms the arms run
-  from a tree at `7ac0edec`, detached, porcelain 0. **Corrects** the producer's walltime envelope
-  maximum from 253.5 to **300** (`boot5dG`, 100 × 3:00), which does not change the under-500 verdict.
-  **Releases the dashboard lane** (`OI-175`, porcelain 726 → 725); does **not** release the deployment
-  tree, move any gate, or decide the post-path `F-17(b)` capture, which is routed as `OI-178`.
 # Orchestration router
 
 This is a pointer-only active-tree router. It contains no scientific evidence or authorization.
+
+> ## ⚠ READ THIS FIRST — the router is 4208 lines and you almost certainly want about 500 of them
+>
+> It grew append-only through three campaigns and **it is now longer than most documents it points
+> at**. Measured 2026-09-21, so a reader can skip rather than scroll:
+>
+> | if you want | go to | lines |
+> |---|---|---|
+> | **what is live now** | `## Current work` → *THE SCALAR-5D REQUIRED DELIVERABLE PATH* | ~310 |
+> | what Joseph still owes a decision on | *Decisions awaiting Joseph* | ~52 |
+> | the scalar-5D campaign's records | *Joseph rules the complete-successor question* | **~2090** |
+> | the k=0 / Gate-1 rehearsal (CLOSED, August) | the round 4–11 sections | ~990 |
+> | conventions, criteria, procedures, templates | *The remaining twelve* | ~44 |
+> | where a task routes | `## Task routes` | ~14 |
+>
+> **One section is ~2090 lines — half the file.** That is the scalar-5D campaign's pointer list,
+> appended to daily for two weeks and now largely history: the covariance it tracks was adopted on
+> 2026-09-20.
+>
+> ⚠ **A SPLIT IS THE OBVIOUS FIX AND IT IS NOT A PROSE CHANGE — see `## Regenerate` for why it is
+> proposed rather than done here.**
+
 
 ## Current work
 
@@ -2664,7 +2674,26 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   dashboard deployment after the operand completed. `OI-175` routes the replacement. No operand was
   retaken, no compute submitted, and Gate 2 remains unchanged.
 
-### 🔒 DEPLOYED AND RE-FROZEN AT `7ac0edec`, 2026-08-30 — steps 1–2 historical filing; later grade above
+### 🔒 DEPLOYED AND RE-FROZEN AT `7ac0edec`, 2026-08-30
+
+> ⚠ **THIS BULLET WAS THE FIRST TWELVE LINES OF THE FILE, ABOVE THE `#` TITLE, until
+> 2026-09-21.** An append landed before the header, so the router opened on a closed
+> August quiesce window instead of on its own title. Moved here, beside the deployment
+> it is about; not one word of it is changed.
+
+- **The canonical quiesce window is CLOSED, 2026-08-30:**
+  [`CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md`](CLOSE-20260830-canonical-quiesce-window-k0-7ac0edec.md)
+  — the freeze expired **on its own terms** (*"when submission is authorized or the rehearsal is
+  abandoned"*), so **no new authorization is claimed**. Records this lane's *independent* remeasure of
+  the sbatch-time property `F-17(a)` actually tests: HEAD `32e403b8`, porcelain **726**, status digest
+  `d429f0f3…` — matching the operand without relying on the producer's report. Reconciles the two byte
+  figures (a 4,096 difference = one wrapper directory inode) and the three quarantine generations
+  (517 + 415 + 6 = 938). Reads the seven arms' array specs **untruncated** and confirms the arms run
+  from a tree at `7ac0edec`, detached, porcelain 0. **Corrects** the producer's walltime envelope
+  maximum from 253.5 to **300** (`boot5dG`, 100 × 3:00), which does not change the under-500 verdict.
+  **Releases the dashboard lane** (`OI-175`, porcelain 726 → 725); does **not** release the deployment
+  tree, move any gate, or decide the post-path `F-17(b)` capture, which is routed as `OI-178`.
+ — steps 1–2 historical filing; later grade above
 
 - [`FREEZE-20260830-k0-deployment-7ac0edec.md`](FREEZE-20260830-k0-deployment-7ac0edec.md)
   — **THE DEPLOYED TREE `/pscratch/sd/j/josephrb/k0r2/clean` IS NOW FROZEN DETACHED AT
@@ -4199,3 +4228,35 @@ python3 docs/orchestration/control_plane_lint.py
 python3 docs/orchestration/generate_manifest.py
 python3 docs/orchestration/generate_manifest.py --check
 ```
+
+### ⚠ THE SPLIT: specified, costed, and DELIBERATELY NOT DONE HERE (2026-09-21)
+
+The reading guide at the top exists because this file is ~4,200 lines and a reader needs ~500 of
+them. A guide reduces what you read; it does not reduce what you LOAD, and an agent that opens the
+router pays for all of it. So the split is the real fix. It is proposed rather than executed, with
+the reasons stated so the next lane does not have to rediscover them.
+
+**Two blockers, both concrete.**
+
+1. **`live_doc_indexed.py` reads exactly one file.** Its `unindexed()` is
+   `basename(p) not in catalog_text`, where `catalog_text` is `CATALOG.md` alone — and that check
+   **enforces whole-tree as of 2026-09-21**. Move a pointer row into an era file and the document
+   it points at becomes "unindexed", so the split would redden the commit that performs it. The
+   checker must first learn to read `CATALOG.md` **plus declared continuation files**, with that
+   widening power-tested in both directions like the rest of it. That is a code change with tests,
+   not an editing pass.
+2. **The historical blocks are INTERLEAVED with live ones, not contiguous.** The Gate-1 round 4–11
+   material runs in two runs (~2,647–3,538 and ~3,659–3,928) with `## Evidence and claims`,
+   *Documents that open items route to*, and *START HERE for the remaining publication work*
+   sitting between them. Extracting it is a restructure of the single live discovery route, and
+   doing that while the publication path is open is the kind of change that is proposed, not
+   performed by whoever happens to be editing.
+
+**What the split should be, so the specification is not lost:** the ~990 lines of k=0/Gate-1
+rehearsal history — a campaign CLOSED in August — move to one era file, and the ~2,090-line
+scalar-5D section follows once its campaign's records stop moving. That leaves a router of roughly
+1,100 lines, which is the size the reading guide's top row implies it should be.
+
+**Not by generating it.** `MANIFEST-overrides.tsv` has the paths and none of the one-line summaries,
+and the summaries are the entire value of a router. A generated index would be a longer, worse
+`ls`.
