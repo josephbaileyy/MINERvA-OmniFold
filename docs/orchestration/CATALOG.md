@@ -3488,6 +3488,25 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   submission is authorized.** Read §5 for the shortest list that would close the gate, and §2 for
   three builder claims that reproduce differently.
 
+- [`HANDOFF-20260921-gbdt-remaining.md`](HANDOFF-20260921-gbdt-remaining.md)
+  - **START HERE for what is left on the GBDT / scalar-5D path.** PET deliberately out of scope.
+  Six live limitations, of which **nothing is blocked on compute**: `L2` is blocked on a **RESERVED
+  estimator change** (unpinning `--seed 42` for the five lateral bands, which `EVIDENCE-20260919`
+  routes to Joseph and forbids routing around), `L5` on **sending a prepared question to a
+  person**, and the rest are closed or are disclosures that cannot be closed.
+  ⚠ Records a regression **introduced on 2026-09-21 and not noticed at the time**: live
+  `pipeline-rc` instances went **3 -> 7**, four from the pilot merge, missed because the failure
+  SET was compared across commits and not its MAGNITUDE. All four verified benign (output-capture,
+  not status-read), so the repair is to the pin or the matcher, not the scripts.
+- [`VERIFICATION-20260921-v6-six-items-reproduced.md`](VERIFICATION-20260921-v6-six-items-reproduced.md)
+  - **`L7` CLOSED.** All six of `V6`'s unreproduced items reproduced from artifacts and committed
+  operands: C4's jitter floor exact from job `58547629`'s own log, C2's `2.673896` exact from the
+  ledger's operands, NULL's `4.4311e-14` at **0.469%** from the historical value, the seven
+  boundaries, the historical `--run-class` absence (**0** at `5be86f55^`), and job `58549890`'s
+  arms -- `rc=3` x2 genuine against `rc=139` x4 segfaults, which is R3's own incident in raw form.
+  ⚠ **Two corrections:** `assess()` NOW HAS production callers so `V6` item 4 is superseded, and
+  `s_proj` is at `z_statistics.py:319` not `:203`. ⚠ States its own independence limit: independent
+  of these six findings, **not** of the campaign around them.
 - [`DRAFT-SPEC-20260921-what-the-pipeline-refuses.md`](DRAFT-SPEC-20260921-what-the-pipeline-refuses.md)
   - **1,061 refusal tests compressed into FIVE rules**, derived from the suite and not proposed at
   it: absence refuses and is never a default; the guard runs before the thing it guards; a refusal is

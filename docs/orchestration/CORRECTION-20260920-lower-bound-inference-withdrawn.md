@@ -24,7 +24,7 @@ Five of `C_Z`'s 45 bands — `BeamAngleX`, `BeamAngleY`, `MuonResolution`, `Muon
 ### The inference, which does not follow
 
 `s_proj` is the **maximum** of `|Δ√(uᵀCu)| / √(uᵀCu)` over the declared functional set
-(`nd-unfolding/z_statistics.py:203`). It is **not** a sum of nonnegative per-component magnitudes.
+(`z_statistics.s_proj` (`z_statistics.py:319` at `2a2196e3`; it was cited as `:203` and the line moved)). It is **not** a sum of nonnegative per-component magnitudes.
 Releasing a component that was held fixed does not append a sample to the maximum of the same
 statistic — it **changes the statistic's operands**. Two positive-semidefinite components can move
 in opposite directions between seeds, so the total can move **less**.

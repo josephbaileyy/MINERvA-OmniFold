@@ -147,7 +147,15 @@ reopens nothing.
 **L6. Clause (c) was satisfied in substance and violated in ORDER.** The independent verification
 followed the adoption. **Ratified retrospectively, not cured.**
 
-**L7. `V6`'s six items have no second-lane reproduction.** Ruled outside clause (c)'s scope, which
+**L7. ✅ CLOSED 2026-09-21 — `V6`'s six items now HAVE a second-lane reproduction.**
+[`VERIFICATION-20260921-v6-six-items-reproduced.md`](VERIFICATION-20260921-v6-six-items-reproduced.md):
+all six reproduced from artifacts and committed operands. ⚠ **It closes a REACHABILITY gap, not
+a credibility one** — `V6`'s own words were *"none of these is doubted; none was reached from
+where I sat"* — and it does **not** retroactively make the clause-(c) verification complete at
+the time it was written, so `L6` is untouched. ⚠ Two claims did not survive: `assess()` now has
+production callers, and `s_proj` is at `z_statistics.py:319`. The original text follows.
+
+~~**L7. `V6`'s six items have no second-lane reproduction.**~~ Ruled outside clause (c)'s scope, which
 is not the same as verified. Anyone re-opening C2's `0.168`/`2.6739`, C4's jitter print, NULL's
 `4.4311e-14`, the `read_by_production` census, `run_m1_projection.sh`'s historical `--run-class`
 absence, or `58549890`'s control arms is reading **single-lane** evidence.

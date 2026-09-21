@@ -77,7 +77,7 @@ robustness as predeclaration.
 
 The **rows of `project_cov_nd.py`'s `M`, plus the all-ones vector.** `s_proj` is the **maximum
 relative change in `√(uᵀCu)` over that set**; reporting class **`per-bin`**. Declared in
-`z_validator.py`'s `Z_LEG_SET`, and **implemented as real code at `z_statistics.py:203`** — that
+`z_validator.py`'s `Z_LEG_SET`, and **implemented as real code at `z_statistics.s_proj` (`z_statistics.py:319` at `2a2196e3`; it was cited as `:203` and the line moved)** — that
 distinction keeps §1's disclosure accurate rather than sweeping: the statistic EXISTS and is
 computable; what has never run is the ASSESSOR that would compare it to `cause3_corr`. The set **dissolves** the region question rather than answering it;
 the earlier corner-integral criterion is a strictly weaker special case.
@@ -142,7 +142,7 @@ production code computed it.* All seven declared boundaries measure `read_by_pro
 | subject | REQUIRED wording | FORBIDDEN wording |
 |---|---|---|
 | **C3** | a **predeclared** criterion whose **assessor has no production caller**, so its legs were **never computed** | "no second member was available" (true but weaker, and it invites the inference that the legs ran and were uninformative); "applied", "satisfied", "passed", "met" |
-| **`s_proj`** | **implemented code at `z_statistics.py:203`** — the statistic exists and is computable | omitting this, which would make the C3 disclosure sweeping rather than accurate |
+| **`s_proj`** | **implemented code at `z_statistics.s_proj` (`z_statistics.py:319` at `2a2196e3`; it was cited as `:203` and the line moved)** — the statistic exists and is computable | omitting this, which would make the C3 disclosure sweeping rather than accurate |
 | **`δ = 5%`** | **declared and disclosed; not evaluated in production** | "the 5% tolerance was met" |
 | **coverage `0.99` / `1.0`** | **declared and disclosed; not evaluated in production** | "coverage was achieved" |
 

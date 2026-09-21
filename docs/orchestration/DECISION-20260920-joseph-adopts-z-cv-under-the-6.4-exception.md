@@ -82,7 +82,7 @@ been measured.**
 > add"*, and that inference does not follow.** Withdrawn on the third-lane verification's finding
 > `P1` ([`VERDICT-20260920-third-lane-c5-c7-verification.md`](VERDICT-20260920-third-lane-c5-c7-verification.md)),
 > and the withdrawal is recorded at [`CORRECTION-20260920-lower-bound-inference-withdrawn.md`](CORRECTION-20260920-lower-bound-inference-withdrawn.md).
-> **`s_proj` is a MAXIMUM of `|Δ√(uᵀCu)| / √(uᵀCu)` over the functional set** (`z_statistics.py:203`),
+> **`s_proj` is a MAXIMUM of `|Δ√(uᵀCu)| / √(uᵀCu)` over the functional set** (`z_statistics.s_proj` (`z_statistics.py:319` at `2a2196e3`; it was cited as `:203` and the line moved)),
 > **not a sum of nonnegative component magnitudes.** Releasing a held-fixed PSD component changes the
 > statistic's operands rather than appending samples to the same maximum, so it can move the total in
 > the **opposite** direction and **lower** the measured movement. The verifier's one-dimensional
