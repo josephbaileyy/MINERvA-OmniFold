@@ -55,7 +55,7 @@ retained set:
 
 | question | measured |
 |---|---|
-| `git merge-base --is-ancestor fb9ec356 main` | **NO** |
+| `git merge-base --is-ancestor fb9ec356 main` | **NO** *(at the time of measurement; **YES** after `db9f91d8` merged the pilot lane — the finding stands as the state that was true when the tag was made)* |
 | `git tag --contains fb9ec356` | **empty** |
 | branches containing it | **`lane/z-assembly-pilot-20260914` only** |
 

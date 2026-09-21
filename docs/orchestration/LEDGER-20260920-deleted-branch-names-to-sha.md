@@ -166,3 +166,31 @@ one, or after removing that worktree.
 **And the retained-branch set is unchanged otherwise:** the fifteen rows of
 `INDEX-20260920-retained-branches-not-on-main.md` hold commits `main` does not, so none of them was
 a candidate here. Only the clause-(c) row left that index, and it left by being merged.
+
+---
+
+## THIRD PASS, 2026-09-20 — the seven scalar-5D lanes, deleted AFTER being MERGED
+
+Unlike the first two passes, these were not deleted because their content had arrived on `main` by
+some other route: **each was merged into `main` in this pass**, one at a time, each through
+`merge_guard.sh` on its own unmerged tree. So the ancestor check below is a consequence of the
+merge rather than a precondition discovered about it — but it was still run, on every one, before
+any ref was touched.
+
+| deleted name | commit it pointed at | merged at |
+|---|---|---|
+| `audit/scalar-5d-publication-gaps` | `ebba67ab6af17a159ae395cb06312b0dcbdca841` | `2aa31d81` |
+| `lane/cause3-voi-20260906` | `47494dbeda1a58f6ed8ee63c7bc698e580c04c5b` | `4fb2a045` |
+| `lane/decision-20260910-z-endpoint-a-ruling` | `ae876e1441dfedfcf6df8501e84a387cd3de42da` | `be80d92a` |
+| `lane/null-only-plan` | `819c64cad3925861d0388f215998f64fa3c3a00a` | `3164cb71` |
+| `lane/z-campaign-ownership-20260913` | `e09513d842ad3acc1964c1af740696f02eaed7d9` | `12c29617` |
+| `lane/z-criteria-recommendation-20260910` | `a6bff83e7c9bb861ee4983bfce5d4ff4f9e234eb` | `04ff9466` |
+| `lane/z-assembly-pilot-20260914` | `c4baf0d29297de0d0f50d5ea1d8b869ddaf83520` | `db9f91d8` |
+
+⚠ **`fb9ec356` IS NO LONGER BRANCH-DEPENDENT, AND THE TAG STAYS ANYWAY.** Merging
+`lane/z-assembly-pilot-20260914` made the assembling revision an ancestor of `main`, so the
+condition that motivated `evidence/z-assembling-revision-fb9ec356` no longer holds. The tag is
+**kept**: it names *why* that commit matters, which ancestry does not, and a future history
+operation that drops it from `main`'s first-parent line would leave the tag as the route again.
+A tag costs nothing; re-discovering the near-miss costs what it cost this time.
+
