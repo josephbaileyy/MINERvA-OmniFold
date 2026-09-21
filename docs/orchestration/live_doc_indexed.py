@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Guard: a document this commit declares LIVE must be reachable from CATALOG.md.
 
-    python3 docs/orchestration/live_doc_indexed.py --check       # the gate (pre-commit)
+    python3 docs/orchestration/live_doc_indexed.py --check       # the gate (pre-commit); WHOLE-TREE since 2026-09-21
     python3 docs/orchestration/live_doc_indexed.py --self-test   # both directions, synthetic
     python3 docs/orchestration/live_doc_indexed.py --backlog     # pre-existing violations, no exit code
 
@@ -24,6 +24,13 @@ touched:
     (2) its overrides row is LIVE in the staged file and was NOT LIVE at HEAD
         (a reclassification, which is the other way a doc becomes LIVE)
   and it PASSES if its basename appears anywhere in CATALOG.md.
+
+⚠ **NO LONGER SCOPED TO THIS COMMIT. The whole-tree arm ENFORCES as of 2026-09-21**, which is the
+one-line widening the paragraph below said was somebody's decision. It was taken after the backlog
+was driven to **zero** — all twelve remaining documents were indexed in `CATALOG.md` in the same
+commit — so the trap the paragraph names is disarmed: this does not go red the moment it is
+installed, and a red from it now is NEW debt. The historical reasoning is kept verbatim because it
+is the reason the widening had to wait, not a reason it was wrong.
 
 SCOPED TO THIS COMMIT ON PURPOSE, and the number is why. Measured before writing: **3 of the 24
 currently-LIVE `.md` docs are absent from `CATALOG.md`** -- `CATALOG.md` itself (a router need not route
@@ -82,11 +89,20 @@ def _git(*args):
     return r.stdout if r.returncode == 0 else ""
 
 
-def backlog():
-    """Pre-existing LIVE docs absent from CATALOG.md. Reported, never enforced here."""
+def backlog(staged_ov=None, staged_cat=None):
+    """Every LIVE .md absent from CATALOG.md. ENFORCED as of 2026-09-21; see the header.
+
+    ⚠ READS THE INDEX, NOT THE WORKING TREE, when the caller supplies it. The working-tree read
+    below is the fallback for `--backlog` outside a commit. A pre-commit hook that judged the
+    working tree would answer a different question from the one the commit asks -- `git commit --
+    <pathspec>` commits a subset of the tree, so the two genuinely differ -- and this file's own
+    scoped arm has always used `git show :<path>` for exactly that reason. Making the whole-tree arm
+    enforcing without matching it would have installed the inconsistency at the moment it started
+    costing something.
+    """
     try:
-        ov = open(OVERRIDES).read()
-        cat = open(CATALOG).read()
+        ov = staged_ov if staged_ov is not None else open(OVERRIDES).read()
+        cat = staged_cat if staged_cat is not None else open(CATALOG).read()
     except OSError as e:
         return None, f"cannot read the index files: {e}"
     live = {p for p in live_paths(ov) if p.endswith(".md")}
@@ -110,10 +126,27 @@ def check():
         return 2
 
     scope = in_scope(added_md, live_paths(staged_ov), live_paths(head_ov))
-    bl, err = backlog()
-    bl_note = ("  (pre-existing, NOT enforced: %d LIVE doc(s) absent from CATALOG -- %s)"
-               % (len(bl), ", ".join(bl)) if bl else "  (no pre-existing backlog)") if not err else \
+    staged_cat = _git("show", ":" + CATALOG) or None
+    bl, err = backlog(staged_ov, staged_cat)
+    bl_note = ("  (%d LIVE doc(s) absent from CATALOG -- %s)" % (len(bl), ", ".join(bl))
+               if bl else "  (whole tree: every LIVE doc is indexed)") if not err else \
               "  (backlog unreadable: %s)" % err
+
+    # WHOLE-TREE ARM, ENFORCING SINCE 2026-09-21. It reports before the scoped arm because an
+    # unindexed doc somebody else left behind is the same defect as one you are adding, and the
+    # scoped arm cannot see it.
+    if bl:
+        print("LIVE-INDEX :: FAIL -- %d LIVE document(s) are not reachable from CATALOG.md:"
+              % len(bl))
+        for b in bl:
+            print("    %s" % b)
+        print("  Add a pointer row to docs/orchestration/CATALOG.md, or -- if the document is not "
+              "live -- fix its class in MANIFEST-overrides.tsv. Do NOT misclassify to silence this.")
+        print("  ⚠ THIS ARM IS WHOLE-TREE, so it can fail on a document you did not touch. That is "
+              "the gate working: an unindexed LIVE doc is one nobody reads, and it belongs to "
+              "whoever notices. The backlog was driven to ZERO on 2026-09-21 before this was "
+              "switched on, so a red here is new debt, not inherited debt.")
+        return 1
 
     if not scope:
         print("LIVE-INDEX :: nothing newly LIVE in this commit." + bl_note)
@@ -181,12 +214,35 @@ def self_test():
     ck("a malformed overrides row is ignored, not treated as LIVE",
        live_paths(HDR + "garbage-with-no-tabs\n") == set())
 
+    # ---- THE WHOLE-TREE ARM, enforcing since 2026-09-21. Both directions, same bar as above:
+    # a backlog function that returned everything would satisfy 10 and fail 11, and one that
+    # returned nothing would satisfy 11 and fail 10. Neither alone is a test.
+    bl_abs, e1 = backlog(staged_ov=staged, staged_cat="| some other row |")
+    ck("whole tree: a LIVE doc absent from CATALOG is CAUGHT",
+       e1 is None and bl_abs == ["NEWDOC-20260817-x.md"], str(bl_abs))
+    bl_pres, e2 = backlog(staged_ov=staged,
+                          staged_cat="- [`NEWDOC-20260817-x.md`](NEWDOC-20260817-x.md)")
+    ck("whole tree: the SAME doc present in CATALOG is clean",
+       e2 is None and bl_pres == [], str(bl_pres))
+    bl_arch, e3 = backlog(staged_ov=arch, staged_cat="| nothing |")
+    ck("whole tree: an ARCHIVAL doc absent from CATALOG is NOT a violation",
+       e3 is None and bl_arch == [], str(bl_arch))
+    bl_exempt, e4 = backlog(staged_ov=catrow, staged_cat="| nothing |")
+    ck("whole tree: CATALOG.md itself is still exempt",
+       e4 is None and bl_exempt == [], str(bl_exempt))
+    # THE OPERAND, which is the half a passing/failing pair cannot show: it must read what was
+    # HANDED to it, not the repository. If it silently fell back to the working tree these two
+    # would agree with each other and with the real repo, and the fallback would be invisible.
+    bl_op, e5 = backlog(staged_ov=HDR, staged_cat="| nothing |")
+    ck("whole tree: an EMPTY staged overrides yields an empty backlog, not the repo's",
+       e5 is None and bl_op == [], str(bl_op))
+
     dt = time.time() - t0
     print()
     if fails:
         print("SELF-TEST :: FAILED -> %s" % fails)
         return 1
-    print("SELF-TEST :: 9/9 PASS in %.3f s (synthetic; no repo state touched)" % dt)
+    print("SELF-TEST :: 14/14 PASS in %.3f s (synthetic; no repo state touched)" % dt)
     return 0
 
 

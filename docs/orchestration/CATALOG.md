@@ -3584,9 +3584,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 Added 2026-08-20. `live_doc_indexed.py --check` reports LIVE docs absent from this catalog and
 **does NOT enforce it**, so an item's own governing document could be unreachable from the router.
 The count was written as **19** on 2026-08-20; re-derived from the same command on 2026-08-22 it is
-**13**, so the figure is stated with its date and its command rather than left to drift. These five are the subset that `docs/OPEN_ITEMS.md` rows
-actually cite; the other fourteen are not routed to by any open item and are left out
-deliberately, because this file is a pointer-only router and not an exhaustive index.
+**13**, and on **2026-09-21** it is **12** — stated with its date and its command rather than left
+to drift. The five below are the subset that `docs/OPEN_ITEMS.md` rows actually cite.
+
+> **⚠ THE REST ARE NO LONGER LEFT OUT, AND THE STATED REASON FOR LEAVING THEM OUT WAS THE WRONG
+> TEST.** This paragraph read *"the other fourteen are not routed to by any open item and are left
+> out deliberately, because this file is a pointer-only router and not an exhaustive index."*
+> Routed-to-by-an-open-item is a **narrower** test than **cited by anything live**, and measured on
+> 2026-09-21 every one of the remaining twelve is cited by at least one live document — two of them
+> by more than twenty. A router that omits a document twenty-three live citations point at is not
+> being selective; it has a hole. All twelve are listed below, and `live_doc_indexed.py` now
+> enforces whole-tree instead of reporting a backlog.
 
 - [`PROVENANCE-DEBT-20260810-standard-p4.md`](PROVENANCE-DEBT-20260810-standard-p4.md) — **`OI-7`'s
   own blocker**: its §3e is the sentence that row is open on. Cited 4× in `OPEN_ITEMS.md` and
@@ -3916,6 +3924,50 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   own gap list**, an A-2(f) digest filed at a superseded sha, and F-17 freshness open. **No
   submission is authorized.** Read §5 for the shortest list that would close the gate, and §2 for
   three builder claims that reproduce differently.
+
+### The remaining twelve — conventions, criteria, procedures and templates (indexed 2026-09-21)
+
+Measured citation counts: `grep -rl` over `*.md`/`*.py`/`*.tex`/`*.sh`, excluding each file itself.
+Ordered by that count, because it is the best available proxy for how badly a reader needs the
+pointer.
+
+- [`CONVENTION-receipt-ingredients.md`](CONVENTION-receipt-ingredients.md) — **cited 24×.** Adopted
+  2026-08-10 on Joseph's instruction: every derived quantity ships with its ingredients, and a
+  receipt that violates it is **incomplete and should be regenerated** — a rule, not a suggestion.
+- [`CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md`](CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md)
+  — **cited 23×.** Discharge criteria for the quarantine causes, written **before** any remediation,
+  on the principle that a remediation whose success condition was invented afterwards is not a
+  remediation. ⚠ Read against [`OPERATIVE-SHEET-scalar5d.md`](OPERATIVE-SHEET-scalar5d.md) §3, whose
+  current dispositions supersede several of its cells.
+- [`PROCEDURE-gbdtFive-macro-update.md`](PROCEDURE-gbdtFive-macro-update.md) — **cited 10×, including
+  from `sec_systematics.tex` itself.** How to update the four `\gbdtFive*` note macros when the J28
+  re-roll lands. ⚠ Its header carries its own withdrawal: an earlier revision claimed Packet B's
+  closure made the adoption gate actionable, and that is retracted in place.
+- [`PROMPTS-20260811-four-session-closeout.md`](PROMPTS-20260811-four-session-closeout.md) — **cited
+  7×.** The four-session close-out prompts, written by the oversight session that was itself *"the
+  largest single source of wrong claims"* that day and says so in its own first paragraph. Live
+  because the prompts are reused, not because the campaign is.
+- [`MAP-20260817-gbdt-note-section-blockers.md`](MAP-20260817-gbdt-note-section-blockers.md) —
+  **cited 6×.** One row per quarantine cause: what it is, its state from artifacts, what would
+  discharge it, and who can. Read-only by construction; adjudicates nothing.
+- [`CONVENTION-document-retention.md`](CONVENTION-document-retention.md) — **cited 5×.** Classify in
+  place, never relocate. The convention this section implements, and the reason the router exists:
+  `docs/orchestration/` reached 498 tracked files of which ~14% were live, so an agent either read
+  ~82k tokens of standing docs or missed the live item.
+- [`CORPUS-20260811-gates-that-cannot-fail-sweep.md`](CORPUS-20260811-gates-that-cannot-fail-sweep.md)
+  — **cited 3×.** The corpus definition for the gates-that-cannot-fail sweep. ⚠ Its own status line
+  still reads **ROUTED FOR REVIEW, NOT YET SWEPT**.
+- [`SCHEDULING-STRATEGY.md`](SCHEDULING-STRATEGY.md) — **cited 2×.** Minimize wall-clock to a
+  publication-ready result without trading away scientific gates; concurrency only on an unblocked
+  DAG lane.
+- [`TASK.template.md`](TASK.template.md) — **cited 2×.** The bounded-question task template.
+- [`SESSION-WORKFLOW.md`](SESSION-WORKFLOW.md) — **cited 1×.** How Joseph, the Claude sessions and
+  Codex divide work. ⚠ Its own header says **LIVE policy, review state UNREVIEWED**.
+- [`TASK-HANDOFF.template.md`](TASK-HANDOFF.template.md) — **cited 1×.** The bounded-deliverable
+  handoff template.
+- [`LIVE-USAGE.md`](LIVE-USAGE.md) — **cited 1×.** `usagectl.py` is the sole machine-readable usage
+  check; agy reports `unknown` because the installed CLI has no usage endpoint, which is a measured
+  absence and not a host limitation.
 
 ## Task routes
 
