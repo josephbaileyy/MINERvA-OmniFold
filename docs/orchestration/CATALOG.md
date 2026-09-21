@@ -115,6 +115,18 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   no annotated objects were lost, and the four `z-deploy` commits remain reachable from
   `lane/z-assembly-pilot-20260914`. **Do not run `--prune-tags` against `origin` in this repo:**
   local-only tags are load-bearing here and the flag treats them as stale.
+- [`REPORT-20260920-scalar5d-uncertainty-completion.md`](REPORT-20260920-scalar5d-uncertainty-completion.md)
+  - **The §7 completion report: adopted source identity, projection receipts, build results, both
+  repository heads, and the limitations that remain live.** Declares the **required deliverable set**
+  complete — adopted covariance `3d7465f6…`, verified projection `835828bf…` paired **by digest**,
+  note/primer/paper built (95/7/4 pp, containment `PASS`) and pushed to both remotes.
+  ⚠ **It explicitly does NOT declare publication readiness, resolve any limitation, or quote a
+  significance.** §6 carries **seven live limitations**: the `6.145%` seed sensitivity against a `5%`
+  bound; the five seed-pinned bands now unprobed **in an unknown direction**; cause 3 predeclared and
+  not computed with all seven boundaries `read_by_production: no`; PM-1's provenance gap; that
+  weight-only does not establish hadronic-response completeness; clause (c) satisfied in substance and
+  **violated in order**; and `V6`'s six items with **no second-lane reproduction**. §7 names what was
+  not done, including that `LIVE-STATE.md` is **stale and not regenerable from this machine**.
 - [`QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md`](QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md)
   - **PREPARED, NOT SENT.** The focused collaborator question Joseph's 2026-09-19 §5 requires, with
   the full 45-band split it is asked against (A 5 lateral / V 13 vertical / R 27 residual, the four
