@@ -85,11 +85,23 @@ def load_run(weights_path: str | Path) -> Run:
     path = Path(weights_path)
     with np.load(path) as handle:
         weights = np.asarray(handle["weights"], dtype=np.float64)
-    receipt_path = path.parent / "receipt.json"
-    if not receipt_path.exists():
+    # The receipt sits BESIDE the weights or ONE DIRECTORY UP. The campaign
+    # launcher passes `--weights-folder $RUN/weights --output $RUN/receipt.json`,
+    # so the real layout is nested; the end-to-end test wrote both into one
+    # directory and therefore passed on a layout the launcher never produces.
+    # Measured: `select` failed in 41 seconds on the first real tuning run.
+    #
+    # Both places are searched and NOTHING ELSE. A wider search -- walking up
+    # to the stage directory, say -- could pick up a sibling run's receipt and
+    # label these weights with another run's arm and seed.
+    candidates = [path.parent / "receipt.json", path.parent.parent / "receipt.json"]
+    receipt_path = next((c for c in candidates if c.exists()), None)
+    if receipt_path is None:
         raise FileNotFoundError(
-            f"no receipt beside {path}: the arm, stage and seed of a run are "
-            "taken from what the run recorded, and a filename cannot stand in"
+            f"no receipt beside or above {path} (looked in "
+            f"{[str(c) for c in candidates]}): the arm, stage and seed of a "
+            "run are taken from what the run recorded, and a filename cannot "
+            "stand in"
         )
     receipt = json.loads(receipt_path.read_text())
     arm, stage, seed = receipt["arm"], receipt["stage"], int(receipt["seed"])

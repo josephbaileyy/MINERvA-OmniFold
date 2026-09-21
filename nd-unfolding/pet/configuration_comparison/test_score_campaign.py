@@ -410,3 +410,46 @@ class TheInjectionIsTheEstablishedOne(unittest.TestCase):
         census_tilt, _ = cp.clipped_exponential_tilt(
             x, cr.TILT_AMPLITUDE, cr.TILT_CLIP_Z)
         np.testing.assert_array_equal(sc.injected_truth_weights(x), census_tilt)
+
+
+class TheReceiptMayBeOneDirectoryUp(unittest.TestCase):
+    """The launcher nests the weights; the end-to-end test did not.
+
+    `sbatch_campaign.sh` passes `--weights-folder $RUN/weights` and
+    `--output $RUN/receipt.json`, so the receipt is one level above the
+    weights. The synthetic fixture wrote both into one directory, so every
+    test passed on a layout the launcher never produces, and `select` failed
+    in 41 seconds on the first real tuning run.
+    """
+
+    def _make(self, tmp, nested):
+        root = Path(tmp) / "ours-seed127"
+        weights_dir = root / "weights" if nested else root
+        weights_dir.mkdir(parents=True)
+        (root / "receipt.json").write_text(json.dumps(
+            {"arm": "ours", "stage": "final", "seed": 127}))
+        path = weights_dir / "weights_ours_final_127.npz"
+        np.savez(path, weights=np.ones(4))
+        return path
+
+    def test_it_loads_the_nested_launcher_layout(self):
+        with TemporaryDirectory() as tmp:
+            run = sc.load_run(self._make(tmp, nested=True))
+            self.assertEqual((run.arm, run.stage, run.seed), ("ours", "final", 127))
+
+    def test_it_still_loads_the_flat_layout(self):
+        with TemporaryDirectory() as tmp:
+            run = sc.load_run(self._make(tmp, nested=False))
+            self.assertEqual(run.seed, 127)
+
+    def test_it_does_not_reach_further_than_one_level(self):
+        """A wider search could label these weights with a sibling's receipt."""
+        with TemporaryDirectory() as tmp:
+            (Path(tmp) / "receipt.json").write_text(json.dumps(
+                {"arm": "theirs", "stage": "final", "seed": 139}))
+            deep = Path(tmp) / "ours-seed127" / "weights" / "extra"
+            deep.mkdir(parents=True)
+            path = deep / "weights_ours_final_127.npz"
+            np.savez(path, weights=np.ones(4))
+            with self.assertRaises(FileNotFoundError):
+                sc.load_run(path)
