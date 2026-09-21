@@ -63,6 +63,20 @@ the change; both files changed together (the evidence says so — `UDIR` is hard
 member-local `active` even if the seed were unpinned); and it changes what the MAT ± endpoint
 difference measures, which is a scientific consequence, not a plumbing one.
 
+> ### ⚠ AND A PRECONDITION THAT IS NOT ABOUT THE ESTIMATOR: NOTHING WOULD SUPERVISE THE RUN
+>
+> Measured on the cluster **2026-09-21**, immediately before writing this:
+>
+>     scrontab -l                 ->  "no crontab for josephrb"
+>     squeue -u josephrb --qos=cron  ->  0 jobs
+>     last wakerctl tick          ->  2026-09-09T14:35:16Z, 296.5 h old
+>
+> **The supervision net has been down since 2026-09-09.** If `L2` is authorized, its run would
+> finish, fail or hang with **nothing to wake anyone** — and an `L2` probe is a multi-band re-unfold,
+> not a two-minute job. This is not a reason to decline `L2`; it is a thing to fix **before** it,
+> and it is cheap. Recorded here rather than only in the PET context where it was found, because
+> a down waker is not PET's property — it is every lane's, and GBDT is the lane about to use it.
+
 ### L3 — cause 3 is predeclared and NOT computed for this digest
 
 `M(i)` `UNRESOLVED` on `4c`, permanently, for a predeclaration failure. **And no declared boundary
@@ -161,6 +175,17 @@ of it and its records stopped moving on 2026-09-20 — **splitting it now would 
 `ROUND 11` (~619 lines) needs one thing first: its own title records `F-8(a)` and `F-17(a)` as
 *"filed and awaiting grade"*, and **nobody has verified that resolved**. One afternoon.
 
+### 4f. ⚠ The supervision net is down, and it is the one item with a LIVE cost
+
+Repeated from `L2` because it is not only `L2`'s problem. `scrontab -l` returns *"no crontab for
+josephrb"*, there are **0** cron jobs, and the last tick is **2026-09-09T14:35:16Z — 296.5 h old**,
+all measured 2026-09-21.
+
+**Nothing will wake anyone when any job ends**, on any lane. It was found while looking at PET's
+queue and is recorded here because the fix is shared infrastructure and GBDT is the lane most
+likely to need it next. ⚠ **Not fixed by this lane:** reinstalling a managed `scrontab` block is a
+change to shared scheduling, and it is PET's tree that holds the waker state dir.
+
 ### 4e. The 12 unexplained launchers
 
 `test_uq_remediation.py`'s fence total is pinned as `216 reviewed + 12 measured-and-unexplained`.
@@ -188,5 +213,8 @@ closed, disclosures that cannot be closed, or hygiene that does not gate publica
 
 **The next decisions are Joseph's:** whether to authorize the `L2` estimator change, and whether to
 send the collaborator question.
+
+⚠ **One thing to fix BEFORE `L2`, if it is authorized:** the supervision net has been down since
+2026-09-09 (§4f), so the run would go unwatched.
 
 **Co-Authored-By: Claude Opus 5 (1M context)**
