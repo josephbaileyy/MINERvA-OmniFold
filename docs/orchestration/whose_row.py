@@ -182,6 +182,83 @@ def rows_in(path: Path, only_conflicts: bool, blocks, owners=None) -> list[tuple
     return out
 
 
+# =====================================================================================
+# OI-189: THE OPERAND WAS WRONG, AND THAT IS WHY THE REFUSAL HAD NO REACHABLE PASS.
+#
+# This gate's declared scope is `merge_guard.sh:2`: "refuse a merge that resolves another lane's
+# LEDGER ROW". Its measured basis is six absorptions on 2026-08-11/12, all in FINDINGS.md (x3),
+# VALIDATION_LEDGER.md (x2) and OPEN_ITEMS.md (x1). But the population it actually ran over was
+# "every conflicted file", so a file that carries no row at all -- CATALOG.md is prose,
+# MANIFEST-overrides.tsv is a path registry -- produced NO ATTRIBUTABLE ROWS and was refused.
+#
+# THE PROTECTED POPULATION WAS EMPTY WHILE THE REFUSAL FIRED. On 2026-09-20 a 69-commit docs lane
+# conflicted in exactly those two files and NEITHER FINDINGS.md NOR VALIDATION_LEDGER.md NOR
+# OPEN_ITEMS.md was in the merge at all. There is no remove-the-cause exit, because the cause is
+# that those two files have no id scheme and never will; and RULING-20260908 forbids an override.
+# That leaves exit (2) -- fix the gate -- and CONVENTION-lane-worktrees.md:99 names the shape
+# directly: "an unreachable pass is the defect this state exists to repair, not a safe default."
+# Every merge of a long-lived docs lane hits it, so this was not a one-off.
+#
+# WHAT IS AND IS NOT WEAKENED. A prose conflict inside a file that DOES carry rows still refuses --
+# unchanged, and now pinned by its own power case. What changed is that a file carrying no rows
+# ANYWHERE is reported as OUT OF SCOPE instead of refused, because this gate cannot attribute it,
+# was never claimed to, and blocking on it protects nothing.
+#
+# MEASURED, NOT DECLARED. The classification is the row count over the file's OWN text, so there is
+# no hardcoded filename list to decay. Measured 2026-09-20 over this repository: FINDINGS.md 48,
+# VALIDATION_LEDGER.md 144, OPEN_ITEMS.md 138, CLAIMS.md 12, CURRENT_WORK.md 11 rows; CATALOG.md,
+# MANIFEST-overrides.tsv, PLAYBOOK.md, AGENTS.md, KNOWN_ISSUES.md and ROW-OWNERS.tsv zero. The
+# split falls exactly on the protected population and needed no list to do it.
+#
+# AND IT IS TWO-SIDED, because a one-sided test here is a laundering path: a conflict that WIPED
+# every row out of a protected file would leave zero rows and read as out-of-scope. So HEAD's copy
+# is counted too, and rows-at-HEAD-but-none-now is its own refusal with its own message. That is
+# the direction this repair could have been attacked from, and it is closed rather than noted.
+SCOPE_HAS_ROWS = "scheme"      # the file carries attributable ids -> this gate governs it
+SCOPE_ROWS_WIPED = "wiped"     # it carried them at HEAD and does not now -> REFUSE, loudly
+SCOPE_NO_ROWS = "none"         # it has never carried one -> not this gate's object
+
+
+def id_scheme_state(path: Path, blocks, owners=None, repo: Path | None = None) -> str:
+    """Does this gate govern `path` at all? Measured from row counts, never from a filename list.
+
+    Returns SCOPE_HAS_ROWS / SCOPE_ROWS_WIPED / SCOPE_NO_ROWS. The HEAD side is best-effort: if
+    HEAD's copy cannot be read the answer falls back to the working-tree count, which is the
+    CONSERVATIVE direction for a file that has rows (it stays in scope) and the only answer
+    available for a file that does not.
+    """
+    repo = repo or REPO
+    if owners is None:
+        owners = load_row_owners()
+    if rows_in(path, False, blocks, owners):
+        return SCOPE_HAS_ROWS
+    try:
+        rel = path.relative_to(repo)
+    except ValueError:
+        return SCOPE_NO_ROWS
+    rc, head_text, _ = _git(["show", f"HEAD:{rel.as_posix()}"], repo)
+    if rc != 0:
+        # No HEAD copy -- a new file, or an unreadable one. Either way it has never carried a row
+        # that this merge could be absorbing.
+        return SCOPE_NO_ROWS
+    # Written outside the repository on purpose: a scratch file inside the tree would be visible to
+    # `git status` mid-merge, and this gate runs while the operator is reading exactly that.
+    fd, name = tempfile.mkstemp(prefix="whose_row-head-", suffix=".md")
+    tmp = Path(name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(head_text)
+        had = bool(rows_in(tmp, False, blocks, owners))
+    except OSError:
+        return SCOPE_NO_ROWS
+    finally:
+        try:
+            tmp.unlink()
+        except OSError:
+            pass
+    return SCOPE_ROWS_WIPED if had else SCOPE_NO_ROWS
+
+
 OWNERS_TSV = HERE / "ROW-OWNERS.tsv"
 UNASSIGNED = "UNASSIGNED"
 
@@ -407,6 +484,11 @@ def self_test() -> int:
     # _clean_merge_power_cases for why the newest pass-granting path is power-tested HERE and not
     # only in test_whose_row_clean_merge.py.
     for _label, _got, _want in _clean_merge_power_cases():
+        case(_label, _got, _want)
+
+    # ---- OI-189's out-of-scope split. In the self-test for the same reason the clean-merge state
+    # is: it hands out a 0, so it belongs inside the check that guards pass-granting paths.
+    for _label, _got, _want in _scope_power_cases():
         case(_label, _got, _want)
 
     for label, ok, got, _ in checks:
@@ -1557,6 +1639,109 @@ def _fixture_git(repo: Path, *args: str, allow_fail: bool = False) -> str:
     return out
 
 
+def _scope_power_cases() -> list[tuple[str, object, object]]:
+    """[(label, got, want)] for OI-189's out-of-scope split. BOTH DIRECTIONS, and the masking case.
+
+    A filter needs a test in the direction it ACTS. This one newly declines to refuse, so the
+    cases that matter most are the ones where it must STILL refuse: a prose conflict inside a file
+    that carries rows, a file whose rows were wiped, and an out-of-scope file sitting beside a
+    genuinely foreign row. A repair tested only on the case it was written for would be a repair
+    that waves everything through.
+
+    The verdict arm runs THIS SCRIPT as a subprocess on real files, not the classifier in-process:
+    `lane_matches`' own docstring records that this file's one false pass was caught end-to-end and
+    NOT by a unit check, and the thing under test here IS an exit code.
+    """
+    out: list[tuple[str, object, object]] = []
+    blocks = ben_blocks(REPO / "docs/orchestration/FINDINGS.md")
+    owners = load_row_owners()
+    tmp = Path(tempfile.mkdtemp(prefix="whose_row-selftest-scope-"))
+    try:
+        # ---- the classifier, on files that are NOT in any repository ---------------------------
+        prose = tmp / "prose.md"
+        prose.write_text("# A catalogue\n\n- [`SOMETHING.md`](SOMETHING.md)\n  - a pointer row.\n")
+        out.append(("SCOPE: a prose file carries no attributable row",
+                    id_scheme_state(prose, blocks, owners), SCOPE_NO_ROWS))
+
+        registry = tmp / "registry.tsv"
+        registry.write_text("path\tclass\tevent_status\n"
+                            "docs/orchestration/X.md\tLIVE\topen\t\n")
+        out.append(("SCOPE: a path registry carries no attributable row",
+                    id_scheme_state(registry, blocks, owners), SCOPE_NO_ROWS))
+
+        governed = tmp / "governed.md"
+        governed.write_text("| BEN-131 | a row this gate governs |\n")
+        out.append(("SCOPE: a file carrying a BEN row IS governed",
+                    id_scheme_state(governed, blocks, owners), SCOPE_HAS_ROWS))
+
+        # NEGATIVE CONTROL on the classifier itself: if it answered SCOPE_NO_ROWS for everything
+        # the repair would pass every merge, and the two cases above would look identical to a
+        # broken classifier. This is the case that distinguishes them.
+        out.append(("SCOPE: the classifier DISCRIMINATES (governed != prose)",
+                    id_scheme_state(governed, blocks, owners)
+                    != id_scheme_state(prose, blocks, owners), True))
+
+        # ---- THE WIPE, which is the direction this repair could be attacked from ---------------
+        # Without this arm the split is one-sided: delete every row from a governed file and it
+        # classifies as row-less, i.e. out of scope, i.e. exactly the absorption the gate exists to
+        # refuse. It needs a real repository because the evidence is HEAD's copy.
+        w = tmp / "wiped"
+        w.mkdir()
+        _fixture_git(w, "init", "-q", "-b", "main", ".")
+        (w / "rows.md").write_text("| BEN-131 | committed at HEAD |\n")
+        _fixture_git(w, "add", "-A"); _fixture_git(w, "commit", "-q", "-m", "base")
+        out.append(("WIPE: before the wipe the file is governed",
+                    id_scheme_state(w / "rows.md", blocks, owners, w), SCOPE_HAS_ROWS))
+        (w / "rows.md").write_text("every row deleted, only prose left\n")
+        out.append(("WIPE: rows at HEAD and none now is NOT out of scope",
+                    id_scheme_state(w / "rows.md", blocks, owners, w), SCOPE_ROWS_WIPED))
+        # And the control that keeps the HEAD arm from answering 'wiped' for everything: a file
+        # that never had a row must still come back out of scope in the SAME repository.
+        (w / "never.md").write_text("no row here, ever\n")
+        _fixture_git(w, "add", "-A"); _fixture_git(w, "commit", "-q", "-m", "never")
+        out.append(("WIPE: a file that never carried a row is still out of scope",
+                    id_scheme_state(w / "never.md", blocks, owners, w), SCOPE_NO_ROWS))
+
+        # ---- the verdict, end to end -----------------------------------------------------------
+        def verdict(*paths: Path) -> int:
+            r = subprocess.run([sys.executable, str(Path(__file__).resolve()),
+                                "--conflicts", "--lane", "C", *[str(x) for x in paths]],
+                               capture_output=True, text=True)
+            return r.returncode
+
+        out.append(("VERDICT: a conflict only in row-less files PASSES (OI-189's unreachable pass)",
+                    verdict(prose, registry), 0))
+
+        # A prose conflict INSIDE a file that carries rows: the conflicted hunk has no row, but the
+        # file does, so this is the protection OI-189 must not have removed.
+        mixed = tmp / "mixed.md"
+        mixed.write_text("| BEN-131 | a row, outside the conflict |\n"
+                         "<<<<<<< HEAD\nheader prose, ours\n=======\n"
+                         "header prose, theirs\n>>>>>>> side\n")
+        out.append(("VERDICT: a PROSE conflict inside a file that carries rows STILL REFUSES",
+                    verdict(mixed), 1))
+
+        # A foreign row must still refuse, and an out-of-scope file beside it must not mask it.
+        # BEN-190 is block A's, so it is foreign to lane C. Asserted here rather than assumed,
+        # because a fixture whose "foreign" row turns out to be the lane's own row tests nothing
+        # and PASSES -- which is exactly what the first draft of this case did.
+        out.append(("VERDICT: the fixture's row really is FOREIGN to lane C (fixture control)",
+                    lane_matches(owner_of_ben(190, blocks), "C"), False))
+        foreign = tmp / "foreign.md"
+        foreign.write_text("<<<<<<< HEAD\n| BEN-190 | ours |\n=======\n"
+                           "| BEN-190 | theirs |\n>>>>>>> side\n")
+        out.append(("VERDICT: a foreign row refuses", verdict(foreign), 1))
+        out.append(("VERDICT: an out-of-scope file does NOT mask a foreign row",
+                    verdict(prose, foreign), 1))
+
+        # And the vacuous-pass protection is untouched: zero files is still not a pass.
+        out.append(("VERDICT: an ABSENT file is still not a pass",
+                    verdict(tmp / "does-not-exist.md"), 1))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return out
+
+
 def _clean_merge_power_cases() -> list[tuple[str, object, object]]:
     """[(label, got, want)] for the clean-merge state, on REAL merges in throwaway repositories.
 
@@ -1759,8 +1944,9 @@ def main() -> int:
         print("no unmerged files; nothing to attribute  (query mode: 0 files, 0 rows)")
         return 0
 
-    foreign, unattributable = [], []
+    foreign, unattributable, out_of_scope = [], [], []
     examined_files = examined_rows = 0
+    _owners = load_row_owners()
     for path in files:
         if not path.exists():
             # An absent file used to `continue` and fall through to "OK :: every contested row is
@@ -1769,13 +1955,31 @@ def main() -> int:
             unattributable.append(f"{path} (absent)")
             continue
         examined_files += 1
-        rows = rows_in(path, args.conflicts, blocks)
+        rows = rows_in(path, args.conflicts, blocks, _owners)
         examined_rows += len(rows)
         rel = path.relative_to(REPO) if REPO in path.parents else path
         if not rows:
+            # OI-189. Three states, not one. Until 2026-09-20 all three printed NO ATTRIBUTABLE
+            # ROWS and refused, which left a merge whose only conflicts are row-less files with no
+            # reachable pass. See id_scheme_state for the measurement and why the split is measured
+            # rather than listed.
+            state = id_scheme_state(path, blocks, _owners)
+            if state == SCOPE_NO_ROWS:
+                print(f"  {rel}: OUT OF SCOPE -- this file carries no attributable row, here or at "
+                      f"HEAD, so no ledger row can be being resolved in it. THIS GATE DOES NOT "
+                      f"CERTIFY IT: read the conflict yourself.")
+                out_of_scope.append(str(rel))
+                continue
+            if state == SCOPE_ROWS_WIPED:
+                print(f"  {rel}: ROWS WIPED -- this file carried attributable rows at HEAD and "
+                      f"carries none now. That is a deletion of somebody's rows, not a file "
+                      f"outside this gate's reach.")
+                unattributable.append(f"{rel} (rows present at HEAD, none now)")
+                continue
             print(f"  {rel}: NO ATTRIBUTABLE ROWS -- resolve by hand and route to the author. "
-                  f"(a prose conflict has no row; VALIDATION_LEDGER.md rows carry VL ids but are "
-                  f"UNOWNED until the owner side table exists.)")
+                  f"(this file DOES carry rows, so the conflict is prose inside a governed file; "
+                  f"VALIDATION_LEDGER.md rows carry VL ids but are UNOWNED until the owner side "
+                  f"table exists.)")
             unattributable.append(str(rel))
             continue
         for lineno, rid, owner in rows:
@@ -1789,8 +1993,9 @@ def main() -> int:
     # this file (vacuous file set, nested scoping, absent file): each printed a verdict without
     # saying what it had examined, and "0 rows, PASS" is indistinguishable from "40 rows, PASS" when
     # only the verdict is printed. BEN-077's receipt-ingredients convention applied to a gate.
-    scope = f"[examined {examined_files} file(s), {examined_rows} attributable row(s)]"
-    if args.lane and examined_rows == 0 and not foreign and not unattributable:
+    scope = (f"[examined {examined_files} file(s), {examined_rows} attributable row(s), "
+             f"{len(out_of_scope)} out of scope]")
+    if args.lane and examined_rows == 0 and not foreign and not unattributable and not out_of_scope:
         print(f"CANNOT CHECK :: {scope} -- nothing was examined, so nothing was verified.")
         return 2
     if args.lane and (foreign or unattributable):
@@ -1800,8 +2005,24 @@ def main() -> int:
             print(f"  route to its author: {f}")
         for u in unattributable:
             print(f"  unattributable, route by hand: {u}")
+        for o in out_of_scope:
+            print(f"  (out of scope, NOT the reason for this refusal: {o})")
         print("Joseph's rule, 2026-08-12: no lane's ledger row is merged by anyone but its author.")
         return 1
+    if args.lane and out_of_scope:
+        print()
+        # NOT a silent pass. The denominator is printed, every file is named, and the sentence says
+        # what was NOT done -- because the failure this repair could introduce is an operator
+        # reading a 0 as "the guard checked these", and a gate that passes quietly over files it
+        # never read is the gates-that-cannot-fail shape in the other direction.
+        print(f"OK {scope} :: no attributable row is contested by this merge.")
+        print(f"  ⚠ {len(out_of_scope)} conflicted file(s) carry NO attributable row and were NOT "
+              f"CHECKED BY THIS GATE:")
+        for o in out_of_scope:
+            print(f"      {o}")
+        print("  This gate refuses a merge that resolves another lane's LEDGER ROW "
+              "(merge_guard.sh:2). It says nothing about the files above. Review them yourself.")
+        return 0
     print(f"OK {scope} :: every contested row is yours" if args.lane
           else f"attribution complete {scope}")
     return 0

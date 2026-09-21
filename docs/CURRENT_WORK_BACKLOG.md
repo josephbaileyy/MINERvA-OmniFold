@@ -99,4 +99,3 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-137 | NOW | migration-carried-forward | OPEN — filed 2026-08-20 by the close-out orchestrator. A HAZARD THAT IS PRESENTLY UNOWNED ON THE PUBLICATION CRITICAL PA |
 | OI-138 | NOW | migration-carried-forward | OPEN |
 | OI-139 | NOW | migration-carried-forward | OPEN |
-| OI-189 | NOW | migration-carried-forward | OPEN |

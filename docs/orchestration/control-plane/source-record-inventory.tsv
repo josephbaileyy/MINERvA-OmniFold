@@ -136,4 +136,4 @@ OI-137	active	NOW	migration-carried-forward	85713f9290390b74f9b9fb7aa554c9037138
 OI-138	active	NOW	migration-carried-forward	9b39ee77565bf276cd001004b359ecbad16542c287ac90e807662678a3cae7c8	OPEN
 OI-139	active	NOW	migration-carried-forward	1ccc6f28d6820f5e7b5b83821c7f2e22ad677dd069e2348a6296d55b3b656262	OPEN
 OI-178	retired	-	migration-carried-forward	718c5d215905f47ebd8ef1699cc39665f69039824892957358477401aab5da2d	DISCHARGED 2026-08-30
-OI-189	active	NOW	migration-carried-forward	815bdc1e7551e2d5bd02c7ce6120f1f83217d4ce5f88bca03ea9bef26a264010	OPEN
+OI-189	retired	-	migration-carried-forward	5ef9e418bb5a2190b63dd09cd24c4bd4f65c480a17c19047bd4e2a288dcb622c	REPAIRED 2026-09-20 via RULING-20260908 exit (2) — fix the gate. Joseph ruled in session that the guard is over-strict h

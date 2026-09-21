@@ -106,9 +106,30 @@ override input, by design (`RULING-20260908-joseph-a-merge-guard-refusal-is-term
 
 - It attributes by **id block, not authorship**. A lane filing in another lane's block is misattributed;
   that has happened (BEN-089, `max+1` from outside both documented ranges).
-- **`VALIDATION_LEDGER.md` has no per-row id scheme and cannot be attributed.** It is the file with the
-  second-most absorptions. Conflicts there print `NO ATTRIBUTABLE ROWS` and are refused, by design.
+- **⚠ THE `VALIDATION_LEDGER.md` SENTENCE THAT STOOD HERE IS OBSOLETE AND WAS ALREADY OBSOLETE WHEN
+  IT WAS READ IN ANGER.** It said the ledger *"has no per-row id scheme and cannot be attributed"*.
+  The ledger has carried `VL<n>` ids since **2026-08-12** — 144 of them, two-sidedly enforced by
+  `--check-ledger-ids`, which `merge_guard.sh` runs before it attributes anything. Ledger conflicts
+  **are** attributed, against `ROW-OWNERS.tsv`; a `VL` id absent from that side table reports
+  `UNOWNED` and refuses, which is a different state from *unattributable* and is the one that
+  actually applies. Corrected 2026-09-20. **This is the defect the guard's own header names —
+  BEN-163, code fixed, published contract not — committed in the document that records it.**
 - It sees rows, not prose. A conflict in a header paragraph is unattributable and reported as such.
+- **THREE STATES, NOT TWO, SINCE 2026-09-20 (`OI-189`).** A conflicted file with no attributable row
+  in the hunk is now classified by **measuring the file**, not by name:
+  - it **carries rows elsewhere** → the conflict is prose inside a governed file → **`NO
+    ATTRIBUTABLE ROWS`, REFUSED**, exactly as before;
+  - it **carried rows at `HEAD` and carries none now** → **`ROWS WIPED`, REFUSED**, because that is
+    a deletion of somebody's rows and not a file outside the gate's reach;
+  - it **has never carried a row** → **`OUT OF SCOPE`**, printed, counted in the denominator, and
+    **not** a refusal.
+  **Why the third state had to exist:** the gate's declared object is another lane's *ledger row*,
+  and its measured basis is six absorptions in `FINDINGS.md`, `VALIDATION_LEDGER.md` and
+  `OPEN_ITEMS.md`. Before this, a merge whose only conflicts were `CATALOG.md` (prose) and
+  `MANIFEST-overrides.tsv` (a path registry) had **no reachable pass at all** while the protected
+  population was **empty** — which `:99` above already calls the defect this state exists to repair
+  rather than a safe default. **⚠ An `OUT OF SCOPE` file is NOT certified by this gate.** The pass
+  message names every one of them and says so. Review them yourself.
 
 ### It shipped with a false pass, which is why the self-test is the cross-product
 

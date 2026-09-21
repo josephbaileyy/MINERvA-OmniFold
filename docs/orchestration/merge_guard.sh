@@ -86,7 +86,12 @@ rc=$?
 
 echo
 case "$rc" in
-  0) echo "  PASS :: owned-row attribution or clean-merge reconstruction verified; see the measurement above." ;;
+  0) echo "  PASS :: owned-row attribution or clean-merge reconstruction verified; see the measurement above."
+     echo "           AND READ ANY 'OUT OF SCOPE' LINES ABOVE. Since OI-189 (2026-09-20) a conflicted file"
+     echo "           that carries no attributable row -- here or at HEAD -- is reported rather than refused,"
+     echo "           because this gate's object is another lane's LEDGER ROW and such a file has none."
+     echo "           THIS PASS SAYS NOTHING ABOUT THOSE FILES. A file that carries rows elsewhere, or that"
+     echo "           carried them at HEAD and does not now, still REFUSES." ;;
   1) echo "  REFUSED :: a contested row belongs to another lane. ROUTE IT TO THE NAMED AUTHOR AND DO"
      echo "             NOT RESOLVE IT. Joseph's rule, 2026-08-12: no lane's ledger row is merged by"
      echo "             anyone but its author." ;;
