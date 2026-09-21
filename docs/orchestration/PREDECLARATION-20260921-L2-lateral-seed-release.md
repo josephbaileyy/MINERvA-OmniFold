@@ -119,3 +119,107 @@ re-ran them would cost orders more and would be measuring the wrong thing.
 - a grade computed over anything other than the two declared members.
 
 **Co-Authored-By: Claude Opus 5 (1M context)**
+
+---
+
+# ⚠ AMENDMENT 1, 2026-09-21 — THE CHANGE IS **SEVEN** SITES, NOT THREE, AND FOUR OF THEM ARE PROVENANCE GATES
+
+**Written before any job was submitted and before any product was written.** Nothing in §1–§6 above
+has been executed. The outcome map in §4 is unchanged and is not reopened by this amendment.
+
+## A1.1 How this was found, because the pattern is the point
+
+§2 above opens *"The evidence named two files. Reading them, there are **three**."* That sentence is
+now itself an understatement, and by the same mechanism: **I read the files the previous record
+named, and stopped.** What I did not do was follow the seed FORWARD through the stages that consume
+the unfolds. Doing that turns up four more sites, and they are worse than the three, because three
+are *paths* and four are *gates that certify provenance*.
+
+⚠ **A grep for `--seed 42` finds site 1 and nothing else.** The literal `42` is load-bearing in six
+more places under five different spellings: a default argument, a dict constant, a `require`, a
+config-hash input, an independent re-derivation of that hash, and a reproducibility reference.
+
+## A1.2 The four new sites
+
+| # | site | what it does today | what a member run would have done |
+|---|---|---|---|
+| 4 | `run_p4_unfold_std.sh:71,76` | `P4Config()` — **default seed 42** — supplies `CFG_HASH` | stamps `config_hash(seed=42)` into a receipt for a ROOT produced at **1242** |
+| 5 | `p4_lib.py:269` + `:41` + `:335` | `require(self.seed == 42)`; `STANDARD_REQUIRED_FOOTING["seed"] = 42`; the footing gate | refuses any member config outright, **or** passes a false one |
+| 6 | `p4_check_receipt.py:97` | re-derives `P4Config()` **at the default** and compares `config_hash` | **re-derives the SAME false hash, so the lie VALIDATES** |
+| 7 | `p4_evidence.py:36,38,391` | hardcoded `UDIR`, hardcoded `EVID`, reproduction-vs-reference gate | reads baseline unfolds, and **DELETES the baseline manifest** |
+
+## A1.3 ⚠ SITE 6 IS THE ONE THAT MAKES SITE 4 INVISIBLE, AND THAT IS THE WHOLE FAILURE
+
+Site 4 alone would be a bad receipt. Site 4 **with** site 6 is a bad receipt **that passes its own
+verification**, because the producer and the checker compute the same wrong number from the same
+default. Two independent-looking confirmations, one shared defect — and the resume rule would then
+treat the member's mis-stamped product as valid on every subsequent run.
+
+The repository already names this exact shape. `mr_require_valid_offset`'s own comment calls a
+seed/provenance divergence *"the worst failure mode available to this campaign,"* and says why it is
+the worst: *"every guard passes, the member directory exists, the stamp is self-consistent, and the
+number is wrong."* That is a literal description of what sites 4+6 would have produced. **The
+comment warning about this failure is in the file I sourced to implement the change.**
+
+## A1.4 ⚠ SITE 7 IS DESTRUCTIVE TO THE ADOPTED PRODUCT'S OWN PROVENANCE
+
+`p4_evidence.py` writes to `.PENDING` and then publishes; `_publish_evidence()` *removes the
+opposite variant* so that *"a directory must describe one run."* That rule is correct and it is the
+hazard here. A member run with `EVID` unscoped would have:
+
+1. hashed the **baseline's** ten unfolds (`UDIR` hardcoded), so the manifest would not describe the
+   member at all;
+2. blocked on all ten reproduction comparisons — **correctly**, since a different seed is not a
+   reproduction — and therefore taken the `.FAILED` branch;
+3. and in taking it, **deleted `active_universe_5d/standard/evidence/p4_standard_manifest.json`** —
+   the manifest that binds the ten endpoint digests the adopted covariance `3d7465f6…` is built
+   from — replacing it with a `.FAILED` copy describing a run that was never the baseline's.
+
+§6's invalidating condition already forbids *"any write into `active_universe_5d/standard/unfolds/`"*.
+It did not reach `evidence/`, because I did not know stage 3 existed in this path. **It is hereby
+extended: no write, rename, or unlink anywhere under `active_universe_5d/standard/`.**
+
+## A1.5 The repairs, and the principle they follow
+
+**Every gate is DERIVED, never relaxed.** The seed requirement does not become "any seed"; it
+becomes `42 + the offset the caller declares`. At offset 0 — every non-probe run, forever — each
+gate evaluates to exactly the literal it enforces today. That is the property that makes this safe
+to land: **the baseline path is unchanged by construction, not by inspection.**
+
+| # | repair |
+|---|---|
+| 4 | driver builds `P4Config(seed=P4_EST_SEED)` and validates it against the declared offset, so `CFG_HASH` covers the seed that actually ran |
+| 5 | `P4Config.validate(expected_offset=0)` and `require_standard_footing(..., expected_offset=0)` compare against `p4_lib.standard_seed_for_offset(offset)`. `STANDARD_REQUIRED_FOOTING` is **not mutated** — its own comment says those constants are hash-pinned into FPS gates and must not be coupled to |
+| 6 | `p4_check_receipt.py` gains `--est-seed-offset`, passed by the driver, so the checker re-derives the config the producer actually used |
+| 7 | `p4_evidence.py` gains `--est-seed-offset`; `UDIR` and `EVID` are member-scoped from it; and the reproduction gate is **INVERTED rather than skipped** — see below |
+
+### ⚠ A1.5.1 The reproduction gate is inverted, and that is STRONGER than disabling it
+
+At offset 0 the gate asks: *do these ten endpoints reproduce the 2026-07-18 reference to
+`1e-9` per bin / `1e-11` on the integral?* A member at a different seed **must** fail that, by
+design — so the honest options are to skip it or to invert it.
+
+**It is inverted.** At a declared non-zero offset the gate requires each endpoint to **differ** from
+the reference by more than the same declared tolerance, using **the same instrument**
+(`check_reproducibility`) with no new constant. A member that *did* reproduce the reference would
+mean **the seed never reached the estimator** — the run would look perfect and measure nothing,
+which is §6's first invalidating condition detected one stage earlier and automatically.
+
+A skipped gate is a hole. An inverted gate is a control.
+
+## A1.6 The cheap control that runs FIRST, added to §6 as a precondition
+
+Before the member runs at all: **run the driver with `MNV_EST_SEED_OFFSET` UNSET.** It must print
+`SKIP` for all ten tags, exit 0, and leave the ten baseline ROOTs and receipts byte-identical to the
+digests captured before the change. Cost: about one CPU-minute, no GPU.
+
+This is the direct, positive demonstration that the seven-site change did not disturb the adopted
+product's inputs — which is the thing §6 says must be *"verified by digest, not by inspection."*
+**If this control does not pass, the probe does not run.**
+
+## A1.7 What this amendment does NOT change
+
+- **The outcome map in §4 stands exactly as written**, including that `< 5%` licenses nothing.
+- The cost in §5 stands; sites 4–7 are code, not compute.
+- Nothing above has been run, so no result is being reinterpreted. This is a correction to the
+  *plan*, made before the plan was executed.
