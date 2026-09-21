@@ -3488,6 +3488,16 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   submission is authorized.** Read §5 for the shortest list that would close the gate, and §2 for
   three builder claims that reproduce differently.
 
+- [`PREDECLARATION-20260921-L2-lateral-seed-release.md`](PREDECLARATION-20260921-L2-lateral-seed-release.md)
+  - **The reserved estimator change, AUTHORIZED by Joseph 2026-09-21**, and the `L2` probe
+  predeclared before the code change and before the run. ⚠ **The change is THREE sites, not the two
+  the evidence named** — the third is `run_p4_unfold_std.sh:32`'s `OUTDIR`, and without it a
+  seed-only change would have found ten valid receipts and **skipped all ten while reporting
+  success**, or overwritten the ten unfolds the adopted covariance is built from.
+  ⚠ **The outcome map is fixed in advance and the probe is asymmetric:** `> 5%` confirms the FAIL
+  and is strong; `< 5%` licenses **nothing**, because one seed pair cannot bound a maximum over the
+  declared set. Also declares the invalidating conditions, including that the baseline's ten ROOTs
+  must be **byte-identical before and after**, verified by digest.
 - [`HANDOFF-20260921-gbdt-remaining.md`](HANDOFF-20260921-gbdt-remaining.md)
   - **START HERE for what is left on the GBDT / scalar-5D path.** PET deliberately out of scope.
   Six live limitations, of which **nothing is blocked on compute**: `L2` is blocked on a **RESERVED
