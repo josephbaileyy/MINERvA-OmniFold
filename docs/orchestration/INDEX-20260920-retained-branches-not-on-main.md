@@ -8,16 +8,27 @@ deleted on 2026-09-20; its commits remain reachable from `main`. The branches be
 ancestors of `main` — they hold commits `main` does not — and were retained. A SHA here is a route:
 `git fetch origin <sha>` reaches it without a merge.
 
-⚠ **READ THIS ROW FIRST. The independent verification of the scalar-5D adoption lives on a branch,
-not on `main`.** An auditor reading only `main` will find the adoption and its decision record, and
-will NOT find the independent clause-(c) verification that was required before it. That verification
-is the first row below. This is a stated limitation of `main` as a single route, not an oversight.
+✅ **AMENDED 2026-09-20 — THE LIMITATION THIS RECORD OPENED WITH IS CLOSED.** It read:
 
-Counts are `git rev-list --count main..<branch>` measured at the time of writing.
+> ⚠ **READ THIS ROW FIRST. The independent verification of the scalar-5D adoption lives on a branch,
+> not on `main`.** An auditor reading only `main` will find the adoption and its decision record, and
+> will NOT find the independent clause-(c) verification that was required before it. … This is a
+> stated limitation of `main` as a single route, not an oversight.
+
+**It is now on `main`**, merged at `ff0b6df0` after `OI-189` repaired the guard that had refused the
+merge. `git rev-list --count main..lane/z-criteria-independent-assessment-20260910` measures **0**.
+The row is struck below rather than deleted, because citations to it exist.
+
+⚠ **What did NOT change:** the verification's `BLOCK` is answered by
+[`DECISION-20260920-joseph-rules-clause-c-disposition.md`](DECISION-20260920-joseph-rules-clause-c-disposition.md),
+not by the merge. **Landing a verdict on `main` is not disposing of it**, and the ordering defect it
+disclosed — verification after adoption — is **ratified, not cured**.
+
+Counts are `git rev-list --count main..origin/<branch>`, **re-measured 2026-09-20 after the merge at `ff0b6df0`** — a count in a document is a measurement with a date, and `main` moved. **Exactly one row changed: the clause-(c) lane, `69 → 0`.** The other fourteen re-measure to the values already printed — the merge brought in only that branch's commits. ⚠ Measure against `origin/<branch>`, not the local ref: this checkout's local `feat/production-interface` is **2** ahead of `main` while `origin`'s is **6**, so the two refs have forked and the local one would understate it. Re-measure before citing any row.
 
 | branch | head | ahead | what it holds that `main` does not |
 |---|---|---|---|
-| `lane/z-criteria-independent-assessment-20260910` | `935b75585a7b9cc39cd52d4aa001df4edbea875f` | 69 | **The independent clause-(c) verification of the scalar-5D adoption**, its BLOCK on completeness, the guard exercise with its positive control, and the NULL per-bin re-check. |
+| ~~`lane/z-criteria-independent-assessment-20260910`~~ **MERGED — NOTHING LEFT TO FIND HERE** | `935b75585a7b9cc39cd52d4aa001df4edbea875f` | ~~69~~ **0** | ~~The independent clause-(c) verification…~~ **All 69 commits are on `main` as of `ff0b6df0` (2026-09-20): the verification with its BLOCK and `V1`–`V9`, the guard exercise with its positive control, the independent acceptance-criteria derivation parts A–H, and the NULL per-bin re-check.** |
 | `pet-direct-token-comparison` | `c934c52757f0273b51ddd5e814bd12cf73953773` | 211 | The PET direct token-comparison campaign: grid behaviour, launch and failure records. |
 | `lane/z-criteria-recommendation-20260910` | `a6bff83e7c9bb861ee4983bfce5d4ff4f9e234eb` | 60 | The criteria-owner lane: recommendations, and the writer fix upgraded from RELAYED to VERIFIED. |
 | `lane/z-assembly-pilot-20260914` | `c4baf0d29297de0d0f50d5ea1d8b869ddaf83520` | 51 | The Z assembly pilot, its E1/E2 reconstruction assessment, and a refuted-then-relocated amendment finding. |

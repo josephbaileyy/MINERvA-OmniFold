@@ -89,4 +89,43 @@ assessor applied to itself.
   one `122 of 160 throws` hit is already public in `docs/OPEN_ITEMS.md`.
 - **It lands after the audit, on a real pass or a repaired guard.** Not on anyone's say-so.
 
+## 7. ✅ OUTCOME 2026-09-20 — the guard was repaired and the merge landed on a real pass
+
+**§5's tension was ruled the way this record declined to rule it, by someone with standing.** Joseph
+ruled in session that the guard is over-strict here and authorized exit (2). The repair is `OI-189`
+at `fc5e227b`: the gate's **operand** was wrong — its population was every conflicted file while its
+declared object is a *ledger row* — and it now classifies a row-less conflicted file by measuring it
+into three states, of which only the third (**never carried a row**) is out of scope.
+
+**The refusal was not converted into a pass.** The gate was re-run on the real unmerged tree,
+against repaired code, and returned its own verdict:
+
+```
+OK [examined 2 file(s), 0 attributable row(s), 2 out of scope]
+  docs/orchestration/CATALOG.md: OUT OF SCOPE
+  docs/orchestration/MANIFEST-overrides.tsv: OUT OF SCOPE
+  ⚠ 2 conflicted file(s) … were NOT CHECKED BY THIS GATE
+```
+
+Merged at `ff0b6df0`. ⚠ **Said precisely, because "preserved resolutions were reused" would be the
+convenient claim and is not what happened:** both files had changed on `main` since §6 was written,
+so the union was **recomputed** — order-preserving, ours-then-theirs, exact duplicates dropped, the
+overrides file **not** re-sorted. It then reproduced §6's own figures **exactly**, **+1324/−0
+`CATALOG.md`** and **+60/−0 `MANIFEST-overrides.tsv`**, which is a corroboration of §6's arithmetic
+rather than a reuse of its output. Zero duplicate paths in the registry afterwards, and both sides'
+rows verified present. Both files were reviewed by hand, which is what the new pass message demands
+rather than assumes.
+
+⚠ **One quotation in §3 above is now out of date, and it is load-bearing enough to flag rather than
+leave.** The convention sentence quoted there — `VALIDATION_LEDGER.md` *"has no per-row id scheme
+and cannot be attributed"* — had been **false since 2026-08-12**; the ledger carries 144 `VL` ids
+and `merge_guard.sh` enforces their completeness before it attributes anything. §3 quotes the
+document faithfully as it stood; the document was wrong. Corrected in the same commit as the repair.
+
+⚠ **`§5`'s reasoning FOR the refusal is not refuted and is not being called wrong.** Fail-closed on
+an unknown remains the safe direction; what changed is that the unknown was outside the gate's
+object, and a file that has never carried a row is now measured as such rather than treated as an
+unknown. ⚠ **And the new pass certifies nothing about those two files** — it says so in the output,
+by name, every time.
+
 **Co-Authored-By: Claude Opus 5 (1M context)**

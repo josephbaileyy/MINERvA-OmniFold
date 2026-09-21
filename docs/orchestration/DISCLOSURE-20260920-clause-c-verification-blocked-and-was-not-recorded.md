@@ -25,7 +25,7 @@ It is an **iff**. The independent verification is a precondition of the adoption
 | branch | `lane/z-criteria-independent-assessment-20260910` |
 |---|---|
 | head | `935b75585a7b9cc39cd52d4aa001df4edbea875f` |
-| reach it without a merge | `git fetch origin 935b75585a7b9cc39cd52d4aa001df4edbea875f` |
+| ~~reach it without a merge~~ | ~~`git fetch origin 935b7558…`~~ — **unnecessary as of 2026-09-20: MERGED TO `main` at `ff0b6df0`**, so the file is simply at `docs/orchestration/VERIFICATION-20260918-scalar5d-adopt-clause-c.md`. The merge had been refused; `OI-189` repaired the guard and the guard was re-run, not overridden. |
 
 | question | verdict |
 |---|---|
