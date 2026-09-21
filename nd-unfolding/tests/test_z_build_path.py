@@ -635,6 +635,20 @@ class TestTheSufficiencyConditionIsExecutable(unittest.TestCase):
         "test_z_validator.py": "a test, not production",
         "probe-z-projected-stability-20260910.py": "a campaign PROBE that measures the unguarded "
                                                    "behaviour on purpose; its §8 IS that measurement",
+        # ⚠ ADDED 2026-09-21, AND THIS TRIGGER WAS RIGHT TO FIRE ON THEM. Both landed 2026-09-20
+        # with the resolution-floor evidence and neither was declared, so the census correctly
+        # reported two unsanctioned callers for a day. Sanctioned on the SAME ground as the probe
+        # above and not a weaker one: each measures `s_proj`'s raw behaviour deliberately, because
+        # the question it answers -- is 6.145% a real seed sensitivity or the statistic's own
+        # resolution floor -- cannot be asked THROUGH the guard that would refuse the comparison.
+        # Verified rather than asserted: neither is imported by anything under `nd-unfolding/`, so
+        # neither is on a production path.
+        "probe-20260920-sproj-resolution-floor.py": "a campaign PROBE: measures what s_proj returns "
+                                                    "when ONLY the throw subset changes, which is "
+                                                    "the null the 6.145% had to be separated from",
+        "probe-20260920-seed-effect-at-matched-N.py": "a campaign PROBE: the seed effect and the "
+                                                      "resampling floor at the SAME N, removing the "
+                                                      "extrapolation that was the weakest step",
         "z_grade.py": "THE PRODUCTION CALLER THIS TRIGGER WAS ARMED FOR. Sanctioned because the "
                       "ROUND-OFF half of the residue was closed in response -- the guard moved "
                       "into z_statistics.s_proj, the remedy this trigger's own message names "

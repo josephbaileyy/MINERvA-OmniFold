@@ -362,8 +362,6 @@ class ADegeneratePredictionMakesEveryDigestMatchForFREE(unittest.TestCase):
         self.assertIn("np.unique(_pred)", src)
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class TheRecordStatesItsOwnScope(unittest.TestCase):
@@ -408,3 +406,7 @@ class TheRecordStatesItsOwnScope(unittest.TestCase):
                           rows=Z.MIN_ROWS, seed=42, repeats=2, thread_grid=(1,))
         self.assertEqual(rec["verdict"], "DEGENERATE")
         self.assertIn("tested_scope", rec)
+
+
+if __name__ == "__main__":
+    unittest.main()

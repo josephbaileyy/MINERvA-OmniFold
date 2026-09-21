@@ -85,6 +85,10 @@ class CombineCovFingerprint(unittest.TestCase):
 
     def setUp(self):
         _STORE.clear(); _CUR[0] = None
+        # MARKED so a consumer can tell a stub from real PyROOT. `import ROOT` SUCCEEDS
+        # against a stub, so an `except ImportError` probe reports PyROOT present and the
+        # gated tests run against a two-attribute fake. See test_z_pilot.HAVE_ROOT.
+        _ROOT.__mnv_stub__ = True
         sys.modules["ROOT"] = _ROOT
         import combine_cov_nd
         self.M = combine_cov_nd

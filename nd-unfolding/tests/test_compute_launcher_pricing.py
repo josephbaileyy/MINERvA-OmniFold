@@ -133,8 +133,6 @@ class AdmissionIsCalledNotRetyped(unittest.TestCase):
                     self.assertNotIn("'", m.group(1), f"{p.name}: {m.group(1)[:50]}")
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class CallersMustNotFlattenTheLibraryCodes(unittest.TestCase):
@@ -186,3 +184,7 @@ class CallersMustNotFlattenTheLibraryCodes(unittest.TestCase):
                            and not l.strip().startswith("#"))
                 self.assertLess(env, adm,
                                 f"{p.name} verifies admission before establishing the environment")
+
+
+if __name__ == "__main__":
+    unittest.main()

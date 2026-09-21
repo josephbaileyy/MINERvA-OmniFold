@@ -655,6 +655,17 @@ def assert_member_path_is_outside_the_archive(path, container=MII_CONTAINER):
 #: by deliberate design -- correct for a background-treatment comparison, and exactly wrong for a member,
 #: whose premise is a different estimator seed. Stage 0 measured that the seed moves C_stat's replicas
 #: across essentially the whole reported support.
+#: ⚠ TWO MORE DECLARED 2026-09-21, AND THEY WERE HOOKED LONG BEFORE THEY WERE DECLARED. Measured at
+#: `c34553e5` and again at today's tip: `sbatch_uthrow_dump_5d.sh` and
+#: `sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh` both source `lib_member_resume.sh` and call
+#: `mr_require_valid_offset` exactly once, outside a comment -- so they were in the HOOKED partition
+#: while absent from every declared set, which is precisely the open set this tuple exists to close.
+#: `test_the_HOOKED_set_is_EXACTLY_the_driver_legs` had been red on them, and the fix is to DECLARE
+#: what is true rather than widen the assertion: the first is the dump leg that repair (e) gave the
+#: guarded preamble and the member-axis source, the second is the M(ii) estimator scan, whose whole
+#: premise is a per-member estimator seed.
 MEMBER_LOCAL_CONSUMERS = (
     "sbatch_finalize_5d_bkgaware_gpu.sh",
+    "sbatch_mii_estimator_scan_5d_bkgaware_gpu.sh",
+    "sbatch_uthrow_dump_5d.sh",
 )

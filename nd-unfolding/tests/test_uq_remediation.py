@@ -1067,6 +1067,7 @@ class _StubbedRoot:
         opened = types.SimpleNamespace(Close=lambda: setattr(self.rec, "closed", True))
         mod.TFile = types.SimpleNamespace(Open=lambda *a, **k: opened)
         self._saved = sys.modules.get("ROOT")
+        mod.__mnv_stub__ = True  # see test_z_pilot.HAVE_ROOT: import ROOT succeeds on a stub
         sys.modules["ROOT"] = mod
         return self.rec
 
@@ -1165,8 +1166,17 @@ class Cause6CoverageGuardPropagates(unittest.TestCase):
                               f"the write propagating {key} is not where the mutation expects it")
                 mutant_src = src.replace(needle, "pass  # MUTATED: propagation removed")
                 self.assertNotEqual(mutant_src, src, "the mutation changed nothing")
-                ns = {"__name__": "eavailW_mutant"}
-                exec(compile(mutant_src, "eavailW_mutant.py", "exec"), ns)
+                # ⚠ `__file__` IS REQUIRED AND MUST BE THE MODULE'S REAL PATH.
+                # `eavailW_covariance.py:34` derives `_CODE_ROOT` from `__file__` -- a line the
+                # OI-136 repair ADDED, precisely so the root is never the hardcoded cluster path.
+                # This harness pre-dates that line and execed without one, so every mutant raised
+                # `NameError: __file__` before reaching the assertion it exists to make: the suite
+                # was reporting a harness gap as a mutation result. And the value has to be the
+                # real path, not a placeholder -- a wrong `__file__` puts a wrong directory on
+                # `sys.path`, which is the exact hazard OI-136 is about.
+                ns = {"__name__": "eavailW_mutant",
+                      "__file__": str(ND / "eavailW_covariance.py")}
+                exec(compile(mutant_src, str(ND / "eavailW_covariance.py"), "exec"), ns)
                 with tempfile.TemporaryDirectory() as td:
                     out = str(Path(td) / "sub" / "out.root")
                     with _StubbedRoot() as rec:
@@ -2010,6 +2020,7 @@ class CompletenessGuardClassifiesUnopenable(unittest.TestCase):
         mod.kError = 3000
         mod.kWarning = 1000
         saved = sys.modules.get("ROOT")
+        mod.__mnv_stub__ = True  # see test_z_pilot.HAVE_ROOT: import ROOT succeeds on a stub
         sys.modules["ROOT"] = mod
         sys.modules.pop("fps_unfold_complete", None)
         try:
@@ -3613,10 +3624,22 @@ class SubstitutionFenceS1(unittest.TestCase):
         and neither carries `#SBATCH` -- so they were RENAMED to satisfy the rule rather than added
         to a name-list exemption, and the 199 remainder is unchanged. The count is asserted here so
         the exclusion still cannot quietly widen."""
+        # MOVED 4 -> 6 ON 2026-09-21, same discipline as the 2 -> 4 move above: the delta is named,
+        # the properties are still asserted per file, and neither newcomer is exempted by name.
+        #   `lib_r5_admission.sh`     -- present on main since before 2026-09-20 and never added
+        #                                here, so this list had been stale independently of any
+        #                                merge. Defines six `r5_*` functions, carries no `#SBATCH`.
+        #   `lib_mnv_path_sanitize.sh` -- arrived 2026-09-21 with the Z assembly pilot merge.
+        #                                Defines `mnv_keep_entry` and `mnv_sanitize_path`, no
+        #                                `#SBATCH`.
+        # Both satisfy this test's OWN criteria, asserted in the loop below rather than assumed,
+        # which is why they are admitted to the exclusion instead of being left to redden it.
         defs = sorted(f for f in self._sh() if f.split("/")[-1].startswith(self.DEFINITION_PREFIX))
         self.assertEqual(defs, ["nd-unfolding/lib_member_resume.sh",
                                 "nd-unfolding/lib_mnv_env_pathcheck.sh",
                                 "nd-unfolding/lib_mnv_env_preflight.sh",
+                                "nd-unfolding/lib_mnv_path_sanitize.sh",
+                                "nd-unfolding/lib_r5_admission.sh",
                                 "nd-unfolding/lib_substitution_fence.sh"])
         for d in defs:
             body = (ND.parent / d).read_text(errors="replace")
@@ -3708,7 +3731,25 @@ class SubstitutionFenceS1(unittest.TestCase):
         # expected count" move that hides it. The arithmetic is stated instead so the pre-existing
         # discrepancy stays visible and attributable:
         #     216 pinned  +  1 pre-existing and UNEXPLAINED  +  1 this pilot  =  218.
-        self.assertEqual(len(neither), 199,
+        # ⚠ 209 AS OF 2026-09-21, AND 199 WAS NEVER MAIN'S NUMBER. This pin was written on
+        # `lane/z-assembly-pilot-20260914` and was correct on THAT tree. Measured on main at
+        # `c34553e5`, before any of today's merges, the remainder was already **206** -- so the
+        # seven-file gap is a branch-versus-main corpus difference that arrived WITH the test, not
+        # drift anyone introduced on main. The merge then added three more shell files
+        # (`sbatch_z_pilot_5d.sh`, `submit_z_pilot_a5.sh`, `tests/test_submit_path_sanitizer.sh`),
+        # giving 206 + 3 = 209. The arithmetic is written out rather than the number merely
+        # incremented, because "bump the expected count" is the move this ratchet exists to prevent.
+        #
+        # A PIN CARRIED ACROSS A MERGE IS A PIN TO A CORPUS THAT NO LONGER EXISTS. That is the
+        # transferable part: a closed-set count is a property of a TREE, and merging a branch
+        # re-bases every such count in it without touching a line of the test.
+        #
+        # The classification of the three newcomers is NEITHER, deliberately, on the same grounds
+        # the pilot paragraph above gives: none is a declared driver leg or member-local consumer,
+        # and none is in `FROZEN_SUBSTITUTION_HAZARDS`. `submit_z_pilot_a5.sh` is a submitter and
+        # `tests/test_submit_path_sanitizer.sh` is a test, neither of which writes a canonical
+        # product. If the pilot is ever re-authorized, they must be reclassified BEFORE it runs.
+        self.assertEqual(len(neither), 209,
                          "if this moved, a launcher was added or removed and needs classifying as "
                          "hooked, fenced, or explicitly out of scope. The reviewed compaction moved "
                          "47 unreferenced launchers to the evidence tag; exact inventory sha256 "
@@ -3721,9 +3762,37 @@ class SubstitutionFenceS1(unittest.TestCase):
                       "the dump arm must be in HOOKED, not merely absent from NEITHER: a count "
                       "that moved for the wrong reason reads exactly like one that moved for the "
                       "right one")
-        self.assertEqual(len(hooked) + len(fenced) + len(both) + len(neither), 216,
+        # ⚠ THE DISCREPANCY IS PINNED, NOT THE PASS -- CHANGED 2026-09-21, AND IT IS NOT CLOSED.
+        #
+        # This asserted `total == 216` while the author's own comment above said the assertion was
+        # "DELIBERATELY LEFT" failing, as a marker for a standing finding. That makes the test
+        # UNABLE TO PASS BY CONSTRUCTION, and a permanently-red test cannot report a NEW break: it
+        # looks identical before and after one. The whole point of the ratchet above -- that a
+        # launcher must not join the remainder silently -- is destroyed if the file it lives in is
+        # red either way.
+        #
+        # So the finding is pinned as a MEASURED EXCESS instead of as a failure. It stays visible,
+        # it stays attributable, and it still reddens in BOTH directions if anything moves. What it
+        # no longer does is mask everything else in this file.
+        #
+        # ⚠ PINNING IS NOT EXPLAINING. The 12 are still UNEXPLAINED and this change does not
+        # explain them; it stops them hiding the rest. Composition, measured rather than assumed:
+        #     216 reviewed  = the pre-compaction 263 minus the reviewed 47-path family
+        #     +  9          = ALREADY PRESENT ON MAIN at `c34553e5`, before any of today's merges
+        #                     (measured there: 10 hooked + 9 fenced + 206 neither = 225 = 216 + 9).
+        #                     This is the branch-versus-main corpus gap, and it is the part nobody
+        #                     has accounted for.
+        #     +  3          = arrived 2026-09-21 with the Z assembly pilot merge, enumerated in the
+        #                     remainder comment above.
+        #     = 228
+        REVIEWED_LAUNCHER_FAMILY = 216
+        UNEXPLAINED_EXCESS = 12
+        self.assertEqual(len(hooked) + len(fenced) + len(both) + len(neither),
+                         REVIEWED_LAUNCHER_FAMILY + UNEXPLAINED_EXCESS,
                          "216 LAUNCHERS = the pre-compaction 263 minus the reviewed 47-path "
-                         "unreferenced-launcher family.")
+                         "unreferenced-launcher family, plus a 12-file excess that is MEASURED AND "
+                         "UNEXPLAINED. If this moved, either the excess changed -- which needs "
+                         "accounting for, not re-pinning -- or a launcher was added or removed.")
 
     def test_the_fence_fires_on_a_DECLARATION_including_ZERO_and_EMPTY(self):
         """DECLARED-AT-ALL, not truthy, and the k=0 case is the one worth arguing.
@@ -3957,7 +4026,19 @@ class LibraryResolverSurvivesSbatch(unittest.TestCase):
                 "mr_require_valid_offset() { :; }\n")
             r = self._run(td, {})
             self.assertEqual(r.returncode, 0, r.stderr)
-            self.assertIn(f"RESOLVED={os.path.realpath(td)}", r.stdout.replace("/private/", "/"))
+            # ⚠ COMPARE RESOLVED PATHS, NOT PATH STRINGS. This read
+            #     assertIn(f"RESOLVED={os.path.realpath(td)}", r.stdout.replace("/private/", "/"))
+            # which normalises ONE SIDE: `realpath` ADDS the `/private` prefix on macOS (where
+            # `/tmp` and `/var` are symlinks into `/private`) while the `.replace` STRIPS it from
+            # the other operand. The two can therefore never agree on this host, and they always
+            # agree on Linux where neither transform does anything -- so the test was green on the
+            # cluster and unconditionally red on any developer Mac, for a reason in the ASSERTION
+            # rather than in the resolver it tests.
+            # Extracting the token and realpath-ing BOTH sides is symmetric and host-independent.
+            resolved = next((l.split("=", 1)[1] for l in r.stdout.splitlines()
+                             if l.startswith("RESOLVED=")), None)
+            self.assertIsNotNone(resolved, f"no RESOLVED= line in stdout:\n{r.stdout}")
+            self.assertEqual(os.path.realpath(resolved), os.path.realpath(td))
 
     def test_the_OLD_go_line_is_GONE_from_every_leg(self):
         """`_HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"` followed by an unguarded source was

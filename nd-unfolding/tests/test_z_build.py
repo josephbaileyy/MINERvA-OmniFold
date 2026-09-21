@@ -19,6 +19,9 @@ ND = Path(__file__).resolve().parents[1]
 if str(ND) not in sys.path:
     sys.path.insert(0, str(ND))
 
+# find_spec("ROOT") is TRUE for a stub another suite installed, so the two gated
+# classes below ran against a fake in whole-directory runs. See tests/root_probe.py.
+from root_probe import have_real_pyroot
 import p4_lib as p4
 import z_build as build
 import z_contract as contract
@@ -190,7 +193,9 @@ class ZBuildIntegration(unittest.TestCase):
                 # REVIEWER FINDING F1. The receipt assertions below already covered the
                 # RECEIPT. Nothing covered the label embedded in the PRODUCT -- the bytes a
                 # downstream consumer actually opens -- and the only assertion on it lived
-                # in a test gated behind `skipUnless(find_spec("ROOT"))`. Measured: flipping
+                # in a test gated behind the PyROOT skip (then `skipUnless(find_spec("ROOT"))`,
+                # now `skipUnless(have_real_pyroot())` -- the old form was TRUE for a stub another
+                # suite had installed, which is worse than the gap this finding names). Measured: flipping
                 # `adoptable` to True and `scientific_acceptance` to "PASSING" left the
                 # documented test command fully green while both products advertised
                 # themselves as adoptable. NPZ metadata needs no PyROOT, so this belongs in
@@ -584,7 +589,7 @@ class ZBuildIntegration(unittest.TestCase):
             self.assertEqual(build.main(args), 1)
         self.assertEqual(json.loads(error.getvalue())["construction_status"], "FAILED")
 
-    @unittest.skipUnless(importlib.util.find_spec("ROOT"), "PyROOT unavailable")
+    @unittest.skipUnless(have_real_pyroot(), "PyROOT unavailable")
     def test_root_sources_and_outputs_complete_the_same_path(self) -> None:
         manifest = json.loads(self.manifest.read_text())
         for role, declaration in manifest["sources"].items():
@@ -622,7 +627,7 @@ class ZBuildIntegration(unittest.TestCase):
                     source.diagonal(build.TOTAL_KEY, 3), expected
                 )
 
-    @unittest.skipUnless(importlib.util.find_spec("ROOT"), "PyROOT unavailable")
+    @unittest.skipUnless(have_real_pyroot(), "PyROOT unavailable")
     def test_root_matrix_orientation_and_missing_objects(self) -> None:
         path = self.directory / "orientation.root"
         matrix = np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]])

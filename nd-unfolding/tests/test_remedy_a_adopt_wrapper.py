@@ -771,6 +771,10 @@ class _WithFakeROOT:
         global _FAKE_ROOT
         _FAKE_ROOT = _FakeROOTModule(self.files)
         self._saved = sys.modules.get("ROOT")
+        # MARKED so a consumer can tell a stub from real PyROOT. `import ROOT` SUCCEEDS
+        # against a stub, so an `except ImportError` probe reports PyROOT present and the
+        # gated tests run against a two-attribute fake. See test_z_pilot.HAVE_ROOT.
+        _FAKE_ROOT.__mnv_stub__ = True
         sys.modules["ROOT"] = _FAKE_ROOT
         return _FAKE_ROOT
 

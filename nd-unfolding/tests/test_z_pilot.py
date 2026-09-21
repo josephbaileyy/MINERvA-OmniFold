@@ -765,11 +765,13 @@ class LauncherStaticChecks(unittest.TestCase):
             self.assertIn(f"${{{var}:?", self.text, var)
 
 
-try:  # pragma: no cover - environment probe
-    import ROOT  # noqa: F401
-    HAVE_ROOT = True
-except Exception:  # pragma: no cover
-    HAVE_ROOT = False
+# ⚠ `import ROOT` SUCCEEDING IS NOT "PyROOT IS AVAILABLE", AND THE DIFFERENCE IS ORDER-DEPENDENT.
+# Other suites install a marked stub at collection time; `root_probe` is the one definition of the
+# question these guards mean to ask, and it carries the measurements. This file passed ALONE
+# (53 passed, 4 skipped) and FAILED with 4 errors behind one stub installer -- the 4 that skipped.
+from root_probe import have_real_pyroot  # noqa: E402
+
+HAVE_ROOT = have_real_pyroot()
 
 
 @unittest.skipUnless(HAVE_ROOT, "PyROOT unavailable")

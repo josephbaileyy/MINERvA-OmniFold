@@ -1641,8 +1641,6 @@ class TheReceiptRefusesToRecordAPassItCannotJustify(unittest.TestCase):
             self.assertIn(key, stamp)
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
 
 
 class TheDeclaredLegSet(unittest.TestCase):
@@ -1706,3 +1704,7 @@ class TheDeclaredLegSet(unittest.TestCase):
         out = zv.assess(zv.Z_LEG_SET, stats, all_valid())
         self.assertIn("NOT MET", out.branch_label)
         self.assertEqual(out.failing_legs, ("s_proj",))
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

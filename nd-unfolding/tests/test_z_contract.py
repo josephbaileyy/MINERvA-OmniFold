@@ -720,8 +720,6 @@ class TheLightGBMProbeRefusesWhatItCannotVerify(unittest.TestCase):
 
 # Entry point at the END of the file, so running this file collects EVERY class above. A
 # `unittest.main()` placed mid-file leaves later classes undefined and still exits zero.
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
 
 
 class TheExhaustivenessLegCanActuallyFail(unittest.TestCase):
@@ -790,3 +788,6 @@ class TheExhaustivenessLegCanActuallyFail(unittest.TestCase):
         self.assertFalse(set(zc.RESIDUAL_BANDS) & set(zc.VERT_BANDS))
         self.assertFalse(set(zc.RESIDUAL_BANDS) & set(zc.LATERAL_BANDS))
 
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

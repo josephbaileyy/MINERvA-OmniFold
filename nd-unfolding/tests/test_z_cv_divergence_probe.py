@@ -180,8 +180,6 @@ class TheProbeDoesNotModifyProduction(unittest.TestCase):
         self.assertNotIn("seed + 7", src)
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class TheFiveDimensionalKernelMustBeTheOneCalled(unittest.TestCase):
@@ -309,3 +307,7 @@ class CheckpointAndEndpointAreReportedSEPARATELY(unittest.TestCase):
         """Checked against the loop, not asserted."""
         loop = (REPO / "nd-unfolding" / "omnifold_nn_core.py").read_text().splitlines()
         self.assertIn("w_push[pass_reco]", loop[252])   # 1-indexed :253
+
+
+if __name__ == "__main__":
+    unittest.main()

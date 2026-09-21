@@ -4,6 +4,7 @@ The closure is intentionally narrow: it may alter only a copied pseudo-data
 reconstructed E_avail column.  Truth, nominal response arrays, weights, and
 event membership are outside the perturbation contract.
 """
+import importlib.util
 import os
 import sys
 import types
@@ -19,6 +20,20 @@ def _load_module():
     if "ROOT" not in sys.modules:
         stub = types.ModuleType("ROOT")
         stub.gROOT = types.SimpleNamespace(SetBatch=lambda *a, **k: None)
+        # ⚠ `__spec__` IS NOT OPTIONAL, AND THE COST OF OMITTING IT IS PAID BY OTHER FILES.
+        # This stub is installed at MODULE IMPORT TIME -- i.e. during pytest COLLECTION -- and is
+        # never removed, so it outlives this file. `types.ModuleType` leaves `__spec__` as None,
+        # and pytest's assertion-rewrite hook raises `ValueError: ROOT.__spec__ is None` when a
+        # LATER module does `import ROOT`. Measured 2026-09-21: per-file runs of those modules
+        # passed while `pytest tests/` aborted with 6 collection errors, which is the worst shape
+        # a defect can take -- green in the way people check, red in the way CI would.
+        # A spec built with a None loader is what a module legitimately created at runtime looks
+        # like to the import system, so this makes the stub honest rather than papering over it.
+        stub.__spec__ = importlib.util.spec_from_loader("ROOT", loader=None)
+        # MARKED so a consumer can tell a stub from real PyROOT. `import ROOT` SUCCEEDS
+        # against a stub, so an `except ImportError` probe reports PyROOT present and the
+        # gated tests run against a two-attribute fake. See test_z_pilot.HAVE_ROOT.
+        stub.__mnv_stub__ = True
         sys.modules["ROOT"] = stub
     for path in (os.path.join(_ROOT_DIR, "2d-unfolding"), _ND):
         if path not in sys.path:

@@ -190,8 +190,6 @@ class TheAdoptionRecordMustNameTheProduct(unittest.TestCase):
         self.assertIn("record names the measured source digest", r.stdout)
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
 
 
 class AdoptionSentinelIsNotAKeywordSearch(unittest.TestCase):
@@ -381,4 +379,4 @@ class TheLauncherCanActuallyHandOverTheExceptionRecord(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)

@@ -132,6 +132,10 @@ class ProjectCovNDReceipt(unittest.TestCase):
 
     def setUp(self):
         _STORE.clear(); _CURRENT[0] = None
+        # MARKED so a consumer can tell a stub from real PyROOT. `import ROOT` SUCCEEDS
+        # against a stub, so an `except ImportError` probe reports PyROOT present and the
+        # gated tests run against a two-attribute fake. See test_z_pilot.HAVE_ROOT.
+        _ROOT.__mnv_stub__ = True
         sys.modules["ROOT"] = _ROOT
         import project_cov_nd as P
         self.P = P
@@ -267,8 +271,6 @@ class ProjectCovNDReceipt(unittest.TestCase):
         self.assertEqual(M.shape[0], 0)
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
 
 
 class RunClassLabel(unittest.TestCase):
@@ -359,8 +361,6 @@ class RunClassLabel(unittest.TestCase):
         self.assertEqual(rec["run_class"], "UNDECLARED")
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class NpzInputPath(unittest.TestCase):
@@ -836,3 +836,6 @@ class VariantIsTheOnlyThingThatDistinguishesTheTwoCandidates(unittest.TestCase):
         self.assertEqual(rec["src_variant_declared"], "cv")
         self.assertEqual(rec["src_variant_measured"], "cv")
 
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
