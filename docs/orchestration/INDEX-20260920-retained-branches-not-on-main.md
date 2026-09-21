@@ -43,3 +43,59 @@ Counts are `git rev-list --count main..origin/<branch>`, **re-measured 2026-09-2
 | `lane/cause3-voi-20260906` | `47494dbeda1a58f6ed8ee63c7bc698e580c04c5b` | 1 | The corrected cause-3 VOI packet: the composite is the Gate-2-blocked M(ii) family. |
 | `lane/null-only-plan` | `819c64cad3925861d0388f215998f64fa3c3a00a` | 1 | The revised null-only plan: no slab migration, no pinning, one overclaim withdrawn. |
 | `salvage-pet-gate6-preservation-20260903` | `93a75cf685c42ff9e26b0e0b990383f94949fa1d` | 1 | The PET Gate-6 branch-family preservation anchor: two pushed tags, removal proposed and not executed. |
+
+---
+
+## ⚠ FINDING 2026-09-20 — the revision that BUILT the adopted covariance was reachable from no tag and not from `main`
+
+**`fb9ec3560fd6d62295dffc81b5694c9e26667d5b`** is named as the **assembling revision** in
+`z-cv.npz`'s **own metadata**, in `z-receipt-cv.json`, in the adoption record §5, and in **every**
+`git show fb9ec356:<path>` command of the third-lane verification. Measured while profiling the
+retained set:
+
+| question | measured |
+|---|---|
+| `git merge-base --is-ancestor fb9ec356 main` | **NO** |
+| `git tag --contains fb9ec356` | **empty** |
+| branches containing it | **`lane/z-assembly-pilot-20260914` only** |
+
+**And `main` having `z_*.py` is not a substitute.** Five of the six build modules differ from that
+revision — only `z_assembly.py` is byte-identical:
+
+| module | `main` vs `fb9ec356` |
+|---|---|
+| `z_assembly.py` | **SAME** |
+| `z_build.py`, `z_contract.py`, `z_receipt.py`, `z_statistics.py`, `z_validator.py` | **DIFFER** |
+
+So the code that built the published product was **one branch deletion away from being unreadable**,
+while `main` would still have looked like it carried the build path.
+
+**REPAIRED, per `CLAUDE.md`'s rule that pre-freeze provenance may leave `main` only through a pushed
+evidence tag:**
+
+    evidence/z-assembling-revision-fb9ec356   ->  fb9ec3560fd6d62295dffc81b5694c9e26667d5b
+
+Annotated, **pushed**, and verified **on the remote** by peeling
+(`refs/tags/…^{}` = `fb9ec356`) rather than by reading the push's output. Durability of that commit
+no longer depends on any branch.
+
+⚠ **What the tag does NOT do:** it does not put the build path on `main`, and it does not make
+`lane/z-assembly-pilot-20260914` deletable *on its own merits* — that branch holds 51 commits and 41
+files beyond this one revision. It removes the single worst consequence of deleting it.
+
+### Disposition of the retained set — RECOMMENDED, not decided
+
+| group | branches | recommendation |
+|---|---|---|
+| **PET — live workstream** | `pet-direct-token-comparison` (tip 2026-09-20), `pet-prong-semantics`, `pet-gate6-strategy-20260825`, `codex/pet-gate6-strategy-20260825`, `codex/pet-gate6-gap1-full-inventory-20260830`, `salvage-pet-gate6-preservation-20260903` | **LEAVE.** Not this closeout's subject, and PET has six PENDING jobs. Two already carry `evidence/preserved-…` tags. |
+| **Scalar-5D docs, small** | `audit/scalar-5d-publication-gaps` (1 commit, 1 file), `lane/cause3-voi-20260906` (5 files), `lane/decision-20260910-z-endpoint-a-ruling` (5 files) | **MERGE, then delete.** Each is a handful of `docs/` files; the conflicts will be `CATALOG.md` / `MANIFEST-overrides.tsv`, which the repaired guard now reports rather than refuses. |
+| **Scalar-5D, code-bearing** | `lane/z-assembly-pilot-20260914` (51), `lane/z-criteria-recommendation-20260910` (60), `lane/z-campaign-ownership-20260913` (10), `lane/null-only-plan` (2 files) | **DECIDE PER BRANCH — do not bulk-merge.** These carry executable files that would land on the publication path. The assembling revision is now tagged, so the urgency is gone. |
+| **Infrastructure** | `feat/production-interface` (6 commits, 46 non-doc files, tip 2026-09-12) | **ITS OWNER'S CALL.** It is a feature branch, not closeout residue. |
+
+**The rule that makes any of this safe is already written:** verify the tip is an ancestor of `main`
+before deleting, and record every name→SHA **before** the deletion, not after
+([`LEDGER-20260920-deleted-branch-names-to-sha.md`](LEDGER-20260920-deleted-branch-names-to-sha.md)).
+⚠ **Add one clause to it, which this finding is the reason for: before deleting a branch, check
+whether any SHA it uniquely reaches is CITED** — by a receipt, a product's metadata, or a decision
+record. An ancestor check protects history; it does not protect a citation.
+
