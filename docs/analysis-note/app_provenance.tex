@@ -1,0 +1,53 @@
+\section{Repository records cited in this note}
+\label{app:provenance}
+
+Several statements in this note rest on records in the analysis repository rather than on anything
+a reader can recompute from the published inputs. Those records are collected here rather than
+inlined, for two reasons. A repository path is not usable by a reader outside the collaboration, so
+in the body it interrupts a physics argument with a string that cannot be followed; and gathering
+them in one table means a path that moves has one place to be corrected instead of five.
+
+\textbf{This appendix is provenance, not evidence.} Nothing here is a result, and no statement in
+the body becomes stronger because its record is listed. Where a claim depends on a record whose own
+limitations matter---most importantly the adopted covariance's four measurements
+(\S\ref{sec:eavailw-adopted})---those limitations are stated at the claim, not delegated here.
+
+The tags are stable; the paths are current as of 2026-09-21.
+
+\begin{center}
+\small
+\begin{tabular}{@{}llp{0.42\textwidth}@{}}
+\toprule
+Tag & Cited at & Record \\
+\midrule
+\texttt{negweight-toy} & \S\ref{app:negweight} &
+  \texttt{docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json} \\
+\texttt{negweight-audit} & \S\ref{app:negweight} &
+  \texttt{docs/orchestration/AUDIT-FINDINGS-20260731.md}, tier~A \\
+\texttt{gbdt-closeout} & \S\ref{app:negweight} &
+  \texttt{docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md} \S2.1--2.2 \\
+\texttt{oi6-oi8-oi126} & \S\ref{app:negweight} &
+  \texttt{docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md} \\
+\texttt{p4-verifier} & \S\ref{app:negweight} &
+  \texttt{docs/orchestration/runs/standard-p4-verifier/} \\
+\texttt{fps-battery} & \S\ref{app:negweight} &
+  FPS ME~FHC battery of 2026-06-10, scheduler job \texttt{54244120} \\
+\texttt{rank-inversion} & \S\ref{app:statmethods} &
+  \texttt{docs/orchestration/RANK-AND-INVERSION-20260810.md} \\
+\texttt{gbdtfive-macros} & \S\ref{sec:systematics} &
+  \texttt{docs/orchestration/PROCEDURE-gbdtFive-macro-update.md} \\
+\texttt{retracted-values} & \S\ref{sec:pet} &
+  \texttt{docs/orchestration/INDEX-retracted-and-superseded-values.md} \\
+\texttt{pet-pairing} & \S\ref{sec:pet} &
+  \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{One record is deliberately \emph{not} moved here.} The adopted five-axis covariance is
+identified in the body by its \texttt{sha256} (\S\ref{sec:eavailw-adopted}), and that digest stays
+in the body. It is not a routing pointer: it is the identity of the object every quoted
+uncertainty is computed from, it is checkable by anyone holding the file, and the pairing between
+the covariance and the central values is established \emph{by} that digest rather than by numerical
+agreement. Moving it to an appendix would relocate the one identifier a reader needs in order to
+know which object the numbers describe.

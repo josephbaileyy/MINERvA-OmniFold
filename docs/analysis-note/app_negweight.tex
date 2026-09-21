@@ -29,7 +29,7 @@ production numbers: the driver was uncommitted when those outputs were written, 
 executing revision is corroborated by a version-distinct log string rather than pinned
 by a digest, and no output carries a producing job identifier, which no later run can
 supply. Receipts: \texttt{RECEIPT-20260821-negweight-hpss-durability} and
-\texttt{docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json}.
+App.~\ref{app:provenance} (\texttt{negweight-toy}).
 
 \subsection{Estimator}
 \label{sec:negweight-estimator}
@@ -255,7 +255,7 @@ binning-independence and continuous floor are essential.
 \textbf{The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ reported in
 \S\ref{sec:fps} was not produced with negative-weight injection}, and an earlier
 version of this appendix implied that it was. The product is dated: it comes from
-the FPS MEFHC battery of \textbf{2026-06-10}, job \texttt{54244120}
+the FPS ME~FHC battery of \textbf{2026-06-10} (App.~\ref{app:provenance}, \texttt{fps-battery})
 (\texttt{VALIDATION\_LEDGER.md}, ``FPS MEFHC battery''), whereas the
 negative-weight driver code did not land until \textbf{2026-07-11}
 (\texttt{cf8a4a6}) and the \texttt{-{}-bkg-mode negweight-refined} launcher flag
@@ -271,7 +271,7 @@ ledger-verified central number from that gated battery, and this correction does
 not change it. What is withdrawn is the \emph{footing}: negative-weight injection
 is the intended baseline for the extended-fiducial analysis, not the one behind
 the number quoted here. (Audit finding J22,
-\texttt{docs/orchestration/AUDIT-FINDINGS-20260731.md}, tier A.)
+App.~\ref{app:provenance}, \texttt{negweight-audit}.)
 
 \subsection{Which footing each production chain stands on}
 \label{sec:negweight-footing}
@@ -309,8 +309,8 @@ question --- whether the locked instruction that $N$-D production runs
 \texttt{negweight-refined} reaches the standard-phase-space chain, or only its
 extended-fiducial form --- and answered in favour of purity on 2026-08-07 and
 again, after the alternative was costed, on 2026-08-15
-(\texttt{docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md} \S2.1--2.2;
-\texttt{docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md}). Two
+(App.~\ref{app:provenance}, \texttt{gbdt-closeout} and
+\texttt{oi6-oi8-oi126}). Two
 grounds carried it. First, mixing footings inside one covariance is worse than
 either consistent choice: dropping a negative-weight-footed lateral block into a
 purity-footed central and vertical set is a footing mismatch, not an upgrade.
@@ -375,14 +375,12 @@ same limit applies to the estimator caveat: raw negative weights destabilise the
 safe, not evidence that it is immaterial.
 
 \paragraph{The footing question is settled; the adoption gate is a different one.}
-\textbf{Nothing here adopts any five-dimensional covariance.} This paragraph used to
-say that the standard covariance remained a candidate \emph{because} its
-selection-complete active-lateral component was not built. That is no longer the
-state: the component \emph{is} built --- five bands, ten endpoint unfolds carrying
-distinct digests bound in the adopted product's receipt --- and one five-axis
-covariance is now adopted under a digest-bound exception
-(\S\ref{sec:eavailw-adopted}). What this appendix establishes is unaffected, because
-it was never the adoption argument. The two questions are independent, and settling
-the footing removes one blocking decision while leaving every other precondition on
-that component exactly where it stood. Routed record:
-\texttt{docs/orchestration/runs/standard-p4-verifier/}.
+\textbf{Nothing here adopts any five-dimensional covariance.} The
+selection-complete active-lateral component is built --- five bands, ten endpoint
+unfolds carrying distinct digests bound in the adopted product's receipt --- and one
+five-axis covariance is adopted under a digest-bound exception
+(\S\ref{sec:eavailw-adopted}). Neither fact follows from anything in this appendix,
+and neither is needed by it: the footing question and the adoption gate are
+independent, and settling the footing removes one blocking decision while leaving
+every other precondition on that component exactly where it stood. Routed record:
+App.~\ref{app:provenance} (\texttt{p4-verifier}).
