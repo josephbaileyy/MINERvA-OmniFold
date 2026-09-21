@@ -340,8 +340,12 @@
 \newcommand{\floorExponent}{1.467}       % the resampling floor, same range: falls steeply
 \newcommand{\floorNforty}{20.91}         % percent, 12 disjoint pairs
 \newcommand{\floorNeighty}{7.57}         % percent, 2 pairs
-% (3) Five of 45 bands are seed-pinned, so the effect above is a LOWER bound.
-%     EVIDENCE-20260919-lateral-bands-are-seed-pinned.md.
+% (3) Five of 45 bands are seed-pinned, so the effect above is measured on the
+%     other forty only. NOT a lower bound -- that inference was withdrawn
+%     2026-09-20 on the third-lane verification's P1; s_proj is a MAXIMUM over a
+%     functional set, not a sum of nonnegative component magnitudes.
+%     EVIDENCE-20260919-lateral-bands-are-seed-pinned.md;
+%     CORRECTION-20260920-lower-bound-inference-withdrawn.md.
 \newcommand{\pinnedBandsSqrtTr}{26.0}    % percent of sqrt(Tr C_Z)
 \newcommand{\pinnedBandsTrace}{6.75}     % percent of the trace
 % (4) The seed also moves the CENTRAL values -- as a fraction of the QUOTED uncertainty.
@@ -350,3 +354,17 @@
 \newcommand{\cvMoveOverSigmaMax}{6.02}   % percent of its own sigma -- the deciding ratio
 \newcommand{\cvMoveOverSigmaMed}{1.06}   % percent of sigma, median
 \newcommand{\cvMoveBinOverSigmaMax}{49.8}% percent of sigma, worst SINGLE 5D bin
+% (5) Cause 7's magnitude: Z's OWN lateral counterfactual, sum_A L_active vs sum_A L_support.
+%     VALIDATION_LEDGER.md VL144; reproduced independently by a third lane 2026-09-20.
+%     CAUTION the -0.0288% is a change in the lateral block's SQUARE-ROOT TRACE. It is
+%     NOT a bound on any individual bin and NOT a bound on the complete covariance.
+%     Joseph 2026-09-19 section 3: small aggregate variance share does NOT make a bin
+%     irrelevant to a quoted result -- so the FULL range is the report and the top-1%
+%     range is a subset of it, never a substitute.
+\newcommand{\latTraceMove}{-0.0288}      % percent, sqrt-trace of the lateral block
+\newcommand{\latBins}{10\,694}           % reported bins carrying the per-bin ratios
+\newcommand{\latRatioMin}{0.177}         % per-bin sqrt(diag_active/diag_support), all bins
+\newcommand{\latRatioMax}{3.062}
+\newcommand{\latRatioTopMin}{0.687}      % SAME ratio, top 1% of bins by support variance
+\newcommand{\latRatioTopMax}{1.153}
+\newcommand{\latTopVarShare}{74.11}      % percent of total support variance in that top 1%

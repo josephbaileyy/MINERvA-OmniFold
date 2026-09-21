@@ -28,10 +28,29 @@ universes use the same mean-centered $1/N$ formula.
 Dump-all shifted branches are limited to CV event-loop support. For the five
 genuinely kinematic bands (BeamAngleX/Y, MuonResolution, and
 Muon\_Energy\_MINERvA/MINOS), selection-complete active-universe event loops
-are the production migration gate and are still in progress; until their
-replacement covariance lands, higher-dimensional uncertainty products that use
-the dump-all lateral branches remain candidates. MinosEfficiency and GEANT are
-weight-only. Top 2D bands: Flux \SI{\fluxBand}{\percent}, Muon\_Energy\_MINOS
+are the production migration gate. That replacement has landed for the adopted
+five-axis covariance, whose lateral block is built from those selection-complete
+bands; higher-dimensional products still built from the dump-all lateral
+branches remain candidates. Replacing the support-limited lateral block by the
+selection-complete one moves that block's square-root trace by
+\SI{\latTraceMove}{\percent}. That is a change in a square-root trace and is
+\emph{not} a bound on any individual bin: across the \latBins\ reported bins
+the per-bin ratio of active to support standard deviation runs \latRatioMin\ to
+\latRatioMax, and within the top \SI{1}{\percent} of bins by support variance
+--- which carry \SI{\latTopVarShare}{\percent} of the total --- it runs
+\latRatioTopMin\ to \latRatioTopMax. A small share of the aggregate variance
+does not make a bin irrelevant to a quoted result.
+
+\paragraph{Scope of the selection-complete replacement.} The selection-complete
+replacement covers the five detector bands implemented through shifted
+reconstructed kinematics. MINOS efficiency and the three GEANT
+hadron-interaction bands (GEANT\_Neutron, GEANT\_Pion, GEANT\_Proton) retain
+their weight-based treatment. This classification establishes their exclusion
+from the kinematic replacement; it does not independently validate the
+completeness of the hadronic-response model for the $\Eavail$ and $W$
+measurement.
+
+Top 2D bands: Flux \SI{\fluxBand}{\percent}, Muon\_Energy\_MINOS
 \SI{2.31}{\percent}, MinosEfficiency \SI{1.47}{\percent},
 Muon\_Energy\_MINERvA \SI{1.29}{\percent}. Figure~\ref{fig:uqbands} shows the
 grouped fractional-uncertainty projections in the published Fig.~6/7 style

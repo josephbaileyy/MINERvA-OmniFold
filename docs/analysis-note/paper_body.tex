@@ -170,10 +170,18 @@ is a property of the estimator rather than of the ensemble's resolution, and a
 larger ensemble would not reduce it.  Five of the covariance's 45 bands are
 built at a fixed seed the variation cannot reach, carrying
 \SI{\pinnedBandsSqrtTr}{\percent} of $\sqrt{\mathrm{Tr}\,C}$ and contributing
-none of the movement, so the figure is a lower bound.  The same variation
+none of the movement, so their seed sensitivity is unprobed and the effect on
+the total were they also to vary is not measured in either direction.  The same variation
 moves the projected central values by at most
 \SI{\cvMoveOverSigmaMax}{\percent} of their own quoted uncertainty (median
 \SI{\cvMoveOverSigmaMed}{\percent}).
+
+The selection-complete replacement underlying that covariance covers the five
+detector bands implemented through shifted reconstructed kinematics.  MINOS
+efficiency and the three GEANT hadron-interaction bands retain their
+weight-based treatment.  This classification establishes their exclusion from
+the kinematic replacement; it does not independently validate the completeness
+of the hadronic-response model for the $\Eavail$ and $W$ measurement.
 
 Two extensions lie outside this result.  Removing the published truth-level
 muon cuts gives a preliminary extended-fiducial cross section in which

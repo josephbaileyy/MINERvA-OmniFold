@@ -115,6 +115,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   no annotated objects were lost, and the four `z-deploy` commits remain reachable from
   `lane/z-assembly-pilot-20260914`. **Do not run `--prune-tags` against `origin` in this repo:**
   local-only tags are load-bearing here and the flag treats them as stale.
+- [`QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md`](QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md)
+  - **PREPARED, NOT SENT.** The focused collaborator question Joseph's 2026-09-19 §5 requires, with
+  the full 45-band split it is asked against (A 5 lateral / V 13 vertical / R 27 residual, the four
+  at issue named), the upstream reference (Aliaga, NIM A **789** 28), and three sharpened
+  sub-questions a yes/no cannot answer. ⚠ Carries the ruling's limits on the answer: **silence
+  reopens nothing**, generic precedent is not proof for this measurement, a concrete omission must
+  return **with its affected observable and a remedy**, and no uncertainty may be invented from it.
 - [`VERDICT-20260920-third-lane-c5-c7-verification.md`](VERDICT-20260920-third-lane-c5-c7-verification.md)
   - **The THIRD-LANE independent verification of `(5, Z)` and `(7, Z)`**, committed **verbatim** as
   the verifier wrote it. It is the lane `DISCLOSURE-20260920`'s `V2` said was required: it authored

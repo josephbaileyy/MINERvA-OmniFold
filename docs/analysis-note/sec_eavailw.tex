@@ -209,7 +209,8 @@ systematic endpoint convention. The
 detector block uses five shifted-kinematic bands
 (\texttt{Muon\_Energy\_MINERvA/MINOS}, \texttt{MuonResolution}, and
 \texttt{BeamAngleX/Y}) plus weight-only \texttt{MinosEfficiency} and GEANT
-bands. Selection-complete active-universe event loops are also required to
+bands; the scope that classification does and does not establish is stated in
+\S\ref{sec:systematics}. Selection-complete active-universe event loops are also required to
 bound migrations omitted by the CV-support-limited dump-all sample.
 
 \subsection{The adopted five-axis covariance, and the four measurements that qualify it}
@@ -246,11 +247,16 @@ number from a committed receipt, and each bounds what may be claimed.
   at a \emph{single} seed pair; the width of the seed-pair distribution is
   unmeasured, and the statistic is a maximum over the declared offset set, so
   further pairs can only raise it.
-\item \textbf{It is a lower bound.} Five of the covariance's 45 bands --- the
-  muon-energy, muon-resolution and beam-angle blocks --- are produced at a fixed
-  estimator seed that the offset does not reach, by construction of the
-  endpoint convention. They carry $\pinnedBandsSqrtTr\,\%$ of
-  $\sqrt{\mathrm{Tr}\,C}$ and contribute exactly zero movement.
+\item \textbf{Five bands lie outside what the variation probes.} Five of the
+  covariance's 45 bands --- the muon-energy, muon-resolution and beam-angle
+  blocks --- are produced at a fixed estimator seed that the offset does not
+  reach, by construction of the endpoint convention. They carry
+  $\pinnedBandsSqrtTr\,\%$ of $\sqrt{\mathrm{Tr}\,C}$ and contribute exactly zero
+  movement. The variation therefore does not probe their seed sensitivity, and
+  what the total would show were they also to vary is unmeasured \emph{in
+  either direction}: $s_{\mathrm{proj}}$ is a maximum of a relative change over
+  a set of functionals, not a sum of nonnegative component contributions, so
+  releasing a component that was held fixed can move the total either way.
 \item \textbf{The seed also moves the central values, by a small fraction of
   their own uncertainty.} On these \zprojCells\ destinations the central value
   moves by at most $\cvMoveProjMax\,\%$, against relative uncertainties of order

@@ -79,12 +79,23 @@ more of them. We checked, and it does not: the shift is the same size whether
 we use a quarter, a half, or all of our variations, while genuine statistical
 noise over that same range falls by a factor of nearly three. So it is a real
 property of the learner, and running more variations would not remove it. Two
-further facts bound it: five of the forty-five uncertainty components are built
-in a way the seed cannot reach at all, so the figure above is a floor rather
-than a ceiling; and the same seed change moves the \emph{central values} too,
+further facts qualify it: five of the forty-five uncertainty components are
+built in a way the seed cannot reach at all, so the figure above is the effect
+of the other forty and we have not measured which way those five would move it;
+and the same seed change moves the \emph{central values} too,
 though only by at most \SI{\cvMoveOverSigmaMax}{\percent} of their own
 uncertainty. Reporting a significance on top of that would claim a precision
 the input does not have.
+
+One more thing is worth saying plainly about what the detector uncertainties
+cover. Five of them describe effects that move a muon's measured momentum or
+angle, and for those we rebuilt the simulation end to end so that events
+crossing into or out of the selection are counted properly. Four others ---
+the MINOS efficiency and three describing how hadrons interact in the detector
+--- are applied instead by reweighting the simulated events, so there is
+nothing to rebuild. That tells us why those four sit outside the rebuild; it
+does not by itself show that the set of hadronic-response variations we
+include is the complete set this measurement needs.
 
 The two-dimensional trust check is unaffected and retains its independently
 constructed uncertainty.
