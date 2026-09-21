@@ -88,9 +88,9 @@ uses charged-pion total energy.  We therefore do not claim generically to
 One inherited constant must remain explicit.  Production subtracts
 \SI{135}{MeV} per charged pion rather than the physical charged-pion mass of
 approximately \SI{139.57}{MeV}.  It was not corrected in production.  A
-committed measurement of the effect exists, but there is not yet an adopted
-scalar-5D covariance to project, so materiality against the eventual adopted
-projection has not been established.  This note neither calls the effect
+committed measurement of the effect exists, and a scalar-5D covariance is now
+adopted, but its projection has not been used to assess this constant, so
+materiality against the adopted projection is still not established.  This note neither calls the effect
 immaterial nor applies the six-site correction or triggers a rerun.
 
 The event loop evaluates both accessors
@@ -239,7 +239,9 @@ only as a quarantined numerical diagnostic in Fig.~\ref{fig:3dfullcov}.
   \caption{Quarantined historical full-3D truncated-spectral scan. It shows the
   old per-generator $\chi^{2}/\mathrm{ndf}$ versus eigenvalue tolerance and is
   retained only to document numerical behavior; no value is interpreted until
-  the selection-complete 5D covariance is adopted and projected to 3D.}
+  the selection-complete 5D covariance is adopted \emph{and} projected to 3D.
+  The first has happened; the 3D projection has not been built, so the gate
+  still holds.}
   \label{fig:3dfullcov}
 \end{figure}
 
@@ -257,9 +259,10 @@ per-bin relative uncertainty \SI{10.4}{\percent}, numerical rank $247$ (of
 1431), and the same flux-dominated band ordering as 2D
 (Fig.~\ref{fig:3dbands}). These are audit descriptors, not publication
 uncertainties. Under the corrected contract, the quotable 3D covariance is the
-exact projection of the final adopted 5D covariance after the
-selection-complete lateral replacement; all covariance-dependent 3D
-comparisons are gated on that product.
+exact projection of the adopted 5D covariance. That covariance now exists
+(\S\ref{sec:eavailw-adopted}) and the replacement it waited on has landed, but
+the 3D projection itself has not been built, so all covariance-dependent 3D
+comparisons remain gated on a product that does not yet exist.
 
 \begin{figure}[H]
   \centering
