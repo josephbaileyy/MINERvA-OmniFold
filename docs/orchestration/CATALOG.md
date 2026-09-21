@@ -3954,6 +3954,17 @@ Added 2026-08-22. The B1 pause is **LIFTED**; read both of these before any subm
   submission is authorized.** Read §5 for the shortest list that would close the gate, and §2 for
   three builder claims that reproduce differently.
 
+- [`PROPOSAL-20260921-note-appendix-and-test-consolidation.md`](PROPOSAL-20260921-note-appendix-and-test-consolidation.md)
+  - **Two proposals, neither executed.** (1) `app_statmethods.tex` is 1,765 lines and **216 of them
+  are the full-event `C_stat` construction** -- PET material, which Joseph's 2026-08-20 ruling puts
+  off the publication path, sitting in the last eighth of the appendix a reader opens to check how
+  the published uncertainty was built. Proposed: move all seven subsections beside the PET material;
+  nothing deleted. Stopped at a proposal because the file carries `\dead{}` markup the containment
+  check enforces, and because what belongs in a physics note is the note owner's judgement.
+  (2) **The rule for test consolidation, written BEFORE anyone consolidates.** 126 files / 63,611
+  lines: additive first, every deletion names the finding it retires, never consolidate against a
+  red suite, re-run whole-directory rather than per-file. Names three tests from 2026-09-21 that a
+  plausible consolidation would have removed as redundant and that each caught something.
 ### The remaining twelve — conventions, criteria, procedures and templates (indexed 2026-09-21)
 
 Measured citation counts: `grep -rl` over `*.md`/`*.py`/`*.tex`/`*.sh`, excluding each file itself.
