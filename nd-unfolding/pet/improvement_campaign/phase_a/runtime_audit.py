@@ -821,6 +821,9 @@ def main() -> int:
     # `configure_production_precision`). On Perlmutter's tensorflow/2.15.0 there is no tf_keras
     # shim, so the backend choice `keras_backend.select_keras_backend` makes is the same either
     # way; this is recorded below rather than assumed.
+    from numpy_probe import disable_numpy_sve_probe
+
+    numpy_probe = disable_numpy_sve_probe()
     import numpy as np
     import tensorflow as tf
 
@@ -855,6 +858,7 @@ def main() -> int:
             "driver_module_file": getattr(rae, "__file__", None),
             "evaluate_source_file": inspect.getsourcefile(rae.evaluate),
             "post_import_hooks_fired": hook.fired,
+            "numpy_sve_probe": numpy_probe,
             "keras_instrumentation": keras_info,
             "environment": {k: os.environ.get(k) for k in (
                 "TF_DETERMINISTIC_OPS", "NVIDIA_TF32_OVERRIDE", "TF_USE_LEGACY_KERAS",
