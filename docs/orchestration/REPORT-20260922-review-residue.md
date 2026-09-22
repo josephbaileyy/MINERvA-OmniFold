@@ -36,6 +36,14 @@ forbid continuing.
 | **agy #2, attempt 1** | ⚠ **NO VERDICT** | **died on a session rate limit during its first action.** Not a clean round — see §1a |
 | **agy #2, attempt 2** | **9** | **counter RESET again.** All nine verified and fixed |
 | **10 (self)** | **2** | ⚠ **(a) I MISCOUNTED THE ROUNDS TO REACH THE CAP** (see below); ⚠ **(b) §3, this report's conclusions section, was STALE in three of five items** including one claim §1b had already withdrawn. Everything else in round 10 verified clean: the committed probes are byte-identical to what ran on the cluster; the figure-readers list is now correct and complete (two `--cov` invocations, both named); the 9/5 arithmetic and the restored README clauses all hold |
+| 11 (self) | **1** | the 3D projection's eigenvalues were cited from an **uncommitted** job log; the receipt has no eigenvalue field. Log now committed. Round 11's other checks were clean — an apparent table mismatch was a parser artifact, correctly diagnosed rather than "fixed" |
+| **agy #3 (independent)** | **7** | **counter RESET a third time.** All seven verified and fixed. ⚠ **It also reproduced, on its own instruments, everything it could not break: the whole release package including the `M` digest and the repaired §6 recipe; all five figure readers; both `_v2` diffs byte-identical to the cluster copies; all of `VL145`; and every measurement in `KNOWN_ISSUES` 61–65** |
+| 12 (self) | **0** | all seven of agy #3's fixes verified, including the repaired probe executed. One apparent failure was my own bare `not in` test matching a retraction quote — diagnosed, not "fixed" |
+| 13 (self) | **2** | ⚠ **(a)** a correction to finding 14's disposition reached §2 and **not** §3 — the one-of-two-sites failure recurring inside the fix for it, found only by sweeping the CLAIM; ⚠ **(b)** this very table had **fragmented** into orphaned single-row tables with the TOTAL line before the last round. Both fixed |
+
+**TOTAL: self rounds 1–13 = 3+0+0+1+1+1+0+0+0+2+1+0+2 = 11; independent reviews = 14+9+7 = 30;
+TOTAL 41.** **THIRTY of the forty-one were found by the three INDEPENDENT reviewers; eleven by me
+across thirteen self-rounds.**
 
 ⚠ **ROUND 10's FINDING IS THE ROUND COUNT ITSELF, and it was in this report.** The line above
 previously read *"9 self-rounds + 2 independent reviews = 11 review rounds; the instruction caps
@@ -50,15 +58,6 @@ arithmetic error the reviewers found in my own bookkeeping rather than in my mea
 followed it, because a third independent review was still obtainable and condition (ii) was still
 open. The cap is permission to stop, not a prohibition on continuing.**
 
-| 11 (self) | **1** | the 3D projection's eigenvalues were cited from an **uncommitted** job log; the receipt has no eigenvalue field. Log now committed. (Round 11's other checks were clean: the loop table reconciles to its stated totals — an apparent mismatch was a parser artifact, correctly diagnosed rather than "fixed".) |
-
-| **agy #3 (independent)** | **7** | **counter RESET a third time.** All seven verified and fixed. ⚠ **It also reproduced cleanly, on its own instruments, everything it could not break: the whole release package including the `M` digest and the repaired §6 recipe; all five figure readers; both `_v2` diffs byte-identical to the cluster copies; all of `VL145`; and every measurement in `KNOWN_ISSUES` 61–65** |
-
-**TOTAL: self rounds 1–12 = 3+0+0+1+1+1+0+0+0+2+1+0 = 9; independent reviews = 14+9+7 = 30;
-TOTAL 39.** **THIRTY of the thirty-nine were found by the three INDEPENDENT reviewers; nine by me
-across twelve self-rounds.**
-
-| 12 (self) | **0** | all seven of agy #3's fixes verified, including the repaired probe executed. One apparent failure was my own bare `not in` test matching the retraction quote — diagnosed, not "fixed" |
 
 ## 1c. ⚠ THE LOOP TERMINATES UNDER ITS OWN RECURRENCE RULE, NOT BY SATISFYING (ii)
 
@@ -159,10 +158,16 @@ unrepairable"* — and it is immutable, so the correction lives here.**
 | 13 | §4c's disposition falsified by §4d in the same commit | correction record §4c |
 | — | (round 4) a fabricated monorepo sha in a pushed commit message | standalone `51794c5c` |
 
-**Recorded, not repaired (5)** — findings **6, 7 → row 63; 11 → row 64; 12 → row 65; and 14 →
-this report only.** ⚠ **Finding 14 is in NO `KNOWN_ISSUES` row** (`grep -n SWEEPS KNOWN_ISSUES.md`
-→ no match), which is the second half of the arithmetic error above: it was counted as recorded
-while living nowhere but a sentence in §2.
+**Recorded, not repaired (5)** — findings **6, 7 → row 63; 11 → row 64; 12 → row 65; 14 → row
+66.** ⚠ **UPDATED 2026-09-22 (round 13).** This read *"14 → this report only … Finding 14 is in NO
+`KNOWN_ISSUES` row (`grep -n SWEEPS KNOWN_ISSUES.md` → no match)"*. **That measurement was true
+when written and was falsified by row 66**, which cites *"WHY TEN SWEEPS MISSED IT"* as one of its
+instances — so the grep now returns row 66 and finding 14 is recorded after all.
+
+⚠ **The stale sentence was created BY the act of recording row 66, and row 66 is the row that
+describes exactly this class** — *a correction reaches one of the two sites that state the claim*.
+It is left visible rather than silently swapped, because a rate recorded in a row that itself
+demonstrates the rate is the most honest form the record can take.
 
 - **6 + 7 → row 63.** The PASS token carries a present-tense pointer to KNOWN_ISSUES rows that did
   not exist at its own `code_rev` (61–62 landed three commits later at `9e78a8cf`), and its
@@ -201,9 +206,12 @@ that stated the claim.
    nobody but their author**, exactly as the first ten were before the second review caught five
    fresh defects in them. **A third reviewer should start there** — measurement: every one of
    reviewer #2's nine findings landed in material that had already passed two clean self-rounds.
-2. **`KNOWN_ISSUES` rows 63, 64, 65 are open by design**, plus **finding 14** which lives only in
-   §2 of this report (`grep -n SWEEPS KNOWN_ISSUES.md` → no match). Each carries its measurement in
-   its own row.
+2. **`KNOWN_ISSUES` rows 63, 64, 65 are open by design, plus finding 14 → row 66.** Each carries
+   its measurement in its own row. ⚠ **This item read *"finding 14 … lives only in §2 of this
+   report (`grep -n SWEEPS KNOWN_ISSUES.md` → no match)"* until round 13. §2 was corrected one
+   edit earlier and THIS site was missed — the one-of-two-sites failure recurring inside the fix
+   for the one-of-two-sites failure, which is row 66's own subject. Found only by sweeping the
+   CLAIM across every record instead of revisiting the site I had just edited.**
 3. ⚠ **ITEM 4's COMPARABILITY GAP IS DECLINED, NOT IMPOSSIBLE — corrected.** `code_agrees` compares
    the members **to each other**, not against `d64257c3`, so rebuilding the k=0 member's Z at
    today's HEAD makes the pair comparable. Measured price: `0.29` task-h per Z assembly
