@@ -62,7 +62,8 @@ PKL_NAME = re.compile(r"_iter(\d+)_step(\d+)\.pkl$")
 
 # `scontrol` output is space-separated `Key=Value`; these are the keys we keep.
 ALLOC_KEYS = ("JobId", "ArrayJobId", "ArrayTaskId", "Account", "QOS",
-              "Partition", "NodeList", "TimeLimit", "NumCPUs", "TresPerJob")
+              "Partition", "NodeList", "TimeLimit", "NumCPUs", "TresPerJob",
+              "SubmitTime", "StartTime", "Command", "WorkDir", "StdOut")
 
 # The launcher exports the pinned checkout commit inside `SubmitLine=`.
 SUBMIT_COMMIT = re.compile(r"COMMIT=([0-9a-f]{40})")
@@ -112,6 +113,9 @@ def read_histories(weights_dir: Path) -> list[dict[str, Any]]:
         # Every Keras history value is a per-epoch list, so any key's length is
         # the epoch count; `loss` is the one guaranteed to be present.
         epochs_run = len(history.get("loss", []))
+        val = [float(v) for v in history.get("val_loss", [])]
+        best = min(range(len(val)), key=val.__getitem__) if val else None
+        ckpt = pkl.with_name(pkl.name[: -len(".pkl")] + ".weights.h5")
         out.append({
             "iteration": int(match.group(1)),
             "step": int(match.group(2)),
@@ -124,6 +128,15 @@ def read_histories(weights_dir: Path) -> list[dict[str, Any]]:
             # Present only if some callback wrote it; recorded so its ABSENCE is
             # itself evidence about what the executed path tracked.
             "lr": [float(v) for v in history.get("lr", [])],
+            # ModelCheckpoint(save_best_only) rewrites the .weights.h5 only when val_loss
+            # improves; the .pkl is written after fit returns. Their mtimes bracket when
+            # the best epoch was saved. The pushed weights come from the in-memory model,
+            # not from this file.
+            "val_loss_argmin_epoch": best,
+            "best_is_last_epoch": (best == len(val) - 1) if val else None,
+            "checkpoint_mtime": ckpt.stat().st_mtime if ckpt.is_file() else None,
+            "history_mtime": pkl.stat().st_mtime,
+            "checkpoint_sha256": sha256_of(ckpt) if ckpt.is_file() else None,
         })
     return sorted(out, key=lambda rec: (rec["iteration"], rec["step"]))
 
@@ -212,14 +225,81 @@ def mine_run(run_dir: Path) -> dict[str, Any]:
             "batch_size": int(batch),
             "examples_reco": int(log["num_steps_reco"]) * int(batch),
             "examples_gen": int(log["num_steps_gen"]) * int(batch),
-            # `RunModel` passes steps_per_epoch=int(train_frac*NTRAIN//BATCH_SIZE)
-            # with NTRAIN=num_steps*BATCH_SIZE, which floors to train_frac*num_steps.
-            "updates_per_epoch_reco": int(0.8 * int(log["num_steps_reco"])),
-            "updates_per_epoch_gen": int(0.8 * int(log["num_steps_gen"])),
+            # INFERRED FROM SOURCE, not logged: `RunModel` passes
+            # steps_per_epoch=int(train_frac*NTRAIN//BATCH_SIZE) with
+            # NTRAIN=num_steps*BATCH_SIZE, which floors to train_frac*num_steps. The
+            # runtime audit measures the same quantity at small scale.
+            "updates_per_epoch_reco_source_formula": int(0.8 * int(log["num_steps_reco"])),
+            "updates_per_epoch_gen_source_formula": int(0.8 * int(log["num_steps_gen"])),
             "train_frac_assumed": 0.8,
             "train_frac_source": "MultiFold.__init__ default; the driver passes no train_frac",
         }
+    rows = receipt.get("closure", {}) if receipt.get("present") else {}
+    if log.get("num_steps_gen") and rows.get("prior_rows"):
+        # Batch size as the ENGINE LOG implies it for each step, independently of the
+        # receipt's declared batch: num_steps = rows // batch.
+        n1 = int(rows.get("pdata_rows") or 0) + int(rows["prior_rows"])
+        n2 = 2 * int(rows["prior_rows"])
+        record["engine_log_implied"] = {
+            "step1_rows": n1, "step2_rows": n2,
+            "step1_batch_range": [n1 // (int(log["num_steps_reco"]) + 1) + 1,
+                                  n1 // int(log["num_steps_reco"])],
+            "step2_batch_range": [n2 // (int(log["num_steps_gen"]) + 1) + 1,
+                                  n2 // int(log["num_steps_gen"])],
+        }
     return record
+
+
+def summarize(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """Per (stage, arm): the executed quantities, as sets, so a single outlier shows."""
+    groups: dict[str, dict[str, Any]] = {}
+    for rec in records:
+        receipt = rec["receipt"]
+        if not receipt.get("present"):
+            continue
+        key = f"{receipt['stage']}/{receipt['arm']}"
+        g = groups.setdefault(key, {
+            "runs": 0, "batch_size": set(), "num_steps_reco": set(), "num_steps_gen": set(),
+            "epochs_run": set(), "history_keys": set(), "realized_lr_by_fit": set(),
+            "learning_rate_argument": set(), "val_argmin_is_last_epoch": [],
+            "val_argmin_epoch": [], "pretrained_exact": set(), "seconds": []})
+        g["runs"] += 1
+        g["batch_size"].add(receipt["estimator"]["batch_size"])
+        g["num_steps_reco"].add(rec["engine_log"].get("num_steps_reco"))
+        g["num_steps_gen"].add(rec["engine_log"].get("num_steps_gen"))
+        g["learning_rate_argument"].add(receipt.get("learning_rate"))
+        lrs = receipt["estimator"].get("realized_learning_rates") or []
+        g["realized_lr_by_fit"].add(tuple((d["iteration"], round(d["learning_rate"], 12))
+                                          for d in lrs))
+        pre = receipt.get("pretrained") or {}
+        g["pretrained_exact"].add(pre.get("exact") if isinstance(pre, dict) else None)
+        g["seconds"].append(receipt.get("seconds"))
+        for h in rec["histories"]:
+            g["epochs_run"].add(h["epochs_run"])
+            g["history_keys"].add(tuple(h["history_keys"]))
+            g["val_argmin_is_last_epoch"].append(h["best_is_last_epoch"])
+            g["val_argmin_epoch"].append((h["iteration"], h["step"], h["val_loss_argmin_epoch"]))
+    out = {}
+    for key, g in sorted(groups.items()):
+        flags = [f for f in g["val_argmin_is_last_epoch"] if f is not None]
+        out[key] = {
+            "runs": g["runs"],
+            "batch_size": sorted(g["batch_size"]),
+            "num_steps_reco": sorted(x for x in g["num_steps_reco"] if x is not None),
+            "num_steps_gen": sorted(x for x in g["num_steps_gen"] if x is not None),
+            "epochs_run": sorted(g["epochs_run"]),
+            "history_keys": sorted(list(k) for k in g["history_keys"]),
+            "learning_rate_argument": sorted(g["learning_rate_argument"]),
+            "realized_lr_by_fit": sorted(list(map(list, t)) for t in g["realized_lr_by_fit"]),
+            "pretrained_exact": sorted(g["pretrained_exact"], key=repr),
+            "fits": len(flags),
+            "fits_whose_val_loss_argmin_is_last_epoch": sum(flags),
+            "val_argmin_epoch_by_step": {
+                f"step{s}": sorted(e for (_i, st, e) in g["val_argmin_epoch"] if st == s)
+                for s in (1, 2)},
+            "seconds_mean": (sum(g["seconds"]) / len(g["seconds"])) if g["seconds"] else None,
+        }
+    return out
 
 
 def discover_runs(root: Path) -> list[Path]:
@@ -253,7 +333,12 @@ def main() -> int:
         raise SystemExit(f"[mine] no run directories under {root}")
 
     records = [mine_run(run) for run in runs]
+    selection = root / "tuning" / "selected_learning_rate.json"
     payload = {
+        "tuning_selection": ({"path": str(selection), "sha256": sha256_of(selection),
+                              "content": json.loads(selection.read_text())}
+                             if selection.is_file() else {"present": False}),
+        "summary": summarize(records),
         "mined_from": str(root),
         "task": "A1 Part 1 evidence level 2 (logs and receipts of the executed campaign)",
         "run_count": len(records),
