@@ -20,6 +20,10 @@ zero on a round after that. Any finding by the reviewer **resets the counter to 
 | 5 (self) | **1** | **the note was never BUILT.** `AGENTS.md` requires a build before note work is called complete; I had synced `sec_3d.tex` to the standalone without one. Built: `build_all.sh` exit 0, all three PDFs rebuilt under the marker proof, containment `RESULT :: PASS`, **106 / 7 / 4 pp** unchanged |
 | 6 (self) | **1** | **this report tripped the §4d detector** — see §4. Second recurrence of that shape |
 | 7 (self) | 0 | table brought current; verification only |
+| 8 (self) | **0** | every committed digest re-derived from its source: the 3D receipt, the four package `.npz` files, VL145 against the scan JSON, the 23/21/2 scope arithmetic |
+| 9 (self) | **0** | every `CATALOG.md` claim I added re-checked against its receipt; every sha cited in my records confirmed a valid object |
+| **agy #2, attempt 1** | ⚠ **NO VERDICT** | **died on a session rate limit during its first action.** Not a clean round — see §1a |
+| agy #2, attempt 2 | *(pending)* | relaunched with the cheap high-yield checks ordered first, so a truncated run still yields findings |
 
 **Condition (i) was satisfied at rounds 2–3 and then destroyed by the reviewer's 14.** Condition
 (ii) requires a clean **independent** round after two clean self-rounds.
@@ -34,9 +38,29 @@ very little. An independent reviewer that had not seen my reasoning then found *
 three with real consequences and one that broke a shipped deliverable. **Self-review converged on
 my own blind spots.**
 
+### 1a. ⚠ A REVIEWER THAT COULD NOT LOOK IS NOT A REVIEWER THAT FOUND NOTHING
+
+The first attempt at the second independent review **returned no verdict**: it was terminated by a
+session rate limit (HTTP 429) after a single action, having started a full LaTeX build before any
+checking. Its transcript ends at *"Let me start the note build in the background while I review the
+documents."*
+
+**That is an instrument failure, and it must not be scored as a clean round.** The temptation is
+exactly the one this repository has paid for before — reading an empty result as an absence of
+findings, when the correct reading is that the search never ran. It is recorded here as a
+distinguishable outcome (`NO VERDICT`) rather than folded into the counts, and the review was
+relaunched with its cheap, high-yield checks ordered first so that a run truncated the same way
+still produces findings instead of silence.
+
 ## 2. Disposition of the 14
 
-**Repaired (10)** — each verified independently before acting, not taken on the reviewer's word:
+**Repaired (9 of the 14)** — each verified independently before acting, not taken on the
+reviewer's word. ⚠ **CORRECTED 2026-09-22 by a second independent reviewer: this read
+*"Repaired (10)"* and the arithmetic did not close.** The table below has ten rows, but one is
+marked `—` and is **not one of the 14** (it is round 4's fabricated sha, and it was fixed in the
+**standalone** repo at `51794c5c`, not "here"). Nine of the 14 were repaired; **five** were not.
+⚠ **Commit `0d913d43`'s message carries the same overcount — *"Ten are repaired here; four are
+unrepairable"* — and it is immutable, so the correction lives here.**
 
 | # | what | where fixed |
 |---|---|---|
@@ -51,7 +75,10 @@ my own blind spots.**
 | 13 | §4c's disposition falsified by §4d in the same commit | correction record §4c |
 | — | (round 4) a fabricated monorepo sha in a pushed commit message | standalone `51794c5c` |
 
-**Recorded, not repaired (4)** — `KNOWN_ISSUES.md` rows 63–65:
+**Recorded, not repaired (5)** — findings **6, 7 → row 63; 11 → row 64; 12 → row 65; and 14 →
+this report only.** ⚠ **Finding 14 is in NO `KNOWN_ISSUES` row** (`grep -n SWEEPS KNOWN_ISSUES.md`
+→ no match), which is the second half of the arithmetic error above: it was counted as recorded
+while living nowhere but a sentence in §2.
 
 - **6 + 7 → row 63.** The PASS token carries a present-tense pointer to KNOWN_ISSUES rows that did
   not exist at its own `code_rev` (61–62 landed three commits later at `9e78a8cf`), and its

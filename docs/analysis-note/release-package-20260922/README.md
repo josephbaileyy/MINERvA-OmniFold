@@ -35,7 +35,10 @@ will quote from."* Stated, not referenced. Source:
   160-throw ensemble at ONE seed pair**, so larger `N` and the seed-pair width are **unmeasured**.
   ⚠ **The direction of the unmeasured remainder is not known either**, and the `± 0.39%` is scatter
   across throw SUBSETS at one seed pair — **the width of the seed-pair distribution HAS NOT BEEN
-  MEASURED.**
+  MEASURED.** ⚠ **AND THE FAILING LEG CAN ONLY GET WORSE WITH MORE PAIRS:** `s_proj` is a
+  **maximum over the declared offset set**, so *"more pairs can only raise it"*. Restored
+  2026-09-22 — a second independent reviewer found this clause still missing after a first repair
+  claimed to have restored the dropped M2/M3/M4 text, and it is the most adverse of them all.
 - **M3 — five bands (`BeamAngleX`, `BeamAngleY`, `MuonResolution`, `Muon_Energy_MINERvA`,
   `Muon_Energy_MINOS`) are seed-pinned and contribute zero movement by construction**, carrying
   `26.0%` of `√Tr C_Z` and `6.75%` of the trace **out of the ~45 MAT bands** — so this is a
@@ -44,7 +47,7 @@ will quote from."* Stated, not referenced. Source:
   releasing a held-fixed PSD component can move the total **either way**.
 - **M4 — the estimator seed moves the CENTRAL VALUES too.** On the 43 `M1` projection functionals:
   median `0.104%`, max `0.761%`; against relative uncertainties of median `10.1%` that is median
-  `1.06%` and max `6.02%` of the quoted `σ`. ⚠ **Per individual 5D bin it is much larger: median
+  `1.06%` and max `6.02%` of the quoted `σ`, on a **total rate of `1.13%`**. ⚠ **Per individual 5D bin it is much larger: median
   `3.77%` of `σ`, p90 `13.6%`, max `49.8%`.** Aggregation suppresses it, so a statement about one
   5D bin carries the larger number and a projection does not. **The same-seed control is
   `9.4e-13`, ten orders below, so the movement is real and not a reproducibility artefact**; the

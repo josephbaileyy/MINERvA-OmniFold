@@ -73,13 +73,26 @@ figure work is exactly the failure the rule exists to prevent.
 - **No figure is regenerated here.** ⚠ **CORRECTED 2026-09-22 by an independent reviewer: the
   enumeration below was wrong in BOTH directions, and it was taken from `HANDOFF-20260922` §9.2's
   table rather than measured.** Measured with `grep -rn hCov_combined3d_total`:
+  `overlay_generators_band.py` (note Fig. 20, via `--cov` at `make_figures.sh:48`),
   `compare_mec_eavail.py`, `mode_decomp_eavail.py`, `compare_ascencio_eavail.py` and
   **`compare_3d_fullcov.py`** read it — and `compare_3d_fullcov` is a **live note figure**
   (`sec_3d.tex`, `\label{fig:3dfullcov}`) that the handoff's list and this record's first version
-  both omitted. In the other direction, `make_figures.sh:48` builds `generators_vs_unfolded_band`
-  (note Fig. 20) with `--cov … :hCov_universe3d_total`, a **different key**, so naming it as a
-  reader of `hCov_combined3d_total` was wrong at the invocation level even though its script
-  mentions both. `ascencio_fullcov_compare` reads the historical unified-throw **4D** object, which
+  both omitted. ⚠ **AND THE "OTHER DIRECTION" CLAUSE THAT STOOD HERE WAS ITSELF WRONG — corrected
+  2026-09-22 by a SECOND independent reviewer.** It read: *"`make_figures.sh:48` builds
+  `generators_vs_unfolded_band` (note Fig. 20) with `--cov … :hCov_universe3d_total`, a different
+  key, so naming it as a reader of `hCov_combined3d_total` was wrong at the invocation level."*
+  **Measured, line 48 passes BOTH flags:**
+
+      --cov      …/uq_universe_3d_covariance.root:hCov_combined3d_total
+      --syst-cov …/uq_universe_3d_covariance.root:hCov_universe3d_total
+
+  The key I named is carried by `--syst-cov`; the **primary** `--cov` **is**
+  `hCov_combined3d_total`. **So `generators_vs_unfolded_band` (note Fig. 20) DOES read the
+  quarantined covariance, the handoff's §9.2 table was right about it, and I "corrected" a true
+  entry into a false one.** It belongs in the readers list and is restored to it. This also removes
+  a contradiction with `sec_3d.tex`'s own `fig:3dmodels` caption — *"the SUPERSEDED historical 3D
+  covariance … (`hCov_combined3d_total`)"* — which I edited in the same commit while asserting the
+  opposite here. `ascencio_fullcov_compare` reads the historical unified-throw **4D** object, which
   this projection does **not** replace.
 - ⚠ **AND THE OMITTED FIGURE CARRIES TWO SENTENCES THIS PROJECTION FALSIFIES.** `sec_3d.tex` states
   *"The first has happened; **the 3D projection has not been built**, so the gate still holds"*

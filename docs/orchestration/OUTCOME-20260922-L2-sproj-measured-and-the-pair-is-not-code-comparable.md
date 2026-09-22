@@ -8,7 +8,7 @@ graded statistic exactly, and the member pair fails `footing_ok` for a measured,
 | | |
 |---|---|
 | unblocked by | `P4_VERIFIER_PASS = 229c43e0…` (`20260922T053047Z-gbdt-cold-start-verdict.json`) |
-| stages | 4 in job `58735444` (29:13, walled after completing), 5 and 6 in `58738058` (18:00) |
+| stages | 4 **and a first, FAILED stage 5** in job `58735444` (29:13, walled); stage 5 (repaired) and 6 in `58738058` (18:00) |
 | L2 product | `/pscratch/sd/j/josephrb/z2m-products/member_k001200_L2laterals/z-cv.npz` |
 | its `sha256` | `48713676fbce070527caa76ff559a34d2b83a34585d60cd13a36f9bd9410dae9`, `887,229,279` B |
 | statistics receipt | `…/l2-statistics.json`; validity detail `…/l2-validity-detail.json` |
@@ -34,13 +34,15 @@ change in `s_proj`.
 
 ## 2. EVERY PREDECLARED INVALIDATING CONDITION, CHECKED
 
-`PREDECLARATION-20260921` §6 lists five. All five hold:
+`PREDECLARATION-20260921` §6 lists five. ⚠ **CORRECTED 2026-09-22 by a second independent
+reviewer: this section read *"All five hold"* and that is WITHDRAWN.** Three hold as measured, one
+holds only against §6's **pre-amendment** text, and one is **not satisfied**:
 
 | condition | measured |
 |---|---|
 | the ten new unfolds all at the **same** seed `1242` | ✅ **one** distinct `config_hash` across all ten receipts, `4809b4ad399f999c…` — distinct from the baseline's `4b41fab90a83df08…`; manifest `est_seed 1242`, `est_seed_offset 1200` |
-| nothing written outside the member directory | ✅ products under `mii/member_k001200/…` only |
-| **the baseline's twenty files byte-identical before and after** | ✅ verified by digest in **both** jobs: *"BASELINE UNTOUCHED: all 20 digests byte-identical"*, population checked as 20/20 so the comparison is non-vacuous |
+| nothing written outside the member directory | ⚠ **PARTIAL, and the caveat is the headline product.** The ten unfolds and the candidate are under `nd-unfolding/mii/member_k001200/…`, which is what `mr_prefix` produces. **The Z product is not:** it is at `/pscratch/sd/j/josephrb/z2m-products/member_k001200_L2laterals/`, a NEW sibling of the graded members' own `z2m-products/member_k001200/`, created by `l2_stage5_assemble.sh`'s hardcoded `OUT` and not by `mr_prefix`. That directory is outside both the member tree and the graded member's canonical Z directory; §6's condition says *"any product"*, so this is **recorded as not satisfied rather than ticked** |
+| the baseline's twenty files byte-identical before and after | ✅ **as §6 was ORIGINALLY written** — verified by digest in **both** jobs, *"BASELINE UNTOUCHED: all 20 digests byte-identical"*, population checked 20/20 so the comparison is non-vacuous. ⚠ **BUT AMENDMENT 1 §A1.4 WIDENED THIS CONDITION AND THE WIDER SCOPE WAS NOT MEASURED:** *"It is hereby extended: no write, rename, or unlink anywhere under `active_universe_5d/standard/`."* The digests cover `…/standard/unfolds/` only — **not** `…/standard/evidence/` (the manifest A1.4 itself says a member run would have deleted), and not the rest of `standard/`. **Recorded as unmeasured, not as passing** |
 | exactly ten endpoint ROOTs, no extras | ✅ ten |
 | the grade computed over the two declared members only | ✅ `[0, 1200]`, `offsets_match_K` PASS |
 
@@ -77,7 +79,7 @@ match. Measured:
 *"two members built by different code are NOT COMPARABLE, so the campaign is inconclusive, and the
 only branch that says 'inconclusive, report no magnitude' is branch 1."*
 
-### 3a. It is STRUCTURAL: the probe as designed cannot produce a code-comparable pair
+### 3a. The GRADED pair's code identity cannot be reproduced — but a code-comparable pair CAN be built, and was not
 
 The divergence is forced, not careless:
 
@@ -87,8 +89,21 @@ The divergence is forced, not careless:
 3. `l2_stage5_assemble.sh`'s own header records that a build at `d64257c3` **dies under the OI-136
    guard** (job `58358282`), because `z_build` there lacks the `--no-ext-diff` the guard requires.
 
-So matching the graded code identity and running at all are mutually exclusive with this
-toolchain. ⚠ **The prior lane anticipated the PROVENANCE difference** — *"the consequence is a
+So matching **the graded pair's** code identity and running at all are mutually exclusive with
+this toolchain.
+
+⚠ **CORRECTED 2026-09-22 by a second independent reviewer. This section claimed *"the probe as
+designed cannot produce a code-comparable pair"* and concluded that matching *"are mutually
+exclusive"*. THAT IS ONE LEVEL TOO BROAD, and the route it misses is cheap.** `code_agrees` does
+**not** compare either member against `d64257c3`; it compares the members **to each other** —
+`all(r == revisions[0] for r in revisions)`, where `revisions[0]` is simply the first member. So a
+code-comparable pair is obtained by **rebuilding the k=0 member's Z at today's HEAD as well**, at
+which point both carry the same revision and the same import closure and `code_agrees` is True.
+The predeclaration's own §5 prices one Z assembly at **`0.29` task-h** (precedent job `58454524`,
+1037 s), so the route costs about **`0.58` task-h** for the pair. **It is DECLINED-AND-UNDONE here,
+not impossible**: rebuilding the offset-0 member replaces the object the 09-20 grade was computed
+on, which is a decision about the graded campaign rather than a step in this probe. What remains
+true without qualification is only that **the GRADED pair's code identity cannot be reproduced**. ⚠ **The prior lane anticipated the PROVENANCE difference** — *"the consequence is a
 PROVENANCE difference between the two members' receipts … stated rather than hidden"* — **but not
 that `cross_member_validity` folds code identity into `footing_ok`, which turns a disclosed
 provenance note into a failed comparability precondition.**
@@ -128,7 +143,18 @@ Both stage scripts were unrunnable as written; stage 4 had been gated, so neithe
   `(product, receipt_path, expect_variant)` signature the script passes. **Repaired** (`_v2`).
 
 ⚠ **The originals are left in place unmodified** as the record of what was predeclared; the repairs
-are `_v2` copies. ⚠ **This lane authored both repairs**, so it is not an independent checker of
+are `_v2` copies. **All four are now COMMITTED** — ⚠ **a second independent review found that none
+of them were, so every claim in this section about what the scripts do, and both repairs, were
+unverifiable from the repository:**
+
+    docs/orchestration/probes/probe-20260922-l2-stage5-assemble-ORIGINAL.sh
+    docs/orchestration/probes/probe-20260922-l2-stage5-assemble-v2.sh
+    docs/orchestration/probes/probe-20260922-l2-stage6-measure-ORIGINAL.sh
+    docs/orchestration/probes/probe-20260922-l2-stage6-measure-v2.sh
+
+alongside the four probes that produced §3's measurements (`…-l2-validity-detail.py`,
+`…-l2-footing-base-reuse.py`, `…-l2-real-footing.py`, `…-l2-code-identity.py`). A later lane can now
+diff original against `_v2` and re-run the footing experiment rather than taking this record's word. ⚠ **This lane authored both repairs**, so it is not an independent checker of
 them — what stands in for that here is the control, which reproduces the graded `s_proj` to exactly
 `0.000e+00` and could not do so through a harness that had been altered in substance.
 
