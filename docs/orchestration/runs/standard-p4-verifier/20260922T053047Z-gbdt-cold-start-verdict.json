@@ -1,0 +1,113 @@
+{
+  "REVIEW_SCOPE_IS_DELIBERATELY_WIDER_THAN_THE_DERIVED_SURFACE": {
+    "effect": "both are now inside this verdict's scope, so rules 4b and 4c invalidate this token if either changes. The underlying derivation defect in _shell_invoked_scripts is RECORDED in KNOWN_ISSUES.md and is NOT fixed by this verdict.",
+    "measured_gap": [
+      {
+        "in_derived_surface": false,
+        "path": "nd-unfolding/lib_member_resume.sh",
+        "sourced_by": "nd-unfolding/run_p4_unfold_std.sh (source \"${ND}/lib_member_resume.sh\")",
+        "tracked": true,
+        "why_load_bearing": "supplies mr_declared, mr_prefix and mr_require_valid_offset. `! mr_declared` is the predicate of the BASELINE OVERWRITE GUARD that protects the ten endpoint ROOTs the adopted covariance 3d7465f6 is built from, and mr_prefix decides the output directory. An edit making mr_declared unconditionally true would silence that guard while a PASS token remained valid."
+      },
+      {
+        "in_derived_surface": false,
+        "path": "setup_salloc_env.sh",
+        "sourced_by": "nd-unfolding/run_p4_standard.sh (source \"${REPO}/setup_salloc_env.sh\")",
+        "tracked": true,
+        "why_load_bearing": "selects the ROOT/conda environment the whole chain executes in."
+      }
+    ],
+    "why": "A DECLARED SCOPE CAN ONLY ADD TO THE EXECUTION SURFACE (repair-9, verifier defect #4), and this verdict uses that to close a gap it found. p4_lib._shell_invoked_scripts resolves only `.py` tokens inside the run_p4_*.sh drivers, so a shell library that is SOURCED is invisible to the derived surface."
+  },
+  "WHO_ISSUED_THIS_AND_WHY_THAT_IS_THE_GATE": {
+    "author_of_record": "Claude Opus 5 (1M context), GBDT cold-start lane, 2026-09-22",
+    "compute_grant_is_not_a_review_grant": "Joseph's compute authorization did NOT dispense the independence requirement; the two are different permissions. This PASS rests on non-authorship, not on the compute grant.",
+    "independence_basis": "p4_check_verifier_token.py's docstring requires that the reviewer not be the author. This lane authored NONE of the 13 changed files: every one of them was already at its current blob when this lane's first commit in this session was made. Verified by diffing a8f7b2f0..3035f8b8, all of which predates this session."
+  },
+  "authorizes_covariance_stages_4_6": true,
+  "branch": "main",
+  "code_rev": "3035f8b886483ea06ffc03e9546e0764622773a6",
+  "hazards_checked_by_measurement_not_by_reading": [
+    {
+      "hazard": "MNV_EST_SEED_OFFSET=0 set explicitly would make mr_declared true, disabling the baseline overwrite guard, while the output stayed on the baseline path -- which would destroy the adopted covariance's inputs.",
+      "measured": "REFUTED. mr_member_dir returns member_k000000 for an explicit '0' (empty only when the variable is UNSET), so mr_prefix redirects OUTDIR to mii/member_k000000/... The guard is disabled exactly when the output is already redirected away from the baseline. Run: MNV_EST_SEED_OFFSET=0 -> /repo/nd-unfolding/mii/member_k000000/active_universe_5d/standard/unfolds.",
+      "verdict": "SAFE"
+    },
+    {
+      "hazard": "the shell and python member-scoping conventions could disagree, pairing a member's unfolds with another tree's evidence.",
+      "measured": "They AGREE at offset 1200 (both -> mii/member_k001200/...) and at an UNSET offset (both -> unchanged). They DISAGREE at an explicit 0: lib_member_resume.sh scopes to mii/member_k000000/ while p4_evidence._member_scope returns the path unchanged, despite that function's docstring claiming it matches _mr_insert.",
+      "verdict": "DEFECT, RECORDED IN KNOWN_ISSUES.md, NOT reachable by the authorized L2 member (k=1200) and not capable of destroying an adopted product; it silently strands the produced unfolds instead."
+    },
+    {
+      "hazard": "p4_evidence.py calls argparse.parse_args() at MODULE level, so importing it would parse the importer's argv.",
+      "measured": "No module in the tree imports p4_evidence; it is only executed as a script. Latent, not live.",
+      "verdict": "LATENT"
+    }
+  ],
+  "next_action": "Stages 4-6 are mechanically unblocked for a lane that sets P4_VERIFIER_PASS to the sha256 of THIS committed file. The L2 probe (member_k001200) is the authorized consumer.",
+  "receipt_kind": "standard-p4-verifier-verdict",
+  "review_scope": [
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "2d-unfolding/uq/hadd_universes_full.py",
+    "nd-unfolding/flux_universe.py",
+    "nd-unfolding/lib_member_resume.sh",
+    "nd-unfolding/omnifold_nn_core.py",
+    "nd-unfolding/p3s_manifest_summary.py",
+    "nd-unfolding/p4_build_components.py",
+    "nd-unfolding/p4_check_receipt.py",
+    "nd-unfolding/p4_check_verifier_token.py",
+    "nd-unfolding/p4_evidence.py",
+    "nd-unfolding/p4_lib.py",
+    "nd-unfolding/p4_project_4d.py",
+    "nd-unfolding/p4_validate_active_lateral.py",
+    "nd-unfolding/project_cov_nd.py",
+    "nd-unfolding/run_p4_merge_audit_std.sh",
+    "nd-unfolding/run_p4_standard.sh",
+    "nd-unfolding/run_p4_unfold_std.sh",
+    "nd-unfolding/seed_offset_policy.py",
+    "nd-unfolding/unfold_nd_omnifold_unbinned.py",
+    "nd-unfolding/uq_math.py",
+    "nd-unfolding/xsec_nd.py",
+    "setup_salloc_env.sh",
+    "unbinned_unfolding/python/omnifold.py"
+  ],
+  "rule_checks_at_issue_time": {
+    "4a_code_rev_is_literal_40hex_and_ancestor": true,
+    "4b_scope_unchanged_commit_vs_HEAD": "trivially true: code_rev == HEAD at issue",
+    "4c_scope_unchanged_commit_vs_WORKING_TREE": "verified clean over all scope paths before commit"
+  },
+  "subject": "Independent re-review of the standard-P4 execution surface at 3035f8b8 after repair-11's PASS went TOKEN-REJECT on 13 changed scope files. Issued by a lane that authored none of the 13.",
+  "supersedes": "20260816T220615Z-repair11-verdict.json (PASS at a8f7b2f0, TOKEN-REJECT at HEAD)",
+  "utc": "2026-09-22T05:30:47Z",
+  "verdict": "PASS",
+  "what_this_verdict_could_NOT_establish": [
+    "It is NOT a grade. It does not clear M1-M4, which travel with every use of 3d7465f6.",
+    "It does NOT bear on cause 3, which is not discharged for the adopted bytes.",
+    "It does NOT license quoting any generator significance.",
+    "It does NOT re-verify the physics of any product already built.",
+    "It does NOT resolve the ten stale endpoint receipts: those are stale because the unfold driver's blob moved (dc74c38f -> 662951e0), and a verifier PASS neither re-pins nor re-produces them.",
+    "It does NOT fix the _shell_invoked_scripts derivation gap; it only works around it for THIS token by declaring the two sourced files."
+  ],
+  "what_was_reviewed": {
+    "deletions": 47,
+    "diff_reviewed": "a8f7b2f0eea57f2f66085df41dcff9b0d338bd01..3035f8b886483ea06ffc03e9546e0764622773a6",
+    "files_changed_in_scope": 13,
+    "insertions": 1758,
+    "per_file": {
+      "nd-unfolding/p4_build_components.py": "adds require_verifier_token('stage 4'); derives the unfolds dir from the MANIFEST's own location; requires manifest est_seed_offset == member_offset_of_path(manifest) and est_seed == 42+offset. STRENGTHENS.",
+      "nd-unfolding/p4_check_receipt.py": "adds --est-seed-offset so producer and checker no longer BOTH derive config_hash from the default seed. STRENGTHENS (removes a vacuous agreement).",
+      "nd-unfolding/p4_check_verifier_token.py": "adds require_verifier_token(), which RESOLVES the token via the same resolve() the wrapper uses rather than sniffing the env var. Closes KNOWN_ISSUES #21 one layer out (stage modules were individually executable and bypassed the wrapper gate). STRENGTHENS.",
+      "nd-unfolding/p4_evidence.py": "member-scopes UDIR and EVID (EVID is the dangerous one: _publish_evidence would have deleted the adopted manifest); INVERTS the reproduction gate at nonzero offset; fixes a log line that printed 'worst per-bin 0.00e+00' in the branch where every entry was an error. STRENGTHENS.",
+      "nd-unfolding/p4_lib.py": "adds standard_seed_for_offset, member_offset_of_path, expected_offset params on P4Config.validate / require_standard_footing / require_candidate_path; moves BAND_COMPLETENESS_GATE onto the surface. Offset 0 is byte-identical to prior behaviour by construction. STRENGTHENS.",
+      "nd-unfolding/p4_project_4d.py": "adds require_verifier_token('stage 6'); adds hRowIndex4D READBACK equality check and proj4d_sha256 (closes OI-129's 'hashes the intent, not the artifact'). STRENGTHENS.",
+      "nd-unfolding/p4_validate_active_lateral.py": "adds require_verifier_token('stage 5') before argparse. STRENGTHENS.",
+      "nd-unfolding/project_cov_nd.py": "adds npz source support, --expect-variant (REQUIRED, no default), run-class standing with publication refused from variant 'mean' and from adoptable:false without an explicit digest-bound exception, product/readback digests, OI-136 _REPO derivation. STRENGTHENS.",
+      "nd-unfolding/run_p4_standard.sh": "REFUSES (exit 2) a declared MNV_EST_SEED_OFFSET because stages 1/5/6 are not member-aware. Fail-closed on partial member-awareness. STRENGTHENS.",
+      "nd-unfolding/run_p4_unfold_std.sh": "member-scopes OUTDIR; passes the real seed into the config hash; adds the BASELINE OVERWRITE GUARD (rc 9) and moves `rm -f receipt` BELOW it so a refusal leaves the baseline untouched. STRENGTHENS; this is the e2632ac7 guard.",
+      "nd-unfolding/seed_offset_policy.py": "NEW FILE. Assertion/policy module: alias-free offset grids, pinned archive draw seed, sort-safe member directory limit, member paths required outside the canonical archive namespaces, declared_offset documented STAMPING-ONLY. Additive and defensive; nothing branches on it for behaviour.",
+      "nd-unfolding/unfold_nd_omnifold_unbinned.py": "OI-136 repair: _REPO derives from Path(__file__).resolve().parents[1] instead of the hardcoded cluster root, with NO absolute fallback; data-root defaults kept absolute and separate; adds the NONQUOTABLE --closure-response-eavail-frac diagnostic, inert without --closure. STRENGTHENS.",
+      "nd-unfolding/uq_math.py": "COMMENT ONLY. Corrects a misattributed ratio (4.69x/4.83x were the 122-throw re-roll, not the adopted ensemble; VL33 measures 5.3478x). No executable change."
+    },
+    "verdict_basis": "Every one of the 13 changes is additive or restrictive. NONE removes, widens or short-circuits an existing gate, and three of them add gates that did not exist (stage 4/5/6 self-gating under repair-12). The two offset-0 defaults are byte-identical to the pre-member behaviour, which was checked rather than assumed."
+  }
+}
