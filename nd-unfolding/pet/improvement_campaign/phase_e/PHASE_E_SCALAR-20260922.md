@@ -112,6 +112,13 @@ Q² < 0 clip, where q3 = q0) take q0 = q3 and are counted (§2).
   than by a full re-simulation of the calorimetric sum; the measured `E_avail`/Σtoken relation is in
   §2.
 
+**What R1–R3 do not do:** they do not re-evaluate the reco selection. `pass_reco` and the extended
+FPS domain gate are the inventory's own, computed on the undistorted quantities, so no event enters
+or leaves the selected sample under a scale or a smearing; only the values of selected events move.
+A real scale systematic would also migrate events across the selection boundary. What does move is
+the reco reporting cell, and the number of pseudodata events whose cell changes is recorded per case
+(`moved_reco_cells` in `results/references.json`).
+
 Each R is run twice, as predeclared: alone (the **null**, where the correct answer is to do nothing
 and what is reported is the spurious displacement) and combined with D1 at +0.35.
 
