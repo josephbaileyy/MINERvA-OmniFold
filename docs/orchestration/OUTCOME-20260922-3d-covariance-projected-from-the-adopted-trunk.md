@@ -1,0 +1,88 @@
+# OUTCOME 2026-09-22 — a 3D `(p_T, p_∥, E_avail)` covariance now EXISTS, projected from the adopted trunk
+
+**CITABLE FOR:** the existence, identity and measured properties of a `(pt, pz, eavail)` covariance
+projected from `3d7465f6…`.
+**NOT CITABLE FOR:** adoption of that object, any figure built from it, any significance, or the
+retirement of the historical 3D quarantine. **Construction is not adoption.**
+
+| | |
+|---|---|
+| product | `/pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root` |
+| `sha256` | `20c16e16a35a837b09d7fe39bcf6bb8ee5828d5283fc5c2f756e3a5371e1f69e`, `15,937,290` B |
+| receipt | `docs/orchestration/state/PROJ3D-20260922-ptpzeavail-from-adopted-trunk-receipt.json` |
+| job / code | `58736728`, worktree at `9e78a8cf`, under `mnv_guarded_run.py` (1 checkout root) |
+| authorization | `HANDOFF-20260922` §9.2 / §12 item 5, this session's **D6** |
+
+## 1. Why it was built
+
+`HANDOFF-20260922` §9.2: four live figures read the **QUARANTINED** `hCov_combined3d_total`, and
+*"they cannot be regenerated correctly yet: the quotable 3D covariance must be projected from the
+adopted 5D trunk and **that projection has not been built**."* It is built now. That removes the
+stated blocker; it does **not** by itself authorize regenerating anything.
+
+## 2. What was measured
+
+| quantity | value |
+|---|---|
+| source | `3d7465f66fbe66b0…`, `variant: cv`, metadata still `adoptable: false` / `NON-PASSING`, carried unedited |
+| adoption exception | `AMENDMENT-20260918-spec-6.4-…md`, `sha256 318cc1b4834a0348…` — **byte-identical** to the record the adopted `(E_avail,W)` publication run used |
+| axes | `pt,pz,eavail,q3,W` → keep `pt,pz,eavail` |
+| destination | **1,431 reported cells** of a dense `14×16×7 = 1,568` grid |
+| `src_cells_dropped` | **0** |
+| `n_empty` | **0** — ⚠ zero **by construction** in receiving-cells mode; this is **not** a check and may not be cited as one |
+| `√Tr C` | `6.1289e-39` |
+| symmetry `max\|C − Cᵀ\|` | **exactly `0.00e+00`** (structural: the `M C Mᵀ` form symmetrises) |
+| `λ_min` | **`−4.326e-93` — NEGATIVE**; most-negative/max `−2.32e-16` |
+| PSD to machine tolerance | OK (`\|min\|/max` far below the `1e-9` relative allowance) |
+| row index readback | `856469c41a8484be…`, 1,431 labels, digested after the file was closed |
+| `M` | shape `1431 × 10694`, content digest `6147e1543e3d6077…` |
+| `run_class` | `publication-under-exception` |
+| `acceptance_question` | **`UNDECLARED`** — carried verbatim, never defaulted |
+
+## 3. ⚠ TWO THINGS THAT DIFFER FROM THE `(E_avail,W)` PRODUCT AND WILL BE GOT WRONG BY ANALOGY
+
+1. **`λ_min` IS NEGATIVE HERE.** The `(E_avail,W)` projection has `λ_min = +4.359104e-92` and
+   `n_negative = 0`, and `VALIDATION_LEDGER` `VL143` carries a correction specifically because the
+   phrase *"most-negative/max"* was carried onto that positive-minimum object. **On THIS object the
+   phrase is correct**: the minimum genuinely is negative. Do not "fix" it to match `VL143`, and do
+   not copy `VL143`'s positive-`λ_min` language onto this product.
+2. **The destination is 1,431 of 1,568, not all of them.** 137 dense `(pt,pz,eavail)` bins receive
+   no source cell. The `(E_avail,W)` case had `42 = 7×6` with no shortfall, so the two are not
+   analogous and a reader assuming a dense destination here will mis-index.
+
+## 4. ⚠ THE DESTINATION MASK IS A DECLARATION, AND THE ONE A FIGURE NEEDS IS **NOT** THE ONE BUILT
+
+This run declares **`receiving-cells`** (no `--dst-cv`) — the **same** declaration the adopted
+`(E_avail,W)` publication product used, chosen to follow precedent rather than to invent policy.
+
+`run_m1_projection.sh` states the rule: *"project_cov_nd.py offers two destination masks and … which
+one is used changes the population every downstream criterion is stated over, so it is declared
+prospectively or not at all."*
+
+**A figure pairing this covariance with the frozen 3D central value would need the
+`declared-dst-cv` variant**, bound to `3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root`, so that the
+covariance's rows and the central value's bins are the same population. **That declaration was not
+made and is not made here.** It is a prospective choice, and choosing it silently in order to make a
+figure work is exactly the failure the rule exists to prevent.
+
+## 5. What this does NOT authorize — read before touching any figure
+
+- **It does NOT adopt this covariance.** Adoption is a Joseph decision (`AGENTS.md`, *Decisions
+  reserved for Joseph*; this session's **D7** forbids anything constituting a new publication
+  adoption). The object exists; nothing has adopted it.
+- **The four marked figures are NOT regenerated and their markings stand.** `generators_vs_unfolded_band`
+  (note Fig. 20), `compare_mec_eavail`, `mode_decomp_eavail` still read `hCov_combined3d_total`;
+  `ascencio_fullcov_compare` reads the historical unified-throw **4D** object, which this projection
+  does **not** replace. Marking remains the remedy.
+- ⚠ **If these are ever regenerated, do NOT silently reintroduce them to the primer.** Fig. 3 was
+  swapped to `eavailW_band` (central-value only, no `--cov`) and Fig. 4 to `paper_joint_localization`;
+  that leakage was blocker 2 of the manuscript review.
+- **`M1`–`M4` travel with this object**, because they travel with `3d7465f6…` and this is projected
+  from it. In particular **no generator significance may be quoted from it**, and `M4` is much
+  larger per individual bin than per projection.
+- **No rank is quoted here and none may be inferred.** The projector printed a retained count at its
+  hardcoded `rc = 1e-12`; on the `(E_avail,W)` object the analogous count moves from 26 to 42 across
+  defensible cutoffs (`VL145`), and nothing has scanned **this** object's spectrum. **Any rank for
+  this product must be reported with its cutoff, and no scan exists yet.**
+
+**Co-Authored-By: Claude Opus 5 (1M context)**

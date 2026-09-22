@@ -1,0 +1,116 @@
+{
+  "M_content_sha256": "64fec490e3e0a6ee3dfc75897301206b7e056e2892879ed58eb049a307a8616a",
+  "M_digest_matches_receipt": true,
+  "M_shape": [
+    42,
+    10694
+  ],
+  "acceptance_question_VERBATIM": "UNDECLARED",
+  "edges": {
+    "W": [
+      0.0,
+      1.1,
+      1.4,
+      1.8,
+      2.2,
+      3.0,
+      100.0
+    ],
+    "eavail": [
+      0.0,
+      0.1,
+      0.2,
+      0.4,
+      0.8,
+      1.5,
+      3.0,
+      100.0
+    ],
+    "pt": [
+      0.0,
+      0.07,
+      0.15,
+      0.25,
+      0.33,
+      0.4,
+      0.47,
+      0.55,
+      0.7,
+      0.85,
+      1.0,
+      1.25,
+      1.5,
+      2.5,
+      4.5
+    ],
+    "pz": [
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0,
+      15.0,
+      20.0,
+      40.0,
+      60.0
+    ],
+    "q3": [
+      0.0,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.2,
+      2.0,
+      100.0
+    ]
+  },
+  "files": {
+    "central_values_5d.npz": {
+      "bytes": 109836,
+      "sha256": "6773530647f66103f5788e70a60c02e2bc4d3402d48423d607e4a1233c45e702"
+    },
+    "covariance_eavailW.npz": {
+      "bytes": 10079,
+      "sha256": "94679d6dcdf1ff25af739354a12b69b95f8bf110bda1eb0c60ffffde983009e8"
+    },
+    "masks_5d.npz": {
+      "bytes": 22372,
+      "sha256": "2c02f47f13448a613843efc443a4d45227e17346f60963fa710475393ae97c55"
+    },
+    "projection_matrix_M_eavailW.npz": {
+      "bytes": 21306,
+      "sha256": "3b81f42bdc75613f790f28a286e2e0336a0436d3b8abcf9a38c83ea2e0eb4b3b"
+    }
+  },
+  "lambda_max": 1.4882151297784383e-77,
+  "lambda_min": 4.359103608788691e-92,
+  "lambda_min_over_max": 2.9290816371673787e-15,
+  "lambda_min_positive": true,
+  "n_dst": 42,
+  "proj_sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e",
+  "row_index_digest_matches_receipt": true,
+  "row_index_equals_receiving_cells": true,
+  "row_index_sha256_readback": "9eb9d21600526db7daaff8e22251b571faa3eb4c2515d5f45afba0e9fe77c14d",
+  "run_class": "publication-under-exception",
+  "sqrt_trace_C_EW": 4.4551809735306645e-39,
+  "src_cells_dropped": 0,
+  "src_cov_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
+  "src_dense": 65856,
+  "src_metadata_adoptable": false,
+  "src_metadata_scientific_acceptance": "NON-PASSING",
+  "src_metadata_variant": "cv",
+  "src_report_equals_producer_hRowIndex5D": true,
+  "src_reported": 10694,
+  "symmetry_max_abs": 0.0,
+  "y_C_vs_F_max_rel_disagreement": 781650.690222893,
+  "y_vs_hCV_marginal_max_abs": 0.0
+}

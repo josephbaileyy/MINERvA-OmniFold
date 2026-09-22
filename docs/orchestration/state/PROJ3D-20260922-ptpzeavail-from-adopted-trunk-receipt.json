@@ -1,0 +1,87 @@
+{
+  "M_content_sha256": "6147e1543e3d60772ecc77ead681404da058359bed5ce10c9476219eebf124a9",
+  "M_shape": [
+    1431,
+    10694
+  ],
+  "acceptance_question": "UNDECLARED",
+  "adoption_exception": {
+    "authorized_src_cov_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
+    "basis": "digest identity: the record names this source covariance sha256. The source metadata below is UNCHANGED and still records adoptable:false.",
+    "record": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-gbdt-20260922/docs/orchestration/AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md",
+    "record_sha256": "318cc1b4834a03483ef9aa964ad336d816880e7c8fc7b4af36d749efed8a46b1"
+  },
+  "class_standing_inherited": null,
+  "dst_cv_sha256": null,
+  "dst_mask_basis": "dense destination bins receiving >= 1 source cell (no --dst-cv)",
+  "keep_axes": [
+    "pt",
+    "pz",
+    "eavail"
+  ],
+  "n_dst": 1431,
+  "n_empty": 0,
+  "paired_central_estimate": "hCV_marginal = M x_src, the marginalised 5D central value. NOT the independently unfolded lower-D estimator.",
+  "product": "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root",
+  "proj_sha256": "20c16e16a35a837b09d7fe39bcf6bb8ee5828d5283fc5c2f756e3a5371e1f69e",
+  "row_index_basis": "row r of the covariance is destination dense grid index hRowIndex[r], on the (pt,pz,eavail) grid in C order. Digest is of the array READ BACK OUT of the closed file, not of the in-memory source.",
+  "row_index_key": "hRowIndex",
+  "row_index_sha256_readback": "856469c41a8484be24d37cc04fbc55f65807a45f10bc5a4bfab77e0de7750f2c",
+  "run_class": "publication-under-exception",
+  "run_class_keys_in_product": [
+    "runClass",
+    "runClassStatus",
+    "acceptanceQuestion"
+  ],
+  "src_axes": [
+    "pt",
+    "pz",
+    "eavail",
+    "q3",
+    "W"
+  ],
+  "src_cells_dropped": 0,
+  "src_container": "npz",
+  "src_cov_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
+  "src_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
+  "src_metadata": {
+    "adoptable": false,
+    "code_identity": {
+      "import_closure_digests": {
+        "nd-unfolding/adopt_unified_5d.py": "e1260e8dec2d39cb4653a8b4b02a198d04ea103d548a2d90b5f003f0b8044c35",
+        "nd-unfolding/compare_unified_throw.py": "8789d14c06c482def0cc0cf1e07204627a3e219ed0ea07e70fd41aa065d292c3",
+        "nd-unfolding/flux_universe.py": "75cb60531ea87f0738d26842183babbe16c3bdab9817548326492e7e675bd28c",
+        "nd-unfolding/mnv_guard_shim/sitecustomize.py": "b7f78a7250f012b90a9699073973c138925ed27474dcad6772d5fcb6565315e6",
+        "nd-unfolding/mnv_guarded_run.py": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b",
+        "nd-unfolding/p4_lib.py": "afe6f35691b67a7013708dfd8400d87c6f1b1594f0ad6641d9649767e68ecd99",
+        "nd-unfolding/seed_offset_policy.py": "dffa622ea5639db7abc9aa13e6e97db81464ce7389db626ec4c37751ef2742fe",
+        "nd-unfolding/unified_throw_cov.py": "dbf423052e23854d61e8c420ad33a4ec33eae36edc215f8779119456d1cee884",
+        "nd-unfolding/uq_math.py": "b382e60996a6e72134462d2961adc83688c372da4e326c4c997c0a22e4317aaa",
+        "nd-unfolding/z_assembly.py": "6090dca4d191066fdcd768dd9770dd269e78b94f0c47a24cde66d9fbd3b71d64",
+        "nd-unfolding/z_build.py": "a42e254edd3b1df0b852bcc5ffadc8705bc85a49ff0dcf720993968059f5f5f8",
+        "nd-unfolding/z_contract.py": "412724b940ded81309660237bacff89e344084839dd9e2121e1300ecac3b6ec3",
+        "nd-unfolding/z_receipt.py": "182d2f994c4cadada10765da58ebb19289f5bb2b38719de69df0dcf54758acda",
+        "nd-unfolding/z_statistics.py": "f42975d5ed2ff94b8c5d6be91050955f795eff5cd956ea991b00888aea36aaa4",
+        "nd-unfolding/z_validator.py": "7ef9f52ce671cd66b02381265c07d64c20c000591306b2998836de3c614e5899"
+      },
+      "revision": "fb9ec3560fd6d62295dffc81b5694c9e26667d5b",
+      "worktree_files_differing_from_revision": []
+    },
+    "input_kind": "real",
+    "manifest_sha256": "44ab73bae181ef222ef8b6aca9450780982b3dfc5feed2967102e694f3b4c080",
+    "run": {
+      "id": "z-pilot-20260916-a5",
+      "step": "assembly"
+    },
+    "schema_version": 1,
+    "scientific_acceptance": "NON-PASSING",
+    "variant": "cv"
+  },
+  "src_reported": 10694,
+  "src_row_index_basis": "producer hRowIndex5D, REQUIRED equal to the order derived from src CV (xsrc > 0); both present and identical",
+  "src_run_class": null,
+  "src_variant_declared": "cv",
+  "src_variant_measured": "cv",
+  "status": "PUBLICATION UNDER A DIGEST-BOUND EXCEPTION -- the source still records adoptable:false and that metadata is preserved unedited. Built because an explicitly authorized record names this source digest. Quotable only after the remaining required evidence and independent verification land; the exception unblocks the route, it does not supply the evidence.",
+  "weight_basis": "entries are the product of the DROPPED axes' bin widths, so the destination is a DIFFERENTIAL DENSITY in the kept axes"
+}

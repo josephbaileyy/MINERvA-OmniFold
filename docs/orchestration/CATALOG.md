@@ -236,6 +236,19 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   RESOLVED 2026-07-10"* — exactly the comment's subject — surviving to `d2ca8ed1` and dropped at
   `1f714b7f`'s index compaction. **The citation was correct when written; a resolved row was deleted
   without sweeping inbound citations.** Index rows now run 5–11, 16, 17, 19–21, 23–62.
+- [`OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md`](OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md)
+  - **THE 3D `(pt,pz,eavail)` COVARIANCE NOW EXISTS, projected from `3d7465f6…`** — §9.2's stated
+  blocker for four marked figures. `sha256 20c16e16a35a837b…`, `15,937,290` B, job `58736728`;
+  **1,431** reported cells of a dense `14x16x7 = 1,568`; `src_cells_dropped 0`; `√Tr 6.1289e-39`;
+  symmetry exactly `0`; row-index readback `856469c41a8484be…`; `acceptance_question UNDECLARED`
+  carried verbatim. ⚠ **CONSTRUCTION IS NOT ADOPTION** — nothing adopts it, the four figures are NOT
+  regenerated, and their markings stand. ⚠ **TWO ANALOGY TRAPS:** `λ_min` is **NEGATIVE** here
+  (`−4.326e-93`, most-neg/max `−2.32e-16`), unlike the `(E_avail,W)` product whose positive minimum
+  is the subject of `VL143`'s correction — so *"most-negative/max"* is **correct on this object**;
+  and the destination is **1,431 of 1,568**, not dense. ⚠ **The destination mask is a DECLARATION**
+  and this run declares `receiving-cells` following the adopted precedent — **a figure would need
+  the `declared-dst-cv` variant**, and that declaration has not been made. `M1`–`M4` travel with it;
+  no rank is quoted and none has been scanned on this object.
 - [`VERDICT-20260922-third-party-review-site9-issue60-s4c.md`](VERDICT-20260922-third-party-review-site9-issue60-s4c.md)
   - **THE THIRD PAIR OF EYES `HANDOFF-20260922` §10 ASKED FOR, on all three objects.** Site 9's fix
   **ACCEPTED** (sentence replaced with the sites 7–8 wording, inline `⚠ M1 CORRECTED` block present,
