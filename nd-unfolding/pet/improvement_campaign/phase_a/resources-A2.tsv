@@ -3,5 +3,6 @@ date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cp
 2026-09-22	A2	58742133	m3246	shared_milan_ss11/shared	1	0	281	0.000	9.367	COMPLETED	feature inventory (run1); receipts/feature_inventory.json first version
 2026-09-22	A2	58747783	m3246	shared_milan_ss11/shared	1	0	508	0.000	16.933	COMPLETED	recover+data-path (run2); recompute_scores/directional/data_path.json
 2026-09-22	A2	58747784	m3246	shared_milan_ss11/shared	1	0	287	0.000	9.567	COMPLETED	feature inventory (run2); receipts/feature_inventory.json final
-2026-09-22	A2	58752537	m3246	shared_milan_ss11/shared	1	0	NA	NA	NA	PENDING	decompose the masks_and_padding FAIL into its seven conjuncts; submitted 08:11:15 PDT, still queued (Resources) at time of writing -- charge to be filled from sacct when it ends
+2026-09-22	A2	58752537	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	mask-conjunct probe under shared QOS; cancelled by me while still PENDING (Resources) after 10 min and resubmitted to debug as 58752745. Never started, no charge
+2026-09-22	A2	58752745	m3246	regular_milan_ss11/debug	1	0	90	0.000	6.400	COMPLETED	decompose the masks_and_padding FAIL into its seven conjuncts; receipts/mask_conjuncts.json. Queued 125 s
 

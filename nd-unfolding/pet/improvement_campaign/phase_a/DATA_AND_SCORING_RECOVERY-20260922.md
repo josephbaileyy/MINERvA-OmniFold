@@ -304,11 +304,32 @@ of two built rows a duplicated key resolves to. Worth closing before Phase C reu
 The aggregate check failed and the original receipt recorded only the AND, so the conjuncts were
 re-run one at a time (`a2_mask_diagnose.py`).
 
-<!-- MASK_CONJUNCTS -->
-*Job `58752537` was still queued when this document was written; §3.6's per-conjunct result is
-filled in from `receipts/mask_conjuncts.json` when it lands.*
+Job `58752745`, `receipts/mask_conjuncts.json`, over the same 1,200,286 rows. **Four of the seven
+conjuncts pass; three fail, all on the reco side, and all on the same two token slots.**
 
-What is already measured, and matters more than the verdict:
+| Conjunct | Result |
+|---|---|
+| real reco tokens precede pads (tail order) | PASS — 0 rows out of order |
+| real truth tokens precede pads (tail order) | PASS — 0 rows out of order |
+| `part_gen` pads all zero | PASS — 0 of 8,892,266 pad slots |
+| no reco token on a `!pass_reco` row | PASS |
+| **`part_reco` pads all zero** | **FAIL — 2 of 8,846,428 pad slots** |
+| **`reco_view` pads all zero** | **FAIL — the same 2 slots** |
+| **`reco_time` pads all zero** | **FAIL — the same 2 slots** |
+
+**The entire failure is two token slots in two events** (2.3 × 10⁻⁷ of pad slots). They are real
+reconstructed clusters whose **energy is exactly 0.0** while position, view and time are populated —
+e.g. row 793,839, slot 11: `part_reco = (E 0.0, pos −472.9035 mm, z 6554.5171 mm)`, `reco_view = 1`
+(X), `reco_time = 9560.8135 ns`, in an event with 11 other real tokens. Because PET's mask is
+`energy != 0`, such a cluster is **read as padding**: its position, view and time are masked away.
+
+So the check is right to fire, and its blast radius is two events out of 1.2 million. Recording it
+precisely matters more than its size: it establishes that the mask convention is otherwise exactly
+as intended (truth side perfectly clean, ordering perfect everywhere), and it names the one way the
+convention can silently drop a real object — a zero-energy cluster — which any Phase C change to the
+token schema must preserve or fix deliberately.
+
+What is measured alongside it, and matters more than the verdict:
 
 | | reco cloud | truth cloud |
 |---|---:|---:|
@@ -370,6 +391,7 @@ A1's runtime audit is the place this gets settled.
 
 1. Per-iteration recovery needs the 48-inference GPU job (§2.5).
 2. The 111 duplicate built keys in `join_sig` are undiagnosed (§3.5).
-3. Which conjunct of the mask check fails — job `58752537` (§3.6).
+3. The 1,000 `pass_reco` rows carrying zero reco tokens (§3.6) are counted but not explained;
+   at the model input they are indistinguishable from a reco failure.
 4. Whether the engine loaded the pinned checkout or the production one (§3.9) — A1's scope.
 5. The step-1 class-ratio discard (§3.8) has an inferred mechanism and no measured effect size.

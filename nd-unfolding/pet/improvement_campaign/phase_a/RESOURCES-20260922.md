@@ -153,16 +153,21 @@ implications:
 
 ## 5. This task's own jobs
 
-Recorded in `resources-A2.tsv`. Five jobs across the A2 delegates (3 COMPLETED, 1 FAILED, 1 still
-queued at the time of writing), all CPU (`m3246`, `shared`, 120 cores each), all read-only —
-**no training was launched.** Cumulative over the four that ran: **0 GPU-hours, 39.40 CPU
-core-hours** (1,182 s of wall time × 120 cores).
+Recorded in `resources-A2.tsv`. Six jobs across the A2 delegates — 4 COMPLETED, 1 FAILED,
+1 CANCELLED before it started — all CPU on `m3246`, all read-only. **No training was launched.**
+Cumulative: **0 GPU-hours, 45.80 CPU core-hours.**
 
 Confirmed that these are the only A2 jobs: over `sacct -u josephrb --starttime 2026-09-21`, the
-`pet-a2` / `pet-a2-mask` names account for 5 jobs; `pa1-*` and `runtime-*` belong to delegate A1 and
+`pet-a2` / `pet-a2-mask` names account for 6 jobs; `pa1-*` and `runtime-*` belong to delegate A1 and
 `pet-b1-*` to delegate B1.
 
 `58742132` FAILED (exit 3:0) at 1 m 46 s: NumPy's optional SVE probe runs `lscpu` at
 `numpy.testing` import time, which TensorFlow reaches via scipy, and the OI-136 launch guard refuses
 a child it cannot prove keeps its own Python launches guarded. Fixed in commit `31347723` by
 answering the probe offline; the rerun `58742133` COMPLETED.
+
+**§4's recommendation was then tested on this task's own last job.** `58752537` was submitted to
+`shared` and sat PENDING on `Resources` for 10 minutes; it was cancelled (by its own submitter) and
+resubmitted unchanged except for `--qos=debug` as `58752745`, which **started after 125 s and
+finished in 90 s.** One flag turned a job of unknown remaining wait into one that was done inside
+four minutes. Small read-only probes belong in `debug`.
