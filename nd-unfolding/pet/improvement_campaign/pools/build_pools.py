@@ -16,6 +16,33 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "configuration_comparison"))
 import stage_splits
 
+SALT = b"pet-improvement-20260922-pools"
+# Pool codes and u-ranges, PROTOCOL-20260922.md section 3. -1 = excluded or not pass_truth.
+POOLS = (("P", 0, 0.00, 0.08), ("F", 1, 0.08, 0.40), ("S", 2, 0.40, 0.80),
+         ("T", 3, 0.80, 0.97), ("R", 4, 0.97, 1.00))
+
+
+def pool_seed(salt: bytes) -> int:
+    return int.from_bytes(hashlib.sha256(salt).digest()[:8], "little", signed=True)
+
+
+def assign_pools(identity, keys, pass_truth, excluded_rows, seed) -> np.ndarray:
+    """Pool code per inventory row from the identity hash; excluded or non-truth rows get -1."""
+    excluded = np.zeros(len(identity), dtype=bool)
+    excluded[np.asarray(excluded_rows, dtype=np.int64)] = True
+    eligible_indices = np.flatnonzero(np.asarray(pass_truth, dtype=bool) & ~excluded)
+    # The sidecar declares signal identity unique without source; check it rather than trust it.
+    if len(np.unique(keys[eligible_indices])) != len(eligible_indices):
+        raise SystemExit("duplicate identities among eligible rows")
+    u = stage_splits.uniform_hash(identity[eligible_indices], seed)
+    codes = np.full(len(identity), -1, dtype=np.int8)
+    for _, code, lo, hi in POOLS:
+        codes[eligible_indices[(u >= lo) & (u < hi)]] = code
+    if np.any(codes[eligible_indices] < 0):
+        raise SystemExit("an eligible row fell outside every pool range")
+    return codes
+
+
 def sha256_file(path: Path) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -40,6 +67,9 @@ def main():
     logging.info(f"Loading identity from {identity_path}")
     with np.load(identity_path, mmap_mode="r") as f:
         identity = np.asarray(f["sig_event_id"])
+        keys = np.asarray(f["sig_event_key"])
+        identity_fields = [str(x) for x in f["sig_identity_fields"]]
+        uniqueness = str(f["identity_uniqueness"])
         
     logging.info(f"Loading truth from {truth_path}")
     with np.load(truth_path, mmap_mode="r") as f:
@@ -57,10 +87,12 @@ def main():
         for weight_file in campaign_dir.glob(f"{stage}/*/weights/*.npz"):
             artifact_files.append(weight_file)
             with np.load(weight_file, allow_pickle=False) as f:
-                if "dump_rows_a" in f:
-                    exclusion_set.update(np.asarray(f["dump_rows_a"]).astype(np.int64))
-                if "dump_rows_b" in f:
-                    exclusion_set.update(np.asarray(f["dump_rows_b"]).astype(np.int64))
+                # Both halves must be recorded: a missing key would silently shrink the exclusion.
+                missing = [k for k in ("dump_rows_a", "dump_rows_b") if k not in f.files]
+                if missing:
+                    raise SystemExit(f"{weight_file}: no {missing}; cannot build the exclusion set")
+                exclusion_set.update(np.asarray(f["dump_rows_a"]).astype(np.int64).tolist())
+                exclusion_set.update(np.asarray(f["dump_rows_b"]).astype(np.int64).tolist())
                     
     num_excluded = len(exclusion_set)
     logging.info(f"Found {len(artifact_files)} artifact files, {num_excluded} excluded rows.")
@@ -68,37 +100,12 @@ def main():
     artifact_info = [{"path": str(p), "sha256": sha256_file(p)} for p in sorted(artifact_files)]
     
     # 3. Compute hashes and assign pools
-    salt = b"pet-improvement-20260922-pools"
-    seed = int.from_bytes(hashlib.sha256(salt).digest()[:8], 'little', signed=True)
-    
-    pool_codes = np.full(len(identity), -1, dtype=np.int8)
-    
-    excluded_array = np.zeros(len(identity), dtype=bool)
-    if num_excluded > 0:
-        excluded_array[list(exclusion_set)] = True
-        
-    eligible = pass_truth & (~excluded_array)
-    eligible_indices = np.flatnonzero(eligible)
-    eligible_identities = identity[eligible_indices]
-    
-    logging.info("Computing uniform hashes...")
-    u = stage_splits.uniform_hash(eligible_identities, seed)
-    
+    salt = SALT
+    seed = pool_seed(SALT)
+    excluded_rows = np.fromiter(exclusion_set, dtype=np.int64, count=num_excluded)
     logging.info("Assigning pools...")
-    # P [0,0.08), F [0.08,0.40), S [0.40,0.80), T [0.80,0.97), R [0.97,1.0)
-    # Mapping to 0, 1, 2, 3, 4
-    mask_P = u < 0.08
-    mask_F = (u >= 0.08) & (u < 0.40)
-    mask_S = (u >= 0.40) & (u < 0.80)
-    mask_T = (u >= 0.80) & (u < 0.97)
-    mask_R = (u >= 0.97) & (u <= 1.0) # Should be up to 1.0
-    
-    pool_codes[eligible_indices[mask_P]] = 0
-    pool_codes[eligible_indices[mask_F]] = 1
-    pool_codes[eligible_indices[mask_S]] = 2
-    pool_codes[eligible_indices[mask_T]] = 3
-    pool_codes[eligible_indices[mask_R]] = 4
-    
+    pool_codes = assign_pools(identity, keys, pass_truth, excluded_rows, seed)
+
     # 4. Save and generate manifest
     logging.info(f"Saving pools to {pool_npz_path}")
     np.savez_compressed(pool_npz_path, pool_codes=pool_codes)
@@ -117,6 +124,8 @@ def main():
             "identity_npz": {"path": str(identity_path), "sha256": identity_sha},
             "truth_npz": {"path": str(truth_path), "sha256": truth_sha}
         },
+        "identity": {"array": "sig_event_id", "fields": identity_fields,
+                     "sidecar_uniqueness": uniqueness, "eligible_unique_checked": True},
         "salt": salt.decode('utf-8'),
         "seed": seed,
         "exclusion": {
@@ -124,13 +133,9 @@ def main():
             "artifacts_count": len(artifact_info),
             "artifacts": artifact_info
         },
-        "pools": {
-            "P": {"count": int(np.sum(pool_codes == 0)), "sorted_identity_sha256": get_pool_sha(0)},
-            "F": {"count": int(np.sum(pool_codes == 1)), "sorted_identity_sha256": get_pool_sha(1)},
-            "S": {"count": int(np.sum(pool_codes == 2)), "sorted_identity_sha256": get_pool_sha(2)},
-            "T": {"count": int(np.sum(pool_codes == 3)), "sorted_identity_sha256": get_pool_sha(3)},
-            "R": {"count": int(np.sum(pool_codes == 4)), "sorted_identity_sha256": get_pool_sha(4)}
-        },
+        "pools": {name: {"code": code, "u_range": [lo, hi], "count": int(np.sum(pool_codes == code)),
+                         "sorted_identity_sha256": get_pool_sha(code)} for name, code, lo, hi in POOLS},
+        "not_pass_truth_rows": int(np.sum(~pass_truth)),
         "output": {
             "path": str(pool_npz_path),
             "sha256": pool_npz_sha

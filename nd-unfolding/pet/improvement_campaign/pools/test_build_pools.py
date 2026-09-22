@@ -1,77 +1,67 @@
-import unittest
-import numpy as np
+"""Tests of the pool assignment the builder actually runs (``build_pools.assign_pools``)."""
 import sys
-import hashlib
+import unittest
 from pathlib import Path
 
-# Add the parent directory so we can import stage_splits
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "configuration_comparison"))
-import stage_splits
+import numpy as np
 
-class TestBuildPoolsLogic(unittest.TestCase):
-    def test_assignment(self):
-        # Generate synthetic identity array
-        N = 10000
-        np.random.seed(42)
-        identity = np.random.randint(0, 1000, size=(N, 5), dtype=np.int64)
-        pass_truth = np.ones(N, dtype=bool)
-        
-        # Test exclusion is honoured
-        exclusion_set = set([0, 1, 2])
-        excluded_array = np.zeros(N, dtype=bool)
-        excluded_array[list(exclusion_set)] = True
-        
-        eligible = pass_truth & (~excluded_array)
-        eligible_indices = np.flatnonzero(eligible)
-        eligible_identities = identity[eligible_indices]
-        
-        salt = b"pet-improvement-20260922-pools"
-        seed = int.from_bytes(hashlib.sha256(salt).digest()[:8], 'little', signed=True)
-        
-        u = stage_splits.uniform_hash(eligible_identities, seed)
-        
-        pool_codes = np.full(N, -1, dtype=np.int8)
-        mask_P = u < 0.08
-        mask_F = (u >= 0.08) & (u < 0.40)
-        mask_S = (u >= 0.40) & (u < 0.80)
-        mask_T = (u >= 0.80) & (u < 0.97)
-        mask_R = (u >= 0.97) & (u <= 1.0)
-        
-        pool_codes[eligible_indices[mask_P]] = 0
-        pool_codes[eligible_indices[mask_F]] = 1
-        pool_codes[eligible_indices[mask_S]] = 2
-        pool_codes[eligible_indices[mask_T]] = 3
-        pool_codes[eligible_indices[mask_R]] = 4
-        
-        # tests:
-        # assignment is deterministic (implied by uniform_hash seed)
-        u2 = stage_splits.uniform_hash(eligible_identities, seed)
-        np.testing.assert_array_equal(u, u2)
-        
-        # pools are disjoint and cover exactly the eligible rows
-        assigned = (pool_codes >= 0)
-        np.testing.assert_array_equal(assigned, eligible)
-        
-        # exclusion is honoured
-        for row in exclusion_set:
-            self.assertEqual(pool_codes[row], -1)
-            
-        # fractions within 4 sigma of expectation
-        counts = {
-            0: np.sum(pool_codes == 0),
-            1: np.sum(pool_codes == 1),
-            2: np.sum(pool_codes == 2),
-            3: np.sum(pool_codes == 3),
-            4: np.sum(pool_codes == 4),
-        }
-        expectations = {0: 0.08, 1: 0.32, 2: 0.40, 3: 0.17, 4: 0.03}
-        total_eligible = len(eligible_indices)
-        
-        for k, p in expectations.items():
-            expected_n = total_eligible * p
-            std_dev = np.sqrt(total_eligible * p * (1 - p))
-            # within 4 sigma
-            self.assertTrue(abs(counts[k] - expected_n) <= 4 * std_dev)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import build_pools as bp  # noqa: E402
 
-if __name__ == '__main__':
+
+def _fixture(n=20000, seed=3):
+    rng = np.random.default_rng(seed)
+    identity = np.column_stack([np.full(n, 110000), rng.integers(1, 50, n), np.arange(n)]).astype(np.int32)
+    keys = identity[:, 2].astype(np.uint64) + (identity[:, 1].astype(np.uint64) << np.uint64(32))
+    pass_truth = rng.random(n) > 0.02
+    excluded = rng.choice(n, size=500, replace=False)
+    return identity, keys, pass_truth, excluded
+
+
+class AssignPools(unittest.TestCase):
+    def test_deterministic_disjoint_covering_and_excluding(self):
+        identity, keys, pass_truth, excluded = _fixture()
+        seed = bp.pool_seed(bp.SALT)
+        a = bp.assign_pools(identity, keys, pass_truth, excluded, seed)
+        b = bp.assign_pools(identity, keys, pass_truth, excluded, seed)
+        np.testing.assert_array_equal(a, b)
+        eligible = pass_truth.copy()
+        eligible[excluded] = False
+        np.testing.assert_array_equal(a >= 0, eligible)          # covers exactly the eligible rows
+        self.assertTrue(np.all(a[excluded] == -1))               # exclusion honoured
+        self.assertTrue(set(np.unique(a[a >= 0])) <= {0, 1, 2, 3, 4})
+
+    def test_fractions_within_four_sigma(self):
+        identity, keys, pass_truth, excluded = _fixture(n=200000)
+        codes = bp.assign_pools(identity, keys, pass_truth, excluded, bp.pool_seed(bp.SALT))
+        n = int(np.sum(codes >= 0))
+        for _, code, lo, hi in bp.POOLS:
+            p = hi - lo
+            self.assertLessEqual(abs(np.sum(codes == code) - n * p), 4 * np.sqrt(n * p * (1 - p)))
+
+    def test_assignment_depends_on_identity_not_row_order(self):
+        identity, keys, pass_truth, excluded = _fixture()
+        seed = bp.pool_seed(bp.SALT)
+        a = bp.assign_pools(identity, keys, pass_truth, excluded, seed)
+        perm = np.random.default_rng(9).permutation(len(identity))
+        inv = np.argsort(perm)
+        b = bp.assign_pools(identity[perm], keys[perm], pass_truth[perm], inv[excluded], seed)
+        np.testing.assert_array_equal(a, b[inv])
+
+    def test_duplicate_identity_is_refused(self):
+        identity, keys, pass_truth, excluded = _fixture()
+        keys = keys.copy()
+        eligible = np.flatnonzero(pass_truth & ~np.isin(np.arange(len(keys)), excluded))
+        keys[eligible[1]] = keys[eligible[0]]
+        with self.assertRaises(SystemExit):
+            bp.assign_pools(identity, keys, pass_truth, excluded, bp.pool_seed(bp.SALT))
+
+    def test_other_salt_gives_other_pools(self):
+        identity, keys, pass_truth, excluded = _fixture()
+        a = bp.assign_pools(identity, keys, pass_truth, excluded, bp.pool_seed(bp.SALT))
+        b = bp.assign_pools(identity, keys, pass_truth, excluded, bp.pool_seed(b"another-salt"))
+        self.assertGreater(np.mean(a[a >= 0] != b[b >= 0]), 0.3)
+
+
+if __name__ == "__main__":
     unittest.main()
