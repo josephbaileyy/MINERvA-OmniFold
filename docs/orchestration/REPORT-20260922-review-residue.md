@@ -23,7 +23,11 @@ zero on a round after that. Any finding by the reviewer **resets the counter to 
 | 8 (self) | **0** | every committed digest re-derived from its source: the 3D receipt, the four package `.npz` files, VL145 against the scan JSON, the 23/21/2 scope arithmetic |
 | 9 (self) | **0** | every `CATALOG.md` claim I added re-checked against its receipt; every sha cited in my records confirmed a valid object |
 | **agy #2, attempt 1** | ⚠ **NO VERDICT** | **died on a session rate limit during its first action.** Not a clean round — see §1a |
-| agy #2, attempt 2 | *(pending)* | relaunched with the cheap high-yield checks ordered first, so a truncated run still yields findings |
+| **agy #2, attempt 2** | **9** | **counter RESET again.** All nine verified and fixed |
+| 10 (self) | — | **LOOP SAFETY REACHED.** 9 self-rounds + 2 independent reviews = 11 review rounds; the instruction caps the loop at 10 and makes this report the terminal outcome |
+
+**TOTAL FINDINGS ACROSS THE LOOP: 3 + 0 + 0 + 14 + 1 + 1 + 1 + 0 + 0 + 0 + 9 = 29.**
+**Twenty-three of them were found by the two INDEPENDENT reviewers; six by me.**
 
 **Condition (i) was satisfied at rounds 2–3 and then destroyed by the reviewer's 14.** Condition
 (ii) requires a clean **independent** round after two clean self-rounds.
@@ -51,6 +55,30 @@ findings, when the correct reading is that the search never ran. It is recorded 
 distinguishable outcome (`NO VERDICT`) rather than folded into the counts, and the review was
 relaunched with its cheap, high-yield checks ordered first so that a run truncated the same way
 still produces findings instead of silence.
+
+### 1b. What the second independent review found, and why it matters more than its count
+
+Nine findings, all verified and all fixed (commit *"A second independent review found 9"*). Three
+are worth carrying:
+
+1. ⚠ **I CORRECTED A TRUE ENTRY INTO A FALSE ONE.** Repairing reviewer #1's finding 3, I wrote
+   that `make_figures.sh:48` builds `generators_vs_unfolded_band` with a *"different key"*. It
+   passes **both**: `--cov …:hCov_combined3d_total` (primary) and
+   `--syst-cov …:hCov_universe3d_total`. Note Fig. 20 **does** read the quarantined covariance; the
+   handoff's original table was right; my correction removed a true entry and contradicted a
+   caption I edited in the same commit. **A repair made under review pressure is not safer than
+   the claim it repairs.**
+2. ⚠ **"STRUCTURAL" WAS ONE LEVEL TOO BROAD.** `code_agrees` compares the members **to each
+   other**, not to `d64257c3`. Rebuilding the k=0 member's Z at HEAD too makes them agree, at a
+   declared `0.29` task-h each. The honest word is **declined**, not impossible.
+3. ⚠ **THE INSTRUMENTS WERE NOT COMMITTED.** `VL145` pinned its scanner by a digest resolving to
+   nothing in the tree, and neither L2 stage script nor either `_v2` repair existed in the
+   repository — so every claim about what they do was unverifiable by the next lane. Eleven files
+   now live under `docs/orchestration/probes/`, originals beside repairs.
+
+**The pattern across both reviews: my errors cluster in the corrections, not in the original
+measurements.** Every raw number this session produced reproduced on independent re-measurement.
+What failed was enumeration, attribution, scope words, and arithmetic about my own work.
 
 ## 2. Disposition of the 14
 
