@@ -326,6 +326,13 @@ def main(argv: list[str] | None = None) -> int:
         lost_frac_reco = np.where(e_all > 0, 1 - e_top / e_all, 0.0)
         lost_frac_gen = np.where(g_all > 0, 1 - g_top / g_all, 0.0)
     ea_units = np.float32(om["sim_eavail"][rp]) == reco_scalars[inv_row[rp], 2]
+    # The first run of this receipt reported a nan correlation here. Cause, measured below: the
+    # omnifile carries non-finite `sim_eavail` on a small number of reco-passing rows, and one
+    # non-finite entry makes the whole corrcoef nan. Correlate on the finite rows and say how many
+    # were dropped, rather than publishing a nan or silently zero-filling.
+    e_all_rp = e_all[rp]
+    ea_rp = np.asarray(om["sim_eavail"][rp], float)
+    finite_pair = np.isfinite(e_all_rp) & np.isfinite(ea_rp)
     out["pre_truncation_from_g2_omnifile"] = {
         "file": str(args.omnifile_g2_playlist), "bytes": args.omnifile_g2_playlist.stat().st_size,
         "entries": int(tp.num_entries),
@@ -341,8 +348,15 @@ def main(argv: list[str] | None = None) -> int:
         "reco_energy_fraction_beyond_cap_on_over_cap_events_mean":
             float(lost_frac_reco[rp][n_clu[rp] > num_part].mean())
             if (n_clu[rp] > num_part).any() else None,
-        "sum_all_cluster_E_vs_reco_eavail_pearson": float(np.corrcoef(
-            e_all[rp], np.asarray(om["sim_eavail"][rp], float))[0, 1]),
+        "sum_all_cluster_E_vs_reco_eavail_pearson": (
+            float(np.corrcoef(e_all_rp[finite_pair], ea_rp[finite_pair])[0, 1])
+            if finite_pair.sum() > 1 else None),
+        "sum_all_cluster_E_vs_reco_eavail_rows_finite": int(finite_pair.sum()),
+        "sum_all_cluster_E_vs_reco_eavail_rows_dropped_non_finite": int((~finite_pair).sum()),
+        "sum_all_cluster_E_median_mev": float(np.median(e_all_rp[finite_pair]))
+            if finite_pair.any() else None,
+        "reco_eavail_median_gev_same_rows": float(np.median(ea_rp[finite_pair]))
+            if finite_pair.any() else None,
         "gen_hadrons_per_event_quantiles_50_90_99_max": np.quantile(n_gen[tr], [.5, .9, .99, 1.]),
         "gen_fraction_events_over_cap": float(np.mean(n_gen[tr] > num_part)),
         "gen_energy_fraction_beyond_cap_mean": float(lost_frac_gen[tr].mean()),

@@ -209,6 +209,34 @@ def main(argv: list[str] | None = None) -> int:
     for p in (str(root / "omnifold_nn"), str(pet), str(cc)):
         if p not in sys.path:
             sys.path.insert(0, p)
+    # NumPy's optional SVE probe runs `lscpu` at `numpy.testing` import time, which TensorFlow
+    # reaches through scipy; the OI-136 launch guard refuses any child it cannot prove keeps its
+    # own Python launches guarded, and that refusal killed the first attempt at this job
+    # (58742132). Measured caller:
+    #   numpy/testing/_private/utils.py:1247 check_support_sve -> subprocess.run('lscpu').
+    # NumPy's own fallback for that call is FileNotFoundError -> "no SVE", which is the right
+    # answer on x86_64, so raise it rather than widen the guard. Same remedy, same reason, as
+    # `nd-unfolding/pet/direct_token_comparison/calibration_measure.py:57`.
+    import platform
+    import shutil
+    import subprocess
+    if platform.machine() != "x86_64" and shutil.which("lscpu") is not None:
+        raise SystemExit("[a2] the optional SVE probe cannot be answered offline on "
+                         f"{platform.machine()}; refusing rather than launching lscpu")
+    _real_run = subprocess.run
+
+    def _run_without_sve_probe(command: Any, *rest: Any, **kw: Any) -> Any:
+        if command == "lscpu" or (isinstance(command, (list, tuple)) and list(command)[:1]
+                                  == ["lscpu"]):
+            raise FileNotFoundError("optional SVE probe disabled: this is x86_64")
+        return _real_run(command, *rest, **kw)
+
+    subprocess.run = _run_without_sve_probe
+    try:
+        import numpy.testing  # noqa: F401
+    finally:
+        subprocess.run = _real_run
+
     # The engine package FIRST, from the pinned tree: `fullevent_fps_dataloader` puts the hardcoded
     # production root at sys.path[0] on import, and its late `from omnifold.dataloader import
     # DataLoader` would otherwise resolve there (the guard refuses that, correctly). Importing
@@ -474,8 +502,12 @@ def main(argv: list[str] | None = None) -> int:
         "paired_differences": diffs,
     }
 
-    # per-iteration outputs
+    # per-iteration outputs. The question the brief asks is whether per-iteration EVENT weights
+    # exist; a `.pkl` beside each checkpoint could be either a history or a weight array, so the
+    # pickles are OPENED rather than classified by suffix.
+    import pickle
     iteration_outputs = {}
+    pickle_contents: dict[str, Any] = {}
     for stage in ("final",):
         for ent in runs[stage]:
             wdir = Path(ent["weights"]).parent
@@ -484,9 +516,32 @@ def main(argv: list[str] | None = None) -> int:
                 "files": names,
                 "event_weight_arrays": [n for n in names if n.endswith(".npz")],
                 "checkpoints": [n for n in names if n.endswith(".weights.h5")],
-                "histories": [n for n in names if n.endswith(".pkl")],
+                "pickles": [n for n in names if n.endswith(".pkl")],
             }
-    any_iter_weights = any(len(v["event_weight_arrays"]) > 1 for v in iteration_outputs.values())
+            for n in iteration_outputs[str(wdir)]["pickles"]:
+                with open(wdir / n, "rb") as handle:
+                    obj = pickle.load(handle)
+                pickle_contents[str(wdir / n)] = {
+                    "type": type(obj).__name__,
+                    "keys": sorted(obj) if isinstance(obj, dict) else None,
+                    "value_lengths": ({k: (len(v) if hasattr(v, "__len__") else None)
+                                       for k, v in obj.items()} if isinstance(obj, dict) else None),
+                    "holds_an_array_of_prior_length": bool(
+                        isinstance(obj, dict) and any(
+                            hasattr(v, "__len__") and len(v) == endpoints["final"]["half_b_rows"]
+                            for v in obj.values())),
+                }
+    any_iter_weights = (any(len(v["event_weight_arrays"]) > 1 for v in iteration_outputs.values())
+                        or any(v["holds_an_array_of_prior_length"]
+                               for v in pickle_contents.values()))
+    # the engine's own normalisation lines, read from the executed tasks' logs
+    norm_lines: dict[str, list[str]] = {}
+    for ent in runs["final"]:
+        log = Path(ent["weights"]).parent.parent / "run.log"
+        if log.exists():
+            norm_lines[str(log)] = [ln.strip() for ln in log.read_text(errors="replace").splitlines()
+                                    if "Normalizing sum of weights" in ln]
+    distinct_norm = sorted({tuple(v) for v in norm_lines.values()})
 
     part1 = {
         "scope": "Phase A2 Part 1: recover and recompute the historical headline (scope section 3)",
@@ -507,11 +562,20 @@ def main(argv: list[str] | None = None) -> int:
         "per_iteration": {
             "per_iteration_event_weights_exist": any_iter_weights,
             "reading": ("each run directory holds ONE event-weight array (the final push) plus a "
-                        "Keras checkpoint and a training-history pickle per (iteration, step). "
-                        "Per-iteration recovery is therefore NOT recoverable from saved event "
-                        "weights; it needs re-inference of each iteration's step-2 checkpoint on "
-                        "half B's truth inputs (a GPU inference job, deferred to Phase B)."),
+                        "Keras checkpoint and a pickle per (iteration, step); the pickles were "
+                        "OPENED and hold only per-epoch training history. Per-iteration recovery "
+                        "is therefore NOT recoverable from saved event weights; the route that "
+                        "exists is re-inference of each iteration's step-2 checkpoint on half B's "
+                        "truth cloud (48 inferences over ~600 k rows), which is a GPU job outside "
+                        "this task's CPU scope."),
             "listing_final": iteration_outputs,
+            "pickle_contents": pickle_contents,
+        },
+        "engine_normalisation_lines_in_the_executed_logs": {
+            "distinct_line_sequences": [list(t) for t in distinct_norm],
+            "runs_with_a_log": len(norm_lines),
+            "reading": ("what the engine printed while the historical tasks ran, not a reading of "
+                        "the loader's source"),
         },
     }
     write(args.outdir, "recompute_scores.json", part1)
@@ -742,9 +806,8 @@ def main(argv: list[str] | None = None) -> int:
          "w_reco_weighted_mean_tilt_over_s1_a": t_acc_w,
          "physical_class_ratio_sum_s1a_wreco_tilt_over_sum_s1b_wreco": r_physical,
          "class_ratio_used": 1.0,
-         "execution_evidence": ("run.log of every final task prints 'Normalizing sum of weights "
-                                "to 1000000' for the pdata loader (DataLoader default) and "
-                                "'1000000.0' for the MC loaders"),
+         "execution_evidence_lines_measured_in_the_run_logs": [list(t) for t in distinct_norm],
+         "execution_evidence_runs_with_a_log": len(norm_lines),
          "consequence (INFERRED)": ("step 1 reweights accepted rows by r(x)/R_phys relative to "
                                     "misses, whose pull weight stays 1; a shape-only closure. "
                                     "Its effect on recovery is not measured here (Phase B)")})
