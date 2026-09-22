@@ -4,7 +4,8 @@
 # command line (e.g. `sbatch -q shared --gpus=1 -c 32` or `-q regular -N 1 --gpus=4`).
 #   MINE         clean checkout (git HEAD must equal MINE_COMMIT, tree clean before and after)
 #   OUT          output dir; each config writes OUT/<config name>/
-#   CONFIGS      space-separated config file names under phase_b/pet/configs/
+#   CONFIGS      space-separated config file names under phase_b/pet/configs/; a token may carry
+#                per-run driver arguments after a '|' (e.g. "x.json|--step2-miss-mode=eff...")
 #   DRIVER       script relative to improvement_campaign/ (default run_unfold.py; the B2 driver
 #                phase_b/pet/b2_driver.py also gets --deadline-unix from the allocation end)
 #   DRIVER_ARGS  extra arguments for the driver (optional)
@@ -39,13 +40,14 @@ DEADLINE=$(( END_UNIX - 300 ))
 [[ "$DRIVER" == *b2_driver.py ]] && DRIVER_ARGS="$DRIVER_ARGS --deadline-unix $DEADLINE"
 echo "job $SLURM_JOB_ID end $END_UNIX deadline $DEADLINE devices ${DEVS[*]} driver $DRIVER args $DRIVER_ARGS" >> "$OUT/launch-$SLURM_JOB_ID.txt"
 read -r -a LIST <<< "$CONFIGS"
-run_one() {  # $1 = config file name, $2 = GPU index
-  local CFG=$1 GPU=$2 NAME RUN
+run_one() {  # $1 = config token ("file.json" or "file.json|extra args"), $2 = GPU index
+  local TOKEN=$1 GPU=$2 CFG EXTRA NAME RUN
+  CFG=${TOKEN%%|*}; EXTRA=""; [[ "$TOKEN" == *"|"* ]] && EXTRA=${TOKEN#*|}
   NAME=$(basename "$CFG" .json); RUN="$OUT/$NAME"; mkdir -p "$RUN"
   CUDA_VISIBLE_DEVICES=${DEVS[$GPU]} python "$MINE/nd-unfolding/mnv_guarded_run.py" --expect-root "$MINE" \
     --inventory "$RUN/guard-$SLURM_JOB_ID.json" --label "B2-$NAME" \
     -- "$C/$DRIVER" --config "$B/configs/$CFG" --repo "$MINE" --out "$RUN" \
-    --inputs-npz "$INPUTS" --identity-sidecar "$SIDECAR" $DRIVER_ARGS \
+    --inputs-npz "$INPUTS" --identity-sidecar "$SIDECAR" $DRIVER_ARGS $EXTRA \
     >> "$RUN/run-$SLURM_JOB_ID.log" 2>&1 || { echo "$NAME train exit $?" >> "$OUT/exit-codes.txt"; return 1; }
   if [[ "${SCORE:-0}" == 1 ]]; then
     python "$MINE/nd-unfolding/mnv_guarded_run.py" --expect-root "$MINE" \

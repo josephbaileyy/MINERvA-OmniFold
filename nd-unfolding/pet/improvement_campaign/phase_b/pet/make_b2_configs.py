@@ -172,17 +172,28 @@ def experiment_3() -> dict[str, RunConfig]:
     """H at K = 10 (step-wise closure; also the reference arm of exp. 4), seeds 1-2."""
     return {f"b2e3-H-K10-s{s}": run_config(f"b2e3-H-K10-s{s}", seed=s, iterations=10,
                                            note="B2 exp 3 / exp 4 reference: H at K=10")
-            for s in (1, 2)}
+            for s in (1, 2, 3, 4)}
 
 
 def experiment_4() -> dict[str, RunConfig]:
-    """Schedule factors one at a time against H, K = 10, seeds 1-2."""
+    """One factor at a time against H, K = 10, seeds 1-2.
+
+    S1/S2/S3 are schedule factors. `M` is the MISS-HANDLING factor: the same H recipe run with
+    the driver's opt-in efficiency-corrected step 2 (`--step2-miss-mode efficiency_corrected`),
+    which is a training rule rather than a recipe field, so it is recorded in the receipt's
+    `run_identity` and named by the config's own name.
+    """
     out = {}
     for variant in ("S1", "S2", "S3"):
         for s in (1, 2):
             name = f"b2e4-{variant}-K10-s{s}"
             out[name] = run_config(name, seed=s, iterations=10, schedule=variant,
                                    note=f"B2 exp 4: schedule factor {variant} vs H")
+    for s in (1, 2):
+        name = f"b2e4-M-K10-s{s}"
+        out[name] = run_config(name, seed=s, iterations=10,
+                               note="B2 exp 4: miss handling -- H with the efficiency-corrected "
+                                    "step 2 (--step2-miss-mode efficiency_corrected)")
     return out
 
 

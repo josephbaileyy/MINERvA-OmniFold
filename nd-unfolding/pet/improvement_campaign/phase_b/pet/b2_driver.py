@@ -52,6 +52,7 @@ import run_unfold as ru  # noqa: E402
 from recipe import RunConfig  # noqa: E402
 
 LOGIT_CAP = rec.REWEIGHT_LOGIT_CAP
+STEP2_MISS_MODES = ("carry", "efficiency_corrected")
 
 
 def sha256_file(path: Path) -> str:
@@ -180,8 +181,12 @@ def make_b2_multifold(MultiFold: type, tf: Any, np: Any) -> type:
     class B2MultiFold(Recipe):
         def __init__(self, *a: Any, deadline_unix: float | None = None,
                      first_iteration_estimate_s: float = 1200.0,
-                     stop_after_iteration: int | None = None, **k: Any) -> None:
+                     stop_after_iteration: int | None = None,
+                     step2_miss_mode: str = "carry", **k: Any) -> None:
             super().__init__(*a, **k)
+            if step2_miss_mode not in STEP2_MISS_MODES:
+                raise SystemExit(f"[b2] unknown step-2 miss mode {step2_miss_mode!r}")
+            self.step2_miss_mode = step2_miss_mode
             self.deadline_unix = deadline_unix
             self.stop_after_iteration = stop_after_iteration
             self.first_iteration_estimate_s = float(first_iteration_estimate_s)
@@ -190,6 +195,30 @@ def make_b2_multifold(MultiFold: type, tf: Any, np: Any) -> type:
             self.fits_sink = self.out_dir / "fits.jsonl"
             self.segments: list[dict[str, Any]] = []
             self._fits_written = 0
+
+        # ---- step 2: the engine's rule, or the efficiency-corrected one ---------------- #
+        def RunStep2(self, i: int) -> None:
+            """`carry` is the engine's own `RunStep2` (misses carry the previous push into the
+            class-1 weights). `efficiency_corrected` trains the truth classifier on the
+            RECO-PASSING events alone -- where the step-1 correction lives -- and applies the
+            learned truth-level ratio to ALL truth events, misses included (Huang et al.
+            arXiv:2504.06857 sec. V.A). It assumes the selection efficiency depends only on the
+            truth variables the classifier sees."""
+            if self.step2_miss_mode == "carry":
+                super().RunStep2(i)
+                return
+            self.log_string("RUNNING STEP 2 (efficiency-corrected: trained on accepted events)")
+            accepted = np.asarray(self.mc.pass_reco, dtype=np.float32)
+            self.RunModel(
+                np.concatenate((self.labels_mc, self.labels_gen)),
+                np.concatenate((self.mc.weight * accepted,
+                                self.mc.weight * self.weights_pull * accepted)),
+                i, self.model2, stepn=2,
+                NTRAIN=self.num_steps_gen * self.config.step2.batch_size, cached=i > self.start)
+            new_weights = np.ones_like(self.weights_push)
+            new_weights[self.mc.pass_gen] = self.reweight(
+                self._pack_gen(self.mc.gen), self.model2)[self.mc.pass_gen]
+            self.weights_push = new_weights
 
         # ---- persistence -------------------------------------------------------------- #
         def _save_iteration(self, i: int, seconds: float) -> None:
@@ -435,6 +464,10 @@ def main() -> int:
     parser.add_argument("--first-iteration-estimate-s", type=float, default=1200.0)
     parser.add_argument("--stop-after-iteration", type=int, default=None,
                         help="testing: exit INCOMPLETE after this iteration (resume check)")
+    parser.add_argument("--step2-miss-mode", choices=STEP2_MISS_MODES, default="carry",
+                        help="'carry' is the engine's rule (the default path, byte-identical); "
+                             "'efficiency_corrected' trains step 2 on reco-passing events only "
+                             "and applies the ratio to all truth events")
     args = parser.parse_args()
 
     out = scope.refuse_historical_output(args.out)
@@ -482,11 +515,16 @@ def main() -> int:
                   training_recipe=training_recipe, torch_adamw=torch_adamw,
                   probe_rows=args.probe_rows, deadline_unix=args.deadline_unix,
                   first_iteration_estimate_s=args.first_iteration_estimate_s,
-                  stop_after_iteration=args.stop_after_iteration)
+                  stop_after_iteration=args.stop_after_iteration,
+                  step2_miss_mode=args.step2_miss_mode)
     receipt: dict[str, Any] = {
         "schema": "pet-improvement-b2-run-receipt-v1", "mode": args.mode,
         "config": config.to_dict(), "config_hash": config.content_hash(),
         "b2_arm": arm.name, "b2_arm_hash": arm.content_hash(), "b2_arm_record": arm_record,
+        "step2_miss_mode": args.step2_miss_mode,
+        "run_identity": hashlib.sha256(
+            f"{config.content_hash()}|{arm.content_hash()}|{args.step2_miss_mode}|{args.mode}"
+            .encode()).hexdigest(),
         "code_commit": subprocess.run(["git", "-C", str(args.repo), "rev-parse", "HEAD"],
                                       capture_output=True, text=True).stdout.strip(),
         "inputs_npz": str(args.inputs_npz), "input_digests_before_arm": digests_before_arm,
