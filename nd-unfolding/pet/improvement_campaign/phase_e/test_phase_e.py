@@ -358,3 +358,26 @@ def test_spurious_displacement_is_zero_for_a_perfect_do_nothing_estimator():
     targets = cm.target_spectra(eav, w, np.ones(n), code)
     out = cm.spurious_displacement(eav, w, np.ones(n), targets["aggregate"])
     assert out["unfolded_minus_target_l1"] == 0.0 and out["prior_minus_target_l1"] == 0.0
+
+
+# ------------------------------------------------------------------------------------------- #
+# Golden values: a draw must not move silently
+# ------------------------------------------------------------------------------------------- #
+def test_replicate_hash_and_draw_are_pinned():
+    """If any of this changes, every replicate in the campaign changes with it, so it is pinned
+    here rather than left to be noticed when two lanes' 'same' replicate disagree."""
+    ident = np.stack([np.full(6, 12), np.arange(6) + 1, np.arange(6) * 7 + 3],
+                     axis=1).astype(np.int64)
+    assert np.allclose(rp.uniform_hash(ident, 12345),
+                       [0.350271297923, 0.242051740861, 0.838437809637,
+                        0.887441436759, 0.727566580646, 0.278999047147], atol=1e-12)
+    assert rp.seed_from_salt("pet-improvement-20260922-replicates/T/E1-references") \
+        == -8378098241530117418
+    rows = np.arange(1000, 1600, dtype=np.int64)
+    identity = np.stack([np.full(600, 12), rows // 10, rows], axis=1).astype(np.int64)
+    reps, _ = rp.draw_replicates(rp.ReplicateDesign("T", "golden", n_prior=7, n_pseudo=5),
+                                 [0, 1], rows, identity)
+    assert reps[0].prior_rows.tolist() == [1574, 1207, 1101, 1480, 1452, 1179, 1373]
+    assert reps[0].pseudo_rows.tolist() == [1545, 1330, 1113, 1409, 1050]
+    assert rp.rows_digest(reps[0].prior_rows).startswith("935c25e39ad00f7d")
+    assert rp.rows_digest(reps[1].pseudo_rows).startswith("4157dae045b245c9")
