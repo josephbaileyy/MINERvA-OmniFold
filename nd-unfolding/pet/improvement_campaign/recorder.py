@@ -243,6 +243,8 @@ def make_epoch_recorder(tf: Any, np: Any, *, context: dict[str, Any], sink: Path
                     self.summary["stopped_early_at_epoch"] = int(epoch)
 
         def on_train_end(self, logs: Any = None) -> None:
+            _COUNTERS.pop(id(self.model.optimizer), None)
+            _COUNTERS.pop(id(self.model), None)
             if stopping.restore == "best" and self.best_weights is not None:
                 self.model.set_weights(self.best_weights)
             final = trainable_digest(np, self.model)
