@@ -43,10 +43,18 @@ forbid continuing.
 | 14 (self) | **0** | pure verification, **no edits** — every package digest, `M` rebuilt to `64fec490…`, the README recipe, the scanner pin, ledger arithmetic, all four gates. Ten apparent "live assertions" were all quotations-to-prohibit, diagnosed not fixed |
 | 15 (self) | **0** | pure verification, **no edits** — physics against receipts, cluster state (deployed `32e403b8`, trunk `3d7465f6…`, projection `835828bf…`, 10 unfolds), note sources clean |
 | **agy #4 (independent)** | **11** | ⚠ **ALL ELEVEN IN ROW 66's CLASS — zero elsewhere.** Stale counts and one-of-N-sites failures in my bookkeeping. It re-derived and could NOT break: the release package end-to-end, `VL145`, the repaired probe, row 66's cited instances, and the ledger arithmetic. All eleven fixed |
+| 16 (self) | **0** | pure verification after the de-duplication fix: ledger reconciles (15 self rows ordered, sum 11; agy 14/9/7/11; totals 11/41/52), `CATALOG.md` and `KNOWN_ISSUES.md` restate **zero** counts, package digests and `M` re-derived, L2 statistics, all four gates |
 
-**TOTAL: self rounds 1–15 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0 = 11; independent reviews =
+**TOTAL: self rounds 1–16 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0 = 11; independent reviews =
 14+9+7+11 = 41; TOTAL 52.** **FORTY-ONE of the fifty-two were found by the four INDEPENDENT
 reviewers; eleven by me across fifteen self-rounds.**
+
+⚠ **THE DUPLICATION THAT CAUSED THE CLASS IS NOW REMOVED, which is the repair row 66 should have
+had from the start.** The per-round counts were restated in three files, so every review staled two
+of them by construction — and reviews #3 and #4 duly found exactly that. They now live in **this
+ledger only**; `CATALOG.md` and `KNOWN_ISSUES` row 66 point at it and restate **zero** counts
+(re-measured: 0 hits each, against 1–1 and 1–1 before). **A rate caused by duplicated bookkeeping
+is fixed by removing the duplication, not by correcting each copy after each review.**
 
 ⚠ **AND THE LOOP CLOSES HERE, ON THE COUNTER THE RECURRENCE RULE DEFINES.** Rounds 14 and 15 —
 run as pure verification with **no edits**, because it was the editing that generated each previous
