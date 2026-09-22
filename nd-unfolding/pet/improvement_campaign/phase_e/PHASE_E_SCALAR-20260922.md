@@ -140,7 +140,34 @@ The hashes are in `results/references.json` and `results/identifiability.json` b
 
 ## 6. What these numbers establish, and what they do not
 
-(filled)
+**Not established by anything here** (independent of how the numbers come out):
+
+1. **No bound.** A recovery in §4 or §5 is one estimator's performance on one population under one
+   distortion. It is not an attainability limit, and the reference model is not a bound either —
+   §5c shows an estimator that exceeds it.
+2. **No threshold.** The historical reference (0.6949731569), the aggregate floor (0.5559785255),
+   the regional floors, the non-inferiority margin (0.02) and the switching margin (0.04) are
+   unchanged and are not re-derived here. Any alternative reference in §5 is a **prospective
+   recommendation** for this campaign, never a retroactive change to the historical verdict.
+3. **Nothing about PET.** These are scalar references. What a PET candidate does under these
+   distortions is a later measurement against exactly these yardsticks, on the same replicates.
+4. **"Not distinguishable at this sample size" is not "unrecoverable."** The identifiability
+   statistic is a property of a classifier, a feature set and a sample size; a distortion below the
+   null band is reported as unprobed at this size (protocol §7), and no recovery number for it
+   carries a claim about what a better-powered experiment would find.
+5. **Event-draw and estimator-seed variation are not separated here.** Each replicate is an
+   independent event draw scored with one estimator seed, so a spread across replicates contains
+   both. B1 measured the seed-only spread of the same GBDT reference on one fixed sample
+   (sd ≤ 0.013 at k = 3).
+6. **R3 is an approximation of a resolution systematic**, not a re-simulation: the ≤ 12 stored
+   tokens are neither all of the calorimetric energy `E_avail` sums nor split by sub-detector, so
+   the smearing is applied to the stored clusters and propagated to `E_avail` by their energy
+   ratio (§1.3).
+7. **D5 as predeclared is dominated by the standalone predictions' p‖ shortfall** above ≈ 8 GeV
+   (§1.2), whose cause is not established here. The post-hoc per-p‖-slice variant separates the
+   remaining `(p_T, E_avail | p‖)` difference; it is not predeclared and enters no verdict.
+8. **The 8× pool-S replicates share events** (§5b) — their spread is a lower bound on the
+   sampling spread of three independent 8× draws, which pool S cannot supply.
 
 ## 7. Provenance and cost
 
