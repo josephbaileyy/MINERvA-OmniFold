@@ -1,0 +1,149 @@
+{
+  "condition_number_abs": 341403936070238.06,
+  "cutoff_scan": [
+    {
+      "largest_excluded_lambda_over_lambda_max": 0.06272537067903033,
+      "rank": 2,
+      "rcond": 0.1
+    },
+    {
+      "largest_excluded_lambda_over_lambda_max": 0.006685946593085058,
+      "rank": 7,
+      "rcond": 0.01
+    },
+    {
+      "largest_excluded_lambda_over_lambda_max": 0.0007358427803595595,
+      "rank": 11,
+      "rcond": 0.001
+    },
+    {
+      "largest_excluded_lambda_over_lambda_max": 8.8555825555287e-05,
+      "rank": 17,
+      "rcond": 0.0001
+    },
+    {
+      "largest_excluded_lambda_over_lambda_max": 7.21725244955179e-07,
+      "rank": 26,
+      "rcond": 1e-06
+    },
+    {
+      "largest_excluded_lambda_over_lambda_max": 9.498625647758263e-09,
+      "rank": 28,
+      "rcond": 1e-08
+    },
+    {
+      "largest_excluded_lambda_over_lambda_max": 6.278556334576645e-11,
+      "rank": 32,
+      "rcond": 1e-10
+    },
+    {
+      "largest_excluded_lambda_over_lambda_max": 7.833398183836109e-13,
+      "rank": 36,
+      "rcond": 1e-12
+    },
+    {
+      "largest_excluded_lambda_over_lambda_max": 2.9290816371673787e-15,
+      "rank": 41,
+      "rcond": 1e-14
+    },
+    {
+      "largest_excluded_lambda_over_lambda_max": null,
+      "rank": 42,
+      "rcond": 1e-16
+    },
+    {
+      "largest_excluded_lambda_over_lambda_max": null,
+      "rank": 42,
+      "rcond": 0.0
+    }
+  ],
+  "eigenvalues_descending": [
+    1.4882151297784383e-77,
+    2.475583741241988e-78,
+    9.334884566549379e-79,
+    5.688975213200188e-79,
+    3.036967933661736e-79,
+    2.576650874273001e-79,
+    1.812888514698813e-79,
+    9.950126876719788e-80,
+    5.4787003035364286e-80,
+    2.8874105583055826e-80,
+    2.4498234583627795e-80,
+    1.0950923588693288e-80,
+    8.449443330020109e-81,
+    6.596569342085329e-81,
+    3.874305376652619e-81,
+    2.7478928376754177e-81,
+    2.0597341373694946e-81,
+    1.3179011942139817e-81,
+    7.528822238907646e-82,
+    6.257379272375486e-82,
+    4.5911497451740713e-82,
+    1.2274228464563283e-82,
+    9.769876850446856e-83,
+    6.810259483336657e-83,
+    4.3793098786061815e-83,
+    2.179056978265321e-83,
+    1.074082429085347e-83,
+    5.529089187922871e-84,
+    1.4135998401095366e-85,
+    4.9468033766276686e-86,
+    4.492652491217326e-86,
+    6.675339068314641e-87,
+    9.343842530283218e-88,
+    5.908061155676991e-89,
+    3.7365005721686024e-89,
+    3.0435244709199455e-89,
+    1.1657781694763838e-89,
+    5.299180489042352e-90,
+    2.7525403520147525e-90,
+    1.7265727384362146e-90,
+    7.007935756103087e-91,
+    4.359103608788691e-92
+  ],
+  "hist": "hCov_proj_eavail_W",
+  "keys_in_product": [
+    "acceptanceQuestion",
+    "hCV_marginal",
+    "hCov_proj_eavail_W",
+    "hRowIndex",
+    "n_dst",
+    "n_empty",
+    "runClass",
+    "runClassStatus",
+    "sqrt_tr",
+    "src_cells_dropped"
+  ],
+  "lambda_max": 1.4882151297784383e-77,
+  "lambda_min": 4.359103608788691e-92,
+  "lambda_min_over_max": 2.9290816371673787e-15,
+  "n": 42,
+  "n_negative_eigenvalues": 0,
+  "numpy_matrix_rank_default": {
+    "rank": 41,
+    "rcond": 9.325873406851315e-15
+  },
+  "numpy_version": "1.26.4",
+  "product": "/pscratch/sd/j/josephrb/z2m-products/PROJ/cov_5d_to_eavailW_publication.root",
+  "product_sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e",
+  "provenance_in_product": {
+    "acceptanceQuestion": "UNDECLARED",
+    "n_dst": 42,
+    "n_empty": 0,
+    "runClass": "publication-under-exception",
+    "runClassStatus": "PUBLICATION UNDER A DIGEST-BOUND EXCEPTION -- the source still records adoptable:false and that metadata is preserved unedited. Built because an explicitly authorized record names this source digest. Quotable only after the remaining required evidence and independent verification land; the exception unblocks the route, it does not supply the evidence.",
+    "sqrt_tr": 4.4551809735306645e-39,
+    "src_cells_dropped": 0
+  },
+  "root_version": "6.28/12",
+  "sqrt_trace": 4.4551809735306645e-39,
+  "symmetry_max_abs_C_minus_CT": 0.0,
+  "trace": 1.984863750690964e-77,
+  "what_it_does_not_authorize": [
+    "it does not discharge M1-M4 of the 3d7465f6 adoption",
+    "it does not bear on cause 3",
+    "it does not make the projection publication-ready",
+    "no rank here may be quoted without the cutoff that produced it"
+  ],
+  "what_this_is": "independent retained-rank-vs-cutoff scan on the PUBLICATION (E_avail,W) projection, read from the product's own bytes"
+}

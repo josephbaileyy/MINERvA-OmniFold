@@ -1,0 +1,62 @@
+{
+  "bitwise_identical_matrix": true,
+  "diagnostic": {
+    "keys": [
+      "acceptanceQuestion",
+      "hCV_marginal",
+      "hCov_proj_eavail_W",
+      "hRowIndex",
+      "n_dst",
+      "n_empty",
+      "runClass",
+      "runClassStatus",
+      "sqrt_tr",
+      "src_cells_dropped"
+    ],
+    "matrix_sha256": "16b023cf5f876ef50eb26d601430d38e0fb4be96147970429ea6b2b466b4e0a6",
+    "meta": {
+      "acceptanceQuestion": "tau: how far may the projected (E_avail W) correlation matrix move before the corner claim changes? Computable only from M1 and it blocks cause 3.",
+      "runClass": "diagnostic",
+      "runClassStatus": "DIAGNOSTIC -- NON-ADOPTED and PROVISIONAL. Authorized only to resolve the acceptance question named in this record. NOT a publication product, not quotable, and it does not become one by being renamed or copied."
+    },
+    "path": "/pscratch/sd/j/josephrb/zdet-DIAGNOSTIC-20260918/m1_eavailW_DIAGNOSTIC.root",
+    "sha256": "92680f4f41cd437f089417dedb8fc849df9ef66d429262d44413306c78d903dc",
+    "shape": [
+      42,
+      42
+    ]
+  },
+  "keys_only_in_diagnostic": [],
+  "keys_only_in_publication": [],
+  "max_abs_diff": 0.0,
+  "max_rel_diff": 0.0,
+  "n_differing_elements": 0,
+  "publication": {
+    "keys": [
+      "acceptanceQuestion",
+      "hCV_marginal",
+      "hCov_proj_eavail_W",
+      "hRowIndex",
+      "n_dst",
+      "n_empty",
+      "runClass",
+      "runClassStatus",
+      "sqrt_tr",
+      "src_cells_dropped"
+    ],
+    "matrix_sha256": "16b023cf5f876ef50eb26d601430d38e0fb4be96147970429ea6b2b466b4e0a6",
+    "meta": {
+      "acceptanceQuestion": "UNDECLARED",
+      "runClass": "publication-under-exception",
+      "runClassStatus": "PUBLICATION UNDER A DIGEST-BOUND EXCEPTION -- the source still records adoptable:false and that metadata is preserved unedited. Built because an explicitly authorized record names this source digest. Quotable only after the remaining required evidence and independent verification land; the exception unblocks the route, it does not supply the evidence."
+    },
+    "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ/cov_5d_to_eavailW_publication.root",
+    "sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e",
+    "shape": [
+      42,
+      42
+    ]
+  },
+  "row_index_identical": true,
+  "same_shape": true
+}

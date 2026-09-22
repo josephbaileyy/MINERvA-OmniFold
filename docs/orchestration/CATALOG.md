@@ -211,6 +211,31 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `state/SEED-EFFECT-20260920.json`, whose key `seed_effect_same_throws` states the limitation in
   its name. ⚠ §4a also records a **false timeline that was caught before it was written**, from
   measuring two sides of a date comparison with different instruments.
+- [`OUTCOME-20260922-ten-adopted-receipts-superseded-by-code-drift.md`](OUTCOME-20260922-ten-adopted-receipts-superseded-by-code-drift.md)
+  - **THE TEN STALE ADOPTED RECEIPTS ARE ONE DIVERGENCE, NOT TEN, AND THEY ARE NOT RE-PINNED.** All
+  ten are byte-identical in every provenance field — `unfold_blob dc74c38f…`, `code_rev 42268b6d…`,
+  `config_hash 4b41fab9…` (the baseline value, distinct from L2's `4809b4ad…`). The single stale
+  binding is `nd-unfolding/unfold_nd_omnifold_unbinned.py`, moved `dc74c38f…` → `662951e0…` by
+  **`5afb7947`, `ae42ae8d`, `0a4ab263`, `1aa055d9`** (151 insertions / 4 deletions); the current blob
+  is the same at deployed `32e403b8` and at `origin/main`, so the divergence is not a tree artefact.
+  **Classified SEMANTIC** — all four deleted lines are executable, including the OI-136 `_REPO`
+  repair that selects which modules load. ⚠ **The drift is MEASURABLY behaviour-preserving for the
+  production invocation from the canonical path** (`Path(__file__).resolve().parents[1]` evaluates to
+  the deleted literal exactly; the new option is `None`-defaulted and the `if`→`elif` preserves the
+  old branch) — **and that is recorded as NOT a licence to re-pin**, because it holds for one path by
+  construction and the receipt asserts code IDENTITY. **Disposition: SUPERSEDED-BY-CODE-DRIFT, guard
+  stays CLOSED.** Nothing moves `3d7465f6…`; no re-unfold was run.
+- [`BLOCKED-20260922-issue59-figure-rerun.md`](BLOCKED-20260922-issue59-figure-rerun.md)
+  - **ISSUE-59's figure re-run NOT executed — terminal outcome under the session's D7 hard limit,
+  not a stall.** D6 named the re-run; D7 enumerates *"PET work of any kind"* as a hard limit, and the
+  re-run executes `pet/pointcloud_projection.py`. Three sources agree with D7, one of them Joseph's
+  own words (§0). Everything row 59 claims that is checkable from the repo was **verified** at
+  `384c2eb1`: the asset's sole commit is `6749ddf8` (2026-07-05); the re-run entry sits at
+  `make_figures.sh:78-83`. ⚠ **AND THE DANGLING `KNOWN_ISSUES #18` IS TRACED, not guessed:** cited at
+  `make_figures.sh:59`, row 18 was *"pet_event_displays / pet_cardinality had no generating script …
+  RESOLVED 2026-07-10"* — exactly the comment's subject — surviving to `d2ca8ed1` and dropped at
+  `1f714b7f`'s index compaction. **The citation was correct when written; a resolved row was deleted
+  without sweeping inbound citations.** Index rows now run 5–11, 16, 17, 19–21, 23–62.
 - [`VERDICT-20260922-third-party-review-site9-issue60-s4c.md`](VERDICT-20260922-third-party-review-site9-issue60-s4c.md)
   - **THE THIRD PAIR OF EYES `HANDOFF-20260922` §10 ASKED FOR, on all three objects.** Site 9's fix
   **ACCEPTED** (sentence replaced with the sites 7–8 wording, inline `⚠ M1 CORRECTED` block present,
