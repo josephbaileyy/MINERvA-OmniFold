@@ -162,20 +162,25 @@ def main() -> None:
                                   "n_pseudo": int(pseudo["rows"].size),
                                   "seconds": time.perf_counter() - t1})
                 r = runs[key]["iterations"]
-                print(f"[assess] {key:44s} k1={r[0]['recovery']:.4f} k3={r[2]['recovery']:.4f} "
-                      f"k10={r[9]['recovery']:.4f} best={runs[key]['best']['recovery']:.4f}"
+                shown = " ".join(f"k{k}={r[k - 1]['recovery']:.4f}" for k in (1, 3, 10)
+                                 if k <= len(r))
+                print(f"[assess] {key:44s} {shown} best={runs[key]['best']['recovery']:.4f}"
                       f"@{runs[key]['best']['iteration']} ({runs[key]['seconds']:.0f}s)",
                       flush=True)
 
     def across(scale: int, binning: str, mode: str, k: int) -> dict[str, float]:
         vals = [runs[f"{scale}x/r{r}/{binning}/{mode}"]["iterations"][k - 1]["recovery"]
                 for r in range(args.replicates)
-                if f"{scale}x/r{r}/{binning}/{mode}" in runs]
+                if f"{scale}x/r{r}/{binning}/{mode}" in runs
+                and k <= len(runs[f"{scale}x/r{r}/{binning}/{mode}"]["iterations"])]
+        if not vals:
+            return None
         return {"mean": float(np.mean(vals)), "sd": float(np.std(vals, ddof=1)) if len(vals) > 1
                 else None, "values": vals}
 
     summary = {f"{binning}/{mode}": {
-        f"{scale}x": {f"k{k}": across(scale, binning, mode, k) for k in (1, 2, 3, 5, 10, 20, 30)}
+        f"{scale}x": {f"k{k}": across(scale, binning, mode, k)
+                      for k in (1, 2, 3, 5, 10, 20, 30) if k <= args.iterations}
         for scale in args.scale}
         for binning, mode in (("muon_eavail", bu.MODE_CARRY_MISSES),
                               ("muon_eavail", bu.MODE_EFFICIENCY_CORRECTED),
