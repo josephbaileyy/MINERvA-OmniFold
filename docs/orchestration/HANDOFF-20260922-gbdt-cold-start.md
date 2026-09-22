@@ -191,6 +191,24 @@ downstream of it.
 Every statement about this product's spectrum currently rests on **that run's own output** agreeing
 digit-for-digit with the diagnostic's. **No independent 42×42 scan on those bytes exists.**
 
+⚠ **AND THE COMPARISON OBJECT IS A DIFFERENT FILE, WHICH IS THE WHOLE RESIDUAL.** "The
+diagnostic's" is not another name for the publication run:
+
+| | publication product | diagnostic product |
+|---|---|---|
+| file | `cov_5d_to_eavailW_publication.root` | `zdet-DIAGNOSTIC-20260918/m1_eavailW_DIAGNOSTIC.root` |
+| bytes | `17,101` | `17,120` |
+| job | `58655509` | `58510024` |
+
+**The cutoff scan that withdrew the bare rank claim was run on the DIAGNOSTIC product**, and is
+recorded at `docs/orchestration/PLAN-20260918-scalar5d-publication-completion.md` **§16.1a**, which
+also supplies `lambda_min`'s sign and the noise-floor argument. So the spectral evidence lives on
+bytes that are **not** the published bytes, and the two agreeing digit-for-digit is the only thing
+connecting them.
+
+⚠ **Read without this, the residual looks pedantic** — as though a run had merely not been repeated.
+It is not: the scan exists, on a different object.
+
 **This is a MEASUREMENT, not an authorization**, on code (`nd-unfolding/project_cov_nd.py`) that the
 L2 session did not author — so the independence bar of §2.1 does not apply, and Joseph's compute
 grant covers it. It is cheap. It needs **its own receipt and a `VALIDATION_LEDGER.md` row**.
@@ -376,6 +394,26 @@ Carry this; it is the most reusable thing from the evening.
    `git show --name-only` for the blast radius. **Site 9 was outside `docs/`, which is exactly why
    two `docs/`-scoped sweeps never saw it.**
 3. **A quote spanning a newline is invisible to a line-oriented grep** — `tr '\n' ' '` first.
+
+### ⚠ 10.2 The two halves of one law — a sweep cannot catch what only reading the artifact catches
+
+Rule 2 above and the failure below are the same law from opposite ends, and neither alone is
+sufficient.
+
+- **Where a claim SPREAD** is mechanical: the file list of the commit that planted it. That is what
+  found site 9 outside `docs/`.
+- **Why a correct artifact FAILS TO STOP a wrong claim** is not mechanical, and no sweep detects it.
+  On 2026-09-21 the withdrawn corollary was quoted into a handoff whose author had
+  `docs/orchestration/state/SEED-EFFECT-20260920.json` **tracked, cited, and one `json.load` away**
+  — a file whose top-level key is literally `seed_effect_same_throws` and which holds `Q1–Q4` at
+  `n_throws=40` and `HA/HB` at `n_throws=80`. The numbers were copied from a derived summary
+  (`REPORT-20260920:115-117`) verbatim. ⚠ **A derived summary can be requoted indefinitely without
+  anyone touching the artifact it derives from**, and the artifact named its own limitation in a
+  schema key the whole time.
+
+**So: sweep by planting-commit to find the spread; OPEN THE ARTIFACT to find out whether the claim
+was ever true.** If you are citing a number, you are citing its population — and if you have not
+looked at the population, you are propagating rather than reporting.
 
 ## 11. NOT GBDT — listed only so you do not adopt them
 
