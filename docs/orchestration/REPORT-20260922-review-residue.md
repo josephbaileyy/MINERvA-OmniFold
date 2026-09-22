@@ -56,9 +56,10 @@ remedy itself.
 | 17 (self) | **0** | pure verification after the §1 rewrite: ledger reconciles from its own rows, package digests and `M` re-derived, gates green |
 | **agy #6 (independent)** | **13** | ⚠ **EVERY ONE in the meta-record; none in the work.** It found: a headline measurement (`231`) that **reproduces from no reading of its operand and was never taken**; a repair claimed in a commit message and **never made at either site**; a bare "four gates" green over a set with no enumeration, one of which is red bare at that sha; the second de-duplication again **deleting a true statement and promoting a stale twin**; and a transcript whose third site was still wrong while the correction announced all three fixed. It re-derived and could NOT break the physics, `VL145`, the package, the probe or rows 61–65 |
 | 18 (self) | **1** | ⚠ **I DUPLICATED THE ENTIRE LEDGER while deleting narrative** — a slice `s[:a]+s[b:]` with `a > b` copies the span between them. Caught by checking row count after the edit, not by reading the diff. Restored from `HEAD` and redone without slice arithmetic |
+| 19 (self) | **1** | ⚠ **the TOTAL line was the last hand-maintained count and had to be rewritten every round — the residual generator.** Fixed with an INSTRUMENT, not care: `probes/probe-20260922-ledger-reconciles.py` derives the totals from the table and refuses on mismatch. Shown to fire on a stale total, on an unrecorded new review row, and on the round-18 ledger duplication; silent on the correct ledger |
 
-**TOTAL: self rounds 1–18 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0+0+1 = 12; independent reviews =
-14+9+7+11+9+13 = 63; TOTAL 75.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
+**TOTAL: self rounds 1–19 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0+0+1+1 = 13; independent reviews =
+14+9+7+11+9+13 = 63; TOTAL 76.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
 the addend lines above and is not restated here.**
 
 ⚠ **THE DUPLICATION THAT CAUSED THE CLASS IS NOW REMOVED, which is the repair row 66 should have
