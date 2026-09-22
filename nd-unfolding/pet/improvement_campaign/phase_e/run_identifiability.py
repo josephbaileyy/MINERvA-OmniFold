@@ -45,16 +45,15 @@ PERMUTATION_SPLITS = 5
 CLASS_TOTAL = 1_000_000.0
 
 
-def feature_matrix(sample: dict[str, np.ndarray], reco: dict[str, np.ndarray],
-                   mask: np.ndarray) -> np.ndarray:
+def feature_matrix(reco: dict[str, np.ndarray]) -> np.ndarray:
+    """The classifier's reco features, with any non-finite entry filled by its column median."""
     feats = dist.reco_features(reco)
     X = np.stack([feats[k] for k in FEATURES], axis=1)
-    bad = ~np.isfinite(X)
-    if bad.any():
-        for j in range(X.shape[1]):
-            col = X[:, j]
-            if (~np.isfinite(col)).any():
-                col[~np.isfinite(col)] = float(np.median(col[np.isfinite(col)]))
+    for j in range(X.shape[1]):
+        col = X[:, j]
+        bad = ~np.isfinite(col)
+        if bad.any():
+            col[bad] = float(np.median(col[~bad]))
     return X
 
 
@@ -116,7 +115,7 @@ def main() -> None:
     ref = cm.take(cache, reps[0].prior_rows)
     probe = cm.take(cache, reps[0].pseudo_rows)
     m_ref, m_probe = ref["pass_reco"], probe["pass_reco"]
-    X_ref = feature_matrix(ref, cm.reco_view(ref, m_ref), m_ref)
+    X_ref = feature_matrix(cm.reco_view(ref, m_ref))
     w_ref = ref["w_reco"][m_ref]
     truth_probe = cm.truth_view(probe)
     pool_truth = cm.truth_view(cache)
@@ -143,7 +142,7 @@ def main() -> None:
             noise = (dist.token_noise(probe["identity"][m_probe]) if dst.family == "R3" else None)
             reco_p = dst.transform(cm.reco_view(probe, m_probe), noise)
             w_probe = probe["w_reco"][m_probe]
-        X_probe = feature_matrix(probe, reco_p, m_probe)
+        X_probe = feature_matrix(reco_p)
         out = two_sample_auc(X_ref, w_ref, X_probe, w_probe, seed)
         out["sample_reco_eavail_l1"] = l1_on_endpoint(X_ref[:, 2], w_ref, X_probe[:, 2], w_probe)
         return out
@@ -158,8 +157,8 @@ def main() -> None:
         a = cm.take(cache, rep.prior_rows)
         b = cm.take(cache, rep.pseudo_rows)
         ma, mb = a["pass_reco"], b["pass_reco"]
-        Xa = feature_matrix(a, cm.reco_view(a, ma), ma)
-        Xb = feature_matrix(b, cm.reco_view(b, mb), mb)
+        Xa = feature_matrix(cm.reco_view(a, ma))
+        Xb = feature_matrix(cm.reco_view(b, mb))
         rec = two_sample_auc(Xa, a["w_reco"][ma], Xb, b["w_reco"][mb],
                              seed=7_000 + rep.replicate)
         rec["sample_reco_eavail_l1"] = l1_on_endpoint(Xa[:, 2], a["w_reco"][ma], Xb[:, 2],
