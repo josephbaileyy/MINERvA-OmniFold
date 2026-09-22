@@ -278,7 +278,9 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   because carrying them in three files is how two went stale after every review (`KNOWN_ISSUES`
   row 66). **Read the ledger for the numbers.** What is stable and worth routing on: condition (ii)
   was never satisfied; the latest review's repairs are always author-reviewed only; and after the
-  first two reviews every finding fell into row 66's class rather than into the physics.
+  review #4's findings were **all** of row 66's class — ⚠ **but review #3's were
+  NOT: it found a wrong count in `VL145`, a LOGIC BUG in committed probe code, and a sourcing
+  defect in the release package. The wider claim is withdrawn at row 66.**
   ⚠ **The reusable lesson: two consecutive clean SELF-rounds were worth very little** — the
   independent pass found three consequential defects including one that made a shipped deliverable's
   own reader recipe raise `AssertionError`. Several findings are recorded rather than repaired

@@ -56,9 +56,9 @@ control — **and its verdict branch does not consult that flag**, so it printed
 under a failed precondition. Exactly one of the ten fields fails:
 
     CONTROL: all nine PASS
-    PROBE:   footing_ok *** FAIL ***    (the other nine PASS)
+    PROBE:   footing_ok *** FAIL ***    (the other eight PASS)
 
-⚠ **CORRECTED 2026-09-22 (third independent review): this said *"Exactly one of the ten fields fails"*, *"the other nine PASS"* and the transcript's *"CONTROL: all ten PASS"*, which is corrected in place above because the repaired probe can no longer print ten rows. `z_validator.Validity` has NINE bool fields plus
+⚠ **CORRECTED 2026-09-22 (third independent review): this said *"Exactly one of the ten fields fails"*, *"the other nine PASS"* and the transcript's *"CONTROL: all ten PASS"*, **all three of which are corrected in place above** — the first correction changed only the CONTROL line and left `(the other nine PASS)` standing, which is the one-of-N-sites failure recurring inside the fix for it. ⚠ **The committed receipt `state/L2-20260922-validity-detail.json` still lists TEN fields including `notes`, because the PRE-FIX probe wrote it, so the corrected transcript deliberately does not reproduce from it; re-run the repaired probe to regenerate.** `z_validator.Validity` has NINE bool fields plus
 `notes: dict`, which `cross_member_validity` always populates and `bool()` always coerces to True —
 so it can never fail and must not be counted as a passing check.** Read it as **one of NINE
 failing, eight passing**. `z_grade.cross_member_validity`'s own docstring says *"all nine"*. The

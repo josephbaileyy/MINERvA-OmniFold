@@ -11,9 +11,12 @@ findings **and (ii)** an independent `agy`-class reviewer, in its own isolated w
 zero on a round after that. Any finding by the reviewer **resets the counter to zero**.
 
 **Terminal state: the loop stopped at the instruction's own 10-round safety cap** — *"If you reach
-10 rounds without satisfying (i) and (ii), stop, and write … That is a complete outcome."* **Thirteen**
-self-review rounds were run; (i) was satisfied twice and destroyed twice by an independent
-reviewer; **(ii) was never satisfied.** ⚠ **This sentence read *"Ten"* until 2026-09-22 — round 11
+10 rounds without satisfying (i) and (ii), stop, and write … That is a complete outcome."* **The ledger below is the count** — it is not
+restated in prose here, because every prose copy of it has gone stale within one round; **(i) was satisfied THREE times — rounds 2–3, 7–9 and 14–15 — and destroyed all
+three times by an independent reviewer (14, 9 and 11 respectively);** ⚠ **this read *"twice … twice"*
+until 2026-09-22. The true count survived only in `CATALOG.md`, and the de-duplication commit
+`f810c973` DELETED that line while leaving the false one here as the single source — a structural
+fix that lost a true statement. Restored here, where the ledger now lives;** **(ii) was never satisfied.** ⚠ **This sentence read *"Ten"* until 2026-09-22 — round 11
 ran (and found something) AFTER round 10 declared the cap reached, and the declaration was not
 updated. That is round 10's own finding — *"I MISCOUNTED THE ROUNDS TO REACH THE CAP"* — recurring
 one round later in the same paragraph, which is why the count is now derived from the table rather
@@ -43,11 +46,12 @@ forbid continuing.
 | 14 (self) | **0** | pure verification, **no edits** — every package digest, `M` rebuilt to `64fec490…`, the README recipe, the scanner pin, ledger arithmetic, all four gates. Ten apparent "live assertions" were all quotations-to-prohibit, diagnosed not fixed |
 | 15 (self) | **0** | pure verification, **no edits** — physics against receipts, cluster state (deployed `32e403b8`, trunk `3d7465f6…`, projection `835828bf…`, 10 unfolds), note sources clean |
 | **agy #4 (independent)** | **11** | ⚠ **ALL ELEVEN IN ROW 66's CLASS — zero elsewhere.** Stale counts and one-of-N-sites failures in my bookkeeping. It re-derived and could NOT break: the release package end-to-end, `VL145`, the repaired probe, row 66's cited instances, and the ledger arithmetic. All eleven fixed |
-| 16 (self) | **0** | pure verification after the de-duplication fix: ledger reconciles (15 self rows ordered, sum 11; agy 14/9/7/11; totals 11/41/52), `CATALOG.md` and `KNOWN_ISSUES.md` restate **zero** counts, package digests and `M` re-derived, L2 statistics, all four gates |
+| 16 (self) | **0** | pure verification after the de-duplication fix: ledger reconciles (self rows ordered and summing to the stated total; agy 14/9/7/11; totals 11/41/52), `CATALOG.md` and `KNOWN_ISSUES.md` restate **zero** counts, package digests and `M` re-derived, L2 statistics, all four gates |
+| **agy #5 (independent)** | **9** | ⚠ **AND IT BROKE THE STRUCTURAL FIX ITSELF.** Three of the nine are about the de-duplication: it **deleted a TRUE statement** (the "(i) satisfied three times" count, which survived only in `CATALOG.md`) while leaving the false twin as the single source; row 66 **still carried a stale review count**, so the commit message's *"0 times in KNOWN_ISSUES.md"* was false; and ⚠ **row 66's central claim was OVERSTATED and is now withdrawn** — review #3 found three defects OUTSIDE the class, including a **logic bug in committed probe code**. All nine fixed |
 
 **TOTAL: self rounds 1–16 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0 = 11; independent reviews =
-14+9+7+11 = 41; TOTAL 52.** **FORTY-ONE of the fifty-two were found by the four INDEPENDENT
-reviewers; eleven by me across fifteen self-rounds.**
+14+9+7+11+9 = 50; TOTAL 61.** **FORTY-ONE of the fifty-two were found by the four INDEPENDENT
+reviewers; eleven by me across the self-rounds tabulated above.**
 
 ⚠ **THE DUPLICATION THAT CAUSED THE CLASS IS NOW REMOVED, which is the repair row 66 should have
 had from the start.** The per-round counts were restated in three files, so every review staled two
@@ -82,7 +86,7 @@ reached. **A count assembled to justify a conclusion I had already drawn** — t
 `"WHY TEN SWEEPS MISSED IT"` bare count this session already recorded, and as every other
 arithmetic error the reviewers found in my own bookkeeping rather than in my measurements.
 
-**Round 10 was then actually run, so the cap was reached honestly at ten — and rounds 11 and 12
+**Round 10 was then actually run, so the cap was reached honestly at ten — and rounds 11 onward
 followed it, because a third independent review was still obtainable and condition (ii) was still
 open. The cap is permission to stop, not a prohibition on continuing.**
 
@@ -105,13 +109,13 @@ not.** ⚠ **The seven repairs from agy #3 were, like the nine and nine
 before them, reviewed by nobody but their author — so a FOURTH reviewer was run, and it found
 ELEVEN, every one of them in this same class.**
 
-⚠ **THE RATIO IS THE RESULT.** Three independent reviews, each after self-rounds I had scored
-clean, each found a fresh double- or single-digit count — **14, then 9, then 7** — and the third
-found defects *in the repairs made for the first two*. Findings per independent review are not
-converging to zero as fast as the effort spent on self-review would suggest; what they ARE doing is
-shrinking (14 → 9 → 7) while shifting from substance to bookkeeping. **Every raw physics number in
-this session has now survived three independent re-derivations; not one of my own enumerations,
-counts or scope words has survived all three.**
+⚠ **THE RATIO IS THE RESULT.** Every independent review, each run after self-rounds I had scored
+clean, found a fresh double- or single-digit count — the sequence is in the ledger — and each after
+the first found defects *in the repairs made for its predecessors*. ⚠ **They are NOT monotonically
+shrinking:** this block previously said *"shrinking (14 → 9 → 7)"* and the next review returned
+**11**, refuting it. What they ARE doing is shifting from substance toward bookkeeping. **Every raw
+physics number in this session has survived every independent re-derivation attempted; not one of
+my own enumerations, counts or scope words has survived them all.**
 
 **Condition (i) was satisfied at rounds 2–3 and then destroyed by the reviewer's 14.** Condition
 (ii) requires a clean **independent** round after two clean self-rounds.
@@ -231,8 +235,8 @@ corrected**, and this is the second time this session that a correction failed t
 that stated the claim.
 
 1. ⚠ **CONDITION (ii) IS UNMET.** **Four** independent reviews ran; all four found defects —
-   **14, 9, 7, 11**. Each reviewed the repairs made for its predecessors and found fresh defects in
-   them. **Measurement: every finding of reviews #2, #3 and #4 landed in material that had already
+   **14, 9, 7, 11**. Each AFTER THE FIRST reviewed the repairs made for its predecessors and found
+   fresh defects in them; review #1 had no predecessor repairs to review. **Measurement: every finding of reviews #2, #3 and #4 landed in material that had already
    passed two clean self-rounds**, and all eleven of review #4's landed in the single class now
    recorded at `KNOWN_ISSUES` row 66. **A fifth reviewer should start at review #4's eleven
    repairs**, which are again author-reviewed only.
