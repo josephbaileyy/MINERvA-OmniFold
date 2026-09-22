@@ -1,0 +1,5317 @@
+{
+ "schema": "pet-improvement-A1-runtime-audit-v1",
+ "historical_commit": "68cf9d29f8ab1b0f5acd933d4baec1962b29e34d",
+ "historical_repo": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+ "arm": "ours",
+ "seed": 17,
+ "stage": "tuning",
+ "learning_rate_argument": 0.0001,
+ "niter": 3,
+ "max_events": 100000,
+ "driver_module_file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py",
+ "evaluate_source_file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py",
+ "post_import_hooks_fired": {
+  "omnifold.omnifold": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/omnifold.py"
+ },
+ "numpy_sve_probe": {
+  "already_imported": false,
+  "machine": "x86_64",
+  "probe_launches_refused": [
+   "'lscpu'"
+  ],
+  "supports_sve": false,
+  "precedent": "direct_token_comparison/calibration_measure.py (2026-09-10)"
+ },
+ "keras_instrumentation": {
+  "fit_owner": {
+   "qualname": "Model",
+   "module": "keras.src.engine.training",
+   "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/training.py"
+  },
+  "clip_owner": {
+   "qualname": "_BaseOptimizer",
+   "module": "keras.src.optimizers.optimizer",
+   "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+  },
+  "keras_version": "2.15.0",
+  "tensorflow_version": "2.15.0"
+ },
+ "environment": {
+  "TF_DETERMINISTIC_OPS": "1",
+  "NVIDIA_TF32_OVERRIDE": "0",
+  "TF_USE_LEGACY_KERAS": null,
+  "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+  "SLURM_JOB_ID": "58742195",
+  "PYTHONDONTWRITEBYTECODE": "1"
+ },
+ "sys_path_before_driver": [
+  "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/850a975e/nd-unfolding/pet/improvement_campaign/phase_a",
+  "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/850a975e/nd-unfolding",
+  "/opt/nersc/pymon",
+  "/global/common/software/nersc9/tensorflow/2.15.0/lib/python39.zip",
+  "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9",
+  "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/lib-dynload",
+  "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages"
+ ],
+ "sys_path_after_run": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet",
+  "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn",
+  "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/omnifold_nn",
+  "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison",
+  "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/850a975e/nd-unfolding/pet/improvement_campaign/phase_a",
+  "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/850a975e/nd-unfolding",
+  "/opt/nersc/pymon",
+  "/global/common/software/nersc9/tensorflow/2.15.0/lib/python39.zip",
+  "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9",
+  "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/lib-dynload",
+  "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages",
+  "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet"
+ ],
+ "multifold": {
+  "class": [
+   {
+    "qualname": "MultiFold",
+    "module": "omnifold.omnifold",
+    "source_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/omnifold.py"
+   }
+  ],
+  "instance_class": [
+   {
+    "qualname": "make_annealed_multifold.<locals>._AnnealedMultiFold",
+    "module": "annealed_estimator",
+    "source_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/annealed_estimator.py"
+   },
+   {
+    "qualname": "MultiFold",
+    "module": "omnifold.omnifold",
+    "source_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/omnifold.py"
+   }
+  ],
+  "BATCH_SIZE": 512,
+  "EPOCHS": 8,
+  "LR": 0.0001,
+  "patience": 10,
+  "train_frac": 0.8,
+  "niter": 3,
+  "n_ensemble": 1,
+  "num_steps_reco": 27,
+  "num_steps_gen": 39,
+  "mc_nmax": 9995,
+  "data_nmax": 4208,
+  "model1_id": 140460606388784,
+  "model2_id": 140459891550144,
+  "model1_class": "PET",
+  "model2_class": "PET",
+  "model1_pretrained_attribute": "ABSENT"
+ },
+ "compiles": [
+  {
+   "context": {},
+   "model_id": 140460606388784,
+   "model_is_template": true,
+   "fixed_argument_seen_by_base": false,
+   "num_steps_argument": 21.6,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-05,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-05,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140459027150304
+   }
+  },
+  {
+   "context": {},
+   "model_id": 140459891550144,
+   "model_is_template": true,
+   "fixed_argument_seen_by_base": false,
+   "num_steps_argument": 31.200000000000003,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-05,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-05,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140459027399008
+   }
+  },
+  {
+   "context": {
+    "iteration": 0,
+    "stepn": 1,
+    "NTRAIN": 13824
+   },
+   "model_id": 140460061856480,
+   "model_is_template": false,
+   "fixed_argument_seen_by_base": false,
+   "num_steps_argument": 27,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-05,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-05,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140458907699328
+   }
+  },
+  {
+   "context": {
+    "iteration": 0,
+    "stepn": 2,
+    "NTRAIN": 19968
+   },
+   "model_id": 140456776617360,
+   "model_is_template": false,
+   "fixed_argument_seen_by_base": false,
+   "num_steps_argument": 39,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-05,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-05,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140455635387920
+   }
+  },
+  {
+   "context": {},
+   "model_id": 140460606388784,
+   "model_is_template": true,
+   "fixed_argument_seen_by_base": true,
+   "num_steps_argument": 21.6,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140454156782944
+   }
+  },
+  {
+   "context": {},
+   "model_id": 140459891550144,
+   "model_is_template": true,
+   "fixed_argument_seen_by_base": true,
+   "num_steps_argument": 31.200000000000003,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140453488963200
+   }
+  },
+  {
+   "context": {
+    "iteration": 1,
+    "stepn": 1,
+    "NTRAIN": 13824
+   },
+   "model_id": 140460061856480,
+   "model_is_template": false,
+   "fixed_argument_seen_by_base": true,
+   "num_steps_argument": 27,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140454156448912
+   }
+  },
+  {
+   "context": {
+    "iteration": 1,
+    "stepn": 2,
+    "NTRAIN": 19968
+   },
+   "model_id": 140456776617360,
+   "model_is_template": false,
+   "fixed_argument_seen_by_base": true,
+   "num_steps_argument": 39,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140453491521280
+   }
+  },
+  {
+   "context": {},
+   "model_id": 140460606388784,
+   "model_is_template": true,
+   "fixed_argument_seen_by_base": true,
+   "num_steps_argument": 21.6,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140455096578352
+   }
+  },
+  {
+   "context": {},
+   "model_id": 140459891550144,
+   "model_is_template": true,
+   "fixed_argument_seen_by_base": true,
+   "num_steps_argument": 31.200000000000003,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140453489037616
+   }
+  },
+  {
+   "context": {
+    "iteration": 2,
+    "stepn": 1,
+    "NTRAIN": 13824
+   },
+   "model_id": 140460061856480,
+   "model_is_template": false,
+   "fixed_argument_seen_by_base": true,
+   "num_steps_argument": 27,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140455637159600
+   }
+  },
+  {
+   "context": {
+    "iteration": 2,
+    "stepn": 2,
+    "NTRAIN": 19968
+   },
+   "model_id": 140456776617360,
+   "model_is_template": false,
+   "fixed_argument_seen_by_base": true,
+   "num_steps_argument": 39,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140451873739968
+   }
+  },
+  {
+   "context": {},
+   "model_id": 140460606388784,
+   "model_is_template": true,
+   "fixed_argument_seen_by_base": true,
+   "num_steps_argument": 21.6,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140446646202272
+   }
+  },
+  {
+   "context": {},
+   "model_id": 140459891550144,
+   "model_is_template": true,
+   "fixed_argument_seen_by_base": true,
+   "num_steps_argument": 31.200000000000003,
+   "optimizer": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140446646225936
+   }
+  }
+ ],
+ "caches": [
+  {
+   "iteration": 0,
+   "step": 1,
+   "cached_flag": false,
+   "train_take": 11060,
+   "rows": 14203,
+   "np_random_state_before": "02c1b30ef7d63bab39dc4a13c550e97d71fb5d48227df2843a5601d9cac9c2fa",
+   "python_random_state_before": "fd62d0006eaffde022ecfb0ce0af98d741d50ad8df49e47abd20cbee8616e448",
+   "weights_label0": {
+    "n": 9995,
+    "sum": 999999.9847335815,
+    "min": 0.0,
+    "max": 2497.221435546875,
+    "n_zero": 5778,
+    "n_negative": 0,
+    "ess_positive": 3635.7828450296925,
+    "sha256": "d8a7b73e034dbc11a22626deeda87fc9b45f0c99c9bbb71601284ff60ff1218c"
+   },
+   "weights_label1": {
+    "n": 4208,
+    "sum": 999999.9551925659,
+    "min": 58.144020080566406,
+    "max": 2059.518798828125,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 2972.350532364484,
+    "sha256": "fc6b171fba96bf5581e337cf612e7dff22311a232b561eacf97c317fc5e45bb8"
+   },
+   "idx_digest": "d1df7d1c361ed2253871e8fda28c6c5f85d0ca574441c3b733dbbcabc9da9da7",
+   "validation_rows": 3143,
+   "validation_row_set_digest": "56eb5f9055d4b98d246ffca674deb7a03d50078066e957f6c3f758db66081eb6",
+   "np_random_state_after": "ebc38bd59398ee1a30eca091a5c9b187ecf743df98d581b03d8747049b7b7fe1",
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 5), dtype=tf.float32, name=None), TensorSpec(shape=(None, 13), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "runmodel_seconds": 26.94016445201123
+  },
+  {
+   "iteration": 0,
+   "step": 2,
+   "cached_flag": false,
+   "train_take": 15975,
+   "rows": 19990,
+   "np_random_state_before": "ebc38bd59398ee1a30eca091a5c9b187ecf743df98d581b03d8747049b7b7fe1",
+   "python_random_state_before": "fd62d0006eaffde022ecfb0ce0af98d741d50ad8df49e47abd20cbee8616e448",
+   "weights_label0": {
+    "n": 9995,
+    "sum": 2379326.367795944,
+    "min": 28.579069137573242,
+    "max": 2569.947021484375,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 8939.603378732229,
+    "sha256": "a8a79564659984de5cd794cc865c6864e63aa1937ec5600836b31772bce45642"
+   },
+   "weights_label1": {
+    "n": 9995,
+    "sum": 2419356.6153850555,
+    "min": 28.579069137573242,
+    "max": 2451.9033203125,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 8844.864641549413,
+    "sha256": "77e9173fd0a79d1372372a79827d14d502b5ed995d5e9e21dc75eba19542257a"
+   },
+   "idx_digest": "469cd9a9e0e5bada29b59eca5eb36ef74e61629cfbf0f8d3bf5cb3365949a6be",
+   "validation_rows": 4015,
+   "validation_row_set_digest": "0315b62bc2a03034963c9d5a061d49a4fae586fdba35fd8367fa59a17397297b",
+   "np_random_state_after": "ca035b60695df2a0a33a31046f5236ea84a5b8c8105bd739d371019afe101b31",
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 8), dtype=tf.float32, name=None), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "runmodel_seconds": 24.56557411700487
+  },
+  {
+   "iteration": 1,
+   "step": 1,
+   "cached_flag": true,
+   "train_take": 11060,
+   "rows": 14203,
+   "np_random_state_before": "ca035b60695df2a0a33a31046f5236ea84a5b8c8105bd739d371019afe101b31",
+   "python_random_state_before": "fd62d0006eaffde022ecfb0ce0af98d741d50ad8df49e47abd20cbee8616e448",
+   "weights_label0": {
+    "n": 9995,
+    "sum": 1017561.6079025269,
+    "min": 0.0,
+    "max": 2411.989501953125,
+    "n_zero": 5778,
+    "n_negative": 0,
+    "ess_positive": 3606.8924599755464,
+    "sha256": "9cdde3c15278691046e7ebed91fdd2cbe5c503320b6e7f23e2ae50f994d94df2"
+   },
+   "weights_label1": {
+    "n": 4208,
+    "sum": 999999.9551925659,
+    "min": 58.144020080566406,
+    "max": 2059.518798828125,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 2972.350532364484,
+    "sha256": "fc6b171fba96bf5581e337cf612e7dff22311a232b561eacf97c317fc5e45bb8"
+   },
+   "idx_digest": "d1df7d1c361ed2253871e8fda28c6c5f85d0ca574441c3b733dbbcabc9da9da7",
+   "validation_rows": 3143,
+   "validation_row_set_digest": "56eb5f9055d4b98d246ffca674deb7a03d50078066e957f6c3f758db66081eb6",
+   "np_random_state_after": "ca035b60695df2a0a33a31046f5236ea84a5b8c8105bd739d371019afe101b31",
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 5), dtype=tf.float32, name=None), TensorSpec(shape=(None, 13), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "runmodel_seconds": 20.745505697035696
+  },
+  {
+   "iteration": 1,
+   "step": 2,
+   "cached_flag": true,
+   "train_take": 15975,
+   "rows": 19990,
+   "np_random_state_before": "ca035b60695df2a0a33a31046f5236ea84a5b8c8105bd739d371019afe101b31",
+   "python_random_state_before": "fd62d0006eaffde022ecfb0ce0af98d741d50ad8df49e47abd20cbee8616e448",
+   "weights_label0": {
+    "n": 9995,
+    "sum": 2379326.367795944,
+    "min": 28.579069137573242,
+    "max": 2569.947021484375,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 8939.603378732229,
+    "sha256": "a8a79564659984de5cd794cc865c6864e63aa1937ec5600836b31772bce45642"
+   },
+   "weights_label1": {
+    "n": 9995,
+    "sum": 2392889.3605365753,
+    "min": 28.733980178833008,
+    "max": 2501.0732421875,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 8722.2120392629,
+    "sha256": "a290cadc94f24697bac6234a331c1766c99a4bb5fd57b837fbb4015fec48a616"
+   },
+   "idx_digest": "469cd9a9e0e5bada29b59eca5eb36ef74e61629cfbf0f8d3bf5cb3365949a6be",
+   "validation_rows": 4015,
+   "validation_row_set_digest": "0315b62bc2a03034963c9d5a061d49a4fae586fdba35fd8367fa59a17397297b",
+   "np_random_state_after": "ca035b60695df2a0a33a31046f5236ea84a5b8c8105bd739d371019afe101b31",
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 8), dtype=tf.float32, name=None), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "runmodel_seconds": 22.273077983001713
+  },
+  {
+   "iteration": 2,
+   "step": 1,
+   "cached_flag": true,
+   "train_take": 11060,
+   "rows": 14203,
+   "np_random_state_before": "ca035b60695df2a0a33a31046f5236ea84a5b8c8105bd739d371019afe101b31",
+   "python_random_state_before": "fd62d0006eaffde022ecfb0ce0af98d741d50ad8df49e47abd20cbee8616e448",
+   "weights_label0": {
+    "n": 9995,
+    "sum": 1024847.746925354,
+    "min": 0.0,
+    "max": 2355.98974609375,
+    "n_zero": 5778,
+    "n_negative": 0,
+    "ess_positive": 3582.2330572354654,
+    "sha256": "e1f92324ea04f228daf0836028ee9a6914f0941328e484fb3f215cb26c0c7f43"
+   },
+   "weights_label1": {
+    "n": 4208,
+    "sum": 999999.9551925659,
+    "min": 58.144020080566406,
+    "max": 2059.518798828125,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 2972.350532364484,
+    "sha256": "fc6b171fba96bf5581e337cf612e7dff22311a232b561eacf97c317fc5e45bb8"
+   },
+   "idx_digest": "d1df7d1c361ed2253871e8fda28c6c5f85d0ca574441c3b733dbbcabc9da9da7",
+   "validation_rows": 3143,
+   "validation_row_set_digest": "56eb5f9055d4b98d246ffca674deb7a03d50078066e957f6c3f758db66081eb6",
+   "np_random_state_after": "ca035b60695df2a0a33a31046f5236ea84a5b8c8105bd739d371019afe101b31",
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 5), dtype=tf.float32, name=None), TensorSpec(shape=(None, 13), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "runmodel_seconds": 21.35753460600972
+  },
+  {
+   "iteration": 2,
+   "step": 2,
+   "cached_flag": true,
+   "train_take": 15975,
+   "rows": 19990,
+   "np_random_state_before": "ca035b60695df2a0a33a31046f5236ea84a5b8c8105bd739d371019afe101b31",
+   "python_random_state_before": "fd62d0006eaffde022ecfb0ce0af98d741d50ad8df49e47abd20cbee8616e448",
+   "weights_label0": {
+    "n": 9995,
+    "sum": 2379326.367795944,
+    "min": 28.579069137573242,
+    "max": 2569.947021484375,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 8939.603378732229,
+    "sha256": "a8a79564659984de5cd794cc865c6864e63aa1937ec5600836b31772bce45642"
+   },
+   "weights_label1": {
+    "n": 9995,
+    "sum": 2393812.571126938,
+    "min": 28.594072341918945,
+    "max": 2530.07861328125,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 8648.529106089387,
+    "sha256": "9951f66cf77bfd2cdc46cd6ce40571ff8f7303a8f699b5325ba13f99aa895f39"
+   },
+   "idx_digest": "469cd9a9e0e5bada29b59eca5eb36ef74e61629cfbf0f8d3bf5cb3365949a6be",
+   "validation_rows": 4015,
+   "validation_row_set_digest": "0315b62bc2a03034963c9d5a061d49a4fae586fdba35fd8367fa59a17397297b",
+   "np_random_state_after": "ca035b60695df2a0a33a31046f5236ea84a5b8c8105bd739d371019afe101b31",
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 8), dtype=tf.float32, name=None), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "runmodel_seconds": 21.801119728013873
+  }
+ ],
+ "fits": [
+  {
+   "arm": "ours",
+   "iteration": 0,
+   "step": 1,
+   "model_class": [
+    {
+     "qualname": "PET",
+     "module": "omnifold.net",
+     "source_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/net.py"
+    },
+    {
+     "qualname": "Model",
+     "module": "keras.src.engine.training",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/training.py"
+    },
+    {
+     "qualname": "Layer",
+     "module": "keras.src.engine.base_layer",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/base_layer.py"
+    },
+    {
+     "qualname": "Module",
+     "module": "tensorflow.python.module.module",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/module/module.py"
+    },
+    {
+     "qualname": "AutoTrackable",
+     "module": "tensorflow.python.trackable.autotrackable",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+    },
+    {
+     "qualname": "Trackable",
+     "module": "tensorflow.python.trackable.base",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+    },
+    {
+     "qualname": "LayerVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    },
+    {
+     "qualname": "ModelVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    }
+   ],
+   "model_id": 140460061856480,
+   "model_is_template": false,
+   "model_seen_before_in_fit": false,
+   "optimizer_id": 140458907699328,
+   "optimizer_seen_before": false,
+   "fit_kwargs": {
+    "epochs": 8,
+    "steps_per_epoch": 21,
+    "validation_steps": 5,
+    "verbose": 0
+   },
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 5), dtype=tf.float32, name=None), TensorSpec(shape=(None, 13), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "callbacks": [
+    {
+     "class": "BroadcastGlobalVariablesCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "MetricAverageCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "ReduceLROnPlateau",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 1000,
+     "min_delta": 0.0001,
+     "mode": "auto",
+     "factor": 0.1,
+     "min_lr": 1e-07,
+     "cooldown": 0,
+     "verbose": 0
+    },
+    {
+     "class": "EarlyStopping",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 10,
+     "min_delta": 0,
+     "baseline": null,
+     "restore_best_weights": true,
+     "start_from_epoch": 0,
+     "verbose": 0
+    },
+    {
+     "class": "ModelCheckpoint",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "save_best_only": true,
+     "save_weights_only": true,
+     "filepath": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseA1/audit-20260922/ours/weights/OmniFold_ours-tuning-seed17_iter0_step1.weights.h5",
+     "verbose": 0
+    }
+   ],
+   "optimizer_at_train_begin": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-05,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-05,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140458907699328
+   },
+   "weights_at_train_begin": {
+    "digest": "f2750724e8d416a9168ccdb718d141a0b1cc421ad27a0a8a1c1bc84e697a1b13",
+    "tensors": 94,
+    "parameters": 47041,
+    "non_trainable_variables": 2
+   },
+   "warm_start_from_previous_fit_of_this_step": null,
+   "model_pretrained_attribute": "ABSENT",
+   "epochs": [
+    {
+     "epoch": 0,
+     "logs": {
+      "loss": 97.54884338378906,
+      "val_loss": 98.629638671875,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 21,
+     "grad_global_norm_pre_clip": {
+      "mean": 250.18402317592077,
+      "max": 446.3191223144531,
+      "min": 117.53787994384766,
+      "frac_above_1": 1.0,
+      "first5": [
+       175.23602294921875,
+       179.4691619873047,
+       356.2730712890625,
+       188.83822631835938,
+       232.96438598632812
+      ]
+     },
+     "grad_global_norm_post_clip_max": 446.3191223144531,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 98.629638671875,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "56613fbb230081e90eb195afbe341fd1cec76e195b4ef5ce4b664d6c918d2925",
+     "seconds": 20.16579542896943
+    },
+    {
+     "epoch": 1,
+     "logs": {
+      "loss": 97.02424621582031,
+      "val_loss": 98.64472198486328,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 42,
+     "grad_global_norm_pre_clip": {
+      "mean": 236.73277682349794,
+      "max": 876.6731567382812,
+      "min": 94.85951232910156,
+      "frac_above_1": 1.0,
+      "first5": [
+       421.86944580078125,
+       138.1689910888672,
+       126.07134246826172,
+       132.4320068359375,
+       207.75527954101562
+      ]
+     },
+     "grad_global_norm_post_clip_max": 876.6731567382812,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 1,
+      "best": 98.629638671875,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "f8a56c6be366ca6689b51c5faf6196359b8e3fe80d0f13a30e77d7939703129d",
+     "seconds": 0.6034458529902622
+    },
+    {
+     "epoch": 2,
+     "logs": {
+      "loss": 97.13854217529297,
+      "val_loss": 98.53697204589844,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 63,
+     "grad_global_norm_pre_clip": {
+      "mean": 175.5791513352167,
+      "max": 375.64373779296875,
+      "min": 68.36742401123047,
+      "frac_above_1": 1.0,
+      "first5": [
+       154.11656188964844,
+       164.6946258544922,
+       177.75369262695312,
+       115.32032012939453,
+       165.79612731933594
+      ]
+     },
+     "grad_global_norm_post_clip_max": 375.64373779296875,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 98.53697204589844,
+      "best_epoch": 2,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "0cf454ee8e59fccb96e7ea9c691c73c7e8ec0f351fa6c7dc29cd2e7729cb02bd",
+     "seconds": 0.8425424859742634
+    },
+    {
+     "epoch": 3,
+     "logs": {
+      "loss": 96.79507446289062,
+      "val_loss": 98.55326080322266,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 84,
+     "grad_global_norm_pre_clip": {
+      "mean": 210.0083523704892,
+      "max": 524.64794921875,
+      "min": 90.14327239990234,
+      "frac_above_1": 1.0,
+      "first5": [
+       143.50181579589844,
+       244.76065063476562,
+       241.70913696289062,
+       304.0206604003906,
+       214.02786254882812
+      ]
+     },
+     "grad_global_norm_post_clip_max": 524.64794921875,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 1,
+      "best": 98.53697204589844,
+      "best_epoch": 2,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "c31b3170c5a839b142608cbbbe65706ebf967b2b90dbe7b477a8e1a483df87fe",
+     "seconds": 0.5948208289919421
+    },
+    {
+     "epoch": 4,
+     "logs": {
+      "loss": 97.55752563476562,
+      "val_loss": 98.58538818359375,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 105,
+     "grad_global_norm_pre_clip": {
+      "mean": 218.97614179338728,
+      "max": 499.9518737792969,
+      "min": 110.42938232421875,
+      "frac_above_1": 1.0,
+      "first5": [
+       117.99958038330078,
+       391.2496337890625,
+       276.2652893066406,
+       414.9927673339844,
+       212.7568817138672
+      ]
+     },
+     "grad_global_norm_post_clip_max": 499.9518737792969,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 2,
+      "best": 98.53697204589844,
+      "best_epoch": 2,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "cb2157c1b1134e5dc09a3d59aea4e163c597d39e346ee0609ef037054974ea25",
+     "seconds": 0.6039180579828098
+    },
+    {
+     "epoch": 5,
+     "logs": {
+      "loss": 96.96627044677734,
+      "val_loss": 98.5678482055664,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 126,
+     "grad_global_norm_pre_clip": {
+      "mean": 227.19967942010788,
+      "max": 448.3756408691406,
+      "min": 77.7312240600586,
+      "frac_above_1": 1.0,
+      "first5": [
+       350.0047607421875,
+       77.7312240600586,
+       201.5448760986328,
+       448.3756408691406,
+       153.05316162109375
+      ]
+     },
+     "grad_global_norm_post_clip_max": 448.3756408691406,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 3,
+      "best": 98.53697204589844,
+      "best_epoch": 2,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "872f862ab3d137bb6d698acc51c37f122eff6da08e9ca13a2af8b9f405c7000e",
+     "seconds": 0.6059196569840424
+    },
+    {
+     "epoch": 6,
+     "logs": {
+      "loss": 97.11441802978516,
+      "val_loss": 98.58118438720703,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 147,
+     "grad_global_norm_pre_clip": {
+      "mean": 221.33673422677177,
+      "max": 448.62701416015625,
+      "min": 98.13887023925781,
+      "frac_above_1": 1.0,
+      "first5": [
+       224.272705078125,
+       305.2669982910156,
+       122.36890411376953,
+       142.73963928222656,
+       225.85494995117188
+      ]
+     },
+     "grad_global_norm_post_clip_max": 448.62701416015625,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 4,
+      "best": 98.53697204589844,
+      "best_epoch": 2,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "e186f530b297bbceeae20b63741b0d67fa0c7f3c0d0997078549716684feea8a",
+     "seconds": 0.5889384199981578
+    },
+    {
+     "epoch": 7,
+     "logs": {
+      "loss": 96.92236328125,
+      "val_loss": 98.6866455078125,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 168,
+     "grad_global_norm_pre_clip": {
+      "mean": 193.26150222051712,
+      "max": 413.5652160644531,
+      "min": 87.48088073730469,
+      "frac_above_1": 1.0,
+      "first5": [
+       196.48406982421875,
+       207.29322814941406,
+       182.82411193847656,
+       102.98055267333984,
+       294.5380554199219
+      ]
+     },
+     "grad_global_norm_post_clip_max": 413.5652160644531,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 5,
+      "best": 98.53697204589844,
+      "best_epoch": 2,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "f3959d8b1f4af29b6e9d94411f321e15fd53eba715c5ab490e811115e0c1f6ae",
+     "seconds": 0.5977172209532
+    }
+   ],
+   "at_first_optimizer_step": {
+    "optimizer_iterations": 0,
+    "weights": {
+     "digest": "f2750724e8d416a9168ccdb718d141a0b1cc421ad27a0a8a1c1bc84e697a1b13",
+     "tensors": 94,
+     "parameters": 47041,
+     "non_trainable_variables": 2
+    }
+   },
+   "at_train_end": {
+    "weights_digest": "f3959d8b1f4af29b6e9d94411f321e15fd53eba715c5ab490e811115e0c1f6ae",
+    "weights_equal_end_of_epoch": [
+     7
+    ],
+    "epochs_run": 8,
+    "val_loss_argmin_epoch": 2,
+    "final_weights_are_best_val_epoch": false,
+    "final_weights_are_last_epoch": true
+   },
+   "fit_seconds": 24.68269893503748,
+   "history": {
+    "loss": [
+     97.54884338378906,
+     97.02424621582031,
+     97.13854217529297,
+     96.79507446289062,
+     97.55752563476562,
+     96.96627044677734,
+     97.11441802978516,
+     96.92236328125
+    ],
+    "val_loss": [
+     98.629638671875,
+     98.64472198486328,
+     98.53697204589844,
+     98.55326080322266,
+     98.58538818359375,
+     98.5678482055664,
+     98.58118438720703,
+     98.6866455078125
+    ],
+    "lr": [
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05
+    ]
+   },
+   "weights_after_fit_return": "f3959d8b1f4af29b6e9d94411f321e15fd53eba715c5ab490e811115e0c1f6ae"
+  },
+  {
+   "arm": "ours",
+   "iteration": 0,
+   "step": 2,
+   "model_class": [
+    {
+     "qualname": "PET",
+     "module": "omnifold.net",
+     "source_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/net.py"
+    },
+    {
+     "qualname": "Model",
+     "module": "keras.src.engine.training",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/training.py"
+    },
+    {
+     "qualname": "Layer",
+     "module": "keras.src.engine.base_layer",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/base_layer.py"
+    },
+    {
+     "qualname": "Module",
+     "module": "tensorflow.python.module.module",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/module/module.py"
+    },
+    {
+     "qualname": "AutoTrackable",
+     "module": "tensorflow.python.trackable.autotrackable",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+    },
+    {
+     "qualname": "Trackable",
+     "module": "tensorflow.python.trackable.base",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+    },
+    {
+     "qualname": "LayerVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    },
+    {
+     "qualname": "ModelVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    }
+   ],
+   "model_id": 140456776617360,
+   "model_is_template": false,
+   "model_seen_before_in_fit": false,
+   "optimizer_id": 140455635387920,
+   "optimizer_seen_before": false,
+   "fit_kwargs": {
+    "epochs": 8,
+    "steps_per_epoch": 31,
+    "validation_steps": 7,
+    "verbose": 0
+   },
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 8), dtype=tf.float32, name=None), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "callbacks": [
+    {
+     "class": "BroadcastGlobalVariablesCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "MetricAverageCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "ReduceLROnPlateau",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 1000,
+     "min_delta": 0.0001,
+     "mode": "auto",
+     "factor": 0.1,
+     "min_lr": 1e-07,
+     "cooldown": 0,
+     "verbose": 0
+    },
+    {
+     "class": "EarlyStopping",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 10,
+     "min_delta": 0,
+     "baseline": null,
+     "restore_best_weights": true,
+     "start_from_epoch": 0,
+     "verbose": 0
+    },
+    {
+     "class": "ModelCheckpoint",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "save_best_only": true,
+     "save_weights_only": true,
+     "filepath": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseA1/audit-20260922/ours/weights/OmniFold_ours-tuning-seed17_iter0_step2.weights.h5",
+     "verbose": 0
+    }
+   ],
+   "optimizer_at_train_begin": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-05,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-05,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140455635387920
+   },
+   "weights_at_train_begin": {
+    "digest": "334eff3f88f5be498d9d4112f220cf48f6c9760cb572c871f7213f2efc8ae8ed",
+    "tensors": 94,
+    "parameters": 46913,
+    "non_trainable_variables": 2
+   },
+   "warm_start_from_previous_fit_of_this_step": null,
+   "model_pretrained_attribute": "ABSENT",
+   "epochs": [
+    {
+     "epoch": 0,
+     "logs": {
+      "loss": 166.1793670654297,
+      "val_loss": 167.419189453125,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 31,
+     "grad_global_norm_pre_clip": {
+      "mean": 238.46243249216388,
+      "max": 644.656982421875,
+      "min": 45.2711296081543,
+      "frac_above_1": 1.0,
+      "first5": [
+       242.88613891601562,
+       230.369384765625,
+       644.656982421875,
+       116.91536712646484,
+       90.80474090576172
+      ]
+     },
+     "grad_global_norm_post_clip_max": 644.656982421875,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 167.419189453125,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "f50a67e940ed9180f2513386e9846aa0d7310c142f2ee1cbd6a19a15ccfd8450",
+     "seconds": 17.13457253400702
+    },
+    {
+     "epoch": 1,
+     "logs": {
+      "loss": 166.10400390625,
+      "val_loss": 167.4712677001953,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 62,
+     "grad_global_norm_pre_clip": {
+      "mean": 192.95446629678048,
+      "max": 423.5455627441406,
+      "min": 74.16447448730469,
+      "frac_above_1": 1.0,
+      "first5": [
+       110.96709442138672,
+       194.41058349609375,
+       212.60609436035156,
+       293.38275146484375,
+       188.47378540039062
+      ]
+     },
+     "grad_global_norm_post_clip_max": 423.5455627441406,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 1,
+      "best": 167.419189453125,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "60e69b6cb0bb086fea1fff5c4e23fb978bb35c4638f09f1e1565732457938cd6",
+     "seconds": 0.8614304740331136
+    },
+    {
+     "epoch": 2,
+     "logs": {
+      "loss": 166.15762329101562,
+      "val_loss": 167.57530212402344,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 93,
+     "grad_global_norm_pre_clip": {
+      "mean": 211.53119757867628,
+      "max": 419.093017578125,
+      "min": 71.55770874023438,
+      "frac_above_1": 1.0,
+      "first5": [
+       93.15408325195312,
+       239.3346710205078,
+       325.8009338378906,
+       114.9909896850586,
+       128.87969970703125
+      ]
+     },
+     "grad_global_norm_post_clip_max": 419.093017578125,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 2,
+      "best": 167.419189453125,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "5f2ce26c8fba0d6f59e6ba9023d2013c2512c1fd7806f104646fbb1c1d24dc13",
+     "seconds": 0.8537530720350333
+    },
+    {
+     "epoch": 3,
+     "logs": {
+      "loss": 166.013671875,
+      "val_loss": 167.44847106933594,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 124,
+     "grad_global_norm_pre_clip": {
+      "mean": 178.61125663018996,
+      "max": 510.7468566894531,
+      "min": 54.515037536621094,
+      "frac_above_1": 1.0,
+      "first5": [
+       184.69989013671875,
+       327.0434875488281,
+       163.43634033203125,
+       65.4460678100586,
+       129.288330078125
+      ]
+     },
+     "grad_global_norm_post_clip_max": 510.7468566894531,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 3,
+      "best": 167.419189453125,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "9a069693f410ad523c22077385094ec0dcb62e7744dc66e6c5e82a41581b9494",
+     "seconds": 0.8641472159652039
+    },
+    {
+     "epoch": 4,
+     "logs": {
+      "loss": 166.14071655273438,
+      "val_loss": 167.4617919921875,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 155,
+     "grad_global_norm_pre_clip": {
+      "mean": 185.31359974030525,
+      "max": 496.18341064453125,
+      "min": 53.30888748168945,
+      "frac_above_1": 1.0,
+      "first5": [
+       166.0340576171875,
+       57.062538146972656,
+       217.34458923339844,
+       268.7513732910156,
+       252.38278198242188
+      ]
+     },
+     "grad_global_norm_post_clip_max": 496.18341064453125,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 4,
+      "best": 167.419189453125,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "5f96bf4d48b6bffd5569eb8f4d2e8dd8155c4739a40a634e0b4db51e59a8410b",
+     "seconds": 0.856837016006466
+    },
+    {
+     "epoch": 5,
+     "logs": {
+      "loss": 166.11175537109375,
+      "val_loss": 167.45957946777344,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 186,
+     "grad_global_norm_pre_clip": {
+      "mean": 197.4432094943139,
+      "max": 632.9409790039062,
+      "min": 64.54351043701172,
+      "frac_above_1": 1.0,
+      "first5": [
+       175.05078125,
+       173.35694885253906,
+       363.10198974609375,
+       106.8070068359375,
+       133.19020080566406
+      ]
+     },
+     "grad_global_norm_post_clip_max": 632.9409790039062,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 5,
+      "best": 167.419189453125,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "55a49b6fba1f072356cba5f02b002dd55c08f762affffed1336458bd38d2864c",
+     "seconds": 0.8574766050442122
+    },
+    {
+     "epoch": 6,
+     "logs": {
+      "loss": 166.33335876464844,
+      "val_loss": 167.64822387695312,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 217,
+     "grad_global_norm_pre_clip": {
+      "mean": 243.67722997357768,
+      "max": 665.2210693359375,
+      "min": 57.80501937866211,
+      "frac_above_1": 1.0,
+      "first5": [
+       184.81100463867188,
+       192.79608154296875,
+       158.45008850097656,
+       423.2853698730469,
+       521.7459716796875
+      ]
+     },
+     "grad_global_norm_post_clip_max": 665.2210693359375,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 6,
+      "best": 167.419189453125,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "70974cc3b62b77aa43386a94af22b5a29496a6a8e4269c4acfcd13bcd550c555",
+     "seconds": 0.8543496769852936
+    },
+    {
+     "epoch": 7,
+     "logs": {
+      "loss": 166.04042053222656,
+      "val_loss": 167.49392700195312,
+      "lr": 9.999999747378752e-05
+     },
+     "learning_rate_end": 9.999999747378752e-05,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 248,
+     "grad_global_norm_pre_clip": {
+      "mean": 153.4857438610446,
+      "max": 317.0609130859375,
+      "min": 46.85053634643555,
+      "frac_above_1": 1.0,
+      "first5": [
+       46.85053634643555,
+       287.8494873046875,
+       136.1687469482422,
+       231.07846069335938,
+       266.02227783203125
+      ]
+     },
+     "grad_global_norm_post_clip_max": 317.0609130859375,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 7,
+      "best": 167.419189453125,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "0a012a3b53c05fa6d738e89c4863c1b4ea8ad98665036e3e27f7273d44b0f742",
+     "seconds": 0.8452767030103132
+    }
+   ],
+   "at_first_optimizer_step": {
+    "optimizer_iterations": 0,
+    "weights": {
+     "digest": "334eff3f88f5be498d9d4112f220cf48f6c9760cb572c871f7213f2efc8ae8ed",
+     "tensors": 94,
+     "parameters": 46913,
+     "non_trainable_variables": 2
+    }
+   },
+   "at_train_end": {
+    "weights_digest": "0a012a3b53c05fa6d738e89c4863c1b4ea8ad98665036e3e27f7273d44b0f742",
+    "weights_equal_end_of_epoch": [
+     7
+    ],
+    "epochs_run": 8,
+    "val_loss_argmin_epoch": 0,
+    "final_weights_are_best_val_epoch": false,
+    "final_weights_are_last_epoch": true
+   },
+   "fit_seconds": 23.193717391986866,
+   "history": {
+    "loss": [
+     166.1793670654297,
+     166.10400390625,
+     166.15762329101562,
+     166.013671875,
+     166.14071655273438,
+     166.11175537109375,
+     166.33335876464844,
+     166.04042053222656
+    ],
+    "val_loss": [
+     167.419189453125,
+     167.4712677001953,
+     167.57530212402344,
+     167.44847106933594,
+     167.4617919921875,
+     167.45957946777344,
+     167.64822387695312,
+     167.49392700195312
+    ],
+    "lr": [
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05,
+     9.999999747378752e-05
+    ]
+   },
+   "weights_after_fit_return": "0a012a3b53c05fa6d738e89c4863c1b4ea8ad98665036e3e27f7273d44b0f742"
+  },
+  {
+   "arm": "ours",
+   "iteration": 1,
+   "step": 1,
+   "model_class": [
+    {
+     "qualname": "PET",
+     "module": "omnifold.net",
+     "source_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/net.py"
+    },
+    {
+     "qualname": "Model",
+     "module": "keras.src.engine.training",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/training.py"
+    },
+    {
+     "qualname": "Layer",
+     "module": "keras.src.engine.base_layer",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/base_layer.py"
+    },
+    {
+     "qualname": "Module",
+     "module": "tensorflow.python.module.module",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/module/module.py"
+    },
+    {
+     "qualname": "AutoTrackable",
+     "module": "tensorflow.python.trackable.autotrackable",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+    },
+    {
+     "qualname": "Trackable",
+     "module": "tensorflow.python.trackable.base",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+    },
+    {
+     "qualname": "LayerVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    },
+    {
+     "qualname": "ModelVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    }
+   ],
+   "model_id": 140460061856480,
+   "model_is_template": false,
+   "model_seen_before_in_fit": true,
+   "optimizer_id": 140454156448912,
+   "optimizer_seen_before": false,
+   "fit_kwargs": {
+    "epochs": 8,
+    "steps_per_epoch": 21,
+    "validation_steps": 5,
+    "verbose": 0
+   },
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 5), dtype=tf.float32, name=None), TensorSpec(shape=(None, 13), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "callbacks": [
+    {
+     "class": "BroadcastGlobalVariablesCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "MetricAverageCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "ReduceLROnPlateau",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 1000,
+     "min_delta": 0.0001,
+     "mode": "auto",
+     "factor": 0.1,
+     "min_lr": 1e-07,
+     "cooldown": 0,
+     "verbose": 0
+    },
+    {
+     "class": "EarlyStopping",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 10,
+     "min_delta": 0,
+     "baseline": null,
+     "restore_best_weights": true,
+     "start_from_epoch": 0,
+     "verbose": 0
+    },
+    {
+     "class": "ModelCheckpoint",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "save_best_only": true,
+     "save_weights_only": true,
+     "filepath": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseA1/audit-20260922/ours/weights/OmniFold_ours-tuning-seed17_iter1_step1.weights.h5",
+     "verbose": 0
+    }
+   ],
+   "optimizer_at_train_begin": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140454156448912
+   },
+   "weights_at_train_begin": {
+    "digest": "f3959d8b1f4af29b6e9d94411f321e15fd53eba715c5ab490e811115e0c1f6ae",
+    "tensors": 94,
+    "parameters": 47041,
+    "non_trainable_variables": 2
+   },
+   "warm_start_from_previous_fit_of_this_step": true,
+   "model_pretrained_attribute": "ABSENT",
+   "epochs": [
+    {
+     "epoch": 0,
+     "logs": {
+      "loss": 97.47651672363281,
+      "val_loss": 99.57865905761719,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 21,
+     "grad_global_norm_pre_clip": {
+      "mean": 247.20391337076822,
+      "max": 422.0606384277344,
+      "min": 75.15531921386719,
+      "frac_above_1": 1.0,
+      "first5": [
+       252.9816436767578,
+       422.0606384277344,
+       157.75381469726562,
+       396.9032897949219,
+       217.08108520507812
+      ]
+     },
+     "grad_global_norm_post_clip_max": 422.0606384277344,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.57865905761719,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "b948e38525e5bcde9dc2c606c3682f2f7c5fc9fbc3043021792ad34fc8e57cdd",
+     "seconds": 14.604108366009314
+    },
+    {
+     "epoch": 1,
+     "logs": {
+      "loss": 98.66712951660156,
+      "val_loss": 99.57624816894531,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 42,
+     "grad_global_norm_pre_clip": {
+      "mean": 216.76971144903274,
+      "max": 411.36920166015625,
+      "min": 111.01996612548828,
+      "frac_above_1": 1.0,
+      "first5": [
+       146.61947631835938,
+       239.38763427734375,
+       225.1973114013672,
+       119.34769439697266,
+       150.6593475341797
+      ]
+     },
+     "grad_global_norm_post_clip_max": 411.36920166015625,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.57624816894531,
+      "best_epoch": 1,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "1a82bce0988e5e13de1dddc3d1d915c439652979a416838f57fae5479a72a1d3",
+     "seconds": 0.8384824430104345
+    },
+    {
+     "epoch": 2,
+     "logs": {
+      "loss": 97.05802154541016,
+      "val_loss": 99.56806945800781,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 63,
+     "grad_global_norm_pre_clip": {
+      "mean": 166.98795064290366,
+      "max": 266.9291687011719,
+      "min": 99.09573364257812,
+      "frac_above_1": 1.0,
+      "first5": [
+       141.36427307128906,
+       137.59573364257812,
+       194.81336975097656,
+       208.57728576660156,
+       121.63706970214844
+      ]
+     },
+     "grad_global_norm_post_clip_max": 266.9291687011719,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.56806945800781,
+      "best_epoch": 2,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "df4e6ef68391af9142860173455dc62611eb989d1a3c74872ff3f446ba4c35b2",
+     "seconds": 0.8459597459877841
+    },
+    {
+     "epoch": 3,
+     "logs": {
+      "loss": 98.02420806884766,
+      "val_loss": 99.56352233886719,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 84,
+     "grad_global_norm_pre_clip": {
+      "mean": 237.60586547851562,
+      "max": 517.4461059570312,
+      "min": 131.106201171875,
+      "frac_above_1": 1.0,
+      "first5": [
+       300.94122314453125,
+       144.65489196777344,
+       169.98377990722656,
+       174.68406677246094,
+       220.69326782226562
+      ]
+     },
+     "grad_global_norm_post_clip_max": 517.4461059570312,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.56352233886719,
+      "best_epoch": 3,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "d97fa59be612330af168f5972e96973ae3b7d4ab621b9b3e319a1417a70e9c2b",
+     "seconds": 0.856361365003977
+    },
+    {
+     "epoch": 4,
+     "logs": {
+      "loss": 97.26578521728516,
+      "val_loss": 99.56636810302734,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 105,
+     "grad_global_norm_pre_clip": {
+      "mean": 183.92504228864397,
+      "max": 320.0955505371094,
+      "min": 82.96317291259766,
+      "frac_above_1": 1.0,
+      "first5": [
+       247.4397430419922,
+       112.29857635498047,
+       179.29052734375,
+       123.20480346679688,
+       293.84820556640625
+      ]
+     },
+     "grad_global_norm_post_clip_max": 320.0955505371094,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 1,
+      "best": 99.56352233886719,
+      "best_epoch": 3,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "d925dff49bd2880b649ceb4b9713dbf407726a0827048ce56cdb29ff4538107b",
+     "seconds": 0.6117617160198279
+    },
+    {
+     "epoch": 5,
+     "logs": {
+      "loss": 98.47720336914062,
+      "val_loss": 99.56097412109375,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 126,
+     "grad_global_norm_pre_clip": {
+      "mean": 231.8546375093006,
+      "max": 548.8350219726562,
+      "min": 109.56724548339844,
+      "frac_above_1": 1.0,
+      "first5": [
+       225.70469665527344,
+       172.680419921875,
+       212.7003936767578,
+       156.03089904785156,
+       181.214599609375
+      ]
+     },
+     "grad_global_norm_post_clip_max": 548.8350219726562,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.56097412109375,
+      "best_epoch": 5,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "2e03b735cd3eaa8faf0c03791b376bcbb109a2a52eab3207c5722514af5ad6b6",
+     "seconds": 0.8635150220361538
+    },
+    {
+     "epoch": 6,
+     "logs": {
+      "loss": 97.08067321777344,
+      "val_loss": 99.55455780029297,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 147,
+     "grad_global_norm_pre_clip": {
+      "mean": 216.2703356061663,
+      "max": 516.7394409179688,
+      "min": 87.95983123779297,
+      "frac_above_1": 1.0,
+      "first5": [
+       283.1620788574219,
+       295.0215148925781,
+       87.95983123779297,
+       124.94279479980469,
+       236.76199340820312
+      ]
+     },
+     "grad_global_norm_post_clip_max": 516.7394409179688,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.55455780029297,
+      "best_epoch": 6,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "81149ffc48eea23d511248a5fd2cef457d3e629c6c0b91c5952e5ddf8891e9e1",
+     "seconds": 0.8590472670039162
+    },
+    {
+     "epoch": 7,
+     "logs": {
+      "loss": 98.50938415527344,
+      "val_loss": 99.55663299560547,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 168,
+     "grad_global_norm_pre_clip": {
+      "mean": 192.72280974615188,
+      "max": 480.0067138671875,
+      "min": 49.05479049682617,
+      "frac_above_1": 1.0,
+      "first5": [
+       392.99505615234375,
+       203.0438995361328,
+       234.83848571777344,
+       139.1842041015625,
+       145.513916015625
+      ]
+     },
+     "grad_global_norm_post_clip_max": 480.0067138671875,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 1,
+      "best": 99.55455780029297,
+      "best_epoch": 6,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "d20bdac54ec622cd1301ae2dd3c36be8930409625565620fb005b74e1ed2c045",
+     "seconds": 0.610224457050208
+    }
+   ],
+   "at_first_optimizer_step": {
+    "optimizer_iterations": 0,
+    "weights": {
+     "digest": "f3959d8b1f4af29b6e9d94411f321e15fd53eba715c5ab490e811115e0c1f6ae",
+     "tensors": 94,
+     "parameters": 47041,
+     "non_trainable_variables": 2
+    }
+   },
+   "at_train_end": {
+    "weights_digest": "d20bdac54ec622cd1301ae2dd3c36be8930409625565620fb005b74e1ed2c045",
+    "weights_equal_end_of_epoch": [
+     7
+    ],
+    "epochs_run": 8,
+    "val_loss_argmin_epoch": 6,
+    "final_weights_are_best_val_epoch": false,
+    "final_weights_are_last_epoch": true
+   },
+   "fit_seconds": 20.159030031994916,
+   "history": {
+    "loss": [
+     97.47651672363281,
+     98.66712951660156,
+     97.05802154541016,
+     98.02420806884766,
+     97.26578521728516,
+     98.47720336914062,
+     97.08067321777344,
+     98.50938415527344
+    ],
+    "val_loss": [
+     99.57865905761719,
+     99.57624816894531,
+     99.56806945800781,
+     99.56352233886719,
+     99.56636810302734,
+     99.56097412109375,
+     99.55455780029297,
+     99.55663299560547
+    ],
+    "lr": [
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06
+    ]
+   },
+   "weights_after_fit_return": "d20bdac54ec622cd1301ae2dd3c36be8930409625565620fb005b74e1ed2c045"
+  },
+  {
+   "arm": "ours",
+   "iteration": 1,
+   "step": 2,
+   "model_class": [
+    {
+     "qualname": "PET",
+     "module": "omnifold.net",
+     "source_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/net.py"
+    },
+    {
+     "qualname": "Model",
+     "module": "keras.src.engine.training",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/training.py"
+    },
+    {
+     "qualname": "Layer",
+     "module": "keras.src.engine.base_layer",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/base_layer.py"
+    },
+    {
+     "qualname": "Module",
+     "module": "tensorflow.python.module.module",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/module/module.py"
+    },
+    {
+     "qualname": "AutoTrackable",
+     "module": "tensorflow.python.trackable.autotrackable",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+    },
+    {
+     "qualname": "Trackable",
+     "module": "tensorflow.python.trackable.base",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+    },
+    {
+     "qualname": "LayerVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    },
+    {
+     "qualname": "ModelVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    }
+   ],
+   "model_id": 140456776617360,
+   "model_is_template": false,
+   "model_seen_before_in_fit": true,
+   "optimizer_id": 140453491521280,
+   "optimizer_seen_before": false,
+   "fit_kwargs": {
+    "epochs": 8,
+    "steps_per_epoch": 31,
+    "validation_steps": 7,
+    "verbose": 0
+   },
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 8), dtype=tf.float32, name=None), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "callbacks": [
+    {
+     "class": "BroadcastGlobalVariablesCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "MetricAverageCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "ReduceLROnPlateau",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 1000,
+     "min_delta": 0.0001,
+     "mode": "auto",
+     "factor": 0.1,
+     "min_lr": 1e-07,
+     "cooldown": 0,
+     "verbose": 0
+    },
+    {
+     "class": "EarlyStopping",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 10,
+     "min_delta": 0,
+     "baseline": null,
+     "restore_best_weights": true,
+     "start_from_epoch": 0,
+     "verbose": 0
+    },
+    {
+     "class": "ModelCheckpoint",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "save_best_only": true,
+     "save_weights_only": true,
+     "filepath": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseA1/audit-20260922/ours/weights/OmniFold_ours-tuning-seed17_iter1_step2.weights.h5",
+     "verbose": 0
+    }
+   ],
+   "optimizer_at_train_begin": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140453491521280
+   },
+   "weights_at_train_begin": {
+    "digest": "0a012a3b53c05fa6d738e89c4863c1b4ea8ad98665036e3e27f7273d44b0f742",
+    "tensors": 94,
+    "parameters": 46913,
+    "non_trainable_variables": 2
+   },
+   "warm_start_from_previous_fit_of_this_step": true,
+   "model_pretrained_attribute": "ABSENT",
+   "epochs": [
+    {
+     "epoch": 0,
+     "logs": {
+      "loss": 165.0010986328125,
+      "val_loss": 166.3998565673828,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 31,
+     "grad_global_norm_pre_clip": {
+      "mean": 166.74133793000252,
+      "max": 360.9716796875,
+      "min": 55.217891693115234,
+      "frac_above_1": 1.0,
+      "first5": [
+       55.217891693115234,
+       238.44627380371094,
+       360.9716796875,
+       109.27278137207031,
+       94.669189453125
+      ]
+     },
+     "grad_global_norm_post_clip_max": 360.9716796875,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 166.3998565673828,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "0586c0701c6a5d6718c3dae7726b8182f2a941943f4c962df40943266a45c402",
+     "seconds": 15.444949897995684
+    },
+    {
+     "epoch": 1,
+     "logs": {
+      "loss": 165.01234436035156,
+      "val_loss": 166.39987182617188,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 62,
+     "grad_global_norm_pre_clip": {
+      "mean": 190.14383845175468,
+      "max": 540.7291870117188,
+      "min": 66.69660949707031,
+      "frac_above_1": 1.0,
+      "first5": [
+       87.80378723144531,
+       132.41323852539062,
+       79.393798828125,
+       130.00694274902344,
+       66.69660949707031
+      ]
+     },
+     "grad_global_norm_post_clip_max": 540.7291870117188,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 1,
+      "best": 166.3998565673828,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "5a5a6fc77a51de67f54de1f0a09159a8e57c975060830c70bdcf382209bd020a",
+     "seconds": 0.866049229982309
+    },
+    {
+     "epoch": 2,
+     "logs": {
+      "loss": 165.0198516845703,
+      "val_loss": 166.40628051757812,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 93,
+     "grad_global_norm_pre_clip": {
+      "mean": 224.9621022132135,
+      "max": 527.225341796875,
+      "min": 44.100589752197266,
+      "frac_above_1": 1.0,
+      "first5": [
+       268.0321960449219,
+       323.299072265625,
+       44.100589752197266,
+       351.70538330078125,
+       527.225341796875
+      ]
+     },
+     "grad_global_norm_post_clip_max": 527.225341796875,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 2,
+      "best": 166.3998565673828,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "b4ff6e56d3e3c86af2ccf0fe5fb97c152e47eea01835ca4067bc49d62c65e057",
+     "seconds": 0.8637288759928197
+    },
+    {
+     "epoch": 3,
+     "logs": {
+      "loss": 165.03793334960938,
+      "val_loss": 166.40750122070312,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 124,
+     "grad_global_norm_pre_clip": {
+      "mean": 205.46884659797914,
+      "max": 617.4520263671875,
+      "min": 37.54066848754883,
+      "frac_above_1": 1.0,
+      "first5": [
+       390.74139404296875,
+       137.974609375,
+       342.7099304199219,
+       37.54066848754883,
+       104.02364349365234
+      ]
+     },
+     "grad_global_norm_post_clip_max": 617.4520263671875,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 3,
+      "best": 166.3998565673828,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "3891342bf4717456241b033da218332a91164d601d5e0e7337a77c4a3b5ec679",
+     "seconds": 0.86318815901177
+    },
+    {
+     "epoch": 4,
+     "logs": {
+      "loss": 165.05160522460938,
+      "val_loss": 166.41297912597656,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 155,
+     "grad_global_norm_pre_clip": {
+      "mean": 162.12157957015498,
+      "max": 364.4014892578125,
+      "min": 68.04811096191406,
+      "frac_above_1": 1.0,
+      "first5": [
+       172.70750427246094,
+       68.04811096191406,
+       114.9268569946289,
+       139.7286834716797,
+       145.56863403320312
+      ]
+     },
+     "grad_global_norm_post_clip_max": 364.4014892578125,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 4,
+      "best": 166.3998565673828,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "bd330e22995e3102dabe2737449720522baefb82a58c419cb493fe2735289b83",
+     "seconds": 0.8697258320171386
+    },
+    {
+     "epoch": 5,
+     "logs": {
+      "loss": 164.8392333984375,
+      "val_loss": 166.4193115234375,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 186,
+     "grad_global_norm_pre_clip": {
+      "mean": 163.92892874440838,
+      "max": 353.0561218261719,
+      "min": 70.30220794677734,
+      "frac_above_1": 1.0,
+      "first5": [
+       181.5202178955078,
+       107.61959838867188,
+       353.0561218261719,
+       173.2955780029297,
+       285.69390869140625
+      ]
+     },
+     "grad_global_norm_post_clip_max": 353.0561218261719,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 5,
+      "best": 166.3998565673828,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "c59e1aaf12c641293fb7717d44aa3885354c43a2cf8af91b974ca3f1c16a449d",
+     "seconds": 0.862255671992898
+    },
+    {
+     "epoch": 6,
+     "logs": {
+      "loss": 164.73391723632812,
+      "val_loss": 166.42369079589844,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 217,
+     "grad_global_norm_pre_clip": {
+      "mean": 167.16371339367282,
+      "max": 356.4735107421875,
+      "min": 63.91305923461914,
+      "frac_above_1": 1.0,
+      "first5": [
+       137.8128204345703,
+       182.8687744140625,
+       223.7334442138672,
+       157.9379119873047,
+       203.7909393310547
+      ]
+     },
+     "grad_global_norm_post_clip_max": 356.4735107421875,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 6,
+      "best": 166.3998565673828,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "f9631e492f301e59b6444e04faea99118df23db66f3af40bc3366150c25b8a89",
+     "seconds": 0.8678282959735952
+    },
+    {
+     "epoch": 7,
+     "logs": {
+      "loss": 165.2730712890625,
+      "val_loss": 166.42822265625,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 248,
+     "grad_global_norm_pre_clip": {
+      "mean": 151.1460940453314,
+      "max": 364.7174987792969,
+      "min": 44.686317443847656,
+      "frac_above_1": 1.0,
+      "first5": [
+       188.849853515625,
+       109.634765625,
+       185.53428649902344,
+       114.57490539550781,
+       231.0504608154297
+      ]
+     },
+     "grad_global_norm_post_clip_max": 364.7174987792969,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 7,
+      "best": 166.3998565673828,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "5ea26c2e6f4dadab472e65d39ae5fae6cc852e0f39a4905a4159b584b30d6b52",
+     "seconds": 0.8664904150064103
+    }
+   ],
+   "at_first_optimizer_step": {
+    "optimizer_iterations": 0,
+    "weights": {
+     "digest": "0a012a3b53c05fa6d738e89c4863c1b4ea8ad98665036e3e27f7273d44b0f742",
+     "tensors": 94,
+     "parameters": 46913,
+     "non_trainable_variables": 2
+    }
+   },
+   "at_train_end": {
+    "weights_digest": "5ea26c2e6f4dadab472e65d39ae5fae6cc852e0f39a4905a4159b584b30d6b52",
+    "weights_equal_end_of_epoch": [
+     7
+    ],
+    "epochs_run": 8,
+    "val_loss_argmin_epoch": 0,
+    "final_weights_are_best_val_epoch": false,
+    "final_weights_are_last_epoch": true
+   },
+   "fit_seconds": 21.575109861965757,
+   "history": {
+    "loss": [
+     165.0010986328125,
+     165.01234436035156,
+     165.0198516845703,
+     165.03793334960938,
+     165.05160522460938,
+     164.8392333984375,
+     164.73391723632812,
+     165.2730712890625
+    ],
+    "val_loss": [
+     166.3998565673828,
+     166.39987182617188,
+     166.40628051757812,
+     166.40750122070312,
+     166.41297912597656,
+     166.4193115234375,
+     166.42369079589844,
+     166.42822265625
+    ],
+    "lr": [
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06
+    ]
+   },
+   "weights_after_fit_return": "5ea26c2e6f4dadab472e65d39ae5fae6cc852e0f39a4905a4159b584b30d6b52"
+  },
+  {
+   "arm": "ours",
+   "iteration": 2,
+   "step": 1,
+   "model_class": [
+    {
+     "qualname": "PET",
+     "module": "omnifold.net",
+     "source_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/net.py"
+    },
+    {
+     "qualname": "Model",
+     "module": "keras.src.engine.training",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/training.py"
+    },
+    {
+     "qualname": "Layer",
+     "module": "keras.src.engine.base_layer",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/base_layer.py"
+    },
+    {
+     "qualname": "Module",
+     "module": "tensorflow.python.module.module",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/module/module.py"
+    },
+    {
+     "qualname": "AutoTrackable",
+     "module": "tensorflow.python.trackable.autotrackable",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+    },
+    {
+     "qualname": "Trackable",
+     "module": "tensorflow.python.trackable.base",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+    },
+    {
+     "qualname": "LayerVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    },
+    {
+     "qualname": "ModelVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    }
+   ],
+   "model_id": 140460061856480,
+   "model_is_template": false,
+   "model_seen_before_in_fit": true,
+   "optimizer_id": 140455637159600,
+   "optimizer_seen_before": false,
+   "fit_kwargs": {
+    "epochs": 8,
+    "steps_per_epoch": 21,
+    "validation_steps": 5,
+    "verbose": 0
+   },
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 5), dtype=tf.float32, name=None), TensorSpec(shape=(None, 13), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "callbacks": [
+    {
+     "class": "BroadcastGlobalVariablesCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "MetricAverageCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "ReduceLROnPlateau",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 1000,
+     "min_delta": 0.0001,
+     "mode": "auto",
+     "factor": 0.1,
+     "min_lr": 1e-07,
+     "cooldown": 0,
+     "verbose": 0
+    },
+    {
+     "class": "EarlyStopping",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 10,
+     "min_delta": 0,
+     "baseline": null,
+     "restore_best_weights": true,
+     "start_from_epoch": 0,
+     "verbose": 0
+    },
+    {
+     "class": "ModelCheckpoint",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "save_best_only": true,
+     "save_weights_only": true,
+     "filepath": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseA1/audit-20260922/ours/weights/OmniFold_ours-tuning-seed17_iter2_step1.weights.h5",
+     "verbose": 0
+    }
+   ],
+   "optimizer_at_train_begin": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140455637159600
+   },
+   "weights_at_train_begin": {
+    "digest": "d20bdac54ec622cd1301ae2dd3c36be8930409625565620fb005b74e1ed2c045",
+    "tensors": 94,
+    "parameters": 47041,
+    "non_trainable_variables": 2
+   },
+   "warm_start_from_previous_fit_of_this_step": true,
+   "model_pretrained_attribute": "ABSENT",
+   "epochs": [
+    {
+     "epoch": 0,
+     "logs": {
+      "loss": 98.39885711669922,
+      "val_loss": 99.91374206542969,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 21,
+     "grad_global_norm_pre_clip": {
+      "mean": 199.2201805114746,
+      "max": 518.230712890625,
+      "min": 54.72177505493164,
+      "frac_above_1": 1.0,
+      "first5": [
+       93.93379211425781,
+       129.68614196777344,
+       223.28468322753906,
+       182.901123046875,
+       54.72177505493164
+      ]
+     },
+     "grad_global_norm_post_clip_max": 518.230712890625,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.91374206542969,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "de80b6e5a2bea1aeaa6cc3340732ccd9c34a78e774b21d394cdd116e7212bff6",
+     "seconds": 14.642672738991678
+    },
+    {
+     "epoch": 1,
+     "logs": {
+      "loss": 97.96842193603516,
+      "val_loss": 99.91339111328125,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 42,
+     "grad_global_norm_pre_clip": {
+      "mean": 227.1990000406901,
+      "max": 400.7991943359375,
+      "min": 106.46846771240234,
+      "frac_above_1": 1.0,
+      "first5": [
+       226.07119750976562,
+       285.4497375488281,
+       189.52305603027344,
+       236.69219970703125,
+       221.46238708496094
+      ]
+     },
+     "grad_global_norm_post_clip_max": 400.7991943359375,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.91339111328125,
+      "best_epoch": 1,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "86ab8ebee7cf6abc692cb3e9d835b758efc7055e43531b2c6d7fe318da3f6656",
+     "seconds": 0.8385096999700181
+    },
+    {
+     "epoch": 2,
+     "logs": {
+      "loss": 98.42809295654297,
+      "val_loss": 99.90814971923828,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 63,
+     "grad_global_norm_pre_clip": {
+      "mean": 239.1118396577381,
+      "max": 446.1435546875,
+      "min": 89.24677276611328,
+      "frac_above_1": 1.0,
+      "first5": [
+       135.33499145507812,
+       186.83966064453125,
+       446.1435546875,
+       138.0990753173828,
+       89.24677276611328
+      ]
+     },
+     "grad_global_norm_post_clip_max": 446.1435546875,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.90814971923828,
+      "best_epoch": 2,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "335be1096dfd593762cc0703ff0a2295fb3b8aef3ebd4f40e10f013ffa060b2b",
+     "seconds": 0.8349561259965412
+    },
+    {
+     "epoch": 3,
+     "logs": {
+      "loss": 98.568115234375,
+      "val_loss": 99.9049072265625,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 84,
+     "grad_global_norm_pre_clip": {
+      "mean": 212.89734504336403,
+      "max": 447.9671936035156,
+      "min": 58.511505126953125,
+      "frac_above_1": 1.0,
+      "first5": [
+       135.56678771972656,
+       170.99554443359375,
+       58.511505126953125,
+       281.6328125,
+       189.27685546875
+      ]
+     },
+     "grad_global_norm_post_clip_max": 447.9671936035156,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.9049072265625,
+      "best_epoch": 3,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "f0413b0690d8193c5b32a992f62c32b745162d65b0f68c92a867cf938e3782e9",
+     "seconds": 0.8356592960190028
+    },
+    {
+     "epoch": 4,
+     "logs": {
+      "loss": 98.25531005859375,
+      "val_loss": 99.90096282958984,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 105,
+     "grad_global_norm_pre_clip": {
+      "mean": 172.55086444673083,
+      "max": 351.27880859375,
+      "min": 101.0986328125,
+      "frac_above_1": 1.0,
+      "first5": [
+       134.50274658203125,
+       155.26614379882812,
+       238.28082275390625,
+       289.90081787109375,
+       193.5858154296875
+      ]
+     },
+     "grad_global_norm_post_clip_max": 351.27880859375,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.90096282958984,
+      "best_epoch": 4,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "ce56c094da6a2038bad1b45535d224133be85351f401f8ebd01be4050a9b06b3",
+     "seconds": 0.8381675080163404
+    },
+    {
+     "epoch": 5,
+     "logs": {
+      "loss": 96.93771362304688,
+      "val_loss": 99.89500427246094,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 126,
+     "grad_global_norm_pre_clip": {
+      "mean": 196.42849949428015,
+      "max": 508.1690673828125,
+      "min": 88.81080627441406,
+      "frac_above_1": 1.0,
+      "first5": [
+       368.05633544921875,
+       88.81080627441406,
+       125.93157958984375,
+       177.62376403808594,
+       151.17926025390625
+      ]
+     },
+     "grad_global_norm_post_clip_max": 508.1690673828125,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.89500427246094,
+      "best_epoch": 5,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "d27b8a922d2b4720c408e63468aae9d8f00ac8a1f23b13e15352ec8d60ad92cc",
+     "seconds": 0.8382301590172574
+    },
+    {
+     "epoch": 6,
+     "logs": {
+      "loss": 98.93468475341797,
+      "val_loss": 99.89115905761719,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 147,
+     "grad_global_norm_pre_clip": {
+      "mean": 183.61838858468192,
+      "max": 307.8026428222656,
+      "min": 71.330322265625,
+      "frac_above_1": 1.0,
+      "first5": [
+       209.4529266357422,
+       302.0066833496094,
+       292.8101501464844,
+       187.29324340820312,
+       112.29109191894531
+      ]
+     },
+     "grad_global_norm_post_clip_max": 307.8026428222656,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.89115905761719,
+      "best_epoch": 6,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "06d209a630dd88a2eef0f84e4728afd53c0a532e6db748d2708cf13877d166f1",
+     "seconds": 0.836098205007147
+    },
+    {
+     "epoch": 7,
+     "logs": {
+      "loss": 98.72364807128906,
+      "val_loss": 99.89014434814453,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 21,
+     "optimizer_updates": 21,
+     "examples": 10752,
+     "last_batch_rows": 512,
+     "clip_calls_total": 168,
+     "grad_global_norm_pre_clip": {
+      "mean": 223.0818793887184,
+      "max": 397.0075988769531,
+      "min": 135.57647705078125,
+      "frac_above_1": 1.0,
+      "first5": [
+       187.85765075683594,
+       156.88038635253906,
+       237.4774169921875,
+       152.909423828125,
+       242.6213836669922
+      ]
+     },
+     "grad_global_norm_post_clip_max": 397.0075988769531,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 99.89014434814453,
+      "best_epoch": 7,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "a5a56d012a6f546f14cd29d4fa1405934cad526fc22161135a1467f2a2ad8dbf",
+     "seconds": 0.8369391219457611
+    }
+   ],
+   "at_first_optimizer_step": {
+    "optimizer_iterations": 0,
+    "weights": {
+     "digest": "d20bdac54ec622cd1301ae2dd3c36be8930409625565620fb005b74e1ed2c045",
+     "tensors": 94,
+     "parameters": 47041,
+     "non_trainable_variables": 2
+    }
+   },
+   "at_train_end": {
+    "weights_digest": "a5a56d012a6f546f14cd29d4fa1405934cad526fc22161135a1467f2a2ad8dbf",
+    "weights_equal_end_of_epoch": [
+     7
+    ],
+    "epochs_run": 8,
+    "val_loss_argmin_epoch": 7,
+    "final_weights_are_best_val_epoch": true,
+    "final_weights_are_last_epoch": true
+   },
+   "fit_seconds": 20.564052776957396,
+   "history": {
+    "loss": [
+     98.39885711669922,
+     97.96842193603516,
+     98.42809295654297,
+     98.568115234375,
+     98.25531005859375,
+     96.93771362304688,
+     98.93468475341797,
+     98.72364807128906
+    ],
+    "val_loss": [
+     99.91374206542969,
+     99.91339111328125,
+     99.90814971923828,
+     99.9049072265625,
+     99.90096282958984,
+     99.89500427246094,
+     99.89115905761719,
+     99.89014434814453
+    ],
+    "lr": [
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06
+    ]
+   },
+   "weights_after_fit_return": "a5a56d012a6f546f14cd29d4fa1405934cad526fc22161135a1467f2a2ad8dbf"
+  },
+  {
+   "arm": "ours",
+   "iteration": 2,
+   "step": 2,
+   "model_class": [
+    {
+     "qualname": "PET",
+     "module": "omnifold.net",
+     "source_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/net.py"
+    },
+    {
+     "qualname": "Model",
+     "module": "keras.src.engine.training",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/training.py"
+    },
+    {
+     "qualname": "Layer",
+     "module": "keras.src.engine.base_layer",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/engine/base_layer.py"
+    },
+    {
+     "qualname": "Module",
+     "module": "tensorflow.python.module.module",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/module/module.py"
+    },
+    {
+     "qualname": "AutoTrackable",
+     "module": "tensorflow.python.trackable.autotrackable",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+    },
+    {
+     "qualname": "Trackable",
+     "module": "tensorflow.python.trackable.base",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+    },
+    {
+     "qualname": "LayerVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    },
+    {
+     "qualname": "ModelVersionSelector",
+     "module": "keras.src.utils.version_utils",
+     "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/utils/version_utils.py"
+    }
+   ],
+   "model_id": 140456776617360,
+   "model_is_template": false,
+   "model_seen_before_in_fit": true,
+   "optimizer_id": 140451873739968,
+   "optimizer_seen_before": false,
+   "fit_kwargs": {
+    "epochs": 8,
+    "steps_per_epoch": 31,
+    "validation_steps": 7,
+    "verbose": 0
+   },
+   "train_element_spec": "((TensorSpec(shape=(None, 12, 8), dtype=tf.float32, name=None), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None)), TensorSpec(shape=(None, 2), dtype=tf.float32, name=None))",
+   "callbacks": [
+    {
+     "class": "BroadcastGlobalVariablesCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "MetricAverageCallback",
+     "module": "horovod.tensorflow.keras.callbacks"
+    },
+    {
+     "class": "ReduceLROnPlateau",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 1000,
+     "min_delta": 0.0001,
+     "mode": "auto",
+     "factor": 0.1,
+     "min_lr": 1e-07,
+     "cooldown": 0,
+     "verbose": 0
+    },
+    {
+     "class": "EarlyStopping",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "patience": 10,
+     "min_delta": 0,
+     "baseline": null,
+     "restore_best_weights": true,
+     "start_from_epoch": 0,
+     "verbose": 0
+    },
+    {
+     "class": "ModelCheckpoint",
+     "module": "keras.src.callbacks",
+     "monitor": "val_loss",
+     "save_best_only": true,
+     "save_weights_only": true,
+     "filepath": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseA1/audit-20260922/ours/weights/OmniFold_ours-tuning-seed17_iter2_step2.weights.h5",
+     "verbose": 0
+    }
+   ],
+   "optimizer_at_train_begin": {
+    "class": "Adam",
+    "class_module": "horovod._keras",
+    "mro": [
+     {
+      "qualname": "Adam",
+      "module": "horovod._keras",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/horovod/_keras/__init__.py"
+     },
+     {
+      "qualname": "Adam",
+      "module": "keras.src.optimizers.adam",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/adam.py"
+     },
+     {
+      "qualname": "Optimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "_BaseOptimizer",
+      "module": "keras.src.optimizers.optimizer",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/keras/src/optimizers/optimizer.py"
+     },
+     {
+      "qualname": "AutoTrackable",
+      "module": "tensorflow.python.trackable.autotrackable",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/autotrackable.py"
+     },
+     {
+      "qualname": "Trackable",
+      "module": "tensorflow.python.trackable.base",
+      "source_file": "/global/common/software/nersc9/tensorflow/2.15.0/lib/python3.9/site-packages/tensorflow/python/trackable/base.py"
+     }
+    ],
+    "config": {
+     "name": "Adam",
+     "weight_decay": null,
+     "clipnorm": null,
+     "global_clipnorm": null,
+     "clipvalue": null,
+     "use_ema": false,
+     "ema_momentum": 0.99,
+     "ema_overwrite_frequency": null,
+     "jit_compile": true,
+     "is_legacy_optimizer": false,
+     "learning_rate": 9.999999747378752e-06,
+     "beta_1": 0.9,
+     "beta_2": 0.999,
+     "epsilon": 1e-07,
+     "amsgrad": false
+    },
+    "learning_rate_type": "ResourceVariable",
+    "learning_rate_is_schedule": false,
+    "learning_rate_value": 9.999999747378752e-06,
+    "iterations_at_record": 0,
+    "clipnorm": null,
+    "global_clipnorm": null,
+    "clipvalue": null,
+    "weight_decay": null,
+    "is_horovod_wrapped": true,
+    "id": 140451873739968
+   },
+   "weights_at_train_begin": {
+    "digest": "5ea26c2e6f4dadab472e65d39ae5fae6cc852e0f39a4905a4159b584b30d6b52",
+    "tensors": 94,
+    "parameters": 46913,
+    "non_trainable_variables": 2
+   },
+   "warm_start_from_previous_fit_of_this_step": true,
+   "model_pretrained_attribute": "ABSENT",
+   "epochs": [
+    {
+     "epoch": 0,
+     "logs": {
+      "loss": 164.9366912841797,
+      "val_loss": 166.35397338867188,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 31,
+     "grad_global_norm_pre_clip": {
+      "mean": 166.07426255749118,
+      "max": 447.008544921875,
+      "min": 55.30512237548828,
+      "frac_above_1": 1.0,
+      "first5": [
+       91.51368713378906,
+       58.32697296142578,
+       103.72996520996094,
+       86.44306182861328,
+       101.68634796142578
+      ]
+     },
+     "grad_global_norm_post_clip_max": 447.008544921875,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 0,
+      "best": 166.35397338867188,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "07b97bd2a30a665401244ac7ca90590c3c3763ea2ee4f46c8a4b3dba26641af0",
+     "seconds": 14.771483007003553
+    },
+    {
+     "epoch": 1,
+     "logs": {
+      "loss": 164.76022338867188,
+      "val_loss": 166.3589324951172,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 62,
+     "grad_global_norm_pre_clip": {
+      "mean": 175.72288020964592,
+      "max": 341.25201416015625,
+      "min": 62.230262756347656,
+      "frac_above_1": 1.0,
+      "first5": [
+       157.72296142578125,
+       155.08995056152344,
+       101.77191162109375,
+       152.5923614501953,
+       207.09933471679688
+      ]
+     },
+     "grad_global_norm_post_clip_max": 341.25201416015625,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 1,
+      "best": 166.35397338867188,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "1967565c5e0cf08b70ae0099c18ded53f4ef274f86e4e1cb1954d0b24e1041b5",
+     "seconds": 0.8674064120277762
+    },
+    {
+     "epoch": 2,
+     "logs": {
+      "loss": 164.9736785888672,
+      "val_loss": 166.36253356933594,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 93,
+     "grad_global_norm_pre_clip": {
+      "mean": 190.11326574510144,
+      "max": 444.5052795410156,
+      "min": 76.09164428710938,
+      "frac_above_1": 1.0,
+      "first5": [
+       140.75631713867188,
+       233.29933166503906,
+       141.27999877929688,
+       126.08076477050781,
+       317.1312255859375
+      ]
+     },
+     "grad_global_norm_post_clip_max": 444.5052795410156,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 2,
+      "best": 166.35397338867188,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "a7876ddb5625cbdd546903e84a897448b37759cf7812171d6a2e5afb25f30e81",
+     "seconds": 0.8608235300052911
+    },
+    {
+     "epoch": 3,
+     "logs": {
+      "loss": 164.84127807617188,
+      "val_loss": 166.37242126464844,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 124,
+     "grad_global_norm_pre_clip": {
+      "mean": 215.90642486080046,
+      "max": 509.6991271972656,
+      "min": 46.39213562011719,
+      "frac_above_1": 1.0,
+      "first5": [
+       185.58888244628906,
+       226.595458984375,
+       225.2853546142578,
+       99.98161315917969,
+       309.37255859375
+      ]
+     },
+     "grad_global_norm_post_clip_max": 509.6991271972656,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 3,
+      "best": 166.35397338867188,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "9812159f8a51753781b657a4163cb264eb0fa4847d15d63263a0e1d9b6a4798c",
+     "seconds": 0.8635201859869994
+    },
+    {
+     "epoch": 4,
+     "logs": {
+      "loss": 164.69845581054688,
+      "val_loss": 166.37660217285156,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 155,
+     "grad_global_norm_pre_clip": {
+      "mean": 194.97015959216702,
+      "max": 455.18804931640625,
+      "min": 52.28977584838867,
+      "frac_above_1": 1.0,
+      "first5": [
+       202.64959716796875,
+       392.2648010253906,
+       110.01288604736328,
+       95.47242736816406,
+       128.2723388671875
+      ]
+     },
+     "grad_global_norm_post_clip_max": 455.18804931640625,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 4,
+      "best": 166.35397338867188,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "ca6b2d26bec4e37460b6222a453aa705cc70b69b695d29b0f04d9f343fbf0984",
+     "seconds": 0.8555430269916542
+    },
+    {
+     "epoch": 5,
+     "logs": {
+      "loss": 164.85025024414062,
+      "val_loss": 166.37893676757812,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 186,
+     "grad_global_norm_pre_clip": {
+      "mean": 170.03064567812027,
+      "max": 393.194580078125,
+      "min": 37.90214538574219,
+      "frac_above_1": 1.0,
+      "first5": [
+       180.72959899902344,
+       152.67724609375,
+       235.58737182617188,
+       286.39404296875,
+       129.54092407226562
+      ]
+     },
+     "grad_global_norm_post_clip_max": 393.194580078125,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 5,
+      "best": 166.35397338867188,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "a48e8dc68eb9fa8d0777b3c288ca1fa4261b3c7cefe92b458978aaecb3ea3031",
+     "seconds": 0.8616899760090746
+    },
+    {
+     "epoch": 6,
+     "logs": {
+      "loss": 165.0081024169922,
+      "val_loss": 166.3882598876953,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 217,
+     "grad_global_norm_pre_clip": {
+      "mean": 202.00183966852003,
+      "max": 426.1549377441406,
+      "min": 42.613861083984375,
+      "frac_above_1": 1.0,
+      "first5": [
+       139.06915283203125,
+       143.43728637695312,
+       224.55612182617188,
+       393.02484130859375,
+       143.75033569335938
+      ]
+     },
+     "grad_global_norm_post_clip_max": 426.1549377441406,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 6,
+      "best": 166.35397338867188,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "2845493e4182dae9036e3fd0ef82cefb8996fe9e354b2167f482771b18668105",
+     "seconds": 0.8650894209858961
+    },
+    {
+     "epoch": 7,
+     "logs": {
+      "loss": 164.6056671142578,
+      "val_loss": 166.3907470703125,
+      "lr": 9.999999747378752e-06
+     },
+     "learning_rate_end": 9.999999747378752e-06,
+     "train_batches": 31,
+     "optimizer_updates": 31,
+     "examples": 15872,
+     "last_batch_rows": 512,
+     "clip_calls_total": 248,
+     "grad_global_norm_pre_clip": {
+      "mean": 183.01326690181608,
+      "max": 432.4713439941406,
+      "min": 60.442630767822266,
+      "frac_above_1": 1.0,
+      "first5": [
+       183.38473510742188,
+       120.82691192626953,
+       241.46209716796875,
+       117.87983703613281,
+       61.37810516357422
+      ]
+     },
+     "grad_global_norm_post_clip_max": 432.4713439941406,
+     "clip_changed_norm_in_any_update": false,
+     "early_stopping_state": {
+      "wait": 7,
+      "best": 166.35397338867188,
+      "best_epoch": 0,
+      "stopped_epoch": 0,
+      "model_stop_training": false
+     },
+     "weights_digest_after_epoch": "e36aec0c788739c5af4a9b65f603bc6b35b1d0035967c7c4f86bd274bd77a5d6",
+     "seconds": 0.8710302420076914
+    }
+   ],
+   "at_first_optimizer_step": {
+    "optimizer_iterations": 0,
+    "weights": {
+     "digest": "5ea26c2e6f4dadab472e65d39ae5fae6cc852e0f39a4905a4159b584b30d6b52",
+     "tensors": 94,
+     "parameters": 46913,
+     "non_trainable_variables": 2
+    }
+   },
+   "at_train_end": {
+    "weights_digest": "e36aec0c788739c5af4a9b65f603bc6b35b1d0035967c7c4f86bd274bd77a5d6",
+    "weights_equal_end_of_epoch": [
+     7
+    ],
+    "epochs_run": 8,
+    "val_loss_argmin_epoch": 0,
+    "final_weights_are_best_val_epoch": false,
+    "final_weights_are_last_epoch": true
+   },
+   "fit_seconds": 20.885902538022492,
+   "history": {
+    "loss": [
+     164.9366912841797,
+     164.76022338867188,
+     164.9736785888672,
+     164.84127807617188,
+     164.69845581054688,
+     164.85025024414062,
+     165.0081024169922,
+     164.6056671142578
+    ],
+    "val_loss": [
+     166.35397338867188,
+     166.3589324951172,
+     166.36253356933594,
+     166.37242126464844,
+     166.37660217285156,
+     166.37893676757812,
+     166.3882598876953,
+     166.3907470703125
+    ],
+    "lr": [
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06,
+     9.999999747378752e-06
+    ]
+   },
+   "weights_after_fit_return": "e36aec0c788739c5af4a9b65f603bc6b35b1d0035967c7c4f86bd274bd77a5d6"
+  }
+ ],
+ "reweights": [
+  {
+   "iteration": null,
+   "which": "step1",
+   "batch_size_argument": 1000,
+   "weights": {
+    "n": 9995,
+    "sum": 10508.456459879875,
+    "min": 0.6791572570800781,
+    "max": 1.8256139755249023,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 9918.940230908034,
+    "sha256": "6c99c4733bc7a52bc1428744df441c81aa0e5c09ea315391392ba1cd044c9e04"
+   }
+  },
+  {
+   "iteration": null,
+   "which": "step2",
+   "batch_size_argument": null,
+   "weights": {
+    "n": 9995,
+    "sum": 10020.735125482082,
+    "min": 0.9243014454841614,
+    "max": 1.2857468128204346,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 9975.552596149942,
+    "sha256": "99b9390ed0878bf82d553fe7c010a6721b06c5941d78b95b29c6e99db4bae6b6"
+   }
+  },
+  {
+   "iteration": null,
+   "which": "step1",
+   "batch_size_argument": 1000,
+   "weights": {
+    "n": 9995,
+    "sum": 10304.15949010849,
+    "min": 0.657886266708374,
+    "max": 1.7917256355285645,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 9910.170883659885,
+    "sha256": "7958c1028b7d3a049589e4d718af125510756a88714518e69c8033dbdbde1e5a"
+   }
+  },
+  {
+   "iteration": null,
+   "which": "step2",
+   "batch_size_argument": null,
+   "weights": {
+    "n": 9995,
+    "sum": 10028.779147803783,
+    "min": 0.8833019137382507,
+    "max": 1.432740569114685,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 9947.625383039907,
+    "sha256": "6536b4648d23049e71b2abf87bfaa5cb2bad6861cd0bb6b25cfd2c7ca41c64f1"
+   }
+  },
+  {
+   "iteration": null,
+   "which": "step1",
+   "batch_size_argument": 1000,
+   "weights": {
+    "n": 9995,
+    "sum": 10269.650216698647,
+    "min": 0.6600649952888489,
+    "max": 1.7601184844970703,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 9913.07502006431,
+    "sha256": "e886f7c7e946815cd8715143b7b94388daab34312415480ddc25e2f5193125c5"
+   }
+  },
+  {
+   "iteration": null,
+   "which": "step2",
+   "batch_size_argument": null,
+   "weights": {
+    "n": 9995,
+    "sum": 9996.726036429405,
+    "min": 0.8399060964584351,
+    "max": 1.592145323753357,
+    "n_zero": 0,
+    "n_negative": 0,
+    "ess_positive": 9903.311349698663,
+    "sha256": "afedb6d77b0722a52eae164f6d3382a7d9ec6d154536613bfc6f080b41b1e22a"
+   }
+  }
+ ],
+ "inputs": {
+  "step1": {
+   "cloud": {
+    "shape": [
+     14203,
+     12,
+     5
+    ],
+    "real_rows": 92933,
+    "real_fraction": 0.5452662583022366,
+    "nonfinite": 0,
+    "columns": [
+     {
+      "column": 0,
+      "name": "E",
+      "n": 92933,
+      "min": 0.0010000474285334349,
+      "max": 0.649994969367981,
+      "mean": 0.02784523030374299,
+      "std": 0.028288913031866966,
+      "frac_exact_zero": 0.0,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 1,
+      "name": "pos",
+      "n": 92933,
+      "min": -1.0545318126678467,
+      "max": 1.0545318126678467,
+      "mean": 0.014042482435781082,
+      "std": 0.5028739460421838,
+      "frac_exact_zero": 0.001474180323458836,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 2,
+      "name": "z",
+      "n": 92933,
+      "min": 4.292957782745361,
+      "max": 9.987317085266113,
+      "mean": 7.7225013653811,
+      "std": 0.8981416673452272,
+      "frac_exact_zero": 0.0,
+      "n_unique_capped": 208
+     },
+     {
+      "column": 3,
+      "name": "view",
+      "n": 92933,
+      "min": 1.0,
+      "max": 3.0,
+      "mean": 1.7563513498972378,
+      "std": 0.8292251453519984,
+      "frac_exact_zero": 0.0,
+      "n_unique_capped": 3
+     },
+     {
+      "column": 4,
+      "name": "time",
+      "n": 92933,
+      "min": 2.279909610748291,
+      "max": 99.84832000732422,
+      "mean": 48.897862863778215,
+      "std": 28.036764026558206,
+      "frac_exact_zero": 0.0,
+      "n_unique_capped": 1000
+     }
+    ],
+    "tokens_per_event": {
+     "min": 0,
+     "max": 12,
+     "mean": 6.543195099626839,
+     "frac_at_cap": 0.5019362106597198
+    }
+   },
+   "cloud_digest": "c698aa95265b2b356b6502dcd4b6b620c1cd250aa57456507d1aaf1ab67bf5b8",
+   "event": {
+    "shape": [
+     14203,
+     13
+    ],
+    "real_rows": 14203,
+    "real_fraction": 1.0,
+    "nonfinite": 0,
+    "columns": [
+     {
+      "column": 0,
+      "name": "pt",
+      "n": 14203,
+      "min": -1.0578147172927856,
+      "max": 34.20637893676758,
+      "mean": 0.00261412766725468,
+      "std": 0.7867335102046992,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 1,
+      "name": "pparallel",
+      "n": 14203,
+      "min": -0.8860797882080078,
+      "max": 16.921918869018555,
+      "mean": 0.0014091986947550928,
+      "std": 0.7500382263685772,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 2,
+      "name": "mu_px",
+      "n": 14203,
+      "min": -24.39683723449707,
+      "max": 32.24278259277344,
+      "mean": 0.0033172721850837344,
+      "std": 0.7915221404307461,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 3,
+      "name": "mu_py",
+      "n": 14203,
+      "min": -18.753704071044922,
+      "max": 10.94943618774414,
+      "mean": -0.009654649529528716,
+      "std": 0.7654539254965417,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 4,
+      "name": "mu_pz",
+      "n": 14203,
+      "min": -0.8860797882080078,
+      "max": 16.921918869018555,
+      "mean": 0.0014091985043242045,
+      "std": 0.7500382260917169,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 5,
+      "name": "mu_E",
+      "n": 14203,
+      "min": -0.8892518281936646,
+      "max": 17.368043899536133,
+      "mean": 0.00146568506761856,
+      "std": 0.7504268982508147,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 6,
+      "name": "mu_cos_phi",
+      "n": 14203,
+      "min": -1.4937479496002197,
+      "max": 1.3856570720672607,
+      "mean": 0.006145622856329834,
+      "std": 0.7681046502337759,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 7,
+      "name": "mu_sin_phi",
+      "n": 14203,
+      "min": -1.4452413320541382,
+      "max": 1.3422967195510864,
+      "mean": -0.009206255499024646,
+      "std": 0.7722611424204342,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 8,
+      "name": "mu_qp",
+      "n": 14203,
+      "min": -7.484091281890869,
+      "max": 1.3793424367904663,
+      "mean": -0.0019768119412666707,
+      "std": 0.78115043378774,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 9,
+      "name": "mu_minos_ok",
+      "n": 14203,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0,
+      "frac_exact_zero": 1.0,
+      "n_unique_capped": 1
+     },
+     {
+      "column": 10,
+      "name": "vtx_x",
+      "n": 14203,
+      "min": -1.9996761083602905,
+      "max": 1.907213568687439,
+      "mean": 0.012622791001619896,
+      "std": 0.7685046440078147,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 11,
+      "name": "vtx_y",
+      "n": 14203,
+      "min": -2.310398817062378,
+      "max": 2.1873679161071777,
+      "mean": 0.0021328166276829486,
+      "std": 0.763282020283057,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 12,
+      "name": "vtx_z",
+      "n": 14203,
+      "min": -1.8411307334899902,
+      "max": 1.647667407989502,
+      "mean": 0.007209454554468152,
+      "std": 0.7776656288954219,
+      "frac_exact_zero": 0.4068154615222136,
+      "n_unique_capped": 1000
+     }
+    ]
+   },
+   "event_digest": "97153725cf93f1a44262e08ee6c986cd35c9d06e5b6c954ba89864867e2638ba",
+   "cloud_column_names_source": "fullevent_fps_dataloader.RECO_CLOUD_COLS"
+  },
+  "step2": {
+   "cloud": {
+    "shape": [
+     9995,
+     12,
+     8
+    ],
+    "real_rows": 45452,
+    "real_fraction": 0.37895614473903616,
+    "nonfinite": 0,
+    "columns": [
+     {
+      "column": 0,
+      "name": "E",
+      "n": 45452,
+      "min": 0.0030900000128895044,
+      "max": 44.65198516845703,
+      "mean": 1.2218125593693938,
+      "std": 1.235378093657216,
+      "frac_exact_zero": 0.0,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 1,
+      "name": "px",
+      "n": 45452,
+      "min": -2.2095324993133545,
+      "max": 1.8942574262619019,
+      "mean": 0.0003875048573729037,
+      "std": 0.3073898616997302,
+      "frac_exact_zero": 0.002750154008624483,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 2,
+      "name": "py",
+      "n": 45452,
+      "min": -3.3919808864593506,
+      "max": 1.5594549179077148,
+      "mean": -0.03984497895876737,
+      "std": 0.3148882921731201,
+      "frac_exact_zero": 0.002750154008624483,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 3,
+      "name": "pz",
+      "n": 45452,
+      "min": -0.856059730052948,
+      "max": 32.378196716308594,
+      "mean": 0.7239972507805864,
+      "std": 1.2341185547501972,
+      "frac_exact_zero": 0.002750154008624483,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 4,
+      "name": "pdg",
+      "n": 45452,
+      "min": -3122.0,
+      "max": 2000000128.0,
+      "mean": 49856140.54796269,
+      "std": 308758955.2306955,
+      "frac_exact_zero": 0.0,
+      "n_unique_capped": 22
+     },
+     {
+      "column": 5,
+      "name": "theta",
+      "n": 45452,
+      "min": 0.0,
+      "max": 3.1415927410125732,
+      "mean": 0.8611277338894925,
+      "std": 0.6598451061062415,
+      "frac_exact_zero": 0.001606089941036698,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 6,
+      "name": "cos_phi",
+      "n": 45452,
+      "min": -1.0,
+      "max": 1.0,
+      "mean": 0.001455383497885469,
+      "std": 0.7071351313249631,
+      "frac_exact_zero": 0.0,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 7,
+      "name": "sin_phi",
+      "n": 45452,
+      "min": -1.0,
+      "max": 1.0,
+      "mean": -0.07016255461886393,
+      "std": 0.7035872394659914,
+      "frac_exact_zero": 0.0014960837806917188,
+      "n_unique_capped": 1000
+     }
+    ],
+    "tokens_per_event": {
+     "min": 2,
+     "max": 12,
+     "mean": 4.547473736868434,
+     "frac_at_cap": 0.02431215607803902
+    }
+   },
+   "cloud_digest": "0f970eb2854e42e112f5baf1afa6fda1d9f7120a8cf71ce7652e1623cbced6da",
+   "event": {
+    "shape": [
+     9995,
+     2
+    ],
+    "real_rows": 9995,
+    "real_fraction": 1.0,
+    "nonfinite": 0,
+    "columns": [
+     {
+      "column": 0,
+      "name": "pt",
+      "n": 9995,
+      "min": -1.8901724815368652,
+      "max": 7.986453056335449,
+      "mean": 0.0013810064179077576,
+      "std": 1.0103675343931693,
+      "frac_exact_zero": 0.0,
+      "n_unique_capped": 1000
+     },
+     {
+      "column": 1,
+      "name": "pparallel",
+      "n": 9995,
+      "min": -0.9670398831367493,
+      "max": 13.03778076171875,
+      "mean": 0.006906192313585982,
+      "std": 1.0359547069661288,
+      "frac_exact_zero": 0.0,
+      "n_unique_capped": 1000
+     }
+    ]
+   },
+   "event_digest": "a8e02f382548a9ced4963b4b63452ed951673469ee75f9af39a6e86535dfa007",
+   "cloud_column_names_source": "fullevent_fps_dataloader.build_truth_cloud docstring layout"
+  }
+ },
+ "historical_receipt": {
+  "arm": "ours",
+  "seed": 17,
+  "stage": "tuning",
+  "learning_rate": 0.0001,
+  "niter": 3,
+  "pretrained": null,
+  "seconds": 234.31612650497118,
+  "closure": {
+   "powered": true,
+   "bkg_mode": "mc-only",
+   "measured_leg_is_real_data": false,
+   "half_size": 9995,
+   "half_size_source": "derived from the stage's share",
+   "split_seed": 20260920,
+   "halves_disjoint": true,
+   "stage_split": {
+    "rows": 100000,
+    "counts": {
+     "tuning": 19991,
+     "pilot": 19740,
+     "final": 60269
+    },
+    "fractions_intended": {
+     "tuning": 0.2,
+     "pilot": 0.2,
+     "final": 0.6
+    },
+    "fractions_observed": {
+     "tuning": 0.19991,
+     "pilot": 0.1974,
+     "final": 0.60269
+    },
+    "disjoint": true,
+    "covering": true,
+    "seed": 20260920,
+    "note": "fractions are exact in expectation, not per draw: the hash is per event so the assignment does not move when the dump grows"
+   },
+   "stage_rows_available": 19991,
+   "pdata_rows": 4208,
+   "prior_rows": 9995,
+   "injection": {
+    "form": "exp(A*clip((pT-p50)/IQR, -Z, +Z)) / mean(...)",
+    "amplitude": 0.35,
+    "clip_z": 3.0,
+    "pt_p25": 0.5242697298526764,
+    "pt_p50": 1.4624589681625366,
+    "pt_p75": 3.1589616537094116,
+    "pt_iqr": 2.6346919238567352,
+    "pre_normalization_mean": 1.1524905690637088,
+    "rate_preserving": true,
+    "applied_on": "pass_truth rows only",
+    "n_injected_rows": 9995,
+    "tilt_min": 0.7144783814023277,
+    "tilt_max": 2.479544036863346
+   }
+  },
+  "substitution": null,
+  "estimator": {
+   "annealed": true,
+   "epochs": 8,
+   "estimator_seed": 17,
+   "subsample_seed": 0,
+   "batch_size": 512,
+   "fits_recorded": 6,
+   "realized_learning_rates": [
+    {
+     "iteration": 0,
+     "learning_rate": 9.999999747378752e-05
+    },
+    {
+     "iteration": 0,
+     "learning_rate": 9.999999747378752e-05
+    },
+    {
+     "iteration": 1,
+     "learning_rate": 9.999999747378752e-06
+    },
+    {
+     "iteration": 1,
+     "learning_rate": 9.999999747378752e-06
+    },
+    {
+     "iteration": 2,
+     "learning_rate": 9.999999747378752e-06
+    },
+    {
+     "iteration": 2,
+     "learning_rate": 9.999999747378752e-06
+    }
+   ]
+  },
+  "weights_finite": true,
+  "weights_path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseA1/audit-20260922/ours/weights/weights_ours_tuning_17.npz",
+  "scored_here": false,
+  "note": "scoring is a separate step over the frozen endpoint"
+ },
+ "error": null,
+ "wall_seconds": 261.2368987110094,
+ "module_provenance": {
+  "modules": [
+   {
+    "module": "__main__",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/850a975e/nd-unfolding/pet/improvement_campaign/phase_a/runtime_audit.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/850a975e",
+    "root_label": "campaign_harness_checkout",
+    "relpath": "nd-unfolding/pet/improvement_campaign/phase_a/runtime_audit.py",
+    "blob": "1147c5ccb2821e50b8decbcc56747d89b1a7ad49",
+    "historical_blob": null,
+    "matches_historical_commit": false
+   },
+   {
+    "module": "__mp_main__",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/850a975e/nd-unfolding/pet/improvement_campaign/phase_a/runtime_audit.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/850a975e",
+    "root_label": "campaign_harness_checkout",
+    "relpath": "nd-unfolding/pet/improvement_campaign/phase_a/runtime_audit.py",
+    "blob": "1147c5ccb2821e50b8decbcc56747d89b1a7ad49",
+    "historical_blob": null,
+    "matches_historical_commit": false
+   },
+   {
+    "module": "annealed_estimator",
+    "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/annealed_estimator.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "root_label": "hardcoded_main_checkout",
+    "relpath": "nd-unfolding/pet/annealed_estimator.py",
+    "blob": "a7f6dc6016e1010142cdf7eeb44fe34d558e2583",
+    "historical_blob": "a7f6dc6016e1010142cdf7eeb44fe34d558e2583",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "atomic_write",
+    "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/atomic_write.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "root_label": "hardcoded_main_checkout",
+    "relpath": "nd-unfolding/pet/atomic_write.py",
+    "blob": "51390b71035238442dc293ccde5f2984688f9f61",
+    "historical_blob": "51390b71035238442dc293ccde5f2984688f9f61",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "closure_powered_truth_reweight",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/closure_powered_truth_reweight.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+    "root_label": "historical_checkout_68cf9d29",
+    "relpath": "nd-unfolding/pet/closure_powered_truth_reweight.py",
+    "blob": "336ef4000abafec8b60b50ba4fb9913f1dad58c1",
+    "historical_blob": "336ef4000abafec8b60b50ba4fb9913f1dad58c1",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "data_leg",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/data_leg.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+    "root_label": "historical_checkout_68cf9d29",
+    "relpath": "nd-unfolding/pet/configuration_comparison/data_leg.py",
+    "blob": "27a64abda8243c608ecc3a790261989d537f70b0",
+    "historical_blob": "27a64abda8243c608ecc3a790261989d537f70b0",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "frozen_design",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/frozen_design.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+    "root_label": "historical_checkout_68cf9d29",
+    "relpath": "nd-unfolding/pet/configuration_comparison/frozen_design.py",
+    "blob": "ac9dde237e8b4cd08552594b6607cdf65246735d",
+    "historical_blob": "ac9dde237e8b4cd08552594b6607cdf65246735d",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "fullevent_fps_dataloader",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/fullevent_fps_dataloader.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+    "root_label": "historical_checkout_68cf9d29",
+    "relpath": "nd-unfolding/pet/fullevent_fps_dataloader.py",
+    "blob": "9a715ca0056b95dfaa6ff15ee0b265f13c036a77",
+    "historical_blob": "9a715ca0056b95dfaa6ff15ee0b265f13c036a77",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "keras_backend",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/keras_backend.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+    "root_label": "historical_checkout_68cf9d29",
+    "relpath": "nd-unfolding/pet/configuration_comparison/keras_backend.py",
+    "blob": "6d8fca9977c917aa475bcfa4d51ac036edb5db68",
+    "historical_blob": "6d8fca9977c917aa475bcfa4d51ac036edb5db68",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "numpy_probe",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/850a975e/nd-unfolding/pet/improvement_campaign/phase_a/numpy_probe.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/850a975e",
+    "root_label": "campaign_harness_checkout",
+    "relpath": "nd-unfolding/pet/improvement_campaign/phase_a/numpy_probe.py",
+    "blob": "64c95765bc534d5ee163aa28b57e0b46081f8b8f",
+    "historical_blob": null,
+    "matches_historical_commit": false
+   },
+   {
+    "module": "omnifold",
+    "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/__init__.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "root_label": "hardcoded_main_checkout",
+    "relpath": "omnifold_nn/omnifold/__init__.py",
+    "blob": "6d857d411f4ba9586c99f7e2d84e4dc86d16cdd9",
+    "historical_blob": "6d857d411f4ba9586c99f7e2d84e4dc86d16cdd9",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "omnifold.dataloader",
+    "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/dataloader.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "root_label": "hardcoded_main_checkout",
+    "relpath": "omnifold_nn/omnifold/dataloader.py",
+    "blob": "581aaf30a7959bccf97880ed7e2174b00e1d23c3",
+    "historical_blob": "581aaf30a7959bccf97880ed7e2174b00e1d23c3",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "omnifold.net",
+    "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/net.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "root_label": "hardcoded_main_checkout",
+    "relpath": "omnifold_nn/omnifold/net.py",
+    "blob": "b16044b91d4fe141f4b8e415cb5e4ee6b48e3567",
+    "historical_blob": "b16044b91d4fe141f4b8e415cb5e4ee6b48e3567",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "omnifold.omnifold",
+    "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/omnifold.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "root_label": "hardcoded_main_checkout",
+    "relpath": "omnifold_nn/omnifold/omnifold.py",
+    "blob": "8c4fe4b2b33db3fec47c674cd19a9f6b40f6e8ea",
+    "historical_blob": "8c4fe4b2b33db3fec47c674cd19a9f6b40f6e8ea",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "omnifold.utils",
+    "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/omnifold_nn/omnifold/utils.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+    "root_label": "hardcoded_main_checkout",
+    "relpath": "omnifold_nn/omnifold/utils.py",
+    "blob": "3252fb223d2a296c4f5c956450a7451a4a355058",
+    "historical_blob": "3252fb223d2a296c4f5c956450a7451a4a355058",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "run_arm_evaluation",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+    "root_label": "historical_checkout_68cf9d29",
+    "relpath": "nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py",
+    "blob": "ce826f2e10e1759223f6d0e7957dbb482c91e395",
+    "historical_blob": "ce826f2e10e1759223f6d0e7957dbb482c91e395",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "stage_splits",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/stage_splits.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+    "root_label": "historical_checkout_68cf9d29",
+    "relpath": "nd-unfolding/pet/configuration_comparison/stage_splits.py",
+    "blob": "87583ace8c4af778715be55234aec1a52234ad63",
+    "historical_blob": "87583ace8c4af778715be55234aec1a52234ad63",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "torch_adamw",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/torch_adamw.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+    "root_label": "historical_checkout_68cf9d29",
+    "relpath": "nd-unfolding/pet/configuration_comparison/torch_adamw.py",
+    "blob": "48461c70f3470308aad97be58d8d949d6e0ef90e",
+    "historical_blob": "48461c70f3470308aad97be58d8d949d6e0ef90e",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "train_fullevent_nominal",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/train_fullevent_nominal.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+    "root_label": "historical_checkout_68cf9d29",
+    "relpath": "nd-unfolding/pet/train_fullevent_nominal.py",
+    "blob": "9719049cfdcd669a215211821b132910ec3d1ce5",
+    "historical_blob": "9719049cfdcd669a215211821b132910ec3d1ce5",
+    "matches_historical_commit": true
+   },
+   {
+    "module": "training_recipe",
+    "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/training_recipe.py",
+    "checkout_root": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29",
+    "root_label": "historical_checkout_68cf9d29",
+    "relpath": "nd-unfolding/pet/configuration_comparison/training_recipe.py",
+    "blob": "266f6e5712bc7eec532dba915692812896bcb88a",
+    "historical_blob": "266f6e5712bc7eec532dba915692812896bcb88a",
+    "matches_historical_commit": true
+   }
+  ],
+  "count_by_root": {
+   "campaign_harness_checkout": 3,
+   "hardcoded_main_checkout": 7,
+   "historical_checkout_68cf9d29": 10
+  },
+  "all_match_historical_commit": false,
+  "mismatched": [
+   [
+    "__main__",
+    "campaign_harness_checkout",
+    "nd-unfolding/pet/improvement_campaign/phase_a/runtime_audit.py"
+   ],
+   [
+    "__mp_main__",
+    "campaign_harness_checkout",
+    "nd-unfolding/pet/improvement_campaign/phase_a/runtime_audit.py"
+   ],
+   [
+    "numpy_probe",
+    "campaign_harness_checkout",
+    "nd-unfolding/pet/improvement_campaign/phase_a/numpy_probe.py"
+   ]
+  ]
+ },
+ "input_files": {
+  "inputs_npz": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+  "theirs_state_npz_sha256": null,
+  "identity_sidecar": "/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz",
+  "theirs_cache": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseA1/audit-20260922/cache/theirs-tuning-100000.npz"
+ }
+}
