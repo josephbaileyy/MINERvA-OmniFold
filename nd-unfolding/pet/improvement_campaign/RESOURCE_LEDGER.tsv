@@ -43,3 +43,5 @@ date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cp
 2026-09-22T13:37:41Z	B1	58748399_12	m3246	shared_milan_ss11/shared	1	0	145	0	0.644	COMPLETED	scalar OmniFold muon_eavail/hgb/seed1, 20 iterations	phase_b/scalar/resources-B1.tsv
 2026-09-22T13:40:56Z	B1	58748399_13	m3246	shared_milan_ss11/shared	1	0	191	0	0.849	COMPLETED	scalar OmniFold muon_eavail/hgb/seed2, 20 iterations	phase_b/scalar/resources-B1.tsv
 2026-09-22T13:48:14Z	B1	58748399_14	m3246	shared_milan_ss11/shared	1	0	70	0	0.311	COMPLETED	scalar OmniFold muon_eavail/hgb/seed3, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T17:30Z	pools	58755437	m3246	regular_milan_ss11/debug	1	0	0	0	0	CANCELLED	first pool build (superseded before start: silent-skip bug)	pools/resources-pools.tsv
+2026-09-22T17:34Z	pools	58755613	m3246	regular_milan_ss11/debug	1	0	101	0	7.18	COMPLETED	pool manifest build at 295572eb	pools/resources-pools.tsv
