@@ -38,6 +38,96 @@ would not reduce it**.
 pending unless you want to revisit the `5%` bound, which was fixed before production and cannot be
 re-chosen from an observed value without violating §6.4's own discipline.
 
+### L2 — the five seed-pinned bands. ⚠ **AUTHORIZED 2026-09-21, CHANGE LANDED, PROBE RUNNING.**
+
+> ## ⚠ STATUS UPDATE 2026-09-21 — supersedes the reservation language below
+>
+> **Joseph authorized the reserved act by name:** *"yes do the L2 probe, i authorize the estimator
+> change."* The text from here to the end of this subsection is kept because it states the
+> reservation that was in force and the reasoning that held the lane back; it is **history, not
+> current state**.
+>
+> **THE CHANGE WAS EIGHT SITES, NOT THE TWO THE EVIDENCE NAMED OR THE THREE I FIRST FOUND.**
+> Landed at `e2632ac7` (sites 4-8) on top of `47dfd345` (sites 1-3), predeclared with two
+> amendments at
+> [`PREDECLARATION-20260921-L2-lateral-seed-release.md`](PREDECLARATION-20260921-L2-lateral-seed-release.md).
+> A grep for `--seed 42` finds ONE of them; the literal is load-bearing in six more places under
+> five spellings — a default argument, a dict constant, a `require`, a config-hash input, an
+> independent re-derivation of that hash, and a reproducibility reference.
+>
+> Four of the eight are **provenance gates**, and the pairing of two of them is the dangerous
+> part: the driver would have stamped `config_hash(seed=42)` onto a ROOT produced at 1242, and
+> `p4_check_receipt` would have re-derived **the same wrong hash from the same default** — so the
+> receipt would have passed its own verification. Producer and checker agreeing is evidence only
+> when they do not both read a default instead of the run. Every gate is now **derived**
+> (`42 + declared offset`), never relaxed: at offset 0 each evaluates to exactly today's literal,
+> confirmed by measurement on the cluster — baseline config hash `4b41fab90a83df08`, identical to
+> the adopted receipt's.
+>
+> ### ⚠⚠ AND THE PROBE UNCOVERED A LIVE HAZARD THAT HAS NOTHING TO DO WITH L2
+>
+> **All ten receipts backing the adopted covariance `3d7465f6…` are STALE on the deployed
+> checkout.** Measured read-only, 10/10:
+>
+>     RECEIPT-REJECT :: receipt BeamAngleX_0 unfold_blob dc74c38f… != committed 662951e0…:
+>                       the unfold driver changed since this endpoint was produced
+>
+> `unfold_nd_omnifold_unbinned.py` changed after 2026-08-08 (`5afb7947`, `ae42ae8d`, `0a4ab263`,
+> `1aa055d9`) and `validate_endpoint_receipt` compares that blob strictly — correctly; it is the
+> producing-code binding. The consequence: **the documented baseline command
+> `bash run_p4_unfold_std.sh` re-unfolds and `mv -f`s over the adopted covariance's own inputs,
+> exit 0, no warning.** This is true with or without the L2 change and was true before it.
+>
+> It surfaced only because the probe forced *"what does the resume gate actually decide for these
+> ten?"* to be **measured** instead of assumed — and the assumption was load-bearing: my own
+> predeclared safety control was to run that exact command. **The control would have destroyed
+> what it was written to protect.**
+>
+> **Remedy landed:** a baseline-overwrite guard in `run_p4_unfold_std.sh`, refusing (`rc 9`) when
+> the ROOT exists, the namespace is not member-scoped, and `P4_ALLOW_BASELINE_REUNFOLD=1` is
+> absent. Its first version sat *after* `rm -f "${REC}"` and would have deleted all ten receipts
+> before refusing — caught by **testing** it, not reading it.
+> `tests/test_baseline_overwrite_guard.py` asserts that ordering against the launcher's own
+> extracted text, in four directions, plus near-miss escape values.
+>
+> ⚠ **This is an open item for whoever owns the adopted product**, not something the L2 probe
+> closes. The guard prevents accidental destruction; it does not re-establish the ten receipts'
+> validity, and a deliberate baseline re-unfold would still need the manifest, components and
+> covariance re-derived.
+>
+> ### Cost, corrected
+>
+> **The probe is CPU work, not GPU.** The cost table below says *"10 endpoint unfolds, 1 GPU +
+> 32 CPU → 15 GPU task-h"*; the historical holder `56495756` was **256 CPU, no GPU, 3 h, one
+> node**. Corrected figure: **~3 node-hours on one CPU node.** CPU is the tighter allocation
+> (project `m3246` at 16,529 / 20,000) but 3 node-hours is negligible against it.
+>
+> ### Running
+>
+> Deployed to a **detached worktree** at `e2632ac7`, with the deployed checkout's HEAD verified
+> unmoved before and after — PET's array `58692544` is live from it and a HEAD move would kill the
+> pending elements. Job **`58724712`**, member `k=1200`, seed **1242**, member-scoped output,
+> member config hash `4809b4ad…`. Baseline population asserted **20/20 before the run** so the
+> byte-identity check cannot pass vacuously.
+>
+> ⚠ **The outcome map was fixed before the run and is not reopened by any result:** `> 5%`
+> confirms `L1`'s FAIL with the five varying; `< 5%` **licenses nothing** — one seed pair cannot
+> show a maximum over the declared set is below a bound; "cannot be computed" is an inability, not
+> a result. Nothing here moves the adopted digest, regrades cause 3, or licenses a significance.
+>
+> ### ⚠ A design correction, made before it cost anything
+>
+> The member is **`member_k001200` rebuilt with its own lateral block**, reusing that member's own
+> `stat`/`ml`/`support`/`throw` — *not* the archive's, which is what my first stage script used.
+> The graded campaign's two members already differ in those four legs and **share `active`**: both
+> z-manifests name the same candidate, sha256 `950f8cb15c5a0bd7…`. **That shared row is L2,
+> readable straight out of the campaign's own records.** Building against the archive would have
+> varied four extra legs and measured a different question.
+
+---
+
+#### (Historical — the reservation as it stood before the authorization)
+
 ### L2 — the five seed-pinned bands. ⚠ **COMPUTE IS AVAILABLE; THE ACT IS RESERVED.**
 
 The five lateral bands — `BeamAngleX/Y`, `MuonResolution`, `Muon_Energy_MINERvA/MINOS` — carry
