@@ -570,9 +570,30 @@ else:
           f"{_diverged}/{len(repro)} differ by more than the reproduction tolerance. "
           f"{len(repro) - _diverged} reproduced the reference and each is a BLOCKER.")
 if repro:
-    _wb = max((v.get("max_rel_bin", 0) for v in repro.values()), default=0)
-    _wi = max((v.get("rel_integral", 0) for v in repro.values()), default=0)
-    print(f"  worst per-bin {_wb:.2e}   worst integral {_wi:.2e}")
+    # ⚠ THIS LINE PRINTED "worst per-bin 0.00e+00" ON A MEMBER RUN, WHICH READS AS THE EXACT
+    # OPPOSITE OF THE TRUTH. In the inverted branch every entry is `{"error": ...}` -- there are
+    # no numeric keys to take a max over -- so `.get(..., 0)` returned 0 for all ten and the log
+    # announced zero divergence at the moment maximum divergence was the passing state. Found by
+    # running the stage rather than by reading it: the surrounding line already said "4/4 differ
+    # by more than the reproduction tolerance", so the log contradicted itself two lines apart and
+    # the reassuring half was the one shaped like a measurement.
+    #
+    # A number whose caption implies a verdict outranks the caveat beside it, so the fix is to
+    # print the quantity that EXISTS in each branch rather than a zero standing in for an absent
+    # one.
+    _numeric = [v for v in repro.values() if "max_rel_bin" in v]
+    if _numeric:
+        _wb = max(v["max_rel_bin"] for v in _numeric)
+        _wi = max(v["rel_integral"] for v in _numeric)
+        _lbl = ("worst agreement with the reference" if EST_SEED_OFFSET == 0
+                else "worst agreement among endpoints that did NOT diverge (each a BLOCKER)")
+        print(f"  {_lbl}: per-bin {_wb:.2e}   integral {_wi:.2e}")
+    if EST_SEED_OFFSET != 0:
+        _err = sum(1 for v in repro.values() if "error" in v)
+        print(f"  {_err}/{len(repro)} endpoints diverged beyond the tolerance, which at offset "
+              f"{EST_SEED_OFFSET} is the REQUIRED outcome; the per-endpoint margins are recorded "
+              f"in endpoint_reproduction[*].error rather than summarised to a single worst case, "
+              f"because a MAXIMUM over divergences is not the quantity this branch is asserting.")
 print(f"footing: bkg_mode={man['footing']['bkg_mode']} estimator={man['footing']['estimator']} "
       f"seed={man['footing']['seed']} iters={man['footing']['iters']}")
 print("footing per endpoint (from log):",
