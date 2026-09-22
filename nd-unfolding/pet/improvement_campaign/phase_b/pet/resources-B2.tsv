@@ -1,0 +1,5 @@
+date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cpu_core_hours	state	purpose
+2026-09-22	B2	58755597	m3246_g	gpu/gpu_shared	1	1	2385	0.663	21.20	COMPLETED	exp 1 H K=3 seed 1 (A1 driver, unmodified); queue wait 5534 s
+2026-09-22	B2	58755598	m3246_g	gpu/gpu_shared	1	1	2413	0.670	21.45	COMPLETED	exp 1 H K=3 seed 2 (A1 driver, unmodified); queue wait 5534 s
+2026-09-22	B2	58755601	m3246_g	gpu/gpu_regular	0	0	0	0.000	0.00	CANCELLED	exp 1 duplicate pack (cancelled once seeds 1-2 had landed on shared)
+2026-09-22	B2	58756024	m3246_g	gpu/gpu_debug	1	4	339	0.377	12.05	COMPLETED	B2 driver mechanics: continuous vs resumed, all input transforms, truth-only mode, unit tests; queue wait 1524 s
