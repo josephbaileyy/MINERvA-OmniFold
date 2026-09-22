@@ -47,11 +47,12 @@ will quote from."* Stated, not referenced. Source:
   releasing a held-fixed PSD component can move the total **either way**.
 - **M4 — the estimator seed moves the CENTRAL VALUES too.** On the 43 `M1` projection functionals:
   median `0.104%`, max `0.761%`; against relative uncertainties of median `10.1%` that is median
-  `1.06%` and max `6.02%` of the quoted `σ`, on a **total rate of `1.13%`**. ⚠ **Per individual 5D bin it is much larger: median
+  `1.06%` and max `6.02%` of the quoted `σ`; **the all-ones "total rate" functional moves by `1.13%` of its OWN `σ`** (movement `0.096%` against an uncertainty of `8.47%`). ⚠ **Re-corrected 2026-09-22: a first restoration wrote this as *"a total rate of `1.13%`"*, which reads as a rate rather than the σ-fraction it is.** ⚠ **Per individual 5D bin it is much larger: median
   `3.77%` of `σ`, p90 `13.6%`, max `49.8%`.** Aggregation suppresses it, so a statement about one
   5D bin carries the larger number and a projection does not. **The same-seed control is
-  `9.4e-13`, ten orders below, so the movement is real and not a reproducibility artefact**; the
-  max occurs **at index 2, the same functional that failed `s_proj`**.
+  `9.4e-13`, ten orders below, so the movement is real and not a reproducibility artefact**; the **`0.761%`
+  maximum movement** occurs **at index 2, the same functional that failed `s_proj`** (its own
+  σ-fraction is `5.91%`).
 
 **The adoption is publication-under-exception, not a pass.** The product's own fields still read
 `scientific_acceptance: NON-PASSING` and `adoptable: false`, and they are carried here unedited.
@@ -105,7 +106,7 @@ The last bin on `eavail`, `q3` and `W` is a **catch bin to 100 GeV**. Dense grid
 
 ## 5. Self-checks — the appendix's own worked example, EXECUTED at build time
 
-Not asserted; run. All from `_build_report.json`.
+Not asserted; run. **The build-time rows are all from `_build_report.json`**; ⚠ **the cross-machine re-measurement in the first row is NOT in that file** — it was produced on a second host (numpy `1.26.4`, macOS/Accelerate, 2026-09-22) and reproduced independently by a third reviewer.
 
 | check | result |
 |---|---|

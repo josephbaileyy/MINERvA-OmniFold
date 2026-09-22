@@ -235,7 +235,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `make_figures.sh:59`, row 18 was *"pet_event_displays / pet_cardinality had no generating script …
   RESOLVED 2026-07-10"* — exactly the comment's subject — surviving to `d2ca8ed1` and dropped at
   `1f714b7f`'s index compaction. **The citation was correct when written; a resolved row was deleted
-  without sweeping inbound citations.** Index rows now run 5–11, 16, 17, 19–21, 23–62.
+  without sweeping inbound citations.** Index rows run **5–11, 16, 17, 19–21, 23–60 at `384c2eb1`**, the sha the BLOCKED record names as its measurement point (23–62 at `9e78a8cf`; **23–65 today**). ⚠ **This paraphrase said *"now run … 23–62"* and was missed when the BLOCKED record itself was corrected — a repair that reached one of two sites, which is this session's most-repeated failure.**
 - [`OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md`](OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md)
   - **THE 3D `(pt,pz,eavail)` COVARIANCE NOW EXISTS, projected from `3d7465f6…`** — §9.2's stated
   blocker for four marked figures. `sha256 20c16e16a35a837b…`, `15,937,290` B, job `58736728`;

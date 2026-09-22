@@ -17,9 +17,19 @@ def load(d):
 
 
 def fields(val):
+    """The NINE bool validity fields.
+
+    ⚠ FIXED 2026-09-22 by a third independent review. This iterated `__dataclass_fields__`, which
+    includes `notes: dict` -- a metadata bag `cross_member_validity` always populates. `bool()`
+    coerced it to True, so it was reported as a tenth PASSING check that can never fail, and it was
+    folded into `all_true` (where an EMPTY notes would have reported a valid pair as invalid).
+    `z_grade.cross_member_validity`'s own docstring says "all nine".
+    """
     if hasattr(val, "__dataclass_fields__"):
-        return {f: bool(getattr(val, f)) for f in val.__dataclass_fields__}
-    return {k: bool(v) for k, v in vars(val).items()}
+        import dataclasses
+        return {f.name: bool(getattr(val, f.name)) for f in dataclasses.fields(val)
+                if f.type in ("bool", bool)}
+    return {k: bool(v) for k, v in vars(val).items() if isinstance(v, bool)}
 
 
 def main():

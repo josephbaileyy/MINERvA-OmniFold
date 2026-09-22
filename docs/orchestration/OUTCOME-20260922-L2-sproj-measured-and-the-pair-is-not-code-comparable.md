@@ -58,6 +58,15 @@ under a failed precondition. Exactly one of the ten fields fails:
     CONTROL: all ten PASS
     PROBE:   footing_ok *** FAIL ***    (the other nine PASS)
 
+⚠ **CORRECTED 2026-09-22 (third independent review): this said *"Exactly one of the ten fields
+fails"* and *"the other nine PASS"*. `z_validator.Validity` has NINE bool fields plus
+`notes: dict`, which `cross_member_validity` always populates and `bool()` always coerces to True —
+so it can never fail and must not be counted as a passing check.** Read it as **one of NINE
+failing, eight passing**. `z_grade.cross_member_validity`'s own docstring says *"all nine"*. The
+committed probe `probes/probe-20260922-l2-validity-detail.py` iterated `__dataclass_fields__` and
+so included `notes` in both its listing and its `all_true`; that is a defect in a committed
+instrument and is fixed there too.
+
 **It is not a mask, row-order or population difference.** Calling the real `Member.footing()` on
 all three products returns **identical dicts** — `mask_sha256 eed021e9…`, `row_order_sha256
 61a7c9fd…`, `n_reported 10694` for every one. The failure enters later:
@@ -100,9 +109,17 @@ exclusive"*. THAT IS ONE LEVEL TOO BROAD, and the route it misses is cheap.** `c
 code-comparable pair is obtained by **rebuilding the k=0 member's Z at today's HEAD as well**, at
 which point both carry the same revision and the same import closure and `code_agrees` is True.
 The predeclaration's own §5 prices one Z assembly at **`0.29` task-h** (precedent job `58454524`,
-1037 s), so the route costs about **`0.58` task-h** for the pair. **It is DECLINED-AND-UNDONE here,
-not impossible**: rebuilding the offset-0 member replaces the object the 09-20 grade was computed
-on, which is a decision about the graded campaign rather than a step in this probe. What remains
+1037 s), so the route costs about **`0.58` task-h** for the pair. ⚠ **AND THE ROUTE IS BOTH MEMBERS, NOT ONE — corrected by the third independent review.** This
+read *"rebuilding the k=0 member's Z at today's HEAD"*, which does **not** work: `z_build`
+`contract.require(revision == head)` stamps whatever HEAD is current, and the L2 product is frozen
+at `384c2eb1`, already 15 commits behind. Rebuilding only k=0 today stamps a **third** revision and
+`code_agrees` stays False. **Both members must be rebuilt at ONE common HEAD** — which is what the
+`0.58 = 2 × 0.29` figure silently priced while the prose named a single rebuild.
+
+**It is DECLINED-AND-UNDONE here, not impossible**, and the price is higher than one object:
+rebuilding the offset-0 member replaces the object the 09-20 grade was computed on, **and
+rebuilding the L2 member replaces the very product §1's `6.189174%` was measured on.** Both are
+decisions about the graded campaign rather than steps in this probe. What remains
 true without qualification is only that **the GRADED pair's code identity cannot be reproduced**. ⚠ **The prior lane anticipated the PROVENANCE difference** — *"the consequence is a
 PROVENANCE difference between the two members' receipts … stated rather than hidden"* — **but not
 that `cross_member_validity` folds code identity into `footing_ok`, which turns a disclosed
