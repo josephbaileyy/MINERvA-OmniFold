@@ -1,0 +1,307 @@
+{
+  "inputs": {
+    "identity_npz": {
+      "path": "/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz",
+      "sha256": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c"
+    },
+    "truth_npz": {
+      "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+      "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
+    }
+  },
+  "identity": {
+    "array": "sig_event_id",
+    "fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+    ],
+    "sidecar_uniqueness": "{\"data\": \"not-unique\", \"mc_background\": \"unique-without-source\", \"mc_signal_reco\": \"unique-without-source\"}",
+    "eligible_unique_checked": true
+  },
+  "salt": "pet-improvement-20260922-pools",
+  "seed": 2244435260235376393,
+  "exclusion": {
+    "count": 1999998,
+    "artifacts_count": 56,
+    "artifacts": [
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/weights_ours_final_127.npz",
+        "sha256": "aa8e7219e0dc68a72744a2a2b4aca634c97f5e05e5daa6fcd6414902f76e8203"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/weights/weights_ours_final_139.npz",
+        "sha256": "22b829551166307455a7be2bcdfd5cadce0b0fcb7b4717201c05ddaa4fe23c95"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/weights/weights_ours_final_151.npz",
+        "sha256": "75c477aa8001030544904aa3d44c173612671aa8f39b7225829f1bea9981225c"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/weights/weights_ours_final_163.npz",
+        "sha256": "06e5d39c5fb813092b81e12d3c352401b1b0ec5e59e195095988cacbb8b4d025"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/weights/weights_ours_final_179.npz",
+        "sha256": "a4c2d5e47062c55ad21186d5893c04208ae53c8d791cd3b7fd7373fd7534f894"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/weights/weights_ours_final_191.npz",
+        "sha256": "45a59b9ee3d9b1ac82ceb503a005a0c882fcd13ceb0a6a3e2b7fbc6ccbbdb520"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/weights/weights_ours_final_211.npz",
+        "sha256": "b664f9872d76a750a0c532b1d90bdb4d29ba8b11b6757fa52744a00bd9b38672"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/weights/weights_ours_final_223.npz",
+        "sha256": "94c155b4af1e895393fdbcb19eb949e25e4712484774bb981f5bac0030d8d8e8"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/weights/weights_theirs_final_127.npz",
+        "sha256": "fe98ee35c996f6f9ee63cbf19bada36f27eac9655f04ca0d121d3630a8f51890"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/weights/weights_theirs_final_139.npz",
+        "sha256": "114e3b0a069af260c914a1da20ce264334d208556aacb504bd78b6327732dc7a"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/weights/weights_theirs_final_151.npz",
+        "sha256": "2c87b3cd6c7ae7bbab1bd65bc62bee3cc2a35de418ea7cd5cadd43ffe36d6016"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/weights/weights_theirs_final_163.npz",
+        "sha256": "348c1dd188e8360f5aee1ca7f272cc8756b868a92f96780ed92a0654b55569de"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/weights/weights_theirs_final_179.npz",
+        "sha256": "42c95af8136943e484231771f52a3aa8255e145738c01619a01f1bc44593f2b9"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/weights/weights_theirs_final_191.npz",
+        "sha256": "99b1d28cdb45f2c9a0340673639328ba61a01d55fdf64e388951a22635a29a07"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/weights/weights_theirs_final_211.npz",
+        "sha256": "04a12e8e0805ffa73c911e4b1781aadc057ce0d7733f1a85d1a2aea288f08fa7"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/weights/weights_theirs_final_223.npz",
+        "sha256": "586c2e0fda6f3bb862a7e5f8cd5ab7c935988773eacfbbbc9d142d6b5d99f385"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed101/weights/weights_ours_pilot_101.npz",
+        "sha256": "fbb904fba2c0b75edc4908dbf8ba4b284f14b8d30b9be65756afbd602ea7509f"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed113/weights/weights_ours_pilot_113.npz",
+        "sha256": "caef864384f41bdbdbcc6807b4b1d7629d68976432328f2df883f3bb6ba8affb"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed71/weights/weights_ours_pilot_71.npz",
+        "sha256": "95c96210ad5f0c3fc4fcff12093a10a2aa26b78cc6d53222b39ff3a9bf7567bc"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed89/weights/weights_ours_pilot_89.npz",
+        "sha256": "3e35915e0cb558059c071b245e9848d96cbfb6f6e8808f10f51b49992e435cc5"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed101/weights/weights_theirs_pilot_101.npz",
+        "sha256": "0d8af6b972745c28e2b7575094f72305a19d04f954c93035c279dd701605b191"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed113/weights/weights_theirs_pilot_113.npz",
+        "sha256": "b0abb94fbba3aac02ff312776fa5bd2afdc8deb51dd74fd4ec7b05b6eefad1cb"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed71/weights/weights_theirs_pilot_71.npz",
+        "sha256": "f345ff3d0a3f8d92650760046ee5efa83aaa6566b5fe898ac6a808f8a7dcd79c"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed89/weights/weights_theirs_pilot_89.npz",
+        "sha256": "7ac15806de0a8d0602462f8588fbc6280495d2cd2b9668c3f192e62d8863b6d5"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.00005/weights/weights_ours_tuning_17.npz",
+        "sha256": "6d2a90b5a287773374800cae08a38d5bf64e5cb14c8e671b4e0d0226c1255c07"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.0001/weights/weights_ours_tuning_17.npz",
+        "sha256": "935af4669c1fa52da09c47ffb3636730e2c508033b1a748d5d1422fd34b0da2f"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.0002/weights/weights_ours_tuning_17.npz",
+        "sha256": "d3d40093ae22ae1c9ced98ae9a64ce7fc916edcade99e0843cb89d9dfdb12bd9"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.0004/weights/weights_ours_tuning_17.npz",
+        "sha256": "7a3ee12fa78570f99e28e90e9b37f41a8c0d8d3720bacbd384d1bfc93e616b02"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.00005/weights/weights_ours_tuning_29.npz",
+        "sha256": "cffc52fffbf98a57195063c9ada47e31b4f7ead9e67e5ad0b3cfd7a09f7a6d36"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.0001/weights/weights_ours_tuning_29.npz",
+        "sha256": "f668d0589521df62b27a5f75b944edc042b2f2a1126c1c563b6b2a54c4a9ebce"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.0002/weights/weights_ours_tuning_29.npz",
+        "sha256": "e28c01fe1e0545fcbfc835bbbd87e3669afa32f1429e88b67950832a3da5c17f"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.0004/weights/weights_ours_tuning_29.npz",
+        "sha256": "bf4d022ba61b47d4c39f9c8ca3d4a1916ca1223c9340a3f62ce538e1cc12c6d0"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.00005/weights/weights_ours_tuning_43.npz",
+        "sha256": "663a3e3c5952af2516071f063be5900823dafe1d44a7092af6bbc6959d595c61"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.0001/weights/weights_ours_tuning_43.npz",
+        "sha256": "8fc06b39b99a3aed5b9adb11ff975efdc5fc9e2f2e1f910389fcf6ca75583bdc"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.0002/weights/weights_ours_tuning_43.npz",
+        "sha256": "2038b8191864184962d74af0e8ba381c7bf50769c5a64096c3f92de8130f3dcf"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.0004/weights/weights_ours_tuning_43.npz",
+        "sha256": "be363a63d5702aa0730642c379750622f553c91a1cbd13874541e73e12fce308"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.00005/weights/weights_ours_tuning_59.npz",
+        "sha256": "a11e4182d74b1e4c17a1c9921287851ded5e33b0a62234887a5b351c9a40e786"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.0001/weights/weights_ours_tuning_59.npz",
+        "sha256": "21909b43da54bf97e8148debaffaab92253e08a044042a4759a27e30d68af558"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.0002/weights/weights_ours_tuning_59.npz",
+        "sha256": "624043e2486ab8cb67c1d97b6700a699b4d20a386e0bbeae8ae0816291ee9338"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.0004/weights/weights_ours_tuning_59.npz",
+        "sha256": "5ff9079473c1e3e2fc0da5f6439f7eae8c1318929e4cc1c858b93da87be59eeb"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.00005/weights/weights_theirs_tuning_17.npz",
+        "sha256": "1eb848152be6c6489ee08c3661f86d1c34bbc498a177b5fd960ae956569f71ca"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.0001/weights/weights_theirs_tuning_17.npz",
+        "sha256": "b64e2af9cab15f1603fc13e8a338b3b692fcd8fdd007de7866e61a123d638433"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.0002/weights/weights_theirs_tuning_17.npz",
+        "sha256": "9881e3341a9270c88cfb68cd7303489b19811050a0ad9e54fa897459af3a6816"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.0004/weights/weights_theirs_tuning_17.npz",
+        "sha256": "53e105da91b2bc0238260ea3e87101d3ca74ed0f40b491e597440fe72a3822f5"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.00005/weights/weights_theirs_tuning_29.npz",
+        "sha256": "acd918b02f78c44f5687f9308f6a46557cae11aaad398705d6972c1ff7d85312"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.0001/weights/weights_theirs_tuning_29.npz",
+        "sha256": "ad66e106697dffbcddc87172dcbe6d269e98463ee173d9083546a657e6f901b5"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.0002/weights/weights_theirs_tuning_29.npz",
+        "sha256": "0c57530b9d663e7d803f8845e7edce27b0638e97b4a6e5a4c9e69add4464d65f"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.0004/weights/weights_theirs_tuning_29.npz",
+        "sha256": "fd790cf8b59644b63c700a52d2b6abe5f99c5f097934dbb503c6ff6d753c5771"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.00005/weights/weights_theirs_tuning_43.npz",
+        "sha256": "f3adf2c52005b5e87895eb5929bb7333bd51c1e038dc025a0aa6c4822e7dccc4"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.0001/weights/weights_theirs_tuning_43.npz",
+        "sha256": "a8c97219b22365e098343c8d84fac6fa4ec34feb71a62845b7d7725feabc39cc"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.0002/weights/weights_theirs_tuning_43.npz",
+        "sha256": "27e411e70ae475f226decf5b12c325eb40527974a7ca4b87461653c6077d82bb"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.0004/weights/weights_theirs_tuning_43.npz",
+        "sha256": "7145f0e405d232a549327b48dabb394a69088c0f7e460c2edd2e22f5ec68d3e6"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.00005/weights/weights_theirs_tuning_59.npz",
+        "sha256": "fb6d02eefc899576c9594dde48a6fceb40fe6991b1c14d796b9039fc71035f1e"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.0001/weights/weights_theirs_tuning_59.npz",
+        "sha256": "d776f7263ef2736c6c98a06945f30c53a4e1002b6a5edf5fb4294c82c836bf8e"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.0002/weights/weights_theirs_tuning_59.npz",
+        "sha256": "bf6fd7b5134a4d078995ce8ebf128e5ab7ae9a4488f97ec8f63f57fc4f14704a"
+      },
+      {
+        "path": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.0004/weights/weights_theirs_tuning_59.npz",
+        "sha256": "2800bd5284e613b4512f6b20169cc12e3cf73ebc6014db78ca73ae30f11a8366"
+      }
+    ]
+  },
+  "pools": {
+    "P": {
+      "code": 0,
+      "u_range": [
+        0.0,
+        0.08
+      ],
+      "count": 3773400,
+      "sorted_identity_sha256": "8636066dc144286d570896e169163c629101670e77853ef76b26e4ef47425c88"
+    },
+    "F": {
+      "code": 1,
+      "u_range": [
+        0.08,
+        0.4
+      ],
+      "count": 15083686,
+      "sorted_identity_sha256": "8d1d4232737058b63b34d23f83eb307a855a5ace9af63c74f774e607cac9aa17"
+    },
+    "S": {
+      "code": 2,
+      "u_range": [
+        0.4,
+        0.8
+      ],
+      "count": 18861069,
+      "sorted_identity_sha256": "7908f8ebfdb2ecf5601f1d00d4db0abd2adf55e9bd1d03034433144676f3a573"
+    },
+    "T": {
+      "code": 3,
+      "u_range": [
+        0.8,
+        0.97
+      ],
+      "count": 8018001,
+      "sorted_identity_sha256": "0738f3c94140f342305d4d57754945daca02e52f375776926a0b46a37dd4e286"
+    },
+    "R": {
+      "code": 4,
+      "u_range": [
+        0.97,
+        1.0
+      ],
+      "count": 1414846,
+      "sorted_identity_sha256": "46e34142988203fec01df62112c09fc55f9feca4d3e31a26b711f5144423a033"
+    }
+  },
+  "not_pass_truth_rows": 1957,
+  "output": {
+    "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/pools/pools.npz",
+    "sha256": "3d8faeb1535da2c01bfe6e5e95775ed9349c85a0028e912113dde1cbca720924"
+  },
+  "commit": "295572eb57c5c6fe40e4bd3fb50d8634045d5159"
+}
