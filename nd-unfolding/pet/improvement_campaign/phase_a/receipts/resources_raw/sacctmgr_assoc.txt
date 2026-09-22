@@ -1,0 +1,6 @@
+$ sacctmgr -P show assoc user=josephrb format=Account,Partition,QOS%80,GrpTRESMins,MaxTRESMins,GrpTRES
+# date_utc: 2026-09-22T08:14:18Z host: login16
+Account|Partition|QOS|GrpTRESMins|MaxTRESMins|GrpTRES
+m3246||cron,debug,debug_preempt,gpu_debug,gpu_interactive,gpu_jupyter,gpu_preempt,gpu_regular,gpu_shared,gpu_shared_interactive,gpu_shared_jupyter,holiday_cpu,holiday_gpu,interactive,jupyter,largemem,overrun,preempt,regular_0,regular_1,resv,resv_shared,shared,shared_interactive,shared_overrun,xfer|||
+m3246_g||cron,debug,debug_preempt,gpu_debug,gpu_interactive,gpu_jupyter,gpu_preempt,gpu_regular,gpu_shared,gpu_shared_interactive,gpu_shared_jupyter,holiday_cpu,holiday_gpu,interactive,jupyter,largemem,overrun,preempt,regular_0,regular_1,resv,resv_shared,shared,shared_interactive,shared_overrun,xfer|||
+# exit: 0

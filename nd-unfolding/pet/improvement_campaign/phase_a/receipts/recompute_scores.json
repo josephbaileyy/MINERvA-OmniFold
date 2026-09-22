@@ -1,0 +1,2919 @@
+{
+ "scope": "Phase A2 Part 1: recover and recompute the historical headline (scope section 3)",
+ "inputs": {
+  "closure_npz": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+   "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+   "expected_by_report": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+   "matches_pin": true
+  },
+  "identity_sidecar": {
+   "path": "/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz",
+   "sha256": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c",
+   "expected_by_frozen_design": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c",
+   "matches_pin": true
+  },
+  "inventory_receipt": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12_RECEIPT.json",
+   "sha256": "d466a0c18deaafa2ae645002c8dbc9b9879476adb45a40a85c0bae9e0129d25e",
+   "expected_by_frozen_design": "d466a0c18deaafa2ae645002c8dbc9b9879476adb45a40a85c0bae9e0129d25e",
+   "matches_pin": true
+  },
+  "committed_report": {
+   "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/31347723/nd-unfolding/pet/configuration_comparison/campaign_report.json",
+   "sha256": "96955a10222b6c95c13a5db0e48c9af96717371045398a837b996ba3d17625c2"
+  },
+  "recomputed_report": {
+   "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseA2/run2/recomputed_campaign_report.json",
+   "sha256": "96955a10222b6c95c13a5db0e48c9af96717371045398a837b996ba3d17625c2"
+  },
+  "theirs_join_sig_npz": {
+   "path": "/pscratch/sd/j/josephrb/campaign-20260920/join/join_sig.npz",
+   "sha256": "33709fa057d1443478f798112b1ca61905b3a2f9e55659e6f9726d15d55b48b6"
+  },
+  "theirs_join_sig_json": {
+   "path": "/pscratch/sd/j/josephrb/campaign-20260920/join/join_sig.json",
+   "sha256": "5e62198e216f2f6b0db0ba604fa561a66fc9c75e387d4d759594889310dbb770"
+  },
+  "theirs_cache_final": {
+   "path": "/pscratch/sd/j/josephrb/campaign-20260920/cache/theirs-final.npz",
+   "sha256": "cc88626bc44293a12e221c6e540476f7d29c718126daf1a090bcdf489d635045"
+  },
+  "runs": {
+   "tuning": [
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.00005/weights/weights_ours_tuning_17.npz",
+     "weights_sha256": "6d2a90b5a287773374800cae08a38d5bf64e5cb14c8e671b4e0d0226c1255c07",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.00005/receipt.json",
+     "receipt_sha256": "5e990abca9b345d3d7b23f051a0a2626448785d212b8a0486c8adb47ad2309be"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.0001/weights/weights_ours_tuning_17.npz",
+     "weights_sha256": "935af4669c1fa52da09c47ffb3636730e2c508033b1a748d5d1422fd34b0da2f",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.0001/receipt.json",
+     "receipt_sha256": "fbe09b5d11a76d5c2586a4dfd4ef9947780754e24f9d2ad0aa9c5665c141b68d"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.0002/weights/weights_ours_tuning_17.npz",
+     "weights_sha256": "d3d40093ae22ae1c9ced98ae9a64ce7fc916edcade99e0843cb89d9dfdb12bd9",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.0002/receipt.json",
+     "receipt_sha256": "bc6fb0f6f16cff721c54c10c99a5098772fcfb8304c9848314806243f2e53920"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.0004/weights/weights_ours_tuning_17.npz",
+     "weights_sha256": "7a3ee12fa78570f99e28e90e9b37f41a8c0d8d3720bacbd384d1bfc93e616b02",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed17-lr0.0004/receipt.json",
+     "receipt_sha256": "0cdcb84925abb2c8224c913be187914e2ed27f281b458c7df9fcb231a87c18d6"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.00005/weights/weights_ours_tuning_29.npz",
+     "weights_sha256": "cffc52fffbf98a57195063c9ada47e31b4f7ead9e67e5ad0b3cfd7a09f7a6d36",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.00005/receipt.json",
+     "receipt_sha256": "4e9387def85f21ade8492370dca9911c8f1d098300eb12c5e586576db8ba42ce"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.0001/weights/weights_ours_tuning_29.npz",
+     "weights_sha256": "f668d0589521df62b27a5f75b944edc042b2f2a1126c1c563b6b2a54c4a9ebce",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.0001/receipt.json",
+     "receipt_sha256": "b1ff8dd6baf19de67a90623e85212fd3c3dd54bdcb1a7b9791c74a8da945c27b"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.0002/weights/weights_ours_tuning_29.npz",
+     "weights_sha256": "e28c01fe1e0545fcbfc835bbbd87e3669afa32f1429e88b67950832a3da5c17f",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.0002/receipt.json",
+     "receipt_sha256": "bdf92492816faf748e072fa4e4fffc20d07e387b83076cc290381a35f167f383"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.0004/weights/weights_ours_tuning_29.npz",
+     "weights_sha256": "bf4d022ba61b47d4c39f9c8ca3d4a1916ca1223c9340a3f62ce538e1cc12c6d0",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed29-lr0.0004/receipt.json",
+     "receipt_sha256": "4503f7c544a5e70672b0daff39ddcff5f720ce8e55842ee5515729de47e85d60"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.00005/weights/weights_ours_tuning_43.npz",
+     "weights_sha256": "663a3e3c5952af2516071f063be5900823dafe1d44a7092af6bbc6959d595c61",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.00005/receipt.json",
+     "receipt_sha256": "ff44626f13fac59f949ba9b5a09413296675eb2dbf125675435293bca65326d5"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.0001/weights/weights_ours_tuning_43.npz",
+     "weights_sha256": "8fc06b39b99a3aed5b9adb11ff975efdc5fc9e2f2e1f910389fcf6ca75583bdc",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.0001/receipt.json",
+     "receipt_sha256": "a6a42da6807f537e0732cdd82fd06668911e46a516a37fa301bc891cc478f05c"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.0002/weights/weights_ours_tuning_43.npz",
+     "weights_sha256": "2038b8191864184962d74af0e8ba381c7bf50769c5a64096c3f92de8130f3dcf",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.0002/receipt.json",
+     "receipt_sha256": "5bf0b2d7e81c3b5ea394acd55addb987a88d8692d951d7d508431d461f6d2acb"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.0004/weights/weights_ours_tuning_43.npz",
+     "weights_sha256": "be363a63d5702aa0730642c379750622f553c91a1cbd13874541e73e12fce308",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed43-lr0.0004/receipt.json",
+     "receipt_sha256": "880855e6e01e7619af23a00d37d35932114d3b9bffda607241c5fb9cf31d3ce0"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.00005/weights/weights_ours_tuning_59.npz",
+     "weights_sha256": "a11e4182d74b1e4c17a1c9921287851ded5e33b0a62234887a5b351c9a40e786",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.00005/receipt.json",
+     "receipt_sha256": "d4a203833007b430a77ca10a482b6f237b90920f583ec125d4b552e47c688fcf"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.0001/weights/weights_ours_tuning_59.npz",
+     "weights_sha256": "21909b43da54bf97e8148debaffaab92253e08a044042a4759a27e30d68af558",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.0001/receipt.json",
+     "receipt_sha256": "ccce51680d6645582e9ffb2783c974f4d1e45ffe0112623e7f8d425463756308"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.0002/weights/weights_ours_tuning_59.npz",
+     "weights_sha256": "624043e2486ab8cb67c1d97b6700a699b4d20a386e0bbeae8ae0816291ee9338",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.0002/receipt.json",
+     "receipt_sha256": "6c9069b6baac88e45e4944f26e0ac54f529d8d4fd440c6dccc99bad77a6e4177"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.0004/weights/weights_ours_tuning_59.npz",
+     "weights_sha256": "5ff9079473c1e3e2fc0da5f6439f7eae8c1318929e4cc1c858b93da87be59eeb",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/ours-seed59-lr0.0004/receipt.json",
+     "receipt_sha256": "beaa8d36b4526f99d17fed8441e7698273b98b2464ca75b8649fdf7828e85bcd"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.00005/weights/weights_theirs_tuning_17.npz",
+     "weights_sha256": "1eb848152be6c6489ee08c3661f86d1c34bbc498a177b5fd960ae956569f71ca",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.00005/receipt.json",
+     "receipt_sha256": "647337bf6a0565ff0ffe0810d229c6cef11264f3d0c8d41b508142ad2592ec1b"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.0001/weights/weights_theirs_tuning_17.npz",
+     "weights_sha256": "b64e2af9cab15f1603fc13e8a338b3b692fcd8fdd007de7866e61a123d638433",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.0001/receipt.json",
+     "receipt_sha256": "2f7aa745f33f80dc46778785df0bcd8f154a3b5c27811cb422a2f3b8ec3d7462"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.0002/weights/weights_theirs_tuning_17.npz",
+     "weights_sha256": "9881e3341a9270c88cfb68cd7303489b19811050a0ad9e54fa897459af3a6816",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.0002/receipt.json",
+     "receipt_sha256": "4037c38c6595c1b4f4673b353cc707e9946649784789d4ef0dc52eb8263e2376"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.0004/weights/weights_theirs_tuning_17.npz",
+     "weights_sha256": "53e105da91b2bc0238260ea3e87101d3ca74ed0f40b491e597440fe72a3822f5",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed17-lr0.0004/receipt.json",
+     "receipt_sha256": "415594d66a41e71ba4252e8567b23168587d92c3d97dfddb9211762553be2939"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.00005/weights/weights_theirs_tuning_29.npz",
+     "weights_sha256": "acd918b02f78c44f5687f9308f6a46557cae11aaad398705d6972c1ff7d85312",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.00005/receipt.json",
+     "receipt_sha256": "7ef80490b44b0a15e685f9738ed3e87c12b3170ac92f1b26f28860c715f7a87b"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.0001/weights/weights_theirs_tuning_29.npz",
+     "weights_sha256": "ad66e106697dffbcddc87172dcbe6d269e98463ee173d9083546a657e6f901b5",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.0001/receipt.json",
+     "receipt_sha256": "ff7ec98f178e51c44a3a18e9014ca2ef3c599861c99ae6e3d926880db72d5ccd"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.0002/weights/weights_theirs_tuning_29.npz",
+     "weights_sha256": "0c57530b9d663e7d803f8845e7edce27b0638e97b4a6e5a4c9e69add4464d65f",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.0002/receipt.json",
+     "receipt_sha256": "6b8f426e06ab17667af19ad6b7570041e1a6ba51d5fc3cfb301cc02858497d34"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.0004/weights/weights_theirs_tuning_29.npz",
+     "weights_sha256": "fd790cf8b59644b63c700a52d2b6abe5f99c5f097934dbb503c6ff6d753c5771",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed29-lr0.0004/receipt.json",
+     "receipt_sha256": "224b3bbf8bec4784f3c08bccecae9ee1895bc11e8ddfc0f40abab34a1fbf495e"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.00005/weights/weights_theirs_tuning_43.npz",
+     "weights_sha256": "f3adf2c52005b5e87895eb5929bb7333bd51c1e038dc025a0aa6c4822e7dccc4",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.00005/receipt.json",
+     "receipt_sha256": "924a7b4742651b70409e89dbfc1e1e8304df97938b118761206b809e6d5c82d9"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.0001/weights/weights_theirs_tuning_43.npz",
+     "weights_sha256": "a8c97219b22365e098343c8d84fac6fa4ec34feb71a62845b7d7725feabc39cc",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.0001/receipt.json",
+     "receipt_sha256": "470c8bdf4bc7dc563e9d157674ba765b2ad21d6034de487a6567a0e7179d5953"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.0002/weights/weights_theirs_tuning_43.npz",
+     "weights_sha256": "27e411e70ae475f226decf5b12c325eb40527974a7ca4b87461653c6077d82bb",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.0002/receipt.json",
+     "receipt_sha256": "3ffd979a51437019d45a633e3d376c0b6fb3364efe2848d95fee64dbec684562"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.0004/weights/weights_theirs_tuning_43.npz",
+     "weights_sha256": "7145f0e405d232a549327b48dabb394a69088c0f7e460c2edd2e22f5ec68d3e6",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed43-lr0.0004/receipt.json",
+     "receipt_sha256": "41a17b8b420ccc07e4f5b3abd186da5ba276ca24ede77a78e9ab5753a0d9da84"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.00005/weights/weights_theirs_tuning_59.npz",
+     "weights_sha256": "fb6d02eefc899576c9594dde48a6fceb40fe6991b1c14d796b9039fc71035f1e",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.00005/receipt.json",
+     "receipt_sha256": "b780e4cb467529fe7a8b375a54adaa812d0169203bbba662e69d32b95f42f7d9"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.0001/weights/weights_theirs_tuning_59.npz",
+     "weights_sha256": "d776f7263ef2736c6c98a06945f30c53a4e1002b6a5edf5fb4294c82c836bf8e",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.0001/receipt.json",
+     "receipt_sha256": "3c855ac8b5479015baf44a6d0b100abf5bd62b17c4651e13a5b1dca9c92c5f9e"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.0002/weights/weights_theirs_tuning_59.npz",
+     "weights_sha256": "bf6fd7b5134a4d078995ce8ebf128e5ab7ae9a4488f97ec8f63f57fc4f14704a",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.0002/receipt.json",
+     "receipt_sha256": "a6530324eb5c447bb329c822a9e99e62bec5e9b69f208f6c23091e78faee66f0"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.0004/weights/weights_theirs_tuning_59.npz",
+     "weights_sha256": "2800bd5284e613b4512f6b20169cc12e3cf73ebc6014db78ca73ae30f11a8366",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/tuning/theirs-seed59-lr0.0004/receipt.json",
+     "receipt_sha256": "527ab5fb6c79e73eb4fe70ecf0bcac54f078dd4f4eefce22348d535c522aaf8a"
+    }
+   ],
+   "pilot": [
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed101/weights/weights_ours_pilot_101.npz",
+     "weights_sha256": "fbb904fba2c0b75edc4908dbf8ba4b284f14b8d30b9be65756afbd602ea7509f",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed101/receipt.json",
+     "receipt_sha256": "8b0527394748a10f029abd8c6f9f4ce013349049f5de34b0eedacfa7621e2a40"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed113/weights/weights_ours_pilot_113.npz",
+     "weights_sha256": "caef864384f41bdbdbcc6807b4b1d7629d68976432328f2df883f3bb6ba8affb",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed113/receipt.json",
+     "receipt_sha256": "1f68d2d7330fe78ac3aec2cbc62531397e3ea2864ee20b06efea1c59e5083aaf"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed71/weights/weights_ours_pilot_71.npz",
+     "weights_sha256": "95c96210ad5f0c3fc4fcff12093a10a2aa26b78cc6d53222b39ff3a9bf7567bc",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed71/receipt.json",
+     "receipt_sha256": "1b0fe49bccb89f401ec388057edbb27439b57220bb3024b0f68d014f20ff4212"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed89/weights/weights_ours_pilot_89.npz",
+     "weights_sha256": "3e35915e0cb558059c071b245e9848d96cbfb6f6e8808f10f51b49992e435cc5",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/ours-seed89/receipt.json",
+     "receipt_sha256": "89365e35891286124da21b1993a8a7d23efb637dc4cb8b4a9b10bb5f6ec3821c"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed101/weights/weights_theirs_pilot_101.npz",
+     "weights_sha256": "0d8af6b972745c28e2b7575094f72305a19d04f954c93035c279dd701605b191",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed101/receipt.json",
+     "receipt_sha256": "4535aa328defea29af2763f9850cbbff62550e67be0a2911d67cccc6ceeb5409"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed113/weights/weights_theirs_pilot_113.npz",
+     "weights_sha256": "b0abb94fbba3aac02ff312776fa5bd2afdc8deb51dd74fd4ec7b05b6eefad1cb",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed113/receipt.json",
+     "receipt_sha256": "a7cf321c2b0c1b489a75d0982ed5ce192045232f750ec31eff72e6dbcaf5cd29"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed71/weights/weights_theirs_pilot_71.npz",
+     "weights_sha256": "f345ff3d0a3f8d92650760046ee5efa83aaa6566b5fe898ac6a808f8a7dcd79c",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed71/receipt.json",
+     "receipt_sha256": "7c20ffedac676fbc956313299aaacfcf756dcbecbc444a61c7d3fea20e9a1ac1"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed89/weights/weights_theirs_pilot_89.npz",
+     "weights_sha256": "7ac15806de0a8d0602462f8588fbc6280495d2cd2b9668c3f192e62d8863b6d5",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/pilot/theirs-seed89/receipt.json",
+     "receipt_sha256": "d69de4f1acb14b3d1c8136635a27afafebd48caa989772016db9e6b8d2367211"
+    }
+   ],
+   "final": [
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/weights_ours_final_127.npz",
+     "weights_sha256": "aa8e7219e0dc68a72744a2a2b4aca634c97f5e05e5daa6fcd6414902f76e8203",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/receipt.json",
+     "receipt_sha256": "10bd895eaf0b6fd0aa5f517cb13b73eb25fe7113bf6d42919595c1b5a2c6e342"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/weights/weights_ours_final_139.npz",
+     "weights_sha256": "22b829551166307455a7be2bcdfd5cadce0b0fcb7b4717201c05ddaa4fe23c95",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/receipt.json",
+     "receipt_sha256": "f606b3c8b188f8ff70f5f67d763c211dba06d03119b952d2ab82d4fd0416e6e1"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/weights/weights_ours_final_151.npz",
+     "weights_sha256": "75c477aa8001030544904aa3d44c173612671aa8f39b7225829f1bea9981225c",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/receipt.json",
+     "receipt_sha256": "4b1ffca207faf2ca7f456765d5de736b2cb2dc6520b8088c7d51304ad6130476"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/weights/weights_ours_final_163.npz",
+     "weights_sha256": "06e5d39c5fb813092b81e12d3c352401b1b0ec5e59e195095988cacbb8b4d025",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/receipt.json",
+     "receipt_sha256": "618114bca10327ceb77e5afa03cdc65b24fa8acfdb047c582d1059b25264c35b"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/weights/weights_ours_final_179.npz",
+     "weights_sha256": "a4c2d5e47062c55ad21186d5893c04208ae53c8d791cd3b7fd7373fd7534f894",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/receipt.json",
+     "receipt_sha256": "9357619c2dd4c867e920a52b473c6147a3b75a1d406653b56cbc4b56dd412576"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/weights/weights_ours_final_191.npz",
+     "weights_sha256": "45a59b9ee3d9b1ac82ceb503a005a0c882fcd13ceb0a6a3e2b7fbc6ccbbdb520",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/receipt.json",
+     "receipt_sha256": "4a3a56eee01017e2d32dc04638a963ba84e31174753450eac0aef4b76c0f178d"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/weights/weights_ours_final_211.npz",
+     "weights_sha256": "b664f9872d76a750a0c532b1d90bdb4d29ba8b11b6757fa52744a00bd9b38672",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/receipt.json",
+     "receipt_sha256": "5ac8b070c716f67a808ebd417dead9cc8ee6cf5fbaa49e49c694fddf9e82c458"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/weights/weights_ours_final_223.npz",
+     "weights_sha256": "94c155b4af1e895393fdbcb19eb949e25e4712484774bb981f5bac0030d8d8e8",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/receipt.json",
+     "receipt_sha256": "0435117b63d7dc529e80dc9ed5787a2edd6c382fbeaf551b911113e44e81a340"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/weights/weights_theirs_final_127.npz",
+     "weights_sha256": "fe98ee35c996f6f9ee63cbf19bada36f27eac9655f04ca0d121d3630a8f51890",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/receipt.json",
+     "receipt_sha256": "208a7868eed405df20dff76222ab4a33c905a1f24d97b096bad390671fcd536f"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/weights/weights_theirs_final_139.npz",
+     "weights_sha256": "114e3b0a069af260c914a1da20ce264334d208556aacb504bd78b6327732dc7a",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/receipt.json",
+     "receipt_sha256": "f1680e39b2056fa383992e6760af55fa18d32a1f08b32507755d69fbe87fee1d"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/weights/weights_theirs_final_151.npz",
+     "weights_sha256": "2c87b3cd6c7ae7bbab1bd65bc62bee3cc2a35de418ea7cd5cadd43ffe36d6016",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/receipt.json",
+     "receipt_sha256": "281449d4ace2429262272277e493ddb45682a0ebf1c8392dfe70bd473ee365e6"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/weights/weights_theirs_final_163.npz",
+     "weights_sha256": "348c1dd188e8360f5aee1ca7f272cc8756b868a92f96780ed92a0654b55569de",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/receipt.json",
+     "receipt_sha256": "f2fc388e903a46948e492b4e1120f2b23d2db8d0174a96fc69abe39c4bbd91de"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/weights/weights_theirs_final_179.npz",
+     "weights_sha256": "42c95af8136943e484231771f52a3aa8255e145738c01619a01f1bc44593f2b9",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/receipt.json",
+     "receipt_sha256": "497e0184bc3864dbf89d281bc222959be5aab033245c8f6af474b111f553cccc"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/weights/weights_theirs_final_191.npz",
+     "weights_sha256": "99b1d28cdb45f2c9a0340673639328ba61a01d55fdf64e388951a22635a29a07",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/receipt.json",
+     "receipt_sha256": "961ea163ed064e783d7fc789b7504239a3219e433bd796ef2ab114b35dcd58d9"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/weights/weights_theirs_final_211.npz",
+     "weights_sha256": "04a12e8e0805ffa73c911e4b1781aadc057ce0d7733f1a85d1a2aea288f08fa7",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/receipt.json",
+     "receipt_sha256": "8f2e959ddd20479c0398eee896c5e21eb3ebe1622cb112d51c1e4ff49b426426"
+    },
+    {
+     "weights": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/weights/weights_theirs_final_223.npz",
+     "weights_sha256": "586c2e0fda6f3bb862a7e5f8cd5ab7c935988773eacfbbbc9d142d6b5d99f385",
+     "receipt": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/receipt.json",
+     "receipt_sha256": "e8df5d50c5029b4ed41bdd6242074e579f0a50b8ac9565e8bc40f7965f88e962"
+    }
+   ]
+  }
+ },
+ "imported_modules": {
+  "frozen_design": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/frozen_design.py",
+   "sha256": "aa9fa4ac3732fe5600b9f860a8d2d9d2e3e8af65ae3f2cc44081fb627657218d"
+  },
+  "score_campaign": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/score_campaign.py",
+   "sha256": "4dc1214bbebceac07eaff1184c8bc89fb6db7d0d8afdd17cf3e58ce3971d4a4e"
+  },
+  "characterize_regions": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/characterize_regions.py",
+   "sha256": "f31495bd7dcc109770f499f94c085e4d58c57aa883005d252f957adfd4a22fff"
+  },
+  "reference_calibration": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/reference_calibration.py",
+   "sha256": "e4b2612dd340edb221d3bfc3d000ba8306021ee1d78555dddb0112544c800556"
+  },
+  "stage_splits": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/stage_splits.py",
+   "sha256": "a1d6bb6a916d234202cb935a1b86dcf18fcc452a3901a3451255c2f2f05d27d3"
+  },
+  "closure_powered_truth_reweight": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/closure_powered_truth_reweight.py",
+   "sha256": "a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
+  },
+  "run_arm_evaluation": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py",
+   "sha256": "f663e3ac56f5e316ac6dcb9140033ac31eed0d4d269961d2304fce3ef0c53f23"
+  },
+  "theirs_token_schema": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/theirs_token_schema.py",
+   "sha256": "2ce5637efed33dbf0779fa768babd40af4df6c696e2d9b9a3e8e8b4ca424017b"
+  },
+  "materialize_theirs": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/configuration_comparison/materialize_theirs.py",
+   "sha256": "fef05bf2f4e8d37cffc139be1c83905bb565f851478ebef5cef1f1f7ee4a9bfc"
+  },
+  "fullevent_fps_dataloader": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/nd-unfolding/pet/fullevent_fps_dataloader.py",
+   "sha256": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1"
+  },
+  "omnifold": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/omnifold_nn/omnifold/__init__.py",
+   "sha256": "bbec850924ca15162f370ee63837b88371bf336746425afebfc95e36d39a8eea"
+  },
+  "omnifold.dataloader": {
+   "file": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/68cf9d29/omnifold_nn/omnifold/dataloader.py",
+   "sha256": "bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a"
+  }
+ },
+ "regenerated_report_vs_committed": {
+  "leaves": 837,
+  "counts": {
+   "bit_identical": 837,
+   "within_1e-10": 0,
+   "mismatch": 0,
+   "missing": 0
+  },
+  "mismatches": [],
+  "headline": {
+   "absolute_adequacy/arms/ours/mean_recovery": {
+    "committed": 0.30367486660122656,
+    "recomputed": 0.30367486660122656,
+    "class": "bit_identical"
+   },
+   "absolute_adequacy/arms/theirs/mean_recovery": {
+    "committed": 0.41652658344946014,
+    "recomputed": 0.41652658344946014,
+    "class": "bit_identical"
+   },
+   "absolute_adequacy/reference": {
+    "committed": 0.6949731568655361,
+    "recomputed": 0.6949731568655361,
+    "class": "bit_identical"
+   },
+   "absolute_adequacy/floor": {
+    "committed": 0.5559785254924289,
+    "recomputed": 0.5559785254924289,
+    "class": "bit_identical"
+   },
+   "mean_recovery_by_region/ours/low_acceptance": {
+    "committed": 0.05579216507588465,
+    "recomputed": 0.05579216507588465,
+    "class": "bit_identical"
+   },
+   "mean_recovery_by_region/ours/moderate": {
+    "committed": 0.2263960855871523,
+    "recomputed": 0.2263960855871523,
+    "class": "bit_identical"
+   },
+   "mean_recovery_by_region/ours/good": {
+    "committed": 0.5381012786198618,
+    "recomputed": 0.5381012786198618,
+    "class": "bit_identical"
+   },
+   "mean_recovery_by_region/theirs/low_acceptance": {
+    "committed": 0.15260764163974938,
+    "recomputed": 0.15260764163974938,
+    "class": "bit_identical"
+   },
+   "mean_recovery_by_region/theirs/moderate": {
+    "committed": 0.41421311151239326,
+    "recomputed": 0.41421311151239326,
+    "class": "bit_identical"
+   },
+   "mean_recovery_by_region/theirs/good": {
+    "committed": 0.6886173731159555,
+    "recomputed": 0.6886173731159555,
+    "class": "bit_identical"
+   },
+   "interval/mean": {
+    "committed": -0.11285171684823361,
+    "recomputed": -0.11285171684823361,
+    "class": "bit_identical"
+   },
+   "interval/sd": {
+    "committed": 0.04101484745791815,
+    "recomputed": 0.04101484745791815,
+    "class": "bit_identical"
+   },
+   "interval/t_quantile": {
+    "committed": 2.364624251592784,
+    "recomputed": 2.364624251592784,
+    "class": "bit_identical"
+   },
+   "interval/ci_low": {
+    "committed": -0.14714098742050435,
+    "recomputed": -0.14714098742050435,
+    "class": "bit_identical"
+   },
+   "interval/ci_high": {
+    "committed": -0.07856244627596287,
+    "recomputed": -0.07856244627596287,
+    "class": "bit_identical"
+   },
+   "regional_safeguard/floor/low_acceptance": {
+    "committed": 0.008376759448816837,
+    "recomputed": 0.008376759448816837,
+    "class": "bit_identical"
+   },
+   "regional_safeguard/floor/moderate": {
+    "committed": 0.46591663906169395,
+    "recomputed": 0.46591663906169395,
+    "class": "bit_identical"
+   },
+   "regional_safeguard/floor/good": {
+    "committed": 0.5852874937783695,
+    "recomputed": 0.5852874937783695,
+    "class": "bit_identical"
+   },
+   "provenance/regional_reference/low_acceptance": {
+    "committed": 0.013961265748028062,
+    "recomputed": 0.013961265748028062,
+    "class": "bit_identical"
+   },
+   "provenance/regional_reference/poor": {
+    "committed": 0.3665375117479021,
+    "recomputed": 0.3665375117479021,
+    "class": "bit_identical"
+   },
+   "provenance/regional_reference/moderate": {
+    "committed": 0.77652773176949,
+    "recomputed": 0.77652773176949,
+    "class": "bit_identical"
+   },
+   "provenance/regional_reference/good": {
+    "committed": 0.9754791562972827,
+    "recomputed": 0.9754791562972827,
+    "class": "bit_identical"
+   },
+   "provenance/half_a_rows": {
+    "committed": 600130,
+    "recomputed": 600130,
+    "class": "bit_identical"
+   },
+   "provenance/half_b_rows": {
+    "committed": 600111,
+    "recomputed": 600111,
+    "class": "bit_identical"
+   },
+   "provenance/half_b_rows_dropped_not_truth_passing": {
+    "committed": 32,
+    "recomputed": 32,
+    "class": "bit_identical"
+   },
+   "region_census/regions[0]/truth_mass_fraction": {
+    "committed": 0.3103084462065607,
+    "recomputed": 0.3103084462065607,
+    "class": "bit_identical"
+   },
+   "verdict": {
+    "committed": "NEITHER_ELIGIBLE",
+    "recomputed": "NEITHER_ELIGIBLE",
+    "class": "bit_identical"
+   },
+   "recommendation": {
+    "committed": "NO_SELECTION",
+    "recomputed": "NO_SELECTION",
+    "class": "bit_identical"
+   }
+  },
+  "paired_differences": {
+   "127": {
+    "committed": -0.16785575267122055,
+    "recomputed": -0.16785575267122055,
+    "class": "bit_identical"
+   },
+   "139": {
+    "committed": -0.16536426303594665,
+    "recomputed": -0.16536426303594665,
+    "class": "bit_identical"
+   },
+   "151": {
+    "committed": -0.09597126778749154,
+    "recomputed": -0.09597126778749154,
+    "class": "bit_identical"
+   },
+   "163": {
+    "committed": -0.1112693612354746,
+    "recomputed": -0.1112693612354746,
+    "class": "bit_identical"
+   },
+   "179": {
+    "committed": -0.0533842044104571,
+    "recomputed": -0.0533842044104571,
+    "class": "bit_identical"
+   },
+   "191": {
+    "committed": -0.13626938815203826,
+    "recomputed": -0.13626938815203826,
+    "class": "bit_identical"
+   },
+   "211": {
+    "committed": -0.07596759774320605,
+    "recomputed": -0.07596759774320605,
+    "class": "bit_identical"
+   },
+   "223": {
+    "committed": -0.09673189975003416,
+    "recomputed": -0.09673189975003416,
+    "class": "bit_identical"
+   }
+  }
+ },
+ "independent_scorer_cross_check": {
+  "final": [
+   {
+    "arm": "ours",
+    "seed": 127,
+    "recovery_committed_scorer": 0.32563324433093876,
+    "recovery_independent": 0.32563324433093876,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "ours",
+    "seed": 139,
+    "recovery_committed_scorer": 0.2888841495272775,
+    "recovery_independent": 0.2888841495272775,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "ours",
+    "seed": 151,
+    "recovery_committed_scorer": 0.2890199194855583,
+    "recovery_independent": 0.2890199194855583,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "ours",
+    "seed": 163,
+    "recovery_committed_scorer": 0.3087741256865204,
+    "recovery_independent": 0.3087741256865204,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "ours",
+    "seed": 179,
+    "recovery_committed_scorer": 0.31670193997291207,
+    "recovery_independent": 0.31670193997291207,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "ours",
+    "seed": 191,
+    "recovery_committed_scorer": 0.3045688893347219,
+    "recovery_independent": 0.3045688893347219,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "ours",
+    "seed": 211,
+    "recovery_committed_scorer": 0.29037317253062145,
+    "recovery_independent": 0.29037317253062145,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "ours",
+    "seed": 223,
+    "recovery_committed_scorer": 0.30544349194126075,
+    "recovery_independent": 0.30544349194126075,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "theirs",
+    "seed": 127,
+    "recovery_committed_scorer": 0.4934889970021603,
+    "recovery_independent": 0.4934889970021603,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "theirs",
+    "seed": 139,
+    "recovery_committed_scorer": 0.4542484125632241,
+    "recovery_independent": 0.4542484125632241,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "theirs",
+    "seed": 151,
+    "recovery_committed_scorer": 0.3849911872730498,
+    "recovery_independent": 0.3849911872730498,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "theirs",
+    "seed": 163,
+    "recovery_committed_scorer": 0.4200434869219951,
+    "recovery_independent": 0.4200434869219951,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "theirs",
+    "seed": 179,
+    "recovery_committed_scorer": 0.3700861443833692,
+    "recovery_independent": 0.3700861443833692,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "theirs",
+    "seed": 191,
+    "recovery_committed_scorer": 0.4408382774867602,
+    "recovery_independent": 0.4408382774867602,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "theirs",
+    "seed": 211,
+    "recovery_committed_scorer": 0.3663407702738275,
+    "recovery_independent": 0.3663407702738275,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   },
+   {
+    "arm": "theirs",
+    "seed": 223,
+    "recovery_committed_scorer": 0.40217539169129524,
+    "recovery_independent": 0.40217539169129524,
+    "independent_minus_committed": 0.0,
+    "class_independent_vs_committed": "bit_identical"
+   }
+  ],
+  "interval_from_independent_scores": {
+   "mean": -0.1128517168482338,
+   "sd": 0.04101484745791832,
+   "t_quantile_scipy": 2.3646242510102993,
+   "ci_low": -0.1471409874120581,
+   "ci_high": -0.07856244628440948,
+   "paired_differences": {
+    "127": -0.16785575267122155,
+    "139": -0.16536426303594665,
+    "151": -0.09597126778749154,
+    "163": -0.1112693612354747,
+    "179": -0.0533842044104571,
+    "191": -0.13626938815203826,
+    "211": -0.07596759774320605,
+    "223": -0.09673189975003449
+   }
+  }
+ },
+ "reference": {
+  "construction": "reference_calibration.ceiling(acceptance, |target-prior|, k) over the WHOLE truth-passing inventory, tilt from clipped_exponential_tilt on the same rows; imported from the 68cf9d29 checkout",
+  "tilt_spec_whole_population": {
+   "form": "exp(A*clip((pT-p50)/IQR, -Z, +Z)) / mean(...)",
+   "amplitude": 0.35,
+   "clip_z": 3.0,
+   "pt_p25": 0.5308068245649338,
+   "pt_p50": 1.4587417840957642,
+   "pt_p75": 3.1600151658058167,
+   "pt_iqr": 2.629208341240883,
+   "pre_normalization_mean": 1.1565941440982164,
+   "rate_preserving": true,
+   "applied_on": "pass_truth rows only",
+   "n_injected_rows": 49150928,
+   "tilt_min": 0.712007245718591,
+   "tilt_max": 2.470746659616924
+  },
+  "domain_pt_ppar_285_cells": {
+   "reference_by_k": {
+    "1": 0.5104038956376603,
+    "2": 0.6482928243903353,
+    "3": 0.6949731568655357,
+    "4": 0.7146286369974333
+   },
+   "k3_minus_frozen": -3.3306690738754696e-16,
+   "k3_class_vs_frozen": "within_1e-10",
+   "k3_minus_report": -3.3306690738754696e-16
+  },
+  "domain_eavail_7_bins": {
+   "acceptance": [
+    0.6707865501786756,
+    0.716558742610458,
+    0.67306051941463,
+    0.5919982609206662,
+    0.4744130535630271,
+    0.3305016476618453,
+    0.21888263326621166
+   ],
+   "displacement": [
+    0.015322744400627857,
+    0.01370126342101377,
+    0.02612279550765992,
+    0.035246121624918345,
+    0.030822818164336213,
+    0.015430633495559565,
+    0.13664637661411566
+   ],
+   "reference_by_k": {
+    "1": 0.3958247355821925,
+    "2": 0.5966744141608565,
+    "3": 0.7131426233805084,
+    "4": 0.7882637668193859
+   },
+   "k3_minus_frozen": 0.01816946651497231
+  },
+  "frozen_design_reference": {
+   "aggregate": 0.6949731568655361,
+   "by_iterations": {
+    "1": 0.5104038956376603,
+    "2": 0.6482928243903355,
+    "3": 0.6949731568655361,
+    "4": 0.7146286369974335
+   },
+   "regional": {
+    "low_acceptance": 0.013961,
+    "poor": 0.366538,
+    "moderate": 0.776528,
+    "good": 0.975479
+   }
+  },
+  "which_domain_is_the_frozen_number": "pt_ppar_285_cells",
+  "floor_recomputed": 0.5559785254924287,
+  "floor_committed": 0.5559785254924289,
+  "floor_class": "within_1e-10",
+  "regional_reference_recomputed": {
+   "low_acceptance": 0.013961265748028074,
+   "poor": 0.366537511747902,
+   "moderate": 0.7765277317694897,
+   "good": 0.9754791562972827
+  },
+  "regional_floor_recomputed": {
+   "low_acceptance": 0.008376759448816844,
+   "poor": 0.2199225070487412,
+   "moderate": 0.46591663906169384,
+   "good": 0.5852874937783695
+  },
+  "regional_floor_committed": {
+   "low_acceptance": 0.008376759448816837,
+   "moderate": 0.46591663906169395,
+   "good": 0.5852874937783695
+  },
+  "regional_floor_class": {
+   "low_acceptance": "within_1e-10",
+   "moderate": "within_1e-10",
+   "good": "bit_identical"
+  },
+  "census_recomputed": {
+   "regions": [
+    {
+     "region": "low_acceptance",
+     "acceptance_range": [
+      0.0,
+      0.05
+     ],
+     "cells": 67,
+     "truth_mass_fraction": 0.3103084462065607,
+     "injected_displacement_share": 0.2657104692691185,
+     "mean_acceptance": 0.005597832091658793,
+     "min_acceptance": 0.0,
+     "max_acceptance": 0.04658946081022478,
+     "scoreable": true,
+     "exempt_reason": null
+    },
+    {
+     "region": "poor",
+     "acceptance_range": [
+      0.05,
+      0.25
+     ],
+     "cells": 10,
+     "truth_mass_fraction": 0.06769276780717835,
+     "injected_displacement_share": 0.012168605180231388,
+     "mean_acceptance": 0.14788164548167443,
+     "min_acceptance": 0.052391309038533444,
+     "max_acceptance": 0.2200926311399103,
+     "scoreable": false,
+     "exempt_reason": "injected displacement share 0.0122 < 0.02"
+    },
+    {
+     "region": "moderate",
+     "acceptance_range": [
+      0.25,
+      0.5
+     ],
+     "cells": 23,
+     "truth_mass_fraction": 0.1391517992143351,
+     "injected_displacement_share": 0.08851738113827377,
+     "mean_acceptance": 0.386210029963644,
+     "min_acceptance": 0.2589505240452794,
+     "max_acceptance": 0.4902660396980522,
+     "scoreable": true,
+     "exempt_reason": null
+    },
+    {
+     "region": "good",
+     "acceptance_range": [
+      0.5,
+      1.0
+     ],
+     "cells": 185,
+     "truth_mass_fraction": 0.4828469867719259,
+     "injected_displacement_share": 0.6336035444123762,
+     "mean_acceptance": 0.7952377589286357,
+     "min_acceptance": 0.5064329693090177,
+     "max_acceptance": 0.9189313228817271,
+     "scoreable": true,
+     "exempt_reason": null
+    }
+   ],
+   "min_displacement_share_to_be_scoreable": 0.02,
+   "exempt_truth_mass_fraction": 0.06769276780717835,
+   "exempt_displacement_share": 0.012168605180231388,
+   "scoreable_regions": [
+    "low_acceptance",
+    "moderate",
+    "good"
+   ],
+   "reading": "Every scoreable region must clear the regional floor for a recommendation to be possible. Exempt regions are reported with the mass they hold so the exemption is auditable; a large exempt mass means the endpoint is not adequate, and the safeguard says so rather than passing quietly."
+  },
+  "low_acceptance_truth_mass_fraction": 0.3103084462065607
+ },
+ "endpoint_context_final": {
+  "half_a_rows": 600130,
+  "half_b_rows": 600111,
+  "half_b_rows_dropped_not_truth_passing": 32,
+  "halves_disjoint": true,
+  "off_grid_truth_fraction": 0.0,
+  "regional_reference": {
+   "low_acceptance": 0.013961265748028074,
+   "poor": 0.366537511747902,
+   "moderate": 0.7765277317694897,
+   "good": 0.9754791562972827
+  }
+ },
+ "per_iteration": {
+  "per_iteration_event_weights_exist": false,
+  "reading": "each run directory holds ONE event-weight array (the final push) plus a Keras checkpoint and a pickle per (iteration, step); the pickles were OPENED and hold only per-epoch training history. Per-iteration recovery is therefore NOT recoverable from saved event weights; the route that exists is re-inference of each iteration's step-2 checkpoint on half B's truth cloud (48 inferences over ~600 k rows), which is a GPU job outside this task's CPU scope.",
+  "listing_final": {
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights": {
+    "files": [
+     "OmniFold_ours-final-seed127_iter0_step1.pkl",
+     "OmniFold_ours-final-seed127_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed127_iter0_step2.pkl",
+     "OmniFold_ours-final-seed127_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed127_iter1_step1.pkl",
+     "OmniFold_ours-final-seed127_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed127_iter1_step2.pkl",
+     "OmniFold_ours-final-seed127_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed127_iter2_step1.pkl",
+     "OmniFold_ours-final-seed127_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed127_iter2_step2.pkl",
+     "OmniFold_ours-final-seed127_iter2_step2.weights.h5",
+     "log_ours-final-seed127.txt",
+     "weights_ours_final_127.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_ours_final_127.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_ours-final-seed127_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed127_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed127_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed127_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed127_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed127_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_ours-final-seed127_iter0_step1.pkl",
+     "OmniFold_ours-final-seed127_iter0_step2.pkl",
+     "OmniFold_ours-final-seed127_iter1_step1.pkl",
+     "OmniFold_ours-final-seed127_iter1_step2.pkl",
+     "OmniFold_ours-final-seed127_iter2_step1.pkl",
+     "OmniFold_ours-final-seed127_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/weights": {
+    "files": [
+     "OmniFold_ours-final-seed139_iter0_step1.pkl",
+     "OmniFold_ours-final-seed139_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed139_iter0_step2.pkl",
+     "OmniFold_ours-final-seed139_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed139_iter1_step1.pkl",
+     "OmniFold_ours-final-seed139_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed139_iter1_step2.pkl",
+     "OmniFold_ours-final-seed139_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed139_iter2_step1.pkl",
+     "OmniFold_ours-final-seed139_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed139_iter2_step2.pkl",
+     "OmniFold_ours-final-seed139_iter2_step2.weights.h5",
+     "log_ours-final-seed139.txt",
+     "weights_ours_final_139.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_ours_final_139.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_ours-final-seed139_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed139_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed139_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed139_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed139_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed139_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_ours-final-seed139_iter0_step1.pkl",
+     "OmniFold_ours-final-seed139_iter0_step2.pkl",
+     "OmniFold_ours-final-seed139_iter1_step1.pkl",
+     "OmniFold_ours-final-seed139_iter1_step2.pkl",
+     "OmniFold_ours-final-seed139_iter2_step1.pkl",
+     "OmniFold_ours-final-seed139_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/weights": {
+    "files": [
+     "OmniFold_ours-final-seed151_iter0_step1.pkl",
+     "OmniFold_ours-final-seed151_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed151_iter0_step2.pkl",
+     "OmniFold_ours-final-seed151_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed151_iter1_step1.pkl",
+     "OmniFold_ours-final-seed151_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed151_iter1_step2.pkl",
+     "OmniFold_ours-final-seed151_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed151_iter2_step1.pkl",
+     "OmniFold_ours-final-seed151_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed151_iter2_step2.pkl",
+     "OmniFold_ours-final-seed151_iter2_step2.weights.h5",
+     "log_ours-final-seed151.txt",
+     "weights_ours_final_151.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_ours_final_151.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_ours-final-seed151_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed151_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed151_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed151_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed151_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed151_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_ours-final-seed151_iter0_step1.pkl",
+     "OmniFold_ours-final-seed151_iter0_step2.pkl",
+     "OmniFold_ours-final-seed151_iter1_step1.pkl",
+     "OmniFold_ours-final-seed151_iter1_step2.pkl",
+     "OmniFold_ours-final-seed151_iter2_step1.pkl",
+     "OmniFold_ours-final-seed151_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/weights": {
+    "files": [
+     "OmniFold_ours-final-seed163_iter0_step1.pkl",
+     "OmniFold_ours-final-seed163_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed163_iter0_step2.pkl",
+     "OmniFold_ours-final-seed163_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed163_iter1_step1.pkl",
+     "OmniFold_ours-final-seed163_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed163_iter1_step2.pkl",
+     "OmniFold_ours-final-seed163_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed163_iter2_step1.pkl",
+     "OmniFold_ours-final-seed163_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed163_iter2_step2.pkl",
+     "OmniFold_ours-final-seed163_iter2_step2.weights.h5",
+     "log_ours-final-seed163.txt",
+     "weights_ours_final_163.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_ours_final_163.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_ours-final-seed163_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed163_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed163_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed163_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed163_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed163_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_ours-final-seed163_iter0_step1.pkl",
+     "OmniFold_ours-final-seed163_iter0_step2.pkl",
+     "OmniFold_ours-final-seed163_iter1_step1.pkl",
+     "OmniFold_ours-final-seed163_iter1_step2.pkl",
+     "OmniFold_ours-final-seed163_iter2_step1.pkl",
+     "OmniFold_ours-final-seed163_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/weights": {
+    "files": [
+     "OmniFold_ours-final-seed179_iter0_step1.pkl",
+     "OmniFold_ours-final-seed179_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed179_iter0_step2.pkl",
+     "OmniFold_ours-final-seed179_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed179_iter1_step1.pkl",
+     "OmniFold_ours-final-seed179_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed179_iter1_step2.pkl",
+     "OmniFold_ours-final-seed179_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed179_iter2_step1.pkl",
+     "OmniFold_ours-final-seed179_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed179_iter2_step2.pkl",
+     "OmniFold_ours-final-seed179_iter2_step2.weights.h5",
+     "log_ours-final-seed179.txt",
+     "weights_ours_final_179.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_ours_final_179.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_ours-final-seed179_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed179_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed179_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed179_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed179_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed179_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_ours-final-seed179_iter0_step1.pkl",
+     "OmniFold_ours-final-seed179_iter0_step2.pkl",
+     "OmniFold_ours-final-seed179_iter1_step1.pkl",
+     "OmniFold_ours-final-seed179_iter1_step2.pkl",
+     "OmniFold_ours-final-seed179_iter2_step1.pkl",
+     "OmniFold_ours-final-seed179_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/weights": {
+    "files": [
+     "OmniFold_ours-final-seed191_iter0_step1.pkl",
+     "OmniFold_ours-final-seed191_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed191_iter0_step2.pkl",
+     "OmniFold_ours-final-seed191_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed191_iter1_step1.pkl",
+     "OmniFold_ours-final-seed191_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed191_iter1_step2.pkl",
+     "OmniFold_ours-final-seed191_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed191_iter2_step1.pkl",
+     "OmniFold_ours-final-seed191_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed191_iter2_step2.pkl",
+     "OmniFold_ours-final-seed191_iter2_step2.weights.h5",
+     "log_ours-final-seed191.txt",
+     "weights_ours_final_191.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_ours_final_191.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_ours-final-seed191_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed191_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed191_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed191_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed191_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed191_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_ours-final-seed191_iter0_step1.pkl",
+     "OmniFold_ours-final-seed191_iter0_step2.pkl",
+     "OmniFold_ours-final-seed191_iter1_step1.pkl",
+     "OmniFold_ours-final-seed191_iter1_step2.pkl",
+     "OmniFold_ours-final-seed191_iter2_step1.pkl",
+     "OmniFold_ours-final-seed191_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/weights": {
+    "files": [
+     "OmniFold_ours-final-seed211_iter0_step1.pkl",
+     "OmniFold_ours-final-seed211_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed211_iter0_step2.pkl",
+     "OmniFold_ours-final-seed211_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed211_iter1_step1.pkl",
+     "OmniFold_ours-final-seed211_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed211_iter1_step2.pkl",
+     "OmniFold_ours-final-seed211_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed211_iter2_step1.pkl",
+     "OmniFold_ours-final-seed211_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed211_iter2_step2.pkl",
+     "OmniFold_ours-final-seed211_iter2_step2.weights.h5",
+     "log_ours-final-seed211.txt",
+     "weights_ours_final_211.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_ours_final_211.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_ours-final-seed211_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed211_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed211_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed211_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed211_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed211_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_ours-final-seed211_iter0_step1.pkl",
+     "OmniFold_ours-final-seed211_iter0_step2.pkl",
+     "OmniFold_ours-final-seed211_iter1_step1.pkl",
+     "OmniFold_ours-final-seed211_iter1_step2.pkl",
+     "OmniFold_ours-final-seed211_iter2_step1.pkl",
+     "OmniFold_ours-final-seed211_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/weights": {
+    "files": [
+     "OmniFold_ours-final-seed223_iter0_step1.pkl",
+     "OmniFold_ours-final-seed223_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed223_iter0_step2.pkl",
+     "OmniFold_ours-final-seed223_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed223_iter1_step1.pkl",
+     "OmniFold_ours-final-seed223_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed223_iter1_step2.pkl",
+     "OmniFold_ours-final-seed223_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed223_iter2_step1.pkl",
+     "OmniFold_ours-final-seed223_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed223_iter2_step2.pkl",
+     "OmniFold_ours-final-seed223_iter2_step2.weights.h5",
+     "log_ours-final-seed223.txt",
+     "weights_ours_final_223.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_ours_final_223.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_ours-final-seed223_iter0_step1.weights.h5",
+     "OmniFold_ours-final-seed223_iter0_step2.weights.h5",
+     "OmniFold_ours-final-seed223_iter1_step1.weights.h5",
+     "OmniFold_ours-final-seed223_iter1_step2.weights.h5",
+     "OmniFold_ours-final-seed223_iter2_step1.weights.h5",
+     "OmniFold_ours-final-seed223_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_ours-final-seed223_iter0_step1.pkl",
+     "OmniFold_ours-final-seed223_iter0_step2.pkl",
+     "OmniFold_ours-final-seed223_iter1_step1.pkl",
+     "OmniFold_ours-final-seed223_iter1_step2.pkl",
+     "OmniFold_ours-final-seed223_iter2_step1.pkl",
+     "OmniFold_ours-final-seed223_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/weights": {
+    "files": [
+     "OmniFold_theirs-final-seed127_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed127_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed127_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed127_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed127_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed127_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed127_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed127_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed127_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed127_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed127_iter2_step2.pkl",
+     "OmniFold_theirs-final-seed127_iter2_step2.weights.h5",
+     "log_theirs-final-seed127.txt",
+     "weights_theirs_final_127.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_theirs_final_127.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_theirs-final-seed127_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed127_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed127_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed127_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed127_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed127_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_theirs-final-seed127_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed127_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed127_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed127_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed127_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed127_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/weights": {
+    "files": [
+     "OmniFold_theirs-final-seed139_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed139_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed139_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed139_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed139_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed139_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed139_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed139_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed139_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed139_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed139_iter2_step2.pkl",
+     "OmniFold_theirs-final-seed139_iter2_step2.weights.h5",
+     "log_theirs-final-seed139.txt",
+     "weights_theirs_final_139.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_theirs_final_139.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_theirs-final-seed139_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed139_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed139_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed139_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed139_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed139_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_theirs-final-seed139_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed139_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed139_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed139_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed139_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed139_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/weights": {
+    "files": [
+     "OmniFold_theirs-final-seed151_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed151_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed151_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed151_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed151_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed151_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed151_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed151_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed151_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed151_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed151_iter2_step2.pkl",
+     "OmniFold_theirs-final-seed151_iter2_step2.weights.h5",
+     "log_theirs-final-seed151.txt",
+     "weights_theirs_final_151.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_theirs_final_151.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_theirs-final-seed151_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed151_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed151_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed151_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed151_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed151_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_theirs-final-seed151_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed151_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed151_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed151_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed151_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed151_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/weights": {
+    "files": [
+     "OmniFold_theirs-final-seed163_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed163_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed163_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed163_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed163_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed163_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed163_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed163_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed163_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed163_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed163_iter2_step2.pkl",
+     "OmniFold_theirs-final-seed163_iter2_step2.weights.h5",
+     "log_theirs-final-seed163.txt",
+     "weights_theirs_final_163.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_theirs_final_163.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_theirs-final-seed163_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed163_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed163_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed163_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed163_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed163_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_theirs-final-seed163_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed163_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed163_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed163_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed163_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed163_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/weights": {
+    "files": [
+     "OmniFold_theirs-final-seed179_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed179_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed179_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed179_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed179_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed179_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed179_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed179_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed179_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed179_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed179_iter2_step2.pkl",
+     "OmniFold_theirs-final-seed179_iter2_step2.weights.h5",
+     "log_theirs-final-seed179.txt",
+     "weights_theirs_final_179.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_theirs_final_179.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_theirs-final-seed179_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed179_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed179_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed179_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed179_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed179_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_theirs-final-seed179_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed179_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed179_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed179_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed179_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed179_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/weights": {
+    "files": [
+     "OmniFold_theirs-final-seed191_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed191_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed191_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed191_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed191_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed191_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed191_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed191_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed191_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed191_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed191_iter2_step2.pkl",
+     "OmniFold_theirs-final-seed191_iter2_step2.weights.h5",
+     "log_theirs-final-seed191.txt",
+     "weights_theirs_final_191.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_theirs_final_191.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_theirs-final-seed191_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed191_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed191_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed191_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed191_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed191_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_theirs-final-seed191_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed191_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed191_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed191_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed191_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed191_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/weights": {
+    "files": [
+     "OmniFold_theirs-final-seed211_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed211_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed211_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed211_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed211_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed211_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed211_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed211_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed211_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed211_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed211_iter2_step2.pkl",
+     "OmniFold_theirs-final-seed211_iter2_step2.weights.h5",
+     "log_theirs-final-seed211.txt",
+     "weights_theirs_final_211.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_theirs_final_211.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_theirs-final-seed211_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed211_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed211_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed211_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed211_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed211_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_theirs-final-seed211_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed211_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed211_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed211_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed211_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed211_iter2_step2.pkl"
+    ]
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/weights": {
+    "files": [
+     "OmniFold_theirs-final-seed223_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed223_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed223_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed223_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed223_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed223_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed223_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed223_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed223_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed223_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed223_iter2_step2.pkl",
+     "OmniFold_theirs-final-seed223_iter2_step2.weights.h5",
+     "log_theirs-final-seed223.txt",
+     "weights_theirs_final_223.npz"
+    ],
+    "event_weight_arrays": [
+     "weights_theirs_final_223.npz"
+    ],
+    "checkpoints": [
+     "OmniFold_theirs-final-seed223_iter0_step1.weights.h5",
+     "OmniFold_theirs-final-seed223_iter0_step2.weights.h5",
+     "OmniFold_theirs-final-seed223_iter1_step1.weights.h5",
+     "OmniFold_theirs-final-seed223_iter1_step2.weights.h5",
+     "OmniFold_theirs-final-seed223_iter2_step1.weights.h5",
+     "OmniFold_theirs-final-seed223_iter2_step2.weights.h5"
+    ],
+    "pickles": [
+     "OmniFold_theirs-final-seed223_iter0_step1.pkl",
+     "OmniFold_theirs-final-seed223_iter0_step2.pkl",
+     "OmniFold_theirs-final-seed223_iter1_step1.pkl",
+     "OmniFold_theirs-final-seed223_iter1_step2.pkl",
+     "OmniFold_theirs-final-seed223_iter2_step1.pkl",
+     "OmniFold_theirs-final-seed223_iter2_step2.pkl"
+    ]
+   }
+  },
+  "pickle_contents": {
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/OmniFold_ours-final-seed127_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/OmniFold_ours-final-seed127_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/OmniFold_ours-final-seed127_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/OmniFold_ours-final-seed127_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/OmniFold_ours-final-seed127_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/OmniFold_ours-final-seed127_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/weights/OmniFold_ours-final-seed139_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/weights/OmniFold_ours-final-seed139_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/weights/OmniFold_ours-final-seed139_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/weights/OmniFold_ours-final-seed139_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/weights/OmniFold_ours-final-seed139_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/weights/OmniFold_ours-final-seed139_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/weights/OmniFold_ours-final-seed151_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/weights/OmniFold_ours-final-seed151_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/weights/OmniFold_ours-final-seed151_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/weights/OmniFold_ours-final-seed151_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/weights/OmniFold_ours-final-seed151_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/weights/OmniFold_ours-final-seed151_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/weights/OmniFold_ours-final-seed163_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/weights/OmniFold_ours-final-seed163_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/weights/OmniFold_ours-final-seed163_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/weights/OmniFold_ours-final-seed163_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/weights/OmniFold_ours-final-seed163_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/weights/OmniFold_ours-final-seed163_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/weights/OmniFold_ours-final-seed179_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/weights/OmniFold_ours-final-seed179_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/weights/OmniFold_ours-final-seed179_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/weights/OmniFold_ours-final-seed179_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/weights/OmniFold_ours-final-seed179_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/weights/OmniFold_ours-final-seed179_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/weights/OmniFold_ours-final-seed191_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/weights/OmniFold_ours-final-seed191_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/weights/OmniFold_ours-final-seed191_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/weights/OmniFold_ours-final-seed191_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/weights/OmniFold_ours-final-seed191_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/weights/OmniFold_ours-final-seed191_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/weights/OmniFold_ours-final-seed211_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/weights/OmniFold_ours-final-seed211_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/weights/OmniFold_ours-final-seed211_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/weights/OmniFold_ours-final-seed211_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/weights/OmniFold_ours-final-seed211_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/weights/OmniFold_ours-final-seed211_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/weights/OmniFold_ours-final-seed223_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/weights/OmniFold_ours-final-seed223_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/weights/OmniFold_ours-final-seed223_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/weights/OmniFold_ours-final-seed223_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/weights/OmniFold_ours-final-seed223_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/weights/OmniFold_ours-final-seed223_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/weights/OmniFold_theirs-final-seed127_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/weights/OmniFold_theirs-final-seed127_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/weights/OmniFold_theirs-final-seed127_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/weights/OmniFold_theirs-final-seed127_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/weights/OmniFold_theirs-final-seed127_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/weights/OmniFold_theirs-final-seed127_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/weights/OmniFold_theirs-final-seed139_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/weights/OmniFold_theirs-final-seed139_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/weights/OmniFold_theirs-final-seed139_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/weights/OmniFold_theirs-final-seed139_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/weights/OmniFold_theirs-final-seed139_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/weights/OmniFold_theirs-final-seed139_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/weights/OmniFold_theirs-final-seed151_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/weights/OmniFold_theirs-final-seed151_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/weights/OmniFold_theirs-final-seed151_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/weights/OmniFold_theirs-final-seed151_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/weights/OmniFold_theirs-final-seed151_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/weights/OmniFold_theirs-final-seed151_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/weights/OmniFold_theirs-final-seed163_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/weights/OmniFold_theirs-final-seed163_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/weights/OmniFold_theirs-final-seed163_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/weights/OmniFold_theirs-final-seed163_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/weights/OmniFold_theirs-final-seed163_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/weights/OmniFold_theirs-final-seed163_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/weights/OmniFold_theirs-final-seed179_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/weights/OmniFold_theirs-final-seed179_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/weights/OmniFold_theirs-final-seed179_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/weights/OmniFold_theirs-final-seed179_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/weights/OmniFold_theirs-final-seed179_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/weights/OmniFold_theirs-final-seed179_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/weights/OmniFold_theirs-final-seed191_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/weights/OmniFold_theirs-final-seed191_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/weights/OmniFold_theirs-final-seed191_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/weights/OmniFold_theirs-final-seed191_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/weights/OmniFold_theirs-final-seed191_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/weights/OmniFold_theirs-final-seed191_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/weights/OmniFold_theirs-final-seed211_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/weights/OmniFold_theirs-final-seed211_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/weights/OmniFold_theirs-final-seed211_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/weights/OmniFold_theirs-final-seed211_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/weights/OmniFold_theirs-final-seed211_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/weights/OmniFold_theirs-final-seed211_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/weights/OmniFold_theirs-final-seed223_iter0_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/weights/OmniFold_theirs-final-seed223_iter0_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/weights/OmniFold_theirs-final-seed223_iter1_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/weights/OmniFold_theirs-final-seed223_iter1_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/weights/OmniFold_theirs-final-seed223_iter2_step1.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   },
+   "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/weights/OmniFold_theirs-final-seed223_iter2_step2.pkl": {
+    "type": "dict",
+    "keys": [
+     "loss",
+     "lr",
+     "val_loss"
+    ],
+    "value_lengths": {
+     "loss": 8,
+     "val_loss": 8,
+     "lr": 8
+    },
+    "holds_an_array_of_prior_length": false
+   }
+  }
+ },
+ "engine_normalisation_lines_in_the_executed_logs": {
+  "distinct_line_sequences": [
+   [
+    "INFO: Normalizing sum of weights to 1000000.0 ...",
+    "INFO: Normalizing sum of weights to 1000000 ...",
+    "INFO: Normalizing sum of weights to 1000000.0 ..."
+   ]
+  ],
+  "runs_with_a_log": 16,
+  "reading": "what the engine printed while the historical tasks ran, not a reading of the loader's source"
+ }
+}

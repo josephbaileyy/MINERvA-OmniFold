@@ -1,0 +1,131 @@
+{
+ "scope": "Phase A2 Part 2: which conjunct of the masks_and_padding check fails (a2_recover.py:831-835 recorded only the AND)",
+ "inputs": {
+  "closure_npz": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+   "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
+  },
+  "run_weights": {
+   "path": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/weights_ours_final_127.npz",
+   "sha256": "aa8e7219e0dc68a72744a2a2b4aca634c97f5e05e5daa6fcd6414902f76e8203"
+  }
+ },
+ "rows_checked": 1200286,
+ "pass_reco_rows": 501623,
+ "pass_truth_rows": 1200241,
+ "part_reco_shape": [
+  1200286,
+  12,
+  3
+ ],
+ "part_gen_shape": [
+  1200286,
+  12,
+  5
+ ],
+ "conjunct_passed": {
+  "tail_order_reco": true,
+  "tail_order_gen": true,
+  "pads_all_zero_part_reco": false,
+  "pads_all_zero_part_gen": true,
+  "pads_all_zero_reco_view": false,
+  "pads_all_zero_reco_time": false,
+  "no_reco_token_on_not_pass_reco": true
+ },
+ "aggregate_would_be": "FAIL",
+ "failing_conjuncts": [
+  "pads_all_zero_part_reco",
+  "pads_all_zero_reco_view",
+  "pads_all_zero_reco_time"
+ ],
+ "detail": {
+  "tail_order_reco": {
+   "rows_out_of_order": 0,
+   "in_order": true
+  },
+  "tail_order_gen": {
+   "rows_out_of_order": 0,
+   "in_order": true
+  },
+  "pads_all_zero_part_reco": {
+   "pad_slots": 8846428,
+   "pad_slots_with_a_nonzero_column": 2,
+   "rows_with_any_nonzero_pad": 2,
+   "nonzero_pad_entries_per_column": [
+    0,
+    2,
+    2
+   ],
+   "all_zero": false,
+   "example": {
+    "row_in_used": 793839,
+    "token_slot": 11,
+    "token_values": [
+     0.0,
+     -472.90350341796875,
+     6554.51708984375
+    ],
+    "n_real_tokens_in_that_row": 11
+   }
+  },
+  "pads_all_zero_part_gen": {
+   "pad_slots": 8892266,
+   "pad_slots_with_a_nonzero_column": 0,
+   "rows_with_any_nonzero_pad": 0,
+   "nonzero_pad_entries_per_column": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "all_zero": true
+  },
+  "pads_all_zero_reco_view": {
+   "pad_slots": 8846428,
+   "pad_slots_with_a_nonzero_column": 2,
+   "rows_with_any_nonzero_pad": 2,
+   "nonzero_pad_entries_per_column": [
+    2
+   ],
+   "all_zero": false,
+   "example": {
+    "row_in_used": 793839,
+    "token_slot": 11,
+    "token_values": [
+     1.0
+    ],
+    "n_real_tokens_in_that_row": 11
+   }
+  },
+  "pads_all_zero_reco_time": {
+   "pad_slots": 8846428,
+   "pad_slots_with_a_nonzero_column": 2,
+   "rows_with_any_nonzero_pad": 2,
+   "nonzero_pad_entries_per_column": [
+    2
+   ],
+   "all_zero": false,
+   "example": {
+    "row_in_used": 793839,
+    "token_slot": 11,
+    "token_values": [
+     9560.8134765625
+    ],
+    "n_real_tokens_in_that_row": 11
+   }
+  },
+  "no_reco_token_on_not_pass_reco": {
+   "rows": 0,
+   "ok": true
+  }
+ },
+ "zero_energy_token_ambiguity": {
+  "reading": "slots whose energy column is 0 but some other column is not: under mask = (energy != 0) these are read as padding",
+  "reco_slots_zero_energy_other_columns_nonzero": 2,
+  "gen_slots_zero_energy_other_columns_nonzero": 0,
+  "reco_rows_affected": 2,
+  "gen_rows_affected": 0
+ },
+ "seconds": 80.43743777275085
+}
