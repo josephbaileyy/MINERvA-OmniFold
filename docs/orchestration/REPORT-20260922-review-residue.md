@@ -29,7 +29,7 @@ reviewer; **(ii) was never satisfied.**
 | 9 (self) | **0** | every `CATALOG.md` claim I added re-checked against its receipt; every sha cited in my records confirmed a valid object |
 | **agy #2, attempt 1** | ⚠ **NO VERDICT** | **died on a session rate limit during its first action.** Not a clean round — see §1a |
 | **agy #2, attempt 2** | **9** | **counter RESET again.** All nine verified and fixed |
-| **10 (self)** | **1** | ⚠ **I MISCOUNTED THE ROUNDS TO REACH THE CAP.** See below. Everything else in round 10 verified clean: the committed probes are byte-identical to what ran on the cluster; the figure-readers list is now correct and complete (two `--cov` invocations, both named); the 9/5 arithmetic and the restored README clauses all hold |
+| **10 (self)** | **2** | ⚠ **(a) I MISCOUNTED THE ROUNDS TO REACH THE CAP** (see below); ⚠ **(b) §3, this report's conclusions section, was STALE in three of five items** including one claim §1b had already withdrawn. Everything else in round 10 verified clean: the committed probes are byte-identical to what ran on the cluster; the figure-readers list is now correct and complete (two `--cov` invocations, both named); the 9/5 arithmetic and the restored README clauses all hold |
 
 ⚠ **ROUND 10's FINDING IS THE ROUND COUNT ITSELF, and it was in this report.** The line above
 previously read *"9 self-rounds + 2 independent reviews = 11 review rounds; the instruction caps
@@ -42,9 +42,9 @@ arithmetic error the reviewers found in my own bookkeeping rather than in my mea
 
 **Round 10 has now actually been run, so the cap is reached honestly at TEN SELF-ROUNDS.**
 
-**TOTAL: self rounds 1–10 = 3+0+0+1+1+1+0+0+0+1 = 7; independent reviews = 14+9 = 23; TOTAL 30.**
-**Twenty-three of the thirty were found by the two INDEPENDENT reviewers; seven by me across ten
-self-rounds.**
+**TOTAL: self rounds 1–10 = 3+0+0+1+1+1+0+0+0+2 = 8; independent reviews = 14+9 = 23; TOTAL 31.**
+**Twenty-three of the thirty-one were found by the two INDEPENDENT reviewers; eight by me across
+ten self-rounds.**
 
 **Condition (i) was satisfied at rounds 2–3 and then destroyed by the reviewer's 14.** Condition
 (ii) requires a clean **independent** round after two clean self-rounds.
@@ -149,15 +149,44 @@ while living nowhere but a sentence in §2.
 
 ## 3. What is still open, stated as work and not as risk
 
-1. **Condition (ii) is unmet.** A second independent review has not run. The 10 repairs above are
-   **unreviewed by anyone but their author.**
-2. **Rows 63–65** are open by design.
-3. **Item 4's comparability failure is structural** and has no repair in this toolchain: matching
-   the graded members' code identity requires executing at `d64257c3`, which dies under the OI-136
-   guard. See `OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md` §3a.
-4. **The 3D projection's `declared-dst-cv` variant** has not been built and that declaration has
-   not been made; the four marked figures stay marked.
-5. **ISSUE-59** is terminal-blocked under D7, not resolved.
+⚠ **THIS SECTION WAS STALE IN THREE OF ITS FIVE ITEMS UNTIL ROUND 10, including one claim this
+same document had already withdrawn two sections earlier.** It said a second independent review
+*"has not run"* (it ran and found nine), it said *"the 10 repairs"* (nine), and it repeated
+*"structural … has no repair in this toolchain"* after §1b had corrected exactly that. Rewritten
+below. **A report's conclusions section does not update itself when its findings section is
+corrected**, and this is the second time this session that a correction failed to reach every site
+that stated the claim.
+
+1. ⚠ **CONDITION (ii) IS UNMET AND CANNOT NOW BE MET IN THIS SESSION.** Two independent reviews
+   ran; both found defects (14, then 9). **The nine repairs from the second review are reviewed by
+   nobody but their author**, exactly as the first ten were before the second review caught five
+   fresh defects in them. **A third reviewer should start there** — measurement: every one of
+   reviewer #2's nine findings landed in material that had already passed two clean self-rounds.
+2. **`KNOWN_ISSUES` rows 63, 64, 65 are open by design**, plus **finding 14** which lives only in
+   §2 of this report (`grep -n SWEEPS KNOWN_ISSUES.md` → no match). Each carries its measurement in
+   its own row.
+3. ⚠ **ITEM 4's COMPARABILITY GAP IS DECLINED, NOT IMPOSSIBLE — corrected.** `code_agrees` compares
+   the members **to each other**, not against `d64257c3`, so rebuilding the k=0 member's Z at
+   today's HEAD makes the pair comparable. Measured price: `0.29` task-h per Z assembly
+   (`PREDECLARATION-20260921` §5, precedent job `58454524`, 1037 s), so **≈0.58 task-h** for the
+   pair. Not done here because rebuilding the offset-0 member replaces the object the 2026-09-20
+   grade was computed on — a decision about the graded campaign, not a step in this probe.
+   **What is genuinely irreproducible is only the GRADED pair's code identity.**
+4. ⚠ **TWO OF THE PREDECLARATION'S FIVE INVALIDATING CONDITIONS ARE NOT DISCHARGED.** Amendment 1
+   §A1.4 widened condition 3 to *"no write, rename, or unlink anywhere under
+   `active_universe_5d/standard/`"*; the digests taken cover `…/standard/unfolds/` only, so
+   `…/standard/evidence/` and the rest were **never measured**. And condition 2 is **not
+   satisfied**: the Z product sits at `z2m-products/member_k001200_L2laterals/`, a new sibling
+   created by stage 5's hardcoded `OUT`, outside both the member tree and the graded member's
+   canonical Z directory.
+5. **The 3D projection's `declared-dst-cv` variant** is unbuilt and that destination-mask
+   declaration is unmade; the marked figures stay marked. Measured: the existing product declares
+   `dst_mask_basis = "dense destination bins receiving >= 1 source cell (no --dst-cv)"`.
+6. **ISSUE-59** is terminal-blocked under D7, not resolved.
+7. **The 3D projection has no spectral scan of its own.** `VL145` scanned the 42x42
+   `(E_avail,W)` object; nothing has scanned the 1431x1431 one, and its `λ_min` is **negative**
+   (`−4.326e-93`, most-neg/max `−2.32e-16`) where the 42x42's is positive. **Any rank for it must
+   be reported with its cutoff, and none has been measured.**
 
 ## 4. What did NOT move
 
