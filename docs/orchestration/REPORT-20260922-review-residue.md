@@ -68,9 +68,11 @@ remedy itself.
 | **agy #8b (independent)** | **13** | ⚠ meta-record scope. **`generate_manifest.py --check` was RED at `3b60abb0` on a clean tree, and the one stale row was the report's own** — writing ledger row 22 invalidated row 22, while rows 14/16/17 cite that gate as green with no sha. **Commit `0f4789da` claimed "all ten fixed" including a `KNOWN_ISSUES` row-66 repair that was never made** (`git log ee359301..HEAD -- KNOWN_ISSUES.md` was EMPTY for two commits) — and self-round 20 "re-verified the ten" without noticing. **The hardened ledger guard still failed OPEN four ways** (row 69). The guard's own docstring re-asserted the thesis row 66 had already withdrawn. Plus: two false universals in §3/§1, §1c still saying the loop had stopped, a 99-vs-97 population, an immutable in-range-edited handoff with no overrides row, its stale head pins, two WITHDRAWN claims live in `CATALOG.md`, and a ✅ whose measurement does not test its row. All 13 verified and repaired |
 | 24 (self) | **0** | table-integrity of every row I touched (`KNOWN_ISSUES` delimiter counts uniform; `VL143/144/145` all 5 unescaped pipes, matching `VL142`), rows 67–70 present and dated, and a whitespace-collapsing sweep of my OWN new text for live withdrawn claims — none. One apparent failure was my exact-string test missing `` `263 of 1431 at rc = 1e-12` `` because the backticks wrap the whole phrase, not just `rc` |
 | 25 (self) | **0** | ⚠ **the round aimed at this session's most-repeated defect: a fix CLAIMED but never made** (`0f4789da`, and the sixth review before it). All **24** findings from agy #8a/#8b re-audited one by one against the tree, plus `git status` to confirm each is COMMITTED and not merely in the worktree. **24 of 24 landed.** The one apparent miss — *"all eleven findings"* still present in `KNOWN_ISSUES` — is that phrase appearing **inside my own retraction of it**; the live clause reads *"where every finding was of this class"*. My probe used a bare `not in`, which is precisely the catalogued instrument error: **a phrase search cannot tell an assertion from its own retraction, and this tree retracts by QUOTING** |
+| **agy #9a (independent)** | **9** | ⚠ scope: **the REPAIRS**, which no reviewer had ever seen. **Row 70 declined an available repair on a premise one `grep` refutes** — I wrote that the cutoff behind `rank 247` was unrecorded; `3d-unfolding/genie/compare_3d_fullcov.py` computes `evals > 1e-12 * lmax` and prints `hard rank (>1e-12)`. **Row 69 claimed a 13-case mutation suite that did not exist in the tree** — run in scratch, never committed. **The `notes`-dict bug was live in a THIRD committed instrument** while the citable record said *"fixed there too"*, singular. A bullet opened *"No rank is quoted here and none may be inferred"* and then quoted one three times. *"A full eigendecomposition was run"* names an operation `eigvalsh` does not perform. The README's new `~support_mask` recipe **raises `TypeError`** on the shipped float64. Row 67 re-planted the `13` that row 63 exists to correct. All 9 repaired |
+| **agy #9b (independent)** | **14** | ⚠ scope: the repaired meta-record and the guard. **I PUBLISHED A FALSE NEGATIVE** — the BLOCKED record claimed `pet_weights_fullcloud.npz` was not on `/pscratch` and blamed a scope limit; it is there, `174,365,198` B, at the path the row directly above quotes. I inferred absence from one `ls` in the wrong directory and never opened the source. **The guard fell SIX more times**, three of them one class: any non-`\|` line inside the table truncated the block and every row below vanished at exit 0 — review #8's *indented row* had been repaired as an instance and I called the class closed. Also a quoted stale ledger HEADER read as the ledger (multiplicity closed for the TOTAL sentence, not for the header one layer down), `\d+` stripping the sign so `**-13**` read `13`, and "NO VERDICT" as an unbounded sink. Plus §1c's counts false three minutes after writing, a withdrawn green routed to a section naming no gate, row 69 misdescribing two of its own four modes, row 66's pledge broken by the sentence repairing it, a CATALOG `ARCHIVAL` claim dissolved by its own commit, `M2` paraphrased from a **view** instead of quoted from its governing correction, both withdrawal records' *"every site reached"* tables missing the CATALOG site, two more false universals, and a citation to *"row 62"* that is a line number. All 14 repaired |
 
 **TOTAL: self rounds 1–25 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0+0+1+1+0+1+0+0+0+0 = 14; independent reviews =
-14+9+7+11+9+13+10+11+13 = 97; TOTAL 111.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
+14+9+7+11+9+13+10+11+13+9+14 = 120; TOTAL 134.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
 the addend lines above and is not restated here.**
 
 ⚠ **THE DUPLICATION THAT CAUSED THE CLASS IS NOW REMOVED, which is the repair row 66 should have
@@ -281,30 +283,33 @@ own safety rule.
 ## 5. The gates, each pinned to a sha — the statement rows 14/16/17 could not make
 
 Ledger rows 14, 16 and 17 recorded *"the four gates green"* with **no tree and no sha**, which is
-what `KNOWN_ISSUES` row 60 prohibits, and one of those greens was later measured **RED**. A green
-that cannot be mapped to an object is not a result. This section is that object.
+what `KNOWN_ISSUES` row 60 prohibits, and one of those greens was later measured **RED** at
+`3b60abb0`. A green that cannot be mapped to an object is not a result. This section is that
+object.
 
-**Measured at `9b6019b4ee61`**, working tree **DIRTY — see below** for tracked files
-(`git status --porcelain --untracked-files=no` NOT empty; this measurement is therefore of the WORKING TREE, not the commit).
-Every status below was read **unpiped** (`cmd > file 2>&1; echo $?`), because a pipe returns the
-status of the last stage and this repo has been bitten by that.
+**Measured at `a7ead89458f2a417f8bd474a3f43b7bef62a12a5`**, working tree **CLEAN** for tracked files
+(`git status --porcelain --untracked-files=no` empty). Every status was read **unpiped**
+(`cmd > file 2>&1; echo $?`) — a pipe returns the last stage's status, which this repo has been
+bitten by.
 
 | gate | status |
 |---|---|
-| `python3 docs/orchestration/generate_manifest.py --check` | **exit 1** |
-| `python3 docs/orchestration/control_plane_lint.py` | **exit 0** |
-| `python3 docs/analysis-note/check_dead_containment.py --source-only` | **exit 0** |
-| `python3 nd-unfolding/p4_check_verifier_token.py --token 229c43e029e9fe7d…` | **exit 0** |
-| `python3 docs/orchestration/probes/probe-20260922-ledger-reconciles.py` | **exit 0** |
-| `python3 docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py` | **exit 0** |
+| `generate_manifest.py --check` | **exit 0** |
+| `control_plane_lint.py` | **exit 0** |
+| `check_dead_containment.py --source-only` | **exit 0** |
+| `p4_check_verifier_token.py --token 229c43e029e9fe7d…` | **exit 0** |
+| `probes/probe-20260922-ledger-reconciles.py` | **exit 0** |
+| `probes/probe-20260922-ledger-guard-mutations.py` | **exit 0** |
 
-The verifier token is `229c43e029e9fe7dc9e65412cf648bc832e0d1e7595d76db53348a7669e57875`
-(sha256 of the committed verdict JSON; quoted in full here because a truncated token is not a
-token — an earlier invocation of mine failed `TOKEN-REJECT :: not a sha256 (63 chars)` after I
-dropped one character).
+Verifier token, in full — `229c43e029e9fe7dc9e65412cf648bc832e0d1e7595d76db53348a7669e57875`.
+Quoted whole because a truncated token is not a token: an earlier invocation of mine returned
+`TOKEN-REJECT :: token is not a sha256 (63 chars)` after I dropped one character, and I briefly
+read that as a gate failure.
 
-⚠ **This section goes stale the moment anything is committed.** That is the point: it names the
-sha it was measured at, so a later reader can tell. Re-run the six commands above rather than
-citing this table at a different sha.
+⚠ **Two honest limits on this table.** (1) It goes stale on the next commit; that is the point of
+naming the sha — re-run the six commands rather than citing this table at a different sha.
+(2) **The commit that carries this section necessarily post-dates the measurement it records.**
+The sha above is this section's PARENT. There is no way to embed a measurement of a commit inside
+that same commit, and pretending otherwise is how rows 14/16/17 went wrong in the first place.
 
 **Co-Authored-By: Claude Opus 5 (1M context)**
