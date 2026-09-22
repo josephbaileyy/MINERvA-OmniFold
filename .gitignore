@@ -31,10 +31,13 @@ docs/analysis-note/main_*.pdf
 # deliverable, they total ~164 KB, and a gitignored .npz has already made one gate behave
 # differently on a working tree than on main. Forcing them in with `git add -f` would leave
 # that trap set for the next person.
-# app_release.tex schema items CARRIED: 2 (row ordering), 3 (central values, partial), 4 (the
-# (E_avail,W) covariance), 5 (masks), 6 (projection matrix). NOT carried: 8 (provenance) --
-# see the README's section 4. This list read "items 2, 5, 6" until 2026-09-22; it omitted the
-# covariance, which is item 4 and is the one object a reader is most likely to come for.
+# app_release.tex schema items CARRIED: 2 (row ordering), 3 (central values, PARTIAL), 4 (only
+# the (E_avail,W) projection, so PARTIAL -- item 4 also asks for the adopted five-axis object,
+# the assembly algebra, the centering variant and the band partition), 5 (masks, PARTIAL: the
+# unreported-cell mask is not shipped as an array), 6 (projection matrix).
+# NOT carried: 7 (generator predictions) and 8 (provenance) -- see the README's section 4.
+# This list read "items 2, 5, 6" until 2026-09-22, omitting the covariance a reader is most
+# likely to come for; the repair then named 8 as the only gap and marked only item 3 partial.
 !docs/analysis-note/release-package-*/*.npz
 *.h5
 *.pkl

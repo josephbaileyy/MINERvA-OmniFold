@@ -84,6 +84,7 @@ not disturb the FAIL, which was measured without it.
 | 6 | `docs/analysis-note/paper_body.tex` | *"so the figure is a lower bound"* |
 | 7 | `docs/analysis-note/primer_body.tex` | *"the figure above is a floor rather than a ceiling"* |
 | 8 | `docs/analysis-note/values.tex` | the block-(3) comment governing `\pinnedBandsSqrtTr` |
+| **9** | **`docs/orchestration/CATALOG.md`**, the entry for `DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md` | ⚠ **MISSED BY THIS TABLE UNTIL 2026-09-22.** It asserted *"five seed-pinned bands make it a **lower bound**"* in the catalogue's own voice, unmarked, on the entry a reader reaches the adoption THROUGH — and contradicting this same file's own `WITHDRAWN` marking further up. Site 1 is the decision record; its `CATALOG.md` entry was a ninth site, and *"every site reached"* was false for two days. Found by the eighth independent review, not by this sweep. |
 
 **`values.tex` is site 8 and it is the one a search for the claim would miss**, because it is a
 LaTeX comment above a macro rather than rendered text. A correction that fixed the three `.tex`

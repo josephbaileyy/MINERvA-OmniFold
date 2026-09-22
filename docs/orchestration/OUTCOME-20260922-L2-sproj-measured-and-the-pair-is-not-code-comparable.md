@@ -64,7 +64,14 @@ so it can never fail and must not be counted as a passing check.** Read it as **
 failing, eight passing**. `z_grade.cross_member_validity`'s own docstring says *"all nine"*. The
 committed probe `probes/probe-20260922-l2-validity-detail.py` iterated `__dataclass_fields__` and
 so included `notes` in both its listing and its `all_true`; that is a defect in a committed
-instrument and is fixed there too.
+instrument. ⚠ **THIS READ *"is fixed there too"* — SINGULAR, AND THE DEFECT HAD THREE COMMITTED
+COPIES.** Fixed in `probe-20260922-l2-validity-detail.py` at `8d22bfd0`, in
+`probe-20260922-l2-stage6-measure-v2.sh` at `9448c0a9` (the copy that actually PRODUCED the
+`validity all-true` line quoted here), and in `probe-20260922-l2-footing-base-reuse.py` only after
+the ninth independent review found it. `probe-20260922-l2-stage6-measure-ORIGINAL.sh` retains it
+**deliberately** — it is a preserved original, not a live instrument. The population is
+`grep -rn '__dataclass_fields__' --include='*.py' --include='*.sh' docs/`, not the file being
+edited.
 
 **It is not a mask, row-order or population difference.** Calling the real `Member.footing()` on
 all three products returns **identical dicts** — `mask_sha256 eed021e9…`, `row_order_sha256

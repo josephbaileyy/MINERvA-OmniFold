@@ -13,7 +13,7 @@ and what remains.
 | | |
 |---|---|
 | monorepo head | `d2f29ca504e5d195756174569a70969986d98be1` (`origin/main`) **as written**. ⚠ **SUPERSEDED — this file was itself EDITED after that pin** (+38 lines in `177af61b..3b60abb0`, adding §10.2). Read the current head from `git rev-parse origin/main`, not from this row. |
-| standalone note head | `908c0568e9a704c4b145f04723c723da7ff67568` (`analysis-note/main`) **as written**. ⚠ **SUPERSEDED by six standalone commits** (`e6619f7 … c692533`). Read it from `git ls-remote <analysis-note remote> refs/heads/main`. Pinning a moving head in a header is the defect `AGENTS.md`'s deliverable-synchronization rule exists to catch. |
+| standalone note head | `908c0568e9a704c4b145f04723c723da7ff67568` (`analysis-note/main`) **as written**. ⚠ **SUPERSEDED by seven standalone commits** (`e6619f7 … f1f370f`). ⚠ This cell read *"six … `c692533`"* and was stale **64 seconds after it was written**: the author's own push of `f1f370f` (the standalone half of the release-README fix made in the same range) landed immediately after, and a self-round then re-audited *"24 of 24 landed and committed"* without re-reading the remote. Which is the whole point of this row: **do not pin a moving head in a header.** Read it from `git ls-remote <analysis-note remote> refs/heads/main`. Pinning a moving head in a header is the defect `AGENTS.md`'s deliverable-synchronization rule exists to catch. |
 | adopted covariance | `/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-cv.npz` |
 | its `sha256` | `3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5`, `890,500,272` B |
 | assembling revision | `fb9ec3560fd6d62295dffc81b5694c9e26667d5b`, tag `evidence/z-assembling-revision-fb9ec356` |

@@ -39,7 +39,17 @@ v1b, _ = G.cross_member_validity([load(M0), load(M1)], [0, 1200])
 print("   control footing_ok:", bool(v1b.footing_ok))
 v2b, _ = G.cross_member_validity([load(M0), load(L2)], [0, 1200])
 print("   probe   footing_ok:", bool(v2b.footing_ok))
-allb = {f: bool(getattr(v2b, f)) for f in v2b.__dataclass_fields__}
+# ⚠ FIXED 2026-09-22 by the NINTH independent review. This iterated `__dataclass_fields__`,
+# which includes `notes: dict` -- a bag `cross_member_validity` ALWAYS populates. bool() coerced
+# it to True, so it printed as a tenth PASSING check that can never fail, and an EMPTY `notes`
+# would have flipped `all_true` to False for a VALID pair. `cross_member_validity` says "all nine".
+# This is the THIRD committed copy of one defect. It was fixed in probe-...-l2-validity-detail.py
+# at 8d22bfd0 ("Fixed in the record and in the instrument" -- singular), then in
+# probe-...-l2-stage6-measure-v2.sh at 9448c0a9, whose own comment complained about that singular
+# -- and missed this file in the same breath. Sweep by SYMBOL, not by the file you are editing.
+import dataclasses
+allb = {f.name: bool(getattr(v2b, f.name)) for f in dataclasses.fields(v2b)
+        if f.type in ("bool", bool)}
 print("   probe all fields (fresh base):")
 for k, val in allb.items():
     print("     ", "PASS" if val else "*** FAIL ***", k)

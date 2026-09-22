@@ -58,37 +58,62 @@ def main() -> int:
         return 2
     text = REPORT.read_text(encoding="utf-8")
 
-    # the ledger block: from its header row to the first blank line after it
+    # ⚠ THE BLOCK ENDS AT A BLANK LINE, NOT AT THE FIRST NON-TABLE LINE.
+    # Review #9 defeated the previous rule three ways at once. It read "end at the first line that
+    # does not start with `|`", so ANY interloper inside the table -- an HTML comment, a stray
+    # whitespace-only line, a blockquote, a wrapped row -- silently truncated the block and every
+    # row BELOW it vanished from all totals, returning PASS on a stale ledger. Review #8's
+    # "indented row" defeat had been repaired by adding .strip(): the INSTANCE, not the CLASS. And
+    # the class is native here -- ledger row 13 records this table FRAGMENTING into orphaned
+    # single-row tables. So: the block runs to the first BLANK line, and anything inside it that is
+    # not a table row is UNCLASSIFIABLE, which refuses.
     lines = text.splitlines()
-    try:
-        h = next(i for i, l in enumerate(lines)
-                 if l.strip().startswith("| round | findings | note |"))
-    except StopIteration:
+    heads = [i for i, l in enumerate(lines)
+             if l.strip().startswith("| round | findings | note |")]
+    if not heads:
         print("[ledger] CANNOT LOOK :: no ledger header row")
         return 2
-    end = next((i for i in range(h + 1, len(lines))
-                if not lines[i].strip().startswith("|")), len(lines))
+    if len(heads) > 1:
+        # ⚠ a QUOTED earlier revision of this table, placed above the live one, was read as THE
+        # ledger. The TOTAL sentence already refuses on multiplicity for exactly this reason; the
+        # header must too, or the hazard is only closed one layer up.
+        print(f"[ledger] CANNOT LOOK :: {len(heads)} ledger header rows at lines "
+              f"{[i + 1 for i in heads]}; this tree RETRACTS BY QUOTING, so the first is not "
+              f"authoritative. Refusing.")
+        return 2
+    h = heads[0]
+    end = next((i for i in range(h + 1, len(lines)) if not lines[i].strip()), len(lines))
     block = [l.strip() for l in lines[h + 1:end]]
 
     selves, agys, unclassified, noverdict = [], [], [], 0
     for l in block:
         if not DATA_ROW.match(l):
+            if l.startswith("|"):
+                continue          # a separator row; handled just below
+            unclassified.append(f"NOT A TABLE ROW: {l[:70]}")
             continue
         if re.match(r"^\|\s*:?-{2,}", l) or set(l.replace("|", "").strip()) <= set("-: "):
             continue
         m = SELF_HEAD.match(l)
         if m:
-            nums = re.findall(r"\d+", m.group(2))
-            if len(nums) == 1:
+            nums = re.findall(r"-?\d+", m.group(2))
+            if len(nums) == 1 and int(nums[0]) >= 0:
                 selves.append((int(m.group(1)), int(nums[0]))); continue
             unclassified.append(l[:90]); continue
         m = AGY_HEAD.match(l)
         if m:
             cell = m.group(1)
-            nums = re.findall(r"\d+", cell)
-            if len(nums) == 1:
+            nums = re.findall(r"-?\d+", cell)
+            if len(nums) == 1 and int(nums[0]) >= 0:
+                # ⚠ `re.findall(r"\d+")` on `**-13**` yielded "13": the row read MINUS thirteen and
+                # the TOTAL read plus thirteen, and the elementwise check called them equal.
                 agys.append(int(nums[0])); continue
-            if not nums and re.search(r"NO VERDICT", cell, re.I):
+            # ⚠ NO VERDICT WAS AN UNBOUNDED SINK. Any agy cell with no digit that merely
+            # CONTAINED the phrase was dropped from every total, so a real review recorded as
+            # "NO VERDICT | ended after finding six defects" vanished. The phrase must now be
+            # essentially the entire cell.
+            if not nums and re.fullmatch(r"[\s*⚠_`()\[\]-]*no verdict[\s*⚠_`()\[\].-]*",
+                                         cell.strip(), re.I):
                 noverdict += 1; continue
             unclassified.append(l[:90]); continue
         unclassified.append(l[:90])

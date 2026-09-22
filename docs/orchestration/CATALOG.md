@@ -277,7 +277,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   the heads *as written*; both moved during the lane, and the file itself was edited afterwards
   (+38 lines, adding §10.2). Read heads from `git rev-parse origin/main` and `git ls-remote`, never
   from that header.
-  - ⚠ **IT IS REGISTERED `ARCHIVAL` / `immutable yes` IN `MANIFEST.tsv` AND WAS MUTATED ANYWAY.** It
+  - ⚠ **IT WAS REGISTERED `ARCHIVAL` / `immutable yes` IN `MANIFEST.tsv` AND WAS MUTATED ANYWAY** — at `3b60abb0`. ⚠ **This entry asserted that in the PRESENT tense at a commit where it was already false:** the same commit added the `LIVE`/`open` overrides row, so from `9448c0a9` onward the file is `LIVE` / `immutable no`, and the *"unresolved immutability conflict"* the next clause described had been dissolved by the edit describing it — the same writing-the-claim-invalidates-the-claim shape as the manifest gate two rows away. What remains genuinely open is **whether reclassifying a terminal handoff to `LIVE` was the right call** rather than leaving it `ARCHIVAL` and recording the mutation; that is a question for whoever rules on the archival class. It
   had **no `MANIFEST-overrides.tsv` row and no entry here**, which put it permanently outside
   `live_doc_indexed.py`'s scope — the same discovery hole
   [`VERDICT-20260922-third-party-review-site9-issue60-s4c.md`](VERDICT-20260922-third-party-review-site9-issue60-s4c.md)
@@ -339,10 +339,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   - **JOSEPH ADOPTS `3d7465f6…` as publication-under-exception**, re-hashed on the cluster first.
   Carries the `UNRESOLVED`/`4c` status and **C3 stays "predeclared, not computed"** in the same
   place as the decision, and **four measurements that travel with the digest**: `M1` `s_proj =
-  6.145%` vs a 5% bound; `M2` that effect is **flat in N over the ensemble sizes measured**
-  (`p = 0.000`), so within that range it is the estimator and not resolution — ⚠ **the unqualified
-  *"flat in N"* reading is CORRECTED** (`AGENTS.md`; it propagated an infinite-`N` claim into note,
-  primer and paper, and *"a larger ensemble would not reduce it"* is **WITHDRAWN**); `M3` five
+  6.145%` vs a 5% bound; `M2` — quoted **verbatim** from the governing record
+  (`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md` §3, *"used verbatim at
+  every prose site"*; `AGENTS.md` is a **view**, not the authority, and this bullet cited only it):
+  *"The effect did not fall with ensemble size over the range tested — `6.02%` at `N = 40`, `6.02%`
+  at `N = 80` and `6.145%` at `N = 160`, fitted exponent `0.000` — while the same-seed resampling
+  floor fell `20.91% → 7.57%` between `N = 40` and `N = 80`. The `40`- and `80`-throw points are
+  nested subsets of the same 160 throws at one seed pair, so the behaviour at much larger `N` and
+  the width of the seed-pair distribution are both unmeasured."* ⚠ **The fitted exponent `0.000` is
+  the exponent `p` in `s ∝ N^-p`, NOT a p-value**, and must never be read as a significance.
+  ⚠ *"a larger ensemble would not reduce it"* is **WITHDRAWN**; a previous repair of this bullet
+  wrote *"flat in N over the ensemble sizes measured"*, which still frames the three points as a
+  sample across ensemble sizes — exactly what §2.1 of that record blocks, since they are nested
+  subsets of one 160-throw draw at one seed pair.
+   `M3` five
   seed-pinned bands — ⚠ **the *"lower bound"* wording is WITHDRAWN** (`AGENTS.md`;
   `CORRECTION-20260920-lower-bound-inference-withdrawn.md`): the bands are **unprobed in either
   direction**, so they bound nothing; and `M4` the seed moves the **central values** by ≤6.0% of

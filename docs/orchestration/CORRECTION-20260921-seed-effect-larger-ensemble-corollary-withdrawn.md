@@ -292,6 +292,7 @@ every side:
 | `HANDOFF-20260921…` `L1` | `bad2e61f` 2026-09-21 14:11 −0700 |
 | **the predeclaration clause** | **`f6f54e73` 2026-09-21 16:16 −0700** |
 | this correction's first edits | ~2026-09-21 20:02 −0700 |
+| ⚠ **`docs/orchestration/CATALOG.md`, the adoption entry** | **MISSED. Found 2026-09-22 by the eighth independent review.** It asserted the unqualified *"flat in N (`p = 0.000`) so it is the estimator, not resolution"* in the catalogue's own voice. A first repair wrote *"flat in N over the ensemble sizes measured"*, which §2.1 still blocks — the three points are nested subsets of one 160-throw draw at one seed pair, not a sample across ensemble sizes. It now carries §3's replacement wording **verbatim**, which is what §3 asked for. |
 
 So the clause **postdates every one of the record-side sites** and predates only this correction,
 by **3 h 46 min**, on the same day, from a concurrently running lane. It is **convergent and

@@ -34,6 +34,7 @@ stated blocker; it does **not** by itself authorize regenerating anything.
 | `√Tr C` | `6.1289e-39` |
 | symmetry `max\|C − Cᵀ\|` | **exactly `0.00e+00`** (structural: the `M C Mᵀ` form symmetrises) |
 | `λ_min` | **`−4.326e-93` — NEGATIVE**; most-negative/max `−2.32e-16` |
+| retained count | **`263` of `1431` at `rc = 1e-12`** (the projector's hardcoded cutoff, from `state/PROJ3D-20260922-job58736728-stdout.txt`). ⚠ **This table omitted it**, while §5 asserted no scan existed — the two halves of one record disagreeing about whether a rank exists. Quote it **only** with its cutoff, and read §5 before citing it: a single count at one hardcoded cutoff is **not** a cutoff scan, and this `263` is **not** the withdrawn *"rank 263 is Z's"* attribution. |
 | PSD to machine tolerance | OK (`\|min\|/max` far below the `1e-9` relative allowance) |
 | row index readback | `856469c41a8484be…`, 1,431 labels, digested after the file was closed |
 | `M` | shape `1431 × 10694`, content digest `6147e1543e3d6077…` |
@@ -108,18 +109,32 @@ figure work is exactly the failure the rule exists to prevent.
 - **`M1`–`M4` travel with this object**, because they travel with `3d7465f6…` and this is projected
   from it. In particular **no generator significance may be quoted from it**, and `M4` is much
   larger per individual bin than per projection.
-- **No rank is quoted here and none may be inferred.** The projector printed a retained count at its
+- **A rank exists for this object and may be quoted ONLY as `263 of 1431 at rc = 1e-12`.** ⚠ This
+  bullet opened *"No rank is quoted here and none may be inferred"* — a bolded prohibition that the
+  rest of the same bullet contradicts three times over. The retraction landed INSIDE the bullet and
+  left its topic sentence standing: the one-of-two-sites defect performed on a single paragraph.
+  The projector printed a retained count at its
   hardcoded `rc = 1e-12`; on the `(E_avail,W)` object the analogous count moves from **2 to 42** across
   the cutoffs `VL145` actually scans (`1e-1 → 2` … `0 → 42`; the narrower `26 → 42` is `VL143`
   item (3)'s abridgement, which starts at `1e-6`). ⚠ **THIS READ *"nothing has scanned this object's
   spectrum ... no scan exists yet"*, AND THE RECORD'S OWN CITED LOG REFUTES IT.**
   `state/PROJ3D-20260922-job58736728-stdout.txt` — the file §2 names as this record's spectrum
-  source — prints `min-eig=-4.326e-93  most-neg/max=-2.32e-16  rank~263/1431`. A full
-  eigendecomposition **was** run and a retained count of **263 of 1431 at the projector's hardcoded
+  source — prints `min-eig=-4.326e-93  most-neg/max=-2.32e-16  rank~263/1431`.
+  `nd-unfolding/project_cov_nd.py` calls `np.linalg.eigvalsh`, which returns
+  **eigenvalues only** — no eigenvectors — and **nothing persists the spectrum** (§2 is right that
+  the receipt carries no eigenvalue field; it was computed and discarded). ⚠ This read *"A full
+  eigendecomposition was run"*, naming an operation the code does not perform. A retained count of **263 of 1431 at the projector's hardcoded
   `rc = 1e-12`** exists; §2's "What was measured" table omitted it. The corrected claim: **what is
   absent is a cutoff SCAN** of the kind `VL145` performs for the `(E_avail,W)` object — a single
   retained count at one hardcoded cutoff is not one. **Any rank for this product must still be
   reported with its cutoff, and `263` may be quoted only as `263 of 1431 at rc = 1e-12`.**
+  ⚠ **DO NOT CONFLATE THIS `263` WITH THE WITHDRAWN ONE.**
+  `state/check-withdrawal-completeness-20260910.py` registers *"rank 263 is a property of Z, G, or
+  the production trunk"* as **WITHDRAWN** (*"263 is S's, the component donor"*). The `263` here is
+  the retained count of **this 1431-cell destination object** at `rc = 1e-12`, measured on
+  `M C Mᵀ`; since `rank(M C Mᵀ) ≤ rank(C)` it may be inherited from the source rather than being a
+  property of the destination, and **which it is has not been measured**. It is not a claim about
+  Z's rank and must not be cited as one.
   The corrected wording had already reached `REPORT-20260922-review-residue.md` §3 item 7 and was
   **not** carried to this record, which is the CITABLE artifact — one-of-two-sites again.
 
