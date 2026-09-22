@@ -98,6 +98,7 @@ bullet and on the fact that the bound was fixed before production, not on the fi
 | 7 | `REPORT-20260920-scalar5d-uncertainty-completion.md` `L1` (at `7257b255`; no line number, the edit moved it) | *"a property of the estimator and a larger ensemble would not reduce it"* | **substantive sentence REPLACED** with *"a property of the estimator rather than of the ensemble's resampling noise"*, **and** an inline `⚠ CORRECTED` block added. Every measured number left standing |
 | 8 | `HANDOFF-20260921-gbdt-remaining.md` `L1` (at `4e960436`; no line number, the edit moved it) | *"so it is a property of the estimator and **a larger ensemble would not reduce it**"* | **substantive sentence REPLACED** with the same wording as site 7, **and** an inline `⚠ CORRECTED` block added. ⚠ **Another lane's live document.** The owning GBDT lane re-derived the withdrawal from `state/SEED-EFFECT-20260920.json` independently, accepted it, and is **keeping the replacement**, judging that it states the retained inference better than the original. **That acceptance is what makes the edit acceptable** — a silent substantive change to another lane's live record would not have been, whatever its quality |
 | 9 | `nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`, the `⚠ FOUR MEASUREMENTS TRAVEL WITH IT` block (planted at `e7f8f365`) | *"so it is a property of the estimator and a larger ensemble would not reduce it"* | **substantive sentence REPLACED** with the same wording as sites 7–8, **and** an inline `⚠ M1 CORRECTED` block added, 2026-09-21. ⚠ **Found only after this table read "all 8 sites" — see §4c.** ⚠ **This file was already being maintained:** the asserting sentence sat three lines above an existing `⚠ M3 CORRECTED 2026-09-20` block in the same paragraph, so a previous withdrawal *did* reach this file. It is **not** an unmaintained corner that was missed |
+| 10 | `docs/orchestration/CATALOG.md`, the `EVIDENCE-20260920…` entry (the DISCOVERY surface) | *"**Corollary: a larger ensemble would not change it**, and no rebuild passes"* — asserted in the catalogue's own voice, in bold, with **no withdrawal marker** | **Clause REPLACED with an inline `⚠ WITHDRAWN 2026-09-21` marker, 2026-09-22.** `no rebuild passes` and `no price is owed` are **retained**, per `EVIDENCE` §5's corrected block (*"The second bullet below is NOT withdrawn, nor is §5's conclusion that there is nothing to price"*). ⚠ **INVISIBLE TO EVERY SWEEP SO FAR, FOR TWO INDEPENDENT REASONS AT ONCE — see §4d** |
 
 **`values.tex` is site 6 and is again the one a search for the claim would miss**, because it is a
 LaTeX comment above a macro rather than rendered text — the same trap
@@ -114,6 +115,14 @@ rewrite"* onward as fact without opening the diff, so a second pair of eyes repr
 instead of catching it. **A reviewer taking a description of a diff on trust is not a check on that
 description.** The fix is mechanical and worth stating as a rule: **after editing, `git diff` the
 file and write the row from the diff.**
+
+## 4c. The sweep's own population claim, and the instrument that found site 9
+
+⚠ **ADDED AS A HEADING 2026-09-22.** This block's content landed at `d2f29ca5`, whose message
+says *"Recorded at the record's new S4c"*, but **no `4c` heading was ever written**. Three
+pointers — row 9's *"see §4c"*, this block's own *"(§4c)"*, and two in `CATALOG.md` — resolved
+to nothing. The heading is added here rather than the pointers rewritten, because the content is
+what they describe. It sits before §4a in document order, which is where the content was placed.
 
 ⚠ **SITE 9 WAS MISSED BY THE SWEEP ITSELF, AND THE CAUSE IS A POPULATION CLAIM THIS RECORD DID NOT
 EARN (§4c).** The sweep paragraph below opens *"swept by CLAIM, not by wording"*, but the command was
@@ -168,6 +177,67 @@ record; `sec_pet.tex:236`, an unrelated and correct sentence about a larger PET 
 sharpening a dispersion estimate; and four older records using the words in unrelated senses
 (`CHECK-20260911`, `PACKET-20260910`, `AUDIT-FINDINGS-20260728`, `PROVENANCE-20260822`).
 **`AGENTS.md` no longer matches, because site 2 is repaired.**
+
+## 4d. SITE 10, and why it was invisible to EVERY sweep — including the corrected one
+
+⚠ **A TENTH SITE WAS LIVE ON THE DISCOVERY SURFACE UNTIL 2026-09-22**, found by a third lane
+reviewing §4c under `HANDOFF-20260922` §10. `docs/orchestration/CATALOG.md`'s entry for
+`EVIDENCE-20260920…` asserted, in bold and in the catalogue's own voice, with **no withdrawal
+marker anywhere near it**:
+
+> **Corollary: a larger ensemble would not change it, and no rebuild passes** — so no price is owed.
+
+Planted at `128a5e7a` (2026-09-20), measured with `git log -S 'ensemble would not change it'
+--reverse -- docs/orchestration/CATALOG.md`. **This is the withdrawn corollary in its strongest
+form** — *"would not CHANGE it"* is two-sided, where sites 1–9 said *"would not REDUCE it"* — sitting
+on the file a reader reaches a record THROUGH.
+
+### Why the scope rule did not catch it, and the instrument rule did not either
+
+**Site 9 was missed by SCOPE. Site 10 was missed by INSTRUMENT.** They are different failures and
+§4c's remedy does not cover this one: `CATALOG.md` is under `docs/`, so it was **inside** the
+sweep's path scope the whole time and still returned nothing.
+
+The record's own sweep command is
+
+    grep -rn -e 'larger ensemble' -e 'more throws' -e 'no ensemble size' \
+             -e 'would not reduce' -e 'would not remove' -e 'would not change this' \
+             docs/ AGENTS.md
+
+**Measured against the pre-fix `CATALOG.md` bytes, every one of the six returns 0 hits on this
+site.** Five miss on WORDING — the text says *"would not change **it**"*, and the pattern list has
+*"would not change **this**"*. The sixth, `larger ensemble`, is the one that should have fired, and
+it did not, for a reason worth more than this claim:
+
+| instrument | hits on site 10 | why |
+|---|---:|---|
+| `grep -e 'larger ensemble'` | **0** | the phrase spans a line break |
+| `tr '\n' ' '` then `grep` | **0** | ⚠ **the rule AS WRITTEN in this tree still misses it** |
+| `tr '\n' ' ' \| tr -s ' '` then `grep` | **1** | whitespace **collapsed**, not merely replaced |
+| `re.sub(r'\s+', ' ', text)` then search | **1** | same thing, done properly |
+
+⚠ **THE STATED NEWLINE RULE IS INSUFFICIENT AND THIS IS THE COUNTEREXAMPLE.**
+`HANDOFF-20260922` §8.5 and §10.1.3 both say *"A quote that spans a newline is invisible to a
+line-oriented grep — use `tr '\n' ' '` first."* The literal bytes here are
+
+    a larger<LF>  ensemble would not change it
+
+— a newline **plus the two-space indent of a wrapped Markdown continuation line.** `tr '\n' ' '`
+turns that into **three** spaces, so `larger ensemble` still does not match. In a tree whose prose is
+hard-wrapped and indented under list items, the newline-spanning quote is **the common case**, and
+the documented remedy fails on it silently: it returns 0 and looks like a clean sweep.
+
+**The rule is therefore corrected here: COLLAPSE whitespace, never merely replace newlines.**
+`tr -s` or `re.sub(r'\s+', ' ', …)`. A sweep that replaces newlines and does not collapse runs is
+still a line-oriented sweep wearing a disguise, and it will report zero on exactly the sites that
+most need finding.
+
+### What this does NOT change
+
+No number moves, again. `M1`'s `6.145%` against the `5%` bound is untouched. The two clauses
+`EVIDENCE` §5's corrected block explicitly RETAINS — *"no rebuild passes"* and *"there is nothing to
+price"* — are retained in the patched entry verbatim, because they rest on where a resolution-aware
+bound could sit and never on arbitrary `N`. Only the two-sided ensemble-size clause is withdrawn.
 
 ## 4a. A convergent, contemporaneous instance of the one-seed-pair half
 

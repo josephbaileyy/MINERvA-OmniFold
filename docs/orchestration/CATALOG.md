@@ -185,9 +185,14 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   gathered for is retained in full: noise must fall with `N`, this did not between `N = 40` and
   `N = 160`, so the failing leg is not reporting its own resampling noise. ⚠ **`M1`'s `6.145%`
   FAIL is untouched**, and §5's **second** bullet and its *"nothing to price"* conclusion are
-  **NOT** withdrawn. Enumerates all **9** sites — `EVIDENCE` §5, `AGENTS.md:88`, four in
+  **NOT** withdrawn. Enumerates all **10** sites — `EVIDENCE` §5, `AGENTS.md:88`, four in
   `docs/analysis-note/` (the last again being `values.tex`'s **comment**), `REPORT-20260920` `L1`,
-  `HANDOFF-20260921-gbdt-remaining` `L1`, and `nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`.
+  `HANDOFF-20260921-gbdt-remaining` `L1`, `nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`, and
+  ⚠ **site 10, THIS FILE's own `EVIDENCE-20260920` entry** (added 2026-09-22, §4d).
+  ⚠ **Site 10 was missed by INSTRUMENT, not by scope** — it was inside `docs/` the whole time. The
+  phrase wraps across a line as `a larger<LF>  ensemble`, and §4d measures that `tr '\n' ' '` —
+  **the remedy this tree's own instrument rules state** — leaves three spaces and STILL returns 0.
+  Whitespace must be **COLLAPSED** (`tr -s`, `re.sub(r'\s+', ' ', …)`), not merely replaced.
   ⚠ **Site 9 was missed by the sweep itself and is the sharpest of the three method notes:** the
   sweep declared itself *"by CLAIM, not by wording"* while its command was scoped
   `docs/ AGENTS.md`, so an `nd-unfolding/` status file was never in the hit set. §4c records the
@@ -206,6 +211,22 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `state/SEED-EFFECT-20260920.json`, whose key `seed_effect_same_throws` states the limitation in
   its name. ⚠ §4a also records a **false timeline that was caught before it was written**, from
   measuring two sides of a date comparison with different instruments.
+- [`VERDICT-20260922-third-party-review-site9-issue60-s4c.md`](VERDICT-20260922-third-party-review-site9-issue60-s4c.md)
+  - **THE THIRD PAIR OF EYES `HANDOFF-20260922` §10 ASKED FOR, on all three objects.** Site 9's fix
+  **ACCEPTED** (sentence replaced with the sites 7–8 wording, inline `⚠ M1 CORRECTED` block present,
+  **no number moved**, and row 9 written from the diff). `ISSUE-60` **STANDS, HIGH, all three checks
+  real** — but item (3)'s stated mechanism is corrected: `live_doc_indexed.py:97`'s `reclassified`
+  branch DOES fire on a later-added row, so the hole is that **both** branches intersect
+  `staged_live`, leaving a doc that never gets a LIVE row permanently out of scope. Measured on
+  `15edf148`: of its two new records, `OUTCOME-20260921-L2-probe-…` got no overrides row and **still
+  has none**. §4c's **substance is confirmed** (`e7f8f365`, seven files, 1 asserting, 4 received /
+  3 corrected all reproduce) with **three defects**: its prescribed `git log -S '<the claim>'`
+  returns `7257b255`, **not** the `e7f8f365` it names, because the quote spans a newline; two
+  adjacent sentences count over two unnamed populations; and **§4c had no heading at all**, so three
+  pointers dangled. ⚠ **AND IT FOUND SITE 10** — `CATALOG.md`'s own `EVIDENCE-20260920` entry,
+  asserting *"a larger ensemble would not change it"* unmarked since `128a5e7a`. **Missed by
+  INSTRUMENT, not scope:** `tr '\n' ' '`, the remedy this tree's rules state, returns **0** on it.
+  ⚠ **This lane fixed site 10 and is therefore NOT independent on it.**
 - [`DECISION-20260920-joseph-rules-clause-c-disposition.md`](DECISION-20260920-joseph-rules-clause-c-disposition.md)
   - **§6.4 clause (c) is DISPOSED.** `V2` **discharged** by the third lane above; `V6`'s six
   unreproduced items **ruled outside** clause (c)'s scope, on the assessor's own distinction that
@@ -260,8 +281,12 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **flat, `p = 0.000`** — while the same-seed resampling floor falls steeply, `20.91% → 7.57%`,
   **`p = 1.467`**. Statistical noise must fall with N; this does not. Controls: the diagnostic path
   reproduces `z_build` **bitwise** for both members and reproduces the graded `s_proj` **exactly**,
-  and the method returns the already-known answers for `s_agg` and `s_med`. **Corollary: a larger
-  ensemble would not change it, and no rebuild passes** — so no price is owed. 6.997 CPU / 0 GPU.
+  and the method returns the already-known answers for `s_agg` and `s_med`. ⚠ **WITHDRAWN
+  2026-09-21 — *"a larger ensemble would not change it"*.** This entry asserted it unqualified
+  until 2026-09-22; `EVIDENCE` §5's own `⚠ CORRECTED` block withdraws it, because the `40`- and
+  `80`-throw points are **nested subsets of one 160-throw ensemble at ONE seed pair**. **NOT
+  withdrawn, and both stand: `no rebuild passes`, so `no price is owed`** — those rest on where a
+  resolution-aware bound could sit, not on arbitrary `N`. 6.997 CPU / 0 GPU.
 - [`OUTCOME-20260920-cause3-two-member-assessable-FAIL.md`](OUTCOME-20260920-cause3-two-member-assessable-FAIL.md)
   - **(B) ASSESSABLE FAIL, branch 5 NOT MET — PER-BIN.** The campaign is **fully valid** — all nine
   `Validity` fields passed, no reject conditions — so this is a measurement, not a footing failure.
