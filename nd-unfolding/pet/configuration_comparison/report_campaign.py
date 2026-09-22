@@ -174,17 +174,35 @@ def main() -> int:
             "not complete and scoring it would report a sample nobody planned")
     endpoint, context = build_endpoint(args.closure_npz, first[0])
     scoreable = context["scoreable_regions"]
-    reference_halves = _halves_of(first[0])
 
     def score_all(stage: str) -> list[dict[str, Any]]:
+        """Score one stage against ITS OWN endpoint.
+
+        Each stage draws from its own share of the split -- 0.20 for tuning
+        and pilot, 0.60 for final -- so their halves necessarily differ, and
+        the pilot's push is over 200,000 rows where the final's is over
+        600,000. An earlier version built one endpoint from the first final
+        run and checked every run against it, which refused the pilot for
+        using different halves. The halves requirement is real but it is
+        WITHIN a stage: a paired difference is only paired if both arms and
+        every seed saw the same split.
+        """
+        runs = list(discover(args.campaign, stage))
+        stage_endpoint, stage_context = (
+            (endpoint, context) if stage == "final"
+            else build_endpoint(args.closure_npz, Path(runs[0].source)))
+        reference = _halves_of(Path(runs[0].source))
         scored = []
-        for run in discover(args.campaign, stage):
-            if _halves_of(Path(run.source)) != reference_halves:
+        for run in runs:
+            if _halves_of(Path(run.source)) != reference:
                 raise SystemExit(
                     f"[report] {run.source} used different halves from "
-                    f"{first[0]}. Every run must be scored against the same "
-                    "split or the paired difference is not paired")
-            scored.append(sc.score_run(run, endpoint, scoreable_regions=scoreable))
+                    f"{runs[0].source} within stage {stage!r}. Every run in a "
+                    "stage must share the split or the paired difference is "
+                    "not paired")
+            scored.append(sc.score_run(
+                run, stage_endpoint,
+                scoreable_regions=stage_context["scoreable_regions"]))
         return scored
 
     final = score_all("final")

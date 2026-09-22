@@ -228,3 +228,30 @@ class TheDeliverableIsProducedAutomatically(unittest.TestCase):
         text = (HERE / "sbatch_join_and_launch.sh").read_text()
         self.assertIn("sbatch_report_and_deck.sh", text)
         self.assertIn("--dependency=afterok:$FINAL", text)
+
+
+class EachStageHasItsOwnHalves(unittest.TestCase):
+    """Stages draw from different shares, so their halves MUST differ.
+
+    An earlier version built one endpoint from the first final run and
+    required every run to match it, which refused the pilot at the last step
+    of a two-day campaign: pilot halves are 200,000 rows from the 0.20 share,
+    final halves are 600,000 from the 0.60 share. The halves requirement is
+    real but belongs WITHIN a stage.
+    """
+
+    def test_the_check_is_scoped_to_a_stage(self):
+        source = (HERE / "report_campaign.py").read_text()
+        self.assertIn("within stage", source)
+        self.assertIn("build_endpoint(args.closure_npz, Path(runs[0].source))",
+                      source)
+
+    def test_the_frozen_shares_really_do_differ(self):
+        import frozen_design as fd
+        self.assertNotEqual(fd.SPLITS["fractions"]["pilot"],
+                            fd.SPLITS["fractions"]["final"])
+
+    def test_pilot_and_final_halves_are_different_sizes(self):
+        import closure_cost as cc
+        self.assertLess(cc.half_size_for(2_000_000, "pilot"),
+                        cc.half_size_for(2_000_000, "final"))
