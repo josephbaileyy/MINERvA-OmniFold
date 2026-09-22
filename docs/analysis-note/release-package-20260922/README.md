@@ -106,7 +106,7 @@ The last bin on `eavail`, `q3` and `W` is a **catch bin to 100 GeV**. Dense grid
 
 ## 5. Self-checks — the appendix's own worked example, EXECUTED at build time
 
-Not asserted; run. **The build-time rows are all from `_build_report.json`**; ⚠ **the cross-machine re-measurement in the first row is NOT in that file** — it was produced on a second host (numpy `1.26.4`, macOS/Accelerate, 2026-09-22) and reproduced independently by a third reviewer.
+Not asserted; run. **The build-time rows are all from `_build_report.json`**; ⚠ **the cross-machine re-measurement in the `y = M x_reported` row is NOT in that file (⚠ this said *"the first row"*, whose two values ARE in it)** — it was produced on a second host (numpy `1.26.4`, macOS/Accelerate, 2026-09-22) and reproduced independently by a third reviewer.
 
 | check | result |
 |---|---|

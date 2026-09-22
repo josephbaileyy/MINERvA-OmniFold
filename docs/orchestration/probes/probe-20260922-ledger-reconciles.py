@@ -20,8 +20,21 @@ from pathlib import Path
 
 REPORT = Path(__file__).resolve().parents[1] / "REPORT-20260922-review-residue.md"
 
-SELF_ROW = re.compile(r"^\|\s*\*{0,2}(\d+)\s*\(self[^|]*\|\s*\*{0,2}(\d+)\*{0,2}\s*\|")
-AGY_ROW = re.compile(r"^\|\s*\*{0,2}agy[^|]*\|\s*\*{0,2}(\d+)\*{0,2}\s*\|", re.I)
+# ⚠ THE FINDINGS CELL IS MATCHED PERMISSIVELY, AND THE ROW SET IS ACCOUNTED FOR INDEPENDENTLY.
+# The first version required the cell to begin with `**` or a digit. A `⚠`-prefixed cell -- a
+# format THIS TABLE ALREADY USES (`| **agy #2, attempt 1** | ⚠ **NO VERDICT** |`) -- was invisible,
+# so such a row vanished from every derived quantity AND from the ordering check, and the probe
+# returned PASS on a ledger whose totals were wrong. An independent reviewer built exactly that
+# case. A guard whose coverage rests on a formatting convention the guarded artifact already
+# violates is not a guard, so:
+#   * the findings cell may carry any leading decoration before its integer;
+#   * every DATA ROW in the ledger block is counted separately, and a row the parsers cannot
+#     classify is a REFUSAL, not a silent omission.
+_CELL = r"[^|]*?\*{0,2}(\d+)\*{0,2}\s*\|"
+SELF_ROW = re.compile(r"^\|\s*\*{0,2}(\d+)\s*\(self[^|]*\|" + _CELL)
+AGY_ROW = re.compile(r"^\|\s*\*{0,2}agy[^|]*\|" + _CELL, re.I)
+NOVERDICT_ROW = re.compile(r"^\|\s*\*{0,2}agy[^|]*\|[^|]*NO VERDICT[^|]*\|", re.I)
+DATA_ROW = re.compile(r"^\|(?!\s*(?:round\b|-{2,}|:?-{2,}))")
 TOTAL = re.compile(r"self rounds 1[–-](\d+)\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*"
                    r"independent reviews\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*TOTAL\s*(\d+)", re.S)
 
@@ -32,10 +45,38 @@ def main() -> int:
         return 2
     text = REPORT.read_text(encoding="utf-8")
 
-    selves = [(int(a), int(b)) for a, b in
-              (m.groups() for m in (SELF_ROW.match(l) for l in text.splitlines()) if m)]
-    agys = [int(m.group(1)) for m in
-            (AGY_ROW.match(l) for l in text.splitlines()) if m]
+    # the ledger block: from its header row to the first blank line after it
+    lines = text.splitlines()
+    try:
+        h = next(i for i, l in enumerate(lines) if l.startswith("| round | findings | note |"))
+    except StopIteration:
+        print("[ledger] CANNOT LOOK :: no ledger header row")
+        return 2
+    end = next((i for i in range(h + 1, len(lines)) if not lines[i].startswith("|")), len(lines))
+    block = lines[h + 1:end]
+
+    selves, agys, unclassified, noverdict = [], [], [], 0
+    for l in block:
+        if not DATA_ROW.match(l):
+            continue
+        if re.match(r"^\|\s*:?-{2,}", l) or set(l.replace("|", "").strip()) <= set("-: "):
+            continue
+        m = SELF_ROW.match(l)
+        if m:
+            selves.append((int(m.group(1)), int(m.group(2)))); continue
+        if NOVERDICT_ROW.match(l):
+            noverdict += 1; continue
+        m = AGY_ROW.match(l)
+        if m:
+            agys.append(int(m.group(1))); continue
+        unclassified.append(l[:90])
+
+    if unclassified:
+        print("[ledger] CANNOT LOOK :: ledger rows the parser could not classify -- refusing "
+              "rather than omitting them:")
+        for u in unclassified:
+            print(f"    {u}")
+        return 2
     if not selves or not agys:
         print(f"[ledger] CANNOT LOOK :: parsed {len(selves)} self rows, {len(agys)} agy rows")
         return 2
@@ -65,6 +106,19 @@ def main() -> int:
         ("self addend count", len([x for x in self_addends.split("+") if x.strip()]), len(selves)),
         ("independent addend count", len([x for x in agy_addends.split("+") if x.strip()]), len(agys)),
     ]
+    # ⚠ THE ADDENDS ARE COMPARED ELEMENTWISE, NOT JUST COUNTED AND SUMMED. A reviewer showed that
+    # permuting the split (`3+0+0+…` -> `0+3+0+…`) kept the count and the sum and so passed, while
+    # the per-round figures the report explicitly sends the reader to were wrong.
+    def _ints(s_):
+        return [int(x) for x in s_.split("+") if x.strip()]
+    for label, stated_list, derived_list in (
+            ("self addends", _ints(self_addends), [c for _, c in selves]),
+            ("independent addends", _ints(agy_addends), agys)):
+        if len(stated_list) == len(derived_list) and stated_list != derived_list:
+            diff = [(i + 1, a, b) for i, (a, b) in enumerate(zip(stated_list, derived_list)) if a != b]
+            print(f"  MISMATCH {label:26s} differs at {len(diff)} position(s): "
+                  + ", ".join(f"#{i}: stated {a} vs ledger {b}" for i, a, b in diff[:5]))
+            bad.append(f"{label} differ elementwise at {len(diff)} position(s)")
     for label, stated, derived in checks:
         mark = "ok " if stated == derived else "MISMATCH"
         print(f"  {mark} {label:26s} stated={stated:<5d} derived from ledger={derived}")
