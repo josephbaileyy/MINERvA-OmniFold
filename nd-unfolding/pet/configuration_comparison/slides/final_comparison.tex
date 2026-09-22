@@ -1,0 +1,188 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usetheme{default}
+\usecolortheme{dove}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\setbeamerfont{block body}{size=\small}
+
+\title{Matched pretrained comparison: result}
+\subtitle{Our incumbent PET vs.\ Gregor's complete pretrained PET2-small}
+\author{PET configuration-comparison lane}
+\date{\today}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}{Result}
+\begin{block}{No adequate arm.}
+Neither configuration cleared the predeclared safeguards, so this comparison recommends neither. That is a result, not a failure to produce one.
+\end{block}
+Matched paired effect, \texttt{ours $-$ theirs}, on the predeclared seven-bin
+$E_{\mathrm{avail}}$ recovery:
+\[
+  \bar{d} = -0.1129, \qquad
+  \text{95\% CI} = [-0.1471,\,
+  -0.0786], \qquad
+  n = 8\ \text{pairs}.
+\]
+Non-inferiority margin $\delta = 0.02$,
+switching threshold $\delta_{\mathrm{switch}} =
+0.04$, both frozen before any comparative
+result existed.
+\vfill
+\textbf{The interval is wider than $\delta$} (0.0343 against 0.02). This comparison resolves the DIRECTION of the difference, not non-inferiority at the frozen margin; the margin was not widened to change that.
+\vfill
+\footnotesize The pilot observations are \textbf{excluded}:
+the pilot chooses n. Reusing its observations in the interval that n was chosen for would make the interval conditional on its own width.
+\end{frame}
+
+\begin{frame}{What this measures, and what it cannot}
+\begin{block}{The arms differ at step 1 only}
+the arms DIFFER: ours is the production cluster cloud, theirs is the complete PET2-small arm over typed objects
+\end{block}
+\begin{block}{Step 2 is identical}
+the arms are IDENTICAL: the production PET on the production truth cloud, same weights initialisation policy, same recipe
+\end{block}
+\begin{alertblock}{The limit this imposes}
+his configuration's behaviour on the truth side, because that configuration does not exist -- his vocabulary has no truth analogue. Any recommendation states this limit in the conclusion, not a footnote
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{Absolute adequacy, asked of each arm alone}
+\begin{center}
+\begin{tabular}{lrrc}
+\toprule
+arm & mean recovery & floor & adequate \\
+\midrule
+ours & 0.3037 &
+  0.5560 &
+  \textbf{no} \\
+theirs & 0.4165 &
+  0.5560 &
+  \textbf{no} \\
+\bottomrule
+\end{tabular}
+\end{center}
+The floor is $0.8\times$ the
+applicable reference (0.6950).
+\vfill
+\footnotesize An arm failing this is ineligible, and one arm's failure does not
+disqualify the other: eligibility is asked of each arm on its own.
+\end{frame}
+
+\begin{frame}{Regional safeguard, on the reporting cells}
+\begin{center}\small
+\begin{tabular}{lrrr}
+\toprule
+region & ours & theirs & floor \\
+\midrule
+low\_acceptance & 0.0558 & 0.1526 & 0.0084 \\
+moderate & 0.2264 & 0.4142 & 0.4659 \\
+good & 0.5381 & 0.6886 & 0.5853 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Regions are defined on the $(p_T, p_\parallel)$ reporting cells, never by
+stratifying the seven marginal bins. Each floor is
+$0.6\times$
+\emph{that region's own} reference.
+\vfill
+\footnotesize Safeguard coverage: events whose $(p_T, p_\parallel)$ falls off the
+reporting grid are in the aggregate score but in no region ---
+0.00\%
+of truth mass.
+\end{frame}
+
+\begin{frame}{Low-acceptance events: retained, reported separately}
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+truth mass fraction & 0.3103 \\
+injected displacement share & 0.2657 \\
+mean recovery, ours & 0.0558 \\
+mean recovery, theirs & 0.1526 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{block}{Scope of any recommendation here}
+These events are retained and reported. The acceptance reference is not an impossibility bound, and this band is not called fundamentally unresolvable. Any recommendation states its limits here.
+\end{block}
+\end{frame}
+
+\begin{frame}{Stability across seeds}
+\begin{center}\small
+\begin{tabular}{lr}
+\toprule
+seed & $d = $ ours $-$ theirs \\
+\midrule
+127 & -0.1679 \\
+139 & -0.1654 \\
+151 & -0.0960 \\
+163 & -0.1113 \\
+179 & -0.0534 \\
+191 & -0.1363 \\
+211 & -0.0760 \\
+223 & -0.0967 \\
+\midrule
+mean & -0.1129 \\
+s.d. & 0.0410 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}{Component comparison: evidence and preference kept apart}
+\framesubtitle{The twelve pinned categories, read from
+\texttt{CONFIGURATION\_COMPARISON-20260918.md}}
+\begin{center}\tiny
+\begin{tabular}{p{0.2cm}p{3.4cm}p{9.4cm}}
+\toprule
+\# & category & recommendation \\
+\midrule
+1 & Object membership, filtering, overlap, primary lepton & \textbf{Borrow the typed-object vocabulary as a candidate, do not borrow the muon-as-token choice.} Keep the muon distinguished. \\
+2 & Token features, PID/type encoding, missingness, padding & \textbf{Borrow the richer per-token feature set and the learned type embedding. Do not borrow zero-fill-for-absent, and do not reuse index 0 for a real class.} Reserve index 0 for padding and shift real codes by one. \\
+3 & Coordinate transforms and normalization & \textbf{Keep ours.} Recommend to Gregor that $\varphi$ be encoded periodically --- this is the one place where we have already paid for the lesson. Do not adopt input-side LayerNorm. \\
+4 & Event globals & \textbf{Borrow the per-PID / per-family log energy sums, computed over the \emph{whole} event before any cap.} They are a fixed-width, cap-proof channel and cost essentially nothing. This is the cheapest candidate on the list. Do not borrow the $\gamma$$\gamma$-mass-or-zero encoding without a companion validity flag. \\
+5 & Pooling versus individual-object attention & \textbf{Keep pooling as the practical default; his individual routing is not shown to be better and is measurably more expensive at our multiplicities.} This is a development choice under an inconclusive result, not a finding. \\
+6 & Caps, ordering, overflow aggregation, merged counts & \textbf{Borrow the aggregate-overflow idea (we independently built the same thing as arm D) and test it before anything else. Do not borrow his ordering, his default-off setting, or his unweighted auxiliary mean} --- use energy-ranked retention (ours) and an energy-weighted merge. \\
+7 & Architecture, capacity, attention structure & \textbf{Keep our architecture and its size. Treat capacity as an open question, not a settled one.} A 19$\times$ parameter gap is large enough that "we are under-parameterized" is a live hypothesis, and it is cheap to test one width step. \\
+8 & Initialization and pretraining & \textbf{Keep random init with the frozen seed.} Ask Gregor directly for the checkpoint files and their hashes before planning any pretrained arm --- do not plan around a URL. \\
+9 & Training objective, optimizer, regularization, stopping & \textbf{Borrow warmup + cosine decay and gradient clipping; do not borrow weight decay} until someone measures its effect on the reweighting bias. Both are candidates, neither is adopted. \\
+10 & OmniFold integration, ratio conventions, validation & \textbf{Keep ours in full.} If a typed-object representation is ever adopted, it must enter through our dump and loader, carrying weights and flags --- not by importing his \texttt{.pb} files. \\
+11 & Training and inference cost & Order candidate changes by campaign cost, not by per-train cost. \\
+12 & Numerical behaviour & Keep ours. \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}{Provenance}
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+commit & \texttt{68cf9d29f8ab} \\
+campaign directory & \texttt{/pscratch/sd/j/josephrb/campaign-20260920} \\
+closure inputs & \texttt{fa6b346316024216} \\
+truth rows scored & --- \\
+aggregate reference & 0.6950 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}{Scope}
+\begin{alertblock}{What this is not}
+PET remains diagnostic method development. This deck is \textbf{not} a
+publication adoption, a covariance construction, a systematic, a central-value
+change, or a Gate-6 action, and it discharges no open item.
+\end{alertblock}
+Three differences from Gregor's configuration are \textbf{declared, not
+eliminated}: muon presence via \texttt{muon\_E > 0} rather than the MINOS
+match, \texttt{prong\_dEdXMean} substituted for the absent
+\texttt{prong\_part\_dEdXMean}, and a proportional cap split that is ours
+rather than his. Any reading of the result carries them.
+\end{frame}
+
+\end{document}

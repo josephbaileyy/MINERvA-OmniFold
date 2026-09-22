@@ -1,0 +1,1181 @@
+{
+  "endpoint": {
+    "injection": "truth E_avail, clipped exponential tilt",
+    "amplitude": 0.35,
+    "clip": 3.0,
+    "primary_score": "seven-bin E_avail recovery",
+    "bin_edges_gev": [
+      0.0,
+      0.1,
+      0.2,
+      0.4,
+      0.8,
+      1.5,
+      3.0,
+      100.0
+    ],
+    "recovery": "fraction of the injected L1 displacement recovered; L1 = 2 x TV"
+  },
+  "thresholds": {
+    "adequacy_fraction_of_reference": 0.8,
+    "non_inferiority_delta": 0.02,
+    "switching_delta": 0.04,
+    "regional_fraction_of_regional_reference": 0.6,
+    "status": "ratified methodological tolerances, not physics facts",
+    "report_when_theirs_better_but_retained": "a result where his arm scores better and ours is retained under the switching policy is reported AS THAT, explicitly. Non-inferiority is not superiority"
+  },
+  "paired_differences": {
+    "127": -0.16785575267122055,
+    "139": -0.16536426303594665,
+    "151": -0.09597126778749154,
+    "163": -0.1112693612354746,
+    "179": -0.0533842044104571,
+    "191": -0.13626938815203826,
+    "211": -0.07596759774320605,
+    "223": -0.09673189975003416
+  },
+  "interval": {
+    "n_pairs": 8,
+    "mean": -0.11285171684823361,
+    "sd": 0.04101484745791815,
+    "df": 7,
+    "t_quantile": 2.364624251592784,
+    "half_width": 0.03428927057227074,
+    "ci_low": -0.14714098742050435,
+    "ci_high": -0.07856244627596287,
+    "confidence": 0.95,
+    "statistic": "paired difference d = recovery(ours) - recovery(theirs), per seed"
+  },
+  "absolute_adequacy": {
+    "reference": 0.6949731568655361,
+    "fraction": 0.8,
+    "floor": 0.5559785254924289,
+    "arms": {
+      "ours": {
+        "mean_recovery": 0.30367486660122656,
+        "n": 8,
+        "adequate": false,
+        "per_seed": [
+          0.32563324433093976,
+          0.2888841495272775,
+          0.2890199194855583,
+          0.3087741256865204,
+          0.31670193997291207,
+          0.3045688893347219,
+          0.29037317253062145,
+          0.3054434919412611
+        ]
+      },
+      "theirs": {
+        "mean_recovery": 0.41652658344946014,
+        "n": 8,
+        "adequate": false,
+        "per_seed": [
+          0.4934889970021603,
+          0.4542484125632241,
+          0.3849911872730498,
+          0.420043486921995,
+          0.3700861443833692,
+          0.4408382774867602,
+          0.3663407702738275,
+          0.40217539169129524
+        ]
+      }
+    }
+  },
+  "regional_safeguard": {
+    "floor": {
+      "low_acceptance": 0.008376759448816837,
+      "moderate": 0.46591663906169395,
+      "good": 0.5852874937783695
+    },
+    "floor_by_region": {
+      "low_acceptance": 0.008376759448816837,
+      "moderate": 0.46591663906169395,
+      "good": 0.5852874937783695
+    },
+    "floor_is_per_region": true,
+    "scoreable_regions": [
+      "low_acceptance",
+      "moderate",
+      "good"
+    ],
+    "arms": {
+      "ours": {
+        "eligible": false,
+        "regions_below_floor": [
+          "moderate",
+          "good"
+        ],
+        "regions_not_reported": [],
+        "recovery_by_region": {
+          "low_acceptance": 0.05579216507588465,
+          "moderate": 0.2263960855871523,
+          "good": 0.5381012786198618
+        }
+      },
+      "theirs": {
+        "eligible": false,
+        "regions_below_floor": [
+          "moderate"
+        ],
+        "regions_not_reported": [],
+        "recovery_by_region": {
+          "low_acceptance": 0.15260764163974938,
+          "moderate": 0.41421311151239326,
+          "good": 0.6886173731159555
+        }
+      }
+    },
+    "both_ineligible": true,
+    "criterion": "every scoreable region must clear the floor. A region defined on the reporting cells, not on the marginal, and a region not reported counts as failed."
+  },
+  "mean_recovery_by_region": {
+    "ours": {
+      "low_acceptance": 0.05579216507588465,
+      "moderate": 0.2263960855871523,
+      "good": 0.5381012786198618
+    },
+    "theirs": {
+      "low_acceptance": 0.15260764163974938,
+      "moderate": 0.41421311151239326,
+      "good": 0.6886173731159555
+    }
+  },
+  "verdict": "NEITHER_ELIGIBLE",
+  "recommendation": "NO_SELECTION",
+  "narrative": "Measured: the difference is resolved and favours theirs by 0.1129 recovery points (95% interval [-0.1471, -0.0786]). Verdict: NEITHER_ELIGIBLE. Recommendation: NO_SELECTION. This recommendation is licensed by the measurement. Neither arm is recommendable. ours is INELIGIBLE on absolute adequacy and regional adequacy (regions below floor: ['good', 'moderate']); theirs is INELIGIBLE on absolute adequacy and regional adequacy (regions below floor: ['moderate']). A difference between two configurations that both fail their own safeguards is not a reason to adopt either.",
+  "theirs_scored_better": true,
+  "retained_ours_though_theirs_scored_better": false,
+  "non_inferiority_is_not_superiority": null,
+  "pilot_excluded": true,
+  "pilot_exclusion_reason": "the pilot chooses n. Reusing its observations in the interval that n was chosen for would make the interval conditional on its own width",
+  "pilot_reported_separately": {
+    "n_rows": 8,
+    "sizing": {
+      "pilot_pairs": 4,
+      "sigma_hat": 0.04994354142138531,
+      "sigma_upper_bound": 0.08628182758118953,
+      "bound_level": 0.8,
+      "delta": 0.02,
+      "required_n": 74,
+      "capped_at": 512,
+      "feasible": true,
+      "procedure": "n solved iteratively from the pilot's upper one-sided 80 % bound on sigma",
+      "note": "n is the number of PAIRS in the final stage. The pilot pairs are not among them: the pilot chooses n. Reusing its observations in the interval that n was chosen for would make the interval conditional on its own width"
+    }
+  },
+  "region_census": {
+    "regions": [
+      {
+        "region": "low_acceptance",
+        "acceptance_range": [
+          0.0,
+          0.05
+        ],
+        "cells": 67,
+        "truth_mass_fraction": 0.3103084462065607,
+        "injected_displacement_share": 0.26571046926911823,
+        "mean_acceptance": 0.005597832091658793,
+        "min_acceptance": 0.0,
+        "max_acceptance": 0.04658946081022478,
+        "scoreable": true,
+        "exempt_reason": null
+      },
+      {
+        "region": "poor",
+        "acceptance_range": [
+          0.05,
+          0.25
+        ],
+        "cells": 10,
+        "truth_mass_fraction": 0.06769276780717835,
+        "injected_displacement_share": 0.012168605180231433,
+        "mean_acceptance": 0.14788164548167443,
+        "min_acceptance": 0.052391309038533444,
+        "max_acceptance": 0.2200926311399103,
+        "scoreable": false,
+        "exempt_reason": "injected displacement share 0.0122 < 0.02"
+      },
+      {
+        "region": "moderate",
+        "acceptance_range": [
+          0.25,
+          0.5
+        ],
+        "cells": 23,
+        "truth_mass_fraction": 0.1391517992143351,
+        "injected_displacement_share": 0.08851738113827383,
+        "mean_acceptance": 0.386210029963644,
+        "min_acceptance": 0.2589505240452794,
+        "max_acceptance": 0.4902660396980522,
+        "scoreable": true,
+        "exempt_reason": null
+      },
+      {
+        "region": "good",
+        "acceptance_range": [
+          0.5,
+          1.0
+        ],
+        "cells": 185,
+        "truth_mass_fraction": 0.4828469867719259,
+        "injected_displacement_share": 0.6336035444123764,
+        "mean_acceptance": 0.7952377589286357,
+        "min_acceptance": 0.5064329693090177,
+        "max_acceptance": 0.9189313228817271,
+        "scoreable": true,
+        "exempt_reason": null
+      }
+    ],
+    "min_displacement_share_to_be_scoreable": 0.02,
+    "exempt_truth_mass_fraction": 0.06769276780717835,
+    "exempt_displacement_share": 0.012168605180231433,
+    "scoreable_regions": [
+      "low_acceptance",
+      "moderate",
+      "good"
+    ],
+    "reading": "Every scoreable region must clear the regional floor for a recommendation to be possible. Exempt regions are reported with the mass they hold so the exemption is auditable; a large exempt mass means the endpoint is not adequate, and the safeguard says so rather than passing quietly."
+  },
+  "regional_coverage": {
+    "off_grid_truth_fraction": 0.0,
+    "reading": "events whose (pT, p_parallel) falls outside the reporting grid are in the aggregate score but in no region, so the safeguard covers the complement of this fraction. Reported because a safeguard's coverage is part of what it certifies"
+  },
+  "low_acceptance": {
+    "region": "low_acceptance",
+    "retained": true,
+    "truth_mass_fraction": 0.3103084462065607,
+    "injected_displacement_share": 0.26571046926911823,
+    "scoreable": true,
+    "mean_recovery_by_arm": {
+      "ours": 0.05579216507588465,
+      "theirs": 0.15260764163974938
+    },
+    "reading": "These events are retained and reported. The acceptance reference is not an impossibility bound, and this band is not called fundamentally unresolvable. Any recommendation states its limits here"
+  },
+  "scope": {
+    "step1_reco": "the arms DIFFER: ours is the production cluster cloud, theirs is the complete PET2-small arm over typed objects",
+    "step2_gen": "the arms are IDENTICAL: the production PET on the production truth cloud, same weights initialisation policy, same recipe",
+    "what_the_comparison_therefore_means": "a comparison of the RECO-SIDE representation and architecture, with the truth-side estimator held fixed",
+    "what_it_cannot_speak_to": "his configuration's behaviour on the truth side, because that configuration does not exist -- his vocabulary has no truth analogue. Any recommendation states this limit in the conclusion, not a footnote",
+    "why_not_the_alternatives": "reading B invents a PDG-to-code mapping he never defined; reading C changes his input width and so is not his configuration either"
+  },
+  "provenance": {
+    "commit": "68cf9d29f8ab1b0f5acd933d4baec1962b29e34d",
+    "campaign_dir": "/pscratch/sd/j/josephrb/campaign-20260920",
+    "aggregate_reference": 0.6949731568655361,
+    "closure_npz": {
+      "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+      "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
+    },
+    "half_a_rows": 600130,
+    "half_b_rows": 600111,
+    "half_b_rows_dropped_not_truth_passing": 32,
+    "halves_disjoint": true,
+    "census": {
+      "regions": [
+        {
+          "region": "low_acceptance",
+          "acceptance_range": [
+            0.0,
+            0.05
+          ],
+          "cells": 67,
+          "truth_mass_fraction": 0.3103084462065607,
+          "injected_displacement_share": 0.26571046926911823,
+          "mean_acceptance": 0.005597832091658793,
+          "min_acceptance": 0.0,
+          "max_acceptance": 0.04658946081022478,
+          "scoreable": true,
+          "exempt_reason": null
+        },
+        {
+          "region": "poor",
+          "acceptance_range": [
+            0.05,
+            0.25
+          ],
+          "cells": 10,
+          "truth_mass_fraction": 0.06769276780717835,
+          "injected_displacement_share": 0.012168605180231433,
+          "mean_acceptance": 0.14788164548167443,
+          "min_acceptance": 0.052391309038533444,
+          "max_acceptance": 0.2200926311399103,
+          "scoreable": false,
+          "exempt_reason": "injected displacement share 0.0122 < 0.02"
+        },
+        {
+          "region": "moderate",
+          "acceptance_range": [
+            0.25,
+            0.5
+          ],
+          "cells": 23,
+          "truth_mass_fraction": 0.1391517992143351,
+          "injected_displacement_share": 0.08851738113827383,
+          "mean_acceptance": 0.386210029963644,
+          "min_acceptance": 0.2589505240452794,
+          "max_acceptance": 0.4902660396980522,
+          "scoreable": true,
+          "exempt_reason": null
+        },
+        {
+          "region": "good",
+          "acceptance_range": [
+            0.5,
+            1.0
+          ],
+          "cells": 185,
+          "truth_mass_fraction": 0.4828469867719259,
+          "injected_displacement_share": 0.6336035444123764,
+          "mean_acceptance": 0.7952377589286357,
+          "min_acceptance": 0.5064329693090177,
+          "max_acceptance": 0.9189313228817271,
+          "scoreable": true,
+          "exempt_reason": null
+        }
+      ],
+      "min_displacement_share_to_be_scoreable": 0.02,
+      "exempt_truth_mass_fraction": 0.06769276780717835,
+      "exempt_displacement_share": 0.012168605180231433,
+      "scoreable_regions": [
+        "low_acceptance",
+        "moderate",
+        "good"
+      ],
+      "reading": "Every scoreable region must clear the regional floor for a recommendation to be possible. Exempt regions are reported with the mass they hold so the exemption is auditable; a large exempt mass means the endpoint is not adequate, and the safeguard says so rather than passing quietly."
+    },
+    "regional_reference": {
+      "low_acceptance": 0.013961265748028062,
+      "poor": 0.3665375117479021,
+      "moderate": 0.77652773176949,
+      "good": 0.9754791562972827
+    },
+    "scoreable_regions": [
+      "low_acceptance",
+      "moderate",
+      "good"
+    ],
+    "off_grid_truth_fraction": 0.0
+  },
+  "per_run": [
+    {
+      "arm": "ours",
+      "stage": "final",
+      "seed": 127,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/weights_ours_final_127.npz",
+      "recovery": 0.32563324433093976,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.18639551211943592,
+        "recovery": 0.32563324433093976,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.06541129307711602,
+        "moderate": 0.22690580742204192,
+        "good": 0.5772446051612421
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.2179597033277183,
+          "recovery": 0.06541129307711602,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.19840659650054984,
+          "recovery": 0.22690580742204192,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.1065494512554343,
+          "recovery": 0.5772446051612421,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.3254522792512584,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "ours",
+      "stage": "final",
+      "seed": 139,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed139/weights/weights_ours_final_139.npz",
+      "recovery": 0.2888841495272775,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.19655299139650728,
+        "recovery": 0.2888841495272775,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.05309217911698749,
+        "moderate": 0.20306109135660466,
+        "good": 0.528211958222108
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.22083270019160134,
+          "recovery": 0.05309217911698749,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.2045260952685972,
+          "recovery": 0.20306109135660466,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.11890742867866463,
+          "recovery": 0.528211958222108,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.2883154830744149,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "ours",
+      "stage": "final",
+      "seed": 151,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed151/weights/weights_ours_final_151.npz",
+      "recovery": 0.2890199194855583,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.19651546447114887,
+        "recovery": 0.2890199194855583,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.05155396660333933,
+        "moderate": 0.2230282950998579,
+        "good": 0.5226780287079882
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.2211914337614019,
+          "recovery": 0.05155396660333933,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.19940171977287463,
+          "recovery": 0.2230282950998579,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.12030217646950146,
+          "recovery": 0.5226780287079882,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.28881481802104286,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "ours",
+      "stage": "final",
+      "seed": 163,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed163/weights/weights_ours_final_163.npz",
+      "recovery": 0.3087741256865204,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.1910553860340258,
+        "recovery": 0.3087741256865204,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.04892888988271771,
+        "moderate": 0.25503631256014625,
+        "good": 0.5564345857087771
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.2218036398997823,
+          "recovery": 0.04892888988271771,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.19118719447182525,
+          "recovery": 0.25503631256014625,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.11179431904504762,
+          "recovery": 0.5564345857087771,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.30867011880863293,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "ours",
+      "stage": "final",
+      "seed": 179,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed179/weights/weights_ours_final_179.npz",
+      "recovery": 0.31670193997291207,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.18886413180703818,
+        "recovery": 0.31670193997291207,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.05514560068925367,
+        "moderate": 0.2684045054970867,
+        "good": 0.5416921981727523
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.22035381236278148,
+          "recovery": 0.05514560068925367,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.1877563865735838,
+          "recovery": 0.2684045054970867,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.1155099269860356,
+          "recovery": 0.5416921981727523,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.31736915519082937,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "ours",
+      "stage": "final",
+      "seed": 191,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed191/weights/weights_ours_final_191.npz",
+      "recovery": 0.3045688893347219,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.19221771673432714,
+        "recovery": 0.3045688893347219,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.07214908444653023,
+        "moderate": 0.21631618727193935,
+        "good": 0.5159229082641934
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.21638835221135738,
+          "recovery": 0.07214908444653023,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.20112431254652002,
+          "recovery": 0.21631618727193935,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.12200470796936612,
+          "recovery": 0.5159229082641934,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.3043633112383462,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "ours",
+      "stage": "final",
+      "seed": 211,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed211/weights/weights_ours_final_211.npz",
+      "recovery": 0.29037317253062145,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.19614142424416367,
+        "recovery": 0.29037317253062145,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.04605164763403691,
+        "moderate": 0.18441654113177686,
+        "good": 0.5179335829744853
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.22247465471333513,
+          "recovery": 0.04605164763403691,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.20931102547361696,
+          "recovery": 0.18441654113177686,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.12149794616419389,
+          "recovery": 0.5179335829744853,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.2904136648079492,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "ours",
+      "stage": "final",
+      "seed": 223,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed223/weights/weights_ours_final_223.npz",
+      "recovery": 0.3054434919412611,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.19197597587243498,
+        "recovery": 0.3054434919412611,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.05400465915709585,
+        "moderate": 0.23399994435776472,
+        "good": 0.544692361747348
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.22061989655149605,
+          "recovery": 0.05400465915709585,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.1965859599234827,
+          "recovery": 0.23399994435776472,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.11475377866373769,
+          "recovery": 0.544692361747348,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.30511005915591566,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "theirs",
+      "stage": "final",
+      "seed": 127,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed127/weights/weights_theirs_final_127.npz",
+      "recovery": 0.4934889970021603,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.14000004745821581,
+        "recovery": 0.4934889970021603,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.1822542416356746,
+        "moderate": 0.4733301845950393,
+        "good": 0.8126995312912777
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.19071022533262344,
+          "recovery": 0.1822542416356746,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.13516433903820063,
+          "recovery": 0.4733301845950393,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.04720640447039513,
+          "recovery": 0.8126995312912777,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.4946964285578755,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "theirs",
+      "stage": "final",
+      "seed": 139,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed139/weights/weights_theirs_final_139.npz",
+      "recovery": 0.4542484125632241,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.1508461764686899,
+        "recovery": 0.4542484125632241,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.19408831127819115,
+        "moderate": 0.44046881854212505,
+        "good": 0.7371179888558403
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.18795034787065953,
+          "recovery": 0.19408831127819115,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.14359786739413893,
+          "recovery": 0.44046881854212505,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.06625565131585931,
+          "recovery": 0.7371179888558403,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.4550212800484452,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "theirs",
+      "stage": "final",
+      "seed": 151,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed151/weights/weights_theirs_final_151.npz",
+      "recovery": 0.3849911872730498,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.16998892908425373,
+        "recovery": 0.3849911872730498,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.15219871974479737,
+        "moderate": 0.416512173563065,
+        "good": 0.6321648209483185
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.1977196109438235,
+          "recovery": 0.15219871974479737,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.14974609155556667,
+          "recovery": 0.416512173563065,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.0927075963048312,
+          "recovery": 0.6321648209483185,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.3860340926191294,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "theirs",
+      "stage": "final",
+      "seed": 163,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed163/weights/weights_theirs_final_163.npz",
+      "recovery": 0.420043486921995,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.16030044534880195,
+        "recovery": 0.420043486921995,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.13648789912995385,
+        "moderate": 0.40785559878346567,
+        "good": 0.694286323833531
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.20138360321644666,
+          "recovery": 0.13648789912995385,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.15196771158047667,
+          "recovery": 0.40785559878346567,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.0770507599299653,
+          "recovery": 0.694286323833531,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.42112490546776205,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "theirs",
+      "stage": "final",
+      "seed": 179,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed179/weights/weights_theirs_final_179.npz",
+      "recovery": 0.3700861443833692,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.17410869489303504,
+        "recovery": 0.3700861443833692,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.11748625414405345,
+        "moderate": 0.3872629798862426,
+        "good": 0.615450085044488
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.205815063679415,
+          "recovery": 0.11748625414405345,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.1572525933809811,
+          "recovery": 0.3872629798862426,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.0969203064444899,
+          "recovery": 0.615450085044488,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.3714247045466719,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "theirs",
+      "stage": "final",
+      "seed": 191,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed191/weights/weights_theirs_final_191.npz",
+      "recovery": 0.4408382774867602,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.15455274855895906,
+        "recovery": 0.4408382774867602,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.15757003967005556,
+        "moderate": 0.4334884081623337,
+        "good": 0.7512957775806632
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.19646694087760566,
+          "recovery": 0.15757003967005556,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.14538931723159434,
+          "recovery": 0.4334884081623337,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.0626823424306551,
+          "recovery": 0.7512957775806632,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.4421126178429433,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "theirs",
+      "stage": "final",
+      "seed": 211,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed211/weights/weights_theirs_final_211.npz",
+      "recovery": 0.3663407702738275,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.17514391930075998,
+        "recovery": 0.3663407702738275,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.10621410266109677,
+        "moderate": 0.35358738057370254,
+        "good": 0.6369759837755826
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.20844389363947258,
+          "recovery": 0.10621410266109677,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.1658950862477783,
+          "recovery": 0.35358738057370254,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.0914950115208072,
+          "recovery": 0.6369759837755826,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.3677880998463059,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    },
+    {
+      "arm": "theirs",
+      "stage": "final",
+      "seed": 223,
+      "source": "/pscratch/sd/j/josephrb/campaign-20260920/final/theirs-seed223/weights/weights_theirs_final_223.npz",
+      "recovery": 0.40217539169129524,
+      "aggregate": {
+        "injected_l1": 0.2764008020153768,
+        "residual_l1": 0.1652392012010545,
+        "recovery": 0.40217539169129524,
+        "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+        "bounded_above_by_one": true,
+        "below_zero_means_worse_than_doing_nothing": true
+      },
+      "recovery_by_region": {
+        "low_acceptance": 0.1745615648541724,
+        "moderate": 0.40119934799317203,
+        "good": 0.6289484735979427
+      },
+      "region_detail": {
+        "low_acceptance": {
+          "injected_l1": 0.2332145699099517,
+          "residual_l1": 0.19250426963967776,
+          "recovery": 0.1745615648541724,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "moderate": {
+          "injected_l1": 0.25663961572255983,
+          "residual_l1": 0.1536759692254506,
+          "recovery": 0.40119934799317203,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        },
+        "good": {
+          "injected_l1": 0.25203569855346986,
+          "residual_l1": 0.09351823065607379,
+          "recovery": 0.6289484735979427,
+          "convention": "L1 = 2 x total variation; 0 = did nothing, 1 = reached target",
+          "bounded_above_by_one": true,
+          "below_zero_means_worse_than_doing_nothing": true
+        }
+      },
+      "unassigned_fraction": 0.0,
+      "overshoot_projection": 0.40277235759918856,
+      "overshoot": false,
+      "wrong_direction": false,
+      "worse_than_doing_nothing": false
+    }
+  ],
+  "scope_note": "PET is diagnostic method development. This report is not a publication adoption, a covariance, a systematic or a central-value change."
+}
