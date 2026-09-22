@@ -139,3 +139,49 @@ Recorded because it is the durable part, and because the change landed regardles
   inputs, exit 0, silently. Guarded at `e2632ac7`.
 
 **Co-Authored-By: Claude Opus 5 (1M context)**
+
+---
+
+## 6. ⚠ WHERE THE SPENT COMPUTE LIVES — **do not prune this worktree**
+
+§4 says *"the expensive part is already spent and is PRESERVED"* and then does not say **where**,
+which makes the sentence useless to the person who acts on it. Fixed here.
+
+| | |
+|---|---|
+| worktree | `/pscratch/sd/j/josephrb/MINERvA-OmniFold-l2-20260921` — a **detached** worktree of the deployed repo at `c05c64a9`, registered in `git -C /pscratch/sd/j/josephrb/MINERvA-OmniFold worktree list` |
+| ten member unfolds | `<worktree>/nd-unfolding/mii/member_k001200/active_universe_5d/standard/unfolds/` — 10 ROOT + 10 receipt pairs |
+| member manifest | `…/standard/evidence/p4_standard_manifest.json`, sha256 `aa5c22226f2ac84b…` |
+| cost to recreate | ~10 × 23 min of CPU, through a saturated queue (11 idle nodes of 2853 when this ran) |
+
+**The ten, pinned so a later lane can prove it is reading the same products:**
+
+| tag | `sha256` (first 16) |
+|---|---|
+| `BeamAngleX_0` | `e6a8bbd1c74be79d` |
+| `BeamAngleX_1` | `841777ee82f83437` |
+| `BeamAngleY_0` | `8da8b3b95116d1ec` |
+| `BeamAngleY_1` | `1c90395d11cb28ff` |
+| `Muon_Energy_MINERvA_0` | `486c044d8a099046` |
+| `Muon_Energy_MINERvA_1` | `bb9cec0f0505c9d8` |
+| `Muon_Energy_MINOS_0` | `676a9a9996d31d9c` |
+| `Muon_Energy_MINOS_1` | `ac8d1bf9dfa68559` |
+| `MuonResolution_0` | `61eaa01773b5b172` |
+| `MuonResolution_1` | `3407132f0287f151` |
+
+⚠ **`git worktree prune`, a scratch purge, or `git worktree remove` on this path destroys all of
+it**, and the products are gitignored so nothing else holds a copy. The directory name looks
+disposable and dated; it is not. It is also NOT in the deployed checkout, which stays at
+`32e403b8` because PET's array `58692544` runs from it.
+
+**Its data inputs are symlinks into the deployed tree** — `merged`, `unfolds`,
+`unfolds__SUPERSEDED_20260718`, `products/5d`, `products/4d`, `MINERvA101/opt` — linked at the
+granularity where **no tracked file exists**, so the worktree's own tracked content is unaffected.
+A first attempt linked the parent directories instead and `ln -sfn` nested each link *inside* the
+existing directory; that is why the links are one level deeper than they look.
+
+**The scripts for stages 4–6 are written and staged on the cluster** at the worktree root:
+`sbatch_l2_debug.sh`, `l2_stages_2_to_4.sh`, `l2_stage5_assemble.sh`, `l2_stage6_measure.sh`.
+⚠ Stage 6 **re-derives the graded pair's `s_proj` as a control first** and declares the
+released-lateral number uninterpretable unless the control reproduces `6.145388143592225%` to
+`1e-12`. Do not read a released-lateral number that comes with a failed control.
