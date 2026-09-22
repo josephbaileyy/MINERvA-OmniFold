@@ -185,9 +185,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   gathered for is retained in full: noise must fall with `N`, this did not between `N = 40` and
   `N = 160`, so the failing leg is not reporting its own resampling noise. ⚠ **`M1`'s `6.145%`
   FAIL is untouched**, and §5's **second** bullet and its *"nothing to price"* conclusion are
-  **NOT** withdrawn. Enumerates all **8** sites — `EVIDENCE` §5, `AGENTS.md:88`, four in
-  `docs/analysis-note/` (the last again being `values.tex`'s **comment**), `REPORT-20260920` `L1`
-  and `HANDOFF-20260921-gbdt-remaining` `L1`. ⚠ **Sites 7 and 8 were missed by the first draft of
+  **NOT** withdrawn. Enumerates all **9** sites — `EVIDENCE` §5, `AGENTS.md:88`, four in
+  `docs/analysis-note/` (the last again being `values.tex`'s **comment**), `REPORT-20260920` `L1`,
+  `HANDOFF-20260921-gbdt-remaining` `L1`, and `nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`.
+  ⚠ **Site 9 was missed by the sweep itself and is the sharpest of the three method notes:** the
+  sweep declared itself *"by CLAIM, not by wording"* while its command was scoped
+  `docs/ AGENTS.md`, so an `nd-unfolding/` status file was never in the hit set. §4c records the
+  instrument that found it — **a claim's blast radius is the file list of the commit that spread
+  it** (`git log -S` for the sha, `git show --name-only` for the population); `e7f8f365`'s own
+  subject named *"the status files"* the glob omitted, and of its seven files four got the claim
+  while three got the correction. §4c also records that **3 of the 4 tree-wide sweep hits are
+  quotations by design**, so a hit count is not a defect count. ⚠ **Sites 7 and 8 were missed by the first draft of
   its own table and found by the sweep, then MISDESCRIBED their own action until the owning lane
   opened the diff** — the record keeps both on the page as method notes: run the sweep before
   writing the enumeration, and write each row from `git diff` afterwards. §4a cites

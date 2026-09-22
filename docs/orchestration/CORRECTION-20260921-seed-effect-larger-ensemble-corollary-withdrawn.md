@@ -97,6 +97,7 @@ bullet and on the fact that the bound was fixed before production, not on the fi
 | 6 | `docs/analysis-note/values.tex` block (2) comment | governed `\seedEffect`; named the over-statement but acted on nothing | now carries the scope caveat and the per-`N` means as separate macros |
 | 7 | `REPORT-20260920-scalar5d-uncertainty-completion.md` `L1` (at `7257b255`; no line number, the edit moved it) | *"a property of the estimator and a larger ensemble would not reduce it"* | **substantive sentence REPLACED** with *"a property of the estimator rather than of the ensemble's resampling noise"*, **and** an inline `⚠ CORRECTED` block added. Every measured number left standing |
 | 8 | `HANDOFF-20260921-gbdt-remaining.md` `L1` (at `4e960436`; no line number, the edit moved it) | *"so it is a property of the estimator and **a larger ensemble would not reduce it**"* | **substantive sentence REPLACED** with the same wording as site 7, **and** an inline `⚠ CORRECTED` block added. ⚠ **Another lane's live document.** The owning GBDT lane re-derived the withdrawal from `state/SEED-EFFECT-20260920.json` independently, accepted it, and is **keeping the replacement**, judging that it states the retained inference better than the original. **That acceptance is what makes the edit acceptable** — a silent substantive change to another lane's live record would not have been, whatever its quality |
+| 9 | `nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`, the `⚠ FOUR MEASUREMENTS TRAVEL WITH IT` block (planted at `e7f8f365`) | *"so it is a property of the estimator and a larger ensemble would not reduce it"* | **substantive sentence REPLACED** with the same wording as sites 7–8, **and** an inline `⚠ M1 CORRECTED` block added, 2026-09-21. ⚠ **Found only after this table read "all 8 sites" — see §4c.** ⚠ **This file was already being maintained:** the asserting sentence sat three lines above an existing `⚠ M3 CORRECTED 2026-09-20` block in the same paragraph, so a previous withdrawal *did* reach this file. It is **not** an unmaintained corner that was missed |
 
 **`values.tex` is site 6 and is again the one a search for the claim would miss**, because it is a
 LaTeX comment above a macro rather than rendered text — the same trap
@@ -113,6 +114,36 @@ rewrite"* onward as fact without opening the diff, so a second pair of eyes repr
 instead of catching it. **A reviewer taking a description of a diff on trust is not a check on that
 description.** The fix is mechanical and worth stating as a rule: **after editing, `git diff` the
 file and write the row from the diff.**
+
+⚠ **SITE 9 WAS MISSED BY THE SWEEP ITSELF, AND THE CAUSE IS A POPULATION CLAIM THIS RECORD DID NOT
+EARN (§4c).** The sweep paragraph below opens *"swept by CLAIM, not by wording"*, but the command was
+`grep -rn … docs/ AGENTS.md` — scoped by a **directory glob**. `nd-unfolding/…` was therefore never
+in the hit set to be classified: site 9 was not judged wrongly, it was **never seen**. A
+claim-scoped sweep under a path-scoped command is exactly the shape this record exists to correct,
+committed inside the record itself.
+
+**THE INSTRUMENT THAT FOUND IT, and it generalises past this claim.** A claim's blast radius is the
+**file list of the commit that spread it** — not a guess about which directories are relevant:
+
+    git log -S '<the claim>' --reverse -- .      # the planting sha
+    git show --name-only <sha>                   # its population
+
+Here that is `e7f8f365`, whose own subject line is *"The adoption reaches the ledger, the front door
+**and the status files**"*. Seven files: `AGENTS.md`, `KNOWN_ISSUES.md`, `VALIDATION_LEDGER.md`,
+`docs/ESTIMATOR_REGISTRY.md`, `OPERATIVE-SHEET-scalar5d.md`, `ND_OMNIFOLD_STATUS.md`,
+`CORRECTED_UQ_PRODUCTION_STATUS.md`. Six are clean; one asserted. **Four surfaces received the
+claim and three received the correction, and the planting commit's subject named the surface class
+the sweep's glob omitted.** Found by the reviewing lane (`fixer reviewer`) on a tree-wide re-run of
+the discriminator; confirmed independently by this lane over all tracked paths.
+
+⚠ **A COUNT OF SWEEP HITS IS NOT A COUNT OF DEFECTS, measured here.** The tree-wide sweep returns
+four *apparent* assertions after the `⚠ CORRECTED` lines and blockquotes are stripped. Opening each:
+`CATALOG.md` quotes the claim under the word **WITHDRAWN**; this record's own §4 quotes it in the
+*"what it said"* column; `EVIDENCE-20260920` §5 is **deliberately left standing** beneath its pointer,
+which is site 1's recorded disposition. **Three of the four are by design.** Only
+`CORRECTED_UQ_PRODUCTION_STATUS.md` was real. A phrase search cannot separate an assertion from its
+own retraction when quoting-to-prohibit is house style — the discriminator is the **sentence ending**
+(`estimator and` versus `estimator rather than of the ensemble's`), plus the pointer count.
 
 ⚠ **SITES 7 AND 8 WERE ALSO MISSED BY THE FIRST DRAFT OF THIS TABLE, AND THAT MISS IS INSTRUCTIVE
 ENOUGH TO RECORD RATHER THAN QUIETLY REPAIR.** This table was written from the sites the

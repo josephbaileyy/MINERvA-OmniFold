@@ -11,9 +11,18 @@ agreement. `VALIDATION_LEDGER.md` `VL142`–`VL144`.
 **⚠ FOUR MEASUREMENTS TRAVEL WITH IT AND THEY ARE NOT CAVEATS:** `s_proj = 6.145%` against a `5%`
 bound fixed before production (`M(ii)` **branch 5, NOT MET — PER-BIN**, on a fully valid campaign);
 that effect is **flat in `N`** at `6.04% ± 0.39%` over `N = 40–160` while the resampling floor falls
-(`p = 0.000` vs `1.467`), so it is a property of the estimator and a larger ensemble would not
-reduce it; five bands are **seed-pinned and unprobed**; and the seed moves the **central values** by
+(`p = 0.000` vs `1.467`), so it is a property of the estimator rather than of the ensemble's
+resampling noise; five bands are **seed-pinned and unprobed**; and the seed moves the **central values** by
 up to `6.02%` of their own `σ` on the 42 destinations, up to `49.8%` per individual 5D bin.
+**⚠ `M1` CORRECTED 2026-09-21 — *"a larger ensemble would not reduce it"* is WITHDRAWN as an
+inference.** The flatness measurement above stands exactly as stated; what does **not** follow is the
+statement about untested ensemble sizes, because the `40`- and `80`-throw points are **nested subsets
+of the same 160 throws at ONE seed pair** (`docs/orchestration/state/SEED-EFFECT-20260920.json`, key
+`seed_effect_same_throws`: `Q1`–`Q4` at `N = 40`, `HA`/`HB` at `N = 80`). What is retained is that
+statistical noise must fall with `N` and this did **not** fall between `N = 40` and `N = 160`, so the
+failing leg is **not** reporting the statistic's own resampling noise. **`M1`'s `6.145%` against the
+`5%` bound is a FAIL and is untouched** — it is measured directly against the bound and never rested
+on this corollary. `CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`.
 **⚠ `M3` CORRECTED 2026-09-20 — *"it is a LOWER bound"* is WITHDRAWN.** `s_proj` is a maximum over a
 functional set, not a sum of nonnegative component magnitudes, so releasing the five pinned bands
 could move the total **either way**. The measurement (`26.0%` of `√Tr`, zero movement by
