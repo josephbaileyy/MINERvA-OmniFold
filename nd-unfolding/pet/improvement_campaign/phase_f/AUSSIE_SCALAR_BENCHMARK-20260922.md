@@ -48,19 +48,48 @@ Injected signal: `[-.016, -.014, -.025, -.036, -.032, -.015, +.138]`
 | OmniFold HGB (k=3) | `+.012 +.010 +.018 +.030 +.031 +.018 -.119` |
 | **AUSSIE (seed 1)** | `+.002 +.001 +.002 +.005 +.008 +.012 -.030` |
 
-### Runtimes
+### Ablation Results
 
-*   **OmniFold (20 iterations)**: Generally dominates time due to sequential dependency.
-*   **AUSSIE**: Highly efficient. Step 1 and Step 2 run exactly once. Recorded runtimes: 8.0s, 9.7s, 7.0s per complete run.
+| Method | Miss Handling | k or lambda | Aggregate | Low | Moderate | Good | Top-Bin Res |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| AUSSIE | penalty | 0 | 0.849 | 0.729 | 0.910 | 0.923 | -0.020 |
+| AUSSIE | penalty | 0.01 | 0.847 | 0.728 | 0.908 | 0.923 | -0.021 |
+| AUSSIE | penalty | 0.1 | 0.848 | 0.729 | 0.909 | 0.923 | -0.020 |
+| AUSSIE | penalty | 1 | 0.792 | 0.688 | 0.879 | 0.891 | -0.029 |
+| AUSSIE | penalty | 10 | 0.792 | 0.685 | 0.880 | 0.894 | -0.029 |
+| AUSSIE | penalty | 100 | 0.767 | 0.641 | 0.867 | 0.889 | -0.032 |
+| AUSSIE | penalty | 1000 | 0.648 | 0.388 | 0.783 | 0.884 | -0.049 |
+| OmniFold | carry | 1 | 0.245 | 0.009 | 0.241 | 0.454 | -0.104 |
+| OmniFold | carry | 3 | 0.411 | 0.033 | 0.475 | 0.735 | -0.081 |
+| OmniFold | carry | 5 | 0.459 | 0.051 | 0.570 | 0.792 | -0.075 |
+| OmniFold | carry | 10 | 0.511 | 0.104 | 0.659 | 0.824 | -0.068 |
+| OmniFold | carry | 20 | 0.543 | 0.160 | 0.681 | 0.821 | -0.063 |
+| OmniFold | carry | 50 | 0.582 | 0.226 | 0.701 | 0.819 | -0.058 |
+| OmniFold | eff | 1 | 0.621 | 0.442 | 0.657 | 0.720 | -0.052 |
+| OmniFold | eff | 3 | 0.779 | 0.628 | 0.803 | 0.841 | -0.031 |
+| OmniFold | eff | 5 | 0.797 | 0.664 | 0.823 | 0.851 | -0.028 |
+| OmniFold | eff | 10 | 0.821 | 0.683 | 0.834 | 0.865 | -0.025 |
+| OmniFold | eff | 20 | 0.791 | 0.634 | 0.826 | 0.841 | -0.029 |
+| OmniFold | eff | 50 | 0.783 | 0.608 | 0.845 | 0.853 | -0.030 |
+
+#### Mean Learned R(z) in Low Acceptance (Misses vs Passes)
+| Penalty (lambda) | Misses | Passes |
+| :--- | :--- | :--- |
+| 0 | 1.151 | 1.196 |
+| 0.01 | 1.150 | 1.195 |
+| 0.1 | 1.151 | 1.196 |
+| 1 | 1.096 | 1.144 |
+| 10 | 1.098 | 1.147 |
+| 100 | 1.078 | 1.132 |
+| 1000 | 1.030 | 1.087 |
 
 ## 4. Verdict
 
-**VERDICT: SUPPORTS advancing to AUSSIE evaluation with the PET backbone.**
+**VERDICT: CONFOUNDED. AUSSIE'S GAIN IS PRIMARILY EFFICIENCY CORRECTION, NOT THE NON-ITERATIVE FORMULATION.**
 
 **Evidence:**
-1.  **Dramatically improved recovery:** AUSSIE surpasses not only OmniFold at matched iterations (0.791 vs 0.412) but also outperforms the best converged result of OmniFold (0.524) and Binned IBU (0.683).
-2.  **Breakthrough in low-acceptance regions:** OmniFold and IBU struggle immensely in the low-acceptance region (recovery 0.136 and 0.040, respectively). AUSSIE elevates recovery in this problematic region to **~0.688**, proving that the limitation is fundamentally algorithmic (iteration/optimization bounds), not informational.
-3.  **Tail bin correction:** The persistent structural undershoot in the highly displaced top `E_avail` bin (-0.119 for OmniFold, -0.073 for IBU) is reduced to just -0.030 by AUSSIE.
-4.  **No sequential bottleneck:** AUSSIE is inherently parallelizable over epochs/batches and avoids the iterative degradation, eliminating the ambiguity in choosing a stopping threshold $k$.
+1. **Miss handling dominates:** When OmniFold is allowed to efficiency-correct misses (training step 2 on reco-passing events only and applying $R$ to all), its recovery jumps drastically, matching or exceeding AUSSIE. OmniFold (`eff`, k=50) achieves 0.783, compared to AUSSIE (`lambda=0`) at 0.849.
+2. **Non-iterative formulation is not the breakthrough:** When miss handling is matched to the B1 baseline by enforcing the carry-misses assumption (AUSSIE with `lambda=1000`), AUSSIE's recovery collapses to 0.648. This is comparable to or worse than OmniFold (`carry`, k=50) which reaches 0.582. The non-iterative formulation itself does not confer a significant advantage.
+3. **Extrapolation to misses:** As lambda approaches 0, AUSSIE's learned $R(z)$ on misses strongly tracks the $R(z)$ on passes in the low-acceptance region (e.g. ~1.17 for misses vs ~1.21 for passes). With high lambda, misses are forced back to 1.0. The unconstrained extrapolation is the source of the apparent improvement, perfectly mirroring the behaviour of efficiency-corrected IBU from Phase B1.
 
-The bounded scalar evidence strongly indicates that AUSSIE's single-pass direct objective extracts the necessary transfer function far more effectively than iterative expectation-maximization. Scaling this to the PET backbone is the recommended next step.
+The initial evaluation was confounded by an implicit change in the uncertainty model (efficiency correction vs carry-misses). The non-iterative method itself does not solve the low-acceptance recovery issue under the required historical constraints. PET evaluation of AUSSIE is **not justified** on this basis.

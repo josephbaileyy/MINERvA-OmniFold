@@ -113,7 +113,7 @@ def train_classifier(X_sim, X_dat, w_sim, w_dat, epochs=50, batch_size=1024, lr=
         
     return model, mean, std
 
-def train_unfolder(classifier, cls_mean, cls_std, Z_sim_pass, X_sim_pass, w_sim_pass, Z_sim_miss, w_sim_miss, epochs=50, batch_size=2048, lr=1e-3, seed=0):
+def train_unfolder(classifier, cls_mean, cls_std, Z_sim_pass, X_sim_pass, w_sim_pass, Z_sim_miss, w_sim_miss, lambda_miss=1.0, epochs=50, batch_size=2048, lr=1e-3, seed=0):
     torch.manual_seed(seed+1)
     
     def transform(x):
@@ -203,7 +203,7 @@ def train_unfolder(classifier, cls_mean, cls_std, Z_sim_pass, X_sim_pass, w_sim_
                 w_m = torch.tensor(w_tr_miss[b_m], dtype=torch.float32)
                 lw_z_m = unfolder(Z_m)
                 # target is R(z) = 1, so log R(z) = 0
-                loss_miss = ((lw_z_m ** 2) * w_m).mean()
+                loss_miss = lambda_miss * ((lw_z_m ** 2) * w_m).mean()
                 loss = loss + loss_miss
                 
             optimizer.zero_grad()
@@ -227,7 +227,7 @@ def train_unfolder(classifier, cls_mean, cls_std, Z_sim_pass, X_sim_pass, w_sim_
             if n_miss > 0:
                 Z_va_m = torch.tensor(Z_va_miss, dtype=torch.float32)
                 w_va_m = torch.tensor(w_va_miss, dtype=torch.float32)
-                val_loss += ((unfolder(Z_va_m) ** 2) * w_va_m).mean()
+                val_loss += lambda_miss * ((unfolder(Z_va_m) ** 2) * w_va_m).mean()
                 
             val_loss = val_loss.item()
             
