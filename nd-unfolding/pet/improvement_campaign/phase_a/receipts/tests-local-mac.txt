@@ -1,0 +1,6 @@
+# local run, 2026-09-22T12:58:40Z, macOS 26.6.2, Python 3.12.2, TF 2.16.2, working tree of commit 3fb56b369bfadba58a6e4b696e2e5177df19a9f4 + the environment skip in test_confirmed_defects.py
+# command: python3 -m pytest -q -rs -p no:cacheprovider test_recipe.py test_authorization_scope.py test_feature_arms.py test_confirmed_defects.py
+........................                                                 [100%]
+=========================== short test summary info ============================
+SKIPPED [1] test_confirmed_defects.py:59: this TensorFlow/Keras cannot build seeded layers: 'float' object cannot be interpreted as an integer
+24 passed, 1 skipped in 2.75s

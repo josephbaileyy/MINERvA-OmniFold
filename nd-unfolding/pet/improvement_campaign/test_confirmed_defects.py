@@ -41,6 +41,23 @@ select_keras_backend()
 tf = pytest.importorskip("tensorflow")
 tf.config.experimental.enable_op_determinism()
 
+
+def _seeded_layers_build() -> str | None:
+    """Some Keras-2 builds (tf_keras 2.16 on Python 3.12) cannot build a layer after
+    `set_random_seed`: `random.randint(1, 1e9)` is a TypeError there. Detect it and skip, so an
+    unusable environment reports SKIPPED rather than failures unrelated to the defects."""
+    try:
+        tf.keras.utils.set_random_seed(0)
+        tf.keras.layers.Dense(1)(np.zeros((1, 1), np.float32))
+    except TypeError as exc:
+        return f"this TensorFlow/Keras cannot build seeded layers: {exc}"
+    return None
+
+
+_UNUSABLE = _seeded_layers_build()
+if _UNUSABLE:
+    pytest.skip(_UNUSABLE, allow_module_level=True)
+
 from annealed_estimator import make_annealed_multifold  # noqa: E402
 from omnifold.dataloader import DataLoader  # noqa: E402
 from omnifold.net import PET  # noqa: E402
