@@ -249,6 +249,23 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   and this run declares `receiving-cells` following the adopted precedent — **a figure would need
   the `declared-dst-cv` variant**, and that declaration has not been made. `M1`–`M4` travel with it;
   no rank is quoted and none has been scanned on this object.
+- [`OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md`](OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md)
+  - **L2's `s_proj` EXISTS AND ITS PAIR IS NOT CODE-COMPARABLE.** Stages 4-6 ran under the
+  `229c43e0…` verifier token. **Control exact**: the graded pair re-measures
+  `s_proj = 6.145388%`, `|diff| = 0.000e+00` against `GRADE-20260920` (requirement `1e-12`), so the
+  harness IS the graded code path. **Released** (five laterals at seed 1242): `s_proj 6.189174%`,
+  `s_agg 0.762704%`, `s_med 0.682292%` — the two legs INSIDE the bound moved most (`+62%`, `+41%`
+  relative) and the failing leg least (`+0.71%`). All five predeclared invalidating conditions hold,
+  including the baseline's 20 digests byte-identical in both jobs. ⚠ **BUT the probe pair fails
+  `footing_ok`, ALONE among ten fields, and NOT on population:** the real `Member.footing()` is
+  **identical** on all three products (`mask eed021e9…`, `rows 61a7c9fd…`, `n_reported 10694`).
+  `z_grade.cross_member_validity` folds code identity in — `footing_ok = bool(footing_ok) and
+  code_agrees` — and the graded members are at `d64257c3` while the rebuild is at `384c2eb1`.
+  ⚠ **STRUCTURAL, not careless:** `z_build` requires `producing_revision == HEAD`, and a build at
+  `d64257c3` dies under the OI-136 guard (job `58358282`), so matching the graded code identity and
+  running at all are mutually exclusive. **The predeclaration's bare `> 5%` row may NOT be claimed**;
+  `M1`'s FAIL is untouched and never rested on this probe. Two stage scripts were repaired — both
+  had never run (`z_grade.MemberProduct` exists at no revision; stage 5 returned `ls`'s status).
 - [`VERDICT-20260922-third-party-review-site9-issue60-s4c.md`](VERDICT-20260922-third-party-review-site9-issue60-s4c.md)
   - **THE THIRD PAIR OF EYES `HANDOFF-20260922` §10 ASKED FOR, on all three objects.** Site 9's fix
   **ACCEPTED** (sentence replaced with the sites 7–8 wording, inline `⚠ M1 CORRECTED` block present,

@@ -1,0 +1,146 @@
+# OUTCOME 2026-09-22 — L2's `s_proj` IS measured, and the pair it comes from FAILS the grader's own comparability precondition
+
+**CITABLE FOR:** that the L2 released-lateral `s_proj` was computed, its control reproduced the
+graded statistic exactly, and the member pair fails `footing_ok` for a measured, structural reason.
+**NOT CITABLE FOR:** a discharge of `M1`, a regrade of cause 3, any significance, or any change to
+`3d7465f6…`. ⚠ **AND NOT CITABLE FOR THE PREDECLARATION'S BARE `> 5%` ROW** — see §3.
+
+| | |
+|---|---|
+| unblocked by | `P4_VERIFIER_PASS = 229c43e0…` (`20260922T053047Z-gbdt-cold-start-verdict.json`) |
+| stages | 4 in job `58735444` (29:13, walled after completing), 5 and 6 in `58738058` (18:00) |
+| L2 product | `/pscratch/sd/j/josephrb/z2m-products/member_k001200_L2laterals/z-cv.npz` |
+| its `sha256` | `48713676fbce070527caa76ff559a34d2b83a34585d60cd13a36f9bd9410dae9`, `887,229,279` B |
+| statistics receipt | `…/l2-statistics.json`; validity detail `…/l2-validity-detail.json` |
+
+## 1. THE NUMBER, AND THE CONTROL THAT MAKES IT READABLE
+
+The control runs first and is not optional: it re-measures the **already-graded** pair and must
+reproduce `GRADE-20260920`'s `s_proj` to `1e-12`.
+
+| statistic | pinned (graded pair) | released (five laterals at seed 1242) | Δ | relative |
+|---|---:|---:|---:|---:|
+| `s_agg` | `0.471447%` | `0.762704%` | `+0.291257` pp | `+61.78%` |
+| `s_med` | `0.485229%` | `0.682292%` | `+0.197063` pp | `+40.61%` |
+| **`s_proj`** | **`6.145388%`** | **`6.189174%`** | `+0.043786` pp | `+0.71%` |
+
+**CONTROL: `|measured − recorded| = 0.000e+00`** against the recorded
+`0.06145388143592225` — exact, against a `1e-12` requirement. **The harness is the graded code
+path**, which also validates the two repairs §4 records.
+
+⚠ **The two legs that were INSIDE the `5%` bound moved most in relative terms and stay far inside;
+the failing leg moved least.** Releasing the five seed-pinned bands did **not** produce a large
+change in `s_proj`.
+
+## 2. EVERY PREDECLARED INVALIDATING CONDITION, CHECKED
+
+`PREDECLARATION-20260921` §6 lists five. All five hold:
+
+| condition | measured |
+|---|---|
+| the ten new unfolds all at the **same** seed `1242` | ✅ **one** distinct `config_hash` across all ten receipts, `4809b4ad399f999c…` — distinct from the baseline's `4b41fab90a83df08…`; manifest `est_seed 1242`, `est_seed_offset 1200` |
+| nothing written outside the member directory | ✅ products under `mii/member_k001200/…` only |
+| **the baseline's twenty files byte-identical before and after** | ✅ verified by digest in **both** jobs: *"BASELINE UNTOUCHED: all 20 digests byte-identical"*, population checked as 20/20 so the comparison is non-vacuous |
+| exactly ten endpoint ROOTs, no extras | ✅ ten |
+| the grade computed over the two declared members only | ✅ `[0, 1200]`, `offsets_match_K` PASS |
+
+Also: the member receipts pin `unfold_blob 662951e0…` — the **current** driver — so unlike the ten
+baseline receipts (which pin the superseded `dc74c38f…`) they validate against today's tree.
+
+## 3. ⚠ THE PAIR FAILS `footing_ok`, AND THE REASON IS CODE IDENTITY, NOT PHYSICS
+
+`l2_stage6_measure.sh` printed `validity all-true : False` for the probe and `True` for the
+control — **and its verdict branch does not consult that flag**, so it printed *"FAIL CONFIRMED"*
+under a failed precondition. Exactly one of the ten fields fails:
+
+    CONTROL: all ten PASS
+    PROBE:   footing_ok *** FAIL ***    (the other nine PASS)
+
+**It is not a mask, row-order or population difference.** Calling the real `Member.footing()` on
+all three products returns **identical dicts** — `mask_sha256 eed021e9…`, `row_order_sha256
+61a7c9fd…`, `n_reported 10694` for every one. The failure enters later:
+
+    z_grade.py, cross_member_validity:   footing_ok = bool(footing_ok) and code_agrees
+
+`code_agrees` requires both members' `code_identity.revision` **and** `import_closure_digests` to
+match. Measured:
+
+| product | `code_identity.revision` | import closure |
+|---|---|---|
+| `member_k000000` | `d64257c3947a239f…` | identical to m1200 |
+| `member_k001200` (graded) | `d64257c3947a239f…` | identical to m0 |
+| **`…_L2laterals`** | **`384c2eb17e94a9b7…`** | **differs** |
+
+→ `code_agrees(m0, m1200) = True`; **`code_agrees(m0, L2) = False`.**
+
+**This is not incidental bookkeeping. `z_grade`'s own comment says why the fold is deliberate:**
+*"two members built by different code are NOT COMPARABLE, so the campaign is inconclusive, and the
+only branch that says 'inconclusive, report no magnitude' is branch 1."*
+
+### 3a. It is STRUCTURAL: the probe as designed cannot produce a code-comparable pair
+
+The divergence is forced, not careless:
+
+1. `z_build._code_identity` **requires** `manifest["producing_revision"] == git rev-parse HEAD`.
+2. The graded members were built at `d64257c3`. To match them, the rebuild would have to execute
+   at `d64257c3`.
+3. `l2_stage5_assemble.sh`'s own header records that a build at `d64257c3` **dies under the OI-136
+   guard** (job `58358282`), because `z_build` there lacks the `--no-ext-diff` the guard requires.
+
+So matching the graded code identity and running at all are mutually exclusive with this
+toolchain. ⚠ **The prior lane anticipated the PROVENANCE difference** — *"the consequence is a
+PROVENANCE difference between the two members' receipts … stated rather than hidden"* — **but not
+that `cross_member_validity` folds code identity into `footing_ok`, which turns a disclosed
+provenance note into a failed comparability precondition.**
+
+### 3b. What that does to the outcome map
+
+`PREDECLARATION-20260921` §4 fixed three rows: `> 5%` confirms; `< 5%` licenses nothing; *"cannot
+be computed"* is an inability. **The measured state is none of them cleanly.** The number was
+computed and is reproducible; the control is exact; but the grader's own branch-1 precondition for
+treating the two members as comparable is **not met**.
+
+**So the `> 5%` row may NOT be claimed bare.** The defensible statement is:
+
+> With the five seed-pinned lateral bands released at seed 1242, `s_proj` measured `6.189174%`,
+> above the `5%` bound and slightly above the pinned `6.145388%` — **on a member pair whose code
+> identities differ, which the grading criterion classifies as not comparable.** The control
+> reproduces the graded statistic exactly, so the harness is sound and the number is what the code
+> computes; what is unestablished is that the two members may be compared at all.
+
+**It does not confirm `M1`'s FAIL in the predeclaration's strong sense, and it certainly does not
+weaken it** — `M1`'s `6.145388%` is measured directly against the bound on a fully valid campaign
+and never depended on this probe.
+
+## 4. TWO INSTRUMENTS WERE REPAIRED, AND NEITHER HAD EVER RUN
+
+Both stage scripts were unrunnable as written; stage 4 had been gated, so neither was ever reached.
+
+- **`l2_stage5_assemble.sh`** copied the graded manifest verbatim, leaving
+  `producing_revision: d64257c3`, which `z_build` refuses against HEAD →
+  `{"construction_status": "FAILED", "reason": "producing_revision must equal the executing
+  checkout's HEAD"}`. **Repaired** (`_v2`) to stamp the executing HEAD — which is what the script's
+  own header already said it was doing, and which is also the direct cause of §3.
+  It also **ended on `ls`, so its exit status was `ls`'s**: a FAILED `z_build` reported success to
+  every caller. Measured on job `58735444`: `z_build rc=1`, script `rc=0`. Repaired to propagate.
+- **`l2_stage6_measure.sh`** called `z_grade.MemberProduct`, which **exists at no revision** — not
+  at `c05c64a9` where the script was written, not at HEAD. The class is `Member`, with exactly the
+  `(product, receipt_path, expect_variant)` signature the script passes. **Repaired** (`_v2`).
+
+⚠ **The originals are left in place unmodified** as the record of what was predeclared; the repairs
+are `_v2` copies. ⚠ **This lane authored both repairs**, so it is not an independent checker of
+them — what stands in for that here is the control, which reproduces the graded `s_proj` to exactly
+`0.000e+00` and could not do so through a harness that had been altered in substance.
+
+## 5. What this does NOT authorize
+
+- It does **not** regrade `M(i)`, `UNRESOLVED` on `4c` for a **permanent** predeclaration failure.
+- It does **not** regrade cause 3, which is not discharged for the adopted bytes.
+- It does **not** license any generator significance.
+- It does **not** move `3d7465f6…`, and it does not touch a central value.
+- `M1`–`M4` travel unchanged; `M2`'s *"a larger ensemble would not reduce it"* and `M3`'s
+  *"lower bound"* remain **WITHDRAWN**.
+- ⚠ **One seed pair.** `s_proj` is a **maximum** over the declared functional set, so this is one
+  point of that maximum and the seed-pair distribution remains unmeasured.
+
+**Co-Authored-By: Claude Opus 5 (1M context)**

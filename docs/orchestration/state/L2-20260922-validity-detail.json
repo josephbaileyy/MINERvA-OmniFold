@@ -1,0 +1,32 @@
+{
+  "CONTROL_graded_pair": {
+    "all_true": true,
+    "fields": {
+      "all_members_finite": true,
+      "cv_held_fixed": true,
+      "digests_agree": true,
+      "footing_ok": true,
+      "identities_pass": true,
+      "notes": true,
+      "offset_declared_nonzero": true,
+      "offsets_match_K": true,
+      "partition_agrees": true,
+      "product_digests_distinct": true
+    }
+  },
+  "PROBE_released_laterals": {
+    "all_true": false,
+    "fields": {
+      "all_members_finite": true,
+      "cv_held_fixed": true,
+      "digests_agree": true,
+      "footing_ok": false,
+      "identities_pass": true,
+      "notes": true,
+      "offset_declared_nonzero": true,
+      "offsets_match_K": true,
+      "partition_agrees": true,
+      "product_digests_distinct": true
+    }
+  }
+}
