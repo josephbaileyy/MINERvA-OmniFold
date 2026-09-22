@@ -14,6 +14,7 @@ Report: `SCALAR_REFERENCES-20260922.md`. Machine-readable results: `results/`. R
 | `features.py` | the named input sets (reco side refuses truth columns) |
 | `run_ibu.py` | binned references vs k = 1..50 beside the reference curve |
 | `run_scalar_omnifold.py` | scalar OmniFold, one (inputs, model, seed) task per array index, iterations 1..20 |
+| `run_anchors.py` | oracle truth-level push (the injected function itself) = the closure's sampling-noise ceiling; identity push; historical pushes |
 | `run_truth_learnability.py` | truth-only learnability of the known tilt on held-out events (a learnability diagnostic, not a bound) |
 | `sbatch_scalar.sh` | guarded (`mnv_guarded_run.py`) CPU launcher from a clean pinned checkout |
 | `test_scalar_references.py` | toys with known answers; bit-equality with the historical scorer; historical blob check |
@@ -40,6 +41,8 @@ sbatch --cpus-per-task=8 --mem=16G --time=00:30:00 --output=$T/slurm-%j.out $L $
   run_ibu.py --populations $T/prep/populations.npz --iterations 50 --output $T/ibu/ibu.json
 sbatch --cpus-per-task=16 --mem=24G --time=02:00:00 --output=$T/slurm-%j.out $L $C $P $T/learn $SHA \
   run_truth_learnability.py --populations $T/prep/populations.npz --output $T/learn/truth_learnability.json
+sbatch --cpus-per-task=4 --mem=16G --time=00:20:00 --output=$T/slurm-%j.out $L $C $P $T/anchors $SHA \
+  run_anchors.py --populations $T/prep/populations.npz --output $T/anchors/anchors.json
 # 3. scalar OmniFold: {muon, muon_had} x {hgb, mlp} x 3 seeds, + muon_eavail x hgb x 3 seeds; 20 iterations each
 sbatch --array=0-14 --cpus-per-task=16 --mem=24G --time=05:00:00 --output=$T/slurm-%A_%a.out $L $C $P \
   $T/omnifold $SHA run_scalar_omnifold.py --populations $T/prep/populations.npz --task-index ARRAY_TASK \

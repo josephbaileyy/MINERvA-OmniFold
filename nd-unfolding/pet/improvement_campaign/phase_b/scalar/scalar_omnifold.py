@@ -159,16 +159,24 @@ class HGBRatio:
 
 class MLPRatio:
     """A small sklearn MLP trained epoch by epoch with early stopping on the WEIGHTED validation
-    log-loss and the best epoch restored (the engine's EarlyStopping(val_loss,
-    restore_best_weights)). Inputs are standardized with statistics frozen at the first fit, so a
-    warm start sees the same coordinates at every iteration."""
+    log-loss and the best epoch restored. (The historical engine's EarlyStopping never fired --
+    patience 10 > 8 epochs -- so each PET fit handed on its LAST epoch; this reference is meant to
+    be a well-converged scalar learner instead, and says so.) Inputs pass through ``transform``
+    ("slog1p" = sign(x) log(1+|x|), default, because E_avail / p_parallel / q3 are heavy-tailed and a
+    standardized raw coordinate crowds the bulk into a sliver; "raw" = none) and are then
+    standardized with statistics frozen at the first fit, so a warm start sees the same coordinates
+    at every iteration."""
 
     def __init__(self, seed: int, hidden: tuple[int, ...] = (64, 64), lr: float = 1e-3,
                  batch_size: int = 1024, max_epochs: int = 30, patience: int = 4,
-                 alpha: float = 1e-5) -> None:
+                 alpha: float = 1e-5, transform: str = "slog1p") -> None:
         from sklearn.neural_network import MLPClassifier
+        if transform not in ("slog1p", "raw"):
+            raise ValueError(f"unknown transform {transform!r}")
+        self.transform = transform
         self.params = dict(hidden=list(hidden), lr=lr, batch_size=batch_size,
-                           max_epochs=max_epochs, patience=patience, alpha=alpha)
+                           max_epochs=max_epochs, patience=patience, alpha=alpha,
+                           transform=transform)
         self.model = MLPClassifier(hidden_layer_sizes=hidden, activation="relu", solver="adam",
                                    learning_rate_init=lr, batch_size=batch_size, alpha=alpha,
                                    max_iter=1, shuffle=True, random_state=int(seed))
@@ -176,15 +184,19 @@ class MLPRatio:
         self.mean: np.ndarray | None = None
         self.scale: np.ndarray | None = None
 
+    def _t(self, X: np.ndarray) -> np.ndarray:
+        X = np.asarray(X, dtype=np.float64)
+        return np.sign(X) * np.log1p(np.abs(X)) if self.transform == "slog1p" else X
+
     def _z(self, X: np.ndarray) -> np.ndarray:
-        return (np.asarray(X, dtype=np.float64) - self.mean) / self.scale
+        return (self._t(X) - self.mean) / self.scale
 
     def fit(self, X_tr, y_tr, w_tr, X_va, y_va, w_va) -> dict[str, Any]:
         import copy
         import warnings
         if self.mean is None:
-            self.mean = np.asarray(X_tr, dtype=np.float64).mean(axis=0)
-            sd = np.asarray(X_tr, dtype=np.float64).std(axis=0)
+            self.mean = self._t(X_tr).mean(axis=0)
+            sd = self._t(X_tr).std(axis=0)
             self.scale = np.where(sd > 0, sd, 1.0)
         Z_tr, Z_va = self._z(X_tr), self._z(X_va)
         best, best_state, stale, history = np.inf, None, 0, []

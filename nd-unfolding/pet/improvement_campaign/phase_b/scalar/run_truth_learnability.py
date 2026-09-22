@@ -29,7 +29,7 @@ import scalar_common as scm
 import scalar_omnifold as so
 
 INPUT_SETS = ("eavail", "truth4", "muon_truth")
-MODELS = ("hgb", "mlp")
+MODELS = ("hgb", "mlp", "mlp_raw")   # mlp = slog1p inputs; mlp_raw = standardized raw inputs
 SEEDS = (1, 2, 3)
 
 
@@ -98,7 +98,8 @@ def main() -> None:
             X = X_all[pg]
             for model in args.models:
                 t0 = time.perf_counter()
-                clf = (so.HGBRatio(seed=seed) if model == "hgb" else so.MLPRatio(seed=seed))
+                clf = (so.HGBRatio(seed=seed) if model == "hgb" else
+                       so.MLPRatio(seed=seed, transform="raw" if model == "mlp_raw" else "slog1p"))
 
                 def stack(rows: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
                     return (np.concatenate([X[rows], X[rows]]),
