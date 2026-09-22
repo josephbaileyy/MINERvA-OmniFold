@@ -83,8 +83,16 @@ the commit ISSUE-60 cites, `15edf148`, which added two orchestration records:
 | `CORRECTION-20260921-seed-effect-…md` | ✅ yes | ✅ yes | — |
 | `OUTCOME-20260921-L2-probe-blocked-at-stage-4.md` | ❌ **no** | ❌ no | ❌ **still none at `384c2eb1`** |
 
-`15edf148` also did **not** contain `docs/orchestration/MANIFEST.tsv` (0 of its 25 paths), which is
-the half of the claim that is exactly right.
+⚠ **CORRECTED 2026-09-22 by an independent reviewer. This read: *"`15edf148` also did not contain
+`docs/orchestration/MANIFEST.tsv` (0 of its 25 paths), which is the half of the claim that is
+exactly right."* THE RATIFICATION IS WITHDRAWN — it is a true fact about a file this checker
+never reads.** `live_doc_indexed.py` reads `OVERRIDES = "docs/orchestration/MANIFEST-overrides.tsv"`;
+its only mention of `MANIFEST.tsv` is a docstring saying it is deliberately **not** regenerated.
+And `15edf148` **did** contain `MANIFEST-overrides.tsv`. So on the operative object the original
+clause *"that commit did not stage the manifest"* is **false**, and this record wrongly graded it
+right. ⚠ **A SECOND-ORDER INSTANCE OF THE EXACT DEFECT THIS SECTION IS ABOUT: the operand.**
+What survives unchanged is §2(3)'s primary correction — both `in_scope()` branches intersect
+`staged_live`, so a doc that never receives a LIVE row is permanently out of scope.
 
 **VERDICT: ISSUE-60 STANDS as a HIGH item and all three checks are real.** Item (3)'s remedy is
 correctly named in `HANDOFF-20260922` §11 — *"a whole-tree-first inversion"* — and that handoff's

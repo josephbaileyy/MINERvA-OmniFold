@@ -65,7 +65,32 @@ read by the code path)"*. It is not. The four deleted lines are all executable:
 Plus a new top-level function `apply_record_only_eavail_shift` and a new CLI option
 `--closure-response-eavail-frac`.
 
-## 4. ⚠ THE DRIFT IS MEASURABLY BEHAVIOUR-PRESERVING FOR THE PRODUCTION INVOCATION — AND THAT IS **NOT** A LICENCE TO RE-PIN
+4. ⚠ **AND AN UNCONDITIONAL PROVENANCE-STAMPING BLOCK IN THE PRODUCT WRITER**, added by the same
+   drift and absent from the pinned blob: `import seed_offset_policy`, then
+   `seed_offset_policy.declared_offset()`, then `.Write()` of `est_seed_offset_declared`,
+   `est_seed_offset` and `estimator_seed_checked` — none behind any option — plus `estimator_seed`
+   whenever `--seed` is given, which production always passes. **This is the item that makes the
+   drift artifact-changing and not merely code-changing**, and it was missing from this
+   enumeration until an independent reviewer supplied it on 2026-09-22.
+
+## 4. ⚠ THE DRIFT PRESERVES THE ARITHMETIC AND **DOES NOT** PRESERVE THE PRODUCT — and neither is a licence to re-pin
+
+⚠ **CORRECTED 2026-09-22 BY AN INDEPENDENT REVIEWER. This section was headed *"THE DRIFT IS
+MEASURABLY BEHAVIOUR-PRESERVING FOR THE PRODUCTION INVOCATION"* and that heading was WRONG — it was
+true of the arithmetic and false of the artifact.** The drift adds **four `.Write()` calls that are
+not behind any option**, so a re-run of the production invocation emits a ROOT with keys the pinned
+blob never wrote:
+
+    est_seed_offset_declared     unconditional
+    est_seed_offset              unconditional
+    estimator_seed_checked       unconditional
+    estimator_seed               written whenever --seed is given, and production passes --seed 42
+
+Measured: `git show 42268b6d:<path> | grep -c 'est_seed_offset_declared\|seed_offset_policy'` → **0**,
+so all four are new; they are inside `main()`'s product-writing block and reached on every run.
+**Consequently the output file would NOT be byte-identical, and the original heading's claim is
+withdrawn.** What survives is narrower and is stated as such below: the *unfolding arithmetic* is
+unchanged for the production invocation. **This makes the disposition in §5 stronger, not weaker.**
 
 Recorded because it is true and useful, and fenced because it is the argument that would otherwise
 be mistaken for a reason:
@@ -79,8 +104,9 @@ be mistaken for a reason:
 - **The production invocation reaches none of it**: `--iters 5 --use-weights --estimator lgbm
   --seed 42 --bkg-mode purity`, with no `--closure`.
 
-⚠ **This establishes behaviour-equivalence for one invocation from one path. It does not establish
-code identity, and code identity is what the receipt asserts.** `validate_endpoint_receipt` compares
+⚠ **This establishes ARITHMETIC equivalence for one invocation from one path. It does not establish
+byte-equivalence of the product — see the correction above, four keys are added unconditionally —
+and it does not establish code identity, which is what the receipt asserts.** `validate_endpoint_receipt` compares
 the blob strictly and is **right** to: the binding's purpose is to say *these bytes produced this
 product*, and those bytes no longer exist in the tree. Re-pinning would replace a true statement
 about a blob that is gone with a false statement about a blob that never ran.

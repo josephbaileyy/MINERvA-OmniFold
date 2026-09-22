@@ -238,7 +238,8 @@ reach.
   (\texttt{hCov\_combined3d\_total}), drawn for orientation only. It is not the
   uncertainty of this measurement, it is not quotable, and no comparison in this
   section uses it; the quotable 3D covariance must be projected from the adopted
-  5D trunk and does not yet exist. Only the central values are interpreted.}
+  5D trunk; that projection now exists (2026-09-22) but is \emph{not adopted},
+  so nothing here is quotable from it. Only the central values are interpreted.}
   \label{fig:3dmodels}
 \end{figure}
 
@@ -259,8 +260,11 @@ only as a quarantined numerical diagnostic in Fig.~\ref{fig:3dfullcov}.
   old per-generator $\chi^{2}/\mathrm{ndf}$ versus eigenvalue tolerance and is
   retained only to document numerical behavior; no value is interpreted until
   the selection-complete 5D covariance is adopted \emph{and} projected to 3D.
-  The first has happened; the 3D projection has not been built, so the gate
-  still holds.}
+  The first has happened, and on 2026-09-22 so did the second: the projection
+  exists (\texttt{20c16e16}\ldots, 1431 reported cells). \textbf{The gate still
+  holds, on different ground} --- that product is \emph{constructed, not
+  adopted}, and it exists only in the receiving-cells destination-mask variant,
+  not the \texttt{declared-dst-cv} variant a figure would require.}
   \label{fig:3dfullcov}
 \end{figure}
 
@@ -280,8 +284,12 @@ per-bin relative uncertainty \SI{10.4}{\percent}, numerical rank $247$ (of
 uncertainties. Under the corrected contract, the quotable 3D covariance is the
 exact projection of the adopted 5D covariance. That covariance now exists
 (\S\ref{sec:eavailw-construction}) and the replacement it waited on has landed, but
-the 3D projection itself has not been built, so all covariance-dependent 3D
-comparisons remain gated on a product that does not yet exist.
+the 3D projection was built on 2026-09-22 (\texttt{20c16e16}\ldots).
+Covariance-dependent 3D comparisons remain gated, on the two grounds that
+survive: that projection is \emph{constructed, not adopted}, and it exists only
+in the receiving-cells destination-mask variant, not the
+\texttt{declared-dst-cv} variant a comparison against the frozen 3D central
+value would require.
 
 \begin{figure}[H]
   \centering

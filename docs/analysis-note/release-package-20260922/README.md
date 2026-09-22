@@ -32,16 +32,22 @@ will quote from."* Stated, not referenced. Source:
   failing leg is not reporting its own resampling noise.** ⚠ **The corollary *"a larger ensemble
   would not reduce it"* is WITHDRAWN**: the `40`- and `80`-throw points are **nested subsets of one
   160-throw ensemble at ONE seed pair**, so larger `N` and the seed-pair width are **unmeasured**.
+  ⚠ **The direction of the unmeasured remainder is not known either**, and the `± 0.39%` is scatter
+  across throw SUBSETS at one seed pair — **the width of the seed-pair distribution HAS NOT BEEN
+  MEASURED.**
 - **M3 — five bands (`BeamAngleX`, `BeamAngleY`, `MuonResolution`, `Muon_Energy_MINERvA`,
   `Muon_Energy_MINOS`) are seed-pinned and contribute zero movement by construction**, carrying
-  `26.0%` of `√Tr C_Z` and `6.75%` of the trace. ⚠ **The *"lower bound"* reading is WITHDRAWN**:
+  `26.0%` of `√Tr C_Z` and `6.75%` of the trace **out of the ~45 MAT bands** — so this is a
+  statement about five bands of that set and not about the covariance as a whole. ⚠ **The *"lower bound"* reading is WITHDRAWN**:
   `s_proj` is a **maximum** over the functional set, not a sum of nonnegative magnitudes, so
   releasing a held-fixed PSD component can move the total **either way**.
 - **M4 — the estimator seed moves the CENTRAL VALUES too.** On the 43 `M1` projection functionals:
   median `0.104%`, max `0.761%`; against relative uncertainties of median `10.1%` that is median
   `1.06%` and max `6.02%` of the quoted `σ`. ⚠ **Per individual 5D bin it is much larger: median
   `3.77%` of `σ`, p90 `13.6%`, max `49.8%`.** Aggregation suppresses it, so a statement about one
-  5D bin carries the larger number and a projection does not.
+  5D bin carries the larger number and a projection does not. **The same-seed control is
+  `9.4e-13`, ten orders below, so the movement is real and not a reproducibility artefact**; the
+  max occurs **at index 2, the same functional that failed `s_proj`**.
 
 **The adoption is publication-under-exception, not a pass.** The product's own fields still read
 `scientific_acceptance: NON-PASSING` and `adoptable: false`, and they are carried here unedited.
@@ -105,11 +111,20 @@ Not asserted; run. All from `_build_report.json`.
 | the destination row index reproduces the receipt's readback digest | ✅ `9eb9d21600526db7…`, **matches** |
 | the row index equals the receiving-cells mask | ✅ `true` |
 | `src_cells_dropped` | ✅ `0` |
-| `y = M x_reported` against the product's own `hCV_marginal` | ✅ **max abs difference exactly `0.0`** |
+| `y = M x_reported` against the product's own `hCV_marginal` | ⚠ **`0.0` ON THE BUILD HOST ONLY — see the warning below.** Re-measured on a different machine (numpy `1.26.4`, different BLAS): **max abs `5.22e-54`, max relative `3.56e-16`, 25 of 42 elements differing.** The agreement is at float64 rounding, not bitwise |
 | **C-order vs F-order control** | ✅ the F-order reshape disagrees with the C-order one by a max **relative** `7.82e5`. ⚠ **This is a different statistic from the appendix's *"relative 1.0"*** — here it is `max\|y_C − y_F\| / \|y_C\|` per cell, which is unbounded where `y_C` is small. The conclusion is the same and stronger: the orderings are nowhere near equal, so C order is **established, not assumed** |
 | `√Tr C_EW` | ✅ `4.4551809735306645e-39` |
 | symmetry `max\|C − Cᵀ\|` | ✅ **exactly `0.0`** |
 | `λ_min`, `λ_max`, ratio | ✅ `+4.359103608788691e-92`, `1.4882151297784383e-77`, `2.929e-15`; `λ_min` is **positive** |
+
+⚠ **THE `0.0` ABOVE IS A PROPERTY OF THE BUILD HOST, NOT OF THESE BYTES — corrected 2026-09-22
+by an independent reviewer who ran this README's own recipe and got `AssertionError`.**
+`hCV_marginal` was produced by the same `M @ x` on the same machine that built this package, so the
+two agreed bit-for-bit *there*. `M @ x` is a 10,694-term sum whose rounding depends on BLAS
+summation order, so a reader on different hardware gets `5.22e-54` instead — which is
+**agreement at the double-precision floor**, and is in fact the same `5.220244e-54` the C-order
+pairing check already records in `VALIDATION_LEDGER.md` `VL143`. **Compare with a tolerance, never
+with `==`.** Build host: Perlmutter CPU, numpy `1.26.4`, ROOT `6.28/12`.
 
 ⚠ **DO NOT CHECK A RANK.** The spectrum decays smoothly over ~15 orders with no plateau, so the
 retained count is set by whatever cutoff is used — `26` at `1e-6`, `36` at the `1e-12` the projector
@@ -138,7 +153,9 @@ M   = np.zeros(tuple(Mz["shape"]))      # 42 x 10694
 M[Mz["rows"], Mz["cols"]] = Mz["values"]
 
 y = M @ x[rep]                          # 42, density in (E_avail, W)
-assert np.abs(y - cov["cv_marginal"]).max() == 0.0
+# TOLERANCE, NOT EQUALITY: M @ x is a 10694-term sum and its rounding is BLAS-dependent.
+# On the build host this difference is exactly 0.0; elsewhere it is ~5e-54 (rel ~3.6e-16).
+assert np.max(np.abs(y - cov["cv_marginal"]) / np.abs(cov["cv_marginal"])) < 1e-15
 y_map = y.reshape(7, 6, order="C")      # C ORDER. The F-order reshape is the control.
 ```
 

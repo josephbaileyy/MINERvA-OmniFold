@@ -48,7 +48,8 @@ Every claim `KNOWN_ISSUES` row 59 makes that can be checked from the repository 
 | `figures/pet_cloud_projection_xsec.pdf` last written at `6749ddf8` (2026-07-05) | ✅ `git log -- <path>` returns exactly one commit, `6749ddf8`, 2026-07-05 |
 | the re-run entry is in `make_figures.sh` with the three `PCPROJ_*` full-cloud inputs | ✅ present at `make_figures.sh:78-83`, setting `of_inputs_pc_fullcloud.npz`, `pet_weights_fullcloud.npz`, `runEventLoopOmniFold_PC_MEFHC_fullcloud.root` |
 | inputs live only on `/pscratch`, so it cannot be rebuilt locally | ✅ all three `PCPROJ_*` paths are under `$REPO/nd-unfolding/…` gitignored product trees |
-| *"Also noticed and not fixed here: `make_figures.sh`'s PET comment cites `KNOWN_ISSUES #18`, and no row `18` exists"* | ✅ cited at **`make_figures.sh:59`**; index rows run `5`–`11`, `16`, `17`, `19`–`21`, `23`–`62`. Absent: `12`–`15`, **`18`**, `22` |
+| *"Also noticed and not fixed here: `make_figures.sh`'s PET comment cites `KNOWN_ISSUES #18`, and no row `18` exists"* | ✅ cited at **`make_figures.sh:59`**; index rows run `5`–`11`, `16`, `17`, `19`–`21`, **`23`–`60` at `384c2eb1`** (and `23`–`62` at
+`9e78a8cf`, after rows 61-62 were added later the same day). Absent at both: `12`–`15`, **`18`**, `22` |
 
 ### 3a. ⚠ The dangling `#18` is not a typo — the row was RESOLVED and then deleted
 

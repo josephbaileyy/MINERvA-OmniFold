@@ -70,10 +70,24 @@ figure work is exactly the failure the rule exists to prevent.
 - **It does NOT adopt this covariance.** Adoption is a Joseph decision (`AGENTS.md`, *Decisions
   reserved for Joseph*; this session's **D7** forbids anything constituting a new publication
   adoption). The object exists; nothing has adopted it.
-- **The four marked figures are NOT regenerated and their markings stand.** `generators_vs_unfolded_band`
-  (note Fig. 20), `compare_mec_eavail`, `mode_decomp_eavail` still read `hCov_combined3d_total`;
-  `ascencio_fullcov_compare` reads the historical unified-throw **4D** object, which this projection
-  does **not** replace. Marking remains the remedy.
+- **No figure is regenerated here.** ⚠ **CORRECTED 2026-09-22 by an independent reviewer: the
+  enumeration below was wrong in BOTH directions, and it was taken from `HANDOFF-20260922` §9.2's
+  table rather than measured.** Measured with `grep -rn hCov_combined3d_total`:
+  `compare_mec_eavail.py`, `mode_decomp_eavail.py`, `compare_ascencio_eavail.py` and
+  **`compare_3d_fullcov.py`** read it — and `compare_3d_fullcov` is a **live note figure**
+  (`sec_3d.tex`, `\label{fig:3dfullcov}`) that the handoff's list and this record's first version
+  both omitted. In the other direction, `make_figures.sh:48` builds `generators_vs_unfolded_band`
+  (note Fig. 20) with `--cov … :hCov_universe3d_total`, a **different key**, so naming it as a
+  reader of `hCov_combined3d_total` was wrong at the invocation level even though its script
+  mentions both. `ascencio_fullcov_compare` reads the historical unified-throw **4D** object, which
+  this projection does **not** replace.
+- ⚠ **AND THE OMITTED FIGURE CARRIES TWO SENTENCES THIS PROJECTION FALSIFIES.** `sec_3d.tex` states
+  *"The first has happened; **the 3D projection has not been built**, so the gate still holds"*
+  (the `fig:3dfullcov` caption) and *"…but **the 3D projection itself has not been built**, so all
+  covariance-dependent 3D comparisons remain gated on a product that does not yet exist"* (§3d-syst
+  body). **Both are now false on their stated ground.** The gate SHOULD still hold — on
+  non-adoption and on the missing `declared-dst-cv` variant (§4) — but not on non-existence.
+  Corrected in `sec_3d.tex` and synced to the standalone repository.
 - ⚠ **If these are ever regenerated, do NOT silently reintroduce them to the primer.** Fig. 3 was
   swapped to `eavailW_band` (central-value only, no `--cov`) and Fig. 4 to `paper_joint_localization`;
   that leakage was blocker 2 of the manuscript review.
@@ -81,8 +95,9 @@ figure work is exactly the failure the rule exists to prevent.
   from it. In particular **no generator significance may be quoted from it**, and `M4` is much
   larger per individual bin than per projection.
 - **No rank is quoted here and none may be inferred.** The projector printed a retained count at its
-  hardcoded `rc = 1e-12`; on the `(E_avail,W)` object the analogous count moves from 26 to 42 across
-  defensible cutoffs (`VL145`), and nothing has scanned **this** object's spectrum. **Any rank for
+  hardcoded `rc = 1e-12`; on the `(E_avail,W)` object the analogous count moves from **2 to 42** across
+  the cutoffs `VL145` actually scans (`1e-1 → 2` … `0 → 42`; the narrower `26 → 42` is `VL143`
+  item (3)'s abridgement, which starts at `1e-6`), and nothing has scanned **this** object's spectrum. **Any rank for
   this product must be reported with its cutoff, and no scan exists yet.**
 
 **Co-Authored-By: Claude Opus 5 (1M context)**

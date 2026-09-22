@@ -154,6 +154,16 @@ which is site 1's recorded disposition. **Three of the four are by design.** Onl
 own retraction when quoting-to-prohibit is house style — the discriminator is the **sentence ending**
 (`estimator and` versus `estimator rather than of the ensemble's`), plus the pointer count.
 
+⚠ **AMENDED 2026-09-22: THE PARAGRAPH ABOVE WAS FALSIFIED BY §4d IN THE SAME COMMIT, AND WENT TWO
+COMMITS UNAMENDED.** Its clause *"`CATALOG.md` quotes the claim under the word WITHDRAWN"* is true
+of **one** `CATALOG.md` entry (the one for this record) and **false as a statement about the file**:
+§4d establishes that `CATALOG.md` simultaneously carried a live, unmarked assertion in its
+`EVIDENCE-20260920` entry. So *"Three of the four are by design … Only
+`CORRECTED_UQ_PRODUCTION_STATUS.md` was real"* is **a defect tally of two, not one**.
+**What stands unchanged is the paragraph's actual thesis** — a hit count is not a defect count, and
+the sweep genuinely returned four, because site 10 was invisible to it (§4d measures why). The
+error is the disposition, not the lesson. Found by an independent adversarial review.
+
 ⚠ **SITES 7 AND 8 WERE ALSO MISSED BY THE FIRST DRAFT OF THIS TABLE, AND THAT MISS IS INSTRUCTIVE
 ENOUGH TO RECORD RATHER THAN QUIETLY REPAIR.** This table was written from the sites the
 manuscript review and the peer re-verification had named — six — and the sweep below was
