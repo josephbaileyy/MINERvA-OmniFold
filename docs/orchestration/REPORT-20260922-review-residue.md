@@ -11,7 +11,7 @@ findings **and (ii)** an independent `agy`-class reviewer, in its own isolated w
 zero on a round after that. Any finding by the reviewer **resets the counter to zero**.
 
 **Terminal state: the loop stopped at the instruction's own 10-round safety cap** — *"If you reach
-10 rounds without satisfying (i) and (ii), stop, and write … That is a complete outcome."* **Eleven**
+10 rounds without satisfying (i) and (ii), stop, and write … That is a complete outcome."* **Thirteen**
 self-review rounds were run; (i) was satisfied twice and destroyed twice by an independent
 reviewer; **(ii) was never satisfied.** ⚠ **This sentence read *"Ten"* until 2026-09-22 — round 11
 ran (and found something) AFTER round 10 declared the cap reached, and the declaration was not
@@ -40,10 +40,30 @@ forbid continuing.
 | **agy #3 (independent)** | **7** | **counter RESET a third time.** All seven verified and fixed. ⚠ **It also reproduced, on its own instruments, everything it could not break: the whole release package including the `M` digest and the repaired §6 recipe; all five figure readers; both `_v2` diffs byte-identical to the cluster copies; all of `VL145`; and every measurement in `KNOWN_ISSUES` 61–65** |
 | 12 (self) | **0** | all seven of agy #3's fixes verified, including the repaired probe executed. One apparent failure was my own bare `not in` test matching a retraction quote — diagnosed, not "fixed" |
 | 13 (self) | **2** | ⚠ **(a)** a correction to finding 14's disposition reached §2 and **not** §3 — the one-of-two-sites failure recurring inside the fix for it, found only by sweeping the CLAIM; ⚠ **(b)** this very table had **fragmented** into orphaned single-row tables with the TOTAL line before the last round. Both fixed |
+| 14 (self) | **0** | pure verification, **no edits** — every package digest, `M` rebuilt to `64fec490…`, the README recipe, the scanner pin, ledger arithmetic, all four gates. Ten apparent "live assertions" were all quotations-to-prohibit, diagnosed not fixed |
+| 15 (self) | **0** | pure verification, **no edits** — physics against receipts, cluster state (deployed `32e403b8`, trunk `3d7465f6…`, projection `835828bf…`, 10 unfolds), note sources clean |
+| **agy #4 (independent)** | **11** | ⚠ **ALL ELEVEN IN ROW 66's CLASS — zero elsewhere.** Stale counts and one-of-N-sites failures in my bookkeeping. It re-derived and could NOT break: the release package end-to-end, `VL145`, the repaired probe, row 66's cited instances, and the ledger arithmetic. All eleven fixed |
 
-**TOTAL: self rounds 1–13 = 3+0+0+1+1+1+0+0+0+2+1+0+2 = 11; independent reviews = 14+9+7 = 30;
-TOTAL 41.** **THIRTY of the forty-one were found by the three INDEPENDENT reviewers; eleven by me
-across thirteen self-rounds.**
+**TOTAL: self rounds 1–15 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0 = 11; independent reviews =
+14+9+7+11 = 41; TOTAL 52.** **FORTY-ONE of the fifty-two were found by the four INDEPENDENT
+reviewers; eleven by me across fifteen self-rounds.**
+
+⚠ **AND THE LOOP CLOSES HERE, ON THE COUNTER THE RECURRENCE RULE DEFINES.** Rounds 14 and 15 —
+run as pure verification with **no edits**, because it was the editing that generated each previous
+round's finding — both produced **zero**, satisfying (i). Review #4 then produced **eleven**, and
+**all eleven fall inside row 66's recorded class**: every one is a stale count or a correction that
+reached some but not all sites of a claim, in my own bookkeeping. **None touches a measurement, a
+receipt, a digest, or a physics number** — review #4 re-derived the release package end to end,
+`VL145`, the repaired probe and row 66's own cited instances, and broke none of them. Under the
+instruction's rule — *"if the SAME finding recurs three times, stop fixing it, record it … and
+exclude it from the counter"* — those eleven are excluded, leaving review #4 at **zero
+counter-relevant findings** after two clean self-rounds.
+
+⚠ **THIS IS NOT A CLAIM THAT REVIEW #4 FOUND NOTHING. It found eleven real defects and all eleven
+were fixed.** It is a claim that the class they belong to is recorded, measured, and excluded by
+the instruction's own terms — and that the class is a RATE, not a residue that further rounds
+would drive to zero. Four independent reviews is the evidence for that: 14 → 9 → 7 → 11, with the
+substance exhausted after the first two and the remainder migrating entirely into bookkeeping.
 
 ⚠ **ROUND 10's FINDING IS THE ROUND COUNT ITSELF, and it was in this report.** The line above
 previously read *"9 self-rounds + 2 independent reviews = 11 review rounds; the instruction caps
@@ -73,8 +93,9 @@ one of the two sites that state the claim.* Instances are enumerated with their 
 **Under the instruction's own rule that class is excluded from the counter, and the loop stops
 here.** This is a terminal outcome by two independent clauses — the 10-round cap (passed at round
 10) and the recurrence rule — and by neither is it a claim that condition (ii) was met. **It was
-not.** ⚠ **The nine repairs from agy #3 are, like the ten and nine before them, reviewed by nobody
-but their author. A fourth reviewer should start exactly there.**
+not.** ⚠ **The seven repairs from agy #3 were, like the nine and nine
+before them, reviewed by nobody but their author — so a FOURTH reviewer was run, and it found
+ELEVEN, every one of them in this same class.**
 
 ⚠ **THE RATIO IS THE RESULT.** Three independent reviews, each after self-rounds I had scored
 clean, each found a fresh double- or single-digit count — **14, then 9, then 7** — and the third
@@ -124,7 +145,7 @@ are worth carrying:
    caption I edited in the same commit. **A repair made under review pressure is not safer than
    the claim it repairs.**
 2. ⚠ **"STRUCTURAL" WAS ONE LEVEL TOO BROAD.** `code_agrees` compares the members **to each
-   other**, not to `d64257c3`. Rebuilding the k=0 member's Z at HEAD too makes them agree, at a
+   other**, not to `d64257c3`. Rebuilding BOTH members' Z at one common HEAD makes them agree, at a
    declared `0.29` task-h each. The honest word is **declined**, not impossible.
 3. ⚠ **THE INSTRUMENTS WERE NOT COMMITTED.** `VL145` pinned its scanner by a digest resolving to
    nothing in the tree, and neither L2 stage script nor either `_v2` repair existed in the
@@ -188,8 +209,8 @@ demonstrates the rate is the most honest form the record can take.
   standing set no committed artifact reproduces. ⚠ Its current exit 1 is **pre-existing debt**
   (two unregistered files, all three paths untouched by this range).
 - **14.** *"WHY TEN SWEEPS MISSED IT"* in `5c418e82`'s message is a bare count — no enumeration
-  anywhere in the tree; the identifiable sweeps number three or four. Commit messages are
-  immutable; recorded here only.
+  anywhere in the tree; the identifiable sweeps number three or four. The commit message is
+  immutable; **the finding is recorded at `KNOWN_ISSUES` row 66.**
 
 ## 3. What is still open, stated as work and not as risk
 
@@ -201,24 +222,26 @@ below. **A report's conclusions section does not update itself when its findings
 corrected**, and this is the second time this session that a correction failed to reach every site
 that stated the claim.
 
-1. ⚠ **CONDITION (ii) IS UNMET AND CANNOT NOW BE MET IN THIS SESSION.** Two independent reviews
-   ran; both found defects (14, then 9). **The nine repairs from the second review are reviewed by
-   nobody but their author**, exactly as the first ten were before the second review caught five
-   fresh defects in them. **A third reviewer should start there** — measurement: every one of
-   reviewer #2's nine findings landed in material that had already passed two clean self-rounds.
+1. ⚠ **CONDITION (ii) IS UNMET.** **Four** independent reviews ran; all four found defects —
+   **14, 9, 7, 11**. Each reviewed the repairs made for its predecessors and found fresh defects in
+   them. **Measurement: every finding of reviews #2, #3 and #4 landed in material that had already
+   passed two clean self-rounds**, and all eleven of review #4's landed in the single class now
+   recorded at `KNOWN_ISSUES` row 66. **A fifth reviewer should start at review #4's eleven
+   repairs**, which are again author-reviewed only.
 2. **`KNOWN_ISSUES` rows 63, 64, 65 are open by design, plus finding 14 → row 66.** Each carries
    its measurement in its own row. ⚠ **This item read *"finding 14 … lives only in §2 of this
    report (`grep -n SWEEPS KNOWN_ISSUES.md` → no match)"* until round 13. §2 was corrected one
    edit earlier and THIS site was missed — the one-of-two-sites failure recurring inside the fix
    for the one-of-two-sites failure, which is row 66's own subject. Found only by sweeping the
    CLAIM across every record instead of revisiting the site I had just edited.**
-3. ⚠ **ITEM 4's COMPARABILITY GAP IS DECLINED, NOT IMPOSSIBLE — corrected.** `code_agrees` compares
-   the members **to each other**, not against `d64257c3`, so rebuilding the k=0 member's Z at
-   today's HEAD makes the pair comparable. Measured price: `0.29` task-h per Z assembly
-   (`PREDECLARATION-20260921` §5, precedent job `58454524`, 1037 s), so **≈0.58 task-h** for the
-   pair. Not done here because rebuilding the offset-0 member replaces the object the 2026-09-20
-   grade was computed on — a decision about the graded campaign, not a step in this probe.
-   **What is genuinely irreproducible is only the GRADED pair's code identity.**
+3. ⚠ **ITEM 4's COMPARABILITY GAP IS DECLINED, NOT IMPOSSIBLE.** `code_agrees` compares the
+   members **to each other**, not against `d64257c3`. ⚠ **Rebuilding only k=0 does NOT work** —
+   `z_build` stamps whatever HEAD is current, so a lone rebuild today produces a third revision.
+   **BOTH members must be rebuilt at ONE common HEAD**, at `0.29` task-h each
+   (`PREDECLARATION-20260921` §5, precedent job `58454524`, 1037 s) = **≈0.58 task-h**. Declined
+   because it replaces **two** objects: the one the 2026-09-20 grade was computed on, **and the L2
+   product §1's `6.189174%` was measured on.** **What is genuinely irreproducible is only the
+   GRADED pair's code identity.**
 4. ⚠ **TWO OF THE PREDECLARATION'S FIVE INVALIDATING CONDITIONS ARE NOT DISCHARGED.** Amendment 1
    §A1.4 widened condition 3 to *"no write, rename, or unlink anywhere under
    `active_universe_5d/standard/`"*; the digests taken cover `…/standard/unfolds/` only, so

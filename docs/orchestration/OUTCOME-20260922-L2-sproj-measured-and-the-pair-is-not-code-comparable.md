@@ -55,11 +55,10 @@ baseline receipts (which pin the superseded `dc74c38f…`) they validate against
 control — **and its verdict branch does not consult that flag**, so it printed *"FAIL CONFIRMED"*
 under a failed precondition. Exactly one of the ten fields fails:
 
-    CONTROL: all ten PASS
+    CONTROL: all nine PASS
     PROBE:   footing_ok *** FAIL ***    (the other nine PASS)
 
-⚠ **CORRECTED 2026-09-22 (third independent review): this said *"Exactly one of the ten fields
-fails"* and *"the other nine PASS"*. `z_validator.Validity` has NINE bool fields plus
+⚠ **CORRECTED 2026-09-22 (third independent review): this said *"Exactly one of the ten fields fails"*, *"the other nine PASS"* and the transcript's *"CONTROL: all ten PASS"*, which is corrected in place above because the repaired probe can no longer print ten rows. `z_validator.Validity` has NINE bool fields plus
 `notes: dict`, which `cross_member_validity` always populates and `bool()` always coerces to True —
 so it can never fail and must not be counted as a passing check.** Read it as **one of NINE
 failing, eight passing**. `z_grade.cross_member_validity`'s own docstring says *"all nine"*. The
@@ -112,7 +111,7 @@ The predeclaration's own §5 prices one Z assembly at **`0.29` task-h** (precede
 1037 s), so the route costs about **`0.58` task-h** for the pair. ⚠ **AND THE ROUTE IS BOTH MEMBERS, NOT ONE — corrected by the third independent review.** This
 read *"rebuilding the k=0 member's Z at today's HEAD"*, which does **not** work: `z_build`
 `contract.require(revision == head)` stamps whatever HEAD is current, and the L2 product is frozen
-at `384c2eb1`, already 15 commits behind. Rebuilding only k=0 today stamps a **third** revision and
+at `384c2eb1`, already 15 commits behind as of `8d22bfd0` (17 by `c6a62a4c`; the count decays, the fact does not). Rebuilding only k=0 today stamps a **third** revision and
 `code_agrees` stays False. **Both members must be rebuilt at ONE common HEAD** — which is what the
 `0.58 = 2 × 0.29` figure silently priced while the prose named a single rebuild.
 

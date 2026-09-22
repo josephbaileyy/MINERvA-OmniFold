@@ -235,7 +235,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `make_figures.sh:59`, row 18 was *"pet_event_displays / pet_cardinality had no generating script …
   RESOLVED 2026-07-10"* — exactly the comment's subject — surviving to `d2ca8ed1` and dropped at
   `1f714b7f`'s index compaction. **The citation was correct when written; a resolved row was deleted
-  without sweeping inbound citations.** Index rows run **5–11, 16, 17, 19–21, 23–60 at `384c2eb1`**, the sha the BLOCKED record names as its measurement point (23–62 at `9e78a8cf`; **23–65 today**). ⚠ **This paraphrase said *"now run … 23–62"* and was missed when the BLOCKED record itself was corrected — a repair that reached one of two sites, which is this session's most-repeated failure.**
+  without sweeping inbound citations.** Index rows run **5–11, 16, 17, 19–21, 23–60 at `384c2eb1`**, the sha the BLOCKED record names as its measurement point (23–62 at `9e78a8cf`; **23–66 at `c6a62a4c`** — pinned, not "today", because this very clause was written to repair a one-of-two-sites failure and went stale one commit later). ⚠ **This paraphrase said *"now run … 23–62"* and was missed when the BLOCKED record itself was corrected — a repair that reached one of two sites, which is this session's most-repeated failure.**
 - [`OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md`](OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md)
   - **THE 3D `(pt,pz,eavail)` COVARIANCE NOW EXISTS, projected from `3d7465f6…`** — §9.2's stated
   blocker for four marked figures. `sha256 20c16e16a35a837b…`, `15,937,290` B, job `58736728`;
@@ -255,9 +255,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `s_proj = 6.145388%`, `|diff| = 0.000e+00` against `GRADE-20260920` (requirement `1e-12`), so the
   harness IS the graded code path. **Released** (five laterals at seed 1242): `s_proj 6.189174%`,
   `s_agg 0.762704%`, `s_med 0.682292%` — the two legs INSIDE the bound moved most (`+62%`, `+41%`
-  relative) and the failing leg least (`+0.71%`). All five predeclared invalidating conditions hold,
-  including the baseline's 20 digests byte-identical in both jobs. ⚠ **BUT the probe pair fails
-  `footing_ok`, ALONE among ten fields, and NOT on population:** the real `Member.footing()` is
+  relative) and the failing leg least (`+0.71%`). ⚠ **NOT all five predeclared invalidating
+  conditions hold** — the record's *"All five hold"* is **WITHDRAWN**: three hold as measured
+  (baseline's 20 digests byte-identical in both jobs), **one holds only against §6's PRE-AMENDMENT
+  text** (Amendment 1 §A1.4 widened it to all of `active_universe_5d/standard/`, never digested),
+  and **one is NOT satisfied** (the Z product sits in a new sibling
+  `z2m-products/member_k001200_L2laterals/`, outside the member tree). ⚠ **BUT the probe pair fails
+  `footing_ok`, ALONE among **NINE** bool fields (`Validity` is 9 bools plus a `notes` dict that cannot fail), and NOT on population:** the real `Member.footing()` is
   **identical** on all three products (`mask eed021e9…`, `rows 61a7c9fd…`, `n_reported 10694`).
   `z_grade.cross_member_validity` folds code identity in — `footing_ok = bool(footing_ok) and
   code_agrees` — and the graded members are at `d64257c3` while the rebuild is at `384c2eb1`.
@@ -268,14 +272,15 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   had never run (`z_grade.MemberProduct` exists at no revision; stage 5 returned `ls`'s status).
 - [`REPORT-20260922-review-residue.md`](REPORT-20260922-review-residue.md)
   - ⚠ **THE REVIEW LOOP DID NOT TERMINATE ON ITS OWN CRITERION, and this records that rather than
-  implying otherwise.** Self-rounds went `3 → 0 → 0`; an **independent reviewer in its own worktree
-  then found 14**, resetting the counter, and a post-review round found one more (a **fabricated
-  sha** in an already-pushed commit message). **Condition (ii) — a clean independent round — has
-  never been satisfied, so the 10 repairs made in response are reviewed by nobody but their author.**
+  implying otherwise.** **FOUR independent reviews ran and all four found defects —
+  14, 9, 7, 11** — each resetting the counter, each reviewing its predecessors' repairs and finding
+  fresh defects in them. Self-rounds reached two-consecutive-clean three times (2–3, 6–9, 14–15)
+  and an independent reviewer destroyed it every time. **Condition (ii) was NEVER satisfied, and
+  review #4's eleven repairs are again reviewed by nobody but their author.**
   ⚠ **The reusable lesson: two consecutive clean SELF-rounds were worth very little** — the
   independent pass found three consequential defects including one that made a shipped deliverable's
-  own reader recipe raise `AssertionError`. Four findings are recorded rather than repaired
-  (`KNOWN_ISSUES` 63-65): the PASS token's forward reference and scope count, both unrepairable
+  own reader recipe raise `AssertionError`. **FIVE** findings are recorded rather than repaired
+  (`KNOWN_ISSUES` **63–66**, the last being the RATE itself, which is the class all eleven of review #4's findings fall into): the PASS token's forward reference and scope count, both unrepairable
   because the token IS the sha256 of those bytes; `check_dead_containment`'s green depending on a
   gitignored PDF; and the existing withdrawal-completeness checker never being given the 2026-09-21
   claim. **No scientific number moved in either direction.**
