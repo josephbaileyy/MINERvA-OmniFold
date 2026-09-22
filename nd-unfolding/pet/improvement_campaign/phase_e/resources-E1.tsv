@@ -1,0 +1,13 @@
+date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cpu_core_hours	state	purpose
+2026-09-22T17:59:14Z	E1	58756787	m3246	shared_milan_ss11/shared	1	0	145	0.000	0.725	FAILED	pool cache prep; FAILED (segfault: import ROOT crashes cling in root_6_28)
+	E1	58769952	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	PENDING	pool T and pool S input caches, D3 standardization, censuses
+	E1	58769953	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	PENDING	D5 tables rebuilt from the canonical generator ROOT files (uproot)
+	E1	58770033	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	PENDING	known-function toy reference assessment (c)
+	E1	58770073	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	superseded smoke test, cancelled before it ran
+	E1	58770074	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	PENDING	smoke test of the identifiability runner
+	E1	58770115	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	PENDING	smoke test of the references runner (5 cases)
+	E1	58770116	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	PENDING	identifiability: every distortion + 20-split null
+	E1	58770117_[0-2]	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	PENDING	scalar references under distortion, replicate 0
+	E1	58770118_[0-2]	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	PENDING	scalar references under distortion, replicate 1
+	E1	58770119_[0-2]	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	PENDING	scalar references under distortion, replicate 2
+	E1	58770120	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	PENDING	reference assessment (b): pool S at 1x and 8x
