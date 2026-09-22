@@ -13,14 +13,15 @@ an uncertainty product, a central-value change, or a Gate-6 action.
 
 | phase | question | state | evidence |
 |---|---|---|---|
-| A | Do the suspected optimizer / shared-step-2 recipe discrepancies exist in the executed path? | A1 done: both CONFIRMED at runtime; repaired per-step driver built and checked | `phase_a/INTENDED_VS_EXECUTED-20260922.md`, `phase_a/receipts/` |
-| B | Where is recovery lost? | not started | `phase_b/` |
-| C | Which feature/model changes improve recovery? | not started | `phase_c/` |
+| A | Do the suspected optimizer / shared-step-2 recipe discrepancies exist in the executed path? | done: both CONFIRMED at runtime (A1); repaired per-step driver built and checked (A1); historical headline, data path, feature inventory and resources recovered (A2) | `phase_a/INTENDED_VS_EXECUTED-20260922.md`, `phase_a/receipts/` |
+| B | Where is recovery lost? | B1 done (scalar IBU/GBDT/MLP references, reference decomposition, truth learnability); B2 (PET stepwise diagnostics) running | `phase_b/scalar/SCALAR_REFERENCES-20260922.md`, `phase_b/pet/` |
+| C | Which feature/model changes improve recovery? | first four feature arms queued inside B2 | `phase_c/` |
 | D | Do more events help? | not started | `phase_d/` |
 | E | Physics robustness, reference calibration, coverage | not started | `phase_e/` |
 | F | Conditional alternative methods | not started | `phase_f/` |
 
-Cumulative resource use: `RESOURCE_LEDGER.tsv`.
+Cumulative resource use: `RESOURCE_LEDGER.tsv`, rebuilt from every `resources-*.tsv` by `aggregate_resources.py`
+(`--check` verifies it is current).
 
 ## Code (task A1)
 
