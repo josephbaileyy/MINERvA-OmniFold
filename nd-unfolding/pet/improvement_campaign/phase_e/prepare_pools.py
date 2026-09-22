@@ -109,6 +109,12 @@ def main() -> None:
     ap.add_argument("--output-dir", type=Path, required=True)
     ap.add_argument("--skip-inventory-sha", action="store_true",
                     help="testing only: do not hash the (large) inventory")
+    ap.add_argument("--d5-check", action="store_true",
+                    help="rebuild the committed D5 tables from the canonical ROOT files here. "
+                         "Needs an interpreter that can read them: uproot, or a WORKING PyROOT "
+                         "-- `root_6_28`'s ROOT segfaults in cling on this machine (job "
+                         "58756787), so the check normally runs as its own job under the NERSC "
+                         "python module (uproot), recorded in `results/d5_rebuild_check.json`")
     args = ap.parse_args()
     t0 = time.perf_counter()
     out = scm.refuse_historical_output(args.output_dir)
@@ -140,6 +146,23 @@ def main() -> None:
     rows = {p: rp.pool_rows(codes, p) for p in ("T", "S")}
     union = np.union1d(rows["T"], rows["S"])
     census: dict[str, Any] = {}
+
+    # ---- D5 tables rebuilt from the canonical files (fail fast, opt-in) ---------------------
+    if args.d5_check:
+        import build_d5_calibration as b5
+        rebuilt = b5.digests(b5.build(args.d5_directory))
+        committed = b5.digests(json.loads(dist.D5_CALIBRATION.read_text()))
+        census["d5_rebuild_check"] = {"directory": str(args.d5_directory), "rebuilt": rebuilt,
+                                      "agrees": rebuilt == committed}
+        if rebuilt != committed:
+            raise SystemExit("[prepare] D5 tables rebuilt from the canonical files differ from "
+                             "the committed calibration")
+    else:
+        census["d5_rebuild_check"] = {
+            "performed_here": False,
+            "reason": "this interpreter cannot read the ROOT files (root_6_28's PyROOT segfaults "
+                      "in cling); the check runs as its own job under the NERSC python module",
+            "record": "phase_e/results/d5_rebuild_check.json"}
 
     # ---- scalar members for T and S --------------------------------------------------------
     scal = {name: load_member_rows(args.closure_npz, name, union) for name in SCALAR_MEMBERS}
@@ -227,16 +250,6 @@ def main() -> None:
     census["d5_3d_phase_space"] = {"inside": int(inside.sum()), "outside": int((~inside).sum()),
                                    "w_truth_fraction_inside":
                                        float(T["w_truth"][inside].sum() / T["w_truth"].sum())}
-
-    # ---- D5 tables rebuilt from the canonical files ------------------------------------------
-    import build_d5_calibration as b5
-    rebuilt = b5.digests(b5.build(args.d5_directory))
-    committed = b5.digests(json.loads(dist.D5_CALIBRATION.read_text()))
-    census["d5_rebuild_check"] = {"directory": str(args.d5_directory), "rebuilt": rebuilt,
-                                  "agrees": rebuilt == committed}
-    if rebuilt != committed:
-        raise SystemExit("[prepare] D5 tables rebuilt from the canonical files differ from the "
-                         "committed calibration")
 
     # ---- write -------------------------------------------------------------------------------
     files = {}
