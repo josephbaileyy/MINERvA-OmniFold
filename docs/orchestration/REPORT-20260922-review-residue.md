@@ -49,8 +49,9 @@ remedy itself.
 | **agy #4 (independent)** | **11** | ⚠ **ALL ELEVEN IN ROW 66's CLASS — zero elsewhere.** Stale counts and one-of-N-sites failures in my bookkeeping. It re-derived and could NOT break: the release package end-to-end, `VL145`, the repaired probe, row 66's cited instances, and the ledger arithmetic. All eleven fixed |
 | 16 (self) | **0** | pure verification after the de-duplication fix: ledger reconciles (self rows ordered and summing to the stated total; agy 14/9/7/11; totals 11/41/52), `CATALOG.md` and `KNOWN_ISSUES.md` restate **zero** counts, package digests and `M` re-derived, L2 statistics, all four gates |
 | **agy #5 (independent)** | **9** | ⚠ **AND IT BROKE THE STRUCTURAL FIX ITSELF.** Three of the nine are about the de-duplication: it **deleted a TRUE statement** (the "(i) satisfied three times" count, which survived only in `CATALOG.md`) while leaving the false twin as the single source; row 66 **still carried a stale review count**, so the commit message's *"0 times in KNOWN_ISSUES.md"* was false; and ⚠ **row 66's central claim was OVERSTATED and is now withdrawn** — review #3 found three defects OUTSIDE the class, including a **logic bug in committed probe code**. All nine fixed |
+| 17 (self) | **0** | pure verification after the §1 rewrite: ledger reconciles from its own rows, package digests and `M` re-derived, gates green |
 
-**TOTAL: self rounds 1–16 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0 = 11; independent reviews =
+**TOTAL: self rounds 1–17 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0+0 = 11; independent reviews =
 14+9+7+11+9 = 50; TOTAL 61.** **FORTY-ONE of the fifty-two were found by the four INDEPENDENT
 reviewers; eleven by me across the self-rounds tabulated above.**
 
