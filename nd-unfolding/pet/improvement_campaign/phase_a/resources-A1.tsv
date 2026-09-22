@@ -14,3 +14,4 @@ date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cp
 2026-09-22	phaseA1	58748392	m3246_g	gpu_debug	1	4	424	0.4711	0.000	COMPLETED	runtime check of run_unfold.py, both arms, tuning 100k, 2 iterations x 2 epochs, input digests vs the audit
 2026-09-22	phaseA1	58748393	m3246_g	gpu_debug	1	4	276	0.3067	0.000	COMPLETED	cost at the historical data size (final, 2M events), ours, 1 epoch per step
 2026-09-22	phaseA1	58748395	m3246_g	gpu_debug	1	4	501	0.5567	0.000	COMPLETED	cost at the historical data size (final, 2M events), theirs (his declared step-1 recipe), 1 epoch per step
+2026-09-22	phaseA1	58748758	m3246	debug	1	0	501	0.0000	17.813	COMPLETED	all campaign tests at the final code commit 7c5bb166: 31 passed, 7 xfailed
