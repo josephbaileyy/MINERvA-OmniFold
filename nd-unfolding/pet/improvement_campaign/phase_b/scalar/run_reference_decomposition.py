@@ -68,8 +68,10 @@ def main() -> None:
     # displacement of NORMALIZED spectra, as the historical maps define it
     d_c = np.abs(T_c / T_c.sum() - t0_c / t0_c.sum())
     d_b = np.abs(T_b / T_b.sum() - t0_b / t0_b.sum())
-    # the law needs a rate-preserving target: rescale T to the prior's total (tilt mean is 1 on
-    # these rows by construction, so this is a no-op up to rounding; recorded)
+    # the law needs a rate-preserving target: rescale T to the prior's total. NOT a no-op: the
+    # historical tilt is normalized by its UNWEIGHTED mean, so on w_truth-weighted mass it is not
+    # rate-preserving (measured factor 0.9713 on half B, recorded below). The score renormalizes,
+    # so this affects only the absolute-spectrum variant's bookkeeping.
     rescale = t0_b.sum() / T_b.sum()
     T_b = T_b * rescale
 
