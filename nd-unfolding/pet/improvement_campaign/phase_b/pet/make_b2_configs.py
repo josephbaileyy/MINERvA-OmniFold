@@ -96,16 +96,32 @@ def schedule_variant(step: StepRecipe, variant: str) -> StepRecipe:
     return step
 
 
+def truth_only_step(seed: int, epochs: int) -> StepRecipe:
+    """Exp. 2: the H step-2 fit at its iteration-0 rate, run `epochs` epochs with the
+    best-validation epoch handed on. Epochs 1-8 are the historical 8-epoch fit (same seeds, same
+    constant rate); the per-epoch evaluation records both."""
+    step = h_step(seed)
+    return dataclasses.replace(step, stopping=dataclasses.replace(
+        step.stopping, max_epochs=int(epochs), restore="best"))
+
+
 def run_config(name: str, *, seed: int, iterations: int, schedule: str = "H",
-               feature_arm: str = "baseline", note: str = "") -> RunConfig:
-    events = EventSplitSpec(stage="final", max_events=TRAIN_EVENTS, subsample_seed=0,
-                            split_seed=int(fd.SPLITS["split_seed"]))
+               feature_arm: str = "baseline", note: str = "", stage: str = "final",
+               max_events: int | None = None, epochs: int | None = None,
+               step2: StepRecipe | None = None) -> RunConfig:
+    events = EventSplitSpec(stage=stage, max_events=int(max_events or TRAIN_EVENTS),
+                            subsample_seed=0, split_seed=int(fd.SPLITS["split_seed"]))
     endpoint = EndpointSpec(amplitude=float(fd.ENDPOINT["amplitude"]),
                             clip=float(fd.ENDPOINT["clip"]))
+    s1 = schedule_variant(h_step(seed), schedule)
+    s2 = step2 or schedule_variant(h_step(seed), schedule)
+    if epochs is not None:
+        s1 = dataclasses.replace(s1, stopping=dataclasses.replace(s1.stopping,
+                                                                  max_epochs=int(epochs)))
+        s2 = dataclasses.replace(s2, stopping=dataclasses.replace(s2.stopping,
+                                                                  max_epochs=int(epochs)))
     config = RunConfig(
-        name=name, arm="ours",
-        step1=schedule_variant(h_step(seed), schedule),
-        step2=schedule_variant(h_step(seed), schedule),
+        name=name, arm="ours", step1=s1, step2=s2,
         iterations=int(iterations),
         model_step1=ModelSpec("ours_pet", OURS_PET_PARAMS),
         model_step2=ModelSpec("ours_pet", OURS_PET_PARAMS),
@@ -121,7 +137,57 @@ def experiment_1() -> dict[str, RunConfig]:
             for s in (1, 2, 3, 4)}
 
 
-PLANS = {"e1": experiment_1}
+def dev() -> dict[str, RunConfig]:
+    """Mechanics checks on the tuning stage (100k events): unfold 2 x 2 epochs, truth-only."""
+    out = {"b2dev-unfold": run_config("b2dev-unfold", seed=1, iterations=2, stage="tuning",
+                                      max_events=100_000, epochs=2, note="B2 mechanics check"),
+           "b2dev-unfold-arm": run_config("b2dev-unfold-arm", seed=1, iterations=2,
+                                          stage="tuning", max_events=100_000, epochs=2,
+                                          feature_arm="reco_summaries_pdg_onehot_truthglobals",
+                                          note="B2 mechanics check, all transforms")}
+    for arm in ("baseline", "pdg_onehot_truthglobals"):
+        name = f"b2dev-truth-{arm}"
+        out[name] = run_config(name, seed=1, iterations=1, stage="tuning", max_events=100_000,
+                               feature_arm=arm, step2=truth_only_step(1, 3),
+                               note="B2 mechanics check, truth-only")
+    return out
+
+
+T_ARMS = {"T0": "baseline", "T1": "pdg_onehot", "T2": "pdg_onehot_truthglobals"}
+
+
+def experiment_2() -> dict[str, RunConfig]:
+    """Truth-only learnability of the KNOWN tilt, step 2 alone, 32 epochs, seeds 1-2."""
+    out = {}
+    for tag, arm in T_ARMS.items():
+        for s in (1, 2):
+            name = f"b2e2-{tag}-s{s}"
+            out[name] = run_config(name, seed=s, iterations=1, feature_arm=arm,
+                                   step2=truth_only_step(s, 4 * EPOCHS),
+                                   note=f"B2 exp 2 {tag}: truth-only learnability ({arm})")
+    return out
+
+
+def experiment_3() -> dict[str, RunConfig]:
+    """H at K = 10 (step-wise closure; also the reference arm of exp. 4), seeds 1-2."""
+    return {f"b2e3-H-K10-s{s}": run_config(f"b2e3-H-K10-s{s}", seed=s, iterations=10,
+                                           note="B2 exp 3 / exp 4 reference: H at K=10")
+            for s in (1, 2)}
+
+
+def experiment_4() -> dict[str, RunConfig]:
+    """Schedule factors one at a time against H, K = 10, seeds 1-2."""
+    out = {}
+    for variant in ("S1", "S2", "S3"):
+        for s in (1, 2):
+            name = f"b2e4-{variant}-K10-s{s}"
+            out[name] = run_config(name, seed=s, iterations=10, schedule=variant,
+                                   note=f"B2 exp 4: schedule factor {variant} vs H")
+    return out
+
+
+PLANS = {"e1": experiment_1, "dev": dev, "e2": experiment_2, "e3": experiment_3,
+         "e4": experiment_4}
 
 
 def write(plans: list[str]) -> None:

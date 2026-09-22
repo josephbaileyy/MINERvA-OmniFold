@@ -5,7 +5,8 @@
 #   MINE         clean checkout (git HEAD must equal MINE_COMMIT, tree clean before and after)
 #   OUT          output dir; each config writes OUT/<config name>/
 #   CONFIGS      space-separated config file names under phase_b/pet/configs/
-#   DRIVER       script relative to improvement_campaign/ (default run_unfold.py)
+#   DRIVER       script relative to improvement_campaign/ (default run_unfold.py; the B2 driver
+#                phase_b/pet/b2_driver.py also gets --deadline-unix from the allocation end)
 #   DRIVER_ARGS  extra arguments for the driver (optional)
 #   SCORE        if 1, score each finished run with phase_b/pet/b2_score.py (optional)
 #   POPULATIONS  B1's cached populations.npz (needed when SCORE=1)
@@ -28,12 +29,20 @@ export TF_DETERMINISTIC_OPS=1 CUBLAS_WORKSPACE_CONFIG=:4096:8 NVIDIA_TF32_OVERRI
 module load tensorflow/2.15.0
 C="$MINE/nd-unfolding/pet/improvement_campaign"
 B="$C/phase_b/pet"
-NGPU=$(nvidia-smi -L | wc -l)
+# GPU slots: the devices Slurm handed this job (its CUDA_VISIBLE_DEVICES), else all visible ones.
+IFS=, read -r -a DEVS <<< "${CUDA_VISIBLE_DEVICES:-}"
+if (( ${#DEVS[@]} == 0 )); then mapfile -t DEVS < <(seq 0 $(( $(nvidia-smi -L | wc -l) - 1 ))); fi
+NGPU=${#DEVS[@]}
+# The B2 driver stops starting iterations 5 min before the allocation ends (resumable).
+END_UNIX=$(date -d "$(squeue -h -j "$SLURM_JOB_ID" -o %e)" +%s)
+DEADLINE=$(( END_UNIX - 300 ))
+[[ "$DRIVER" == *b2_driver.py ]] && DRIVER_ARGS="$DRIVER_ARGS --deadline-unix $DEADLINE"
+echo "job $SLURM_JOB_ID end $END_UNIX deadline $DEADLINE devices ${DEVS[*]} driver $DRIVER args $DRIVER_ARGS" >> "$OUT/launch-$SLURM_JOB_ID.txt"
 read -r -a LIST <<< "$CONFIGS"
 run_one() {  # $1 = config file name, $2 = GPU index
   local CFG=$1 GPU=$2 NAME RUN
   NAME=$(basename "$CFG" .json); RUN="$OUT/$NAME"; mkdir -p "$RUN"
-  CUDA_VISIBLE_DEVICES=$GPU python "$MINE/nd-unfolding/mnv_guarded_run.py" --expect-root "$MINE" \
+  CUDA_VISIBLE_DEVICES=${DEVS[$GPU]} python "$MINE/nd-unfolding/mnv_guarded_run.py" --expect-root "$MINE" \
     --inventory "$RUN/guard-$SLURM_JOB_ID.json" --label "B2-$NAME" \
     -- "$C/$DRIVER" --config "$B/configs/$CFG" --repo "$MINE" --out "$RUN" \
     --inputs-npz "$INPUTS" --identity-sidecar "$SIDECAR" $DRIVER_ARGS \
