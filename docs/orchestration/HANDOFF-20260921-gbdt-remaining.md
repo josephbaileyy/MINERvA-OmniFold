@@ -31,8 +31,10 @@ accepted provenance gap, repeated summaries, or absent optional studies.
 
 `(cause 3, Z)`'s `M(ii)`, branch 5, **NOT MET — PER-BIN**, on a fully valid campaign. It is **flat
 in `N`** — `6.04% ± 0.39%` at `N = 40/80/160`, exponent `0.000`, against a resampling floor falling
-`20.91% → 7.57%` at exponent `1.467` — so it is a property of the estimator and **a larger ensemble
-would not reduce it**.
+`20.91% → 7.57%` at exponent `1.467` — so it is a property of the estimator rather than of the
+ensemble's resampling noise.
+
+⚠ **CORRECTED 2026-09-21: *"a larger ensemble would not reduce it"* is WITHDRAWN as an inference.** The flatness measurement stands exactly as stated; what does not follow is the statement about untested ensemble sizes, because the `40`- and `80`-throw points are **nested subsets of the same 160 throws at ONE seed pair**. Read [`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`](CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md) before quoting this. **The FAIL and the no-significance conclusion are untouched** — they rest on the measurement against the bound, not on this inference.
 
 **It is why no generator significance is quoted, and that is already in the abstract.** No action is
 pending unless you want to revisit the `5%` bound, which was fixed before production and cannot be
@@ -114,6 +116,37 @@ re-chosen from an observed value without violating §6.4's own discipline.
 > confirms `L1`'s FAIL with the five varying; `< 5%` **licenses nothing** — one seed pair cannot
 > show a maximum over the declared set is below a bound; "cannot be computed" is an inability, not
 > a result. Nothing here moves the adopted digest, regrades cause 3, or licenses a significance.
+>
+> ## ⚠⚠ OUTCOME 2026-09-21 — THE PROBE IS BLOCKED AT STAGE 4 AND THERE IS NO `s_proj`
+>
+> **`L2` is NOT answered.** Full record:
+> [`OUTCOME-20260921-L2-probe-blocked-at-stage-4.md`](OUTCOME-20260921-L2-probe-blocked-at-stage-4.md).
+> This discharges the predeclaration's third outcome row — *"cannot be computed | report the
+> inability as an inability | it is not a result of any kind"* — which was fixed before the run.
+>
+> **What exists:** ten endpoint unfolds at seed `1242`, published with receipts, **one** distinct
+> `config_hash` (`4809b4ad…`) across all ten, and an `EVIDENCE-COMPLETE` member manifest. The seed
+> demonstrably reached the estimator — `12–15%` per-bin divergence, eight orders above the
+> `1.9e-11` floor, inverted gate `10/10` diverged.
+>
+> **What stopped it:** `p4_build_components` is self-gated (repair-12) on `P4_VERIFIER_PASS`. Both
+> committed verdicts were tested with the real checker: `repair8` is `BLOCK`; `repair11` is a
+> genuine `PASS` authorizing stages 4–6 that `TOKEN-REJECT`s because **13 files in its scope
+> changed at HEAD** — *"A PASS cannot authorize code the verifier never saw."*
+>
+> ⚠ **The gate was already unsatisfiable before `L2`, measured not assumed:** the same token
+> against `f6f54e73` rejects with **10** changed files. **Stage 4 is blocked for the whole
+> standard-P4 lane**, and has been. `L2` took the set `10 → 13` (adding `p4_check_receipt.py`,
+> `run_p4_standard.sh`, `run_p4_unfold_std.sh`).
+>
+> **This lane does not self-issue a token.** It authored all eight sites under review, and the
+> gate exists because a self-authorizing run *"would have written a candidate ROOT at stage 4"*. A
+> **compute** grant is not a **review** authorization.
+>
+> **To unblock — routed, not performed:** a `standard-p4-verifier` re-run by a lane that did not
+> author the change. That unblocks stages 4–6 for the entire lane, not just `L2`. The expensive
+> part is already spent and preserved: the ten member endpoints resume-skip, so stages 4–6 are
+> minutes once a PASS exists.
 >
 > ### ⚠ A design correction, made before it cost anything
 >
