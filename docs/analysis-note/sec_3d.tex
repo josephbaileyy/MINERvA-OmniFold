@@ -148,7 +148,7 @@ so this number is not a calibrated goodness-of-fit statistic.
   \label{fig:eavail-marg}
 \end{figure}
 
-\subsection{Closure: the scatter is physical, not a method bias}
+\subsection{Closure: the one injected $\Eavail$ deformation is recovered}
 \label{sec:3d-closure}
 A reweight closure isolates whether that $\SI{4.4}{\percent}$ scatter is method
 bias or real information. We inject a known $+\SI{30}{\percent}$ Gaussian bump
@@ -160,11 +160,25 @@ median $0.9999$ with standard deviation \textbf{\num{0.0006}}
 (\SI{0.06}{\percent}); the per-3D-bin residual standard deviation is
 \SI{3.2}{\percent} (MC statistics in sparse high-recoil corners). The closure
 marginal scatter is thus $\sim70\times$ tighter than the
-$\SI{4.4}{\percent}$ data-versus-2D scatter. For the tested deformation --- a
-single injected $+30\%$ Gaussian bump --- no nonclosure is observed, and the
-total normalization matches to better than \SI{1}{\percent}. We therefore read
-the elevated marginal distance as data\,$\leftrightarrow$\,MC structure resolved
-by the available-energy dimension.
+$\SI{4.4}{\percent}$ data-versus-2D scatter, and the total normalization matches
+to better than \SI{1}{\percent}.
+
+\emph{What closes, stated exactly.} The deformation recovered is one shape: a
+$+\SI{30}{\percent}$ Gaussian in truth $\Eavail$ at
+center~\SI{0.3}{GeV}, width~\SI{0.15}{GeV}, injected into the pseudo-data and
+unfolded \emph{with the same detector response the unfold was given}. On that
+test the method does not manufacture or destroy the feature, which is what
+makes the data-versus-2D scatter readable as
+data\,$\leftrightarrow$\,MC structure resolved by the available-energy
+dimension rather than as an artifact of this particular injection. It does
+\emph{not} exclude estimator bias for other deformations --- no predeclared
+suite of shapes and amplitudes was run (\S\ref{sec:validation}) --- and it
+cannot speak to response mismatch at all, because the response is common to the
+pseudo-data and the unfold by construction. The distinct test in which the two
+responses disagree is defined in Appendix~\ref{app:response-mismatch} and has
+produced no result; it remains an open question, and the hidden-variable
+closure of \S\ref{sec:validation} does exceed its threshold at the largest
+injected amplitude.
 
 \subsection{Generator comparison in 3D}
 \label{sec:3d-models}
@@ -213,13 +227,18 @@ reach.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{generators_vs_unfolded_band}
-  \caption{1D projections of the unfolded 3D central cross section (black; the
-  historical covariance band is shown for orientation only and is not final)
+  \caption{1D projections of the unfolded 3D central cross section (black)
   versus four generator predictions
   produced at truth level: GENIE 2.12 CV, MINERvA Tune v1, NuWro 21.09, and
   GiBUU 2019. On $\pT$ and $\pPar$ the models track the data shape; on $\Eavail$
   they split, and all under-predict the data at low available energy. The wide
-  $\Eavail$ catch bin is omitted from the axis.}
+  $\Eavail$ catch bin is omitted from the axis.
+  \textbf{The grey band labelled ``total syst$\oplus$stat'' inside the graphic
+  is the SUPERSEDED historical 3D covariance} of \S\ref{sec:3d-syst}
+  (\texttt{hCov\_combined3d\_total}), drawn for orientation only. It is not the
+  uncertainty of this measurement, it is not quotable, and no comparison in this
+  section uses it; the quotable 3D covariance must be projected from the adopted
+  5D trunk and does not yet exist. Only the central values are interpreted.}
   \label{fig:3dmodels}
 \end{figure}
 
@@ -245,7 +264,7 @@ only as a quarantined numerical diagnostic in Fig.~\ref{fig:3dfullcov}.
   \label{fig:3dfullcov}
 \end{figure}
 
-\subsection{Historical 3D uncertainty budget and replacement gate}
+\subsection{The historical 3D uncertainty budget, and why it is not quoted}
 \label{sec:3d-syst}
 The historical band on Fig.~\ref{fig:3dmodels} was built as a full 3D
 analog of the 2D uncertainty budget of \S\ref{sec:systematics}. The
@@ -260,7 +279,7 @@ per-bin relative uncertainty \SI{10.4}{\percent}, numerical rank $247$ (of
 (Fig.~\ref{fig:3dbands}). These are audit descriptors, not publication
 uncertainties. Under the corrected contract, the quotable 3D covariance is the
 exact projection of the adopted 5D covariance. That covariance now exists
-(\S\ref{sec:eavailw-adopted}) and the replacement it waited on has landed, but
+(\S\ref{sec:eavailw-construction}) and the replacement it waited on has landed, but
 the 3D projection itself has not been built, so all covariance-dependent 3D
 comparisons remain gated on a product that does not yet exist.
 
@@ -372,7 +391,10 @@ shape comparison awaits the public \cite{MINERvA:2022incl} data release.
     \caption{Central-value $d\sigma/d\Eavail$ decomposed by interaction mode and
     overlaid with the unfolded data. The data excess is localized to the
     quasielastic--$\Delta$ dip ($\Eavail\le\SI{0.4}{GeV}$), the shape and size of
-    a missing 2p2h component.}
+    a missing 2p2h component. \textbf{The error bars drawn on the data points
+    (``$\pm$ total'') are from the superseded historical 3D covariance}
+    (\S\ref{sec:3d-syst}); they orient the eye and are not quotable, and the
+    excess is read here as a central-value shape statement.}
     \label{fig:modedecomp}
   \end{minipage}\hfill
   \begin{minipage}{0.49\textwidth}
@@ -380,7 +402,11 @@ shape comparison awaits the public \cite{MINERvA:2022incl} data release.
     \includegraphics[width=\textwidth]{compare_mec_eavail}
     \caption{Re-generating GENIE with the empirical Valencia 2p2h enabled (red,
     stacked on the no-2p2h CV) fills part of the low-$\Eavail$ dip --- about half
-    the data$-$CV gap, the remainder being the MINERvA-tune enhancement.}
+    the data$-$CV gap, the remainder being the MINERvA-tune enhancement.
+    \textbf{As in Fig.~\ref{fig:modedecomp}, the ``$\pm$ total'' bars on the
+    data points come from the superseded historical 3D covariance}
+    (\S\ref{sec:3d-syst}) and are not quotable; the gap-filling fraction is a
+    central-value statement.}
     \label{fig:mec}
   \end{minipage}
 \end{figure}
@@ -453,9 +479,12 @@ future work.
   \includegraphics[width=0.85\textwidth]{ascencio_fullcov_compare}
   \caption{Bin-identical comparison to Ascencio
   \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common
-  $(\Eavail,q_{3})$ grid. Only the central-value comparison is used; the
-  uncertainty-derived annotations in the panel do not use the corrected 4D
-  covariance.}
+  $(\Eavail,q_{3})$ grid. Only the central-value comparison is used. The
+  uncertainty-derived annotations inside the panel --- the error bars on our
+  points and the $\chi^{2}$ it prints --- are computed from the
+  \emph{superseded} historical unified-throw 4D covariance, not from a
+  corrected one, and are not quotable; the published points carry the
+  published covariance.}
   \label{fig:ascencio}
 \end{figure}
 

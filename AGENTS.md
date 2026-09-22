@@ -85,8 +85,8 @@ target-factor, extraction, or occupancy probes.
 **Nor is it the ADOPTION of a scalar-5D covariance: Joseph adopted `3d7465f6…` on 2026-09-20 as
 publication-under-exception, and the `(E_avail,W)` projection built from it is verified.** It is now
 **the estimator-seed sensitivity of that trunk, which exceeds its own declared limit** —
-`s_proj = 6.145%` against a `5%` bound fixed before production, flat in `N`, so a property of the
-estimator and not of the ensemble's resolution. **That is why no generator significance is quoted.**
+`s_proj = 6.145%` against a `5%` bound fixed before production, and it did **not fall over the tested `N = 40`–`160`** (`6.02%`/`6.02%`/`6.145%`) while the same-seed resampling floor fell `20.91% → 7.57%` between `N = 40` and `80` — **so the failing leg is not reporting its own resampling noise. That is why no generator significance is quoted.**
+⚠ **CORRECTED 2026-09-21, and it reached the deliverables: this read *"flat in `N`, so a property of the estimator and not of the ensemble's resolution"*, and the unqualified "flat in `N`" propagated an infinite-`N` claim into note, primer and paper.** The `40`/`80` points are **nested subsets of one 160-throw ensemble at ONE seed pair**, so it is a within-ensemble statement; larger `N` and the seed-pair width are **unmeasured**. No number moved — [`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`](docs/orchestration/CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md).
 ⚠ It is **not** a licence to re-open the declined member campaign, the completed central-value
 studies, or PET (2026-09-19 §7 stopping rule), and it is **not** bounded below — the *"lower bound"*
 reading was **withdrawn 2026-09-20**. Read the routed `OI-*` end-state and

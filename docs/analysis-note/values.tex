@@ -339,10 +339,31 @@
 %     CAUTION the +/- is scatter across throw subsets at ONE seed pair (1000 vs 2200);
 %     the width of the seed-pair distribution is UNMEASURED. Do not read it as the
 %     uncertainty on the seed effect, and note s_proj is a MAXIMUM over the offset set.
-\newcommand{\seedEffect}{6.04}           % percent, mean over N = 40, 80, 160
+%
+%     CAUTION -- SCOPE, ADDED 2026-09-21 WHEN A MANUSCRIPT REVIEW FOUND THE NOTE, PRIMER AND PAPER
+%     ALL ASSERTING THE INFINITE-ENSEMBLE LIMIT FROM THESE SEVEN POINTS. Read the operand
+%     before quoting any of them:
+%       * the SEVEN s_proj measurements are ONE seed pair (offsets 0 and 1200) and the
+%         40/80-throw points are NESTED SUBSETS of the same 160 throws
+%         (state/SEED-EFFECT-20260920.json, `seed_effect_same_throws`: Q1-Q4 at N=40,
+%         HA/HB at N=80, plus the graded full-N value). So "flat in N" is a WITHIN-ENSEMBLE
+%         statement over a factor of four, not a statement about arbitrary N. The evidence
+%         file's own section 5 ("A LARGER ENSEMBLE WOULD NOT CHANGE THIS", "there is no
+%         ensemble size at which it falls under 5%") states more than the seven points
+%         support; the note/primer/paper now report the narrower conclusion, and repeating
+%         that narrative is not additional evidence for it.
+%       * the FLOOR was measured at N=40 and N=80 ONLY. \floorExponent is therefore a
+%         TWO-POINT exponent, log(20.91/7.57)/log(2) = 1.4657 -> 1.467, and there is NO
+%         floor measurement at N=160. Do not write "over the same range" against a seed
+%         effect quoted at 40/80/160.
+\newcommand{\seedEffect}{6.04}           % percent, mean over all SEVEN points (6 subsets + full N=160)
+\newcommand{\seedEffectNforty}{6.02}     % percent, mean of the FOUR disjoint N=40 subsets:
+                                         % (6.64025+5.86403+5.44858+6.14425)/4 = 6.0243
+\newcommand{\seedEffectNeighty}{6.02}    % percent, mean of the TWO N=80 halves:
+                                         % (6.28872+5.75774)/2 = 6.0232
 \newcommand{\seedEffectScatter}{0.39}    % percent, subset scatter at ONE seed pair
-\newcommand{\seedEffectExponent}{0.000}  % s ~ N^-p, measured: FLAT
-\newcommand{\floorExponent}{1.467}       % the resampling floor, same range: falls steeply
+\newcommand{\seedEffectExponent}{0.000}  % s ~ N^-p over N = 40, 80, 160 (nested subsets): FLAT
+\newcommand{\floorExponent}{1.467}       % the resampling floor, N = 40 -> 80 ONLY: two-point
 \newcommand{\floorNforty}{20.91}         % percent, 12 disjoint pairs
 \newcommand{\floorNeighty}{7.57}         % percent, 2 pairs
 % (3) Five of 45 bands are seed-pinned, so the effect above is measured on the

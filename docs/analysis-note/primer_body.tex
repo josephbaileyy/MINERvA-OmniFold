@@ -28,11 +28,12 @@ done carelessly it amplifies noise into artifacts.
 
 The traditional way to unfold builds a big table --- a ``migration matrix'' ---
 that records, for every bin of true momentum, how events leak into neighboring
-bins of measured momentum, and then tries to invert that leakage. It works, but
-it has a crippling limitation: each new quantity you want to measure multiplies
-the number of bins, and the table quickly becomes too large and too sparse to be
-useful. In practice this caps the method at two --- exceptionally three ---
-quantities at a time.
+bins of measured momentum, and then tries to invert that leakage. It works, and
+nothing forbids it in principle; the limitation is one of scale. Each new
+quantity you want to measure multiplies the number of bins, so the simulation
+needed to fill the table --- and the table's own conditioning --- degrade fast.
+In published practice that has kept binned results at two, occasionally three,
+reported quantities at a time.
 
 This analysis uses a different, machine-learning method called \textbf{OmniFold}.
 Instead of a table of bins, it trains a computer to compare the real data with a
@@ -75,11 +76,16 @@ report on the projected result shifts by about \SI{\sprojMeasured}{\percent}
 --- more than the \SI{\sprojBound}{\percent} we had decided in advance we
 would tolerate. The natural hope is that this is just statistical noise from
 having a finite number of simulated variations, which would shrink if we ran
-more of them. We checked, and it does not: the shift is the same size whether
-we use a quarter, a half, or all of our variations, while genuine statistical
-noise over that same range falls by a factor of nearly three. So it is a real
-property of the learner, and running more variations would not remove it. Two
-further facts qualify it: five of the forty-five uncertainty components are
+more of them. We checked over the range we have, and it does not shrink: the
+shift is the same size whether we use a quarter, a half, or all of our
+variations, while genuine statistical noise, measured between the quarter and
+the half, falls by a factor of nearly three over the same step. So the shift
+behaves like a real property of the learner rather than like noise, and we saw
+no reduction between a quarter and the full set. What we did \emph{not}
+establish is what a much larger set would give: we compared only one pair of
+random seeds, and nested subsets of one set of variations cannot rule out every
+larger one. Two further facts qualify it: five of the forty-five uncertainty
+components are
 built in a way the seed cannot reach at all, so the figure above is the effect
 of the other forty and we have not measured which way those five would move it;
 and the same seed change moves the \emph{central values} too,
@@ -131,8 +137,8 @@ mass ($W$). Each richer measurement, when collapsed back down, reproduces the
 simpler one --- a built-in consistency check.
 
 The first physics payoff appears in the available energy. When we compare the
-data to four independent state-of-the-art simulations, all four fall short of
-the data in the low-energy region (Fig.~\ref{fig:primergen}). This is not a
+data to four state-of-the-art simulation predictions, all four fall short of
+the data in the low-energy region (Fig.~\ref{fig:primergen}, left). This is not a
 surprise --- it resembles an established low-recoil discrepancy that simulations
 have historically struggled to model. Adding a process in which the neutrino
 interacts with a pair of nucleons (``2p2h'') fills part of the gap. The two tested
@@ -146,12 +152,17 @@ with it at central-value level on the maximal common grid.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.99\textwidth]{generators_vs_unfolded_band}
-  \caption{The unfolded central values (black points) compared to
-  four independent simulations. They agree on the muon momentum (left, center)
-  but all fall below the data at low available energy (right) --- the known
-  ``low-recoil'' shortfall, here rediscovered by an independent method. Only
-  the central values are interpreted; no significance is assigned.}
+  \includegraphics[width=0.99\textwidth]{eavailW_band}
+  \caption{The unfolded central values (black points) compared to four tested
+  simulation predictions --- GENIE's own central configuration, the same GENIE
+  with the two-nucleon process added, NuWro and GiBUU. \emph{Left:} available
+  energy; all four fall below the data at low available energy, the known
+  ``low-recoil'' shortfall, here rediscovered by a different unfolding method.
+  \emph{Right:} hadronic mass; all four sit below the data at high hadronic
+  mass. \textbf{Central values only.} No uncertainty band is drawn and no
+  significance is assigned, for the reason given at the start of this section.
+  The first two predictions are two configurations of the same generator and
+  are not independent of each other.}
   \label{fig:primergen}
 \end{figure}
 
@@ -160,9 +171,12 @@ with it at central-value level on the maximal common grid.
 Adding the hadronic-mass axis $W$ lets us look where the simulations still miss
 \emph{after} the two-nucleon process is included. The leftover discrepancy sits
 in a specific corner: high available energy \emph{and} high $W$ --- the
-``deep-inelastic'' region where the neutrino shatters the nucleon. There, all
-four simulations undershoot the central result. Its statistical significance
-is not assigned. The random seed described at the start of this section moves
+``deep-inelastic'' region where the neutrino shatters the nucleon. That corner
+is a statement about the two quantities \emph{jointly}, so
+Fig.~\ref{fig:primerjoint} shows the joint map rather than the two separate
+one-dimensional views of Fig.~\ref{fig:primergen}: neither of those alone
+would show it. There, all four simulations undershoot the central result. Its
+statistical significance is not assigned. The random seed described at the start of this section moves
 these central values as well, by at most \SI{\cvMoveOverSigmaMax}{\percent} of
 their own uncertainty; how far the corner's share of the excess could shift
 with it was not separately measured. This is the kind of localized discrepancy that
@@ -171,13 +185,25 @@ visible because the unbinned method let us slice the data this finely.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.99\textwidth]{eavailW_band}
-  \caption{The data versus the simulation band in the available-energy /
-  hadronic-mass plane. Every simulation underpredicts the high-energy, high-$W$
-  ``deep-inelastic'' corner in the central values; adding the two-nucleon
-  process does not help there. No significance is assigned. The estimator seed
-  moves these central values by at most \SI{\cvMoveOverSigmaMax}{\percent} of
-  their own uncertainty.}
+  \includegraphics[width=0.95\textwidth]{paper_joint_localization}
+  \caption{The unfolded data compared to the GENIE central simulation across
+  the available-energy / hadronic-mass plane \emph{jointly}. Both panels are
+  measured on the same seven-by-six grid of cells, with available-energy
+  boundaries $0$, $0.1$, $0.2$, $0.4$, $0.8$, $1.5$, $3$ and $100$~GeV and
+  hadronic-mass boundaries $0$, $1.1$, $1.4$, $1.8$, $2.2$, $3$ and
+  $100$~GeV; the axes are labelled by cell number, counting from zero, and the
+  last cell on each axis is a wide catch-all that collects everything above
+  $3$~GeV. \emph{Left:} the ratio of data to simulation, so $1$ means
+  agreement. \emph{Right:} the difference, data minus simulation, as a
+  cross section \emph{integrated over each cell}
+  (\si{cm^2/nucleon}) --- because that includes the cell's area, the wide
+  catch-all cells look large here even where the ratio on the left is
+  moderate, and the two panels should be read together. The excess concentrates
+  in the top-right corner: high available energy \emph{and} high hadronic mass.
+  Central values only; no uncertainty is drawn and no significance is assigned.
+  The estimator seed moves these central values by at most
+  \SI{\cvMoveOverSigmaMax}{\percent} of their own uncertainty.}
+  \label{fig:primerjoint}
 \end{figure}
 
 \subsection*{Alternative representations and signal definitions}
@@ -218,8 +244,8 @@ separately labeled, simulation-dependent extrapolation.
 \section{The takeaway}
 
 Unbinned machine-learning unfolding reproduces a flagship MINERvA measurement
-\emph{and} does what the traditional method cannot: measure many quantities at
-once. Using that, this analysis recovered a known low-recoil discrepancy with
+\emph{and} scales to many quantities at once, where the binned method's
+response table does not. Using that, this analysis recovered a known low-recoil discrepancy with
 a different unfolding method, exposed a localized central-value difference that all four tested
 simulations underpredict, and
 mapped a possible extension of the signal definition while exposing where the

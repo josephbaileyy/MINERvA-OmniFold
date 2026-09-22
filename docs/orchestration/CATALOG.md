@@ -176,6 +176,23 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   all **8** sites, including `values.tex`'s **comment**, which a search for rendered text misses.
   Also repairs `P2`: §4i now gives the full per-bin range `0.177`–`3.062` with `0.687`–`1.153`
   labelled as the top-1%-by-variance subset.
+- [`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`](CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md)
+  - **WITHDRAWN: *"there is no ensemble size at which it falls under `5%`"*** —
+  `EVIDENCE-20260920` §5's first bullet. The seven `s_proj` points are **one seed pair**
+  (offsets `{0,1200}`) and the `40`/`80`-throw points are **nested subsets of the same 160
+  throws**, so flatness over a factor of four in `N` is a **within-ensemble** observation, not a
+  determination of the asymptote. **No number moves** and the conclusion the measurement was
+  gathered for is retained in full: noise must fall with `N`, this did not between `N = 40` and
+  `N = 160`, so the failing leg is not reporting its own resampling noise. ⚠ **`M1`'s `6.145%`
+  FAIL is untouched**, and §5's **second** bullet and its *"nothing to price"* conclusion are
+  **NOT** withdrawn. Enumerates all **8** sites — `EVIDENCE` §5, `AGENTS.md:88`, four in
+  `docs/analysis-note/` (the last again being `values.tex`'s **comment**), `REPORT-20260920` `L1`
+  and `HANDOFF-20260921-gbdt-remaining` `L1`. ⚠ **Sites 7 and 8 were missed by the first draft of
+  its own table and found by the sweep, then MISDESCRIBED their own action until the owning lane
+  opened the diff** — the record keeps both on the page as method notes: run the sweep before
+  writing the enumeration, and write each row from `git diff` afterwards. §4a cites
+  `PREDECLARATION-20260921-L2-lateral-seed-release.md` §4 as an independent instance of the
+  one-seed-pair half that **predates** this record (`f6f54e73`), scoped to that half.
 - [`DECISION-20260920-joseph-rules-clause-c-disposition.md`](DECISION-20260920-joseph-rules-clause-c-disposition.md)
   - **§6.4 clause (c) is DISPOSED.** `V2` **discharged** by the third lane above; `V6`'s six
   unreproduced items **ruled outside** clause (c)'s scope, on the assessor's own distinction that

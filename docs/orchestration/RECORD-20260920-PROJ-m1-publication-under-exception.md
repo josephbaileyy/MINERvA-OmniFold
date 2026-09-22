@@ -31,13 +31,51 @@ Declared in `OPERATIVE-SHEET` §4c **before** the run, mode `receiving-cells`:
 |---|---|
 | **`src_cells_dropped` must be `0`** — a source cell mapping outside the destination is discarded uncertainty | **`0`** |
 | exact symmetry | `max|C − Cᵀ| = 0.00e+00` |
-| PSD | **OK** — `min-eig 4.359e-92`, most-negative/max `2.93e-15` |
+| PSD | **no negative eigenvalue** — `lambda_min = +4.359e-92` (**positive**, `n_negative = 0`), `lambda_min/lambda_max = 2.93e-15`, condition number `~3.4e14`. ⚠ **Read the correction below before quoting this row** |
 | `hRowIndex` readback digest | **OK**, 42 labels, `9eb9d216…` |
 | `rel` (CV reproduction) | **does not exist in this mode**, and nothing is reported for it |
 | `n_empty` | **NOT a declared check.** The projector writes it (`0`); **nothing may cite it**, because it is zero by construction here |
 
-Also recorded: `C_low (42,42)`, `sqrt-tr 4.4552e-39`, **rank ≈ 36 of 42** — the projection of a
-rank-deficient source is rank-deficient, and that is a property of the object, not a defect.
+Also recorded: `C_low (42,42)`, `sqrt-tr 4.4552e-39`, and **rank `36` of 42 AT THE PROJECTOR'S
+HARDCODED RELATIVE CUTOFF `rc = 1e-12`** (`project_cov_nd.py:340`) — **never quotable bare.** The
+source is rank-deficient and the projection inherits its ill-conditioning; that much is a property
+of the object, and the integer is not.
+
+> ## ⚠ CORRECTED 2026-09-21 — THE PSD LABEL AND THE RANK. NO MEASUREMENT MOVES.
+>
+> **1. `2.93e-15` is `lambda_min/lambda_max`, and `lambda_min` is POSITIVE.** Measured:
+> `lambda_min = +4.359104e-92`, `lambda_max = 1.488215e-77`, `n_negative = 0`, condition number
+> `~3.4e14`. The label *"most-negative/max"* asserts a negative eigenvalue this object does not
+> have. It is correct one row up in `VALIDATION_LEDGER.md` `VL142`, whose trunk min genuinely is
+> negative (`-1.6306079908811896e-90`, `abs(min)/max = 7.3147e-16`); it was carried down onto an
+> object with a positive min. **Do not "fix" `VL142`.**
+>
+> **2. `n_negative = 0` proves less than a PSD row suggests.** The smallest eigenvalues sit at the
+> float64 noise floor of a 10,694-term weighted sum, so **their sign is not meaningful**, and zero
+> negatives is a statement about this computation — **not** a demonstration that the source's
+> 5,214 negative directions were handled, and not a property guaranteed under a different mask,
+> summation order or precision.
+>
+> **3. The rank integer is a property of the CUTOFF, not of the matrix.** Scan on the same
+> projection: `rc 1e-6 → 26`, `1e-8 → 28`, `1e-10 → 32`, **`1e-12 → 36`**, `1e-14 → 41`, `0 → 42`;
+> `numpy.linalg.matrix_rank`'s own default `n*eps = 9.33e-15` gives **41**. The 42 eigenvalues decay
+> smoothly over ~15 orders with **no plateau**. **Do not substitute `41` for `36`** — that repeats
+> the defect with a different constant.
+>
+> **4. What survives of *"a property of the object"*, and what does not.** That the source is
+> rank-deficient and the projection inherits its ill-conditioning **is** a property of the object.
+> The **integer** is not, and the clause was being used to license the bare integer beside it.
+>
+> **Provenance, stated precisely.** [`PLAN-20260918-scalar5d-publication-completion.md`](PLAN-20260918-scalar5d-publication-completion.md)
+> §16.1a declares **TWO** withdrawals — the bare rank, and a separate *"`M C Mᵀ` averages the
+> negative directions out"* mechanism claim — and supplies the scan and the `lambda_min` sign above.
+> Points 1, 2 and 4 here are **consequences drawn from it**, not withdrawals §16.1a itself declared;
+> it could not have withdrawn this document's wording, because §16.1a was committed at `e78a458a`
+> (2026-09-18) and this text at `493e3f25` / `7257b255` (2026-09-20). ⚠ **Scope:** §16.1a scanned the
+> **DIAGNOSTIC** product (`m1_eavailW_DIAGNOSTIC.root`, `17,120` B, job `58510024`). This run
+> recorded the identical `lambda_min`, ratio, `sqrt-tr` and rank-at-`1e-12`, so the spectra agree at
+> recorded precision, but **no independent cutoff scan on `835828bf…` exists.**
+
 
 ## 3. The BINDING pairing check, repeated against the publication product
 

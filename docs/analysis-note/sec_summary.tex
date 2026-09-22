@@ -32,9 +32,11 @@ unbinned, simultaneously-unfolded formulation.) The physics output:
         (\S\ref{sec:uq-combine});
   \item the $(\Eavail,W)$ study localizes the remaining high-$\Eavail$
         excess to the deep-inelastic region, where all four generators
-        underpredict the central result; no significance is quoted without a
-        corrected projected covariance
-        (\S\ref{sec:eavailw});
+        underpredict the central result. A projected covariance for that plane
+        is adopted and built (\S\ref{sec:eavailw-construction}); no
+        significance is quoted because its measured estimator-seed sensitivity
+        exceeds the limit declared for it before production
+        (\S\ref{sec:eavailw-adopted});
   \item the recoil-only PET point-cloud track provides a low-level-input
         representation cross-check, yielding an absolutely-normalized central
         value that passes ordinary closure. Its historical five-component budget
@@ -79,7 +81,11 @@ products. The emerging \texttt{omnifold\_publication} proposal
 \cite{Bajpai:2026publication} emphasizes weight-family metadata, normalization,
 row alignment, and checksums. A MINERvA release should likewise specify event
 identity, estimator and uncertainty-family definitions, units, support,
-normalization, and a reproducible projection example. New projections require
+normalization, and a reproducible projection example. That release is specified
+for this analysis in App.~\ref{app:release}, which also records which of its
+objects have fixed identities today and which do not exist yet; \textbf{no
+release tag or release manifest exists}, so rebuilding the documents is not
+reproduction of any result here. New projections require
 their own applicability checks; nominal weights alone cannot certify arbitrary
 downstream inference (App.~\ref{sec:unbinned-inference}). Neither this release
 design nor a public example bears on the covariance adoption, which is settled

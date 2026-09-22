@@ -5,7 +5,11 @@
 Throughout this section, error bars on the unfolded points are the total
 uncertainty --- the combined systematic (universe), statistical (bootstrap),
 and ML (training-seed variation) budget constructed in \S\ref{sec:systematics}; the
-published points carry the published total covariance.
+published points carry the published total covariance. Two figures are
+exceptions and say so in their own captions:
+Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} carry statistical errors only,
+and their second curve is the simulated truth rather than the published
+data.
 
 \subsection{Double-differential cross section}
 \label{sec:results-xsec}
@@ -66,8 +70,11 @@ combined covariance that also credits this measurement's own uncertainty
 \S\ref{sec:results-tension}. The per-bin standardized
 difference using the published uncertainty as a scale (Fig.~\ref{fig:pull}) is centered (mean
 $\pullMean$) with RMS $\pullRMSr$, well inside the published
-uncertainties, and Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} show the
-same comparison bin-by-bin in $\pT$ and $\pPar$ slices.
+uncertainties. Figures~\ref{fig:ptslices}--\ref{fig:pzslices} display the
+unfolded result slice by slice against the \emph{simulated truth} in the
+published figure's panel format; they are a data-versus-prior comparison and
+are not a second view of this subsection's comparison to the published
+data.
 
 \begin{table}[h]
   \centering
@@ -102,17 +109,29 @@ same comparison bin-by-bin in $\pT$ and $\pPar$ slices.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pt_slices}
-  \caption{Bin-by-bin comparison to the published measurement: the unfolded
-  cross section (points) overlaid on the published data (histogram) in slices
-  of $\pT$ versus $\pPar$.}
+  \caption{Unfolded cross section (points) against the GENIE 2.12.6 $+$
+  MINERvA Tune~v1 \emph{simulated truth} prediction (histogram), in slices of
+  $\pT$ versus $\pPar$. \textbf{This is a data-versus-simulation comparison and
+  does not read the published measurement.} The histogram is the analysis MC
+  truth denominator passed through the same flux, nucleon-count and efficiency
+  normalization as the unfolded result
+  (\texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds it from
+  \texttt{hOFTruthDenom2D}), so the only difference between the two curves is
+  data versus the MC prior; only the \emph{panel format} follows Fig.~13 of
+  Ref.~\cite{MINERvA:2021owq}. The annotated per-panel $\chi^{2}$ uses the
+  statistical errors of the unfolded points alone and is a descriptive scale.
+  The comparisons \emph{to the published data} are Fig.~\ref{fig:pull} (per-bin
+  standardized differences), Table~\ref{tab:compare}, and
+  Fig.~\ref{fig:model} (projections).}
   \label{fig:ptslices}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pz_slices}
-  \caption{Same comparison as Fig.~\ref{fig:ptslices}, sliced in $\pPar$
-  versus $\pT$.}
+  \caption{The same unfolded-versus-simulated-truth comparison as
+  Fig.~\ref{fig:ptslices}, sliced in $\pPar$ versus $\pT$. It likewise does not
+  read the published measurement.}
   \label{fig:pzslices}
 \end{figure}
 
@@ -217,8 +236,17 @@ classifier feature and is re-unfolded accordingly.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{model_comp_ratio_maps}
-  \caption{Bin-by-bin ratio maps on the $(\pT,\pPar)$ grid: ours/paper (left)
-  and Tune~v1/paper (right). The tune's deficit is concentrated in the
-  low-$\pT$ peak; our result is flat near unity.}
+  \caption{Bin-by-bin ratio maps on the $(\pT,\pPar)$ grid, \textbf{both taken
+  to the MINERvA Tune~v1 model}: ours/Tune~v1 (left) and published
+  data/Tune~v1 (right), on a common colour scale $0.7$--$1.3$
+  (\texttt{2d-unfolding/compare\_to\_models.py}; the panels carry no printed
+  titles, so this caption is the only label). Neither map is a ratio to the
+  published data, and neither is flat near unity: both show the same tune
+  deficit, rising above unity over most of the plane and dipping below it at
+  the lowest $\pT$. \emph{That the two maps are close to each other} is the
+  content --- our result departs from the tune in the same places and by
+  similar amounts as the published data does. The direct ours-versus-published
+  ratio is the median bin ratio of Table~\ref{tab:compare} and the residual map
+  of Fig.~\ref{fig:pull}.}
   \label{fig:modelmaps}
 \end{figure}

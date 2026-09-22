@@ -64,10 +64,28 @@ has not yet produced a result.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\textwidth]{excess_eavail_W}
-  \caption{Unfolded-data minus GENIE-CV excess across the $(\Eavail,W)$
-  plane. The positive excess concentrates at high $\Eavail$ \emph{and} high
+  \caption{Unfolded data versus the GENIE-CV prediction across the
+  $(\Eavail,W)$ plane. \emph{Left:} $d\sigma/d\Eavail$ for both, integrated over
+  $W$. \emph{Center:} the per-cell ratio data/CV, dimensionless, on a
+  $0.5$--$1.5$ colour scale. \emph{Right:} the per-cell difference
+  data\,$-$\,CV.
+  \textbf{Axes are cell indices, counting from zero, on the
+  $7\times6$ reporting grid}: $\Eavail$ edges
+  $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ and $W$ edges
+  $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$, so index~6 on $\Eavail$ and
+  index~5 on $W$ are wide catch bins.
+  \textbf{Units and the bin-area factor:} the centre panel is a ratio of
+  densities and is area-free, but the right panel is the difference of
+  \emph{cell-integrated} cross sections,
+  $(\mathrm{d}^{2}\sigma/\mathrm{d}\Eavail\,\mathrm{d}W)\times
+  \Delta\Eavail\,\Delta W$ in \si{cm^2/nucleon}
+  (\texttt{nd-unfolding/excess\_eavail\_W.py}), so the catch-bin cells carry
+  their large widths and look correspondingly bigger. Read the two panels
+  together: the positive excess concentrates at high $\Eavail$ \emph{and} high
   $W$ --- the deep-inelastic region --- with a secondary low-$W$ (QE-like)
-  component and a small $\Delta$-region deficit.}
+  component and a small $\Delta$-region deficit. The percentage shares quoted in
+  the text are shares of the cell-integrated positive excess, i.e.\ of the right
+  panel.}
   \label{fig:eavailWexcess}
 \end{figure}
 
@@ -191,39 +209,181 @@ confirmation of the same localized excess. The location identified in the
 central-value map is descriptive; a future significance must account for any
 selection of the tested region using these data.
 
-\subsection{The $(\Eavail,W)$ covariance replacement gate}
+\subsection{The earlier direct $(\Eavail,W)$ block sum, and what its
+replacement had to satisfy}
 \label{sec:eavailw-cov}
-To turn the band into a number we build a dedicated 42-bin $(\Eavail,W)$
-covariance, $C = C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{lateral}}$,
+\noindent\textbf{This subsection is historical. It describes a superseded
+construction and the requirements imposed on its replacement; the covariance
+this note actually quotes is specified in \S\ref{sec:eavailw-construction}.}
+
+An earlier attempt built a dedicated 42-bin $(\Eavail,W)$ covariance
+\emph{directly}, as $C = C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{lateral}}$,
 by a \emph{frozen-reweighter} block sum on the merged five-axis
 \texttt{\_universes\_full} sample: the central-value OmniFold push-weights
-are held fixed and only the per-event truth reweight ratios change per
+were held fixed and only the per-event truth reweight ratios changed per
 systematic universe (the same frozen-reweighter \emph{technique} as the PET
 budget, \S\ref{sec:pet-syst} --- not the PET covariance matrix, which is never
-applied to this GBDT central value; no per-universe re-inference). The covariance carries
-13 knob bands $\pm1\sigma$, the 100-universe flux multisim, the projected full
-five-axis bootstrap covariance $C_{EW}=M C_{5D}M^{\top}$, and a $W$-resolved
-detector (lateral) block. A valid replacement must project the corrected
-five-axis statistical covariance as $M C_{5D}M^{\top}$ and use the corrected
-systematic endpoint convention. The
-detector block uses five shifted-kinematic bands
+applied to this GBDT central value; no per-universe re-inference). That object
+carried 13 knob bands $\pm1\sigma$, the 100-universe flux multisim, the
+projected full five-axis bootstrap covariance $C_{EW}=M C_{5D}M^{\top}$, and a
+$W$-resolved detector (lateral) block. It is not adopted and is not quoted
+anywhere in this note.
+
+Three requirements were declared for any replacement, and all three are met by
+the adopted object of \S\ref{sec:eavailw-construction}: project the corrected
+five-axis statistical covariance as $M C_{5D}M^{\top}$ rather than rebuilding it
+in the destination binning; use the corrected systematic endpoint convention;
+and bound the migrations omitted by the CV-support-limited dump-all sample with
+selection-complete active-universe event loops. That last replacement has
+landed. Its detector block uses five shifted-kinematic bands
 (\texttt{Muon\_Energy\_MINERvA/MINOS}, \texttt{MuonResolution}, and
 \texttt{BeamAngleX/Y}) plus weight-only \texttt{MinosEfficiency} and GEANT
 bands; the scope that classification does and does not establish is stated in
-\S\ref{sec:systematics}. Selection-complete active-universe event loops are also required to
-bound migrations omitted by the CV-support-limited dump-all sample.
+\S\ref{sec:systematics}.
 
-\subsection{The adopted five-axis covariance, and the four measurements that qualify it}
+\subsection{The adopted construction, in full}
+\label{sec:eavailw-construction}
+\noindent\textbf{This subsection is the authoritative account of the covariance
+this note quotes.} Where an earlier recipe appears elsewhere in this note
+(\S\ref{sec:eavailw-cov} for the direct $(\Eavail,W)$ block sum,
+\S\ref{app:pair} for the per-band pair convention), that recipe is historical
+or partial and this one governs.
+
+\paragraph{The five-axis object.} On the $\latBins$ reported cells of the
+$(\pT,\pPar,\Eavail,q_{3},W)$ grid, the adopted covariance is
+\begin{equation}
+  \label{eq:zassembly}
+  C_{Z} \;=\; D\,\Big(\textstyle\sum_{V} C_{b}\Big)\,D
+  \;+\; \textstyle\sum_{R} C_{b}
+  \;+\; \textstyle\sum_{A} L_{b}
+  \;+\; C_{\mathrm{stat}}
+  \;+\; C_{\mathrm{ML}},
+\end{equation}
+with the inflation $D=\diag(g)$,
+\begin{equation}
+  \label{eq:zinflation}
+  g_{i} \;=\;
+  \sqrt{\frac{\max\!\big(v^{\mathrm{cv}}_{\mathrm{uni},i},\,
+                         v_{\mathrm{blk},i}\big)}
+             {v_{\mathrm{blk},i}}}
+  \;\ge\; 1,
+  \qquad
+  g_{i}\equiv 1 \ \text{ where } v_{\mathrm{blk},i}=0 .
+\end{equation}
+Here $v_{\mathrm{blk}}=\diag\big(\sum_{V}C_{b}\big)$ is the diagonal of the
+vertical block sum and $v^{\mathrm{cv}}_{\mathrm{uni}}$ is the diagonal of the
+unified-throw covariance \emph{centered on the central value}. The bins where
+the denominator vanishes are pinned to $g=1$ by declaration rather than
+computed, and their count is carried in the product's receipt, because
+``pinned'' and ``computed to one'' are different facts. The three band groups
+$V$ (vertical), $R$ (residual) and $A$ (active lateral) are required to be
+disjoint and exhaustive over the 45 bands. Implementation:
+\texttt{nd-unfolding/z\_assembly.py}; the same algebra is asserted
+independently of the producer that wrote the object.
+
+\paragraph{Centering, explicitly.} The per-band blocks $C_{b}$ use the
+MAT-conformant mean-centered $\pm1\sigma$ estimator of \S\ref{app:pair}. The
+\emph{inflation operand} does not: variant \texttt{cv} takes
+$v^{\mathrm{cv}}_{\mathrm{uni}}$, and the two centerings of the unified-throw
+covariance differ by the outer product of the measured joint mean shift
+$\mathbf{ms}$ (joint throw mean minus central value),
+\begin{equation}
+  \label{eq:zcentering}
+  C^{\mathrm{cv}}_{\mathrm{uni}}
+  = C^{\mathrm{mean}}_{\mathrm{uni}} + \mathbf{ms}\,\mathbf{ms}^{\top}
+  \qquad\Longrightarrow\qquad
+  v^{\mathrm{cv}}_{\mathrm{uni},i}-v^{\mathrm{mean}}_{\mathrm{uni},i}
+  = \mathbf{ms}_{i}^{2},
+\end{equation}
+so the CV-centered variant retains the mean shift as variance where the
+mean-centered variant discharges it. \textbf{That retention is the adopted
+choice and is deliberate}: the mean-centered sibling \texttt{z-mean.npz} is
+structurally identical --- same seven keys, same shapes, byte-identical central
+values, support mask, pinned mask and row index --- and measures
+$\sqrt{\Tr C}$ \SI{7.13}{\percent} \emph{lower}. The variant is therefore read
+from the product's own metadata and checked, never inferred from a path:
+\texttt{project\_cov\_nd.py -{}-expect-variant} is required with no default,
+and \texttt{-{}-run-class publication} from a mean-centered source is refused.
+
+\paragraph{The projection to $(\Eavail,W)$.} The quoted 42-cell covariance is
+$C_{EW}=M\,C_{Z}\,M^{\top}$ with $M$ of shape
+$\zprojCells\times\latBins$, built by
+\texttt{project\_cov\_nd.build\_projection} over the kept axes
+$(\Eavail,W)$. Each entry of $M$ is the product of the \emph{dropped} axes'
+bin widths, so the destination is a differential density in the kept axes and
+carries units \si{cm^2/GeV^2/nucleon}; converting a destination cell to an
+integrated cross section requires multiplying by that cell's own
+$\Delta\Eavail\,\Delta W$. Row $r$ of the result is destination dense-grid
+index $\texttt{hRowIndex}[r]$ on the $7\times6$ $(\Eavail,W)$ grid in
+\textbf{C order} --- measured, not assumed. Against the figure's central
+values the C-order reshape agrees to a relative $1.7\times10^{-16}$ while the
+F-order control disagrees at relative $1.0$, i.e.\ completely; the two orderings
+are distinguished by the measurement rather than by convention. No source cell
+is dropped ($\texttt{src\_cells\_dropped}=0$) and the result is exactly
+symmetric ($\max|C-C^{\top}|=0$), a structural consequence of the
+$M C M^{\top}$ form rather than a tolerance.
+
+\paragraph{Conditioning, and why no rank is quoted.} Two properties of this
+matrix are routinely misstated, including in an earlier version of this
+subsection, so both are given with their operands.
+
+\emph{It has no negative eigenvalue, and that fact is weaker than it sounds.}
+The measured extremes are $\lambda_{\min}=+4.359104\times10^{-92}$ ---
+\emph{positive} --- and $\lambda_{\max}=1.488215\times10^{-77}$, so
+$\lambda_{\min}/\lambda_{\max}=2.9\times10^{-15}$ and the condition number is
+$\approx3.4\times10^{14}$, at the edge of double precision. The commonly
+transcribed label ``most-negative over max'' for that ratio is a misnomer:
+there is no negative eigenvalue, and $n_{\mathrm{negative}}=0$. But the
+smallest eigenvalues sit at the floating-point noise floor of a
+$\latBins$-term weighted sum, so \textbf{their sign carries no information},
+and $n_{\mathrm{negative}}=0$ is a statement about this computation --- not a
+demonstration that the source's negative directions were cured, and not a
+property the object need retain under a different mask, summation order or
+precision.
+
+\emph{The numerical rank is a property of a cutoff, not of the matrix.} The 42
+eigenvalues decay smoothly over about fifteen orders of magnitude with no
+plateau anywhere, so the retained count tracks whatever threshold is applied:
+26 at a relative cutoff $10^{-6}$, 36 at the $10^{-12}$ hardcoded in
+\texttt{project\_cov\_nd.py}, 41 at \texttt{numpy.linalg.matrix\_rank}'s own
+default $n\epsilon=9.3\times10^{-15}$, and 42 at no cutoff at all.
+\textbf{A bare ``rank 36'' should not be quoted, and it is not a number of
+degrees of freedom.} What is true without a cutoff is qualitative: the
+spectrum is continuous down to the noise floor, so any use requiring an
+inverse requires a \emph{declared} regularization, which this analysis does
+not supply silently. The cutoff scan is recorded in
+\texttt{PLAN-20260918-scalar5d-publication-completion.md} \S16.1a, performed
+on the diagnostic projection of the same source through the same $M$; its
+$\lambda_{\min}$, $\lambda_{\min}/\lambda_{\max}$ and rank-at-$10^{-12}$ are
+identical to the values the publication run recorded, and no separate scan on
+the publication bytes exists.
+
+\paragraph{Masks, and what the pairing is.} The support mask, pinned mask and
+row-index arrays travel with the covariance and are byte-identical between the
+\texttt{cv} and \texttt{mean} variants. The pairing between this covariance and
+the central values shown in Fig.~\ref{fig:eavailWexcess} is established
+\emph{by digest identity} --- the projected source's central-value array and the
+figure's are the same bytes --- and not by numerical agreement; the numerical
+agreement is a corroborating check.
+
+\paragraph{What the adoption did and did not change.} The object's own metadata
+is preserved unedited and still reads
+$\texttt{scientific\_acceptance}=\text{\texttt{NON-PASSING}}$ and
+$\texttt{adoptable}=\text{\texttt{false}}$. \textbf{An adoption does not turn
+those fields into pass labels.} What was adopted is a decision to publish under
+a digest-bound exception, recorded on 2026-09-20; the specification requires the
+null bound to be fixed before production and production had already happened,
+so the derivation step is unperformable for this object by anyone, which is why
+this is an exception and not a repair. The exception attaches to these bytes and
+to no other candidate.
+
+\subsection{The four measurements that qualify the adopted covariance}
 \label{sec:eavailw-adopted}
-The five-axis covariance \texttt{z-cv.npz} (\texttt{sha256}~\zcvDigest\ldots,
-variant \texttt{cv}) is adopted as \emph{publication-under-exception}: the
-specification requires the null bound to be fixed before production and
-production had already happened, so the derivation step is unperformable for
-this object by anyone. The exception attaches to those bytes and to no other
-candidate. The $(\Eavail,W)$ projection built from it
-(\texttt{sha256}~\zprojDigest\ldots, \zprojCells\ cells) drops no source cell,
-is exactly symmetric and positive semi-definite, and its central values are
-bound by digest to the figure's --- the same bytes, not merely the same numbers.
+The adopted five-axis covariance is \texttt{z-cv.npz}
+(\texttt{sha256}~\zcvDigest\ldots, \num{890500272} bytes, variant
+\texttt{cv}), constructed as in \S\ref{sec:eavailw-construction}, and its
+$(\Eavail,W)$ projection is \texttt{sha256}~\zprojDigest\ldots\ on
+\zprojCells\ cells.
 
 Four measurements travel with it. They are measurements, not caveats: each is a
 number from a committed receipt, and each bounds what may be claimed.
@@ -236,17 +396,29 @@ number from a committed receipt, and each bounds what may be claimed.
   diagonal-only legs passed ($s_{\mathrm{agg}}=\saggMeasured\,\%$,
   $s_{\mathrm{med}}=\smedMeasured\,\%$): what the failing leg sees and they do
   not is off-diagonal structure, which is precisely what a projection uses.
-\item \textbf{That sensitivity is a property of the estimator, not of the
-  ensemble's resolution.} Measured with the throw ensemble held \emph{fixed}
-  and only the seed changed, it is $\seedEffect\,\%$ at $N=40$, $80$ and $160$
-  --- flat, fitted exponent $\seedEffectExponent$ --- while the same-seed
-  resampling floor over the same range falls steeply, $\floorNforty\,\%$ to
-  $\floorNeighty\,\%$, exponent $\floorExponent$. Statistical noise must fall
-  with $N$; this does not. Enlarging the ensemble would therefore not reduce it.
-  The $\pm\seedEffectScatter\,\%$ quoted with it is scatter across throw subsets
-  at a \emph{single} seed pair; the width of the seed-pair distribution is
-  unmeasured, and the statistic is a maximum over the declared offset set, so
-  further pairs can only raise it.
+\item \textbf{That sensitivity behaves like a property of the estimator rather
+  than of the ensemble's resolution.} Measured with the throw ensemble held
+  \emph{fixed} and only the seed changed, it does not fall with ensemble size
+  over the range tested: mean $\seedEffectNforty\,\%$ over four disjoint
+  40-throw subsets, $\seedEffectNeighty\,\%$ over the two 80-throw halves, and
+  $\sprojMeasured\,\%$ on the full $N=160$ ensemble, giving a fitted exponent
+  $\seedEffectExponent$ in $s\propto N^{-p}$. The same-seed resampling floor,
+  measured at $N=40$ and $N=80$ only, falls steeply over that step ---
+  $\floorNforty\,\%$ to $\floorNeighty\,\%$, a two-point exponent
+  $\floorExponent$ --- and no floor measurement at $N=160$ exists. Statistical
+  noise must fall with $N$; this did not fall between $N=40$ and $N=160$.
+  \emph{Three limits on the reading, and they are the reason no
+  infinite-ensemble statement is made here.} The $40$- and $80$-throw points are
+  \emph{nested subsets} of the same 160 throws, not independent ensembles, so
+  the flatness is a within-ensemble statement over a factor of four in $N$ and
+  does not by itself determine the behaviour at much larger $N$; the
+  $\pm\seedEffectScatter\,\%$ quoted with the mean is scatter across those throw
+  subsets at a \emph{single} seed pair (offsets $\{0,1200\}$), so the width of
+  the seed-pair distribution is unmeasured; and the statistic is a maximum over
+  the declared offset set, so further pairs can only raise it. What is
+  established is that the failure of the $\sprojBound\,\%$ limit is not the
+  statistic's own resampling noise, and that no reduction was observed over
+  $N=40$--$160$.
 \item \textbf{Five bands lie outside what the variation probes.} Five of the
   covariance's 45 bands --- the muon-energy, muon-resolution and beam-angle
   blocks --- are produced at a fixed estimator seed that the offset does not
@@ -268,9 +440,12 @@ number from a committed receipt, and each bounds what may be claimed.
   suppresses it.
 \end{enumerate}
 
-\noindent Cause~3's magnitude criterion remains \emph{predeclared and not
-computed} for this object: the campaign graded two other products, built for
-that purpose, and grading them does not regrade this one.
+\noindent The predeclared magnitude criterion for this estimator-seed
+sensitivity --- \emph{cause~3}'s $M(\mathrm{ii})$ in the internal
+dependency register --- remains \emph{predeclared and not computed} for this
+object: the 2026-09-20 campaign computed it for two \emph{other} products,
+built for that purpose, and grading them does not regrade these bytes. The
+exact record identifiers are in App.~\ref{app:provenance}.
 
 The complementary cross-check against MINERvA's published
 low-recoil measurement is presented in the $(\Eavail,q_{3})$ plane

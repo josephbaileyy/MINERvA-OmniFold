@@ -6,6 +6,14 @@ a reader can recompute from the published inputs. Those records are collected he
 inlined, for two reasons. A repository path is not usable by a reader outside the collaboration, so
 in the body it interrupts a physics argument with a string that cannot be followed; and gathering
 them in one table means a path that moves has one place to be corrected instead of five.
+All paths below are relative to the code repository, \repolink, and are set breakably so they stay
+inside the text block.
+
+\textbf{This appendix is not the reproduction path.} What an external reader would need in order to
+recompute the quoted numbers --- the arrays, edges, orderings, masks, units, projection matrices and
+generator predictions, with one worked example --- is specified separately in
+App.~\ref{app:release}, together with a measured statement of which of those objects exist today and
+which do not.
 
 \textbf{This appendix is provenance, not evidence.} Nothing here is a result, and no statement in
 the body becomes stronger because its record is listed. Where a claim depends on a record whose own
@@ -16,33 +24,65 @@ The tags are stable; the paths are current as of 2026-09-21.
 
 \begin{center}
 \small
-\begin{tabular}{@{}llp{0.42\textwidth}@{}}
+\begin{tabular}{@{}llp{0.50\textwidth}@{}}
 \toprule
 Tag & Cited at & Record \\
 \midrule
 \texttt{negweight-toy} & \S\ref{app:negweight} &
-  \texttt{docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json} \\
+  \texttt{docs/\allowbreak orchestration/\allowbreak receipts/\allowbreak RECEIPT-\allowbreak negweight-\allowbreak toy-\allowbreak 20260821.json} \\
 \texttt{negweight-audit} & \S\ref{app:negweight} &
-  \texttt{docs/orchestration/AUDIT-FINDINGS-20260731.md}, tier~A \\
+  \texttt{docs/\allowbreak orchestration/\allowbreak AUDIT-\allowbreak FINDINGS-\allowbreak 20260731.md}, tier~A \\
 \texttt{gbdt-closeout} & \S\ref{app:negweight} &
-  \texttt{docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md} \S2.1--2.2 \\
+  \texttt{docs/\allowbreak orchestration/\allowbreak RUNBOOK-\allowbreak 20260807-\allowbreak gbdt-\allowbreak closeout.md} \S2.1--2.2 \\
 \texttt{oi6-oi8-oi126} & \S\ref{app:negweight} &
-  \texttt{docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md} \\
+  \texttt{docs/\allowbreak orchestration/\allowbreak DECISION-\allowbreak 20260815-\allowbreak joseph-\allowbreak oi6-\allowbreak oi8-\allowbreak oi126.md} \\
 \texttt{p4-verifier} & \S\ref{app:negweight} &
-  \texttt{docs/orchestration/runs/standard-p4-verifier/} \\
+  \texttt{docs/\allowbreak orchestration/\allowbreak runs/\allowbreak standard-\allowbreak p4-\allowbreak verifier/\allowbreak } \\
 \texttt{fps-battery} & \S\ref{app:negweight} &
   FPS ME~FHC battery of 2026-06-10, scheduler job \texttt{54244120} \\
 \texttt{rank-inversion} & \S\ref{app:statmethods} &
-  \texttt{docs/orchestration/RANK-AND-INVERSION-20260810.md} \\
+  \texttt{docs/\allowbreak orchestration/\allowbreak RANK-\allowbreak AND-\allowbreak INVERSION-\allowbreak 20260810.md} \\
 \texttt{gbdtfive-macros} & \S\ref{sec:systematics} &
-  \texttt{docs/orchestration/PROCEDURE-gbdtFive-macro-update.md} \\
+  \texttt{docs/\allowbreak orchestration/\allowbreak PROCEDURE-\allowbreak gbdtFive-\allowbreak macro-\allowbreak update.md} \\
 \texttt{retracted-values} & \S\ref{sec:pet} &
-  \texttt{docs/orchestration/INDEX-retracted-and-superseded-values.md} \\
-\texttt{pet-pairing} & \S\ref{sec:pet} &
-  \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md} \\
+  \texttt{docs/\allowbreak orchestration/\allowbreak INDEX-\allowbreak retracted-\allowbreak and-\allowbreak superseded-\allowbreak values.md} \\
+\texttt{pet-pairing} & \S\ref{sec:pet}, \S\ref{app:cstatlimit} &
+  \texttt{OI-126} in \texttt{docs/\allowbreak OPEN\_ITEMS.md} \\
+\texttt{z-adoption} & \S\ref{sec:eavailw-construction} &
+  see below \\
+\texttt{z-projection} & \S\ref{app:release} &
+  see below \\
+\texttt{pet-projection-figure} & \S\ref{sec:pet-projection} &
+  see below \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\noindent The last four tags carry records whose paths are too long for the
+column above, so they are given here at full width.
+
+\begin{description}[leftmargin=0pt,itemsep=3pt]
+  \item[\texttt{pet-pairing}.] \texttt{OI-126} in \texttt{docs/\allowbreak OPEN\_ITEMS.md}.
+    The 2026-08-20 ruling: the central/statistical pairing is declined, no PET
+    total covariance is adopted for publication, PET remains a
+    diagnostic and method-development result, and reconsideration requires
+    estimator-equivalence \emph{and} coverage evidence --- coverage being a
+    different object from verifying the construction.
+  \item[\texttt{z-adoption}.] The adoption itself at
+    \texttt{docs/\allowbreak orchestration/\allowbreak DECISION-\allowbreak 20260920-\allowbreak joseph-\allowbreak adopts-\allowbreak z-\allowbreak cv-\allowbreak under-\allowbreak the-\allowbreak 6.4-\allowbreak exception.md};
+    the seed measurements at
+    \texttt{docs/\allowbreak orchestration/\allowbreak EVIDENCE-\allowbreak 20260920-\allowbreak sproj-\allowbreak resolution-\allowbreak floor-\allowbreak and-\allowbreak seed-\allowbreak effect.md}
+    and \texttt{docs/\allowbreak orchestration/\allowbreak state/\allowbreak SEED-\allowbreak EFFECT-\allowbreak 20260920.json}; and the
+    withdrawal of the lower-bound reading at
+    \texttt{docs/\allowbreak orchestration/\allowbreak CORRECTION-\allowbreak 20260920-\allowbreak lower-\allowbreak bound-\allowbreak inference-\allowbreak withdrawn.md}.
+  \item[\texttt{z-projection}.]
+    \texttt{docs/\allowbreak orchestration/\allowbreak state/\allowbreak PROJ-\allowbreak 20260920-\allowbreak m1-\allowbreak publication-\allowbreak receipt.json}
+    and \texttt{docs/\allowbreak orchestration/\allowbreak state/\allowbreak PROJ-\allowbreak 20260920-\allowbreak binding-\allowbreak check.json}.
+  \item[\texttt{pet-projection-figure}.] \texttt{ISSUE-59} in
+    \texttt{KNOWN\_ISSUES.md} --- the stale
+    \texttt{pet\_cloud\_projection\_xsec} asset --- and the corrected values at
+    \texttt{nd-\allowbreak unfolding/\allowbreak products/\allowbreak pet/\allowbreak fullcloud/\allowbreak pointcloud\_projection\_summary.json}.
+\end{description}
 
 \paragraph{One record is deliberately \emph{not} moved here.} The adopted five-axis covariance is
 identified in the body by its \texttt{sha256} (\S\ref{sec:eavailw-adopted}), and that digest stays

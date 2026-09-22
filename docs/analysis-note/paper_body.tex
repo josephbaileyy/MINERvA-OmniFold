@@ -120,20 +120,31 @@ one-dimensional projection resolves this structure.
 \begin{figure}[t]
   \centering
   \includegraphics[width=\columnwidth]{paper_joint_localization}
-  \caption{Localization in the joint $(\Eavail,W)$ central value.  Left:
-  unfolded-to-GENIE ratio.  Right: absolute unfolded-minus-GENIE difference.
-  The
-  high-$\Eavail$, high-$W$ corner contains the remaining positive difference;
-  no significance is assigned.}
+  \caption{Localization in the joint $(\Eavail,W)$ central value, on the
+  $7\times6$ reporting grid with $\Eavail$ edges
+  $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ and $W$ edges
+  $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$; axes are cell indices counting from
+  zero, so index~6 in $\Eavail$ and index~5 in $W$ are wide catch bins.  Left:
+  the unfolded-to-GENIE ratio per cell, dimensionless, on a $0.5$--$1.5$
+  scale.  Right: the unfolded-minus-GENIE difference as a
+  \emph{cell-integrated} cross section in \si{cm^2/nucleon}, i.e.\ the
+  density difference multiplied by that cell's
+  $\Delta\Eavail\,\Delta W$; the catch-bin cells therefore carry their large
+  widths and appear larger here than the ratio panel alone would suggest.  Read
+  together, the panels put the remaining positive difference in the
+  high-$\Eavail$, high-$W$ corner.  No significance is assigned.}
   \label{fig:joint}
 \end{figure}
 
 The one-dimensional projections in Fig.~\ref{fig:generator-context} compare
-the same central result with GENIE, the MINERvA Tune~v1, NuWro, and GiBUU.  All four
-underpredict the high-$W$ region.  Turning on the Valencia two-particle--two-hole
-component does not remove that difference because it primarily populates lower
-$W$.  The agreement of several generators on the direction of the discrepancy
-is a useful model diagnostic.
+the same central result with the four predictions that figure plots: GENIE's
+own central value, the same GENIE with the Valencia two-particle--two-hole
+component added, NuWro, and GiBUU.  All four underpredict the high-$W$ region.
+Turning on the Valencia two-particle--two-hole component does not remove that
+difference because it primarily populates lower $W$ --- visible here precisely
+because the first two curves are two configurations of one generator rather
+than independent predictions.  That several distinct generators agree on the
+direction of the discrepancy is a useful model diagnostic.
 Dedicated MINERvA shallow-inelastic measurements also report generator
 disagreements~\cite{MINERvA:2025sis}, motivating differential tests across the
 resonance--DIS transition. Their different selections preclude treating them as
@@ -161,13 +172,20 @@ quote no publication-level significance, and the reason is measured rather
 than precautionary.  Varying the estimator seed moves the projected
 uncertainty by \SI{\sprojMeasured}{\percent}, against a
 \SI{\sprojBound}{\percent} movement limit fixed before production.  That
-movement does not fall with ensemble size --- \SI{\seedEffect}{\percent} at
-$N=40$, $80$ and $160$, fitted exponent $\seedEffectExponent$ --- while a
-same-seed resampling floor over the same range falls from
-\SI{\floorNforty}{\percent} to \SI{\floorNeighty}{\percent}, exponent
-$\floorExponent$.  Statistical noise must fall with $N$; this does not, so it
-is a property of the estimator rather than of the ensemble's resolution, and a
-larger ensemble would not reduce it.  Five of the covariance's 45 bands are
+movement did not fall with ensemble size over the range tested:
+\SI{\seedEffectNforty}{\percent} averaged over four disjoint 40-throw subsets,
+\SI{\seedEffectNeighty}{\percent} over the two 80-throw halves, and
+\SI{\sprojMeasured}{\percent} on the full 160-throw ensemble, fitted exponent
+$\seedEffectExponent$.  A same-seed resampling floor, measured at $N=40$ and
+$N=80$, falls steeply over that step --- \SI{\floorNforty}{\percent} to
+\SI{\floorNeighty}{\percent}, two-point exponent $\floorExponent$.
+Statistical noise must fall with $N$; this did not fall between $N=40$ and
+$N=160$, so the failing leg is not reporting the statistic's own resampling
+noise.  The comparison is a single seed pair and the 40- and 80-throw points
+are nested subsets of the same 160 throws, so the width of the seed-pair
+distribution and the behaviour at much larger $N$ are both unmeasured; the
+statistic is a maximum over the declared offset set, so further pairs can only
+raise it.  Five of the covariance's 45 bands are
 built at a fixed seed the variation cannot reach, carrying
 \SI{\pinnedBandsSqrtTr}{\percent} of $\sqrt{\mathrm{Tr}\,C}$ and contributing
 none of the movement, so their seed sensitivity is unprobed and the effect on

@@ -41,21 +41,43 @@ learned density ratio $r(x)=p(x)/(1-p(x))$, whose population optimum is
 $r^{\star}(x)=\rho_1(x)/S(x)$. The background treatment is entirely a choice of
 $\rho_1$:
 \begin{itemize}
-  \item the binned purity weight sets
-    $\rho_1(x)=D(x)\,w_{\mathrm{pur}}(x)=\max(0,\,D(x)-B(x))$, realized by a
-    per-reco-bin scalar applied to each data event, with $D$ the data density
-    and $B$ the POT-scaled background density;
+  \item the binned purity weight applies one scalar per reconstructed analysis
+    bin $b$ to every data event in that bin, so for $x\in b$
+    \begin{equation}
+      \label{eq:negweight-purity}
+      \rho_1^{\mathrm{pur}}(x)
+      \;=\; D(x)\,w_{\mathrm{pur}}(b)
+      \;=\; D(x)\,\max\!\Big(0,\;1-\frac{B_{b}}{D_{b}}\Big),
+    \end{equation}
+    with $D$ the data density, $B$ the POT-scaled background density, and
+    $D_{b},B_{b}$ their bin masses;
   \item negative-weight injection appends the background-simulation
     reconstruction events to the measured side with weight
     $-w_{\mathrm{bkg}}\,\times\,(\text{POT scale})$, leaving the data events at
-    $+1$, so that $\rho_1(x)=D(x)-B(x)$ \emph{continuously}, with no analysis
-    binning.
+    $+1$, so that
+    \begin{equation}
+      \label{eq:negweight-continuous}
+      \rho_1^{\mathrm{neg}}(x) \;=\; D(x)-B(x)
+    \end{equation}
+    pointwise, with no analysis binning.
 \end{itemize}
-Both give the same background-subtracted estimand
-$r^{\star}(x)=(D(x)-B(x))/S(x)$; they differ only in whether the subtraction is
-performed per reco bin or event by event in the full reconstructed phase space.
-The injected background is restricted to the same reconstructed fiducial window
-as the data, so the two constructions act on identical support.
+\textbf{Equations~\eqref{eq:negweight-purity} and \eqref{eq:negweight-continuous}
+are not the same function of $x$.} Rescaling the data density by a bin-constant
+factor reproduces $D(x)-B(x)$ inside bin $b$ only when $B/D$ is constant across
+that bin; where the background's shape differs from the data's within a bin,
+$D(x)\,(1-B_{b}/D_{b})$ and $D(x)-B(x)$ differ while sharing the same bin
+integral. The two constructions therefore agree \emph{exactly} in the binned
+limit --- on the same bin masses, which is what \S\ref{sec:negweight-binned}
+proves under the piecewise-constant sieve --- and agree only up to within-bin
+shape terms in general. It is the \emph{bin-integrated} background-subtracted
+estimand that both target,
+$r^{\star}(b)=(D_{b}-B_{b})/S_{b}$; the claim that they give the same
+continuous estimand $r^{\star}(x)=(D(x)-B(x))/S(x)$ was stated here without
+those conditions and is corrected. What is measured rather than assumed is how
+much the difference matters in this analysis: \S\ref{sec:negweight-2d} and
+\S\ref{sec:negweight-uq}. The injected background is restricted to the same
+reconstructed fiducial window as the data, so the two constructions do act on
+identical support.
 
 \paragraph{The floor.} Where the background locally exceeds the data,
 $D-B<0$, the binned method floors the correction at zero through the
@@ -343,20 +365,33 @@ against \SI{1.7576e-40}{cm^2/nucleon}; and the real-data totals agree to
 \S\ref{sec:negweight-2d} and \S\ref{sec:negweight-uq}, restated here with the
 operands of each ratio so that the ratios can be checked rather than taken.
 
-\paragraph{Why the agreement is structural rather than two lucky universes.}
-\S\ref{sec:negweight-binned} makes the two constructions the same estimand,
-$\rho_1=D-B$, so what separates them is the finite-classifier residual, and at
-this measurement's sub-percent genuine-background scale that residual is a shift
-of order \SI{0.1}{\percent} per universe. A systematic covariance is the spread
-\emph{across} universes about their own mean. A footing change that displaces
-every universe by the same small amount therefore leaves that spread almost
-unchanged: the two covariances agree by construction, not by coincidence, which
-is why the $187$-universe ratio lands at $\nwSystRatio$ rather than anywhere near
+\paragraph{Why the agreement is not two lucky universes.}
+The argument is a displacement argument and it rests on a \emph{measured} input,
+not on an identity between the two estimands.
+\S\ref{sec:negweight-binned} makes the two constructions agree on bin masses in
+the binned limit, and \S\ref{sec:negweight-estimator} states the within-bin
+shape term that separates them in general; what is measured is that the net
+per-universe effect of switching footing, residual and shape term together, is a
+displacement of order \SI{0.1}{\percent} at this measurement's sub-percent
+genuine-background scale. A systematic covariance is the spread \emph{across}
+universes about their own mean, so a footing change that displaces every
+universe by a similar small amount leaves that spread nearly unchanged. That is
+why the $187$-universe ratio lands at $\nwSystRatio$ rather than anywhere near
 the size of the purity correction itself (${\sim}\SI{3}{\percent}$). A reader is
 entitled to ask how a comparison on a handful of universes can support a
 statement about a $187$-universe object; the displacement argument is the reason
 it can, and the full $187$-universe rebuild of \S\ref{sec:negweight-uq} is that
 reasoning's test at 2D, which it passes.
+
+\textbf{The scope this does and does not have.} The measured agreement is
+evidence about \emph{these} objects: the 2D systematic and statistical
+covariances at the configurations stated above. It is not a theorem that the two
+footings give the same covariance, because the underlying estimands are not
+pointwise identical --- so ``the two covariances agree by construction,'' as
+this paragraph previously read, is withdrawn. In particular nothing here
+establishes covariance equivalence for the continuous estimator or in five
+dimensions; the five-dimensional evidence is the two-universe spot check whose
+limits are stated in the next paragraph.
 
 \paragraph{What the five-dimensional evidence does and does not cover.}
 \textbf{There is no full five-dimensional $187$-universe both-footing comparison at the

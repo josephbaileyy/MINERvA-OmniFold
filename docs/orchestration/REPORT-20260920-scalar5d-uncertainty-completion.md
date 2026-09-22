@@ -58,8 +58,45 @@ dense eigensolve. **The product's own fields are unchanged and stay so** — `NO
 | receipts | `state/PROJ-20260920-m1-publication-receipt.json`, `state/PROJ-20260920-binding-check.json` |
 
 **Predeclared checks, declared before the run:** `src_cells_dropped = 0`; `max|C − Cᵀ| = 0.00e+00`;
-PSD `min-eig 4.359e-92`, most-negative/max `2.93e-15`; `hRowIndex` readback `9eb9d216…`, 42 labels.
-`rel` does not exist in this mode and nothing is reported for it.
+**no negative eigenvalue** — `lambda_min = +4.359e-92` (positive, `n_negative = 0`),
+`lambda_min/lambda_max = 2.93e-15`, condition number `~3.4e14`; `hRowIndex` readback `9eb9d216…`,
+42 labels. `rel` does not exist in this mode and nothing is reported for it.
+
+> ## ⚠ CORRECTED 2026-09-21 — THE PSD LABEL AND THE RANK. NO MEASUREMENT MOVES.
+>
+> **1. `2.93e-15` is `lambda_min/lambda_max`, and `lambda_min` is POSITIVE.** Measured:
+> `lambda_min = +4.359104e-92`, `lambda_max = 1.488215e-77`, `n_negative = 0`, condition number
+> `~3.4e14`. The label *"most-negative/max"* asserts a negative eigenvalue this object does not
+> have. It is correct one row up in `VALIDATION_LEDGER.md` `VL142`, whose trunk min genuinely is
+> negative (`-1.6306079908811896e-90`, `abs(min)/max = 7.3147e-16`); it was carried down onto an
+> object with a positive min. **Do not "fix" `VL142`.**
+>
+> **2. `n_negative = 0` proves less than a PSD row suggests.** The smallest eigenvalues sit at the
+> float64 noise floor of a 10,694-term weighted sum, so **their sign is not meaningful**, and zero
+> negatives is a statement about this computation — **not** a demonstration that the source's
+> 5,214 negative directions were handled, and not a property guaranteed under a different mask,
+> summation order or precision.
+>
+> **3. The rank integer is a property of the CUTOFF, not of the matrix.** Scan on the same
+> projection: `rc 1e-6 → 26`, `1e-8 → 28`, `1e-10 → 32`, **`1e-12 → 36`**, `1e-14 → 41`, `0 → 42`;
+> `numpy.linalg.matrix_rank`'s own default `n*eps = 9.33e-15` gives **41**. The 42 eigenvalues decay
+> smoothly over ~15 orders with **no plateau**. **Do not substitute `41` for `36`** — that repeats
+> the defect with a different constant.
+>
+> **4. What survives of *"a property of the object"*, and what does not.** That the source is
+> rank-deficient and the projection inherits its ill-conditioning **is** a property of the object.
+> The **integer** is not, and the clause was being used to license the bare integer beside it.
+>
+> **Provenance, stated precisely.** [`PLAN-20260918-scalar5d-publication-completion.md`](PLAN-20260918-scalar5d-publication-completion.md)
+> §16.1a declares **TWO** withdrawals — the bare rank, and a separate *"`M C Mᵀ` averages the
+> negative directions out"* mechanism claim — and supplies the scan and the `lambda_min` sign above.
+> Points 1, 2 and 4 here are **consequences drawn from it**, not withdrawals §16.1a itself declared;
+> it could not have withdrawn this document's wording, because §16.1a was committed at `e78a458a`
+> (2026-09-18) and this text at `493e3f25` / `7257b255` (2026-09-20). ⚠ **Scope:** §16.1a scanned the
+> **DIAGNOSTIC** product (`m1_eavailW_DIAGNOSTIC.root`, `17,120` B, job `58510024`). This run
+> recorded the identical `lambda_min`, ratio, `sqrt-tr` and rank-at-`1e-12`, so the spectra agree at
+> recorded precision, but **no independent cutoff scan on `835828bf…` exists.**
+
 ⚠ **`n_empty` is not a declared check and nothing may cite it as one** — it is zero by construction
 in `receiving-cells` mode.
 
@@ -119,8 +156,9 @@ manufacturing, the other is an ordering that cannot be un-violated.
 **L1. `s_proj = 6.145%` against a `5%` bound.** `(cause 3, Z)`'s `M(ii)` graded **branch 5, NOT MET —
 PER-BIN** on a fully valid campaign. It is **flat in `N`** — `6.04% ± 0.39%` at `N = 40/80/160`,
 exponent `0.000`, against a resampling floor falling `20.91% → 7.57%` at exponent `1.467` — so it is
-a property of the estimator and a larger ensemble would not reduce it. **This is why no significance
-is quoted.**
+a property of the estimator rather than of the ensemble's resampling noise. **This is why no
+significance is quoted.**
+⚠ **CORRECTED 2026-09-21: *"a larger ensemble would not reduce it"* is WITHDRAWN as an inference.** The flatness measurement stands exactly as stated; what does not follow is the statement about untested ensemble sizes, because the `40`- and `80`-throw points are **nested subsets of the same 160 throws at ONE seed pair**. Read [`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`](CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md) before quoting this. **The FAIL and the no-significance conclusion are untouched** — they rest on the measurement against the bound, not on this inference.
 
 **L2. The five seed-pinned bands are unprobed, and the direction is UNKNOWN.** They carry `26.0%` of
 `√Tr C_Z` and contribute zero movement by construction. ⚠ **The *"lower bound"* reading was

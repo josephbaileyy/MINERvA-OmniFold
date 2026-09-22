@@ -1,0 +1,204 @@
+\section{The result package: what a reader needs, and what is pinned today}
+\label{app:release}
+
+Rebuilding the three PDFs of this note is document assembly. It is not
+reproduction of any scientific result, and this appendix exists so that the
+difference is not left implicit. App.~\ref{app:provenance} lists the internal
+records that statements rest on; this appendix specifies the \emph{external}
+release that would let a reader outside the collaboration recompute the quoted
+numbers, records the identities that are already fixed, and states plainly
+which parts do not exist yet.
+
+\paragraph{Status, measured.} \textbf{No release tag and no release manifest
+exist.} Measured in this checkout on 2026-09-21: 35 git tags, of which 30 are
+\texttt{evidence/*} preservation anchors, one is a \texttt{freeze/*} anchor and
+four are deployment tags; none is a publication-results release. The adopted
+covariance and the five-axis central values are not in the repository at all
+--- they live on \texttt{/pscratch} on the compute system and are identified
+here by digest (\S\ref{sec:eavailw-construction}). Consequently the release
+below is a \emph{specification plus an identity register}, not an index of
+something already published. Assembling it is packaging work on existing
+products: it requires no reanalysis and no new compute.
+
+\subsection{What today's reader can and cannot recompute}
+\label{app:release-scope}
+
+Recomputable from public inputs: everything in the 2D reproduction that uses
+the published data release --- the comparison to
+Ref.~\cite{MINERvA:2021owq}'s central values and covariance, the standardized
+differences, the tension anatomy, and the MINERvA~Tune~v1 model comparison, all
+of which read only the public ancillary files.
+
+Not recomputable from public inputs: every $\Eavail$, $q_{3}$ and $W$ result.
+These need the MINERvA production AnaTuples (collaboration-internal), the
+event-loop outputs derived from them, the four truth-level generator samples
+produced for this analysis, and the adopted five-axis covariance. A reader
+without those can check internal consistency of the numbers quoted here and
+nothing more.
+
+\subsection{Release schema}
+\label{app:release-schema}
+
+The package must carry all of the following. Items marked $\checkmark$ have
+their identity or value already fixed and are listed in
+\S\ref{app:release-identities}; the rest are packaging.
+
+\begin{enumerate}[itemsep=2pt]
+  \item \textbf{Reporting bin edges, per axis, in physical units}
+        $\checkmark$: $\pT$ and $\pPar$ in \si{GeV/c}, $\Eavail$, $q_{3}$ and
+        $W$ in \si{GeV}, each with its wide terminal catch bin stated as such.
+  \item \textbf{The flattened-cell ordering} $\checkmark$: the dense
+        $14\times16\times7\times7\times6$ grid in C order, with the reported
+        subset given explicitly as an index array rather than implied by a
+        positivity cut.
+  \item \textbf{Central values}: the five-axis array and every projection
+        quoted, each with its own digest, on the density scale, in
+        \si{cm^2/nucleon} divided by the product of its kept axes' units.
+  \item \textbf{Covariances} $\checkmark$: the adopted five-axis object and its
+        $(\Eavail,W)$ projection, with the assembly algebra of
+        Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}, the declared
+        centering variant, and the band partition.
+  \item \textbf{Masks} $\checkmark$: the support mask, the pinned mask (bins
+        where the inflation denominator vanished and $g$ was set to $1$ by
+        declaration), and the unreported-cell mask.
+  \item \textbf{Projection matrices} $\checkmark$: $M$ itself, with its
+        content digest, its shape, and the statement that its entries are the
+        dropped axes' bin-width products --- without which the destination's
+        units are ambiguous.
+  \item \textbf{Generator predictions}: the four truth-level $(\Eavail,W)$
+        predictions (GENIE-CV, GENIE$+$Valencia~2p2h, NuWro, GiBUU) and the
+        MINERvA~Tune~v1 ancillary model, as arrays on the release binning
+        rather than as figure curves, each with its generator version,
+        configuration, target and flux.
+  \item \textbf{Provenance} $\checkmark$: for each object, the producing
+        revision, the producing job, and the digest of the bytes as read back
+        out of the closed file.
+  \item \textbf{One minimal worked example}: \S\ref{app:release-example}.
+  \item \textbf{The four measurements} that travel with the adopted covariance
+        (\S\ref{sec:eavailw-adopted}), carried \emph{in} the package and not
+        only in this note, since the package is what a reader will quote from.
+\end{enumerate}
+
+\subsection{Identities already fixed}
+\label{app:release-identities}
+
+Every row is from a committed receipt. Digests are truncated for display; the
+full values are in the cited records.
+
+\begin{center}
+\small
+\begin{tabular}{@{}llp{0.40\textwidth}@{}}
+\toprule
+Object & Identity & Properties as measured \\
+\midrule
+Adopted five-axis covariance $C_{Z}$ &
+  \texttt{sha256} \zcvDigest\ldots &
+  \num{890500272} bytes; declared variant \texttt{cv}, read from the object's
+  own metadata; $\sqrt{\Tr C}=\SI{5.6742e-38}{}$; assembling revision
+  \texttt{fb9ec356}; producing job \texttt{58454524}. Its own metadata still
+  reads \texttt{NON-PASSING} / \texttt{adoptable: false}. \\
+\addlinespace
+Mean-centered sibling &
+  \texttt{z-mean.npz} &
+  \emph{Not interchangeable.} Same seven keys and shapes, byte-identical
+  central values and masks; $\sqrt{\Tr C}$ \SI{7.13}{\percent} lower. \\
+\addlinespace
+$(\Eavail,W)$ projection $C_{EW}$ &
+  \texttt{sha256} \zprojDigest\ldots &
+  \num{17101} bytes; \zprojCells\ cells; no source cell dropped;
+  $\max|C-C^{\top}|=0$; $\lambda_{\min}=+4.359104\times10^{-92}$ (positive;
+  $n_{\mathrm{negative}}=0$) against $\lambda_{\max}=1.488215\times10^{-77}$,
+  condition number $\approx3.4\times10^{14}$; \textbf{no bare rank} --- the
+  retained count runs 26 to 42 over defensible cutoffs;
+  $\sqrt{\Tr C}=\SI{4.4552e-39}{}$; job \texttt{58655509}. \\
+\addlinespace
+Projection matrix $M$ &
+  \texttt{sha256} \texttt{64fec490}\ldots &
+  Shape $\zprojCells\times\latBins$; entries are the dropped axes' bin-width
+  products, so the destination is a density in $(\Eavail,W)$. \\
+\addlinespace
+Destination row index &
+  \texttt{sha256} \texttt{9eb9d216}\ldots &
+  42 labels, digested \emph{after} the file was closed and read back; row $r$
+  is dense $(\Eavail,W)$ index $\texttt{hRowIndex}[r]$ in \textbf{C order}. \\
+\addlinespace
+Central values paired to the figure &
+  \texttt{sha256} \texttt{0f04abce}\ldots &
+  \num{65856} dense cells, \latBins\ reported. The projected source array and
+  the figure's array are \emph{the same bytes}; the pairing is digest
+  identity, not numerical agreement. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Bin edges, for completeness, since they are the one thing a reader
+cannot recover from a digest:
+\begin{itemize}[nosep,leftmargin=2em]
+  \item $\pT$, \si{GeV/c}:
+        $0$, $0.07$, $0.15$, $0.25$, $0.33$, $0.40$, $0.47$, $0.55$, $0.70$,
+        $0.85$, $1.00$, $1.25$, $1.50$, $2.50$, $4.50$ (14 bins).
+  \item $\pPar$, \si{GeV/c}:
+        $1.5$, $2$, $2.5$, $3$, $3.5$, $4$, $4.5$, $5$, $6$, $7$, $8$, $9$,
+        $10$, $15$, $20$, $40$, $60$ (16 bins).
+  \item $\Eavail$, \si{GeV}: $0$, $0.1$, $0.2$, $0.4$, $0.8$, $1.5$, $3.0$,
+        $100$ (7 bins).
+  \item $q_{3}$, \si{GeV}: $0$, $0.2$, $0.4$, $0.6$, $0.8$, $1.2$, $2.0$,
+        $100$ (7 bins).
+  \item $W$, \si{GeV}: $0$, $1.1$, $1.4$, $1.8$, $2.2$, $3.0$, $100$
+        (6 bins).
+\end{itemize}
+The last bin on $\Eavail$, $q_{3}$ and $W$ is a catch bin to \SI{100}{GeV}, and
+the $\pT\times\pPar$ grid carries the 19 unreported high-$\pT$, low-$\pPar$
+acceptance cells of \S\ref{sec:method-binning}.
+
+\subsection{One minimal projection example}
+\label{app:release-example}
+
+This is the whole computation a reader should be able to run against the
+package, and it is the check that the ordering, the mask and the weights were
+released correctly.
+
+\begin{enumerate}[itemsep=2pt]
+  \item Load the five-axis central values $\mathbf{x}$ and the reported-cell
+        index array. Assert $\mathbf{x}$ has \num{65856} entries and the index
+        array \latBins.
+  \item Load $M$ (shape $\zprojCells\times\latBins$) and $C_{Z}$ (shape
+        $\latBins\times\latBins$).
+  \item Form $\mathbf{y}=M\mathbf{x}_{\text{reported}}$ and reshape to
+        $7\times6$ \textbf{in C order}. This must reproduce the
+        $(\Eavail,W)$ central-value map of Fig.~\ref{fig:eavailWexcess}. The
+        F-order reshape is the discriminating control: the C-order reshape
+        agrees with the figure to a relative $1.7\times10^{-16}$ and the
+        F-order reshape disagrees at relative $1.0$, which is how the ordering
+        was established rather than assumed.
+  \item Form $C_{EW}=M\,C_{Z}\,M^{\top}$ and check
+        $\sqrt{\Tr C_{EW}}=\SI{4.4552e-39}{}$ and exact symmetry
+        ($\max|C-C^{\top}|=0$). \textbf{Do not check a rank.} The spectrum
+        decays smoothly with no plateau, so the retained count is set by
+        whatever cutoff is used --- 26 at $10^{-6}$, 36 at the $10^{-12}$ the
+        projector hardcodes, 41 at \texttt{numpy.linalg.matrix\_rank}'s
+        default, 42 at none --- and a reader following a ``rank should be 36''
+        instruction with NumPy defaults would get 41 and wrongly conclude the
+        package is corrupt. Check instead that
+        $\lambda_{\min}/\lambda_{\max}\approx2.9\times10^{-15}$ and that
+        $\lambda_{\min}$ is positive, and treat the object as ill-conditioned
+        rather than as having a definite rank.
+  \item Read the per-cell relative uncertainty as
+        $\sqrt{(C_{EW})_{rr}}/y_{r}$. Because $M$ carries the dropped axes'
+        widths, $\mathbf{y}$ and $C_{EW}$ are on the \emph{density} scale:
+        converting cell $r$ to an integrated cross section requires
+        multiplying by that cell's own $\Delta\Eavail\,\Delta W$, and the
+        catch bins make that factor large.
+  \item Do \emph{not} invert $C_{EW}$ without a declared regularization: its
+        spectrum runs continuously down to the double-precision noise floor, so
+        the inverse is set by the regularizer rather than by the data, and
+        \S\ref{sec:eavailw-adopted}'s first measurement is the reason no
+        significance is computed from it at all.
+\end{enumerate}
+
+\paragraph{One field is undeclared and is named rather than defaulted.} The
+projection receipt records \texttt{acceptance\_question: UNDECLARED}: whether
+an acceptance correction is owed at the destination binning was not decided
+when the projection was built. The released package must carry that field with
+that value until it is decided, because a silent default here would be a
+scientific choice made by a data format.

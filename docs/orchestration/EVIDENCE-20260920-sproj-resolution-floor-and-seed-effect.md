@@ -95,6 +95,25 @@ k-comparison anyway because that fluctuation cancels in it.
 
 ## 5. ⚠ THE COROLLARY: A LARGER ENSEMBLE WOULD NOT CHANGE THIS
 
+> ## ⚠ CORRECTED 2026-09-21 — THE FIRST BULLET'S SECOND SENTENCE IS WITHDRAWN. READ THIS BEFORE QUOTING §5.
+>
+> *"There is no ensemble size at which it falls under `5%`"* does not follow from the seven points
+> in §1. They are **one seed pair** (offsets `{0, 1200}`) and the `40`- and `80`-throw points are
+> **nested subsets of the same 160 throws** (§3's own method table), so the flatness is a
+> **within-ensemble** observation over a factor of four in `N` — not a determination of the
+> asymptote. Withdrawal recorded at
+> [`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`](CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md),
+> which carries the replacement wording.
+>
+> **THE MEASUREMENT IS UNCHANGED AND STILL TRAVELS**, and so is what it was gathered to settle:
+> statistical noise must fall with `N`, this did not fall between `N = 40` and `N = 160`, and
+> **the failing leg is therefore not reporting the statistic's own resampling noise.** `M1`'s
+> `6.145%` FAIL is untouched — it is measured directly against the bound and never rested on this
+> corollary. **The second bullet below is NOT withdrawn**, nor is §5's conclusion that there is
+> nothing to price: both rest on where a resolution-aware bound could sit, not on arbitrary `N`.
+>
+> The text below is left exactly as written, so the withdrawn reasoning stays readable.
+
 The seed effect is **flat in `N` over a factor of four**. So:
 
 - **Re-running with more throws does not reduce it.** At `N = 40`, `80` and `160` it is the same
