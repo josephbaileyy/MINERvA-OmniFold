@@ -54,9 +54,28 @@ open. The cap is permission to stop, not a prohibition on continuing.**
 
 | **agy #3 (independent)** | **7** | **counter RESET a third time.** All seven verified and fixed. ⚠ **It also reproduced cleanly, on its own instruments, everything it could not break: the whole release package including the `M` digest and the repaired §6 recipe; all five figure readers; both `_v2` diffs byte-identical to the cluster copies; all of `VL145`; and every measurement in `KNOWN_ISSUES` 61–65** |
 
-**TOTAL: self rounds 1–11 = 3+0+0+1+1+1+0+0+0+2+1 = 9; independent reviews = 14+9+7 = 30;
+**TOTAL: self rounds 1–12 = 3+0+0+1+1+1+0+0+0+2+1+0 = 9; independent reviews = 14+9+7 = 30;
 TOTAL 39.** **THIRTY of the thirty-nine were found by the three INDEPENDENT reviewers; nine by me
-across eleven self-rounds.**
+across twelve self-rounds.**
+
+| 12 (self) | **0** | all seven of agy #3's fixes verified, including the repaired probe executed. One apparent failure was my own bare `not in` test matching the retraction quote — diagnosed, not "fixed" |
+
+## 1c. ⚠ THE LOOP TERMINATES UNDER ITS OWN RECURRENCE RULE, NOT BY SATISFYING (ii)
+
+The instruction says: *"if the SAME finding recurs three times, stop fixing it, record it in
+`KNOWN_ISSUES.md` with its measurements, and exclude it from the counter."*
+
+**One finding CLASS has now recurred far more than three times, and it accounts for nearly every
+independent finding after the first review:** *a lane's statements about its own work — counts,
+enumerations, scope words, corrections — fail independent re-measurement, and a correction reaches
+one of the two sites that state the claim.* Instances are enumerated with their measurements at
+**`KNOWN_ISSUES.md` row 66**, which also records why it is a rate rather than a repairable defect.
+
+**Under the instruction's own rule that class is excluded from the counter, and the loop stops
+here.** This is a terminal outcome by two independent clauses — the 10-round cap (passed at round
+10) and the recurrence rule — and by neither is it a claim that condition (ii) was met. **It was
+not.** ⚠ **The nine repairs from agy #3 are, like the ten and nine before them, reviewed by nobody
+but their author. A fourth reviewer should start exactly there.**
 
 ⚠ **THE RATIO IS THE RESULT.** Three independent reviews, each after self-rounds I had scored
 clean, each found a fresh double- or single-digit count — **14, then 9, then 7** — and the third
