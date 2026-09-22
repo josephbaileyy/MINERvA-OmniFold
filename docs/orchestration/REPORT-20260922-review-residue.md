@@ -42,9 +42,11 @@ arithmetic error the reviewers found in my own bookkeeping rather than in my mea
 
 **Round 10 has now actually been run, so the cap is reached honestly at TEN SELF-ROUNDS.**
 
-**TOTAL: self rounds 1–10 = 3+0+0+1+1+1+0+0+0+2 = 8; independent reviews = 14+9 = 23; TOTAL 31.**
-**Twenty-three of the thirty-one were found by the two INDEPENDENT reviewers; eight by me across
-ten self-rounds.**
+| **11 (self)** | **1** | the 3D projection's eigenvalues were cited from an **uncommitted** job log; the receipt has no eigenvalue field. Log now committed. (Round 11's other checks were clean: the loop table reconciles to its stated totals — an apparent mismatch was a parser artifact, correctly diagnosed rather than "fixed".) |
+
+**TOTAL: self rounds 1–11 = 3+0+0+1+1+1+0+0+0+2+1 = 9; independent reviews = 14+9 = 23; TOTAL 32.**
+**Twenty-three of the thirty-two were found by the two INDEPENDENT reviewers; nine by me across
+eleven self-rounds.**
 
 **Condition (i) was satisfied at rounds 2–3 and then destroyed by the reviewer's 14.** Condition
 (ii) requires a clean **independent** round after two clean self-rounds.
@@ -186,7 +188,11 @@ that stated the claim.
 7. **The 3D projection has no spectral scan of its own.** `VL145` scanned the 42x42
    `(E_avail,W)` object; nothing has scanned the 1431x1431 one, and its `λ_min` is **negative**
    (`−4.326e-93`, most-neg/max `−2.32e-16`) where the 42x42's is positive. **Any rank for it must
-   be reported with its cutoff, and none has been measured.**
+   be reported with its cutoff, and none has been measured.** ⚠ **Round 11: those eigenvalues were
+   cited from an UNCOMMITTED source** — the 3D receipt has no eigenvalue field at all, and the
+   numbers come from job `58736728`'s stdout. That log is now committed at
+   `state/PROJ3D-20260922-job58736728-stdout.txt`; before it was, this item's own measurement was
+   unreachable to a reader, the same unpinned-operand class as `VL145`'s scanner.
 
 ## 4. What did NOT move
 

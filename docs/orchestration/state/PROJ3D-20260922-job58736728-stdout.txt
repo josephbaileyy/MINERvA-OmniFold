@@ -1,0 +1,18 @@
+[p3d] job 58736728 on nid006893 start 2026-09-22T05:57:49Z
+[p3d] worktree HEAD: 9e78a8cfa58a8a5a81b220553a978a5420317388
+[p3d] src sha256: 3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5
+[p3d] exception : /pscratch/sd/j/josephrb/MINERvA-OmniFold-gbdt-20260922/docs/orchestration/AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md
+[p3d] exc sha256: 318cc1b4834a03483ef9aa964ad336d816880e7c8fc7b4af36d749efed8a46b1
+[proj] ['pt', 'pz', 'eavail', 'q3', 'W'] -> keep ['pt', 'pz', 'eavail']
+[proj] src reported = 10694  dst reported = 1431  src cells dropped (dst bin not reported) = 0
+[proj] C_low (1431, 1431)  sqrt-tr=6.1289e-39
+[proj] symmetry max|C-C^T|=0.00e+00  min-eig=-4.326e-93  most-neg/max=-2.32e-16  rank~263/1431
+[proj] PSD (to machine tol): OK
+[proj] wrote /pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root  (publication-under-exception -- PUBLICATION UNDER A DIGEST-BOUND EXCEPTION -- the source still records adoptable:false and that metadata is preserved unedited)
+[proj] receipt /pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root.receipt.json  proj_sha256=20c16e16a35a837b...
+[proj] hRowIndex readback OK: 1431 labels, digest 856469c41a8484be...
+[p3d] project_cov_nd rc=0
+[p3d] product sha256: 20c16e16a35a837b09d7fe39bcf6bb8ee5828d5283fc5c2f756e3a5371e1f69e
+-rw-r----- 1 josephrb josephrb 15937290 Sep 21 22:58 /pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root
+-rw-rw---- 1 josephrb josephrb     4986 Sep 21 22:58 /pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root.receipt.json
+[p3d] job 58736728 end 2026-09-22T05:58:20Z rc=0

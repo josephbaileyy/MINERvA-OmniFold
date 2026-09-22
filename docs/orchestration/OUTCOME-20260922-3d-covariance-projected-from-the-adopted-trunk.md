@@ -10,6 +10,7 @@ retirement of the historical 3D quarantine. **Construction is not adoption.**
 | product | `/pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root` |
 | `sha256` | `20c16e16a35a837b09d7fe39bcf6bb8ee5828d5283fc5c2f756e3a5371e1f69e`, `15,937,290` B |
 | receipt | `docs/orchestration/state/PROJ3D-20260922-ptpzeavail-from-adopted-trunk-receipt.json` |
+| spectrum source | `docs/orchestration/state/PROJ3D-20260922-job58736728-stdout.txt` — ⚠ **the receipt carries NO eigenvalue field**, so `λ_min`, `most-neg/max`, `√Tr` and the symmetry residual below come from the producing job's stdout. Committed 2026-09-22 after round 11 found them cited from an uncommitted source |
 | job / code | `58736728`, worktree at `9e78a8cf`, under `mnv_guarded_run.py` (1 checkout root) |
 | authorization | `HANDOFF-20260922` §9.2 / §12 item 5, this session's **D6** |
 
