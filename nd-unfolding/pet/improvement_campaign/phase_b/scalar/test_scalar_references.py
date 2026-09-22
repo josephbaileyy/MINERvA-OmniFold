@@ -210,6 +210,15 @@ def test_reco_input_sets_read_no_truth_column():
         assert all(key != "truth" for key, _c, _l in features.RECO_SETS[name])
 
 
+def test_fill_nonfinite_touches_only_used_rows_and_counts_them():
+    X = np.array([[1.0, np.nan], [2.0, 4.0], [3.0, 6.0], [np.inf, -9999.0]])
+    used = np.array([True, True, True, False])
+    out, record = features.fill_nonfinite(X, used, ["a", "b"])
+    assert out[0, 1] == 5.0 and np.isinf(out[3, 0]) and out[3, 1] == -9999.0
+    assert record == {"b": {"filled_rows": 1, "used_rows": 3, "fill_value": 5.0,
+                            "rule": "median over finite used rows"}}
+
+
 def test_historical_modules_match_the_campaign_commit():
     record = scm.verify_historical_sources()
     assert record["all_match"]

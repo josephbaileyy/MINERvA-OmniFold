@@ -130,5 +130,6 @@ def reco_level_recovery(reco_bin_mc: np.ndarray, s1: np.ndarray, w_reco_mc: np.n
     prior, moved, target = (a / a.sum() for a in (prior, moved, target))
     injected = float(np.abs(target - prior).sum())
     residual = float(np.abs(target - moved).sum())
+    # None rather than NaN: the result files are written with allow_nan=False
     return {"injected_l1": injected, "residual_l1": residual,
-            "recovery": 1.0 - residual / injected if injected > 0 else float("nan")}
+            "recovery": 1.0 - residual / injected if injected > 0 else None}

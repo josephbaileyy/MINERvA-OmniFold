@@ -84,6 +84,7 @@ def main() -> None:
     n = eav.size
 
     results = []
+    fills: dict[str, Any] = {}
     for seed in SEEDS:
         rng = np.random.default_rng(10_000 + seed)
         perm = rng.permutation(n)
@@ -93,7 +94,8 @@ def main() -> None:
         fit_rows, val_rows = train[inner[:n_tr]], train[inner[n_tr:]]
         exact = score_on(held, eav, w, tilt, tilt, region, edges)
         for input_set in INPUT_SETS:
-            X = features.truth_matrix(pop, "b", input_set)[pg]
+            X_all, fills[input_set] = features.truth_matrix(pop, "b", input_set, used=pg)
+            X = X_all[pg]
             for model in args.models:
                 t0 = time.perf_counter()
                 clf = (so.HGBRatio(seed=seed) if model == "hgb" else so.MLPRatio(seed=seed))
@@ -141,6 +143,7 @@ def main() -> None:
         "population": {"half": "B (historical prior)", "rows": int(n),
                        "split": "seeded 50/50 train/held-out per seed; 80/20 inside train"},
         "tilt_spec_half_B": spec_b,
+        "nonfinite_fills": fills,
         "results": results,
         "seconds": time.perf_counter() - started,
     }

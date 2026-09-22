@@ -23,8 +23,11 @@ import scalar_common as scm
 import scalar_omnifold as so
 
 SEEDS = (1, 2, 3)
-GRID = [(inputs, model, seed) for inputs in ("muon", "muon_had") for model in ("hgb", "mlp")
-        for seed in SEEDS]
+# (a) muon kinematics, (b) + every reco hadronic summary, both classifiers; plus the single
+# controlled addition of reco E_avail with the boosted trees. Indices 0-11 are (a)/(b).
+GRID = ([(inputs, model, seed) for inputs in ("muon", "muon_had") for model in ("hgb", "mlp")
+         for seed in SEEDS]
+        + [("muon_eavail", "hgb", seed) for seed in SEEDS])
 
 
 def make_factory(model: str, seed: int):
@@ -70,9 +73,10 @@ def main() -> None:
     s1b = pgb & pop["b_pass_reco"].astype(bool)
     w_data = (pop["a_w_reco"] * pop["a_tilt"])[s1a]
 
-    X_reco_mc = features.reco_matrix(pop, "b", inputs)
-    X_reco_data = features.reco_matrix(pop, "a", inputs)[s1a]
-    X_gen_mc = features.truth_matrix(pop, "b", "truth4")
+    X_reco_mc, fill_mc = features.reco_matrix(pop, "b", inputs, used=s1b)
+    X_reco_data, fill_data = features.reco_matrix(pop, "a", inputs, used=s1a)
+    X_reco_data = X_reco_data[s1a]
+    X_gen_mc, fill_gen = features.truth_matrix(pop, "b", "truth4", used=pgb)
     for name, X, mask in (("reco mc", X_reco_mc, s1b), ("reco data", X_reco_data, None),
                           ("truth mc", X_gen_mc, pgb)):
         sub = X if mask is None else X[mask]
@@ -105,7 +109,7 @@ def main() -> None:
         print(f"[omnifold] {tag} k={k:2d} R(push)={r['push']['recovery']:.4f} "
               f"R(pull)={r['pull']['recovery']:.4f} "
               + " ".join(f"{n}={v:.3f}" for n, v in r["push"]["recovery_by_region"].items())
-              + f" reco7={r['step1_reco_eavail7_recovery']['recovery']:.3f} "
+              + f" reco7={r['step1_reco_eavail7_recovery']['recovery']} "
               f"t1={r['step1']['seconds']:.0f}s t2={r['step2']['seconds']:.0f}s", flush=True)
 
     so.run_scalar_omnifold(
@@ -129,6 +133,8 @@ def main() -> None:
                                        else so.MLPRatio(seed=0).params),
                  "engine_mirror": {"train_frac": so.TRAIN_FRAC, "logit_cap": so.LOGIT_CAP,
                                    "normalization": bu.ENGINE_NORMALIZATION}},
+        "nonfinite_fills": {"reco_prior": fill_mc, "reco_pseudodata": fill_data,
+                            "truth_prior": fill_gen},
         "inputs": {"populations_npz": str(args.populations),
                    "populations_npz_sha256": scm.sha256_file(args.populations)},
         "event_counts": {"prior_rows": int(pgb.size), "prior_pass_gen": int(pgb.sum()),
