@@ -706,6 +706,17 @@ class Repair4DriverContract(unittest.TestCase):
         documenting the dead key is good, *referencing* it is the defect."""
         return [l for l in text.splitlines() if not l.lstrip().startswith("#")]
 
+    @staticmethod
+    def _stage_lines(text):
+        """Delegates to THE single definition; see tests/shell_stage_lines for why it exists.
+
+        This was a local copy for about an hour. It is routed to the shared module because two
+        more detectors in two other files needed the identical rule, and three private copies of
+        "what counts as code" is the condition that let them disagree in the first place.
+        """
+        from shell_stage_lines import stage_lines
+        return stage_lines(text)
+
     def test_candidate_key_is_produced_by_the_builder(self):
         builder = (self.ND / "p4_build_components.py").read_text()
         self.assertIn("P.CANDIDATE_TOTAL_KEY", builder)      # builder writes the shared constant
@@ -735,7 +746,10 @@ class Repair4DriverContract(unittest.TestCase):
 
     # ---------- D1a: stage order ----------
     def test_stage_order_is_audit_then_unfold_then_evidence(self):
-        drv = self._driver()
+        # Indexed over STAGE lines, not raw text: the refusal preamble's help message names all
+        # three stages in order, so a raw index() would confirm the ordering from the error text
+        # even if the stages themselves were reversed. See `_stage_lines`.
+        drv = "\n".join(self._stage_lines(self._driver()))
         i_audit = drv.index("run bash run_p4_merge_audit_std.sh")
         i_unfold = drv.index("run bash run_p4_unfold_std.sh")
         i_evid = drv.index("python3 p4_evidence.py")
@@ -750,9 +764,10 @@ class Repair4DriverContract(unittest.TestCase):
         self.assertIn("unknown STOP_AFTER", drv)          # invalid values abort, not fall through
 
     def test_covariance_stages_are_still_gated(self):
-        """Compare EXECUTABLE positions, not the header comment -- both strings appear in the
-        stage-list comment at the top, so a naive index() compares documentation."""
-        code = "\n".join(self._code_lines(self._driver()))
+        """Compare STAGE positions, not documentation -- both strings appear in the stage-list
+        comment at the top AND (since 2026-09-21) in the member-axis refusal's help message, so
+        neither a naive index() nor a comment-stripped one compares code. See `_stage_lines`."""
+        code = "\n".join(self._stage_lines(self._driver()))
         self.assertIn("P4_VERIFIER_PASS", code)
         self.assertLess(code.index("P4_VERIFIER_PASS"),
                         code.index("python3 p4_build_components.py"),
@@ -835,9 +850,22 @@ class Repair4EvidenceBindings(unittest.TestCase):
             "REPO = P.REPO_ROOT; ND = P.ND_ROOT",
             'REPO = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"; ND = f"{REPO}/nd-unfolding"')
         self.assertNotEqual(old, real, "anchor line not found -- this control has gone stale")
-        old = old.replace('EVID = f"{ND}/active_universe_5d/standard/evidence"',
+        # ANCHOR 2, AND IT NEEDS ITS OWN STALENESS ASSERTION -- which is the defect this line
+        # carried until 2026-09-21. Anchor 1 above is guarded ("anchor line not found -- this
+        # control has gone stale"); anchor 2 was not, so when the member axis rewrote the EVID
+        # line to `EVID = _member_scope(...)` the replace became a SILENT NO-OP. The control did
+        # not report a stale anchor: it went on to assert `os.makedirs` in the head and failed
+        # there, three lines later, pointing at the import-time side effect rather than at
+        # itself. A negative control that cannot detect its own staleness is the thing BEN-119
+        # is about, reached from inside the fixture written to discharge BEN-119.
+        _evid_anchor = 'EVID = _member_scope(f"{ND}/active_universe_5d/standard/evidence")'
+        _before = old
+        old = old.replace(_evid_anchor,
                           'EVID = f"{ND}/active_universe_5d/standard/evidence"; '
                           'os.makedirs(EVID, exist_ok=True)', 1)
+        self.assertNotEqual(old, _before,
+                            f"EVID anchor {_evid_anchor!r} not found -- this control has gone "
+                            f"stale and would silently stop rebuilding the pre-fix form")
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "p4_evidence.py"
             p.write_text(old)

@@ -51,6 +51,30 @@ ND="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "${ND}/.." && pwd
 [[ -f "${ND}/p4_lib.py" ]] || { echo "[p4-std] ABORT: derived ND=${ND} contains no p4_lib.py; refusing to run against an unresolved root"; exit 3; }
 source "${REPO}/setup_salloc_env.sh" >/dev/null 2>&1
 cd "${ND}"
+# --- M(ii) member axis: THIS ORCHESTRATOR REFUSES A DECLARED OFFSET ------------------------------
+# Added 2026-09-21 with the L2 estimator change. Stages 2, 3 and 4 became member-aware
+# (run_p4_unfold_std.sh, p4_evidence.py, p4_build_components.py); stages 1, 5 and 6 --
+# run_p4_merge_audit_std.sh, p4_validate_active_lateral.py, p4_project_4d.py -- did NOT, because
+# the L2 probe does not use them and making a stage member-aware without a member run to exercise
+# it produces an untested claim rather than a capability.
+#
+# A PARTIALLY MEMBER-AWARE ORCHESTRATOR IS WORSE THAN ONE THAT REFUSES. Run with an offset set, this
+# script would have member-scoped half the chain and left the other half pointing at the baseline,
+# so a member's validation and projection would have read the ADOPTED product's files and reported
+# on them as though they were the member's. That is not a crash; it is a plausible wrong answer with
+# every stage exiting 0. Refusing costs a member run nothing -- the probe drives stages 2-4 directly
+# -- and it cannot be got wrong by someone who does not know which half is which.
+if [[ -n "${MNV_EST_SEED_OFFSET:-}" ]]; then
+  echo "[p4-std] ABORT: MNV_EST_SEED_OFFSET='${MNV_EST_SEED_OFFSET}' is declared, and this" >&2
+  echo "[p4-std]   orchestrator is NOT member-aware end to end. Stages 2-4 are; stages 1, 5 and 6" >&2
+  echo "[p4-std]   are not, so running the whole chain under an offset would mix member outputs" >&2
+  echo "[p4-std]   with baseline inputs and exit 0. Drive the member stages directly:" >&2
+  echo "[p4-std]     bash run_p4_unfold_std.sh" >&2
+  echo "[p4-std]     python3 p4_evidence.py --est-seed-offset \${MNV_EST_SEED_OFFSET}" >&2
+  echo "[p4-std]     python3 p4_build_components.py --manifest <member evidence>/..." >&2
+  echo "[p4-std]   See docs/orchestration/PREDECLARATION-20260921-L2-lateral-seed-release.md." >&2
+  exit 2
+fi
 STOP_AFTER="${STOP_AFTER:-audit}"
 case "${STOP_AFTER}" in
   audit|unfold|evidence|components|validate|project) ;;

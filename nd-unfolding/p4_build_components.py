@@ -103,12 +103,50 @@ def main():
     ap.add_argument("--out-manifest", required=True)
     a = ap.parse_args()
 
-    P.require_candidate_path(a.out)                       # positive+negative guard (fixes round-2 self-reject)
+    # --- M(ii) member axis: THE MEMBER IS READ OFF THE MANIFEST, NOT OFF A FLAG ----------------
+    # The manifest already determines which unfolds are checked (`_udir`, below), so letting a
+    # separate `--est-seed-offset` decide where the candidate may be written would create two
+    # sources of truth that can disagree: a baseline manifest with a member candidate path, or
+    # the reverse, and both would look deliberate on the command line. `p4_evidence` stamps
+    # `est_seed_offset` into the manifest it writes, so the manifest is the single object that
+    # says which member this is.
+    #
+    # A manifest with no `est_seed_offset` is treated as offset 0. That is right rather than
+    # lenient: every manifest written before 2026-09-21 is a baseline manifest, and the baseline
+    # is what offset 0 means.
+    _man_head = json.load(open(a.manifest))
+    _offset = int(_man_head.get("est_seed_offset", 0))
+    # The member component this manifest's LOCATION implies, derived independently of the field.
+    _tree_offset = P.member_offset_of_path(os.path.abspath(a.manifest))
+    # AND THE MANIFEST'S DECLARED OFFSET MUST AGREE WITH WHERE THE MANIFEST LIVES. The two are
+    # written by the same program and can still disagree if a manifest is copied between trees --
+    # which is exactly how a member would end up validated against the baseline's unfolds while
+    # every individual check passed. Cheap to assert, and it is the pairing the whole member-axis
+    # design rests on.
+    P.require(_man_head.get("est_seed_offset", 0) == _tree_offset,
+              f"manifest est_seed_offset={_man_head.get('est_seed_offset', 0)} but it lives in the "
+              f"tree of member offset {_tree_offset} ({a.manifest}). The two are written by the "
+              f"same program and can still disagree once a manifest is copied between trees -- "
+              f"which is exactly how a member gets validated against the baseline's unfolds with "
+              f"every individual check passing.")
+
+    # AND THE STAMPED SEED MUST BE THE ONE THE OFFSET IMPLIES. `est_seed` and `est_seed_offset`
+    # are written by p4_evidence as a pair; recording both and comparing neither is the
+    # "recorded, never checked" shape the recorded-fields sweep exists to surface, and it is the
+    # shape that let a config hash claim seed 42 for a run at 1242 in the first place. One line
+    # turns the pair into a constraint.
+    if "est_seed" in _man_head:
+        P.require(int(_man_head["est_seed"]) == P.standard_seed_for_offset(_offset),
+                  f"manifest est_seed={_man_head['est_seed']} but est_seed_offset={_offset} "
+                  f"implies {P.standard_seed_for_offset(_offset)}; the manifest disagrees with "
+                  f"itself about which estimator produced these unfolds")
+
+    P.require_candidate_path(a.out, expected_offset=_offset)   # positive+negative guard (fixes round-2 self-reject)
     for bad in SUPERSEDED_TOKENS:
         P.require(bad not in a.support_family, f"support family superseded/non-bkgaware ({bad})")
     P.require(BKGAWARE_DIR in a.support_family, "support family must be the corrected bkgaware combined cov")
 
-    man = json.load(open(a.manifest))
+    man = _man_head
     central_path = "products/5d/xsec_5d_MEFHC_5iter_lgbm.root"
     P.require(P.sha256_file(central_path) == man["central5d_sha256"], "central 5D sha256 drift vs manifest")
     central = _flat(central_path, "hXSecND_flat"); mask = central > 0

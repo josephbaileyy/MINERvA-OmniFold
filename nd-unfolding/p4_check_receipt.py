@@ -86,6 +86,16 @@ def main():
     ap.add_argument("--tag", required=True)
     ap.add_argument("--root", required=True)
     ap.add_argument("--merged", required=True)
+    # --est-seed-offset: THE DECLARED MEMBER OFFSET, and it must be passed by the launcher rather
+    # than read from the environment here. Until 2026-09-21 this checker built `P4Config()` at the
+    # DEFAULT and compared the resulting config_hash -- and the producing launcher did the same, so
+    # a member endpoint produced at seed 42+k would have been stamped config_hash(seed=42) and then
+    # VALIDATED by this file recomputing the identical wrong value. Producer and checker agreeing is
+    # supposed to be evidence; it is worth nothing when both derive the number from the same default
+    # instead of from what ran. The offset now enters as an argument, so the two agree about the
+    # seed that was actually used or they do not agree at all.
+    ap.add_argument("--est-seed-offset", type=int, default=0,
+                    help="declared member offset k; the receipt must carry config_hash for seed 42+k")
     a = ap.parse_args()
     try:
         if not os.path.exists(a.receipt) or os.path.getsize(a.receipt) == 0:
@@ -94,7 +104,8 @@ def main():
             rec = json.load(open(a.receipt))
         except Exception as e:
             raise P.P4GateError(f"receipt is not valid JSON ({e})")
-        cfg = P.P4Config(); cfg.validate()
+        cfg = P.P4Config(seed=P.standard_seed_for_offset(a.est_seed_offset))
+        cfg.validate(expected_offset=a.est_seed_offset)
         blob, rev = committed_unfold_blob(), current_code_rev()
         if not blob:
             raise P.P4GateError(f"cannot resolve the committed blob of {UNFOLD_SRC}; refusing to "

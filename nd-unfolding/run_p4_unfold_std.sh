@@ -68,12 +68,25 @@ fi
 # (no MANIFEST variable: its only consumer was the deleted legacy-attest path)
 CONC="${CONC:-4}"
 cd "${ND}"
-CFG_HASH=$(python3 -c "import p4_lib; c=p4_lib.P4Config(); c.validate(); print(c.hash())") || { echo "[p4-unfold] ABORT config"; exit 2; }
+# --- M(ii) member axis: THE CONFIG MUST CARRY THE SEED THAT ACTUALLY RUNS ------------------------
+# This was `P4Config()` -- the DEFAULT, seed 42 -- while line 111 below already passed
+# --seed ${P4_EST_SEED}. For the baseline those are the same number and nothing was wrong. For a
+# member they are not, and the receipt written at the bottom of unfold_one() stamps CFG_HASH: the
+# product would have asserted seed 42 while having been produced at 42+k. Worse, p4_check_receipt.py
+# re-derived the config the same defaulted way, so the resume gate would have RECOMPUTED THE SAME
+# WRONG HASH AND PASSED. Producer and checker agreeing means nothing when both read a default rather
+# than the run. The seed and the declared offset are now both passed in, so the config hash covers
+# what happened.
+CFG_HASH=$(python3 -c "import sys, p4_lib
+c = p4_lib.P4Config(seed=int(sys.argv[1])); c.validate(expected_offset=int(sys.argv[2])); print(c.hash())" \
+  "${P4_EST_SEED}" "${MNV_EST_SEED_OFFSET:-0}") || { echo "[p4-unfold] ABORT config"; exit 2; }
 # G-1 (2026-08-07): the background footing is passed EXPLICITLY, never inherited from the
 # driver default. Read from P4Config (validated above) rather than hardcoded here, so the
 # launcher and the manifest cannot drift apart. `purity` is also the driver default, so this
 # is a provenance change and a physics NO-OP: it must not move any output ROOT hash.
-BKG_MODE=$(python3 -c "import p4_lib; c=p4_lib.P4Config(); c.validate(); print(c.bkg_mode)") || { echo "[p4-unfold] ABORT bkg_mode"; exit 2; }
+BKG_MODE=$(python3 -c "import sys, p4_lib
+c = p4_lib.P4Config(seed=int(sys.argv[1])); c.validate(expected_offset=int(sys.argv[2])); print(c.bkg_mode)" \
+  "${P4_EST_SEED}" "${MNV_EST_SEED_OFFSET:-0}") || { echo "[p4-unfold] ABORT bkg_mode"; exit 2; }
 CODE_REV=$(git rev-parse HEAD 2>/dev/null)
 # repair-5 (D2): stamp the PRODUCING driver's committed blob into every receipt, so the resume
 # gate can COMPARE source identity instead of merely observing that code_rev is non-empty.
@@ -111,11 +124,61 @@ unfold_one(){
   # every member's blob. A reject falls through and re-runs the endpoint.
   if [[ -s "${OUT}" && -s "${REC}" ]] && valid_root "${OUT}"; then
     if RCHK=$(python3 p4_check_receipt.py --receipt "${REC}" --tag "${tag}" \
-                --root "${OUT}" --merged "${MERGED}" 2>&1); then
+                --root "${OUT}" --merged "${MERGED}" \
+                --est-seed-offset "${MNV_EST_SEED_OFFSET:-0}" 2>&1); then
       echo "[unfold] SKIP ${tag} (receipt validated)"; return 0
     fi
-    echo "[unfold] STALE ${tag} -> re-running: ${RCHK}"
-    rm -f "${REC}"                       # D2: never leave a stale ROOT/receipt pair behind
+  fi
+  # ⚠ ORDER IS LOAD-BEARING FROM HERE. Past this point the function has COMMITTED to producing
+  # ${OUT}, and nothing destructive may happen before the guard below has had its say. The
+  # `rm -f "${REC}"` used to sit up in the block above, between the rejection and the guard, so a
+  # baseline run still DELETED all ten receipts before being refused -- the guard prevented the
+  # overwrite and not the damage. Moved below the guard: a refusal now leaves the baseline exactly
+  # as it found it, ROOTs and receipts both.
+  # ⚠ BASELINE OVERWRITE GUARD -- added 2026-09-21, and it closes a LIVE hazard that predates the
+  # member axis and is not caused by it.
+  #
+  # MEASURED, not reasoned: at the deployed cluster HEAD 32e403b8, running p4_check_receipt.py
+  # read-only against the adopted BeamAngleX_0 receipt returns
+  #
+  #   RECEIPT-REJECT :: receipt BeamAngleX_0 unfold_blob dc74c38f... != committed 662951e0...:
+  #                     the unfold driver changed since this endpoint was produced
+  #
+  # unfold_nd_omnifold_unbinned.py changed after 2026-08-08 (commits 5afb7947, ae42ae8d, 0a4ab263,
+  # 1aa055d9), and validate_endpoint_receipt compares that blob STRICTLY -- correctly, it is the
+  # producing-code binding. The consequence is that ALL TEN receipts for the ten endpoint unfolds
+  # the adopted covariance 3d7465f6 is built from now read STALE, so `bash run_p4_unfold_std.sh`
+  # with no offset falls straight through to the re-unfold below and `mv -f` overwrites them.
+  # Nothing warns, the run exits 0, and the ROOTs the published result rests on are silently
+  # replaced by ones produced under different code.
+  #
+  # The resume gate is RIGHT to reject; what was missing is that rejecting a receipt for an
+  # ADOPTED product is not a licence to regenerate it. Re-unfolding is fine in a member namespace,
+  # where nothing is adopted and the directory is derived from the offset -- so the guard is scoped
+  # to the BASELINE namespace and members are unaffected.
+  #
+  # FAIL CLOSED, with a named escape rather than none: a deliberate baseline re-unfold is a real
+  # operation and must remain possible, but it must be ASKED FOR. An env var that has to be typed
+  # cannot be arrived at by running the documented command.
+  if [[ -s "${OUT}" ]] && ! mr_declared && [[ "${P4_ALLOW_BASELINE_REUNFOLD:-0}" != "1" ]]; then
+    echo "[unfold] REFUSE ${tag}: the BASELINE endpoint ROOT already exists and its receipt did" >&2
+    echo "[unfold]   not validate, so this run would OVERWRITE it. These ten ROOTs are the inputs" >&2
+    echo "[unfold]   of the adopted covariance 3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5." >&2
+    echo "[unfold]   Reason the receipt was rejected: ${RCHK:-<no receipt>}" >&2
+    echo "[unfold]   A stale receipt means the producing code moved; it does NOT authorize" >&2
+    echo "[unfold]   regenerating an adopted product. If a baseline re-unfold is genuinely" >&2
+    echo "[unfold]   intended, re-run with P4_ALLOW_BASELINE_REUNFOLD=1 and expect to re-derive" >&2
+    echo "[unfold]   the manifest, the components and the covariance from the new ROOTs." >&2
+    echo "[unfold]   To vary the estimator seed instead, set MNV_EST_SEED_OFFSET and this endpoint" >&2
+    echo "[unfold]   is written to its own member namespace, leaving the baseline untouched." >&2
+    return 9
+  fi
+  # D2: never leave a stale ROOT/receipt pair behind. Reached only once the guard has allowed the
+  # (re)production -- i.e. in a member namespace, on a first production, or under the explicit
+  # escape. Guarded by `-s` because the receipt is legitimately absent on a first production.
+  if [[ -s "${REC}" ]]; then
+    echo "[unfold] STALE ${tag} -> re-running: ${RCHK:-receipt/ROOT pair did not validate}"
+    rm -f "${REC}"
   fi
   # REPAIR-6: the LEGACY-ATTEST path is DELETED, not repaired.
   #

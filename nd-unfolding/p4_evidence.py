@@ -17,7 +17,7 @@ that must agree: `footing` asserts the declared P4Config value, and `footing_evi
 classifies each endpoint's unfold log by the driver's two-branch print asymmetry. Absent or
 mismatched fails closed, matching fps_provenance.require_footing's "unprovable" semantics.
 """
-import hashlib, json, os, sys
+import argparse, hashlib, json, os, sys
 import numpy as np
 import ROOT
 import p4_lib as P
@@ -33,9 +33,51 @@ import p4_lib as P
 REPO = P.REPO_ROOT; ND = P.ND_ROOT
 CEN5 = f"{ND}/products/5d/xsec_5d_MEFHC_5iter_lgbm.root"
 CEN4 = f"{ND}/products/4d/xsec_4d_MEFHC_5iter_lgbm.root"
-UDIR = f"{ND}/active_universe_5d/standard/unfolds"
+# --- M(ii) member axis ---------------------------------------------------------------------------
+# `--est-seed-offset` is the DECLARED member offset and it arrives as an argument, never from the
+# environment, for the reason `p4_lib.standard_seed_for_offset` states: `declared_offset`'s own
+# contract is "STAMPING ONLY -- never for behaviour", and both the paths below and the reproduction
+# gate at the bottom of this file BRANCH on the offset.
+#
+# ⚠ BOTH `UDIR` AND `EVID` MUST MOVE, AND `EVID` IS THE DANGEROUS ONE. `_publish_evidence()` removes
+# the opposite variant so that "a directory must describe one run" -- correct, and lethal here. A
+# member run with EVID unscoped would hash the BASELINE's ten unfolds (UDIR unscoped), block on all
+# ten reproduction comparisons (correctly: a different seed is not a reproduction), take the .FAILED
+# branch -- and in taking it DELETE
+# active_universe_5d/standard/evidence/p4_standard_manifest.json, the manifest binding the ten
+# endpoint digests the adopted covariance 3d7465f6 is built from. Read-only intent in a docstring is
+# not a read-only program.
+#
+# MDIR IS DELIBERATELY NOT MEMBER-SCOPED. The merged endpoint ROOTs are the shifted-kinematics event
+# loops, which are estimator-seed-independent -- a member REUSES them and must not re-produce them.
+# Scoping MDIR would have made every member look for inputs that do not exist, and creating them
+# would have cost orders more and measured the wrong thing.
+_ap = argparse.ArgumentParser(description="P4 standard evidence + manifest generator")
+_ap.add_argument("--est-seed-offset", type=int, default=0,
+                 help="declared member offset k; unfolds and evidence are read/written under "
+                      "mii/member_k<NNNNNN>/ and the required seed becomes 42+k")
+_ARGS = _ap.parse_args()
+EST_SEED_OFFSET = int(_ARGS.est_seed_offset)
+
+
+def _member_scope(path):
+    """Insert `mii/member_kNNNNNN` after `/nd-unfolding/`, matching lib_member_resume.sh's
+    `_mr_insert` -- MEMBER-ROOT-FIRST, so a member tree is never underneath a canonical archive
+    namespace. At offset 0 the path is returned unchanged, so every historical caller is byte-exact.
+    """
+    if EST_SEED_OFFSET == 0:
+        return path
+    k = EST_SEED_OFFSET
+    name = f"member_kneg{-k:06d}" if k < 0 else f"member_k{k:06d}"
+    anchor = "/nd-unfolding/"
+    P.require(anchor in path, f"cannot member-scope a path with no {anchor} anchor: {path}")
+    head, _, tail = path.partition(anchor)
+    return f"{head}{anchor}mii/{name}/{tail}"
+
+
+UDIR = _member_scope(f"{ND}/active_universe_5d/standard/unfolds")
 MDIR = f"{ND}/active_universe_5d/standard/merged"
-EVID = f"{ND}/active_universe_5d/standard/evidence"
+EVID = _member_scope(f"{ND}/active_universe_5d/standard/evidence")
 # The `os.makedirs(EVID, exist_ok=True)` that used to sit on this line ran at IMPORT time, in a
 # module whose own docstring says "Read-only: opens nothing for write". Importing this file created
 # a directory -- under the hardcoded /pscratch path, off-cluster that either failed outright or
@@ -105,7 +147,8 @@ def need(cond, msg):
 # Built up front (not at the config section below) because the endpoint loop needs the
 # declared footing to check each log against. validate() fails closed on an out-of-policy
 # bkg_mode, so an unauthorized footing cannot reach the manifest at all.
-_cfg = P.P4Config(); _cfg.validate()
+_cfg = P.P4Config(seed=P.standard_seed_for_offset(EST_SEED_OFFSET))
+_cfg.validate(expected_offset=EST_SEED_OFFSET)
 _cfg_bkg_mode = _cfg.bkg_mode
 
 # ---- central hashes (recomputed) ----
@@ -255,7 +298,7 @@ man["footing_evidence"] = {t: {"log_bkg_mode": ep_ev[t].get("log_bkg_mode"),
                                "log_sha256": ep_ev[t].get("log_sha256")}
                            for t in ep_ev}
 try:
-    P.require_standard_footing(man)
+    P.require_standard_footing(man, expected_offset=EST_SEED_OFFSET)
 except P.P4GateError as e:
     blockers.append(f"footing gate: {e}")
 
@@ -393,13 +436,51 @@ else:
                 blockers.append(f"endpoint {tag}: cannot compare (cur={os.path.exists(cur)} "
                                 f"ref={os.path.exists(ref)})")
                 continue
+            # ⚠ AT A DECLARED NON-ZERO OFFSET THIS GATE IS INVERTED, NOT SKIPPED.
+            #
+            # At offset 0 the question is "do these ten reproduce the 2026-07-18 reference to
+            # 1e-9 per bin / 1e-11 on the integral", and the answer must be yes. A member runs a
+            # DIFFERENT estimator seed, so it must fail that comparison by construction -- which
+            # left two honest options: skip the gate, or turn it around.
+            #
+            # It is turned around. A member is required to DIFFER from the reference by more than
+            # the same declared tolerance, measured with the SAME instrument and no new constant.
+            # The reason this is stronger than skipping: an endpoint that DID reproduce the
+            # reference would mean the seed never reached the estimator, so the run would look
+            # flawless and measure nothing at all. That is the probe's first invalidating
+            # condition, and inverting the gate detects it automatically, one stage before the
+            # covariance is assembled, instead of leaving it to be noticed afterwards.
+            #
+            # A skipped gate is a hole. An inverted gate is a control.
             try:
                 r = P.check_reproducibility(flat(cur), flat(ref))
                 repro[tag] = r
+                if EST_SEED_OFFSET != 0:
+                    repro[tag]["member_divergence"] = "ABSENT"
+                    blockers.append(
+                        f"endpoint {tag} REPRODUCES the offset-0 reference at offset "
+                        f"{EST_SEED_OFFSET} (max_rel_bin {r['max_rel_bin']:.3e}, rel_integral "
+                        f"{r['rel_integral']:.3e}). A member at seed "
+                        f"{P.standard_seed_for_offset(EST_SEED_OFFSET)} must NOT reproduce the "
+                        f"seed-{P.STANDARD_BASE_SEED} reference; that it does means the estimator "
+                        f"seed did not reach the estimator and this member measures nothing.")
             except P.P4GateError as e:
                 repro[tag] = {"error": str(e)}
-                blockers.append(f"endpoint {tag} does not reproduce the reference: {e}")
+                if EST_SEED_OFFSET == 0:
+                    blockers.append(f"endpoint {tag} does not reproduce the reference: {e}")
+                else:
+                    repro[tag]["member_divergence"] = "PRESENT"
 man["endpoint_reproduction"] = repro
+# Stamp the offset and the SENSE the gate was evaluated in. A consumer reading
+# `endpoint_reproduction` alone cannot tell whether "error" on all ten is the failure state or the
+# passing state, and those are opposite readings of the same bytes. `declared_offset` is the
+# stamp-only pair from seed_offset_policy: declared=0 means nothing may be concluded about which
+# scan member this is, which is a different fact from offset==0.
+man["est_seed_offset"] = EST_SEED_OFFSET
+man["est_seed"] = P.standard_seed_for_offset(EST_SEED_OFFSET)
+man["endpoint_reproduction_sense"] = ("MUST_REPRODUCE" if EST_SEED_OFFSET == 0
+                                      else "MUST_DIVERGE (inverted: a member that reproduced the "
+                                           "offset-0 reference never received its seed)")
 man["endpoint_reference_dir"] = os.path.relpath(ENDPOINT_REFERENCE_DIR, REPO)
 man["endpoint_reproduction_tolerance"] = {"per_bin": P.REPRO_RTOL_PER_BIN,
                                           "integral": P.REPRO_RTOL_INTEGRAL}
@@ -475,8 +556,19 @@ for k, v in man["verifier_crosscheck"].items():
     print(f"  {k}: {'MATCH' if v else 'DIFF'}")
 print(f"mask5d n={man['mask5d_nreported']} mask4d n={man['mask4d_nreported']}")
 _ok = sum(1 for v in repro.values() if "error" not in v)
-print(f"endpoint reproduction vs reference: {_ok}/{len(repro)} within tolerance "
-      f"(per-bin {P.REPRO_RTOL_PER_BIN:.0e}, integral {P.REPRO_RTOL_INTEGRAL:.0e})")
+if EST_SEED_OFFSET == 0:
+    print(f"endpoint reproduction vs reference: {_ok}/{len(repro)} within tolerance "
+          f"(per-bin {P.REPRO_RTOL_PER_BIN:.0e}, integral {P.REPRO_RTOL_INTEGRAL:.0e})")
+else:
+    # The headline is reported in the INVERTED sense too. A line reading "0/10 within tolerance"
+    # under a member offset is the PASSING state, and printing it in the offset-0 wording would
+    # read as total failure to anyone scanning the log -- a correct number with a verdict-shaped
+    # caption is how a good run gets thrown away.
+    _diverged = sum(1 for v in repro.values() if v.get("member_divergence") == "PRESENT")
+    print(f"endpoint DIVERGENCE from the offset-0 reference (INVERTED gate, member offset "
+          f"{EST_SEED_OFFSET}, seed {P.standard_seed_for_offset(EST_SEED_OFFSET)}): "
+          f"{_diverged}/{len(repro)} differ by more than the reproduction tolerance. "
+          f"{len(repro) - _diverged} reproduced the reference and each is a BLOCKER.")
 if repro:
     _wb = max((v.get("max_rel_bin", 0) for v in repro.values()), default=0)
     _wi = max((v.get("rel_integral", 0) for v in repro.values()), default=0)

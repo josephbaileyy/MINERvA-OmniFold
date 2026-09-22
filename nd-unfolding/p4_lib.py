@@ -43,6 +43,27 @@ STANDARD_REQUIRED_FOOTING = {
     "use_weights": True,
     "full_phase_space": False,      # standard phase space; the FPS lane sets this True
 }
+# STANDARD_BASE_SEED is the seed at offset 0, i.e. the value the dict above pins. It exists so the
+# six sites that used to spell `42` can name the same quantity instead of each carrying a literal.
+STANDARD_BASE_SEED = STANDARD_REQUIRED_FOOTING["seed"]
+
+
+def standard_seed_for_offset(offset):
+    """The standard P4 estimator seed for a DECLARED member offset: `42 + offset`.
+
+    THE OFFSET IS AN ARGUMENT AND IS NEVER READ FROM THE ENVIRONMENT HERE, and that is a contract
+    this module is honouring rather than a style choice. `seed_offset_policy.declared_offset`'s
+    docstring says the env var is "for STAMPING ONLY -- never for behaviour ... no code path
+    branches on it". Every gate below branches on the offset, so the offset has to arrive as a
+    parameter from a caller that declared it. A hidden read here would have made p4_lib's gates
+    depend on an ambient variable, which is the property that lets a member's provenance and a
+    member's behaviour disagree.
+
+    AND THE DEFAULT IS 0 EVERYWHERE, so every existing caller keeps the literal-42 semantics it had
+    before the member axis existed -- byte-for-byte, not approximately. The member axis can only be
+    entered by passing a non-zero offset explicitly.
+    """
+    return STANDARD_BASE_SEED + int(offset)
 # ---------------------------------------------------- candidate ROOT keys (repair-4, D1c)
 # The driver used to hardcode `hCov_std_final5_candidate`, a key NOTHING wrote -- stages 4-6
 # had never executed, so nothing caught it. The builder's names and the driver's names now
@@ -264,9 +285,17 @@ class P4Config:
         f.update({"estimator": self.estimator, "seed": self.seed, "iters": self.iters,
                   "use_weights": self.use_weights, "bkg_mode": self.bkg_mode})
         return f
-    def validate(self):
+    def validate(self, expected_offset=0):
+        # `expected_offset` DERIVES the required seed instead of relaxing the requirement. At the
+        # default 0 this line is exactly the `require(self.seed == 42)` it replaces; at a declared
+        # member offset it requires 42+k and still refuses everything else. A gate that accepted
+        # "any seed" for members would have made the member axis unfalsifiable, which is the one
+        # outcome this campaign's own resume library calls its worst available failure.
+        want = standard_seed_for_offset(expected_offset)
         require(self.universe is None, "active endpoint config must not set --universe")
-        require(self.seed == 42, f"standard P4 requires fixed seed 42 (got {self.seed})")
+        require(self.seed == want,
+                f"standard P4 requires seed {want} (= {STANDARD_BASE_SEED} + offset "
+                f"{int(expected_offset)}); got {self.seed}")
         require(self.use_weights, "standard P4 requires --use-weights")
         require(self.iters == 5, f"standard P4 production uses 5 iters (got {self.iters})")
         require(self.axes == "eavail,q3,W", f"standard P4 requires axes=eavail,q3,W (got {self.axes})")
@@ -324,7 +353,7 @@ def classify_log_bkg_mode(text):
                   "have been non-verbose, so the branch is unprovable from this log")
 
 
-def require_standard_footing(manifest, required_bkg_mode=STANDARD_BKG_MODE):
+def require_standard_footing(manifest, required_bkg_mode=STANDARD_BKG_MODE, expected_offset=0):
     """Fail closed unless the manifest carries a complete footing block that matches the
     standard requirement. Mirrors fps_provenance.require_footing's semantics -- absent is
     'unprovable' and fails, exactly like mismatched -- without importing or mutating it."""
@@ -332,7 +361,15 @@ def require_standard_footing(manifest, required_bkg_mode=STANDARD_BKG_MODE):
     require(isinstance(foot, dict) and foot,
             "manifest has no footing block (unprovable): the standard lane must record its "
             "background footing, not inherit the driver default")
+    # The `seed` key is compared against the OFFSET-DERIVED value; every other key against the
+    # pinned constant. STANDARD_REQUIRED_FOOTING is deliberately NOT mutated to carry the member
+    # seed -- its own comment above says these constants are hash-pinned into freshly-green FPS
+    # gates "and must not be mutated or coupled to". Rewriting the dict per run would have coupled
+    # the two lanes through a global, which is precisely what that comment forbids.
+    _want_seed = standard_seed_for_offset(expected_offset)
     for k, v in STANDARD_REQUIRED_FOOTING.items():
+        if k == "seed":
+            v = _want_seed
         require(foot.get(k) == v, f"footing.{k}={foot.get(k)!r} != {v!r}")
     require("bkg_mode" in foot, "footing has no bkg_mode (unprovable)")
     require(foot["bkg_mode"] in KNOWN_BKG_MODES,
@@ -701,18 +738,53 @@ def require_adoptable(prov):
             f"verifier PASS and is not adoptable. {prov.get('non_adoptable_reason', '')}")
 
 
-def require_candidate_path(path):
+def member_offset_of_path(path):
+    """The member offset a path's OWN LOCATION implies: `k` if it contains `member_k<NNNNNN>`
+    (or `member_kneg<NNNNNN>`), else 0.
+
+    This exists so a member's declared offset can be checked against something DERIVED
+    INDEPENDENTLY OF THE DECLARATION. A manifest stamps `est_seed_offset`; the directory it sits
+    in also determines a member; and until they are compared, a manifest copied from one member
+    tree into another is self-consistent, correctly stamped, and wrong -- every individual check
+    passing while the unfolds being validated belong to someone else.
+    """
+    parts = os.path.abspath(path).split(os.sep)
+    for c in parts:
+        if c.startswith("member_kneg"):
+            return -int(c[len("member_kneg"):])
+        if c.startswith("member_k"):
+            return int(c[len("member_k"):])
+    return 0
+
+
+def require_candidate_path(path, expected_offset=0):
     """Positive allowlist + negative denylist: a candidate MUST live under the
     candidate subdir and MUST NOT match any adopted/protected token. Prevents both
     the round-2 self-rejection (candidate name containing '_final') and any write
-    onto an adopted/central path."""
+    onto an adopted/central path.
+
+    `expected_offset` MOVES THE ALLOWED ROOT, IT DOES NOT WIDEN IT. At the default 0 the root is
+    `<ND>/active_universe_5d/standard/candidate`, exactly as before. At a declared member offset
+    it is `<ND>/mii/member_kNNNNNN/active_universe_5d/standard/candidate` and the baseline root is
+    then NOT accepted -- so a member cannot write into the baseline candidate area and a baseline
+    run cannot write into a member's. Two disjoint allowlists, never a union.
+
+    Added 2026-09-21 with the L2 estimator change. Without it the member candidate is refused
+    outright, which is the safe failure -- but the tempting repair is to widen the guard to accept
+    anything under a candidate subdir anywhere, and that is the substring test this function's own
+    history records being defeated twice."""
     # repair-5 (defect 4a). History: this was first a bare substring test, then a
     # normpath component match -- and the verifier defeated the second one too, because a
     # component match succeeds ANYWHERE the sequence appears, so
     # `/evil/active_universe_5d/standard/candidate/out.root` passed, and normpath does not
     # resolve symlinks. Containment must be RESOLVED and anchored to this repository:
     # realpath both sides, then require commonpath(candidate_root, target) == candidate_root.
-    cand_root = os.path.realpath(os.path.join(ND_ROOT, CANDIDATE_SUBDIR))
+    if int(expected_offset) == 0:
+        cand_root = os.path.realpath(os.path.join(ND_ROOT, CANDIDATE_SUBDIR))
+    else:
+        _k = int(expected_offset)
+        _m = f"member_kneg{-_k:06d}" if _k < 0 else f"member_k{_k:06d}"
+        cand_root = os.path.realpath(os.path.join(ND_ROOT, "mii", _m, CANDIDATE_SUBDIR))
     # Callers pass repo-relative ("nd-unfolding/active_universe_5d/...") or ND-relative
     # ("active_universe_5d/...") paths depending on where they cd to, so resolve a relative
     # path against BOTH known roots and accept it if either lands inside. An absolute path is

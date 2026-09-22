@@ -363,8 +363,11 @@ class A1_VerifierTokenBinding(unittest.TestCase):
         self.assertGreater(found, 0, "expected at least one committed BLOCK verdict to test")
 
     def test_gate_is_wired_into_the_driver(self):
+        # Indexed over STAGE lines. Stripping `#` is not enough: the member-axis refusal's ABORT
+        # message names the stages too, and an `echo` is not a comment. See tests/shell_stage_lines.
+        from shell_stage_lines import stage_text
         sh = (ND / "run_p4_standard.sh").read_text()
-        code = "\n".join(l for l in sh.splitlines() if not l.lstrip().startswith("#"))
+        code = stage_text(sh)
         self.assertIn("p4_check_verifier_token.py", code)
         # and the non-emptiness test is no longer the ONLY thing between here and stage 4
         i_tok = code.index("p4_check_verifier_token.py")
