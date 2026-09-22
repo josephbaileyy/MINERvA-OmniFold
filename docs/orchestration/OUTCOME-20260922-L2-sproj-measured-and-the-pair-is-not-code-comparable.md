@@ -53,12 +53,12 @@ baseline receipts (which pin the superseded `dc74c38f…`) they validate against
 
 `l2_stage6_measure.sh` printed `validity all-true : False` for the probe and `True` for the
 control — **and its verdict branch does not consult that flag**, so it printed *"FAIL CONFIRMED"*
-under a failed precondition. Exactly one of the ten fields fails:
+under a failed precondition. Exactly one of the NINE bool fields fails:
 
     CONTROL: all nine PASS
     PROBE:   footing_ok *** FAIL ***    (the other eight PASS)
 
-⚠ **CORRECTED 2026-09-22 (third independent review): this said *"Exactly one of the ten fields fails"*, *"the other nine PASS"* and the transcript's *"CONTROL: all ten PASS"*, **all three of which are corrected in place above** — the first correction changed only the CONTROL line and left `(the other nine PASS)` standing, which is the one-of-N-sites failure recurring inside the fix for it. ⚠ **The committed receipt `state/L2-20260922-validity-detail.json` still lists TEN fields including `notes`, because the PRE-FIX probe wrote it, so the corrected transcript deliberately does not reproduce from it; re-run the repaired probe to regenerate.** `z_validator.Validity` has NINE bool fields plus
+⚠ **CORRECTED 2026-09-22 (third independent review): this said *"Exactly one of the ten fields fails"*, *"the other nine PASS"* and the transcript's *"CONTROL: all ten PASS"*, **all three of which are now corrected in place above — ⚠ **the first correction changed only the CONTROL line, the second only the PROBE line, and this lead-in survived both; three sites, three separate passes**** — the first correction changed only the CONTROL line and left `(the other nine PASS)` standing, which is the one-of-N-sites failure recurring inside the fix for it. ⚠ **The committed receipt `state/L2-20260922-validity-detail.json` still lists TEN fields including `notes`, because the PRE-FIX probe wrote it, so the corrected transcript deliberately does not reproduce from it; re-run the repaired probe to regenerate.** `z_validator.Validity` has NINE bool fields plus
 `notes: dict`, which `cross_member_validity` always populates and `bool()` always coerces to True —
 so it can never fail and must not be counted as a passing check.** Read it as **one of NINE
 failing, eight passing**. `z_grade.cross_member_validity`'s own docstring says *"all nine"*. The

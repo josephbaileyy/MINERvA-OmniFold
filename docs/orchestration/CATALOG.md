@@ -277,12 +277,11 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   ⚠ **THE PER-ROUND COUNTS ARE NOT RESTATED HERE** — they live only in that report's §1 ledger,
   because carrying them in three files is how two went stale after every review (`KNOWN_ISSUES`
   row 66). **Read the ledger for the numbers.** What is stable and worth routing on: condition (ii)
-  was never satisfied; the latest review's repairs are always author-reviewed only; and after the
-  review #4's findings were **all** of row 66's class — ⚠ **but review #3's were
+  was never satisfied; the latest review's repairs are always author-reviewed only; and review #4's findings were **all** of row 66's class — ⚠ **but review #3's were
   NOT: it found a wrong count in `VL145`, a LOGIC BUG in committed probe code, and a sourcing
   defect in the release package. The wider claim is withdrawn at row 66.**
   ⚠ **The reusable lesson: two consecutive clean SELF-rounds were worth very little** — the
-  independent pass found three consequential defects including one that made a shipped deliverable's
+  independent pass found three consequential defects including one that made a in-repo deliverable's
   own reader recipe raise `AssertionError`. Several findings are recorded rather than repaired
   (`KNOWN_ISSUES` **63–66**, the last being the RATE itself): the PASS token's forward reference and scope count, both unrepairable
   because the token IS the sha256 of those bytes; `check_dead_containment`'s green depending on a
