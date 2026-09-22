@@ -262,7 +262,8 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   returns `7257b255`, **not** the `e7f8f365` it names, because the quote spans a newline; two
   adjacent sentences count over two unnamed populations; and **§4c had no heading at all**, so three
   pointers dangled. ⚠ **AND IT FOUND SITE 10** — `CATALOG.md`'s own `EVIDENCE-20260920` entry,
-  asserting *"a larger ensemble would not change it"* unmarked since `128a5e7a`. **Missed by
+  asserting the now-**WITHDRAWN** *"a larger ensemble would not change it"*, unmarked since
+  `128a5e7a` and marked 2026-09-22. **Missed by
   INSTRUMENT, not scope:** `tr '\n' ' '`, the remedy this tree's rules state, returns **0** on it.
   ⚠ **This lane fixed site 10 and is therefore NOT independent on it.**
 - [`DECISION-20260920-joseph-rules-clause-c-disposition.md`](DECISION-20260920-joseph-rules-clause-c-disposition.md)

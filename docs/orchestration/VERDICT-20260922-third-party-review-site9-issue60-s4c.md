@@ -41,9 +41,9 @@ rows 7 and 8 misdescribed themselves.
 | surviving `flat in N` claim is scoped | ✅ reads `over N = 40–160`, not unqualified |
 | row 9 written from the diff, not from intent | ✅ the row's description matches `git show d2f29ca5 -- nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md` |
 
-**VERDICT: ACCEPTED.** One imprecision, not a defect: the commit message says the asserting sentence
-sat *"three lines above"* the existing `⚠ M3 CORRECTED 2026-09-20` block; measured, it is two lines
-above. Nothing rests on the number.
+**VERDICT: ACCEPTED, with no exceptions.**
+
+⚠ **THIS SECTION CARRIED A WRONG CORRECTION OF ITS OWN FOR ONE REVISION, AND WITHDRAWING IT IS THE POINT.** It read: *"One imprecision, not a defect: the commit message says the asserting sentence sat 'three lines above' the existing `⚠ M3 CORRECTED 2026-09-20` block; measured, it is two lines above."* **That is withdrawn — `d2f29ca5` was right and this record was wrong.** Measured at `d2f29ca5^`: the asserting sentence begins at line index **13** and the `M3 CORRECTED` block at index **16**, so it sits **three lines above**, exactly as the commit message said. The error came from measuring the gap from the sentence's **wrapped second line** (index 14, `reduce it;`) instead of from where the sentence starts. **A hard-wrapped sentence has two plausible anchors and they differ by one**, so a line-gap claim must name which end it counts from — and a reviewer correcting another lane on a point where *nothing rests on the number* should be held to a higher bar than the claim it corrects, not a lower one. Found by this session's own round-1 review.
 
 ## 2. ISSUE-60 — **TWO CONFIRMED AS STATED; ONE CONFIRMED WITH ITS MECHANISM CORRECTED**
 

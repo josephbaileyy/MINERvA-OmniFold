@@ -232,6 +232,25 @@ the documented remedy fails on it silently: it returns 0 and looks like a clean 
 still a line-oriented sweep wearing a disguise, and it will report zero on exactly the sites that
 most need finding.
 
+### The detector's own false positive, adjudicated rather than silenced
+
+Running the collapsing sweep over the whole tree returns **one hit that is not a defect and must
+not be "fixed"**: `docs/analysis-note/values.tex`'s `CAUTION -- SCOPE` comment block, which quotes
+`EVIDENCE` §5's heading (*"A LARGER ENSEMBLE WOULD NOT CHANGE THIS"*) in order to say that §5
+*"states more than the seven points support"*. It is the **correction**, quoting the claim to
+prohibit it — the house style §4c describes.
+
+It is flagged only because the mechanical discriminator looks for the literal tokens `WITHDRAWN` /
+`CORRECTED` within a window, and that block states its retraction in its own words instead.
+**The block is right and is left exactly as the note lane wrote it.** Editing a correct artifact so
+that a detector stops complaining would be repairing the instrument's reading rather than the
+tree — and it would put a wording change into the note, and therefore into the standalone
+repository, for no scientific reason. **Recorded here so the next sweep classifies it in one step
+instead of rediscovering it.**
+
+⚠ **So the standing hit set after 2026-09-22 is: three by-design quotations named in §4c, this
+`values.tex` block, plus every site row above — and ZERO live assertions.**
+
 ### What this does NOT change
 
 No number moves, again. `M1`'s `6.145%` against the `5%` bound is untouched. The two clauses
