@@ -17,8 +17,8 @@ an uncertainty product, a central-value change, or a Gate-6 action.
 | B | Where is recovery lost? | B1 done (scalar IBU/GBDT/MLP references, reference decomposition, truth learnability); B2 (PET stepwise diagnostics) running | `phase_b/scalar/SCALAR_REFERENCES-20260922.md`, `phase_b/pet/` |
 | C | Which feature/model changes improve recovery? | first four feature arms queued inside B2 | `phase_c/` |
 | D | Do more events help? | not started | `phase_d/` |
-| E | Physics robustness, reference calibration, coverage | not started | `phase_e/` |
-| F | Conditional alternative methods | not started | `phase_f/` |
+| E | Physics robustness, reference calibration, coverage | distortions predeclared (protocol amendment 1); E1 building the library, identifiability and reference assessment | `PROTOCOL-20260922.md`, `phase_e/` |
+| F | Conditional alternative methods | AUSSIE benchmarked at scalar level: gain is miss handling, not the non-iterative form; PET evaluation not justified on this evidence | `phase_f/AUSSIE_SCALAR_BENCHMARK-20260922.md` |
 
 Cumulative resource use: `RESOURCE_LEDGER.tsv`, rebuilt from every `resources-*.tsv` by `aggregate_resources.py`
 (`--check` verifies it is current).
