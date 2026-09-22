@@ -179,9 +179,11 @@ def make_b2_multifold(MultiFold: type, tf: Any, np: Any) -> type:
 
     class B2MultiFold(Recipe):
         def __init__(self, *a: Any, deadline_unix: float | None = None,
-                     first_iteration_estimate_s: float = 1200.0, **k: Any) -> None:
+                     first_iteration_estimate_s: float = 1200.0,
+                     stop_after_iteration: int | None = None, **k: Any) -> None:
             super().__init__(*a, **k)
             self.deadline_unix = deadline_unix
+            self.stop_after_iteration = stop_after_iteration
             self.first_iteration_estimate_s = float(first_iteration_estimate_s)
             self.state_dir = self.out_dir / "iterations"
             self.state_dir.mkdir(parents=True, exist_ok=True)
@@ -266,6 +268,11 @@ def make_b2_multifold(MultiFold: type, tf: Any, np: Any) -> type:
                     "push": rec.weight_stats(np, self.weights_push)})
                 segment["last_iteration"] = i
                 self._save_iteration(i, last)
+                if self.stop_after_iteration is not None and i >= self.stop_after_iteration \
+                        and i + 1 < self.niter:
+                    segment["stopped_before_iteration"] = i + 1
+                    self._save_iteration(i, last)
+                    return False
             return True
 
     return B2MultiFold
@@ -426,6 +433,8 @@ def main() -> int:
     parser.add_argument("--probe-rows", type=int, default=50_000)
     parser.add_argument("--deadline-unix", type=float, default=None)
     parser.add_argument("--first-iteration-estimate-s", type=float, default=1200.0)
+    parser.add_argument("--stop-after-iteration", type=int, default=None,
+                        help="testing: exit INCOMPLETE after this iteration (resume check)")
     args = parser.parse_args()
 
     out = scope.refuse_historical_output(args.out)
@@ -472,7 +481,8 @@ def main() -> int:
     common = dict(config=config, out_dir=out, pretrained_check=None,
                   training_recipe=training_recipe, torch_adamw=torch_adamw,
                   probe_rows=args.probe_rows, deadline_unix=args.deadline_unix,
-                  first_iteration_estimate_s=args.first_iteration_estimate_s)
+                  first_iteration_estimate_s=args.first_iteration_estimate_s,
+                  stop_after_iteration=args.stop_after_iteration)
     receipt: dict[str, Any] = {
         "schema": "pet-improvement-b2-run-receipt-v1", "mode": args.mode,
         "config": config.to_dict(), "config_hash": config.content_hash(),
