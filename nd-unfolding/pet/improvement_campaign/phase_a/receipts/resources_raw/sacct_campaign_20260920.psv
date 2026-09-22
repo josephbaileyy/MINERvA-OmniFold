@@ -1,0 +1,71 @@
+JobID|JobName|State|ElapsedRaw|NNodes|Partition|QOS|AllocTRES
+58627085|pet-prematerialize|COMPLETED|2819|1|shared_milan_ss11|shared|billing=26,cpu=26,energy=1535567,mem=48G,node=1
+58627089|pet-select-lr|CANCELLED by 112498|0|1|shared_milan_ss11|shared|
+58627088_1|pet-campaign|COMPLETED|932|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=612166,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_2|pet-campaign|COMPLETED|1930|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1947815,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_3|pet-campaign|COMPLETED|929|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=606561,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_4|pet-campaign|COMPLETED|1931|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1516337,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_5|pet-campaign|COMPLETED|925|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=877645,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_6|pet-campaign|COMPLETED|1940|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2016325,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_7|pet-campaign|COMPLETED|936|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=618430,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_8|pet-campaign|COMPLETED|1921|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2091531,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_9|pet-campaign|COMPLETED|949|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1032338,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_10|pet-campaign|COMPLETED|1921|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1693890,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_11|pet-campaign|COMPLETED|925|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=873920,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_12|pet-campaign|COMPLETED|1901|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2152968,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_13|pet-campaign|COMPLETED|925|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=875524,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_14|pet-campaign|COMPLETED|1913|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2231285,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_15|pet-campaign|COMPLETED|921|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=942532,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_16|pet-campaign|COMPLETED|1914|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2458962,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_17|pet-campaign|COMPLETED|907|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=929063,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_18|pet-campaign|COMPLETED|1910|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2441485,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_19|pet-campaign|COMPLETED|922|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1012853,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_20|pet-campaign|COMPLETED|1932|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1488948,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_21|pet-campaign|COMPLETED|924|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=872614,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_22|pet-campaign|COMPLETED|1913|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2065313,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_23|pet-campaign|COMPLETED|927|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=806324,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_24|pet-campaign|COMPLETED|1980|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1916082,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_25|pet-campaign|COMPLETED|928|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=595645,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_26|pet-campaign|COMPLETED|1919|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2378436,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_27|pet-campaign|COMPLETED|947|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=948497,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_28|pet-campaign|COMPLETED|1922|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1528527,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_29|pet-campaign|COMPLETED|922|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1005515,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_30|pet-campaign|COMPLETED|1933|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1538219,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_31|pet-campaign|COMPLETED|976|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=462904,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627088_32|pet-campaign|COMPLETED|1933|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2229960,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58627093|pet-report-deck|CANCELLED by 112498|0|1|shared_milan_ss11|shared|
+58627090_[1-8]|pet-campaign|CANCELLED by 112498|0|1|shared_gpu_ss11|gpu_shared|
+58627092_[1-16]|pet-campaign|CANCELLED by 112498|0|1|shared_gpu_ss11|gpu_shared|
+58645826|pet-select-lr|FAILED|41|1|shared_milan_ss11|shared|billing=26,cpu=26,energy=16573,mem=48G,node=1
+58645827_[1-8]|pet-campaign|CANCELLED by 112498|0|1|shared_gpu_ss11|gpu_shared|
+58645828_[1-16]|pet-campaign|CANCELLED by 112498|0|1|shared_gpu_ss11|gpu_shared|
+58645829|pet-report-deck|CANCELLED by 112498|0|1|shared_milan_ss11|shared|
+58692348|pet-select-lr|FAILED|41|1|shared_milan_ss11|shared|billing=26,cpu=26,energy=17993,mem=48G,node=1
+58692352_[1-8]|pet-campaign|CANCELLED by 112498|0|1|shared_gpu_ss11|gpu_shared|
+58692354|pet-report-deck|CANCELLED by 112498|0|1|shared_milan_ss11|shared|
+58692353_[1-16]|pet-campaign|CANCELLED by 112498|0|1|shared_gpu_ss11|gpu_shared|
+58692542_1|pet-campaign|COMPLETED|928|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=545141,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692542_2|pet-campaign|COMPLETED|1930|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1427176,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692542_3|pet-campaign|COMPLETED|946|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=843352,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692542_4|pet-campaign|COMPLETED|1923|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2712633,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692542_5|pet-campaign|COMPLETED|982|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=625157,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692542_6|pet-campaign|COMPLETED|1934|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1556553,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692542_7|pet-campaign|COMPLETED|953|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=915249,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692542_8|pet-campaign|COMPLETED|1926|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2107135,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_1|pet-campaign|COMPLETED|2352|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2260628,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_2|pet-campaign|COMPLETED|5275|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=5780019,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_3|pet-campaign|COMPLETED|2337|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1834048,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_4|pet-campaign|COMPLETED|5303|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=5354826,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_5|pet-campaign|COMPLETED|2342|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1833871,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_6|pet-campaign|COMPLETED|5279|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=5731121,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_7|pet-campaign|COMPLETED|2331|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2344103,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_8|pet-campaign|COMPLETED|5283|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=5115706,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_9|pet-campaign|COMPLETED|2348|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2260053,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_10|pet-campaign|COMPLETED|5285|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=4810646,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_11|pet-campaign|COMPLETED|2331|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=1341053,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_12|pet-campaign|COMPLETED|5279|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=5096243,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_13|pet-campaign|COMPLETED|2334|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2707345,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_14|pet-campaign|COMPLETED|5292|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=4791013,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_15|pet-campaign|COMPLETED|2343|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=2323458,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58692544_16|pet-campaign|COMPLETED|5293|1|shared_gpu_ss11|gpu_shared|billing=32,cpu=32,energy=5867709,gres/gpu:a100=1,gres/gpu=1,mem=56G,node=1
+58722209|pet-report-deck|FAILED|45|1|shared_milan_ss11|shared|billing=26,cpu=26,energy=17325,mem=48G,node=1

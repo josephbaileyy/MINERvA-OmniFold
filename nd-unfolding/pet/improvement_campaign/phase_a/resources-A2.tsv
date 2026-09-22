@@ -1,1 +1,7 @@
 date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cpu_core_hours	state	purpose
+2026-09-22	A2	58742132	m3246	shared_milan_ss11/shared	1	0	106	0.000	3.533	FAILED	recover+data-path; died in the OI-136 launch guard on NumPy's SVE lscpu probe (exit 3:0), fixed in 31347723
+2026-09-22	A2	58742133	m3246	shared_milan_ss11/shared	1	0	281	0.000	9.367	COMPLETED	feature inventory (run1); receipts/feature_inventory.json first version
+2026-09-22	A2	58747783	m3246	shared_milan_ss11/shared	1	0	508	0.000	16.933	COMPLETED	recover+data-path (run2); recompute_scores/directional/data_path.json
+2026-09-22	A2	58747784	m3246	shared_milan_ss11/shared	1	0	287	0.000	9.567	COMPLETED	feature inventory (run2); receipts/feature_inventory.json final
+2026-09-22	A2	58752537	m3246	shared_milan_ss11/shared	1	0	NA	NA	NA	PENDING	decompose the masks_and_padding FAIL into its seven conjuncts; submitted 08:11:15 PDT, still queued (Resources) at time of writing -- charge to be filled from sacct when it ends
+
