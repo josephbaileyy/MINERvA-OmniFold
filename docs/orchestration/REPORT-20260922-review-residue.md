@@ -10,19 +10,20 @@ The instruction was: terminate only when **(i)** two consecutive self-review rou
 findings **and (ii)** an independent `agy`-class reviewer, in its own isolated worktree, produces
 zero on a round after that. Any finding by the reviewer **resets the counter to zero**.
 
-**Terminal state: the loop stopped at the instruction's own 10-round safety cap** — *"If you reach
-10 rounds without satisfying (i) and (ii), stop, and write … That is a complete outcome."* **The ledger below is the count** — it is not
-restated in prose here, because every prose copy of it has gone stale within one round; **(i) was satisfied THREE times — rounds 2–3, 7–9 and 14–15 — and destroyed all
-three times by an independent reviewer (14, 9 and 11 respectively);** ⚠ **this read *"twice … twice"*
-until 2026-09-22. The true count survived only in `CATALOG.md`, and the de-duplication commit
-`f810c973` DELETED that line while leaving the false one here as the single source — a structural
-fix that lost a true statement. Restored here, where the ledger now lives;** **(ii) was never satisfied.** ⚠ **This sentence read *"Ten"* until 2026-09-22 — round 11
-ran (and found something) AFTER round 10 declared the cap reached, and the declaration was not
-updated. That is round 10's own finding — *"I MISCOUNTED THE ROUNDS TO REACH THE CAP"* — recurring
-one round later in the same paragraph, which is why the count is now derived from the table rather
-than written by hand.** Rounds past the cap were run because the loop's stopping condition had not
-been met and further independent review was still available; the cap permits stopping, it does not
-forbid continuing.
+**(ii) was never satisfied.** Every independent review run in this session found defects.
+
+⚠ **THE LEDGER BELOW IS THE ONLY PLACE ANY PER-ROUND COUNT LIVES, AND THAT IS DELIBERATE.**
+Earlier revisions of this section restated the round count, the review sequence and the
+satisfied-(i) tally in prose beside the table — **231 numeric tokens duplicating 24 table cells** —
+and every independent review found two or three of those copies stale, because each review must be
+recorded and recording it staled the prose. `CATALOG.md` and `KNOWN_ISSUES` row 66 now point here
+rather than copying; this section no longer restates its own table. **If you want a number, read a
+row.**
+
+⚠ **And de-duplicating is only safe when the SURVIVING site is the correct one.** The commit that
+did it deleted a true statement from `CATALOG.md` and left its stale twin here as the new single
+source — caught by the next review, restored, and recorded because it is the failure mode of the
+remedy itself.
 
 | round | findings | note |
 |---|---:|---|
