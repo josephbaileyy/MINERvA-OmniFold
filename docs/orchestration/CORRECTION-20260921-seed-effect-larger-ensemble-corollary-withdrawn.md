@@ -138,7 +138,7 @@ sharpening a dispersion estimate; and four older records using the words in unre
 (`CHECK-20260911`, `PACKET-20260910`, `AUDIT-FINDINGS-20260728`, `PROVENANCE-20260822`).
 **`AGENTS.md` no longer matches, because site 2 is repaired.**
 
-## 4a. An independent instance of the same reasoning that PREDATES this correction
+## 4a. A convergent, contemporaneous instance of the one-seed-pair half
 
 `PREDECLARATION-20260921-L2-lateral-seed-release.md` §4 fixes an outcome map *before* its probe
 runs, and its `< 5%` row reads:
@@ -147,19 +147,65 @@ runs, and its `< 5%` row reads:
 > bound … it is **not** a PASS, not a clearance, and not grounds to revisit the adoption.
 
 Written by a different lane, for a different purpose, and **fixed before a run rather than after a
-result** — which is the strongest form this kind of reasoning takes. It first entered the tree at
-`f6f54e73` (2026-09-21 16:16 −0700), before the manuscript review that prompted this record.
+result** — which is the strongest form this kind of reasoning takes.
+
+**The margin, measured, because "predates" invites a reader to picture an established principle.**
+First-landing commits, all by `git log -S <phrase> -- <path>` so the instrument is the same on
+every side:
+
+| site | first landed |
+|---|---|
+| `state/SEED-EFFECT-20260920.json` (the artifact) | `128a5e7a` 2026-09-20 13:01 −0700 |
+| `EVIDENCE-20260920…` §5 corollary | `128a5e7a` 2026-09-20 13:01 −0700 |
+| `AGENTS.md` *"flat in `N`"* | `e7f8f365` 2026-09-20 22:01 −0700 |
+| `REPORT-20260920…` `L1` | `7257b255` 2026-09-20 22:18 −0700 |
+| `HANDOFF-20260921…` `L1` | `bad2e61f` 2026-09-21 14:11 −0700 |
+| **the predeclaration clause** | **`f6f54e73` 2026-09-21 16:16 −0700** |
+| this correction's first edits | ~2026-09-21 20:02 −0700 |
+
+So the clause **postdates every one of the record-side sites** and predates only this correction,
+by **3 h 46 min**, on the same day, from a concurrently running lane. It is **convergent and
+contemporaneous, not prior authority**, and the window in which the sound reasoning was live in the
+tree while other records asserted its opposite is that 3 h 46 min — not a standing principle
+anyone had been ignoring.
 
 **Scoped, because half of this correction is not in it.** That clause is an independent instance of
 the **one-seed-pair** half: a single pair cannot settle where a maximum over the declared set sits
 relative to a bound. It says nothing about the **nested-subset** half — that `40`- and `80`-throw
 subsets of one 160-throw ensemble cannot determine behaviour at much larger `N` — which is the
 part that the withdrawn corollary actually turned on. Cited as convergent support for one half, not
-as prior authority for the whole.
+as prior authority for the whole; the owning lane has itself declined to claim it more broadly.
 
-⚠ **And it means the sound reasoning was already live in this repository while eight sites asserted
-its opposite.** A correct principle held by one lane does not propagate to the records another lane
-quotes from; only a sweep does.
+⚠ **A FALSE FINDING WAS NEARLY RECORDED HERE, AND THE METHOD THAT PRODUCED IT IS THE POINT.** A
+draft of this section was going to state that one asserting site was committed **after** its own
+refutation — the handoff at `4e960436` (18:39) against the clause at `f6f54e73` (16:16). **That is
+wrong and is not in this record.** `4e960436` is merely the handoff path's most recent touch; the
+sentence entered at `bad2e61f`, **14:11**, so the handoff **precedes** the clause by 2 h 05 min and
+no site asserted the inference after its refutation existed. The error came from using
+**first-landing (`log -S`) on one side of a comparison and the file's latest commit (`log -1`) on
+the other** — a 4 h 28 min swing, from the same asymmetry this record already warns about in its
+site table. **Measure both sides of a date comparison with the same instrument**, and for "when did
+this text appear" that instrument is `git log -S` on the path, never `log -1`.
+
+## 4b. What actually went wrong at the handoff, reported by the lane that owns it
+
+The GBDT lane volunteered this against its own interest, and it is measured rather than relayed:
+its `L1` paragraph is **verbatim** from `REPORT-20260920…` `L1` — `6.04% ± 0.39%`, `N = 40/80/160`,
+exponent `0.000`, `20.91% → 7.57%`, exponent `1.467`, the same sentence — under a §2 header that
+declares itself the completion report's limitation list. So the handoff **quoted a derived summary
+of the measurement instead of the measurement.**
+
+⚠ **And the artifact was already tracked, already cited by that chain, and names the limitation in
+a FIELD NAME.** `state/SEED-EFFECT-20260920.json` landed at `128a5e7a` on 2026-09-20 13:01 — a day
+before the handoff, and in the **same commit** as the `EVIDENCE` corollary it undercuts — and its
+key is literally **`seed_effect_same_throws`**. *Same throws*: the nesting is in the name. Reading
+it was one command away.
+
+**That is a third failure mode, distinct from the two this record otherwise describes.** Not a
+sweep that missed a site, and not a withdrawal that failed to propagate: a summary quoted in place
+of the artifact it summarizes, where the artifact was tracked, cited and self-describing. **When a
+record restates a number, cite the artifact and open it** — a derived paragraph cannot carry a
+caveat its source never wrote down.
 
 ## 5. What this correction does NOT do
 

@@ -52,6 +52,32 @@
 % pulling in a stale raster .png.
 \DeclareGraphicsExtensions{.pdf}
 
+% Repository paths: \repopath{docs/orchestration/FOO-20260101-bar.md} sets the path
+% in \texttt with a break opportunity after every "/" and "-", so a long path breaks
+% inside a narrow column instead of running into the margin.
+%
+% WHY A MACRO RATHER THAN HAND-INSERTED \allowbreak, and it is not a style preference.
+% The first fix for the margin overflow wrote the breaks into the source
+% (docs/\allowbreak orchestration/\allowbreak AUDIT-...). That types identically and
+% SILENTLY BROKE DISCOVERY: generate_manifest.py counts inbound references by matching
+% the literal path, so seven records each lost a citation -- measured as inbound_count
+% 11->10, 3->2, 26->25, 14->13, 10->9, 17->16 and 5->4. The macro keeps the argument a
+% literal, greppable path and inserts the breaks at typeset time instead.
+% \path{} was also tried: it breaks too reluctantly and still overflowed.
+% NOTE: the argument may not contain "_" (it would need catcode surgery); no path
+% routed here does, and the one that does is written with \texttt{...\_...} directly.
+\makeatletter
+\newcommand{\mnv@stop}{}
+\newcommand{\repopath}[1]{\texttt{\mnv@brk#1\mnv@stop}}
+\def\mnv@brk#1{%
+  \ifx\mnv@stop#1\else
+    #1%
+    \ifx#1/\allowbreak\fi
+    \ifx#1-\allowbreak\fi
+    \expandafter\mnv@brk
+  \fi}
+\makeatother
+
 % --- notation macros ---
 \newcommand{\pT}{p_{T}}
 \newcommand{\pPar}{p_{\parallel}}

@@ -191,8 +191,13 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   its own table and found by the sweep, then MISDESCRIBED their own action until the owning lane
   opened the diff** — the record keeps both on the page as method notes: run the sweep before
   writing the enumeration, and write each row from `git diff` afterwards. §4a cites
-  `PREDECLARATION-20260921-L2-lateral-seed-release.md` §4 as an independent instance of the
-  one-seed-pair half that **predates** this record (`f6f54e73`), scoped to that half.
+  `PREDECLARATION-20260921-L2-lateral-seed-release.md` §4 as a **convergent, contemporaneous**
+  instance of the one-seed-pair half, scoped to that half: `f6f54e73` 2026-09-21 16:16 **postdates
+  every record-side site** and leads only this correction, by 3 h 46 min. §4b adds the owning
+  lane's own diagnosis — the handoff quoted a derived summary instead of
+  `state/SEED-EFFECT-20260920.json`, whose key `seed_effect_same_throws` states the limitation in
+  its name. ⚠ §4a also records a **false timeline that was caught before it was written**, from
+  measuring two sides of a date comparison with different instruments.
 - [`DECISION-20260920-joseph-rules-clause-c-disposition.md`](DECISION-20260920-joseph-rules-clause-c-disposition.md)
   - **§6.4 clause (c) is DISPOSED.** `V2` **discharged** by the third lane above; `V6`'s six
   unreproduced items **ruled outside** clause (c)'s scope, on the assessor's own distinction that
