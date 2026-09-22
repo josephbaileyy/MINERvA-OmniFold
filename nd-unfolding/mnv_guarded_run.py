@@ -1646,7 +1646,7 @@ _LEAF_TOOL_BASENAMES = frozenset({
     # digests
     "sha256sum", "shasum", "md5sum",
     # archive tools: they extract and compress, they do not run what they extract
-    "tar", "gzip", "gunzip", "zstd", "xz",
+    "tar", "gzip", "gunzip", "zstd", "lscpu", "xz",
     # Slurm CLIENTS that submit or report and run nothing locally. `sbatch` and `srun` are NOT
     # here: `sbatch` runs a script and `srun` runs a command, so both are modelled as wrappers.
     "sacct", "squeue", "sinfo", "scancel", "sstat",
