@@ -13,6 +13,7 @@ has **not** happened. There is still **no release tag and no release manifest** 
 | | |
 |---|---|
 | built at | `origin/main = 9e78a8cf`, on Perlmutter under `mnv_guarded_run.py` (1 checkout root) |
+| corrected at | `0d913d43` (monorepo), mirrored to the standalone note repository |
 | builder | `nd-unfolding/build_appendixF.py` (untracked helper; the package is the deliverable) |
 | source trunk | `sha256 3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5` |
 | projection | `sha256 835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e` |

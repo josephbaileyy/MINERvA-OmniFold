@@ -266,6 +266,19 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   running at all are mutually exclusive. **The predeclaration's bare `> 5%` row may NOT be claimed**;
   `M1`'s FAIL is untouched and never rested on this probe. Two stage scripts were repaired — both
   had never run (`z_grade.MemberProduct` exists at no revision; stage 5 returned `ls`'s status).
+- [`REPORT-20260922-review-residue.md`](REPORT-20260922-review-residue.md)
+  - ⚠ **THE REVIEW LOOP DID NOT TERMINATE ON ITS OWN CRITERION, and this records that rather than
+  implying otherwise.** Self-rounds went `3 → 0 → 0`; an **independent reviewer in its own worktree
+  then found 14**, resetting the counter, and a post-review round found one more (a **fabricated
+  sha** in an already-pushed commit message). **Condition (ii) — a clean independent round — has
+  never been satisfied, so the 10 repairs made in response are reviewed by nobody but their author.**
+  ⚠ **The reusable lesson: two consecutive clean SELF-rounds were worth very little** — the
+  independent pass found three consequential defects including one that made a shipped deliverable's
+  own reader recipe raise `AssertionError`. Four findings are recorded rather than repaired
+  (`KNOWN_ISSUES` 63-65): the PASS token's forward reference and scope count, both unrepairable
+  because the token IS the sha256 of those bytes; `check_dead_containment`'s green depending on a
+  gitignored PDF; and the existing withdrawal-completeness checker never being given the 2026-09-21
+  claim. **No scientific number moved in either direction.**
 - [`VERDICT-20260922-third-party-review-site9-issue60-s4c.md`](VERDICT-20260922-third-party-review-site9-issue60-s4c.md)
   - **THE THIRD PAIR OF EYES `HANDOFF-20260922` §10 ASKED FOR, on all three objects.** Site 9's fix
   **ACCEPTED** (sentence replaced with the sites 7–8 wording, inline `⚠ M1 CORRECTED` block present,
