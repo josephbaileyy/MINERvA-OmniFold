@@ -60,9 +60,11 @@ remedy itself.
 | 18 (self) | **1** | ⚠ **I DUPLICATED THE ENTIRE LEDGER while deleting narrative** — a slice `s[:a]+s[b:]` with `a > b` copies the span between them. Caught by checking row count after the edit, not by reading the diff. Restored from `HEAD` and redone without slice arithmetic |
 | 19 (self) | **1** | ⚠ **the TOTAL line was the last hand-maintained count and had to be rewritten every round — the residual generator.** Fixed with an INSTRUMENT, not care: `probes/probe-20260922-ledger-reconciles.py` derives the totals from the table and refuses on mismatch. Shown to fire on a stale total, on an unrecorded new review row, and on the round-18 ledger duplication; silent on the correct ledger |
 | **agy #7 (independent)** | **10** | ⚠ **THE GUARD I HAD JUST SHIPPED HAD THE DEFECT IT PREVENTS.** A `⚠`-prefixed findings cell was invisible to its regex, so such a row vanished from every derived quantity **and** from the ordering check — and that format is used **inside this table** (`agy #2, attempt 1`). It also compared addend COUNTS but not the split. Both fixed and re-tested on five shapes plus a control. Nine more: row 66's pledge broken by one numeral, a bare gate green in row 17, a gate cited in a form that exits 2, a universal claim the ledger refutes for three reviews, a "no rank measured" refuted by its own cited log, `VL143`'s `:340` (blank at every sha; the literal is `:488`), a README carve-out on the wrong row, and `24 table cells` left unwithdrawn beside `231` |
+| 20 (self) | **0** | the ten agy-#7 fixes re-verified, and the hardened guard re-tested live on the shape that defeated it. One apparent failure was my own `not in` test matching a retraction quote — diagnosed, not "fixed" |
+| 21 (self) | **1** | ⚠ **the standalone note repo was left BEHIND after the README fix landed on `origin`** — `AGENTS.md`'s deliverable-synchronization rule. Caught by a parity check over all 99 tracked files, not by remembering. Synced; parity now 0 differing |
 
-**TOTAL: self rounds 1–19 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0+0+1+1 = 13; independent reviews =
-14+9+7+11+9+13+10 = 73; TOTAL 86.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
+**TOTAL: self rounds 1–21 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0+0+1+1+0+1 = 14; independent reviews =
+14+9+7+11+9+13+10 = 73; TOTAL 87.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
 the addend lines above and is not restated here.**
 
 ⚠ **THE DUPLICATION THAT CAUSED THE CLASS IS NOW REMOVED, which is the repair row 66 should have
