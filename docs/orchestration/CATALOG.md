@@ -272,15 +272,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   had never run (`z_grade.MemberProduct` exists at no revision; stage 5 returned `ls`'s status).
 - [`REPORT-20260922-review-residue.md`](REPORT-20260922-review-residue.md)
   - ⚠ **THE REVIEW LOOP DID NOT TERMINATE ON ITS OWN CRITERION, and this records that rather than
-  implying otherwise.** **FOUR independent reviews ran and all four found defects —
-  14, 9, 7, 11** — each resetting the counter, each reviewing its predecessors' repairs and finding
-  fresh defects in them. Self-rounds reached two-consecutive-clean three times (2–3, 6–9, 14–15)
-  and an independent reviewer destroyed it every time. **Condition (ii) was NEVER satisfied, and
-  review #4's eleven repairs are again reviewed by nobody but their author.**
+  implying otherwise.** ⚠ **EVERY independent review so far has found defects, each
+  resetting the counter, each reviewing its predecessors' repairs and finding fresh ones.**
+  ⚠ **THE PER-ROUND COUNTS ARE NOT RESTATED HERE** — they live only in that report's §1 ledger,
+  because carrying them in three files is how two went stale after every review (`KNOWN_ISSUES`
+  row 66). **Read the ledger for the numbers.** What is stable and worth routing on: condition (ii)
+  was never satisfied; the latest review's repairs are always author-reviewed only; and after the
+  first two reviews every finding fell into row 66's class rather than into the physics.
   ⚠ **The reusable lesson: two consecutive clean SELF-rounds were worth very little** — the
   independent pass found three consequential defects including one that made a shipped deliverable's
-  own reader recipe raise `AssertionError`. **FIVE** findings are recorded rather than repaired
-  (`KNOWN_ISSUES` **63–66**, the last being the RATE itself, which is the class all eleven of review #4's findings fall into): the PASS token's forward reference and scope count, both unrepairable
+  own reader recipe raise `AssertionError`. Several findings are recorded rather than repaired
+  (`KNOWN_ISSUES` **63–66**, the last being the RATE itself): the PASS token's forward reference and scope count, both unrepairable
   because the token IS the sha256 of those bytes; `check_dead_containment`'s green depending on a
   gitignored PDF; and the existing withdrawal-completeness checker never being given the 2026-09-21
   claim. **No scientific number moved in either direction.**
