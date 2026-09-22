@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 """Assert that REPORT-20260922-review-residue.md's TOTAL line reconciles with its own ledger.
 
-WHY THIS EXISTS. Six independent adversarial reviews of one session found, between them, that the
-loop ledger's hand-written totals and the prose around them were stale -- every time, and almost
-nothing else. The cause is mechanical: each review must be RECORDED, and recording it invalidates
-any hand-maintained sum of the table it was added to.
+WHY THIS EXISTS. Independent adversarial reviews of one session repeatedly found the loop ledger's
+hand-written totals, and the prose around them, stale. The cause is mechanical: each review must be
+RECORDED, and recording it invalidates any hand-maintained sum of the table it was added to.
+
+⚠ THIS DOCSTRING ONCE OVERSTATED THAT. It read "Six independent adversarial reviews ... found ...
+every time, and almost nothing else". Both halves are false and BOTH WERE ALREADY WITHDRAWN at
+KNOWN_ISSUES row 66 before this file was written -- the withdrawal reached the row and not the
+instrument, which is row 66's own subject. "Almost nothing else": review #3 alone found a wrong
+count in VL145, a logic bug in committed probe code, and a release-package sourcing defect.
+"Every time": review #1 ran BEFORE this ledger existed (its fixes landed at 0d913d43 00:08:17;
+the report was created at 6a411ed0 00:17:11). The counts live in the ledger; none is restated here.
 
 Correcting each stale copy after each review does not work; it was tried repeatedly and the next
 review found the next copy. `KNOWN_ISSUES.md` row 65 states the general lesson -- an assurance a
@@ -30,11 +37,17 @@ REPORT = Path(__file__).resolve().parents[1] / "REPORT-20260922-review-residue.m
 #   * the findings cell may carry any leading decoration before its integer;
 #   * every DATA ROW in the ledger block is counted separately, and a row the parsers cannot
 #     classify is a REFUSAL, not a silent omission.
-_CELL = r"[^|]*?\*{0,2}(\d+)\*{0,2}\s*\|"
-SELF_ROW = re.compile(r"^\|\s*\*{0,2}(\d+)\s*\(self[^|]*\|" + _CELL)
-AGY_ROW = re.compile(r"^\|\s*\*{0,2}agy[^|]*\|" + _CELL, re.I)
-NOVERDICT_ROW = re.compile(r"^\|\s*\*{0,2}agy[^|]*\|[^|]*NO VERDICT[^|]*\|", re.I)
-DATA_ROW = re.compile(r"^\|(?!\s*(?:round\b|-{2,}|:?-{2,}))")
+# ⚠ THE FINDINGS CELL IS EXTRACTED AND THEN ADJUDICATED -- IT IS NOT PATTERN-RACED.
+# An earlier version tried NOVERDICT_ROW and AGY_ROW as competing patterns. An agy row whose
+# findings cell merely MENTIONED "NO VERDICT" (`| **5** after a NO VERDICT retry |`) matched
+# neither as an integer nor cleanly as a no-verdict row, and was dropped SILENTLY -- the exact
+# fail-open this file claims to have closed. So: take cell 2 whole, then decide.
+#   exactly one integer      -> that is the count
+#   no integer + "NO VERDICT" -> a recorded non-verdict, counted as such
+#   anything else             -> REFUSE. Ambiguity is not zero.
+SELF_HEAD = re.compile(r"^\|\s*\*{0,2}(\d+)\s*\(self[^|]*\|([^|]*)\|")
+AGY_HEAD = re.compile(r"^\|\s*\*{0,2}agy[^|]*\|([^|]*)\|", re.I)
+DATA_ROW = re.compile(r"^\|(?!\s*(?:-{2,}|:?-{2,}))")
 TOTAL = re.compile(r"self rounds 1[–-](\d+)\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*"
                    r"independent reviews\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*TOTAL\s*(\d+)", re.S)
 
@@ -48,12 +61,14 @@ def main() -> int:
     # the ledger block: from its header row to the first blank line after it
     lines = text.splitlines()
     try:
-        h = next(i for i, l in enumerate(lines) if l.startswith("| round | findings | note |"))
+        h = next(i for i, l in enumerate(lines)
+                 if l.strip().startswith("| round | findings | note |"))
     except StopIteration:
         print("[ledger] CANNOT LOOK :: no ledger header row")
         return 2
-    end = next((i for i in range(h + 1, len(lines)) if not lines[i].startswith("|")), len(lines))
-    block = lines[h + 1:end]
+    end = next((i for i in range(h + 1, len(lines))
+                if not lines[i].strip().startswith("|")), len(lines))
+    block = [l.strip() for l in lines[h + 1:end]]
 
     selves, agys, unclassified, noverdict = [], [], [], 0
     for l in block:
@@ -61,14 +76,21 @@ def main() -> int:
             continue
         if re.match(r"^\|\s*:?-{2,}", l) or set(l.replace("|", "").strip()) <= set("-: "):
             continue
-        m = SELF_ROW.match(l)
+        m = SELF_HEAD.match(l)
         if m:
-            selves.append((int(m.group(1)), int(m.group(2)))); continue
-        if NOVERDICT_ROW.match(l):
-            noverdict += 1; continue
-        m = AGY_ROW.match(l)
+            nums = re.findall(r"\d+", m.group(2))
+            if len(nums) == 1:
+                selves.append((int(m.group(1)), int(nums[0]))); continue
+            unclassified.append(l[:90]); continue
+        m = AGY_HEAD.match(l)
         if m:
-            agys.append(int(m.group(1))); continue
+            cell = m.group(1)
+            nums = re.findall(r"\d+", cell)
+            if len(nums) == 1:
+                agys.append(int(nums[0])); continue
+            if not nums and re.search(r"NO VERDICT", cell, re.I):
+                noverdict += 1; continue
+            unclassified.append(l[:90]); continue
         unclassified.append(l[:90])
 
     if unclassified:
@@ -82,10 +104,16 @@ def main() -> int:
         return 2
 
     flat = re.sub(r"\s+", " ", text)
-    m = TOTAL.search(flat)
-    if not m:
+    hits = list(TOTAL.finditer(flat))
+    if not hits:
         print("[ledger] CANNOT LOOK :: no TOTAL line matching the expected shape")
         return 2
+    if len(hits) > 1:
+        print(f"[ledger] CANNOT LOOK :: {len(hits)} TOTAL sentences match; the first is not\n    authoritative. This tree RETRACTS BY QUOTING, so a quoted-but-stale TOTAL is\n    indistinguishable from the live one at this layer. Refusing.")
+        for hh in hits:
+            print(f"    {hh.group(0)[:110]}")
+        return 2
+    m = hits[0]
 
     rounds = [n for n, _ in selves]
     bad = []
@@ -130,7 +158,8 @@ def main() -> int:
         for b in bad:
             print(f"    {b}")
         return 1
-    print(f"\n[ledger] PASS :: {len(selves)} self rounds and {len(agys)} independent reviews reconcile")
+    print(f"\n[ledger] PASS :: {len(selves)} self rounds and {len(agys)} independent reviews "
+          f"reconcile ({noverdict} recorded non-verdict row(s))")
     return 0
 
 

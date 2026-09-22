@@ -47,7 +47,17 @@ def measure(label, other_dir):
     val, ev = G.cross_member_validity(members, [0, 1200])
     U, ufo = G.m1_functionals(base.mask)
     stats, detail = G.member_statistics(members, U)
-    ok = all(bool(getattr(val, f)) for f in val.__dataclass_fields__) if hasattr(val, "__dataclass_fields__") else None
+    # ⚠ FIXED 2026-09-22 by the EIGHTH independent review. This iterated `__dataclass_fields__`,
+    # which includes `notes: dict` -- a metadata bag `cross_member_validity` ALWAYS populates.
+    # bool() coerced it to True, so it read as a tenth check that can never fail; and an EMPTY
+    # `notes` would have reported a VALID pair as invalid. `cross_member_validity`'s own docstring
+    # says "all nine". The identical defect was fixed in the sibling probe at 8d22bfd0, whose
+    # message said "Fixed in the record and in the instrument" -- singular, and this is the copy
+    # that actually PRODUCED the `validity all-true` line the L2 OUTCOME record quotes.
+    import dataclasses
+    ok = (all(bool(getattr(val, f.name)) for f in dataclasses.fields(val)
+              if f.type in ("bool", bool))
+          if hasattr(val, "__dataclass_fields__") else None)
     print(f"\n=== {label} ===")
     print(f"  member offset      : {other.offset}")
     print(f"  cov_digest         : {other.cov_digest()[:16]}")

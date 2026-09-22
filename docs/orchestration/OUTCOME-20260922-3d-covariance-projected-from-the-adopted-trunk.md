@@ -111,7 +111,16 @@ figure work is exactly the failure the rule exists to prevent.
 - **No rank is quoted here and none may be inferred.** The projector printed a retained count at its
   hardcoded `rc = 1e-12`; on the `(E_avail,W)` object the analogous count moves from **2 to 42** across
   the cutoffs `VL145` actually scans (`1e-1 → 2` … `0 → 42`; the narrower `26 → 42` is `VL143`
-  item (3)'s abridgement, which starts at `1e-6`), and nothing has scanned **this** object's spectrum. **Any rank for
-  this product must be reported with its cutoff, and no scan exists yet.**
+  item (3)'s abridgement, which starts at `1e-6`). ⚠ **THIS READ *"nothing has scanned this object's
+  spectrum ... no scan exists yet"*, AND THE RECORD'S OWN CITED LOG REFUTES IT.**
+  `state/PROJ3D-20260922-job58736728-stdout.txt` — the file §2 names as this record's spectrum
+  source — prints `min-eig=-4.326e-93  most-neg/max=-2.32e-16  rank~263/1431`. A full
+  eigendecomposition **was** run and a retained count of **263 of 1431 at the projector's hardcoded
+  `rc = 1e-12`** exists; §2's "What was measured" table omitted it. The corrected claim: **what is
+  absent is a cutoff SCAN** of the kind `VL145` performs for the `(E_avail,W)` object — a single
+  retained count at one hardcoded cutoff is not one. **Any rank for this product must still be
+  reported with its cutoff, and `263` may be quoted only as `263 of 1431 at rc = 1e-12`.**
+  The corrected wording had already reached `REPORT-20260922-review-residue.md` §3 item 7 and was
+  **not** carried to this record, which is the CITABLE artifact — one-of-two-sites again.
 
 **Co-Authored-By: Claude Opus 5 (1M context)**

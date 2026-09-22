@@ -13,8 +13,8 @@ has **not** happened. There is still **no release tag and no release manifest** 
 | | |
 |---|---|
 | built at | `origin/main = 9e78a8cf`, on Perlmutter under `mnv_guarded_run.py` (1 checkout root) |
-| corrected at | `0d913d43` (monorepo), mirrored to the standalone note repository |
-| builder | `nd-unfolding/build_appendixF.py` (untracked helper; the package is the deliverable) |
+| corrected at | this README has been corrected repeatedly; **a single sha here goes stale on the next correction and did** (it read `0d913d43`, four corrections behind). Authoritative history: `git log -- docs/analysis-note/release-package-20260922/README.md`. Mirrored to the standalone note repository. |
+| builder | `docs/orchestration/probes/probe-20260922-build-appendix-f-package.py` (committed at `38836db7`). ⚠ This row read `nd-unfolding/build_appendixF.py`, which **exists at no commit** (`git log --all --oneline -- <path>` is empty). ⚠ The committed copy is **not runnable from its committed location**: it inserts its own directory on `sys.path` and does `import project_cov_nd`, which lives in `nd-unfolding/`. Run it with `PYTHONPATH=nd-unfolding`. |
 | source trunk | `sha256 3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5` |
 | projection | `sha256 835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e` |
 
@@ -71,7 +71,7 @@ reproduced above. **A silent default here is a scientific choice made by a data 
 | file | bytes | `sha256` | contents |
 |---|---:|---|---|
 | `central_values_5d.npz` | 109,836 | `6773530647f66103…` | `hXSecND_flat_dense` (65,856 dense cells) and `reported_index` (10,694, C order) |
-| `masks_5d.npz` | 22,372 | `2c02f47f13448a61…` | `support_mask`, `pinned_mask`, `producer_row_index_5d` |
+| `masks_5d.npz` | 22,372 | `2c02f47f13448a61…` | `support_mask` `(65,856,)` over the **dense** grid, sum `10,694`; `pinned_mask` `(10,694,)` over the **reported** rows — ⚠ **identically zero in this package**, and it is `z_assembly.compute_g`'s pinning (bins where `v_blk == 0` and `g` was pinned to exactly 1), **NOT** M3's five *seed-pinned* bands, which are a different thing entirely and are **not** represented by this array; `producer_row_index_5d` `(10,694,)`. ⚠ Schema item 5 also asks for an **unreported-cell mask**: it is not shipped as its own array; it is `~support_mask` on the dense grid. |
 | `projection_matrix_M_eavailW.npz` | 21,306 | `3b81f42bdc75613f…` | `M` as COO (`rows`, `cols`, `values`, `shape`); dense shape `42 × 10694` |
 | `covariance_eavailW.npz` | 10,079 | `94679d6dcdf1ff25…` | `C_eavailW` (42×42), `row_index` (42), `cv_marginal` (42) |
 | `_build_report.json` | — | — | every number below, machine-readable |
@@ -94,6 +94,17 @@ The last bin on `eavail`, `q3` and `W` is a **catch bin to 100 GeV**. Dense grid
 `14×16×7×7×6 = 65,856` in **C order**; `10,694` reported.
 
 ## 4. What is NOT here, and why
+
+- **Per-object provenance** (schema item 8: *"for each object, the producing revision, the
+  producing job, and the digest of the bytes as read back out of the closed file"*). ⚠ **NOT
+  CARRIED.** `_build_report.json` records digests of the shipped files but **no producing revision
+  and no producing job for any object**. This omission was not disclosed here until the eighth
+  independent review measured it; the earlier §4 enumerated only items 4, 7 and 3.
+- **The pairing digest `0f04abce…`**, which `VL143` calls **binding** for the note figure, is not
+  carried in the package or the build report. It is reproducible from the shipped bytes with this
+  repo's own convention: `z_receipt.sha256_array(central_values_5d.npz["hXSecND_flat_dense"])`
+  → `0f04abceccb5330b1a5ee84a1f943c2b7d1eaa3d32ae854aaecb91bc5c0d9baa`. So the package ships the
+  right bytes without shipping the digest that binds them.
 
 - **`C_Z`, the adopted five-axis covariance itself.** `890,500,272` bytes; it cannot go in a git
   repository. It is identified by digest, which is what the appendix specifies. It lives at

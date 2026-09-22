@@ -270,6 +270,20 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   running at all are mutually exclusive. **The predeclaration's bare `> 5%` row may NOT be claimed**;
   `M1`'s FAIL is untouched and never rested on this probe. Two stage scripts were repaired — both
   had never run (`z_grade.MemberProduct` exists at no revision; stage 5 returned `ls`'s status).
+- [`HANDOFF-20260922-gbdt-cold-start.md`](HANDOFF-20260922-gbdt-cold-start.md)
+  - The **work order** for the 2026-09-22 GBDT cold-start lane: §12 enumerates the seven items, §2
+  the verifier-token position, §9.2/§9.4 the 3D projection and the ISSUE-59 figure re-run.
+  - ⚠ **ITS HEADER PINS ARE SUPERSEDED.** The `monorepo head` and `standalone note head` rows record
+  the heads *as written*; both moved during the lane, and the file itself was edited afterwards
+  (+38 lines, adding §10.2). Read heads from `git rev-parse origin/main` and `git ls-remote`, never
+  from that header.
+  - ⚠ **IT IS REGISTERED `ARCHIVAL` / `immutable yes` IN `MANIFEST.tsv` AND WAS MUTATED ANYWAY.** It
+  had **no `MANIFEST-overrides.tsv` row and no entry here**, which put it permanently outside
+  `live_doc_indexed.py`'s scope — the same discovery hole
+  [`VERDICT-20260922-third-party-review-site9-issue60-s4c.md`](VERDICT-20260922-third-party-review-site9-issue60-s4c.md)
+  documents for a different file. A `LIVE`/`open` overrides row and this entry were added
+  2026-09-22 by the eighth independent review; the immutability conflict itself is **unresolved**
+  and belongs to whoever rules on the archival class.
 - [`REPORT-20260922-review-residue.md`](REPORT-20260922-review-residue.md)
   - ⚠ **THE REVIEW LOOP DID NOT TERMINATE ON ITS OWN CRITERION, and this records that rather than
   implying otherwise.** ⚠ **EVERY independent review so far has found defects, each
@@ -324,10 +338,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 - [`DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md`](DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md)
   - **JOSEPH ADOPTS `3d7465f6…` as publication-under-exception**, re-hashed on the cluster first.
   Carries the `UNRESOLVED`/`4c` status and **C3 stays "predeclared, not computed"** in the same
-  place as the decision, and **four measurements that travel with the digest**: `s_proj = 6.145%`
-  vs a 5% bound; that effect is **flat in N** (`p = 0.000`) so it is the estimator, not resolution;
-  five seed-pinned bands make it a **lower bound**; and the seed moves the **central values** by
-  ≤6.0% of their uncertainty (≤49.8% for a single 5D bin). The exception covers this digest **and
+  place as the decision, and **four measurements that travel with the digest**: `M1` `s_proj =
+  6.145%` vs a 5% bound; `M2` that effect is **flat in N over the ensemble sizes measured**
+  (`p = 0.000`), so within that range it is the estimator and not resolution — ⚠ **the unqualified
+  *"flat in N"* reading is CORRECTED** (`AGENTS.md`; it propagated an infinite-`N` claim into note,
+  primer and paper, and *"a larger ensemble would not reduce it"* is **WITHDRAWN**); `M3` five
+  seed-pinned bands — ⚠ **the *"lower bound"* wording is WITHDRAWN** (`AGENTS.md`;
+  `CORRECTION-20260920-lower-bound-inference-withdrawn.md`): the bands are **unprobed in either
+  direction**, so they bound nothing; and `M4` the seed moves the **central values** by ≤6.0% of
+  their uncertainty (≤49.8% for a single 5D bin). ⚠ This entry **asserted `M2` and `M3` in the
+  catalogue's own voice**, unmarked, until 2026-09-22 — on the entry a reader reaches the adoption
+  through, and contradicting this same file's own `WITHDRAWN` marking of `M3` further up. The exception covers this digest **and
   nothing else** — `361090f9…` and `7e4636a3…` are named as excluded.
 - [`DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md`](DRAFT-ADOPTION-20260919-z-cv-under-the-6.4-exception.md)
   - **The exception route, taken to the point where only Joseph's act is missing.** It **adopts

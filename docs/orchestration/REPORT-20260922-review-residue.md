@@ -21,7 +21,7 @@ revision put a specific figure here (`231`) and it REPRODUCES FROM NO READING of
 had 22 data rows and 66 cells; `24` reproduces only as table LINES including header and separator.
 **Both figures are in `07605c7d`'s immutable message.** Withdrawn rather than re-measured, because
 the point does not need a number** —
-and every independent review found two or three of those copies stale, because each review must be
+and every independent review **from #2 onward** found two or three of those copies stale, because each review must be
 recorded and recording it staled the prose. `CATALOG.md` and `KNOWN_ISSUES` row 66 now point here
 rather than copying; this section no longer restates its own table. **If you want a number, read a
 row.**
@@ -55,18 +55,20 @@ remedy itself.
 | **agy #4 (independent)** | **11** | ⚠ **ALL ELEVEN IN ROW 66's CLASS — zero elsewhere.** Stale counts and one-of-N-sites failures in my bookkeeping. It re-derived and could NOT break: the release package end-to-end, `VL145`, the repaired probe, row 66's cited instances, and the ledger arithmetic. All eleven fixed |
 | 16 (self) | **0** | pure verification after the de-duplication fix: ledger reconciled at that round; counts live in the TOTAL line and are not restated here, package digests and `M` re-derived, L2 statistics, the four gates (`p4_check_verifier_token --token 229c43e0…`, `generate_manifest --check`, `control_plane_lint`, `check_dead_containment --source-only`) |
 | **agy #5 (independent)** | **9** | ⚠ **AND IT BROKE THE STRUCTURAL FIX ITSELF.** Three of the nine are about the de-duplication: it **deleted a TRUE statement** (the "(i) satisfied three times" count, which survived only in `CATALOG.md`) while leaving the false twin as the single source; row 66 **still carried a stale review count**, so the commit message's *"0 times in KNOWN_ISSUES.md"* was false; and ⚠ **row 66's central claim was OVERSTATED and is now withdrawn** — review #3 found three defects OUTSIDE the class, including a **logic bug in committed probe code**. All nine fixed |
-| 17 (self) | **0** | pure verification after the §1 rewrite: ledger reconciles from its own rows, package digests and `M` re-derived, and the four gates green as enumerated in rows 14/16 |
+| 17 (self) | **0** | pure verification after the §1 rewrite: ledger reconciles from its own rows, package digests and `M` re-derived, and the four gates green as enumerated in rows 14/16. ⚠ **THE GATE GREENS IN ROWS 14/16/17 NAME NO TREE AND NO SHA, WHICH IS EXACTLY WHAT `KNOWN_ISSUES` ROW 60 PROHIBITS** (*"state the object — 'checked at `<sha>` with a clean tree' — or do not cite it"*). They were run on the working tree at the round in question, which is not recoverable from this table. Worse, one of the four — `generate_manifest.py --check` — was measured **RED at `3b60abb0` on a clean tree** by the eighth independent review: the commit that added ledger row 22 grew this report by 2 lines / 829 bytes and did not regenerate `MANIFEST.tsv`, so **writing the claim invalidated the claim**. Treat rows 14/16/17's gate greens as UNMAPPED. The authoritative statement is in §4, pinned to a sha, and `MANIFEST.tsv` is regenerated there. |
 | **agy #6 (independent)** | **13** | ⚠ **EVERY ONE in the meta-record; none in the work.** It found: a headline measurement (`231`) that **reproduces from no reading of its operand and was never taken**; a repair claimed in a commit message and **never made at either site**; a bare "four gates" green over a set with no enumeration, one of which is red bare at that sha; the second de-duplication again **deleting a true statement and promoting a stale twin**; and a transcript whose third site was still wrong while the correction announced all three fixed. It re-derived and could NOT break the physics, `VL145`, the package, the probe or rows 61–65 |
 | 18 (self) | **1** | ⚠ **I DUPLICATED THE ENTIRE LEDGER while deleting narrative** — a slice `s[:a]+s[b:]` with `a > b` copies the span between them. Caught by checking row count after the edit, not by reading the diff. Restored from `HEAD` and redone without slice arithmetic |
 | 19 (self) | **1** | ⚠ **the TOTAL line was the last hand-maintained count and had to be rewritten every round — the residual generator.** Fixed with an INSTRUMENT, not care: `probes/probe-20260922-ledger-reconciles.py` derives the totals from the table and refuses on mismatch. Shown to fire on a stale total, on an unrecorded new review row, and on the round-18 ledger duplication; silent on the correct ledger |
 | **agy #7 (independent)** | **10** | ⚠ **THE GUARD I HAD JUST SHIPPED HAD THE DEFECT IT PREVENTS.** A `⚠`-prefixed findings cell was invisible to its regex, so such a row vanished from every derived quantity **and** from the ordering check — and that format is used **inside this table** (`agy #2, attempt 1`). It also compared addend COUNTS but not the split. Both fixed and re-tested on five shapes plus a control. Nine more: row 66's pledge broken by one numeral, a bare gate green in row 17, a gate cited in a form that exits 2, a universal claim the ledger refutes for three reviews, a "no rank measured" refuted by its own cited log, `VL143`'s `:340` (blank at every sha; the literal is `:488`), a README carve-out on the wrong row, and `24 table cells` left unwithdrawn beside `231` |
 | 20 (self) | **0** | the ten agy-#7 fixes re-verified, and the hardened guard re-tested live on the shape that defeated it. One apparent failure was my own `not in` test matching a retraction quote — diagnosed, not "fixed" |
-| 21 (self) | **1** | ⚠ **the standalone note repo was left BEHIND after the README fix landed on `origin`** — `AGENTS.md`'s deliverable-synchronization rule. Caught by a parity check over all 99 tracked files, not by remembering. Synced; parity now 0 differing |
+| 21 (self) | **1** | ⚠ **the standalone note repo was left BEHIND after the README fix landed on `origin`** — `AGENTS.md`'s deliverable-synchronization rule. Caught by a digest parity check over the **97** files the two trees share (the standalone tracks 99; its own `.gitignore` and `AGENTS.md` have no monorepo counterpart, so 97 is the comparable population — this read *"all 99 tracked files"*, naming a population 2 larger than the one measured), not by remembering. Synced; parity now 0 differing |
 | 22 (self) | **0** | probes re-parsed, the PASS token re-digested to `229c43e029e9fe7d…`, `CATALOG`/`MANIFEST`/overrides rows re-resolved for all six 09-22 records |
 | 23 (self) | **0** | every number in the four outcome records re-derived FROM ITS SOURCE BYTES rather than re-checked. Eight apparent failures, **all eight my own probe's wrong operands**: the README quotes 16-hex **truncated** digests (all four prefixes match the bytes), the record writes `1,431`/`1,568` **with commas**, `hCov_proj_eavail_W` is the **2D** histogram and so the wrong operand for the *3D* record, and both records assert the non-adoption and non-comparability I tested for in different words. ⚠ **8 of 21 checks in one round had the wrong operand** — the catalogued recurring error, here caught before it became a false correction |
+| **agy #8a (independent)** | **11** | ⚠ scientific-records scope. **The PASS token's sole stated basis for its own legitimacy cites a requirement that is not in the code it names** — *"p4_check_verifier_token.py's docstring requires that the reviewer not be the author"*; it does not, at `3035f8b8` or HEAD, and `resolve()` has no authorship check at all (now `KNOWN_ISSUES` 67). The token also mis-attributes `4.69x` to the 122-throw re-roll when only `4.83x` was (row 68). **The `notes`-dict logic bug was fixed in ONE of two committed instruments** — the surviving copy is the one that PRODUCED the quoted `validity all-true` line. `VL145` made the ledger's own *"these three rows … not three independent confirmations"* note stale by count. The package omits schema item 8 (provenance) and the binding pairing digest `0f04abce…` without disclosing either; its `builder` row names a file that **exists at no commit**; `pinned_mask` ships identically zero, on a different index space, undocumented, beside a prominent *seed-pinned* measurement it has nothing to do with. The 3D record still said *"no scan exists"* where its own cited log prints `rank~263/1431`. All 11 verified and repaired |
+| **agy #8b (independent)** | **13** | ⚠ meta-record scope. **`generate_manifest.py --check` was RED at `3b60abb0` on a clean tree, and the one stale row was the report's own** — writing ledger row 22 invalidated row 22, while rows 14/16/17 cite that gate as green with no sha. **Commit `0f4789da` claimed "all ten fixed" including a `KNOWN_ISSUES` row-66 repair that was never made** (`git log ee359301..HEAD -- KNOWN_ISSUES.md` was EMPTY for two commits) — and self-round 20 "re-verified the ten" without noticing. **The hardened ledger guard still failed OPEN four ways** (row 69). The guard's own docstring re-asserted the thesis row 66 had already withdrawn. Plus: two false universals in §3/§1, §1c still saying the loop had stopped, a 99-vs-97 population, an immutable in-range-edited handoff with no overrides row, its stale head pins, two WITHDRAWN claims live in `CATALOG.md`, and a ✅ whose measurement does not test its row. All 13 verified and repaired |
 
 **TOTAL: self rounds 1–23 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0+0+1+1+0+1+0+0 = 14; independent reviews =
-14+9+7+11+9+13+10 = 73; TOTAL 87.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
+14+9+7+11+9+13+10+11+13 = 97; TOTAL 111.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
 the addend lines above and is not restated here.**
 
 ⚠ **THE DUPLICATION THAT CAUSED THE CLASS IS NOW REMOVED, which is the repair row 66 should have
@@ -78,9 +80,18 @@ is fixed by removing the duplication, not by correcting each copy after each rev
 
 ## 1c. Why the loop stopped
 
-**Not by satisfying (ii).** The instruction offers two exits and both were reached: the 10-round
-safety cap, and the recurrence clause (*"if the SAME finding recurs three times, stop fixing it,
-record it … and exclude it from the counter"*). The recurring class is `KNOWN_ISSUES` row 66.
+⚠ **THIS SECTION ONCE SAID THE LOOP HAD STOPPED. IT HAD NOT, AND HAS NOT.** It read *"Why the loop
+stopped … The instruction offers two exits and both were reached"*. The ledger immediately above
+records **23 self rounds and 9 independent reviews** — 13 self rounds and 4 independent reviews
+**after** the round at which the cap was claimed (row 10 records that the cap count itself was
+wrong: agy reviews had been counted as rounds). This is the defect the section is *about*: a
+conclusions block left behind after its own findings were corrected.
+
+**The live status.** Two exits are AVAILABLE and neither has been taken as a stopping decision: the
+10-round safety cap, and the recurrence clause (*"if the SAME finding recurs three times, stop
+fixing it, record it … and exclude it from the counter"*), whose recurring class is `KNOWN_ISSUES`
+row 66. Condition (ii) has **never** been satisfied: every independent review so far has produced
+findings, the eighth pair included (11 + 13 = 24 findings across two disjoint scopes).
 
 ⚠ **AND THE EXCLUSION ARGUMENT IS ITSELF QUALIFIED — this section previously argued the loop
 closed because one review's findings were ALL of that class.** A later review **refuted that** by
@@ -196,10 +207,15 @@ that stated the claim.
 1. ⚠ **CONDITION (ii) IS UNMET.** Every independent review run in this session found defects;
    the sequence is in the ledger and is not restated here. Each AFTER THE FIRST reviewed the
    repairs made for its predecessors and found fresh defects in them; review #1 had no predecessor
-   repairs. **Measurement: every finding landed in material that had already passed at
-   least one clean self-round, and reviews #2 and #4 followed TWO consecutive clean rounds
-   (7–9 and 14–15). ⚠ This read *"every finding after the first review … two clean self-rounds"*,
-   which the ledger refutes for reviews #3, #5 and #6. THE MOST RECENT REVIEW'S REPAIRS ARE ALWAYS
+   repairs. **Measurement: reviews #2 and #4 followed TWO consecutive clean rounds (7–9 and
+   14–15). ⚠ This read *"every finding after the first review … two clean self-rounds"*, which the
+   ledger refutes for reviews #3, #5, #6 **and #7** (the ledger places #7 after rounds 18 and 19,
+   each of which found 1 — zero clean rounds before it). ⚠ **AND THE REPAIR OF THAT OVERSTATEMENT
+   OVERSHOT INTO A SECOND ONE:** it then read *"every finding landed in material that had already
+   passed at least one clean self-round"*, which **this report's own row 62 refutes** — the ledger
+   guard was created at `ad2babcc` as round 19's fix and agy #7's first finding was against it at
+   `0f4789da`, with **no self-round in between**. Neither universal survives; what survives is the
+   particular: **the most recent review's repairs are the least-reviewed material in the tree.** THE MOST RECENT REVIEW'S REPAIRS ARE ALWAYS
    AUTHOR-REVIEWED ONLY, and that is where the next reviewer should start.**
 2. **`KNOWN_ISSUES` rows 63, 64, 65 are open by design, plus finding 14 → row 66.** Each carries
    its measurement in its own row. ⚠ **This item read *"finding 14 … lives only in §2 of this

@@ -28,9 +28,13 @@ docs/analysis-note/main_*.pdf
 *.bbl
 *.npz
 # EXCEPTION, narrow and deliberate: the Appendix F result package. Its arrays ARE the
-# deliverable (app_release.tex schema items 2, 5, 6), they total ~164 KB, and a gitignored
-# .npz has already made one gate behave differently on a working tree than on main. Forcing
-# them in with `git add -f` would leave that trap set for the next person.
+# deliverable, they total ~164 KB, and a gitignored .npz has already made one gate behave
+# differently on a working tree than on main. Forcing them in with `git add -f` would leave
+# that trap set for the next person.
+# app_release.tex schema items CARRIED: 2 (row ordering), 3 (central values, partial), 4 (the
+# (E_avail,W) covariance), 5 (masks), 6 (projection matrix). NOT carried: 8 (provenance) --
+# see the README's section 4. This list read "items 2, 5, 6" until 2026-09-22; it omitted the
+# covariance, which is item 4 and is the one object a reader is most likely to come for.
 !docs/analysis-note/release-package-*/*.npz
 *.h5
 *.pkl
