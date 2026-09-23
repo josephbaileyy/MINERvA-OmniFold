@@ -141,19 +141,101 @@ class AgentCtlTests(unittest.TestCase):
                     str(logical / "claude-homes" / "school"),
                 )
 
-    def test_codex_yolo_uses_supported_long_flag_without_sandbox_conflict(self):
-        profile = {
-            "provider": "codex",
-            "home": "~/codex-homes/personal",
-            "model": "gpt-5.6-sol",
-            "sandbox": "read-only",
-            "yolo": True,
-        }
-        command, _env = agentctl.build_start_command(
-            profile, "the prompt", Path.cwd(), "unused"
-        )
+    def test_codex_yolo_alone_uses_the_bypass_flag_and_no_sandbox(self):
+        profile = {"provider": "codex", "home": "~/codex-homes/personal",
+                   "model": "gpt-5.6-sol", "yolo": True}
+        command, _env = agentctl.build_start_command(profile, "p", Path.cwd(), "unused")
         self.assertIn("--dangerously-bypass-approvals-and-sandbox", command)
         self.assertNotIn("--sandbox", command)
+        command, _env = agentctl.build_resume_command(profile, "p", "thread-1")
+        self.assertIn("--dangerously-bypass-approvals-and-sandbox", command)
+        self.assertFalse(any("sandbox_mode" in a for a in command))
+
+
+class CodexSandboxDeclaredIsApplied(unittest.TestCase):
+    """KNOWN_ISSUES 53: the sandbox a profile declares must be the sandbox the command applies,
+    on the start path AND on the resume path, and a profile that contradicts itself is refused."""
+
+    RO = {"provider": "codex", "home": "~/codex-homes/personal", "sandbox": "read-only"}
+
+    def test_start_applies_the_declared_sandbox(self):
+        for mode in agentctl.CODEX_SANDBOX_MODES:
+            command, _ = agentctl.build_start_command(dict(self.RO, sandbox=mode), "p",
+                                                      Path.cwd(), "unused")
+            i = command.index("--sandbox")
+            self.assertEqual(mode, command[i + 1])
+            self.assertNotIn("--dangerously-bypass-approvals-and-sandbox", command)
+
+    def test_resume_applies_the_declared_sandbox(self):
+        """The half the issue says matters: resume used to never mention the sandbox. It uses the
+        config form because `codex exec resume --sandbox` is rejected (exit 2, codex-cli 0.153.4)."""
+        command, _ = agentctl.build_resume_command(self.RO, "p", "thread-1")
+        self.assertIn("--config", command)
+        self.assertIn('sandbox_mode="read-only"', command)
+        self.assertNotIn("--sandbox", command)
+        self.assertNotIn("--dangerously-bypass-approvals-and-sandbox", command)
+
+    def test_an_undeclared_sandbox_defaults_to_read_only_on_both_paths(self):
+        bare = {"provider": "codex", "home": "~/codex-homes/personal"}
+        start, _ = agentctl.build_start_command(bare, "p", Path.cwd(), "unused")
+        self.assertEqual("read-only", start[start.index("--sandbox") + 1])
+        resume, _ = agentctl.build_resume_command(bare, "p", "thread-1")
+        self.assertIn('sandbox_mode="read-only"', resume)
+
+    def test_read_only_plus_yolo_is_REFUSED_on_start_resume_and_the_shared_helper(self):
+        bad = dict(self.RO, yolo=True)
+        with self.assertRaises(agentctl.AgentCtlError) as cm:
+            agentctl.build_start_command(bad, "p", Path.cwd(), "unused")
+        self.assertIn("AND yolo=true", str(cm.exception))
+        with self.assertRaises(agentctl.AgentCtlError):
+            agentctl.build_resume_command(bad, "p", "thread-1")
+        # wakerctl's root resume builds its own argv through this helper.
+        with self.assertRaises(agentctl.AgentCtlError):
+            agentctl.add_codex_options(["codex", "exec", "resume"], bad)
+
+    def test_workspace_write_plus_yolo_is_refused_too(self):
+        with self.assertRaises(agentctl.AgentCtlError):
+            agentctl.codex_sandbox_mode(dict(self.RO, sandbox="workspace-write", yolo=True))
+
+    def test_danger_full_access_plus_yolo_is_consistent(self):
+        self.assertIsNone(agentctl.codex_sandbox_mode(
+            dict(self.RO, sandbox="danger-full-access", yolo=True)))
+
+    def test_an_unknown_sandbox_mode_is_refused(self):
+        with self.assertRaises(agentctl.AgentCtlError):
+            agentctl.codex_sandbox_mode(dict(self.RO, sandbox="readonly"))
+
+    def test_agy_sandbox_must_be_a_boolean(self):
+        """The latent third inconsistency: a codex-style string on agy would become a bare
+        `--sandbox`, which means something else."""
+        agy = {"provider": "agy", "executable": "~/.local/bin/agy", "sandbox": "read-only"}
+        with self.assertRaises(agentctl.AgentCtlError):
+            agentctl.build_start_command(agy, "p", Path.cwd(), "unused", provider_log=Path("l"))
+        agy["sandbox"] = True
+        command, _ = agentctl.build_start_command(agy, "p", Path.cwd(), "unused",
+                                                  provider_log=Path("l"))
+        self.assertIn("--sandbox", command)
+
+    def test_every_committed_codex_profile_is_refused_or_applies_what_it_declares(self):
+        """Over the REAL profiles.json. There is no third outcome."""
+        profiles = agentctl.load_profiles(Path(agentctl.__file__).resolve().parent / "profiles.json")
+        seen = 0
+        for name, prof in profiles.items():
+            if prof.get("provider") != "codex":
+                continue
+            seen += 1
+            try:
+                resume, _ = agentctl.build_resume_command(prof, "p", "thread-1")
+            except agentctl.AgentCtlError:
+                self.assertTrue(prof.get("yolo") and prof.get("sandbox") not in
+                                (None, "danger-full-access"), name)
+                continue
+            mode = agentctl.codex_sandbox_mode(prof)
+            if mode is None:
+                self.assertIn("--dangerously-bypass-approvals-and-sandbox", resume, name)
+            else:
+                self.assertIn(f'sandbox_mode="{mode}"', resume, name)
+        self.assertGreater(seen, 0)
 
 
 class AutoCodexProfileTests(unittest.TestCase):

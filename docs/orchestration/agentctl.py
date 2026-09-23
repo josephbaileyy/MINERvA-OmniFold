@@ -407,7 +407,48 @@ def queue_deferred_send(
     )
 
 
-def add_codex_options(command: list[str], profile: dict) -> None:
+#: The values `codex exec --sandbox` accepts (codex-cli 0.153.4, `codex exec --help`).
+CODEX_SANDBOX_MODES = ("read-only", "workspace-write", "danger-full-access")
+
+
+def codex_sandbox_mode(profile: dict) -> str | None:
+    """The sandbox a codex profile DECLARES, validated; None when `yolo` bypasses it.
+
+    KNOWN_ISSUES 53: `sandbox` used to be read only on the start path and only when `yolo` was
+    unset, and the resume path never read it at all. So `"sandbox": "read-only"` next to
+    `"yolo": true` was a claim nothing enforced. The two keys contradict each other unless the
+    sandbox is `danger-full-access`, which is what yolo means anyway. A contradictory profile is
+    REFUSED rather than silently resolved either way.
+    """
+    declared = profile.get("sandbox")
+    if declared is not None and declared not in CODEX_SANDBOX_MODES:
+        raise AgentCtlError(
+            f"codex profile sandbox must be one of {', '.join(CODEX_SANDBOX_MODES)}; "
+            f"got {declared!r}"
+        )
+    if profile.get("yolo"):
+        if declared not in (None, "danger-full-access"):
+            raise AgentCtlError(
+                f"codex profile declares sandbox={declared!r} AND yolo=true; yolo passes "
+                "--dangerously-bypass-approvals-and-sandbox, so the declared sandbox would "
+                "never be applied. Remove one of the two keys (KNOWN_ISSUES 53)."
+            )
+        return None
+    return declared or "read-only"
+
+
+def add_codex_options(
+    command: list[str], profile: dict, *, sandbox_flag: bool = False
+) -> None:
+    """Append model/effort/search options and the APPLIED sandbox.
+
+    The sandbox goes in as `--sandbox MODE` when `sandbox_flag` is set, which only `codex exec`
+    accepts. Otherwise it goes in as `--config sandbox_mode="MODE"`, which `codex exec resume` also
+    accepts: `codex exec resume --sandbox` exits 2 on codex-cli 0.153.4. Every resume caller,
+    including wakerctl's root resume, therefore gets the declared sandbox without having to
+    know which form to use.
+    """
+    mode = codex_sandbox_mode(profile)
     if profile.get("model"):
         command.extend(["--model", profile["model"]])
     if profile.get("reasoning_effort"):
@@ -416,8 +457,21 @@ def add_codex_options(command: list[str], profile: dict) -> None:
         )
     if profile.get("web_search"):
         command.extend(["--config", "tools.web_search=true"])
-    if profile.get("yolo"):
+    if mode is None:
         command.append("--dangerously-bypass-approvals-and-sandbox")
+    elif sandbox_flag:
+        command.extend(["--sandbox", mode])
+    else:
+        command.extend(["--config", f'sandbox_mode="{mode}"'])
+
+
+def agy_sandbox(profile: dict) -> bool:
+    """agy's `sandbox` is a BOOLEAN (a bare `--sandbox`). A codex-style string such as
+    "read-only" would silently turn into that bare flag, which means something else."""
+    value = profile.get("sandbox", False)
+    if not isinstance(value, bool):
+        raise AgentCtlError(f"agy profile sandbox must be true or false; got {value!r}")
+    return value
 
 
 def build_start_command(
@@ -432,9 +486,7 @@ def build_start_command(
     if provider == "codex":
         env["CODEX_HOME"] = expand_path(profile["home"])
         command = ["codex", "exec", "--json"]
-        add_codex_options(command, profile)
-        if not profile.get("yolo"):
-            command.extend(["--sandbox", profile.get("sandbox", "read-only")])
+        add_codex_options(command, profile, sandbox_flag=True)
         command.extend(
             ["--skip-git-repo-check", "--cd", str(cwd), prompt]
         )
@@ -477,7 +529,7 @@ def build_start_command(
         )
         if profile.get("dangerously_skip_permissions", False):
             command.append("--dangerously-skip-permissions")
-        if profile.get("sandbox", False):
+        if agy_sandbox(profile):
             command.append("--sandbox")
         command.extend(["--print", prompt])
     return command, env
@@ -536,7 +588,7 @@ def build_resume_command(
         )
         if profile.get("dangerously_skip_permissions", False):
             command.append("--dangerously-skip-permissions")
-        if profile.get("sandbox", False):
+        if agy_sandbox(profile):
             command.append("--sandbox")
         command.extend(["--print", prompt])
     return command, env
