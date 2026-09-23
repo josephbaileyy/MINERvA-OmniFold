@@ -155,12 +155,18 @@ def main():
         print(f"[FAIL] reported bins = {int(reported.sum())}, expected 205", file=sys.stderr)
         return 3
     interior = reported & interior_mask()
-    area = bin_areas(h_paper)
+    # Areas from the AUTHORITATIVE paper edges (minerva_paper_anc/bin_mapping.txt, mirrored in
+    # PT_EDGES/PZ_EDGES), NOT from the paper TH2D axes, whose edges are cosmetic rounding
+    # (2D_OMNIFOLD_STUDY_STATUS.md "Paper binning"). Our TH2D is checked against these below.
+    ipt, ipz = strip_index()
+    area = (np.diff(PT_EDGES)[ipt] * np.diff(PZ_EDGES)[ipz]).astype(float)
+    out_paper_axis_area_maxreldev = float(np.max(np.abs(bin_areas(h_paper) / area - 1.0)))
 
     out = dict(produced_by="2d-unfolding/strip_ratio_receipt.py",
                issue="KNOWN_ISSUES #5", hostname=os.uname().nodename,
                paper=dict(path=paper_path, sha256=sha256(paper_path)),
                n_reported=int(reported.sum()), n_interior=int(interior.sum()),
+               paper_th2d_axis_area_max_reldev_vs_authoritative=out_paper_axis_area_maxreldev,
                inputs={}, results={})
     for spec in specs:
         label, _, rest = spec.partition("=")
@@ -169,8 +175,8 @@ def main():
         fo = ROOT.TFile.Open(path)
         ho = fo.Get(hist)
         ours_v = flatten_ours(ho)
-        # Our TH2D must share the paper grid; the area vector is taken from the paper TH2D and
-        # checked against ours so a binning mismatch cannot pass silently.
+        # Our TH2D must share the authoritative paper grid, so a binning mismatch cannot pass
+        # silently.
         a_o = bin_areas(ho)
         if not np.allclose(a_o, area, rtol=1e-6):
             print(f"[FAIL] {label}: bin areas differ from the paper grid", file=sys.stderr)
