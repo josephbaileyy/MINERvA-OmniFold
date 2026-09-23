@@ -17,6 +17,11 @@
 # ROOT+numpy (no GPU compute); gpu_shared is used only for the CPU+RAM (CPU
 # allocation exhausted). 2 GPUs -> ~114G RAM (docstring estimate ~120G).
 set -eo pipefail
+# KNOWN_ISSUES row 32: the lateral block must carry the estimator it was computed under. No defaults
+# on purpose -- the nominal these weights came from is the caller's to name, not this file's.
+: "${PET_ESTIMATOR_NITER:?set PET_ESTIMATOR_NITER to the niter of the nominal weights}"
+: "${PET_SCHEMA_ID:?set PET_SCHEMA_ID to the input schema id of the nominal}"
+: "${PET_PRODUCER_COMMIT:?set PET_PRODUCER_COMMIT to the commit that trained the nominal}"
 export HOME=/global/homes/j/josephrb
 export ROOT628_PREFIX="${ROOT628_PREFIX:-/global/homes/j/josephrb/.conda/envs/root_6_28}"
 REPO=/pscratch/sd/j/josephrb/MINERvA-OmniFold
@@ -38,6 +43,8 @@ echo "[clat] start $(date -u +%FT%TZ) on $(hostname)"
 echo "[clat] pc=$PC weights=$WEIGHTS omni=$OMNI -> $OUTNPZ"
 "$ROOTPY" pet_lateral_band_5d.py \
   --pc "$PC" --w-source "$WSOURCE" --weights "$WEIGHTS" \
-  --omnifile "$OMNI" --combined "" --out-npz "$OUTNPZ"
+  --omnifile "$OMNI" --combined "" --out-npz "$OUTNPZ" \
+  --estimator-niter "$PET_ESTIMATOR_NITER" --schema-id "$PET_SCHEMA_ID" \
+  --producer-commit "$PET_PRODUCER_COMMIT"
 echo "[clat] done $(date -u +%FT%TZ)"
 ls -lh "$OUTNPZ" 2>/dev/null || true

@@ -30,8 +30,9 @@ because a sum of blocks computed under different estimators is not a covariance 
 The assembly's own stamp is DERIVED from its stamped components; the `--estimator-*` flags are then
 optional and, if given, must agree. With no stamped component the flags are required. A component
 without a stamp (every product written before 2026-09-23; the stamping producers are
-combine_cstat_bkgsub[_100rep].py, combine_cml_bkgsub.py and build_csyst_prelim_bkgsub.py, and the
-C_retrain / C_lateral producers do NOT stamp yet) is refused unless named in `--allow-unstamped`, and is then listed as
+combine_cstat_bkgsub[_100rep].py, combine_cml_bkgsub.py, build_csyst_prelim_bkgsub.py,
+assemble_cretrain.py and pet_lateral_band_5d.py --out-npz) is refused unless named in
+`--allow-unstamped`, and is then listed as
 unstamped in the summary rather than silently treated as matching.
 """
 import argparse
@@ -162,7 +163,10 @@ def main():
         Ck = key if key in z.files else ([k for k in z.files if k.startswith("C_")][0])
         Cs[name] = np.asarray(z[Ck], float)
         masks[name] = np.asarray(z["reported_mask"], bool)
-        cvs[name] = np.asarray(z["cv"], float)
+        # assemble_cretrain.py writes no `cv` (it sums response deltas, not cross sections), so the
+        # central-value agreement check can only cover components that carry one.
+        if "cv" in z.files:
+            cvs[name] = np.asarray(z["cv"], float)
         try:
             stamps[name] = estimator_stamp.read_npz(z)
         except ValueError as exc:
@@ -179,6 +183,8 @@ def main():
     for name, m in masks.items():
         if not np.array_equal(m, ref_mask):
             raise SystemExit(f"[FAIL] {name} reported_mask differs from C_syst (common-mask violation)")
+    if "C_syst" not in cvs:
+        raise SystemExit("[FAIL] C_syst carries no `cv`; it is the central-value reference")
     ref_cv = cvs["C_syst"]
     for name, c in cvs.items():
         if not np.allclose(c, ref_cv, rtol=0, atol=0):

@@ -274,5 +274,104 @@ class OtherProducerStampTests(Fixture):
         self.assertEqual(summary["unstamped_components"], [])
 
 
+class RetrainAndLateralStampTests(OtherProducerStampTests):
+    """C_retrain and C_lateral stamp too, so a DEFAULT assembly (C_retrain included) and one with
+    --clateral need no --allow-unstamped."""
+
+    def p7(self):
+        d = self.tmp / "p7"
+        d.mkdir(exist_ok=True)
+        mask = self.cv > 0
+        rng = np.random.default_rng(11)
+        for tag, material in (("MaRES_1", True), ("flux_55", False)):
+            np.savez(d / f"pet_p7_{tag}_response.npz", reported_mask=mask,
+                     delta_reported=1e-3 * rng.normal(size=int(mask.sum())))
+            (d / f"pet_p7_{tag}_response.summary.json").write_text(
+                json.dumps({"materiality": {"material": material, "overall_ratio": 1.0,
+                                            "frac_bins_over": 0.1}}))
+        return d
+
+    def cretrain(self, *stamp_args):
+        return self.run_py("assemble_cretrain.py", "--p7dir", str(self.p7()),
+                           "--tags", "MaRES_1,flux_55", "--out", "cretrain.npz", *stamp_args)
+
+    def lateral_module(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("lateral_under_test",
+                                                      ND / "pet_lateral_band_5d.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def test_cretrain_missing_stamp_exits_nonzero(self):
+        r = self.cretrain()
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("--estimator-niter", r.stderr)
+        self.assertFalse((self.tmp / "cretrain.npz").exists())
+
+    def test_cretrain_stamp_round_trips(self):
+        r = self.cretrain(*STAMP_ARGS)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        with np.load(self.tmp / "cretrain.npz") as z:
+            self.assertEqual(estimator_stamp.read_npz(z), self.WANT)
+        summary = json.loads((self.tmp / "cretrain.summary.json").read_text())
+        self.assertEqual(summary["estimator_stamp"], self.WANT)
+
+    def test_lateral_out_npz_without_stamp_is_refused_before_the_root_imports(self):
+        r = subprocess.run([sys.executable, str(ND / "pet_lateral_band_5d.py"),
+                            "--out-npz", str(self.tmp / "clat.npz")],
+                           capture_output=True, text=True, cwd=self.tmp)
+        self.assertEqual(r.returncode, 2, r.stderr)
+        self.assertIn("--estimator-niter", r.stderr)
+        self.assertNotIn("ModuleNotFoundError", r.stderr)
+
+    def test_lateral_partial_stamp_is_refused(self):
+        r = subprocess.run([sys.executable, str(ND / "pet_lateral_band_5d.py"),
+                            "--estimator-niter", "2"],
+                           capture_output=True, text=True, cwd=self.tmp)
+        self.assertEqual(r.returncode, 2, r.stderr)
+        self.assertIn("partial stamp", r.stderr)
+
+    def write_lateral(self, stamp):
+        mask = self.cv > 0
+        n = int(mask.sum())
+        self.lateral_module().write_lateral_npz(str(self.tmp / "clat.npz"), np.eye(n) * 1e-5,
+                                                mask, self.cv, n, {"BandA": np.eye(n)}, stamp)
+
+    def test_lateral_npz_carries_the_stamp(self):
+        self.write_lateral(self.WANT)
+        with np.load(self.tmp / "clat.npz") as z:
+            self.assertEqual(estimator_stamp.read_npz(z), self.WANT)
+
+    def test_a_default_assembly_with_lateral_needs_no_allow_unstamped(self):
+        self.assertEqual(self.combine(*STAMP_ARGS).returncode, 0)
+        self.assertEqual(self.cml(*STAMP_ARGS).returncode, 0)
+        self.assertEqual(self.cretrain(*STAMP_ARGS).returncode, 0)
+        self.csyst(["--out", str(self.tmp / "csyst.npz"), *STAMP_ARGS])
+        self.write_lateral(self.WANT)
+        r = self.run_py("assemble_ctotal_bkgsub.py", "--w-source", "w.npz",
+                        "--csyst", "csyst.npz", "--cstat", "cstat.npz", "--cml", "cml.npz",
+                        "--cretrain", "cretrain.npz", "--clateral", "clat.npz",
+                        "--out", "ctotal.npz")
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        summary = json.loads((self.tmp / "ctotal.summary.json").read_text())
+        self.assertEqual(summary["estimator_stamp"], self.WANT)
+        self.assertEqual(summary["unstamped_components"], [])
+        self.assertEqual(sorted(summary["components_present"]),
+                         ["C_lateral", "C_ml", "C_retrain", "C_stat", "C_syst"])
+
+    def test_a_retrain_of_a_different_estimator_is_refused(self):
+        self.assertEqual(self.combine(*STAMP_ARGS).returncode, 0)
+        self.assertEqual(self.cml(*STAMP_ARGS).returncode, 0)
+        self.assertEqual(self.cretrain("--estimator-niter", "3", "--schema-id", "recoil-pc-v1",
+                                       "--producer-commit", "aeb6668c").returncode, 0)
+        self.csyst(["--out", str(self.tmp / "csyst.npz"), *STAMP_ARGS])
+        r = self.run_py("assemble_ctotal_bkgsub.py", "--w-source", "w.npz",
+                        "--csyst", "csyst.npz", "--cstat", "cstat.npz", "--cml", "cml.npz",
+                        "--cretrain", "cretrain.npz", "--out", "ctotal.npz")
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("disagree", r.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

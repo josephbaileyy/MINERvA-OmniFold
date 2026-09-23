@@ -18,6 +18,11 @@ summed over the 9 detector bands. Reads the 5D vertical combined cov
 writes products/pet/pet_5d_covariance_combined_wlat.root (old files untouched).
 
   python pet_lateral_band_5d.py   # compute node, ~120G, reads 5D file column-wise
+
+With --out-npz (the assemble_ctotal_bkgsub input), --estimator-niter, --schema-id and
+--producer-commit are REQUIRED (KNOWN_ISSUES row 32) and are written as `estimator_stamp` into the
+npz; see pet/estimator_stamp.py. They are checked BEFORE the ROOT / PET imports, so a missing
+stamp is refused in seconds.
 """
 import argparse
 import os
@@ -32,9 +37,18 @@ for _p in (f"{_CODE_ROOT}/2d-unfolding", f"{_CODE_ROOT}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import unfold_2d_omnifold_unbinned as u2d
-from xsec_nd import extract_cross_section_nd
-from pet_systematics_5d import PETxsec5D
+
+def _load_estimator_stamp():
+    """pet/estimator_stamp.py by FILE PATH (this module lives in nd-unfolding/, not pet/)."""
+    import importlib.util
+    path = os.path.join(_CODE_ROOT, "nd-unfolding", "pet", "estimator_stamp.py")
+    spec = importlib.util.spec_from_file_location("estimator_stamp", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+estimator_stamp = _load_estimator_stamp()
 
 KINE_BANDS = ["BeamAngleX", "BeamAngleY", "MuonResolution",
               "Muon_Energy_MINERvA", "Muon_Energy_MINOS"]
@@ -46,9 +60,18 @@ def _np(d, k):
     return np.asarray(d[k], dtype=np.float64)
 
 
-def main():
-    import ROOT
+def write_lateral_npz(path, C_lat, rep, x_cv, nrep, band_cov, stamp):
+    """The assemble_ctotal_bkgsub input, carrying its estimator stamp."""
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    np.savez_compressed(path, C_lateral=C_lat, reported_mask=rep, cv=x_cv,
+                        n_reported=np.array(nrep),
+                        band_names=np.array(list(band_cov.keys())),
+                        band_sqrt_trace=np.array([float(np.sqrt(max(np.trace(cb), 0)))
+                                                  for cb in band_cov.values()]),
+                        **{estimator_stamp.NPZ_KEY: estimator_stamp.npz_value(stamp)})
 
+
+def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pc", default="of_inputs_pc.npz")
     ap.add_argument("--w-source", default="of_inputs_5d.npz")
@@ -64,7 +87,21 @@ def main():
     ap.add_argument("--out-npz", default=None,
                     help="if set, dump the PET-native lateral block C_lateral + "
                          "reported_mask(65856) + cv(65856) as npz for assemble_ctotal_bkgsub")
+    estimator_stamp.add_arguments(ap, required=False)
     args = ap.parse_args()
+    try:
+        stamp = estimator_stamp.from_args(args)
+    except ValueError as exc:
+        ap.error(str(exc))
+    if args.out_npz and stamp is None:
+        ap.error("--out-npz writes an assembly component, so --estimator-niter, --schema-id and "
+                 "--producer-commit are required (KNOWN_ISSUES row 32)")
+
+    # Heavy imports after the argument gate -- see the module docstring.
+    import ROOT
+    import unfold_2d_omnifold_unbinned as u2d
+    from xsec_nd import extract_cross_section_nd
+    from pet_systematics_5d import PETxsec5D
 
     pet = PETxsec5D(args.pc, args.weights, args.mcfile, args.flux_hist, args.w_source, args.comp_ref)
     x_cv = pet.xsec(None)
@@ -211,12 +248,7 @@ def main():
     # ---------- dump the PET-native lateral block as npz (assemble_ctotal input) ----------
     if args.out_npz:
         med = float(np.median(np.sqrt(np.clip(np.diag(C_lat), 0, None))[base > 0] / base[base > 0]))
-        os.makedirs(os.path.dirname(args.out_npz) or ".", exist_ok=True)
-        np.savez_compressed(args.out_npz, C_lateral=C_lat, reported_mask=rep, cv=x_cv,
-                            n_reported=np.array(nrep),
-                            band_names=np.array(list(band_cov.keys())),
-                            band_sqrt_trace=np.array([float(np.sqrt(max(np.trace(cb), 0)))
-                                                      for cb in band_cov.values()]))
+        write_lateral_npz(args.out_npz, C_lat, rep, x_cv, nrep, band_cov, stamp)
         print(f"[wlat5d] wrote lateral NPZ -> {args.out_npz}  "
               f"(C_lateral {nrep}x{nrep}, sqrt-tr={np.sqrt(max(np.trace(C_lat),0)):.4e}, "
               f"median frac={100*med:.2f}%)", flush=True)

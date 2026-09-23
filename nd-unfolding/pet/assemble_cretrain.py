@@ -12,12 +12,17 @@ Inputs are the per-universe response.npz + summary.json produced by
 phase7_extract_compare.py. BANK-INVARIANT/FINAL: these consume only signal
 truth ratios, bit-identical between bank_uthrow_5d and bank_uthrow_5d_bkgaware
 (see PET_UQ receipts). ROOT-free; login-runnable pure numpy.
+
+--estimator-niter, --schema-id and --producer-commit are REQUIRED (KNOWN_ISSUES row 32) and are
+written as `estimator_stamp` into the npz and the summary; see estimator_stamp.py.
 """
 import argparse
 import json
 import os
 
 import numpy as np
+
+import estimator_stamp  # this file's own directory, pet/
 
 # nd-unfolding dir from this file location (<repo>/nd-unfolding/pet/); MNV_REPO overrides.
 _ND = os.path.join(os.environ["MNV_REPO"], "nd-unfolding") if os.environ.get("MNV_REPO") \
@@ -34,7 +39,12 @@ def main():
     ap.add_argument("--out", default=f"{_ND}/products/pet/bkgsub/pet_cretrain_bkgsub_5d.npz")
     ap.add_argument("--require-all", action="store_true",
                     help="fail if any tag's response/summary is missing (default: skip+warn)")
+    estimator_stamp.add_arguments(ap, required=True)
     a = ap.parse_args()
+    try:
+        stamp = estimator_stamp.from_args(a)
+    except ValueError as exc:
+        ap.error(str(exc))
     tags = [t for t in a.tags.split(",") if t]
 
     mask_ref = None
@@ -82,6 +92,8 @@ def main():
     sqrt_tr = float(np.sqrt(np.trace(C)))
     summary = {
         "campaign": "PET bkgsub Phase 7 C_retrain (retraining-response covariance)",
+        "estimator_stamp": stamp,
+        "assembled_by": estimator_stamp.checkout_state(__file__),
         "status": "bank-invariant / FINAL for the retraining-response (see KNOWN_ISSUES receipts)",
         "consequence_rule": "C_retrain = sum_u outer(Delta_u, Delta_u) over MATERIAL bands (rank-1 each)",
         "n_reported_bins": int(mask_ref.sum()),
@@ -95,7 +107,8 @@ def main():
     }
     np.savez_compressed(a.out, C_retrain=C, reported_mask=mask_ref,
                         sigma=np.sqrt(np.clip(diag, 0, None)),
-                        contributing=np.array([c["tag"] for c in contribs]))
+                        contributing=np.array([c["tag"] for c in contribs]),
+                        **{estimator_stamp.NPZ_KEY: estimator_stamp.npz_value(stamp)})
     json.dump(summary, open(os.path.splitext(a.out)[0] + ".summary.json", "w"), indent=2)
     print(f"[cretrain] rank={len(contribs)} material bands; sqrt(tr)={sqrt_tr:.3e}; "
           f"min_eig={evmin}; wrote {a.out}")
