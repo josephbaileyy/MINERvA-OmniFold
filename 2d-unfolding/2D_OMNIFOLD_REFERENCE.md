@@ -325,6 +325,21 @@ selection (or generator rate mismodeling); its net effect inside the
 published phase space is bounded by the 2D paper reproduction (integral
 ratio 1.011), and the FPS p_||<1.5 region carries tier-2 flagging.
 
+**Re-measured 2026-09-23 (KNOWN_ISSUES #5): the gradient is ABSENT from the
+frozen Phase-18.2 product, so the three paragraphs above describe the
+April state, not the current one.** The 0.6→1.0 numbers are the
+2026-04-25 Phase-11 measurement; the Phase-16 input-completeness
+(efficiency-denominator) fix of 2026-05-08/09 removed it (archive
+`evidence/prepublication-2026-08-20-0b329e8a:2d-unfolding/2D_OMNIFOLD_RUN_LOG_ARCHIVE.md:441-775`),
+and the 2026-06-10 diagnostic tested a premise that no longer held.
+`strip_ratio_receipt.py` on `2d_crossSection_omnifold_MEFHC_5iter.root`
+(sha256 `142a45b0…`), 185-bin interior: strip ratio 1.091 ± 0.125 at
+p_|| 1.5–2, 1.013 ± 0.068 at 2–2.5, 1.053 ± 0.050 at 20–40 (paper
+TotalCov); low−high contrast −0.013 ± 0.085 (−0.16σ). Its built-in power
+control (the historical gradient injected into the same input) is
+detected at −6.8σ. Receipt and verdict rule:
+`docs/orchestration/RESULT-20260923-issue26-issue5.md`.
+
 ## Output hygiene
 
 - Preserve known-bad but diagnostically useful files under an explicit
