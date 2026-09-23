@@ -198,13 +198,15 @@ def main() -> int:
             # ⚠ a findings cell that MENTIONS "no verdict" goes to the pin FIRST, whatever else it holds. The pin
             # was once reached only by a digit-free cell, so "NO VERDICT (attempt 1)" was counted as a review
             # with 1 finding, never pinned, and passed once its TOTAL was updated (review #18b)
-            # and the MENTION is read on letters alone: `no\s+verdict` let NO-VERDICT, NOVERDICT, NO_VERDICT and
-            # `no<br>verdict` (whose tag `visible()` drops) through to the count (review #19b)
-            if "noverdict" in re.sub(r"[\W_]+", "", cell.lower()):     # REGRESSION-ANCHOR:noverdict-first
+            # "no" must START a word and anything non-alphanumeric may separate it from "verdict": `no\s+verdict` let
+            # NO-VERDICT, NOVERDICT, NO_VERDICT and `no<br>verdict` through (review #19b), and letters-alone matching
+            # then refused "iteration over dict" and "turnover dict" (review #20b)
+            if re.search(r"\bno[\W_]*verdict", cell, re.I):     # REGRESSION-ANCHOR:noverdict-first
                 key = noverdict_key(cells)
                 if key not in NOVERDICT_PINNED:                  # REGRESSION-ANCHOR:noverdict-pinned
-                    unclassified.append(f"line {line}: NO VERDICT row not in NOVERDICT_PINNED (key {key}); read it, "
-                                        "confirm it reports no findings, and pin it"); continue
+                    unclassified.append(f"line {line}: NO VERDICT row not in NOVERDICT_PINNED (key {key}). If it IS a "
+                                        "non-verdict, read it, confirm it reports no findings, and pin it; if it is a "
+                                        "counted review whose findings cell merely says the words, reword that cell"); continue
                 noverdict += 1; continue
             if len(nums) == 1 and int(nums[0]) >= 0:     # REGRESSION-ANCHOR:agy-count
                 agys.append(int(nums[0])); continue

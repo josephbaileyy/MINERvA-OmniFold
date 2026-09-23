@@ -100,10 +100,12 @@ REGRESSIONS = {
         'if False:'),
     # the HISTORICAL defect, not `if False:`: that also unpinned row 46, so every case refused through it and the
     # regression fired only through CONTROLs, never through the reconciling case it was written for
-    'R30 a NO VERDICT cell with a number counted as a review, never pinned (review #18b)': ('if "noverdict" in re.sub(r"[\\W_]+", "", cell.lower()):     # REGRESSION-ANCHOR:noverdict-first',
+    'R30 a NO VERDICT cell with a number counted as a review, never pinned (review #18b)': ('if re.search(r"\\bno[\\W_]*verdict", cell, re.I):     # REGRESSION-ANCHOR:noverdict-first',
         'if not nums and re.search(r"no\\s+verdict", cell, re.I):'),
-    'R31 the NO VERDICT mention read only with whitespace between the words (review #19b)': ('if "noverdict" in re.sub(r"[\\W_]+", "", cell.lower()):     # REGRESSION-ANCHOR:noverdict-first',
+    'R31 the NO VERDICT mention read only with whitespace between the words (review #19b)': ('if re.search(r"\\bno[\\W_]*verdict", cell, re.I):     # REGRESSION-ANCHOR:noverdict-first',
         'if re.search(r"no\\s+verdict", cell, re.I):'),
+    'R32 the NO VERDICT mention read on letters alone, across word boundaries (review #20b)': ('if re.search(r"\\bno[\\W_]*verdict", cell, re.I):     # REGRESSION-ANCHOR:noverdict-first',
+        'if "noverdict" in re.sub(r"[\\W_]+", "", cell.lower()):'),
     # PRECONDITIONS: without one, the guard CRASHES instead of refusing cleanly. Their regressions may fire
     # through a traceback only -- the one class allowed to (anchor names beginning `pre-`)
     'P1 a missing report not refused cleanly (review #16a)': ('if not REPORT.exists():                                  # REGRESSION-ANCHOR:pre-report',
@@ -479,6 +481,12 @@ def build_cases(orig):
            re.sub(r"(\+\d+) = (\d+); TOTAL (\d+)", lambda mm: f"{mm.group(1)}+1 = {int(mm.group(2)) + 1}; TOTAL {int(mm.group(3)) + 1}",
                   after(r_last_agy, f"| **agy #99, attempt 1** | \u26a0 **{sp}** (attempt 1) | died on a rate limit |"), count=1), (1, 2))
           for sp in ("NO-VERDICT", "NOVERDICT", "NO_VERDICT", "no<br>verdict")],
+        # review #20b: counted reviews whose findings cell contains "no...verdict" only ACROSS words -- refused by the
+        # letters-alone rule, correct ledgers all
+        *[(f"CONTROL a counted review whose findings cell reads {txt!r}, TOTAL updated",
+           re.sub(r"(\+\d+) = (\d+); TOTAL (\d+)", lambda mm: f"{mm.group(1)}+{n} = {int(mm.group(2)) + n}; TOTAL {int(mm.group(3)) + n}",
+                  after(r_last_agy, f"| **agy #99 (independent)** | **{n}** ({txt}) | x |"), count=1), (0,))
+          for n, txt in ((3, "one on the iteration over dict order"), (2, "turnover dict in the cache"), (1, "union over dictionary keys"))],
         ("an unrecorded agy row with 0 findings", after(r_last_agy, "| **agy #99 (independent)** | **0** | clean |"), (1, 2)),
         ("an unrecorded self round with 0 findings", after(anchor, "| 99 (self) | **0** | clean |"), (1, 2)),
         ("CONTROL untouched ledger", orig, (0,)),

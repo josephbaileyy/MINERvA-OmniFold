@@ -26,7 +26,9 @@ BASE and REV.
      a path or directory at REV, directly or relative to the citing file's directory or to
      docs/orchestration/ (the tree's `probes/...` shorthand). A span holding `…`, `<`, `>`, `$`, `{`, `}`
      or `*` is a pattern or a placeholder, not a path: it is COUNTED as unexaminable and listed, not
-     skipped. Most misses are not repository paths at all -- ratios, refs, cluster product
+     skipped. ⚠ A bare span (not `./` or `../`) is deduplicated tree-wide and resolved from its FIRST citing
+     file's directory only, so the same span failing from another directory is not listed (review #20b: latent;
+     no recorded range hides a miss this way). Most misses are not repository paths at all -- ratios, refs, cluster product
      directories -- and a human classifies them.
 
 Exits 0 once it has looked: it is a lister, and a human classifies what it prints. Exits 2 when it
@@ -41,6 +43,7 @@ being root-relative and named part C alone; its OUTPUT is root-relative, its pat
 import ast
 import os
 import re
+import symtable
 import subprocess
 import sys
 
@@ -157,25 +160,20 @@ def module_names(path):
     walk(tree.body)
     # a `global NAME` inside a function binds a module-level name -- but only if that function ASSIGNS it: a
     # `global` that is only read binds nothing (review #18b; first added unconditionally, review #17b)
-    # ⚠ ONE scope at a time: `ast.walk(fn)` descended into nested functions and paired a `global` in one
-    # scope with an assignment in another; and an import binds a name too (review #19b)
-    def own_scope(fn):
-        stack = list(ast.iter_child_nodes(fn))
-        while stack:
-            n = stack.pop()
-            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
-                continue
-            yield n
-            stack.extend(ast.iter_child_nodes(n))
-    for fn in ast.walk(tree):
-        if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            body = list(own_scope(fn))
-            declared = {g for n in body if isinstance(n, ast.Global) for g in n.names}
-            if declared:
-                stored = {n.id for n in body if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
-                stored |= {a.asname or a.name.split(".")[0] for n in body if isinstance(n, (ast.Import, ast.ImportFrom))
-                           for a in n.names}
-                names.update(declared & stored)
+    # a `global` binds a module-level name only where that scope ASSIGNS it -- read from Python's own `symtable`,
+    # which knows every binding form. A hand-made scope walker, the second version, still erred at the edges:
+    # comprehension targets, `def`/`class`/`except ... as` under a `global` (review #20b; first version #18b)
+    def scopes(tab):
+        yield tab
+        for ch in tab.get_children():
+            yield from scopes(ch)
+    try:
+        top = symtable.symtable(git("show", f"{REV}:{path}").stdout, path, "exec")
+        for tab in scopes(top):
+            if tab.get_type() != "module":
+                names.update(s.get_name() for s in tab.get_symbols() if s.is_declared_global() and (s.is_assigned() or s.is_imported()))
+    except (SyntaxError, ValueError):
+        pass
     return names
 
 
