@@ -2,11 +2,33 @@
 
 ## Status (resume anchor; newest first)
 
-- 2026-09-23: items 1-5 implemented; local tests pass (`test_confirm.py`, synthetic inventory:
-  the forced-historical-rows path is byte-identical to `closure_data.py`). Next: the GPU positive
-  control on the real halves and the pool-S mechanics run (`runs/v1-infrastructure.tsv`).
+- 2026-09-23 (code `0f83a0c5`, chain 58786058 -> 58786334 -> 58786713, `results/v1-infra-0f83a0c5/`):
+  items 1-6 DONE. Tests: 30 passed on Perlmutter (job 58786149, `75e4b5cf`, incl. the real-pool and
+  B1-populations tests); 17 + 2 skipped locally.
+  * **5(a) positive control, MEASURED.** Historical halves through this path: every engine input
+    byte-identical to `closure_data.build_closure_inputs` (CPU job 58786043 and again in the GPU run);
+    frozen tilt constants equal the historical half-A quantiles; pushes and pulls of k = 1-3
+    **bit-identical** to B2's `b2e3-H-K10-s1` (max abs diff 0.0; resumed across 3 jobs); recovery
+    k = 3 = 0.3226641379 (B2's scorer on the same bits differs at ~4e-14 absolute: summation order,
+    cause not established).
+  * **6 mechanics, MEASURED (pool S, replicate 0, H, K = 2, seed 1):** input build 103 s (the
+    forced halves 186 s, incl. the crosscheck); iterations 759 s and 741 s on one A100 (control:
+    768, 750, 729 s). R(k=1, 2) = 0.180, 0.260 against the replicate target, 0.179, 0.258 against the
+    pool-S population target; oracle anchor 0.986 (replicate) / 0.991 (population); replicate vs
+    population target L1 0.0024 (injected L1 0.270).
+  * The race worked: the gpu_debug copy started first and cancelled the preempt copy (58786061).
 - **No PILOT or FINAL run has been launched and no row of pools P or F has been read.** Both pools
   are refused by the code until the protocol carries Amendment 2 (the candidate freeze).
+
+### Cost per run (for sizing PILOT/FINAL)
+
+One run at the historical size = load ~100-190 s + **~750 s per OmniFold iteration on one A100**
+(H recipe, 8 epochs/step). K = 3: ~0.7 GPU-h; K = 10: ~2.1 GPU-h (GPU-seconds per run; four runs
+share a node). In 30-min `gpu_debug` rounds with `DEADLINE_MARGIN=90` only ONE iteration fits per
+round (load + 750 s + 1.1 x 750 s > 1710 s), so each round charges ~1.1 node-GPU-h for up to four
+runs x one iteration: K rounds per batch of four. Two iterations per round need `DEADLINE_MARGIN<=60`
+and load <= 130 s (B2's setting); full-node `regular`/`preempt` copies avoid the per-round reload.
+Pool capacity at the protocol's sizes: P 3, F 12, S 15, T 6 disjoint replicates.
 
 ## What this is
 
