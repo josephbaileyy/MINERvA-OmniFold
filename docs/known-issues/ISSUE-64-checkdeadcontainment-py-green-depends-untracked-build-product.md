@@ -1,3 +1,7 @@
+> **FIXED 2026-09-23 at `d7c5afe9`.** `RESULT ::` now prints `head=`, `tree=`, `mode=` and each product's sha256 and
+> freshness; stale products fail strict mode. Measured on a clean `git archive` export: strict exit 1 (`products=main_note.pdf=absent`),
+> `--source-only` exit 0.
+
 # ISSUE-64 — checkdeadcontainment.py's green depends on an UNTRACKED build product, so a reported exit 0 cannot be mapped to a sha — the same class as row 60(1)
 
 **Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 64. **Updated:** 2026-09-22.
