@@ -8,14 +8,11 @@ later and can never be reused as confirmatory data.
 
 ## Running status (resume anchor; newest first)
 
-- 2026-09-23 10:45Z: exp 1 DONE (§1), exp 2 DONE (§3, 12 and 32 epochs), exp 3 DONE (§4), exp 4
-  DONE for S1, S2 and M (§5). Exp 5 running as two self-chaining `gpu_debug` chains from code
-  `9d64b0da` (`58785788`: C1-C4 seed 1 -> `phaseB2/e5c1/`; `58785789`: C1-C4 seed 2 ->
-  `phaseB2/e5c2/`), T1 truth side, H schedule, CARRY-misses (the robust rule, §5); runs score
-  themselves on completion. The preempt copy of exp 5 (`58781990`) was cancelled unstarted.
-- Next: harvest exp 5 -> §6; then, if budget allows, the best C arm in efficiency-corrected mode.
-- Dropped/deferred because of the queue (say so, do not read as nulls): S3 (2x epochs with
-  patience) and the S-combination; H at K=10 seeds 3-4; seeds beyond 2 for every K=10 arm.
+- 2026-09-23 (final): experiments 1-5 COMPLETE and committed; nothing of B2 is queued. Exp 5 ran
+  as self-chaining `gpu_debug` jobs (e5c1: 58785788 ...; e5c2: 58785789 ...; code `9d64b0da`).
+- NOT run (queue; report as untested, not as nulls): S3 (2x epochs + patience) and the
+  S-combination; H at K=10 seeds 3-4; seeds beyond 2 for any K=10 arm; the best C arm (C2) rerun
+  in efficiency-corrected mode.
 
 ## Measured queue waits and compute (elapsed time was the binding constraint, not node-hours)
 
@@ -239,3 +236,36 @@ arXiv:2504.06857 §V.A; `b2_driver.B2MultiFold.RunStep2`, default path unchanged
    robust. **The miss rule is therefore a model-dependence choice, not a free improvement**, and
    M is not a candidate until Phase E's hidden-variable distortions have tested it with the PET.
    Experiment 5 runs in carry-misses mode for that reason.
+
+## 6. Experiment 5 — feature arms C1-C4, K = 10, carry-misses (MEASURED, 2 seeds)
+
+Held fixed: the T1 truth side (PDG one-hot, from exp 2), the H schedule (no S factor helped in
+exp 4), and the engine's CARRY-misses rule (the robust one; exp 4 §5 caveat). C1 = the incumbent
+inputs; C2 = + step-1 reco summaries (reco E_avail, reco q3, stored-cluster ΣE and count; reco-only,
+asserted in `b2_arms.assert_step1_reco_only`); C3 = + step-2 truth globals (true E_avail, q3);
+C4 = both. `results/b2e5-C{1,2,3,4}-H-s{1,2}.scores.json`.
+
+| arm | k = 1 | 3 | 5 | 10 | low (k=10) | moderate | good | push acc (k=10) | push miss | paired Δ vs C1, k = 3 [s1, s2] | paired Δ vs C1, k = 10 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
+| C1 | 0.169 | 0.369 | 0.439 | 0.525 | 0.154 | 0.544 | 0.858 | 0.819 | 0.380 | — | — |
+| C2 | 0.303 | 0.480 | 0.518 | **0.564** | 0.127 | 0.627 | 0.960 | 0.917 | 0.399 | **+0.112** [+0.106, +0.117] | **+0.039** [+0.040, +0.038] |
+| C3 | 0.190 | 0.384 | 0.453 | 0.544 | 0.204 | 0.540 | 0.857 | 0.819 | 0.409 | +0.015 [+0.011, +0.020] | +0.019 [+0.010, +0.028] |
+| C4 | 0.303 | 0.480 | 0.515 | 0.558 | 0.089 | 0.628 | 0.967 | 0.929 | 0.381 | **+0.112** [+0.097, +0.126] | +0.032 [+0.033, +0.032] |
+
+(means of seeds 1-2; per-seed k = 10: C1 0.505/0.546, C2 0.544/0.584, C3 0.515/0.574, C4 0.538/0.578.)
+
+1. **Reco energy summaries at step 1 are the one feature change that helps** (MEASURED, both seeds,
+   paired): +0.11 at k = 3, +0.04 at k = 10. They speed convergence (C2 at k = 3 matches C1 at
+   k ≈ 7) and lift the accepted-event truth recovery to 0.92-0.93, but they do NOT reach the
+   misses (0.38-0.40 in every arm) or the low-acceptance region (0.09-0.20).
+2. **Truth globals at step 2 add ~0.02** (C3 vs C1; C4 vs C2 is −0.006) — small, as exp 2
+   predicted once the PDG one-hot is in: step 2 is not the bottleneck under carry-misses.
+3. T1 alone (C1, 0.525) vs the executed T0 truth side (H, 0.506) at k = 10: +0.02, different seeds'
+   noise realizations, NOT RESOLVED at 2 seeds.
+4. **Under carry-misses no arm reaches the 0.556 floor at k = 3** (best 0.480); C2 passes it only by
+   k = 10 (0.564, one seed 0.544 below). The miss rule (exp 4: +0.31) remains the dominant lever,
+   and it is a model-dependence choice (Phase E1). The efficiency-corrected rerun of C2 was NOT run.
+
+What this does NOT establish: any confirmatory claim (development population, 2 seeds, arms chosen
+after seeing exps 2-4); robustness to distortions other than the E_avail tilt (C2/C3/M all read
+the tilted coordinate or its reco proxy).
