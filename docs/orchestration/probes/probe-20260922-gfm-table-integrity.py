@@ -11,6 +11,12 @@ round, because every check before this one read the SOURCE and none asked how it
     second line fell out of the table and rendered as a stray paragraph.
 
 Checks, per GFM table (a header row followed by a delimiter row):
+  codespan-pipe -- an unescaped `|` INSIDE a backtick code span. Checked independently of the
+                   count, because a row one cell short PLUS a code-span pipe has exactly the
+                   header's count: that pair passed a count-only check and still rendered with the
+                   column boundary inside the code span (found by self-round 30).
+  cell-parity  -- a cell with an odd number of backticks or of `**` (outside code spans), which
+                  strands a marker and re-pairs everything after it
   cells        -- a body row whose unescaped-pipe count differs from the header's
   broken-row   -- a body row that does not end with `|` (continued on the next line)
   orphan-tail  -- a non-table line directly after a table that ends with `|` (the torn-off half)
@@ -39,6 +45,14 @@ def sweep(path):
         if lines[i].startswith("|") and SEP.match(lines[i + 1]):
             n, j = pipes(lines[i]), i + 2
             while j < len(lines) and lines[j].startswith("|"):
+                for span in re.findall(r"`[^`]*`", lines[j]):
+                    if re.search(r"(?<!\\)\|", span):
+                        out.append((j + 1, "codespan-pipe", f"unescaped pipe in {span[:40]}"))
+                for ci, cell in enumerate(re.split(r"(?<!\\)\|", lines[j])[1:-1]):
+                    if len(re.findall(r"(?<!\\)`", cell)) % 2:
+                        out.append((j + 1, "cell-parity", f"odd backticks in cell {ci}"))
+                    if len(re.findall(r"(?<!\\)\*\*", re.sub(r"`[^`]*`", "", cell))) % 2:
+                        out.append((j + 1, "cell-parity", f"odd ** in cell {ci}"))
                 if pipes(lines[j]) != n:
                     out.append((j + 1, "cells", f"{pipes(lines[j])} pipes vs header {n}"))
                 if not lines[j].rstrip().endswith("|"):
