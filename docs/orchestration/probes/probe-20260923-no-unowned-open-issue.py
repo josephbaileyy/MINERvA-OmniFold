@@ -15,7 +15,8 @@ paragraph of its own beginning with a bold `Blocker:`, in the detail file the ro
 The check refuses (exit 1), listing each case:
   * an OPEN row with no blocker;
   * a blocker whose kind is not D7, JOSEPH or OWNER, or whose text after the dash is empty;
-  * a blocker in a detail file that is not its own top-level paragraph (inside a blockquote or a list);
+  * a blocker in a detail file that is not its own top-level paragraph (in a blockquote, list or heading, or
+    mid-paragraph), or a blocker left in the index row of a row whose detail file is the agreed place;
   * a row whose status is not OPEN but still carries a blocker (a fixed row still claiming a blocker);
   * a status that does not begin with OPEN, FIXED, CLOSED, RESOLVED, WONTFIX or RETRACTED;
   * an id, as rendered, used by more than one row;
@@ -39,33 +40,62 @@ except ImportError:
     print("[owned] CANNOT LOOK :: markdown-it-py is not installed")
     sys.exit(2)
 
-# ⚠ No `DETECTION`: it once sat here only so that row 52 ("DETECTION FIXED …; RESIDUAL BELOW") parsed, which
-# exempted an issue that still has open residuals and said so nowhere (review #21b). A status is one of these.
+# ⚠ No `DETECTION`: it once sat here only so that row 52 (then "DETECTION FIXED …; RESIDUAL BELOW") parsed, which
+# exempted an issue that then had open residuals and said so nowhere (review #21b; row 52 was closed at 01530992,
+# and this comment first said it "still has" them, review #22a). A status is one of these.
 STATUSES = ("OPEN", "FIXED", "CLOSED", "RESOLVED", "WONTFIX", "RETRACTED")
 KINDS = ("D7", "JOSEPH", "OWNER")
 BLOCKER_TEXT = re.compile(r"^\s+(\S+)\s+\u2014\s*(.*)$", re.S)     # after the bold `Blocker:`: " KIND — text"
-MD = MarkdownIt("commonmark").enable(["table"])
+MD = MarkdownIt("commonmark").enable(["table", "strikethrough"])   # GFM strikethrough, as GitHub renders (#22b)
 
 
-def visible(inline):
-    """What a reader sees of an inline token: text and code, never raw HTML."""
-    return "".join(c.content for c in (inline.children or []) if c.type in ("text", "code_inline")).strip()
+BREAKS = ("softbreak", "hardbreak", "html_inline")        # each separates words on the page (#22b: `OPEN<br>x`)
+
+
+def visible(inline, skip_struck=False):
+    """What a reader sees of an inline token: text and code, never raw HTML; a break is a space. With
+    `skip_struck`, struck-through text is dropped, so `~~OPEN~~ FIXED` reads as FIXED (review #22b)."""
+    out, struck = [], 0
+    for c in inline.children or []:
+        struck += c.type == "s_open"
+        struck -= c.type == "s_close"
+        if skip_struck and struck:
+            continue
+        if c.type in ("text", "code_inline"):
+            out.append(c.content)
+        elif c.type in BREAKS:
+            out.append(" ")
+    return " ".join("".join(out).split())
+
+
+def _is_blocker_label(ch, k, colon_inside=True):
+    label = "Blocker:" if colon_inside else "Blocker"
+    return (ch[k].type == "strong_open" and k + 2 < len(ch) and ch[k + 1].type == "text"
+            and ch[k + 1].content.strip() == label and ch[k + 2].type == "strong_close")
 
 
 def blockers_in_inline(inline):
     """(kind, text) for each bold `Blocker:` in this inline token, as RENDERED -- not raw source, so a blocker
     inside a code span or an HTML comment is not one (review #21b)."""
+    # The text runs to the NEXT bold `Blocker:` or the end, through links, emphasis and code, as a reader sees it.
+    # (#22b: it stopped at the first link or emphasis, refusing `JOSEPH — [the decision](…)`, and at any text
+    # merely containing the word "Blocker:".)
     ch, out, k = inline.children or [], [], 0
     while k < len(ch):
-        if (ch[k].type == "strong_open" and k + 2 < len(ch) and ch[k + 1].type == "text"
-                and ch[k + 1].content.strip() == "Blocker:" and ch[k + 2].type == "strong_close"):
+        if _is_blocker_label(ch, k, colon_inside=False) and k + 3 < len(ch) and ch[k + 3].type == "text" \
+                and ch[k + 3].content.startswith(":"):
+            out.append((None, ""))                     # `**Blocker**:` -- the colon outside the bold is malformed
+            k += 4
+        elif _is_blocker_label(ch, k):
             j, rest = k + 3, []
-            while j < len(ch) and ch[j].type in ("text", "code_inline", "softbreak") and not (
-                    ch[j].type == "text" and "Blocker:" in ch[j].content):
-                rest.append(" " if ch[j].type == "softbreak" else ch[j].content)
+            while j < len(ch) and not _is_blocker_label(ch, j):
+                if ch[j].type in ("text", "code_inline"):
+                    rest.append(ch[j].content)
+                elif ch[j].type in BREAKS:
+                    rest.append(" ")
                 j += 1
             m = BLOCKER_TEXT.match("".join(rest))
-            out.append((m.group(1), m.group(2).strip()) if m else (None, ""))
+            out.append((m.group(1), " ".join(m.group(2).split())) if m else (None, ""))
             k = j
         else:
             k += 1
@@ -74,7 +104,7 @@ def blockers_in_inline(inline):
 
 def detail_blockers(text):
     """(top-level blockers, nested blockers) in a detail file, read from its markdown-it parse. A blocker counts
-    only as its own top-level paragraph; one in a blockquote or list is nested (flagged); one in a code block or
+    only as its own top-level paragraph; one in a blockquote, list, heading or mid-paragraph is nested (flagged); one in a code block or
     an HTML comment is not rendered as a blocker at all, so it is ignored (review #21b)."""
     top, nested = [], []
     toks = MD.parse(text)
@@ -91,15 +121,18 @@ def detail_blockers(text):
     return top, nested
 
 
-def detail_href(cell_inline):
-    """The FIRST link in the DETAIL cell, as markdown-it resolves it (so `<…>`, a title and `%20` are handled),
-    normalised: anchor and query dropped, `./` removed. The whole row was once searched, so a row citing another
-    issue's detail file inherited that issue's blocker (review #21b)."""
+def detail_hrefs(cell_inline):
+    """EVERY `docs/known-issues/` link in the DETAIL cell, as markdown-it resolves it (so `<…>`, a title and `%20`
+    are handled), normalised: anchor and query dropped, `./` removed. Only the detail cell: the whole row was once
+    searched, so a row citing another issue inherited its blocker (#21b); and only its FIRST link was once read,
+    so a detail file after a run-log link was ignored and a missing one passed (#22b)."""
+    out = []
     for c in cell_inline.children or []:
         if c.type == "link_open":
-            href = unquote(c.attrs.get("href", ""))
-            return os.path.normpath(re.split(r"[#?]", href)[0])
-    return None
+            h = os.path.normpath(re.split(r"[#?]", unquote(c.attrs.get("href", "")))[0])
+            if h.startswith("docs/known-issues/") and h not in out:
+                out.append(h)
+    return out
 
 
 def rows_of(text):
@@ -123,7 +156,7 @@ def rows_of(text):
                     header = [visible(c).lower() for c in cur[1]]
                 elif header and header[0] == "id" and len(cur[1]) >= 5:
                     cells = cur[1]
-                    out.append((visible(cells[0]), visible(cells[2]), cells[4], cells, cur[0] + 1))
+                    out.append((visible(cells[0]), visible(cells[2], skip_struck=True), cells[4], cells, cur[0] + 1))
                 cur = None
             j += 1
         i = j + 1
@@ -131,7 +164,9 @@ def rows_of(text):
 
 
 def status_word(status):
-    return status.strip().split(" ")[0].upper().rstrip(".,")
+    """The status's leading word, letters only: `FIXED: …`, `OPEN; …` and `OPEN—…` begin with a status (#22b)."""
+    m = re.match(r"\s*([A-Za-z]+)", status)
+    return m.group(1).upper() if m else ""
 
 
 def check(text, exists=os.path.exists, read=lambda p: open(p, encoding="utf-8").read()):
@@ -142,15 +177,22 @@ def check(text, exists=os.path.exists, read=lambda p: open(p, encoding="utf-8").
         if word not in STATUSES:
             problems.append(f"line {line}: id {rid}: status {status[:40]!r} does not begin with one of {', '.join(STATUSES)}")
             continue
-        href = detail_href(detail)
-        if href and href.startswith("docs/known-issues/"):
-            if not exists(href):
-                problems.append(f"line {line}: id {rid}: its detail cell links {href}, which does not exist")
+        hrefs = detail_hrefs(detail)
+        if hrefs:
+            missing = [h for h in hrefs if not exists(h)]
+            for h in missing:
+                problems.append(f"line {line}: id {rid}: its detail cell links {h}, which does not exist")
+            if missing:
                 continue
-            blockers, nested = detail_blockers(read(href))
-            where = href
-            for k_, t_ in nested:
-                problems.append(f"line {line}: id {rid}: a blocker in {where} that is not its own top-level paragraph")
+            blockers, where = [], ", ".join(hrefs)
+            for h in hrefs:
+                top, nested = detail_blockers(read(h))
+                blockers += top
+                for k_, t_ in nested:
+                    problems.append(f"line {line}: id {rid}: a blocker in {h} that is not its own top-level paragraph")
+            # the agreed place is the detail file; a blocker left in the index row of such a row was never read (#22b)
+            if [b for c in cells for b in blockers_in_inline(c)]:
+                problems.append(f"line {line}: id {rid}: a blocker in its index row, but its blockers belong in {where}")
         else:
             blockers = [b for c in cells for b in blockers_in_inline(c)]
             where = "its index row"
@@ -177,7 +219,11 @@ def self_test():
              "docs/known-issues/ISSUE-7-x.md": "# x\n\n```\n**Blocker:** OWNER — in a fence\n```\n",
              "docs/known-issues/ISSUE-8-x.md": "# x\n\n<!--\n**Blocker:** OWNER — in a comment\n-->\n",
              "docs/known-issues/ISSUE-9-x.md": "# x\n\n  **Blocker:** OWNER — indented two spaces, still a paragraph\n",
-             "docs/known-issues/ISSUE-10-x.md": "# x\n\nThe row had no Blocker: field before.\n"}
+             "docs/known-issues/ISSUE-10-x.md": "# x\n\nThe row had no Blocker: field before.\n",
+             "docs/known-issues/ISSUE-11-x.md": "# x\n\n**Blocker:** OWNER — the lane that\nwraps its line\n",
+             "docs/known-issues/ISSUE-12-x.md": "# x\n\nSome text first\n**Blocker:** OWNER — no blank line before it\n",
+             "docs/known-issues/ISSUE-13 x.md": "# x\n\n**Blocker:** OWNER — a spaced file name\n",
+             "docs/known-issues/ISSUE-14-x.md": "# x\n\n**Blocker:** OWNER\n— wrapped between the kind and the dash\n"}
     ex, rd = (lambda p: p in files), (lambda p: files[p])
     link = lambda n: f"[d](docs/known-issues/ISSUE-{n}-x.md)"
     shapes = [  # (name, body -- rows or a whole document --, problems wanted)
@@ -213,6 +259,28 @@ def self_test():
         ("blocker with a plain hyphen, not an em dash", "| 1 | LOW | OPEN | x **Blocker:** OWNER - lane | row | d |\n", 2),
         ("blocker inside a code span is not a blocker", "| 1 | LOW | OPEN | x `**Blocker:** OWNER — y` | row | d |\n", 1),
         ("status in bold, OPEN with a qualifier", "| 1 | LOW | **OPEN — DO NOT FIX** | x **Blocker:** D7 — z | row | d |\n", 0),
+        # --- review #22b
+        ("blocker text beginning with a link", "| 1 | LOW | OPEN | x **Blocker:** JOSEPH — [the decision](d.md) | row | d |\n", 0),
+        ("blocker text beginning with emphasis", "| 1 | LOW | OPEN | x **Blocker:** OWNER — *the* lane | row | d |\n", 0),
+        ("blocker text beginning with a code span", "| 1 | LOW | OPEN | x **Blocker:** OWNER — `lane-b` | row | d |\n", 0),
+        ("blocker text containing the word Blocker:", "| 1 | LOW | OPEN | x **Blocker:** OWNER — the old Blocker: field | row | d |\n", 0),
+        ("colon outside the bold is malformed", "| 1 | LOW | OPEN | x **Blocker**: OWNER — y | row | d |\n", 2),
+        ("a detail file after a run-log link in the detail cell", f"| 2 | LOW | OPEN | x | [log](nd/LOG.md), {link(2)} | d |\n", 0),
+        ("a missing detail file after a run-log link", "| 6 | LOW | OPEN | x | [log](nd/LOG.md), [d](docs/known-issues/ISSUE-6-x.md) | d |\n", 1),
+        ("a blocker left in the index row of a detail-linked row", f"| 2 | LOW | OPEN | x **Blocker:** OWNER — y | {link(2)} | d |\n", 1),
+        ("status FIXED: with a colon", "| 1 | LOW | FIXED: 2026-09-23 | x | row | d |\n", 0),
+        ("status OPEN—partial with no spaces, blocker present", "| 1 | LOW | OPEN—partial | x **Blocker:** D7 — y | row | d |\n", 0),
+        ("status ~~OPEN~~ FIXED reads as FIXED", "| 1 | LOW | ~~OPEN~~ FIXED | x | row | d |\n", 0),
+        ("status OPEN<br>since still needs a blocker", "| 1 | LOW | OPEN<br>since | x | row | d |\n", 1),
+        ("a wrapped blocker in a detail file", f"| 11 | LOW | OPEN | x | {link(11)} | d |\n", 0),
+        ("a mid-paragraph blocker in a detail file", f"| 12 | LOW | OPEN | x | {link(12)} | d |\n", 2),
+        # --- review #22a: behaviours whose mutants were called "equivalent" without being run
+        ("a duplicate id, one wrapped in <span>", "| 1 | LOW | FIXED | x | row | d |\n| <span>1</span> | LOW | FIXED | y | row | d |\n", 1),
+        ("a bold label that merely CONTAINS Blocker: is not one", "| 1 | LOW | OPEN | x **See Blocker:** OWNER — y | row | d |\n", 1),
+        ("two blockers in one paragraph, the second malformed", "| 1 | LOW | OPEN | x **Blocker:** OWNER — a **Blocker:** MAYBE — b | row | d |\n", 1),
+        ("blocker text that is only raw HTML is empty", "| 1 | LOW | OPEN | x **Blocker:** OWNER — <br> | row | d |\n", 2),
+        ("a blocker wrapped between its kind and the dash", f"| 14 | LOW | OPEN | x | {link(14)} | d |\n", 0),
+        ("a detail link with %20", "| 13 | LOW | OPEN | x | [d](docs/known-issues/ISSUE-13%20x.md) | d |\n", 0),
         ("an OPEN row in a SECOND table is checked",
          "| 1 | LOW | FIXED | x | row | d |\n\n## Resolved\n\n" + head + "| 2 | LOW | OPEN | x | row | d |\n", 1),
         ("a table whose header is not `id` is not an index",
