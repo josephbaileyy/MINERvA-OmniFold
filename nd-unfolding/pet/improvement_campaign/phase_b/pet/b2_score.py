@@ -11,8 +11,9 @@ populations (`populations.npz`, 31/31 checks against the report). Per iteration 
   previous push), compact;
 * weight tails and ESS: `push` on truth-passing rows (max, 99.9th pct, ESS/n) and the ESS
   `(sum w)^2 / sum w^2` of the final truth weights `w_truth x push`;
-* `step1_detector`: experiment 3a -- how much of the reco-level pseudo-data / prior difference the
-  step-1 reweighting removed, on the same normalized-L1 scale, in reconstructed E_avail (the
+* `step1_detector`: experiment 3a -- how much of the REMAINING reco-level pseudo-data / prior
+  difference (prior x previous push) this iteration's step-1 reweighting removed;
+  `step1_detector_cumulative`: the same for the pulled weights against the ORIGINAL prior, on the same normalized-L1 scale, in reconstructed E_avail (the
   analysis definition, 7 endpoint bins), the muon (pT, p||) reporting cells, reco pT and p||
   alone, the stored-cluster energy sum (deciles of the prior) and the stored-cluster count;
 * `pulled_vs_pushed`: experiment 3b -- truth E_avail recovery of the pull and of the push over
@@ -196,6 +197,9 @@ class Scorer:
                 ratio = pull[self.s1b] / np.where(prev[self.s1b] > 0, prev[self.s1b], 1.0)
                 record["step1_ratio_on_step1_rows"] = scm.weight_summary(ratio)
                 record["step1_detector"] = self.step1_detector(prev, pull)
+                # cumulative: the pulled weights against the ORIGINAL prior (before any iteration)
+                record["step1_detector_cumulative"] = self.step1_detector(
+                    np.ones(self.pgb.size), pull)
                 record["pulled_vs_pushed"] = self.pulled_vs_pushed(pull, push)
             records.append(record)
             prev = push

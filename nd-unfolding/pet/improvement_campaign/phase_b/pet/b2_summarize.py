@@ -106,7 +106,10 @@ def table_steps(runs: dict[str, dict[int, Any]], arm: str) -> str:
     ks = sorted({r["k"] for run in seeds.values() for r in run["data"]["iterations"]})
     names = ["reco_eavail_7", "muon_cells", "reco_pt", "reco_pparallel",
              "stored_sumE_deciles", "stored_n"]
-    lines = ["| k | push | pull | " + " | ".join(f"step1 {n}" for n in names) +
+    key = ("step1_detector_cumulative" if all("step1_detector_cumulative" in r for run in
+                                              seeds.values() for r in run["data"]["iterations"])
+           else "step1_detector")
+    lines = [f"({key})", "| k | push | pull | " + " | ".join(f"step1 {n}" for n in names) +
              " | pull(acc) | push(acc) | push(miss) | ESS/n | push p99.9 |",
              "|---|" + "---|" * (len(names) + 8)]
     for k in ks:
@@ -114,7 +117,7 @@ def table_steps(runs: dict[str, dict[int, Any]], arm: str) -> str:
         rows = [r for r in rows if r and "step1_detector" in r]
         if not rows:
             continue
-        det = [cell([r["step1_detector"][n]["recovery"] for r in rows]) for n in names]
+        det = [cell([r[key][n]["recovery"] for r in rows]) for n in names]
         pv = cell([r["pulled_vs_pushed"]["accepted"]["pull"]["recovery"] for r in rows])
         pa = cell([r["pulled_vs_pushed"]["accepted"]["push"]["recovery"] for r in rows])
         pm = cell([r["pulled_vs_pushed"]["misses"]["push"]["recovery"] for r in rows])
@@ -124,6 +127,26 @@ def table_steps(runs: dict[str, dict[int, Any]], arm: str) -> str:
         lines.append(f"| {k} | {cell([r['push']['recovery'] for r in rows])} | "
                      f"{cell([r['pull']['recovery'] for r in rows])} | " + " | ".join(det) +
                      f" | {pv} | {pa} | {pm} | {ess} | {tail} |")
+    return "\n".join(lines)
+
+
+def table_paired(runs: dict[str, dict[int, Any]], reference: str, ks: tuple = (3, 5, 10)
+                 ) -> str:
+    """Arm minus reference at matched seeds (the same validation split and step seeds)."""
+    lines = [f"| arm − `{reference}` | " + " | ".join(f"k={k} (per seed)" for k in ks) + " |",
+             "|---|" + "---|" * len(ks)]
+    if reference not in runs:
+        return ""
+    for arm, seeds in sorted(runs.items()):
+        if arm == reference or not arm.endswith("K10"):
+            continue
+        row = []
+        for k in ks:
+            diffs = [by_k(seeds[s])[k]["push"]["recovery"] - by_k(runs[reference][s])[k]["push"]
+                     ["recovery"] for s in sorted(seeds) if s in runs[reference]
+                     and k in by_k(seeds[s]) and k in by_k(runs[reference][s])]
+            row.append(cell(diffs) + " [" + ", ".join(f"{d:+.3f}" for d in diffs) + "]")
+        lines.append(f"| `{arm}` | " + " | ".join(row) + " |")
     return "\n".join(lines)
 
 
@@ -218,6 +241,8 @@ def main() -> None:
         for k in (3, 10):
             print(f"\n### Regions at k = {k}\n")
             print(table_regions(runs, k))
+        print("\n### Paired differences against H at K = 10 (matched seeds)\n")
+        print(table_paired(runs, "b2e3-H-K10"))
         for arm in sorted(runs):
             if any("step1_detector" in r for run in runs[arm].values()
                    for r in run["data"]["iterations"]):
