@@ -426,6 +426,10 @@ def collect(obj, src, out, unpaired=None, revision_pinned=None):
     with them counted and 120 with them excluded. Existing coverage loses nothing; every past
     `ALL BINDINGS INTACT` means exactly what it meant. What changes is only what a FUTURE
     revision-pinned record does.
+    (Superseded 2026-09-23: "ZERO" was true at `ab341cc4` only. `f71ad116`, a minute later, added
+    12 revision-pinned pairs in the Sep-09 talk's measurement tables. Those pairs are now
+    reviewed and verified at their own revision by `test_hash_bindings.py`'s
+    `test_every_revision_pinned_pair_verifies_at_its_revision`.)
 
     They are counted and PRINTED rather than dropped, for the reason `unpaired` exists: a
     collector that quietly stops seeing a shape reports ALL BINDINGS INTACT and is indis-

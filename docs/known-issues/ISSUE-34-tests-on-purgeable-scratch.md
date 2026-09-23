@@ -1,3 +1,6 @@
+> **FIXED 2026-09-23** at `c60f3a3f`: the last scratch-only test, `tests/test_cstat_100rep.py`, is now tracked
+> (byte-identical to the `/pscratch` copy); the required module was tracked at `9fbeeafd`.
+
 ## 25 tests ran only from purgeable scratch, and one still does
 
 Found 2026-08-07 while working plan Step 4. The cluster suite collected **764** tests against the local
