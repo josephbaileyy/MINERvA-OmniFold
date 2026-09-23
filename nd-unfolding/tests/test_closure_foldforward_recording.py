@@ -42,7 +42,7 @@ CPT = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(CPT)
 
 PINNED_DRIVER = os.path.join(PET, "closure_powered_truth_reweight.py")
-PINNED_DRIVER_SHA256 = "a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
+PINNED_DRIVER_SHA256 = "ab92ffe5b35861077da0ec6181e993bf8b7e1e4a0332ebca2f506ffb717f8048"
 
 
 class _Leg:
@@ -520,10 +520,10 @@ class LauncherWrapperPinTest(unittest.TestCase):
 class _FakeEngine:
     """Mirrors omnifold.MultiFold's Unfold LOOP, because that ordering is what the hooks depend on.
 
-    `omnifold.py:172-177` is `for i in range(start, niter): RunStep1(i); RunStep2(i);
-    CompileModels(fixed=True)`, and `RunStep2` assigns `self.weights_push` (`:220`). The trailing
-    `CompileModels` is reproduced deliberately -- the claim under test is that it does NOT touch
-    `weights_push`, so a fixture that omitted it would assume what it is meant to demonstrate.
+    The loop is `for i in range(start, niter): RunStep1(i); RunStep2(i)`, and `RunStep2` assigns
+    `self.weights_push`. Until 2026-09-23 the engine also ran a dead `CompileModels(fixed=True)` at
+    the end of each iteration (KNOWN_ISSUES #38); it was removed, so nothing now runs between the
+    last RunStep2 and the driver's read, and this fixture mirrors that.
     """
 
     def __init__(self, mc, weight_reco_leg, niter=3, n=4):
@@ -533,14 +533,12 @@ class _FakeEngine:
         self.weights_push = np.ones(n, dtype=np.float32)
         self.niter, self.start = niter, 0
         self.LR = 1e-4
-        self.compile_calls = []
         self.step2_calls = []
 
     def Unfold(self):
         for i in range(self.start, self.niter):
             self.RunStep1(i)
             self.RunStep2(i)
-            self.CompileModels(fixed=True)
 
     def RunStep1(self, i):
         return "step1"
@@ -564,9 +562,6 @@ class _FakeEngine:
         n = self.weights_push.shape[0]
         self.weights_push = (base + 0.01 * np.arange(n)).astype(np.float32)
         return "step2"
-
-    def CompileModels(self, fixed=False):
-        self.compile_calls.append(fixed)          # must not touch weights_push
 
 
 class EndOfRunPushHookTest(unittest.TestCase):
@@ -605,8 +600,8 @@ class EndOfRunPushHookTest(unittest.TestCase):
         """The load-bearing claim: what the hook records is what `of.weights_push` holds afterwards.
 
         The driver reads `of.weights_push` AFTER `Unfold()` returns
-        (closure_powered_truth_reweight.py:332-333). Only `CompileModels(fixed=True)` runs between the
-        last RunStep2 and that read, so the arrays must agree bit-for-bit.
+        (closure_powered_truth_reweight.py, right after `of.Unfold()`). Nothing runs between the last
+        RunStep2 and that read, so the arrays must agree bit-for-bit.
         """
         inst, ff, s2 = self._run()
         persisted = np.asarray(inst.weights_push, np.float64)          # exactly the driver's read
@@ -616,8 +611,6 @@ class EndOfRunPushHookTest(unittest.TestCase):
         end = [r for r in s2 if r["is_end_of_run_push"]][0]
         self.assertEqual(end["reco_weighted_mean_push"], driver_ratio,
                          "the hook's end-of-run capture is not the array the driver persists")
-        self.assertTrue(inst.compile_calls and all(inst.compile_calls),
-                        "the fixture must exercise the trailing CompileModels(fixed=True)")
 
     def test_THE_ASSERTION_ABOVE_HAS_POWER_a_pre_delegation_capture_FAILS_it(self):
         """A hook recording BEFORE super().RunStep2 would capture the previous iteration's push.

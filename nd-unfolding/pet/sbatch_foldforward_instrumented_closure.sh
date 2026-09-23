@@ -178,13 +178,28 @@ die() { echo "[ff-launch] FATAL: $1" >&2; exit "${2:-1}"; }
 #       digest, and G0 prints what it checked. NO RUN IS ATTACHED TO THIS MOVE either; the arm-1
 #       resubmit was held until it landed so the array runs against ONE wrapper version, which is the
 #       hazard :77 names.
+#
+#     PIN MOVE 5, 2026-09-23, under Joseph's 2026-09-23 ruling ("if something needs to be fixed,
+#     fix it now"), four pins at once:
+#       ENGINE  3a2022b0 -> 3d95aae2  dead between-iteration CompileModels(fixed=True) removed
+#               (KNOWN_ISSUES #38); last+best val_loss logged instead of epoch 1's (#28). No
+#               fit-time LR and no anneal record changes: tests/test_engine_unfold_lr_and_val_loss_log.py
+#               on the real engine with TF stubbed, and bit-identical tf_keras weights with and
+#               without the removed call.
+#       DRIVER  a45fae7c -> ab92ffe5  the artifact now also stores `inference_contract` (#31);
+#               training is unchanged (same PET arguments, via PET_ARCH_FIXED).
+#       NOMINAL_POLICY 91144bee -> ba939bd2  `step1_class_ratio` stored as
+#               `step1_class_ratio_target` (#33) plus a comment; NOMINAL_SEED_POLICY is unchanged.
+#       WRAPPER e284cdbc -> 181e2f5b  docstrings and FOLD_FORWARD_NOTE's driver digest updated.
+#     A run under these pins is NOT byte-identical to the PREDECLARATION-20260815 configuration; the
+#     argued equivalence above is the record. No run is attached to this move.
 # ---------------------------------------------------------------------------------------------
 declare -A PINS=(
-  ["$DRIVER"]="a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
+  ["$DRIVER"]="ab92ffe5b35861077da0ec6181e993bf8b7e1e4a0332ebca2f506ffb717f8048"
   ["$ANNEALED"]="ce9f11f4872dd611932705e36f4ecfb651f8ee8eed796cca98be598d92fbb911"
-  ["$ENGINE"]="3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa"
-  ["$WRAPPER"]="e284cdbc2502adbf1b2292da62c20c84e404668851d95240cdab17ee4aca0c19"
-  ["$NOMINAL_POLICY"]="91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc"
+  ["$ENGINE"]="3d95aae20ed038926ce294fa42008f76b32310c42169cca6dbbb27665faa8de9"
+  ["$WRAPPER"]="181e2f5b3a4dec06efdbb2c1782041d1a6492b5abef3edf3562ead0e56d63cf8"
+  ["$NOMINAL_POLICY"]="ba939bd2468ea3a288043cd126cb6ec41e4e498ef6fc320f2d01d2da829ae811"
 )
 for f in "${!PINS[@]}"; do
   [[ -s "$f" ]] || die "missing: $f" 2

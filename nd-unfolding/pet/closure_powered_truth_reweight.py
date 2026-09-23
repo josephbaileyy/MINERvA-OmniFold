@@ -50,7 +50,9 @@ check FAILS CLOSED on any overridden run, which is the intended and only safe be
 not gate evidence.
 
 WHAT THIS SCRIPT PERSISTS, so Gate-4 can re-derive rather than believe: the ABSOLUTE dump row
-indices of both halves, the push weights, and the hashes of the source NPZ and its producer receipt.
+indices of both halves, the push weights, the hashes of the source NPZ and its producer receipt, and
+(since 2026-09-23, KNOWN_ISSUES #31) an `inference_contract` in the artifact: the event-feature
+normalization the loader applied and the PET architecture both networks were built with.
 Gate-4 recomputes the tilt (importing the function below, so the two cannot drift), recomputes all
 four spectra from the dump, and checks disjointness on the actual index arrays. The metrics printed
 here are convenience; none of them is load-bearing for the verdict.
@@ -183,6 +185,64 @@ def deterministic_halves(n_rows, half=HALF_SIZE, seed=SPLIT_SEED):
     if np.intersect1d(a, b).size:
         raise SystemExit("[powered] halves overlap; the split is broken (fail closed)")
     return a, b
+
+
+INFERENCE_CONTRACT_SCHEMA = "powered-closure-inference-contract-v1"
+PET_ARCH_FIXED = {"num_transformer": 2, "num_heads": 2, "projection_dim": 32, "local": True, "K": 3}
+_CONTRACT_META_KEYS = ("feature_names", "truth_feature_names", "reco_cloud_cols",
+                       "n_evt_reco", "n_evt_truth",
+                       "reco_norm_mean", "reco_norm_std", "truth_norm_mean", "truth_norm_std",
+                       "degenerate_reco_columns", "degenerate_truth_columns")
+
+
+def closure_inference_contract(meta, *, num_feat_reco, num_feat_gen, num_part, coord_reco,
+                               coord_gen, loader_args, multifold_name, weights_folder,
+                               step1_mc_normalization):
+    """What an inference-only reproduction of this closure must reuse (KNOWN_ISSUES #31).
+
+    The event-feature z-scoring is computed inside `build_fullevent_loaders` from the rows this
+    run loaded, so it cannot be re-derived from the dump alone without replaying the load; it is
+    stored here as the loader returned it. `pet_arch_step1`/`pet_arch_step2` are the exact PET
+    arguments `main` builds `m1`/`m2` from. Fails closed if the loader meta lacks any normalization
+    key rather than persisting a partial contract.
+
+    CHECKPOINTS: the engine's `ModelCheckpoint(save_best_only=True)` writes BEST-val-loss weights
+    into `weights_folder`, while `weights_push` came from the LAST-epoch in-memory models (issue
+    #28's note). This driver saves no final-epoch weights, so those files are not guaranteed to
+    reproduce `weights_push`; `checkpoint_semantics` records that.
+    """
+    missing = [k for k in _CONTRACT_META_KEYS if k not in meta]
+    if missing:
+        raise SystemExit(f"[powered] loader meta lacks {missing}; cannot persist the inference "
+                         f"contract (fail closed)")
+
+    def arch(nfeat, nevt, coord):
+        return dict(num_feat=int(nfeat), num_evt=int(nevt), num_part=int(num_part),
+                    coord_idx=[int(c) for c in coord], **PET_ARCH_FIXED)
+
+    return {
+        "schema": INFERENCE_CONTRACT_SCHEMA,
+        "pet_arch_step1": arch(num_feat_reco, meta["n_evt_reco"], coord_reco),
+        "pet_arch_step2": arch(num_feat_gen, meta["n_evt_truth"], coord_gen),
+        "event_features_reco": list(meta["feature_names"]),
+        "event_features_truth": list(meta["truth_feature_names"]),
+        "reco_cloud_cols": list(meta["reco_cloud_cols"]),
+        "reco_norm_mean": [float(x) for x in meta["reco_norm_mean"]],
+        "reco_norm_std": [float(x) for x in meta["reco_norm_std"]],
+        "truth_norm_mean": [float(x) for x in meta["truth_norm_mean"]],
+        "truth_norm_std": [float(x) for x in meta["truth_norm_std"]],
+        "degenerate_reco_columns": list(meta["degenerate_reco_columns"]),
+        "degenerate_truth_columns": list(meta["degenerate_truth_columns"]),
+        "normalization_population": ("statistics returned by fullevent_fps_dataloader."
+                                     "build_fullevent_loaders over the rows it loaded (loader_args); "
+                                     "both halves were cut from those already-normalized arrays"),
+        "loader_args": dict(loader_args),
+        "step1_mc_weight_normalization_factor": float(step1_mc_normalization),
+        "multifold_name": str(multifold_name),
+        "weights_folder": os.path.abspath(weights_folder),
+        "checkpoint_semantics": ("engine ModelCheckpoint(save_best_only=True): best-val-loss "
+                                 "weights, NOT the last-epoch models that produced weights_push"),
+    }
 
 
 def parse_args(argv=None):
@@ -321,10 +381,17 @@ def main(argv=None):
                                  f"the engine multiplies it against float32 logits (fail closed)")
 
     P = reco.shape[1]
-    m1 = PET(reco.shape[-1], num_evt=meta["n_evt_reco"], num_part=P, num_transformer=2,
-             num_heads=2, projection_dim=32, local=True, K=3, coord_idx=coord_reco)
-    m2 = PET(gen.shape[-1], num_evt=meta["n_evt_truth"], num_part=P, num_transformer=2,
-             num_heads=2, projection_dim=32, local=True, K=3, coord_idx=coord_gen)
+    m1 = PET(reco.shape[-1], num_evt=meta["n_evt_reco"], num_part=P, **PET_ARCH_FIXED,
+             coord_idx=coord_reco)
+    m2 = PET(gen.shape[-1], num_evt=meta["n_evt_truth"], num_part=P, **PET_ARCH_FIXED,
+             coord_idx=coord_gen)
+    inference_contract = closure_inference_contract(
+        meta, num_feat_reco=reco.shape[-1], num_feat_gen=gen.shape[-1], num_part=P,
+        coord_reco=coord_reco, coord_gen=coord_gen,
+        loader_args={"inputs": os.path.abspath(a.inputs), "max_events": need,
+                     "seed": int(pol["subsample_seed"]), "bkg_mode": "mc-only"},
+        multifold_name="fe_powered", weights_folder=a.weights_folder,
+        step1_mc_normalization=fe.STEP1_MC_NORMALIZATION)
     of = MultiFold("fe_powered", m1, m2, pdata, mcB, niter=eff["niter"],
                    epochs=eff["epochs"], batch_size=eff["batch_size"],
                    early_stop=eff_early_stop,
@@ -350,7 +417,8 @@ def main(argv=None):
     rows_a, rows_b = imc[ia].astype(np.int64), imc[ib].astype(np.int64)
     np.savez_compressed(artifact, dump_rows_a=rows_a, dump_rows_b=rows_b,
                         weights_push=push.astype(np.float64),
-                        mc_indices=imc.astype(np.int64))
+                        mc_indices=imc.astype(np.int64),
+                        inference_contract=np.asarray(inference_contract, dtype=object))
     art_sha = sha256_file(artifact)
 
     print(f"[powered] gap={gap:.4f} floor={floor:.4f} residual={residual:.4f} "
@@ -389,7 +457,8 @@ def main(argv=None):
         # this driver believes it passed.
         "early_stop_patience": int(of.patience),
         "artifact": {"path": os.path.abspath(artifact), "sha256": art_sha,
-                     "contains": ["dump_rows_a", "dump_rows_b", "weights_push", "mc_indices"]},
+                     "contains": ["dump_rows_a", "dump_rows_b", "weights_push", "mc_indices",
+                                  "inference_contract"]},
         "source": {"inputs": os.path.abspath(a.inputs),
                    "inputs_sha256": sha256_file(a.inputs),
                    "producer_receipt": os.path.abspath(a.producer_receipt),

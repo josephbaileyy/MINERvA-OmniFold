@@ -99,7 +99,7 @@ PRODUCER="${REPO}/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12_RECEIPT.json"
 # Both are written in the one-line `[[ "$(sha_of "$VAR")" == "$EXPECTED_..." ]]` idiom because that is
 # the only form docs/orchestration/verify_hash_bindings.py's collect_shell can discover; these two
 # pins are why SHELL_PIN_FLOOR moves 13 -> 15 in the same commit that adds this file.
-EXPECTED_DRIVER_SHA="a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
+EXPECTED_DRIVER_SHA="ab92ffe5b35861077da0ec6181e993bf8b7e1e4a0332ebca2f506ffb717f8048"
 EXPECTED_PREFLIGHT_SHA="dee9aa20a49a89eb5553a4f75672cfde5e9ce05df8f4c9ae00095c549e5ce9bb"
 EXPECTED_INPUTS_SHA="fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
 EXPECTED_INPUTS_SIZE="9897374636"

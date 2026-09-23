@@ -78,7 +78,7 @@ PRODUCER="${REPO}/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12_RECEIPT.json"
 # the rule in verify_hash_bindings.py's docstring applies instead and the gate must be re-issued.
 # test_code_pins_are_discoverable_by_the_repo_verifier asserts this equals the driver's CURRENT sha,
 # so leaving it stale is not an option the suite permits.
-EXPECTED_DRIVER_SHA="a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48"
+EXPECTED_DRIVER_SHA="ab92ffe5b35861077da0ec6181e993bf8b7e1e4a0332ebca2f506ffb717f8048"
 EXPECTED_PREFLIGHT_SHA="dee9aa20a49a89eb5553a4f75672cfde5e9ce05df8f4c9ae00095c549e5ce9bb"
 EXPECTED_INPUTS_SHA="fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
 EXPECTED_INPUTS_SIZE="9897374636"

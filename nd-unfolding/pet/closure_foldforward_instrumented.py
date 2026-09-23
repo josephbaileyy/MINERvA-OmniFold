@@ -12,6 +12,10 @@ run receipts -- including `NONQUOTABLE-DIAGNOSTIC.INDEPENDENT_VALIDATION.slurm-5
 `test_powered_closure_preflight::…code_pins_are_discoverable…`: *"pin is stale"*) and would have made
 the 47/47 validation un-re-derivable at HEAD. **Repinning to make it pass is prohibited while
 receipts bind it** (BEN-270, and `docs/orchestration/HANDOFF-20260815-0455Z.md`'s `OI-123` note).
+(Superseded for one edit: on 2026-09-23 the driver gained its inference contract, KNOWN_ISSUES #31,
+under Joseph's ruling to fix now and re-pin with a record. It now hashes to
+`ab92ffe5b35861077da0ec6181e993bf8b7e1e4a0332ebca2f506ffb717f8048`; the receipts above still bind
+the old digest, which `git show <revision>:` recovers.)
 
 So this follows the pattern the campaign already uses for exactly this problem:
 `closure_powered_annealed_lr.py` adds the LR anneal without touching the engine OR the driver, by
@@ -184,8 +188,8 @@ def install_fold_forward_recorder(base, correct=False):
             """Record the push RunStep2 LEAVES, which is the only way the end-of-run value is seen.
 
             WHY THIS HOOK EXISTS AND THE RunStep1 ONE IS NOT ENOUGH. `Unfold` is
-            `for i in range(start, niter): RunStep1(i); RunStep2(i); CompileModels(fixed=True)`
-            (omnifold.py:172-177), and `RunStep2` assigns `self.weights_push` at :220. So the
+            `for i in range(start, niter): RunStep1(i); RunStep2(i)` (omnifold.py), and `RunStep2`
+            assigns `self.weights_push`. So the
             RunStep1 hook, which records at the point of CONSUMPTION, sees the pushes left by
             initialisation, `RunStep2(0)` and `RunStep2(1)` -- and **the push left by
             `RunStep2(niter-1)` is consumed by nothing and recorded by no row.** That last one is
@@ -198,9 +202,9 @@ def install_fold_forward_recorder(base, correct=False):
             artefact of the substitution (BEN-360, VL134).
 
             BIT-IDENTITY WITH WHAT THE DRIVER PERSISTS IS THE POINT, and it holds because nothing
-            between this hook and the driver's read touches the array: the loop's trailing
-            `CompileModels(fixed=True)` only recompiles models. Asserted rather than reasoned in
-            `test_the_final_capture_is_BIT_IDENTICAL_to_what_the_driver_persists`, which also shows
+            runs between this hook and the driver's read (the loop's dead trailing
+            `CompileModels(fixed=True)` was removed 2026-09-23, KNOWN_ISSUES #38). Asserted rather
+            than reasoned in `test_the_final_capture_is_BIT_IDENTICAL_to_what_the_driver_persists`, which also shows
             a pre-delegation capture FAILING the same assertion so the test has power (BEN-314).
 
             The first `niter-1` of these rows DUPLICATE RunStep1 rows by construction -- the push
@@ -258,8 +262,8 @@ FOLD_FORWARD_NOTE = (
     "measurement of the estimator -- read iterations 1 and 2. Reco leg per D1. step1_class_ratio is "
     "derived from THIS run's pdata/mcB and is NOT meta['target']['step1_class_ratio'], which "
     "describes the nominal target rather than this A/B split with an injected tilt (BEN-312). The "
-    "closure driver itself is UNMODIFIED and still hashes to its pinned "
-    "a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48."
+    "closure driver itself is not modified by this wrapper and hashes to its pinned "
+    "ab92ffe5b35861077da0ec6181e993bf8b7e1e4a0332ebca2f506ffb717f8048."
 )
 
 
