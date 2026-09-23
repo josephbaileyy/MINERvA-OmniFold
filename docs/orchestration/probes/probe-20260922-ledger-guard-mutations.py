@@ -40,14 +40,15 @@ HERE = Path(__file__).resolve().parent
 GUARD = HERE / "probe-20260922-ledger-reconciles.py"
 REPORT = HERE.parent / "REPORT-20260922-review-residue.md"
 
-TOTAL_RE = re.compile(r"\*\*TOTAL: self rounds 1[–-]\d+ = [0-9+]+ = (\d+);", re.S)
+# ⚠ the WHOLE sentence: an earlier pattern stopped at the self-round total, so the "hidden in a comment"
+# case hid only a prefix and tested something other than its label (review #12b)
+TOTAL_RE = re.compile(r"\*\*TOTAL: self rounds 1[–-]\d+ = [0-9+]+ = (\d+);\s*independent reviews =\s*[0-9+]+ = \d+; TOTAL \d+\.\*\*", re.S)
 
 # Each regression rewrites the guard back to a defect a reviewer actually found.
 REGRESSIONS = {
     "R1 block ends at first non-table line (review #9's class)": (
-        'end = next((i for i in range(h + 1, len(lines)) if not lines[i].strip()), len(lines))',
-        'end = next((i for i in range(h + 1, len(lines))\n'
-        '                if not lines[i].strip().startswith("|")), len(lines))'),
+        'if not lines[i].strip(" \\t") or _block.match(lines[i])), len(lines))',
+        "if not lines[i].strip().startswith('|')), len(lines))"),
     "R2 duplicate ledger HEADER allowed (review #9)": (
         'if len(heads) > 1:', 'if False:'),
     "R3 TOTAL multiplicity allowed (review #8)": (
@@ -71,6 +72,18 @@ REGRESSIONS = {
     "R12 NO VERDICT row may report findings in its note (review #11b)": (
         'unclassified.append("NO VERDICT row whose note reports findings: " + l[:60]); continue',
         'pass'),
+    'R13 comment-stripping blind to code spans (review #12b)': ('text = re.sub(r"(?<!`)(`+)(?!`).+?(?<!`)\\1(?!`)", _hold, text, flags=re.S)',
+        'text = text'),
+    'R14 link reference definitions not stripped (review #12b)': ('text = re.sub(r"(?m)^ {0,3}\\[[^\\]]+\\]:[^\\n]*\\n?", "", text)',
+        'text = text'),
+    'R15 HTML entities not decoded (review #12b)': ('text = html.unescape(text)',
+        'text = text'),
+    'R16 orphan labels matched only at the start of cell 1 (review #12b)': ('return bool(re.search(r"(\\b\\d+\\s+self\\b|\\bagy\\b)", lab, re.I))',
+        'return bool(re.match(r"(\\d+\\s*\\(self|agy\\b)", lab.strip(), re.I))'),
+    'R17 NO VERDICT note wordings narrowly matched (review #12b)': ('if re.search(_num, rest, re.I) and re.search(_what, rest, re.I):',
+        'if re.search(r"\\b(\\d+|one|two|six)\\b[^|]{0,40}\\b(findings?|defects?)\\b", rest, re.I):'),
+    'R18 block ends only at a strip()-blank line (review #12b)': ('if not lines[i].strip(" \\t") or _block.match(lines[i])), len(lines))',
+        'if not lines[i].strip()), len(lines))'),
 }
 
 
@@ -109,6 +122,10 @@ def build_cases(orig):
     anchor = _last_self_row(orig)
     tail = _last_table_row(orig)
     agy0 = _first_agy_row(orig)
+    r46 = next(l for l in orig.splitlines() if re.match(r"^\| 46 \(self\)", l))
+    one_digit_agy = next(l for l in orig.splitlines()
+                         if re.match(r"^\|\s*\*{0,2}agy", l, re.I) and re.search(r"\|\s*\*\*\d\*\*\s*\|", l))
+    r_last_agy = [l for l in orig.splitlines() if re.match(r"^\|\s*\*{0,2}agy", l, re.I)][-1]
     m = TOTAL_RE.search(orig)
     if not m:
         raise SystemExit("[mutations] CANNOT LOOK :: no TOTAL sentence of the expected shape")
@@ -178,6 +195,31 @@ def build_cases(orig):
         # split, so it tested nothing; this one PASSES only if escaped pipes are honoured.
         ("CONTROL correct ledger with an escaped pipe in a label",
          orig.replace(agy0, agy0.replace("(independent)**", "(independent)** \\| retry 9", 1), 1), (0,)),
+        # --- review #12b: the guard's sixth defeat, and two false refusals
+        # a CONTROL, deliberately: with the markers inside code spans nothing is hidden, so a correct
+        # ledger must PASS; the guard's old comment-stripping swallowed the row between them (R13)
+        ("CONTROL comment markers inside code spans hide nothing",
+         orig.replace(r46, r46[:-1] + " `<!--` |", 1).replace(r_last_agy, r_last_agy[:-1] + " `-->` |", 1), (0,)),
+        ("an HTML entity that renders as a different count",
+         orig.replace(agy0, re.sub(r"\*\*(\d+)\*\*", lambda mm: "**&#" + str(48 + int(mm.group(1)) % 10) + ";**", agy0, count=1), 1), (1, 2)),
+        ("reconciling TOTAL hidden in a link reference definition, visible one stale",
+         orig.replace(total_line, "[//]: # (" + total_line.replace("**", "") + ")\n\n" + stale_total, 1), (1, 2)),
+        *[(f"orphan below a whitespace line: {lab[:22]}", orig.replace(tail, tail + "\n   \n" + lab, 1), (1, 2))
+          for lab in ("| <b>agy #99</b> | **6** | x |", "| **99** (self) | **3** | x |",
+                      "| #99 (self) | **3** | x |", "| review agy #99 | **6** | x |")],
+        *[(f"NO VERDICT row whose note says: {note}", after(tail, f"| **agy #99 (independent)** | NO VERDICT | {note} |"), (1, 2))
+          for note in ("died after reporting sixteen defects", "found 6 problems", "defects found: six")],
+        ("CONTROL a heading directly after the table", orig.replace(tail, tail + "\n## An aside", 1), (0,)),
+        ("CONTROL a blockquote directly after the table", orig.replace(tail, tail + "\n> an aside", 1), (0,)),
+        # CONTROLS that discriminate the "read what a reader sees" layers: a CORRECT ledger carrying
+        # something a reader cannot see must PASS. Refusal-only cases could not tell these layers
+        # from the TOTAL-multiplicity check, so R11/R14/R15 reported "redundant" (review #12b).
+        ("CONTROL a stale TOTAL hidden in an HTML comment is ignored",
+         orig.replace(total_line, total_line + "\n\n<!-- " + stale_total + " -->", 1), (0,)),
+        ("CONTROL a stale TOTAL hidden in a link reference definition is ignored",
+         orig.replace(total_line, total_line + "\n\n[//]: # (" + stale_total.replace("**", "") + ")", 1), (0,)),
+        ("CONTROL a single-digit count written as an HTML entity reads as that digit",
+         orig.replace(one_digit_agy, re.sub(r"\*\*(\d)\*\*", lambda mm: "**&#" + str(48 + int(mm.group(1))) + ";**", one_digit_agy, count=1), 1), (0,)),
         ("CONTROL untouched ledger", orig, (0,)),
     ]
     # ⚠ A MUTATION THAT DOES NOT MUTATE TESTS NOTHING, and this suite has shipped three of them.

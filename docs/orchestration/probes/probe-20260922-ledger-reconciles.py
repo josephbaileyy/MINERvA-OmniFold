@@ -21,6 +21,7 @@ shape. So the totals are no longer defended by care; they are defended by this c
 Exit 0 = the stated totals equal the ledger's own column sums. Exit 1 = they do not, naming both.
 Exit 2 = the ledger could not be parsed, which is a failure, not a pass.
 """
+import html
 import re
 import sys
 from pathlib import Path
@@ -81,7 +82,19 @@ def main() -> int:
     # ⚠ READ WHAT A READER SEES. Review #11b hid a reconciling TOTAL in an HTML comment beside a
     # visible stale one, and the guard read the hidden one. Comments are invisible when rendered,
     # so they are removed before anything is parsed -- a ledger row or TOTAL inside one does not exist.
+    # ⚠ BUT NOT INSIDE CODE SPANS: review #12b put `<!--` in one row's note and `-->` in another's, as
+    # code, and the comment regex swallowed the row between them -- GitHub showed both rows.
+    spans = []
+    def _hold(m):
+        spans.append(m.group(0)); return f"\x00{len(spans) - 1}\x00"
+    text = re.sub(r"(?<!`)(`+)(?!`).+?(?<!`)\1(?!`)", _hold, text, flags=re.S)
     text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
+    # a link reference definition (`[//]: # (...)`) is invisible when rendered too (review #12b hid a
+    # reconciling TOTAL in one)
+    text = re.sub(r"(?m)^ {0,3}\[[^\]]+\]:[^\n]*\n?", "", text)
+    text = re.sub(r"\x00(\d+)\x00", lambda m: spans[int(m.group(1))], text)
+    # HTML entities render as characters: `&#48;` SHOWS as 0 and was read as 48 (review #12b)
+    text = html.unescape(text)
 
     # ⚠ THE BLOCK ENDS AT A BLANK LINE, NOT AT THE FIRST NON-TABLE LINE.
     # Review #9 defeated the previous rule three ways at once. It read "end at the first line that
@@ -107,7 +120,12 @@ def main() -> int:
               f"authoritative. Refusing.")
         return 2
     h = heads[0]
-    end = next((i for i in range(h + 1, len(lines)) if not lines[i].strip()), len(lines))
+    # CommonMark: a line is blank only if it holds spaces or tabs (Python's strip() also eats a
+    # non-breaking space, which GitHub keeps as an empty row); and a table also ends where another
+    # block begins -- a heading or blockquote straight after the table is legitimate (review #12b).
+    _block = re.compile(r"^\s{0,3}(#|```|~~~|>|<[A-Za-z!/]|(\*\s*){3,}$|(-\s*){3,}$|(_\s*){3,}$)")
+    end = next((i for i in range(h + 1, len(lines))
+                if not lines[i].strip(" \t") or _block.match(lines[i])), len(lines))
     block = [l.strip() for l in lines[h + 1:end]]
 
     # ⚠ AND NO LEDGER ROW MAY SURVIVE OUTSIDE THE BLOCK.
@@ -125,8 +143,11 @@ def main() -> int:
         if not l.strip().startswith("|"):
             return False
         c = _cells(l.strip())
-        lab = re.sub(r"^[\s*_`\[\]()~>⚠-]+", "", c[0]) if c else ""
-        return bool(re.match(r"(\d+\s*\(self|agy\b)", lab, re.I))
+        # review #12b orphaned `<b>agy #12</b>`, `**55** (self)`, `#55 (self)` and `review agy #12`:
+        # strip tags and every decoration character, and look for the label ANYWHERE in cell 1
+        lab = re.sub(r"<[^>]+>", " ", c[0]) if c else ""
+        lab = re.sub(r"[*_`\[\]()~>#⚠-]", " ", lab)
+        return bool(re.search(r"(\b\d+\s+self\b|\bagy\b)", lab, re.I))
     orphans = [l.strip()[:80] for i, l in enumerate(lines) if not (h < i < end) and _orphan(l)]
     if orphans:
         print("[ledger] CANNOT LOOK :: ledger-shaped row(s) OUTSIDE the ledger block -- the table "
@@ -161,8 +182,11 @@ def main() -> int:
                 # ⚠ but a non-verdict row whose NOTE reports findings is not a non-verdict: review
                 # #11b moved "ended after finding six defects" into the next cell and it passed.
                 rest = " ".join(cells[2:])
-                if re.search(r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
-                             r"thirteen|fourteen|fifteen)\b[^|]{0,40}\b(findings?|defects?)\b", rest, re.I):
+                _num = (r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|"
+                        r"fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\b")
+                _what = r"\b(find|found|finding|findings|defects?|problems?|issues?|errors?)\b"
+                # review #12b: "sixteen defects", "found 6 problems", "defects found: six" all passed
+                if re.search(_num, rest, re.I) and re.search(_what, rest, re.I):
                     unclassified.append("NO VERDICT row whose note reports findings: " + l[:60]); continue
                 noverdict += 1; continue
             unclassified.append(l[:90]); continue
@@ -178,7 +202,8 @@ def main() -> int:
         print(f"[ledger] CANNOT LOOK :: parsed {len(selves)} self rows, {len(agys)} agy rows")
         return 2
 
-    flat = re.sub(r"\s+", " ", text)
+    # bold around the TOTAL's numbers is still the TOTAL a reader sees (review #12b)
+    flat = re.sub(r"\s+", " ", re.sub(r"\*\*", "", text))
     hits = list(TOTAL.finditer(flat))
     if not hits:
         print("[ledger] CANNOT LOOK :: no TOTAL line matching the expected shape")

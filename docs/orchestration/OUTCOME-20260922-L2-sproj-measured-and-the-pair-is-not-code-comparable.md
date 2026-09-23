@@ -33,18 +33,27 @@ terms and stay far inside; the failing leg differs least.** ⚠ **These differen
 attributed to releasing the five bands.** The two products differ in the band release **and** in
 code identity (`384c2eb1` against `d64257c3`, with different import closures — §3), so each
 delta is the combined effect of both, at one seed pair; §3's quotable statement already says
-*"what is unestablished is that the two members may be compared at all"*. ⚠ **And there is a THIRD
-difference, found by independent review #11a:** the pinned member's five lateral bands come from the
-ten baseline unfolds, whose receipts pin driver `unfold_blob dc74c38f…` (§2), while releasing them
-meant re-unfolding those same ten endpoints on today's driver, `662951e0…`; the ten-receipts record
-classifies that driver change as **SEMANTIC**, and all four commits that made it are dated 2026-08-19
-to 08-26, before the graded member was built. So the release and the driver change are inseparable
-here. ⚠ **This paragraph said *"Isolating the release needs the code-comparable rebuild §3a
-describes"*, which was wrong:** §3a's rebuild re-assembles Z at one HEAD, which would pass the
-grader's comparability check but leave the two drivers in place. Equalising the driver would mean
-re-unfolding the baseline endpoints, which this lane's governing instructions forbid because it
-destroys the adopted covariance's inputs. The release's effect alone is therefore not isolable
-within the constraints this lane ran under. ⚠ This paragraph previously
+*"what is unestablished is that the two members may be compared at all"*. ⚠ **The two products also differ in the unfold DRIVER's identity for the ten lateral endpoints,
+but that is not established as a difference in the result.** The pinned member's five lateral bands
+come from the ten baseline unfolds (`EVIDENCE-20260919-lateral-bands-are-seed-pinned.md` §1–§2),
+whose receipts pin driver `unfold_blob dc74c38f…` (§2); releasing them re-unfolded those endpoints
+on `662951e0…`. `OUTCOME-20260922-ten-adopted-receipts-superseded-by-code-drift.md` §4 establishes
+that this drift **preserves the unfolding arithmetic for the production invocation** and changes only
+the emitted provenance keys; its §3 label *SEMANTIC* means only that the receipts cannot be re-pinned
+under D2(b). For the seed-1242 invocation that equivalence was not separately measured, though the same
+code path applies, and the arithmetic-bearing modules the driver imports are unchanged between the two
+revisions. The graded members were already built this way: the k=0 member's detector arm ran on
+`662951e0` (job `57753244`, 2026-08-30, checkout `7ac0edec`) beside `dc74c38f` laterals, and the grader
+rated that pair comparable. ⚠ **This paragraph read, until 2026-09-22 (independent review #12a),** that
+the driver change made the release *"inseparable"* from a third confound and that the release's effect
+was therefore *"not isolable"* — an overreach that cited the *SEMANTIC* label as if it meant the
+arithmetic moved, when the record carrying that label says it did not. **What the records support:**
+the confounds are the band release and the Z-assembly code identity (§3). §3a's Z-only rebuild would
+remove the second, leaving the release beside a driver-identity difference whose arithmetic is
+established as unchanged for the production invocation. A member-local re-unfold of the ten endpoints
+on `dc74c38f` (reachable with `git cat-file -p 42268b6d:<path>`) would remove even that, without
+touching the adopted inputs — the current toolchain would reject its receipts, but no constraint of
+this lane forbids it. Neither was run. ⚠ This paragraph previously
 ended *"Releasing the five seed-pinned bands did **not** produce a large change in `s_proj`"* — a
 causal attribution this record's own §3 does not license; withdrawn at self-round 40.
 

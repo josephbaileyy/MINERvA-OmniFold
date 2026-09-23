@@ -46,7 +46,14 @@ import sys
 # GFM's delimiter row: optional leading/trailing pipe, each cell ":?-+:?", at least one pipe.
 SEP = re.compile(r"^\s{0,3}\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$|^\s{0,3}\|\s*:?-+:?\s*\|?\s*$")
 # a line that starts another block ends a GFM table; so does a blank line
-BLOCK_START = re.compile(r"^\s{0,3}(#|```|~~~|>|[-*+]\s|\d+[.)]\s)")
+BLOCK_START = re.compile(r"^\s{0,3}(#|```|~~~|>|[-*+]\s|\d+[.)]\s|<[A-Za-z!/]|(\*\s*){3,}$|(-\s*){3,}$|(_\s*){3,}$)")
+FENCE = re.compile(r"^\s{0,3}(```|~~~)")
+
+
+def strip_code_spans(text):
+    """Remove code spans PROPERLY: a span opens with a run of N backticks and closes with a run of
+    exactly N, so a double-backtick span may contain a single backtick (review #12b)."""
+    return re.sub(r"(?<!`)(`+)(?!`)(.+?)(?<!`)\1(?!`)", "", text)
 
 
 def cells(line):
@@ -67,8 +74,12 @@ def sweep(path):
         lines = open(path, encoding="utf-8").read().splitlines()
     except UnicodeDecodeError as e:
         return None, str(e)
-    out, i = [], 0
+    out, i, fenced = [], 0, False
     while i < len(lines) - 1:
+        if FENCE.match(lines[i]):
+            fenced = not fenced; i += 1; continue
+        if fenced:
+            i += 1; continue                # a table inside a fenced code block is code, not a table
         if "|" in lines[i] and SEP.match(lines[i + 1]) and not SEP.match(lines[i]):
             ncol, j = len(cells(lines[i + 1])), i + 2
             if len(cells(lines[i])) != ncol:
@@ -79,7 +90,7 @@ def sweep(path):
                     out.append((i + 1, "codespan-pipe", f"unescaped pipe in header {span[:40]}"))
             # the body runs to a blank line or another block -- NOT to the first line without a pipe:
             # GFM makes a pipe-less line into a ROW (self-round 29's torn tail rendered as a new row)
-            while j < len(lines) and lines[j].strip() and not BLOCK_START.match(lines[j]):
+            while j < len(lines) and lines[j].strip(" \t") and not BLOCK_START.match(lines[j]):
                 row = lines[j]
                 n = len(cells(row))
                 if not row.strip().startswith("|"):
@@ -92,9 +103,10 @@ def sweep(path):
                     if re.search(r"(?<!\\)\|", span):
                         out.append((j + 1, "codespan-pipe", f"unescaped pipe in {span[:40]}"))
                 for ci, cell in enumerate(cells(row)):
-                    if len(re.findall(r"(?<!\\)`", cell)) % 2:
+                    rest = strip_code_spans(cell)
+                    if len(re.findall(r"(?<!\\)`", rest)) % 2:
                         out.append((j + 1, "cell-parity", f"odd backticks in cell {ci}"))
-                    if len(re.findall(r"(?<!\\)\*\*", re.sub(r"`[^`]*`", "", cell))) % 2:
+                    if len(re.findall(r"(?<!\\)\*\*", rest)) % 2:
                         out.append((j + 1, "cell-parity", f"odd ** in cell {ci}"))
                 j += 1
             i = j
@@ -117,15 +129,21 @@ def main():
     here = os.getcwd()
     args = [os.path.relpath(os.path.abspath(a), root) for a in args]
     os.chdir(root)
+    named = bool(args)
+    # -z: `.split()` on newline output silently dropped every changed file with a space in its name
     files = args or [f for f in subprocess.run(
-        ["git", "diff", "--name-only", f"{base}..HEAD"], capture_output=True, text=True
-    ).stdout.split() if f.endswith(".md")]
+        ["git", "diff", "--name-only", "-z", f"{base}..HEAD"], capture_output=True, text=True
+    ).stdout.split("\0") if f.endswith(".md")]
     if not files:
         print("[gfm-tables] CANNOT LOOK :: no files"); return 2
     total, unread = 0, []
     for f in files:
         if not os.path.exists(f):
-            continue          # deleted in range: nothing to render
+            if named:          # a NAMED file that is not there was never read: that is not a pass
+                unread.append(f)
+            continue           # default mode: deleted in range, nothing to render
+        if not os.path.isfile(f):
+            unread.append(f); continue
         found, err = sweep(f)
         if err:
             unread.append(f); continue

@@ -117,7 +117,10 @@ The last bin on `eavail`, `q3` and `W` is a **catch bin to 100 GeV**. Dense grid
 
 ## 5. Self-checks — the appendix's own worked example, EXECUTED at build time
 
-Not asserted; run. **The build-time rows are all from `_build_report.json`**; ⚠ **the cross-machine re-measurements in the `y = M x_reported` row AND in the `λ` row are NOT in that file (⚠ this said *"the first row"*, whose two values ARE in it)** — it was produced on a second host (numpy `1.26.4`, macOS/Accelerate, 2026-09-22) and reproduced independently by a third reviewer.
+Not asserted; run. **The build-time rows are all from `_build_report.json`**; ⚠ **the cross-machine re-measurements in the `y = M x_reported` row AND in the `λ` row are NOT in that file (⚠ this said *"the first row"*, whose two values ARE in it)** — the `y = M x_reported` value was produced on a second host (numpy `1.26.4`, macOS/Accelerate,
+2026-09-22) and reproduced independently by a third reviewer; the `λ` row's cross-host values were
+measured later the same day by this lane, and have since been reproduced by independent review #12a.
+(⚠ This sentence credited both rows to the third reviewer, whose check predates the `λ` values.)
 
 | check | result |
 |---|---|
@@ -147,8 +150,10 @@ retained count is set by whatever cutoff is used — `26` at `1e-6`, `36` at the
 hardcodes, `41` at `numpy.linalg.matrix_rank`'s default, `42` at none
 (`docs/orchestration/state/CUTOFF-SCAN-20260922-publication-42x42.json`, ledger `VL145`). **A reader
 following a "rank should be 36" instruction with NumPy defaults would get 41 and wrongly conclude
-this package is corrupt.** Check `λ_min/λ_max ≈ 2.9e-15` and treat the object as ill-conditioned rather than as having a
-definite rank. ⚠ **Do not check `λ_min > 0`:** its sign is not meaningful at this noise floor (see the
+this package is corrupt.** Check that `|λ_min|/λ_max` is of order `1e-15` — the edge of double precision — and treat the object as
+ill-conditioned rather than as having a definite rank. (⚠ This read *"Check `λ_min/λ_max ≈ 2.9e-15`"*, a
+signed comparison that fails whenever `λ_min` comes out negative, so it smuggled back the sign check
+the next sentence withdraws.) ⚠ **Do not check `λ_min > 0`:** its sign is not meaningful at this noise floor (see the
 `λ` row in §5); this instruction included that check until 2026-09-22. `_build_report.json`'s
 `"lambda_min_positive": true` records what one computation returned, and is not a check either.
 

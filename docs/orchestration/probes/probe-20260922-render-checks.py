@@ -37,8 +37,13 @@ MD = MarkdownIt("commonmark").enable(["table", "strikethrough"])   # no linkify:
 
 
 def changed_md(base):
-    out = subprocess.run(["git", "diff", "--name-only", f"{base}..HEAD"], capture_output=True, text=True)
-    return [f for f in out.stdout.split() if f.endswith(".md") and os.path.exists(f)]
+    # -z: `.split()` here silently dropped changed files whose names contain a space; the review-#11b
+    # repair fixed only `ls-files` (review #12b)
+    out = subprocess.run(["git", "diff", "--name-only", "-z", f"{base}..HEAD"], capture_output=True, text=True)
+    return [f for f in out.stdout.split("\0") if f.endswith(".md") and os.path.exists(f)]
+
+
+HTML_REF = re.compile(r"""<(?:a|img)\b[^>]*?\b(?:href|src)\s*=\s*["']([^"']+)["']""", re.I)
 
 
 def added_lines(base, f):
@@ -67,21 +72,37 @@ def links(path, src, tracked, only=None):
         for c in (t.children or []):
             # images too: the docstring promised "every relative link", and review #11b found images
             # and directory links were never checked
-            if c.type not in ("link_open", "image"):
+            if c.type in ("html_inline",):
+                hrefs = HTML_REF.findall(c.content)     # <a href> and <img src> were never checked (review #12b)
+            elif c.type in ("link_open", "image"):
+                hrefs = [c.attrs.get("href", "") if c.type == "link_open" else c.attrs.get("src", "")]
+            else:
                 continue
-            href = c.attrs.get("href", "") if c.type == "link_open" else c.attrs.get("src", "")
+            for href in hrefs:
+                bad.extend(_check(path, href, tracked, t.map[0] + 1))
+    return bad
+
+
+def _check(path, href, tracked, line):
+    bad = []
+    if True:
+        if True:
             # markdown-it PERCENT-ENCODES hrefs: a tracked file with a space in its name was reported
             # missing as "MINERvA%20with%20..." (review #11b)
             href = unquote(href)
-            if re.match(r"^(https?:|mailto:|#)", href) or not href.split("#")[0]:
-                continue
-            tgt = os.path.normpath(os.path.join(os.path.dirname(path), href.split("#")[0]))
+            if re.match(r"^(https?:|mailto:|#)", href):
+                return bad
+            rel = re.split(r"[?#]", href)[0]          # `?plain=1` and `#anchor` are not part of the path
+            if not rel:
+                return bad
+            # a leading `/` is REPOSITORY-root-relative on GitHub, not filesystem-root (review #12b)
+            tgt = os.path.normpath(rel.lstrip("/") if rel.startswith("/") else os.path.join(os.path.dirname(path), rel))
             if not os.path.exists(tgt):
-                bad.append((t.map[0] + 1, href, "missing"))
+                bad.append((line, href, "missing"))
             elif os.path.isfile(tgt) and tgt not in tracked:
-                bad.append((t.map[0] + 1, href, "untracked"))
+                bad.append((line, href, "untracked"))
             elif os.path.isdir(tgt) and not any(x.startswith(tgt.rstrip("/") + "/") for x in tracked):
-                bad.append((t.map[0] + 1, href, "directory holds no tracked file"))
+                bad.append((line, href, "directory holds no tracked file"))
     return bad
 
 
@@ -99,6 +120,10 @@ def controls(tracked):
     spaced = next((t for t in tracked if " " in t and t.startswith("docs/") and "/" not in t[5:]), None)
     if spaced and links("docs/x.md", f"[x](<{spaced[5:]}>)\n", tracked):
         print(f"[render] CONTROL FAILED :: a tracked file with a space in its name was reported"); ok = False
+    if links(probe, "[x](/KNOWN_ISSUES.md) and [y](CATALOG.md?plain=1)\n", tracked):
+        print("[render] CONTROL FAILED :: a repo-root-relative or query-suffixed link to a real file was reported"); ok = False
+    if not links(probe, '<a href="MISSING-CONTROL-html.md">x</a>\n', tracked):
+        print("[render] CONTROL FAILED :: a missing HTML <a href> target was not reported"); ok = False
     if not links(probe, "![x](MISSING-CONTROL-image.png)\n", tracked):
         print("[render] CONTROL FAILED :: a missing IMAGE target was not reported"); ok = False
     return ok
