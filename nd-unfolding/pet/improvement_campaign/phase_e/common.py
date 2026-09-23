@@ -224,4 +224,28 @@ def canonical_sha(obj: Any) -> str:
 
 
 def write_json(path: Path | str, payload: Mapping[str, Any], compact: bool = True) -> None:
-    scm.write_json(path, payload, compact=compact)
+    """`scalar_common.write_json` (which refuses NaN/Inf), with the offending key named."""
+    try:
+        scm.write_json(path, payload, compact=compact)
+    except ValueError as exc:
+        where = locate_nonfinite(payload)
+        raise ValueError(f"{exc}: first non-finite value at {where or 'unknown'}") from exc
+
+
+def locate_nonfinite(obj: Any, path: str = "") -> str | None:
+    """The path of the first NaN/Inf inside a nested result structure, for a usable refusal."""
+    if isinstance(obj, float) and not np.isfinite(obj):
+        return path or "<root>"
+    if isinstance(obj, np.ndarray):
+        return path if not np.isfinite(obj).all() else None
+    if isinstance(obj, Mapping):
+        for k, v in obj.items():
+            found = locate_nonfinite(v, f"{path}.{k}")
+            if found:
+                return found
+    elif isinstance(obj, (list, tuple)):
+        for i, v in enumerate(obj):
+            found = locate_nonfinite(v, f"{path}[{i}]")
+            if found:
+                return found
+    return None

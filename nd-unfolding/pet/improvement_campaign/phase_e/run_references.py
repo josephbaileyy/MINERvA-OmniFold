@@ -92,9 +92,12 @@ def transformed_reco(case: dist.Case, pseudo: dict[str, np.ndarray], mask: np.nd
     noise = dist.token_noise(pseudo["identity"][mask]) if case.reco.family == "R3" else None
     moved = case.reco.transform(base, noise)
     cell = cr.cell_index_of_events(moved["pt"], moved["ppar"], edges_pt, edges_pz)
+    nz = np.asarray(base["eavail"]) != 0.0        # E_avail is exactly 0 on events with no recoil
     rec = {"reco_distortion": case.reco.spec(), "reco_hash": case.reco.content_hash(),
            "moved_reco_cells": int((cell != pseudo["reco_cell"][mask]).sum()),
-           "reco_eavail_mean_ratio": float(np.mean(moved["eavail"] / base["eavail"]))}
+           "reco_eavail_zero_rows": int((~nz).sum()),
+           "reco_eavail_mean_ratio": (float(np.mean(moved["eavail"][nz] / base["eavail"][nz]))
+                                      if nz.any() else None)}
     return moved, cell, rec
 
 
