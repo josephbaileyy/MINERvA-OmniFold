@@ -131,11 +131,92 @@ The hashes are in `results/references.json` and `results/identifiability.json` b
 
 ## 2. The pool-T and pool-S input census
 
-(filled from `results/prepare.json`)
+All MEASURED by job `58780643` at commit `bf1f11e7` (2 min 11 s on one exclusive CPU node;
+`results/prepare.json`), before anything was scored. The caches are
+`/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseE1/prep/pool{T,S}.npz`
+(sha256 `4dbbfb670095…`, 1.44 GB; `57a0a78c8a41…`, 2.30 GB).
+
+| | pool T (STRESS) | pool S (SCALE) |
+|---|---:|---:|
+| events (all `pass_truth`) | 8,018,001 | 18,861,069 |
+| selected (`pass_reco`) | 3,356,843 | 7,893,556 |
+| w-weighted accepted fraction | 0.41583 | 0.41565 |
+| region: low acceptance / poor / moderate / good | 2,533,077 / 556,412 / 1,132,536 / 3,795,976 | 5,956,870 / 1,311,213 / 2,664,944 / 8,928,042 |
+| truth off the reporting grid | 0 | 0 |
+| non-finite true `q3` (D3 gives them weight 1) | 197 | 477 |
+| non-finite or sentinel reco values on selected rows | 0 | 0 |
+
+The accepted fraction matches the historical prior half's 0.4155 (B1), as it should: the pools are
+disjoint draws from the same inventory.
+
+**D1's frozen standardization against pool T's own.** Pool T's true-`E_avail` quartiles are
+p25 0.53108, p50 1.45949, p75 3.16153 GeV (IQR 2.63044), against the frozen development constants
+p50 1.46537, IQR 2.63367 — 0.4 % and 0.1 % apart. D1 is therefore one fixed function everywhere,
+at a cost of well under a percent of its coordinate.
+
+**D3's standardization** (`calibration/d3_standardization.json`, digest `dc53c373…`): the quartiles
+of true `E_avail`/`q3` over the 8,017,804 usable pool-T rows are p25 0.40408, p50 0.64921,
+p75 0.82325 (IQR 0.41916).
+
+**The `RecoQ3` inversion** that R1–R3 need: on the 3,356,843 selected pool-T rows, 17 (5·10⁻⁶) have
+no non-negative root and take q0 = q3; the recomputed q3 reproduces the stored one to
+2.8·10⁻¹⁴ GeV. The recovered q0 has quartiles 0.569 / 1.284 / 2.772 GeV, and 916 rows have
+q0 below `E_avail`/1.17 (q0 is the full calorimetric recoil, so it should normally exceed it).
+
+**What the stored tokens hold, which is what R3 acts on.** 3,350,456 selected events have stored
+cluster energy and 6,387 have none (their reco `E_avail` is exactly 0, and R3 leaves them alone).
+The ratio reco `E_avail` / Σ(stored token energy) has quartiles 1.63 / 2.58 / 3.97: with the 1.17
+calorimetric factor, the ≤ 12 stored clusters hold a median ≈ 45 % of the tracker+ECAL recoil
+energy, and 2,856,291 events (85 %) fill all 12 slots. R3's ρ is therefore built from the
+highest-energy clusters, which dominate the quadrature sum but are not all of it (§1.3, §6).
+
+**`part_gen` truncation, which is what D4 counts through.** 200,368 events (2.5 %) fill all 12
+truth-hadron slots and may have lost hadrons below the 12th; mean stored counts are 1.213 (π±),
+0.626 (π⁰), 1.428 (p), 0.988 (n).
+
+**D5's coverage:** 6,300,197 pool-T events (78.9 % of the truth weight) fall inside the 3D
+phase space where the generator predictions are defined; the remaining 1,717,804 keep weight 1.
+
+**The committed D5 tables were rebuilt from the canonical ROOT files on Perlmutter** and every
+table digest and source sha256 agreed (`results/d5_rebuild_check.json`). The rebuild ran through
+the OI-136 guard on a login node because `root_6_28`'s PyROOT segfaults in cling on this machine
+(job `58756787`) and the NERSC python module supplies `uproot` instead.
 
 ## 3. Identifiability
 
-(filled from `results/identifiability.json`)
+MEASURED by jobs `58780734` (the null) and `58780834` (the distortions) at commit `eba430eb`, on
+one replicate of the `E1-identifiability` family: two disjoint 600,111-event samples from pool T,
+the probe distorted, a HistGradientBoosting classifier on (reco p_T, p‖, `E_avail`, `q3`, stored
+token count, stored token ΣE), 50/50 train/test, statistic = weighted test AUC − 0.5.
+
+**The null** (20 equal-model splits, both samples undistorted): mean +0.00021, sd 0.00128, 95 %
+band [−0.00191, +0.00197], max +0.00202. Two undistorted samples of this size differ in the
+seven-bin reco `E_avail` spectrum by L1 = 0.0059 on average (max 0.0089) — the noise floor any
+reco-level displacement has to clear. The **positive controls are in the same table**: D1 at
+±0.70 gives AUC − 0.5 = +0.17 and +0.077, so the machinery has power where power is expected, and
+a "not distinguishable" verdict below is not a silent failure of the measurement.
+
+**Every truth distortion is distinguishable** at the historical pseudodata size, by 2.6× to 78× the
+threshold. The weakest is D4d (neutron multiplicity), the predeclared hidden-variable test:
++0.0126 (×1.3) and +0.0055 (÷1.3) against a threshold of ≈ 0.0022, with a reco `E_avail`
+displacement of only 0.009–0.011 — it is detectable, but through the parts of the event that are
+not `E_avail`.
+
+**The response distortions are at or below the floor.** R1 (±5 % hadronic scale) is clearly
+distinguishable (+0.022, +0.024; reco `E_avail` L1 0.034–0.036). R2 at +1 % sits on the threshold
+(+0.00229 against 0.00213) and R2 at −1 % does not clear it (−0.00019); **R3 as implemented does
+not clear it either** (−0.00137, reco `E_avail` L1 0.0008). R3's predeclared σ = 10 % per cluster
+becomes a much smaller displacement of the `E_avail` marginal: smearing ~12 clusters independently
+and summing averages the fluctuation down to a few percent, and a symmetric convolution barely
+moves a seven-bin marginal. **These are reported as unprobed at this sample size, not as harmless**
+(protocol §7): the recovery numbers for them in §4 are measured under a distortion the data cannot
+distinguish from no distortion at all.
+
+**The weighted-sample correction is real but small.** The ESS-scaled threshold rises from 0.00197
+(raw 97.5th percentile) to at most 0.00274 (D1 at +0.70), and the permutation null run for the
+three most weight-dispersed cases (D1 ±0.70, D5 GiBUU, 5 splits each) lands in the same band as the
+equal-model null (e.g. D5 GiBUU: −0.0013 … +0.0020), so the scaling is not doing hidden work. No
+verdict in the table differs between the raw and the scaled threshold.
 
 ## 4. The scalar references under distortion
 
