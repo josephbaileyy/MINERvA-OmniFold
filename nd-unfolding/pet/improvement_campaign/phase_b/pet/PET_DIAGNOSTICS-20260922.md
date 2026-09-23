@@ -8,16 +8,14 @@ later and can never be reused as confirmatory data.
 
 ## Running status (resume anchor; newest first)
 
-- 2026-09-23 05:30Z (code `db8b7184`): exp 1 DONE (§1), exp 2 DONE at 12 epochs (§3) -> truth side
-  for exp 5 = **T1 (PDG one-hot)**. Running as self-chaining `gpu_debug` jobs (2 iterations per
-  30-min job; resume is bit-exact): chain `k10a` (`58781966`: H K=10 s1-s2 = exp 3 + exp-4
-  reference, S1 s1-s2) and chain `k10b` (`58781967`: M = efficiency-corrected step 2 s1-s2, S2
-  s1-s2). Each run has iteration 0 done (k10a) and is scored in-job when it completes. Still queued
-  as a lottery ticket: `58769968` (exp 2 at 32 epochs, preempt, code `5634768e`).
-- Next: when k10a/k10b complete -> exp 3 tables (step-wise closure), exp 4 (S1, S2, M vs H);
-  then S3 + H s3-s4 chain; then exp 5 (C1-C4, T1 truth side, the best schedule and miss rule).
-- Dropped/deferred so far because of the queue: exp 2 at 32 epochs (12 run instead; the 32-epoch
-  job stays queued), T-arm seeds beyond 2.
+- 2026-09-23 10:45Z: exp 1 DONE (§1), exp 2 DONE (§3, 12 and 32 epochs), exp 3 DONE (§4), exp 4
+  DONE for S1, S2 and M (§5). Exp 5 running as two self-chaining `gpu_debug` chains from code
+  `9d64b0da` (`58785788`: C1-C4 seed 1 -> `phaseB2/e5c1/`; `58785789`: C1-C4 seed 2 ->
+  `phaseB2/e5c2/`), T1 truth side, H schedule, CARRY-misses (the robust rule, §5); runs score
+  themselves on completion. The preempt copy of exp 5 (`58781990`) was cancelled unstarted.
+- Next: harvest exp 5 -> §6; then, if budget allows, the best C arm in efficiency-corrected mode.
+- Dropped/deferred because of the queue (say so, do not read as nulls): S3 (2x epochs with
+  patience) and the S-combination; H at K=10 seeds 3-4; seeds beyond 2 for every K=10 arm.
 
 ## Measured queue waits (elapsed time is this task's binding constraint, not node-hours)
 
@@ -144,6 +142,89 @@ What this measures:
    injected coordinate. **The development tilt is an exact function of true E_avail, so T2/C3 make
    this particular closure easy by construction**; Phase E's other distortions are what test them.
 
+**32 epochs** (job `58769968`, preempt, code `5634768e`; `results/b2e2-T*.truth_only.json`): at the
+best-validation epoch T0 **0.911 ± 0.018**, T1 **0.950 ± 0.026**, T2 **0.976 ± 0.001**; the mean over
+epochs 17-32 is 0.89 (T0) and 0.94 (T1). Longer training does not lift the plateau and does not
+remove the epoch-to-epoch fluctuation. (A different noise realization of the same recipe from the
+12-epoch runs: that job predates the B2 driver's per-step seeding.)
+
 What it does NOT establish: that step 2 is not limiting INSIDE the unfolding, where its class-1
 weights are the step-1 pull rather than the true tilt and the fit at iterations >= 1 runs at 1e-5
 (experiment 3 measures that); anything about detector-level recovery.
+
+## 4. Experiment 3 — step-wise closure inside the unfolding, H at K = 10 (MEASURED, 2 seeds)
+
+The historical as-executed recipe through the B2 driver (`b2e3-H-K10-s{1,2}`, chain `k10a`,
+jobs 58780657 -> 58781966 -> ... , code `b1ea0056`/`db8b7184`, bit-exact resume), scored at every
+iteration by `b2_score.py`. Columns: `push` = the historical score; `pull` = the same score of the
+pulled weights; step-1 detector-level recovery of the PULLED weights against the ORIGINAL prior, in
+reco E_avail (7 endpoint bins, the analysis definition), the muon (pT, p‖) cells, the stored-cluster
+energy sum (deciles) and count; `acc` / `miss` = truth E_avail recovery over the reco-passing
+events alone / the misses alone (targets: half A x tilt over the same class); ESS/n of
+w_truth x push; the 99.9th percentile of the push.
+
+| k | push | pull | reco E_avail | muon cells | stored ΣE | stored n | pull (acc) | push (acc) | push (miss) | ESS/n | push p99.9 |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 0.164 | 0.191 | 0.656 | 0.657 | 0.686 | 0.820 | 0.591 | **0.313** | 0.098 | 0.874 | 1.75 |
+| 3 | 0.334 | 0.363 | 0.824 | 0.629 | 0.845 | 0.900 | 0.723 | 0.554 | 0.212 | 0.844 | 2.19 |
+| 10 | **0.506** | 0.512 | 0.940 | 0.725 | 0.938 | 0.954 | 0.841 | 0.774 | **0.378** | 0.786 | 3.23 |
+
+(means of seeds 1-2; full per-iteration tables with spreads in `results/summary.json` via
+`b2_summarize.py`; regions at k = 10: low 0.172, moderate 0.539, good 0.816.)
+
+Where the correction is lost (MEASURED on this closure):
+
+1. **Not at step 1, at the detector level**: after one iteration the pulled weights already remove
+   66 % of the reco E_avail pseudo-data/prior difference and 94 % by k = 10; the stored-cluster
+   energy sum and count close likewise. The muon-cell difference closes less (0.63-0.73) — that
+   residual is small in absolute terms and at the level of the halves' finite-sample difference.
+2. **In the step-2 fit under the carry-misses rule**: over the ACCEPTED events the pull holds 0.59
+   of the truth displacement at k = 1 but the step-2 output keeps only 0.31 of it. The class-1
+   weights of every miss are the previous push, unchanged, so the classifier is trained on a truth
+   sample whose correction is diluted by the 58 % of events that carry none.
+3. **In extrapolation to the misses**: the misses recover 0.10 at k = 1 and 0.38 at k = 10.
+   Recovery keeps rising at k = 10 (0.455 -> 0.506 over the last two iterations); the historical
+   k = 3 sits on the steep part of the curve (0.334 here, 0.311 ± 0.028 in exp 1).
+4. Weight tails grow with k (p99.9 1.75 -> 3.23, ESS/n 0.87 -> 0.79) — moderate, no saturation.
+
+Together with exp 2 (step 2 given the TRUE tilt learns 0.90-0.95), this says the historical
+shortfall is a property of how the unfolding moves correction from accepted events to misses and
+of stopping at k = 3, much more than of the PET's representation on either side. INFERRED from
+these measurements, and scoped to this closure: the development tilt is a smooth function of
+true E_avail, the variable the truth side sees.
+
+## 5. Experiment 4 — schedule and miss handling against H, K = 10 (MEASURED, 2 seeds)
+
+One factor at a time, both steps, truth-side inputs held at the executed T0 representation.
+`M` = the H recipe with the driver's opt-in **efficiency-corrected step 2** (trained on the
+reco-passing events alone, the learned truth-level ratio applied to all truth events; Huang et al.
+arXiv:2504.06857 §V.A; `b2_driver.B2MultiFold.RunStep2`, default path unchanged).
+
+| arm | k = 1 | 3 | 5 | 10 | low (k=10) | moderate | good | paired Δ vs H at k = 10 [s1, s2] |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| H (carry misses, anneal to 1e-5, last epoch) | 0.164 | 0.334 | 0.404 | 0.506 ± 0.025 | 0.172 | 0.539 | 0.816 | — |
+| S1: no forced 1e-5 (4e-4 every iteration) | 0.164 | 0.326 | 0.415 | 0.496 ± 0.018 | 0.144 | 0.559 | 0.833 | −0.010 [+0.021, −0.041] NOT RESOLVED |
+| S2: best-validation epoch handed on | 0.136 | 0.290 | 0.354 | 0.452 ± 0.015 | 0.147 | 0.467 | 0.726 | **−0.054** [−0.047, −0.062] |
+| **M: efficiency-corrected step 2** | 0.418 | 0.608 | 0.707 | **0.817 ± 0.003** | **0.667** | 0.835 | 0.884 | **+0.310** [+0.330, +0.290] |
+
+(S3 — 16 epochs with patience — was not run: queue; see status.) Files:
+`results/b2e3-H-K10-s*.scores.json`, `results/b2e4-{S1,S2,M}-K10-s*.scores.json`.
+
+1. **Miss handling dominates everything measured so far** (MEASURED): +0.27 at k = 3 and +0.31 at
+   k = 10, both seeds, 10 x the paired spread. M passes the historical 0.556 floor already at k = 3
+   (0.608) and exceeds the 0.695 reference by k = 5; the low-acceptance region goes from 0.17 to
+   0.67. Over accepted events M's step 2 keeps what the pull holds (k = 1: 0.566 vs 0.591), and the
+   misses reach 0.76 at k = 10. This reproduces at PET level what Phase F found for scalar
+   OmniFold (0.582 -> 0.783).
+2. **The schedule factors do not help**: removing the forced 1e-5 changes nothing resolvable;
+   handing on the best-validation epoch is WORSE by 0.05 on both seeds (the validation loss of a
+   weighted classifier does not select the epoch whose ratio recovers best; cf. the epoch
+   fluctuation of exp 2).
+3. **Caveat that governs how M may be used** (scope, and Phase E1 `phase_e/PHASE_E_SCALAR-20260922.md`):
+   efficiency correction assumes the selection efficiency depends only on the truth variables the
+   step-2 classifier sees. The development tilt is an exact function of true E_avail, so this
+   closure flatters it; at scalar level it FAILS when a distortion changes the event mix inside a
+   truth bin (NuWro reweighting −0.20, proton multiplicity 0.31) while carry-misses is slower but
+   robust. **The miss rule is therefore a model-dependence choice, not a free improvement**, and
+   M is not a candidate until Phase E's hidden-variable distortions have tested it with the PET.
+   Experiment 5 runs in carry-misses mode for that reason.
