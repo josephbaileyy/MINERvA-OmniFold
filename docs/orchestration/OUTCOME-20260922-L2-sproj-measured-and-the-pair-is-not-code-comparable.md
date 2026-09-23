@@ -36,18 +36,25 @@ delta is the combined effect of both, at one seed pair; §3's quotable statement
 *"what is unestablished is that the two members may be compared at all"*. ⚠ **The two products also differ in the unfold driver's identity for the ten lateral endpoints, and
 whether that changes the result is NOT ESTABLISHED by any record.** The pinned member's lateral
 bands come from the ten baseline unfolds (`EVIDENCE-20260919-lateral-bands-are-seed-pinned.md`
-§1–§2), which pin driver `dc74c38f…` (§2); the released ones ran on `662951e0…`. What is known:
+§1–§2), which pin driver `dc74c38f…` (the ten-receipts record's §2); the released ones ran on `662951e0…`. What is known:
 (1) `OUTCOME-20260922-ten-adopted-receipts-superseded-by-code-drift.md` §4 shows arithmetic
 equivalence for *"one invocation from one path"* — seed 42, from the canonical checkout — and says it
 *"evaporates"* from any other; the L2 endpoints ran at seed 1242 from a different checkout, so that
 record does not cover them. (2) Indirect evidence, from review #13a: the L2 receipts' `surface_blobs`
-match `42268b6d` for the driver's non-driver closure, and their `merged_sha256`/`central5d_sha256`
+match `42268b6d` for five of the six non-driver modules they record — the sixth,
+`seed_offset_policy.py`, is imported by the newer driver and does not exist at `42268b6d` — and their `merged_sha256`/`central5d_sha256`
 match the baseline receipts. (3) The grader's comparability check reads only the Z builder's code
 identity (`z_grade.cross_member_validity`), never the unfold driver, so its verdicts say nothing
 about this difference. **No run isolates the release.** §3a's Z-only rebuild would leave the drivers
-different; and no existing launcher re-unfolds the laterals on `dc74c38f` at seed 1242 without
-writing into the adopted directory — the `dc74c38f`-era launcher hardcodes both that directory and
-`--seed 42`, and the L2 checkout's `standard/unfolds` is a symlink to the adopted one. ⚠ **This
+different; and no launcher EXAMINED re-unfolds the laterals on `dc74c38f` at seed 1242 — a scoped
+statement, not a universal: at `5afb7947^`, the last commit with that driver, **20** scripts call it, and
+three were examined, one of them at three revisions. Every revision of
+`run_p4_unfold_std.sh` that pairs with that driver (`42268b6d`, `f67352f5`, `a5178268`) passes a literal
+`--seed 42`, and the two that hardcode the canonical checkout would run today's driver (`662951e0`) there,
+not `dc74c38f`. The L2 checkout's `standard/unfolds` is moreover a symlink to the adopted one. Of the other two examined,
+`run_active_lateral_unfolds_interactive.sh` also passes `--seed 42`, and
+`sbatch_unfold_5d_detector_bkgaware_gpu.sh` takes a seed offset but re-unfolds the support family, not
+these endpoints. The remaining seventeen were not examined. ⚠ **This
 paragraph has now been rewritten four times, each time adding an inference that the next independent
 review refuted** (a SEMANTIC-means-changed reading; then a grader precedent that does not read the
 driver; a "most of the way" rebuild; a member-local route that does not exist). What remains is only
