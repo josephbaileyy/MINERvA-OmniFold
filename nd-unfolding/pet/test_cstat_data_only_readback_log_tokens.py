@@ -144,8 +144,10 @@ class old_fatal_config:
         return False
 
 
-def call(logs_dir, prefix=None):
-    """Invoke the real predicate. Returns (raised, message)."""
+def call(logs_dir, prefix=R.LAUNCHER_LOG_PREFIX):
+    """Invoke the real predicate with the prefix the DATA-ONLY caller passes unless told otherwise
+    (`launcher_log_prefix` is REQUIRED since 2026-09-23; there is no module default to fall back on).
+    Returns (raised, message)."""
     try:
         res = R.assert_member_logs(logs_dir, array_job_id=JOB, replica_index=IDX,
                                    bootstrap_seed=SEED, where=WHERE,
@@ -303,10 +305,38 @@ def main():
         d = write_logs(tmp, r_out, "")
         raised, info = call(d, prefix="[gate5-train]")
         ok("replica_family_log_passes_with_its_own_prefix", not raised, f"raised: {info}")
-        # And the default must NOT accept a replica log -- otherwise the parameter is decorative.
-        raised_def, msg_def = call(d)
+        # And the prefix the data-only CALLER passes must NOT accept a replica log -- otherwise the
+        # parameter is decorative. (Name kept from when this was a module default; since 2026-09-23 the
+        # parameter is required and this is the value `validate_gate5_data_only_artifacts` passes.)
+        raised_def, msg_def = call(d, prefix=R.LAUNCHER_LOG_PREFIX)
         ok("replica_log_REJECTED_under_the_data_only_default", raised_def
            and "appears 0 times" in msg_def, f"raised={raised_def} {msg_def}")
+
+    print("== 9. ISSUE-54 residual 1: launcher_log_prefix is REQUIRED, and the caller passes it ==")
+    with tempfile.TemporaryDirectory() as tmp:
+        d = write_logs(tmp, healthy_stdout(), "")
+        try:
+            R.assert_member_logs(d, array_job_id=JOB, replica_index=IDX, bootstrap_seed=SEED,
+                                 where=WHERE)
+            omitted = "no error"
+        except TypeError as e:
+            omitted = f"TypeError: {e}"
+        except SystemExit as e:
+            omitted = f"SystemExit: {e}"
+        ok("omitting_the_prefix_is_a_TypeError", omitted.startswith("TypeError")
+           and "launcher_log_prefix" in omitted, omitted)
+        for bad in (None, ""):
+            raised_bad, msg_bad = call(d, prefix=bad)
+            ok(f"prefix_{bad!r}_is_refused_not_defaulted", raised_bad
+               and "launcher_log_prefix must be a non-empty string" in str(msg_bad),
+               f"raised={raised_bad} {msg_bad}")
+    import ast
+    caller = HERE / "validate_gate5_data_only_artifacts.py"
+    calls = [n for n in ast.walk(ast.parse(caller.read_text()))
+             if isinstance(n, ast.Call) and getattr(n.func, "attr", None) == "assert_member_logs"]
+    kw = [{k.arg: ast.unparse(k.value) for k in c.keywords}.get("launcher_log_prefix") for c in calls]
+    ok("data_only_caller_passes_the_prefix_explicitly",
+       len(calls) >= 1 and all(v == "rb.LAUNCHER_LOG_PREFIX" for v in kw), f"{len(calls)} calls, {kw}")
 
     print(f"\n{P} passed, {len(F)} failed")
     for f in F:

@@ -1648,7 +1648,8 @@ class ReadbackCheckpointsAndLogs(unittest.TestCase):
 
     def _check(self, d):
         return self.rb.assert_member_logs(d, array_job_id=self.JOB, replica_index=self.IDX,
-                                          bootstrap_seed=self.SEED, where="unit")
+                                          bootstrap_seed=self.SEED, where="unit",
+                                          launcher_log_prefix=self.rb.LAUNCHER_LOG_PREFIX)
 
     def test_clean_logs_pass_and_the_job_id_is_caller_supplied(self):
         out = self._check(self._logs())

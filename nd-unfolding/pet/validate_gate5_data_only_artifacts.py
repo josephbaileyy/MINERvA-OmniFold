@@ -198,7 +198,8 @@ def validate_member(idx, family_root, *, array_job_id, expected_mc_indices, chec
     guarded("member_logs",
             lambda: rb.assert_member_logs(Path(family_root) / "logs", array_job_id=array_job_id,
                                           replica_index=idx, bootstrap_seed=seed,
-                                          where=f"replica_{idx:02d}"))
+                                          where=f"replica_{idx:02d}",
+                                          launcher_log_prefix=rb.LAUNCHER_LOG_PREFIX))
     return {"replica_index": idx, "verdict": "PASS" if not c.failed else "FAIL",
             "checks": c.summary(),
             "loader_sha256": ((receipt.get("code") or {}).get("loader") or {}).get("sha256"),

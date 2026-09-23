@@ -79,16 +79,15 @@ EXPECTED_LOADER_SHA256 = EXPECTED_CODE["loader"]
 # need editing when a third launcher appears.
 # LANE C'S RULING (RULING-20260819-lanec-issue54-frozen-deployment.md): the launcher token is a
 # PARAMETER of the reader, not a literal in it -- the fix belongs in the reader, parameterised, and never
-# in either producer. This constant is now only the DEFAULT for `assert_member_logs`'s
-# `launcher_log_prefix`, which is what lets ONE reader serve both families: the data-only launcher emits
+# in either producer. This constant is now only the VALUE the data-only caller passes as
+# `assert_member_logs`'s REQUIRED `launcher_log_prefix`, which is what lets ONE reader serve both families: the data-only launcher emits
 # "[gate5-do-train]" (:113/:124) and the REPLICA launcher `sbatch_gate5_replica_train_array.sh` emits
 # "[gate5-train]" (:62/:72). Those two are the SOLE producers of the two needles; the shared driver
 # produces ZERO of them (all 41 of its "[gate5-train]" sites are `raise` sites), so it can neither satisfy
 # nor rescue the exactly-once check.
-# NOT made a REQUIRED parameter, though that is the exact shape of `array_job_id` and would leave no
-# literal here at all: the sole caller is `validate_gate5_data_only_artifacts.py:199`, which is outside
-# this lane's file set, so requiring it would break a file this lane may not edit. The one-line caller
-# change is handed over rather than taken.
+# REQUIRED since 2026-09-23 (ISSUE-54 residual 1), the same shape as `array_job_id`: there is no default,
+# so a second caller cannot silently inherit the data-only prefix. The data-only caller
+# (`validate_gate5_data_only_artifacts.py`, member_logs) passes this constant explicitly.
 LAUNCHER_LOG_PREFIX = "[gate5-do-train]"
 DRIVER_FATAL_PREFIXES = ("[gate5-train]", "[gate5-dataonly]")
 
@@ -479,7 +478,7 @@ def assert_checkpoints_and_contract(train_dir, contract, *, where):
 
 
 def assert_member_logs(logs_dir, *, array_job_id, replica_index, bootstrap_seed, where,
-                       launcher_log_prefix=None):
+                       launcher_log_prefix):
     """Replaces :333 / :334 / :337 / :339 / :340 / :342 / :343 / :345.
 
     `array_job_id` IS A CALLER-SUPPLIED OPERAND, deliberately. The pinned validator takes it from a
@@ -494,9 +493,12 @@ def assert_member_logs(logs_dir, *, array_job_id, replica_index, bootstrap_seed,
     stdout is exactly how 57194055 failed while its logs looked short rather than wrong.
     """
     logs_dir = Path(logs_dir)
-    # Resolved here rather than in the signature so the module constant remains the ONE place the default
-    # lives; a default evaluated at def-time would silently outlive any change to it.
-    prefix = LAUNCHER_LOG_PREFIX if launcher_log_prefix is None else launcher_log_prefix
+    # REQUIRED, with no default: the launcher prefix names which producer wrote the log, and only the
+    # caller knows that. `None`/empty is refused rather than read as "the data-only one".
+    if not isinstance(launcher_log_prefix, str) or not launcher_log_prefix:
+        raise SystemExit(f"[gate5-dataonly] {where}: launcher_log_prefix must be a non-empty string, "
+                         f"got {launcher_log_prefix!r}; there is no default")
+    prefix = launcher_log_prefix
     idx, seed = int(replica_index), int(bootstrap_seed)
     out_p = logs_dir / f"train_{array_job_id}_{idx}.out"
     err_p = logs_dir / f"train_{array_job_id}_{idx}.err"
