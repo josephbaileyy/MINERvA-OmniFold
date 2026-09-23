@@ -103,12 +103,21 @@ def main() -> None:
     ap.add_argument("--output", type=Path, required=True)
     ap.add_argument("--null-splits", type=int, default=NULL_SPLITS)
     ap.add_argument("--only", nargs="*", default=None, help="distortion ids (default: all)")
+    ap.add_argument("--stage", choices=("all", "null", "distortions"), default="all",
+                    help="chunking for short `debug`-QOS jobs: compute the null once, then run "
+                         "distortions against it with --null-from")
+    ap.add_argument("--null-from", type=Path, default=None,
+                    help="reuse the `null` block of a previous output file")
+    ap.add_argument("--permutation", nargs="*", default=None,
+                    help="distortion ids for the permutation null (default: with --stage all, "
+                         "the two most weight-dispersed of the ids that ran)")
     args = ap.parse_args()
     t0 = time.perf_counter()
     prep = json.loads(args.prepare.read_text())
     cache = cm.load_cache(args.cache, prep["caches"]["T"]["sha256"])
     reg = dist.registry()
-    chosen = list(reg) if args.only is None else list(args.only)
+    chosen = ([] if args.stage == "null"
+              else (list(reg) if args.only is None else list(args.only)))
 
     design = rp.ReplicateDesign("T", "E1-identifiability", n_prior=SAMPLE, n_pseudo=SAMPLE)
     reps, draw_record = rp.draw_replicates(design, [0], cache["rows"], cache["identity"])
@@ -147,12 +156,24 @@ def main() -> None:
         out["sample_reco_eavail_l1"] = l1_on_endpoint(X_ref[:, 2], w_ref, X_probe[:, 2], w_probe)
         return out
 
-    # ---- the null: equal-model splits ------------------------------------------------------
-    null_design = rp.ReplicateDesign("T", "E1-identifiability-null", n_prior=SAMPLE,
-                                     n_pseudo=SAMPLE, disjoint=False)
-    null_reps, null_record = rp.draw_replicates(null_design, list(range(args.null_splits)),
-                                                cache["rows"], cache["identity"])
-    null = []
+    # ---- the null: equal-model splits (computed once, reused by later chunks) ---------------
+    if args.null_from is not None:
+        null_summary = json.loads(args.null_from.read_text())["null"]
+        null_summary["reused_from"] = {"path": str(args.null_from),
+                                       "sha256": scm.sha256_file(args.null_from)}
+        stat = np.array([r["auc_minus_half"] for r in null_summary["runs"]])
+        n_test = float(np.mean([r["n_test"] for r in null_summary["runs"]])) / 2.0
+        print(f"[ident] reusing the null of {args.null_from} "
+              f"({null_summary['splits']} splits)", flush=True)
+        null_reps = []
+        null_record = null_summary.get("draws")
+        null = null_summary["runs"]
+    else:
+        null_design = rp.ReplicateDesign("T", "E1-identifiability-null", n_prior=SAMPLE,
+                                         n_pseudo=SAMPLE, disjoint=False)
+        null_reps, null_record = rp.draw_replicates(null_design, list(range(args.null_splits)),
+                                                    cache["rows"], cache["identity"])
+        null = []
     for rep in null_reps:
         a = cm.take(cache, rep.prior_rows)
         b = cm.take(cache, rep.pseudo_rows)
@@ -166,16 +187,47 @@ def main() -> None:
         null.append(rec)
         print(f"[ident] null {rep.replicate:2d} AUC-0.5={rec['auc_minus_half']:+.5f} "
               f"L1={rec['sample_reco_eavail_l1']:.5f} {rec['seconds']:.0f}s", flush=True)
-    stat = np.array([r["auc_minus_half"] for r in null])
-    null_summary = {"splits": len(null), "mean": float(stat.mean()), "sd": float(stat.std(ddof=1)),
-                    "min": float(stat.min()), "max": float(stat.max()),
-                    "q2.5": float(np.percentile(stat, 2.5)),
-                    "q97.5": float(np.percentile(stat, 97.5)),
-                    "reco_eavail_l1_mean": float(np.mean([r["sample_reco_eavail_l1"]
-                                                          for r in null])),
-                    "reco_eavail_l1_max": float(np.max([r["sample_reco_eavail_l1"] for r in null])),
-                    "runs": null, "draws": null_record}
-    n_test = float(np.mean([r["n_test"] for r in null])) / 2.0
+    if args.null_from is None:
+        stat = np.array([r["auc_minus_half"] for r in null])
+        null_summary = {"splits": len(null), "mean": float(stat.mean()),
+                        "sd": float(stat.std(ddof=1)),
+                        "min": float(stat.min()), "max": float(stat.max()),
+                        "q2.5": float(np.percentile(stat, 2.5)),
+                        "q97.5": float(np.percentile(stat, 97.5)),
+                        "reco_eavail_l1_mean": float(np.mean([r["sample_reco_eavail_l1"]
+                                                              for r in null])),
+                        "reco_eavail_l1_max": float(np.max([r["sample_reco_eavail_l1"]
+                                                            for r in null])),
+                        "runs": null, "draws": null_record}
+        n_test = float(np.mean([r["n_test"] for r in null])) / 2.0
+
+    permutation: dict[str, Any] = {}
+
+    def payload() -> dict[str, Any]:
+        return {
+            "schema": "phase-e-identifiability/1", "commit": scm.repo_commit(),
+            "historical_sources": getattr(cm.historical, "_verified", None),
+            "stage": args.stage,
+            "design": {"features": list(FEATURES), "sample_size": SAMPLE,
+                       "train_test": "50/50, 80/20 fit/validation inside train",
+                       "classifier": {"model": "HistGradientBoostingClassifier", **HGB_PARAMS},
+                       "class_weight_total": CLASS_TOTAL,
+                       "statistic": "weighted test AUC - 0.5",
+                       "null": f"{null_summary['splits']} equal-model splits, both samples "
+                               f"undistorted",
+                       "verdict_rule": "distinguishable if the statistic exceeds the null's 97.5th "
+                                       "percentile (raw, and ESS-scaled for weighted samples)"},
+            "inputs": {"cache": str(args.cache), "cache_sha256": prep["caches"]["T"]["sha256"],
+                       "prepare": str(args.prepare),
+                       "prepare_sha256": scm.sha256_file(args.prepare),
+                       "pools": prep["pools"]},
+            "draws": draw_record, "null": null_summary, "permutation_null": permutation,
+            "distortions": results, "environment": cm.environment(),
+            "seconds": time.perf_counter() - t0,
+            "scope": ("simulation-only identifiability measurement on pool T; a distortion that "
+                      "is not distinguishable at this sample size is NOT unrecoverable; PET is "
+                      "diagnostic method development"),
+        }
 
     # ---- every distortion -------------------------------------------------------------------
     for i, name in enumerate(chosen):
@@ -213,12 +265,18 @@ def main() -> None:
               f"thr={scaled:.5f} recoL1={pop_reco_l1:.4f} truthL1={pop_truth_l1:.4f} "
               f"{'DISTINGUISHABLE' if rec['distinguishable_vs_scaled_null'] else 'not-dist.'} "
               f"{rec['seconds']:.0f}s", flush=True)
+        cm.write_json(args.output, payload())        # after every case: a killed job loses one
 
     # ---- permutation null for the most weight-dispersed truth distortions -------------------
     dispersion = sorted(((results[n]["ess_test_class1"] / results[n]["n_test_class1"], n)
                          for n in results if reg[n].kind == "truth_weight"))
-    permutation: dict[str, Any] = {}
-    for _ess_frac, name in dispersion[:2]:
+    if args.permutation is not None:
+        wanted = list(args.permutation)
+    elif args.stage == "all":
+        wanted = [n for _e, n in dispersion[:2]]
+    else:
+        wanted = []
+    for name in wanted:
         runs = []
         for j in range(PERMUTATION_SPLITS):
             g = np.random.default_rng(31_000 + j)
@@ -236,28 +294,7 @@ def main() -> None:
                         "weight dispersion with no dependence on the event, so this is the null "
                         "AT this ESS")}
 
-    payload = {
-        "schema": "phase-e-identifiability/1", "commit": scm.repo_commit(),
-        "historical_sources": getattr(cm.historical, "_verified", None),
-        "design": {"features": list(FEATURES), "sample_size": SAMPLE,
-                   "train_test": "50/50, 80/20 fit/validation inside train",
-                   "classifier": {"model": "HistGradientBoostingClassifier", **HGB_PARAMS},
-                   "class_weight_total": CLASS_TOTAL,
-                   "statistic": "weighted test AUC - 0.5",
-                   "null": f"{args.null_splits} equal-model splits, both samples undistorted",
-                   "verdict_rule": "distinguishable if the statistic exceeds the null's 97.5th "
-                                   "percentile (raw, and ESS-scaled for weighted samples)"},
-        "inputs": {"cache": str(args.cache), "cache_sha256": prep["caches"]["T"]["sha256"],
-                   "prepare": str(args.prepare), "prepare_sha256": scm.sha256_file(args.prepare),
-                   "pools": prep["pools"]},
-        "draws": draw_record, "null": null_summary, "permutation_null": permutation,
-        "distortions": results, "environment": cm.environment(),
-        "seconds": time.perf_counter() - t0,
-        "scope": ("simulation-only identifiability measurement on pool T; a distortion that is "
-                  "not distinguishable at this sample size is NOT unrecoverable; PET is "
-                  "diagnostic method development"),
-    }
-    cm.write_json(args.output, payload)
+    cm.write_json(args.output, payload())
     print(f"[ident] wrote {args.output} in {time.perf_counter() - t0:.0f}s")
 
 

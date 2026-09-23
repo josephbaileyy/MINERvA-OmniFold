@@ -82,6 +82,37 @@ def merge_references(files: list[Path]) -> dict[str, Any]:
     return merged
 
 
+def merge_identifiability(files: list[Path]) -> dict[str, Any]:
+    """Merge the identifiability chunks (one null chunk plus distortion chunks that reused it).
+
+    Refuses if two chunks carry different nulls: a statistic compared against a null it was not
+    measured beside is not the test this protocol declares.
+    """
+    merged: dict[str, Any] = {"schema": "phase-e-identifiability-merged/1", "distortions": {},
+                              "permutation_null": {}, "sources": []}
+    nulls: dict[str, Any] = {}
+    for path in sorted(files):
+        payload = json.loads(path.read_text())
+        merged["sources"].append({"path": str(path), "sha256": scm.sha256_file(path),
+                                  "commit": payload["commit"], "stage": payload.get("stage"),
+                                  "seconds": payload["seconds"],
+                                  "environment": payload["environment"]})
+        merged.setdefault("design", payload["design"])
+        merged.setdefault("inputs", payload["inputs"])
+        merged.setdefault("draws", payload["draws"])
+        merged.setdefault("historical_sources", payload.get("historical_sources"))
+        null = payload["null"]
+        key = f"{null['splits']}/{null['mean']:.12g}/{null['q97.5']:.12g}"
+        nulls[key] = {k: v for k, v in null.items() if k != "reused_from"}
+        merged["distortions"].update(payload["distortions"])
+        merged["permutation_null"].update(payload.get("permutation_null", {}))
+    if len(nulls) != 1:
+        raise SystemExit(f"[summarize] identifiability chunks carry {len(nulls)} different nulls; "
+                         "every statistic must be compared against the same one")
+    merged["null"] = next(iter(nulls.values()))
+    return merged
+
+
 def across_replicates(merged: dict[str, Any]) -> dict[str, Any]:
     """Mean and sd over replicates of the aggregate and regional recovery at k = 3, 10 and best."""
     out: dict[str, Any] = {}
@@ -131,8 +162,10 @@ def main() -> None:
         merged = merge_references(refs)
         merged["across_replicates"] = across_replicates(merged)
         cm.write_json(args.results_dir / "references.json", merged)
-    for name, pattern in (("identifiability", "identifiability/identifiability.json"),
-                          ("reference_assessment", "assessment/reference_assessment.json"),
+    ident = sorted(args.task_dir.glob("identifiability/identifiability*.json"))
+    if ident:
+        cm.write_json(args.results_dir / "identifiability.json", merge_identifiability(ident))
+    for name, pattern in (("reference_assessment", "assessment/reference_assessment.json"),
                           ("toy_reference", "toy/toy_reference.json"),
                           ("d5_rebuild_check", "d5check/d5_rebuild_check.json"),
                           ("prepare", "prep/prepare.json")):

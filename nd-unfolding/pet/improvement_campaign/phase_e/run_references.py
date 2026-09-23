@@ -126,11 +126,15 @@ def main() -> None:
     ap.add_argument("--ibu-iterations", type=int, default=30)
     ap.add_argument("--omnifold-iterations", type=int, default=10)
     ap.add_argument("--only", nargs="*", default=None)
+    ap.add_argument("--stop-after-seconds", type=float, default=0.0,
+                    help="start no further case once this much time has passed (0 = no limit); "
+                         "for short `debug`-QOS jobs, so a chunk ends cleanly and names what is "
+                         "left instead of being killed")
     ap.add_argument("--output-dir", type=Path, required=True)
     args = ap.parse_args()
     t0 = time.perf_counter()
-    out_dir = scm.refuse_historical_output(args.output_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
+    args.output_dir = scm.refuse_historical_output(args.output_dir)
+    args.output_dir.mkdir(parents=True, exist_ok=True)
     prep = json.loads(args.prepare.read_text())
     cache = cm.load_cache(args.cache, prep["caches"]["T"]["sha256"])
     b1_sha = scm.sha256_file(args.b1_populations)
@@ -176,7 +180,39 @@ def main() -> None:
         raise SystemExit("[refs] non-finite inputs on rows a step uses (fail closed)")
 
     results: dict[str, Any] = {}
+    path = args.output_dir / f"references_r{args.replicate}_c{args.chunk}of{args.chunks}.json"
+
+    def payload() -> dict[str, Any]:
+        return {
+            "schema": "phase-e-references/1", "commit": scm.repo_commit(),
+            "historical_sources": getattr(cm.historical, "_verified", None),
+            "replicate": args.replicate, "chunk": [args.chunk, args.chunks], "cases": names,
+            "cases_done": sorted(results), "cases_remaining": [n for n in names if n not in results],
+            "design": {"draw": draw_record, "prior_rows": int(prior["rows"].size),
+                       "pseudodata_rows": int(pseudo["rows"].size),
+                       "prior_pass_reco": int(s1p.sum()),
+                       "pseudodata_pass_reco": int(s1d.sum()),
+                       "ibu": {"reco_binning": "(p_T,p_par) cell x 7 reco E_avail bins",
+                               "n_bins": n_bins, "modes": list(bu.MODES),
+                               "normalization": "engine (both legs to 1e6)"},
+                       "gbdt": {"classifier": so.HGBRatio(seed=0).params,
+                                "reco_features": ["reco_pt", "reco_pparallel", "reco_eavail"],
+                                "truth_features": ["true_eavail", "true_pt", "true_pparallel",
+                                                   "true_q3"],
+                                "truth_median_fills": gen_fill},
+                       "endpoint_edges": endpoint_edges.tolist()},
+            "inputs": {"cache": str(args.cache), "cache_sha256": prep["caches"]["T"]["sha256"],
+                       "prepare": str(args.prepare), "b1_populations_sha256": b1_sha},
+            "results": results, "environment": cm.environment(),
+            "seconds": time.perf_counter() - t0,
+            "scope": ("simulation-only scalar references under predeclared distortions on pool T; "
+                      "not a bound, not a threshold; PET is diagnostic method development"),
+        }
+
     for name in names:
+        if args.stop_after_seconds and time.perf_counter() - t0 > args.stop_after_seconds:
+            print(f"[refs] time budget reached; {len(names) - len(results)} cases left", flush=True)
+            break
         case = all_cases[name]
         t_case = time.perf_counter()
         w_dist, targets, rec = case_weights(case, pseudo, cache)
@@ -273,33 +309,11 @@ def main() -> None:
               f"IBUeff k3={ibu_eff[2]['recovery']:.4f} k10={ibu_eff[9]['recovery']:.4f} "
               f"GBDT k3={of_rows[2]['recovery']:.4f} k10={of_rows[-1]['recovery']:.4f} "
               f"({time.perf_counter() - t_case:.0f}s)", flush=True)
+        cm.write_json(path, payload())           # after every case: a killed job loses one case
 
-    payload = {
-        "schema": "phase-e-references/1", "commit": scm.repo_commit(),
-        "historical_sources": getattr(cm.historical, "_verified", None),
-        "replicate": args.replicate, "chunk": [args.chunk, args.chunks], "cases": names,
-        "design": {"draw": draw_record,
-                   "prior_rows": int(prior["rows"].size), "pseudodata_rows": int(pseudo["rows"].size),
-                   "prior_pass_reco": int(s1p.sum()), "pseudodata_pass_reco": int(s1d.sum()),
-                   "ibu": {"reco_binning": "(p_T,p_par) cell x 7 reco E_avail bins",
-                           "n_bins": n_bins, "modes": list(bu.MODES),
-                           "normalization": "engine (both legs to 1e6)"},
-                   "gbdt": {"classifier": so.HGBRatio(seed=0).params,
-                            "reco_features": ["reco_pt", "reco_pparallel", "reco_eavail"],
-                            "truth_features": ["true_eavail", "true_pt", "true_pparallel",
-                                               "true_q3"],
-                            "truth_median_fills": gen_fill},
-                   "endpoint_edges": endpoint_edges.tolist()},
-        "inputs": {"cache": str(args.cache), "cache_sha256": prep["caches"]["T"]["sha256"],
-                   "prepare": str(args.prepare), "b1_populations_sha256": b1_sha},
-        "results": results, "environment": cm.environment(),
-        "seconds": time.perf_counter() - t0,
-        "scope": ("simulation-only scalar references under predeclared distortions on pool T; "
-                  "not a bound, not a threshold; PET is diagnostic method development"),
-    }
-    path = out_dir / f"references_r{args.replicate}_c{args.chunk}of{args.chunks}.json"
-    cm.write_json(path, payload)
-    print(f"[refs] wrote {path} in {time.perf_counter() - t0:.0f}s")
+    cm.write_json(path, payload())
+    print(f"[refs] wrote {path} in {time.perf_counter() - t0:.0f}s; "
+          f"{len(results)}/{len(names)} cases", flush=True)
 
 
 if __name__ == "__main__":
