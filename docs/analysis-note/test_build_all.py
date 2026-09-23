@@ -45,16 +45,39 @@ FAKE_LATEXMK = r"""#!/usr/bin/env bash
 tex="${!#}"
 t="${tex%.tex}"
 echo "latexmk: fake invoked for $tex with args: $*" >> "$BUILD_TEST_LOG"
+# Every real latexmk run leaves a .log. The clean one carries the T1/cmtt font-shape warning
+# every real build prints, so the happy path also proves that "undefined" alone is NOT flagged.
+clean_log() { printf "LaTeX Font Warning: Font shape \`T1/cmtt/m/it' undefined\n" > "${t}.log"; }
+unresolved_log() {
+  printf "LaTeX Warning: Reference \`sec:fake' on page 1 undefined on input line 3.\n" > "${t}.log"
+  printf "LaTeX Warning: There were undefined references.\n" >> "${t}.log"
+}
 case "$BUILD_TEST_MODE" in
   nothing-to-do)
     # The 2026-08-19 transcript, verbatim in shape: exit 0, touch nothing.
     echo "Latexmk: Nothing to do for '$tex'."
     ;;
   build)
+    printf '%%PDF-1.5 fake %s\n' "$t" > "${t}.pdf"; clean_log
+    ;;
+  build-no-log)
+    printf '%%PDF-1.5 fake %s\n' "$t" > "${t}.pdf"; rm -f "${t}.log"
+    ;;
+  unresolved-persist)
+    # The KNOWN_ISSUES-50 cold tree, when one more invocation does NOT resolve it.
+    printf '%%PDF-1.5 fake %s\n' "$t" > "${t}.pdf"; unresolved_log
+    ;;
+  unresolved-citation-persist)
     printf '%%PDF-1.5 fake %s\n' "$t" > "${t}.pdf"
+    printf "LaTeX Warning: Citation 'fake2026' on page 1 undefined on input line 3.\n" > "${t}.log"
+    ;;
+  unresolved-first-invocation-only)
+    # The KNOWN_ISSUES-50 cold tree as measured: unresolved after one invocation, clean after two.
+    printf '%%PDF-1.5 fake %s\n' "$t" > "${t}.pdf"
+    if [ -f "${t}.invoked" ]; then clean_log; else unresolved_log; touch "${t}.invoked"; fi
     ;;
   build-note-only)
-    if [ "$t" = "main_note" ]; then printf '%%PDF-1.5 fake\n' > "${t}.pdf"
+    if [ "$t" = "main_note" ]; then printf '%%PDF-1.5 fake\n' > "${t}.pdf"; clean_log
     else echo "Latexmk: Nothing to do for '$tex'."; fi
     ;;
   latexmk-semantics)
@@ -73,10 +96,10 @@ case "$BUILD_TEST_MODE" in
         exit 0
       fi
     fi
-    printf '%%PDF-1.5 fake\n' > "${t}.pdf"
+    printf '%%PDF-1.5 fake\n' > "${t}.pdf"; clean_log
     ;;
   build-then-edit-source)
-    printf '%%PDF-1.5 fake\n' > "${t}.pdf"
+    printf '%%PDF-1.5 fake\n' > "${t}.pdf"; clean_log
     sleep 1
     printf 'edited during the build\n' >> values.tex
     ;;
@@ -132,6 +155,11 @@ class BuildAllHarness(unittest.TestCase):
             p = self.sandbox / (t + ".pdf")
             p.write_text("%PDF-1.5 stale\n")
             os.utime(str(p), (old, old))
+            # The stale tree's clean logs came with it, so a "Nothing to do" run is refused by
+            # the marker check itself and not, incidentally, by the missing-log check.
+            lg = self.sandbox / (t + ".log")
+            lg.write_text("stale clean log\n")
+            os.utime(str(lg), (old, old))
 
     def run_build(self, mode, containment_rc="0", drop_latexmk=False):
         env = dict(os.environ)
@@ -279,6 +307,46 @@ class TestOtherRefusals(BuildAllHarness):
         self.assert_containment_not_reached(proc)
 
 
+class TestUnresolvedReferences(BuildAllHarness):
+    """KNOWN_ISSUES row 50: a cold tree exited 0 with `??` in all three PDFs."""
+
+    def test_unresolved_after_the_extra_invocation_FAILS_before_containment(self):
+        proc = self.run_build("unresolved-persist")
+        self.assertNotEqual(0, proc.returncode, proc.stdout)
+        self.assertIn("main_note.pdf has unresolved references after 2 latexmk", proc.stdout)
+        self.assertIn("Reference `sec:fake'", proc.stdout)
+        self.assertEqual(2, self.calls.count("fake invoked for main_note.tex"),
+                         "the extra cold-tree invocation must be tried exactly once")
+        self.assert_containment_not_reached(proc)
+
+    def test_an_unresolved_citation_alone_also_FAILS(self):
+        proc = self.run_build("unresolved-citation-persist")
+        self.assertNotEqual(0, proc.returncode, proc.stdout)
+        self.assertIn("has unresolved references", proc.stdout)
+        self.assert_containment_not_reached(proc)
+
+    def test_the_cold_tree_as_measured_converges_on_the_extra_invocation_and_passes(self):
+        proc = self.run_build("unresolved-first-invocation-only")
+        self.assertEqual(0, proc.returncode, proc.stdout)
+        for t in TARGETS:
+            self.assertEqual(2, self.calls.count("fake invoked for %s.tex" % t), self.calls)
+            self.assertIn("OK   %s.pdf written by this run" % t, proc.stdout)
+        self.assertIn("containment: reached", self.calls)
+
+    def test_a_clean_log_takes_one_invocation_and_font_shape_undefined_is_not_flagged(self):
+        proc = self.run_build("build")
+        self.assertEqual(0, proc.returncode, proc.stdout)
+        self.assertNotIn("has unresolved references after latexmk invocation", proc.stdout)
+        self.assertEqual(3, self.calls.count("latexmk: fake invoked"), self.calls)
+        self.assertIn("Font shape", (self.sandbox / "main_note.log").read_text())
+
+    def test_a_missing_log_FAILS_rather_than_passing_unread(self):
+        proc = self.run_build("build-no-log")
+        self.assertNotEqual(0, proc.returncode, proc.stdout)
+        self.assertIn("main_note.log does not exist", proc.stdout)
+        self.assert_containment_not_reached(proc)
+
+
 class TestContractsThatMustNotDrift(unittest.TestCase):
     """Static properties of the real script. The containment contract is not mine to change."""
 
@@ -325,6 +393,10 @@ MUTANTS = [
      '    echo "       Delete ${t}.pdf and its .aux/.fls/.fdb_latexmk, then re-run."\n    exit 1',
      '    echo "       Delete ${t}.pdf and its .aux/.fls/.fdb_latexmk, then re-run."'),
     ("m5-let-a-failed-latexmk-through", "if ! latexmk -g -pdf", "if ! : latexmk -g -pdf"),
+    ("m6-drop-the-final-reference-check",
+     'if grep -Eq "$unresolved_re" "${t}.log"; then', "if false; then"),
+    ("m7-no-extra-invocation", "max_invocations=2", "max_invocations=1"),
+    ("m8-accept-a-missing-log", 'if [ ! -f "${t}.log" ]; then', "if false; then"),
 ]
 
 

@@ -29,6 +29,24 @@
 #
 # Anything that fails these exits non-zero BEFORE the containment stage, because a check
 # that validated a stale artifact is worse than no check -- it reports a pass nobody earned.
+#
+# WHY THE BUILD STAGE ALSO READS THE LOG, ADDED 2026-09-23 (KNOWN_ISSUES row 50)
+# -----------------------------------------------------------------------------
+# On a COLD tree at 92b2873 this script exited 0 with 93 undefined references in main_note,
+# 6 in main_paper and 1 in main_primer; all resolved on a second invocation. latexmk's exit
+# status does not report unresolved references, so the exit code said nothing about the `??`
+# in the PDFs. (Not reproduced on a cold tree at aeb6668c with a local latexmk 4.83, which
+# converged in one invocation -- so the cause is toolchain-dependent, most likely the NERSC
+# texlive/2024 module. The check below does not depend on knowing which.)
+#
+#   4. If the final `${t}.log` records an unresolved reference or citation, latexmk is invoked
+#      ONE more time -- the extra pass the cold case needed -- and if it is still unresolved the
+#      build FAILS. A missing log also fails: a reference check that did not read one passed
+#      nothing. The patterns are LaTeX's own reference/citation warnings; the `T1/cmtt` font
+#      shape "undefined" warnings every build prints do NOT match them. TeX wraps log lines at
+#      79 columns, so a long `Reference ... undefined` warning can split across two lines and
+#      miss its own pattern; LaTeX's end-of-run "There were undefined references" summary is
+#      the pattern that carries the check (measured 2026-09-23 with a planted \ref).
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -54,13 +72,29 @@ marker="$(mktemp "${TMPDIR:-/tmp}/build_all_marker.XXXXXX")"
 trap 'rm -f "$marker"' EXIT INT TERM
 sleep 1
 
+# (4) LaTeX's own unresolved-reference warnings. ERE, matched against the final `${t}.log`.
+unresolved_re='There were undefined (references|citations)|Reference .* undefined|Citation .* undefined'
+max_invocations=2
+
 for t in "${targets[@]}"; do
   echo "=== building ${t}.pdf (forced with -g, so \"Nothing to do\" cannot pass for a build) ==="
-  if ! latexmk -g -pdf -interaction=nonstopmode -halt-on-error "${t}.tex"; then
-    echo "  FAIL latexmk failed for ${t}.tex -- see the log above. No PDF from this target is"
-    echo "       trustworthy, so the containment stage is NOT reached."
-    exit 1
-  fi
+  invocation=0
+  while :; do
+    invocation=$((invocation + 1))
+    if ! latexmk -g -pdf -interaction=nonstopmode -halt-on-error "${t}.tex"; then
+      echo "  FAIL latexmk failed for ${t}.tex -- see the log above. No PDF from this target is"
+      echo "       trustworthy, so the containment stage is NOT reached."
+      exit 1
+    fi
+    # Re-invoke only on evidence of unresolved references; a missing log is judged below.
+    if [ -f "${t}.log" ] && grep -Eq "$unresolved_re" "${t}.log" \
+        && [ "$invocation" -lt "$max_invocations" ]; then
+      echo "  NOTE ${t}.log has unresolved references after latexmk invocation ${invocation};"
+      echo "       invoking latexmk once more (the cold-tree pass, KNOWN_ISSUES row 50)."
+      continue
+    fi
+    break
+  done
   if [ ! -f "${t}.pdf" ]; then
     echo "  FAIL ${t}.pdf does not exist after latexmk reported success."
     exit 1
@@ -79,8 +113,19 @@ for t in "${targets[@]}"; do
       exit 1
     fi
   done
+  if [ ! -f "${t}.log" ]; then
+    echo "  FAIL ${t}.log does not exist, so this run cannot show that ${t}.pdf has no"
+    echo "       unresolved references. An unread log is not a clean one."
+    exit 1
+  fi
+  if grep -Eq "$unresolved_re" "${t}.log"; then
+    echo "  FAIL ${t}.pdf has unresolved references after ${invocation} latexmk invocation(s);"
+    echo "       it would print \"??\" or [?]. First matching lines of ${t}.log:"
+    grep -E "$unresolved_re|^LaTeX Warning: (Reference|Citation)" "${t}.log" | head -n 10 | sed 's/^/       /' || true
+    exit 1
+  fi
   # Report what was READ, not that a build was attempted: the size and mtime are the evidence.
-  echo "  OK   ${t}.pdf written by this run:"
+  echo "  OK   ${t}.pdf written by this run; no unresolved references in ${t}.log after ${invocation} latexmk invocation(s):"
   ls -l "${t}.pdf" | sed 's/^/       /'
 done
 
