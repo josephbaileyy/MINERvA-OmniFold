@@ -96,6 +96,15 @@ DELIVERY = {
     "corrected_uq": _ROOT / "nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md",
 }
 
+# FLOOR, NOT EXACT, for another live lane's running ledger. `REPORT-20260922-review-residue.md` is
+# rewritten every review round by the session that owns it, and it quotes withdrawn wordings as
+# WITHDRAWN as a matter of course. Pinning it exactly would make that lane's routine edits read as
+# defects here. For a FLOOR key the check fails only if the count FALLS below the pin (an approved
+# quotation lost); a rise is accepted, and is therefore NOT detected -- a live affirmation added to
+# that file is invisible to this check. Registered rather than dropped, because dropping it would
+# make discovery report it as an UNREGISTERED FILE on every run.
+FLOOR_KEYS = {"report_residue"}
+
 # Files registered after the first eight claims were classified. For THOSE claims each of these
 # files was checked on 2026-09-23 and carries the count pinned in `_LATE`; every other late file is 0.
 _LATE_KEYS = [k for k in DELIVERY if k not in ("recommendation", "probe", "catalog")]
@@ -277,6 +286,8 @@ def audit(corpus: dict[str, str]) -> list[str]:
                                 f"approved count -- classify it and pin it")
                 continue
             actual = sum(_count(text, ph) for ph in entry["paraphrases"])
+            if key in FLOOR_KEYS and actual >= expected:
+                continue
             if actual != expected:
                 direction = "NEW OCCURRENCE(S)" if actual > expected else "APPROVED QUOTATION LOST"
                 failures.append(
@@ -439,7 +450,17 @@ def self_test() -> int:
     f_seed = audit(seed)
     print(f"  (g) seed-effect affirmation planted -> {len(f_seed)} failure(s)   must be >= 1")
 
-    ok = bool(f_inj) and bool(f_del) and bool(f_new) and ok_e and bool(f_seed)
+    # (h) FLOOR keys: a rise passes, a fall fails.
+    rise = dict(corpus)
+    rise["report_residue"] += " a larger ensemble would not reduce it is WITHDRAWN."
+    fall = dict(corpus)
+    fall["report_residue"] = ""
+    f_rise, f_fall = audit(rise), audit(fall)
+    print(f"  (h) floor key: count rises -> {len(f_rise)} failure(s) must be 0; "
+          f"count falls -> {len(f_fall)} must be >= 1")
+
+    ok = (bool(f_inj) and bool(f_del) and bool(f_new) and ok_e and bool(f_seed)
+          and not f_rise and bool(f_fall))
     print(f"  SELF-TEST {'PASSED' if ok else 'FAILED'} -- fires on an injected affirmation, a "
           f"deleted quotation, an unpinned key and an UNREGISTERED FILE ON DISK; silent on a "
           f"clean tree and on a tree with no claims")
