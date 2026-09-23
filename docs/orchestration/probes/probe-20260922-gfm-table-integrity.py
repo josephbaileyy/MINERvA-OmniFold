@@ -40,6 +40,7 @@ Usage:  probe-20260922-gfm-table-integrity.py [FILE ...]   (default: every .md c
 """
 import os
 import re
+import unicodedata
 import subprocess
 import sys
 
@@ -129,19 +130,77 @@ def sweep(path):
                         out.append((ln + 1, "cell-parity", f"a stranded formatting marker renders literally in cell {ci}"))
             k += 1
         k += 1
-    # a header + delimiter pair that the parser did NOT turn into a table
+    # a line that BEGINS with non-ASCII whitespace (U+00A0, U+3000, form feed...) near a table: GitHub and
+    # markdown-it disagree about it -- GitHub renders a U+00A0-led row with an empty first cell and every cell
+    # shifted right, and continues a table past a U+00A0-only line where markdown-it ends it (review #14b)
+    for ln, l in enumerate(lines):
+        if ln in code or not l[:1] or l[0] in " \t":
+            continue
+        if (l[0].isspace() or unicodedata.category(l[0]) == "Zs") and (
+                "|" in l or any(abs(ln - t) <= 1 for t in tabled)):
+            out.append((ln + 1, "unicode-ws", "a line near a table begins with non-ASCII whitespace; GitHub and "
+                        "CommonMark parsers render it differently"))
+    # a header + delimiter pair that the parser did NOT turn into a table -- including inside a blockquote or
+    # a list item, whose prefixes the first version never stripped (review #14b)
+    def bare(x):
+        return re.sub(r"^\s{0,3}(>\s?)+", "", x).strip()
     for ln in range(len(lines) - 1):
         if ln in code or ln in tabled:
             continue
-        if "|" in lines[ln] and SEP.match(lines[ln + 1]) and not SEP.match(lines[ln]):
+        if "|" in bare(lines[ln]) and SEP.match(bare(lines[ln + 1])) and not SEP.match(bare(lines[ln])):
             out.append((ln + 1, "header-mismatch",
-                        f"header has {len(cells(lines[ln]))} cells, delimiter {len(cells(lines[ln + 1]))}: "
+                        f"header has {len(cells(bare(lines[ln])))} cells, delimiter {len(cells(bare(lines[ln + 1])))}: "
                         "GFM does NOT render a table here"))
     return out, None
 
 
+SHAPES = [   # (name, source, should the probe report a defect?)  -- judged against GitHub's renderer
+    ("clean", "| a | b |\n|---|---|\n| 1 | 2 |\n", False),
+    ("code-span pipe", "| a | b |\n|---|---|\n| 1 | `x|y` |\n", True),
+    ("escaped pipe in a code span", "| a | b |\n|---|---|\n| 1 | `x\\|y` |\n", False),
+    ("text after the last pipe", "| a | b |\n|---|---|\n| 1 | 2 | tail\n", True),
+    ("too few cells (a documented warning)", "| a | b |\n|---|---|\n| 1 |\n", True),
+    ("no trailing pipe", "| a | b |\n|---|---|\n| 1 | 2\n", False),
+    ("heading right after", "| a | b |\n|---|---|\n| 1 | 2 |\n## h\n", False),
+    ("list right after", "| a | b |\n|---|---|\n| 1 | 2 |\n- x\n", False),
+    ("table in a fence", "```\n| a | b |\n|---|---|\n| 1 | 2 | 3 |\n```\n", False),
+    ("double-backtick span", "| a | b |\n|---|---|\n| 1 | ``a`b`` |\n", False),
+    ("header code-span pipe", "| a | `x|y` |\n|---|---|\n| 1 | 2 |\n", True),
+    ("stray bold", "| a | b |\n|---|---|\n| 1 | **x |\n", True),
+    ("stray single backtick", "| a | b |\n|---|---|\n| 1 | `x |\n", True),
+    ("TeX quotes, intended", "| a | b |\n|---|---|\n| 1 | ``before'' |\n", False),
+    ("'#5 |' row, excess dropped", "| a | b |\n|---|---|\n| 1 | 2 |\n#5 | x | y | DROPPED |\n", True),
+    ("'<b>r</b> |' row, excess dropped", "| a | b |\n|---|---|\n| 1 | 2 |\n<b>r</b> | x | DROPPED |\n", True),
+    ("4-backtick fence closed only by 4", "````\n```\n````\n| a | b |\n|---|---|\n| 1 | 2 | DROPPED |\n", True),
+    ("indented line after a table", "| a | b |\n|---|---|\n| 1 | 2 |\n    | not | a | row |\n", False),
+    ("table in a blockquote, clean", "> | a | b |\n> |---|---|\n> | 1 | 2 |\n", False),
+    ("table in a blockquote, excess", "> | a | b |\n> |---|---|\n> | 1 | 2 | X |\n", True),
+    ("U+00A0-led row", "| a | b | c |\n|---|---|---|\n\u00a0| x | 1 | note |\n", True),
+    ("U+00A0-only line inside a table", "| a | b |\n|---|---|\n| 1 | 2 |\n\u00a0\n| 3 | `p|q` |\n", True),
+    ("header mismatch inside a blockquote", "> | a | b | c |\n> |---|---|\n", True),
+]
+
+
+def self_test():
+    import tempfile
+    wrong = []
+    with tempfile.TemporaryDirectory() as td:
+        for name, src, want in SHAPES:
+            f = os.path.join(td, "shape.md")
+            open(f, "w", encoding="utf-8").write(src)
+            found, err = sweep(f)
+            if err or bool(found) != want:
+                wrong.append(name)
+    for name in wrong:
+        print(f"  *** WRONG *** {name}")
+    print(f"[gfm-tables self-test] {'FAIL' if wrong else 'PASS'} :: {len(SHAPES) - len(wrong)} of {len(SHAPES)} shapes")
+    return 1 if wrong else 0
+
+
 def main():
     args = sys.argv[1:]
+    if "--self-test" in args:
+        return 2 if MarkdownIt is None else self_test()
     base = "177af61b"
     if "--since" in args:
         k = args.index("--since"); base = args[k + 1]; del args[k:k + 2]

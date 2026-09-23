@@ -24,7 +24,9 @@ of those defeats had one cause: the guard used regexes to IMITATE how GitHub ren
 each imitation left the next gap -- `**`-less cells, indentation, escaped pipes, HTML comments inside
 code spans, HTML entities, link-reference definitions, title attributes, block boundaries. So it no
 longer imitates. It PARSES the report with a CommonMark + GFM-table parser (markdown-it-py) and
-reads what that parser renders as visible text: `text` and `code_inline` content, never raw HTML.
+reads what that parser renders as visible text: `text` and `code_inline` content and code blocks, never
+raw HTML. Lines in the ledger's section that begin with non-ASCII whitespace are refused, because GitHub
+and markdown-it disagree about them.
 Cells are split by the parser, so an entity-encoded pipe stays inside its cell, as it does on
 GitHub; comments, attributes and link-reference definitions never reach the visible text at all.
 
@@ -53,9 +55,15 @@ MD = MarkdownIt("commonmark").enable(["table"])
 VISIBLE = ("text", "code_inline")                      # REGRESSION-ANCHOR:visible-types
 TOTAL = re.compile(r"self rounds 1[\u2013-](\d+)\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*"
                    r"independent reviews\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*TOTAL\s*(\d+)", re.S)
-NUM = (r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|"
-       r"sixteen|seventeen|eighteen|nineteen|twenty|dozen|score)\b")
-WHAT = r"\b(find|found|finding|findings|flag|flagged|flagging|defects?|problems?|issues?|errors?|bugs?|flaws?|faults?|mistakes?)\b"
+NUM = (r"(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|"
+       r"sixteen|seventeen|eighteen|nineteen|twenty|dozen|score)")
+WORD = r"(findings?|defects?|problems?|bugs?|flaws?|faults?|mistakes?)"
+# ⚠ a count must MODIFY a finding-word. The first versions paired any number with any finding-word in a
+# window, so a correct note -- "a rate-limit error 2 minutes in", "no defects reported" -- was refused
+# (review #14b). `errors?` and `issues?` are gone: they are how a review's death is described.
+REPORTS = [re.compile(rf"\b{NUM}\s+(?:\w+\s+){{0,2}}{WORD}\b", re.I),               # "six defects", "a dozen flaws"
+           re.compile(rf"\b(found|reported|flagged|flagging|reporting|finding)\s+{NUM}\b", re.I),   # "found 6"
+           re.compile(rf"\b{WORD}\s+(found|reported)\s*:?\s*{NUM}\b", re.I)]              # "defects found: six"
 
 
 def visible(inline):
@@ -72,20 +80,16 @@ def visible(inline):
 
 
 def reports_findings(note):
-    """A count near a finding-word, in either order, within a few words."""
-    words = note.lower()
-    for m in re.finditer(NUM, words):
-        window = words[max(0, m.start() - 60):m.end() + 60]
-        if re.search(WHAT, window):
-            return True
-    return False                                          # REGRESSION-ANCHOR:noverdict-notes
+    """True if the note asserts a count OF findings -- not merely a number near a finding-word."""
+    return any(p.search(note) for p in REPORTS)           # REGRESSION-ANCHOR:noverdict-notes
 
 
 def main() -> int:
     if not REPORT.exists():
         print(f"[ledger] CANNOT LOOK :: no report at {REPORT}")
         return 2
-    toks = MD.parse(REPORT.read_text(encoding="utf-8"))
+    text = REPORT.read_text(encoding="utf-8")
+    toks = MD.parse(text)
 
     # every table, as (header cells, [(row cells, source line)])
     tables, i = [], 0
@@ -116,6 +120,21 @@ def main() -> int:
               "is indistinguishable from the live one. Refusing.")
         return 2
     header, rows, end_tok = ledgers[0]
+
+    # ⚠ a line in the ledger's section that BEGINS with Unicode whitespace (U+00A0, U+3000, form feed...)
+    # is read one way by markdown-it and another by GitHub: a row led by U+00A0 renders on GitHub with an
+    # empty first cell and every cell shifted right, and a line of only U+00A0 continues the table on
+    # GitHub where markdown-it ends it (review #14b). This guard cannot know which, so it refuses.
+    heads = [t.map[0] for t in toks if t.type == "heading_open" and t.map]
+    ledger_line = rows[0][1] or 0
+    start = max((x for x in heads if x <= ledger_line), default=0)
+    stop = min((x for x in heads if x > ledger_line), default=len(text.splitlines()))
+    odd = [n + 1 for n, l in enumerate(text.splitlines()[start:stop], start)
+           if l[:1] and l[0] not in " \t" and (l[0].isspace() or unicodedata.category(l[0]) == "Zs")]
+    if odd:                                               # REGRESSION-ANCHOR:unicode-ws
+        print(f"[ledger] CANNOT LOOK :: line(s) {odd[:8]} in the ledger's section begin with non-ASCII "
+              "whitespace, which GitHub and this parser render differently. Refusing.")
+        return 2
 
     # orphans: ledger-shaped text AFTER the ledger and before the next heading -- a fragment of the
     # table, cut off by a blank line or a block the parser ended it at. Other sections' tables are not
@@ -175,7 +194,10 @@ def main() -> int:
         return 2
 
     # the TOTAL, read from what is RENDERED -- never from comments, attributes or reference definitions
-    flat = re.sub(r"\s+", " ", " ".join(visible(t) for t in toks if t.type == "inline"))
+    # code blocks are VISIBLE: a stale TOTAL in a fenced or indented block is on the page (review #14b)
+    shown = [visible(t) if t.type == "inline" else t.content for t in toks
+             if t.type in ("inline", "fence", "code_block")]   # REGRESSION-ANCHOR:total-sources
+    flat = re.sub(r"\s+", " ", " ".join(shown))
     hits = list(TOTAL.finditer(flat))
     if not hits:
         print("[ledger] CANNOT LOOK :: no rendered TOTAL sentence of the expected shape")

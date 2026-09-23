@@ -64,6 +64,10 @@ REGRESSIONS = {
         're.search("no verdict", cell, re.I)'),
     'R11 a NO VERDICT note may report findings (reviews #11b, #12b, #13b)': ('if reports_findings(" ".join(cells[2:])):',
         'if False:'),
+    'R12 non-ASCII-whitespace-led lines not refused (review #14b)': ('if odd:                                               # REGRESSION-ANCHOR:unicode-ws',
+        'if False:'),
+    'R13 TOTALs read from inline text only, not code blocks (review #14b)': ('if t.type in ("inline", "fence", "code_block")]   # REGRESSION-ANCHOR:total-sources',
+        'if t.type in ("inline",)]'),
 }
 
 
@@ -91,6 +95,16 @@ def _last_table_row(text):
     return lines[j - 1]
 
 
+def _ledger_bounds(text):
+    """(lines, header index, index one past the table's last row) of the ledger table."""
+    L = text.split("\n")
+    h = next(i for i, l in enumerate(L) if l.strip().startswith("| round | findings | note |"))
+    e = h + 1
+    while e < len(L) and L[e].strip():
+        e += 1
+    return L, h, e
+
+
 def _first_agy_row(text):
     rows = [l for l in text.splitlines() if re.match(r"^\|\s*\*{0,2}agy", l, re.I)]
     if not rows:
@@ -103,6 +117,7 @@ def build_cases(orig):
     tail = _last_table_row(orig)
     agy0 = _first_agy_row(orig)
     r46 = next(l for l in orig.splitlines() if re.match(r"^\| 46 \(self\)", l))
+    nv_row = next(l for l in orig.splitlines() if re.search(r"NO VERDICT", l) and re.match(r"^\|\s*\*{0,2}agy", l, re.I))
     one_digit_agy = next(l for l in orig.splitlines()
                          if re.match(r"^\|\s*\*{0,2}agy", l, re.I) and re.search(r"\|\s*\*\*\d\*\*\s*\|", l))
     r_last_agy = [l for l in orig.splitlines() if re.match(r"^\|\s*\*{0,2}agy", l, re.I)][-1]
@@ -124,7 +139,8 @@ def build_cases(orig):
         ("unrecorded review BELOW an HTML comment in the table", after(anchor, "<!-- aside -->\n" + NEW), (1, 2)),
         ("unrecorded review BELOW a blockquote in the table", after(tail, "> aside\n" + NEW), (1, 2)),
         ("unrecorded review BELOW a whitespace-only line", after(tail, "   \n" + NEW), (1, 2)),
-        # --- decoy that RECONCILES with the live TOTAL, so only header-multiplicity can catch it
+        # --- a decoy table directly ABOVE the live one: caught by the orphan check, because the live rows fall
+        # in the decoy's section. It does NOT reconcile; the reconciling case that R3 alone catches is below
         ("a decoy ledger table above the live one",
          orig.replace("| round | findings | note |",
                       "| round | findings | note |\n|---|---|---|\n| 1 (self) | **14** | decoy |\n\n"
@@ -228,6 +244,25 @@ def build_cases(orig):
         # become the table's last row
         ("new agy row tab-indented after the table's last row", after(tail, "\t" + NEW), (1, 2)),
         ("new agy row indented four spaces after the table's last row", after(tail, "    " + NEW), (1, 2)),
+        # --- review #14b
+        # R3's discriminating case: a RECONCILING snapshot of the ledger in an earlier section, while the live
+        # ledger gains an unrecorded row. Only table multiplicity can refuse this; the orphan check cannot,
+        # because the snapshot's section ends before the live table begins.
+        ("a reconciling snapshot of the ledger in an earlier section, live ledger stale",
+         (lambda L, h, e: "\n".join(L[:e] + ["| **agy #99 (independent)** | **6** | unrecorded |"] + L[e:]).replace(
+             "## 1. ", "## 0. A quoted earlier revision\n\n" + "\n".join(L[h:e]) + "\n\n## 1. ", 1))(*_ledger_bounds(orig)), (1, 2)),
+        ("new agy row tab-indented in the MIDDLE of the table", after(agy0, "\t" + NEW), (1, 2)),
+        ("new agy row indented four spaces in the MIDDLE of the table", after(agy0, "    " + NEW), (1, 2)),
+        ("a real row led by a non-breaking space", orig.replace(agy0, "\u00a0" + agy0, 1), (1, 2)),
+        ("a line of only a non-breaking space inside the table, then an unrecorded row",
+         after(agy0, "\u00a0\n| **agy #99 (independent)** | **6** | x |"), (1, 2)),
+        ("a stale TOTAL in a fenced code block", orig.replace(total_line, total_line + "\n\n```\n" + stale_total.replace("**", "") + "\n```\n\n", 1), (1, 2)),
+        ("a stale TOTAL in an indented code block", orig.replace(total_line, total_line + "\n\n    " + stale_total.replace("**", "").replace("\n", " ") + "\n\n", 1), (1, 2)),
+        *[(f"CONTROL a NO VERDICT note that reports no findings: {note[:30]}",
+           orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| " + note + " |", nv_row), 1), (0,))
+          for note in ("died on a session rate-limit error 2 minutes into its first action",
+                       "produced no findings; attempt 2 is the real review",
+                       "rate-limited before one file was read; no defects reported")],
         ("CONTROL untouched ledger", orig, (0,)),
     ]
     # ⚠ A MUTATION THAT DOES NOT MUTATE TESTS NOTHING, and this suite has shipped three of them.

@@ -26,5 +26,5 @@ another section, was refused.
 **The rewrite.** All seven defeats share one cause: the guard used regular expressions to IMITATE GitHub's
 renderer. It now parses the report with markdown-it-py and reads only what renders as visible text; the
 table probe was rebuilt the same way. The mutation suite's regressions were rebuilt against marked anchor
-lines in the new guard, and every redundancy it reports was checked by hand. The guard's docstring states
+lines in the new guard. ⚠ It said *"every redundancy it reports was checked by hand"*, and that was false: R3 was called redundant on the strength of a decoy case that did not reconcile, and review #14b showed R3 is load-bearing — a reconciling snapshot of the ledger in an earlier section passes under R3. With discriminating cases added, all twelve regressions are load-bearing. The guard's docstring states
 its threat model: accidental staleness, not a proof against deliberately constructed input.
