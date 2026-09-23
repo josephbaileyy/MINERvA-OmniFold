@@ -28,9 +28,15 @@ reproduce `GRADE-20260920`'s `s_proj` to `1e-12`.
 `0.06145388143592225` — exact, against a `1e-12` requirement. **The harness is the graded code
 path**, which also validates the two repairs §4 records.
 
-⚠ **The two legs that were INSIDE the `5%` bound moved most in relative terms and stay far inside;
-the failing leg moved least.** Releasing the five seed-pinned bands did **not** produce a large
-change in `s_proj`.
+⚠ **Between the two products, the two legs that were INSIDE the `5%` bound differ most in relative
+terms and stay far inside; the failing leg differs least.** ⚠ **These differences CANNOT be
+attributed to releasing the five bands.** The two products differ in the band release **and** in
+code identity (`384c2eb1` against `d64257c3`, with different import closures — §3), so each
+delta is the combined effect of both, at one seed pair; §3's quotable statement already says
+*"what is unestablished is that the two members may be compared at all"*. Isolating the release
+needs the code-comparable rebuild §3a describes, which was not run. ⚠ This paragraph previously
+ended *"Releasing the five seed-pinned bands did **not** produce a large change in `s_proj`"* — a
+causal attribution this record's own §3 does not license; withdrawn at self-round 40.
 
 ## 2. EVERY PREDECLARED INVALIDATING CONDITION, CHECKED
 

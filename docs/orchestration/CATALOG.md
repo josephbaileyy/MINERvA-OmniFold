@@ -256,8 +256,10 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   `229c43e0…` verifier token. **Control exact**: the graded pair re-measures
   `s_proj = 6.145388%`, `|diff| = 0.000e+00` against `GRADE-20260920` (requirement `1e-12`), so the
   harness IS the graded code path. **Released** (five laterals at seed 1242): `s_proj 6.189174%`,
-  `s_agg 0.762704%`, `s_med 0.682292%` — the two legs INSIDE the bound moved most (`+62%`, `+41%`
-  relative) and the failing leg least (`+0.71%`). ⚠ **NOT all five predeclared invalidating
+  `s_agg 0.762704%`, `s_med 0.682292%` — against the pinned pair, the two legs INSIDE the bound differ
+  most (`+62%`, `+41%` relative) and the failing leg least (`+0.71%`); ⚠ **not attributable to the
+  release**, because the products also differ in code identity (record §3), so each delta mixes the
+  release with code drift at one seed pair. ⚠ **NOT all five predeclared invalidating
   conditions hold** — the record's *"All five hold"* is **WITHDRAWN**: three hold as measured
   (baseline's 20 digests byte-identical in both jobs), **one holds only against §6's PRE-AMENDMENT
   text** (Amendment 1 §A1.4 widened it to all of `active_universe_5d/standard/`, never digested),
