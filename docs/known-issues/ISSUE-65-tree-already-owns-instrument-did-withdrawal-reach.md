@@ -1,6 +1,8 @@
+> **FIXED 2026-09-23** at `5629db29` + `1851df36`: green at HEAD; seed-effect withdrawal registered; REPORT-20260922 pinned as a floor.
+
 # ISSUE-65 — The tree already owns an instrument for did this withdrawal reach every site, and the 2026-09-21 seed-effect withdrawal was never registered in it — so the assurance published in its place is not re-runnable by the next lane
 
-**Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 65. **Updated:** 2026-09-22.
+**Severity:** MEDIUM. **Status:** FIXED (2026-09-23). **Index row:** `KNOWN_ISSUES.md` row 65. **Updated:** 2026-09-22.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to

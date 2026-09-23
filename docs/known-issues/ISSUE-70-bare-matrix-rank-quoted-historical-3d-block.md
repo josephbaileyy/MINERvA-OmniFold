@@ -1,6 +1,8 @@
+> **FIXED 2026-09-23** at `5f614103`: each live site cites its producer's cutoff (1e-12 or 1e-10 of lambda_max).
+
 # ISSUE-70 — A bare matrix rank is quoted for the historical 3D block-sum object in 17 tracked files that omit its cutoff
 
-**Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 70. **Updated:** 2026-09-22.
+**Severity:** MEDIUM. **Status:** FIXED (2026-09-23). **Index row:** `KNOWN_ISSUES.md` row 70. **Updated:** 2026-09-22.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to

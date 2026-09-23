@@ -1,3 +1,5 @@
+> **FIXED 2026-09-23** at `cc30fc86` + `735c3f75` + `ed58d3db`: every PET covariance producer writes `estimator_stamp`; the assembler reconciles or refuses.
+
 ## The PET covariance summaries carry no estimator stamp — the fact lives only in the launcher
 
 `products/pet/bkgsub/pet_cstat_bkgsub_5d.summary.json` and its siblings record `n_replicas`,

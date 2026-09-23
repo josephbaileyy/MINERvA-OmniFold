@@ -1,6 +1,8 @@
+> **FIXED 2026-09-23** at `df27e6d2` + `8bce09b5` + `10ff3bbd`: `generate_manifest.py --at-sha`, a verdict line naming its object, and 106 docs given overrides rows under a hard pre-commit check. Classifications left for owner review are listed in `8bce09b5`'s message.
+
 # ISSUE-60 — Three checks in routine use return a green a reader cannot map back to any object, and all three were read as verification during one round on 2026-09-21
 
-**Severity:** HIGH. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 60. **Updated:** 2026-09-21.
+**Severity:** HIGH. **Status:** FIXED (2026-09-23). **Index row:** `KNOWN_ISSUES.md` row 60. **Updated:** 2026-09-21.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to

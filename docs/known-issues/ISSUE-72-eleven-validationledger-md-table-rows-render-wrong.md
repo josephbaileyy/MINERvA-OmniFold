@@ -1,6 +1,8 @@
+> **FIXED 2026-09-23** at `51179bd9`: the GFM table probe reports 0 defects.
+
 # ISSUE-72 — Eleven VALIDATIONLEDGER.md table rows render wrong on GitHub, all written by earlier lanes
 
-**Severity:** LOW. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 72. **Updated:** 2026-09-22.
+**Severity:** LOW. **Status:** FIXED (2026-09-23). **Index row:** `KNOWN_ISSUES.md` row 72. **Updated:** 2026-09-22.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to

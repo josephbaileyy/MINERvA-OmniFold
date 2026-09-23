@@ -1,6 +1,8 @@
+> **FIXED 2026-09-23** at `b6b19496`: the shared pre-commit hook runs the guard as a warning whenever the report is staged. The body below records the state before this fix.
+
 # ISSUE-71 — Nothing runs the loop-ledger guard on the live ledger automatically (its mutation suite runs it on copies; its runner is run by hand), so its docstring's central claim about itself is not yet true
 
-**Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 71. **Updated:** 2026-09-23.
+**Severity:** MEDIUM. **Status:** FIXED (2026-09-23). **Index row:** `KNOWN_ISSUES.md` row 71. **Updated:** 2026-09-23.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to
