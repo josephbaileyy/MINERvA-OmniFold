@@ -66,9 +66,34 @@ REGRESSIONS = {
         'if False:'),
     'R12 non-ASCII-whitespace-led lines not refused (review #14b)': ('if odd:                                               # REGRESSION-ANCHOR:unicode-ws',
         'if False:'),
-    'R13 TOTALs read from inline text only, not code blocks (review #14b)': ('if t.type in ("inline", "fence", "code_block")]   # REGRESSION-ANCHOR:total-sources',
-        'if t.type in ("inline",)]'),
+    'R13 TOTALs read from inline text only, not code blocks (review #14b)': ('for t in toks if t.type in ("inline", "fence", "code_block", "html_block")]   # REGRESSION-ANCHOR:total-sources',
+        'for t in toks if t.type in ("inline", "html_block")]'),
+    # --- review #15b: checks the guard HAD, that no case pinned -- each could be deleted with the suite green
+    'R14 a self cell with several numbers read by its first (review #15b)': ('if len(nums) == 1 and int(nums[0]) >= 0:     # REGRESSION-ANCHOR:self-count',
+        'if nums:'),
+    'R15 an agy cell with several numbers read by its first (review #15b)': ('if len(nums) == 1 and int(nums[0]) >= 0:     # REGRESSION-ANCHOR:agy-count',
+        'if nums:'),
+    'R16 self rounds not required to run 1..N (review #15b)': ('if rounds != list(range(1, len(rounds) + 1)):      # REGRESSION-ANCHOR:round-order',
+        'if False:'),
+    'R17 the self subtotal not compared (review #15b)': ('("self total", int(stated_self), self_sum),                    # REGRESSION-ANCHOR:self-total',
+        ''),
+    'R18 the independent subtotal not compared (review #15b)': ('("independent total", int(stated_agy), agy_sum),               # REGRESSION-ANCHOR:agy-total',
+        ''),
+    'R19 the grand TOTAL not compared (review #15b)': ('("grand total", int(stated_total), self_sum + agy_sum),        # REGRESSION-ANCHOR:grand-total',
+        ''),
+    'R20 only U+00A0 counted as non-ASCII whitespace (review #15b)': ('if non_ascii_ws_led(l)]                    # REGRESSION-ANCHOR:ws-classes',
+        'if l[:1] == "\\u00a0"]'),
+    'R21 TOTALs in raw-HTML blocks not read (review #15b)': ('for t in toks if t.type in ("inline", "fence", "code_block", "html_block")]   # REGRESSION-ANCHOR:total-sources',
+        'for t in toks if t.type in ("inline", "fence", "code_block")]'),
+    'R22 a NO VERDICT note never read as reporting (review #15b)': ('return any(p.search(note) for p in REPORTS)           # REGRESSION-ANCHOR:noverdict-notes',
+        'return False'),
 }
+# review #15b: dropping ONE finding-report pattern left the suite green. Each pattern, keyed by the
+# example in its trailing comment, gets its own regression and its own case (NV_REPORTING below).
+REPORT_TAGS = ['"six defects", "a dozen flaws"', '"found 6"', '"defects found: six"', '"found a defect"',
+               '"two issues found"', '"findings: 3"', '"2 MEDIUM" (case-sensitive)']
+# a REGRESSION-ANCHOR with no regression is a check nothing tests; `--regressions` refuses one
+ANCHOR_RE = re.compile(r"REGRESSION-ANCHOR:([\w-]+)")
 
 
 def _last_self_row(text):
@@ -110,6 +135,11 @@ def _first_agy_row(text):
     if not rows:
         raise SystemExit("[mutations] CANNOT LOOK :: no agy rows in the report")
     return rows[0]
+
+
+# one note per REPORTS pattern, each matched by THAT pattern alone, so dropping any one pattern fails a case
+NV_REPORTING = ("six defects in the guard", "found 6 before the session died", "defects found: six",
+                "found a defect in the guard", "two issues found", "findings: 3", "2 MEDIUM, 1 LOW")
 
 
 def build_cases(orig):
@@ -263,6 +293,26 @@ def build_cases(orig):
           for note in ("died on a session rate-limit error 2 minutes into its first action",
                        "produced no findings; attempt 2 is the real review",
                        "rate-limited before one file was read; no defects reported")],
+        # --- review #15b: a hand-edited count, one number at a time. Each is caught by exactly one check
+        ("only the grand TOTAL stale", re.sub(r"(; TOTAL )(\d+)", lambda mm: mm.group(1) + str(int(mm.group(2)) - 1), orig, count=1), (1, 2)),
+        ("only the independent subtotal stale", re.sub(r"= (\d+)(; TOTAL )", lambda mm: f"= {int(mm.group(1)) - 1}" + mm.group(2), orig, count=1), (1, 2)),
+        ("only the self subtotal stale", orig.replace(total_line, re.sub(r"= (\d+);", lambda mm: f"= {int(mm.group(1)) - 1};", total_line, count=1), 1), (1, 2)),
+        ("a self round's label mistyped (5 -> 50)", orig.replace("\n| 5 (self) |", "\n| 50 (self) |", 1), (1, 2)),
+        ("an agy cell reading '14 of 20'", orig.replace(agy0, agy0.replace("**14**", "**14 of 20**", 1), 1), (1, 2)),
+        ("a self cell reading '3 of 5'", orig.replace("\n| 1 (self) | **3** |", "\n| 1 (self) | **3 of 5** |", 1), (1, 2)),
+        *[(f"a real row led by {name}", orig.replace(agy0, lead + agy0, 1), (1, 2))
+          for name, lead in (("a form feed", "\x0c"), ("U+0085", "\x85"), ("U+2028", "\u2028"), ("U+3000", "\u3000"),
+                             ("U+2003", "\u2003"), ("one ASCII space then U+00A0", " \u00a0"))],
+        *[(f"a NO VERDICT note reporting findings: {note}",
+           orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| " + note + " |", nv_row), 1), (1, 2))
+          for note in NV_REPORTING],
+        ("CONTROL a NO VERDICT note reporting ZERO findings",
+         orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| 0 findings reported because it never started |", nv_row), 1), (0,)),
+        ("a stale TOTAL in a <pre> block", orig.replace(total_line, total_line + "\n\n<pre>\n" + stale_total.replace("**", "") + "\n</pre>\n\n", 1), (1, 2)),
+        ("a stale TOTAL in <details> with no blank lines",
+         orig.replace(total_line, total_line + "\n\n<details><summary>an earlier revision</summary>\n" + stale_total.replace("**", "") + "\n</details>\n\n", 1), (1, 2)),
+        ("CONTROL a stale TOTAL inside an HTML comment BLOCK is ignored",
+         orig.replace(total_line, total_line + "\n\n<!--\n" + stale_total.replace("**", "") + "\n-->\n\n", 1), (0,)),
         ("CONTROL untouched ledger", orig, (0,)),
     ]
     # ⚠ A MUTATION THAT DOES NOT MUTATE TESTS NOTHING, and this suite has shipped three of them.
@@ -286,8 +336,10 @@ def run_suite(guard_src, cases, verbose):
         target = work / REPORT.name
         for label, text, want in cases:
             target.write_text(text, encoding="utf-8")
-            rc = subprocess.run([sys.executable, str(g)], capture_output=True, text=True).returncode
-            ok = rc in want
+            r = subprocess.run([sys.executable, str(g)], capture_output=True, text=True)
+            rc = r.returncode
+            # a CRASH is not a refusal: exit 1 from a traceback satisfies every (1, 2) case by accident
+            ok = rc in want and "Traceback" not in r.stderr
             if verbose:
                 print(f"  {'OK ' if ok else '*** WRONG ***'} {label:58s} exit={rc} want={want}")
             if not ok:
@@ -324,7 +376,30 @@ def main() -> int:
         # A suite that passes under every possible breakage is not evidence that it passed.
         print("\n--- REGRESSION HARNESS: which guard lines are load-bearing? ---")
         load_bearing, redundant, skipped = [], [], []
-        for label, (new_, old_) in REGRESSIONS.items():
+        regs = dict(REGRESSIONS)
+        for tag in REPORT_TAGS:
+            line = next((l for l in src.splitlines() if l.rstrip().endswith("# " + tag)), None)
+            if line is None:
+                skipped.append(f"REPORTS pattern {tag}"); continue
+            pat = line.strip()
+            if pat.startswith("REPORTS = ["):
+                pat = pat[len("REPORTS = ["):]
+            pat = re.split(r"\s+#\s", pat, maxsplit=1)[0].strip()
+            regs[f"R-REPORTS {tag} pattern dropped (review #15b)"] = (pat, 're.compile(r"(?!x)x"),' if pat.endswith(",") else 're.compile(r"(?!x)x")]')
+        untested = sorted(set(ANCHOR_RE.findall(src)) - {a for new_, _ in regs.values() for a in ANCHOR_RE.findall(new_)})
+        for a in untested:
+            skipped.append(f"REGRESSION-ANCHOR:{a} has no regression, so nothing tests that check")
+        for label, (new_, old_) in regs.items():
+            # ⚠ a regression that does not COMPILE makes the guard crash, and a crash exits nonzero, which every
+            # refusal case accepts: it "fires" through the controls and looks load-bearing. The first per-pattern
+            # regressions did exactly that (a comment kept in the pattern closed the list early)
+            if new_ in src:
+                try:
+                    compile(src.replace(new_, old_, 1), GUARD.name, "exec")
+                except SyntaxError as e:
+                    print(f"  ?? {label:58s} SKIPPED -- the patched guard does not compile ({e.msg})")
+                    skipped.append(label)
+                    continue
             if new_ not in src:
                 print(f"  ?? {label:58s} SKIPPED -- anchor absent, the guard moved")
                 skipped.append(label)
@@ -345,8 +420,17 @@ def main() -> int:
             print("[regressions] FAIL :: the suite stayed green under EVERY regression, so it "
                   "cannot fail and its PASS above is not evidence.")
             return 1
-        print(f"[regressions] PASS :: the suite can fail ({len(load_bearing)} load-bearing, "
-              f"{len(redundant)} redundant -- redundant means a later layer also closes that shape)")
+        # ⚠ review #15b: "12 of 12 load-bearing" was true while five checks had no regression at all. Every
+        # check now has one (the anchor sweep above), and a REDUNDANT one is a check no case pins: the suite
+        # would stay green if it were deleted. That is now a failure, not a remark.
+        if redundant:
+            print(f"[regressions] FAIL :: {len(redundant)} regression(s) are redundant -- deleting that check "
+                  "leaves every case green, so no case pins it:")
+            for u in redundant:
+                print(f"    {u}")
+            return 1
+        print(f"[regressions] PASS :: all {len(load_bearing)} regressions are load-bearing, and every "
+              "REGRESSION-ANCHOR in the guard has one")
     return 0
 
 

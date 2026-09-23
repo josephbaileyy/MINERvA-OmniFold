@@ -28,3 +28,13 @@ renderer. It now parses the report with markdown-it-py and reads only what rende
 table probe was rebuilt the same way. The mutation suite's regressions were rebuilt against marked anchor
 lines in the new guard. ⚠ It said *"every redundancy it reports was checked by hand"*, and that was false: R3 was called redundant on the strength of a decoy case that did not reconcile, and review #14b showed R3 is load-bearing — a reconciling snapshot of the ledger in an earlier section passes under R3. With discriminating cases added, all twelve regressions are load-bearing. The guard's docstring states
 its threat model: accidental staleness, not a proof against deliberately constructed input.
+
+**Eighth, of the tests rather than the guard (independent review #15b).** The guard worked, but five of its
+checks could each be deleted with every case green: the grand-TOTAL and independent-subtotal comparisons,
+the 1..N order check, and the single-number rules for self and agy cells. *"All twelve regressions are
+load-bearing"* was true only of the twelve that existed. The table probe's self-test also stayed green with
+two of its checks deleted, because it asked only whether ANY finding appeared. Both are now tested structurally:
+every `REGRESSION-ANCHOR` must have a regression and every regression must be load-bearing, or `--regressions`
+fails; a patched guard that crashes or does not compile no longer counts as firing; and the self-test
+compares exact kind sets and requires a shape isolating each kind. **CHECK:** "N of N load-bearing" says
+nothing about checks that have no regression. Enumerate the checks from the instrument, not from the list.

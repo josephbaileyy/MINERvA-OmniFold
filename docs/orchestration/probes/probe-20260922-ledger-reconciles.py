@@ -24,9 +24,11 @@ of those defeats had one cause: the guard used regexes to IMITATE how GitHub ren
 each imitation left the next gap -- `**`-less cells, indentation, escaped pipes, HTML comments inside
 code spans, HTML entities, link-reference definitions, title attributes, block boundaries. So it no
 longer imitates. It PARSES the report with a CommonMark + GFM-table parser (markdown-it-py) and
-reads what that parser renders as visible text: `text` and `code_inline` content and code blocks, never
-raw HTML. Lines in the ledger's section that begin with non-ASCII whitespace are refused, because GitHub
-and markdown-it disagree about them.
+reads what that parser renders as visible text: `text` and `code_inline` content, code blocks and --
+for the TOTAL only -- the text of raw-HTML blocks with comments and tags removed (`<pre>` and
+`<details>` are shown on GitHub; review #15b). Inline raw HTML is never read. Lines in the ledger's
+section that begin with non-ASCII whitespace, after any ASCII spaces, are refused, because GitHub and
+markdown-it disagree about them.
 Cells are split by the parser, so an entity-encoded pipe stays inside its cell, as it does on
 GitHub; comments, attributes and link-reference definitions never reach the visible text at all.
 
@@ -39,6 +41,7 @@ the authority; this is a check against it.
 Exit 0 = the stated totals equal the ledger's own column sums. Exit 1 = they do not, naming both.
 Exit 2 = the ledger could not be read, which is a failure, not a pass.
 """
+import html
 import re
 import sys
 import unicodedata
@@ -55,15 +58,23 @@ MD = MarkdownIt("commonmark").enable(["table"])
 VISIBLE = ("text", "code_inline")                      # REGRESSION-ANCHOR:visible-types
 TOTAL = re.compile(r"self rounds 1[\u2013-](\d+)\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*"
                    r"independent reviews\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*TOTAL\s*(\d+)", re.S)
-NUM = (r"(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|"
+NUM = (r"([1-9]\d*|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|"
        r"sixteen|seventeen|eighteen|nineteen|twenty|dozen|score)")
 WORD = r"(findings?|defects?|problems?|bugs?|flaws?|faults?|mistakes?)"
 # ⚠ a count must MODIFY a finding-word. The first versions paired any number with any finding-word in a
 # window, so a correct note -- "a rate-limit error 2 minutes in", "no defects reported" -- was refused
 # (review #14b). `errors?` and `issues?` are gone: they are how a review's death is described.
+# ⚠ a count of ZERO reports nothing: `NUM` starts at 1, so "0 findings reported because it never started" is
+# accepted (review #15b). `issues?` returns only where a report verb or a colon pins it (review #15b):
+# "two issues found", "issues: 3", "found an issue".
+WORDI = rf"({WORD[1:-1]}|issues?)"
 REPORTS = [re.compile(rf"\b{NUM}\s+(?:\w+\s+){{0,2}}{WORD}\b", re.I),               # "six defects", "a dozen flaws"
            re.compile(rf"\b(found|reported|flagged|flagging|reporting|finding)\s+{NUM}\b", re.I),   # "found 6"
-           re.compile(rf"\b{WORD}\s+(found|reported)\s*:?\s*{NUM}\b", re.I)]              # "defects found: six"
+           re.compile(rf"\b{WORD}\s+(found|reported)\s*:?\s*{NUM}\b", re.I),              # "defects found: six"
+           re.compile(rf"\b(found|reported|flagged)\s+(a|an|one)\s+(?:\w+\s+){{0,2}}{WORDI}\b", re.I),  # "found a defect"
+           re.compile(rf"\b{NUM}\s+issues?\s+(found|reported|flagged)\b", re.I),        # "two issues found"
+           re.compile(rf"\b{WORDI}\s*:\s*{NUM}\b", re.I),                               # "findings: 3"
+           re.compile(rf"\b{NUM}\s+(HIGH|MEDIUM|LOW|CRITICAL)\b")]                      # "2 MEDIUM" (case-sensitive)
 
 
 def visible(inline):
@@ -77,6 +88,16 @@ def visible(inline):
     t = "".join(out)
     # format characters (U+2060 and friends) are invisible: a reader sees the digits either side joined
     return "".join(ch for ch in t if unicodedata.category(ch) != "Cf").strip()   # REGRESSION-ANCHOR:cf-strip
+
+
+def non_ascii_ws_led(line):
+    s = line.lstrip(" \t")
+    return bool(s[:1]) and (s[0].isspace() or unicodedata.category(s[0]) in ("Zs", "Zl", "Zp"))
+
+
+def html_text(block):
+    """What a reader sees of a raw-HTML block: comments dropped, tags dropped, entities decoded."""
+    return html.unescape(re.sub(r"<[^>]*>", " ", re.sub(r"<!--.*?-->", " ", block, flags=re.S)))
 
 
 def reports_findings(note):
@@ -128,9 +149,13 @@ def main() -> int:
     heads = [t.map[0] for t in toks if t.type == "heading_open" and t.map]
     ledger_line = rows[0][1] or 0
     start = max((x for x in heads if x <= ledger_line), default=0)
-    stop = min((x for x in heads if x > ledger_line), default=len(text.splitlines()))
-    odd = [n + 1 for n, l in enumerate(text.splitlines()[start:stop], start)
-           if l[:1] and l[0] not in " \t" and (l[0].isspace() or unicodedata.category(l[0]) == "Zs")]
+    # ⚠ split on "\n" ONLY, as the parser does: `splitlines()` also breaks at form feed, U+0085 and U+2028, so
+    # a row led by one of those looked pipe-led here, and every later line number drifted off the parser's
+    # map (review #15b). And look PAST leading ASCII spaces: " \u00a0| row" renders like "\u00a0| row".
+    lines = text.split("\n")
+    stop = min((x for x in heads if x > ledger_line), default=len(lines))
+    odd = [n + 1 for n, l in enumerate(lines[start:stop], start)
+           if non_ascii_ws_led(l)]                    # REGRESSION-ANCHOR:ws-classes
     if odd:                                               # REGRESSION-ANCHOR:unicode-ws
         print(f"[ledger] CANNOT LOOK :: line(s) {odd[:8]} in the ledger's section begin with non-ASCII "
               "whitespace, which GitHub and this parser render differently. Refusing.")
@@ -195,8 +220,9 @@ def main() -> int:
 
     # the TOTAL, read from what is RENDERED -- never from comments, attributes or reference definitions
     # code blocks are VISIBLE: a stale TOTAL in a fenced or indented block is on the page (review #14b)
-    shown = [visible(t) if t.type == "inline" else t.content for t in toks
-             if t.type in ("inline", "fence", "code_block")]   # REGRESSION-ANCHOR:total-sources
+    # and so is text inside raw HTML that is not a comment -- `<pre>`, `<details>` (review #15b)
+    shown = [visible(t) if t.type == "inline" else html_text(t.content) if t.type == "html_block" else t.content
+             for t in toks if t.type in ("inline", "fence", "code_block", "html_block")]   # REGRESSION-ANCHOR:total-sources
     flat = re.sub(r"\s+", " ", " ".join(shown))
     hits = list(TOTAL.finditer(flat))
     if not hits:
@@ -211,7 +237,7 @@ def main() -> int:
     m = hits[0]
     rounds = [n for n, _ in selves]
     bad = []
-    if rounds != list(range(1, len(rounds) + 1)):
+    if rounds != list(range(1, len(rounds) + 1)):      # REGRESSION-ANCHOR:round-order
         bad.append(f"self rounds are not 1..N in order: {rounds}")
     self_sum, agy_sum = sum(c for _, c in selves), sum(agys)
     stated_last, self_addends, stated_self, agy_addends, stated_agy, stated_total = m.groups()
@@ -225,9 +251,9 @@ def main() -> int:
                   + ", ".join(f"#{k}: stated {a} vs ledger {b}" for k, a, b in diff[:5]))
             bad.append(f"{label} differ elementwise at {len(diff)} position(s)")
     checks = [("last self round", int(stated_last), rounds[-1]),
-              ("self total", int(stated_self), self_sum),
-              ("independent total", int(stated_agy), agy_sum),
-              ("grand total", int(stated_total), self_sum + agy_sum),
+              ("self total", int(stated_self), self_sum),                    # REGRESSION-ANCHOR:self-total
+              ("independent total", int(stated_agy), agy_sum),               # REGRESSION-ANCHOR:agy-total
+              ("grand total", int(stated_total), self_sum + agy_sum),        # REGRESSION-ANCHOR:grand-total
               ("self addend count", len(_ints(self_addends)), len(selves)),
               ("independent addend count", len(_ints(agy_addends)), len(agys))]
     for label, stated, derived in checks:
