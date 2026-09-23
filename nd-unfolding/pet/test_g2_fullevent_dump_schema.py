@@ -10,7 +10,7 @@ the parallel-vector clearing, the schema/provenance metadata, or a default-path
 gate DISAPPEARS, and it fails on the forbidden truth-detector counterparts and
 truth<->reco feature leakage.
 
-Run: python3 test_fullevent_dump_schema.py   (exit 0 = pass, 1 = fail)
+Run: python3 test_g2_fullevent_dump_schema.py   (exit 0 = pass, 1 = fail)
 """
 import re
 import sys
