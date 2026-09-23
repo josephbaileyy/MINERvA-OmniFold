@@ -2,6 +2,15 @@
 
 ## Status (resume anchor; newest first)
 
+- 2026-09-23 20:41Z, CONFIRMATORY STAGE SUBMITTED (code `661cb5b9`; checkout
+  `/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/661cb5b9`). PILOT (pool P, replicates
+  0-2, CTL/A, B, C, K = 10: `runs/pilot.tsv`, out `.../confirm/pilot`, chain 58798408 + gpu_shared
+  singles 58798410-58798419) and STRESS (pool T, replicates 0-1, the six amendment-2 cases:
+  `runs/stress.tsv`, out `.../confirm/stress`, chain 58798420 + singles 58798421-58798485); population
+  targets + tests on Perlmutter: CPU job 58798405 (`.../confirm/targets-log`). Every submission is in
+  `<out>/submissions.txt`; each run's lock history in `<out>/<run>/lock-history.txt`.
+  Resume: `squeue -u josephrb`; harvest `<out>/<run>/scores.json`. FINAL waits for the PILOT sizing
+  record below (committed before any pool F row is read).
 - 2026-09-23 (code `0f83a0c5`, chain 58786058 -> 58786334 -> 58786713, `results/v1-infra-0f83a0c5/`):
   items 1-6 DONE. Tests: 30 passed on Perlmutter (job 58786149, `75e4b5cf`, incl. the real-pool and
   B1-populations tests); 17 + 2 skipped locally.
