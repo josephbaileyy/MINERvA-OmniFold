@@ -17,18 +17,29 @@ later and can never be reused as confirmatory data.
 - Dropped/deferred because of the queue (say so, do not read as nulls): S3 (2x epochs with
   patience) and the S-combination; H at K=10 seeds 3-4; seeds beyond 2 for every K=10 arm.
 
-## Measured queue waits (elapsed time is this task's binding constraint, not node-hours)
+## Measured queue waits and compute (elapsed time was the binding constraint, not node-hours)
 
-| QOS | shape | submitted | started | wait |
-|---|---|---|---|---|
-| `gpu_shared` | 1 GPU, 32 cores | 17:31Z | 19:03Z | **92 min** (2 of 4 jobs) |
-| `gpu_shared` | 1 GPU, 32 cores | 17:31Z | still pending at 22:30Z | **> 5 h** (the other 2) |
-| `gpu_debug` | 1 node, 4 GPUs, 30 min | 17:40Z | 18:06Z | **25 min** |
-| `gpu_preempt`, `gpu_regular` | 1 node, 4 GPUs | 22:16Z | — | pending |
+From `sacct` (submit -> start), every B2 job (`resources-B2.tsv`):
 
-`sbatch --test-only` start estimates are worst-case and were useless here (they said 8 days for
-`gpu_regular` while `gpu_shared` jobs started in 92 min). Full-node packs of 4 runs cost the same
-per run as 4 single-GPU shared jobs and pay ONE queue wait, so every K = 10 batch is packed 4-up.
+| QOS | shape | jobs started | median wait | max wait |
+|---|---|---:|---:|---:|
+| `gpu_debug` | 1 node, 4 A100, 30 min, 2 running per user | 20 | **3 min** | 43 min |
+| `gpu_shared` | 1 A100, 32 cores | 4 | 92 min (2 jobs) | 5.8 h (2 jobs) |
+| `gpu_preempt` | 1 node, 4 A100 | 1 | 9.8 h | — |
+| `gpu_regular` | 1 node, 4 A100 | 0 | never started in 6 h; cancelled | — |
+| `debug` (CPU) | 1 node | 1 | 4 min | — |
+| `gpu_interactive` | — | — | refuses `sbatch` (needs `salloc`) | — |
+
+`sbatch --test-only` estimates were worst-case and useless (8 days for `gpu_regular`). What worked:
+**self-chaining `gpu_debug` jobs** (`jobs/sbatch_b2_chain.sh`): four runs per node, each run
+checkpointed per OmniFold iteration, two iterations per 30-minute job (measured: load 133 s,
+one H iteration 756 s), the job resubmitting itself until every run is COMPLETE. Resume is
+bit-exact (§2), so a chained run is the same computation as an uninterrupted one.
+
+Compute so far (all B2 jobs, `resources-B2.tsv`): **35.0 GPU-hours** (A100) on `m3246_g`; the
+1,134 "CPU core-hours" in the ledger are the host cores of those GPU allocations (charged to
+`m3246_g`), the CPU allocation `m3246` was used only by the T3 reference (15.7 core-hours).
+Projection for what remains (exp 5: 8 runs x 10 iterations x 756 s + loading) ~ 18 GPU-hours.
 
 ## Pre-declared gate for experiment 1 (written before any B2 result existed)
 
