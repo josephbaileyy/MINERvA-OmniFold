@@ -15,6 +15,10 @@ BASE and REV.
   C  `module.symbol` / `path.py::symbol` code spans on added lines, where `module` is the basename of
      a tracked .py file, resolved as a def/class/assignment in that file. A miss whose symbol is
      `py`/`sh` is a file name that the pattern misreads as `module.symbol`, not a citation.
+  D  backticked slash-paths on added lines (self-round 66) that are neither a path nor a directory
+     tracked at REV, nor one relative to the citing file's directory or to docs/orchestration/ (the
+     tree's `probes/...` shorthand). Most misses are not repository paths at all -- ratios, refs,
+     cluster product directories -- and a human classifies them.
 
 Exits 0 once it has looked: it is a lister, and a human classifies what it prints. Exits 2 when it
 cannot look -- outside a git work tree, or when BASE or REV does not name a commit. The result DEPENDS ON
@@ -112,4 +116,27 @@ print(f"C  {ok} resolve, {len(miss)} do not; {sum(x[2] for x in miss)} of the mi
 for f, key, isname in miss:
     if not isname:
         print("   ", f, "|", key)
+
+at_rev = set(git("ls-tree", "-r", "--name-only", "-z", REV).stdout.split("\0")) - {""}
+dirs = {os.path.dirname(x) for x in at_rev}
+while True:
+    up = {os.path.dirname(d) for d in dirs} - dirs
+    if not up:
+        break
+    dirs |= up
+known = at_rev | dirs
+seen, ok, dmiss = set(), 0, []
+for f, L in added:
+    for m in re.finditer(r"`([\w.-]+(?:/[\w.*-]+)+/?)(?::[\d-]+)?`", L):
+        q = m.group(1).rstrip("/")
+        if "*" in q or q in seen:
+            continue
+        seen.add(q)
+        if any(os.path.normpath(os.path.join(b, q)) in known for b in ("", os.path.dirname(f), "docs/orchestration")):
+            ok += 1
+        else:
+            dmiss.append((f, q))
+print(f"D  {ok} backticked path(s) resolve at {REV}, {len(dmiss)} do not")
+for f, q in dmiss:
+    print("   ", f, "|", q)
 sys.exit(0)
