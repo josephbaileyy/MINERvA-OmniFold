@@ -823,7 +823,7 @@ achievable repeatability, not acceptable error."* **So no format-derived number 
 | candidate declared use | measured status |
 |---|---|
 | the Letter | `paper_body.tex:145-146` — *"Every non-two-dimensional result in this Letter is a central value."* **No non-2D uncertainty is quoted** |
-| the 3D budget | `sec_3d.tex:250-251` — `sqrt(tr)=5.72e-39`, median per-bin relative `10.4%`, rank `247` of `1431`, *"the same flux-dominated band ordering as 2D"* — followed immediately by ***"These are audit descriptors, not publication uncertainties."*** |
+| the 3D budget | `sec_3d.tex:250-251` — `sqrt(tr)=5.72e-39`, median per-bin relative `10.4%`, rank `247` of `1431` [cutoff `λ > 1e-12·λ_max`, `analyze_universes_3d.py`; not in the quoted note text], *"the same flux-dominated band ordering as 2D"* — followed immediately by ***"These are audit descriptors, not publication uncertainties."*** |
 | D1/D2 figures | bands drawn, no printed digit; `:263-264` *"The magnitudes are quarantined"*; `:210` *"orientation only and is not final"* |
 | C6 | a truth-containment **diagnostic** at *"nominal 68.27%"* (`coverage_valid_nd.py:188,209`), not a released claim |
 | C7 | Gate-2 blocked, unquotable |

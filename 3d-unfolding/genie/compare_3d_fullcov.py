@@ -8,7 +8,7 @@ The 3D UQ campaign produced the reported-bin covariance
 unfolded data on that grid.
 
 WHY NOT raw pinv: the covariance is built from a finite ensemble (187 universes
-+ 100 bootstrap + 10 seed), so its rank (~247) is far below 1431 -- it has a
++ 100 bootstrap + 10 seed), so its rank (~247 at lambda > 1e-12 lambda_max) is far below 1431 -- it has a
 large null space. A raw inverse/pseudo-inverse either blows up or silently drops
 the null directions (carrying the model residual there for free), which is the
 mistake the UQ docs warn against. Instead we use a TRUNCATED-SPECTRAL chi^2:

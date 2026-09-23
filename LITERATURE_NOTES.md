@@ -475,8 +475,7 @@ result; each tightens a defensible-but-assumed choice. Listed in rough priority.
    sake.** OmniFold's structural advantage is exactly that adding an observable = adding a
    feature, with *no* IBU/D'Agostini analogue — so a 4th axis is the natural showcase and
    costs almost nothing in the unbinned step. The cost is downstream: the *reported binned*
-   product and its covariance grow combinatorially (3D is already 1431 bins, rank 247/1431
-   — the covariance is mostly null space), MC stats thin out per bin, and each new axis
+   product and its covariance grow combinatorially (3D is already 1431 bins, rank 247/1431 at λ > 1e-12·λ_max — the covariance is mostly null space), MC stats thin out per bin, and each new axis
    needs its own truth/reco accessor + closure + binning study. **Recommendation:** add a
    4th axis only with a *specific physics question* it answers, not for dimensionality's
    sake. The best-motivated candidates, in order: (a) **q3 / 3-momentum transfer** — would

@@ -39,7 +39,7 @@ the three pre-publication methodology items), `3d-unfolding/3D_OMNIFOLD_STATUS.m
 | Estimators | same | `exact / hist / xgb / lgbm` branches exist. **No NN branch.** |
 | Histogramming | `3d-unfolding/unfold_3d_omnifold_unbinned.py::hist3d` | Uses `np.histogramdd` (already N-D) but the wrapper is written for 3 columns. |
 | Cross-section extraction / projection | `3d-unfolding/xsec_3d.py` | **No** — `extract_cross_section_3d`, `project_axis`, `project_eavail_marginal` are hardcoded to 3 axes (pt/pz/eavail). Needs an N-D generalization. |
-| Covariance (block-sum C_syst+C_stat+C_ML) | `2d-unfolding/uq/analyze_universes.py`, `3d-unfolding/uq_3d/analyze_universes_3d.py` | **Yes (bin-count-agnostic)** — but bin count and covariance null-space grow fast (3D is already 1431 bins, rank 247). |
+| Covariance (block-sum C_syst+C_stat+C_ML) | `2d-unfolding/uq/analyze_universes.py`, `3d-unfolding/uq_3d/analyze_universes_3d.py` | **Yes (bin-count-agnostic)** — but bin count and covariance null-space grow fast (3D is already 1431 bins, rank 247 at λ > 1e-12·λ_max). |
 | New observable input | `MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h` | **No** — a genuinely new reco/truth variable needs a C++ accessor (mirror `NewEavail()` L184 / `GetEAvailableTrue()` L194) **and an event-loop re-run** to dump the branch. This is how E_avail was added in workstream C1. |
 
 **Takeaway:** the *unfolding* is nearly free to extend; the cost is (a) one C++ accessor +

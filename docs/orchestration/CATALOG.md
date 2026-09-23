@@ -1634,7 +1634,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   the relayed `g_max` and `≥ 0` on clamped bins — `γ` is finite from construction, no tolerance
   needed. **The `f ≤ 0.1371` threshold arithmetic stands**; only *"`g` may fall to zero"* was wrong. **`T5d`:** *"the same factor bounds every projection"* is
   **FALSE** without a further condition; measured `179.9` against a limit of `0.69` with a PSD `C`
-  and non-negative weights, and `∞` at exact annihilation — and `AGENTS.md:27`'s rank-247 precedent
+  and non-negative weights, and `∞` at exact annihilation — and `AGENTS.md:27`'s rank-247 (λ > 1e-12·λ_max) precedent
   makes null directions live in this family. **`T5e`:** `6528 + 4166 = 10694`, so **38.96%** of the
   support has `g` pinned at 1 and contributes `u = 0` **while membership holds**; taking `min f` over
   the full support is a mis-specified minimisation. ⚠ **CORRECTED:** *"not a population choice"* is

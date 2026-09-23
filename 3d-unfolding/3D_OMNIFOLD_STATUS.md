@@ -7,8 +7,7 @@ test (PASS, ratio 0.102) and an **ensemble-mean** 3D CV
 (`xsec_3d_MEFHC_5iter_lgbm_ensemble.root`, lgbm seed band 0.45→0.14 %/bin, shift
 ~0); staged the **Ascencio low-q3** corroboration
 (`genie/compare_ascencio_eavail.py`, arXiv:2110.13372) and folded the
-open-question resolutions into `docs/technote/sec_openquestions.tex` (3D GoF =
-rank-247 truncated-spectral χ²; the high-E_avail DIS-tail excess is the one
+open-question resolutions into `docs/technote/sec_openquestions.tex` (3D GoF = rank-247 (λ > 1e-10·λ_max, `compare_3d_fullcov.py --tol`) truncated-spectral χ²; the high-E_avail DIS-tail excess is the one
 remaining physics item). Full-stats 3D unfold
 `d³σ/(dp_T dp_‖ dE_avail)` produced and validated: the Eavail-marginal recovers
 the published 2D **normalization**, and an injected-shape **closure passes** — so
@@ -24,8 +23,7 @@ band ordering as 2D); the generator comparison now carries that full-cov
 systematic band.
 
 **2026-07-16 covariance-gate override:** the 3D central value, dimensional
-anchor, and closure controls remain valid. The historical rank-247 block-sum
-covariance and every covariance-dependent generator $\chi^2$/significance are
+anchor, and closure controls remain valid. The historical rank-247 (λ > 1e-12·λ_max) block-sum covariance and every covariance-dependent generator $\chi^2$/significance are
 now **CANDIDATE/QUARANTINED**, not publication numbers. Under the corrected
 dependency contract, the quotable 3D covariance is projected from the final
 adopted 5D trunk after the selection-complete lateral replacement. Statements
@@ -114,7 +112,7 @@ matches to <1 %).
 - **Systematic UQ**: DONE (2026-06-02). 187-universe sweep + seedscan, re-unfolded
   and rolled up into the combined covariance C_syst+C_stat+C_ML at
   `uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root` (Flux-dominated, same
-  band ordering as 2D, rank 247/1431). Full-cov χ² computed for all four
+  band ordering as 2D, rank 247/1431 at λ > 1e-12·λ_max). Full-cov χ² computed for all four
   generators (incl. GiBUU). Plan/record: `3D_SYSTEMATIC_UQ_PLAN.md`, memory
   `3d-systematic-campaign-gaps`.
 

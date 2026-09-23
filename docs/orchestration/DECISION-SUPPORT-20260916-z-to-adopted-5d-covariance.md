@@ -1190,7 +1190,7 @@ counterexample.** Both conditions are needed to see the failure: **non-uniform `
 anti-correlated `C`.** My earlier diagnosis was half of it.
 
 And it is live:
-`AGENTS.md:27` records the historical 3D block-sum object at **rank 247**, so exact null directions
+`AGENTS.md:27` records the historical 3D block-sum object at **rank 247** (λ > 1e-12·λ_max), so exact null directions
 already exist in this family.
 
 ### 15.3 What the finite-change correction actually does — it helps
@@ -1271,7 +1271,7 @@ currently runs together:
 
 ⚠ **AND THE PROJECTION SET IS NOT A DECLARATION AT ALL.** `SPEC:1356` plus the publication scope
 **enumerate** it, so what is owed is a **CHECK — each declared projection evaluated against §15.2's
-condition — not a judgement.** Given the rank-247 precedent the assessor expects at least one to sit
+condition — not a judgement.** Given the rank-247 (λ > 1e-12·λ_max) precedent the assessor expects at least one to sit
 near a null direction. **This is the highest-value zero-compute item in the set and it was absent
 from §12.5.** It becomes **§12.5 item 5**.
 

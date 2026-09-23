@@ -188,7 +188,7 @@ hazard does not touch.
 | 7 | `uq/_ours_only_chi2.py:128` **direct `inv`** | `C^syst`(shrunk) + `C^boot` | **block sum** | 300 / 100 | **205, direct inverse** | mixed | **NO** — note reports pulls + scan instead |
 | 8 | `uq/analyze_uq.py:160-165` | `C^boot` alone, Cholesky **PD check only, not a χ²** | pure sample | 300 | — | 1/(N−1) | n/a |
 | 9 | **`ibu_omnifold_paired_cdelta.py:190-198`** | `C_delta` = `Cov(x_OF − x_IBU)` | **PURE SAMPLE** | **200** | declared rank or `rcond=1e-10` | 1/(N−1) | **NO** (no `.tex` hit) |
-| 10 | `genie/compare_3d_fullcov.py:101-107` truncated-spectral | 3D block sum, 1431 bins, rank ~247 | block sum | 187 + 100 + 10 | truncation scan | mixed | **NO — quarantined** (`sec_3d.tex:181`) |
+| 10 | `genie/compare_3d_fullcov.py:101-107` truncated-spectral | 3D block sum, 1431 bins, rank ~247 (λ > 1e-12·λ_max) | block sum | 187 + 100 + 10 | truncation scan | mixed | **NO — quarantined** (`sec_3d.tex:181`) |
 | 11 | `genie/overlay_generators_band.py:170-177` | 3D block sum | block sum | as above | `solve`, else `pinv` | mixed | **NO — quarantined** |
 | 12 | `compare_ascencio_fullcov.py:186`, `compare_ascencio_fine.py:93` | ours + Ascencio published | block sum | mixed | `solve` | mixed | **NO** — *"No pulls or full-covariance χ² are reported"* (`sec_3d.tex:374-375`) |
 | 13 | `eavail_generator_significance.py:106-107` | `C_y`, `E_avail` | block sum | mixed | `pinv`, full + hi subset | mixed | **NO — quarantined** |

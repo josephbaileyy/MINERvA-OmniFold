@@ -468,7 +468,7 @@ The honest reading of the table below is therefore *"confirms the bound for unif
 non-negative fixtures"* — not *"confirms the bound"*.
 
 ⚠ **This is LIVE, not hypothetical.** Unfolded covariances are strongly anti-correlated between
-neighbouring cells, and `AGENTS.md:27` records the historical 3D block-sum object at **rank 247** —
+neighbouring cells, and `AGENTS.md:27` records the historical 3D block-sum object at **rank 247** (λ > 1e-12·λ_max) —
 exact null directions already exist in this family.
 
 **What survives:** the factor bounds the **full matrix** in any submultiplicative norm, and it

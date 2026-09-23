@@ -86,7 +86,7 @@ E_avail invariant). Flux:IDX divides by Φ_u (Task #70). Validation guards mirro
 ran → `uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root`
 (`hCov_universe3d_total` syst-only, `hCov_combined3d_total` = C_syst+C_stat+C_ML,
 per-band TH2D, `hSigma` TH3D, pt/pz/eavail PNGs, summary.txt). **Combined budget:**
-√trace 5.724e-39, median 10.4%/bin, p84 15%, rank 247/1431. Systematics dominate
+√trace 5.724e-39, median 10.4%/bin, p84 15%, rank 247/1431 (λ > 1e-12·λ_max, `analyze_universes_3d.py`). Systematics dominate
 (C_syst √tr 5.710e-39 ≫ C_stat 3.51e-40, C_ML 2.13e-40). **Dominant bands:** Flux
 (3.22e-39, median 5.4%) > 2p2h (2.42e-39) > Muon_Energy_MINERvA (1.84e-39) >
 Muon_Energy_MINOS (1.77e-39) > MaCCQE (1.32e-39) — Flux-led, same ordering as 2D.

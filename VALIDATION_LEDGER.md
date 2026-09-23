@@ -1529,7 +1529,7 @@ artifacts on the login node. All PASS; no rerun required.
   `check_4d_anchors.py` reproduces 0.38%/0.64%/1.68% medians and 4D/3D
   integral ratio 0.9960; `check_5d_anchors.py` 5D/4D total 1.0011, W marginal
   PASS; `compare_3d_fullcov.py` reproduces the historical candidate's
-  sqrt-trace 5.724e-39, rank 247/1431, and Tune-v1/GiBUU ordering. These
+  sqrt-trace 5.724e-39, rank 247/1431 (λ > 1e-12·λ_max), and Tune-v1/GiBUU ordering. These
   covariance-dependent numbers are quarantined pending the final 5D-to-3D
   projection.
 
@@ -1580,7 +1580,7 @@ artifacts on the login node. All PASS; no rerun required.
 ## Active 3D And 4D Results — central anchors valid; covariance products gated
 
 - `compare_3d_fullcov.py` with GENIE, Tune v1, NuWro, and GiBUU reproduces the
-  historical candidate: sqrt-trace `5.724e-39`, hard rank `247/1431`, and the
+  historical candidate: sqrt-trace `5.724e-39`, hard rank `247/1431` (`λ > 1e-12·λ_max`), and the
   same generator ordering. **DIAGNOSTIC ONLY** — the final quotable 3D
   covariance and generator comparison require the adopted selection-complete
   5D-to-3D projection.

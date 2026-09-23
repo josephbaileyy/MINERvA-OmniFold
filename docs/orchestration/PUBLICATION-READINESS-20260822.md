@@ -976,7 +976,7 @@ command; what it blocks and what blocks it; the actor; the expiry/falsifier; and
 - **Path.** CRITICAL.
 
 ### PR-G13 — collaboration review
-- **What.** Endorsement for publishing the full **1431-bin** 3D+ covariance (rank 247) and its
+- **What.** Endorsement for publishing the full **1431-bin** 3D+ covariance (rank 247, λ > 1e-10·λ_max as `COLLABORATOR_QUESTIONS.md` item 2 declares) and its
   **rank-deficient GoF** treatment, plus blinded/full-author review.
 - **MEASURED — three collaborator questions were sent; two are answered, one is not, and the
   unanswered one IS `OI-29`.** From `docs/COLLABORATOR_QUESTIONS.md` (181 lines): (1) FrInel_pi

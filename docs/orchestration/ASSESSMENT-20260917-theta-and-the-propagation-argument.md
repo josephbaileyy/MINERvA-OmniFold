@@ -378,7 +378,7 @@ off-diagonals it does not transfer at all.
 
 **And this is live rather than academic in this family.** An unfolded covariance is strongly
 anti-correlated between neighbouring cells, which is precisely the cancelling structure above; and
-`AGENTS.md:27` records that the historical 3D block-sum object was **rank 247**, i.e. it had exact
+`AGENTS.md:27` records that the historical 3D block-sum object was **rank 247** (λ > 1e-12·λ_max), i.e. it had exact
 null directions — a projection along one annihilates it exactly. **The case the bound does not cover
 is the expected structure of the object, not a contrived corner.** `SPEC:1356` requires the 3D/4D
 covariances to be exact projections, so the check is mandatory and it is **zero compute** once the
@@ -549,7 +549,7 @@ requires the 3D/4D covariances to be exact projections of the adopted trunk, and
 scope (`AGENTS.md`) fixes which they are: the 2D `(p_T, p_∥)` reproduction, the 3D `E_avail`
 extension, and the 4D/5D extensions through `q3` and `W`. **So the projection set is
 *enumerable*, and what is owed is a *check*, not a judgement** — each declared projection evaluated
-against `T5d`'s condition. Given `AGENTS.md:27`'s rank-247 precedent in this very family, I would
+against `T5d`'s condition. Given `AGENTS.md:27`'s rank-247 (λ > 1e-12·λ_max) precedent in this very family, I would
 expect at least one declared projection to sit near a null direction, and `T5d` shows the bound fails
 there without limit rather than degrading. **That check is the single highest-value zero-compute item
 in this set, and it is not in §12.5's list.**
