@@ -11,12 +11,25 @@ or verdict. Every reference or threshold statement below is a **prospective reco
 
 | item | state |
 |---|---|
-| 1. distortion library (`distortions.py`) + unit tests | committed |
-| 2. replicate drawing (`replicates.py`) + unit tests | committed |
-| 3. identifiability table | (filled when the job lands) |
-| 4. scalar references under distortion | (filled when the jobs land) |
-| 5. reference assessment (a)(b)(c) | (filled when the jobs land) |
-| 6. this document + `results/*.json` | in progress |
+| 1. distortion library (`distortions.py`) + unit tests | done — 33 distortions (28 predeclared + 5 post-hoc), 38 cases |
+| 2. replicate drawing (`replicates.py`) + unit tests | done — golden-pinned; importable by Phase D/E and the confirmatory stage |
+| 3. identifiability table | done — §3, `results/identifiability.json` |
+| 4. scalar references under distortion | done — 114/114 case × replicate runs, both miss-handling modes, §4 |
+| 5. reference assessment (a)(b)(c) | done — (a) cited from B1, (b) pool S 1× and 8×, (c) toy; §5 |
+| 6. this document + `results/*.json` | done |
+
+**Headline (all simulation, all MEASURED unless labelled):** every predeclared truth distortion is
+distinguishable at the historical pseudodata size; R2 (±1 % muon scale) and R3 (10 % cluster
+smearing) are not, and are reported as unprobed at that size. The scalar yardsticks at k = 3 span
+0.34–0.62 (IBU, misses carried) and 0.22–0.57 (GBDT) across D1–D3, D4a/b and D5, fall to 0.11–0.30
+under the proton multiplicity (D4c) and below zero under D4d; efficiency correction reaches
+0.84–0.96 on the `E_avail` tilts and pion multiplicities but fails on within-bin shape changes
+(D5 NuWro −0.20). Under D4d (neutrons) every estimator ends farther from the target than the prior. A ±5 %
+hadronic-scale error moves measured recovery by ±0.06. On pool S, 8× more events close only 0.008
+of the 0.223 gap between the response-aware IBU and the historical reference at k = 3; the
+reference model's own realization on the scored object is 0.53, not 0.695; and a known-function toy
+shows `1-(1-a)^k` overstates the engine rule's attainable recovery at small k even when its
+assumptions hold, while efficiency correction exceeds it — it is neither a bound nor a match.
 
 ## 1. What is implemented, and what it acts on
 
@@ -452,18 +465,85 @@ the same construction on pool S's own maps.
 
 ### 5b. Response-aware references at the historical size and at 8× (pool S)
 
-(filled from `results/reference_assessment.json`)
+MEASURED by job `58782099` at commit `09dc2f2e` (`results/reference_assessment.json`): the
+development injection (D1 at +0.35) on pool S, target = the tilted spectrum over all 18.86 M pool-S
+events; three replicates at the historical size (disjoint) and three at 8× (4.80 M + 4.80 M events,
+which pool S can only supply with a measured 51 % pairwise overlap, so their sd is a lower bound).
+
+| estimator | size | k=1 | k=3 | k=10 | k=20 | k=30 |
+|---|---|---:|---:|---:|---:|---:|
+| IBU reco E_avail, misses carried | 1x | 0.265 ± 0.002 | 0.472 ± 0.004 | 0.647 ± 0.011 | 0.692 ± 0.008 | 0.685 ± 0.007 |
+| IBU reco E_avail, misses carried | 8x | 0.267 ± 0.001 | 0.480 ± 0.001 | 0.662 ± 0.002 | 0.696 ± 0.001 | 0.686 ± 0.001 |
+| IBU reco E_avail, eff.-corrected | 1x | 0.674 ± 0.037 | 0.904 ± 0.051 | 0.768 ± 0.198 | 0.717 ± 0.276 | 0.684 ± 0.289 |
+| IBU reco E_avail, eff.-corrected | 8x | 0.655 ± 0.016 | 0.951 ± 0.022 | 0.770 ± 0.043 | 0.656 ± 0.073 | 0.605 ± 0.109 |
+| *reference model realized (`diag`)* | 1x | 0.346 ± 0.005 | 0.523 ± 0.007 | 0.609 ± 0.007 | 0.644 ± 0.004 | 0.669 ± 0.002 |
+| *reference model realized (`diag`)* | 8x | 0.348 ± 0.001 | 0.528 ± 0.002 | 0.618 ± 0.004 | 0.656 ± 0.006 | 0.682 ± 0.007 |
+| *analytic reference model* `1-(1-a)^k` | population | 0.510 | 0.695 | 0.742 | 0.755 | 0.765 |
+
+1x draws: 600130 prior + 600111 pseudodata events per replicate, disjoint=True, max pairwise overlap 0.000.
+
+8x draws: 4801040 prior + 4800888 pseudodata events per replicate, disjoint=False, max pairwise overlap 0.509.
+
+* **The historical reference construction is stable across populations:** built on pool S's own
+  acceptance and displacement maps it gives 0.6950 at k = 3 (historical 0.69497) and the same
+  regional values (low 0.014, moderate 0.776, good 0.976).
+* **The finite-sample part of the gap is small.** The response-aware IBU (misses carried, the
+  engine's rule) gives 0.472 ± 0.004 at k = 3 at the historical size and 0.480 ± 0.001 at 8×:
+  8× more events close 0.008 of the 0.223 between it and the 0.695 reference (0.015 at k = 10).
+  **At least 96 % of the gap at k = 3 is definitional**, not statistical.
+* **The reference model does not describe its own scored realization.** Its assumptions (acceptance
+  only, no smearing, misses carried) realized on the actual events and scored by the actual
+  statistic (`diag`) give 0.523 at 1× and 0.528 at 8× — below the 0.556 floor derived from the
+  model itself — against 0.695 for the analytic construction on the (p_T, p‖) cells. This is B1's
+  0.523 on the DEV halves, reproduced on independent pool-S events and shown not to be a
+  finite-sample effect.
+* **Efficiency correction** reaches 0.904 ± 0.051 at 1× and 0.951 ± 0.022 at 8× at k = 3 — above
+  the reference, so the reference is not a bound — and then declines with k at both sizes
+  (0.60 by k = 30 at 8×), so the decline is not only statistical noise either (§5c gives the
+  mechanism).
+
+**Prospective recommendation (not a verdict, and no change to the historical floor):** a reference
+for this endpoint should be computed for the estimator rule and normalization actually used, on
+the seven-bin marginal actually scored — e.g. the `diag` realization (0.52–0.53 at k = 3) or the
+attainable recovery of §5c — and quoted at the iteration count actually run. The historical
+0.695 overstates what its own model delivers on the scored object by ≈ 0.17 at k = 3, and more
+events do not close that.
 
 ### 5c. A known-function toy: does `1-(1-a)^k` bound, match or undershoot what is attainable?
 
-`run_toy_reference.py`, jobs `58781107` (engine normalization) and the rerun with the rate-matched
-variant (§7); the toy is deterministic and the cluster run reproduced a local run bit for bit. One
+`run_toy_reference.py`, jobs `58781107` (at `972ab5d4`, engine normalization) and `58782108` (at
+`09dc2f2e`, adding the rate-matched variant; `results/toy_reference.json`); the toy is
+deterministic and both cluster runs reproduced a local run bit for bit. One
 variable x with a gamma truth density, a logistic efficiency from 0.02 to 0.75 (midpoint 0.8), and
 Gaussian smearing σ = f·(x + 0.1); the historical tilt at amplitude 0.35 standardized by the toy's
 own quartiles; the endpoint's seven bins. The iteration runs on **expected** histograms, so each
 number is the attainable recovery of that estimator on that response, with no sampling noise.
 
-(table from `results/toy_reference.json`)
+| smearing σ/(x+0.1) | estimator | k=1 | k=3 | k=10 | k=30 |
+|---|---|---:|---:|---:|---:|
+| 0.00 | IBU, misses carried (engine norm.) | 0.434 | 0.659 | 0.926 | 0.992 |
+| 0.00 | IBU, misses carried (rate-matched) | 0.542 | 0.762 | 0.950 | 0.992 |
+| 0.00 | IBU, efficiency-corrected (engine norm.) | 0.991 | 0.991 | 0.991 | 0.991 |
+| 0.00 | *reference model* `1-(1-a)^k` | 0.503 | 0.788 | 0.962 | 0.999 |
+| 0.05 | IBU, misses carried (engine norm.) | 0.431 | 0.655 | 0.920 | 0.976 |
+| 0.05 | IBU, misses carried (rate-matched) | 0.539 | 0.760 | 0.939 | 0.976 |
+| 0.05 | IBU, efficiency-corrected (engine norm.) | 0.960 | 0.977 | 0.976 | 0.976 |
+| 0.05 | *reference model* `1-(1-a)^k` | 0.503 | 0.788 | 0.962 | 0.999 |
+| 0.15 | IBU, misses carried (engine norm.) | 0.410 | 0.645 | 0.870 | 0.929 |
+| 0.15 | IBU, misses carried (rate-matched) | 0.517 | 0.753 | 0.889 | 0.930 |
+| 0.15 | IBU, efficiency-corrected (engine norm.) | 0.884 | 0.948 | 0.930 | 0.930 |
+| 0.15 | *reference model* `1-(1-a)^k` | 0.503 | 0.788 | 0.962 | 0.999 |
+| 0.30 | IBU, misses carried (engine norm.) | 0.356 | 0.613 | 0.818 | 0.895 |
+| 0.30 | IBU, misses carried (rate-matched) | 0.459 | 0.728 | 0.848 | 0.896 |
+| 0.30 | IBU, efficiency-corrected (engine norm.) | 0.763 | 0.939 | 0.904 | 0.896 |
+| 0.30 | *reference model* `1-(1-a)^k` | 0.503 | 0.788 | 0.962 | 0.999 |
+
+Finite sample (the historical size, σ/(x+0.1) = 0.15, 3 draws):
+
+| estimator | k=3 | k=10 | k=30 |
+|---|---:|---:|---:|
+| misses carried | 0.656 ± 0.005 | 0.879 ± 0.013 | 0.919 ± 0.011 |
+| efficiency-corrected | 0.936 ± 0.007 | 0.917 ± 0.012 | 0.916 ± 0.013 |
 
 **Answer (MEASURED on the toy):** the reference model is **neither a bound nor a match**.
 
@@ -521,4 +601,23 @@ displacement, which overstates it by 0.13 at k = 3 even when its assumptions hol
 
 ## 7. Provenance and cost
 
-(filled)
+| item | value |
+|---|---|
+| code | branch `pet-improvement-20260922-phaseE1`; the jobs ran pinned clean checkouts at `bf1f11e7` (prep), `eba430eb` (identifiability), `972ab5d4` (references), `09dc2f2e` (assessment, toy) under `/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/`; every entrypoint through `nd-unfolding/mnv_guarded_run.py`, guard inventories beside the outputs |
+| historical code | `68cf9d29` (blob ids checked at run time by `scalar_common.verify_historical_sources`) |
+| inventory | `G2_FPS_MEFHC_P12.npz`, sha256 `fa6b3463…a29625` (re-hashed by the prep job); identity sidecar `01e07412…`; pools `pools.npz` `3d8faeb1…` against `pools/POOL_MANIFEST.json` |
+| caches | `phaseE1/prep/poolT.npz` `4dbbfb670095…`, `poolS.npz` `57a0a78c8a41…` |
+| generator predictions (D5) | `/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/*_xsec3d.root`, sha256s in `calibration/d5_tables.json`; rebuilt and matched on Perlmutter (`results/d5_rebuild_check.json`) |
+| task directory | `/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseE1/` (raw per-job outputs, logs, guard inventories) |
+| results | `results/*.json`, digests in `results/summary.json`; tables rendered by `make_tables.py` |
+| environment | `root_6_28` conda python 3.11.14, numpy 1.26.4, sklearn 1.8.0 (jobs); tests also under the NERSC python module (numpy 2.5.2, sklearn 1.9.0) and locally |
+
+**Cost.** 30 jobs recorded in `resources-E1.tsv`, 15 completed. **451.8 CPU core-hours** as
+allocated hardware threads × elapsed, i.e. **1.76 CPU node-hours** of `m3246` (the allocation's
+unit; 3,463 node-hours remained on it at the end). 31.1 core-hours (0.12 node-hours) went to four
+failed jobs: a PyROOT segfault in `root_6_28` (58756787), a missing `uproot` in the same
+environment (58780644), a 0/0 in a diagnostic ratio that the fail-closed JSON writer refused
+(58780737), and a hand-typed pin SHA the wrapper refused (58781324). Eleven jobs were cancelled
+without running: the shared QOS left them PENDING on Resources for six hours, and the work was
+re-cut into ≤ 30-minute pieces for the `debug` QOS (one exclusive node each, two at a time), which
+is why each completed job is charged a whole node. No GPU was used.
