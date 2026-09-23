@@ -198,6 +198,9 @@ SHAPES = [
     ("form-feed-led row", "| a | b | c |\n|---|---|---|\n\x0c| x | 1 | note |\n", {'unicode-ws'}),
     ("U+2028-led row", "| a | b | c |\n|---|---|---|\n\u2028| x | 1 | note |\n", {'unicode-ws'}),
     ("one ASCII space then U+00A0", "| a | b | c |\n|---|---|---|\n \u00a0| x | 1 | note |\n", {'unicode-ws'}),
+    # --- review #16b: the two sub-conditions of `unicode-ws` that no shape pinned
+    ("U+00A0-led pipe line inside a fence", "```\n\u00a0| x | y |\n```\n", set()),
+    ("U+00A0-led pipe line with no table near it", "text\n\n\u00a0| x | y |\n", {'unicode-ws'}),
 ]
 
 
@@ -214,7 +217,16 @@ def self_test():
                 wrong.append(f"{name}: wanted {sorted(want)}, got {err or sorted(got)}")
     # every kind this file can emit needs a shape that produces it ALONE; otherwise deleting that check
     # leaves every shape passing
-    emitted = set(re.findall(r'out\.append\(\(ln \+ 1, "([\w-]+)"', open(__file__, encoding="utf-8").read()))
+    # read from the SYNTAX TREE, not by a regex over one call form: `out.append((ln+1, "torn-row", ...))`
+    # reformatted slipped past the regex, and the self-test passed with a kind it could no longer see (#16b)
+    import ast
+    emitted = set()
+    for node in ast.walk(ast.parse(open(__file__, encoding="utf-8").read())):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "append"
+                and isinstance(node.func.value, ast.Name) and node.func.value.id == "out" and node.args
+                and isinstance(node.args[0], ast.Tuple) and len(node.args[0].elts) > 1
+                and isinstance(node.args[0].elts[1], ast.Constant) and isinstance(node.args[0].elts[1].value, str)):
+            emitted.add(node.args[0].elts[1].value)
     for kind in sorted(emitted - {k for *_, want in SHAPES if len(want) == 1 for k in want}):
         wrong.append(f"no shape isolates `{kind}`, so deleting that check would pass")
     for w in wrong:

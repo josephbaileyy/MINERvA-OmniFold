@@ -20,9 +20,9 @@ So this file now has two layers:
     defect, and the suite must FAIL. A suite that cannot fail is not evidence that it passed.
 
 Run: python3 docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py [--regressions]
-Exit 0 = every case behaved as wanted, and (with --regressions) the suite FAILED under at least one
-patched-back defect -- i.e. it can fail. It does NOT mean every regression is detected: a regression
-can be REDUNDANT (a later guard layer also closes its shape), and the harness says which.
+Exit 0 = every case behaved as wanted, and (with --regressions) every refusal site found in the guard's
+code is anchored, every anchor has a regression, and every regression changes some case's result without
+crashing (only preconditions may fire through a traceback). See the harness comment in `main`.
 ⚠ An earlier version of this docstring claimed "every regression detected" and that the harness
 "patches the guard back to EACH historical defect"; review #11b showed both false. The regression
 list is a set of defects reviewers actually found, not all of them, and it grows when one is missed.
@@ -87,6 +87,30 @@ REGRESSIONS = {
         'for t in toks if t.type in ("inline", "fence", "code_block")]'),
     'R22 a NO VERDICT note never read as reporting (review #15b)': ('return any(p.search(note) for p in REPORTS)           # REGRESSION-ANCHOR:noverdict-notes',
         'return False'),
+    # --- review #16a: three `checks` entries and two generic branches had no anchor, so the anchor sweep
+    # could not see them and deleting any one left every case green
+    'R23 the stated last self round not compared (review #16a)': ('checks = [("last self round", int(stated_last), rounds[-1]),   # REGRESSION-ANCHOR:last-round',
+        'checks = ['),
+    'R24 the self addend count not compared (review #16a)': ('("self addend count", len(_ints(self_addends)), len(selves)),   # REGRESSION-ANCHOR:self-addend-count',
+        ''),
+    'R25 the independent addend count not compared (review #16a)': ('("independent addend count", len(_ints(agy_addends)), len(agys))]   # REGRESSION-ANCHOR:agy-addend-count',
+        ']'),
+    'R26 a stated/derived mismatch not recorded (review #16a)': ('if stated != derived:                                # REGRESSION-ANCHOR:scalar-compare',
+        'if False:'),
+    'R27 recorded mismatches not acted on (review #16a)': ('if bad:                                                  # REGRESSION-ANCHOR:any-bad',
+        'if False:'),
+    'R28 "found N" read as a report whatever noun follows (review #16b)': ('rf"|\\s+(?:before|after|and|then|but|while|when|of|in|so)\\b")      # REGRESSION-ANCHOR:found-tail',
+        'rf"|\\s+\\w")'),
+    # PRECONDITIONS: without one, the guard CRASHES instead of refusing cleanly. Their regressions may fire
+    # through a traceback only -- the one class allowed to (anchor names beginning `pre-`)
+    'P1 a missing report not refused cleanly (review #16a)': ('if not REPORT.exists():                                  # REGRESSION-ANCHOR:pre-report',
+        'if False:'),
+    'P2 a report without a ledger table not refused cleanly (review #16a)': ('if not ledgers:                                          # REGRESSION-ANCHOR:pre-ledger',
+        'if False:'),
+    'P3 a ledger with no self rows not refused cleanly (review #16a)': ('if not selves or not agys:                               # REGRESSION-ANCHOR:pre-rows',
+        'if False:'),
+    'P4 a report with no TOTAL not refused cleanly (review #16a)': ('if not hits:                                             # REGRESSION-ANCHOR:pre-total',
+        'if False:'),
 }
 # review #15b: dropping ONE finding-report pattern left the suite green. Each pattern, keyed by the
 # example in its trailing comment, gets its own regression and its own case (NV_REPORTING below).
@@ -140,6 +164,38 @@ def _first_agy_row(text):
 # one note per REPORTS pattern, each matched by THAT pattern alone, so dropping any one pattern fails a case
 NV_REPORTING = ("six defects in the guard", "found 6 before the session died", "defects found: six",
                 "found a defect in the guard", "two issues found", "findings: 3", "2 MEDIUM, 1 LOW")
+
+
+def unanchored_sites(src):
+    """Refusal sites of the guard, found in its CODE, whose governing condition carries no anchor."""
+    lines, out = src.split("\n"), []
+    ind = lambda s: len(s) - len(s.lstrip())
+    for i, l in enumerate(lines):
+        s = l.strip()
+        if s in ("return 1", "return 2") or s.startswith("bad.append("):
+            need = ind(l)
+            for j in range(i - 1, -1, -1):
+                lj = lines[j]
+                if not lj.strip() or ind(lj) >= need:
+                    continue
+                need = ind(lj)
+                if re.match(r"\s*(if|elif)\b", lj):
+                    if "REGRESSION-ANCHOR:" not in lj:
+                        out.append((j + 1, lj.strip()))
+                    break
+                if re.match(r"\s*def\b", lj):
+                    out.append((i + 1, s + " (no governing if)"))
+                    break
+    k = next((i for i, l in enumerate(lines) if l.strip().startswith("checks = [")), None)
+    if k is None:
+        out.append((0, "no `checks = [` list found"))
+    else:
+        for i in range(k, len(lines)):
+            if "REGRESSION-ANCHOR:" not in lines[i]:
+                out.append((i + 1, lines[i].strip()))
+            if lines[i].rstrip().split("#")[0].rstrip().endswith("]"):
+                break
+    return out
 
 
 def build_cases(orig):
@@ -313,12 +369,33 @@ def build_cases(orig):
          orig.replace(total_line, total_line + "\n\n<details><summary>an earlier revision</summary>\n" + stale_total.replace("**", "") + "\n</details>\n\n", 1), (1, 2)),
         ("CONTROL a stale TOTAL inside an HTML comment BLOCK is ignored",
          orig.replace(total_line, total_line + "\n\n<!--\n" + stale_total.replace("**", "") + "\n-->\n\n", 1), (0,)),
+        # --- review #16a: each isolates a check the anchor sweep could not see
+        ("the TOTAL's last self round one short", re.sub(r"(self rounds 1[–-])(\d+)", lambda mm: mm.group(1) + str(int(mm.group(2)) - 1), orig, count=1), (1, 2)),
+        ("two self addends merged (count short, sum unchanged)", orig.replace("= 3+0+0+1+", "= 3+0+1+", 1), (1, 2)),
+        ("two independent addends merged (count short, sum unchanged)", orig.replace("14+9+7+11", "23+7+11", 1), (1, 2)),
+        ("the report is absent", None, (2,)),
+        ("the ledger table's header renamed away", orig.replace("| round | findings | note |", "| round | count | note |", 1), (2,)),
+        # ⚠ every row the guard would read as a self row, including `**10 (self)**`: the first version of this case
+        # matched only a bare label, left row 10 behind, and so never reached the precondition it names
+        ("every self row removed", "\n".join(l for l in orig.split("\n") if not re.match(r"^\|\s*\W*\d+\s*\(self", l)), (1, 2)),
+        ("the TOTAL sentence removed", orig.replace(total_line, "", 1), (2,)),
+        *[(f"CONTROL a NO VERDICT death note naming a count of something else: {note[:34]}",
+           orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| " + note + " |", nv_row), 1), (0,))
+          for note in ("found one file unreadable and stopped", "reported 3 minutes in that the session was rate-limited",
+                       "flagged 1 file as unreadable, then died")],
+        # --- review #16b: ORDINARY staleness that only the addend counts catch -- a zero-finding row added,
+        # the TOTAL left alone, so every sum still agrees
+        ("an unrecorded agy row with 0 findings", after(r_last_agy, "| **agy #99 (independent)** | **0** | clean |"), (1, 2)),
+        ("an unrecorded self round with 0 findings", after(anchor, "| 99 (self) | **0** | clean |"), (1, 2)),
         ("CONTROL untouched ledger", orig, (0,)),
     ]
     # ⚠ A MUTATION THAT DOES NOT MUTATE TESTS NOTHING, and this suite has shipped three of them.
     # Assert the text actually changed before trusting any verdict derived from it.
     inert = [label for label, text, want in cases
              if text == orig and not label.startswith("CONTROL")]
+    absent_base = [label for label, text, want in cases if text is not None and "(self)" not in text]
+    if [x for x in absent_base if x != "every self row removed"]:
+        raise SystemExit("[mutations] CANNOT LOOK :: a case lost every self row by accident: " + "; ".join(absent_base))
     if inert:
         raise SystemExit("[mutations] CANNOT LOOK :: these cases did not change the document, so "
                          "their result is meaningless: " + "; ".join(inert))
@@ -335,15 +412,19 @@ def run_suite(guard_src, cases, verbose):
         g.write_text(guard_src, encoding="utf-8")
         target = work / REPORT.name
         for label, text, want in cases:
-            target.write_text(text, encoding="utf-8")
+            if text is None:                  # the report is ABSENT
+                target.unlink(missing_ok=True)
+            else:
+                target.write_text(text, encoding="utf-8")
             r = subprocess.run([sys.executable, str(g)], capture_output=True, text=True)
             rc = r.returncode
             # a CRASH is not a refusal: exit 1 from a traceback satisfies every (1, 2) case by accident
-            ok = rc in want and "Traceback" not in r.stderr
+            crashed = "Traceback" in r.stderr
+            ok = rc in want and not crashed
             if verbose:
                 print(f"  {'OK ' if ok else '*** WRONG ***'} {label:58s} exit={rc} want={want}")
             if not ok:
-                wrong.append((label, rc, want))
+                wrong.append((label, rc, want, crashed))
     return wrong
 
 
@@ -359,21 +440,22 @@ def main() -> int:
     print()
     if wrong:
         print(f"[mutations] FAIL :: {len(wrong)} of {len(cases)} case(s) behaved wrongly")
-        for label, rc, want in wrong:
-            print(f"    {label}: exit {rc}, wanted one of {want}")
+        for label, rc, want, crashed in wrong:
+            print(f"    {label}: exit {rc}{' (TRACEBACK)' if crashed else ''}, wanted one of {want}")
         return 1
     print(f"[mutations] PASS :: {len(cases)} cases, every defeating shape refused, control clean")
 
     if "--regressions" in sys.argv:
-        # ⚠ WHAT THIS HARNESS DOES AND DOES NOT ASSERT.
-        # It patches the guard back to each historical defect and re-runs the suite. A regression
-        # that makes some case fail open is LOAD-BEARING: that line is the only thing closing its
-        # shape. A regression under which every case still refuses is REDUNDANT: the shape is
-        # closed by a later layer too (the orphan-row check covers several). Redundancy is defence
-        # in depth, not a suite defect -- the earlier version of this harness called it FAIL, which
-        # would have pushed me to weaken the guard to make a test go green.
-        # The real assertion is the weaker, honest one: THE SUITE MUST BE ABLE TO FAIL AT ALL.
-        # A suite that passes under every possible breakage is not evidence that it passed.
+        # ⚠ WHAT THIS HARNESS ASSERTS. It patches the guard one line at a time and re-runs the suite.
+        #  * Every refusal site in the guard's CODE must carry an anchor (`unanchored_sites`), and every
+        #    anchor must have a regression. The anchors alone were a list, and missed three checks (#16a).
+        #  * Every regression must be LOAD-BEARING: it changes some case's result without crashing,
+        #    either OPEN (a refusal case now passes) or CLOSED (a CONTROL now refuses). Only a
+        #    precondition (`pre-` anchor) may fire through a traceback alone.
+        #  * A REDUNDANT regression FAILS the harness, where it once did not. Every check but a
+        #    precondition is now pinned by a case that fails when that check alone is deleted.
+        #    (An earlier version accepted redundancy as defence in depth; review #15b showed that let
+        #    five checks go unpinned.)
         print("\n--- REGRESSION HARNESS: which guard lines are load-bearing? ---")
         load_bearing, redundant, skipped = [], [], []
         regs = dict(REGRESSIONS)
@@ -387,6 +469,11 @@ def main() -> int:
             pat = re.split(r"\s+#\s", pat, maxsplit=1)[0].strip()
             regs[f"R-REPORTS {tag} pattern dropped (review #15b)"] = (pat, 're.compile(r"(?!x)x"),' if pat.endswith(",") else 're.compile(r"(?!x)x")]')
         untested = sorted(set(ANCHOR_RE.findall(src)) - {a for new_, _ in regs.values() for a in ANCHOR_RE.findall(new_)})
+        # ⚠ review #16a: the anchors are a LIST, and three checks were not on it. So the refusal sites are
+        # ENUMERATED FROM THE CODE: every `return 1`, `return 2` and `bad.append(` is governed by the nearest
+        # enclosing `if`/`elif`, which must carry an anchor, and so must every entry of the `checks` list
+        for site in unanchored_sites(src):
+            skipped.append(f"line {site[0]}: `{site[1][:60]}` governs a refusal and carries no REGRESSION-ANCHOR")
         for a in untested:
             skipped.append(f"REGRESSION-ANCHOR:{a} has no regression, so nothing tests that check")
         for label, (new_, old_) in regs.items():
@@ -405,10 +492,20 @@ def main() -> int:
                 skipped.append(label)
                 continue
             w = run_suite(src.replace(new_, old_, 1), cases, verbose=False)
-            fired = w          # a CONTROL that fails under a regression also proves the suite can fail
-            kind = "LOAD-BEARING" if fired else "redundant   "
+            # ⚠ review #16a: a regression that only makes the guard CRASH still "fired", so a broken patch
+            # looked load-bearing. Only a precondition (`pre-` anchor) may fire through tracebacks alone;
+            # every other regression must make some case FAIL OPEN -- a clean wrong exit, no traceback
+            pre = any(a.startswith("pre-") for a in ANCHOR_RE.findall(new_))
+            fired = w if pre else [x for x in w if not x[3]]
+            kind = "LOAD-BEARING" if fired else ("CRASH-ONLY  " if w else "redundant   ")
             (load_bearing if fired else redundant).append(label)
-            print(f"  {kind} {label:58s} {len(fired)} case(s) fire")
+            # ⚠ review #16b: "load-bearing" meant "some result changes", not "some case fails OPEN" as this
+            # comment once said. Both directions are printed: OPEN = a refusal case now passes; CLOSED = a
+            # CONTROL now refuses. A line pinned only by CLOSED guards against over-strictness, not staleness
+            opened = sum(1 for x in fired if 0 not in x[2] and x[1] == 0)
+            closed = sum(1 for x in fired if x[2] == (0,))
+            print(f"  {kind} {label:58s} {len(fired)} case(s) fire (open {opened}, closed {closed})"
+                  + (f", {len(w) - len(fired)} only by crashing" if len(w) > len(fired) else ""))
         print()
         if skipped:
             print(f"[regressions] FAIL :: {len(skipped)} regression anchor(s) no longer exist in "

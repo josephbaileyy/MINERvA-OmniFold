@@ -68,8 +68,13 @@ WORD = r"(findings?|defects?|problems?|bugs?|flaws?|faults?|mistakes?)"
 # accepted (review #15b). `issues?` returns only where a report verb or a colon pins it (review #15b):
 # "two issues found", "issues: 3", "found an issue".
 WORDI = rf"({WORD[1:-1]}|issues?)"
+# ⚠ after "found 6" the count must still modify a FINDING: nothing follows, or a finding-word, a punctuation
+# mark or a joining word does -- not another noun ("found one file unreadable", "reported 3 minutes in" were
+# refused; review #16b)
+FOUND_TAIL = (rf"\s*(?:$|[.,;:)!?\u2014-])|\s+(?:\w+\s+)?{WORDI}\b"
+              rf"|\s+(?:before|after|and|then|but|while|when|of|in|so)\b")      # REGRESSION-ANCHOR:found-tail
 REPORTS = [re.compile(rf"\b{NUM}\s+(?:\w+\s+){{0,2}}{WORD}\b", re.I),               # "six defects", "a dozen flaws"
-           re.compile(rf"\b(found|reported|flagged|flagging|reporting|finding)\s+{NUM}\b", re.I),   # "found 6"
+           re.compile(rf"\b(found|reported|flagged|flagging|reporting|finding)\s+{NUM}(?={FOUND_TAIL})", re.I),   # "found 6"
            re.compile(rf"\b{WORD}\s+(found|reported)\s*:?\s*{NUM}\b", re.I),              # "defects found: six"
            re.compile(rf"\b(found|reported|flagged)\s+(a|an|one)\s+(?:\w+\s+){{0,2}}{WORDI}\b", re.I),  # "found a defect"
            re.compile(rf"\b{NUM}\s+issues?\s+(found|reported|flagged)\b", re.I),        # "two issues found"
@@ -106,7 +111,7 @@ def reports_findings(note):
 
 
 def main() -> int:
-    if not REPORT.exists():
+    if not REPORT.exists():                                  # REGRESSION-ANCHOR:pre-report
         print(f"[ledger] CANNOT LOOK :: no report at {REPORT}")
         return 2
     text = REPORT.read_text(encoding="utf-8")
@@ -133,7 +138,7 @@ def main() -> int:
             tables.append((header or [], rows, i))
         i += 1
     ledgers = [t for t in tables if [c.lower() for c in t[0][:3]] == ["round", "findings", "note"]]
-    if not ledgers:
+    if not ledgers:                                          # REGRESSION-ANCHOR:pre-ledger
         print("[ledger] CANNOT LOOK :: no rendered table with the ledger header")
         return 2
     if len(ledgers) > 1:                                  # REGRESSION-ANCHOR:header-multiplicity
@@ -214,7 +219,7 @@ def main() -> int:
         for u in unclassified:
             print(f"    {u}")
         return 2
-    if not selves or not agys:
+    if not selves or not agys:                               # REGRESSION-ANCHOR:pre-rows
         print(f"[ledger] CANNOT LOOK :: parsed {len(selves)} self rows, {len(agys)} agy rows")
         return 2
 
@@ -225,7 +230,7 @@ def main() -> int:
              for t in toks if t.type in ("inline", "fence", "code_block", "html_block")]   # REGRESSION-ANCHOR:total-sources
     flat = re.sub(r"\s+", " ", " ".join(shown))
     hits = list(TOTAL.finditer(flat))
-    if not hits:
+    if not hits:                                             # REGRESSION-ANCHOR:pre-total
         print("[ledger] CANNOT LOOK :: no rendered TOTAL sentence of the expected shape")
         return 2
     if len(hits) > 1:                                     # REGRESSION-ANCHOR:total-multiplicity
@@ -250,18 +255,18 @@ def main() -> int:
             print(f"  MISMATCH {label:26s} differs at {len(diff)} position(s): "
                   + ", ".join(f"#{k}: stated {a} vs ledger {b}" for k, a, b in diff[:5]))
             bad.append(f"{label} differ elementwise at {len(diff)} position(s)")
-    checks = [("last self round", int(stated_last), rounds[-1]),
+    checks = [("last self round", int(stated_last), rounds[-1]),   # REGRESSION-ANCHOR:last-round
               ("self total", int(stated_self), self_sum),                    # REGRESSION-ANCHOR:self-total
               ("independent total", int(stated_agy), agy_sum),               # REGRESSION-ANCHOR:agy-total
               ("grand total", int(stated_total), self_sum + agy_sum),        # REGRESSION-ANCHOR:grand-total
-              ("self addend count", len(_ints(self_addends)), len(selves)),
-              ("independent addend count", len(_ints(agy_addends)), len(agys))]
+              ("self addend count", len(_ints(self_addends)), len(selves)),   # REGRESSION-ANCHOR:self-addend-count
+              ("independent addend count", len(_ints(agy_addends)), len(agys))]   # REGRESSION-ANCHOR:agy-addend-count
     for label, stated, derived in checks:
         mark = "ok " if stated == derived else "MISMATCH"
         print(f"  {mark} {label:26s} stated={stated:<5d} derived from ledger={derived}")
-        if stated != derived:
+        if stated != derived:                                # REGRESSION-ANCHOR:scalar-compare
             bad.append(f"{label}: stated {stated}, ledger says {derived}")
-    if bad:
+    if bad:                                                  # REGRESSION-ANCHOR:any-bad
         print("\n[ledger] FAIL :: the TOTAL line does not reconcile with its own table")
         for b in bad:
             print(f"    {b}")

@@ -38,3 +38,16 @@ every `REGRESSION-ANCHOR` must have a regression and every regression must be lo
 fails; a patched guard that crashes or does not compile no longer counts as firing; and the self-test
 compares exact kind sets and requires a shape isolating each kind. **CHECK:** "N of N load-bearing" says
 nothing about checks that have no regression. Enumerate the checks from the instrument, not from the list.
+
+**Ninth, the same shape one level up (independent review #16a).** The repair above enumerated checks
+from the `REGRESSION-ANCHOR` tags, and the tags were themselves a list. Three `checks` entries carried
+none: the last self round, the self addend count and the independent addend count. Deleting any of
+them left all 95 cases green, while each changes a verdict. The sentence *"a patched guard that crashes
+… no longer counts as firing"* was also false: only a patch that failed to COMPILE was skipped, and a
+guard that raised at runtime still made its regression "load-bearing". Now the harness finds refusal
+sites in the guard's CODE. Every `return 1`, `return 2` and `bad.append(` must sit under an anchored
+`if`, and every `checks` entry must carry an anchor. Only a precondition regression (a `pre-` anchor,
+whose removal can only turn a clean refusal into a crash) may fire through tracebacks alone; every
+other regression must change some case's result without crashing. Independent review #16b, reaching the same two
+defects on its own, added that "load-bearing" had never meant "fails open": R1 and R2 fire only through CONTROLs,
+that is, fail-closed. The harness now prints both directions for every regression.
