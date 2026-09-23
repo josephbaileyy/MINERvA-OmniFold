@@ -3769,6 +3769,21 @@ written and false one commit later — **an index that counts citations becomes 
   check; agy reports `unknown` because the installed CLI has no usage endpoint, which is a measured
   absence and not a host limitation.
 
+### Standing references that had no overrides row (classified 2026-09-23, KNOWN_ISSUES row 60)
+
+The 2026-09-23 pass gave all 106 row-less `docs/orchestration/` documents a class. 101 were event
+records whose events had concluded and are now `ARCHIVAL`, and one fixture README is `MACHINE`. These
+four describe standing systems or rules rather than events, so they are `LIVE`:
+
+- [`CONVENTION-lane-worktrees.md`](CONVENTION-lane-worktrees.md) — per-lane worktrees, and the author
+  merges their own row. Decided by Joseph 2026-08-12 after six cross-lane absorption events.
+- [`OPERATOR-GUIDE.md`](OPERATOR-GUIDE.md) — how a human reads status, answers notifications and
+  debugs the orchestrator (`wakerctl.py status`, `RUNS.tsv`).
+- [`PORTING.md`](PORTING.md) — how to reproduce or restore the orchestration system on a migration.
+  Written for the 2026-07-22 shutdown, and it applies to any migration.
+- [`AGENT-NOTIFICATIONS.md`](AGENT-NOTIFICATIONS.md) — how cluster Codex/Claude sessions notify the
+  ntfy channel when a turn waits for input.
+
 ## Task routes
 
 | Task | Route |
