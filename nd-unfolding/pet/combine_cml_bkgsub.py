@@ -17,7 +17,11 @@ Pure numpy -- runs on the login node.
     --cv products/pet/bkgsub/pet_nominal_bkgsub_5d_xsec.npz \
     --floor products/pet/bkgsub/pet_floor_bkgsub_5d_diagnostic.json \
     --out products/pet/bkgsub/pet_cml_bkgsub_5d.npz \
-    --expect 12
+    --expect 12 \
+    --estimator-niter 2 --schema-id <input-schema-id> --producer-commit <sha>
+
+The three estimator flags are REQUIRED (KNOWN_ISSUES row 32); they are written as
+`estimator_stamp` into the npz and the summary. See estimator_stamp.py.
 """
 import argparse
 import glob
@@ -26,6 +30,8 @@ import os
 import re
 
 import numpy as np
+
+import estimator_stamp  # this file's own directory, pet/
 
 _RE = re.compile(r"pet_s(\d+)_e(\d+)_bkgsub_5d_xsec\.npz$")
 
@@ -80,7 +86,12 @@ def main():
                     help="Build from an INCOMPLETE family anyway, for a diagnostic or an "
                          "intermediate. The product is written to a NONQUOTABLE-DIAGNOSTIC.-prefixed "
                          "path and its summary carries quotable=false. Never use for publication.")
+    estimator_stamp.add_arguments(ap, required=True)
     args = ap.parse_args()
+    try:
+        stamp = estimator_stamp.from_args(args)
+    except ValueError as exc:
+        ap.error(str(exc))
 
     cv = np.asarray(np.load(args.cv)["xsec_flat"], float)
     rep = cv > 0
@@ -123,9 +134,12 @@ def main():
 
     np.savez_compressed(args.out, C_ml=C, reported_mask=rep,
                         sub_seeds=S, est_seeds=E, xsec_members=X,
-                        cv=cv, sigma=sig)
+                        cv=cv, sigma=sig,
+                        **{estimator_stamp.NPZ_KEY: estimator_stamp.npz_value(stamp)})
     summary = {
         "campaign": "PET bkgsub 5D corrected C_ml (Phase 5)",
+        "estimator_stamp": stamp,
+        "combined_by": estimator_stamp.checkout_state(__file__),
         # DECLARED, not inferred: a consumer must be able to gate on completeness without
         # recomputing it, and `quotable` must be false on the page it is false on.
         "family_complete": bool(family_complete),

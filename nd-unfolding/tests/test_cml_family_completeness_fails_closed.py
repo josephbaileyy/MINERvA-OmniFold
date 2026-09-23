@@ -79,7 +79,10 @@ def _run(tmp_path, pairs, expect, extra=(), seed=0):
            "--cv", str(cv),
            "--floor", str(tmp_path / "absent_floor.json"),
            "--out", str(out),
-           "--expect", str(expect), *extra]
+           "--expect", str(expect),
+           # KNOWN_ISSUES row 32: the stamp is required; this test is about completeness, not it.
+           "--estimator-niter", "2", "--schema-id", "test-schema", "--producer-commit", "0" * 40,
+           *extra]
     proc = subprocess.run(cmd, capture_output=True, text=True)
     return proc, out
 

@@ -17,6 +17,10 @@ is a legitimate preliminary vertical block; the FINAL C_syst must consume the
 GBDT session's background-aware / selection-complete rebank when it lands.
 
 Run under root_6_28 on a compute node (124 x 32.8M 5D re-binnings).
+
+--estimator-niter, --schema-id and --producer-commit are REQUIRED (KNOWN_ISSUES row 32) and are
+written as `estimator_stamp` into the npz and the summary. They are parsed BEFORE the PyROOT
+imports, so a missing stamp is refused in seconds rather than after a ROOT start-up.
 """
 import argparse
 import json
@@ -32,9 +36,7 @@ _ND = f"{_REPO}/nd-unfolding"
 if _ND not in sys.path:
     sys.path.insert(0, _ND)
 
-from pet_systematics_5d import PETxsec5D, KNOB_BANDS, _opt, RHO_CLIP  # noqa: E402
-from uq_math import guarded_ratio, mat_covariance, require_truth_ratio_bank  # noqa: E402
-from xsec_nd import total_xsec  # noqa: E402
+import estimator_stamp  # noqa: E402  (this file's own directory, pet/)
 
 
 def main():
@@ -50,7 +52,17 @@ def main():
                     help="matches the locked GBDT decision: hold ~5e-5 GENIE "
                          "negative-weight artifacts at CV for the affected knob")
     ap.add_argument("--out", default=f"{_ND}/products/pet/bkgsub/pet_csyst_prelim_bkgsub_5d.npz")
+    estimator_stamp.add_arguments(ap, required=True)
     a = ap.parse_args()
+    try:
+        stamp = estimator_stamp.from_args(a)
+    except ValueError as exc:
+        ap.error(str(exc))
+
+    # Heavy (PyROOT) imports after the argument gate -- see the module docstring.
+    from pet_systematics_5d import PETxsec5D, KNOB_BANDS, _opt, RHO_CLIP
+    from uq_math import guarded_ratio, mat_covariance, require_truth_ratio_bank
+    from xsec_nd import total_xsec
 
     pet = PETxsec5D(a.pc, a.weights, a.mcfile, a.flux_hist, a.w_source, a.comp_ref)
     x_cv = pet.xsec(None)
@@ -81,9 +93,12 @@ def main():
 
     sig = np.sqrt(np.clip(np.diag(C), 0, None))
     rel = sig / base
-    np.savez_compressed(a.out, C_syst=C, reported_mask=rep, cv=x_cv, sigma=sig)
+    np.savez_compressed(a.out, C_syst=C, reported_mask=rep, cv=x_cv, sigma=sig,
+                        **{estimator_stamp.NPZ_KEY: estimator_stamp.npz_value(stamp)})
     summary = {
         "campaign": "PET bkgsub 5D corrected C_syst VERTICAL (Phase 6 PRELIMINARY)",
+        "estimator_stamp": stamp,
+        "built_by": estimator_stamp.checkout_state(__file__),
         "status": "PRELIMINARY / support-limited: pre-fix bank_uthrow_5d "
                   "(KNOWN_ISSUES #13/#16); FINAL needs GBDT background-aware/"
                   "selection-complete rebank (uq_5d, in flight).",

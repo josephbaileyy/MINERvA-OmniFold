@@ -61,7 +61,12 @@ replica id. That invariance is a launcher constant, recorded in the summary.
     --floor products/pet/bkgsub/pet_floor_bkgsub_5d_diagnostic.json \
     --ref20 products/pet/bkgsub/pet_cstat_bkgsub_5d.npz \
     --expected-ids 1-100 \
+    --estimator-niter 2 --schema-id <input-schema-id> --producer-commit <sha> \
     --out products/pet/bkgsub/pet_cstat_bkgsub_5d_100rep.npz
+
+The three estimator flags are REQUIRED (KNOWN_ISSUES row 32) and written as `estimator_stamp` into
+the npz and the summary. If the --ref20 product carries a stamp, its (niter, schema_id) must agree:
+the 100-replica candidate extends the 20-replica product and cannot be of a different estimator.
 """
 import argparse
 import glob
@@ -80,6 +85,8 @@ if _ND not in sys.path:
     sys.path.insert(0, _ND)
 from replica_manifest import load_replica_manifest       # noqa: E402
 from pet_bootstrap import validate_full_replica_weights  # noqa: E402
+
+import estimator_stamp  # noqa: E402  (this file's own directory, pet/)
 
 
 def compute_cstat(X, cv):
@@ -148,7 +155,12 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--no-weight-check", action="store_true",
                     help="skip the per-replica coherent-draw revalidation (weights already proven)")
+    estimator_stamp.add_arguments(ap, required=True)
     a = ap.parse_args()
+    try:
+        stamp = estimator_stamp.from_args(a)
+    except ValueError as exc:
+        ap.error(str(exc))
 
     lo, hi = (int(v) for v in a.expected_ids.split("-", 1))
     if hi < lo:
@@ -195,6 +207,14 @@ def main():
         with np.load(a.ref20) as r20:
             mask20 = np.asarray(r20["reported_mask"])
             mask_match = bool(np.array_equal(mask20, rep))
+            try:
+                stamp20 = estimator_stamp.read_npz(r20)
+            except ValueError as exc:
+                raise SystemExit(f"[FAIL] --ref20 carries an invalid estimator_stamp: {exc}")
+            if stamp20 is not None and \
+                    estimator_stamp.config(stamp20) != estimator_stamp.config(stamp):
+                raise SystemExit(f"[FAIL] estimator {estimator_stamp.config(stamp)} disagrees "
+                                 f"with the --ref20 product's {estimator_stamp.config(stamp20)}")
             if "sigma" in r20.files:                       # sigma20 lives in cv>0 space
                 sig20 = np.asarray(r20["sigma"], float)
                 relmed20 = float(np.median(sig20 / cvr))
@@ -219,10 +239,13 @@ def main():
                          f"finite_diag={diag_finite}")
 
     np.savez_compressed(a.out, C_stat=C, reported_mask=rep, replica_ids=ids,
-                        cv=cv, sigma=sig)
+                        cv=cv, sigma=sig,
+                        **{estimator_stamp.NPZ_KEY: estimator_stamp.npz_value(stamp)})
     gates["mask_identical_to_20rep"] = mask_match
     summary = {
         "campaign": "PET bkgsub 5D corrected C_stat -- 100-replica candidate (#15)",
+        "estimator_stamp": stamp,
+        "combined_by": estimator_stamp.checkout_state(__file__),
         "n_replicas": int(X.shape[0]), "replica_ids": ids.tolist(),
         "expected_ids": f"{lo}-{hi}",
         "n_reported_bins": stats["n_reported_bins"],

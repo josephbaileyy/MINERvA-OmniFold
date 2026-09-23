@@ -29,8 +29,9 @@ ESTIMATOR STAMP (KNOWN_ISSUES row 32; rule in estimator_stamp.py). Each componen
 because a sum of blocks computed under different estimators is not a covariance of any one of them.
 The assembly's own stamp is DERIVED from its stamped components; the `--estimator-*` flags are then
 optional and, if given, must agree. With no stamped component the flags are required. A component
-without a stamp (every product written before 2026-09-23, and every producer other than
-combine_cstat_bkgsub.py) is refused unless named in `--allow-unstamped`, and is then listed as
+without a stamp (every product written before 2026-09-23; the stamping producers are
+combine_cstat_bkgsub[_100rep].py, combine_cml_bkgsub.py and build_csyst_prelim_bkgsub.py, and the
+C_retrain / C_lateral producers do NOT stamp yet) is refused unless named in `--allow-unstamped`, and is then listed as
 unstamped in the summary rather than silently treated as matching.
 """
 import argparse
