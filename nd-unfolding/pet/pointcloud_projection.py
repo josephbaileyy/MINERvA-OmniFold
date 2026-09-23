@@ -32,9 +32,9 @@ for _p in (f"{_REPO}/2d-unfolding", f"{_REPO}/nd-unfolding"):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import unfold_2d_omnifold_unbinned as u2d            # noqa: E402
+# u2d / und import ROOT at load: main() imports them, so project_xsec_1d stays ROOT-free.
 from xsec_nd import extract_cross_section_nd, project_marginal  # noqa: E402
-import unfold_nd_omnifold_unbinned as und            # noqa: E402
+# (tests/test_pointcloud_projection_completeness.py imports this module without ROOT.)
 
 # Paths are env-overridable so the same script serves the baseline run and the
 # full-cloud re-dump (of_inputs_pc_fullcloud.npz + retrained weights). OMNI must
@@ -57,6 +57,8 @@ PROTON_KE_THRESH = 110.0
 
 
 def main():
+    import unfold_2d_omnifold_unbinned as u2d
+    import unfold_nd_omnifold_unbinned as und
     print("[load] npz cloud + weights ...", flush=True)
     d = np.load(PC, allow_pickle=True)
     pg = d["part_gen"]                       # (N,12,5) E,px,py,pz,pdg  (MeV)
@@ -223,24 +225,22 @@ def main():
     flux, _ = u2d.load_flux_bins(MCFILE, FLUXH, pt_edges)
     n_nucleons = u2d.TRACKER_FIDUCIAL_N_NUCLEONS
 
+    # ISSUE-30 (2026-09-23): the projection no longer divides by the reco efficiency;
+    # see project_xsec_1d_from_arrays. Every projection_* value this script wrote before
+    # that date is larger than the corrected one by 1/eff per (pT, obs) cell, eff being
+    # sum(w_truth | base & pass_reco) / sum(w_truth | base). Ratios BETWEEN curves built
+    # on one base are not cancelled by that factor in general (eff varies across the pT
+    # axis that project_marginal sums over), so re-read them from a post-fix summary.
+    #
+    # `base` selects the truth rows histogrammed; pass `has_cloud` for observables
+    # computed from the cloud. The reco efficiency is formed over the SAME base, and it
+    # is used only as the reporting mask (cells with no reco row stay 0).
+    #
     def project_xsec_1d(obs, obs_edges, base=None):
-        """dsigma/dobs from push-weighted truth via a 2D (pt,obs) bin + flux-on-pt
-        marginalization (project_marginal drops the pt axis).
-
-        base: truth-event mask to include (default = all pass_truth). Use
-        `has_cloud` for cloud-recomputed observables (misses have no cloud)."""
-        mtb = pass_truth if base is None else (pass_truth & base)
-        mtr = mtb & pass_reco
-        ct = np.column_stack([pt[mtb], obs[mtb]])
-        ctr = np.column_stack([pt[mtr], obs[mtr]])
-        edges2 = [pt_edges, obs_edges]
-        counts, _ = np.histogramdd(ct, bins=edges2, weights=(wp * w_truth)[mtb])
-        denom, _ = np.histogramdd(ct, bins=edges2, weights=w_truth[mtb])
-        ofin, _ = np.histogramdd(ctr, bins=edges2, weights=w_truth[mtr])
-        comp = np.zeros_like(denom); nz = denom > 0; comp[nz] = ofin[nz] / denom[nz]
-        xs2, _ = extract_cross_section_nd(counts, comp, flux, data_pot,
-                                          n_nucleons, edges2, flux_axis=0)
-        return project_marginal(xs2, edges2, drop_axes=[0])   # dsigma/dobs
+        return project_xsec_1d_from_arrays(
+            obs, obs_edges, pt=pt, pt_edges=pt_edges, w_push=wp, w_truth=w_truth,
+            pass_truth=pass_truth, pass_reco=pass_reco, flux=flux, data_pot=data_pot,
+            n_nucleons=n_nucleons, base=base)
 
     # cloud observables: restricted to has_cloud (the only events with a cloud)
     dsig_ea_cloud = project_xsec_1d(eavail_cloud, ea_edges, base=has_cloud)
@@ -416,6 +416,43 @@ def main():
     fo.Close()
     print(f"[root] {OUTDIR}/pointcloud_projection.root")
     print("\n[DONE] pointcloud projection demonstration complete.")
+
+
+def project_xsec_1d_from_arrays(obs, obs_edges, *, pt, pt_edges, w_push, w_truth,
+                                pass_truth, pass_reco, flux, data_pot, n_nucleons,
+                                base=None):
+    """dsigma/dobs from push-weighted truth: a 2D (pT, obs) histogram, the integrated
+    flux on the pT axis, then `project_marginal` drops pT.
+
+    base: truth-row mask to include (default: all pass_truth). Cloud-recomputed
+    observables pass `has_cloud`.
+
+    UNITY COMPLETENESS (ISSUE-30). `extract_cross_section_nd`'s `completeness` means
+    COVERAGE of the truth denominator by the OmniFold input, not reco efficiency. The
+    declared domain here is pass_truth itself, so coverage is 1 by construction, and
+    `w_push` is already acceptance-corrected: `MultiFold.RunStep2` assigns nu_k to the
+    truth-only-miss rows (omnifold_nn/omnifold/omnifold.py:218-220). This function used
+    to divide by sum(w | pass_truth & pass_reco) / sum(w | pass_truth) -- the reco
+    efficiency -- which corrects for acceptance a second time. It now passes ones, exactly as
+    `extract_fullevent_fps.extract_xsec` does; the reco efficiency survives only as the
+    reporting mask (eff > 0), which preserves the previously reported domain because
+    eff == 0 already zeroed those cells.
+    """
+    mtb = pass_truth if base is None else (pass_truth & base)
+    mtr = mtb & pass_reco
+    ct = np.column_stack([pt[mtb], obs[mtb]])
+    ctr = np.column_stack([pt[mtr], obs[mtr]])
+    edges2 = [pt_edges, obs_edges]
+    counts, _ = np.histogramdd(ct, bins=edges2, weights=(w_push * w_truth)[mtb])
+    denom, _ = np.histogramdd(ct, bins=edges2, weights=w_truth[mtb])
+    numer, _ = np.histogramdd(ctr, bins=edges2, weights=w_truth[mtr])
+    eff = np.zeros_like(denom)
+    nz = denom > 0
+    eff[nz] = numer[nz] / denom[nz]
+    xs2, _ = extract_cross_section_nd(counts, np.ones_like(counts), flux, data_pot,
+                                      n_nucleons, edges2, flux_axis=0)
+    xs2 = np.where(eff > 0, xs2, 0.0)
+    return project_marginal(xs2, edges2, drop_axes=[0])   # dsigma/dobs
 
 
 if __name__ == "__main__":
