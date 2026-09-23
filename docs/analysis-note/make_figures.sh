@@ -56,7 +56,9 @@ run eavailW_band.png                 3d-unfolding/genie  python overlay_eavailW_
 run q3_excess_projection.png         nd-unfolding  python q3_excess_projection.py
 
 echo "== PET =="
-# PET point-cloud INPUT figures (KNOWN_ISSUES #18): one invocation writes
+# PET point-cloud INPUT figures (former KNOWN_ISSUES #18, RESOLVED 2026-07-10 and
+# dropped from the index at 1f714b7f; its text survives at
+# evidence/prepublication-2026-08-20-0b329e8a:KNOWN_ISSUES-ARCHIVE-2026-08.md:23): one invocation writes
 # pet_event_displays + the muon-bearing pet_event_displays_energy_angle +
 # pet_cardinality_{real,withremnant} + pet_truncation_retention.
 # Reads the coverage-FIXED of_inputs_pc_fullcloud.npz (the pre-06-28 of_inputs_pc.npz
