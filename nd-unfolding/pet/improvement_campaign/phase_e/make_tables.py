@@ -127,10 +127,13 @@ def toy(path: Path) -> str:
     out = ["| smearing σ/(x+0.1) | estimator | k=1 | k=3 | k=10 | k=30 |",
            "|---|---|---:|---:|---:|---:|"]
     for f in d["smearing_fractions"]:
-        for mode, label in (("carry_misses", "IBU, misses carried"),
-                            ("efficiency_corrected", "IBU, efficiency-corrected"),
+        for mode, label in (("carry_misses", "IBU, misses carried (engine norm.)"),
+                            ("carry_misses/rate_matched", "IBU, misses carried (rate-matched)"),
+                            ("efficiency_corrected", "IBU, efficiency-corrected (engine norm.)"),
                             ("reference_model", "*reference model* `1-(1-a)^k`")):
             key = f"sigma_frac={f:.2f}/{mode}"
+            if key not in d["expected"]:
+                continue
             rows = d["expected"][key]["iterations"]
             out.append(f"| {f:.2f} | {label} | "
                        + " | ".join(_f(rows[k - 1]["recovery"]) for k in (1, 3, 10, 30)) + " |")

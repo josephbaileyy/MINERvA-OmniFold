@@ -176,6 +176,13 @@ def main() -> None:
             key = f"sigma_frac={f:.2f}/{mode}"
             runs[key] = expected_iteration(x, p, w, f, mode, args.iterations)
             runs[key]["smearing_fraction"] = f
+            runs[key]["normalization"] = "engine"
+            # the same with the pseudodata total set by the true rate (POT-like), which separates
+            # the engine normalization's cost from the rule's own convergence
+            rkey = f"sigma_frac={f:.2f}/{mode}/rate_matched"
+            runs[rkey] = expected_iteration(x, p, w, f, mode, args.iterations, "rate_matched")
+            runs[rkey]["smearing_fraction"] = f
+            runs[rkey]["normalization"] = "rate_matched"
         # the reference model on this toy's own acceptance and displacement
         base = runs[f"sigma_frac={f:.2f}/{bu.MODE_CARRY_MISSES}"]
         t0b = np.asarray(base["prior_by_bin"])
@@ -189,8 +196,10 @@ def main() -> None:
         for mode in (bu.MODE_CARRY_MISSES, bu.MODE_EFFICIENCY_CORRECTED):
             r = runs[f"sigma_frac={f:.2f}/{mode}"]["iterations"]
             ref = runs[f"sigma_frac={f:.2f}/reference_model"]["iterations"]
+            rm = runs[f"sigma_frac={f:.2f}/{mode}/rate_matched"]["iterations"]
             print(f"[toy] f={f:.2f} {mode:22s} k1={r[0]['recovery']:.4f} k3={r[2]['recovery']:.4f}"
-                  f" k10={r[9]['recovery']:.4f} k30={r[-1]['recovery']:.4f}  reference "
+                  f" k10={r[9]['recovery']:.4f} k30={r[-1]['recovery']:.4f}  rate-matched "
+                  f"k3={rm[2]['recovery']:.4f} k10={rm[9]['recovery']:.4f}  reference "
                   f"k3={ref[2]['recovery']:.4f} k10={ref[9]['recovery']:.4f}", flush=True)
 
     # ---- finite-sample check at the historical size -----------------------------------------
