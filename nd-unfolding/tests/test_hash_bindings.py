@@ -5,8 +5,8 @@ entry points, the Gate-2 canonical-runtime dataloader, and the Gate-3 launcher
 test -- with the whole suite still green. The edits were behaviourally inert on
 Perlmutter, so only the hashes changed and nothing caught it.
 
-This test fails on any NEW mismatch. The four pre-existing drifts are allowed by
-the verifier's KNOWN_PREEXISTING list; run it with --strict to see those too.
+This test fails on any NEW mismatch. The declared pre-existing drift is allowed by
+the verifier's exact, source-qualified KNOWN_PREEXISTING set; --strict fails on it too.
 """
 import importlib.util
 import json
@@ -641,3 +641,121 @@ def test_the_narrowing_costs_the_live_tree_no_coverage():
     assert len(with_pins) == len(without), (
         f"excluding revision-pinned pairs now costs {len(with_pins) - len(without)} "
         f"tracked binding(s); review that delta rather than deleting this test")
+
+
+# --- AUDIT-FINDINGS-20260731 J11-J14: shell and python pins, exact exemptions -----------------
+
+_HEX_A, _HEX_B = "a" * 64, "b" * 64
+
+
+def test_a_shell_path_assignment_with_a_trailing_comment_is_collected():
+    """J12. `_VAR_DEF` anchored on `\\s*$`, so `X="p"   # note` never parsed and its pin was lost."""
+    m = _verifier_module()
+    text = ('EXPECTED_V_SHA="%s"\n'
+            'V="${REPO}/nd-unfolding/pet/v.py"       # authored by Agent B (do not edit)\n'
+            'REPO="/r"\n'
+            'g=$(sha_of "$V"); [[ "$g" == "$EXPECTED_V_SHA" ]] || die "drift"\n' % _HEX_A)
+    out, unwalked = [], []
+    m.collect_shell(text, "fixture.sh", out, unwalked)
+    assert out == [("/r/nd-unfolding/pet/v.py", _HEX_A, "fixture.sh")]
+    assert unwalked == []
+
+
+def test_a_defined_shell_pin_no_line_pairs_is_reported_unwalked():
+    """J12's independent side: the definition count, not the collector's own pairing count."""
+    m = _verifier_module()
+    text = ('EXPECTED_V_SHA="%s"\nV="/r/v.py"\n'
+            'gs="$(sha_of "$V")"\n[[ "$gs" == "$EXPECTED_V_SHA" ]] || die x\n' % _HEX_A)
+    out, unwalked = [], []
+    m.collect_shell(text, "fixture.sh", out, unwalked)
+    assert out == [] and unwalked == [("fixture.sh", "EXPECTED_V_SHA")]
+
+
+def test_a_python_pin_compared_to_a_file_digest_is_walked():
+    """J14. Direct, reversed, `!=`, and one-hop-through-a-local forms all pair; a pin compared
+    only against a receipt field names no file and is reported unwalked, never guessed."""
+    m = _verifier_module()
+    text = ('import os\n'
+            'P1 = "%s"\nP2 = "%s"\nP3 = "%s"\nP4 = "%s"\nFIELD_ONLY = "%s"\n'
+            'def main(repo, rec):\n'
+            '    ok = sha256(repo / "nd-unfolding/pet/a.py") == P1\n'
+            '    ok &= P2 == _sha256_file(os.path.join(repo, "docs/b.sh"))\n'
+            '    if sha_of("lib/c.py") != P3: raise SystemExit(1)\n'
+            '    d = sha256(repo / "2d-unfolding/d.py")\n'
+            '    if d != P4: raise SystemExit(1)\n'
+            '    return rec.get("sha256") == FIELD_ONLY\n'
+            % ("1" * 64, "2" * 64, "3" * 64, "4" * 64, "5" * 64))
+    out, unwalked = [], []
+    m.collect_python(text, "fixture.py", out, unwalked)
+    assert sorted(out) == sorted([
+        ("nd-unfolding/pet/a.py", "1" * 64, "fixture.py"),
+        ("docs/b.sh", "2" * 64, "fixture.py"),
+        ("lib/c.py", "3" * 64, "fixture.py"),
+        ("2d-unfolding/d.py", "4" * 64, "fixture.py"),
+    ])
+    assert unwalked == [("fixture.py", "FIELD_ONLY")]
+
+
+def test_the_live_python_pins_are_walked_and_point_at_tracked_files():
+    """J14 on the real tree: `validate_g2_gate1_pairs.py` is the one module using the idiom."""
+    m = _verifier_module()
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    out = []
+    for f in m.py_files(root):
+        m.collect_python(open(f).read(), os.path.relpath(f, root), out)
+    tracked = m.tracked_paths(root)
+    resolved = {os.path.relpath(m.localize(p, root), root)
+                for p, _s, _src in out if m.localize(p, root)}
+    assert "nd-unfolding/pet/validate_g2_fullevent_domain.py" in resolved
+    assert len(resolved & tracked) >= m.PY_PIN_FLOOR
+
+
+def test_the_premerge_gate_pins_the_validators_it_executes():
+    """J13. `merge_g2_gate1_mefhc.sh` runs `validate_g2_gate1_pairs.py`; it must freeze it."""
+    m = _verifier_module()
+    rel = "nd-unfolding/pet/merge_g2_gate1_mefhc.sh"
+    out = []
+    m.collect_shell(open(os.path.join(_REPO, rel)).read(), rel, out)
+    targets = {p.rsplit("/", 1)[-1] for p, _s, _src in out}
+    assert {"validate_g2_gate1_pairs.py", "validate_g2_fullevent_domain.py"} <= targets
+
+
+def _run_main_with(monkeypatch, capsys, **overrides):
+    m = _verifier_module()
+    for k, v in overrides.items():
+        monkeypatch.setattr(m, k, v)
+    monkeypatch.setattr(sys, "argv", ["verify_hash_bindings.py", "--root", _REPO])
+    rc = m.main()
+    return rc, capsys.readouterr().out
+
+
+def test_a_stale_exemption_fails_the_run(monkeypatch, capsys):
+    """J11. An expected-red entry that no longer drifts is a dead waiver, and must be loud."""
+    m = _verifier_module()
+    extra = ("docs/orchestration/verify_hash_bindings.py", "some-receipt.json", "0" * 64)
+    rc, out = _run_main_with(monkeypatch, capsys,
+                             KNOWN_PREEXISTING=set(m.KNOWN_PREEXISTING) | {extra})
+    assert rc == 1 and "STALE EXEMPTION docs/orchestration/verify_hash_bindings.py" in out
+
+
+def test_an_exemption_is_source_qualified(monkeypatch, capsys):
+    """J11 / DECISION-20260804 D3: dropping the declared entry turns its drift red again."""
+    rc, out = _run_main_with(monkeypatch, capsys, KNOWN_PREEXISTING=set())
+    assert rc == 1 and "MISMATCH nd-unfolding/pet/sbatch_dump_g2_mefhc.sh" in out
+
+
+def test_an_undeclared_unwalked_shell_pin_fails_the_run(monkeypatch, capsys):
+    """J12. Removing one declaration makes that pin a NEW unwalked pin, and the run goes red."""
+    m = _verifier_module()
+    victim = sorted(m.SHELL_UNWALKED_PINS)[0]
+    rc, out = _run_main_with(monkeypatch, capsys,
+                             SHELL_UNWALKED_PINS=set(m.SHELL_UNWALKED_PINS) - {victim})
+    assert rc == 1 and f"UNWALKED SHELL PIN {victim[1]} in {victim[0]}" in out
+
+
+def test_a_declared_unwalked_pin_that_is_gone_fails_the_run(monkeypatch, capsys):
+    m = _verifier_module()
+    rc, out = _run_main_with(
+        monkeypatch, capsys,
+        SHELL_UNWALKED_PINS=set(m.SHELL_UNWALKED_PINS) | {("nope.sh", "EXPECTED_NOPE_SHA")})
+    assert rc == 1 and "DECLARED-UNWALKED SHELL PIN EXPECTED_NOPE_SHA in nope.sh" in out

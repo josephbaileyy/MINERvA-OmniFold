@@ -8,6 +8,10 @@ GATE_SUMMARY="${REPO}/docs/orchestration/state/g2-gate1-all12-validation-2026071
 EXPECTED_GATE_SHA="23b652d69460d61f2c347d0ec50c883043df83e0aa3fab3eda56b18b7364911f"
 PAIR_VALIDATOR="${REPO}/nd-unfolding/pet/validate_g2_gate1_pairs.py"
 DOMAIN_VALIDATOR="${REPO}/nd-unfolding/pet/validate_g2_fullevent_domain.py"
+# The premerge gate EXECUTES both validators, so both are frozen here (AUDIT-FINDINGS-20260731
+# J13). Pinned in the one-line idiom verify_hash_bindings.collect_shell walks.
+EXPECTED_PAIR_VALIDATOR_SHA="73d111339b7f49e79fa67f359acdc131f1f76c10e8aba34b94b0b8ed71ed7cf8"
+EXPECTED_DOMAIN_VALIDATOR_SHA="32634d6832b4c1f6e5f9036a425b7412f004e2de0aa77828106646d7fc6e3739"
 FINAL_DIR="${REPO}/nd-unfolding/g2_fullevent/merged"
 FINAL_ROOT="${FINAL_DIR}/runEventLoopOmniFold_G2_FPS_MEFHC.root"
 FINAL_RECHECK="${FINAL_DIR}/G2_MEFHC_PREMERGE_REVALIDATION.json"
@@ -23,6 +27,8 @@ occupied() { [[ -e "$1" || -L "$1" ]]; }
 [[ -f "$GATE_SUMMARY" ]] || die "Gate-1A summary missing"
 [[ "$(sha_of "$GATE_SUMMARY")" == "$EXPECTED_GATE_SHA" ]] || die "Gate-1A summary hash drift"
 [[ -f "$PAIR_VALIDATOR" && -f "$DOMAIN_VALIDATOR" ]] || die "validator missing"
+[[ "$(sha_of "$PAIR_VALIDATOR")" == "$EXPECTED_PAIR_VALIDATOR_SHA" ]] || die "pair validator hash drift"
+[[ "$(sha_of "$DOMAIN_VALIDATOR")" == "$EXPECTED_DOMAIN_VALIDATOR_SHA" ]] || die "domain validator hash drift"
 mkdir -p "$FINAL_DIR"
 exec 200>"${FINAL_DIR}/.g2_merge.lock"
 flock -n 200 || die "another G2 merge owns the lock"
@@ -42,10 +48,16 @@ trap cleanup EXIT
 
 echo "[g2-merge] revalidating all twelve immutable inputs ..."
 /usr/bin/python3.11 "$PAIR_VALIDATOR" --repo "$REPO" --output "$PAIR_TMP" --hash-workers 4
-/usr/bin/python3.11 - "$PAIR_TMP" "$EXPECTED_GATE_SHA" <<'PY' || die "all-12 premerge recheck failed"
+/usr/bin/python3.11 - "$PAIR_TMP" "$GATE_SUMMARY" <<'PY' || die "all-12 premerge recheck failed"
 import json,sys
 d=json.load(open(sys.argv[1]))
 assert d.get("status")=="PASS" and not d.get("failures") and len(d.get("pairs",{}))==12
+# The recheck must re-observe the SAME twelve ROOTs the hash-verified Gate-1A summary froze
+# (J13: the gate argument used to be passed here and never read).
+g=json.load(open(sys.argv[2]))
+assert set(d["pairs"])==set(g["pairs"]), "recheck playlist set != Gate-1A summary"
+for pl,rec in d["pairs"].items():
+    assert rec.get("root_sha256_actual")==g["pairs"][pl].get("root_sha256_actual"), pl+": ROOT sha != Gate-1A"
 PY
 
 INPUTS=()

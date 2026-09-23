@@ -64,6 +64,7 @@ count this replaces.
 Exit 0 if every resolvable binding matches, 1 otherwise.
 """
 import argparse
+import ast
 import glob
 import hashlib
 import importlib.util
@@ -78,11 +79,18 @@ PERLMUTTER_ROOT = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/"
 # Bindings known to have drifted before 2026-07-28 and deliberately not "fixed":
 # these receipts record what ran at submit time, and rewriting their hashes would
 # falsify history. Listed so real regressions stay visible above the noise.
+#
+# EXACT AND SOURCE-QUALIFIED (AUDIT-FINDINGS-20260731 J11; DECISION-20260804-B4-STEP3-RECEIPTS D3).
+# Each entry is `(bound path, source receipt, expected sha256)`, so a NEW receipt drifting on the
+# same file is not silently exempted, and an entry that no longer drifts FAILS the run: a red that
+# silently disappears is as invisible as a new one, and a dead exemption would pre-waive the next
+# binding to reach its path. The three path-only entries `wakerctl.py`, `test_wakerctl.py` and
+# `gate2_queue_hedge_controller.sh` were pruned on 2026-09-23 because no live binding names them
+# any more (their receipts left the checkout at the 2026-08-20 compaction).
 KNOWN_PREEXISTING = {
-    "docs/orchestration/wakerctl.py",
-    "docs/orchestration/test_wakerctl.py",
-    "docs/orchestration/gate2_queue_hedge_controller.sh",
-    "nd-unfolding/pet/sbatch_dump_g2_mefhc.sh",
+    ("nd-unfolding/pet/sbatch_dump_g2_mefhc.sh",
+     "docs/orchestration/state/g2-dump-submit-20260719.json",
+     "324a40811669355bdd219d2b5f7988a80cea22e585cbab2e8d98f2bf178fc46e"),
 }
 
 
@@ -114,7 +122,49 @@ KNOWN_PREEXISTING = {
 # same three globs the test uses against `git ls-files`: 15, itemised. Raising to match is what the
 # test prescribes; the direction that is forbidden is lowering it to make a red test pass, which
 # would be deleting a guard.
-SHELL_PIN_FLOOR = 15
+# Raised 15 -> 20 on 2026-09-23 (AUDIT-FINDINGS-20260731 J12/J13): `_VAR_DEF` now accepts a
+# trailing `# comment`, which walks the three P3F -> domain -> base validator pins in
+# `sbatch_p3f_pet_fullevent_evloop_array.sh:59-61` (+3), and `merge_g2_gate1_mefhc.sh` now pins the
+# two validators it executes (+2). All five match the checkout. Counted, not argued: 20 tracked.
+SHELL_PIN_FLOOR = 20
+
+# J12: `EXPECTED_*_SHA` constants DEFINED in a walked shell script that no comparison line pairs
+# to a file. Exact, keyed `(script, NAME)`: a new entry means a pin nothing here can see go stale;
+# a vanished entry means the declaration is out of date.
+#
+# Every entry below is compared through a two-line temporary (`gs="$(sha_of "$X")"`, then
+# `[[ "$gs" == "$EXPECTED_..." ]]` on a later line) or exported to a child job, which the one-line
+# pairing rule cannot see. All bind untracked data products except the two powered-closure
+# PRODUCER pins, which bind the tracked `G2_FPS_MEFHC_P12_RECEIPT.json` (matching, 2026-09-23).
+SHELL_UNWALKED_PINS = {
+    ("nd-unfolding/pet/sbatch_annealed_shape_validation.sh", "EXPECTED_INPUTS_SHA"),
+    ("nd-unfolding/pet/sbatch_fullevent_diagnostic_extract.sh", "EXPECTED_INPUTS_SHA"),
+    ("nd-unfolding/pet/sbatch_fullevent_diagnostic_xsec_resume.sh", "EXPECTED_INPUTS_SHA"),
+    ("nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh", "EXPECTED_INPUTS_SHA"),
+    ("nd-unfolding/pet/sbatch_p5a_fullevent_nominal_extract.sh", "EXPECTED_WEIGHTS_SHA"),
+    ("nd-unfolding/pet/sbatch_pet_fullevent_ml_ensemble.sh", "EXPECTED_TARGET_SHA"),
+    ("nd-unfolding/pet/sbatch_pet_fullevent_nominal_annealed.sh", "EXPECTED_TARGET_SHA"),
+    ("nd-unfolding/pet/sbatch_powered_closure.sh", "EXPECTED_INPUTS_SHA"),
+    ("nd-unfolding/pet/sbatch_powered_closure.sh", "EXPECTED_PRODUCER_SHA"),
+    ("nd-unfolding/pet/sbatch_powered_closure_budget_probe.sh", "EXPECTED_INPUTS_SHA"),
+    ("nd-unfolding/pet/sbatch_powered_closure_budget_probe.sh", "EXPECTED_PRODUCER_SHA"),
+    ("nd-unfolding/pet/sbatch_powered_closure_stability_repeat.sh", "EXPECTED_INPUTS_SHA"),
+    ("nd-unfolding/pet/submit_gate5_extraction_n50.sh", "EXPECTED_INPUT_SHA"),
+    ("nd-unfolding/pet/submit_gate5_extraction_r2_n50.sh", "EXPECTED_INPUT_SHA"),
+}
+
+# J14: floor for 64-hex pin constants in *.py resolved to TRACKED files, same device as
+# SHELL_PIN_FLOOR. Count them with collect_python over py_files() against the tracked set.
+# 3 on 2026-09-23: `validate_g2_gate1_pairs.py:85-91` pins the base and domain validators and the
+# G2 production launcher (a fourth pin, on the compiled binary, is untracked). All three match.
+PY_PIN_FLOOR = 3
+
+
+def py_files(root):
+    """Python sources the pin collector walks: the same three trees as the shell collector."""
+    return (glob.glob(os.path.join(root, "docs/**/*.py"), recursive=True)
+            + glob.glob(os.path.join(root, "nd-unfolding/**/*.py"), recursive=True)
+            + glob.glob(os.path.join(root, "2d-unfolding/**/*.py"), recursive=True))
 
 
 # Exact live receipt-binding inventory at the post-freeze compaction boundary.
@@ -411,7 +461,10 @@ def collect(obj, src, out, unpaired=None, revision_pinned=None):
 _SHA_OF = re.compile(r'(?:sha_of|sha256sum)\s+"\$\{?(\w+)\}?"')
 _PIN_USE = re.compile(r'\$\{?(EXPECTED_[A-Z0-9_]*_SHA)\}?')
 _PIN_DEF = re.compile(r'^\s*(EXPECTED_[A-Z0-9_]*_SHA)=["\']?([0-9a-f]{64})["\']?\s*$', re.M)
-_VAR_DEF = re.compile(r'^\s*(\w+)=["\']?([^"\'\s|;]+)["\']?\s*$', re.M)
+# A trailing `# comment` is allowed (J12): `sbatch_p3f_pet_fullevent_evloop_array.sh:59-61`
+# annotates all three validator paths that way, and anchoring on `\s*$` alone dropped them, so the
+# P3F -> domain -> base validator pins were defined, used, and never walked.
+_VAR_DEF = re.compile(r'^\s*(\w+)=["\']?([^"\'\s|;]+)["\']?(?:\s+#[^\n]*)?\s*$', re.M)
 
 
 def _expand(value, env, depth=0):
@@ -423,11 +476,17 @@ def _expand(value, env, depth=0):
     return _expand(out, env, depth + 1) if out != value else out
 
 
-def collect_shell(text, src, out):
-    """Harvest (path, sha256, src) from `EXPECTED_*_SHA` guards in a shell script."""
+def collect_shell(text, src, out, unwalked=None):
+    """Harvest (path, sha256, src) from `EXPECTED_*_SHA` guards in a shell script.
+
+    `unwalked`, if given, receives `(src, NAME)` for every `EXPECTED_*_SHA` DEFINED here that no
+    comparison line paired to a file. The shell floor cannot see such a pin -- both sides of its
+    ratio come from this parser -- so the definition count is the independent side (J12).
+    """
     pins = dict(_PIN_DEF.findall(text))
     if not pins:
         return
+    paired = set()
     env = {k: v for k, v in _VAR_DEF.findall(text) if not k.startswith("EXPECTED_")}
     for line in text.splitlines():
         # Deduped, because the guards restate both operands in their failure text
@@ -444,6 +503,80 @@ def collect_shell(text, src, out):
         target = _expand(env.get(next(iter(files)), ""), env)
         if target:
             out.append((target, pins[next(iter(used))], src))
+            paired.add(next(iter(used)))
+    if unwalked is not None:
+        unwalked.extend((src, name) for name in sorted(set(pins) - paired))
+
+
+# PYTHON PINS (J14). A module-level `NAME = "<64 hex>"` is a pin only where it is COMPARED against
+# the digest of a file the source names, so pairing is read off the comparison, as for shell:
+#     sha256(repo / "nd-unfolding/pet/x.py") == NAME        (either side, `==` or `!=`)
+#     d = sha256(repo / "nd-unfolding/pet/x.py"); ... d != NAME   (one hop, same scope)
+# The hashing call is any call whose function name contains `sha`; the path is the LAST string
+# literal inside its first argument, which covers `repo / "p"`, `os.path.join(ROOT, "p")`,
+# `Path("p")` and a bare `"p"`. A pin compared against a runtime argument or a receipt field names
+# no file here and is reported as unwalked, never guessed.
+_HEX64 = re.compile(r'^[0-9a-f]{64}$')
+
+
+def _py_hash_target(node):
+    if not isinstance(node, ast.Call) or not node.args:
+        return None
+    fn = node.func
+    name = fn.attr if isinstance(fn, ast.Attribute) else getattr(fn, "id", "")
+    if "sha" not in name.lower():
+        return None
+    lits = [n.value for n in ast.walk(node.args[0])
+            if isinstance(n, ast.Constant) and isinstance(n.value, str)]
+    lits = [s for s in lits if "/" in s or "." in s]
+    return lits[-1] if lits else None
+
+
+def collect_python(text, src, out, unwalked=None):
+    """Harvest (path, sha256, src) from module-level 64-hex constants compared to a file digest."""
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return
+    pins = {}
+    for node in tree.body:
+        targets = (node.targets if isinstance(node, ast.Assign)
+                   else [node.target] if isinstance(node, ast.AnnAssign) else [])
+        v = getattr(node, "value", None)
+        if isinstance(v, ast.Constant) and isinstance(v.value, str) and _HEX64.match(v.value):
+            for t in targets:
+                if isinstance(t, ast.Name):
+                    pins[t.id] = v.value
+    if not pins:
+        return
+    scopes = [tree] + [n for n in ast.walk(tree)
+                       if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
+    paired, seen = set(), set()
+    for scope in scopes:
+        local = {}
+        for n in ast.walk(scope):
+            if (isinstance(n, ast.Assign) and len(n.targets) == 1
+                    and isinstance(n.targets[0], ast.Name)):
+                t = _py_hash_target(n.value)
+                if t:
+                    local[n.targets[0].id] = t
+        for n in ast.walk(scope):
+            if not isinstance(n, ast.Compare) or len(n.ops) != 1 \
+                    or not isinstance(n.ops[0], (ast.Eq, ast.NotEq)):
+                continue
+            a, b = n.left, n.comparators[0]
+            for pin_side, other in ((a, b), (b, a)):
+                if not (isinstance(pin_side, ast.Name) and pin_side.id in pins):
+                    continue
+                target = _py_hash_target(other)
+                if target is None and isinstance(other, ast.Name):
+                    target = local.get(other.id)
+                if target and (target, pin_side.id) not in seen:
+                    seen.add((target, pin_side.id))
+                    out.append((target, pins[pin_side.id], src))
+                    paired.add(pin_side.id)
+    if unwalked is not None:
+        unwalked.extend((src, name) for name in sorted(set(pins) - paired))
 
 
 def localize(p, root):
@@ -571,15 +704,22 @@ def main():
         except OSError:
             continue
 
-    shell_pairs = []
+    shell_pairs, shell_unwalked = [], []
     for f in (glob.glob(os.path.join(a.root, "docs/**/*.sh"), recursive=True)
               + glob.glob(os.path.join(a.root, "nd-unfolding/**/*.sh"), recursive=True)
               + glob.glob(os.path.join(a.root, "2d-unfolding/**/*.sh"), recursive=True)):
         try:
-            collect_shell(open(f).read(), os.path.relpath(f, a.root), shell_pairs)
+            collect_shell(open(f).read(), os.path.relpath(f, a.root), shell_pairs,
+                          shell_unwalked)
         except OSError:
             continue
-    pairs = receipt_pairs + shell_pairs
+    py_pairs, py_unwalked = [], []
+    for f in py_files(a.root):
+        try:
+            collect_python(open(f).read(), os.path.relpath(f, a.root), py_pairs, py_unwalked)
+        except (OSError, UnicodeDecodeError):
+            continue
+    pairs = receipt_pairs + shell_pairs + py_pairs
 
     seen, ok, new_bad, known_bad, unresolved = set(), 0, [], [], 0
     receipt_resolved = 0
@@ -596,18 +736,25 @@ def main():
         # ...and never across shell SITES either: two launchers pinning the same
         # runner are two constants to edit, so collapsing them hides half the
         # remediation. Receipts still dedupe, where repeats are genuinely noise.
-        key = (rel, want, src if src.endswith(".sh") else "")
+        code_site = src.endswith((".sh", ".py"))
+        key = (rel, want, src if code_site else "")
         if key in seen:
             continue
         seen.add(key)
-        if not src.endswith(".sh"):
+        if not code_site:
             receipt_resolved += 1
         if sha256(lp) == want:
             ok += 1
-        elif rel in KNOWN_PREEXISTING:
-            known_bad.append((rel, src))
+        elif (rel, src, want) in KNOWN_PREEXISTING:
+            known_bad.append((rel, src, want))
         else:
             new_bad.append((rel, want, sha256(lp), src))
+    # J11: the expected-red set is EXACT. An exemption that no longer drifts is a dead waiver.
+    stale_exemptions = sorted(KNOWN_PREEXISTING - set(known_bad))
+    # J12: every DEFINED shell pin must be paired, or be in the declared unwalked set.
+    unwalked_now = set(shell_unwalked)
+    unwalked_new = sorted(unwalked_now - SHELL_UNWALKED_PINS)
+    unwalked_gone = sorted(SHELL_UNWALKED_PINS - unwalked_now)
 
     # The shell collector parses source rather than reading a schema, so it can go
     # blind if the launchers change idiom -- and a collector that silently matches
@@ -616,6 +763,8 @@ def main():
     # quiet zero. The floor is deliberately the count that exists today.
     shell_resolved = sum(1 for p, _, _ in shell_pairs if localize(p, a.root))
     blind = shell_resolved < SHELL_PIN_FLOOR
+    py_resolved = sum(1 for p, _, _ in py_pairs if localize(p, a.root))
+    py_blind = py_resolved < PY_PIN_FLOOR
 
     # Identity, not a scalar floor: a floor catches collapse but permits erosion.
     # Derive this from receipt_pairs only; shell pins are separate remediation sites.
@@ -655,7 +804,11 @@ def main():
           f"`git show <revision>:<path>` reads and the checkout cannot contradict")
     print(f"  {ok} OK")
     print(f"  {shell_resolved} of them from EXPECTED_*_SHA guards in *.sh "
-          f"({len(shell_pairs)} pins seen, floor {SHELL_PIN_FLOOR})")
+          f"({len(shell_pairs)} pins seen, floor {SHELL_PIN_FLOOR}; "
+          f"{len(shell_unwalked)} defined but unpaired, declared {len(SHELL_UNWALKED_PINS)})")
+    print(f"  {py_resolved} of them from 64-hex pin constants in *.py "
+          f"({len(py_pairs)} pins seen, floor {PY_PIN_FLOOR}; {len(py_unwalked)} module-level "
+          f"64-hex constants compared to no file digest -- printed, not gated)")
     # These two numbers are DIFFERENT QUESTIONS and may legitimately differ: the first
     # is how many bound files were hashed, the second is how many of those are tracked
     # and therefore inventoried (OI-70). An untracked bound product present on disk is
@@ -737,14 +890,33 @@ def main():
               f"  Either pins were deleted, or a launcher changed hashing idiom and\n"
               f"  the parser no longer sees its guards. Do NOT lower the floor to\n"
               f"  make this pass -- an unwalked pin is how the Gate-2 pair went stale.")
+    if py_blind:
+        print(f"\n*** PYTHON PIN COLLECTOR WENT BLIND ***\n"
+              f"  resolved {py_resolved}, expected at least {PY_PIN_FLOOR}.\n"
+              f"  Either pins were deleted, or a module changed hashing idiom and\n"
+              f"  collect_python no longer sees its comparison. Do NOT lower the floor.")
+    for src, name in unwalked_new:
+        print(f"\nUNWALKED SHELL PIN {name} in {src}\n"
+              f"  defined, but no single comparison line pairs it to a file, so nothing here\n"
+              f"  can tell when it goes stale. Use the one-line idiom\n"
+              f"  `[[ \"$(sha_of \"$VAR\")\" == \"$EXPECTED_X_SHA\" ]]`, or declare it in\n"
+              f"  SHELL_UNWALKED_PINS with the reason.")
+    for src, name in unwalked_gone:
+        print(f"\nDECLARED-UNWALKED SHELL PIN {name} in {src} is no longer unwalked\n"
+              f"  (now paired, renamed, or deleted). Remove it from SHELL_UNWALKED_PINS.")
     if known_bad:
         print(f"  {len(known_bad)} known pre-existing drift (submit-time provenance):")
-        for rel, src in known_bad:
+        for rel, src, _want in known_bad:
             print(f"      {rel}  <- {os.path.basename(src)}")
+    for rel, src, want in stale_exemptions:
+        print(f"\nSTALE EXEMPTION {rel}  <- {src}\n  want {want}\n"
+              f"  KNOWN_PREEXISTING waives this drift, and it is no longer observed (the file\n"
+              f"  now matches, or no live binding names it). Remove the entry.")
     for rel, want, got, src in new_bad:
         print(f"\nMISMATCH {rel}\n  want {want}\n  got  {got}\n  from {src}")
 
-    failed = (bool(new_bad) or blind or receipt_inventory_changed
+    failed = (bool(new_bad) or blind or py_blind or receipt_inventory_changed
+              or bool(stale_exemptions) or bool(unwalked_new) or bool(unwalked_gone)
               or bool(field_bad) or field_blind
               or bool(uncovered) or frozen_blind
               or (a.strict and bool(known_bad)))
