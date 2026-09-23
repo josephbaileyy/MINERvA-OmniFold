@@ -65,11 +65,15 @@ def synthetic(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def historical_mods():
+    # OI-136 order (as `closure_data.import_historical`): the engine from THIS checkout first,
+    # then the loader, which inserts the hardcoded tree at sys.path[0]; then remove that entry.
+    from omnifold.dataloader import DataLoader
     import fullevent_fps_dataloader as ffd
+    hardcoded = "/pscratch/sd/j/josephrb/MINERvA-OmniFold"
+    sys.path[:] = [p for p in sys.path if not p.startswith(hardcoded)]
     import closure_powered_truth_reweight as cp
     import run_arm_evaluation as rae
     import stage_splits as ss
-    from omnifold.dataloader import DataLoader
     return {"ffd": ffd, "cp": cp, "rae": rae, "ss": ss, "DataLoader": DataLoader}
 
 

@@ -1,0 +1,293 @@
+{
+ "schema": "pet-improvement-confirm-run-receipt/1/inputs-only",
+ "config_hash": "9e62c28db8d8b64dd406cb71e90fe9acef52fd92e48e40ad599c5b4360e8e8a1",
+ "run_identity": {
+  "config_hash": "9e62c28db8d8b64dd406cb71e90fe9acef52fd92e48e40ad599c5b4360e8e8a1",
+  "b2_arm": "baseline",
+  "b2_arm_hash": "acb31ec5ef9d55be932c3e0419c8d1f64497cafa6e0aeac0a0ace81e587243d8",
+  "step2_miss_mode": "carry",
+  "selection_mode": "replicate",
+  "prior_rows_sha256": "cc9260db2d2bd6dbe0b7dfc1795fa65c082c6cf439f277e3154a2cfc84d0c9c4",
+  "pseudo_rows_sha256": "8aad9c0f07bcdf31d6ede383a9be6e9204dc1b630f4297e06905dc813ef350f4",
+  "distortion": "dev",
+  "distortion_hash": "ae29d8b444e84ffb67747db56e8b1ee53d953f52353b846b8df6682d29ee0f5f",
+  "run_identity": "c3a26101328bc4d309249c3cd44cc767d12ec361c849acdc4a1c2f01a2725dd1"
+ },
+ "selection": {
+  "mode": "replicate",
+  "pool_guard": {
+   "pool": "S",
+   "sealed": false
+  },
+  "pools": {
+   "pools_npz": "/pscratch/sd/j/josephrb/pet-improvement-20260922/pools/pools.npz",
+   "pools_npz_sha256": "3d8faeb1535da2c01bfe6e5e95775ed9349c85a0028e912113dde1cbca720924",
+   "manifest": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/3a86a98e/nd-unfolding/pet/improvement_campaign/pools/POOL_MANIFEST.json",
+   "manifest_commit": "295572eb57c5c6fe40e4bd3fb50d8634045d5159",
+   "counts": {
+    "P": 3773400,
+    "F": 15083686,
+    "S": 18861069,
+    "T": 8018001,
+    "R": 1414846
+   }
+  },
+  "identity_sidecar": "/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz",
+  "identity_sidecar_sha256": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c",
+  "draw": {
+   "design": {
+    "pool": "S",
+    "family": "confirm-historical-size-v1",
+    "n_prior": 600130,
+    "n_pseudo": 600111,
+    "disjoint": true
+   },
+   "salt": "pet-improvement-20260922-replicates",
+   "family_salt": "pet-improvement-20260922-replicates/S/confirm-historical-size-v1",
+   "family_seed": -6707577207009492460,
+   "n_pool_rows": 18861069,
+   "n_excluded": 0,
+   "n_available": 18861069,
+   "disjoint_capacity": 15,
+   "replicates": {
+    "0": {
+     "design": {
+      "pool": "S",
+      "family": "confirm-historical-size-v1",
+      "n_prior": 600130,
+      "n_pseudo": 600111,
+      "disjoint": true
+     },
+     "replicate": 0,
+     "family_salt": "pet-improvement-20260922-replicates/S/confirm-historical-size-v1",
+     "replicate_salt": "pet-improvement-20260922-replicates/S/confirm-historical-size-v1/0",
+     "n_prior": 600130,
+     "n_pseudo": 600111,
+     "prior_rows_sha256": "cc9260db2d2bd6dbe0b7dfc1795fa65c082c6cf439f277e3154a2cfc84d0c9c4",
+     "pseudo_rows_sha256": "8aad9c0f07bcdf31d6ede383a9be6e9204dc1b630f4297e06905dc813ef350f4",
+     "replicate_seed": 5818362463755218082
+    }
+   },
+   "overlap": {
+    "within_replicate_prior_pseudo_shared": {
+     "0": 0
+    },
+    "pairwise": {},
+    "max_pairwise_fraction": 0.0
+   }
+  },
+  "replicate": {
+   "design": {
+    "pool": "S",
+    "family": "confirm-historical-size-v1",
+    "n_prior": 600130,
+    "n_pseudo": 600111,
+    "disjoint": true
+   },
+   "replicate": 0,
+   "family_salt": "pet-improvement-20260922-replicates/S/confirm-historical-size-v1",
+   "replicate_salt": "pet-improvement-20260922-replicates/S/confirm-historical-size-v1/0",
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "prior_rows_sha256": "cc9260db2d2bd6dbe0b7dfc1795fa65c082c6cf439f277e3154a2cfc84d0c9c4",
+   "pseudo_rows_sha256": "8aad9c0f07bcdf31d6ede383a9be6e9204dc1b630f4297e06905dc813ef350f4"
+  },
+  "prior_rows_sha256": "cc9260db2d2bd6dbe0b7dfc1795fa65c082c6cf439f277e3154a2cfc84d0c9c4",
+  "pseudo_rows_sha256": "8aad9c0f07bcdf31d6ede383a9be6e9204dc1b630f4297e06905dc813ef350f4",
+  "prior_identity_sha256": "8b3610c1270ea929cabda5faeef6c1cee44567c6deb6fb3758c711ac0ffd6f10",
+  "pseudo_identity_sha256": "52732ca883576a91513f0555ad181504422a6d137f966e282c1169822ca024f0"
+ },
+ "distortion": {
+  "name": "dev",
+  "form": "exp(A*clip((E-p50)/IQR, -Z, +Z)) / mean over the pseudodata's truth-passing rows",
+  "amplitude": 0.35,
+  "clip_z": 3.0,
+  "p50": 1.4653696417808533,
+  "iqr": 2.6336711198091507,
+  "historical_pre_normalization_mean": 1.1561864049708446,
+  "sources": {
+   "frozen_design": "nd-unfolding/pet/configuration_comparison/frozen_design.py:ENDPOINT",
+   "frozen_design_sha256": "aa9fa4ac3732fe5600b9f860a8d2d9d2e3e8af65ae3f2cc44081fb627657218d",
+   "tilt_spec": "nd-unfolding/pet/improvement_campaign/phase_b/scalar/results/populations.json:tilt_spec_half_A",
+   "tilt_spec_sha256": "98f5ec2d04bcd53e3bf094349aeeb76cb293b504e4a82c34830de16778944d2e"
+  }
+ },
+ "closure": {
+  "n_evt_reco": 13,
+  "n_evt_truth": 2,
+  "coord_reco": [
+   1,
+   2
+  ],
+  "coord_gen": [
+   5,
+   6,
+   7
+  ],
+  "half_size": null,
+  "stage_rows": null,
+  "split_census": null,
+  "tilt_spec": {
+   "name": "dev",
+   "form": "exp(A*clip((E-p50)/IQR, -Z, +Z)) / mean over the pseudodata's truth-passing rows",
+   "amplitude": 0.35,
+   "clip_z": 3.0,
+   "p50": 1.4653696417808533,
+   "iqr": 2.6336711198091507,
+   "historical_pre_normalization_mean": 1.1561864049708446,
+   "sources": {
+    "frozen_design": "nd-unfolding/pet/configuration_comparison/frozen_design.py:ENDPOINT",
+    "frozen_design_sha256": "aa9fa4ac3732fe5600b9f860a8d2d9d2e3e8af65ae3f2cc44081fb627657218d",
+    "tilt_spec": "nd-unfolding/pet/improvement_campaign/phase_b/scalar/results/populations.json:tilt_spec_half_A",
+    "tilt_spec_sha256": "98f5ec2d04bcd53e3bf094349aeeb76cb293b504e4a82c34830de16778944d2e"
+   },
+   "pre_normalization_mean": 1.154718482709246,
+   "n_injected_rows": 600111,
+   "applied_on": "pass_truth rows of the pseudodata only",
+   "oracle_prior_pre_normalization_mean": 1.1555890550360308
+  },
+  "substitution": null,
+  "step1_mc_normalization": 1000000.0,
+  "selection": {
+   "mode": "replicate",
+   "pool_guard": {
+    "pool": "S",
+    "sealed": false
+   },
+   "pools": {
+    "pools_npz": "/pscratch/sd/j/josephrb/pet-improvement-20260922/pools/pools.npz",
+    "pools_npz_sha256": "3d8faeb1535da2c01bfe6e5e95775ed9349c85a0028e912113dde1cbca720924",
+    "manifest": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/3a86a98e/nd-unfolding/pet/improvement_campaign/pools/POOL_MANIFEST.json",
+    "manifest_commit": "295572eb57c5c6fe40e4bd3fb50d8634045d5159",
+    "counts": {
+     "P": 3773400,
+     "F": 15083686,
+     "S": 18861069,
+     "T": 8018001,
+     "R": 1414846
+    }
+   },
+   "identity_sidecar": "/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz",
+   "identity_sidecar_sha256": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c",
+   "draw": {
+    "design": {
+     "pool": "S",
+     "family": "confirm-historical-size-v1",
+     "n_prior": 600130,
+     "n_pseudo": 600111,
+     "disjoint": true
+    },
+    "salt": "pet-improvement-20260922-replicates",
+    "family_salt": "pet-improvement-20260922-replicates/S/confirm-historical-size-v1",
+    "family_seed": -6707577207009492460,
+    "n_pool_rows": 18861069,
+    "n_excluded": 0,
+    "n_available": 18861069,
+    "disjoint_capacity": 15,
+    "replicates": {
+     "0": {
+      "design": {
+       "pool": "S",
+       "family": "confirm-historical-size-v1",
+       "n_prior": 600130,
+       "n_pseudo": 600111,
+       "disjoint": true
+      },
+      "replicate": 0,
+      "family_salt": "pet-improvement-20260922-replicates/S/confirm-historical-size-v1",
+      "replicate_salt": "pet-improvement-20260922-replicates/S/confirm-historical-size-v1/0",
+      "n_prior": 600130,
+      "n_pseudo": 600111,
+      "prior_rows_sha256": "cc9260db2d2bd6dbe0b7dfc1795fa65c082c6cf439f277e3154a2cfc84d0c9c4",
+      "pseudo_rows_sha256": "8aad9c0f07bcdf31d6ede383a9be6e9204dc1b630f4297e06905dc813ef350f4",
+      "replicate_seed": 5818362463755218082
+     }
+    },
+    "overlap": {
+     "within_replicate_prior_pseudo_shared": {
+      "0": 0
+     },
+     "pairwise": {},
+     "max_pairwise_fraction": 0.0
+    }
+   },
+   "replicate": {
+    "design": {
+     "pool": "S",
+     "family": "confirm-historical-size-v1",
+     "n_prior": 600130,
+     "n_pseudo": 600111,
+     "disjoint": true
+    },
+    "replicate": 0,
+    "family_salt": "pet-improvement-20260922-replicates/S/confirm-historical-size-v1",
+    "replicate_salt": "pet-improvement-20260922-replicates/S/confirm-historical-size-v1/0",
+    "n_prior": 600130,
+    "n_pseudo": 600111,
+    "prior_rows_sha256": "cc9260db2d2bd6dbe0b7dfc1795fa65c082c6cf439f277e3154a2cfc84d0c9c4",
+    "pseudo_rows_sha256": "8aad9c0f07bcdf31d6ede383a9be6e9204dc1b630f4297e06905dc813ef350f4"
+   },
+   "prior_rows_sha256": "cc9260db2d2bd6dbe0b7dfc1795fa65c082c6cf439f277e3154a2cfc84d0c9c4",
+   "pseudo_rows_sha256": "8aad9c0f07bcdf31d6ede383a9be6e9204dc1b630f4297e06905dc813ef350f4",
+   "prior_identity_sha256": "8b3610c1270ea929cabda5faeef6c1cee44567c6deb6fb3758c711ac0ffd6f10",
+   "pseudo_identity_sha256": "52732ca883576a91513f0555ad181504422a6d137f966e282c1169822ca024f0"
+  },
+  "distortion": "dev",
+  "distortion_hash": "ae29d8b444e84ffb67747db56e8b1ee53d953f52353b846b8df6682d29ee0f5f",
+  "members_read": [
+   "edges_0",
+   "edges_1",
+   "petSchemaVersion",
+   "pass_reco",
+   "part_reco",
+   "reco_view",
+   "reco_time",
+   "part_gen",
+   "reco_scalars",
+   "truth_scalars",
+   "pass_truth",
+   "reco_muon",
+   "reco_vertex",
+   "w_truth",
+   "w_reco",
+   "sig_identity_hash"
+  ]
+ },
+ "input_digests_before_arm": {
+  "step1_cloud": "0efc85d33ec1df7838dca2cb0b464bbda35628fac1b626a99c27b1da753ad2a3",
+  "step1_event": "ce8869c6553554a281a243b05b8c48d6581583a5e601ae0862e04abcebcc225f",
+  "step2_cloud": "1c38b7bd5af519893557f5598f8113130eec69397ecb07886396dd23b1f1b70a",
+  "step2_event": "0486ebcbe6d40014c165e94f6e3b88a3bd6ce270a8d2cdc9373d01cd7b2264da"
+ },
+ "replicate_arrays_digests": {
+  "prior_oracle": "537ec66fe2d1227f7d1e76e4de4d0552cc4f85462cb31bb9acd3881a0cb15e3e",
+  "prior_pass_reco": "0cb1036717d7cacdf30b65ce0b64fb6b13c767ad65e7af9d003c8eae0db026d9",
+  "prior_pass_truth": "69656ed3d1b9ef355045235b0a83656668218b098bea774320d9c74fc1a17476",
+  "prior_reco_eavail": "4fa9031c43e273ab5d0213f90effd246a4ea7b1f9f975f9bf2fcd3d97b03cea9",
+  "prior_region": "d884327e6d0706d9e887327e8ecbd8d7de3bc94aac1f6578b34d6b62d272445f",
+  "prior_rows": "cc9260db2d2bd6dbe0b7dfc1795fa65c082c6cf439f277e3154a2cfc84d0c9c4",
+  "prior_truth": "a9641232ed3ad2ae44495fc43cde90f66f49882e79eb3f31ce95050ca25267a0",
+  "prior_w_reco": "d601f16a39a81bd0d7b131bf334521b5a72c4ee2e7cfdce6f69cc20d041556b7",
+  "prior_w_truth": "1788f2ed15c11618f0675f0f2490bfadb4825ffc98232308a139b4680f19842b",
+  "pseudo_distortion": "7b98e18b5a0ddd3cd423211126f974ac463bdabd5090555d54e571b6e26d6c06",
+  "pseudo_pass_reco": "5036ab2b9bb48eb5227714c232b43086fb7bf33047a916105563133be9d89031",
+  "pseudo_pass_truth": "8569b44a45b5ed02629187561b2afd0db9cab71c6ce5ce67baddf0d7a806aa18",
+  "pseudo_reco_eavail": "2de9f4fc84f9e00940c2a6e7719c38a4adbf8f2bb0d20a7f11f1c363f17a322e",
+  "pseudo_region": "6bf0bb5fca7394f3eff546dc776f18e8eef89d2e826f1c2f59dfef64f5cde977",
+  "pseudo_rows": "8aad9c0f07bcdf31d6ede383a9be6e9204dc1b630f4297e06905dc813ef350f4",
+  "pseudo_truth": "81ba75aaa871fe0da7a6ce390b69365e23679b46a9543e3fd865f9187b30f4ad",
+  "pseudo_w_reco": "5afa59dfe609e5c49d675abb4cf787688e74bb01dca1d711da8fe0b49440c2a2",
+  "pseudo_w_truth": "3712c1c85a5551605c4ced951684708f05670d692a6f6b59ba87d9a499b5eaec"
+ },
+ "crosscheck_closure_data": null,
+ "counts": {
+  "pdata_rows": 251655,
+  "prior_rows": 600130,
+  "prior_pass_reco": 251424,
+  "prior_pass_truth": 600130
+ },
+ "load_seconds": 101.95598300500023,
+ "code_commit": "3a86a98e000d32150f1441a1916fb53ee61c634d",
+ "slurm_job_id": "58786043",
+ "measured_leg_is_real_data": false
+}
