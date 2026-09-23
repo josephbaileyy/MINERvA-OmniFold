@@ -25,6 +25,7 @@ added; lowering it needs the same justification as deleting a guard.
 """
 import argparse
 import glob
+import importlib.util
 import os
 import re
 import sys
@@ -32,7 +33,27 @@ import sys
 FAMILY_FLOOR = 12
 
 _GUARDED = re.compile(r'rg_(?:run|is_complete)\s+"([^"]+)"')
-_VAR_DEF = re.compile(r'^\s*(\w+)=["\']?([^"\'\s|;#]+)["\']?\s*$', re.M)
+
+
+def _shared_var_def():
+    """The shell-assignment regex, from its ONE definition in `verify_hash_bindings.py`.
+
+    This file carried its own copy, and the copy kept the defect AUDIT-FINDINGS-20260731 J12 found
+    in the original: anchoring on `\\s*$` drops `X="path"   # comment`. A second implementation of
+    a rule is a second place to forget the fix, so it is loaded by FILE PATH from this checkout
+    (never via sys.path, which another checkout can own) and fails loudly if absent.
+    """
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        "docs", "orchestration", "verify_hash_bindings.py")
+    spec = importlib.util.spec_from_file_location("_vhb_for_backfill", path)
+    if spec is None or not os.path.isfile(path):
+        raise SystemExit(f"[FAIL] cannot load the shared _VAR_DEF from {path}")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod._VAR_DEF
+
+
+_VAR_DEF = _shared_var_def()
 # Anything that varies per unit becomes the glob wildcard. SLURM_ARRAY_TASK_ID is the common one;
 # single-letter loop variables (${T}, ${i}) are the other. The alternation must match the WHOLE
 # name -- an earlier version allowed `\$\{?([A-Za-z])\}?`, whose optional brace let `${OUTDIR}`

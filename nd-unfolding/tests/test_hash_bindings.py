@@ -759,3 +759,17 @@ def test_a_declared_unwalked_pin_that_is_gone_fails_the_run(monkeypatch, capsys)
         monkeypatch, capsys,
         SHELL_UNWALKED_PINS=set(m.SHELL_UNWALKED_PINS) | {("nope.sh", "EXPECTED_NOPE_SHA")})
     assert rc == 1 and "DECLARED-UNWALKED SHELL PIN EXPECTED_NOPE_SHA in nope.sh" in out
+
+
+def test_backfill_enumerator_shares_the_verifiers_var_def():
+    """J12 follow-up: `lib/enumerate_backfill_families.py` kept its own copy of the old regex, with
+    the trailing-comment defect. It must now USE the verifier's single definition."""
+    m = _verifier_module()
+    path = os.path.join(_REPO, "lib", "enumerate_backfill_families.py")
+    spec = importlib.util.spec_from_file_location("ebf_under_test", path)
+    ebf = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ebf)
+    assert ebf._VAR_DEF.pattern == m._VAR_DEF.pattern
+    text = 'OUT="/r/x.root"   # annotated\n'
+    assert dict(ebf._VAR_DEF.findall(text)) == {"OUT": "/r/x.root"}
+    assert "_VAR_DEF = re.compile" not in open(path).read(), "a second definition came back"
