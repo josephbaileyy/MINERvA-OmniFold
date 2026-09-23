@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Mutation suite for probe-20260922-ledger-reconciles.py (the loop-ledger guard).
 
-WHY THIS FILE EXISTS. The guard it tests has been defeated by independent reviewers FOUR times:
-review #7 (blind to a `⚠`-prefixed findings cell), review #8 (four fail-open shapes), review #9
-(six more, three of them one class -- any non-table line inside the block truncated it), and
-review #10 (a row whose first cell begins `--` silently skipped; cells split on escaped pipes).
+WHY THIS FILE EXISTS. The guard it tests has been defeated by independent reviewers FIVE times, and its
+defeat history lives in KNOWN_ISSUES row 69 rather than being restated here, where it went stale
+(this sentence said "FOUR times" after review #11b made it five).
 Four rounds of hardening-by-inspection did not converge.
 
 ⚠ AND THE FIRST VERSION OF THIS SUITE DID NOT CONVERGE EITHER. Review #10 measured it: the suite
@@ -16,7 +15,9 @@ returned a REGEX PREFIX rather than a whole row, so nine mutations spliced into 
 last ledger row, and its "row deleted" case only rewrote a cell.
 
 So this file now has two layers:
-  * MUTATIONS -- each must be REFUSED (exit 1 or 2) by the current guard.
+  * MUTATIONS -- each defeating shape must be REFUSED (exit 1 or 2) by the current guard, and each
+    case labelled CONTROL must PASS (exit 0). One control is a CORRECT ledger that only an escape-aware
+    parser reads right, so it discriminates in the direction a refusal-only case cannot.
   * REGRESSIONS (`--regressions`) -- the guard is deliberately patched back to each historical
     defect, and the suite must FAIL. A suite that cannot fail is not evidence that it passed.
 

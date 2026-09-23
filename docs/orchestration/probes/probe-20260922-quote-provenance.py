@@ -7,8 +7,9 @@ was never written in that form -- plus a third, older one from another lane. Thi
 reviews had passed over all three, because a quotation READS as evidence and nobody re-opened the
 source.
 
-A quote is listed when a fragment of it appears nowhere in the tracked tree (other than at its own
-quoting site) and nowhere in commit messages. Each listed quote is then classified from history:
+A quote is listed when a fragment of it appears nowhere UNQUOTED -- neither in the tracked tree nor in
+commit messages, with every other quotation removed first, so that a misquote copied to a second site
+cannot serve as its own source (it could, until review #11b). Each listed quote is then classified from history:
   born-as-assertion -- the first commit to add its longest fragment added it OUTSIDE quote marks,
                        so a real original existed and a retraction later quoted it. Usually fine.
   BORN-AS-QUOTE     -- the fragment first appeared already inside `*"` or a curly quote, so no

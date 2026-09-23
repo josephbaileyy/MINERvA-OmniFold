@@ -13,7 +13,8 @@ Two checks, scoped to inline blocks that contain a line changed since BASE (defa
   leaks  -- `**` or a backtick that survives parsing as LITERAL TEXT, i.e. a formatting marker the
             parser could not pair. (Deliberately escaped markers -- `\\*\\*` -- also land here; the
             report says so, and a human must read each hit. This check lists, it does not judge.)
-  links  -- every relative link resolves to a file that exists AND is tracked. A link to an
+  links  -- every relative link AND image resolves to a file that exists and is tracked, or to a
+            directory holding at least one tracked file (hrefs are percent-decoded first). A link to an
             untracked file works on the author's disk and breaks on every other clone.
 
 Both checks run a built-in POSITIVE CONTROL first and refuse (exit 2) if it does not fire: a

@@ -25,12 +25,15 @@ Checks, per GFM table (a header row followed by a delimiter row):
                   first version of this probe, which never examined the header; independent review
                   #11a found it in VALIDATION_LEDGER.md, where a code-span pipe in a header un-tabled
                   six rows.)
-  cells        -- a body row whose unescaped-pipe count differs from the header's
-  trailing-cell -- text AFTER a body row's last pipe. GFM reads it as one more cell than the header
-                  allows and DROPS it. (The first version called this "broken-row -- continued on the
-                  next line"; review #11a showed the rows in question were complete rows whose final
-                  clause was silently discarded.)
-  orphan-tail  -- a non-table line directly after a table that ends with `|` (a row's torn-off half)
+  cells        -- a body row whose CELL count (GFM semantics: one optional leading and trailing pipe
+                  trimmed, then split on unescaped pipes) differs from the delimiter row's. Too many
+                  and GFM DROPS the excess -- including text after a row's last pipe, which the first
+                  version mislabelled a torn row; too few and it pads with empty cells.
+  torn-row     -- a line inside a table with no leading pipe. GFM makes it a ROW of its own; the
+                  usual cause is a row broken across two physical lines.
+  (Earlier versions documented `trailing-cell` and `orphan-tail`; both are now covered by `cells`
+  and `torn-row`, because GFM runs a table to the next blank line rather than to the first line
+  without a pipe.)
 
 Usage:  probe-20260922-gfm-table-integrity.py [FILE ...]   (default: every .md changed since
         177af61b). Exit 0 clean, 1 defects found, 2 cannot look. `--since REV` changes the base.
