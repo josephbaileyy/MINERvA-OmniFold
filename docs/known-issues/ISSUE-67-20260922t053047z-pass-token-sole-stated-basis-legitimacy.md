@@ -1,0 +1,11 @@
+# ISSUE-67 — The 20260922T053047Z PASS token's sole stated basis for its own legitimacy cites a requirement that does not exist in the code it names
+
+**Severity:** HIGH. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 67. **Updated:** 2026-09-22.
+
+Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
+is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to
+obey that, and this lane had grown it from 65,681 B (at `177af61b`) to 96,816 B, almost all of it in these thirteen rows.
+
+## Detail
+
+The token's `WHO_ISSUED_THIS_AND_WHY_THAT_IS_THE_GATE` block asserts *"`p4_check_verifier_token.py`'s docstring requires that the reviewer not be the author."* **It does not, at the token's own `code_rev` `3035f8b8` or at HEAD.** Measured: `grep -niE "not the author\|written by\|self-issu\|who may\|reviewer" nd-unfolding/p4_check_verifier_token.py` → **no output**, and the same at `git show 3035f8b8:`. The docstring's rules are 1–4c (digest, tracked blob, `verdict == PASS`, literal-ancestor `code_rev` + scope byte-identity); `resolve()`/`main()` contain **no authorship check**, so a self-issued token resolves `TOKEN-OK`. The independence requirement is a **governance** rule in `HANDOFF-20260922` §2.1, which is careful to say the docstring *"records why the gate exists"* — not that it enforces it. This is the catalogued *a schema guard is not a permission guard* shape, and here it sits in the block headed "WHY THAT IS THE GATE". **NOT REPAIRABLE:** the token IS the sha256 of these bytes, so correcting the text would invalidate the token. **CHECK:** the PASS at `229c43e029e9fe7d…` rests on the issuer being independent **as a matter of record** (the issuer authored none of them; the reviewed set is the token's **23-path `review_scope`**, over which **14** files changed — ⚠ **not the `13` this CHECK originally quoted**, which is the token's own `files_changed_in_scope` field and is precisely the undercount **row 63 exists to flag**; the 14th is `nd-unfolding/lib_member_resume.sh`, added 2026-08-18 by another lane), *not* on any check the instrument performs. Do not cite the docstring as the source of that requirement.

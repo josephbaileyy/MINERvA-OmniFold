@@ -1,0 +1,11 @@
+# ISSUE-71 — The loop-ledger guard has no caller, so its docstring's central claim about itself is not yet true
+
+**Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 71. **Updated:** 2026-09-22.
+
+Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
+is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to
+obey that, and this lane had grown it from 65,681 B (at `177af61b`) to 96,816 B, almost all of it in these thirteen rows.
+
+## Detail
+
+`probes/probe-20260922-ledger-reconciles.py` says *"the totals are no longer defended by care; they are defended by this check"*. Measured: `grep -rn 'probe-20260922-ledger-reconciles'` outside the three documents that mention it returns **nothing**, and it is absent from `.githooks/pre-commit`. **A check nothing invokes is still defended by someone remembering to run it** — the catalogued *a check with no caller* shape (`OI-148`). Its only automated caller is its own mutation suite (`probe-20260922-ledger-guard-mutations.py`), which exercises it but does not guard the live ledger. **NOT WIRED UP HERE, DELIBERATELY, AND THIS IS A JUDGEMENT CALL A LATER LANE MAY OVERRIDE:** the natural caller is the shared `.githooks/pre-commit`, which **other live sessions run on every commit in this same checkout**. A new failing check there would block peers' commits for a defect in a document they do not own, and the guard refuses (exit 2) on shapes that are legitimate mid-edit. Adding it is a change to shared infrastructure with a blast radius beyond this lane, so it is recorded rather than made. **CHECK:** run the guard and its suite by hand after any ledger edit — or wire it in as a **warning**, not a refusal, if a later lane decides the shared hook is the right home.

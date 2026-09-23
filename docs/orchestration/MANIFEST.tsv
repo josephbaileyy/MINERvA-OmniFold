@@ -33,7 +33,7 @@ docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	trac
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	tracked	LIVE	document		20260901	open		route-only		no	7	226	14356
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	tracked	LIVE	document		20260901	open		route-only		no	6	296	19292
 docs/orchestration/CATALOG-ARCHIVE-gate1-k0.md	tracked	LIVE	document			open		route-only	docs/orchestration/live_doc_indexed.py	no	3	514	44319
-docs/orchestration/CATALOG.md	tracked	LIVE	router	20260919-cause3-two-member-campaign		open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/probes/probe-20260922-render-checks.py;docs/orchestration/state/check-withdrawal-completeness-20260910.py;docs/orchestration/state/probe-z-endpointA-projected-diagonal-20260910.py;docs/orchestration/whose_row.py	no	54	4067	391456
+docs/orchestration/CATALOG.md	tracked	LIVE	router	20260919-cause3-two-member-campaign		open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/probes/probe-20260922-render-checks.py;docs/orchestration/state/check-withdrawal-completeness-20260910.py;docs/orchestration/state/probe-z-endpointA-projected-diagonal-20260910.py;docs/orchestration/whose_row.py	no	56	4067	391456
 docs/orchestration/CENSUS-20260902-permanence-language-in-leg-grade-cells.md	tracked	LIVE	document		20260902	open		route-only		no	4	170	10966
 docs/orchestration/CHECK-20260911-three-relayed-readings-gate2-mii-and-cost.md	tracked	ARCHIVAL	document		20260911	terminal		exact-path-only		yes	2	339	25602
 docs/orchestration/CHECKLIST-20260919-reverification-against-a-new-digest.md	tracked	LIVE	document		20260919	open		route-only		no	2	65	5110
@@ -303,9 +303,9 @@ docs/orchestration/RECORD-20260920-PROJ-m1-publication-under-exception.md	tracke
 docs/orchestration/REPAIR4-DEFECT-STATUS-20260807.md	tracked	ARCHIVAL	document		20260807	terminal		exact-path-only	nd-unfolding/run_p4_standard.sh	yes	4	201	13579
 docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md	tracked	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/p4_evidence.py;nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	5	418	30567
 docs/orchestration/REPORT-20260920-scalar5d-uncertainty-completion.md	tracked	LIVE	document		20260920	open		route-only		no	5	224	15442
-docs/orchestration/REPORT-20260922-review-residue.md	tracked	LIVE	document		20260922	open		route-only	docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py;docs/orchestration/probes/probe-20260922-ledger-reconciles.py	no	6	370	68983
+docs/orchestration/REPORT-20260922-review-residue.md	tracked	LIVE	document		20260922	open		route-only	docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py;docs/orchestration/probes/probe-20260922-ledger-reconciles.py	no	6	371	69672
 docs/orchestration/REPRODUCTION-20260918-scalar5d-trunk-path.md	tracked	LIVE	document		20260918	open		route-only		no	3	230	15652
-docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md	tracked	ARCHIVAL	document		20260814	terminal		exact-path-only	nd-unfolding/pet/build_cstat_gate5_n50.py	yes	7	779	54474
+docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md	tracked	ARCHIVAL	document		20260814	terminal		exact-path-only	nd-unfolding/pet/build_cstat_gate5_n50.py	yes	8	779	54474
 docs/orchestration/RESTORE-2026-08-03.md	tracked	ARCHIVAL	document			terminal		exact-path-only	lib/enumerate_backfill_families.py;nd-unfolding/pet/closure_fullevent_fps.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/stress_closure_muon.py;nd-unfolding/pet/validate_pet_nominal_gate4.py;nd-unfolding/tests/test_b1_normalization_fix.py;nd-unfolding/tests/test_pet_nominal_gate4_validator.py	yes	30	1428	91909
 docs/orchestration/REVIEW-20260902-pet-typed-semantic-evidence.md	tracked	LIVE	review		20260902	open		route-only		no	3	154	7755
 docs/orchestration/REVIEW-20260910-z-acceptance-criteria-independent-derivation-partF.md	tracked	LIVE	review		20260910	open		route-only		no	2	386	27493
@@ -460,8 +460,8 @@ docs/orchestration/probes/probe-20260922-l2-stage5-assemble-v2.sh	tracked	MACHIN
 docs/orchestration/probes/probe-20260922-l2-stage6-measure-ORIGINAL.sh	tracked	MACHINE	shell-tool		20260922	generated		exact-path-only		no	1	92	5059
 docs/orchestration/probes/probe-20260922-l2-stage6-measure-v2.sh	tracked	MACHINE	shell-tool		20260922	generated		exact-path-only		no	1	106	6180
 docs/orchestration/probes/probe-20260922-l2-validity-detail.py	tracked	MACHINE	script		20260922	generated		exact-path-only		no	2	58	2478
-docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py	tracked	MACHINE	script		20260922	generated		exact-path-only		no	2	269	16015
-docs/orchestration/probes/probe-20260922-ledger-reconciles.py	tracked	MACHINE	script		20260922	generated		exact-path-only	docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py	no	3	242	13817
+docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py	tracked	MACHINE	script		20260922	generated		exact-path-only		no	3	269	16015
+docs/orchestration/probes/probe-20260922-ledger-reconciles.py	tracked	MACHINE	script		20260922	generated		exact-path-only	docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py	no	4	242	13817
 docs/orchestration/probes/probe-20260922-quote-provenance.py	tracked	MACHINE	script		20260922	generated		exact-path-only		no	2	112	5580
 docs/orchestration/probes/probe-20260922-render-checks.py	tracked	MACHINE	script		20260922	generated		exact-path-only		no	1	140	7137
 docs/orchestration/profiles.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/agentctl.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/test_agentctl.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py;docs/orchestration/wakerctl.py	no	14	90	2163
