@@ -16,7 +16,7 @@ BASE and REV.
   C  `module.symbol` / `path.py::symbol` code spans on added lines, where `module` is the basename of
      a .py file at REV, resolved against that file's MODULE-LEVEL names as Python's `ast` reads them:
      def / async def / class, assignment targets (tuples too), annotated assignments, imports,
-     `with ... as` and `for` targets, and names declared `global` in a function, including those under a
+     `with ... as` and `for` targets, and names a function declares `global` AND assigns, including those under a
      module-level if/try/with/for/while (⚠ loop bodies, `as` targets and `global` were first missed;
      review #17b). A method, a nested def or a local does not count
      (the first version matched any indented `def` or `name =` line; review #16b). A basename shared
@@ -155,10 +155,14 @@ def module_names(path):
                     targets(n.target)
                 walk(n.body); walk(n.orelse)
     walk(tree.body)
-    # a `global NAME` inside a function binds a module-level name too (review #17b)
-    for n in ast.walk(tree):
-        if isinstance(n, ast.Global):
-            names.update(n.names)
+    # a `global NAME` inside a function binds a module-level name -- but only if that function ASSIGNS it: a
+    # `global` that is only read binds nothing (review #18b; first added unconditionally, review #17b)
+    for fn in ast.walk(tree):
+        if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            declared = {g for n in ast.walk(fn) if isinstance(n, ast.Global) for g in n.names}
+            if declared:
+                stored = {n.id for n in ast.walk(fn) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
+                names.update(declared & stored)
     return names
 
 
@@ -166,7 +170,11 @@ seen, ok, miss, ambiguous, unparsable, gone = set(), 0, [], [], [], []
 for f, L in added:
     for m in re.finditer(r"`([\w/.-]+\.py)::(\w+)`|`([A-Za-z_]\w*)\.([A-Za-z_]\w*)(?:\(\))?`", L):
         if m.group(1):
-            cand, sym, key = [p for p in py if p == m.group(1) or p.endswith("/" + m.group(1))], m.group(2), m.group(0)
+            # `./x.py` and `../x.py` are relative to the CITING file; they were once reported "not at REV" (#18b)
+            q = m.group(1)
+            rel = os.path.normpath(os.path.join(os.path.dirname(f), q)) if q.startswith(("./", "../")) else None
+            cand = [p for p in py if p == rel] if rel else [p for p in py if p == q or p.endswith("/" + q)]
+            sym, key = m.group(2), m.group(0)
         else:
             cand, sym, key = bymod.get(m.group(3), []), m.group(4), m.group(0)
             if not cand:
@@ -211,7 +219,7 @@ known = at_rev | dirs
 seen, ok, dmiss, odd = set(), 0, [], []
 for f, L in added:
     for m in re.finditer(r"(?<!`)`([^`\s]*/[^`\s]*)`(?!`)", L):
-        q = re.sub(r":[\d,-]+$", "", m.group(1)).rstrip("/")
+        q = re.sub(r"(::\w+|:[\d,-]+)$", "", m.group(1)).rstrip("/")     # `x.py::sym` and `x.py:12` name the file
         if not q or q in seen:
             continue
         seen.add(q)

@@ -1,6 +1,6 @@
 # ISSUE-69 — A hand-maintained instrument was rebuilt against its own recorded defect three times before a mutation suite was written for it
 
-**Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 69. **Updated:** 2026-09-22.
+**Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 69. **Updated:** 2026-09-23.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to
@@ -54,7 +54,7 @@ that is, fail-closed. The harness now prints both directions for every regressio
 
 **Tenth (independent review #17b), and a change of method.** The site sweep matched exact text, so `return (2)`,
 `sys.exit(2)` and `bad.extend` escaped it; it now reads the syntax tree. And the NO VERDICT wording rules, which
-had drawn findings in reviews #9, #11b, #12b, #13b, #14b, #15b, #16b and #17b, each one refusing a correct death
+had drawn findings in reviews #11b, #12b, #13b, #14b, #15b, #16b and #17b, each one refusing a correct death
 note or accepting a report, were DELETED rather than refined again. The ledger's one NO VERDICT row is pinned
 by a digest of the whole rendered row. Any new or edited NO VERDICT row is refused until a human reads it and
 pins it. **CHECK:** when a pattern rule keeps drawing findings from both directions, stop refining it. Replace

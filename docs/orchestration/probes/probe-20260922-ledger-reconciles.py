@@ -59,8 +59,10 @@ MD = MarkdownIt("commonmark").enable(["table"])
 VISIBLE = ("text", "code_inline")                      # REGRESSION-ANCHOR:visible-types
 TOTAL = re.compile(r"self rounds 1[\u2013-](\d+)\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*"
                    r"independent reviews\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*TOTAL\s*(\d+)", re.S)
-# NO VERDICT rows are PINNED, not parsed. Wording rules drew findings in eight reviews (#9, #11b, #12b, #13b,
-# #14b, #15b, #16b, #17b) each refused a correct death note or accepted a note reporting findings: a sentence
+# NO VERDICT rows are PINNED, not parsed. Rules reading the NOTE's wording drew findings in seven reviews
+# (#11b, #12b, #13b, #14b, #15b, #16b, #17b), each refusing a correct death note or accepting a note reporting
+# findings. (Review #9's finding was about the FINDINGS cell: any cell mentioning NO VERDICT now goes to the pin
+# first, whatever else it holds; review #18b.) A sentence
 # cannot be read for "does this report findings?" by pattern. This ledger has had one NO VERDICT row since
 # review #2, so the guard accepts exactly the rows listed here, keyed by a digest of the whole row as
 # rendered. A new NO VERDICT row, or any edit to a listed one, is REFUSED until a human reads it and adds it.
@@ -193,14 +195,17 @@ def main() -> int:
                 selves.append((int(m.group(1)), int(nums[0]))); continue
             unclassified.append(f"line {line}: {label[:40]} | {cell[:30]}"); continue
         if re.search(r"\bagy\b", label, re.I):
-            if len(nums) == 1 and int(nums[0]) >= 0:     # REGRESSION-ANCHOR:agy-count
-                agys.append(int(nums[0])); continue
-            if not nums and re.fullmatch(r"[\s\u26a0()\[\]-]*no verdict[\s\u26a0().-]*", cell, re.I):
+            # ⚠ a findings cell that MENTIONS "no verdict" goes to the pin FIRST, whatever else it holds. The pin
+            # was once reached only by a digit-free cell, so "NO VERDICT (attempt 1)" was counted as a review
+            # with 1 finding, never pinned, and passed once its TOTAL was updated (review #18b)
+            if re.search(r"no\s+verdict", cell, re.I):     # REGRESSION-ANCHOR:noverdict-first
                 key = noverdict_key(cells)
                 if key not in NOVERDICT_PINNED:                  # REGRESSION-ANCHOR:noverdict-pinned
                     unclassified.append(f"line {line}: NO VERDICT row not in NOVERDICT_PINNED (key {key}); read it, "
                                         "confirm it reports no findings, and pin it"); continue
                 noverdict += 1; continue
+            if len(nums) == 1 and int(nums[0]) >= 0:     # REGRESSION-ANCHOR:agy-count
+                agys.append(int(nums[0])); continue
             unclassified.append(f"line {line}: {label[:40]} | {cell[:30]}"); continue
         unclassified.append(f"line {line}: {label[:40]} | {cell[:30]}")
     if unclassified:                                      # REGRESSION-ANCHOR:unclassified

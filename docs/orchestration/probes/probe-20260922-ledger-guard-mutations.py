@@ -59,9 +59,8 @@ REGRESSIONS = {
         'if False:'),
     'R9 addends compared by count and sum only (review #7)': ('if len(stated_list) == len(derived_list) and stated_list != derived_list:   # REGRESSION-ANCHOR:elementwise',
         'if False:'),
-    # R10 (NO VERDICT accepted anywhere in the cell, review #9) is RETIRED, not lost: since the whole NO VERDICT
-    # row is pinned by digest (R29), a findings cell that merely CONTAINS "no verdict" can only reach the pin
-    # check with a digest nobody pinned, so R10's regression changed no result. The fullmatch stays in the guard.
+    # R10 (NO VERDICT accepted anywhere in the cell, review #9) is RETIRED, not lost. Since review #18b, ANY findings
+    # cell that mentions "no verdict" goes to the whole-row pin first (R30 below), so the fullmatch R10 pinned is gone.
     'R12 non-ASCII-whitespace-led lines not refused (review #14b)': ('if odd:                                               # REGRESSION-ANCHOR:unicode-ws',
         'if False:'),
     'R13 TOTALs read from inline text only, not code blocks (review #14b)': ('for t in toks if t.type in ("inline", "fence", "code_block", "html_block")]   # REGRESSION-ANCHOR:total-sources',
@@ -95,10 +94,14 @@ REGRESSIONS = {
         'if False:'),
     'R27 recorded mismatches not acted on (review #16a)': ('if bad:                                                  # REGRESSION-ANCHOR:any-bad',
         'if False:'),
-    # --- review #17b: NO VERDICT wording rules drew findings in eight reviews, failing one way or the other, so the guard now
+    # --- review #17b: rules reading the NO VERDICT NOTE drew findings in seven reviews (#11b-#17b), failing both ways, so the guard now
     # PINS the one NO VERDICT row by digest; this regression removes the pin check
     'R29 an unpinned NO VERDICT row accepted (review #17b)': ('if key not in NOVERDICT_PINNED:                  # REGRESSION-ANCHOR:noverdict-pinned',
         'if False:'),
+    # the HISTORICAL defect, not `if False:`: that also unpinned row 46, so every case refused through it and the
+    # regression fired only through CONTROLs, never through the reconciling case it was written for
+    'R30 a NO VERDICT cell with a number counted as a review, never pinned (review #18b)': ('if re.search(r"no\\s+verdict", cell, re.I):     # REGRESSION-ANCHOR:noverdict-first',
+        'if not nums and re.search(r"no\\s+verdict", cell, re.I):'),
     # PRECONDITIONS: without one, the guard CRASHES instead of refusing cleanly. Their regressions may fire
     # through a traceback only -- the one class allowed to (anchor names beginning `pre-`)
     'P1 a missing report not refused cleanly (review #16a)': ('if not REPORT.exists():                                  # REGRESSION-ANCHOR:pre-report',
@@ -169,10 +172,12 @@ EXEMPT_HANDLERS = {"ImportError": "markdown-it-py missing: unreachable while the
 def unanchored_sites(src):
     """Refusal sites of the guard, found in its SYNTAX TREE, whose governing condition carries no anchor.
 
-    A refusal site is a `return 1` / `return 2` (any spelling: `return (2)`, one-line `if x: return 2`), a
+    A refusal site is a `return 1` / `return 2` (`return (2)`, one-line `if x: return 2`, `return 2 if x else 0`), a
     `sys.exit(...)`, a `raise SystemExit`, an `assert`, or a write to `bad` (`.append`, `.extend`, `+=`). Each
     must sit under an `if`/`elif` whose header lines carry a REGRESSION-ANCHOR, or inside an exempt `except`
-    handler (EXEMPT_HANDLERS); every entry of the `checks` list must carry one too. ⚠ The first version matched
+    handler of a module-level `try` (EXEMPT_HANDLERS); every entry of the `checks` list must carry one too. A site
+    in the `else:` of an anchored `if` counts as governed by it, and that anchor's `if False:` regression can
+    only make the else branch fire MORE -- so such a site is tested in one direction only (review #18b). ⚠ The first version matched
     exact TEXT (`return 2`, `bad.append(`) and missed `return (2)`, `sys.exit(2)`, `bad.extend` and a trailing
     comment (review #17b). What decides WHAT enters `orphans` / `unclassified` -- which token types are
     scanned, which label shapes count -- is a SUB-condition of an anchored site, and not every one is pinned.
@@ -192,6 +197,9 @@ def unanchored_sites(src):
     def is_refusal(n):
         if isinstance(n, ast.Return) and isinstance(n.value, ast.Constant) and n.value.value in (1, 2):
             return True
+        if isinstance(n, ast.Return) and isinstance(n.value, ast.IfExp) and any(   # `return 2 if x else 0` (#18b)
+                isinstance(v, ast.Constant) and v.value in (1, 2) for v in (n.value.body, n.value.orelse)):
+            return True
         if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "exit" \
                 and isinstance(n.func.value, ast.Name) and n.func.value.id == "sys":
             return not forwards_main(n)
@@ -208,9 +216,8 @@ def unanchored_sites(src):
         return False
 
     def header_anchored(node):
-        first = node.lineno
-        last = (node.body[0].lineno - 1) if node.body and node.body[0].lineno > first else first
-        return any("REGRESSION-ANCHOR:" in lines[k - 1] for k in range(first, last + 1))
+        # the header is the `if` line through the end of its TEST -- not a comment line below it (review #18b)
+        return any("REGRESSION-ANCHOR:" in lines[k - 1] for k in range(node.lineno, node.test.end_lineno + 1))
 
     out = []
     for n in ast.walk(tree):
@@ -220,7 +227,10 @@ def unanchored_sites(src):
         while p is not None and not isinstance(p, (ast.FunctionDef, ast.Module)):
             if isinstance(p, ast.If):
                 governed = p; break
-            if isinstance(p, ast.ExceptHandler) and isinstance(p.type, ast.Name) and p.type.id in EXEMPT_HANDLERS:
+            # exempt only a handler of a MODULE-LEVEL `try` (the import guard): matching the exception name alone
+            # exempted every `except ImportError:` anywhere in the guard (review #18b)
+            if isinstance(p, ast.ExceptHandler) and isinstance(p.type, ast.Name) and p.type.id in EXEMPT_HANDLERS \
+                    and parent.get(parent.get(p)) is tree:
                 governed = "exempt"; break
             p = parent.get(p)
         if governed == "exempt":
@@ -438,6 +448,14 @@ def build_cases(orig):
                        "flagged 1 file as unreadable, then died")],
         # --- review #16b: ORDINARY staleness that only the addend counts catch -- a zero-finding row added,
         # the TOTAL left alone, so every sum still agrees
+        # review #18b: a NO VERDICT cell carrying ONE number, with the TOTAL updated to match -- the arithmetic agrees,
+        # so only the pin can refuse it
+        ("a new NO VERDICT row carrying one number, TOTAL updated to reconcile",
+         re.sub(r"(\+\d+) = (\d+); TOTAL (\d+)", lambda mm: f"{mm.group(1)}+1 = {int(mm.group(2)) + 1}; TOTAL {int(mm.group(3)) + 1}",
+                after(r_last_agy, "| **agy #99, attempt 1** | \u26a0 **NO VERDICT** (attempt 1) | died on a rate limit |"), count=1), (1, 2)),
+        ("the pinned NO VERDICT row given one number, TOTAL updated to reconcile",
+         re.sub(r"(\+\d+) = (\d+); TOTAL (\d+)", lambda mm: f"{mm.group(1)}+0 = {mm.group(2)}; TOTAL {mm.group(3)}",
+                orig.replace(nv_row, nv_row.replace("**NO VERDICT**", "**NO VERDICT** (0)", 1), 1), count=1), (1, 2)),
         ("an unrecorded agy row with 0 findings", after(r_last_agy, "| **agy #99 (independent)** | **0** | clean |"), (1, 2)),
         ("an unrecorded self round with 0 findings", after(anchor, "| 99 (self) | **0** | clean |"), (1, 2)),
         ("CONTROL untouched ledger", orig, (0,)),
