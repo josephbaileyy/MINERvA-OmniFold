@@ -450,6 +450,101 @@ class GatedMacroDetectorTest(unittest.TestCase):
             "commit and say which macro and on whose authority.")
 
 
+class ResultLineNamesItsObjectTest(unittest.TestCase):
+    """KNOWN_ISSUES row 64: the checker's verdict must name the object it was computed on.
+
+    A synthetic note directory (outside any git tree) with fake PDFs that are plain text, read
+    through a `pdftotext` shim that copies them -- so the PDF stage really runs, over bytes this
+    test controls. latexmk's `.fdb_latexmk` is written by hand with the real md5s, then one source
+    is edited to make one PDF stale. Both directions: fresh passes, stale fails in strict mode.
+    """
+
+    BODIES = {"main_note": r"struck $\dead{1.234}$ here", "main_paper": "clean paper",
+              "main_primer": "clean primer"}
+
+    def setUp(self):
+        import hashlib
+        self.tmp = Path(tempfile.mkdtemp(prefix="cdc-object-"))
+        self.note = self.tmp / "note"
+        self.note.mkdir()
+        shim = self.tmp / "bin"
+        shim.mkdir()
+        (shim / "pdftotext").write_text('#!/bin/sh\ncat "$2" > "$3"\n')
+        (shim / "pdftotext").chmod(0o755)
+        self.env = dict(os.environ, PATH=f"{shim}{os.pathsep}{os.environ.get('PATH', '')}")
+        for driver, body in self.BODIES.items():
+            (self.note / f"{driver}.tex").write_text(
+                "\\documentclass{article}\n\\input{body_%s}\n" % driver)
+            (self.note / f"body_{driver}.tex").write_text(body + "\n")
+            (self.note / f"{driver}.pdf").write_text(
+                "1.234 rendered\n" if driver == "main_note" else "nothing struck\n")
+            rows = "".join(
+                '  "%s" 1790000000 %d %s ""\n' % (
+                    name, (self.note / name).stat().st_size,
+                    hashlib.md5((self.note / name).read_bytes()).hexdigest())
+                for name in (f"{driver}.tex", f"body_{driver}.tex"))
+            (self.note / f"{driver}.fdb_latexmk").write_text(
+                '# Fdb version 4\n["pdflatex"] 1790000000 "%s.tex" "%s.pdf" "%s" 1790000001 0\n'
+                '%s  (generated)\n  "%s.pdf"\n' % (driver, driver, driver, rows, driver))
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, True)
+
+    def _run(self, *extra):
+        r = subprocess.run([sys.executable, str(HERE / "check_dead_containment.py"),
+                            "--dir", str(self.note), "--tmp", str(self.tmp / "txt"), *extra],
+                           capture_output=True, text=True, env=self.env)
+        result = [line for line in r.stdout.splitlines() if line.startswith("RESULT ::")]
+        self.assertEqual(len(result), 1, r.stdout + r.stderr)
+        return r.returncode, result[0], r.stdout
+
+    def test_fresh_products_pass_and_the_line_names_every_field(self):
+        import hashlib
+        code, line, out = self._run()
+        self.assertEqual(code, 0, out)
+        self.assertTrue(line.startswith("RESULT :: PASS :: "), line)
+        helper = any(p.is_file() for p in (HERE / "tree_state.py",
+                                           HERE.parents[1] / "lib" / "tree_state.py"))
+        # outside git there is no sha to claim; a checkout without the helper must SAY so
+        self.assertIn("head=none tree=no-git" if helper else "helper not found", line)
+        self.assertIn("mode=strict", line)
+        digest = hashlib.sha256((self.note / "main_note.pdf").read_bytes()).hexdigest()
+        self.assertIn(f"main_note.pdf@sha256:{digest}(fresh)", line)
+        self.assertEqual(line.count("(fresh)"), 3, line)
+
+    def test_a_stale_product_fails_strict_mode(self):
+        (self.note / "body_main_paper.tex").write_text("clean paper, edited after the build\n")
+        code, line, out = self._run()
+        self.assertEqual(code, 1, out)
+        self.assertTrue(line.startswith("RESULT :: FAIL :: "), line)
+        self.assertIn("main_paper.pdf is STALE", out)
+        self.assertIn("body_main_paper.tex", out)
+        self.assertIn("main_paper.pdf@sha256:", line)
+        self.assertIn("(stale)", line)
+
+    def test_source_only_reports_the_stale_product_without_failing(self):
+        (self.note / "body_main_paper.tex").write_text("clean paper, edited after the build\n")
+        code, line, out = self._run("--source-only")
+        self.assertEqual(code, 0, out)
+        self.assertIn("mode=source-only", line)
+        self.assertIn("(stale)", line)
+
+    def test_a_missing_database_is_unknown_not_fresh(self):
+        (self.note / "main_primer.fdb_latexmk").unlink()
+        code, line, out = self._run()
+        self.assertEqual(code, 0, out)
+        self.assertIn("main_primer.pdf freshness UNKNOWN", out)
+        self.assertIn("(unknown)", line)
+        self.assertEqual(line.count("(fresh)"), 2, line)
+
+    def test_absent_pdfs_are_named_absent(self):
+        for driver in self.BODIES:
+            (self.note / f"{driver}.pdf").unlink()
+        code, line, out = self._run()
+        self.assertEqual(code, 1, out)
+        self.assertIn("products=main_note.pdf=absent", line)
+
+
 # The mutation runner points the whole suite at a mutated copy without editing anything.
 if os.environ.get("BUILD_ALL_SCRIPT"):
     SCRIPT = Path(os.environ["BUILD_ALL_SCRIPT"])

@@ -33,10 +33,21 @@ skipped quietly.
 
 Usage:  python3 check_dead_containment.py [--dir <analysis-note dir>]
 Exit 0 = invariant holds. Exit 1 = violation or an unresolvable input.
+
+THE VERDICT NAMES ITS OBJECT (KNOWN_ISSUES row 64). The PDFs are gitignored build products, so the
+same sha is red in a clean checkout and green where somebody built the note. The `RESULT ::` line
+therefore carries the HEAD sha, whether the note directory is clean, the mode (`strict` or
+`source-only`), and the sha256 and freshness of every PDF the PDF stage read. Freshness is judged
+from latexmk's own `<driver>.fdb_latexmk`, which records the md5 of every source the PDF was built
+from: a PDF whose recorded sources no longer match the files on disk is STALE and fails strict
+mode, because its text describes a different note from the one the source stage just read. A PDF
+with no .fdb_latexmk is reported as freshness `unknown`, never as fresh.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
+import importlib.util
 import re
 import shutil
 import subprocess
@@ -251,6 +262,79 @@ def literals_from(body: str, macros: dict[str, str]) -> tuple[set[str], list[str
     return nums, unresolved
 
 
+def _load_tree_state():
+    """The repo's one sha+tree-state helper, loaded by file path (never via sys.path)."""
+    here = Path(__file__).resolve().parent
+    for candidate in (here / "tree_state.py", here.parents[1] / "lib" / "tree_state.py"):
+        if candidate.is_file():
+            spec = importlib.util.spec_from_file_location("tree_state", candidate)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            return module
+    return None
+
+
+def tree_object(note_dir: Path) -> str:
+    """`head=<sha> tree=<state> scope=<note dir>` for the directory the checks read."""
+    ts = _load_tree_state()
+    if ts is None:
+        return "head=unknown tree=unknown scope=? (tree_state.py helper not found)"
+    state = ts.describe(note_dir)
+    if state["toplevel"]:
+        rel = note_dir.resolve().relative_to(Path(state["toplevel"]).resolve()).as_posix()
+        state = ts.describe(note_dir, rel or ".")
+    return ts.format_state(state)
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+FDB_RULE_RE = re.compile(r'^\["([^"]+)"\]\s+\S+\s+"([^"]*)"\s+"([^"]*)"')
+FDB_SOURCE_RE = re.compile(r'^\s+"([^"]+)"\s+\S+\s+\d+\s+([0-9a-f]{32})\s+"([^"]*)"')
+
+
+def pdf_freshness(note_dir: Path, driver: str) -> tuple[str, list[str]]:
+    """("fresh" | "stale" | "unknown", detail) for `<driver>.pdf` against its recorded sources.
+
+    Reads the latexmk rule whose destination is `<driver>.pdf` and compares the recorded md5 of
+    every PRIMARY source (relative path, not produced by another rule) with the file on disk.
+    Bounded claim: this proves the sources match the last latexmk run that wrote the database; it
+    cannot prove the PDF beside it came from that same run.
+    """
+    fdb = note_dir / f"{driver}.fdb_latexmk"
+    if not fdb.exists():
+        return "unknown", [f"{fdb.name} absent"]
+    in_rule, sources = False, []
+    for line in fdb.read_text(encoding="utf-8", errors="replace").splitlines():
+        rule = FDB_RULE_RE.match(line)
+        if rule:
+            in_rule = rule.group(3) == f"{driver}.pdf"
+            continue
+        if not in_rule:
+            continue
+        if line.strip().startswith("("):
+            in_rule = False
+            continue
+        src = FDB_SOURCE_RE.match(line)
+        if src and not src.group(3) and not Path(src.group(1)).is_absolute():
+            sources.append((src.group(1), src.group(2)))
+    if not sources:
+        return "unknown", [f"{fdb.name} records no primary source for {driver}.pdf"]
+    changed = []
+    for name, md5 in sources:
+        path = note_dir / name
+        if not path.is_file():
+            changed.append(f"{name} (missing)")
+        elif hashlib.md5(path.read_bytes()).hexdigest() != md5:
+            changed.append(name)
+    return ("stale", changed) if changed else ("fresh", [f"{len(sources)} sources match"])
+
+
 def pdf_text(pdf: Path, tmp: Path) -> str | None:
     """Extract searchable text without allowing an unavailable backend to skip the PDF gate."""
     if not pdf.exists():
@@ -391,6 +475,7 @@ def main() -> int:
         return self_test()
     strict = not args.source_only
     note_dir = Path(args.dir).resolve()
+    products: list[str] = []   # identity + freshness of every build product the PDF stage read
     tmp = Path(args.tmp)
     tmp.mkdir(parents=True, exist_ok=True)
 
@@ -494,10 +579,26 @@ def main() -> int:
                                            "Build the PDFs, install pdftotext or Ghostscript, or pass "
                                            "--source-only to accept a source-only check]"))
 
+    def read_pdf(driver: str) -> str | None:
+        """pdf_text, plus the identity and freshness of the build product it read."""
+        pdf = note_dir / f"{driver}.pdf"
+        if not pdf.exists():
+            products.append(f"{pdf.name}=absent")
+            return None
+        state, detail = pdf_freshness(note_dir, driver)
+        products.append(f"{pdf.name}@sha256:{sha256_file(pdf)}({state})")
+        if state == "stale":
+            _skip(f"{pdf.name} is STALE: {len(detail)} source(s) changed since latexmk recorded "
+                  f"them ({', '.join(detail[:6])}{' ...' if len(detail) > 6 else ''}) -- its text "
+                  f"describes a different note from the sources checked above; rebuild it")
+        elif state == "unknown":
+            notes.append(f"{pdf.name} freshness UNKNOWN: {'; '.join(detail)}")
+        return pdf_text(pdf, tmp)
+
     if not struck_values:
         _skipped("no struck literals derived -- PDF stage cannot run")
     else:
-        note_txt = pdf_text(note_dir / "main_note.pdf", tmp)
+        note_txt = read_pdf("main_note")
         if note_txt is None:
             _skipped("main_note.pdf absent, no PDF text extractor available, or the PDF extracted EMPTY -- "
                       "PDF stage did not run")
@@ -513,7 +614,7 @@ def main() -> int:
                 for driver, label in BUILDS.items():
                     if driver == STRUCK_ALLOWED_IN:
                         continue
-                    txt = pdf_text(note_dir / f"{driver}.pdf", tmp)
+                    txt = read_pdf(driver)
                     if txt is None:
                         _skipped(f"{driver}.pdf absent, unreadable, or extracted EMPTY -- {label} build "
                                  f"NOT PDF-checked, and this is an outward-facing build the "
@@ -532,7 +633,10 @@ def main() -> int:
         print(f"  ok   {n}")
     for f in failures:
         print(f"  FAIL {f}")
-    print("RESULT :: " + ("PASS" if not failures else "FAIL"))
+    # The object the verdict is about, on the verdict's own line (KNOWN_ISSUES row 64).
+    print("RESULT :: " + ("PASS" if not failures else "FAIL")
+          + f" :: {tree_object(note_dir)} mode={'strict' if strict else 'source-only'}"
+          + f" products={','.join(products) if products else 'none-read'}")
     return 0 if not failures else 1
 
 
