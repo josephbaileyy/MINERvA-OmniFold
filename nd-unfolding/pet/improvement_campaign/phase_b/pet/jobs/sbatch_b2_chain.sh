@@ -30,7 +30,7 @@ SELF="$B/jobs/sbatch_b2_chain.sh"
 IFS=, read -r -a DEVS <<< "${CUDA_VISIBLE_DEVICES:-}"
 if (( ${#DEVS[@]} == 0 )); then mapfile -t DEVS < <(seq 0 $(( $(nvidia-smi -L | wc -l) - 1 ))); fi
 END_UNIX=$(date -d "$(squeue -h -j "$SLURM_JOB_ID" -o %e)" +%s)
-DEADLINE=$(( END_UNIX - 240 ))
+DEADLINE=$(( END_UNIX - ${DEADLINE_MARGIN:-60} ))   # measured: load 133 s, iteration 756 s
 read -r -a LIST <<< "$CONFIGS"
 remaining() {  # config tokens whose run is not COMPLETE yet
   local out=() t name

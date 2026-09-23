@@ -140,38 +140,45 @@ def load_truth_only() -> dict[str, dict[int, Any]]:
 
 
 def truth_only_tables(runs: dict[str, dict[int, Any]]) -> tuple[str, dict[str, Any]]:
-    """Learnability (B x ratio vs B x the tilt function) and the endpoint score, per epoch."""
-    shown = (1, 2, 4, 8, 12, 16, 24, 32)
-    lines = ["| arm (seeds) | epoch 8 (the historical fit) | best epoch | at best | endpoint at "
-             "best | low | moderate | good |", "|---|---|---|---|---|---|---|---|"]
+    """Learnability (B x ratio vs B x the tilt function) and the endpoint score, per epoch.
+
+    `epoch 8` is the historical fit (8 epochs, last-epoch weights, same rate and seeds);
+    `best-val` is the epoch the recipe hands on (minimum validation loss, restore='best');
+    `max` is the best epoch BY THE EVALUATION ITSELF -- an oracle selection, shown only to size
+    the epoch-to-epoch fluctuation, never a result.
+    """
+    lines = ["| arm (seeds) | epoch 8 (historical fit) | best-val epoch | at best-val | endpoint at "
+             "best-val | low | moderate | good | max over epochs (oracle) |",
+             "|---|---|---|---|---|---|---|---|---|"]
     curves: dict[str, Any] = {}
     for arm, seeds in sorted(runs.items()):
-        at8, best_ep, best, ep_end, regs = [], [], [], [], {r: [] for r in REGIONS}
+        at8, best_ep, best, ep_end, oracle = [], [], [], [], []
+        regs: dict[str, list] = {r: [] for r in REGIONS}
         for run in seeds.values():
             epochs = run["data"]["epochs_on_half_b"]
             values = [e.get("learnability", {}).get("aggregate", {}).get("recovery")
                       for e in epochs]
-            values = [v for v in values if v is not None]
-            if not values:
+            if not values or None in values:
                 continue
+            vloss = [e["val_loss"] for e in epochs]
+            index = min(range(len(vloss)), key=lambda i: vloss[i])
             at8.append(values[7] if len(values) >= 8 else None)
-            index = max(range(len(values)), key=lambda i: values[i])
             best_ep.append(index + 1)
             best.append(values[index])
-            final = run["data"].get("final_after_restore", {})
-            ep_end.append(final.get("endpoint", {}).get("recovery"))
+            oracle.append(max(values))
+            ep_end.append(epochs[index]["endpoint"]["recovery"])
             for name in REGIONS:
                 regs[name].append(epochs[index]["learnability"]["regions"][name]["recovery"])
             curves.setdefault(arm, {})[run["data"]["config"]["step2"]["seed"]] = {
                 "learnability_by_epoch": values,
-                "endpoint_by_epoch": [e.get("endpoint", {}).get("recovery") for e in epochs],
-                "val_loss_by_epoch": [e.get("val_loss") for e in epochs]}
+                "endpoint_by_epoch": [e["endpoint"]["recovery"] for e in epochs],
+                "val_loss_by_epoch": vloss, "best_val_epoch": index + 1}
         if not best:
             continue
-        lines.append(f"| `{arm}` ({len(seeds)}) | {cell([v for v in at8 if v is not None])} | "
-                     f"{'/'.join(str(e) for e in best_ep)} | {cell(best)} | "
-                     f"{cell([v for v in ep_end if v is not None])} | "
-                     + " | ".join(cell(regs[name]) for name in REGIONS) + " |")
+        lines.append(f"| `{arm}` ({len(best)}) | {cell([v for v in at8 if v is not None])} | "
+                     f"{'/'.join(str(e) for e in best_ep)} | {cell(best)} | {cell(ep_end)} | "
+                     + " | ".join(cell(regs[name]) for name in REGIONS)
+                     + f" | {cell(oracle)} |")
     return "\n".join(lines), curves
 
 
