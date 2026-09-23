@@ -16,8 +16,12 @@ BASE and REV.
      a tracked .py file, resolved as a def/class/assignment in that file. A miss whose symbol is
      `py`/`sh` is a file name that the pattern misreads as `module.symbol`, not a citation.
 
-Always exits 0: it is a lister, and a human classifies what it prints. The result DEPENDS ON THE
-CLONE: a token that sits in a remote this clone has not fetched counts as unresolved.
+Exits 0 once it has looked: it is a lister, and a human classifies what it prints. Exits 2 when it
+cannot look -- outside a git work tree, or when BASE or REV does not name a commit. The result DEPENDS ON
+THE CLONE: a token that sits in a remote this clone has not fetched counts as unresolved. It runs from
+the repository root whatever the caller's directory (self-round 64: `git ls-files` prints paths relative
+to the caller, `git diff` and `git show REV:path` relative to the root, so part C read 6/18 from the root,
+0/2 from docs/orchestration/, and "0 resolve, 0 do not" at exit 0 from outside the repository).
 """
 import os
 import re
@@ -40,6 +44,16 @@ def shaish(s):
 def resolves(obj):
     return git("cat-file", "-e", obj).returncode == 0
 
+
+root = git("rev-parse", "--show-toplevel").stdout.strip()
+if not root:
+    print("[citations] CANNOT LOOK :: not inside a git work tree")
+    sys.exit(2)
+os.chdir(root)
+for r_ in (BASE, REV):
+    if not resolves(r_ + "^{commit}"):
+        print(f"[citations] CANNOT LOOK :: {r_!r} does not name a commit in this clone")
+        sys.exit(2)
 
 files = [f for f in git("diff", "--name-only", "-z", BASE, REV, "--", "*.md").stdout.split("\0") if f]
 occ, unres = 0, set()
