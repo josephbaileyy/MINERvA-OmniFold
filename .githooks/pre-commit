@@ -198,6 +198,21 @@
 # lanes' commits, every one of which printed "pre-commit: N checks passed". If you decline a check, say
 # so HERE -- an unlisted check is not a decision, and the whole point of the omission being cheap to
 # fix is that nobody could tell it had happened.
+#
+# ADVISORY, NOT A CHECK, ADDED 2026-09-23: the loop-ledger guard
+# docs/orchestration/probes/probe-20260922-ledger-reconciles.py (KNOWN_ISSUES row 71), wired as a
+# WARNING with its owner's (the gbdt session's) agreement. It is deliberately NOT a `run` line, so
+# it sits outside the two-channel rule above (BEN-226): it never sets `fail`, never counts toward
+# "checks passed", and never changes this hook's exit status. It fails OPEN.
+#   - It runs ONLY when docs/orchestration/REPORT-20260922-review-residue.md is staged, so peers
+#     committing anything else pay nothing (~0.15 s when it does run).
+#   - The guard reads the WORKING-TREE copy of the report, not the staged blob, and the warning
+#     says so: a partially staged report is judged on bytes this commit may not contain.
+#   - rc 1 = the TOTAL line does not reconcile (or the guard crashed; its output is printed).
+#     rc 2, or any other code, = COULD NOT CHECK (e.g. no markdown-it-py in this python3), printed
+#     as such and never as a pass. rc 0 prints one "reconciles" line.
+# It warns rather than refuses because the guard exits 2 on shapes that are legitimate mid-edit and
+# the report belongs to one lane; ISSUE-71 records that reasoning.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)" || exit 2
 
@@ -254,6 +269,25 @@ run "LIVE-index self-test"         python3 docs/orchestration/live_doc_indexed.p
 run "bounded control plane"        python3 docs/orchestration/control_plane_lint.py
 run "control-plane self-test"      python3 docs/orchestration/control_plane_lint.py --self-test
 run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.py --self-test
+
+# The loop-ledger ADVISORY described in the header. Never touches `fail`. No pipe into `grep -q`:
+# an early-closing reader can SIGPIPE git and, under pipefail, turn "staged" into "not staged".
+ledger_report="docs/orchestration/REPORT-20260922-review-residue.md"
+ledger_staged="$(git diff --cached --name-only -- "$ledger_report" 2>/dev/null || true)"
+if [ -n "$ledger_staged" ]; then
+  ledger_out="$(python3 docs/orchestration/probes/probe-20260922-ledger-reconciles.py 2>&1)"
+  ledger_rc=$?
+  case "$ledger_rc" in
+    0) echo "pre-commit advisory: loop ledger reconciles (the guard read the WORKING-TREE copy of $ledger_report)" ;;
+    1) echo "PRE-COMMIT WARNING (advisory; this commit is NOT blocked): the loop-ledger guard says the"
+       echo "  WORKING-TREE copy of $ledger_report does NOT reconcile (or the guard crashed)."
+       echo "  It read the working tree, not the staged blob. Guard output:"
+       printf '%s\n' "$ledger_out" | tail -n 15 | sed 's/^/    /' ;;
+    *) echo "PRE-COMMIT WARNING (advisory; this commit is NOT blocked): loop ledger COULD NOT CHECK --"
+       echo "  the guard exited $ledger_rc on the WORKING-TREE copy of $ledger_report. This is NOT a pass."
+       printf '%s\n' "$ledger_out" | tail -n 5 | sed 's/^/    /' ;;
+  esac
+fi
 
 rm -f /tmp/.hook.$$
 if [ "$fail" -eq 0 ]; then
