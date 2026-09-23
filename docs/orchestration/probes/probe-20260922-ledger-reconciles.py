@@ -96,7 +96,7 @@ def html_text(block):
 
 def noverdict_key(cells):
     """Digest of the WHOLE rendered row -- label, findings cell and note -- so that ANY edit to a pinned row is
-    refused here, without relying on the findings-cell `fullmatch` alone."""
+    refused here."""
     return hashlib.sha256("\n".join(cells).encode("utf-8")).hexdigest()[:16]
 
 
@@ -198,7 +198,9 @@ def main() -> int:
             # ⚠ a findings cell that MENTIONS "no verdict" goes to the pin FIRST, whatever else it holds. The pin
             # was once reached only by a digit-free cell, so "NO VERDICT (attempt 1)" was counted as a review
             # with 1 finding, never pinned, and passed once its TOTAL was updated (review #18b)
-            if re.search(r"no\s+verdict", cell, re.I):     # REGRESSION-ANCHOR:noverdict-first
+            # and the MENTION is read on letters alone: `no\s+verdict` let NO-VERDICT, NOVERDICT, NO_VERDICT and
+            # `no<br>verdict` (whose tag `visible()` drops) through to the count (review #19b)
+            if "noverdict" in re.sub(r"[\W_]+", "", cell.lower()):     # REGRESSION-ANCHOR:noverdict-first
                 key = noverdict_key(cells)
                 if key not in NOVERDICT_PINNED:                  # REGRESSION-ANCHOR:noverdict-pinned
                     unclassified.append(f"line {line}: NO VERDICT row not in NOVERDICT_PINNED (key {key}); read it, "

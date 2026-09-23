@@ -100,8 +100,10 @@ REGRESSIONS = {
         'if False:'),
     # the HISTORICAL defect, not `if False:`: that also unpinned row 46, so every case refused through it and the
     # regression fired only through CONTROLs, never through the reconciling case it was written for
-    'R30 a NO VERDICT cell with a number counted as a review, never pinned (review #18b)': ('if re.search(r"no\\s+verdict", cell, re.I):     # REGRESSION-ANCHOR:noverdict-first',
+    'R30 a NO VERDICT cell with a number counted as a review, never pinned (review #18b)': ('if "noverdict" in re.sub(r"[\\W_]+", "", cell.lower()):     # REGRESSION-ANCHOR:noverdict-first',
         'if not nums and re.search(r"no\\s+verdict", cell, re.I):'),
+    'R31 the NO VERDICT mention read only with whitespace between the words (review #19b)': ('if "noverdict" in re.sub(r"[\\W_]+", "", cell.lower()):     # REGRESSION-ANCHOR:noverdict-first',
+        'if re.search(r"no\\s+verdict", cell, re.I):'),
     # PRECONDITIONS: without one, the guard CRASHES instead of refusing cleanly. Their regressions may fire
     # through a traceback only -- the one class allowed to (anchor names beginning `pre-`)
     'P1 a missing report not refused cleanly (review #16a)': ('if not REPORT.exists():                                  # REGRESSION-ANCHOR:pre-report',
@@ -216,8 +218,12 @@ def unanchored_sites(src):
         return False
 
     def header_anchored(node):
-        # the header is the `if` line through the end of its TEST -- not a comment line below it (review #18b)
-        return any("REGRESSION-ANCHOR:" in lines[k - 1] for k in range(node.lineno, node.test.end_lineno + 1))
+        # the header is the `if` line through the end of its TEST -- not a comment line below it (review #18b) --
+        # plus a closing `):` line, which the test's span stops before (black's style; review #19b)
+        last = node.test.end_lineno
+        while last < len(lines) and lines[last].lstrip().startswith(")") and (not node.body or last + 1 < node.body[0].lineno):
+            last += 1
+        return any("REGRESSION-ANCHOR:" in lines[k - 1] for k in range(node.lineno, last + 1))
 
     out = []
     for n in ast.walk(tree):
@@ -249,6 +255,19 @@ def unanchored_sites(src):
     else:
         out.append((0, "no `checks = [...]` list found"))
     return out
+
+
+def _insert_agy_addend(text, marker, value):
+    """Insert `value` into the TOTAL's independent addends at the position of the agy row containing `marker`,
+    counting only the agy rows above it that the guard COUNTS (a NO VERDICT row carries no addend)."""
+    agy = [l for l in text.splitlines() if re.match(r"^\|\s*\*{0,2}agy", l, re.I)]
+    at = next(i for i, l in enumerate(agy) if marker in l)
+    k = sum(1 for l in agy[:at] if "noverdict" not in re.sub(r"[\W_]+", "", l.split("|")[2].lower()))
+    m = re.search(r"independent reviews =\s*([0-9+\s]+?) = (\d+); TOTAL (\d+)", text)
+    adds = re.sub(r"\s+", "", m.group(1)).split("+")
+    adds.insert(k, str(value))
+    new = f"independent reviews =\n{'+'.join(adds)} = {int(m.group(2)) + value}; TOTAL {int(m.group(3)) + value}"
+    return text[:m.start()] + new + text[m.end():]
 
 
 def build_cases(orig):
@@ -417,8 +436,7 @@ def build_cases(orig):
         *[(f"a NO VERDICT note reporting findings: {note}",
            orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| " + note + " |", nv_row), 1), (1, 2))
           for note in NV_REPORTING],
-        # the pinned row's FINDINGS cell edited, digit-free so that it is still read as a NO VERDICT candidate,
-        # its label and note untouched. Refused by the findings-cell fullmatch and by the whole-row digest
+        # the pinned row's FINDINGS cell edited, its label and note untouched: refused by the whole-row digest
         ("the pinned NO VERDICT row's findings cell edited to carry findings in words",
          orig.replace(nv_row, nv_row.replace("**NO VERDICT**", "**NO VERDICT** \u2014 six defects found", 1), 1), (1, 2)),
         ("an edited NO VERDICT note reporting ZERO findings",
@@ -453,9 +471,14 @@ def build_cases(orig):
         ("a new NO VERDICT row carrying one number, TOTAL updated to reconcile",
          re.sub(r"(\+\d+) = (\d+); TOTAL (\d+)", lambda mm: f"{mm.group(1)}+1 = {int(mm.group(2)) + 1}; TOTAL {int(mm.group(3)) + 1}",
                 after(r_last_agy, "| **agy #99, attempt 1** | \u26a0 **NO VERDICT** (attempt 1) | died on a rate limit |"), count=1), (1, 2)),
-        ("the pinned NO VERDICT row given one number, TOTAL updated to reconcile",
-         re.sub(r"(\+\d+) = (\d+); TOTAL (\d+)", lambda mm: f"{mm.group(1)}+0 = {mm.group(2)}; TOTAL {mm.group(3)}",
-                orig.replace(nv_row, nv_row.replace("**NO VERDICT**", "**NO VERDICT** (0)", 1), 1), count=1), (1, 2)),
+        # ⚠ the 0 goes in at the pinned row's OWN position among the agy rows: appended at the end, it left the TOTAL
+        # unreconciled, so the case was refused by the arithmetic, not the pin (review #19b)
+        ("the pinned NO VERDICT row given one number, TOTAL updated to reconcile", _insert_agy_addend(
+            orig.replace(nv_row, nv_row.replace("**NO VERDICT**", "**NO VERDICT** (0)", 1), 1), "**NO VERDICT** (0)", 0), (1, 2)),
+        *[(f"a new NO VERDICT row spelled {sp!r}, carrying one number, TOTAL updated to reconcile",
+           re.sub(r"(\+\d+) = (\d+); TOTAL (\d+)", lambda mm: f"{mm.group(1)}+1 = {int(mm.group(2)) + 1}; TOTAL {int(mm.group(3)) + 1}",
+                  after(r_last_agy, f"| **agy #99, attempt 1** | \u26a0 **{sp}** (attempt 1) | died on a rate limit |"), count=1), (1, 2))
+          for sp in ("NO-VERDICT", "NOVERDICT", "NO_VERDICT", "no<br>verdict")],
         ("an unrecorded agy row with 0 findings", after(r_last_agy, "| **agy #99 (independent)** | **0** | clean |"), (1, 2)),
         ("an unrecorded self round with 0 findings", after(anchor, "| 99 (self) | **0** | clean |"), (1, 2)),
         ("CONTROL untouched ledger", orig, (0,)),

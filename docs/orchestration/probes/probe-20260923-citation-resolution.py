@@ -157,11 +157,24 @@ def module_names(path):
     walk(tree.body)
     # a `global NAME` inside a function binds a module-level name -- but only if that function ASSIGNS it: a
     # `global` that is only read binds nothing (review #18b; first added unconditionally, review #17b)
+    # ⚠ ONE scope at a time: `ast.walk(fn)` descended into nested functions and paired a `global` in one
+    # scope with an assignment in another; and an import binds a name too (review #19b)
+    def own_scope(fn):
+        stack = list(ast.iter_child_nodes(fn))
+        while stack:
+            n = stack.pop()
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+                continue
+            yield n
+            stack.extend(ast.iter_child_nodes(n))
     for fn in ast.walk(tree):
         if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            declared = {g for n in ast.walk(fn) if isinstance(n, ast.Global) for g in n.names}
+            body = list(own_scope(fn))
+            declared = {g for n in body if isinstance(n, ast.Global) for g in n.names}
             if declared:
-                stored = {n.id for n in ast.walk(fn) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
+                stored = {n.id for n in body if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
+                stored |= {a.asname or a.name.split(".")[0] for n in body if isinstance(n, (ast.Import, ast.ImportFrom))
+                           for a in n.names}
                 names.update(declared & stored)
     return names
 
@@ -179,9 +192,11 @@ for f, L in added:
             cand, sym, key = bymod.get(m.group(3), []), m.group(4), m.group(0)
             if not cand:
                 continue                  # not a module of this repo
-        if key in seen:
+        # a relative span means something different from each citing directory: dedupe it per directory (#19b)
+        dkey = (os.path.dirname(f), key) if key.startswith(("`./", "`../")) else key
+        if dkey in seen:
             continue
-        seen.add(key)
+        seen.add(dkey)
         if sym in ("py", "sh"):
             miss.append((f, key, True)); continue
         if not cand:                      # a `path.py::symbol` whose file is not at REV: renamed or deleted
@@ -220,9 +235,10 @@ seen, ok, dmiss, odd = set(), 0, [], []
 for f, L in added:
     for m in re.finditer(r"(?<!`)`([^`\s]*/[^`\s]*)`(?!`)", L):
         q = re.sub(r"(::\w+|:[\d,-]+)$", "", m.group(1)).rstrip("/")     # `x.py::sym` and `x.py:12` name the file
-        if not q or q in seen:
+        dkey = (os.path.dirname(f), q) if q.startswith(("./", "../")) else q     # per directory if relative (#19b)
+        if not q or dkey in seen:
             continue
-        seen.add(q)
+        seen.add(dkey)
         if re.search(r"[\u2026<>${}*]", q):
             odd.append((f, q)); continue
         if any(os.path.normpath(os.path.join(b, q)) in known for b in ("", os.path.dirname(f), "docs/orchestration")):

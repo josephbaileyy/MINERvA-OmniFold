@@ -58,7 +58,7 @@ buried in run-log prose.
 | 68 | MEDIUM | OPEN | **The same PASS token mis-attributes a ratio in its `uq_math.py` per-file summary.** | [issue detail](docs/known-issues/ISSUE-68-same-pass-token-mis-attributes-ratio-uqmath.md) | 2026-09-22 |
 | 69 | MEDIUM | OPEN | **A hand-maintained instrument was rebuilt against its own recorded defect three times before a mutation suite was written for it.** | [issue detail](docs/known-issues/ISSUE-69-hand-maintained-instrument-was-rebuilt-against-recorded.md) | 2026-09-23 |
 | 70 | MEDIUM | OPEN | **A bare matrix rank is quoted for the historical 3D block-sum object in 17 tracked files that omit its cutoff.** | [issue detail](docs/known-issues/ISSUE-70-bare-matrix-rank-quoted-historical-3d-block.md) | 2026-09-22 |
-| 71 | MEDIUM | OPEN | **The loop-ledger guard has no AUTOMATIC caller (only a runner run by hand), so its docstring's central claim about itself is not yet true.** | [issue detail](docs/known-issues/ISSUE-71-loop-ledger-guard-has-no-caller-docstring.md) | 2026-09-23 |
+| 71 | MEDIUM | OPEN | **Nothing runs the loop-ledger guard on the live ledger automatically (its mutation suite runs it on copies; its runner is run by hand), so its docstring's central claim about itself is not yet true.** | [issue detail](docs/known-issues/ISSUE-71-loop-ledger-guard-has-no-caller-docstring.md) | 2026-09-23 |
 | 72 | LOW | OPEN | **Eleven `VALIDATION_LEDGER.md` table rows render wrong on GitHub, all written by earlier lanes.** | [issue detail](docs/known-issues/ISSUE-72-eleven-validationledger-md-table-rows-render-wrong.md) | 2026-09-22 |
 
 ## Resolved traps that WILL bite again if forgotten
