@@ -266,6 +266,12 @@ run "receipt artifact tracking"    python3 docs/orchestration/verify_receipt_art
 # that merge_guard.sh's one false pass was caught end-to-end and NOT by its self-test.
 run "LIVE doc indexed"             python3 docs/orchestration/live_doc_indexed.py --check
 run "LIVE-index self-test"         python3 docs/orchestration/live_doc_indexed.py --self-test
+# WHOLE-TREE, added 2026-09-23 (KNOWN_ISSUES row 60(3)). Every tracked docs/orchestration/*.md outside
+# runs/ and state/ must have a MANIFEST-overrides.tsv row of SOME class -- the hole that let
+# OUTCOME-20260921-L2-... land with no row and sit outside every arm above. It passes the admitting rule
+# at line 11 because the backlog was driven to 0 (106 -> 0, 1fc23944) before this was switched on, and
+# a row saying ARCHIVAL is always available to the committer. Reads the index, like --check.
+run "every doc has an overrides row" python3 docs/orchestration/live_doc_indexed.py --unrowed
 run "bounded control plane"        python3 docs/orchestration/control_plane_lint.py
 run "control-plane self-test"      python3 docs/orchestration/control_plane_lint.py --self-test
 run "manifest inventory self-test" python3 docs/orchestration/generate_manifest.py --self-test

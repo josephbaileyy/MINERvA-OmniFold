@@ -55,10 +55,11 @@ every later run said "nothing newly LIVE". Two additions, split by the hook's ad
   * ENFORCED, forward: a `.md` this commit ADDS under docs/orchestration/ (outside runs/ and state/)
     must have a row in the staged overrides file -- any class. The committer can always satisfy it,
     because ARCHIVAL is a legal declaration; what is refused is declaring nothing.
-  * REPORTED, whole tree: every tracked `.md` in that scope with no row is counted on every `--check`
-    and listed by `--unrowed`, which exits 1 while any exist. Not enforced in the hook, because 106
-    such documents pre-date this (measured at `aeb6668c`, `OUTCOME-20260921-L2-…` among them) and no
-    committer can clear another lane's classification debt.
+  * WHOLE TREE: every tracked `.md` in that scope with no row is counted on every `--check` and listed
+    by `--unrowed`, which exits 1 while any exist. 106 such documents pre-dated this (measured at
+    `aeb6668c`, `OUTCOME-20260921-L2-…` among them). All 106 were classified on 2026-09-23 (106 -> 0),
+    and after that `--unrowed` became a HARD pre-commit check (`.githooks/pre-commit`, "every doc has an
+    overrides row"). A red from it now is new debt, never inherited debt.
 The judgement is still the author's -- a row saying ARCHIVAL passes -- so this makes the declaration
 mandatory, not correct.
 
@@ -244,7 +245,7 @@ def check():
     bl_note = ("  (%d LIVE doc(s) absent from CATALOG -- %s)" % (len(bl), ", ".join(bl))
                if bl else "  (whole tree: every LIVE doc is indexed)") if not err else \
               "  (backlog unreadable: %s)" % err
-    bl_note += ("  (whole tree: %d tracked doc(s) have NO overrides row, reported not enforced; "
+    bl_note += ("  (whole tree: %d tracked doc(s) have NO overrides row, enforced by the hook via --unrowed; "
                 "list them with --unrowed)" % len(tree_unrowed))
 
     # WHOLE-TREE ARM, ENFORCING SINCE 2026-09-21. It reports before the scoped arm because an
