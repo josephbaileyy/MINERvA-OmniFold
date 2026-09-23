@@ -57,6 +57,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--config-hash", required=True,
                    help="sha256 content hash of the frozen RunConfig; refused on a mismatch")
+    p.add_argument("--frozen-config", type=Path, default=None,
+                   help="the committed frozen config this run's config was generated from "
+                        "(amendment 2); must differ from --config only in name, note and seeds")
+    p.add_argument("--frozen-sha256", default=None, help="sha256 of --frozen-config's bytes")
     p.add_argument("--repo", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--inputs-npz", type=Path, required=True)
@@ -117,6 +121,11 @@ def preflight(args: argparse.Namespace) -> tuple[Path, RunConfig, Any]:
                          f"{args.config_hash}")
     if config.arm != "ours":
         raise SystemExit("[confirm] the confirmatory path runs the ours arm only")
+    args.frozen_record = None
+    if args.frozen_config is not None:
+        import freeze_runs
+        args.frozen_record = freeze_runs.verify_generated(config, args.frozen_config,
+                                                          args.frozen_sha256)
     if args.pool is not None:
         ri.refuse_sealed_pool(args.pool)
     distortion = ri.get_distortion(args.distortion, config.endpoint.amplitude,
@@ -180,7 +189,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise SystemExit(f"[confirm] {out} belongs to another run: {before} vs {ident}")
     else:
         write_json_atomic(ident_path, ident)
-    loaded = ri.load_signal_rows(ffd, mods["DataLoader"], args.inputs_npz, selection.load_rows)
+    r1 = (None if distortion.reco_energy_scale is None
+          else (selection.pseudo_rows, distortion.reco_energy_scale))
+    loaded = ri.load_signal_rows(ffd, mods["DataLoader"], args.inputs_npz, selection.load_rows,
+                                 reco_energy_scale=r1)
     inputs, arrays = ri.assemble_closure(ffd, loaded, selection, distortion, cd.ClosureInputs)
     del loaded
     crosscheck = None
@@ -220,7 +232,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "distortion": distortion.record, "closure": {
                 k: v for k, v in inputs.meta.items()
                 if k not in ("dump_rows_a", "dump_rows_b", "tilt_a", "pass_gen_a", "mc_indices")},
-            "input_digests_before_arm": digests_before_arm,
+            "input_digests_before_arm": digests_before_arm, "frozen_config": args.frozen_record,
             "replicate_arrays_digests": arrays_digest, "crosscheck_closure_data": crosscheck,
             "counts": {"pdata_rows": int(len(inputs.pdata["rows"])),
                        "prior_rows": int(len(inputs.mc["rows"])),
@@ -233,7 +245,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps({"inputs_receipt": str(out / "inputs_receipt.json"),
                           "load_seconds": time.perf_counter() - t_load}))
         return 0
-    read = b2d.scalar_reader(np, ffd, args.inputs_npz)
+    read = ri.scaled_reader(np, b2d.scalar_reader(np, ffd, args.inputs_npz), r1)
     arm_record = b2d.apply_arm(np, arm, inputs, read, None)
     pdata, mcb = cd.make_loaders(mods, np, inputs)
     factories, _check = ru.model_factories(config, mods, inputs)
@@ -258,7 +270,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                                  "mc_indices")}
     receipt = {
         "schema": SCHEMA, "config": config.to_dict(), "config_hash": config.content_hash(),
-        "run_identity": ident, "b2_arm": arm.name, "b2_arm_hash": arm.content_hash(),
+        "frozen_config": args.frozen_record, "run_identity": ident, "b2_arm": arm.name, "b2_arm_hash": arm.content_hash(),
         "b2_arm_record": arm_record, "step2_miss_mode": args.step2_miss_mode,
         "selection": selection.record, "distortion": distortion.record,
         "code_commit": subprocess.run(["git", "-C", str(args.repo), "rev-parse", "HEAD"],

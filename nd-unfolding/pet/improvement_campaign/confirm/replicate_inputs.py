@@ -173,6 +173,7 @@ class DistortionSpec:
     record: dict[str, Any]
     raw: Callable[[Mapping[str, np.ndarray]], np.ndarray]
     needs_species: bool = False
+    reco_energy_scale: float | None = None   # R1 (amendment 3 item 3): pseudodata only
 
     def content_hash(self) -> str:
         return hashlib.sha256(json.dumps(self.record, sort_keys=True, default=repr)
@@ -189,6 +190,8 @@ def get_distortion(name: str, endpoint_amplitude: float | None = None,
                              f"{endpoint_clip}) is not the historical tilt")
         return DistortionSpec(DEV, spec, lambda t: development_tilt_raw(t["eavail"], spec))
     registry = dist.registry()
+    if "+" in name or (name in registry and registry[name].family == "R1"):
+        return _r1_distortion(name, registry)
     if name not in registry:
         raise SystemExit(f"[confirm] unknown distortion {name!r}")
     d = registry[name]
@@ -201,6 +204,35 @@ def get_distortion(name: str, endpoint_amplitude: float | None = None,
                                                   "rows"},
                           lambda t: np.asarray(d.truth_weight(t), np.float64),
                           needs_species=d.family == "D4")
+
+
+def _r1_distortion(name: str, registry: Mapping[str, Any]) -> DistortionSpec:
+    """R1 on the PET path (PROTOCOL amendment 3, item 3): every stored reco cluster energy and the
+    reco E_avail of the PSEUDODATA are multiplied by the factor, at the raw-array level (the
+    inventory's `part_reco[..., 0]` and `reco_scalars[:, eavail]`, before the loader builds the
+    cloud). Muon quantities, reco q3, the prior and the selection are unchanged (so, unlike
+    Phase E1's R1, reco q3 is NOT recomputed from the scaled recoil). Alone, or combined with a
+    truth-weight distortion as `R1_x<s>+<truth id>`; the truth target is the truth part's."""
+    reco_id, _, truth_id = name.partition("+")
+    if reco_id not in registry or registry[reco_id].family != "R1":
+        raise SystemExit(f"[confirm] {name}: only R1 is implemented on the PET path "
+                         "(R2/R3 refused, not approximated)")
+    factor = float(dict(registry[reco_id].params)["scale"])
+    if truth_id:
+        truth = get_distortion(truth_id)
+        if truth.reco_energy_scale is not None:
+            raise SystemExit(f"[confirm] {name}: two reco distortions")
+    else:
+        truth = DistortionSpec("none", {"name": "none"}, lambda t: np.ones(len(t["eavail"])))
+    record = {"name": name, "reco": {"id": reco_id, "phase_e_spec": registry[reco_id].spec(),
+                                     "applied": "pseudodata part_reco[...,0] and reco_scalars"
+                                                "[:,eavail] x factor on reco-passing rows; muon, "
+                                                "q3, prior and selection unchanged "
+                                                "(amendment 3 item 3)",
+                                     "factor": factor},
+              "truth": truth.record}
+    return DistortionSpec(name, record, truth.raw, needs_species=truth.needs_species,
+                          reco_energy_scale=factor)
 
 
 # ------------------------------------------------------------------------------------------- #
@@ -300,9 +332,14 @@ class LoadedRows:
 
 
 def load_signal_rows(ffd: Any, DataLoader: type, inputs_npz: Path, rows: np.ndarray, *,
-                     feature_names: Any = None, truth_feature_names: Any = None) -> LoadedRows:
+                     feature_names: Any = None, truth_feature_names: Any = None,
+                     reco_energy_scale: tuple[np.ndarray, float] | None = None) -> LoadedRows:
     """`build_fullevent_loaders(..., bkg_mode="mc-only")` with `imc = rows`, reading signal-MC
-    members only (see the module docstring for the one deliberate difference)."""
+    members only (see the module docstring for the one deliberate difference).
+
+    `reco_energy_scale = (scale_rows, factor)`: R1 -- multiply the raw stored cluster energies
+    (`part_reco[..., 0]`, MeV) and reco E_avail of those inventory rows that pass reco by the
+    factor BEFORE the cloud is built; nothing else changes."""
     feature_names = ffd.DEFAULT_EVT_FEATURES if feature_names is None else feature_names
     truth_feature_names = (ffd.DEFAULT_TRUTH_EVT_FEATURES if truth_feature_names is None
                            else truth_feature_names)
@@ -328,13 +365,22 @@ def load_signal_rows(ffd: Any, DataLoader: type, inputs_npz: Path, rows: np.ndar
         def _tok(key: str) -> Any:
             return None if key not in d.files else np.asarray(d[key])[imc]
 
-        reco_cloud, coord_reco = ffd.build_reco_cloud(np.asarray(d["part_reco"])[imc],
+        part_reco = np.asarray(d["part_reco"])[imc]
+        reco_scalars = np.asarray(d["reco_scalars"])[imc]
+        pass_reco = np.asarray(d["pass_reco"])[imc]
+        scaled = None
+        if reco_energy_scale is not None:
+            scale_rows, factor = reco_energy_scale
+            scaled = np.isin(imc, np.asarray(scale_rows, np.int64)) & np.asarray(pass_reco, bool)
+            f = part_reco.dtype.type(factor)
+            part_reco[scaled, :, 0] = part_reco[scaled, :, 0] * f
+            col = ffd.SCALAR_COLS["eavail"]
+            reco_scalars[scaled, col] = reco_scalars[scaled, col] * reco_scalars.dtype.type(factor)
+        reco_cloud, coord_reco = ffd.build_reco_cloud(part_reco,
                                                       _tok("reco_view"), _tok("reco_time"))
         part_gen = np.asarray(d["part_gen"])[imc]
         gen_cloud, coord_gen = ffd.build_truth_cloud(part_gen)
-        reco_scalars = np.asarray(d["reco_scalars"])[imc]
         truth_scalars = np.asarray(d["truth_scalars"])[imc]
-        pass_reco = np.asarray(d["pass_reco"])[imc]
         pass_truth = np.asarray(d["pass_truth"])[imc]
         reco_blocks = ffd.evt_blocks(
             scalars=reco_scalars,
@@ -367,6 +413,9 @@ def load_signal_rows(ffd: Any, DataLoader: type, inputs_npz: Path, rows: np.ndar
                         normalization_factor=ffd.STEP1_MC_NORMALIZATION, reco_evt=event_reco,
                         gen_evt=event_truth, rank=0, size=1)
         meta["mc_only"] = True
+        meta["reco_energy_scale"] = (None if scaled is None else
+                                     {"factor": float(reco_energy_scale[1]),
+                                      "rows_scaled": int(scaled.sum())})
         keys = list(d.keys_read)
     finally:
         d.close()
@@ -513,3 +562,22 @@ def compare_inputs(np_: Any, ours: Any, reference: Any) -> dict[str, Any]:
                                   and sha256_bytes(x) == sha256_bytes(y))
     out["all_equal"] = all(v is True for v in out.values())
     return out
+
+
+def scaled_reader(np_: Any, read: Callable, r1: tuple[np.ndarray, float] | None) -> Callable:
+    """The B2 arms' reco-scalar reader with R1 applied to reco E_avail of the pseudodata rows
+    (the arms read reco scalars straight from the inventory, bypassing the loader)."""
+    if r1 is None:
+        return read
+    rows_scaled, factor = np_.asarray(r1[0], np_.int64), float(r1[1])
+
+    def wrapped(which: str, column: str, rows: Any) -> Any:
+        vals = read(which, column, rows)
+        if which == "reco" and column == "eavail":
+            vals = np_.array(vals, dtype=np_.float64, copy=True)
+            hit = np_.isin(np_.asarray(rows, np_.int64), rows_scaled)
+            # the float32 product, as the loader scales the stored float32 column
+            vals[hit] = (vals[hit].astype(np_.float32) * np_.float32(factor)).astype(np_.float64)
+        return vals
+
+    return wrapped

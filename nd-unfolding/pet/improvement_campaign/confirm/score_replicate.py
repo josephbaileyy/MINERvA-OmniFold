@@ -165,10 +165,16 @@ class RunScorer:
         for k, push, pull, sha in its:
             if not np.all(np.isfinite(push)) or (push < 0).any():
                 raise SystemExit(f"[confirm-score] iteration {k}: push not finite/non-negative")
+            rep, pop = self.replicate_score(push), self.population_score(push)
             records.append({
                 "iteration": k, "k": k + 1, "file_sha256": sha,
-                "push": self.replicate_score(push),
-                "push_vs_population": self.population_score(push),
+                "push": rep, "push_vs_population": pop,
+                # amendment 2: ends FARTHER from the target than the identity push (the prior)
+                "moves_away": {
+                    "replicate_target": bool(rep["aggregate"]["residual_l1"]
+                                             > rep["aggregate"]["injected_l1"]),
+                    "population_target": (None if pop is None else
+                                          bool(pop["residual_l1"] > pop["injected_l1"]))},
                 "pull": run_ibu.compact_score(self.replicate_score(pull)),
                 "pull_vs_population": self.population_score(pull),
                 "push_weights_on_truth_passing": scm.weight_summary(push[kb]),
