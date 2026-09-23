@@ -185,7 +185,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   gathered for is retained in full: noise must fall with `N`, this did not between `N = 40` and
   `N = 160`, so the failing leg is not reporting its own resampling noise. ⚠ **`M1`'s `6.145%`
   FAIL is untouched**, and §5's **second** bullet and its *"nothing to price"* conclusion are
-  **NOT** withdrawn. Enumerates all **10** sites — `EVIDENCE` §5, `AGENTS.md:88`, four in
+  **NOT** withdrawn. Enumerates **11** sites (⚠ this entry read *"all 10"*; site 11, the adoption entry in this catalogue, was added 2026-09-22) — `EVIDENCE` §5, `AGENTS.md:88`, four in
   `docs/analysis-note/` (the last again being `values.tex`'s **comment**), `REPORT-20260920` `L1`,
   `HANDOFF-20260921-gbdt-remaining` `L1`, `nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md`, and
   ⚠ **site 10, THIS FILE's own `EVIDENCE-20260920` entry** (added 2026-09-22, §4d).
@@ -250,7 +250,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   meaningful sign; withdrawn 2026-09-22); and the destination is **1,431 of 1,568**, not dense. ⚠ **The destination mask is a DECLARATION**
   and this run declares `receiving-cells` following the adopted precedent — **a figure would need
   the `declared-dst-cv` variant**, and that declaration has not been made. `M1`–`M4` travel with it;
-  no rank is quoted and none has been scanned on this object.
+  a retained count is quoted ONLY with its cutoff (`263 of 1431 at rc = 1e-12`, from the producing job's stdout) and no cutoff SCAN exists for this object (⚠ this entry read *"no rank is quoted and none has been scanned"*, stale after the record itself began quoting the retained count).
 - [`OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md`](OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md)
   - **L2's `s_proj` EXISTS AND ITS PAIR IS NOT CODE-COMPARABLE.** Stages 4-6 ran under the
   `229c43e0…` verifier token. **Control exact**: the graded pair re-measures
