@@ -197,8 +197,40 @@ def experiment_4() -> dict[str, RunConfig]:
     return out
 
 
+# Experiment 5: the four controlled feature arms. C1 is the incumbent input set; C2 adds the
+# detector-side summaries (reco E_avail, reco q3, stored-cluster energy sum and count -- no truth
+# quantity, asserted in `b2_arms.assert_step1_reco_only`); C3 adds the truth globals (true E_avail,
+# q3) to step 2; C4 both. The truth-side PDG encoding and the schedule are held fixed at whatever
+# experiments 2 and 4 selected, so the arms differ only in the declared feature sets.
+C_ARMS_RAW = {"C1": "baseline", "C2": "reco_summaries", "C3": "truthglobals",
+              "C4": "reco_summaries_truthglobals"}
+C_ARMS_ONEHOT = {"C1": "pdg_onehot", "C2": "reco_summaries_pdg_onehot",
+                 "C3": "pdg_onehot_truthglobals",
+                 "C4": "reco_summaries_pdg_onehot_truthglobals"}
+
+
+def experiment_5(pdg: str = "raw", schedule: str = "H", seeds: tuple = (1, 2),
+                 iterations: int = 10) -> dict[str, RunConfig]:
+    arms = C_ARMS_ONEHOT if pdg == "onehot" else C_ARMS_RAW
+    out = {}
+    for tag, arm in arms.items():
+        for s in seeds:
+            name = f"b2e5-{tag}-{schedule}-s{s}"
+            out[name] = run_config(name, seed=s, iterations=iterations, schedule=schedule,
+                                   feature_arm=arm,
+                                   note=f"B2 exp 5 {tag}: feature arm {arm}, schedule {schedule}")
+    return out
+
+
 PLANS = {"e1": experiment_1, "dev": dev, "e2": experiment_2, "e3": experiment_3,
          "e4": experiment_4}
+
+
+def write_experiment_5(pdg: str, schedule: str) -> None:
+    CONFIG_DIR.mkdir(exist_ok=True)
+    for name, config in experiment_5(pdg=pdg, schedule=schedule).items():
+        (CONFIG_DIR / f"{name}.json").write_text(config.to_json(indent=1) + "\n")
+        print(name, config.content_hash()[:16], config.feature_arm)
 
 
 def write(plans: list[str]) -> None:
@@ -213,4 +245,7 @@ def write(plans: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    write(sys.argv[1:] or sorted(PLANS))
+    if sys.argv[1:2] == ["e5"]:
+        write_experiment_5(pdg=sys.argv[2], schedule=sys.argv[3])
+    else:
+        write(sys.argv[1:] or sorted(PLANS))

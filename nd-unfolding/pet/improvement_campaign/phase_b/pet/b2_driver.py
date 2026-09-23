@@ -196,6 +196,19 @@ def make_b2_multifold(MultiFold: type, tf: Any, np: Any) -> type:
             self.segments: list[dict[str, Any]] = []
             self._fits_written = 0
 
+        def seed_step(self, stepn: int, iteration: int) -> None:
+            """Set the GLOBAL TensorFlow seed before a step, so a fit depends only on its own
+            (step seed, step, iteration) and not on what ran before it in this process.
+
+            Without this, `RunModel` builds its `tf.data` pipeline BEFORE it seeds the fit, so the
+            shuffle inherits the graph-level seed left by the previous fit -- which is why a
+            resumed run diverged from a continuous one after the first restored iteration (dev
+            job 58756024: iteration 1 push differed by 1.9e-3). The A1 driver's own default path
+            is untouched; this is the B2 driver's determinism policy and it makes a resumed or
+            preempted run bit-identical to an uninterrupted one."""
+            tf.keras.utils.set_random_seed(
+                ru.derive_seed(self.step_recipe(stepn).seed, stepn, iteration, "pre_step"))
+
         # ---- step 2: the engine's rule, or the efficiency-corrected one ---------------- #
         def RunStep2(self, i: int) -> None:
             """`carry` is the engine's own `RunStep2` (misses carry the previous push into the
@@ -289,7 +302,9 @@ def make_b2_multifold(MultiFold: type, tf: Any, np: Any) -> type:
                     return False
                 self.log_string(f"ITERATION: {i + 1}")
                 t0 = time.perf_counter()
+                self.seed_step(1, i)
                 self.RunStep1(i)
+                self.seed_step(2, i)
                 self.RunStep2(i)
                 last = time.perf_counter() - t0
                 self.iteration_records.append({
@@ -573,6 +588,7 @@ def main() -> int:
         tilt_a = np.asarray(inputs.meta["tilt_a"], np.float32)
         unfolder.weights_pull = tilt_a
         unfolder.weights_push = np.ones_like(tilt_a)
+        unfolder.seed_step(2, 0)
         unfolder.RunStep2(0)
         final_ratio, saturated = evaluator.ratio(unfolder.step2_models[0])
         final = {"saturated": saturated, **evaluator.score(final_ratio)}
