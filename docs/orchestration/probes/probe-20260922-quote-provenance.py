@@ -23,9 +23,23 @@ not to decide it.
 
 Usage: [--since REV]   Exit 0 listed, 2 cannot look.
 """
+import os
 import re
 import subprocess
 import sys
+
+
+QUOTE = re.compile(r'\*"([^"]{24,400}?)"\*', re.S)
+
+
+def dequote(t):
+    """Remove every quotation, so only UNQUOTED text can serve as a quote's source.
+
+    ⚠ The first version counted any second occurrence as a source. Review #11b showed the flaw: a
+    misquote this lister found was then quoted again in KNOWN_ISSUES row 72, and from that moment the
+    copy "sourced" the original and the misquote vanished from the listing. A quotation cannot be
+    the evidence for another quotation of the same words."""
+    return QUOTE.sub(" ", t)
 
 
 def norm(t):
@@ -41,25 +55,38 @@ def main():
         base = a[a.index("--since") + 1]
     git = lambda *x: subprocess.run(["git", *x], capture_output=True, text=True).stdout
     files = [f for f in git("diff", "--name-only", f"{base}..HEAD").split() if f.endswith(".md")]
+    # run from the repository root whatever the caller's directory (the table probe failed open without it)
+    root = git("rev-parse", "--show-toplevel").strip()
+    if not root:
+        print("[quotes] CANNOT LOOK :: not inside a git work tree"); return 2
+    os.chdir(root)
     quotes = set()
     for f in files:
-        for l in git("diff", "-U0", f"{base}..HEAD", "--", f).splitlines():
-            if l.startswith("+") and not l.startswith("+++"):
-                quotes.update((f, m.group(1)) for m in re.finditer(r'\*"([^"]{24,400}?)"\*', l))
+        if not os.path.exists(f):
+            continue
+        # collect from the WHOLE FILE, keeping quotes that START on a changed line: the first version
+        # read single diff lines and never saw a quote wrapped across a line break (review #11b)
+        changed = set()
+        for m in re.finditer(r"^@@ -\S+ \+(\d+)(?:,(\d+))? @@", git("diff", "-U0", f"{base}..HEAD", "--", f), re.M):
+            a = int(m.group(1)); changed.update(range(a, a + int(m.group(2) or 1)))
+        text = open(f, encoding="utf-8", errors="ignore").read()
+        for m in QUOTE.finditer(text):
+            if text.count("\n", 0, m.start()) + 1 in changed:
+                quotes.add((f, re.sub(r"\s+", " ", m.group(1))))
     if not quotes:
         print("[quotes] CANNOT LOOK :: no quotations on changed lines"); return 2
     corpus = []
     for t in git("ls-files", "*.md", "*.py", "*.sh", "*.tex", "*.json").split():
         try:
-            corpus.append(norm(open(t, errors="ignore").read()))
+            corpus.append(norm(dequote(open(t, errors="ignore").read())))
         except OSError:
             pass
     corpus = "\n".join(corpus)
-    msgs = norm(git("log", "--format=%B"))
+    msgs = norm(dequote(git("log", "--format=%B")))
     listed = 0
     for f, q in sorted(quotes):
         parts = [p.strip() for p in re.split(r"\.\.\.|…", norm(q)) if len(p.strip()) >= 12]
-        if not parts or all(corpus.count(p) >= 2 or p in msgs for p in parts):
+        if not parts or all(p in corpus or p in msgs for p in parts):
             continue
         frags = sorted((x.strip() for x in re.split(r"\*\*|`|\.\.\.|…|\*|\|", q)
                         if len(x.strip()) >= 14), key=len, reverse=True)

@@ -295,7 +295,8 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 - [`REPORT-20260922-review-residue.md`](REPORT-20260922-review-residue.md)
   - ⚠ **THE REVIEW LOOP DID NOT TERMINATE ON ITS OWN CRITERION, and this records that rather than
   implying otherwise.** ⚠ **EVERY independent review so far has found defects, each
-  resetting the counter, each reviewing its predecessors' repairs and finding fresh ones.**
+  resetting the counter, and every one after the first reviewing its predecessors' repairs and finding
+  fresh ones** (review #1 had no predecessor repairs to review).
   ⚠ **THE PER-ROUND COUNTS ARE NOT RESTATED HERE** — they live only in that report's §1 ledger,
   because carrying them in three files is how two went stale after every review (`KNOWN_ISSUES`
   row 66). **Read the ledger for the numbers.** What is stable and worth routing on: condition (ii)
@@ -305,7 +306,7 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   ⚠ **The reusable lesson: two consecutive clean SELF-rounds were worth very little** — the
   independent pass found three consequential defects including one that made a in-repo deliverable's
   own reader recipe raise `AssertionError`. Several findings are recorded rather than repaired
-  (`KNOWN_ISSUES` **63–66**, the last being the RATE itself): the PASS token's forward reference and scope count, both unrepairable
+  (`KNOWN_ISSUES` **63–66**, the last being the RATE itself; and, added later the same day, **67–72** — the PASS token's false docstring citation, a mis-attributed ratio, the guard's defeat history, the tree-wide bare rank `247`, the guard having no caller, and pre-existing ledger rendering defects — with the five committed probes under `probes/probe-20260922-*` that police them): the PASS token's forward reference and scope count, both unrepairable
   because the token IS the sha256 of those bytes; `check_dead_containment`'s green depending on a
   gitignored PDF; and the existing withdrawal-completeness checker never being given the 2026-09-21
   claim. **No scientific number moved in either direction.**

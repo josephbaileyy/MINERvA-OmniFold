@@ -21,7 +21,12 @@ So this file now has two layers:
     defect, and the suite must FAIL. A suite that cannot fail is not evidence that it passed.
 
 Run: python3 docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py [--regressions]
-Exit 0 = every mutation refused (and, with --regressions, every regression detected).
+Exit 0 = every case behaved as wanted, and (with --regressions) the suite FAILED under at least one
+patched-back defect -- i.e. it can fail. It does NOT mean every regression is detected: a regression
+can be REDUNDANT (a later guard layer also closes its shape), and the harness says which.
+⚠ An earlier version of this docstring claimed "every regression detected" and that the harness
+"patches the guard back to EACH historical defect"; review #11b showed both false. The regression
+list is a set of defects reviewers actually found, not all of them, and it grows when one is missed.
 """
 import re
 import shutil
@@ -50,6 +55,21 @@ REGRESSIONS = {
         'nums = re.findall(r"-?\\d+", cell)', 'nums = [x.lstrip("-") for x in re.findall(r"-?\\d+", cell)]'),
     "R5 unclassifiable rows omitted instead of refusing (review #8)": (
         'unclassified.append(l[:90])\n\n', 'pass\n\n'),
+    "R6 cells split naively, ignoring escaped pipes (review #10)": (
+        'parts = re.split(r"(?<!\\\\)\\|", line)', 'parts = line.split("|")'),
+    "R7 a first cell beginning '--' taken as a separator (review #10)": (
+        'if len(cells) >= 2 and all(SEP_CELL.match(c) for c in cells):',
+        'if len(cells) >= 2 and (all(SEP_CELL.match(c) for c in cells) or cells[0].startswith("--")):'),
+    "R8 addends compared by count and sum only, not elementwise (review #7)": (
+        'if len(stated_list) == len(derived_list) and stated_list != derived_list:', 'if False:'),
+    "R9 NO VERDICT accepted anywhere in the cell (review #9)": (
+        'no verdict[\\s*\u26a0_`()\\[\\].-]*"', 'no verdict.*"'),
+    "R10 no orphan-row check (self-round 30 / review #11b)": ('if orphans:', 'if False:'),
+    "R11 HTML comments not stripped (review #11b)": (
+        'text = re.sub(r"<!--.*?-->", "", text, flags=re.S)', 'text = text'),
+    "R12 NO VERDICT row may report findings in its note (review #11b)": (
+        'unclassified.append("NO VERDICT row whose note reports findings: " + l[:60]); continue',
+        'pass'),
 }
 
 
@@ -61,6 +81,22 @@ def _last_self_row(text):
     return rows[-1]
 
 
+def _last_table_row(text):
+    """The LAST row of the ledger table, whatever kind it is.
+
+    ⚠ Position-sensitive cases (an interloper line, an orphaned row) must be placed after THIS, not
+    after the last self row: once agy rows follow the last self row, an interloper inserted there
+    truncates REAL rows, and the case then refuses on arithmetic under the fixed guard and the broken
+    one alike. Review #11b's regression runs exposed that: the orphan cases tested nothing.
+    """
+    lines = text.splitlines()
+    h = next(i for i, l in enumerate(lines) if l.strip().startswith("| round | findings | note |"))
+    j = h + 1
+    while j < len(lines) and lines[j].strip():
+        j += 1
+    return lines[j - 1]
+
+
 def _first_agy_row(text):
     rows = [l for l in text.splitlines() if re.match(r"^\|\s*\*{0,2}agy", l, re.I)]
     if not rows:
@@ -70,6 +106,7 @@ def _first_agy_row(text):
 
 def build_cases(orig):
     anchor = _last_self_row(orig)
+    tail = _last_table_row(orig)
     agy0 = _first_agy_row(orig)
     m = TOTAL_RE.search(orig)
     if not m:
@@ -87,8 +124,8 @@ def build_cases(orig):
         ("all-dash body row below the header", after(anchor, "| - | - | - |"), (1, 2)),
         # --- review #9's class, in the DISCRIMINATING placement: unrecorded row BELOW the interloper
         ("unrecorded review BELOW an HTML comment in the table", after(anchor, "<!-- aside -->\n" + NEW), (1, 2)),
-        ("unrecorded review BELOW a blockquote in the table", after(anchor, "> aside\n" + NEW), (1, 2)),
-        ("unrecorded review BELOW a whitespace-only line", after(anchor, "   \n" + NEW), (1, 2)),
+        ("unrecorded review BELOW a blockquote in the table", after(tail, "> aside\n" + NEW), (1, 2)),
+        ("unrecorded review BELOW a whitespace-only line", after(tail, "   \n" + NEW), (1, 2)),
         # --- decoy that RECONCILES with the live TOTAL, so only header-multiplicity can catch it
         ("decoy ledger above the live one that itself reconciles",
          orig.replace("| round | findings | note |",
@@ -122,12 +159,30 @@ def build_cases(orig):
         ("new agy row indented two spaces", after(anchor, "  " + NEW), (1, 2)),
         ("new agy row indented with a tab", after(anchor, "\t" + NEW), (1, 2)),
         ("TOTAL left stale after a real new review row", after(anchor, NEW), (1, 2)),
+        # --- review #11b: orphan shapes the first orphan check was too narrow to see
+        *[(f"orphan below a whitespace line: {lab[:26]}", orig.replace(tail, tail + "\n   \n" + lab, 1), (1, 2))
+          for lab in ("| -- **agy #99 (independent)** | **6** | x |", "| \u26a0 **agy #99 (independent)** | **6** | x |",
+                      "| _agy #99_ | **6** | x |", "| [agy #99](x.md) | **6** | x |",
+                      "| ***agy #99*** | **6** | x |", "| `agy #99` | **6** | x |", "| ***99 (self)*** | **3** | x |")],
+        # restored: dropped when the suite was rebuilt at review #10b, which left the NO VERDICT sink
+        # with no discriminating case at all (review #11b's R9 came back "redundant")
+        ("a real review hidden inside a NO VERDICT findings cell",
+         after(anchor, "| **agy #99 (independent)** | \u26a0 **NO VERDICT** \u2014 ended after finding six defects | x |"), (1, 2)),
+        ("NO VERDICT row whose NOTE reports findings",
+         after(anchor, "| **agy #99 (independent)** | NO VERDICT | ended after finding six defects |"), (1, 2)),
+        ("reconciling TOTAL hidden in an HTML comment, visible one stale",
+         orig.replace(total_line, "<!-- " + total_line + " -->\n\n" + stale_total, 1), (1, 2)),
+        # --- DISCRIMINATING in the other direction: a CORRECT ledger that a naive cell split misreads.
+        # Review #11b showed the "escaped pipe" case above refuses under both the fixed and the broken
+        # split, so it tested nothing; this one PASSES only if escaped pipes are honoured.
+        ("CONTROL correct ledger with an escaped pipe in a label",
+         orig.replace(agy0, agy0.replace("(independent)**", "(independent)** \\| retry 9", 1), 1), (0,)),
         ("CONTROL untouched ledger", orig, (0,)),
     ]
     # ⚠ A MUTATION THAT DOES NOT MUTATE TESTS NOTHING, and this suite has shipped three of them.
     # Assert the text actually changed before trusting any verdict derived from it.
     inert = [label for label, text, want in cases
-             if text == orig and label != "CONTROL untouched ledger"]
+             if text == orig and not label.startswith("CONTROL")]
     if inert:
         raise SystemExit("[mutations] CANNOT LOOK :: these cases did not change the document, so "
                          "their result is meaningless: " + "; ".join(inert))
@@ -189,7 +244,7 @@ def main() -> int:
                 skipped.append(label)
                 continue
             w = run_suite(src.replace(new_, old_, 1), cases, verbose=False)
-            fired = [c for c in w if c[0] != "CONTROL untouched ledger"]
+            fired = w          # a CONTROL that fails under a regression also proves the suite can fail
             kind = "LOAD-BEARING" if fired else "redundant   "
             (load_bearing if fired else redundant).append(label)
             print(f"  {kind} {label:58s} {len(fired)} case(s) fire")

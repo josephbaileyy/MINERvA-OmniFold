@@ -78,6 +78,10 @@ def main() -> int:
         print(f"[ledger] CANNOT LOOK :: no report at {REPORT}")
         return 2
     text = REPORT.read_text(encoding="utf-8")
+    # ⚠ READ WHAT A READER SEES. Review #11b hid a reconciling TOTAL in an HTML comment beside a
+    # visible stale one, and the guard read the hidden one. Comments are invisible when rendered,
+    # so they are removed before anything is parsed -- a ledger row or TOTAL inside one does not exist.
+    text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
 
     # ⚠ THE BLOCK ENDS AT A BLANK LINE, NOT AT THE FIRST NON-TABLE LINE.
     # Review #9 defeated the previous rule three ways at once. It read "end at the first line that
@@ -113,9 +117,17 @@ def main() -> int:
     # whenever a row that LOOKS like a ledger row appears anywhere outside the block: ledger row 13
     # records this table fragmenting into orphaned single-row tables, so orphans are a real event
     # here, not a hypothetical.
-    orphan_like = re.compile(r"^\s*\|\s*\*{0,2}(?:\d+\s*\(self|agy\b)", re.I)
-    orphans = [l.strip()[:80] for i, l in enumerate(lines)
-               if not (h < i < end) and orphan_like.match(l)]
+    # ⚠ The first version of this check matched only `**`-decorated labels, narrower than the in-block
+    # parser: review #11b orphaned `| -- **agy …`, `| _agy …_`, `| [agy …](x)`, `| ***agy …***`,
+    # `` | `agy …` `` and `| ***47 (self)*** |` below a whitespace-only line, and each passed at exit 0.
+    # Strip ANY decoration from the first cell before testing the label.
+    def _orphan(l):
+        if not l.strip().startswith("|"):
+            return False
+        c = _cells(l.strip())
+        lab = re.sub(r"^[\s*_`\[\]()~>⚠-]+", "", c[0]) if c else ""
+        return bool(re.match(r"(\d+\s*\(self|agy\b)", lab, re.I))
+    orphans = [l.strip()[:80] for i, l in enumerate(lines) if not (h < i < end) and _orphan(l)]
     if orphans:
         print("[ledger] CANNOT LOOK :: ledger-shaped row(s) OUTSIDE the ledger block -- the table "
               "has fragmented, or a row was orphaned by a blank/whitespace line. Refusing:")
@@ -146,6 +158,12 @@ def main() -> int:
                 agys.append(int(nums[0])); continue
             if not nums and re.fullmatch(r"[\s*⚠_`()\[\]-]*no verdict[\s*⚠_`()\[\].-]*",
                                          cell, re.I):
+                # ⚠ but a non-verdict row whose NOTE reports findings is not a non-verdict: review
+                # #11b moved "ended after finding six defects" into the next cell and it passed.
+                rest = " ".join(cells[2:])
+                if re.search(r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
+                             r"thirteen|fourteen|fifteen)\b[^|]{0,40}\b(findings?|defects?)\b", rest, re.I):
+                    unclassified.append("NO VERDICT row whose note reports findings: " + l[:60]); continue
                 noverdict += 1; continue
             unclassified.append(l[:90]); continue
         unclassified.append(l[:90])

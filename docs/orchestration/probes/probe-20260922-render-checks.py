@@ -4,7 +4,8 @@
 WHY THIS EXISTS. Self-rounds 29 and 30 found four defects of this lane's that thirteen
 independent reviews had passed over, and every one was invisible in the source: pipes inside code
 spans silently dropping half a table row, a row torn across two lines, a table cell one short that a
-code-span pipe made LOOK complete, and a stranded bold marker re-pairing every `**` after it. Every
+code-span pipe made LOOK complete, and a stranded bold marker that rendered as a literal pair of asterisks (⚠ described here at first as
+"re-pairing every `**` after it", which rendering later showed it did not). Every
 check before then counted characters or matched strings in the source. This one parses with a real
 CommonMark + GFM-table parser (markdown-it-py) and inspects what a reader would actually see.
 
@@ -24,6 +25,7 @@ import os
 import re
 import subprocess
 import sys
+from urllib.parse import unquote
 
 try:
     from markdown_it import MarkdownIt
@@ -62,9 +64,14 @@ def links(path, src, tracked, only=None):
     bad = []
     for t in inline_blocks(src, only):
         for c in (t.children or []):
-            if c.type != "link_open":
+            # images too: the docstring promised "every relative link", and review #11b found images
+            # and directory links were never checked
+            if c.type not in ("link_open", "image"):
                 continue
-            href = c.attrs.get("href", "")
+            href = c.attrs.get("href", "") if c.type == "link_open" else c.attrs.get("src", "")
+            # markdown-it PERCENT-ENCODES hrefs: a tracked file with a space in its name was reported
+            # missing as "MINERvA%20with%20..." (review #11b)
+            href = unquote(href)
             if re.match(r"^(https?:|mailto:|#)", href) or not href.split("#")[0]:
                 continue
             tgt = os.path.normpath(os.path.join(os.path.dirname(path), href.split("#")[0]))
@@ -72,6 +79,8 @@ def links(path, src, tracked, only=None):
                 bad.append((t.map[0] + 1, href, "missing"))
             elif os.path.isfile(tgt) and tgt not in tracked:
                 bad.append((t.map[0] + 1, href, "untracked"))
+            elif os.path.isdir(tgt) and not any(x.startswith(tgt.rstrip("/") + "/") for x in tracked):
+                bad.append((t.map[0] + 1, href, "directory holds no tracked file"))
     return bad
 
 
@@ -86,6 +95,11 @@ def controls(tracked):
         print("[render] CONTROL FAILED :: a missing link target was not reported"); ok = False
     if links(probe, "[x](CATALOG.md)\n", tracked):
         print("[render] CONTROL FAILED :: a real, tracked link target was reported"); ok = False
+    spaced = next((t for t in tracked if " " in t and t.startswith("docs/") and "/" not in t[5:]), None)
+    if spaced and links("docs/x.md", f"[x](<{spaced[5:]}>)\n", tracked):
+        print(f"[render] CONTROL FAILED :: a tracked file with a space in its name was reported"); ok = False
+    if not links(probe, "![x](MISSING-CONTROL-image.png)\n", tracked):
+        print("[render] CONTROL FAILED :: a missing IMAGE target was not reported"); ok = False
     return ok
 
 
@@ -94,7 +108,14 @@ def main():
     base = "177af61b"
     if "--since" in args:
         k = args.index("--since"); base = args[k + 1]; del args[k:k + 2]
-    tracked = set(subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.split())
+    # run from the repository root, whatever the caller's directory (the gfm probe failed open without this)
+    root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
+    if not root:
+        print("[render] CANNOT LOOK :: not inside a git work tree"); return 2
+    os.chdir(root)
+    # -z: `.split()` on newline output broke every path containing a space (review #11b)
+    tracked = set(x for x in subprocess.run(["git", "ls-files", "-z"], capture_output=True,
+                                             text=True).stdout.split("\0") if x)
     if not controls(tracked):
         print("[render] CANNOT LOOK :: a built-in control failed, so silence would mean nothing"); return 2
     files = changed_md(base)
