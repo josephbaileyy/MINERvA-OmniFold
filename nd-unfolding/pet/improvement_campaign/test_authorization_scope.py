@@ -62,3 +62,27 @@ def test_thresholds_come_from_the_frozen_design_and_cannot_move():
         scope.check_like_for_like_thresholds(lowered)
     with pytest.raises(scope.ScopeViolation):
         scope.check_like_for_like_thresholds({k: v for k, v in historical.items() if k != key})
+
+
+class _FakeNpz:
+    files = ["w_truth", "measured_scalars", "data_muon", "data_new_member"]
+
+    def __getitem__(self, key):
+        return f"array:{key}"
+
+
+def test_signal_only_view_refuses_real_data_members_and_records_reads():
+    view = scope.SignalOnlyNpz(_FakeNpz())
+    assert "measured_scalars" in view                     # a presence check reads nothing
+    for key in ("measured_scalars", "data_muon", "data_new_member"):
+        with pytest.raises(scope.ScopeViolation):
+            view[key]
+    assert view["w_truth"] == "array:w_truth"
+    assert view.keys_read == ["w_truth"]
+
+
+def test_real_data_member_prefixes_are_refused():
+    for key in ("measured_anything", "data_anything"):
+        with pytest.raises(scope.ScopeViolation):
+            scope.refuse_real_data_inputs(bkg_mode="mc-only", measured_leg_is_real=False,
+                                          npz_keys_read=[key])

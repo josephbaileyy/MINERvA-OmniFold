@@ -26,6 +26,9 @@ REAL_DATA_NPZ_KEYS = frozenset({
     "measured_pc", "measured_scalars", "data_muon", "data_vertex", "data_view", "data_time",
     "data_pot", "data_identity_hash"})
 # Path fragments naming real-data streams of his built inputs and their identity joins.
+# Any member whose name starts with one of these is a real-data member as well (the G2 dump names
+# its measured-side arrays `measured_*` / `data_*`), so a future member is refused without an edit.
+REAL_DATA_NPZ_PREFIXES = ("measured_", "data_")
 REAL_DATA_PATH_MARKERS = ("_Data/", "/join_data.", "Data_", "/data/")
 ALLOWED_BKG_MODE = "mc-only"
 
@@ -68,7 +71,8 @@ def refuse_real_data_inputs(*, bkg_mode: str, measured_leg_is_real: bool,
             "authorized; any other mode builds a measured leg from real data")
     if measured_leg_is_real:
         raise ScopeViolation("the measured leg is real data; unfold simulated pseudo-data only")
-    real_keys = sorted(set(npz_keys_read) & REAL_DATA_NPZ_KEYS)
+    real_keys = sorted({k for k in npz_keys_read
+                        if k in REAL_DATA_NPZ_KEYS or k.startswith(REAL_DATA_NPZ_PREFIXES)})
     if real_keys:
         raise ScopeViolation(f"real-data arrays requested from the inventory: {real_keys}")
     for path in input_paths:
@@ -76,6 +80,40 @@ def refuse_real_data_inputs(*, bkg_mode: str, measured_leg_is_real: bool,
         hits = [m for m in REAL_DATA_PATH_MARKERS if m in text]
         if hits:
             raise ScopeViolation(f"input {text} names a real-data stream ({hits})")
+
+
+class SignalOnlyNpz:
+    """A read-through view of an opened inventory npz that REFUSES every real-data member.
+
+    `refuse_real_data_inputs` trusts its caller's list of keys; this makes the list true by
+    construction: every member access goes through `refuse_real_data_inputs`, so a code path that
+    asks for `measured_scalars` (as the historical loader does even in mc-only mode) raises
+    `ScopeViolation` instead of reading it. `keys_read` records what was actually read.
+    Presence checks (`key in view.files`) read nothing and are allowed.
+    """
+
+    def __init__(self, npz: Any) -> None:
+        self._npz = npz
+        self.keys_read: list[str] = []
+
+    @property
+    def files(self) -> list[str]:
+        return list(self._npz.files)
+
+    def __contains__(self, key: str) -> bool:
+        return key in self._npz.files
+
+    def __getitem__(self, key: str) -> Any:
+        refuse_real_data_inputs(bkg_mode=ALLOWED_BKG_MODE, measured_leg_is_real=False,
+                                npz_keys_read=[key])
+        if key not in self.keys_read:
+            self.keys_read.append(key)
+        return self._npz[key]
+
+    def close(self) -> None:
+        close = getattr(self._npz, "close", None)
+        if close is not None:
+            close()
 
 
 def check_like_for_like_thresholds(thresholds: Mapping[str, Any]) -> dict[str, Any]:
