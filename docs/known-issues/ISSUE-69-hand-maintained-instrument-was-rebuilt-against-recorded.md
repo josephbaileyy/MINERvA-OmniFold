@@ -2,7 +2,7 @@
 
 **Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 69. **Updated:** 2026-09-23.
 
-**Blocker:** OWNER — the GBDT cold-start lane: this records the ledger guard's defeats, it gains an entry after every review of the loop, and it closes when the loop terminates or the guard is retired.
+**Blocker:** OWNER — the GBDT cold-start lane: this records the ledger guard's defeats (entries run to review #17b; the NO VERDICT pin defeats of reviews #18b, #19b and #20b are in the review-residue report's ledger rows, not here), and it closes when the loop terminates or the guard is retired.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to
