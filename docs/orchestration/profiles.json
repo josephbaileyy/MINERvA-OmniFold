@@ -55,7 +55,6 @@
       "model": "gpt-5.6-sol",
       "provider": "codex",
       "reasoning_effort": "xhigh",
-      "sandbox": "read-only",
       "web_search": false,
       "yolo": true
     },
@@ -64,7 +63,6 @@
       "model": "gpt-5.6-sol",
       "provider": "codex",
       "reasoning_effort": "xhigh",
-      "sandbox": "read-only",
       "web_search": true,
       "yolo": true
     },
@@ -73,7 +71,6 @@
       "model": "gpt-5.6-sol",
       "provider": "codex",
       "reasoning_effort": "xhigh",
-      "sandbox": "read-only",
       "web_search": true,
       "yolo": true
     },
@@ -82,7 +79,6 @@
       "model": "gpt-5.6-luna",
       "provider": "codex",
       "reasoning_effort": "low",
-      "sandbox": "read-only",
       "web_search": false,
       "yolo": true
     }

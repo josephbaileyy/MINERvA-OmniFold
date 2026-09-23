@@ -216,26 +216,33 @@ class CodexSandboxDeclaredIsApplied(unittest.TestCase):
                                                   provider_log=Path("l"))
         self.assertIn("--sandbox", command)
 
-    def test_every_committed_codex_profile_is_refused_or_applies_what_it_declares(self):
-        """Over the REAL profiles.json. There is no third outcome."""
+    def test_every_committed_profile_passes_the_sandbox_validator(self):
+        """Over the REAL profiles.json. Joseph ruled 2026-09-23 that the codex profiles keep yolo and
+        drop the unapplied read-only declaration, so NO committed profile may be refused. Each codex
+        profile must pass `codex_sandbox_mode()` and build start and resume commands that apply exactly
+        what it declares. Each agy profile must pass `agy_sandbox()`."""
         profiles = agentctl.load_profiles(Path(agentctl.__file__).resolve().parent / "profiles.json")
-        seen = 0
+        n_codex = 0
         for name, prof in profiles.items():
-            if prof.get("provider") != "codex":
-                continue
-            seen += 1
-            try:
+            with self.subTest(profile=name):
+                if prof.get("provider") == "agy":
+                    agentctl.agy_sandbox(prof)
+                    continue
+                if prof.get("provider") != "codex":
+                    continue
+                n_codex += 1
+                mode = agentctl.codex_sandbox_mode(prof)
+                start, _ = agentctl.build_start_command(prof, "p", Path.cwd(), "unused")
                 resume, _ = agentctl.build_resume_command(prof, "p", "thread-1")
-            except agentctl.AgentCtlError:
-                self.assertTrue(prof.get("yolo") and prof.get("sandbox") not in
-                                (None, "danger-full-access"), name)
-                continue
-            mode = agentctl.codex_sandbox_mode(prof)
-            if mode is None:
-                self.assertIn("--dangerously-bypass-approvals-and-sandbox", resume, name)
-            else:
-                self.assertIn(f'sandbox_mode="{mode}"', resume, name)
-        self.assertGreater(seen, 0)
+                if mode is None:
+                    for argv in (start, resume):
+                        self.assertIn("--dangerously-bypass-approvals-and-sandbox", argv)
+                        self.assertNotIn("--sandbox", argv)
+                        self.assertFalse(any("sandbox_mode" in a for a in argv))
+                else:
+                    self.assertEqual(mode, start[start.index("--sandbox") + 1])
+                    self.assertIn(f'sandbox_mode="{mode}"', resume)
+        self.assertEqual(4, n_codex, "the four committed codex profiles")
 
 
 class AutoCodexProfileTests(unittest.TestCase):
