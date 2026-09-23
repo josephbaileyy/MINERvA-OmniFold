@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """Mutation suite for probe-20260922-ledger-reconciles.py (the loop-ledger guard).
 
-WHY THIS FILE EXISTS. The guard it tests has been defeated by independent reviewers FIVE times, and its
-defeat history lives in KNOWN_ISSUES row 69 rather than being restated here, where it went stale
-(this sentence said "FOUR times" after review #11b made it five).
-Four rounds of hardening-by-inspection did not converge.
+WHY THIS FILE EXISTS. The guard it tests has been defeated by independent reviewers repeatedly; the count is not
+restated here, where it went stale twice, but lives in docs/known-issues/ISSUE-69.
 
 ⚠ AND THE FIRST VERSION OF THIS SUITE DID NOT CONVERGE EITHER. Review #10 measured it: the suite
 stayed GREEN under three deliberate regressions of the guard, including review #9's own headline
@@ -46,44 +44,26 @@ TOTAL_RE = re.compile(r"\*\*TOTAL: self rounds 1[–-]\d+ = [0-9+]+ = (\d+);\s*i
 
 # Each regression rewrites the guard back to a defect a reviewer actually found.
 REGRESSIONS = {
-    "R1 block ends at first non-table line (review #9's class)": (
-        'if not lines[i].strip(" \\t") or _block.match(lines[i])), len(lines))',
-        "if not lines[i].strip().startswith('|')), len(lines))"),
-    "R2 duplicate ledger HEADER allowed (review #9)": (
-        'if len(heads) > 1:', 'if False:'),
-    "R3 TOTAL multiplicity allowed (review #8)": (
-        'if len(hits) > 1:', 'if False:'),
-    "R4 sign stripped, so -13 reads as 13 (review #9)": (
-        'nums = re.findall(r"-?\\d+", cell)', 'nums = [x.lstrip("-") for x in re.findall(r"-?\\d+", cell)]'),
-    "R5 unclassifiable rows omitted instead of refusing (review #8)": (
-        'unclassified.append(l[:90])\n\n', 'pass\n\n'),
-    "R6 cells split naively, ignoring escaped pipes (review #10)": (
-        'parts = re.split(r"(?<!\\\\)\\|", line)', 'parts = line.split("|")'),
-    "R7 a first cell beginning '--' taken as a separator (review #10)": (
-        'if len(cells) >= 2 and all(SEP_CELL.match(c) for c in cells):',
-        'if len(cells) >= 2 and (all(SEP_CELL.match(c) for c in cells) or cells[0].startswith("--")):'),
-    "R8 addends compared by count and sum only, not elementwise (review #7)": (
-        'if len(stated_list) == len(derived_list) and stated_list != derived_list:', 'if False:'),
-    "R9 NO VERDICT accepted anywhere in the cell (review #9)": (
-        'no verdict[\\s*\u26a0_`()\\[\\].-]*"', 'no verdict.*"'),
-    "R10 no orphan-row check (self-round 30 / review #11b)": ('if orphans:', 'if False:'),
-    "R11 HTML comments not stripped (review #11b)": (
-        'text = re.sub(r"<!--.*?-->", "", text, flags=re.S)', 'text = text'),
-    "R12 NO VERDICT row may report findings in its note (review #11b)": (
-        'unclassified.append("NO VERDICT row whose note reports findings: " + l[:60]); continue',
-        'pass'),
-    'R13 comment-stripping blind to code spans (review #12b)': ('text = re.sub(r"(?<!`)(`+)(?!`).+?(?<!`)\\1(?!`)", _hold, text, flags=re.S)',
-        'text = text'),
-    'R14 link reference definitions not stripped (review #12b)': ('text = re.sub(r"(?m)^ {0,3}\\[[^\\]]+\\]:[^\\n]*\\n?", "", text)',
-        'text = text'),
-    'R15 HTML entities not decoded (review #12b)': ('text = html.unescape(text)',
-        'text = text'),
-    'R16 orphan labels matched only at the start of cell 1 (review #12b)': ('return bool(re.search(r"(\\b\\d+\\s+self\\b|\\bagy\\b)", lab, re.I))',
-        'return bool(re.match(r"(\\d+\\s*\\(self|agy\\b)", lab.strip(), re.I))'),
-    'R17 NO VERDICT note wordings narrowly matched (review #12b)': ('if re.search(_num, rest, re.I) and re.search(_what, rest, re.I):',
-        'if re.search(r"\\b(\\d+|one|two|six)\\b[^|]{0,40}\\b(findings?|defects?)\\b", rest, re.I):'),
-    'R18 block ends only at a strip()-blank line (review #12b)': ('if not lines[i].strip(" \\t") or _block.match(lines[i])), len(lines))',
-        'if not lines[i].strip()), len(lines))'),
+    'R1 raw HTML counted as visible text (reviews #11b, #12b, #13b)': ('VISIBLE = ("text", "code_inline")                      # REGRESSION-ANCHOR:visible-types',
+        'VISIBLE = ("text", "code_inline", "html_inline", "html_block")'),
+    'R2 invisible format characters not removed (review #13b)': ('return "".join(ch for ch in t if unicodedata.category(ch) != "Cf").strip()   # REGRESSION-ANCHOR:cf-strip',
+        'return t.strip()'),
+    'R3 duplicate ledger table allowed (review #9)': ('if len(ledgers) > 1:                                  # REGRESSION-ANCHOR:header-multiplicity',
+        'if False:'),
+    'R4 no orphan check (self-round 30, reviews #11b, #12b)': ('if orphans:                                           # REGRESSION-ANCHOR:orphans',
+        'if False:'),
+    'R5 unclassifiable rows omitted instead of refused (review #8)': ('if unclassified:                                      # REGRESSION-ANCHOR:unclassified',
+        'if False:'),
+    'R6 the sign of a count stripped, so -13 reads as 13 (review #9)': ('nums = re.findall(r"-?\\d+", cell)',
+        'nums = re.findall(r"\\d+", cell)'),
+    'R8 TOTAL multiplicity allowed (review #8)': ('if len(hits) > 1:                                     # REGRESSION-ANCHOR:total-multiplicity',
+        'if False:'),
+    'R9 addends compared by count and sum only (review #7)': ('if len(stated_list) == len(derived_list) and stated_list != derived_list:   # REGRESSION-ANCHOR:elementwise',
+        'if False:'),
+    'R10 NO VERDICT accepted anywhere in the cell (review #9)': ('re.fullmatch(r"[\\s\\u26a0()\\[\\]-]*no verdict[\\s\\u26a0().-]*", cell, re.I)',
+        're.search("no verdict", cell, re.I)'),
+    'R11 a NO VERDICT note may report findings (reviews #11b, #12b, #13b)': ('if reports_findings(" ".join(cells[2:])):',
+        'if False:'),
 }
 
 
@@ -139,13 +119,13 @@ def build_cases(orig):
         # --- review #10's two new shapes
         ("first cell begins '--' (renders as a body row)", after(anchor, "| -- **agy #99 (independent)** | **6** | x |"), (1, 2)),
         ("escaped pipe shifts the cell window", after(anchor, "| **agy #99 (independent)** \\| x | **6** | y |"), (1, 2)),
-        ("all-dash body row below the header", after(anchor, "| - | - | - |"), (1, 2)),
+        ("an all-dash row at the end of the table", after(anchor, "| - | - | - |"), (1, 2)),
         # --- review #9's class, in the DISCRIMINATING placement: unrecorded row BELOW the interloper
         ("unrecorded review BELOW an HTML comment in the table", after(anchor, "<!-- aside -->\n" + NEW), (1, 2)),
         ("unrecorded review BELOW a blockquote in the table", after(tail, "> aside\n" + NEW), (1, 2)),
         ("unrecorded review BELOW a whitespace-only line", after(tail, "   \n" + NEW), (1, 2)),
         # --- decoy that RECONCILES with the live TOTAL, so only header-multiplicity can catch it
-        ("decoy ledger above the live one that itself reconciles",
+        ("a decoy ledger table above the live one",
          orig.replace("| round | findings | note |",
                       "| round | findings | note |\n|---|---|---|\n| 1 (self) | **14** | decoy |\n\n"
                       "| round | findings | note |", 1), (1, 2)),
@@ -216,10 +196,38 @@ def build_cases(orig):
         # from the TOTAL-multiplicity check, so R11/R14/R15 reported "redundant" (review #12b).
         ("CONTROL a stale TOTAL hidden in an HTML comment is ignored",
          orig.replace(total_line, total_line + "\n\n<!-- " + stale_total + " -->", 1), (0,)),
+        # ⚠ a reference definition must stand ALONE: an earlier version of this case left the rest of the
+        # paragraph on the same line, so it was not a definition at all but VISIBLE text -- and the old
+        # regex guard "passed" it by deleting text a reader could see (found by the parser rewrite)
         ("CONTROL a stale TOTAL hidden in a link reference definition is ignored",
-         orig.replace(total_line, total_line + "\n\n[//]: # (" + stale_total.replace("**", "") + ")", 1), (0,)),
+         orig.replace(total_line, total_line + "\n\n[//]: # (" + stale_total.replace("**", "") + ")\n\n", 1), (0,)),
         ("CONTROL a single-digit count written as an HTML entity reads as that digit",
          orig.replace(one_digit_agy, re.sub(r"\*\*(\d)\*\*", lambda mm: "**&#" + str(48 + int(mm.group(1))) + ";**", one_digit_agy, count=1), 1), (0,)),
+        # --- review #13b: the guard's seventh defeat, and two false refusals
+        ("an entity-encoded pipe in a label hides a changed count",
+         orig.replace(r_last_agy, re.sub(r"\|\s*\*\*(\d+)\*\*\s*\|", lambda mm: "&#124; **" + mm.group(1) + "** | **" + str(int(mm.group(1)) + 1) + "** |", r_last_agy, count=1), 1), (1, 2)),
+        ("a final row starting with an HTML tag and no pipe", orig.replace(tail, tail + "\n<b>agy #99 (independent)</b> | **9** | x", 1), (1, 2)),
+        ("a final row starting '#99 (self)' with no pipe", orig.replace(tail, tail + "\n#99 (self) | **2** | x", 1), (1, 2)),
+        *[(f"visible TOTAL made unreadable, reconciling one hidden in {where}",
+           after(tail, "| **agy #99 (independent)** | **9** | x |").replace(total_line, total_line.replace("1\u2013", "1\u2013\u2060", 1) + hide, 1), (1, 2))
+          for where, hide in (("a multi-line link reference", "\n\n[//]: # (hidden\nTOTAL 999)\n\n"),
+                              ("a title attribute", '\n\n<a title="TOTAL 999"></a>\n\n'))],
+        *[(f"NO VERDICT row whose note says: {note}", after(tail, f"| **agy #99 (independent)** | NO VERDICT | {note} |"), (1, 2))
+          for note in ("died after flagging 5 bugs", "a dozen flaws reported before the rate limit")],
+        ("CONTROL a visible TOTAL carrying an invisible U+2060 still reads", orig.replace(total_line, total_line.replace("1\u2013", "1\u2013\u2060", 1), 1), (0,)),
+        ("CONTROL a bullet list directly after the table", orig.replace(tail, tail + "\n- an aside", 1), (0,)),
+        ("CONTROL an ordered list directly after the table", orig.replace(tail, tail + "\n1. an aside", 1), (0,)),
+        ("CONTROL a reviewer-keyed table in another section", orig + "\n\n## Appendix\n\n| reviewer | scope |\n|---|---|\n| agy #12b | instruments |\n", (0,)),
+        # R1's discriminating control: INLINE html. A comment on its own line is a block token that never
+        # reaches the inline text, so only a mid-paragraph comment can show raw HTML leaking into the
+        # visible text (review #13b showed "redundant" is not to be taken on trust)
+        ("CONTROL a stale TOTAL inside an INLINE html comment is ignored",
+         orig.replace(total_line, total_line + " <!-- " + stale_total.replace("**", "") + " -->", 1), (0,)),
+        # indentation AFTER the table's true last row parses as a code block, not a row -- tested in both
+        # positions on purpose: this suite first caught the gap only because a self row happened to
+        # become the table's last row
+        ("new agy row tab-indented after the table's last row", after(tail, "\t" + NEW), (1, 2)),
+        ("new agy row indented four spaces after the table's last row", after(tail, "    " + NEW), (1, 2)),
         ("CONTROL untouched ledger", orig, (0,)),
     ]
     # ⚠ A MUTATION THAT DOES NOT MUTATE TESTS NOTHING, and this suite has shipped three of them.

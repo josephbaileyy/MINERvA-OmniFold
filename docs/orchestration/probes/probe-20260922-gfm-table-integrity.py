@@ -43,24 +43,22 @@ import re
 import subprocess
 import sys
 
-# GFM's delimiter row: optional leading/trailing pipe, each cell ":?-+:?", at least one pipe.
+try:
+    from markdown_it import MarkdownIt
+except ImportError:
+    MarkdownIt = None
+
+# ⚠ BLOCK STRUCTURE COMES FROM A PARSER, NOT FROM THIS FILE. Earlier versions hand-coded which lines
+# end a table (blank line, heading, fence, list, HTML, thematic break) and review #13b found four places
+# they diverged from GitHub: `#5 |` is not a heading (ATX needs a space), `<b>r</b> |` does not start an
+# HTML block, a closing fence must match its opening fence's character and length, and an indented line
+# after a table is not a row. markdown-it-py implements CommonMark's block rules; this probe asks it
+# which source lines became which table rows, and compares each row's SOURCE cells with its RENDERED ones.
 SEP = re.compile(r"^\s{0,3}\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$|^\s{0,3}\|\s*:?-+:?\s*\|?\s*$")
-# a line that starts another block ends a GFM table; so does a blank line
-BLOCK_START = re.compile(r"^\s{0,3}(#|```|~~~|>|[-*+]\s|\d+[.)]\s|<[A-Za-z!/]|(\*\s*){3,}$|(-\s*){3,}$|(_\s*){3,}$)")
-FENCE = re.compile(r"^\s{0,3}(```|~~~)")
-
-
-def strip_code_spans(text):
-    """Remove code spans PROPERLY: a span opens with a run of N backticks and closes with a run of
-    exactly N, so a double-backtick span may contain a single backtick (review #12b)."""
-    return re.sub(r"(?<!`)(`+)(?!`)(.+?)(?<!`)\1(?!`)", "", text)
 
 
 def cells(line):
-    """GFM cells: trim ONE leading and ONE trailing pipe, then split on UNESCAPED pipes.
-
-    A pipe inside a code span still splits a cell in GFM unless it is escaped, so no special case
-    for code spans is needed to COUNT cells -- only to explain why a count is wrong."""
+    """GFM cells of a SOURCE line: trim one leading and one trailing pipe, split on unescaped pipes."""
     t = line.strip()
     if t.startswith("|"):
         t = t[1:]
@@ -69,49 +67,76 @@ def cells(line):
     return re.split(r"(?<!\\)\|", t)
 
 
+def strip_code_spans(text):
+    return re.sub(r"(?<!`)(`+)(?!`)(.+?)(?<!`)\1(?!`)", "", text)
+
+
 def sweep(path):
     try:
-        lines = open(path, encoding="utf-8").read().splitlines()
+        src = open(path, encoding="utf-8").read()
     except UnicodeDecodeError as e:
         return None, str(e)
-    out, i, fenced = [], 0, False
-    while i < len(lines) - 1:
-        if FENCE.match(lines[i]):
-            fenced = not fenced; i += 1; continue
-        if fenced:
-            i += 1; continue                # a table inside a fenced code block is code, not a table
-        if "|" in lines[i] and SEP.match(lines[i + 1]) and not SEP.match(lines[i]):
-            ncol, j = len(cells(lines[i + 1])), i + 2
-            if len(cells(lines[i])) != ncol:
-                out.append((i + 1, "header-mismatch",
-                            f"header has {len(cells(lines[i]))} cells, delimiter {ncol}: GFM will NOT render a table"))
-            for span in re.findall(r"`[^`]*`", lines[i]):
-                if re.search(r"(?<!\\)\|", span):
-                    out.append((i + 1, "codespan-pipe", f"unescaped pipe in header {span[:40]}"))
-            # the body runs to a blank line or another block -- NOT to the first line without a pipe:
-            # GFM makes a pipe-less line into a ROW (self-round 29's torn tail rendered as a new row)
-            while j < len(lines) and lines[j].strip(" \t") and not BLOCK_START.match(lines[j]):
-                row = lines[j]
-                n = len(cells(row))
-                if not row.strip().startswith("|"):
-                    out.append((j + 1, "torn-row", "a line with no leading pipe inside a table renders as its own row"))
-                if n > ncol:
-                    out.append((j + 1, "cells", f"{n} cells under {ncol} columns: GFM DROPS the excess"))
-                elif n < ncol:
-                    out.append((j + 1, "cells", f"{n} cells under {ncol} columns: GFM pads with empty cells"))
-                for span in re.findall(r"`[^`]*`", row):
+    lines = src.splitlines()
+    toks = MarkdownIt("commonmark").enable(["table"]).parse(src)
+    out, tabled, code = [], set(), set()
+    for t in toks:
+        if t.type in ("fence", "code_block", "html_block") and t.map:
+            code.update(range(t.map[0], t.map[1]))
+    k = 0
+    while k < len(toks):
+        if toks[k].type != "table_open":
+            k += 1; continue
+        ncol = None
+        while toks[k].type != "table_close":
+            t = toks[k]
+            if t.type == "tr_open" and t.map:
+                row, n_rendered, ln = [], 0, t.map[0]
+                j = k + 1
+                while toks[j].type != "tr_close":
+                    if toks[j].type in ("th_open", "td_open"):
+                        n_rendered += 1
+                    if toks[j].type == "inline":
+                        row.append(toks[j])
+                    j += 1
+                tabled.add(ln)
+                # strip container prefixes the parser has already consumed: a table inside a
+                # blockquote has `> ` on every line (a false positive in this probe's first parser-based
+                # version, on a real CATALOG table)
+                raw = re.sub(r"^\s{0,3}(>\s?)+", "", lines[ln])
+                n_src = len(cells(raw))
+                body = ncol is not None            # every row after the header
+                if not body:
+                    ncol = n_rendered              # the header row fixes the column count
+                elif n_src > ncol:
+                    out.append((ln + 1, "cells", f"{n_src} cells under {ncol} columns: GFM DROPS the excess"))
+                elif n_src < ncol:
+                    out.append((ln + 1, "cells", f"{n_src} cells under {ncol} columns: GFM pads with empty cells"))
+                if body and not raw.lstrip().startswith("|"):
+                    out.append((ln + 1, "torn-row", "a line with no leading pipe renders as a row of its own"))
+                for span in re.findall(r"`[^`]*`", raw):
                     if re.search(r"(?<!\\)\|", span):
-                        out.append((j + 1, "codespan-pipe", f"unescaped pipe in {span[:40]}"))
-                for ci, cell in enumerate(cells(row)):
-                    rest = strip_code_spans(cell)
-                    if len(re.findall(r"(?<!\\)`", rest)) % 2:
-                        out.append((j + 1, "cell-parity", f"odd backticks in cell {ci}"))
-                    if len(re.findall(r"(?<!\\)\*\*", rest)) % 2:
-                        out.append((j + 1, "cell-parity", f"odd ** in cell {ci}"))
-                j += 1
-            i = j
-        else:
-            i += 1
+                        out.append((ln + 1, "codespan-pipe", f"unescaped pipe in {span[:40]}"))
+                src_cells = cells(raw)
+                for ci, inl in enumerate(row):
+                    shown = "".join(c.content for c in (inl.children or []) if c.type == "text")
+                    rest = strip_code_spans(src_cells[ci]) if ci < len(src_cells) else ""
+                    # a STRANDED marker: it renders literally AND the source has an unpaired one. A marker
+                    # typed as a literal on purpose (TeX-style ``quotes'') renders literally too, but pairs
+                    # evenly in the source; flagging every literal was this probe's own false positive
+                    stranded_bold = "**" in shown and len(re.findall(r"(?<!\\)\*\*", rest)) % 2
+                    stranded_tick = "`" in shown and len(re.findall(r"(?<!\\)`", rest)) % 2
+                    if stranded_bold or stranded_tick:
+                        out.append((ln + 1, "cell-parity", f"a stranded formatting marker renders literally in cell {ci}"))
+            k += 1
+        k += 1
+    # a header + delimiter pair that the parser did NOT turn into a table
+    for ln in range(len(lines) - 1):
+        if ln in code or ln in tabled:
+            continue
+        if "|" in lines[ln] and SEP.match(lines[ln + 1]) and not SEP.match(lines[ln]):
+            out.append((ln + 1, "header-mismatch",
+                        f"header has {len(cells(lines[ln]))} cells, delimiter {len(cells(lines[ln + 1]))}: "
+                        "GFM does NOT render a table here"))
     return out, None
 
 
@@ -132,8 +157,10 @@ def main():
     named = bool(args)
     # -z: `.split()` on newline output silently dropped every changed file with a space in its name
     files = args or [f for f in subprocess.run(
-        ["git", "diff", "--name-only", "-z", f"{base}..HEAD"], capture_output=True, text=True
+        ["git", "diff", "--name-only", "-z", base], capture_output=True, text=True
     ).stdout.split("\0") if f.endswith(".md")]
+    if MarkdownIt is None:
+        print("[gfm-tables] CANNOT LOOK :: markdown-it-py is not installed"); return 2
     if not files:
         print("[gfm-tables] CANNOT LOOK :: no files"); return 2
     total, unread = 0, []

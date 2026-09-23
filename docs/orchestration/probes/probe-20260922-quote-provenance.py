@@ -64,7 +64,7 @@ def main():
         base = a[a.index("--since") + 1]
     git = lambda *x: subprocess.run(["git", *x], capture_output=True, text=True).stdout
     # -z: `.split()` dropped changed files whose names contain a space (review #12b)
-    files = [f for f in git("diff", "--name-only", "-z", f"{base}..HEAD").split("\0") if f.endswith(".md")]
+    files = [f for f in git("diff", "--name-only", "-z", base).split("\0") if f.endswith(".md")]
     # run from the repository root whatever the caller's directory (the table probe failed open without it)
     root = git("rev-parse", "--show-toplevel").strip()
     if not root:
@@ -77,7 +77,7 @@ def main():
         # collect from the WHOLE FILE, keeping quotes that START on a changed line: the first version
         # read single diff lines and never saw a quote wrapped across a line break (review #11b)
         changed = set()
-        for m in re.finditer(r"^@@ -\S+ \+(\d+)(?:,(\d+))? @@", git("diff", "-U0", f"{base}..HEAD", "--", f), re.M):
+        for m in re.finditer(r"^@@ -\S+ \+(\d+)(?:,(\d+))? @@", git("diff", "-U0", base, "--", f), re.M):
             a = int(m.group(1)); changed.update(range(a, a + int(m.group(2) or 1)))
         text = open(f, encoding="utf-8", errors="ignore").read()
         for m in QUOTE.finditer(text):

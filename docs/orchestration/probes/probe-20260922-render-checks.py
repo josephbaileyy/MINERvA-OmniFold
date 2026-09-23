@@ -39,7 +39,10 @@ MD = MarkdownIt("commonmark").enable(["table", "strikethrough"])   # no linkify:
 def changed_md(base):
     # -z: `.split()` here silently dropped changed files whose names contain a space; the review-#11b
     # repair fixed only `ls-files` (review #12b)
-    out = subprocess.run(["git", "diff", "--name-only", "-z", f"{base}..HEAD"], capture_output=True, text=True)
+    # `git diff BASE` with no `..HEAD` compares BASE with the WORKING TREE, staged files included: the
+    # runner checks the tree that is about to become a commit, and `..HEAD` only ever saw the parent's
+    # lines (review #13b appended an uncommitted dead link and a stranded marker; this reported CLEAN)
+    out = subprocess.run(["git", "diff", "--name-only", "-z", base], capture_output=True, text=True)
     return [f for f in out.stdout.split("\0") if f.endswith(".md") and os.path.exists(f)]
 
 
@@ -47,7 +50,7 @@ HTML_REF = re.compile(r"""<(?:a|img)\b[^>]*?\b(?:href|src)\s*=\s*["']([^"']+)["'
 
 
 def added_lines(base, f):
-    d = subprocess.run(["git", "diff", "-U0", f"{base}..HEAD", "--", f], capture_output=True, text=True).stdout
+    d = subprocess.run(["git", "diff", "-U0", base, "--", f], capture_output=True, text=True).stdout
     s = set()
     for m in re.finditer(r"^@@ -\S+ \+(\d+)(?:,(\d+))? @@", d, re.M):
         a = int(m.group(1)); s.update(range(a, a + int(m.group(2) or 1)))
@@ -68,6 +71,12 @@ def leaks(src, only=None):
 
 def links(path, src, tracked, only=None):
     bad = []
+    for t in MD.parse(src):
+        # an HTML BLOCK is a block token, never an inline one: `<img src="x.png">` alone on a line was
+        # never checked (review #13b)
+        if t.type == "html_block" and t.map and (only is None or set(range(t.map[0] + 1, t.map[1] + 1)) & only):
+            for href in HTML_REF.findall(t.content):
+                bad.extend(_check(path, href, tracked, t.map[0] + 1))
     for t in inline_blocks(src, only):
         for c in (t.children or []):
             # images too: the docstring promised "every relative link", and review #11b found images
@@ -122,6 +131,8 @@ def controls(tracked):
         print(f"[render] CONTROL FAILED :: a tracked file with a space in its name was reported"); ok = False
     if links(probe, "[x](/KNOWN_ISSUES.md) and [y](CATALOG.md?plain=1)\n", tracked):
         print("[render] CONTROL FAILED :: a repo-root-relative or query-suffixed link to a real file was reported"); ok = False
+    if not links(probe, '<img src="MISSING-CONTROL-block.png">\n', tracked):
+        print("[render] CONTROL FAILED :: a missing target in an HTML BLOCK was not reported"); ok = False
     if not links(probe, '<a href="MISSING-CONTROL-html.md">x</a>\n', tracked):
         print("[render] CONTROL FAILED :: a missing HTML <a href> target was not reported"); ok = False
     if not links(probe, "![x](MISSING-CONTROL-image.png)\n", tracked):
@@ -157,7 +168,7 @@ def main():
             for ln, href, why in links(f, src, tracked, only):
                 hits += 1; print(f"  link   {f}:~{ln}  ({href}) {why}")
     print(f"\n[render] {'HITS' if hits else 'CLEAN'} :: {hits} hit(s) across {len(files)} file(s) "
-          f"changed since {base}; controls passed")
+          f"changed in the WORKING TREE since {base}; controls passed")
     return 1 if hits else 0
 
 
