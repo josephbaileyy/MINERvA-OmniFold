@@ -2,21 +2,34 @@
  "schema": "phase-b2-summary/1",
  "files": {
   "b2e1-H-K3-s1.scores.json": "32d312e154ac85b794c44d76d2f3180d0cc2fd1279ec138b7843e776738daf7f",
-  "b2e1-H-K3-s2.scores.json": "dd5a48179ad877877467be2e6d0b4d670461cd2cc3c90aaf49d944ac5941b682"
+  "b2e1-H-K3-s2.scores.json": "dd5a48179ad877877467be2e6d0b4d670461cd2cc3c90aaf49d944ac5941b682",
+  "b2e1-H-K3-s3.scores.json": "8bae5f4df1a41b95aba909162cfb60de68ce1184472f7ae8f0fa58fa695d733a",
+  "b2e1-H-K3-s4.scores.json": "63f6ead267d67f5142eef56bae608616dfa40b802cfa9a6740a5821244d71490"
  },
  "recovery_by_k": {
   "b2e1-H-K3": {
    "3": {
-    "n": 2,
-    "mean": 0.3221511282648576,
-    "sd": 0.0005789371251928839,
-    "min": 0.32174175789775306,
-    "max": 0.3225604986319621,
+    "n": 4,
+    "mean": 0.31128039117903505,
+    "sd": 0.0283233831371816,
+    "min": 0.2693161239811819,
+    "max": 0.33150318420524316,
     "values": [
      0.32174175789775306,
-     0.3225604986319621
+     0.3225604986319621,
+     0.2693161239811819,
+     0.33150318420524316
     ]
    }
   }
+ },
+ "t3": {
+  "sha256": "8f7d8eda7aa0d0c8b060554dff78c52c0b9cc62b3b116c4ac02676fc2aefbdc5",
+  "groups": [
+   "eavail_pt_ppar / hgb",
+   "eavail_pt_ppar / mlp",
+   "pt_ppar / hgb",
+   "pt_ppar / mlp"
+  ]
  }
 }

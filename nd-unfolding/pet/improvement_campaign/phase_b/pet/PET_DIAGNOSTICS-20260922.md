@@ -8,10 +8,16 @@ later and can never be reused as confirmatory data.
 
 ## Running status (resume anchor; newest first)
 
-- 2026-09-22 22:30Z: **experiment 1 PASSES its pre-declared gate on the two seeds that have run**
-  (R at k = 3: seed 1 `0.3217`, seed 2 `0.3226`, both inside the historical per-seed range
-  [0.28888, 0.32563]); seeds 3-4 are still queued (`58755599`, `58755600`, gpu_shared, submitted
-  2026-09-22 17:31Z). Driver-mechanics check (job `58756024`) green.
+- 2026-09-23 04:20Z: **experiment 1 is COMPLETE and PASSES** its pre-declared gate on 4 seeds
+  (§1). The queue stalled every long job for 6 h, so the K = 10 work moved to self-chaining
+  `gpu_debug` jobs (§ queue): `58780654` (truth-only, 12-epoch configs) and `58780657` (H K=10
+  s1-s2 + S1 K=10 s1-s2), plus `58780659` (T3 scalar reference, CPU debug, started in < 1 min).
+  `58769968` (exp 2 at 32 epochs, preempt) is still queued as a lottery ticket; `58769969/70/71`
+  were cancelled in favour of the chains.
+- Resume is now **bit-exact**: the divergence the mechanics check found was the graph-level seed
+  left over from the previous fit (the `tf.data` shuffle is built before `RunModel` seeds the fit),
+  not model state; the B2 driver now seeds each step from its own (step seed, step, iteration)
+  before the step runs (`b2_driver.B2MultiFold.seed_step`).
 - Submitted after the gate (all from checkout `5634768e`, task dir
   `/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseB2/`):
   `58769968` (preempt, exp 2: T0/T1/T2 × 2 seeds, truth-only), `58769969` (regular, exp 3 H K=10
@@ -47,7 +53,7 @@ historical as-executed recipe through the A1 driver at K = 3 with 4 seeds.
   8 historical seeds AND no seed is more than 3 historical sd from the historical mean; otherwise
   FAIL and stop to find out why before anything else.
 
-## 1. Experiment 1 — driver faithfulness (MEASURED, 2 of 4 seeds)
+## 1. Experiment 1 — driver faithfulness (MEASURED, complete: 4 seeds)
 
 The historical as-executed `ours` recipe (Adam, iteration-0 rate 4e-4 then 1e-5 forced, batch 512
 both steps, 8 epochs, last-epoch weights, raw truth PDG column, row-level 20 % split, warm start)
@@ -56,16 +62,35 @@ development halves.
 
 | run | config hash | job | R (k = 3) | low | moderate | good |
 |---|---|---|---:|---:|---:|---:|
-| `b2e1-H-K3-s1` | `b891519df0d6e070` | 58755597 | **0.3217** | 0.062 | 0.261 | 0.574 |
-| `b2e1-H-K3-s2` | `acaf8f0b94a2ff51` | 58755598 | **0.3226** | 0.051 | 0.271 | 0.578 |
-| historical `ours` (8 seeds, `campaign_report.json`) | — | — | 0.3037 ± 0.0134 [0.2889, 0.3256] | 0.056 | 0.226 | 0.538 |
+| `b2e1-H-K3-s1` | `b891519df0d6e070` | 58755597 | 0.32166 | 0.062 | 0.261 | 0.574 |
+| `b2e1-H-K3-s2` | `acaf8f0b94a2ff51` | 58755598 | 0.32262 | 0.051 | 0.271 | 0.578 |
+| `b2e1-H-K3-s3` | `a3259926338fc60b` | 58755599 | 0.26930 | 0.048 | 0.196 | 0.476 |
+| `b2e1-H-K3-s4` | `2ccf22bc400a646e` | 58755600 | 0.33153 | 0.073 | 0.279 | 0.573 |
+| **B2, 4 seeds** | | | **0.3113 ± 0.0283** [0.2693, 0.3315] | 0.058 | 0.252 | 0.550 |
+| historical `ours`, 8 seeds (`campaign_report.json`) | | | 0.3037 ± 0.0136 [0.2889, 0.3256] | 0.056 | 0.226 | 0.538 |
 
-Both seeds land inside the historical per-seed range: **the repaired driver reproduces the
-historical as-executed recipe's recovery** (MEASURED). Evidence:
-`phaseB2/e1-shared/b2e1-H-K3-s{1,2}/{receipt.json,scores.json}`, scored by
-`phase_b/pet/b2_score.py`, whose positive control reproduces the historical `ours`-seed-127 score
-to 1e-15 (`0.32563324433093876` vs the report's `0.32563324433093976`, regions identical;
-`phaseB2/scorer-check/hist-ours-127-scores.json`).
+Two seeds land inside the historical per-seed range and two outside (s3 below, s4 above), so the
+pre-declared fallback applies and it is satisfied:
+
+* Welch comparison of the two seed sets: difference of means **+0.0076**, se 0.0150, t = 0.51,
+  df = 3.7, 95 % interval **[-0.040, +0.055]** — it contains 0;
+* the furthest seed is **2.53** historical sd from the historical mean (limit 3).
+
+**Verdict: the repaired driver reproduces the historical as-executed recipe's recovery** (MEASURED).
+Everything downstream is unblocked.
+
+**A second, unplanned measurement matters for every later comparison**: the B2 seed spread is
+**0.0283**, about twice the historical 8-seed spread 0.0136 (variance ratio 4.3, F(3,7), not
+significant at 5 % two-sided). Taking 0.0283 at face value, two arms of **2 seeds** each separate
+their means only at ±0.028 (1 se) — enough for a 0.08-0.10 effect, **not** for the 0.02-0.04
+differences the brief asks about. Arms are therefore compared at matched seeds (paired), the paired
+spread is reported with every comparison, and any factor whose paired effect is within the spread is
+reported as NOT RESOLVED at this seed count rather than as a null.
+
+Evidence: `phaseB2/e1-shared/b2e1-H-K3-s{1,2,3,4}/{receipt.json,scores.json}`, copied to
+`results/`. The scorer's positive control reproduces the historical `ours`-seed-127 score to 1e-15
+(`0.32563324433093876` vs the report's `0.32563324433093976`, regions identical;
+`results/scorer-positive-control-hist-ours-127.json`).
 
 ## 2. Driver-mechanics check (job 58756024, `gpu_debug`, tuning stage, 100k events)
 
