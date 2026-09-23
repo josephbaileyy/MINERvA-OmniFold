@@ -8,8 +8,10 @@
 #   submit_confirm.sh <checkout> <manifest, relative to confirm/> <out dir> [race QOS ...]
 #   e.g. submit_confirm.sh $C runs/v1-infrastructure.tsv $T/v1 regular preempt
 #
-# The race copies are full nodes (4 GPUs) with RACE_TIME (default 02:00:00); `preempt` copies
-# are submitted with --requeue (the runs resume bit-exactly after a preemption).
+# The race copies are full nodes (4 GPUs) with RACE_TIME (default 03:00:00: `preempt` refused a
+# 01:30:00 request as matching no policy, job submission 2026-09-23); `preempt` copies are
+# submitted with --requeue (the runs resume bit-exactly after a preemption). A copy stops as soon
+# as every row is COMPLETE, so the limit is a cap, not a charge.
 set -euo pipefail
 MINE=$(realpath "$1"); MANIFEST=$2; OUT=$(realpath -m "$3"); shift 3
 SHA=$(git -C "$MINE" rev-parse HEAD)
@@ -26,7 +28,7 @@ echo "debug chain: $J"
 [[ -n "$RACE_DIR" ]] && touch "$RACE_DIR/submitted-$J"
 for QOS in "$@"; do
   EXTRA=(); [[ "$QOS" == preempt ]] && EXTRA=(--requeue)
-  R=$(sbatch --parsable -q "$QOS" -t "${RACE_TIME:-02:00:00}" "${EXTRA[@]}" \
+  R=$(sbatch --parsable -q "$QOS" -t "${RACE_TIME:-03:00:00}" "${EXTRA[@]}" \
         -o "$OUT/slurm-%j.out" --export="$ENV" "$SELF")
   touch "$RACE_DIR/submitted-$R"
   echo "race copy ($QOS): $R"
