@@ -16,7 +16,12 @@ mask); pure numpy -> runs on the login node.
     --cv products/pet/bkgsub/pet_nominal_bkgsub_5d_xsec.npz \
     --floor products/pet/bkgsub/pet_floor_bkgsub_5d_diagnostic.json \
     --expected-ids 1-6 \
+    --estimator-niter 2 --schema-id <input-schema-id> --producer-commit <sha> \
     --out products/pet/bkgsub/pet_cstat_bkgsub_5d.npz
+
+The three estimator flags are REQUIRED (KNOWN_ISSUES row 32): the replicas do not carry the
+estimator configuration, so the caller names it and it is written as `estimator_stamp` into both
+the npz and the summary. See estimator_stamp.py.
 """
 import argparse
 import glob
@@ -33,6 +38,8 @@ if _ND not in sys.path:
     sys.path.insert(0, _ND)
 from replica_manifest import load_replica_manifest  # noqa: E402
 
+import estimator_stamp  # noqa: E402  (this file's own directory, pet/)
+
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
@@ -41,7 +48,12 @@ def main():
     ap.add_argument("--floor", default="products/pet/bkgsub/pet_floor_bkgsub_5d_diagnostic.json")
     ap.add_argument("--expected-ids", required=True, help="inclusive LO-HI, e.g. 1-6")
     ap.add_argument("--out", required=True)
+    estimator_stamp.add_arguments(ap, required=True)
     a = ap.parse_args()
+    try:
+        stamp = estimator_stamp.from_args(a)
+    except ValueError as exc:
+        ap.error(str(exc))
 
     lo, hi = (int(v) for v in a.expected_ids.split("-", 1))
     if hi < lo:
@@ -66,9 +78,12 @@ def main():
         floor_med = json.load(open(a.floor)).get("per_bin_rel_floor", {}).get("median")
 
     np.savez_compressed(a.out, C_stat=C, reported_mask=rep, replica_ids=ids,
-                        cv=cv, sigma=sig)
+                        cv=cv, sigma=sig,
+                        **{estimator_stamp.NPZ_KEY: estimator_stamp.npz_value(stamp)})
     summary = {
         "campaign": "PET bkgsub 5D corrected C_stat (Phase 4)",
+        "estimator_stamp": stamp,
+        "combined_by": estimator_stamp.checkout_state(__file__),
         "n_replicas": int(Xr.shape[0]), "replica_ids": ids.tolist(),
         "expected_ids": f"{lo}-{hi}",
         "n_reported_bins": int(rep.sum()),

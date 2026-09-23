@@ -23,12 +23,23 @@ the frozen shift -- it is not.)
 Runs on the login node (pure numpy). Components are the npz products written by
 combine_cstat_bkgsub / combine_cml_bkgsub / build_csyst_prelim_bkgsub, each
 carrying `C_*`, `reported_mask` (65856-len bool), and `cv` (65856 xsec_flat).
+
+ESTIMATOR STAMP (KNOWN_ISSUES row 32; rule in estimator_stamp.py). Each component's npz
+`estimator_stamp` is read, and the assembly REFUSES components whose (niter, schema_id) disagree,
+because a sum of blocks computed under different estimators is not a covariance of any one of them.
+The assembly's own stamp is DERIVED from its stamped components; the `--estimator-*` flags are then
+optional and, if given, must agree. With no stamped component the flags are required. A component
+without a stamp (every product written before 2026-09-23, and every producer other than
+combine_cstat_bkgsub.py) is refused unless named in `--allow-unstamped`, and is then listed as
+unstamped in the summary rather than silently treated as matching.
 """
 import argparse
 import json
 import os
 
 import numpy as np
+
+import estimator_stamp  # this file's own directory, pet/
 
 SHAPE5 = (14, 16, 7, 7, 6)   # pt, pz, eavail, q3, W (corrected 5D reporting grid)
 
@@ -65,6 +76,51 @@ def psd_diagnostics(C):
             "psd_within_tol": bool(ev.min() >= -1e-12 * max(abs(ev.max()), 1e-300))}
 
 
+def reconcile_stamps(component_stamps, declared=None, allow_unstamped=()):
+    """The assembly's stamp from its components' stamps; raises ValueError on any refusal.
+
+    `component_stamps` maps component name -> stamp or None. Returns (stamp, report) where the
+    report lists unstamped components and the per-component producer commits.
+    """
+    unstamped = sorted(n for n, s in component_stamps.items() if s is None)
+    refused = [n for n in unstamped if n not in set(allow_unstamped)]
+    if refused:
+        raise ValueError(f"component(s) {refused} carry no estimator_stamp; an unstamped "
+                         f"covariance is unclassifiable. Rebuild them with a stamping producer, "
+                         f"or name them in --allow-unstamped to assemble them as DISCLOSED "
+                         f"unstamped blocks")
+    stamped = {n: s for n, s in component_stamps.items() if s is not None}
+    configs = {n: estimator_stamp.config(s) for n, s in stamped.items()}
+    if len(set(configs.values())) > 1:
+        raise ValueError("components disagree on the estimator (niter, schema_id): "
+                         + ", ".join(f"{n}={c}" for n, c in sorted(configs.items())))
+    if stamped:
+        first = next(iter(stamped.values()))
+        commits = sorted({s["producer_commit"] for s in stamped.values()})
+        stamp = {"niter": first["niter"], "schema_id": first["schema_id"],
+                 "producer_commit": commits[0] if len(commits) == 1 else None}
+        if declared is not None:
+            if estimator_stamp.config(declared) != estimator_stamp.config(first):
+                raise ValueError(f"declared estimator {estimator_stamp.config(declared)} != "
+                                 f"components' {estimator_stamp.config(first)}")
+            stamp["producer_commit"] = declared["producer_commit"]
+        elif stamp["producer_commit"] is None:
+            raise ValueError(f"components were produced at different commits {commits}; the "
+                             f"assembly cannot pick one, so declare it with the three "
+                             f"--estimator-*/--schema-id/--producer-commit flags")
+    elif declared is not None:
+        stamp = dict(declared)
+    else:
+        raise ValueError("no component carries an estimator_stamp, so the assembly cannot derive "
+                         "one: pass --estimator-niter, --schema-id and --producer-commit")
+    report = {"unstamped_components": unstamped,
+              "component_producer_commits": {n: s["producer_commit"]
+                                             for n, s in sorted(stamped.items())},
+              "producer_commits_differ": len({s["producer_commit"]
+                                              for s in stamped.values()}) > 1}
+    return stamp, report
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     D = "products/pet/bkgsub"
@@ -80,7 +136,15 @@ def main():
     ap.add_argument("--out", default=f"{D}/pet_ctotal_bkgsub_5d.npz")
     ap.add_argument("--label", default="preliminary",
                     help="'preliminary' (no lateral / prelim C_syst) or 'final'")
+    estimator_stamp.add_arguments(ap, required=False)
+    ap.add_argument("--allow-unstamped", action="append", default=[], metavar="C_NAME",
+                    help="assemble this component (e.g. C_syst) although it carries no "
+                         "estimator_stamp; recorded as unstamped in the summary. Repeatable.")
     a = ap.parse_args()
+    try:
+        declared = estimator_stamp.from_args(a)
+    except ValueError as exc:
+        ap.error(str(exc))
 
     comps = {"C_syst": (a.csyst, "C_syst"), "C_stat": (a.cstat, "C_stat"),
              "C_ml": (a.cml, "C_ml")}
@@ -89,7 +153,7 @@ def main():
     if a.clateral:
         comps["C_lateral"] = (a.clateral, "C_lateral")
 
-    loaded, masks, cvs, Cs = {}, {}, {}, {}
+    loaded, masks, cvs, Cs, stamps = {}, {}, {}, {}, {}
     for name, (path, key) in comps.items():
         if not os.path.exists(path):
             raise SystemExit(f"[FAIL] {name} product missing: {path}")
@@ -98,7 +162,16 @@ def main():
         Cs[name] = np.asarray(z[Ck], float)
         masks[name] = np.asarray(z["reported_mask"], bool)
         cvs[name] = np.asarray(z["cv"], float)
+        try:
+            stamps[name] = estimator_stamp.read_npz(z)
+        except ValueError as exc:
+            raise SystemExit(f"[FAIL] {name} carries an invalid estimator_stamp: {exc}")
         loaded[name] = path
+
+    try:
+        stamp, stamp_report = reconcile_stamps(stamps, declared, a.allow_unstamped)
+    except ValueError as exc:
+        raise SystemExit(f"[FAIL] estimator stamp: {exc}")
 
     # common mask/order + common central check
     ref_mask = masks["C_syst"]
@@ -139,10 +212,14 @@ def main():
     np.savez_compressed(a.out, C_total_5d=C_total, cv_5d_reported=cv5,
                         reported_mask_5d=ref_mask, C_4d=C4, cv_4d=cv4,
                         M_5d_to_4d=M, rep4_flat_idx=rep4_idx, shape5=np.array(SHAPE5),
-                        shape4=np.array(shape4))
+                        shape4=np.array(shape4),
+                        **{estimator_stamp.NPZ_KEY: estimator_stamp.npz_value(stamp)})
     summary = {
         "campaign": f"PET bkgsub 5D corrected C_total assembly ({a.label})",
         "label": a.label,
+        "estimator_stamp": stamp,
+        **stamp_report,
+        "assembled_by": estimator_stamp.checkout_state(__file__),
         "components_present": sorted(Cs.keys()),
         "components_missing": ([] if a.clateral else ["C_lateral (detector; not yet built on corrected target)"]),
         "cretrain_no_double_count": (
@@ -175,6 +252,8 @@ def main():
 
     print(f"[assemble] ({a.label}) components={sorted(Cs.keys())} "
           f"missing={summary['components_missing']}")
+    print(f"[assemble] estimator_stamp={stamp} "
+          f"unstamped={stamp_report['unstamped_components']}")
     for name in list(Cs.keys()) + ["C_total"]:
         print(f"    {name:10s} sqrt-tr={per[name]['sqrt_trace']:.3e} "
               f"per-bin rel median={100*per[name]['per_bin_rel_median']:.2f}%")
