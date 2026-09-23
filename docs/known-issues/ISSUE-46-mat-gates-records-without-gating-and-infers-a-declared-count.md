@@ -1,3 +1,7 @@
+> **FIXED 2026-09-23 at `dbccae8a`.** `n_reported = C.shape[0]`; `zero_diag_reported_idx` and
+> `rank_at_1em10_lambda_max` are recorded; tests in `nd-unfolding/tests/test_mat_gates_rank_and_reported_count.py`.
+> The `psd` flag and the `-1e-30` literal are unchanged (relied on by `audit_validator_tolerance_units.py`).
+
 # ISSUE-46 — `mat_gates` records a diagnostic it never gates, and infers a count it should be told
 
 **File:** `nd-unfolding/p4_validate_active_lateral_fps.py`, function `mat_gates` (`:62-74`).
