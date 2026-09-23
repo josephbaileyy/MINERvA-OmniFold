@@ -154,9 +154,42 @@ def toy(path: Path) -> str:
     return "\n".join(out)
 
 
+def absolute(path: Path, cases: tuple[str, ...] = (
+        "D1_p0.350", "D1_p0.175", "D4d_n_up", "D4d_n_down", "D4c_p_up", "D4c_p_down",
+        "R2_x0.99", "R3_s0.10", "R2_x1.01", "R1_x1.05")) -> str:
+    """Absolute L1 distances on the normalized seven-bin spectra, mean over replicates:
+    injected = |target - prior|, residual = |unfolded - target|. For a case whose injected L1 is
+    at the sampling floor the RATIO (recovery) is noise; the absolute residual is not."""
+    d = json.loads(path.read_text())
+    out = ["| case | injected L1 | IBU carry residual k=3 / k=10 | IBU eff.-corr. residual k=3 / "
+           "k=10 | GBDT residual k=3 / k=10 |", "|---|---:|---|---|---|"]
+    for name in cases:
+        if name not in d["cases"]:
+            continue
+        reps = d["cases"][name]["replicates"].values()
+
+        def l1(node: dict, k: int, key: str) -> float | None:
+            row = next((r for r in node["iterations"] if r["iteration"] == k), None)
+            return None if row is None or key not in row else sum(abs(v) for v in row[key])
+
+        def mean(vals: list) -> float | None:
+            vals = [v for v in vals if v is not None]
+            return sum(vals) / len(vals) if vals else None
+
+        inj = mean([l1(r["ibu"]["carry_misses"], 3, "injected_per_bin") for r in reps])
+        cells = []
+        for pick in (lambda r: r["ibu"]["carry_misses"], lambda r: r["ibu"]["efficiency_corrected"],
+                     lambda r: r["gbdt_omnifold"]):
+            cells.append(" / ".join(_f(mean([l1(pick(r), k, "signed_residual_per_bin")
+                                             for r in reps]), 4) for k in (3, 10)))
+        out.append(f"| `{name}` | {_f(inj, 4)} | " + " | ".join(cells) + " |")
+    return "\n".join(out)
+
+
 RENDERERS = {"identifiability": ("identifiability.json", identifiability),
              "references": ("references.json", references),
              "spurious": ("references.json", spurious),
+             "absolute": ("references.json", absolute),
              "assessment": ("reference_assessment.json", assessment),
              "toy": ("toy_reference.json", toy)}
 
