@@ -363,6 +363,71 @@ def add_watch(ctx: Ctx, watch: dict) -> None:
     ctx.ledger(f"evt-{watch['watch_id']}", "watch-armed", f"kind={watch['kind']}")
 
 
+def disarm_watch(ctx: Ctx, watch_id: str) -> None:
+    """Disarm a live watch and archive it; `rearm_watch` is the inverse."""
+    path = watch_path(ctx, watch_id)
+    if not path.exists():
+        raise WakerError(f"no live watch to disarm: {watch_id}")
+    watch = read_json(path)
+    watch["state"] = "disarmed"
+    watch["disarmed_at_utc"] = ctx.now_iso()
+    save_watch(ctx, watch)
+    ctx.ledger(f"evt-{watch_id}", "watch-disarmed", "")
+    archive_watch(ctx, watch_id)
+
+
+def rearm_watch(ctx: Ctx, watch_id: str) -> dict:
+    """Restore a DISARMED watch to `armed` (the inverse of `watch-disarm`).
+
+    Refuses an unknown id, a watch whose state is anything but `disarmed`
+    (a fired watch has already produced its one event), a watch present both
+    live and archived, and a watch whose `evt-<id>` event already exists --
+    re-arming that would fire into an existing event id, which emit_event()
+    refuses, so the watch would go `fired` without ever dispatching.
+
+    The watch is re-validated exactly as `watch-add` validates a new one,
+    against the configuration and Slurm as they are NOW, before anything moves.
+    """
+    live = watch_path(ctx, watch_id)
+    archived = archived_watch_path(ctx, watch_id)
+    if live.exists() and archived.exists():
+        raise WakerError(f"watch {watch_id} exists both live and archived; refusing to choose")
+    source = live if live.exists() else archived if archived.exists() else None
+    if source is None:
+        raise WakerError(f"unknown watch: {watch_id}")
+    watch = read_json(source)
+    state = watch_state(watch)  # whole field: "disarmed" must not read as "armed"
+    if state != "disarmed":
+        raise WakerError(f"watch {watch_id} is {state or '<no state>'!r}, not 'disarmed'; refusing to arm")
+    if event_paths(ctx, f"evt-{watch_id}")["event"].exists():
+        raise WakerError(
+            f"event evt-{watch_id} already exists, so this watch could never dispatch again; "
+            "add a new watch id instead"
+        )
+    candidate = json.loads(json.dumps(watch))
+    candidate["state"] = "armed"
+    validate_watch(ctx, candidate)
+    validate_array_spec_against_slurm(ctx, candidate)
+    previous_unreliable = candidate.get("unreliable", 0)
+    candidate["unreliable"] = 0
+    candidate.pop("disarmed_at_utc", None)
+    candidate["rearmed_at_utc"] = ctx.now_iso()
+    candidate["rearmed_by"] = owner_string()
+    if source == archived:
+        # Move first, then flip state: a crash between the two leaves a DISARMED
+        # watch in the live directory, which scan ignores and compaction re-archives.
+        live.parent.mkdir(parents=True, exist_ok=True)
+        os.replace(archived, live)
+    save_watch(ctx, candidate)
+    ctx.ledger(
+        f"evt-{watch_id}",
+        "watch-rearmed",
+        f"kind={candidate.get('kind')} from={'archive' if source == archived else 'live'} "
+        f"previous_unreliable={previous_unreliable}",
+    )
+    return candidate
+
+
 KINDS = {
     "slurm-job",
     "slurm-array",
@@ -1012,7 +1077,8 @@ def _write_tick_receipt(ctx: Ctx, errors: list[dict] | None = None) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Control-plane assessment (read-only; consumed by `preflight --` from the CLI)
+# Control-plane assessment (read-only; consumed by `preflight` from the CLI and,
+# report-only, by control_plane_guard() on every tick)
 #
 # On 2026-08-19 three controls failed together and every one of them was silent:
 #   (1) scron job 56585597 -- the `wakerctl tick` job -- had been PENDING with
@@ -2171,6 +2237,59 @@ def campaign_queue_guard(ctx: Ctx) -> dict | None:
     return value
 
 
+def control_plane_path(ctx: Ctx) -> Path:
+    return ctx.state_dir / "control-plane.json"
+
+
+def control_plane_guard(ctx: Ctx) -> dict | None:
+    """Run the preflight control-plane checks on every tick, REPORT-ONLY.
+
+    `preflight(control_plane=True)` only runs when a human invokes it, so a detector
+    for "armed but not working" was itself unscheduled. This runs the same two
+    checks from the tick, AFTER dispatch, and nothing it finds can gate anything:
+    every problem is written to `control-plane.json` (NO EVIDENCE lines included,
+    so "could not look" stays visible there), and positive-evidence problems send
+    ONE notice per distinct problem set. NO EVIDENCE lines do not notify, because
+    a transient squeue failure on one tick is not a condition worth an email.
+
+    What this cannot see: a ticker that is not running runs no tick, so the
+    freshness and held-job checks here only fire from a surviving tick (the
+    foreground `run` loop, or a second scheduler). A dead sole ticker is the
+    external `heartbeat_command`'s job.
+    """
+    if not ctx.config.get("tick_control_plane_checks", True):
+        return None
+    problems: list[str] = []
+    for name, check in (
+        ("check_cron_ticker", check_cron_ticker),
+        ("check_armed_watch_subjects", check_armed_watch_subjects),
+    ):
+        try:
+            problems.extend(check(ctx))
+        except Exception as exc:  # noqa: BLE001 -- report-only: never propagate into tick()
+            problems.append(no_evidence(f"{name} raised {type(exc).__name__}: {exc}"))
+    actionable = sorted(p for p in problems if not p.startswith(NO_EVIDENCE_PREFIX))
+    result: dict = {"at_utc": ctx.now_iso(), "problems": problems, "actionable": len(actionable)}
+    if actionable:
+        digest = hashlib.sha256("\n".join(actionable).encode("utf-8")).hexdigest()[:16]
+        key = f"control-plane-{digest}"
+        result["notice_key"] = key
+        if not (ctx.state_dir / "notified" / f"{key}.sent").exists():
+            ctx.ledger("control-plane", "control-plane-problem", " || ".join(actionable)[:2000])
+        if notify(
+            ctx,
+            key,
+            "[MINERvA waker] A watch or the ticker is armed but not working",
+            "wakerctl tick found control-plane problems (report-only; dispatch was not "
+            "affected):\n\n" + "\n\n".join(f"- {p}" for p in actionable)[:6000]
+            + "\n\nRe-check with: wakerctl.py preflight",
+        ):
+            result["notified"] = key
+    with contextlib.suppress(Exception):
+        agentctl.atomic_write_json(control_plane_path(ctx), result)
+    return result
+
+
 def tick(ctx: Ctx) -> dict:
     emitted = scan(ctx)
     outcomes = dispatch(ctx)
@@ -2190,6 +2309,13 @@ def tick(ctx: Ctx) -> dict:
     heartbeat = heartbeat_guard(ctx)
     if heartbeat is not None:
         result["heartbeat"] = heartbeat
+    # Last, and fully guarded: report-only checks must never delay or break the above.
+    try:
+        control_plane = control_plane_guard(ctx)
+    except Exception as exc:  # noqa: BLE001
+        control_plane = {"problems": [no_evidence(f"control_plane_guard raised {type(exc).__name__}: {exc}")]}
+    if control_plane and control_plane.get("problems"):
+        result["control_plane"] = control_plane
     return result
 
 
@@ -2229,6 +2355,10 @@ def status(ctx: Ctx) -> dict:
     if idle_path.is_file():
         with contextlib.suppress(OSError, json.JSONDecodeError):
             idle_state = read_json(idle_path)
+    control_plane = None
+    if control_plane_path(ctx).is_file():
+        with contextlib.suppress(OSError, json.JSONDecodeError):
+            control_plane = read_json(control_plane_path(ctx))
     return {
         "observed_at_utc": ctx.now_iso(),
         "node": socket.gethostname(),
@@ -2244,6 +2374,7 @@ def status(ctx: Ctx) -> dict:
         "campaign_idle": campaign_is_idle(ctx),
         "blocked_on_user": blocked_on_user_path(ctx).exists(),
         "idle_state": idle_state,
+        "control_plane": control_plane,
     }
 
 
@@ -2348,6 +2479,9 @@ def smoke(config_path: Path) -> int:
         config["notify_command"] = None
         config["status_report_interval_seconds"] = 0
         config["idle_guard_ticks"] = 0
+        # The sandbox state dir is not what the live scrontab ticks; probing the
+        # real scheduler from here would report on the wrong object.
+        config["tick_control_plane_checks"] = False
         config["root"] = {
             "provider": "codex",
             "profile": "codex-personal",
@@ -2417,8 +2551,14 @@ def main() -> int:
     add.add_argument("--argv", nargs=argparse.REMAINDER)
     add.add_argument("--max-retries", type=int)
 
+    listing = commands.add_parser("watch-list", help="List watches")
+    listing.add_argument(
+        "--state",
+        help="Only watches whose state EQUALS this (whole field; use instead of grep, "
+        "because 'disarmed' contains 'armed')",
+    )
+
     for name, help_text in (
-        ("watch-list", "List watches"),
         ("watch-compact", "Archive terminal watches out of the live scan directory"),
         ("scan", "One condition-evaluation pass"),
         ("dispatch", "One claim/act pass over spooled events"),
@@ -2444,8 +2584,16 @@ def main() -> int:
         help="Skip the cron-ticker and watch-subject checks (the subset the dispatch path uses)",
     )
 
-    disarm = commands.add_parser("watch-disarm", help="Disarm a watch without deleting it")
+    disarm = commands.add_parser(
+        "watch-disarm", help="Disarm a watch without deleting it (undo with watch-arm)"
+    )
     disarm.add_argument("--id", required=True)
+
+    rearm = commands.add_parser(
+        "watch-arm",
+        help="Re-arm a DISARMED watch after re-validating it; refuses fired or unknown ids",
+    )
+    rearm.add_argument("--id", required=True)
 
     emit = commands.add_parser("emit", help="Manually emit an event")
     emit.add_argument("--id", required=True)
@@ -2495,18 +2643,18 @@ def main() -> int:
             print(f"armed {args.id}")
         elif args.command == "watch-list":
             for watch in load_watches(ctx):
+                if args.state is not None and watch_state(watch) != args.state:
+                    continue
                 print(f"{watch['watch_id']}\t{watch['kind']}\t{watch.get('state')}")
         elif args.command == "watch-compact":
             archived = compact_terminal_watches(ctx)
             print(json.dumps({"archived": archived, "count": len(archived)}, indent=2))
         elif args.command == "watch-disarm":
-            path = watch_path(ctx, args.id)
-            watch = read_json(path)
-            watch["state"] = "disarmed"
-            save_watch(ctx, watch)
-            ctx.ledger(f"evt-{args.id}", "watch-disarmed", "")
-            archive_watch(ctx, args.id)
+            disarm_watch(ctx, args.id)
             print(f"disarmed {args.id}")
+        elif args.command == "watch-arm":
+            rearm_watch(ctx, args.id)
+            print(f"armed {args.id}")
         elif args.command == "emit":
             created = emit_event(
                 ctx, f"evt-{args.id}", args.id, args.type, {}, context=args.context

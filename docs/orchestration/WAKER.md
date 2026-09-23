@@ -121,8 +121,14 @@ $P wakerctl.py watch-add --id g2-driver-done --kind file-sentinel \
     --param path=/abs/path/DONE --param must_contain=rc=0 --context "..."
 
 $P wakerctl.py status                     # watches/events/tick liveness, any node
+$P wakerctl.py watch-list --state armed   # whole-field filter; never `grep armed`
+                                          # ("disarmed" contains "armed")
+$P wakerctl.py watch-disarm --id <id>     # disarm + archive
+$P wakerctl.py watch-arm --id <id>        # inverse: re-validates, refuses fired/unknown ids
 $P wakerctl.py watch-compact              # archive terminal legacy watches
-$P wakerctl.py tick                       # one manual scan+dispatch pass
+$P wakerctl.py tick                       # scan+dispatch, then report-only control-plane
+                                          # checks -> state/waker/control-plane.json + one
+                                          # notice per distinct problem set
 $P wakerctl.py install-cron               # arm after saving a checked scrontab -l
 $P wakerctl.py uninstall-cron             # rollback
 ```

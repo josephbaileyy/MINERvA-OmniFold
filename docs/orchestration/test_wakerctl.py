@@ -1,3 +1,5 @@
+import contextlib
+import io
 import json
 import os
 from pathlib import Path
@@ -10,6 +12,7 @@ import types
 import unittest
 from unittest import mock
 
+import test_wakerctl_preflight_watch_health as health
 import wakerctl
 
 
@@ -77,6 +80,11 @@ class WakerTestCase(unittest.TestCase):
             "claim_lease_seconds": 900,
             "invoke_grace_seconds": 7200,
             "max_retries_default": 2,
+            # OFF here only: these fixtures have no scrontab or squeue, so the tick's
+            # report-only control-plane checks would add a notice to every notify count.
+            # They run ON (the production default) in ControlPlaneTickTests and in
+            # test_wakerctl_preflight_watch_health.TickControlPlaneWiring.
+            "tick_control_plane_checks": False,
         }
         config.update(overrides)
         self.config_path.write_text(json.dumps(config))
@@ -1413,10 +1421,6 @@ class StatusAndCronTests(WakerTestCase):
         self.assertTrue(wakerctl.watch_path(ctx, "active").exists())
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class ScanPerWatchIsolationTests(WakerTestCase):
     """One malformed watch must not silence the waker (KNOWN_ISSUES: `scan()` has no per-watch guard).
 
@@ -1588,3 +1592,234 @@ class ScanPerWatchIsolationTests(WakerTestCase):
         self.assertIn("emitted", result)
         self.assertIn("dispatch", result)
         self.assertEqual(result["emitted"], ["evt-zzz-valid"])
+
+
+class WatchArmTests(WakerTestCase):
+    """`watch-arm` is the inverse of `watch-disarm` (KNOWN_ISSUES row 56: a one-way door)."""
+
+    def ledger_transitions(self, watch_id):
+        rows = [line.split("\t") for line in (self.dir / "state" / "LEDGER.tsv").read_text().splitlines()]
+        return [row[2] for row in rows if row[1] == f"evt-{watch_id}"]
+
+    def test_add_disarm_arm_restores_an_armed_watch_with_a_ledger_row(self):
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, "door")
+        wakerctl.disarm_watch(ctx, "door")
+        self.assertFalse(wakerctl.watch_path(ctx, "door").exists())
+        self.assertTrue(wakerctl.archived_watch_path(ctx, "door").exists())
+
+        wakerctl.rearm_watch(ctx, "door")
+
+        self.assertFalse(wakerctl.archived_watch_path(ctx, "door").exists())
+        watch = wakerctl.read_json(wakerctl.watch_path(ctx, "door"))
+        self.assertEqual(wakerctl.watch_state(watch), "armed")
+        self.assertEqual(watch["action"]["context"], "ctx-note")  # context survives the round trip
+        self.assertNotIn("disarmed_at_utc", watch)
+        self.assertIn("rearmed_at_utc", watch)
+        self.assertEqual(
+            self.ledger_transitions("door"),
+            ["watch-armed", "watch-disarmed", "watch-archived", "watch-rearmed"],
+        )
+        # And it is a WORKING watch, not only a relabelled one: it fires.
+        sentinel.write_text("done\n")
+        self.assertEqual(wakerctl.scan(ctx), ["evt-door"])
+
+    def test_arm_refuses_a_fired_watch(self):
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, "fired")
+        sentinel.write_text("done\n")
+        self.assertEqual(wakerctl.scan(ctx), ["evt-fired"])
+        with self.assertRaisesRegex(wakerctl.WakerError, "'fired', not 'disarmed'"):
+            wakerctl.rearm_watch(ctx, "fired")
+        live = wakerctl.read_json(wakerctl.watch_path(ctx, "fired"))
+        self.assertEqual(wakerctl.watch_state(live), "fired")
+
+    def test_arm_refuses_an_unknown_id(self):
+        with self.assertRaisesRegex(wakerctl.WakerError, "unknown watch: ghost"):
+            wakerctl.rearm_watch(self.ctx(), "ghost")
+
+    def test_arm_refuses_an_already_armed_watch(self):
+        ctx = self.ctx()
+        self.arm_sentinel(ctx, "live")
+        with self.assertRaisesRegex(wakerctl.WakerError, "'armed', not 'disarmed'"):
+            wakerctl.rearm_watch(ctx, "live")
+
+    def test_arm_refuses_when_its_event_id_is_already_taken(self):
+        """Re-arming into an existing evt-<id> would go `fired` and never dispatch."""
+        ctx = self.ctx()
+        self.arm_sentinel(ctx, "taken")
+        wakerctl.disarm_watch(ctx, "taken")
+        wakerctl.emit_event(ctx, "evt-taken", "taken", "manual", {})
+        with self.assertRaisesRegex(wakerctl.WakerError, "already exists"):
+            wakerctl.rearm_watch(ctx, "taken")
+        self.assertTrue(wakerctl.archived_watch_path(ctx, "taken").exists())
+
+    def test_arm_revalidates_against_slurm_now_and_leaves_the_archive_on_refusal(self):
+        ctx = self.ctx()
+        # Armed while Slurm could not see the job, so add-time validation could not refuse.
+        self.runner.add(lambda a: a[0] in {"squeue", "sacct"}, 1, "")
+        wakerctl.add_watch(
+            ctx,
+            {
+                "watch_id": "arr",
+                "kind": "slurm-array",
+                "params": {"job_id": "57266000", "tasks": "1"},
+                "action": {"type": "root-resume", "context": ""},
+            },
+        )
+        wakerctl.disarm_watch(ctx, "arr")
+        # Now Slurm knows the array, and it has only task 0.
+        self.runner.rules.clear()
+        self.runner.add(lambda a: a[0] == "sacct", 0, "57266000_0\n")
+        with self.assertRaisesRegex(wakerctl.WakerError, r"has no task \[1\]"):
+            wakerctl.rearm_watch(ctx, "arr")
+        archived = wakerctl.read_json(wakerctl.archived_watch_path(ctx, "arr"))
+        self.assertEqual(wakerctl.watch_state(archived), "disarmed")
+        self.assertFalse(wakerctl.watch_path(ctx, "arr").exists())
+        self.assertNotIn("watch-rearmed", self.ledger_transitions("arr"))
+
+    def run_cli(self, *argv):
+        out = io.StringIO()
+        argv_patch = mock.patch.object(
+            sys, "argv", ["wakerctl.py", "--config", str(self.config_path), *argv]
+        )
+        env_patch = mock.patch.dict(os.environ, {"WAKER_STATE_DIR": str(self.dir / "state")})
+        with argv_patch, env_patch, contextlib.redirect_stdout(out), contextlib.redirect_stderr(io.StringIO()):
+            code = wakerctl.main()
+        return code, out.getvalue()
+
+    def test_cli_round_trip_and_state_filter_is_whole_field(self):
+        sentinel = self.dir / "cli.sentinel"
+        added = self.run_cli(
+            "watch-add", "--id", "cli", "--kind", "file-sentinel", "--param", f"path={sentinel}"
+        )
+        self.assertEqual(added[0], 0)
+        self.assertEqual(self.run_cli("watch-disarm", "--id", "cli")[0], 0)
+        # A disarmed watch must NOT list under --state armed (the `grep armed` trap).
+        self.assertEqual(self.run_cli("watch-list", "--state", "armed"), (0, ""))
+        self.assertEqual(self.run_cli("watch-arm", "--id", "cli"), (0, "armed cli\n"))
+        self.assertEqual(
+            self.run_cli("watch-list", "--state", "armed"), (0, "cli\tfile-sentinel\tarmed\n")
+        )
+        self.assertEqual(self.run_cli("watch-arm", "--id", "cli")[0], 1)  # already armed
+        self.assertEqual(self.run_cli("watch-arm", "--id", "nope")[0], 1)  # unknown
+
+
+class ControlPlaneTickTests(WakerTestCase):
+    """The preflight control-plane checks run from tick(), REPORT-ONLY (KNOWN_ISSUES row 52).
+
+    Slurm and scrontab outputs are the 2026-08-19 Perlmutter transcripts from
+    test_wakerctl_preflight_watch_health, with the ticker row in its RUNNABLE form so
+    that the only real problem is the watch on a task the array does not have.
+    """
+
+    def write_config(self, **overrides):
+        overrides.setdefault("tick_control_plane_checks", True)
+        overrides.setdefault("notify_command", ["/bin/notify", "{key}", "{subject}"])
+        # A real interpreter, so preflight passes and dispatch is observable on any host.
+        overrides.setdefault("python", sys.executable)
+        super().write_config(**overrides)
+
+    def setUp(self):
+        super().setUp()
+        self.runner.add(lambda a: a[:2] == ["scrontab", "-l"], 0, health.SCRONTAB_REAL)
+        self.runner.add(lambda a: a[0] == "squeue" and "--me" in a, 0, health.SQUEUE_CRON_RUNNABLE)
+        self.runner.add(lambda a: a[0] == "sacct", 0, health.SACCT_57266000)
+        self.runner.add(lambda a: a[0] == "squeue" and "-j" in a, 0, health.SQUEUE_57266000)
+        self.runner.add(lambda a: a[0] == "/bin/notify", 0, "")
+
+    def write_bad_subject_watch(self, ctx):
+        """Saved directly, as a watch armed before add-time validation existed would be."""
+        ctx.watches_dir.mkdir(parents=True, exist_ok=True)
+        wakerctl.save_watch(
+            ctx,
+            {
+                "watch_id": "gate5-do-train-57266000-r2",
+                "kind": "slurm-array",
+                "params": dict(health.WATCH_R2_PARAMS),
+                "state": "armed",
+                "unreliable": 0,
+                "action": {"type": "root-resume", "context": "fixture"},
+            },
+        )
+
+    def notices(self):
+        return self.runner.action_calls("/bin/notify")
+
+    def test_bad_subject_watch_emits_one_notice_and_the_tick_still_dispatches(self):
+        ctx = self.ctx()
+        self.write_bad_subject_watch(ctx)
+        sentinel = self.arm_sentinel(ctx, "st")
+        sentinel.write_text("done\n")
+
+        first = wakerctl.tick(ctx)
+
+        self.assertEqual(first["dispatch"], [("evt-st", "resumed")])
+        self.assertEqual(len(self.runner.action_calls("codex")), 1)
+        self.assertEqual(len(self.notices()), 1)
+        notice = self.notices()[0]
+        self.assertIn("armed but not working", " ".join(notice["argv"]))
+        self.assertIn("gate5-do-train-57266000-r2", notice["input"])
+        self.assertEqual(first["control_plane"]["actionable"], 1)
+        recorded = wakerctl.read_json(wakerctl.control_plane_path(ctx))
+        self.assertIn("gate5-do-train-57266000-r2", " ".join(recorded["problems"]))
+
+        second = wakerctl.tick(ctx)  # the same problem set sends no second notice
+        self.assertEqual(len(self.notices()), 1)
+        self.assertEqual(second["control_plane"]["actionable"], 1)
+        ledger = (ctx.state_dir / "LEDGER.tsv").read_text()
+        self.assertEqual(ledger.count("control-plane-problem"), 1)
+
+    def test_healthy_control_plane_adds_nothing_to_the_tick(self):
+        ctx = self.ctx()
+        result = wakerctl.tick(ctx)
+        self.assertNotIn("control_plane", result)
+        self.assertEqual(self.notices(), [])
+        self.assertEqual(wakerctl.read_json(wakerctl.control_plane_path(ctx))["problems"], [])
+
+    def test_unreachable_slurm_is_recorded_but_does_not_notify(self):
+        self.runner.rules.insert(0, (lambda a: a[0] in {"squeue", "sacct"}, 1, "down"))
+        ctx = self.ctx()
+        self.write_bad_subject_watch(ctx)
+        result = wakerctl.tick(ctx)
+        problems = result["control_plane"]["problems"]
+        self.assertTrue(problems)
+        self.assertTrue(all(p.startswith(wakerctl.NO_EVIDENCE_PREFIX) for p in problems), problems)
+        self.assertEqual(self.notices(), [])
+
+    def test_a_raising_check_cannot_escape_the_tick_or_block_dispatch(self):
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, "st")
+        sentinel.write_text("done\n")
+        with mock.patch.object(wakerctl, "check_armed_watch_subjects", side_effect=RuntimeError("boom")):
+            result = wakerctl.tick(ctx)
+        self.assertEqual(result["dispatch"], [("evt-st", "resumed")])
+        self.assertIn("boom", " ".join(result["control_plane"]["problems"]))
+
+    def test_a_raising_guard_cannot_escape_the_tick(self):
+        ctx = self.ctx()
+        sentinel = self.arm_sentinel(ctx, "st")
+        sentinel.write_text("done\n")
+        with mock.patch.object(wakerctl, "control_plane_guard", side_effect=RuntimeError("guard-boom")):
+            result = wakerctl.tick(ctx)
+        self.assertEqual(result["dispatch"], [("evt-st", "resumed")])
+        self.assertIn("guard-boom", " ".join(result["control_plane"]["problems"]))
+
+    def test_checks_default_on_when_the_config_key_is_absent(self):
+        config = json.loads(self.config_path.read_text())
+        del config["tick_control_plane_checks"]
+        self.config_path.write_text(json.dumps(config))
+        ctx = self.ctx()
+        self.write_bad_subject_watch(ctx)
+        self.assertEqual(wakerctl.tick(ctx)["control_plane"]["actionable"], 1)
+
+    def test_config_can_switch_the_checks_off(self):
+        self.write_config(tick_control_plane_checks=False)
+        ctx = self.ctx()
+        self.write_bad_subject_watch(ctx)
+        self.assertNotIn("control_plane", wakerctl.tick(ctx))
+        self.assertEqual([c for c in self.runner.calls if c["argv"][:2] == ["scrontab", "-l"]], [])
+
+
+if __name__ == "__main__":
+    unittest.main()

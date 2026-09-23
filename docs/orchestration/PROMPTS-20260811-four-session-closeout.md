@@ -163,7 +163,9 @@ event, so nothing looks unread while the job completes and sits.
 
 STEP 3 - armed-vs-intended. PIN THE INTERPRETER; the login-node default python3 is too old for
 `from __future__ import annotations` and dies with a SyntaxError having verified nothing:
-  ssh perlmutter.nersc.gov "cd /pscratch/sd/j/josephrb/MINERvA-OmniFold && /usr/bin/python3.11 docs/orchestration/wakerctl.py watch-list 2>&1 | grep -E 'armed|<jobid>'"
+  ssh perlmutter.nersc.gov "cd /pscratch/sd/j/josephrb/MINERvA-OmniFold && /usr/bin/python3.11 docs/orchestration/wakerctl.py watch-list --state armed"
+  (Not `watch-list | grep armed`: "disarmed" contains "armed", so the grep counts disarmed watches too,
+  and the pipe reports grep's exit status instead of wakerctl's.)
   Cross-check every RUNNING/PENDING job from squeue against an `armed` line. A running job with no
   armed watch notifies nobody. Report it; do not arm another lane's watch. A traceback or non-zero
   exit is A FAILED CHECK, not a clean result.
