@@ -2,6 +2,12 @@
 
 ## Status (resume anchor; newest first)
 
+- 2026-09-23 21:15Z: first chain round measured ONE 767 s iteration per 30-min round (60 s margin;
+  the 1.1x estimate crosses the deadline). Chain v2 (`c4726062`: next round queued `afterany` at the
+  start, margin 15 s) replaces it; the old-code successors 58799686/58799690 were cancelled (own
+  jobs). Debug slots (2 per user) now serve PILOT only: chains 58799222 + 58799224 on
+  `runs/pilot.tsv`. STRESS runs rely on their 36 gpu_shared copies (all still PENDING at 21:15Z).
+  Inputs-only check of the D4c, D5 and R1 stress rows on the real inventory passed (CPU job 58798949).
 - 2026-09-23 20:41Z, CONFIRMATORY STAGE SUBMITTED (code `661cb5b9`; checkout
   `/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/661cb5b9`). PILOT (pool P, replicates
   0-2, CTL/A, B, C, K = 10: `runs/pilot.tsv`, out `.../confirm/pilot`, chain 58798408 + gpu_shared
