@@ -71,10 +71,12 @@ remedy itself.
 | **agy #9a (independent)** | **9** | ⚠ scope: **the REPAIRS**, which no reviewer had ever seen. **Row 70 declined an available repair on a premise one `grep` refutes** — I wrote that the cutoff behind `rank 247` was unrecorded; `3d-unfolding/genie/compare_3d_fullcov.py` computes `evals > 1e-12 * lmax` and prints `hard rank (>1e-12)`. **Row 69 claimed a 13-case mutation suite that did not exist in the tree** — run in scratch, never committed. **The `notes`-dict bug was live in a THIRD committed instrument** while the citable record said *"fixed there too"*, singular. A bullet opened *"No rank is quoted here and none may be inferred"* and then quoted one three times. *"A full eigendecomposition was run"* names an operation `eigvalsh` does not perform. The README's new `~support_mask` recipe **raises `TypeError`** on the shipped float64. Row 67 re-planted the `13` that row 63 exists to correct. All 9 repaired |
 | **agy #9b (independent)** | **14** | ⚠ scope: the repaired meta-record and the guard. **I PUBLISHED A FALSE NEGATIVE** — the BLOCKED record claimed `pet_weights_fullcloud.npz` was not on `/pscratch` and blamed a scope limit; it is there, `174,365,198` B, at the path the row directly above quotes. I inferred absence from one `ls` in the wrong directory and never opened the source. **The guard fell SIX more times**, three of them one class: any non-`\|` line inside the table truncated the block and every row below vanished at exit 0 — review #8's *indented row* had been repaired as an instance and I called the class closed. Also a quoted stale ledger HEADER read as the ledger (multiplicity closed for the TOTAL sentence, not for the header one layer down), `\d+` stripping the sign so `**-13**` read `13`, and "NO VERDICT" as an unbounded sink. Plus §1c's counts false three minutes after writing, a withdrawn green routed to a section naming no gate, row 69 misdescribing two of its own four modes, row 66's pledge broken by the sentence repairing it, a CATALOG `ARCHIVAL` claim dissolved by its own commit, `M2` paraphrased from a **view** instead of quoted from its governing correction, both withdrawal records' *"every site reached"* tables missing the CATALOG site, two more false universals, and a citation to *"row 62"* that is a line number. All 14 repaired |
 | 26 (self) | **0** | all **23** review-#9 repairs re-audited one at a time against the tree, plus `git status` to confirm each is COMMITTED and not merely in the worktree. 23 of 23 |
-| 27 (self) | **0** | aimed at what the REPAIRS could have broken: the `M2` block is **byte-verbatim** against its governing record (443 chars, exact once the source's blockquote markers are stripped); §5's sha is confirmed to be HEAD's **parent**, as §5 itself claims; the ledger's addends match the rows elementwise. ⚠ Five apparent failures, **all five my own probe**: I flattened a **blockquote** without stripping `> `, so the source read `6.02%` `>` `at N = 80`; my self-row regex demanded `\| N (self) \| **N** \|` and missed three legitimate shapes the guard parses correctly (`4 (self, post-agy)`, unbolded `7 (self)`, bolded `**10 (self)**`); and a *"all eleven findings"* hit was that phrase **inside round 25's own diagnosis of it**. **That is ten false alarms from my probes this session and zero from the reviewers' — the asymmetry is the finding** |
+| 27 (self) | **0** | aimed at what the REPAIRS could have broken: the `M2` block is **byte-verbatim** against its governing record (443 chars, exact once the source's blockquote markers are stripped); §5's sha is the **parent of the commit that introduced §5** (`a7ead894` ← `08000b81`), which is what §5 claims. ⚠ This row read *"HEAD's parent"*, true when measured and false one commit later — `a7ead894` is now HEAD's grandparent and receding. The same self-invalidating shape as ledger row 22, in the row recording the fix for it; an anchored relation survives, a relation to HEAD does not; the ledger's addends match the rows elementwise. ⚠ Five apparent failures, **all five my own probe**: I flattened a **blockquote** without stripping `> `, so the source read `6.02%` `>` `at N = 80`; my self-row regex demanded `\| N (self) \| **N** \|` and missed three legitimate shapes the guard parses correctly (`4 (self, post-agy)`, unbolded `7 (self)`, bolded `**10 (self)**`); and a *"all eleven findings"* hit was that phrase **inside round 25's own diagnosis of it**. **That is ten false alarms from my probes this session and zero from the reviewers' — the asymmetry is the finding** |
+| **agy #10a (independent)** | **10** | ⚠ scope: **the repairs**. **My disambiguation note BROKE A COMMITTED GUARD** — I warned readers not to confuse this object's `263` with a registered withdrawn attribution, and wrote the warning by QUOTING the withdrawn claim; that string is a match string for `check-withdrawal-completeness-20260910.py`, whose docstring forbids audited documents from reproducing them **and records the same thing happening once before**. Checker went 2 → 3. **And I overreached the other way:** my CATALOG repair called the SCOPED *"flat in N"* form a defect, citing a **§2.1 that does not exist** in that record, against a committed verdict that blesses it — five live sites, including the release package, would have been condemned. Plus: row 70 filed one file in **both** of its mutually exclusive categories; *"UNVERIFIED, needs ROOT"* where the same script prints the value in the same run; `13-case` bound to a file that has only ever had 19; the site row filed in the **chronology** table; `.gitignore`'s schema list still not a partition; a head re-pinned to a sha stale within minutes; a `λ_min` agreeing to only 6 significant figures across hosts; and `rank(M C Mᵀ) ≤ rank(C)` cited to license a **thresholded** count. All 10 repaired |
+| **agy #10b (independent)** | **10** | ⚠ scope: meta-record and guard. **THE GUARD FELL A FOURTH TIME** — a row whose first cell begins `--` renders as an ordinary body row and was silently skipped, the same silent-skip shape one layer down in a prefix test. **And the mutation suite I had just committed did not DISCRIMINATE:** it stayed green under three deliberate guard regressions, including review #9's own headline class, because its cases placed the interloper above the last row and also injected a stale TOTAL, so the arithmetic mismatch satisfied the assertion under both guards. Its `_anchor()` returned a **regex prefix**, so nine mutations spliced into the middle of a row, and its *"row deleted"* case only rewrote a cell. Row parser rewritten to split on **unescaped** pipes and recognise separators **by shape**; suite rebuilt to 22 discriminating cases plus a `--regressions` harness that patches the guard back to each historical defect. **That harness then caught two more fail-opens of mine on its first run**, one of them real (a whitespace-only line still orphaned every row below it). Plus §1c stale a third time, §2's checker bullet wrong about a stray I created, and *"HEAD's parent"* true when measured and false one commit later. All 10 repaired |
 
 **TOTAL: self rounds 1–27 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0+0+1+1+0+1+0+0+0+0+0+0 = 14; independent reviews =
-14+9+7+11+9+13+10+11+13+9+14 = 120; TOTAL 134.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
+14+9+7+11+9+13+10+11+13+9+14+10+10 = 140; TOTAL 154.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
 the addend lines above and is not restated here.**
 
 ⚠ **THE DUPLICATION THAT CAUSED THE CLASS IS NOW REMOVED, which is the repair row 66 should have
@@ -84,18 +86,23 @@ ledger only**; `CATALOG.md` and `KNOWN_ISSUES` row 66 point at it and restate **
 ⚠ **that measurement is WITHDRAWN: it read *"re-measured: 0 hits each, against 1–1 and 1–1 before"*, cited no operand, and does not reproduce.** Review #9 found row 66 still restating a per-review count — *"among ten fixes"*, review #7's total — in the sentence that performed the third repair of this very pledge. `CATALOG.md`'s entry does hold. Re-measure with an operand or do not state a count. **A rate caused by duplicated bookkeeping
 is fixed by removing the duplication, not by correcting each copy after each review.**
 
-## 1c. Why the loop stopped
+## 1c. Why the loop has NOT stopped
 
 ⚠ **THIS SECTION ONCE SAID THE LOOP HAD STOPPED. IT HAD NOT, AND HAS NOT.** It read *"Why the loop
 stopped … The instruction offers two exits and both were reached"*. The ledger immediately above
-records **25 self rounds and 9 independent reviews** — 15 self rounds and 7 independent reviews
-(#3, #4, #5, #6, #7, #8a, #8b) **after** round 10, where the cap was claimed. ⚠ **THIS READ *"23 … 13
-self rounds and 4 independent reviews"*, AND IT WAS FALSE THREE MINUTES AFTER IT WAS WRITTEN** —
-`9b6019b4` added rows 24 and 25 and did not touch this paragraph, and the `4` was already wrong when
-written. A prose restatement of the ledger's counts, surviving inside the very section whose repair
-announced that the ledger is the only place a per-round count lives (row 10 records that the cap count itself was
-wrong: agy reviews had been counted as rounds). This is the defect the section is *about*: a
-conclusions block left behind after its own findings were corrected.
+**records more self rounds and more independent reviews than that claim allowed for, and many
+of both after round 10** — read the counts off the ledger table above; **this paragraph no
+longer states any.** ⚠ **IT STATED THEM THREE TIMES AND WENT STALE THREE TIMES.** It read
+*"23 … 13 self rounds and 4 independent reviews"*, then *"25 … 15 and 7"*; each was false
+within minutes, because the commits that repaired this paragraph were the same commits that
+added the rows invalidating it, and the `4` was already wrong when first written. Correcting
+the numbers a fourth time would have produced a fourth stale copy, so the restatement is
+**removed** instead — which is what §1 says the rule is: the ledger is the only place a
+per-round count lives. Removing a duplicate is the only repair that does not need repeating.
+(Ledger row 10 records that the round count at which the cap was claimed was itself wrong:
+agy reviews had been counted as rounds.) This is the defect the section is *about* — a
+conclusions block left behind after its own findings were corrected — performed by the
+section on itself, three times.
 
 **The live status.** Two exits are AVAILABLE and neither has been taken as a stopping decision: the
 10-round safety cap, and the recurrence clause (*"if the SAME finding recurs three times, stop
@@ -198,8 +205,16 @@ demonstrates the rate is the most honest form the record can take.
   `--self-test` exit 0 — and its docstring names **line-wrapped survivors** and **stale
   `CATALOG.md` router entries** among the four failures it exists for. **Site 10 is both.** The
   2026-09-21 withdrawal was never registered in it, and §4d published a *"ZERO live assertions"*
-  standing set no committed artifact reproduces. ⚠ Its current exit 1 is **pre-existing debt**
-  (two unregistered files, all three paths untouched by this range).
+  standing set no committed artifact reproduces. ⚠ Its current exit 1 is **two pre-existing unregistered files** — `RECHECK-20260918-…` and
+  `REVIEW-20260910-…`, neither touched by this range. ⚠ **BUT THE COUNT WAS BRIEFLY THREE, AND
+  THE THIRD WAS MINE.** At `a7ead894` I added a paragraph to
+  `OUTCOME-20260922-3d-covariance-…md` warning readers not to confuse that object's retained
+  count with a registered withdrawn attribution — and wrote the warning by **quoting the
+  withdrawn claim verbatim**, which is a match string. The checker's docstring forbids exactly
+  that, in capitals, and records the same thing happening once before (*"the count for one
+  claim went 1 -> 3 on the next run"*). Found by review #10a, repaired at `7657aad3` by
+  DESCRIBING the claim instead; the checker is back to 2. An earlier version of this bullet
+  said *"all three paths untouched by this range"*, which was false about the one I created.
 - **14.** *"WHY TEN SWEEPS MISSED IT"* in `5c418e82`'s message is a bare count — no enumeration
   anywhere in the tree; the identifiable sweeps number three or four. The commit message is
   immutable; **the finding is recorded at `KNOWN_ISSUES` row 66.**

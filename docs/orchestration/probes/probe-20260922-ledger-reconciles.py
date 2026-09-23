@@ -45,9 +45,30 @@ REPORT = Path(__file__).resolve().parents[1] / "REPORT-20260922-review-residue.m
 #   exactly one integer      -> that is the count
 #   no integer + "NO VERDICT" -> a recorded non-verdict, counted as such
 #   anything else             -> REFUSE. Ambiguity is not zero.
-SELF_HEAD = re.compile(r"^\|\s*\*{0,2}(\d+)\s*\(self[^|]*\|([^|]*)\|")
-AGY_HEAD = re.compile(r"^\|\s*\*{0,2}agy[^|]*\|([^|]*)\|", re.I)
-DATA_ROW = re.compile(r"^\|(?!\s*(?:-{2,}|:?-{2,}))")
+# ⚠ CELLS ARE SPLIT ON UNESCAPED PIPES AND A SEPARATOR IS RECOGNISED BY SHAPE, NOT BY PREFIX.
+# Review #10 defeated the previous version twice more. (a) `DATA_ROW`'s negative lookahead
+# skipped any row whose FIRST CELL began `--`, so `| -- **agy #12 …** | **6** | …` -- which
+# renders as an ordinary body row, since Markdown only honours a delimiter row in position 2 --
+# vanished from every total at exit 0. That is the same silent-skip shape review #9 closed for
+# non-table lines, surviving one layer down in the prefix test. (b) A backslash-escaped pipe in
+# cell 1 shifted the cell window, so the count was read out of the wrong cell. Splitting on
+# `(?<!\\)\|` and testing separator-ness by SHAPE (every cell is dashes/colons) closes both, and
+# removes the `-{2,}` prefix special case entirely.
+SELF_LABEL = re.compile(r"^\*{0,2}(\d+)\s*\(self", re.I)
+AGY_LABEL = re.compile(r"^[^A-Za-z0-9]*agy\b", re.I)
+SEP_CELL = re.compile(r"^:?-{2,}:?$")
+
+
+def _cells(line):
+    """Cells of a Markdown row, split on UNESCAPED pipes."""
+    parts = re.split(r"(?<!\\)\|", line)
+    if parts and not parts[0].strip():
+        parts = parts[1:]
+    if parts and not parts[-1].strip():
+        parts = parts[:-1]
+    return [c.strip() for c in parts]
+
+
 TOTAL = re.compile(r"self rounds 1[–-](\d+)\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*"
                    r"independent reviews\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*TOTAL\s*(\d+)", re.S)
 
@@ -85,35 +106,46 @@ def main() -> int:
     end = next((i for i in range(h + 1, len(lines)) if not lines[i].strip()), len(lines))
     block = [l.strip() for l in lines[h + 1:end]]
 
+    # ⚠ AND NO LEDGER ROW MAY SURVIVE OUTSIDE THE BLOCK.
+    # Ending the block at a blank line closed review #9's interloper class -- but a WHITESPACE-ONLY
+    # line is blank, so it still truncated the table and orphaned every row beneath it at exit 0.
+    # My own mutation suite caught that one. Rather than patch a third boundary rule, refuse
+    # whenever a row that LOOKS like a ledger row appears anywhere outside the block: ledger row 13
+    # records this table fragmenting into orphaned single-row tables, so orphans are a real event
+    # here, not a hypothetical.
+    orphan_like = re.compile(r"^\s*\|\s*\*{0,2}(?:\d+\s*\(self|agy\b)", re.I)
+    orphans = [l.strip()[:80] for i, l in enumerate(lines)
+               if not (h < i < end) and orphan_like.match(l)]
+    if orphans:
+        print("[ledger] CANNOT LOOK :: ledger-shaped row(s) OUTSIDE the ledger block -- the table "
+              "has fragmented, or a row was orphaned by a blank/whitespace line. Refusing:")
+        for o in orphans:
+            print(f"    {o}")
+        return 2
+
     selves, agys, unclassified, noverdict = [], [], [], 0
     for l in block:
-        if not DATA_ROW.match(l):
-            if l.startswith("|"):
-                continue          # a separator row; handled just below
+        if not l.startswith("|"):
             unclassified.append(f"NOT A TABLE ROW: {l[:70]}")
             continue
-        if re.match(r"^\|\s*:?-{2,}", l) or set(l.replace("|", "").strip()) <= set("-: "):
+        cells = _cells(l)
+        if len(cells) >= 2 and all(SEP_CELL.match(c) for c in cells):
+            continue                      # a genuine delimiter row: every cell is dashes/colons
+        if len(cells) < 2:
+            unclassified.append(f"FEWER THAN 2 CELLS: {l[:70]}")
             continue
-        m = SELF_HEAD.match(l)
+        label, cell = cells[0], cells[1]
+        nums = re.findall(r"-?\d+", cell)
+        m = SELF_LABEL.match(label)
         if m:
-            nums = re.findall(r"-?\d+", m.group(2))
             if len(nums) == 1 and int(nums[0]) >= 0:
                 selves.append((int(m.group(1)), int(nums[0]))); continue
             unclassified.append(l[:90]); continue
-        m = AGY_HEAD.match(l)
-        if m:
-            cell = m.group(1)
-            nums = re.findall(r"-?\d+", cell)
+        if AGY_LABEL.match(label):
             if len(nums) == 1 and int(nums[0]) >= 0:
-                # ⚠ `re.findall(r"\d+")` on `**-13**` yielded "13": the row read MINUS thirteen and
-                # the TOTAL read plus thirteen, and the elementwise check called them equal.
                 agys.append(int(nums[0])); continue
-            # ⚠ NO VERDICT WAS AN UNBOUNDED SINK. Any agy cell with no digit that merely
-            # CONTAINED the phrase was dropped from every total, so a real review recorded as
-            # "NO VERDICT | ended after finding six defects" vanished. The phrase must now be
-            # essentially the entire cell.
             if not nums and re.fullmatch(r"[\s*⚠_`()\[\]-]*no verdict[\s*⚠_`()\[\].-]*",
-                                         cell.strip(), re.I):
+                                         cell, re.I):
                 noverdict += 1; continue
             unclassified.append(l[:90]); continue
         unclassified.append(l[:90])
