@@ -69,8 +69,17 @@ def mat_gates(C, tag):
     d = np.diag(C)
     r["diag_finite_nonneg"] = bool(np.all(np.isfinite(d)) and np.all(d >= -1e-30))
     r["sqrt_trace"] = float(np.sqrt(np.clip(np.trace(Cs), 0, None)))
-    r["n_reported"] = int(np.sum(d > 0))
-    print(f"[{tag}] shape={r['shape']} finite={r['all_finite']} psd={r['psd']} sqrt_tr={r['sqrt_trace']:.4e}")
+    # The matrix is defined on the reported cells, so its dimension IS the reported count.
+    # sum(d > 0) undercounts: a reported cell with zero ensemble variance has d == 0.
+    r["n_reported"] = int(C.shape[0])
+    r["zero_diag_reported_idx"] = [int(i) for i in np.flatnonzero(d == 0)]
+    # `psd` only asks whether any eigenvalue is negative, so an exact zero passes it. This
+    # sibling records how many directions carry variance at the declared 1e-10*lambda_max cutoff.
+    lam_max = float(ev[-1])
+    r["rank_at_1em10_lambda_max"] = int(np.sum(ev > 1e-10 * lam_max)) if lam_max > 0 else 0
+    print(f"[{tag}] shape={r['shape']} finite={r['all_finite']} psd={r['psd']} "
+          f"rank@1e-10={r['rank_at_1em10_lambda_max']}/{r['n_reported']} "
+          f"zero_diag={len(r['zero_diag_reported_idx'])} sqrt_tr={r['sqrt_trace']:.4e}")
     return r
 
 
