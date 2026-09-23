@@ -119,7 +119,8 @@ The last bin on `eavail`, `q3` and `W` is a **catch bin to 100 GeV**. Dense grid
 
 Not asserted; run. **The build-time rows are all from `_build_report.json`**; ⚠ **the cross-machine re-measurements in the `y = M x_reported` row AND in the `λ` row are NOT in that file (⚠ this said *"the first row"*, whose two values ARE in it)** — the `y = M x_reported` value was produced on a second host (numpy `1.26.4`, macOS/Accelerate,
 2026-09-22) and reproduced independently by a third reviewer; the `λ` row's cross-host values were
-measured later the same day by this lane, and have since been reproduced by independent review #12a.
+first re-measured on a second host by independent review #10a, and then by this lane (`7657aad3`).
+(⚠ A later revision credited a reproduction to review #12a, for which no record exists.)
 (⚠ This sentence credited both rows to the third reviewer, whose check predates the `λ` values.)
 
 | check | result |

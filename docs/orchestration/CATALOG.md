@@ -260,12 +260,9 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   harness IS the graded code path. **Released** (five laterals at seed 1242): `s_proj 6.189174%`,
   `s_agg 0.762704%`, `s_med 0.682292%` — against the pinned pair, the two legs INSIDE the bound differ
   most (`+62%`, `+41%` relative) and the failing leg least (`+0.71%`); ⚠ **not attributable to the
-  release**, because the products also differ in the Z-assembly code identity (record §3), at one seed
-  pair. They differ too in the unfold driver's identity for the lateral endpoints (`dc74c38f` vs
-  `662951e0`), but the ten-receipts record §4 establishes that drift preserves the unfolding arithmetic,
-  so it is not an established confound; §3a's Z-only rebuild would leave only the release. (⚠ This
-  entry briefly called the driver change a third confound that the rebuild could not separate —
-  withdrawn after independent review #12a.) ⚠ **NOT all five predeclared invalidating
+  release**, because the products also differ in the Z-assembly code identity (record §3) and in the
+  unfold driver's identity for the lateral endpoints, at one seed pair; whether the driver difference
+  changes the result is not established, and no run isolates the release (record §1). ⚠ **NOT all five predeclared invalidating
   conditions hold** — the record's *"All five hold"* is **WITHDRAWN**: three hold as measured
   (baseline's 20 digests byte-identical in both jobs), **one holds only against §6's PRE-AMENDMENT
   text** (Amendment 1 §A1.4 widened it to all of `active_universe_5d/standard/`, never digested),
