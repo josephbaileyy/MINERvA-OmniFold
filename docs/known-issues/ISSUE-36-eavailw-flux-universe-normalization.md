@@ -1,3 +1,8 @@
+> **RESOLVED 2026-09-23.** The "Still open" paragraph at the end is superseded. The rebuild it waited on
+> belongs, as it says, with the `M C_5D M^T` projection, and that projection now exists: the publication
+> `(E_avail,W)` covariance is VL143, sha256 `835828bf3e25bbd9…`, 42 cells, projected from VL142
+> (`VALIDATION_LEDGER.md:30`). The standalone product of this script is not a publication input.
+
 ## J28's scope misses a sixth site: `eavailW_covariance.py` divides every flux universe by the CV flux
 
 The J28 fix commit `081ae4a` touches **12 files and `eavailW_covariance.py` is not among them**, and

@@ -1,3 +1,9 @@
+> **RESOLVED 2026-09-23 — option (b), pin retired.** The receipt that holds the lapsed pin,
+> `state/p3f-pet-gate3-queue-latency-reconciliation-56169838.json`, was removed from the live tree by
+> `84607aa3` (2026-08-20, "Retire frozen orchestration history from live tree"). It is recoverable
+> from the evidence tag, as a historical record of wakerctl at `8c8775f`. No live gate reads the pin, so
+> there is nothing left to re-issue. The hash was not hand-edited.
+
 ## The `wakerctl.py` pin in the Gate-3 queue-latency receipt LAPSED on 2026-07-20 — and three fixes were declined today on the belief it was live (found 2026-08-11)
 
 `docs/orchestration/state/p3f-pet-gate3-queue-latency-reconciliation-56169838.json` records

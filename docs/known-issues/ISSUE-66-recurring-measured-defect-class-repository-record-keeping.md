@@ -1,6 +1,11 @@
+> **WONTFIX 2026-09-23 — closed as a rate, not a defect.** As the detail says, this is a measured rate and
+> cannot be repaired in place. What it calls for is controls, and they are committed and run:
+> `probes/probe-20260922-ledger-reconciles.py` (with its mutation suite), `probe-20260923-citation-resolution.py`
+> and `probe-20260922-quote-provenance.py`. The measurement below stays as the record.
+
 # ISSUE-66 — A recurring, measured defect class in THIS repository's own record-keeping: a lane's statements ABOUT ITS OWN WORK — counts, enumerations, scope words, and corrections — fail independent re-measurement at a far higher rate than the physics measurements they describe, and a correction routinely reaches one of the two sites that state the claim
 
-**Severity:** HIGH. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 66. **Updated:** 2026-09-22.
+**Severity:** HIGH. **Status:** WONTFIX (2026-09-23). **Index row:** `KNOWN_ISSUES.md` row 66. **Updated:** 2026-09-22.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to
