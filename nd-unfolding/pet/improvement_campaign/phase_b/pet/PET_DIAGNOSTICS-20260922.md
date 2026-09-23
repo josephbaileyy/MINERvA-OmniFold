@@ -8,24 +8,16 @@ later and can never be reused as confirmatory data.
 
 ## Running status (resume anchor; newest first)
 
-- 2026-09-23 04:20Z: **experiment 1 is COMPLETE and PASSES** its pre-declared gate on 4 seeds
-  (§1). The queue stalled every long job for 6 h, so the K = 10 work moved to self-chaining
-  `gpu_debug` jobs (§ queue): `58780654` (truth-only, 12-epoch configs) and `58780657` (H K=10
-  s1-s2 + S1 K=10 s1-s2), plus `58780659` (T3 scalar reference, CPU debug, started in < 1 min).
-  `58769968` (exp 2 at 32 epochs, preempt) is still queued as a lottery ticket; `58769969/70/71`
-  were cancelled in favour of the chains.
-- Resume is now **bit-exact**: the divergence the mechanics check found was the graph-level seed
-  left over from the previous fit (the `tf.data` shuffle is built before `RunModel` seeds the fit),
-  not model state; the B2 driver now seeds each step from its own (step seed, step, iteration)
-  before the step runs (`b2_driver.B2MultiFold.seed_step`).
-- Submitted after the gate (all from checkout `5634768e`, task dir
-  `/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseB2/`):
-  `58769968` (preempt, exp 2: T0/T1/T2 × 2 seeds, truth-only), `58769969` (regular, exp 3 H K=10
-  s1-s2 + exp 4 S1 s1-s2), `58769970` (preempt, exp 4 S2 s1-s2 + M s1-s2),
-  `58769971` (regular, exp 4 S3 s1-s2 + H K=10 s3-s4), `58769978` (CPU shared, T3 scalar
-  reference). Jobs score themselves (`b2_score.py`) when they finish.
-- Next: harvest exp 2/3/4; then experiment 5 (feature arms C1-C4 with the best step-2 variant,
-  the best schedule and the better miss rule held fixed).
+- 2026-09-23 05:30Z (code `db8b7184`): exp 1 DONE (§1), exp 2 DONE at 12 epochs (§3) -> truth side
+  for exp 5 = **T1 (PDG one-hot)**. Running as self-chaining `gpu_debug` jobs (2 iterations per
+  30-min job; resume is bit-exact): chain `k10a` (`58781966`: H K=10 s1-s2 = exp 3 + exp-4
+  reference, S1 s1-s2) and chain `k10b` (`58781967`: M = efficiency-corrected step 2 s1-s2, S2
+  s1-s2). Each run has iteration 0 done (k10a) and is scored in-job when it completes. Still queued
+  as a lottery ticket: `58769968` (exp 2 at 32 epochs, preempt, code `5634768e`).
+- Next: when k10a/k10b complete -> exp 3 tables (step-wise closure), exp 4 (S1, S2, M vs H);
+  then S3 + H s3-s4 chain; then exp 5 (C1-C4, T1 truth side, the best schedule and miss rule).
+- Dropped/deferred so far because of the queue: exp 2 at 32 epochs (12 run instead; the 32-epoch
+  job stays queued), T-arm seeds beyond 2.
 
 ## Measured queue waits (elapsed time is this task's binding constraint, not node-hours)
 
@@ -109,3 +101,49 @@ construction seed instead of continuing, which perturbs later iterations like a 
 Consequence adopted here: production runs are given walltime to finish in one allocation, and any
 run that did resume is marked by its receipt's `segments` and read as a different noise realization
 of the same recipe, not as the same run.
+
+## 3. Experiment 2 — truth-only learnability of the KNOWN tilt (MEASURED, 2 seeds, 12 epochs)
+
+**A learnability diagnostic of the step-2 input set, not a detector-level bound and not an unfolding
+recovery.** Step 2 alone (the engine's own `RunStep2` with the pull set to the injected tilt),
+trained on half A (prior truth vs prior truth x tilt; the H step-2 recipe at its iteration-0 rate
+4e-4, batch 512; 12 epochs, best-validation epoch handed on), evaluated on half B's truth at every
+epoch. `learnability` = B x ratio vs B x the half-A tilt function (B1's convention);
+`endpoint` = the historical score of that push over half B (its sampling ceiling is 0.984, B1
+anchors). 12 epochs instead of the planned 32 so each run fits one 30-minute queue slot; epochs 1-12
+are identical to the first 12 of a 32-epoch run (constant rate, same seeds).
+
+| arm | truth-side inputs | epoch 8 (the historical fit) | at best-val epoch | endpoint | low | moderate | good |
+|---|---|---:|---:|---:|---:|---:|---:|
+| T0 | executed: raw PDG as a continuous column, globals pT, p‖ | 0.843 ± 0.075 | **0.898 ± 0.012** | 0.887 | 0.823 | 0.897 | 0.911 |
+| T1 | PDG as a one-hot of 13 physics categories | 0.925 ± 0.090 | **0.952 ± 0.037** | 0.950 | 0.952 | 0.948 | 0.957 |
+| T2 | T1 + true E_avail, q3 as globals | 0.901 ± 0.094 | **0.973 ± 0.008** | 0.961 | 0.970 | 0.977 | 0.969 |
+| T3 | scalar GBDT on (true E_avail, pT, p‖), same protocol | — | 0.999 ± 0.000 | 0.983 | 0.999 | 0.999 | 0.999 |
+| T3 | scalar MLP on (true E_avail, pT, p‖) | — | 0.969 ± 0.007 | 0.969 | 0.966 | 0.982 | 0.979 |
+| T3 | scalar GBDT / MLP on (pT, p‖) only | — | 0.330 / 0.344 | 0.326 / 0.339 | 0.048 | 0.216 | 0.442 |
+
+(mean ± sd over seeds 1-2; regions at the best-validation epoch.) Files:
+`results/b2e2f-T{0,1,2}-s{1,2}.truth_only.json` (jobs 58780654), `results/truth_scalar_ref.json`
+(job 58780659); per-epoch curves in `results/summary.json`.
+
+What this measures:
+
+1. **The historical truth-side PET can learn the known tilt far beyond what its explicit globals
+   carry** (MEASURED): 0.90 with raw PDG against 0.33 for any learner on (pT, p‖) alone. The truth
+   hadron cloud carries the E_avail information and the PET extracts most of it. B1's inference
+   ("a step 2 whose explicit globals are pT and p‖ must extract E_avail from its cloud to exceed
+   ~0.33; whether it does is a Phase-B measurement") is now answered: it does.
+2. **The PDG encoding matters, most in the low-acceptance region** (MEASURED, 2 seeds): one-hot
+   raises best-val learnability 0.898 -> 0.952 overall and 0.823 -> 0.952 in the low-acceptance
+   region. With 2 seeds and a T1 spread of 0.037 the aggregate gain is suggestive, not resolved.
+3. **Epoch-to-epoch fluctuation at the historical rate is large** (MEASURED): the same fit moves by
+   0.05-0.2 between consecutive epochs (T0 seed 2: 0.51, 0.90, 0.68, 0.87, ...), so the historical
+   hand-on of the LAST of 8 epochs is a noisy draw (epoch-8 spread 0.075-0.094 vs 0.008-0.037 at the
+   best-validation epoch).
+4. Truth globals (T2) reach 0.97 — the PET does not reproduce the GBDT's 0.999 even when handed the
+   injected coordinate. **The development tilt is an exact function of true E_avail, so T2/C3 make
+   this particular closure easy by construction**; Phase E's other distortions are what test them.
+
+What it does NOT establish: that step 2 is not limiting INSIDE the unfolding, where its class-1
+weights are the step-1 pull rather than the true tilt and the fit at iterations >= 1 runs at 1e-5
+(experiment 3 measures that); anything about detector-level recovery.
