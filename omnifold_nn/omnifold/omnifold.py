@@ -174,7 +174,10 @@ class MultiFold():
                 self.log_string("ITERATION: {}".format(i + 1))
             self.RunStep1(i)        
             self.RunStep2(i)
-            self.CompileModels(fixed=True)
+            # No per-iteration LR anneal here (KNOWN_ISSUES #38). A `CompileModels(fixed=True)`
+            # stood on this line and was dead: RunModel recompiles every trained clone at full
+            # self.LR immediately before fit(). The adopted fit-time anneal lives in
+            # nd-unfolding/pet/annealed_estimator.py, which forces `fixed=True` on that recompile.
 
     def RunStep1(self,i):
         '''Data versus reco MC reweighting'''
@@ -300,7 +303,11 @@ class MultiFold():
                 verbose= self.verbose,
                 callbacks=callbacks)
             
-            self.log_string(f"Last val loss {hist.history['val_loss'][0]}")
+            # KNOWN_ISSUES #28: this printed val_loss[0] (epoch 1) under the label "Last".
+            val_loss = hist.history['val_loss']
+            best = int(np.argmin(val_loss))
+            self.log_string(f"Last val loss {val_loss[-1]} (epoch {len(val_loss)}); "
+                            f"best val loss {val_loss[best]} (epoch {best + 1})")
             
             if self.rank ==0:
                 self.log_string("INFO: Dumping training history ...")
@@ -373,7 +380,7 @@ class MultiFold():
         gc.collect()
         return train_data, test_data
 
-    def get_optimizer(self,num_steps,fixed=False,min_learning_rate = 1e-5):
+    def get_optimizer(self,fixed=False,min_learning_rate = 1e-5):
         opt = tf.keras.optimizers.Adam(learning_rate=min_learning_rate if fixed else self.LR)
         if hvd_installed:
             opt = hvd.DistributedOptimizer(opt)
@@ -381,8 +388,9 @@ class MultiFold():
         
 
     def CompileModel(self,model,num_steps,fixed=False):
-
-        opt = self.get_optimizer(int(self.train_frac*num_steps),fixed=fixed)
+        # `num_steps` is unused (the optimizer has no schedule). It stays because subclasses
+        # override this signature (nd-unfolding/pet/annealed_estimator.py).
+        opt = self.get_optimizer(fixed=fixed)
         model.compile(opt,loss = weighted_binary_crossentropy,
                       weighted_metrics=[])
 

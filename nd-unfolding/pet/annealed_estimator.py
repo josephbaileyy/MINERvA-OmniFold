@@ -47,9 +47,9 @@ def make_annealed_multifold(MultiFold, tf, records):
                 would be shared across every call and is the exact rebinding hazard this factory
                 exists to prevent.
 
-    The engine's own anneal is dead: `omnifold.py` calls `CompileModels(fixed=True)` after each
-    iteration, but `RunModel` recompiles the trained clone at full `self.LR` immediately before every
-    `fit()`. This subclass forces `fixed=True` on the fit-time recompile once past `self.start`,
+    The engine has no working anneal of its own: `RunModel` recompiles the trained clone at full
+    `self.LR` immediately before every `fit()` (its dead between-iteration `CompileModels(fixed=True)`
+    was removed 2026-09-23, KNOWN_ISSUES #38, without changing any fit). This subclass forces `fixed=True` on the fit-time recompile once past `self.start`,
     which is what makes the adopted policy take effect.
     """
     if records is None:
