@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """Withdrawal-completeness check for RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md.
 
+WIDENED 2026-09-23 (KNOWN_ISSUES row 65). It now also carries the 2026-09-21 seed-effect
+withdrawal (`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`), whose sites
+live outside `docs/orchestration/` -- `AGENTS.md`, the note's `.tex`, `nd-unfolding/`. Discovery
+therefore walks every TRACKED file in the repository (not `docs/orchestration/` alone), `.tex` is
+scanned, and DELIVERY is keyed per file. Tracked, not on-disk: the verdict is a property of the
+commit, so a peer's untracked draft cannot turn it red; a NEW file is discovered once it is staged.
+
 WHY THIS EXISTS, and it is not a hygiene tool. In this lane a withdrawn claim survived its own
 retraction FOUR times, in four different ways, and every failure was a search whose FORM excluded
 the instance it was meant to find:
@@ -65,12 +72,40 @@ from pathlib import Path
 
 _HERE = Path(__file__).resolve().parent
 _ORCH = _HERE.parent
+_ROOT = _ORCH.parent.parent
 
 DELIVERY = {
     "recommendation": _ORCH / "RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md",
     "probe": _HERE / "probe-z-criteria-acceptance-mathematics-20260910.py",
     "catalog": _ORCH / "CATALOG.md",
+    # Registered 2026-09-23 (row 65). Each was UNREGISTERED at HEAD and made this check exit 1.
+    "recheck_0918": _ORCH / "RECHECK-20260918-null-per-bin-distribution.md",
+    "review_0910": _ORCH / "REVIEW-20260910-z-acceptance-criteria-independent-derivation.md",
+    # Registered 2026-09-23 with the seed-effect claim: every tracked file carrying one of its wordings.
+    "agents": _ROOT / "AGENTS.md",
+    "release_readme": _ROOT / "docs/analysis-note/release-package-20260922/README.md",
+    "values_tex": _ROOT / "docs/analysis-note/values.tex",
+    "seed_correction": _ORCH / "CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md",
+    "seed_evidence": _ORCH / "EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md",
+    "handoff_0921": _ORCH / "HANDOFF-20260921-gbdt-remaining.md",
+    "handoff_0922": _ORCH / "HANDOFF-20260922-gbdt-cold-start.md",
+    "outcome_l2": _ORCH / "OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md",
+    "report_0920": _ORCH / "REPORT-20260920-scalar5d-uncertainty-completion.md",
+    "report_residue": _ORCH / "REPORT-20260922-review-residue.md",
+    "verdict_0922": _ORCH / "VERDICT-20260922-third-party-review-site9-issue60-s4c.md",
+    "corrected_uq": _ROOT / "nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md",
 }
+
+# Files registered after the first eight claims were classified. For THOSE claims each of these
+# files was checked on 2026-09-23 and carries the count pinned in `_LATE`; every other late file is 0.
+_LATE_KEYS = [k for k in DELIVERY if k not in ("recommendation", "probe", "catalog")]
+
+
+def _late(**nonzero):
+    """Approved counts for the late-registered files: 0 except where named."""
+    unknown = set(nonzero) - set(_LATE_KEYS)
+    assert not unknown, f"not a late-registered DELIVERY key: {unknown}"
+    return {k: nonzero.get(k, 0) for k in _LATE_KEYS}
 
 # Each withdrawn claim, probed by SEVERAL paraphrases, because one wording is what failed.
 # `approved` maps file key -> expected occurrence count, with the reason each is permitted.
@@ -94,15 +129,18 @@ WITHDRAWN = [
             "evaluated BEFORE the projection question",
             "evaluated **before** the projection question",
         ],
-        "approved": {"recommendation": 5, "probe": 2, "catalog": 0},
+        "approved": {"recommendation": 5, "probe": 2, "catalog": 0, **_late(review_0910=1)},
         "reason": "recommendation: 3 in the F2 withdrawal block + 2 in the R3-1 correction quoting "
-                  "the survivor. probe: 2 in the section-1b header withdrawal. catalog: none.",
+                  "the survivor. probe: 2 in the section-1b header withdrawal. catalog: none. "
+                  "review_0910: 1, D.3 QUOTING the recommendation's section 2.2 sentence to propose "
+                  "a hypothesis for it -- an ARCHIVAL review dated 2026-09-10, before F2 withdrew "
+                  "the claim; it is a historical quotation, not a live assertion.",
     },
     {
         "claim": "domination implies non-bindingness",
         "withdrawn_by": "F9 -- the implication needs rho_crit <= tau, a relation between THRESHOLDS",
         "paraphrases": ["cannot bind independently, by definition", "dominated statistic cannot bind"],
-        "approved": {"recommendation": 0, "probe": 0, "catalog": 0},
+        "approved": {"recommendation": 0, "probe": 0, "catalog": 0, **_late()},
         "reason": "fully removed; Part 6 was rewritten rather than patched.",
     },
     {
@@ -116,22 +154,24 @@ WITHDRAWN = [
         # too-generic wording gives false POSITIVES. Same underlying error: the string is not the claim.
         "paraphrases": ["it needs no tolerance", "NEEDS NO TOLERANCE", "leg needs no tolerance",
                         "This leg needs no tolerance"],
-        "approved": {"recommendation": 0, "probe": 0, "catalog": 1},
+        "approved": {"recommendation": 0, "probe": 0, "catalog": 1, **_late(recheck_0918=1)},
         "reason": "catalog: 1, inside the sentence that records the earlier revision said it and "
-                  "that it was FALSE.",
+                  "that it was FALSE. recheck_0918: 1, a FALSE POSITIVE of the generic wording -- "
+                  "'there is an exact test and it needs no tolerance' is about display "
+                  "invariance of a rendered string, not the declaration-stability leg.",
     },
     {
         "claim": "the builder-comparison premise was superseded by measurement",
         "withdrawn_by": "authoring lane's sustained objection -- 1 of 6 pairs measured",
         "paraphrases": ["SUPERSEDED by measurement"],
-        "approved": {"recommendation": 2, "probe": 0, "catalog": 0},
+        "approved": {"recommendation": 2, "probe": 0, "catalog": 0, **_late()},
         "reason": "both inside the NOT-SUPERSEDED correction, quoting the wrong verdict.",
     },
     {
         "claim": "retained-rank ndf rests on a distributional fact",
         "withdrawn_by": "F6 -- the protocol says those assumptions are not established",
         "paraphrases": ["rests on a distributional fact"],
-        "approved": {"recommendation": 1, "probe": 0, "catalog": 0},
+        "approved": {"recommendation": 1, "probe": 0, "catalog": 0, **_late()},
         "reason": "1, inside the withdrawal that quotes it.",
     },
     {
@@ -141,7 +181,7 @@ WITHDRAWN = [
         # false-positive control. The CLAIM is that the 263 figure belongs to the trunk, so
         # the rank token must co-occur.
         "paraphrases": [("the production trunk", "263")],
-        "approved": {"recommendation": 1, "probe": 1, "catalog": 0},
+        "approved": {"recommendation": 1, "probe": 1, "catalog": 0, **_late()},
         "reason": "recommendation: 1, in Part 6's F1(b) row quoting what my probe had called "
                   "it. probe: 1, inside the docstring correction quoting the misattribution. "
                   "NOTE: I pinned recommendation at 0 and this check caught it on its FIRST "
@@ -152,7 +192,7 @@ WITHDRAWN = [
         "claim": "cause3_corr has no proposal",
         "withdrawn_by": "Joseph's 2026-09-10 ruling; Part 6 gives one",
         "paraphrases": ["Only `cause3_corr` is left without a proposal", "the one boundary I do not propose"],
-        "approved": {"recommendation": 0, "probe": 0, "catalog": 0},
+        "approved": {"recommendation": 0, "probe": 0, "catalog": 0, **_late()},
         "reason": "fully removed from both the document and the router entry.",
     },
     {
@@ -160,8 +200,44 @@ WITHDRAWN = [
         "withdrawn_by": "R4-1 -- production is numpy 1.26.4, whose default is the literal 1e-15; "
                         "and the figure was this lane's own arithmetic, not a measurement of numpy",
         "paraphrases": ["4.4408920985006262e-14", "4.440892098500626e-14"],
-        "approved": {"recommendation": 1, "probe": 0, "catalog": 0},
+        "approved": {"recommendation": 1, "probe": 0, "catalog": 0, **_late()},
         "reason": "1, inside the R4-1 correction quoting the withdrawn figure.",
+    },
+    {
+        "claim": "a larger ensemble would not change / reduce the seed effect (s_proj at any N)",
+        "withdrawn_by": "CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md -- "
+                        "the N=40/80 points are nested subsets of one 160-throw ensemble at ONE "
+                        "seed pair, so larger N and the seed-pair width are unmeasured",
+        # Every wording the correction's section 4 site table records (sites 1-11), plus the
+        # two-sided CATALOG form (site 10) in both cases. Case-sensitive, like every paraphrase here.
+        "paraphrases": [
+            "no ensemble size at which it falls",
+            "larger ensemble would not reduce it",
+            "larger ensemble would not change",
+            "LARGER ENSEMBLE WOULD NOT CHANGE",
+            "Enlarging the ensemble would therefore not reduce it",
+            "running more variations would not remove it",
+            "more throws does not reduce it",
+            "flat in `N`, so a property of the estimator",
+            "so it is the estimator, not resolution",
+        ],
+        "approved": {"recommendation": 0, "probe": 0, "catalog": 4, **_late(
+            agents=1, release_readme=1, values_tex=1, seed_correction=17, seed_evidence=4,
+            handoff_0921=1, handoff_0922=2, outcome_l2=1, report_0920=1, report_residue=1,
+            verdict_0922=3, corrected_uq=1)},
+        "reason": "Classified 2026-09-23 by reading each occurrence; every one is a quotation "
+                  "under a WITHDRAWN / CORRECTED marker or a by-design survivor. "
+                  "catalog 4: the correction's route entry quotes 'no ensemble size' and 'would "
+                  "not reduce it' as WITHDRAWN; site 10's entry carries 'would not change it' "
+                  "under its WITHDRAWN 2026-09-21 marker; the ISSUE-60/site-10 entry quotes it. "
+                  "seed_correction 17: the record itself (title, quotations, site table). "
+                  "seed_evidence 4: section 5's heading and text are LEFT STANDING beneath the "
+                  "CORRECTED block by site 1's recorded disposition, and the block quotes it. "
+                  "values_tex 1: the CAUTION -- SCOPE comment quoting section 5 to prohibit it "
+                  "(correction section 4d: by design, not to be 'fixed'). agents 1: inside the "
+                  "CORRECTED 2026-09-21 block. release_readme, handoff_0921, handoff_0922 (2), "
+                  "outcome_l2, report_0920, report_residue, corrected_uq: each 'is WITHDRAWN' "
+                  "quotation. verdict_0922 3: the site-9/site-10 review quoting the diff and site 10.",
     },
 ]
 
@@ -216,12 +292,24 @@ def audit(corpus: dict[str, str]) -> list[str]:
 # with no `glob`/`iterdir`/`walk` anywhere, so a fourth file carrying a live affirmation went
 # undetected and the checker stayed green while blind. Measured: 583 files / 12.0 MB / 0.15 s, so
 # scanning by content costs nothing worth saving.
-SCAN_EXTS = {".md", ".py", ".tsv", ".json", ".sh"}
-SCAN_SKIP = ("/runs/",)          # bulk machine receipts; never prose, and large
+SCAN_EXTS = {".md", ".py", ".tsv", ".json", ".sh", ".tex"}   # .tex: correction sites 3-6
+SCAN_SKIP = ("/runs/", "/.git/", "/.claude/")   # bulk receipts; git internals; peer worktrees
 
 
-def discover(root: Path, paraphrases: set[str]) -> dict[Path, str]:
-    """Every file under `root` whose text contains ANY registered paraphrase.
+def tracked_files(root: Path) -> list[Path]:
+    """Every file git tracks (or has staged) under `root`. Fails closed: an empty or failed
+    listing would make discovery see nothing and pass, which is what this file exists to prevent."""
+    import subprocess
+    r = subprocess.run(["git", "-C", str(root), "ls-files", "-z"], capture_output=True)
+    names = [n for n in r.stdout.decode("utf-8", "surrogateescape").split("\0") if n]
+    if r.returncode != 0 or not names:
+        raise SystemExit(f"[FAIL] cannot list tracked files under {root} (git rc {r.returncode}); "
+                         f"discovery would be empty, and an empty sweep is not a clean one.")
+    return [root / n for n in names]
+
+
+def discover(root: Path, paraphrases: set[str], paths=None) -> dict[Path, str]:
+    """Every file under `root` (or in `paths`) whose text contains ANY registered paraphrase.
 
     Discovery is driven by the very strings being audited, so it cannot miss a file BECAUSE of
     what that file contains -- which is the failure mode enumeration has. The checker itself is
@@ -229,10 +317,16 @@ def discover(root: Path, paraphrases: set[str]) -> dict[Path, str]:
     """
     me = Path(__file__).resolve()
     found = {}
-    for path in root.rglob("*"):
+    for path in (root.rglob("*") if paths is None else paths):
         if not path.is_file() or path.suffix not in SCAN_EXTS:
             continue
-        if any(s in str(path) for s in SCAN_SKIP) or path.resolve() == me:
+        # Skip rules apply to the path RELATIVE to `root`: a checkout that itself lives under
+        # `.claude/worktrees/` would otherwise skip every file it holds.
+        try:
+            rel = "/" + str(path.relative_to(root))
+        except ValueError:
+            rel = str(path)
+        if any(s in rel for s in SCAN_SKIP) or path.resolve() == me:
             continue
         try:
             flat = re.sub(r"\s+", " ", path.read_text(errors="ignore"))
@@ -253,10 +347,10 @@ def all_paraphrases() -> list:
     return out
 
 
-def unregistered(root: Path) -> list[Path]:
+def unregistered(root: Path, paths=None) -> list[Path]:
     """Discovered files carrying a withdrawn claim that are NOT in the pinned DELIVERY set."""
     registered = {q.resolve() for q in DELIVERY.values()}
-    return sorted(set(discover(root, all_paraphrases())) - registered)
+    return sorted(set(discover(root, all_paraphrases(), paths)) - registered)
 
 
 def _load() -> dict[str, str]:
@@ -338,7 +432,14 @@ def self_test() -> int:
             print(f"          LEAKED: {hit.name} via {matched}")
         ok_e = ok_e and not clean_hits
 
-    ok = bool(f_inj) and bool(f_del) and bool(f_new) and ok_e
+    # (g) row 65: a LIVE affirmation of the seed-effect corollary, planted in a file whose pinned
+    # count for it is 1 (AGENTS.md's quotation), must fail.
+    seed = dict(corpus)
+    seed["agents"] += " So a larger ensemble would not reduce it, and no rebuild can pass."
+    f_seed = audit(seed)
+    print(f"  (g) seed-effect affirmation planted -> {len(f_seed)} failure(s)   must be >= 1")
+
+    ok = bool(f_inj) and bool(f_del) and bool(f_new) and ok_e and bool(f_seed)
     print(f"  SELF-TEST {'PASSED' if ok else 'FAILED'} -- fires on an injected affirmation, a "
           f"deleted quotation, an unpinned key and an UNREGISTERED FILE ON DISK; silent on a "
           f"clean tree and on a tree with no claims")
@@ -349,7 +450,7 @@ def main(argv: list[str]) -> int:
     if "--self-test" in argv:
         return self_test()
     failures = audit(_load())
-    stray = unregistered(_ORCH)
+    stray = unregistered(_ROOT, tracked_files(_ROOT))
     if stray:
         failures = [f"UNREGISTERED FILE carrying a withdrawn claim: {s} -- it is not in DELIVERY, "
                     f"so its occurrences were never classified. Classify and pin it, or remove "
