@@ -81,6 +81,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     p.add_argument("--deadline-unix", type=float, default=None)
     p.add_argument("--first-iteration-estimate-s", type=float, default=1200.0)
     p.add_argument("--stop-after-iteration", type=int, default=None)
+    p.add_argument("--inputs-only", action="store_true",
+                   help="build and check the inputs (and the crosscheck), write "
+                        "replicate_arrays.npz and inputs_receipt.json, and stop before any "
+                        "training (no GPU needed)")
     args = p.parse_args(argv)
     if args.pool is not None and (args.replicate is None or args.pools_npz is None
                                   or args.manifest is None):
@@ -150,7 +154,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     import training_recipe
     import torch_adamw
     gpus = [d.name for d in tf.config.list_physical_devices("GPU")]
-    if not gpus:
+    if not gpus and not args.inputs_only:
         raise SystemExit("[confirm] no GPU visible to TensorFlow; refusing to train on CPU")
     if mods["omnifold"].REWEIGHT_LOGIT_CAP != b2d.rec.REWEIGHT_LOGIT_CAP:
         raise SystemExit("[confirm] the recorder's logit cap differs from the engine's")
@@ -209,6 +213,26 @@ def main(argv: Sequence[str] | None = None) -> int:
         np.savez(out / "replicate_arrays.tmp.npz", **arrays)
         os.replace(out / "replicate_arrays.tmp.npz", arrays_path)
     digests_before_arm = inputs.digests(np)
+    if args.inputs_only:
+        write_json_atomic(out / "inputs_receipt.json", {
+            "schema": SCHEMA + "/inputs-only", "config_hash": config.content_hash(),
+            "run_identity": ident, "selection": selection.record,
+            "distortion": distortion.record, "closure": {
+                k: v for k, v in inputs.meta.items()
+                if k not in ("dump_rows_a", "dump_rows_b", "tilt_a", "pass_gen_a", "mc_indices")},
+            "input_digests_before_arm": digests_before_arm,
+            "replicate_arrays_digests": arrays_digest, "crosscheck_closure_data": crosscheck,
+            "counts": {"pdata_rows": int(len(inputs.pdata["rows"])),
+                       "prior_rows": int(len(inputs.mc["rows"])),
+                       "prior_pass_reco": int(np.sum(inputs.mc["pass_reco"])),
+                       "prior_pass_truth": int(np.sum(inputs.mc["pass_gen"]))},
+            "load_seconds": time.perf_counter() - t_load,
+            "code_commit": subprocess.run(["git", "-C", str(args.repo), "rev-parse", "HEAD"],
+                                          capture_output=True, text=True).stdout.strip(),
+            "slurm_job_id": os.environ.get("SLURM_JOB_ID"), "measured_leg_is_real_data": False})
+        print(json.dumps({"inputs_receipt": str(out / "inputs_receipt.json"),
+                          "load_seconds": time.perf_counter() - t_load}))
+        return 0
     read = b2d.scalar_reader(np, ffd, args.inputs_npz)
     arm_record = b2d.apply_arm(np, arm, inputs, read, None)
     pdata, mcb = cd.make_loaders(mods, np, inputs)
