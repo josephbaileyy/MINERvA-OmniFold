@@ -1,0 +1,36 @@
+# Claim-to-evidence index — PET improvement campaign
+
+Every claim the report and deck make, and the artifact that settles it. Paths are relative to
+`nd-unfolding/pet/improvement_campaign/` unless stated. **Status: growing with the campaign**; claims from Phases
+B(PET)/C/D and the rest of E are added when their experiments land. Shared measurement origins count once: the
+historical numbers in §1 come from the preserved comparison, not from any new measurement.
+
+| claim | evidence | how it was measured |
+|---|---|---|
+| Historical: ours 0.3037, theirs 0.4165, floor 0.5560, paired −0.1129 [−0.1471, −0.0786] | `../configuration_comparison/campaign_report.json` (preserved, unmodified) | the historical campaign; re-scored bit-identically by B1 for two runs (`phase_b/scalar/results/populations.json`) |
+| Gregor's arm ran Horovod-wrapped Keras Adam, not the declared TorchAdamW: no weight decay, no clipping, no warmup/cosine | `phase_a/receipts/runtime_audit_theirs.json`; table in `phase_a/INTENDED_VS_EXECUTED-20260922.md` | runtime capture of `model.optimizer` and `_clip_gradients` while the historical code at `68cf9d29` ran unmodified through the OI-136 guard (job 58742195) |
+| The intended clip would have bound on 100 % of updates (norms up to 1474) | same receipt, `epochs[*].grad_global_norm_pre_clip` | in-graph observation of the pre-clip global gradient norm |
+| The "identical" step 2 differed: batch 2048 vs 512, iteration-0 lr 1e-4 vs 4e-4, different validation subset | `phase_a/receipts/runtime_audit_{ours,theirs}.json`, `phase_a/receipts/historical_receipts.json` (`engine_log_implied`, `realized_learning_rates`, `validation_row_set_digest`) | runtime capture plus the engine logs and Keras histories of all 336 full-scale fits |
+| Every fit after iteration 0 ran at 1e-5 | `historical_receipts.json` → per-epoch `lr` of all 336 fits; `annealed_estimator.py:71`, `omnifold.py:376-377` | L2 log mining + source |
+| Early stopping never fired; last-epoch weights were handed on (val-loss argmin was the last epoch in 7/48 theirs-final, 30/48 ours-final) | `historical_receipts.json` → `summary.*.fits_whose_val_loss_argmin_is_last_epoch`; `runtime_audit_*.json` → `at_train_end` | runtime capture of the weights at train end + L2 mining |
+| Pretrained weights survive cloning exactly (176/176 tensors at the first optimizer step) | `runtime_audit_theirs.json` → `fits[0].at_first_optimizer_step.pretrained` | tensor-by-tensor comparison against `PRETRAINED_STATE_MANIFEST-20260919.json` |
+| His token features are the converted eta/phi/log-pT/log-E set (the raw-momentum defect is not present) | `runtime_audit_theirs.json` → `inputs.step1.theirs_semantics` | inspection of the arrays handed to `from_tensor_slices` |
+| Step-2 truth cloud carries raw PDG codes (−3122 … 2.0e9) into Dense layers and k-NN features | `runtime_audit_*.json` → `inputs.step2.cloud`; `omnifold_nn/omnifold/net.py:147-155,290-293` | runtime array inspection (value range) + source reading for the consumer |
+| The repaired driver executes its declared recipe; 31 tests pass, 7 xfail on the historical behaviour | `phase_a/receipts/driver_check/`, `phase_a/receipts/tests-7c5bb166/` | driver check and test jobs 58748392, 58748758 |
+| First-epoch cost at historical size on one A100: ours step 1 51.3 s, step 2 62.7 s; theirs step 1 207.5 s | `phase_a/receipts/driver_check/cost_{ours,theirs}/` | timed runs through the real engine (jobs 58748393, 58748395) |
+| The 12-token cap bites on 85.1 % of reco-passing events and drops 39.9 % of cluster energy on average | `phase_a/receipts/feature_inventory.json`; `phase_a/FEATURE_INVENTORY-20260922.md` | scan of the G2 omnifiles against the inventory |
+| Reco `E_avail` = `reco_scalars[:,2]`, bit-equal to the 3D pipeline's `sim_eavail` over 20,481,532 matched events | `phase_a/FEATURE_INVENTORY-20260922.md`; `CVUniverse.h:185-193` | float32 comparison on matched events + definition reading |
+| The historical closure reproduces bit-exactly (31/31 checks; halves 600,130/600,111, 32 dropped; reference 0.6949731569) | `phase_b/scalar/results/populations.json` | replay through the historical code at `68cf9d29` (job 58741903) |
+| At k = 3: IBU muon-only 0.164, IBU muon+reco E_avail 0.472, GBDT +reco E_avail 0.412, MLP +reco hadronic 0.486 | `phase_b/scalar/results/{ibu,summary}.json` | binned IBU and scalar OmniFold on the DEV halves (jobs 58748148, 58748399_*) |
+| Recovery still climbing at k = 3: IBU 0.648 at k = 10, 0.683 best (k = 15–20); GBDT 0.524 at k = 20 | `phase_b/scalar/results/summary.json` → `ibu`, `omnifold` | per-iteration scoring |
+| Truth-side learnability: 0.999 with true `E_avail`, 0.329 from true muon pT/p‖ alone | `phase_b/scalar/results/truth_learnability.json` | held-out evaluation of the learned ratio against the known tilt (job 58748398) |
+| The reference is built on (pT, p‖) cell displacement; its own model on the scored 7-bin spectrum gives 0.578, and 0.523 on the actual halves with the historical normalization | `phase_b/scalar/results/reference_decomposition.json` | re-derivation of the reference model on the scored quantity (job 58748456) |
+| Efficiency-corrected IBU peaks at 0.923 (k = 2) then destabilizes (k = 20: 0.559 aggregate, −0.424 low-acceptance) | `phase_b/scalar/results/summary.json` → `ibu["muon_eavail/efficiency_corrected/engine"]` | per-iteration scoring of the efficiency-corrected variant |
+| The historical normalization assumes the accepted fraction is unchanged by the tilt; measured ratio 0.8979 | `phase_b/scalar/results/summary.json` → `reproduction.accepted_fraction` | direct computation on the halves |
+| Phase F: miss handling, not the non-iterative form, drives AUSSIE's gain (OmniFold carry 0.582 vs eff 0.783 at k = 50; AUSSIE λ=1000 0.648, λ=0 0.849) | `phase_f/AUSSIE_SCALAR_BENCHMARK-20260922.md`, `phase_f/results/aussie_ablation.json` | local Mac runs on the DEV populations, 3 seeds, λ sweep and both OmniFold miss modes |
+| Pools P/F/S/T/R = 3,773,400 / 15,083,686 / 18,861,069 / 8,018,001 / 1,414,846 rows, excluding 1,999,998 historical rows | `pools/POOL_MANIFEST.json` | identity-hash assignment over the inventory, exclusion from all 56 historical artifacts (job 58755613) |
+| Every literature quotation used in the report appears verbatim in the cited paper | `REPORT-20260922.md` §9 | string match against the downloaded full texts; unmatched claims discarded, including a delegate memo's fabricated `ParticleViT` comparison |
+
+**Scope.** PET is diagnostic method development. Nothing indexed here is a publication adoption, a covariance, a
+systematic, a central-value change or a Gate-6 action, and none of it changes the historical comparison's
+thresholds or verdict.
