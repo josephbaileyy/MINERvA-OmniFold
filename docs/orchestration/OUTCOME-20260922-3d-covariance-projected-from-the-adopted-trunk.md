@@ -129,12 +129,21 @@ figure work is exactly the failure the rule exists to prevent.
   retained count at one hardcoded cutoff is not one. **Any rank for this product must still be
   reported with its cutoff, and `263` may be quoted only as `263 of 1431 at rc = 1e-12`.**
   ⚠ **DO NOT CONFLATE THIS `263` WITH THE WITHDRAWN ONE.**
-  `state/check-withdrawal-completeness-20260910.py` registers *"rank 263 is a property of Z, G, or
-  the production trunk"* as **WITHDRAWN** (*"263 is S's, the component donor"*). The `263` here is
-  the retained count of **this 1431-cell destination object** at `rc = 1e-12`, measured on
-  `M C Mᵀ`; since `rank(M C Mᵀ) ≤ rank(C)` it may be inherited from the source rather than being a
-  property of the destination, and **which it is has not been measured**. It is not a claim about
-  Z's rank and must not be cited as one.
+  `state/check-withdrawal-completeness-20260910.py` registers, as WITHDRAWN, a claim attributing
+  a rank of this magnitude to Z, to G, or to the trunk used in production; the registry records
+  that the value belongs to S, the component donor. **The claim string is deliberately NOT quoted here** —
+  that checker's docstring forbids its audited documents from reproducing its match strings, and
+  an earlier revision of this very paragraph quoted one and took the checker from 2 discrepancies
+  to 3, which is the exact failure its docstring records having happened once before. Read the
+  registry for the wording.
+  The `263` here is the retained count of **this 1431-cell destination object** at `rc = 1e-12`,
+  measured on `M C Mᵀ`. ⚠ **It may be inherited from the source rather than being a property of
+  the destination, and which it is has NOT been measured.** (An earlier revision cited
+  `rank(M C Mᵀ) ≤ rank(C)` as the licence for that. **That is withdrawn as stated:** the
+  inequality governs EXACT rank, while `263` is a retained count at a RELATIVE cutoff
+  `ev > ev.max()*rc`, and `λ_max` itself changes under `M C Mᵀ` — so the exact-rank bound does not
+  transfer to the thresholded count. The same paragraph insists a rank is a step function of its
+  cutoff; that applies here too.) It is not a claim about Z's rank and must not be cited as one.
   The corrected wording had already reached `REPORT-20260922-review-residue.md` §3 item 7 and was
   **not** carried to this record, which is the CITABLE artifact — one-of-two-sites again.
 

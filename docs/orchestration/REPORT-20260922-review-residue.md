@@ -290,9 +290,16 @@ what `KNOWN_ISSUES` row 60 prohibits, and one of those greens was later measured
 object.
 
 **Measured at `a7ead89458f2a417f8bd474a3f43b7bef62a12a5`**, working tree **CLEAN** for tracked files
-(`git status --porcelain --untracked-files=no` empty). Every status was read **unpiped**
-(`cmd > file 2>&1; echo $?`) — a pipe returns the last stage's status, which this repo has been
-bitten by.
+(`git status --porcelain --untracked-files=no` empty). Every status was read **unpiped** (`cmd > file 2>&1; echo $?`) — a pipe returns the last stage's
+status, which this repo has been bitten by.
+
+⚠ **AND THE SHELL MATTERS: THIS SESSION IS `zsh`, WHICH DOES NOT WORD-SPLIT UNQUOTED PARAMETERS.**
+Running these gates from a loop as `python3 $c`, where `c="script.py --flag"`, passes the whole
+string as **one** `argv` entry, so Python reports `can't open file 'script.py --flag'` and exits
+**2**. I read that as two gates failing. Exactly the two gates that take an argument "failed"; the
+argument-less three passed — a pattern that should have been diagnostic immediately. Use `${=c}`,
+an array, or literal commands. A false RED is cheaper than a false green, but it is still a
+measurement defect in the instrument that measures the gates.
 
 | gate | status |
 |---|---|

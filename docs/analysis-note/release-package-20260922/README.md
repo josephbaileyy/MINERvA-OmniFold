@@ -131,7 +131,7 @@ Not asserted; run. **The build-time rows are all from `_build_report.json`**; �
 | **C-order vs F-order control** | ✅ the F-order reshape disagrees with the C-order one by a max **relative** `7.82e5`. ⚠ **This is a different statistic from the appendix's *"relative 1.0"*** — here it is `max\|y_C − y_F\| / \|y_C\|` per cell, which is unbounded where `y_C` is small. The conclusion is the same and stronger: the orderings are nowhere near equal, so C order is **established, not assumed** |
 | `√Tr C_EW` | ✅ `4.4551809735306645e-39` |
 | symmetry `max\|C − Cᵀ\|` | ✅ **exactly `0.0`** |
-| `λ_min`, `λ_max`, ratio | ✅ `+4.359103608788691e-92`, `1.4882151297784383e-77`, `2.929e-15`; `λ_min` is **positive** |
+| `λ_min`, `λ_max`, ratio | ✅ `+4.359103608788691e-92`, `1.4882151297784383e-77`, `2.929e-15`; `λ_min` is **positive**. ⚠ **These are the BUILD HOST's values (Perlmutter), quoted from `_build_report.json`, and the last digits are not portable.** Re-measured from the shipped bytes on macOS/Accelerate with numpy 1.26.4: `λ_min = 4.3591116699293156e-92`, agreeing only to **6 significant figures**, and `λ_max = 1.4882151297784372e-77`, agreeing to 15. §5 caveats BLAS dependence for the `y = M x` row and did not for this one. The **sign** of `λ_min` (positive here) is the citable content; its trailing digits are not. |
 
 ⚠ **THE `0.0` ABOVE IS A PROPERTY OF THE BUILD HOST, NOT OF THESE BYTES — corrected 2026-09-22
 by an independent reviewer who ran this README's own recipe and got `AssertionError`.**

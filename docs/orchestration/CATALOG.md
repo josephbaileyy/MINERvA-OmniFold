@@ -348,10 +348,18 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   nested subsets of the same 160 throws at one seed pair, so the behaviour at much larger `N` and
   the width of the seed-pair distribution are both unmeasured."* ⚠ **The fitted exponent `0.000` is
   the exponent `p` in `s ∝ N^-p`, NOT a p-value**, and must never be read as a significance.
-  ⚠ *"a larger ensemble would not reduce it"* is **WITHDRAWN**; a previous repair of this bullet
-  wrote *"flat in N over the ensemble sizes measured"*, which still frames the three points as a
-  sample across ensemble sizes — exactly what §2.1 of that record blocks, since they are nested
-  subsets of one 160-throw draw at one seed pair.
+  ⚠ *"a larger ensemble would not reduce it"* is **WITHDRAWN** — what the correction withdraws is
+  the claim quantified over ALL `N`, not a claim scoped to the range measured.
+  ⚠ **AN EARLIER REVISION OF THIS BULLET OVERREACHED AND IS WITHDRAWN.** It said the scoped form
+  *"flat in N over the ensemble sizes measured"* *"still frames the three points as a sample
+  across ensemble sizes — exactly what §2.1 of that record blocks"*. Two defects: **that record
+  has no §2.1** (its sections are 1, 2, 3, 4, 4a–4d, 5; the *"not a sample … across ensemble
+  sizes drawn independently"* clause is §2 item 1), and the scoped form is **explicitly blessed**
+  by a committed third-party verdict — `VERDICT-20260922-third-party-review-site9-issue60-s4c.md`:
+  *"surviving `flat in N` claim is scoped | ✅ reads `over N = 40–160`, not unqualified"*. Five
+  further live sites use the scoped form; had the overreach stood, it would have condemned all
+  five, including the release package. **The verbatim §3 wording above is the standard; the
+  scoped form is not a defect.**
    `M3` five
   seed-pinned bands — ⚠ **the *"lower bound"* wording is WITHDRAWN** (`AGENTS.md`;
   `CORRECTION-20260920-lower-bound-inference-withdrawn.md`): the bands are **unprobed in either
