@@ -25,9 +25,29 @@ deliverable area gives zero false positives here and still catches every histori
 Absolute paths under the cluster checkout are rewritten to repo-relative first, so a receipt that
 records `/pscratch/.../MINERvA-OmniFold/docs/orchestration/state/x.npz` is caught too.
 
-Exit 0 clean, 1 on findings, 2 if it could not run.
+BARE FILENAMES AND LOG EVIDENCE (KNOWN_ISSUES 48, 2026-09-23). `.out`, `.err` and `.log` count as
+artifact extensions too. A citation with no directory (for example "centring_n50.out") is RESOLVED
+rather than dropped. It is tried in this order:
+  1. the receipt's own directory, and its companion directory `<receipt stem>/`;
+  2. the receipt's DECLARED run directories (string fields such as `run_root`, `member_root`,
+     `family_root`, `out_dir`, `*_dir`, `dir`);
+  3. the same basename cited WITH a directory elsewhere in the same receipt.
+Each citation ends in exactly one state:
+  TRACKED       resolved to a tracked file (green);
+  MISSING       a candidate directory in the deliverable area is tracked (it holds tracked files)
+                but does not carry the file. This is the `.gitignore` trap, exit 1;
+  OFF-AREA      resolved to a declared run directory outside the deliverable area (a cluster
+                product, out of scope for the reason above). Counted, not checked;
+  BY-PATH       the same file is also cited with a directory, and that path is what gets checked;
+  UNRESOLVED    none of the above. This is a separate non-green state and is never counted as green.
+
+Exit 0 clean, 1 on MISSING, 2 if it could not run, 3 if the UNRESOLVED set differs from the pinned
+inventory (`UNRESOLVED_COUNT`/`UNRESOLVED_SHA256`), or, with `--strict`, if ANY citation is
+UNRESOLVED. The pinned inventory exists so that citations committed before 2026-09-23 do not block
+every commit. They are still printed as UNRESOLVED on every run, and a NEW one fails.
 """
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -53,7 +73,7 @@ AREA = "docs/orchestration/state/"
 #: way is fail-CLOSED: the worst case is checking a path we did not have to, which is visible,
 #: rather than skipping one we did, which is not.
 _AREA_MARKER = "/" + AREA
-EXT = (".npz", ".npy", ".h5", ".hdf5", ".root", ".pkl", ".parquet")
+EXT = (".npz", ".npy", ".h5", ".hdf5", ".root", ".pkl", ".parquet", ".out", ".err", ".log")
 PATHLIKE = re.compile(r"[\w./\-]+(?:" + "|".join(re.escape(e) for e in EXT) + r")\b")
 
 
@@ -107,9 +127,88 @@ def named_artifacts(text, root=None):
     return out
 
 
-def scan(rev=None, root=None):
-    """Return (findings, n_receipts, n_paths). `rev` evaluates a historical commit instead
-    of the working tree -- needed to demonstrate the check against the cases that motivated it."""
+#: String fields whose value is a RUN DIRECTORY that a bare filename may live in. Listed explicitly:
+#: code roots and data roots are checkouts, not the directory a log was written to.
+DECLARED_DIR_KEY = re.compile(
+    r"(?i)^(?:dir|[a-z0-9_]*_dir|run_root|member_root|member_output_root|family_root|"
+    r"output_root|logs?_root|evidence_root)$")
+
+#: The UNRESOLVED citations already committed when bare-filename resolution landed (2026-09-23),
+#: stored as a count and a sha256 over the sorted "receipt<TAB>citation<NL>" rows. The default mode
+#: fails (exit 3) when the set CHANGES, whether a citation is added or removed. Re-derive the values
+#: with `--list-unresolved`, and change them only in the same commit as the receipt change that
+#: caused the difference.
+#: Measured 2026-09-23 on the tree based on f8d6f276: 169 receipts, bare citations TRACKED 9 /
+#: MISSING 0 / OFF-AREA 29 / BY-PATH 7 / UNRESOLVED 64.
+UNRESOLVED_COUNT = 64
+UNRESOLVED_SHA256 = "f142d18736b1db8a7b43e2491eccaca9d77f364ef643e8ef956a9d8bae6a13e5"
+
+
+def bare_citations(text):
+    """Artifact-extension tokens with NO directory component, named anywhere in a receipt."""
+    return {m for m in PATHLIKE.findall(text) if "/" not in m}
+
+
+def declared_dirs(text):
+    """Values of DECLARED_DIR_KEY string fields anywhere in the receipt's JSON."""
+    try:
+        doc = json.loads(text)
+    except (json.JSONDecodeError, ValueError):
+        return []
+    out, stack = [], [doc]
+    while stack:
+        o = stack.pop()
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if isinstance(v, str) and v and DECLARED_DIR_KEY.match(str(k)):
+                    out.append(v)
+                elif isinstance(v, (dict, list)):
+                    stack.append(v)
+        elif isinstance(o, list):
+            stack.extend(o)
+    return sorted(set(out))
+
+
+def classify_bare(receipt, name, text, tracked, tracked_dirs, root=None):
+    """Resolve ONE bare citation. Returns (state, resolved_to)."""
+    here = os.path.dirname(receipt)
+    stem = receipt[:-len(".json")] if receipt.endswith(".json") else receipt
+    # The flat state/ directory always holds tracked files, so it can only resolve a citation;
+    # it is never evidence that the file is MISSING. A receipt's own subdirectory is.
+    area_candidates = [(here, here.rstrip("/") + "/" != AREA), (stem, True)]
+    offarea = []
+    for d in declared_dirs(text):
+        rel = normalise(d.rstrip("/"), root)
+        if rel.startswith("/"):
+            offarea.append(d)
+        elif (rel + "/").startswith(AREA):
+            area_candidates.append((rel, True))
+        else:
+            offarea.append(d)
+    for d, _ in area_candidates:
+        cand = os.path.join(d, name)
+        if cand in tracked:
+            return "TRACKED", cand
+    for d, specific in area_candidates:
+        if specific and d in tracked_dirs:
+            return "MISSING", os.path.join(d, name)
+    if offarea:
+        return "OFF-AREA", os.path.join(offarea[0], name)
+    for m in PATHLIKE.findall(text):
+        if "/" in m and os.path.basename(m) == name:
+            return "BY-PATH", m
+    return "UNRESOLVED", None
+
+
+def unresolved_digest(rows):
+    payload = "".join(f"{r}\t{n}\n" for r, n in sorted(rows)).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def scan_full(rev=None, root=None):
+    """Every citation in every state/*.json receipt, classified. `rev` evaluates a historical
+    commit instead of the working tree. That is needed to show the check against the cases that
+    motivated it."""
     root = root or repo_root()
     if rev:
         tracked = set(_run(["git", "ls-tree", "-r", rev, "--name-only"], root).split("\n"))
@@ -128,14 +227,33 @@ def scan(rev=None, root=None):
             except OSError:
                 return ""
 
-    findings, n_paths = [], 0
-    for f in receipts:
-        for rel in sorted(named_artifacts(read(f), root)):
+    tracked_dirs = {os.path.dirname(t) for t in tracked if t}
+    findings, unresolved, states, n_paths = [], [], {}, 0
+    for f in sorted(receipts):
+        text = read(f)
+        for rel in sorted(named_artifacts(text, root)):
             n_paths += 1
             if rel not in tracked:
                 findings.append({"receipt": f, "artifact": rel,
                                  "why": "named by a tracked receipt, absent from git"})
-    return findings, len(receipts), n_paths
+        for name in sorted(bare_citations(text)):
+            state, where = classify_bare(f, name, text, tracked, tracked_dirs, root)
+            states[state] = states.get(state, 0) + 1
+            if state == "MISSING":
+                findings.append({"receipt": f, "artifact": where,
+                                 "why": f"bare citation {name!r}; the receipt's evidence directory "
+                                        f"is tracked but does not carry it"})
+            elif state == "UNRESOLVED":
+                unresolved.append((f, name))
+    return {"findings": findings, "n_receipts": len(receipts), "n_paths": n_paths,
+            "bare_states": states, "unresolved": unresolved,
+            "unresolved_sha256": unresolved_digest(unresolved)}
+
+
+def scan(rev=None, root=None):
+    """Return (findings, n_receipts, n_paths); see `scan_full` for the classified detail."""
+    r = scan_full(rev=rev, root=root)
+    return r["findings"], r["n_receipts"], r["n_paths"]
 
 
 def historical_cases(root=None):
@@ -150,6 +268,8 @@ def historical_cases(root=None):
          "GATE5_CSTAT_N50.npz"),
         ("849b70f^", "lane D's cross-check, the commit before the artifact landed",
          "LANED_CSTAT_CROSSCHECK.npz"),
+        ("e7aea2c9^", "nine .out evidence files cited by BARE filename, dropped by .gitignore",
+         "centring_n50.out"),
     ]
     out = []
     for rev, desc, needle in cases:
@@ -170,8 +290,18 @@ def self_test(root=None):
     fake = "docs/orchestration/state/__selftest_nonexistent__/OBJECT.npz"
     caught = bool(named_artifacts(json.dumps({"artifact": {"path": fake}})))
     tracked = set(_run(["git", "ls-files"], root or repo_root()).split("\n"))
+    # Bare-citation controls on a synthetic tree: one green case, plus MISSING and UNRESOLVED.
+    rcpt = AREA + "__selftest__.json"
+    t_tracked = {AREA + "__selftest__/probe.py", AREA + "__selftest__/kept.out"}
+    t_dirs = {os.path.dirname(x) for x in t_tracked}
+    body = json.dumps({"evidence": {"kept.out": {}, "dropped.out": {}}})
+    bare = {n: classify_bare(rcpt, n, body, t_tracked, t_dirs)[0] for n in ("kept.out", "dropped.out")}
+    lost = classify_bare(AREA + "__elsewhere__.json", "lost.err",
+                         json.dumps({"x": "lost.err"}), t_tracked, t_dirs)[0]
+    bare_ok = bare == {"kept.out": "TRACKED", "dropped.out": "MISSING"} and lost == "UNRESOLVED"
     return {"synthetic_path_extracted": caught, "and_is_untracked": fake not in tracked,
-            "control_fires": bool(caught and fake not in tracked)}
+            "bare_states": dict(bare, **{"lost.err": lost}),
+            "control_fires": bool(caught and fake not in tracked and bare_ok)}
 
 
 def main(argv=None):
@@ -181,27 +311,53 @@ def main(argv=None):
     ap.add_argument("--historical", action="store_true",
                     help="report whether this fires on the cases that motivated it")
     ap.add_argument("--json", action="store_true", help="emit a JSON receipt")
+    ap.add_argument("--strict", action="store_true",
+                    help="exit 3 on ANY unresolved citation, not only on a change to the pinned set")
+    ap.add_argument("--list-unresolved", action="store_true",
+                    help="print every UNRESOLVED citation and the set's count/sha256")
     a = ap.parse_args(argv)
 
     root = repo_root()
     ctl = self_test(root)
-    findings, n_receipts, n_paths = scan(rev=a.rev, root=root)
+    r = scan_full(rev=a.rev, root=root)
+    findings, unresolved = r["findings"], r["unresolved"]
     hist = historical_cases(root) if a.historical else None
+    pinned = (len(unresolved) == UNRESOLVED_COUNT and r["unresolved_sha256"] == UNRESOLVED_SHA256)
+    # A historical --rev is compared with nothing: the pin describes the working tree.
+    unresolved_fails = bool(unresolved) and (a.strict or (not pinned and not a.rev))
 
     if a.json:
-        print(json.dumps({"findings": findings, "n_receipts": n_receipts,
-                          "n_deliverable_paths": n_paths, "control": ctl,
-                          "historical": hist, "rev": a.rev or "working tree"},
+        print(json.dumps({"findings": findings, "n_receipts": r["n_receipts"],
+                          "n_deliverable_paths": r["n_paths"], "bare_states": r["bare_states"],
+                          "unresolved": [{"receipt": f, "citation": n} for f, n in unresolved],
+                          "unresolved_sha256": r["unresolved_sha256"],
+                          "unresolved_matches_pinned_inventory": pinned,
+                          "control": ctl, "historical": hist, "rev": a.rev or "working tree"},
                          indent=1, sort_keys=True))
     else:
         where = a.rev or "working tree"
-        print(f"RECEIPT-ARTIFACTS :: {n_receipts} receipts scanned at {where}, "
-              f"{n_paths} deliverable-area artifact path(s), {len(findings)} missing")
+        st = r["bare_states"]
+        print(f"RECEIPT-ARTIFACTS :: {r['n_receipts']} receipts scanned at {where}, "
+              f"{r['n_paths']} deliverable-area artifact path(s), {len(findings)} missing")
+        print("  bare-filename citations: " + ", ".join(
+            f"{k} {st.get(k, 0)}" for k in ("TRACKED", "MISSING", "OFF-AREA", "BY-PATH", "UNRESOLVED")))
+        if unresolved:
+            tag = ("pinned inventory, UNCHANGED" if pinned else
+                   f"DIFFERS from the pinned inventory ({UNRESOLVED_COUNT} / "
+                   f"{(UNRESOLVED_SHA256 or 'none')[:12]})")
+            print(f"  NOT GREEN: {len(unresolved)} citation(s) UNRESOLVED -- NOT CHECKED ({tag}); "
+                  f"sha256 {r['unresolved_sha256'][:12]}. `--list-unresolved` names them.")
+        if a.list_unresolved or (unresolved and not pinned and not a.rev):
+            for f, n in unresolved:
+                print(f"    UNRESOLVED {n}  <- {f}")
+            print(f"  UNRESOLVED_COUNT = {len(unresolved)}\n"
+                  f"  UNRESOLVED_SHA256 = \"{r['unresolved_sha256']}\"")
         if not ctl["control_fires"]:
             print("  *** the positive control did not fire; this check is not evidence ***")
         for x in findings:
-            print(f"  FAIL {x['artifact']}\n       named by {x['receipt']} but not tracked. "
-                  f"If it is a deliverable, `git add -f` it; .gitignore:29 excludes *.npz.")
+            print(f"  FAIL {x['artifact']}\n       named by {x['receipt']} but not tracked "
+                  f"({x['why']}). If it is a deliverable, `git add -f` it; .gitignore excludes "
+                  f"*.npz/*.out/*.err/*.log.")
         if hist:
             print("\n  -- would it have caught the cases that motivated it? --")
             for h in hist:
@@ -209,7 +365,9 @@ def main(argv=None):
                 print(f"    {h['rev']:12s} {v:14s} {h['desc']}")
     if not ctl["control_fires"]:
         return 2
-    return 1 if findings else 0
+    if findings:
+        return 1
+    return 3 if unresolved_fails else 0
 
 
 if __name__ == "__main__":

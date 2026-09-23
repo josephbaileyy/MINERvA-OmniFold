@@ -290,8 +290,15 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: reproduces 120 / 0b29b654 exactly. Power-tested: flipping the manifest pin's last hex digit makes
 #: this file report `MISMATCH nd-unfolding/pet/validate_gate5_training_artifacts.py`. That was
 #: measured, then reverted.
-RECEIPT_BINDING_COUNT = 120
-RECEIPT_BINDING_SHA256 = "23f68f4b35d86348b9ccf97e9edce365254e0c8c1b049dd0944c826954e04f9f"
+#: 120 -> 121, digest 23f68f4b -> 298eceb4 (2026-09-23, ISSUE-48). One binding was ADDED:
+#:   ADDED   docs/orchestration/state/step1-traj-ihedge-56525829.salloc.log
+#:           e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+#: The widened verify_receipt_artifacts.py (.log now in scope) found this 0-byte log. It is cited,
+#: with its sha256, by state/step1-ihedge-launch-56525829.json, and git had never carried it. It is
+#: now force-added, byte-identical to the cluster copy (0 bytes, the empty-file sha256, measured on
+#: Perlmutter). Excluding that one row reproduces 120 / 23f68f4b exactly.
+RECEIPT_BINDING_COUNT = 121
+RECEIPT_BINDING_SHA256 = "298eceb4583d9522714bcaa82ea364a8bd63b4ba187f7ee5ac917c70da378376"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
