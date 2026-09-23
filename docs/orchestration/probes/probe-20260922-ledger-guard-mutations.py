@@ -569,9 +569,13 @@ def main() -> int:
             # ⚠ review #16b: "load-bearing" meant "some result changes", not "some case fails OPEN" as this
             # comment once said. Both directions are printed: OPEN = a refusal case now passes; CLOSED = a
             # CONTROL now refuses. A line pinned only by CLOSED guards against over-strictness, not staleness
-            opened = sum(1 for x in fired if 0 not in x[2] and x[1] == 0)
-            closed = sum(1 for x in fired if x[2] == (0,))
-            print(f"  {kind} {label:58s} {len(fired)} case(s) fire (open {opened}, closed {closed})"
+            opened = sum(1 for x in fired if 0 not in x[2] and x[1] == 0 and not x[3])
+            closed = sum(1 for x in fired if x[2] == (0,) and not x[3])
+            crashed = sum(1 for x in fired if x[3])       # only a `pre-` regression may count these (self-round 74:
+            # its line once read "(open 0, closed 0)" beside "1 case(s) fire", naming no way it fired)
+            other = len(fired) - opened - closed - crashed   # a refusal with the WRONG nonzero code, e.g. 1 for (2,)
+            print(f"  {kind} {label:58s} {len(fired)} case(s) fire (open {opened}, closed {closed}, crash {crashed}"
+                  + (f", wrong-code {other}" if other else "") + ")"
                   + (f", {len(w) - len(fired)} only by crashing" if len(w) > len(fired) else ""))
         print()
         if skipped:
