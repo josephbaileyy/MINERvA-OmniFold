@@ -43,5 +43,35 @@ date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cp
 2026-09-22T13:37:41Z	B1	58748399_12	m3246	shared_milan_ss11/shared	1	0	145	0	0.644	COMPLETED	scalar OmniFold muon_eavail/hgb/seed1, 20 iterations	phase_b/scalar/resources-B1.tsv
 2026-09-22T13:40:56Z	B1	58748399_13	m3246	shared_milan_ss11/shared	1	0	191	0	0.849	COMPLETED	scalar OmniFold muon_eavail/hgb/seed2, 20 iterations	phase_b/scalar/resources-B1.tsv
 2026-09-22T13:48:14Z	B1	58748399_14	m3246	shared_milan_ss11/shared	1	0	70	0	0.311	COMPLETED	scalar OmniFold muon_eavail/hgb/seed3, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T17:59:14Z	E1	58756787	m3246	shared_milan_ss11/shared	1	0	145	0.000	0.725	FAILED	pool cache prep; FAILED (segfault: import ROOT crashes cling in root_6_28)	phase_e/resources-E1.tsv
+	E1	58769952	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	pool caches (shared QOS); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58769953	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	D5 check (shared QOS); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770033	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	toy (shared QOS); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770073	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	superseded smoke test, cancelled before it ran	phase_e/resources-E1.tsv
+	E1	58770074	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	identifiability smoke (shared QOS); cancelled, never ran	phase_e/resources-E1.tsv
+	E1	58770115	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	references smoke (shared QOS); cancelled, never ran	phase_e/resources-E1.tsv
+	E1	58770116	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	identifiability (shared QOS); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770117_[0-2]	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	references r0 (shared QOS array); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770118_[0-2]	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	references r1 (shared QOS array); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770119_[0-2]	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	references r2 (shared QOS array); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770120	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	reference assessment (shared QOS); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+2026-09-23T04:16:29Z	E1	58780643	m3246	regular_milan_ss11/debug	1	0	131	0.000	9.316	COMPLETED	pool T and pool S input caches, D3 standardization, censuses (debug QOS)	phase_e/resources-E1.tsv
+2026-09-23T04:16:29Z	E1	58780644	m3246	regular_milan_ss11/debug	1	0	7	0.000	0.498	FAILED	D5 rebuild check; FAILED: root_6_28 has no uproot (check then run on the login node through the guard)	phase_e/resources-E1.tsv
+2026-09-23T04:23:10Z	E1	58780734	m3246	regular_milan_ss11/debug	1	0	273	0.000	19.413	COMPLETED	identifiability: 20-split equal-model null	phase_e/resources-E1.tsv
+2026-09-23T04:23:10Z	E1	58780737	m3246	regular_milan_ss11/debug	1	0	418	0.000	29.724	FAILED	references r0 chunk 0; FAILED on a NaN (0/0 E_avail ratio), superseded by 58780900	phase_e/resources-E1.tsv
+2026-09-23T04:30:58Z	E1	58780834	m3246	regular_milan_ss11/debug	1	0	212	0.000	15.076	COMPLETED	identifiability: 33 distortions + permutation nulls	phase_e/resources-E1.tsv
+2026-09-23T04:34:48Z	E1	58780900	m3246	regular_milan_ss11/debug	1	0	493	0.000	35.058	COMPLETED	references r0 chunk 0	phase_e/resources-E1.tsv
+2026-09-23T04:34:48Z	E1	58780902	m3246	regular_milan_ss11/debug	1	0	526	0.000	37.404	COMPLETED	references r0 chunk 1	phase_e/resources-E1.tsv
+2026-09-23T04:43:49Z	E1	58781106	m3246	regular_milan_ss11/debug	1	0	471	0.000	33.493	COMPLETED	references r0 chunk 2	phase_e/resources-E1.tsv
+2026-09-23T04:43:49Z	E1	58781107	m3246	regular_milan_ss11/debug	1	0	11	0.000	0.782	COMPLETED	known-function toy (engine normalization only)	phase_e/resources-E1.tsv
+2026-09-23T04:45:44Z	E1	58781132	m3246	regular_milan_ss11/debug	1	0	495	0.000	35.200	COMPLETED	references r1 chunk 0	phase_e/resources-E1.tsv
+2026-09-23T04:52:43Z	E1	58781324	m3246	regular_milan_ss11/debug	1	0	2	0.000	0.142	FAILED	references r1 chunk 1; FAILED in 2 s: hand-typed pin SHA refused by the wrapper	phase_e/resources-E1.tsv
+2026-09-23T05:27:11Z	E1	58781969	m3246	regular_milan_ss11/debug	1	0	512	0.000	36.409	COMPLETED	references r1 chunk 1	phase_e/resources-E1.tsv
+2026-09-23T05:27:11Z	E1	58781970	m3246	regular_milan_ss11/debug	1	0	482	0.000	34.276	COMPLETED	references r1 chunk 2	phase_e/resources-E1.tsv
+2026-09-23T05:36:08Z	E1	58781972	m3246	regular_milan_ss11/debug	1	0	473	0.000	33.636	COMPLETED	references r2 chunk 0	phase_e/resources-E1.tsv
+2026-09-23T05:36:08Z	E1	58781973	m3246	regular_milan_ss11/debug	1	0	501	0.000	35.627	COMPLETED	references r2 chunk 1	phase_e/resources-E1.tsv
+2026-09-23T05:45:05Z	E1	58781974	m3246	regular_milan_ss11/debug	1	0	494	0.000	35.129	COMPLETED	references r2 chunk 2	phase_e/resources-E1.tsv
+2026-09-23T05:45:05Z	E1	58782099	m3246	regular_milan_ss11/debug	1	0	830	0.000	59.022	COMPLETED	reference assessment (b): pool S at 1x and 8x	phase_e/resources-E1.tsv
+2026-09-23T05:53:33Z	E1	58782108	m3246	regular_milan_ss11/debug	1	0	12	0.000	0.853	COMPLETED	known-function toy with the rate-matched variant	phase_e/resources-E1.tsv
 2026-09-22T17:30Z	pools	58755437	m3246	regular_milan_ss11/debug	1	0	0	0	0	CANCELLED	first pool build (superseded before start: silent-skip bug)	pools/resources-pools.tsv
 2026-09-22T17:34Z	pools	58755613	m3246	regular_milan_ss11/debug	1	0	101	0	7.18	COMPLETED	pool manifest build at 295572eb	pools/resources-pools.tsv
