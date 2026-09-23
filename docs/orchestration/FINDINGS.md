@@ -67,7 +67,7 @@ first filing (`BEN-530`).
 
 All pre-freeze long forms are indexed by the frozen `FINDINGS.md` at the evidence tag.
 
-Four long forms remain in the live checkout: three because the canonical-designation guard inventories
+Four pre-freeze long forms remain in the live checkout: three because the canonical-designation guard inventories
 their paths, and one because hash-pinned runtime diagnostics route to it. All other long forms are
 recovered from the frozen index.
 
@@ -77,6 +77,36 @@ recovered from the frozen index.
 | `FINDING-20260807-checkpoint-is-not-the-trained-model.md` | Full evidence row at the evidence tag. |
 | `FINDING-20260807-step1-under-achieves.md` | Full evidence row at the evidence tag. |
 | `FINDING-20260811-promotion-by-move-silently-repoints-artifacts.md` | Full evidence row at the evidence tag. |
+
+Post-freeze long forms (filed after the 2026-08-20 evidence tag) live only in the live checkout and
+are indexed here. Each row is a title, not a summary of its result: read the file's own `CITABLE FOR`
+/ `NOT CITABLE FOR` lines before quoting it.
+
+| post-freeze long form | subject |
+|---|---|
+| `FINDING-20260822-a-hold-that-instructed-its-own-deletion.md` | A governing hold document instructed its own deletion and was router-inert for its whole life; the hold file it concerns is preserved unchanged as evidence. |
+| `FINDING-20260822-clause-c-adopt-is-unreachable-under-its-own-pause.md` | Clause (c) of the B1 steps (4)/(5) member pause cannot be satisfied through the real launcher path as written. |
+| `FINDING-20260824-five-rules-from-the-r5-night.md` | Evidence home for `BEN-530`–`BEN-534`: five process defects from the OI-126 R5 night and the playbook amendments they justify. |
+| `FINDING-20260824-gate2-preparation-and-four-open-rulings.md` | Gate-2 clause list with per-clause settling instruments, and four questions about what Gate 2 means that a lane may not answer. |
+| `FINDING-20260828-ben-citations-resolve-only-at-the-evidence-tag.md` | Measurement of how many source `BEN-*` citations resolve only at the evidence tag. |
+| `FINDING-20260828-oi136-guard-provenance.md` | Provenance of the `OI-136` import guard (`nd-unfolding/mnv_guarded_run.py`), moved out of its docstring. |
+| `FINDING-20260828-polish-pass-residue.md` | What the 2026-08-28 polishing pass did not touch, and why. |
+| `FINDING-20260829-f17b-deferred-surfaces-and-stale-freeze-prose.md` | Surfaces the 2026-08-29 F-17(b) test-hardening pass deferred, and freeze prose the freeze's expiry stranded. |
+| `FINDING-20260830-k0-member-namespace-blocks-submission.md` | Measured state of the k=0 member namespace after the `aa67c426` rehearsal and its consequence for the seven-arm submission. |
+| `FINDING-20260830-k0r2-env-pathcheck-submitter-declaration-omitted.md` | Why the seven k=0 arms of run `k0-7ac0edec-20260830T000215Z` died on `env-pathcheck`. |
+| `FINDING-20260830-quarantine-nocompute-legs-measured.md` | The 2026-07-12 quarantine's no-compute legs measured at `32e403b8`; regrades nothing. |
+| `FINDING-20260831-ben039-detector-is-triple-bound.md` | The `BEN-039` `tautological-datum` detector is bound on three axes; folded into `OI-179`. |
+| `FINDING-20260831-strip-noncode-inverts-on-a-closing-triple-quote.md` | `audit_gates_that_cannot_fail.py`'s comment stripper misreads a closing triple quote; corrects the triple-bound finding above. |
+| `FINDING-20260901-cause4-jitter-floor-recovered.md` | Cause 4's jitter floor recovered, and a ledger value that describes a product no longer present. |
+| `FINDING-20260901-f7-floor-ratio-and-seed-pull-measured.md` | The F7 predeclared test measured on the candidate, with the seed-ensemble pull. |
+| `FINDING-20260901-k0r2-redeploy-precondition-delta.md` | Per-launcher precondition delta of the `7ac0edec` → `main` redeploy for the remaining k=0 arms. |
+| `FINDING-20260901-p-leg-status-measured-against-the-candidate.md` | Status of the quarantine `P` leg read off committed receipts for the candidate. |
+| `FINDING-20260901-pscratch-read-stalls-block-a2b.md` | Intermittent pscratch read stalls make `A-2(b)` unmeasurable. |
+| `FINDING-20260906-cause3-scan-execution-composition.md` | The cause-3 fixed-draw scan's execution declaration composes into defects; remedies are proposals only. |
+| `FINDING-20260906-r5-meter-undercounted-requeue-attempts.md` | The R5 spend meter under-counted requeued execution attempts; the required `sacct` query and receipt schema 2. |
+| `FINDING-20260910-projection-builders-agree-numerically-and-diverge-on-refusal.md` | The two projection builders agree on weights and disagree on refusal; amended the same day. |
+| `FINDING-20260910-r5-attempt-identity-is-not-stable-across-queries.md` | `R5` attempt identity is not stable across `sacct` queries; an accounting-instrument finding. |
+| `FINDING-20260919-build-time-cv-held-fixed-is-not-the-spec-condition.md` | The build-time `cv_held_fixed` test measures a different proposition than its name; disclosure, not a repair. |
 
 | id | frozen evidence |
 |---|---|

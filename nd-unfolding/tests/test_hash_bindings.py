@@ -615,17 +615,50 @@ def test_a_revision_pinned_bare_sha_does_not_become_an_unpaired_complaint():
     assert out == [] and pinned == [] and unpaired == []
 
 
-def test_the_narrowing_costs_the_live_tree_no_coverage():
-    """Measured, not argued: the repository contains no revision-pinned pair today.
+#: The revision-pinned pairs that have been REVIEWED, as (receipt, path, revision, sha256).
+#: When the collector was narrowed (ab341cc4, 2026-09-09 13:37) the tree held zero such pairs.
+#: One minute later f71ad116 landed the Sep-09 talk, whose measurement tables record the sources
+#: they read as `{path, revision, sha256}` -- exactly the shape the narrowing was written for.
+#: Reviewed 2026-09-23: all 12 digests match `git show <revision>:<path>`, and 11 of them name a
+#: tracked path, so excluding them from the worktree comparison removes 11 rows that would
+#: otherwise compare an immutable git object against a file that has legitimately moved on
+#: (VALIDATION_LEDGER.md among them). A pair outside this set is unreviewed and fails below.
+_TALK = "docs/sep-09-presentation/ai-research-talk/measurements/"
+_REV_901F = "901f2c647355d69412b5c190fcb1df02d1c8aa14"
+REVIEWED_REVISION_PINNED = frozenset({
+    (_TALK + "metrics.json", "docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json",
+     _REV_901F, "f84305193b8886f22d83a31269feaf4d73829a315e5a7be8096ac071e390dc82"),
+    (_TALK + "metrics.json", "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json",
+     _REV_901F, "8d3079f828175119df7ea156547ecd6869c9ea3e5f7892b092c7521758cbdc4f"),
+    (_TALK + "metrics.json",
+     "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.slurm-56445883.batch512.json",
+     _REV_901F, "9901a23bbe20dd614cfbfd8e24f19c24e259aa4f3303b9a203844e71f1f7484c"),
+    (_TALK + "two_d_uncertainty.json",
+     "2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/MEFHC_fig6_7_uncertainty_summary.txt",
+     _REV_901F, "0571c4ade51f1d22eb2b4957db5aa8f417f10559cdb36a28ebb1b9332cc1b40b"),
+    (_TALK + "two_d_uncertainty.json", "2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md",
+     _REV_901F, "084a88ae4436b28a5df0989cba73c859fa6a659ce7cf858851b0f973f7036c04"),
+    (_TALK + "two_d_uncertainty.json", "2d-unfolding/2D_OMNIFOLD_REFERENCE.md",
+     _REV_901F, "9c7d2b195dab8e6ca419482be6b006a6cc95be1788ab08cc7b4d1d7516cae450"),
+    (_TALK + "two_d_uncertainty.json", "VALIDATION_LEDGER.md",
+     _REV_901F, "46110d7be0507701bf5314bc4ed14f56995744bd78bb43fda1da6312974078e9"),
+    (_TALK + "two_d_uncertainty.json", "2d-unfolding/uq/analyze_universes.py",
+     _REV_901F, "c070e852cda3e647b4ede439fc4fcc38ad73c313b1fa071d44a856039dcbc148"),
+    (_TALK + "two_d_uncertainty.json", "2d-unfolding/minerva_paper_anc/README",
+     _REV_901F, "715fd56e53d61bf07565dac4195b1f7d71d2f6453ea014f19144d1965a6ffe2a"),
+    (_TALK + "corner_comparison.json", "VALIDATION_LEDGER.md",
+     _REV_901F, "46110d7be0507701bf5314bc4ed14f56995744bd78bb43fda1da6312974078e9"),
+    (_TALK + "corner_comparison.json", "docs/analysis-note/sec_eavailw.tex",
+     _REV_901F, "d59a0604c217cf72a38354564a08df0c87443fb2d4fe9beaadb27207f4af7e9b"),
+    (_TALK + "corner_comparison.json", "docs/COLLABORATOR_QUESTIONS.md",
+     _REV_901F, "8648f2a848b92e6d8db6e9ae8a2d46169c764542ba77735610f0150953b342cf"),
+})
+#: How many TRACKED worktree bindings excluding the reviewed set costs. Measured 2026-09-23.
+REVIEWED_NARROWING_COST = 11
 
-    The whole justification for narrowing a shared gate's collector is that existing
-    coverage is untouched. If a revision-pinned receipt is ever added, this test turns into
-    the place that says so, and the delta has to be reviewed rather than absorbed silently.
-    """
+
+def _live_receipts(m, root):
     import glob
-    m = _verifier_module()
-    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    plain, pinned = [], []
     for f in (glob.glob(os.path.join(root, "docs/**/*.json"), recursive=True)
               + glob.glob(os.path.join(root, "nd-unfolding/**/*.json"), recursive=True)):
         try:
@@ -634,13 +667,88 @@ def test_the_narrowing_costs_the_live_tree_no_coverage():
             continue
         if isinstance(doc, dict) and m.NEGATIVE_CONTROL_MARKER in doc:
             continue
-        m.collect(doc, os.path.relpath(f, root), plain, [], pinned)
+        yield os.path.relpath(f, root), doc
+
+
+def _revision_pinned_quads(m, root):
+    """(receipt, path, revision, sha256) for every pair `collect` routes to `revision_pinned`.
+
+    `collect` returns (path, sha256, receipt) and drops the revision, so the revision is read
+    off the enclosing dict here; the count is cross-checked against `collect` so the two
+    readings cannot silently diverge.
+    """
+    quads, via_collect = [], []
+
+    def walk(obj, src):
+        if isinstance(obj, dict):
+            rev = obj.get("revision")
+            if isinstance(rev, str):
+                sink = []
+                m.collect({k: v for k, v in obj.items()
+                           if not isinstance(v, (dict, list))}, src, [], [], sink)
+                quads.extend((src, p, rev, s) for p, s, _ in sink)
+            for v in obj.values():
+                walk(v, src)
+        elif isinstance(obj, list):
+            for v in obj:
+                walk(v, src)
+
+    for src, doc in _live_receipts(m, root):
+        walk(doc, src)
+        m.collect(doc, src, [], [], via_collect)
+    assert len(quads) == len(via_collect), (
+        f"revision reader saw {len(quads)} pinned pairs, collect() routed {len(via_collect)}")
+    return quads
+
+
+def test_the_narrowing_costs_only_the_reviewed_bindings():
+    """Measured, not argued: excluding revision-pinned pairs costs exactly the reviewed set.
+
+    The justification for narrowing a shared gate's collector is that no coverage is lost
+    silently. The tree held zero revision-pinned pairs when the narrowing landed; it now holds
+    the reviewed set above. A new pinned pair, or a change in what excluding them costs, fails
+    here so the delta is reviewed rather than absorbed.
+    """
+    m = _verifier_module()
+    root = _REPO
+    quads = _revision_pinned_quads(m, root)
+    unreviewed = sorted(set(quads) - REVIEWED_REVISION_PINNED)
+    vanished = sorted(REVIEWED_REVISION_PINNED - set(quads))
+    assert not unreviewed, (
+        "revision-pinned pairs not yet reviewed (verify each at its revision, then add it to "
+        f"REVIEWED_REVISION_PINNED): {unreviewed}")
+    assert not vanished, f"reviewed revision-pinned pairs no longer in the tree: {vanished}"
+
+    plain, pinned = [], []
+    for src, doc in _live_receipts(m, root):
+        m.collect(doc, src, plain, [], pinned)
     tracked = m.tracked_paths(root)
     with_pins, _ = m.receipt_inventory(plain + pinned, root, tracked)
     without, _ = m.receipt_inventory(plain, root, tracked)
-    assert len(with_pins) == len(without), (
-        f"excluding revision-pinned pairs now costs {len(with_pins) - len(without)} "
-        f"tracked binding(s); review that delta rather than deleting this test")
+    assert len(with_pins) - len(without) == REVIEWED_NARROWING_COST, (
+        f"excluding revision-pinned pairs now costs {len(with_pins) - len(without)} tracked "
+        f"binding(s), reviewed at {REVIEWED_NARROWING_COST}; review that delta rather than "
+        f"updating the constant")
+
+
+def test_every_revision_pinned_pair_verifies_at_its_revision():
+    """The check the narrowing moved these pairs TO: the digest of `git show <rev>:<path>`.
+
+    Excluding a pair from the worktree comparison is only safe if something still compares it
+    against the object it names. Fails closed if the revision is unreachable.
+    """
+    import hashlib
+    m = _verifier_module()
+    quads = _revision_pinned_quads(m, _REPO)
+    assert quads, "no revision-pinned pairs found -- the reviewed set says there are 12"
+    bad = []
+    for src, path, rev, sha in quads:
+        r = subprocess.run(["git", "-C", _REPO, "show", f"{rev}:{path}"], capture_output=True)
+        if r.returncode != 0:
+            bad.append((src, path, rev, "UNREADABLE: " + r.stderr.decode(errors="replace").strip()))
+        elif hashlib.sha256(r.stdout).hexdigest() != sha:
+            bad.append((src, path, rev, "MISMATCH"))
+    assert not bad, f"revision-pinned pairs that do not verify at their revision: {bad}"
 
 
 # --- AUDIT-FINDINGS-20260731 J11-J14: shell and python pins, exact exemptions -----------------
