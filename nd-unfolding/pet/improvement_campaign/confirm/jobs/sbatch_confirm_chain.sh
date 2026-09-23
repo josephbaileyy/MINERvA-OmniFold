@@ -2,10 +2,11 @@
 # V1 batch launcher: run every row of a run manifest (confirm/runs/*.tsv) that is not COMPLETE,
 # four runs per node (one per GPU), each run checkpointed per OmniFold iteration by B2's loop;
 # at its deadline the job RESUBMITS ITSELF (default gpu_debug, 30 min) until every row is
-# COMPLETE. Resume is bit-exact (B2's per-step seeding), so a chained run is the same computation
-# as an uninterrupted one. COMPLETE runs are scored in the job (`score_replicate.py`) against the
-# replicate target and, for pool rows, the population target (computed once per (pool,
-# distortion) into $OUT/targets/ by `population_target.py`).
+# COMPLETE (never after a round in which a run crashed). Resume is bit-exact (B2's per-step
+# seeding), so a chained run is the same computation as an uninterrupted one. COMPLETE runs are
+# scored in the job (`score_replicate.py`) against the replicate target and, for pool rows, the
+# population target (computed once per (pool, distortion) into $OUT/targets/ by
+# `population_target.py`).
 #
 #   env: MINE MINE_COMMIT OUT MANIFEST   (MANIFEST relative to confirm/, e.g. runs/x.tsv)
 #        [SCORE=1] [CHAIN_QOS=debug CHAIN_TIME=00:30:00 MAX_ROUNDS=16 DEADLINE_MARGIN=240]
@@ -137,13 +138,16 @@ for ROW in "${TODO[@]}"; do
   i=$(( i + 1 ))
 done
 for pid in "${pids[@]}"; do wait "$pid" || status=1; done
+runs_failed=$status        # a run that stops at the deadline exits 0 (INCOMPLETE); a crash does not
 for pid in "${tpids[@]}"; do wait "$pid" || status=1; done
 if [[ "${SCORE:-1}" == 1 ]]; then for ROW in "${ROWS[@]}"; do score_one "$ROW"; done; fi
 [[ -z "$(git -C "$MINE" status --porcelain)" ]] || status=1
 
 mapfile -t LEFT < <(remaining)
 ROUNDS=$(ls "$OUT"/chain-*.txt 2>/dev/null | wc -l)
-if (( ${#LEFT[@]} > 0 )) && (( ROUNDS < ${MAX_ROUNDS:-16} )); then
+if (( ${#LEFT[@]} > 0 )) && (( runs_failed != 0 )); then
+  echo "NOT resubmitting: a run exited non-zero (exit-codes.txt); fix and resubmit" >> "$OUT/chain-$SLURM_JOB_ID.txt"
+elif (( ${#LEFT[@]} > 0 )) && (( ROUNDS < ${MAX_ROUNDS:-16} )); then
   NEXT=$(sbatch --parsable -q "${CHAIN_QOS:-debug}" -t "${CHAIN_TIME:-00:30:00}" \
     -o "$OUT/slurm-%j.out" --export=ALL "$SELF" 2>&1) || NEXT="resubmit failed: $NEXT"
   echo "resubmitted: $NEXT (left: ${#LEFT[@]})" >> "$OUT/chain-$SLURM_JOB_ID.txt"
