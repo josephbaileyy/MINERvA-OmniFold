@@ -85,9 +85,10 @@ remedy itself.
 | 36 (self) | **1** | re-derived the release package's science numbers from its bytes — every digest and size, the pairing digest, the 55,162 unreported cells, `λ_min`'s sign, `√Tr C`, `VL145`'s retained counts at `1e-6` and `1e-12`, and `matrix_rank`'s 41 — all reproduce. ⚠ **One of mine does not:** the cross-host caveat I added at review #10a said `λ_min` agrees on *6 significant figures*; it agrees on **5** (`4.35910…` vs `4.35911…`). I had measured it with a common string prefix, and the decimal point was one of the six characters. Fixed in the README and in this ledger's agy-#10a row; the same wrong figure is in two pushed commit messages that cannot be edited, `7657aad3` here and `679217f3` in the standalone note repository, and is corrected here |
 | 37 (self) | **0** | a fresh class: every piece of arithmetic this lane DERIVED in prose — deltas, relative changes, products, totals, ratios — recomputed from the operands printed beside it, with the L2 table's operands parsed from the record rather than retyped. 18 of 18 reproduce |
 | 38 (self) | **1** | another fresh class: every code citation on a lane-added line — `file:line`, bare `:N`, and `module.symbol` — resolved at HEAD and checked for the CONTENT its prose describes, not mere existence. All resolve. ⚠ **But reading `PLAN-20260918` §16.1a to check two of them exposed a scientific contradiction of mine:** §16.1a rules that `C_EW`'s smallest eigenvalues sit at the double-precision noise floor, *"so their sign is not meaningful"*; the release README marked *"`λ_min` is positive"* with a ✅ since the package build (`6a425f5b`), and the cross-host caveat I added at `7657aad3` called that sign *"the citable content"* — the opposite of the governing record, and of the README's own *DO NOT INVERT* note. ⚠ **Round 36 had "verified" the sentence** by asserting `λ_min > 0`: my probe encoded my belief, so it could only confirm it. Row rewritten: computed, not a check; sign not citable; §16.1a quoted. `VL145` was already scoped correctly |
+| 39 (self) | **1** | followed round 38's finding to its sibling claim: every eigenvalue-SIGN statement on a lane-added line (21). ⚠ **The mirror-image error, one sentence at three sites** (counted once, as one claim copied): the 3D record, its `CATALOG` entry, and §3 item 7 of this report presented the 3D projection's `λ_min` as **meaningfully negative** — *"`λ_min` IS NEGATIVE HERE … the minimum genuinely is negative"* — while its most-negative/max is `−2.32e-16`, at machine epsilon: deeper in the noise than the 42x42 whose sign §16.1a rules meaningless, and far inside the `1e-9` relative PSD allowance `VL142` applies to the trunk. Round 38 had removed a false *positive* sign claim from one object; the same lane had written a false *negative* one for the other, and framed it as the analogy trap. The trap is copying EITHER sign across as a property. All three sites rewritten; `VL143`'s hits are scoped inside their own cell and `sec_3d.tex` carries none |
 
-**TOTAL: self rounds 1–38 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0+0+1+1+0+1+0+0+0+0+0+0+0+2+2+0+0+1+1+0+1+0+1 = 22; independent reviews =
-14+9+7+11+9+13+10+11+13+9+14+10+10 = 140; TOTAL 162.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
+**TOTAL: self rounds 1–39 = 3+0+0+1+1+1+0+0+0+2+1+0+2+0+0+0+0+1+1+0+1+0+0+0+0+0+0+0+2+2+0+0+1+1+0+1+0+1+1 = 23; independent reviews =
+14+9+7+11+9+13+10+11+13+9+14+10+10 = 140; TOTAL 163.** **The overwhelming majority were found by the INDEPENDENT reviewers, not by me — the split is in
 the addend lines above and is not restated here.**
 
 ⚠ **THE DUPLICATION THAT CAUSED THE CLASS IS NOW REMOVED, which is the repair row 66 should have
@@ -283,8 +284,10 @@ that stated the claim.
    `dst_mask_basis = "dense destination bins receiving >= 1 source cell (no --dst-cv)"`.
 6. **ISSUE-59** is terminal-blocked under D7, not resolved.
 7. **The 3D projection has no spectral scan of its own.** `VL145` scanned the 42x42
-   `(E_avail,W)` object; nothing has scanned the 1431x1431 one, and its `λ_min` is **negative**
-   (`−4.326e-93`, most-neg/max `−2.32e-16`) where the 42x42's is positive. **Any rank for it must be reported with its cutoff. ⚠ This read *"none has been
+   `(E_avail,W)` object; nothing has scanned the 1431x1431 one. Its `λ_min` **computes** negative
+   (`−4.326e-93`, most-neg/max `−2.32e-16`) where the 42x42's computes positive; **neither sign is
+   meaningful** at the noise floor (`PLAN-20260918` §16.1a) — this read *"is **negative** … where the
+   42x42's is positive"* as if both signs were properties, withdrawn at self-round 39. **Any rank for it must be reported with its cutoff. ⚠ This read *"none has been
    measured"*, which its own cited log refutes: `rank~263/1431` at the projector's hardcoded
    `rc = 1e-12`. What is absent is a cutoff SCAN.** ⚠ **Round 11: those eigenvalues were
    cited from an UNCOMMITTED source** — the 3D receipt has no eigenvalue field at all, and the

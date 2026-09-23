@@ -242,10 +242,12 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   **1,431** reported cells of a dense `14x16x7 = 1,568`; `src_cells_dropped 0`; `√Tr 6.1289e-39`;
   symmetry exactly `0`; row-index readback `856469c41a8484be…`; `acceptance_question UNDECLARED`
   carried verbatim. ⚠ **CONSTRUCTION IS NOT ADOPTION** — nothing adopts it, the four figures are NOT
-  regenerated, and their markings stand. ⚠ **TWO ANALOGY TRAPS:** `λ_min` is **NEGATIVE** here
-  (`−4.326e-93`, most-neg/max `−2.32e-16`), unlike the `(E_avail,W)` product whose positive minimum
-  is the subject of `VL143`'s correction — so *"most-negative/max"* is **correct on this object**;
-  and the destination is **1,431 of 1,568**, not dense. ⚠ **The destination mask is a DECLARATION**
+  regenerated, and their markings stand. ⚠ **TWO ANALOGY TRAPS:** `λ_min` **computes** negative here
+  (`−4.326e-93`, most-neg/max `−2.32e-16`) and positive on the `(E_avail,W)` product, **and neither
+  sign is meaningful** — both sit at the double-precision noise floor (`PLAN-20260918` §16.1a; far
+  inside `VL142`'s `1e-9` relative PSD allowance), so copying either sign across as a property is the
+  trap (⚠ this entry read *"`λ_min` is **NEGATIVE** here … correct on this object"*, asserting a
+  meaningful sign; withdrawn 2026-09-22); and the destination is **1,431 of 1,568**, not dense. ⚠ **The destination mask is a DECLARATION**
   and this run declares `receiving-cells` following the adopted precedent — **a figure would need
   the `declared-dst-cv` variant**, and that declaration has not been made. `M1`–`M4` travel with it;
   no rank is quoted and none has been scanned on this object.

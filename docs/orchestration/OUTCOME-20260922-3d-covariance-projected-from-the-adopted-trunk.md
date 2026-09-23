@@ -33,7 +33,7 @@ stated blocker; it does **not** by itself authorize regenerating anything.
 | `n_empty` | **0** — ⚠ zero **by construction** in receiving-cells mode; this is **not** a check and may not be cited as one |
 | `√Tr C` | `6.1289e-39` |
 | symmetry `max\|C − Cᵀ\|` | **exactly `0.00e+00`** (structural: the `M C Mᵀ` form symmetrises) |
-| `λ_min` | **`−4.326e-93` — NEGATIVE**; most-negative/max `−2.32e-16` |
+| `λ_min` | computes **`−4.326e-93`**; most-negative/max `−2.32e-16` — ⚠ **a relative size at machine epsilon, so the SIGN IS NOT MEANINGFUL**: it is far inside the `1e-9` relative PSD allowance `VL142` applies to the trunk itself (whose own negatives, at `7.3147e-16`, are *"arithmetic-implementation dependent"*). This row read *"— NEGATIVE"* in bold, as if the sign were a property of the object |
 | retained count | **`263` of `1431` at `rc = 1e-12`** (the projector's hardcoded cutoff, from `state/PROJ3D-20260922-job58736728-stdout.txt`). ⚠ **This table omitted it**, while §5 asserted no scan existed — the two halves of one record disagreeing about whether a rank exists. Quote it **only** with its cutoff, and read §5 before citing it: a single count at one hardcoded cutoff is **not** a cutoff scan, and this `263` is **not** the withdrawn *"rank 263 is Z's"* attribution. |
 | PSD to machine tolerance | OK (`\|min\|/max` far below the `1e-9` relative allowance) |
 | row index readback | `856469c41a8484be…`, 1,431 labels, digested after the file was closed |
@@ -43,11 +43,17 @@ stated blocker; it does **not** by itself authorize regenerating anything.
 
 ## 3. ⚠ TWO THINGS THAT DIFFER FROM THE `(E_avail,W)` PRODUCT AND WILL BE GOT WRONG BY ANALOGY
 
-1. **`λ_min` IS NEGATIVE HERE.** The `(E_avail,W)` projection has `λ_min = +4.359104e-92` and
-   `n_negative = 0`, and `VALIDATION_LEDGER` `VL143` carries a correction specifically because the
-   phrase *"most-negative/max"* was carried onto that positive-minimum object. **On THIS object the
-   phrase is correct**: the minimum genuinely is negative. Do not "fix" it to match `VL143`, and do
-   not copy `VL143`'s positive-`λ_min` language onto this product.
+1. **The two objects' `λ_min` compute with OPPOSITE SIGNS, and NEITHER sign means anything.** The
+   `(E_avail,W)` projection computes `λ_min = +4.359104e-92` (`n_negative = 0`); this one computes
+   `−4.326e-93`, most-negative/max `−2.32e-16`. Both sit at the double-precision noise floor, and
+   `PLAN-20260918` §16.1a rules for the first that *"their sign is not meaningful"* — the same holds
+   here, at a relative size even closer to machine epsilon and far inside the `1e-9` relative PSD
+   allowance `VL142` uses. The analogy trap is therefore **copying EITHER sign across as a
+   property**: labelling this one "most-negative/max" is accurate about the computed value, and must
+   not be read as evidence the covariance is indefinite, just as the other's positive minimum is not
+   evidence it is definite. ⚠ **This item read *"`λ_min` IS NEGATIVE HERE … the minimum genuinely
+   is negative"*, which asserted a meaningful sign; withdrawn 2026-09-22 (self-round 39), after the
+   release README was found asserting the opposite sign as meaningful for the other object.**
 2. **The destination is 1,431 of 1,568, not all of them.** 137 dense `(pt,pz,eavail)` bins receive
    no source cell. The `(E_avail,W)` case had `42 = 7×6` with no shortfall, so the two are not
    analogous and a reader assuming a dense destination here will mis-index.
