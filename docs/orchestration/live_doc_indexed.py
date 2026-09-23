@@ -4,6 +4,7 @@
     python3 docs/orchestration/live_doc_indexed.py --check       # the gate (pre-commit); WHOLE-TREE since 2026-09-21
     python3 docs/orchestration/live_doc_indexed.py --self-test   # both directions, synthetic
     python3 docs/orchestration/live_doc_indexed.py --backlog     # pre-existing violations, no exit code
+    python3 docs/orchestration/live_doc_indexed.py --unrowed     # whole tree: docs with NO overrides row; exit 1 if any
 
 WHY THIS EXISTS. On 2026-08-17 `RECONCILIATION-20260817-gbdtfive-macros-vs-rebuilt-candidate.md` was
 committed LIVE and **pre-commit printed "7 checks passed" while the document was in no index at all.**
@@ -47,6 +48,20 @@ LIVE but was never declared.** With no overrides row the generator defaults to `
 (`generate_manifest.py:145`), so an undeclared doc is out of scope and this check is silent. It enforces
 consistency between the author's declaration and the router, not the correctness of the declaration.
 
+THE UNDECLARED HOLE, NARROWED 2026-09-23 (KNOWN_ISSUES row 60, part 3). Both arms above intersect the
+LIVE rows, so a document that never receives ANY overrides row was outside this check permanently --
+`OUTCOME-20260921-L2-probe-blocked-at-stage-4.md` landed in `15edf148` with no row and no pointer, and
+every later run said "nothing newly LIVE". Two additions, split by the hook's admitting rule:
+  * ENFORCED, forward: a `.md` this commit ADDS under docs/orchestration/ (outside runs/ and state/)
+    must have a row in the staged overrides file -- any class. The committer can always satisfy it,
+    because ARCHIVAL is a legal declaration; what is refused is declaring nothing.
+  * REPORTED, whole tree: every tracked `.md` in that scope with no row is counted on every `--check`
+    and listed by `--unrowed`, which exits 1 while any exist. Not enforced in the hook, because 106
+    such documents pre-date this (measured at `aeb6668c`, `OUTCOME-20260921-L2-…` among them) and no
+    committer can clear another lane's classification debt.
+The judgement is still the author's -- a row saying ARCHIVAL passes -- so this makes the declaration
+mandatory, not correct.
+
 COST: two small file reads plus two `git show`s. No generator -- regenerating `MANIFEST.tsv` would be
 far too expensive for a hook and is independently ~140 lines stale anyway. Measured runtime is printed
 by --self-test.
@@ -89,6 +104,29 @@ def live_paths(overrides_text):
         if len(f) >= 2 and f[1].strip() == "LIVE":
             out.add(f[0].strip())
     return out
+
+
+def row_paths(overrides_text):
+    """Every path the overrides file declares, whatever its class."""
+    out = set()
+    for line in overrides_text.splitlines()[1:]:
+        f = line.split("\t")
+        if len(f) >= 2 and f[0].strip():
+            out.add(f[0].strip())
+    return out
+
+
+def needs_row(path):
+    """A document the retention convention requires a declared class for."""
+    return (path.startswith(DOCDIR) and path.endswith(".md")
+            and not path.startswith((DOCDIR + "runs/", DOCDIR + "state/"))
+            and os.path.basename(path) not in EXEMPT)
+
+
+def unrowed(paths, overrides_text):
+    """Documents in `paths` that need an overrides row and have none. Sorted."""
+    declared = row_paths(overrides_text)
+    return sorted(p for p in paths if needs_row(p) and p not in declared)
 
 
 def in_scope(added_md, staged_live, head_live):
@@ -179,6 +217,19 @@ def check():
         print("LIVE-INDEX :: CANNOT CHECK -- the overrides file could not be read from the index")
         return 2
 
+    # UNDECLARED ARM (row 60, part 3). Forward-enforced; the whole-tree count is reported only.
+    added_unrowed = unrowed(added_md, staged_ov)
+    tree_unrowed = unrowed(_git("ls-files", "--", DOCDIR).splitlines(), staged_ov)
+    if added_unrowed:
+        print("LIVE-INDEX :: FAIL -- %d document(s) ADDED by this commit have NO row in "
+              "MANIFEST-overrides.tsv:" % len(added_unrowed))
+        for p in added_unrowed:
+            print("    %s" % p)
+        print("  Declare each one's class in docs/orchestration/MANIFEST-overrides.tsv in THIS "
+              "commit (ARCHIVAL is a legal declaration). With no row it defaults to ARCHIVAL and is "
+              "outside every arm of this check forever -- the 15edf148 shape.")
+        return 1
+
     scope = in_scope(added_md, live_paths(staged_ov), live_paths(head_ov))
     staged_cat = _git("show", ":" + CATALOG) or None
 
@@ -193,6 +244,8 @@ def check():
     bl_note = ("  (%d LIVE doc(s) absent from CATALOG -- %s)" % (len(bl), ", ".join(bl))
                if bl else "  (whole tree: every LIVE doc is indexed)") if not err else \
               "  (backlog unreadable: %s)" % err
+    bl_note += ("  (whole tree: %d tracked doc(s) have NO overrides row, reported not enforced; "
+                "list them with --unrowed)" % len(tree_unrowed))
 
     # WHOLE-TREE ARM, ENFORCING SINCE 2026-09-21. It reports before the scoped arm because an
     # unindexed doc somebody else left behind is the same defect as one you are adding, and the
@@ -241,10 +294,11 @@ def self_test():
     t0 = time.time()
     HDR = "path\tclass\tevent_status\tcanonical_successor\n"
     NEW = DOCDIR + "NEWDOC-20260817-x.md"
-    fails = []
+    fails, ran = [], []
 
     def ck(label, ok, detail=""):
         print(("  PASS  " if ok else "  FAIL  ") + label + (" :: " + detail if detail else ""))
+        ran.append(label)
         if not ok:
             fails.append(label)
 
@@ -338,12 +392,28 @@ def self_test():
     ck("whole tree: an EMPTY staged overrides yields an empty backlog, not the repo's",
        e5 is None and bl_op == [], str(bl_op))
 
+    # ---- THE UNDECLARED ARM (row 60, part 3). Both directions: it must fire on a doc with no row
+    # and stay silent on one with ANY row, including ARCHIVAL -- otherwise it would be a LIVE-only
+    # rule wearing a new name, or a rule no committer can satisfy.
+    ck("UNROWED: an added doc with NO overrides row FIRES", unrowed([NEW], HDR) == [NEW])
+    ck("UNROWED: the same doc with an ARCHIVAL row is silent", unrowed([NEW], arch) == [])
+    ck("UNROWED: the same doc with a LIVE row is silent", unrowed([NEW], staged) == [])
+    ck("UNROWED: runs/ and state/ records are not documents needing a row",
+       unrowed([DOCDIR + "runs/x/NOTE.md", DOCDIR + "state/y.md"], HDR) == [])
+    ck("UNROWED: non-.md files and files outside docs/orchestration are out of scope",
+       unrowed([DOCDIR + "tool.py", "docs/OPEN_ITEMS.md"], HDR) == [])
+    ck("UNROWED: CATALOG.md stays exempt", unrowed([DOCDIR + "CATALOG.md"], HDR) == [])
+    ck("UNROWED: a malformed row does not count as a declaration of the doc",
+       unrowed([NEW], HDR + "garbage-with-no-tabs\n") == [NEW])
+
+    n_cases = len(ran)
     dt = time.time() - t0
     print()
     if fails:
         print("SELF-TEST :: FAILED -> %s" % fails)
         return 1
-    print("SELF-TEST :: 21/21 PASS in %.3f s (synthetic; no repo state touched)" % dt)
+    print("SELF-TEST :: %d/%d PASS in %.3f s (synthetic; no repo state touched)"
+          % (n_cases, n_cases, dt))
     return 0
 
 
@@ -360,4 +430,15 @@ if __name__ == "__main__":
         for b in bl:
             print("    %s" % b)
         raise SystemExit(0)
+    if "--unrowed" in a:
+        # WHOLE TREE, from the index: tracked docs and the staged overrides file.
+        ov = _git("show", ":" + OVERRIDES)
+        if not ov:
+            print("unrowed :: CANNOT CHECK -- the overrides file could not be read from the index")
+            raise SystemExit(2)
+        missing = unrowed(_git("ls-files", "--", DOCDIR).splitlines(), ov)
+        print("tracked docs under %s with NO overrides row: %d" % (DOCDIR, len(missing)))
+        for p in missing:
+            print("    %s" % p)
+        raise SystemExit(1 if missing else 0)
     raise SystemExit(check())

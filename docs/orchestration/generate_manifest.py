@@ -4,12 +4,21 @@
 Inventory is Git-defined: tracked files plus nonignored untracked files intended
 for the current change. Ignored caches and build products are excluded. Tracking
 state is emitted, so a proposed file cannot masquerade as committed inventory.
+
+WHICH OBJECT A VERDICT IS ABOUT (KNOWN_ISSUES row 60). By default every byte is read from the
+WORKING TREE, so `--check` is a function of whatever is on disk and a green is citable only with
+the tree state beside it -- which is printed on every run. `--at-sha REV` reads the path set, the
+overrides, every inventoried file and every reference source from the COMMIT instead, and `--check`
+compares against that commit's own MANIFEST.tsv: its verdict is a statement about REV alone and no
+working-tree edit, staged or not, can move it. `--at-sha` never writes; without `--check` it
+prints the generated table to stdout.
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
+import importlib.util
 import io
 import re
 import subprocess
@@ -66,7 +75,68 @@ def repo_path(path: Path) -> str:
     return path.relative_to(REPO).as_posix()
 
 
-def inventory(committed_only: bool = False) -> tuple[list[Path], dict[str, str]]:
+class TreeSource:
+    """Where the bytes come from: the working tree (``rev=None``) or exactly one commit.
+
+    In commit mode, symlinks and submodules are not read (the working-tree mode's read of the
+    repo's one symlink, a directory link, fails and is skipped the same way).
+    """
+
+    def __init__(self, rev: str | None = None) -> None:
+        self.sha: str | None = None
+        self._objects: dict[str, str] = {}
+        self._batch: subprocess.Popen | None = None
+        if rev is not None:
+            self.sha = git_lines("rev-parse", "--verify", "--quiet", f"{rev}^{{commit}}")[0]
+            for line in git_lines("ls-tree", "-r", "--full-tree", self.sha):
+                meta, rel = line.split("\t", 1)
+                mode, kind, oid = meta.split()
+                if kind == "blob" and mode in {"100644", "100755"}:
+                    self._objects[rel] = oid
+
+    def ls(self, prefix: str | None = None) -> list[str]:
+        """Tracked paths, optionally under one directory prefix."""
+        if self.sha is None:
+            return git_lines("ls-files", *(["--", prefix] if prefix else []))
+        return sorted(rel for rel in self._objects
+                      if prefix is None or rel.startswith(prefix.rstrip("/") + "/"))
+
+    def is_file(self, rel: str) -> bool:
+        return (REPO / rel).is_file() if self.sha is None else rel in self._objects
+
+    def read(self, rel: str) -> bytes:
+        """Bytes of ``rel``; raises FileNotFoundError / IsADirectoryError like Path.read_bytes."""
+        if self.sha is None:
+            return (REPO / rel).read_bytes()
+        oid = self._objects.get(rel)
+        if oid is None:
+            raise FileNotFoundError(f"{rel} is not a regular file at {self.sha}")
+        if self._batch is None:
+            self._batch = subprocess.Popen(["git", "cat-file", "--batch"], cwd=REPO,
+                                           stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        self._batch.stdin.write(oid.encode() + b"\n")
+        self._batch.stdin.flush()
+        header = self._batch.stdout.readline().split()
+        if len(header) != 3 or header[0].decode() != oid:
+            raise ValueError(f"git cat-file --batch answered {header!r} for {rel}")
+        size = int(header[2])
+        data = self._batch.stdout.read(size)
+        self._batch.stdout.read(1)   # the trailing newline cat-file --batch appends
+        return data
+
+    def object_line(self) -> str:
+        """The object the verdict describes, in the repo's one tree-state notation."""
+        if self.sha is not None:
+            return f"object: head={self.sha} tree=at-sha(working tree not read) scope=."
+        spec = importlib.util.spec_from_file_location("tree_state",
+                                                      REPO / "lib" / "tree_state.py")
+        tree_state = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(tree_state)
+        return "object: " + tree_state.format_state(tree_state.describe(REPO))
+
+
+def inventory(committed_only: bool = False,
+              source: TreeSource | None = None) -> tuple[list[Path], dict[str, str]]:
     """Git-defined inventory. `committed_only` drops the `intended` half entirely.
 
     OI-70, second half, measured 2026-08-20. Emitting `tracking` stops an uncommitted file
@@ -88,21 +158,24 @@ def inventory(committed_only: bool = False) -> tuple[list[Path], dict[str, str]]
     `bytes` and `inbound_count` are still measured from WORKING-TREE bytes, so an uncommitted
     edit to a file that is already tracked still reaches the table. Generate from a tree whose
     inventory scope is clean; `main()` prints the dirty tracked paths for exactly this reason.
+    `--at-sha` IS the substitute: with a commit-mode `source`, every byte comes from that commit.
     """
-    tracked = set(git_lines("ls-files", "--", "docs/orchestration"))
-    intended = set() if committed_only else set(
+    source = source or TreeSource()
+    tracked = set(source.ls("docs/orchestration"))
+    intended = set() if committed_only or source.sha else set(
         git_lines("ls-files", "--others", "--exclude-standard", "--", "docs/orchestration"))
     target_rel = repo_path(TARGET)
     tracked.add(target_rel)
     relpaths = sorted(tracked | intended)
-    paths = [REPO / rel for rel in relpaths if (REPO / rel).is_file() or rel == target_rel]
+    paths = [REPO / rel for rel in relpaths if source.is_file(rel) or rel == target_rel]
     states = {rel: ("tracked" if rel in tracked else "intended") for rel in relpaths}
     return paths, states
 
 
-def load_overrides() -> dict[str, dict[str, str]]:
+def load_overrides(source: TreeSource | None = None) -> dict[str, dict[str, str]]:
+    source = source or TreeSource()
     try:
-        handle = OVERRIDES.open(newline="", encoding="utf-8")
+        handle = io.StringIO(source.read(repo_path(OVERRIDES)).decode("utf-8"), newline="")
     except FileNotFoundError as exc:
         raise ValueError(f"missing overrides file: {repo_path(OVERRIDES)}") from exc
 
@@ -243,7 +316,7 @@ def derive_immutable(classification: str, rel: str, event_status: str) -> str:
 
 
 def build_match_index(
-    basenames: set[bytes], source_paths: list[Path]
+    basenames: set[bytes], source_paths: list[Path], source: TreeSource | None = None
 ) -> dict[bytes, set[str]]:
     """Return basename -> source files containing it using Aho-Corasick."""
     transitions: list[dict[int, int]] = [{}]
@@ -275,10 +348,11 @@ def build_match_index(
             failures[next_state] = transitions[fallback].get(byte, 0)
             outputs[next_state].update(outputs[failures[next_state]])
 
+    tree = source or TreeSource()
     matches: dict[bytes, set[str]] = {pattern: set() for pattern in basenames}
     for source in source_paths:
         try:
-            data = source.read_bytes()
+            data = tree.read(repo_path(source))
         except (FileNotFoundError, IsADirectoryError, PermissionError):
             continue
         found: set[bytes] = set()
@@ -294,13 +368,17 @@ def build_match_index(
     return matches
 
 
-def reference_sources(paths: list[Path], states: dict[str, str]) -> list[Path]:
+def reference_sources(paths: list[Path], states: dict[str, str],
+                      source: TreeSource | None = None) -> list[Path]:
     # All currently tracked files are authoritative reference sources.  Include
     # nonignored files in this new deliverable set so generation is stable
     # before and after they are added to Git.
-    tracked = [REPO / path for path in git_lines("ls-files")]
+    source = source or TreeSource()
+    tracked = [REPO / path for path in source.ls()]
     intended = [path for path in paths if states[repo_path(path)] == "intended"]
-    unique = {path.resolve(): path for path in tracked + intended if path != TARGET}
+    # At a sha there is no filesystem to resolve through, and the key only dedups.
+    key = (lambda path: path) if source.sha else (lambda path: path.resolve())
+    unique = {key(path): path for path in tracked + intended if path != TARGET}
     return sorted(unique.values(), key=lambda path: repo_path(path))
 
 
@@ -373,12 +451,14 @@ def status_warnings(
     return warnings
 
 
-def generate(committed_only: bool = False) -> tuple[
+def generate(committed_only: bool = False, source: TreeSource | None = None) -> tuple[
         bytes, Counter[str], int, int, Counter[str], list[str]]:
-    paths, states = inventory(committed_only)
-    overrides = load_overrides()
+    source = source or TreeSource()
+    paths, states = inventory(committed_only, source)
+    overrides = load_overrides(source)
     basename_bytes = {path.name.encode("utf-8") for path in paths}
-    matches = build_match_index(basename_bytes, reference_sources(paths, states))
+    matches = build_match_index(basename_bytes, reference_sources(paths, states, source),
+                                source)
 
     rows: list[dict[str, object]] = []
     applied_overrides: set[str] = set()
@@ -387,7 +467,7 @@ def generate(committed_only: bool = False) -> tuple[
         if path == TARGET:
             data = b""
         else:
-            data = path.read_bytes()
+            data = source.read(rel)
 
         classification = default_class(path, rel)
         event_status = "generated" if classification == "MACHINE" else "terminal"
@@ -578,16 +658,27 @@ def main() -> int:
         help="OI-70: inventory only tracked paths, so a shared checkout's foreign untracked "
              "files are neither published as inventory nor allowed to move inbound_count",
     )
+    parser.add_argument(
+        "--at-sha",
+        metavar="REV",
+        help="KNOWN_ISSUES row 60: read every byte (path set, overrides, inventoried files, "
+             "reference sources, and for --check the committed MANIFEST.tsv) from commit REV "
+             "instead of the working tree, so the verdict is about REV alone. Implies "
+             "--committed-only; never writes (prints the table to stdout without --check)",
+    )
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
 
     if args.self_test:
         return self_test()
 
+    committed_only = args.committed_only or args.at_sha is not None
     try:
-        output, counts, overridden, defaults, tracking, unused = generate(args.committed_only)
-        unstaged, intended = inventory_status()
-    except (OSError, subprocess.CalledProcessError, ValueError) as exc:
+        source = TreeSource(args.at_sha)
+        output, counts, overridden, defaults, tracking, unused = generate(committed_only, source)
+        unstaged, intended = ([], []) if source.sha else inventory_status()
+        object_line = source.object_line()
+    except (OSError, subprocess.CalledProcessError, ValueError, IndexError) as exc:
         print(f"generate_manifest.py: {exc}", file=sys.stderr)
         return 2
 
@@ -598,29 +689,50 @@ def main() -> int:
         + " tracking="
         + ",".join(f"{name}:{tracking[name]}" for name in sorted(tracking))
     )
-    if args.committed_only:
+    if source.sha:
+        summary += f" mode=at-sha:{source.sha}"
+    elif committed_only:
         summary += " mode=committed-only"
     if unused:
         summary += f" unused_overrides={len(unused)}"
+    # The verdict's object, on stderr so `--at-sha` without `--check` keeps stdout a clean table.
+    print(object_line, file=sys.stderr)
     # DISCLOSED, never silent. An exclusion nobody is told about is how `MANIFEST-overrides.tsv`
     # went inert reporting as applied (BEN-321), and a transient published as repo state is
     # BEN-183. Both are announced on stdout beside the summary rather than left to be inferred.
-    if args.committed_only:
+    if committed_only and not source.sha:
         excluded = git_lines("ls-files", "--others", "--exclude-standard", "--",
                              "docs/orchestration")
         print(f"committed-only: {len(excluded)} nonignored untracked path(s) EXCLUDED from "
               f"both the table and the reference sources")
-    for warning in status_warnings(unstaged, intended, args.committed_only):
+    for warning in status_warnings(unstaged, intended, committed_only):
         print(warning)
 
     if args.check:
-        current = TARGET.read_bytes() if TARGET.exists() else None
-        if current != output:
+        if source.sha:
+            try:
+                current = source.read(repo_path(TARGET))
+            except FileNotFoundError:
+                current = None
+        else:
+            current = TARGET.read_bytes() if TARGET.exists() else None
+        # KNOWN_ISSUES row 60(2): `--check ... | tail -1` returned tail's 0 while the failure went
+        # by on stderr. The verdict is therefore ALSO the LAST stdout line, and it carries its own
+        # exit status and object, so a pipe that loses `$?` still shows which way it went and on
+        # what. (Read `$?` from the bare command all the same.)
+        code = 0 if current == output else 1
+        verdict = "OK" if code == 0 else "OUT OF DATE"
+        if code:
             print(f"OUT OF DATE: {repo_path(TARGET)}; {summary}", file=sys.stderr)
-            return 1
-        print(f"OK: {repo_path(TARGET)}; {summary}")
-        return 0
+        else:
+            print(f"OK: {repo_path(TARGET)}; {summary}")
+        sys.stdout.flush()
+        print(f"MANIFEST-CHECK :: {verdict} exit={code} :: {object_line.removeprefix('object: ')}")
+        return code
 
+    if source.sha:
+        sys.stdout.buffer.write(output)
+        return 0
     TARGET.write_bytes(output)
     print(f"wrote {repo_path(TARGET)}; {summary}")
     return 0
