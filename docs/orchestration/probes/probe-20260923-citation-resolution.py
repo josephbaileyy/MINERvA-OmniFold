@@ -15,8 +15,10 @@ BASE and REV.
      and whose surrounding 70/40 characters read like a commit citation.
   C  `module.symbol` / `path.py::symbol` code spans on added lines, where `module` is the basename of
      a .py file at REV, resolved against that file's MODULE-LEVEL names as Python's `ast` reads them:
-     def / async def / class, assignment targets (tuples too), annotated assignments and imports,
-     including those under a module-level if/try/with. A method, a nested def or a local does not count
+     def / async def / class, assignment targets (tuples too), annotated assignments, imports,
+     `with ... as` and `for` targets, and names declared `global` in a function, including those under a
+     module-level if/try/with/for/while (⚠ loop bodies, `as` targets and `global` were first missed;
+     review #17b). A method, a nested def or a local does not count
      (the first version matched any indented `def` or `name =` line; review #16b). A basename shared
      by two files is reported AMBIGUOUS, not resolved. A miss whose symbol is `py`/`sh` is a file name
      that the pattern misreads as `module.symbol`, not a citation.
@@ -30,9 +32,11 @@ BASE and REV.
 Exits 0 once it has looked: it is a lister, and a human classifies what it prints. Exits 2 when it
 cannot look -- outside a git work tree, or when BASE or REV does not name a commit. The result DEPENDS ON
 THE CLONE: a token that sits in a remote this clone has not fetched counts as unresolved. It runs from
-the repository root whatever the caller's directory (self-round 64: `git ls-files` prints paths relative
-to the caller, `git diff` and `git show REV:path` relative to the root, so part C read 6/18 from the root,
-0/2 from docs/orchestration/, and "0 resolve, 0 do not" at exit 0 from outside the repository).
+the repository root whatever the caller's directory (self-round 64: `git diff`'s `'*.md'` pathspec and
+`git ls-files` resolve relative to the caller, so parts A, B and C all read a different operand per
+directory -- A read 26, 10 and 0 files from the root, docs/orchestration/ and nd-unfolding/ -- and
+outside the repository it printed "0 resolve, 0 do not" at exit 0. ⚠ This first blamed `git diff` for
+being root-relative and named part C alone; its OUTPUT is root-relative, its pathspec is not; review #17a).
 """
 import ast
 import os
@@ -142,12 +146,23 @@ def module_names(path):
                 for h in n.handlers:
                     walk(h.body)
             elif isinstance(n, (ast.With, ast.AsyncWith)):
+                for it in n.items:
+                    if it.optional_vars is not None:
+                        targets(it.optional_vars)
                 walk(n.body)
+            elif isinstance(n, (ast.For, ast.AsyncFor, ast.While)):
+                if not isinstance(n, ast.While):
+                    targets(n.target)
+                walk(n.body); walk(n.orelse)
     walk(tree.body)
+    # a `global NAME` inside a function binds a module-level name too (review #17b)
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Global):
+            names.update(n.names)
     return names
 
 
-seen, ok, miss, ambiguous, unparsable = set(), 0, [], [], []
+seen, ok, miss, ambiguous, unparsable, gone = set(), 0, [], [], [], []
 for f, L in added:
     for m in re.finditer(r"`([\w/.-]+\.py)::(\w+)`|`([A-Za-z_]\w*)\.([A-Za-z_]\w*)(?:\(\))?`", L):
         if m.group(1):
@@ -161,6 +176,8 @@ for f, L in added:
         seen.add(key)
         if sym in ("py", "sh"):
             miss.append((f, key, True)); continue
+        if not cand:                      # a `path.py::symbol` whose file is not at REV: renamed or deleted
+            gone.append((f, key)); continue
         if len(cand) > 1:
             ambiguous.append((f, key, cand)); continue
         names = module_names(cand[0])
@@ -171,7 +188,8 @@ for f, L in added:
         else:
             miss.append((f, key, False))
 print(f"C  {ok} resolve, {len(miss)} do not; {sum(x[2] for x in miss)} of the misses are file names; "
-      f"{len(ambiguous)} ambiguous (basename shared), {len(unparsable)} in a file that does not parse")
+      f"{len(ambiguous)} ambiguous (basename shared), {len(unparsable)} in a file that does not parse, "
+      f"{len(gone)} citing a file not at REV")
 for f, key, isname in miss:
     if not isname:
         print("   ", f, "|", key)
@@ -179,6 +197,9 @@ for f, key, cand in ambiguous:
     print("    AMBIGUOUS", f, "|", key, "|", ", ".join(cand))
 for f, key, c in unparsable:
     print("    UNPARSABLE", f, "|", key, "|", c)
+for f, key in gone:
+    # ⚠ this indexed an empty candidate list and crashed at exit 1, losing part D (review #17b)
+    print("    FILE NOT AT REV", f, "|", key)
 
 dirs = {os.path.dirname(x) for x in at_rev}
 while True:

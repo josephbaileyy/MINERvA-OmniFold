@@ -41,6 +41,7 @@ the authority; this is a check against it.
 Exit 0 = the stated totals equal the ledger's own column sums. Exit 1 = they do not, naming both.
 Exit 2 = the ledger could not be read, which is a failure, not a pass.
 """
+import hashlib
 import html
 import re
 import sys
@@ -58,28 +59,14 @@ MD = MarkdownIt("commonmark").enable(["table"])
 VISIBLE = ("text", "code_inline")                      # REGRESSION-ANCHOR:visible-types
 TOTAL = re.compile(r"self rounds 1[\u2013-](\d+)\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*"
                    r"independent reviews\s*=\s*([0-9+\s]+?)\s*=\s*(\d+);\s*TOTAL\s*(\d+)", re.S)
-NUM = (r"([1-9]\d*|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|"
-       r"sixteen|seventeen|eighteen|nineteen|twenty|dozen|score)")
-WORD = r"(findings?|defects?|problems?|bugs?|flaws?|faults?|mistakes?)"
-# ⚠ a count must MODIFY a finding-word. The first versions paired any number with any finding-word in a
-# window, so a correct note -- "a rate-limit error 2 minutes in", "no defects reported" -- was refused
-# (review #14b). `errors?` and `issues?` are gone: they are how a review's death is described.
-# ⚠ a count of ZERO reports nothing: `NUM` starts at 1, so "0 findings reported because it never started" is
-# accepted (review #15b). `issues?` returns only where a report verb or a colon pins it (review #15b):
-# "two issues found", "issues: 3", "found an issue".
-WORDI = rf"({WORD[1:-1]}|issues?)"
-# ⚠ after "found 6" the count must still modify a FINDING: nothing follows, or a finding-word, a punctuation
-# mark or a joining word does -- not another noun ("found one file unreadable", "reported 3 minutes in" were
-# refused; review #16b)
-FOUND_TAIL = (rf"\s*(?:$|[.,;:)!?\u2014-])|\s+(?:\w+\s+)?{WORDI}\b"
-              rf"|\s+(?:before|after|and|then|but|while|when|of|in|so)\b")      # REGRESSION-ANCHOR:found-tail
-REPORTS = [re.compile(rf"\b{NUM}\s+(?:\w+\s+){{0,2}}{WORD}\b", re.I),               # "six defects", "a dozen flaws"
-           re.compile(rf"\b(found|reported|flagged|flagging|reporting|finding)\s+{NUM}(?={FOUND_TAIL})", re.I),   # "found 6"
-           re.compile(rf"\b{WORD}\s+(found|reported)\s*:?\s*{NUM}\b", re.I),              # "defects found: six"
-           re.compile(rf"\b(found|reported|flagged)\s+(a|an|one)\s+(?:\w+\s+){{0,2}}{WORDI}\b", re.I),  # "found a defect"
-           re.compile(rf"\b{NUM}\s+issues?\s+(found|reported|flagged)\b", re.I),        # "two issues found"
-           re.compile(rf"\b{WORDI}\s*:\s*{NUM}\b", re.I),                               # "findings: 3"
-           re.compile(rf"\b{NUM}\s+(HIGH|MEDIUM|LOW|CRITICAL)\b")]                      # "2 MEDIUM" (case-sensitive)
+# NO VERDICT rows are PINNED, not parsed. Wording rules drew findings in eight reviews (#9, #11b, #12b, #13b,
+# #14b, #15b, #16b, #17b) each refused a correct death note or accepted a note reporting findings: a sentence
+# cannot be read for "does this report findings?" by pattern. This ledger has had one NO VERDICT row since
+# review #2, so the guard accepts exactly the rows listed here, keyed by a digest of the whole row as
+# rendered. A new NO VERDICT row, or any edit to a listed one, is REFUSED until a human reads it and adds it.
+NOVERDICT_PINNED = {
+    "ada8cecd111592ac": "agy #2, attempt 1 -- died on a session rate limit during its first action (section 1a)",
+}
 
 
 def visible(inline):
@@ -105,9 +92,10 @@ def html_text(block):
     return html.unescape(re.sub(r"<[^>]*>", " ", re.sub(r"<!--.*?-->", " ", block, flags=re.S)))
 
 
-def reports_findings(note):
-    """True if the note asserts a count OF findings -- not merely a number near a finding-word."""
-    return any(p.search(note) for p in REPORTS)           # REGRESSION-ANCHOR:noverdict-notes
+def noverdict_key(cells):
+    """Digest of the WHOLE rendered row -- label, findings cell and note -- so that ANY edit to a pinned row is
+    refused here, without relying on the findings-cell `fullmatch` alone."""
+    return hashlib.sha256("\n".join(cells).encode("utf-8")).hexdigest()[:16]
 
 
 def main() -> int:
@@ -208,8 +196,10 @@ def main() -> int:
             if len(nums) == 1 and int(nums[0]) >= 0:     # REGRESSION-ANCHOR:agy-count
                 agys.append(int(nums[0])); continue
             if not nums and re.fullmatch(r"[\s\u26a0()\[\]-]*no verdict[\s\u26a0().-]*", cell, re.I):
-                if reports_findings(" ".join(cells[2:])):
-                    unclassified.append(f"line {line}: NO VERDICT row whose note reports findings"); continue
+                key = noverdict_key(cells)
+                if key not in NOVERDICT_PINNED:                  # REGRESSION-ANCHOR:noverdict-pinned
+                    unclassified.append(f"line {line}: NO VERDICT row not in NOVERDICT_PINNED (key {key}); read it, "
+                                        "confirm it reports no findings, and pin it"); continue
                 noverdict += 1; continue
             unclassified.append(f"line {line}: {label[:40]} | {cell[:30]}"); continue
         unclassified.append(f"line {line}: {label[:40]} | {cell[:30]}")

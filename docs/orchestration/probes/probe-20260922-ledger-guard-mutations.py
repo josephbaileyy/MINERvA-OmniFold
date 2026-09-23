@@ -59,10 +59,9 @@ REGRESSIONS = {
         'if False:'),
     'R9 addends compared by count and sum only (review #7)': ('if len(stated_list) == len(derived_list) and stated_list != derived_list:   # REGRESSION-ANCHOR:elementwise',
         'if False:'),
-    'R10 NO VERDICT accepted anywhere in the cell (review #9)': ('re.fullmatch(r"[\\s\\u26a0()\\[\\]-]*no verdict[\\s\\u26a0().-]*", cell, re.I)',
-        're.search("no verdict", cell, re.I)'),
-    'R11 a NO VERDICT note may report findings (reviews #11b, #12b, #13b)': ('if reports_findings(" ".join(cells[2:])):',
-        'if False:'),
+    # R10 (NO VERDICT accepted anywhere in the cell, review #9) is RETIRED, not lost: since the whole NO VERDICT
+    # row is pinned by digest (R29), a findings cell that merely CONTAINS "no verdict" can only reach the pin
+    # check with a digest nobody pinned, so R10's regression changed no result. The fullmatch stays in the guard.
     'R12 non-ASCII-whitespace-led lines not refused (review #14b)': ('if odd:                                               # REGRESSION-ANCHOR:unicode-ws',
         'if False:'),
     'R13 TOTALs read from inline text only, not code blocks (review #14b)': ('for t in toks if t.type in ("inline", "fence", "code_block", "html_block")]   # REGRESSION-ANCHOR:total-sources',
@@ -84,8 +83,6 @@ REGRESSIONS = {
         'if l[:1] == "\\u00a0"]'),
     'R21 TOTALs in raw-HTML blocks not read (review #15b)': ('for t in toks if t.type in ("inline", "fence", "code_block", "html_block")]   # REGRESSION-ANCHOR:total-sources',
         'for t in toks if t.type in ("inline", "fence", "code_block")]'),
-    'R22 a NO VERDICT note never read as reporting (review #15b)': ('return any(p.search(note) for p in REPORTS)           # REGRESSION-ANCHOR:noverdict-notes',
-        'return False'),
     # --- review #16a: three `checks` entries and two generic branches had no anchor, so the anchor sweep
     # could not see them and deleting any one left every case green
     'R23 the stated last self round not compared (review #16a)': ('checks = [("last self round", int(stated_last), rounds[-1]),   # REGRESSION-ANCHOR:last-round',
@@ -98,8 +95,10 @@ REGRESSIONS = {
         'if False:'),
     'R27 recorded mismatches not acted on (review #16a)': ('if bad:                                                  # REGRESSION-ANCHOR:any-bad',
         'if False:'),
-    'R28 "found N" read as a report whatever noun follows (review #16b)': ('rf"|\\s+(?:before|after|and|then|but|while|when|of|in|so)\\b")      # REGRESSION-ANCHOR:found-tail',
-        'rf"|\\s+\\w")'),
+    # --- review #17b: NO VERDICT wording rules drew findings in eight reviews, failing one way or the other, so the guard now
+    # PINS the one NO VERDICT row by digest; this regression removes the pin check
+    'R29 an unpinned NO VERDICT row accepted (review #17b)': ('if key not in NOVERDICT_PINNED:                  # REGRESSION-ANCHOR:noverdict-pinned',
+        'if False:'),
     # PRECONDITIONS: without one, the guard CRASHES instead of refusing cleanly. Their regressions may fire
     # through a traceback only -- the one class allowed to (anchor names beginning `pre-`)
     'P1 a missing report not refused cleanly (review #16a)': ('if not REPORT.exists():                                  # REGRESSION-ANCHOR:pre-report',
@@ -111,10 +110,6 @@ REGRESSIONS = {
     'P4 a report with no TOTAL not refused cleanly (review #16a)': ('if not hits:                                             # REGRESSION-ANCHOR:pre-total',
         'if False:'),
 }
-# review #15b: dropping ONE finding-report pattern left the suite green. Each pattern, keyed by the
-# example in its trailing comment, gets its own regression and its own case (NV_REPORTING below).
-REPORT_TAGS = ['"six defects", "a dozen flaws"', '"found 6"', '"defects found: six"', '"found a defect"',
-               '"two issues found"', '"findings: 3"', '"2 MEDIUM" (case-sensitive)']
 # a REGRESSION-ANCHOR with no regression is a check nothing tests; `--regressions` refuses one
 ANCHOR_RE = re.compile(r"REGRESSION-ANCHOR:([\w-]+)")
 
@@ -160,40 +155,89 @@ def _first_agy_row(text):
     return rows[0]
 
 
-# one note per REPORTS pattern, each matched by THAT pattern alone, so dropping any one pattern fails a case
+# notes that REPORT findings -- once one per wording pattern; since the NO VERDICT row is pinned by digest, each
+# is simply an edit to the pinned row, and must be refused like any other
 NV_REPORTING = ("six defects in the guard", "found 6 before the session died", "defects found: six",
                 "found a defect in the guard", "two issues found", "findings: 3", "2 MEDIUM, 1 LOW")
 
 
+# refusal forms `unanchored_sites` does not model -- each named, with why it needs no regression
+EXEMPT_HANDLERS = {"ImportError": "markdown-it-py missing: unreachable while the suite runs under the guard's own "
+                                  "interpreter, which has it"}
+
+
 def unanchored_sites(src):
-    """Refusal sites of the guard, found in its CODE, whose governing condition carries no anchor."""
-    lines, out = src.split("\n"), []
-    ind = lambda s: len(s) - len(s.lstrip())
-    for i, l in enumerate(lines):
-        s = l.strip()
-        if s in ("return 1", "return 2") or s.startswith("bad.append("):
-            need = ind(l)
-            for j in range(i - 1, -1, -1):
-                lj = lines[j]
-                if not lj.strip() or ind(lj) >= need:
-                    continue
-                need = ind(lj)
-                if re.match(r"\s*(if|elif)\b", lj):
-                    if "REGRESSION-ANCHOR:" not in lj:
-                        out.append((j + 1, lj.strip()))
-                    break
-                if re.match(r"\s*def\b", lj):
-                    out.append((i + 1, s + " (no governing if)"))
-                    break
-    k = next((i for i, l in enumerate(lines) if l.strip().startswith("checks = [")), None)
-    if k is None:
-        out.append((0, "no `checks = [` list found"))
+    """Refusal sites of the guard, found in its SYNTAX TREE, whose governing condition carries no anchor.
+
+    A refusal site is a `return 1` / `return 2` (any spelling: `return (2)`, one-line `if x: return 2`), a
+    `sys.exit(...)`, a `raise SystemExit`, an `assert`, or a write to `bad` (`.append`, `.extend`, `+=`). Each
+    must sit under an `if`/`elif` whose header lines carry a REGRESSION-ANCHOR, or inside an exempt `except`
+    handler (EXEMPT_HANDLERS); every entry of the `checks` list must carry one too. ⚠ The first version matched
+    exact TEXT (`return 2`, `bad.append(`) and missed `return (2)`, `sys.exit(2)`, `bad.extend` and a trailing
+    comment (review #17b). What decides WHAT enters `orphans` / `unclassified` -- which token types are
+    scanned, which label shapes count -- is a SUB-condition of an anchored site, and not every one is pinned.
+    """
+    import ast
+    tree = ast.parse(src)
+    lines = src.split("\n")
+    parent = {}
+    for n in ast.walk(tree):
+        for c in ast.iter_child_nodes(n):
+            parent[c] = n
+
+    def forwards_main(call):              # `sys.exit(main())` is the entry point: it FORWARDS a status, not a refusal
+        return (call.args and isinstance(call.args[0], ast.Call) and isinstance(call.args[0].func, ast.Name)
+                and call.args[0].func.id == "main")
+
+    def is_refusal(n):
+        if isinstance(n, ast.Return) and isinstance(n.value, ast.Constant) and n.value.value in (1, 2):
+            return True
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "exit" \
+                and isinstance(n.func.value, ast.Name) and n.func.value.id == "sys":
+            return not forwards_main(n)
+        if isinstance(n, ast.Raise) and n.exc is not None:
+            e = n.exc.func if isinstance(n.exc, ast.Call) else n.exc
+            return isinstance(e, ast.Name) and e.id == "SystemExit" and not (isinstance(n.exc, ast.Call) and forwards_main(n.exc))
+        if isinstance(n, ast.Assert):
+            return True
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr in ("append", "extend") \
+                and isinstance(n.func.value, ast.Name) and n.func.value.id == "bad":
+            return True
+        if isinstance(n, ast.AugAssign) and isinstance(n.target, ast.Name) and n.target.id == "bad":
+            return True
+        return False
+
+    def header_anchored(node):
+        first = node.lineno
+        last = (node.body[0].lineno - 1) if node.body and node.body[0].lineno > first else first
+        return any("REGRESSION-ANCHOR:" in lines[k - 1] for k in range(first, last + 1))
+
+    out = []
+    for n in ast.walk(tree):
+        if not is_refusal(n):
+            continue
+        p, governed = parent.get(n), None
+        while p is not None and not isinstance(p, (ast.FunctionDef, ast.Module)):
+            if isinstance(p, ast.If):
+                governed = p; break
+            if isinstance(p, ast.ExceptHandler) and isinstance(p.type, ast.Name) and p.type.id in EXEMPT_HANDLERS:
+                governed = "exempt"; break
+            p = parent.get(p)
+        if governed == "exempt":
+            continue
+        if governed is None:
+            out.append((n.lineno, lines[n.lineno - 1].strip() + " (no governing if)"))
+        elif not header_anchored(governed):
+            out.append((governed.lineno, lines[governed.lineno - 1].strip()))
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Assign) and any(isinstance(tg, ast.Name) and tg.id == "checks" for tg in n.targets) \
+                and isinstance(n.value, ast.List):
+            for e in n.value.elts:
+                if not any("REGRESSION-ANCHOR:" in lines[k - 1] for k in range(e.lineno, e.end_lineno + 1)):
+                    out.append((e.lineno, lines[e.lineno - 1].strip()))
+            break
     else:
-        for i in range(k, len(lines)):
-            if "REGRESSION-ANCHOR:" not in lines[i]:
-                out.append((i + 1, lines[i].strip()))
-            if lines[i].rstrip().split("#")[0].rstrip().endswith("]"):
-                break
+        out.append((0, "no `checks = [...]` list found"))
     return out
 
 
@@ -343,8 +387,10 @@ def build_cases(orig):
          after(agy0, "\u00a0\n| **agy #99 (independent)** | **6** | x |"), (1, 2)),
         ("a stale TOTAL in a fenced code block", orig.replace(total_line, total_line + "\n\n```\n" + stale_total.replace("**", "") + "\n```\n\n", 1), (1, 2)),
         ("a stale TOTAL in an indented code block", orig.replace(total_line, total_line + "\n\n    " + stale_total.replace("**", "").replace("\n", " ") + "\n\n", 1), (1, 2)),
-        *[(f"CONTROL a NO VERDICT note that reports no findings: {note[:30]}",
-           orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| " + note + " |", nv_row), 1), (0,))
+        # ⚠ once CONTROLs: correct death notes the wording rules had to ACCEPT. The row is now pinned by digest, so
+        # any edit to its note -- even a correct one -- is refused until a human re-pins it (review #17b)
+        *[(f"an edited NO VERDICT note, though it reports nothing: {note[:30]}",
+           orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| " + note + " |", nv_row), 1), (1, 2))
           for note in ("died on a session rate-limit error 2 minutes into its first action",
                        "produced no findings; attempt 2 is the real review",
                        "rate-limited before one file was read; no defects reported")],
@@ -361,8 +407,16 @@ def build_cases(orig):
         *[(f"a NO VERDICT note reporting findings: {note}",
            orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| " + note + " |", nv_row), 1), (1, 2))
           for note in NV_REPORTING],
-        ("CONTROL a NO VERDICT note reporting ZERO findings",
-         orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| 0 findings reported because it never started |", nv_row), 1), (0,)),
+        # the pinned row's FINDINGS cell edited, digit-free so that it is still read as a NO VERDICT candidate,
+        # its label and note untouched. Refused by the findings-cell fullmatch and by the whole-row digest
+        ("the pinned NO VERDICT row's findings cell edited to carry findings in words",
+         orig.replace(nv_row, nv_row.replace("**NO VERDICT**", "**NO VERDICT** \u2014 six defects found", 1), 1), (1, 2)),
+        ("an edited NO VERDICT note reporting ZERO findings",
+         orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| 0 findings reported because it never started |", nv_row), 1), (1, 2)),
+        # review #17b's two notes that the last wording rule ACCEPTED although they report findings
+        *[(f"an edited NO VERDICT note reporting findings in this ledger's own words: {note[:30]}",
+           orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| " + note + " |", nv_row), 1), (1, 2))
+          for note in ("found 2 gaps in the guard, then died", "found 3 regressions before the rate limit")],
         ("a stale TOTAL in a <pre> block", orig.replace(total_line, total_line + "\n\n<pre>\n" + stale_total.replace("**", "") + "\n</pre>\n\n", 1), (1, 2)),
         ("a stale TOTAL in <details> with no blank lines",
          orig.replace(total_line, total_line + "\n\n<details><summary>an earlier revision</summary>\n" + stale_total.replace("**", "") + "\n</details>\n\n", 1), (1, 2)),
@@ -378,8 +432,8 @@ def build_cases(orig):
         # matched only a bare label, left row 10 behind, and so never reached the precondition it names
         ("every self row removed", "\n".join(l for l in orig.split("\n") if not re.match(r"^\|\s*\W*\d+\s*\(self", l)), (1, 2)),
         ("the TOTAL sentence removed", orig.replace(total_line, "", 1), (2,)),
-        *[(f"CONTROL a NO VERDICT death note naming a count of something else: {note[:34]}",
-           orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| " + note + " |", nv_row), 1), (0,))
+        *[(f"an edited NO VERDICT death note naming a count of something else: {note[:34]}",
+           orig.replace(nv_row, re.sub(r"\|[^|]*\|\s*$", "| " + note + " |", nv_row), 1), (1, 2))
           for note in ("found one file unreadable and stopped", "reported 3 minutes in that the session was rate-limited",
                        "flagged 1 file as unreadable, then died")],
         # --- review #16b: ORDINARY staleness that only the addend counts catch -- a zero-finding row added,
@@ -446,27 +500,23 @@ def main() -> int:
 
     if "--regressions" in sys.argv:
         # ⚠ WHAT THIS HARNESS ASSERTS. It patches the guard one line at a time and re-runs the suite.
-        #  * Every refusal site in the guard's CODE must carry an anchor (`unanchored_sites`), and every
-        #    anchor must have a regression. The anchors alone were a list, and missed three checks (#16a).
+        #  * Every refusal SITE in the guard's syntax tree (see `unanchored_sites` for exactly which forms)
+        #    must sit under an anchored `if`, and every anchor must have a regression. The anchors alone were
+        #    a list and missed three checks (#16a); a text match then missed `return (2)`, `sys.exit` and
+        #    `bad.extend` (#17b). SUB-conditions -- what enters `orphans`/`unclassified`, which token types
+        #    are scanned -- are not all pinned: review #17b deleted 24 and 13 left every case green, most of
+        #    them redundant or unreachable.
         #  * Every regression must be LOAD-BEARING: it changes some case's result without crashing,
         #    either OPEN (a refusal case now passes) or CLOSED (a CONTROL now refuses). Only a
         #    precondition (`pre-` anchor) may fire through a traceback alone.
-        #  * A REDUNDANT regression FAILS the harness, where it once did not. Every check but a
-        #    precondition is now pinned by a case that fails when that check alone is deleted.
+        #  * A REDUNDANT regression FAILS the harness, where it once did not: every anchored site but a
+        #    precondition is pinned by a case that fails when that site alone is deleted. (A patch that made the
+        #    guard exit 2 cleanly everywhere would still count, through refused CONTROLs; review #17b.)
         #    (An earlier version accepted redundancy as defence in depth; review #15b showed that let
         #    five checks go unpinned.)
         print("\n--- REGRESSION HARNESS: which guard lines are load-bearing? ---")
         load_bearing, redundant, skipped = [], [], []
         regs = dict(REGRESSIONS)
-        for tag in REPORT_TAGS:
-            line = next((l for l in src.splitlines() if l.rstrip().endswith("# " + tag)), None)
-            if line is None:
-                skipped.append(f"REPORTS pattern {tag}"); continue
-            pat = line.strip()
-            if pat.startswith("REPORTS = ["):
-                pat = pat[len("REPORTS = ["):]
-            pat = re.split(r"\s+#\s", pat, maxsplit=1)[0].strip()
-            regs[f"R-REPORTS {tag} pattern dropped (review #15b)"] = (pat, 're.compile(r"(?!x)x"),' if pat.endswith(",") else 're.compile(r"(?!x)x")]')
         untested = sorted(set(ANCHOR_RE.findall(src)) - {a for new_, _ in regs.values() for a in ANCHOR_RE.findall(new_)})
         # ⚠ review #16a: the anchors are a LIST, and three checks were not on it. So the refusal sites are
         # ENUMERATED FROM THE CODE: every `return 1`, `return 2` and `bad.append(` is governed by the nearest

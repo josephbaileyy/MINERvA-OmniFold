@@ -51,3 +51,11 @@ whose removal can only turn a clean refusal into a crash) may fire through trace
 other regression must change some case's result without crashing. Independent review #16b, reaching the same two
 defects on its own, added that "load-bearing" had never meant "fails open": R1 and R2 fire only through CONTROLs,
 that is, fail-closed. The harness now prints both directions for every regression.
+
+**Tenth (independent review #17b), and a change of method.** The site sweep matched exact text, so `return (2)`,
+`sys.exit(2)` and `bad.extend` escaped it; it now reads the syntax tree. And the NO VERDICT wording rules, which
+had drawn findings in reviews #9, #11b, #12b, #13b, #14b, #15b, #16b and #17b, each one refusing a correct death
+note or accepting a report, were DELETED rather than refined again. The ledger's one NO VERDICT row is pinned
+by a digest of the whole rendered row. Any new or edited NO VERDICT row is refused until a human reads it and
+pins it. **CHECK:** when a pattern rule keeps drawing findings from both directions, stop refining it. Replace
+the inference with an enumeration that a human maintains.
