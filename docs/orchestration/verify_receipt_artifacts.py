@@ -140,8 +140,14 @@ DECLARED_DIR_KEY = re.compile(
 #: caused the difference.
 #: Measured 2026-09-23 on the tree based on f8d6f276: 169 receipts, bare citations TRACKED 9 /
 #: MISSING 0 / OFF-AREA 29 / BY-PATH 7 / UNRESOLVED 64.
-UNRESOLVED_COUNT = 64
-UNRESOLVED_SHA256 = "f142d18736b1db8a7b43e2491eccaca9d77f364ef643e8ef956a9d8bae6a13e5"
+#: 64 -> 66 on 2026-09-23 with the Gate-4 launch-code re-issue (KNOWN_ISSUES rows 28/38/33, Joseph's
+#: 2026-09-23 ruling). The successor p3f-pet-gate4-launch-code-gate-20260923.json carries forward
+#: 20260813's narrative fields verbatim, so it repeats 20260813's two bare citations. ADDED exactly:
+#:   state/p3f-pet-gate4-launch-code-gate-20260923.json  pet_fullevent_floor_weights.npz
+#:   state/p3f-pet-gate4-launch-code-gate-20260923.json  pet_fullevent_nominal_weights.npz
+#: Nothing was removed: the retired 20260813 keeps its citations.
+UNRESOLVED_COUNT = 66
+UNRESOLVED_SHA256 = "49916d2832740f06163191d8dc960454ab85ae5bbb3aa9d5623b62b7d88e3020"
 
 
 def bare_citations(text):

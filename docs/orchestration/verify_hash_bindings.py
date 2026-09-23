@@ -91,8 +91,16 @@ KNOWN_PREEXISTING = {
     ("nd-unfolding/pet/sbatch_dump_g2_mefhc.sh",
      "docs/orchestration/state/g2-dump-submit-20260719.json",
      "324a40811669355bdd219d2b5f7988a80cea22e585cbab2e8d98f2bf178fc46e"),
+    # KNOWN_ISSUES #33, 2026-09-23 (Joseph: "if something needs to be fixed, fix it now"): these
+    # readers now take `step1_class_ratio_target` with a legacy fallback. The RUN receipts below
+    # record the bytes those runs executed and are not edited; `git show` recovers them.
+    ("nd-unfolding/pet/gate6_floor_statistics.py",
+     "docs/orchestration/state/gate6-floor-replication-partial-56863958.json",
+     "637ee33d2c36270ae084e17ebb8696f081f77bd7f9f6712738764a989904b7cc"),
+    ("nd-unfolding/pet/evaluate_annealed_nominal_reproduction.py",
+     "docs/orchestration/state/annealed-nominal-error-56563092.json",
+     "077e43620fcfb1c12401b41e60f32e184ab0290b67a89bc55def0bfed2735149"),
 }
-
 
 # Minimum EXPECTED_*_SHA guards the shell collector must still resolve to files in
 # the checkout. Raise it when launchers add pins; lowering it needs the same
@@ -297,8 +305,20 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: with its sha256, by state/step1-ihedge-launch-56525829.json, and git had never carried it. It is
 #: now force-added, byte-identical to the cluster copy (0 bytes, the empty-file sha256, measured on
 #: Perlmutter). Excluding that one row reproduces 120 / 23f68f4b exactly.
+#: 121 -> 121, DIGEST 298eceb4 -> f447426d ON 2026-09-23: the Gate-4 launch-code re-issue
+#: (p3f-pet-gate4-launch-code-gate-20260923.json supersedes 20260813, retired in place) for
+#: KNOWN_ISSUES rows 28/38/33, under Joseph's 2026-09-23 ruling ("if something needs to be fixed,
+#: fix it now"). The delta was enumerated before the constant moved, and it is FOUR REPOINTS, nothing
+#: added or removed:
+#:   omnifold_nn/omnifold/omnifold.py                3a2022b0 -> 3d95aae2
+#:   nd-unfolding/pet/train_fullevent_nominal.py     91144bee -> ba939bd2
+#:   nd-unfolding/pet/validate_pet_nominal_gate4.py  6d04a366 -> 8719b701
+#:   nd-unfolding/pet/annealed_estimator.py          fdf6556c -> f6717968
+#: Reconstructing the inventory with 20260813 at its pre-retirement bytes and 20260923 absent
+#: reproduces 121 / 298eceb4 exactly. Power-tested: flipping the last hex of the successor's engine
+#: pin makes this file report MISMATCH omnifold_nn/omnifold/omnifold.py, rc 1; then restored.
 RECEIPT_BINDING_COUNT = 121
-RECEIPT_BINDING_SHA256 = "298eceb4583d9522714bcaa82ea364a8bd63b4ba187f7ee5ac917c70da378376"
+RECEIPT_BINDING_SHA256 = "f447426da3f6001d3a9d4301603b52cada36555151c101633536ce0f3c7d6f95"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
