@@ -249,7 +249,6 @@ def main():
     root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
     if not root:
         print("[gfm-tables] CANNOT LOOK :: not inside a git work tree"); return 2
-    here = os.getcwd()
     args = [os.path.relpath(os.path.abspath(a), root) for a in args]
     os.chdir(root)
     named = bool(args)

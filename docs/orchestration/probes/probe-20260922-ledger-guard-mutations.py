@@ -28,7 +28,6 @@ crashing (only preconditions may fire through a traceback). See the harness comm
 list is a set of defects reviewers actually found, not all of them, and it grows when one is missed.
 """
 import re
-import shutil
 import subprocess
 import sys
 import tempfile

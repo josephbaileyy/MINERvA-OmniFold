@@ -126,9 +126,17 @@ def controls(tracked):
         print("[render] CONTROL FAILED :: a missing link target was not reported"); ok = False
     if links(probe, "[x](CATALOG.md)\n", tracked):
         print("[render] CONTROL FAILED :: a real, tracked link target was reported"); ok = False
-    spaced = next((t for t in tracked if " " in t and t.startswith("docs/") and "/" not in t[5:]), None)
-    if spaced and links("docs/x.md", f"[x](<{spaced[5:]}>)\n", tracked):
-        print(f"[render] CONTROL FAILED :: a tracked file with a space in its name was reported"); ok = False
+    # its OWN file with a space in the name, made for the purpose: this control once ran only if the repository
+    # happened to hold such a file directly under docs/, and would have been skipped silently -- "controls
+    # passed" -- without one (self-round 68). `_check` reads the disk too, so the file must really exist
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        spaced = os.path.join(td, "a b.md")
+        open(spaced, "w").close()
+        if links(os.path.join(td, "x.md"), "[x](<a b.md>)\n", set(tracked) | {spaced}):
+            print("[render] CONTROL FAILED :: a tracked file with a space in its name was reported"); ok = False
+        if not links(os.path.join(td, "x.md"), "[x](<a b.md>)\n", set(tracked)):
+            print("[render] CONTROL FAILED :: an UNTRACKED file with a space in its name was not reported"); ok = False
     if links(probe, "[x](/KNOWN_ISSUES.md) and [y](CATALOG.md?plain=1)\n", tracked):
         print("[render] CONTROL FAILED :: a repo-root-relative or query-suffixed link to a real file was reported"); ok = False
     if not links(probe, '<img src="MISSING-CONTROL-block.png">\n', tracked):
