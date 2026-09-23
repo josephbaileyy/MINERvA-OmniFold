@@ -12,10 +12,17 @@ import hashlib
 import json
 import math
 import os
+import sys
 import tempfile
 from datetime import datetime, timezone
 
 import numpy as np
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
+from nominal_artifact_keys import (  # noqa: E402  KNOWN_ISSUES #33 rename
+    step1_class_ratio_target, step1_class_ratio_target_key)
 
 
 EXPECTED_DEV = -0.011724
@@ -74,16 +81,17 @@ def evaluate(artifact):
         required = {
             "fold_forward_sum_w_push_reco",
             "fold_forward_sum_w_reco",
-            "step1_class_ratio",
             "seed_policy",
             "lr_policy_realized",
         }
         missing = sorted(required.difference(data.files))
+        if step1_class_ratio_target_key(data.files) is None:
+            missing.append("step1_class_ratio_target (or legacy step1_class_ratio)")
         if missing:
             raise RuntimeError("artifact lacks required fields: {}".format(missing))
         numerator = float(np.asarray(data["fold_forward_sum_w_push_reco"]).reshape(-1)[0])
         denominator = float(np.asarray(data["fold_forward_sum_w_reco"]).reshape(-1)[0])
-        ratio = float(np.asarray(data["step1_class_ratio"]).reshape(-1)[0])
+        ratio = step1_class_ratio_target(data)
         seed_policy = dict(_item(data["seed_policy"]))
         realized = dict(_item(data["lr_policy_realized"]))
 

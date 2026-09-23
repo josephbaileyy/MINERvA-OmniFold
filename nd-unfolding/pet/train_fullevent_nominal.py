@@ -408,12 +408,11 @@ def main(argv=None):
     mf_name = f"fe_nominal_{args.tag}"
     weights_folder = os.path.join(os.path.dirname(args.out) or ".", f"w_{args.tag}")
     # ---- ADOPTED LR ANNEAL, applied WITHOUT editing the engine (Joseph 2026-08-10) --------------
-    # `omnifold.py` calls CompileModels(fixed=True) after each iteration, but RunModel recompiles the
-    # trained clone at full self.LR immediately before every fit(), so the engine's intended anneal is
-    # dead code (KNOWN_ISSUES). This subclass forces the FIT-TIME compile to fixed=True for iterations
-    # > start, which is where the anneal has to bite. The engine file is untouched, so the Gate-4
-    # `estimator_engine_multifold` / `estimator_engine_net` pins stay INTACT and only this driver's pin
-    # moves.
+    # RunModel recompiles the trained clone at full self.LR immediately before every fit(), so the
+    # engine has no working anneal of its own (KNOWN_ISSUES #38; its dead between-iteration
+    # CompileModels(fixed=True) was removed 2026-09-23 with no change to any fit). This subclass
+    # forces the FIT-TIME compile to fixed=True for iterations > start, which is where the anneal
+    # has to bite. It was added without editing the engine (2026-08-10).
     #
     # __init__ is wrapped rather than replaced: closure_powered_truth_reweight.py reads early_stop's
     # default off `inspect.signature(MultiFold.__init__)`, and a bare (*a, **kw) override erases it
@@ -629,7 +628,10 @@ def main(argv=None):
              fold_forward_sum_w_push_reco=np.asarray(sum_w_push_reco),
              fold_forward_sum_w_reco=np.asarray(sum_w_reco),
              fold_forward_n_pass_reco=np.asarray(int(pass_reco_sub.sum())),
-             step1_class_ratio=np.asarray(float(class_ratio)),
+             # KNOWN_ISSUES #33: the loader's TARGET R, copied from the input -- not what step 1
+             # achieved. Was stored as `step1_class_ratio`; readers accept both via
+             # nominal_artifact_keys.step1_class_ratio_target.
+             step1_class_ratio_target=np.asarray(float(class_ratio)),
              # -1 = nominal (no bootstrap); the validator's recomputation from the dump
              # is only valid for the nominal, so it must be able to tell.
              bootstrap_seed=np.asarray(

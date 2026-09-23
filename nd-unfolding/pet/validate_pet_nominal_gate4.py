@@ -56,6 +56,8 @@ for _p in (_HERE, f"{_REPO}/nd-unfolding", f"{_REPO}/nd-unfolding/pet"):
         sys.path.insert(0, _p)
 
 import fullevent_fps_dataloader as fe  # noqa: E402  (login-safe)
+from nominal_artifact_keys import (  # noqa: E402  KNOWN_ISSUES #33 rename
+    step1_class_ratio_target, step1_class_ratio_target_key)
 
 RECEIPT_SCHEMA = "pet-fullevent-gate4-nominal-validation-v1"
 ESTIMATOR_FINGERPRINT = "pet-fullevent-fps-v1"
@@ -1515,8 +1517,10 @@ def main(argv=None):
     fold_forward = fold_forward_driver = fold_forward_telemetry = None
     spectra = spectra_driver = spectra_telemetry = None
     n_full = args.n_full
-    driver_keys = ("fold_forward_sum_w_push_reco", "fold_forward_sum_w_reco", "step1_class_ratio")
+    driver_keys = ("fold_forward_sum_w_push_reco", "fold_forward_sum_w_reco")
     missing = [k for k in driver_keys if k not in z.files]
+    if step1_class_ratio_target_key(z.files) is None:
+        missing.append("step1_class_ratio_target")
     if missing and not args.allow_missing_fold_forward:
         raise SystemExit(
             f"[gate4] weights npz {args.nominal_weights} lacks {missing} -- it was produced by a "
@@ -1558,7 +1562,7 @@ def main(argv=None):
         fold_forward = (v_push, v_w, v_R)
         fold_forward_driver = (float(z["fold_forward_sum_w_push_reco"]),
                                float(z["fold_forward_sum_w_reco"]),
-                               float(z["step1_class_ratio"]))
+                               step1_class_ratio_target(z))
         inventory = fold_forward_telemetry.get("n_signal_inventory")
         if n_full is None:
             n_full = inventory

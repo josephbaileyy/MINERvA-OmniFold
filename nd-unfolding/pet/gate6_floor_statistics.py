@@ -440,7 +440,11 @@ def collect_draw(draw, floor_dir, member1_indices, sacct, all_output_paths):
     import numpy as np  # local: only this clause needs numpy
     z = np.load(npz_path, allow_pickle=True)
     policy = z["seed_policy"].item()
-    r_artifact = float(z["step1_class_ratio"])
+    here = str(Path(__file__).resolve().parent)
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    from nominal_artifact_keys import step1_class_ratio_target  # KNOWN_ISSUES #33 rename
+    r_artifact = step1_class_ratio_target(z)
     idx = z["mc_indices"]
     if member1_indices is None:
         eq, n_diff = False, -1
