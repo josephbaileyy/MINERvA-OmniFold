@@ -168,6 +168,23 @@ def experiment_2() -> dict[str, RunConfig]:
     return out
 
 
+def experiment_2_short() -> dict[str, RunConfig]:
+    """Exp 2 sized for a 30-minute chunk: 12 epochs instead of 32, same recipe and seeds.
+
+    Epochs 1-12 are identical to the first 12 of the 32-epoch run (constant rate, same seeds), so
+    this carries the historical 8-epoch point and the early trend; the 32-epoch configs extend it.
+    """
+    out = {}
+    for tag, arm in T_ARMS.items():
+        for s in (1, 2):
+            name = f"b2e2f-{tag}-s{s}"
+            out[name] = run_config(name, seed=s, iterations=1, feature_arm=arm,
+                                   step2=truth_only_step(s, 12),
+                                   note=f"B2 exp 2 {tag}: truth-only learnability ({arm}), "
+                                        f"12 epochs")
+    return out
+
+
 def experiment_3() -> dict[str, RunConfig]:
     """H at K = 10 (step-wise closure; also the reference arm of exp. 4), seeds 1-2."""
     return {f"b2e3-H-K10-s{s}": run_config(f"b2e3-H-K10-s{s}", seed=s, iterations=10,
@@ -222,8 +239,8 @@ def experiment_5(pdg: str = "raw", schedule: str = "H", seeds: tuple = (1, 2),
     return out
 
 
-PLANS = {"e1": experiment_1, "dev": dev, "e2": experiment_2, "e3": experiment_3,
-         "e4": experiment_4}
+PLANS = {"e1": experiment_1, "dev": dev, "e2": experiment_2, "e2f": experiment_2_short,
+         "e3": experiment_3, "e4": experiment_4}
 
 
 def write_experiment_5(pdg: str, schedule: str) -> None:

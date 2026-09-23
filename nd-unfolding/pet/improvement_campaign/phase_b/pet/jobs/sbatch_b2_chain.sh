@@ -73,10 +73,13 @@ for pid in "${pids[@]}"; do wait "$pid" || status=1; done
 [[ -z "$(git -C "$MINE" status --porcelain)" ]] || status=1
 mapfile -t LEFT < <(remaining)
 LEFT=("${LEFT[@]:-}")
-if [[ -n "${LEFT[0]:-}" ]]; then
+ROUNDS=$(ls "$OUT"/chain-*.txt 2>/dev/null | wc -l)
+if [[ -n "${LEFT[0]:-}" ]] && (( ROUNDS < ${MAX_ROUNDS:-12} )); then
   NEXT=$(sbatch --parsable -q "${CHAIN_QOS:-debug}" -t "${CHAIN_TIME:-00:30:00}" \
     -o "$OUT/slurm-%j.out" --export=ALL "$SELF" 2>&1) || NEXT="resubmit failed: $NEXT"
   echo "resubmitted: $NEXT (left: ${LEFT[*]})" >> "$OUT/chain-$SLURM_JOB_ID.txt"
+elif [[ -n "${LEFT[0]:-}" ]]; then
+  echo "NOT resubmitting: round cap ${MAX_ROUNDS:-12} reached (left: ${LEFT[*]})" >> "$OUT/chain-$SLURM_JOB_ID.txt"
 fi
 echo "status $status" >> "$OUT/chain-$SLURM_JOB_ID.txt"
 exit $status
