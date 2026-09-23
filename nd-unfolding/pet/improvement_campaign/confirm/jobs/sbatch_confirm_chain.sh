@@ -67,13 +67,28 @@ open_rows() {   # not COMPLETE and not being worked on by another running job
   done
 }
 
+# score rows a previous round completed but could not score before its time limit
+for ROW in "${ROWS[@]}"; do score_row "$ROW"; done
+mapfile -t UNFINISHED < <(for r in "${ROWS[@]}"; do is_complete "$(row_name "$r")" || echo x; done)
+if (( ${#UNFINISHED[@]} == 0 )); then echo "all COMPLETE" > "$OUT/chain-$SLURM_JOB_ID.txt"; exit 0; fi
+# queue the next round NOW (it starts when this one ends), so a round killed at its limit still
+# chains and no queue wait falls between rounds; cancelled below if it turns out not to be needed
+NEXT=""
+if (( $(ls "$OUT"/chain-*.txt 2>/dev/null | wc -l) < ${MAX_ROUNDS:-16} )); then
+  NEXT=$(sbatch --parsable -q "${CHAIN_QOS:-debug}" -t "${CHAIN_TIME:-00:30:00}" \
+    --dependency="afterany:$SLURM_JOB_ID" -o "$OUT/slurm-%j.out" --export=ALL "$SELF" 2>&1) || NEXT=""
+fi
+echo "job $SLURM_JOB_ID next round queued: ${NEXT:-none}" >> "$OUT/chain-$SLURM_JOB_ID.txt"
+cancel_next() {
+  [[ -n "$NEXT" && "$(squeue -h -j "$NEXT" -o '%u %j' 2>/dev/null)" == "$USER pv1-chain" ]] && scancel "$NEXT"
+  echo "cancelled queued next round $NEXT: $1" >> "$OUT/chain-$SLURM_JOB_ID.txt"
+}
 mapfile -t TODO < <(open_rows)
-if (( ${#TODO[@]} == 0 )); then echo "nothing open" > "$OUT/chain-$SLURM_JOB_ID.txt"; exit 0; fi
+if (( ${#TODO[@]} == 0 )); then echo "nothing open (held by others)" >> "$OUT/chain-$SLURM_JOB_ID.txt"; exit 0; fi
 echo "job $SLURM_JOB_ID deadline $DEADLINE open ${#TODO[@]}" >> "$OUT/chain-$SLURM_JOB_ID.txt"
 
-work_on() {   # ROW DEVICE: claim, run, score, release; skip a row someone else holds
+work_on() {   # ROW DEVICE (already claimed): run, score, release
   local name; name=$(row_name "$1")
-  claim "$name" || { echo "skip $name (held)" >> "$OUT/chain-$SLURM_JOB_ID.txt"; return 0; }
   local rc=0
   is_complete "$name" || run_row "$1" "$2" "$DEADLINE" || rc=1
   if is_complete "$name"; then [[ "${SCORE:-1}" == 1 ]] && score_row "$1"; cancel_pending_copy "$name"; fi
@@ -85,6 +100,7 @@ status=0
 pids=(); i=0
 for ROW in "${TODO[@]}"; do
   (( i >= ${#DEVS[@]} )) && break       # one row per GPU per round
+  claim "$(row_name "$ROW")" || { echo "skip $(row_name "$ROW") (held)" >> "$OUT/chain-$SLURM_JOB_ID.txt"; continue; }
   work_on "$ROW" "${DEVS[$i]}" & pids[$i]=$!
   i=$(( i + 1 ))
 done
@@ -92,17 +108,9 @@ for pid in "${pids[@]}"; do wait "$pid" || status=1; done
 runs_failed=$status        # a run that stops at the deadline exits 0 (INCOMPLETE); a crash does not
 [[ -z "$(git -C "$MINE" status --porcelain)" ]] || status=1
 
-mapfile -t LEFT < <(open_rows)
 mapfile -t UNFINISHED < <(for r in "${ROWS[@]}"; do is_complete "$(row_name "$r")" || echo x; done)
-ROUNDS=$(ls "$OUT"/chain-*.txt 2>/dev/null | wc -l)
-if (( ${#UNFINISHED[@]} > 0 )) && (( runs_failed != 0 )); then
-  echo "NOT resubmitting: a run exited non-zero (exit-codes.txt); fix and resubmit" >> "$OUT/chain-$SLURM_JOB_ID.txt"
-elif (( ${#UNFINISHED[@]} > 0 )) && (( ROUNDS < ${MAX_ROUNDS:-16} )); then
-  NEXT=$(sbatch --parsable -q "${CHAIN_QOS:-debug}" -t "${CHAIN_TIME:-00:30:00}" \
-    -o "$OUT/slurm-%j.out" --export=ALL "$SELF" 2>&1) || NEXT="resubmit failed: $NEXT"
-  echo "resubmitted: $NEXT (unfinished ${#UNFINISHED[@]}, open ${#LEFT[@]})" >> "$OUT/chain-$SLURM_JOB_ID.txt"
-elif (( ${#UNFINISHED[@]} > 0 )); then
-  echo "NOT resubmitting: round cap ${MAX_ROUNDS:-16} reached" >> "$OUT/chain-$SLURM_JOB_ID.txt"
+if (( ${#UNFINISHED[@]} == 0 )); then cancel_next "all COMPLETE"
+elif (( runs_failed != 0 )); then cancel_next "a run exited non-zero (exit-codes.txt); fix and resubmit"
 fi
 echo "status $status" >> "$OUT/chain-$SLURM_JOB_ID.txt"
 exit $status
