@@ -244,8 +244,10 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   carried verbatim. ⚠ **CONSTRUCTION IS NOT ADOPTION** — nothing adopts it, the four figures are NOT
   regenerated, and their markings stand. ⚠ **TWO ANALOGY TRAPS:** `λ_min` **computes** negative here
   (`−4.326e-93`, most-neg/max `−2.32e-16`) and positive on the `(E_avail,W)` product, **and neither
-  sign is meaningful** — both sit at the double-precision noise floor (`PLAN-20260918` §16.1a; far
-  inside `VL142`'s `1e-9` relative PSD allowance), so copying either sign across as a property is the
+  sign is meaningful** — both sit at the double-precision noise floor (`PLAN-20260918` §16.1a rules this for the
+  42x42 and predates the 3D object, so it applies to the 3D one by extension; far inside `VL142`'s `1e-9`
+  relative PSD allowance). The 3D `λ_min` value is also one run's: it varies with the BLAS configuration,
+  and 583–587 of its 1,431 eigenvalues compute negative, so copying either sign across as a property is the
   trap (⚠ this entry read *"`λ_min` is **NEGATIVE** here … correct on this object"*, asserting a
   meaningful sign; withdrawn 2026-09-22); and the destination is **1,431 of 1,568**, not dense. ⚠ **The destination mask is a DECLARATION**
   and this run declares `receiving-cells` following the adopted precedent — **a figure would need
@@ -258,8 +260,10 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   harness IS the graded code path. **Released** (five laterals at seed 1242): `s_proj 6.189174%`,
   `s_agg 0.762704%`, `s_med 0.682292%` — against the pinned pair, the two legs INSIDE the bound differ
   most (`+62%`, `+41%` relative) and the failing leg least (`+0.71%`); ⚠ **not attributable to the
-  release**, because the products also differ in code identity (record §3), so each delta mixes the
-  release with code drift at one seed pair. ⚠ **NOT all five predeclared invalidating
+  release**, because the products also differ in the Z-assembly code identity (record §3) AND in the unfold
+  driver the ten lateral endpoints ran on (`dc74c38f` for the pinned bands, `662951e0` for the released ones,
+  a SEMANTIC difference), so each delta mixes all three at one seed pair; §3a's Z-only rebuild would not
+  separate them. ⚠ **NOT all five predeclared invalidating
   conditions hold** — the record's *"All five hold"* is **WITHDRAWN**: three hold as measured
   (baseline's 20 digests byte-identical in both jobs), **one holds only against §6's PRE-AMENDMENT
   text** (Amendment 1 §A1.4 widened it to all of `active_universe_5d/standard/`, never digested),

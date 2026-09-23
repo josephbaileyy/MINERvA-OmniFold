@@ -33,8 +33,18 @@ terms and stay far inside; the failing leg differs least.** ⚠ **These differen
 attributed to releasing the five bands.** The two products differ in the band release **and** in
 code identity (`384c2eb1` against `d64257c3`, with different import closures — §3), so each
 delta is the combined effect of both, at one seed pair; §3's quotable statement already says
-*"what is unestablished is that the two members may be compared at all"*. Isolating the release
-needs the code-comparable rebuild §3a describes, which was not run. ⚠ This paragraph previously
+*"what is unestablished is that the two members may be compared at all"*. ⚠ **And there is a THIRD
+difference, found by independent review #11a:** the pinned member's five lateral bands come from the
+ten baseline unfolds, whose receipts pin driver `unfold_blob dc74c38f…` (§2), while releasing them
+meant re-unfolding those same ten endpoints on today's driver, `662951e0…`; the ten-receipts record
+classifies that driver change as **SEMANTIC**, and all four commits that made it are dated 2026-08-19
+to 08-26, before the graded member was built. So the release and the driver change are inseparable
+here. ⚠ **This paragraph said *"Isolating the release needs the code-comparable rebuild §3a
+describes"*, which was wrong:** §3a's rebuild re-assembles Z at one HEAD, which would pass the
+grader's comparability check but leave the two drivers in place. Equalising the driver would mean
+re-unfolding the baseline endpoints, which this lane's governing instructions forbid because it
+destroys the adopted covariance's inputs. The release's effect alone is therefore not isolable
+within the constraints this lane ran under. ⚠ This paragraph previously
 ended *"Releasing the five seed-pinned bands did **not** produce a large change in `s_proj`"* — a
 causal attribution this record's own §3 does not license; withdrawn at self-round 40.
 

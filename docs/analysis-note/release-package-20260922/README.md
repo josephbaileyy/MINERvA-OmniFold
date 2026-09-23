@@ -117,7 +117,7 @@ The last bin on `eavail`, `q3` and `W` is a **catch bin to 100 GeV**. Dense grid
 
 ## 5. Self-checks — the appendix's own worked example, EXECUTED at build time
 
-Not asserted; run. **The build-time rows are all from `_build_report.json`**; ⚠ **the cross-machine re-measurement in the `y = M x_reported` row is NOT in that file (⚠ this said *"the first row"*, whose two values ARE in it)** — it was produced on a second host (numpy `1.26.4`, macOS/Accelerate, 2026-09-22) and reproduced independently by a third reviewer.
+Not asserted; run. **The build-time rows are all from `_build_report.json`**; ⚠ **the cross-machine re-measurements in the `y = M x_reported` row AND in the `λ` row are NOT in that file (⚠ this said *"the first row"*, whose two values ARE in it)** — it was produced on a second host (numpy `1.26.4`, macOS/Accelerate, 2026-09-22) and reproduced independently by a third reviewer.
 
 | check | result |
 |---|---|
@@ -131,7 +131,7 @@ Not asserted; run. **The build-time rows are all from `_build_report.json`**; �
 | **C-order vs F-order control** | ✅ the F-order reshape disagrees with the C-order one by a max **relative** `7.82e5`. ⚠ **This is a different statistic from the appendix's *"relative 1.0"*** — here it is `max\|y_C − y_F\| / \|y_C\|` per cell, which is unbounded where `y_C` is small. The conclusion is the same and stronger: the orderings are nowhere near equal, so C order is **established, not assumed** |
 | `√Tr C_EW` | ✅ `4.4551809735306645e-39` |
 | symmetry `max\|C − Cᵀ\|` | ✅ **exactly `0.0`** |
-| `λ_min`, `λ_max`, ratio | computed, **not a check**: `+4.359103608788691e-92`, `1.4882151297784383e-77`, `2.929e-15` (build host, Perlmutter, from `_build_report.json`). ⚠ **`λ_min`'s SIGN IS NOT MEANINGFUL.** The governing measurement for this matrix, `PLAN-20260918-scalar5d-publication-completion.md` §16.1a, rules that the smallest eigenvalues *"sit at the floating-point noise floor … so their sign is not meaningful and 'positive' is not evidence that anything was cured"* (condition number `≈ 3.4e14`), and that `n_negative = 0` *"is not a demonstration that the source's 5,214 negative directions were handled"*. This row previously carried a ✅ beside *"`λ_min` is **positive**"*, and a cross-host caveat I added later went further and called *"the **sign** of `λ_min` … the citable content"* — the opposite of §16.1a, and inconsistent with this README's own *DO NOT INVERT* note two paragraphs down. Both withdrawn. **Cross-host:** re-measured from the shipped bytes on macOS/Accelerate with numpy 1.26.4, `λ_min = 4.3591116699293156e-92` (agreeing on only **5 significant digits**, `4.35910…` vs `4.35911…`, relative difference `1.85e-6`; an earlier revision said *6*, from a common string prefix that counted the decimal point) and `λ_max = 1.4882151297784372e-77`, agreeing on 15. **Citable from this row: `λ_max`, and the ratio's order of magnitude. Not citable: `λ_min`'s sign or its trailing digits.** |
+| `λ_min`, `λ_max`, ratio | computed, **not a check**: `+4.359103608788691e-92`, `1.4882151297784383e-77`, `2.929e-15` (build host, Perlmutter, from `_build_report.json`). ⚠ **`λ_min`'s SIGN IS NOT MEANINGFUL.** The governing measurement for this matrix, `PLAN-20260918-scalar5d-publication-completion.md` §16.1a, rules that the smallest eigenvalues *"sit at the floating-point noise floor … so their sign is not meaningful and 'positive' is not evidence that anything was cured"* (condition number `≈ 3.4e14`), and that `n_negative = 0` *"is not a demonstration that the source's 5,214 negative directions were handled"*. This row previously carried a ✅ beside *"`λ_min` is **positive**"*, and a cross-host caveat I added later went further and called *"the **sign** of `λ_min` … the citable content"* — the opposite of §16.1a, and inconsistent with this README's own *DO NOT INVERT* note further down. Both withdrawn. **Cross-host:** re-measured from the shipped bytes on macOS/Accelerate with numpy 1.26.4, `λ_min = 4.3591116699293156e-92` (agreeing on only **5 significant digits**, `4.35910…` vs `4.35911…`, relative difference `1.85e-6`; an earlier revision said *6*, from a common string prefix that counted the decimal point) and `λ_max = 1.4882151297784372e-77`, agreeing on 15. **Citable from this row: `λ_max`, and the ratio's order of magnitude. Not citable: `λ_min`'s sign or its trailing digits.** |
 
 ⚠ **THE `0.0` ABOVE IS A PROPERTY OF THE BUILD HOST, NOT OF THESE BYTES — corrected 2026-09-22
 by an independent reviewer who ran this README's own recipe and got `AssertionError`.**
@@ -147,8 +147,10 @@ retained count is set by whatever cutoff is used — `26` at `1e-6`, `36` at the
 hardcodes, `41` at `numpy.linalg.matrix_rank`'s default, `42` at none
 (`docs/orchestration/state/CUTOFF-SCAN-20260922-publication-42x42.json`, ledger `VL145`). **A reader
 following a "rank should be 36" instruction with NumPy defaults would get 41 and wrongly conclude
-this package is corrupt.** Check `λ_min/λ_max ≈ 2.9e-15` and `λ_min > 0`, and treat the object as
-ill-conditioned rather than as having a definite rank.
+this package is corrupt.** Check `λ_min/λ_max ≈ 2.9e-15` and treat the object as ill-conditioned rather than as having a
+definite rank. ⚠ **Do not check `λ_min > 0`:** its sign is not meaningful at this noise floor (see the
+`λ` row in §5); this instruction included that check until 2026-09-22. `_build_report.json`'s
+`"lambda_min_positive": true` records what one computation returned, and is not a check either.
 
 ⚠ **DO NOT INVERT `C_EW`** without a declared regularization. Its spectrum runs continuously down to
 the double-precision noise floor, so the inverse is set by the regularizer rather than by the data.

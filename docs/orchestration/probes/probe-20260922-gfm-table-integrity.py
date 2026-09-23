@@ -17,9 +17,17 @@ Checks, per GFM table (a header row followed by a delimiter row):
                    column boundary inside the code span (found by self-round 30).
   cell-parity  -- a cell with an odd number of backticks or of `**` (outside code spans), which
                   strands a marker and re-pairs everything after it
+  header-mismatch -- the HEADER row's cell count differs from the delimiter row's. GFM then does not
+                  recognise a table at all: every row below renders as plain text. (Missed by the
+                  first version of this probe, which never examined the header; independent review
+                  #11a found it in VALIDATION_LEDGER.md, where a code-span pipe in a header un-tabled
+                  six rows.)
   cells        -- a body row whose unescaped-pipe count differs from the header's
-  broken-row   -- a body row that does not end with `|` (continued on the next line)
-  orphan-tail  -- a non-table line directly after a table that ends with `|` (the torn-off half)
+  trailing-cell -- text AFTER a body row's last pipe. GFM reads it as one more cell than the header
+                  allows and DROPS it. (The first version called this "broken-row -- continued on the
+                  next line"; review #11a showed the rows in question were complete rows whose final
+                  clause was silently discarded.)
+  orphan-tail  -- a non-table line directly after a table that ends with `|` (a row's torn-off half)
 
 Usage:  probe-20260922-gfm-table-integrity.py [FILE ...]   (default: every .md changed since
         177af61b). Exit 0 clean, 1 defects found, 2 cannot look. `--since REV` changes the base.
@@ -44,6 +52,13 @@ def sweep(path):
     while i < len(lines) - 1:
         if lines[i].startswith("|") and SEP.match(lines[i + 1]):
             n, j = pipes(lines[i]), i + 2
+            if n != pipes(lines[i + 1]):
+                out.append((i + 1, "header-mismatch",
+                            f"header has {pipes(lines[i])} pipes, delimiter {pipes(lines[i + 1])}: "
+                            "GFM will not render this as a table"))
+            for span in re.findall(r"`[^`]*`", lines[i]):
+                if re.search(r"(?<!\\)\|", span):
+                    out.append((i + 1, "codespan-pipe", f"unescaped pipe in header {span[:40]}"))
             while j < len(lines) and lines[j].startswith("|"):
                 for span in re.findall(r"`[^`]*`", lines[j]):
                     if re.search(r"(?<!\\)\|", span):
@@ -55,8 +70,9 @@ def sweep(path):
                         out.append((j + 1, "cell-parity", f"odd ** in cell {ci}"))
                 if pipes(lines[j]) != n:
                     out.append((j + 1, "cells", f"{pipes(lines[j])} pipes vs header {n}"))
-                if not lines[j].rstrip().endswith("|"):
-                    out.append((j + 1, "broken-row", "row does not end with a pipe"))
+                tail = re.split(r"(?<!\\)\|", lines[j])[-1].strip()
+                if tail:
+                    out.append((j + 1, "trailing-cell", f"text after the last pipe is dropped: {tail[:40]!r}"))
                 j += 1
             if (j < len(lines) and lines[j].strip() and not lines[j].startswith("|")
                     and lines[j].rstrip().endswith("|")):
