@@ -630,7 +630,18 @@
     "early_return_line": 218,
     "executed_on_a_data_only_artifact": 22,
     "path": "nd-unfolding/pet/validate_gate5_training_artifacts.py",
-    "sha256": "1aea6f96fef54d0298d885998d5556f326fb273eba7aabbaf44dc4b922c59067",
+    "reissues": [
+      {
+        "authorization": "Joseph's 2026-09-23 ruling: close every known issue now, and a fix blocked only by re-pin cost gets fix + re-pin + a record.",
+        "change": "In the pinned module, `validate_member`'s fatal-token check (:344-346) dropped the dead \"SystemExit:\" token and now also scans stderr for the driver guard prefixes in the new module constant FATAL_STDERR_TOKENS. That constant is defined below `validate_member`, so no check site moved line.",
+        "date": "2026-09-23",
+        "from_sha256": "1aea6f96fef54d0298d885998d5556f326fb273eba7aabbaf44dc4b922c59067",
+        "issue": "ISSUE-55",
+        "re_derived": "The partition was re-derived with gen_divergence_manifest_cstat_data_only.py, run with its wrapper-must-not-exist refusal bypassed and its output sent to a scratch file (the refusal exists to freeze the PREDICTIONS, and none moved). Compared with this file, the ONLY field that differed was pinned_module.sha256: 77 static sites, early return at :218, 18/55/4 DELEGATED/UNEXECUTED/MANIFEST and every bucket entry are unchanged. Site 345 ('fatal_log_tokens') is UNEXECUTED_BY_CONSTRUCTION on a data-only artifact and is replaced by cstat_data_only_readback.assert_member_logs, which was fixed the same way.",
+        "to_sha256": "27801a97eb342cee30d3bc8c6a1ab0bca1e63c3e9100bbaa2afc611bdd200c38"
+      }
+    ],
+    "sha256": "27801a97eb342cee30d3bc8c6a1ab0bca1e63c3e9100bbaa2afc611bdd200c38",
     "static_check_sites": 77,
     "unexecuted_on_a_data_only_artifact": 55,
     "why_the_digest": "so a legitimate re-issue of the pinned module is distinguishable from this manifest breaking, in one comparison. Without it a re-issue produces a loud failure whose tempting resolution is to refresh the manifest -- the read-off-the-finished-artifact defect through the back door."

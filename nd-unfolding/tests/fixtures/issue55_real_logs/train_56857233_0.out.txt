@@ -1,0 +1,93 @@
+Horovod instalation found.
+2.15.0
+[gate5-train] index=0 seed=50000 job=56857233_0 head=b82ac63f9c5685c9cc05df059d2bbb4ae42d3258
+{
+  "config_gate": "PASS",
+  "tag": "nominal",
+  "estimator_fingerprint": "pet-fullevent-fps-v1",
+  "bkg_mode": "negweight-refined",
+  "petSchemaVersion": "g2-fullevent-v1",
+  "hasFullEventSchema": 1,
+  "fullPhaseSpace": 1,
+  "has_background": true,
+  "input": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+  "seed_policy": {
+    "estimator_seed": 42,
+    "subsample_seed": 0,
+    "niter": 3,
+    "epochs": 8,
+    "train_events": 2000000,
+    "batch_size": 512,
+    "lr_policy": {
+      "schedule": "fit-time-anneal-after-iteration-0",
+      "base_lr": 0.0001,
+      "annealed_lr": 1e-05,
+      "applies_from_iteration": 1,
+      "mechanism": "MultiFold subclass overriding CompileModel at fit time; omnifold.py is NOT edited"
+    }
+  }
+}
+Horovod instalation found.
+INFO: Normalizing sum of weights to 1000000.0 ...
+INFO: Creating pass reco flag ...
+INFO: Normalizing sum of weights to 1125311.0723074477 ...
+{
+  "consumed_inventory_matches_receipt": true,
+  "inventories": [
+    "bkg",
+    "data",
+    "sig"
+  ]
+}
+13048 training steps at reco and 7812 steps at gen
+INFO: B-4 dual-leg MC weights ACTIVE -- step 1 on weight_reco, step 2 on weight
+ITERATION: 1
+RUNNING STEP 1
+Last val loss 0.21845023334026337
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 0.8252590894699097
+INFO: Dumping training history ...
+ITERATION: 2
+RUNNING STEP 1
+Last val loss 0.11144762486219406
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 0.808040201663971
+INFO: Dumping training history ...
+ITERATION: 3
+RUNNING STEP 1
+Last val loss 0.1079791784286499
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 0.7788369059562683
+INFO: Dumping training history ...
+[gate4] LR anneal VERIFIED from the optimizer: 2 fit(s) at 0.0001, 4 at 1e-05
+[gate4] step1 FINAL (last-epoch) weights -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_00/training/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5 (round-trip verified)
+[gate4] step2 FINAL (last-epoch) weights -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_00/training/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5 (round-trip verified)
+[gate4] wrote /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_00/training/GATE5_REPLICA_WEIGHTS.npz (tag=nominal)
+{
+  "fold_forward_reco_ratio": 0.8310555600313153,
+  "step1_class_ratio_R": 1.1253110723074478,
+  "n_pass_reco_subsample": 837671,
+  "n_pass_truth_subsample": 1999928,
+  "n_reported_cells": 258,
+  "cap_saturation_frac": 0.0,
+  "seed_policy": {
+    "estimator_seed": 42,
+    "subsample_seed": 0,
+    "niter": 3,
+    "epochs": 8,
+    "train_events": 2000000,
+    "batch_size": 512,
+    "lr_policy": {
+      "schedule": "fit-time-anneal-after-iteration-0",
+      "base_lr": 0.0001,
+      "annealed_lr": 1e-05,
+      "applies_from_iteration": 1,
+      "mechanism": "MultiFold subclass overriding CompileModel at fit time; omnifold.py is NOT edited"
+    }
+  }
+}
+{"artifact": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_00/training/GATE5_REPLICA_WEIGHTS.npz", "bootstrap_seed": 50000, "receipt": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/replicas/replica_00/training/GATE5_REPLICA_TRAINING_RECEIPT.json", "replica_index": 0, "status": "PASS"}
+[gate5-train] DONE index=0 seed=50000 2026-08-13T14:42:00Z

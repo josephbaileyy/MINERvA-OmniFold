@@ -1,0 +1,76 @@
+Horovod instalation found.
+2.15.0
+CURRENT              /pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713/nd-unfolding/pet/train_fullevent_replica.py  (nd-unfolding/pet/train_fullevent_replica.py)
+CURRENT              /pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713/nd-unfolding/pet/train_fullevent_nominal.py  (nd-unfolding/pet/train_fullevent_nominal.py)
+CURRENT              /pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713/nd-unfolding/pet/fullevent_fps_dataloader.py  (nd-unfolding/pet/fullevent_fps_dataloader.py)
+CURRENT              /pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713/nd-unfolding/pet/cstat_data_only.py  (nd-unfolding/pet/cstat_data_only.py)
+CURRENT              /pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713/nd-unfolding/pet/verify_executing_copy_is_committed.py  (nd-unfolding/pet/verify_executing_copy_is_committed.py)
+
+repo /pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713 @ 377c713d1790d96d15f7d115d9c903fd556c5943
+5 of 5 CURRENT
+[gate5-do-train] deployment parity CURRENT for all pinned executing copies in /pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713
+[gate5-do-train] index=0 seed=50000 job=57266000_0 head=377c713d1790d96d15f7d115d9c903fd556c5943 product=data-only-v1
+{
+  "config_gate": "PASS",
+  "tag": "nominal",
+  "estimator_fingerprint": "pet-fullevent-fps-v1",
+  "bkg_mode": "negweight-refined",
+  "petSchemaVersion": "g2-fullevent-v1",
+  "hasFullEventSchema": 1,
+  "fullPhaseSpace": 1,
+  "has_background": true,
+  "input": "/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/g2_fullevent/input/G2_FPS_MEFHC_P12.npz",
+  "seed_policy": {
+    "estimator_seed": 42,
+    "subsample_seed": 0,
+    "niter": 3,
+    "epochs": 8,
+    "train_events": 2000000,
+    "batch_size": 512,
+    "lr_policy": {
+      "schedule": "fit-time-anneal-after-iteration-0",
+      "base_lr": 0.0001,
+      "annealed_lr": 1e-05,
+      "applies_from_iteration": 1,
+      "mechanism": "MultiFold subclass overriding CompileModel at fit time; omnifold.py is NOT edited"
+    }
+  }
+}
+Horovod instalation found.
+INFO: Normalizing sum of weights to 1000000.0 ...
+INFO: Creating pass reco flag ...
+INFO: Normalizing sum of weights to 1124080.2949941019 ...
+{
+  "consumed_inventory_matches_receipt": true,
+  "inventories": [
+    "bkg",
+    "data",
+    "sig"
+  ]
+}
+13048 training steps at reco and 7812 steps at gen
+INFO: B-4 dual-leg MC weights ACTIVE -- step 1 on weight_reco, step 2 on weight
+ITERATION: 1
+RUNNING STEP 1
+Last val loss 0.2085437923669815
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 0.7939537763595581
+INFO: Dumping training history ...
+ITERATION: 2
+RUNNING STEP 1
+Last val loss 0.1054825410246849
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 0.8085836172103882
+INFO: Dumping training history ...
+ITERATION: 3
+RUNNING STEP 1
+Last val loss 0.107237808406353
+INFO: Dumping training history ...
+RUNNING STEP 2
+Last val loss 0.7912918925285339
+INFO: Dumping training history ...
+[gate4] LR anneal VERIFIED from the optimizer: 2 fit(s) at 0.0001, 4 at 1e-05
+[gate4] step1 FINAL (last-epoch) weights -> /pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/replicas/replica_00/training/w_nominal/OmniFold_fe_nominal_nominal_iter2_step1_final.weights.h5 (round-trip verified)
+[gate4] step2 FINAL (last-epoch) weights -> /pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/replicas/replica_00/training/w_nominal/OmniFold_fe_nominal_nominal_iter2_step2_final.weights.h5 (round-trip verified)

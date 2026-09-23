@@ -279,8 +279,19 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: file report
 #:   MISMATCH docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md
 #: and *** BINDINGS BROKEN ***, measured before the bump and then reverted, not argued.
+#: 120 -> 120, digest 0b29b654 -> 23f68f4b (2026-09-23, ISSUE-55). This is a REPOINT, not an addition.
+#: The pinned g1 validator `nd-unfolding/pet/validate_gate5_training_artifacts.py` was re-issued to fix
+#: its dead "SystemExit:" fatal token, and its LIVE pin in
+#: `state/DIVERGENCE-MANIFEST-20260818-cstat-data-only.json` (`pinned_module.sha256`) moved with it:
+#:   REPOINTED nd-unfolding/pet/validate_gate5_training_artifacts.py
+#:             1aea6f96fef54d0298d885998d5556f326fb273eba7aabbaf44dc4b922c59067
+#:          -> 27801a97eb342cee30d3bc8c6a1ab0bca1e63c3e9100bbaa2afc611bdd200c38
+#: The delta was enumerated before the constant moved. Swapping that one row back to its old want
+#: reproduces 120 / 0b29b654 exactly. Power-tested: flipping the manifest pin's last hex digit makes
+#: this file report `MISMATCH nd-unfolding/pet/validate_gate5_training_artifacts.py`. That was
+#: measured, then reverted.
 RECEIPT_BINDING_COUNT = 120
-RECEIPT_BINDING_SHA256 = "0b29b654ea4a6586bc9ac8fae08158450a7b0a898e7859d1b2ceb88fb6111fa8"
+RECEIPT_BINDING_SHA256 = "23f68f4b35d86348b9ccf97e9edce365254e0c8c1b049dd0944c826954e04f9f"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

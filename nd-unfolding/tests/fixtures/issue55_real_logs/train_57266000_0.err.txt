@@ -1,0 +1,52 @@
+Unloading the cpe module is insufficient to restore the system defaults.
+Please run 'source
+/opt/cray/pe/cpe/25.09/restore_lmod_system_defaults.[csh|sh]'. 
+ 
+Sourcing the above script is not necessary if swapping the cpe module with a
+different version. 
+Lmod Warning:
+-------------------------------------------------------------------------------
+The following dependent module(s) are not currently loaded: cray-mpich/9.0.1
+(required by: tensorflow/2.15.0)
+-------------------------------------------------------------------------------
+
+
+
+
+The following have been reloaded with a version change:
+  1) PrgEnv-gnu/8.6.0 => PrgEnv-gnu/8.7.0
+  2) cpe/25.09 => cpe/26.03
+  3) cray-libsci/25.09.0 => cray-libsci/26.03.0
+  4) cray-mpich/9.0.1 => cray-mpich/9.1.0
+  5) craype/2.7.35 => craype/2.7.36
+  6) cudatoolkit/12.9 => cudatoolkit/12.2
+  7) gcc-native/14 => gcc-native/12.3
+  8) perftools-base/25.09.0 => perftools-base/26.03.0
+
+2026-08-19 23:08:27.605150: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2026-08-19 23:08:27.605236: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2026-08-19 23:08:27.713671: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-08-19 23:08:27.886138: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-08-19 23:08:32.180821: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2026-08-19 23:09:49.923459: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2026-08-19 23:09:49.923546: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2026-08-19 23:09:49.924996: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-08-19 23:09:49.932055: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-08-19 23:10:19.608869: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2026-08-19 23:12:01.147677: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1929] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 79189 MB memory:  -> device: 0, name: NVIDIA A100-SXM4-80GB, pci bus id: 0000:41:00.0, compute capability: 8.0
+2026-08-19 23:15:33.406544: I tensorflow/core/kernels/data/shuffle_dataset_op.cc:422] fused(ShuffleDatasetV3:4,RepeatDataset:5): Filling up shuffle buffer (this may take a while): 5092696 of 5344461
+2026-08-19 23:15:33.938419: I tensorflow/core/kernels/data/shuffle_dataset_op.cc:452] Shuffle buffer filled.
+2026-08-19 23:17:39.167325: I external/local_xla/xla/service/service.cc:168] XLA service 0x7f18f30eb9f0 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+2026-08-19 23:17:39.167423: I external/local_xla/xla/service/service.cc:176]   StreamExecutor device (0): NVIDIA A100-SXM4-80GB, Compute Capability 8.0
+2026-08-19 23:17:39.176193: I tensorflow/compiler/mlir/tensorflow/utils/dump_mlir_util.cc:269] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+2026-08-19 23:17:39.234999: I external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:454] Loaded cuDNN version 8903
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1787206687.753679  454476 device_compiler.h:186] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+WARNING:tensorflow:Callback method `on_train_batch_end` is slow compared to the batch time (batch time: 0.0231s vs `on_train_batch_end` time: 0.1440s). Check your callbacks.
+WARNING:tensorflow:Callback method `on_train_batch_end` is slow compared to the batch time (batch time: 0.0235s vs `on_train_batch_end` time: 0.1320s). Check your callbacks.
+2026-08-20 00:18:48.882904: I tensorflow/core/kernels/data/shuffle_dataset_op.cc:422] fused(ShuffleDatasetV3:61,RepeatDataset:62): Filling up shuffle buffer (this may take a while): 5172191 of 5344461
+2026-08-20 00:18:49.218278: I tensorflow/core/kernels/data/shuffle_dataset_op.cc:452] Shuffle buffer filled.
+[gate4] WARNING degenerate event-feature columns reco=['mu_minos_ok'] truth=[]
+[gate5-dataonly] write-time: withheld key(s) present: ['bootstrap_seed']; the seed lives under `data_bootstrap_seed` (P6)

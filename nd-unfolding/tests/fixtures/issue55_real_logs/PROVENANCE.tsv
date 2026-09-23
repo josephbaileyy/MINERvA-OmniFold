@@ -1,0 +1,18 @@
+# Fixtures for nd-unfolding/tests/test_issue55_systemexit_log_tokens.py (ISSUE-55, 2026-09-23).
+#
+# COMPLETE FILES, byte-identical to real Slurm logs on Perlmutter. Read-only capture on 2026-09-23 with
+# `ssh saul.nersc.gov cat <path>`; sha256 and byte count were measured on both ends and match.
+# Stored with a .txt suffix because .gitignore excludes *.out/*.err repo-wide. The test copies each
+# fixture to the producer's real name in a temp dir, so the bytes are unchanged.
+#
+# fixture	source_abs_path	sha256	bytes	lines	what it is
+train_56857233_0.out.txt	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/train_56857233_0.out	c517b0efb27569209964a588ecfd9f654c79260a89cd6c785f0bfe79c34811c2	3667	93	HEALTHY replica/g1 member 0 (promoted Gate-5 N50 training family); stdout carries the launcher's healthy [gate5-train] start and DONE lines
+train_56857233_0.err.txt	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/pet/fullevent_cstat_n50/logs/train_56857233_0.err	6b426b4b093cf183061cde643847225e3bb8dfd3f04de9d59cfff14caeefd04f	4789	32	HEALTHY replica/g1 member 0 stderr: TF banners and the healthy "[gate4] WARNING degenerate event-feature columns" line
+train_57266000_0.out.txt	/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/logs/train_57266000_0.out	49c9f92eba426f4f367c2f4c425f70eb43fcc5ca97772f868a82d624d3f27f18	3543	76	FAILED data-only member 0 stdout: start line, no DONE line
+train_57266000_0.err.txt	/pscratch/sd/j/josephrb/gate5-do-g2/nd-unfolding/pet/fullevent_cstat_data_only_n50/logs/train_57266000_0.err	571bf287f92301d38de347c44faad630a45a6b14b975559e74b7ce82e92a7be9	5389	52	FAILED data-only member 0 stderr: ends in the bare SystemExit message "[gate5-dataonly] write-time: withheld key(s) present: ..." (no traceback, no "SystemExit:")
+#
+# Also measured on the cluster at capture time and NOT copied: all 50 of train_56857233_*.err contain
+# "[gate4] WARNING" and none contains "[gate5-train]", "[gate5-dataonly]", "[gate5-family]",
+# "[gate5-target-dataonly]", "[gate4/D2]", "SystemExit", "Traceback" or "[FAIL]"; all 50
+# train_56857233_*.out contain "[gate5-train]". The three data-only driver-guard failures (57253127_0,
+# 57256638_0, 57266000_0) contain 0 "SystemExit" and 0 "Traceback".

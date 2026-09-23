@@ -1527,10 +1527,16 @@ class ReadbackCheckpointsAndLogs(unittest.TestCase):
         # stdout. Asserting over `FATAL_LOG_TOKENS` alone would report the repair as missing.
         guard = "[gate5-train] target receipt unreadable: x"
         self.assertFalse(any(t in guard for t in pinned),
-                         "the pinned g1 list already sees a bare driver guard; ISSUE-55 would be moot")
+                         "g1's both-streams list now sees a bare driver guard in STDOUT too, where the "
+                         "replica launcher prints that prefix on its healthy path")
         self.assertTrue(any(t in guard for t in
                             list(self.rb.FATAL_LOG_TOKENS) + list(self.rb.FATAL_STDERR_TOKENS)),
                         "a bare driver guard message is invisible again -- ISSUE-54's silent half")
+        # ISSUE-55 (2026-09-23): g1 now has the same STDERR-only arm, so both paths see the guard.
+        self.assertEqual(list(self.V.FATAL_STDERR_TOKENS), list(self.rb.FATAL_STDERR_TOKENS))
+        self.assertTrue(any(t in guard for t in self.V.FATAL_STDERR_TOKENS),
+                        "g1 is blind to a bare driver guard again -- ISSUE-55")
+        self.assertNotIn("SystemExit:", pinned)
 
     def test_the_optimizer_proof_line_is_DERIVED_and_matches_the_pinned_literal(self):
         """Its four embedded numbers are the ones the schedule already derives, so copying the string

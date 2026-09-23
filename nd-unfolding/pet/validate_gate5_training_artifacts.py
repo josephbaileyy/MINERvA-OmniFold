@@ -341,8 +341,9 @@ def validate_member(idx, campaign: Path, target_row, expected_indices: np.ndarra
               out_text.count("LR anneal VERIFIED from the optimizer: 2 fit(s) at 0.0001, 4 at 1e-05"), 1)
     checks.eq("log_pass_receipt_count", out_text.count('"status": "PASS"'), 1)
     checks.eq("log_done_count", out_text.count(f"[gate5-train] DONE index={idx} seed={seed}"), 1)
-    fatal_tokens = ["Traceback (most recent call last)", "[gate5-train][FAIL]", "SystemExit:"]
-    checks.eq("fatal_log_tokens", [t for t in fatal_tokens if t in out_text or t in err_text], [])
+    fatal_tokens = ["Traceback (most recent call last)", "[gate5-train][FAIL]"]  # ISSUE-55: below
+    checks.eq("fatal_log_tokens", [t for t in fatal_tokens if t in out_text or t in err_text]
+              + [t for t in FATAL_STDERR_TOKENS if t in err_text], [])
 
     return {
         "replica_index": idx,
@@ -354,6 +355,22 @@ def validate_member(idx, campaign: Path, target_row, expected_indices: np.ndarra
         "checks": checks.summary(),
         "verdict": "PASS" if not checks.failed else "FAIL",
     }
+
+
+# ISSUE-55 (2026-09-23). The fatal list used to carry "SystemExit:", which a SystemExit never prints:
+# `raise SystemExit("[gate5-train] ...")` prints ONLY the message to stderr (rc=1, no traceback, no
+# "SystemExit:"), and a SystemExit inside a thread prints nothing at all. Measured on real Perlmutter
+# logs: the three data-only driver-guard failures 57253127_0 / 57256638_0 / 57266000_0 each end in a
+# bare "[gate5-dataonly] ..." line on stderr, and 0 of them contain "SystemExit". So the token that
+# really marks a driver guard is the guard's own PREFIX, in STDERR ONLY. Only stderr is scanned because
+# this family's launcher prints "[gate5-train] index=..." and "[gate5-train] DONE ..." to STDOUT on its
+# healthy path (sbatch_gate5_replica_train_array.sh:62,72). Also measured: the 50 healthy 56857233 .err
+# files contain none of these, and all 50 contain "[gate4] WARNING ...". That is why the nominal
+# driver's bare "[gate4]" guards cannot be named by prefix; `log_done_count` still catches those runs.
+# Defined here, below `validate_member`, so that no check site above it changes line (the divergence
+# manifest records the check sites by line). Keep equal to `cstat_data_only_readback.FATAL_STDERR_TOKENS`.
+FATAL_STDERR_TOKENS = ("[gate5-train]", "[gate5-dataonly]", "[gate5-family]", "[gate5-target-dataonly]",
+                       "[gate4/D2]")
 
 
 def parse_sacct(path: Path):

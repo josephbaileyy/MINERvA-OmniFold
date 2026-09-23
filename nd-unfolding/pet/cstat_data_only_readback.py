@@ -106,8 +106,13 @@ DRIVER_FATAL_PREFIXES = ("[gate5-train]", "[gate5-dataonly]")
 #     "do not reuse this list" caveat, and lane C's ruling to parameterise the reader turned that caveat
 #     into a live defect by making the reuse the POINT.
 #   * "Traceback (most recent call last)" -- anything that is not a deliberate guard.
-# "SystemExit:" is KEPT but is no longer load-bearing: it cannot fire for a `raise` in __main__, and is
-# retained only for the case where a SystemExit escapes a thread, where `threading` does print a traceback.
+# "SystemExit:" was REMOVED 2026-09-23 (ISSUE-55). It cannot fire for a `raise` in __main__, and the
+# reason once given for keeping it was also wrong: `threading` IGNORES a SystemExit raised in a thread and
+# prints nothing (measured, Python 3.12). On real logs it matched nothing either. The three data-only
+# driver-guard failures 57253127_0 / 57256638_0 / 57266000_0 each end in a bare "[gate5-dataonly] ..."
+# stderr line and contain 0 occurrences of "SystemExit". The one real log that does contain the word,
+# 57194055_*, has it inside a traceback source line (`raise SystemExit(main())`), which the Traceback
+# token already catches.
 # BELT AND BRACES, AND THE HONEST SIZING OF THIS ARM: the launcher runs under `set -eo pipefail` (:15),
 # its 12 `die` sites are ALL at :59-110 i.e. BEFORE the start echo at :113, and the driver call at :114 is
 # an unguarded simple command. So every failure that aborts the launcher already loses an `exact_one`
@@ -118,19 +123,13 @@ DRIVER_FATAL_PREFIXES = ("[gate5-train]", "[gate5-dataonly]")
 # Both are real; neither is the common case. Recorded so the next reader does not re-derive it, and so
 # nobody quotes this arm as the sole detector.
 #
-# ISSUE-55, AND IT IS NOT FIXED HERE: `validate_gate5_training_artifacts.py:344` holds the byte-identical
-# three-token list as a LOCAL `fatal_tokens`, so the g1 path is blind to the shared driver's 41
-# `[gate5-train]` guards in exactly the same way. That is one wrong constant on two paths and g1's copy is
-# another lane's surface. THE COUPLING THAT MAKES THIS MORE THAN A COURTESY NOTE:
-# `nd-unfolding/tests/test_cstat_data_only_predicates.py:1513` asserts
-# `FATAL_LOG_TOKENS == <g1's fatal_tokens, AST-extracted>` -- an EQUALITY. Written to stop this file
-# drifting from the pinned copy, it also makes this file UNABLE TO BE MORE CORRECT THAN g1, which is why
-# one constant stayed wrong on both paths for as long as it did. Widening the list here breaks that test
-# BY CONSTRUCTION, and repairing it is a scope decision for that suite's owner, not a tuple edit.
+# ISSUE-55, FIXED ON BOTH PATHS 2026-09-23: `validate_gate5_training_artifacts.py:344-346` (g1) dropped
+# "SystemExit:" as well, and now scans its own `FATAL_STDERR_TOKENS`, which must equal the list below.
+# `nd-unfolding/tests/test_cstat_data_only_predicates.py` asserts that equality, and it asserts that this
+# list still covers every token in g1's `fatal_tokens`.
 FATAL_LOG_TOKENS = [
     "Traceback (most recent call last)",
     "[FAIL]",
-    "SystemExit:",
 ]
 
 # STDERR ONLY, and the stream is the discriminator rather than a convenience. MEASURED in both families:
@@ -143,7 +142,15 @@ FATAL_LOG_TOKENS = [
 #     streams are not merged and this distinction survives to the artifact.
 # Therefore: a driver prefix in STDERR is a failure, in EITHER family, with no dependence on which
 # launcher prefix the caller passed. That is what makes one reader safely serve both.
-FATAL_STDERR_TOKENS = list(DRIVER_FATAL_PREFIXES)
+# ALSO the guard prefixes of the modules the driver imports, since their SystemExits end the same
+# process and print the same way (ISSUE-55, 2026-09-23). They are `cstat_data_only.py`'s "[gate5-family]"
+# and "[gate5-target-dataonly]" and `train_fullevent_nominal.py`'s "[gate4/D2]"; every occurrence of each
+# is inside a `raise SystemExit(...)`. NOT the nominal driver's bare "[gate4]": real stderr carries
+# "[gate4] WARNING degenerate event-feature columns ..." on HEALTHY runs (all 50 of 56857233's .err files,
+# and 57256638_0 / 57266000_0), so that prefix would be a false alarm. Those guards are caught by the
+# `log_done` needle, which is missing whenever the run dies, and not by any token.
+IMPORTED_GUARD_PREFIXES = ("[gate5-family]", "[gate5-target-dataonly]", "[gate4/D2]")
+FATAL_STDERR_TOKENS = list(DRIVER_FATAL_PREFIXES) + list(IMPORTED_GUARD_PREFIXES)
 
 
 def _scalar(store, key, *, where):
