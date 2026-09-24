@@ -1,0 +1,458 @@
+{
+ "produced_by": "nd-unfolding/compare_eavail_scale.py",
+ "hostname": "login09",
+ "files": {
+  "control": {
+   "path": "/pscratch/sd/j/josephrb/eavail_scale_20260923/NONQUOTABLE-DIAGNOSTIC.eavscale.c5_ctrl.root",
+   "sha256": "ada533fee8d905a32faf1184dbd5d64b8d7892b7da090be616e1692424752783"
+  },
+  "repeat": {
+   "path": "/pscratch/sd/j/josephrb/eavail_scale_20260923/NONQUOTABLE-DIAGNOSTIC.eavscale.c5_rep.root",
+   "sha256": "abe9978e981b94735e9c4c6f510eac9bfc647f2500e76291867be013c4ea63fa"
+  },
+  "k100": {
+   "path": "/pscratch/sd/j/josephrb/eavail_scale_20260923/NONQUOTABLE-DIAGNOSTIC.eavscale.c5_k100.root",
+   "sha256": "8d6f808a5cc898e96d4a2a8ef4ce23eac9f14516e17d685415f42325ed672021"
+  },
+  "m10": {
+   "path": "/pscratch/sd/j/josephrb/eavail_scale_20260923/NONQUOTABLE-DIAGNOSTIC.eavscale.c5_m10.root",
+   "sha256": "b9d2962501310cdf05dfe2243d085bb58f48ba4a2cf13feddff9dfdb9091c68a"
+  },
+  "p10": {
+   "path": "/pscratch/sd/j/josephrb/eavail_scale_20260923/NONQUOTABLE-DIAGNOSTIC.eavscale.c5_p10.root",
+   "sha256": "80b8aae8eedc1197a544441bdf2fbd83d8cb53ab21826b066d3c225fb4babbec"
+  },
+  "pow_dataonly": {
+   "path": "/pscratch/sd/j/josephrb/eavail_scale_20260923/NONQUOTABLE-DIAGNOSTIC.eavscale.c5_pow.root",
+   "sha256": "d2c90e618d9f01118938ecd3bc0223feda6a254784c21ca471b25ec0afb8929f"
+  },
+  "frozen_reference": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+   "sha256": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8"
+  }
+ },
+ "hists": [
+  "hXSecND_flat",
+  "hXSec_eavail",
+  "hXSec_W",
+  "hXSec2D"
+ ],
+ "ml_ref": 0.0045,
+ "results": {
+  "repeat_floor": {
+   "hXSecND_flat": {
+    "n_support": 10694,
+    "median_abs_dev": 6.461498003318411e-14,
+    "p95_abs_dev": 4.89164264649844e-13,
+    "max_abs_dev": 1.3318235403403378e-12,
+    "integral_ratio": 0.9999999999998649,
+    "bitwise_identical": false
+   },
+   "hXSec_eavail": {
+    "n_support": 7,
+    "median_abs_dev": 3.885780586188048e-14,
+    "p95_abs_dev": 8.544276397515202e-14,
+    "max_abs_dev": 9.370282327836321e-14,
+    "integral_ratio": 0.9999999999999915,
+    "bitwise_identical": false,
+    "per_bin_ratio": [
+     0.9999999999999618,
+     0.9999999999999063,
+     0.9999999999999464,
+     0.9999999999999611,
+     0.9999999999999803,
+     1.0000000000000138,
+     1.0000000000000662
+    ]
+   },
+   "hXSec_W": {
+    "n_support": 6,
+    "median_abs_dev": 3.0309088572266774e-14,
+    "p95_abs_dev": 8.829048603331557e-14,
+    "max_abs_dev": 9.392486788328824e-14,
+    "integral_ratio": 0.9999999999999913,
+    "bitwise_identical": false,
+    "per_bin_ratio": [
+     0.999999999999981,
+     0.9999999999999286,
+     0.9999999999999584,
+     1.0000000000000002,
+     1.000000000000015,
+     1.000000000000094
+    ]
+   },
+   "hXSec2D": {
+    "n_support": 205,
+    "median_abs_dev": 5.695444116327053e-14,
+    "p95_abs_dev": 3.252731417546781e-13,
+    "max_abs_dev": 3.986810881428937e-13,
+    "integral_ratio": 0.9999999999999915,
+    "bitwise_identical": false
+   }
+  },
+  "frozen_reference_vs_control": {
+   "hXSecND_flat": {
+    "n_support": 10694,
+    "median_abs_dev": 0.005750010501433034,
+    "p95_abs_dev": 0.02955228868715421,
+    "max_abs_dev": 0.14448355237331723,
+    "integral_ratio": 1.0003092725520777,
+    "bitwise_identical": false
+   },
+   "hXSec_eavail": {
+    "n_support": 7,
+    "median_abs_dev": 0.0006382608879118568,
+    "p95_abs_dev": 0.002695187944976583,
+    "max_abs_dev": 0.003444808888775075,
+    "integral_ratio": 0.9997594449033477,
+    "bitwise_identical": false,
+    "per_bin_ratio": [
+     0.9965551911112249,
+     1.0005784029956992,
+     1.0009460724094468,
+     0.9998306782144162,
+     1.0006382608879119,
+     0.9991684840862849,
+     0.9996507588457134
+    ]
+   },
+   "hXSec_W": {
+    "n_support": 6,
+    "median_abs_dev": 0.0007331995079634668,
+    "p95_abs_dev": 0.0015476889637138502,
+    "max_abs_dev": 0.0017062994540585352,
+    "integral_ratio": 0.9997594449033477,
+    "bitwise_identical": false,
+    "per_bin_ratio": [
+     0.9997376723656685,
+     0.9995716326863412,
+     1.0010191779743,
+     0.9982937005459415,
+     1.0004472210416269,
+     0.9989281425073202
+    ]
+   },
+   "hXSec2D": {
+    "n_support": 205,
+    "median_abs_dev": 0.0024862380532848505,
+    "p95_abs_dev": 0.01312765554457016,
+    "max_abs_dev": 0.021699580192825252,
+    "integral_ratio": 0.9997594449033479,
+    "bitwise_identical": false
+   }
+  },
+  "k100": {
+   "metrics": {
+    "hXSecND_flat": {
+     "n_support": 10694,
+     "median_abs_dev": 0.005752190882895469,
+     "p95_abs_dev": 0.02799386140730028,
+     "max_abs_dev": 0.0988485925832413,
+     "integral_ratio": 0.9999895017457362,
+     "bitwise_identical": false,
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec_eavail": {
+     "n_support": 7,
+     "median_abs_dev": 0.00027108528007446786,
+     "p95_abs_dev": 0.0021839488185632847,
+     "max_abs_dev": 0.0027728919682968867,
+     "integral_ratio": 0.9999274470115711,
+     "bitwise_identical": false,
+     "per_bin_ratio": [
+      0.9972271080317031,
+      0.9999968123649403,
+      1.0000625624462776,
+      1.0002710852800745,
+      0.9999861645501498,
+      1.0008097481358516,
+      0.9995374653221271
+     ],
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec_W": {
+     "n_support": 6,
+     "median_abs_dev": 0.0008877344607183812,
+     "p95_abs_dev": 0.0023605241771965657,
+     "max_abs_dev": 0.002564329726494119,
+     "integral_ratio": 0.9999274470115711,
+     "bitwise_identical": false,
+     "per_bin_ratio": [
+      0.9996798054218987,
+      1.0001662895368746,
+      1.0006194925151062,
+      0.9988440235936694,
+      1.001749107529304,
+      0.9974356702735059
+     ],
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec2D": {
+     "n_support": 205,
+     "median_abs_dev": 0.0020240408042196956,
+     "p95_abs_dev": 0.012142564186747279,
+     "max_abs_dev": 0.017081026972595947,
+     "integral_ratio": 0.9999274470115714,
+     "bitwise_identical": false,
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    }
+   },
+   "verdict": "SENSITIVE"
+  },
+  "m10": {
+   "metrics": {
+    "hXSecND_flat": {
+     "n_support": 10694,
+     "median_abs_dev": 0.005421227869651046,
+     "p95_abs_dev": 0.026228662344686942,
+     "max_abs_dev": 0.1072217690441879,
+     "integral_ratio": 1.0002325208676899,
+     "bitwise_identical": false,
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec_eavail": {
+     "n_support": 7,
+     "median_abs_dev": 0.0004614272041199019,
+     "p95_abs_dev": 0.00181770497900544,
+     "max_abs_dev": 0.002305970530789736,
+     "integral_ratio": 0.999930301016727,
+     "bitwise_identical": false,
+     "per_bin_ratio": [
+      0.9976940294692103,
+      1.0006784186915088,
+      1.0005840927690108,
+      0.9998924459685219,
+      1.0000323807161096,
+      1.00039602232819,
+      0.9995385727958801
+     ],
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec_W": {
+     "n_support": 6,
+     "median_abs_dev": 0.0005857567267587016,
+     "p95_abs_dev": 0.002605597088168321,
+     "max_abs_dev": 0.0028675636647030878,
+     "integral_ratio": 0.999930301016727,
+     "bitwise_identical": false,
+     "per_bin_ratio": [
+      0.999957815587776,
+      1.00004060744918,
+      1.000372635261114,
+      0.9992011218075966,
+      1.001819697358564,
+      0.9971324363352969
+     ],
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec2D": {
+     "n_support": 205,
+     "median_abs_dev": 0.0018470200846502083,
+     "p95_abs_dev": 0.006488490828826209,
+     "max_abs_dev": 0.013390860419158601,
+     "integral_ratio": 0.9999303010167275,
+     "bitwise_identical": false,
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    }
+   },
+   "verdict": "SENSITIVE"
+  },
+  "p10": {
+   "metrics": {
+    "hXSecND_flat": {
+     "n_support": 10694,
+     "median_abs_dev": 0.006703127763652783,
+     "p95_abs_dev": 0.026768856932142673,
+     "max_abs_dev": 0.08847755429405335,
+     "integral_ratio": 1.0000633647191262,
+     "bitwise_identical": false,
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec_eavail": {
+     "n_support": 7,
+     "median_abs_dev": 0.0005705931259374353,
+     "p95_abs_dev": 0.002337394805947789,
+     "max_abs_dev": 0.002846363237622107,
+     "integral_ratio": 1.0000010258581746,
+     "bitwise_identical": false,
+     "per_bin_ratio": [
+      0.9971536367623779,
+      1.0011498017987077,
+      0.9996922080247731,
+      1.0003431110183398,
+      1.001024588917715,
+      1.0002072855953452,
+      0.9994294068740626
+     ],
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec_W": {
+     "n_support": 6,
+     "median_abs_dev": 0.00021911036761190772,
+     "p95_abs_dev": 0.0009849718024690646,
+     "max_abs_dev": 0.0010657765446278056,
+     "integral_ratio": 1.0000010258581746,
+     "bitwise_identical": false,
+     "per_bin_ratio": [
+      0.9997042041125757,
+      0.9999066118476305,
+      1.0010657765446278,
+      1.0001424248477995,
+      0.9992574424240072,
+      0.99993052809594
+     ],
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec2D": {
+     "n_support": 205,
+     "median_abs_dev": 0.0020931984944312365,
+     "p95_abs_dev": 0.012686076077652413,
+     "max_abs_dev": 0.022841270263138758,
+     "integral_ratio": 1.0000010258581749,
+     "bitwise_identical": false,
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    }
+   },
+   "verdict": "SENSITIVE"
+  },
+  "pow_dataonly": {
+   "metrics": {
+    "hXSecND_flat": {
+     "n_support": 10694,
+     "median_abs_dev": 0.23679986149383792,
+     "p95_abs_dev": 0.7824804209796787,
+     "max_abs_dev": 1.2597189279906078,
+     "integral_ratio": 0.9781301017830141,
+     "bitwise_identical": false,
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec_eavail": {
+     "n_support": 7,
+     "median_abs_dev": 0.11894023162407596,
+     "p95_abs_dev": 0.26263649393518346,
+     "max_abs_dev": 0.3130266331141536,
+     "integral_ratio": 0.951895416532404,
+     "bitwise_identical": false,
+     "per_bin_ratio": [
+      1.3130266331141536,
+      1.118940231624076,
+      0.9432241109157061,
+      0.9404163944496853,
+      0.9669358525741262,
+      0.8549404974824131,
+      0.8751821683162516
+     ],
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec_W": {
+     "n_support": 6,
+     "median_abs_dev": 0.07531379297052848,
+     "p95_abs_dev": 0.09220817280449758,
+     "max_abs_dev": 0.09275141335099424,
+     "integral_ratio": 0.951895416532404,
+     "bitwise_identical": false,
+     "per_bin_ratio": [
+      1.0665910915750965,
+      0.9159635056340395,
+      0.9828626840094423,
+      0.9094215488349924,
+      0.9072485866490058,
+      0.9364807958198856
+     ],
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    },
+    "hXSec2D": {
+     "n_support": 205,
+     "median_abs_dev": 0.07734361296584014,
+     "p95_abs_dev": 0.17213966458762417,
+     "max_abs_dev": 0.3510008241068141,
+     "integral_ratio": 0.9518954165324043,
+     "bitwise_identical": false,
+     "tolerances": {
+      "median": 0.00045,
+      "p95": 0.00045,
+      "integral": 0.0001
+     },
+     "within": false
+    }
+   },
+   "verdict": "SENSITIVE",
+   "power_control_detected": true
+  }
+ }
+}

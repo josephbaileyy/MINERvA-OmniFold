@@ -54,8 +54,59 @@ efficiency modelling question beyond its effect on this ratio.
 
 ---
 
-## Issue #26 — sensitivity to the 1.17 reco-E_avail scale: **IN FLIGHT**
+## Issue #26 — sensitivity to the 1.17 reco-E_avail scale: **QUANTIFIED — SENSITIVE by the predeclared rule, at the estimator-noise scale**
 
-Array `58794336` (12 tasks, `nd-unfolding/sbatch_eavail_scale_study.sh`, study checkout
-`/pscratch/sd/j/josephrb/MINERvA-OmniFold-eavailscale-20260923` at `68a266a5`, outputs in
-`/pscratch/sd/j/josephrb/eavail_scale_20260923/`). Results are recorded below when the tasks finish.
+**Runs.** Array `58794336`, all 12 tasks `COMPLETED 0:0` (sacct; 11–23 min each, 32 CPUs,
+≈ 0.4 node-h total). Script `nd-unfolding/sbatch_eavail_scale_study.sh`, study clone
+`/pscratch/sd/j/josephrb/MINERvA-OmniFold-eavailscale-20260923` at `68a266a5` (driver blobs identical
+to `main`). Every task's log (`state/.../scale-logs/*.json`) shows each patched reader called exactly
+once, `Σ after = r·Σ before` for signal-MC, background-MC and data, sentinel counts preserved, and
+`omnifold`/driver modules loaded from the study clone (OI-136 guard: 0 outside-root origins).
+
+**Receipts.** `state/result-20260923-issue26-issue5/compare_3d.json` (sha256 `69e27ea3…ad38`) and
+`compare_5d.json` (`77807229…7896`), with console output. Every output ROOT sha256 is listed in the
+console output of the cluster run; control roots: 3D `ca0fecca…8f4b`, 5D `ada533fe…2783`.
+
+**Measured** (|variant/control − 1| over the control's positive support; integral = Σ content × volume):
+
+| product / hist | repeat floor (median) | k = 1.00 median / p95 / max | k = 1.053 (−10 %) median / p95 | k = 1.287 (+10 %) median / p95 | integral ratio (k=1.00 / −10 / +10) |
+|---|---|---|---|---|---|
+| 3D `hXSec3D` (1431 bins) | 4e-14 | 0.47 % / 3.2 % / 9.8 % | 0.53 % / 2.5 % | 0.42 % / 2.8 % | 0.99972 / 0.99972 / 0.99999 |
+| 3D `hXSec_eavail` (7) | 1e-14 | 0.11 % / 0.30 % / 0.33 % | 0.08 % / 0.29 % | 0.08 % / 0.15 % | same |
+| 3D `hXSec2D` marginal (205) | 3e-14 | 0.21 % / 1.2 % / 3.4 % | 0.17 % / 0.88 % | 0.24 % / 1.3 % | same |
+| 5D `hXSecND_flat` (10694) | 6e-14 | 0.58 % / 2.8 % / 9.9 % | 0.54 % / 2.6 % | 0.67 % / 2.7 % | 0.99999 / 1.00023 / 1.00006 |
+| 5D `hXSec_eavail` (7) | 4e-14 | 0.03 % / 0.22 % / 0.28 % | 0.05 % / 0.18 % | 0.06 % / 0.23 % | 0.99993 / 0.99993 / 1.00000 |
+| 5D `hXSec_W` (6) | 3e-14 | 0.09 % / 0.24 % / 0.26 % | 0.06 % / 0.26 % | 0.02 % / 0.10 % | same |
+
+**Power control** (data only at k = 1.00, MC at 1.17): 3D `hXSec3D` median 18.9 %, integral 0.9894;
+5D `hXSec_eavail` median 11.9 %, integral 0.9519. **The pipeline responds strongly to a *relative*
+data/MC E_avail scale**, so the common-scale result is not a blind null.
+
+**Controls.** The seed-fixed repeat reproduces the control to ~1e-13, so the floor is float rounding,
+not estimator noise. The 3D control reproduces the frozen 3D product (`xsec_3d_MEFHC_5iter_lgbm.root`)
+to 3e-13. The 5D control does **not** reproduce the frozen 5D central (`products/5d/xsec_5d_MEFHC_5iter_lgbm.root`):
+median 0.58 %, integral 1.0003. That product was made by an earlier deployment (Jun 6) and this study
+does not explain the difference. It does not enter the verdict, which uses only matched runs.
+
+**Verdict (predeclared rule, applied by `compare_eavail_scale.py`): SENSITIVE for all three
+common-scale points in both products.** The floor is a deterministic rerun (~1e-13), so the tolerance
+fell to its `0.1 × m_ML = 0.045 %` term, and every per-bin median exceeds that.
+
+**Reading, and what is still open.** A common rescale is *not* exactly inert in this pipeline. The
+per-bin shifts have three properties: (i) they are the same size as the lgbm estimator-seed band
+(3D 0.45 %/bin) and as the unexplained 5D control-vs-frozen difference; (ii) they do **not** grow with
+the size of the rescale (k = 1.00, i.e. −14.5 %, is no larger than ±10 %); (iii) the integrals move
+≤ 0.03 %. Together these look like the rescale re-drawing the GBDT's histogram binning and the
+fixed-edge purity reco binning, which would make this a realization effect rather than a physical
+response to the value of 1.17. That mechanism is **not demonstrated**: separating the classifier term
+from the purity-binning term would take a further run (scale only the purity-binning input), which is
+not in this plan.
+
+**Proposed systematic (proposal only, for Joseph).** Following the predeclared SENSITIVE branch: a
+per-bin symmetric band equal to the envelope `max(|m10 − ctrl|, |p10 − ctrl|)` from `compare_*.json`
+inputs (3D `hXSec3D` median 0.5 %, p95 ≈ 3 %; 5D `hXSecND_flat` median ≈ 0.6 %, p95 ≈ 2.7 %;
+integrated ≤ 0.03 %), with k = 1.00 reported alongside it (same size). **Caveat for adoption:**
+because its size matches the estimator-seed band, adding it to a covariance that already carries an
+ML/seed block may partly double-count it. That overlap is unmeasured. This study also does **not**
+cover a data/MC *relative* E_avail response uncertainty, which the power control shows is large
+(percent-level integrals). That is the separate, unrun `RESPONSE_MISMATCH_CLOSURE.md` question.

@@ -1,0 +1,33 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[repeat_floor] verdict=-
+   hXSec3D          n=  1431 med|d|=4.396e-14 p95|d|=1.640e-13 max|d|=2.991e-13 int=1.000000 identical=False
+   hXSec_eavail     n=     7 med|d|=1.188e-14 p95|d|=5.397e-14 max|d|=5.973e-14 int=1.000000 identical=False
+   hXSec2D          n=   205 med|d|=3.164e-14 p95|d|=9.148e-14 max|d|=2.207e-13 int=1.000000 identical=False
+[frozen_reference_vs_control] verdict=-
+   hXSec3D          n=  1431 med|d|=4.852e-14 p95|d|=2.278e-13 max|d|=3.448e-13 int=1.000000 identical=False
+   hXSec_eavail     n=     7 med|d|=3.064e-14 p95|d|=1.436e-13 max|d|=1.628e-13 int=1.000000 identical=False
+   hXSec2D          n=   205 med|d|=2.220e-14 p95|d|=8.979e-14 max|d|=1.079e-13 int=1.000000 identical=False
+[k100] verdict=SENSITIVE
+   hXSec3D          n=  1431 med|d|=4.732e-03 p95|d|=3.213e-02 max|d|=9.769e-02 int=0.999716 identical=False
+   hXSec_eavail     n=     7 med|d|=1.111e-03 p95|d|=3.041e-03 max|d|=3.307e-03 int=0.999716 identical=False
+   hXSec2D          n=   205 med|d|=2.068e-03 p95|d|=1.151e-02 max|d|=3.382e-02 int=0.999716 identical=False
+[m10] verdict=SENSITIVE
+   hXSec3D          n=  1431 med|d|=5.314e-03 p95|d|=2.542e-02 max|d|=6.264e-02 int=0.999722 identical=False
+   hXSec_eavail     n=     7 med|d|=7.970e-04 p95|d|=2.863e-03 max|d|=3.063e-03 int=0.999722 identical=False
+   hXSec2D          n=   205 med|d|=1.745e-03 p95|d|=8.830e-03 max|d|=2.174e-02 int=0.999722 identical=False
+[p10] verdict=SENSITIVE
+   hXSec3D          n=  1431 med|d|=4.228e-03 p95|d|=2.831e-02 max|d|=8.110e-02 int=0.999997 identical=False
+   hXSec_eavail     n=     7 med|d|=8.023e-04 p95|d|=1.502e-03 max|d|=1.785e-03 int=0.999997 identical=False
+   hXSec2D          n=   205 med|d|=2.363e-03 p95|d|=1.265e-02 max|d|=2.554e-02 int=0.999997 identical=False
+[pow_dataonly] verdict=SENSITIVE
+   hXSec3D          n=  1431 med|d|=1.888e-01 p95|d|=4.610e-01 max|d|=6.757e-01 int=0.989443 identical=False
+   hXSec_eavail     n=     7 med|d|=1.268e-01 p95|d|=2.668e-01 max|d|=2.688e-01 int=0.989443 identical=False
+   hXSec2D          n=   205 med|d|=2.180e-02 p95|d|=9.985e-02 max|d|=2.727e-01 int=0.989443 identical=False

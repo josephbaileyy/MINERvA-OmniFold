@@ -1,0 +1,88 @@
+{
+ "driver": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-eavailscale-20260923/nd-unfolding/unfold_nd_omnifold_unbinned.py",
+ "scale_mc": 1.0,
+ "scale_data": 1.0,
+ "driver_args": [
+  "--omnifile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root",
+  "--mcfile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "--axes",
+  "eavail,q3,W",
+  "--iters",
+  "5",
+  "--use-weights",
+  "--estimator",
+  "lgbm",
+  "--seed",
+  "42",
+  "--out",
+  "/pscratch/sd/j/josephrb/eavail_scale_20260923/NONQUOTABLE-DIAGNOSTIC.eavscale.c5_ctrl.root",
+  "--verbose"
+ ],
+ "calls": {
+  "signal": 1,
+  "data": 1,
+  "background": 1
+ },
+ "data": {
+  "before": {
+   "n": 4091707,
+   "n_valid": 4091707,
+   "sum_valid": 6226599.068030808,
+   "n_negative_valid": 73
+  },
+  "after": {
+   "n": 4091707,
+   "n_valid": 4091707,
+   "sum_valid": 6226599.068030808,
+   "n_negative_valid": 73
+  },
+  "factor": 1.0,
+  "sum_scaled_as_intended": true,
+  "valid_count_preserved": true
+ },
+ "background_reco": {
+  "before": {
+   "n": 621547,
+   "n_valid": 621547,
+   "sum_valid": 2454653.7821959555,
+   "n_negative_valid": 91
+  },
+  "after": {
+   "n": 621547,
+   "n_valid": 621547,
+   "sum_valid": 2454653.7821959555,
+   "n_negative_valid": 91
+  },
+  "factor": 1.0,
+  "sum_scaled_as_intended": true,
+  "valid_count_preserved": true
+ },
+ "signal_reco": {
+  "before": {
+   "n": 32846302,
+   "n_valid": 20402537,
+   "sum_valid": 23253525.72848381,
+   "n_negative_valid": 217
+  },
+  "after": {
+   "n": 32846302,
+   "n_valid": 20402537,
+   "sum_valid": 23253525.72848381,
+   "n_negative_valid": 217
+  },
+  "factor": 1.0,
+  "sum_scaled_as_intended": true,
+  "valid_count_preserved": true
+ },
+ "driver_return": null,
+ "all_readers_patched_once": true,
+ "imported_files": {
+  "omnifold": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-eavailscale-20260923/unbinned_unfolding/python/omnifold.py",
+  "unfold_2d_omnifold_unbinned": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-eavailscale-20260923/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+  "xsec_3d": null,
+  "xsec_nd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-eavailscale-20260923/nd-unfolding/xsec_nd.py",
+  "flux_universe": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-eavailscale-20260923/nd-unfolding/flux_universe.py"
+ }
+}

@@ -1,0 +1,39 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[repeat_floor] verdict=-
+   hXSecND_flat     n= 10694 med|d|=6.461e-14 p95|d|=4.892e-13 max|d|=1.332e-12 int=1.000000 identical=False
+   hXSec_eavail     n=     7 med|d|=3.886e-14 p95|d|=8.544e-14 max|d|=9.370e-14 int=1.000000 identical=False
+   hXSec_W          n=     6 med|d|=3.031e-14 p95|d|=8.829e-14 max|d|=9.392e-14 int=1.000000 identical=False
+   hXSec2D          n=   205 med|d|=5.695e-14 p95|d|=3.253e-13 max|d|=3.987e-13 int=1.000000 identical=False
+[frozen_reference_vs_control] verdict=-
+   hXSecND_flat     n= 10694 med|d|=5.750e-03 p95|d|=2.955e-02 max|d|=1.445e-01 int=1.000309 identical=False
+   hXSec_eavail     n=     7 med|d|=6.383e-04 p95|d|=2.695e-03 max|d|=3.445e-03 int=0.999759 identical=False
+   hXSec_W          n=     6 med|d|=7.332e-04 p95|d|=1.548e-03 max|d|=1.706e-03 int=0.999759 identical=False
+   hXSec2D          n=   205 med|d|=2.486e-03 p95|d|=1.313e-02 max|d|=2.170e-02 int=0.999759 identical=False
+[k100] verdict=SENSITIVE
+   hXSecND_flat     n= 10694 med|d|=5.752e-03 p95|d|=2.799e-02 max|d|=9.885e-02 int=0.999990 identical=False
+   hXSec_eavail     n=     7 med|d|=2.711e-04 p95|d|=2.184e-03 max|d|=2.773e-03 int=0.999927 identical=False
+   hXSec_W          n=     6 med|d|=8.877e-04 p95|d|=2.361e-03 max|d|=2.564e-03 int=0.999927 identical=False
+   hXSec2D          n=   205 med|d|=2.024e-03 p95|d|=1.214e-02 max|d|=1.708e-02 int=0.999927 identical=False
+[m10] verdict=SENSITIVE
+   hXSecND_flat     n= 10694 med|d|=5.421e-03 p95|d|=2.623e-02 max|d|=1.072e-01 int=1.000233 identical=False
+   hXSec_eavail     n=     7 med|d|=4.614e-04 p95|d|=1.818e-03 max|d|=2.306e-03 int=0.999930 identical=False
+   hXSec_W          n=     6 med|d|=5.858e-04 p95|d|=2.606e-03 max|d|=2.868e-03 int=0.999930 identical=False
+   hXSec2D          n=   205 med|d|=1.847e-03 p95|d|=6.488e-03 max|d|=1.339e-02 int=0.999930 identical=False
+[p10] verdict=SENSITIVE
+   hXSecND_flat     n= 10694 med|d|=6.703e-03 p95|d|=2.677e-02 max|d|=8.848e-02 int=1.000063 identical=False
+   hXSec_eavail     n=     7 med|d|=5.706e-04 p95|d|=2.337e-03 max|d|=2.846e-03 int=1.000001 identical=False
+   hXSec_W          n=     6 med|d|=2.191e-04 p95|d|=9.850e-04 max|d|=1.066e-03 int=1.000001 identical=False
+   hXSec2D          n=   205 med|d|=2.093e-03 p95|d|=1.269e-02 max|d|=2.284e-02 int=1.000001 identical=False
+[pow_dataonly] verdict=SENSITIVE
+   hXSecND_flat     n= 10694 med|d|=2.368e-01 p95|d|=7.825e-01 max|d|=1.260e+00 int=0.978130 identical=False
+   hXSec_eavail     n=     7 med|d|=1.189e-01 p95|d|=2.626e-01 max|d|=3.130e-01 int=0.951895 identical=False
+   hXSec_W          n=     6 med|d|=7.531e-02 p95|d|=9.221e-02 max|d|=9.275e-02 int=0.951895 identical=False
+   hXSec2D          n=   205 med|d|=7.734e-02 p95|d|=1.721e-01 max|d|=3.510e-01 int=0.951895 identical=False
