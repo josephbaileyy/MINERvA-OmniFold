@@ -8,7 +8,8 @@ Any other argument, or both together, exits 2: a mistyped `--mutation` once ran 
 
 `--mutations` applies each single-change mutation in MUTATIONS to a copy of this file and requires the copy's
 self-test to FAIL, after requiring the UNMUTATED self-test to pass; before Python 3.12 the f-string mutant counts as
-red when it fails to COMPILE, and its self-test never runs (review #43b). Everything above MUTATIONS, main() included,
+red when it fails to COMPILE, and its self-test never runs (review #43b), and the nested-f-string mutant, whose
+check runs only from 3.12, is SKIPPED and counted as skipped in the summary line (row 148; review #45a). Everything above MUTATIONS, main() included,
 can be mutated; `mutations()` itself, below it, cannot, and its tally is checked only by reading it (review #36b).
 It runs every child under clean_env(), so no mutant reaches the caller's repository (review #39b). A claim that "every mutation turns the self-test red" was twice made about a mutation set
 that lived only in scratch space, so nobody could re-run it (reviews #22a, #23a); the set is committed here.
@@ -36,15 +37,18 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     also FAILS CLOSED on prose such as `the index said OPEN` or a code span such as `open()`, which must be
     reworded (review #32b). A residual described in other words (`pending`, `remaining`) is not detected;
   * a status other than OPEN that SHOWS a letter of a script other than Latin or Greek, or a format character:
-    refused, not interpreted (reviews #43b, #44b). Punctuation, symbols, numbers, spaces, tabs and combining marks
-    are allowed (marks are dropped before the open check). A Latin or Greek letter is allowed and READ: as its ASCII
+    refused, not interpreted (reviews #43b, #44b). Punctuation, symbols, numbers, spaces, tabs and nonspacing and
+    enclosing marks (Mn, Me) are allowed, and dropped before the open check; spacing marks (Mc) are refused (⚠ this
+    said *"combining marks"*; review #45a). A Latin or Greek letter is allowed and READ: as its ASCII
     letter if NFKD reduces it to one (`\u00e9`, fullwidth, superscript), as o, p, e or n if its Unicode name makes it a
     form of one (`\u00f8`, `\u01dd`, `\u014b`, small capitals, Greek omicron, rho, epsilon, eta, nu, sigma), else as itself
     (`\u00df`, `\u03c7`, `\u0394`). A symbol or other letter shaped like one (`\u25cbpen`, `\ua74fpen`) is NOT seen (⚠ this
     once said a lone combining mark is refused; review #44b);
-  * a status cell ending inside a code span (a backtick run with no later run of its length, so also prose such as
-    `don`t`) or inside a link target: a `|` may have cut it short (reviews #42b, #43b, #44b). A `|` inside a link's
-    TEXT, in a row also missing a cell, is not detected;
+  * a status cell ending inside a code span (reading left to right, a backtick run with no later run of its length,
+    runs inside a paired span skipped (⚠ first stated without that; review #45a), so also prose such as
+    `don`t`) or inside a link target: a `|` may have cut it short (reviews #42b, #43b, #44b). A `|` anywhere else in
+    the status -- a link's TEXT, prose, math such as `P(a|b)` -- in a row ALSO missing a cell, is not detected: the
+    count stays six and nothing is left open (⚠ this named only link text; review #45b);
   * an index id that is not plain letters and digits, or used by more than one row;
   * an index row whose severity is not one the index uses (CRITICAL, BLOCKER, HIGH, MEDIUM, LOW, TRAP; bold or
     any case, but no qualifier such as `HIGH (was MEDIUM)`), whose `updated` cell is empty (a row missing a cell
@@ -120,12 +124,14 @@ STATUS_RE = re.compile(r"^\s*(?:(?P<u>[*_]*_[*_]*)|\**)(?P<w>[A-Za-z]+)(?(u)[*_]
 # below): a list of six missed U+200E and U+034F (#33b), and Cf alone missed variation selectors and fillers (#34b)
 OPEN_WORD = re.compile(r"open", re.I)
 # A closed status may SHOW only these characters: printable ASCII and the 12 others its 59 historical status cells use.
+# (⚠ since superseded below: look-alike Latin and Greek letters are READ, Mn/Me marks and invisibles DROPPED; #45a)
 # Look-alike letters, combining marks and invisible characters are refused, not interpreted: special cases for each
 # (NFKC, a Cyrillic/Greek fold) kept missing the next one, and NFKC itself composed `open` + U+0303 away (review #43b)
 STATUS_CHARS = set(map(chr, range(32, 127))) | set("\u2014\u2026\u2013\u00b1\u2225\u2212\u00b7\u03bb\u03c3\u00d7\u2248\u2264")
 # ...widened by CLASS, since a set of 12 refused `→`, curly quotes, `≥` and `café` (self-found, 2026-09-24): any
 # punctuation, symbol, number or space; and any letter that NFKD reduces to an ASCII letter (`é`, `ｏ`, `ᵒ`), which is
 # then READ as that letter, so `opén` and `ｏｐｅｎ` still say open. Other letters, marks and format characters are refused
+# (⚠ superseded below: Latin and Greek letters are READ, Mn/Me marks and non-Cf invisibles allowed and DROPPED; #45b)
 # a letter that reduces to no ASCII letter is READ by its Unicode name when it is a form of o, p, e or n (`ø`, `ǝ`, `ƥ`,
 # `ŋ`, Greek omicron, rho, epsilon, eta, nu, sigma), so `øpen` still says open; refusing them refused `Løvås`, and every
 # Greek letter but two refused `χ²`, `Δ` and `ν_μ` in a physics index (review #44b)
@@ -184,14 +190,25 @@ HEADER = ("id", "severity", "status", "one-sentence failure", "detail", "updated
 
 
 def unpaired_backticks(s):
-    """True if a run of backticks has no later run of the same length (an escaped backtick is not a run)."""
-    runs = [len(m.group()) for m in re.finditer(r"`+", s.replace("\\`", ""))]
-    i = 0
-    while i < len(runs):
-        j = next((k for k in range(i + 1, len(runs)) if runs[k] == runs[i]), None)
-        if j is None:
+    """True if, reading left to right as CommonMark does, a backtick run opens a code span that no later run of the
+    same length closes. A backslash escapes a backtick only OUTSIDE a span; inside one it is literal, so a span
+    holding one backslash closes (⚠ an earlier version deleted every backslash-backtick first, refusing that and
+    passing a status cut after it; review #45b). Runs inside a paired span are skipped (review #45a)."""
+    i, n = 0, len(s)
+    while i < n:
+        if s[i] == "\\" and i + 1 < n and s[i + 1] == "`":
+            i += 2                                   # an escaped backtick, outside a span
+            continue
+        if s[i] != "`":
+            i += 1
+            continue
+        k = i
+        while k < n and s[k] == "`":
+            k += 1
+        m = re.compile(r"(?<!`)" + "`" * (k - i) + r"(?!`)").search(s, k)
+        if not m:
             return True
-        i = j + 1
+        i = m.end()
     return False
 
 
@@ -269,12 +286,14 @@ def index_rows(text):
                     if cells > len(HEADER):
                         problems.append(f"line {cur[0]}: {cells} cells, more than the header's {len(HEADER)}; an "
                                         "unescaped `|` (in a code span too) splits a cell")
-                    # a status cut short by a `|` ends inside a code span, link or parenthesis: with a cell also missing,
+                    # a status cut short by a `|` ends inside a code span or link target (⚠ this said "or parenthesis":
+                    # no parenthesis is checked; #45b): with a cell also missing,
                     # the count stayed six and the residual left the status unseen (review #42b). The status cell itself
                     # is checked, not the whole line, whose backticks pair across cells (review #43b)
                     # backtick RUNS are paired as CommonMark pairs them, equal length to equal length: a parity count
                     # missed ``a|b`` and refused ``a`b`` (review #44b). Brackets are not counted, since `[0, 1.5)` is an
-                    # interval; an unclosed link TARGET at the cell's end is
+                    # interval; an unclosed link TARGET at the cell's end is refused. A `|` in a link's TEXT, in a row
+                    # also missing a cell, is not detected: a stated limit (⚠ this sentence once stopped at "is"; #45a)
                     st = cur[1][2].content if len(cur[1]) > 2 else ""
                     if cells <= len(HEADER) and (unpaired_backticks(st) or re.search(r"\]\([^)]*$", st.strip())):
                         problems.append(f"line {cur[0]}: the status cell {st.strip()[:30]!r} ends inside a code span or "
@@ -585,6 +604,14 @@ def self_test():
         ("three pipes behind a marker make a row line", "| 1 | LOW | FIXED | x | d | u |\n\n- |a| and |b\n", "", 1),
         ("a Braille blank inside open is dropped, and open is seen", "| 1 | LOW | FIXED; still op\u2800en | x | d | u |\n", "", 1),
         ("a variation selector inside open is dropped, and open is seen", "| 1 | LOW | FIXED; still op\ufe0fen | x | d | u |\n", "", 1),
+        # --- review #45b: a backslash inside a code span is literal; omicron; enclosing marks; circled letters
+        *[(f"a code span holding a backslash, {s!r}, is closed", f"| 1 | LOW | FIXED; the {s} was dropped | x | d | u |\n", "", 0)
+          for s in ("trailing `\\` launcher", "stray `\\\\` note")],
+        ("a status cut after a backslash code span is refused", "| 1 | LOW | FIXED at `a\\` then `b|c` still open | d | 2026 |\n", "", 1),
+        ("Greek omicron standing for o is read as open", "| 1 | LOW | FIXED; still \u03bfpen | x | d | u |\n", "", 1),
+        ("an enclosing keycap mark is accepted", "| 1 | LOW | FIXED 1\ufe0f\u20e3 done | x | d | u |\n", "", 0),
+        ("an enclosing circle inside open is dropped, and open is seen", "| 1 | LOW | FIXED; still op\u20dden | x | d | u |\n", "", 1),
+        ("circled letters are read as open", "| 1 | LOW | FIXED; still \u24de\u24df\u24d4\u24dd | x | d | u |\n", "", 1),
         ("sigma standing for o is read as open", "| 1 | LOW | FIXED; still \u03c3pen | x | d | u |\n", "", 1),
         # --- self-found: ordinary typography is accepted; letters reducing to ASCII are read as ASCII
         *[(f"a closed status showing {s!r} is accepted", f"| 1 | LOW | FIXED {s} | x | d | u |\n", "", 0)
@@ -856,6 +883,13 @@ def main():
 # (label, text in this file, replacement). Each must make the self-test fail. `--mutations` refuses (exit 2) if a
 # text is not found exactly once, so a mutation cannot silently stop applying when the code moves.
 MUTATIONS = [
+    ('backtick runs closed by any length', 'm = re.compile(r"(?<!`)" + "`" * (k - i) + r"(?!`)").search(s, k)', 'm = re.compile(r"`+").search(s, k)'),
+    ('an escaped backtick outside a span opens one', '        if s[i] == "\\\\" and i + 1 < n and s[i + 1] == "`":\n            i += 2', '        if False:\n            i += 2'),
+    ('backslash escapes a backtick inside a span too', '    i, n = 0, len(s)\n    while i < n:', '    s = s.replace("\\\\`", "")\n    i, n = 0, len(s)\n    while i < n:'),
+    ('Greek omicron not read as o', '"OMICRON": "o", ', ''),
+    ('enclosing marks refused', 'cat in ("Mn", "Me"):   # marks', 'cat in ("Mn",):   # marks'),
+    ('enclosing marks kept by the fold', '        if unicodedata.category(c) in ("Mn", "Me") or INVISIBLE.match(c):', '        if unicodedata.category(c) in ("Mn",) or INVISIBLE.match(c):'),
+    ('the fold without NFKD', '    for c in unicodedata.normalize("NFKD", s):', '    for c in s:'),
     ('letters not folded before the open check', '        rest = fold(rest)\n', '        rest = rest\n'),
     ('symbols and punctuation refused', ' or cat[0] in "PSN" or cat == "Zs" or cat in', ' or cat in'),
     ('any letter accepted', '    return cat[0] == "L" and letter_as(c) is not None', '    return cat[0] == "L"'),
@@ -866,13 +900,12 @@ MUTATIONS = [
     ('sigma not folded', ', "SIGMA": "o"}', '}'),
     ('a tab refused', ' or c == "\\t" or', ' or'),
     ('an unpaired backtick accepted', '(unpaired_backticks(st) or re.search', '(re.search'),
-    ('backtick runs paired by any length', 'if runs[k] == runs[i]), None)', 'if True), None)'),
-    ('an escaped backtick counted as a run', 're.finditer(r"`+", s.replace("\\\\`", ""))', 're.finditer(r"`+", s)'),
     ('an unclosed link target accepted', ' or re.search(r"\\]\\([^)]*$", st.strip()))', ')'),
     ('truncation read on over-long rows too', 'if cells <= len(HEADER) and (unpaired_backticks', 'if True and (unpaired_backticks'),
     ("the NFKD base's name ignored", '(unicodedata.name(c, "") + " " + unicodedata.name(base, ""))', 'unicodedata.name(c, "")'),
     ('nested f-strings not searched', 'and (tk.type != tokenize.FSTRING_MIDDLE or depth > 1)', 'and tk.type != tokenize.FSTRING_MIDDLE'),
-    # ("open matched case-sensitively") is RETIRED as equivalent: fold() lowercases every letter first (review #44b)
+    # ("open matched case-sensitively") is RETIRED as equivalent: fold() lowercases every letter that can spell open,
+    # those it reads as ASCII (⚠ this said *"every letter"*; Δ and Æ stay as they are; review #45a) (review #44b)
     ("the registry-count check dropped", "        if n != 1:\n", "        if False:\n"),
     ("more than one line accepted", "        if n != 1:\n", "        if n == 0:\n"),
     ("stray registry lines accepted", "        if rid not in open_ids:\n", "        if False:\n"),
