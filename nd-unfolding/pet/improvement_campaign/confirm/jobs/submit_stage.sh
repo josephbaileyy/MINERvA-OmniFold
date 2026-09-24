@@ -18,6 +18,7 @@ if [[ "$NOCHAIN" != --no-chain ]]; then
 fi
 grep -v '^#' "$M" | grep -v '^[[:space:]]*$' | cut -f1 | while read -r ROW; do
   mkdir -p "$OUT/$ROW"
+  [[ "$(cat "$OUT/$ROW/status.txt" 2>/dev/null)" == COMPLETE ]] && continue
   S=$(sbatch --parsable -o "$OUT/$ROW/slurm-%j.out" --export="$ENV,ROW=$ROW" "$J/sbatch_confirm_single.sh")
   echo "$S" > "$OUT/$ROW/shared_job"
   echo "$(date -u +%FT%TZ) single $ROW $S" | tee -a "$OUT/submissions.txt"
