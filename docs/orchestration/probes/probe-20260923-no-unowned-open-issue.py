@@ -34,8 +34,10 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     also FAILS CLOSED on prose such as `the index said OPEN` or a code span such as `open()`, which must be
     reworded (review #32b). A residual described in other words (`pending`, `remaining`) is not detected;
   * an index id that is not plain letters and digits, or used by more than one row;
-  * an index row whose severity is not one the index uses (CRITICAL, BLOCKER, HIGH, MEDIUM, LOW, TRAP) or whose
-    `updated` cell is empty: a row missing a cell shifts its status column (review #39b);
+  * an index row whose severity is not one the index uses (CRITICAL, BLOCKER, HIGH, MEDIUM, LOW, TRAP; bold or
+    any case, but no qualifier such as `HIGH (was MEDIUM)`), whose `updated` cell is empty (a row missing a cell
+    shifts its status column), or that has MORE cells than the header, which the parser drops: an unescaped `|`,
+    even in a code span, splits a cell (reviews #39b, #40b);
   * any table whose rendered header is not exactly the index header
     (`id | severity | status | one-sentence failure | detail | updated`): the index holds index tables only;
   * an absent registry file;
@@ -51,8 +53,8 @@ registry is not UTF-8, is a directory, or is a symlink to nothing (these once ra
 as an absent registry, exiting 1; reviews #34b, #35a). A registry that does not exist at all is the exit-1
 refusal above. It checks the git work tree holding
 the CURRENT DIRECTORY, not the one holding this file (review #34b), whatever GIT_DIR or GIT_WORK_TREE say; it
-exits 2 when git cannot run (review #37b). The SELF-TEST needs git: without it the git-init report and four of the six command checks FAIL,
-exit 1, and `--mutations` exits 2 (⚠ `a3fc3486` called it green there; it raised; review #38a; ⚠ this said *"the
+exits 2 when git cannot run (review #37b). The SELF-TEST needs git: without it the git-init report and every command check that needs a work
+tree FAIL, exit 1 (⚠ this gave a count, *"four of the six"*, that the next command check made stale; review #40b), and `--mutations` exits 2 (⚠ `a3fc3486` called it green there; it raised; review #38a; ⚠ this said *"the
 command checks FAIL"*; two do not; review #39a).
 
 ⚠ WHY A REGISTRY. The first versions read blocker lines written as Markdown, in detail files or index rows.
@@ -164,6 +166,13 @@ def index_rows(text):
                         problems.append(f"line {cur[0]}: a table that is not an index table (its header is not exactly "
                                         f"{' | '.join(HEADER)}): {' | '.join(header)[:60]!r}")
                 elif header == HEADER:
+                    # the parser DROPS cells beyond the header's six: an open residual after a pipe in a code span
+                    # vanished from the status (review #40b); history has two 10-cell versions of row 69
+                    src = lines[cur[0] - 1].strip() if 0 < cur[0] <= len(lines) else ""
+                    cells = len(re.findall(r"(?<!\\)\|", src)) + 1 - src.startswith("|") - bool(re.search(r"(?<!\\)\|$", src))
+                    if cells > len(HEADER):
+                        problems.append(f"line {cur[0]}: {cells} cells, more than the header's {len(HEADER)}; an "
+                                        "unescaped `|` (in a code span too) splits a cell")
                     c = cur[1] + [None] * (6 - len(cur[1]))     # never shorter here; a mutant reads other tables
                     rows.append((c[0].content, c[2].content, cur[0], c[2],
                                  _rendered(c[1]) if c[1] else "", _rendered(c[5]) if c[5] else ""))
@@ -223,10 +232,12 @@ def check(index_text, registry_text):
             continue
         rid = m.group(1)
         seen.setdefault(rid, []).append(line)
-        if sev.upper() not in SEVERITIES or not updated:
-            problems.append(f"line {line}: id {rid}: not six cells in order (severity {sev[:20]!r}, updated "
-                            f"{updated[:20]!r}); a missing cell shifts the status column")
-            continue
+        # two problems, and the row still read: one message for both, and a `continue`, once called a six-cell row
+        # "not six cells" and its OPEN status "not OPEN" (review #40b)
+        if sev.upper() not in SEVERITIES:
+            problems.append(f"line {line}: id {rid}: severity {sev[:30]!r} is not one of {', '.join(SEVERITIES)}")
+        if not updated:
+            problems.append(f"line {line}: id {rid}: the updated cell is empty; a row missing a cell shifts its status")
         s = STATUS_RE.match(status_src)
         if not s or s.group("w").upper() not in STATUSES:
             problems.append(f"line {line}: id {rid}: status {status_src.strip()[:40]!r} does not begin with a plain "
@@ -428,7 +439,13 @@ def self_test():
         *[(f"status {s!r} is refused", f"| 1 | LOW | {s} | x | d | u |\n", "", 1)
           for s in ("FIXED-pending review", "FIXED?", "**FIXED**-x", "FIXED/pending", "FIXED' x", "FIXED!")],
         # --- review #39b: a row missing a cell; an index table with no body rows
-        ("a row missing its severity cell is refused", "| 74 | OPEN | Fixed seeds are not reset | d | 2026-09-24 |\n", "", 1),
+        # --- review #40b: each severity pinned; a qualified severity is one problem and the row still counts; extra cells
+        *[(f"severity {w} is accepted", f"| 1 | {w} | FIXED | x | d | u |\n", "", 0)
+          for w in ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP", "**HIGH**", "High")],
+        ("a qualified severity is one problem, and its OPEN row is still owned", "| 1 | HIGH (was MEDIUM) | OPEN | x | d | u |\n", "1\tOWNER\ta\n", 1),
+        ("an escaped pipe in a code span stays in its cell", "| 1 | LOW | **FIXED** at `a \\| b` fine | x | d | u |\n", "", 0),
+        ("more cells than the header is refused", "| 1 | LOW | **FIXED** at `abc` \u2014 `a | b` still open | x | d | u |\n", "", 1),
+        ("a row missing its severity cell is refused, twice", "| 74 | OPEN | Fixed seeds are not reset | d | 2026-09-24 |\n", "", 2),
         ("an unknown severity is refused", "| 1 | SEVERE | FIXED | x | d | u |\n", "", 1),
         ("an empty updated cell is refused", "| 1 | LOW | FIXED | x | d | |\n", "", 1),
         ("a row cut off after a Braille-blank lead is refused", "| 1 | LOW | FIXED | x | d | u |\n\n\u2800| 2 | LOW | OPEN | x | d | u |\n", "", 1),
@@ -493,6 +510,11 @@ def self_test():
         rc, _ = decide(doc, reg)
         if rc != want:
             wrong.append(f"{name}: wanted exit {want}, got {rc}")
+    # lone CRs: the cut-off OPEN row must be reported AS a cut-off row. Unnormalised, the CR-joined line also trips the
+    # extra-cells rule, so a problem COUNT stayed equal and pinned nothing (self-found, 2026-09-24)
+    if not any("99" in x and "not part of any parsed table" in x for x in check(head + "| 1 | LOW | FIXED | x | d | u |\r"
+               "| 3 | LOW | FIXED | y | d | u |\r| 4 | LOW | FIXED | z | d | u |\n\n| 99 | LOW | OPEN | x | d | u |\n", "")[0]):
+        wrong.append("lone CRs: the cut-off OPEN row 99 is not reported as a row outside every table")
     # an index table with no body rows still exits 2, and prints what it found on the way (review #39b)
     rc, out = decide(head + "\n| 2 | LOW | OPEN | x | d | u |\n", "")
     if rc != 2 or not any("not part of any parsed table" in x for x in out):
@@ -753,8 +775,11 @@ MUTATIONS = [
     ("exit 1 reported as 0", "    return (1 if problems else 0), out", "    return 0, out"),
     ("no-rows exit 2 dropped", "    if not n_rows:     # the problems", "    if False:     # the problems"),
     ("no-rows problems dropped", 'return 2, [f"  {p}" for p in problems] + ["[owned] CANNOT LOOK', 'return 2, [] + ["[owned] CANNOT LOOK'),
-    ("any severity accepted", '        if sev.upper() not in SEVERITIES or not updated:', '        if not updated:'),
-    ("an empty updated accepted", '        if sev.upper() not in SEVERITIES or not updated:', '        if sev.upper() not in SEVERITIES:'),
+    ("any severity accepted", '        if sev.upper() not in SEVERITIES:\n', '        if False:\n'),
+    ("an empty updated accepted", '        if not updated:\n', '        if False:\n'),
+    *[(f"severity {w} dropped", 'SEVERITIES = ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP")', 'SEVERITIES = ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP")'.replace(f'"{w}", ', "").replace(f', "{w}"', ""))
+      for w in ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP")],
+    ("more cells than the header accepted", '            if cells > len(HEADER):', '            if False:'),
     ("the current directory taken as the work tree", '    root = r.stdout.strip()\n', '    root = os.getcwd() if r.stdout.strip() else ""\n'),
     ("rows outside tables unseen", '        if INVISIBLE.sub("", l).lstrip().startswith("|") and n not in covered:', '        if False:'),
 ]
