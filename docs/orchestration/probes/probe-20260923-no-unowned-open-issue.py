@@ -30,14 +30,15 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     is refused, not interpreted;
   * a status other than OPEN whose cell also shows `open` after the word, in any case (`two literals still open`,
     `reopened`), because a closed row may carry an open residual (review #31b). It reads the RENDERED text (text
-    and code spans and image alt text, entities decoded, soft hyphens and every other invisible format character dropped), not a link's target, so it
+    and code spans and image alt text, entities decoded, NFKC-normalised, with Cyrillic and Greek look-alikes of
+    o, p, e and n read as those letters, soft hyphens and every other invisible format character dropped), not a link's target, so it
     also FAILS CLOSED on prose such as `the index said OPEN` or a code span such as `open()`, which must be
     reworded (review #32b). A residual described in other words (`pending`, `remaining`) is not detected;
   * an index id that is not plain letters and digits, or used by more than one row;
   * an index row whose severity is not one the index uses (CRITICAL, BLOCKER, HIGH, MEDIUM, LOW, TRAP; bold or
     any case, but no qualifier such as `HIGH (was MEDIUM)`), whose `updated` cell is empty (a row missing a cell
-    shifts its status column), or that has MORE cells than the header, which the parser drops: an unescaped `|`,
-    even in a code span, splits a cell (reviews #39b, #40b);
+    shifts its status column), or that has MORE cells than the header, which the parser drops, or an unescaped
+    `|` inside a code span: such a pipe always splits a cell (reviews #39b, #40b, #42b);
   * any table whose rendered header is not exactly the index header
     (`id | severity | status | one-sentence failure | detail | updated`): the index holds index tables only;
   * an absent registry file;
@@ -105,6 +106,10 @@ STATUS_RE = re.compile(r"^\s*(?:(?P<u>[*_]*_[*_]*)|\**)(?P<w>[A-Za-z]+)(?(u)[*_]
 # format character (category Cf) plus every Default_Ignorable_Code_Point (Unicode 15.0 DerivedCoreProperties, listed
 # below): a list of six missed U+200E and U+034F (#33b), and Cf alone missed variation selectors and fillers (#34b)
 OPEN_WORD = re.compile(r"open", re.I)
+# letters that LOOK like o, p, e, n: fullwidth forms fall to NFKC, these Cyrillic and Greek ones do not (review #42b)
+CONFUSABLE = str.maketrans("\u043e\u041e\u0440\u0420\u0435\u0415\u03bf\u039f\u03c1\u03a1\u0395\u039d", "oOpPeEoOpPEN")
+# the quote and list markers in front of a row line are the parser's, not the row's (reviews #41b, #42b)
+CONTAINER = re.compile(r"^(?:\s*(?:>|[-*+](?=\s)|\d{1,9}[.)](?=\s)))*\s*")
 _DI = {c for a, b in ((0xAD, 0xAD), (0x34F, 0x34F), (0x61C, 0x61C), (0x115F, 0x1160), (0x17B4, 0x17B5), (0x180B, 0x180F),
                       (0x200B, 0x200F), (0x202A, 0x202E), (0x2060, 0x206F), (0x3164, 0x3164), (0xFE00, 0xFE0F),
                       (0xFEFF, 0xFEFF), (0xFFA0, 0xFFA0), (0xFFF0, 0xFFF8), (0x1BCA0, 0x1BCA3), (0x1D173, 0x1D17A),
@@ -169,11 +174,15 @@ def index_rows(text):
                     # the parser DROPS cells beyond the header's six: an open residual after a pipe in a code span
                     # vanished from the status (review #40b); history has two 10-cell versions of row 69
                     # blockquote markers are the parser's, not the row's: a quoted index table was refused (#41b)
-                    src = re.sub(r"^\s*(>\s?)+", "", lines[cur[0] - 1]).strip() if 0 < cur[0] <= len(lines) else ""
+                    src = CONTAINER.sub("", lines[cur[0] - 1]).strip() if 0 < cur[0] <= len(lines) else ""
                     cells = len(re.findall(r"(?<!\\)\|", src)) + 1 - src.startswith("|") - bool(re.search(r"(?<!\\)\|$", src))
                     if cells > len(HEADER):
                         problems.append(f"line {cur[0]}: {cells} cells, more than the header's {len(HEADER)}; an "
                                         "unescaped `|` (in a code span too) splits a cell")
+                    # a pipe inside a code span ALWAYS splits the cell, whatever the count: with a cell also missing the
+                    # count stayed six and a residual after it left the status unseen (review #42b)
+                    elif any(re.search(r"(?<!\\)\|", m.group(2)) for m in re.finditer(r"(`+)(.+?)(?<!`)\1(?!`)", src)):
+                        problems.append(f"line {cur[0]}: an unescaped `|` inside a code span splits the cell; write `\\|`")
                     c = cur[1] + [None] * (6 - len(cur[1]))     # never shorter here; a mutant reads other tables
                     rows.append((c[0].content, c[2].content, cur[0], c[2],
                                  _rendered(c[1]) if c[1] else "", _rendered(c[5]) if c[5] else ""))
@@ -190,7 +199,7 @@ def index_rows(text):
             problems.append(f"line {(tk.map[0] + 1) if tk.map else '?'}: raw-HTML table markup, which this check cannot read; "
                             "write the table in Markdown")
     for n, l in enumerate(lines):          # every `|`-led line must lie inside SOME parsed table (review #24b)
-        if INVISIBLE.sub("", l).lstrip().startswith("|") and n not in covered:     # a zero-width lead too (#32b)
+        if CONTAINER.sub("", INVISIBLE.sub("", l)).startswith("|") and n not in covered:     # zero-width (#32b), quoted (#42b)
             problems.append(f"line {n + 1}: a table-row line that is not part of any parsed table: {l.strip()[:50]!r}")
     return rows, problems
 
@@ -246,6 +255,7 @@ def check(index_text, registry_text):
             continue
         shown, w = INVISIBLE.sub("", _shown(stok)).lstrip(), s.group("w")
         rest = shown[len(w):] if shown[:len(w)].upper() == w.upper() else shown
+        rest = unicodedata.normalize("NFKC", rest).translate(CONFUSABLE)
         if s.group("w").upper() != "OPEN" and OPEN_WORD.search(rest):
             problems.append(f"line {line}: id {rid}: status {status_src.strip()[:40]!r} is closed but also says open; "
                             "give the residual its own OPEN row, or reword")
@@ -446,6 +456,17 @@ def self_test():
         ("a qualified severity is one problem, and its OPEN row is still owned", "| 1 | HIGH (was MEDIUM) | OPEN | x | d | u |\n", "1\tOWNER\ta\n", 1),
         ("an escaped pipe in a code span stays in its cell", "| 1 | LOW | **FIXED** at `a \\| b` fine | x | d | u |\n", "", 0),
         ("more cells than the header is refused", "| 1 | LOW | **FIXED** at `abc` \u2014 `a | b` still open | x | d | u |\n", "", 1),
+        # --- review #42b: look-alike letters; a code-span pipe with a missing cell; NBSP and em-space leads
+        *[(f"open in look-alike letters ({s!r}) is refused", f"| 1 | LOW | FIXED; still {s} | x | d | u |\n", "", 1)
+          for s in ("\uff4f\uff50\uff45\uff4e", "\u043epen", "&#65359;pen", "OPE\u039d")],
+        # the extra-cells rule and the trailing-pipe regex, each pinned WITHOUT a code span, which the code-span rule
+        # would refuse first (self-found, 2026-09-24)
+        ("a plain pipe in a status is more cells, refused", "| 1 | LOW | FIXED a | b still open | x | d | u |\n", "", 1),
+        ("a plain split ending in an escaped pipe is refused", "| 1 | LOW | FIXED a|b | x | d | u \\|\n", "", 1),
+        ("a lone row in a list item is refused", "| 1 | LOW | FIXED | x | d | u |\n\n- | 2 | LOW | OPEN | x | d | u |\n", "", 1),
+        ("a code-span pipe in a row missing a cell is refused", "| 1 | LOW | FIXED at `a|b` still open | d | 2026 |\n", "", 1),
+        *[(f"a row cut off after a U+{ord(c):04X} lead is refused", f"| 1 | LOW | FIXED | x | d | u |\n\n{c}| 2 | LOW | OPEN | x | d | u |\n", "", 1)
+          for c in "\u00a0\u2003"],
         # --- review #41b: the pipe count's edges; the updated rule still reads the row; CRLF through check()
         ("a split cell ending in an escaped pipe is refused", "| 1 | LOW | FIXED `a|b` | x | d | u \\|\n", "", 1),
         ("trailing spaces after a row are not a cell", "| 1 | LOW | FIXED | x | d | u |   \n", "", 0),
@@ -522,12 +543,26 @@ def self_test():
                "| 3 | LOW | FIXED | y | d | u |\r| 4 | LOW | FIXED | z | d | u |\n\n| 99 | LOW | OPEN | x | d | u |\n", "")[0]):
         wrong.append("lone CRs: the cut-off OPEN row 99 is not reported as a row outside every table")
     # a quoted index table is read, not refused for its `>` (review #41b); a CRLF index through check() (review #41b)
-    quoted = "".join("> " + x + "\n" for x in (head + "| 1 | LOW | OPEN | x | d | u |").split("\n"))
-    if len(check(quoted, "1\tOWNER\ta\n")[0]) != 0:
-        wrong.append(f"a quoted index table with an owned row: wanted 0 problems, got {check(quoted, '1\tOWNER\ta\n')[0]}")
+    # no backslash inside an f-string's braces: Python before 3.12 cannot parse it, and the probe once exited 1 there (#42a)
+    OWNED = "1\tOWNER\ta\n"
+    code = open(__file__, encoding="utf-8").read().split("\nMUTATIONS = [")[0]
+    for n, l in enumerate(code.split("\n"), 1):
+        if re.search(r"""\bf(["']).*?\{[^{}]*\\[^{}]*\}""", l):
+            wrong.append(f"line {n}: a backslash inside an f-string's braces, which Python before 3.12 cannot parse")
+    body = (head + "| 1 | LOW | OPEN | x | d | u |").split("\n")
+    for lead in ("> ", ">> ", "> > ", ">  > ", ">\t"):          # every quote form CommonMark allows (review #42b)
+        quoted = "".join(lead + x + "\n" for x in body)
+        if len(check(quoted, "1\tOWNER\ta\n")[0]) != 0:
+            wrong.append(f"a quoted index table led {lead!r} with an owned row: wanted 0 problems, got {check(quoted, OWNED)[0]}")
+    listed = "- " + body[0] + "\n" + "".join("  " + x + "\n" for x in body[1:])
+    if len(check(listed, "1\tOWNER\ta\n")[0]) != 0:
+        wrong.append(f"an index table in a list item with an owned row: wanted 0 problems, got {check(listed, OWNED)[0]}")
+    cut = "".join("> " + x + "\n" for x in (head + "| 1 | LOW | FIXED | x | d | u |").split("\n")) + ">\n> | 2 | LOW | OPEN | x | d | u |\n"
+    if not any("not part of any parsed table" in x for x in check(cut, "")[0]):
+        wrong.append(f"a quoted index with a cut-off OPEN row: wanted it reported, got {check(cut, '')[0]}")
     crlf = (head + "| 1 | LOW | OPEN | x | d | u |\n").replace("\n", "\r\n")
     if check(crlf, "1\tOWNER\ta\n")[1:] != (1, 1):
-        wrong.append(f"a CRLF index through check(): wanted 1 row, 1 OPEN, got {check(crlf, '1\tOWNER\ta\n')[1:]}")
+        wrong.append(f"a CRLF index through check(): wanted 1 row, 1 OPEN, got {check(crlf, OWNED)[1:]}")
     # an index table with no body rows still exits 2, and prints what it found on the way (review #39b)
     rc, out = decide(head + "\n| 2 | LOW | OPEN | x | d | u |\n", "")
     if rc != 2 or not any("not part of any parsed table" in x for x in out):
@@ -716,7 +751,7 @@ MUTATIONS = [
     ("a dangling symlink read as absent", 'and not os.path.lexists(path):', 'and not os.path.exists(path):'),
     ("unknown arguments run the live check", 'return MODES.get(tuple(argv))', 'return MODES.get(tuple(argv), "live")'),
     ("lone CRs kept", '    text = text.replace("\\r\\n", "\\n").replace("\\r", "\\n")\n', '    text = text\n'),
-    ("a tab lead hides a row", 'if INVISIBLE.sub("", l).lstrip().startswith("|")', 'if INVISIBLE.sub("", l).lstrip(" ").startswith("|")'),
+    ("a tab lead hides a row", 'if CONTAINER.sub("", INVISIBLE.sub("", l)).startswith("|")', 'if INVISIBLE.sub("", l).lstrip(" ").startswith("|")'),
     ("a status word ended by ? or -", '(?=$|[\\s.,:;)\\u2013\\u2014])")   # en dash', '(?=$|[\\s.,:;)\\u2013\\u2014?-])")   # en dash'),
     ("a status word ended by /", '(?=$|[\\s.,:;)\\u2013\\u2014])")   # en dash', '(?=$|[\\s.,:;)\\u2013\\u2014/])")   # en dash'),
     ("the live exit status dropped", '    print("\\n".join(out))\n    return rc\n', '    print("\\n".join(out))\n    return 0\n'),
@@ -733,7 +768,7 @@ MUTATIONS = [
     ("the work-tree lookup not isolated", '["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, env=clean_env())', '["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)'),
     ("a missing git raises", '    except OSError as e:\n        return None, f"git cannot run: {e}"', '    except ImportError as e:\n        return None, f"git cannot run: {e}"'),
     ("Braille blank visible", ' | {0x2800}   # Braille', '   # Braille'),
-    ("a zero-width lead hides a row", 'if INVISIBLE.sub("", l).lstrip().startswith("|")', 'if l.lstrip().startswith("|")'),
+    ("a zero-width lead hides a row", 'if CONTAINER.sub("", INVISIBLE.sub("", l)).startswith("|")', 'if CONTAINER.sub("", l).startswith("|")'),
     ("a closed status that says open accepted", '        if s.group("w").upper() != "OPEN" and OPEN_WORD.search', '        if False and OPEN_WORD.search'),
     ("comments closed only by -->", 'r"<!--(?:-?>|.*?--!?>)"', 'r"<!--.*?-->"'),
     ("a greedy comment strip", 'r"<!--(?:-?>|.*?--!?>)"', 'r"<!--(?:-?>|.*--!?>)"'),
@@ -792,15 +827,22 @@ MUTATIONS = [
     ("an empty updated accepted", '        if not updated:\n', '        if False:\n'),
     *[(f"severity {w} dropped", 'SEVERITIES = ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP")', 'SEVERITIES = ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP")'.replace(f'"{w}", ', "").replace(f', "{w}"', ""))
       for w in ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP")],
-    ("blockquote markers counted as cells", 're.sub(r"^\\s*(>\\s?)+", "", lines[cur[0] - 1]).strip()', 'lines[cur[0] - 1].strip()'),
+    ("blockquote markers counted as cells", 'CONTAINER.sub("", lines[cur[0] - 1]).strip()', 'lines[cur[0] - 1].strip()'),
+    ("quote markers unstripped on the row-line scan", 'if CONTAINER.sub("", INVISIBLE.sub("", l)).startswith("|")', 'if INVISIBLE.sub("", l).lstrip().startswith("|")'),
+    ("only one quote marker stripped", 'CONTAINER = re.compile(r"^(?:\\s*(?:>|[-*+](?=\\s)|\\d{1,9}[.)](?=\\s)))*\\s*")', 'CONTAINER = re.compile(r"^\\s*(?:>\\s?)?")'),
+    ("list markers not stripped", '(?:>|[-*+](?=\\s)|\\d{1,9}[.)](?=\\s))', '(?:>)'),
+    ("a code-span pipe in a six-cell row accepted", '                    elif any(re.search(r"(?<!\\\\)\\|", m.group(2))', '                    elif False and any(re.search(r"(?<!\\\\)\\|", m.group(2))'),
+    ("fullwidth open read as other letters", 'rest = unicodedata.normalize("NFKC", rest).translate(CONFUSABLE)', 'rest = rest.translate(CONFUSABLE)'),
+    ("Cyrillic and Greek open read as other letters", 'rest = unicodedata.normalize("NFKC", rest).translate(CONFUSABLE)', 'rest = unicodedata.normalize("NFKC", rest)'),
     ("an escaped trailing pipe counted", 'bool(re.search(r"(?<!\\\\)\\|$", src))', 'bool(re.search(r"\\|$", src))'),
-    ("row whitespace kept", 'lines[cur[0] - 1]).strip() if 0 < cur[0]', 'lines[cur[0] - 1]) if 0 < cur[0]'),
+    ("row whitespace kept", 'CONTAINER.sub("", lines[cur[0] - 1]).strip() if 0 < cur[0]', 'CONTAINER.sub("", lines[cur[0] - 1]).rstrip("\\n") if 0 < cur[0]'),
     ("CRLF left as CR plus LF", '    text = text.replace("\\r\\n", "\\n").replace("\\r", "\\n")\n', '    text = text.replace("\\r", "\\n")\n'),
     ("an empty updated skips the row", '            problems.append(f"line {line}: id {rid}: the updated cell is empty; a row missing a cell shifts its status")\n', '            problems.append(f"line {line}: id {rid}: the updated cell is empty; a row missing a cell shifts its status")\n            continue\n'),
     ("updated read from its source", '_rendered(c[5]) if c[5] else ""', 'c[5].content.strip() if c[5] else ""'),
+    ("a backslash in an f-string's braces", "got {check(crlf, OWNED)[1:]}", "got {check(crlf, '1\\tOWNER\\ta\\n')[1:]}"),
     ("more cells than the header accepted", '            if cells > len(HEADER):', '            if False:'),
     ("the current directory taken as the work tree", '    root = r.stdout.strip()\n', '    root = os.getcwd() if r.stdout.strip() else ""\n'),
-    ("rows outside tables unseen", '        if INVISIBLE.sub("", l).lstrip().startswith("|") and n not in covered:', '        if False:'),
+    ("rows outside tables unseen", '        if CONTAINER.sub("", INVISIBLE.sub("", l)).startswith("|") and n not in covered:', '        if False:'),
 ]
 
 
