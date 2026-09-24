@@ -2,6 +2,11 @@
 
 ## Status (resume anchor; newest first)
 
+- 2026-09-24 06:40Z: PILOT 9/9 complete (tables in `CONFIRM_RESULTS.md`). FINAL 8/36 complete, 101/360
+  iterations; chain v2 gives two iterations per 30-min round (receipts: segments of 2), resume
+  bit-exact (the control's 3-segment run is bit-identical to B2's uninterrupted one). Projection at
+  16 iterations per ~33-min cycle (both debug slots): FINAL done ~16:00Z; STRESS (6/360) only after
+  that unless its gpu_shared/regular/preempt copies start (none has in 9 h).
 - 2026-09-24 01:35Z: **FINAL submitted** (code `e61ba86c`, after the sizing record below was committed):
   `runs/final.tsv`, out `/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/final`, debug
   chains 58808974 + 58809024, 36 gpu_shared copies (ids in `final/submissions.txt`). PILOT 8/9
