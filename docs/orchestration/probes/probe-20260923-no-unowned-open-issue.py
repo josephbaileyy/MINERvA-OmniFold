@@ -8,7 +8,8 @@ Any other argument, or both together, exits 2: a mistyped `--mutation` once ran 
 
 `--mutations` applies each single-change mutation in MUTATIONS to a copy of this file and requires the copy's
 self-test to FAIL, after requiring the UNMUTATED self-test to pass. Everything above MUTATIONS, main() included,
-can be mutated; `mutations()` itself, below it, cannot, and its tally is checked only by reading it (review #36b). A claim that "every mutation turns the self-test red" was twice made about a mutation set
+can be mutated; `mutations()` itself, below it, cannot, and its tally is checked only by reading it (review #36b).
+It runs every child under clean_env(), so no mutant reaches the caller's repository (review #39b). A claim that "every mutation turns the self-test red" was twice made about a mutation set
 that lived only in scratch space, so nobody could re-run it (reviews #22a, #23a); the set is committed here.
 
 The goal condition Joseph added on 2026-09-23: every OPEN row is either fixed and closed with evidence, or
@@ -33,6 +34,8 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     also FAILS CLOSED on prose such as `the index said OPEN` or a code span such as `open()`, which must be
     reworded (review #32b). A residual described in other words (`pending`, `remaining`) is not detected;
   * an index id that is not plain letters and digits, or used by more than one row;
+  * an index row whose severity is not one the index uses (CRITICAL, BLOCKER, HIGH, MEDIUM, LOW, TRAP) or whose
+    `updated` cell is empty: a row missing a cell shifts its status column (review #39b);
   * any table whose rendered header is not exactly the index header
     (`id | severity | status | one-sentence failure | detail | updated`): the index holds index tables only;
   * an absent registry file;
@@ -43,13 +46,14 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     A cut-off row WITHOUT a leading pipe, or inside a blockquote, is not detected, and neither is a whole
     pipe-less table written straight after a list item; the index always uses leading pipes (reviews #28b, #30b).
 Exit 0 = none of these. Exit 2 = it could not read the index, including an index with NO table carrying the
-index header (⚠ that case was first listed among the exit-1 refusals; review #28a), or when the index or the
+index header or one with no body rows (the problems found on the way are printed too; review #39b) (⚠ that case was first listed among the exit-1 refusals; review #28a), or when the index or the
 registry is not UTF-8, is a directory, or is a symlink to nothing (these once raised or, for the symlink, counted
 as an absent registry, exiting 1; reviews #34b, #35a). A registry that does not exist at all is the exit-1
 refusal above. It checks the git work tree holding
 the CURRENT DIRECTORY, not the one holding this file (review #34b), whatever GIT_DIR or GIT_WORK_TREE say; it
-exits 2 when git cannot run (review #37b). The SELF-TEST needs git: without it the command checks FAIL,
-exit 1, and `--mutations` exits 2 (⚠ `a3fc3486` called it green there; it raised; review #38a).
+exits 2 when git cannot run (review #37b). The SELF-TEST needs git: without it the git-init report and four of the six command checks FAIL,
+exit 1, and `--mutations` exits 2 (⚠ `a3fc3486` called it green there; it raised; review #38a; ⚠ this said *"the
+command checks FAIL"*; two do not; review #39a).
 
 ⚠ WHY A REGISTRY. The first versions read blocker lines written as Markdown, in detail files or index rows.
 Independent reviews #21b, #22b and #23b found 6, 7 and 11 defects, most of them about which Markdown forms
@@ -79,6 +83,10 @@ except ImportError:
     sys.exit(2)
 
 STATUSES = ("OPEN", "FIXED", "CLOSED", "RESOLVED", "WONTFIX", "RETRACTED")
+# every severity the index has used, 3,273 rows over its history (review #39b): a row missing its severity cell shifted
+# its status into the severity column and read `Fixed seeds…` as the status, hiding an OPEN row. A short row is also
+# padded by the parser with an empty last cell, and no historical row has an empty `updated`
+SEVERITIES = ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP")
 KINDS = ("D7", "JOSEPH", "OWNER")
 REGISTRY = "docs/known-issues/BLOCKERS.tsv"
 MD = MarkdownIt("commonmark").enable(["table"])
@@ -120,7 +128,7 @@ def _shown(inline):
 
 
 def index_rows(text):
-    """(id source, status source, line, status inline token) for each body row of each table whose rendered header is exactly HEADER,
+    """(id source, status source, line, status inline token, rendered severity, rendered updated) for each body row of each table whose rendered header is exactly HEADER,
     plus a list of problems: any table whose rendered header is not exactly HEADER, and `|`-led lines outside every
     parsed table."""
     text = text[1:] if text.startswith("\ufeff") else text      # a BOM before a first table line hid the table (#34b)
@@ -156,7 +164,9 @@ def index_rows(text):
                         problems.append(f"line {cur[0]}: a table that is not an index table (its header is not exactly "
                                         f"{' | '.join(HEADER)}): {' | '.join(header)[:60]!r}")
                 elif header == HEADER:
-                    rows.append((cur[1][0].content, cur[1][2].content, cur[0], cur[1][2]))
+                    c = cur[1] + [None] * (6 - len(cur[1]))     # never shorter here; a mutant reads other tables
+                    rows.append((c[0].content, c[2].content, cur[0], c[2],
+                                 _rendered(c[1]) if c[1] else "", _rendered(c[5]) if c[5] else ""))
                 cur = None
             j += 1
         i = j + 1
@@ -200,19 +210,23 @@ def check(index_text, registry_text):
     problems HERE, where the self-test reaches them; they were once decided only in main() (review #27b)."""
     rows, problems = index_rows(index_text)
     if not rows:
-        problems.append("no index rows parsed: no table has exactly the index header")
+        problems.append("no index rows parsed: no table has exactly the index header, or it has no body rows")
     if registry_text is None:
         problems.append(f"{REGISTRY} does not exist")
     reg, rp = read_registry(registry_text if registry_text is not None else "")
     problems += rp
     open_ids, seen = set(), {}
-    for id_src, status_src, line, stok in rows:
+    for id_src, status_src, line, stok, sev, updated in rows:
         m = ID_RE.match(id_src)
         if not m:
             problems.append(f"line {line}: id {id_src.strip()[:20]!r} is not plain letters and digits")
             continue
         rid = m.group(1)
         seen.setdefault(rid, []).append(line)
+        if sev.upper() not in SEVERITIES or not updated:
+            problems.append(f"line {line}: id {rid}: not six cells in order (severity {sev[:20]!r}, updated "
+                            f"{updated[:20]!r}); a missing cell shifts the status column")
+            continue
         s = STATUS_RE.match(status_src)
         if not s or s.group("w").upper() not in STATUSES:
             problems.append(f"line {line}: id {rid}: status {status_src.strip()[:40]!r} does not begin with a plain "
@@ -305,8 +319,8 @@ def decide(index_text, registry_text):
     """(exit status, lines to print) -- the whole verdict, above the mutation marker so that the self-test and
     `--mutations` reach it. main() once decided the exit status itself, unpinned (review #29b)."""
     problems, n_rows, n_open = check(index_text, registry_text)
-    if not n_rows:
-        return 2, ["[owned] CANNOT LOOK :: no issue rows parsed"]
+    if not n_rows:     # the problems found on the way are printed too; they were once dropped (review #39b)
+        return 2, [f"  {p}" for p in problems] + ["[owned] CANNOT LOOK :: no issue rows parsed"]
     out = [f"  {p}" for p in problems]
     out.append(f"\n[owned] {'FAIL' if problems else 'PASS'} :: {n_rows} rows, {n_open} OPEN, {len(problems)} problem(s)")
     return (1 if problems else 0), out
@@ -315,166 +329,174 @@ def decide(index_text, registry_text):
 def self_test():
     head = "| id | severity | status | one-sentence failure | detail | updated |\n|---|---|---|---|---|---|\n"
     shapes = [  # (name, index rows, registry, problems wanted)
-        ("OPEN row with one registry line", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\tlane B\n", 0),
-        ("OPEN row with no registry line", "| 1 | L | OPEN | x | d | u |\n", "", 1),
-        ("OPEN row with two registry lines", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n1\tD7\tb\n", 1),
-        ("a registry line for a FIXED row", "| 1 | L | FIXED | x | d | u |\n", "1\tOWNER\ta\n", 1),
-        ("a registry line for an id not in the index", "| 1 | L | FIXED | x | d | u |\n", "9\tOWNER\ta\n", 1),
-        ("an unknown kind: malformed, and the row stays unowned", "| 1 | L | OPEN | x | d | u |\n", "1\tMAYBE\ta\n", 2),
-        ("empty blocker text: malformed, and the row stays unowned", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\t \n", 2),
-        ("two fields, not three", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER lane B\n", 2),
-        ("comments and blank lines are ignored", "| 1 | L | OPEN | x | d | u |\n", "# c\n\n1\tJOSEPH\tt\n", 0),
-        ("status in bold with a qualifier", "| 1 | L | **OPEN — DO NOT FIX** | x | d | u |\n", "1\tD7\tt\n", 0),
-        ("status FIXED: with a colon, in bold", "| 1 | L | **FIXED:** 2026 at `abc` | x | d | u |\n", "", 0),
-        ("lowercase open still needs a line", "| 1 | L | open | x | d | u |\n", "", 1),
-        ("status struck with ~~ is refused, not read", "| 1 | L | ~~OPEN~~ FIXED | x | d | u |\n", "", 1),
-        ("status in <del> is refused", "| 1 | L | <del>FIXED</del> OPEN | x | d | u |\n", "", 1),
-        ("status in a code span is refused", "| 1 | L | `FIXED` | x | d | u |\n", "", 1),
-        ("status word unknown", "| 1 | L | PENDING | x | d | u |\n", "", 1),
-        ("REOPENED is not OPEN", "| 1 | L | REOPENED | x | d | u |\n", "", 1),
+        ("OPEN row with one registry line", "| 1 | LOW | OPEN | x | d | u |\n", "1\tOWNER\tlane B\n", 0),
+        ("OPEN row with no registry line", "| 1 | LOW | OPEN | x | d | u |\n", "", 1),
+        ("OPEN row with two registry lines", "| 1 | LOW | OPEN | x | d | u |\n", "1\tOWNER\ta\n1\tD7\tb\n", 1),
+        ("a registry line for a FIXED row", "| 1 | LOW | FIXED | x | d | u |\n", "1\tOWNER\ta\n", 1),
+        ("a registry line for an id not in the index", "| 1 | LOW | FIXED | x | d | u |\n", "9\tOWNER\ta\n", 1),
+        ("an unknown kind: malformed, and the row stays unowned", "| 1 | LOW | OPEN | x | d | u |\n", "1\tMAYBE\ta\n", 2),
+        ("empty blocker text: malformed, and the row stays unowned", "| 1 | LOW | OPEN | x | d | u |\n", "1\tOWNER\t \n", 2),
+        ("two fields, not three", "| 1 | LOW | OPEN | x | d | u |\n", "1\tOWNER lane B\n", 2),
+        ("comments and blank lines are ignored", "| 1 | LOW | OPEN | x | d | u |\n", "# c\n\n1\tJOSEPH\tt\n", 0),
+        ("status in bold with a qualifier", "| 1 | LOW | **OPEN — DO NOT FIX** | x | d | u |\n", "1\tD7\tt\n", 0),
+        ("status FIXED: with a colon, in bold", "| 1 | LOW | **FIXED:** 2026 at `abc` | x | d | u |\n", "", 0),
+        ("lowercase open still needs a line", "| 1 | LOW | open | x | d | u |\n", "", 1),
+        ("status struck with ~~ is refused, not read", "| 1 | LOW | ~~OPEN~~ FIXED | x | d | u |\n", "", 1),
+        ("status in <del> is refused", "| 1 | LOW | <del>FIXED</del> OPEN | x | d | u |\n", "", 1),
+        ("status in a code span is refused", "| 1 | LOW | `FIXED` | x | d | u |\n", "", 1),
+        ("status word unknown", "| 1 | LOW | PENDING | x | d | u |\n", "", 1),
+        ("REOPENED is not OPEN", "| 1 | LOW | REOPENED | x | d | u |\n", "", 1),
         # counts that DIFFER under the mutation each pins (a count equal either way pins nothing)
-        ("OPENED is not OPEN, and its registry line is stray", "| 1 | L | OPENED | x | d | u |\n", "1\tOWNER\ta\n", 2),
-        ("lowercase open with its registry line", "| 1 | L | open | x | d | u |\n", "1\tOWNER\ta\n", 0),
-        ("four fields, not three", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\tb\n", 2),
-        ("a bold id is the same id", "| 1 | L | FIXED | x | d | u |\n| **1** | L | FIXED | y | d | u |\n", "", 1),
-        ("an id with markup is refused", "| <span>1</span> | L | FIXED | x | d | u |\n", "", 1),
+        ("OPENED is not OPEN, and its registry line is stray", "| 1 | LOW | OPENED | x | d | u |\n", "1\tOWNER\ta\n", 2),
+        ("lowercase open with its registry line", "| 1 | LOW | open | x | d | u |\n", "1\tOWNER\ta\n", 0),
+        ("four fields, not three", "| 1 | LOW | OPEN | x | d | u |\n", "1\tOWNER\ta\tb\n", 2),
+        ("a bold id is the same id", "| 1 | LOW | FIXED | x | d | u |\n| **1** | LOW | FIXED | y | d | u |\n", "", 1),
+        ("an id with markup is refused", "| <span>1</span> | LOW | FIXED | x | d | u |\n", "", 1),
         ("an OPEN row in a SECOND table is checked",
-         "| 1 | L | FIXED | x | d | u |\n\n## R\n\n" + head + "| 2 | L | OPEN | x | d | u |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n## R\n\n" + head + "| 2 | LOW | OPEN | x | d | u |\n", "", 1),
         ("any non-index table is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| name | a | status |\n|---|---|---|\n| z | L | OPEN |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n| name | a | status |\n|---|---|---|\n| z | LOW | OPEN |\n", "", 1),
         # --- review #28b
         ("a near-index table headed Issue is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| Issue | severity | status | one-sentence failure | detail | updated |\n|---|---|---|---|---|---|\n| 74 | L | OPEN | x | d | u |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n| Issue | severity | status | one-sentence failure | detail | updated |\n|---|---|---|---|---|---|\n| 74 | LOW | OPEN | x | d | u |\n", "", 1),
         ("a raw-HTML table is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n<table><tr><td>74</td><td>OPEN</td></tr></table>\n", "", 1),
-        ("status FIXED-pending is refused", "| 1 | L | FIXED-pending; OPEN | x | d | u |\n", "", 1),
-        ("status Fixed? is refused", "| 1 | L | **Fixed?** No \u2014 still OPEN | x | d | u |\n", "", 1),
-        ("status **FIXED**-pending is refused", "| 1 | L | **FIXED**-pending review; OPEN | x | d | u |\n", "", 1),
-        ("status FIXED_pending is refused", "| 1 | L | FIXED_pending_ OPEN | x | d | u |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n<table><tr><td>74</td><td>OPEN</td></tr></table>\n", "", 1),
+        ("status FIXED-pending is refused", "| 1 | LOW | FIXED-pending; OPEN | x | d | u |\n", "", 1),
+        ("status Fixed? is refused", "| 1 | LOW | **Fixed?** No \u2014 still OPEN | x | d | u |\n", "", 1),
+        ("status **FIXED**-pending is refused", "| 1 | LOW | **FIXED**-pending review; OPEN | x | d | u |\n", "", 1),
+        ("status FIXED_pending is refused", "| 1 | LOW | FIXED_pending_ OPEN | x | d | u |\n", "", 1),
         # --- review #30b: the HTML rule's inline, upper-case and nested forms, and what it must NOT refuse
         ("an inline raw-HTML table in a paragraph is refused",
-         "| 1 | L | FIXED | x | d | u |\n\nSee: <table><tr><td>74</td><td>OPEN</td></tr></table>\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\nSee: <table><tr><td>74</td><td>OPEN</td></tr></table>\n", "", 1),
         ("an upper-case raw-HTML table is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n<TABLE><TR><TD>74</TD><TD>OPEN</TD></TR></TABLE>\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n<TABLE><TR><TD>74</TD><TD>OPEN</TD></TR></TABLE>\n", "", 1),
         ("a raw-HTML table nested in a div is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n<div>\n<table><tr><td>74</td></tr></table>\n</div>\n", "", 1),
-        ("<td> in a code span is prose, not a table", "| 1 | L | FIXED | x | d | u |\n\nThe parser drops `<td>` cells.\n", "", 0),
-        ("<td> in an HTML comment renders nothing", "| 1 | L | FIXED | x | d | u |\n\n<!-- <td> -->\n", "", 0),
+         "| 1 | LOW | FIXED | x | d | u |\n\n<div>\n<table><tr><td>74</td></tr></table>\n</div>\n", "", 1),
+        ("<td> in a code span is prose, not a table", "| 1 | LOW | FIXED | x | d | u |\n\nThe parser drops `<td>` cells.\n", "", 0),
+        ("<td> in an HTML comment renders nothing", "| 1 | LOW | FIXED | x | d | u |\n\n<!-- <td> -->\n", "", 0),
         # --- review #32b: the open rule's case, substring and status coverage; what it reads; HTML in an index cell
-        ("a FIXED status saying (reopened …) is refused", "| 1 | L | FIXED 2026-09-24 (reopened 2026-09-25) | x | d | u |\n", "", 1),
-        ("a FIXED status saying residual OPEN is refused", "| 1 | L | FIXED \u2014 residual OPEN | x | d | u |\n", "", 1),
-        *[(f"a {w} status saying still open is refused", f"| 1 | L | **{w} 2026-09-23** \u2014 two literals still open | x | d | u |\n", "", 1)
+        ("a FIXED status saying (reopened …) is refused", "| 1 | LOW | FIXED 2026-09-24 (reopened 2026-09-25) | x | d | u |\n", "", 1),
+        ("a FIXED status saying residual OPEN is refused", "| 1 | LOW | FIXED \u2014 residual OPEN | x | d | u |\n", "", 1),
+        *[(f"a {w} status saying still open is refused", f"| 1 | LOW | **{w} 2026-09-23** \u2014 two literals still open | x | d | u |\n", "", 1)
           for w in ("RESOLVED", "CLOSED", "WONTFIX", "RETRACTED")],
-        ("a link TARGET naming OPEN is not read", "| 1 | L | FIXED (ruled at [OI-134](docs/OPEN_ITEMS.md)) | x | d | u |\n", "", 0),
-        ("open() in a code span is refused (fail closed)", "| 1 | L | FIXED; `open()` now closes | x | d | u |\n", "", 1),
-        *[(f"open hidden in the source ({s!r}) is refused", f"| 1 | L | FIXED; still {s} | x | d | u |\n", "", 1)
+        ("a link TARGET naming OPEN is not read", "| 1 | LOW | FIXED (ruled at [OI-134](docs/OPEN_ITEMS.md)) | x | d | u |\n", "", 0),
+        ("open() in a code span is refused (fail closed)", "| 1 | LOW | FIXED; `open()` now closes | x | d | u |\n", "", 1),
+        *[(f"open hidden in the source ({s!r}) is refused", f"| 1 | LOW | FIXED; still {s} | x | d | u |\n", "", 1)
           for s in ("&#111;pen", "o*pe*n", "op<span></span>en", "op\u00aden", "op\u200ben")],
-        ("raw-HTML table markup in an index cell is refused", "| 1 | L | FIXED | x | <table><tr><td>2</td></tr></table> | u |\n", "", 1),
+        ("raw-HTML table markup in an index cell is refused", "| 1 | LOW | FIXED | x | <table><tr><td>2</td></tr></table> | u |\n", "", 1),
         # --- review #34b: struck statuses, blank registry lines, default-ignorables and alt text, <thead>, a Unicode id
-        ("a struck FIXED is refused", "| 1 | L | ~~FIXED 2026-09-01~~ still broken | x | d | u |\n", "", 1),
-        ("a struck OPEN before FIXED is refused, and its registry line is stray", "| 1 | L | ~~OPEN 2026~~ FIXED | x | d | u |\n", "1\tOWNER\ta\n", 2),
-        ("blocker text of only invisible characters is empty", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\t\u200b\u2060\n", 2),
-        ("a whitespace-only registry line is blank", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n   \n", 0),
-        *[(f"open hidden by U+{ord(c):04X} is refused", f"| 1 | L | FIXED; still op{c}en | x | d | u |\n", "", 1)
+        ("a struck FIXED is refused", "| 1 | LOW | ~~FIXED 2026-09-01~~ still broken | x | d | u |\n", "", 1),
+        ("a struck OPEN before FIXED is refused, and its registry line is stray", "| 1 | LOW | ~~OPEN 2026~~ FIXED | x | d | u |\n", "1\tOWNER\ta\n", 2),
+        ("blocker text of only invisible characters is empty", "| 1 | LOW | OPEN | x | d | u |\n", "1\tOWNER\t\u200b\u2060\n", 2),
+        ("a whitespace-only registry line is blank", "| 1 | LOW | OPEN | x | d | u |\n", "1\tOWNER\ta\n   \n", 0),
+        *[(f"open hidden by U+{ord(c):04X} is refused", f"| 1 | LOW | FIXED; still op{c}en | x | d | u |\n", "", 1)
           for c in "\ufe0f\U000e0100\u3164\u115f\U000e0001"],
-        ("image alt text saying open is refused", "| 1 | L | FIXED ![still open](x.png) | x | d | u |\n", "", 1),
-        ("a stray <thead><th> is refused", "| 1 | L | FIXED | x | d | u |\n\n<thead><th>x</th></thead>\n", "", 1),
-        ("a stray <tbody> is refused", "| 1 | L | FIXED | x | d | u |\n\n<tbody>\n", "", 1),
-        ("a Unicode-letter id is refused", "| \u00e91 | L | FIXED | x | d | u |\n", "", 1),
+        ("image alt text saying open is refused", "| 1 | LOW | FIXED ![still open](x.png) | x | d | u |\n", "", 1),
+        ("a stray <thead><th> is refused", "| 1 | LOW | FIXED | x | d | u |\n\n<thead><th>x</th></thead>\n", "", 1),
+        ("a stray <tbody> is refused", "| 1 | LOW | FIXED | x | d | u |\n\n<tbody>\n", "", 1),
+        ("a Unicode-letter id is refused", "| \u00e91 | LOW | FIXED | x | d | u |\n", "", 1),
         # --- review #33b: every invisible format character, not a list of six
-        *[(f"open hidden by U+{ord(c):04X} is refused", f"| 1 | L | FIXED; still op{c}en | x | d | u |\n", "", 1)
+        *[(f"open hidden by U+{ord(c):04X} is refused", f"| 1 | LOW | FIXED; still op{c}en | x | d | u |\n", "", 1)
           for c in "\u200c\u200d\u2060\ufeff\u200e\u200f\u2061\u034f"],
-        *[(f"a row cut off after a U+{ord(c):04X} lead is refused", f"| 1 | L | FIXED | x | d | u |\n\n{c}| 2 | L | OPEN | x | d | u |\n", "", 1)
+        *[(f"a row cut off after a U+{ord(c):04X} lead is refused", f"| 1 | LOW | FIXED | x | d | u |\n\n{c}| 2 | LOW | OPEN | x | d | u |\n", "", 1)
           for c in "\u200e\u200f"],
-        ("a row cut off after a zero-width lead is refused", "| 1 | L | FIXED | x | d | u |\n\n\u200b| 2 | L | OPEN | x | d | u |\n", "", 1),
+        ("a row cut off after a zero-width lead is refused", "| 1 | LOW | FIXED | x | d | u |\n\n\u200b| 2 | LOW | OPEN | x | d | u |\n", "", 1),
         # --- review #31b: a closed status that also says open; underscores that are not markup; the comment forms
         #     HTML5 closes early; the inputs that each surviving weakening broke. Review #31a: <td> in a fenced block
         ("a FIXED status saying two literals are still open is refused",
-         "| 1 | L | **FIXED 2026-08-19** at `abc`; two literals still open, see the end | x | d | u |\n", "", 1),
-        ("a FIXED status saying reopened is refused", "| 1 | L | FIXED (reopened \u2014 OPEN) | x | d | u |\n", "", 1),
-        *[(f"status {s!r} is refused", f"| 1 | L | {s} | x | d | u |\n", "", 1) for s in ("FIXED__ x", "**FIXED__** x", "FIXED_ x")],
-        *[(f"status {s!r} is read as FIXED", f"| 1 | L | {s} x | x | d | u |\n", "", 0)
+         "| 1 | LOW | **FIXED 2026-08-19** at `abc`; two literals still open, see the end | x | d | u |\n", "", 1),
+        ("a FIXED status saying reopened is refused", "| 1 | LOW | FIXED (reopened \u2014 OPEN) | x | d | u |\n", "", 1),
+        *[(f"status {s!r} is refused", f"| 1 | LOW | {s} | x | d | u |\n", "", 1) for s in ("FIXED__ x", "**FIXED__** x", "FIXED_ x")],
+        *[(f"status {s!r} is read as FIXED", f"| 1 | LOW | {s} x | x | d | u |\n", "", 0)
           for s in ("**FIXED*", "*FIXED**", "***FIXED***", "_FIXED_", "**FIXED:**")],
         ("a raw-HTML table between two comments is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n<!-- a --> <table><tr><td>2</td><td>OPEN</td></tr></table> <!-- b -->\n", "", 1),
-        *[(f"a comment HTML5 ends early ({c!r}) does not hide a table", f"| 1 | L | FIXED | x | d | u |\n\n{c} <table><tr><td>2</td></tr></table> -->\n", "", 1)
+         "| 1 | LOW | FIXED | x | d | u |\n\n<!-- a --> <table><tr><td>2</td><td>OPEN</td></tr></table> <!-- b -->\n", "", 1),
+        *[(f"a comment HTML5 ends early ({c!r}) does not hide a table", f"| 1 | LOW | FIXED | x | d | u |\n\n{c} <table><tr><td>2</td></tr></table> -->\n", "", 1)
           for c in ("<!-->", "<!--->", "<!-- a --!>")],
-        ("a multi-line comment holding <td> renders nothing", "| 1 | L | FIXED | x | d | u |\n\n<!-- a\n<td> -->\n", "", 0),
-        ("<track> is not table markup", "| 1 | L | FIXED | x | d | u |\n\n<video><track src=x></video>\n", "", 0),
-        ("a stray <tr><td> is refused", "| 1 | L | FIXED | x | d | u |\n\n<tr><td>2</td></tr>\n", "", 1),
-        ("a stray </table> is refused", "| 1 | L | FIXED | x | d | u |\n\n</table>\n", "", 1),
-        ("<td> in a fenced code block is code, not a table", "| 1 | L | FIXED | x | d | u |\n\n```html\n<td>x</td>\n```\n", "", 0),
+        ("a multi-line comment holding <td> renders nothing", "| 1 | LOW | FIXED | x | d | u |\n\n<!-- a\n<td> -->\n", "", 0),
+        ("<track> is not table markup", "| 1 | LOW | FIXED | x | d | u |\n\n<video><track src=x></video>\n", "", 0),
+        ("a stray <tr><td> is refused", "| 1 | LOW | FIXED | x | d | u |\n\n<tr><td>2</td></tr>\n", "", 1),
+        ("a stray </table> is refused", "| 1 | LOW | FIXED | x | d | u |\n\n</table>\n", "", 1),
+        ("<td> in a fenced code block is code, not a table", "| 1 | LOW | FIXED | x | d | u |\n\n```html\n<td>x</td>\n```\n", "", 0),
         ("an indented row directly under the table is refused",
-         "| 1 | L | FIXED | x | d | u |\n    | 2 | L | OPEN | x | d | u |\n", "", 1),
-        ("a bold OPEN id with its registry line", "| **1** | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n", 0),
-        ("a lower-case kind is refused, and the row stays unowned", "| 1 | L | OPEN | x | d | u |\n", "1\towner\ta\n", 2),
-        ("a registry id in the wrong case owns nothing", "| J36 | L | OPEN | x | d | u |\n", "j36\tOWNER\ta\n", 2),
-        ("a registry with two BOMs owns nothing", "| 1 | L | OPEN | x | d | u |\n", "\ufeff\ufeff1\tOWNER\ta\n", 2),
+         "| 1 | LOW | FIXED | x | d | u |\n    | 2 | LOW | OPEN | x | d | u |\n", "", 1),
+        ("a bold OPEN id with its registry line", "| **1** | LOW | OPEN | x | d | u |\n", "1\tOWNER\ta\n", 0),
+        ("a lower-case kind is refused, and the row stays unowned", "| 1 | LOW | OPEN | x | d | u |\n", "1\towner\ta\n", 2),
+        ("a registry id in the wrong case owns nothing", "| J36 | LOW | OPEN | x | d | u |\n", "j36\tOWNER\ta\n", 2),
+        ("a registry with two BOMs owns nothing", "| 1 | LOW | OPEN | x | d | u |\n", "\ufeff\ufeff1\tOWNER\ta\n", 2),
         # --- review #36b: boundaries pinned WITHOUT an `open` that the open rule would refuse anyway; a tab lead; lone CRs
-        *[(f"status {s!r} is refused", f"| 1 | L | {s} | x | d | u |\n", "", 1)
+        *[(f"status {s!r} is refused", f"| 1 | LOW | {s} | x | d | u |\n", "", 1)
           for s in ("FIXED-pending review", "FIXED?", "**FIXED**-x", "FIXED/pending", "FIXED' x", "FIXED!")],
-        ("a row cut off after a Braille-blank lead is refused", "| 1 | L | FIXED | x | d | u |\n\n\u2800| 2 | L | OPEN | x | d | u |\n", "", 1),
-        ("a row cut off after a tab lead is refused", "| 1 | L | FIXED | x | d | u |\n\n\t| 2 | L | OPEN | x | d | u |\n", "", 1),
+        # --- review #39b: a row missing a cell; an index table with no body rows
+        ("a row missing its severity cell is refused", "| 74 | OPEN | Fixed seeds are not reset | d | 2026-09-24 |\n", "", 1),
+        ("an unknown severity is refused", "| 1 | SEVERE | FIXED | x | d | u |\n", "", 1),
+        ("an empty updated cell is refused", "| 1 | LOW | FIXED | x | d | |\n", "", 1),
+        ("a row cut off after a Braille-blank lead is refused", "| 1 | LOW | FIXED | x | d | u |\n\n\u2800| 2 | LOW | OPEN | x | d | u |\n", "", 1),
+        ("a row cut off after a tab lead is refused", "| 1 | LOW | FIXED | x | d | u |\n\n\t| 2 | LOW | OPEN | x | d | u |\n", "", 1),
         ("lone CRs in a table do not hide a cut-off OPEN row",
-         "| 1 | L | FIXED | x | d | u |\r| 3 | L | FIXED | y | d | u |\r| 4 | L | FIXED | z | d | u |\n\n| 99 | L | OPEN | x | d | u |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\r| 3 | LOW | FIXED | y | d | u |\r| 4 | LOW | FIXED | z | d | u |\n\n| 99 | LOW | OPEN | x | d | u |\n", "", 1),
         # --- review #30b: each status boundary the real index uses, pinned
-        *[(f"status boundary {s!r}", f"| 1 | L | {s} x | x | d | u |\n", "", 0)
+        *[(f"status boundary {s!r}", f"| 1 | LOW | {s} x | x | d | u |\n", "", 0)
           for s in ("**FIXED**", "__FIXED__", "FIXED.", "FIXED,", "FIXED;", "FIXED)", "FIXED\u2014pending", "FIXED\u2013pending")],
         ("a stray row plus a delimiter is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| 74 | L | OPEN | x | d | u |\n|---|---|---|---|---|---|\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n| 74 | LOW | OPEN | x | d | u |\n|---|---|---|---|---|---|\n", "", 1),
         ("a header beginning `id` but not `id` is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| id (x) | a | status |\n|---|---|---|\n| 2 | L | OPEN |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n| id (x) | a | status |\n|---|---|---|\n| 2 | LOW | OPEN |\n", "", 1),
         # --- review #27b: index tables are recognised by their exact rendered header
         ("a bold **id** header is the index header", "", "", 1 - 1),
         ("a code `id` header is the index header", "", "", 0),
         ("a header with a doubled space is the index header", "", "", 0),
         ("a two-column id | status table is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| id | status |\n|---|---|\n| 74 | OPEN |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n| id | status |\n|---|---|\n| 74 | OPEN |\n", "", 1),
         ("a three-column id table is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| id | severity | status |\n|---|---|---|\n| 74 | L | OPEN |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n| id | severity | status |\n|---|---|---|\n| 74 | LOW | OPEN |\n", "", 1),
         ("a header ID. is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| ID. | severity | status | one-sentence failure | detail | updated |\n|---|---|---|---|---|---|\n| 74 | L | OPEN | x | d | u |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n| ID. | severity | status | one-sentence failure | detail | updated |\n|---|---|---|---|---|---|\n| 74 | LOW | OPEN | x | d | u |\n", "", 1),
         ("a header whose third column is not status is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| id | status | failure |\n|---|---|---|\n| 74 | OPEN | Closed form |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n| id | status | failure |\n|---|---|---|\n| 74 | OPEN | Closed form |\n", "", 1),
         ("no index table at all", None, "", 1),
-        ("the registry file absent", "| 1 | L | FIXED | x | d | u |\n", None, 1),
-        ("an indented comment line in the registry", "| 1 | L | OPEN | x | d | u |\n", "  # c\n1\tOWNER\ta\n", 0),
+        ("the registry file absent", "| 1 | LOW | FIXED | x | d | u |\n", None, 1),
+        ("an indented comment line in the registry", "| 1 | LOW | OPEN | x | d | u |\n", "  # c\n1\tOWNER\ta\n", 0),
         # --- review #24b: the real index's letter ids and status words, and rows the parser would not see
-        ("a letter id J36, OPEN with its line", "| J36 | L | OPEN | x | d | u |\n", "J36\tOWNER\ta\n", 0),
-        *[(f"status {w} needs no line", f"| 1 | L | {w} 2026 | x | d | u |\n", "", 0)
+        ("a letter id J36, OPEN with its line", "| J36 | LOW | OPEN | x | d | u |\n", "J36\tOWNER\ta\n", 0),
+        *[(f"status {w} needs no line", f"| 1 | LOW | {w} 2026 | x | d | u |\n", "", 0)
           for w in ("CLOSED", "RESOLVED", "WONTFIX", "RETRACTED")],
-        ("an id with trailing text is refused", "| 51 (reopened) | L | FIXED | x | d | u |\n", "", 1),
-        ("spaces around the registry id and kind are accepted", "| 1 | L | OPEN | x | d | u |\n", " 1 \t OWNER \ta\n", 0),
+        ("an id with trailing text is refused", "| 51 (reopened) | LOW | FIXED | x | d | u |\n", "", 1),
+        ("spaces around the registry id and kind are accepted", "| 1 | LOW | OPEN | x | d | u |\n", " 1 \t OWNER \ta\n", 0),
         ("an upper-case ID header is still an index", "", "", 0),
         ("a row cut off by a blank line is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| 2 | L | OPEN | x | d | u |\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n| 2 | LOW | OPEN | x | d | u |\n", "", 1),
         ("a pipe-led line inside a fenced code block is refused (fail closed)",
-         "| 1 | L | FIXED | x | d | u |\n\n```sh\ngrep x f \\\n  | sort\n```\n", "", 1),
+         "| 1 | LOW | FIXED | x | d | u |\n\n```sh\ngrep x f \\\n  | sort\n```\n", "", 1),
         ("an unclosed fence does not hide an OPEN row after it",
-         "| 1 | L | FIXED | x | d | u |\n\n```\n\n" + head + "| 2 | L | OPEN | x | d | u |\n", "", 3),
-        ("a BOM before a data line", "| 1 | L | OPEN | x | d | u |\n", "\ufeff1\tOWNER\ta\n", 0),
-        ("a registry beginning with a UTF-8 BOM", "| 1 | L | OPEN | x | d | u |\n", "\ufeff# c\n1\tOWNER\ta\n", 0),
+         "| 1 | LOW | FIXED | x | d | u |\n\n```\n\n" + head + "| 2 | LOW | OPEN | x | d | u |\n", "", 3),
+        ("a BOM before a data line", "| 1 | LOW | OPEN | x | d | u |\n", "\ufeff1\tOWNER\ta\n", 0),
+        ("a registry beginning with a UTF-8 BOM", "| 1 | LOW | OPEN | x | d | u |\n", "\ufeff# c\n1\tOWNER\ta\n", 0),
         ("a row cut off by an indent is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n    | 2 | L | OPEN | x | d | u |\n", "", 1),
-        ("CRLF registry lines", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\r\n", 0),
+         "| 1 | LOW | FIXED | x | d | u |\n\n    | 2 | LOW | OPEN | x | d | u |\n", "", 1),
+        ("CRLF registry lines", "| 1 | LOW | OPEN | x | d | u |\n", "1\tOWNER\ta\r\n", 0),
     ]
     wrong = []
     # the exit status itself, through decide()
-    one = head + "| 1 | L | OPEN | x | d | u |\n"
-    fixed = head + "| 1 | L | FIXED | x | d | u |\n"
+    one = head + "| 1 | LOW | OPEN | x | d | u |\n"
+    fixed = head + "| 1 | LOW | FIXED | x | d | u |\n"
     exits = (("exit 0 when every OPEN row is owned", one, "1\tOWNER\ta\n", 0),
              ("exit 1 when an OPEN row is unowned", one, "", 1),
              ("exit 1 when the registry is absent", one, None, 1),
              ("exit 2 when no index table exists", "# none\n", "", 2),
              # --- review #34b: the live index has NO OPEN row, and no exit check had one without
              ("exit 0 when no row is OPEN", fixed, "", 0),
-             ("exit 1 when an all-FIXED index hides a cut-off OPEN row", fixed + "\n| 2 | L | OPEN | x | d | u |\n", "", 1),
+             ("exit 1 when an all-FIXED index hides a cut-off OPEN row", fixed + "\n| 2 | LOW | OPEN | x | d | u |\n", "", 1),
              ("exit 1 when an all-FIXED index has no registry", fixed, None, 1),
              ("exit 0 with a BOM before the first table line", "\ufeff" + one, "1\tOWNER\ta\n", 0))
     for name, doc, reg, want in exits:
         rc, _ = decide(doc, reg)
         if rc != want:
             wrong.append(f"{name}: wanted exit {want}, got {rc}")
+    # an index table with no body rows still exits 2, and prints what it found on the way (review #39b)
+    rc, out = decide(head + "\n| 2 | LOW | OPEN | x | d | u |\n", "")
+    if rc != 2 or not any("not part of any parsed table" in x for x in out):
+        wrong.append(f"an index table with no body rows: wanted exit 2 listing the cut-off row, got {rc}: {out}")
     import tempfile
     with tempfile.TemporaryDirectory() as td:     # read_file: exit 2 cases must not be exceptions (review #34b)
         bad = os.path.join(td, "latin1.md")
@@ -552,8 +574,10 @@ def self_test():
         finally:
             for k, v in saved.items():
                 os.environ.pop(k) if v is None else os.environ.__setitem__(k, v)
-        if os.path.exists(os.path.join(bait, ".git")) or not os.path.isdir(os.path.join(gb, ".git")):
+        if os.path.exists(os.path.join(bait, ".git")):
             wrong.append("git init under an exported GIT_DIR: it reached the caller's repository, not the new tree")
+        elif all(inited) and not os.path.isdir(os.path.join(gb, ".git")):   # no git: already reported (review #39b)
+            wrong.append("git init under an exported GIT_DIR made no repository in the new tree")
         # `plain` sits INSIDE a work tree, `enc`, on every host, so the ceiling at `enc` is what keeps it outside; it
         # once mattered only where TMPDIR lay inside a repository (review #38b)
         enc = os.path.join(td, "enc")
@@ -569,6 +593,7 @@ def self_test():
                 ("the command exits 1 on an unowned row whatever GIT_DIR and GIT_WORK_TREE say", g1, [], hostile, 1, "(UNOWNED)"),
                 ("the command exits 2 outside a work tree", plain, [], base, 2, "not inside a git work tree"),
                 ("the command exits 2 when git cannot run", g0, [], dict(base, PATH=os.path.join(td, "no-bin")), 2, "git cannot run"),
+                ("the command exits 1 run from a subdirectory of that work tree", os.path.join(g1, "docs"), [], base, 1, "(UNOWNED)"),
                 ("the command exits 2 on an unknown argument", g0, ["--mutation"], base, 2, "usage"))
         for name, cwd, argv, env, want, text in clis:
             r = subprocess.run([sys.executable, os.path.abspath(__file__), *argv], cwd=cwd, capture_output=True, text=True, env=env)
@@ -585,7 +610,7 @@ def self_test():
                  head.replace("| id |", "| **id** |", 1) if "bold" in name else
                  head.replace("| id |", "| `id` |", 1) if "code" in name else
                  head.replace("one-sentence failure", "one-sentence  failure", 1))
-            doc, reg = h + "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n"
+            doc, reg = h + "| 1 | LOW | OPEN | x | d | u |\n", "1\tOWNER\ta\n"
         elif body is None:
             doc = "# no table here\n"
         else:
@@ -643,7 +668,7 @@ MUTATIONS = [
     ("format characters only, no default-ignorables", 'unicodedata.category(chr(c)) == "Cf" or c in _DI', 'unicodedata.category(chr(c)) == "Cf"'),
     ("invisibles from the BMP only", 'for c in range(sys.maxunicode + 1)\n', 'for c in range(0x10000)\n'),
     ("exit 0 while problems exist but none is OPEN", '    return (1 if problems else 0), out', '    return (1 if problems and n_open else 0), out'),
-    ("exit 2 when no row is OPEN", '    if not n_rows:\n        return 2', '    if not n_open:\n        return 2'),
+    ("exit 2 when no row is OPEN", '    if not n_rows:     # the problems', '    if not n_open:     # the problems'),
     ("markup, not letters, before the status word read through", 'STATUS_RE = re.compile(r"^\\s*(?:', 'STATUS_RE = re.compile(r"^[\\s~<>/`]*(?:'),
     ("a whitespace-only registry line read", 'if not line.strip() or line.lstrip().startswith("#")', 'if not line or line.lstrip().startswith("#")'),
     ("HTML_TABLE missing thead, tbody and th", 't(able|head|body|r|d|h)\\b", re.I)', 't(able|r|d)\\b", re.I)'),
@@ -726,7 +751,11 @@ MUTATIONS = [
     ("raw-HTML tables unrefused", '        if any(HTML_TABLE.search(b) for b in bits):', '        if False:'),
     ("status word ended by any non-letter", '(?(u)[*_]*|\\**)(?=$|[\\s.,:;)\\u2013\\u2014])")   # en dash', '(?![A-Za-z])")   # en dash'),
     ("exit 1 reported as 0", "    return (1 if problems else 0), out", "    return 0, out"),
-    ("no-rows exit 2 dropped", "    if not n_rows:\n        return 2,", "    if False:\n        return 2,"),
+    ("no-rows exit 2 dropped", "    if not n_rows:     # the problems", "    if False:     # the problems"),
+    ("no-rows problems dropped", 'return 2, [f"  {p}" for p in problems] + ["[owned] CANNOT LOOK', 'return 2, [] + ["[owned] CANNOT LOOK'),
+    ("any severity accepted", '        if sev.upper() not in SEVERITIES or not updated:', '        if not updated:'),
+    ("an empty updated accepted", '        if sev.upper() not in SEVERITIES or not updated:', '        if sev.upper() not in SEVERITIES:'),
+    ("the current directory taken as the work tree", '    root = r.stdout.strip()\n', '    root = os.getcwd() if r.stdout.strip() else ""\n'),
     ("rows outside tables unseen", '        if INVISIBLE.sub("", l).lstrip().startswith("|") and n not in covered:', '        if False:'),
 ]
 
@@ -741,7 +770,9 @@ def mutations():
         # would have killed it (self-found, 2026-09-24; ⚠ first said "every mutant"; review #36a)
         p = os.path.join(td, "m.py")
         open(p, "w", encoding="utf-8").write(src)
-        r = subprocess.run([sys.executable, p, "--self-test"], capture_output=True, text=True)
+        # every child gets clean_env(): a mutant that removes the isolation ON PURPOSE otherwise ran `git init` against
+        # the caller's GIT_DIR and set a linked worktree's shared config bare, while reporting PASS (review #39b)
+        r = subprocess.run([sys.executable, p, "--self-test"], capture_output=True, text=True, env=clean_env())
         if r.returncode != 0 or "[owned self-test] PASS" not in r.stdout:
             print(f"[owned mutations] CANNOT LOOK :: the unmutated self-test does not pass (exit {r.returncode})")
             return 2
@@ -751,7 +782,7 @@ def mutations():
                 continue
             p = os.path.join(td, "m.py")
             open(p, "w", encoding="utf-8").write(src.replace(a, b, 1))
-            r = subprocess.run([sys.executable, p, "--self-test"], capture_output=True, text=True)
+            r = subprocess.run([sys.executable, p, "--self-test"], capture_output=True, text=True, env=clean_env())
             # KILLED only if the self-test ran and reported a failed shape: a SyntaxError prints no "Traceback"
             # and was once counted as red (review #24b)
             if r.returncode == 0:
