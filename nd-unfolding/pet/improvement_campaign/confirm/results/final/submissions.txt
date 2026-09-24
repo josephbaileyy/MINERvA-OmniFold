@@ -69,3 +69,5 @@
 2026-09-24T07:17:36Z single final-B-F11 58815965
 2026-09-24T07:17:36Z single final-C-F11 58815966
 2026-09-24T07:17:36Z chain 58815967 (flock code d01a04a940fefe1199353f77ba2bc6c2dc392be4)
+2026-09-24T16:56:21Z cancelled old-code successor 58830032; replaced by handoff-capable chains
+2026-09-24T16:56:24Z chains 58830728 (now) and 58830729 (after 58827682), code 6b18e09d799c6ece83f5f6bfed47ce6b7dc36319, hand off to STRESS

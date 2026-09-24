@@ -9,13 +9,20 @@ pseudodata truth (like-for-like). CTL = the frozen `b2e3-H-K10-s1` run scored at
 run at K* = 10. Sizes follow the protocol (prior 600,130, pseudodata 600,111), the reverse of the
 historical closure's orientation (a 19-event swap; amendment 3).
 
-## Status (2026-09-24 11:35Z)
+## Status (2026-09-24 23:30Z)
 
 - PILOT: 9 of 9 runs complete. **Reported separately; never enters FINAL.**
-- FINAL: 15 of 36 runs complete (199 of 360 iterations). The rerun of `final-C-F1` (fresh run dir,
-  from iteration 0, flock code) is one of the 15; the lock re-audit at 11:35Z over 36 run dirs finds
-  no suspect. No inferential statistic until all 36 are in.
-- STRESS: 6 of 360 iterations; none of its gpu_shared / regular / preempt copies has started.
+- FINAL: **36 of 36 runs complete** (last harvested 23:20Z). Lock re-audit at 23:20Z over every
+  PILOT, FINAL and started STRESS run directory (49 dirs, 72 jobs; `results/audit_locks-20260924T2320Z.json`,
+  run on Perlmutter with the committed `audit_locks.py`, blob `762b47b6`): **0 suspect**, every FINAL
+  row covered. Per-run provenance: all 36 receipts `complete`, `config_hash` equal to the frozen
+  manifest's, frozen-config sha256 equal to amendment 2's, declared miss rule. The FINAL gate is
+  therefore complete and the decisions below are the fixed-n confirmatory result.
+- STRESS: running (FINAL's chains handed off to `runs/stress.tsv`).
+- Coverage: decided only after STRESS (amendment 2: adequate at K* on FINAL **and** no "moves away" on
+  an identifiable stress case). On FINAL, B@10 and C@10 meet the first clause; A does not.
+
+Reproduce: `bash harvest.sh final && python3 analyze_confirm.py --audit results/audit_locks-20260924T2320Z.json`.
 
 ### PILOT (pool P; reported separately, never enters FINAL)
 
@@ -35,9 +42,47 @@ historical closure's orientation (a 19-event swap; amendment 3).
 
 **n for FINAL = 12** (uncapped 298; cap 12).
 
-### FINAL (INTERIM, descriptive only): 15 of 36 frozen runs scored; no inferential statistic is computed until the complete, provenance-clean manifest is in (fixed-n design)
+### FINAL (pool F): decision inequalities vs CTL (k=3), Holm across A, B, C
 
+Candidates at K=10:
 
+| candidate | mean diff | lower 95 % | superiority | non-inferiority (-0.02) | switching (+0.04) |
+|---|---:|---:|---|---|---|
+| A | +0.1892 | +0.1784 | reject (p=1.85e-12) | reject (p=6.18e-13) | reject (p=2.44e-11) |
+| B | +0.2531 | +0.2351 | reject (p=2.16e-11) | reject (p=9.46e-12) | reject (p=1.38e-10) |
+| C | +0.4697 | +0.4455 | reject (p=6.56e-13) | reject (p=4.16e-13) | reject (p=1.73e-12) |
+
+Candidates at K=3:
+
+| candidate | mean diff | lower 95 % | superiority | non-inferiority (-0.02) | switching (+0.04) |
+|---|---:|---:|---|---|---|
+| A | +0.0000 | +0.0000 | not shown (p=1) | reject (p=0) | not shown (p=1) |
+| B | +0.1585 | +0.1458 | reject (p=7.81e-11) | reject (p=2.16e-11) | reject (p=1.76e-09) |
+| C | +0.2544 | +0.2348 | reject (p=5.24e-11) | reject (p=2.31e-11) | reject (p=3.3e-10) |
+
+Adequacy (historical floors imported unchanged):
+
+| estimator | n | mean R | lower 95 % | floor | low | moderate | good | adequate |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| CTL | 12 | 0.3159 | 0.3012 | 0.5560 | 0.053 | 0.232 (<floor) | 0.594 | no |
+| A | 12 | 0.5051 | 0.4902 | 0.5560 | 0.143 | 0.492 | 0.863 | no |
+| B@10 | 12 | 0.5690 | 0.5547 | 0.5560 | 0.120 | 0.639 | 0.960 | yes |
+| C@10 | 12 | 0.7856 | 0.7633 | 0.5560 | 0.568 | 0.824 | 0.926 | yes |
+| B@3 | 12 | 0.4743 | 0.4620 | 0.5560 | 0.081 | 0.407 (<floor) | 0.896 | no |
+| C@3 | 12 | 0.5703 | 0.5440 | 0.5560 | 0.280 | 0.530 | 0.753 | yes |
+
+Reading the adequacy table (all definitions are the protocol's; floors imported unchanged):
+
+- Adequacy is the protocol's point rule (mean aggregate >= floor and every region's mean >= its floor).
+  **B@10 meets it by 0.013 in the mean, but its one-sided 95 % lower bound (0.5547) is below the floor
+  (0.5560)**; C@3 is in the same position (mean 0.570, lower bound 0.544). Only C@10 clears the floor with its
+  lower bound (0.763).
+- A (iterations alone, k = 10) is superior to CTL by +0.189 but is **not adequate** (0.505 < 0.556).
+- At k = 3, A is the CTL run itself: its difference is identically 0 (p = 1 / p = 0 are that identity,
+  not tests). It remains in the Holm family of 3 as frozen.
+- CTL on fresh pool F reproduces the historical failure (0.316, moderate region below its floor).
+- 12 replicates is the pool-F cap, below the pilot-sized requirement for 80 % power on the C differences
+  (259 / 298); every rejection above is nevertheless at p < 1e-8, so the power shortfall did not bind.
 
 ## Lock audit (review BLOCK, 2026-09-24 07:20Z) -- `audit_locks.py`, `results/audit_locks.json`
 
