@@ -259,8 +259,8 @@ STYLE = {
     "ibu_carry": dict(color="#56B4E9", ls="--", marker="o", label="IBU, muon + reco $E_{avail}$, carry-misses"),
     "ibu_eff": dict(color="#009E73", ls="--", marker="^", label="IBU, muon + reco $E_{avail}$, eff.-corrected"),
     "ibu_muon": dict(color="#999999", ls="--", marker="x", label="IBU, muon only, carry-misses"),
-    "gbdt_carry": dict(color="#56B4E9", ls=":", marker="D", label="GBDT OmniFold + reco $E_{avail}$, carry-misses"),
-    "gbdt_eff": dict(color="#009E73", ls=":", marker="D", label="GBDT OmniFold, eff.-corrected"),
+    "gbdt_carry": dict(color="#1F4E79", ls=":", marker="D", label="GBDT OmniFold + reco $E_{avail}$, carry-misses"),
+    "gbdt_eff": dict(color="#006D4F", ls=":", marker="D", label="GBDT OmniFold, eff.-corrected"),
     "mlp_had": dict(color="#CC79A7", ls="-.", marker="v", label="MLP OmniFold + reco hadronic summaries"),
     "aussie0": dict(color="#8C564B", ls="-.", marker="P", label=r"AUSSIE, $\lambda=0$"),
     "oracle": dict(color="#000000", ls=(0, (1, 2)), marker="", label="oracle anchor (exact tilt)"),
@@ -280,15 +280,20 @@ def _plt():
     return plt
 
 
-def _floor(ax, floor: float, text: str) -> None:
+def _floor(ax, floor: float, text: str, left: bool = False, legend: bool = False) -> None:
+    if legend:
+        ax.axhline(floor, **FLOOR_STYLE, zorder=1, label=text)
+        return
     ax.axhline(floor, **FLOOR_STYLE, zorder=1)
-    ax.annotate(text, xy=(1.0, floor), xycoords=("axes fraction", "data"), xytext=(-2, 3),
-                textcoords="offset points", ha="right", va="bottom", color=FLOOR_STYLE["color"],
-                fontsize=7.5)
+    ax.annotate(text, xy=(0.0 if left else 1.0, floor), xycoords=("axes fraction", "data"),
+                xytext=(2 if left else -2, 3), textcoords="offset points",
+                ha="left" if left else "right", va="bottom", color=FLOOR_STYLE["color"], fontsize=7.5,
+                bbox=dict(boxstyle="square,pad=0.1", fc="white", ec="none", alpha=0.8), zorder=6)
 
 
-def _save(fig_, out: Path) -> None:
-    fig_.tight_layout()
+def _save(fig_, out: Path, tight: bool = True) -> None:
+    if tight:
+        fig_.tight_layout()
     fig_.savefig(out, metadata={"CreationDate": None, "ModDate": None, "Creator": None,
                                 "Producer": None})
     import matplotlib.pyplot as plt
@@ -624,25 +629,26 @@ def slide_levers(d: Deck, n: Numbers, out: Path) -> None:
     lr = n.f("ax.lr_after0", A_HIST, ["summary", "final/theirs", "realized_lr_by_fit", 0, 2, 1], "sci",
              note="realized learning rate of the first fit at iteration 1")
     seeds = n.f("b2.H.k10.n", B2, ["recovery_by_k", H, "10", "n"], "int")
-    spec = [(H, f"historical recipe (carry-misses, anneal to {lr}, last epoch)"),
-            (S1, f"no forced {lr} after iteration 0"),
-            (S2, "best-validation epoch handed on"),
-            (M, r"\textbf{efficiency-corrected step 2}")]
+    spec = [(H, "H: historical recipe"),
+            (S1, "S1: no forced rate"),
+            (S2, r"S2: best-val.\ epoch"),
+            (M, r"\textbf{M: eff.-corr.\ step 2}")]
     for run, label in spec:
         tag = run.split("-")[1]
         r3 = n.f(f"b2.{tag}.k3", *rk(run, 3))
         r10 = n.f(f"b2.{tag}.k10", *rk(run, 10))
         if run == H:
-            dcell = "---"
+            dcell = "--- & "
         else:
             dcell = _b2_paired(n, f"b2.{tag}.dk10", run, H, 10)
-            dcell += f" [{n.r(f'b2.{tag}.dk10.s1')}, {n.r(f'b2.{tag}.dk10.s2')}]"
+            dcell += f" & [{n.r(f'b2.{tag}.dk10.s1')}, {n.r(f'b2.{tag}.dk10.s2')}]"
+
         rows.append([label, r3, r10, dcell])
     for tag, run in (("H", H), ("M", M)):
         _b2_mean(n, f"b2.{tag}.k10.low", run, 10, ["push", "recovery_by_region", "low_acceptance"], "2")
 
     plt = _plt()
-    f, ax = plt.subplots(figsize=(5.0, 3.2))
+    f, ax = plt.subplots(figsize=(5.0, 4.0))
     for run, sk in ((H, "pet_H"), ("b2e5-C2-H", "pet_C2"), (M, "pet_M")):
         ks = sorted(int(k) for k, v in n.src.get(B2, ["recovery_by_k", run]).items() if v.get("n"))
         m = [n.src.get(B2, ["recovery_by_k", run, str(k), "mean"]) for k in ks]
@@ -658,21 +664,21 @@ def slide_levers(d: Deck, n: Numbers, out: Path) -> None:
     ax.set_ylabel("seven-bin $E_{avail}$ recovery")
     ax.set_ylim(0, 1)
     ax.set_xlim(0.5, 10.5)
-    ax.legend(loc="upper left", fontsize=6.5)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.17), ncol=2, fontsize=6.3)
     _save(f, out / FIG_DIR / "pet_recovery_vs_k.pdf")
 
     body = rf"""
 \begin{{columns}}[T]
-\begin{{column}}{{0.52\linewidth}}
-{{\small PET through the repaired driver, DEV halves, $K=10$, paired against the historical recipe
-({seeds} seeds; the per-seed paired $\Delta$ in brackets):}}\par\vspace{{3pt}}
-{table(["factor", "$k=3$", "$k=10$", r"paired $\Delta$, $k=10$"], rows, "p{3.2cm}rrl", r"\scriptsize")}\par\vspace{{4pt}}
+\begin{{column}}{{0.6\linewidth}}
+{{\small PET through the repaired driver, DEV halves, $K=10$, {seeds} seeds, paired against H
+(carry-misses, rate forced to {lr} after iteration 0, last epoch handed on); per-seed $\Delta$ in brackets:}}\par\vspace{{3pt}}
+{table(["factor", "$k=3$", "$k=10$", r"$\Delta$, $k=10$", "per seed"], rows, "lrrrl", r"\scriptsize")}\par\vspace{{4pt}}
 {{\small \textbf{{Iterations and the miss rule are the two levers.}} Efficiency correction clears the
 historical floor already at $k=3$ and lifts the low-acceptance region from {n.r("b2.H.k10.low")} to
 {n.r("b2.M.k10.low")} at $k=10$. \textbf{{The schedule does not help}}: handing on the best-validation
 epoch \emph{{hurts}}.}}
 \end{{column}}
-\begin{{column}}{{0.47\linewidth}}
+\begin{{column}}{{0.38\linewidth}}
 {fig("pet_recovery_vs_k.pdf")}\\
 {{\scriptsize Bands: min--max over seeds. Efficiency correction is a model-dependence choice; see
 the robustness slides.}}
@@ -845,29 +851,37 @@ def slide_scaling(d: Deck, n: Numbers, out: Path) -> None:
         _floor(ax, n.v("hist.floor"), f"historical floor {n.v('hist.floor'):.3f}")
     a1.set_ylabel("aggregate recovery")
     a1.set_ylim(0, 1.05)
-    a1.legend(loc="lower right", fontsize=6)
-    a2.legend(loc="lower right", fontsize=6)
-    _save(f, out / FIG_DIR / "scaling.pdf")
+    h1, l1 = a1.get_legend_handles_labels()
+    h2, l2 = a2.get_legend_handles_labels()
+    f.legend(h1 + h2, [x + (" (prior axis)" if i < len(l1) else " (pseudodata axis)")
+                       for i, x in enumerate(l1 + l2)], loc="lower center", ncol=3, fontsize=6.3,
+             bbox_to_anchor=(0.5, 0.0))
+    f.set_size_inches(6.4, 3.6)
+    f.tight_layout(rect=(0, 0.2, 1, 1))
+    _save(f, out / FIG_DIR / "scaling.pdf", tight=False)
 
     hdr = ["axis (aggregate recovery)"] + [lab(p) for p in prior_sizes]
     body = rf"""
 {{\small \textbf{{Development-stage evidence}} (scalar, DEV halves, {n.r("d.data_n")} runs, overlapping draws
 per size, a per-subset oracle anchor). The confirmatory study on fresh pool-S draws is separate.}}\par\vspace{{2pt}}
 \begin{{columns}}[T]
-\begin{{column}}{{0.5\linewidth}}
-{table(hdr, rows, "l" + "r" * len(prior_sizes), r"\scriptsize")}\par\vspace{{4pt}}
-\begin{{itemize}}\scriptsize
+\begin{{column}}{{0.52\linewidth}}
+{fig("scaling.pdf")}
+\end{{column}}
+\begin{{column}}{{0.46\linewidth}}
+\begin{{itemize}}\footnotesize
 \item Prior-MC statistics buy recovery in the historical miss mode ({n.r("d.gain_k3")} at $k=3$,
 {n.r("d.gain_k20")} at $k=20$, {lab(lo_ps)}$\to${lab(hi_ps)}); beyond {lab(hi_ps)} is not measured.
 \item Pseudodata statistics are not the binding constraint over this range.
 \item Miss handling outweighs every statistical axis tested ({n.r("d.miss_gain")} at {lab(hi_ps)}).
+\item Error bars: sd over draws.
 \end{{itemize}}
 \end{{column}}
-\begin{{column}}{{0.49\linewidth}}
-{fig("scaling.pdf")}\\
-{{\scriptsize Error bars: sd over draws.}}
-\end{{column}}
-\end{{columns}}"""
+\end{{columns}}
+\vspace{{-2pt}}
+\begin{{center}}
+{table(hdr, rows, "l" + "r" * len(prior_sizes), r"\tiny")}
+\end{{center}}"""
     for tag, label, _, _ in series:
         d.claim(f"Phase D prior-size axis: {label.replace('$', '')}", [f"d.prior.{tag}.{ps}" for ps in prior_sizes])
     d.claim("Phase D pseudodata-size axis, carry-misses k=20", [f"d.data.carry20.{ds}" for ds in data_sizes])
@@ -880,7 +894,7 @@ per size, a per-subset oracle anchor). The confirmatory study on fresh pool-S dr
 def slide_reference_decomp(d: Deck, n: Numbers, out: Path) -> None:
     curve = n.src.get(B1_DECOMP, ["curve"])
     i3 = next(i for i, c in enumerate(curve) if c["k"] == 3)
-    ref = n.f("ref.cells", B1_DECOMP, ["curve", i3, "cells285"])
+    ref = n.f("ref.hist", HIST, ["absolute_adequacy", "reference"], "3")
     scored = n.f("ref.marginal", B1_DECOMP, ["curve", i3, "marginal7_score"])
     halves = n.f("ref.halves", B1, ["ibu", "diag/carry_misses/engine", "3", "aggregate"])
     n.f("ref.floor", HIST, ["absolute_adequacy", "floor"], "3")
@@ -891,24 +905,28 @@ def slide_reference_decomp(d: Deck, n: Numbers, out: Path) -> None:
     n.f("ref.accepted_ratio", B1, ["reproduction", "accepted_fraction", "ratio_f_A_tilted_over_f_B"], "4")
 
     plt = _plt()
-    f, ax = plt.subplots(figsize=(4.8, 3.0))
-    labels = ["historical reference\n(p$_T$, p$_\\parallel$ cells)", "reference model on the\nscored 7-bin spectrum",
-              "same, on the actual halves\n(historical normalization)", "response-aware IBU\n(estimator, k=3)"]
-    vals = [n.v("ref.cells"), n.v("ref.marginal"), n.v("ref.halves"), n.v("ref.ibu_eav_k3")]
+    f, ax = plt.subplots(figsize=(4.8, 3.4))
+    labels = ["historical\nreference\n(cells)", "its model on\nthe scored\n7-bin spectrum",
+              "same, actual\nhalves, hist.\nnormalization", "response-\naware IBU\n(estimator)"]
+    vals = [n.v("ref.hist"), n.v("ref.marginal"), n.v("ref.halves"), n.v("ref.ibu_eav_k3")]
     cols = ["#999999", "#999999", "#999999", STYLE["ibu_carry"]["color"]]
     bars = ax.bar(range(4), vals, color=cols, width=0.6)
     for b, v in zip(bars, vals):
-        ax.text(b.get_x() + b.get_width() / 2, v + 0.01, f"{v:.3f}", ha="center", va="bottom", fontsize=8)
-    _floor(ax, n.v("hist.floor"), f"historical floor {n.v('hist.floor'):.3f} (= {n.v('hist.frac'):.1f} x reference)")
-    ax.set_xticks(range(4), labels, fontsize=6.5)
+        ax.text(b.get_x() + b.get_width() / 2, v - 0.015, f"{v:.3f}", ha="center", va="top", fontsize=8,
+                color="white", fontweight="bold")
+    _floor(ax, n.v("hist.floor"), f"historical floor {n.v('hist.floor'):.3f} (= {n.v('hist.frac'):.1f} x reference)",
+           legend=True)
+    ax.legend(loc="upper right", fontsize=7, bbox_to_anchor=(1.0, 1.12))
+    ax.set_xticks(range(4), labels, fontsize=7)
     ax.set_ylabel("recovery at $k=3$")
-    ax.set_ylim(0, 0.85)
+    ax.set_ylim(0, 0.8)
+    ax.set_yticks([0, 0.2, 0.4, 0.6])
     _save(f, out / FIG_DIR / "reference_decomposition.pdf")
 
     body = rf"""
 \begin{{columns}}[T]
-\begin{{column}}{{0.47\linewidth}}
-{{\small The reference is $1-(1-a)^k$ at $k=3$ with a per-cell acceptance $a$; the floor is
+\begin{{column}}{{0.5\linewidth}}
+{{\footnotesize The reference is $1-(1-a)^k$ at $k=3$ with a per-cell acceptance $a$; the floor is
 {n.r("hist.frac")}$\times$ it.\par\vspace{{3pt}}
 \textbf{{It is computed on a different quantity from the one scored.}} It is built on the
 $(p_T, p_\parallel)$ cell displacement ({ref}); the score is the seven-bin $E_{{\mathrm{{avail}}}}$ marginal.
@@ -920,12 +938,12 @@ historical pseudodata normalization, {halves}: \emph{{below the {n.r("ref.floor"
 The historical normalization assumes the accepted fraction is unchanged by the tilt; measured ratio
 {n.r("ref.accepted_ratio")}.}}
 \end{{column}}
-\begin{{column}}{{0.52\linewidth}}
+\begin{{column}}{{0.48\linewidth}}
 {fig("reference_decomposition.pdf")}
 \end{{column}}
 \end{{columns}}"""
     d.claim("Reference decomposition: cells, scored marginal, actual halves; below the floor",
-            ["ref.cells", "ref.marginal", "ref.halves", "ref.floor"])
+            ["ref.hist", "ref.marginal", "ref.halves", "ref.floor"])
     d.claim("Efficiency-corrected IBU exceeds the reference and recovers low acceptance",
             ["ref.eff_k2", "ref.low_ref", "ref.eff_k2_low"])
     d.claim("Historical normalization assumes unchanged accepted fraction; measured ratio", ["ref.accepted_ratio"])
@@ -1034,26 +1052,26 @@ def _eref(n: Numbers, nid: str, case: str, est: str, stat: str = "mean", k: str 
 
 
 def slide_tradeoff(d: Deck, n: Numbers, out: Path) -> None:
-    cases = [("D1_p0.350", r"$E_{\mathrm{avail}}$ tilt $+$ (development point)"),
-             ("D1_m0.350", r"$E_{\mathrm{avail}}$ tilt $-$"),
+    cases = [("D1_p0.350", r"$E_{\mathrm{av}}$ tilt $+$ (dev.\ point)"),
+             ("D1_m0.350", r"$E_{\mathrm{av}}$ tilt $-$"),
              ("D4a_pipm_up", r"$\pi^\pm$ multiplicity up"),
-             ("D5_nuwro", "NuWro generator reweighting"),
-             ("D2_bump_c0.3", r"bump in $E_{\mathrm{avail}}$"),
+             ("D5_nuwro", "NuWro reweighting"),
+             ("D2_bump_c0.3", r"bump in $E_{\mathrm{av}}$"),
              ("D4c_p_up", "proton multiplicity up")]
     ests = [("ibu/carry_misses", "IBU, misses carried", "ibu_carry"),
             ("ibu/efficiency_corrected", "IBU, eff.-corrected", "ibu_eff"),
             ("gbdt_omnifold", "GBDT OmniFold (carried)", "gbdt_carry")]
     rows = []
     for case, label in cases:
-        row = [_tt(case) + " " + label]
+        row = [label]
         for est, _, _ in ests:
             tag = est.split("/")[-1]
             m = _eref(n, f"e.{case}.{tag}.k3", case, est)
             _eref(n, f"e.{case}.{tag}.k3.sd", case, est, "sd")
-            row.append(m + (r" $\pm$ " + n.r(f"e.{case}.{tag}.k3.sd") if case in ("D1_p0.350", "D5_nuwro") else ""))
+            row.append(m)
         rows.append(row)
     plt = _plt()
-    f, ax = plt.subplots(figsize=(5.6, 2.9))
+    f, ax = plt.subplots(figsize=(5.2, 3.4))
     w = 0.26
     for j, (est, lab_, sk) in enumerate(ests):
         tag = est.split("/")[-1]
@@ -1064,9 +1082,9 @@ def slide_tradeoff(d: Deck, n: Numbers, out: Path) -> None:
                hatch=None if "carry" in sk else "//", edgecolor="white", lw=0)
     ax.axhline(0, color="#444444", lw=0.8)
     _floor(ax, n.v("hist.floor"), f"historical floor {n.v('hist.floor'):.3f}")
-    ax.set_xticks(range(len(cases)), [c for c, _ in cases], fontsize=6.5, rotation=15)
+    ax.set_xticks(range(len(cases)), [c for c, _ in cases], fontsize=6.5, rotation=20)
     ax.set_ylabel("recovery at $k=3$")
-    ax.legend(loc="upper right", fontsize=6.5, ncol=3, bbox_to_anchor=(1.0, 1.12))
+    ax.legend(loc="lower center", fontsize=6.5, ncol=3, bbox_to_anchor=(0.5, 1.0))
     _save(f, out / FIG_DIR / "miss_tradeoff.pdf")
     n.add("e.reps", "count", [(E_REFS, ["across_replicates", "D1_p0.350", "ibu/carry_misses", "k3", "values", i])
                               for i in range(len(n.src.get(E_REFS, ["across_replicates", "D1_p0.350", "ibu/carry_misses", "k3", "values"])))], "int")
@@ -1074,17 +1092,18 @@ def slide_tradeoff(d: Deck, n: Numbers, out: Path) -> None:
     n.f("e.D1.gbdt_b1", B1, ["omnifold", "muon_eavail/hgb", "by_iteration", "3", "aggregate", "mean"])
     body = rf"""
 \begin{{columns}}[T]
-\begin{{column}}{{0.5\linewidth}}
-{table(["distortion ($k=3$)", "IBU carried", "IBU eff.-corr.", "GBDT"], rows, "p{2.5cm}rrr", r"\scriptsize")}\par\vspace{{4pt}}
-{{\scriptsize Mean over {n.r("e.reps")} replicates on fresh pool-T events ($\pm$ sd where shown). The development-point
+\begin{{column}}{{0.52\linewidth}}
+{table(["distortion ($k=3$)", "IBU carried", "IBU eff.-corr.", "GBDT"], rows, "lrrr", r"\scriptsize")}\par\vspace{{4pt}}
+{{\tiny Mean over {n.r("e.reps")} replicates on fresh pool-T events (sd as error bars in the figure;
+D5 NuWro efficiency-corrected: {n.r("e.D5_nuwro.efficiency_corrected.k3")} $\pm$ {n.r("e.D5_nuwro.efficiency_corrected.k3.sd")}). The development-point
 yardsticks transfer: B1's {n.r("e.D1.ibu_carry_b1")} / {n.r("e.D1.gbdt_b1")} on the historical halves.}}
 \end{{column}}
-\begin{{column}}{{0.49\linewidth}}
+\begin{{column}}{{0.46\linewidth}}
 {fig("miss_tradeoff.pdf")}
 \end{{column}}
 \end{{columns}}
 \vspace{{2pt}}
-{{\small \textbf{{Efficiency correction is far ahead when the distortion is a function of the variables the
+{{\footnotesize \textbf{{Efficiency correction is far ahead when the distortion is a function of the variables the
 unfolder sees, and it fails --- moves away from the target --- when the distortion changes the event mix
 inside a truth bin}}, because it extrapolates an acceptance that no longer holds. Carry-misses is slower
 but does not fail that way. Neither mode is dominant: \textbf{{the choice is a model-dependence choice and must
@@ -1180,7 +1199,7 @@ def _pilot_block(d: Deck, n: Numbers, out: Path, size: str = r"\scriptsize") -> 
     d.claim("FINAL sized from the PILOT", ["p.n_final", "p.n_uncapped"])
     # figure
     plt = _plt()
-    f, ax = plt.subplots(figsize=(4.6, 2.6))
+    f, ax = plt.subplots(figsize=(4.6, 2.4))
     colour = {"CTL": "pet_H", "A": "pet_H", "B@3": "pet_C2", f"B@{KSTAR}": "pet_C2", "C@3": "pet_M", f"C@{KSTAR}": "pet_M"}
     for x, lab in enumerate(LABELS):
         ys = [n.v(f"p.{lab}.P{rep}") for rep in reps if str(rep) in obs.get(lab, {})]
@@ -1210,22 +1229,22 @@ def slide_confirm(d: Deck, n: Numbers, out: Path) -> tuple[bool, bool]:
             pilot = rf"""
 \begin{{columns}}[T]
 \begin{{column}}{{0.55\linewidth}}
-{_pilot_block(d, n, out)}\par\vspace{{2pt}}
-{{\scriptsize FINAL sized from these at $n={n.r("p.n_final")}$ (uncapped {n.r("p.n_uncapped")}; capped by pool F).}}
+{_pilot_block(d, n, out, r"\tiny")}\par\vspace{{2pt}}
+{{\tiny FINAL sized from these at $n={n.r("p.n_final")}$ (uncapped {n.r("p.n_uncapped")}; capped by pool F).}}
 \end{{column}}
 \begin{{column}}{{0.43\linewidth}}
 {fig("confirm_pilot.pdf")}
 \end{{column}}
 \end{{columns}}
-{{\scriptsize \textbf{{PILOT observations are not confirmatory.}} They size FINAL and are reported separately;
+{{\tiny \textbf{{PILOT observations are not confirmatory.}} They size FINAL and are reported separately;
 they never enter the FINAL interval, and no decision is drawn from them.}}"""
         body = rf"""
 \begin{{alertblock}}{{Confirmatory results pending}}
-The FINAL comparison (fresh pool F, $n$ independent replicates) has not been harvested into
+\small The FINAL comparison (fresh pool F, $n$ independent replicates) has not been harvested into
 \texttt{{confirm\_results.json}}{"" if has_file else " (the file is absent)"}. No confirmatory decision,
 superiority, non-inferiority or adequacy statement is made in this deck.
 \end{{alertblock}}
-{{\small {design}}}
+{{\scriptsize {design}}}\par\vspace{{2pt}}
 {pilot}"""
         d.frame("The confirmatory result: pending", body, [CONFIRM])
         return has_final, has_stress
@@ -1332,7 +1351,7 @@ def slide_limits(d: Deck, n: Numbers, has_final: bool) -> None:
             "above is development-stage evidence on the DEV halves")
     body = rf"""
 \textbf{{Limitations}}
-\begin{{itemize}}\small
+\begin{{itemize}}\footnotesize
 \item DEV-stage PET results rest on {n.r("b2.H.k10.n")} seeds per arm. The repaired driver reproduces the historical recipe
 ({n.r("lim.h4_mean")} over {n.r("lim.h4_n")} seeds, sd {n.r("lim.h4_sd")}); effects below about that spread are
 reported as unresolved, not as nulls.
@@ -1342,7 +1361,7 @@ margins) and cannot see hidden variables (D4d).
 \item Coverage has not been run: protocol \S 7 reserves it for a candidate adequate or best-in-class on FINAL.
 \end{{itemize}}
 \textbf{{Next choice}}
-\begin{{itemize}}\small
+\begin{{itemize}}\footnotesize
 \item Confirmatory status: {conf}.
 \item The miss rule is a model-dependence choice (carry-misses: slower, does not move away; efficiency
 correction: faster, fails when the event mix inside a truth bin changes). Whichever is recommended must be
@@ -1350,7 +1369,7 @@ stated as that choice.
 \item A reference computed for the estimator's own miss rule and normalization, on the scored spectrum, is a
 prospective recommendation to be checked on a known-function toy before use.
 \end{{itemize}}
-{{\small {SCOPE}}}"""
+{{\scriptsize \textbf{{Scope.}} {SCOPE}}}"""
     d.claim("Driver reproduces the historical recipe; spread sets the resolution",
             ["lim.h4_mean", "lim.h4_n", "lim.h4_sd"])
     d.frame("Limitations and the next choice", body, [B2, CONFIRM])
@@ -1476,6 +1495,7 @@ PREAMBLE = r"""\documentclass[aspectratio=169,10pt]{beamer}
 \usepackage{booktabs}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
+\usepackage{lmodern}
 \setbeamerfont{block body}{size=\small}
 \def\evidencetext{}
 \setbeamertemplate{footline}{%

@@ -14730,23 +14730,6 @@
    ]
   },
   {
-   "id": "ref.cells",
-   "op": "field",
-   "fmt": "3",
-   "value": 0.6962458243360091,
-   "rendered": "0.696",
-   "inputs": [
-    {
-     "file": "phase_b/scalar/results/reference_decomposition.json",
-     "path": [
-      "curve",
-      2,
-      "cells285"
-     ]
-    }
-   ]
-  },
-  {
    "id": "ref.eff_k2",
    "op": "field",
    "fmt": "3",
@@ -14812,6 +14795,22 @@
       "diag/carry_misses/engine",
       "3",
       "aggregate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref.hist",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.6949731568655361,
+   "rendered": "0.695",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "reference"
      ]
     }
    ]

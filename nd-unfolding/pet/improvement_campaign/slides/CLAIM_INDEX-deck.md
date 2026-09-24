@@ -76,19 +76,19 @@ Confirmatory FINAL section present when generated: **no (pending slide rendered)
 | 5 | Missed events are this share of the truth sample; accepted-event pull vs push at k=1 | `b2.miss_frac` = 58 % | **one_minus** of `phase_b/pet/results/b2e3-H-K10-s1.scores.json` `['iterations'][0]['pulled_vs_pushed']['truth_mass_fraction_accepted_B']` |
 |  |  | `b2.H.k1.acc_pull` = 0.591 | **mean** of `phase_b/pet/results/b2e3-H-K10-s1.scores.json` `['iterations'][0]['pulled_vs_pushed']['accepted']['pull']['recovery']`; `phase_b/pet/results/b2e3-H-K10-s2.scores.json` `['iterations'][0]['pulled_vs_pushed']['accepted']['pull']['recovery']` |
 |  |  | `b2.H.k1.acc` = 0.313 | **mean** of `phase_b/pet/results/b2e3-H-K10-s1.scores.json` `['iterations'][0]['pulled_vs_pushed']['accepted']['push']['recovery']`; `phase_b/pet/results/b2e3-H-K10-s2.scores.json` `['iterations'][0]['pulled_vs_pushed']['accepted']['push']['recovery']` |
-| 6 | PET lever at K=10: historical recipe (carry-misses, anneal to \ensuremath{1\times10^{-5}}, last epoch) | `b2.H.k3` = 0.334 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e3-H-K10']['3']['mean']` |
+| 6 | PET lever at K=10: H: historical recipe | `b2.H.k3` = 0.334 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e3-H-K10']['3']['mean']` |
 |  |  | `b2.H.k10` = 0.506 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e3-H-K10']['10']['mean']` |
-| 6 | PET lever at K=10: no forced \ensuremath{1\times10^{-5}} after iteration 0 | `b2.S1.k3` = 0.326 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e4-S1-K10']['3']['mean']` |
+| 6 | PET lever at K=10: S1: no forced rate | `b2.S1.k3` = 0.326 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e4-S1-K10']['3']['mean']` |
 |  |  | `b2.S1.k10` = 0.496 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e4-S1-K10']['10']['mean']` |
 |  |  | `b2.S1.dk10` = −0.010 | **mean** of = `b2.S1.dk10.s1`; = `b2.S1.dk10.s2` |
 |  |  | `b2.S1.dk10.s1` = +0.021 | **diff** of `phase_b/pet/results/b2e4-S1-K10-s1.scores.json` `['iterations'][9]['push']['recovery']`; `phase_b/pet/results/b2e3-H-K10-s1.scores.json` `['iterations'][9]['push']['recovery']` |
 |  |  | `b2.S1.dk10.s2` = −0.041 | **diff** of `phase_b/pet/results/b2e4-S1-K10-s2.scores.json` `['iterations'][9]['push']['recovery']`; `phase_b/pet/results/b2e3-H-K10-s2.scores.json` `['iterations'][9]['push']['recovery']` |
-| 6 | PET lever at K=10: best-validation epoch handed on | `b2.S2.k3` = 0.290 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e4-S2-K10']['3']['mean']` |
+| 6 | PET lever at K=10: S2: best-val.\ epoch | `b2.S2.k3` = 0.290 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e4-S2-K10']['3']['mean']` |
 |  |  | `b2.S2.k10` = 0.452 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e4-S2-K10']['10']['mean']` |
 |  |  | `b2.S2.dk10` = −0.054 | **mean** of = `b2.S2.dk10.s1`; = `b2.S2.dk10.s2` |
 |  |  | `b2.S2.dk10.s1` = −0.047 | **diff** of `phase_b/pet/results/b2e4-S2-K10-s1.scores.json` `['iterations'][9]['push']['recovery']`; `phase_b/pet/results/b2e3-H-K10-s1.scores.json` `['iterations'][9]['push']['recovery']` |
 |  |  | `b2.S2.dk10.s2` = −0.062 | **diff** of `phase_b/pet/results/b2e4-S2-K10-s2.scores.json` `['iterations'][9]['push']['recovery']`; `phase_b/pet/results/b2e3-H-K10-s2.scores.json` `['iterations'][9]['push']['recovery']` |
-| 6 | PET lever at K=10: \textbf{efficiency-corrected step 2} | `b2.M.k3` = 0.608 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e4-M-K10']['3']['mean']` |
+| 6 | PET lever at K=10: \textbf{M: eff.-corr.\ step 2} | `b2.M.k3` = 0.608 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e4-M-K10']['3']['mean']` |
 |  |  | `b2.M.k10` = 0.817 | `phase_b/pet/results/summary.json` `['recovery_by_k']['b2e4-M-K10']['10']['mean']` |
 |  |  | `b2.M.dk10` = +0.310 | **mean** of = `b2.M.dk10.s1`; = `b2.M.dk10.s2` |
 |  |  | `b2.M.dk10.s1` = +0.330 | **diff** of `phase_b/pet/results/b2e4-M-K10-s1.scores.json` `['iterations'][9]['push']['recovery']`; `phase_b/pet/results/b2e3-H-K10-s1.scores.json` `['iterations'][9]['push']['recovery']` |
@@ -153,7 +153,7 @@ Confirmatory FINAL section present when generated: **no (pending slide rendered)
 | 9 | Prior-MC gain in the historical miss mode; miss handling outweighs statistics | `d.gain_k3` = +0.080 | **diff** of = `d.prior.carry3.600143`; = `d.prior.carry3.75000` |
 |  |  | `d.gain_k20` = +0.101 | **diff** of = `d.prior.carry20.600143`; = `d.prior.carry20.75000` |
 |  |  | `d.miss_gain` = +0.27 | **diff** of = `d.prior.eff20.600143`; = `d.prior.carry20.600143` |
-| 10 | Reference decomposition: cells, scored marginal, actual halves; below the floor | `ref.cells` = 0.696 | `phase_b/scalar/results/reference_decomposition.json` `['curve'][2]['cells285']` |
+| 10 | Reference decomposition: cells, scored marginal, actual halves; below the floor | `ref.hist` = 0.695 | `../configuration_comparison/campaign_report.json` `['absolute_adequacy']['reference']` |
 |  |  | `ref.marginal` = 0.578 | `phase_b/scalar/results/reference_decomposition.json` `['curve'][2]['marginal7_score']` |
 |  |  | `ref.halves` = 0.523 | `phase_b/scalar/results/summary.json` `['ibu']['diag/carry_misses/engine']['3']['aggregate']` |
 |  |  | `ref.floor` = 0.556 | `../configuration_comparison/campaign_report.json` `['absolute_adequacy']['floor']` |
@@ -203,19 +203,19 @@ Confirmatory FINAL section present when generated: **no (pending slide rendered)
 | 12 | Identifiability of R3_s0.10 | `id.auc.R3_s0.10` = −0.0014 | `phase_e/results/identifiability.json` `['distortions']['R3_s0.10']['auc_minus_half']` |
 |  |  | `id.thr.R3_s0.10` = 0.0021 | `phase_e/results/identifiability.json` `['distortions']['R3_s0.10']['threshold_ess_scaled']` |
 |  |  | `id.dist.R3_s0.10` = no | `phase_e/results/identifiability.json` `['distortions']['R3_s0.10']['distinguishable_vs_scaled_null']` |
-| 13 | Phase E k=3 recovery under D1_p0.350 (E_{\mathrm{avail}} tilt + (development point)): IBU carried, eff.-corrected, GBDT | `e.D1_p0.350.carry_misses.k3` = 0.483 | `phase_e/results/references.json` `['across_replicates']['D1_p0.350']['ibu/carry_misses']['k3']['mean']` |
+| 13 | Phase E k=3 recovery under D1_p0.350 (E_{\mathrm{av}} tilt + (dev.\ point)): IBU carried, eff.-corrected, GBDT | `e.D1_p0.350.carry_misses.k3` = 0.483 | `phase_e/results/references.json` `['across_replicates']['D1_p0.350']['ibu/carry_misses']['k3']['mean']` |
 |  |  | `e.D1_p0.350.efficiency_corrected.k3` = 0.932 | `phase_e/results/references.json` `['across_replicates']['D1_p0.350']['ibu/efficiency_corrected']['k3']['mean']` |
 |  |  | `e.D1_p0.350.gbdt_omnifold.k3` = 0.414 | `phase_e/results/references.json` `['across_replicates']['D1_p0.350']['gbdt_omnifold']['k3']['mean']` |
-| 13 | Phase E k=3 recovery under D1_m0.350 (E_{\mathrm{avail}} tilt -): IBU carried, eff.-corrected, GBDT | `e.D1_m0.350.carry_misses.k3` = 0.382 | `phase_e/results/references.json` `['across_replicates']['D1_m0.350']['ibu/carry_misses']['k3']['mean']` |
+| 13 | Phase E k=3 recovery under D1_m0.350 (E_{\mathrm{av}} tilt -): IBU carried, eff.-corrected, GBDT | `e.D1_m0.350.carry_misses.k3` = 0.382 | `phase_e/results/references.json` `['across_replicates']['D1_m0.350']['ibu/carry_misses']['k3']['mean']` |
 |  |  | `e.D1_m0.350.efficiency_corrected.k3` = 0.913 | `phase_e/results/references.json` `['across_replicates']['D1_m0.350']['ibu/efficiency_corrected']['k3']['mean']` |
 |  |  | `e.D1_m0.350.gbdt_omnifold.k3` = 0.340 | `phase_e/results/references.json` `['across_replicates']['D1_m0.350']['gbdt_omnifold']['k3']['mean']` |
 | 13 | Phase E k=3 recovery under D4a_pipm_up (\pi^\pm multiplicity up): IBU carried, eff.-corrected, GBDT | `e.D4a_pipm_up.carry_misses.k3` = 0.573 | `phase_e/results/references.json` `['across_replicates']['D4a_pipm_up']['ibu/carry_misses']['k3']['mean']` |
 |  |  | `e.D4a_pipm_up.efficiency_corrected.k3` = 0.871 | `phase_e/results/references.json` `['across_replicates']['D4a_pipm_up']['ibu/efficiency_corrected']['k3']['mean']` |
 |  |  | `e.D4a_pipm_up.gbdt_omnifold.k3` = 0.488 | `phase_e/results/references.json` `['across_replicates']['D4a_pipm_up']['gbdt_omnifold']['k3']['mean']` |
-| 13 | Phase E k=3 recovery under D5_nuwro (NuWro generator reweighting): IBU carried, eff.-corrected, GBDT | `e.D5_nuwro.carry_misses.k3` = 0.475 | `phase_e/results/references.json` `['across_replicates']['D5_nuwro']['ibu/carry_misses']['k3']['mean']` |
+| 13 | Phase E k=3 recovery under D5_nuwro (NuWro reweighting): IBU carried, eff.-corrected, GBDT | `e.D5_nuwro.carry_misses.k3` = 0.475 | `phase_e/results/references.json` `['across_replicates']['D5_nuwro']['ibu/carry_misses']['k3']['mean']` |
 |  |  | `e.D5_nuwro.efficiency_corrected.k3` = −0.201 | `phase_e/results/references.json` `['across_replicates']['D5_nuwro']['ibu/efficiency_corrected']['k3']['mean']` |
 |  |  | `e.D5_nuwro.gbdt_omnifold.k3` = 0.430 | `phase_e/results/references.json` `['across_replicates']['D5_nuwro']['gbdt_omnifold']['k3']['mean']` |
-| 13 | Phase E k=3 recovery under D2_bump_c0.3 (bump in E_{\mathrm{avail}}): IBU carried, eff.-corrected, GBDT | `e.D2_bump_c0.3.carry_misses.k3` = 0.514 | `phase_e/results/references.json` `['across_replicates']['D2_bump_c0.3']['ibu/carry_misses']['k3']['mean']` |
+| 13 | Phase E k=3 recovery under D2_bump_c0.3 (bump in E_{\mathrm{av}}): IBU carried, eff.-corrected, GBDT | `e.D2_bump_c0.3.carry_misses.k3` = 0.514 | `phase_e/results/references.json` `['across_replicates']['D2_bump_c0.3']['ibu/carry_misses']['k3']['mean']` |
 |  |  | `e.D2_bump_c0.3.efficiency_corrected.k3` = 0.596 | `phase_e/results/references.json` `['across_replicates']['D2_bump_c0.3']['ibu/efficiency_corrected']['k3']['mean']` |
 |  |  | `e.D2_bump_c0.3.gbdt_omnifold.k3` = 0.322 | `phase_e/results/references.json` `['across_replicates']['D2_bump_c0.3']['gbdt_omnifold']['k3']['mean']` |
 | 13 | Phase E k=3 recovery under D4c_p_up (proton multiplicity up): IBU carried, eff.-corrected, GBDT | `e.D4c_p_up.carry_misses.k3` = 0.197 | `phase_e/results/references.json` `['across_replicates']['D4c_p_up']['ibu/carry_misses']['k3']['mean']` |

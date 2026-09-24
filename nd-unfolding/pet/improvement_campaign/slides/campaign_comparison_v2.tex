@@ -5,6 +5,7 @@
 \usepackage{booktabs}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
+\usepackage{lmodern}
 \setbeamerfont{block body}{size=\small}
 \def\evidencetext{}
 \setbeamertemplate{footline}{%
@@ -146,18 +147,18 @@ $k$ & push & pull & reco $E_{\mathrm{av}}$ & acc. & missed \\
 \gdef\evidencetext{\texttt{phase\_b/pet/results/summary.json}; \texttt{phase\_b/pet/results/b2e\{3,4\}-*-K10-s\{1,2\}.scores.json}}
 \begin{frame}{What improves it (1): iterations and the miss rule; the schedule does not}
 \begin{columns}[T]
-\begin{column}{0.52\linewidth}
-{\small PET through the repaired driver, DEV halves, $K=10$, paired against the historical recipe
-(2 seeds; the per-seed paired $\Delta$ in brackets):}\par\vspace{3pt}
+\begin{column}{0.6\linewidth}
+{\small PET through the repaired driver, DEV halves, $K=10$, 2 seeds, paired against H
+(carry-misses, rate forced to \ensuremath{1\times10^{-5}} after iteration 0, last epoch handed on); per-seed $\Delta$ in brackets:}\par\vspace{3pt}
 {\scriptsize
-\begin{tabular}{p{3.2cm}rrl}
+\begin{tabular}{lrrrl}
 \toprule
-factor & $k=3$ & $k=10$ & paired $\Delta$, $k=10$ \\
+factor & $k=3$ & $k=10$ & $\Delta$, $k=10$ & per seed \\
 \midrule
-historical recipe (carry-misses, anneal to \ensuremath{1\times10^{-5}}, last epoch) & 0.334 & 0.506 & --- \\
-no forced \ensuremath{1\times10^{-5}} after iteration 0 & 0.326 & 0.496 & \ensuremath{-}0.010 [+0.021, \ensuremath{-}0.041] \\
-best-validation epoch handed on & 0.290 & 0.452 & \ensuremath{-}0.054 [\ensuremath{-}0.047, \ensuremath{-}0.062] \\
-\textbf{efficiency-corrected step 2} & 0.608 & 0.817 & +0.310 [+0.330, +0.290] \\
+H: historical recipe & 0.334 & 0.506 & --- &  \\
+S1: no forced rate & 0.326 & 0.496 & \ensuremath{-}0.010 & [+0.021, \ensuremath{-}0.041] \\
+S2: best-val.\ epoch & 0.290 & 0.452 & \ensuremath{-}0.054 & [\ensuremath{-}0.047, \ensuremath{-}0.062] \\
+\textbf{M: eff.-corr.\ step 2} & 0.608 & 0.817 & +0.310 & [+0.330, +0.290] \\
 \bottomrule
 \end{tabular}}\par\vspace{4pt}
 {\small \textbf{Iterations and the miss rule are the two levers.} Efficiency correction clears the
@@ -165,7 +166,7 @@ historical floor already at $k=3$ and lifts the low-acceptance region from 0.17 
 0.67 at $k=10$. \textbf{The schedule does not help}: handing on the best-validation
 epoch \emph{hurts}.}
 \end{column}
-\begin{column}{0.47\linewidth}
+\begin{column}{0.38\linewidth}
 \includegraphics[width=0.95\linewidth]{figures_campaign/pet_recovery_vs_k.pdf}\\
 {\scriptsize Bands: min--max over seeds. Efficiency correction is a model-dependence choice; see
 the robustness slides.}
@@ -232,8 +233,22 @@ with low-acceptance recovery \ensuremath{-}0.424. It needs a stopping rule and a
 {\small \textbf{Development-stage evidence} (scalar, DEV halves, 222 runs, overlapping draws
 per size, a per-subset oracle anchor). The confirmatory study on fresh pool-S draws is separate.}\par\vspace{2pt}
 \begin{columns}[T]
-\begin{column}{0.5\linewidth}
-{\scriptsize
+\begin{column}{0.52\linewidth}
+\includegraphics[width=0.95\linewidth]{figures_campaign/scaling.pdf}
+\end{column}
+\begin{column}{0.46\linewidth}
+\begin{itemize}\footnotesize
+\item Prior-MC statistics buy recovery in the historical miss mode (+0.080 at $k=3$,
++0.101 at $k=20$, 75k$\to$600k); beyond 600k is not measured.
+\item Pseudodata statistics are not the binding constraint over this range.
+\item Miss handling outweighs every statistical axis tested (+0.27 at 600k).
+\item Error bars: sd over draws.
+\end{itemize}
+\end{column}
+\end{columns}
+\vspace{-2pt}
+\begin{center}
+{\tiny
 \begin{tabular}{lrrrr}
 \toprule
 axis (aggregate recovery) & 75k & 150k & 300k & 600k \\
@@ -245,29 +260,18 @@ AUSSIE, $\lambda=0$ & 0.816 & 0.820 & 0.880 & 0.849 \\
 pseudodata size: carry-misses, $k=20$ & 0.541 & 0.540 & 0.551 & --- \\
 oracle anchor (exact tilt on that subset) & 0.969 & 0.974 & 0.984 & 0.984 \\
 \bottomrule
-\end{tabular}}\par\vspace{4pt}
-\begin{itemize}\scriptsize
-\item Prior-MC statistics buy recovery in the historical miss mode (+0.080 at $k=3$,
-+0.101 at $k=20$, 75k$\to$600k); beyond 600k is not measured.
-\item Pseudodata statistics are not the binding constraint over this range.
-\item Miss handling outweighs every statistical axis tested (+0.27 at 600k).
-\end{itemize}
-\end{column}
-\begin{column}{0.49\linewidth}
-\includegraphics[width=0.95\linewidth]{figures_campaign/scaling.pdf}\\
-{\scriptsize Error bars: sd over draws.}
-\end{column}
-\end{columns}
+\end{tabular}}
+\end{center}
 \end{frame}
 
 \gdef\evidencetext{\texttt{phase\_b/scalar/results/reference\_decomposition.json}; \texttt{phase\_b/scalar/results/summary.json}; \texttt{../configuration\_comparison/campaign\_report.json}}
 \begin{frame}{The adequacy reference (1): what it measures}
 \begin{columns}[T]
-\begin{column}{0.47\linewidth}
-{\small The reference is $1-(1-a)^k$ at $k=3$ with a per-cell acceptance $a$; the floor is
+\begin{column}{0.5\linewidth}
+{\footnotesize The reference is $1-(1-a)^k$ at $k=3$ with a per-cell acceptance $a$; the floor is
 0.8$\times$ it.\par\vspace{3pt}
 \textbf{It is computed on a different quantity from the one scored.} It is built on the
-$(p_T, p_\parallel)$ cell displacement (0.696); the score is the seven-bin $E_{\mathrm{avail}}$ marginal.
+$(p_T, p_\parallel)$ cell displacement (0.695); the score is the seven-bin $E_{\mathrm{avail}}$ marginal.
 The model's own assumptions applied to the scored spectrum give 0.578; on the actual halves with the
 historical pseudodata normalization, 0.523: \emph{below the 0.556 floor derived from it.}\par\vspace{3pt}
 \textbf{It is not an attainability bound in either direction.} Efficiency-corrected IBU exceeds it
@@ -276,7 +280,7 @@ historical pseudodata normalization, 0.523: \emph{below the 0.556 floor derived 
 The historical normalization assumes the accepted fraction is unchanged by the tilt; measured ratio
 0.8979.}
 \end{column}
-\begin{column}{0.52\linewidth}
+\begin{column}{0.48\linewidth}
 \includegraphics[width=0.95\linewidth]{figures_campaign/reference_decomposition.pdf}
 \end{column}
 \end{columns}
@@ -344,29 +348,30 @@ case & AUC$-\frac{1}{2}$ & threshold & disting. \\
 \gdef\evidencetext{\texttt{phase\_e/results/references.json}; \texttt{phase\_b/scalar/results/summary.json}}
 \begin{frame}{Robustness (2): the miss-handling trade-off}
 \begin{columns}[T]
-\begin{column}{0.5\linewidth}
+\begin{column}{0.52\linewidth}
 {\scriptsize
-\begin{tabular}{p{2.5cm}rrr}
+\begin{tabular}{lrrr}
 \toprule
 distortion ($k=3$) & IBU carried & IBU eff.-corr. & GBDT \\
 \midrule
-\texttt{D1\_p0.350} $E_{\mathrm{avail}}$ tilt $+$ (development point) & 0.483 $\pm$ 0.012 & 0.932 $\pm$ 0.021 & 0.414 $\pm$ 0.004 \\
-\texttt{D1\_m0.350} $E_{\mathrm{avail}}$ tilt $-$ & 0.382 & 0.913 & 0.340 \\
-\texttt{D4a\_pipm\_up} $\pi^\pm$ multiplicity up & 0.573 & 0.871 & 0.488 \\
-\texttt{D5\_nuwro} NuWro generator reweighting & 0.475 $\pm$ 0.029 & \ensuremath{-}0.201 $\pm$ 0.169 & 0.430 $\pm$ 0.020 \\
-\texttt{D2\_bump\_c0.3} bump in $E_{\mathrm{avail}}$ & 0.514 & 0.596 & 0.322 \\
-\texttt{D4c\_p\_up} proton multiplicity up & 0.197 & 0.314 & 0.112 \\
+$E_{\mathrm{av}}$ tilt $+$ (dev.\ point) & 0.483 & 0.932 & 0.414 \\
+$E_{\mathrm{av}}$ tilt $-$ & 0.382 & 0.913 & 0.340 \\
+$\pi^\pm$ multiplicity up & 0.573 & 0.871 & 0.488 \\
+NuWro reweighting & 0.475 & \ensuremath{-}0.201 & 0.430 \\
+bump in $E_{\mathrm{av}}$ & 0.514 & 0.596 & 0.322 \\
+proton multiplicity up & 0.197 & 0.314 & 0.112 \\
 \bottomrule
 \end{tabular}}\par\vspace{4pt}
-{\scriptsize Mean over 3 replicates on fresh pool-T events ($\pm$ sd where shown). The development-point
+{\tiny Mean over 3 replicates on fresh pool-T events (sd as error bars in the figure;
+D5 NuWro efficiency-corrected: \ensuremath{-}0.201 $\pm$ 0.169). The development-point
 yardsticks transfer: B1's 0.472 / 0.412 on the historical halves.}
 \end{column}
-\begin{column}{0.49\linewidth}
+\begin{column}{0.46\linewidth}
 \includegraphics[width=0.95\linewidth]{figures_campaign/miss_tradeoff.pdf}
 \end{column}
 \end{columns}
 \vspace{2pt}
-{\small \textbf{Efficiency correction is far ahead when the distortion is a function of the variables the
+{\footnotesize \textbf{Efficiency correction is far ahead when the distortion is a function of the variables the
 unfolder sees, and it fails --- moves away from the target --- when the distortion changes the event mix
 inside a truth bin}, because it extrapolates an acceptance that no longer holds. Carry-misses is slower
 but does not fail that way. Neither mode is dominant: \textbf{the choice is a model-dependence choice and must
@@ -401,15 +406,15 @@ conditional on the simulated response.}
 \gdef\evidencetext{\texttt{confirm/results/confirm\_results.json}}
 \begin{frame}{The confirmatory result: pending}
 \begin{alertblock}{Confirmatory results pending}
-The FINAL comparison (fresh pool F, $n$ independent replicates) has not been harvested into
+\small The FINAL comparison (fresh pool F, $n$ independent replicates) has not been harvested into
 \texttt{confirm\_results.json}. No confirmatory decision,
 superiority, non-inferiority or adequacy statement is made in this deck.
 \end{alertblock}
-{\small Frozen before any fresh-pool row was read (protocol amendment 2): \textbf{CTL} = historical recipe at $k=3$; \textbf{A} = the same run at $K^*=10$ (iterations alone); \textbf{B} = C2 inputs at $K^*$ (carry-misses); \textbf{C} = efficiency-corrected step 2 at $K^*$. Adequacy judged like-for-like at $k=3$ and at $K^*$ against the unchanged historical floors.}
+{\scriptsize Frozen before any fresh-pool row was read (protocol amendment 2): \textbf{CTL} = historical recipe at $k=3$; \textbf{A} = the same run at $K^*=10$ (iterations alone); \textbf{B} = C2 inputs at $K^*$ (carry-misses); \textbf{C} = efficiency-corrected step 2 at $K^*$. Adequacy judged like-for-like at $k=3$ and at $K^*$ against the unchanged historical floors.}\par\vspace{2pt}
 
 \begin{columns}[T]
 \begin{column}{0.55\linewidth}
-{\scriptsize
+{\tiny
 \begin{tabular}{lrrr}
 \toprule
 PILOT, pool P & P0 & P1 & P2 \\
@@ -423,13 +428,13 @@ C (eff.-corr.), $K^*=10$ & 0.722 & 0.796 & --- \\
 oracle anchor & 0.987 & 0.985 & 0.982 \\
 \bottomrule
 \end{tabular}}\par\vspace{2pt}
-{\scriptsize FINAL sized from these at $n=12$ (uncapped 200; capped by pool F).}
+{\tiny FINAL sized from these at $n=12$ (uncapped 200; capped by pool F).}
 \end{column}
 \begin{column}{0.43\linewidth}
 \includegraphics[width=0.95\linewidth]{figures_campaign/confirm_pilot.pdf}
 \end{column}
 \end{columns}
-{\scriptsize \textbf{PILOT observations are not confirmatory.} They size FINAL and are reported separately;
+{\tiny \textbf{PILOT observations are not confirmatory.} They size FINAL and are reported separately;
 they never enter the FINAL interval, and no decision is drawn from them.}
 \end{frame}
 
@@ -453,7 +458,7 @@ injected truth.\par\vspace{6pt}
 \gdef\evidencetext{\texttt{phase\_b/pet/results/summary.json}; \texttt{confirm/results/confirm\_results.json}}
 \begin{frame}{Limitations and the next choice}
 \textbf{Limitations}
-\begin{itemize}\small
+\begin{itemize}\footnotesize
 \item DEV-stage PET results rest on 2 seeds per arm. The repaired driver reproduces the historical recipe
 (0.311 over 4 seeds, sd 0.03); effects below about that spread are
 reported as unresolved, not as nulls.
@@ -463,7 +468,7 @@ margins) and cannot see hidden variables (D4d).
 \item Coverage has not been run: protocol \S 7 reserves it for a candidate adequate or best-in-class on FINAL.
 \end{itemize}
 \textbf{Next choice}
-\begin{itemize}\small
+\begin{itemize}\footnotesize
 \item Confirmatory status: the FINAL comparison and the PET stress set are pending; until they land, every candidate statement above is development-stage evidence on the DEV halves.
 \item The miss rule is a model-dependence choice (carry-misses: slower, does not move away; efficiency
 correction: faster, fails when the event mix inside a truth bin changes). Whichever is recommended must be
@@ -471,7 +476,7 @@ stated as that choice.
 \item A reference computed for the estimator's own miss rule and normalization, on the scored spectrum, is a
 prospective recommendation to be checked on a known-function toy before use.
 \end{itemize}
-{\small PET is diagnostic method development. Nothing here is a publication adoption, and nothing here changes the historical comparison's verdict or thresholds.}
+{\scriptsize \textbf{Scope.} PET is diagnostic method development. Nothing here is a publication adoption, and nothing here changes the historical comparison's verdict or thresholds.}
 \end{frame}
 
 \appendix
