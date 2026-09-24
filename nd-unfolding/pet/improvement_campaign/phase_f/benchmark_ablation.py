@@ -16,6 +16,8 @@ import features
 import binned_unfolding as bu
 
 from aussie_scalar import train_classifier, train_unfolder, _capped_ratio
+# The OmniFold loop needs the (ratio, n_saturated) form; AUSSIE's _capped_ratio returns the ratio only.
+from scalar_omnifold import _capped_ratio as _capped_ratio_with_saturation
 
 def _split(n: int, rng: np.random.Generator) -> tuple[np.ndarray, np.ndarray]:
     idx = rng.permutation(n)
@@ -75,7 +77,7 @@ def run_scalar_omnifold_patched(*, X_reco_mc: np.ndarray, X_reco_data: np.ndarra
         else:
             info1 = m1.fit(X1[tr1], y1[tr1], w1[tr1], X1[va1], y1[va1], w1[va1])
             
-        ratio1, sat1 = _capped_ratio(m1.logit(np.asarray(X_reco_mc)[s1]))
+        ratio1, sat1 = _capped_ratio_with_saturation(m1.logit(np.asarray(X_reco_mc)[s1]))
         info1.update({"seconds": time.perf_counter() - t0, "saturated": sat1})
         prev_push = push
         pull = push.copy()
@@ -94,7 +96,7 @@ def run_scalar_omnifold_patched(*, X_reco_mc: np.ndarray, X_reco_data: np.ndarra
         else:
             info2 = m2.fit(X2[tr2], y2[tr2], w2[tr2], X2[va2], y2[va2], w2[va2])
             
-        ratio2, sat2 = _capped_ratio(m2.logit(Xg))
+        ratio2, sat2 = _capped_ratio_with_saturation(m2.logit(Xg))
         info2.update({"seconds": time.perf_counter() - t0, "saturated": sat2})
         push = np.ones_like(push)
         push[pg] = ratio2
@@ -105,8 +107,7 @@ def run_scalar_omnifold_patched(*, X_reco_mc: np.ndarray, X_reco_data: np.ndarra
 def transform(x):
     return np.sign(x) * np.log1p(np.abs(x))
 
-def run_all():
-    pop_file = "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/b160e1e8-d9e0-44fe-ab81-24d89902eec7/scratchpad/pet/f1_data/populations.npz"
+def run_all(pop_file: str):
     pop = scm.load_populations(pop_file)
     endpoint = scm.endpoint_from_populations(pop)
     
@@ -233,10 +234,24 @@ def run_all():
                     "time": t1-t0 if k==50 else 0
                 })
                 
+    import hashlib, subprocess
+    commit = subprocess.run(["git", "-C", str(Path(__file__).parent), "rev-parse", "HEAD"],
+                            capture_output=True, text=True).stdout.strip()
+    dirty = subprocess.run(["git", "-C", str(Path(__file__).parent), "status", "--porcelain", "--", "."],
+                           capture_output=True, text=True).stdout.strip()
+    payload = {"schema": "phase-f-aussie-ablation/2",
+               "producer": "phase_f/benchmark_ablation.py",
+               "code_commit": commit, "code_dirty": bool(dirty),
+               "populations_sha256": hashlib.sha256(Path(pop_file).read_bytes()).hexdigest(),
+               "runs": results}
     out_dir = Path("results")
     out_dir.mkdir(exist_ok=True)
     with open(out_dir / "aussie_ablation.json", "w") as f:
-        json.dump(results, f, indent=2)
+        json.dump(payload, f, indent=2)
+
 
 if __name__ == "__main__":
-    run_all()
+    import argparse
+    ap = argparse.ArgumentParser(description="Phase F miss-handling ablation (scalar, DEV halves).")
+    ap.add_argument("--populations", required=True, help="B1 populations.npz of the DEV halves")
+    run_all(ap.parse_args().populations)
