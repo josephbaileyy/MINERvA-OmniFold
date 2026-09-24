@@ -21,7 +21,9 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     CLOSED, RESOLVED, WONTFIX or RETRACTED. Markup before the word (`~~`, `<del>`, a backtick) is refused,
     not interpreted;
   * an index id that is not plain letters and digits, or used by more than one row;
-  * a table whose header begins with `id` but is not exactly `id`;
+  * a table whose rendered first header cell begins with `id` but whose header is not exactly the index header
+    (`id | severity | status | one-sentence failure | detail | updated`);
+  * an index with no table carrying that header, or an absent registry file;
   * a line of the index that begins with `|` but was not parsed as part of any table -- a row cut off by a
     stray blank line, an indent or an unclosed code fence is otherwise never seen (reviews #24b, #26b). This
     FAILS CLOSED on a pipe-led line inside a code block, such as a shell pipeline, which must be rewritten.
@@ -56,12 +58,21 @@ REGISTRY = "docs/known-issues/BLOCKERS.tsv"
 MD = MarkdownIt("commonmark").enable(["table"])
 STATUS_RE = re.compile(r"^[\s*_]*([A-Za-z]+)(?![A-Za-z])")     # bold markers, then the word; nothing else first
 ID_RE = re.compile(r"^[\s*_]*([A-Za-z0-9]+)[\s*_]*$")
+# An index table is one whose header, AS RENDERED, is exactly this. The first rule ("first header cell is `id`")
+# dropped a whole table headed `**id**` -- GitHub shows headers bold anyway -- and skipped every row of a
+# two-column `id | status` table, both silently (review #27b). A table whose rendered first header cell begins
+# with `id` but whose header is not exactly this is REFUSED, so the status column is always the third.
+HEADER = ("id", "severity", "status", "one-sentence failure", "detail", "updated")
+
+
+def _rendered(inline):
+    return " ".join("".join(c.content for c in (inline.children or []) if c.type in ("text", "code_inline")).split())
 
 
 def index_rows(text):
-    """(id source, status source, line) for each body row of each table whose header's first cell is `id`, plus a
-    list of problems: headers that begin with `id` without being exactly `id`, and `|`-led lines outside every
-    parsed table."""
+    """(id source, status source, line) for each body row of each table whose rendered header is exactly HEADER,
+    plus a list of problems: a table whose rendered first header cell begins with `id` but whose header is not
+    exactly HEADER, and `|`-led lines outside every parsed table."""
     toks, rows, problems, i = MD.parse(text), [], [], 0
     lines, covered = text.split("\n"), set()
     # ⚠ NO line is excused for sitting in a code block. Excusing FENCED blocks (to stop refusing a shell pipeline,
@@ -79,14 +90,15 @@ def index_rows(text):
             if tk.type == "tr_open":
                 cur = (tk.map[0] + 1 if tk.map else 0, [])
             elif tk.type == "inline" and cur is not None:
-                cur[1].append(tk.content)
+                cur[1].append(tk)
             elif tk.type == "tr_close" and cur is not None:
                 if header is None:
-                    header = cur[1][0].strip().lower() if cur[1] else ""
-                    if header != "id" and header.startswith("id"):
-                        problems.append(f"line {cur[0]}: a table header begins {cur[1][0]!r}, not exactly `id`")
-                elif header == "id" and len(cur[1]) >= 3:
-                    rows.append((cur[1][0], cur[1][2], cur[0]))
+                    header = tuple(_rendered(c).lower() for c in cur[1])
+                    if header != HEADER and header[:1] and header[0].startswith("id"):
+                        problems.append(f"line {cur[0]}: a table whose header begins `id` is not exactly the index "
+                                        f"header {' | '.join(HEADER)}: {' | '.join(header)[:60]!r}")
+                elif header == HEADER:
+                    rows.append((cur[1][0].content, cur[1][2].content, cur[0]))
                 cur = None
             j += 1
         i = j + 1
@@ -109,15 +121,21 @@ def read_registry(text):
             continue
         rid, kind, body = f[0].strip(), f[1].strip(), f[2].strip()
         if kind not in KINDS:
-            problems.append(f"{REGISTRY}:{n}: id {rid}: kind {kind!r} is not one of {', '.join(KINDS)}")
+            problems.append(f"{REGISTRY}:{n}: id {rid!r}: kind {kind!r} is not one of {', '.join(KINDS)}")
         if not body:
-            problems.append(f"{REGISTRY}:{n}: id {rid}: empty blocker text")
+            problems.append(f"{REGISTRY}:{n}: id {rid!r}: empty blocker text")   # every registry id prints with !r (#27a)
         reg.setdefault(rid, []).append((kind, body, n))
     return reg, problems
 
 
 def check(index_text, registry_text):
+    """`registry_text` None means the registry file is absent. Both that and an index with no parsed rows are
+    problems HERE, where the self-test reaches them; they were once decided only in main() (review #27b)."""
     rows, problems = index_rows(index_text)
+    if not rows:
+        problems.append("no index rows parsed: no table has exactly the index header")
+    if registry_text is None:
+        problems.append(f"{REGISTRY} does not exist")
     reg, rp = read_registry(registry_text if registry_text is not None else "")
     problems += rp
     open_ids, seen = set(), {}
@@ -152,7 +170,7 @@ def check(index_text, registry_text):
 
 
 def self_test():
-    head = "| id | severity | status | failure | detail | updated |\n|---|---|---|---|---|---|\n"
+    head = "| id | severity | status | one-sentence failure | detail | updated |\n|---|---|---|---|---|---|\n"
     shapes = [  # (name, index rows, registry, problems wanted)
         ("OPEN row with one registry line", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\tlane B\n", 0),
         ("OPEN row with no registry line", "| 1 | L | OPEN | x | d | u |\n", "", 1),
@@ -183,6 +201,19 @@ def self_test():
          "| 1 | L | FIXED | x | d | u |\n\n| name | a | status |\n|---|---|---|\n| z | L | OPEN |\n", "", 0),
         ("a header beginning `id` but not `id` is refused",
          "| 1 | L | FIXED | x | d | u |\n\n| id (x) | a | status |\n|---|---|---|\n| 2 | L | OPEN |\n", "", 1),
+        # --- review #27b: index tables are recognised by their exact rendered header
+        ("a bold **id** header is the index header", "", "", 1 - 1),
+        ("a two-column id | status table is refused",
+         "| 1 | L | FIXED | x | d | u |\n\n| id | status |\n|---|---|\n| 74 | OPEN |\n", "", 1),
+        ("a three-column id table is refused",
+         "| 1 | L | FIXED | x | d | u |\n\n| id | severity | status |\n|---|---|---|\n| 74 | L | OPEN |\n", "", 1),
+        ("a header ID. is refused",
+         "| 1 | L | FIXED | x | d | u |\n\n| ID. | severity | status | one-sentence failure | detail | updated |\n|---|---|---|---|---|---|\n| 74 | L | OPEN | x | d | u |\n", "", 1),
+        ("a header whose third column is not status is refused",
+         "| 1 | L | FIXED | x | d | u |\n\n| id | status | failure |\n|---|---|---|\n| 74 | OPEN | Closed form |\n", "", 1),
+        ("no index table at all", None, "", 1),
+        ("the registry file absent", "| 1 | L | FIXED | x | d | u |\n", None, 1),
+        ("an indented comment line in the registry", "| 1 | L | OPEN | x | d | u |\n", "  # c\n1\tOWNER\ta\n", 0),
         # --- review #24b: the real index's letter ids and status words, and rows the parser would not see
         ("a letter id J36, OPEN with its line", "| J36 | L | OPEN | x | d | u |\n", "J36\tOWNER\ta\n", 0),
         *[(f"status {w} needs no line", f"| 1 | L | {w} 2026 | x | d | u |\n", "", 0)
@@ -204,8 +235,13 @@ def self_test():
     ]
     wrong = []
     for name, body, reg, want in shapes:
-        doc = (head.replace("| id |", "| ID |", 1) + "| 1 | L | OPEN | x | d | u |\n") if "upper-case ID" in name else head + body
-        reg = "1\tOWNER\ta\n" if "upper-case ID" in name else reg
+        if "upper-case ID" in name or "bold **id**" in name:
+            h = head.replace("| id |", "| ID |" if "upper-case" in name else "| **id** |", 1)
+            doc, reg = h + "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n"
+        elif body is None:
+            doc = "# no table here\n"
+        else:
+            doc = head + body
         got, _, _ = check(doc, reg)
         if len(got) != want:
             wrong.append(f"{name}: wanted {want} problem(s), got {len(got)}: {got}")
@@ -232,13 +268,17 @@ MUTATIONS = [
     ("bold ids not merged", 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)[\\s*_]*$")', 'ID_RE = re.compile(r"^\\s*([*_]*[A-Za-z0-9]+[*_]*)\\s*$")'),
     ("duplicates unchecked", "        if len(lines) > 1:\n", "        if False:\n"),
     ("second table ignored", "        i = j + 1\n    for n, l in enumerate(lines):", "        break\n    for n, l in enumerate(lines):"),
-    ("any table read as an index", '                elif header == "id" and len(cur[1]) >= 3:', '                elif len(cur[1]) >= 3:'),
-    ("near-`id` headers unrefused", '                    if header != "id" and header.startswith("id"):', '                    if False:'),
+    ("any table read as an index", '                elif header == HEADER:', '                elif len(cur[1]) >= 3:'),
+    ("near-`id` headers unrefused", '                    if header != HEADER and header[:1] and header[0].startswith("id"):', '                    if False:'),
+    ("header compared as source, not rendered", 'header = tuple(_rendered(c).lower() for c in cur[1])', 'header = tuple(c.content.strip().lower() for c in cur[1])'),
+    ("absent registry unreported", '    if registry_text is None:\n        problems.append', '    if False:\n        problems.append'),
+    ("empty index unreported", '    if not rows:\n        problems.append', '    if False:\n        problems.append'),
+    ("indented comments read as entries", 'line.lstrip().startswith("#")', 'line.startswith("#")'),
     ("letter ids refused", 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)[\\s*_]*$")', 'ID_RE = re.compile(r"^[\\s*_]*([0-9]+)[\\s*_]*$")'),
     *[(f"{w} dropped", 'STATUSES = ("OPEN", "FIXED", "CLOSED", "RESOLVED", "WONTFIX", "RETRACTED")', 'STATUSES = ("OPEN", "FIXED", "CLOSED", "RESOLVED", "WONTFIX", "RETRACTED")'.replace(f', "{w}"', "")) for w in ("CLOSED", "RESOLVED", "WONTFIX", "RETRACTED")],
     ("registry id unstripped", "rid, kind, body = f[0].strip(), f[1].strip()", "rid, kind, body = f[0], f[1].strip()"),
     ("registry kind unstripped", "rid, kind, body = f[0].strip(), f[1].strip()", "rid, kind, body = f[0].strip(), f[1]"),
-    ("header case-sensitive", "header = cur[1][0].strip().lower() if cur[1] else", "header = cur[1][0].strip() if cur[1] else"),
+    ("header case-sensitive", 'header = tuple(_rendered(c).lower() for c in cur[1])', 'header = tuple(_rendered(c) for c in cur[1])'),
     ("id with trailing text read", 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)[\\s*_]*$")', 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)")'),
     ("a malformed line owns its row", "if e[0] in KINDS and e[1]])", "if True])"),
     ("fenced blocks excused", '    lines, covered = text.split("\\n"), set()',
@@ -296,8 +336,6 @@ def main():
     if not n_rows:
         print("[owned] CANNOT LOOK :: no issue rows parsed")
         return 2
-    if registry is None:
-        problems.insert(0, f"{REGISTRY} does not exist")
     for p in problems:
         print(f"  {p}")
     print(f"\n[owned] {'FAIL' if problems else 'PASS'} :: {n_rows} rows, {n_open} OPEN, {len(problems)} problem(s)")
