@@ -37,8 +37,10 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     reworded (review #32b). A residual described in other words (`pending`, `remaining`) is not detected;
   * a status other than OPEN that SHOWS a letter which does not reduce (NFKD) to an ASCII letter -- other scripts'
     look-alikes, small capitals -- or a lone combining mark or format character: refused, not interpreted (review
-    #43b). Punctuation, symbols, numbers, spaces, `\u03bb` and `\u03c3` are allowed; letters that do reduce (`\u00e9`,
-    fullwidth, superscript) are read as their ASCII letter. A symbol shaped like a letter (`\u25cbpen`) is NOT seen;
+    #43b). Punctuation, symbols, numbers, spaces, combining marks, `\u03bb` and `\u03c3` are allowed; letters that do
+    reduce (`\u00e9`, fullwidth, superscript) are read as their ASCII letter, and a Latin letter that does not (`\u00df`,
+    `\u00e6`, `\u0142`) is allowed unless its name makes it a form of o, p, e or n (`\u00f8`, `\u0254`, `\u014b`). A symbol
+    shaped like a letter (`\u25cbpen`) is NOT seen;
   * a status cell with an unpaired backtick or bracket, even in prose such as `don`t`: a `|` in a code span or
     link may have cut it short (reviews #42b, #43b);
   * an index id that is not plain letters and digits, or used by more than one row;
@@ -124,14 +126,25 @@ STATUS_CHARS = set(map(chr, range(32, 127))) | set("\u2014\u2026\u2013\u00b1\u22
 # then READ as that letter, so `opén` and `ｏｐｅｎ` still say open. Other letters, marks and format characters are refused
 def status_char_ok(c):
     cat = unicodedata.category(c)
-    if c in STATUS_CHARS or cat[0] in "PSN" or cat == "Zs":
+    if c in STATUS_CHARS or cat[0] in "PSN" or cat == "Zs" or cat == "Mn":   # a mark is dropped by fold() (#self)
         return True
-    return cat[0] == "L" and unicodedata.normalize("NFKD", c)[:1].isascii() and unicodedata.normalize("NFKD", c)[:1].isalpha()
+    if cat[0] != "L":
+        return False
+    base = unicodedata.normalize("NFKD", c)[:1]
+    if base.isascii() and base.isalpha():
+        return True
+    # a Latin letter with no decomposition (`ß`, `æ`, `ł`) is allowed unless it is a form of o, p, e or n
+    # (`ø`, `ɔ`, `ɵ`, `ŋ`), which could spell open unseen (self-found, 2026-09-24)
+    words = set(unicodedata.name(c, "").replace("-", " ").split())
+    return "LATIN" in words and not (words & {"O", "P", "E", "N", "ENG", "OE"})
 
 
 def fold(s):
     """Letters reduced to ASCII, marks dropped: what `open` is searched in."""
-    return "".join(c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c))
+    # every mark and invisible character goes, not only those with a combining class: a variation selector or the
+    # grapheme joiner (class 0) once kept `op` + mark + `en` from reading as open (self-found, 2026-09-24)
+    return "".join(c for c in unicodedata.normalize("NFKD", s)
+                   if unicodedata.category(c) not in ("Mn", "Me") and not INVISIBLE.match(c))
 CONFUSABLE = str.maketrans("\u03c3", "o")     # the one allowed character that can pass for a letter of `open` (#43b)
 # the quote and list markers in front of a row line are the parser's, not the row's (reviews #41b, #42b)
 CONTAINER = re.compile(r"^(?:\s*(?:>|[-*+](?=\s)|\d{1,9}[.)](?=\s)))*\s*")
@@ -509,7 +522,12 @@ def self_test():
         ("sigma standing for o is read as open", "| 1 | LOW | FIXED; still \u03c3pen | x | d | u |\n", "", 1),
         # --- self-found: ordinary typography is accepted; letters reducing to ASCII are read as ASCII
         *[(f"a closed status showing {s!r} is accepted", f"| 1 | LOW | FIXED {s} | x | d | u |\n", "", 0)
-          for s in ("\u2192 see ISSUE-75", "\u201cas designed\u201d", "\u2265 3 runs", "at caf\u00e9", "\u2018q\u2019", "\u2260 bug", "\u00b2", "1\u00bd h")],
+          for s in ("\u2192 see ISSUE-75", "\u201cas designed\u201d", "\u2265 3 runs", "at caf\u00e9", "\u2018q\u2019", "\u2260 bug", "\u00b2", "1\u00bd h",
+                    "Stra\u00dfe", "\u00e6ther", "\u0141\u00f3d\u017a", "nai\u0308ve")],
+        *[(f"a closed status showing the look-alike {s!r} is refused", f"| 1 | LOW | FIXED {s}pen | x | d | u |\n", "", 1)
+          for s in ("\u00f8", "\u0254", "\u0275")],
+        ("open with a combining mark still says open", "| 1 | LOW | FIXED; still o\u0305pen | x | d | u |\n", "", 1),
+        ("ope + eng is refused", "| 1 | LOW | FIXED; still ope\u014b | x | d | u |\n", "", 1),
         *[(f"open written {s!r} is still read as open", f"| 1 | LOW | FIXED; still {s} | x | d | u |\n", "", 1)
           for s in ("op\u00e9n", "\uff4f\uff50\uff45\uff4e", "\u1d52pen")],
         ("the historical status characters are accepted", "| 1 | LOW | FIXED \u2014 \u2026 \u2013 \u00b1 \u2225 \u2212 \u00b7 \u03bb \u03c3 \u00d7 \u2248 \u2264 | x | d | u |\n", "", 0),
@@ -898,9 +916,12 @@ MUTATIONS = [
     ("prose behind a marker read as a row", 'and (lead == bare.lstrip() or len(re.findall(r"(?<!\\\\)\\|", lead)) >= 3):', ':'),
     ("any status character accepted", '        if s.group("w").upper() != "OPEN" and odd:', '        if False and odd:'),
     ("letters not folded before the open check", 'rest = fold(rest).translate(CONFUSABLE)', 'rest = rest.translate(CONFUSABLE)'),
-    ("symbols and punctuation refused", '    if c in STATUS_CHARS or cat[0] in "PSN" or cat == "Zs":', '    if c in STATUS_CHARS:'),
-    ("any letter accepted", '    return cat[0] == "L" and unicodedata.normalize("NFKD", c)[:1].isascii()', '    return cat[0] == "L" or unicodedata.normalize("NFKD", c)[:1].isascii()'),
-    ("marks kept by the fold", 'if not unicodedata.combining(c))', 'if True)'),
+    ("symbols and punctuation refused", 'if c in STATUS_CHARS or cat[0] in "PSN" or cat == "Zs" or', 'if c in STATUS_CHARS or'),
+    ("any letter accepted", '    if cat[0] != "L":\n        return False\n', '    if cat[0] == "L":\n        return True\n'),
+    ("look-alike Latin letters accepted", 'not (words & {"O", "P", "E", "N", "ENG", "OE"})', 'True'),
+    ("Latin letters without decomposition refused", '    return "LATIN" in words and not', '    return False and not'),
+    ("combining marks refused", ' or cat == "Zs" or cat == "Mn":', ' or cat == "Zs":'),
+    ("marks kept by the fold", 'if unicodedata.category(c) not in ("Mn", "Me") and not INVISIBLE.match(c))', 'if not unicodedata.combining(c))'),
     ("sigma not folded", 'CONFUSABLE = str.maketrans("\\u03c3", "o")', 'CONFUSABLE = str.maketrans("", "")'),
     ("an unpaired backtick accepted", '(st.count("`") % 2 or st.count("[")', '(st.count("[")'),
     ("an unpaired bracket accepted", ' or st.count("[") != st.count("]")):', '):'),
