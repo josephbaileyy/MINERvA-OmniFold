@@ -24,6 +24,7 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
   * any table whose rendered header is not exactly the index header
     (`id | severity | status | one-sentence failure | detail | updated`): the index holds index tables only;
   * an absent registry file;
+  * raw-HTML table markup (`<table>`, `<tr>`, `<td>` …), which renders as a table but cannot be read (review #29b);
   * a line of the index that begins with `|` but was not parsed as part of any table -- a row cut off by a
     stray blank line, an indent or an unclosed code fence is otherwise never seen (reviews #24b, #26b). This
     FAILS CLOSED on a pipe-led line inside a code block, such as a shell pipeline, which must be rewritten.
@@ -57,7 +58,10 @@ STATUSES = ("OPEN", "FIXED", "CLOSED", "RESOLVED", "WONTFIX", "RETRACTED")
 KINDS = ("D7", "JOSEPH", "OWNER")
 REGISTRY = "docs/known-issues/BLOCKERS.tsv"
 MD = MarkdownIt("commonmark").enable(["table"])
-STATUS_RE = re.compile(r"^[\s*_]*([A-Za-z]+)(?![A-Za-z])")     # bold markers, then the word; nothing else first
+# bold markers, then the word, which must END there: `FIXED-pending review; OPEN` and `**Fixed?** still OPEN` once read
+# as FIXED because any non-letter ended the word (review #29b)
+STATUS_RE = re.compile(r"^[\s*_]*([A-Za-z]+)(?=$|[\s*_.,:;)\u2014])")
+HTML_TABLE = re.compile(r"<\s*/?\s*t(able|head|body|r|d|h)\b", re.I)
 ID_RE = re.compile(r"^[\s*_]*([A-Za-z0-9]+)[\s*_]*$")
 # An index table is one whose header, AS RENDERED, is exactly this. The first rule ("first header cell is `id`")
 # dropped a whole table headed `**id**` -- GitHub shows headers bold anyway -- and skipped every row of a
@@ -105,6 +109,12 @@ def index_rows(text):
                 cur = None
             j += 1
         i = j + 1
+    # a raw-HTML table renders as a table but is not parsed as one, so its rows would go unseen: REFUSED (review #29b)
+    for tk in toks:
+        bits = [tk.content] if tk.type == "html_block" else [c.content for c in (tk.children or []) if c.type == "html_inline"]
+        if any(HTML_TABLE.search(b) for b in bits):
+            problems.append(f"line {(tk.map[0] + 1) if tk.map else '?'}: raw-HTML table markup, which this check cannot read; "
+                            "write the table in Markdown")
     for n, l in enumerate(lines):          # every `|`-led line must lie inside SOME parsed table (review #24b)
         if l.lstrip().startswith("|") and n not in covered:
             problems.append(f"line {n + 1}: a table-row line that is not part of any parsed table: {l.strip()[:50]!r}")
@@ -172,6 +182,17 @@ def check(index_text, registry_text):
     return problems, len(rows), len(open_ids)
 
 
+def decide(index_text, registry_text):
+    """(exit status, lines to print) -- the whole verdict, above the mutation marker so that the self-test and
+    `--mutations` reach it. main() once decided the exit status itself, unpinned (review #29b)."""
+    problems, n_rows, n_open = check(index_text, registry_text)
+    if not n_rows:
+        return 2, ["[owned] CANNOT LOOK :: no issue rows parsed"]
+    out = [f"  {p}" for p in problems]
+    out.append(f"\n[owned] {'FAIL' if problems else 'PASS'} :: {n_rows} rows, {n_open} OPEN, {len(problems)} problem(s)")
+    return (1 if problems else 0), out
+
+
 def self_test():
     head = "| id | severity | status | one-sentence failure | detail | updated |\n|---|---|---|---|---|---|\n"
     shapes = [  # (name, index rows, registry, problems wanted)
@@ -205,6 +226,10 @@ def self_test():
         # --- review #28b
         ("a near-index table headed Issue is refused",
          "| 1 | L | FIXED | x | d | u |\n\n| Issue | severity | status | one-sentence failure | detail | updated |\n|---|---|---|---|---|---|\n| 74 | L | OPEN | x | d | u |\n", "", 1),
+        ("a raw-HTML table is refused",
+         "| 1 | L | FIXED | x | d | u |\n\n<table><tr><td>74</td><td>OPEN</td></tr></table>\n", "", 1),
+        ("status FIXED-pending is refused", "| 1 | L | FIXED-pending; OPEN | x | d | u |\n", "", 1),
+        ("status Fixed? is refused", "| 1 | L | **Fixed?** still OPEN | x | d | u |\n", "", 1),
         ("a stray row plus a delimiter is refused",
          "| 1 | L | FIXED | x | d | u |\n\n| 74 | L | OPEN | x | d | u |\n|---|---|---|---|---|---|\n", "", 1),
         ("a header beginning `id` but not `id` is refused",
@@ -244,6 +269,15 @@ def self_test():
         ("CRLF registry lines", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\r\n", 0),
     ]
     wrong = []
+    # the exit status itself, through decide()
+    one = head + "| 1 | L | OPEN | x | d | u |\n"
+    for name, doc, reg, want in (("exit 0 when every OPEN row is owned", one, "1\tOWNER\ta\n", 0),
+                                 ("exit 1 when an OPEN row is unowned", one, "", 1),
+                                 ("exit 1 when the registry is absent", one, None, 1),
+                                 ("exit 2 when no index table exists", "# none\n", "", 2)):
+        rc, _ = decide(doc, reg)
+        if rc != want:
+            wrong.append(f"{name}: wanted exit {want}, got {rc}")
     for name, body, reg, want in shapes:
         if "upper-case ID" in name or "bold **id**" in name or "code `id`" in name or "doubled space" in name:
             h = (head.replace("| id |", "| ID |", 1) if "upper-case" in name else
@@ -275,12 +309,14 @@ MUTATIONS = [
     ("a fourth field accepted", "        if len(f) != 3:\n", "        if len(f) not in (3, 4):\n"),
     ("comment lines read as entries", 'line.lstrip().startswith("#")', 'False'),
     ("markup before the status word read through", 'STATUS_RE = re.compile(r"^[\\s*_]*', 'STATUS_RE = re.compile(r"^[\\s*_~<>/a-z`]*'),
-    ("a status read as a prefix (OPENED as OPEN)", '([A-Za-z]+)(?![A-Za-z])")', '(OPEN|FIXED|[A-Za-z]+)")'),
+    # ("a status read as a prefix (OPENED as OPEN)") is RETIRED: since the status word must end at a boundary
+    # (review #29b), the prefix alternation falls back to the whole word, and it gave the same result as the real
+    # rule on all 20 inputs tried (OPENED, REOPENED, OPENING, FIXEDFIXED, OPEN-x, ...). It is equivalent, not a gap.
     ("status read case-sensitively", 's.group(1).upper() not in STATUSES', 's.group(1) not in STATUSES'),
     ("ids with markup accepted", 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)[\\s*_]*$")', 'ID_RE = re.compile(r"^.*?([A-Za-z0-9]+).*$")'),
     ("bold ids not merged", 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)[\\s*_]*$")', 'ID_RE = re.compile(r"^\\s*([*_]*[A-Za-z0-9]+[*_]*)\\s*$")'),
     ("duplicates unchecked", "        if len(lines) > 1:\n", "        if False:\n"),
-    ("second table ignored", "        i = j + 1\n    for n, l in enumerate(lines):", "        break\n    for n, l in enumerate(lines):"),
+    ("second table ignored", "        i = j + 1\n    # a raw-HTML table", "        break\n    # a raw-HTML table"),
     ("any table read as an index", '                elif header == HEADER:', '                elif len(cur[1]) >= 3:'),
     ("non-index tables unrefused", '                    if header != HEADER:', '                    if header != HEADER and header[:1] and header[0].startswith("id"):'),
     ("code spans dropped from the header", 'if c.type in ("text", "code_inline")).split())', 'if c.type in ("text",)).split())'),
@@ -299,6 +335,10 @@ MUTATIONS = [
     ("fenced blocks excused", '    lines, covered = text.split("\\n"), set()',
      '    lines, covered = text.split("\\n"), set()\n    covered.update(x for tk in toks if tk.type == "fence" and tk.map for x in range(*tk.map))'),
     ("a BOM not stripped", 'text = text[1:] if text.startswith("\\ufeff") else text', 'text = text'),
+    ("raw-HTML tables unrefused", '        if any(HTML_TABLE.search(b) for b in bits):', '        if False:'),
+    ("status word ended by any non-letter", '(?=$|[\\s*_.,:;)\\u2014])")', '(?![A-Za-z])")'),
+    ("exit 1 reported as 0", "    return (1 if problems else 0), out", "    return 0, out"),
+    ("no-rows exit 2 dropped", "    if not n_rows:\n        return 2,", "    if False:\n        return 2,"),
     ("rows outside tables unseen", '        if l.lstrip().startswith("|") and n not in covered:', '        if False:'),
 ]
 
@@ -347,14 +387,9 @@ def main():
         print(f"[owned] CANNOT LOOK :: {e}")
         return 2
     registry = open(REGISTRY, encoding="utf-8").read() if os.path.exists(REGISTRY) else None
-    problems, n_rows, n_open = check(index, registry)
-    if not n_rows:
-        print("[owned] CANNOT LOOK :: no issue rows parsed")
-        return 2
-    for p in problems:
-        print(f"  {p}")
-    print(f"\n[owned] {'FAIL' if problems else 'PASS'} :: {n_rows} rows, {n_open} OPEN, {len(problems)} problem(s)")
-    return 1 if problems else 0
+    rc, out = decide(index, registry)
+    print("\n".join(out))
+    return rc
 
 
 if __name__ == "__main__":
