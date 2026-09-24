@@ -242,7 +242,7 @@ def markdown(res: dict[str, Any]) -> str:
         for k, v in sz["differences"].items():
             lines.append(f"| {k} | {', '.join(f'{x:+.3f}' for x in v['per_replicate'])} | "
                          f"{v['mean']:+.3f} | {v['sd']:.4f} ({v['df']}) | {v['sd_ucb80']:.4f} | "
-                         f"{v['n_for_80pct_power']} |")
+                         f"{'>= ' if v['n_for_80pct_power'] >= 200 else ''}{v['n_for_80pct_power']} |")
         lines += ["", f"**n for FINAL = {sz['n_final']}** (uncapped {sz['n_uncapped']}; cap 12).", ""]
     if res.get("stress"):
         lines += ["### PET stress set (pool T; mean of replicates; * = moves away from the target "
@@ -260,6 +260,10 @@ def markdown(res: dict[str, Any]) -> str:
                 row.append(f"{m:.3f}{'*' if away else ''} ({len(c)})")
             lines.append(f"| {case} | " + " | ".join(row) + " |")
         lines.append("")
+    if res.get("final_progress"):
+        fp = res["final_progress"]
+        lines += [f"### FINAL: {fp['runs_scored']} of {fp['runs_expected']} runs scored -- no decision "
+                  "statistic is computed until all are in (fixed-n design)", ""]
     if res.get("final"):
         d = res["final"]["decisions"]
         lines += ["### FINAL (pool F): decision inequalities vs CTL (k=3), Holm across A, B, C", ""]
@@ -307,8 +311,12 @@ def main() -> None:
     if stress:
         res["stress"] = stress_table(stress)
     final = load_stage(args.results / "final") if (args.results / "final").is_dir() else {}
-    if final:
+    n_expected = 3 * 12
+    if final and len(final) >= n_expected:
         res["final"] = {"runs": final, "decisions": decisions(final, floors)}
+    elif final:
+        # fixed-n design: no decision statistic is computed or shown before FINAL is complete
+        res["final_progress"] = {"runs_scored": len(final), "runs_expected": n_expected}
     (args.results / "confirm_results.json").write_text(json.dumps(res, indent=1) + "\n")
     print(markdown(res))
 

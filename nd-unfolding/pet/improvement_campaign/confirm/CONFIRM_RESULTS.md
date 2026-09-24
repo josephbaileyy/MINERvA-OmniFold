@@ -9,11 +9,12 @@ pseudodata truth (like-for-like). CTL = the frozen `b2e3-H-K10-s1` run scored at
 run at K* = 10. Sizes follow the protocol (prior 600,130, pseudodata 600,111), the reverse of the
 historical closure's orientation (a 19-event swap; amendment 3).
 
-## Status
+## Status (2026-09-24 06:40Z)
 
-- PILOT: 8 of 9 runs complete (`pilot-C-P2` running). **Reported separately; never enters FINAL.**
-- FINAL: sized at n = 12 (README sizing record), submitted.
-- STRESS: 36 runs submitted; waiting for GPU time (see README).
+- PILOT: 9 of 9 runs complete and scored. **Reported separately; never enters FINAL.** The sizing
+  record (README) was committed from 8 of 9 runs; the ninth (`pilot-C-P2`) does not change n.
+- FINAL: 8 of 36 runs scored, 101 of 360 iterations done (two iterations per 30-min debug round).
+- STRESS: 6 of 360 iterations; its gpu_shared / regular / preempt copies have not started.
 
 ### PILOT (pool P; reported separately, never enters FINAL)
 
@@ -21,16 +22,18 @@ historical closure's orientation (a 19-event swap; amendment 3).
 |---|---:|---:|---:|---:|---:|---:|---:|
 | P0 | 0.297 | 0.457 | 0.454 | 0.542 | 0.535 | 0.722 | 0.987 |
 | P1 | 0.329 | 0.508 | 0.455 | 0.551 | 0.617 | 0.796 | 0.985 |
-| P2 | 0.349 | 0.501 | 0.504 | 0.539 | — | — | 0.982 |
+| P2 | 0.349 | 0.501 | 0.504 | 0.539 | 0.697 | 0.876 | 0.982 |
 
 | paired difference | per replicate | mean | sd (df) | 80 % UCB of sd | n for 80 % power |
 |---|---|---:|---:|---:|---:|
 | A - CTL | +0.160, +0.179, +0.152 | +0.164 | 0.0140 (2) | 0.0296 | 22 |
 | B@10 - CTL | +0.246, +0.222, +0.189 | +0.219 | 0.0282 (2) | 0.0597 | 81 |
-| C@10 - CTL | +0.425, +0.467 | +0.446 | 0.0297 (1) | 0.1172 | 200 |
+| C@10 - CTL | +0.425, +0.467, +0.526 | +0.473 | 0.0509 (2) | 0.1078 | >= 200 |
 | B@3 - CTL | +0.157, +0.126, +0.155 | +0.146 | 0.0171 (2) | 0.0361 | 32 |
-| C@3 - CTL | +0.238, +0.288 | +0.263 | 0.0354 (1) | 0.1395 | 200 |
+| C@3 - CTL | +0.238, +0.288, +0.348 | +0.292 | 0.0547 (2) | 0.1157 | >= 200 |
 
 **n for FINAL = 12** (uncapped 200; cap 12).
+
+### FINAL: 8 of 36 runs scored -- no decision statistic is computed until all are in (fixed-n design)
 
 
