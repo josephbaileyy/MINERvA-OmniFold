@@ -1,6 +1,10 @@
+> **RESOLVED 2026-09-23 — superseded.** The `20260922T053047Z` token is replaced by
+> `runs/standard-p4-verifier/20260924T010110Z-known-issues-51-61-62-verdict.json` (PASS, code_rev `036f507e`, landed `5ee482e9`).
+> The defect below stays in the old token's immutable bytes, which no longer authorize anything.
+
 # ISSUE-67 — The 20260922T053047Z PASS token's sole stated basis for its own legitimacy cites a requirement that does not exist in the code it names
 
-**Severity:** HIGH. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 67. **Updated:** 2026-09-22.
+**Severity:** HIGH. **Status:** RESOLVED (2026-09-23). **Index row:** `KNOWN_ISSUES.md` row 67. **Updated:** 2026-09-22.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to

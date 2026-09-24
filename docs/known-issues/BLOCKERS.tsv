@@ -1,6 +1,3 @@
 # Blocker registry for KNOWN_ISSUES.md: one line per OPEN row, <id> TAB <D7|JOSEPH|OWNER> TAB <text>.
 # Checked by docs/orchestration/probes/probe-20260923-no-unowned-open-issue.py. A FIXED or CLOSED row has no line.
 69	OWNER	the GBDT cold-start lane: ISSUE-69 records the ledger guard's defeats (entries run to review #17b; the NO VERDICT pin defeats of reviews #18b, #19b and #20b are in the review-residue report's ledger rows, not here), and it closes when the loop terminates or the guard is retired.
-63	OWNER	the GBDT cold-start lane: superseding standard-P4 verdict for the 51/61/62 commit, pending that commit
-67	OWNER	the GBDT cold-start lane: superseding standard-P4 verdict for the 51/61/62 commit, pending that commit
-68	OWNER	the GBDT cold-start lane: superseding standard-P4 verdict for the 51/61/62 commit, pending that commit

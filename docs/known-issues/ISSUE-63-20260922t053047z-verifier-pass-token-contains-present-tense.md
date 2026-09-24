@@ -1,6 +1,10 @@
+> **RESOLVED 2026-09-23 — superseded.** The `20260922T053047Z` token is replaced by
+> `runs/standard-p4-verifier/20260924T010110Z-known-issues-51-61-62-verdict.json` (PASS, code_rev `036f507e`, landed `5ee482e9`).
+> The defect below stays in the old token's immutable bytes, which no longer authorize anything.
+
 # ISSUE-63 — The 20260922T053047Z verifier PASS token contains a present-tense pointer to KNOWNISSUES rows that did not exist at its own coderev, and its fileschangedinscope counts the derived surface rather than its own declared scope. Neither is repairable: the token IS the sha256 of those bytes
 
-**Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 63. **Updated:** 2026-09-22.
+**Severity:** MEDIUM. **Status:** RESOLVED (2026-09-23). **Index row:** `KNOWN_ISSUES.md` row 63. **Updated:** 2026-09-22.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to
