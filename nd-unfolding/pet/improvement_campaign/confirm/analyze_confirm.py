@@ -118,14 +118,15 @@ def ucb80_sd(sd: float, df: int) -> float:
 
 
 def n_for_power(sigma: float, margin: float = 0.02, alpha: float = 0.05 / 3,
-                power: float = 0.80, cap: int = 200) -> int:
+                power: float = 0.80, cap: int = 100_000) -> int:
+    """The smallest n reaching `power`; refuses (never returns the search bound) if none <= cap."""
     for n in range(2, cap + 1):
         df = n - 1
         # noncentral t: P(T > t_{1-alpha}) with noncentrality margin*sqrt(n)/sigma
         crit = stats.t.ppf(1 - alpha, df)
         if 1 - stats.nct.cdf(crit, df, margin * math.sqrt(n) / sigma) >= power:
             return n
-    return cap
+    raise ValueError(f"no n <= {cap} reaches power {power} at sigma {sigma}")
 
 
 def sizing(pilot: dict[str, dict]) -> dict[str, Any]:
@@ -148,9 +149,14 @@ def sizing(pilot: dict[str, dict]) -> dict[str, Any]:
     return out
 
 
+FAMILY = ("A", "B", "C")          # the frozen candidate family (amendment 2): Holm m is ALWAYS 3
+
+
 def holm(pvals: dict[str, float]) -> dict[str, dict[str, float | bool]]:
+    if set(pvals) != set(FAMILY):
+        raise ValueError(f"Holm needs the whole frozen family {FAMILY}, got {sorted(pvals)}")
     order = sorted(pvals, key=pvals.get)
-    m, out, stop = len(order), {}, False
+    m, out, stop = len(FAMILY), {}, False
     for i, key in enumerate(order):
         level = 0.05 / (m - i)
         reject = (not stop) and pvals[key] <= level
@@ -163,23 +169,21 @@ def decisions(final: dict[str, dict], floors: dict[str, Any]) -> dict[str, Any]:
     obs = observations(final)
     out: dict[str, Any] = {"floors": floors, "tests": {}, "adequacy": {}}
     for kk in (KSTAR, 3):
-        # at k = 3, A IS the CTL run (identical by construction): it is not tested there
-        labels = ({"A": "A"} if kk == KSTAR else {}) | {"B": f"B@{kk}", "C": f"C@{kk}"}
+        # at k = 3, A IS the CTL run: its difference is identically 0 and it stays in the family
+        labels = {"A": "A" if kk == KSTAR else "A@3", "B": f"B@{kk}", "C": f"C@{kk}"}
         diffs = {c: paired(obs, lab) for c, lab in labels.items()}
         block = {}
         for test, delta in (("superiority", 0.0), ("non_inferiority", -floors["non_inferiority"]),
                             ("switching", floors["switching"])):
             pv, est = {}, {}
             for c, d in diffs.items():
-                if d.size < 2:
-                    continue
                 se = d.std(ddof=1) / math.sqrt(d.size)
                 t = ((d.mean() - delta) / se if se > 0
                      else (math.inf if d.mean() > delta else -math.inf))
                 pv[c] = float(1 - stats.t.cdf(t, d.size - 1))
                 est[c] = {"mean": float(d.mean()), "se": float(se), "n": int(d.size),
                           "lower_95_one_sided": float(d.mean() - stats.t.ppf(0.95, d.size - 1) * se)}
-            block[test] = {"threshold": delta, "estimates": est, "holm": holm(pv) if pv else {}}
+            block[test] = {"threshold": delta, "estimates": est, "holm": holm(pv)}
         out["tests"][f"K={kk}"] = block
     for label in ("CTL", "A", f"B@{KSTAR}", f"C@{KSTAR}", "B@3", "C@3"):
         pts = obs.get(label, {})
@@ -220,6 +224,23 @@ def stress_table(stress: dict[str, dict]) -> dict[str, Any]:
     return out
 
 
+def final_gate(final: dict[str, dict], manifest: Path, audit: Path | None) -> dict[str, Any]:
+    """Complete = every row of the frozen FINAL manifest scored at k = 3 and K*, none quarantined
+    or flagged by the lock audit."""
+    rows = [ln.split("\t")[0] for ln in manifest.read_text().splitlines()
+            if ln.strip() and not ln.startswith("#")] if manifest.exists() else []
+    suspect = set()
+    if audit is not None and audit.exists():
+        suspect = {k.split("/", 1)[1] for k, v in json.loads(audit.read_text())["runs"].items()
+                   if v["suspect"] and k.startswith("final/")}
+    missing = [r for r in rows if r not in final or final[r]["k3"] is None
+               or final[r][f"k{KSTAR}"] is None]
+    bad = sorted(set(rows) & suspect)
+    return {"manifest_rows": len(rows), "scored_complete": len(rows) - len(missing),
+            "missing": missing, "suspect_by_audit": bad,
+            "complete": bool(rows) and not missing and not bad}
+
+
 def fmt(x: Any, nd: int = 3) -> str:
     return "—" if x is None else f"{x:.{nd}f}"
 
@@ -242,7 +263,7 @@ def markdown(res: dict[str, Any]) -> str:
         for k, v in sz["differences"].items():
             lines.append(f"| {k} | {', '.join(f'{x:+.3f}' for x in v['per_replicate'])} | "
                          f"{v['mean']:+.3f} | {v['sd']:.4f} ({v['df']}) | {v['sd_ucb80']:.4f} | "
-                         f"{'>= ' if v['n_for_80pct_power'] >= 200 else ''}{v['n_for_80pct_power']} |")
+                         f"{v['n_for_80pct_power']} |")
         lines += ["", f"**n for FINAL = {sz['n_final']}** (uncapped {sz['n_uncapped']}; cap 12).", ""]
     if res.get("stress"):
         lines += ["### PET stress set (pool T; mean of replicates; * = moves away from the target "
@@ -262,8 +283,11 @@ def markdown(res: dict[str, Any]) -> str:
         lines.append("")
     if res.get("final_progress"):
         fp = res["final_progress"]
-        lines += [f"### FINAL: {fp['runs_scored']} of {fp['runs_expected']} runs scored -- no decision "
-                  "statistic is computed until all are in (fixed-n design)", ""]
+        lines += [f"### FINAL (INTERIM, descriptive only): {fp['scored_complete']} of "
+                  f"{fp['manifest_rows']} frozen runs scored; no inferential statistic is computed "
+                  "until the complete, provenance-clean manifest is in (fixed-n design)"
+                  + (f"; quarantined/suspect: {', '.join(fp['suspect_by_audit'])}"
+                     if fp["suspect_by_audit"] else ""), ""]
     if res.get("final"):
         d = res["final"]["decisions"]
         lines += ["### FINAL (pool F): decision inequalities vs CTL (k=3), Holm across A, B, C", ""]
@@ -296,6 +320,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--results", type=Path, default=HERE / "results")
+    ap.add_argument("--manifest", type=Path, default=HERE / "runs" / "final.tsv")
+    ap.add_argument("--audit", type=Path, default=HERE / "results" / "audit_locks.json")
     args = ap.parse_args()
     floors = historical_floors()
     res: dict[str, Any] = {"floors": floors}
@@ -311,12 +337,13 @@ def main() -> None:
     if stress:
         res["stress"] = stress_table(stress)
     final = load_stage(args.results / "final") if (args.results / "final").is_dir() else {}
-    n_expected = 3 * 12
-    if final and len(final) >= n_expected:
-        res["final"] = {"runs": final, "decisions": decisions(final, floors)}
+    gate = final_gate(final, args.manifest, args.audit)
+    if final and gate["complete"]:
+        res["final"] = {"runs": final, "gate": gate, "decisions": decisions(final, floors)}
     elif final:
-        # fixed-n design: no decision statistic is computed or shown before FINAL is complete
-        res["final_progress"] = {"runs_scored": len(final), "runs_expected": n_expected}
+        # fixed-n design: no inferential statistic before the COMPLETE, provenance-clean frozen
+        # manifest is in; until then descriptive progress only
+        res["final_progress"] = gate
     (args.results / "confirm_results.json").write_text(json.dumps(res, indent=1) + "\n")
     print(markdown(res))
 

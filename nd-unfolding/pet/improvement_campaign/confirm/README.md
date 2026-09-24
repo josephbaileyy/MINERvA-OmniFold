@@ -83,6 +83,15 @@ cannot change n: every value it could take leaves n at the cap. FINAL = pool F r
 As amendment 3 anticipated, 12 replicates give less than the nominal 80 % power for the largest
 pilot sds; that is reported with the FINAL result, not compensated.
 
+### Correction to the sizing record (2026-09-24 07:20Z; the record above is left as committed)
+
+The record's "n for 80 % power" column printed **200 for the two C rows, and "uncapped 200"**: 200 was
+the search bound of `n_for_power`, returned when the criterion was never met (found by review). The
+exact values from the SAME 8 runs the record used are **C@10 - CTL: 306, C@3 - CTL: 432** (df = 1);
+the other rows are unchanged (22, 81, 32). With the complete pilot (9/9, df = 2): A 22, B@10 81,
+C@10 259, B@3 32, C@3 298. **n for FINAL = 12 is unchanged** (the cap binds either way). The search
+is now exact and refuses rather than return its bound (`analyze_confirm.n_for_power`).
+
 ## What this is
 
 PET is diagnostic method development; simulation only. This directory turns a frozen `RunConfig` plus

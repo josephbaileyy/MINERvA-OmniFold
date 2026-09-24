@@ -1739,7 +1739,7 @@
      "sd": 0.05093593687326569,
      "df": 2,
      "sd_ucb80": 0.10782814360018463,
-     "n_for_80pct_power": 200
+     "n_for_80pct_power": 259
     },
     "B@3 - CTL": {
      "per_replicate": [
@@ -1763,15 +1763,47 @@
      "sd": 0.05465767213345233,
      "df": 2,
      "sd_ucb80": 0.11570682079180622,
-     "n_for_80pct_power": 200
+     "n_for_80pct_power": 298
     }
    },
    "n_final": 12,
-   "n_uncapped": 200
+   "n_uncapped": 298
   }
  },
  "final_progress": {
-  "runs_scored": 8,
-  "runs_expected": 36
+  "manifest_rows": 36,
+  "scored_complete": 8,
+  "missing": [
+   "final-C-F2",
+   "final-CTL-F3",
+   "final-B-F3",
+   "final-C-F3",
+   "final-CTL-F4",
+   "final-B-F4",
+   "final-C-F4",
+   "final-CTL-F5",
+   "final-B-F5",
+   "final-C-F5",
+   "final-CTL-F6",
+   "final-B-F6",
+   "final-C-F6",
+   "final-CTL-F7",
+   "final-B-F7",
+   "final-C-F7",
+   "final-CTL-F8",
+   "final-B-F8",
+   "final-C-F8",
+   "final-CTL-F9",
+   "final-B-F9",
+   "final-C-F9",
+   "final-CTL-F10",
+   "final-B-F10",
+   "final-C-F10",
+   "final-CTL-F11",
+   "final-B-F11",
+   "final-C-F11"
+  ],
+  "suspect_by_audit": [],
+  "complete": false
  }
 }
