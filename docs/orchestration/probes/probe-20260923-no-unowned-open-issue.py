@@ -19,8 +19,13 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     OWNER, or whose text is empty;
   * an index status that does not BEGIN, after any bold markers, with a plain status word -- OPEN, FIXED,
     CLOSED, RESOLVED, WONTFIX or RETRACTED -- ending, after any closing bold markers, at the end of the cell,
-    whitespace or `. , : ; )` or a dash other than a hyphen. So `FIXED-pending`, `FIXED?` and `**FIXED**-x` are
-    refused. Markup before the word (`~~`, `<del>`, a backtick) is refused, not interpreted;
+    whitespace, `. , : ; )`, an en dash or an em dash. So `FIXED-pending`, `FIXED?` and `**FIXED**-x` are
+    refused, and so is `FIXED_ x`: an underscore closes the word only if one opened it (⚠ this said *"a dash other
+    than a hyphen"*, but no other dash is accepted; review #31a). Markup before the word (`~~`, `<del>`, a backtick)
+    is refused, not interpreted;
+  * a status other than OPEN whose cell also contains `open`, in any case (`two literals still open`,
+    `reopened`), because a closed row may carry an open residual (review #31b). A residual described in other
+    words (`pending`, `remaining`) is not detected;
   * an index id that is not plain letters and digits, or used by more than one row;
   * any table whose rendered header is not exactly the index header
     (`id | severity | status | one-sentence failure | detail | updated`): the index holds index tables only;
@@ -38,11 +43,13 @@ index header (⚠ that case was first listed among the exit-1 refusals; review #
 Independent reviews #21b, #22b and #23b found 6, 7 and 11 defects, most of them about which Markdown forms
 a blocker could take (links, emphasis, strikethrough, `<del>`, hard breaks, a second issue's file cited in the
 same cell, root-absolute links); the rest were about status vocabulary and self-test power. On the real index
-the check was exact at #22b's and #23b's shas, but not at #21b's, where `DETECTION` exempted a row with an open
-residual. The SURFACE was the main problem, so it was removed rather than patched a fourth time. (⚠ This said
+the check was not exact at #21b's sha, where `DETECTION` exempted a row with an open residual, nor at #22b's
+or #23b's, where row 54's status read `**FIXED 2026-08-19** …; two literals still open` and was read as FIXED,
+needing no blocker (⚠ this said *"exact at #22b's and #23b's shas"*; review #31b). The SURFACE was the main problem, so it was removed rather than patched a fourth time. (⚠ This said
 *"every one about … Markdown forms"* and *"exact on the real index each time"*; review #24a.) Of each index row, only the id and status
-cells are read; the rest of the file is scanned only for table structure (every table must be an index table,
-and raw-HTML table markup is refused). (⚠ This said *"only the id and status cells are read"*; review #30a.)
+cells are interpreted; every cell, like the rest of the file, is also scanned for table structure and raw-HTML
+table markup, which is refused wherever it appears. (⚠ This said *"only the id and status cells are read"*
+(review #30a), then that the rest of the file alone was scanned (review #31a).)
 It does NOT judge whether a blocker is TRUE; a
 human does.
 """
@@ -63,8 +70,12 @@ REGISTRY = "docs/known-issues/BLOCKERS.tsv"
 MD = MarkdownIt("commonmark").enable(["table"])
 # bold markers, then the word, then any CLOSING bold markers, then a real boundary. `FIXED-pending review; OPEN` and
 # `**Fixed?** No — still OPEN` once read as FIXED because any non-letter ended the word (review #29b), and
-# `**FIXED**-pending` still did while `*` itself counted as a boundary (review #30a)
-STATUS_RE = re.compile(r"^[\s*_]*([A-Za-z]+)[*_]*(?=$|[\s.,:;)\u2013\u2014])")   # en dash too (#30b)
+# `**FIXED**-pending` still did while `*` itself counted as a boundary (review #30a). An underscore may close the
+# word only if one opened it: `FIXED__ x` and `FIXED_ x` render literally and were read as FIXED (review #31b)
+STATUS_RE = re.compile(r"^\s*(?:(?P<u>[*_]*_[*_]*)|\**)(?P<w>[A-Za-z]+)(?(u)[*_]*|\**)(?=$|[\s.,:;)\u2013\u2014])")   # en dash too (#30b)
+# a closed status whose cell ALSO says open: `**FIXED …**; two literals still open` passed with no registry line,
+# on the real index at reviews #22b's and #23b's shas (review #31b). Any case, anywhere after the word: `reopened` too
+OPEN_WORD = re.compile(r"open", re.I)
 HTML_TABLE = re.compile(r"<\s*/?\s*t(able|head|body|r|d|h)\b", re.I)
 ID_RE = re.compile(r"^[\s*_]*([A-Za-z0-9]+)[\s*_]*$")
 # An index table is one whose header, AS RENDERED, is exactly this. The first rule ("first header cell is `id`")
@@ -116,7 +127,9 @@ def index_rows(text):
     # a raw-HTML table renders as a table but is not parsed as one, so its rows would go unseen: REFUSED (review #29b)
     for tk in toks:
         bits = [tk.content] if tk.type == "html_block" else [c.content for c in (tk.children or []) if c.type == "html_inline"]
-        bits = [re.sub(r"<!--.*?-->", "", b, flags=re.S) for b in bits]     # a comment renders nothing (#30b)
+        # a comment renders nothing (#30b); HTML5 also ends one at `<!-->`, `<!--->` and `--!>`, so a strip that ran
+        # on to the next `-->` hid the table after them (review #31b). An unclosed comment is not stripped
+        bits = [re.sub(r"<!--(?:-?>|.*?--!?>)", "", b, flags=re.S) for b in bits]
         if any(HTML_TABLE.search(b) for b in bits):
             problems.append(f"line {(tk.map[0] + 1) if tk.map else '?'}: raw-HTML table markup, which this check cannot read; "
                             "write the table in Markdown")
@@ -165,11 +178,15 @@ def check(index_text, registry_text):
         rid = m.group(1)
         seen.setdefault(rid, []).append(line)
         s = STATUS_RE.match(status_src)
-        if not s or s.group(1).upper() not in STATUSES:
+        if not s or s.group("w").upper() not in STATUSES:
             problems.append(f"line {line}: id {rid}: status {status_src.strip()[:40]!r} does not begin with a plain "
                             f"status word ({', '.join(STATUSES)})")
             continue
-        if s.group(1).upper() == "OPEN":
+        if s.group("w").upper() != "OPEN" and OPEN_WORD.search(status_src[s.end():]):
+            problems.append(f"line {line}: id {rid}: status {status_src.strip()[:40]!r} is closed but also says open; "
+                            "give the residual its own OPEN row, or reword")
+            continue
+        if s.group("w").upper() == "OPEN":
             open_ids.add(rid)
     for rid, lines in seen.items():
         if len(lines) > 1:
@@ -246,6 +263,29 @@ def self_test():
          "| 1 | L | FIXED | x | d | u |\n\n<div>\n<table><tr><td>74</td></tr></table>\n</div>\n", "", 1),
         ("<td> in a code span is prose, not a table", "| 1 | L | FIXED | x | d | u |\n\nThe parser drops `<td>` cells.\n", "", 0),
         ("<td> in an HTML comment renders nothing", "| 1 | L | FIXED | x | d | u |\n\n<!-- <td> -->\n", "", 0),
+        # --- review #31b: a closed status that also says open; underscores that are not markup; the comment forms
+        #     HTML5 closes early; the inputs that each surviving weakening broke. Review #31a: <td> in a fenced block
+        ("a FIXED status saying two literals are still open is refused",
+         "| 1 | L | **FIXED 2026-08-19** at `abc`; two literals still open, see the end | x | d | u |\n", "", 1),
+        ("a FIXED status saying reopened is refused", "| 1 | L | FIXED (reopened \u2014 OPEN) | x | d | u |\n", "", 1),
+        *[(f"status {s!r} is refused", f"| 1 | L | {s} | x | d | u |\n", "", 1) for s in ("FIXED__ x", "**FIXED__** x", "FIXED_ x")],
+        *[(f"status {s!r} is read as FIXED", f"| 1 | L | {s} x | x | d | u |\n", "", 0)
+          for s in ("**FIXED*", "*FIXED**", "***FIXED***", "_FIXED_", "**FIXED:**")],
+        ("a raw-HTML table between two comments is refused",
+         "| 1 | L | FIXED | x | d | u |\n\n<!-- a --> <table><tr><td>2</td><td>OPEN</td></tr></table> <!-- b -->\n", "", 1),
+        *[(f"a comment HTML5 ends early ({c!r}) does not hide a table", f"| 1 | L | FIXED | x | d | u |\n\n{c} <table><tr><td>2</td></tr></table> -->\n", "", 1)
+          for c in ("<!-->", "<!--->", "<!-- a --!>")],
+        ("a multi-line comment holding <td> renders nothing", "| 1 | L | FIXED | x | d | u |\n\n<!-- a\n<td> -->\n", "", 0),
+        ("<track> is not table markup", "| 1 | L | FIXED | x | d | u |\n\n<video><track src=x></video>\n", "", 0),
+        ("a stray <tr><td> is refused", "| 1 | L | FIXED | x | d | u |\n\n<tr><td>2</td></tr>\n", "", 1),
+        ("a stray </table> is refused", "| 1 | L | FIXED | x | d | u |\n\n</table>\n", "", 1),
+        ("<td> in a fenced code block is code, not a table", "| 1 | L | FIXED | x | d | u |\n\n```html\n<td>x</td>\n```\n", "", 0),
+        ("an indented row directly under the table is refused",
+         "| 1 | L | FIXED | x | d | u |\n    | 2 | L | OPEN | x | d | u |\n", "", 1),
+        ("a bold OPEN id with its registry line", "| **1** | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n", 0),
+        ("a lower-case kind is refused, and the row stays unowned", "| 1 | L | OPEN | x | d | u |\n", "1\towner\ta\n", 2),
+        ("a registry id in the wrong case owns nothing", "| J36 | L | OPEN | x | d | u |\n", "j36\tOWNER\ta\n", 2),
+        ("a registry with two BOMs owns nothing", "| 1 | L | OPEN | x | d | u |\n", "\ufeff\ufeff1\tOWNER\ta\n", 2),
         # --- review #30b: each status boundary the real index uses, pinned
         *[(f"status boundary {s!r}", f"| 1 | L | {s} x | x | d | u |\n", "", 0)
           for s in ("**FIXED**", "__FIXED__", "FIXED.", "FIXED,", "FIXED;", "FIXED)", "FIXED\u2014pending", "FIXED\u2013pending")],
@@ -327,11 +367,26 @@ MUTATIONS = [
     ("empty text accepted", "        if not body:\n", "        if False:\n"),
     ("a fourth field accepted", "        if len(f) != 3:\n", "        if len(f) not in (3, 4):\n"),
     ("comment lines read as entries", 'line.lstrip().startswith("#")', 'False'),
-    ("markup before the status word read through", 'STATUS_RE = re.compile(r"^[\\s*_]*', 'STATUS_RE = re.compile(r"^[\\s*_~<>/a-z`]*'),
+    ("markup before the status word read through", 'STATUS_RE = re.compile(r"^\\s*(?:', 'STATUS_RE = re.compile(r"^[\\s~<>/a-z`]*(?:'),
+    ("any closing marker after the word", '(?(u)[*_]*|\\**)(?=', '[*_]*(?='),
+    ("a closed status that says open accepted", '        if s.group("w").upper() != "OPEN" and OPEN_WORD.search', '        if False and OPEN_WORD.search'),
+    ("comments closed only by -->", 'r"<!--(?:-?>|.*?--!?>)"', 'r"<!--.*?-->"'),
+    ("a greedy comment strip", 'r"<!--(?:-?>|.*?--!?>)"', 'r"<!--(?:-?>|.*--!?>)"'),
+    ("a comment strip without re.S", '"", b, flags=re.S) for b in bits]', '"", b) for b in bits]'),
+    ("fenced code scanned for HTML", 'bits = [tk.content] if tk.type == "html_block"', 'bits = [tk.content] if tk.type in ("html_block", "fence", "code_block")'),
+    ("HTML_TABLE without a word boundary", 't(able|head|body|r|d|h)\\b", re.I)', 't(able|head|body|r|d|h)", re.I)'),
+    ("HTML_TABLE matching <table only", 't(able|head|body|r|d|h)\\b", re.I)', 't(able)\\b", re.I)'),
+    ("HTML_TABLE matching opening tags only", 'HTML_TABLE = re.compile(r"<\\s*/?\\s*t', 'HTML_TABLE = re.compile(r"<\\s*t'),
+    ("a table covering one line more", 'covered.update(range(toks[i].map[0], toks[i].map[1]))', 'covered.update(range(toks[i].map[0], toks[i].map[1] + 1))'),
+    ("registry kinds upper-cased", 'rid, kind, body = f[0].strip(), f[1].strip(), f[2].strip()', 'rid, kind, body = f[0].strip(), f[1].strip().upper(), f[2].strip()'),
+    ("registry ids upper-cased", 'rid, kind, body = f[0].strip(), f[1].strip(), f[2].strip()', 'rid, kind, body = f[0].strip().upper(), f[1].strip(), f[2].strip()'),
+    ("ids without leading markers", 'ID_RE = re.compile(r"^[\\s*_]*(', 'ID_RE = re.compile(r"^\\s*('),
+    ("every BOM stripped", 'text = text[1:] if text.startswith("\\ufeff") else text', 'text = text.lstrip("\\ufeff")'),
     # ("a status read as a prefix (OPENED as OPEN)") is RETIRED as equivalent: the lookahead after the word admits
-    # no letter, so a prefix alternation must still capture the whole leading run of letters. Review #30a confirmed
-    # it on 1,075,265 inputs; the "20 inputs" first cited here were never listed, so could not be re-run.
-    ("status read case-sensitively", 's.group(1).upper() not in STATUSES', 's.group(1) not in STATUSES'),
+    # no letter, so a prefix alternation must still capture the whole leading run of letters. The same holds with
+    # the closing-marker part, which admits no letter either. Review #30a TESTED an earlier rule on 1,075,265 inputs
+    # (⚠ once cited as proof, and for the rule after it; review #31a). The "20 inputs" first cited were never listed.
+    ("status read case-sensitively", 's.group("w").upper() not in STATUSES', 's.group("w") not in STATUSES'),
     ("ids with markup accepted", 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)[\\s*_]*$")', 'ID_RE = re.compile(r"^.*?([A-Za-z0-9]+).*$")'),
     ("bold ids not merged", 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)[\\s*_]*$")', 'ID_RE = re.compile(r"^\\s*([*_]*[A-Za-z0-9]+[*_]*)\\s*$")'),
     ("duplicates unchecked", "        if len(lines) > 1:\n", "        if False:\n"),
@@ -357,13 +412,13 @@ MUTATIONS = [
     ("inline HTML not scanned", 'else [c.content for c in (tk.children or []) if c.type == "html_inline"]', 'else []'),
     ("HTML tags matched case-sensitively", 'r"<\\s*/?\\s*t(able|head|body|r|d|h)\\b", re.I)', 'r"<\\s*/?\\s*t(able|head|body|r|d|h)\\b")'),
     ("HTML matched only at the start", '        if any(HTML_TABLE.search(b) for b in bits):', '        if any(HTML_TABLE.match(b) for b in bits):'),
-    ("HTML comments scanned", '        bits = [re.sub(r"<!--.*?-->", "", b, flags=re.S) for b in bits]', '        bits = bits'),
+    ("HTML comments scanned", '        bits = [re.sub(r"<!--(?:-?>|.*?--!?>)", "", b, flags=re.S) for b in bits]', '        bits = bits'),
     *[(f"status boundary {c!r} dropped", '(?=$|[\\s.,:;)\\u2013\\u2014])")', '(?=$|[\\s.,:;)\\u2013\\u2014])")'.replace(c, "", 1))
       for c in (".", ",", ";", ")", "\\u2013", "\\u2014")],
-    ("closing bold markers not consumed", '([A-Za-z]+)[*_]*(?=$|', '([A-Za-z]+)(?=$|'),
-    ("bold markers counted as a boundary", '[*_]*(?=$|[\\s.,:;)', '(?=$|[\\s*_.,:;)'),
+    ("closing bold markers not consumed", '(?P<w>[A-Za-z]+)(?(u)[*_]*|\\**)(?=$|', '(?P<w>[A-Za-z]+)(?=$|'),
+    ("bold markers counted as a boundary", '(?(u)[*_]*|\\**)(?=$|[\\s.,:;)', '(?=$|[\\s*_.,:;)'),
     ("raw-HTML tables unrefused", '        if any(HTML_TABLE.search(b) for b in bits):', '        if False:'),
-    ("status word ended by any non-letter", '[*_]*(?=$|[\\s.,:;)\\u2013\\u2014])")   # en dash', '(?![A-Za-z])")   # en dash'),
+    ("status word ended by any non-letter", '(?(u)[*_]*|\\**)(?=$|[\\s.,:;)\\u2013\\u2014])")   # en dash', '(?![A-Za-z])")   # en dash'),
     ("exit 1 reported as 0", "    return (1 if problems else 0), out", "    return 0, out"),
     ("no-rows exit 2 dropped", "    if not n_rows:\n        return 2,", "    if False:\n        return 2,"),
     ("rows outside tables unseen", '        if l.lstrip().startswith("|") and n not in covered:', '        if False:'),
