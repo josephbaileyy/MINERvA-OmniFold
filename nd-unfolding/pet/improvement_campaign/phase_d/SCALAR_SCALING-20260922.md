@@ -18,6 +18,10 @@ estimators plus the effort sweep, run locally (5 workers), `results/scalar_scali
    with the sample. The oracle anchor below is measured per subset for exactly this reason.
 3. Fewer events at fixed hyper-parameters also means fewer optimizer updates/trees; the effort sweep separates
    these two.
+4. **Each repetition changes BOTH the subset seed and the estimator seed** (`subset_seed = 100·draw`,
+   `seed = draw`), and at the full size no subsampling happens. So the spread at 600k (and the fixed-size axis of
+   each table) is **estimator-seed variation only**, while the spreads below full size are seed and event-subset
+   variation **combined**. The design does not separate the two; the confirmatory Phase D should cross them.
 
 ## The finite-sample ceiling (oracle anchor)
 
@@ -47,7 +51,7 @@ divide by these to normalize.
 ## 3. What this says
 
 - **The prior-MC axis is the one that pays, and only in the historical (carry-misses) mode.** Going 75k → 600k
-  lifts carry-misses recovery by `+0.079` at k = 3 and `+0.101` at k = 20 — real against a draw spread of 0.005–0.06,
+  lifts carry-misses recovery by `+0.079` at k = 3 and `+0.101` at k = 20 — real against a repetition spread of 0.005–0.06,
   and still rising at 300k. Whether it continues past 600k is **not measured here**; that is the confirmatory
   Phase D question on pool S.
 - **Pseudodata statistics are not the limitation in this range.** Over 75k → 300k no estimator moves by more than
@@ -55,8 +59,8 @@ divide by these to normalize.
 - **Miss handling dominates every statistical axis.** At every size, switching from carry-misses to efficiency
   correction is worth roughly `+0.3` — larger than any size effect measured here, and consistent with the Phase F
   ablation and with arXiv:2504.06857's reason for correcting efficiency after unfolding.
-- **The efficiency-corrected and AUSSIE curves are flat in the prior size**, which is what one expects when the
-  estimator is limited by its extrapolation assumption rather than by statistics.
+- **The efficiency-corrected and AUSSIE curves are flat in the prior size**, consistent with (not proof of) an
+  estimator limited by its extrapolation assumption rather than by statistics.
 - **None of this is a PET result.** It says where PET's GPU time should go: more prior MC and more iterations in
   the historical miss mode, and a direct test of the miss-handling mode itself.
 
