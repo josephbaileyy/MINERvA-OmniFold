@@ -1,6 +1,8 @@
+> **FIXED 2026-09-23** at `036f507e` (one commit with rows 51 and 62/61). The superseding standard-P4 verdict is the GBDT lane's; see rows 63/67/68.
+
 # ISSUE-62 — The shell and Python member-scoping conventions disagree at an explicit offset of 0, so MNVESTSEEDOFFSET=0 writes unfolds into a member namespace that the evidence stage then does not read
 
-**Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 62. **Updated:** 2026-09-22.
+**Severity:** MEDIUM. **Status:** FIXED (2026-09-23). **Index row:** `KNOWN_ISSUES.md` row 62. **Updated:** 2026-09-22.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to

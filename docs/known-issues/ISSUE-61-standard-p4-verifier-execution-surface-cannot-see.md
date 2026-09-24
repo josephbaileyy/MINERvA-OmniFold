@@ -1,6 +1,8 @@
+> **FIXED 2026-09-23** at `036f507e` (one commit with rows 51 and 62/61). The superseding standard-P4 verdict is the GBDT lane's; see rows 63/67/68.
+
 # ISSUE-61 — The standard-P4 verifier's execution surface cannot see a shell library that is sourced, so a P4VERIFIERPASS token stays valid across edits to code the verifier never reviewed — including the guard that protects the adopted covariance's inputs
 
-**Severity:** HIGH. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 61. **Updated:** 2026-09-22.
+**Severity:** HIGH. **Status:** FIXED (2026-09-23). **Index row:** `KNOWN_ISSUES.md` row 61. **Updated:** 2026-09-22.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to
