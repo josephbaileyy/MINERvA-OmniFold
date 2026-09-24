@@ -7,7 +7,8 @@ Any other argument, or both together, exits 2: a mistyped `--mutation` once ran 
 (review #35b).
 
 `--mutations` applies each single-change mutation in MUTATIONS to a copy of this file and requires the copy's
-self-test to FAIL. A claim that "every mutation turns the self-test red" was twice made about a mutation set
+self-test to FAIL, after requiring the UNMUTATED self-test to pass. Everything above MUTATIONS, main() included,
+can be mutated; `mutations()` itself, below it, cannot, and its tally is checked only by reading it (review #36b). A claim that "every mutation turns the self-test red" was twice made about a mutation set
 that lived only in scratch space, so nobody could re-run it (reviews #22a, #23a); the set is committed here.
 
 The goal condition Joseph added on 2026-09-23: every OPEN row is either fixed and closed with evidence, or
@@ -121,6 +122,9 @@ def index_rows(text):
     plus a list of problems: any table whose rendered header is not exactly HEADER, and `|`-led lines outside every
     parsed table."""
     text = text[1:] if text.startswith("\ufeff") else text      # a BOM before a first table line hid the table (#34b)
+    # markdown-it ends a line at a lone CR, `split("\n")` does not: two in a table shifted the numbering, and a cut-off
+    # OPEN row after it fell on a "covered" line and passed (review #36b)
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
     toks, rows, problems, i = MD.parse(text), [], [], 0
     lines, covered = text.split("\n"), set()
     # ⚠ NO line is excused for sitting in a code block. Excusing FENCED blocks (to stop refusing a shell pipeline,
@@ -375,6 +379,12 @@ def self_test():
         ("a lower-case kind is refused, and the row stays unowned", "| 1 | L | OPEN | x | d | u |\n", "1\towner\ta\n", 2),
         ("a registry id in the wrong case owns nothing", "| J36 | L | OPEN | x | d | u |\n", "j36\tOWNER\ta\n", 2),
         ("a registry with two BOMs owns nothing", "| 1 | L | OPEN | x | d | u |\n", "\ufeff\ufeff1\tOWNER\ta\n", 2),
+        # --- review #36b: boundaries pinned WITHOUT an `open` that the open rule would refuse anyway; a tab lead; lone CRs
+        *[(f"status {s!r} is refused", f"| 1 | L | {s} | x | d | u |\n", "", 1)
+          for s in ("FIXED-pending review", "FIXED?", "**FIXED**-x", "FIXED/pending", "FIXED' x", "FIXED!")],
+        ("a row cut off after a tab lead is refused", "| 1 | L | FIXED | x | d | u |\n\n\t| 2 | L | OPEN | x | d | u |\n", "", 1),
+        ("lone CRs in a table do not hide a cut-off OPEN row",
+         "| 1 | L | FIXED | x | d | u |\r| 3 | L | FIXED | y | d | u |\r| 4 | L | FIXED | z | d | u |\n\n| 99 | L | OPEN | x | d | u |\n", "", 1),
         # --- review #30b: each status boundary the real index uses, pinned
         *[(f"status boundary {s!r}", f"| 1 | L | {s} x | x | d | u |\n", "", 0)
           for s in ("**FIXED**", "__FIXED__", "FIXED.", "FIXED,", "FIXED;", "FIXED)", "FIXED\u2014pending", "FIXED\u2013pending")],
@@ -481,6 +491,20 @@ def self_test():
                 rc = f"raised {type(e).__name__}"
             if rc != want:
                 wrong.append(f"{name}: wanted exit {want}, got {rc}")
+        # main(): THIS file run as a command, so its dispatch and exit status are pinned too (review #36b)
+        g0, g1 = tree("g0", ok, b"1\tOWNER\ta\n"), tree("g1", ok, b"")
+        for g in (g0, g1):
+            subprocess.run(["git", "init", "-q"], cwd=g, capture_output=True)
+        plain = os.path.join(td, "plain")
+        os.mkdir(plain)
+        clis = (("the command exits 0 on an owned work tree", g0, [], 0),
+                ("the command exits 1 on an unowned OPEN row", g1, [], 1),
+                ("the command exits 2 outside a work tree", plain, [], 2),
+                ("the command exits 2 on an unknown argument", g0, ["--mutation"], 2))
+        for name, cwd, argv, want in clis:
+            rc = subprocess.run([sys.executable, os.path.abspath(__file__), *argv], cwd=cwd, capture_output=True).returncode
+            if rc != want:
+                wrong.append(f"{name}: wanted exit {want}, got {rc}")
     modes = (([], "live"), (["--self-test"], "self-test"), (["--mutations"], "mutations"), (["--mutation"], None),
              (["--selftest"], None), (["--self-test", "--mutations"], None), (["x"], None))
     for argv, want in modes:
@@ -503,8 +527,26 @@ def self_test():
     for w in wrong:
         print(f"  *** WRONG *** {w}")
     print(f"[owned self-test] {'FAIL' if wrong else 'PASS'} :: {len(shapes)} shapes, {len(exits)} exit, {len(reads)} read, "
-          f"{len(runs)} work-tree and {len(modes)} argument checks")   # all (#30a)
+          f"{len(runs)} work-tree, {len(clis)} command and {len(modes)} argument checks")   # all (#30a)
     return 1 if wrong else 0
+
+
+def main():
+    m = mode(sys.argv[1:])
+    if m is None:
+        print(f"[owned] usage: {os.path.basename(sys.argv[0])} [--self-test | --mutations]; got {sys.argv[1:]}")
+        return 2
+    if m == "self-test":
+        return self_test()
+    if m == "mutations":
+        return mutations()
+    root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
+    if not root:
+        print("[owned] CANNOT LOOK :: not inside a git work tree")
+        return 2
+    rc, out = run(root)
+    print("\n".join(out))
+    return rc
 
 
 # (label, text in this file, replacement). Each must make the self-test fail. `--mutations` refuses (exit 2) if a
@@ -544,6 +586,13 @@ MUTATIONS = [
     ("the index read as optional", 'read_file(os.path.join(root, "KNOWN_ISSUES.md"), True)', 'read_file(os.path.join(root, "KNOWN_ISSUES.md"), False)'),
     ("a dangling symlink read as absent", 'and not os.path.lexists(path):', 'and not os.path.exists(path):'),
     ("unknown arguments run the live check", 'return MODES.get(tuple(argv))', 'return MODES.get(tuple(argv), "live")'),
+    ("lone CRs kept", '    text = text.replace("\\r\\n", "\\n").replace("\\r", "\\n")\n', '    text = text\n'),
+    ("a tab lead hides a row", 'if INVISIBLE.sub("", l).lstrip().startswith("|")', 'if INVISIBLE.sub("", l).lstrip(" ").startswith("|")'),
+    ("a status word ended by ? or -", '(?=$|[\\s.,:;)\\u2013\\u2014])")   # en dash', '(?=$|[\\s.,:;)\\u2013\\u2014?-])")   # en dash'),
+    ("a status word ended by /", '(?=$|[\\s.,:;)\\u2013\\u2014])")   # en dash', '(?=$|[\\s.,:;)\\u2013\\u2014/])")   # en dash'),
+    ("the live exit status dropped", '    print("\\n".join(out))\n    return rc\n', '    print("\\n".join(out))\n    return 0\n'),
+    ("a usage error exits 0", '        return 2\n    if m == "self-test":', '        return 0\n    if m == "self-test":'),
+    ("outside a work tree exits 0", 'not inside a git work tree")\n        return 2', 'not inside a git work tree")\n        return 0'),
     ("a zero-width lead hides a row", 'if INVISIBLE.sub("", l).lstrip().startswith("|")', 'if l.lstrip().startswith("|")'),
     ("a closed status that says open accepted", '        if s.group("w").upper() != "OPEN" and OPEN_WORD.search', '        if False and OPEN_WORD.search'),
     ("comments closed only by -->", 'r"<!--(?:-?>|.*?--!?>)"', 'r"<!--.*?-->"'),
@@ -608,7 +657,8 @@ def mutations():
     body = src[:src.index("# (label, text in this file, replacement).")]    # mutate the CODE, not this list
     alive, broken = [], []
     with tempfile.TemporaryDirectory() as td:
-        # the UNMUTATED self-test must pass first: a failing one makes every mutant look red (self-found, 2026-09-24)
+        # the UNMUTATED self-test must pass first: a failing one makes a mutant look red unless the wrong shape alone
+        # would have killed it (self-found, 2026-09-24; ⚠ first said "every mutant"; review #36a)
         p = os.path.join(td, "m.py")
         open(p, "w", encoding="utf-8").write(src)
         r = subprocess.run([sys.executable, p, "--self-test"], capture_output=True, text=True)
@@ -635,24 +685,6 @@ def mutations():
     print(f"[owned mutations] {'FAIL' if alive or broken else 'PASS'} :: {len(MUTATIONS)} mutations, "
           f"{len(MUTATIONS) - len(alive) - len(broken)} turn the self-test red")
     return 2 if broken else 1 if alive else 0
-
-
-def main():
-    m = mode(sys.argv[1:])
-    if m is None:
-        print(f"[owned] usage: {os.path.basename(sys.argv[0])} [--self-test | --mutations]; got {sys.argv[1:]}")
-        return 2
-    if m == "self-test":
-        return self_test()
-    if m == "mutations":
-        return mutations()
-    root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
-    if not root:
-        print("[owned] CANNOT LOOK :: not inside a git work tree")
-        return 2
-    rc, out = run(root)
-    print("\n".join(out))
-    return rc
 
 
 if __name__ == "__main__":
