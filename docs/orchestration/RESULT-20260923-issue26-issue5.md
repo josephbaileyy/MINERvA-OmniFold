@@ -2,6 +2,8 @@
 
 Plan and verdict rules (committed before any submission): `PLAN-20260923-issue26-issue5-studies.md`
 (commit `68a266a5`). Receipts: `docs/orchestration/state/result-20260923-issue26-issue5/`.
+**Sha map (rebase onto `origin/main` `cdc2bce2`).** The cluster runs executed at the pre-rebase commits `68a266a5` (plan + instruments) and `5760a785` (strip-area fix). They are preserved on the cluster clones as `refs/study/eavscale-20260923` / `refs/study/strip-20260923`. The instrument and plan files are byte-identical to this branch's `7d669e70` / `1fa89fcd`, checked with `git diff` restricted to those paths. The rest of each tree differs only by the `origin/main` base.
+
 This is a receipt document, not a ledger row; nothing here changes a central value, covariance or
 note text. A proposed systematic below is a proposal for Joseph.
 
