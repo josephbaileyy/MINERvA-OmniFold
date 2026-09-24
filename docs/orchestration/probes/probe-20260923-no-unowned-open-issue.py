@@ -46,7 +46,9 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     once said a lone combining mark is refused; review #44b);
   * a row whose line, parsed by markdown-it itself, has a code span, link (text or target), image, autolink or HTML
     tag that STARTS in the status cell and holds a `|`: the table split at that pipe and cut the status short
-    (reviews #42b-#46b; three hand-written scans each missed a case). A pipe escaped inside a link counts too. A `|`
+    (reviews #42b-#46b; three hand-written scans each missed a case). A pipe escaped inside a link counts too, and so
+    does a lone backtick in the status (`don`t`) that the parser pairs with one in a LATER cell: a correct row, but
+    one the parser reads as cut, so it FAILS CLOSED and must be reworded (self-found, 2026-09-24). A `|`
     in plain prose or math, such as `P(a|b)`, in a row ALSO missing a cell is not detected: nothing is left open
     (review #45b);
   * an index id that is not plain letters and digits, or used by more than one row;
@@ -640,6 +642,7 @@ def self_test():
                        ("an angle-bracket link target", "[a](<f)g|h>)"), ("link text", "[a|b](x)"))],
         ("a status cut by a pipe inside an HTML tag is refused", '| 1 | LOW | FIXED <span title="a|b">x</span> still open | d | 2026 |\n', "", 1),
         ("a pipe span starting in a LATER cell leaves the status whole", "| 1 | LOW | FIXED | x `a|b` y | u |\n", "", 0),
+        ("a lone backtick in the status pairing with a later cell's fails closed", "| 1 | LOW | FIXED; don`t | x | see `y` | u |\n", "", 1),
         ("a code span holding `](` is fine", "| 1 | LOW | FIXED; the parser splits on `](` now | x | d | u |\n", "", 0),
         ("a closed span after an escaped backslash is fine", "| 1 | LOW | FIXED; path ends C:\\\\`x` fine | x | d | u |\n", "", 0),
         ("n after an apostrophe still says open", "| 1 | LOW | FIXED; still ope\u0149 | x | d | u |\n", "", 1),
