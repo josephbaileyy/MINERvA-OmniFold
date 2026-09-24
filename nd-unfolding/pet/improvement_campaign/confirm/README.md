@@ -2,6 +2,16 @@
 
 ## Status (resume anchor; newest first)
 
+- 2026-09-24 01:35Z: **FINAL submitted** (code `e61ba86c`, after the sizing record below was committed):
+  `runs/final.tsv`, out `/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/final`, debug
+  chains 58808974 + 58809024, 36 gpu_shared copies (ids in `final/submissions.txt`). PILOT 8/9
+  complete and harvested (`results/pilot/`, `CONFIRM_RESULTS.md`); `pilot-C-P2` at 4/10 on the
+  pilot chain. STRESS: 6 iterations in 5 h -- its gpu_shared copies and its full-node regular
+  (58800973/4) and preempt (58800975/6) chains have NOT started (Priority). Measured waits so far:
+  gpu_shared 2 of 45 started, after 188 and 201 min; regular/preempt none in 4 h; gpu_debug a few
+  minutes once a slot is free (2 running per user). Throughput is the binding constraint:
+  ~16 run-iterations per 35-min debug cycle for both slots together.
+- Harvest: `confirm/harvest.sh <stage>` then `python analyze_confirm.py > tables`.
 - 2026-09-23 21:15Z: first chain round measured ONE 767 s iteration per 30-min round (60 s margin;
   the 1.1x estimate crosses the deadline). Chain v2 (`c4726062`: next round queued `afterany` at the
   start, margin 15 s) replaces it; the old-code successors 58799686/58799690 were cancelled (own
