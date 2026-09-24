@@ -9,11 +9,13 @@ pseudodata truth (like-for-like). CTL = the frozen `b2e3-H-K10-s1` run scored at
 run at K* = 10. Sizes follow the protocol (prior 600,130, pseudodata 600,111), the reverse of the
 historical closure's orientation (a 19-event swap; amendment 3).
 
-## Status
+## Status (2026-09-24 11:35Z)
 
-- PILOT: 8 of 9 runs complete (`pilot-C-P2` running). **Reported separately; never enters FINAL.**
-- FINAL: sized at n = 12 (README sizing record), submitted.
-- STRESS: 36 runs submitted; waiting for GPU time (see README).
+- PILOT: 9 of 9 runs complete. **Reported separately; never enters FINAL.**
+- FINAL: 15 of 36 runs complete (199 of 360 iterations). The rerun of `final-C-F1` (fresh run dir,
+  from iteration 0, flock code) is one of the 15; the lock re-audit at 11:35Z over 36 run dirs finds
+  no suspect. No inferential statistic until all 36 are in.
+- STRESS: 6 of 360 iterations; none of its gpu_shared / regular / preempt copies has started.
 
 ### PILOT (pool P; reported separately, never enters FINAL)
 
@@ -21,16 +23,39 @@ historical closure's orientation (a 19-event swap; amendment 3).
 |---|---:|---:|---:|---:|---:|---:|---:|
 | P0 | 0.297 | 0.457 | 0.454 | 0.542 | 0.535 | 0.722 | 0.987 |
 | P1 | 0.329 | 0.508 | 0.455 | 0.551 | 0.617 | 0.796 | 0.985 |
-| P2 | 0.349 | 0.501 | 0.504 | 0.539 | — | — | 0.982 |
+| P2 | 0.349 | 0.501 | 0.504 | 0.539 | 0.697 | 0.876 | 0.982 |
 
 | paired difference | per replicate | mean | sd (df) | 80 % UCB of sd | n for 80 % power |
 |---|---|---:|---:|---:|---:|
 | A - CTL | +0.160, +0.179, +0.152 | +0.164 | 0.0140 (2) | 0.0296 | 22 |
 | B@10 - CTL | +0.246, +0.222, +0.189 | +0.219 | 0.0282 (2) | 0.0597 | 81 |
-| C@10 - CTL | +0.425, +0.467 | +0.446 | 0.0297 (1) | 0.1172 | 200 |
+| C@10 - CTL | +0.425, +0.467, +0.526 | +0.473 | 0.0509 (2) | 0.1078 | 259 |
 | B@3 - CTL | +0.157, +0.126, +0.155 | +0.146 | 0.0171 (2) | 0.0361 | 32 |
-| C@3 - CTL | +0.238, +0.288 | +0.263 | 0.0354 (1) | 0.1395 | 200 |
+| C@3 - CTL | +0.238, +0.288, +0.348 | +0.292 | 0.0547 (2) | 0.1157 | 298 |
 
-**n for FINAL = 12** (uncapped 200; cap 12).
+**n for FINAL = 12** (uncapped 298; cap 12).
+
+### FINAL (INTERIM, descriptive only): 15 of 36 frozen runs scored; no inferential statistic is computed until the complete, provenance-clean manifest is in (fixed-n design)
 
 
+
+## Lock audit (review BLOCK, 2026-09-24 07:20Z) -- `audit_locks.py`, `results/audit_locks.json`
+
+The run lock used from `661cb5b9` to `e61ba86c` (mkdir + owner file) was not atomic. All pending
+pv1 jobs were cancelled at ~07:00Z; the lock was replaced by a job-lifetime flock (`150ecaf8`,
+tested: 12 simultaneous contenders -> 1 holder; free after SIGKILL of the holder and its child);
+the audit ran after the last old-code job (58814884) ended.
+
+* Audited: **29 run directories** (PILOT 9, FINAL 16,
+  STRESS 4), **116 driver executions** by 33 jobs.
+* Checks per run: pairwise overlap of the DRIVER intervals of the jobs that ran the driver there
+  (job start, as an upper bound on the claim time, to the job's run-log last write), segment
+  contiguity (state/receipt), every executing job accounted for by a segment, each (iteration, step)
+  fitted exactly once.
+* **Suspect: 1 -- `final-C-F1`.** Drivers of 58812108 (iterations 7-8; last write 22:05:55 PT
+  iter08, log 22:06:04) and 58812932 (job start 22:06:00; restored at 22:08:29 and first wrote at
+  22:21) overlap by at most 4 s on the conservative bound. No duplicate fit, segments contiguous; the
+  second driver read the state after the first had finished writing. It is nevertheless
+  **quarantined** (`final/_quarantine/final-C-F1-driver-overlap-4s`, `results/final/_quarantine/`)
+  and **rerun from scratch**, as the review directs. Its numbers enter no table.
+* Every other run: no driver overlap, no duplicate fit, contiguous segments. Clean: PILOT 9/9.
