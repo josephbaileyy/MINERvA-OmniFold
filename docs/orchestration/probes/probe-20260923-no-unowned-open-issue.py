@@ -25,7 +25,7 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     is refused, not interpreted;
   * a status other than OPEN whose cell also shows `open` after the word, in any case (`two literals still open`,
     `reopened`), because a closed row may carry an open residual (review #31b). It reads the RENDERED text (text
-    and code spans, entities decoded, soft hyphens and every other invisible format character dropped), not a link's target, so it
+    and code spans and image alt text, entities decoded, soft hyphens and every other invisible format character dropped), not a link's target, so it
     also FAILS CLOSED on prose such as `the index said OPEN` or a code span such as `open()`, which must be
     reworded (review #32b). A residual described in other words (`pending`, `remaining`) is not detected;
   * an index id that is not plain letters and digits, or used by more than one row;
@@ -39,7 +39,9 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     A cut-off row WITHOUT a leading pipe, or inside a blockquote, is not detected, and neither is a whole
     pipe-less table written straight after a list item; the index always uses leading pipes (reviews #28b, #30b).
 Exit 0 = none of these. Exit 2 = it could not read the index, including an index with NO table carrying the
-index header (⚠ that case was first listed among the exit-1 refusals; review #28a).
+index header (⚠ that case was first listed among the exit-1 refusals; review #28a), a file that is not UTF-8,
+or a path that is a directory (these once raised, exiting 1; review #34b). It checks the git work tree holding
+the CURRENT DIRECTORY, not the one holding this file (review #34b).
 
 ⚠ WHY A REGISTRY. The first versions read blocker lines written as Markdown, in detail files or index rows.
 Independent reviews #21b, #22b and #23b found 6, 7 and 11 defects, most of them about which Markdown forms
@@ -82,10 +84,15 @@ STATUS_RE = re.compile(r"^\s*(?:(?P<u>[*_]*_[*_]*)|\**)(?P<w>[A-Za-z]+)(?(u)[*_]
 # registry line" at #22b's and #23b's, but no registry existed then; review #32a). Any case, anywhere after the word,
 # `reopened` too, read in the RENDERED text: a link target is not read, but emphasis, a tag or an entity inside the
 # word does not hide it, nor does a soft hyphen or zero-width character (review #32b). INVISIBLE is EVERY Unicode
-# format character (category Cf) plus the combining grapheme joiner: a list of six missed U+200E and U+034F (#33b)
+# format character (category Cf) plus every Default_Ignorable_Code_Point (Unicode 15.0 DerivedCoreProperties, listed
+# below): a list of six missed U+200E and U+034F (#33b), and Cf alone missed variation selectors and fillers (#34b)
 OPEN_WORD = re.compile(r"open", re.I)
+_DI = {c for a, b in ((0xAD, 0xAD), (0x34F, 0x34F), (0x61C, 0x61C), (0x115F, 0x1160), (0x17B4, 0x17B5), (0x180B, 0x180F),
+                      (0x200B, 0x200F), (0x202A, 0x202E), (0x2060, 0x206F), (0x3164, 0x3164), (0xFE00, 0xFE0F),
+                      (0xFEFF, 0xFEFF), (0xFFA0, 0xFFA0), (0xFFF0, 0xFFF8), (0x1BCA0, 0x1BCA3), (0x1D173, 0x1D17A),
+                      (0xE0000, 0xE0FFF)) for c in range(a, b + 1)}
 INVISIBLE = re.compile("[" + "".join(re.escape(chr(c)) for c in range(sys.maxunicode + 1)
-                                     if unicodedata.category(chr(c)) == "Cf" or c == 0x34F) + "]")
+                                     if unicodedata.category(chr(c)) == "Cf" or c in _DI) + "]")
 HTML_TABLE = re.compile(r"<\s*/?\s*t(able|head|body|r|d|h)\b", re.I)
 ID_RE = re.compile(r"^[\s*_]*([A-Za-z0-9]+)[\s*_]*$")
 # An index table is one whose header, AS RENDERED, is exactly this. The first rule ("first header cell is `id`")
@@ -101,13 +108,14 @@ def _rendered(inline):
 
 def _shown(inline):
     """The cell's visible text, pieces joined with NOTHING between them: `o*pe*n` shows as `open` (review #32b)."""
-    return "".join(c.content for c in (inline.children or []) if c.type in ("text", "code_inline"))
+    return "".join(c.content for c in (inline.children or []) if c.type in ("text", "code_inline", "image"))   # alt (#34b)
 
 
 def index_rows(text):
     """(id source, status source, line, status inline token) for each body row of each table whose rendered header is exactly HEADER,
     plus a list of problems: any table whose rendered header is not exactly HEADER, and `|`-led lines outside every
     parsed table."""
+    text = text[1:] if text.startswith("\ufeff") else text      # a BOM before a first table line hid the table (#34b)
     toks, rows, problems, i = MD.parse(text), [], [], 0
     lines, covered = text.split("\n"), set()
     # ⚠ NO line is excused for sitting in a code block. Excusing FENCED blocks (to stop refusing a shell pipeline,
@@ -221,6 +229,18 @@ def check(index_text, registry_text):
     return problems, len(rows), len(open_ids)
 
 
+def read_file(path, required):
+    """(text, None); (None, None) if an optional file is absent; or (None, reason) if it cannot be read as UTF-8.
+    main() once let a non-UTF-8 or directory path raise, exiting 1 -- a refusal -- instead of 2 (review #34b)."""
+    if not required and not os.path.lexists(path):
+        return None, None
+    try:
+        with open(path, encoding="utf-8") as f:
+            return f.read(), None
+    except (OSError, UnicodeDecodeError) as e:
+        return None, f"{path}: {e}"
+
+
 def decide(index_text, registry_text):
     """(exit status, lines to print) -- the whole verdict, above the mutation marker so that the self-test and
     `--mutations` reach it. main() once decided the exit status itself, unpinned (review #29b)."""
@@ -290,6 +310,16 @@ def self_test():
         *[(f"open hidden in the source ({s!r}) is refused", f"| 1 | L | FIXED; still {s} | x | d | u |\n", "", 1)
           for s in ("&#111;pen", "o*pe*n", "op<span></span>en", "op\u00aden", "op\u200ben")],
         ("raw-HTML table markup in an index cell is refused", "| 1 | L | FIXED | x | <table><tr><td>2</td></tr></table> | u |\n", "", 1),
+        # --- review #34b: struck statuses, blank registry lines, default-ignorables and alt text, <thead>, a Unicode id
+        ("a struck FIXED is refused", "| 1 | L | ~~FIXED 2026-09-01~~ still broken | x | d | u |\n", "", 1),
+        ("a struck OPEN before FIXED is refused, and its registry line is stray", "| 1 | L | ~~OPEN 2026~~ FIXED | x | d | u |\n", "1\tOWNER\ta\n", 2),
+        ("a whitespace-only registry line is blank", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n   \n", 0),
+        *[(f"open hidden by U+{ord(c):04X} is refused", f"| 1 | L | FIXED; still op{c}en | x | d | u |\n", "", 1)
+          for c in "\ufe0f\U000e0100\u3164\u115f\U000e0001"],
+        ("image alt text saying open is refused", "| 1 | L | FIXED ![still open](x.png) | x | d | u |\n", "", 1),
+        ("a stray <thead><th> is refused", "| 1 | L | FIXED | x | d | u |\n\n<thead><th>x</th></thead>\n", "", 1),
+        ("a stray <tbody> is refused", "| 1 | L | FIXED | x | d | u |\n\n<tbody>\n", "", 1),
+        ("a Unicode-letter id is refused", "| \u00e91 | L | FIXED | x | d | u |\n", "", 1),
         # --- review #33b: every invisible format character, not a list of six
         *[(f"open hidden by U+{ord(c):04X} is refused", f"| 1 | L | FIXED; still op{c}en | x | d | u |\n", "", 1)
           for c in "\u200c\u200d\u2060\ufeff\u200e\u200f\u2061\u034f"],
@@ -363,13 +393,40 @@ def self_test():
     wrong = []
     # the exit status itself, through decide()
     one = head + "| 1 | L | OPEN | x | d | u |\n"
-    for name, doc, reg, want in (("exit 0 when every OPEN row is owned", one, "1\tOWNER\ta\n", 0),
-                                 ("exit 1 when an OPEN row is unowned", one, "", 1),
-                                 ("exit 1 when the registry is absent", one, None, 1),
-                                 ("exit 2 when no index table exists", "# none\n", "", 2)):
+    fixed = head + "| 1 | L | FIXED | x | d | u |\n"
+    exits = (("exit 0 when every OPEN row is owned", one, "1\tOWNER\ta\n", 0),
+             ("exit 1 when an OPEN row is unowned", one, "", 1),
+             ("exit 1 when the registry is absent", one, None, 1),
+             ("exit 2 when no index table exists", "# none\n", "", 2),
+             # --- review #34b: the live index has NO OPEN row, and no exit check had one without
+             ("exit 0 when no row is OPEN", fixed, "", 0),
+             ("exit 1 when an all-FIXED index hides a cut-off OPEN row", fixed + "\n| 2 | L | OPEN | x | d | u |\n", "", 1),
+             ("exit 1 when an all-FIXED index has no registry", fixed, None, 1),
+             ("exit 0 with a BOM before the first table line", "\ufeff" + one, "1\tOWNER\ta\n", 0))
+    for name, doc, reg, want in exits:
         rc, _ = decide(doc, reg)
         if rc != want:
             wrong.append(f"{name}: wanted exit {want}, got {rc}")
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:     # read_file: exit 2 cases must not be exceptions (review #34b)
+        bad = os.path.join(td, "latin1.md")
+        with open(bad, "wb") as f:
+            f.write(b"| caf\xe9 |\n")
+        good = os.path.join(td, "ok.md")
+        with open(good, "w", encoding="utf-8") as f:
+            f.write("x")
+        reads = (("a non-UTF-8 file cannot be read", bad, True, "err"), ("a directory cannot be read", td, True, "err"),
+                 ("an absent required file cannot be read", os.path.join(td, "no"), True, "err"),
+                 ("an absent optional file is None", os.path.join(td, "no"), False, "none"),
+                 ("a UTF-8 file is read", good, True, "text"))
+        for name, path, req, want in reads:
+            try:
+                text, err = read_file(path, req)
+                got = "err" if err else "none" if text is None else "text"
+            except Exception as e:           # a raise is a wrong answer here, not a crash of the self-test
+                got = f"raised {type(e).__name__}"
+            if got != want:
+                wrong.append(f"{name}: wanted {want}, got {got}")
     for name, body, reg, want in shapes:
         if "upper-case ID" in name or "bold **id**" in name or "code `id`" in name or "doubled space" in name:
             h = (head.replace("| id |", "| ID |", 1) if "upper-case" in name else
@@ -386,7 +443,7 @@ def self_test():
             wrong.append(f"{name}: wanted {want} problem(s), got {len(got)}: {got}")
     for w in wrong:
         print(f"  *** WRONG *** {w}")
-    print(f"[owned self-test] {'FAIL' if wrong else 'PASS'} :: {len(shapes)} shapes and 4 exit checks")   # both (#30a)
+    print(f"[owned self-test] {'FAIL' if wrong else 'PASS'} :: {len(shapes)} shapes, {len(exits)} exit checks and {len(reads)} read checks")   # all (#30a)
     return 1 if wrong else 0
 
 
@@ -407,10 +464,21 @@ MUTATIONS = [
     ("only FIXED checked for open", '        if s.group("w").upper() != "OPEN" and OPEN_WORD.search', '        if s.group("w").upper() == "FIXED" and OPEN_WORD.search'),
     ("the status SOURCE read for open", 'INVISIBLE.sub("", _shown(stok)).lstrip(), s.group("w")', 'INVISIBLE.sub("", status_src).lstrip(), s.group("w")'),
     ("invisible characters kept", 'INVISIBLE.sub("", _shown(stok)).lstrip(), s.group("w")', '_shown(stok).lstrip(), s.group("w")'),
-    ("shown pieces joined with a space", 'return "".join(c.content for c in (inline.children or []) if c.type in ("text", "code_inline"))', 'return " ".join(c.content for c in (inline.children or []) if c.type in ("text", "code_inline"))'),
+    ("shown pieces joined with a space", 'return "".join(c.content for c in (inline.children or []) if c.type in ("text", "code_inline", "image"))', 'return " ".join(c.content for c in (inline.children or []) if c.type in ("text", "code_inline", "image"))'),
+    ("image alt text not read", 'if c.type in ("text", "code_inline", "image"))   # alt', 'if c.type in ("text", "code_inline"))   # alt'),
     ("index cells not scanned for HTML", '    for tk in toks:\n        bits', '    for tk in [x for x in toks if not (x.map and x.map[0] in covered)]:\n        bits'),
-    ("invisibles as a fixed list of six", 'for c in range(sys.maxunicode + 1)\n                                     if unicodedata.category(chr(c)) == "Cf" or c == 0x34F)', 'for c in (0xAD, 0x200B, 0x200C, 0x200D, 0x2060, 0xFEFF))'),
-    ("format characters only, no CGJ", 'unicodedata.category(chr(c)) == "Cf" or c == 0x34F', 'unicodedata.category(chr(c)) == "Cf"'),
+    ("invisibles as a fixed list of six", 'for c in range(sys.maxunicode + 1)\n                                     if unicodedata.category(chr(c)) == "Cf" or c in _DI)', 'for c in (0xAD, 0x200B, 0x200C, 0x200D, 0x2060, 0xFEFF))'),
+    ("format characters only, no default-ignorables", 'unicodedata.category(chr(c)) == "Cf" or c in _DI', 'unicodedata.category(chr(c)) == "Cf"'),
+    ("invisibles from the BMP only", 'for c in range(sys.maxunicode + 1)\n', 'for c in range(0x10000)\n'),
+    ("exit 0 while problems exist but none is OPEN", '    return (1 if problems else 0), out', '    return (1 if problems and n_open else 0), out'),
+    ("exit 2 when no row is OPEN", '    if not n_rows:\n        return 2', '    if not n_open:\n        return 2'),
+    ("markup, not letters, before the status word read through", 'STATUS_RE = re.compile(r"^\\s*(?:', 'STATUS_RE = re.compile(r"^[\\s~<>/`]*(?:'),
+    ("a whitespace-only registry line read", 'if not line.strip() or line.lstrip().startswith("#")', 'if not line or line.lstrip().startswith("#")'),
+    ("HTML_TABLE missing thead, tbody and th", 't(able|head|body|r|d|h)\\b", re.I)', 't(able|r|d)\\b", re.I)'),
+    ("ids of any word character", 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)', 'ID_RE = re.compile(r"^[\\s*_]*(\\w+)'),
+    ("a BOM before the index kept", '    text = text[1:] if text.startswith("\\ufeff") else text      # a BOM before a first', '    text = text      # a BOM before a first'),
+    ("an undecodable file raises", '    except (OSError, UnicodeDecodeError) as e:\n        return None, f"{path}: {e}"', '    except OSError as e:\n        return None, f"{path}: {e}"'),
+    ("an absent required file read as absent", '    if not required and not os.path.lexists(path):', '    if not os.path.lexists(path):'),
     ("a zero-width lead hides a row", 'if INVISIBLE.sub("", l).lstrip().startswith("|")', 'if l.lstrip().startswith("|")'),
     ("a closed status that says open accepted", '        if s.group("w").upper() != "OPEN" and OPEN_WORD.search', '        if False and OPEN_WORD.search'),
     ("comments closed only by -->", 'r"<!--(?:-?>|.*?--!?>)"', 'r"<!--.*?-->"'),
@@ -424,7 +492,7 @@ MUTATIONS = [
     ("registry kinds upper-cased", 'rid, kind, body = f[0].strip(), f[1].strip(), f[2].strip()', 'rid, kind, body = f[0].strip(), f[1].strip().upper(), f[2].strip()'),
     ("registry ids upper-cased", 'rid, kind, body = f[0].strip(), f[1].strip(), f[2].strip()', 'rid, kind, body = f[0].strip().upper(), f[1].strip(), f[2].strip()'),
     ("ids without leading markers", 'ID_RE = re.compile(r"^[\\s*_]*(', 'ID_RE = re.compile(r"^\\s*('),
-    ("every BOM stripped", 'text = text[1:] if text.startswith("\\ufeff") else text', 'text = text.lstrip("\\ufeff")'),
+    ("every BOM stripped", 'text = text[1:] if text.startswith("\\ufeff") else text      # a UTF-8 BOM', 'text = text.lstrip("\\ufeff")      # a UTF-8 BOM'),
     # ("a status read as a prefix (OPENED as OPEN)") is RETIRED as equivalent: the lookahead after the word admits
     # no letter, so a prefix alternation must still capture the whole leading run of letters. The same holds with
     # the closing-marker part, which admits no letter either. Review #30a TESTED an earlier rule on 1,075,265 inputs
@@ -451,7 +519,7 @@ MUTATIONS = [
     ("a malformed line owns its row", "if e[0] in KINDS and e[1]])", "if True])"),
     ("fenced blocks excused", '    lines, covered = text.split("\\n"), set()',
      '    lines, covered = text.split("\\n"), set()\n    covered.update(x for tk in toks if tk.type == "fence" and tk.map for x in range(*tk.map))'),
-    ("a BOM not stripped", 'text = text[1:] if text.startswith("\\ufeff") else text', 'text = text'),
+    ("a BOM not stripped", 'text = text[1:] if text.startswith("\\ufeff") else text      # a UTF-8 BOM', 'text = text      # a UTF-8 BOM'),
     ("inline HTML not scanned", 'else [c.content for c in (tk.children or []) if c.type == "html_inline"]', 'else []'),
     ("HTML tags matched case-sensitively", 'r"<\\s*/?\\s*t(able|head|body|r|d|h)\\b", re.I)', 'r"<\\s*/?\\s*t(able|head|body|r|d|h)\\b")'),
     ("HTML matched only at the start", '        if any(HTML_TABLE.search(b) for b in bits):', '        if any(HTML_TABLE.match(b) for b in bits):'),
@@ -506,12 +574,12 @@ def main():
         print("[owned] CANNOT LOOK :: not inside a git work tree")
         return 2
     os.chdir(root)
-    try:
-        index = open("KNOWN_ISSUES.md", encoding="utf-8").read()
-    except OSError as e:
-        print(f"[owned] CANNOT LOOK :: {e}")
-        return 2
-    registry = open(REGISTRY, encoding="utf-8").read() if os.path.exists(REGISTRY) else None
+    index, e1 = read_file("KNOWN_ISSUES.md", True)
+    registry, e2 = read_file(REGISTRY, False)
+    for e in (e1, e2):
+        if e:
+            print(f"[owned] CANNOT LOOK :: {e}")
+            return 2
     rc, out = decide(index, registry)
     print("\n".join(out))
     return rc
