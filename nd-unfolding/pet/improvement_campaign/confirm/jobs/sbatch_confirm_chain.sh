@@ -52,6 +52,7 @@ fi
 scontrol show job -o "$SLURM_JOB_ID" > "$OUT/allocation-$SLURM_JOB_ID.txt"
 source "$MINE/nd-unfolding/pet/improvement_campaign/confirm/jobs/confirm_lib.sh"
 setup_env
+require_coherent_flock
 SELF="$V/jobs/sbatch_confirm_chain.sh"
 IFS=, read -r -a DEVS <<< "${CUDA_VISIBLE_DEVICES:-}"
 if (( ${#DEVS[@]} == 0 )); then mapfile -t DEVS < <(seq 0 $(( $(nvidia-smi -L | wc -l) - 1 ))); fi

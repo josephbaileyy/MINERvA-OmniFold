@@ -21,7 +21,9 @@ LINE=$(manifest_rows | awk -F'\t' -v n="$ROW" '$1==n')
 [[ -n "$LINE" ]] || { echo "no row $ROW" >&2; exit 2; }
 echo "$(date -u +%FT%TZ) single job $SLURM_JOB_ID started" >> "$OUT/$ROW/lock-history.txt"
 if is_complete "$ROW"; then echo "already COMPLETE" >> "$OUT/$ROW/lock-history.txt"; exit 0; fi
+require_coherent_flock
 claim "$ROW" || { echo "$(date -u +%FT%TZ) single $SLURM_JOB_ID: held by another job, exiting" >> "$OUT/$ROW/lock-history.txt"; exit 0; }
+if is_complete "$ROW"; then echo "already COMPLETE (after claim)" >> "$OUT/$ROW/lock-history.txt"; exit 0; fi
 setup_env
 END_UNIX=$(date -d "$(squeue -h -j "$SLURM_JOB_ID" -o %e)" +%s)
 rc=0

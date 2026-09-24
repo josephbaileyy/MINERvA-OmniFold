@@ -1,12 +1,15 @@
 # Sourced by sbatch_confirm_chain.sh and sbatch_confirm_single.sh (not executable on its own).
 #
-# A run directory is worked on by at most one job at a time: `claim` takes $RUN/.lock (mkdir is
-# atomic) and records the job id; a lock whose job is no longer RUNNING is stale and is taken
-# over (a job killed at its time limit cannot release it). The debug chain and the single-GPU
-# gpu_shared copy of a run therefore RACE: whichever gets the lock works on the run (resume is
-# bit-exact, so the two can alternate), the other skips it; when a run is COMPLETE its pending
-# gpu_shared copy is cancelled (only a job this campaign recorded in $RUN/shared_job, and only if
-# it is still this user's pending pv1-single job).
+# A run directory is worked on by at most one job at a time. OWNERSHIP IS AN flock(2) on
+# $RUN/.flock, taken non-blocking by `claim` and held by an open file descriptor for the REST OF THE
+# JOB (inherited by the driver process); the kernel/Lustre release it when the job's processes exit,
+# including on SIGKILL at the time limit, so there is no stale lock and no takeover step. /pscratch
+# is mounted with the cluster-coherent `flock` option (checked by `require_coherent_flock`; a node
+# without it refuses to work). This replaces the mkdir/.lock/job scheme of `661cb5b9`-`e61ba86c`,
+# which was NOT atomic (the owner file was written after the mkdir, and stale takeover raced; found
+# by review 2026-09-24). A legacy `.lock/job` whose job is still RUNNING is also respected, for the
+# transition. The debug chain and a run's gpu_shared copy race through this lock; the loser skips,
+# and a completed run's pending copy is cancelled.
 INPUTS=/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz
 SIDECAR=/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz
 POOLS=/pscratch/sd/j/josephrb/pet-improvement-20260922/pools/pools.npz
@@ -26,25 +29,39 @@ row_name() { printf '%s' "${1%%$'\t'*}"; }
 is_complete() { [[ "$(cat "$OUT/$1/status.txt" 2>/dev/null)" == COMPLETE ]]; }
 target_path() { echo "$OUT/targets/${1}-${2}.json"; }
 
-held_by_other() {   # 0 if $OUT/$1 is locked by another RUNNING job
+require_coherent_flock() {
+  awk '$2 == "/pscratch" {print $4}' /proc/mounts | tr , '\n' | grep -qx flock || {
+    echo "$(date -u +%FT%TZ) job $SLURM_JOB_ID on $(hostname): /pscratch not mounted with flock; refusing" >&2
+    exit 3; }
+}
+
+legacy_holder_running() {   # 0 if an old-scheme .lock/job names another RUNNING job
   local holder
   holder=$(cat "$OUT/$1/.lock/job" 2>/dev/null) || return 1
   [[ -n "$holder" && "$holder" != "$SLURM_JOB_ID" ]] || return 1
   [[ "$(squeue -h -j "$holder" -o %T 2>/dev/null)" == RUNNING ]]
 }
 
-claim() {
-  local RUN="$OUT/$1"; mkdir -p "$RUN"
-  if mkdir "$RUN/.lock" 2>/dev/null; then echo "$SLURM_JOB_ID" > "$RUN/.lock/job"; return 0; fi
-  held_by_other "$1" && return 1
-  echo "$SLURM_JOB_ID" > "$RUN/.lock/job"          # stale (or our own, requeued): take over
-  echo "$(date -u +%FT%TZ) job $SLURM_JOB_ID took over the lock" >> "$RUN/lock-history.txt"
+LOCK_FDS=()
+claim() {   # take $OUT/$1/.flock for the rest of this job, or return 1 (someone holds it)
+  local RUN="$OUT/$1" fd
+  mkdir -p "$RUN"
+  legacy_holder_running "$1" && return 1
+  exec {fd}>>"$RUN/.flock"
+  if ! flock -n "$fd"; then exec {fd}>&-; return 1; fi
+  LOCK_FDS+=("$fd")
+  echo "$(date -u +%FT%TZ) job $SLURM_JOB_ID on $(hostname) holds the flock" >> "$RUN/lock-history.txt"
 }
 
-release() {
-  [[ "$(cat "$OUT/$1/.lock/job" 2>/dev/null)" == "$SLURM_JOB_ID" ]] && rm -rf "$OUT/$1/.lock"
-  return 0
+held_by_other() {   # 0 if another job holds $OUT/$1 (probe: take and drop the lock at once)
+  local fd
+  [[ -e "$OUT/$1/.flock" ]] || { legacy_holder_running "$1"; return; }
+  exec {fd}>>"$OUT/$1/.flock"
+  if flock -n "$fd"; then flock -u "$fd"; exec {fd}>&-; legacy_holder_running "$1"; return; fi
+  exec {fd}>&-; return 0
 }
+
+release() { return 0; }   # the flock is released when this job's processes exit
 
 cancel_pending_copy() {   # the run is COMPLETE: its gpu_shared copy is the loser
   local j
