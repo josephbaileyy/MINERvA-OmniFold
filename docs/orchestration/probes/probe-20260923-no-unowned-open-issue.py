@@ -525,7 +525,8 @@ def self_test():
                 wrong.append(f"{name}: wanted exit {want}, got {rc}")
         # main(): THIS file run as a command, so its dispatch and exit status are pinned too (review #36b)
         g0, g1 = tree("g0", ok, b"1\tOWNER\ta\n"), tree("g1", ok, b"")
-        if not all([git_init(g0), git_init(g1)]):
+        inited = [git_init(g0), git_init(g1)]
+        if not all(inited):     # only a missing or failing git fires this, so no mutation pins it where git runs
             wrong.append("git cannot run here, so the command checks cannot build their work trees")
         # with no git on PATH, git_init() must say False, not raise (review #38a)
         saved_path = os.environ.get("PATH", "")
@@ -665,7 +666,8 @@ MUTATIONS = [
     ("the command checks' ceiling dropped", 'base = clean_env(GIT_CEILING_DIRECTORIES=os.path.realpath(enc))', 'base = clean_env()'),
     ("the two exit-2 reasons merged", 'return None, f"git cannot run: {e}"', 'return None, f"not inside a git work tree: {e}"'),
     ("a missing git crashes the self-test", '    except OSError:\n        return False', '    except ImportError:\n        return False'),
-    ("a failed git init unreported", '        if not all([git_init(g0), git_init(g1)]):', '        if False:'),
+    # ("a failed git init unreported") is RETIRED: as `if False:` it also skipped both git_init() calls, so it went red
+    # through the command checks, not its own; with the calls kept apart it cannot go red where git runs (self-found)
     ("GIT_* variables inherited", 'if not k.startswith("GIT_") or k == "GIT_CEILING_DIRECTORIES"}', 'if True}'),
     ("git init not isolated", 'cwd=path, capture_output=True, env=clean_env())', 'cwd=path, capture_output=True)'),
     ("the work-tree lookup not isolated", '["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, env=clean_env())', '["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)'),
