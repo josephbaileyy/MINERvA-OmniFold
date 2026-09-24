@@ -1,3 +1,5 @@
+> **FIXED 2026-09-23** at `1ed88bbd`, and the figure was regenerated at `db550682` (row 59).
+
 ## The same construction exists in `pointcloud_projection.py`, off the gated path
 
 `nd-unfolding/pet/pointcloud_projection.py:236-241` has the identical shape -- `counts` over
