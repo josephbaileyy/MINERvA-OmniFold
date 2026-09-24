@@ -868,6 +868,13 @@ def mutations():
                 continue
             p = os.path.join(td, "m.py")
             open(p, "w", encoding="utf-8").write(src.replace(a, b, 1))
+            # the f-string mutant IS a syntax error before Python 3.12: there, failing to compile is the defect found,
+            # not a crash of the harness, which once exited 2 on 3.9 (and would on Perlmutter's 3.11; self-found)
+            if label == "a backslash in an f-string's braces" and sys.version_info < (3, 12):
+                try:
+                    compile(src.replace(a, b, 1), p, "exec")
+                except SyntaxError:
+                    continue
             r = subprocess.run([sys.executable, p, "--self-test"], capture_output=True, text=True, env=clean_env())
             # KILLED only if the self-test ran and reported a failed shape: a SyntaxError prints no "Traceback"
             # and was once counted as red (review #24b)
