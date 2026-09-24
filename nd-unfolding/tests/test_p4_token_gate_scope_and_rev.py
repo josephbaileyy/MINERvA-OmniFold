@@ -412,7 +412,12 @@ class Defect4b_ShellInvokedScriptsAreOnTheSurface(unittest.TestCase):
     def test_MUTATION_prefix_surface_OMITS_the_shell_invoked_scripts(self):
         """THE NEGATIVE CONTROL for #4's second half: with the shell-scan leg removed, the surface
         is the 18-module set repair-8 measured and the named module is absent. The KNOWN_ISSUES
-        #61 source leg postdates repair-8, so it is removed too to rebuild that surface."""
+        #61 source leg postdates repair-8, so it is removed too to rebuild that surface.
+
+        19, NOT 18, since 5afb7947 (2026-08-19): the unfold's provenance stamp imports
+        `seed_offset_policy`, and the Python import walker (not the shell leg this mutation
+        removes) now reaches it. So the rebuilt pre-fix surface is repair-8's 18 plus that one
+        file, and the test pins the file by name so a different 19th member cannot pass."""
         mut = _mutated_lib([(LIB_REL,
                              "    roots += sorted(_shell_invoked_scripts(shell, tracked) "
                              "- set(roots))",
@@ -422,7 +427,10 @@ class Defect4b_ShellInvokedScriptsAreOnTheSurface(unittest.TestCase):
                              "- set(shell))",
                              "    shell += []")])
         surf = mut.standard_p4_execution_surface()
-        self.assertEqual(len(surf), 18, f"repair-8 measured 18; got {len(surf)}: {surf}")
+        self.assertIn("nd-unfolding/seed_offset_policy.py", surf,
+                      "the import walker no longer reaches seed_offset_policy from the unfold")
+        self.assertEqual(len(surf), 19,
+                         f"repair-8 measured 18, +1 for seed_offset_policy; got {len(surf)}: {surf}")
         for mod in self.SHELL_INVOKED:
             self.assertNotIn(mod, surf, "pre-fix surface should omit it -- that was the defect")
         self.assertLess(len(surf), len(P.standard_p4_execution_surface()))

@@ -223,11 +223,19 @@ class PB2ProducingClosureResume(ReceiptGateIntegration):
     """
 
     def test_launcher_emits_exactly_the_six_producing_paths(self):
-        """The record the launcher actually writes, not a list restated in a test."""
+        """The record the launcher actually writes, not a list restated in a test.
+
+        SEVEN since 5afb7947 (2026-08-19); the name keeps "six" because
+        `unfold_nd_omnifold_unbinned.py` cites this test by name. That commit's provenance stamp
+        (`import seed_offset_policy` -> `est_seed_offset[_declared]`) made `seed_offset_policy.py`
+        a real dependency of the unfold, so the closure covering it is correct, not drift. The
+        commit named this pin as another lane's to re-measure; it was not re-measured until
+        2026-09-23."""
         self.assertEqual(set(launcher_surface_json()), {
             "2d-unfolding/unfold_2d_omnifold_unbinned.py",
             "nd-unfolding/flux_universe.py",
             "nd-unfolding/omnifold_nn_core.py",
+            "nd-unfolding/seed_offset_policy.py",
             "nd-unfolding/unfold_nd_omnifold_unbinned.py",
             "nd-unfolding/xsec_nd.py",
             "unbinned_unfolding/python/omnifold.py"})
