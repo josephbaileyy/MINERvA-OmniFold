@@ -1,3 +1,5 @@
+> **FIXED 2026-09-23** at `92f1a5e4`: the dead between-iteration compile is removed, with no behaviour change. The adopted anneal stays in `annealed_estimator.py`; re-pinned via Gate-4 20260923.
+
 ## The engine's per-iteration learning-rate anneal is dead code, so every iteration trains at full LR (found 2026-08-09)
 
 `MultiFold.Unfold()` calls `self.CompileModels(fixed=True)` after each iteration

@@ -1,3 +1,5 @@
+> **FIXED 2026-09-23** at `92f1a5e4`: the engine logs the last and best val_loss with their epochs. Engine re-pinned via the Gate-4 re-issue 20260923 (`9b0fc946`).
+
 ## The engine's "Last val loss" prints the FIRST epoch, not the last
 
 `omnifold_nn/omnifold/omnifold.py:303` logs `hist.history['val_loss'][0]` under the label

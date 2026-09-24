@@ -1,3 +1,5 @@
+> **FIXED 2026-09-23** at `533745a5`: the powered closure persists its normalization and architecture contract; launchers re-pinned.
+
 ## The closure driver persists no inference contract
 
 `closure_powered_truth_reweight.py:287` saves only `dump_rows_a/b`, `weights_push`, `mc_indices`.

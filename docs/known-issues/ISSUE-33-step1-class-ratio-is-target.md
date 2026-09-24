@@ -1,3 +1,5 @@
+> **FIXED 2026-09-23** at `21db9add`: the field is `step1_class_ratio_target`, and readers fall back to the legacy key.
+
 ## `step1_class_ratio` in the nominal artifact is a stored TARGET, not an achieved measurement
 
 Found 2026-08-07 by making the mistake. Investigating the nominal's fold-forward failure I read
