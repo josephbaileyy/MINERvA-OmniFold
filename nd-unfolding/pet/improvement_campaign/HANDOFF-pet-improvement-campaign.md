@@ -33,6 +33,13 @@ Read this, then `README.md` (state table), then `PROTOCOL-20260922.md` (design +
 
 ## Where things stand (update this block)
 
+- **2026-09-24 23:45Z** — Orchestration moved to a claude-school session (the personal session `b160e1e8` hit its
+  weekly limit; V1's delegate ended with it — the orchestrator now runs V1's harvest/analysis itself). **FINAL
+  complete 36/36**, gate clean (re-audit `confirm/results/audit_locks-20260924T2320Z.json`, 0 suspect; receipts
+  match the frozen manifest). Decisions: A, B, C all superior to CTL at K* = 10; adequate by the mean rule B@10,
+  C@10, C@3; only C@10 (0.786, lower bound 0.763) clears the floor with its lower bound. Report §11 and deck slide
+  15 carry it. STRESS running (6/360 iterations at 23:30Z; ~16 run-iterations per debug cycle when the queue is
+  free). Next: harvest STRESS (`confirm/harvest.sh stress`), decide coverage (amendment 2), review round 2.
 - **2026-09-24 12:30Z** — DEV complete; candidates frozen (amendment 2); PILOT complete (pool P, 3 replicates,
   reported separately); FINAL sized n = 12 before pool F was read; FINAL 15/36 runs harvested; STRESS (36 runs, pool
   T) queued behind FINAL. Review round 1 dispositioned (`REVIEW_DISPOSITION-20260924.md`); the run-lock BLOCK is

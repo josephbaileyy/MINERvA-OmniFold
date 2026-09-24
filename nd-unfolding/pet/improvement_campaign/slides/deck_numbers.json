@@ -4,13 +4,13 @@
  "root": "nd-unfolding/pet/improvement_campaign",
  "confirm": {
   "file_present": true,
-  "final_present": false,
+  "final_present": true,
   "stress_present": false
  },
  "main_slides": 17,
  "sources": {
   "../configuration_comparison/campaign_report.json": "96955a10222b6c95c13a5db0e48c9af96717371045398a837b996ba3d17625c2",
-  "confirm/results/confirm_results.json": "4a00848e37a08f6722e1c8deabca1724298ab27b484b9a5feb0ca67f675f259a",
+  "confirm/results/confirm_results.json": "4c71c9fef482f3d7ab1da8d58c44839a471deb118ade171db61a0b00269c2c0f",
   "phase_a/receipts/historical_receipts.json": "938b97521cc77e8278c69e32634ccf9c85ddadb0aaf6f6314c8fa3187734f495",
   "phase_a/receipts/runtime_audit_theirs.json": "8dadb3f32d3fec72e9ee282dc8e7509299e8cac41e9994cf6b8a69163e50531b",
   "phase_b/pet/results/b2e3-H-K10-s1.scores.json": "c181d5fcdc18f215b75207b411bc56fcfeabcec28805c862eaa59c2104c938e9",
@@ -37,7 +37,7 @@
   "phase_e/results/reference_assessment.json": "610e643515efbc347acd50f1184c9e944aa5ab4e41ec7c86ef06f38545a97af2",
   "phase_e/results/references.json": "5c27d2ce2109710215315c3a8935b8c0483ac2a0875ef7279eed556372ad40be",
   "phase_e/results/toy_reference.json": "dd5d85c699adbd3dd9ef16e68fc9c428f1945161821d911f9d582691305ce333",
-  "phase_f/results/aussie_ablation.json": "cbe81805d792468e9564630a2075f11671e200ab7c8c225c0f2db64cd3fa8d9b"
+  "phase_f/results/aussie_ablation.json": "8a5eb97f39f04ad824ff60a88b60d6878a192c0f936f550e65678aa195feb66c"
  },
  "numbers": [
   {
@@ -11212,21 +11212,24 @@
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      200,
+      "runs",
+      0,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      201,
+      "runs",
+      1,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      202,
+      "runs",
+      2,
       "aggregate"
      ]
     }
@@ -11242,21 +11245,24 @@
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      200,
+      "runs",
+      0,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      201,
+      "runs",
+      1,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      202,
+      "runs",
+      2,
       "aggregate"
      ]
     }
@@ -11272,21 +11278,24 @@
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      218,
+      "runs",
+      18,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      219,
+      "runs",
+      19,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      220,
+      "runs",
+      20,
       "aggregate"
      ]
     }
@@ -11302,21 +11311,24 @@
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      218,
+      "runs",
+      18,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      219,
+      "runs",
+      19,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      220,
+      "runs",
+      20,
       "aggregate"
      ]
     }
@@ -11437,14 +11449,16 @@
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      49,
+      "runs",
+      70,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      99,
+      "runs",
+      120,
       "aggregate"
      ]
     }
@@ -11460,14 +11474,16 @@
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      49,
+      "runs",
+      70,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      99,
+      "runs",
+      120,
       "aggregate"
      ]
     }
@@ -11483,14 +11499,16 @@
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      149,
+      "runs",
+      170,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      199,
+      "runs",
+      220,
       "aggregate"
      ]
     }
@@ -11506,14 +11524,1546 @@
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      149,
+      "runs",
+      170,
       "aggregate"
      ]
     },
     {
      "file": "phase_f/results/aussie_ablation.json",
      "path": [
-      199,
+      "runs",
+      220,
+      "aggregate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.A.lcb",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.1784475427942272,
+   "rendered": "+0.178",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "estimates",
+      "A",
+      "lower_95_one_sided"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.A.mean",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.18917441121358827,
+   "rendered": "+0.189",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "estimates",
+      "A",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.A.n",
+   "op": "field",
+   "fmt": "int",
+   "value": 12,
+   "rendered": "12",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "estimates",
+      "A",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.A.non_inferiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "non_inferiority",
+      "holm",
+      "A",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.A.superiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "holm",
+      "A",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.A.switching",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "switching",
+      "holm",
+      "A",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.B.lcb",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.23508739365636674,
+   "rendered": "+0.235",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "estimates",
+      "B",
+      "lower_95_one_sided"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.B.mean",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.253082295367953,
+   "rendered": "+0.253",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "estimates",
+      "B",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.B.n",
+   "op": "field",
+   "fmt": "int",
+   "value": 12,
+   "rendered": "12",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "estimates",
+      "B",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.B.non_inferiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "non_inferiority",
+      "holm",
+      "B",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.B.superiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "holm",
+      "B",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.B.switching",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "switching",
+      "holm",
+      "B",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.C.lcb",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.4454945337922399,
+   "rendered": "+0.445",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "estimates",
+      "C",
+      "lower_95_one_sided"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.C.mean",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.46971572832310104,
+   "rendered": "+0.470",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "estimates",
+      "C",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.C.n",
+   "op": "field",
+   "fmt": "int",
+   "value": 12,
+   "rendered": "12",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "estimates",
+      "C",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.C.non_inferiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "non_inferiority",
+      "holm",
+      "C",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.C.superiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "superiority",
+      "holm",
+      "C",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=10.C.switching",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=10",
+      "switching",
+      "holm",
+      "C",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.A.lcb",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.0,
+   "rendered": "+0.000",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "estimates",
+      "A",
+      "lower_95_one_sided"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.A.mean",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.0,
+   "rendered": "+0.000",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "estimates",
+      "A",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.A.n",
+   "op": "field",
+   "fmt": "int",
+   "value": 12,
+   "rendered": "12",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "estimates",
+      "A",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.A.non_inferiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "non_inferiority",
+      "holm",
+      "A",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.A.superiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": false,
+   "rendered": "no",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "holm",
+      "A",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.A.switching",
+   "op": "field",
+   "fmt": "bool",
+   "value": false,
+   "rendered": "no",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "switching",
+      "holm",
+      "A",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.B.lcb",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.1457632550359635,
+   "rendered": "+0.146",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "estimates",
+      "B",
+      "lower_95_one_sided"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.B.mean",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.15845370818899424,
+   "rendered": "+0.158",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "estimates",
+      "B",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.B.n",
+   "op": "field",
+   "fmt": "int",
+   "value": 12,
+   "rendered": "12",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "estimates",
+      "B",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.B.non_inferiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "non_inferiority",
+      "holm",
+      "B",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.B.superiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "holm",
+      "B",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.B.switching",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "switching",
+      "holm",
+      "B",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.C.lcb",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.23475331318241285,
+   "rendered": "+0.235",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "estimates",
+      "C",
+      "lower_95_one_sided"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.C.mean",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.2543883957211688,
+   "rendered": "+0.254",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "estimates",
+      "C",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.C.n",
+   "op": "field",
+   "fmt": "int",
+   "value": 12,
+   "rendered": "12",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "estimates",
+      "C",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.C.non_inferiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "non_inferiority",
+      "holm",
+      "C",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.C.superiority",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "superiority",
+      "holm",
+      "C",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.K=3.C.switching",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "tests",
+      "K=3",
+      "switching",
+      "holm",
+      "C",
+      "reject_H0"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.A.adequate",
+   "op": "field",
+   "fmt": "bool",
+   "value": false,
+   "rendered": "no",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "A",
+      "adequate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.A.good",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8630342179449736,
+   "rendered": "0.863",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "A",
+      "regions",
+      "good",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.A.lcb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4902072220366931,
+   "rendered": "0.490",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "A",
+      "lower_95"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.A.low_acceptance",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.14280486669801648,
+   "rendered": "0.143",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "A",
+      "regions",
+      "low_acceptance",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.A.mean",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5050514514590524,
+   "rendered": "0.505",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "A",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.A.moderate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.49243867112710665,
+   "rendered": "0.492",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "A",
+      "regions",
+      "moderate",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@10.adequate",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@10",
+      "adequate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@10.good",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9602650125498885,
+   "rendered": "0.960",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@10",
+      "regions",
+      "good",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@10.lcb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5547297352326171,
+   "rendered": "0.555",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@10",
+      "lower_95"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@10.low_acceptance",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.12040670572075463,
+   "rendered": "0.120",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@10",
+      "regions",
+      "low_acceptance",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@10.mean",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.568959335613417,
+   "rendered": "0.569",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@10",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@10.moderate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.638969901780369,
+   "rendered": "0.639",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@10",
+      "regions",
+      "moderate",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@3.adequate",
+   "op": "field",
+   "fmt": "bool",
+   "value": false,
+   "rendered": "no",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@3",
+      "adequate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@3.good",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8958040603619529,
+   "rendered": "0.896",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@3",
+      "regions",
+      "good",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@3.lcb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.46198504797990414,
+   "rendered": "0.462",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@3",
+      "lower_95"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@3.low_acceptance",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.08083313389617804,
+   "rendered": "0.081",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@3",
+      "regions",
+      "low_acceptance",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@3.mean",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.47433074843445827,
+   "rendered": "0.474",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@3",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.B@3.moderate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4073964856780303,
+   "rendered": "0.407",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "B@3",
+      "regions",
+      "moderate",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@10.adequate",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@10",
+      "adequate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@10.good",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.925973252156048,
+   "rendered": "0.926",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@10",
+      "regions",
+      "good",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@10.lcb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.7632507343917575,
+   "rendered": "0.763",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@10",
+      "lower_95"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@10.low_acceptance",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5675864669985315,
+   "rendered": "0.568",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@10",
+      "regions",
+      "low_acceptance",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@10.mean",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.7855927685685652,
+   "rendered": "0.786",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@10",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@10.moderate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8235303824585416,
+   "rendered": "0.824",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@10",
+      "regions",
+      "moderate",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@3.adequate",
+   "op": "field",
+   "fmt": "bool",
+   "value": true,
+   "rendered": "yes",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@3",
+      "adequate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@3.good",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.7533487418537165,
+   "rendered": "0.753",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@3",
+      "regions",
+      "good",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@3.lcb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5439832517742162,
+   "rendered": "0.544",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@3",
+      "lower_95"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@3.low_acceptance",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.2804054511115822,
+   "rendered": "0.280",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@3",
+      "regions",
+      "low_acceptance",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@3.mean",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5702654359666329,
+   "rendered": "0.570",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@3",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.C@3.moderate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5297830820496809,
+   "rendered": "0.530",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "C@3",
+      "regions",
+      "moderate",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.CTL.adequate",
+   "op": "field",
+   "fmt": "bool",
+   "value": false,
+   "rendered": "no",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "CTL",
+      "adequate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.CTL.good",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5938025846319851,
+   "rendered": "0.594",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "CTL",
+      "regions",
+      "good",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.CTL.lcb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.30120083429136274,
+   "rendered": "0.301",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "CTL",
+      "lower_95"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.CTL.low_acceptance",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.05320637371759798,
+   "rendered": "0.053",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "CTL",
+      "regions",
+      "low_acceptance",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.CTL.mean",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.3158770402454641,
+   "rendered": "0.316",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "CTL",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.adq.CTL.moderate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.2318199677359901,
+   "rendered": "0.232",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "adequacy",
+      "CTL",
+      "regions",
+      "moderate",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin.floor",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5559785254924289,
+   "rendered": "0.556",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "final",
+      "decisions",
+      "floors",
       "aggregate"
      ]
     }
@@ -14335,6 +15885,25 @@
    ]
   },
   {
+   "id": "p.C@10.P2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8755051337363162,
+   "rendered": "0.876",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "pilot",
+      "observations",
+      "C@10",
+      "2",
+      "R"
+     ]
+    }
+   ]
+  },
+  {
    "id": "p.C@3.P0",
    "op": "field",
    "fmt": "3",
@@ -14367,6 +15936,25 @@
       "observations",
       "C@3",
       "1",
+      "R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p.C@3.P2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.6967405807379767,
+   "rendered": "0.697",
+   "inputs": [
+    {
+     "file": "confirm/results/confirm_results.json",
+     "path": [
+      "pilot",
+      "observations",
+      "C@3",
+      "2",
       "R"
      ]
     }
@@ -14450,8 +16038,8 @@
    "id": "p.n_uncapped",
    "op": "field",
    "fmt": "int",
-   "value": 200,
-   "rendered": "200",
+   "value": 298,
+   "rendered": "298",
    "inputs": [
     {
      "file": "confirm/results/confirm_results.json",

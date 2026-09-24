@@ -747,7 +747,7 @@ def _group_runs(runs: list[dict], keyf) -> dict:
 
 
 def slide_aussie(d: Deck, n: Numbers) -> None:
-    runs = n.src.load(F_ABL)
+    runs = n.src.load(F_ABL)["runs"]   # schema phase-f-aussie-ablation/2
     g = _group_runs(runs, lambda r: (r["method"], r["miss_handling"], r["k_or_lambda"]))
     spec = [("f.omf_carry50", ("OmniFold", "carry", 50), "scalar OmniFold (HGB)", "carry-misses (the engine's rule)", "$k=50$"),
             ("f.omf_eff50", ("OmniFold", "eff", 50), "scalar OmniFold (HGB)", "efficiency-corrected", "$k=50$"),
@@ -756,8 +756,8 @@ def slide_aussie(d: Deck, n: Numbers) -> None:
     rows = []
     for nid, key, est, miss, setting in spec:
         idx = g[key]
-        val = n.add(nid, "mean", [(F_ABL, [i, "aggregate"]) for i in idx], "3")
-        n.add(nid + ".n", "count", [(F_ABL, [i, "aggregate"]) for i in idx], "int")
+        val = n.add(nid, "mean", [(F_ABL, ["runs", i, "aggregate"]) for i in idx], "3")
+        n.add(nid + ".n", "count", [(F_ABL, ["runs", i, "aggregate"]) for i in idx], "int")
         rows.append([est, miss, setting, val, n.r(nid + ".n")])
     n.add("f.gain_miss", "diff", ["f.aussie0", "f.aussie1000"], "+2")
     n.add("f.gain_miss_omf", "diff", ["f.omf_eff50", "f.omf_carry50"], "+2")
@@ -1277,6 +1277,12 @@ superiority, non-inferiority or adequacy statement is made in this deck.
         claim_ids += [f"fin.adq.{lab}.{x}" for x in ("mean", "lcb", *REGIONS, "adequate")]
         arows.append([LABEL_TEXT.get(lab, esc(lab))] + ids)
     n.f("fin.floor", CONFIRM, ["final", "decisions", "floors", "aggregate"], "3")
+    # the protocol's adequacy rule is on the MEAN; say where the lower bound falls short of the floor
+    floor = dec["floors"]["aggregate"]
+    short = [lab for lab, a in dec["adequacy"].items() if a["adequate"] and a["lower_95"] < floor]
+    caveat = ("" if not short else
+              r"\vspace{-8pt}\par{\tiny ``adequate'' = the protocol's rule on the mean; lower 95\,\% bound"
+              r" below the floor for " + ", ".join(esc(lab) for lab in short) + r".}")
     body = rf"""
 {{\scriptsize {design}}}\par\vspace{{3pt}}
 {{\small Decision inequalities vs CTL, one-sided $\alpha=0.05$, Holm across A, B, C (``yes'' = null rejected):}}
@@ -1286,7 +1292,7 @@ superiority, non-inferiority or adequacy statement is made in this deck.
 {{\small Adequacy against the historical floors, imported unchanged (aggregate floor {n.r("fin.floor")}):}}
 \begin{{center}}
 {table(["estimator", "mean", "lower 95\\,\\%", "low", "moderate", "good", "adequate"], arows, "lrrrrrc", r"\scriptsize")}
-\end{{center}}"""
+\end{{center}}{caveat}"""
     d.claim("FINAL decision inequalities and adequacy (pool F)", claim_ids + ["fin.floor"])
     d.frame("The confirmatory result (FINAL, pool F)", body, [CONFIRM])
     return has_final, has_stress

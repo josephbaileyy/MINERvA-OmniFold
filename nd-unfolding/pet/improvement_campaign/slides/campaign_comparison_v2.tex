@@ -404,38 +404,40 @@ conditional on the simulated response.}
 \end{frame}
 
 \gdef\evidencetext{\texttt{confirm/results/confirm\_results.json}}
-\begin{frame}{The confirmatory result: pending}
-\begin{alertblock}{Confirmatory results pending}
-\small The FINAL comparison (fresh pool F, $n$ independent replicates) has not been harvested into
-\texttt{confirm\_results.json}. No confirmatory decision,
-superiority, non-inferiority or adequacy statement is made in this deck.
-\end{alertblock}
-{\scriptsize Frozen before any fresh-pool row was read (protocol amendment 2): \textbf{CTL} = historical recipe at $k=3$; \textbf{A} = the same run at $K^*=10$ (iterations alone); \textbf{B} = C2 inputs at $K^*$ (carry-misses); \textbf{C} = efficiency-corrected step 2 at $K^*$. Adequacy judged like-for-like at $k=3$ and at $K^*$ against the unchanged historical floors.}\par\vspace{2pt}
-
-\begin{columns}[T]
-\begin{column}{0.55\linewidth}
-{\tiny
-\begin{tabular}{lrrr}
+\begin{frame}{The confirmatory result (FINAL, pool F)}
+{\scriptsize Frozen before any fresh-pool row was read (protocol amendment 2): \textbf{CTL} = historical recipe at $k=3$; \textbf{A} = the same run at $K^*=10$ (iterations alone); \textbf{B} = C2 inputs at $K^*$ (carry-misses); \textbf{C} = efficiency-corrected step 2 at $K^*$. Adequacy judged like-for-like at $k=3$ and at $K^*$ against the unchanged historical floors.}\par\vspace{3pt}
+{\small Decision inequalities vs CTL, one-sided $\alpha=0.05$, Holm across A, B, C (``yes'' = null rejected):}
+\begin{center}
+{\scriptsize
+\begin{tabular}{lrrrccc}
 \toprule
-PILOT, pool P & P0 & P1 & P2 \\
+candidate & $n$ & mean diff. & lower 95\,\% & superior & non-inf. & switch \\
 \midrule
-CTL (hist. recipe, $k=3$) & 0.297 & 0.329 & 0.349 \\
-A (same run, $K^*=10$) & 0.457 & 0.508 & 0.501 \\
-B (C2 inputs), $k=3$ & 0.454 & 0.455 & 0.504 \\
-B (C2 inputs), $K^*=10$ & 0.542 & 0.551 & 0.539 \\
-C (eff.-corr.), $k=3$ & 0.535 & 0.617 & --- \\
-C (eff.-corr.), $K^*=10$ & 0.722 & 0.796 & --- \\
-oracle anchor & 0.987 & 0.985 & 0.982 \\
+A vs CTL, $k=10$ & 12 & +0.189 & +0.178 & yes & yes & yes \\
+B vs CTL, $k=10$ & 12 & +0.253 & +0.235 & yes & yes & yes \\
+C vs CTL, $k=10$ & 12 & +0.470 & +0.445 & yes & yes & yes \\
+A vs CTL, $k=3$ & 12 & +0.000 & +0.000 & no & yes & no \\
+B vs CTL, $k=3$ & 12 & +0.158 & +0.146 & yes & yes & yes \\
+C vs CTL, $k=3$ & 12 & +0.254 & +0.235 & yes & yes & yes \\
 \bottomrule
-\end{tabular}}\par\vspace{2pt}
-{\tiny FINAL sized from these at $n=12$ (uncapped 200; capped by pool F).}
-\end{column}
-\begin{column}{0.43\linewidth}
-\includegraphics[width=0.95\linewidth]{figures_campaign/confirm_pilot.pdf}
-\end{column}
-\end{columns}
-{\tiny \textbf{PILOT observations are not confirmatory.} They size FINAL and are reported separately;
-they never enter the FINAL interval, and no decision is drawn from them.}
+\end{tabular}}
+\end{center}
+{\small Adequacy against the historical floors, imported unchanged (aggregate floor 0.556):}
+\begin{center}
+{\scriptsize
+\begin{tabular}{lrrrrrc}
+\toprule
+estimator & mean & lower 95\,\% & low & moderate & good & adequate \\
+\midrule
+CTL (hist. recipe, $k=3$) & 0.316 & 0.301 & 0.053 & 0.232 & 0.594 & no \\
+A (same run, $K^*=10$) & 0.505 & 0.490 & 0.143 & 0.492 & 0.863 & no \\
+B (C2 inputs), $K^*=10$ & 0.569 & 0.555 & 0.120 & 0.639 & 0.960 & yes \\
+C (eff.-corr.), $K^*=10$ & 0.786 & 0.763 & 0.568 & 0.824 & 0.926 & yes \\
+B (C2 inputs), $k=3$ & 0.474 & 0.462 & 0.081 & 0.407 & 0.896 & no \\
+C (eff.-corr.), $k=3$ & 0.570 & 0.544 & 0.280 & 0.530 & 0.753 & yes \\
+\bottomrule
+\end{tabular}}
+\end{center}\vspace{-8pt}\par{\tiny ``adequate'' = the protocol's rule on the mean; lower 95\,\% bound below the floor for B@10, C@3.}
 \end{frame}
 
 \gdef\evidencetext{\texttt{PROTOCOL-20260922.md \S 1}; \texttt{../configuration\_comparison/campaign\_report.json}}
@@ -469,7 +471,7 @@ margins) and cannot see hidden variables (D4d).
 \end{itemize}
 \textbf{Next choice}
 \begin{itemize}\footnotesize
-\item Confirmatory status: the FINAL comparison and the PET stress set are pending; until they land, every candidate statement above is development-stage evidence on the DEV halves.
+\item Confirmatory status: the FINAL decisions are on the previous slide; coverage runs only for a candidate adequate at $K^*$ that does not move away on any identifiable stress case.
 \item The miss rule is a model-dependence choice (carry-misses: slower, does not move away; efficiency
 correction: faster, fails when the event mix inside a truth bin changes). Whichever is recommended must be
 stated as that choice.
@@ -558,6 +560,28 @@ case & IBU carried $k$=3 & $k$=10 & IBU eff. $k$=3 & $k$=10 & GBDT $k$=3 & $k$=1
 \end{center}
 \end{frame}
 
+\gdef\evidencetext{\texttt{confirm/results/confirm\_results.json}}
+\begin{frame}{Appendix: PILOT (not confirmatory)}
+{\small PILOT (pool P) --- reported separately; never enters the FINAL interval; sizes FINAL only.}
+\begin{center}
+{\footnotesize
+\begin{tabular}{lrrr}
+\toprule
+PILOT, pool P & P0 & P1 & P2 \\
+\midrule
+CTL (hist. recipe, $k=3$) & 0.297 & 0.329 & 0.349 \\
+A (same run, $K^*=10$) & 0.457 & 0.508 & 0.501 \\
+B (C2 inputs), $k=3$ & 0.454 & 0.455 & 0.504 \\
+B (C2 inputs), $K^*=10$ & 0.542 & 0.551 & 0.539 \\
+C (eff.-corr.), $k=3$ & 0.535 & 0.617 & 0.697 \\
+C (eff.-corr.), $K^*=10$ & 0.722 & 0.796 & 0.876 \\
+oracle anchor & 0.987 & 0.985 & 0.982 \\
+\bottomrule
+\end{tabular}}
+\end{center}
+{\small FINAL sized at $n=12$ (uncapped 298).}
+\end{frame}
+
 \gdef\evidencetext{\texttt{slides/deck\_numbers.json}}
 \begin{frame}{Appendix: evidence files}
 {\small Every number in this deck is read from these committed files by
@@ -571,7 +595,7 @@ behind each, and \texttt{slides/CLAIM\_INDEX-deck.md} maps every claim to them. 
 file & sha256 \\
 \midrule
 \texttt{../configuration\_comparison/campaign\_report.json} & \texttt{96955a10222b6c95} \\
-\texttt{confirm/results/confirm\_results.json} & \texttt{4a00848e37a08f67} \\
+\texttt{confirm/results/confirm\_results.json} & \texttt{4c71c9fef482f3d7} \\
 \texttt{phase\_a/receipts/historical\_receipts.json} & \texttt{938b97521cc77e82} \\
 \texttt{phase\_a/receipts/runtime\_audit\_theirs.json} & \texttt{8dadb3f32d3fec72} \\
 \texttt{phase\_b/pet/results/summary.json} & \texttt{ed81c51f67e9df24} \\
@@ -582,7 +606,7 @@ file & sha256 \\
 \texttt{phase\_e/results/reference\_assessment.json} & \texttt{610e643515efbc34} \\
 \texttt{phase\_e/results/references.json} & \texttt{5c27d2ce21097102} \\
 \texttt{phase\_e/results/toy\_reference.json} & \texttt{dd5d85c699adbd3d} \\
-\texttt{phase\_f/results/aussie\_ablation.json} & \texttt{cbe81805d792468e} \\
+\texttt{phase\_f/results/aussie\_ablation.json} & \texttt{8a5eb97f39f04ad8} \\
 \bottomrule
 \end{tabular}}
 \end{center}
