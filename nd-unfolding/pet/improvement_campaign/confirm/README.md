@@ -2,6 +2,13 @@
 
 ## Status (resume anchor; newest first)
 
+- 2026-09-24 11:35Z: FINAL 15/36 complete (199/360 iterations), harvested; `final-C-F1` rerun from
+  iteration 0 in a fresh dir (6 flock-holding jobs, `lock-history.txt`), re-audit of 36 dirs clean.
+  Projection: FINAL complete ~17:00Z on the two debug chains. STRESS (6/360): two debug chains
+  58820947 / 58820949 queued to begin 17:30Z (after FINAL), plus its 36 gpu_shared copies and the
+  regular/preempt chains 58816008/58816009 (none started yet). STRESS needs ~12 h of debug time
+  after FINAL, i.e. past the NERSC certificate expiry (21:02Z); jobs continue without ssh,
+  harvesting needs a refreshed certificate.
 - 2026-09-24 07:18Z: relaunched on the flock code `d01a04a9` after the lock audit (below): FINAL debug
   chains 58815932 + 58815967 and 29 gpu_shared copies (the 7 COMPLETE FINAL rows get none);
   STRESS: 36 gpu_shared copies + full-node chains 58816008 (regular) and 58816009 (preempt).
