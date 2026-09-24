@@ -92,6 +92,27 @@ the other rows are unchanged (22, 81, 32). With the complete pilot (9/9, df = 2)
 C@10 259, B@3 32, C@3 298. **n for FINAL = 12 is unchanged** (the cap binds either way). The search
 is now exact and refuses rather than return its bound (`analyze_confirm.n_for_power`).
 
+## Lock audit (review BLOCK, 2026-09-24 07:20Z) -- `audit_locks.py`, `results/audit_locks.json`
+
+The run lock used from `661cb5b9` to `e61ba86c` (mkdir + owner file) was not atomic. All pending
+pv1 jobs were cancelled at ~07:00Z; the lock was replaced by a job-lifetime flock (`150ecaf8`,
+tested: 12 simultaneous contenders -> 1 holder; free after SIGKILL of the holder and its child);
+the audit ran after the last old-code job (58814884) ended.
+
+* Audited: **29 run directories** (PILOT 9, FINAL 16,
+  STRESS 4), **116 driver executions** by 33 jobs.
+* Checks per run: pairwise overlap of the DRIVER intervals of the jobs that ran the driver there
+  (job start, as an upper bound on the claim time, to the job's run-log last write), segment
+  contiguity (state/receipt), every executing job accounted for by a segment, each (iteration, step)
+  fitted exactly once.
+* **Suspect: 1 -- `final-C-F1`.** Drivers of 58812108 (iterations 7-8; last write 22:05:55 PT
+  iter08, log 22:06:04) and 58812932 (job start 22:06:00; restored at 22:08:29 and first wrote at
+  22:21) overlap by at most 4 s on the conservative bound. No duplicate fit, segments contiguous; the
+  second driver read the state after the first had finished writing. It is nevertheless
+  **quarantined** (`final/_quarantine/final-C-F1-driver-overlap-4s`, `results/final/_quarantine/`)
+  and **rerun from scratch**, as the review directs. Its numbers enter no table.
+* Every other run: no driver overlap, no duplicate fit, contiguous segments. Clean: PILOT 9/9.
+
 ## What this is
 
 PET is diagnostic method development; simulation only. This directory turns a frozen `RunConfig` plus
