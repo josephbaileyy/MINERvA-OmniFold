@@ -156,16 +156,21 @@ def test_population_target_and_scores_refuse_the_historical_output_dir(tmp_path)
 
 
 def test_sealed_pools_need_amendment_2(tmp_path):
+    text = ri.PROTOCOL.read_text()
+    before = text.split("### Amendment 2")[0]            # the protocol as it was before the freeze
+    unamended = tmp_path / "PROTOCOL-unamended.md"
+    unamended.write_text(before)
     for pool in ("P", "F"):
         with pytest.raises(scope.ScopeViolation):
-            ri.refuse_sealed_pool(pool)
-    assert ri.refuse_sealed_pool("S")["sealed"] is False
+            ri.refuse_sealed_pool(pool, unamended)
+    assert ri.refuse_sealed_pool("S", unamended)["sealed"] is False
     amended = tmp_path / "PROTOCOL.md"
-    amended.write_text(ri.PROTOCOL.read_text() + "\n### Amendment 2 (test) -- frozen candidates\n")
+    amended.write_text(before + "\n### Amendment 2 (test) -- frozen candidates\n")
     assert ri.refuse_sealed_pool("F", amended)["amendment_2_present"] is True
+    assert ri.refuse_sealed_pool("P")["amendment_2_present"] is True   # the committed protocol
     # a mention in prose is not an amendment
     prose = tmp_path / "P2.md"
-    prose.write_text(ri.PROTOCOL.read_text() + "\nsee Amendment 2 later\n")
+    prose.write_text(before + "\nsee Amendment 2 later\n")
     with pytest.raises(scope.ScopeViolation):
         ri.refuse_sealed_pool("P", prose)
 
@@ -249,7 +254,7 @@ def test_dev_distortion_equals_phase_e_d1_at_the_development_point():
     with pytest.raises(SystemExit):
         ri.get_distortion("dev", 0.70, 3.0)         # a config endpoint that is not historical
     with pytest.raises(SystemExit):
-        ri.get_distortion("R1_x1.05")               # reco-response: refused, not approximated
+        ri.get_distortion("R2_x1.01")               # R2/R3: refused, not approximated
     assert ri.get_distortion("D4c_p_up").needs_species
 
 
@@ -379,3 +384,60 @@ def test_scorer_anchors(tmp_path):
     assert len(k1["push"]["aggregate"]["signed_residual_per_bin"]) == 7
     assert k0["final_truth_weights_ess"]["ess"] == pytest.approx(
         k0["final_truth_weights_ess"]["ess_prior_only"])
+
+
+# ------------------------------------------------------------------------------------------- #
+# R1 on the PET path (amendment 3 item 3)
+# ------------------------------------------------------------------------------------------- #
+def test_r1_scales_pseudodata_cluster_energies_and_reco_eavail_only(synthetic, historical_mods):
+    ffd, DL = historical_mods["ffd"], historical_mods["DataLoader"]
+    rows = np.arange(0, synthetic.n, 2)
+    pseudo = rows[::3]
+    base = ri.load_signal_rows(ffd, DL, synthetic.npz, rows)
+    r1 = ri.load_signal_rows(ffd, DL, synthetic.npz, rows, reco_energy_scale=(pseudo, 1.05))
+    hit = np.isin(rows, pseudo) & np.asarray(base.mc.pass_reco, bool)
+    assert r1.meta["reco_energy_scale"] == {"factor": 1.05, "rows_scaled": int(hit.sum())}
+    e0, e1 = np.asarray(base.mc.reco)[..., 0], np.asarray(r1.mc.reco)[..., 0]
+    np.testing.assert_allclose(e1[hit], e0[hit] * 1.05, rtol=2e-7)
+    assert e1[~hit].tobytes() == e0[~hit].tobytes()                 # prior / non-reco rows
+    assert np.asarray(r1.mc.reco)[..., 1:].tobytes() == np.asarray(base.mc.reco)[..., 1:].tobytes()
+    for f in ("reco_evt", "gen", "gen_evt", "weight", "weight_reco", "pass_reco", "pass_gen"):
+        assert np.asarray(getattr(r1.mc, f)).tobytes() == np.asarray(getattr(base.mc, f)).tobytes(), f
+    col = ffd.SCALAR_COLS["eavail"]
+    np.testing.assert_allclose(r1.reco_scalars[hit, col], base.reco_scalars[hit, col] * 1.05,
+                               rtol=2e-7)
+    others = [c for c in range(base.reco_scalars.shape[1]) if c != col]
+    assert r1.reco_scalars[:, others].tobytes() == base.reco_scalars[:, others].tobytes()
+    assert r1.reco_scalars[~hit].tobytes() == base.reco_scalars[~hit].tobytes()
+
+
+def test_r1_distortion_parsing_and_arm_reader():
+    d = ri.get_distortion("R1_x1.05+D1_p0.350")
+    assert d.reco_energy_scale == 1.05 and d.record["truth"]["name"] == "D1_p0.350"
+    e = np.linspace(0.0, 8.0, 101)
+    np.testing.assert_array_equal(d.raw({"eavail": e}), ri.get_distortion("D1_p0.350").raw(
+        {"eavail": e}))
+    assert ri.get_distortion("R1_x0.95").reco_energy_scale == 0.95
+    for bad in ("R2_x1.01+D1_p0.350", "R3_s0.10", "R1_x1.05+R1_x0.95"):
+        with pytest.raises(SystemExit):
+            ri.get_distortion(bad)
+    base = lambda which, column, rows: np.full(len(rows), 2.0)          # noqa: E731
+    read = ri.scaled_reader(np, base, (np.array([3, 5]), 1.05))
+    got = read("reco", "eavail", np.array([1, 3, 5, 7]))
+    np.testing.assert_allclose(got, [2.0, 2.1, 2.1, 2.0], rtol=1e-7)
+    assert np.all(read("reco", "q3", np.array([3, 5])) == 2.0)
+    assert np.all(read("truth", "eavail", np.array([3, 5])) == 2.0)
+
+
+def test_frozen_configs_generate_with_only_seed_name_note_changed(tmp_path):
+    import freeze_runs as fr
+    from recipe import RunConfig
+    for cand in fr.CANDIDATES:
+        frozen, path, sha = fr.load_frozen(cand)
+        cfg = fr.reseed(frozen, fr.seed_for("P", 1), "x", "y")
+        rec = fr.verify_generated(cfg, path, sha)
+        assert rec["frozen_sha256"] == sha and rec["seed"] == fr.seed_for("P", 1)
+        bad = cfg.replace(iterations=3)
+        with pytest.raises(SystemExit):
+            fr.verify_generated(bad, path, sha)
+    assert len({fr.seed_for(p, r) for p in "PFT" for r in range(12)}) == 36
