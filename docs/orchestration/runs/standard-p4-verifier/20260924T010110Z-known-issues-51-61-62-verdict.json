@@ -1,0 +1,77 @@
+{
+  "receipt_kind": "standard-p4-verifier-verdict",
+  "subject": "Independent review of the standard-P4 execution surface at 036f507e, the known-issues lane's fix for KNOWN_ISSUES rows 51, 61 and 62, after it made the 20260922T053047Z PASS go TOKEN-REJECT (rule 4b) on 4 changed scope files. Issued by a lane that authored none of the 4.",
+  "utc": "20260924T010110Z",
+  "verdict": "PASS",
+  "code_rev": "036f507e45420464cfe7613ca38918cde2b991f0",
+  "branch": "main",
+  "authorizes_covariance_stages_4_6": true,
+  "review_scope": [
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "2d-unfolding/uq/hadd_universes_full.py",
+    "nd-unfolding/flux_universe.py",
+    "nd-unfolding/lib_member_resume.sh",
+    "nd-unfolding/omnifold_nn_core.py",
+    "nd-unfolding/p3s_manifest_summary.py",
+    "nd-unfolding/p4_build_components.py",
+    "nd-unfolding/p4_check_receipt.py",
+    "nd-unfolding/p4_check_verifier_token.py",
+    "nd-unfolding/p4_evidence.py",
+    "nd-unfolding/p4_lib.py",
+    "nd-unfolding/p4_project_4d.py",
+    "nd-unfolding/p4_validate_active_lateral.py",
+    "nd-unfolding/project_cov_nd.py",
+    "nd-unfolding/run_p4_merge_audit_std.sh",
+    "nd-unfolding/run_p4_standard.sh",
+    "nd-unfolding/run_p4_unfold_std.sh",
+    "nd-unfolding/seed_offset_policy.py",
+    "nd-unfolding/unfold_nd_omnifold_unbinned.py",
+    "nd-unfolding/uq_math.py",
+    "nd-unfolding/xsec_nd.py",
+    "setup_salloc_env.sh",
+    "unbinned_unfolding/python/omnifold.py"
+  ],
+  "supersedes": "20260922T053047Z-gbdt-cold-start-verdict.json (PASS at 3035f8b8; TOKEN-REJECT at 036f507e by rule 4b, 4 changed scope files)",
+  "WHO_ISSUED_THIS_AND_WHY_THAT_IS_THE_GATE": {
+    "author_of_record": "Claude Opus 5.5 (1M context), GBDT cold-start lane, 2026-09-23",
+    "authorization": "Joseph, directly to this lane on 2026-09-23, verbatim: \"Yes you can review them or have agy review them\" -- in answer to whether this lane, or an independent reviewer, should verify the 51/61/62 fix and issue the new verdict.",
+    "independence_basis": "036f507e was authored by the known-issues lane (git log: 'Claude Opus 5.5 (known-issues lane)'). This lane authored none of the 4 changed files. The review was done by an independent reviewer agent in its own isolated worktree, which did not write the code, and its receipts were then re-measured by this lane: the 4-file scope diff, no scope change after 036f507e in commits or working tree, the 23-path derived surface, and test_p4_ki61_ki62.py at 11 of 11."
+  },
+  "rule_checks_at_issue_time": {
+    "4a_code_rev_is_literal_40hex_and_ancestor": true,
+    "4b_scope_unchanged_commit_vs_HEAD": "verified: git diff --name-only 036f507e HEAD over the 23 scope paths is empty",
+    "4c_scope_unchanged_commit_vs_WORKING_TREE": "verified: git status over the 23 scope paths is empty"
+  },
+  "what_was_reviewed": [
+    "git diff 3035f8b8 036f507e over the 23 scope paths: exactly p4_build_components.py, p4_evidence.py, p4_lib.py, run_p4_standard.sh (+130/-26); the only commit touching scope in 3035f8b8..036f507e is 036f507e",
+    "row 51: the STOP_AFTER=audit message at run_p4_standard.sh now states truthfully what stage 1 writes (merged files, merge logs, the p3s manifest) and that it exits before stage 2",
+    "row 61: _shell_sourced_scripts puts the sourced libraries on the surface; removing that leg drops lib_member_resume.sh and setup_salloc_env.sh (23 -> 21 paths), and each leg of the derivation catches paths the other does not",
+    "row 62: the live shell _mr_insert/mr_declared and the live p4_evidence scoping agree on unfolds and evidence paths at offsets UNSET, 0, 1200 and -5, differing only where one side refuses a malformed value"
+  ],
+  "hazards_checked_by_measurement_not_by_reading": [
+    {
+      "hazard": "a stage-4-6 path overwriting the ADOPTED covariance's inputs on the baseline path (run_p4_unfold_std.sh destroys them)",
+      "measured": "run_p4_unfold_std.sh and lib_member_resume.sh are unchanged since 3035f8b8. The driver's guard and OUTDIR lines, copied verbatim and run against a fake baseline file: UNSET -> refuse (rc 9); 0 -> member_k000000 (not the baseline); 1200 and -5 -> member directories; malformed values refused. Baseline bytes unchanged in every case.",
+      "verdict": "SAFE"
+    },
+    {
+      "hazard": "p4_evidence's explicit offset 0 now scoping to a member tree",
+      "measured": "it now routes both UDIR and EVID to mii/member_k000000 where the old code routed EVID to the baseline; strictly safer. The orchestrator's no-flag call is unchanged.",
+      "verdict": "SAFE"
+    },
+    {
+      "hazard": "a new silent fail-open",
+      "measured": "none found: an unreadable sourced file leaves its driver on the surface and rule 4c refuses; regex over-matching can only add paths; member detection can only refuse; the new require() refuses an undeclared nonzero offset",
+      "verdict": "SAFE"
+    }
+  ],
+  "what_this_verdict_could_NOT_establish": [
+    "It is NOT a grade. It does not clear M1-M4, which travel with every use of 3d7465f6, and does not bear on cause 3.",
+    "No end-to-end run of stages 4-6 or of p4_evidence: ROOT is not available where this was reviewed. p4_evidence was measured through its argparse and scoping block.",
+    "No cluster state was checked: whether a deployed checkout matches 036f507e, or whether any in-flight consumer of the old token was affected when it went TOKEN-REJECT.",
+    "The two untracked setup.sh files sourced by setup_salloc_env.sh cannot be pinned by the gate.",
+    "Six tests in the -k p4/token/member selection fail; each traces to a cause predating 036f507e (stale expected counts and sweep snapshots), but they were not re-run at 3035f8b8.",
+    "It does NOT resolve the ten stale endpoint receipts, which a verifier PASS neither re-pins nor re-produces."
+  ],
+  "next_action": "The known-issues lane may close KNOWN_ISSUES rows 63, 67 and 68 (defects in the 20260922T053047Z token's bytes, superseded here). Rows 51, 61 and 62 were already closed on their records at b563b086, after 036f507e."
+}
