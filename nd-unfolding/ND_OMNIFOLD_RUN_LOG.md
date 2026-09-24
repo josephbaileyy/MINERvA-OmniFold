@@ -1,5 +1,33 @@
 # N-D OmniFold run log
 
+## 2026-09-24 — PET improvement campaign: diagnosis complete, confirmatory stage running
+
+Campaign `nd-unfolding/pet/improvement_campaign/` on branch `pet-improvement-20260922` (Joseph's 2026-09-22
+authorization, `docs/orchestration/AUTHORIZATION-20260922-pet-improvement-campaign.md`). PET stays diagnostic;
+the historical comparison's thresholds and `NEITHER_ELIGIBLE / NO_SELECTION` verdict are unchanged. Development
+evidence (DEV halves), not confirmatory:
+
+- **Runtime audit** (jobs 58742194/58742195, `phase_a/INTENDED_VS_EXECUTED-20260922.md`): both suspected recipe
+  discrepancies CONFIRMED — Gregor's arm ran Horovod-wrapped Keras Adam, not the declared TorchAdamW recipe; the
+  declared-identical step 2 ran at batch 2048 vs 512, lr 1e-4 vs 4e-4, on a different validation subset. Every fit
+  after iteration 0 ran at 1e-5; early stopping was inert (last-epoch weights handed on); the truth cloud carries
+  raw PDG codes.
+- **Scalar references** (`phase_b/scalar/SCALAR_REFERENCES-20260922.md`): no carry-misses estimator reaches the
+  0.556 floor at k = 3 (IBU + reco E_avail 0.472, GBDT 0.412); recovery still rising at k = 3; the 0.695 reference
+  is computed on (pT, p‖) cells, not the scored seven-bin spectrum (its own model on the scored object: 0.523).
+- **PET diagnostics** (`phase_b/pet/PET_DIAGNOSTICS-20260922.md`, 35+ A100-h): driver reproduces the historical
+  result (0.311 ± 0.028 vs 0.304 ± 0.014); truth PET learns the supplied tilt to 0.90–0.95; step 1 closes 94 % of
+  the reco E_avail marginal by k = 10; historical recipe 0.334 (k=3) → 0.506 (k=10); efficiency-corrected step 2
+  0.608 → 0.817 (+0.310 paired); reco energy summaries at step 1 +0.112 at k = 3; best-validation epoch −0.054.
+- **Robustness** (`phase_e/PHASE_E_SCALAR-20260922.md`): efficiency correction wins on E_avail tilts and fails when
+  a distortion changes the event mix inside a truth bin (NuWro variant −0.20); the neutron hidden-variable test
+  defeats every estimator; ±5 % hadronic scale moves recovery ±0.06.
+- **Confirmatory stage** (protocol amendments 2–3): candidates frozen before any fresh-pool row was read; PILOT
+  (pool P) done and reported separately; FINAL (pool F, n = 12, sized before pool F was read) and the PET stress set
+  (pool T) running. An independent cross-model review found a non-atomic run lock (fixed with flock; one suspect run
+  quarantined and rerun) and nine over-strong or unprovenanced claims (all corrected;
+  `improvement_campaign/REVIEW_DISPOSITION-20260924.md`).
+
 ## 2026-09-17 — per-arm inference cost measured
 
 First attempt `58461843` FAILED on `timeout` (exit 124, 35 min, no receipt) from a
