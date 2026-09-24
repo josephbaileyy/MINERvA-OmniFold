@@ -22,8 +22,9 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     not interpreted;
   * an index id that is not plain letters and digits, or used by more than one row;
   * a table whose header begins with `id` but is not exactly `id`;
-  * a line of the index that begins with `|` but was not parsed as part of an index table -- a row cut off by
-    a stray blank line or an indent is otherwise never seen (review #24b).
+  * a line of the index that begins with `|`, outside a FENCED code block, but was not parsed as part of any table --
+    a row cut off by a stray blank line or an indent is otherwise never seen (review #24b). A cut-off row
+    WITHOUT a leading pipe, or inside a blockquote, is not detected; the index always uses leading pipes.
 Exit 0 = none of these. Exit 2 = it could not read the index.
 
 ⚠ WHY A REGISTRY. The first versions read blocker lines written as Markdown, in detail files or index rows.
@@ -57,9 +58,15 @@ ID_RE = re.compile(r"^[\s*_]*([A-Za-z0-9]+)[\s*_]*$")
 
 def index_rows(text):
     """(id source, status source, line) for each body row of each table whose header's first cell is `id`, plus a
-    list of problems for headers that begin with `id` without being exactly `id`."""
+    list of problems: headers that begin with `id` without being exactly `id`, and `|`-led lines outside every
+    parsed table and every fenced code block."""
     toks, rows, problems, i = MD.parse(text), [], [], 0
     lines, covered = text.split("\n"), set()
+    # a `|` line in a FENCED code block is code, not a row -- a shell pipeline (#25b). An INDENTED `|` line is
+    # still refused: in this index it is far likelier a row cut off by an indent (#24b) than a code sample
+    for tk in toks:
+        if tk.type == "fence" and tk.map:
+            covered.update(range(tk.map[0], tk.map[1]))
     while i < len(toks):
         if toks[i].type != "table_open":
             i += 1
@@ -92,6 +99,7 @@ def index_rows(text):
 def read_registry(text):
     """{id: [(kind, text, line)]} and a list of problems."""
     reg, problems = {}, []
+    text = text[1:] if text.startswith("\ufeff") else text      # a UTF-8 BOM (#24b), stripped where a shape can pin it (#25b)
     for n, line in enumerate(text.split("\n"), 1):
         if not line.strip() or line.lstrip().startswith("#"):
             continue
@@ -145,51 +153,54 @@ def check(index_text, registry_text):
 
 def self_test():
     head = "| id | severity | status | failure | detail | updated |\n|---|---|---|---|---|---|\n"
-    shapes = [  # (name, index rows, registry, detail files, problems wanted)
-        ("OPEN row with one registry line", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\tlane B\n", {}, 0),
-        ("OPEN row with no registry line", "| 1 | L | OPEN | x | d | u |\n", "", {}, 1),
-        ("OPEN row with two registry lines", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n1\tD7\tb\n", {}, 1),
-        ("a registry line for a FIXED row", "| 1 | L | FIXED | x | d | u |\n", "1\tOWNER\ta\n", {}, 1),
-        ("a registry line for an id not in the index", "| 1 | L | FIXED | x | d | u |\n", "9\tOWNER\ta\n", {}, 1),
-        ("an unknown kind: malformed, and the row stays unowned", "| 1 | L | OPEN | x | d | u |\n", "1\tMAYBE\ta\n", {}, 2),
-        ("empty blocker text: malformed, and the row stays unowned", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\t \n", {}, 2),
-        ("two fields, not three", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER lane B\n", {}, 2),
-        ("comments and blank lines are ignored", "| 1 | L | OPEN | x | d | u |\n", "# c\n\n1\tJOSEPH\tt\n", {}, 0),
-        ("status in bold with a qualifier", "| 1 | L | **OPEN — DO NOT FIX** | x | d | u |\n", "1\tD7\tt\n", {}, 0),
-        ("status FIXED: with a colon, in bold", "| 1 | L | **FIXED:** 2026 at `abc` | x | d | u |\n", "", {}, 0),
-        ("lowercase open still needs a line", "| 1 | L | open | x | d | u |\n", "", {}, 1),
-        ("status struck with ~~ is refused, not read", "| 1 | L | ~~OPEN~~ FIXED | x | d | u |\n", "", {}, 1),
-        ("status in <del> is refused", "| 1 | L | <del>FIXED</del> OPEN | x | d | u |\n", "", {}, 1),
-        ("status in a code span is refused", "| 1 | L | `FIXED` | x | d | u |\n", "", {}, 1),
-        ("status word unknown", "| 1 | L | PENDING | x | d | u |\n", "", {}, 1),
-        ("REOPENED is not OPEN", "| 1 | L | REOPENED | x | d | u |\n", "", {}, 1),
+    shapes = [  # (name, index rows, registry, problems wanted)
+        ("OPEN row with one registry line", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\tlane B\n", 0),
+        ("OPEN row with no registry line", "| 1 | L | OPEN | x | d | u |\n", "", 1),
+        ("OPEN row with two registry lines", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n1\tD7\tb\n", 1),
+        ("a registry line for a FIXED row", "| 1 | L | FIXED | x | d | u |\n", "1\tOWNER\ta\n", 1),
+        ("a registry line for an id not in the index", "| 1 | L | FIXED | x | d | u |\n", "9\tOWNER\ta\n", 1),
+        ("an unknown kind: malformed, and the row stays unowned", "| 1 | L | OPEN | x | d | u |\n", "1\tMAYBE\ta\n", 2),
+        ("empty blocker text: malformed, and the row stays unowned", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\t \n", 2),
+        ("two fields, not three", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER lane B\n", 2),
+        ("comments and blank lines are ignored", "| 1 | L | OPEN | x | d | u |\n", "# c\n\n1\tJOSEPH\tt\n", 0),
+        ("status in bold with a qualifier", "| 1 | L | **OPEN — DO NOT FIX** | x | d | u |\n", "1\tD7\tt\n", 0),
+        ("status FIXED: with a colon, in bold", "| 1 | L | **FIXED:** 2026 at `abc` | x | d | u |\n", "", 0),
+        ("lowercase open still needs a line", "| 1 | L | open | x | d | u |\n", "", 1),
+        ("status struck with ~~ is refused, not read", "| 1 | L | ~~OPEN~~ FIXED | x | d | u |\n", "", 1),
+        ("status in <del> is refused", "| 1 | L | <del>FIXED</del> OPEN | x | d | u |\n", "", 1),
+        ("status in a code span is refused", "| 1 | L | `FIXED` | x | d | u |\n", "", 1),
+        ("status word unknown", "| 1 | L | PENDING | x | d | u |\n", "", 1),
+        ("REOPENED is not OPEN", "| 1 | L | REOPENED | x | d | u |\n", "", 1),
         # counts that DIFFER under the mutation each pins (a count equal either way pins nothing)
-        ("OPENED is not OPEN, and its registry line is stray", "| 1 | L | OPENED | x | d | u |\n", "1\tOWNER\ta\n", {}, 2),
-        ("lowercase open with its registry line", "| 1 | L | open | x | d | u |\n", "1\tOWNER\ta\n", {}, 0),
-        ("four fields, not three", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\tb\n", {}, 2),
-        ("a bold id is the same id", "| 1 | L | FIXED | x | d | u |\n| **1** | L | FIXED | y | d | u |\n", "", {}, 1),
-        ("an id with markup is refused", "| <span>1</span> | L | FIXED | x | d | u |\n", "", {}, 1),
+        ("OPENED is not OPEN, and its registry line is stray", "| 1 | L | OPENED | x | d | u |\n", "1\tOWNER\ta\n", 2),
+        ("lowercase open with its registry line", "| 1 | L | open | x | d | u |\n", "1\tOWNER\ta\n", 0),
+        ("four fields, not three", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\tb\n", 2),
+        ("a bold id is the same id", "| 1 | L | FIXED | x | d | u |\n| **1** | L | FIXED | y | d | u |\n", "", 1),
+        ("an id with markup is refused", "| <span>1</span> | L | FIXED | x | d | u |\n", "", 1),
         ("an OPEN row in a SECOND table is checked",
-         "| 1 | L | FIXED | x | d | u |\n\n## R\n\n" + head + "| 2 | L | OPEN | x | d | u |\n", "", {}, 1),
+         "| 1 | L | FIXED | x | d | u |\n\n## R\n\n" + head + "| 2 | L | OPEN | x | d | u |\n", "", 1),
         ("a table whose header is not id is not an index",
-         "| 1 | L | FIXED | x | d | u |\n\n| name | a | status |\n|---|---|---|\n| z | L | OPEN |\n", "", {}, 0),
+         "| 1 | L | FIXED | x | d | u |\n\n| name | a | status |\n|---|---|---|\n| z | L | OPEN |\n", "", 0),
         ("a header beginning `id` but not `id` is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| id (x) | a | status |\n|---|---|---|\n| 2 | L | OPEN |\n", "", {}, 1),
+         "| 1 | L | FIXED | x | d | u |\n\n| id (x) | a | status |\n|---|---|---|\n| 2 | L | OPEN |\n", "", 1),
         # --- review #24b: the real index's letter ids and status words, and rows the parser would not see
-        ("a letter id J36, OPEN with its line", "| J36 | L | OPEN | x | d | u |\n", "J36\tOWNER\ta\n", {}, 0),
-        *[(f"status {w} needs no line", f"| 1 | L | {w} 2026 | x | d | u |\n", "", {}, 0)
+        ("a letter id J36, OPEN with its line", "| J36 | L | OPEN | x | d | u |\n", "J36\tOWNER\ta\n", 0),
+        *[(f"status {w} needs no line", f"| 1 | L | {w} 2026 | x | d | u |\n", "", 0)
           for w in ("CLOSED", "RESOLVED", "WONTFIX", "RETRACTED")],
-        ("an id with trailing text is refused", "| 51 (reopened) | L | FIXED | x | d | u |\n", "", {}, 1),
-        ("spaces around the registry id and kind are accepted", "| 1 | L | OPEN | x | d | u |\n", " 1 \t OWNER \ta\n", {}, 0),
-        ("an upper-case ID header is still an index", "", "", {}, 0),
+        ("an id with trailing text is refused", "| 51 (reopened) | L | FIXED | x | d | u |\n", "", 1),
+        ("spaces around the registry id and kind are accepted", "| 1 | L | OPEN | x | d | u |\n", " 1 \t OWNER \ta\n", 0),
+        ("an upper-case ID header is still an index", "", "", 0),
         ("a row cut off by a blank line is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n| 2 | L | OPEN | x | d | u |\n", "", {}, 1),
+         "| 1 | L | FIXED | x | d | u |\n\n| 2 | L | OPEN | x | d | u |\n", "", 1),
+        ("a `|` line inside a fenced code block is not a row",
+         "| 1 | L | FIXED | x | d | u |\n\n```sh\ngrep x f \\\n  | sort\n```\n", "", 0),
+        ("a registry beginning with a UTF-8 BOM", "| 1 | L | OPEN | x | d | u |\n", "\ufeff# c\n1\tOWNER\ta\n", 0),
         ("a row cut off by an indent is refused",
-         "| 1 | L | FIXED | x | d | u |\n\n    | 2 | L | OPEN | x | d | u |\n", "", {}, 1),
-        ("CRLF registry lines", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\r\n", {}, 0),
+         "| 1 | L | FIXED | x | d | u |\n\n    | 2 | L | OPEN | x | d | u |\n", "", 1),
+        ("CRLF registry lines", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\r\n", 0),
     ]
     wrong = []
-    for name, body, reg, files, want in shapes:
+    for name, body, reg, want in shapes:
         doc = (head.replace("| id |", "| ID |", 1) + "| 1 | L | OPEN | x | d | u |\n") if "upper-case ID" in name else head + body
         reg = "1\tOWNER\ta\n" if "upper-case ID" in name else reg
         got, _, _ = check(doc, reg)
@@ -227,6 +238,9 @@ MUTATIONS = [
     ("header case-sensitive", "header = cur[1][0].strip().lower() if cur[1] else", "header = cur[1][0].strip() if cur[1] else"),
     ("id with trailing text read", 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)[\\s*_]*$")', 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)")'),
     ("a malformed line owns its row", "if e[0] in KINDS and e[1]])", "if True])"),
+    ("fenced blocks not excluded", '        if tk.type == "fence" and tk.map:', '        if False:'),
+    ("indented code excluded too", '        if tk.type == "fence" and tk.map:', '        if tk.type in ("fence", "code_block") and tk.map:'),
+    ("a BOM not stripped", 'text = text[1:] if text.startswith("\\ufeff") else text', 'text = text'),
     ("rows outside tables unseen", '        if l.lstrip().startswith("|") and n not in covered:', '        if False:'),
 ]
 
@@ -274,7 +288,7 @@ def main():
     except OSError as e:
         print(f"[owned] CANNOT LOOK :: {e}")
         return 2
-    registry = open(REGISTRY, encoding="utf-8-sig").read() if os.path.exists(REGISTRY) else None   # a BOM (#24b)
+    registry = open(REGISTRY, encoding="utf-8").read() if os.path.exists(REGISTRY) else None
     problems, n_rows, n_open = check(index, registry)
     if not n_rows:
         print("[owned] CANNOT LOOK :: no issue rows parsed")

@@ -64,8 +64,13 @@ the inference with an enumeration that a human maintains.
 again with no mutation suite, is fixed. The ledger guard now has two things it lacked. The first is
 `probes/probe-20260922-ledger-guard-mutations.py` (last changed at `29c3482c`): its `--regressions` requires
 every refusal site in the guard's CODE to carry an anchored regression, and every regression to change a
-result without crashing. That held for 31 of 31 at `0b828b53` (review #24a), and the seven-gates runner
+result, without crashing except for a precondition. That held for 31 of 31 at `0b828b53` (review #24a): 27
+fire without a crash, and the 4 preconditions fire through one, as allowed (⚠ this first dropped the
+precondition exception; review #25a), and the seven-gates runner
 re-runs it for the commit that closes this. The second is an automatic caller: the shared pre-commit hook has
 run the guard since `b6b19496` (row 71). The issue was held OPEN only as a place to log later defeats, which
-is not a defect. Further defeats of the guard are recorded in the review-residue report's ledger rows, not
+is not a defect. Its registered closure condition, *"it closes when the loop terminates or the guard is
+retired"* (in `BLOCKERS.tsv` from `f8d6f276` until this closure), is WITHDRAWN rather than met. It tied the
+row to the loop's diary, and not to the defect the row records (⚠ the closure first did not say so; review
+#25a). Further defeats of the guard are recorded in the review-residue report's ledger rows, not
 here.
