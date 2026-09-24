@@ -1772,15 +1772,8 @@
  },
  "final_progress": {
   "manifest_rows": 36,
-  "scored_complete": 8,
+  "scored_complete": 15,
   "missing": [
-   "final-C-F2",
-   "final-CTL-F3",
-   "final-B-F3",
-   "final-C-F3",
-   "final-CTL-F4",
-   "final-B-F4",
-   "final-C-F4",
    "final-CTL-F5",
    "final-B-F5",
    "final-C-F5",

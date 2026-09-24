@@ -1,5 +1,5 @@
 {
- "audited_at": "2026-09-24T00:16:01.471792-07:00",
+ "audited_at": "2026-09-24T04:31:45.764747-07:00",
  "runs": {
   "pilot/pilot-B-P0": {
    "run": "pilot-B-P0",
@@ -224,15 +224,18 @@
   },
   "final/final-B-F3": {
    "run": "final-B-F3",
-   "status": "INCOMPLETE",
+   "status": "COMPLETE",
    "executing_jobs": [
     "58813173",
     "58814145",
-    "58814884"
+    "58814884",
+    "58815932",
+    "58817152",
+    "58817962"
    ],
    "overlaps": [],
    "job_level_overlaps": [],
-   "segments": 3,
+   "segments": 6,
    "segment_problems": [],
    "jobs_without_segment": [],
    "duplicate_fits": [],
@@ -240,16 +243,73 @@
   },
   "final/final-B-F4": {
    "run": "final-B-F4",
-   "status": "INCOMPLETE",
+   "status": "COMPLETE",
    "executing_jobs": [
     "58813661",
-    "58813919"
+    "58813919",
+    "58815967",
+    "58817151",
+    "58817961",
+    "58818330"
    ],
    "overlaps": [],
    "job_level_overlaps": [],
-   "segments": 2,
+   "segments": 6,
    "segment_problems": [],
    "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "suspect": false
+  },
+  "final/final-B-F5": {
+   "run": "final-B-F5",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58817961",
+    "58818330",
+    "58818805",
+    "58819349",
+    "58820023"
+   ],
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 4,
+   "segment_problems": [],
+   "jobs_without_segment": [
+    "58820023"
+   ],
+   "duplicate_fits": [],
+   "suspect": false
+  },
+  "final/final-B-F6": {
+   "run": "final-B-F6",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58818329",
+    "58818806",
+    "58819350",
+    "58819771"
+   ],
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 4,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "suspect": false
+  },
+  "final/final-B-F7": {
+   "run": "final-B-F7",
+   "status": null,
+   "executing_jobs": [
+    "58820023"
+   ],
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 0,
+   "segment_problems": [],
+   "jobs_without_segment": [
+    "58820023"
+   ],
    "duplicate_fits": [],
    "suspect": false
   },
@@ -276,48 +336,34 @@
    "run": "final-C-F1",
    "status": "COMPLETE",
    "executing_jobs": [
-    "58809024",
-    "58809361",
-    "58810596",
-    "58811530",
-    "58812108",
-    "58812932"
+    "58815932",
+    "58817152",
+    "58817962",
+    "58818330",
+    "58818805",
+    "58819349"
    ],
-   "overlaps": [
-    {
-     "jobs": [
-      "58812108",
-      "58812932"
-     ],
-     "driver_overlap_s": 4
-    }
-   ],
-   "job_level_overlaps": [
-    {
-     "jobs": [
-      "58812108",
-      "58812932"
-     ],
-     "overlap_s": 51
-    }
-   ],
+   "overlaps": [],
+   "job_level_overlaps": [],
    "segments": 6,
    "segment_problems": [],
    "jobs_without_segment": [],
    "duplicate_fits": [],
-   "suspect": true
+   "suspect": false
   },
   "final/final-C-F2": {
    "run": "final-C-F2",
-   "status": "INCOMPLETE",
+   "status": "COMPLETE",
    "executing_jobs": [
     "58813173",
     "58814145",
-    "58814884"
+    "58814884",
+    "58815932",
+    "58817152"
    ],
    "overlaps": [],
    "job_level_overlaps": [],
-   "segments": 3,
+   "segments": 5,
    "segment_problems": [],
    "jobs_without_segment": [],
    "duplicate_fits": [],
@@ -325,15 +371,17 @@
   },
   "final/final-C-F3": {
    "run": "final-C-F3",
-   "status": "INCOMPLETE",
+   "status": "COMPLETE",
    "executing_jobs": [
     "58813661",
     "58814145",
-    "58814884"
+    "58814884",
+    "58815967",
+    "58817151"
    ],
    "overlaps": [],
    "job_level_overlaps": [],
-   "segments": 3,
+   "segments": 5,
    "segment_problems": [],
    "jobs_without_segment": [],
    "duplicate_fits": [],
@@ -341,14 +389,53 @@
   },
   "final/final-C-F4": {
    "run": "final-C-F4",
-   "status": "INCOMPLETE",
+   "status": "COMPLETE",
    "executing_jobs": [
     "58813661",
-    "58813919"
+    "58813919",
+    "58815967",
+    "58817151",
+    "58817961"
    ],
    "overlaps": [],
    "job_level_overlaps": [],
-   "segments": 2,
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "suspect": false
+  },
+  "final/final-C-F5": {
+   "run": "final-C-F5",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58818329",
+    "58818805",
+    "58819349",
+    "58820023"
+   ],
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 3,
+   "segment_problems": [],
+   "jobs_without_segment": [
+    "58820023"
+   ],
+   "duplicate_fits": [],
+   "suspect": false
+  },
+  "final/final-C-F6": {
+   "run": "final-C-F6",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58818329",
+    "58818806",
+    "58819350",
+    "58819771"
+   ],
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 4,
    "segment_problems": [],
    "jobs_without_segment": [],
    "duplicate_fits": [],
@@ -411,15 +498,18 @@
   },
   "final/final-CTL-F3": {
    "run": "final-CTL-F3",
-   "status": "INCOMPLETE",
+   "status": "COMPLETE",
    "executing_jobs": [
     "58813173",
     "58814145",
-    "58814884"
+    "58814884",
+    "58815932",
+    "58817151",
+    "58817962"
    ],
    "overlaps": [],
    "job_level_overlaps": [],
-   "segments": 3,
+   "segments": 6,
    "segment_problems": [],
    "jobs_without_segment": [],
    "duplicate_fits": [],
@@ -427,14 +517,17 @@
   },
   "final/final-CTL-F4": {
    "run": "final-CTL-F4",
-   "status": "INCOMPLETE",
+   "status": "COMPLETE",
    "executing_jobs": [
     "58813661",
-    "58813919"
+    "58813919",
+    "58815967",
+    "58817152",
+    "58817962"
    ],
    "overlaps": [],
    "job_level_overlaps": [],
-   "segments": 2,
+   "segments": 5,
    "segment_problems": [],
    "jobs_without_segment": [],
    "duplicate_fits": [],
@@ -444,11 +537,51 @@
    "run": "final-CTL-F5",
    "status": "INCOMPLETE",
    "executing_jobs": [
-    "58813919"
+    "58813919",
+    "58817961",
+    "58818330",
+    "58818805",
+    "58819349",
+    "58820023"
    ],
    "overlaps": [],
    "job_level_overlaps": [],
-   "segments": 1,
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [
+    "58820023"
+   ],
+   "duplicate_fits": [],
+   "suspect": false
+  },
+  "final/final-CTL-F6": {
+   "run": "final-CTL-F6",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58818329",
+    "58818806",
+    "58819350",
+    "58819771"
+   ],
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 4,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "suspect": false
+  },
+  "final/final-CTL-F7": {
+   "run": "final-CTL-F7",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58818806",
+    "58819350",
+    "58819771"
+   ],
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 3,
    "segment_problems": [],
    "jobs_without_segment": [],
    "duplicate_fits": [],
@@ -512,11 +645,14 @@
   }
  },
  "summary": {
-  "runs_audited": 29,
-  "jobs": 33,
-  "suspect": [
-   "final/final-C-F1"
-  ],
-  "runs_with_jobs_without_segment": []
+  "runs_audited": 36,
+  "jobs": 47,
+  "suspect": [],
+  "runs_with_jobs_without_segment": [
+   "final/final-B-F5",
+   "final/final-B-F7",
+   "final/final-C-F5",
+   "final/final-CTL-F5"
+  ]
  }
 }

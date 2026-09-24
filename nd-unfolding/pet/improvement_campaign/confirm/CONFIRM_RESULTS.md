@@ -9,12 +9,13 @@ pseudodata truth (like-for-like). CTL = the frozen `b2e3-H-K10-s1` run scored at
 run at K* = 10. Sizes follow the protocol (prior 600,130, pseudodata 600,111), the reverse of the
 historical closure's orientation (a 19-event swap; amendment 3).
 
-## Status (2026-09-24 06:40Z)
+## Status (2026-09-24 11:35Z)
 
-- PILOT: 9 of 9 runs complete and scored. **Reported separately; never enters FINAL.** The sizing
-  record (README) was committed from 8 of 9 runs; the ninth (`pilot-C-P2`) does not change n.
-- FINAL: 8 of 36 runs scored, 101 of 360 iterations done (two iterations per 30-min debug round).
-- STRESS: 6 of 360 iterations; its gpu_shared / regular / preempt copies have not started.
+- PILOT: 9 of 9 runs complete. **Reported separately; never enters FINAL.**
+- FINAL: 15 of 36 runs complete (199 of 360 iterations). The rerun of `final-C-F1` (fresh run dir,
+  from iteration 0, flock code) is one of the 15; the lock re-audit at 11:35Z over 36 run dirs finds
+  no suspect. No inferential statistic until all 36 are in.
+- STRESS: 6 of 360 iterations; none of its gpu_shared / regular / preempt copies has started.
 
 ### PILOT (pool P; reported separately, never enters FINAL)
 
@@ -28,13 +29,13 @@ historical closure's orientation (a 19-event swap; amendment 3).
 |---|---|---:|---:|---:|---:|
 | A - CTL | +0.160, +0.179, +0.152 | +0.164 | 0.0140 (2) | 0.0296 | 22 |
 | B@10 - CTL | +0.246, +0.222, +0.189 | +0.219 | 0.0282 (2) | 0.0597 | 81 |
-| C@10 - CTL | +0.425, +0.467, +0.526 | +0.473 | 0.0509 (2) | 0.1078 | >= 200 |
+| C@10 - CTL | +0.425, +0.467, +0.526 | +0.473 | 0.0509 (2) | 0.1078 | 259 |
 | B@3 - CTL | +0.157, +0.126, +0.155 | +0.146 | 0.0171 (2) | 0.0361 | 32 |
-| C@3 - CTL | +0.238, +0.288, +0.348 | +0.292 | 0.0547 (2) | 0.1157 | >= 200 |
+| C@3 - CTL | +0.238, +0.288, +0.348 | +0.292 | 0.0547 (2) | 0.1157 | 298 |
 
-**n for FINAL = 12** (uncapped 200; cap 12).
+**n for FINAL = 12** (uncapped 298; cap 12).
 
-### FINAL: 8 of 36 runs scored -- no decision statistic is computed until all are in (fixed-n design)
+### FINAL (INTERIM, descriptive only): 15 of 36 frozen runs scored; no inferential statistic is computed until the complete, provenance-clean manifest is in (fixed-n design)
 
 
 
