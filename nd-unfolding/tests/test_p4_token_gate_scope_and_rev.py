@@ -411,11 +411,16 @@ class Defect4b_ShellInvokedScriptsAreOnTheSurface(unittest.TestCase):
 
     def test_MUTATION_prefix_surface_OMITS_the_shell_invoked_scripts(self):
         """THE NEGATIVE CONTROL for #4's second half: with the shell-scan leg removed, the surface
-        is the 18-module set repair-8 measured and the named module is absent."""
+        is the 18-module set repair-8 measured and the named module is absent. The KNOWN_ISSUES
+        #61 source leg postdates repair-8, so it is removed too to rebuild that surface."""
         mut = _mutated_lib([(LIB_REL,
                              "    roots += sorted(_shell_invoked_scripts(shell, tracked) "
                              "- set(roots))",
-                             "    roots += []")])
+                             "    roots += []"),
+                            (LIB_REL,
+                             "    shell += sorted(_shell_sourced_scripts(shell, tracked) "
+                             "- set(shell))",
+                             "    shell += []")])
         surf = mut.standard_p4_execution_surface()
         self.assertEqual(len(surf), 18, f"repair-8 measured 18; got {len(surf)}: {surf}")
         for mod in self.SHELL_INVOKED:

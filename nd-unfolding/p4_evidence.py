@@ -53,26 +53,26 @@ CEN4 = f"{ND}/products/4d/xsec_4d_MEFHC_5iter_lgbm.root"
 # Scoping MDIR would have made every member look for inputs that do not exist, and creating them
 # would have cost orders more and measured the wrong thing.
 _ap = argparse.ArgumentParser(description="P4 standard evidence + manifest generator")
-_ap.add_argument("--est-seed-offset", type=int, default=0,
-                 help="declared member offset k; unfolds and evidence are read/written under "
-                      "mii/member_k<NNNNNN>/ and the required seed becomes 42+k")
+# KNOWN_ISSUES #62: the default is None (UNDECLARED), not 0. The shell convention in
+# lib_member_resume.sh is canonical and branches on DECLARED-NESS: unset -> baseline paths, an explicit
+# `0` -> member_k000000. With `default=0` this file could not tell `--est-seed-offset 0` from no flag
+# and read the baseline while run_p4_unfold_std.sh had written member_k000000.
+_ap.add_argument("--est-seed-offset", type=int, default=None,
+                 help="declared member offset k (omit for the baseline); unfolds and evidence are "
+                      "read/written under mii/member_k<NNNNNN>/ -- including k=0 -- and the "
+                      "required seed becomes 42+k")
 _ARGS = _ap.parse_args()
-EST_SEED_OFFSET = int(_ARGS.est_seed_offset)
+EST_SEED_OFFSET_DECLARED = _ARGS.est_seed_offset is not None
+# The VALUE still drives the seed and the reproduction sense: the k=0 member runs seed 42 and must
+# reproduce the archive, which is what makes it an anchor.
+EST_SEED_OFFSET = int(_ARGS.est_seed_offset) if EST_SEED_OFFSET_DECLARED else 0
 
 
 def _member_scope(path):
-    """Insert `mii/member_kNNNNNN` after `/nd-unfolding/`, matching lib_member_resume.sh's
-    `_mr_insert` -- MEMBER-ROOT-FIRST, so a member tree is never underneath a canonical archive
-    namespace. At offset 0 the path is returned unchanged, so every historical caller is byte-exact.
-    """
-    if EST_SEED_OFFSET == 0:
-        return path
-    k = EST_SEED_OFFSET
-    name = f"member_kneg{-k:06d}" if k < 0 else f"member_k{k:06d}"
-    anchor = "/nd-unfolding/"
-    P.require(anchor in path, f"cannot member-scope a path with no {anchor} anchor: {path}")
-    head, _, tail = path.partition(anchor)
-    return f"{head}{anchor}mii/{name}/{tail}"
+    """`p4_lib.member_scope_path`, the Python twin of lib_member_resume.sh's `_mr_insert` --
+    MEMBER-ROOT-FIRST, so a member tree is never underneath a canonical archive namespace.
+    Unchanged only when NO offset is declared, so every historical caller is byte-exact."""
+    return P.member_scope_path(path, EST_SEED_OFFSET if EST_SEED_OFFSET_DECLARED else None)
 
 
 UDIR = _member_scope(f"{ND}/active_universe_5d/standard/unfolds")

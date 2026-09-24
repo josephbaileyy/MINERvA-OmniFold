@@ -34,9 +34,14 @@
 #   merge_active_endpoints.sh, run_active_lateral_unfolds_interactive.sh  (guarded to abort)
 #
 # STOP_AFTER controls the last stage to run. DEFAULT IS 'audit' -- changed in repair-4 from
-# 'evidence', because reordering put `unfold` (which WRITES receipts) before evidence, and a
-# default that silently starts writing receipts is the opposite of a safe preflight. Valid:
+# 'evidence', because reordering put `unfold` (which WRITES receipts) before evidence. Valid:
 #   audit | unfold | evidence | components | validate | project
+# KNOWN_ISSUES #51: `audit` writes NO RECEIPTS, but it is NOT write-free. Stage 1 (re)builds any
+# missing or invalid merged endpoint ROOT (+ its merge_*.log) under
+# active_universe_5d/standard/merged/, and p3s_manifest_summary.py atomically replaces the
+# observation-mode summary active_universe_5d/standard/p3s_standard_manifest.json. It also exits
+# BEFORE stage 2, so it says nothing about whether the endpoints would re-run; for that, run the
+# resume guard's own checker (p4_check_receipt.py) standalone.
 # Covariance stages (4-6) run ONLY with a P4_VERIFIER_PASS token bound to a verifier receipt.
 set -o pipefail
 export HOME=/global/homes/j/josephrb
@@ -88,7 +93,7 @@ run(){ echo "[p4-std] STAGE $*"; "$@" || { echo "[p4-std] ABORT at: $*"; exit 1;
 
 echo "[p4-std] canonical driver start $(date -u +%T); STOP_AFTER=${STOP_AFTER}; code_rev=$(git rev-parse HEAD)"
 run bash run_p4_merge_audit_std.sh
-[[ "${STOP_AFTER}" == "audit" ]] && { echo "[p4-std] stop after merge+audit (safe preflight; nothing written)"; exit 0; }
+[[ "${STOP_AFTER}" == "audit" ]] && { echo "[p4-std] stop after merge+audit (no receipts written; merged ROOTs (re)built only if missing/invalid; observation-mode p3s_standard_manifest.json refreshed; stage-2 resume NOT checked)"; exit 0; }
 run bash run_p4_unfold_std.sh
 [[ "${STOP_AFTER}" == "unfold" ]] && { echo "[p4-std] stop after unfold"; exit 0; }
 run env P4_CODE_REV="$(git rev-parse HEAD)" python3 p4_evidence.py

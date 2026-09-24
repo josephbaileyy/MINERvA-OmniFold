@@ -757,7 +757,43 @@ def member_offset_of_path(path):
     return 0
 
 
-def require_candidate_path(path, expected_offset=0):
+def member_dir_name(offset):
+    """`member_k<NNNNNN>` / `member_kneg<NNNNNN>` for a DECLARED offset; `None` when undeclared.
+
+    The Python twin of `lib_member_resume.sh:mr_member_dir`, which is the CANONICAL convention
+    (KNOWN_ISSUES #62): the namespace is decided by DECLARED-NESS, not by the value. `None` is
+    the baseline; an explicit `0` is the k=0 anchor MEMBER and gets `member_k000000` like every
+    other member -- that file's header, "THE ANCHOR IS NOT AN EXCEPTION". Branching on `== 0`
+    instead is what made `MNV_EST_SEED_OFFSET=0` write where the evidence stage did not read."""
+    if offset is None:
+        return None
+    k = int(offset)
+    return f"member_kneg{-k:06d}" if k < 0 else f"member_k{k:06d}"
+
+
+def member_scope_path(path, offset):
+    """`lib_member_resume.sh:_mr_insert`, in Python: put `mii/<member>` after the FIRST
+    `/nd-unfolding/` of an absolute path, or in front of a relative one; unchanged when `offset`
+    is `None` (undeclared). An absolute path with no anchor fails closed, as in the shell."""
+    name = member_dir_name(offset)
+    if name is None:
+        return path
+    anchor = "/nd-unfolding/"
+    if anchor in path:
+        head, _, tail = path.partition(anchor)
+        return f"{head}{anchor}mii/{name}/{tail}"
+    require(not path.startswith("/"),
+            f"cannot member-scope an absolute path with no {anchor} anchor: {path}")
+    return f"mii/{name}/{path}"
+
+
+def member_declared_in_path(path):
+    """True iff the path's OWN LOCATION is a member tree (a `member_k*` component). Distinguishes
+    the k=0 member from the baseline, which `member_offset_of_path` (0 for both) cannot."""
+    return any(c.startswith("member_k") for c in os.path.abspath(path).split(os.sep))
+
+
+def require_candidate_path(path, expected_offset=0, declared=None):
     """Positive allowlist + negative denylist: a candidate MUST live under the
     candidate subdir and MUST NOT match any adopted/protected token. Prevents both
     the round-2 self-rejection (candidate name containing '_final') and any write
@@ -779,12 +815,19 @@ def require_candidate_path(path, expected_offset=0):
     # `/evil/active_universe_5d/standard/candidate/out.root` passed, and normpath does not
     # resolve symlinks. Containment must be RESOLVED and anchored to this repository:
     # realpath both sides, then require commonpath(candidate_root, target) == candidate_root.
-    if int(expected_offset) == 0:
+    #
+    # KNOWN_ISSUES #62: `declared` separates the k=0 MEMBER from the baseline. `None` keeps the
+    # historical value-based reading (declared iff offset != 0) for every existing caller; a caller
+    # that knows it is in a member tree passes `declared=True` and gets member_k000000's root.
+    if declared is None:
+        declared = int(expected_offset) != 0
+    require(declared or int(expected_offset) == 0,
+            f"undeclared member offset must be 0, got {expected_offset}")
+    if not declared:
         cand_root = os.path.realpath(os.path.join(ND_ROOT, CANDIDATE_SUBDIR))
     else:
-        _k = int(expected_offset)
-        _m = f"member_kneg{-_k:06d}" if _k < 0 else f"member_k{_k:06d}"
-        cand_root = os.path.realpath(os.path.join(ND_ROOT, "mii", _m, CANDIDATE_SUBDIR))
+        cand_root = os.path.realpath(os.path.join(ND_ROOT, "mii", member_dir_name(expected_offset),
+                                                  CANDIDATE_SUBDIR))
     # Callers pass repo-relative ("nd-unfolding/active_universe_5d/...") or ND-relative
     # ("active_universe_5d/...") paths depending on where they cd to, so resolve a relative
     # path against BOTH known roots and accept it if either lands inside. An absolute path is
@@ -948,6 +991,50 @@ def _shell_invoked_scripts(shell_paths, tracked):
     return found
 
 
+# KNOWN_ISSUES #61: a shell file that a driver `source`s (or `.`-includes). The leg above names only
+# `.py` tokens, so a SOURCED `.sh` was never resolved, and two load-bearing libraries were off the
+# surface: `nd-unfolding/lib_member_resume.sh` (sourced by run_p4_unfold_std.sh; `mr_declared` is
+# the baseline-overwrite guard's predicate and `mr_prefix` picks the output directory) and
+# `setup_salloc_env.sh` (sourced by run_p4_standard.sh; selects the execution environment). A PASS
+# token therefore stayed valid across edits to them. The word before the path must be `source` or a
+# lone `.` preceded by start-of-line, whitespace or a shell separator, so `e.g.` and a sentence
+# ending in `.` do not match; an unresolvable token is dropped, exactly as for `.py`.
+_SHELL_SOURCE_TOKEN = re.compile(
+    r"""(?:^|[\s;&|{(])(?:source|\.)[ \t]+["']?([^\s"';|&)]+)""", re.M)
+
+
+def _shell_sourced_scripts(shell_paths, tracked):
+    """Tracked files `source`d / `.`-included by the given shell files, TRANSITIVELY.
+
+    Same segment resolution as `_shell_invoked_scripts` (a `${VAR}` segment is stripped, then the
+    remainder is tried repo-relative and relative to the including file's directory, and `..` is
+    normalised). Every tracked candidate is kept rather than the first: over-inclusion costs a
+    verifier re-run, under-inclusion is KNOWN_ISSUES #61. Untracked targets (e.g. a build tree's
+    `setup.sh`) cannot be pinned by a git-identity gate and are dropped."""
+    found, seen, frontier = set(), set(shell_paths), sorted(shell_paths)
+    while frontier:
+        nxt = []
+        for sh in frontier:
+            try:
+                text = (REPO_ROOT_PATH / sh).read_text(errors="replace")
+            except Exception:
+                continue
+            shdir = os.path.dirname(sh)
+            for m in _SHELL_SOURCE_TOKEN.finditer(text):
+                segs = [s for s in m.group(1).split("/") if s and s != "." and "$" not in s]
+                if not segs:
+                    continue
+                rel = "/".join(segs)
+                for cand in {os.path.normpath(rel),
+                             os.path.normpath(f"{shdir}/{rel}") if shdir else os.path.normpath(rel)}:
+                    if cand in tracked and cand not in seen:
+                        seen.add(cand)
+                        found.add(cand)
+                        nxt.append(cand)
+        frontier = sorted(nxt)
+    return found
+
+
 def standard_p4_execution_surface(entrypoints=None, max_depth=6):
     """Every tracked first-party module reachable from the chain's entrypoints, by IMPORT.
 
@@ -957,7 +1044,10 @@ def standard_p4_execution_surface(entrypoints=None, max_depth=6):
 
     repair-9: the shell drivers are also scanned for the scripts they INVOKE, and those are used
     as additional import-walk roots -- otherwise a shell-invoked module and everything it imports
-    is outside the surface entirely (verifier defect #4)."""
+    is outside the surface entirely (verifier defect #4).
+
+    KNOWN_ISSUES #61: the shell files the drivers `source` are resolved too, transitively, and are
+    both on the surface and scanned for the scripts THEY invoke."""
     import ast
     tracked = set()
     try:
@@ -978,6 +1068,10 @@ def standard_p4_execution_surface(entrypoints=None, max_depth=6):
     # their own imports too, instead of being bolted on afterwards as leaves.
     shell = sorted(p for p in tracked
                    if p.startswith("nd-unfolding/run_p4_") and p.endswith(".sh"))
+    # KNOWN_ISSUES #61: what the drivers SOURCE executes in the driver's own shell, so it is part
+    # of the surface, and it may itself invoke `.py` scripts -- hence it joins `shell` BEFORE the
+    # invoked-script scan below.
+    shell += sorted(_shell_sourced_scripts(shell, tracked) - set(shell))
     roots = list(entrypoints or STANDARD_P4_ENTRYPOINTS)
     roots += sorted(_shell_invoked_scripts(shell, tracked) - set(roots))
 

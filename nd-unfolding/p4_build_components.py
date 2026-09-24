@@ -141,7 +141,12 @@ def main():
                   f"implies {P.standard_seed_for_offset(_offset)}; the manifest disagrees with "
                   f"itself about which estimator produced these unfolds")
 
-    P.require_candidate_path(a.out, expected_offset=_offset)   # positive+negative guard (fixes round-2 self-reject)
+    # KNOWN_ISSUES #62: a member_k000000 manifest (the k=0 anchor member) has offset 0 like the
+    # baseline, so the manifest's TREE decides which candidate root is allowed -- otherwise its
+    # candidate would be accepted into the baseline candidate area.
+    _tree_declared = P.member_declared_in_path(os.path.abspath(a.manifest))
+    P.require_candidate_path(a.out, expected_offset=_offset,
+                             declared=_tree_declared)   # positive+negative guard (fixes round-2 self-reject)
     for bad in SUPERSEDED_TOKENS:
         P.require(bad not in a.support_family, f"support family superseded/non-bkgaware ({bad})")
     P.require(BKGAWARE_DIR in a.support_family, "support family must be the corrected bkgaware combined cov")
