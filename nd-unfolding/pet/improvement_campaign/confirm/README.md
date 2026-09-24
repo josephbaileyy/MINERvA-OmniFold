@@ -2,6 +2,22 @@
 
 ## Status (resume anchor; newest first)
 
+- 2026-09-24 17:00Z: **why FINAL fell to one chain (measured):** gpu_debug allows 5 SUBMITTED jobs per
+  user. The two STRESS chains I had queued with a begin time (58820947/58820949) held two of the
+  five, so FINAL chain 58820416 could not queue its successor (~08:00Z) and FINAL ran on one debug
+  slot for ~9 h. Fixed (`6b18e09d`): those two were cancelled; a lost successor is now logged in
+  `exit-codes.txt`; FINAL's chains HAND OFF to STRESS when every FINAL row is COMPLETE, so no
+  submission is held in advance. Chains now: 58827682 (old code, running) -> 58830729, and 58830728;
+  both new ones carry `NEXT_MANIFEST=runs/stress.tsv`.
+  Two iterations per round are already in effect since chain v2 (successor queued at the start,
+  15 s margin): of 150 FINAL segments, 114 ran 2 iterations and 36 ran 1 (first segments and
+  scoring rounds). Resume bit-exactness: the positive control's pushes over 3 chained jobs are
+  bit-identical to B2's uninterrupted run.
+  Progress: FINAL 25/36 COMPLETE, 264/360 iterations; STRESS 6/360.
+  **Expected (2 slots, ~14 run-iterations per ~50-min cycle incl. queue wait):** FINAL complete
+  ~23:00-24:00Z today; STRESS ~24 h after that (~2026-09-25 late), sooner if its gpu_shared,
+  regular or preempt copies start (none has in 20 h). The NERSC certificate expires 21:02Z:
+  jobs continue, harvesting needs a refresh.
 - 2026-09-24 11:35Z: FINAL 15/36 complete (199/360 iterations), harvested; `final-C-F1` rerun from
   iteration 0 in a fresh dir (6 flock-holding jobs, `lock-history.txt`), re-audit of 36 dirs clean.
   Projection: FINAL complete ~17:00Z on the two debug chains. STRESS (6/360): two debug chains
