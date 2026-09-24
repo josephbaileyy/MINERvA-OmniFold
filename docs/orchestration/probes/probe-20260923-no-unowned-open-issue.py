@@ -25,7 +25,7 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     is refused, not interpreted;
   * a status other than OPEN whose cell also shows `open` after the word, in any case (`two literals still open`,
     `reopened`), because a closed row may carry an open residual (review #31b). It reads the RENDERED text (text
-    and code spans, entities decoded, soft hyphens and zero-width characters dropped), not a link's target, so it
+    and code spans, entities decoded, soft hyphens and every other invisible format character dropped), not a link's target, so it
     also FAILS CLOSED on prose such as `the index said OPEN` or a code span such as `open()`, which must be
     reworded (review #32b). A residual described in other words (`pending`, `remaining`) is not detected;
   * an index id that is not plain letters and digits, or used by more than one row;
@@ -60,6 +60,7 @@ import os
 import re
 import subprocess
 import sys
+import unicodedata
 
 try:
     from markdown_it import MarkdownIt
@@ -80,9 +81,11 @@ STATUS_RE = re.compile(r"^\s*(?:(?P<u>[*_]*_[*_]*)|\**)(?P<w>[A-Za-z]+)(?(u)[*_]
 # blocker, on the real index at reviews #21b's, #22b's and #23b's shas (review #31b; ⚠ this said it "passed with no
 # registry line" at #22b's and #23b's, but no registry existed then; review #32a). Any case, anywhere after the word,
 # `reopened` too, read in the RENDERED text: a link target is not read, but emphasis, a tag or an entity inside the
-# word does not hide it, nor does a soft hyphen or zero-width character (review #32b)
+# word does not hide it, nor does a soft hyphen or zero-width character (review #32b). INVISIBLE is EVERY Unicode
+# format character (category Cf) plus the combining grapheme joiner: a list of six missed U+200E and U+034F (#33b)
 OPEN_WORD = re.compile(r"open", re.I)
-INVISIBLE = re.compile("[\u00ad\u200b\u200c\u200d\u2060\ufeff]")
+INVISIBLE = re.compile("[" + "".join(re.escape(chr(c)) for c in range(sys.maxunicode + 1)
+                                     if unicodedata.category(chr(c)) == "Cf" or c == 0x34F) + "]")
 HTML_TABLE = re.compile(r"<\s*/?\s*t(able|head|body|r|d|h)\b", re.I)
 ID_RE = re.compile(r"^[\s*_]*([A-Za-z0-9]+)[\s*_]*$")
 # An index table is one whose header, AS RENDERED, is exactly this. The first rule ("first header cell is `id`")
@@ -287,6 +290,11 @@ def self_test():
         *[(f"open hidden in the source ({s!r}) is refused", f"| 1 | L | FIXED; still {s} | x | d | u |\n", "", 1)
           for s in ("&#111;pen", "o*pe*n", "op<span></span>en", "op\u00aden", "op\u200ben")],
         ("raw-HTML table markup in an index cell is refused", "| 1 | L | FIXED | x | <table><tr><td>2</td></tr></table> | u |\n", "", 1),
+        # --- review #33b: every invisible format character, not a list of six
+        *[(f"open hidden by U+{ord(c):04X} is refused", f"| 1 | L | FIXED; still op{c}en | x | d | u |\n", "", 1)
+          for c in "\u200c\u200d\u2060\ufeff\u200e\u200f\u2061\u034f"],
+        *[(f"a row cut off after a U+{ord(c):04X} lead is refused", f"| 1 | L | FIXED | x | d | u |\n\n{c}| 2 | L | OPEN | x | d | u |\n", "", 1)
+          for c in "\u200e\u200f"],
         ("a row cut off after a zero-width lead is refused", "| 1 | L | FIXED | x | d | u |\n\n\u200b| 2 | L | OPEN | x | d | u |\n", "", 1),
         # --- review #31b: a closed status that also says open; underscores that are not markup; the comment forms
         #     HTML5 closes early; the inputs that each surviving weakening broke. Review #31a: <td> in a fenced block
@@ -401,6 +409,8 @@ MUTATIONS = [
     ("invisible characters kept", 'INVISIBLE.sub("", _shown(stok)).lstrip(), s.group("w")', '_shown(stok).lstrip(), s.group("w")'),
     ("shown pieces joined with a space", 'return "".join(c.content for c in (inline.children or []) if c.type in ("text", "code_inline"))', 'return " ".join(c.content for c in (inline.children or []) if c.type in ("text", "code_inline"))'),
     ("index cells not scanned for HTML", '    for tk in toks:\n        bits', '    for tk in [x for x in toks if not (x.map and x.map[0] in covered)]:\n        bits'),
+    ("invisibles as a fixed list of six", 'for c in range(sys.maxunicode + 1)\n                                     if unicodedata.category(chr(c)) == "Cf" or c == 0x34F)', 'for c in (0xAD, 0x200B, 0x200C, 0x200D, 0x2060, 0xFEFF))'),
+    ("format characters only, no CGJ", 'unicodedata.category(chr(c)) == "Cf" or c == 0x34F', 'unicodedata.category(chr(c)) == "Cf"'),
     ("a zero-width lead hides a row", 'if INVISIBLE.sub("", l).lstrip().startswith("|")', 'if l.lstrip().startswith("|")'),
     ("a closed status that says open accepted", '        if s.group("w").upper() != "OPEN" and OPEN_WORD.search', '        if False and OPEN_WORD.search'),
     ("comments closed only by -->", 'r"<!--(?:-?>|.*?--!?>)"', 'r"<!--.*?-->"'),
