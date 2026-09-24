@@ -11,6 +11,9 @@
 #   env: MINE MINE_COMMIT OUT MANIFEST   (MANIFEST relative to confirm/, e.g. runs/x.tsv)
 #        [SCORE=1] [CHAIN_QOS=debug CHAIN_TIME=00:30:00 MAX_ROUNDS=16 DEADLINE_MARGIN=240]
 #        [ITER_ESTIMATE=800] [RACE_DIR]  (set by submit_confirm.sh; see there)
+#        [NEXT_MANIFEST NEXT_OUT]: when every row is COMPLETE, continue as a chain on that stage
+#        (lets FINAL's chains roll over to STRESS without holding extra gpu_debug submissions:
+#        the QOS allows 5 submitted jobs per user)
 #
 # Manifest columns (tab-separated, '#' comments): name, config (confirm/configs/), config_hash,
 # selection ('historical' or POOL:REPLICATE), distortion, reference_run ('-' or a B2 run dir),
@@ -70,14 +73,27 @@ open_rows() {   # not COMPLETE and not being worked on by another running job
 
 # score rows a previous round completed but could not score before its time limit
 for ROW in "${ROWS[@]}"; do score_row "$ROW"; done
+handoff() {   # this stage is done: continue as a chain on NEXT_MANIFEST / NEXT_OUT (once)
+  [[ -n "${NEXT_MANIFEST:-}" && -n "${NEXT_OUT:-}" ]] || return 0
+  local j
+  j=$(sbatch --parsable -q "${CHAIN_QOS:-debug}" -t "${CHAIN_TIME:-00:30:00}" \
+      -o "$NEXT_OUT/slurm-%j.out" \
+      --export="ALL,MANIFEST=$NEXT_MANIFEST,OUT=$NEXT_OUT,NEXT_MANIFEST=,NEXT_OUT=" "$SELF" 2>&1) || j="failed: $j"
+  echo "handoff to $NEXT_MANIFEST -> $NEXT_OUT: $j" >> "$OUT/chain-$SLURM_JOB_ID.txt"
+  echo "$(date -u +%FT%TZ) chain $j (handoff from $OUT chain $SLURM_JOB_ID)" >> "$NEXT_OUT/submissions.txt"
+}
 mapfile -t UNFINISHED < <(for r in "${ROWS[@]}"; do is_complete "$(row_name "$r")" || echo x; done)
-if (( ${#UNFINISHED[@]} == 0 )); then echo "all COMPLETE" > "$OUT/chain-$SLURM_JOB_ID.txt"; exit 0; fi
+if (( ${#UNFINISHED[@]} == 0 )); then echo "all COMPLETE" > "$OUT/chain-$SLURM_JOB_ID.txt"; handoff; exit 0; fi
 # queue the next round NOW (it starts when this one ends), so a round killed at its limit still
 # chains and no queue wait falls between rounds; cancelled below if it turns out not to be needed
 NEXT=""
 if (( $(ls "$OUT"/chain-*.txt 2>/dev/null | wc -l) < ${MAX_ROUNDS:-16} )); then
   NEXT=$(sbatch --parsable -q "${CHAIN_QOS:-debug}" -t "${CHAIN_TIME:-00:30:00}" \
-    --dependency="afterany:$SLURM_JOB_ID" -o "$OUT/slurm-%j.out" --export=ALL "$SELF" 2>&1) || NEXT=""
+    --dependency="afterany:$SLURM_JOB_ID" -o "$OUT/slurm-%j.out" --export=ALL "$SELF" 2>&1) || {
+    # e.g. the QOS's per-user submit limit (gpu_debug: 5): a lost successor silently halves the
+    # chains, so it is logged loudly (measured 2026-09-24: chain 58820416 lost its successor)
+    echo "$(date -u +%FT%TZ) chain $SLURM_JOB_ID could NOT queue its successor: $NEXT" >> "$OUT/exit-codes.txt"
+    NEXT=""; }
 fi
 echo "job $SLURM_JOB_ID next round queued: ${NEXT:-none}" >> "$OUT/chain-$SLURM_JOB_ID.txt"
 cancel_next() {
@@ -110,7 +126,7 @@ runs_failed=$status        # a run that stops at the deadline exits 0 (INCOMPLET
 [[ -z "$(git -C "$MINE" status --porcelain)" ]] || status=1
 
 mapfile -t UNFINISHED < <(for r in "${ROWS[@]}"; do is_complete "$(row_name "$r")" || echo x; done)
-if (( ${#UNFINISHED[@]} == 0 )); then cancel_next "all COMPLETE"
+if (( ${#UNFINISHED[@]} == 0 )); then cancel_next "all COMPLETE"; handoff
 elif (( runs_failed != 0 )); then cancel_next "a run exited non-zero (exit-codes.txt); fix and resubmit"
 fi
 echo "status $status" >> "$OUT/chain-$SLURM_JOB_ID.txt"
