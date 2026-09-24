@@ -21,15 +21,16 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     CLOSED, RESOLVED, WONTFIX or RETRACTED. Markup before the word (`~~`, `<del>`, a backtick) is refused,
     not interpreted;
   * an index id that is not plain letters and digits, or used by more than one row;
-  * a table whose rendered first header cell begins with `id` but whose header is not exactly the index header
-    (`id | severity | status | one-sentence failure | detail | updated`);
-  * an index with no table carrying that header, or an absent registry file;
+  * any table whose rendered header is not exactly the index header
+    (`id | severity | status | one-sentence failure | detail | updated`): the index holds index tables only;
+  * an absent registry file;
   * a line of the index that begins with `|` but was not parsed as part of any table -- a row cut off by a
     stray blank line, an indent or an unclosed code fence is otherwise never seen (reviews #24b, #26b). This
     FAILS CLOSED on a pipe-led line inside a code block, such as a shell pipeline, which must be rewritten.
     A cut-off row WITHOUT a leading pipe, or inside a blockquote, is not detected; the index always uses
     leading pipes.
-Exit 0 = none of these. Exit 2 = it could not read the index.
+Exit 0 = none of these. Exit 2 = it could not read the index, including an index with NO table carrying the
+index header (⚠ that case was first listed among the exit-1 refusals; review #28a).
 
 ⚠ WHY A REGISTRY. The first versions read blocker lines written as Markdown, in detail files or index rows.
 Independent reviews #21b, #22b and #23b found 6, 7 and 11 defects, most of them about which Markdown forms
@@ -60,8 +61,8 @@ STATUS_RE = re.compile(r"^[\s*_]*([A-Za-z]+)(?![A-Za-z])")     # bold markers, t
 ID_RE = re.compile(r"^[\s*_]*([A-Za-z0-9]+)[\s*_]*$")
 # An index table is one whose header, AS RENDERED, is exactly this. The first rule ("first header cell is `id`")
 # dropped a whole table headed `**id**` -- GitHub shows headers bold anyway -- and skipped every row of a
-# two-column `id | status` table, both silently (review #27b). A table whose rendered first header cell begins
-# with `id` but whose header is not exactly this is REFUSED, so the status column is always the third.
+# two-column `id | status` table, both silently (review #27b). ANY table whose rendered header is not exactly this
+# is REFUSED -- the index file holds index tables only -- so the status column is always the third.
 HEADER = ("id", "severity", "status", "one-sentence failure", "detail", "updated")
 
 
@@ -71,8 +72,8 @@ def _rendered(inline):
 
 def index_rows(text):
     """(id source, status source, line) for each body row of each table whose rendered header is exactly HEADER,
-    plus a list of problems: a table whose rendered first header cell begins with `id` but whose header is not
-    exactly HEADER, and `|`-led lines outside every parsed table."""
+    plus a list of problems: any table whose rendered header is not exactly HEADER, and `|`-led lines outside every
+    parsed table."""
     toks, rows, problems, i = MD.parse(text), [], [], 0
     lines, covered = text.split("\n"), set()
     # ⚠ NO line is excused for sitting in a code block. Excusing FENCED blocks (to stop refusing a shell pipeline,
@@ -94,9 +95,11 @@ def index_rows(text):
             elif tk.type == "tr_close" and cur is not None:
                 if header is None:
                     header = tuple(_rendered(c).lower() for c in cur[1])
-                    if header != HEADER and header[:1] and header[0].startswith("id"):
-                        problems.append(f"line {cur[0]}: a table whose header begins `id` is not exactly the index "
-                                        f"header {' | '.join(HEADER)}: {' | '.join(header)[:60]!r}")
+                    # EVERY table in the index must be an index table: one whose first cell did not begin `id`
+                    # (`Issue`, `#`, empty), or a stray row read as a header, hid its OPEN rows (review #28b)
+                    if header != HEADER:
+                        problems.append(f"line {cur[0]}: a table that is not an index table (its header is not exactly "
+                                        f"{' | '.join(HEADER)}): {' | '.join(header)[:60]!r}")
                 elif header == HEADER:
                     rows.append((cur[1][0].content, cur[1][2].content, cur[0]))
                 cur = None
@@ -197,12 +200,19 @@ def self_test():
         ("an id with markup is refused", "| <span>1</span> | L | FIXED | x | d | u |\n", "", 1),
         ("an OPEN row in a SECOND table is checked",
          "| 1 | L | FIXED | x | d | u |\n\n## R\n\n" + head + "| 2 | L | OPEN | x | d | u |\n", "", 1),
-        ("a table whose header is not id is not an index",
-         "| 1 | L | FIXED | x | d | u |\n\n| name | a | status |\n|---|---|---|\n| z | L | OPEN |\n", "", 0),
+        ("any non-index table is refused",
+         "| 1 | L | FIXED | x | d | u |\n\n| name | a | status |\n|---|---|---|\n| z | L | OPEN |\n", "", 1),
+        # --- review #28b
+        ("a near-index table headed Issue is refused",
+         "| 1 | L | FIXED | x | d | u |\n\n| Issue | severity | status | one-sentence failure | detail | updated |\n|---|---|---|---|---|---|\n| 74 | L | OPEN | x | d | u |\n", "", 1),
+        ("a stray row plus a delimiter is refused",
+         "| 1 | L | FIXED | x | d | u |\n\n| 74 | L | OPEN | x | d | u |\n|---|---|---|---|---|---|\n", "", 1),
         ("a header beginning `id` but not `id` is refused",
          "| 1 | L | FIXED | x | d | u |\n\n| id (x) | a | status |\n|---|---|---|\n| 2 | L | OPEN |\n", "", 1),
         # --- review #27b: index tables are recognised by their exact rendered header
         ("a bold **id** header is the index header", "", "", 1 - 1),
+        ("a code `id` header is the index header", "", "", 0),
+        ("a header with a doubled space is the index header", "", "", 0),
         ("a two-column id | status table is refused",
          "| 1 | L | FIXED | x | d | u |\n\n| id | status |\n|---|---|\n| 74 | OPEN |\n", "", 1),
         ("a three-column id table is refused",
@@ -235,8 +245,11 @@ def self_test():
     ]
     wrong = []
     for name, body, reg, want in shapes:
-        if "upper-case ID" in name or "bold **id**" in name:
-            h = head.replace("| id |", "| ID |" if "upper-case" in name else "| **id** |", 1)
+        if "upper-case ID" in name or "bold **id**" in name or "code `id`" in name or "doubled space" in name:
+            h = (head.replace("| id |", "| ID |", 1) if "upper-case" in name else
+                 head.replace("| id |", "| **id** |", 1) if "bold" in name else
+                 head.replace("| id |", "| `id` |", 1) if "code" in name else
+                 head.replace("one-sentence failure", "one-sentence  failure", 1))
             doc, reg = h + "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n"
         elif body is None:
             doc = "# no table here\n"
@@ -269,7 +282,9 @@ MUTATIONS = [
     ("duplicates unchecked", "        if len(lines) > 1:\n", "        if False:\n"),
     ("second table ignored", "        i = j + 1\n    for n, l in enumerate(lines):", "        break\n    for n, l in enumerate(lines):"),
     ("any table read as an index", '                elif header == HEADER:', '                elif len(cur[1]) >= 3:'),
-    ("near-`id` headers unrefused", '                    if header != HEADER and header[:1] and header[0].startswith("id"):', '                    if False:'),
+    ("non-index tables unrefused", '                    if header != HEADER:', '                    if header != HEADER and header[:1] and header[0].startswith("id"):'),
+    ("code spans dropped from the header", 'if c.type in ("text", "code_inline")).split())', 'if c.type in ("text",)).split())'),
+    ("header whitespace not normalised", ' if c.type in ("text", "code_inline")).split())', ' if c.type in ("text", "code_inline")).split(" "))'),
     ("header compared as source, not rendered", 'header = tuple(_rendered(c).lower() for c in cur[1])', 'header = tuple(c.content.strip().lower() for c in cur[1])'),
     ("absent registry unreported", '    if registry_text is None:\n        problems.append', '    if False:\n        problems.append'),
     ("empty index unreported", '    if not rows:\n        problems.append', '    if False:\n        problems.append'),
