@@ -48,7 +48,8 @@ registry is not UTF-8, is a directory, or is a symlink to nothing (these once ra
 as an absent registry, exiting 1; reviews #34b, #35a). A registry that does not exist at all is the exit-1
 refusal above. It checks the git work tree holding
 the CURRENT DIRECTORY, not the one holding this file (review #34b), whatever GIT_DIR or GIT_WORK_TREE say; it
-exits 2 when git cannot run (review #37b).
+exits 2 when git cannot run (review #37b). The SELF-TEST needs git: without it the command checks FAIL,
+exit 1, and `--mutations` exits 2 (⚠ `a3fc3486` called it green there; it raised; review #38a).
 
 ⚠ WHY A REGISTRY. The first versions read blocker lines written as Markdown, in detail files or index rows.
 Independent reviews #21b, #22b and #23b found 6, 7 and 11 defects, most of them about which Markdown forms
@@ -282,7 +283,11 @@ def toplevel():
 
 
 def git_init(path):
-    subprocess.run(["git", "init", "-q"], cwd=path, capture_output=True, env=clean_env())
+    """True if `git init` ran. A missing git raised here and crashed the self-test, exit 1 (review #38a)."""
+    try:
+        return subprocess.run(["git", "init", "-q"], cwd=path, capture_output=True, env=clean_env()).returncode == 0
+    except OSError:
+        return False
 
 
 def run(root):
@@ -520,25 +525,44 @@ def self_test():
                 wrong.append(f"{name}: wanted exit {want}, got {rc}")
         # main(): THIS file run as a command, so its dispatch and exit status are pinned too (review #36b)
         g0, g1 = tree("g0", ok, b"1\tOWNER\ta\n"), tree("g1", ok, b"")
+        if not all([git_init(g0), git_init(g1)]):
+            wrong.append("git cannot run here, so the command checks cannot build their work trees")
+        # with no git on PATH, git_init() must say False, not raise (review #38a)
+        saved_path = os.environ.get("PATH", "")
+        os.environ["PATH"] = os.path.join(td, "no-bin")
+        try:
+            got = git_init(os.path.join(td, "t0"))
+        except Exception as e:
+            got = f"raised {type(e).__name__}"
+        finally:
+            os.environ["PATH"] = saved_path
+        if got is not False:
+            wrong.append(f"git_init() with no git on PATH: wanted False, got {got}")
         # git init under a HOSTILE caller environment: an exported GIT_DIR must not reach it (review #37b). The bait is
-        # a plain directory, so a leak creates bait/.git and harms nothing real
-        bait = os.path.join(td, "bait")
+        # a plain directory, so a leak creates bait/.git and harms nothing real. Its own tree `gb`, initialised ONLY
+        # here, so that this check alone catches the leak: g0 and g1 once shared it, and the command checks caught it
+        # first (review #38b)
+        bait, gb = os.path.join(td, "bait"), tree("gb", ok, b"")
         os.mkdir(bait)
         saved = {k: os.environ.get(k) for k in ("GIT_DIR", "GIT_WORK_TREE")}
         os.environ.update(GIT_DIR=os.path.join(bait, ".git"), GIT_WORK_TREE=bait)
         try:
-            for g in (g0, g1):
-                git_init(g)
+            git_init(gb)
         finally:
             for k, v in saved.items():
                 os.environ.pop(k) if v is None else os.environ.__setitem__(k, v)
-        if os.path.exists(os.path.join(bait, ".git")) or not all(os.path.isdir(os.path.join(g, ".git")) for g in (g0, g1)):
+        if os.path.exists(os.path.join(bait, ".git")) or not os.path.isdir(os.path.join(gb, ".git")):
             wrong.append("git init under an exported GIT_DIR: it reached the caller's repository, not the new tree")
-        plain = os.path.join(td, "plain")
-        os.mkdir(plain)
-        # the ceiling keeps `plain` outside any work tree even when TMPDIR lies inside one (review #37b)
-        base = clean_env(GIT_CEILING_DIRECTORIES=os.path.realpath(td))
-        hostile = dict(base, GIT_DIR=os.path.join(g0, ".git"), GIT_WORK_TREE=g0)
+        # `plain` sits INSIDE a work tree, `enc`, on every host, so the ceiling at `enc` is what keeps it outside; it
+        # once mattered only where TMPDIR lay inside a repository (review #38b)
+        enc = os.path.join(td, "enc")
+        plain = os.path.join(enc, "plain")
+        os.makedirs(plain)
+        git_init(enc)
+        base = clean_env(GIT_CEILING_DIRECTORIES=os.path.realpath(enc))
+        # every GIT_* variable that redirects git, not only GIT_DIR and GIT_WORK_TREE (review #38b)
+        hostile = dict(base, GIT_DIR=os.path.join(g0, ".git"), GIT_WORK_TREE=g0, GIT_OBJECT_DIRECTORY=os.path.join(td, "none"),
+                       GIT_INDEX_FILE=os.path.join(td, "none"), GIT_COMMON_DIR=os.path.join(td, "none"))
         clis = (("the command exits 0 on an owned work tree", g0, [], base, 0, "[owned] PASS"),
                 ("the command exits 1 on an unowned OPEN row", g1, [], base, 1, "(UNOWNED)"),
                 ("the command exits 1 on an unowned row whatever GIT_DIR and GIT_WORK_TREE say", g1, [], hostile, 1, "(UNOWNED)"),
@@ -637,6 +661,11 @@ MUTATIONS = [
     ("the live exit status dropped", '    print("\\n".join(out))\n    return rc\n', '    print("\\n".join(out))\n    return 0\n'),
     ("a usage error exits 0", '        return 2\n    if m == "self-test":', '        return 0\n    if m == "self-test":'),
     ("outside a work tree exits 0", 'CANNOT LOOK :: {why}")\n        return 2', 'CANNOT LOOK :: {why}")\n        return 0'),
+    ("only GIT_DIR and GIT_WORK_TREE stripped", 'if not k.startswith("GIT_") or k == "GIT_CEILING_DIRECTORIES"}', 'if k not in ("GIT_DIR", "GIT_WORK_TREE")}'),
+    ("the command checks' ceiling dropped", 'base = clean_env(GIT_CEILING_DIRECTORIES=os.path.realpath(enc))', 'base = clean_env()'),
+    ("the two exit-2 reasons merged", 'return None, f"git cannot run: {e}"', 'return None, f"not inside a git work tree: {e}"'),
+    ("a missing git crashes the self-test", '    except OSError:\n        return False', '    except ImportError:\n        return False'),
+    ("a failed git init unreported", '        if not all([git_init(g0), git_init(g1)]):', '        if False:'),
     ("GIT_* variables inherited", 'if not k.startswith("GIT_") or k == "GIT_CEILING_DIRECTORIES"}', 'if True}'),
     ("git init not isolated", 'cwd=path, capture_output=True, env=clean_env())', 'cwd=path, capture_output=True)'),
     ("the work-tree lookup not isolated", '["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, env=clean_env())', '["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)'),
