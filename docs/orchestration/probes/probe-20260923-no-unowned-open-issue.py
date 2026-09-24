@@ -168,7 +168,8 @@ def index_rows(text):
                 elif header == HEADER:
                     # the parser DROPS cells beyond the header's six: an open residual after a pipe in a code span
                     # vanished from the status (review #40b); history has two 10-cell versions of row 69
-                    src = lines[cur[0] - 1].strip() if 0 < cur[0] <= len(lines) else ""
+                    # blockquote markers are the parser's, not the row's: a quoted index table was refused (#41b)
+                    src = re.sub(r"^\s*(>\s?)+", "", lines[cur[0] - 1]).strip() if 0 < cur[0] <= len(lines) else ""
                     cells = len(re.findall(r"(?<!\\)\|", src)) + 1 - src.startswith("|") - bool(re.search(r"(?<!\\)\|$", src))
                     if cells > len(HEADER):
                         problems.append(f"line {cur[0]}: {cells} cells, more than the header's {len(HEADER)}; an "
@@ -445,6 +446,11 @@ def self_test():
         ("a qualified severity is one problem, and its OPEN row is still owned", "| 1 | HIGH (was MEDIUM) | OPEN | x | d | u |\n", "1\tOWNER\ta\n", 1),
         ("an escaped pipe in a code span stays in its cell", "| 1 | LOW | **FIXED** at `a \\| b` fine | x | d | u |\n", "", 0),
         ("more cells than the header is refused", "| 1 | LOW | **FIXED** at `abc` \u2014 `a | b` still open | x | d | u |\n", "", 1),
+        # --- review #41b: the pipe count's edges; the updated rule still reads the row; CRLF through check()
+        ("a split cell ending in an escaped pipe is refused", "| 1 | LOW | FIXED `a|b` | x | d | u \\|\n", "", 1),
+        ("trailing spaces after a row are not a cell", "| 1 | LOW | FIXED | x | d | u |   \n", "", 0),
+        ("an empty updated is one problem, and its OPEN row is still read", "| 1 | LOW | OPEN | x | d | |\n", "", 2),
+        ("an updated cell of only a tag is empty", "| 1 | LOW | FIXED | x | d | <br> |\n", "", 1),
         ("a row missing its severity cell is refused, twice", "| 74 | OPEN | Fixed seeds are not reset | d | 2026-09-24 |\n", "", 2),
         ("an unknown severity is refused", "| 1 | SEVERE | FIXED | x | d | u |\n", "", 1),
         ("an empty updated cell is refused", "| 1 | LOW | FIXED | x | d | |\n", "", 1),
@@ -515,6 +521,13 @@ def self_test():
     if not any("99" in x and "not part of any parsed table" in x for x in check(head + "| 1 | LOW | FIXED | x | d | u |\r"
                "| 3 | LOW | FIXED | y | d | u |\r| 4 | LOW | FIXED | z | d | u |\n\n| 99 | LOW | OPEN | x | d | u |\n", "")[0]):
         wrong.append("lone CRs: the cut-off OPEN row 99 is not reported as a row outside every table")
+    # a quoted index table is read, not refused for its `>` (review #41b); a CRLF index through check() (review #41b)
+    quoted = "".join("> " + x + "\n" for x in (head + "| 1 | LOW | OPEN | x | d | u |").split("\n"))
+    if len(check(quoted, "1\tOWNER\ta\n")[0]) != 0:
+        wrong.append(f"a quoted index table with an owned row: wanted 0 problems, got {check(quoted, '1\tOWNER\ta\n')[0]}")
+    crlf = (head + "| 1 | LOW | OPEN | x | d | u |\n").replace("\n", "\r\n")
+    if check(crlf, "1\tOWNER\ta\n")[1:] != (1, 1):
+        wrong.append(f"a CRLF index through check(): wanted 1 row, 1 OPEN, got {check(crlf, '1\tOWNER\ta\n')[1:]}")
     # an index table with no body rows still exits 2, and prints what it found on the way (review #39b)
     rc, out = decide(head + "\n| 2 | LOW | OPEN | x | d | u |\n", "")
     if rc != 2 or not any("not part of any parsed table" in x for x in out):
@@ -779,6 +792,12 @@ MUTATIONS = [
     ("an empty updated accepted", '        if not updated:\n', '        if False:\n'),
     *[(f"severity {w} dropped", 'SEVERITIES = ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP")', 'SEVERITIES = ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP")'.replace(f'"{w}", ', "").replace(f', "{w}"', ""))
       for w in ("CRITICAL", "BLOCKER", "HIGH", "MEDIUM", "LOW", "TRAP")],
+    ("blockquote markers counted as cells", 're.sub(r"^\\s*(>\\s?)+", "", lines[cur[0] - 1]).strip()', 'lines[cur[0] - 1].strip()'),
+    ("an escaped trailing pipe counted", 'bool(re.search(r"(?<!\\\\)\\|$", src))', 'bool(re.search(r"\\|$", src))'),
+    ("row whitespace kept", 'lines[cur[0] - 1]).strip() if 0 < cur[0]', 'lines[cur[0] - 1]) if 0 < cur[0]'),
+    ("CRLF left as CR plus LF", '    text = text.replace("\\r\\n", "\\n").replace("\\r", "\\n")\n', '    text = text.replace("\\r", "\\n")\n'),
+    ("an empty updated skips the row", '            problems.append(f"line {line}: id {rid}: the updated cell is empty; a row missing a cell shifts its status")\n', '            problems.append(f"line {line}: id {rid}: the updated cell is empty; a row missing a cell shifts its status")\n            continue\n'),
+    ("updated read from its source", '_rendered(c[5]) if c[5] else ""', 'c[5].content.strip() if c[5] else ""'),
     ("more cells than the header accepted", '            if cells > len(HEADER):', '            if False:'),
     ("the current directory taken as the work tree", '    root = r.stdout.strip()\n', '    root = os.getcwd() if r.stdout.strip() else ""\n'),
     ("rows outside tables unseen", '        if INVISIBLE.sub("", l).lstrip().startswith("|") and n not in covered:', '        if False:'),
