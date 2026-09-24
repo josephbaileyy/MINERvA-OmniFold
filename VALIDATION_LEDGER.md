@@ -1,5 +1,27 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-09-23 truth-cloud projection re-run after the ISSUE-30 fix: census reproduces, projected values move
+
+**PET diagnostic, not a publication product.** This re-runs `nd-unfolding/pet/pointcloud_projection.py`
+at `8d310b59` (ISSUE-30 fix `8f6e0329`: the projection no longer divides the push-weighted counts by
+the reco efficiency) on the full-cloud inputs. Slurm job `58796643` ran `COMPLETED 0:0` in 4:04,
+under `mnv_guarded_run.py`, which found all 6 checkout modules in the expected tree. Receipt, with
+the sha256 of all five inputs and six outputs:
+`nd-unfolding/products/pet/fullcloud/pointcloud_projection_rerun_20260923.receipt.json`.
+
+- **Unchanged, byte-equal in the JSON:** `event_census`, `eavail_validation`, `W_validation`,
+  `frac_saturated`, `eavail_bias_vs_nhad` and the multiplicity counts. So every number in the
+  2026-07-02 delta-pass entry below (N=32,849,103; has_cloud 32,848,929; frac_within 0.98784; ...)
+  still stands. None of them depends on the completeness divisor.
+- **Changed:** every `projection_*` value. `projection_eavail.pet_stored_full` new/old per bin is
+  0.746, 0.755, 0.722, 0.671, 0.605, 0.532, 0.489. The old values were inflated by 1/eff.
+- **`\pcCloudFull`**: max |pet_cloud_hascloud/pet_stored_full - 1| is now **0.4498%** (was 0.4555%),
+  and the printed value "0.5" stands.
+- **Adjacent measurement, recorded without interpretation:** PET `pet_stored_full` / GBDT
+  `hXSec_eavail` is now 0.910–0.972 per bin. Before the fix it was 1.21–1.95.
+- Summary sha256 `b1be7837…8b91` (the old one was `6fef248b…ce88`). The note asset
+  `figures/pet_cloud_projection_xsec.pdf` is `8fbe33e3…d4dc`.
+
 ## 2026-09-20 the ADOPTED scalar-5D covariance, its publication projection, and cause 7's magnitude
 
 **This is the trunk every non-2D publication uncertainty projects from.** `z-cv.npz` was adopted by

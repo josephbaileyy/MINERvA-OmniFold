@@ -321,18 +321,16 @@ cloud-recomputed $d\sigma/d\Eavail$ now reproduces the full unfold to
 $\lesssim\SI{\pcCloudFull}{\percent}$ in every $\Eavail$ bin. The projection is
 no longer acceptance-limited.
 
-\emph{That agreement is a number from the corrected artifact, not something
-Fig.~\ref{fig:pcxsec} displays.} The committed post-fix summary
+The committed post-fix summary
 \texttt{nd-unfolding/products/pet/fullcloud/}\allowbreak\texttt{pointcloud\_projection\_summary.json}
 holds the three near-coincident $\Eavail$ projections (\texttt{pet\_cloud\_hascloud},
 \texttt{pet\_stored\_hascloud}, \texttt{pet\_stored\_full}), and
-\SI{\pcCloudFull}{\percent} is their largest per-bin relative spread. The
-figure asset in this note predates the re-dump and still shows the
-\emph{pre-fix} configuration described at the start of this paragraph, with the
-full-unfold curve displaced above the two has-cloud curves. Regenerating it is
-a figure-production task recorded as \texttt{ISSUE-59} in
-\texttt{KNOWN\_ISSUES.md}; until it is done the caption states what is on the
-page and the corrected values are read from the summary above.
+\SI{\pcCloudFull}{\percent} is their largest per-bin relative spread; they overlay in the
+centre panel of Fig.~\ref{fig:pcxsec}. The summary and figure were regenerated on
+2026-09-23 after the projection stopped dividing the push-weighted counts by the reco
+efficiency (\texttt{ISSUE-30}): the unfolded counts are already acceptance-corrected, so
+that division corrected for acceptance twice. The fix lowers every projected
+$d\sigma/d\Eavail$ bin by 25--51\% and leaves the spread above essentially unchanged.
 
 \paragraph{Exploratory projection yields new hadronic diagnostics.}
 $W_{\text{had}}$ is not a lossy copy of the leptonic ``experimenter's''
@@ -371,24 +369,14 @@ existing recoil-only unfold.
   \centering
   \includegraphics[width=0.98\textwidth]{pet_cloud_projection_xsec}
   \caption{Exploratory recoil-only reweight-then-project demonstration.
-  \textbf{This asset is the PRE-coverage-fix projection and is retained as the
-  ``before'' state; it is not the corrected result quoted in the text.}
   \emph{Left:} hadronic-system
   invariant mass $W_{\text{had}}$ versus the leptonic stored $W$ --- they
   differ by definition (median \SI{\pcWoffset}{GeV}), with the QE locus at
   \SI{0.94}{GeV} and multi-baryon bands above $y=x$. \emph{Center:}
-  projected $d\sigma/d\Eavail$. The two has-cloud curves (push-weighted cloud
-  and stored $\Eavail$) lie on top of each other, while the
-  \emph{full-unfold} curve sits visibly \emph{above} them --- which is the
-  acceptance gap itself: when this asset was produced only
-  \SI{\pcHasCloudBefore}{\percent} of truth events carried a cloud, so the
-  has-cloud curves were normalized over a subset of the unfold's truth sample
-  and the displacement in the lowest bin is close to the corresponding
-  $1/0.726=1.38$.
-  After the fix those three projections agree to
-  $\lesssim\SI{\pcCloudFull}{\percent}$ per bin in the committed summary
-  artifact; the separation on the page is therefore the defect, not the
-  result. The GBDT 5D reference is a different estimator and is not expected to
+  projected $d\sigma/d\Eavail$. The push-weighted cloud $\Eavail$, the stored $\Eavail$ on
+  the has-cloud subset, and the stored $\Eavail$ over the full unfold agree to
+  $\lesssim\SI{\pcCloudFull}{\percent}$ per bin, because after the coverage fix
+  essentially every truth event carries a cloud. The GBDT 5D reference is a different estimator and is not expected to
   coincide. \emph{Right:} projected $d\sigma/d W_{\text{had}}$, whose shape
   differs from the leptonic-$W$ reference as expected.}
   \label{fig:pcxsec}

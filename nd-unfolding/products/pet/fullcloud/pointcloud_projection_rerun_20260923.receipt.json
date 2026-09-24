@@ -1,0 +1,23 @@
+{
+  "jobid": "58796643",
+  "code_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-i30-20260923",
+  "code_sha": "8d310b59dd7242ed10ed909946ac7101531b4b44",
+  "data_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+  "entrypoint": "nd-unfolding/pet/pointcloud_projection.py (via mnv_guarded_run.py)",
+  "exit_code": 0,
+  "inputs_sha256": {
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fullcloud.npz": "e61249d25fec83005a2d9e14c9d0cde09522c307e31af83124ce7c501658dbf2",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/pet/pet_weights_fullcloud.npz": "05459c5cf37b18ede278ad46f201856e439be2ddbc34e81fe2534d5c10708170",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_PC_MEFHC_fullcloud.root": "b9d8cf60c5ae659da094814849a09a0e519f00748b2c4b1de7c93e931c45f98e",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8"
+  },
+  "outputs_sha256": {
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-i30-20260923/nd-unfolding/products/pet/fullcloud/pointcloud_projection_summary.json": "b1be7837f6e4b9fdb447f83ea5b67dd7b3db19c6e50119c8ab2663cddec78b91",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-i30-20260923/nd-unfolding/products/pet/fullcloud/pointcloud_projection.root": "5996887a42391e31e16a3940ca5efd47b05260cad7b98f289c932418712a3505",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-i30-20260923/nd-unfolding/products/pet/fullcloud/pet_cloud_projection_xsec.png": "affebdb730c86bbc17d66c2e180d85091cfc8b96a9c3e65963342b0a6dfa9d26",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-i30-20260923/nd-unfolding/products/pet/fullcloud/pet_cloud_projection_xsec.pdf": "8fbe33e3f5ac29eab8e9fb32168405b11d710bd8fccea893470e4f82f875d4dc",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-i30-20260923/nd-unfolding/products/pet/fullcloud/pet_cloud_projection_validation.png": "0303274f5e2e8a65b5e0feae6d9b18d4b79631b81b4e879646b7cc8afdfedca7",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-i30-20260923/nd-unfolding/products/pet/fullcloud/pet_cloud_projection_validation.pdf": "ed1769783cb73fc7a7464e4c215b5dd9aa0f5625c571abb44ac126f1c659700b"
+  }
+}
