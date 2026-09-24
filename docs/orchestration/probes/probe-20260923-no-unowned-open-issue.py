@@ -3,6 +3,9 @@
 
     probe-20260923-no-unowned-open-issue.py [--self-test | --mutations]
 
+Any other argument, or both together, exits 2: a mistyped `--mutation` once ran the live check and exited 0
+(review #35b).
+
 `--mutations` applies each single-change mutation in MUTATIONS to a copy of this file and requires the copy's
 self-test to FAIL. A claim that "every mutation turns the self-test red" was twice made about a mutation set
 that lived only in scratch space, so nobody could re-run it (reviews #22a, #23a); the set is committed here.
@@ -16,7 +19,7 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
   * an OPEN row with no registry line, or with more than one;
   * a registry line naming an id that is not an OPEN row (fixed, or absent from the index);
   * a registry line that is not exactly three tab-separated fields, or whose kind is not D7, JOSEPH or
-    OWNER, or whose text is empty;
+    OWNER, or whose text is empty or only invisible characters (review #35b);
   * an index status that does not BEGIN, after any bold markers, with a plain status word -- OPEN, FIXED,
     CLOSED, RESOLVED, WONTFIX or RETRACTED -- ending, after any closing bold markers, at the end of the cell,
     whitespace, `. , : ; )`, an en dash or an em dash. So `FIXED-pending`, `FIXED?` and `**FIXED**-x` are
@@ -39,8 +42,10 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     A cut-off row WITHOUT a leading pipe, or inside a blockquote, is not detected, and neither is a whole
     pipe-less table written straight after a list item; the index always uses leading pipes (reviews #28b, #30b).
 Exit 0 = none of these. Exit 2 = it could not read the index, including an index with NO table carrying the
-index header (⚠ that case was first listed among the exit-1 refusals; review #28a), a file that is not UTF-8,
-or a path that is a directory (these once raised, exiting 1; review #34b). It checks the git work tree holding
+index header (⚠ that case was first listed among the exit-1 refusals; review #28a), or when the index or the
+registry is not UTF-8, is a directory, or is a symlink to nothing (these once raised or, for the symlink, counted
+as an absent registry, exiting 1; reviews #34b, #35a). A registry that does not exist at all is the exit-1
+refusal above. It checks the git work tree holding
 the CURRENT DIRECTORY, not the one holding this file (review #34b).
 
 ⚠ WHY A REGISTRY. The first versions read blocker lines written as Markdown, in detail files or index rows.
@@ -176,7 +181,7 @@ def read_registry(text):
         rid, kind, body = f[0].strip(), f[1].strip(), f[2].strip()
         if kind not in KINDS:
             problems.append(f"{REGISTRY}:{n}: id {rid!r}: kind {kind!r} is not one of {', '.join(KINDS)}")
-        if not body:
+        if not INVISIBLE.sub("", body).strip():         # a text of only U+200B once owned a row (#35b)
             problems.append(f"{REGISTRY}:{n}: id {rid!r}: empty blocker text")   # every registry id prints with !r (#27a)
         reg.setdefault(rid, []).append((kind, body, n))
     return reg, problems
@@ -218,7 +223,7 @@ def check(index_text, registry_text):
             problems.append(f"id {rid} is used by {len(lines)} rows (lines {', '.join(map(str, lines))})")
     for rid in sorted(open_ids):
         # only a VALID line owns a row: a malformed one is reported, and once also counted as the owner (#24a)
-        n = len([e for e in reg.get(rid, []) if e[0] in KINDS and e[1]])
+        n = len([e for e in reg.get(rid, []) if e[0] in KINDS and INVISIBLE.sub("", e[1]).strip()])
         if n != 1:
             problems.append(f"id {rid}: OPEN with {n} registry line(s) in {REGISTRY}, not 1"
                             + (" (UNOWNED)" if n == 0 else ""))
@@ -230,7 +235,8 @@ def check(index_text, registry_text):
 
 
 def read_file(path, required):
-    """(text, None); (None, None) if an optional file is absent; or (None, reason) if it cannot be read as UTF-8.
+    """(text, None); (None, None) if an optional file does not exist, not even as a symlink (a dangling symlink is
+    unreadable, not absent; review #35a); or (None, reason) if it cannot be read as UTF-8.
     main() once let a non-UTF-8 or directory path raise, exiting 1 -- a refusal -- instead of 2 (review #34b)."""
     if not required and not os.path.lexists(path):
         return None, None
@@ -239,6 +245,25 @@ def read_file(path, required):
             return f.read(), None
     except (OSError, UnicodeDecodeError) as e:
         return None, f"{path}: {e}"
+
+
+MODES = {(): "live", ("--self-test",): "self-test", ("--mutations",): "mutations"}
+
+
+def mode(argv):
+    """The mode an argument list asks for, or None: an unknown or extra argument once ran the live check (#35b)."""
+    return MODES.get(tuple(argv))
+
+
+def run(root):
+    """(exit status, lines) for the work tree at `root`: main()'s reading and verdict, above the mutation marker so
+    that the self-test reaches them. main() once read the files itself, unpinned (review #35b)."""
+    index, e1 = read_file(os.path.join(root, "KNOWN_ISSUES.md"), True)
+    registry, e2 = read_file(os.path.join(root, REGISTRY), False)
+    for e in (e1, e2):
+        if e:
+            return 2, [f"[owned] CANNOT LOOK :: {e}"]
+    return decide(index, registry)
 
 
 def decide(index_text, registry_text):
@@ -313,6 +338,7 @@ def self_test():
         # --- review #34b: struck statuses, blank registry lines, default-ignorables and alt text, <thead>, a Unicode id
         ("a struck FIXED is refused", "| 1 | L | ~~FIXED 2026-09-01~~ still broken | x | d | u |\n", "", 1),
         ("a struck OPEN before FIXED is refused, and its registry line is stray", "| 1 | L | ~~OPEN 2026~~ FIXED | x | d | u |\n", "1\tOWNER\ta\n", 2),
+        ("blocker text of only invisible characters is empty", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\t\u200b\u2060\n", 2),
         ("a whitespace-only registry line is blank", "| 1 | L | OPEN | x | d | u |\n", "1\tOWNER\ta\n   \n", 0),
         *[(f"open hidden by U+{ord(c):04X} is refused", f"| 1 | L | FIXED; still op{c}en | x | d | u |\n", "", 1)
           for c in "\ufe0f\U000e0100\u3164\u115f\U000e0001"],
@@ -427,6 +453,39 @@ def self_test():
                 got = f"raised {type(e).__name__}"
             if got != want:
                 wrong.append(f"{name}: wanted {want}, got {got}")
+        # run(): the exit status of a whole work tree, as main() reports it (review #35b)
+        def tree(name, index=None, registry=None, dir_registry=False, dangling=False):
+            root = os.path.join(td, name)
+            os.makedirs(os.path.join(root, os.path.dirname(REGISTRY)))
+            for rel, data in (("KNOWN_ISSUES.md", index), (REGISTRY, registry)):
+                if data is not None:
+                    with open(os.path.join(root, rel), "wb") as f:
+                        f.write(data)
+            if dir_registry:
+                os.mkdir(os.path.join(root, REGISTRY))
+            if dangling:
+                os.symlink(os.path.join(root, "nowhere"), os.path.join(root, REGISTRY))
+            return root
+        ok, fx = one.encode(), fixed.encode()
+        runs = (("a tree with its OPEN row owned exits 0", tree("t0", ok, b"1\tOWNER\ta\n"), 0),
+                ("a tree with no registry exits 1", tree("t1", fx), 1),
+                ("a tree without an index exits 2", tree("t2", None, b""), 2),
+                ("a tree with a non-UTF-8 index exits 2", tree("t3", b"| caf\xe9 |\n", b""), 2),
+                ("a tree with a non-UTF-8 registry exits 2", tree("t4", fx, b"1\tOWNER\tcaf\xe9\n"), 2),
+                ("a tree whose registry is a directory exits 2", tree("t5", fx, None, dir_registry=True), 2),
+                ("a tree whose registry is a dangling symlink exits 2", tree("t6", fx, None, dangling=True), 2))
+        for name, root, want in runs:
+            try:
+                rc = run(root)[0]
+            except Exception as e:
+                rc = f"raised {type(e).__name__}"
+            if rc != want:
+                wrong.append(f"{name}: wanted exit {want}, got {rc}")
+    modes = (([], "live"), (["--self-test"], "self-test"), (["--mutations"], "mutations"), (["--mutation"], None),
+             (["--selftest"], None), (["--self-test", "--mutations"], None), (["x"], None))
+    for argv, want in modes:
+        if mode(argv) != want:
+            wrong.append(f"arguments {argv}: wanted mode {want}, got {mode(argv)}")
     for name, body, reg, want in shapes:
         if "upper-case ID" in name or "bold **id**" in name or "code `id`" in name or "doubled space" in name:
             h = (head.replace("| id |", "| ID |", 1) if "upper-case" in name else
@@ -443,7 +502,8 @@ def self_test():
             wrong.append(f"{name}: wanted {want} problem(s), got {len(got)}: {got}")
     for w in wrong:
         print(f"  *** WRONG *** {w}")
-    print(f"[owned self-test] {'FAIL' if wrong else 'PASS'} :: {len(shapes)} shapes, {len(exits)} exit checks and {len(reads)} read checks")   # all (#30a)
+    print(f"[owned self-test] {'FAIL' if wrong else 'PASS'} :: {len(shapes)} shapes, {len(exits)} exit, {len(reads)} read, "
+          f"{len(runs)} work-tree and {len(modes)} argument checks")   # all (#30a)
     return 1 if wrong else 0
 
 
@@ -454,7 +514,8 @@ MUTATIONS = [
     ("more than one line accepted", "        if n != 1:\n", "        if n == 0:\n"),
     ("stray registry lines accepted", "        if rid not in open_ids:\n", "        if False:\n"),
     ("any kind accepted", "        if kind not in KINDS:\n", "        if False:\n"),
-    ("empty text accepted", "        if not body:\n", "        if False:\n"),
+    ("empty text accepted", '        if not INVISIBLE.sub("", body).strip():', "        if False:"),
+    ("invisible-only text accepted", 'if not INVISIBLE.sub("", body).strip():', 'if not body.strip():'),
     ("a fourth field accepted", "        if len(f) != 3:\n", "        if len(f) not in (3, 4):\n"),
     ("comment lines read as entries", 'line.lstrip().startswith("#")', 'False'),
     ("markup before the status word read through", 'STATUS_RE = re.compile(r"^\\s*(?:', 'STATUS_RE = re.compile(r"^[\\s~<>/a-z`]*(?:'),
@@ -479,6 +540,10 @@ MUTATIONS = [
     ("a BOM before the index kept", '    text = text[1:] if text.startswith("\\ufeff") else text      # a BOM before a first', '    text = text      # a BOM before a first'),
     ("an undecodable file raises", '    except (OSError, UnicodeDecodeError) as e:\n        return None, f"{path}: {e}"', '    except OSError as e:\n        return None, f"{path}: {e}"'),
     ("an absent required file read as absent", '    if not required and not os.path.lexists(path):', '    if not os.path.lexists(path):'),
+    ("registry read errors ignored", '    for e in (e1, e2):', '    for e in (e1,):'),
+    ("the index read as optional", 'read_file(os.path.join(root, "KNOWN_ISSUES.md"), True)', 'read_file(os.path.join(root, "KNOWN_ISSUES.md"), False)'),
+    ("a dangling symlink read as absent", 'and not os.path.lexists(path):', 'and not os.path.exists(path):'),
+    ("unknown arguments run the live check", 'return MODES.get(tuple(argv))', 'return MODES.get(tuple(argv), "live")'),
     ("a zero-width lead hides a row", 'if INVISIBLE.sub("", l).lstrip().startswith("|")', 'if l.lstrip().startswith("|")'),
     ("a closed status that says open accepted", '        if s.group("w").upper() != "OPEN" and OPEN_WORD.search', '        if False and OPEN_WORD.search'),
     ("comments closed only by -->", 'r"<!--(?:-?>|.*?--!?>)"', 'r"<!--.*?-->"'),
@@ -516,7 +581,8 @@ MUTATIONS = [
     ("registry kind unstripped", "rid, kind, body = f[0].strip(), f[1].strip()", "rid, kind, body = f[0].strip(), f[1]"),
     ("header case-sensitive", 'header = tuple(_rendered(c).lower() for c in cur[1])', 'header = tuple(_rendered(c) for c in cur[1])'),
     ("id with trailing text read", 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)[\\s*_]*$")', 'ID_RE = re.compile(r"^[\\s*_]*([A-Za-z0-9]+)")'),
-    ("a malformed line owns its row", "if e[0] in KINDS and e[1]])", "if True])"),
+    ("a malformed line owns its row", 'if e[0] in KINDS and INVISIBLE.sub("", e[1]).strip()])', "if True])"),
+    ("invisible-only text owns its row", 'if e[0] in KINDS and INVISIBLE.sub("", e[1]).strip()])', "if e[0] in KINDS and e[1]])"),
     ("fenced blocks excused", '    lines, covered = text.split("\\n"), set()',
      '    lines, covered = text.split("\\n"), set()\n    covered.update(x for tk in toks if tk.type == "fence" and tk.map for x in range(*tk.map))'),
     ("a BOM not stripped", 'text = text[1:] if text.startswith("\\ufeff") else text      # a UTF-8 BOM', 'text = text      # a UTF-8 BOM'),
@@ -542,6 +608,13 @@ def mutations():
     body = src[:src.index("# (label, text in this file, replacement).")]    # mutate the CODE, not this list
     alive, broken = [], []
     with tempfile.TemporaryDirectory() as td:
+        # the UNMUTATED self-test must pass first: a failing one makes every mutant look red (self-found, 2026-09-24)
+        p = os.path.join(td, "m.py")
+        open(p, "w", encoding="utf-8").write(src)
+        r = subprocess.run([sys.executable, p, "--self-test"], capture_output=True, text=True)
+        if r.returncode != 0 or "[owned self-test] PASS" not in r.stdout:
+            print(f"[owned mutations] CANNOT LOOK :: the unmutated self-test does not pass (exit {r.returncode})")
+            return 2
         for label, a, b in MUTATIONS:
             if body.count(a) != 1:
                 broken.append(f"{label}: its text occurs {body.count(a)} times in the code, not once")
@@ -565,22 +638,19 @@ def mutations():
 
 
 def main():
-    if "--self-test" in sys.argv:
+    m = mode(sys.argv[1:])
+    if m is None:
+        print(f"[owned] usage: {os.path.basename(sys.argv[0])} [--self-test | --mutations]; got {sys.argv[1:]}")
+        return 2
+    if m == "self-test":
         return self_test()
-    if "--mutations" in sys.argv:
+    if m == "mutations":
         return mutations()
     root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
     if not root:
         print("[owned] CANNOT LOOK :: not inside a git work tree")
         return 2
-    os.chdir(root)
-    index, e1 = read_file("KNOWN_ISSUES.md", True)
-    registry, e2 = read_file(REGISTRY, False)
-    for e in (e1, e2):
-        if e:
-            print(f"[owned] CANNOT LOOK :: {e}")
-            return 2
-    rc, out = decide(index, registry)
+    rc, out = run(root)
     print("\n".join(out))
     return rc
 
