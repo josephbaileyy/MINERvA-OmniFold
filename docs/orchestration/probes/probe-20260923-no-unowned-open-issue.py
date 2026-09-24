@@ -47,7 +47,8 @@ index header (⚠ that case was first listed among the exit-1 refusals; review #
 registry is not UTF-8, is a directory, or is a symlink to nothing (these once raised or, for the symlink, counted
 as an absent registry, exiting 1; reviews #34b, #35a). A registry that does not exist at all is the exit-1
 refusal above. It checks the git work tree holding
-the CURRENT DIRECTORY, not the one holding this file (review #34b).
+the CURRENT DIRECTORY, not the one holding this file (review #34b), whatever GIT_DIR or GIT_WORK_TREE say; it
+exits 2 when git cannot run (review #37b).
 
 ⚠ WHY A REGISTRY. The first versions read blocker lines written as Markdown, in detail files or index rows.
 Independent reviews #21b, #22b and #23b found 6, 7 and 11 defects, most of them about which Markdown forms
@@ -96,7 +97,7 @@ OPEN_WORD = re.compile(r"open", re.I)
 _DI = {c for a, b in ((0xAD, 0xAD), (0x34F, 0x34F), (0x61C, 0x61C), (0x115F, 0x1160), (0x17B4, 0x17B5), (0x180B, 0x180F),
                       (0x200B, 0x200F), (0x202A, 0x202E), (0x2060, 0x206F), (0x3164, 0x3164), (0xFE00, 0xFE0F),
                       (0xFEFF, 0xFEFF), (0xFFA0, 0xFFA0), (0xFFF0, 0xFFF8), (0x1BCA0, 0x1BCA3), (0x1D173, 0x1D17A),
-                      (0xE0000, 0xE0FFF)) for c in range(a, b + 1)}
+                      (0xE0000, 0xE0FFF)) for c in range(a, b + 1)} | {0x2800}   # Braille blank renders blank too (#37b)
 INVISIBLE = re.compile("[" + "".join(re.escape(chr(c)) for c in range(sys.maxunicode + 1)
                                      if unicodedata.category(chr(c)) == "Cf" or c in _DI) + "]")
 HTML_TABLE = re.compile(r"<\s*/?\s*t(able|head|body|r|d|h)\b", re.I)
@@ -123,7 +124,9 @@ def index_rows(text):
     parsed table."""
     text = text[1:] if text.startswith("\ufeff") else text      # a BOM before a first table line hid the table (#34b)
     # markdown-it ends a line at a lone CR, `split("\n")` does not: two in a table shifted the numbering, and a cut-off
-    # OPEN row after it fell on a "covered" line and passed (review #36b)
+    # OPEN row after it fell on a "covered" line and passed (review #36b). Only for a string passed to check(): the
+    # command reads through read_file(), whose universal newlines already convert every CR (⚠ first stated without
+    # this scope; review #37b)
     text = text.replace("\r\n", "\n").replace("\r", "\n")
     toks, rows, problems, i = MD.parse(text), [], [], 0
     lines, covered = text.split("\n"), set()
@@ -259,6 +262,29 @@ def mode(argv):
     return MODES.get(tuple(argv))
 
 
+def clean_env(**extra):
+    """This environment without any GIT_* variable except GIT_CEILING_DIRECTORIES. An exported GIT_DIR made the
+    self-test's `git init` re-initialise the CALLER's repository -- from a linked worktree it set the shared config
+    to bare -- and GIT_WORK_TREE redirected the live check away from the current directory (review #37b)."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_") or k == "GIT_CEILING_DIRECTORIES"}
+    env.update(extra)
+    return env
+
+
+def toplevel():
+    """(the work tree holding the current directory, None) or (None, why not). A missing `git` once raised, exit 1."""
+    try:
+        r = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, env=clean_env())
+    except OSError as e:
+        return None, f"git cannot run: {e}"
+    root = r.stdout.strip()
+    return (root, None) if root else (None, "not inside a git work tree")
+
+
+def git_init(path):
+    subprocess.run(["git", "init", "-q"], cwd=path, capture_output=True, env=clean_env())
+
+
 def run(root):
     """(exit status, lines) for the work tree at `root`: main()'s reading and verdict, above the mutation marker so
     that the self-test reaches them. main() once read the files itself, unpinned (review #35b)."""
@@ -382,6 +408,7 @@ def self_test():
         # --- review #36b: boundaries pinned WITHOUT an `open` that the open rule would refuse anyway; a tab lead; lone CRs
         *[(f"status {s!r} is refused", f"| 1 | L | {s} | x | d | u |\n", "", 1)
           for s in ("FIXED-pending review", "FIXED?", "**FIXED**-x", "FIXED/pending", "FIXED' x", "FIXED!")],
+        ("a row cut off after a Braille-blank lead is refused", "| 1 | L | FIXED | x | d | u |\n\n\u2800| 2 | L | OPEN | x | d | u |\n", "", 1),
         ("a row cut off after a tab lead is refused", "| 1 | L | FIXED | x | d | u |\n\n\t| 2 | L | OPEN | x | d | u |\n", "", 1),
         ("lone CRs in a table do not hide a cut-off OPEN row",
          "| 1 | L | FIXED | x | d | u |\r| 3 | L | FIXED | y | d | u |\r| 4 | L | FIXED | z | d | u |\n\n| 99 | L | OPEN | x | d | u |\n", "", 1),
@@ -493,18 +520,35 @@ def self_test():
                 wrong.append(f"{name}: wanted exit {want}, got {rc}")
         # main(): THIS file run as a command, so its dispatch and exit status are pinned too (review #36b)
         g0, g1 = tree("g0", ok, b"1\tOWNER\ta\n"), tree("g1", ok, b"")
-        for g in (g0, g1):
-            subprocess.run(["git", "init", "-q"], cwd=g, capture_output=True)
+        # git init under a HOSTILE caller environment: an exported GIT_DIR must not reach it (review #37b). The bait is
+        # a plain directory, so a leak creates bait/.git and harms nothing real
+        bait = os.path.join(td, "bait")
+        os.mkdir(bait)
+        saved = {k: os.environ.get(k) for k in ("GIT_DIR", "GIT_WORK_TREE")}
+        os.environ.update(GIT_DIR=os.path.join(bait, ".git"), GIT_WORK_TREE=bait)
+        try:
+            for g in (g0, g1):
+                git_init(g)
+        finally:
+            for k, v in saved.items():
+                os.environ.pop(k) if v is None else os.environ.__setitem__(k, v)
+        if os.path.exists(os.path.join(bait, ".git")) or not all(os.path.isdir(os.path.join(g, ".git")) for g in (g0, g1)):
+            wrong.append("git init under an exported GIT_DIR: it reached the caller's repository, not the new tree")
         plain = os.path.join(td, "plain")
         os.mkdir(plain)
-        clis = (("the command exits 0 on an owned work tree", g0, [], 0),
-                ("the command exits 1 on an unowned OPEN row", g1, [], 1),
-                ("the command exits 2 outside a work tree", plain, [], 2),
-                ("the command exits 2 on an unknown argument", g0, ["--mutation"], 2))
-        for name, cwd, argv, want in clis:
-            rc = subprocess.run([sys.executable, os.path.abspath(__file__), *argv], cwd=cwd, capture_output=True).returncode
-            if rc != want:
-                wrong.append(f"{name}: wanted exit {want}, got {rc}")
+        # the ceiling keeps `plain` outside any work tree even when TMPDIR lies inside one (review #37b)
+        base = clean_env(GIT_CEILING_DIRECTORIES=os.path.realpath(td))
+        hostile = dict(base, GIT_DIR=os.path.join(g0, ".git"), GIT_WORK_TREE=g0)
+        clis = (("the command exits 0 on an owned work tree", g0, [], base, 0, "[owned] PASS"),
+                ("the command exits 1 on an unowned OPEN row", g1, [], base, 1, "(UNOWNED)"),
+                ("the command exits 1 on an unowned row whatever GIT_DIR and GIT_WORK_TREE say", g1, [], hostile, 1, "(UNOWNED)"),
+                ("the command exits 2 outside a work tree", plain, [], base, 2, "not inside a git work tree"),
+                ("the command exits 2 when git cannot run", g0, [], dict(base, PATH=os.path.join(td, "no-bin")), 2, "git cannot run"),
+                ("the command exits 2 on an unknown argument", g0, ["--mutation"], base, 2, "usage"))
+        for name, cwd, argv, env, want, text in clis:
+            r = subprocess.run([sys.executable, os.path.abspath(__file__), *argv], cwd=cwd, capture_output=True, text=True, env=env)
+            if r.returncode != want or text not in r.stdout:     # the exit AND its reason: two paths exit 2 (#37b)
+                wrong.append(f"{name}: wanted exit {want} saying {text!r}, got {r.returncode}: {r.stdout.strip()[-80:]!r}")
     modes = (([], "live"), (["--self-test"], "self-test"), (["--mutations"], "mutations"), (["--mutation"], None),
              (["--selftest"], None), (["--self-test", "--mutations"], None), (["x"], None))
     for argv, want in modes:
@@ -540,9 +584,9 @@ def main():
         return self_test()
     if m == "mutations":
         return mutations()
-    root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip()
+    root, why = toplevel()
     if not root:
-        print("[owned] CANNOT LOOK :: not inside a git work tree")
+        print(f"[owned] CANNOT LOOK :: {why}")
         return 2
     rc, out = run(root)
     print("\n".join(out))
@@ -592,7 +636,12 @@ MUTATIONS = [
     ("a status word ended by /", '(?=$|[\\s.,:;)\\u2013\\u2014])")   # en dash', '(?=$|[\\s.,:;)\\u2013\\u2014/])")   # en dash'),
     ("the live exit status dropped", '    print("\\n".join(out))\n    return rc\n', '    print("\\n".join(out))\n    return 0\n'),
     ("a usage error exits 0", '        return 2\n    if m == "self-test":', '        return 0\n    if m == "self-test":'),
-    ("outside a work tree exits 0", 'not inside a git work tree")\n        return 2', 'not inside a git work tree")\n        return 0'),
+    ("outside a work tree exits 0", 'CANNOT LOOK :: {why}")\n        return 2', 'CANNOT LOOK :: {why}")\n        return 0'),
+    ("GIT_* variables inherited", 'if not k.startswith("GIT_") or k == "GIT_CEILING_DIRECTORIES"}', 'if True}'),
+    ("git init not isolated", 'cwd=path, capture_output=True, env=clean_env())', 'cwd=path, capture_output=True)'),
+    ("the work-tree lookup not isolated", '["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, env=clean_env())', '["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)'),
+    ("a missing git raises", '    except OSError as e:\n        return None, f"git cannot run: {e}"', '    except ImportError as e:\n        return None, f"git cannot run: {e}"'),
+    ("Braille blank visible", ' | {0x2800}   # Braille', '   # Braille'),
     ("a zero-width lead hides a row", 'if INVISIBLE.sub("", l).lstrip().startswith("|")', 'if l.lstrip().startswith("|")'),
     ("a closed status that says open accepted", '        if s.group("w").upper() != "OPEN" and OPEN_WORD.search', '        if False and OPEN_WORD.search'),
     ("comments closed only by -->", 'r"<!--(?:-?>|.*?--!?>)"', 'r"<!--.*?-->"'),
