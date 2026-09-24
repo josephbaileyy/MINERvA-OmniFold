@@ -163,6 +163,60 @@ class SweepSnapshots(unittest.TestCase):
                       f"the document does not quote the current gate count ({ng})")
 
 
+class PipelineMatcherBothDirections(unittest.TestCase):
+    """The matcher was narrowed on 2026-09-23 from "a filter pipe anywhere on a line that has an
+    `if`/`&&`/`||`" to "the pipeline IS the status being read" (HANDOFF-20260921-gbdt-remaining
+    4a: nine output-capture shapes had gone 'live'). A narrowing is exactly where a real instance
+    can start slipping through, so every true shape must still FIRE and every benign one found in
+    the tree must stay SILENT."""
+
+    FIRES = {
+        "A": ['if grep -q x f | head -1; then', 'elif cmd | tail -1 ; then',
+              'if cmd | grep -q ok', '   foo | grep -q bar; then'],
+        "B": ['cmd | tail -1 && echo ok', 'cmd | grep x || die "no x"',
+              'x=$(cmd | head -1) && use "$x"', '( cmd | tail -3 ) || die',
+              'a; cmd | awk \'{print $1}\' && b', 'cmd | grep -c x || echo 0'],
+        "C": ['cmd | tail -1', 'rc=$?'],
+    }
+    SILENT = [
+        'if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | cut -d" " -f1',
+        '_got="$(grep -oE "k=[^ ]*" f | head -1 || true)"',
+        'grep -iE "ERROR" log | head -3 || true',
+        'grep x f | sort || :',
+        'echo "e=$([ -f "$B" ] && echo yes || echo NO) s=$(sha256sum "$B" | cut -c1-12)"',
+        'while read -r f; do [ -f "$f" ] && MD+=("$f"); done < <( git diff | sort -zu )',
+        'run(){ py "$@"; rc=$?; printf "%s" "$rc" | cut -c1-110; [ $rc -ne 0 ] && all=1; }',
+        '(cd "$R" && ls -1 "$1"/*.root | sort)',
+        '|| { bad "wrong"; echo "$out" | sed "s/^/  /"; }',
+        'cmd | tail -1',
+    ]
+
+    def _mod(self):
+        import tools_p4_sweep_pipeline_rc as pipe
+        return pipe
+
+    def test_every_true_shape_still_fires(self):
+        pipe = self._mod()
+        for shape in ("A", "B"):
+            for line in self.FIRES[shape]:
+                with self.subTest(shape=shape, line=line):
+                    hits, _ = pipe.scan_lines([line])
+                    self.assertEqual(len(hits), 1, f"missed a real shape-{shape} instance")
+                    self.assertTrue(hits[0][1].startswith(shape), hits[0][1])
+        hits, _ = pipe.scan_lines(self.FIRES["C"])
+        self.assertEqual([h[1] for h in hits], ["C: rc=$? after pipeline"])
+
+    def test_benign_shapes_found_in_the_tree_stay_silent(self):
+        pipe = self._mod()
+        for line in self.SILENT:
+            with self.subTest(line=line):
+                self.assertEqual(pipe.scan_lines([line])[0], [], "benign shape flagged")
+
+    def test_pipefail_is_still_reported(self):
+        _, pf = self._mod().scan_lines(["set -euo pipefail", "cmd | tail -1 && x"])
+        self.assertTrue(pf)
+
+
 def _update():
     SNAPSHOT.parent.mkdir(parents=True, exist_ok=True)
     SNAPSHOT.write_text(json.dumps(_current(), indent=2, sort_keys=True) + "\n")

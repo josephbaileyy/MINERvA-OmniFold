@@ -5332,7 +5332,7 @@ class TheGitAllowlistIsMEASUREDAgainstWhatThisRepoActuallyRuns(unittest.TestCase
 
     #: (site, argv after `git`) -- admitted.
     ADMITTED = (
-        ("nd-unfolding/tools_p4_sweep_pipeline_rc.py:31", ["ls-files", "*.sh"]),
+        ("nd-unfolding/tools_p4_sweep_pipeline_rc.py:73", ["ls-files", "*.sh"]),
         ("nd-unfolding/receipt_construction_contract_5d.py:218", ["rev-parse", "HEAD"]),
         ("nd-unfolding/receipt_construction_contract_5d.py:219", ["status", "--porcelain"]),
         ("nd-unfolding/p4_check_verifier_token.py:94", ["ls-files", "--error-unmatch", "f"]),

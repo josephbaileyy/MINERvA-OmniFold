@@ -62,9 +62,13 @@ for f, s in sh.items():
 # second operand; presence-only = only `in`, `is not None`, or bare truthiness.
 def classify(field):
     compared, presence = [], []
+    # A WHOLE-NAME match. A substring test let `endpoint_reproduction` count as compared because
+    # `man["endpoint_reproduction_sense"] = (... if EST_SEED_OFFSET == 0` names a longer field on a
+    # line holding `==`; five fields left the inventory that way (2026-09-23).
+    name = re.compile(rf"(?<![A-Za-z0-9_]){re.escape(field)}(?![A-Za-z0-9_])")
     for f, s in {**src, **sh}.items():
         for line in s.splitlines():
-            if field not in line:
+            if not name.search(line):
                 continue
             if line.lstrip().startswith("#"):
                 continue

@@ -12,9 +12,11 @@ Three shapes are flagged:
   B. `<pipeline> && ...` / `<pipeline> || ...`          -- same, in a boolean chain
   C. `<pipeline>` immediately followed by `rc=$?`       -- captures the wrong status
 
-Not flagged, and deliberately: a bare pipeline whose status is never consumed, and any pipeline
-under `set -o pipefail` where the FIRST failing element propagates. pipefail changes the
-semantics, so the report states per-file whether it is set.
+Not flagged, and deliberately: a bare pipeline whose status is never consumed -- including one in
+an `if` BODY (`if command -v X; then X | cut`) and one whose status is discarded by `|| true` --
+and an operator whose left operand is not the pipeline (`[ -f x ] && echo yes`). A pipeline under
+`set -o pipefail`, where the FIRST failing element propagates, is still counted, but pipefail
+changes the semantics, so the report states per-file whether it is set.
 """
 import re
 import subprocess
@@ -25,6 +27,46 @@ REPO = Path(__file__).resolve().parents[1]
 FILTERS = r"(?:tail|head|grep|cut|sed|awk|wc|sort|uniq|tee|xargs)"
 PIPE_TO_FILTER = re.compile(rf"\|\s*{FILTERS}\b")
 RC_CAPTURE = re.compile(r"^\s*(?:local\s+)?\w+=\$\?|^\s*rc=\$\?")
+IF_HEAD = re.compile(r"^\s*(?:el)?if\b")
+THEN = re.compile(r";\s*then\b")
+BOOL_OP = re.compile(r"&&|\|\|")
+# Where a command's left operand begins: a list separator, an opening group or substitution,
+# or a compound-command keyword. The operator binds only the text after the last of these.
+# `(`/`{` count only as a subshell/group opener (at line start or after whitespace/`;`), so the
+# braces and parens inside an awk program do not truncate the operand and hide its pipe.
+SEGMENT_START = re.compile(r";|&&|\|\||\$\(|<\(|(?:^|(?<=[\s;]))\(|(?:^|(?<=[\s;]))\{(?=\s)"
+                           r"|`|\bthen\b|\bdo\b|\belse\b")
+# `|| true` / `|| :` DISCARDS the status: nothing reads it, so it cannot read the wrong command's.
+DISCARD = re.compile(r"\s*(?:true|:)\s*(?:$|[;)}`\"'])")
+
+
+def _condition(line):
+    """The text of an `if`/`elif` CONDITION on this line, or None.
+
+    Only the condition is a status read. `if command -v X; then X "$1" | cut -f1` pipes in the
+    BODY, whose status nothing tests -- flagging it was the output-capture false positive that
+    took `submit_z_pilot_a5.sh` and `lib_mnv_env_preflight.sh` live (HANDOFF-20260921 4a)."""
+    head = IF_HEAD.match(line)
+    then = THEN.search(line)
+    if head:
+        return line[head.end():then.start() if then else len(line)]
+    if then:  # `; then` closing a condition begun on an earlier line
+        return line[:then.start()]
+    return None
+
+
+def _chain_reads_a_pipeline(line):
+    """True iff some `&&`/`||` on this line has a filter pipeline as its LEFT operand and does
+    not discard the status. `[ -f x ] && echo yes`, followed later on the line by `a | cut`, is
+    not the trap: the operator reads the test, not the pipeline."""
+    for m in BOOL_OP.finditer(line):
+        left = SEGMENT_START.split(line[:m.start()])[-1]
+        if not PIPE_TO_FILTER.search(left):
+            continue
+        if m.group() == "||" and DISCARD.match(line[m.end():]):
+            continue
+        return True
+    return False
 
 
 def tracked_shell_files():
@@ -38,6 +80,11 @@ def scan(rel):
         lines = path.read_text(errors="replace").splitlines()
     except Exception:
         return [], False
+    return scan_lines(lines)
+
+
+def scan_lines(lines):
+    """`scan` over already-read lines, so the matcher is testable on fixtures in both directions."""
     pipefail = any(re.search(r"set\s+-o\s+pipefail|set\s+-[a-z]*o[a-z]*\s+pipefail", l)
                    for l in lines if not l.lstrip().startswith("#"))
     hits = []
@@ -48,9 +95,10 @@ def scan(rel):
             # shape C can span two lines: pipeline then rc=$?
             continue
         shape = None
-        if re.search(r"^\s*(?:el)?if\b", line) or re.search(r";\s*then\b", line):
+        cond = _condition(line)
+        if cond is not None and PIPE_TO_FILTER.search(cond):
             shape = "A: if-condition"
-        elif re.search(r"\|\|\s*\S|&&\s*\S", line):
+        elif _chain_reads_a_pipeline(line):
             shape = "B: boolean chain"
         nxt = lines[i] if i < len(lines) else ""
         if RC_CAPTURE.match(nxt):

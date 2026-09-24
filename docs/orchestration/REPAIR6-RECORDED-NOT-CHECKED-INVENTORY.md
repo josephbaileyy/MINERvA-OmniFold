@@ -10,8 +10,20 @@ re-runnable — not a judgement I assert I made.
 **Generator:** the sweep is grep-level over `p4_lib.py`, `p4_evidence.py`,
 `p4_validate_active_lateral.py`, `p4_build_components.py`, `p4_project_4d.py`,
 `p4_adopt_standard.py`, `p4_check_receipt.py`, `p4_lateral_replace.py` and the three shell
-drivers. **129 fields** written into a product with no same-line comparison, and **30 named
+drivers. **136 fields** written into a product with no same-line comparison, and **30 named
 gates**.
+
+**129 → 136 fields on 2026-09-23** (snapshot re-based; the gate count is unchanged at 30). Three
+entered from `p4_project_4d.py`'s projection receipt when M-G closed OI-129's write-path half:
+`proj4d_sha256`, `row_index_sha256_readback` and `row_index_readback_basis` — provenance digests of
+the written product, recorded for a later reader's comparison and read by no gate. **Four more
+entered by fixing an extractor defect:** `classify()` matched a field as a SUBSTRING, so a field
+counted as compared when a LONGER identifier or path containing its name sat beside `==`/`<`/`>`.
+The defect surfaced because `endpoint_reproduction` (already in the 129) was about to LEAVE: the
+new line `man["endpoint_reproduction_sense"] = (... if EST_SEED_OFFSET == 0` would have marked it
+compared, and a regenerate-only update would have recorded that silently. With a whole-name match
+it stays, and `omnifold`, `ratio`, `universe` and `xsec` -- each "compared" only through a longer
+name -- join it as recorded-but-unchecked.
 
 **115 → 129 fields / 28 → 29 gates on 2026-08-16**, from the N3+N4 repair; then **29 → 30 gates**
 on 2026-08-16 from repair-12, whose new gate is `require_verifier_token()` — the per-stage token
@@ -262,6 +274,18 @@ three shapes -- a pipeline through `tail/head/grep/...` used as an `if` conditio
 **Result: 23 candidate instances, and every single one is in a file that sets `set -o pipefail`.**
 Under pipefail the first failing element propagates, so the shape is benign there. **There are no
 live instances in the tracked shell corpus.**
+
+> **2026-09-23: the matcher was narrowed to status reads, and this count is now 23 over 360 files by
+> a different rule.** The corpus reached 9 "live" hits in 5 files without pipefail, every one an
+> output-capture shape the old line-level match could not distinguish from a status read — a pipe in
+> an `if` BODY (`if command -v sha256sum; then sha256sum "$1" | cut ...`), a status discarded by
+> `|| true`, or an `&&`/`||` whose left operand was a `[ ... ]` test with the pipe elsewhere on the
+> line (HANDOFF-20260921-gbdt-remaining 4a verified the first four benign). Shape A now reads only
+> the condition, shape B only an operator whose left operand is the pipeline and whose status is
+> not discarded; `PipelineMatcherBothDirections` pins both directions. On today's tree the old rule
+> found 60 candidates: 37 dropped for those reasons, none was added, and every drop was read;
+> the 374 → 360 file count is three retirement
+> commits (`84607aa3`, `96d394a2`, `b017cfe6`).
 
 **Which relocates the finding, and is the useful part.** The trap has now bitten five times, and
 the most recent -- `selfcheck_receipts.sh` reporting `pass=10 fail=0` beside ten REJECT lines --
