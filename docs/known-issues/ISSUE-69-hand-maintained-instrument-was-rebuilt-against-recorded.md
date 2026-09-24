@@ -1,6 +1,6 @@
 # ISSUE-69 — A hand-maintained instrument was rebuilt against its own recorded defect three times before a mutation suite was written for it
 
-**Severity:** MEDIUM. **Status:** OPEN. **Index row:** `KNOWN_ISSUES.md` row 69. **Updated:** 2026-09-23.
+**Severity:** MEDIUM. **Status:** FIXED 2026-09-24. **Index row:** `KNOWN_ISSUES.md` row 69. **Updated:** 2026-09-24.
 
 Moved here from the index on 2026-09-22 (self-round 52), text unchanged, because `KNOWN_ISSUES.md`
 is an index and not a copy: its own header says so, it was compacted to 8,720 B at `1f714b7f` to
@@ -59,3 +59,13 @@ note or accepting a report, were DELETED rather than refined again. The ledger's
 by a digest of the whole rendered row. Any new or edited NO VERDICT row is refused until a human reads it and
 pins it. **CHECK:** when a pattern rule keeps drawing findings from both directions, stop refining it. Replace
 the inference with an enumeration that a human maintains.
+
+**Closed 2026-09-24 (FIXED).** The defect this issue records, a hand-maintained instrument rebuilt again and
+again with no mutation suite, is fixed. The ledger guard now has two things it lacked. The first is
+`probes/probe-20260922-ledger-guard-mutations.py` (last changed at `29c3482c`): its `--regressions` requires
+every refusal site in the guard's CODE to carry an anchored regression, and every regression to change a
+result without crashing. That held for 31 of 31 at `0b828b53` (review #24a), and the seven-gates runner
+re-runs it for the commit that closes this. The second is an automatic caller: the shared pre-commit hook has
+run the guard since `b6b19496` (row 71). The issue was held OPEN only as a place to log later defeats, which
+is not a defect. Further defeats of the guard are recorded in the review-residue report's ledger rows, not
+here.
