@@ -2,6 +2,10 @@
 
 ## Status (resume anchor; newest first)
 
+- 2026-09-24 07:18Z: relaunched on the flock code `d01a04a9` after the lock audit (below): FINAL debug
+  chains 58815932 + 58815967 and 29 gpu_shared copies (the 7 COMPLETE FINAL rows get none);
+  STRESS: 36 gpu_shared copies + full-node chains 58816008 (regular) and 58816009 (preempt).
+  `final-C-F1` quarantined and rerunning from scratch. PILOT 9/9 complete.
 - 2026-09-24 06:40Z: PILOT 9/9 complete (tables in `CONFIRM_RESULTS.md`). FINAL 8/36 complete, 101/360
   iterations; chain v2 gives two iterations per 30-min round (receipts: segments of 2), resume
   bit-exact (the control's 3-segment run is bit-identical to B2's uninterrupted one). Projection at
