@@ -104,6 +104,15 @@ nothing to rebuild. That tells us why those four sit outside the rebuild; it
 does not by itself show that the set of hadronic-response variations we
 include is the complete set this measurement needs.
 
+Two newer end-to-end tests qualify ``pass the stated validation tests''. When the
+simulated pseudo-data include background and are processed exactly as the data are, the
+way we remove background biases the highest-$W$ cells by about \SI{4}{\percent}. A finer,
+unbinned removal cuts that to below \SI{0.3}{\percent}, but leaves about \SI{1}{\percent}
+in a few combined cells. More importantly, when the simulated ``true'' distribution of
+available energy is changed by as much as two standard generators differ, the unfolding
+follows it only partly: typical cells come back about \SI{10}{\percent} off, and the
+highest-$W$ cells much more. Neither effect is in the quoted uncertainty yet.
+
 The two-dimensional trust check is unaffected and retains its independently
 constructed uncertainty.
 

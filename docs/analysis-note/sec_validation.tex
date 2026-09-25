@@ -55,6 +55,30 @@ covariance, and its size on data is not established.
 % Sources: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md,
 % docs/orchestration/state/s5c/d1/d1_summary.json, docs/orchestration/state/s5c/d1/bias_vs_adopted.json.
 
+\paragraph{Unbinned background treatment and generator-sized truth changes.}
+The same end-to-end experiments were repeated with the unbinned negative-weight
+treatment (\texttt{-{}-bkg-mode negweight-refined}): data and signed background
+simulation are refined to non-negative weights before the first OmniFold step, and the
+background simulation is split into an injection half and an independent subtraction
+half. Sixty experiments at nominal truth bring the highest-$W$ column to
+\SIrange{0.11}{0.24}{\percent} and the corner cell to \SI{0.24}{\percent}. A set of joint
+cells nevertheless remains \SIrange{0.7}{1.1}{\percent} high, up to 14 standard errors,
+against \SI{-0.2}{\percent} without background; the mechanism is not established.
+Experiments whose truth is reweighted by the GiBUU-to-GENIE $\Eavail$ shape ratio
+(0.70--1.33 per $\Eavail$ bin, total preserved) are not followed by the unfolding. The
+$(\Eavail,W)$ cells deviate from that truth by a median of \SI{9.7}{\percent}, up to
+\SI{74}{\percent} in the highest-$W$ column, and by several percent in the largest cells.
+A $q_3$ deformation that leaves the $(\Eavail,W)$ truth unchanged moves those cells by up
+to \SI{37}{\percent}. Signal-only experiments with the same seeds reproduce both results,
+so they are a property of the estimator (five iterations, the GBDT configuration of
+\S\ref{sec:method}), not of the background treatment. This regularization bias is not
+included in any quoted uncertainty. On the data, the two background treatments differ by
+a median of \SI{0.36}{\percent} and at most \SI{1.4}{\percent} over the reported
+functionals. This measures method sensitivity, not a bias. The negative-weight treatment
+is not adopted.
+% Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md (VL151, VL152);
+% KNOWN_ISSUES 75, 77; independently reproduced (state/s5n/stage1/review-round-1.md).
+
 \paragraph{Unbinned diagnostic (C2ST).}
 As a binning-free check that the unfold removes the data\,$\leftrightarrow$\,MC mismatch, we use
 a classifier two-sample test (C2ST): a classifier is trained to separate the data from the

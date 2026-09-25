@@ -424,6 +424,26 @@ purity-versus-\texttt{negweight-refined} comparison on data is the cheapest esti
 size on data.
 % Source: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; KNOWN_ISSUES 75.
 
+\paragraph{The five-dimensional \texttt{negweight-refined} test (2026-09-25).}
+The refined footing was run end to end in the same five-dimensional pseudo-experiments.
+The refinement classifier used the same deterministic GBDT configuration as the unfold,
+the background simulation was split into independent injection and subtraction halves,
+and each bootstrap replica resampled every pseudo-event individually and refit the
+refinement. The refinement preserves the signed total to $3\times10^{-6}$ and clips
+\SIrange{0.01}{0.05}{\percent} of events. At nominal truth the purity footing's
+highest-$W$ bias falls from \SIrange{-3.5}{-4.1}{\percent} to
+\SIrange{0.11}{0.24}{\percent}, and the corner from \SI{1.66}{\percent} to
+\SI{0.24}{\percent}. A residual of up to about \SI{1}{\percent} remains in some joint
+cells, so the predeclared nominal closure criterion fails. On the data the two footings
+differ by a median of \SI{0.36}{\percent} and at most \SI{1.4}{\percent}. The sign
+pattern matches the simulated purity bias at an order of magnitude smaller size; this is
+method sensitivity, not a measured bias. The same study found that the estimator, with
+either footing, does not follow generator-sized $\Eavail$ shape changes
+(\S\ref{sec:validation}). No coverage test was run, and the footing obligation above
+therefore remains open: the refined footing reduces one bias but does not by itself
+qualify an uncertainty.
+% Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md; VL151, VL152.
+
 \paragraph{The footing question is settled; the adoption gate is a different one.}
 \textbf{Nothing here adopts any five-dimensional covariance.} The
 selection-complete active-lateral component is built --- five bands, ten endpoint
