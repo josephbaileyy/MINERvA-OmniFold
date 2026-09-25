@@ -405,3 +405,24 @@ Authority `docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activatio
 - Spend (meter, 17:49Z): 20.09 CPU + 9.79 GPU node-h (39.2 A100-h) of the 500/500 envelope;
   `docs/orchestration/state/s5c/tier_s/meter-measure-20260925T1749Z.json`. No s5c job remains.
 
+### 2026-09-25 (evening) — s5n successor (OI-191): Stage 1, STAGE1_FAIL, campaign closed
+
+- Authority `75bd22c0` (Joseph's /goal, attachments byte-identical); contract `state/s5n/contract.json`;
+  meter generalized (`6412f8ad`: campaign key and `s5n-` prefix from the budget, carried-forward cap
+  guard); budget revision 1: CPU 325.184, GPU 115.2138 node-h (unspent s5c envelope binds).
+- Code: `nd-unfolding/s5n_pseudo.py` (negweight-refined measured side calling the driver's
+  `refine_stay_positive` with the F2 parameters; background source/template split; per-event Poisson(k)
+  bootstrap, template Poisson(1), refinement refit per replica), `s5n_truth_check.py`,
+  `s5n_eavail_ratio.py`, `s5n_analyze_dev.py`, `s5n_feasibility.py`; `s5c_with_estimator.py` patches
+  and verifies the refinement for driver arms.
+- Allocations (all stage `development`, all released by their runners): `58874450` (controls + grid,
+  2.627 CPU node-h), `58874451` (σ bootstrap, 1.974), `58875242` (prior-equals-truth diagnostic, 0.096
+  GPU node-h), `58876649` (signal-only departure diagnostic, 0.213 GPU node-h). Deploys `bd0faf0b`,
+  `82dc1517`, `cac87ced`, `e76cb126` (analysis). One hand fix recorded in the state file (output
+  directories created before any task wrote).
+- Results: `VALIDATION_LEDGER.md` `VL151`–`VL152`; `docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md`;
+  independent review rounds 1–2 (`state/s5n/stage1/review-round-1.md`), which refuted two of the
+  author's interpretations (withdrawn) and confirmed every number.
+- Spend (meter 22:06:24Z): 4.601 CPU + 0.309 GPU node-h; envelope totals with s5c 24.687 / 345.27 CPU and
+  10.095 / 125 GPU node-h. No s5n job remains.
+

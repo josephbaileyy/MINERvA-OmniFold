@@ -54,3 +54,28 @@ plus a ledger `rebind`).
 Retained from the s5c index unchanged: D4 (protected baseline namespace), D6 (shared cluster checkout
 not moved), D7 (outward acts), D8 (no `git pull` in the shared main checkout), D9–D11 as recorded
 there. D3 is closed (HPSS backup); nothing in this successor rebuilds from the nine sole-copy objects.
+
+## Closeout (2026-09-25) — final disposition
+
+Evidence: [`OUTCOME-20260925-s5n-stage1-development-fail.md`](OUTCOME-20260925-s5n-stage1-development-fail.md)
+(`VL151`–`VL152`, independently reproduced), [`state/s5n/stage1/`](state/s5n/stage1/) (development receipt,
+truth check, feasibility, meter measurement, review rounds 1–2).
+
+| field | value |
+|---|---|
+| `campaign_disposition` | **CONCLUDED — `STAGE1_FAIL`; objective NOT MET.** Controls C0–C2 pass; C3 (nominal background-inclusive closure) FAILS; Tier-S assurance is 0 at the development estimates because the estimator does not follow the physically anchored E_avail shape departure. No development revision used (0/2); no validation seed run; no Stage 2. |
+| `reportable_uncertainty_scope` | **Unchanged.** The 2D standalone covariance (validated) and the `(E_avail,W)` `C_EW` `835828bf…` published under exception with M1–M4 travelling, plus the purity-background closure bias (`KNOWN_ISSUES.md` 75) and now the estimator's regularization bias under anchored E_avail shape departures (`KNOWN_ISSUES.md` 77), neither in any covariance. No frequentist coverage is claimed for any 5D interval. No new checkpoint qualifies; nothing is adopted. |
+| `joint_5d_inference_status` | **NOT PERFORMED** (excluded by the authorization; also blocked by the absence of a qualified covariance and ≈ 440 CPU node-h per generator). |
+| `publication_readiness` | **NOT READY.** |
+
+**Failed or missing requirements.** (1) C3 nominal background-inclusive closure (≈ 1% in joint cells,
+mechanism unknown). (2) Tier-S coverage under physically anchored truth departures (estimator property,
+`KNOWN_ISSUES.md` 77); no qualifying statistical scope. (3) The matched systematic construction, seed
+stability and Tier T under family `N`: not attempted (Stage-2 precondition unmet). (4) A regularization /
+unfolding-model uncertainty component for the published products (`OI-192`). (5) Driver/npz path parity at
+1% (`KNOWN_ISSUES.md` 79). (6) Joint-5D inference, release package, per-object provenance and generator
+digests (paper-wide table R20): OPEN, unchanged. (7) Outward acts (D7) remain Joseph's.
+
+**Spend:** 4.601 CPU + 0.309 GPU node-h (all Stage-1 development); envelope totals with s5c 24.687 / 345.27
+CPU node-h and 10.095 / 125 GPU node-h. Remaining unspent: 320.58 CPU and 114.90 GPU node-h (459.6 A100-h) — balances, not
+grants. **Costed next increments:** outcome §8, tracked as `OI-192` (Joseph's decision).

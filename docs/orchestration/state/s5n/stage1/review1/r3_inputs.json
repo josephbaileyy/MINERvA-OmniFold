@@ -1,0 +1,260 @@
+{
+ "files": [
+  "axes",
+  "MCgen",
+  "MCreco",
+  "measured",
+  "pass_reco",
+  "pass_truth",
+  "w_truth",
+  "w_reco",
+  "measured_weights",
+  "denom_nd",
+  "flux",
+  "data_pot",
+  "n_nucleons",
+  "edges_0",
+  "edges_1",
+  "edges_2",
+  "edges_3",
+  "edges_4",
+  "nedges"
+ ],
+ "key_axes": "['eavail' 'q3' 'W']",
+ "key_flux": "[0.00062433 0.00062433 0.00062433 0.00062433 0.00062433 0.00062433\n 0.00062433 0.00062433 0.00062433 0.00062433 0.00062433 0.00062433\n 0.00062433 0.00062433]",
+ "key_data_pot": "1.057394261158926e+21",
+ "key_n_nucleons": "3.2352943296224835e+30",
+ "key_edges_0": "[0.   0.07 0.15 0.25 0.33 0.4  0.47 0.55 0.7  0.85 1.   1.25 1.5  2.5\n 4.5 ]",
+ "key_edges_1": "[ 1.5  2.   2.5  3.   3.5  4.   4.5  5.   6.   7.   8.   9.  10.  15.\n 20.  40.  60. ]",
+ "key_edges_2": "[  0.    0.1   0.2   0.4   0.8   1.5   3.  100. ]",
+ "key_edges_3": "[  0.    0.2   0.4   0.6   0.8   1.2   2.  100. ]",
+ "key_edges_4": "[  0.    1.1   1.4   1.8   2.2   3.  100. ]",
+ "key_nedges": "5",
+ "n_rows": 32849103,
+ "n_pass_reco": 20404292,
+ "n_pass_truth": 32849103,
+ "n_reco_not_truth": 0,
+ "w_reco_sum_reco_not_truth_frac": 0.0,
+ "w_reco_eq_w_truth_frac": 0.0,
+ "w_reco_stats": [
+  0.0002717546402585681,
+  0.17857974764859397,
+  3.850547659978899,
+  0.17319118263227717
+ ],
+ "overdispersion_sum_lam(1+lam)/sum_lam_all_pass_reco": 1.4150843946455263,
+ "mean_count_per_reco_row": 0.34638236526455435,
+ "overdispersion_unit_weight_full_sample": 1.2075421973227647,
+ "measured_weights_stats": [
+  0.0,
+  1.0,
+  3972518.4763267958,
+  4091707
+ ],
+ "edges_equal_pc": [
+  true,
+  true,
+  true,
+  true,
+  true
+ ],
+ "gen_reco_corr_per_col": [
+  0.8443246991638367,
+  0.9341545738199701,
+  0.862532004591786,
+  0.033589312735598446,
+  0.023362140461258483
+ ],
+ "gen_col_medians": [
+  0.6280850172042847,
+  4.940876483917236,
+  0.752348780632019,
+  1.4438735246658325,
+  1.574363350868225
+ ],
+ "reco_col_medians": [
+  0.6274213790893555,
+  4.943309307098389,
+  0.6524404883384705,
+  1.5472851991653442,
+  1.5916621685028076
+ ],
+ "bkg_meta": {
+  "schema": "s5c-bkg-dump/1",
+  "omnifile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root",
+  "omnifile_sha256": "b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a",
+  "npz": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "npz_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+  "axes": [
+   "eavail",
+   "q3",
+   "W"
+  ],
+  "code_sha256": {
+   "s5c_dump_bkg.py": "c4e87d18a4003e6795ca78eba8d704c41060ef91c41e838a9cff69939db20982"
+  },
+  "check": {
+   "vectorized_purity_max_abs_diff": 0.0,
+   "float32_coordinates_purity_max_abs_diff": 0.13725014839262872,
+   "float32_coordinates_events_with_changed_weight": 25357,
+   "measured_coordinates_identical": true,
+   "measured_weights_max_abs_diff": 0.0,
+   "n_data": 4091707,
+   "n_bkg": 621547,
+   "sum_bkg_w": 119132.3688136796,
+   "data_pot": 1.057394261158926e+21,
+   "mc_pot": 4.978198462880827e+21
+  },
+  "seconds": 29.9
+ },
+ "bkg_rows": 621547,
+ "bkg_w_stats": [
+  0.0009126502570542873,
+  0.18401013634925792,
+  2.4117900065801283,
+  119132.3688136796
+ ],
+ "bkg_reco_col_medians": [
+  0.7362731099128723,
+  4.931702613830566,
+  1.6920478343963623,
+  3.8141191005706787,
+  2.483811616897583
+ ],
+ "bkg_nd_equals_hist_bkg_reco": 0.0,
+ "bkg_over_data_global": 0.029111862292880937,
+ "bkg_frac_rank_top20": [
+  [
+   "EW41",
+   0.119
+  ],
+  [
+   "EW36",
+   0.1047
+  ],
+  [
+   "J242",
+   0.0902
+  ],
+  [
+   "J26",
+   0.0823
+  ],
+  [
+   "EW37",
+   0.0817
+  ],
+  [
+   "EW38",
+   0.0773
+  ],
+  [
+   "J161",
+   0.0712
+  ],
+  [
+   "J17",
+   0.0688
+  ],
+  [
+   "J80",
+   0.0665
+  ],
+  [
+   "J188",
+   0.0656
+  ],
+  [
+   "J179",
+   0.0641
+  ],
+  [
+   "J240",
+   0.0623
+  ],
+  [
+   "EW39",
+   0.0598
+  ],
+  [
+   "EW35",
+   0.0594
+  ],
+  [
+   "EW30",
+   0.0542
+  ],
+  [
+   "J107",
+   0.0531
+  ],
+  [
+   "J215",
+   0.0527
+  ],
+  [
+   "J88",
+   0.0482
+  ],
+  [
+   "J53",
+   0.0474
+  ],
+  [
+   "EW40",
+   0.0464
+  ]
+ ],
+ "bkg_frac_claimed": {
+  "J80": [
+   0.0665,
+   8
+  ],
+  "J85": [
+   0.0373,
+   32
+  ],
+  "J88": [
+   0.0482,
+   17
+  ],
+  "J89": [
+   0.0311,
+   39
+  ],
+  "J94": [
+   0.0196,
+   86
+  ],
+  "J97": [
+   0.0285,
+   46
+  ],
+  "J98": [
+   0.045,
+   21
+  ],
+  "J106": [
+   0.0243,
+   69
+  ],
+  "J107": [
+   0.0531,
+   15
+  ],
+  "J161": [
+   0.0712,
+   6
+  ],
+  "J162": [
+   0.019,
+   89
+  ],
+  "J175": [
+   0.0226,
+   77
+  ]
+ },
+ "bkg_frac_median_all": 0.023124188499274008,
+ "template_var_over_data_var_global_pseudo(2x)": 0.024334249385593663
+}

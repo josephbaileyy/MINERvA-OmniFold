@@ -1,0 +1,108 @@
+{
+ "admissions": {
+  "2026-09-25T19:26:37Z-1877938-s5n_dryrun": {
+   "charged": 0.0,
+   "closed": true,
+   "job_id": null,
+   "measured": 0.0,
+   "pool": "cpu",
+   "released": true,
+   "reservation_node_hours": 4.0,
+   "stage": "development",
+   "tasks_seen": 0,
+   "underpriced": false
+  },
+  "2026-09-25T19:26:51Z-1878963-s5n_dev_1": {
+   "charged": 2.6266666666666665,
+   "closed": true,
+   "job_id": "58874450",
+   "measured": 2.6266666666666665,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "development",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T19:26:54Z-1879051-s5n_dev_2": {
+   "charged": 1.9744444444444444,
+   "closed": true,
+   "job_id": "58874451",
+   "measured": 1.9744444444444444,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 3.5,
+   "stage": "development",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T19:58:28Z-2030766-s5n_dev_3": {
+   "charged": 0.0961111111111111,
+   "closed": true,
+   "job_id": "58875242",
+   "measured": 0.0961111111111111,
+   "pool": "gpu",
+   "released": false,
+   "reservation_node_hours": 1.0,
+   "stage": "development",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T20:46:52Z-2304844-s5n_dev_4": {
+   "charged": 0.21305555555555555,
+   "closed": true,
+   "job_id": "58876649",
+   "measured": 0.21305555555555555,
+   "pool": "gpu",
+   "released": false,
+   "reservation_node_hours": 1.0,
+   "stage": "development",
+   "tasks_seen": 1,
+   "underpriced": false
+  }
+ },
+ "budget_sha256": "83a78e435492da5fe041f7655ef2a0e7914d20874a64b845744a53e2f9b0a41c",
+ "campaign_key": "s5n-20260925",
+ "ledger_sha256": "5e3fa4298209d2a9f10c51f85c69aefd79b51360600b0c6eebeeb5a93f7e2bc2",
+ "measured_utc": "2026-09-25T22:06:24Z",
+ "summary": {
+  "cpu": {
+   "cap_node_hours": 325.184,
+   "carried_forward": {
+    "envelope_charged_node_hours": 24.687022569444444,
+    "envelope_node_hours": 345.27,
+    "prior_charged_node_hours": 20.085911458333335
+   },
+   "charged_by_stage": {
+    "development": 4.601111111111111,
+    "verification_repair": 0.0
+   },
+   "charged_node_hours": 4.601111111111111,
+   "open_concurrency": 0.0,
+   "stage_allocations": {
+    "development": 32.5184,
+    "verification_repair": 65.0368
+   }
+  },
+  "gpu": {
+   "cap_node_hours": 115.2138,
+   "carried_forward": {
+    "envelope_charged_node_hours": 10.095277777777778,
+    "envelope_node_hours": 125.0,
+    "prior_charged_node_hours": 9.786111111111111
+   },
+   "charged_a100_hours": 1.2366666666666666,
+   "charged_by_stage": {
+    "development": 0.30916666666666665,
+    "verification_repair": 0.0
+   },
+   "charged_node_hours": 0.30916666666666665,
+   "open_concurrency": 0.0,
+   "stage_allocations": {
+    "development": 11.5213,
+    "verification_repair": 23.0427
+   }
+  }
+ },
+ "unit": "billed node-hours = ElapsedRaw/3600 * billing/(256 CPU | 128 GPU) * qos_factor; GPU A100-h = 4 x GPU node-h"
+}

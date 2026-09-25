@@ -128,6 +128,15 @@ replacement is implied for 4D/FPS or dependent significances. See
 
 ## Remediation in flight
 
+- **2026-09-25, s5n successor (`OI-191`) — FINAL DISPOSITION: STAGE1_FAIL, no Stage 2, nothing
+  adopted.** `--bkg-mode negweight-refined` cuts the purity nominal highest-W bias from −3.5%…−4.1% to
+  +0.11%…+0.24% but leaves a ≈ 1% background-related bias in a set of joint cells (control C3 FAILED,
+  `VL151`). The F2 estimator does not follow a GiBUU/GENIE-anchored E_avail shape departure (median
+  9.7%, up to 74%, signal-only alike; `KNOWN_ISSUES.md` 77), so Tier-S assurance is 0 at every n.
+  Real-data method sensitivity 0.36% median, 1.42% max (`VL152`, not a measured bias). Spend 4.60 CPU
+  + 0.31 GPU node-h. Next increments are Joseph's (`OI-192`). Route:
+  `docs/orchestration/CAMPAIGN-s5n-20260925-index.md`.
+
 - **2026-09-25, s5c campaign (`OI-190`) — FINAL DISPOSITION: Tier-S FAIL (futility), no checkpoint
   qualifies.** The existing estimator fails the 5% seed gate on every coarse partition (`VL146`);
   candidate F2 (deterministic LightGBM) failed Tier-S coverage of its bias-corrected statistical

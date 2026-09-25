@@ -1,0 +1,110 @@
+{
+ "schema": "s5n-feasibility/1",
+ "functionals": 153,
+ "grid_points": 3,
+ "m": 459,
+ "points": {
+  "C3_nominal": {
+   "68": {
+    "min_empirical": 0.18333333333333332,
+    "min_normal_model": 0.1705850704912223,
+    "assurance_at_min_normal_model": {
+     "4000": 0.0,
+     "8000": 0.0,
+     "21152": 0.0,
+     "40000": 0.0
+    }
+   },
+   "95": {
+    "min_empirical": 0.4666666666666667,
+    "min_normal_model": 0.47692825145546164,
+    "assurance_at_min_normal_model": {
+     "4000": 0.0,
+     "8000": 0.0,
+     "21152": 0.0,
+     "40000": 0.0
+    }
+   }
+  },
+  "C4_eavail_shape": {
+   "68": {
+    "min_empirical": 0.0,
+    "min_normal_model": 0.0,
+    "assurance_at_min_normal_model": {
+     "4000": 0.0,
+     "8000": 0.0,
+     "21152": 0.0,
+     "40000": 0.0
+    }
+   },
+   "95": {
+    "min_empirical": 0.0,
+    "min_normal_model": 0.0,
+    "assurance_at_min_normal_model": {
+     "4000": 0.0,
+     "8000": 0.0,
+     "21152": 0.0,
+     "40000": 0.0
+    }
+   }
+  },
+  "C5_q3_given_eavail_w": {
+   "68": {
+    "min_empirical": 0.0,
+    "min_normal_model": 0.0,
+    "assurance_at_min_normal_model": {
+     "4000": 0.0,
+     "8000": 0.0,
+     "21152": 0.0,
+     "40000": 0.0
+    }
+   },
+   "95": {
+    "min_empirical": 0.0,
+    "min_normal_model": 0.0,
+    "assurance_at_min_normal_model": {
+     "4000": 0.0,
+     "8000": 0.0,
+     "21152": 0.0,
+     "40000": 0.0
+    }
+   }
+  }
+ },
+ "exactly_nominal": {
+  "68": {
+   "4000": 0.0,
+   "8000": 0.0,
+   "21152": 0.8002440790242746,
+   "40000": 0.9999994453386711
+  },
+  "95": {
+   "4000": 0.0,
+   "8000": 0.0,
+   "21152": 0.9999983123732207,
+   "40000": 1.0
+  },
+  "n_for_80pct_assurance_68": {
+   "n": 21248,
+   "k_min": 14279,
+   "q": 0.9995877692096322,
+   "assurance_lower_bound": 0.8107860672211868,
+   "assurance_if_independent": 0.8275771500362317
+  },
+  "n_for_80pct_assurance_95": {
+   "n": 11789,
+   "k_min": 11176,
+   "q": 0.9995819775849809,
+   "assurance_lower_bound": 0.8081277115062365,
+   "assurance_if_independent": 0.8253791659549122
+  }
+ },
+ "cost_cpu_node_h": {
+  "per_experiment_measured": 0.0136,
+  "tier_s_at_4000_per_point": 163.2,
+  "tier_s_exactly_nominal_80pct": 866.9183999999999,
+  "sigma_bootstraps_data_and_pseudo_400": 5.4399999999999995,
+  "systematic_construction_driver_arms_about_200_unfolds": 4.0,
+  "tier_t_two_nuisance_points_8000": 108.8
+ }
+}

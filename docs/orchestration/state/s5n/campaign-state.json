@@ -14,8 +14,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5n",
  "branch": "campaign/s5n-negweight-refined-20260925",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5n-20260925/",
- "phase": "STAGE-1-RUNNING",
- "phase_detail": "Stage-1 development allocations running at deploy bd0faf0b (meter verified: dry-run admitted, over-cap refused, carried-forward envelope reported)",
+ "phase": "CLOSED",
+ "phase_detail": "Final disposition 2026-09-25: STAGE1_FAIL (C3 failed; Tier-S assurance 0 because the estimator does not follow anchored departures); no revision, no validation, no Stage 2, nothing adopted; see CAMPAIGN-s5n-20260925-index.md#closeout-2026-09-25--final-disposition",
  "pinned": {
   "contract": "docs/orchestration/state/s5n/contract.json (frozen at 75bd22c0)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -31,7 +31,7 @@
    "label": "s5n_dev_1 (salloc interactive, 1 CPU node, 4 h)",
    "stage": "development",
    "queue": "state/s5n/queues/dev-1.q",
-   "state": "RUNNING: controls C0/C2/C7/C8, truth check, grid lines 0-35",
+   "state": "COMPLETED: released by runner 22:04:27Z; 2.627 CPU node-h",
    "started_utc": "2026-09-25T19:26:53Z"
   },
   {
@@ -39,22 +39,66 @@
    "label": "s5n_dev_2 (salloc interactive, 1 CPU node, 3.5 h)",
    "stage": "development",
    "queue": "state/s5n/queues/dev-2.q",
-   "state": "RUNNING: C6 sigma bootstrap 200 replicas",
+   "state": "COMPLETED: released 21:25:22Z; 1.974 CPU node-h",
    "started_utc": "2026-09-25T19:26:56Z"
+  },
+  {
+   "job": "58875242",
+   "label": "s5n_dev_3 (salloc interactive, 1 GPU node, 1 h)",
+   "stage": "development",
+   "queue": "state/s5n/queues/dev-3.q",
+   "state": "COMPLETED: released 20:04:16Z; 0.096 GPU node-h"
+  },
+  {
+   "job": "58876649",
+   "label": "s5n_dev_4 (salloc interactive, 1 GPU node, 1 h)",
+   "stage": "development",
+   "queue": "state/s5n/queues/dev-4.q",
+   "state": "COMPLETED: released 20:59:39Z; 0.213 GPU node-h"
   }
  ],
- "receipts": [],
+ "receipts": [
+  {
+   "path": "docs/orchestration/state/s5n/stage1/dev_receipt.json",
+   "what": "development receipt C0-C8 (s5n_analyze_dev.py at e76cb126)"
+  },
+  {
+   "path": "docs/orchestration/state/s5n/stage1/truth_check.json",
+   "what": "C4/C5 truth operand check"
+  },
+  {
+   "path": "docs/orchestration/state/s5n/stage1/feasibility.json",
+   "what": "recomputed Tier-S assurance (0 at development estimates) and cost of complete remaining work"
+  },
+  {
+   "path": "docs/orchestration/state/s5n/stage1/meter-measure-20260925T2206Z.json",
+   "what": "final meter reconciliation: 4.601 CPU + 0.309 GPU node-h, all admissions closed"
+  },
+  {
+   "path": "docs/orchestration/state/s5n/stage1/review-round-1.md",
+   "what": "independent review rounds 1-2 with dispositions"
+  },
+  {
+   "path": "docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md",
+   "what": "final disposition"
+  }
+ ],
  "family": {
   "name": "N",
   "revisions_used": 0,
   "revisions_allowed": 2,
   "validation_looks": 0
  },
- "verification": "none yet",
- "next_action": "on completion of both allocations: reconcile the ledger (meter measure), run s5n_analyze_dev.py on the products, commit the development receipt; then independent review and the feasibility receipt",
+ "verification": "independent review rounds 1 (construction) and 2 (targeted full-n), worktree MINERvA-OmniFold-s5n-review1 at 82dc1517, own code; every number confirmed; two author interpretations refuted and withdrawn",
+ "next_action": "none within this campaign; OI-192 awaits Joseph",
  "deploy": {
-  "tree": "/pscratch/sd/j/josephrb/s5n-20260925/deploy/bd0faf0b",
-  "pin": "bd0faf0b9941188bd5b0464d1beea1736e7a12a7"
+  "trees": [
+   "bd0faf0b",
+   "82dc1517",
+   "cac87ced",
+   "e76cb126"
+  ],
+  "root": "/pscratch/sd/j/josephrb/s5n-20260925/deploy/"
  },
  "incidents": [
   {

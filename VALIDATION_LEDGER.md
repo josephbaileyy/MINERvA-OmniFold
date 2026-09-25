@@ -1,5 +1,17 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-09-25 s5n successor (OI-191): negweight-refined development controls, real-data method sensitivity
+
+Successor under [`AUTHORIZATION-20260925-negweight-refined-successor.md`](docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md);
+contract `docs/orchestration/state/s5n/contract.json` (frozen at `75bd22c0`). Development seeds only; **no
+validation seed was run, nothing is adopted, and no row grades or changes `3d7465f6…`, s5c or Z.**
+Record: [`OUTCOME-20260925-s5n-stage1-development-fail.md`](docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md).
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL151 | background-inclusive end-to-end 5D pseudo-experiments of family `N` (F2 estimator, `--bkg-mode negweight-refined`, source/template background split, repaired per-event resampling): 60 each at nominal truth, a GiBUU/GENIE E_avail shape departure (amplitude 1) and the repaired q3 departure (a = 0.3); σ from 200 bootstrap replicas of one nominal experiment; 153 s5c functionals | nominal: highest-W column +0.11%…+0.24% (purity D1 −3.5%…−4.1%), EW41 +0.24% (purity +1.66%); max \|t\| 14.4 (J88 +0.91%, mean pull 2.02), 89/153 \|t\| > 3.6; pooled coverage 0.603 / 0.870; pull SD median 0.96 (0.56–1.73). E_avail shape: median \|residual\| 9.7%, max 74.1% (EW29), pooled cov68 0.027; q3: max 37.4% (EW36), pooled cov68 0.027; signal-only on the same seeds reproduces both (corr 0.9994 / 0.9993). Controls C0, C1, C2 PASS; receipt `state/s5n/stage1/dev_receipt.json` | **C3 FAIL → STAGE1_FAIL**; independently reproduced (review rounds 1–2, own code). Development evidence: the departure failure is the estimator's (`KNOWN_ISSUES.md` 77), the residual nominal bias is background-related with no established mechanism (`KNOWN_ISSUES.md` 75). Not a coverage verdict |
+| VL152 | real-data method sensitivity: the F2 estimator on the 5D data under `negweight-refined` minus under purity, npz path, relative, 153 functionals | median \|diff\| 0.36%, max 1.42% (J93); highest-W column EW5 +0.60, EW11 +0.03, EW17 +0.06, EW23 +0.07, EW29 +0.73, EW35 +1.12%; EW41 −1.22%; total −0.12%; refined/signed sum 1.0000029, clipped fraction 2.8e-4; driver versus npz path (negweight) up to 1.29% (median 0.19%) | **METHOD SENSITIVITY, not a measured bias**; independently reproduced. The same sign pattern as the simulated purity bias at an order of magnitude smaller size. No central value changes |
+
 ## 2026-09-25 s5c campaign (OI-190): estimator-seed channel, F1 screen, projection reproduction
 
 Campaign under [`AUTHORIZATION-20260924-scalar5d-campaign-activation.md`](docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md);

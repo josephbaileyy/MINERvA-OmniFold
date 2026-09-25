@@ -1,0 +1,41 @@
+{
+ "spearman(C3bias - C8bias, bkg/sig)": 0.38001787558638805,
+ "spearman(C3bias - C8bias, reco refine err)": 0.06864761221874956,
+ "pearson(C3bias - C8bias, reco refine err)": 0.1799546734880415,
+ "spearman(C3 bias, reco (R-S)/S)": 0.08271353744787445,
+ "reco refine err: median|.|%, max|.|%": [
+  0.483079815914572,
+  4.245107145814787
+ ],
+ "reco refine err claimed J %": {
+  "J80": 0.817,
+  "J85": 1.699,
+  "J88": 2.131,
+  "J89": -0.332,
+  "J94": -0.02,
+  "J97": 0.272,
+  "J98": 0.291,
+  "J106": -0.583,
+  "J107": -0.743,
+  "J161": 2.298,
+  "J162": 0.842,
+  "J175": 0.625
+ },
+ "data refine err claimed J %": {
+  "J80": -0.181,
+  "J85": 1.619,
+  "J88": 2.403,
+  "J89": -0.223,
+  "J94": -0.13,
+  "J97": 0.368,
+  "J98": 0.633,
+  "J106": -0.264,
+  "J107": -0.345,
+  "J161": 1.714,
+  "J162": 0.778,
+  "J175": 0.155
+ },
+ "spearman(data refine err, C7 rd)": 0.12658662581141927,
+ "spearman(data refine err - purity err, C7 rd)": 0.12733381526499118,
+ "spearman(reco refine err pseudo, reco refine err data)": 0.930876541079539
+}

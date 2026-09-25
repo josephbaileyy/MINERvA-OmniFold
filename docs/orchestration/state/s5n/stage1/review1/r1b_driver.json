@@ -1,0 +1,17 @@
+{
+ "driver_negw_vs_npz_negw_max_rel_pct": 1.2857411361430593,
+ "argmax": "J111",
+ "driver_negw_vs_npz_negw_median_rel_pct": 0.18858912490808954,
+ "s5c_det_cv(purity,driver,bkgaware omnifile)_vs_npz_purity_max_rel_pct": 1.4648808986586603,
+ "driver_negw_minus_det_cv_rel: max|.-npz diff| pp": 2.4913270404327914,
+ "driver_path_method_sensitivity_highW_pct": {
+  "EW5": 0.374,
+  "EW11": 0.341,
+  "EW17": 0.411,
+  "EW23": 0.457,
+  "EW29": 0.522,
+  "EW35": 0.815,
+  "EW41": -1.243,
+  "total_integrated": -0.126
+ }
+}
