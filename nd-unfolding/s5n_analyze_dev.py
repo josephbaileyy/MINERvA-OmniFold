@@ -104,7 +104,7 @@ def main(argv=None) -> int:
     ap.add_argument("--ns", type=Path, required=True, help="the s5n namespace (runs/ below it)")
     ap.add_argument("--s5c-d1-product", type=Path, required=True, help="the s5c product C0 reproduces")
     ap.add_argument("--s5c-d1-summary", type=Path, required=True)
-    ap.add_argument("--s5c-driver-purity", required=True, help="the s5c F2 driver central value (purity)")
+    ap.add_argument("--s5c-driver-purity", default=None, help="an s5c F2 driver central value (purity), if one exists")
     ap.add_argument("--n-sigma", type=int, default=200)
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
@@ -161,7 +161,7 @@ def main(argv=None) -> int:
     dp, dn = load(runs / "c7" / "data_purity.npz"), load(runs / "c7" / "data_negweight.npz")
     fp, fn = U @ dp["xs"], U @ dn["xs"]
     drv = U @ s5c_assemble.read_flat(str(runs / "c7" / "xsec_5d_driver_negweight_F2.root"))
-    drv_p = U @ s5c_assemble.read_flat(a.s5c_driver_purity)
+    drv_p = U @ s5c_assemble.read_flat(a.s5c_driver_purity) if a.s5c_driver_purity else None
     rd = (fn - fp) / fp
     order = np.argsort(-np.abs(rd))[:12]
     ctl["C7"] = {
@@ -173,7 +173,8 @@ def main(argv=None) -> int:
         "total_rel_diff_pct": 100 * float(rd[names.index("total_integrated")]),
         "refinement_data": dn["meta"]["refinement"],
         "driver_vs_npz_negweight_max_abs_rel_pct": 100 * float(np.max(np.abs(drv / fn - 1.0))),
-        "driver_vs_npz_purity_max_abs_rel_pct": 100 * float(np.max(np.abs(drv_p / fp - 1.0))),
+        "driver_vs_npz_negweight_median_abs_rel_pct": 100 * float(np.median(np.abs(drv / fn - 1.0))),
+        "driver_vs_npz_purity_max_abs_rel_pct": None if drv_p is None else 100 * float(np.max(np.abs(drv_p / fp - 1.0))),
         "scale_note": "diff_over_dev_sigma uses the development (half-MC pseudo-data) sigma as a SCALE only; the data's own statistical sigma is built in Stage 2",
     }
     c8 = [load(f) for f in sorted((runs / "c8").glob("c8_signal_only_s*.npz"))]
@@ -182,6 +183,24 @@ def main(argv=None) -> int:
         ctl["C8"] = {"label": "signal-only reference: description only, not background-inclusive closure evidence",
                      "n": len(c8), "max_abs_mean_rel_pct": 100 * float(np.max(np.abs(r8.mean(0)))),
                      "high_W_mean_rel_pct": {nm: 100 * float(r8.mean(0)[names.index(nm)]) for nm in HIGH_W}}
+    diag = {}
+    for t, a_ in (("eavail_shape", "1"), ("q3_given_eavail_w", "0.3")):
+        rows = []
+        for f in sorted((runs / "diag").glob(f"diag_sigonly_{t}_a{a_}_s*.npz")):
+            seed = f.stem.rsplit("_s", 1)[1]
+            p_s, p_b = load(f), load(runs / "dev" / f"{t}_a{a_}_s{seed}.npz")
+            r_s = (U @ p_s["xs"] - U @ p_s["xt"]) / (U @ p_s["xt"])
+            r_b = (U @ p_b["xs"] - U @ p_b["xt"]) / (U @ p_b["xt"])
+            rows.append((r_s, r_b))
+        if rows:
+            rs, rb = np.array([r[0] for r in rows]), np.array([r[1] for r in rows])
+            diag[t] = {"n": len(rows), "signal_only_median_abs_rel_pct": 100 * float(np.median(np.abs(rs.mean(0)))),
+                       "signal_only_max_abs_rel_pct": 100 * float(np.max(np.abs(rs.mean(0)))),
+                       "background_inclusive_same_seeds_median_abs_rel_pct": 100 * float(np.median(np.abs(rb.mean(0)))),
+                       "background_inclusive_same_seeds_max_abs_rel_pct": 100 * float(np.max(np.abs(rb.mean(0)))),
+                       "max_abs_difference_pct": 100 * float(np.max(np.abs(rs.mean(0) - rb.mean(0)))),
+                       "high_W_signal_only_pct": {nm: 100 * float(rs.mean(0)[names.index(nm)]) for nm in HIGH_W}}
+    rec["departure_signal_only_diagnostic"] = diag
     all_nw = [p for p in (runs / "dev").glob("*.npz")] + [runs / "c7" / "data_negweight.npz"] + \
         [runs / "c2" / f"{k}.npz" for k in c2] + list((runs / "sigma").glob("boot_b*.npz"))
     missing = [str(p) for p in all_nw if not load(p)["meta"].get("refinement", {}).get("ran")]
