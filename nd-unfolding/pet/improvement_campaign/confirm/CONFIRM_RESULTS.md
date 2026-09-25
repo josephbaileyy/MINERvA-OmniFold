@@ -76,9 +76,12 @@ moves away on either target:
 | D4d_n_up | C@10 | T0 | -0.446 | -0.206 | True / True |
 
 Identifiability of each case at reco level (E1, `../phase_e/results/identifiability.json`,
-`distinguishable_vs_scaled_null`): D1 −0.35, D2 bump, D4c ×1.3, D4d ×1.3, D5 NuWro and R1 ×1.05 are **all
-distinguishable** (D4c AUC − ½ = 0.039, D4d 0.0126, against ESS-scaled thresholds 0.0024 / 0.0023). R1 here is
-amendment 3's PET-path implementation, combined with D1 +0.35.
+`distinguishable_vs_scaled_null`, same distortion definitions, pseudodata size 600,111): the five truth distortions
+D1 −0.35, D2 bump, D4c ×1.3, D4d ×1.3 and D5 NuWro (implemented variant) are **distinguishable** (D4c AUC − ½ =
+0.039, D4d 0.0126, against ESS-scaled thresholds 0.0024 / 0.0023). The sixth case, R1 ×1.05 **combined with**
+D1 +0.35 on amendment 3's PET path (reco q3 not recomputed), was **not measured** by E1 (its standalone R1 recomputes
+reco q3 and has no D1): identifiability unmeasured. `D5_nuwro` everywhere here is the implemented variant (amendment 4).
+Two independent replicates per case.
 
 ### Coverage decision (amendment 2)
 
@@ -91,11 +94,15 @@ case.
 | B (k = 10) | yes (mean rule) | **D4d, both replicates** (−1.59, −0.90) | not run: fails clause 2 |
 | C (k = 10) | yes | **D4c, both replicates** (−0.19, −0.19); **D4d** (T0, −0.45) | not run: fails clause 2 |
 
-**No candidate qualifies; coverage is not run.** Both failures are distortions that change the hadron content at
-fixed true E_avail (proton and neutron multiplicity). For C this is the failure mode E1 found at scalar level for
-efficiency correction (an acceptance extrapolated from the nominal mix); for B, which moves farthest under D4d at
-both k = 3 and k = 10, the mechanism is **not isolated** by these runs. CTL sits at R ≈ 0 under D4d (T0 flagged at
-−0.001): it barely moves at all.
+**No frozen candidate at K* qualifies; coverage is not run.** Both exclusions come from D4c/D4d, which are
+reco-identifiable. They change the hadron content at fixed true E_avail; the D4 weights are functions of the stored
+truth PDG codes, which PET's truth cloud receives, so E1's scalar explanation for efficiency correction does not
+transfer directly and the mechanism on the PET path is **not established** for C or for B. CTL sits at R ≈ 0 under
+D4d (T0 flagged at −0.001).
+
+C **at k = 3** has no moves-away in any of its 12 stress cells (minimum R +0.014) and is adequate by the mean rule
+(0.570; lower bound 0.544 below the floor), but amendment 2 fixed the coverage point at K*; it does not qualify
+retroactively and would need a new predeclared amendment.
 
 ### FINAL (pool F): decision inequalities vs CTL (k=3), Holm across A, B, C
 

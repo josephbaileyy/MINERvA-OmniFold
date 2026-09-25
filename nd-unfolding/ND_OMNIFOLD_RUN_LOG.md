@@ -12,18 +12,19 @@ and `NEITHER_ELIGIBLE / NO_SELECTION` verdict are unchanged; nothing is adopted.
   protocol's mean rule: B@10, C@10, C@3; only C@10's lower bound clears the 0.556 floor.
 - **STRESS** (pool T, 6 cases × 2 replicates × 3 runs = 36): C@10 moves away from the target under proton
   multiplicity ×1.3 on both replicates (R −0.19) and under neutron multiplicity ×1.3 on one; B@10 under neutron
-  multiplicity on both (−1.59, −0.90). All six cases are reco-identifiable (E1).
-- **Coverage: not run** — amendment 2's condition (adequate at K* and no moves-away on an identifiable case) is met
-  by no candidate.
+  multiplicity on both (−1.59, −0.90). The five truth cases are reco-identifiable (E1); the R1+D1 case was not
+  measured. Two replicates per case. C at k = 3 never moves away.
+- **Coverage: not run** — amendment 2's condition (adequate at K* = 10 and no moves-away on an identifiable case) is
+  met by no frozen candidate. C at k = 3 would pass both as observed but is not the declared coverage point.
 - **Provenance:** 81 run directories strict-audited CLEAN (`confirm/results/audit_locks-20260925T1244Z.json`); two
   concurrently scored FINAL runs re-scored identically (CPU job 58843833). Independent review round 2 (codex-school
-  lane, approved by Joseph): FINAL part 3 MAJOR + 1 MINOR, all dispositioned without changing a number
+  lane, approved by Joseph): FINAL part 3 MAJOR + 1 MINOR, all dispositioned without changing a number; STRESS part 4 MAJOR + 2 MINOR (claims scoped, no number changed)
   (`improvement_campaign/REVIEW_DISPOSITION-ROUND2-20260925.md`).
 - **Resources:** campaign total 268.3 GPU-h and 9,221 CPU-core-h on m3246 / m3246_g
   (`improvement_campaign/RESOURCE_LEDGER.tsv`).
 - **Conclusion** (report §12): the historical shortfall is recoverable within the closure, but the large gain rests
-  on an acceptance-extrapolation assumption that fails under identifiable hadron-content changes; no configuration
-  tested is both adequate and robust.
+  on a configuration (C at K*) that moves away under identifiable hadron-content changes, cause not established on
+  the PET path; no frozen candidate at K* is both adequate and robust.
 
 ## 2026-09-24 — PET improvement campaign: diagnosis complete, confirmatory stage running
 

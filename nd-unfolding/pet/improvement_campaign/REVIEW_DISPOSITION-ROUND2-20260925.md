@@ -41,3 +41,31 @@ numbers match the committed sources; PILOT stays separate; the scoped "recoverab
 Cluster-side checkpoint bytes, original scheduler intervals, cross-node Lustre locking and first physical pool reads
 (no cluster access in its sandbox); GPU bit-exact resume beyond the committed positive control (no TensorFlow). The
 re-audit above ran on the cluster with scheduler intervals.
+
+---
+
+# Round 2, part 2 — STRESS, coverage decision and conclusion
+
+Same lane and approval, detached worktree at `f6f8764d`, unchanged afterwards. **No BLOCK: the reviewer
+independently recomputed all 360 stress recoveries against both targets, every moves-away flag and the table, and
+they match; the decision not to run coverage at K* stands.**
+
+| # | severity | finding (restated) | verified? | disposition |
+|---|---|---|---|---|
+| 5 | MAJOR | §12 "no PET configuration tested is both adequate and robust" is too broad: C at k = 3 is adequate by the mean rule and has no moves-away in any stress cell. | yes (C@3 0.570, `adequate: true`; 12/12 cells positive, minimum +0.014) | **Fixed** in §11.3, §11.4, §12, `CONFIRM_RESULTS.md`, the deck, RUN_LOG and STATUS: "no frozen candidate **at K* = 10**"; C@3 is reported with its lower bound below the floor, two replicates per case, and as a **prospective** candidate needing a new predeclared amendment — coverage is not run for it retroactively. |
+| 6 | MAJOR | "All six cases identifiable" is unsupported for R1 × 1.05 + D1 +0.35: E1 measured only a standalone R1 that also recomputes reco q3. | yes (`identifiability.json` has `R1_x1.05`, "reco q3 recomputed"; no combined entry) | **Fixed**: the five truth cases are identifiable (same definitions, 600,111 events); the combined case is "identifiability unmeasured". The deck now computes identifiability from E1 instead of assuming it. The coverage decision rests on D4c/D4d, which are measured. |
+| 7 | MAJOR | C's PET failure is attributed to acceptance extrapolation, but the D4 weights are functions of the stored truth PDG codes that PET's truth cloud receives, so the scalar explanation does not transfer. | yes (`distortions.py` D4 = f^N over truth PDGs; `fullevent_fps_dataloader.py` keeps the PDG column) | **Fixed**: mechanism "not established" on the PET path for C and B; acceptance extrapolation stated as a hypothesis; "hidden from E_avail, not from PET's inputs". |
+| 8 | MAJOR | "The response error moves recovery up" (C 0.956 under R1 + D1) has no matching unscaled control on the same replicates. | yes (`stress.tsv` has D1 −0.35 and R1+D1 +0.35, no D1 +0.35 alone) | **Fixed**: reported as measured; the R1 effect is "not isolated" on the PET path. |
+| 9 | MINOR | The STRESS slide does not state two replicates per case. | yes | **Fixed** on the slide and in the limitations bullet. |
+| 10 | MINOR | D5 is shown without its "implemented variant" label in `CONFIRM_RESULTS.md` and on the slide. | yes | **Fixed** (amendment 4 label on both). |
+
+**Checked and found correct (part 2):** 36 STRESS receipts match the manifest, frozen hashes, miss rules, pool and
+distortion identities; all 360 iteration-file hashes match the score provenance; code `6b18e09d` with the relevant
+files unchanged at HEAD; the strict audit covers all 36 STRESS rows CLEAN; D1, D2, D4c/D4d and the PET R1 follow
+their declarations and D5 the documented implemented variant; targets use the distorted truth (R1 leaves it
+unchanged); "moves away" is exactly `residual_l1 > injected_l1`; the part-1 fixes behave as described; all 684 deck
+values recompute from their sources.
+
+**Not verifiable by the reviewer:** cluster-side bytes and scheduler observations; "no STRESS run scored twice"
+(the committed audit covers driver logs, not scorer logs — the count was taken on the cluster, 2026-09-25 12:44Z,
+by listing `score-<job>.log` per STRESS run directory: none had more than one).

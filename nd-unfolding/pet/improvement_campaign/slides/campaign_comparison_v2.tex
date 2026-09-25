@@ -442,9 +442,10 @@ C (eff.-corr.), $k=3$ & 0.570 & 0.544 & 0.280 & 0.530 & 0.753 & yes \\
 
 \gdef\evidencetext{\texttt{confirm/results/confirm\_results.json}}
 \begin{frame}{The confirmatory result (STRESS, pool T)}
-{\small PET stress set on fresh pool-T events (protocol amendment 2): mean recovery over replicates;
-$^\dagger$ = the estimator ends farther from the target than the untouched prior on some replicate
-(``moves away'' --- reported as \textbf{not robust} where the distortion is identifiable; all six cases are).}
+{\small PET stress set on fresh pool-T events (protocol amendment 2), \textbf{two independent replicates per
+case}: mean recovery; $^\dagger$ = the estimator ends farther from the target than the untouched prior on some
+replicate (``moves away'' --- \textbf{not robust} where the distortion is identifiable: E1 measured the five truth
+cases; \texttt{R1\_x1.05\_D1\_p0.350} unmeasured).}
 \begin{center}
 {\scriptsize
 \begin{tabular}{lrrrrrr}
@@ -455,12 +456,12 @@ case & CTL $k=3$ & A $k=10$ & B $k=3$ & B $k=10$ & C $k=3$ & C $k=10$ \\
 \texttt{D2\_bump\_c0.3} & 0.171 & 0.247 & 0.321 & 0.399 & 0.252 & 0.304 \\
 \texttt{D4c\_p\_up} & 0.341 & 0.183 & 0.432 & 0.453 & 0.131 & \ensuremath{-}0.190$^\dagger$ \\
 \texttt{D4d\_n\_up} & 0.003$^\dagger$ & \ensuremath{-}0.061$^\dagger$ & \ensuremath{-}0.496$^\dagger$ & \ensuremath{-}1.244$^\dagger$ & 0.017 & \ensuremath{-}0.086$^\dagger$ \\
-\texttt{D5\_nuwro} & 0.358 & 0.387 & 0.444 & 0.451 & 0.238 & 0.320 \\
+\texttt{D5\_nuwro}\,(impl.\ variant) & 0.358 & 0.387 & 0.444 & 0.451 & 0.238 & 0.320 \\
 \texttt{R1\_x1.05\_D1\_p0.350} & 0.405 & 0.626 & 0.516 & 0.583 & 0.842 & 0.956 \\
 \bottomrule
 \end{tabular}}
 \end{center}
-{\footnotesize \textbf{Coverage (amendment 2): not run --- no candidate qualifies.} A $k=10$: not adequate on FINAL; B $k=10$: moves away on \texttt{D4d\_n\_up}; C $k=10$: moves away on \texttt{D4c\_p\_up}, \texttt{D4d\_n\_up}.}
+{\footnotesize \textbf{Coverage (amendment 2, at $K^*$): not run --- no frozen candidate qualifies.} A $k=10$: not adequate on FINAL; B $k=10$: moves away on \texttt{D4d\_n\_up}; C $k=10$: moves away on \texttt{D4c\_p\_up}, \texttt{D4d\_n\_up}. C $k=3$ never moves away and is adequate by the mean, but amendment 2 fixed coverage at $K^*$: a prospective candidate only.}
 \end{frame}
 
 \gdef\evidencetext{\texttt{PROTOCOL-20260922.md \S 1}; \texttt{../configuration\_comparison/campaign\_report.json}}
@@ -490,12 +491,12 @@ reported as unresolved, not as nulls.
 \item Recovery statements are conditional on the simulated detector response (R1 moves them by more than the
 margins) and cannot see hidden variables (D4d).
 \item Efficiency correction needs a stopping rule and a variance statement, not only a mean recovery.
-\item Coverage was not run: no candidate is both adequate on FINAL and free of moves-away on the identifiable stress cases (STRESS slide).
+\item Coverage was not run: no frozen candidate at $K^*$ is both adequate on FINAL and free of moves-away on the identifiable stress cases (two replicates each; STRESS slide).
 \end{itemize}
 \textbf{Next choice}
 \begin{itemize}\footnotesize
-\item Confirmatory status: FINAL and STRESS are complete (their two slides); no candidate is both adequate and robust.
-\item The miss rule is a model-dependence choice. Efficiency correction is faster but moves away when the hadron content changes at fixed true $E_{\rm avail}$ (D4c, D4d); carry-misses is slower, and the carry-misses feature arm B moves away under D4d too. Whichever is recommended must be stated as that choice and tested against hadron-content variations.
+\item Confirmatory status: FINAL and STRESS are complete (their two slides); no frozen candidate at $K^*$ is both adequate and robust.
+\item Miss rule and iteration count are model-dependence choices. Efficiency correction at $K^*$ moves away when the hadron content changes at fixed true $E_{\rm avail}$ (D4c, D4d; cause not established), at $k=3$ it does not; the carry-misses arm B moves away under D4d. Any recommendation must be tested against hadron-content variations.
 \item A reference computed for the estimator's own miss rule and normalization, on the scored spectrum, is a
 prospective recommendation to be checked on a known-function toy before use.
 \end{itemize}

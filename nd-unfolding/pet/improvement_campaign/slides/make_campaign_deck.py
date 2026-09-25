@@ -1304,7 +1304,7 @@ def slide_stress(d: Deck, n: Numbers) -> None:
     st = n.src.get(CONFIRM, ["stress"])
     rows, ids = [], []
     for case in sorted(st):
-        row = [_tt(case)]
+        row = [_tt(case) + (r"\,(impl.\ variant)" if case.startswith("D5") else "")]
         for lab in LABELS:
             cell = st[case].get(lab, {})
             if not cell:
@@ -1320,20 +1320,28 @@ def slide_stress(d: Deck, n: Numbers) -> None:
     # amendment 2's coverage rule: adequate at K* on FINAL AND no moves-away on any identifiable case
     # (all six stress cases are reco-identifiable, E1); computed here, not typed
     adq = (n.src.get(CONFIRM, ["final"]) or {}).get("decisions", {}).get("adequacy", {})
+    e1 = n.src.load(E_IDENT)["distortions"]
+    ident = {c for c in st if c in e1 and e1[c].get("distinguishable_vs_scaled_null")}
+    unmeasured = sorted(c for c in st if c not in e1)
     verdicts = []
     for lab in ("A", f"B@{KSTAR}", f"C@{KSTAR}"):
-        away = [c for c in sorted(st) if st[c].get(lab) and n.v(f"st.{c}.{lab}.away")]
+        away = [c for c in sorted(ident) if st[c].get(lab) and n.v(f"st.{c}.{lab}.away")]
         ok = bool(adq.get(lab, {}).get("adequate"))
         why = ("not adequate on FINAL" if not ok else
                ("moves away on " + ", ".join(_tt(c) for c in away)) if away else "qualifies")
         verdicts.append(f"{SHORT[lab]}: {why}")
     qualifies = any(v.endswith("qualifies") for v in verdicts)
-    cov = (r"\textbf{Coverage (amendment 2): " + ("run for the qualifying candidate" if qualifies else
-           "not run --- no candidate qualifies") + r".} " + "; ".join(verdicts) + ".")
+    c3_away = [c for c in sorted(st) if st[c].get("C@3") and n.v(f"st.{c}.C@3.away")]
+    c3 = ("" if c3_away or not adq.get("C@3", {}).get("adequate") else
+          r" C $k=3$ never moves away and is adequate by the mean, but amendment 2 fixed coverage at $K^*$:"
+          r" a prospective candidate only.")
+    cov = (r"\textbf{Coverage (amendment 2, at $K^*$): " + ("run for the qualifying candidate" if qualifies else
+           "not run --- no frozen candidate qualifies") + r".} " + "; ".join(verdicts) + "." + c3)
     body = rf"""
-{{\small PET stress set on fresh pool-T events (protocol amendment 2): mean recovery over replicates;
-$^\dagger$ = the estimator ends farther from the target than the untouched prior on some replicate
-(``moves away'' --- reported as \textbf{{not robust}} where the distortion is identifiable; all six cases are).}}
+{{\small PET stress set on fresh pool-T events (protocol amendment 2), \textbf{{two independent replicates per
+case}}: mean recovery; $^\dagger$ = the estimator ends farther from the target than the untouched prior on some
+replicate (``moves away'' --- \textbf{{not robust}} where the distortion is identifiable: E1 measured the five truth
+cases; {", ".join(_tt(c) for c in unmeasured) or "none"} unmeasured).}}
 \begin{{center}}
 {table(["case"] + [SHORT[l] for l in LABELS], rows, "l" + "r" * len(LABELS), r"\scriptsize")}
 \end{{center}}
@@ -1366,7 +1374,8 @@ def slide_limits(d: Deck, n: Numbers, has_final: bool, has_stress: bool = False)
     n.f("lim.h4_sd", B2, ["recovery_by_k", "b2e1-H-K3", "3", "sd"], "2")
     n.f("lim.h4_n", B2, ["recovery_by_k", "b2e1-H-K3", "3", "n"], "int")
     n.f("lim.h4_mean", B2, ["recovery_by_k", "b2e1-H-K3", "3", "mean"], "3")
-    conf = ("FINAL and STRESS are complete (their two slides); no candidate is both adequate and robust"
+    conf = ("FINAL and STRESS are complete (their two slides); no frozen candidate at $K^*$ is both adequate "
+            "and robust"
             if has_stress else
             "the FINAL decisions are on the previous slide; coverage runs only for a candidate adequate at "
             "$K^*$ that does not move away on any identifiable stress case"
@@ -1374,14 +1383,14 @@ def slide_limits(d: Deck, n: Numbers, has_final: bool, has_stress: bool = False)
             "the FINAL comparison and the PET stress set are pending; until they land, every candidate statement "
             "above is development-stage evidence on the DEV halves")
     coverage_item = (
-        "Coverage was not run: no candidate is both adequate on FINAL and free of moves-away on the "
-        "identifiable stress cases (STRESS slide)." if has_stress else
+        "Coverage was not run: no frozen candidate at $K^*$ is both adequate on FINAL and free of moves-away on "
+        "the identifiable stress cases (two replicates each; STRESS slide)." if has_stress else
         "Coverage has not been run: protocol \\S 7 reserves it for a candidate adequate or best-in-class on FINAL.")
     miss_item = (
-        "The miss rule is a model-dependence choice. Efficiency correction is faster but moves away when the "
-        "hadron content changes at fixed true $E_{\\rm avail}$ (D4c, D4d); carry-misses is slower, and the "
-        "carry-misses feature arm B moves away under D4d too. Whichever is recommended must be stated as that "
-        "choice and tested against hadron-content variations." if has_stress else
+        "Miss rule and iteration count are model-dependence choices. Efficiency correction at $K^*$ moves away "
+        "when the hadron content changes at fixed true $E_{\\rm avail}$ (D4c, D4d; cause not established), "
+        "at $k=3$ it does not; the carry-misses arm B moves away under D4d. Any recommendation must be tested "
+        "against hadron-content variations." if has_stress else
         "The miss rule is a model-dependence choice (carry-misses: slower, did not move away at scalar level; "
         "efficiency correction: faster, fails when the event mix inside a truth bin changes). Whichever is "
         "recommended must be stated as that choice.")
