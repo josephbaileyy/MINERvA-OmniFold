@@ -167,6 +167,24 @@ echo "LAUNCHED job=5$4 lines=$4..$5"
         self.assertEqual((r.returncode, r.stdout.strip()), (0, "NOTHING-TO-DO"))
         self.assertEqual(self.held(), {"0-3": "58861566", "4-35": "54", "36-39": "536"})
 
+    def test_a_launched_background_process_does_not_keep_the_claim_lock(self) -> None:
+        """The launcher leaves a long-lived child (as the nohup'd steps runner does). A second claim must
+        not wait for it: the lock descriptor must not be inherited."""
+        _exe(self.deploy / "nd-unfolding" / "s5c_valid_launch.sh", f"""echo "$@" >> {self.tmp}/launch.log
+nohup sleep 30 > /dev/null 2>&1 < /dev/null &
+echo $! > {self.tmp}/sleeper.pid
+echo "LAUNCHED job=5$4 lines=$4..$5"
+""")
+        self.assertEqual(self.next("gpu").returncode, 0)
+        (self.tmp / "squeue.seq").write_text("50\n")
+        try:
+            r = subprocess.run(["bash", str(NEXT), str(self.deploy), "sha", "cpu"], env=self.env,
+                               capture_output=True, text=True, timeout=10)
+        finally:
+            subprocess.run(["kill", (self.tmp / "sleeper.pid").read_text().strip()], capture_output=True)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("NEW lines 16..39 pool=cpu", r.stdout)
+
     def test_a_refused_launch_releases_its_claim_and_returns_the_code(self) -> None:
         (self.tmp / "refuse").write_text("")
         r = self.next("cpu")

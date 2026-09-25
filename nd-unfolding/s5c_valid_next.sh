@@ -20,7 +20,11 @@ mkdir -p "$CL"
 [ "$POOL" = cpu ] && SIZE=32 || SIZE=16
 ids=$(squeue -h --me -o %i 2>/dev/null) || { echo "squeue failed; not choosing" >&2; exit 7; }
 
-exec 9> "$CL/.lock"
+# The lock lives on fd 9 and must never reach the launcher: its nohup'd steps runner would inherit
+# the open file description and keep the lock held for its whole allocation (it did: 2026-09-25,
+# the GPU lane's runner blocked the CPU lane for 46 min). Hence `9>&-` on the launch below, and a
+# lock file (.lock2) that no process of the defective version can still be holding.
+exec 9> "$CL/.lock2"
 flock 9
 choice=$(/usr/bin/python3.11 - "$TABLE" "$CL" "$NS/runs/s_valid" "$SIZE" "$ids" <<'EOF'
 import os, re, sys
@@ -77,7 +81,7 @@ echo "pending:$$" > "$claim"
 flock -u 9
 echo "[valid-next] $kind lines $first..$last pool=$POOL${prev:+ (previous holder $prev)}"
 
-out=$(bash "$DEPLOY/nd-unfolding/s5c_valid_launch.sh" "$DEPLOY" "$PIN" "$POOL" "$first" "$last" 2>&1)
+out=$(bash "$DEPLOY/nd-unfolding/s5c_valid_launch.sh" "$DEPLOY" "$PIN" "$POOL" "$first" "$last" 2>&1 9>&-)
 lrc=$?
 echo "$out"
 job=$(echo "$out" | sed -n 's/.*LAUNCHED job=\([0-9]*\).*/\1/p' | head -1)
