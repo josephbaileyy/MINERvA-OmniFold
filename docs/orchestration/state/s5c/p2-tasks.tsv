@@ -1,0 +1,2 @@
+# P2 (pilot-contract.json): background dump for pseudo-experiments
+bkg_dump	s5c_dump_bkg.py	--omnifile	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--out	{OUT}
