@@ -18,16 +18,16 @@ historical closure's orientation (a 19-event swap; amendment 3).
   row covered. Per-run provenance: all 36 receipts `complete`, `config_hash` equal to the frozen
   manifest's, frozen-config sha256 equal to amendment 2's, declared miss rule. The FINAL gate is
   therefore complete and the decisions below are the fixed-n confirmatory result.
-- STRESS: running (FINAL's chains handed off to `runs/stress.tsv`).
-- Coverage: decided only after STRESS (amendment 2: adequate at K* on FINAL **and** no "moves away" on
-  an identifiable stress case). On FINAL, B@10 and C@10 meet the first clause; A does not.
+- STRESS: **36 of 36 runs complete** (2026-09-25 12:43Z). Strict re-audit `results/audit_locks-20260925T1244Z.json`:
+  PILOT 9, FINAL 36, STRESS 36 all CLEAN; no STRESS run was scored by more than one job.
+- Coverage: **not run — no candidate qualifies** (amendment 2; see "Coverage decision" below).
 
 - Review round 2 (2026-09-25): the gate now requires every FINAL row CLEAN in a named audit and a complete,
   hash-matching receipt; the stricter re-audit `results/audit_locks-20260925T0019Z.json` (verdicts CLEAN / SUSPECT /
   UNVERIFIABLE, completeness checked) finds PILOT 9, FINAL 36, STRESS 8 all CLEAN; decisions unchanged. Dispositions:
   `../REVIEW_DISPOSITION-ROUND2-20260925.md`.
 
-Reproduce: `bash harvest.sh final && python3 analyze_confirm.py --audit results/audit_locks-20260925T0019Z.json`.
+Reproduce: `bash harvest.sh final && bash harvest.sh stress && python3 analyze_confirm.py --audit results/audit_locks-20260925T1244Z.json`.
 
 ### PILOT (pool P; reported separately, never enters FINAL)
 
@@ -46,6 +46,56 @@ Reproduce: `bash harvest.sh final && python3 analyze_confirm.py --audit results/
 | C@3 - CTL | +0.238, +0.288, +0.348 | +0.292 | 0.0547 (2) | 0.1157 | 298 |
 
 **n for FINAL = 12** (uncapped 298; cap 12).
+
+### PET stress set (pool T; mean of replicates; * = moves away from the target on some replicate)
+
+| case | CTL k=3 | A k=10 | B k=3 | B k=10 | C k=3 | C k=10 |
+|---|---:|---:|---:|---:|---:|---:|
+| D1_m0.350 | 0.241 (2) | 0.391 (2) | 0.419 (2) | 0.501 (2) | 0.407 (2) | 0.673 (2) |
+| D2_bump_c0.3 | 0.171 (2) | 0.247 (2) | 0.321 (2) | 0.399 (2) | 0.252 (2) | 0.304 (2) |
+| D4c_p_up | 0.341 (2) | 0.183 (2) | 0.432 (2) | 0.453 (2) | 0.131 (2) | -0.190* (2) |
+| D4d_n_up | 0.003* (2) | -0.061* (2) | -0.496* (2) | -1.244* (2) | 0.017 (2) | -0.086* (2) |
+| D5_nuwro | 0.358 (2) | 0.387 (2) | 0.444 (2) | 0.451 (2) | 0.238 (2) | 0.320 (2) |
+| R1_x1.05_D1_p0.350 | 0.405 (2) | 0.626 (2) | 0.516 (2) | 0.583 (2) | 0.842 (2) | 0.956 (2) |
+
+Two independent pool-T replicates per case; R against the replicate's own distorted truth (R_pop: against the
+pool-level distorted spectrum). "Moves away" (amendment 2) = the final truth-level residual exceeds the injected
+displacement, i.e. the estimator ends farther from the target than the untouched prior (R < 0). Every cell that
+moves away on either target:
+
+| case | estimator | replicate | R | R_pop | moves away (replicate / population target) |
+|---|---|---|---:|---:|---|
+| D4c_p_up | C@10 | T0 | -0.187 | -0.184 | True / True |
+| D4c_p_up | C@10 | T1 | -0.194 | -0.018 | True / True |
+| D4d_n_up | CTL | T0 | -0.001 | +0.001 | True / False |
+| D4d_n_up | A | T0 | -0.276 | -0.120 | True / True |
+| D4d_n_up | B@3 | T0 | -0.635 | -0.654 | True / True |
+| D4d_n_up | B@3 | T1 | -0.356 | -0.347 | True / True |
+| D4d_n_up | B@10 | T0 | -1.593 | -1.512 | True / True |
+| D4d_n_up | B@10 | T1 | -0.896 | -0.905 | True / True |
+| D4d_n_up | C@10 | T0 | -0.446 | -0.206 | True / True |
+
+Identifiability of each case at reco level (E1, `../phase_e/results/identifiability.json`,
+`distinguishable_vs_scaled_null`): D1 −0.35, D2 bump, D4c ×1.3, D4d ×1.3, D5 NuWro and R1 ×1.05 are **all
+distinguishable** (D4c AUC − ½ = 0.039, D4d 0.0126, against ESS-scaled thresholds 0.0024 / 0.0023). R1 here is
+amendment 3's PET-path implementation, combined with D1 +0.35.
+
+### Coverage decision (amendment 2)
+
+Coverage runs only for a candidate adequate at K* = 10 on FINAL **and** not moving away on any identifiable stress
+case.
+
+| candidate | adequate at K* on FINAL | moves away on an identifiable case | coverage |
+|---|---|---|---|
+| A (k = 10) | **no** (0.505 < 0.556) | D4d (T0) | not run: fails clause 1 |
+| B (k = 10) | yes (mean rule) | **D4d, both replicates** (−1.59, −0.90) | not run: fails clause 2 |
+| C (k = 10) | yes | **D4c, both replicates** (−0.19, −0.19); **D4d** (T0, −0.45) | not run: fails clause 2 |
+
+**No candidate qualifies; coverage is not run.** Both failures are distortions that change the hadron content at
+fixed true E_avail (proton and neutron multiplicity). For C this is the failure mode E1 found at scalar level for
+efficiency correction (an acceptance extrapolated from the nominal mix); for B, which moves farthest under D4d at
+both k = 3 and k = 10, the mechanism is **not isolated** by these runs. CTL sits at R ≈ 0 under D4d (T0 flagged at
+−0.001): it barely moves at all.
 
 ### FINAL (pool F): decision inequalities vs CTL (k=3), Holm across A, B, C
 
