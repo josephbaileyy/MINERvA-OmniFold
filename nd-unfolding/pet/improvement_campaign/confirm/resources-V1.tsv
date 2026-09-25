@@ -1,0 +1,7 @@
+date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cpu_core_hours	state	purpose
+2026-09-23T10:59:45Z	V1	58786043	m3246	regular_milan_ss11/debug	1	0	418	0.000	29.724	FAILED	CPU check: real-inventory input path, forced-halves crosscheck, pool-S inputs + target; FAILED only on pytest fixture import order
+2026-09-23T11:11:13Z	V1	58786058	m3246_g	gpu_ss11/gpu_debug	1	4	1012	1.124	35.982	COMPLETED	chain round 1 (gpu_debug, race winner): control k=1, mechanics k=1
+	V1	58786061	m3246_g	gpu_ss11/gpu_preempt	1	0	0	0.000	0.000	CANCELLED	race copy (gpu_preempt), cancelled unstarted by the winner
+2026-09-23T11:09:53Z	V1	58786149	m3246	regular_milan_ss11/debug	1	0	80	0.000	5.689	COMPLETED	CPU pytest at 75e4b5cf: 30 passed
+2026-09-23T11:52:02Z	V1	58786334	m3246_g	gpu_ss11/gpu_debug	1	4	1004	1.116	35.698	COMPLETED	chain round 2: control k=2, mechanics k=2
+2026-09-23T12:26:04Z	V1	58786713	m3246_g	gpu_ss11/gpu_debug	1	4	966	1.073	34.347	COMPLETED	chain round 3: control k=3 + scoring

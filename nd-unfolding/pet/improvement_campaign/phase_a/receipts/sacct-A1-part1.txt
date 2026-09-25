@@ -1,0 +1,12 @@
+JobID|JobName|Account|QOS|NNodes|AllocTRES|ElapsedRaw|State|Start
+58741064|runtime-audit|m3246_g|gpu_debug|1|billing=128,cpu=128,energy=10218,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|32|FAILED|2026-09-22T00:45:10
+58741294|runtime-audit|m3246_g|gpu_debug|1|billing=128,cpu=128,energy=10277,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|45|FAILED|2026-09-22T00:49:03
+58741303|runtime-test-run|m3246_g|gpu_shared|1||0|CANCELLED by 112498|None
+58741897|pa1-premat|m3246|shared|1||0|CANCELLED by 112498|None
+58741898|pa1-audit|m3246_g|gpu_debug|1||0|CANCELLED by 112498|None
+58742006|pa1-build|m3246|shared|1||0|CANCELLED by 112498|None
+58742046|pa1-premat|m3246|debug|1|billing=256,cpu=256,energy=27778,mem=110G,node=1|105|FAILED|2026-09-22T01:11:02
+58742047|pa1-audit|m3246_g|gpu_debug|1||0|CANCELLED by 112498|None
+58742048|pa1-build|m3246|debug|1|billing=256,cpu=256,energy=9372,mem=16G,node=1|38|COMPLETED|2026-09-22T01:11:02
+58742194|pa1-premat|m3246|debug|1|billing=256,cpu=256,energy=260690,mem=110G,node=1|884|COMPLETED|2026-09-22T01:17:19
+58742195|pa1-audit|m3246_g|gpu_debug|1|billing=128,cpu=128,energy=239218,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|619|COMPLETED|2026-09-22T01:33:12

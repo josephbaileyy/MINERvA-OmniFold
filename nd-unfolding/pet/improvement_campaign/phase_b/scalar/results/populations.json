@@ -1,0 +1,544 @@
+{
+ "schema": "phase-b1-populations/1",
+ "commit": "36733301ebe6792ff7c6eaecbad1403291c1f88e",
+ "historical_sources": {
+  "commit": "68cf9d29f8ab1b0f5acd933d4baec1962b29e34d",
+  "files": {
+   "nd-unfolding/pet/closure_powered_truth_reweight.py": {
+    "loaded_from": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/36733301/nd-unfolding/pet/closure_powered_truth_reweight.py",
+    "blob_sha1": "336ef4000abafec8b60b50ba4fb9913f1dad58c1",
+    "pinned_68cf9d29": "336ef4000abafec8b60b50ba4fb9913f1dad58c1",
+    "matches": true
+   },
+   "nd-unfolding/pet/configuration_comparison/characterize_regions.py": {
+    "loaded_from": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/36733301/nd-unfolding/pet/configuration_comparison/characterize_regions.py",
+    "blob_sha1": "23068602c031bee7b4cbf14846e020dad35df519",
+    "pinned_68cf9d29": "23068602c031bee7b4cbf14846e020dad35df519",
+    "matches": true
+   },
+   "nd-unfolding/pet/configuration_comparison/frozen_design.py": {
+    "loaded_from": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/36733301/nd-unfolding/pet/configuration_comparison/frozen_design.py",
+    "blob_sha1": "ac9dde237e8b4cd08552594b6607cdf65246735d",
+    "pinned_68cf9d29": "ac9dde237e8b4cd08552594b6607cdf65246735d",
+    "matches": true
+   },
+   "nd-unfolding/pet/configuration_comparison/reference_calibration.py": {
+    "loaded_from": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/36733301/nd-unfolding/pet/configuration_comparison/reference_calibration.py",
+    "blob_sha1": "279c46bacf6284be822731a0cf4d3b5cdb932078",
+    "pinned_68cf9d29": "279c46bacf6284be822731a0cf4d3b5cdb932078",
+    "matches": true
+   },
+   "nd-unfolding/pet/configuration_comparison/report_campaign.py": {
+    "loaded_from": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/36733301/nd-unfolding/pet/configuration_comparison/report_campaign.py",
+    "blob_sha1": "0e032fa1d0e9dbdeec1ea2f821d6dd23f605c7b6",
+    "pinned_68cf9d29": "0e032fa1d0e9dbdeec1ea2f821d6dd23f605c7b6",
+    "matches": true
+   },
+   "nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py": {
+    "loaded_from": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/36733301/nd-unfolding/pet/configuration_comparison/run_arm_evaluation.py",
+    "blob_sha1": "ce826f2e10e1759223f6d0e7957dbb482c91e395",
+    "pinned_68cf9d29": "ce826f2e10e1759223f6d0e7957dbb482c91e395",
+    "matches": true
+   },
+   "nd-unfolding/pet/configuration_comparison/score_campaign.py": {
+    "loaded_from": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/36733301/nd-unfolding/pet/configuration_comparison/score_campaign.py",
+    "blob_sha1": "3830ea708c8ee6806eefc571c11e93893a89850c",
+    "pinned_68cf9d29": "3830ea708c8ee6806eefc571c11e93893a89850c",
+    "matches": true
+   },
+   "nd-unfolding/pet/configuration_comparison/stage_splits.py": {
+    "loaded_from": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/36733301/nd-unfolding/pet/configuration_comparison/stage_splits.py",
+    "blob_sha1": "87583ace8c4af778715be55234aec1a52234ad63",
+    "pinned_68cf9d29": "87583ace8c4af778715be55234aec1a52234ad63",
+    "matches": true
+   },
+   "nd-unfolding/pet/fullevent_fps_dataloader.py": {
+    "loaded_from": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/36733301/nd-unfolding/pet/fullevent_fps_dataloader.py",
+    "blob_sha1": "9a715ca0056b95dfaa6ff15ee0b265f13c036a77",
+    "pinned_68cf9d29": "9a715ca0056b95dfaa6ff15ee0b265f13c036a77",
+    "matches": true
+   }
+  },
+  "all_match": true
+ },
+ "inputs": {
+  "closure_npz": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+  "closure_npz_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+  "identity_sidecar": "/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz",
+  "identity_sidecar_sha256": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c",
+  "weights_defining_halves": "/pscratch/sd/j/josephrb/campaign-20260920/final/ours-seed127/weights/weights_ours_final_127.npz",
+  "weights_defining_halves_sha256": "aa8e7219e0dc68a72744a2a2b4aca634c97f5e05e5daa6fcd6414902f76e8203"
+ },
+ "checks": {
+  "closure_npz_sha256": {
+   "recomputed": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+   "report": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+   "agrees": true
+  },
+  "half_a_rows": {
+   "recomputed": 600130,
+   "report": 600130,
+   "agrees": true
+  },
+  "half_b_rows": {
+   "recomputed": 600111,
+   "report": 600111,
+   "agrees": true
+  },
+  "half_b_rows_dropped_not_truth_passing": {
+   "recomputed": 32,
+   "report": 32,
+   "agrees": true
+  },
+  "regional_reference_k3/low_acceptance": {
+   "recomputed": 0.013961265748028074,
+   "report": 0.013961265748028062,
+   "abs_deviation": 1.214306433183765e-17,
+   "agrees": true
+  },
+  "regional_reference_k3/poor": {
+   "recomputed": 0.366537511747902,
+   "report": 0.3665375117479021,
+   "abs_deviation": 1.1102230246251565e-16,
+   "agrees": true
+  },
+  "regional_reference_k3/moderate": {
+   "recomputed": 0.7765277317694897,
+   "report": 0.77652773176949,
+   "abs_deviation": 2.220446049250313e-16,
+   "agrees": true
+  },
+  "regional_reference_k3/good": {
+   "recomputed": 0.9754791562972827,
+   "report": 0.9754791562972827,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "aggregate_reference_k3": {
+   "recomputed": 0.6949731568655357,
+   "report": 0.6949731568655361,
+   "abs_deviation": 3.3306690738754696e-16,
+   "agrees": true
+  },
+  "frozen_design_REFERENCE_aggregate": {
+   "recomputed": 0.6949731568655361,
+   "report": 0.6949731568655361,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "frozen_design_REFERENCE_by_iterations/1": {
+   "recomputed": 0.5104038956376603,
+   "report": 0.5104038956376603,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "frozen_design_REFERENCE_by_iterations/2": {
+   "recomputed": 0.6482928243903353,
+   "report": 0.6482928243903355,
+   "abs_deviation": 2.220446049250313e-16,
+   "agrees": true
+  },
+  "frozen_design_REFERENCE_by_iterations/3": {
+   "recomputed": 0.6949731568655357,
+   "report": 0.6949731568655361,
+   "abs_deviation": 3.3306690738754696e-16,
+   "agrees": true
+  },
+  "frozen_design_REFERENCE_by_iterations/4": {
+   "recomputed": 0.7146286369974333,
+   "report": 0.7146286369974335,
+   "abs_deviation": 2.220446049250313e-16,
+   "agrees": true
+  },
+  "scoreable_regions": {
+   "recomputed": [
+    "low_acceptance",
+    "moderate",
+    "good"
+   ],
+   "report": [
+    "low_acceptance",
+    "moderate",
+    "good"
+   ],
+   "agrees": true
+  },
+  "historical_score_run/ours127": {
+   "recomputed": 0.32563324433093876,
+   "report": 0.32563324433093976,
+   "abs_deviation": 9.992007221626409e-16,
+   "agrees": true
+  },
+  "score_push_mirror/ours127": {
+   "recomputed": 0.32563324433093876,
+   "report": 0.32563324433093876,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "score_push_mirror/ours127/low_acceptance": {
+   "recomputed": 0.06541129307711602,
+   "report": 0.06541129307711602,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "score_push_mirror/ours127/moderate": {
+   "recomputed": 0.22690580742204192,
+   "report": 0.22690580742204192,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "score_push_mirror/ours127/good": {
+   "recomputed": 0.5772446051612421,
+   "report": 0.5772446051612421,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "historical_score_run/theirs127": {
+   "recomputed": 0.4934889970021603,
+   "report": 0.4934889970021603,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "score_push_mirror/theirs127": {
+   "recomputed": 0.4934889970021603,
+   "report": 0.4934889970021603,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "score_push_mirror/theirs127/low_acceptance": {
+   "recomputed": 0.18225424163567394,
+   "report": 0.18225424163567394,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "score_push_mirror/theirs127/moderate": {
+   "recomputed": 0.4733301845950393,
+   "report": 0.4733301845950393,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "score_push_mirror/theirs127/good": {
+   "recomputed": 0.8126995312912777,
+   "report": 0.8126995312912777,
+   "abs_deviation": 0.0,
+   "agrees": true
+  },
+  "all_final_runs_share_halves": {
+   "n_runs": 16,
+   "agrees": true
+  },
+  "identity_sidecar_sha256": {
+   "recomputed": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c",
+   "frozen_design": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c",
+   "agrees": true
+  },
+  "pass_gen_a_recorded_equals_npz": {
+   "agrees": true
+  },
+  "pass_gen_b_recorded_equals_npz": {
+   "agrees": true
+  },
+  "tilt_replay_equals_recorded": {
+   "max_abs_deviation": 0.0,
+   "non_truth_rows_are_one": true,
+   "agrees": true
+  },
+  "cache_roundtrip_score/ours127": {
+   "recomputed": 0.32563324433093876,
+   "report": 0.32563324433093976,
+   "abs_deviation": 9.992007221626409e-16,
+   "agrees": true
+  }
+ },
+ "all_checks_agree": true,
+ "split_replay": {
+  "subsample_max_events": 2000000,
+  "subsample_seed": 0,
+  "imc_replay_equals_recorded_mc_indices": true,
+  "stage": "final",
+  "stage_rows": 1200286,
+  "half_size": 600143,
+  "split_seed": 20260920,
+  "stage_census": {
+   "rows": 2000000,
+   "counts": {
+    "tuning": 399479,
+    "pilot": 400235,
+    "final": 1200286
+   },
+   "fractions_intended": {
+    "tuning": 0.2,
+    "pilot": 0.2,
+    "final": 0.6
+   },
+   "fractions_observed": {
+    "tuning": 0.1997395,
+    "pilot": 0.2001175,
+    "final": 0.600143
+   },
+   "disjoint": true,
+   "covering": true,
+   "seed": 20260920,
+   "note": "fractions are exact in expectation, not per draw: the hash is per event so the assignment does not move when the dump grows"
+  },
+  "replay_rows_a_equal_recorded": true,
+  "replay_rows_b_equal_recorded": true,
+  "halves_disjoint": true
+ },
+ "tilt_spec_half_A": {
+  "form": "exp(A*clip((pT-p50)/IQR, -Z, +Z)) / mean(...)",
+  "amplitude": 0.35,
+  "clip_z": 3.0,
+  "pt_p25": 0.5318406671285629,
+  "pt_p50": 1.4653696417808533,
+  "pt_p75": 3.1655117869377136,
+  "pt_iqr": 2.6336711198091507,
+  "pre_normalization_mean": 1.1561864049708446,
+  "rate_preserving": true,
+  "applied_on": "pass_truth rows only",
+  "n_injected_rows": 600130,
+  "tilt_min": 0.7118654594756344,
+  "tilt_max": 2.4716179897784083
+ },
+ "context_from_build_endpoint": {
+  "closure_npz": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+   "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625"
+  },
+  "half_a_rows": 600130,
+  "half_b_rows": 600111,
+  "half_b_rows_dropped_not_truth_passing": 32,
+  "halves_disjoint": true,
+  "regional_reference": {
+   "low_acceptance": 0.013961265748028074,
+   "poor": 0.366537511747902,
+   "moderate": 0.7765277317694897,
+   "good": 0.9754791562972827
+  },
+  "scoreable_regions": [
+   "low_acceptance",
+   "moderate",
+   "good"
+  ],
+  "off_grid_truth_fraction": 0.0
+ },
+ "region_census": {
+  "regions": [
+   {
+    "region": "low_acceptance",
+    "acceptance_range": [
+     0.0,
+     0.05
+    ],
+    "cells": 67,
+    "truth_mass_fraction": 0.3103084462065607,
+    "injected_displacement_share": 0.2657104692691185,
+    "mean_acceptance": 0.005597832091658793,
+    "min_acceptance": 0.0,
+    "max_acceptance": 0.04658946081022478,
+    "scoreable": true,
+    "exempt_reason": null
+   },
+   {
+    "region": "poor",
+    "acceptance_range": [
+     0.05,
+     0.25
+    ],
+    "cells": 10,
+    "truth_mass_fraction": 0.06769276780717835,
+    "injected_displacement_share": 0.012168605180231388,
+    "mean_acceptance": 0.14788164548167443,
+    "min_acceptance": 0.052391309038533444,
+    "max_acceptance": 0.2200926311399103,
+    "scoreable": false,
+    "exempt_reason": "injected displacement share 0.0122 < 0.02"
+   },
+   {
+    "region": "moderate",
+    "acceptance_range": [
+     0.25,
+     0.5
+    ],
+    "cells": 23,
+    "truth_mass_fraction": 0.1391517992143351,
+    "injected_displacement_share": 0.08851738113827377,
+    "mean_acceptance": 0.386210029963644,
+    "min_acceptance": 0.2589505240452794,
+    "max_acceptance": 0.4902660396980522,
+    "scoreable": true,
+    "exempt_reason": null
+   },
+   {
+    "region": "good",
+    "acceptance_range": [
+     0.5,
+     1.0
+    ],
+    "cells": 185,
+    "truth_mass_fraction": 0.4828469867719259,
+    "injected_displacement_share": 0.6336035444123762,
+    "mean_acceptance": 0.7952377589286357,
+    "min_acceptance": 0.5064329693090177,
+    "max_acceptance": 0.9189313228817271,
+    "scoreable": true,
+    "exempt_reason": null
+   }
+  ],
+  "min_displacement_share_to_be_scoreable": 0.02,
+  "exempt_truth_mass_fraction": 0.06769276780717835,
+  "exempt_displacement_share": 0.012168605180231388,
+  "scoreable_regions": [
+   "low_acceptance",
+   "moderate",
+   "good"
+  ],
+  "reading": "Every scoreable region must clear the regional floor for a recommendation to be possible. Exempt regions are reported with the mass they hold so the exemption is auditable; a large exempt mass means the endpoint is not adequate, and the safeguard says so rather than passing quietly."
+ },
+ "census": {
+  "A": {
+   "rows": 600143,
+   "pass_reco": 250514,
+   "pass_truth": 600130,
+   "pass_reco_and_truth": 250501,
+   "reco_only_fakes": 13,
+   "truth_only_misses": 349629,
+   "neither": 0,
+   "reco_scalar_nonfinite_on_s1": {
+    "pt": 0,
+    "pparallel": 0,
+    "eavail": 0,
+    "q3": 0
+   },
+   "reco_scalar_sentinel_on_s1": {
+    "pt": 0,
+    "pparallel": 0,
+    "eavail": 0,
+    "q3": 0
+   },
+   "reco_scalar_negative_on_s1": {
+    "pt": 0,
+    "pparallel": 0,
+    "eavail": 4,
+    "q3": 0
+   },
+   "truth_scalar_nonfinite_on_pg": {
+    "pt": 0,
+    "pparallel": 0,
+    "eavail": 0,
+    "q3": 15
+   },
+   "sum_w_truth_on_pg": 493077.9023578465,
+   "sum_w_reco_on_s1": 204624.27751749894,
+   "w_reco_over_w_truth_on_s1": {
+    "min": 0.9311305284500122,
+    "max": 0.9968072175979614
+   },
+   "truth_off_grid_on_pg": 0,
+   "reco_off_grid_on_s1": 0
+  },
+  "B": {
+   "rows": 600143,
+   "pass_reco": 251109,
+   "pass_truth": 600111,
+   "pass_reco_and_truth": 251077,
+   "reco_only_fakes": 32,
+   "truth_only_misses": 349034,
+   "neither": 0,
+   "reco_scalar_nonfinite_on_s1": {
+    "pt": 0,
+    "pparallel": 0,
+    "eavail": 0,
+    "q3": 0
+   },
+   "reco_scalar_sentinel_on_s1": {
+    "pt": 0,
+    "pparallel": 0,
+    "eavail": 0,
+    "q3": 0
+   },
+   "reco_scalar_negative_on_s1": {
+    "pt": 0,
+    "pparallel": 0,
+    "eavail": 3,
+    "q3": 0
+   },
+   "truth_scalar_nonfinite_on_pg": {
+    "pt": 0,
+    "pparallel": 0,
+    "eavail": 0,
+    "q3": 21
+   },
+   "sum_w_truth_on_pg": 492696.7349866554,
+   "sum_w_reco_on_s1": 204730.59794810042,
+   "w_reco_over_w_truth_on_s1": {
+    "min": 0.9311305284500122,
+    "max": 0.9965700507164001
+   },
+   "truth_off_grid_on_pg": 0,
+   "reco_off_grid_on_s1": 0
+  }
+ },
+ "accepted_fraction": {
+  "f_A_tilted": 0.3731044110068406,
+  "f_A_untilted": 0.41499381038778504,
+  "f_B": 0.4155306569134165,
+  "ratio_f_A_tilted_over_f_B": 0.8978986382816607,
+  "reading": "the historical closure normalizes pseudo-data to the prior's accepted total, which is equivalent to assuming this ratio is 1"
+ },
+ "fields": {
+  "truth": {
+   "columns": [
+    "pt",
+    "pparallel",
+    "eavail",
+    "q3"
+   ],
+   "units": "GeV",
+   "npz_member": "truth_scalars",
+   "branches": [
+    "MC",
+    "MC_pz",
+    "MC_eavail",
+    "MC_q3"
+   ],
+   "definitions": {
+    "eavail": "CVUniverse::GetEAvailableTrue()/1000 (runEventLoopOmniFold.cpp:589)",
+    "q3": "CVUniverse::Getq3True()/1000 (runEventLoopOmniFold.cpp:590)"
+   }
+  },
+  "reco": {
+   "columns": [
+    "pt",
+    "pparallel",
+    "eavail",
+    "q3"
+   ],
+   "units": "GeV",
+   "npz_member": "reco_scalars",
+   "branches": [
+    "sim",
+    "sim_pz",
+    "sim_eavail",
+    "sim_q3"
+   ],
+   "definitions": {
+    "pt, pparallel": "reconstructed muon transverse / longitudinal momentum",
+    "eavail": "reconstructed available energy NewEavail() -- the 3D E_avail pipeline's reco definition (3d-unfolding/3D_OMNIFOLD_STATUS.md, stage C1)",
+    "q3": "RecoQ3(): Q^2 from the reco muon + recoil_E (runEventLoopOmniFold.cpp:246-249)"
+   },
+   "sentinel_on_not_pass_reco": -9999.0
+  },
+  "tokens": {
+   "npz_member": "part_reco[..., 0] (cluster energy, MeV), via fullevent_fps_dataloader.build_reco_cloud",
+   "tok_sumE": "sum of stored reco-cluster energies, GeV (post-truncation: at most 12 stored)",
+   "tok_n": "number of stored reco clusters with nonzero energy (<= 12)"
+  }
+ },
+ "populations_npz": {
+  "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseB1/prep/populations.npz",
+  "sha256": "b2b55791a25523ef510a099cbbd0defcf3157ab59af2580c219fe088ccb96da1"
+ },
+ "seconds": 83.82934909197502,
+ "scope": "simulation-only reproduction of the historical closure populations; PET is diagnostic method development; no real data read"
+}

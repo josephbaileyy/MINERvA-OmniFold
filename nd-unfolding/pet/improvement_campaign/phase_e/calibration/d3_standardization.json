@@ -1,0 +1,15 @@
+{
+ "schema": "phase-e-d3-standardization/1",
+ "pool": "T",
+ "definition": "quartiles of true E_avail / true q3 over pool T rows (unweighted, as closure_powered_truth_reweight.clipped_exponential_tilt standardizes); rows with q3 <= 0 or non-finite are excluded here and get weight 1",
+ "p25": 0.40408209426100505,
+ "p50": 0.6492113473114207,
+ "p75": 0.8232457421995485,
+ "iqr": 0.41916364793854344,
+ "n": 8017804,
+ "excluded_rows": 197,
+ "pool_rows_sha256": "1f290c4e1384184c4401c4548484d149ba84c06af34eeaf088f40bb452fdc4b8",
+ "pools_npz_sha256": "3d8faeb1535da2c01bfe6e5e95775ed9349c85a0028e912113dde1cbca720924",
+ "inventory_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+ "sha256": "dc53c37345cf9bb660f1223fe3b809ec8ed9001d9de79ed9eccc964f8356e4a3"
+}

@@ -1,0 +1,17 @@
+date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cpu_core_hours	state	purpose
+2026-09-22	phaseA1	58741064	m3246_g	gpu_debug	1	4	32	0.0356	0.000	FAILED	earlier delegate: runtime audit at 506d26de, refused by the guard on an lscpu launch (numpy.testing SVE probe)
+2026-09-22	phaseA1	58741294	m3246_g	gpu_debug	1	4	45	0.0500	0.000	FAILED	earlier delegate: runtime audit at 506d26de, refused by the guard (OI-136 import of atomic_write from the hardcoded tree)
+2026-09-22	phaseA1	58741303	m3246_g	gpu_shared	1	1	0	0.0000	0.000	CANCELLED	earlier delegate: placeholder test_run.py (imported a nonexistent module); cancelled while pending
+2026-09-22	phaseA1	58741897	m3246	shared	1	0	0	0.0000	0.000	CANCELLED	prematerialize tiny cache; moved to debug QOS before starting
+2026-09-22	phaseA1	58741898	m3246_g	gpu_debug	1	1	0	0.0000	0.000	CANCELLED	runtime audit; dependency cancelled before start
+2026-09-22	phaseA1	58742006	m3246	shared	1	0	0	0.0000	0.000	CANCELLED	build check; moved to debug QOS before starting
+2026-09-22	phaseA1	58742046	m3246	debug	1	0	105	0.0000	3.733	FAILED	prematerialize tiny cache; guard refused lscpu (numpy.testing SVE probe) -> harness fix numpy_probe.py
+2026-09-22	phaseA1	58742047	m3246_g	gpu_debug	1	1	0	0.0000	0.000	CANCELLED	runtime audit; dependency never satisfied
+2026-09-22	phaseA1	58742048	m3246	debug	1	0	38	0.0000	1.351	COMPLETED	declared-differences check (rebuild one MC shard, branch availability)
+2026-09-22	phaseA1	58742194	m3246	debug	1	0	884	0.0000	31.431	COMPLETED	prematerialize his tokens for the tiny audit subsample (historical prematerialize_theirs, 100k events, tuning stage)
+2026-09-22	phaseA1	58742195	m3246_g	gpu_debug	1	4	619	0.6878	0.000	COMPLETED	level-1 runtime audit of the historical driver, both arms, 3 iterations x 8 epochs, 100k-event subsample
+2026-09-22	phaseA1	58748390	m3246	debug	1	0	514	0.0000	18.276	COMPLETED	all campaign tests (non-TF + TF regression) at pinned 3fb56b36: 31 passed, 7 xfailed
+2026-09-22	phaseA1	58748392	m3246_g	gpu_debug	1	4	424	0.4711	0.000	COMPLETED	runtime check of run_unfold.py, both arms, tuning 100k, 2 iterations x 2 epochs, input digests vs the audit
+2026-09-22	phaseA1	58748393	m3246_g	gpu_debug	1	4	276	0.3067	0.000	COMPLETED	cost at the historical data size (final, 2M events), ours, 1 epoch per step
+2026-09-22	phaseA1	58748395	m3246_g	gpu_debug	1	4	501	0.5567	0.000	COMPLETED	cost at the historical data size (final, 2M events), theirs (his declared step-1 recipe), 1 epoch per step
+2026-09-22	phaseA1	58748758	m3246	debug	1	0	501	0.0000	17.813	COMPLETED	all campaign tests at the final code commit 7c5bb166: 31 passed, 7 xfailed

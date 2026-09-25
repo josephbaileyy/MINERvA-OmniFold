@@ -1,0 +1,9 @@
+$ sshare -l -A m3246,m3246_g -u josephrb
+# date_utc: 2026-09-22T08:14:18Z host: login16
+Account                    User  RawShares  NormShares    RawUsage   NormUsage  EffectvUsage  FairShare    LevelFS                    GrpTRESMins                    TRESRunMins 
+-------------------- ---------- ---------- ----------- ----------- ----------- ------------- ---------- ---------- ------------------------------ ------------------------------ 
+m3246                                    1    0.000192    85827848    0.000109      0.000109              1.759514                                cpu=0,mem=0,energy=0,node=0,b+ 
+ m3246                 josephrb          1    0.007874    25182152    0.000032      0.293403   0.242758   0.026837                                cpu=0,mem=0,energy=0,node=0,b+ 
+m3246_g                                  1    0.000192   642499951    0.000818      0.000818              0.235043                                cpu=50269,mem=87028321,energy+ 
+ m3246_g               josephrb          1    0.007874    12528638    0.000016      0.019500   0.118184   0.403799                                cpu=0,mem=0,energy=0,node=0,b+ 
+# exit: 0

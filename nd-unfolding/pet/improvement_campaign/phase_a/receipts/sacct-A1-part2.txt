@@ -1,0 +1,5 @@
+JobID|JobName|Account|QOS|NNodes|AllocTRES|ElapsedRaw|State|Start
+58748390|pa1-tests|m3246|debug|1|billing=256,cpu=256,energy=144522,mem=487802M,node=1|514|COMPLETED|2026-09-22T05:47:57
+58748392|pa1-unfold|m3246_g|gpu_debug|1|billing=128,cpu=128,energy=160014,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|424|COMPLETED|2026-09-22T05:49:12
+58748393|pa1-unfold|m3246_g|gpu_debug|1|billing=128,cpu=128,energy=94847,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|276|COMPLETED|2026-09-22T05:49:12
+58748395|pa1-unfold|m3246_g|gpu_debug|1|billing=128,cpu=128,energy=210893,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|501|COMPLETED|2026-09-22T05:53:52

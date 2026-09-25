@@ -1,0 +1,31 @@
+{
+ "schema": "phase-e-summary/1",
+ "commit": "379bc69c2f0a88252d8222089b2ea59862d55005",
+ "files": {
+  "d5_rebuild_check.json": {
+   "sha256": "08bb6685d4fdcf5f08e78323c7f7ae75da99367d0310506b8ffd1166f79686ce",
+   "bytes": 5708
+  },
+  "identifiability.json": {
+   "sha256": "856aa31aae209fe87eb95de093b20695ec4de50832ab458c991b6a6eb743cd07",
+   "bytes": 89170
+  },
+  "prepare.json": {
+   "sha256": "7763f0cd6af142d477307167ef9d85650f24c9286995ed920802b952862f4c33",
+   "bytes": 7848
+  },
+  "reference_assessment.json": {
+   "sha256": "610e643515efbc347acd50f1184c9e944aa5ab4e41ec7c86ef06f38545a97af2",
+   "bytes": 346602
+  },
+  "references.json": {
+   "sha256": "5c27d2ce2109710215315c3a8935b8c0483ac2a0875ef7279eed556372ad40be",
+   "bytes": 2565675
+  },
+  "toy_reference.json": {
+   "sha256": "dd5d85c699adbd3dd9ef16e68fc9c428f1945161821d911f9d582691305ce333",
+   "bytes": 83298
+  }
+ },
+ "scope": "simulation-only Phase-E results; PET is diagnostic method development; no value here is a threshold, a bound or an adoption"
+}

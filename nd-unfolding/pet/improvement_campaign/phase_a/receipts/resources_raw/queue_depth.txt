@@ -1,0 +1,24 @@
+# date_utc: 2026-09-22T08:14:28Z
+gpu_shared PENDING jobs=1384
+gpu_shared RUNNING jobs=139
+gpu_regular PENDING jobs=7894
+gpu_regular RUNNING jobs=168
+shared PENDING jobs=1227
+shared RUNNING jobs=1256
+regular_1 PENDING jobs=8906
+regular_1 RUNNING jobs=720
+# gpu_shared pending by reason
+   1161 Priority
+    140 Dependency
+     36 JobHeldUser
+     19 JobHeldAdmin
+     11 DependencyNeverSatisfied
+      9 JobArrayTaskLimit
+      4 InvalidQOS
+      2 BeginTime
+      1 None
+      1 Nodes required for job are DOWN, DRAINED or reserved for jobs in higher priority partitions
+# gpu_shared pending GPUs requested
+   1047 gres/gpu:1
+    336 N/A
+      1 gres/gpu:2

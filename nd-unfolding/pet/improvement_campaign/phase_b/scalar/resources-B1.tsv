@@ -1,0 +1,23 @@
+date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cpu_core_hours	state	purpose
+2026-09-22T08:41:15Z	B1	58741903	m3246	shared_milan_ss11/shared	1	0	89	0	0.890	COMPLETED	populations reproduction + input cache
+2026-09-22T12:43:39Z	B1	58748148	m3246	shared_milan_ss11/shared	1	0	501	0	1.392	COMPLETED	binned IBU k=1..50 (10 variants)
+2026-09-22T12:45:41Z	B1	58748149	m3246	shared_milan_ss11/shared	1	0	415	0	1.844	CANCELLED	truth learnability, cancelled by me to add the MLP input transform (superseded by 58748398)
+2026-09-22T12:45:41Z	B1	58748151	m3246	shared_milan_ss11/shared	1	0	0	0	0.000	CANCELLED	scalar OmniFold array, cancelled while PENDING (never ran; superseded by 58748399)
+2026-09-22T12:48:32Z	B1	58748397	m3246	shared_milan_ss11/shared	1	0	8	0	0.022	COMPLETED	oracle / identity / historical push anchors
+2026-09-22T12:52:11Z	B1	58748456	m3246	shared_milan_ss11/shared	1	0	9	0	0.025	COMPLETED	reference-model decomposition
+2026-09-22T13:17:17Z	B1	58748398	m3246	shared_milan_ss11/shared	1	0	1237	0	5.498	COMPLETED	truth-only learnability (3 input sets x hgb/mlp/mlp_raw x 3 seeds)
+2026-09-22T13:01:07Z	B1	58748399_0	m3246	shared_milan_ss11/shared	1	0	68	0	0.302	COMPLETED	scalar OmniFold muon/hgb/seed1, 20 iterations
+2026-09-22T13:02:51Z	B1	58748399_1	m3246	shared_milan_ss11/shared	1	0	74	0	0.329	COMPLETED	scalar OmniFold muon/hgb/seed2, 20 iterations
+2026-09-22T13:06:11Z	B1	58748399_2	m3246	shared_milan_ss11/shared	1	0	67	0	0.298	COMPLETED	scalar OmniFold muon/hgb/seed3, 20 iterations
+2026-09-22T13:22:32Z	B1	58748399_3	m3246	shared_milan_ss11/shared	1	0	1048	0	4.658	COMPLETED	scalar OmniFold muon/mlp/seed1, 20 iterations
+2026-09-22T13:29:57Z	B1	58748399_4	m3246	shared_milan_ss11/shared	1	0	891	0	3.960	COMPLETED	scalar OmniFold muon/mlp/seed2, 20 iterations
+2026-09-22T13:40:37Z	B1	58748399_5	m3246	shared_milan_ss11/shared	1	0	1531	0	6.804	COMPLETED	scalar OmniFold muon/mlp/seed3, 20 iterations
+2026-09-22T13:21:18Z	B1	58748399_6	m3246	shared_milan_ss11/shared	1	0	154	0	0.684	COMPLETED	scalar OmniFold muon_had/hgb/seed1, 20 iterations
+2026-09-22T13:22:23Z	B1	58748399_7	m3246	shared_milan_ss11/shared	1	0	70	0	0.311	COMPLETED	scalar OmniFold muon_had/hgb/seed2, 20 iterations
+2026-09-22T13:25:27Z	B1	58748399_8	m3246	shared_milan_ss11/shared	1	0	100	0	0.444	COMPLETED	scalar OmniFold muon_had/hgb/seed3, 20 iterations
+2026-09-22T13:43:17Z	B1	58748399_9	m3246	shared_milan_ss11/shared	1	0	1008	0	4.480	COMPLETED	scalar OmniFold muon_had/mlp/seed1, 20 iterations
+2026-09-22T14:24:52Z	B1	58748399_10	m3246	shared_milan_ss11/shared	1	0	3331	0	14.804	COMPLETED	scalar OmniFold muon_had/mlp/seed2, 20 iterations
+2026-09-22T13:45:46Z	B1	58748399_11	m3246	shared_milan_ss11/shared	1	0	925	0	4.111	COMPLETED	scalar OmniFold muon_had/mlp/seed3, 20 iterations
+2026-09-22T13:37:41Z	B1	58748399_12	m3246	shared_milan_ss11/shared	1	0	145	0	0.644	COMPLETED	scalar OmniFold muon_eavail/hgb/seed1, 20 iterations
+2026-09-22T13:40:56Z	B1	58748399_13	m3246	shared_milan_ss11/shared	1	0	191	0	0.849	COMPLETED	scalar OmniFold muon_eavail/hgb/seed2, 20 iterations
+2026-09-22T13:48:14Z	B1	58748399_14	m3246	shared_milan_ss11/shared	1	0	70	0	0.311	COMPLETED	scalar OmniFold muon_eavail/hgb/seed3, 20 iterations

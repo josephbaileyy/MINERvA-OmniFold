@@ -1,5 +1,59 @@
 # N-D OmniFold run log
 
+## 2026-09-25 — PET improvement campaign: confirmatory stage complete (FINAL, STRESS; coverage not run)
+
+Same campaign and authorization as the entry below. Simulation only; PET stays diagnostic; the historical thresholds
+and `NEITHER_ELIGIBLE / NO_SELECTION` verdict are unchanged; nothing is adopted.
+
+- **FINAL** (fresh pool F, 12 independent replicates × CTL/A, B, C = 36 A100 runs, debug-queue chains
+  58808974 … 58839336; `improvement_campaign/confirm/CONFIRM_RESULTS.md`): mean recovery CTL 0.316, A (k = 10) 0.505,
+  B (C2 inputs, k = 10) 0.569, **C (efficiency-corrected step 2, k = 10) 0.786** (lower 95 % 0.763). All three
+  superior to CTL, non-inferior and past the +0.04 switching margin after Holm (largest p 1.8e-9). Adequate by the
+  protocol's mean rule: B@10, C@10, C@3; only C@10's lower bound clears the 0.556 floor.
+- **STRESS** (pool T, 6 cases × 2 replicates × 3 runs = 36): C@10 moves away from the target under proton
+  multiplicity ×1.3 on both replicates (R −0.19) and under neutron multiplicity ×1.3 on one; B@10 under neutron
+  multiplicity on both (−1.59, −0.90). The five truth cases are reco-identifiable (E1); the R1+D1 case was not
+  measured. Two replicates per case. C at k = 3 never moves away.
+- **Coverage: not run** — amendment 2's condition (adequate at K* = 10 and no moves-away on an identifiable case) is
+  met by no frozen candidate. C at k = 3 would pass both as observed but is not the declared coverage point.
+- **Provenance:** 81 run directories strict-audited CLEAN (`confirm/results/audit_locks-20260925T1244Z.json`); two
+  concurrently scored FINAL runs re-scored identically (CPU job 58843833). Independent review round 2 (codex-school
+  lane, approved by Joseph): FINAL part 3 MAJOR + 1 MINOR, all dispositioned without changing a number; STRESS part 4 MAJOR + 2 MINOR (claims scoped, no number changed)
+  (`improvement_campaign/REVIEW_DISPOSITION-ROUND2-20260925.md`).
+- **Resources:** campaign total 268.3 GPU-h and 9,221 CPU-core-h on m3246 / m3246_g
+  (`improvement_campaign/RESOURCE_LEDGER.tsv`).
+- **Conclusion** (report §12): the historical shortfall is recoverable within the closure, but the large gain rests
+  on a configuration (C at K*) that moves away under identifiable hadron-content changes, cause not established on
+  the PET path; no frozen candidate at K* is both adequate and robust.
+
+## 2026-09-24 — PET improvement campaign: diagnosis complete, confirmatory stage running
+
+Campaign `nd-unfolding/pet/improvement_campaign/` on branch `pet-improvement-20260922` (Joseph's 2026-09-22
+authorization, `docs/orchestration/AUTHORIZATION-20260922-pet-improvement-campaign.md`). PET stays diagnostic;
+the historical comparison's thresholds and `NEITHER_ELIGIBLE / NO_SELECTION` verdict are unchanged. Development
+evidence (DEV halves), not confirmatory:
+
+- **Runtime audit** (jobs 58742194/58742195, `phase_a/INTENDED_VS_EXECUTED-20260922.md`): both suspected recipe
+  discrepancies CONFIRMED — Gregor's arm ran Horovod-wrapped Keras Adam, not the declared TorchAdamW recipe; the
+  declared-identical step 2 ran at batch 2048 vs 512, lr 1e-4 vs 4e-4, on a different validation subset. Every fit
+  after iteration 0 ran at 1e-5; early stopping was inert (last-epoch weights handed on); the truth cloud carries
+  raw PDG codes.
+- **Scalar references** (`phase_b/scalar/SCALAR_REFERENCES-20260922.md`): no carry-misses estimator reaches the
+  0.556 floor at k = 3 (IBU + reco E_avail 0.472, GBDT 0.412); recovery still rising at k = 3; the 0.695 reference
+  is computed on (pT, p‖) cells, not the scored seven-bin spectrum (its own model on the scored object: 0.523).
+- **PET diagnostics** (`phase_b/pet/PET_DIAGNOSTICS-20260922.md`, 35+ A100-h): driver reproduces the historical
+  result (0.311 ± 0.028 vs 0.304 ± 0.014); truth PET learns the supplied tilt to 0.90–0.95; step 1 closes 94 % of
+  the reco E_avail marginal by k = 10; historical recipe 0.334 (k=3) → 0.506 (k=10); efficiency-corrected step 2
+  0.608 → 0.817 (+0.310 paired); reco energy summaries at step 1 +0.112 at k = 3; best-validation epoch −0.054.
+- **Robustness** (`phase_e/PHASE_E_SCALAR-20260922.md`): efficiency correction wins on E_avail tilts and fails when
+  a distortion changes the event mix inside a truth bin (NuWro variant −0.20); the neutron hidden-variable test
+  defeats every estimator; ±5 % hadronic scale moves recovery ±0.06.
+- **Confirmatory stage** (protocol amendments 2–3): candidates frozen before any fresh-pool row was read; PILOT
+  (pool P) done and reported separately; FINAL (pool F, n = 12, sized before pool F was read) and the PET stress set
+  (pool T) running. An independent cross-model review found a non-atomic run lock (fixed with flock; one suspect run
+  quarantined and rerun) and nine over-strong or unprovenanced claims (all corrected;
+  `improvement_campaign/REVIEW_DISPOSITION-20260924.md`).
+
 ## 2026-09-17 — per-arm inference cost measured
 
 First attempt `58461843` FAILED on `timeout` (exit 124, 35 min, no receipt) from a

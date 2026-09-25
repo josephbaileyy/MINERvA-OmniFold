@@ -1,0 +1,15 @@
+# LaTeX build noise stays out.
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.fls
+*.fdb_latexmk
+
+# The repository root ignores *.pdf. The deck and its figures are deliverables,
+# re-included here rather than by weakening the root rule for everyone.
+!campaign_comparison_v2.pdf
+!figures_campaign/*.pdf

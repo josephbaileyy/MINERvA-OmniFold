@@ -1,0 +1,284 @@
+date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cpu_core_hours	state	purpose	source
+2026-09-23T20:41:37Z	V1	58798405	m3246	regular_milan_ss11/debug	1	0	85	0.000	6.044	COMPLETED	population targets + tests	confirm/resources-V1-sacct.tsv
+2026-09-23T20:44:45Z	V1	58798408	m3246_g	gpu_ss11/gpu_debug	1	4	1674	1.860	59.520	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T20:44:45Z	V1	58798420	m3246_g	gpu_ss11/gpu_debug	1	4	1662	1.847	59.093	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T20:56:31Z	V1	58798949	m3246	regular_milan_ss11/debug	1	0	143	0.000	10.169	COMPLETED	confirmatory inputs check	confirm/resources-V1-sacct.tsv
+2026-09-23T21:13:43Z	V1	58799222	m3246_g	gpu_ss11/gpu_debug	1	4	1705	1.894	60.622	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T21:13:43Z	V1	58799224	m3246_g	gpu_ss11/gpu_debug	1	4	1688	1.876	60.018	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T21:56:25Z	V1	58799743	m3246_g	gpu_ss11/gpu_debug	1	4	1715	1.906	60.978	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T21:56:25Z	V1	58799744	m3246_g	gpu_ss11/gpu_debug	1	4	1714	1.904	60.942	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T22:30:08Z	V1	58801924	m3246_g	gpu_ss11/gpu_debug	1	4	1696	1.884	60.302	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T22:30:09Z	V1	58801929	m3246_g	gpu_ss11/gpu_debug	1	4	1683	1.870	59.840	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T23:05:45Z	V1	58803600	m3246_g	gpu_ss11/gpu_debug	1	4	1686	1.873	59.947	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T23:05:45Z	V1	58803601	m3246_g	gpu_ss11/gpu_debug	1	4	1698	1.887	60.373	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T23:49:02Z	V1	58804824	m3246_g	gpu_ss11/gpu_debug	1	4	1720	1.911	61.156	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T23:49:02Z	V1	58804835	m3246_g	gpu_ss11/gpu_debug	1	4	1685	1.872	59.911	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T23:49:05Z	V1	58798410	m3246_g	shared_gpu_ss11/gpu_shared	1	1	1648	0.458	14.649	COMPLETED	confirmatory single-run copy (gpu_shared race copy of a chain row)	confirm/resources-V1-sacct.tsv
+2026-09-24T00:02:05Z	V1	58798413	m3246_g	shared_gpu_ss11/gpu_shared	1	1	6	0.002	0.053	COMPLETED	confirmatory single-run copy (gpu_shared race copy of a chain row)	confirm/resources-V1-sacct.tsv
+2026-09-24T00:25:18Z	V1	58805948	m3246_g	gpu_ss11/gpu_debug	1	4	15	0.017	0.533	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T00:25:18Z	V1	58805963	m3246_g	gpu_ss11/gpu_debug	1	4	1616	1.796	57.458	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T00:29:47Z	V1	58807094	m3246_g	gpu_ss11/gpu_debug	1	4	17	0.019	0.604	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T00:34:08Z	V1	58807241	m3246_g	gpu_ss11/gpu_debug	1	4	16	0.018	0.569	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T00:38:16Z	V1	58807340	m3246_g	gpu_ss11/gpu_debug	1	4	15	0.017	0.533	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T00:42:39Z	V1	58807464	m3246_g	gpu_ss11/gpu_debug	1	4	12	0.013	0.427	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T00:46:47Z	V1	58807609	m3246_g	gpu_ss11/gpu_debug	1	4	14	0.016	0.498	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T01:21:40Z	V1	58807093	m3246_g	gpu_ss11/gpu_debug	1	4	1602	1.780	56.960	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T01:21:41Z	V1	58807661	m3246_g	gpu_ss11/gpu_debug	1	4	14	0.016	0.498	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T01:26:31Z	V1	58808684	m3246_g	gpu_ss11/gpu_debug	1	4	11	0.012	0.391	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T01:31:43Z	V1	58808826	m3246_g	gpu_ss11/gpu_debug	1	4	11	0.012	0.391	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T01:37:06Z	V1	58808938	m3246_g	gpu_ss11/gpu_debug	1	4	16	0.018	0.569	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T01:42:45Z	V1	58808974	m3246_g	gpu_ss11/gpu_debug	1	4	1703	1.892	60.551	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T01:52:07Z	V1	58809024	m3246_g	gpu_ss11/gpu_debug	1	4	1714	1.904	60.942	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T02:14:57Z	V1	58808680	m3246_g	gpu_ss11/gpu_debug	1	4	1630	1.811	57.956	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T02:24:56Z	V1	58809183	m3246_g	gpu_ss11/gpu_debug	1	4	1690	1.878	60.089	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T02:35:12Z	V1	58798419	m3246_g	shared_gpu_ss11/gpu_shared	1	1	10	0.003	0.089	COMPLETED	confirmatory single-run copy (gpu_shared race copy of a chain row)	confirm/resources-V1-sacct.tsv
+2026-09-24T02:45:30Z	V1	58809361	m3246_g	gpu_ss11/gpu_debug	1	4	1692	1.880	60.160	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T02:55:33Z	V1	58809824	m3246_g	gpu_ss11/gpu_debug	1	4	1612	1.791	57.316	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T03:14:58Z	V1	58810047	m3246_g	gpu_ss11/gpu_debug	1	4	1696	1.884	60.302	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T03:25:31Z	V1	58810596	m3246_g	gpu_ss11/gpu_debug	1	4	1701	1.890	60.480	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T03:49:09Z	V1	58811322	m3246_g	gpu_ss11/gpu_debug	1	4	1703	1.892	60.551	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T03:59:57Z	V1	58811530	m3246_g	gpu_ss11/gpu_debug	1	4	1714	1.904	60.942	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T04:26:42Z	V1	58811912	m3246_g	gpu_ss11/gpu_debug	1	4	1743	1.937	61.973	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T04:38:21Z	V1	58812108	m3246_g	gpu_ss11/gpu_debug	1	4	1710	1.900	60.800	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T05:06:00Z	V1	58812932	m3246_g	gpu_ss11/gpu_debug	1	4	943	1.048	33.529	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T05:16:19Z	V1	58813173	m3246_g	gpu_ss11/gpu_debug	1	4	1665	1.850	59.200	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T05:26:51Z	V1	58813661	m3246_g	gpu_ss11/gpu_debug	1	4	1710	1.900	60.800	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T06:05:00Z	V1	58813919	m3246_g	gpu_ss11/gpu_debug	1	4	1694	1.882	60.231	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T06:05:01Z	V1	58814145	m3246_g	gpu_ss11/gpu_debug	1	4	1695	1.883	60.267	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T06:46:44Z	V1	58814884	m3246_g	gpu_ss11/gpu_debug	1	4	1705	1.894	60.622	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T06:59:26Z	V1	58815670	m3246	regular_milan_ss11/debug	2	0	28	0.000	3.982	COMPLETED	flock run-lock test	confirm/resources-V1-sacct.tsv
+2026-09-24T07:42:36Z	V1	58815932	m3246_g	gpu_ss11/gpu_debug	1	4	1683	1.870	59.840	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T07:42:36Z	V1	58815967	m3246_g	gpu_ss11/gpu_debug	1	4	1691	1.879	60.124	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T08:17:21Z	V1	58817151	m3246_g	gpu_ss11/gpu_debug	1	4	1707	1.897	60.693	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T08:17:21Z	V1	58817152	m3246_g	gpu_ss11/gpu_debug	1	4	1709	1.899	60.764	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T08:51:07Z	V1	58817961	m3246_g	gpu_ss11/gpu_debug	1	4	1708	1.898	60.729	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T08:51:07Z	V1	58817962	m3246_g	gpu_ss11/gpu_debug	1	4	1691	1.879	60.124	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T09:31:58Z	V1	58818329	m3246_g	gpu_ss11/gpu_debug	1	4	1696	1.884	60.302	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T09:31:58Z	V1	58818330	m3246_g	gpu_ss11/gpu_debug	1	4	1713	1.903	60.907	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T10:06:16Z	V1	58818805	m3246_g	gpu_ss11/gpu_debug	1	4	1724	1.916	61.298	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T10:06:16Z	V1	58818806	m3246_g	gpu_ss11/gpu_debug	1	4	988	1.098	35.129	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T10:27:19Z	V1	58819350	m3246_g	gpu_ss11/gpu_debug	1	4	1711	1.901	60.836	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T10:40:04Z	V1	58819349	m3246_g	gpu_ss11/gpu_debug	1	4	1687	1.874	59.982	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T11:02:58Z	V1	58819771	m3246_g	gpu_ss11/gpu_debug	1	4	1716	1.907	61.013	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T11:20:42Z	V1	58820023	m3246_g	gpu_ss11/gpu_debug	1	4	1649	1.832	58.631	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T11:37:57Z	V1	58820416	m3246_g	gpu_ss11/gpu_debug	1	4	1710	1.900	60.800	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T11:55:32Z	V1	58820749	m3246_g	gpu_ss11/gpu_debug	1	4	1678	1.864	59.662	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T12:37:43Z	V1	58821442	m3246_g	gpu_ss11/gpu_debug	1	4	1691	1.879	60.124	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T13:13:37Z	V1	58822048	m3246_g	gpu_ss11/gpu_debug	1	4	1686	1.873	59.947	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T13:46:29Z	V1	58822550	m3246_g	gpu_ss11/gpu_debug	1	4	1730	1.922	61.511	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T14:21:48Z	V1	58823189	m3246_g	gpu_ss11/gpu_debug	1	4	1712	1.902	60.871	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T14:57:15Z	V1	58823954	m3246_g	gpu_ss11/gpu_debug	1	4	1707	1.897	60.693	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T15:33:06Z	V1	58824804	m3246_g	gpu_ss11/gpu_debug	1	4	1672	1.858	59.449	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T16:31:27Z	V1	58827682	m3246_g	gpu_ss11/gpu_debug	1	4	1692	1.880	60.160	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T17:04:22Z	V1	58830728	m3246_g	gpu_ss11/gpu_debug	1	4	1710	1.900	60.800	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T17:04:22Z	V1	58830729	m3246_g	gpu_ss11/gpu_debug	1	4	1686	1.873	59.947	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T17:40:32Z	V1	58831112	m3246_g	gpu_ss11/gpu_debug	1	4	1719	1.910	61.120	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T17:40:32Z	V1	58831113	m3246_g	gpu_ss11/gpu_debug	1	4	1707	1.897	60.693	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T18:18:32Z	V1	58831976	m3246_g	gpu_ss11/gpu_debug	1	4	1719	1.910	61.120	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T18:18:32Z	V1	58831977	m3246_g	gpu_ss11/gpu_debug	1	4	1697	1.886	60.338	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T18:56:46Z	V1	58832785	m3246_g	gpu_ss11/gpu_debug	1	4	1714	1.904	60.942	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T18:56:46Z	V1	58832786	m3246_g	gpu_ss11/gpu_debug	1	4	1685	1.872	59.911	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T20:45:34Z	V1	58833610	m3246_g	gpu_ss11/gpu_debug	1	4	1701	1.890	60.480	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T20:45:34Z	V1	58833611	m3246_g	gpu_ss11/gpu_debug	1	4	1699	1.888	60.409	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T21:18:12Z	V1	58836163	m3246_g	gpu_ss11/gpu_debug	1	4	1672	1.858	59.449	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T21:18:12Z	V1	58836164	m3246_g	gpu_ss11/gpu_debug	1	4	1698	1.887	60.373	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T21:48:56Z	V1	58837006	m3246_g	gpu_ss11/gpu_debug	1	4	1708	1.898	60.729	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T21:48:57Z	V1	58837007	m3246_g	gpu_ss11/gpu_debug	1	4	1621	1.801	57.636	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T22:21:36Z	V1	58838064	m3246_g	gpu_ss11/gpu_debug	1	4	1646	1.829	58.524	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T22:31:39Z	V1	58838063	m3246_g	gpu_ss11/gpu_debug	1	4	15	0.017	0.533	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T22:34:00Z	V1	58839279	m3246_g	gpu_ss11/gpu_debug	1	4	12	0.013	0.427	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T22:36:26Z	V1	58839336	m3246_g	gpu_ss11/gpu_debug	1	4	47	0.052	1.671	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T22:46:12Z	V1	58839428	m3246_g	gpu_ss11/gpu_debug	1	4	14	0.016	0.498	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T22:51:02Z	V1	58839011	m3246_g	gpu_ss11/gpu_debug	1	4	1639	1.821	58.276	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T22:51:02Z	V1	58839617	m3246_g	gpu_ss11/gpu_debug	1	4	16	0.018	0.569	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T22:56:32Z	V1	58839729	m3246_g	gpu_ss11/gpu_debug	1	4	16	0.018	0.569	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T22:58:59Z	V1	58839840	m3246_g	gpu_ss11/gpu_debug	1	4	14	0.016	0.498	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T23:01:41Z	V1	58839885	m3246_g	gpu_ss11/gpu_debug	1	4	12	0.013	0.427	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T23:04:37Z	V1	58839954	m3246_g	gpu_ss11/gpu_debug	1	4	12	0.013	0.427	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T23:07:15Z	V1	58840060	m3246_g	gpu_ss11/gpu_debug	1	4	14	0.016	0.498	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T23:10:14Z	V1	58840348	m3246_g	gpu_ss11/gpu_debug	1	4	16	0.018	0.569	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T23:19:00Z	V1	58840489	m3246_g	gpu_ss11/gpu_debug	1	4	11	0.012	0.391	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T23:30:27Z	V1	58840854	m3246_g	gpu_ss11/gpu_debug	1	4	1692	1.880	60.160	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-24T23:30:27Z	V1	58840888	m3246_g	gpu_ss11/gpu_debug	1	4	1704	1.893	60.587	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T00:02:51Z	V1	58841404	m3246_g	gpu_ss11/gpu_debug	1	4	1695	1.883	60.267	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T00:02:51Z	V1	58841405	m3246_g	gpu_ss11/gpu_debug	1	4	1706	1.896	60.658	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T00:20:13Z	V1	58843833	m3246	regular_milan_ss11/debug	1	0	41	0.000	2.916	COMPLETED	pv1-rescore	confirm/resources-V1-sacct.tsv
+2026-09-25T00:33:31Z	V1	58842815	m3246_g	gpu_ss11/gpu_debug	1	4	1699	1.888	60.409	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T00:33:31Z	V1	58842816	m3246_g	gpu_ss11/gpu_debug	1	4	1683	1.870	59.840	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T01:03:16Z	V1	58844363	m3246_g	gpu_ss11/gpu_debug	1	4	1697	1.886	60.338	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T01:05:33Z	V1	58844364	m3246_g	gpu_ss11/gpu_debug	1	4	1668	1.853	59.307	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T01:34:38Z	V1	58845345	m3246_g	gpu_ss11/gpu_debug	1	4	1679	1.866	59.698	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T01:36:48Z	V1	58845445	m3246_g	gpu_ss11/gpu_debug	1	4	1736	1.929	61.724	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T02:05:40Z	V1	58846584	m3246_g	gpu_ss11/gpu_debug	1	4	1703	1.892	60.551	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T02:08:04Z	V1	58846706	m3246_g	gpu_ss11/gpu_debug	1	4	1702	1.891	60.516	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T02:36:09Z	V1	58848019	m3246_g	gpu_ss11/gpu_debug	1	4	1699	1.888	60.409	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T02:38:37Z	V1	58848150	m3246_g	gpu_ss11/gpu_debug	1	4	1697	1.886	60.338	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T03:08:09Z	V1	58849443	m3246_g	gpu_ss11/gpu_debug	1	4	1692	1.880	60.160	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T03:10:34Z	V1	58849517	m3246_g	gpu_ss11/gpu_debug	1	4	1696	1.884	60.302	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T03:24:09Z	V1	58815976	m3246_g	shared_gpu_ss11/gpu_shared	1	1	10	0.003	0.089	COMPLETED	confirmatory single-run copy (gpu_shared race copy of a chain row)	confirm/resources-V1-sacct.tsv
+2026-09-25T03:39:43Z	V1	58850411	m3246_g	gpu_ss11/gpu_debug	1	4	1702	1.891	60.516	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T03:42:16Z	V1	58850478	m3246_g	gpu_ss11/gpu_debug	1	4	1712	1.902	60.871	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T04:13:18Z	V1	58851491	m3246_g	gpu_ss11/gpu_debug	1	4	1709	1.899	60.764	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T04:20:27Z	V1	58851563	m3246_g	gpu_ss11/gpu_debug	1	4	1686	1.873	59.947	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T04:43:50Z	V1	58852539	m3246_g	gpu_ss11/gpu_debug	1	4	1688	1.876	60.018	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T04:49:49Z	V1	58852753	m3246_g	gpu_ss11/gpu_debug	1	4	1711	1.901	60.836	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T05:16:24Z	V1	58853640	m3246_g	gpu_ss11/gpu_debug	1	4	1704	1.893	60.587	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T05:20:01Z	V1	58853792	m3246_g	gpu_ss11/gpu_debug	1	4	1711	1.901	60.836	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T05:37:54Z	V1	58815984	m3246_g	shared_gpu_ss11/gpu_shared	1	1	10	0.003	0.089	COMPLETED	confirmatory single-run copy (gpu_shared race copy of a chain row)	confirm/resources-V1-sacct.tsv
+2026-09-25T05:57:55Z	V1	58854554	m3246_g	gpu_ss11/gpu_debug	1	4	1716	1.907	61.013	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T05:57:55Z	V1	58854649	m3246_g	gpu_ss11/gpu_debug	1	4	1701	1.890	60.480	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T06:28:39Z	V1	58855476	m3246_g	gpu_ss11/gpu_debug	1	4	1707	1.897	60.693	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T06:28:39Z	V1	58855477	m3246_g	gpu_ss11/gpu_debug	1	4	1707	1.897	60.693	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T06:58:49Z	V1	58856102	m3246_g	gpu_ss11/gpu_debug	1	4	1703	1.892	60.551	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T06:58:49Z	V1	58856103	m3246_g	gpu_ss11/gpu_debug	1	4	1703	1.892	60.551	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T07:29:11Z	V1	58856641	m3246_g	gpu_ss11/gpu_debug	1	4	1700	1.889	60.444	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T07:29:11Z	V1	58856642	m3246_g	gpu_ss11/gpu_debug	1	4	1700	1.889	60.444	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T07:59:11Z	V1	58857287	m3246_g	gpu_ss11/gpu_debug	1	4	1705	1.894	60.622	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T07:59:11Z	V1	58857288	m3246_g	gpu_ss11/gpu_debug	1	4	1692	1.880	60.160	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T08:28:36Z	V1	58857916	m3246_g	gpu_ss11/gpu_debug	1	4	1697	1.886	60.338	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T08:28:36Z	V1	58857917	m3246_g	gpu_ss11/gpu_debug	1	4	1700	1.889	60.444	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T08:57:56Z	V1	58858794	m3246_g	gpu_ss11/gpu_debug	1	4	1701	1.890	60.480	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T08:57:56Z	V1	58858795	m3246_g	gpu_ss11/gpu_debug	1	4	1703	1.892	60.551	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T09:28:12Z	V1	58859442	m3246_g	gpu_ss11/gpu_debug	1	4	1696	1.884	60.302	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T09:28:12Z	V1	58859443	m3246_g	gpu_ss11/gpu_debug	1	4	1734	1.927	61.653	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T09:58:34Z	V1	58860160	m3246_g	gpu_ss11/gpu_debug	1	4	1690	1.878	60.089	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T10:01:28Z	V1	58860161	m3246_g	gpu_ss11/gpu_debug	1	4	1676	1.862	59.591	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T10:29:52Z	V1	58860857	m3246_g	gpu_ss11/gpu_debug	1	4	1660	1.844	59.022	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T10:31:19Z	V1	58860921	m3246_g	gpu_ss11/gpu_debug	1	4	1644	1.827	58.453	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T11:00:40Z	V1	58861497	m3246_g	gpu_ss11/gpu_debug	1	4	1693	1.881	60.196	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T11:00:40Z	V1	58861525	m3246_g	gpu_ss11/gpu_debug	1	4	1601	1.779	56.924	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T11:27:52Z	V1	58861940	m3246_g	gpu_ss11/gpu_debug	1	4	1598	1.776	56.818	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T11:30:24Z	V1	58861937	m3246_g	gpu_ss11/gpu_debug	1	4	1700	1.889	60.444	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T11:55:25Z	V1	58862294	m3246_g	gpu_ss11/gpu_debug	1	4	1612	1.791	57.316	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T11:59:50Z	V1	58862319	m3246_g	gpu_ss11/gpu_debug	1	4	1689	1.877	60.053	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:16:21Z	V1	58816005	m3246_g	shared_gpu_ss11/gpu_shared	1	1	6	0.002	0.053	COMPLETED	confirmatory single-run copy (gpu_shared race copy of a chain row)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:24:00Z	V1	58862618	m3246_g	gpu_ss11/gpu_debug	1	4	14	0.016	0.498	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:25:14Z	V1	58863214	m3246_g	gpu_ss11/gpu_debug	1	4	14	0.016	0.498	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:27:59Z	V1	58863230	m3246_g	gpu_ss11/gpu_debug	1	4	896	0.996	31.858	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:29:10Z	V1	58862666	m3246_g	gpu_ss11/gpu_debug	1	4	14	0.016	0.498	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:30:26Z	V1	58863348	m3246_g	gpu_ss11/gpu_debug	1	4	20	0.022	0.711	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:31:46Z	V1	58863383	m3246_g	gpu_ss11/gpu_debug	1	4	15	0.017	0.533	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:33:00Z	V1	58863473	m3246_g	gpu_ss11/gpu_debug	1	4	11	0.012	0.391	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:34:08Z	V1	58863497	m3246_g	gpu_ss11/gpu_debug	1	4	13	0.014	0.462	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:35:34Z	V1	58863512	m3246_g	gpu_ss11/gpu_debug	1	4	19	0.021	0.676	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:36:52Z	V1	58863529	m3246_g	gpu_ss11/gpu_debug	1	4	14	0.016	0.498	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:38:10Z	V1	58863549	m3246_g	gpu_ss11/gpu_debug	1	4	14	0.016	0.498	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:39:23Z	V1	58863575	m3246_g	gpu_ss11/gpu_debug	1	4	17	0.019	0.604	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:40:42Z	V1	58863597	m3246_g	gpu_ss11/gpu_debug	1	4	13	0.014	0.462	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:42:01Z	V1	58863619	m3246_g	gpu_ss11/gpu_debug	1	4	15	0.017	0.533	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-25T12:43:14Z	V1	58863652	m3246_g	gpu_ss11/gpu_debug	1	4	11	0.012	0.391	COMPLETED	confirmatory run chain (PILOT/FINAL/STRESS; stage per job in <stage>/submissions.txt)	confirm/resources-V1-sacct.tsv
+2026-09-23T10:59:45Z	V1	58786043	m3246	regular_milan_ss11/debug	1	0	418	0.000	29.724	FAILED	CPU check: real-inventory input path, forced-halves crosscheck, pool-S inputs + target; FAILED only on pytest fixture import order	confirm/resources-V1.tsv
+2026-09-23T11:11:13Z	V1	58786058	m3246_g	gpu_ss11/gpu_debug	1	4	1012	1.124	35.982	COMPLETED	chain round 1 (gpu_debug, race winner): control k=1, mechanics k=1	confirm/resources-V1.tsv
+	V1	58786061	m3246_g	gpu_ss11/gpu_preempt	1	0	0	0.000	0.000	CANCELLED	race copy (gpu_preempt), cancelled unstarted by the winner	confirm/resources-V1.tsv
+2026-09-23T11:09:53Z	V1	58786149	m3246	regular_milan_ss11/debug	1	0	80	0.000	5.689	COMPLETED	CPU pytest at 75e4b5cf: 30 passed	confirm/resources-V1.tsv
+2026-09-23T11:52:02Z	V1	58786334	m3246_g	gpu_ss11/gpu_debug	1	4	1004	1.116	35.698	COMPLETED	chain round 2: control k=2, mechanics k=2	confirm/resources-V1.tsv
+2026-09-23T12:26:04Z	V1	58786713	m3246_g	gpu_ss11/gpu_debug	1	4	966	1.073	34.347	COMPLETED	chain round 3: control k=3 + scoring	confirm/resources-V1.tsv
+2026-09-22	phaseA1	58741064	m3246_g	gpu_debug	1	4	32	0.0356	0.000	FAILED	earlier delegate: runtime audit at 506d26de, refused by the guard on an lscpu launch (numpy.testing SVE probe)	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58741294	m3246_g	gpu_debug	1	4	45	0.0500	0.000	FAILED	earlier delegate: runtime audit at 506d26de, refused by the guard (OI-136 import of atomic_write from the hardcoded tree)	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58741303	m3246_g	gpu_shared	1	1	0	0.0000	0.000	CANCELLED	earlier delegate: placeholder test_run.py (imported a nonexistent module); cancelled while pending	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58741897	m3246	shared	1	0	0	0.0000	0.000	CANCELLED	prematerialize tiny cache; moved to debug QOS before starting	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58741898	m3246_g	gpu_debug	1	1	0	0.0000	0.000	CANCELLED	runtime audit; dependency cancelled before start	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58742006	m3246	shared	1	0	0	0.0000	0.000	CANCELLED	build check; moved to debug QOS before starting	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58742046	m3246	debug	1	0	105	0.0000	3.733	FAILED	prematerialize tiny cache; guard refused lscpu (numpy.testing SVE probe) -> harness fix numpy_probe.py	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58742047	m3246_g	gpu_debug	1	1	0	0.0000	0.000	CANCELLED	runtime audit; dependency never satisfied	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58742048	m3246	debug	1	0	38	0.0000	1.351	COMPLETED	declared-differences check (rebuild one MC shard, branch availability)	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58742194	m3246	debug	1	0	884	0.0000	31.431	COMPLETED	prematerialize his tokens for the tiny audit subsample (historical prematerialize_theirs, 100k events, tuning stage)	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58742195	m3246_g	gpu_debug	1	4	619	0.6878	0.000	COMPLETED	level-1 runtime audit of the historical driver, both arms, 3 iterations x 8 epochs, 100k-event subsample	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58748390	m3246	debug	1	0	514	0.0000	18.276	COMPLETED	all campaign tests (non-TF + TF regression) at pinned 3fb56b36: 31 passed, 7 xfailed	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58748392	m3246_g	gpu_debug	1	4	424	0.4711	0.000	COMPLETED	runtime check of run_unfold.py, both arms, tuning 100k, 2 iterations x 2 epochs, input digests vs the audit	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58748393	m3246_g	gpu_debug	1	4	276	0.3067	0.000	COMPLETED	cost at the historical data size (final, 2M events), ours, 1 epoch per step	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58748395	m3246_g	gpu_debug	1	4	501	0.5567	0.000	COMPLETED	cost at the historical data size (final, 2M events), theirs (his declared step-1 recipe), 1 epoch per step	phase_a/resources-A1.tsv
+2026-09-22	phaseA1	58748758	m3246	debug	1	0	501	0.0000	17.813	COMPLETED	all campaign tests at the final code commit 7c5bb166: 31 passed, 7 xfailed	phase_a/resources-A1.tsv
+2026-09-22	A2	58742132	m3246	shared_milan_ss11/shared	1	0	106	0.000	3.533	FAILED	recover+data-path; died in the OI-136 launch guard on NumPy's SVE lscpu probe (exit 3:0), fixed in 31347723	phase_a/resources-A2.tsv
+2026-09-22	A2	58742133	m3246	shared_milan_ss11/shared	1	0	281	0.000	9.367	COMPLETED	feature inventory (run1); receipts/feature_inventory.json first version	phase_a/resources-A2.tsv
+2026-09-22	A2	58747783	m3246	shared_milan_ss11/shared	1	0	508	0.000	16.933	COMPLETED	recover+data-path (run2); recompute_scores/directional/data_path.json	phase_a/resources-A2.tsv
+2026-09-22	A2	58747784	m3246	shared_milan_ss11/shared	1	0	287	0.000	9.567	COMPLETED	feature inventory (run2); receipts/feature_inventory.json final	phase_a/resources-A2.tsv
+2026-09-22	A2	58752537	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	mask-conjunct probe under shared QOS; cancelled by me while still PENDING (Resources) after 10 min and resubmitted to debug as 58752745. Never started, no charge	phase_a/resources-A2.tsv
+2026-09-22	A2	58752745	m3246	regular_milan_ss11/debug	1	0	90	0.000	6.400	COMPLETED	decompose the masks_and_padding FAIL into its seven conjuncts; receipts/mask_conjuncts.json. Queued 125 s	phase_a/resources-A2.tsv
+2026-09-22	B2	58755597	m3246_g	gpu_shared	1	1	2385	0.662	21.20	COMPLETED	exp1 H K=3 s1; wait_s=5534	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58755598	m3246_g	gpu_shared	1	1	2413	0.670	21.45	COMPLETED	exp1 H K=3 s2; wait_s=5534	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58755599	m3246_g	gpu_shared	1	1	2397	0.666	21.31	COMPLETED	exp1 H K=3 s3; wait_s=20828	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58755600	m3246_g	gpu_shared	1	1	2372	0.659	21.08	COMPLETED	exp1 H K=3 s4; wait_s=20828	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58755601	m3246_g	gpu_regular	0	0	0	0.000	0.00	CANCELLED	exp1 duplicate pack (cancelled); wait_s=n/a	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58756024	m3246_g	gpu_debug	1	4	339	0.377	12.05	COMPLETED	driver mechanics check; wait_s=1524	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58769968	m3246_g	gpu_preempt	1	4	4197	4.663	149.23	COMPLETED	exp2 truth-only 32 epochs; wait_s=35181	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58769969	m3246_g	gpu_regular	0	0	0	0.000	0.00	CANCELLED	K=10 pack (cancelled; moved to chain); wait_s=n/a	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58769970	m3246_g	gpu_preempt	0	0	0	0.000	0.00	CANCELLED	K=10 pack (cancelled; moved to chain); wait_s=n/a	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58769971	m3246_g	gpu_regular	0	0	0	0.000	0.00	CANCELLED	K=10 pack (cancelled); wait_s=n/a	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58769978	m3246	shared	0	0	0	0.000	0.00	CANCELLED	T3 scalar ref (cancelled; ran in debug); wait_s=n/a	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58780654	m3246_g	gpu_debug	1	4	1802	2.002	64.07	TIMEOUT	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=751	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58780657	m3246_g	gpu_debug	1	4	942	1.047	33.49	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=1622	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58780659	m3246	debug	1	0	221	0.000	15.72	COMPLETED	T3 scalar reference; wait_s=215	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58781614	m3246_g	gpu_debug	0	0	0	0.000	0.00	CANCELLED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=n/a	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58781966	m3246_g	gpu_debug	1	4	1659	1.843	58.99	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=983	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58781967	m3246_g	gpu_debug	1	4	943	1.048	33.53	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=983	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58781990	m3246_g	gpu_preempt	0	0	0	0.000	0.00	CANCELLED	exp5 preempt pack (cancelled; moved to chain); wait_s=n/a	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58782367	m3246_g	gpu_debug	1	4	1665	1.850	59.20	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=97	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58782488	m3246_g	gpu_debug	1	4	1673	1.859	59.48	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=2608	phase_b/pet/resources-B2.tsv
+2026-09-22	B2	58782671	m3246_g	gpu_debug	1	4	1657	1.841	58.92	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=1569	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58783357	m3246_g	gpu_debug	1	4	1663	1.848	59.13	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=359	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58783360	m3246_g	gpu_debug	1	4	1663	1.848	59.13	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=346	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58783850	m3246_g	gpu_debug	1	4	943	1.048	33.53	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=66	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58783851	m3246_g	gpu_debug	1	4	1660	1.844	59.02	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=66	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58784064	m3246_g	gpu_debug	1	4	1659	1.843	58.99	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=107	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58784189	m3246_g	gpu_debug	1	4	946	1.051	33.64	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=84	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58784440	m3246_g	gpu_debug	1	4	1680	1.867	59.73	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=73	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58784444	m3246_g	gpu_debug	1	4	943	1.048	33.53	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=159	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58784708	m3246_g	gpu_debug	1	4	1641	1.823	58.35	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=86	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58784838	m3246_g	gpu_debug	1	4	988	1.098	35.13	COMPLETED	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=92	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58785788	m3246_g	gpu_debug	1	4	203	0.226	7.22	RUNNING	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=94	phase_b/pet/resources-B2.tsv
+2026-09-23	B2	58785789	m3246_g	gpu_debug	1	4	203	0.226	7.22	RUNNING	self-chaining gpu_debug segment (exp2 12-ep / exp3-4 K=10 / exp5); wait_s=92	phase_b/pet/resources-B2.tsv
+2026-09-22T08:41:15Z	B1	58741903	m3246	shared_milan_ss11/shared	1	0	89	0	0.890	COMPLETED	populations reproduction + input cache	phase_b/scalar/resources-B1.tsv
+2026-09-22T12:43:39Z	B1	58748148	m3246	shared_milan_ss11/shared	1	0	501	0	1.392	COMPLETED	binned IBU k=1..50 (10 variants)	phase_b/scalar/resources-B1.tsv
+2026-09-22T12:45:41Z	B1	58748149	m3246	shared_milan_ss11/shared	1	0	415	0	1.844	CANCELLED	truth learnability, cancelled by me to add the MLP input transform (superseded by 58748398)	phase_b/scalar/resources-B1.tsv
+2026-09-22T12:45:41Z	B1	58748151	m3246	shared_milan_ss11/shared	1	0	0	0	0.000	CANCELLED	scalar OmniFold array, cancelled while PENDING (never ran; superseded by 58748399)	phase_b/scalar/resources-B1.tsv
+2026-09-22T12:48:32Z	B1	58748397	m3246	shared_milan_ss11/shared	1	0	8	0	0.022	COMPLETED	oracle / identity / historical push anchors	phase_b/scalar/resources-B1.tsv
+2026-09-22T12:52:11Z	B1	58748456	m3246	shared_milan_ss11/shared	1	0	9	0	0.025	COMPLETED	reference-model decomposition	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:17:17Z	B1	58748398	m3246	shared_milan_ss11/shared	1	0	1237	0	5.498	COMPLETED	truth-only learnability (3 input sets x hgb/mlp/mlp_raw x 3 seeds)	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:01:07Z	B1	58748399_0	m3246	shared_milan_ss11/shared	1	0	68	0	0.302	COMPLETED	scalar OmniFold muon/hgb/seed1, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:02:51Z	B1	58748399_1	m3246	shared_milan_ss11/shared	1	0	74	0	0.329	COMPLETED	scalar OmniFold muon/hgb/seed2, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:06:11Z	B1	58748399_2	m3246	shared_milan_ss11/shared	1	0	67	0	0.298	COMPLETED	scalar OmniFold muon/hgb/seed3, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:22:32Z	B1	58748399_3	m3246	shared_milan_ss11/shared	1	0	1048	0	4.658	COMPLETED	scalar OmniFold muon/mlp/seed1, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:29:57Z	B1	58748399_4	m3246	shared_milan_ss11/shared	1	0	891	0	3.960	COMPLETED	scalar OmniFold muon/mlp/seed2, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:40:37Z	B1	58748399_5	m3246	shared_milan_ss11/shared	1	0	1531	0	6.804	COMPLETED	scalar OmniFold muon/mlp/seed3, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:21:18Z	B1	58748399_6	m3246	shared_milan_ss11/shared	1	0	154	0	0.684	COMPLETED	scalar OmniFold muon_had/hgb/seed1, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:22:23Z	B1	58748399_7	m3246	shared_milan_ss11/shared	1	0	70	0	0.311	COMPLETED	scalar OmniFold muon_had/hgb/seed2, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:25:27Z	B1	58748399_8	m3246	shared_milan_ss11/shared	1	0	100	0	0.444	COMPLETED	scalar OmniFold muon_had/hgb/seed3, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:43:17Z	B1	58748399_9	m3246	shared_milan_ss11/shared	1	0	1008	0	4.480	COMPLETED	scalar OmniFold muon_had/mlp/seed1, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T14:24:52Z	B1	58748399_10	m3246	shared_milan_ss11/shared	1	0	3331	0	14.804	COMPLETED	scalar OmniFold muon_had/mlp/seed2, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:45:46Z	B1	58748399_11	m3246	shared_milan_ss11/shared	1	0	925	0	4.111	COMPLETED	scalar OmniFold muon_had/mlp/seed3, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:37:41Z	B1	58748399_12	m3246	shared_milan_ss11/shared	1	0	145	0	0.644	COMPLETED	scalar OmniFold muon_eavail/hgb/seed1, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:40:56Z	B1	58748399_13	m3246	shared_milan_ss11/shared	1	0	191	0	0.849	COMPLETED	scalar OmniFold muon_eavail/hgb/seed2, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T13:48:14Z	B1	58748399_14	m3246	shared_milan_ss11/shared	1	0	70	0	0.311	COMPLETED	scalar OmniFold muon_eavail/hgb/seed3, 20 iterations	phase_b/scalar/resources-B1.tsv
+2026-09-22T17:59:14Z	E1	58756787	m3246	shared_milan_ss11/shared	1	0	145	0.000	0.725	FAILED	pool cache prep; FAILED (segfault: import ROOT crashes cling in root_6_28)	phase_e/resources-E1.tsv
+	E1	58769952	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	pool caches (shared QOS); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58769953	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	D5 check (shared QOS); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770033	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	toy (shared QOS); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770073	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	superseded smoke test, cancelled before it ran	phase_e/resources-E1.tsv
+	E1	58770074	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	identifiability smoke (shared QOS); cancelled, never ran	phase_e/resources-E1.tsv
+	E1	58770115	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	references smoke (shared QOS); cancelled, never ran	phase_e/resources-E1.tsv
+	E1	58770116	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	identifiability (shared QOS); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770117_[0-2]	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	references r0 (shared QOS array); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770118_[0-2]	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	references r1 (shared QOS array); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770119_[0-2]	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	references r2 (shared QOS array); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+	E1	58770120	m3246	shared_milan_ss11/shared	1	0	0	0.000	0.000	CANCELLED	reference assessment (shared QOS); cancelled after 6 h PENDING, never ran	phase_e/resources-E1.tsv
+2026-09-23T04:16:29Z	E1	58780643	m3246	regular_milan_ss11/debug	1	0	131	0.000	9.316	COMPLETED	pool T and pool S input caches, D3 standardization, censuses (debug QOS)	phase_e/resources-E1.tsv
+2026-09-23T04:16:29Z	E1	58780644	m3246	regular_milan_ss11/debug	1	0	7	0.000	0.498	FAILED	D5 rebuild check; FAILED: root_6_28 has no uproot (check then run on the login node through the guard)	phase_e/resources-E1.tsv
+2026-09-23T04:23:10Z	E1	58780734	m3246	regular_milan_ss11/debug	1	0	273	0.000	19.413	COMPLETED	identifiability: 20-split equal-model null	phase_e/resources-E1.tsv
+2026-09-23T04:23:10Z	E1	58780737	m3246	regular_milan_ss11/debug	1	0	418	0.000	29.724	FAILED	references r0 chunk 0; FAILED on a NaN (0/0 E_avail ratio), superseded by 58780900	phase_e/resources-E1.tsv
+2026-09-23T04:30:58Z	E1	58780834	m3246	regular_milan_ss11/debug	1	0	212	0.000	15.076	COMPLETED	identifiability: 33 distortions + permutation nulls	phase_e/resources-E1.tsv
+2026-09-23T04:34:48Z	E1	58780900	m3246	regular_milan_ss11/debug	1	0	493	0.000	35.058	COMPLETED	references r0 chunk 0	phase_e/resources-E1.tsv
+2026-09-23T04:34:48Z	E1	58780902	m3246	regular_milan_ss11/debug	1	0	526	0.000	37.404	COMPLETED	references r0 chunk 1	phase_e/resources-E1.tsv
+2026-09-23T04:43:49Z	E1	58781106	m3246	regular_milan_ss11/debug	1	0	471	0.000	33.493	COMPLETED	references r0 chunk 2	phase_e/resources-E1.tsv
+2026-09-23T04:43:49Z	E1	58781107	m3246	regular_milan_ss11/debug	1	0	11	0.000	0.782	COMPLETED	known-function toy (engine normalization only)	phase_e/resources-E1.tsv
+2026-09-23T04:45:44Z	E1	58781132	m3246	regular_milan_ss11/debug	1	0	495	0.000	35.200	COMPLETED	references r1 chunk 0	phase_e/resources-E1.tsv
+2026-09-23T04:52:43Z	E1	58781324	m3246	regular_milan_ss11/debug	1	0	2	0.000	0.142	FAILED	references r1 chunk 1; FAILED in 2 s: hand-typed pin SHA refused by the wrapper	phase_e/resources-E1.tsv
+2026-09-23T05:27:11Z	E1	58781969	m3246	regular_milan_ss11/debug	1	0	512	0.000	36.409	COMPLETED	references r1 chunk 1	phase_e/resources-E1.tsv
+2026-09-23T05:27:11Z	E1	58781970	m3246	regular_milan_ss11/debug	1	0	482	0.000	34.276	COMPLETED	references r1 chunk 2	phase_e/resources-E1.tsv
+2026-09-23T05:36:08Z	E1	58781972	m3246	regular_milan_ss11/debug	1	0	473	0.000	33.636	COMPLETED	references r2 chunk 0	phase_e/resources-E1.tsv
+2026-09-23T05:36:08Z	E1	58781973	m3246	regular_milan_ss11/debug	1	0	501	0.000	35.627	COMPLETED	references r2 chunk 1	phase_e/resources-E1.tsv
+2026-09-23T05:45:05Z	E1	58781974	m3246	regular_milan_ss11/debug	1	0	494	0.000	35.129	COMPLETED	references r2 chunk 2	phase_e/resources-E1.tsv
+2026-09-23T05:45:05Z	E1	58782099	m3246	regular_milan_ss11/debug	1	0	830	0.000	59.022	COMPLETED	reference assessment (b): pool S at 1x and 8x	phase_e/resources-E1.tsv
+2026-09-23T05:53:33Z	E1	58782108	m3246	regular_milan_ss11/debug	1	0	12	0.000	0.853	COMPLETED	known-function toy with the rate-matched variant	phase_e/resources-E1.tsv
+2026-09-22T17:30Z	pools	58755437	m3246	regular_milan_ss11/debug	1	0	0	0	0	CANCELLED	first pool build (superseded before start: silent-skip bug)	pools/resources-pools.tsv
+2026-09-22T17:34Z	pools	58755613	m3246	regular_milan_ss11/debug	1	0	101	0	7.18	COMPLETED	pool manifest build at 295572eb	pools/resources-pools.tsv
