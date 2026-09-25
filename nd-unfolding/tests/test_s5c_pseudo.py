@@ -47,5 +47,35 @@ class Truth(unittest.TestCase):
         self.assertAlmostEqual(t.max(), 1.15, delta=0.01)
 
 
+class CorrelationDeformation(unittest.TestCase):
+    def test_preserves_eavail_w_marginal_and_moves_q3(self):
+        rng = np.random.default_rng(3)
+        n = 200_000
+        gen = rng.random((n, 5)) * np.array([4.5, 60, 3.0, 3.0, 3.0])
+        gen[:, 3] = gen[:, 2] * 0.8 + rng.random(n)  # q3 correlated with E_avail
+        edges = [np.linspace(0, 4.5, 4), np.linspace(0, 60, 4), np.linspace(0, 3, 7),
+                 np.linspace(0, 4, 6), np.linspace(0, 3, 6)]
+        w = rng.uniform(0.5, 1.5, n)
+        r = s5c_pseudo.truth_weight("q3_given_eavail_w", gen, edges, 0.3, w_truth=w)
+        self.assertGreater(r.min(), 0.0)
+        ew = lambda weights: np.histogram2d(gen[:, 2], gen[:, 4], bins=[edges[2], edges[4]], weights=weights)[0]
+        np.testing.assert_allclose(ew(w * r), ew(w), rtol=1e-10)
+        q_nom = np.histogram(gen[:, 3], bins=edges[3], weights=w)[0]
+        q_def = np.histogram(gen[:, 3], bins=edges[3], weights=w * r)[0]
+        self.assertGreater(np.max(np.abs(q_def / q_nom - 1)), 0.02)
+
+    def test_refuses_nonpositive_amplitude_range(self):
+        with self.assertRaises(ValueError):
+            s5c_pseudo.truth_weight("q3_given_eavail_w", np.zeros((3, 5)), [np.linspace(0, 1, 3)] * 5, 0.6,
+                                    w_truth=np.ones(3))
+
+
+class SplitKeys(unittest.TestCase):
+    def test_per_seed_split_keys_are_distinct_and_deterministic(self):
+        keys = [s5c_pseudo.split_key_for(s) for s in range(100000, 100200)]
+        self.assertEqual(len(set(keys)), 200)
+        self.assertEqual(keys[0], s5c_pseudo.split_key_for(100000))
+
+
 if __name__ == "__main__":
     unittest.main()

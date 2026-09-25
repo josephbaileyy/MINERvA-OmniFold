@@ -37,7 +37,7 @@ if _ND not in sys.path:
 import s5c_unfold  # noqa: E402
 from xsec_nd import extract_cross_section_nd  # noqa: E402
 
-TRUTHS = ("nominal", "eavail_tilt")
+TRUTHS = ("nominal", "eavail_tilt", "q3_given_eavail_w")
 AXIS = {"pt": 0, "pz": 1, "eavail": 2, "q3": 3, "W": 4}
 
 
@@ -51,13 +51,36 @@ def half_mask(n: int, key: int) -> np.ndarray:
     return (z & np.uint64(1)).astype(bool)
 
 
-def truth_weight(name: str, gen: np.ndarray, edges: list, amplitude: float) -> np.ndarray:
+def truth_weight(name: str, gen: np.ndarray, edges: list, amplitude: float,
+                 w_truth: np.ndarray | None = None) -> np.ndarray:
+    """Declared truth reweights r(truth). ``q3_given_eavail_w`` changes the q3 dependence inside every
+    fine (E_avail, W) truth cell while preserving that cell's w_truth-weighted total exactly: within
+    each cell r = 1 + a z, where z is the cell-standardized q3, clipped to [-2, 2] and re-centred to
+    weighted mean zero (so the (E_avail, W) marginal of the reweighted truth equals the nominal one
+    to rounding; r > 0 for |a| < 0.5)."""
     if name == "nominal":
         return np.ones(gen.shape[0])
     if name == "eavail_tilt":
         e = edges[AXIS["eavail"]]
         u = (gen[:, AXIS["eavail"]] - e[0]) / (e[-1] - e[0])
         return 1.0 + amplitude * (np.clip(u, 0.0, 1.0) - 0.5)
+    if name == "q3_given_eavail_w":
+        if w_truth is None or abs(amplitude) >= 0.5:
+            raise ValueError("q3_given_eavail_w needs w_truth and |amplitude| < 0.5")
+        ie = np.clip(np.searchsorted(edges[AXIS["eavail"]], gen[:, AXIS["eavail"]], side="right") - 1,
+                     0, len(edges[AXIS["eavail"]]) - 2)
+        iw = np.clip(np.searchsorted(edges[AXIS["W"]], gen[:, AXIS["W"]], side="right") - 1,
+                     0, len(edges[AXIS["W"]]) - 2)
+        cell = ie * (len(edges[AXIS["W"]]) - 1) + iw
+        n = int(cell.max()) + 1
+        w = np.asarray(w_truth, float)
+        q = gen[:, AXIS["q3"]].astype(float)
+        sw = np.bincount(cell, weights=w, minlength=n)
+        mu = np.bincount(cell, weights=w * q, minlength=n) / np.where(sw > 0, sw, 1)
+        var = np.bincount(cell, weights=w * (q - mu[cell]) ** 2, minlength=n) / np.where(sw > 0, sw, 1)
+        z = np.clip((q - mu[cell]) / np.sqrt(np.where(var > 0, var, 1.0))[cell], -2.0, 2.0)
+        z = z - (np.bincount(cell, weights=w * z, minlength=n) / np.where(sw > 0, sw, 1))[cell]
+        return 1.0 + amplitude * z
     raise ValueError(name)
 
 
@@ -83,7 +106,7 @@ def build_experiment(inputs: dict, bkg: dict, truth: str, amplitude: float, spli
     n = inputs["MCgen"].shape[0]
     is_b = half_mask(n, split_key)
     rng = np.random.default_rng(pseudo_seed)
-    r = truth_weight(truth, inputs["MCgen"], edges, amplitude)
+    r = truth_weight(truth, inputs["MCgen"], edges, amplitude, w_truth=inputs["w_truth"])
 
     b_reco = is_b & inputs["pass_reco"]
     lam = 2.0 * inputs["w_reco"][b_reco] * r[b_reco]
@@ -132,14 +155,25 @@ def main(argv=None) -> int:
     ap.add_argument("--estimator-seed", type=int, required=True)
     ap.add_argument("--truth", choices=TRUTHS, required=True)
     ap.add_argument("--amplitude", type=float, default=0.0)
-    ap.add_argument("--split-key", type=int, required=True)
-    ap.add_argument("--pseudo-seed", type=int, required=True)
+    ap.add_argument("--split-key", type=int, default=None,
+                    help="fixed MC split (single-experiment mode); batch mode derives one per seed")
+    ap.add_argument("--pseudo-seed", type=int, default=None, help="one experiment")
+    ap.add_argument("--pseudo-seeds", default=None,
+                    help="first:last inclusive; one process runs each seed, writing <out>/<truth>_s<seed>.npz, "
+                         "skipping seeds whose product exists; the split key is derived from each seed")
     ap.add_argument("--threads", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "32")))
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--expect-npz-sha256", default=None)
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
-    if a.out.exists():
+    batch = a.pseudo_seeds is not None
+    if batch == (a.pseudo_seed is not None):
+        print("give exactly one of --pseudo-seed and --pseudo-seeds", file=sys.stderr)
+        return 2
+    if not batch and a.split_key is None:
+        print("single-experiment mode needs --split-key", file=sys.stderr)
+        return 2
+    if not batch and a.out.exists():
         print(f"refusing to overwrite {a.out}", file=sys.stderr)
         return 3
     t0 = time.time()
@@ -154,25 +188,50 @@ def main(argv=None) -> int:
     if bkg_meta["npz_sha256"] != npz_sha:
         print("refusing: background dump was made against a different npz", file=sys.stderr)
         return 4
-    exp_inputs, x_true, info = build_experiment(inputs, bkg, a.truth, a.amplitude, a.split_key, a.pseudo_seed)
+    bkg_sha = s5c_unfold.sha256_path(a.bkg)
+    if batch:
+        first, last = (int(v) for v in a.pseudo_seeds.split(":"))
+        a.out.mkdir(parents=True, exist_ok=True)
+        status = 0
+        for seed in range(first, last + 1):
+            target = a.out / f"{a.truth}_a{a.amplitude:g}_s{seed}.npz"
+            if target.exists():
+                continue
+            status |= run_one(a, inputs, bkg, npz_sha, bkg_sha, seed, split_key_for(seed), target)
+        return status
+    return run_one(a, inputs, bkg, npz_sha, bkg_sha, a.pseudo_seed, a.split_key, a.out, t0)
+
+
+def split_key_for(seed: int) -> int:
+    """Batch mode: an MC split per experiment, so the unfolding half's finite-sample fluctuation is
+    regenerated with the data (declared in the contract); deterministic in the seed."""
+    return (seed * 0x9E3779B1 + 0x5C5C) % (2**61 - 1)
+
+
+def run_one(a, inputs, bkg, npz_sha, bkg_sha, seed, split_key, out, t0=None) -> int:
+    t0 = time.time() if t0 is None else t0
+    exp_inputs, x_true, info = build_experiment(inputs, bkg, a.truth, a.amplitude, split_key, seed)
     t1 = time.time()
     xs, params = s5c_unfold.unfold(exp_inputs, a.config, a.estimator_seed, a.threads, a.iters)
     t2 = time.time()
     meta = {
         "schema": "s5c-pseudo/1", "config": a.config, "estimator_seed": a.estimator_seed,
-        "truth": a.truth, "amplitude": a.amplitude, "split_key": a.split_key, "pseudo_seed": a.pseudo_seed,
+        "truth": a.truth, "amplitude": a.amplitude, "split_key": split_key, "pseudo_seed": seed,
         "threads": a.threads, "iters": a.iters, "input_npz_sha256": npz_sha,
-        "bkg_dump_sha256": s5c_unfold.sha256_path(a.bkg),
+        "bkg_dump_sha256": bkg_sha,
         "code_sha256": {"s5c_pseudo.py": s5c_unfold.sha256_path(Path(__file__).resolve()),
                         "s5c_unfold.py": s5c_unfold.sha256_path(Path(s5c_unfold.__file__).resolve())},
         "experiment": info, "extra_params": s5c_unfold.config_params(a.config, a.threads),
         "slurm_job": os.environ.get("SLURM_JOB_ID"), "slurm_array_task": os.environ.get("SLURM_ARRAY_TASK_ID"),
         "seconds_build": round(t1 - t0, 3), "seconds_unfold": round(t2 - t1, 3),
     }
-    tmp = a.out.with_name(a.out.name + ".partial.npz")
+    tmp = out.with_name(out.name + f".partial-{os.getpid()}.npz")
     np.savez_compressed(tmp, xsec_flat=xs.ravel(order="C"), xtrue_flat=x_true.ravel(order="C"),
                         shape=np.array(xs.shape), meta=json.dumps(meta, default=str))
-    os.replace(tmp, a.out)
+    if out.exists():  # another process finished it first: keep the first product, never overwrite
+        tmp.unlink()
+        return 3
+    os.replace(tmp, out)
     print(json.dumps({k: meta[k] for k in ("truth", "pseudo_seed", "seconds_build", "seconds_unfold")}))
     return 0
 
